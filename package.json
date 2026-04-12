@@ -1,0 +1,26 @@
+{
+  "name": "coderift",
+  "version": "2.0.0",
+  "description": "CodeRift – Multi-Language Competitive Programming Platform",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "scrape": "node src/scraper.js",
+    "scrape:100": "node src/scraper.js --limit 100",
+    "scrape:500": "node src/scraper.js --limit 500",
+    "scrape:easy": "node src/scraper.js --rating 800 1200 --limit 200",
+    "scrape:medium": "node src/scraper.js --rating 1200 1800 --limit 200",
+    "scrape:hard": "node src/scraper.js --rating 1800 3500 --limit 200"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.12",
+    "cors": "^2.8.5",
+    "dotenv": "^17.4.1",
+    "express": "^4.18.2",
+    "node-fetch": "^2.7.0",
+    "puppeteer": "^24.40.0",
+    "socket.io": "^4.8.3",
+    "sqlite3": "^5.1.7"
+  }
+}

@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CodeRift — Enter the Rift</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/icons.css">
+  <link rel="stylesheet" href="/css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="/js/particles.js" defer></script>
+</head>
+<body>
+  <!-- SVG Gradient Defs -->
+  <svg style="position:absolute;width:0;height:0">
+    <defs>
+      <linearGradient id="xpRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#6366f1"/>
+        <stop offset="50%" stop-color="#a855f7"/>
+        <stop offset="100%" stop-color="#06b6d4"/>
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <!-- ===== BOOT SCREEN ===== -->
+  <div id="bootScreen" class="boot-screen">
+    <div class="boot-content">
+      <div class="boot-ring-wrap">
+        <div class="boot-ring"></div>
+        <div class="boot-icon"><i class="icon-rift"></i></div>
+      </div>
+      <div class="boot-title">CodeRift</div>
+      <div class="boot-tagline">Enter the Rift</div>
+      <div class="boot-bar-track"><div class="boot-bar-fill" id="bootBarFill"></div></div>
+      <div class="boot-status" id="bootStatus">Initializing systems...</div>
+    </div>
+  </div>
+
+  <!-- ===== COMMAND PALETTE ===== -->
+  <div id="cmdPalette" class="cmd-palette hidden">
+    <div class="cmd-backdrop" onclick="App.closeCmdPalette()"></div>
+    <div class="cmd-modal">
+      <div class="cmd-search-row">
+        <i class="icon-search cmd-search-icon"></i>
+        <input type="text" id="cmdInput" class="cmd-input" placeholder="Search pages, problems, actions..." autocomplete="off" />
+        <kbd class="cmd-kbd">ESC</kbd>
+      </div>
+      <div class="cmd-results" id="cmdResults"></div>
+    </div>
+  </div>
+
+  <!-- ===== KEYBOARD SHORTCUTS OVERLAY ===== -->
+  <div id="shortcutsOverlay" class="shortcuts-overlay hidden">
+    <div class="shortcuts-backdrop" onclick="App.closeShortcuts()"></div>
+    <div class="shortcuts-panel">
+      <div class="shortcuts-header">
+        <h2><i class="icon-bolt"></i> Keyboard Shortcuts</h2>
+        <button class="btn btn-ghost btn-sm" onclick="App.closeShortcuts()">✕</button>
+      </div>
+      <div class="shortcuts-body" id="shortcutsBody"></div>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <nav id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon"><i class="icon-rift"></i></div>
+      <div class="brand-text-wrap">
+        <span class="brand-text">CodeRift</span>
+        <span class="brand-sub">Enter the Rift &bull; Master Every Language</span>
+      </div>
+    </div>
+    <div class="sidebar-player-card" id="sidebarPlayerCard">
+      <div class="player-badge-wrap">
+        <svg class="player-xp-ring" viewBox="0 0 44 44">
+          <circle class="xp-ring-bg" cx="22" cy="22" r="19" fill="none" stroke-width="2.5"/>
+          <circle class="xp-ring-fill" id="sidebarXpRing" cx="22" cy="22" r="19" fill="none" stroke-width="2.5"
+            stroke-dasharray="119.38" stroke-dashoffset="119.38" stroke-linecap="round"
+            transform="rotate(-90 22 22)"/>
+        </svg>
+        <div class="player-level-badge" id="sidebarLevel">1</div>
+      </div>
+      <div class="player-mini-info">
+        <div class="player-title-text" id="sidebarTitle">Byte</div>
+        <div class="player-xp-mini">
+          <div class="player-xp-bar-mini"><div class="player-xp-fill-mini" id="sidebarXpFill" style="width:0%"></div></div>
+          <span class="player-xp-text" id="sidebarXpText">0 XP</span>
+        </div>
+        <div class="player-streak-mini" id="sidebarStreak"></div>
+      </div>
+    </div>
+    <div class="sidebar-nav">
+      <a href="#/dashboard" class="nav-item active" data-page="dashboard">
+        <i class="icon-dashboard nav-icon-i"></i><span class="nav-label">Dashboard</span>
+      </a>
+      <a href="#/problems" class="nav-item" data-page="problems">
+        <i class="icon-problems nav-icon-i"></i><span class="nav-label">Problems</span>
+      </a>
+      <a href="#/nexus" class="nav-item" data-page="nexus">
+        <i class="icon-arena nav-icon-i"></i><span class="nav-label">Progress</span>
+      </a>
+      <a href="#/contests" class="nav-item" data-page="contests">
+        <i class="icon-contests nav-icon-i"></i><span class="nav-label">Contests</span>
+      </a>
+      <a href="#/ailab" class="nav-item" data-page="ailab">
+        <i class="icon-neural nav-icon-i"></i><span class="nav-label">AI Lab</span>
+      </a>
+      <a href="#/learn" class="nav-item" data-page="learn">
+        <i class="icon-learn nav-icon-i"></i><span class="nav-label">Learn</span>
+      </a>
+      <a href="#/forge" class="nav-item" data-page="forge">
+        <i class="icon-hammer nav-icon-i"></i><span class="nav-label">The Forge</span>
+      </a>
+      <a href="#/workshop" class="nav-item" data-page="workshop">
+        <i class="icon-code nav-icon-i"></i><span class="nav-label">Workshop</span>
+      </a>
+      <a href="#/social" class="nav-item" data-page="social">
+        <i class="icon-friends nav-icon-i"></i><span class="nav-label">Community</span>
+        <span class="social-unread-badge hidden" id="socialUnreadBadge">0</span>
+      </a>
+      <a href="#/profile" class="nav-item" data-page="profile">
+        <i class="icon-profile nav-icon-i"></i><span class="nav-label">Profile</span>
+      </a>
+    </div>
+    <div class="sidebar-footer">
+      <button class="btn btn-ghost btn-sm full-width settings-trigger" onclick="App.openSettings()">
+        <i class="icon-settings"></i> <span>Settings</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main id="mainContent">
+    <div id="pageContent"></div>
+  </main>
+
+  <!-- ===== SOLVE OVERLAY ===== -->
+  <div id="solveOverlay" class="solve-overlay hidden">
+    <div class="solve-container">
+      <!-- LEFT -->
+      <div class="solve-left" id="solveLeft">
+        <div class="solve-topbar">
+          <button class="btn btn-ghost btn-sm" onclick="App.closeSolve()">
+            <i class="icon-back"></i> Back
+          </button>
+          <div class="solve-problem-badges" id="solveProblemBadges"></div>
+          <a id="solveExternalLink" href="#" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" title="Open original">
+            <i class="icon-external"></i>
+          </a>
+        </div>
+        <div class="solve-tabs">
+          <button class="solve-tab active" data-stab="description" onclick="App.switchSolveTab('description',this)">
+            <i class="icon-problems"></i> Description
+          </button>
+          <button class="solve-tab" data-stab="submissions" onclick="App.switchSolveTab('submissions',this)">
+            <i class="icon-send"></i> Submissions
+          </button>
+        </div>
+        <div class="solve-tab-content" id="solveTabContent">
+          <div id="solveDescriptionContent"></div>
+          <div id="solveSubmissionsContent" class="hidden"></div>
+        </div>
+      </div>
+
+      <!-- Resize Handle -->
+      <div class="solve-resizer" id="solveResizer"></div>
+
+      <!-- RIGHT -->
+      <div class="solve-right" id="solveRight">
+        <div class="editor-toolbar">
+          <div class="flex items-center gap-2">
+            <div class="lang-selector" id="langSelector">
+              <button class="lang-selector-btn" id="langSelectorBtn" onclick="App.toggleLangMenu()">
+                <i class="icon-lang-cpp" id="langIcon"></i>
+                <span id="langLabel">C++20</span>
+                <i class="icon-chevron-down" style="width:14px;height:14px"></i>
+              </button>
+              <div class="lang-menu hidden" id="langMenu">
+                <button class="lang-option active" data-lang="cpp" onclick="App.selectLang('cpp')">
+                  <i class="icon-lang-cpp"></i> C++20
+                </button>
+                <button class="lang-option" data-lang="python" onclick="App.selectLang('python')">
+                  <i class="icon-lang-python"></i> Python 3
+                </button>
+                <button class="lang-option" data-lang="java" onclick="App.selectLang('java')">
+                  <i class="icon-lang-java"></i> Java
+                </button>
+                <button class="lang-option" data-lang="javascript" onclick="App.selectLang('javascript')">
+                  <i class="icon-lang-js"></i> JavaScript
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="editor-actions">
+            <button class="btn btn-ghost btn-sm collab-btn" onclick="App.toggleCollab()" title="Collaborate"><i class="icon-friends"></i> Collab</button>
+            <button class="btn btn-ghost btn-sm" onclick="App.startAiBattle()" title="Race AI" id="aiBattleBtn"><i class="icon-robot"></i> Race</button>
+            <button class="btn btn-ghost btn-sm" onclick="App.toggleDebug()" title="Debug Visualizer" id="debugToggle"><i class="icon-microscope"></i> Debug</button>
+            <button class="btn btn-ghost btn-sm" id="focusModeBtn" onclick="App.toggleFocusMode()" title="Focus Mode (⌘⇧F)">
+              <i class="icon-focus"></i>
+            </button>
+            <button class="btn btn-ghost btn-sm" onclick="App.resetCode()" title="Reset Code">
+              <i class="icon-reset"></i>
+            </button>
+            <button class="btn btn-run btn-sm" onclick="App.runCode()" title="Run (Ctrl+Enter)">
+              <i class="icon-run"></i> Run
+            </button>
+            <button class="btn btn-submit btn-sm" onclick="App.submitCode()" title="Submit">
+              <i class="icon-send"></i> Submit
+            </button>
+          </div>
+        </div>
+        <div id="monacoEditor" class="editor-container"></div>
+        <div class="bottom-panel" id="bottomPanel">
+          <div class="bottom-panel-header">
+            <div class="bottom-tabs">
+              <button class="bottom-tab active" data-btab="testcases" onclick="App.switchBottomTab('testcases',this)">
+                <i class="icon-test"></i> Testcases
+              </button>
+              <button class="bottom-tab" data-btab="results" onclick="App.switchBottomTab('results',this)">
+                <i class="icon-terminal"></i> Results
+              </button>
+              <button class="bottom-tab" data-btab="debug" onclick="App.switchBottomTab('debug',this)">
+                <i class="icon-chart"></i> Visualizer
+              </button>
+            </div>
+            <button class="btn btn-ghost btn-sm" onclick="App.toggleAddTestcase()" title="Add Test Case">
+              <i class="icon-plus"></i> Add
+            </button>
+          </div>
+          <div class="bottom-panel-body" id="bottomPanelBody">
+            <div id="bottomTestcasesContent"></div>
+            <div id="bottomResultsContent" class="hidden">
+              <div class="output-placeholder">
+                <i class="icon-terminal" style="font-size:24px;opacity:0.3"></i>
+                <p>Run or submit your code to see results</p>
+              </div>
+            </div>
+            <div id="bottomDebugContent" class="hidden">
+              <div class="output-placeholder">
+                <i class="icon-microscope" style="font-size:24px;opacity:0.3"></i>
+                <p>Enable Debug mode and add DBG macros to visualize data</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Floating AI Chat -->
+      <button class="ai-fab" id="aiFab" onclick="App.toggleAiChat()" title="AI Tutor">
+        <span class="ai-fab-icon"><i class="icon-robot"></i></span>
+        <span class="ai-fab-pulse"></span>
+      </button>
+      <div class="ai-float-panel hidden" id="aiFloatPanel"></div>
+    </div>
+  </div>
+
+  <!-- Collab Indicator -->
+  <div id="collabIndicator" class="collab-indicator hidden">
+    <span class="collab-dot"></span>
+    <span id="collabInfo">Not connected</span>
+    <button class="btn btn-ghost btn-sm" onclick="App.leaveCollab()" style="padding:2px 6px">✕</button>
+  </div>
+
+  <!-- AI Race Overlay -->
+  <div id="aiRaceOverlay" class="ai-race-overlay hidden">
+    <div class="ai-race-container">
+      <div class="ai-race-header"><i class="icon-robot"></i> vs <i class="icon-sword"></i> — RACE MODE</div>
+      <div class="ai-race-tracks">
+        <div class="race-track">
+          <span class="race-label"><i class="icon-robot"></i> AI</span>
+          <div class="race-progress-bar"><div class="race-progress-fill ai-fill" id="aiProgressFill" style="width:0%"></div></div>
+          <span class="race-time" id="aiTimeDisplay">--:--</span>
+        </div>
+        <div class="race-track">
+          <span class="race-label"><i class="icon-sword"></i> You</span>
+          <div class="race-progress-bar"><div class="race-progress-fill player-fill" id="playerProgressFill" style="width:0%"></div></div>
+          <span class="race-time" id="playerTimeDisplay">00:00</span>
+        </div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="App.cancelAiBattle()">Cancel Race</button>
+    </div>
+  </div>
+
+  <!-- Achievement Popup -->
+  <div id="achievementPopup" class="achievement-popup hidden">
+    <div class="achievement-popup-inner">
+      <div class="achievement-popup-glow"></div>
+      <div class="achievement-popup-icon" id="achievePopupIcon"></div>
+      <div class="achievement-popup-text">
+        <div class="achievement-popup-label">ACHIEVEMENT UNLOCKED</div>
+        <div class="achievement-popup-title" id="achievePopupTitle"></div>
+        <div class="achievement-popup-xp" id="achievePopupXp"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- XP Gain Popup -->
+  <div id="xpPopup" class="xp-popup hidden">
+    <span class="xp-popup-text" id="xpPopupText">+50 XP</span>
+  </div>
+
+  <!-- Toast -->
+  <div id="toasts" class="toast-container"></div>
+
+  <!-- User Setup Modal -->
+  <div id="userSetupModal" class="user-setup-modal hidden">
+    <div class="user-setup-box">
+      <div class="user-setup-header">
+        <h2><i class="icon-wave-hand"></i> Welcome to CodeRift</h2>
+        <p>Set up your profile to connect with friends</p>
+      </div>
+      <div class="user-setup-body">
+        <label class="setup-label">Username</label>
+        <input type="text" id="setupUsername" class="setup-input" placeholder="Choose a unique username" maxlength="20" pattern="[a-zA-Z0-9_]+" />
+        <label class="setup-label">Display Name</label>
+        <input type="text" id="setupDisplayName" class="setup-input" placeholder="Your display name" maxlength="30" />
+        <label class="setup-label">Pick your avatar</label>
+        <div class="avatar-picker" id="avatarPicker"></div>
+        <button class="btn btn-primary full-width" id="setupSubmitBtn" onclick="App.completeSetup()">
+          Enter the Rift →
+        </button>
+        <p class="setup-error hidden" id="setupError"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat Sidebar -->
+  <div id="chatSidebar" class="chat-sidebar hidden">
+    <div class="chat-sidebar-header">
+      <h3 id="chatSidebarTitle">Chat</h3>
+      <button class="btn btn-ghost btn-sm" onclick="App.closeChatSidebar()">✕</button>
+    </div>
+    <div class="chat-sidebar-messages" id="chatSidebarMessages"></div>
+    <div class="chat-sidebar-input">
+      <input type="text" id="chatSidebarInput" placeholder="Type a message..." autocomplete="off"
+        onkeydown="if(event.key==='Enter'){event.preventDefault();App.sendChatMessage()}" />
+      <button class="btn btn-primary btn-sm" onclick="App.sendChatMessage()"><i class="icon-send"></i></button>
+    </div>
+  </div>
+
+  <!-- Solve Room Overlay -->
+  <div id="solveRoomOverlay" class="solve-room-overlay hidden">
+    <div class="solve-room-container">
+      <div class="solve-room-topbar">
+        <div class="solve-room-info">
+          <span class="solve-room-name" id="solveRoomName"></span>
+          <span class="solve-room-problem" id="solveRoomProblem"></span>
+        </div>
+        <div class="solve-room-actions">
+          <button class="btn btn-ghost btn-sm voice-btn" id="voiceToggleBtn" onclick="App.toggleVoice()">
+            <i class="icon-mic"></i> Voice
+          </button>
+          <div class="voice-controls hidden" id="voiceControls">
+            <button class="btn btn-ghost btn-sm" id="muteMicBtn" onclick="App.toggleMute()"><i class="icon-mic"></i></button>
+            <span class="voice-status" id="voiceStatus">Connected</span>
+          </div>
+          <div class="room-members-bar" id="roomMembersBar"></div>
+          <button class="btn btn-ghost btn-sm" onclick="App.leaveSolveRoom()">Leave Room</button>
+        </div>
+      </div>
+      <div class="solve-room-body">
+        <div class="solve-room-editor">
+          <div id="solveRoomEditor" class="editor-container" style="height:100%"></div>
+        </div>
+        <div class="solve-room-chat">
+          <div class="solve-room-chat-messages" id="solveRoomChatMessages"></div>
+          <div class="solve-room-chat-input">
+            <input type="text" id="solveRoomChatInput" placeholder="Chat with team..." autocomplete="off"
+              onkeydown="if(event.key==='Enter'){event.preventDefault();App.sendRoomChat()}" />
+            <button class="btn btn-primary btn-sm" onclick="App.sendRoomChat()"><i class="icon-send"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div id="loadingOverlay" class="loading-overlay hidden">
+    <div class="loader"><div class="loader-ring"></div><p class="loader-text">Loading...</p></div>
+  </div>
+
+  <!-- Settings Overlay -->
+  <div id="settingsOverlay" class="settings-overlay hidden">
+    <div class="settings-panel">
+      <div class="settings-header">
+        <h2><i class="icon-settings"></i> Settings</h2>
+        <button class="btn btn-ghost btn-sm" onclick="App.closeSettings()">✕</button>
+      </div>
+      <div class="settings-body">
+
+        <!-- Accounts -->
+        <div class="settings-section">
+          <h3 class="settings-section-title"><i class="icon-globe"></i> Competitive Accounts</h3>
+          <div class="settings-row">
+            <label class="settings-label">Codeforces Handle</label>
+            <input type="text" id="settingsCfHandle" class="settings-input" placeholder="Your CF handle" />
+          </div>
+          <div class="settings-row">
+            <label class="settings-label">CodeChef Handle</label>
+            <input type="text" id="settingsCcHandle" class="settings-input" placeholder="Your CC handle" />
+          </div>
+          <div class="settings-row">
+            <label class="settings-label">AtCoder Handle</label>
+            <input type="text" id="settingsAcHandle" class="settings-input" placeholder="Your AC handle" />
+          </div>
+        </div>
+
+        <!-- Editor -->
+        <div class="settings-section">
+          <h3 class="settings-section-title"><i class="icon-code"></i> Editor</h3>
+          <div class="settings-row">
+            <label class="settings-label">Default Language</label>
+            <select id="settingsDefaultLang" class="settings-select">
+              <option value="cpp">C++20</option>
+              <option value="python">Python 3</option>
+              <option value="java">Java</option>
+              <option value="javascript">JavaScript</option>
+            </select>
+          </div>
+          <div class="settings-row">
+            <label class="settings-label">Font Size</label>
+            <select id="settingsFontSize" class="settings-select">
+              <option value="12">12px</option>
+              <option value="13">13px</option>
+              <option value="14" selected>14px</option>
+              <option value="15">15px</option>
+              <option value="16">16px</option>
+              <option value="18">18px</option>
+              <option value="20">20px</option>
+            </select>
+          </div>
+          <div class="settings-row">
+            <label class="settings-label">Tab Size</label>
+            <select id="settingsTabSize" class="settings-select">
+              <option value="2">2 spaces</option>
+              <option value="4" selected>4 spaces</option>
+              <option value="8">8 spaces</option>
+            </select>
+          </div>
+          <div class="settings-row">
+            <label class="settings-label">Word Wrap</label>
+            <label class="settings-toggle">
+              <input type="checkbox" id="settingsWordWrap" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="settings-row">
+            <label class="settings-label">Minimap</label>
+            <label class="settings-toggle">
+              <input type="checkbox" id="settingsMinimap" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="settings-row">
+            <label class="settings-label">Bracket Colorization</label>
+            <label class="settings-toggle">
+              <input type="checkbox" id="settingsBracketColor" checked />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Judge -->
+        <div class="settings-section">
+          <h3 class="settings-section-title"><i class="icon-run"></i> Judge</h3>
+          <div class="settings-row">
+            <label class="settings-label">Time Limit (ms)</label>
+            <select id="settingsTimeLimit" class="settings-select">
+              <option value="2000">2 seconds</option>
+              <option value="3000">3 seconds</option>
+              <option value="5000" selected>5 seconds</option>
+              <option value="10000">10 seconds</option>
+            </select>
+          </div>
+          <div class="settings-row">
+            <label class="settings-label">Auto-submit on Run (if AC)</label>
+            <label class="settings-toggle">
+              <input type="checkbox" id="settingsAutoSubmit" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Sync -->
+        <div class="settings-section">
+          <h3 class="settings-section-title"><i class="icon-sync"></i> Problem Sync</h3>
+          <div class="settings-row">
+            <button class="btn btn-primary btn-sm" id="settingsSyncBtn" onclick="App.syncFromSettings()">
+              <i class="icon-sync"></i> Sync All Problems
+            </button>
+            <span class="text-sm text-muted" id="settingsSyncStatus"></span>
+          </div>
+          <div class="settings-row">
+            <button class="btn btn-secondary btn-sm" onclick="App.syncSolvedProblems()">
+              <i class="icon-check"></i> Sync Solved Status
+            </button>
+          </div>
+        </div>
+
+        <!-- UI -->
+        <div class="settings-section">
+          <h3 class="settings-section-title"><i class="icon-dashboard"></i> Interface</h3>
+          <div class="settings-row">
+            <label class="settings-label">Sidebar Compact Mode</label>
+            <label class="settings-toggle">
+              <input type="checkbox" id="settingsCompactSidebar" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="settings-row">
+            <label class="settings-label">Show XP Notifications</label>
+            <label class="settings-toggle">
+              <input type="checkbox" id="settingsShowXp" checked />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="settings-row">
+            <label class="settings-label">Sound Effects</label>
+            <label class="settings-toggle">
+              <input type="checkbox" id="settingsSound" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- AI -->
+        <div class="settings-section">
+          <h3 class="settings-section-title"><i class="icon-robot"></i> AI Tutor</h3>
+          <div class="settings-row">
+            <label class="settings-label">AI Difficulty (Race)</label>
+            <select id="settingsAiDifficulty" class="settings-select">
+              <option value="easy">Easy (2x solve time)</option>
+              <option value="medium" selected>Medium (1.5x solve time)</option>
+              <option value="hard">Hard (1x solve time)</option>
+              <option value="impossible">Impossible (0.7x solve time)</option>
+            </select>
+          </div>
+          <div class="settings-row">
+            <label class="settings-label">Show AI Hints</label>
+            <label class="settings-toggle">
+              <input type="checkbox" id="settingsAiHints" checked />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="settings-section settings-danger">
+          <h3 class="settings-section-title"><i class="icon-warning"></i> Data</h3>
+          <div class="settings-row">
+            <button class="btn btn-outline btn-sm" onclick="App.exportData()">
+              <i class="icon-external"></i> Export Progress (JSON)
+            </button>
+          </div>
+          <div class="settings-row">
+            <button class="btn btn-danger btn-sm" onclick="App.resetProgress()">
+              <i class="icon-trash"></i> Reset All Progress
+            </button>
+          </div>
+        </div>
+
+      </div>
+      <div class="settings-footer">
+        <button class="btn btn-ghost btn-sm" onclick="App.closeSettings()">Cancel</button>
+        <button class="btn btn-primary btn-sm" onclick="App.saveAllSettings()">
+          <i class="icon-save"></i> Save Settings
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
+  <script>
+    require.config({ paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs' }});
+    window.monacoReady = new Promise(resolve => {
+      require(['vs/editor/editor.main'], resolve);
+    });
+  </script>
+  <script src="/js/api.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
