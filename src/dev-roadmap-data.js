@@ -1,4 +1,4 @@
-/* ===== CodeRift – The Forge: Software Development Roadmap Data ===== */
+/* ===== Nexora – The Forge: Software Development Roadmap Data ===== */
 
 /**
  * Each path represents a major software development domain.

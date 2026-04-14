@@ -1,0 +1,229 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">
+<defs>
+  <!-- Center glow -->
+  <radialGradient id="coreGlow" cx="250" cy="250" r="40" gradientUnits="userSpaceOnUse">
+    <stop offset="0%" stop-color="#fff" stop-opacity="1"/>
+    <stop offset="40%" stop-color="#e0f2fe" stop-opacity="0.9"/>
+    <stop offset="70%" stop-color="#7dd3fc" stop-opacity="0.5"/>
+    <stop offset="100%" stop-color="#0284c7" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="coreHalo" cx="250" cy="250" r="80" gradientUnits="userSpaceOnUse">
+    <stop offset="0%" stop-color="#bae6fd" stop-opacity="0.3"/>
+    <stop offset="100%" stop-color="#0284c7" stop-opacity="0"/>
+  </radialGradient>
+  <!-- Blue blade gradients -->
+  <linearGradient id="bladeBlue1" x1="250" y1="250" x2="120" y2="80" gradientUnits="userSpaceOnUse">
+    <stop offset="0%" stop-color="#93c5fd"/>
+    <stop offset="40%" stop-color="#3b82f6"/>
+    <stop offset="100%" stop-color="#1e3a8a"/>
+  </linearGradient>
+  <linearGradient id="bladeBlue2" x1="250" y1="250" x2="100" y2="200" gradientUnits="userSpaceOnUse">
+    <stop offset="0%" stop-color="#60a5fa"/>
+    <stop offset="50%" stop-color="#2563eb"/>
+    <stop offset="100%" stop-color="#1e3a8a"/>
+  </linearGradient>
+  <linearGradient id="bladeBlue3" x1="250" y1="250" x2="140" y2="380" gradientUnits="userSpaceOnUse">
+    <stop offset="0%" stop-color="#60a5fa"/>
+    <stop offset="50%" stop-color="#1d4ed8"/>
+    <stop offset="100%" stop-color="#172554"/>
+  </linearGradient>
+  <linearGradient id="bladeDark" x1="250" y1="250" x2="200" y2="440" gradientUnits="userSpaceOnUse">
+    <stop offset="0%" stop-color="#3b82f6"/>
+    <stop offset="40%" stop-color="#1e40af"/>
+    <stop offset="100%" stop-color="#0f1d45"/>
+  </linearGradient>
+  <!-- Orange blade gradients -->
+  <linearGradient id="bladeOrange1" x1="250" y1="250" x2="340" y2="80" gradientUnits="userSpaceOnUse">
+    <stop offset="0%" stop-color="#fde68a"/>
+    <stop offset="30%" stop-color="#f59e0b"/>
+    <stop offset="70%" stop-color="#ea580c"/>
+    <stop offset="100%" stop-color="#c2410c"/>
+  </linearGradient>
+  <linearGradient id="bladeOrange2" x1="250" y1="250" x2="420" y2="200" gradientUnits="userSpaceOnUse">
+    <stop offset="0%" stop-color="#fbbf24"/>
+    <stop offset="50%" stop-color="#ea580c"/>
+    <stop offset="100%" stop-color="#9a3412"/>
+  </linearGradient>
+  <linearGradient id="bladeOrange3" x1="250" y1="250" x2="380" y2="380" gradientUnits="userSpaceOnUse">
+    <stop offset="0%" stop-color="#fed7aa"/>
+    <stop offset="40%" stop-color="#f97316"/>
+    <stop offset="100%" stop-color="#9a3412"/>
+  </linearGradient>
+  <!-- Flame gradients -->
+  <linearGradient id="flameBlue" x1="220" y1="200" x2="200" y2="60" gradientUnits="userSpaceOnUse">
+    <stop offset="0%" stop-color="#60a5fa"/>
+    <stop offset="50%" stop-color="#3b82f6"/>
+    <stop offset="100%" stop-color="#1d4ed8"/>
+  </linearGradient>
+  <linearGradient id="flameOrange" x1="270" y1="190" x2="300" y2="55" gradientUnits="userSpaceOnUse">
+    <stop offset="0%" stop-color="#fbbf24"/>
+    <stop offset="50%" stop-color="#f97316"/>
+    <stop offset="100%" stop-color="#ea580c"/>
+  </linearGradient>
+  <!-- Circuit line gradient -->
+  <linearGradient id="circuitG" x1="270" y1="230" x2="440" y2="140" gradientUnits="userSpaceOnUse">
+    <stop offset="0%" stop-color="#f97316"/>
+    <stop offset="100%" stop-color="#fb923c" stop-opacity="0.5"/>
+  </linearGradient>
+  <!-- Glow filters -->
+  <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+    <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="b"/>
+    <feFlood flood-color="#7dd3fc" flood-opacity="0.4" result="c"/>
+    <feComposite in="c" in2="b" operator="in" result="s"/>
+    <feMerge><feMergeNode in="s"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <filter id="softG" x="-20%" y="-20%" width="140%" height="140%">
+    <feGaussianBlur in="SourceGraphic" stdDeviation="3"/>
+  </filter>
+</defs>
+
+<!-- ====== BLUE BLADES (left / bottom) ====== -->
+<!-- Blade: top-left sweeping up-left (with binary code feel) -->
+<path d="M240,230 Q200,180 130,120 Q110,105 95,100 Q108,95 140,100 Q200,130 245,210Z"
+      fill="url(#bladeBlue1)" opacity="0.9"/>
+<path d="M238,225 Q185,160 100,110 Q90,108 85,115 Q95,120 130,145 Q190,190 240,228Z"
+      fill="#2563eb" opacity="0.4"/>
+
+<!-- Blade: left sweeping out -->
+<path d="M230,245 Q170,230 100,225 Q75,222 65,230 Q75,240 100,242 Q170,248 228,250Z"
+      fill="url(#bladeBlue2)" opacity="0.85"/>
+<path d="M228,252 Q160,260 90,280 Q78,285 72,278 Q80,268 98,258 Q165,240 230,248Z"
+      fill="#1e40af" opacity="0.5"/>
+
+<!-- Blade: bottom-left going down-left -->
+<path d="M235,262 Q195,310 155,370 Q145,390 140,400 Q152,392 168,370 Q210,310 242,268Z"
+      fill="url(#bladeBlue3)" opacity="0.85"/>
+<path d="M242,265 Q215,320 185,380 Q180,392 186,395 Q192,388 200,368 Q225,315 245,270Z"
+      fill="#1d4ed8" opacity="0.4"/>
+
+<!-- Blade: bottom going straight down (dark navy, pointed) -->
+<path d="M245,265 Q240,330 225,400 Q222,420 228,435 Q235,425 238,400 Q248,330 252,270Z"
+      fill="url(#bladeDark)" opacity="0.9"/>
+<path d="M252,268 Q258,340 268,405 Q270,418 264,425 Q258,415 256,398 Q250,335 249,270Z"
+      fill="#172554" opacity="0.6"/>
+
+<!-- ====== ORANGE BLADES (right / top-right) ====== -->
+<!-- Blade: right going out -->
+<path d="M270,242 Q340,225 400,218 Q420,216 435,222 Q422,230 400,234 Q335,245 272,250Z"
+      fill="url(#bladeOrange2)" opacity="0.85"/>
+<path d="M272,252 Q340,260 405,275 Q418,280 425,272 Q415,264 398,256 Q338,242 270,248Z"
+      fill="#ea580c" opacity="0.45"/>
+
+<!-- Blade: bottom-right -->
+<path d="M262,265 Q310,315 355,370 Q365,382 368,390 Q358,380 345,365 Q300,308 258,262Z"
+      fill="url(#bladeOrange3)" opacity="0.8"/>
+<path d="M258,260 Q295,300 330,345 Q340,358 335,365 Q328,358 322,342 Q290,298 255,258Z"
+      fill="#c2410c" opacity="0.4"/>
+
+<!-- Blade: top-right with arrow feel -->
+<path d="M265,232 Q310,180 365,130 Q385,115 400,108 Q388,118 370,140 Q315,195 260,238Z"
+      fill="url(#bladeOrange1)" opacity="0.85"/>
+<path d="M268,228 Q325,165 385,108 Q395,100 398,106 Q390,115 375,135 Q320,180 265,235Z"
+      fill="#f97316" opacity="0.45"/>
+
+<!-- Arrow tip (right side) -->
+<path d="M400,108 L418,98 L405,118Z" fill="#ea580c" opacity="0.8"/>
+<path d="M385,130 L395,118 L380,138Z" fill="#f59e0b" opacity="0.5"/>
+
+<!-- ====== FLAME SHAPES (top) ====== -->
+<!-- Blue flame - left -->
+<path d="M232,220 Q215,160 208,110 Q205,85 195,65 Q200,80 210,105 Q225,160 240,215Z"
+      fill="url(#flameBlue)" opacity="0.8"/>
+<path d="M228,215 Q210,145 195,90 Q192,72 185,58 Q192,70 200,90 Q218,150 235,212Z"
+      fill="#2563eb" opacity="0.5"/>
+<!-- Blue flame curl tip -->
+<path d="M195,65 Q188,50 178,48 Q185,42 195,50Z" fill="#60a5fa" opacity="0.7"/>
+<path d="M185,58 Q175,42 165,42 Q172,36 182,45Z" fill="#3b82f6" opacity="0.5"/>
+
+<!-- Orange flame - right -->
+<path d="M268,215 Q280,150 290,100 Q295,75 305,55 Q298,72 290,98 Q275,155 262,218Z"
+      fill="url(#flameOrange)" opacity="0.8"/>
+<path d="M272,218 Q288,155 300,95 Q305,70 315,50 Q308,68 298,92 Q282,158 265,220Z"
+      fill="#f97316" opacity="0.45"/>
+<!-- Orange flame curl tip -->
+<path d="M305,55 Q312,38 322,35 Q315,42 308,52Z" fill="#fbbf24" opacity="0.7"/>
+
+<!-- ====== CIRCUIT TRACES (right side) ====== -->
+<g stroke="url(#circuitG)" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.7">
+  <path d="M280,225 L340,185 L370,160"/>
+  <path d="M285,235 L360,200 L410,180"/>
+  <path d="M280,248 L350,240 L400,225 L430,215"/>
+  <path d="M280,260 L345,275 L390,295"/>
+  <path d="M275,268 L320,310 L345,335"/>
+</g>
+<!-- Circuit nodes -->
+<g fill="#f97316">
+  <circle cx="370" cy="160" r="4" opacity="0.8"/>
+  <circle cx="410" cy="180" r="3.5" opacity="0.7"/>
+  <circle cx="430" cy="215" r="3" opacity="0.6"/>
+  <circle cx="390" cy="295" r="3.5" opacity="0.7"/>
+  <circle cx="345" cy="335" r="4" opacity="0.6"/>
+  <circle cx="340" cy="185" r="3" opacity="0.6"/>
+  <circle cx="350" cy="240" r="3" opacity="0.55"/>
+</g>
+<!-- Small circuit branches -->
+<g stroke="#fb923c" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.5">
+  <path d="M370,160 L382,148"/>
+  <path d="M410,180 L425,172"/>
+  <path d="M390,295 L405,305"/>
+  <circle cx="382" cy="148" r="2.5" fill="#fb923c" opacity="0.5"/>
+  <circle cx="425" cy="172" r="2" fill="#fb923c" opacity="0.4"/>
+  <circle cx="405" cy="305" r="2.5" fill="#fb923c" opacity="0.4"/>
+</g>
+
+<!-- ====== BINARY CODE TEXT ====== -->
+<g font-family="'JetBrains Mono','Courier New',monospace" font-weight="600" opacity="0.5">
+  <!-- On top-left blue blade -->
+  <text x="120" y="130" font-size="11" fill="#93c5fd" transform="rotate(-42,120,130)">01010101</text>
+  <text x="140" y="148" font-size="9" fill="#60a5fa" transform="rotate(-42,140,148)">10110101</text>
+  <text x="155" y="168" font-size="8" fill="#93c5fd" transform="rotate(-42,155,168)">101</text>
+
+  <!-- On left blade -->
+  <text x="100" y="238" font-size="10" fill="#60a5fa" transform="rotate(-5,100,238)">010</text>
+  <text x="118" y="265" font-size="9" fill="#93c5fd" transform="rotate(12,118,265)">1110</text>
+
+  <!-- Top flame area -->
+  <text x="195" y="95" font-size="9" fill="#93c5fd" transform="rotate(-78,195,95)">0110101</text>
+  <text x="302" y="82" font-size="9" fill="#fbbf24" transform="rotate(75,302,82)">1010011</text>
+
+  <!-- On top-right orange -->
+  <text x="345" y="138" font-size="10" fill="#fbbf24" transform="rotate(-38,345,138)">01</text>
+  <text x="360" y="155" font-size="8" fill="#fb923c" transform="rotate(-38,360,155)">0110</text>
+
+  <!-- Right side near circuits -->
+  <text x="365" y="198" font-size="10" fill="#fbbf24" transform="rotate(-15,365,198)">01101101</text>
+  <text x="380" y="220" font-size="9" fill="#fb923c" transform="rotate(-8,380,220)">011101</text>
+
+  <!-- Bottom-left -->
+  <text x="170" y="372" font-size="8" fill="#60a5fa" transform="rotate(58,170,372)">1</text>
+  <text x="192" y="355" font-size="9" fill="#3b82f6" transform="rotate(52,192,355)">01</text>
+
+  <!-- Bottom -->
+  <text x="225" y="405" font-size="9" fill="#3b82f6" transform="rotate(82,225,405)">1</text>
+</g>
+
+<!-- ====== CENTER FLOWER PETALS ====== -->
+<g filter="url(#glow)">
+  <!-- Inner petal shapes around center -->
+  <path d="M250,230 Q240,215 250,200 Q260,215 250,230Z" fill="#bae6fd" opacity="0.6"/>
+  <path d="M250,270 Q240,285 250,300 Q260,285 250,270Z" fill="#bae6fd" opacity="0.5"/>
+  <path d="M230,250 Q215,240 200,250 Q215,260 230,250Z" fill="#bae6fd" opacity="0.6"/>
+  <path d="M270,250 Q285,240 300,250 Q285,260 270,250Z" fill="#bae6fd" opacity="0.5"/>
+  <!-- Diagonal petals -->
+  <path d="M237,237 Q222,225 212,215 Q225,222 237,237Z" fill="#93c5fd" opacity="0.5"/>
+  <path d="M263,237 Q278,225 288,215 Q275,222 263,237Z" fill="#fed7aa" opacity="0.45"/>
+  <path d="M237,263 Q222,275 212,285 Q225,278 237,263Z" fill="#93c5fd" opacity="0.45"/>
+  <path d="M263,263 Q278,275 288,285 Q275,278 263,263Z" fill="#fed7aa" opacity="0.4"/>
+</g>
+
+<!-- Center halo -->
+<circle cx="250" cy="250" r="60" fill="url(#coreHalo)" filter="url(#softG)"/>
+<!-- Center glow orb -->
+<circle cx="250" cy="250" r="28" fill="url(#coreGlow)"/>
+<!-- Bright core -->
+<circle cx="250" cy="250" r="12" fill="#fff" opacity="0.95"/>
+<circle cx="250" cy="250" r="8" fill="#fff"/>
+<!-- Core highlight -->
+<circle cx="246" cy="246" r="4" fill="#fff" opacity="0.5"/>
+
+</svg>

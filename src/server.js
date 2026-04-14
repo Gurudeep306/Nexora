@@ -2573,7 +2573,7 @@ io.on('connection', (socket) => {
 
 (async () => {
   await initDb();
-  server.listen(PORT, () => console.log(`CodeRift running on http://localhost:${PORT}`));
+  server.listen(PORT, () => console.log(`Nexora running on http://localhost:${PORT}`));
 
   // Background pre-scraper: silently scrape un-cached statements
   _backgroundScrape();

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * CodeRift — High-Performance Batch Problem Statement Scraper
+ * Nexora — High-Performance Batch Problem Statement Scraper
  * Uses Puppeteer with parallel browser tabs to scrape problem statements
  * from Codeforces, CodeChef & AtCoder into a local database.
  *
@@ -66,7 +66,7 @@ async function showStats() {
     GROUP BY p.platform`);
 
   console.log('\n╔══════════════════════════════════════╗');
-  console.log('║    CodeRift — Scrape Statistics      ║');
+  console.log('║    Nexora — Scrape Statistics         ║');
   console.log('╠══════════════════════════════════════╣');
   console.log(`║  Total problems:     ${String(total).padStart(6)}          ║`);
   console.log(`║  Scraped:            ${String(scraped).padStart(6)}          ║`);

@@ -1,4 +1,4 @@
-/* ===== CodeRift – Animated Particle Background ===== */
+/* ===== Nexora – Animated Particle Background ===== */
 (function() {
   'use strict';
 
@@ -9,7 +9,7 @@
 
   const ctx = canvas.getContext('2d');
   let W, H, particles = [], mouse = { x: -1000, y: -1000 };
-  const COLORS = ['#6366f1', '#a855f7', '#06b6d4', '#ec4899', '#818cf8'];
+  const COLORS = ['#1d4ed8', '#14b8a6', '#059669', '#d4a017', '#3b82f6'];
   const MAX = 80;
   const CONNECT_DIST = 140;
 

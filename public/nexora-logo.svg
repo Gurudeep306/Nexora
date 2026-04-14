@@ -1,0 +1,205 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+<defs>
+  <linearGradient id="ringG" x1="80" y1="160" x2="432" y2="352" gradientUnits="userSpaceOnUse">
+    <stop offset="0%" stop-color="#60a5fa"/>
+    <stop offset="33%" stop-color="#14b8a6"/>
+    <stop offset="66%" stop-color="#f59e0b"/>
+    <stop offset="100%" stop-color="#818cf8"/>
+  </linearGradient>
+  <linearGradient id="nG" x1="170" y1="130" x2="342" y2="382" gradientUnits="userSpaceOnUse">
+    <stop offset="0%" stop-color="#60a5fa"/>
+    <stop offset="50%" stop-color="#14b8a6"/>
+    <stop offset="100%" stop-color="#818cf8"/>
+  </linearGradient>
+  <radialGradient id="coreG" cx="256" cy="256" r="40" gradientUnits="userSpaceOnUse">
+    <stop offset="0%" stop-color="#fff"/>
+    <stop offset="40%" stop-color="#bae6fd"/>
+    <stop offset="100%" stop-color="#38bdf8" stop-opacity="0"/>
+  </radialGradient>
+  <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+    <feGaussianBlur in="SourceGraphic" stdDeviation="3"/>
+  </filter>
+</defs>
+
+<style>
+  @keyframes spinCW   { to { transform: rotate(360deg); } }
+  @keyframes spinCCW  { to { transform: rotate(-360deg); } }
+  @keyframes pulse    { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
+  @keyframes breathe  { 0%,100% { opacity: 0.35; } 50% { opacity: 0.6; } }
+  @keyframes flicker  { 0%,100% { opacity: 0.2; } 30% { opacity: 0.35; } 60% { opacity: 0.1; } }
+  @keyframes corePulse { 0%,100% { r: 20; opacity: 0.4; } 50% { r: 28; opacity: 0.7; } }
+  @keyframes nodePop  { 0%,100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+  @keyframes dashFlow { to { stroke-dashoffset: -100; } }
+  @keyframes cornerGlow { 0%,100% { opacity: 0.5; r: 8; } 50% { opacity: 0.8; r: 11; } }
+  @keyframes nPulse   { 0%,100% { opacity: 0.25; } 50% { opacity: 0.4; } }
+  @keyframes lambdaFade { 0%,100% { opacity: 0.3; } 50% { opacity: 0.15; } }
+  @keyframes traceFlow { 0% { stroke-dashoffset: 40; } 100% { stroke-dashoffset: -40; } }
+
+  .orbit-outer  { animation: spinCW 60s linear infinite; transform-origin: 256px 256px; }
+  .orbit-inner  { animation: spinCCW 45s linear infinite; transform-origin: 256px 256px; }
+  .n-glow       { animation: breathe 4s ease-in-out infinite; }
+  .n-white      { animation: nPulse 4s ease-in-out infinite; }
+  .core         { animation: corePulse 3s ease-in-out infinite; }
+  .corner-glow  { animation: cornerGlow 3s ease-in-out infinite; }
+  .binary-frag  { animation: flicker 5s ease-in-out infinite; }
+  .lambda       { animation: lambdaFade 6s ease-in-out infinite; }
+  .circuit      { stroke-dasharray: 12 8; animation: traceFlow 3s linear infinite; }
+
+  .node-sigma   { animation: nodePop 4s ease-in-out infinite; transform-origin: 256px 46px; }
+  .node-lambda  { animation: nodePop 4s ease-in-out 0.5s infinite; transform-origin: 466px 256px; }
+  .node-inf     { animation: nodePop 4s ease-in-out 1s infinite; transform-origin: 256px 466px; }
+  .node-partial { animation: nodePop 4s ease-in-out 1.5s infinite; transform-origin: 46px 256px; }
+  .node-on      { animation: nodePop 5s ease-in-out 0.3s infinite; transform-origin: 404px 108px; }
+  .node-hex     { animation: nodePop 5s ease-in-out 0.8s infinite; transform-origin: 108px 404px; }
+  .node-pi      { animation: nodePop 5s ease-in-out 1.3s infinite; transform-origin: 404px 404px; }
+  .node-brace   { animation: nodePop 5s ease-in-out 1.8s infinite; transform-origin: 108px 108px; }
+
+  .dash-ring    { stroke-dasharray: 8 6; animation: dashFlow 8s linear infinite; }
+  .ds-tree      { animation: pulse 5s ease-in-out 0s infinite; }
+  .ds-stack     { animation: pulse 5s ease-in-out 1.25s infinite; }
+  .ds-graph     { animation: pulse 5s ease-in-out 2.5s infinite; }
+  .ds-hash      { animation: pulse 5s ease-in-out 3.75s infinite; }
+</style>
+
+<!-- Background circle (dark) -->
+<circle cx="256" cy="256" r="240" fill="#080e1c"/>
+<circle cx="256" cy="256" r="240" fill="none" stroke="#1e3a8a" stroke-width="2" opacity="0.4"/>
+
+<!-- Outer orbit ring -->
+<circle class="orbit-outer" cx="256" cy="256" r="210" fill="none" stroke="url(#ringG)" stroke-width="2.5" opacity="0.5"/>
+
+<!-- Inner orbit ring -->
+<circle class="orbit-inner dash-ring" cx="256" cy="256" r="170" fill="none" stroke="url(#ringG)" stroke-width="1.5" opacity="0.25"/>
+
+<!-- Circuit traces radiating outward -->
+<g class="circuit" stroke="#14b8a6" stroke-width="1.5" fill="none" opacity="0.4" stroke-linecap="round">
+  <path d="M330,180 L380,140 L400,140"/>
+  <path d="M380,140 L388,125"/>
+  <path d="M330,332 L380,372 L400,372"/>
+  <path d="M380,372 L388,387"/>
+  <path d="M182,180 L132,140 L112,140"/>
+  <path d="M132,140 L124,125"/>
+  <path d="M182,332 L132,372 L112,372"/>
+  <path d="M132,372 L124,387"/>
+</g>
+
+<!-- Circuit trace nodes -->
+<g fill="#14b8a6" opacity="0.6">
+  <circle cx="400" cy="140" r="3"/><circle cx="388" cy="125" r="2.5"/>
+  <circle cx="400" cy="372" r="3"/><circle cx="388" cy="387" r="2.5"/>
+  <circle cx="112" cy="140" r="3"/><circle cx="124" cy="125" r="2.5"/>
+  <circle cx="112" cy="372" r="3"/><circle cx="124" cy="387" r="2.5"/>
+</g>
+
+<!-- THE N — bold, circuit-trace style -->
+<path d="M170,382 L170,130 L342,382 L342,130" stroke="url(#nG)" stroke-width="28" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<path class="n-white" d="M170,382 L170,130 L342,382 L342,130" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.25"/>
+
+<!-- N glow layer -->
+<path class="n-glow" d="M170,382 L170,130 L342,382 L342,130" stroke="url(#nG)" stroke-width="34" stroke-linecap="round" stroke-linejoin="round" fill="none" filter="url(#glow)" opacity="0.35"/>
+
+<!-- Lambda symbol inside N -->
+<text class="lambda" x="256" y="290" text-anchor="middle" font-size="72" font-family="serif" fill="url(#nG)" opacity="0.3" font-weight="bold">&#x03BB;</text>
+
+<!-- Corner nodes on N -->
+<g fill="#fff" opacity="0.8">
+  <circle cx="170" cy="130" r="5"/>
+  <circle cx="170" cy="382" r="5"/>
+  <circle cx="342" cy="130" r="5"/>
+  <circle cx="342" cy="382" r="5"/>
+</g>
+<g class="corner-glow" fill="url(#nG)" opacity="0.5" filter="url(#glow)">
+  <circle cx="170" cy="130" r="8"/>
+  <circle cx="170" cy="382" r="8"/>
+  <circle cx="342" cy="130" r="8"/>
+  <circle cx="342" cy="382" r="8"/>
+</g>
+
+<!-- Orbiting CS symbol nodes on the ring -->
+<g class="node-sigma">
+<circle cx="256" cy="46" r="18" fill="#192142" stroke="#60a5fa" stroke-width="2"/>
+<text x="256" y="53" text-anchor="middle" font-size="18" font-family="monospace" fill="#60a5fa" font-weight="bold">&#x3A3;</text>
+</g>
+
+<g class="node-lambda">
+<circle cx="466" cy="256" r="16" fill="#192142" stroke="#14b8a6" stroke-width="2"/>
+<text x="466" y="262" text-anchor="middle" font-size="16" font-family="monospace" fill="#14b8a6" font-weight="bold">&#x03BB;</text>
+</g>
+
+<g class="node-inf">
+<circle cx="256" cy="466" r="16" fill="#192142" stroke="#818cf8" stroke-width="2"/>
+<text x="256" y="473" text-anchor="middle" font-size="16" font-family="monospace" fill="#818cf8" font-weight="bold">&#x221E;</text>
+</g>
+
+<g class="node-partial">
+<circle cx="46" cy="256" r="16" fill="#192142" stroke="#f59e0b" stroke-width="2"/>
+<text x="46" y="262" text-anchor="middle" font-size="15" font-family="monospace" fill="#f59e0b" font-weight="bold">&#x2202;</text>
+</g>
+
+<!-- Diagonal CS nodes -->
+<g class="node-on">
+<circle cx="404" cy="108" r="14" fill="#192142" stroke="#5eead4" stroke-width="1.5"/>
+<text x="404" y="114" text-anchor="middle" font-size="12" font-family="monospace" fill="#5eead4" font-weight="bold">O(n)</text>
+</g>
+
+<g class="node-hex">
+<circle cx="108" cy="404" r="14" fill="#192142" stroke="#fbbf24" stroke-width="1.5"/>
+<text x="108" y="410" text-anchor="middle" font-size="11" font-family="monospace" fill="#fbbf24" font-weight="bold">0x4E</text>
+</g>
+
+<g class="node-pi">
+<circle cx="404" cy="404" r="14" fill="#192142" stroke="#a5b4fc" stroke-width="1.5"/>
+<text x="404" y="410" text-anchor="middle" font-size="14" font-family="monospace" fill="#a5b4fc" font-weight="bold">&#x3C0;</text>
+</g>
+
+<g class="node-brace">
+<circle cx="108" cy="108" r="14" fill="#192142" stroke="#60a5fa" stroke-width="1.5"/>
+<text x="108" y="114" text-anchor="middle" font-size="13" font-family="monospace" fill="#60a5fa" font-weight="bold">{}</text>
+</g>
+
+<!-- Binary data fragments scattered -->
+<g class="binary-frag" font-family="monospace" font-size="9" fill="#60a5fa" opacity="0.2">
+  <text x="140" y="200" transform="rotate(-15,140,200)">10110</text>
+  <text x="350" y="200" transform="rotate(12,350,200)">01101</text>
+  <text x="140" y="340" transform="rotate(8,140,340)">11001</text>
+  <text x="350" y="340" transform="rotate(-10,350,340)">00110</text>
+</g>
+
+<!-- Tree data structure (top-right) -->
+<g class="ds-tree" opacity="0.5">
+  <circle cx="380" cy="185" r="4" fill="#5eead4"/>
+  <circle cx="365" cy="205" r="3" fill="#5eead4"/>
+  <circle cx="395" cy="205" r="3" fill="#5eead4"/>
+  <line x1="380" y1="189" x2="365" y2="202" stroke="#14b8a6" stroke-width="1.5"/>
+  <line x1="380" y1="189" x2="395" y2="202" stroke="#14b8a6" stroke-width="1.5"/>
+</g>
+
+<!-- Stack data structure (bottom-left) -->
+<g class="ds-stack" opacity="0.5">
+  <rect x="110" y="310" width="22" height="7" rx="2" fill="none" stroke="#818cf8" stroke-width="1.2"/>
+  <rect x="110" y="320" width="22" height="7" rx="2" fill="none" stroke="#818cf8" stroke-width="1.2"/>
+  <rect x="110" y="330" width="22" height="7" rx="2" fill="none" stroke="#818cf8" stroke-width="1.2"/>
+</g>
+
+<!-- Graph (bottom-right) -->
+<g class="ds-graph" opacity="0.5">
+  <circle cx="385" cy="310" r="3.5" fill="#fbbf24"/>
+  <circle cx="400" cy="330" r="3.5" fill="#fbbf24"/>
+  <circle cx="370" cy="330" r="3.5" fill="#fbbf24"/>
+  <line x1="385" y1="313" x2="400" y2="327" stroke="#fbbf24" stroke-width="1.2"/>
+  <line x1="385" y1="313" x2="370" y2="327" stroke="#fbbf24" stroke-width="1.2"/>
+  <line x1="370" y1="330" x2="400" y2="330" stroke="#fbbf24" stroke-width="1.2"/>
+</g>
+
+<!-- Hash table (top-left) -->
+<g class="ds-hash" opacity="0.5" stroke="#60a5fa" stroke-width="1" fill="none">
+  <rect x="110" y="185" width="24" height="24" rx="2"/>
+  <line x1="110" y1="193" x2="134" y2="193"/>
+  <line x1="110" y1="201" x2="134" y2="201"/>
+  <line x1="122" y1="185" x2="122" y2="209"/>
+</g>
+
+<!-- Center nexus glow -->
+<circle class="core" cx="256" cy="256" r="20" fill="url(#coreG)" opacity="0.4"/>
+
+</svg>

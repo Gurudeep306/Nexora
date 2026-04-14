@@ -1,4 +1,4 @@
-/* ===== CodeRift – Multi-Language Competitive Programming Platform ===== */
+/* ===== Nexora – Multi-Domain CS Learning Platform ===== */
 
 const App = {
   editor: null,
@@ -56,7 +56,7 @@ const App = {
     sword: '<i class="icon-sword"></i>', fire: '<i class="icon-fire"></i>', shield: '<i class="icon-shield"></i>', dragon: '<i class="icon-dragon"></i>', muscle: '<i class="icon-muscle"></i>',
     target: '<i class="icon-target"></i>', trophy: '<i class="icon-trophy"></i>', crown: '<i class="icon-crown"></i>', globe: '<i class="icon-globe"></i>', lightning: '<i class="icon-bolt"></i>',
     diamond: '<i class="icon-diamond"></i>', moon: '<i class="icon-moon"></i>', sunrise: '<i class="icon-sunrise"></i>', flag: '<i class="icon-flag-finish"></i>', tags: '<i class="icon-tags"></i>',
-    calendar: '<i class="icon-calendar"></i>', medal_green: '<i class="icon-medal" style="color:#22c55e"></i>', medal_blue: '<i class="icon-medal" style="color:#3b82f6"></i>', medal_purple: '<i class="icon-medal" style="color:#a855f7"></i>',
+    calendar: '<i class="icon-calendar"></i>', medal_green: '<i class="icon-medal" style="color:#22c55e"></i>', medal_blue: '<i class="icon-medal" style="color:#3b82f6"></i>', medal_purple: '<i class="icon-medal" style="color:#059669"></i>',
     medal_red: '<i class="icon-medal" style="color:#ef4444"></i>', star: '<i class="icon-star"></i>', bolt: '<i class="icon-bolt"></i>',
   },
 
@@ -77,26 +77,111 @@ const App = {
     this._autoSync();
 
     // Dismiss boot screen after content loads
-    setTimeout(() => this._dismissBoot(), 1800);
+    setTimeout(() => this._dismissBoot(), 2800);
   },
 
   _bootSequence() {
     const bar = document.getElementById('bootBarFill');
     const status = document.getElementById('bootStatus');
+    const cmd = document.getElementById('bootCmd');
+    const modEl = document.getElementById('bootModules');
+    const nodeEl = document.getElementById('bootNodes');
+    const latEl = document.getElementById('bootLatency');
     if (!bar || !status) return;
+
+    // Matrix canvas background
+    this._bootMatrix();
+
     const steps = [
-      { pct: 25, text: 'Loading modules...' },
-      { pct: 50, text: 'Connecting to Rift...' },
-      { pct: 75, text: 'Syncing problems...' },
-      { pct: 95, text: 'Almost ready...' },
+      { pct: 10, text: 'Booting kernel...', cmd: 'nexora init --env=production', mods: 12, nodes: 1, lat: 142 },
+      { pct: 25, text: 'Loading modules...', cmd: 'load core.module --parallel', mods: 47, nodes: 3, lat: 98 },
+      { pct: 40, text: 'Connecting to Nexus...', cmd: 'connect nexus://api.nexora.dev', mods: 83, nodes: 5, lat: 67 },
+      { pct: 55, text: 'Syncing problem bank...', cmd: 'sync --source=leetcode,codeforces', mods: 121, nodes: 8, lat: 45 },
+      { pct: 70, text: 'Building knowledge graph...', cmd: 'graph build --nodes=142 --edges=891', mods: 142, nodes: 12, lat: 32 },
+      { pct: 85, text: 'Compiling shaders...', cmd: 'compile render.glsl --optimize', mods: 168, nodes: 16, lat: 18 },
+      { pct: 95, text: 'Entering the Nexus...', cmd: 'nexora launch --mode=explore', mods: 186, nodes: 18, lat: 8 },
     ];
+
     let i = 0;
+    const typeCmd = (text, cb) => {
+      if (!cmd) { cb && cb(); return; }
+      cmd.textContent = '';
+      let j = 0;
+      const t = setInterval(() => {
+        if (j >= text.length) { clearInterval(t); cb && cb(); return; }
+        cmd.textContent += text[j]; j++;
+      }, 18);
+    };
+
+    const animateNum = (el, target) => {
+      if (!el) return;
+      const start = parseInt(el.textContent) || 0;
+      const diff = target - start;
+      const dur = 400;
+      const startT = performance.now();
+      const step = (now) => {
+        const p = Math.min((now - startT) / dur, 1);
+        el.textContent = Math.round(start + diff * p);
+        if (p < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    };
+
     const tick = setInterval(() => {
       if (i >= steps.length) { clearInterval(tick); return; }
-      bar.style.width = steps[i].pct + '%';
-      status.textContent = steps[i].text;
+      const s = steps[i];
+      bar.style.width = s.pct + '%';
+      status.textContent = s.text;
+      typeCmd(s.cmd);
+      animateNum(modEl, s.mods);
+      animateNum(nodeEl, s.nodes);
+      animateNum(latEl, s.lat);
       i++;
-    }, 350);
+    }, 320);
+  },
+
+  _bootMatrix() {
+    const canvas = document.getElementById('bootCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let w, h, cols, drops;
+    const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+    const colors = ['#1d4ed8', '#14b8a6', '#10b981', '#3b82f6', '#0ea5e9'];
+
+    function resize() {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+      cols = Math.floor(w / 14);
+      drops = Array.from({ length: cols }, () => Math.random() * -100);
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    function draw() {
+      ctx.fillStyle = 'rgba(2,6,16,0.08)';
+      ctx.fillRect(0, 0, w, h);
+      ctx.font = '12px monospace';
+
+      for (let i = 0; i < cols; i++) {
+        const ch = chars[Math.floor(Math.random() * chars.length)];
+        const x = i * 14;
+        const y = drops[i] * 14;
+
+        // Head character: bright
+        ctx.fillStyle = Math.random() > 0.85 ? '#5eead4' : colors[Math.floor(Math.random() * colors.length)];
+        ctx.globalAlpha = 0.4 + Math.random() * 0.3;
+        ctx.fillText(ch, x, y);
+        ctx.globalAlpha = 1;
+
+        if (y > h && Math.random() > 0.975) drops[i] = 0;
+        drops[i] += 0.5 + Math.random() * 0.5;
+      }
+
+      if (document.getElementById('bootScreen')) {
+        requestAnimationFrame(draw);
+      }
+    }
+    requestAnimationFrame(draw);
   },
 
   _dismissBoot() {
@@ -105,11 +190,19 @@ const App = {
     const bar = document.getElementById('bootBarFill');
     if (bar) bar.style.width = '100%';
     const status = document.getElementById('bootStatus');
-    if (status) status.textContent = 'Ready';
+    if (status) status.textContent = '● System online';
+    const cmd = document.getElementById('bootCmd');
+    if (cmd) cmd.textContent = 'nexora ready ✓';
+    const modEl = document.getElementById('bootModules');
+    const nodeEl = document.getElementById('bootNodes');
+    const latEl = document.getElementById('bootLatency');
+    if (modEl) modEl.textContent = '186';
+    if (nodeEl) nodeEl.textContent = '18';
+    if (latEl) latEl.textContent = '3';
     setTimeout(() => {
       boot.classList.add('fade-out');
-      setTimeout(() => boot.remove(), 800);
-    }, 300);
+      setTimeout(() => boot.remove(), 1000);
+    }, 400);
   },
 
   async _autoSync() {
@@ -134,8 +227,12 @@ const App = {
       el.classList.toggle('active', el.dataset.page === navPage);
     });
     const content = document.getElementById('pageContent');
+    // Page transition animation
+    content.classList.remove('page-enter');
+    void content.offsetWidth; // force reflow
+    content.classList.add('page-enter');
     const sidebar = document.getElementById('sidebar');
-    const isSubPage = (page === 'learn' && subId) || (page === 'forge' && subId);
+    const isSubPage = (page === 'learn' && parts[2]) || (page === 'forge' && subId);
     if (isSubPage) {
       sidebar.classList.add('sidebar-minimized');
     } else {
@@ -151,7 +248,12 @@ const App = {
         else { this._ailabView = 'grid'; this._ailabProblem = null; this.renderAILab(content); }
         break;
       case 'learn':
-        if (subId) { this._openTutorialPage(content, parseInt(subId)); }
+        if (subId) {
+          const subId2 = parts[2] || null;
+          if (subId2) { this._openTutorialPage(content, parseInt(subId2)); }
+          else if (/^\d+$/.test(subId)) { this._openTutorialPage(content, parseInt(subId)); }
+          else { this._learnSubject = subId; this.renderLearnTopics(content); }
+        }
         else { this.renderLearn(content); }
         break;
       case 'forge':
@@ -339,7 +441,7 @@ const App = {
           <div class="hud-stat-pill"><i class="icon-check" style="color:var(--success)"></i><span class="hud-stat-num">${data.solved}</span><span class="hud-stat-lbl">Solved</span></div>
           <div class="hud-stat-pill"><i class="icon-fire" style="color:var(--warning)"></i><span class="hud-stat-num">${data.streak.current}d</span><span class="hud-stat-lbl">Streak</span></div>
           <div class="hud-stat-pill"><i class="icon-target" style="color:var(--info)"></i><span class="hud-stat-num">${data.accuracy}%</span><span class="hud-stat-lbl">Accuracy</span></div>
-          <div class="hud-stat-pill"><i class="icon-trending" style="color:#06b6d4"></i><span class="hud-stat-num">${p.consistencyScore || 0}%</span><span class="hud-stat-lbl">Consist.</span></div>
+          <div class="hud-stat-pill"><i class="icon-trending" style="color:#14b8a6"></i><span class="hud-stat-num">${p.consistencyScore || 0}%</span><span class="hud-stat-lbl">Consist.</span></div>
         </div>
       </div>`;
 
@@ -526,6 +628,8 @@ const App = {
       ${this._statCard('icon-fire', 'amber', data.streak.current + ' days', 'Current Streak')}
       ${this._statCard('icon-code', 'brand', data.submissions, 'Submissions')}
       ${this._statCard('icon-trending', 'pink', (p.consistencyScore || 0) + '%', 'Consistency')}`;
+    // Trigger count-up animations
+    setTimeout(() => this._animateCountUps(), 100);
 
     /* ═══════════════════════════════════════════════
        7. STREAK TRACKER (enhanced with calendar)
@@ -597,7 +701,7 @@ const App = {
         for (let h = 0; h < 24; h++) {
           const entry = hours.find(x => x.hour === h) || { total: 0, ac: 0 };
           const intensity = entry.total / maxHr;
-          const col = intensity > 0.7 ? 'var(--brand)' : intensity > 0.4 ? 'rgba(99,102,241,0.5)' : intensity > 0 ? 'rgba(99,102,241,0.2)' : 'rgba(255,255,255,0.04)';
+          const col = intensity > 0.7 ? 'var(--brand)' : intensity > 0.4 ? 'rgba(29,78,216,0.5)' : intensity > 0 ? 'rgba(29,78,216,0.2)' : 'rgba(255,255,255,0.04)';
           const label = h === 0 ? '12a' : h < 12 ? h + 'a' : h === 12 ? '12p' : (h-12) + 'p';
           aHtml += `<div class="dash-hour" title="${label}: ${entry.total} subs" style="--h:${Math.max(intensity * 100, 6)}%;--hc:${col}">
             <div class="dash-hour-bar"></div>
@@ -721,7 +825,7 @@ const App = {
       const easyCount = data.ratingDist.filter(d2 => d2.tier === 'Newbie' || d2.tier === 'Pupil').reduce((s, d2) => s + d2.count, 0);
       const hardCount = data.ratingDist.filter(d2 => ['Expert','Candidate Master','Master','Grandmaster'].includes(d2.tier)).reduce((s, d2) => s + d2.count, 0);
       if (data.solved > 10 && hardCount < easyCount * 0.1) insights.push({icon:'icon-chart',color:'#3b82f6',title:'Try Harder Problems',desc:'Most solves are easy-rated. Push to 1400+ problems to grow faster.'});
-      if (data.solved > 10 && hardCount >= easyCount * 0.3) insights.push({icon:'icon-bolt',color:'#a855f7',title:'Great Difficulty Range',desc:'You tackle a strong mix of easy and hard problems. Excellent approach.'});
+      if (data.solved > 10 && hardCount >= easyCount * 0.3) insights.push({icon:'icon-bolt',color:'#059669',title:'Great Difficulty Range',desc:'You tackle a strong mix of easy and hard problems. Excellent approach.'});
 
       // Verdict patterns
       const waCount = data.verdicts.find(v => v.verdict === 'WA')?.count || 0;
@@ -731,12 +835,12 @@ const App = {
       if (tleCount > acCount * 0.2 && data.submissions > 5) insights.push({icon:'icon-clock',color:'#f59e0b',title:'Frequent TLE',desc:'Study time complexity. Consider binary search, segment trees, or memoization.'});
 
       // Consistency insight
-      if (p.consistencyScore >= 80) insights.push({icon:'icon-trending',color:'#06b6d4',title:'Consistency King: ' + p.consistencyScore + '%',desc:'You have been active ' + Math.round(p.consistencyScore * 30 / 100) + ' of the last 30 days. Incredible!'});
+      if (p.consistencyScore >= 80) insights.push({icon:'icon-trending',color:'#14b8a6',title:'Consistency King: ' + p.consistencyScore + '%',desc:'You have been active ' + Math.round(p.consistencyScore * 30 / 100) + ' of the last 30 days. Incredible!'});
       else if (p.consistencyScore > 0 && p.consistencyScore < 30) insights.push({icon:'icon-trending',color:'#f97316',title:'Low Consistency: ' + p.consistencyScore + '%',desc:'Try to practice at least a little every day. Consistency beats intensity.'});
 
       // Hardest solved
       const hardest = p.hardestSolved || [];
-      if (hardest.length && hardest[0].rating >= 1600) insights.push({icon:'icon-arena',color:'#a855f7',title:`Hardest Solve: ${hardest[0].rating}`,desc:`You cracked "${hardest[0].title}" — a ${hardest[0].rating}-rated problem. Impressive skill!`});
+      if (hardest.length && hardest[0].rating >= 1600) insights.push({icon:'icon-arena',color:'#059669',title:`Hardest Solve: ${hardest[0].rating}`,desc:`You cracked "${hardest[0].title}" — a ${hardest[0].rating}-rated problem. Impressive skill!`});
 
       // Getting started
       if (data.solved === 0) insights.push({icon:'icon-spark',color:'var(--brand)',title:'Get Started',desc:'Welcome! Head to Problems and solve your first problem to begin tracking progress.'});
@@ -762,10 +866,30 @@ const App = {
   },
 
   _statCard(iconClass, color, value, label) {
+    const numVal = typeof value === 'number' ? value : parseInt(value);
+    const isNum = !isNaN(numVal) && numVal > 0;
     return `<div class="stat-card">
       <div class="stat-icon ${color}"><i class="${iconClass}" style="font-size:20px"></i></div>
-      <div><div class="stat-value">${value}</div><div class="stat-label">${label}</div></div>
+      <div><div class="stat-value${isNum ? ' counting' : ''}" ${isNum ? `data-target="${numVal}"` : ''}>${value}</div><div class="stat-label">${label}</div></div>
     </div>`;
+  },
+
+  _animateCountUps() {
+    document.querySelectorAll('.stat-value.counting[data-target]').forEach(el => {
+      const target = parseInt(el.dataset.target);
+      if (!target || target <= 0) return;
+      const duration = 800;
+      const start = performance.now();
+      el.textContent = '0';
+      const step = (now) => {
+        const progress = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.round(target * eased);
+        if (progress < 1) requestAnimationFrame(step);
+        else { el.textContent = target; el.classList.remove('counting'); }
+      };
+      requestAnimationFrame(step);
+    });
   },
 
   renderHeatmap(data) {
@@ -803,8 +927,8 @@ const App = {
     const ctx = document.getElementById('ratingChart');
     if (this.charts.rating) this.charts.rating.destroy();
     const colors = {
-      'Newbie': '#808080', 'Pupil': '#22c55e', 'Specialist': '#06b6d4',
-      'Expert': '#3b82f6', 'Candidate Master': '#a855f7', 'Master': '#f59e0b', 'Grandmaster': '#ef4444',
+      'Newbie': '#808080', 'Pupil': '#22c55e', 'Specialist': '#14b8a6',
+      'Expert': '#3b82f6', 'Candidate Master': '#059669', 'Master': '#f59e0b', 'Grandmaster': '#ef4444',
     };
     this.charts.rating = new Chart(ctx, {
       type: 'doughnut',
@@ -819,7 +943,7 @@ const App = {
   renderVerdictChart(verdicts) {
     const ctx = document.getElementById('verdictChart');
     if (this.charts.verdict) this.charts.verdict.destroy();
-    const colors = { AC: '#22c55e', WA: '#ef4444', TLE: '#f59e0b', CE: '#94a3b8', RE: '#a855f7', OK: '#3b82f6' };
+    const colors = { AC: '#22c55e', WA: '#ef4444', TLE: '#f59e0b', CE: '#94a3b8', RE: '#059669', OK: '#3b82f6' };
     this.charts.verdict = new Chart(ctx, {
       type: 'doughnut',
       data: {
@@ -1010,7 +1134,7 @@ const App = {
   async renderProfile(el) {
     el.innerHTML = `
       <div class="profile-header" id="profileHeader">
-        <div class="profile-avatar"><i class="icon-rift" style="font-size:48px"></i></div>
+        <div class="profile-avatar"><img src="/nexora-logo.svg" alt="Nexora" style="width:80px;height:80px;object-fit:contain"></div>
         <div class="profile-info">
           <h2>Profile</h2>
           <p>Your stats, rank progression, and achievements</p>
@@ -1348,10 +1472,10 @@ const App = {
     html += `<div class="perf-overview mt-3">
       <div class="perf-card"><div class="perf-card-icon" style="background:var(--success-bg);color:var(--success)"><i class="icon-check"></i></div><div class="perf-card-val">${d.solved}</div><div class="perf-card-label">Solved</div></div>
       <div class="perf-card"><div class="perf-card-icon" style="background:rgba(59,130,246,0.1);color:var(--info)"><i class="icon-code"></i></div><div class="perf-card-val">${d.submissions}</div><div class="perf-card-label">Submissions</div></div>
-      <div class="perf-card"><div class="perf-card-icon" style="background:rgba(168,85,247,0.1);color:var(--purple)"><i class="icon-target"></i></div><div class="perf-card-val">${d.accuracy}%</div><div class="perf-card-label">Accuracy</div></div>
+      <div class="perf-card"><div class="perf-card-icon" style="background:rgba(5,150,105,0.1);color:var(--purple)"><i class="icon-target"></i></div><div class="perf-card-val">${d.accuracy}%</div><div class="perf-card-label">Accuracy</div></div>
       <div class="perf-card"><div class="perf-card-icon" style="background:var(--warning-bg);color:var(--warning)"><i class="icon-bolt"></i></div><div class="perf-card-val">${d.totalXp?.toLocaleString() || 0}</div><div class="perf-card-label">Total XP</div></div>
-      <div class="perf-card"><div class="perf-card-icon" style="background:rgba(236,72,153,0.1);color:#ec4899"><i class="icon-fire"></i></div><div class="perf-card-val">${d.streak?.current || 0}<span class="perf-card-sub">/ ${d.streak?.best || 0}</span></div><div class="perf-card-label">Day Streak</div></div>
-      <div class="perf-card"><div class="perf-card-icon" style="background:rgba(6,182,212,0.1);color:#06b6d4"><i class="icon-trending"></i></div><div class="perf-card-val">${d.consistencyScore}%</div><div class="perf-card-label">Consistency</div></div>
+      <div class="perf-card"><div class="perf-card-icon" style="background:rgba(212,160,23,0.1);color:#d4a017"><i class="icon-fire"></i></div><div class="perf-card-val">${d.streak?.current || 0}<span class="perf-card-sub">/ ${d.streak?.best || 0}</span></div><div class="perf-card-label">Day Streak</div></div>
+      <div class="perf-card"><div class="perf-card-icon" style="background:rgba(20,184,166,0.1);color:#14b8a6"><i class="icon-trending"></i></div><div class="perf-card-val">${d.consistencyScore}%</div><div class="perf-card-label">Consistency</div></div>
     </div>`;
 
     /* ═══════════════════════════════════════════════
@@ -1410,7 +1534,7 @@ const App = {
     // 3a. Verdict donut
     const verdicts = d.verdicts || [];
     const totalV = verdicts.reduce((s, v) => s + v.count, 0) || 1;
-    const verdictColors = { AC: '#10b981', WA: '#ef4444', TLE: '#f59e0b', RE: '#f97316', CE: '#a855f7', MLE: '#ec4899' };
+    const verdictColors = { AC: '#10b981', WA: '#ef4444', TLE: '#f59e0b', RE: '#f97316', CE: '#059669', MLE: '#d4a017' };
     let donutOffset = 0;
     const donutR = 60, donutC = 2 * Math.PI * donutR;
     html += `<div class="perf-section" style="flex:1">
@@ -1441,7 +1565,7 @@ const App = {
     // 3b. Rating bars
     const ratingDist = d.ratingDist || [];
     const maxRD = Math.max(...ratingDist.map(r => r.count), 1);
-    const tierColors = { Newbie: '#6b7280', Pupil: '#22c55e', Specialist: '#06b6d4', Expert: '#3b82f6', 'Candidate Master': '#a855f7', Master: '#f59e0b', Grandmaster: '#ef4444' };
+    const tierColors = { Newbie: '#6b7280', Pupil: '#22c55e', Specialist: '#14b8a6', Expert: '#3b82f6', 'Candidate Master': '#059669', Master: '#f59e0b', Grandmaster: '#ef4444' };
     html += `<div class="perf-section" style="flex:1">
       <div class="perf-section-header"><i class="icon-arena" style="font-size:14px"></i> Rating Breakdown</div>
       <div class="perf-rating-bars">`;
@@ -1526,7 +1650,7 @@ const App = {
 
       const maxHeat = Math.max(...heatmap.map(h => h.problems_solved), 1);
       const heatLevels = [0, Math.ceil(maxHeat * 0.25), Math.ceil(maxHeat * 0.5), Math.ceil(maxHeat * 0.75), maxHeat];
-      const heatColors = ['rgba(255,255,255,0.04)', 'rgba(99,102,241,0.25)', 'rgba(99,102,241,0.45)', 'rgba(99,102,241,0.7)', 'var(--accent)'];
+      const heatColors = ['rgba(255,255,255,0.04)', 'rgba(29,78,216,0.25)', 'rgba(29,78,216,0.45)', 'rgba(29,78,216,0.7)', 'var(--accent)'];
       const getHeatColor = (c) => { if (c === 0) return heatColors[0]; if (c <= heatLevels[1]) return heatColors[1]; if (c <= heatLevels[2]) return heatColors[2]; if (c <= heatLevels[3]) return heatColors[3]; return heatColors[4]; };
 
       const totalSolfvedDays = heatmap.filter(h => h.problems_solved > 0).length;
@@ -1564,7 +1688,7 @@ const App = {
         const entry = hours.find(x => x.hour === h) || { total: 0, ac: 0 };
         const intensity = entry.total / maxHr;
         const acRate = entry.total > 0 ? Math.round(entry.ac / entry.total * 100) : 0;
-        const color = intensity > 0.7 ? 'var(--accent)' : intensity > 0.4 ? 'rgba(99,102,241,0.6)' : intensity > 0 ? 'rgba(99,102,241,0.25)' : 'rgba(255,255,255,0.04)';
+        const color = intensity > 0.7 ? 'var(--accent)' : intensity > 0.4 ? 'rgba(29,78,216,0.6)' : intensity > 0 ? 'rgba(29,78,216,0.25)' : 'rgba(255,255,255,0.04)';
         const label = h === 0 ? '12a' : h < 12 ? h + 'a' : h === 12 ? '12p' : (h-12) + 'p';
         html += `<div class="perf-hour" title="${label}: ${entry.total} submissions, ${acRate}% AC">
           <div class="perf-hour-bar" style="height:${Math.max(intensity * 100, 4)}%;background:${color}"></div>
@@ -1633,7 +1757,7 @@ const App = {
         const r = radarR * t.solveRate / 100;
         return `${(radarCx + Math.cos(angle) * r).toFixed(1)},${(radarCy + Math.sin(angle) * r).toFixed(1)}`;
       }).join(' ');
-      radarSvg += `<polygon points="${dataPts}" fill="rgba(99,102,241,0.15)" stroke="var(--accent)" stroke-width="2"/>`;
+      radarSvg += `<polygon points="${dataPts}" fill="rgba(29,78,216,0.15)" stroke="var(--accent)" stroke-width="2"/>`;
       // Data points + labels
       for (let i = 0; i < n; i++) {
         const angle = (Math.PI * 2 * i / n) - Math.PI / 2;
@@ -1672,7 +1796,7 @@ const App = {
     const platforms = d.platformDist || [];
     if (platforms.length) {
       const totalPlat = platforms.reduce((s, p) => s + p.count, 0) || 1;
-      const platColors = { codeforces: '#3b82f6', codechef: '#a855f7', atcoder: '#06b6d4' };
+      const platColors = { codeforces: '#3b82f6', codechef: '#059669', atcoder: '#14b8a6' };
       const platNames = { codeforces: 'Codeforces', codechef: 'CodeChef', atcoder: 'AtCoder' };
       html += `<div class="perf-section mt-3">
         <div class="perf-section-header"><i class="icon-arena" style="font-size:14px"></i> Platform Split</div>
@@ -1838,7 +1962,7 @@ const App = {
   async renderAILab(el) {
     const cat = this._ailabCategory;
     const catLabels = { all: 'All Domains', ml: 'Machine Learning', dl: 'Deep Learning', nlp: 'NLP', cv: 'Computer Vision', genai: 'Generative AI', rl: 'Reinforcement Learning' };
-    const catColors = { ml: '#22c55e', dl: '#3b82f6', nlp: '#a855f7', cv: '#f59e0b', genai: '#ec4899', rl: '#06b6d4' };
+    const catColors = { ml: '#22c55e', dl: '#3b82f6', nlp: '#059669', cv: '#f59e0b', genai: '#d4a017', rl: '#14b8a6' };
     const catIcons = { ml: '<i class="icon-neural"></i>', dl: '<i class="icon-bolt"></i>', nlp: '<i class="icon-chat"></i>', cv: '<i class="icon-eye"></i>', genai: '<i class="icon-spark"></i>', rl: '<i class="icon-gamepad"></i>' };
 
     el.innerHTML = `
@@ -2229,8 +2353,102 @@ const App = {
     'data-preprocessing':'flow','model-deployment':'flow','supervised-learning':'flow',
     'unsupervised-learning':'cluster','stacks-queues':'stack',
     'generative-ai':'spark','nlp':'spark','game-theory':'spark',
-    'ethics-ai':'spark','bit-manipulation':'binary','greedy':'spark'
+    'ethics-ai':'spark','bit-manipulation':'binary','greedy':'spark',
+    // GATE topics
+    'os-process-mgmt':'gear','os-synchronization':'gear','os-deadlocks':'gear',
+    'os-memory':'gear','os-virtual-memory':'gear','os-file-systems':'gear',
+    'dbms-er-relational':'database','dbms-relational-algebra':'database',
+    'dbms-normalization':'database','dbms-transactions':'database','dbms-indexing':'database',
+    'cn-models':'network','cn-datalink':'network','cn-network':'network',
+    'cn-routing':'network','cn-transport':'network','cn-application':'network',
+    'toc-finite-automata':'automata','toc-regular':'automata','toc-cfg':'automata',
+    'toc-turing':'automata','toc-complexity':'automata',
+    'cd-lexical':'compiler','cd-parsing':'compiler','cd-sdt':'compiler','cd-optimization':'compiler',
+    'coa-number-systems':'circuit','coa-processor':'circuit','coa-memory':'circuit','coa-io':'circuit',
+    'dl-boolean':'logic','dl-combinational':'logic','dl-sequential':'logic',
+    'dm-logic':'proof','dm-sets-relations':'proof','dm-combinatorics':'proof','dm-groups':'proof',
+    'math-linear-algebra':'matrix','math-calculus':'matrix','math-probability':'matrix',
+    // Other CS subjects
+    'se-sdlc':'blueprint','se-testing':'blueprint','se-design-patterns':'blueprint',
+    'oop-fundamentals':'diamond','oop-inheritance-poly':'diamond','oop-solid':'diamond',
+    'web-fundamentals':'globe2','web-frontend':'globe2','web-backend':'globe2',
+    'security-fundamentals':'shield','security-cryptography':'shield','security-network':'shield',
+    'cloud-fundamentals':'cloud','cloud-containers':'cloud','cloud-architecture':'cloud',
+    'graphics-fundamentals':'prism','graphics-3d':'prism',
+    'distributed-fundamentals':'scatter','distributed-consensus':'scatter',
+    'ds-eda':'chart2','ds-visualization':'chart2','ds-statistics':'chart2',
+    'parallel-fundamentals':'threads','parallel-sync':'threads',
+    'iot-fundamentals':'signal','iot-platforms':'signal',
+    'blockchain-fundamentals':'chain','blockchain-smart-contracts':'chain',
+    'embedded-fundamentals':'chip','embedded-rtos':'chip',
+    'hci-principles':'cursor','hci-evaluation':'cursor',
+    'ir-fundamentals':'lens','ir-web-search':'lens',
+    'numerical-root-finding':'integral','numerical-integration':'integral',
+    'bigdata-ecosystem':'warehouse','bigdata-nosql':'warehouse',
+    // Programming Languages
+    'c-basics':'terminal2','c-pointers':'terminal2','c-advanced':'terminal2',
+    'cpp-basics':'cplusplus','cpp-stl':'cplusplus','cpp-modern':'cplusplus',
+    'java-basics':'coffee','java-oop':'coffee','java-advanced':'coffee',
+    'python-basics':'snake','python-oop-modules':'snake','python-advanced':'snake',
+    'js-basics':'brackets','js-async':'brackets','js-advanced':'brackets',
+    'go-basics':'gopher','go-concurrency':'gopher',
+    'rust-basics':'crab','rust-advanced':'crab',
+    'ts-basics':'typescript2','ts-advanced':'typescript2',
+    // System Design
+    'sd-hld-basics':'architect','sd-hld-patterns':'architect','sd-lld-principles':'architect','sd-lld-cases':'architect',
+    // Computer Vision
+    'cv-fundamentals':'vision','cv-detection':'vision','cv-advanced':'vision',
+    // NLP
+    'nlp-fundamentals':'textwave','nlp-transformers':'textwave','nlp-applications':'textwave'
   },
+
+  _learnSubjects: [
+    { id: 'ds', name: 'Data Structures', desc: 'Master arrays, linked lists, stacks, queues, trees, heaps, tries, and advanced structures', icon: 'tree', anim: 'nodes', color: '#1d4ed8', categories: ['cp'], topics: ['arrays','stacks-queues','hashing','linked-lists','heaps','trees','tries','segment-trees','disjoint-set'] },
+    { id: 'algo', name: 'Algorithms', desc: 'Sorting, searching, DP, graphs, greedy, number theory, bit manipulation, and geometry', icon: 'code', anim: 'bars', color: '#8b5cf6', categories: ['cp'], topics: ['complexity','sorting','binary-search','dynamic-programming','graphs','greedy','number-theory','bit-manipulation','string-algorithms','game-theory','geometry'] },
+    // AI & Machine Learning
+    { id: 'ml', name: 'Machine Learning', desc: 'From fundamentals to deployment — regression, classification, ensembles, and MLOps', icon: 'chart', anim: 'flow', color: '#10b981', categories: ['ai'], topics: ['linear-algebra-ml','probability-stats','data-preprocessing','supervised-learning','unsupervised-learning','ensemble-methods','model-deployment','ethics-ai','ml-fundamentals'], aiml: true },
+    { id: 'dl', name: 'Deep Learning', desc: 'Neural networks, CNNs, backpropagation, and modern architectures from scratch', icon: 'neural', anim: 'neural', color: '#8b5cf6', categories: ['ai'], topics: ['deep-learning-fundamentals','cnns'], aiml: true },
+    { id: 'ai', name: 'Artificial Intelligence', desc: 'Reinforcement learning, transformers, generative AI, and large language models', icon: 'spark', anim: 'spark', color: '#f59e0b', categories: ['ai'], topics: ['reinforcement-learning','generative-ai'], aiml: true },
+    { id: 'cv', name: 'Computer Vision', desc: 'Image processing, object detection, segmentation, GANs, and visual recognition systems', icon: 'eye-ai', anim: 'vision', color: '#e11d48', categories: ['cv'], aiml: true },
+    { id: 'nlp', name: 'Natural Language Processing', desc: 'Text processing, embeddings, transformers, LLMs, sentiment analysis, and language generation', icon: 'nlp', anim: 'textwave', color: '#0ea5e9', categories: ['nlpcat'], aiml: true },
+    { id: 'datascience', name: 'Data Science & Analytics', desc: 'EDA, visualization, statistical analysis, hypothesis testing, and regression', icon: 'chart', anim: 'chart2', color: '#16a34a', categories: ['datascience'], aiml: true },
+    { id: 'os', name: 'Operating Systems', desc: 'Process management, synchronization, memory, file systems — GATE focused', icon: 'cpu', anim: 'gear', color: '#ef4444', categories: ['os'], gate: true },
+    { id: 'dbms', name: 'Database Systems', desc: 'ER model, SQL, normalization, transactions, indexing — GATE focused', icon: 'dataset', anim: 'database', color: '#3b82f6', categories: ['dbms'], gate: true },
+    { id: 'cn', name: 'Computer Networks', desc: 'TCP/IP, routing, transport layer, application protocols — GATE focused', icon: 'globe', anim: 'network', color: '#14b8a6', categories: ['cn'], gate: true },
+    { id: 'toc', name: 'Theory of Computation', desc: 'Automata, grammars, Turing machines, decidability, complexity — GATE focused', icon: 'infinity', anim: 'automata', color: '#059669', categories: ['toc'], gate: true },
+    { id: 'cd', name: 'Compiler Design', desc: 'Lexical analysis, parsing, SDT, code optimization — GATE focused', icon: 'terminal', anim: 'compiler', color: '#f97316', categories: ['cd'], gate: true },
+    { id: 'coa', name: 'Computer Organization', desc: 'Number systems, pipelining, cache, I/O organization — GATE focused', icon: 'cpu', anim: 'circuit', color: '#d4a017', categories: ['coa'], gate: true },
+    { id: 'digital', name: 'Digital Logic', desc: 'Boolean algebra, combinational & sequential circuits, flip-flops — GATE focused', icon: 'bolt', anim: 'logic', color: '#22c55e', categories: ['digital'], gate: true },
+    { id: 'discrete', name: 'Discrete Mathematics', desc: 'Logic, sets, relations, combinatorics, graph theory, groups — GATE focused', icon: 'puzzle', anim: 'proof', color: '#14b8a6', categories: ['discrete'], gate: true },
+    { id: 'math', name: 'Engineering Mathematics', desc: 'Linear algebra, calculus, probability & statistics — GATE focused', icon: 'chart', anim: 'matrix', color: '#eab308', categories: ['math'], gate: true },
+    // Other CS Subjects
+    { id: 'se', name: 'Software Engineering', desc: 'SDLC models, testing strategies, design patterns, and agile methodology', icon: 'layers', anim: 'blueprint', color: '#6d28d9', categories: ['se'], other: true },
+    { id: 'oop', name: 'Object-Oriented Programming', desc: 'Classes, inheritance, polymorphism, SOLID principles, and clean design', icon: 'diamond', anim: 'diamond', color: '#0ea5e9', categories: ['oop'], other: true },
+    { id: 'web', name: 'Web Technologies', desc: 'HTTP, REST APIs, frontend development, backend & database integration', icon: 'globe', anim: 'globe2', color: '#f43f5e', categories: ['web'], other: true },
+    { id: 'security', name: 'Cyber Security', desc: 'Cryptography, network security, OWASP vulnerabilities, and defense mechanisms', icon: 'shield', anim: 'shield', color: '#dc2626', categories: ['security'], other: true },
+    { id: 'cloud', name: 'Cloud Computing', desc: 'IaaS/PaaS/SaaS, Docker, Kubernetes, serverless, and cloud architecture patterns', icon: 'cloud', anim: 'cloud', color: '#2563eb', categories: ['cloud'], other: true },
+    { id: 'graphics', name: 'Computer Graphics', desc: '2D/3D transformations, rendering pipeline, shading models, and rasterization', icon: 'palette', anim: 'prism', color: '#d946ef', categories: ['graphics'], other: true },
+    { id: 'distributed', name: 'Distributed Systems', desc: 'CAP theorem, consensus algorithms, replication, and fault tolerance', icon: 'share', anim: 'scatter', color: '#0891b2', categories: ['distributed'], other: true },
+    { id: 'parallel', name: 'Parallel Computing', desc: 'Threads, synchronization, Amdahl\'s law, map-reduce, and GPU computing', icon: 'cpu', anim: 'threads', color: '#7c3aed', categories: ['parallel'], other: true },
+    { id: 'iot', name: 'Internet of Things', desc: 'IoT architecture, MQTT, edge computing, sensors, and smart applications', icon: 'radio', anim: 'signal', color: '#059669', categories: ['iot'], other: true },
+    { id: 'blockchain', name: 'Blockchain Technology', desc: 'Distributed ledger, consensus mechanisms, smart contracts, and DApps', icon: 'link', anim: 'chain', color: '#ea580c', categories: ['blockchain'], other: true },
+    { id: 'embedded', name: 'Embedded Systems', desc: 'Microcontrollers, RTOS, firmware development, and real-time constraints', icon: 'cpu', anim: 'chip', color: '#4f46e5', categories: ['embedded'], other: true },
+    { id: 'hci', name: 'Human-Computer Interaction', desc: 'Usability heuristics, UX research, accessibility, and design evaluation', icon: 'cursor', anim: 'cursor', color: '#e11d48', categories: ['hci'], other: true },
+    { id: 'ir', name: 'Information Retrieval', desc: 'Search engines, indexing, TF-IDF, PageRank, and web search ranking', icon: 'search', anim: 'lens', color: '#ca8a04', categories: ['ir'], other: true },
+    { id: 'numerical', name: 'Numerical Methods', desc: 'Root finding, interpolation, numerical integration, and ODE solvers', icon: 'calculator', anim: 'integral', color: '#9333ea', categories: ['numerical'], other: true },
+    { id: 'bigdata', name: 'Big Data & NoSQL', desc: 'Hadoop, Spark, MapReduce, NoSQL databases, and large-scale data processing', icon: 'database', anim: 'warehouse', color: '#0d9488', categories: ['bigdata'], other: true },
+    // Programming Languages
+    { id: 'clang', name: 'C', desc: 'Systems programming — pointers, memory management, structs, file I/O, and preprocessor', icon: 'terminal', anim: 'terminal2', color: '#555555', categories: ['clang'], lang: true },
+    { id: 'cpp', name: 'C++', desc: 'OOP, STL containers, templates, smart pointers, and modern C++ (11/14/17/20)', icon: 'code', anim: 'cplusplus', color: '#004482', categories: ['cpp'], lang: true },
+    { id: 'java', name: 'Java', desc: 'JVM, OOP, generics, collections framework, streams, multithreading, and records', icon: 'coffee', anim: 'coffee', color: '#f89820', categories: ['java'], lang: true },
+    { id: 'python', name: 'Python', desc: 'Dynamic typing, decorators, generators, async/await, and metaprogramming', icon: 'code', anim: 'snake', color: '#3776ab', categories: ['python'], lang: true },
+    { id: 'javascript', name: 'JavaScript', desc: 'ES6+, closures, promises, async/await, event loop, and metaprogramming', icon: 'bolt', anim: 'brackets', color: '#f7df1e', categories: ['javascript'], lang: true },
+    { id: 'golang', name: 'Go', desc: 'Goroutines, channels, interfaces, concurrency patterns, and systems programming', icon: 'code', anim: 'gopher', color: '#00add8', categories: ['golang'], lang: true },
+    { id: 'rust', name: 'Rust', desc: 'Ownership, borrowing, lifetimes, traits, generics, and zero-cost abstractions', icon: 'shield', anim: 'crab', color: '#ce422b', categories: ['rust'], lang: true },
+    { id: 'typescript', name: 'TypeScript', desc: 'Static types, interfaces, generics, mapped/conditional types, and utility types', icon: 'code', anim: 'typescript2', color: '#3178c6', categories: ['typescript'], lang: true },
+    // System Design
+    { id: 'sysdesign', name: 'System Design', desc: 'HLD, LLD, scalability patterns, design case studies, and SOLID principles', icon: 'layers', anim: 'architect', color: '#7c3aed', categories: ['sysdesign'], sysdesign: true },
+  ],
 
   _topicPapers: {
     'complexity': [
@@ -2401,33 +2619,13 @@ const App = {
   },
 
   async renderLearn(el) {
-    const cat = this._learnCategory;
-    el.innerHTML = `
-      <div class="page-header">
-        <h1><i class="icon-learn" style="font-size:28px"></i> Learn</h1>
-        <p>Unlock knowledge — step-by-step tutorials and interactive examples</p>
-      </div>
-      <div id="learnStats"></div>
-      <div class="learn-categories">
-        <button class="learn-cat-btn ${cat === 'all' ? 'active' : ''}" onclick="App._learnCategory='all';App.renderLearn(document.getElementById('pageContent'))">
-          <i class="icon-spark"></i> All Topics
-        </button>
-        <button class="learn-cat-btn ${cat === 'cp' ? 'active' : ''}" onclick="App._learnCategory='cp';App.renderLearn(document.getElementById('pageContent'))">
-          <i class="icon-code"></i> Competitive Programming
-        </button>
-        <button class="learn-cat-btn ${cat === 'ai' ? 'active' : ''}" onclick="App._learnCategory='ai';App.renderLearn(document.getElementById('pageContent'))">
-          <i class="icon-neural"></i> AI & Machine Learning
-        </button>
-      </div>
-      <div id="learnGrid" class="learn-grid"></div>`;
-
-    // Stats
     const stats = await API.getTutorialStats();
+    let statsHtml = '';
     if (stats.ok) {
       const pct = stats.total > 0 ? Math.round(stats.completed / stats.total * 100) : 0;
-      document.getElementById('learnStats').innerHTML = `
+      statsHtml = `
         <div class="learn-stats-bar">
-          <div class="learn-stat-item"><i class="icon-book"></i><span>${stats.total} Tutorials</span></div>
+          <div class="learn-stat-item"><i class="icon-book"></i><span>${stats.total} Topics</span></div>
           <div class="learn-stat-item"><i class="icon-check"></i><span>${stats.completed} Completed</span></div>
           <div class="learn-progress-bar">
             <div class="learn-progress-fill" style="width:${pct}%"></div>
@@ -2436,16 +2634,107 @@ const App = {
         </div>`;
     }
 
-    const data = await API.getTutorials(cat);
+    const gateSubjects = this._learnSubjects.filter(s => s.gate);
+    const coreSubjects = this._learnSubjects.filter(s => !s.gate && !s.other && !s.lang && !s.sysdesign && !s.aiml);
+    const otherSubjects = this._learnSubjects.filter(s => s.other);
+    const langSubjects = this._learnSubjects.filter(s => s.lang);
+    const sysdesignSubjects = this._learnSubjects.filter(s => s.sysdesign);
+    const aimlSubjects = this._learnSubjects.filter(s => s.aiml);
+
+    const cardHtml = (s, i) => `
+      <div class="learn-subject-card" onclick="location.hash='#/learn/${s.id}'" style="animation-delay:${i * 0.07}s">
+        <div class="learn-subject-visual lv-${s.anim}">
+          <div class="learn-card-icon-wrap">
+            <i class="icon-${s.icon} learn-card-icon" style="color:${s.color}"></i>
+          </div>
+        </div>
+        <div class="learn-subject-body">
+          <h3 class="learn-subject-name">${s.name}</h3>
+          <p class="learn-subject-desc">${s.desc}</p>
+          ${s.gate ? '<span class="learn-subject-badge">GATE</span>' : ''}
+        </div>
+        <div class="learn-subject-arrow"><i class="icon-chevron-right"></i></div>
+      </div>`;
+
+    el.innerHTML = `
+      <div class="page-header">
+        <h1><i class="icon-learn" style="font-size:28px"></i> Learn</h1>
+        <p>Unlock knowledge — choose a subject and master it step by step</p>
+      </div>
+      ${statsHtml}
+      <h2 class="learn-section-title"><i class="icon-spark"></i> Data Structures & Algorithms</h2>
+      <div class="learn-subjects-grid">
+        ${coreSubjects.map((s, i) => cardHtml(s, i)).join('')}
+      </div>
+      <h2 class="learn-section-title"><i class="icon-brain"></i> AI & Machine Learning</h2>
+      <div class="learn-subjects-grid">
+        ${aimlSubjects.map((s, i) => cardHtml(s, i)).join('')}
+      </div>
+      <h2 class="learn-section-title"><i class="icon-shield"></i> GATE Computer Science</h2>
+      <div class="learn-subjects-grid">
+        ${gateSubjects.map((s, i) => cardHtml(s, i)).join('')}
+      </div>
+      <h2 class="learn-section-title"><i class="icon-code"></i> Programming Languages</h2>
+      <div class="learn-subjects-grid">
+        ${langSubjects.map((s, i) => cardHtml(s, i)).join('')}
+      </div>
+      <h2 class="learn-section-title"><i class="icon-layers"></i> System Design</h2>
+      <div class="learn-subjects-grid">
+        ${sysdesignSubjects.map((s, i) => cardHtml(s, i)).join('')}
+      </div>
+      <h2 class="learn-section-title"><i class="icon-book"></i> Explore More</h2>
+      <div class="learn-subjects-grid">
+        ${otherSubjects.map((s, i) => cardHtml(s, i)).join('')}
+      </div>`;
+  },
+
+  async renderLearnTopics(el) {
+    const subjectDef = this._learnSubjects.find(s => s.id === this._learnSubject);
+    if (!subjectDef) { location.hash = '#/learn'; return; }
+
+    el.innerHTML = `
+      <div class="page-header">
+        <h1><i class="icon-${subjectDef.icon}" style="font-size:28px;color:${subjectDef.color}"></i> ${subjectDef.name}</h1>
+        <p>${subjectDef.desc}</p>
+      </div>
+      <div style="margin-bottom:20px">
+        <a href="#/learn" class="fp-back-btn"><i class="icon-back"></i> Back to Subjects</a>
+      </div>
+      <div id="learnStats"></div>
+      <div id="learnGrid" class="learn-grid"></div>`;
+
+    // Fetch all tutorials and filter by subject
+    const data = await API.getTutorials('all');
     if (!data.ok) return;
+
+    let tutorials = data.tutorials.filter(t => {
+      if (subjectDef.topics) {
+        return subjectDef.topics.includes(t.topic);
+      }
+      return subjectDef.categories.includes(t.category);
+    });
+
+    // Stats for this subject
+    const total = tutorials.length;
+    const completed = tutorials.filter(t => t.completed).length;
+    const pct = total > 0 ? Math.round(completed / total * 100) : 0;
+    document.getElementById('learnStats').innerHTML = `
+      <div class="learn-stats-bar">
+        <div class="learn-stat-item"><i class="icon-book"></i><span>${total} Topics</span></div>
+        <div class="learn-stat-item"><i class="icon-check"></i><span>${completed} Completed</span></div>
+        <div class="learn-progress-bar">
+          <div class="learn-progress-fill" style="width:${pct}%"></div>
+          <span class="learn-progress-text">${pct}% Complete</span>
+        </div>
+      </div>`;
+
     const grid = document.getElementById('learnGrid');
-    if (!data.tutorials.length) {
+    if (!tutorials.length) {
       grid.innerHTML = '<div class="empty-state"><p>No tutorials found.</p></div>';
       return;
     }
 
-    const catIcons = { cp: 'code', ai: 'neural' };
-    const catLabels = { cp: 'Competitive Programming', ai: 'AI & ML' };
+    const catLabels = { cp: 'DSA', ai: 'AI & ML', cv: 'Computer Vision', nlpcat: 'NLP', os: 'Operating Systems', dbms: 'DBMS', cn: 'Networks', toc: 'Theory of Computation', cd: 'Compiler Design', coa: 'Computer Org.', digital: 'Digital Logic', discrete: 'Discrete Math', math: 'Engineering Math', se: 'Software Eng.', oop: 'OOP', web: 'Web Tech', security: 'Cyber Security', cloud: 'Cloud Computing', graphics: 'Computer Graphics', distributed: 'Distributed Systems', datascience: 'Data Science', parallel: 'Parallel Computing', iot: 'IoT', blockchain: 'Blockchain', embedded: 'Embedded Systems', hci: 'HCI', ir: 'Information Retrieval', numerical: 'Numerical Methods', bigdata: 'Big Data', clang: 'C', cpp: 'C++', java: 'Java', python: 'Python', javascript: 'JavaScript', golang: 'Go', rust: 'Rust', typescript: 'TypeScript', sysdesign: 'System Design' };
     const diffColors = { beginner: 'green', intermediate: 'blue', advanced: 'red' };
     const topicIcons = {
       'complexity': 'clock', 'arrays': 'hash', 'sorting': 'chart', 'binary-search': 'search',
@@ -2462,11 +2751,11 @@ const App = {
       'ml-fundamentals': 'chart', 'deep-learning': 'neural', 'computer-vision': 'eye'
     };
 
-    grid.innerHTML = data.tutorials.map((t, i) => `
-      <div class="learn-card ${t.completed ? 'completed' : ''}" onclick="App.openTutorial(${t.id})" style="animation-delay:${i * 0.06}s">
-        <div class="learn-card-visual lv-${this._topicAnim[t.topic] || 'bars'}">
+    grid.innerHTML = tutorials.map((t, i) => `
+      <div class="learn-card ${t.completed ? 'completed' : ''}" onclick="location.hash='#/learn/${this._learnSubject}/${t.id}'" style="animation-delay:${i * 0.06}s">
+        <div class="learn-card-visual lv-${this._topicAnim[t.topic] || subjectDef.anim || 'bars'}">
           <div class="learn-card-icon-wrap">
-            <i class="icon-${topicIcons[t.topic] || catIcons[t.category] || 'book'} learn-card-icon"></i>
+            <i class="icon-${topicIcons[t.topic] || subjectDef.icon || 'book'} learn-card-icon"></i>
             ${t.completed ? '<div class="learn-card-check"><i class="icon-check"></i></div>' : ''}
           </div>
         </div>
@@ -2483,7 +2772,17 @@ const App = {
   },
 
   async openTutorial(id) {
-    location.hash = '#/learn/' + id;
+    // Try to find which subject this tutorial belongs to
+    const data = await API.getTutorial(id);
+    if (data.ok) {
+      const t = data.tutorial;
+      const sub = this._learnSubjects.find(s => {
+        if (s.topics) return s.topics.includes(t.topic);
+        return s.categories.includes(t.category);
+      });
+      if (sub) { location.hash = '#/learn/' + sub.id + '/' + id; return; }
+    }
+    location.hash = '#/learn/dsa/' + id;
   },
 
   async _openTutorialPage(el, id) {
@@ -2492,6 +2791,14 @@ const App = {
     const t = data.tutorial;
     const examples = JSON.parse(t.code_examples || '[]');
     const papers = this._topicPapers[t.topic] || [];
+
+    // Find subject for back navigation
+    const subjectDef = this._learnSubjects.find(s => {
+      if (s.topics) return s.topics.includes(t.topic);
+      return s.categories.includes(t.category);
+    });
+    const backHash = subjectDef ? '#/learn/' + subjectDef.id : '#/learn';
+    const subjectName = subjectDef ? subjectDef.name : 'Learn';
 
     const topicIcons = {
       'complexity': 'clock', 'arrays': 'hash', 'sorting': 'chart', 'binary-search': 'search',
@@ -2506,16 +2813,18 @@ const App = {
       'cnns': 'eye', 'nlp': 'text', 'reinforcement-learning': 'gamepad',
       'generative-ai': 'spark', 'model-deployment': 'rocket', 'ethics-ai': 'shield',
     };
-    const catLabels = { cp: 'Competitive Programming', ai: 'AI & ML' };
+    const catLabels = { cp: 'DSA', ai: 'AI & ML', cv: 'Computer Vision', nlpcat: 'NLP', os: 'Operating Systems', dbms: 'DBMS', cn: 'Networks', toc: 'Theory of Computation', cd: 'Compiler Design', coa: 'Computer Org.', digital: 'Digital Logic', discrete: 'Discrete Math', math: 'Engineering Math', se: 'Software Eng.', oop: 'OOP', web: 'Web Tech', security: 'Cyber Security', cloud: 'Cloud Computing', graphics: 'Computer Graphics', distributed: 'Distributed Systems', datascience: 'Data Science', parallel: 'Parallel Computing', iot: 'IoT', blockchain: 'Blockchain', embedded: 'Embedded Systems', hci: 'HCI', ir: 'Information Retrieval', numerical: 'Numerical Methods', bigdata: 'Big Data', clang: 'C', cpp: 'C++', java: 'Java', python: 'Python', javascript: 'JavaScript', golang: 'Go', rust: 'Rust', typescript: 'TypeScript', sysdesign: 'System Design' };
     const vis = this._topicAnim[t.topic] || 'bars';
     const topicIcon = topicIcons[t.topic] || 'book';
 
     el.innerHTML = `
       <div class="fp-tutorial">
         <div class="fp-topbar">
-          <a href="#/learn" class="fp-back-btn"><i class="icon-back"></i> Back to Learn</a>
+          <a href="${backHash}" class="fp-back-btn"><i class="icon-back"></i> Back to ${subjectName}</a>
           <div class="fp-breadcrumb">
             <a href="#/learn" class="fp-bc-link"><i class="icon-learn"></i> Learn</a>
+            <i class="icon-chevron-right fp-bc-sep"></i>
+            <a href="${backHash}" class="fp-bc-link">${subjectName}</a>
             <i class="icon-chevron-right fp-bc-sep"></i>
             <span class="fp-bc-current">${this._esc(t.title)}</span>
           </div>
@@ -2611,7 +2920,7 @@ const App = {
       grid.innerHTML = data.problems.map((p, i) => {
         const statusCls = p.solve_status === 'solved' ? 'tp-solved' : p.solve_status === 'attempted' ? 'tp-attempted' : '';
         const statusDot = p.solve_status === 'solved' ? '<span class="tp-dot tp-dot-solved"></span>' : p.solve_status === 'attempted' ? '<span class="tp-dot tp-dot-attempted"></span>' : '<span class="tp-dot"></span>';
-        const ratingColor = p.rating <= 1200 ? '#22c55e' : p.rating <= 1600 ? '#3b82f6' : p.rating <= 2000 ? '#a855f7' : p.rating <= 2400 ? '#f59e0b' : '#ef4444';
+        const ratingColor = p.rating <= 1200 ? '#22c55e' : p.rating <= 1600 ? '#3b82f6' : p.rating <= 2000 ? '#059669' : p.rating <= 2400 ? '#f59e0b' : '#ef4444';
         const diffLabel = p.rating <= 1200 ? 'Easy' : p.rating <= 1600 ? 'Medium' : p.rating <= 2000 ? 'Hard' : 'Expert';
         const platShort = p.platform === 'codeforces' ? 'CF' : p.platform === 'codechef' ? 'CC' : 'AC';
         return `
@@ -3578,7 +3887,7 @@ const App = {
         const max = Math.max(...d.values, 1);
         html += `<div class="debug-item"><span class="debug-label"><i class="icon-chart"></i> ${this._esc(d.name)}</span>
           <div class="debug-array">${d.values.map(v =>
-            `<div class="debug-cell" style="background:rgba(99,102,241,${0.15 + v/max*0.6})"><span>${v}</span></div>`
+            `<div class="debug-cell" style="background:rgba(29,78,216,${0.15 + v/max*0.6})"><span>${v}</span></div>`
           ).join('')}</div></div>`;
       } else {
         html += `<div class="debug-item"><span class="debug-label"><i class="icon-pin"></i> ${this._esc(d.name)}</span>
@@ -4988,7 +5297,7 @@ const App = {
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
-      a.href = url; a.download = 'coderift-progress.json'; a.click();
+      a.href = url; a.download = 'nexora-progress.json'; a.click();
       URL.revokeObjectURL(url);
       this.toast('Progress exported!', 'success');
     } catch (e) { this.toast('Export failed', 'error'); }
@@ -5383,7 +5692,7 @@ rl.on('close', () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    const colors = ['#6366f1', '#a855f7', '#06b6d4', '#ec4899', '#fbbf24', '#10b981', '#f59e0b', '#3b82f6'];
+    const colors = ['#1d4ed8', '#059669', '#14b8a6', '#d4a017', '#fbbf24', '#10b981', '#f59e0b', '#3b82f6'];
     const particles = [];
 
     for (let i = 0; i < 180; i++) {

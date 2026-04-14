@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CodeRift — Enter the Rift</title>
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <title>Nexora — Enter the Nexus</title>
+  <link rel="icon" type="image/svg+xml" href="/nexora-logo.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/icons.css">
@@ -17,24 +17,35 @@
   <svg style="position:absolute;width:0;height:0">
     <defs>
       <linearGradient id="xpRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="#6366f1"/>
-        <stop offset="50%" stop-color="#a855f7"/>
-        <stop offset="100%" stop-color="#06b6d4"/>
+        <stop offset="0%" stop-color="#1d4ed8"/>
+        <stop offset="50%" stop-color="#059669"/>
+        <stop offset="100%" stop-color="#14b8a6"/>
       </linearGradient>
     </defs>
   </svg>
 
   <!-- ===== BOOT SCREEN ===== -->
   <div id="bootScreen" class="boot-screen">
+    <canvas id="bootCanvas"></canvas>
     <div class="boot-content">
-      <div class="boot-ring-wrap">
-        <div class="boot-ring"></div>
-        <div class="boot-icon"><i class="icon-rift"></i></div>
+      <div class="boot-hex-ring">
+        <div class="boot-hex-ring-inner"></div>
+        <div class="boot-logo-wrap">
+          <img src="/nexora-logo.svg" alt="Nexora" class="boot-logo-img" />
+        </div>
       </div>
-      <div class="boot-title">CodeRift</div>
-      <div class="boot-tagline">Enter the Rift</div>
-      <div class="boot-bar-track"><div class="boot-bar-fill" id="bootBarFill"></div></div>
+      <div class="boot-title">NEXORA</div>
+      <div class="boot-tagline">Enter the Nexus</div>
+      <div class="boot-terminal" id="bootTerminal">
+        <div class="boot-line"><span class="boot-prompt">$</span> <span class="boot-cmd" id="bootCmd"></span><span class="boot-cursor">▌</span></div>
+      </div>
+      <div class="boot-bar-track"><div class="boot-bar-fill" id="bootBarFill"></div><div class="boot-bar-glow"></div></div>
       <div class="boot-status" id="bootStatus">Initializing systems...</div>
+      <div class="boot-metrics">
+        <div class="boot-metric"><span class="boot-metric-val" id="bootModules">0</span><span class="boot-metric-label">modules</span></div>
+        <div class="boot-metric"><span class="boot-metric-val" id="bootNodes">0</span><span class="boot-metric-label">nodes</span></div>
+        <div class="boot-metric"><span class="boot-metric-val" id="bootLatency">0</span><span class="boot-metric-label">ms ping</span></div>
+      </div>
     </div>
   </div>
 
@@ -66,10 +77,10 @@
   <!-- Sidebar -->
   <nav id="sidebar">
     <div class="sidebar-brand">
-      <div class="brand-icon"><i class="icon-rift"></i></div>
+      <div class="brand-icon"><img src="/nexora-logo.svg" alt="Nexora" class="brand-feather" /></div>
       <div class="brand-text-wrap">
-        <span class="brand-text">CodeRift</span>
-        <span class="brand-sub">Enter the Rift &bull; Master Every Language</span>
+        <span class="brand-text">Nexora</span>
+        <span class="brand-sub">Enter the Nexus &bull; Master Every Domain</span>
       </div>
     </div>
     <div class="sidebar-player-card" id="sidebarPlayerCard">
@@ -308,7 +319,7 @@
   <div id="userSetupModal" class="user-setup-modal hidden">
     <div class="user-setup-box">
       <div class="user-setup-header">
-        <h2><i class="icon-wave-hand"></i> Welcome to CodeRift</h2>
+        <h2><i class="icon-wave-hand"></i> Welcome to Nexora</h2>
         <p>Set up your profile to connect with friends</p>
       </div>
       <div class="user-setup-body">

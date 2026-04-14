@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 64">
+<defs>
+  <radialGradient id="cg" cx="32" cy="32" r="12" gradientUnits="userSpaceOnUse">
+    <stop offset="0%" stop-color="#fff"/><stop offset="60%" stop-color="#7dd3fc" stop-opacity="0.5"/>
+    <stop offset="100%" stop-color="#0284c7" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="b1" x1="32" y1="32" x2="8" y2="8" gradientUnits="userSpaceOnUse">
+    <stop offset="0%" stop-color="#93c5fd"/><stop offset="100%" stop-color="#1e3a8a"/>
+  </linearGradient>
+  <linearGradient id="b2" x1="32" y1="32" x2="4" y2="28" gradientUnits="userSpaceOnUse">
+    <stop offset="0%" stop-color="#60a5fa"/><stop offset="100%" stop-color="#1e3a8a"/>
+  </linearGradient>
+  <linearGradient id="b3" x1="32" y1="32" x2="16" y2="56" gradientUnits="userSpaceOnUse">
+    <stop offset="0%" stop-color="#60a5fa"/><stop offset="100%" stop-color="#172554"/>
+  </linearGradient>
+  <linearGradient id="o1" x1="32" y1="32" x2="56" y2="8" gradientUnits="userSpaceOnUse">
+    <stop offset="0%" stop-color="#fde68a"/><stop offset="50%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#c2410c"/>
+  </linearGradient>
+  <linearGradient id="o2" x1="32" y1="32" x2="60" y2="28" gradientUnits="userSpaceOnUse">
+    <stop offset="0%" stop-color="#fbbf24"/><stop offset="100%" stop-color="#9a3412"/>
+  </linearGradient>
+  <linearGradient id="o3" x1="32" y1="32" x2="50" y2="56" gradientUnits="userSpaceOnUse">
+    <stop offset="0%" stop-color="#fed7aa"/><stop offset="100%" stop-color="#9a3412"/>
+  </linearGradient>
+  <linearGradient id="textGrad" x1="80" y1="20" x2="300" y2="44" gradientUnits="userSpaceOnUse">
+    <stop offset="0%" stop-color="#5eead4"/><stop offset="50%" stop-color="#e0e7ff"/><stop offset="100%" stop-color="#93c5fd"/>
+  </linearGradient>
+  <linearGradient id="accentLine" x1="80" y1="48" x2="260" y2="48" gradientUnits="userSpaceOnUse">
+    <stop offset="0%" stop-color="#14b8a6"/><stop offset="50%" stop-color="#1d4ed8"/><stop offset="100%" stop-color="#d4a017"/>
+  </linearGradient>
+</defs>
+<!-- Mini logo symbol -->
+<g>
+  <path d="M29,28 Q22,20 13,14 Q11,12.5 10,12 Q12,11.5 15,13 Q23,17 30,25Z" fill="url(#b1)" opacity="0.9"/>
+  <path d="M28,31 Q18,28 10,28 Q6,27.5 4,29 Q6,30.5 10,31 Q18,32 28,32Z" fill="url(#b2)" opacity="0.85"/>
+  <path d="M29,35 Q24,42 19,50 Q17.5,53 17,55 Q19,53 21,50 Q26,42 30,36Z" fill="url(#b3)" opacity="0.85"/>
+  <path d="M31,35 Q30,44 28,54 Q27.5,57 29,59 Q30,57 30.5,54 Q32,44 33,36Z" fill="#1e40af" opacity="0.9"/>
+  <path d="M35,31 Q44,28 54,27 Q57,26.5 59,28 Q57,30 54,30.5 Q44,32 36,32Z" fill="url(#o2)" opacity="0.85"/>
+  <path d="M34,35 Q40,42 47,50 Q49,53 50,54 Q48,52 46,49 Q39,42 33,35Z" fill="url(#o3)" opacity="0.8"/>
+  <path d="M34,28 Q40,20 48,14 Q51,12 54,11 Q52,13 49,16 Q41,22 33,29Z" fill="url(#o1)" opacity="0.85"/>
+  <path d="M54,11 L57,9 L55,14Z" fill="#ea580c" opacity="0.7"/>
+  <!-- Flames -->
+  <path d="M28,27 Q25,18 24,12 Q23.5,9 22,6 Q23,8 24,12 Q26,18 30,25Z" fill="#3b82f6" opacity="0.7"/>
+  <path d="M35,26 Q37,17 38,11 Q38.5,8 40,5 Q39,8 38,12 Q36,18 34,27Z" fill="#f97316" opacity="0.7"/>
+  <!-- Circuits -->
+  <g stroke="#f97316" stroke-width="0.7" fill="none" opacity="0.5">
+    <path d="M37,28 L46,22 L50,18"/><path d="M37,31 L48,28 L56,25"/>
+  </g>
+  <circle cx="50" cy="18" r="1.2" fill="#f97316" opacity="0.5"/>
+  <circle cx="56" cy="25" r="1" fill="#f97316" opacity="0.4"/>
+  <!-- Center -->
+  <circle cx="32" cy="32" r="8" fill="url(#cg)"/>
+  <circle cx="32" cy="32" r="3.5" fill="#fff" opacity="0.95"/>
+  <circle cx="32" cy="32" r="2.5" fill="#fff"/>
+</g>
+<!-- Wordmark -->
+<text x="74" y="40" font-family="'Inter','Segoe UI',system-ui,sans-serif" font-weight="800"
+      font-size="32" fill="url(#textGrad)" letter-spacing="6">NEXORA</text>
+<line x1="74" y1="48" x2="260" y2="48" stroke="url(#accentLine)" stroke-width="1.2" stroke-linecap="round"/>
+<circle cx="76" cy="57" r="1.5" fill="#14b8a6" opacity="0.4"/>
+<circle cx="83" cy="57" r="1.5" fill="#1d4ed8" opacity="0.4"/>
+<circle cx="90" cy="57" r="1.5" fill="#d4a017" opacity="0.4"/>
+</svg>
