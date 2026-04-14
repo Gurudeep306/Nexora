@@ -38,6 +38,7 @@ const API = {
   getStats() { return this._fetch('/api/stats'); },
   getPerformance() { return this._fetch('/api/performance'); },
   getScrapeStats() { return this._fetch('/api/scrape-stats'); },
+  getDateActivity(date) { return this._fetch(`/api/activity/${encodeURIComponent(date)}`); },
 
   // Roadmap / Nexus
   getRoadmap() { return this._fetch('/api/roadmap'); },

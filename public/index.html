@@ -6,7 +6,7 @@
   <title>Nexora — Enter the Nexus</title>
   <link rel="icon" type="image/svg+xml" href="/nexora-logo.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Share+Tech+Mono&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/icons.css">
   <link rel="stylesheet" href="/css/styles.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -28,23 +28,30 @@
   <div id="bootScreen" class="boot-screen">
     <canvas id="bootCanvas"></canvas>
     <div class="boot-content">
-      <div class="boot-hex-ring">
-        <div class="boot-hex-ring-inner"></div>
-        <div class="boot-logo-wrap">
-          <img src="/nexora-logo.svg" alt="Nexora" class="boot-logo-img" />
-        </div>
-      </div>
-      <div class="boot-title">NEXORA</div>
-      <div class="boot-tagline">Enter the Nexus</div>
+      <div class="boot-scanlines"></div>
+      <div class="boot-glitch-title" data-text="NEXORA">NEXORA</div>
+      <div class="boot-tagline">[ SYSTEM BOOT SEQUENCE ]</div>
+
       <div class="boot-terminal" id="bootTerminal">
-        <div class="boot-line"><span class="boot-prompt">$</span> <span class="boot-cmd" id="bootCmd"></span><span class="boot-cursor">▌</span></div>
+        <div class="boot-log" id="bootLog"></div>
+        <div class="boot-line"><span class="boot-prompt">&gt;_</span> <span class="boot-cmd" id="bootCmd"></span><span class="boot-cursor">█</span></div>
       </div>
+
       <div class="boot-bar-track"><div class="boot-bar-fill" id="bootBarFill"></div><div class="boot-bar-glow"></div></div>
-      <div class="boot-status" id="bootStatus">Initializing systems...</div>
+      <div class="boot-status" id="bootStatus">INITIALIZING...</div>
+
       <div class="boot-metrics">
         <div class="boot-metric"><span class="boot-metric-val" id="bootModules">0</span><span class="boot-metric-label">modules</span></div>
         <div class="boot-metric"><span class="boot-metric-val" id="bootNodes">0</span><span class="boot-metric-label">nodes</span></div>
-        <div class="boot-metric"><span class="boot-metric-val" id="bootLatency">0</span><span class="boot-metric-label">ms ping</span></div>
+        <div class="boot-metric"><span class="boot-metric-val" id="bootLatency">0</span><span class="boot-metric-label">ms</span></div>
+      </div>
+
+      <div class="boot-keys">
+        <span class="boot-key">SYS</span>
+        <span class="boot-key">NET</span>
+        <span class="boot-key">GFX</span>
+        <span class="boot-key">AI</span>
+        <span class="boot-key">DB</span>
       </div>
     </div>
   </div>
@@ -55,7 +62,7 @@
     <div class="cmd-modal">
       <div class="cmd-search-row">
         <i class="icon-search cmd-search-icon"></i>
-        <input type="text" id="cmdInput" class="cmd-input" placeholder="Search pages, problems, actions..." autocomplete="off" />
+        <input type="text" id="cmdInput" class="cmd-input" placeholder="> search modules, problems, commands..." autocomplete="off" />
         <kbd class="cmd-kbd">ESC</kbd>
       </div>
       <div class="cmd-results" id="cmdResults"></div>
@@ -67,7 +74,7 @@
     <div class="shortcuts-backdrop" onclick="App.closeShortcuts()"></div>
     <div class="shortcuts-panel">
       <div class="shortcuts-header">
-        <h2><i class="icon-bolt"></i> Keyboard Shortcuts</h2>
+        <h2><i class="icon-bolt"></i> <span class="glitch" data-text="Keyboard Shortcuts">Keyboard Shortcuts</span></h2>
         <button class="btn btn-ghost btn-sm" onclick="App.closeShortcuts()">✕</button>
       </div>
       <div class="shortcuts-body" id="shortcutsBody"></div>
@@ -77,10 +84,9 @@
   <!-- Sidebar -->
   <nav id="sidebar">
     <div class="sidebar-brand">
-      <div class="brand-icon"><img src="/nexora-logo.svg" alt="Nexora" class="brand-feather" /></div>
       <div class="brand-text-wrap">
-        <span class="brand-text">Nexora</span>
-        <span class="brand-sub">Enter the Nexus &bull; Master Every Domain</span>
+        <span class="brand-text glitch" data-text="NEXORA">NEXORA</span>
+        <span class="brand-sub">// enter_the_nexus()</span>
       </div>
     </div>
     <div class="sidebar-player-card" id="sidebarPlayerCard">
@@ -94,7 +100,7 @@
         <div class="player-level-badge" id="sidebarLevel">1</div>
       </div>
       <div class="player-mini-info">
-        <div class="player-title-text" id="sidebarTitle">Byte</div>
+        <div class="player-title-text" id="sidebarTitle">Bit</div>
         <div class="player-xp-mini">
           <div class="player-xp-bar-mini"><div class="player-xp-fill-mini" id="sidebarXpFill" style="width:0%"></div></div>
           <span class="player-xp-text" id="sidebarXpText">0 XP</span>
@@ -103,41 +109,56 @@
       </div>
     </div>
     <div class="sidebar-nav">
-      <a href="#/dashboard" class="nav-item active" data-page="dashboard">
-        <i class="icon-dashboard nav-icon-i"></i><span class="nav-label">Dashboard</span>
+      <a href="#/hub" class="nav-item active" data-page="hub">
+        <div class="nav-active-bar"></div>
+        <div class="nav-icon-wrap"><i class="icon-dashboard nav-icon-i"></i></div>
+        <div class="nav-text-wrap"><span class="nav-label">HQ</span><span class="nav-desc">~/command_center</span></div>
       </a>
       <a href="#/problems" class="nav-item" data-page="problems">
-        <i class="icon-problems nav-icon-i"></i><span class="nav-label">Problems</span>
+        <div class="nav-active-bar"></div>
+        <div class="nav-icon-wrap"><i class="icon-problems nav-icon-i"></i></div>
+        <div class="nav-text-wrap"><span class="nav-label">Problems</span><span class="nav-desc">grep -r "challenge"</span></div>
       </a>
       <a href="#/nexus" class="nav-item" data-page="nexus">
-        <i class="icon-arena nav-icon-i"></i><span class="nav-label">Progress</span>
+        <div class="nav-active-bar"></div>
+        <div class="nav-icon-wrap"><i class="icon-arena nav-icon-i"></i></div>
+        <div class="nav-text-wrap"><span class="nav-label">Progress</span><span class="nav-desc">cat stats.log</span></div>
       </a>
       <a href="#/contests" class="nav-item" data-page="contests">
-        <i class="icon-contests nav-icon-i"></i><span class="nav-label">Contests</span>
+        <div class="nav-active-bar"></div>
+        <div class="nav-icon-wrap"><i class="icon-contests nav-icon-i"></i></div>
+        <div class="nav-text-wrap"><span class="nav-label">Contests</span><span class="nav-desc">./arena --live</span></div>
       </a>
       <a href="#/ailab" class="nav-item" data-page="ailab">
-        <i class="icon-neural nav-icon-i"></i><span class="nav-label">AI Lab</span>
+        <div class="nav-active-bar"></div>
+        <div class="nav-icon-wrap"><i class="icon-neural nav-icon-i"></i></div>
+        <div class="nav-text-wrap"><span class="nav-label">AI Lab</span><span class="nav-desc">python3 neural.py</span></div>
       </a>
       <a href="#/learn" class="nav-item" data-page="learn">
-        <i class="icon-learn nav-icon-i"></i><span class="nav-label">Learn</span>
+        <div class="nav-active-bar"></div>
+        <div class="nav-icon-wrap"><i class="icon-learn nav-icon-i"></i></div>
+        <div class="nav-text-wrap"><span class="nav-label">Learn</span><span class="nav-desc">import knowledge</span></div>
       </a>
       <a href="#/forge" class="nav-item" data-page="forge">
-        <i class="icon-hammer nav-icon-i"></i><span class="nav-label">The Forge</span>
+        <div class="nav-active-bar"></div>
+        <div class="nav-icon-wrap"><i class="icon-hammer nav-icon-i"></i></div>
+        <div class="nav-text-wrap"><span class="nav-label">The Forge</span><span class="nav-desc">make build</span></div>
       </a>
       <a href="#/workshop" class="nav-item" data-page="workshop">
-        <i class="icon-code nav-icon-i"></i><span class="nav-label">Workshop</span>
+        <div class="nav-active-bar"></div>
+        <div class="nav-icon-wrap"><i class="icon-code nav-icon-i"></i></div>
+        <div class="nav-text-wrap"><span class="nav-label">Workshop</span><span class="nav-desc">vim sandbox.cpp</span></div>
       </a>
       <a href="#/social" class="nav-item" data-page="social">
-        <i class="icon-friends nav-icon-i"></i><span class="nav-label">Community</span>
+        <div class="nav-active-bar"></div>
+        <div class="nav-icon-wrap"><i class="icon-friends nav-icon-i"></i></div>
+        <div class="nav-text-wrap"><span class="nav-label">Squad</span><span class="nav-desc">ssh party@nexus</span></div>
         <span class="social-unread-badge hidden" id="socialUnreadBadge">0</span>
-      </a>
-      <a href="#/profile" class="nav-item" data-page="profile">
-        <i class="icon-profile nav-icon-i"></i><span class="nav-label">Profile</span>
       </a>
     </div>
     <div class="sidebar-footer">
       <button class="btn btn-ghost btn-sm full-width settings-trigger" onclick="App.openSettings()">
-        <i class="icon-settings"></i> <span>Settings</span>
+        <i class="icon-settings"></i> <span>./config</span>
       </button>
     </div>
   </nav>
@@ -149,30 +170,83 @@
 
   <!-- ===== SOLVE OVERLAY ===== -->
   <div id="solveOverlay" class="solve-overlay hidden">
+    <div class="solve-scanlines"></div>
+    <div id="solveComboPopup" class="solve-combo-popup hidden"></div>
+    <!-- Solve HUD Bar -->
+    <div class="solve-hud" id="solveHud">
+      <div class="solve-hud-left">
+        <!-- Exit lives here — always on the main overlay, never on a floating panel -->
+        <button class="btn btn-ghost btn-sm solve-exit-btn hud-exit-btn" onclick="App.closeSolve()">
+          <i class="icon-back"></i> &lt;exit
+        </button>
+        <div class="solve-hud-timer" id="solveHudTimer">
+          <i class="icon-clock"></i>
+          <span id="solveTimerDisplay">00:00</span>
+        </div>
+        <div class="solve-hud-combo" id="solveHudCombo">
+          <span class="combo-fire" id="comboFire"></span>
+          <span class="combo-count" id="comboCount"></span>
+          <span class="combo-multi" id="comboMulti"></span>
+        </div>
+      </div>
+      <div class="solve-hud-center">
+        <div class="solve-hud-quest" id="solveHudQuest"></div>
+      </div>
+      <div class="solve-hud-right">
+        <div class="solve-hud-xp" id="solveHudXp">
+          <span class="hud-xp-label">XP</span>
+          <span class="hud-xp-value" id="hudXpValue">+0</span>
+        </div>
+        <div class="solve-hud-attempts" id="solveHudAttempts">
+          <span class="hud-attempts-label">TRIES</span>
+          <span class="hud-attempts-value" id="hudAttemptsValue">0</span>
+        </div>
+        <button class="hud-min-btn" id="hudMinBtn" onclick="App.toggleSolveHud()" title="Minimize HUD">▲</button>
+      </div>
+    </div>
+    <!-- Zen Mode Restore Bar -->
+    <div class="zen-restore-bar hidden" id="zenRestoreBar">
+      <span class="zen-label">ZEN</span>
+      <span class="zen-timer" id="zenTimerDisplay">00:00</span>
+      <button class="zen-restore-btn" onclick="App.toggleFocusMode()">◈ RESTORE PANELS</button>
+    </div>
     <div class="solve-container">
       <!-- LEFT -->
       <div class="solve-left" id="solveLeft">
+        <!-- Collapsed strip — visible only when panel is closed -->
+        <div class="left-collapse-strip hidden" id="leftCollapseStrip" onclick="App.toggleLeftPanel()" title="Restore problem panel">
+          <span>◈</span><span class="left-strip-label">P R O B L E M</span>
+        </div>
         <div class="solve-topbar">
-          <button class="btn btn-ghost btn-sm" onclick="App.closeSolve()">
-            <i class="icon-back"></i> Back
-          </button>
           <div class="solve-problem-badges" id="solveProblemBadges"></div>
+          <div class="solve-difficulty-flame" id="solveDifficultyFlame"></div>
           <a id="solveExternalLink" href="#" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" title="Open original">
             <i class="icon-external"></i>
           </a>
+          <button class="btn btn-ghost btn-sm float-min-btn" id="leftCollapseBtn" onclick="App.toggleLeftPanel()" title="Minimize">_</button>
+          <button class="btn btn-ghost btn-sm float-close-btn" onclick="App.toggleProblemPanel()" title="Hide panel">✕</button>
         </div>
         <div class="solve-tabs">
           <button class="solve-tab active" data-stab="description" onclick="App.switchSolveTab('description',this)">
-            <i class="icon-problems"></i> Description
+            <i class="icon-problems"></i> readme.md
           </button>
           <button class="solve-tab" data-stab="submissions" onclick="App.switchSolveTab('submissions',this)">
-            <i class="icon-send"></i> Submissions
+            <i class="icon-send"></i> git log
           </button>
         </div>
         <div class="solve-tab-content" id="solveTabContent">
           <div id="solveDescriptionContent"></div>
           <div id="solveSubmissionsContent" class="hidden"></div>
         </div>
+        <!-- 8-direction resize edges -->
+        <div class="fp-edge fp-edge-n"  data-dir="n"></div>
+        <div class="fp-edge fp-edge-ne" data-dir="ne"></div>
+        <div class="fp-edge fp-edge-e"  data-dir="e"></div>
+        <div class="fp-edge fp-edge-se" data-dir="se"></div>
+        <div class="fp-edge fp-edge-s"  data-dir="s"></div>
+        <div class="fp-edge fp-edge-sw" data-dir="sw"></div>
+        <div class="fp-edge fp-edge-w"  data-dir="w"></div>
+        <div class="fp-edge fp-edge-nw" data-dir="nw"></div>
       </div>
 
       <!-- Resize Handle -->
@@ -205,56 +279,85 @@
             </div>
           </div>
           <div class="editor-actions">
-            <button class="btn btn-ghost btn-sm collab-btn" onclick="App.toggleCollab()" title="Collaborate"><i class="icon-friends"></i> Collab</button>
-            <button class="btn btn-ghost btn-sm" onclick="App.startAiBattle()" title="Race AI" id="aiBattleBtn"><i class="icon-robot"></i> Race</button>
-            <button class="btn btn-ghost btn-sm" onclick="App.toggleDebug()" title="Debug Visualizer" id="debugToggle"><i class="icon-microscope"></i> Debug</button>
+            <button class="btn btn-ghost btn-sm collab-btn" onclick="App.toggleCollab()" title="Pair Program"><i class="icon-friends"></i> co-op</button>
+            <button class="btn btn-ghost btn-sm" onclick="App.startAiBattle()" title="Race AI" id="aiBattleBtn"><i class="icon-robot"></i> 1v1</button>
+            <button class="btn btn-ghost btn-sm" onclick="App.toggleDebug()" title="Debug Visualizer" id="debugToggle"><i class="icon-microscope"></i> dbg</button>
             <button class="btn btn-ghost btn-sm" id="focusModeBtn" onclick="App.toggleFocusMode()" title="Focus Mode (⌘⇧F)">
               <i class="icon-focus"></i>
             </button>
             <button class="btn btn-ghost btn-sm" onclick="App.resetCode()" title="Reset Code">
               <i class="icon-reset"></i>
             </button>
-            <button class="btn btn-run btn-sm" onclick="App.runCode()" title="Run (Ctrl+Enter)">
-              <i class="icon-run"></i> Run
+            <button class="btn btn-ghost btn-sm panel-toggle-btn" id="probPanelBtn" onclick="App.toggleProblemPanel()" title="Toggle problem panel">≡ prob</button>
+            <button class="btn btn-ghost btn-sm panel-toggle-btn" id="tcPanelBtn" onclick="App.toggleTestPanel()" title="Toggle test panel">⌗ tc</button>
+            <button class="btn btn-run btn-sm solve-run-btn" onclick="App.runCode()" id="runCodeBtn" title="Run (Ctrl+Enter)">
+              <i class="icon-run"></i> <span>./run</span>
             </button>
-            <button class="btn btn-submit btn-sm" onclick="App.submitCode()" title="Submit">
-              <i class="icon-send"></i> Submit
+            <button class="btn btn-submit btn-sm solve-submit-btn" onclick="App.submitCode()" id="submitCodeBtn" title="Submit">
+              <i class="icon-send"></i> <span>git push</span>
             </button>
           </div>
         </div>
+        <div class="keyshint-bar">
+          <span><kbd>Ctrl+Enter</kbd> run</span>
+          <span><kbd>Ctrl+⇧Enter</kbd> submit</span>
+          <span><kbd>Esc</kbd> exit</span>
+          <div class="keyshint-stats" id="keyshintStats">0 lines · 0 chars</div>
+        </div>
         <div id="monacoEditor" class="editor-container"></div>
+        <!-- Vertical drag handle for bottom panel height -->
+        <div class="bottom-panel-resizer hidden" id="bottomResizer"></div>
         <div class="bottom-panel" id="bottomPanel">
           <div class="bottom-panel-header">
             <div class="bottom-tabs">
               <button class="bottom-tab active" data-btab="testcases" onclick="App.switchBottomTab('testcases',this)">
-                <i class="icon-test"></i> Testcases
+                <i class="icon-test"></i> test/
               </button>
               <button class="bottom-tab" data-btab="results" onclick="App.switchBottomTab('results',this)">
-                <i class="icon-terminal"></i> Results
+                <i class="icon-terminal"></i> stdout
               </button>
               <button class="bottom-tab" data-btab="debug" onclick="App.switchBottomTab('debug',this)">
-                <i class="icon-chart"></i> Visualizer
+                <i class="icon-chart"></i> gdb
               </button>
             </div>
-            <button class="btn btn-ghost btn-sm" onclick="App.toggleAddTestcase()" title="Add Test Case">
-              <i class="icon-plus"></i> Add
-            </button>
+            <div class="bottom-actions-right">
+              <span class="bottom-tc-count" id="bottomTcCount"></span>
+              <button class="btn btn-ghost btn-sm" onclick="App.toggleAddTestcase()" title="Add Test Case">
+                <i class="icon-plus"></i> +tc
+              </button>
+              <button class="btn btn-ghost btn-sm float-min-btn" id="bottomCollapseBtn" onclick="App.toggleBottomPanel()" title="Minimize">_</button>
+              <button class="btn btn-ghost btn-sm float-close-btn" onclick="App.toggleTestPanel()" title="Hide panel">✕</button>
+            </div>
           </div>
           <div class="bottom-panel-body" id="bottomPanelBody">
-            <div id="bottomTestcasesContent"></div>
-            <div id="bottomResultsContent" class="hidden">
-              <div class="output-placeholder">
-                <i class="icon-terminal" style="font-size:24px;opacity:0.3"></i>
-                <p>Run or submit your code to see results</p>
+            <!-- TC Deck (one card at a time, no scroll clipping) -->
+            <div id="bottomTestcasesContent">
+              <div class="tc-deck" id="tcDeck">
+                <div class="tc-deck-header">
+                  <button class="tc-nav-btn" id="tcPrevBtn" onclick="App.tcDeckPrev()">&#9664;</button>
+                  <span class="tc-deck-label" id="tcDeckLabel">TC 1 / 1</span>
+                  <button class="tc-nav-btn" id="tcNextBtn" onclick="App.tcDeckNext()">&#9654;</button>
+                </div>
+                <div class="tc-deck-body" id="tcDeckBody"></div>
               </div>
             </div>
+            <div id="bottomResultsContent" class="hidden"></div>
             <div id="bottomDebugContent" class="hidden">
               <div class="output-placeholder">
                 <i class="icon-microscope" style="font-size:24px;opacity:0.3"></i>
-                <p>Enable Debug mode and add DBG macros to visualize data</p>
+                <p>$ gdb --args ./a.out // add DBG macros</p>
               </div>
             </div>
           </div>
+          <!-- 8-direction resize edges -->
+          <div class="fp-edge fp-edge-n"  data-dir="n"></div>
+          <div class="fp-edge fp-edge-ne" data-dir="ne"></div>
+          <div class="fp-edge fp-edge-e"  data-dir="e"></div>
+          <div class="fp-edge fp-edge-se" data-dir="se"></div>
+          <div class="fp-edge fp-edge-s"  data-dir="s"></div>
+          <div class="fp-edge fp-edge-sw" data-dir="sw"></div>
+          <div class="fp-edge fp-edge-w"  data-dir="w"></div>
+          <div class="fp-edge fp-edge-nw" data-dir="nw"></div>
         </div>
       </div>
 
@@ -300,7 +403,7 @@
       <div class="achievement-popup-glow"></div>
       <div class="achievement-popup-icon" id="achievePopupIcon"></div>
       <div class="achievement-popup-text">
-        <div class="achievement-popup-label">ACHIEVEMENT UNLOCKED</div>
+        <div class="achievement-popup-label">// NEW ACHIEVEMENT UNLOCKED</div>
         <div class="achievement-popup-title" id="achievePopupTitle"></div>
         <div class="achievement-popup-xp" id="achievePopupXp"></div>
       </div>
@@ -309,8 +412,16 @@
 
   <!-- XP Gain Popup -->
   <div id="xpPopup" class="xp-popup hidden">
-    <span class="xp-popup-text" id="xpPopupText">+50 XP</span>
+    <div class="xp-popup-inner">
+      <div class="xp-popup-particles" id="xpPopupParticles"></div>
+      <div class="xp-popup-icon">⚡</div>
+      <span class="xp-popup-text" id="xpPopupText">+50 XP</span>
+      <span class="xp-popup-sub" id="xpPopupSub"></span>
+    </div>
   </div>
+
+  <!-- Verdict Full-Screen Flash -->
+  <div id="verdictFlash" class="verdict-flash hidden"></div>
 
   <!-- Toast -->
   <div id="toasts" class="toast-container"></div>
@@ -319,18 +430,18 @@
   <div id="userSetupModal" class="user-setup-modal hidden">
     <div class="user-setup-box">
       <div class="user-setup-header">
-        <h2><i class="icon-wave-hand"></i> Welcome to Nexora</h2>
-        <p>Set up your profile to connect with friends</p>
+        <h2><i class="icon-wave-hand"></i> // initializing nexora</h2>
+        <p>configure your identity to join the network</p>
       </div>
       <div class="user-setup-body">
-        <label class="setup-label">Username</label>
-        <input type="text" id="setupUsername" class="setup-input" placeholder="Choose a unique username" maxlength="20" pattern="[a-zA-Z0-9_]+" />
-        <label class="setup-label">Display Name</label>
-        <input type="text" id="setupDisplayName" class="setup-input" placeholder="Your display name" maxlength="30" />
-        <label class="setup-label">Pick your avatar</label>
+        <label class="setup-label">handle</label>
+        <input type="text" id="setupUsername" class="setup-input" placeholder="choose a unique handle" maxlength="20" pattern="[a-zA-Z0-9_]+" />
+        <label class="setup-label">display_name</label>
+        <input type="text" id="setupDisplayName" class="setup-input" placeholder="your display name" maxlength="30" />
+        <label class="setup-label">avatar</label>
         <div class="avatar-picker" id="avatarPicker"></div>
         <button class="btn btn-primary full-width" id="setupSubmitBtn" onclick="App.completeSetup()">
-          Enter the Rift →
+          ./connect --init →
         </button>
         <p class="setup-error hidden" id="setupError"></p>
       </div>
@@ -396,14 +507,14 @@
   <div id="settingsOverlay" class="settings-overlay hidden">
     <div class="settings-panel">
       <div class="settings-header">
-        <h2><i class="icon-settings"></i> Settings</h2>
+        <h2><i class="icon-settings"></i> <span class="glitch" data-text="Settings">Settings</span></h2>
         <button class="btn btn-ghost btn-sm" onclick="App.closeSettings()">✕</button>
       </div>
       <div class="settings-body">
 
         <!-- Accounts -->
         <div class="settings-section">
-          <h3 class="settings-section-title"><i class="icon-globe"></i> Competitive Accounts</h3>
+          <h3 class="settings-section-title"><i class="icon-globe"></i> accounts.cfg</h3>
           <div class="settings-row">
             <label class="settings-label">Codeforces Handle</label>
             <input type="text" id="settingsCfHandle" class="settings-input" placeholder="Your CF handle" />
@@ -420,7 +531,7 @@
 
         <!-- Editor -->
         <div class="settings-section">
-          <h3 class="settings-section-title"><i class="icon-code"></i> Editor</h3>
+          <h3 class="settings-section-title"><i class="icon-code"></i> editor.cfg</h3>
           <div class="settings-row">
             <label class="settings-label">Default Language</label>
             <select id="settingsDefaultLang" class="settings-select">
@@ -475,7 +586,7 @@
 
         <!-- Judge -->
         <div class="settings-section">
-          <h3 class="settings-section-title"><i class="icon-run"></i> Judge</h3>
+          <h3 class="settings-section-title"><i class="icon-run"></i> judge.cfg</h3>
           <div class="settings-row">
             <label class="settings-label">Time Limit (ms)</label>
             <select id="settingsTimeLimit" class="settings-select">
@@ -496,23 +607,23 @@
 
         <!-- Sync -->
         <div class="settings-section">
-          <h3 class="settings-section-title"><i class="icon-sync"></i> Problem Sync</h3>
+          <h3 class="settings-section-title"><i class="icon-sync"></i> sync.cfg</h3>
           <div class="settings-row">
             <button class="btn btn-primary btn-sm" id="settingsSyncBtn" onclick="App.syncFromSettings()">
-              <i class="icon-sync"></i> Sync All Problems
+              <i class="icon-sync"></i> git pull --all
             </button>
             <span class="text-sm text-muted" id="settingsSyncStatus"></span>
           </div>
           <div class="settings-row">
             <button class="btn btn-secondary btn-sm" onclick="App.syncSolvedProblems()">
-              <i class="icon-check"></i> Sync Solved Status
+              <i class="icon-check"></i> sync --solved
             </button>
           </div>
         </div>
 
         <!-- UI -->
         <div class="settings-section">
-          <h3 class="settings-section-title"><i class="icon-dashboard"></i> Interface</h3>
+          <h3 class="settings-section-title"><i class="icon-dashboard"></i> ui.cfg</h3>
           <div class="settings-row">
             <label class="settings-label">Sidebar Compact Mode</label>
             <label class="settings-toggle">
@@ -538,7 +649,7 @@
 
         <!-- AI -->
         <div class="settings-section">
-          <h3 class="settings-section-title"><i class="icon-robot"></i> AI Tutor</h3>
+          <h3 class="settings-section-title"><i class="icon-robot"></i> ai.cfg</h3>
           <div class="settings-row">
             <label class="settings-label">AI Difficulty (Race)</label>
             <select id="settingsAiDifficulty" class="settings-select">
@@ -559,24 +670,24 @@
 
         <!-- Danger Zone -->
         <div class="settings-section settings-danger">
-          <h3 class="settings-section-title"><i class="icon-warning"></i> Data</h3>
+          <h3 class="settings-section-title"><i class="icon-warning"></i> /danger</h3>
           <div class="settings-row">
             <button class="btn btn-outline btn-sm" onclick="App.exportData()">
-              <i class="icon-external"></i> Export Progress (JSON)
+              <i class="icon-external"></i> export --json
             </button>
           </div>
           <div class="settings-row">
             <button class="btn btn-danger btn-sm" onclick="App.resetProgress()">
-              <i class="icon-trash"></i> Reset All Progress
+              <i class="icon-trash"></i> rm -rf progress/
             </button>
           </div>
         </div>
 
       </div>
       <div class="settings-footer">
-        <button class="btn btn-ghost btn-sm" onclick="App.closeSettings()">Cancel</button>
+        <button class="btn btn-ghost btn-sm" onclick="App.closeSettings()">:q</button>
         <button class="btn btn-primary btn-sm" onclick="App.saveAllSettings()">
-          <i class="icon-save"></i> Save Settings
+          <i class="icon-save"></i> :w (save)
         </button>
       </div>
     </div>

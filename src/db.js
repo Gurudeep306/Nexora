@@ -116,26 +116,17 @@ async function initDb() {
 
   // Seed unified Rift Levels as titles
   const titles = [
-    ['Byte', 0, '#6b7280', 'none'],
-    ['Spark', 75, '#84cc16', 'none'],
-    ['Circuit', 250, '#22c55e', 'none'],
-    ['Flare', 600, '#14b8a6', 'none'],
-    ['Pulse', 1500, '#06b6d4', '0 0 6px rgba(6,182,212,0.3)'],
-    ['Surge', 3000, '#0ea5e9', '0 0 8px rgba(14,165,233,0.3)'],
-    ['Prism', 5500, '#3b82f6', '0 0 8px rgba(59,130,246,0.4)'],
-    ['Torrent', 9500, '#6366f1', '0 0 10px rgba(99,102,241,0.4)'],
-    ['Nexus', 15000, '#8b5cf6', '0 0 10px rgba(139,92,246,0.4)'],
-    ['Phantom', 23000, '#a855f7', '0 0 12px rgba(168,85,247,0.5)'],
-    ['Vortex', 34000, '#d946ef', '0 0 12px rgba(217,70,239,0.5)'],
-    ['Tempest', 50000, '#ec4899', '0 0 14px rgba(236,72,153,0.5)'],
-    ['Wraith', 72000, '#f43f5e', '0 0 14px rgba(244,63,94,0.5)'],
-    ['Inferno', 100000, '#ef4444', '0 0 16px rgba(239,68,68,0.6)'],
-    ['Oracle', 140000, '#f97316', '0 0 16px rgba(249,115,22,0.6)'],
-    ['Titan', 195000, '#f59e0b', '0 0 18px rgba(245,158,11,0.6)'],
-    ['Arbiter', 270000, '#eab308', '0 0 18px rgba(234,179,8,0.6)'],
-    ['Celestial', 375000, '#a78bfa', '0 0 20px rgba(167,139,250,0.7)'],
-    ['Riftwalker', 520000, '#38bdf8', '0 0 22px rgba(56,189,248,0.7)'],
-    ['Mythic', 750000, '#fbbf24', '0 0 28px rgba(251,191,36,0.8)'],
+    ['Bit', 0, '#6b7280', 'none'],
+    ['Byte', 100, '#84cc16', 'none'],
+    ['Kilobyte', 400, '#22c55e', '0 0 6px rgba(34,197,94,0.3)'],
+    ['Megabyte', 1200, '#06b6d4', '0 0 8px rgba(6,182,212,0.3)'],
+    ['Gigabyte', 3500, '#3b82f6', '0 0 10px rgba(59,130,246,0.4)'],
+    ['Terabyte', 8000, '#8b5cf6', '0 0 12px rgba(139,92,246,0.5)'],
+    ['Petabyte', 18000, '#d946ef', '0 0 14px rgba(217,70,239,0.5)'],
+    ['Exabyte', 40000, '#f43f5e', '0 0 16px rgba(244,63,94,0.6)'],
+    ['Zettabyte', 85000, '#ef4444', '0 0 18px rgba(239,68,68,0.6)'],
+    ['Yottabyte', 180000, '#f59e0b', '0 0 22px rgba(245,158,11,0.7)'],
+    ['∞ Overflow', 400000, '#fbbf24', '0 0 28px rgba(251,191,36,0.8)'],
   ];
   for (const [title, xp, color, glow] of titles) {
     await run(`INSERT OR IGNORE INTO player_titles(title,min_xp,color,glow) VALUES(?,?,?,?)`, [title, xp, color, glow]);

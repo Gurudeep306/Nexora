@@ -449,6 +449,23 @@ app.get('/api/scrape-stats', async (_req, res) => {
   }
 });
 
+/* ========== DATE ACTIVITY DETAIL ========== */
+app.get('/api/activity/:date', async (req, res) => {
+  try {
+    const date = req.params.date;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return res.status(400).json({ ok: false, error: 'Invalid date' });
+    const dayStats = await get(`SELECT COALESCE(problems_solved,0) as solved, COALESCE(problems_attempted,0) as attempted,
+      COALESCE(xp_earned,0) as xp FROM daily_activity WHERE date=?`, [date]) || { solved: 0, attempted: 0, xp: 0 };
+    const submissions = await all(`SELECT s.id, s.verdict, s.exec_time_ms, s.language, s.submitted_at,
+      p.title, p.rating, p.platform, p.problem_id
+      FROM submissions s JOIN problems p ON s.problem_rowid=p.id
+      WHERE date(s.submitted_at)=? ORDER BY s.submitted_at DESC`, [date]);
+    res.json({ ok: true, date, stats: dayStats, submissions });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message });
+  }
+});
+
 /* ========== TRANSLATE ========== */
 app.post('/api/translate', async (req, res) => {
   try {
@@ -650,7 +667,7 @@ app.get('/api/stats', async (req, res) => {
     const dailyChallenges = await getDailyChallenges();
 
     // All Rift Levels (for rank progression display)
-    const allTitles = RIFT_LEVELS.map(r => ({ title: r.name, min_xp: r.xp, min_problems: r.minProblems, color: r.color, glow: r.glow }));
+    const allTitles = RIFT_LEVELS.map(r => ({ title: r.name, badge: r.badge, min_xp: r.xp, min_problems: r.minProblems, color: r.color, glow: r.glow }));
 
     // Today's stats
     const today = new Date().toISOString().slice(0, 10);
@@ -683,7 +700,7 @@ app.get('/api/roadmap', async (req, res) => {
       const problems = await all(`SELECT p.*, COALESCE(pr.status,'unsolved') as solve_status
         FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id
         WHERE p.rating >= ? AND p.rating <= ? AND p.rating > 0
-        ORDER BY p.rating ASC, RANDOM() LIMIT ?`, [rl.minR, rl.maxR, rl.count]);
+        ORDER BY p.rating ASC, RANDOM() LIMIT 30`, [rl.minR, rl.maxR]);
 
       const solvedCount = problems.filter(p => p.solve_status === 'solved').length;
       const isCurrentOrPast = playerLevel.level >= rl.level;
@@ -691,7 +708,7 @@ app.get('/api/roadmap', async (req, res) => {
 
       result.push({
         level: rl.level, title: rl.name, subtitle: `Rating ${rl.minR}–${rl.maxR}`,
-        minR: rl.minR, maxR: rl.maxR, count: rl.count,
+        minR: rl.minR, maxR: rl.maxR, count: 30,
         xpRequired: rl.xp, probsRequired: rl.minProblems,
         color: rl.color, glow: rl.glow,
         problems,
@@ -822,26 +839,17 @@ async function calcXp(problemId) {
 
 /* ── Unified Rift Levels — single progression system ── */
 const RIFT_LEVELS = [
-  { level:1,  name:'Byte',       xp:0,      minProblems:0,    minR:0,    maxR:800,   count:15, color:'#6b7280', glow:'none' },
-  { level:2,  name:'Spark',      xp:75,     minProblems:5,    minR:800,  maxR:900,   count:15, color:'#84cc16', glow:'none' },
-  { level:3,  name:'Circuit',    xp:250,    minProblems:15,   minR:800,  maxR:1000,  count:20, color:'#22c55e', glow:'none' },
-  { level:4,  name:'Flare',      xp:600,    minProblems:30,   minR:900,  maxR:1100,  count:20, color:'#14b8a6', glow:'none' },
-  { level:5,  name:'Pulse',      xp:1500,   minProblems:60,   minR:1000, maxR:1200,  count:25, color:'#06b6d4', glow:'0 0 6px rgba(6,182,212,0.3)' },
-  { level:6,  name:'Surge',      xp:3000,   minProblems:100,  minR:1100, maxR:1300,  count:25, color:'#0ea5e9', glow:'0 0 8px rgba(14,165,233,0.3)' },
-  { level:7,  name:'Prism',      xp:5500,   minProblems:160,  minR:1200, maxR:1400,  count:25, color:'#3b82f6', glow:'0 0 8px rgba(59,130,246,0.4)' },
-  { level:8,  name:'Torrent',    xp:9500,   minProblems:240,  minR:1300, maxR:1500,  count:25, color:'#6366f1', glow:'0 0 10px rgba(99,102,241,0.4)' },
-  { level:9,  name:'Nexus',      xp:15000,  minProblems:350,  minR:1400, maxR:1600,  count:30, color:'#8b5cf6', glow:'0 0 10px rgba(139,92,246,0.4)' },
-  { level:10, name:'Phantom',    xp:23000,  minProblems:480,  minR:1400, maxR:1700,  count:30, color:'#a855f7', glow:'0 0 12px rgba(168,85,247,0.5)' },
-  { level:11, name:'Vortex',     xp:34000,  minProblems:650,  minR:1500, maxR:1800,  count:30, color:'#d946ef', glow:'0 0 12px rgba(217,70,239,0.5)' },
-  { level:12, name:'Tempest',    xp:50000,  minProblems:850,  minR:1600, maxR:1900,  count:30, color:'#ec4899', glow:'0 0 14px rgba(236,72,153,0.5)' },
-  { level:13, name:'Wraith',     xp:72000,  minProblems:1100, minR:1700, maxR:2000,  count:25, color:'#f43f5e', glow:'0 0 14px rgba(244,63,94,0.5)' },
-  { level:14, name:'Inferno',    xp:100000, minProblems:1400, minR:1800, maxR:2100,  count:25, color:'#ef4444', glow:'0 0 16px rgba(239,68,68,0.6)' },
-  { level:15, name:'Oracle',     xp:140000, minProblems:1800, minR:1900, maxR:2200,  count:20, color:'#f97316', glow:'0 0 16px rgba(249,115,22,0.6)' },
-  { level:16, name:'Titan',      xp:195000, minProblems:2300, minR:2000, maxR:2400,  count:20, color:'#f59e0b', glow:'0 0 18px rgba(245,158,11,0.6)' },
-  { level:17, name:'Arbiter',    xp:270000, minProblems:2900, minR:2100, maxR:2500,  count:15, color:'#eab308', glow:'0 0 18px rgba(234,179,8,0.6)' },
-  { level:18, name:'Celestial',  xp:375000, minProblems:3700, minR:2200, maxR:2600,  count:15, color:'#a78bfa', glow:'0 0 20px rgba(167,139,250,0.7)' },
-  { level:19, name:'Riftwalker', xp:520000, minProblems:4800, minR:2400, maxR:2800,  count:15, color:'#38bdf8', glow:'0 0 22px rgba(56,189,248,0.7)' },
-  { level:20, name:'Mythic',     xp:750000, minProblems:6500, minR:2600, maxR:3500,  count:10, color:'#fbbf24', glow:'0 0 28px rgba(251,191,36,0.8)' },
+  { level:1,  name:'Bit',        badge:'⚡', xp:0,       minProblems:0,     minR:0,    maxR:800,   color:'#6b7280', glow:'none' },
+  { level:2,  name:'Byte',       badge:'◆',  xp:100,     minProblems:10,    minR:800,  maxR:1000,  color:'#84cc16', glow:'none' },
+  { level:3,  name:'Kilobyte',   badge:'◈',  xp:400,     minProblems:30,    minR:1000, maxR:1200,  color:'#22c55e', glow:'0 0 6px rgba(34,197,94,0.3)' },
+  { level:4,  name:'Megabyte',   badge:'✦',  xp:1200,    minProblems:80,    minR:1200, maxR:1400,  color:'#06b6d4', glow:'0 0 8px rgba(6,182,212,0.3)' },
+  { level:5,  name:'Gigabyte',   badge:'★',  xp:3500,    minProblems:180,   minR:1400, maxR:1600,  color:'#3b82f6', glow:'0 0 10px rgba(59,130,246,0.4)' },
+  { level:6,  name:'Terabyte',   badge:'◉',  xp:8000,    minProblems:350,   minR:1600, maxR:1800,  color:'#8b5cf6', glow:'0 0 12px rgba(139,92,246,0.5)' },
+  { level:7,  name:'Petabyte',   badge:'♦',  xp:18000,   minProblems:600,   minR:1800, maxR:2000,  color:'#d946ef', glow:'0 0 14px rgba(217,70,239,0.5)' },
+  { level:8,  name:'Exabyte',    badge:'✧',  xp:40000,   minProblems:1000,  minR:2000, maxR:2200,  color:'#f43f5e', glow:'0 0 16px rgba(244,63,94,0.6)' },
+  { level:9,  name:'Zettabyte',  badge:'⬡',  xp:85000,   minProblems:1600,  minR:2200, maxR:2500,  color:'#ef4444', glow:'0 0 18px rgba(239,68,68,0.6)' },
+  { level:10, name:'Yottabyte',  badge:'♛',  xp:180000,  minProblems:2500,  minR:2500, maxR:2800,  color:'#f59e0b', glow:'0 0 22px rgba(245,158,11,0.7)' },
+  { level:11, name:'∞ Overflow', badge:'∞',  xp:400000,  minProblems:4000,  minR:2800, maxR:3500,  color:'#fbbf24', glow:'0 0 28px rgba(251,191,36,0.8)' },
 ];
 
 function calcLevel(xp, solvedCount = 0) {
@@ -856,7 +864,7 @@ function calcLevel(xp, solvedCount = 0) {
   const probsInLevel = solvedCount - curr.minProblems;
   const probsForNext = next ? next.minProblems - curr.minProblems : curr.minProblems;
   return {
-    level: lvl, xp, name: curr.name, color: curr.color, glow: curr.glow,
+    level: lvl, xp, name: curr.name, badge: curr.badge, color: curr.color, glow: curr.glow,
     xpInLevel, xpForNext, probsInLevel, probsForNext,
     xpGated: next ? xp < next.xp : false,
     probGated: next ? solvedCount < next.minProblems : false,
@@ -997,8 +1005,8 @@ function getPlayerTitle(xp, solvedCount = 0) {
   const curr = RIFT_LEVELS[lvlData.level - 1];
   const next = RIFT_LEVELS[lvlData.level] || null;
   return {
-    current: { title: curr.name, min_xp: curr.xp, color: curr.color, glow: curr.glow },
-    next: next ? { title: next.name, min_xp: next.xp, min_problems: next.minProblems, color: next.color, glow: next.glow } : null,
+    current: { title: curr.name, badge: curr.badge, min_xp: curr.xp, color: curr.color, glow: curr.glow },
+    next: next ? { title: next.name, badge: next.badge, min_xp: next.xp, min_problems: next.minProblems, color: next.color, glow: next.glow } : null,
     xpToNext: next ? Math.max(0, next.xp - xp) : 0,
     probsToNext: next ? Math.max(0, next.minProblems - solvedCount) : 0,
   };
@@ -1139,7 +1147,7 @@ app.get('/api/performance', async (req, res) => {
     const accuracy = submissions > 0 ? Math.round(acCount / submissions * 100) : 0;
     const streak = await calcStreak();
     const level = calcLevel(totalXp, solved);
-    const allTitles = RIFT_LEVELS.map(r => ({ title: r.name, minXp: r.xp, minProblems: r.minProblems, color: r.color, glow: r.glow, level: r.level }));
+    const allTitles = RIFT_LEVELS.map(r => ({ title: r.name, badge: r.badge, minXp: r.xp, minProblems: r.minProblems, color: r.color, glow: r.glow, level: r.level }));
 
     /* ── Rating distribution of solved ── */
     const ratingDist = await all(`SELECT
@@ -1374,49 +1382,60 @@ app.delete('/api/custom-problems/:id', async (req, res) => {
  + meeting XP/problem-count gates unlocks the next zone.
 */
 const NEXUS_NODES = [
-  // ── Zone 1: Byte (Rating 0-800) ──
-  { id:'byte_basics', zone:1, name:'Fundamentals', icon:'<i class="icon-book"></i>', desc:'Implementation, simulation, basic I/O', tags:['implementation','math'], requires:[], target:8, x:50, y:0, difficulty:[800,1000], xpReward:50, resources:[{title:'USACO Guide: Intro',url:'https://usaco.guide/general/intro-cp'},{title:'CF: Way to Practice',url:'https://codeforces.com/blog/entry/66909'}] },
+  // ── Zone 1: Bit (Rating 0-800) ──
+  { id:'bit_basics', zone:1, name:'Fundamentals', icon:'<i class="icon-book"></i>', desc:'Implementation, simulation, basic I/O', tags:['implementation','math'], requires:[], target:8, x:50, y:0, difficulty:[800,1000], xpReward:50, resources:[{title:'USACO Guide: Intro',url:'https://usaco.guide/general/intro-cp'},{title:'CF: Way to Practice',url:'https://codeforces.com/blog/entry/66909'}] },
 
-  // ── Zone 2: Spark (Rating 800-900) ──
-  { id:'spark_sorting', zone:2, name:'Sorting', icon:'<i class="icon-chart"></i>', desc:'Comparison sorts, counting sort, custom comparators', tags:['sortings'], requires:['byte_basics'], target:6, x:20, y:1, difficulty:[800,1200], xpReward:60, resources:[{title:'Sorting Algorithms',url:'https://usaco.guide/bronze/intro-sorting'}] },
-  { id:'spark_strings', zone:2, name:'Strings', icon:'<i class="icon-abc"></i>', desc:'String manipulation, pattern matching, palindromes', tags:['strings'], requires:['byte_basics'], target:6, x:50, y:1, difficulty:[800,1200], xpReward:60, resources:[{title:'String Basics',url:'https://usaco.guide/bronze/intro-complete'}] },
-  { id:'spark_brute', zone:2, name:'Complete Search', icon:'<i class="icon-search"></i>', desc:'Enumeration, recursion, backtracking, pruning', tags:['brute force','constructive algorithms'], requires:['byte_basics'], target:6, x:80, y:1, difficulty:[800,1200], xpReward:60, resources:[{title:'Complete Search',url:'https://usaco.guide/bronze/intro-complete'}] },
+  // ── Zone 2: Byte (Rating 800-1000) ──
+  { id:'byte_sorting', zone:2, name:'Sorting', icon:'<i class="icon-chart"></i>', desc:'Comparison sorts, counting sort, custom comparators', tags:['sortings'], requires:['bit_basics'], target:6, x:20, y:1, difficulty:[800,1200], xpReward:60, resources:[{title:'Sorting Algorithms',url:'https://usaco.guide/bronze/intro-sorting'}] },
+  { id:'byte_strings', zone:2, name:'Strings', icon:'<i class="icon-abc"></i>', desc:'String manipulation, pattern matching, palindromes', tags:['strings'], requires:['bit_basics'], target:6, x:50, y:1, difficulty:[800,1200], xpReward:60, resources:[{title:'String Basics',url:'https://usaco.guide/bronze/intro-complete'}] },
+  { id:'byte_brute', zone:2, name:'Complete Search', icon:'<i class="icon-search"></i>', desc:'Enumeration, recursion, backtracking, pruning', tags:['brute force','constructive algorithms'], requires:['bit_basics'], target:6, x:80, y:1, difficulty:[800,1200], xpReward:60, resources:[{title:'Complete Search',url:'https://usaco.guide/bronze/intro-complete'}] },
 
-  // ── Zone 3: Circuit (Rating 800-1000) ──
-  { id:'circuit_bsearch', zone:3, name:'Binary Search', icon:'<i class="icon-search"></i>', desc:'Binary search on answers, two pointers, ternary search', tags:['binary search','two pointers'], requires:['spark_sorting'], target:6, x:25, y:2, difficulty:[1000,1400], xpReward:70, resources:[{title:'Binary Search Guide',url:'https://usaco.guide/silver/binary-search'}] },
-  { id:'circuit_greedy', zone:3, name:'Greedy', icon:'<i class="icon-coins"></i>', desc:'Exchange arguments, scheduling, interval problems', tags:['greedy'], requires:['spark_sorting'], target:8, x:50, y:2, difficulty:[1000,1400], xpReward:80, resources:[{title:'Greedy Algorithms',url:'https://usaco.guide/bronze/intro-greedy'}] },
-  { id:'circuit_prefix', zone:3, name:'Prefix Sums', icon:'<i class="icon-trending"></i>', desc:'1D/2D prefix sums, difference arrays', tags:['data structures','math'], requires:['byte_basics'], target:6, x:75, y:2, difficulty:[1000,1400], xpReward:70, resources:[{title:'Prefix Sums',url:'https://usaco.guide/silver/prefix-sums'}] },
+  // ── Zone 3: Kilobyte (Rating 1000-1200) ──
+  { id:'kb_bsearch', zone:3, name:'Binary Search', icon:'<i class="icon-search"></i>', desc:'Binary search on answers, two pointers, ternary search', tags:['binary search','two pointers'], requires:['byte_sorting'], target:6, x:25, y:2, difficulty:[1000,1400], xpReward:70, resources:[{title:'Binary Search Guide',url:'https://usaco.guide/silver/binary-search'}] },
+  { id:'kb_greedy', zone:3, name:'Greedy', icon:'<i class="icon-coins"></i>', desc:'Exchange arguments, scheduling, interval problems', tags:['greedy'], requires:['byte_sorting'], target:8, x:50, y:2, difficulty:[1000,1400], xpReward:80, resources:[{title:'Greedy Algorithms',url:'https://usaco.guide/bronze/intro-greedy'}] },
+  { id:'kb_prefix', zone:3, name:'Prefix Sums', icon:'<i class="icon-trending"></i>', desc:'1D/2D prefix sums, difference arrays', tags:['data structures','math'], requires:['bit_basics'], target:6, x:75, y:2, difficulty:[1000,1400], xpReward:70, resources:[{title:'Prefix Sums',url:'https://usaco.guide/silver/prefix-sums'}] },
 
-  // ── Zone 4: Flare (Rating 900-1100) ──
-  { id:'flare_ntheory', zone:4, name:'Number Theory', icon:'<i class="icon-hash"></i>', desc:'Primes, GCD, modular arithmetic, sieve', tags:['number theory'], requires:['byte_basics'], target:6, x:20, y:3, difficulty:[1000,1600], xpReward:80, resources:[{title:'Number Theory',url:'https://usaco.guide/gold/divisibility'}] },
-  { id:'flare_dp', zone:4, name:'DP Foundations', icon:'<i class="icon-puzzle"></i>', desc:'Fibonacci, knapsack, LIS, LCS, coin change', tags:['dp'], requires:['circuit_bsearch','spark_brute'], target:10, x:50, y:3, difficulty:[1200,1600], xpReward:100, resources:[{title:'Intro to DP',url:'https://usaco.guide/gold/intro-dp'}] },
-  { id:'flare_graphs', zone:4, name:'Graph Basics', icon:'<i class="icon-graph"></i>', desc:'BFS, DFS, connected components, bipartite check', tags:['graphs','dfs and similar','bfs'], requires:['spark_brute'], target:8, x:80, y:3, difficulty:[1200,1600], xpReward:90, resources:[{title:'Graph Traversal',url:'https://usaco.guide/silver/graph-traversal'}] },
+  // ── Zone 4: Megabyte (Rating 1200-1400) ──
+  { id:'mb_ntheory', zone:4, name:'Number Theory', icon:'<i class="icon-hash"></i>', desc:'Primes, GCD, modular arithmetic, sieve', tags:['number theory'], requires:['bit_basics'], target:6, x:10, y:3, difficulty:[1000,1600], xpReward:80, resources:[{title:'Number Theory',url:'https://usaco.guide/gold/divisibility'}] },
+  { id:'mb_dp', zone:4, name:'DP Foundations', icon:'<i class="icon-puzzle"></i>', desc:'Fibonacci, knapsack, LIS, LCS, coin change', tags:['dp'], requires:['kb_bsearch','byte_brute'], target:10, x:35, y:3, difficulty:[1200,1600], xpReward:100, resources:[{title:'Intro to DP',url:'https://usaco.guide/gold/intro-dp'}] },
+  { id:'mb_graphs', zone:4, name:'Graph Basics', icon:'<i class="icon-graph"></i>', desc:'BFS, DFS, connected components, bipartite check', tags:['graphs','dfs and similar','bfs'], requires:['byte_brute'], target:8, x:60, y:3, difficulty:[1200,1600], xpReward:90, resources:[{title:'Graph Traversal',url:'https://usaco.guide/silver/graph-traversal'}] },
+  { id:'mb_dsu', zone:4, name:'Disjoint Sets', icon:'<i class="icon-link"></i>', desc:'Union-Find, path compression, weighted DSU', tags:['dsu'], requires:['mb_graphs'], target:6, x:85, y:3, difficulty:[1200,1600], xpReward:90, resources:[{title:'DSU Guide',url:'https://usaco.guide/gold/dsu'}] },
 
-  // ── Zone 5-6: Pulse / Surge (Rating 1000-1300) ──
-  { id:'pulse_dsu', zone:5, name:'Disjoint Sets', icon:'<i class="icon-link"></i>', desc:'Union-Find, path compression, weighted DSU', tags:['dsu'], requires:['flare_graphs'], target:6, x:15, y:4, difficulty:[1200,1600], xpReward:90, resources:[{title:'DSU Guide',url:'https://usaco.guide/gold/dsu'}] },
-  { id:'pulse_ds', zone:5, name:'Data Structures', icon:'<i class="icon-building"></i>', desc:'Stacks, queues, sets, maps, priority queues', tags:['data structures'], requires:['circuit_prefix','spark_sorting'], target:10, x:42, y:4, difficulty:[1200,1800], xpReward:120, resources:[{title:'PURS Guide',url:'https://usaco.guide/gold/PURS'}] },
-  { id:'pulse_trees', zone:5, name:'Trees', icon:'<i class="icon-tree"></i>', desc:'Tree traversal, LCA, diameter, Euler tour', tags:['trees'], requires:['flare_graphs'], target:8, x:70, y:4, difficulty:[1400,1800], xpReward:110, resources:[{title:'Tree Algorithms',url:'https://usaco.guide/gold/tree-euler'}] },
-  { id:'surge_combo', zone:6, name:'Combinatorics', icon:'<i class="icon-dice"></i>', desc:'Permutations, binomial coefficients, inclusion-exclusion', tags:['combinatorics','math'], requires:['flare_ntheory','flare_dp'], target:8, x:92, y:4, difficulty:[1400,1800], xpReward:110, resources:[{title:'Combinatorics',url:'https://usaco.guide/gold/combo'}] },
+  // ── Zone 5: Gigabyte (Rating 1400-1600) ──
+  { id:'gb_adv_dp', zone:5, name:'Advanced DP', icon:'<i class="icon-brain"></i>', desc:'Bitmask DP, digit DP, tree DP, DP on DAGs', tags:['dp','bitmasks'], requires:['mb_dp','mb_graphs'], target:12, x:15, y:4, difficulty:[1400,2000], xpReward:150, resources:[{title:'Bitmask DP',url:'https://usaco.guide/gold/dp-bitmasks'}] },
+  { id:'gb_ds', zone:5, name:'Data Structures', icon:'<i class="icon-building"></i>', desc:'Stacks, queues, sets, maps, priority queues, BIT', tags:['data structures'], requires:['kb_prefix','byte_sorting'], target:10, x:40, y:4, difficulty:[1400,1800], xpReward:120, resources:[{title:'PURS Guide',url:'https://usaco.guide/gold/PURS'}] },
+  { id:'gb_trees', zone:5, name:'Trees', icon:'<i class="icon-tree"></i>', desc:'Tree traversal, LCA, diameter, Euler tour', tags:['trees'], requires:['mb_graphs'], target:8, x:65, y:4, difficulty:[1400,1800], xpReward:110, resources:[{title:'Tree Algorithms',url:'https://usaco.guide/gold/tree-euler'}] },
+  { id:'gb_spaths', zone:5, name:'Shortest Paths', icon:'<i class="icon-path"></i>', desc:'Dijkstra, Bellman-Ford, Floyd-Warshall, 0-1 BFS', tags:['shortest paths','graphs'], requires:['mb_graphs','mb_dp'], target:8, x:90, y:4, difficulty:[1400,2000], xpReward:140, resources:[{title:'Shortest Paths',url:'https://usaco.guide/gold/shortest-paths'}] },
 
-  // ── Zone 7-8: Prism / Torrent (Rating 1200-1500) ──
-  { id:'prism_spaths', zone:7, name:'Shortest Paths', icon:'<i class="icon-path"></i>', desc:'Dijkstra, Bellman-Ford, Floyd-Warshall, 0-1 BFS', tags:['shortest paths','graphs'], requires:['flare_graphs','flare_dp'], target:8, x:12, y:5, difficulty:[1400,2000], xpReward:140, resources:[{title:'Shortest Paths',url:'https://usaco.guide/gold/shortest-paths'}] },
-  { id:'prism_adv_dp', zone:7, name:'Advanced DP', icon:'<i class="icon-brain"></i>', desc:'Bitmask DP, digit DP, tree DP, DP on DAGs', tags:['dp','bitmasks'], requires:['flare_dp','flare_graphs'], target:12, x:40, y:5, difficulty:[1600,2000], xpReward:150, resources:[{title:'Bitmask DP',url:'https://usaco.guide/gold/dp-bitmasks'}] },
-  { id:'torrent_segtree', zone:8, name:'Segment Tree', icon:'<i class="icon-pine"></i>', desc:'Range queries, lazy propagation, persistent seg tree', tags:['data structures'], requires:['pulse_ds'], target:10, x:65, y:5, difficulty:[1600,2200], xpReward:160, resources:[{title:'PURS',url:'https://usaco.guide/plat/RURQ'}] },
-  { id:'torrent_geometry', zone:8, name:'Geometry', icon:'<i class="icon-geometry"></i>', desc:'Convex hull, line intersection, polygon area', tags:['geometry'], requires:['spark_sorting','flare_ntheory'], target:6, x:90, y:5, difficulty:[1600,2200], xpReward:150, resources:[{title:'Geometry Guide',url:'https://usaco.guide/plat/geo-pri'}] },
+  // ── Zone 6: Terabyte (Rating 1600-1800) ──
+  { id:'tb_segtree', zone:6, name:'Segment Tree', icon:'<i class="icon-pine"></i>', desc:'Range queries, lazy propagation, persistent seg tree', tags:['data structures'], requires:['gb_ds'], target:10, x:20, y:5, difficulty:[1600,2200], xpReward:160, resources:[{title:'PURS',url:'https://usaco.guide/plat/RURQ'}] },
+  { id:'tb_combo', zone:6, name:'Combinatorics', icon:'<i class="icon-dice"></i>', desc:'Permutations, binomial coefficients, inclusion-exclusion', tags:['combinatorics','math'], requires:['mb_ntheory','mb_dp'], target:8, x:50, y:5, difficulty:[1600,1800], xpReward:110, resources:[{title:'Combinatorics',url:'https://usaco.guide/gold/combo'}] },
+  { id:'tb_stralgo', zone:6, name:'String Algorithms', icon:'<i class="icon-abc"></i>', desc:'KMP, Z-function, hashing, suffix array basics', tags:['string suffix structures','hashing','strings'], requires:['byte_strings','mb_dp'], target:6, x:80, y:5, difficulty:[1600,2200], xpReward:150, resources:[{title:'String Hashing',url:'https://usaco.guide/gold/string-hashing'}] },
 
-  // ── Zone 9-10: Nexus / Phantom (Rating 1400-1700) ──
-  { id:'nexus_flows', zone:9, name:'Network Flow', icon:'<i class="icon-water"></i>', desc:'Max flow, min cut, bipartite matching, Hungarian', tags:['flows','graph matchings'], requires:['prism_spaths'], target:6, x:15, y:6, difficulty:[1800,2400], xpReward:180, resources:[{title:'Max Flow',url:'https://usaco.guide/adv/max-flow'}] },
-  { id:'nexus_stralgo', zone:9, name:'String Algorithms', icon:'<i class="icon-abc"></i>', desc:'KMP, Z-function, suffix array, Aho-Corasick', tags:['string suffix structures','hashing'], requires:['spark_strings','flare_dp'], target:6, x:42, y:6, difficulty:[1800,2400], xpReward:160, resources:[{title:'String Hashing',url:'https://usaco.guide/gold/string-hashing'}] },
-  { id:'phantom_game', zone:10, name:'Game Theory', icon:'<i class="icon-gamepad"></i>', desc:'Sprague-Grundy, nim, minimax with alpha-beta', tags:['games'], requires:['flare_dp','flare_ntheory'], target:5, x:65, y:6, difficulty:[1600,2200], xpReward:140, resources:[{title:'Game Theory',url:'https://codeforces.com/blog/entry/66040'}] },
-  { id:'phantom_adv_trees', zone:10, name:'Advanced Trees', icon:'<i class="icon-leaf"></i>', desc:'HLD, centroid decomposition, link-cut trees', tags:['trees','data structures'], requires:['pulse_trees','torrent_segtree'], target:8, x:88, y:6, difficulty:[2000,2600], xpReward:200, resources:[{title:'HLD',url:'https://usaco.guide/plat/hld'}] },
+  // ── Zone 7: Petabyte (Rating 1800-2000) ──
+  { id:'pb_flows', zone:7, name:'Network Flow', icon:'<i class="icon-water"></i>', desc:'Max flow, min cut, bipartite matching, Hungarian', tags:['flows','graph matchings'], requires:['gb_spaths'], target:6, x:15, y:6, difficulty:[1800,2400], xpReward:180, resources:[{title:'Max Flow',url:'https://usaco.guide/adv/max-flow'}] },
+  { id:'pb_game', zone:7, name:'Game Theory', icon:'<i class="icon-gamepad"></i>', desc:'Sprague-Grundy, nim, minimax with alpha-beta', tags:['games'], requires:['mb_dp','mb_ntheory'], target:5, x:45, y:6, difficulty:[1800,2200], xpReward:140, resources:[{title:'Game Theory',url:'https://codeforces.com/blog/entry/66040'}] },
+  { id:'pb_adv_trees', zone:7, name:'Advanced Trees', icon:'<i class="icon-leaf"></i>', desc:'HLD, centroid decomposition, link-cut trees', tags:['trees','data structures'], requires:['gb_trees','tb_segtree'], target:8, x:75, y:6, difficulty:[2000,2600], xpReward:200, resources:[{title:'HLD',url:'https://usaco.guide/plat/hld'}] },
+  { id:'pb_geometry', zone:7, name:'Geometry', icon:'<i class="icon-geometry"></i>', desc:'Convex hull, line intersection, polygon area', tags:['geometry'], requires:['byte_sorting','mb_ntheory'], target:6, x:95, y:6, difficulty:[1800,2200], xpReward:150, resources:[{title:'Geometry Guide',url:'https://usaco.guide/plat/geo-pri'}] },
 
-  // ── Zone 11-14: Vortex → Inferno (Rating 1500-2100) ──
-  { id:'vortex_fft', zone:11, name:'FFT / NTT', icon:'<i class="icon-wave-line"></i>', desc:'Fast Fourier transform, polynomial multiplication', tags:['fft','math'], requires:['flare_ntheory','prism_adv_dp'], target:5, x:25, y:7, difficulty:[2000,2600], xpReward:200, resources:[{title:'Convolutions',url:'https://usaco.guide/adv/convolutions'}] },
-  { id:'vortex_dp_opt', zone:11, name:'DP Optimization', icon:'<i class="icon-bolt"></i>', desc:'Divide & conquer DP, Knuth, CHT, aliens trick', tags:['dp'], requires:['prism_adv_dp','torrent_segtree'], target:8, x:55, y:7, difficulty:[2200,2800], xpReward:220, resources:[{title:'DP Optimizations',url:'https://usaco.guide/adv/dp-more'}] },
-  { id:'inferno_mastery', zone:14, name:'Ascension', icon:'<i class="icon-crown"></i>', desc:'Solve elite problems across all domains — prove you are Mythic', tags:[], requires:['nexus_flows','vortex_fft','vortex_dp_opt','phantom_adv_trees'], target:30, x:50, y:8, difficulty:[2200,3500], xpReward:500, resources:[] },
+  // ── Zone 8: Exabyte (Rating 2000-2200) ──
+  { id:'eb_fft', zone:8, name:'FFT / NTT', icon:'<i class="icon-wave-line"></i>', desc:'Fast Fourier transform, polynomial multiplication', tags:['fft','math'], requires:['mb_ntheory','gb_adv_dp'], target:5, x:25, y:7, difficulty:[2000,2600], xpReward:200, resources:[{title:'Convolutions',url:'https://usaco.guide/adv/convolutions'}] },
+  { id:'eb_dp_opt', zone:8, name:'DP Optimization', icon:'<i class="icon-bolt"></i>', desc:'Divide & conquer DP, Knuth, CHT, aliens trick', tags:['dp'], requires:['gb_adv_dp','tb_segtree'], target:8, x:55, y:7, difficulty:[2200,2800], xpReward:220, resources:[{title:'DP Optimizations',url:'https://usaco.guide/adv/dp-more'}] },
+  { id:'eb_adv_graphs', zone:8, name:'Advanced Graphs', icon:'<i class="icon-graph"></i>', desc:'2-SAT, block-cut tree, SCC, Euler paths', tags:['graphs','dfs and similar'], requires:['mb_graphs','gb_spaths'], target:6, x:85, y:7, difficulty:[2000,2600], xpReward:180, resources:[] },
+
+  // ── Zone 9: Zettabyte (Rating 2200-2500) ──
+  { id:'zb_expert_ds', zone:9, name:'Expert Structures', icon:'<i class="icon-building"></i>', desc:'Treap, splay, persistent structures, wavelet tree', tags:['data structures'], requires:['tb_segtree','eb_dp_opt'], target:8, x:30, y:8, difficulty:[2200,2800], xpReward:250, resources:[] },
+  { id:'zb_expert_combo', zone:9, name:'Expert Combinatorics', icon:'<i class="icon-dice"></i>', desc:'Generating functions, Burnside, Polya, formal power series', tags:['combinatorics','math'], requires:['tb_combo','eb_fft'], target:6, x:70, y:8, difficulty:[2200,2800], xpReward:220, resources:[] },
+
+  // ── Zone 10: Yottabyte (Rating 2500-2800) ──
+  { id:'yb_expert_trees', zone:10, name:'Expert Trees', icon:'<i class="icon-tree"></i>', desc:'Top tree, Euler tour tree, LCT applications', tags:['trees','data structures'], requires:['pb_adv_trees','zb_expert_ds'], target:8, x:30, y:9, difficulty:[2500,3000], xpReward:300, resources:[] },
+  { id:'yb_expert_math', zone:10, name:'Expert Math', icon:'<i class="icon-hash"></i>', desc:'Elliptic curves, matroid intersection, multivariate polynomials', tags:['math','number theory'], requires:['zb_expert_combo'], target:6, x:70, y:9, difficulty:[2500,3000], xpReward:280, resources:[] },
+
+  // ── Zone 11: ∞ Overflow (Rating 2800-3500) ──
+  { id:'overflow_ascension', zone:11, name:'Ascension', icon:'<i class="icon-crown"></i>', desc:'Solve elite problems across all domains — prove you have overflowed', tags:[], requires:['pb_flows','eb_fft','eb_dp_opt','yb_expert_trees'], target:30, x:50, y:10, difficulty:[2800,3500], xpReward:500, resources:[] },
 ];
 
-const ZONE_NAMES = ['','Byte','Spark','Circuit','Flare','Pulse','Surge','Prism','Torrent','Nexus','Phantom','Vortex','Tempest','Wraith','Inferno','Oracle','Titan','Arbiter','Celestial','Riftwalker','Mythic'];
+const ZONE_NAMES = ['','Bit','Byte','Kilobyte','Megabyte','Gigabyte','Terabyte','Petabyte','Exabyte','Zettabyte','Yottabyte','∞ Overflow'];
 
 /* unified /api/nexus — replaces both /api/roadmap and /api/skill-tree */
 app.get('/api/nexus', async (req, res) => {
@@ -1477,211 +1496,142 @@ app.get('/api/nexus', async (req, res) => {
 
 /* ========== LEVEL ROADMAP — curated problems per level ========== */
 const LEVEL_TOPICS = [
-  // ── Level 1: Byte (0–800) ── Total: ~40 problems
+  // ── Level 1: Bit (0–800) ── Total: ~110 problems
   { level:1, topics:[
-    {name:'Implementation Basics',tags:['implementation'],count:12,desc:'Basic coding, simulation, and following instructions'},
-    {name:'Math Foundations',tags:['math'],count:10,desc:'Simple arithmetic, divisibility, and number properties'},
-    {name:'String Manipulation',tags:['strings'],count:8,desc:'Character processing, substrings, and parsing'},
-    {name:'Brute Force',tags:['brute force'],count:10,desc:'Exhaustive search, trying all possibilities'},
+    {name:'Implementation Basics',tags:['implementation'],count:20,desc:'Basic coding, simulation, and following instructions'},
+    {name:'Math Foundations',tags:['math'],count:18,desc:'Simple arithmetic, divisibility, and number properties'},
+    {name:'String Manipulation',tags:['strings'],count:15,desc:'Character processing, substrings, and parsing'},
+    {name:'Brute Force',tags:['brute force'],count:18,desc:'Exhaustive search, trying all possibilities'},
+    {name:'Greedy Intro',tags:['greedy'],count:15,desc:'Making locally optimal choices'},
+    {name:'Sorting Basics',tags:['sortings'],count:12,desc:'Simple sorting and ordering'},
+    {name:'Constructive Basics',tags:['constructive algorithms'],count:12,desc:'Building valid solutions step by step'},
   ]},
-  // ── Level 2: Spark (800–900) ── Total: ~45 problems
+  // ── Level 2: Byte (800–1000) ── Total: ~110 problems
   { level:2, topics:[
-    {name:'Greedy Thinking',tags:['greedy'],count:12,desc:'Making locally optimal choices'},
-    {name:'Sorting & Ordering',tags:['sortings'],count:10,desc:'Comparison sorts, custom comparators'},
-    {name:'Constructive Algorithms',tags:['constructive algorithms'],count:10,desc:'Building valid solutions step by step'},
-    {name:'Implementation Practice',tags:['implementation'],count:8,desc:'Moderate simulation and case handling'},
-    {name:'Math & Logic',tags:['math'],count:5,desc:'Pattern recognition and parity arguments'},
+    {name:'Greedy Strategies',tags:['greedy'],count:18,desc:'Exchange arguments, scheduling, interval selection'},
+    {name:'Sorting & Ordering',tags:['sortings'],count:15,desc:'Comparison sorts, custom comparators, multi-key sorting'},
+    {name:'Constructive Algorithms',tags:['constructive algorithms'],count:15,desc:'Building valid solutions via invariants'},
+    {name:'Implementation Practice',tags:['implementation'],count:15,desc:'Moderate simulation and case handling'},
+    {name:'Math & Logic',tags:['math'],count:15,desc:'Pattern recognition, parity, modular arithmetic basics'},
+    {name:'String Processing',tags:['strings'],count:12,desc:'Palindromes, substrings, frequency counting'},
+    {name:'Brute Force & Enumeration',tags:['brute force'],count:12,desc:'Smart enumeration and pruning'},
+    {name:'Number Theory Intro',tags:['number theory'],count:8,desc:'GCD, primes intro, divisibility'},
   ]},
-  // ── Level 3: Circuit (800–1000) ── Total: ~50 problems
+  // ── Level 3: Kilobyte (1000–1200) ── Total: ~110 problems
   { level:3, topics:[
-    {name:'Greedy Strategies',tags:['greedy'],count:12,desc:'Exchange arguments, scheduling, interval selection'},
-    {name:'Brute Force & Enumeration',tags:['brute force'],count:10,desc:'Smart enumeration and pruning'},
-    {name:'Sorting Applications',tags:['sortings'],count:8,desc:'Sorting as preprocessing, median tricks'},
-    {name:'Constructive Proofs',tags:['constructive algorithms'],count:8,desc:'Constructing outputs via invariants'},
-    {name:'Math Patterns',tags:['math'],count:7,desc:'Modular arithmetic, GCD basics'},
-    {name:'Intro Strings',tags:['strings'],count:5,desc:'Palindromes, substrings, frequency counting'},
+    {name:'Dynamic Programming Intro',tags:['dp'],count:18,desc:'Fibonacci, knapsack, LIS, coin change'},
+    {name:'Binary Search',tags:['binary search'],count:15,desc:'Search on sorted arrays and answer spaces'},
+    {name:'Greedy Advanced',tags:['greedy'],count:14,desc:'Complex greedy with proof of correctness'},
+    {name:'Two Pointers & Sliding Window',tags:['two pointers'],count:12,desc:'Sliding window max/min, meet in middle'},
+    {name:'Sorting Applications',tags:['sortings'],count:12,desc:'Sorting as preprocessing, median tricks'},
+    {name:'Number Theory Foundations',tags:['number theory'],count:10,desc:'Sieve, GCD/LCM, modular inverse'},
+    {name:'Data Structures Intro',tags:['data structures'],count:10,desc:'Sets, maps, stacks, priority queues'},
+    {name:'Constructive & Math',tags:['constructive algorithms','math'],count:10,desc:'Constructive solutions with math insight'},
+    {name:'Bitmask Basics',tags:['bitmasks'],count:9,desc:'XOR tricks, subset enumeration, bit manipulation'},
   ]},
-  // ── Level 4: Flare (900–1100) ── Total: ~45 problems
+  // ── Level 4: Megabyte (1200–1400) ── Total: ~115 problems
   { level:4, topics:[
-    {name:'Greedy + Sorting',tags:['greedy','sortings'],count:10,desc:'Greedy on sorted data, scheduling'},
-    {name:'Number Theory Intro',tags:['number theory'],count:8,desc:'Primes, sieve, GCD/LCM, divisors'},
-    {name:'Binary Search Intro',tags:['binary search'],count:7,desc:'Search on sorted arrays and answer spaces'},
-    {name:'Basic DP',tags:['dp'],count:8,desc:'Fibonacci style, simple recurrences'},
-    {name:'Constructive & Math',tags:['constructive algorithms','math'],count:7,desc:'Constructive solutions with math insight'},
-    {name:'Data Structures Intro',tags:['data structures'],count:5,desc:'Sets, maps, stacks, basic usage'},
+    {name:'DP Intermediate',tags:['dp'],count:18,desc:'Subsequence DP, interval DP, LCS, bitmask DP intro'},
+    {name:'Graph Introduction',tags:['graphs','dfs and similar'],count:15,desc:'BFS, DFS, connected components, bipartite check'},
+    {name:'Binary Search Mastery',tags:['binary search'],count:12,desc:'Binary search + greedy, complex predicates'},
+    {name:'Disjoint Set Union',tags:['dsu'],count:10,desc:'Union-Find, connected components online'},
+    {name:'Combinatorics Intro',tags:['combinatorics'],count:10,desc:'Counting principles, nCr, inclusion-exclusion'},
+    {name:'Two Pointers Pro',tags:['two pointers'],count:10,desc:'Merging sorted arrays, partition problems'},
+    {name:'Number Theory Applied',tags:['number theory'],count:10,desc:'Euler totient, modular exponentiation'},
+    {name:'Constructive Hard',tags:['constructive algorithms'],count:10,desc:'Non-trivial constructions'},
+    {name:'Bitmask Techniques',tags:['bitmasks'],count:10,desc:'Bitmask states, subset DP basics'},
+    {name:'String Algorithms Intro',tags:['strings','hashing'],count:10,desc:'String hashing, pattern matching basics'},
   ]},
-  // ── Level 5: Pulse (1000–1200) ── Total: ~50 problems
+  // ── Level 5: Gigabyte (1400–1600) ── Total: ~115 problems
   { level:5, topics:[
-    {name:'Dynamic Programming',tags:['dp'],count:10,desc:'Knapsack, LIS, coin change, grid DP'},
-    {name:'Binary Search Mastery',tags:['binary search'],count:8,desc:'Binary search on answer, parametric search'},
-    {name:'Two Pointers & Sliding Window',tags:['two pointers'],count:7,desc:'Sliding window maximum/minimum, meet in middle'},
-    {name:'Greedy Advanced',tags:['greedy'],count:8,desc:'Complex greedy with proof of correctness'},
-    {name:'Sorting & Comparators',tags:['sortings'],count:7,desc:'Multi-key sorting, inversion counting'},
-    {name:'Data Structures',tags:['data structures'],count:5,desc:'Priority queues, deques, multisets'},
-    {name:'Number Theory',tags:['number theory'],count:5,desc:'Sieve applications, modular inverse'},
+    {name:'Advanced DP',tags:['dp'],count:18,desc:'Tree DP, digit DP, DP on DAGs, bitmask DP'},
+    {name:'Graph Algorithms',tags:['graphs'],count:14,desc:'Shortest paths intro, cycle detection, topological sort'},
+    {name:'DFS & BFS Applications',tags:['dfs and similar'],count:12,desc:'Flood fill, tree traversal, back edges, SCC basics'},
+    {name:'Range Query Structures',tags:['data structures'],count:14,desc:'Segment tree basics, BIT/Fenwick tree'},
+    {name:'Tree Algorithms',tags:['trees'],count:12,desc:'LCA, tree diameter, centroid basics, Euler tour'},
+    {name:'Combinatorics Applied',tags:['combinatorics'],count:10,desc:'Binomial coefficients, Catalan numbers, derangements'},
+    {name:'Binary Search + DS',tags:['binary search','data structures'],count:10,desc:'Segment tree, range queries with search'},
+    {name:'Shortest Paths',tags:['shortest paths'],count:10,desc:'Dijkstra, Bellman-Ford, 0-1 BFS'},
+    {name:'Interactive Problems',tags:['interactive'],count:7,desc:'Binary search queries, adaptive strategies'},
+    {name:'Bitmask DP',tags:['bitmasks','dp'],count:8,desc:'Subset enumeration DP, profile DP intro'},
   ]},
-  // ── Level 6: Surge (1100–1300) ── Total: ~50 problems
+  // ── Level 6: Terabyte (1600–1800) ── Total: ~115 problems
   { level:6, topics:[
-    {name:'DP Foundations',tags:['dp'],count:10,desc:'Interval DP, LCS, bitmask DP intro'},
-    {name:'Binary Search Applications',tags:['binary search'],count:8,desc:'Binary search + greedy, complex predicates'},
-    {name:'Graph Introduction',tags:['graphs','dfs and similar'],count:7,desc:'BFS, DFS, connected components, bipartite check'},
-    {name:'Combinatorics Intro',tags:['combinatorics'],count:5,desc:'Counting principles, nCr, inclusion-exclusion'},
-    {name:'Bitmask Techniques',tags:['bitmasks'],count:6,desc:'XOR tricks, subset enumeration, bit manipulation'},
-    {name:'Two Pointers',tags:['two pointers'],count:6,desc:'Merging sorted arrays, partition problems'},
-    {name:'Constructive Hard',tags:['constructive algorithms'],count:5,desc:'Non-trivial constructions'},
-    {name:'Number Theory',tags:['number theory'],count:5,desc:'Euler totient, modular exponentiation'},
+    {name:'Expert DP',tags:['dp'],count:18,desc:'Convex hull trick, Li Chao tree, aliens trick intro'},
+    {name:'Segment Tree Pro',tags:['data structures'],count:15,desc:'Lazy propagation, persistent segment tree'},
+    {name:'Advanced Graph Theory',tags:['graphs','shortest paths'],count:12,desc:'Min cost flow intro, network modeling'},
+    {name:'Tree Decomposition',tags:['trees'],count:12,desc:'Centroid decomposition, virtual tree, HLD intro'},
+    {name:'String Processing',tags:['strings','hashing'],count:10,desc:'Z-function, KMP, suffix array intro'},
+    {name:'DSU & Connectivity',tags:['dsu'],count:10,desc:'Online connectivity, DSU on tree'},
+    {name:'Number Theory Pro',tags:['number theory'],count:10,desc:'CRT, discrete log, primitive roots'},
+    {name:'Bitmask Mastery',tags:['bitmasks'],count:10,desc:'SOS DP, broken profile DP'},
+    {name:'Combinatorics & Counting',tags:['combinatorics'],count:10,desc:'Inclusion-exclusion, Burnside lemma intro'},
+    {name:'Divide and Conquer',tags:['divide and conquer'],count:8,desc:'CDQ divide and conquer, merge sort tree'},
   ]},
-  // ── Level 7: Prism (1200–1400) ── Total: ~50 problems
+  // ── Level 7: Petabyte (1800–2000) ── Total: ~110 problems
   { level:7, topics:[
-    {name:'DP Intermediate',tags:['dp'],count:10,desc:'Subsequence DP, digit DP intro, transitions'},
-    {name:'Graph Algorithms',tags:['graphs'],count:7,desc:'Shortest paths intro, cycle detection, topological sort'},
-    {name:'DFS & BFS Applications',tags:['dfs and similar'],count:7,desc:'Flood fill, tree traversal, back edges'},
-    {name:'Disjoint Set Union',tags:['dsu'],count:6,desc:'Union-Find, connected components online'},
-    {name:'Binary Search + Data Structures',tags:['binary search','data structures'],count:7,desc:'Segment tree basics, range queries'},
-    {name:'Bitmask DP',tags:['bitmasks','dp'],count:5,desc:'Subset enumeration DP, bitmask states'},
-    {name:'Combinatorics',tags:['combinatorics'],count:5,desc:'Binomial coefficients, Catalan numbers'},
-    {name:'String Algorithms',tags:['strings','hashing'],count:5,desc:'String hashing, pattern matching basics'},
+    {name:'Hard DP',tags:['dp'],count:18,desc:'Profile DP, DP with convex hull trick, connection profile'},
+    {name:'Advanced Data Structures',tags:['data structures'],count:15,desc:'Treap, splay tree, implicit treap'},
+    {name:'Hard Graphs',tags:['graphs','dfs and similar'],count:14,desc:'2-SAT, block-cut tree, dominator tree, SCC applications'},
+    {name:'Hard Combinatorics',tags:['combinatorics','math'],count:12,desc:'Generating functions intro, Polya counting'},
+    {name:'Tree Mastery',tags:['trees'],count:10,desc:'Auxiliary trees, LCT basics, ETT'},
+    {name:'Geometry',tags:['geometry'],count:10,desc:'Convex hull, line sweep, half-plane intersection'},
+    {name:'Game Theory',tags:['games'],count:8,desc:'Sprague-Grundy, nim variants'},
+    {name:'Network Flow',tags:['flows'],count:8,desc:'Max flow, bipartite matching applications'},
+    {name:'Interactive Pro',tags:['interactive'],count:7,desc:'Complex query strategies'},
+    {name:'Probabilities',tags:['probabilities'],count:8,desc:'Expected value, linearity of expectation'},
   ]},
-  // ── Level 8: Torrent (1300–1500) ── Total: ~55 problems
+  // ── Level 8: Exabyte (2000–2200) ── Total: ~105 problems
   { level:8, topics:[
-    {name:'Advanced DP',tags:['dp'],count:12,desc:'Bitmask DP, DP on DAGs, optimization tricks'},
-    {name:'Graph Theory',tags:['graphs','shortest paths'],count:8,desc:'Dijkstra, Bellman-Ford, Floyd-Warshall'},
-    {name:'Segment Trees',tags:['data structures'],count:8,desc:'Point update, range query, lazy propagation'},
-    {name:'DFS Trees & DSU',tags:['dfs and similar','dsu'],count:7,desc:'Bridge finding, articulation points, DSU tricks'},
-    {name:'Binary Search Advanced',tags:['binary search'],count:7,desc:'Median binary search, ternary search'},
-    {name:'Two Pointers + Sorting',tags:['two pointers','sortings'],count:5,desc:'Three-sum, closest pair, merge technique'},
-    {name:'Number Theory Applied',tags:['number theory'],count:5,desc:'CRT intro, multiplicative functions'},
-    {name:'Hashing',tags:['hashing'],count:3,desc:'Rolling hash, collision avoidance'},
+    {name:'Expert DP Techniques',tags:['dp'],count:16,desc:'Lambda optimization, DP with Li Chao tree'},
+    {name:'Expert Data Structures',tags:['data structures'],count:14,desc:'Link-cut tree, wavelet tree, segment tree merging'},
+    {name:'Expert Graph Algorithms',tags:['graphs','dfs and similar'],count:12,desc:'Tarjan SCC, bridge tree, Euler tour HLD'},
+    {name:'Hard Number Theory',tags:['number theory','math'],count:12,desc:'CRT, quadratic residues, NTT, modular systems'},
+    {name:'Divide and Conquer Pro',tags:['divide and conquer'],count:10,desc:'CDQ, persistent divide and conquer'},
+    {name:'Expert Trees',tags:['data structures','trees'],count:10,desc:'Euler tour tree, link-cut applications'},
+    {name:'Probabilities & EV',tags:['probabilities'],count:8,desc:'Markov chains, probability DP'},
+    {name:'Geometry Pro',tags:['geometry'],count:8,desc:'Rotating calipers, Minkowski sum'},
+    {name:'FFT & Polynomials',tags:['fft'],count:8,desc:'NTT applications, polynomial division'},
+    {name:'Matrix Exponentiation',tags:['matrices'],count:7,desc:'Linear recurrence, matrix power'},
   ]},
-  // ── Level 9: Nexus (1400–1600) ── Total: ~55 problems
+  // ── Level 9: Zettabyte (2200–2500) ── Total: ~105 problems
   { level:9, topics:[
-    {name:'DP on Trees & Graphs',tags:['dp','trees'],count:10,desc:'Subtree DP, rerooting, tree DP'},
-    {name:'Advanced Graphs',tags:['graphs','dfs and similar'],count:8,desc:'Strongly connected components, 2-coloring, bridges'},
-    {name:'Range Query Structures',tags:['data structures'],count:8,desc:'Segment tree with lazy, BIT/Fenwick tree'},
-    {name:'Binary Search Mastery',tags:['binary search'],count:7,desc:'Fractional binary search, min-max optimization'},
-    {name:'Tree Algorithms',tags:['trees'],count:6,desc:'LCA, tree diameter, centroid basics'},
-    {name:'Bitmask Problems',tags:['bitmasks'],count:5,desc:'Profile DP, SOS intro, XOR problems'},
-    {name:'Combinatorics Applied',tags:['combinatorics'],count:5,desc:'Derangements, Stirling numbers, counting'},
-    {name:'Interactive Problems',tags:['interactive'],count:4,desc:'Binary search queries, adaptive strategies'},
-    {name:'Shortest Paths',tags:['shortest paths'],count:4,desc:'0-1 BFS, modified Dijkstra'},
+    {name:'Research-Level DP',tags:['dp'],count:16,desc:'Aliens trick, Knuth optimization, WQS binary search'},
+    {name:'Championship Data Structures',tags:['data structures'],count:14,desc:'Persistent structures, segment tree beats'},
+    {name:'Advanced Number Theory',tags:['number theory','math'],count:12,desc:'Mobius inversion, Dirichlet convolution'},
+    {name:'Advanced Combinatorics',tags:['combinatorics'],count:12,desc:'Burnside, Polya enumeration, formal power series'},
+    {name:'Championship Graphs',tags:['graphs','shortest paths'],count:10,desc:'Advanced flow modeling, planarity, virtual graphs'},
+    {name:'Expert Strings',tags:['strings','hashing'],count:10,desc:'Suffix automaton, palindrome tree'},
+    {name:'Complex Bitmask',tags:['bitmasks'],count:8,desc:'Subset sum convolution, zeta/Mobius on subsets'},
+    {name:'Advanced Geometry',tags:['geometry'],count:8,desc:'3D geometry, Voronoi basics'},
+    {name:'Flows & Matching Pro',tags:['flows'],count:8,desc:'Min-cost max-flow applications, Hungarian algorithm'},
+    {name:'Expert Interactive',tags:['interactive'],count:7,desc:'Randomized interactive, adversary arguments'},
   ]},
-  // ── Level 10: Phantom (1400–1700) ── Total: ~55 problems
+  // ── Level 10: Yottabyte (2500–2800) ── Total: ~105 problems
   { level:10, topics:[
-    {name:'DP Mastery',tags:['dp'],count:12,desc:'Complex state DP, DP with data structures'},
-    {name:'Graph Mastery',tags:['graphs'],count:8,desc:'Multi-source BFS, virtual nodes, graph modeling'},
-    {name:'Advanced Data Structures',tags:['data structures'],count:8,desc:'Persistent arrays, merge sort tree intro'},
-    {name:'Tree DP & LCA',tags:['trees'],count:7,desc:'Heavy-light decomposition basics, Euler tour'},
-    {name:'DSU Advanced',tags:['dsu'],count:6,desc:'DSU with rollback, weighted DSU'},
-    {name:'Greedy + Math',tags:['greedy','math'],count:7,desc:'Greedy with mathematical proofs'},
-    {name:'Number Theory',tags:['number theory'],count:5,desc:'Mobius function, multiplicative functions'},
-    {name:'Geometry Intro',tags:['geometry'],count:4,desc:'Cross product, convex hull basics'},
+    {name:'World Finals DP',tags:['dp','graphs','data structures'],count:16,desc:'ICPC World Finals level technique fusion'},
+    {name:'Expert Trees & DS',tags:['trees','data structures'],count:14,desc:'Top tree, Euler tour tree applications'},
+    {name:'Expert Math & NT',tags:['math','number theory'],count:12,desc:'Multivariate polynomials, elliptic curves'},
+    {name:'Advanced Flows',tags:['flows','graphs'],count:10,desc:'Project selection, circulation, flow on grids'},
+    {name:'FFT & Polynomials Pro',tags:['fft'],count:10,desc:'Chirp Z-transform, multipoint evaluation'},
+    {name:'Expert Combinatorics',tags:['combinatorics','math'],count:10,desc:'Matroids, polymatroids, species'},
+    {name:'Matrix & Linear Algebra',tags:['matrices'],count:8,desc:'Matroid intersection, Gaussian elimination'},
+    {name:'Expert Divide & Conquer',tags:['divide and conquer'],count:8,desc:'Persistent D&C, kinetic data structures'},
+    {name:'Complex Constructive',tags:['constructive algorithms'],count:8,desc:'Multi-step constructions, invariant proofs'},
+    {name:'String Suffix Structures',tags:['string suffix structures'],count:9,desc:'Suffix tree, suffix automaton advanced'},
   ]},
-  // ── Level 11: Vortex (1500–1800) ── Total: ~55 problems
+  // ── Level 11: ∞ Overflow (2800–3500) ── Total: ~105 problems
   { level:11, topics:[
-    {name:'Advanced DP Techniques',tags:['dp'],count:12,desc:'Divide & conquer DP, Knuth optimization intro'},
-    {name:'Advanced Trees',tags:['trees','data structures'],count:8,desc:'HLD, centroid decomposition, Euler tour tricks'},
-    {name:'Graph Algorithms Pro',tags:['graphs','dfs and similar'],count:8,desc:'Block-cut trees, 2-SAT intro, Euler paths'},
-    {name:'Combinatorics & Counting',tags:['combinatorics'],count:7,desc:'Inclusion-exclusion, Burnside lemma intro'},
-    {name:'Two Pointers & Sorting Pro',tags:['two pointers','sortings'],count:6,desc:'Complex sweep line, merge-based counting'},
-    {name:'Binary Search + Greedy',tags:['binary search','greedy'],count:7,desc:'Parametric search, min-cost problems'},
-    {name:'Probabilities',tags:['probabilities'],count:4,desc:'Expected value, linearity of expectation'},
-    {name:'Divide and Conquer',tags:['divide and conquer'],count:4,desc:'CDQ divide and conquer, merge sort tree'},
-  ]},
-  // ── Level 12: Tempest (1600–1900) ── Total: ~55 problems
-  { level:12, topics:[
-    {name:'Expert DP',tags:['dp'],count:12,desc:'Convex hull trick, Li Chao tree, aliens trick'},
-    {name:'Segment Tree Pro',tags:['data structures'],count:10,desc:'Persistent segment tree, segment tree beats'},
-    {name:'Advanced Graph Theory',tags:['graphs','shortest paths'],count:8,desc:'Min cost flow intro, network modeling'},
-    {name:'Tree Decomposition',tags:['trees'],count:7,desc:'Centroid decomposition applications, virtual tree'},
-    {name:'String Processing',tags:['strings','hashing'],count:6,desc:'Z-function, KMP, suffix array intro'},
-    {name:'DSU & Connectivity',tags:['dsu'],count:5,desc:'Online connectivity, DSU on tree'},
-    {name:'Number Theory Pro',tags:['number theory'],count:5,desc:'Discrete log, primitive roots'},
-    {name:'Bitmask Mastery',tags:['bitmasks'],count:5,desc:'SOS DP, broken profile DP'},
-  ]},
-  // ── Level 13: Wraith (1700–2000) ── Total: ~50 problems
-  { level:13, topics:[
-    {name:'Hard DP',tags:['dp'],count:12,desc:'Profile DP, DP with convex hull trick'},
-    {name:'Advanced Data Structures',tags:['data structures'],count:10,desc:'Treap, splay tree, implicit treap'},
-    {name:'Hard Graphs',tags:['graphs','dfs and similar'],count:8,desc:'2-SAT, block-cut tree, dominator tree'},
-    {name:'Hard Combinatorics',tags:['combinatorics','math'],count:7,desc:'Generating functions intro, Polya counting'},
-    {name:'Tree Mastery',tags:['trees'],count:6,desc:'Auxiliary trees, LCT basics'},
-    {name:'Geometry',tags:['geometry'],count:5,desc:'Line sweep, half-plane intersection'},
-    {name:'Game Theory',tags:['games'],count:4,desc:'Sprague-Grundy, nim variants'},
-    {name:'Interactive Pro',tags:['interactive'],count:4,desc:'Complex query strategies'},
-  ]},
-  // ── Level 14: Inferno (1800–2100) ── Total: ~50 problems
-  { level:14, topics:[
-    {name:'Expert DP Techniques',tags:['dp'],count:12,desc:'Connection profile, lambda optimization'},
-    {name:'Expert Data Structures',tags:['data structures'],count:10,desc:'Link-cut tree, wavelet tree intro'},
-    {name:'Network Flow',tags:['graphs','flows'],count:6,desc:'Max flow, bipartite matching, Hungarian'},
-    {name:'Hard Graph Algorithms',tags:['graphs','dfs and similar'],count:8,desc:'Tarjan SCC, bridge tree, Euler tour'},
-    {name:'Hard Number Theory',tags:['number theory','math'],count:6,desc:'CRT, quadratic residues, NTT'},
-    {name:'Divide and Conquer Pro',tags:['divide and conquer'],count:5,desc:'CDQ, persistent divide and conquer'},
-    {name:'Probabilities & Expected Value',tags:['probabilities'],count:4,desc:'Markov chains, probability DP'},
-    {name:'Geometry Pro',tags:['geometry'],count:4,desc:'Rotating calipers, Minkowski sum'},
-  ]},
-  // ── Level 15: Oracle (1900–2200) ── Total: ~50 problems
-  { level:15, topics:[
-    {name:'Research-Level DP',tags:['dp'],count:12,desc:'Aliens trick, Knuth optimization, WQS binary search'},
-    {name:'Expert Trees & DS',tags:['data structures','trees'],count:10,desc:'Euler tour tree, link-cut applications'},
-    {name:'Advanced Number Theory',tags:['number theory','math'],count:8,desc:'Mobius inversion, Dirichlet convolution'},
-    {name:'Advanced Combinatorics',tags:['combinatorics'],count:7,desc:'Burnside, Polya enumeration, formal power series'},
-    {name:'Advanced Graphs',tags:['graphs','shortest paths'],count:6,desc:'Advanced flow modeling, planarity'},
-    {name:'Complex Constructive',tags:['constructive algorithms'],count:5,desc:'Multi-step constructions, invariant proofs'},
-    {name:'Interactive Expert',tags:['interactive'],count:4,desc:'Information-theoretic bounds, adaptive queries'},
-  ]},
-  // ── Level 16: Titan (2000–2400) ── Total: ~55 problems
-  { level:16, topics:[
-    {name:'IOI/ICPC DP',tags:['dp'],count:12,desc:'Multi-technique DP, optimization on DP transitions'},
-    {name:'Championship Data Structures',tags:['data structures'],count:10,desc:'Segment tree merging, persistent structures'},
-    {name:'Championship Graphs',tags:['graphs','dfs and similar'],count:8,desc:'Complex graph modeling, virtual graphs'},
-    {name:'Expert Combinatorics',tags:['combinatorics','math'],count:7,desc:'Generating functions, polynomial operations'},
-    {name:'Expert Trees',tags:['trees'],count:6,desc:'Heavy path optimization, AHU algorithm'},
-    {name:'Flows & Matching',tags:['flows'],count:5,desc:'Min-cost max-flow applications'},
-    {name:'Complex Divide & Conquer',tags:['divide and conquer'],count:5,desc:'Merge sort tree, offline algorithms'},
-    {name:'Matrix Exponentiation',tags:['matrices'],count:4,desc:'Linear recurrence, matrix power'},
-  ]},
-  // ── Level 17: Arbiter (2100–2500) ── Total: ~50 problems
-  { level:17, topics:[
-    {name:'Expert DP Systems',tags:['dp','data structures'],count:12,desc:'DP with Li Chao tree, explicit DAG DP'},
-    {name:'Expert Graph Theory',tags:['graphs','trees','dsu'],count:8,desc:'Dynamic connectivity, LCT applications'},
-    {name:'Expert Math & NT',tags:['math','number theory'],count:8,desc:'Multivariate polynomials, sum of squares'},
-    {name:'Expert Strings',tags:['strings','hashing'],count:6,desc:'Suffix automaton, palindrome tree'},
-    {name:'Complex Bitmask',tags:['bitmasks'],count:5,desc:'Subset sum convolution, zeta/Mobius on subsets'},
-    {name:'Advanced Geometry',tags:['geometry'],count:5,desc:'3D geometry, Voronoi basics'},
-    {name:'Expert Interactive',tags:['interactive'],count:4,desc:'Randomized interactive, adversary arguments'},
-    {name:'Expert Divide & Conquer',tags:['divide and conquer'],count:4,desc:'Advanced CDQ, offline with rollback'},
-  ]},
-  // ── Level 18: Celestial (2200–2600) ── Total: ~45 problems
-  { level:18, topics:[
-    {name:'Grandmaster DP',tags:['dp','data structures','graphs'],count:10,desc:'Top-tier competition DP combinations'},
-    {name:'Expert Data Structures',tags:['data structures'],count:8,desc:'Wavelet tree, persistent LCT'},
-    {name:'Grandmaster Combinatorics',tags:['combinatorics','math'],count:7,desc:'Formal power series advanced, species'},
-    {name:'Expert Number Theory',tags:['number theory','math'],count:6,desc:'Elliptic curves, factorization algorithms'},
-    {name:'Expert Graphs',tags:['graphs','trees'],count:6,desc:'Gomory-Hu tree, Steiner tree'},
-    {name:'Probabilities Expert',tags:['probabilities'],count:4,desc:'Martingales, Chernoff bounds'},
-    {name:'Complex Geometry',tags:['geometry'],count:4,desc:'3D convex hull, Minkowski sum advanced'},
-  ]},
-  // ── Level 19: Riftwalker (2400–2800) ── Total: ~45 problems
-  { level:19, topics:[
-    {name:'World Finals DP',tags:['dp','graphs','data structures'],count:10,desc:'ICPC World Finals level technique fusion'},
-    {name:'Expert Trees & DS',tags:['trees','data structures'],count:8,desc:'Top tree, Euler tour tree applications'},
-    {name:'Advanced Flows',tags:['flows','graphs'],count:6,desc:'Project selection, circulation, flow on grids'},
-    {name:'FFT & Polynomials',tags:['fft'],count:5,desc:'NTT, polynomial division, multipoint eval'},
-    {name:'Expert Combinatorics',tags:['combinatorics','math'],count:6,desc:'Matroids, polymatroids'},
-    {name:'Matrix & Linear Algebra',tags:['matrices'],count:5,desc:'Matroid intersection, Gaussian elimination'},
-    {name:'Expert Divide & Conquer',tags:['divide and conquer'],count:5,desc:'Persistent D&C, kinetic data structures'},
-  ]},
-  // ── Level 20: Mythic (2600–3500) ── Total: ~45 problems
-  { level:20, topics:[
-    {name:'Legendary DP',tags:['dp'],count:10,desc:'The hardest DP problems ever created'},
-    {name:'Legendary Data Structures',tags:['data structures'],count:8,desc:'Novel data structure combinations'},
-    {name:'Legendary Graphs',tags:['graphs','trees'],count:7,desc:'Exotic graph algorithms, planar graphs'},
-    {name:'Advanced FFT & Polynomials',tags:['fft'],count:5,desc:'Chirp Z-transform, subset convolution'},
-    {name:'Legendary Combinatorics',tags:['combinatorics','math'],count:5,desc:'Advanced species, operad theory'},
-    {name:'Advanced Geometry',tags:['geometry'],count:4,desc:'Algebraic geometry, higher-dim structures'},
-    {name:'Legendary Interactive',tags:['interactive'],count:3,desc:'Information-theoretic lower bound problems'},
-    {name:'String Suffix Structures',tags:['string suffix structures'],count:3,desc:'Suffix tree, suffix automaton advanced'},
+    {name:'Legendary DP',tags:['dp'],count:16,desc:'The hardest DP problems ever created'},
+    {name:'Legendary Data Structures',tags:['data structures'],count:14,desc:'Novel data structure combinations'},
+    {name:'Legendary Graphs',tags:['graphs','trees'],count:14,desc:'Exotic graph algorithms, planar graphs'},
+    {name:'Advanced FFT & Polynomials',tags:['fft'],count:10,desc:'Subset convolution, partition function'},
+    {name:'Legendary Combinatorics',tags:['combinatorics','math'],count:12,desc:'Advanced species, operad theory'},
+    {name:'Advanced Geometry',tags:['geometry'],count:10,desc:'Algebraic geometry, higher-dim structures'},
+    {name:'Legendary Math',tags:['math','number theory'],count:10,desc:'Research-level number theory and algebra'},
+    {name:'Legendary Interactive',tags:['interactive'],count:8,desc:'Information-theoretic lower bound problems'},
+    {name:'Legendary Strings',tags:['string suffix structures','hashing'],count:8,desc:'Suffix tree advanced, eertree applications'},
+    {name:'Expert Games',tags:['games'],count:5,desc:'Complex game theory, Sprague-Grundy on graphs'},
   ]},
 ];
 
@@ -1775,11 +1725,11 @@ app.get('/api/roadmap', async (req, res) => {
       const problems = await all(`SELECT p.*, COALESCE(pr.status,'unsolved') as solve_status
         FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id
         WHERE p.rating >= ? AND p.rating <= ? AND p.rating > 0
-        ORDER BY p.rating ASC, RANDOM() LIMIT ?`, [rl.minR, rl.maxR, rl.count]);
+        ORDER BY p.rating ASC, RANDOM() LIMIT 30`, [rl.minR, rl.maxR]);
       const solvedCount = problems.filter(p => p.solve_status === 'solved').length;
       result.push({
         level: rl.level, title: rl.name, subtitle: `Rating ${rl.minR}–${rl.maxR}`,
-        minR: rl.minR, maxR: rl.maxR, count: rl.count,
+        minR: rl.minR, maxR: rl.maxR, count: 30,
         xpRequired: rl.xp, probsRequired: rl.minProblems,
         color: rl.color, glow: rl.glow, problems, solvedCount,
         totalCount: problems.length,

@@ -24,6 +24,14 @@ const App = {
   _cmdFiltered: [],
   _cmdSelectedIdx: 0,
 
+  // Gamified solve state
+  _solveTimerInterval: null,
+  _solveSecondsElapsed: 0,
+  _solveAttempts: 0,
+  _solveCombo: 0,
+  _comboPopupTimer: null,
+  _baseXpReward: 0,
+
   // Language state
   _currentLang: 'cpp',
   _langIconMap: { cpp: 'icon-lang-cpp', python: 'icon-lang-python', java: 'icon-lang-java', javascript: 'icon-lang-js' },
@@ -70,7 +78,7 @@ const App = {
     this.initResizer();
     await this._initSocial();
     await this._loadAndApplySettings();
-    if (!location.hash) location.hash = '#/dashboard';
+    if (!location.hash) location.hash = '#/hub';
     else this.route();
     this._updateSidebarPlayer();
     // Auto-sync problems silently in background on every page load
@@ -87,19 +95,23 @@ const App = {
     const modEl = document.getElementById('bootModules');
     const nodeEl = document.getElementById('bootNodes');
     const latEl = document.getElementById('bootLatency');
+    const logEl = document.getElementById('bootLog');
+    const keys = document.querySelectorAll('.boot-key');
     if (!bar || !status) return;
 
     // Matrix canvas background
     this._bootMatrix();
 
     const steps = [
-      { pct: 10, text: 'Booting kernel...', cmd: 'nexora init --env=production', mods: 12, nodes: 1, lat: 142 },
-      { pct: 25, text: 'Loading modules...', cmd: 'load core.module --parallel', mods: 47, nodes: 3, lat: 98 },
-      { pct: 40, text: 'Connecting to Nexus...', cmd: 'connect nexus://api.nexora.dev', mods: 83, nodes: 5, lat: 67 },
-      { pct: 55, text: 'Syncing problem bank...', cmd: 'sync --source=leetcode,codeforces', mods: 121, nodes: 8, lat: 45 },
-      { pct: 70, text: 'Building knowledge graph...', cmd: 'graph build --nodes=142 --edges=891', mods: 142, nodes: 12, lat: 32 },
-      { pct: 85, text: 'Compiling shaders...', cmd: 'compile render.glsl --optimize', mods: 168, nodes: 16, lat: 18 },
-      { pct: 95, text: 'Entering the Nexus...', cmd: 'nexora launch --mode=explore', mods: 186, nodes: 18, lat: 8 },
+      { pct: 8,  text: 'KERNEL BOOT', cmd: 'nexora --init --kernel', mods: 6,  nodes: 1, lat: 220, log: '[SYS] kernel v4.2.1 loaded', logType: 'ok', key: 0 },
+      { pct: 18, text: 'NETWORK SYNC', cmd: 'net.connect(nexus://core)', mods: 24, nodes: 2, lat: 180, log: '[NET] handshake established', logType: 'ok', key: 1 },
+      { pct: 32, text: 'LOADING MODULES', cmd: 'import { core, render, ai }', mods: 58, nodes: 4, lat: 142, log: '[SYS] 58 modules resolved', logType: 'ok' },
+      { pct: 45, text: 'GPU INIT', cmd: 'gpu.compile(shaders/*.glsl)', mods: 89, nodes: 6, lat: 98,  log: '[GFX] WebGL2 renderer active', logType: 'ok', key: 2 },
+      { pct: 58, text: 'AI SUBSYSTEM',  cmd: 'ai.load(model="nexora-v3")', mods: 112, nodes: 9, lat: 72, log: '[AI] neural engine online', logType: 'ok', key: 3 },
+      { pct: 70, text: 'DATABASE LINK', cmd: 'db.sync(problems, progress)', mods: 138, nodes: 12, lat: 52, log: '[DB] 2847 records synced', logType: 'ok', key: 4 },
+      { pct: 82, text: 'BUILDING GRAPH', cmd: 'graph.build(nodes=142)', mods: 158, nodes: 15, lat: 28,  log: '[SYS] knowledge graph ready', logType: 'ok' },
+      { pct: 92, text: 'FINAL CHECKS',  cmd: 'verify --checksum --integrity', mods: 178, nodes: 17, lat: 12, log: '[SYS] all systems nominal', logType: 'ok' },
+      { pct: 98, text: 'LAUNCHING',     cmd: 'nexora.launch()', mods: 186, nodes: 18, lat: 4,   log: '[>>>] entering the nexus...', logType: 'warn' },
     ];
 
     let i = 0;
@@ -127,6 +139,17 @@ const App = {
       requestAnimationFrame(step);
     };
 
+    const addLog = (text, type) => {
+      if (!logEl) return;
+      const line = document.createElement('div');
+      line.className = 'boot-log-line';
+      const colorClass = type === 'warn' ? 'warn' : type === 'err' ? 'err' : 'ok';
+      line.innerHTML = text.replace(/\[(.*?)\]/, `[<span class="${colorClass}">$1</span>]`);
+      logEl.appendChild(line);
+      // Keep only last 4 lines visible
+      while (logEl.children.length > 4) logEl.removeChild(logEl.firstChild);
+    };
+
     const tick = setInterval(() => {
       if (i >= steps.length) { clearInterval(tick); return; }
       const s = steps[i];
@@ -136,6 +159,8 @@ const App = {
       animateNum(modEl, s.mods);
       animateNum(nodeEl, s.nodes);
       animateNum(latEl, s.lat);
+      if (s.log) addLog(s.log, s.logType);
+      if (s.key !== undefined && keys[s.key]) keys[s.key].classList.add('active');
       i++;
     }, 320);
   },
@@ -190,9 +215,11 @@ const App = {
     const bar = document.getElementById('bootBarFill');
     if (bar) bar.style.width = '100%';
     const status = document.getElementById('bootStatus');
-    if (status) status.textContent = '● System online';
+    if (status) { status.textContent = '● SYSTEM ONLINE'; status.style.color = '#10b981'; }
     const cmd = document.getElementById('bootCmd');
-    if (cmd) cmd.textContent = 'nexora ready ✓';
+    if (cmd) cmd.textContent = 'ready ✓';
+    // Activate all remaining keys
+    document.querySelectorAll('.boot-key').forEach(k => k.classList.add('active'));
     const modEl = document.getElementById('bootModules');
     const nodeEl = document.getElementById('bootNodes');
     const latEl = document.getElementById('bootLatency');
@@ -209,7 +236,7 @@ const App = {
     try {
       const res = await API.sync('all');
       if (res.ok && res.inserted > 0) {
-        this.toast(`Synced ${res.inserted} new problems`, 'info');
+        this.toast(`[sync] pulled ${res.inserted} new problems`, 'info');
       }
     } catch {}
   },
@@ -239,7 +266,7 @@ const App = {
       sidebar.classList.remove('sidebar-minimized');
     }
     switch (page) {
-      case 'dashboard': this.renderDashboard(content); break;
+      case 'dashboard': this.renderHub(content); break;
       case 'problems': this.renderProblems(content); break;
       case 'nexus': this.renderNexus(content); break;
       case 'contests': this.renderContests(content); break;
@@ -262,8 +289,8 @@ const App = {
         break;
       case 'workshop': this.renderWorkshop(content); break;
       case 'social': this.renderSocial(content); break;
-      case 'profile': this.renderProfile(content); break;
-      default: this.renderDashboard(content);
+      case 'hub': this.renderHub(content); break;
+      default: this.renderHub(content);
     }
   },
 
@@ -302,91 +329,251 @@ const App = {
   },
 
   /* ===================================================
-     DASHBOARD
+     COMMAND CENTER — Unified Hub (Dashboard + Profile)
      =================================================== */
-  async renderDashboard(el) {
+  _hubTab: 'overview',
+
+  // Section definitions for the customize panel
+  _hubSections: [
+    { key: 'today', label: 'daily.log', icon: 'icon-clock', desc: 'Progress rings & goal tracker' },
+    { key: 'challenges', label: 'quests[]', icon: 'icon-sword', desc: 'Daily challenge missions' },
+    { key: 'momentum', label: 'momentum', icon: 'icon-trending', desc: 'Rating climb & weekly bars' },
+    { key: 'stats', label: 'sys.stats', icon: 'icon-chart', desc: 'Core metrics at a glance' },
+    { key: 'streak', label: 'streak.log', icon: 'icon-fire', desc: 'Streak tracker & calendar' },
+    { key: 'analytics', label: 'analytics', icon: 'icon-target', desc: 'Uptime, peaks & languages' },
+    { key: 'activity', label: 'heatmap', icon: 'icon-calendar', desc: 'Activity heatmap & subs' },
+    { key: 'charts', label: 'charts', icon: 'icon-arena', desc: 'Rating & verdict doughnuts' },
+    { key: 'skillradar', label: 'skill.radar()', icon: 'icon-target', desc: 'Tag distribution & weak areas' },
+    { key: 'battlelog', label: 'battle.log', icon: 'icon-sword', desc: 'Boss kills & speed analysis' },
+    { key: 'insights', label: 'ai.insights', icon: 'icon-neural', desc: 'AI-generated perf tips' },
+  ],
+
+  async renderHub(el) {
+    const activeTab = this._hubTab || 'overview';
+    el.innerHTML = `
+      <div class="hub-header">
+        <div class="hub-header-left">
+          <h1 class="hub-title"><i class="icon-dashboard" style="font-size:28px"></i> <span class="glitch" data-text="Command Center">Command Center</span></h1>
+          <p class="hub-subtitle">sys.init() => load_modules(stats, profile, activity)</p>
+        </div>
+        <div class="hub-header-actions">
+          <button class="btn btn-ghost btn-sm" onclick="App.openSettings()"><i class="icon-settings" style="font-size:13px"></i> ./config</button>
+          <button class="btn btn-secondary btn-sm" onclick="App.syncSolvedProblems()"><i class="icon-sync" style="font-size:13px"></i> git pull</button>
+          <button class="btn btn-primary btn-sm" onclick="App._openCustomizePanel()" id="hubCustomizeBtn"><i class="icon-dashboard" style="font-size:13px"></i> layout</button>
+        </div>
+      </div>
+      <div class="hub-tabs">
+        <button class="hub-tab ${activeTab === 'overview' ? 'active' : ''}" onclick="App._switchHubTab('overview')">
+          <i class="icon-dashboard"></i> ~/overview
+        </button>
+        <button class="hub-tab ${activeTab === 'profile' ? 'active' : ''}" onclick="App._switchHubTab('profile')">
+          <i class="icon-profile"></i> /profile --achievements
+        </button>
+      </div>
+      <div class="hub-content" id="hubContent"></div>`;
+
+    const hubContent = document.getElementById('hubContent');
+    if (activeTab === 'overview') {
+      await this._renderHubOverview(hubContent);
+    } else {
+      await this._renderHubProfile(hubContent);
+    }
+  },
+
+  _switchHubTab(tab) {
+    this._hubTab = tab;
+    // Animate tab switch
+    const content = document.getElementById('hubContent');
+    if (content) {
+      content.classList.add('hub-content-exit');
+      setTimeout(() => {
+        this.renderHub(document.getElementById('pageContent'));
+      }, 150);
+    } else {
+      this.renderHub(document.getElementById('pageContent'));
+    }
+  },
+
+  async _renderHubProfile(el) {
+    el.innerHTML = `
+      <div class="hub-profile-section">
+        <div class="hub-profile-hero" id="hubProfileHero">
+          <div class="hub-profile-avatar" style="font-size:48px;display:flex;align-items:center;justify-content:center;width:80px;height:80px;background:var(--glass);border-radius:16px;border:1px solid var(--glass-border)"><i class="icon-profile"></i></div>
+          <div class="hub-profile-info">
+            <div class="hub-profile-stats-row" id="hubProfileQuickStats"></div>
+          </div>
+        </div>
+        <div class="card mb-3" id="rankProgressionCard">
+          <div class="card-header"><span class="card-title"><i class="icon-medal" style="font-size:16px"></i> rank.progression</span></div>
+          <div class="rank-progression" id="rankProgression"></div>
+        </div>
+        <div class="card mb-3">
+          <div class="card-header"><span class="card-title"><i class="icon-trophy" style="font-size:16px"></i> achievements[]</span>
+            <span class="badge badge-xp" id="achieveCountBadge">0/0</span></div>
+          <div class="achievements-grid" id="achievementsGrid"></div>
+        </div>
+        <div class="profile-grid">
+          <div class="card">
+            <div class="card-header"><span class="card-title"><i class="icon-chart" style="font-size:16px"></i> platform.dist()</span></div>
+            <div class="chart-container"><canvas id="platformChart"></canvas></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><span class="card-title"><i class="icon-star" style="font-size:16px"></i> player.stats</span></div>
+            <div id="solveStats"></div>
+          </div>
+        </div>
+      </div>`;
+
+    const [stats, settings] = await Promise.all([API.getStats(), API.getSettings()]);
+    if (!stats.ok) return;
+
+    // Quick stats row in hero
+    const qsEl = document.getElementById('hubProfileQuickStats');
+    if (qsEl) {
+      qsEl.innerHTML = `
+        <div class="hub-pstat"><span class="hub-pstat-val">${stats.solved}</span><span class="hub-pstat-lbl">Solved</span></div>
+        <div class="hub-pstat"><span class="hub-pstat-val">${stats.accuracy}%</span><span class="hub-pstat-lbl">Accuracy</span></div>
+        <div class="hub-pstat"><span class="hub-pstat-val">${stats.totalXp.toLocaleString()}</span><span class="hub-pstat-lbl">Total XP</span></div>
+        <div class="hub-pstat"><span class="hub-pstat-val">${stats.streak.current}</span><span class="hub-pstat-lbl">Day Streak</span></div>`;
+    }
+
+    // Rank Progression
+    if (stats.allTitles?.length) {
+      const rpEl = document.getElementById('rankProgression');
+      let rpHtml = '';
+      const currentLvl = stats.level.level;
+      for (let i = 0; i < stats.allTitles.length; i++) {
+        const t = stats.allTitles[i];
+        const lvlNum = i + 1;
+        const reached = currentLvl >= lvlNum;
+        const isCurrent = currentLvl === lvlNum;
+        rpHtml += `
+          <div class="rank-node ${isCurrent ? 'rank-current' : ''}">
+            <div class="rank-dot ${reached ? 'reached' : ''} ${isCurrent ? 'current' : ''}" style="background:${t.color}${reached ? '' : ';opacity:0.3'};${reached && t.glow !== 'none' ? 'box-shadow:' + t.glow : ''}">
+              <span class="rank-badge">${t.badge || ''}</span>
+            </div>
+            <div class="rank-name" style="color:${t.color}">${lvlNum}. ${t.title}</div>
+            <div class="rank-xp">${t.min_xp.toLocaleString()} XP · ${(t.min_problems||0).toLocaleString()} solved</div>
+          </div>`;
+        if (i < stats.allTitles.length - 1) {
+          rpHtml += `<div class="rank-connector ${reached ? 'reached' : ''}"></div>`;
+        }
+      }
+      rpEl.innerHTML = rpHtml;
+    }
+
+    // Achievements
+    const unlocked = stats.achievements.filter(a => a.unlocked_at).length;
+    document.getElementById('achieveCountBadge').textContent = `${unlocked}/${stats.achievements.length}`;
+    const achvGrid = document.getElementById('achievementsGrid');
+    achvGrid.innerHTML = stats.achievements.map(a => {
+      const isUnlocked = !!a.unlocked_at;
+      const pct = Math.min(100, Math.round(a.progress / a.target * 100));
+      const icon = this._achieveIconMap[a.icon] || '<i class="icon-medal"></i>';
+      return `
+        <div class="achievement-card ${isUnlocked ? 'unlocked' : 'locked'}">
+          <div class="achievement-icon-wrap">${icon}</div>
+          <div class="achievement-title">${a.title}</div>
+          <div class="achievement-desc">${a.description}</div>
+          <div class="achievement-xp-reward">+${a.xp_reward || 0} XP</div>
+          <div class="achievement-progress"><div class="achievement-progress-fill" style="width:${pct}%"></div></div>
+          <div class="text-sm text-muted mt-2">${a.progress}/${a.target}</div>
+        </div>`;
+    }).join('');
+
+    // Platform Chart
+    if (stats.platformDist.length) {
+      const ctx = document.getElementById('platformChart');
+      if (this.charts.platform) this.charts.platform.destroy();
+      this.charts.platform = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: stats.platformDist.map(d => d.platform === 'codeforces' ? 'Codeforces' : 'CodeChef'),
+          datasets: [{ data: stats.platformDist.map(d => d.count), backgroundColor: ['#fcd34d', '#a78bfa'], borderWidth: 0 }],
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8' } } } },
+      });
+    }
+
+    // Statistics
+    document.getElementById('solveStats').innerHTML = `
+      <div style="display:grid;gap:12px;padding:12px 0">
+        <div class="flex items-center gap-3">
+          <span class="stat-icon green" style="width:36px;height:36px"><i class="icon-check" style="font-size:16px"></i></span>
+          <div><div style="font-size:18px;font-weight:700">${stats.solved}</div><div class="text-sm text-muted">Problems Solved</div></div>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="stat-icon amber" style="width:36px;height:36px"><i class="icon-target" style="font-size:16px"></i></span>
+          <div><div style="font-size:18px;font-weight:700">${stats.accuracy}%</div><div class="text-sm text-muted">Accuracy</div></div>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="stat-icon purple" style="width:36px;height:36px"><i class="icon-bolt" style="font-size:16px"></i></span>
+          <div><div style="font-size:18px;font-weight:700">${stats.totalXp}</div><div class="text-sm text-muted">Total XP</div></div>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="stat-icon blue" style="width:36px;height:36px"><i class="icon-fire" style="font-size:16px"></i></span>
+          <div><div style="font-size:18px;font-weight:700">${stats.streak.current}</div><div class="text-sm text-muted">Day Streak (Best: ${stats.streak.best})</div></div>
+        </div>
+      </div>`;
+  },
+
+  async _renderHubOverview(el) {
     const layoutData = await API.getDashboardLayout();
     const layout = layoutData.ok ? layoutData.layout : {};
     const isHidden = (section) => layout[section] === false;
-    const toggleBtn = (section, label) => `
-      <button class="dash-toggle-btn" onclick="App._toggleDashSection('${section}')" title="${isHidden(section) ? 'Show' : 'Hide'} ${label}">
-        <i class="icon-${isHidden(section) ? 'eye-off' : 'eye'}"></i>
-      </button>`;
 
-    el.innerHTML = `
-      <div class="page-header dash-header-row">
-        <div>
-          <h1><i class="icon-dashboard" style="font-size:28px"></i> Dashboard</h1>
-          <p>Your command center — track every metric that matters</p>
-        </div>
-        <button class="btn btn-ghost btn-sm" onclick="App._resetDashLayout()" title="Reset Layout">
-          <i class="icon-reset"></i> Reset
-        </button>
-      </div>
-      <div id="playerHud"></div>
-      <div class="dash-section ${isHidden('today') ? 'collapsed' : ''}" data-section="today">
-        <div class="dash-section-toggle">${toggleBtn('today', 'Today')}</div>
-        <div id="todaySummarySection"></div>
-      </div>
-      <div class="dash-section ${isHidden('quicknav') ? 'collapsed' : ''}" data-section="quicknav">
-        <div class="dash-section-toggle">${toggleBtn('quicknav', 'Quick Actions')}</div>
-        <div id="quickActionsSection"></div>
-      </div>
-      <div class="dash-section ${isHidden('challenges') ? 'collapsed' : ''}" data-section="challenges">
-        <div class="dash-section-toggle">${toggleBtn('challenges', 'Daily Challenges')}</div>
-        <div id="dailyChallengesSection"></div>
-      </div>
-      <div class="dash-section ${isHidden('momentum') ? 'collapsed' : ''}" data-section="momentum">
-        <div class="dash-section-toggle">${toggleBtn('momentum', 'Momentum')}</div>
-        <div id="momentumSection"></div>
-      </div>
-      <div class="dash-section ${isHidden('stats') ? 'collapsed' : ''}" data-section="stats">
-        <div class="dash-section-toggle">${toggleBtn('stats', 'Stats')}</div>
-        <div class="stats-grid" id="statsGrid"></div>
-      </div>
-      <div class="dash-section ${isHidden('streak') ? 'collapsed' : ''}" data-section="streak">
-        <div class="dash-section-toggle">${toggleBtn('streak', 'Streak')}</div>
-        <div id="streakSection"></div>
-      </div>
-      <div class="dash-section ${isHidden('analytics') ? 'collapsed' : ''}" data-section="analytics">
-        <div class="dash-section-toggle">${toggleBtn('analytics', 'Analytics')}</div>
-        <div id="analyticsSection"></div>
-      </div>
-      <div class="dash-section ${isHidden('activity') ? 'collapsed' : ''}" data-section="activity">
-        <div class="dash-section-toggle">${toggleBtn('activity', 'Activity')}</div>
-        <div class="dashboard-grid">
-          <div class="card">
-            <div class="card-header"><span class="card-title"><i class="icon-calendar" style="font-size:16px"></i> Activity Heatmap</span>
-              <span class="text-sm text-muted" id="heatmapLabel"></span></div>
-            <div class="heatmap-container" id="heatmapContainer"></div>
+    // Determine section order
+    const defaultOrder = this._hubSections.map(s => s.key);
+    const order = Array.isArray(layout._order) ? layout._order.filter(k => defaultOrder.includes(k)) : defaultOrder;
+    // Add any missing sections at the end
+    for (const k of defaultOrder) { if (!order.includes(k)) order.push(k); }
+
+    // Section HTML templates
+    const sectionHtml = {
+      today: `<div id="todaySummarySection"></div>`,
+      challenges: `<div id="dailyChallengesSection"></div>`,
+      momentum: `<div id="momentumSection"></div>`,
+      stats: `<div class="stats-grid" id="statsGrid"></div>`,
+      streak: `<div id="streakSection"></div>`,
+      analytics: `<div id="analyticsSection"></div>`,
+      activity: `<div class="card">
+          <div class="card-header">
+            <span class="card-title"><i class="icon-calendar" style="font-size:16px"></i> heatmap.render()</span>
+            <span class="text-sm text-muted" id="heatmapLabel"></span>
           </div>
+          <div class="heatmap-container" id="heatmapContainer"></div>
+        </div>`,
+      charts: `<div class="dashboard-grid mt-3">
           <div class="card">
-            <div class="card-header"><span class="card-title"><i class="icon-send" style="font-size:16px"></i> Recent Submissions</span></div>
-            <div id="recentSubmissions"></div>
-          </div>
-        </div>
-      </div>
-      <div class="dash-section ${isHidden('charts') ? 'collapsed' : ''}" data-section="charts">
-        <div class="dash-section-toggle">${toggleBtn('charts', 'Charts')}</div>
-        <div class="dashboard-grid mt-3">
-          <div class="card">
-            <div class="card-header"><span class="card-title"><i class="icon-chart" style="font-size:16px"></i> Rating Distribution</span></div>
+            <div class="card-header"><span class="card-title"><i class="icon-chart" style="font-size:16px"></i> rating.dist()</span></div>
             <div class="chart-container"><canvas id="ratingChart"></canvas></div>
           </div>
           <div class="card">
-            <div class="card-header"><span class="card-title"><i class="icon-target" style="font-size:16px"></i> Verdict Distribution</span></div>
+            <div class="card-header"><span class="card-title"><i class="icon-target" style="font-size:16px"></i> verdict.analysis()</span></div>
             <div class="chart-container"><canvas id="verdictChart"></canvas></div>
           </div>
-        </div>
-      </div>
-      <div class="dash-section ${isHidden('database') ? 'collapsed' : ''}" data-section="database">
-        <div class="dash-section-toggle">${toggleBtn('database', 'Database')}</div>
-        <div id="dbStatsCard"></div>
-      </div>
-      <div class="dash-section ${isHidden('insights') ? 'collapsed' : ''}" data-section="insights">
-        <div class="dash-section-toggle">${toggleBtn('insights', 'Insights')}</div>
-        <div id="performanceInsights"></div>
-      </div>`;
+        </div>`,
+      skillradar: `<div id="skillRadarSection"></div>`,
+      battlelog: `<div id="battleLogSection"></div>`,
+      insights: `<div id="performanceInsights"></div>`,
+    };
+
+    // Build sections in the user's order, skip hidden ones
+    let sectionsMarkup = '';
+    for (const key of order) {
+      if (isHidden(key)) continue;
+      sectionsMarkup += `<div class="dash-section" data-section="${key}">${sectionHtml[key] || ''}</div>\n`;
+    }
+
+    el.innerHTML = `<div id="playerHud"></div>${sectionsMarkup}`;
+
+    await this._populateDashboardData();
+  },
+
+  /* ===================================================
+     DASHBOARD DATA POPULATION (extracted from renderDashboard)
+     =================================================== */
+  async _populateDashboardData() {
 
     // Fetch both APIs in parallel
     const [data, perf] = await Promise.all([API.getStats(), API.getPerformance()]);
@@ -513,23 +700,7 @@ const App = {
     }
 
     /* ═══════════════════════════════════════════════
-       3. QUICK ACTIONS
-       ═══════════════════════════════════════════════ */
-    const qaEl = document.getElementById('quickActionsSection');
-    if (qaEl) {
-      qaEl.innerHTML = `
-        <div class="quick-actions mt-3">
-          <a href="#/problems" class="quick-action-card qa-problems"><i class="icon-problems"></i><span>Solve Problems</span></a>
-          <a href="#/contests" class="quick-action-card qa-contests"><i class="icon-contests"></i><span>View Contests</span></a>
-          <a href="#/learn" class="quick-action-card qa-learn"><i class="icon-learn"></i><span>Learn Topics</span></a>
-          <a href="#/ailab" class="quick-action-card qa-ailab"><i class="icon-neural"></i><span>AI Lab</span></a>
-          <a href="#/nexus" class="quick-action-card qa-progress"><i class="icon-arena"></i><span>View Progress</span></a>
-          <a href="#/workshop" class="quick-action-card qa-workshop"><i class="icon-code"></i><span>Create Problem</span></a>
-        </div>`;
-    }
-
-    /* ═══════════════════════════════════════════════
-       4. DAILY CHALLENGES (enhanced with tier badges)
+       3. DAILY CHALLENGES (enhanced with tier badges)
        ═══════════════════════════════════════════════ */
     const dcEl = document.getElementById('dailyChallengesSection');
     if (data.dailyChallenges && data.dailyChallenges.length) {
@@ -554,7 +725,7 @@ const App = {
       dcHtml += '</div>';
       dcEl.innerHTML = dcHtml;
     } else {
-      dcEl.innerHTML = '<div class="empty-state mt-3"><p>Sync problems to generate daily challenges</p></div>';
+      dcEl.innerHTML = '<div class="empty-state mt-3"><p>// run `git pull` to sync problem database first</p></div>';
     }
 
     /* ═══════════════════════════════════════════════
@@ -566,7 +737,7 @@ const App = {
 
       // 5a. Rating Climb Sparkline
       const climb = p.ratingClimb || [];
-      momHtml += '<div class="card"><div class="card-header"><span class="card-title"><i class="icon-trending" style="font-size:16px"></i> Rating Climb</span>';
+      momHtml += '<div class="card"><div class="card-header"><span class="card-title"><i class="icon-trending" style="font-size:16px"></i> rating.climb()</span>';
       if (climb.length) momHtml += `<span class="text-sm text-muted">${climb.length} problems</span>`;
       momHtml += '</div><div style="padding:0 16px 16px">';
       if (climb.length >= 2) {
@@ -589,13 +760,13 @@ const App = {
           <circle cx="${cPts[cPts.length-1].x}" cy="${cPts[cPts.length-1].y}" r="3.5" fill="var(--brand)" stroke="var(--bg)" stroke-width="2"/>
         </svg>`;
       } else {
-        momHtml += '<div class="empty-state" style="padding:20px"><p>Solve more problems to see your climb</p></div>';
+        momHtml += '<div class="empty-state" style="padding:20px"><p>// need more data points to render graph</p></div>';
       }
       momHtml += '</div></div>';
 
       // 5b. Weekly Momentum
       const weekly = p.weeklyProgress || [];
-      momHtml += '<div class="card"><div class="card-header"><span class="card-title"><i class="icon-chart" style="font-size:16px"></i> Weekly Momentum</span>';
+      momHtml += '<div class="card"><div class="card-header"><span class="card-title"><i class="icon-chart" style="font-size:16px"></i> weekly.momentum</span>';
       if (weekly.length) momHtml += `<span class="text-sm text-muted">${weekly.length} weeks</span>`;
       momHtml += '</div><div style="padding:0 16px 16px">';
       if (weekly.length) {
@@ -611,7 +782,7 @@ const App = {
         }
         momHtml += '</div>';
       } else {
-        momHtml += '<div class="empty-state" style="padding:20px"><p>Activity data appears after your first week</p></div>';
+        momHtml += '<div class="empty-state" style="padding:20px"><p>// logging starts after week 1</p></div>';
       }
       momHtml += '</div></div>';
       momHtml += '</div>';
@@ -638,7 +809,7 @@ const App = {
     const streakEl = document.getElementById('streakSection');
     let streakHtml = `<div class="card mt-3">
       <div class="card-header">
-        <span class="card-title"><i class="icon-fire" style="font-size:16px;color:var(--warning)"></i> ${streak.current} Day Streak</span>
+        <span class="card-title"><i class="icon-fire" style="font-size:16px;color:var(--warning)"></i> ${streak.current}d streak</span>
         <span class="text-sm text-muted">Best: ${streak.best} days</span>
       </div>
       <div style="padding:12px 16px">
@@ -676,7 +847,7 @@ const App = {
       const cs = p.consistencyScore || 0;
       const csColor = cs >= 70 ? 'var(--success)' : cs >= 40 ? 'var(--warning)' : 'var(--danger)';
       aHtml += `<div class="card dash-analytics-card">
-        <div class="card-header"><span class="card-title"><i class="icon-trending" style="font-size:14px"></i> Consistency</span></div>
+        <div class="card-header"><span class="card-title"><i class="icon-trending" style="font-size:14px"></i> uptime</span></div>
         <div class="dash-consist-wrap">
           <svg viewBox="0 0 36 36" class="dash-consist-ring">
             <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="var(--surface-2)" stroke-width="3"/>
@@ -695,7 +866,7 @@ const App = {
         const peakHr = hours.reduce((best, h) => h.ac > (best?.ac || 0) ? h : best, null);
         const peakLabel = peakHr ? (peakHr.hour > 12 ? (peakHr.hour - 12) + ' PM' : peakHr.hour === 0 ? '12 AM' : peakHr.hour + ' AM') : '?';
         aHtml += `<div class="card dash-analytics-card">
-          <div class="card-header"><span class="card-title"><i class="icon-clock" style="font-size:14px"></i> Peak Hours</span>
+          <div class="card-header"><span class="card-title"><i class="icon-clock" style="font-size:14px"></i> peak_hours</span>
             <span class="text-sm text-muted">Best: ${peakLabel}</span></div>
           <div class="dash-hours">`;
         for (let h = 0; h < 24; h++) {
@@ -711,15 +882,15 @@ const App = {
         aHtml += '</div></div>';
       } else {
         aHtml += `<div class="card dash-analytics-card">
-          <div class="card-header"><span class="card-title"><i class="icon-clock" style="font-size:14px"></i> Peak Hours</span></div>
-          <div class="empty-state" style="padding:20px"><p>Submit solutions to see patterns</p></div>
+          <div class="card-header"><span class="card-title"><i class="icon-clock" style="font-size:14px"></i> peak_hours</span></div>
+          <div class="empty-state" style="padding:20px"><p>// no data — submit solutions to map patterns</p></div>
         </div>`;
       }
 
       // 8c. Top Languages
       const langs = p.langUsage || [];
       aHtml += `<div class="card dash-analytics-card">
-        <div class="card-header"><span class="card-title"><i class="icon-code" style="font-size:14px"></i> Languages</span></div>`;
+        <div class="card-header"><span class="card-title"><i class="icon-code" style="font-size:14px"></i> lang.stats()</span></div>`;
       if (langs.length) {
         const totalLang = langs.reduce((s, l) => s + l.count, 0) || 1;
         const langColors = { cpp: '#00599C', python: '#3776AB', java: '#f89820', javascript: '#f7df1e', c: '#555', rust: '#ce412b', go: '#00ADD8', kotlin: '#7F52FF' };
@@ -736,7 +907,7 @@ const App = {
         }
         aHtml += '</div>';
       } else {
-        aHtml += '<div class="empty-state" style="padding:20px"><p>No submissions yet</p></div>';
+        aHtml += '<div class="empty-state" style="padding:20px"><p>// stdin empty — no submissions in pipeline</p></div>';
       }
       aHtml += '</div>';
 
@@ -745,27 +916,9 @@ const App = {
     }
 
     /* ═══════════════════════════════════════════════
-       9. ACTIVITY — Heatmap + Recent Submissions
+       9. ACTIVITY — Interactive Heatmap
        ═══════════════════════════════════════════════ */
     this.renderHeatmap(data.heatmap);
-
-    const recentEl = document.getElementById('recentSubmissions');
-    if (!data.recent.length) {
-      recentEl.innerHTML = '<div class="empty-state"><p>No submissions yet. Solve a problem to get started!</p></div>';
-    } else {
-      recentEl.innerHTML = data.recent.slice(0, 8).map(s => `
-        <div class="submission-item">
-          <div class="submission-verdict ${s.verdict.toLowerCase()}"><i class="icon-${s.verdict === 'AC' ? 'check' : 'cross'}" style="font-size:14px"></i></div>
-          <div class="submission-info">
-            <div class="submission-title">${this._esc(s.title)}</div>
-            <div class="submission-meta">
-              <span class="badge ${s.platform === 'codeforces' ? 'badge-cf' : 'badge-cc'}" style="font-size:10px;padding:2px 6px">${s.platform === 'codeforces' ? 'CF' : 'CC'}</span>
-              ${this._ratingBadge(s.rating)} · ${s.exec_time_ms}ms
-            </div>
-          </div>
-          <div class="submission-time">${this._timeAgo(s.submitted_at)}</div>
-        </div>`).join('');
-    }
 
     /* ═══════════════════════════════════════════════
        10. CHARTS — Rating & Verdict Doughnuts
@@ -774,81 +927,152 @@ const App = {
     this.renderVerdictChart(data.verdicts);
 
     /* ═══════════════════════════════════════════════
-       11. DATABASE STATS
+       10b. SKILL RADAR — Tag-based skill breakdown
        ═══════════════════════════════════════════════ */
-    API.getScrapeStats().then(ss => {
-      if (!ss.ok) return;
-      const spct = ss.total > 0 ? ((ss.scraped / ss.total) * 100).toFixed(1) : 0;
-      const dbEl = document.getElementById('dbStatsCard');
-      if (!dbEl) return;
-      dbEl.innerHTML = `
-        <div class="card mt-3">
-          <div class="card-header">
-            <span class="card-title"><i class="icon-problems" style="font-size:16px"></i> Problem Database</span>
-            <span class="text-sm text-muted">${ss.scraped}/${ss.total} stored</span>
-          </div>
-          <div style="padding:16px">
-            <div class="hud-xp-bar" style="height:12px;margin-bottom:12px">
-              <div class="hud-xp-fill" style="width:${spct}%;background:linear-gradient(90deg,var(--brand),var(--brand-light))"></div>
+    const srEl = document.getElementById('skillRadarSection');
+    if (srEl) {
+      const tags = p.tagAnalysis || [];
+      if (tags.length >= 3) {
+        // Top 8 tags by volume, render horizontal bars with solve rate
+        const top = [...tags].sort((a, b) => b.total - a.total).slice(0, 8);
+        const maxTotal = Math.max(...top.map(t => t.total), 1);
+        let srHtml = `<div class="card mt-3">
+          <div class="card-header"><span class="card-title"><i class="icon-target" style="font-size:16px"></i> skill.radar()</span>
+            <span class="text-sm text-muted">${tags.length} topics tracked</span></div>
+          <div class="skill-radar-body">`;
+        for (const t of top) {
+          const pct = Math.round(t.total / maxTotal * 100);
+          const rateColor = t.solveRate >= 70 ? 'var(--success)' : t.solveRate >= 40 ? 'var(--warning)' : 'var(--danger)';
+          srHtml += `<div class="skill-bar-row">
+            <div class="skill-bar-label">${this._esc(t.tag)}</div>
+            <div class="skill-bar-track">
+              <div class="skill-bar-fill" style="width:${pct}%">
+                <div class="skill-bar-solved" style="width:${t.solveRate}%"></div>
+              </div>
             </div>
-            <div style="display:flex;gap:16px;flex-wrap:wrap">
-              ${ss.byPlatform.map(pp => `
-                <div style="flex:1;min-width:120px;background:var(--surface-2);border-radius:var(--radius);padding:12px;text-align:center">
-                  <div style="font-size:20px;font-weight:700;color:var(--text-bright)">${pp.scraped}</div>
-                  <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px">${pp.platform}</div>
-                  <div style="font-size:11px;color:var(--text-muted)">${pp.total} total</div>
-                </div>`).join('')}
+            <div class="skill-bar-stats">
+              <span class="skill-bar-rate" style="color:${rateColor}">${t.solveRate}%</span>
+              <span class="skill-bar-count">${t.solved}/${t.total}</span>
             </div>
-          </div>
-        </div>`;
-    });
+          </div>`;
+        }
+
+        // Weak areas call-out
+        const weak = tags.filter(t => t.solveRate < 50 && t.total >= 3).slice(0, 3);
+        if (weak.length) {
+          srHtml += '<div class="skill-weak-callout">';
+          srHtml += '<div class="skill-weak-title"><i class="icon-bolt" style="color:var(--warning)"></i> // TODO: level up these</div>';
+          weak.forEach(w => {
+            srHtml += `<div class="skill-weak-tag"><span>${this._esc(w.tag)}</span><span class="skill-weak-rate">${w.solveRate}% solve rate</span></div>`;
+          });
+          srHtml += '</div>';
+        }
+
+        srHtml += '</div></div>';
+        srEl.innerHTML = srHtml;
+      } else {
+        srEl.innerHTML = '<div class="card mt-3"><div class="card-header"><span class="card-title"><i class="icon-target" style="font-size:16px"></i> skill.radar()</span></div><div class="empty-state" style="padding:24px"><p>// insufficient data — solve 3+ topic types to render radar</p></div></div>';
+      }
+    }
 
     /* ═══════════════════════════════════════════════
-       12. PERFORMANCE INSIGHTS (enriched with perf data)
+       10c. BATTLE LOG — Hardest solves, solve speed, struggles
+       ═══════════════════════════════════════════════ */
+    const blEl = document.getElementById('battleLogSection');
+    if (blEl) {
+      let blHtml = '<div class="dashboard-grid mt-3">';
+
+      // Hardest Solved
+      const hardest = p.hardestSolved || [];
+      blHtml += `<div class="card"><div class="card-header"><span class="card-title"><i class="icon-fire" style="font-size:16px;color:var(--danger)"></i> boss_kills[]</span></div>`;
+      if (hardest.length) {
+        blHtml += '<div class="battle-list">';
+        hardest.forEach((h, i) => {
+          blHtml += `<div class="battle-item" onclick="App.openSolve(${h.id})">
+            <div class="battle-rank">#${i + 1}</div>
+            <div class="battle-info">
+              <div class="battle-title">${this._esc(h.title)}</div>
+              <div class="battle-meta">${this._ratingBadge(h.rating)} · ${h.platform} · ${h.attempts || 1} attempt${(h.attempts || 1) !== 1 ? 's' : ''}</div>
+            </div>
+          </div>`;
+        });
+        blHtml += '</div>';
+      } else {
+        blHtml += '<div class="empty-state" style="padding:20px"><p>// kill_list empty — no defeats logged yet</p></div>';
+      }
+      blHtml += '</div>';
+
+      // Solve Speed Analysis
+      const speed = p.solveSpeed || [];
+      blHtml += `<div class="card"><div class="card-header"><span class="card-title"><i class="icon-clock" style="font-size:16px;color:var(--brand-light)"></i> solve.speed()</span></div>`;
+      if (speed.length) {
+        const maxAttempts = Math.max(...speed.map(s => s.avgAttempts), 1);
+        blHtml += '<div class="speed-chart">';
+        speed.forEach(s => {
+          const barH = Math.max(Math.round(s.avgAttempts / maxAttempts * 100), 8);
+          blHtml += `<div class="speed-col" title="${s.bracket}: avg ${s.avgAttempts} attempts, ${s.avgMinutes || '?'} min, ${s.count} solved">
+            <div class="speed-bar" style="height:${barH}%">
+              <span class="speed-val">${s.avgAttempts}</span>
+            </div>
+            <div class="speed-lbl">${s.bracket.split('-')[0]}</div>
+          </div>`;
+        });
+        blHtml += '</div><div class="speed-legend">Rating bracket → avg attempts to solve</div>';
+      } else {
+        blHtml += '<div class="empty-state" style="padding:20px"><p>// benchmarks pending — solve rated problems</p></div>';
+      }
+      blHtml += '</div>';
+
+      blHtml += '</div>';
+      blEl.innerHTML = blHtml;
+    }
+
+    /* ═══════════════════════════════════════════════
+       11. PERFORMANCE INSIGHTS (enriched with perf data)
        ═══════════════════════════════════════════════ */
     const insightEl = document.getElementById('performanceInsights');
     if (insightEl) {
       const insights = [];
 
       // Streak insights
-      if (data.streak.current >= 7) insights.push({icon:'icon-fire',color:'#f59e0b',title:`${data.streak.current} Day Streak!`,desc:'Amazing consistency! You are building elite problem-solving habits.'});
-      else if (data.streak.current === 0 && data.solved > 0) insights.push({icon:'icon-clock',color:'#94a3b8',title:'Streak Reset',desc:'Your streak reset. Solve one problem today to start fresh!'});
+      if (data.streak.current >= 7) insights.push({icon:'icon-fire',color:'#f59e0b',title:`${data.streak.current}d streak — on fire`,desc:'// elite consistency detected. keep the process alive.'});
+      else if (data.streak.current === 0 && data.solved > 0) insights.push({icon:'icon-clock',color:'#94a3b8',title:'streak.reset()',desc:'// streak broke. solve one problem to respawn it.'});
 
       // Daily goal
-      if (ts.solved >= dailyGoal) insights.push({icon:'icon-check',color:'#22c55e',title:'Daily Goal Reached!',desc:`You hit your daily goal of ${dailyGoal} problems today. Outstanding!`});
+      if (ts.solved >= dailyGoal) insights.push({icon:'icon-check',color:'#22c55e',title:'daily_goal.reached()',desc:`// ${dailyGoal} problems cleared today. mission complete.`});
 
       // Accuracy analysis
-      if (data.accuracy < 50 && data.submissions > 5) insights.push({icon:'icon-target',color:'#ef4444',title:'Accuracy Below 50%',desc:'Focus on reading constraints carefully and testing with sample inputs before submitting.'});
-      else if (data.accuracy >= 80 && data.submissions > 10) insights.push({icon:'icon-target',color:'#22c55e',title:'Elite Accuracy: ' + data.accuracy + '%',desc:'Your accuracy is exceptional. You rarely submit incorrect solutions.'});
+      if (data.accuracy < 50 && data.submissions > 5) insights.push({icon:'icon-target',color:'#ef4444',title:'accuracy < 50%',desc:'// WARNING: read constraints, test edge cases before push.'});
+      else if (data.accuracy >= 80 && data.submissions > 10) insights.push({icon:'icon-target',color:'#22c55e',title:'accuracy: ' + data.accuracy + '%',desc:'// exceptional hit rate. rarely pushing bad code.'});
 
       // Difficulty range
       const easyCount = data.ratingDist.filter(d2 => d2.tier === 'Newbie' || d2.tier === 'Pupil').reduce((s, d2) => s + d2.count, 0);
       const hardCount = data.ratingDist.filter(d2 => ['Expert','Candidate Master','Master','Grandmaster'].includes(d2.tier)).reduce((s, d2) => s + d2.count, 0);
-      if (data.solved > 10 && hardCount < easyCount * 0.1) insights.push({icon:'icon-chart',color:'#3b82f6',title:'Try Harder Problems',desc:'Most solves are easy-rated. Push to 1400+ problems to grow faster.'});
-      if (data.solved > 10 && hardCount >= easyCount * 0.3) insights.push({icon:'icon-bolt',color:'#059669',title:'Great Difficulty Range',desc:'You tackle a strong mix of easy and hard problems. Excellent approach.'});
+      if (data.solved > 10 && hardCount < easyCount * 0.1) insights.push({icon:'icon-chart',color:'#3b82f6',title:'difficulty.increase()',desc:'// most solves are < 1200. push to 1400+ to level up faster.'});
+      if (data.solved > 10 && hardCount >= easyCount * 0.3) insights.push({icon:'icon-bolt',color:'#059669',title:'difficulty.balanced()',desc:'// strong difficulty spread detected. solid approach.'});
 
       // Verdict patterns
       const waCount = data.verdicts.find(v => v.verdict === 'WA')?.count || 0;
       const acCount = data.verdicts.find(v => v.verdict === 'AC')?.count || 0;
       const tleCount = data.verdicts.find(v => v.verdict === 'TLE')?.count || 0;
-      if (waCount > acCount && data.submissions > 5) insights.push({icon:'icon-cross',color:'#ef4444',title:'High Wrong Answer Rate',desc:'More WA than AC. Focus on edge cases, boundary conditions, and off-by-one errors.'});
-      if (tleCount > acCount * 0.2 && data.submissions > 5) insights.push({icon:'icon-clock',color:'#f59e0b',title:'Frequent TLE',desc:'Study time complexity. Consider binary search, segment trees, or memoization.'});
+      if (waCount > acCount && data.submissions > 5) insights.push({icon:'icon-cross',color:'#ef4444',title:'WA > AC',desc:'// fix: check edge cases, boundaries, off-by-one errors.'});
+      if (tleCount > acCount * 0.2 && data.submissions > 5) insights.push({icon:'icon-clock',color:'#f59e0b',title:'TLE frequent',desc:'// optimize: try binary search, segment trees, memoization.'});
 
       // Consistency insight
-      if (p.consistencyScore >= 80) insights.push({icon:'icon-trending',color:'#14b8a6',title:'Consistency King: ' + p.consistencyScore + '%',desc:'You have been active ' + Math.round(p.consistencyScore * 30 / 100) + ' of the last 30 days. Incredible!'});
-      else if (p.consistencyScore > 0 && p.consistencyScore < 30) insights.push({icon:'icon-trending',color:'#f97316',title:'Low Consistency: ' + p.consistencyScore + '%',desc:'Try to practice at least a little every day. Consistency beats intensity.'});
+      if (p.consistencyScore >= 80) insights.push({icon:'icon-trending',color:'#14b8a6',title:'uptime: ' + p.consistencyScore + '%',desc:'// active ' + Math.round(p.consistencyScore * 30 / 100) + '/30 days. legendary.'});
+      else if (p.consistencyScore > 0 && p.consistencyScore < 30) insights.push({icon:'icon-trending',color:'#f97316',title:'uptime: ' + p.consistencyScore + '%',desc:'// low consistency. daily practice > weekend grinds.'});
 
       // Hardest solved
       const hardest = p.hardestSolved || [];
-      if (hardest.length && hardest[0].rating >= 1600) insights.push({icon:'icon-arena',color:'#059669',title:`Hardest Solve: ${hardest[0].rating}`,desc:`You cracked "${hardest[0].title}" — a ${hardest[0].rating}-rated problem. Impressive skill!`});
+      if (hardest.length && hardest[0].rating >= 1600) insights.push({icon:'icon-arena',color:'#059669',title:`boss_kill: ${hardest[0].rating}`,desc:`// defeated "${hardest[0].title}" — ${hardest[0].rating}-rated. respect.`});
 
       // Getting started
-      if (data.solved === 0) insights.push({icon:'icon-spark',color:'var(--brand)',title:'Get Started',desc:'Welcome! Head to Problems and solve your first problem to begin tracking progress.'});
+      if (data.solved === 0) insights.push({icon:'icon-spark',color:'var(--brand)',title:'boot_sequence',desc:'// welcome, pilot. navigate to Problems and score your first kill.'});
 
       if (insights.length) {
         insightEl.innerHTML = `
           <div class="card mt-3">
-            <div class="card-header"><span class="card-title"><i class="icon-lightbulb" style="font-size:16px"></i> Performance Insights</span>
+            <div class="card-header"><span class="card-title"><i class="icon-lightbulb" style="font-size:16px"></i> ai.insights()</span>
               <span class="text-sm text-muted">${insights.length} insights</span></div>
             <div class="insights-list">
               ${insights.map(ins => `
@@ -894,33 +1118,142 @@ const App = {
 
   renderHeatmap(data) {
     const container = document.getElementById('heatmapContainer');
-    const map = {};
-    for (const d of data) map[d.date] = d.problems_solved;
+    this._heatmapMap = {};
+    for (const d of data) this._heatmapMap[d.date] = d.problems_solved;
 
     const today = new Date();
     const startDate = new Date(today);
     startDate.setDate(startDate.getDate() - 364);
     startDate.setDate(startDate.getDate() - startDate.getDay());
 
-    let html = '<div class="heatmap">';
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+    // Build month labels
+    let monthHtml = '<div class="heatmap-months">';
+    const mCursor = new Date(startDate);
+    let lastMonth = -1;
+    let weekIdx = 0;
+    const monthPositions = [];
+    while (mCursor <= today) {
+      if (mCursor.getMonth() !== lastMonth) {
+        monthPositions.push({ month: months[mCursor.getMonth()], week: weekIdx });
+        lastMonth = mCursor.getMonth();
+      }
+      mCursor.setDate(mCursor.getDate() + 7);
+      weekIdx++;
+    }
+    for (const mp of monthPositions) {
+      monthHtml += `<span class="heatmap-month-label" style="grid-column:${mp.week + 1}">${mp.month}</span>`;
+    }
+    monthHtml += '</div>';
+
+    // Day labels
+    let dayHtml = '<div class="heatmap-day-labels">';
+    for (let i = 0; i < 7; i++) {
+      dayHtml += `<span class="heatmap-day-label">${i % 2 === 1 ? days[i].slice(0,3) : ''}</span>`;
+    }
+    dayHtml += '</div>';
+
+    // Grid
+    let gridHtml = '<div class="heatmap-grid">';
     const d = new Date(startDate);
+    let currentStreak = 0, maxStreak = 0, activeDays = 0, tmpStreak = 0;
     while (d <= today) {
-      html += '<div class="heatmap-week">';
+      gridHtml += '<div class="heatmap-week">';
       for (let dow = 0; dow < 7; dow++) {
         const ds = d.toISOString().slice(0, 10);
-        const count = map[ds] || 0;
+        const count = this._heatmapMap[ds] || 0;
         const level = count === 0 ? 0 : count <= 1 ? 1 : count <= 3 ? 2 : count <= 5 ? 3 : 4;
-        html += `<div class="heatmap-cell" data-level="${level}" title="${ds}: ${count} solved"></div>`;
+        const isFuture = d > today;
+        if (count > 0) { activeDays++; tmpStreak++; if (tmpStreak > maxStreak) maxStreak = tmpStreak; }
+        else { tmpStreak = 0; }
+        gridHtml += `<div class="heatmap-cell${isFuture ? ' future' : ''}" data-level="${isFuture ? -1 : level}" data-date="${ds}" data-count="${count}" title="${ds}: ${count} solved" onclick="App._showHeatmapDetail('${ds}')"></div>`;
         d.setDate(d.getDate() + 1);
       }
-      html += '</div>';
+      gridHtml += '</div>';
     }
-    html += '</div>';
-    html += `<div class="heatmap-legend">Less <div class="heatmap-cell" data-level="0"></div><div class="heatmap-cell" data-level="1"></div><div class="heatmap-cell" data-level="2"></div><div class="heatmap-cell" data-level="3"></div><div class="heatmap-cell" data-level="4"></div> More</div>`;
-    container.innerHTML = html;
+    currentStreak = tmpStreak;
+    gridHtml += '</div>';
 
     const total = data.reduce((s, d) => s + d.problems_solved, 0);
+
+    container.innerHTML = `
+      <div class="heatmap-wrapper">
+        <div class="heatmap-stats-row">
+          <div class="heatmap-stat"><span class="heatmap-stat-value">${total}</span><span class="heatmap-stat-label">Total Solved</span></div>
+          <div class="heatmap-stat"><span class="heatmap-stat-value">${activeDays}</span><span class="heatmap-stat-label">Active Days</span></div>
+          <div class="heatmap-stat"><span class="heatmap-stat-value">${currentStreak}</span><span class="heatmap-stat-label">Current Streak</span></div>
+          <div class="heatmap-stat"><span class="heatmap-stat-value">${maxStreak}</span><span class="heatmap-stat-label">Best Streak</span></div>
+        </div>
+        ${monthHtml}
+        <div class="heatmap-body">
+          ${dayHtml}
+          ${gridHtml}
+        </div>
+        <div class="heatmap-legend">Less <div class="heatmap-cell" data-level="0"></div><div class="heatmap-cell" data-level="1"></div><div class="heatmap-cell" data-level="2"></div><div class="heatmap-cell" data-level="3"></div><div class="heatmap-cell" data-level="4"></div> More</div>
+      </div>
+      <div class="heatmap-detail-panel hidden" id="heatmapDetailPanel"></div>`;
+
     document.getElementById('heatmapLabel').textContent = `${total} solved in the last year`;
+  },
+
+  _showHeatmapDetail(dateStr) {
+    const panel = document.getElementById('heatmapDetailPanel');
+    if (!panel) return;
+    // Deselect previous
+    document.querySelectorAll('.heatmap-cell.selected').forEach(c => c.classList.remove('selected'));
+    // Select clicked
+    const cell = document.querySelector(`.heatmap-cell[data-date="${dateStr}"]`);
+    if (cell) cell.classList.add('selected');
+
+    const count = this._heatmapMap?.[dateStr] || 0;
+    const dateObj = new Date(dateStr + 'T00:00:00');
+    const formatted = dateObj.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+    panel.classList.remove('hidden');
+    panel.innerHTML = `
+      <div class="heatmap-detail-header">
+        <div class="heatmap-detail-date">${formatted}</div>
+        <div class="heatmap-detail-count">${count} problem${count !== 1 ? 's' : ''} solved</div>
+        <button class="heatmap-detail-close" onclick="App._closeHeatmapDetail()">&times;</button>
+      </div>
+      <div class="heatmap-detail-body" id="heatmapDetailBody">
+        ${count === 0 ? '<div class="heatmap-detail-empty">No problems solved on this day</div>' : '<div class="heatmap-detail-loading"><div class="spinner"></div>Loading submissions…</div>'}
+      </div>`;
+
+    if (count === 0) return;
+
+    API.getDateActivity(dateStr).then(res => {
+      const body = document.getElementById('heatmapDetailBody');
+      if (!body) return;
+      if (!res.ok || !res.submissions.length) {
+        body.innerHTML = '<div class="heatmap-detail-empty">No submission details available</div>';
+        return;
+      }
+      body.innerHTML = res.submissions.map(s => `
+        <div class="heatmap-detail-item">
+          <div class="heatmap-detail-verdict ${(s.verdict || '').toLowerCase()}">${s.verdict || '?'}</div>
+          <div class="heatmap-detail-info">
+            <div class="heatmap-detail-title">${this._esc(s.title || 'Unknown')}</div>
+            <div class="heatmap-detail-meta">
+              <span class="badge ${s.platform === 'codeforces' ? 'badge-cf' : 'badge-cc'}">${s.platform === 'codeforces' ? 'CF' : 'CC'}</span>
+              ${this._ratingBadge(s.rating)}
+              <span style="color:var(--text-muted)">${s.language || ''}</span>
+              ${s.exec_time_ms ? `<span style="color:var(--text-muted)">${s.exec_time_ms}ms</span>` : ''}
+            </div>
+          </div>
+        </div>`).join('');
+    }).catch(() => {
+      const body = document.getElementById('heatmapDetailBody');
+      if (body) body.innerHTML = '<div class="heatmap-detail-empty">Failed to load details</div>';
+    });
+  },
+
+  _closeHeatmapDetail() {
+    const panel = document.getElementById('heatmapDetailPanel');
+    if (panel) { panel.classList.add('hidden'); }
+    document.querySelectorAll('.heatmap-cell.selected').forEach(c => c.classList.remove('selected'));
   },
 
   renderRatingChart(dist) {
@@ -960,8 +1293,8 @@ const App = {
   async renderProblems(el) {
     el.innerHTML = `
       <div class="page-header">
-        <h1><i class="icon-problems" style="font-size:28px"></i> Problems</h1>
-        <p>Browse and solve problems from Codeforces &amp; CodeChef</p>
+        <h1><i class="icon-problems" style="font-size:28px"></i> <span class="glitch" data-text="Problems">Problems</span></h1>
+        <p>grep -r "challenge" /codeforces /codechef --type=problem</p>
       </div>
       <div class="card">
         <div class="filter-bar">
@@ -1045,7 +1378,7 @@ const App = {
           <th style="width:80px">ID</th>
           <th style="width:90px"></th>
         </tr></thead>
-        <tbody>${tbody || '<tr><td colspan="6" class="text-center text-muted" style="padding:40px">No problems found. Open Settings to sync problems.</td></tr>'}</tbody>
+        <tbody>${tbody || '<tr><td colspan="6" class="text-center text-muted" style="padding:40px">// 0 records — run ./config to sync problem DB</td></tr>'}</tbody>
       </table>`;
 
     const start = s.offset + 1;
@@ -1072,16 +1405,16 @@ const App = {
   async renderContests(el) {
     el.innerHTML = `
       <div class="page-header">
-        <h1><i class="icon-contests" style="font-size:28px"></i> Contests</h1>
-        <p>Upcoming and live contests from Codeforces &amp; CodeChef</p>
+        <h1><i class="icon-contests" style="font-size:28px"></i> <span class="glitch" data-text="Contests">Contests</span></h1>
+        <p>crontab -l | grep 'contest' # live + upcoming arenas</p>
       </div>
       <div class="tabs">
-        <button class="tab active" onclick="App.filterContests('all',this)">All</button>
-        <button class="tab" onclick="App.filterContests('running',this)">Live</button>
-        <button class="tab" onclick="App.filterContests('upcoming',this)">Upcoming</button>
-        <button class="tab" onclick="App.filterContests('finished',this)">Past</button>
+        <button class="tab active" onclick="App.filterContests('all',this)">*</button>
+        <button class="tab" onclick="App.filterContests('running',this)">● live</button>
+        <button class="tab" onclick="App.filterContests('upcoming',this)">▶ queue</button>
+        <button class="tab" onclick="App.filterContests('finished',this)">✔ past</button>
       </div>
-      <div class="contests-grid" id="contestsGrid"><div class="loader"><div class="loader-ring"></div></div></div>`;
+      <div class="contests-grid" id="contestsGrid"><div class="loader"><div class="loader-ring"></div><div class="loader-dots"><span></span><span></span><span></span></div></div></div>`;
 
     this._contestsData = (await API.getContests()).contests || [];
     this.filterContests('all');
@@ -1100,7 +1433,7 @@ const App = {
 
     const grid = document.getElementById('contestsGrid');
     if (!contests.length) {
-      grid.innerHTML = '<div class="empty-state"><div class="empty-icon"><i class="icon-trophy" style="font-size:40px"></i></div><h3>No contests found</h3><p>Check back later for upcoming events</p></div>';
+      grid.innerHTML = '<div class="empty-state"><div class="empty-icon"><i class="icon-trophy" style="font-size:40px"></i></div><h3>// no live arenas found</h3><p>Retry later — servers update every 30min</p></div>';
       return;
     }
     grid.innerHTML = contests.map(c => {
@@ -1137,7 +1470,7 @@ const App = {
         <div class="profile-avatar"><img src="/nexora-logo.svg" alt="Nexora" style="width:80px;height:80px;object-fit:contain"></div>
         <div class="profile-info">
           <h2>Profile</h2>
-          <p>Your stats, rank progression, and achievements</p>
+          <p>user.getStats() => rank + achievements</p>
           <div class="profile-handles mt-3">
             <button class="btn btn-ghost btn-sm" onclick="App.openSettings()"><i class="icon-settings" style="font-size:13px"></i> Open Settings</button>
             <button class="btn btn-secondary btn-sm" onclick="App.syncSolvedProblems()"><i class="icon-sync" style="font-size:13px"></i> Sync Solved</button>
@@ -1180,7 +1513,9 @@ const App = {
         const isCurrent = currentLvl === lvlNum;
         rpHtml += `
           <div class="rank-node ${isCurrent ? 'rank-current' : ''}">
-            <div class="rank-dot ${reached ? 'reached' : ''} ${isCurrent ? 'current' : ''}" style="background:${t.color}${reached ? '' : ';opacity:0.3'};${reached && t.glow !== 'none' ? 'box-shadow:' + t.glow : ''}"></div>
+            <div class="rank-dot ${reached ? 'reached' : ''} ${isCurrent ? 'current' : ''}" style="background:${t.color}${reached ? '' : ';opacity:0.3'};${reached && t.glow !== 'none' ? 'box-shadow:' + t.glow : ''}">
+              <span class="rank-badge">${t.badge || ''}</span>
+            </div>
             <div class="rank-name" style="color:${t.color}">${lvlNum}. ${t.title}</div>
             <div class="rank-xp">${t.min_xp.toLocaleString()} XP · ${(t.min_problems||0).toLocaleString()} solved</div>
           </div>`;
@@ -1248,10 +1583,10 @@ const App = {
   },
 
   async syncSolvedProblems() {
-    this.toast('Syncing solved problems...', 'info');
+    this.toast('[sync] fetching solved data...', 'info');
     const res = await API.syncSolved();
-    if (res.ok) this.toast(`Synced ${res.synced} newly solved problems`, 'success');
-    else this.toast('Sync failed: ' + (res.error || 'Unknown'), 'error');
+    if (res.ok) this.toast(`[sync] merged ${res.synced} solved entries`, 'success');
+    else this.toast('[error] sync failed: ' + (res.error || 'unknown'), 'error');
   },
 
   /* ===================================================
@@ -1262,12 +1597,10 @@ const App = {
   async renderNexus(el) {
     el.innerHTML = `
       <div class="page-header">
-        <h1><i class="icon-arena" style="font-size:28px"></i> Progress</h1>
-        <p>Your stats, rank progression, and achievements</p>
-      </div>
-      <div class="nexus-tabs">
-        <button class="tab active" onclick="App._switchNexusView('zones',this)"><i class="icon-arena"></i> Zones</button>
-        <button class="tab" onclick="App._switchNexusView('performance',this)"><i class="icon-chart"></i> Performance</button>
+        <h1><i class="icon-arena" style="font-size:28px"></i> <span class="glitch" data-text="Progress">Progress</span></h1>
+        <p>cat /var/log/stats.log | sort -k2 -rn # rank + zones + XP</p>
+        <button class="tab active" onclick="App._switchNexusView('zones',this)"><i class="icon-arena"></i> /zones</button>
+        <button class="tab" onclick="App._switchNexusView('performance',this)"><i class="icon-chart"></i> /perf</button>
       </div>
       <div id="nexusZones"></div>
       <div id="nexusPerformance" class="hidden"></div>`;
@@ -1285,10 +1618,10 @@ const App = {
 
   async _loadNexusZones() {
     const el = document.getElementById('nexusZones');
-    el.innerHTML = '<div class="loader"><div class="loader-ring"></div><p class="loader-text">Loading Zones...</p></div>';
+    el.innerHTML = '<div class="loader"><div class="loader-ring"></div><div class="loader-dots"><span></span><span></span><span></span></div><p class="loader-text">Loading Zones...</p></div>';
 
     const [data, roadmap] = await Promise.all([API.getNexus(), API.getLevelRoadmap()]);
-    if (!data.ok) { el.innerHTML = '<div class="empty-state"><p>Failed to load data</p></div>'; return; }
+    if (!data.ok) { el.innerHTML = '<div class="empty-state"><p>// error: failed to fetch data</p></div>'; return; }
     this._nexusData = data;
 
     const roadmapByLevel = {};
@@ -1304,7 +1637,7 @@ const App = {
           <div class="hud-level-badge" style="background:${p.color};${p.glow !== 'none' ? 'box-shadow:' + p.glow : ''}">${p.level}</div>
           <div>
             <div class="nexus-player-name" style="color:${p.color}">${this._esc(p.name)}</div>
-            <div class="text-sm text-muted">${p.xp.toLocaleString()} XP · Zone ${p.level}/20</div>
+            <div class="text-sm text-muted">${p.xp.toLocaleString()} XP · Zone ${p.level}/${data.zones.length}</div>
           </div>
         </div>
         <div class="lrm-refresh">
@@ -1314,6 +1647,8 @@ const App = {
 
     // Zones with skill nodes + practice problems
     html += '<div class="nexus-zones-list">';
+    const riftBadges = {};
+    if (data.riftLevels) data.riftLevels.forEach(r => riftBadges[r.level] = r.badge);
     for (const zone of data.zones) {
       const zoneNodes = data.nodes.filter(n => n.zone === zone.level);
       const rm = roadmapByLevel[zone.level];
@@ -1321,12 +1656,13 @@ const App = {
       const nodeColor = zone.color;
       const totalProbs = rm ? rm.totalProblems : 0;
       const solvedProbs = rm ? rm.solvedCount : 0;
+      const badge = riftBadges[zone.level] || zone.level;
 
       html += `
         <div class="nexus-zone ${state}">
           <div class="nexus-zone-header" onclick="this.parentElement.classList.toggle('expanded')">
             <div class="nexus-zone-icon" style="${state !== 'locked' ? 'border-color:' + nodeColor + ';color:' + nodeColor : ''}">
-              ${zone.completed ? '<i class="icon-check" style="font-size:18px"></i>' : state === 'locked' ? '<i class="icon-lock" style="font-size:16px"></i>' : '<span style="font-weight:800">' + zone.level + '</span>'}
+              ${zone.completed ? '<i class="icon-check" style="font-size:18px"></i>' : state === 'locked' ? '<i class="icon-lock" style="font-size:16px"></i>' : '<span class="zone-badge-icon">' + badge + '</span>'}
             </div>
             <div class="nexus-zone-info">
               <div class="nexus-zone-title" style="color:${nodeColor}">
@@ -1433,10 +1769,10 @@ const App = {
   _perfLoaded: false,
   async _loadPerformance() {
     const el = document.getElementById('nexusPerformance');
-    el.innerHTML = '<div class="loader"><div class="loader-ring"></div><p class="loader-text">Crunching your data...</p></div>';
+    el.innerHTML = '<div class="loader"><div class="loader-ring"></div><div class="loader-dots"><span></span><span></span><span></span></div><p class="loader-text">Crunching your data...</p></div>';
 
     const d = await API.getPerformance();
-    if (!d.ok) { el.innerHTML = '<div class="empty-state"><p>Failed to load analytics</p></div>'; return; }
+    if (!d.ok) { el.innerHTML = '<div class="empty-state"><p>// error: analytics module failed</p></div>'; return; }
     this._perfLoaded = true;
 
     let html = '';
@@ -1454,7 +1790,7 @@ const App = {
         <div class="perf-hero-ring" style="--pct:${xpPct};--ring-color:${lvl.color || 'var(--accent)'}">
           <div class="perf-hero-ring-inner">
             <span class="perf-hero-lvl" style="color:${lvl.color || 'var(--accent)'}">${lvl.level || 1}</span>
-            <span class="perf-hero-title">${this._esc(lvl.name || 'Byte')}</span>
+            <span class="perf-hero-title">${this._esc(lvl.name || 'Bit')}</span>
           </div>
         </div>
         ${nextLvl ? `<div class="perf-hero-next">
@@ -1501,7 +1837,7 @@ const App = {
       const maxLine = maxPts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ');
 
       html += `<div class="perf-section mt-3">
-        <div class="perf-section-header"><i class="icon-trending" style="font-size:14px"></i> Rating Climb — Difficulty Progression</div>
+        <div class="perf-section-header"><i class="icon-trending" style="font-size:14px"></i> rating.climb() — difficulty progression</div>
         <div class="perf-chart-scroll">
         <svg class="perf-climb-svg" viewBox="0 0 ${climbW} ${climbH}" preserveAspectRatio="none">
           <defs>
@@ -1538,7 +1874,7 @@ const App = {
     let donutOffset = 0;
     const donutR = 60, donutC = 2 * Math.PI * donutR;
     html += `<div class="perf-section" style="flex:1">
-      <div class="perf-section-header"><i class="icon-chart" style="font-size:14px"></i> Verdict Breakdown</div>
+      <div class="perf-section-header"><i class="icon-chart" style="font-size:14px"></i> verdict.breakdown()</div>
       <div class="perf-donut-wrap">
         <svg width="160" height="160" viewBox="0 0 160 160">
           <circle cx="80" cy="80" r="${donutR}" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="18"/>`;
@@ -1772,7 +2108,7 @@ const App = {
       }
 
       html += `<div class="perf-section mt-3">
-        <div class="perf-section-header"><i class="icon-target" style="font-size:14px"></i> Skill Radar</div>
+        <div class="perf-section-header"><i class="icon-target" style="font-size:14px"></i> skill.radar()</div>
         <div class="perf-radar-wrap">
           <svg class="perf-radar-svg" viewBox="0 0 ${radarSize} ${radarSize}">${radarSvg}</svg>
           <div class="perf-weakness">`;
@@ -1936,7 +2272,9 @@ const App = {
         const isPast = t.level < lvl.level;
         const cls = isCurrent ? 'current' : isPast ? 'past' : 'locked';
         html += `<div class="perf-rank ${cls}">
-          <div class="perf-rank-dot" style="background:${isPast || isCurrent ? t.color : 'var(--border)'}; box-shadow:${isCurrent ? '0 0 8px ' + t.color : 'none'}"></div>
+          <div class="perf-rank-dot" style="background:${isPast || isCurrent ? t.color : 'var(--border)'}; box-shadow:${isCurrent ? '0 0 8px ' + t.color : 'none'}">
+            <span class="rank-badge">${t.badge || ''}</span>
+          </div>
           <div class="perf-rank-info">
             <span class="perf-rank-name" style="color:${isPast || isCurrent ? t.color : 'var(--text-muted)'}">${this._esc(t.title)}</span>
             <span class="perf-rank-req">${t.minXp?.toLocaleString()} XP · ${t.minProblems} probs</span>
@@ -1967,14 +2305,14 @@ const App = {
 
     el.innerHTML = `
       <div class="page-header">
-        <h1><i class="icon-neural" style="font-size:28px"></i> AI Lab</h1>
-        <p>AI & ML competitive challenges — solve, run, and test your implementations</p>
+        <h1><i class="icon-neural" style="font-size:28px"></i> <span class="glitch" data-text="AI Lab">AI Lab</span></h1>
+        <p>python3 neural_net.py --mode=challenge --eval=true</p>
       </div>
       <div id="nfStats" class="nf-stats-bar"></div>
       <div class="nf-categories">
         ${Object.entries(catLabels).map(([k, v]) => `<button class="nf-cat-btn ${k === cat ? 'active' : ''}" onclick="App._ailabCategory='${k}';App.renderAILab(document.getElementById('pageContent'))">${k !== 'all' ? catIcons[k] + ' ' : '<i class="icon-fire"></i> '}${v}</button>`).join('')}
       </div>
-      <div id="ailabGrid" class="ailab-grid"><div class="loader"><div class="loader-ring"></div></div></div>`;
+      <div id="ailabGrid" class="ailab-grid"><div class="loader"><div class="loader-ring"></div><div class="loader-dots"><span></span><span></span><span></span></div></div></div>`;
 
     // Stats bar
     const stats = await API.getAiStats();
@@ -1998,7 +2336,7 @@ const App = {
     if (!data.ok) return;
     const grid = document.getElementById('ailabGrid');
     if (!data.problems.length) {
-      grid.innerHTML = '<div class="empty-state"><h3>No problems found</h3></div>';
+      grid.innerHTML = '<div class="empty-state"><h3>// 0 matching problems</h3></div>';
       return;
     }
     const _aiVisualMap = { ml: 'neural', dl: 'neural', nlp: 'spark', cv: 'search', genai: 'spark', rl: 'nodes' };
@@ -2251,7 +2589,7 @@ const App = {
     const code = (this._ailabProblem.starter_code || '').replace(/\\n/g, '\n');
     if (this._ailabEditor) this._ailabEditor.setValue(code);
     else { const fb = document.getElementById('nfCodeFallback'); if (fb) fb.value = code; }
-    this.toast('Code reset to starter template', 'info');
+    this.toast('[reset] code reverted to template', 'info');
   },
 
   _switchNfBottomTab(tab, btn) {
@@ -2271,7 +2609,7 @@ const App = {
     document.querySelectorAll('.nf-tab-panel').forEach(p => p.classList.add('hidden'));
     document.getElementById('nfTabOutput')?.classList.remove('hidden');
     const outputEl = document.getElementById('nfOutputContent');
-    if (outputEl) outputEl.innerHTML = '<div class="loader"><div class="loader-ring"></div></div>';
+    if (outputEl) outputEl.innerHTML = '<div class="loader"><div class="loader-ring"></div><div class="loader-dots"><span></span><span></span><span></span></div></div>';
     try {
       const res = await API.run(code, input, 'python');
       if (outputEl) {
@@ -2322,13 +2660,13 @@ const App = {
       }
     }
     if (allPassed && samples.length > 0) {
-      this.toast('All samples passed!', 'success');
+      this.toast('[test] all samples passed ✔', 'success');
     }
   },
 
   async _saveAiProgress(id, status) {
     await API.updateAiProgress(id, { status, notes: '' });
-    this.toast(status === 'solved' ? 'Problem marked as solved!' : 'Progress saved!', 'success');
+    this.toast(status === 'solved' ? '[AC] problem conquered!' : '[save] progress stored', 'success');
     if (status === 'solved') {
       this._ailabView = 'grid';
       this._ailabProblem = null;
@@ -2658,8 +2996,8 @@ const App = {
 
     el.innerHTML = `
       <div class="page-header">
-        <h1><i class="icon-learn" style="font-size:28px"></i> Learn</h1>
-        <p>Unlock knowledge — choose a subject and master it step by step</p>
+        <h1><i class="icon-learn" style="font-size:28px"></i> <span class="glitch" data-text="Learn">Learn</span></h1>
+        <p>git clone knowledge.git && make install # step_by_step</p>
       </div>
       ${statsHtml}
       <h2 class="learn-section-title"><i class="icon-spark"></i> Data Structures & Algorithms</h2>
@@ -2694,7 +3032,7 @@ const App = {
 
     el.innerHTML = `
       <div class="page-header">
-        <h1><i class="icon-${subjectDef.icon}" style="font-size:28px;color:${subjectDef.color}"></i> ${subjectDef.name}</h1>
+        <h1><i class="icon-${subjectDef.icon}" style="font-size:28px;color:${subjectDef.color}"></i> <span class="glitch" data-text="${subjectDef.name}">${subjectDef.name}</span></h1>
         <p>${subjectDef.desc}</p>
       </div>
       <div style="margin-bottom:20px">
@@ -2730,7 +3068,7 @@ const App = {
 
     const grid = document.getElementById('learnGrid');
     if (!tutorials.length) {
-      grid.innerHTML = '<div class="empty-state"><p>No tutorials found.</p></div>';
+      grid.innerHTML = '<div class="empty-state"><p>// 404: no tutorials in this module</p></div>';
       return;
     }
 
@@ -2843,7 +3181,7 @@ const App = {
               <span class="learn-time"><i class="icon-clock"></i> ${t.estimated_time}</span>
               ${t.completed ? '<span class="fp-badge-done"><i class="icon-check"></i> Completed</span>' : ''}
             </div>
-            <h1 class="fp-hero-title">${this._esc(t.title)}</h1>
+            <h1 class="fp-hero-title"><span class="glitch" data-text="${this._esc(t.title)}">${this._esc(t.title)}</span></h1>
             <p class="fp-hero-desc">${this._esc(t.description)}</p>
           </div>
         </div>
@@ -2886,7 +3224,7 @@ const App = {
             <div class="fp-practice-stats-inline" id="tutorialProblemStats"></div>
           </div>
           <div id="tutorialProblemsGrid" class="fp-problems-grid">
-            <div class="loader"><div class="loader-ring"></div></div>
+            <div class="loader"><div class="loader-ring"></div><div class="loader-dots"><span></span><span></span><span></span></div></div>
           </div>
         </div>
       </div>`;
@@ -2939,7 +3277,7 @@ const App = {
 
   async _completeTutorial(id) {
     await API.completeTutorial(id);
-    this.toast('Tutorial completed! Great learning!', 'success');
+    this.toast('[complete] tutorial mastered ✔', 'success');
     location.hash = '#/learn';
   },
 
@@ -2954,12 +3292,12 @@ const App = {
   async renderForge(el) {
     el.innerHTML = `
       <div class="page-header">
-        <h1><i class="icon-hammer" style="font-size:28px"></i> The Forge</h1>
-        <p>Craft your software development skills — choose your path and master the craft</p>
+        <h1><i class="icon-hammer" style="font-size:28px"></i> <span class="glitch" data-text="The Forge">The Forge</span></h1>
+        <p>make build && ./forge --craft=skills --level=master</p>
       </div>
       <div id="forgeStats"></div>
       <div id="forgeGrid" class="forge-grid">
-        <div class="loader"><div class="loader-ring"></div></div>
+        <div class="loader"><div class="loader-ring"></div><div class="loader-dots"><span></span><span></span><span></span></div></div>
       </div>`;
 
     const [statsData, data] = await Promise.all([API.getForgeStats(), API.getForgePaths()]);
@@ -2980,7 +3318,7 @@ const App = {
         </div>`;
     }
 
-    if (!data.ok) { document.getElementById('forgeGrid').innerHTML = '<div class="empty-state"><p>Failed to load paths.</p></div>'; return; }
+    if (!data.ok) { document.getElementById('forgeGrid').innerHTML = '<div class="empty-state"><p>// error: forge paths failed to load</p></div>'; return; }
 
     const grid = document.getElementById('forgeGrid');
     grid.innerHTML = data.paths.map((p, i) => {
@@ -3015,7 +3353,7 @@ const App = {
   },
 
   async _openForgePath(el, pathId) {
-    el.innerHTML = '<div class="loader"><div class="loader-ring"></div></div>';
+    el.innerHTML = '<div class="loader"><div class="loader-ring"></div><div class="loader-dots"><span></span><span></span><span></span></div></div>';
     const data = await API.getForgePath(pathId);
     if (!data.ok) { location.hash = '#/forge'; return; }
     const p = data.path;
@@ -3037,7 +3375,7 @@ const App = {
             <i class="icon-${icon}" style="color:${p.color}; font-size:36px"></i>
           </div>
           <div class="forge-detail-info">
-            <h1 class="forge-detail-title" style="color:${p.color}">${this._esc(p.title)}</h1>
+            <h1 class="forge-detail-title" style="color:${p.color}"><span class="glitch" data-text="${this._esc(p.title)}">${this._esc(p.title)}</span></h1>
             <p class="forge-detail-desc">${this._esc(p.description)}</p>
             <div class="forge-detail-stats">
               <span class="forge-detail-stat">${p.completedTopics}/${p.totalTopics} topics completed</span>
@@ -3116,11 +3454,11 @@ const App = {
   async renderWorkshop(el) {
     el.innerHTML = `
       <div class="page-header">
-        <h1><i class="icon-code" style="font-size:28px"></i> Workshop</h1>
-        <p>Create, test, and solve your own problems</p>
+        <h1><i class="icon-code" style="font-size:28px"></i> <span class="glitch" data-text="Workshop">Workshop</span></h1>
+        <p>touch sandbox.cpp && g++ -O2 -o a.out sandbox.cpp</p>
       </div>
       <div class="flex gap-3 mb-3">
-        <button class="btn btn-primary" onclick="App.showCreateProblem()"><i class="icon-plus" style="font-size:14px"></i> Create Problem</button>
+        <button class="btn btn-primary" onclick="App.showCreateProblem()"><i class="icon-plus" style="font-size:14px"></i> touch problem.cpp</button>
       </div>
       <div id="workshopCreateForm" class="hidden"></div>
       <div id="workshopList"></div>`;
@@ -3131,7 +3469,7 @@ const App = {
     const el = document.getElementById('workshopList');
     const data = await API.getCustomProblems();
     if (!data.ok || !data.problems.length) {
-      el.innerHTML = '<div class="empty-state"><div class="empty-icon" style="font-size:48px"><i class="icon-wrench"></i></div><h3>No custom problems yet</h3><p>Click "Create Problem" to build your first one</p></div>';
+      el.innerHTML = '<div class="empty-state"><div class="empty-icon" style="font-size:48px"><i class="icon-wrench"></i></div><h3>// workspace empty</h3><p>Run `touch problem.cpp` to create your first one</p></div>';
       return;
     }
     el.innerHTML = `<div class="card"><table class="problem-table"><thead><tr>
@@ -3158,7 +3496,7 @@ const App = {
     form.classList.remove('hidden');
     form.innerHTML = `
       <div class="card mb-3">
-        <div class="card-header"><span class="card-title">${existing ? 'Edit' : 'Create'} Problem</span></div>
+        <div class="card-header"><span class="card-title">${existing ? 'vim' : 'touch'} problem</span></div>
         <div class="workshop-form">
           <div class="flex gap-3">
             <div style="flex:2"><label class="text-sm text-muted">Title</label>
@@ -3189,11 +3527,11 @@ const App = {
                 <div><label class="text-sm text-muted">Output ${i+1}</label><textarea class="input full-width wp-sample-out" rows="2">${this._esc(s.output)}</textarea></div>
               </div>`).join('')}
             </div>
-            <button class="btn btn-ghost btn-sm mt-2" onclick="App._addWpSample()"><i class="icon-plus" style="font-size:12px"></i> Add Sample</button>
+            <button class="btn btn-ghost btn-sm mt-2" onclick="App._addWpSample()"><i class="icon-plus" style="font-size:12px"></i> +sample</button>
           </div>
           <div class="flex gap-2 mt-3">
-            <button class="btn btn-primary" onclick="App.saveCustomProblem(${existing ? p.id : 'null'})">${existing ? 'Update' : 'Create'} Problem</button>
-            <button class="btn btn-ghost" onclick="document.getElementById('workshopCreateForm').classList.add('hidden')">Cancel</button>
+            <button class="btn btn-primary" onclick="App.saveCustomProblem(${existing ? p.id : 'null'})">${existing ? ':w' : 'touch'}</button>
+            <button class="btn btn-ghost" onclick="document.getElementById('workshopCreateForm').classList.add('hidden')">:q</button>
           </div>
         </div>
       </div>`;
@@ -3211,7 +3549,7 @@ const App = {
 
   async saveCustomProblem(id) {
     const title = document.getElementById('wpTitle').value.trim();
-    if (!title) { this.toast('Title required', 'error'); return; }
+    if (!title) { this.toast('[error] title required', 'error'); return; }
     const ins = document.querySelectorAll('.wp-sample-in');
     const outs = document.querySelectorAll('.wp-sample-out');
     const samples = [];
@@ -3233,7 +3571,7 @@ const App = {
     if (id) await API.updateCustomProblem(id, data);
     else await API.createCustomProblem(data);
     document.getElementById('workshopCreateForm').classList.add('hidden');
-    this.toast(id ? 'Problem updated' : 'Problem created', 'success');
+    this.toast(id ? '[save] problem updated' : '[touch] problem created', 'success');
     this._loadWorkshopList();
   },
 
@@ -3245,7 +3583,7 @@ const App = {
   async deleteCustomProblem(id) {
     if (!confirm('Delete this problem?')) return;
     await API.deleteCustomProblem(id);
-    this.toast('Problem deleted', 'success');
+    this.toast('[rm] problem deleted', 'success');
     this._loadWorkshopList();
   },
 
@@ -3370,10 +3708,23 @@ const App = {
         tabSize: 4,
         bracketPairColorization: { enabled: true },
       });
+      // Code stats listener (set up once)
+      this.editor.onDidChangeModelContent(() => {
+        const val = this.editor.getValue();
+        const el = document.getElementById('keyshintStats');
+        if (el) el.textContent = `${val.split('\n').length} lines \u00b7 ${val.length} chars`;
+      });
+      // Keyboard shortcuts inside Monaco
+      this.editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => this.runCode());
+      this.editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.Enter, () => this.submitCode());
     }
 
     // Start recording for code replay
     this._startRecording();
+
+    // Init gamified HUD
+    this._initSolveHUD(p);
+    this._startSolveTimer();
   },
   async _loadStatement(p) {
     const descEl = document.getElementById('solveDescriptionContent');
@@ -3479,7 +3830,7 @@ const App = {
     this.currentProblem = data;
     this._renderBottomTestcases(data.testcases);
     this.switchBottomTab('testcases');
-    this.toast('Sample imported', 'success');
+    this.toast('[cp] sample imported', 'success');
   },
 
   async importAllSamples() {
@@ -3498,7 +3849,7 @@ const App = {
     this.currentProblem = data;
     this._renderBottomTestcases(data.testcases);
     this.switchBottomTab('testcases');
-    this.toast(`Imported ${this.currentStatement.samples.length} samples`, 'success');
+    this.toast(`[cp] imported ${this.currentStatement.samples.length} samples`, 'success');
   },
 
   async translateStatement() {
@@ -3539,7 +3890,7 @@ const App = {
     if (this._aiBattle) { this.cancelAiBattle(); return; }
     const p = this.currentProblem.problem;
     const res = await API.startAiBattle(p.id);
-    if (!res.ok) { this.toast('Failed to start battle', 'error'); return; }
+    if (!res.ok) { this.toast('[error] battle init failed', 'error'); return; }
 
     this._aiBattle = { battleId: res.battleId, aiTimeMs: res.aiTimeMs, startTime: Date.now() };
     this._aiBattleStart = Date.now();
@@ -3559,11 +3910,11 @@ const App = {
 
       if (aiPct >= 100) {
         this._aiBattle.aiFinished = true;
-        this.toast('<i class="icon-robot"></i> AI finished! Hurry up!', 'warning');
+        this.toast('<i class="icon-robot"></i> AI.solve() returned! hurry!', 'warning');
       }
     }, 100);
 
-    this.toast('<i class="icon-robot"></i> Race started! Solve before the AI does!', 'info');
+    this.toast('<i class="icon-robot"></i> [1v1] race initiated! beat the AI!', 'info');
   },
 
   async _completeAiBattle(won) {
@@ -3687,7 +4038,7 @@ const App = {
 
   async showReplay(submissionId) {
     const data = await API.getCodeReplay(submissionId);
-    if (!data.ok || !data.replay?.events?.length) { this.toast('No replay available', 'info'); return; }
+    if (!data.ok || !data.replay?.events?.length) { this.toast('[replay] no data available', 'info'); return; }
     const events = data.replay.events;
     const duration = data.replay.duration_ms;
 
@@ -3777,7 +4128,7 @@ const App = {
       this._collabRoom = roomId;
       document.getElementById('collabIndicator').classList.remove('hidden');
       document.getElementById('collabInfo').textContent = `Room: ${roomId} (1 user)`;
-      this.toast(`Room created: ${roomId} — Share this code!`, 'success');
+      this.toast(`[room] spawned: ${roomId} — share code!`, 'success');
       this._setupCollabSync();
     });
     this._collabSocket.on('user-count', ({ count }) => {
@@ -3797,7 +4148,7 @@ const App = {
       }
       document.getElementById('collabIndicator').classList.remove('hidden');
       document.getElementById('collabInfo').textContent = `Room: ${data.roomId}`;
-      this.toast(`Joined room ${data.roomId}`, 'success');
+      this.toast(`[ssh] connected to room ${data.roomId}`, 'success');
       this._setupCollabSync();
     });
     this._collabSocket.on('room-error', ({ error }) => this.toast(error, 'error'));
@@ -3828,7 +4179,7 @@ const App = {
     if (this._collabSocket) { this._collabSocket.disconnect(); this._collabSocket = null; }
     this._collabRoom = null;
     document.getElementById('collabIndicator').classList.add('hidden');
-    this.toast('Left collaboration room', 'info');
+    this.toast('[exit] left collaboration room', 'info');
   },
 
   /* ===== Visual Algorithm Debugger ===== */
@@ -4069,33 +4420,29 @@ const App = {
     if (!this._username) {
       el.innerHTML = `
         <div class="page-header">
-          <h1><i class="icon-globe" style="font-size:28px"></i> Community</h1>
-          <p>Connect with friends, chat, and solve problems together</p>
-        </div>
-        <div class="card" style="text-align:center;padding:60px 20px">
+          <h1><i class="icon-globe" style="font-size:28px"></i> <span class="glitch" data-text="Community">Community</span></h1>
+          <p>ssh party@nexus.dev --join-squad</p>
           <span style="font-size:64px;display:block;margin-bottom:20px"><i class="icon-wave-hand"></i></span>
-          <h2 style="margin-bottom:8px;color:var(--text-bright)">Set up your profile to get started</h2>
-          <p style="color:var(--text-secondary);margin-bottom:24px">Create a username to add friends, chat, and solve together</p>
-          <button class="btn btn-primary" onclick="App.showUserSetup()">Create Profile</button>
+          <h2 style="margin-bottom:8px;color:var(--text-bright)">// identity not found</h2>
+          <p style="color:var(--text-secondary);margin-bottom:24px">Create a handle to join the squad, pair-program & compete</p>
+          <button class="btn btn-primary" onclick="App.showUserSetup()">useradd --create</button>
         </div>`;
       return;
     }
 
     el.innerHTML = `
       <div class="page-header">
-        <h1><i class="icon-globe" style="font-size:28px"></i> Community</h1>
-        <p>Connect with friends, chat, and solve problems together</p>
-      </div>
-      <div class="social-layout">
+        <h1><i class="icon-globe" style="font-size:28px"></i> <span class="glitch" data-text="Community">Community</span></h1>
+        <p>ssh party@nexus.dev --join-squad</p>
         <div class="social-tab-bar">
           <button class="social-tab active" data-stab="friends" onclick="App._switchSocialTab('friends',this)">
-            <i class="icon-friends"></i> Friends
+            <i class="icon-friends"></i> /allies
           </button>
           <button class="social-tab" data-stab="rooms" onclick="App._switchSocialTab('rooms',this)">
-            <i class="icon-house"></i> Rooms
+            <i class="icon-house"></i> /rooms
           </button>
           <button class="social-tab" data-stab="feed" onclick="App._switchSocialTab('feed',this)">
-            <i class="icon-feed"></i> Feed
+            <i class="icon-feed"></i> /feed
           </button>
         </div>
         <div id="socialTabContent">
@@ -4187,7 +4534,7 @@ const App = {
     } else {
       html += `<div class="empty-state">
         <span style="font-size:48px"><i class="icon-friends"></i></span>
-        <p>No friends yet. Search for users above to add friends!</p>
+        <p>// allies[] is empty — search handles above</p>
       </div>`;
     }
     html += `</div>`;
@@ -4361,7 +4708,7 @@ const App = {
     } else {
       html += `<div class="empty-state">
         <span style="font-size:48px"><i class="icon-house"></i></span>
-        <p>No active rooms. Create one and invite friends!</p>
+        <p>// no rooms[] spawned yet — create one to begin</p>
       </div>`;
     }
     html += `</div>`;
@@ -4900,33 +5247,83 @@ const App = {
     else resDiv.classList.remove('hidden');
   },
 
+  /* ── TC Deck state ── */
+  _tcDeckIdx: 0,
+  _tcDeckData: [],   // { label, input, expected_output, id, passed?, actual? }
+
   _renderBottomTestcases(testcases) {
-    const tcDiv = document.getElementById('bottomTestcasesContent');
-    if (!testcases || !testcases.length) {
-      tcDiv.innerHTML = `
-        <div class="output-placeholder">
-          <i class="icon-test" style="font-size:24px;opacity:0.3"></i>
-          <p>No test cases yet. Import samples from the problem or add manually.</p>
+    this._tcDeckData = testcases || [];
+    this._tcDeckIdx = 0;
+    this._renderTcDeck();
+  },
+
+  _renderTcDeck() {
+    const body = document.getElementById('tcDeckBody');
+    const labelEl = document.getElementById('tcDeckLabel');
+    const prevBtn = document.getElementById('tcPrevBtn');
+    const nextBtn = document.getElementById('tcNextBtn');
+    const tcs = this._tcDeckData;
+    const idx = this._tcDeckIdx;
+
+    if (!body) return;
+
+    if (!tcs || !tcs.length) {
+      if (labelEl) labelEl.textContent = 'TC 0 / 0';
+      if (prevBtn) prevBtn.disabled = true;
+      if (nextBtn) nextBtn.disabled = true;
+      body.innerHTML = `
+        <div class="tc-deck-empty">
+          <div style="font-size:28px;opacity:0.25">[ ]</div>
+          <span>// no test cases — import samples or +tc</span>
+          <button class="btn btn-ghost btn-sm" onclick="App.toggleAddTestcase()" style="margin-top:8px">+ add testcase</button>
         </div>
         <div id="addTcForm" class="hidden"></div>`;
       return;
     }
 
-    let html = '<div class="tc-list">';
-    html += testcases.map((tc, i) => `
-      <div class="tc-card" data-tc-id="${tc.id}">
+    if (labelEl) labelEl.textContent = `TC ${idx + 1} / ${tcs.length}`;
+    if (prevBtn) prevBtn.disabled = idx === 0;
+    if (nextBtn) nextBtn.disabled = idx === tcs.length - 1;
+
+    const tc = tcs[idx];
+    const passed  = tc._passed;   // set by _renderRunResults after judging
+    const failed  = tc._failed;
+    const actual  = tc._actual;
+    const verdict = tc._verdict;
+    const timeMs  = tc._timeMs;
+
+    const statusCls = passed ? 'passed' : failed ? 'failed' : '';
+    const hasResult = passed !== undefined || failed !== undefined;
+
+    let cardHtml = `
+      <div class="tc-card ${statusCls}" style="animation: tcDeckFlip 0.22s ease both">
         <div class="tc-header">
-          <span class="tc-label"><i class="icon-test" style="font-size:12px"></i> ${this._esc(tc.label || 'Test ' + (i + 1))}</span>
-          <button class="btn btn-ghost btn-sm" onclick="App.deleteTestcase(${tc.id})" style="color:var(--danger);padding:2px 6px"><i class="icon-trash" style="font-size:12px"></i></button>
+          <span class="tc-label">
+            <i class="icon-test" style="font-size:12px"></i> ${this._esc(tc.label || 'Test ' + (idx + 1))}
+            ${hasResult ? `<span class="tc-verdict-badge" style="background:${passed ? 'var(--success-bg)':'var(--danger-bg)'};color:${passed ? 'var(--success)':'var(--danger)'};margin-left:6px">${verdict || (passed ? 'AC' : 'WA')}</span>` : ''}
+            ${timeMs != null ? `<span style="font-size:10px;color:var(--text-muted)">${timeMs}ms</span>` : ''}
+          </span>
+          <div style="display:flex;gap:4px;align-items:center">
+            <button class="btn btn-ghost btn-sm" onclick="App.deleteTestcase(${tc.id})" style="color:var(--danger);padding:2px 6px"><i class="icon-trash" style="font-size:12px"></i></button>
+          </div>
         </div>
-        <div class="tc-boxes">
-          <div class="tc-box"><label>Input</label><pre>${this._esc(tc.input)}</pre></div>
-          <div class="tc-box"><label>Expected Output</label><pre>${this._esc(tc.expected_output)}</pre></div>
+        <div class="tc-boxes${hasResult ? '-3' : ''}">
+          <div class="tc-box"><label>Input</label><pre>${this._esc(tc.input || '')}</pre></div>
+          <div class="tc-box"><label>Expected</label><pre class="${passed ? 'correct' : ''}">${this._esc(tc.expected_output || tc.expected || '')}</pre></div>
+          ${hasResult ? `<div class="tc-box"><label>Output</label><pre class="${passed ? 'correct' : 'wrong'}">${this._esc(actual || '')}</pre></div>` : ''}
         </div>
-      </div>`).join('');
-    html += '</div>';
-    html += '<div id="addTcForm" class="hidden"></div>';
-    tcDiv.innerHTML = html;
+        ${tc._stderr ? `<div style="padding:6px 10px;border-top:1px solid var(--border)"><label style="font-size:10px;color:var(--text-muted);text-transform:uppercase;font-weight:600">Stderr</label><pre style="color:var(--warning);font-size:12px;margin:4px 0 0">${this._esc(tc._stderr)}</pre></div>` : ''}
+      </div>
+      <div id="addTcForm" class="hidden"></div>`;
+
+    body.innerHTML = cardHtml;
+  },
+
+  tcDeckPrev() {
+    if (this._tcDeckIdx > 0) { this._tcDeckIdx--; this._renderTcDeck(); }
+  },
+  tcDeckNext() {
+    if (this._tcDeckIdx < this._tcDeckData.length - 1) { this._tcDeckIdx++; this._renderTcDeck(); }
   },
 
   toggleAddTestcase() {
@@ -4971,11 +5368,45 @@ const App = {
   },
 
   closeSolve() {
-    document.getElementById('solveOverlay').classList.add('hidden');
+    const ov = document.getElementById('solveOverlay');
+    ov.classList.add('hidden');
+    // Reset zen mode on close
+    ov.classList.remove('solve-zen');
+    const zenBar = document.getElementById('zenRestoreBar');
+    if (zenBar) zenBar.classList.add('hidden');
+    const focusBtn = document.getElementById('focusModeBtn');
+    if (focusBtn) focusBtn.classList.remove('zen-active');
+    // Reset collapsed panels
+    const solveHud = document.getElementById('solveHud');
+    if (solveHud) solveHud.classList.remove('hud-collapsed');
+    const solveLeft = document.getElementById('solveLeft');
+    if (solveLeft) {
+      solveLeft.classList.remove('left-collapsed', 'float-hidden', 'float-minimized');
+      solveLeft.style.left = '16px'; solveLeft.style.top = '16px';
+      solveLeft.style.width = '440px'; solveLeft.style.height = '';
+      solveLeft.style.right = ''; solveLeft.style.bottom = '';
+    }
+    const bottomPanel = document.getElementById('bottomPanel');
+    if (bottomPanel) {
+      bottomPanel.classList.remove('bottom-collapsed', 'float-hidden', 'float-minimized');
+      bottomPanel.style.right = '16px'; bottomPanel.style.bottom = '16px';
+      bottomPanel.style.left = 'auto'; bottomPanel.style.top = 'auto';
+      bottomPanel.style.width = '520px'; bottomPanel.style.height = '280px';
+    }
+    const strip = document.getElementById('leftCollapseStrip');
+    if (strip) strip.classList.add('hidden');
+    // Reset toolbar indicators
+    const probBtn = document.getElementById('probPanelBtn');
+    if (probBtn) probBtn.classList.remove('fp-hidden-indicator');
+    const tcBtn = document.getElementById('tcPanelBtn');
+    if (tcBtn) tcBtn.classList.remove('fp-hidden-indicator');
+    this._focusMode = false;
+
     this.currentProblem = null;
     this.currentStatement = null;
 
-    // Clean up AI battle
+    // Stop solve timer
+    this._stopSolveTimer();
     if (this._aiBattle) this.cancelAiBattle();
 
     // Clean up collaboration
@@ -5001,6 +5432,115 @@ const App = {
   },
 
   /* ===================================================
+     GAMIFIED HUD LOGIC
+     =================================================== */
+  _initSolveHUD(p) {
+    this._solveAttempts = 0;
+    this._solveCombo = 0;
+    const attEl = document.getElementById('hudAttemptsValue');
+    if (attEl) attEl.textContent = '0';
+    const r = p.rating || 800;
+    let xp = 10;
+    if (r >= 2200) xp = 150; else if (r >= 2000) xp = 100; else if (r >= 1800) xp = 80;
+    else if (r >= 1600) xp = 60; else if (r >= 1400) xp = 40; else if (r >= 1200) xp = 25; else if (r >= 1000) xp = 15;
+    this._baseXpReward = xp;
+    const xpEl = document.getElementById('hudXpValue');
+    if (xpEl) xpEl.textContent = `+${xp}`;
+    const comboFire = document.getElementById('comboFire');
+    const comboCount = document.getElementById('comboCount');
+    const comboMulti = document.getElementById('comboMulti');
+    if (comboFire) comboFire.textContent = '';
+    if (comboCount) comboCount.textContent = '';
+    if (comboMulti) comboMulti.textContent = '';
+    const flameEl = document.getElementById('solveDifficultyFlame');
+    if (flameEl) {
+      let tier, label, icon;
+      if (r >= 2400)      { tier = 'boss';   icon = '\u{1F480}'; label = 'BOSS'; }
+      else if (r >= 2000) { tier = 'master'; icon = '\u2620\uFE0F'; label = 'MASTER'; }
+      else if (r >= 1800) { tier = 'expert'; icon = '\uD83D\uDD25'; label = 'EXPERT'; }
+      else if (r >= 1600) { tier = 'elite';  icon = '\u26A1'; label = 'ELITE'; }
+      else if (r >= 1400) { tier = 'warrior';icon = '\u2694\uFE0F'; label = 'WARRIOR'; }
+      else if (r >= 1200) { tier = 'warrior';icon = '\uD83D\uDDE1\uFE0F'; label = 'APPRENTICE'; }
+      else if (r >= 1000) { tier = 'novice'; icon = '\uD83C\uDF31'; label = 'NOVICE'; }
+      else                { tier = 'novice'; icon = '\uD83D\uDD30'; label = 'ROOKIE'; }
+      flameEl.setAttribute('data-tier', tier);
+      flameEl.innerHTML = `${icon} ${label}`;
+    }
+    const questEl = document.getElementById('solveHudQuest');
+    if (questEl) questEl.textContent = r >= 2000
+      ? `\u27E8 BOSS BATTLE \u27E9  ${p.problem_id} \u2014 ${p.title}`
+      : `\u27E8 MISSION \u27E9  ${p.problem_id} \u2014 ${p.title}`;
+    const statsEl = document.getElementById('keyshintStats');
+    if (statsEl) statsEl.textContent = '0 lines \u00b7 0 chars';
+    const editorEl = document.getElementById('monacoEditor');
+    if (editorEl) editorEl.className = 'editor-container';
+    // Reset deck state
+    this._tcDeckIdx = 0;
+  },
+
+  _updateHpBar() { /* removed — HP replaced by tries counter */ },
+
+  _startSolveTimer() {
+    this._stopSolveTimer();
+    this._solveSecondsElapsed = 0;
+    const display = document.getElementById('solveTimerDisplay');
+    const timerEl = document.getElementById('solveHudTimer');
+    if (timerEl) timerEl.removeAttribute('data-urgency');
+    this._solveTimerInterval = setInterval(() => {
+      this._solveSecondsElapsed++;
+      const m = Math.floor(this._solveSecondsElapsed / 60);
+      const s = this._solveSecondsElapsed % 60;
+      if (display) display.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+      // Mirror time in zen bar
+      const zenTimer = document.getElementById('zenTimerDisplay');
+      if (zenTimer) zenTimer.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+      if (timerEl) {
+        const secs = this._solveSecondsElapsed;
+        if (secs >= 3600)      timerEl.dataset.urgency = 'danger';
+        else if (secs >= 1800) timerEl.dataset.urgency = 'slow';
+        else if (secs >= 600)  timerEl.dataset.urgency = 'normal';
+        else                   delete timerEl.dataset.urgency;
+      }
+    }, 1000);
+  },
+
+  _stopSolveTimer() {
+    if (this._solveTimerInterval) { clearInterval(this._solveTimerInterval); this._solveTimerInterval = null; }
+  },
+
+  _screenShake() {
+    const el = document.getElementById('solveOverlay');
+    if (!el) return;
+    el.classList.remove('screenshake');
+    void el.offsetWidth;
+    el.classList.add('screenshake');
+    setTimeout(() => el.classList.remove('screenshake'), 650);
+  },
+
+  _showComboPopup(n) {
+    if (n < 2) return;
+    const el = document.getElementById('solveComboPopup');
+    if (!el) return;
+    const labels = { 2: 'DOUBLE!', 3: 'TRIPLE!', 4: 'QUAD!', 5: 'PENTA KILL!' };
+    el.textContent = labels[n] || `COMBO \xd7${n}!`;
+    el.classList.remove('hidden', 'combo-pop-animate');
+    void el.offsetWidth;
+    el.classList.add('combo-pop-animate');
+    if (this._comboPopupTimer) clearTimeout(this._comboPopupTimer);
+    this._comboPopupTimer = setTimeout(() => { el.classList.add('hidden'); el.classList.remove('combo-pop-animate'); }, 1600);
+  },
+
+  _updateComboHud() {
+    const n = this._solveCombo;
+    const comboFire = document.getElementById('comboFire');
+    const comboCount = document.getElementById('comboCount');
+    const comboMulti = document.getElementById('comboMulti');
+    if (comboFire) comboFire.textContent = n >= 2 ? '\uD83D\uDD25' : n === 1 ? '\u2713' : '';
+    if (comboCount) comboCount.textContent = n >= 1 ? `${n}\xd7` : '';
+    if (comboMulti) comboMulti.textContent = n >= 3 ? `(+${Math.min(n - 1, 5) * 20}% xp)` : '';
+  },
+
+  /* ===================================================
      RUN / SUBMIT
      =================================================== */
   async runCode() {
@@ -5008,22 +5548,29 @@ const App = {
     const code = this.editor.getValue();
     const lang = this._currentLang;
     const resDiv = document.getElementById('bottomResultsContent');
-    resDiv.innerHTML = '<div class="flex items-center gap-2" style="padding:16px"><span class="spinner-sm"></span> Running...</div>';
+    const editorEl = document.getElementById('monacoEditor');
+    const runBtn = document.getElementById('runCodeBtn');
+    resDiv.innerHTML = '<div class="flex items-center gap-2" style="padding:16px"><span class="spinner-sm"></span> <span style="font-family:var(--mono);font-size:12px">$ ./run...</span></div>';
     this.switchBottomTab('results');
+    if (editorEl) editorEl.classList.add('editor-running');
+    if (runBtn) runBtn.classList.add('running');
 
-    if (this.currentProblem?.testcases?.length) {
-      const result = await API.judge({ code, testcases: this.currentProblem.testcases, language: lang });
-      this._renderRunResults(result, false);
-      // Parse debug output if debug mode is active
-      if (this._debugMode && result.results) {
-        const allStderr = result.results.map(r => r.stderr || '').join('\n');
-        if (allStderr) this._parseDebugOutput(allStderr);
+    try {
+      if (this.currentProblem?.testcases?.length) {
+        const result = await API.judge({ code, testcases: this.currentProblem.testcases, language: lang });
+        this._renderRunResults(result, false);
+        if (this._debugMode && result.results) {
+          const allStderr = result.results.map(r => r.stderr || '').join('\n');
+          if (allStderr) this._parseDebugOutput(allStderr);
+        }
+      } else {
+        const result = await API.run(code, '', lang);
+        resDiv.innerHTML = `<div style="padding:12px"><pre style="color:var(--text-primary);margin:0">${this._esc(result.output || '(no output)')}</pre>${result.stderr ? `<pre style="color:var(--danger);margin:8px 0 0">${this._esc(result.stderr)}</pre>` : ''}</div>`;
+        if (this._debugMode && result.stderr) this._parseDebugOutput(result.stderr);
       }
-    } else {
-      const result = await API.run(code, '', lang);
-      resDiv.innerHTML = `<div style="padding:12px"><pre style="color:var(--text-primary);margin:0">${this._esc(result.output || '(no output)')}</pre>${result.stderr ? `<pre style="color:var(--danger);margin:8px 0 0">${this._esc(result.stderr)}</pre>` : ''}</div>`;
-      // Parse debug output if debug mode is active
-      if (this._debugMode && result.stderr) this._parseDebugOutput(result.stderr);
+    } finally {
+      if (editorEl) { editorEl.classList.remove('editor-running'); }
+      if (runBtn) runBtn.classList.remove('running');
     }
   },
 
@@ -5033,93 +5580,107 @@ const App = {
     const lang = this._currentLang;
     const p = this.currentProblem.problem;
     const resDiv = document.getElementById('bottomResultsContent');
-    resDiv.innerHTML = '<div class="flex items-center gap-2" style="padding:16px"><span class="spinner-sm"></span> <i class="icon-sword"></i> Judging...</div>';
+    const editorEl = document.getElementById('monacoEditor');
+    const submitBtn = document.getElementById('submitCodeBtn');
+    resDiv.innerHTML = '<div class="flex items-center gap-2" style="padding:16px"><span class="spinner-sm"></span><span style="font-family:var(--mono);font-size:12px">$ git push origin main -- judging...</span></div>';
     this.switchBottomTab('results');
+    if (editorEl) editorEl.classList.add('editor-running');
+    if (submitBtn) submitBtn.disabled = true;
 
-    // Save achievements state before submission
+    // Track attempt
+    this._solveAttempts++;
+    const attEl = document.getElementById('hudAttemptsValue');
+    if (attEl) attEl.textContent = this._solveAttempts;
+
     const prevAchievements = this._previousAchievements || [];
 
-    const result = await API.judge({
-      problem_id: p.id,
-      code,
-      language: lang,
-      testcases: this.currentProblem.testcases || [],
-    });
-    this._renderRunResults(result, true);
+    try {
+      const result = await API.judge({
+        problem_id: p.id, code, language: lang,
+        testcases: this.currentProblem.testcases || [],
+      });
+      this._renderRunResults(result, true);
 
-    // Refresh problem data
-    const data = await API.getProblem(p.id);
-    this.currentProblem = data;
-
-    // If AC, show XP popup and check for new achievements
-    if (result.verdict === 'AC') {
-      this._showXpPopup(p);
-      this._checkNewAchievements(prevAchievements);
-      this._updateSidebarPlayer();
-      this._fireConfetti();
-
-      // Complete AI battle if active
-      if (this._aiBattle) {
-        this._completeAiBattle(true);
+      if (result.verdict === 'AC') {
+        // Combo up
+        this._solveCombo++;
+        this._updateComboHud();
+        this._showComboPopup(this._solveCombo);
+        // Editor green glow
+        if (editorEl) { editorEl.classList.remove('editor-running', 'editor-wa'); editorEl.classList.add('editor-ac'); }
+        // XP popup and celebrations
+        this._showXpPopup(p);
+        this._checkNewAchievements(prevAchievements);
+        this._updateSidebarPlayer();
+        this._fireConfetti();
+        if (this._aiBattle) this._completeAiBattle(true);
+      } else if (result.verdict && result.verdict !== 'AC') {
+        // Wrong answer — HP down, screen shake
+        this._solveCombo = 0;
+        this._updateComboHud();
+        this._screenShake();
+        if (editorEl) { editorEl.classList.remove('editor-running', 'editor-ac'); editorEl.classList.add('editor-wa'); }
+        setTimeout(() => { if (editorEl) editorEl.classList.remove('editor-wa'); }, 2000);
       }
-    } else if (this._aiBattle && result.verdict) {
-      // Wrong answer during AI battle - don't end battle, let them keep trying
-    }
 
-    // Save code replay for this submission
-    if (data?.submissions?.length) {
-      const latestSub = data.submissions[data.submissions.length - 1];
-      this._saveReplay(latestSub.id);
+      const data = await API.getProblem(p.id);
+      this.currentProblem = data;
+      if (data?.submissions?.length) {
+        const latestSub = data.submissions[data.submissions.length - 1];
+        this._saveReplay(latestSub.id);
+      }
+    } finally {
+      if (editorEl) editorEl.classList.remove('editor-running');
+      if (submitBtn) submitBtn.disabled = false;
     }
   },
 
   _renderRunResults(result, isSubmit) {
-    const resDiv = document.getElementById('bottomResultsContent');
-    let html = '<div style="padding:10px">';
-
     if (result.compileError) {
-      html += `<div class="verdict-banner ce"><i class="icon-cross" style="font-size:18px"></i> Compilation Error</div><pre style="color:var(--danger);font-size:12px;white-space:pre-wrap">${this._esc(result.compileError)}</pre>`;
-      html += '</div>';
-      resDiv.innerHTML = html;
+      // Show compile error in results tab
+      this.switchBottomTab('results');
+      const resDiv = document.getElementById('bottomResultsContent');
+      resDiv.innerHTML = `<div style="padding:10px"><div class="verdict-banner ce"><i class="icon-cross" style="font-size:18px"></i> Compilation Error</div><pre style="color:var(--danger);font-size:12px;white-space:pre-wrap;padding:0 8px">${this._esc(result.compileError)}</pre></div>`;
       return;
     }
 
     const v = result.verdict;
     const iconName = v === 'AC' ? 'check' : v === 'WA' ? 'cross' : v === 'TLE' ? 'clock' : 'cross';
-    const label = v === 'AC' ? '<i class="icon-circle-check"></i> ACCEPTED' : v === 'WA' ? '<i class="icon-circle-x"></i> Wrong Answer' : v === 'TLE' ? '<i class="icon-clock"></i> Time Limit Exceeded' : v === 'RE' ? '<i class="icon-explosion"></i> Runtime Error' : v;
+    const timeStr = this._solveSecondsElapsed > 0
+      ? ` &nbsp;<span class="boss-label">\u23F1 ${String(Math.floor(this._solveSecondsElapsed/60)).padStart(2,'0')}:${String(this._solveSecondsElapsed%60).padStart(2,'0')}</span>`
+      : '';
+    const acLabel = `<i class="icon-circle-check"></i> ACCEPTED \u2014 MISSION COMPLETE${timeStr}`;
+    const label = v === 'AC' ? acLabel
+      : v === 'WA' ? '<i class="icon-circle-x"></i> Wrong Answer \u2014 try again'
+      : v === 'TLE' ? '<i class="icon-clock"></i> Time Limit Exceeded'
+      : v === 'RE' ? '<i class="icon-explosion"></i> Runtime Error' : v;
 
-    if (isSubmit) {
-      html += `<div class="verdict-banner ${v.toLowerCase()}"><i class="icon-${iconName}" style="font-size:18px"></i> ${label}</div>`;
-    }
-
+    // Merge run results back into the deck data so deck shows pass/fail
     if (result.results && result.results.length) {
-      html += '<div class="tc-list">';
-      html += result.results.map(r => {
-        const passed = r.verdict === 'AC';
-        return `
-          <div class="tc-card ${passed ? 'passed' : 'failed'}">
-            <div class="tc-header">
-              <span class="tc-label">
-                <i class="icon-${passed ? 'check' : 'cross'}" style="font-size:12px"></i> ${r.label}
-              </span>
-              <span class="flex items-center gap-2">
-                <span class="tc-verdict-badge" style="background:${passed ? 'var(--success-bg)' : 'var(--danger-bg)'};color:${passed ? 'var(--success)' : 'var(--danger)'}">${r.verdict}</span>
-                <span class="text-sm text-muted">${r.timeMs}ms</span>
-              </span>
-            </div>
-            <div class="tc-boxes-3">
-              <div class="tc-box"><label>Input</label><pre>${this._esc(r.input)}</pre></div>
-              <div class="tc-box"><label>Expected</label><pre class="${passed ? 'correct' : ''}">${this._esc(r.expected)}</pre></div>
-              <div class="tc-box"><label>Output</label><pre class="${passed ? 'correct' : 'wrong'}">${this._esc(r.actual)}</pre></div>
-            </div>
-            ${r.stderr ? `<div style="padding:6px 10px;border-top:1px solid var(--border)"><label style="font-size:10px;color:var(--text-muted);text-transform:uppercase;font-weight:600">Stderr</label><pre style="color:var(--warning);font-size:12px;margin:4px 0 0">${this._esc(r.stderr)}</pre></div>` : ''}
-          </div>`;
-      }).join('');
-      html += '</div>';
+      result.results.forEach((r, i) => {
+        if (this._tcDeckData[i]) {
+          this._tcDeckData[i]._passed  = r.verdict === 'AC';
+          this._tcDeckData[i]._failed  = r.verdict !== 'AC';
+          this._tcDeckData[i]._verdict = r.verdict;
+          this._tcDeckData[i]._actual  = r.actual;
+          this._tcDeckData[i]._timeMs  = r.timeMs;
+          this._tcDeckData[i]._stderr  = r.stderr;
+        }
+      });
+      // Jump to first failed test case
+      const firstFail = result.results.findIndex(r => r.verdict !== 'AC');
+      if (firstFail >= 0) this._tcDeckIdx = firstFail;
+      this._renderTcDeck();
+      this.switchBottomTab('testcases');
     }
 
-    html += '</div>';
-    resDiv.innerHTML = html;
+    // Also show verdict banner in results tab
+    if (isSubmit) {
+      const resDiv = document.getElementById('bottomResultsContent');
+      resDiv.innerHTML = `<div style="padding:10px"><div class="verdict-banner ${v.toLowerCase()}"><i class="icon-${iconName}" style="font-size:18px"></i> ${label}</div></div>`;
+      // For AC switch to testcases to celebrate, for WA stay on testcases (deck jumped to fail)
+      if (v === 'AC') this.switchBottomTab('results');
+    }
   },
 
   resetCode() {
@@ -5131,20 +5692,25 @@ const App = {
      =================================================== */
   _showXpPopup(problem) {
     const r = problem.rating || 800;
-    let xp = 10;
-    if (r >= 2200) xp = 150;
-    else if (r >= 2000) xp = 100;
-    else if (r >= 1800) xp = 80;
-    else if (r >= 1600) xp = 60;
-    else if (r >= 1400) xp = 40;
-    else if (r >= 1200) xp = 25;
-    else if (r >= 1000) xp = 15;
+    let xp = this._baseXpReward || 10;
+    // Combo bonus
+    const combo = this._solveCombo;
+    const comboBonus = combo >= 2 ? Math.min(combo - 1, 5) * 0.2 : 0;
+    // Speed bonus: solve in < 5 min = +50%, < 15 min = +25%
+    const secs = this._solveSecondsElapsed;
+    const speedBonus = secs < 300 ? 0.5 : secs < 900 ? 0.25 : 0;
+    const total = Math.round(xp * (1 + comboBonus + speedBonus));
 
     const popup = document.getElementById('xpPopup');
     const text = document.getElementById('xpPopupText');
-    text.textContent = `+${xp} XP`;
+    const sub = document.getElementById('xpPopupSub');
+    if (text) text.textContent = `+${total} XP`;
+    let subParts = [];
+    if (comboBonus > 0) subParts.push(`\uD83D\uDD25 COMBO x${combo}`);
+    if (speedBonus > 0) subParts.push(secs < 300 ? '\u26A1 SPEED BONUS' : '\uD83D\uDCA8 QUICK SOLVE');
+    if (sub) sub.textContent = subParts.join('  ');
     popup.classList.remove('hidden');
-    setTimeout(() => popup.classList.add('hidden'), 1500);
+    setTimeout(() => popup.classList.add('hidden'), 2200);
   },
 
   async _checkNewAchievements(prevAchievements) {
@@ -5318,27 +5884,190 @@ const App = {
      RESIZER
      =================================================== */
   initResizer() {
-    const resizer = document.getElementById('solveResizer');
-    const left = document.getElementById('solveLeft');
-    let isResizing = false;
+    this._initFloatingPanels();
+  },
 
-    resizer.addEventListener('mousedown', () => {
-      isResizing = true;
-      document.body.style.cursor = 'col-resize';
-      document.body.style.userSelect = 'none';
-    });
+  _initFloatingPanels() {
+    const solveLeft   = document.getElementById('solveLeft');
+    const bottomPanel = document.getElementById('bottomPanel');
+    const leftHandle  = solveLeft?.querySelector('.solve-topbar');
+    const botHandle   = bottomPanel?.querySelector('.bottom-panel-header');
 
-    document.addEventListener('mousemove', e => {
-      if (!isResizing) return;
-      const pct = (e.clientX / window.innerWidth) * 100;
-      if (pct > 20 && pct < 80) left.style.width = pct + '%';
-    });
+    this._makeDraggable(solveLeft, leftHandle);
+    this._makeDraggable(bottomPanel, botHandle);
+    this._attachResizeEdges(solveLeft);
+    this._attachResizeEdges(bottomPanel);
+  },
 
-    document.addEventListener('mouseup', () => {
-      isResizing = false;
-      document.body.style.cursor = '';
-      document.body.style.userSelect = '';
+  /* Generic drag — move panel by dragging its handle bar */
+  _makeDraggable(panel, handle) {
+    if (!panel || !handle) return;
+    handle.addEventListener('mousedown', e => {
+      if (e.target.closest('button, a, input, select, .bottom-tabs, .tc-nav-btn')) return;
+      e.preventDefault();
+
+      const parent = panel.offsetParent || panel.parentElement;
+      const pRect  = parent.getBoundingClientRect();
+      const elRect = panel.getBoundingClientRect();
+
+      let initLeft = elRect.left - pRect.left;
+      let initTop  = elRect.top  - pRect.top;
+      panel.style.left   = initLeft + 'px';
+      panel.style.top    = initTop  + 'px';
+      panel.style.right  = 'auto';
+      panel.style.bottom = 'auto';
+      panel.classList.add('fp-dragging');
+
+      const startX = e.clientX, startY = e.clientY;
+      const onMove = mv => {
+        panel.style.left = (initLeft + mv.clientX - startX) + 'px';
+        panel.style.top  = (initTop  + mv.clientY - startY) + 'px';
+      };
+      const onUp = () => {
+        panel.classList.remove('fp-dragging');
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+      };
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
     });
+  },
+
+  /* 8-direction resize — attaches mousedown to every .fp-edge inside panel */
+  _attachResizeEdges(panel) {
+    if (!panel) return;
+    panel.querySelectorAll('.fp-edge').forEach(edge => {
+      edge.addEventListener('mousedown', e => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const dir = edge.dataset.dir; // 'n','ne','e','se','s','sw','w','nw'
+        const par = panel.offsetParent || panel.parentElement;
+        const parRect = par.getBoundingClientRect();
+        const elRect  = panel.getBoundingClientRect();
+
+        // Snapshot current geometry in explicit px (normalise right/bottom → left/top)
+        let initLeft = elRect.left - parRect.left;
+        let initTop  = elRect.top  - parRect.top;
+        let initW    = elRect.width;
+        let initH    = elRect.height;
+
+        panel.style.left   = initLeft + 'px';
+        panel.style.top    = initTop  + 'px';
+        panel.style.right  = 'auto';
+        panel.style.bottom = 'auto';
+        panel.style.width  = initW + 'px';
+        panel.style.height = initH + 'px';
+
+        const startX = e.clientX, startY = e.clientY;
+        const MIN_W = 200, MIN_H = 80;
+
+        panel.classList.add('fp-dragging');
+
+        const onMove = mv => {
+          const dx = mv.clientX - startX;
+          const dy = mv.clientY - startY;
+
+          let newLeft = initLeft, newTop = initTop, newW = initW, newH = initH;
+
+          // Horizontal
+          if (dir.includes('e')) {
+            newW = Math.max(MIN_W, initW + dx);
+          }
+          if (dir.includes('w')) {
+            const clamped = Math.min(initW - MIN_W, dx);
+            newLeft = initLeft + clamped;
+            newW    = initW    - clamped;
+          }
+          // Vertical
+          if (dir.includes('s')) {
+            newH = Math.max(MIN_H, initH + dy);
+          }
+          if (dir === 'n' || dir === 'ne' || dir === 'nw') {
+            const clamped = Math.min(initH - MIN_H, dy);
+            newTop = initTop + clamped;
+            newH   = initH   - clamped;
+          }
+
+          panel.style.left   = newLeft + 'px';
+          panel.style.top    = newTop  + 'px';
+          panel.style.width  = newW    + 'px';
+          panel.style.height = newH    + 'px';
+
+          // Restore minimized state if user drags taller
+          if (newH > 120) panel.classList.remove('float-minimized');
+          if (window._monacoEditor) window._monacoEditor.layout();
+        };
+
+        const onUp = () => {
+          panel.classList.remove('fp-dragging');
+          document.removeEventListener('mousemove', onMove);
+          document.removeEventListener('mouseup', onUp);
+        };
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+      });
+    });
+  },
+
+  /* Panel collapse toggles */
+  toggleSolveHud() {
+    const hud = document.getElementById('solveHud');
+    const btn = document.getElementById('hudMinBtn');
+    if (!hud) return;
+    const collapsed = hud.classList.toggle('hud-collapsed');
+    if (btn) btn.classList.toggle('rotated', collapsed);
+    if (btn) btn.title = collapsed ? 'Restore HUD' : 'Minimize HUD';
+  },
+
+  /* Minimize problem panel to title bar only */
+  toggleLeftPanel() {
+    const panel = document.getElementById('solveLeft');
+    if (!panel) return;
+    const minimized = panel.classList.toggle('float-minimized');
+    const btn = document.getElementById('leftCollapseBtn');
+    if (btn) btn.title = minimized ? 'Restore panel' : 'Minimize panel';
+    if (minimized) {
+      // Snap height to just the title bars
+      panel.style.height = '80px';
+    } else {
+      panel.style.height = panel.dataset.prevH || 'calc(100% - 32px)';
+    }
+  },
+
+  /* Minimize test panel to header bar only */
+  toggleBottomPanel() {
+    const panel = document.getElementById('bottomPanel');
+    if (!panel) return;
+    const minimized = panel.classList.toggle('float-minimized');
+    const btn = document.getElementById('bottomCollapseBtn');
+    if (btn) btn.title = minimized ? 'Restore test panel' : 'Minimize';
+    if (minimized) {
+      panel.dataset.prevH = panel.offsetHeight + 'px';
+      panel.style.height = '38px';
+    } else {
+      panel.style.height = panel.dataset.prevH || '280px';
+    }
+  },
+
+  /* Show / hide problem panel from toolbar button */
+  toggleProblemPanel() {
+    const panel = document.getElementById('solveLeft');
+    const btn   = document.getElementById('probPanelBtn');
+    if (!panel) return;
+    const hidden = panel.classList.toggle('float-hidden');
+    if (btn) btn.classList.toggle('fp-hidden-indicator', hidden);
+    if (btn) btn.title = hidden ? 'Show problem panel' : 'Hide problem panel';
+  },
+
+  /* Show / hide test panel from toolbar button */
+  toggleTestPanel() {
+    const panel = document.getElementById('bottomPanel');
+    const btn   = document.getElementById('tcPanelBtn');
+    if (!panel) return;
+    const hidden = panel.classList.toggle('float-hidden');
+    if (btn) btn.classList.toggle('fp-hidden-indicator', hidden);
+    if (btn) btn.title = hidden ? 'Show test panel' : 'Hide test panel';
   },
 
   /* ===================================================
@@ -5512,18 +6241,143 @@ rl.on('close', () => {
     }
   },
 
-  async _toggleDashSection(section) {
+  /* ===================================================
+     CUSTOMIZE PANEL — Drag-to-reorder + toggle sections
+     =================================================== */
+  _customizeLayout: null,
+  _customizeDragIdx: null,
+
+  async _openCustomizePanel() {
     const layoutData = await API.getDashboardLayout();
     const layout = layoutData.ok ? layoutData.layout : {};
-    layout[section] = layout[section] === false ? true : false;
-    await API.saveDashboardLayout(layout);
-    this.renderDashboard(document.getElementById('pageContent'));
+    const defaultOrder = this._hubSections.map(s => s.key);
+    const order = Array.isArray(layout._order) ? layout._order.filter(k => defaultOrder.includes(k)) : [...defaultOrder];
+    for (const k of defaultOrder) { if (!order.includes(k)) order.push(k); }
+
+    this._customizeLayout = { ...layout, _order: order };
+
+    const overlay = document.createElement('div');
+    overlay.className = 'customize-overlay';
+    overlay.id = 'customizeOverlay';
+    overlay.onclick = (e) => { if (e.target === overlay) this._closeCustomizePanel(); };
+
+    overlay.innerHTML = `
+      <div class="customize-panel">
+        <div class="customize-header">
+          <div>
+            <h2><i class="icon-dashboard" style="font-size:20px"></i> Customize Layout</h2>
+            <p>Toggle sections on/off and drag to reorder</p>
+          </div>
+          <button class="customize-close" onclick="App._closeCustomizePanel()"><i class="icon-cross"></i></button>
+        </div>
+        <div class="customize-body" id="customizeBody"></div>
+        <div class="customize-footer">
+          <button class="btn btn-ghost btn-sm" onclick="App._resetCustomizeLayout()"><i class="icon-reset" style="font-size:12px"></i> Reset to Default</button>
+          <div class="customize-footer-right">
+            <button class="btn btn-secondary btn-sm" onclick="App._closeCustomizePanel()">Cancel</button>
+            <button class="btn btn-primary btn-sm" onclick="App._saveCustomizeLayout()"><i class="icon-check" style="font-size:12px"></i> Apply</button>
+          </div>
+        </div>
+      </div>`;
+
+    document.body.appendChild(overlay);
+    this._renderCustomizeItems();
   },
 
-  async _resetDashLayout() {
-    await API.saveDashboardLayout({});
-    this.renderDashboard(document.getElementById('pageContent'));
-    this.toast('Dashboard layout reset', 'success');
+  _renderCustomizeItems() {
+    const body = document.getElementById('customizeBody');
+    if (!body) return;
+    const layout = this._customizeLayout;
+    const order = layout._order;
+    const sectionMap = {};
+    for (const s of this._hubSections) sectionMap[s.key] = s;
+
+    body.innerHTML = order.map((key, idx) => {
+      const sec = sectionMap[key];
+      if (!sec) return '';
+      const enabled = layout[key] !== false;
+      return `
+        <div class="customize-item ${enabled ? '' : 'disabled'}" data-key="${key}" data-idx="${idx}"
+             draggable="true"
+             ondragstart="App._custDragStart(event, ${idx})"
+             ondragover="App._custDragOver(event, ${idx})"
+             ondrop="App._custDrop(event, ${idx})"
+             ondragend="App._custDragEnd(event)">
+          <div class="customize-drag-handle">⠿</div>
+          <div class="customize-item-icon"><i class="${sec.icon}"></i></div>
+          <div class="customize-item-info">
+            <div class="customize-item-label">${sec.label}</div>
+            <div class="customize-item-desc">${sec.desc}</div>
+          </div>
+          <label class="customize-toggle">
+            <input type="checkbox" ${enabled ? 'checked' : ''} onchange="App._custToggle('${key}', this.checked)">
+            <span class="customize-toggle-slider"></span>
+          </label>
+        </div>`;
+    }).join('');
+  },
+
+  _custToggle(key, checked) {
+    this._customizeLayout[key] = checked;
+    this._renderCustomizeItems();
+  },
+
+  _custDragStart(e, idx) {
+    this._customizeDragIdx = idx;
+    e.dataTransfer.effectAllowed = 'move';
+    e.target.closest('.customize-item').classList.add('dragging');
+  },
+
+  _custDragOver(e, idx) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    const items = document.querySelectorAll('.customize-item');
+    items.forEach((item, i) => {
+      item.classList.remove('drag-over-above', 'drag-over-below');
+      if (i === idx && this._customizeDragIdx !== idx) {
+        item.classList.add(this._customizeDragIdx < idx ? 'drag-over-below' : 'drag-over-above');
+      }
+    });
+  },
+
+  _custDrop(e, dropIdx) {
+    e.preventDefault();
+    const dragIdx = this._customizeDragIdx;
+    if (dragIdx == null || dragIdx === dropIdx) return;
+    const order = this._customizeLayout._order;
+    const [moved] = order.splice(dragIdx, 1);
+    order.splice(dropIdx, 0, moved);
+    this._customizeDragIdx = null;
+    this._renderCustomizeItems();
+  },
+
+  _custDragEnd(e) {
+    this._customizeDragIdx = null;
+    document.querySelectorAll('.customize-item').forEach(item => {
+      item.classList.remove('dragging', 'drag-over-above', 'drag-over-below');
+    });
+  },
+
+  _resetCustomizeLayout() {
+    const defaultOrder = this._hubSections.map(s => s.key);
+    this._customizeLayout = { _order: [...defaultOrder] };
+    this._renderCustomizeItems();
+  },
+
+  async _saveCustomizeLayout() {
+    await API.saveDashboardLayout(this._customizeLayout);
+    this._closeCustomizePanel();
+    this.toast('Layout updated', 'success');
+    this.renderHub(document.getElementById('pageContent'));
+  },
+
+  _closeCustomizePanel() {
+    const overlay = document.getElementById('customizeOverlay');
+    if (overlay) {
+      overlay.classList.add('closing');
+      setTimeout(() => overlay.remove(), 200);
+    }
+    this._customizeLayout = null;
   },
 
   /* ===================================================
@@ -5531,20 +6385,19 @@ rl.on('close', () => {
      =================================================== */
   _buildCmdItems() {
     return [
-      { type: 'nav', label: 'Dashboard', desc: 'Stats & activity hub', icon: 'icon-dashboard', action: () => { location.hash = '#/dashboard'; } },
-      { type: 'nav', label: 'Problems', desc: 'Browse problem set', icon: 'icon-problems', action: () => { location.hash = '#/problems'; } },
-      { type: 'nav', label: 'Progress', desc: 'Level roadmap & zones', icon: 'icon-arena', action: () => { location.hash = '#/nexus'; } },
-      { type: 'nav', label: 'Contests', desc: 'Upcoming contests', icon: 'icon-contests', action: () => { location.hash = '#/contests'; } },
-      { type: 'nav', label: 'AI Lab', desc: 'ML/AI practice problems', icon: 'icon-neural', action: () => { location.hash = '#/ailab'; } },
-      { type: 'nav', label: 'Learn', desc: 'Tutorials & theory', icon: 'icon-learn', action: () => { location.hash = '#/learn'; } },
-      { type: 'nav', label: 'The Forge', desc: 'Software development roadmap', icon: 'icon-hammer', action: () => { location.hash = '#/forge'; } },
-      { type: 'nav', label: 'Workshop', desc: 'Create custom problems', icon: 'icon-code', action: () => { location.hash = '#/workshop'; } },
-      { type: 'nav', label: 'Community', desc: 'Friends & social', icon: 'icon-friends', action: () => { location.hash = '#/social'; } },
-      { type: 'nav', label: 'Profile', desc: 'Your stats & profile', icon: 'icon-profile', action: () => { location.hash = '#/profile'; } },
-      { type: 'action', label: 'Settings', desc: 'Open settings panel', icon: 'icon-settings', action: () => { this.openSettings(); } },
-      { type: 'action', label: 'Sync Problems', desc: 'Sync from online judges', icon: 'icon-sync', action: () => { this._autoSync(); } },
-      { type: 'action', label: 'Keyboard Shortcuts', desc: 'View all shortcuts', icon: 'icon-bolt', action: () => { this.openShortcuts(); } },
-      { type: 'action', label: 'Focus Mode', desc: 'Toggle distraction-free mode', icon: 'icon-focus', action: () => { this.toggleFocusMode(); } },
+      { type: 'nav', label: 'HQ', desc: 'cd ~/command_center', icon: 'icon-dashboard', action: () => { location.hash = '#/hub'; } },
+      { type: 'nav', label: 'Problems', desc: 'grep -r "challenge"', icon: 'icon-problems', action: () => { location.hash = '#/problems'; } },
+      { type: 'nav', label: 'Progress', desc: 'cat stats.log', icon: 'icon-arena', action: () => { location.hash = '#/nexus'; } },
+      { type: 'nav', label: 'Contests', desc: './arena --live', icon: 'icon-contests', action: () => { location.hash = '#/contests'; } },
+      { type: 'nav', label: 'AI Lab', desc: 'python3 neural.py', icon: 'icon-neural', action: () => { location.hash = '#/ailab'; } },
+      { type: 'nav', label: 'Learn', desc: 'import knowledge', icon: 'icon-learn', action: () => { location.hash = '#/learn'; } },
+      { type: 'nav', label: 'The Forge', desc: 'make build', icon: 'icon-hammer', action: () => { location.hash = '#/forge'; } },
+      { type: 'nav', label: 'Workshop', desc: 'vim sandbox.cpp', icon: 'icon-code', action: () => { location.hash = '#/workshop'; } },
+      { type: 'nav', label: 'Squad', desc: 'ssh party@nexus', icon: 'icon-friends', action: () => { location.hash = '#/social'; } },
+      { type: 'action', label: './config', desc: 'open settings panel', icon: 'icon-settings', action: () => { this.openSettings(); } },
+      { type: 'action', label: 'git pull', desc: 'sync from OJs', icon: 'icon-sync', action: () => { this._autoSync(); } },
+      { type: 'action', label: 'shortcuts', desc: 'view keybinds', icon: 'icon-bolt', action: () => { this.openShortcuts(); } },
+      { type: 'action', label: 'zen mode', desc: 'toggle focus mode', icon: 'icon-focus', action: () => { this.toggleFocusMode(); } },
     ];
   },
 
@@ -5743,11 +6596,28 @@ rl.on('close', () => {
      FOCUS MODE
      =================================================== */
   toggleFocusMode() {
+    const solveOv = document.getElementById('solveOverlay');
+    const isSolving = solveOv && !solveOv.classList.contains('hidden');
+
+    if (isSolving) {
+      // Solve zen mode — collapse everything except the editor
+      this._focusMode = !this._focusMode;
+      solveOv.classList.toggle('solve-zen', this._focusMode);
+      const zenBar = document.getElementById('zenRestoreBar');
+      if (zenBar) zenBar.classList.toggle('hidden', !this._focusMode);
+      const btn = document.getElementById('focusModeBtn');
+      if (btn) btn.classList.toggle('zen-active', this._focusMode);
+      if (btn) btn.title = this._focusMode ? 'Exit Zen Mode (⌘⇧F)' : 'Zen Mode (⌘⇧F)';
+      // Monaco needs a relayout after panels animate away
+      setTimeout(() => { if (window._monacoEditor) window._monacoEditor.layout(); }, 320);
+      this.toast(this._focusMode ? '[ ZEN MODE ] — pure focus' : '[ ZEN MODE ] off', 'info');
+      return;
+    }
+
+    // Outside solve: regular sidebar focus mode
     this._focusMode = !this._focusMode;
     document.getElementById('sidebar').classList.toggle('focus-hidden', this._focusMode);
     document.getElementById('mainContent').classList.toggle('focus-expand', this._focusMode);
-    const solveOv = document.getElementById('solveOverlay');
-    if (solveOv) solveOv.classList.toggle('focus-full', this._focusMode);
     const btn = document.getElementById('focusModeBtn');
     if (btn) btn.classList.toggle('active', this._focusMode);
     this.toast(this._focusMode ? 'Focus mode on — distraction-free' : 'Focus mode off', 'info');
