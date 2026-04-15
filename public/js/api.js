@@ -86,6 +86,10 @@ const API = {
   // AI Chat
   aiChat(statement, question, history) { return this._fetch('/api/ai-chat', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ statement, question, history }) }); },
 
+  // AI Code Helper
+  aiComplete(prefix, suffix, language) { return this._fetch('/api/ai-complete', { method: 'POST', body: JSON.stringify({ prefix, suffix, language }) }); },
+  aiFix(code, language, error) { return this._fetch('/api/ai-fix', { method: 'POST', body: JSON.stringify({ code, language, error }) }); },
+
   // Social: User
   registerUser(data) { return this._fetch('/api/user/register', { method: 'POST', body: JSON.stringify(data) }); },
   getUserProfile(username) { return this._fetch(`/api/user/profile/${encodeURIComponent(username)}`); },

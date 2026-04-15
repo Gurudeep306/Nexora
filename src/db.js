@@ -19,6 +19,10 @@ const all = (sql, params = []) => new Promise((resolve, reject) => {
 
 async function initDb() {
   await run('PRAGMA journal_mode=WAL');
+  await run('PRAGMA synchronous=NORMAL');
+  await run('PRAGMA cache_size=-8000');
+  await run('PRAGMA mmap_size=268435456');
+  await run('PRAGMA temp_store=MEMORY');
   await run('PRAGMA foreign_keys=ON');
 
   await run(`CREATE TABLE IF NOT EXISTS problems (
@@ -314,6 +318,18 @@ async function initDb() {
   await run('CREATE INDEX IF NOT EXISTS idx_messages_users ON messages(from_user, to_user)');
   await run('CREATE INDEX IF NOT EXISTS idx_room_messages ON room_messages(room_id)');
   await run('CREATE INDEX IF NOT EXISTS idx_activity_user ON activity_feed(username)');
+
+  // Performance indexes — high-frequency query paths
+  await run('CREATE INDEX IF NOT EXISTS idx_progress_status ON progress(status)');
+  await run('CREATE INDEX IF NOT EXISTS idx_progress_status_solved ON progress(status, solved_at) WHERE status=\'solved\'');
+  await run('CREATE INDEX IF NOT EXISTS idx_submissions_submitted_at ON submissions(submitted_at DESC)');
+  await run('CREATE INDEX IF NOT EXISTS idx_submissions_verdict ON submissions(verdict)');
+  await run('CREATE INDEX IF NOT EXISTS idx_daily_activity_date ON daily_activity(date DESC)');
+  await run('CREATE INDEX IF NOT EXISTS idx_submissions_language ON submissions(language)');
+  await run('CREATE INDEX IF NOT EXISTS idx_progress_problem_rowid ON progress(problem_rowid)');
+  await run('CREATE INDEX IF NOT EXISTS idx_problems_rating_platform ON problems(rating, platform)');
+  await run('CREATE INDEX IF NOT EXISTS idx_daily_activity_solved ON daily_activity(date DESC, problems_solved)');
+  await run('CREATE INDEX IF NOT EXISTS idx_submissions_problem_verdict ON submissions(problem_rowid, verdict)');
 
   // ===== AI LAB TABLES =====
   await run(`CREATE TABLE IF NOT EXISTS ai_problems (

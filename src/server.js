@@ -1,5 +1,6 @@
 require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') });
 const express = require('express');
+const compression = require('compression');
 const cors = require('cors');
 const path = require('path');
 const fetch = require('node-fetch');
@@ -8,7 +9,7 @@ const puppeteer = require('puppeteer');
 const http = require('http');
 const { Server: SocketServer } = require('socket.io');
 const { run, get, all, initDb } = require('./db');
-const { fetchCodeforcesProblems, fetchCodechefProblems, fetchCodeforcesContests, fetchCodechefContests, fetchCodeforcesSolved, fetchAtcoderProblems, fetchAtcoderContests } = require('./sync');
+const { fetchCodeforcesProblems, fetchCodechefProblems, fetchCodeforcesContests, fetchCodechefContests, fetchCodeforcesSolved, fetchAtcoderProblems, fetchAtcoderContests, fetchLeetcodeProblems, fetchSpojProblems, fetchProjectEulerProblems } = require('./sync');
 const { judge, quickRun, LANG_CONFIG } = require('./judge');
 
 /* ========== Lightweight HTTP Scrapers (fast, no browser) ========== */
@@ -18,6 +19,9 @@ async function scrapePageHTTP(problem) {
   if (problem.platform === 'codeforces') return await _scrapeCF_HTTP(problem);
   if (problem.platform === 'codechef') return await _scrapeCC_HTTP(problem);
   if (problem.platform === 'atcoder') return await _scrapeAC_HTTP(problem);
+  if (problem.platform === 'leetcode') return await _scrapeLC_HTTP(problem);
+  if (problem.platform === 'spoj') return await _scrapeSPOJ_HTTP(problem);
+  if (problem.platform === 'euler') return await _scrapeEuler_HTTP(problem);
   return null;
 }
 
@@ -119,6 +123,110 @@ async function _scrapeAC_HTTP(problem) {
     memLimit: memMatch ? memMatch[1] + ' MB' : '',
     samples
   };
+}
+
+/* ---------- LeetCode HTTP scraper (GraphQL) ---------- */
+async function _scrapeLC_HTTP(problem) {
+  try {
+    // Extract slug from URL
+    const slugMatch = problem.url.match(/\/problems\/([^/]+)/);
+    if (!slugMatch) return null;
+    const slug = slugMatch[1];
+
+    const query = `query questionData($titleSlug: String!) {
+      question(titleSlug: $titleSlug) {
+        content
+        difficulty
+        exampleTestcaseList
+        sampleTestCase
+      }
+    }`;
+    const resp = await fetch('https://leetcode.com/graphql', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'User-Agent': SCRAPE_UA },
+      body: JSON.stringify({ query, variables: { titleSlug: slug } }),
+      timeout: 15000,
+    });
+    if (!resp.ok) return null;
+    const data = await resp.json();
+    const q = data?.data?.question;
+    if (!q || !q.content) return null;
+
+    return {
+      statement: q.content,
+      inputSpec: '',
+      outputSpec: '',
+      note: '',
+      timeLimit: '',
+      memLimit: '',
+      samples: [],
+    };
+  } catch {
+    return null;
+  }
+}
+
+/* ---------- SPOJ HTTP scraper ---------- */
+async function _scrapeSPOJ_HTTP(problem) {
+  try {
+    const resp = await fetch(problem.url, { headers: { 'User-Agent': SCRAPE_UA }, timeout: 15000 });
+    if (!resp.ok) return null;
+    const html = await resp.text();
+    const $ = cheerio.load(html);
+    const body = $('#problem-body');
+    if (!body.length) return null;
+
+    const statement = body.html() || '';
+    // Try to extract I/O from typical SPOJ format
+    const samples = [];
+    const inputPre = body.find('pre').eq(0);
+    const outputPre = body.find('pre').eq(1);
+    if (inputPre.length && outputPre.length) {
+      samples.push({ input: inputPre.text(), output: outputPre.text() });
+    }
+
+    return {
+      statement,
+      inputSpec: '',
+      outputSpec: '',
+      note: '',
+      timeLimit: '',
+      memLimit: '',
+      samples,
+    };
+  } catch {
+    return null;
+  }
+}
+
+/* ---------- Project Euler HTTP scraper ---------- */
+async function _scrapeEuler_HTTP(problem) {
+  try {
+    const idMatch = problem.problem_id.match(/PE(\d+)/);
+    if (!idMatch) return null;
+    const id = idMatch[1];
+    const resp = await fetch(`https://projecteuler.net/problem=${id}`, {
+      headers: { 'User-Agent': SCRAPE_UA },
+      timeout: 15000,
+    });
+    if (!resp.ok) return null;
+    const html = await resp.text();
+    const $ = cheerio.load(html);
+    const content = $('.problem_content');
+    if (!content.length) return null;
+
+    return {
+      statement: content.html() || '',
+      inputSpec: '',
+      outputSpec: '',
+      note: '',
+      timeLimit: '',
+      memLimit: '',
+      samples: [],
+    };
+  } catch {
+    return null;
+  }
 }
 
 /* ========== Lazy Puppeteer Browser Pool (fallback only) ========== */
@@ -251,9 +359,30 @@ async function _scrapeAC(page, problem) {
 }
 
 const app = express();
+app.use(compression());
 app.use(cors());
 app.use(express.json({ limit: '5mb' }));
-app.use(express.static(path.join(__dirname, '..', 'public')));
+app.use(express.static(path.join(__dirname, '..', 'public'), {
+  maxAge: '1h',
+  etag: true,
+  lastModified: true,
+  setHeaders(res, filePath) {
+    if (/\.(css|js)$/.test(filePath)) res.setHeader('Cache-Control', 'public, max-age=3600');
+    if (/\.(woff2?|ttf|eot|svg|png|jpg|ico)$/.test(filePath)) res.setHeader('Cache-Control', 'public, max-age=86400');
+  }
+}));
+
+/* ── Lightweight in-memory TTL cache for heavy read endpoints ── */
+const _apiCache = new Map();
+function cachedResponse(key, ttlMs, computeFn) {
+  const entry = _apiCache.get(key);
+  if (entry && Date.now() - entry.ts < ttlMs) return entry.promise;
+  const promise = computeFn();
+  _apiCache.set(key, { ts: Date.now(), promise });
+  promise.catch(() => _apiCache.delete(key));
+  return promise;
+}
+function invalidateCache() { _apiCache.clear(); }
 
 /* ========== SYNC ========== */
 app.post('/api/sync', async (req, res) => {
@@ -281,6 +410,18 @@ app.post('/api/sync', async (req, res) => {
     if (platform === 'atcoder' || platform === 'all') {
       const ac = await fetchAtcoderProblems();
       await doInsert(ac);
+    }
+    if (platform === 'leetcode' || platform === 'all') {
+      const lc = await fetchLeetcodeProblems();
+      await doInsert(lc);
+    }
+    if (platform === 'spoj' || platform === 'all') {
+      const sp = await fetchSpojProblems();
+      await doInsert(sp);
+    }
+    if (platform === 'euler' || platform === 'all') {
+      const pe = await fetchProjectEulerProblems();
+      await doInsert(pe);
     }
 
     const total = (await get('SELECT COUNT(*) as c FROM problems')).c;
@@ -589,6 +730,7 @@ app.post('/api/judge', async (req, res) => {
 
       // Check achievements
       await checkAchievements(problem_id, result.verdict);
+      invalidateCache();
     }
 
     res.json({ ok: true, ...result });
@@ -616,55 +758,49 @@ app.get('/api/languages', (req, res) => {
 /* ========== STATS ========== */
 app.get('/api/stats', async (req, res) => {
   try {
-    const total = (await get('SELECT COUNT(*) as c FROM problems')).c;
-    const solved = (await get("SELECT COUNT(*) as c FROM progress WHERE status='solved'")).c;
-    const attempted = (await get("SELECT COUNT(*) as c FROM progress WHERE status='attempted'")).c;
-    const totalXp = (await get('SELECT COALESCE(SUM(xp_earned),0) as s FROM progress')).s;
-    const submissions = (await get('SELECT COUNT(*) as c FROM submissions')).c;
+    const result = await cachedResponse('stats', 3000, async () => {
+    // Batch core counts into a single query
+    const counts = await get(`SELECT
+      (SELECT COUNT(*) FROM problems) as total,
+      (SELECT COUNT(*) FROM progress WHERE status='solved') as solved,
+      (SELECT COUNT(*) FROM progress WHERE status='attempted') as attempted,
+      (SELECT COALESCE(SUM(xp_earned),0) FROM progress) as totalXp,
+      (SELECT COUNT(*) FROM submissions) as submissions,
+      (SELECT COUNT(*) FROM submissions WHERE verdict='AC') as acCount`);
+    const { total, solved, attempted, totalXp, submissions: submissionCount, acCount } = counts;
+    const accuracy = submissionCount > 0 ? Math.round(acCount / submissionCount * 100) : 0;
 
-    // Rating distribution of solved
-    const ratingDist = await all(`SELECT
-      CASE
-        WHEN p.rating < 1000 THEN 'Newbie'
-        WHEN p.rating < 1200 THEN 'Pupil'
-        WHEN p.rating < 1400 THEN 'Specialist'
-        WHEN p.rating < 1600 THEN 'Expert'
-        WHEN p.rating < 1900 THEN 'Candidate Master'
-        WHEN p.rating < 2100 THEN 'Master'
-        ELSE 'Grandmaster'
-      END as tier,
-      COUNT(*) as count
-      FROM progress pr JOIN problems p ON pr.problem_rowid=p.id WHERE pr.status='solved'
-      GROUP BY tier ORDER BY MIN(p.rating)`);
-
-    // Platform distribution
-    const platformDist = await all(`SELECT p.platform, COUNT(*) as count
-      FROM progress pr JOIN problems p ON pr.problem_rowid=p.id WHERE pr.status='solved'
-      GROUP BY p.platform`);
-
-    // Streak
-    const streak = await calcStreak();
+    // Parallel independent queries
+    const [ratingDist, platformDist, streak, heatmap, recent, achievements, verdicts, dailyChallenges] = await Promise.all([
+      all(`SELECT
+        CASE
+          WHEN p.rating < 1000 THEN 'Newbie'
+          WHEN p.rating < 1200 THEN 'Pupil'
+          WHEN p.rating < 1400 THEN 'Specialist'
+          WHEN p.rating < 1600 THEN 'Expert'
+          WHEN p.rating < 1900 THEN 'Candidate Master'
+          WHEN p.rating < 2100 THEN 'Master'
+          ELSE 'Grandmaster'
+        END as tier,
+        COUNT(*) as count
+        FROM progress pr JOIN problems p ON pr.problem_rowid=p.id WHERE pr.status='solved'
+        GROUP BY tier ORDER BY MIN(p.rating)`),
+      all(`SELECT p.platform, COUNT(*) as count
+        FROM progress pr JOIN problems p ON pr.problem_rowid=p.id WHERE pr.status='solved'
+        GROUP BY p.platform`),
+      calcStreak(),
+      all(`SELECT date, problems_solved, xp_earned FROM daily_activity
+        WHERE date >= date('now','-365 days') ORDER BY date`),
+      all(`SELECT s.id, s.verdict, s.exec_time_ms, s.submitted_at, p.title, p.problem_id, p.platform, p.rating
+        FROM submissions s JOIN problems p ON s.problem_rowid=p.id ORDER BY s.submitted_at DESC LIMIT 15`),
+      all('SELECT * FROM achievements ORDER BY category, target'),
+      all(`SELECT verdict, COUNT(*) as count FROM submissions GROUP BY verdict`),
+      getDailyChallenges(),
+    ]);
 
     // Level & Title (unified Rift Levels)
     const level = calcLevel(totalXp, solved);
     const title = getPlayerTitle(totalXp, solved);
-
-    // Activity heatmap (last 365 days)
-    const heatmap = await all(`SELECT date, problems_solved, xp_earned FROM daily_activity
-      WHERE date >= date('now','-365 days') ORDER BY date`);
-
-    // Recent submissions
-    const recent = await all(`SELECT s.id, s.verdict, s.exec_time_ms, s.submitted_at, p.title, p.problem_id, p.platform, p.rating
-      FROM submissions s JOIN problems p ON s.problem_rowid=p.id ORDER BY s.submitted_at DESC LIMIT 15`);
-
-    // Achievements
-    const achievements = await all('SELECT * FROM achievements ORDER BY category, target');
-
-    // Verdict distribution
-    const verdicts = await all(`SELECT verdict, COUNT(*) as count FROM submissions GROUP BY verdict`);
-
-    // Daily challenges
-    const dailyChallenges = await getDailyChallenges();
 
     // All Rift Levels (for rank progression display)
     const allTitles = RIFT_LEVELS.map(r => ({ title: r.name, badge: r.badge, min_xp: r.xp, min_problems: r.minProblems, color: r.color, glow: r.glow }));
@@ -673,16 +809,13 @@ app.get('/api/stats', async (req, res) => {
     const today = new Date().toISOString().slice(0, 10);
     const todayStats = await get(`SELECT COALESCE(problems_solved,0) as solved, COALESCE(problems_attempted,0) as attempted, COALESCE(xp_earned,0) as xp FROM daily_activity WHERE date=?`, [today]) || { solved: 0, attempted: 0, xp: 0 };
 
-    // Accuracy
-    const accuracy = submissions > 0
-      ? Math.round((await get("SELECT COUNT(*) as c FROM submissions WHERE verdict='AC'")).c / submissions * 100)
-      : 0;
-
-    res.json({
-      ok: true, total, solved, attempted, totalXp, submissions,
+    return {
+      ok: true, total, solved, attempted, totalXp, submissions: submissionCount,
       ratingDist, platformDist, streak, level, title, heatmap, recent,
       achievements, verdicts, dailyChallenges, allTitles, todayStats, accuracy,
-    });
+    };
+    }); // end cachedResponse
+    res.json(result);
   } catch (e) {
     res.status(500).json({ ok: false, error: e.message });
   }
@@ -772,6 +905,7 @@ app.post('/api/reset-progress', async (req, res) => {
     await run('DELETE FROM code_replays');
     await run("DELETE FROM achievements WHERE unlocked_at IS NOT NULL");
     await run("UPDATE achievements SET progress=0");
+    invalidateCache();
     res.json({ ok: true });
   } catch (e) {
     res.status(500).json({ ok: false, error: e.message });
@@ -802,6 +936,7 @@ app.post('/api/sync-solved', async (req, res) => {
         synced++;
       }
     }
+    invalidateCache();
     res.json({ ok: true, synced, total: solvedIds.length });
   } catch (e) {
     res.status(500).json({ ok: false, error: e.message });
@@ -872,43 +1007,38 @@ function calcLevel(xp, solvedCount = 0) {
 }
 
 async function calcStreak() {
-  const rows = await all("SELECT date FROM daily_activity WHERE problems_solved > 0 ORDER BY date DESC");
-  if (!rows.length) return { current: 0, best: 0 };
-  let current = 0;
-  let best = 0;
-  let streak = 0;
-  let prev = null;
+  // Current streak: only need recent consecutive days, not entire table
   const today = new Date().toISOString().slice(0, 10);
   const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
 
+  // Fetch only last 400 days (more than enough for any reasonable streak)
+  const rows = await all(
+    "SELECT date FROM daily_activity WHERE problems_solved > 0 AND date >= date('now','-400 days') ORDER BY date DESC"
+  );
+  if (!rows.length) return { current: 0, best: 0 };
+
+  let current = 0;
+  let prev = null;
   for (const r of rows) {
     if (!prev) {
-      if (r.date === today || r.date === yesterday) {
-        streak = 1;
-        prev = r.date;
-      } else {
-        break;
-      }
+      if (r.date === today || r.date === yesterday) { current = 1; prev = r.date; }
+      else break;
     } else {
       const diff = (new Date(prev) - new Date(r.date)) / 86400000;
-      if (diff === 1) {
-        streak++;
-        prev = r.date;
-      } else {
-        break;
-      }
+      if (diff === 1) { current++; prev = r.date; }
+      else break;
     }
   }
-  current = streak;
 
-  // Calculate best streak
-  streak = 1;
+  // Best streak in single pass
+  let best = current;
+  let streak = 1;
   for (let i = 1; i < rows.length; i++) {
     const diff = (new Date(rows[i - 1].date) - new Date(rows[i].date)) / 86400000;
-    if (diff === 1) { streak++; best = Math.max(best, streak); }
-    else { streak = 1; }
+    if (diff === 1) { streak++; if (streak > best) best = streak; }
+    else streak = 1;
   }
-  best = Math.max(best, streak, current);
+  if (streak > best) best = streak;
 
   return { current, best };
 }
@@ -1137,86 +1267,104 @@ app.get('/api/code-replay/:submissionId', async (req, res) => {
 /* ========== ADVANCED PERFORMANCE ANALYTICS ========== */
 app.get('/api/performance', async (req, res) => {
   try {
-    /* ── Core stats (reuse existing queries) ── */
-    const total = (await get('SELECT COUNT(*) as c FROM problems')).c;
-    const solved = (await get("SELECT COUNT(*) as c FROM progress WHERE status='solved'")).c;
-    const attempted = (await get("SELECT COUNT(*) as c FROM progress WHERE status='attempted'")).c;
-    const totalXp = (await get('SELECT COALESCE(SUM(xp_earned),0) as s FROM progress')).s;
-    const submissions = (await get('SELECT COUNT(*) as c FROM submissions')).c;
-    const acCount = (await get("SELECT COUNT(*) as c FROM submissions WHERE verdict='AC'")).c;
+    const result = await cachedResponse('performance', 3000, async () => {
+    /* ── Batch core counts into single query ── */
+    const counts = await get(`SELECT
+      (SELECT COUNT(*) FROM problems) as total,
+      (SELECT COUNT(*) FROM progress WHERE status='solved') as solved,
+      (SELECT COUNT(*) FROM progress WHERE status='attempted') as attempted,
+      (SELECT COALESCE(SUM(xp_earned),0) FROM progress) as totalXp,
+      (SELECT COUNT(*) FROM submissions) as submissions,
+      (SELECT COUNT(*) FROM submissions WHERE verdict='AC') as acCount`);
+    const { total, solved, attempted, totalXp, submissions, acCount } = counts;
     const accuracy = submissions > 0 ? Math.round(acCount / submissions * 100) : 0;
-    const streak = await calcStreak();
+
+    /* ── Parallel independent queries (all at once) ── */
+    const today = new Date().toISOString().slice(0, 10);
+    const [streak, ratingDist, platformDist, verdicts, heatmap, recent,
+           ratingClimb, solveSpeed, langUsage, weeklyProgress,
+           solvedTags, attemptedTags, hourDist, hardestSolved, mostAttempted, firstSolves, todayStats] = await Promise.all([
+      calcStreak(),
+      all(`SELECT
+        CASE WHEN p.rating<1000 THEN 'Newbie' WHEN p.rating<1200 THEN 'Pupil'
+          WHEN p.rating<1400 THEN 'Specialist' WHEN p.rating<1600 THEN 'Expert'
+          WHEN p.rating<1900 THEN 'Candidate Master' WHEN p.rating<2100 THEN 'Master'
+          ELSE 'Grandmaster' END as tier,
+        COUNT(*) as count FROM progress pr JOIN problems p ON pr.problem_rowid=p.id
+        WHERE pr.status='solved' GROUP BY tier ORDER BY MIN(p.rating)`),
+      all(`SELECT p.platform, COUNT(*) as count
+        FROM progress pr JOIN problems p ON pr.problem_rowid=p.id WHERE pr.status='solved' GROUP BY p.platform`),
+      all(`SELECT verdict, COUNT(*) as count FROM submissions GROUP BY verdict`),
+      all(`SELECT date, problems_solved, xp_earned FROM daily_activity
+        WHERE date >= date('now','-365 days') ORDER BY date`),
+      all(`SELECT s.id, s.verdict, s.exec_time_ms, s.memory_kb, s.submitted_at, s.language,
+        p.title, p.problem_id, p.platform, p.rating, p.tags
+        FROM submissions s JOIN problems p ON s.problem_rowid=p.id ORDER BY s.submitted_at DESC LIMIT 20`),
+      all(`SELECT p.rating, pr.solved_at as date
+        FROM progress pr JOIN problems p ON pr.problem_rowid=p.id
+        WHERE pr.status='solved' AND p.rating > 0 AND pr.solved_at IS NOT NULL
+        ORDER BY pr.solved_at ASC`),
+      all(`SELECT
+        CASE WHEN p.rating<1000 THEN '800-999' WHEN p.rating<1200 THEN '1000-1199'
+          WHEN p.rating<1400 THEN '1200-1399' WHEN p.rating<1600 THEN '1400-1599'
+          WHEN p.rating<1800 THEN '1600-1799' WHEN p.rating<2000 THEN '1800-1999'
+          WHEN p.rating<2200 THEN '2000-2199' WHEN p.rating<2500 THEN '2200-2499'
+          ELSE '2500+' END as bracket,
+        ROUND(AVG(pr.attempts),1) as avgAttempts,
+        COUNT(*) as count,
+        ROUND(AVG(pr.time_spent)/60.0,1) as avgMinutes
+        FROM progress pr JOIN problems p ON pr.problem_rowid=p.id
+        WHERE pr.status='solved' AND p.rating>0
+        GROUP BY bracket ORDER BY MIN(p.rating)`),
+      all(`SELECT language, COUNT(*) as count,
+        SUM(CASE WHEN verdict='AC' THEN 1 ELSE 0 END) as acCount
+        FROM submissions GROUP BY language ORDER BY count DESC`),
+      all(`SELECT
+        strftime('%Y-W%W', date) as week,
+        SUM(problems_solved) as solved,
+        SUM(xp_earned) as xp,
+        COUNT(*) as activeDays
+        FROM daily_activity
+        WHERE date >= date('now','-84 days')
+        GROUP BY week ORDER BY week`),
+      all("SELECT p.tags, p.rating FROM progress pr JOIN problems p ON pr.problem_rowid=p.id WHERE pr.status='solved' AND p.tags!='[]'"),
+      all("SELECT p.tags FROM progress pr JOIN problems p ON pr.problem_rowid=p.id WHERE pr.status='attempted' AND p.tags!='[]'"),
+      all(`SELECT
+        CAST(strftime('%H', submitted_at) AS INTEGER) as hour,
+        COUNT(*) as total,
+        SUM(CASE WHEN verdict='AC' THEN 1 ELSE 0 END) as ac
+        FROM submissions WHERE submitted_at IS NOT NULL
+        GROUP BY hour ORDER BY hour`),
+      all(`SELECT p.id, p.title, p.problem_id, p.platform, p.rating, pr.attempts, pr.solved_at
+        FROM progress pr JOIN problems p ON pr.problem_rowid=p.id
+        WHERE pr.status='solved' AND p.rating>0
+        ORDER BY p.rating DESC LIMIT 5`),
+      all(`SELECT p.id, p.title, p.problem_id, p.platform, p.rating,
+        pr.attempts, pr.status as solve_status
+        FROM progress pr JOIN problems p ON pr.problem_rowid=p.id
+        WHERE pr.attempts >= 2
+        ORDER BY pr.attempts DESC LIMIT 5`),
+      all(`SELECT
+        CASE WHEN p.rating<1000 THEN '< 1000' WHEN p.rating<1200 THEN '1000-1199'
+          WHEN p.rating<1400 THEN '1200-1399' WHEN p.rating<1600 THEN '1400-1599'
+          WHEN p.rating<1800 THEN '1600-1799' WHEN p.rating<2000 THEN '1800-1999'
+          WHEN p.rating<2200 THEN '2000-2199' WHEN p.rating<2400 THEN '2200-2399'
+          WHEN p.rating<2600 THEN '2400-2599' WHEN p.rating<2800 THEN '2600-2799'
+          ELSE '2800+' END as bracket,
+        MIN(pr.solved_at) as firstDate,
+        p.title as firstTitle
+        FROM progress pr JOIN problems p ON pr.problem_rowid=p.id
+        WHERE pr.status='solved' AND p.rating>0 AND pr.solved_at IS NOT NULL
+        GROUP BY bracket ORDER BY MIN(p.rating)`),
+      get(`SELECT COALESCE(problems_solved,0) as solved, COALESCE(problems_attempted,0) as attempted,
+        COALESCE(xp_earned,0) as xp FROM daily_activity WHERE date=?`, [today]),
+    ]);
+
     const level = calcLevel(totalXp, solved);
     const allTitles = RIFT_LEVELS.map(r => ({ title: r.name, badge: r.badge, minXp: r.xp, minProblems: r.minProblems, color: r.color, glow: r.glow, level: r.level }));
+    const finalTodayStats = todayStats || { solved: 0, attempted: 0, xp: 0 };
 
-    /* ── Rating distribution of solved ── */
-    const ratingDist = await all(`SELECT
-      CASE WHEN p.rating<1000 THEN 'Newbie' WHEN p.rating<1200 THEN 'Pupil'
-        WHEN p.rating<1400 THEN 'Specialist' WHEN p.rating<1600 THEN 'Expert'
-        WHEN p.rating<1900 THEN 'Candidate Master' WHEN p.rating<2100 THEN 'Master'
-        ELSE 'Grandmaster' END as tier,
-      COUNT(*) as count FROM progress pr JOIN problems p ON pr.problem_rowid=p.id
-      WHERE pr.status='solved' GROUP BY tier ORDER BY MIN(p.rating)`);
-
-    /* ── Platform distribution ── */
-    const platformDist = await all(`SELECT p.platform, COUNT(*) as count
-      FROM progress pr JOIN problems p ON pr.problem_rowid=p.id WHERE pr.status='solved' GROUP BY p.platform`);
-
-    /* ── Verdicts ── */
-    const verdicts = await all(`SELECT verdict, COUNT(*) as count FROM submissions GROUP BY verdict`);
-
-    /* ── Heatmap (365 days) ── */
-    const heatmap = await all(`SELECT date, problems_solved, xp_earned FROM daily_activity
-      WHERE date >= date('now','-365 days') ORDER BY date`);
-
-    /* ── Recent submissions ── */
-    const recent = await all(`SELECT s.id, s.verdict, s.exec_time_ms, s.memory_kb, s.submitted_at, s.language,
-      p.title, p.problem_id, p.platform, p.rating, p.tags
-      FROM submissions s JOIN problems p ON s.problem_rowid=p.id ORDER BY s.submitted_at DESC LIMIT 20`);
-
-    /* ── Today stats ── */
-    const today = new Date().toISOString().slice(0, 10);
-    const todayStats = await get(`SELECT COALESCE(problems_solved,0) as solved, COALESCE(problems_attempted,0) as attempted,
-      COALESCE(xp_earned,0) as xp FROM daily_activity WHERE date=?`, [today]) || { solved: 0, attempted: 0, xp: 0 };
-
-    /* ── Rating climb: solved problems ordered by rating (difficulty progression) ── */
-    const ratingClimb = await all(`SELECT p.rating, pr.solved_at as date
-      FROM progress pr JOIN problems p ON pr.problem_rowid=p.id
-      WHERE pr.status='solved' AND p.rating > 0 AND pr.solved_at IS NOT NULL
-      ORDER BY pr.solved_at ASC`);
-
-    /* ── Solve speed analysis: avg attempts to solve per rating bracket ── */
-    const solveSpeed = await all(`SELECT
-      CASE WHEN p.rating<1000 THEN '800-999' WHEN p.rating<1200 THEN '1000-1199'
-        WHEN p.rating<1400 THEN '1200-1399' WHEN p.rating<1600 THEN '1400-1599'
-        WHEN p.rating<1800 THEN '1600-1799' WHEN p.rating<2000 THEN '1800-1999'
-        WHEN p.rating<2200 THEN '2000-2199' WHEN p.rating<2500 THEN '2200-2499'
-        ELSE '2500+' END as bracket,
-      ROUND(AVG(pr.attempts),1) as avgAttempts,
-      COUNT(*) as count,
-      ROUND(AVG(pr.time_spent)/60.0,1) as avgMinutes
-      FROM progress pr JOIN problems p ON pr.problem_rowid=p.id
-      WHERE pr.status='solved' AND p.rating>0
-      GROUP BY bracket ORDER BY MIN(p.rating)`);
-
-    /* ── Language usage from submissions ── */
-    const langUsage = await all(`SELECT language, COUNT(*) as count,
-      SUM(CASE WHEN verdict='AC' THEN 1 ELSE 0 END) as acCount
-      FROM submissions GROUP BY language ORDER BY count DESC`);
-
-    /* ── Weekly progress (last 12 weeks) ── */
-    const weeklyProgress = await all(`SELECT
-      strftime('%Y-W%W', date) as week,
-      SUM(problems_solved) as solved,
-      SUM(xp_earned) as xp,
-      COUNT(*) as activeDays
-      FROM daily_activity
-      WHERE date >= date('now','-84 days')
-      GROUP BY week ORDER BY week`);
-
-    /* ── Tag performance (weakness radar) ── */
-    const solvedTags = await all("SELECT p.tags, p.rating FROM progress pr JOIN problems p ON pr.problem_rowid=p.id WHERE pr.status='solved' AND p.tags!='[]'");
-    const attemptedTags = await all("SELECT p.tags FROM progress pr JOIN problems p ON pr.problem_rowid=p.id WHERE pr.status='attempted' AND p.tags!='[]'");
+    /* ── Tag performance (in-memory, fast) ── */
     const tagStats = {};
     for (const r of solvedTags) { try { JSON.parse(r.tags).forEach(t => { if (!tagStats[t]) tagStats[t]={solved:0,attempted:0,ratings:[]}; tagStats[t].solved++; tagStats[t].ratings.push(r.rating); }); } catch{} }
     for (const r of attemptedTags) { try { JSON.parse(r.tags).forEach(t => { if (!tagStats[t]) tagStats[t]={solved:0,attempted:0,ratings:[]}; tagStats[t].attempted++; }); } catch{} }
@@ -1254,45 +1402,10 @@ app.get('/api/performance', async (req, res) => {
     const activeDays30 = last30.filter(d => d.problems_solved > 0).length;
     const consistencyScore = Math.round(activeDays30 / 30 * 100);
 
-    /* ── Peak performance hours (from submission timestamps) ── */
-    const hourDist = await all(`SELECT
-      CAST(strftime('%H', submitted_at) AS INTEGER) as hour,
-      COUNT(*) as total,
-      SUM(CASE WHEN verdict='AC' THEN 1 ELSE 0 END) as ac
-      FROM submissions WHERE submitted_at IS NOT NULL
-      GROUP BY hour ORDER BY hour`);
-
-    /* ── Hardest problems solved ── */
-    const hardestSolved = await all(`SELECT p.id, p.title, p.problem_id, p.platform, p.rating, pr.attempts, pr.solved_at
-      FROM progress pr JOIN problems p ON pr.problem_rowid=p.id
-      WHERE pr.status='solved' AND p.rating>0
-      ORDER BY p.rating DESC LIMIT 5`);
-
-    /* ── Most attempted (struggle) problems ── */
-    const mostAttempted = await all(`SELECT p.id, p.title, p.problem_id, p.platform, p.rating,
-      pr.attempts, pr.status as solve_status
-      FROM progress pr JOIN problems p ON pr.problem_rowid=p.id
-      WHERE pr.attempts >= 2
-      ORDER BY pr.attempts DESC LIMIT 5`);
-
-    /* ── First solve each difficulty tier (personal bests) ── */
-    const firstSolves = await all(`SELECT
-      CASE WHEN p.rating<1000 THEN '< 1000' WHEN p.rating<1200 THEN '1000-1199'
-        WHEN p.rating<1400 THEN '1200-1399' WHEN p.rating<1600 THEN '1400-1599'
-        WHEN p.rating<1800 THEN '1600-1799' WHEN p.rating<2000 THEN '1800-1999'
-        WHEN p.rating<2200 THEN '2000-2199' WHEN p.rating<2400 THEN '2200-2399'
-        WHEN p.rating<2600 THEN '2400-2599' WHEN p.rating<2800 THEN '2600-2799'
-        ELSE '2800+' END as bracket,
-      MIN(pr.solved_at) as firstDate,
-      p.title as firstTitle
-      FROM progress pr JOIN problems p ON pr.problem_rowid=p.id
-      WHERE pr.status='solved' AND p.rating>0 AND pr.solved_at IS NOT NULL
-      GROUP BY bracket ORDER BY MIN(p.rating)`);
-
-    res.json({
+    return {
       ok: true, total, solved, attempted, totalXp, submissions, accuracy,
       streak, level, allTitles, ratingDist, platformDist, verdicts, heatmap,
-      recent, todayStats, ratingClimb, solveSpeed, langUsage, weeklyProgress,
+      recent, todayStats: finalTodayStats, ratingClimb, solveSpeed, langUsage, weeklyProgress,
       tagAnalysis, recommendations, nextLevel: nextLevel ? {
         level: nextLevel.level, name: nextLevel.name, color: nextLevel.color,
         xpNeeded: nextLevel.xp, probsNeeded: nextLevel.minProblems,
@@ -1300,7 +1413,9 @@ app.get('/api/performance', async (req, res) => {
       } : null,
       avgDailyXp, avgDailySolves, consistencyScore, hourDist,
       hardestSolved, mostAttempted, firstSolves,
-    });
+    };
+    }); // end cachedResponse
+    res.json(result);
   } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
 });
 
@@ -2078,6 +2193,177 @@ ${(statement || 'No problem statement available').substring(0, 4000)}
     const data = await groqRes.json();
     const reply = data.choices?.[0]?.message?.content || 'No response generated.';
     res.json({ ok: true, reply });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
+/* ========== AI CODE HELPER (inline completion + error fix) ========== */
+
+// In-memory completion cache (key → {text, ts})
+const _aiCache = new Map();
+const AI_CACHE_TTL = 60000; // 1 minute
+const AI_CACHE_MAX = 200;
+
+// Shared Groq caller with retry on 429 rate-limit
+async function _groqChat(apiKey, messages, opts = {}) {
+  const { maxTokens = 128, temperature = 0.1, stop, retries = 2 } = opts;
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+      body: JSON.stringify({
+        model: 'llama-3.1-8b-instant',
+        messages,
+        max_tokens: maxTokens,
+        temperature,
+        ...(stop ? { stop } : {}),
+      }),
+    });
+    if (groqRes.status === 429 && attempt < retries) {
+      // Rate limited — wait and retry
+      const retryAfter = parseInt(groqRes.headers.get('retry-after') || '2', 10);
+      await new Promise(r => setTimeout(r, Math.max(retryAfter, 2) * 1000));
+      continue;
+    }
+    if (!groqRes.ok) return { ok: false, status: groqRes.status, error: await groqRes.text() };
+    const data = await groqRes.json();
+    return { ok: true, content: data.choices?.[0]?.message?.content || '' };
+  }
+  return { ok: false, error: 'rate limited' };
+}
+
+function _aiCacheKey(prefix, suffix, lang) {
+  // Normalize: trim, take last 6 lines of prefix, first 3 of suffix
+  const pLines = prefix.split('\n').slice(-6).join('\n').trim();
+  const sLines = (suffix || '').split('\n').slice(0, 3).join('\n').trim();
+  return `${lang}::${pLines}::${sLines}`;
+}
+
+// POST /api/ai-complete — ghost-text inline completion
+app.post('/api/ai-complete', async (req, res) => {
+  try {
+    const apiKey = process.env.GROQ_API_KEY;
+    if (!apiKey) return res.json({ ok: false, text: '' });
+
+    const { prefix, suffix, language } = req.body;
+    if (!prefix || !language) return res.json({ ok: true, text: '' });
+
+    // Check cache
+    const cacheKey = _aiCacheKey(prefix, suffix, language);
+    const cached = _aiCache.get(cacheKey);
+    if (cached && Date.now() - cached.ts < AI_CACHE_TTL) {
+      return res.json({ ok: true, text: cached.text });
+    }
+
+    // Take meaningful context (last 30 lines prefix, first 10 lines suffix)
+    const prefixCtx = prefix.split('\n').slice(-30).join('\n');
+    const suffixCtx = (suffix || '').split('\n').slice(0, 10).join('\n');
+    const lastLine = prefixCtx.split('\n').pop() || '';
+
+    // Skip if cursor is on an empty/whitespace-only line with no context
+    if (!lastLine.trim() && prefixCtx.trim().split('\n').length < 2) {
+      return res.json({ ok: true, text: '' });
+    }
+
+    const systemPrompt = `You are an inline code completion engine for a competitive programming IDE. The user is writing ${language} code.
+
+YOUR ROLE: Complete the CURRENT line or add the next 1-3 lines. You are a typing assistant — predict what the user is about to type based on patterns and context.
+
+STRICT RULES:
+1. Output ONLY the completion text — no explanations, no markdown, no code fences.
+2. Complete at most 1-3 lines. Prefer single-line completions.
+3. Match the user's coding style, indentation, and variable naming.
+4. You may complete: variable declarations, loop structures, I/O operations, function signatures, common patterns, brackets/braces, return statements.
+5. NEVER write algorithmic logic, problem-solving code, or solution implementations. If the context suggests a specific algorithm (DP, greedy, graph, etc.), do NOT fill in the logic — only complete structural syntax.
+6. NEVER output the prefix text that already exists — only the NEW text that should appear after the cursor.
+7. If unsure or the completion would be algorithmic, return an empty string.
+8. Do not add comments unless the user started writing one.`;
+
+    const userMsg = suffixCtx
+      ? `[CODE BEFORE CURSOR]\n${prefixCtx}\n[CURSOR]\n[CODE AFTER CURSOR]\n${suffixCtx}`
+      : `[CODE BEFORE CURSOR]\n${prefixCtx}\n[CURSOR]`;
+
+    const groqResult = await _groqChat(apiKey, [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userMsg },
+    ], { maxTokens: 128, temperature: 0.1, stop: ['\n\n\n', '```'] });
+
+    if (!groqResult.ok) return res.json({ ok: false, text: '' });
+
+    let text = groqResult.content.replace(/^```[\w]*\n?/, '').replace(/```$/, '').trimEnd();
+
+    // Safety: strip if it looks like a full solution or algorithmic block
+    const lines = text.split('\n');
+    if (lines.length > 5) text = lines.slice(0, 3).join('\n');
+
+    // Cache result
+    if (_aiCache.size >= AI_CACHE_MAX) {
+      const oldest = _aiCache.keys().next().value;
+      _aiCache.delete(oldest);
+    }
+    _aiCache.set(cacheKey, { text, ts: Date.now() });
+
+    res.json({ ok: true, text });
+  } catch (e) { res.json({ ok: false, text: '' }); }
+});
+
+// POST /api/ai-fix — detect and fix small syntax/compile errors
+app.post('/api/ai-fix', async (req, res) => {
+  try {
+    const apiKey = process.env.GROQ_API_KEY;
+    if (!apiKey) return res.status(500).json({ ok: false, error: 'GROQ_API_KEY not configured' });
+
+    const { code, language, error } = req.body;
+    if (!code || !language) return res.status(400).json({ ok: false, error: 'code and language required' });
+
+    const systemPrompt = `You are a code syntax fixer for competitive programming. The user has a ${language} program with a compile or runtime error.
+
+STRICT RULES:
+1. ONLY fix syntax errors, typos, missing semicolons, wrong brackets, missing includes/imports, type mismatches, and similar small mistakes.
+2. NEVER change the algorithm or logic. NEVER add new algorithmic code.
+3. NEVER restructure or refactor the code.
+4. If the code has logic errors (wrong algorithm), say "NO_FIX" — you cannot fix those.
+5. Return ONLY the corrected full code. No explanations, no markdown, no code fences.
+6. Preserve the user's style, variable names, and structure exactly.
+7. If you cannot determine a fix, return "NO_FIX".`;
+
+    const userMsg = `[CODE]\n${code.substring(0, 4000)}\n\n[ERROR]\n${(error || 'Compilation error').substring(0, 500)}`;
+
+    const groqResult = await _groqChat(apiKey, [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userMsg },
+    ], { maxTokens: 2048, temperature: 0.0 });
+
+    if (!groqResult.ok) {
+      return res.status(groqResult.status || 500).json({ ok: false, error: `AI error: ${(groqResult.error || '').substring(0, 200)}` });
+    }
+
+    let fixedCode = groqResult.content.trim();
+
+    // Strip markdown fences if model adds them
+    fixedCode = fixedCode.replace(/^```[\w]*\n?/, '').replace(/\n?```$/, '').trim();
+
+    // Go: ensure package main is present
+    if (language === 'go' && fixedCode && !fixedCode.match(/^\s*package\s/)) {
+      fixedCode = 'package main\n\n' + fixedCode;
+    }
+
+    // Java: ensure class is named Main (required by judge) and common imports present
+    if (language === 'java' && fixedCode) {
+      // Fix class name if AI renamed it
+      fixedCode = fixedCode.replace(/public\s+class\s+(\w+)/, (m, name) => {
+        return name === 'Main' ? m : 'public class Main';
+      });
+      // Add Scanner import if Scanner is used but import missing
+      if (/Scanner/.test(fixedCode) && !/import\s+java\.util\.Scanner/.test(fixedCode)) {
+        fixedCode = 'import java.util.Scanner;\n' + fixedCode;
+      }
+    }
+
+    if (!fixedCode || fixedCode === 'NO_FIX') {
+      return res.json({ ok: true, fixed: false, message: 'No syntax fix found — the issue may be logical.' });
+    }
+
+    res.json({ ok: true, fixed: true, code: fixedCode });
   } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
 });
 

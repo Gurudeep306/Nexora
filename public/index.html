@@ -6,10 +6,15 @@
   <title>Nexora — Enter the Nexus</title>
   <link rel="icon" type="image/svg+xml" href="/nexora-logo.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Share+Tech+Mono&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <link rel="preload" href="/css/styles.css" as="style">
+  <link rel="preload" href="/js/app.js" as="script">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=JetBrains+Mono:wght@400;600&family=Share+Tech+Mono&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/icons.css">
   <link rel="stylesheet" href="/css/styles.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
   <script src="/js/particles.js" defer></script>
 </head>
 <body>
@@ -211,74 +216,38 @@
       <button class="zen-restore-btn" onclick="App.toggleFocusMode()">◈ RESTORE PANELS</button>
     </div>
     <div class="solve-container">
-      <!-- LEFT -->
-      <div class="solve-left" id="solveLeft">
-        <!-- Collapsed strip — visible only when panel is closed -->
-        <div class="left-collapse-strip hidden" id="leftCollapseStrip" onclick="App.toggleLeftPanel()" title="Restore problem panel">
-          <span>◈</span><span class="left-strip-label">P R O B L E M</span>
-        </div>
-        <div class="solve-topbar">
-          <div class="solve-problem-badges" id="solveProblemBadges"></div>
-          <div class="solve-difficulty-flame" id="solveDifficultyFlame"></div>
-          <a id="solveExternalLink" href="#" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" title="Open original">
-            <i class="icon-external"></i>
-          </a>
-          <button class="btn btn-ghost btn-sm float-min-btn" id="leftCollapseBtn" onclick="App.toggleLeftPanel()" title="Minimize">_</button>
-          <button class="btn btn-ghost btn-sm float-close-btn" onclick="App.toggleProblemPanel()" title="Hide panel">✕</button>
-        </div>
-        <div class="solve-tabs">
-          <button class="solve-tab active" data-stab="description" onclick="App.switchSolveTab('description',this)">
-            <i class="icon-problems"></i> readme.md
-          </button>
-          <button class="solve-tab" data-stab="submissions" onclick="App.switchSolveTab('submissions',this)">
-            <i class="icon-send"></i> git log
-          </button>
-        </div>
-        <div class="solve-tab-content" id="solveTabContent">
-          <div id="solveDescriptionContent"></div>
-          <div id="solveSubmissionsContent" class="hidden"></div>
-        </div>
-        <!-- 8-direction resize edges -->
-        <div class="fp-edge fp-edge-n"  data-dir="n"></div>
-        <div class="fp-edge fp-edge-ne" data-dir="ne"></div>
-        <div class="fp-edge fp-edge-e"  data-dir="e"></div>
-        <div class="fp-edge fp-edge-se" data-dir="se"></div>
-        <div class="fp-edge fp-edge-s"  data-dir="s"></div>
-        <div class="fp-edge fp-edge-sw" data-dir="sw"></div>
-        <div class="fp-edge fp-edge-w"  data-dir="w"></div>
-        <div class="fp-edge fp-edge-nw" data-dir="nw"></div>
-      </div>
-
-      <!-- Resize Handle -->
+      <!-- Resize Handle (hidden — panels are floating) -->
       <div class="solve-resizer" id="solveResizer"></div>
 
-      <!-- RIGHT -->
+      <!-- EDITOR — fills full container -->
       <div class="solve-right" id="solveRight">
         <div class="editor-toolbar">
           <div class="flex items-center gap-2">
             <div class="lang-selector" id="langSelector">
               <button class="lang-selector-btn" id="langSelectorBtn" onclick="App.toggleLangMenu()">
-                <i class="icon-lang-cpp" id="langIcon"></i>
+                <span class="lang-badge group-popular" id="langBadge">C++</span>
                 <span id="langLabel">C++20</span>
                 <i class="icon-chevron-down" style="width:14px;height:14px"></i>
               </button>
               <div class="lang-menu hidden" id="langMenu">
-                <button class="lang-option active" data-lang="cpp" onclick="App.selectLang('cpp')">
-                  <i class="icon-lang-cpp"></i> C++20
-                </button>
-                <button class="lang-option" data-lang="python" onclick="App.selectLang('python')">
-                  <i class="icon-lang-python"></i> Python 3
-                </button>
-                <button class="lang-option" data-lang="java" onclick="App.selectLang('java')">
-                  <i class="icon-lang-java"></i> Java
-                </button>
-                <button class="lang-option" data-lang="javascript" onclick="App.selectLang('javascript')">
-                  <i class="icon-lang-js"></i> JavaScript
-                </button>
+                <div class="lang-search-wrap">
+                  <i class="icon-search" style="width:13px;height:13px;opacity:0.4;flex-shrink:0"></i>
+                  <input type="text" class="lang-search" id="langSearch" placeholder="Search language…" oninput="App._filterLangs(this.value)" autocomplete="off" spellcheck="false" />
+                </div>
+                <div class="lang-groups" id="langGroups"></div>
               </div>
             </div>
           </div>
           <div class="editor-actions">
+            <div class="ai-helper-controls">
+              <button class="btn btn-ghost btn-sm ai-helper-toggle active" id="aiHelperToggle" onclick="App.toggleAiHelper()" title="AI Helper ON (click to disable)">
+                <i class="icon-bolt"></i> ai
+              </button>
+              <button class="btn btn-ghost btn-sm" id="aiFixBtn" onclick="App.aiFixCode()" title="AI Fix Syntax Errors">
+                <i class="icon-bolt"></i> ai fix
+              </button>
+              <span class="ai-helper-indicator" id="aiHelperIndicator"><i class="icon-bolt"></i></span>
+            </div>
             <button class="btn btn-ghost btn-sm collab-btn" onclick="App.toggleCollab()" title="Pair Program"><i class="icon-friends"></i> co-op</button>
             <button class="btn btn-ghost btn-sm" onclick="App.startAiBattle()" title="Race AI" id="aiBattleBtn"><i class="icon-robot"></i> 1v1</button>
             <button class="btn btn-ghost btn-sm" onclick="App.toggleDebug()" title="Debug Visualizer" id="debugToggle"><i class="icon-microscope"></i> dbg</button>
@@ -305,60 +274,6 @@
           <div class="keyshint-stats" id="keyshintStats">0 lines · 0 chars</div>
         </div>
         <div id="monacoEditor" class="editor-container"></div>
-        <!-- Vertical drag handle for bottom panel height -->
-        <div class="bottom-panel-resizer hidden" id="bottomResizer"></div>
-        <div class="bottom-panel" id="bottomPanel">
-          <div class="bottom-panel-header">
-            <div class="bottom-tabs">
-              <button class="bottom-tab active" data-btab="testcases" onclick="App.switchBottomTab('testcases',this)">
-                <i class="icon-test"></i> test/
-              </button>
-              <button class="bottom-tab" data-btab="results" onclick="App.switchBottomTab('results',this)">
-                <i class="icon-terminal"></i> stdout
-              </button>
-              <button class="bottom-tab" data-btab="debug" onclick="App.switchBottomTab('debug',this)">
-                <i class="icon-chart"></i> gdb
-              </button>
-            </div>
-            <div class="bottom-actions-right">
-              <span class="bottom-tc-count" id="bottomTcCount"></span>
-              <button class="btn btn-ghost btn-sm" onclick="App.toggleAddTestcase()" title="Add Test Case">
-                <i class="icon-plus"></i> +tc
-              </button>
-              <button class="btn btn-ghost btn-sm float-min-btn" id="bottomCollapseBtn" onclick="App.toggleBottomPanel()" title="Minimize">_</button>
-              <button class="btn btn-ghost btn-sm float-close-btn" onclick="App.toggleTestPanel()" title="Hide panel">✕</button>
-            </div>
-          </div>
-          <div class="bottom-panel-body" id="bottomPanelBody">
-            <!-- TC Deck (one card at a time, no scroll clipping) -->
-            <div id="bottomTestcasesContent">
-              <div class="tc-deck" id="tcDeck">
-                <div class="tc-deck-header">
-                  <button class="tc-nav-btn" id="tcPrevBtn" onclick="App.tcDeckPrev()">&#9664;</button>
-                  <span class="tc-deck-label" id="tcDeckLabel">TC 1 / 1</span>
-                  <button class="tc-nav-btn" id="tcNextBtn" onclick="App.tcDeckNext()">&#9654;</button>
-                </div>
-                <div class="tc-deck-body" id="tcDeckBody"></div>
-              </div>
-            </div>
-            <div id="bottomResultsContent" class="hidden"></div>
-            <div id="bottomDebugContent" class="hidden">
-              <div class="output-placeholder">
-                <i class="icon-microscope" style="font-size:24px;opacity:0.3"></i>
-                <p>$ gdb --args ./a.out // add DBG macros</p>
-              </div>
-            </div>
-          </div>
-          <!-- 8-direction resize edges -->
-          <div class="fp-edge fp-edge-n"  data-dir="n"></div>
-          <div class="fp-edge fp-edge-ne" data-dir="ne"></div>
-          <div class="fp-edge fp-edge-e"  data-dir="e"></div>
-          <div class="fp-edge fp-edge-se" data-dir="se"></div>
-          <div class="fp-edge fp-edge-s"  data-dir="s"></div>
-          <div class="fp-edge fp-edge-sw" data-dir="sw"></div>
-          <div class="fp-edge fp-edge-w"  data-dir="w"></div>
-          <div class="fp-edge fp-edge-nw" data-dir="nw"></div>
-        </div>
       </div>
 
       <!-- Floating AI Chat -->
@@ -367,6 +282,96 @@
         <span class="ai-fab-pulse"></span>
       </button>
       <div class="ai-float-panel hidden" id="aiFloatPanel"></div>
+    </div>
+
+    <!-- FLOATING PROBLEM PANEL — direct child of overlay, no clipping -->
+    <div class="solve-left" id="solveLeft">
+      <div class="left-collapse-strip hidden" id="leftCollapseStrip" onclick="App.toggleLeftPanel()" title="Restore problem panel">
+        <span>◈</span><span class="left-strip-label">P R O B L E M</span>
+      </div>
+      <div class="solve-topbar">
+        <div class="solve-problem-badges" id="solveProblemBadges"></div>
+        <div class="solve-difficulty-flame" id="solveDifficultyFlame"></div>
+        <a id="solveExternalLink" href="#" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" title="Open original">
+          <i class="icon-external"></i>
+        </a>
+        <button class="btn btn-ghost btn-sm float-min-btn" id="leftCollapseBtn" onclick="App.toggleLeftPanel()" title="Minimize">_</button>
+        <button class="btn btn-ghost btn-sm float-close-btn" onclick="App.toggleProblemPanel()" title="Hide panel">✕</button>
+      </div>
+      <div class="solve-tabs">
+        <button class="solve-tab active" data-stab="description" onclick="App.switchSolveTab('description',this)">
+          <i class="icon-problems"></i> readme.md
+        </button>
+        <button class="solve-tab" data-stab="submissions" onclick="App.switchSolveTab('submissions',this)">
+          <i class="icon-send"></i> git log
+        </button>
+      </div>
+      <div class="solve-tab-content" id="solveTabContent">
+        <div id="solveDescriptionContent"></div>
+        <div id="solveSubmissionsContent" class="hidden"></div>
+      </div>
+      <!-- 8-direction resize edges -->
+      <div class="fp-edge fp-edge-n"  data-dir="n"></div>
+      <div class="fp-edge fp-edge-ne" data-dir="ne"></div>
+      <div class="fp-edge fp-edge-e"  data-dir="e"></div>
+      <div class="fp-edge fp-edge-se" data-dir="se"></div>
+      <div class="fp-edge fp-edge-s"  data-dir="s"></div>
+      <div class="fp-edge fp-edge-sw" data-dir="sw"></div>
+      <div class="fp-edge fp-edge-w"  data-dir="w"></div>
+      <div class="fp-edge fp-edge-nw" data-dir="nw"></div>
+    </div>
+
+    <!-- FLOATING TEST PANEL — direct child of overlay, no clipping -->
+    <div class="bottom-panel" id="bottomPanel">
+      <div class="bottom-panel-header">
+        <div class="bottom-tabs">
+          <button class="bottom-tab active" data-btab="testcases" onclick="App.switchBottomTab('testcases',this)">
+            <i class="icon-test"></i> test/
+          </button>
+          <button class="bottom-tab" data-btab="results" onclick="App.switchBottomTab('results',this)">
+            <i class="icon-terminal"></i> stdout
+          </button>
+          <button class="bottom-tab" data-btab="debug" onclick="App.switchBottomTab('debug',this)">
+            <i class="icon-chart"></i> gdb
+          </button>
+        </div>
+        <div class="bottom-actions-right">
+          <span class="bottom-tc-count" id="bottomTcCount"></span>
+          <button class="btn btn-ghost btn-sm" onclick="App.toggleAddTestcase()" title="Add Test Case">
+            <i class="icon-plus"></i> +tc
+          </button>
+          <button class="btn btn-ghost btn-sm float-min-btn" id="bottomCollapseBtn" onclick="App.toggleBottomPanel()" title="Minimize">_</button>
+          <button class="btn btn-ghost btn-sm float-close-btn" onclick="App.toggleTestPanel()" title="Hide panel">✕</button>
+        </div>
+      </div>
+      <div class="bottom-panel-body" id="bottomPanelBody">
+        <div id="bottomTestcasesContent">
+          <div class="tc-deck" id="tcDeck">
+            <div class="tc-deck-header">
+              <button class="tc-nav-btn" id="tcPrevBtn" onclick="App.tcDeckPrev()">&#9664;</button>
+              <span class="tc-deck-label" id="tcDeckLabel">TC 1 / 1</span>
+              <button class="tc-nav-btn" id="tcNextBtn" onclick="App.tcDeckNext()">&#9654;</button>
+            </div>
+            <div class="tc-deck-body" id="tcDeckBody"></div>
+          </div>
+        </div>
+        <div id="bottomResultsContent" class="hidden"></div>
+        <div id="bottomDebugContent" class="hidden">
+          <div class="output-placeholder">
+            <i class="icon-microscope" style="font-size:24px;opacity:0.3"></i>
+            <p>$ gdb --args ./a.out // add DBG macros</p>
+          </div>
+        </div>
+      </div>
+      <!-- 8-direction resize edges -->
+      <div class="fp-edge fp-edge-n"  data-dir="n"></div>
+      <div class="fp-edge fp-edge-ne" data-dir="ne"></div>
+      <div class="fp-edge fp-edge-e"  data-dir="e"></div>
+      <div class="fp-edge fp-edge-se" data-dir="se"></div>
+      <div class="fp-edge fp-edge-s"  data-dir="s"></div>
+      <div class="fp-edge fp-edge-sw" data-dir="sw"></div>
+      <div class="fp-edge fp-edge-w"  data-dir="w"></div>
+      <div class="fp-edge fp-edge-nw" data-dir="nw"></div>
     </div>
   </div>
 

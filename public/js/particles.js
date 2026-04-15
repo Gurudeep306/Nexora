@@ -1,4 +1,4 @@
-/* ===== Nexora – Animated Particle Background ===== */
+/* ===== Nexora – Animated Particle Background (optimized) ===== */
 (function() {
   'use strict';
 
@@ -8,10 +8,12 @@
   document.body.prepend(canvas);
 
   const ctx = canvas.getContext('2d');
-  let W, H, particles = [], mouse = { x: -1000, y: -1000 };
+  let W, H, particles = [], mouse = { x: -1000, y: -1000 }, animId = 0, paused = false;
   const COLORS = ['#1d4ed8', '#14b8a6', '#059669', '#d4a017', '#3b82f6'];
-  const MAX = 80;
-  const CONNECT_DIST = 140;
+  const MAX = 50;               // reduced from 80
+  const CONNECT_DIST = 120;     // reduced from 140
+  const CONNECT_DIST_SQ = CONNECT_DIST * CONNECT_DIST; // avoid sqrt
+  const TWO_PI = Math.PI * 2;
 
   function resize() {
     W = canvas.width = window.innerWidth;
@@ -35,33 +37,37 @@
   }
 
   function draw() {
+    if (paused) return;
     ctx.clearRect(0, 0, W, H);
 
-    // connections
+    // batch connections in one path per alpha bucket
+    ctx.lineWidth = 0.5;
     for (let i = 0; i < particles.length; i++) {
+      const pi = particles[i];
       for (let j = i + 1; j < particles.length; j++) {
-        const dx = particles[i].x - particles[j].x;
-        const dy = particles[i].y - particles[j].y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < CONNECT_DIST) {
-          const alpha = (1 - dist / CONNECT_DIST) * 0.15;
+        const pj = particles[j];
+        const dx = pi.x - pj.x;
+        const dy = pi.y - pj.y;
+        const distSq = dx * dx + dy * dy;
+        if (distSq < CONNECT_DIST_SQ) {
+          const alpha = (1 - Math.sqrt(distSq) / CONNECT_DIST) * 0.15;
           ctx.strokeStyle = `rgba(99,102,241,${alpha})`;
-          ctx.lineWidth = 0.5;
           ctx.beginPath();
-          ctx.moveTo(particles[i].x, particles[i].y);
-          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.moveTo(pi.x, pi.y);
+          ctx.lineTo(pj.x, pj.y);
           ctx.stroke();
         }
       }
     }
 
-    // particles
+    // particles — skip per-particle glow gradients (major perf win)
     for (const p of particles) {
       // mouse repulsion
       const mdx = p.x - mouse.x;
       const mdy = p.y - mouse.y;
-      const mDist = Math.sqrt(mdx * mdx + mdy * mdy);
-      if (mDist < 150) {
+      const mDistSq = mdx * mdx + mdy * mdy;
+      if (mDistSq < 22500) { // 150^2
+        const mDist = Math.sqrt(mDistSq);
         const force = (150 - mDist) / 150 * 0.02;
         p.vx += mdx * force;
         p.vy += mdy * force;
@@ -78,24 +84,26 @@
       if (p.y > H) p.y = 0;
 
       ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.arc(p.x, p.y, p.r, 0, TWO_PI);
       ctx.fillStyle = p.color;
       ctx.globalAlpha = p.alpha;
       ctx.fill();
-      ctx.globalAlpha = 1;
-
-      // glow
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r * 3, 0, Math.PI * 2);
-      const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 3);
-      grad.addColorStop(0, p.color + '20');
-      grad.addColorStop(1, 'transparent');
-      ctx.fillStyle = grad;
-      ctx.fill();
     }
+    ctx.globalAlpha = 1;
 
-    requestAnimationFrame(draw);
+    animId = requestAnimationFrame(draw);
   }
+
+  // Pause when tab not visible — big battery/CPU saver
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      paused = true;
+      cancelAnimationFrame(animId);
+    } else {
+      paused = false;
+      animId = requestAnimationFrame(draw);
+    }
+  });
 
   // floating orbs in main content
   function createOrbs() {
@@ -117,8 +125,9 @@
     }
   }
 
-  window.addEventListener('resize', resize);
-  document.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+  let resizeTimer;
+  window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(resize, 150); });
+  document.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; }, { passive: true });
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => { init(); draw(); createOrbs(); });

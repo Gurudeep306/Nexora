@@ -34,9 +34,50 @@ const App = {
 
   // Language state
   _currentLang: 'cpp',
-  _langIconMap: { cpp: 'icon-lang-cpp', python: 'icon-lang-python', java: 'icon-lang-java', javascript: 'icon-lang-js' },
-  _langLabelMap: { cpp: 'C++20', python: 'Python 3', java: 'Java', javascript: 'JavaScript' },
-  _monacoLangMap: { cpp: 'cpp', python: 'python', java: 'java', javascript: 'javascript' },
+  _langs: [
+    { g:'popular',    id:'cpp',         label:'C++20',        badge:'C++',  mono:'cpp' },
+    { g:'popular',    id:'c',           label:'C',            badge:'C',    mono:'c' },
+    { g:'popular',    id:'python',      label:'Python 3',     badge:'PY',   mono:'python' },
+    { g:'popular',    id:'java',        label:'Java',         badge:'JA',   mono:'java' },
+    { g:'popular',    id:'javascript',  label:'JavaScript',   badge:'JS',   mono:'javascript' },
+    { g:'popular',    id:'typescript',  label:'TypeScript',   badge:'TS',   mono:'typescript' },
+    { g:'popular',    id:'csharp',      label:'C#',           badge:'C#',   mono:'csharp' },
+    { g:'popular',    id:'go',          label:'Go',           badge:'GO',   mono:'go' },
+    { g:'popular',    id:'rust',        label:'Rust',         badge:'RS',   mono:'rust' },
+    { g:'popular',    id:'kotlin',      label:'Kotlin',       badge:'KT',   mono:'kotlin' },
+    { g:'scripting',  id:'ruby',        label:'Ruby',         badge:'RB',   mono:'ruby' },
+    { g:'scripting',  id:'php',         label:'PHP',          badge:'PHP',  mono:'php' },
+    { g:'scripting',  id:'perl',        label:'Perl',         badge:'PL',   mono:'perl' },
+    { g:'scripting',  id:'lua',         label:'Lua',          badge:'LUA',  mono:'lua' },
+    { g:'scripting',  id:'shell',       label:'Bash / Shell', badge:'SH',   mono:'shell' },
+    { g:'scripting',  id:'powershell',  label:'PowerShell',   badge:'PS',   mono:'powershell' },
+    { g:'data',       id:'r',           label:'R',            badge:'R',    mono:'r' },
+    { g:'data',       id:'julia',       label:'Julia',        badge:'JL',   mono:'julia' },
+    { g:'functional', id:'scala',       label:'Scala',        badge:'SC',   mono:'scala' },
+    { g:'functional', id:'fsharp',      label:'F#',           badge:'F#',   mono:'fsharp' },
+    { g:'functional', id:'clojure',     label:'Clojure',      badge:'CLJ',  mono:'clojure' },
+    { g:'functional', id:'scheme',      label:'Scheme',       badge:'SCM',  mono:'scheme' },
+    { g:'mobile',     id:'swift',       label:'Swift',        badge:'SW',   mono:'swift' },
+    { g:'mobile',     id:'dart',        label:'Dart',         badge:'DT',   mono:'dart' },
+    { g:'mobile',     id:'objectivec',  label:'Objective-C',  badge:'OC',   mono:'objective-c' },
+    { g:'db',         id:'sql',         label:'SQL',          badge:'SQL',  mono:'sql' },
+    { g:'db',         id:'pgsql',       label:'PostgreSQL',   badge:'PG',   mono:'pgsql' },
+    { g:'classic',    id:'pascal',      label:'Pascal',       badge:'PAS',  mono:'pascal' },
+    { g:'classic',    id:'vb',          label:'Visual Basic', badge:'VB',   mono:'vb' },
+    { g:'other',      id:'elixir',      label:'Elixir',       badge:'EX',   mono:'elixir' },
+    { g:'other',      id:'tcl',         label:'Tcl',          badge:'TCL',  mono:'tcl' },
+    { g:'other',      id:'solidity',    label:'Solidity',     badge:'SOL',  mono:'solidity' },
+  ],
+  _langGroups: {
+    popular:    { label: 'Popular',    color: '#00ffaa' },
+    scripting:  { label: 'Scripting',  color: '#fbbf24' },
+    data:       { label: 'Data / ML',  color: '#818cf8' },
+    functional: { label: 'Functional', color: '#f472b6' },
+    mobile:     { label: 'Mobile',     color: '#34d399' },
+    db:         { label: 'Database',   color: '#60a5fa' },
+    classic:    { label: 'Classic',    color: '#94a3b8' },
+    other:      { label: 'Other',      color: '#a78bfa' },
+  },
 
   // Social state
   _username: null,
@@ -83,6 +124,9 @@ const App = {
     this._updateSidebarPlayer();
     // Auto-sync problems silently in background on every page load
     this._autoSync();
+
+    // Register autocomplete providers after Monaco loads
+    window.monacoReady.then(() => this._registerAutocomplete());
 
     // Dismiss boot screen after content loads
     setTimeout(() => this._dismissBoot(), 2800);
@@ -335,8 +379,10 @@ const App = {
 
   // Section definitions for the customize panel
   _hubSections: [
+    { key: 'quickactions', label: 'launch()', icon: 'icon-rocket', desc: 'Quick start actions & shortcuts' },
     { key: 'today', label: 'daily.log', icon: 'icon-clock', desc: 'Progress rings & goal tracker' },
     { key: 'challenges', label: 'quests[]', icon: 'icon-sword', desc: 'Daily challenge missions' },
+    { key: 'recent', label: 'activity.log', icon: 'icon-feed', desc: 'Recent submission feed' },
     { key: 'momentum', label: 'momentum', icon: 'icon-trending', desc: 'Rating climb & weekly bars' },
     { key: 'stats', label: 'sys.stats', icon: 'icon-chart', desc: 'Core metrics at a glance' },
     { key: 'streak', label: 'streak.log', icon: 'icon-fire', desc: 'Streak tracker & calendar' },
@@ -353,8 +399,8 @@ const App = {
     el.innerHTML = `
       <div class="hub-header">
         <div class="hub-header-left">
-          <h1 class="hub-title"><i class="icon-dashboard" style="font-size:28px"></i> <span class="glitch" data-text="Command Center">Command Center</span></h1>
-          <p class="hub-subtitle">sys.init() => load_modules(stats, profile, activity)</p>
+          <h1 class="hub-title"><i class="icon-cpu" style="font-size:28px"></i> <span class="glitch" data-text="NEXORA HQ">NEXORA HQ</span></h1>
+          <p class="hub-subtitle">sys.init() => boot_sequence(modules: [stats, profile, activity])</p>
         </div>
         <div class="hub-header-actions">
           <button class="btn btn-ghost btn-sm" onclick="App.openSettings()"><i class="icon-settings" style="font-size:13px"></i> ./config</button>
@@ -530,8 +576,10 @@ const App = {
 
     // Section HTML templates
     const sectionHtml = {
+      quickactions: `<div id="quickActionsSection"></div>`,
       today: `<div id="todaySummarySection"></div>`,
       challenges: `<div id="dailyChallengesSection"></div>`,
+      recent: `<div id="recentActivitySection"></div>`,
       momentum: `<div id="momentumSection"></div>`,
       stats: `<div class="stats-grid" id="statsGrid"></div>`,
       streak: `<div id="streakSection"></div>`,
@@ -583,7 +631,7 @@ const App = {
     this._previousAchievements = data.achievements;
 
     /* ═══════════════════════════════════════════════
-       1. HERO HUD — Animated level ring + gates + ETA
+       1. HERO HUD — Redesigned with Power Level + Animated Ring
        ═══════════════════════════════════════════════ */
     const lvl = data.level;
     const title = data.title;
@@ -591,46 +639,136 @@ const App = {
     const probPct = lvl.probsForNext > 0 ? Math.min(Math.round(lvl.probsInLevel / lvl.probsForNext * 100), 100) : 100;
     const nextLvl = p.nextLevel;
 
+    // Compute a composite "power level" score
+    const powerLevel = Math.round(
+      (data.solved * 10) +
+      (data.totalXp * 0.1) +
+      (data.streak.current * 50) +
+      ((data.accuracy || 0) * 5) +
+      ((p.consistencyScore || 0) * 3)
+    );
+
     let gateHtml = '';
     if (title.next) {
-      const hudGates = [];
-      if (title.xpToNext > 0) hudGates.push(`${title.xpToNext.toLocaleString()} XP`);
-      if (title.probsToNext > 0) hudGates.push(`${title.probsToNext} problems`);
-      gateHtml = `<div class="hud-gates">
-        <div class="hud-gate"><div class="hud-gate-fill" style="width:${xpPct}%;background:${lvl.color}"></div><span>${data.totalXp.toLocaleString()}/${(data.totalXp + (title.xpToNext || 0)).toLocaleString()} XP</span></div>
-        <div class="hud-gate"><div class="hud-gate-fill" style="width:${probPct}%;background:${lvl.color}"></div><span>${data.solved}/${data.solved + (title.probsToNext || 0)} Problems</span></div>
+      gateHtml = `<div class="hud-gates-v2">
+        <div class="hud-gate-v2">
+          <div class="hud-gate-label"><i class="icon-bolt" style="font-size:10px;color:var(--brand-light)"></i> XP Progress</div>
+          <div class="hud-gate-track"><div class="hud-gate-fill-v2" style="width:${xpPct}%;--gc:${lvl.color}"></div></div>
+          <div class="hud-gate-nums">${data.totalXp.toLocaleString()} / ${(data.totalXp + (title.xpToNext || 0)).toLocaleString()}</div>
+        </div>
+        <div class="hud-gate-v2">
+          <div class="hud-gate-label"><i class="icon-check" style="font-size:10px;color:var(--success)"></i> Problem Gate</div>
+          <div class="hud-gate-track"><div class="hud-gate-fill-v2" style="width:${probPct}%;--gc:var(--success)"></div></div>
+          <div class="hud-gate-nums">${data.solved} / ${data.solved + (title.probsToNext || 0)}</div>
+        </div>
       </div>
-      <div class="next-rank-preview">
-        <span class="next-rank-label">Next:</span>
-        <span class="next-rank-name" style="color:${title.next.color}">${this._esc(title.next.title)}</span>
-        ${nextLvl?.daysEstimate != null ? `<span class="next-rank-eta"><i class="icon-clock" style="font-size:10px"></i> ~${nextLvl.daysEstimate}d at current pace</span>` : ''}
+      <div class="hud-next-rank">
+        <span class="hud-next-label">NEXT RANK</span>
+        <span class="hud-next-name" style="color:${title.next.color};text-shadow:0 0 12px ${title.next.color}40">${this._esc(title.next.title)}</span>
+        ${nextLvl?.daysEstimate != null ? `<span class="hud-next-eta"><i class="icon-clock" style="font-size:10px"></i> ~${nextLvl.daysEstimate}d ETA</span>` : ''}
       </div>`;
     }
 
+    const ringPath = 'M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831';
+
     document.getElementById('playerHud').innerHTML = `
-      <div class="player-hud card">
-        <div class="hud-left">
-          <div class="hud-ring-wrap" style="--ring-color:${lvl.color};--ring-pct:${xpPct}">
-            <div class="hud-level-ring">
-              <div class="hud-level-badge" style="background:${lvl.color};${lvl.glow !== 'none' ? 'box-shadow:' + lvl.glow : ''}">${lvl.level}</div>
+      <div class="player-hud-v2">
+        <div class="hud-scanline"></div>
+        <div class="hud-v2-top">
+          <div class="hud-v2-center">
+            <div class="hud-power-ring" style="--ring-color:${lvl.color}">
+              <svg viewBox="0 0 36 36" class="hud-ring-svg">
+                <defs>
+                  <linearGradient id="hudRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="${lvl.color}"/>
+                    <stop offset="100%" stop-color="${lvl.color}88"/>
+                  </linearGradient>
+                </defs>
+                <path d="${ringPath}" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="2.5"/>
+                <path d="${ringPath}" fill="none" stroke="url(#hudRingGrad)" stroke-width="2.5" stroke-dasharray="${xpPct}, 100" stroke-linecap="round" class="hud-ring-fill-anim"/>
+              </svg>
+              <div class="hud-level-num" style="color:${lvl.color};text-shadow:0 0 30px ${lvl.color}80">${lvl.level}</div>
             </div>
-          </div>
-          <div class="hud-info">
-            <div class="hud-title" style="color:${lvl.color};${lvl.glow !== 'none' ? 'text-shadow:' + lvl.glow : ''}">${this._esc(title.current.title)}</div>
-            <div class="hud-xp-row">
-              <div class="hud-xp-bar"><div class="hud-xp-fill" style="width:${xpPct}%;background:${lvl.color}"></div></div>
-              <span class="hud-xp-text">${data.totalXp.toLocaleString()} XP</span>
+            <div class="hud-rank-title" style="color:${lvl.color};text-shadow:0 0 20px ${lvl.color}60">${this._esc(title.current.title)}</div>
+            <div class="hud-power-row">
+              <span class="hud-power-label">POWER LEVEL</span>
+              <span class="hud-power-val counting" data-target="${powerLevel}">${powerLevel.toLocaleString()}</span>
             </div>
-            ${gateHtml}
           </div>
         </div>
-        <div class="hud-stats">
-          <div class="hud-stat-pill"><i class="icon-check" style="color:var(--success)"></i><span class="hud-stat-num">${data.solved}</span><span class="hud-stat-lbl">Solved</span></div>
-          <div class="hud-stat-pill"><i class="icon-fire" style="color:var(--warning)"></i><span class="hud-stat-num">${data.streak.current}d</span><span class="hud-stat-lbl">Streak</span></div>
-          <div class="hud-stat-pill"><i class="icon-target" style="color:var(--info)"></i><span class="hud-stat-num">${data.accuracy}%</span><span class="hud-stat-lbl">Accuracy</span></div>
-          <div class="hud-stat-pill"><i class="icon-trending" style="color:#14b8a6"></i><span class="hud-stat-num">${p.consistencyScore || 0}%</span><span class="hud-stat-lbl">Consist.</span></div>
+        <div class="hud-v2-stats">
+          <div class="hud-v2-stat">
+            <div class="hud-v2-stat-icon" style="--sc:var(--success)"><i class="icon-check"></i></div>
+            <div class="hud-v2-stat-num">${data.solved}</div>
+            <div class="hud-v2-stat-lbl">SOLVED</div>
+          </div>
+          <div class="hud-v2-stat">
+            <div class="hud-v2-stat-icon" style="--sc:var(--warning)"><i class="icon-fire"></i></div>
+            <div class="hud-v2-stat-num">${data.streak.current}d</div>
+            <div class="hud-v2-stat-lbl">STREAK</div>
+          </div>
+          <div class="hud-v2-stat">
+            <div class="hud-v2-stat-icon" style="--sc:var(--info)"><i class="icon-target"></i></div>
+            <div class="hud-v2-stat-num">${data.accuracy}%</div>
+            <div class="hud-v2-stat-lbl">ACCURACY</div>
+          </div>
+          <div class="hud-v2-stat">
+            <div class="hud-v2-stat-icon" style="--sc:#14b8a6"><i class="icon-trending"></i></div>
+            <div class="hud-v2-stat-num">${p.consistencyScore || 0}%</div>
+            <div class="hud-v2-stat-lbl">UPTIME</div>
+          </div>
+          <div class="hud-v2-stat">
+            <div class="hud-v2-stat-icon" style="--sc:var(--purple)"><i class="icon-bolt"></i></div>
+            <div class="hud-v2-stat-num">${data.totalXp.toLocaleString()}</div>
+            <div class="hud-v2-stat-lbl">TOTAL XP</div>
+          </div>
+        </div>
+        <div class="hud-v2-bottom">
+          ${gateHtml}
         </div>
       </div>`;
+
+    /* ═══════════════════════════════════════════════
+       1b. QUICK ACTIONS — Launch pad for common tasks
+       ═══════════════════════════════════════════════ */
+    const qaEl = document.getElementById('quickActionsSection');
+    if (qaEl) {
+      qaEl.innerHTML = `
+        <div class="quick-actions-v2 mt-3">
+          <div class="qa-card" onclick="App.navigate('problems');App._randomProblem&&App._randomProblem()" data-glow="var(--brand)">
+            <div class="qa-icon-wrap" style="--qa-c:var(--brand)"><i class="icon-dice"></i></div>
+            <div class="qa-text">
+              <div class="qa-title">Random Mission</div>
+              <div class="qa-desc">Jump into a random unsolved problem</div>
+            </div>
+            <div class="qa-arrow"><i class="icon-chevron-right"></i></div>
+          </div>
+          <div class="qa-card" onclick="App.navigate('problems')" data-glow="var(--success)">
+            <div class="qa-icon-wrap" style="--qa-c:var(--success)"><i class="icon-code"></i></div>
+            <div class="qa-text">
+              <div class="qa-title">Browse Problems</div>
+              <div class="qa-desc">Find your next challenge by topic</div>
+            </div>
+            <div class="qa-arrow"><i class="icon-chevron-right"></i></div>
+          </div>
+          <div class="qa-card" onclick="App.navigate('arena')" data-glow="var(--warning)">
+            <div class="qa-icon-wrap" style="--qa-c:var(--warning)"><i class="icon-sword"></i></div>
+            <div class="qa-text">
+              <div class="qa-title">Arena Campaign</div>
+              <div class="qa-desc">Progress through structured levels</div>
+            </div>
+            <div class="qa-arrow"><i class="icon-chevron-right"></i></div>
+          </div>
+          <div class="qa-card" onclick="App.navigate('contests')" data-glow="var(--purple)">
+            <div class="qa-icon-wrap" style="--qa-c:var(--purple)"><i class="icon-trophy"></i></div>
+            <div class="qa-text">
+              <div class="qa-title">Live Contests</div>
+              <div class="qa-desc">Check upcoming and active battles</div>
+            </div>
+            <div class="qa-arrow"><i class="icon-chevron-right"></i></div>
+          </div>
+        </div>`;
+    }
 
     /* ═══════════════════════════════════════════════
        2. TODAY'S COMMAND CENTER
@@ -638,22 +776,34 @@ const App = {
     const ts = data.todayStats;
     const dailyGoal = 3;
     const todayPct = Math.min(100, Math.round((ts.solved / dailyGoal) * 100));
-    const greeting = new Date().getHours() < 12 ? 'Good morning' : new Date().getHours() < 17 ? 'Good afternoon' : 'Good evening';
+    const hour = new Date().getHours();
+    const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+    const greetEmoji = hour < 12 ? '☀️' : hour < 17 ? '⚡' : '🌙';
     const todayEl = document.getElementById('todaySummarySection');
     if (todayEl) {
       const ringPath = 'M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831';
       const todayAccuracy = ts.attempted > 0 ? Math.round(ts.solved / ts.attempted * 100) : 0;
       todayEl.innerHTML = `
-        <div class="card mt-3 today-summary-card">
-          <div class="today-header">
-            <div class="today-greeting"><h2>${greeting}!</h2><p class="text-muted">Here\u2019s your progress for today</p></div>
-            <div class="today-date">${new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</div>
+        <div class="card mt-3 today-summary-card-v2">
+          <div class="today-scanline"></div>
+          <div class="today-header-v2">
+            <div class="today-greeting-v2">
+              <span class="today-greeting-emoji">${greetEmoji}</span>
+              <div>
+                <h2 class="today-greeting-text">${greeting}, Pilot</h2>
+                <p class="today-greeting-sub"><span class="terminal-caret">❯</span> session.status() — ${new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</p>
+              </div>
+            </div>
+            <div class="today-session-badge">
+              <i class="icon-clock" style="font-size:12px"></i>
+              <span>Day ${data.streak.current + 1}</span>
+            </div>
           </div>
-          <div class="today-metrics">
-            <div class="today-metric">
+          <div class="today-metrics-v2">
+            <div class="today-metric-v2">
               <div class="today-metric-ring">
                 <svg viewBox="0 0 36 36" class="today-ring-svg">
-                  <path d="${ringPath}" fill="none" stroke="var(--surface-2)" stroke-width="3"/>
+                  <path d="${ringPath}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="3"/>
                   <path d="${ringPath}" fill="none" stroke="#22c55e" stroke-width="3" stroke-dasharray="${todayPct}, 100" stroke-linecap="round" class="today-ring-fill"/>
                 </svg>
                 <span class="today-ring-val">${ts.solved}</span>
@@ -661,10 +811,10 @@ const App = {
               <span class="today-metric-label">Solved</span>
               <span class="today-metric-sub">Goal: ${dailyGoal}/day</span>
             </div>
-            <div class="today-metric">
+            <div class="today-metric-v2">
               <div class="today-metric-ring">
                 <svg viewBox="0 0 36 36" class="today-ring-svg">
-                  <path d="${ringPath}" fill="none" stroke="var(--surface-2)" stroke-width="3"/>
+                  <path d="${ringPath}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="3"/>
                   <path d="${ringPath}" fill="none" stroke="var(--brand)" stroke-width="3" stroke-dasharray="${todayAccuracy}, 100" stroke-linecap="round" class="today-ring-fill"/>
                 </svg>
                 <span class="today-ring-val">${ts.attempted}</span>
@@ -672,10 +822,10 @@ const App = {
               <span class="today-metric-label">Attempted</span>
               <span class="today-metric-sub">${todayAccuracy}% success</span>
             </div>
-            <div class="today-metric">
+            <div class="today-metric-v2">
               <div class="today-metric-ring">
                 <svg viewBox="0 0 36 36" class="today-ring-svg">
-                  <path d="${ringPath}" fill="none" stroke="var(--surface-2)" stroke-width="3"/>
+                  <path d="${ringPath}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="3"/>
                   <path d="${ringPath}" fill="none" stroke="#f59e0b" stroke-width="3" stroke-dasharray="${Math.min(100, ts.xp)}, 100" stroke-linecap="round" class="today-ring-fill"/>
                 </svg>
                 <span class="today-ring-val">${ts.xp}</span>
@@ -683,10 +833,10 @@ const App = {
               <span class="today-metric-label">XP Earned</span>
               <span class="today-metric-sub">today</span>
             </div>
-            <div class="today-metric">
+            <div class="today-metric-v2">
               <div class="today-metric-ring">
                 <svg viewBox="0 0 36 36" class="today-ring-svg">
-                  <path d="${ringPath}" fill="none" stroke="var(--surface-2)" stroke-width="3"/>
+                  <path d="${ringPath}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="3"/>
                   <path d="${ringPath}" fill="none" stroke="#ef4444" stroke-width="3" stroke-dasharray="${Math.min(100, data.streak.current * 15)}, 100" stroke-linecap="round" class="today-ring-fill"/>
                 </svg>
                 <span class="today-ring-val">${data.streak.current}</span>
@@ -695,7 +845,7 @@ const App = {
               <span class="today-metric-sub">Best: ${data.streak.best}</span>
             </div>
           </div>
-          ${ts.solved >= dailyGoal ? '<div class="today-goal-hit"><i class="icon-check" style="color:var(--success)"></i> Daily goal reached!</div>' : `<div class="today-goal-bar"><div class="today-goal-fill" style="width:${todayPct}%"></div><span>${ts.solved}/${dailyGoal} daily goal</span></div>`}
+          ${ts.solved >= dailyGoal ? '<div class="today-goal-hit-v2"><i class="icon-shield" style="font-size:16px"></i> <span>Daily objective complete — XP secured</span></div>' : `<div class="today-goal-bar-v2"><div class="today-goal-fill-v2" style="width:${todayPct}%"></div><span>${ts.solved}/${dailyGoal} daily objective</span></div>`}
         </div>`;
     }
 
@@ -705,27 +855,71 @@ const App = {
     const dcEl = document.getElementById('dailyChallengesSection');
     if (data.dailyChallenges && data.dailyChallenges.length) {
       const tiers = ['Easy', 'Medium', 'Hard'];
-      const tierIcons = ['icon-check', 'icon-bolt', 'icon-fire'];
-      let dcHtml = '<div class="daily-grid mt-3">';
+      const tierIcons = ['icon-shield', 'icon-bolt', 'icon-fire'];
+      const tierColors = ['var(--success)', 'var(--warning)', 'var(--danger)'];
+      const tierRewards = [10, 25, 50];
+      let dcHtml = `<div class="card mt-3 quest-board-card">
+        <div class="card-header">
+          <span class="card-title"><i class="icon-sword" style="font-size:16px;color:var(--gold)"></i> Mission Board</span>
+          <span class="quest-timer"><i class="icon-clock" style="font-size:11px"></i> Refreshes daily</span>
+        </div>
+        <div class="quest-grid">`;
       data.dailyChallenges.forEach((dc, i) => {
         const solved = dc.solve_status === 'solved';
+        const tierIdx = Math.min(i, 2);
         dcHtml += `
-          <div class="daily-card ${solved ? 'completed' : ''}" onclick="App.openSolve(${dc.id})">
-            <div class="daily-top">
-              <div class="daily-difficulty ${tiers[i].toLowerCase()}"><i class="${tierIcons[i]}" style="font-size:10px"></i> ${tiers[i]} Challenge</div>
-              ${solved ? '<div class="daily-check"><i class="icon-check"></i></div>' : ''}
+          <div class="quest-card ${solved ? 'quest-completed' : ''} quest-tier-${tiers[tierIdx].toLowerCase()}" onclick="App.openSolve(${dc.id})">
+            <div class="quest-tier-badge" style="--tier-c:${tierColors[tierIdx]}">
+              <i class="${tierIcons[tierIdx]}" style="font-size:12px"></i>
+              <span>${tiers[tierIdx]}</span>
             </div>
-            <div class="daily-problem-title">${this._esc(dc.title)}</div>
-            <div class="daily-bottom">
+            ${solved ? '<div class="quest-check"><i class="icon-check"></i></div>' : ''}
+            <div class="quest-title">${this._esc(dc.title)}</div>
+            <div class="quest-footer">
               <span class="${this._ratingClass(dc.rating)}">${dc.rating || '?'}</span>
-              <span class="daily-reward"><i class="icon-bolt" style="font-size:11px"></i> +${dc.xp_reward || (i + 1) * 10} XP</span>
+              <span class="quest-reward"><i class="icon-bolt" style="font-size:11px;color:var(--gold)"></i> +${dc.xp_reward || tierRewards[tierIdx]} XP</span>
             </div>
           </div>`;
       });
-      dcHtml += '</div>';
+      dcHtml += '</div></div>';
       dcEl.innerHTML = dcHtml;
     } else {
       dcEl.innerHTML = '<div class="empty-state mt-3"><p>// run `git pull` to sync problem database first</p></div>';
+    }
+
+    /* ═══════════════════════════════════════════════
+       4. RECENT ACTIVITY — Last submissions feed
+       ═══════════════════════════════════════════════ */
+    const raEl = document.getElementById('recentActivitySection');
+    if (raEl && data.recent && data.recent.length) {
+      const recentItems = data.recent.slice(0, 8);
+      let raHtml = `<div class="card mt-3 recent-feed-card">
+        <div class="card-header">
+          <span class="card-title"><i class="icon-feed" style="font-size:16px"></i> activity.log()</span>
+          <span class="text-sm text-muted">${data.recent.length} recent</span>
+        </div>
+        <div class="recent-feed">`;
+      recentItems.forEach((sub, i) => {
+        const v = (sub.verdict || 'pending').toUpperCase();
+        const vClass = v === 'AC' ? 'ac' : v === 'WA' ? 'wa' : v === 'TLE' ? 'tle' : 're';
+        const timeAgo = this._timeAgo(sub.submitted_at || sub.created_at);
+        raHtml += `<div class="recent-feed-item" style="animation-delay:${i * 0.05}s" onclick="App.openSolve(${sub.problem_id || sub.id})">
+          <div class="recent-feed-line"></div>
+          <div class="recent-feed-dot ${vClass}"></div>
+          <div class="recent-feed-content">
+            <div class="recent-feed-title">${this._esc(sub.title || sub.problem_title || 'Problem')}</div>
+            <div class="recent-feed-meta">
+              <span class="recent-feed-verdict ${vClass}">${v}</span>
+              ${sub.rating ? `<span class="${this._ratingClass(sub.rating)}">${sub.rating}</span>` : ''}
+              <span class="recent-feed-time">${timeAgo}</span>
+            </div>
+          </div>
+        </div>`;
+      });
+      raHtml += '</div></div>';
+      raEl.innerHTML = raHtml;
+    } else if (raEl) {
+      raEl.innerHTML = `<div class="card mt-3"><div class="card-header"><span class="card-title"><i class="icon-feed" style="font-size:16px"></i> activity.log()</span></div><div class="empty-state" style="padding:24px"><p>// no recent submissions — start solving to fill the log</p></div></div>`;
     }
 
     /* ═══════════════════════════════════════════════
@@ -1303,6 +1497,10 @@ const App = {
             <option value="all">All Platforms</option>
             <option value="codeforces">Codeforces</option>
             <option value="codechef">CodeChef</option>
+            <option value="atcoder">AtCoder</option>
+            <option value="leetcode">LeetCode</option>
+            <option value="spoj">SPOJ</option>
+            <option value="euler">Project Euler</option>
           </select>
           <select class="input" id="ratingFilterMin" onchange="App.filterProblems()">
             <option value="">Min Rating</option>
@@ -1358,15 +1556,21 @@ const App = {
     if (!data.ok) return;
     s.total = data.total;
 
-    const tbody = data.problems.map(p => `
+    const tbody = data.problems.map(p => {
+      const pMap = { codeforces:'CF', codechef:'CC', atcoder:'AC', leetcode:'LC', spoj:'SP', euler:'PE' };
+      const cMap = { codeforces:'badge-cf', codechef:'badge-cc', atcoder:'badge-ac', leetcode:'badge-lc', spoj:'badge-sp', euler:'badge-pe' };
+      const pBadge = pMap[p.platform] || p.platform.substring(0,2).toUpperCase();
+      const pClass = cMap[p.platform] || 'badge-cc';
+      return `
       <tr onclick="App.openSolve(${p.id})">
         <td><span class="status-dot ${p.solve_status}"></span></td>
-        <td><span class="badge ${p.platform === 'codeforces' ? 'badge-cf' : 'badge-cc'}" style="font-size:10px;padding:2px 6px">${p.platform === 'codeforces' ? 'CF' : 'CC'}</span></td>
+        <td><span class="badge ${pClass}" style="font-size:10px;padding:2px 6px">${pBadge}</span></td>
         <td><span class="problem-title-link">${this._esc(p.title)}</span></td>
         <td>${this._ratingBadge(p.rating)}</td>
         <td class="text-sm text-muted">${p.problem_id}</td>
         <td><button class="btn btn-outline btn-sm" onclick="event.stopPropagation();App.openSolve(${p.id})"><i class="icon-sword"></i> Solve</button></td>
-      </tr>`).join('');
+      </tr>`;
+    }).join('');
 
     document.getElementById('problemsTable').innerHTML = `
       <table class="problem-table">
@@ -3641,20 +3845,25 @@ const App = {
     await window.monacoReady;
     if (!this.editor) {
       this.editor = monaco.editor.create(document.getElementById('monacoEditor'), {
-        value: this._defaultCode(), language: this._monacoLangMap[this._currentLang] || 'cpp', theme: 'vs-dark',
+        value: this._defaultCode(), language: (this._langs.find(l=>l.id===this._currentLang)||{mono:'cpp'}).mono, theme: 'vs-dark',
         fontFamily: "'JetBrains Mono', 'Fira Code', monospace", fontSize: 14,
         minimap: { enabled: false }, scrollBeyondLastLine: false, padding: { top: 12 },
         automaticLayout: true, tabSize: 4, bracketPairColorization: { enabled: true },
+        inlineSuggest: { enabled: true, mode: 'subwordSmart' },
+        quickSuggestions: { other: true, comments: false, strings: false },
+        suggestOnTriggerCharacters: true,
+        wordBasedSuggestions: 'currentDocument',
+        suggest: { preview: true, showMethods: true, showFunctions: true, showSnippets: true },
       });
     }
 
     // Start recording for code replay
     this._startRecording();
-  },
 
-  /* ===================================================
-     SOLVE OVERLAY
-     =================================================== */
+    // Init gamified HUD + timer for custom problems
+    this._initSolveHUD({ ...p, problem_id: p.title, rating: p.difficulty });
+    this._startSolveTimer();
+  },
   async openSolve(problemId) {
     const data = await API.getProblem(problemId);
     if (!data.ok) return;
@@ -3662,18 +3871,26 @@ const App = {
     this.currentStatement = null;
     const p = data.problem;
 
-    // Top bar badges
+    // Top bar badges — support all platforms
+    const _pMap = { codeforces:'CF', codechef:'CC', atcoder:'AC', leetcode:'LC', spoj:'SP', euler:'PE' };
+    const _cMap = { codeforces:'badge-cf', codechef:'badge-cc', atcoder:'badge-ac', leetcode:'badge-lc', spoj:'badge-sp', euler:'badge-pe' };
+    const platformBadge = _pMap[p.platform] || p.platform.substring(0,2).toUpperCase();
+    const badgeClass = _cMap[p.platform] || 'badge-cc';
     const badges = document.getElementById('solveProblemBadges');
     badges.innerHTML = `
-      <span class="badge ${p.platform === 'codeforces' ? 'badge-cf' : 'badge-cc'}" style="font-size:10px">${p.platform === 'codeforces' ? 'CF' : 'CC'}</span>
+      <span class="badge ${badgeClass}" style="font-size:10px">${platformBadge}</span>
       ${this._ratingBadge(p.rating)}
       <span style="font-weight:600;color:var(--text-bright);font-size:13px">${this._esc(p.problem_id)} \u00b7 ${this._esc(p.title)}</span>`;
 
     // External link
     document.getElementById('solveExternalLink').href = p.url || '#';
 
-    // Show overlay
-    document.getElementById('solveOverlay').classList.remove('hidden');
+    // Show overlay — reset HUD collapse state
+    const overlay = document.getElementById('solveOverlay');
+    overlay.classList.remove('hidden');
+    overlay.classList.remove('solve-zen');
+    const hud = document.getElementById('solveHud');
+    if (hud) hud.classList.remove('hud-collapsed');
 
     // Reset tabs to description + testcases
     this.switchSolveTab('description');
@@ -3697,7 +3914,7 @@ const App = {
     if (!this.editor) {
       this.editor = monaco.editor.create(document.getElementById('monacoEditor'), {
         value: this._defaultCode(),
-        language: this._monacoLangMap[this._currentLang] || 'cpp',
+        language: (this._langs.find(l=>l.id===this._currentLang)||{mono:'cpp'}).mono,
         theme: 'vs-dark',
         fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
         fontSize: 14,
@@ -3707,6 +3924,11 @@ const App = {
         automaticLayout: true,
         tabSize: 4,
         bracketPairColorization: { enabled: true },
+        inlineSuggest: { enabled: true, mode: 'subwordSmart' },
+        quickSuggestions: { other: true, comments: false, strings: false },
+        suggestOnTriggerCharacters: true,
+        wordBasedSuggestions: 'currentDocument',
+        suggest: { preview: true, showMethods: true, showFunctions: true, showSnippets: true },
       });
       // Code stats listener (set up once)
       this.editor.onDidChangeModelContent(() => {
@@ -3747,7 +3969,9 @@ const App = {
     metaHtml += '<div class="problem-meta-bar">';
     if (hasContent && stmt.timeLimit) metaHtml += `<div class="meta-chip"><i class="icon-clock" style="font-size:13px"></i> ${this._esc(stmt.timeLimit)}</div>`;
     if (hasContent && stmt.memLimit) metaHtml += `<div class="meta-chip"><i class="icon-memory" style="font-size:13px"></i> ${this._esc(stmt.memLimit)}</div>`;
-    metaHtml += `<div class="meta-chip"><i class="icon-${p.platform === 'codeforces' ? 'bolt' : 'star'}" style="font-size:13px"></i> ${p.platform === 'codeforces' ? 'Codeforces' : 'CodeChef'}</div>`;
+    const _platformNames = { codeforces:'Codeforces', codechef:'CodeChef', atcoder:'AtCoder', leetcode:'LeetCode', spoj:'SPOJ', euler:'Project Euler' };
+    const _platformIcons = { codeforces:'bolt', codechef:'star', atcoder:'target', leetcode:'code', spoj:'globe', euler:'brain' };
+    metaHtml += `<div class="meta-chip"><i class="icon-${_platformIcons[p.platform] || 'globe'}" style="font-size:13px"></i> ${_platformNames[p.platform] || p.platform}</div>`;
     metaHtml += `<div class="meta-chip">${this._ratingBadge(p.rating)}</div>`;
     metaHtml += `<button class="btn btn-ghost btn-sm translate-btn" onclick="App.translateStatement()" title="Translate to English" style="margin-left:auto;gap:4px;font-size:12px"><i class="icon-globe"></i> Translate</button>`;
     metaHtml += '</div>';
@@ -4756,7 +4980,7 @@ const App = {
     if (!this._solveRoomEditor) {
       this._solveRoomEditor = monaco.editor.create(document.getElementById('solveRoomEditor'), {
         value: this._defaultCode(),
-        language: this._monacoLangMap[this._currentLang] || 'cpp',
+        language: (this._langs.find(l=>l.id===this._currentLang)||{mono:'cpp'}).mono,
         theme: 'vs-dark',
         fontSize: 14,
         minimap: { enabled: false },
@@ -5325,6 +5549,13 @@ const App = {
   tcDeckNext() {
     if (this._tcDeckIdx < this._tcDeckData.length - 1) { this._tcDeckIdx++; this._renderTcDeck(); }
   },
+  tcDeckJump(idx) {
+    if (idx >= 0 && idx < this._tcDeckData.length) {
+      this._tcDeckIdx = idx;
+      this._renderTcDeck();
+      this.switchBottomTab('testcases');
+    }
+  },
 
   toggleAddTestcase() {
     let form = document.getElementById('addTcForm');
@@ -5382,7 +5613,7 @@ const App = {
     const solveLeft = document.getElementById('solveLeft');
     if (solveLeft) {
       solveLeft.classList.remove('left-collapsed', 'float-hidden', 'float-minimized');
-      solveLeft.style.left = '16px'; solveLeft.style.top = '16px';
+      solveLeft.style.left = '16px'; solveLeft.style.top = '56px';
       solveLeft.style.width = '440px'; solveLeft.style.height = '';
       solveLeft.style.right = ''; solveLeft.style.bottom = '';
     }
@@ -5558,6 +5789,7 @@ const App = {
     try {
       if (this.currentProblem?.testcases?.length) {
         const result = await API.judge({ code, testcases: this.currentProblem.testcases, language: lang });
+        this._lastRunError = result.verdict === 'CE' ? (result.error || result.results?.[0]?.stderr || 'Compilation error') : (result.results?.find(r => r.stderr)?.stderr || '');
         this._renderRunResults(result, false);
         if (this._debugMode && result.results) {
           const allStderr = result.results.map(r => r.stderr || '').join('\n');
@@ -5565,6 +5797,7 @@ const App = {
         }
       } else {
         const result = await API.run(code, '', lang);
+        this._lastRunError = result.stderr || '';
         resDiv.innerHTML = `<div style="padding:12px"><pre style="color:var(--text-primary);margin:0">${this._esc(result.output || '(no output)')}</pre>${result.stderr ? `<pre style="color:var(--danger);margin:8px 0 0">${this._esc(result.stderr)}</pre>` : ''}</div>`;
         if (this._debugMode && result.stderr) this._parseDebugOutput(result.stderr);
       }
@@ -5674,12 +5907,35 @@ const App = {
       this.switchBottomTab('testcases');
     }
 
-    // Also show verdict banner in results tab
+    // Show verdict banner in results tab for both Run and Submit
+    const resDiv = document.getElementById('bottomResultsContent');
+    const passed = result.results ? result.results.filter(r => r.verdict === 'AC').length : 0;
+    const total = result.results ? result.results.length : 0;
+    const maxTime = result.results?.length ? Math.max(...result.results.map(r => r.timeMs || 0)) : 0;
+
     if (isSubmit) {
-      const resDiv = document.getElementById('bottomResultsContent');
       resDiv.innerHTML = `<div style="padding:10px"><div class="verdict-banner ${v.toLowerCase()}"><i class="icon-${iconName}" style="font-size:18px"></i> ${label}</div></div>`;
-      // For AC switch to testcases to celebrate, for WA stay on testcases (deck jumped to fail)
       if (v === 'AC') this.switchBottomTab('results');
+    } else if (result.results && result.results.length) {
+      // Run mode: show quick-check summary banner with test case dots
+      const dotsHtml = result.results.map((r, i) => {
+        const cls = r.verdict === 'AC' ? 'tc-dot-pass' : 'tc-dot-fail';
+        return `<button class="tc-dot ${cls}" onclick="App.tcDeckJump(${i})" title="TC ${i+1}: ${r.verdict}">${i+1}</button>`;
+      }).join('');
+
+      const summaryClass = v === 'AC' ? 'ac' : v === 'TLE' ? 'tle' : v === 'WA' ? 'wa' : 're';
+      const summaryIcon = v === 'AC' ? 'circle-check' : v === 'TLE' ? 'clock' : 'circle-x';
+      const summaryLabel = v === 'AC' ? 'All Tests Passed' : `${passed}/${total} Tests Passed`;
+
+      resDiv.innerHTML = `<div class="run-check-summary">
+        <div class="run-check-banner ${summaryClass}">
+          <i class="icon-${summaryIcon}" style="font-size:16px"></i>
+          <span class="run-check-label">${summaryLabel}</span>
+          <span class="run-check-time">${maxTime}ms</span>
+        </div>
+        <div class="run-check-dots">${dotsHtml}</div>
+      </div>`;
+      this.switchBottomTab('results');
     }
   },
 
@@ -5846,8 +6102,16 @@ const App = {
       const cf = await API.sync('codeforces');
       status.textContent = `CF: ${cf.inserted} new. Fetching CodeChef...`;
       const cc = await API.sync('codechef');
-      status.textContent = `Done! Total: ${cc.total} problems`;
-      this.toast(`Synced! Total missions: ${cc.total}`, 'success');
+      status.textContent = `CF+CC done. Fetching AtCoder...`;
+      const ac = await API.sync('atcoder');
+      status.textContent = `+AtCoder. Fetching LeetCode...`;
+      const lc = await API.sync('leetcode');
+      status.textContent = `+LeetCode. Fetching SPOJ...`;
+      const sp = await API.sync('spoj');
+      status.textContent = `+SPOJ. Fetching Project Euler...`;
+      const pe = await API.sync('euler');
+      status.textContent = `Done! Total: ${pe.total} problems`;
+      this.toast(`Synced! Total missions: ${pe.total}`, 'success');
     } catch (e) {
       status.textContent = 'Sync error';
       this.toast('Sync failed: ' + e.message, 'error');
@@ -5919,11 +6183,16 @@ const App = {
       panel.classList.add('fp-dragging');
 
       const startX = e.clientX, startY = e.clientY;
+      let rafId = 0;
       const onMove = mv => {
-        panel.style.left = (initLeft + mv.clientX - startX) + 'px';
-        panel.style.top  = (initTop  + mv.clientY - startY) + 'px';
+        cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(() => {
+          panel.style.left = (initLeft + mv.clientX - startX) + 'px';
+          panel.style.top  = (initTop  + mv.clientY - startY) + 'px';
+        });
       };
       const onUp = () => {
+        cancelAnimationFrame(rafId);
         panel.classList.remove('fp-dragging');
         document.removeEventListener('mousemove', onMove);
         document.removeEventListener('mouseup', onUp);
@@ -5963,8 +6232,11 @@ const App = {
         const MIN_W = 200, MIN_H = 80;
 
         panel.classList.add('fp-dragging');
+        let rafId = 0;
 
         const onMove = mv => {
+          cancelAnimationFrame(rafId);
+          rafId = requestAnimationFrame(() => {
           const dx = mv.clientX - startX;
           const dy = mv.clientY - startY;
 
@@ -5997,9 +6269,11 @@ const App = {
           // Restore minimized state if user drags taller
           if (newH > 120) panel.classList.remove('float-minimized');
           if (window._monacoEditor) window._monacoEditor.layout();
+          });
         };
 
         const onUp = () => {
+          cancelAnimationFrame(rafId);
           panel.classList.remove('fp-dragging');
           document.removeEventListener('mousemove', onMove);
           document.removeEventListener('mouseup', onUp);
@@ -6153,6 +6427,976 @@ const App = {
     return `${Math.floor(hrs / 24)}d ago`;
   },
 
+  /* ═══════════════════════════════════════════════════
+     AUTOCOMPLETE — Language-aware completion providers
+     ═══════════════════════════════════════════════════ */
+  _registerAutocomplete() {
+    const CK = monaco.languages.CompletionItemKind;
+
+    // ── keyword + snippet definitions per language ──
+    const langData = {
+      cpp: {
+        keywords: ['auto','break','case','catch','class','const','constexpr','continue','default','delete','do','double','else','enum','explicit','extern','false','float','for','friend','goto','if','inline','int','long','mutable','namespace','new','noexcept','nullptr','operator','override','private','protected','public','register','return','short','signed','sizeof','static','static_assert','static_cast','struct','switch','template','this','throw','true','try','typedef','typeid','typename','union','unsigned','using','virtual','void','volatile','while','char','bool','wchar_t','int8_t','int16_t','int32_t','int64_t','uint8_t','uint16_t','uint32_t','uint64_t','size_t','string','vector','map','set','unordered_map','unordered_set','pair','queue','stack','deque','priority_queue','array','tuple','bitset','list','multiset','multimap','endl','cin','cout','cerr'],
+        snippets: [
+          { label: 'for loop', insert: 'for (int ${1:i} = 0; ${1:i} < ${2:n}; ${1:i}++) {\n\t$0\n}', doc: 'For loop with counter' },
+          { label: 'for range', insert: 'for (auto& ${1:x} : ${2:container}) {\n\t$0\n}', doc: 'Range-based for loop' },
+          { label: 'while', insert: 'while (${1:condition}) {\n\t$0\n}', doc: 'While loop' },
+          { label: 'if else', insert: 'if (${1:condition}) {\n\t$2\n} else {\n\t$0\n}', doc: 'If-else block' },
+          { label: 'sort', insert: 'sort(${1:v}.begin(), ${1:v}.end());', doc: 'Sort container' },
+          { label: 'vector<int>', insert: 'vector<int> ${1:v}(${2:n});', doc: 'Declare vector' },
+          { label: 'map<int,int>', insert: 'map<int, int> ${1:mp};', doc: 'Declare map' },
+          { label: 'pair<int,int>', insert: 'pair<int, int> ${1:p} = {${2:a}, ${3:b}};', doc: 'Declare pair' },
+          { label: 'lambda', insert: 'auto ${1:fn} = [&](${2:int x}) {\n\t$0\n};', doc: 'Lambda expression' },
+          { label: 'bits/stdc++', insert: '#include <bits/stdc++.h>\nusing namespace std;\n', doc: 'Competitive programming header' },
+          { label: 'fast IO', insert: 'ios_base::sync_with_stdio(false);\ncin.tie(nullptr);', doc: 'Fast IO' },
+          { label: 'dfs', insert: 'void dfs(int u, vector<vector<int>>& adj, vector<bool>& vis) {\n\tvis[u] = true;\n\tfor (int v : adj[u]) {\n\t\tif (!vis[v]) dfs(v, adj, vis);\n\t}\n}', doc: 'DFS traversal' },
+          { label: 'bfs', insert: 'void bfs(int start, vector<vector<int>>& adj) {\n\tqueue<int> q;\n\tvector<bool> vis(adj.size(), false);\n\tq.push(start);\n\tvis[start] = true;\n\twhile (!q.empty()) {\n\t\tint u = q.front(); q.pop();\n\t\tfor (int v : adj[u]) {\n\t\t\tif (!vis[v]) { vis[v] = true; q.push(v); }\n\t\t}\n\t}\n}', doc: 'BFS traversal' },
+          { label: 'binary search', insert: 'int lo = ${1:0}, hi = ${2:n};\nwhile (lo < hi) {\n\tint mid = lo + (hi - lo) / 2;\n\tif (${3:check(mid)}) hi = mid;\n\telse lo = mid + 1;\n}\n// answer = lo', doc: 'Binary search template' },
+          { label: 'mod pow', insert: 'long long power(long long base, long long exp, long long mod) {\n\tlong long result = 1;\n\tbase %= mod;\n\twhile (exp > 0) {\n\t\tif (exp & 1) result = result * base % mod;\n\t\tbase = base * base % mod;\n\t\texp >>= 1;\n\t}\n\treturn result;\n}', doc: 'Modular exponentiation' },
+        ],
+      },
+      c: {
+        keywords: ['auto','break','case','char','const','continue','default','do','double','else','enum','extern','float','for','goto','if','inline','int','long','register','return','short','signed','sizeof','static','struct','switch','typedef','union','unsigned','void','volatile','while','NULL','FILE','size_t','printf','scanf','malloc','calloc','realloc','free','strlen','strcmp','strcpy','strcat','memset','memcpy'],
+        snippets: [
+          { label: 'for loop', insert: 'for (int ${1:i} = 0; ${1:i} < ${2:n}; ${1:i}++) {\n\t$0\n}', doc: 'For loop' },
+          { label: 'printf', insert: 'printf("${1:%d}\\n", ${2:var});', doc: 'Formatted print' },
+          { label: 'scanf', insert: 'scanf("${1:%d}", &${2:var});', doc: 'Formatted input' },
+          { label: 'malloc', insert: '${1:int} *${2:arr} = (${1:int} *)malloc(${3:n} * sizeof(${1:int}));', doc: 'Allocate memory' },
+          { label: 'struct', insert: 'struct ${1:Name} {\n\t${2:int val};\n};', doc: 'Struct definition' },
+        ],
+      },
+      python: {
+        keywords: ['False','None','True','and','as','assert','async','await','break','class','continue','def','del','elif','else','except','finally','for','from','global','if','import','in','is','lambda','nonlocal','not','or','pass','raise','return','try','while','with','yield','print','input','range','len','int','str','float','list','dict','set','tuple','map','filter','sorted','enumerate','zip','min','max','sum','abs','any','all','open','type','isinstance','append','extend','pop','remove','insert','index','count','reverse','sort','keys','values','items','join','split','strip','replace','find','format','upper','lower','startswith','endswith','isdigit','isalpha'],
+        snippets: [
+          { label: 'for range', insert: 'for ${1:i} in range(${2:n}):\n\t$0', doc: 'For loop with range' },
+          { label: 'for enumerate', insert: 'for ${1:i}, ${2:v} in enumerate(${3:arr}):\n\t$0', doc: 'Enumerate loop' },
+          { label: 'if else', insert: 'if ${1:condition}:\n\t$2\nelse:\n\t$0', doc: 'If-else' },
+          { label: 'def function', insert: 'def ${1:func}(${2:args}):\n\t$0', doc: 'Function definition' },
+          { label: 'class', insert: 'class ${1:Name}:\n\tdef __init__(self${2:, args}):\n\t\t$0', doc: 'Class with init' },
+          { label: 'try except', insert: 'try:\n\t$1\nexcept ${2:Exception} as ${3:e}:\n\t$0', doc: 'Try-except block' },
+          { label: 'list comprehension', insert: '[${1:x} for ${1:x} in ${2:iterable}${3: if condition}]', doc: 'List comprehension' },
+          { label: 'lambda', insert: 'lambda ${1:x}: ${2:x}', doc: 'Lambda function' },
+          { label: 'defaultdict', insert: 'from collections import defaultdict\n${1:d} = defaultdict(${2:int})', doc: 'Default dictionary' },
+          { label: 'Counter', insert: 'from collections import Counter\n${1:c} = Counter(${2:arr})', doc: 'Counter' },
+          { label: 'heapq', insert: 'import heapq\nheapq.heappush(${1:heap}, ${2:val})\n${3:val} = heapq.heappop(${1:heap})', doc: 'Heap operations' },
+          { label: 'bisect', insert: 'from bisect import bisect_left, bisect_right\n${1:pos} = bisect_left(${2:arr}, ${3:val})', doc: 'Binary search with bisect' },
+          { label: 'dfs', insert: 'def dfs(u, adj, vis):\n\tvis.add(u)\n\tfor v in adj[u]:\n\t\tif v not in vis:\n\t\t\tdfs(v, adj, vis)', doc: 'DFS traversal' },
+          { label: 'bfs', insert: 'from collections import deque\ndef bfs(start, adj):\n\tq = deque([start])\n\tvis = {start}\n\twhile q:\n\t\tu = q.popleft()\n\t\tfor v in adj[u]:\n\t\t\tif v not in vis:\n\t\t\t\tvis.add(v)\n\t\t\t\tq.append(v)', doc: 'BFS traversal' },
+          { label: 'MOD', insert: 'MOD = 10**9 + 7', doc: 'Modular constant' },
+          { label: 'sys stdin', insert: 'import sys\ninput = sys.stdin.readline', doc: 'Fast input' },
+        ],
+      },
+      java: {
+        keywords: ['abstract','assert','boolean','break','byte','case','catch','char','class','const','continue','default','do','double','else','enum','extends','final','finally','float','for','goto','if','implements','import','instanceof','int','interface','long','native','new','null','package','private','protected','public','return','short','static','strictfp','super','switch','synchronized','this','throw','throws','transient','try','void','volatile','while','String','Integer','Long','Double','Boolean','ArrayList','HashMap','HashSet','LinkedList','TreeMap','TreeSet','Queue','Stack','PriorityQueue','Arrays','Collections','Scanner','StringBuilder','System','Math'],
+        snippets: [
+          { label: 'for loop', insert: 'for (int ${1:i} = 0; ${1:i} < ${2:n}; ${1:i}++) {\n\t$0\n}', doc: 'For loop' },
+          { label: 'for each', insert: 'for (${1:var} ${2:item} : ${3:collection}) {\n\t$0\n}', doc: 'Enhanced for loop' },
+          { label: 'if else', insert: 'if (${1:condition}) {\n\t$2\n} else {\n\t$0\n}', doc: 'If-else' },
+          { label: 'try catch', insert: 'try {\n\t$1\n} catch (${2:Exception} ${3:e}) {\n\t$0\n}', doc: 'Try-catch' },
+          { label: 'sout', insert: 'System.out.println(${1:});', doc: 'Print line' },
+          { label: 'Scanner', insert: 'Scanner sc = new Scanner(System.in);', doc: 'Scanner input' },
+          { label: 'ArrayList', insert: 'ArrayList<${1:Integer}> ${2:list} = new ArrayList<>();', doc: 'ArrayList' },
+          { label: 'HashMap', insert: 'HashMap<${1:String}, ${2:Integer}> ${3:map} = new HashMap<>();', doc: 'HashMap' },
+          { label: 'main', insert: 'public static void main(String[] args) {\n\t$0\n}', doc: 'Main method' },
+        ],
+      },
+      javascript: {
+        keywords: ['await','break','case','catch','class','const','continue','debugger','default','delete','do','else','export','extends','finally','for','from','function','if','import','in','instanceof','let','new','null','of','return','super','switch','this','throw','true','false','try','typeof','undefined','var','void','while','with','yield','async','console','log','require','module','exports','process','setTimeout','setInterval','Promise','Array','Object','String','Number','Boolean','Map','Set','JSON','Math','Date','Error','RegExp','Symbol','parseInt','parseFloat','isNaN','isFinite','push','pop','shift','unshift','splice','slice','map','filter','reduce','forEach','find','findIndex','some','every','includes','indexOf','join','split','replace','trim','toLowerCase','toUpperCase','keys','values','entries','assign','freeze','create','stringify','parse','then','catch','finally','resolve','reject','all','race','from','of','flat','flatMap','fill','sort','reverse'],
+        snippets: [
+          { label: 'arrow function', insert: 'const ${1:fn} = (${2:args}) => {\n\t$0\n};', doc: 'Arrow function' },
+          { label: 'async function', insert: 'async function ${1:name}(${2:args}) {\n\t$0\n}', doc: 'Async function' },
+          { label: 'for of', insert: 'for (const ${1:item} of ${2:iterable}) {\n\t$0\n}', doc: 'For-of loop' },
+          { label: 'try catch', insert: 'try {\n\t$1\n} catch (${2:err}) {\n\t$0\n}', doc: 'Try-catch' },
+          { label: 'promise', insert: 'new Promise((resolve, reject) => {\n\t$0\n});', doc: 'Promise' },
+          { label: 'destructure', insert: 'const { ${1:a}, ${2:b} } = ${3:obj};', doc: 'Object destructuring' },
+          { label: 'map', insert: '${1:arr}.map(${2:item} => ${3:item});', doc: 'Array map' },
+          { label: 'filter', insert: '${1:arr}.filter(${2:item} => ${3:condition});', doc: 'Array filter' },
+          { label: 'reduce', insert: '${1:arr}.reduce((${2:acc}, ${3:cur}) => {\n\t$0\n}, ${4:initial});', doc: 'Array reduce' },
+          { label: 'readline', insert: "const readline = require('readline');\nconst rl = readline.createInterface({ input: process.stdin });\nconst lines = [];\nrl.on('line', l => lines.push(l));\nrl.on('close', () => {\n\t$0\n});", doc: 'Readline input' },
+        ],
+      },
+      typescript: {
+        keywords: ['abstract','any','as','async','await','bigint','boolean','break','case','catch','class','const','continue','debugger','declare','default','delete','do','else','enum','export','extends','false','finally','for','from','function','get','if','implements','import','in','infer','instanceof','interface','is','keyof','let','module','namespace','never','new','null','number','of','package','private','protected','public','readonly','return','set','static','string','super','switch','symbol','this','throw','true','try','type','typeof','undefined','unique','unknown','var','void','while','with','yield'],
+        snippets: [
+          { label: 'interface', insert: 'interface ${1:Name} {\n\t${2:prop}: ${3:type};\n}', doc: 'Interface' },
+          { label: 'type', insert: 'type ${1:Name} = ${2:type};', doc: 'Type alias' },
+          { label: 'generic function', insert: 'function ${1:fn}<${2:T}>(${3:arg}: ${2:T}): ${4:void} {\n\t$0\n}', doc: 'Generic function' },
+          { label: 'enum', insert: 'enum ${1:Name} {\n\t${2:Value},\n}', doc: 'Enum' },
+          { label: 'async function', insert: 'async function ${1:name}(${2:args}): Promise<${3:void}> {\n\t$0\n}', doc: 'Async function' },
+        ],
+      },
+      go: {
+        keywords: ['break','case','chan','const','continue','default','defer','else','fallthrough','for','func','go','goto','if','import','interface','map','package','range','return','select','struct','switch','type','var','append','cap','close','complex','copy','delete','imag','len','make','new','panic','print','println','real','recover','nil','true','false','iota','int','int8','int16','int32','int64','uint','uint8','uint16','uint32','uint64','float32','float64','complex64','complex128','byte','rune','string','bool','error','fmt','Println','Printf','Sprintf','Fprintf','Scanf','Sscanf','Errorf','bufio','os','io','strings','strconv','sort','math','sync','context'],
+        snippets: [
+          { label: 'func', insert: 'func ${1:name}(${2:args}) ${3:returnType} {\n\t$0\n}', doc: 'Function' },
+          { label: 'for range', insert: 'for ${1:i}, ${2:v} := range ${3:slice} {\n\t$0\n}', doc: 'For range' },
+          { label: 'if err', insert: 'if err != nil {\n\t$0\n}', doc: 'Error check' },
+          { label: 'struct', insert: 'type ${1:Name} struct {\n\t${2:field} ${3:type}\n}', doc: 'Struct' },
+          { label: 'goroutine', insert: 'go func() {\n\t$0\n}()', doc: 'Goroutine' },
+          { label: 'scanner', insert: 'scanner := bufio.NewScanner(os.Stdin)\nfor scanner.Scan() {\n\tline := scanner.Text()\n\t$0\n}', doc: 'Scanner input' },
+        ],
+      },
+      rust: {
+        keywords: ['as','async','await','break','const','continue','crate','dyn','else','enum','extern','false','fn','for','if','impl','in','let','loop','match','mod','move','mut','pub','ref','return','self','Self','static','struct','super','trait','true','type','unsafe','use','where','while','Box','Vec','String','Option','Result','Some','None','Ok','Err','HashMap','HashSet','BTreeMap','BTreeSet','VecDeque','BinaryHeap','Rc','Arc','Cell','RefCell','Mutex','println','eprintln','format','vec','todo','unimplemented','unreachable','panic','assert','assert_eq','assert_ne','cfg','derive','allow','warn','deny','test','bench','main','std','io','fs','collections','iter','cmp','mem','fmt','ops','clone','Copy','Clone','Debug','Display','Default','PartialEq','Eq','PartialOrd','Ord','Hash','Send','Sync','Sized','Drop','Fn','FnMut','FnOnce','Iterator','Into','From','TryInto','TryFrom','AsRef','AsMut','Deref','DerefMut','i8','i16','i32','i64','i128','isize','u8','u16','u32','u64','u128','usize','f32','f64','bool','char','str'],
+        snippets: [
+          { label: 'fn', insert: 'fn ${1:name}(${2:args}) -> ${3:()} {\n\t$0\n}', doc: 'Function' },
+          { label: 'let mut', insert: 'let mut ${1:var} = ${2:value};', doc: 'Mutable binding' },
+          { label: 'match', insert: 'match ${1:expr} {\n\t${2:pattern} => $3,\n\t_ => $0,\n}', doc: 'Match expression' },
+          { label: 'impl', insert: 'impl ${1:Type} {\n\t$0\n}', doc: 'Impl block' },
+          { label: 'struct', insert: 'struct ${1:Name} {\n\t${2:field}: ${3:Type},\n}', doc: 'Struct' },
+          { label: 'for iter', insert: 'for ${1:item} in ${2:iter} {\n\t$0\n}', doc: 'For-in loop' },
+          { label: 'vec!', insert: 'vec![${1:}]', doc: 'Vec macro' },
+          { label: 'read input', insert: 'let mut input = String::new();\nstd::io::stdin().read_line(&mut input).unwrap();\nlet input = input.trim();', doc: 'Read line from stdin' },
+        ],
+      },
+      kotlin: {
+        keywords: ['abstract','annotation','as','break','by','catch','class','companion','const','constructor','continue','crossinline','data','do','else','enum','false','final','finally','for','fun','get','if','import','in','infix','init','inline','inner','interface','internal','is','it','lateinit','noinline','null','object','open','operator','out','override','package','private','protected','public','reified','return','sealed','set','super','suspend','tailrec','this','throw','true','try','typealias','typeof','val','var','vararg','when','where','while','Any','Boolean','Byte','Char','Double','Float','Int','Long','Nothing','Short','String','Unit','Array','List','Map','Set','MutableList','MutableMap','MutableSet','Pair','Triple','println','readLine','toInt','toLong','toDouble','split','trim','map','filter','forEach','sorted','sortedBy','groupBy','flatMap','fold','reduce','joinToString','listOf','mutableListOf','mapOf','setOf','arrayOf'],
+        snippets: [
+          { label: 'fun', insert: 'fun ${1:name}(${2:args}): ${3:Unit} {\n\t$0\n}', doc: 'Function' },
+          { label: 'for range', insert: 'for (${1:i} in ${2:0} until ${3:n}) {\n\t$0\n}', doc: 'For range' },
+          { label: 'when', insert: 'when (${1:expr}) {\n\t${2:value} -> $3\n\telse -> $0\n}', doc: 'When expression' },
+          { label: 'data class', insert: 'data class ${1:Name}(val ${2:prop}: ${3:Type})', doc: 'Data class' },
+          { label: 'val', insert: 'val ${1:name}: ${2:Type} = ${3:value}', doc: 'Immutable var' },
+          { label: 'readLine', insert: 'val ${1:n} = readLine()!!.trim().toInt()', doc: 'Read integer' },
+        ],
+      },
+      ruby: {
+        keywords: ['BEGIN','END','alias','and','begin','break','case','class','def','defined?','do','else','elsif','end','ensure','false','for','if','in','module','next','nil','not','or','redo','rescue','retry','return','self','super','then','true','undef','unless','until','when','while','yield','puts','print','gets','chomp','to_i','to_f','to_s','length','size','each','map','select','reject','reduce','inject','sort','sort_by','flatten','compact','uniq','first','last','push','pop','shift','unshift','include?','empty?','nil?','freeze','frozen?','dup','clone','respond_to?','send','method','class','is_a?','kind_of?','require','require_relative','attr_accessor','attr_reader','attr_writer','initialize','new','raise','catch','throw'],
+        snippets: [
+          { label: 'def', insert: 'def ${1:method}(${2:args})\n\t$0\nend', doc: 'Method definition' },
+          { label: 'each', insert: '${1:arr}.each do |${2:item}|\n\t$0\nend', doc: 'Each block' },
+          { label: 'class', insert: 'class ${1:Name}\n\tdef initialize(${2:args})\n\t\t$0\n\tend\nend', doc: 'Class' },
+          { label: 'if else', insert: 'if ${1:condition}\n\t$2\nelse\n\t$0\nend', doc: 'If-else' },
+          { label: 'map', insert: '${1:arr}.map { |${2:item}| ${3:item} }', doc: 'Map' },
+        ],
+      },
+      php: {
+        keywords: ['abstract','and','array','as','break','callable','case','catch','class','clone','const','continue','declare','default','die','do','echo','else','elseif','empty','enddeclare','endfor','endforeach','endif','endswitch','endwhile','eval','exit','extends','final','finally','fn','for','foreach','function','global','goto','if','implements','include','include_once','instanceof','insteadof','interface','isset','list','match','namespace','new','null','or','print','private','protected','public','readonly','require','require_once','return','self','static','switch','throw','trait','true','false','try','unset','use','var','while','xor','yield','array_push','array_pop','array_shift','array_unshift','array_merge','sort','rsort','strlen','strpos','substr','str_replace','explode','implode','trim','strtolower','strtoupper','sprintf','printf','count','in_array','array_key_exists','array_map','array_filter','array_reduce','json_encode','json_decode','intval','floatval','is_array','is_string','is_numeric','isset','empty','var_dump','print_r'],
+        snippets: [
+          { label: 'function', insert: 'function ${1:name}(${2:args}) {\n\t$0\n}', doc: 'Function' },
+          { label: 'foreach', insert: 'foreach (${1:$arr} as ${2:$key} => ${3:$val}) {\n\t$0\n}', doc: 'Foreach loop' },
+          { label: 'class', insert: 'class ${1:Name} {\n\tpublic function __construct(${2:args}) {\n\t\t$0\n\t}\n}', doc: 'Class' },
+          { label: 'if else', insert: 'if (${1:condition}) {\n\t$2\n} else {\n\t$0\n}', doc: 'If-else' },
+          { label: 'try catch', insert: 'try {\n\t$1\n} catch (${2:Exception} ${3:$e}) {\n\t$0\n}', doc: 'Try-catch' },
+        ],
+      },
+      csharp: {
+        keywords: ['abstract','as','base','bool','break','byte','case','catch','char','checked','class','const','continue','decimal','default','delegate','do','double','else','enum','event','explicit','extern','false','finally','fixed','float','for','foreach','goto','if','implicit','in','int','interface','internal','is','lock','long','namespace','new','null','object','operator','out','override','params','private','protected','public','readonly','ref','return','sbyte','sealed','short','sizeof','stackalloc','static','string','struct','switch','this','throw','true','try','typeof','uint','ulong','unchecked','unsafe','ushort','using','var','virtual','void','volatile','while','async','await','dynamic','nameof','when','yield','Console','WriteLine','ReadLine','List','Dictionary','HashSet','Queue','Stack','Array','String','Math','LINQ','Select','Where','OrderBy','GroupBy','ToList','ToArray','Count','Sum','Max','Min','Average','Any','All','First','FirstOrDefault','Contains','Add','Remove','Clear','Sort','Reverse','ForEach'],
+        snippets: [
+          { label: 'for loop', insert: 'for (int ${1:i} = 0; ${1:i} < ${2:n}; ${1:i}++) {\n\t$0\n}', doc: 'For loop' },
+          { label: 'foreach', insert: 'foreach (var ${1:item} in ${2:collection}) {\n\t$0\n}', doc: 'Foreach' },
+          { label: 'Console.WriteLine', insert: 'Console.WriteLine(${1:});', doc: 'Print line' },
+          { label: 'class', insert: 'class ${1:Name} {\n\t$0\n}', doc: 'Class' },
+          { label: 'try catch', insert: 'try {\n\t$1\n} catch (${2:Exception} ${3:ex}) {\n\t$0\n}', doc: 'Try-catch' },
+          { label: 'List<T>', insert: 'var ${1:list} = new List<${2:int}>();', doc: 'List' },
+          { label: 'Dictionary', insert: 'var ${1:dict} = new Dictionary<${2:string}, ${3:int}>();', doc: 'Dictionary' },
+          { label: 'LINQ', insert: '${1:collection}.Where(${2:x} => ${3:condition}).ToList();', doc: 'LINQ query' },
+        ],
+      },
+      scala: {
+        keywords: ['abstract','case','catch','class','def','do','else','extends','false','final','finally','for','forSome','if','implicit','import','lazy','match','new','null','object','override','package','private','protected','return','sealed','super','this','throw','trait','true','try','type','val','var','while','with','yield','println','readLine','toInt','toString','map','flatMap','filter','foreach','foldLeft','foldRight','reduce','sorted','sortBy','mkString','List','Map','Set','Array','Vector','Option','Some','None','Either','Left','Right','Try','Success','Failure','Future','Seq','Iterable','Iterator','Tuple2','Range','Int','Long','Double','Float','Boolean','String','Char','Unit','Any','AnyRef','AnyVal','Nothing','Null'],
+        snippets: [
+          { label: 'def', insert: 'def ${1:name}(${2:args}): ${3:Unit} = {\n\t$0\n}', doc: 'Method' },
+          { label: 'for yield', insert: 'for {\n\t${1:x} <- ${2:xs}\n} yield ${3:x}', doc: 'For comprehension' },
+          { label: 'match', insert: '${1:expr} match {\n\tcase ${2:pattern} => $3\n\tcase _ => $0\n}', doc: 'Pattern match' },
+          { label: 'case class', insert: 'case class ${1:Name}(${2:field}: ${3:Type})', doc: 'Case class' },
+          { label: 'object', insert: 'object ${1:Name} {\n\tdef main(args: Array[String]): Unit = {\n\t\t$0\n\t}\n}', doc: 'Main object' },
+        ],
+      },
+      swift: {
+        keywords: ['associatedtype','class','deinit','enum','extension','fileprivate','func','import','init','inout','internal','let','open','operator','private','protocol','public','rethrows','static','struct','subscript','typealias','var','break','case','continue','default','defer','do','else','fallthrough','for','guard','if','in','repeat','return','switch','where','while','as','catch','false','is','nil','self','Self','super','throw','throws','true','try','Any','AnyObject','Array','Bool','Character','Dictionary','Double','Float','Int','Optional','Set','String','UInt','Void','print','readLine','map','filter','reduce','forEach','sorted','contains','count','append','insert','remove','isEmpty','first','last','prefix','suffix','stride','zip','enumerated','compactMap','flatMap'],
+        snippets: [
+          { label: 'func', insert: 'func ${1:name}(${2:args}) -> ${3:Void} {\n\t$0\n}', doc: 'Function' },
+          { label: 'for in', insert: 'for ${1:item} in ${2:collection} {\n\t$0\n}', doc: 'For-in' },
+          { label: 'guard', insert: 'guard ${1:condition} else {\n\t$0\n\treturn\n}', doc: 'Guard' },
+          { label: 'if let', insert: 'if let ${1:val} = ${2:optional} {\n\t$0\n}', doc: 'Optional binding' },
+          { label: 'struct', insert: 'struct ${1:Name} {\n\t$0\n}', doc: 'Struct' },
+          { label: 'enum', insert: 'enum ${1:Name} {\n\tcase ${2:value}\n}', doc: 'Enum' },
+        ],
+      },
+      dart: {
+        keywords: ['abstract','as','assert','async','await','break','case','catch','class','const','continue','covariant','default','deferred','do','dynamic','else','enum','export','extends','extension','external','factory','false','final','finally','for','Function','get','hide','if','implements','import','in','interface','is','late','library','mixin','new','null','on','operator','part','required','rethrow','return','set','show','static','super','switch','sync','this','throw','true','try','typedef','var','void','while','with','yield','print','int','double','String','bool','List','Map','Set','num','dynamic','Object','Iterable','Future','Stream','Duration','DateTime','RegExp','Error','Exception','stdin','stdout','readLineSync','toString','toInt','split','trim','map','where','forEach','fold','reduce','sort','reversed','contains','length','isEmpty','add','remove','clear','keys','values','entries'],
+        snippets: [
+          { label: 'void main', insert: 'void main() {\n\t$0\n}', doc: 'Main function' },
+          { label: 'for loop', insert: 'for (int ${1:i} = 0; ${1:i} < ${2:n}; ${1:i}++) {\n\t$0\n}', doc: 'For loop' },
+          { label: 'class', insert: 'class ${1:Name} {\n\t$0\n}', doc: 'Class' },
+          { label: 'Future', insert: 'Future<${1:void}> ${2:name}() async {\n\t$0\n}', doc: 'Async function' },
+          { label: 'if else', insert: 'if (${1:condition}) {\n\t$2\n} else {\n\t$0\n}', doc: 'If-else' },
+        ],
+      },
+      perl: {
+        keywords: ['my','our','local','sub','return','if','elsif','else','unless','while','until','for','foreach','do','last','next','redo','goto','die','warn','print','say','chomp','chop','push','pop','shift','unshift','splice','reverse','sort','map','grep','join','split','length','substr','index','rindex','sprintf','printf','open','close','read','write','chomp','chop','defined','undef','ref','bless','use','require','package','BEGIN','END','STDIN','STDOUT','STDERR','qw','qq','qr','scalar','wantarray','keys','values','each','exists','delete','tie','untie','eval','die'],
+        snippets: [
+          { label: 'sub', insert: 'sub ${1:name} {\n\tmy (${2:@args}) = @_;\n\t$0\n}', doc: 'Subroutine' },
+          { label: 'foreach', insert: 'foreach my ${1:$item} (${2:@arr}) {\n\t$0\n}', doc: 'Foreach' },
+          { label: 'if else', insert: 'if (${1:condition}) {\n\t$2\n} else {\n\t$0\n}', doc: 'If-else' },
+          { label: 'while readline', insert: 'while (my $line = <STDIN>) {\n\tchomp $line;\n\t$0\n}', doc: 'Read lines' },
+        ],
+      },
+      lua: {
+        keywords: ['and','break','do','else','elseif','end','false','for','function','goto','if','in','local','nil','not','or','repeat','return','then','true','until','while','print','io','read','write','string','table','math','os','type','tostring','tonumber','pairs','ipairs','next','select','unpack','rawget','rawset','setmetatable','getmetatable','require','pcall','xpcall','error','assert','coroutine','insert','remove','sort','concat','format','find','gsub','gmatch','match','sub','len','rep','reverse','upper','lower','byte','char','abs','ceil','floor','max','min','sqrt','random','randomseed','huge','pi'],
+        snippets: [
+          { label: 'function', insert: 'function ${1:name}(${2:args})\n\t$0\nend', doc: 'Function' },
+          { label: 'local function', insert: 'local function ${1:name}(${2:args})\n\t$0\nend', doc: 'Local function' },
+          { label: 'for numeric', insert: 'for ${1:i} = ${2:1}, ${3:n} do\n\t$0\nend', doc: 'Numeric for' },
+          { label: 'for pairs', insert: 'for ${1:k}, ${2:v} in pairs(${3:t}) do\n\t$0\nend', doc: 'For pairs' },
+          { label: 'if else', insert: 'if ${1:condition} then\n\t$2\nelse\n\t$0\nend', doc: 'If-else' },
+        ],
+      },
+      shell: {
+        keywords: ['if','then','else','elif','fi','case','esac','for','while','until','do','done','in','function','select','time','coproc','echo','printf','read','declare','local','export','readonly','unset','shift','set','test','true','false','break','continue','return','exit','trap','source','eval','exec','wait','kill','cd','pwd','ls','cat','grep','sed','awk','sort','uniq','wc','head','tail','find','xargs','cut','tr','tee','mkdir','rm','cp','mv','chmod','chown','curl','wget','tar','zip','unzip','date','basename','dirname','realpath','mktemp'],
+        snippets: [
+          { label: 'if then', insert: 'if [[ ${1:condition} ]]; then\n\t$2\nfi', doc: 'If block' },
+          { label: 'for loop', insert: 'for ${1:i} in ${2:items}; do\n\t$0\ndone', doc: 'For loop' },
+          { label: 'while read', insert: 'while IFS= read -r ${1:line}; do\n\t$0\ndone', doc: 'While read' },
+          { label: 'function', insert: '${1:name}() {\n\t$0\n}', doc: 'Function' },
+          { label: 'case', insert: 'case "${1:var}" in\n\t${2:pattern})\n\t\t$0\n\t\t;;\nesac', doc: 'Case statement' },
+        ],
+      },
+      r: {
+        keywords: ['if','else','for','while','repeat','function','return','in','next','break','TRUE','FALSE','NULL','NA','Inf','NaN','library','require','source','print','cat','paste','paste0','sprintf','c','vector','list','matrix','data.frame','array','factor','seq','rep','length','nrow','ncol','dim','names','colnames','rownames','head','tail','str','summary','class','typeof','is.numeric','is.character','is.logical','as.numeric','as.character','as.integer','which','match','grep','grepl','gsub','sub','nchar','substr','strsplit','toupper','tolower','trimws','sum','mean','median','var','sd','min','max','range','sort','order','rank','table','unique','duplicated','rev','append','apply','sapply','lapply','tapply','mapply','do.call','Reduce','Filter','Map','ifelse','switch','tryCatch','stop','warning','message','readline','readLines','scan','read.csv','write.csv','file','sink','cat','format','round','ceiling','floor','abs','sqrt','log','log2','log10','exp','cumsum','cumprod','diff','which.min','which.max','sample','set.seed','runif','rnorm','plot','hist','barplot','boxplot','pie','lines','points','abline','legend','title','text','par','pdf','png','dev.off','install.packages','library','require','setwd','getwd','list.files','file.exists','Sys.time','proc.time','system.time'],
+        snippets: [
+          { label: 'function', insert: '${1:name} <- function(${2:args}) {\n\t$0\n}', doc: 'Function' },
+          { label: 'for loop', insert: 'for (${1:i} in ${2:1:n}) {\n\t$0\n}', doc: 'For loop' },
+          { label: 'if else', insert: 'if (${1:condition}) {\n\t$2\n} else {\n\t$0\n}', doc: 'If-else' },
+          { label: 'sapply', insert: 'sapply(${1:X}, function(${2:x}) {\n\t$0\n})', doc: 'sapply' },
+          { label: 'tryCatch', insert: 'tryCatch({\n\t$1\n}, error = function(e) {\n\t$0\n})', doc: 'Try-catch' },
+        ],
+      },
+      powershell: {
+        keywords: ['if','else','elseif','switch','for','foreach','while','do','until','break','continue','return','function','param','begin','process','end','try','catch','finally','throw','trap','exit','Write-Host','Write-Output','Write-Error','Write-Warning','Write-Verbose','Read-Host','Get-Content','Set-Content','Add-Content','Get-ChildItem','Get-Item','New-Item','Remove-Item','Copy-Item','Move-Item','Test-Path','Join-Path','Split-Path','Resolve-Path','Import-Module','Export-ModuleMember','Get-Command','Invoke-Expression','Invoke-Command','ForEach-Object','Where-Object','Select-Object','Sort-Object','Group-Object','Measure-Object','Compare-Object','New-Object','Get-Member','Format-Table','Format-List','Out-File','Out-String','ConvertTo-Json','ConvertFrom-Json','Get-Process','Stop-Process','Start-Process','Get-Service','Get-Date','Start-Sleep','$true','$false','$null','$_','$PSItem','$args','$input','$Error','$Host','$HOME','$PWD'],
+        snippets: [
+          { label: 'function', insert: 'function ${1:Name} {\n\tparam(\n\t\t$2\n\t)\n\t$0\n}', doc: 'Function' },
+          { label: 'foreach', insert: 'foreach ($$${1:item} in $$${2:collection}) {\n\t$0\n}', doc: 'Foreach loop' },
+          { label: 'try catch', insert: 'try {\n\t$1\n} catch {\n\t$0\n}', doc: 'Try-catch' },
+          { label: 'if else', insert: 'if ($$${1:condition}) {\n\t$2\n} else {\n\t$0\n}', doc: 'If-else' },
+        ],
+      },
+      julia: {
+        keywords: ['function','end','if','else','elseif','for','while','begin','let','do','try','catch','finally','return','break','continue','module','using','import','export','struct','mutable','abstract','primitive','type','const','local','global','macro','quote','true','false','nothing','missing','Inf','NaN','println','print','string','length','size','eltype','typeof','isa','convert','parse','collect','push!','pop!','append!','insert!','deleteat!','sort','sort!','reverse','reverse!','filter','map','reduce','foldl','foldr','zip','enumerate','eachindex','range','zeros','ones','fill','rand','randn','reshape','sum','prod','maximum','minimum','mean','abs','sqrt','log','exp','sin','cos','floor','ceil','round','div','mod','rem','gcd','lcm','isprime','factorial','binomial','Array','Vector','Matrix','Dict','Set','Tuple','String','Symbol','Int','Float64','Bool','Char','Any','Union','Nothing','open','close','read','readline','readlines','write','IOBuffer','stdin','stdout','stderr','@show','@assert','@time','@elapsed','@warn','@error','@info'],
+        snippets: [
+          { label: 'function', insert: 'function ${1:name}(${2:args})\n\t$0\nend', doc: 'Function' },
+          { label: 'for loop', insert: 'for ${1:i} in ${2:1:n}\n\t$0\nend', doc: 'For loop' },
+          { label: 'if else', insert: 'if ${1:condition}\n\t$2\nelse\n\t$0\nend', doc: 'If-else' },
+          { label: 'struct', insert: 'struct ${1:Name}\n\t${2:field}::${3:Type}\nend', doc: 'Struct' },
+          { label: 'try catch', insert: 'try\n\t$1\ncatch ${2:e}\n\t$0\nend', doc: 'Try-catch' },
+        ],
+      },
+      fsharp: {
+        keywords: ['let','in','if','then','else','elif','match','with','for','while','do','done','fun','function','rec','mutable','type','of','module','namespace','open','begin','end','class','interface','inherit','abstract','override','member','static','val','new','as','true','false','null','not','and','or','yield','return','async','task','use','try','finally','raise','failwith','printfn','printf','sprintf','List','Array','Seq','Map','Set','Option','Result','Some','None','Ok','Error','string','int','float','bool','unit','obj','ignore','fst','snd','List.map','List.filter','List.fold','List.iter','List.head','List.tail','List.length','Array.map','Array.filter','Array.fold','Array.init','Array.create','Seq.map','Seq.filter','Seq.fold','Seq.iter','Seq.toList','Seq.toArray','Map.ofList','Map.find','Map.tryFind','Map.add','Set.ofList','Set.contains','Set.add','pipe','compose','id','defaultArg'],
+        snippets: [
+          { label: 'let binding', insert: 'let ${1:name} = $0', doc: 'Let binding' },
+          { label: 'function', insert: 'let ${1:name} ${2:args} =\n\t$0', doc: 'Function' },
+          { label: 'match', insert: 'match ${1:expr} with\n| ${2:pattern} -> $0', doc: 'Pattern match' },
+          { label: 'pipeline', insert: '|> ${1:fn}', doc: 'Pipeline operator' },
+          { label: 'async', insert: 'async {\n\t$0\n}', doc: 'Async block' },
+        ],
+      },
+      clojure: {
+        keywords: ['def','defn','defn-','defmacro','let','fn','if','do','when','when-not','cond','case','loop','recur','for','doseq','dotimes','while','and','or','not','nil','true','false','ns','require','use','import','refer','in-ns','atom','deref','swap!','reset!','ref','dosync','alter','commute','agent','send','send-off','promise','deliver','future','realized?','map','filter','reduce','apply','partial','comp','complement','juxt','identity','constantly','memoize','assoc','dissoc','get','get-in','assoc-in','update','update-in','select-keys','merge','keys','vals','contains?','empty?','seq','first','rest','next','cons','conj','into','concat','flatten','distinct','sort','sort-by','reverse','take','drop','take-while','drop-while','partition','partition-by','group-by','frequencies','interleave','interpose','zipmap','str','subs','clojure.string/join','clojure.string/split','clojure.string/replace','clojure.string/trim','clojure.string/upper-case','clojure.string/lower-case','println','print','prn','pr-str','format','read-string','slurp','spit','count','range','repeat','repeatedly','iterate','inc','dec','pos?','neg?','zero?','even?','odd?','number?','string?','keyword?','symbol?','vector?','map?','list?','set?','nil?','some?','type','class','instance?','Integer/parseInt','Long/parseLong','Double/parseDouble','Math/pow','Math/sqrt','Math/abs','rand','rand-int','rand-nth','shuffle','try','catch','finally','throw','ex-info','ex-data','ex-message'],
+        snippets: [
+          { label: 'defn', insert: '(defn ${1:name}\n  [${2:args}]\n  $0)', doc: 'Define function' },
+          { label: 'let', insert: '(let [${1:bindings}]\n  $0)', doc: 'Let binding' },
+          { label: 'if', insert: '(if ${1:cond}\n  ${2:then}\n  $0)', doc: 'If expression' },
+          { label: 'cond', insert: '(cond\n  ${1:test1} ${2:expr1}\n  :else $0)', doc: 'Cond' },
+          { label: 'loop recur', insert: '(loop [${1:bindings}]\n  $0\n  (recur ${2:args}))', doc: 'Loop-recur' },
+        ],
+      },
+      scheme: {
+        keywords: ['define','lambda','let','let*','letrec','if','cond','case','else','begin','and','or','not','set!','quote','quasiquote','unquote','cons','car','cdr','cadr','caddr','caar','cdar','list','pair?','null?','list?','eq?','eqv?','equal?','number?','string?','symbol?','boolean?','char?','vector?','procedure?','zero?','positive?','negative?','even?','odd?','display','newline','write','read','string-append','string-length','string-ref','substring','string->number','number->string','string->list','list->string','string-upcase','string-downcase','char->integer','integer->char','map','for-each','filter','fold-left','fold-right','apply','append','reverse','length','sort','assoc','assv','assq','member','memv','memq','make-vector','vector','vector-ref','vector-set!','vector-length','vector->list','list->vector','+','-','*','/','=','<','>','<=','>=','remainder','quotient','modulo','abs','max','min','gcd','lcm','floor','ceiling','round','truncate','exact->inexact','inexact->exact','sqrt','expt','log','exp','sin','cos','tan','asin','acos','atan','random','values','call-with-values','call-with-current-continuation','call/cc','dynamic-wind','with-exception-handler','guard','raise','error','open-input-file','open-output-file','close-port','eof-object?','read-char','write-char','read-line','with-input-from-file','with-output-to-file'],
+        snippets: [
+          { label: 'define function', insert: '(define (${1:name} ${2:args})\n  $0)', doc: 'Define function' },
+          { label: 'define variable', insert: '(define ${1:name} $0)', doc: 'Define variable' },
+          { label: 'lambda', insert: '(lambda (${1:args})\n  $0)', doc: 'Lambda expression' },
+          { label: 'let', insert: '(let ((${1:var} ${2:val}))\n  $0)', doc: 'Let binding' },
+          { label: 'cond', insert: '(cond\n  (${1:test1} ${2:expr1})\n  (else $0))', doc: 'Cond expression' },
+        ],
+      },
+      'objective-c': {
+        keywords: ['@interface','@implementation','@end','@protocol','@property','@synthesize','@dynamic','@class','@selector','@encode','@try','@catch','@finally','@throw','@autoreleasepool','@synchronized','@required','@optional','@public','@private','@protected','@package','self','super','nil','Nil','YES','NO','TRUE','FALSE','id','Class','SEL','IMP','BOOL','void','int','float','double','long','short','char','unsigned','signed','const','static','extern','register','volatile','typedef','struct','union','enum','if','else','for','while','do','switch','case','default','break','continue','return','goto','sizeof','NSObject','NSString','NSMutableString','NSArray','NSMutableArray','NSDictionary','NSMutableDictionary','NSSet','NSMutableSet','NSNumber','NSInteger','NSUInteger','CGFloat','NSLog','NSError','NSURL','NSDate','NSData','NSNotificationCenter','NSUserDefaults','dispatch_async','dispatch_sync','dispatch_queue_t','alloc','init','new','copy','mutableCopy','retain','release','autorelease','dealloc','description','isEqual','hash','class','superclass','respondsToSelector','performSelector','conformsToProtocol','isKindOfClass','isMemberOfClass','stringWithFormat','arrayWithObjects','dictionaryWithObjectsAndKeys','initWithFrame','addSubview','removeFromSuperview','setNeedsLayout','layoutSubviews','drawRect','viewDidLoad','viewWillAppear','viewDidAppear'],
+        snippets: [
+          { label: '@interface', insert: '@interface ${1:ClassName} : ${2:NSObject}\n$0\n@end', doc: 'Interface declaration' },
+          { label: '@implementation', insert: '@implementation ${1:ClassName}\n$0\n@end', doc: 'Implementation' },
+          { label: 'method', insert: '- (${1:void})${2:methodName} {\n\t$0\n}', doc: 'Instance method' },
+          { label: 'property', insert: '@property (nonatomic, ${1:strong}) ${2:NSString} *${3:name};', doc: 'Property' },
+          { label: 'NSLog', insert: 'NSLog(@"${1:%@}", ${2:obj});', doc: 'NSLog' },
+        ],
+      },
+      sql: {
+        keywords: ['SELECT','FROM','WHERE','INSERT','INTO','VALUES','UPDATE','SET','DELETE','CREATE','TABLE','ALTER','DROP','INDEX','VIEW','TRIGGER','PROCEDURE','FUNCTION','DATABASE','SCHEMA','IF','EXISTS','NOT','NULL','DEFAULT','PRIMARY','KEY','FOREIGN','REFERENCES','UNIQUE','CHECK','CONSTRAINT','AUTO_INCREMENT','IDENTITY','SERIAL','AND','OR','IN','BETWEEN','LIKE','ILIKE','IS','AS','ON','JOIN','INNER','LEFT','RIGHT','FULL','OUTER','CROSS','NATURAL','USING','UNION','ALL','INTERSECT','EXCEPT','ORDER','BY','ASC','DESC','LIMIT','OFFSET','FETCH','FIRST','NEXT','ROWS','ONLY','GROUP','HAVING','DISTINCT','COUNT','SUM','AVG','MIN','MAX','CASE','WHEN','THEN','ELSE','END','CAST','CONVERT','COALESCE','NULLIF','IFNULL','NVL','DECODE','SUBSTRING','TRIM','UPPER','LOWER','LENGTH','REPLACE','CONCAT','ROUND','FLOOR','CEIL','ABS','MOD','POWER','SQRT','NOW','CURRENT_DATE','CURRENT_TIME','CURRENT_TIMESTAMP','DATE','TIME','YEAR','MONTH','DAY','HOUR','MINUTE','SECOND','EXTRACT','DATEADD','DATEDIFF','TO_CHAR','TO_DATE','TO_NUMBER','GRANT','REVOKE','COMMIT','ROLLBACK','SAVEPOINT','BEGIN','TRANSACTION','DECLARE','CURSOR','OPEN','CLOSE','FETCH','INTO','LOOP','WHILE','FOR','EXIT','RETURN','RAISE','EXCEPTION','VARCHAR','CHAR','INT','INTEGER','BIGINT','SMALLINT','DECIMAL','NUMERIC','FLOAT','DOUBLE','REAL','BOOLEAN','TEXT','BLOB','CLOB','DATE','TIMESTAMP','INTERVAL','JSON','JSONB','XML','ARRAY','ENUM','MONEY'],
+        snippets: [
+          { label: 'SELECT', insert: 'SELECT ${1:*}\nFROM ${2:table}\nWHERE ${3:condition};', doc: 'SELECT query' },
+          { label: 'INSERT', insert: 'INSERT INTO ${1:table} (${2:columns})\nVALUES (${3:values});', doc: 'INSERT statement' },
+          { label: 'UPDATE', insert: 'UPDATE ${1:table}\nSET ${2:column} = ${3:value}\nWHERE ${4:condition};', doc: 'UPDATE statement' },
+          { label: 'CREATE TABLE', insert: 'CREATE TABLE ${1:name} (\n\t${2:id} INT PRIMARY KEY,\n\t${3:col} VARCHAR(255)$0\n);', doc: 'Create table' },
+          { label: 'JOIN', insert: 'SELECT ${1:cols}\nFROM ${2:t1}\nJOIN ${3:t2} ON ${2:t1}.${4:id} = ${3:t2}.${5:fk};', doc: 'JOIN query' },
+        ],
+      },
+      pgsql: {
+        keywords: ['SELECT','FROM','WHERE','INSERT','INTO','VALUES','UPDATE','SET','DELETE','CREATE','TABLE','ALTER','DROP','INDEX','VIEW','TRIGGER','FUNCTION','PROCEDURE','DATABASE','SCHEMA','IF','EXISTS','NOT','NULL','DEFAULT','PRIMARY','KEY','FOREIGN','REFERENCES','UNIQUE','CHECK','CONSTRAINT','SERIAL','BIGSERIAL','SMALLSERIAL','AND','OR','IN','BETWEEN','LIKE','ILIKE','SIMILAR','IS','AS','ON','JOIN','INNER','LEFT','RIGHT','FULL','OUTER','CROSS','LATERAL','NATURAL','USING','UNION','ALL','INTERSECT','EXCEPT','ORDER','BY','ASC','DESC','NULLS','FIRST','LAST','LIMIT','OFFSET','FETCH','NEXT','ROWS','ONLY','GROUP','HAVING','DISTINCT','COUNT','SUM','AVG','MIN','MAX','CASE','WHEN','THEN','ELSE','END','CAST','COALESCE','NULLIF','GREATEST','LEAST','ARRAY','ARRAY_AGG','STRING_AGG','JSON_AGG','JSONB_AGG','JSON_BUILD_OBJECT','JSONB_BUILD_OBJECT','ROW_NUMBER','RANK','DENSE_RANK','LAG','LEAD','FIRST_VALUE','LAST_VALUE','NTH_VALUE','NTILE','PARTITION','OVER','WINDOW','FILTER','WITHIN','GROUP','RETURNING','ON CONFLICT','DO NOTHING','DO UPDATE','UPSERT','CTE','WITH','RECURSIVE','MATERIALIZED','EXPLAIN','ANALYZE','VACUUM','REINDEX','CLUSTER','COPY','PERFORM','RAISE','NOTICE','EXCEPTION','INFO','WARNING','DEBUG','LOG','EXECUTE','FORMAT','FOUND','NEW','OLD','TG_OP','TG_TABLE_NAME','TG_WHEN','RETURNS','LANGUAGE','PLPGSQL','VOLATILE','STABLE','IMMUTABLE','SECURITY','DEFINER','INVOKER','TEXT','INTEGER','BIGINT','SMALLINT','BOOLEAN','NUMERIC','DECIMAL','REAL','DOUBLE PRECISION','VARCHAR','CHAR','DATE','TIME','TIMESTAMP','TIMESTAMPTZ','INTERVAL','UUID','JSONB','JSON','BYTEA','INET','CIDR','MACADDR','POINT','LINE','BOX','CIRCLE','POLYGON','TSVECTOR','TSQUERY','REGCLASS','OID','MONEY','HSTORE','INT4RANGE','INT8RANGE','NUMRANGE','TSRANGE','TSTZRANGE','DATERANGE','GENERATE_SERIES','NOW','CURRENT_DATE','CURRENT_TIMESTAMP','AGE','DATE_TRUNC','DATE_PART','EXTRACT','TO_CHAR','TO_DATE','TO_TIMESTAMP','TO_NUMBER','PG_SLEEP','CONCAT','CONCAT_WS','SUBSTRING','POSITION','TRIM','UPPER','LOWER','LEFT','RIGHT','LENGTH','REPLACE','REGEXP_REPLACE','REGEXP_MATCHES','SPLIT_PART','ENCODE','DECODE','MD5','GEN_RANDOM_UUID','ROUND','FLOOR','CEIL','ABS','MOD','POWER','SQRT','LN','LOG','RANDOM','SETSEED','GREATEST','LEAST'],
+        snippets: [
+          { label: 'CREATE FUNCTION', insert: 'CREATE OR REPLACE FUNCTION ${1:name}(${2:args})\nRETURNS ${3:void} AS $$$$\nBEGIN\n\t$0\nEND;\n$$$$ LANGUAGE plpgsql;', doc: 'PL/pgSQL function' },
+          { label: 'SELECT', insert: 'SELECT ${1:*}\nFROM ${2:table}\nWHERE ${3:condition};', doc: 'SELECT query' },
+          { label: 'CTE', insert: 'WITH ${1:cte_name} AS (\n\t${2:SELECT 1}\n)\nSELECT * FROM ${1:cte_name};', doc: 'Common Table Expression' },
+          { label: 'UPSERT', insert: 'INSERT INTO ${1:table} (${2:cols})\nVALUES (${3:vals})\nON CONFLICT (${4:key}) DO UPDATE\nSET ${5:col} = EXCLUDED.${5:col};', doc: 'Upsert' },
+        ],
+      },
+      pascal: {
+        keywords: ['program','unit','uses','interface','implementation','initialization','finalization','begin','end','var','const','type','procedure','function','array','of','record','class','object','constructor','destructor','inherited','virtual','override','abstract','private','protected','public','published','property','read','write','default','if','then','else','case','for','to','downto','while','repeat','until','do','with','try','except','finally','raise','on','break','continue','exit','halt','result','nil','true','false','and','or','not','xor','shl','shr','div','mod','in','is','as','integer','longint','int64','byte','word','cardinal','real','double','extended','boolean','char','string','shortstring','ansistring','widestring','pointer','file','text','set','writeln','write','readln','read','inc','dec','length','setlength','low','high','sizeof','ord','chr','succ','pred','abs','sqr','sqrt','round','trunc','random','randomize','copy','pos','delete','insert','concat','upcase','lowercase','trim','val','str','inttostr','strtoint','floattostr','strtofloat','format','assigned','new','dispose','getmem','freemem','move','fillchar','append','close','reset','rewrite','eof','eoln','ioresult','assignfile','closefile'],
+        snippets: [
+          { label: 'program', insert: 'program ${1:Name};\n\nbegin\n\t$0\nend.', doc: 'Program' },
+          { label: 'procedure', insert: 'procedure ${1:Name}(${2:params});\nbegin\n\t$0\nend;', doc: 'Procedure' },
+          { label: 'function', insert: 'function ${1:Name}(${2:params}): ${3:integer};\nbegin\n\tResult := $0;\nend;', doc: 'Function' },
+          { label: 'for loop', insert: 'for ${1:i} := ${2:0} to ${3:n} do\nbegin\n\t$0\nend;', doc: 'For loop' },
+          { label: 'if then else', insert: 'if ${1:condition} then\nbegin\n\t$2\nend\nelse\nbegin\n\t$0\nend;', doc: 'If-then-else' },
+        ],
+      },
+      vb: {
+        keywords: ['Module','Sub','Function','End','Dim','As','Integer','Long','String','Boolean','Double','Single','Decimal','Date','Object','Variant','Byte','Short','Char','If','Then','Else','ElseIf','End If','Select','Case','End Select','For','To','Step','Next','For Each','In','Do','While','Loop','Until','Wend','With','End With','Try','Catch','Finally','End Try','Throw','ReDim','Preserve','Erase','Public','Private','Protected','Friend','Shared','Static','Const','ReadOnly','ByVal','ByRef','Optional','ParamArray','Call','Return','Exit','GoTo','Resume','On Error','Class','Structure','Interface','Enum','Namespace','Imports','Module','Property','Get','Set','Let','Event','RaiseEvent','AddHandler','RemoveHandler','Handles','Delegate','New','Me','MyBase','MyClass','Nothing','True','False','Not','And','Or','AndAlso','OrElse','Xor','Mod','Like','Is','IsNot','TypeOf','GetType','CType','CInt','CLng','CDbl','CStr','CBool','CByte','CChar','CDate','CDec','CSng','CShort','CObj','DirectCast','TryCast','Console.Write','Console.WriteLine','Console.ReadLine','MsgBox','InputBox','Len','Mid','Left','Right','UCase','LCase','Trim','LTrim','RTrim','Replace','InStr','Split','Join','Val','CStr','Format','Chr','Asc','Abs','Int','Fix','Sqr','Math.Pow','Math.Sqrt','Math.Abs','Math.Floor','Math.Ceiling','Math.Round','Math.Max','Math.Min','Array.Sort','Array.Reverse','String.Format','String.Join','String.IsNullOrEmpty'],
+        snippets: [
+          { label: 'Sub', insert: 'Sub ${1:Name}()\n\t$0\nEnd Sub', doc: 'Subroutine' },
+          { label: 'Function', insert: 'Function ${1:Name}(${2:params}) As ${3:Integer}\n\t$0\nEnd Function', doc: 'Function' },
+          { label: 'If Then', insert: 'If ${1:condition} Then\n\t$2\nElse\n\t$0\nEnd If', doc: 'If-Then-Else' },
+          { label: 'For Next', insert: 'For ${1:i} As Integer = ${2:0} To ${3:n}\n\t$0\nNext', doc: 'For loop' },
+          { label: 'Try Catch', insert: 'Try\n\t$1\nCatch ex As Exception\n\t$0\nEnd Try', doc: 'Try-Catch' },
+        ],
+      },
+      elixir: {
+        keywords: ['def','defp','defmodule','defmacro','defstruct','defprotocol','defimpl','defdelegate','defguard','defexception','defoverridable','do','end','if','else','unless','cond','case','with','when','fn','receive','after','send','spawn','spawn_link','self','raise','reraise','rescue','try','catch','throw','import','require','use','alias','for','in','not','and','or','true','false','nil','is_atom','is_binary','is_bitstring','is_boolean','is_float','is_function','is_integer','is_list','is_map','is_nil','is_number','is_pid','is_reference','is_tuple','abs','ceil','floor','round','trunc','div','rem','max','min','length','hd','tl','elem','put_elem','tuple_size','map_size','is_map_key','Enum.map','Enum.filter','Enum.reduce','Enum.each','Enum.sort','Enum.find','Enum.any?','Enum.all?','Enum.count','Enum.zip','Enum.chunk_every','Enum.flat_map','Enum.join','Enum.into','Enum.member?','Enum.at','Enum.take','Enum.drop','Enum.reverse','Enum.sum','Enum.max','Enum.min','Enum.uniq','Enum.group_by','Enum.frequencies','List.first','List.last','List.flatten','List.zip','Map.get','Map.put','Map.delete','Map.merge','Map.keys','Map.values','Map.has_key?','Map.new','Map.update','String.split','String.join','String.replace','String.trim','String.upcase','String.downcase','String.contains?','String.starts_with?','String.ends_with?','String.length','String.to_integer','String.to_float','Integer.parse','Float.parse','IO.puts','IO.gets','IO.inspect','Kernel.inspect','File.read','File.write','File.exists?','Path.join','Agent.start_link','Agent.get','Agent.update','GenServer','Task.async','Task.await','Supervisor','Application','Logger','dbg'],
+        snippets: [
+          { label: 'defmodule', insert: 'defmodule ${1:Module} do\n\t$0\nend', doc: 'Module' },
+          { label: 'def', insert: 'def ${1:name}(${2:args}) do\n\t$0\nend', doc: 'Function' },
+          { label: 'case', insert: 'case ${1:expr} do\n\t${2:pattern} ->\n\t\t$0\nend', doc: 'Case expression' },
+          { label: 'pipe', insert: '|> ${1:fn}()', doc: 'Pipe operator' },
+          { label: 'with', insert: 'with ${1:pattern} <- ${2:expr} do\n\t$0\nend', doc: 'With expression' },
+        ],
+      },
+      tcl: {
+        keywords: ['proc','set','puts','gets','expr','if','elseif','else','for','foreach','while','switch','break','continue','return','uplevel','upvar','global','variable','namespace','package','source','eval','catch','try','throw','error','info','array','list','lindex','lrange','llength','lappend','linsert','lreplace','lsearch','lsort','lmap','concat','join','split','string','regexp','regsub','scan','format','append','incr','dict','open','close','read','gets','puts','flush','eof','seek','tell','file','glob','cd','pwd','exec','pid','after','vwait','update','trace','rename','interp','load','unset','subst','binary','clock','msgcat','http','socket','fileevent','fconfigure','encoding','apply','lassign','lrepeat','lreverse','mathfunc','mathop','chan','coroutine','yield','tailcall','oo::class','oo::define','oo::objdefine','method','constructor','destructor','my','self','next'],
+        snippets: [
+          { label: 'proc', insert: 'proc ${1:name} {${2:args}} {\n\t$0\n}', doc: 'Procedure' },
+          { label: 'if', insert: 'if {${1:condition}} {\n\t$2\n} else {\n\t$0\n}', doc: 'If-else' },
+          { label: 'foreach', insert: 'foreach ${1:var} $$${2:list} {\n\t$0\n}', doc: 'Foreach loop' },
+          { label: 'while', insert: 'while {${1:condition}} {\n\t$0\n}', doc: 'While loop' },
+        ],
+      },
+      solidity: {
+        keywords: ['pragma','solidity','contract','interface','library','abstract','is','constructor','function','modifier','event','emit','error','revert','require','assert','mapping','struct','enum','public','private','internal','external','view','pure','payable','nonpayable','virtual','override','constant','immutable','indexed','anonymous','returns','return','if','else','for','while','do','break','continue','delete','new','this','super','selfdestruct','type','address','bool','string','bytes','bytes1','bytes2','bytes4','bytes8','bytes16','bytes32','uint','uint8','uint16','uint32','uint64','uint128','uint256','int','int8','int16','int32','int64','int128','int256','fixed','ufixed','true','false','wei','gwei','ether','seconds','minutes','hours','days','weeks','msg.sender','msg.value','msg.data','msg.sig','block.timestamp','block.number','block.difficulty','block.gaslimit','block.chainid','block.basefee','tx.origin','tx.gasprice','gasleft','blockhash','keccak256','sha256','ripemd160','ecrecover','addmod','mulmod','abi.encode','abi.encodePacked','abi.encodeWithSelector','abi.encodeWithSignature','abi.decode','memory','storage','calldata','assembly','unchecked','try','catch','using','import','from','as','fallback','receive','transfer','send','call','delegatecall','staticcall','balance','code','codehash','push','pop','length','concat','IERC20','IERC721','ERC20','ERC721','Ownable','ReentrancyGuard','SafeMath','Address','Strings','Counters','Context','AccessControl'],
+        snippets: [
+          { label: 'contract', insert: 'contract ${1:Name} {\n\t$0\n}', doc: 'Contract' },
+          { label: 'function', insert: 'function ${1:name}(${2:params}) ${3:public} ${4:returns (${5:uint256})} {\n\t$0\n}', doc: 'Function' },
+          { label: 'modifier', insert: 'modifier ${1:name}() {\n\t$0\n\t_;\n}', doc: 'Modifier' },
+          { label: 'event', insert: 'event ${1:Name}(${2:address indexed sender});', doc: 'Event' },
+          { label: 'mapping', insert: 'mapping(${1:address} => ${2:uint256}) ${3:public} ${4:name};', doc: 'Mapping' },
+          { label: 'require', insert: 'require(${1:condition}, "${2:error message}");', doc: 'Require' },
+        ],
+      },
+    };
+
+    // Helper to build completion items
+    const mkItems = (langId) => {
+      const data = langData[langId];
+      if (!data) return [];
+      const items = [];
+      // Keywords
+      if (data.keywords) {
+        for (const kw of data.keywords) {
+          items.push({
+            label: kw,
+            kind: CK.Keyword,
+            insertText: kw,
+            detail: 'keyword',
+            sortText: '1_' + kw,
+          });
+        }
+      }
+      // Snippets
+      if (data.snippets) {
+        for (const sn of data.snippets) {
+          items.push({
+            label: sn.label,
+            kind: CK.Snippet,
+            insertText: sn.insert,
+            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+            documentation: sn.doc,
+            detail: 'snippet',
+            sortText: '0_' + sn.label,
+          });
+        }
+      }
+      return items;
+    };
+
+    // Register a completion provider for each language that has data
+    const registeredLangs = new Set();
+    for (const lang of this._langs) {
+      const monacoLang = lang.mono;
+      if (registeredLangs.has(monacoLang)) continue;
+      registeredLangs.add(monacoLang);
+
+      const items = mkItems(lang.id);
+      // Also collect items from languages that share the same Monaco language ID
+      const allItems = [...items];
+      for (const otherLang of this._langs) {
+        if (otherLang.id !== lang.id && otherLang.mono === monacoLang) {
+          allItems.push(...mkItems(otherLang.id));
+        }
+      }
+      if (!allItems.length) continue;
+
+      monaco.languages.registerCompletionItemProvider(monacoLang, {
+        triggerCharacters: ['.', ':', '<', '(', '{', '[', ' ', '$', '@', '#'],
+        provideCompletionItems(model, position) {
+          const word = model.getWordUntilPosition(position);
+          const range = {
+            startLineNumber: position.lineNumber,
+            endLineNumber: position.lineNumber,
+            startColumn: word.startColumn,
+            endColumn: word.endColumn,
+          };
+          return { suggestions: allItems.map(item => ({ ...item, range })) };
+        }
+      });
+    }
+
+    // ── Inline Completion Provider (ghost text / line prediction) ──
+    this._registerInlineCompletions();
+  },
+
+  _registerInlineCompletions() {
+    // Comprehensive pattern-based inline predictions for all languages
+    const patterns = {
+      // === C / C++ ===
+      cpp: [
+        { re: /^\s*#inc$/, text: 'lude <bits/stdc++.h>' },
+        { re: /^\s*#include\s*<bits\/stdc\+\+\.h>\s*$/, text: '\nusing namespace std;' },
+        { re: /^\s*using\s+namespace\s+std;\s*$/, text: '\n\nint main() {\n\tios_base::sync_with_stdio(false);\n\tcin.tie(NULL);\n\t\n\treturn 0;\n}' },
+        { re: /^\s*for\s*\(\s*int\s+(\w+)\s*=\s*0\s*;\s*$/, text: (m) => `${m[1]} < n; ${m[1]}++) {` },
+        { re: /^\s*for\s*\(\s*int\s+(\w+)\s*=\s*0\s*;\s*\w+\s*<\s*\w+\s*;\s*\w+\+\+\s*\)\s*\{?\s*$/, text: '\n\t' },
+        { re: /^\s*for\s*\($/, text: 'int i = 0; i < n; i++) {' },
+        { re: /^\s*for\s*\(auto\s*&?\s*$/, text: (m) => 'x : v) {' },
+        { re: /^\s*if\s*\($/, text: ') {' },
+        { re: /^\s*while\s*\($/, text: ') {' },
+        { re: /^\s*cout\s*<<\s*$/, text: ' << endl;' },
+        { re: /^\s*cin\s*>>\s*$/, text: ';' },
+        { re: /^\s*vector<int>\s+(\w+)$/, text: (m) => `(n);` },
+        { re: /^\s*vector<int>\s+\w+\((\w+)\);\s*$/, text: '\nfor (int i = 0; i < n; i++) cin >> v[i];' },
+        { re: /^\s*sort\($/, text: 'v.begin(), v.end());' },
+        { re: /^\s*int\s+(\w+)\s*=\s*$/, text: '0;' },
+        { re: /^\s*string\s+(\w+)$/, text: ';' },
+        { re: /^\s*void\s+(\w+)\s*\($/, text: ') {\n\t\n}' },
+        { re: /^\s*int\s+main\s*\(\s*\)\s*\{?\s*$/, text: '\n\tios_base::sync_with_stdio(false);\n\tcin.tie(NULL);\n\t\n\treturn 0;\n}' },
+        { re: /^\s*return\s+$/, text: '0;' },
+        { re: /^\s*map<$/, text: 'int, int> mp;' },
+        { re: /^\s*set<$/, text: 'int> s;' },
+        { re: /^\s*priority_queue<$/, text: 'int> pq;' },
+        { re: /^\s*queue<$/, text: 'int> q;' },
+        { re: /^\s*stack<$/, text: 'int> st;' },
+        { re: /^\s*pair<$/, text: 'int, int>' },
+        { re: /^\s*long\s+long\s+$/, text: 'n;' },
+        { re: /^\s*const\s+int\s+MOD\s*$/, text: '= 1e9 + 7;' },
+        { re: /^\s*#define\s+$/, text: 'll long long' },
+        { re: /^\s*template\s*<$/, text: 'typename T>' },
+      ],
+      // === Python ===
+      python: [
+        { re: /^\s*def\s+(\w+)\s*\($/, text: (m) => '):' },
+        { re: /^\s*def\s+(\w+)\s*\(.*\)\s*:?\s*$/, text: '\n\t' },
+        { re: /^\s*class\s+(\w+)$/, text: ':\n\tdef __init__(self):\n\t\t' },
+        { re: /^\s*class\s+(\w+)\s*:?\s*$/, text: '\n\tdef __init__(self):\n\t\t' },
+        { re: /^\s*for\s+(\w+)\s+in\s*$/, text: 'range(n):' },
+        { re: /^\s*for\s+(\w+)\s+in\s+range\(\w+\)\s*:\s*$/, text: '\n\t' },
+        { re: /^\s*if\s+$/, text: ':' },
+        { re: /^\s*if\s+.*:\s*$/, text: '\n\t' },
+        { re: /^\s*elif\s+$/, text: ':' },
+        { re: /^\s*else\s*$/, text: ':' },
+        { re: /^\s*while\s+$/, text: ':' },
+        { re: /^\s*try\s*$/, text: ':' },
+        { re: /^\s*try\s*:\s*$/, text: '\n\t' },
+        { re: /^\s*except\s*$/, text: ' Exception as e:' },
+        { re: /^\s*with\s+open\s*\($/, text: "'file.txt', 'r') as f:" },
+        { re: /^\s*import\s*$/, text: 'sys' },
+        { re: /^\s*from\s+collections\s+import\s*$/, text: 'defaultdict, Counter, deque' },
+        { re: /^\s*from\s+functools\s+import\s*$/, text: 'lru_cache' },
+        { re: /^\s*from\s+itertools\s+import\s*$/, text: 'permutations, combinations' },
+        { re: /^\s*from\s+bisect\s+import\s*$/, text: 'bisect_left, bisect_right' },
+        { re: /^\s*from\s+heapq\s+import\s*$/, text: 'heappush, heappop' },
+        { re: /^\s*n\s*=\s*int\s*\($/, text: "input())" },
+        { re: /^\s*n\s*=\s*int\(input\(\)\)\s*$/, text: '' },
+        { re: /^\s*(\w+)\s*=\s*list\s*\($/, text: "map(int, input().split()))" },
+        { re: /^\s*(\w+)\s*=\s*\[\s*$/, text: ']' },
+        { re: /^\s*print\s*\($/, text: ')' },
+        { re: /^\s*input\s*\($/, text: ').split()' },
+        { re: /^\s*(\w+)\.append\s*\($/, text: ')' },
+        { re: /^\s*return\s*$/, text: '' },
+        { re: /^\s*lambda\s+$/, text: 'x: x' },
+        { re: /^\s*sys\.stdin$/, text: '.readline' },
+        { re: /^\s*@lru_cache$/, text: '(maxsize=None)' },
+        { re: /^\s*def\s+solve\s*\(\s*\)\s*:\s*$/, text: '\n\t' },
+        { re: /^\s*t\s*=\s*int\(input\(\)\)\s*$/, text: '\nfor _ in range(t):\n\tsolve()' },
+      ],
+      // === Java ===
+      java: [
+        { re: /^\s*public\s+class\s+(\w+)\s*\{?\s*$/, text: '\n\tpublic static void main(String[] args) {\n\t\tScanner sc = new Scanner(System.in);\n\t\t\n\t}\n}' },
+        { re: /^\s*public\s+static\s+void\s+main\s*\($/, text: 'String[] args) {' },
+        { re: /^\s*Scanner\s+(\w+)\s*=\s*new\s*$/, text: 'Scanner(System.in);' },
+        { re: /^\s*System\.out\.print$/, text: 'ln();' },
+        { re: /^\s*for\s*\(int\s+(\w+)\s*=\s*0\s*;\s*$/, text: (m) => `${m[1]} < n; ${m[1]}++) {` },
+        { re: /^\s*for\s*\($/, text: 'int i = 0; i < n; i++) {' },
+        { re: /^\s*if\s*\($/, text: ') {' },
+        { re: /^\s*while\s*\($/, text: ') {' },
+        { re: /^\s*import\s+java\.$/, text: 'util.*;' },
+        { re: /^\s*import\s+java\.util\.\*;\s*$/, text: '\nimport java.io.*;' },
+        { re: /^\s*int\[\]\s+(\w+)\s*=\s*new\s*$/, text: (m) => `int[n];` },
+        { re: /^\s*String\s+(\w+)\s*=\s*$/, text: 'sc.next();' },
+        { re: /^\s*int\s+(\w+)\s*=\s*$/, text: 'sc.nextInt();' },
+        { re: /^\s*ArrayList<$/, text: 'Integer> list = new ArrayList<>();' },
+        { re: /^\s*HashMap<$/, text: 'Integer, Integer> map = new HashMap<>();' },
+        { re: /^\s*private\s+$/, text: 'static ' },
+        { re: /^\s*return\s+$/, text: ';' },
+      ],
+      // === JavaScript ===
+      javascript: [
+        { re: /^\s*const\s+(\w+)\s*=\s*\($/, text: ') => {' },
+        { re: /^\s*const\s+(\w+)\s*=\s*$/, text: ';' },
+        { re: /^\s*let\s+(\w+)\s*=\s*$/, text: ';' },
+        { re: /^\s*function\s+(\w+)\s*\($/, text: ') {' },
+        { re: /^\s*for\s*\(let\s+(\w+)\s*=\s*0\s*;\s*$/, text: (m) => `${m[1]} < n; ${m[1]}++) {` },
+        { re: /^\s*for\s*\(const\s+(\w+)\s+of\s*$/, text: 'arr) {' },
+        { re: /^\s*for\s*\($/, text: 'let i = 0; i < n; i++) {' },
+        { re: /^\s*if\s*\($/, text: ') {' },
+        { re: /^\s*while\s*\($/, text: ') {' },
+        { re: /^\s*console\.log\s*\($/, text: ');' },
+        { re: /^\s*return\s+$/, text: ';' },
+        { re: /^\s*const\s+readline\s*$/, text: "= require('readline');" },
+        { re: /^\s*process\.stdin$/, text: ".on('data', d => {" },
+        { re: /^\s*\.map\s*\($/, text: (m) => 'Number);' },
+        { re: /^\s*\.filter\s*\($/, text: 'x => );' },
+        { re: /^\s*\.reduce\s*\($/, text: '(acc, x) => acc + x, 0);' },
+        { re: /^\s*try\s*\{?\s*$/, text: '\n\t\n} catch (e) {\n\t\n}' },
+        { re: /^\s*async\s+function\s+$/, text: '() {' },
+        { re: /^\s*await\s+$/, text: '' },
+        { re: /^\s*class\s+(\w+)\s*\{?\s*$/, text: '\n\tconstructor() {\n\t\t\n\t}\n}' },
+      ],
+      // === TypeScript ===
+      typescript: [
+        { re: /^\s*const\s+(\w+):\s*$/, text: 'string = ;' },
+        { re: /^\s*interface\s+(\w+)\s*\{?\s*$/, text: '\n\t\n}' },
+        { re: /^\s*type\s+(\w+)\s*=\s*$/, text: '{};' },
+        { re: /^\s*function\s+(\w+)\s*\($/, text: '): void {' },
+        { re: /^\s*for\s*\(let\s+(\w+)\s*=\s*0\s*;\s*$/, text: (m) => `${m[1]} < n; ${m[1]}++) {` },
+        { re: /^\s*for\s*\($/, text: 'let i = 0; i < n; i++) {' },
+        { re: /^\s*if\s*\($/, text: ') {' },
+        { re: /^\s*console\.log\s*\($/, text: ');' },
+        { re: /^\s*return\s+$/, text: ';' },
+        { re: /^\s*export\s+$/, text: 'default ' },
+        { re: /^\s*import\s+\{$/, text: ' } from ;' },
+      ],
+      // === Go ===
+      go: [
+        { re: /^\s*package\s*$/, text: 'main' },
+        { re: /^\s*package\s+main\s*$/, text: '\n\nimport "fmt"\n\nfunc main() {\n\t\n}' },
+        { re: /^\s*import\s+"$/, text: 'fmt"' },
+        { re: /^\s*func\s+main\s*\(\s*\)\s*\{?\s*$/, text: '\n\t' },
+        { re: /^\s*func\s+(\w+)\s*\($/, text: ') {' },
+        { re: /^\s*fmt\.Print$/, text: 'ln()' },
+        { re: /^\s*fmt\.Scan$/, text: '(&n)' },
+        { re: /^\s*for\s+(\w+)\s*:=\s*0\s*;\s*$/, text: (m) => `${m[1]} < n; ${m[1]}++ {` },
+        { re: /^\s*for\s+$/, text: 'i := 0; i < n; i++ {' },
+        { re: /^\s*if\s+$/, text: '{' },
+        { re: /^\s*var\s+$/, text: 'n int' },
+        { re: /^\s*:=\s*make\s*\($/, text: '[]int, n)' },
+      ],
+      // === Rust ===
+      rust: [
+        { re: /^\s*fn\s+main\s*\(\s*\)\s*\{?\s*$/, text: '\n\tlet mut input = String::new();\n\tstd::io::stdin().read_line(&mut input).unwrap();\n\t' },
+        { re: /^\s*fn\s+(\w+)\s*\($/, text: ') {' },
+        { re: /^\s*let\s+mut\s+(\w+)\s*$/, text: '= ;' },
+        { re: /^\s*let\s+(\w+)\s*$/, text: '= ;' },
+        { re: /^\s*println!\s*\($/, text: '"{}",);' },
+        { re: /^\s*for\s+(\w+)\s+in\s*$/, text: '0..n {' },
+        { re: /^\s*if\s+$/, text: '{' },
+        { re: /^\s*match\s+$/, text: '{\n\t\n}' },
+        { re: /^\s*use\s+std::$/, text: 'io;' },
+        { re: /^\s*impl\s+(\w+)\s*\{?\s*$/, text: '\n\t\n}' },
+        { re: /^\s*struct\s+(\w+)\s*\{?\s*$/, text: '\n\t\n}' },
+      ],
+      // === C# ===
+      csharp: [
+        { re: /^\s*using\s+System$/, text: ';' },
+        { re: /^\s*using\s+System;\s*$/, text: '\nusing System.Collections.Generic;\nusing System.Linq;' },
+        { re: /^\s*class\s+Program\s*\{?\s*$/, text: '\n\tstatic void Main() {\n\t\t\n\t}\n}' },
+        { re: /^\s*static\s+void\s+Main\s*\($/, text: ') {' },
+        { re: /^\s*Console\.Write$/, text: 'Line();' },
+        { re: /^\s*Console\.Read$/, text: 'Line();' },
+        { re: /^\s*int\s+(\w+)\s*=\s*$/, text: 'int.Parse(Console.ReadLine());' },
+        { re: /^\s*for\s*\(int\s+(\w+)\s*=\s*0\s*;\s*$/, text: (m) => `${m[1]} < n; ${m[1]}++) {` },
+        { re: /^\s*for\s*\($/, text: 'int i = 0; i < n; i++) {' },
+        { re: /^\s*if\s*\($/, text: ') {' },
+        { re: /^\s*List<$/, text: 'int> list = new List<int>();' },
+        { re: /^\s*Dictionary<$/, text: 'int, int> dict = new Dictionary<int, int>();' },
+      ],
+      // === Ruby ===
+      ruby: [
+        { re: /^\s*def\s+(\w+)$/, text: '\n\t\nend' },
+        { re: /^\s*puts\s*$/, text: '' },
+        { re: /^\s*gets\.$/, text: 'chomp' },
+        { re: /^\s*(\w+)\.each\s*$/, text: 'do |x|' },
+        { re: /^\s*(\w+)\.map\s*$/, text: '{ |x| x }' },
+        { re: /^\s*if\s+$/, text: '\n\t\nend' },
+        { re: /^\s*while\s+$/, text: '\n\t\nend' },
+        { re: /^\s*class\s+(\w+)$/, text: '\n\tdef initialize\n\t\t\n\tend\nend' },
+        { re: /^\s*n\s*=\s*gets$/, text: '.to_i' },
+        { re: /^\s*arr\s*=\s*gets$/, text: '.split.map(&:to_i)' },
+      ],
+      // === PHP ===
+      php: [
+        { re: /^\s*<\?php\s*$/, text: '\n' },
+        { re: /^\s*function\s+(\w+)\s*\($/, text: ') {' },
+        { re: /^\s*echo\s+$/, text: ';' },
+        { re: /^\s*\$(\w+)\s*=\s*$/, text: ';' },
+        { re: /^\s*for\s*\(\$(\w+)\s*=\s*0\s*;\s*$/, text: (m) => `$${m[1]} < $n; $${m[1]}++) {` },
+        { re: /^\s*foreach\s*\($/, text: '$arr as $val) {' },
+        { re: /^\s*if\s*\($/, text: ') {' },
+      ],
+      // === Kotlin ===
+      kotlin: [
+        { re: /^\s*fun\s+main\s*\($/, text: ') {' },
+        { re: /^\s*fun\s+main\s*\(\s*\)\s*\{?\s*$/, text: '\n\tval n = readLine()!!.toInt()\n\t' },
+        { re: /^\s*fun\s+(\w+)\s*\($/, text: '): {' },
+        { re: /^\s*val\s+(\w+)\s*=\s*$/, text: '' },
+        { re: /^\s*var\s+(\w+)\s*=\s*$/, text: '' },
+        { re: /^\s*println\s*\($/, text: ')' },
+        { re: /^\s*readLine\s*\(\)\s*!!$/, text: '.toInt()' },
+        { re: /^\s*for\s*\((\w+)\s+in\s*$/, text: '0 until n) {' },
+        { re: /^\s*if\s*\($/, text: ') {' },
+      ],
+      // === Scala ===
+      scala: [
+        { re: /^\s*object\s+Main\s*\{?\s*$/, text: '\n\tdef main(args: Array[String]): Unit = {\n\t\t\n\t}\n}' },
+        { re: /^\s*def\s+(\w+)\s*\($/, text: '): Unit = {' },
+        { re: /^\s*val\s+(\w+)\s*=\s*$/, text: '' },
+        { re: /^\s*println\s*\($/, text: ')' },
+        { re: /^\s*for\s*\((\w+)\s*<-\s*$/, text: '0 until n) {' },
+      ],
+      // === Swift ===
+      swift: [
+        { re: /^\s*func\s+(\w+)\s*\($/, text: ') {' },
+        { re: /^\s*let\s+(\w+)\s*=\s*$/, text: '' },
+        { re: /^\s*var\s+(\w+)\s*=\s*$/, text: '' },
+        { re: /^\s*print\s*\($/, text: ')' },
+        { re: /^\s*guard\s+let\s*$/, text: ' = readLine() else { return }' },
+        { re: /^\s*if\s+let\s+$/, text: '= {' },
+        { re: /^\s*for\s+(\w+)\s+in\s*$/, text: '0..<n {' },
+        { re: /^\s*if\s+$/, text: '{' },
+        { re: /^\s*while\s+$/, text: '{' },
+      ],
+      // === Dart ===
+      dart: [
+        { re: /^\s*void\s+main\s*\($/, text: ') {' },
+        { re: /^\s*void\s+main\s*\(\s*\)\s*\{?\s*$/, text: "\n\tvar n = int.parse(stdin.readLineSync()!);\n\t" },
+        { re: /^\s*print\s*\($/, text: ');' },
+        { re: /^\s*var\s+(\w+)\s*=\s*$/, text: ';' },
+        { re: /^\s*for\s*\(var\s+(\w+)\s*=\s*0\s*;\s*$/, text: (m) => `${m[1]} < n; ${m[1]}++) {` },
+        { re: /^\s*if\s*\($/, text: ') {' },
+      ],
+      // === Perl ===
+      perl: [
+        { re: /^\s*my\s+\$(\w+)\s*=\s*$/, text: ';' },
+        { re: /^\s*print\s+$/, text: '"\\n";' },
+        { re: /^\s*for\s+my\s+\$(\w+)\s*\($/, text: '0..$n-1) {' },
+        { re: /^\s*foreach\s+my\s+\$(\w+)\s*\($/, text: '@arr) {' },
+        { re: /^\s*if\s*\($/, text: ') {' },
+        { re: /^\s*sub\s+(\w+)\s*\{?\s*$/, text: '\n\t\n}' },
+        { re: /^\s*chomp\s*\($/, text: 'my $line = <STDIN>);' },
+      ],
+      // === Lua ===
+      lua: [
+        { re: /^\s*function\s+(\w+)\s*\($/, text: ')' },
+        { re: /^\s*local\s+(\w+)\s*=\s*$/, text: '' },
+        { re: /^\s*for\s+(\w+)\s*=\s*1\s*,\s*$/, text: 'n do' },
+        { re: /^\s*for\s+$/, text: 'i = 1, n do' },
+        { re: /^\s*if\s+$/, text: 'then' },
+        { re: /^\s*while\s+$/, text: 'do' },
+        { re: /^\s*print\s*\($/, text: ')' },
+        { re: /^\s*io\.read\s*\($/, text: '"*n")' },
+      ],
+      // === Shell/Bash ===
+      shell: [
+        { re: /^#!/, text: '/bin/bash' },
+        { re: /^\s*read\s+$/, text: 'n' },
+        { re: /^\s*echo\s+$/, text: '"$n"' },
+        { re: /^\s*for\s+(\w+)\s+in\s*$/, text: '$(seq 1 $n); do' },
+        { re: /^\s*for\s*\(\(\s*(\w+)=0\s*;\s*$/, text: (m) => `${m[1]}<n; ${m[1]}++ )); do` },
+        { re: /^\s*if\s+\[\s*$/, text: ']; then' },
+        { re: /^\s*while\s+\[\s*$/, text: ']; do' },
+        { re: /^\s*function\s+(\w+)\s*$/, text: '() {' },
+      ],
+      // === R ===
+      r: [
+        { re: /^\s*(\w+)\s*<-\s*$/, text: '' },
+        { re: /^\s*print\s*\($/, text: ')' },
+        { re: /^\s*cat\s*\($/, text: '"\\n")' },
+        { re: /^\s*for\s*\((\w+)\s+in\s*$/, text: '1:n) {' },
+        { re: /^\s*if\s*\($/, text: ') {' },
+        { re: /^\s*function\s*\($/, text: ') {' },
+        { re: /^\s*n\s*<-\s*as\.integer\s*\($/, text: 'readLines("stdin", n=1))' },
+      ],
+    };
+
+    // Map our language IDs to pattern sets (share patterns for similar languages)
+    const langPatternMap = {
+      c: 'cpp', cpp: 'cpp',
+      python: 'python',
+      java: 'java',
+      javascript: 'javascript', typescript: 'typescript',
+      go: 'go', rust: 'rust', csharp: 'csharp',
+      ruby: 'ruby', php: 'php', kotlin: 'kotlin',
+      scala: 'scala', swift: 'swift', dart: 'dart',
+      perl: 'perl', lua: 'lua', shell: 'shell', r: 'r',
+    };
+
+    // Collect all unique words from the editor for variable/function name predictions
+    const getDocumentWords = (model, position) => {
+      const words = new Set();
+      const lc = model.getLineCount();
+      for (let i = 1; i <= lc; i++) {
+        if (i === position.lineNumber) continue;
+        const line = model.getLineContent(i);
+        const matches = line.match(/\b[a-zA-Z_]\w{2,}\b/g);
+        if (matches) matches.forEach(w => words.add(w));
+      }
+      return words;
+    };
+
+    // ── AI completion state ──
+    const aiState = {
+      enabled: true,
+      cache: new Map(),           // key → { text, ts }
+      pending: null,              // current AbortController
+      debounceTimer: null,
+      lastRequestMs: 0,
+      DEBOUNCE_MS: 600,           // wait before calling AI
+      CACHE_TTL: 60000,
+      MIN_PREFIX_LINES: 3,        // need at least 3 lines of context
+      indicator: null,            // DOM element for AI status
+    };
+    this._aiState = aiState;      // expose for toggle
+
+    // Build a cache key from cursor context
+    const aiCacheKey = (prefix, suffix, lang) => {
+      const pLines = prefix.split('\n').slice(-6).join('\n').trim();
+      const sLines = (suffix || '').split('\n').slice(0, 3).join('\n').trim();
+      return `${lang}::${pLines}::${sLines}`;
+    };
+
+    // Register inline completion for each Monaco language
+    const registeredInline = new Set();
+    for (const lang of this._langs) {
+      const monacoLang = lang.mono;
+      if (registeredInline.has(monacoLang)) continue;
+      registeredInline.add(monacoLang);
+
+      const patternKey = langPatternMap[lang.id];
+      const langPatterns = patternKey ? patterns[patternKey] : null;
+      const langId = lang.id;
+
+      monaco.languages.registerInlineCompletionsProvider(monacoLang, {
+        provideInlineCompletions(model, position, context, token) {
+          const lineContent = model.getLineContent(position.lineNumber);
+          const textBefore = lineContent.substring(0, position.column - 1);
+          const trimmedBefore = textBefore.trimStart();
+
+          // Don't suggest in comments or strings
+          if (/^\s*(\/\/|#|--|\/\*)/.test(lineContent) && !trimmedBefore.startsWith('#inc') && !trimmedBefore.startsWith('#!') && !trimmedBefore.startsWith('#define')) {
+            return { items: [] };
+          }
+
+          const items = [];
+
+          // 1) Pattern-based predictions (instant, no AI)
+          if (langPatterns) {
+            for (const p of langPatterns) {
+              const match = trimmedBefore.match(p.re);
+              if (match) {
+                const text = typeof p.text === 'function' ? p.text(match) : p.text;
+                if (text) {
+                  items.push({
+                    insertText: { snippet: text },
+                    range: new monaco.Range(position.lineNumber, position.column, position.lineNumber, position.column),
+                  });
+                }
+                break;
+              }
+            }
+          }
+
+          // 2) Bracket/brace auto-close line completion
+          if (!items.length) {
+            const openBraces = (textBefore.match(/\{/g) || []).length;
+            const closeBraces = (textBefore.match(/\}/g) || []).length;
+            if (textBefore.trim().endsWith('{') && openBraces > closeBraces) {
+              items.push({
+                insertText: { snippet: '\n\t' },
+                range: new monaco.Range(position.lineNumber, position.column, position.lineNumber, position.column),
+              });
+            }
+          }
+
+          // 3) Word completion from document context
+          if (!items.length && trimmedBefore.length >= 2) {
+            const lastWord = trimmedBefore.match(/\b([a-zA-Z_]\w*)$/);
+            if (lastWord && lastWord[1].length >= 2) {
+              const prefix = lastWord[1].toLowerCase();
+              const docWords = getDocumentWords(model, position);
+              for (const w of docWords) {
+                if (w.toLowerCase().startsWith(prefix) && w.toLowerCase() !== prefix) {
+                  items.push({
+                    insertText: { snippet: w.substring(lastWord[1].length) },
+                    range: new monaco.Range(position.lineNumber, position.column, position.lineNumber, position.column),
+                  });
+                  break;
+                }
+              }
+            }
+          }
+
+          // 4) AI-powered ghost text (async fallback — uses cached result or triggers background fetch)
+          if (!items.length && aiState.enabled && trimmedBefore.length >= 3) {
+            const fullText = model.getValue();
+            const offset = model.getOffsetAt(position);
+            const prefix = fullText.substring(0, offset);
+            const suffix = fullText.substring(offset);
+
+            // Only call AI if there's enough context
+            if (prefix.split('\n').length >= aiState.MIN_PREFIX_LINES) {
+              const key = aiCacheKey(prefix, suffix, langId);
+              const cached = aiState.cache.get(key);
+
+              if (cached && Date.now() - cached.ts < aiState.CACHE_TTL && cached.text) {
+                // Serve from cache
+                items.push({
+                  insertText: cached.text,
+                  range: new monaco.Range(position.lineNumber, position.column, position.lineNumber, position.column),
+                });
+              } else {
+                // Trigger async AI fetch (result will show on next keystroke from cache)
+                clearTimeout(aiState.debounceTimer);
+                aiState.debounceTimer = setTimeout(() => {
+                  // Abort any in-flight request
+                  if (aiState.pending) aiState.pending.abort();
+                  const ac = new AbortController();
+                  aiState.pending = ac;
+
+                  // Show indicator
+                  App._setAiIndicator('thinking');
+
+                  API.aiComplete(prefix, suffix, langId)
+                    .then(r => {
+                      if (ac.signal.aborted) return;
+                      if (r.ok && r.text) {
+                        aiState.cache.set(key, { text: r.text, ts: Date.now() });
+                        // Evict old entries
+                        if (aiState.cache.size > 150) {
+                          const oldest = aiState.cache.keys().next().value;
+                          aiState.cache.delete(oldest);
+                        }
+                        App._setAiIndicator('ready');
+                        // Trigger re-evaluation of inline completions
+                        try {
+                          const ed = App.editor;
+                          if (ed) {
+                            // Nudge Monaco to re-request inline completions
+                            ed.trigger('ai', 'editor.action.inlineSuggest.trigger', {});
+                          }
+                        } catch(_) {}
+                      } else {
+                        App._setAiIndicator('idle');
+                      }
+                    })
+                    .catch(() => App._setAiIndicator('idle'))
+                    .finally(() => { aiState.pending = null; });
+                }, aiState.DEBOUNCE_MS);
+              }
+            }
+          }
+
+          return { items };
+        },
+        freeInlineCompletions() {},
+      });
+    }
+  },
+
+  /* ── AI Helper indicator & controls ── */
+  _setAiIndicator(state) {
+    let el = document.getElementById('aiHelperIndicator');
+    if (!el) return;
+    el.className = 'ai-helper-indicator';
+    if (state === 'thinking') {
+      el.classList.add('ai-thinking');
+      el.innerHTML = '<i class="icon-bolt"></i> <span>AI thinking…</span>';
+    } else if (state === 'ready') {
+      el.classList.add('ai-ready');
+      el.innerHTML = '<i class="icon-bolt"></i> <span>AI ready</span>';
+      // Auto-fade after 2s
+      setTimeout(() => {
+        if (el.classList.contains('ai-ready')) {
+          el.classList.remove('ai-ready');
+          el.innerHTML = '<i class="icon-bolt"></i>';
+        }
+      }, 2000);
+    } else {
+      el.innerHTML = '<i class="icon-bolt"></i>';
+    }
+  },
+
+  toggleAiHelper() {
+    if (!this._aiState) return;
+    this._aiState.enabled = !this._aiState.enabled;
+    const el = document.getElementById('aiHelperToggle');
+    if (el) {
+      el.classList.toggle('active', this._aiState.enabled);
+      el.title = this._aiState.enabled ? 'AI Helper ON (click to disable)' : 'AI Helper OFF (click to enable)';
+    }
+    const ind = document.getElementById('aiHelperIndicator');
+    if (ind) ind.classList.toggle('ai-disabled', !this._aiState.enabled);
+    this._toast(this._aiState.enabled ? 'AI code helper enabled' : 'AI code helper disabled', 'info');
+  },
+
+  async aiFixCode() {
+    if (!this.editor) return;
+    const code = this.editor.getValue();
+    if (!code.trim()) return this._toast('No code to fix', 'warning');
+
+    const btn = document.getElementById('aiFixBtn');
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="icon-bolt"></i> fixing…'; }
+
+    try {
+      const result = await API.aiFix(code, this._currentLang, this._lastRunError || 'Compilation error');
+      if (result.ok && result.fixed && result.code) {
+        // Show diff in a confirmation
+        const oldLines = code.split('\n').length;
+        const newLines = result.code.split('\n').length;
+        const changed = oldLines !== newLines || code !== result.code;
+
+        if (changed) {
+          // Apply the fix
+          this.editor.setValue(result.code);
+          this._toast('AI applied syntax fix', 'success');
+        } else {
+          this._toast('Code looks correct — no fix needed', 'info');
+        }
+      } else {
+        this._toast(result.message || 'No syntax fix found — may be a logic issue', 'info');
+      }
+    } catch (e) {
+      this._toast('AI fix failed: ' + e.message, 'error');
+    } finally {
+      if (btn) { btn.disabled = false; btn.innerHTML = '<i class="icon-bolt"></i> ai fix'; }
+    }
+  },
+
   _defaultCode(lang) {
     const l = lang || this._currentLang || 'cpp';
     const templates = {
@@ -6163,6 +7407,16 @@ int main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     
+    // Your solution here
+    
+    return 0;
+}
+`,
+      c: `#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int main() {
     // Your solution here
     
     return 0;
@@ -6199,6 +7453,243 @@ rl.on('close', () => {
     
 });
 `,
+      typescript: `import * as readline from 'readline';
+const rl = readline.createInterface({ input: process.stdin });
+const lines: string[] = [];
+
+rl.on('line', (line: string) => lines.push(line));
+rl.on('close', () => {
+    // Your solution here
+    
+});
+`,
+      csharp: `using System;
+using System.IO;
+
+class Solution {
+    static void Main(string[] args) {
+        // Your solution here
+        string line = Console.ReadLine();
+        Console.WriteLine(line);
+    }
+}
+`,
+      go: `package main
+
+import (
+    "bufio"
+    "fmt"
+    "os"
+)
+
+var reader *bufio.Reader
+var writer *bufio.Writer
+
+func main() {
+    reader = bufio.NewReader(os.Stdin)
+    writer = bufio.NewWriter(os.Stdout)
+    defer writer.Flush()
+    
+    // Your solution here
+    var s string
+    fmt.Fscan(reader, &s)
+    fmt.Fprintln(writer, s)
+}
+`,
+      rust: `use std::io::{self, BufRead, Write, BufWriter};
+
+fn main() {
+    let stdin = io::stdin();
+    let stdout = io::stdout();
+    let mut out = BufWriter::new(stdout.lock());
+    
+    for line in stdin.lock().lines() {
+        let line = line.unwrap();
+        // Your solution here
+        writeln!(out, "{}", line).unwrap();
+    }
+}
+`,
+      kotlin: `import java.util.Scanner
+
+fun main() {
+    val sc = Scanner(System.\`in\`)
+    
+    // Your solution here
+    
+}
+`,
+      ruby: `# Your solution here
+while line = gets&.chomp
+    puts line
+end
+`,
+      php: `<?php
+// Your solution here
+while ($line = trim(fgets(STDIN))) {
+    echo $line . PHP_EOL;
+}
+?>
+`,
+      perl: `use strict;
+use warnings;
+
+# Your solution here
+while (<STDIN>) {
+    chomp;
+    print "$_\n";
+}
+`,
+      lua: `-- Your solution here
+for line in io.lines() do
+    print(line)
+end
+`,
+      shell: `#!/bin/bash
+
+# Your solution here
+while IFS= read -r line; do
+    echo "$line"
+done
+`,
+      powershell: `# Your solution here
+$input | ForEach-Object {
+    Write-Output $_
+}
+`,
+      r: `con <- file("stdin", "r")
+lines <- readLines(con)
+close(con)
+
+# Your solution here
+cat(lines, sep="\n")
+`,
+      julia: `# Your solution here
+for line in eachline(stdin)
+    println(line)
+end
+`,
+      scala: `import scala.io.Source
+import scala.io.StdIn
+
+object Main extends App {
+    val lines = Source.stdin.getLines().toList
+    
+    // Your solution here
+    
+}
+`,
+      fsharp: `open System
+
+[<EntryPoint>]
+let main _ =
+    // Your solution here
+    let line = Console.ReadLine()
+    printfn "%s" line
+    0
+`,
+      clojure: `(ns solution.core
+  (:require [clojure.string :as str]))
+
+(defn -main []
+  ;; Your solution here
+  (let [line (read-line)]
+    (println line)))
+
+(-main)
+`,
+      scheme: `(define (main)
+  ;; Your solution here
+  (let ((line (read-line)))
+    (display line)
+    (newline)))
+
+(main)
+`,
+      swift: `import Foundation
+
+// Your solution here
+while let line = readLine() {
+    print(line)
+}
+`,
+      dart: `import 'dart:io';
+
+void main() {
+    // Your solution here
+    String? line = stdin.readLineSync();
+    print(line);
+}
+`,
+      objectivec: `#import <Foundation/Foundation.h>
+
+int main(int argc, char *argv[]) {
+    @autoreleasepool {
+        // Your solution here
+        NSFileHandle *fh = [NSFileHandle fileHandleWithStandardInput];
+        NSData *data = [fh readDataToEndOfFile];
+        NSString *input = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        NSLog(@"%@", input);
+    }
+    return 0;
+}
+`,
+      sql: `-- Your solution here
+SELECT *
+FROM table_name
+WHERE condition;
+`,
+      pgsql: `-- Your solution here (PostgreSQL)
+SELECT *
+FROM table_name
+WHERE condition;
+`,
+      pascal: `program Solution;
+var
+    line : string;
+begin
+    { Your solution here }
+    readln(line);
+    writeln(line);
+end.
+`,
+      vb: `Imports System
+
+Module Solution
+    Sub Main()
+        ' Your solution here
+        Dim line As String = Console.ReadLine()
+        Console.WriteLine(line)
+    End Sub
+End Module
+`,
+      elixir: `defmodule Solution do
+  def main do
+    # Your solution here
+    IO.gets("")
+    |> String.trim()
+    |> IO.puts()
+  end
+end
+
+Solution.main()
+`,
+      tcl: `# Your solution here
+while {[gets stdin line] >= 0} {
+    puts $line
+}
+`,
+      solidity: `// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Solution {
+    // Your solution here
+    
+    function execute() public pure returns (string memory) {
+        return "Hello, World!";
+    }
+}
+`,
     };
     return templates[l] || templates.cpp;
   },
@@ -6206,11 +7697,19 @@ rl.on('close', () => {
   /* ===== LANGUAGE SELECTOR ===== */
   toggleLangMenu() {
     const menu = document.getElementById('langMenu');
+    const isOpen = !menu.classList.contains('hidden');
     menu.classList.toggle('hidden');
-    // Close on outside click
-    if (!menu.classList.contains('hidden')) {
+    if (!isOpen) {
+      // Position using fixed coords so it escapes any overflow:hidden ancestor
+      const btn = document.getElementById('langSelectorBtn');
+      const rect = btn.getBoundingClientRect();
+      menu.style.top  = (rect.bottom + 4) + 'px';
+      menu.style.left = rect.left + 'px';
+      this._buildLangMenu();
+      const search = document.getElementById('langSearch');
+      if (search) { search.value = ''; this._filterLangs(''); setTimeout(() => search.focus(), 50); }
       const close = (e) => {
-        if (!e.target.closest('.lang-selector')) {
+        if (!e.target.closest('.lang-selector') && !e.target.closest('#langMenu')) {
           menu.classList.add('hidden');
           document.removeEventListener('click', close);
         }
@@ -6225,20 +7724,54 @@ rl.on('close', () => {
       return;
     }
     this._currentLang = lang;
-    // Update selector button
-    document.getElementById('langIcon').className = this._langIconMap[lang];
-    document.getElementById('langLabel').textContent = this._langLabelMap[lang];
-    // Update active state in menu
+    const langDef = this._langs.find(l => l.id === lang);
+    if (langDef) {
+      const badge = document.getElementById('langBadge');
+      if (badge) { badge.textContent = langDef.badge; badge.className = `lang-badge group-${langDef.g}`; }
+      const lbl = document.getElementById('langLabel');
+      if (lbl) lbl.textContent = langDef.label;
+    }
     document.querySelectorAll('.lang-option').forEach(el => {
       el.classList.toggle('active', el.dataset.lang === lang);
     });
     document.getElementById('langMenu').classList.add('hidden');
-    // Switch editor language and template
     if (this.editor) {
+      const monacoLang = langDef ? langDef.mono : 'plaintext';
       const model = this.editor.getModel();
-      monaco.editor.setModelLanguage(model, this._monacoLangMap[lang]);
+      monaco.editor.setModelLanguage(model, monacoLang);
       this.editor.setValue(this._defaultCode(lang));
     }
+  },
+
+  _buildLangMenu() {
+    const container = document.getElementById('langGroups');
+    if (!container) return;
+    container.innerHTML = '';
+    const groupOrder = ['popular','scripting','data','functional','mobile','db','classic','other'];
+    groupOrder.forEach(gKey => {
+      const langs = this._langs.filter(l => l.g === gKey);
+      if (!langs.length) return;
+      const info = this._langGroups[gKey];
+      const section = document.createElement('div');
+      section.className = 'lang-group-section';
+      section.dataset.group = gKey;
+      section.innerHTML = `<div class="lang-group-label" style="color:${info.color}">${info.label}</div>` +
+        langs.map(l => `<button class="lang-option${l.id === this._currentLang ? ' active' : ''}" data-lang="${l.id}" onclick="App.selectLang('${l.id}')"><span class="lang-badge group-${l.g}">${l.badge}</span>${l.label}</button>`).join('');
+      container.appendChild(section);
+    });
+  },
+
+  _filterLangs(q) {
+    const query = q.toLowerCase();
+    document.querySelectorAll('#langGroups .lang-group-section').forEach(section => {
+      let visible = 0;
+      section.querySelectorAll('.lang-option').forEach(btn => {
+        const match = !query || btn.textContent.toLowerCase().includes(query) || btn.dataset.lang.includes(query);
+        btn.style.display = match ? '' : 'none';
+        if (match) visible++;
+      });
+      section.style.display = visible ? '' : 'none';
+    });
   },
 
   /* ===================================================
