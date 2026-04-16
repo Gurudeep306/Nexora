@@ -1,16 +1,28 @@
 require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') });
+const crypto = require('crypto');
+const fs = require('fs');
 const express = require('express');
 const compression = require('compression');
 const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const path = require('path');
 const fetch = require('node-fetch');
 const cheerio = require('cheerio');
 const puppeteer = require('puppeteer');
 const http = require('http');
+const session = require('express-session');
+const passport = require('passport');
+const GitHubStrategy = require('passport-github2').Strategy;
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const { Server: SocketServer } = require('socket.io');
 const { run, get, all, initDb } = require('./db');
 const { fetchCodeforcesProblems, fetchCodechefProblems, fetchCodeforcesContests, fetchCodechefContests, fetchCodeforcesSolved, fetchAtcoderProblems, fetchAtcoderContests, fetchLeetcodeProblems, fetchSpojProblems, fetchProjectEulerProblems } = require('./sync');
 const { judge, quickRun, LANG_CONFIG } = require('./judge');
+const multer = require('multer');
+
+const IS_PROD = process.env.NODE_ENV === 'production';
+const APP_URL = process.env.APP_URL || `http://localhost:${process.env.PORT || 3000}`;
 
 /* ========== Lightweight HTTP Scrapers (fast, no browser) ========== */
 const SCRAPE_UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
@@ -359,9 +371,266 @@ async function _scrapeAC(page, problem) {
 }
 
 const app = express();
+
+/* ── Trust proxy (for Nginx / Cloudflare / Railway / Render) ── */
+if (IS_PROD) app.set('trust proxy', 1);
+
+/* ── Compression ── */
 app.use(compression());
-app.use(cors());
-app.use(express.json({ limit: '5mb' }));
+
+/* ── Helmet — security headers ── */
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: [
+        "'self'",
+        "'unsafe-inline'",          // Monaco loader needs this
+        "'unsafe-eval'",             // Monaco worker needs this
+        'https://cdn.jsdelivr.net',
+        'https://cdnjs.cloudflare.com',
+        'https://cdn.socket.io',
+        'https://cdn.quilljs.com',
+      ],
+      scriptSrcAttr: ["'unsafe-inline'"],  // inline onclick handlers
+      styleSrc: [
+        "'self'",
+        "'unsafe-inline'",
+        'https://fonts.googleapis.com',
+        'https://cdn.jsdelivr.net',
+        'https://cdnjs.cloudflare.com',
+        'https://cdn.quilljs.com',
+      ],
+      fontSrc: [
+        "'self'",
+        'https://fonts.gstatic.com',
+        'https://cdn.jsdelivr.net',
+        'https://cdnjs.cloudflare.com',
+        'data:',
+      ],
+      imgSrc: ["'self'", 'data:', 'https:', 'blob:'],
+      connectSrc: [
+        "'self'",
+        'wss:',
+        'ws:',
+        'https://api.groq.com',
+      ],
+      workerSrc: ["'self'", 'blob:'],
+      frameSrc: ["'self'", "https://www.youtube.com"],
+      objectSrc: ["'none'"],
+      baseUri: ["'self'"],
+      upgradeInsecureRequests: IS_PROD ? [] : null,
+    },
+  },
+  crossOriginEmbedderPolicy: false, // Monaco CDN workers
+  hsts: IS_PROD ? { maxAge: 31536000, includeSubDomains: true, preload: true } : false,
+}));
+
+/* ── CORS ── */
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim())
+  : ['http://localhost:3000', 'http://127.0.0.1:3000'];
+
+app.use(cors({
+  origin: IS_PROD ? allowedOrigins : true,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+
+/* ── Body parsing ── */
+app.use(express.json({ limit: '2mb' }));
+app.use(express.urlencoded({ extended: false, limit: '2mb' }));
+
+/* ── Rate Limiters ── */
+// Global limiter — 300 req/min per IP
+const globalLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 300,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { ok: false, error: 'Too many requests — please slow down.' },
+  skip: (req) => !IS_PROD, // only in production
+});
+app.use(globalLimiter);
+
+// Strict limiter for auth endpoints — 10 req/min
+const authLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { ok: false, error: 'Too many auth attempts — try again in a minute.' },
+});
+
+// Judge limiter — 30 submissions/min per IP
+const judgeLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { ok: false, error: 'Submission rate limit reached — wait a moment.' },
+});
+
+// AI limiter — 20 req/min per IP
+const aiLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { ok: false, error: 'AI rate limit reached — please wait.' },
+});
+
+/* ── Session & Passport ── */
+const sessionSecret = process.env.SESSION_SECRET;
+if (!sessionSecret || sessionSecret.length < 32) {
+  if (IS_PROD) {
+    console.error('[FATAL] SESSION_SECRET must be set and at least 32 characters in production.');
+    process.exit(1);
+  } else {
+    console.warn('[WARN] SESSION_SECRET not set — using insecure dev fallback. Set it before going to production!');
+  }
+}
+
+app.use(session({
+  secret: sessionSecret || 'nexora-dev-fallback-secret-do-not-use-in-prod',
+  resave: false,
+  saveUninitialized: false,
+  name: 'nx.sid',
+  cookie: {
+    secure: IS_PROD,          // HTTPS only in production
+    httpOnly: true,            // Not accessible via JS
+    sameSite: IS_PROD ? 'strict' : 'lax',
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+  },
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.serializeUser((user, done) => done(null, user));
+passport.deserializeUser((obj, done) => done(null, obj));
+
+/* ── GitHub OAuth Strategy ── */
+if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
+  passport.use(new GitHubStrategy({
+    clientID: process.env.GITHUB_CLIENT_ID,
+    clientSecret: process.env.GITHUB_CLIENT_SECRET,
+    callbackURL: `${APP_URL}/auth/github/callback`,
+    scope: ['user:email']
+  }, (accessToken, refreshToken, profile, done) => {
+    const user = {
+      provider: 'github',
+      providerId: profile.id,
+      displayName: profile.displayName || profile.username,
+      email: profile.emails?.[0]?.value || '',
+      avatarUrl: profile.photos?.[0]?.value || '',
+      username: profile.username || ''
+    };
+    done(null, user);
+  }));
+  console.log('✓ GitHub OAuth configured');
+}
+
+/* ── Google OAuth Strategy ── */
+if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+  passport.use(new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: `${APP_URL}/auth/google/callback`,
+    scope: ['profile', 'email']
+  }, (accessToken, refreshToken, profile, done) => {
+    const user = {
+      provider: 'google',
+      providerId: profile.id,
+      displayName: profile.displayName || '',
+      email: profile.emails?.[0]?.value || '',
+      avatarUrl: profile.photos?.[0]?.value || '',
+      username: ''
+    };
+    done(null, user);
+  }));
+  console.log('✓ Google OAuth configured');
+}
+
+/* ── OAuth Routes ── */
+app.get('/auth/github', authLimiter, (req, res, next) => {
+  if (!process.env.GITHUB_CLIENT_ID) return res.redirect('/?auth_error=github_not_configured');
+  passport.authenticate('github', { scope: ['user:email'] })(req, res, next);
+});
+app.get('/auth/github/callback',
+  passport.authenticate('github', { failureRedirect: '/?auth_error=github_failed' }),
+  (req, res) => {
+    // Store OAuth data in session and redirect to app
+    req.session.oauthUser = req.user;
+    res.redirect('/?auth=github');
+  }
+);
+
+app.get('/auth/google', authLimiter, (req, res, next) => {
+  if (!process.env.GOOGLE_CLIENT_ID) return res.redirect('/?auth_error=google_not_configured');
+  passport.authenticate('google', { scope: ['profile', 'email'] })(req, res, next);
+});
+app.get('/auth/google/callback',
+  passport.authenticate('google', { failureRedirect: '/?auth_error=google_failed' }),
+  (req, res) => {
+    req.session.oauthUser = req.user;
+    res.redirect('/?auth=google');
+  }
+);
+
+/* ── Auth Status & Data ── */
+app.get('/api/auth/status', (req, res) => {
+  if (req.session?.oauthUser) {
+    return res.json({ ok: true, authenticated: true, user: req.session.oauthUser });
+  }
+  res.json({ ok: true, authenticated: false });
+});
+
+/* ── Health Check — for load balancers and uptime monitors ── */
+const _startTime = Date.now();
+app.get('/api/health', (req, res) => {
+  res.json({
+    ok: true,
+    uptime: Math.floor((Date.now() - _startTime) / 1000),
+    timestamp: new Date().toISOString(),
+    version: process.env.npm_package_version || '2.0.0',
+    env: IS_PROD ? 'production' : 'development',
+  });
+});
+
+app.get('/api/auth/providers', (req, res) => {
+  res.json({
+    ok: true,
+    github: !!process.env.GITHUB_CLIENT_ID,
+    google: !!process.env.GOOGLE_CLIENT_ID
+  });
+});
+
+app.post('/api/auth/logout', (req, res) => {
+  req.session.destroy((err) => {
+    res.clearCookie('nx.sid');
+    res.json({ ok: !err });
+  });
+});
+
+/* ── Username Availability Check ── */
+app.get('/api/user/check-username', async (req, res) => {
+  try {
+    const username = (req.query.username || '').trim();
+    if (!username || username.length < 2 || username.length > 20) {
+      return res.json({ ok: true, available: false, reason: 'Username must be 2-20 characters' });
+    }
+    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+      return res.json({ ok: true, available: false, reason: 'Only letters, numbers, underscores' });
+    }
+    const existing = await get('SELECT username FROM users WHERE LOWER(username)=LOWER(?)', [username]);
+    if (existing) {
+      return res.json({ ok: true, available: false, reason: 'Username already taken' });
+    }
+    res.json({ ok: true, available: true });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
 app.use(express.static(path.join(__dirname, '..', 'public'), {
   maxAge: '1h',
   etag: true,
@@ -691,7 +960,7 @@ app.delete('/api/testcases/:id', async (req, res) => {
 });
 
 /* ========== JUDGE ========== */
-app.post('/api/judge', async (req, res) => {
+app.post('/api/judge', judgeLimiter, async (req, res) => {
   try {
     const { problem_id, code, testcases, language } = req.body;
     const lang = LANG_CONFIG[language] ? language : 'cpp';
@@ -739,7 +1008,7 @@ app.post('/api/judge', async (req, res) => {
   }
 });
 
-app.post('/api/run', async (req, res) => {
+app.post('/api/run', judgeLimiter, async (req, res) => {
   try {
     const { code, input, language } = req.body;
     const lang = LANG_CONFIG[language] ? language : 'cpp';
@@ -767,8 +1036,18 @@ app.get('/api/stats', async (req, res) => {
       (SELECT COALESCE(SUM(xp_earned),0) FROM progress) as totalXp,
       (SELECT COUNT(*) FROM submissions) as submissions,
       (SELECT COUNT(*) FROM submissions WHERE verdict='AC') as acCount`);
-    const { total, solved, attempted, totalXp, submissions: submissionCount, acCount } = counts;
+    let { total, solved, attempted, totalXp, submissions: submissionCount, acCount } = counts;
     const accuracy = submissionCount > 0 ? Math.round(acCount / submissionCount * 100) : 0;
+
+    // Apply admin overrides if user is logged in
+    const username = req.query.username;
+    if (username) {
+      const user = await get('SELECT xp_override, solved_override, role FROM users WHERE username=?', [username]);
+      if (user) {
+        totalXp += (user.xp_override || 0);
+        solved += (user.solved_override || 0);
+      }
+    }
 
     // Parallel independent queries
     const [ratingDist, platformDist, streak, heatmap, recent, achievements, verdicts, dailyChallenges] = await Promise.all([
@@ -972,19 +1251,34 @@ async function calcXp(problemId) {
   return 150;
 }
 
-/* ── Unified Rift Levels — single progression system ── */
+/* ── Unified Rift Levels — single progression system ──
+   Each level gate requires 100+ NEW problems from the previous tier.
+   XP thresholds are calibrated to roughly match solving that many
+   problems at the tier's average XP value.
+   Level-up breakdown (new problems required per jump):
+     Bit→Byte        +100 probs   (total 100)
+     Byte→Kilobyte   +120 probs   (total 220)
+     Kilobyte→Mega   +160 probs   (total 380)
+     Mega→Giga       +170 probs   (total 550)
+     Giga→Tera       +200 probs   (total 750)
+     Tera→Peta       +250 probs   (total 1,000)
+     Peta→Exa        +350 probs   (total 1,350)
+     Exa→Zetta       +450 probs   (total 1,800)
+     Zetta→Yotta     +700 probs   (total 2,500)
+     Yotta→∞         +1,000 probs (total 3,500)
+*/
 const RIFT_LEVELS = [
   { level:1,  name:'Bit',        badge:'⚡', xp:0,       minProblems:0,     minR:0,    maxR:800,   color:'#6b7280', glow:'none' },
-  { level:2,  name:'Byte',       badge:'◆',  xp:100,     minProblems:10,    minR:800,  maxR:1000,  color:'#84cc16', glow:'none' },
-  { level:3,  name:'Kilobyte',   badge:'◈',  xp:400,     minProblems:30,    minR:1000, maxR:1200,  color:'#22c55e', glow:'0 0 6px rgba(34,197,94,0.3)' },
-  { level:4,  name:'Megabyte',   badge:'✦',  xp:1200,    minProblems:80,    minR:1200, maxR:1400,  color:'#06b6d4', glow:'0 0 8px rgba(6,182,212,0.3)' },
-  { level:5,  name:'Gigabyte',   badge:'★',  xp:3500,    minProblems:180,   minR:1400, maxR:1600,  color:'#3b82f6', glow:'0 0 10px rgba(59,130,246,0.4)' },
-  { level:6,  name:'Terabyte',   badge:'◉',  xp:8000,    minProblems:350,   minR:1600, maxR:1800,  color:'#8b5cf6', glow:'0 0 12px rgba(139,92,246,0.5)' },
-  { level:7,  name:'Petabyte',   badge:'♦',  xp:18000,   minProblems:600,   minR:1800, maxR:2000,  color:'#d946ef', glow:'0 0 14px rgba(217,70,239,0.5)' },
-  { level:8,  name:'Exabyte',    badge:'✧',  xp:40000,   minProblems:1000,  minR:2000, maxR:2200,  color:'#f43f5e', glow:'0 0 16px rgba(244,63,94,0.6)' },
-  { level:9,  name:'Zettabyte',  badge:'⬡',  xp:85000,   minProblems:1600,  minR:2200, maxR:2500,  color:'#ef4444', glow:'0 0 18px rgba(239,68,68,0.6)' },
+  { level:2,  name:'Byte',       badge:'◆',  xp:800,     minProblems:100,   minR:800,  maxR:1000,  color:'#84cc16', glow:'none' },
+  { level:3,  name:'Kilobyte',   badge:'◈',  xp:2000,    minProblems:220,   minR:1000, maxR:1200,  color:'#22c55e', glow:'0 0 6px rgba(34,197,94,0.3)' },
+  { level:4,  name:'Megabyte',   badge:'✦',  xp:4500,    minProblems:380,   minR:1200, maxR:1400,  color:'#06b6d4', glow:'0 0 8px rgba(6,182,212,0.3)' },
+  { level:5,  name:'Gigabyte',   badge:'★',  xp:9000,    minProblems:550,   minR:1400, maxR:1600,  color:'#3b82f6', glow:'0 0 10px rgba(59,130,246,0.4)' },
+  { level:6,  name:'Terabyte',   badge:'◉',  xp:18000,   minProblems:750,   minR:1600, maxR:1800,  color:'#8b5cf6', glow:'0 0 12px rgba(139,92,246,0.5)' },
+  { level:7,  name:'Petabyte',   badge:'♦',  xp:34000,   minProblems:1000,  minR:1800, maxR:2000,  color:'#d946ef', glow:'0 0 14px rgba(217,70,239,0.5)' },
+  { level:8,  name:'Exabyte',    badge:'✧',  xp:62000,   minProblems:1350,  minR:2000, maxR:2200,  color:'#f43f5e', glow:'0 0 16px rgba(244,63,94,0.6)' },
+  { level:9,  name:'Zettabyte',  badge:'⬡',  xp:107000,  minProblems:1800,  minR:2200, maxR:2500,  color:'#ef4444', glow:'0 0 18px rgba(239,68,68,0.6)' },
   { level:10, name:'Yottabyte',  badge:'♛',  xp:180000,  minProblems:2500,  minR:2500, maxR:2800,  color:'#f59e0b', glow:'0 0 22px rgba(245,158,11,0.7)' },
-  { level:11, name:'∞ Overflow', badge:'∞',  xp:400000,  minProblems:4000,  minR:2800, maxR:3500,  color:'#fbbf24', glow:'0 0 28px rgba(251,191,36,0.8)' },
+  { level:11, name:'∞ Overflow', badge:'∞',  xp:310000,  minProblems:3500,  minR:2800, maxR:3500,  color:'#fbbf24', glow:'0 0 28px rgba(251,191,36,0.8)' },
 ];
 
 function calcLevel(xp, solvedCount = 0) {
@@ -1006,16 +1300,35 @@ function calcLevel(xp, solvedCount = 0) {
   };
 }
 
+function _buildLastWeek(sevenDayRows) {
+  const today = new Date();
+  const lastWeek = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const ds = d.toISOString().slice(0, 10);
+    const found = sevenDayRows.find(r => r.date === ds);
+    lastWeek.push({ date: ds, solved: found ? found.problems_solved : 0 });
+  }
+  return lastWeek;
+}
+
 async function calcStreak() {
   // Current streak: only need recent consecutive days, not entire table
   const today = new Date().toISOString().slice(0, 10);
   const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
 
+  // Last 7 days for the streak calendar widget
+  const sevenDayRows = await all(
+    "SELECT date, problems_solved FROM daily_activity WHERE date >= date('now','-6 days') ORDER BY date ASC"
+  );
+  const lastWeek = _buildLastWeek(sevenDayRows);
+
   // Fetch only last 400 days (more than enough for any reasonable streak)
   const rows = await all(
     "SELECT date FROM daily_activity WHERE problems_solved > 0 AND date >= date('now','-400 days') ORDER BY date DESC"
   );
-  if (!rows.length) return { current: 0, best: 0 };
+  if (!rows.length) return { current: 0, best: 0, lastWeek };
 
   let current = 0;
   let prev = null;
@@ -1040,7 +1353,7 @@ async function calcStreak() {
   }
   if (streak > best) best = streak;
 
-  return { current, best };
+  return { current, best, lastWeek };
 }
 
 async function checkAchievements(problemId, verdict) {
@@ -1576,12 +1889,14 @@ app.get('/api/nexus', async (req, res) => {
         return req && req.progress >= 100;
       });
       const zoneUnlocked = playerLevel.level >= skill.zone;
+      // Zone 11 (∞ Overflow) unlocks all its nodes once the player reaches level 11
+      const overflowUnlock = skill.zone === 11 && zoneUnlocked;
       const progress = Math.min(100, Math.round(solvedCount / skill.target * 100));
       nodes.push({
         ...skill,
         solved: Math.min(solvedCount, skill.target),
         progress,
-        unlocked: (prereqsMet && zoneUnlocked) || progress > 0,
+        unlocked: overflowUnlock || (prereqsMet && zoneUnlocked) || progress > 0,
         completed: progress >= 100,
       });
     }
@@ -1596,7 +1911,8 @@ app.get('/api/nexus', async (req, res) => {
         level: rl.level, name: rl.name, color: rl.color, glow: rl.glow,
         xpRequired: rl.xp, probsRequired: rl.minProblems,
         minR: rl.minR, maxR: rl.maxR,
-        unlocked: playerLevel.level >= rl.level || playerLevel.level === rl.level - 1,
+        unlocked: true, // all zones are always browsable
+        locked: playerLevel.level < rl.level, // true = not yet reached (shows requirement banner)
         completed: playerLevel.level > rl.level && zoneProgress === 100,
         current: playerLevel.level === rl.level,
         nodeCount: totalNodes,
@@ -1773,6 +2089,11 @@ app.get('/api/level-roadmap', async (req, res) => {
       const rl = RIFT_LEVELS[lt.level - 1];
       const topicsResult = [];
 
+      // For ∞ Overflow (level 11), lower the floor to 2200 and remove the ceiling
+      // so practice problems actually appear in the DB (very few problems rated 2800+ exist)
+      const queryMinR = lt.level === 11 ? 2200 : rl.minR;
+      const queryMaxR = lt.level === 11 ? 99999 : rl.maxR;
+
       for (const topic of lt.topics) {
         const tagCond = topic.tags.map(() => 'p.tags LIKE ?').join(' OR ');
         const tagParams = topic.tags.map(t => `%${t}%`);
@@ -1785,8 +2106,8 @@ app.get('/api/level-roadmap', async (req, res) => {
           WHERE (${tagCond})
             AND p.rating >= ? AND p.rating <= ?
             AND p.rating > 0
-          ORDER BY p.rating ASC
-        `, [...tagParams, rl.minR, rl.maxR]);
+          ORDER BY p.rating DESC
+        `, [...tagParams, queryMinR, queryMaxR]);
 
         const shuffled = seededShuffle(pool, weekSeed + lt.level * 100 + topic.tags.length);
         const unsolved = shuffled.filter(p => p.solve_status !== 'solved');
@@ -1816,7 +2137,7 @@ app.get('/api/level-roadmap', async (req, res) => {
         maxR: rl.maxR,
         xpRequired: rl.xp,
         probsRequired: rl.minProblems,
-        unlocked: playerLevel.level >= lt.level || playerLevel.level === lt.level - 1,
+        unlocked: true, // all levels are always browsable
         current: playerLevel.level === lt.level,
         topics: topicsResult,
         totalProblems: allProbs.length,
@@ -1914,25 +2235,164 @@ app.get('/api/skill-tree/:nodeId/problems', async (req, res) => {
 });
 
 /* ========== SOCIAL: USER PROFILE ========== */
+/* ========== Admin username (god mode) ========== */
+const ADMIN_USERS = ['gurudeep', 'gurudeeppaidipati'];
+
+// Password hashing with scrypt
+function hashPassword(password) {
+  return new Promise((resolve, reject) => {
+    const salt = crypto.randomBytes(16).toString('hex');
+    crypto.scrypt(password, salt, 64, (err, derived) => {
+      if (err) reject(err);
+      resolve(salt + ':' + derived.toString('hex'));
+    });
+  });
+}
+function verifyPassword(password, hash) {
+  return new Promise((resolve, reject) => {
+    const [salt, key] = hash.split(':');
+    crypto.scrypt(password, salt, 64, (err, derived) => {
+      if (err) reject(err);
+      resolve(crypto.timingSafeEqual(Buffer.from(key, 'hex'), derived));
+    });
+  });
+}
+
 app.post('/api/user/register', async (req, res) => {
   try {
-    const { username, display_name, avatar, bio } = req.body;
+    const { username, display_name, avatar, bio, provider, provider_id, email, avatar_url, password } = req.body;
     if (!username || typeof username !== 'string' || username.length < 2 || username.length > 20) {
       return res.status(400).json({ ok: false, error: 'Username must be 2-20 characters' });
     }
     const clean = username.replace(/[^a-zA-Z0-9_]/g, '');
     if (clean !== username) return res.status(400).json({ ok: false, error: 'Username can only contain letters, numbers, underscores' });
+    const isAdmin = ADMIN_USERS.includes(clean.toLowerCase());
+    const role = isAdmin ? 'admin' : 'member';
+    const xpOverride = isAdmin ? 500000 : 0;
+    const solvedOverride = isAdmin ? 5000 : 0;
     const existing = await get('SELECT * FROM users WHERE username=?', [clean]);
     if (existing) {
-      await run('UPDATE users SET display_name=?, avatar=?, bio=? WHERE username=?',
-        [display_name || existing.display_name, avatar || existing.avatar, bio !== undefined ? bio : existing.bio, clean]);
+      // For updates, password field is handled separately (not here)
+      await run(`UPDATE users SET display_name=?, avatar=?, bio=?, role=?, xp_override=?, solved_override=?,
+        auth_provider=COALESCE(?,auth_provider), provider_id=COALESCE(?,provider_id),
+        email=COALESCE(?,email), avatar_url=COALESCE(?,avatar_url) WHERE username=?`,
+        [display_name || existing.display_name, avatar || existing.avatar, bio !== undefined ? bio : existing.bio, 
+         isAdmin ? 'admin' : existing.role, isAdmin ? xpOverride : existing.xp_override, isAdmin ? solvedOverride : existing.solved_override,
+         provider || null, provider_id || null, email || null, avatar_url || null, clean]);
       const user = await get('SELECT * FROM users WHERE username=?', [clean]);
+      if (req.session?.oauthUser) delete req.session.oauthUser;
       return res.json({ ok: true, user, updated: true });
     }
-    await run('INSERT INTO users(username,display_name,avatar,bio,status,created_at) VALUES(?,?,?,?,?,?)',
-      [clean, display_name || clean, avatar || 'coder', bio || '', 'online', new Date().toISOString()]);
+    // Hash password for new registrations
+    let pwHash = null;
+    if (password && typeof password === 'string' && password.length >= 4) {
+      pwHash = await hashPassword(password);
+    }
+    await run(`INSERT INTO users(username,display_name,avatar,bio,status,role,xp_override,solved_override,auth_provider,provider_id,email,avatar_url,password_hash,created_at)
+      VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+      [clean, display_name || clean, avatar || 'coder', bio || '', 'online', role, xpOverride, solvedOverride,
+       provider || 'manual', provider_id || null, email || null, avatar_url || null, pwHash, new Date().toISOString()]);
     const user = await get('SELECT * FROM users WHERE username=?', [clean]);
+    if (req.session?.oauthUser) delete req.session.oauthUser;
     res.json({ ok: true, user, created: true });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
+// Login with password
+app.post('/api/user/login', async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    if (!username || !password) return res.status(400).json({ ok: false, error: 'Username and password required' });
+    const clean = username.replace(/[^a-zA-Z0-9_]/g, '');
+    const user = await get('SELECT * FROM users WHERE username=?', [clean]);
+    if (!user) return res.status(404).json({ ok: false, error: 'User not found' });
+    if (!user.password_hash) {
+      // User has no password — allow login (legacy account / OAuth)
+      return res.json({ ok: true, user });
+    }
+    const valid = await verifyPassword(password, user.password_hash);
+    if (!valid) return res.status(401).json({ ok: false, error: 'Incorrect password' });
+    res.json({ ok: true, user });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
+// Update profile (username change, password change, bio, display_name)
+app.put('/api/user/profile', async (req, res) => {
+  try {
+    const { currentUsername, newUsername, displayName, bio, password, currentPassword, avatar, avatarUrl } = req.body;
+    if (!currentUsername) return res.status(400).json({ ok: false, error: 'Current username required' });
+    const user = await get('SELECT * FROM users WHERE username=?', [currentUsername]);
+    if (!user) return res.status(404).json({ ok: false, error: 'User not found' });
+
+    // If changing password, verify current password first (if they have one)
+    if (password && typeof password === 'string') {
+      if (password.length < 4) return res.status(400).json({ ok: false, error: 'Password must be at least 4 characters' });
+      if (user.password_hash && currentPassword) {
+        const valid = await verifyPassword(currentPassword, user.password_hash);
+        if (!valid) return res.status(401).json({ ok: false, error: 'Current password is incorrect' });
+      }
+      const newHash = await hashPassword(password);
+      await run('UPDATE users SET password_hash=? WHERE username=?', [newHash, currentUsername]);
+    }
+
+    // Handle username change
+    let finalUsername = currentUsername;
+    if (newUsername && newUsername !== currentUsername) {
+      const cleanNew = newUsername.replace(/[^a-zA-Z0-9_]/g, '');
+      if (cleanNew !== newUsername || cleanNew.length < 2 || cleanNew.length > 20) {
+        return res.status(400).json({ ok: false, error: 'Invalid new username' });
+      }
+      const taken = await get('SELECT username FROM users WHERE username=?', [cleanNew]);
+      if (taken) return res.status(400).json({ ok: false, error: 'Username already taken' });
+      // Update username in all related tables
+      await run('UPDATE users SET username=? WHERE username=?', [cleanNew, currentUsername]);
+      await run('UPDATE friendships SET from_user=? WHERE from_user=?', [cleanNew, currentUsername]);
+      await run('UPDATE friendships SET to_user=? WHERE to_user=?', [cleanNew, currentUsername]);
+      await run('UPDATE messages SET from_user=? WHERE from_user=?', [cleanNew, currentUsername]);
+      await run('UPDATE messages SET to_user=? WHERE to_user=?', [cleanNew, currentUsername]);
+      await run('UPDATE activity_feed SET username=? WHERE username=?', [cleanNew, currentUsername]).catch(()=>{});
+      finalUsername = cleanNew;
+    }
+
+    // Update display_name, bio, avatar
+    if (displayName !== undefined || bio !== undefined || avatar || avatarUrl) {
+      const current = await get('SELECT * FROM users WHERE username=?', [finalUsername]);
+      await run('UPDATE users SET display_name=?, bio=?, avatar=?, avatar_url=? WHERE username=?',
+        [displayName !== undefined ? displayName : current.display_name,
+         bio !== undefined ? bio : current.bio,
+         avatar || current.avatar,
+         avatarUrl !== undefined ? (avatarUrl || null) : current.avatar_url,
+         finalUsername]);
+    }
+
+    const updated = await get('SELECT * FROM users WHERE username=?', [finalUsername]);
+    res.json({ ok: true, user: updated, usernameChanged: finalUsername !== currentUsername });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
+// Avatar upload (base64 image)
+app.post('/api/user/avatar', async (req, res) => {
+  try {
+    const { username, image } = req.body;
+    if (!username || !image) return res.status(400).json({ ok: false, error: 'Username and image required' });
+    const user = await get('SELECT * FROM users WHERE username=?', [username]);
+    if (!user) return res.status(404).json({ ok: false, error: 'User not found' });
+
+    // Validate base64 image (only allow png, jpg, webp)
+    const match = image.match(/^data:image\/(png|jpe?g|webp);base64,(.+)$/);
+    if (!match) return res.status(400).json({ ok: false, error: 'Invalid image format. Use PNG, JPG, or WebP.' });
+    const ext = match[1] === 'jpeg' ? 'jpg' : match[1];
+    const data = Buffer.from(match[2], 'base64');
+    if (data.length > 2 * 1024 * 1024) return res.status(400).json({ ok: false, error: 'Image too large (max 2MB)' });
+
+    const filename = `${username}_${Date.now()}.${ext}`;
+    const uploadDir = path.join(__dirname, '..', 'public', 'uploads');
+    if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+    fs.writeFileSync(path.join(uploadDir, filename), data);
+
+    const avatarUrl = `/uploads/${filename}`;
+    await run('UPDATE users SET avatar_url=? WHERE username=?', [avatarUrl, username]);
+    res.json({ ok: true, avatar_url: avatarUrl });
   } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
 });
 
@@ -1940,19 +2400,651 @@ app.get('/api/user/profile/:username', async (req, res) => {
   try {
     const user = await get('SELECT * FROM users WHERE username=?', [req.params.username]);
     if (!user) return res.status(404).json({ ok: false, error: 'User not found' });
+    const baseSolved = (await get("SELECT COUNT(*) as c FROM progress WHERE status='solved'"))?.c || 0;
+    const baseXp = (await get('SELECT COALESCE(SUM(xp_earned),0) as s FROM progress'))?.s || 0;
     const stats = {
-      solved: (await get("SELECT COUNT(*) as c FROM progress WHERE status='solved'"))?.c || 0,
-      totalXp: (await get('SELECT COALESCE(SUM(xp_earned),0) as s FROM progress'))?.s || 0,
+      solved: baseSolved + (user.solved_override || 0),
+      totalXp: baseXp + (user.xp_override || 0),
     };
-    res.json({ ok: true, user, stats });
+    const level = calcLevel(stats.totalXp, stats.solved);
+    const streak = await calcStreak();
+    // Friendship status relative to viewer
+    let friendStatus = 'none'; // none | pending_sent | pending_received | friends
+    const viewer = req.query.viewer;
+    if (viewer && viewer !== req.params.username) {
+      const f = await get(`SELECT * FROM friendships WHERE
+        (from_user=? AND to_user=?) OR (from_user=? AND to_user=?)`,
+        [viewer, req.params.username, req.params.username, viewer]);
+      if (f) {
+        if (f.status === 'accepted') friendStatus = 'friends';
+        else if (f.from_user === viewer) friendStatus = 'pending_sent';
+        else friendStatus = 'pending_received';
+      }
+    }
+    // Friend count
+    const friendCount = (await get(`SELECT COUNT(*) as c FROM friendships WHERE (from_user=? OR to_user=?) AND status='accepted'`,
+      [req.params.username, req.params.username]))?.c || 0;
+    // Activity (recent solves, room creation, etc)
+    const activity = await all(`SELECT * FROM activity_feed WHERE username=? ORDER BY created_at DESC LIMIT 10`,
+      [req.params.username]);
+    // Member since
+    const memberSince = user.created_at;
+    res.json({ ok: true, user: { ...user, email: undefined, provider_id: undefined }, stats, level, streak: streak.current || 0, friendStatus, friendCount, activity, memberSince });
   } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
 });
+
+/* Admin: set any user's role */
+app.post('/api/admin/set-role', async (req, res) => {
+  try {
+    const { adminUser, targetUser, role } = req.body;
+    const admin = await get('SELECT * FROM users WHERE username=?', [adminUser]);
+    if (!admin || admin.role !== 'admin') return res.status(403).json({ ok: false, error: 'Unauthorized' });
+    await run('UPDATE users SET role=? WHERE username=?', [role, targetUser]);
+    res.json({ ok: true });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
+/* Admin: list all users */
+app.get('/api/admin/users', async (req, res) => {
+  try {
+    const adminUser = req.query.admin;
+    const admin = await get('SELECT * FROM users WHERE username=?', [adminUser]);
+    if (!admin || admin.role !== 'admin') return res.status(403).json({ ok: false, error: 'Unauthorized' });
+    const users = await all('SELECT username, display_name, avatar, bio, role, status, last_seen, created_at FROM users ORDER BY created_at DESC');
+    res.json({ ok: true, users });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
+/* ========== CREATOR STUDIO — CMS ========== */
+
+// ── Admin password check middleware ──
+const STUDIO_PASS = process.env.STUDIO_PASSWORD || 'nexora-studio';
+function studioAuth(req, res, next) {
+  const token = req.headers['x-studio-token'] || req.query.token;
+  if (token !== STUDIO_PASS) return res.status(401).json({ ok: false, error: 'Unauthorized' });
+  next();
+}
+
+// ── File upload (images/videos → public/uploads/studio/) ──
+const studioUploadDir = path.join(__dirname, '..', 'public', 'uploads', 'studio');
+if (!fs.existsSync(studioUploadDir)) fs.mkdirSync(studioUploadDir, { recursive: true });
+const studioStorage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, studioUploadDir),
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname).toLowerCase();
+    cb(null, `${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`);
+  },
+});
+const studioUpload = multer({
+  storage: studioStorage,
+  limits: { fileSize: 50 * 1024 * 1024 }, // 50 MB
+  fileFilter: (req, file, cb) => {
+    const ok = /\.(jpg|jpeg|png|gif|webp|mp4|webm|mov|pdf|svg)$/i.test(file.originalname);
+    cb(ok ? null : new Error('Unsupported file type'), ok);
+  },
+});
+
+// Serve the studio page
+app.get('/studio', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'public', 'studio.html'));
+});
+
+// POST /api/studio/upload — media upload
+app.post('/api/studio/upload', studioAuth, studioUpload.single('file'), (req, res) => {
+  if (!req.file) return res.status(400).json({ ok: false, error: 'No file' });
+  const url = `/uploads/studio/${req.file.filename}`;
+  res.json({ ok: true, url, name: req.file.originalname, size: req.file.size });
+});
+
+// ── COURSES ──
+app.get('/api/studio/courses', studioAuth, async (req, res) => {
+  try {
+    const courses = await all('SELECT * FROM cms_courses ORDER BY order_idx, id');
+    for (const c of courses) {
+      c.chapters = await all('SELECT * FROM cms_chapters WHERE course_id=? ORDER BY order_idx, id', [c.id]);
+      for (const ch of c.chapters) {
+        ch.lessons = await all('SELECT id, title, slug, order_idx, published, duration_min FROM cms_lessons WHERE chapter_id=? ORDER BY order_idx, id', [ch.id]);
+      }
+    }
+    res.json({ ok: true, courses });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
+app.post('/api/studio/courses', studioAuth, async (req, res) => {
+  try {
+    const { title, description = '', icon = '📚', color = '#6c63ff', section = 'learn', order_idx = 0 } = req.body;
+    if (!title) return res.status(400).json({ ok: false, error: 'title required' });
+    const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    const r = await run('INSERT INTO cms_courses(slug,title,description,icon,color,section,order_idx) VALUES(?,?,?,?,?,?,?)',
+      [slug, title, description, icon, color, section, order_idx]);
+    res.json({ ok: true, id: r.lastID, slug });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
+app.put('/api/studio/courses/:id', studioAuth, async (req, res) => {
+  try {
+    const { title, description, icon, color, section, order_idx, published } = req.body;
+    await run(`UPDATE cms_courses SET title=COALESCE(?,title), description=COALESCE(?,description),
+      icon=COALESCE(?,icon), color=COALESCE(?,color), section=COALESCE(?,section),
+      order_idx=COALESCE(?,order_idx), published=COALESCE(?,published),
+      updated_at=datetime('now') WHERE id=?`,
+      [title, description, icon, color, section, order_idx, published, req.params.id]);
+    res.json({ ok: true });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
+app.delete('/api/studio/courses/:id', studioAuth, async (req, res) => {
+  try {
+    await run('DELETE FROM cms_courses WHERE id=?', [req.params.id]);
+    res.json({ ok: true });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
+// ── CHAPTERS ──
+app.post('/api/studio/chapters', studioAuth, async (req, res) => {
+  try {
+    const { course_id, title, description = '', order_idx = 0 } = req.body;
+    if (!course_id || !title) return res.status(400).json({ ok: false, error: 'course_id + title required' });
+    const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    const r = await run('INSERT INTO cms_chapters(course_id,slug,title,description,order_idx) VALUES(?,?,?,?,?)',
+      [course_id, slug, title, description, order_idx]);
+    res.json({ ok: true, id: r.lastID, slug });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
+app.put('/api/studio/chapters/:id', studioAuth, async (req, res) => {
+  try {
+    const { title, description, order_idx, published } = req.body;
+    await run(`UPDATE cms_chapters SET title=COALESCE(?,title), description=COALESCE(?,description),
+      order_idx=COALESCE(?,order_idx), published=COALESCE(?,published) WHERE id=?`,
+      [title, description, order_idx, published, req.params.id]);
+    res.json({ ok: true });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
+app.delete('/api/studio/chapters/:id', studioAuth, async (req, res) => {
+  try {
+    await run('DELETE FROM cms_chapters WHERE id=?', [req.params.id]);
+    res.json({ ok: true });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
+// ── LESSONS ──
+app.get('/api/studio/lessons/:id', studioAuth, async (req, res) => {
+  try {
+    const lesson = await get('SELECT * FROM cms_lessons WHERE id=?', [req.params.id]);
+    if (!lesson) return res.status(404).json({ ok: false, error: 'Not found' });
+    lesson.linked_problems = await all(`
+      SELECT lp.id, lp.order_idx, p.id as problem_id, p.title, p.rating, p.platform, p.tags,
+             cp.id as custom_problem_id, cp.title as cp_title, cp.difficulty as cp_rating
+      FROM cms_lesson_problems lp
+      LEFT JOIN problems p ON lp.problem_id = p.id
+      LEFT JOIN custom_problems cp ON lp.custom_problem_id = cp.id
+      WHERE lp.lesson_id=? ORDER BY lp.order_idx`, [lesson.id]);
+    res.json({ ok: true, lesson });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
+app.post('/api/studio/lessons', studioAuth, async (req, res) => {
+  try {
+    const { chapter_id, title, content = '', duration_min = 10, order_idx = 0 } = req.body;
+    if (!chapter_id || !title) return res.status(400).json({ ok: false, error: 'chapter_id + title required' });
+    const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-' + Date.now().toString(36);
+    const r = await run('INSERT INTO cms_lessons(chapter_id,slug,title,content,duration_min,order_idx) VALUES(?,?,?,?,?,?)',
+      [chapter_id, slug, title, content, duration_min, order_idx]);
+    res.json({ ok: true, id: r.lastID, slug });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
+app.put('/api/studio/lessons/:id', studioAuth, async (req, res) => {
+  try {
+    const { title, content, duration_min, order_idx, published } = req.body;
+    await run(`UPDATE cms_lessons SET title=COALESCE(?,title), content=COALESCE(?,content),
+      duration_min=COALESCE(?,duration_min), order_idx=COALESCE(?,order_idx),
+      published=COALESCE(?,published), updated_at=datetime('now') WHERE id=?`,
+      [title, content, duration_min, order_idx, published, req.params.id]);
+    res.json({ ok: true });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
+app.delete('/api/studio/lessons/:id', studioAuth, async (req, res) => {
+  try {
+    await run('DELETE FROM cms_lessons WHERE id=?', [req.params.id]);
+    res.json({ ok: true });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
+// ── LESSON PROBLEMS ──
+app.post('/api/studio/lessons/:id/problems', studioAuth, async (req, res) => {
+  try {
+    const { problem_id, custom_problem_id, order_idx = 0 } = req.body;
+    if (!problem_id && !custom_problem_id) return res.status(400).json({ ok: false, error: 'problem_id or custom_problem_id required' });
+    const r = await run('INSERT INTO cms_lesson_problems(lesson_id,problem_id,custom_problem_id,order_idx) VALUES(?,?,?,?)',
+      [req.params.id, problem_id || null, custom_problem_id || null, order_idx]);
+    res.json({ ok: true, id: r.lastID });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
+app.delete('/api/studio/lessons/:lessonId/problems/:linkId', studioAuth, async (req, res) => {
+  try {
+    await run('DELETE FROM cms_lesson_problems WHERE id=? AND lesson_id=?', [req.params.linkId, req.params.lessonId]);
+    res.json({ ok: true });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
+// ── STUDIO: Create problem (adds to main problems table + testcases) ──
+app.post('/api/studio/create-problem', studioAuth, async (req, res) => {
+  try {
+    const { title, statement, input_spec = '', output_spec = '', difficulty = 1200,
+      tags = '[]', time_limit = '2 seconds', memory_limit = '256 MB',
+      samples = '[]', testcases = '[]' } = req.body;
+    if (!title) return res.status(400).json({ ok: false, error: 'title required' });
+
+    // Insert into custom_problems
+    const r = await run(`INSERT INTO custom_problems(title,statement,input_spec,output_spec,difficulty,tags,samples,testcases,time_limit,memory_limit,created_at,updated_at)
+      VALUES(?,?,?,?,?,?,?,?,?,?,datetime('now'),datetime('now'))`,
+      [title, statement, input_spec, output_spec, difficulty, typeof tags === 'string' ? tags : JSON.stringify(tags),
+       typeof samples === 'string' ? samples : JSON.stringify(samples),
+       typeof testcases === 'string' ? testcases : JSON.stringify(testcases),
+       time_limit, memory_limit]);
+    res.json({ ok: true, id: r.lastID });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
+// ── PUBLIC: read published courses (for learn section in app) ──
+app.get('/api/cms/courses', async (req, res) => {
+  try {
+    const section = req.query.section || null;
+    const courses = await all(`SELECT * FROM cms_courses WHERE published=1 ${section ? 'AND section=?' : ''} ORDER BY order_idx, id`,
+      section ? [section] : []);
+    for (const c of courses) {
+      c.chapters = await all('SELECT * FROM cms_chapters WHERE course_id=? AND published=1 ORDER BY order_idx, id', [c.id]);
+      for (const ch of c.chapters) {
+        ch.lessons = await all('SELECT id, title, slug, order_idx, duration_min FROM cms_lessons WHERE chapter_id=? AND published=1 ORDER BY order_idx, id', [ch.id]);
+      }
+    }
+    res.json({ ok: true, courses });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
+app.get('/api/cms/lessons/:id', async (req, res) => {
+  try {
+    const lesson = await get('SELECT * FROM cms_lessons WHERE id=? AND published=1', [req.params.id]);
+    if (!lesson) return res.status(404).json({ ok: false, error: 'Not found' });
+    lesson.linked_problems = await all(`
+      SELECT lp.order_idx, p.id as problem_id, p.title, p.rating, p.platform, p.tags, p.url,
+             cp.id as custom_problem_id, cp.title as cp_title, cp.difficulty as cp_rating
+      FROM cms_lesson_problems lp
+      LEFT JOIN problems p ON lp.problem_id = p.id
+      LEFT JOIN custom_problems cp ON lp.custom_problem_id = cp.id
+      WHERE lp.lesson_id=? ORDER BY lp.order_idx`, [lesson.id]);
+    res.json({ ok: true, lesson });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
+// ── STUDIO: reorder items ──
+app.post('/api/studio/reorder', studioAuth, async (req, res) => {
+  try {
+    const { type, items } = req.body; // items: [{id, order_idx}]
+    const table = { course: 'cms_courses', chapter: 'cms_chapters', lesson: 'cms_lessons' }[type];
+    if (!table) return res.status(400).json({ ok: false, error: 'invalid type' });
+    for (const { id, order_idx } of items) {
+      await run(`UPDATE ${table} SET order_idx=? WHERE id=?`, [order_idx, id]);
+    }
+    res.json({ ok: true });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
+// ── STUDIO: search problems to link ──
+app.get('/api/studio/search-problems', studioAuth, async (req, res) => {
+  try {
+    const q = (req.query.q || '').trim();
+    const type = req.query.type || 'all';
+    let results = [];
+    if (type !== 'custom') {
+      results = await all(`SELECT id, title, rating, platform, tags FROM problems
+        WHERE title LIKE ? ORDER BY rating DESC LIMIT 20`, [`%${q}%`]);
+    }
+    if (type !== 'platform') {
+      const custom = await all(`SELECT id, title, difficulty as rating, 'custom' as platform, tags
+        FROM custom_problems WHERE title LIKE ? ORDER BY difficulty LIMIT 20`, [`%${q}%`]);
+      results = [...results, ...custom];
+    }
+    res.json({ ok: true, results });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+// ── STUDIO: media file list ──
+app.get('/api/studio/media-list', studioAuth, (req, res) => {
+  try {
+    const uploadDir = path.join(__dirname, '../public/uploads/studio');
+    if (!fs.existsSync(uploadDir)) return res.json({ ok: true, files: [] });
+    const files = fs.readdirSync(uploadDir)
+      .filter(f => !f.startsWith('.'))
+      .map(name => ({ name, url: `/uploads/studio/${name}` }));
+    res.json({ ok: true, files });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
+// ── STUDIO: Tutorials list ──
+app.get('/api/studio/tutorials', studioAuth, async (req, res) => {
+  try {
+    const rows = await all('SELECT id,category,topic,title,description,difficulty,order_index,estimated_time FROM tutorials ORDER BY category,order_index');
+    const grouped = {};
+    for (const r of rows) { if (!grouped[r.category]) grouped[r.category] = []; grouped[r.category].push(r); }
+    res.json({ ok: true, grouped, total: rows.length });
+  } catch(e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+app.get('/api/studio/tutorials/:id', studioAuth, async (req, res) => {
+  try {
+    const row = await get('SELECT * FROM tutorials WHERE id=?', [req.params.id]);
+    if (!row) return res.status(404).json({ ok: false, error: 'Not found' });
+    res.json({ ok: true, tutorial: row });
+  } catch(e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+app.put('/api/studio/tutorials/:id', studioAuth, async (req, res) => {
+  try {
+    const { title, description, content, difficulty, estimated_time, category, topic, order_index } = req.body;
+    await run(
+      `UPDATE tutorials SET title=COALESCE(?,title),description=COALESCE(?,description),content=COALESCE(?,content),difficulty=COALESCE(?,difficulty),estimated_time=COALESCE(?,estimated_time),category=COALESCE(?,category),topic=COALESCE(?,topic),order_index=COALESCE(?,order_index) WHERE id=?`,
+      [title||null,description||null,content||null,difficulty||null,estimated_time||null,category||null,topic||null,order_index!=null?order_index:null,req.params.id]
+    );
+    res.json({ ok: true });
+  } catch(e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+app.post('/api/studio/tutorials', studioAuth, async (req, res) => {
+  try {
+    const { title, description, content, difficulty, estimated_time, category, topic, order_index } = req.body;
+    if (!title || !category || !topic) return res.status(400).json({ ok: false, error: 'title, category, topic required' });
+    const r = await run('INSERT INTO tutorials(category,topic,title,description,content,difficulty,order_index,estimated_time) VALUES(?,?,?,?,?,?,?,?)',
+      [category,topic,title,description||'',content||'',difficulty||'beginner',order_index||0,estimated_time||'15 min']);
+    res.json({ ok: true, id: r.lastID });
+  } catch(e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+app.delete('/api/studio/tutorials/:id', studioAuth, async (req, res) => {
+  try {
+    await run('DELETE FROM tutorials WHERE id=?', [req.params.id]);
+    res.json({ ok: true });
+  } catch(e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
+// ── STUDIO: AI Problems CRUD ──
+app.get('/api/studio/ai-problems-list', studioAuth, async (req, res) => {
+  try {
+    const rows = await all('SELECT id,category,title,difficulty,tags FROM ai_problems ORDER BY category,id');
+    const grouped = {};
+    for (const r of rows) { if (!grouped[r.category]) grouped[r.category] = []; grouped[r.category].push(r); }
+    res.json({ ok: true, grouped, total: rows.length });
+  } catch(e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+app.get('/api/studio/ai-problems/:id', studioAuth, async (req, res) => {
+  try {
+    const row = await get('SELECT * FROM ai_problems WHERE id=?', [req.params.id]);
+    if (!row) return res.status(404).json({ ok: false, error: 'Not found' });
+    res.json({ ok: true, problem: row });
+  } catch(e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+app.put('/api/studio/ai-problems/:id', studioAuth, async (req, res) => {
+  try {
+    const fields = ['title','description','difficulty','tags','starter_code','solution_approach','hints','resources','input_format','output_format','constraints','samples','category'];
+    const sets = []; const vals = [];
+    for (const f of fields) { if (req.body[f] != null) { sets.push(`${f}=?`); vals.push(req.body[f]); } }
+    if (sets.length) await run(`UPDATE ai_problems SET ${sets.join(',')} WHERE id=?`, [...vals, req.params.id]);
+    res.json({ ok: true });
+  } catch(e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+app.post('/api/studio/ai-problems-new', studioAuth, async (req, res) => {
+  try {
+    const { category, title, description, difficulty, tags, starter_code, solution_approach, hints, resources, input_format, output_format, constraints, samples } = req.body;
+    if (!title || !category) return res.status(400).json({ ok: false, error: 'title and category required' });
+    const r = await run('INSERT INTO ai_problems(category,title,description,difficulty,tags,starter_code,solution_approach,hints,resources,input_format,output_format,constraints,samples) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)',
+      [category,title,description||'',difficulty||'beginner',tags||'[]',starter_code||'',solution_approach||'',hints||'[]',resources||'[]',input_format||'',output_format||'',constraints||'',samples||'[]']);
+    res.json({ ok: true, id: r.lastID });
+  } catch(e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+app.delete('/api/studio/ai-problems/:id', studioAuth, async (req, res) => {
+  try {
+    await run('DELETE FROM ai_problems WHERE id=?', [req.params.id]);
+    res.json({ ok: true });
+  } catch(e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
+// ── STUDIO: Forge content overrides ──
+app.get('/api/studio/forge', studioAuth, async (req, res) => {
+  try {
+    const forgePaths = require('./dev-roadmap-data');
+    const overrides = await all('SELECT * FROM forge_content');
+    const overrideMap = {};
+    for (const o of overrides) overrideMap[o.topic_id] = o;
+    const paths = forgePaths.map(p => ({
+      id: p.id, title: p.title, icon: p.icon, color: p.color, description: p.description,
+      milestones: p.milestones.map(m => ({
+        id: m.id, title: m.title,
+        topics: m.topics.map(t => {
+          const ov = overrideMap[t.id] || {};
+          return { id: t.id, path_id: p.id, milestone_id: m.id,
+            title: ov.title || t.title, description: ov.description || t.desc,
+            content_html: ov.content_html || '', difficulty: ov.difficulty || t.difficulty,
+            time_estimate: ov.time_estimate || t.time, has_override: !!overrideMap[t.id] };
+        })
+      }))
+    }));
+    res.json({ ok: true, paths });
+  } catch(e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+app.get('/api/studio/forge/:topicId', studioAuth, async (req, res) => {
+  try {
+    const ov = await get('SELECT * FROM forge_content WHERE topic_id=?', [req.params.topicId]);
+    // Also get static data
+    const forgePaths = require('./dev-roadmap-data');
+    let staticTopic = null;
+    for (const p of forgePaths) {
+      for (const m of p.milestones) {
+        const t = m.topics.find(t => t.id === req.params.topicId);
+        if (t) { staticTopic = { ...t, path_id: p.id }; break; }
+      }
+      if (staticTopic) break;
+    }
+    res.json({ ok: true, override: ov || null, static: staticTopic });
+  } catch(e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+app.put('/api/studio/forge/:topicId', studioAuth, async (req, res) => {
+  try {
+    const { path_id, title, description, content_html, difficulty, time_estimate } = req.body;
+    await run(`INSERT INTO forge_content(topic_id,path_id,title,description,content_html,difficulty,time_estimate,updated_at) VALUES(?,?,?,?,?,?,?,CURRENT_TIMESTAMP)
+      ON CONFLICT(topic_id) DO UPDATE SET title=COALESCE(excluded.title,title),description=COALESCE(excluded.description,description),content_html=COALESCE(excluded.content_html,content_html),difficulty=COALESCE(excluded.difficulty,difficulty),time_estimate=COALESCE(excluded.time_estimate,time_estimate),updated_at=CURRENT_TIMESTAMP`,
+      [req.params.topicId,path_id||'',title||null,description||null,content_html||null,difficulty||null,time_estimate||null]);
+    res.json({ ok: true });
+  } catch(e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
+// ── STUDIO: Platform problems browse & edit ──
+app.get('/api/studio/all-problems', studioAuth, async (req, res) => {
+  try {
+    const q = (req.query.q || '').trim();
+    const limit = Math.min(+(req.query.limit || 60), 200);
+    const offset = +(req.query.offset || 0);
+    let where = q ? 'WHERE p.title LIKE ?' : '';
+    const params = q ? [`%${q}%`, limit, offset] : [limit, offset];
+    const rows = await all(`SELECT p.id,p.title,p.platform,p.rating,p.tags,p.category,ps.statement,ps.input_spec,ps.output_spec,ps.samples
+      FROM problems p LEFT JOIN problem_statements ps ON ps.problem_rowid=p.id ${where} ORDER BY p.rating DESC LIMIT ? OFFSET ?`, params);
+    const tot = await get(`SELECT COUNT(*) as c FROM problems ${where}`, q ? [`%${q}%`] : []);
+    res.json({ ok: true, problems: rows, total: tot.c });
+  } catch(e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+app.put('/api/studio/platform-problems/:id', studioAuth, async (req, res) => {
+  try {
+    const { title, rating, tags, category, statement, input_spec, output_spec, samples } = req.body;
+    const metaFields = [['title',title],['rating',rating!=null?+rating:null],['tags',tags],['category',category]].filter(([,v])=>v!=null);
+    if (metaFields.length) {
+      const sets = metaFields.map(([f])=>`${f}=?`).join(',');
+      await run(`UPDATE problems SET ${sets} WHERE id=?`, [...metaFields.map(([,v])=>v), req.params.id]);
+    }
+    if (statement!=null||input_spec!=null||output_spec!=null||samples!=null) {
+      const ex = await get('SELECT problem_rowid FROM problem_statements WHERE problem_rowid=?', [req.params.id]);
+      if (ex) {
+        const sf = [['statement',statement],['input_spec',input_spec],['output_spec',output_spec],['samples',samples]].filter(([,v])=>v!=null);
+        if (sf.length) await run(`UPDATE problem_statements SET ${sf.map(([f])=>`${f}=?`).join(',')} WHERE problem_rowid=?`, [...sf.map(([,v])=>v), req.params.id]);
+      } else {
+        await run("INSERT INTO problem_statements(problem_rowid,statement,input_spec,output_spec,samples,scraped_at) VALUES(?,?,?,?,?,datetime('now'))",
+          [req.params.id,statement||'',input_spec||'',output_spec||'',samples||'[]']);
+      }
+    }
+    res.json({ ok: true });
+  } catch(e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
+// ── STUDIO: Custom problems browse & edit ──
+app.get('/api/studio/custom-problems-list', studioAuth, async (req, res) => {
+  try {
+    const q = (req.query.q || '').trim();
+    const rows = q
+      ? await all('SELECT id,title,difficulty,tags,created_at FROM custom_problems WHERE title LIKE ? ORDER BY id DESC LIMIT 100', [`%${q}%`])
+      : await all('SELECT id,title,difficulty,tags,created_at FROM custom_problems ORDER BY id DESC LIMIT 100');
+    res.json({ ok: true, problems: rows });
+  } catch(e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+app.get('/api/studio/custom-problems/:id', studioAuth, async (req, res) => {
+  try {
+    const row = await get('SELECT * FROM custom_problems WHERE id=?', [req.params.id]);
+    if (!row) return res.status(404).json({ ok: false, error: 'Not found' });
+    res.json({ ok: true, problem: row });
+  } catch(e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+app.put('/api/studio/custom-problems/:id', studioAuth, async (req, res) => {
+  try {
+    const fields = ['title','statement','input_spec','output_spec','difficulty','tags','samples','testcases','time_limit','memory_limit'];
+    const sf = fields.filter(f => req.body[f] != null).map(f => [f, req.body[f]]);
+    if (!sf.length) return res.json({ ok: true });
+    await run(`UPDATE custom_problems SET ${sf.map(([f])=>`${f}=?`).join(',')},updated_at=datetime('now') WHERE id=?`, [...sf.map(([,v])=>v), req.params.id]);
+    res.json({ ok: true });
+  } catch(e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
+// ── STUDIO: Code Execution Proxy (Piston API) ──
+app.post('/api/studio/run-code', studioAuth, async (req, res) => {
+  try {
+    const { language, code, stdin } = req.body;
+    if (!language || !code) return res.status(400).json({ ok: false, error: 'language and code required' });
+    const langMap = {
+      python: { language: 'python', version: '3.10.0' },
+      javascript: { language: 'javascript', version: '18.15.0' },
+      typescript: { language: 'typescript', version: '5.0.3' },
+      cpp: { language: 'c++', version: '10.2.0' },
+      c: { language: 'c', version: '10.2.0' },
+      java: { language: 'java', version: '15.0.2' },
+      go: { language: 'go', version: '1.16.2' },
+      rust: { language: 'rust', version: '1.68.2' },
+      bash: { language: 'bash', version: '5.2.0' },
+      ruby: { language: 'ruby', version: '3.0.1' },
+      php: { language: 'php', version: '8.2.3' },
+      csharp: { language: 'csharp.net', version: '5.0.201' },
+      kotlin: { language: 'kotlin', version: '1.6.0' },
+      swift: { language: 'swift', version: '5.3.3' },
+      scala: { language: 'scala', version: '3.0.2' },
+      perl: { language: 'perl', version: '5.36.0' },
+      r: { language: 'r', version: '4.1.1' },
+      lua: { language: 'lua', version: '5.4.4' },
+      dart: { language: 'dart', version: '2.19.6' },
+      haskell: { language: 'haskell', version: '9.0.1' },
+      elixir: { language: 'elixir', version: '1.11.3' },
+      sql: { language: 'sqlite3', version: '3.36.0' },
+    };
+    const lang = langMap[language];
+    if (!lang) return res.status(400).json({ ok: false, error: `Unsupported language: ${language}` });
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
+    const r = await fetch('https://emkc.org/api/v2/piston/execute', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ language: lang.language, version: lang.version, files: [{ content: code }], stdin: stdin || '' }),
+      signal: controller.signal,
+    });
+    clearTimeout(timeout);
+    const d = await r.json();
+    if (d.run) {
+      res.json({ ok: true, output: d.run.stdout || '', stderr: d.run.stderr || '', exitCode: d.run.code || 0 });
+    } else {
+      res.json({ ok: false, error: d.message || 'Execution failed' });
+    }
+  } catch(e) {
+    if (e.name === 'AbortError') return res.json({ ok: false, error: 'Execution timed out (15s)' });
+    res.status(500).json({ ok: false, error: e.message });
+  }
+});
+
+// ── STUDIO: AI Content Assistant (uses existing _groqChat) ──
+app.post('/api/studio/ai-assist', studioAuth, async (req, res) => {
+  try {
+    const { prompt, type } = req.body;
+    if (!prompt) return res.status(400).json({ ok: false, error: 'prompt required' });
+    const apiKey = process.env.GROQ_API_KEY;
+    if (!apiKey) return res.json({ ok: false, error: 'GROQ_API_KEY not configured' });
+    const systems = {
+      problem: 'You are an expert competitive programming problem setter. Write a clear, detailed problem description in HTML (use <p>, <ul>, <li>, <strong>, <code>, <pre> tags). Include: problem statement, constraints, examples with explanations. No markdown.',
+      tutorial: 'You are an expert technical educator. Write a comprehensive tutorial section in HTML using <h2>, <h3>, <p>, <ul>, <li>, <code>, <pre> tags. Include explanations, examples and code snippets. No markdown.',
+      hints: 'You are a helpful competitive programming mentor. Provide 3-5 progressive hints as a JSON array of strings. Return ONLY valid JSON: ["hint1", "hint2", ...]',
+      description: 'You are a technical content writer. Write a clear, concise HTML description using <p> and <ul> tags. No markdown.',
+      animation: `You are an expert web animator specializing in educational animations.
+Generate a SINGLE self-contained animation that visually explains the concept.
+Return ONLY valid JSON with exactly these fields:
+{"html":"<the HTML markup>","css":"<the CSS including @keyframes>","title":"<short title>"}
+Rules:
+- Use CSS @keyframes animations (no JS).
+- Use vibrant colors on dark background (#0c0c1a).
+- The animation container should be max 600px wide, centered.
+- Make it loop infinitely.
+- Use clear labels and visual elements to explain the concept.
+- Keep HTML and CSS simple and self-contained.
+- All styles must be scoped with a unique class prefix like .anim-[random].
+Return ONLY the JSON object, no markdown fences.`,
+      diagram: `You are an expert at creating Mermaid.js diagrams for technical education.
+Generate a Mermaid diagram that clearly visualizes the concept.
+Return ONLY the raw Mermaid syntax (no markdown fences, no explanation).
+Use clear labels. Prefer flowcharts (graph TD) or sequence diagrams where appropriate.
+Use meaningful node names and edge labels.`,
+      quiz: `You are an expert educator creating quiz questions.
+Generate quiz questions as a JSON array.
+Each question: {"question":"...","options":["A","B","C","D"],"answer":0,"explanation":"..."}
+answer is the 0-based index of the correct option.
+Return ONLY valid JSON array, no markdown.`,
+      blocks: `You are an expert technical educator creating tutorial content.
+Generate a complete tutorial as a JSON array of content blocks.
+Block types and their schemas:
+- {"type":"heading","level":1|2|3,"text":"..."}
+- {"type":"paragraph","html":"<p>rich HTML text</p>"}
+- {"type":"code","language":"python|javascript|cpp|java","code":"...","caption":"optional"}
+- {"type":"callout","variant":"tip|info|warning|danger","text":"..."}
+- {"type":"list","ordered":true|false,"items":["item1","item2"]}
+- {"type":"divider"}
+- {"type":"animation_prompt","prompt":"describe animation to generate later"}
+- {"type":"diagram_prompt","prompt":"describe diagram to generate later"}
+- {"type":"quiz","question":"...","options":["A","B","C","D"],"answer":0,"explanation":"..."}
+Create a comprehensive, well-structured tutorial with 10-20 blocks.
+Include code examples, callouts, and suggest animations/diagrams where helpful.
+Return ONLY valid JSON array, no markdown fences.`,
+      improve: 'You are a senior technical editor. Improve the given content: fix grammar, enhance clarity, add better examples, improve structure. Return improved HTML content only (use <h2>, <h3>, <p>, <ul>, <li>, <code>, <pre> tags). No markdown.',
+      code: `You are an expert programmer. Generate clean, well-commented code for the given task.
+Return ONLY valid JSON: {"code":"...","language":"python","explanation":"one line explanation"}
+No markdown fences.`
+    };
+    const system = systems[type] || systems.description;
+    const maxTok = type === 'blocks' ? 4000 : type === 'animation' ? 2000 : type === 'quiz' ? 2000 : 2000;
+    const result = await _groqChat(apiKey, [
+      { role: 'system', content: system },
+      { role: 'user', content: prompt }
+    ], { maxTokens: maxTok, model: 'llama-3.3-70b-versatile', temperature: type === 'animation' ? 0.3 : 0.15 });
+    if (!result.ok) return res.json({ ok: false, error: result.error });
+    res.json({ ok: true, text: result.content });
+  } catch(e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
+/* ── end Creator Studio ── */
 
 app.get('/api/user/search', async (req, res) => {
   try {
     const q = (req.query.q || '').trim();
     if (!q) return res.json({ ok: true, users: [] });
-    const users = await all('SELECT username, display_name, avatar, status, last_seen FROM users WHERE username LIKE ? LIMIT 20', [`%${q}%`]);
+    const users = await all('SELECT username, display_name, avatar, status, last_seen, role FROM users WHERE username LIKE ? LIMIT 20', [`%${q}%`]);
     res.json({ ok: true, users });
   } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
 });
@@ -2136,8 +3228,189 @@ app.get('/api/feed/:username', async (req, res) => {
   } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
 });
 
+/* ========== LEADERBOARD ========== */
+app.get('/api/leaderboard', async (req, res) => {
+  try {
+    const limit = Math.min(parseInt(req.query.limit) || 25, 100);
+    const type = req.query.type || 'xp'; // xp | solved | streak
+    let rows;
+    if (type === 'streak') {
+      rows = await all(`
+        SELECT u.username, u.display_name, u.avatar, u.avatar_url, u.role, u.created_at,
+          COALESCE(u.solved_override, 0) as total_solved,
+          COALESCE(u.xp_override, 0) as total_xp,
+          COALESCE(u.solved_override, 0) as best_streak
+        FROM users u
+        WHERE u.username IS NOT NULL
+        ORDER BY best_streak DESC, total_xp DESC
+        LIMIT ?`, [limit]);
+    } else if (type === 'solved') {
+      rows = await all(`
+        SELECT u.username, u.display_name, u.avatar, u.avatar_url, u.role, u.created_at,
+          COALESCE(u.solved_override, 0) as total_solved,
+          COALESCE(u.xp_override, 0) as total_xp
+        FROM users u
+        WHERE u.username IS NOT NULL
+        ORDER BY total_solved DESC, total_xp DESC
+        LIMIT ?`, [limit]);
+    } else {
+      // XP-based (default)
+      rows = await all(`
+        SELECT u.username, u.display_name, u.avatar, u.avatar_url, u.role, u.created_at,
+          COALESCE(u.xp_override,0) as total_xp,
+          COALESCE(u.solved_override,0) as total_solved
+        FROM users u
+        WHERE u.username IS NOT NULL
+        ORDER BY total_xp DESC, total_solved DESC
+        LIMIT ?`, [limit]);
+    }
+    res.json({ ok: true, leaderboard: rows, type });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
+/* ========== WORKSHOP STATS ========== */
+app.get('/api/workshop/stats', async (req, res) => {
+  try {
+    const username = req.query.username;
+    if (!username) return res.json({ ok: true, total: 0, totalAttempts: 0 });
+    const total = await get('SELECT COUNT(*) as c FROM custom_problems WHERE creator=?', [username]);
+    res.json({ ok: true, total: total?.c || 0 });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
+/* ========== CUSTOM CONTESTS & QUIZZES ========== */
+
+function hashPass(pass) {
+  return crypto.createHash('sha256').update(pass + 'nexora_salt').digest('hex');
+}
+
+function genContestCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = 'NX-';
+  for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
+  return code;
+}
+
+// Create contest
+app.post('/api/contests/create', async (req, res) => {
+  try {
+    const { creator, title, description, type, password, org_tag, start_time, duration_mins, problems, max_participants } = req.body;
+    if (!creator || !title || !password || !start_time) return res.status(400).json({ ok: false, error: 'Missing required fields' });
+    const validTypes = ['speed', 'accuracy', 'quiz'];
+    if (!validTypes.includes(type)) return res.status(400).json({ ok: false, error: 'Invalid type' });
+    if (password.length < 4) return res.status(400).json({ ok: false, error: 'Password must be at least 4 characters' });
+    let code;
+    let attempts = 0;
+    do {
+      code = genContestCode();
+      const existing = await get('SELECT id FROM custom_contests WHERE contest_code=?', [code]);
+      if (!existing) break;
+      attempts++;
+    } while (attempts < 10);
+    const r = await run(
+      `INSERT INTO custom_contests(creator,title,description,type,contest_code,password_hash,org_tag,start_time,duration_mins,problems,max_participants)
+       VALUES(?,?,?,?,?,?,?,?,?,?,?)`,
+      [creator, title, description || '', type || 'speed', code, hashPass(password), org_tag || '', start_time, duration_mins || 60, JSON.stringify(problems || []), max_participants || 50]
+    );
+    res.json({ ok: true, contest_id: r.lastID, contest_code: code });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
+// List contests by creator
+app.get('/api/contests/mine', async (req, res) => {
+  try {
+    const username = req.query.username;
+    if (!username) return res.status(400).json({ ok: false, error: 'username required' });
+    const contests = await all(
+      `SELECT id, title, description, type, contest_code, org_tag, start_time, duration_mins, problems, max_participants, created_at,
+       (SELECT COUNT(*) FROM contest_participants WHERE contest_id = custom_contests.id) as participant_count
+       FROM custom_contests WHERE creator=? ORDER BY created_at DESC`,
+      [username]
+    );
+    res.json({ ok: true, contests });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
+// Join contest with code + password
+app.post('/api/contests/join', async (req, res) => {
+  try {
+    const { username, contest_code, password } = req.body;
+    if (!username || !contest_code || !password) return res.status(400).json({ ok: false, error: 'Missing fields' });
+    const contest = await get('SELECT * FROM custom_contests WHERE contest_code=?', [contest_code.toUpperCase()]);
+    if (!contest) return res.status(404).json({ ok: false, error: 'Contest not found' });
+    if (contest.password_hash !== hashPass(password)) return res.status(401).json({ ok: false, error: 'Wrong password' });
+    const count = await get('SELECT COUNT(*) as c FROM contest_participants WHERE contest_id=?', [contest.id]);
+    if (count.c >= contest.max_participants) return res.status(400).json({ ok: false, error: 'Contest is full' });
+    // Upsert participant
+    await run(`INSERT OR IGNORE INTO contest_participants(contest_id,username) VALUES(?,?)`, [contest.id, username]);
+    const safeContest = { ...contest, password_hash: undefined };
+    delete safeContest.password_hash;
+    res.json({ ok: true, contest: safeContest, participant_count: count.c + 1 });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
+// Get single contest details (public fields only if participant)
+app.get('/api/contests/:id', async (req, res) => {
+  try {
+    const { username } = req.query;
+    const contest = await get('SELECT * FROM custom_contests WHERE id=?', [req.params.id]);
+    if (!contest) return res.status(404).json({ ok: false, error: 'Not found' });
+    const isOwner = contest.creator === username;
+    const isParticipant = username ? !!(await get('SELECT id FROM contest_participants WHERE contest_id=? AND username=?', [contest.id, username])) : false;
+    if (!isOwner && !isParticipant) return res.status(403).json({ ok: false, error: 'Not enrolled' });
+    const participants = await all('SELECT username, score, joined_at FROM contest_participants WHERE contest_id=? ORDER BY score DESC', [contest.id]);
+    const { password_hash, ...safe } = contest;
+    res.json({ ok: true, contest: safe, participants, isOwner });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
+// Delete contest (owner only)
+app.delete('/api/contests/:id', async (req, res) => {
+  try {
+    const { username } = req.body;
+    const contest = await get('SELECT creator FROM custom_contests WHERE id=?', [req.params.id]);
+    if (!contest) return res.status(404).json({ ok: false });
+    if (contest.creator !== username) return res.status(403).json({ ok: false, error: 'Not owner' });
+    await run('DELETE FROM contest_participants WHERE contest_id=?', [req.params.id]);
+    await run('DELETE FROM custom_contests WHERE id=?', [req.params.id]);
+    res.json({ ok: true });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
+/* ========== MESSAGE REACTIONS ========== */
+// In-memory reactions store (persists until server restart; lightweight for small squads)
+const msgReactions = {}; // { msgId: { emoji: Set<username> } }
+
+app.post('/api/messages/:id/react', (req, res) => {
+  const { username, emoji } = req.body;
+  const id = req.params.id;
+  if (!username || !emoji) return res.status(400).json({ ok: false });
+  if (!msgReactions[id]) msgReactions[id] = {};
+  if (!msgReactions[id][emoji]) msgReactions[id][emoji] = new Set();
+  if (msgReactions[id][emoji].has(username)) {
+    msgReactions[id][emoji].delete(username);
+  } else {
+    msgReactions[id][emoji].add(username);
+  }
+  const reactions = {};
+  for (const [e, users] of Object.entries(msgReactions[id])) {
+    if (users.size > 0) reactions[e] = [...users];
+  }
+  // Broadcast to both chat participants via socket
+  res.json({ ok: true, reactions });
+});
+
+app.get('/api/messages/:id/reactions', (req, res) => {
+  const reactions = {};
+  const r = msgReactions[req.params.id] || {};
+  for (const [e, users] of Object.entries(r)) {
+    if (users.size > 0) reactions[e] = [...users];
+  }
+  res.json({ ok: true, reactions });
+});
+
 /* ========== AI CHAT (Groq) ========== */
-app.post('/api/ai-chat', async (req, res) => {
+app.post('/api/ai-chat', aiLimiter, async (req, res) => {
   try {
     const apiKey = process.env.GROQ_API_KEY;
     if (!apiKey) return res.status(500).json({ ok: false, error: 'GROQ_API_KEY not configured in .env' });
@@ -2200,18 +3473,48 @@ ${(statement || 'No problem statement available').substring(0, 4000)}
 
 // In-memory completion cache (key → {text, ts})
 const _aiCache = new Map();
-const AI_CACHE_TTL = 60000; // 1 minute
-const AI_CACHE_MAX = 200;
+const AI_CACHE_TTL = 90000; // 90 seconds
+const AI_CACHE_MAX = 300;
 
-// Shared Groq caller with retry on 429 rate-limit
+// ── Gemini 2.0 Flash Lite — primary completion engine (free, best at code) ──
+async function _geminiComplete(apiKey, prompt) {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${apiKey}`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: {
+        temperature: 0.05,
+        maxOutputTokens: 150,
+        stopSequences: ['\n\n\n', '```', '// [END]', '/* [END] */'],
+      },
+      safetySettings: [
+        { category: 'HARM_CATEGORY_HARASSMENT',        threshold: 'BLOCK_NONE' },
+        { category: 'HARM_CATEGORY_HATE_SPEECH',       threshold: 'BLOCK_NONE' },
+        { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_NONE' },
+        { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_NONE' },
+      ],
+    }),
+  });
+  if (!res.ok) return { ok: false, error: await res.text() };
+  const data = await res.json();
+  const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  return { ok: true, content: text };
+}
+
+// ── Groq — fallback completion engine (uses llama-3.3-70b, better than 8b) ──
 async function _groqChat(apiKey, messages, opts = {}) {
-  const { maxTokens = 128, temperature = 0.1, stop, retries = 2 } = opts;
+  const {
+    maxTokens = 128, temperature = 0.1, stop, retries = 1,
+    model = 'llama-3.3-70b-versatile',
+  } = opts;
   for (let attempt = 0; attempt <= retries; attempt++) {
     const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
       body: JSON.stringify({
-        model: 'llama-3.1-8b-instant',
+        model,
         messages,
         max_tokens: maxTokens,
         temperature,
@@ -2219,7 +3522,6 @@ async function _groqChat(apiKey, messages, opts = {}) {
       }),
     });
     if (groqRes.status === 429 && attempt < retries) {
-      // Rate limited — wait and retry
       const retryAfter = parseInt(groqRes.headers.get('retry-after') || '2', 10);
       await new Promise(r => setTimeout(r, Math.max(retryAfter, 2) * 1000));
       continue;
@@ -2232,17 +3534,33 @@ async function _groqChat(apiKey, messages, opts = {}) {
 }
 
 function _aiCacheKey(prefix, suffix, lang) {
-  // Normalize: trim, take last 6 lines of prefix, first 3 of suffix
-  const pLines = prefix.split('\n').slice(-6).join('\n').trim();
-  const sLines = (suffix || '').split('\n').slice(0, 3).join('\n').trim();
+  const pLines = prefix.split('\n').slice(-8).join('\n').trim();
+  const sLines = (suffix || '').split('\n').slice(0, 4).join('\n').trim();
   return `${lang}::${pLines}::${sLines}`;
 }
 
+// Build a fill-in-the-middle prompt for Gemini
+function _buildGeminiPrompt(language, prefixCtx, suffixCtx) {
+  return `You are an expert inline code completion assistant for a competitive programming IDE.
+Language: ${language}
+
+Complete ONLY the missing code exactly where [CURSOR] is. Output raw code only — no markdown, no fences, no explanations. 1-3 lines maximum.
+
+[CODE BEFORE CURSOR]
+${prefixCtx}
+[CURSOR]
+[CODE AFTER CURSOR]
+${suffixCtx || ''}
+
+Completion:`;
+}
+
 // POST /api/ai-complete — ghost-text inline completion
-app.post('/api/ai-complete', async (req, res) => {
+app.post('/api/ai-complete', aiLimiter, async (req, res) => {
   try {
-    const apiKey = process.env.GROQ_API_KEY;
-    if (!apiKey) return res.json({ ok: false, text: '' });
+    const geminiKey = process.env.GEMINI_API_KEY;
+    const groqKey   = process.env.GROQ_API_KEY;
+    if (!geminiKey && !groqKey) return res.json({ ok: false, text: '' });
 
     const { prefix, suffix, language } = req.body;
     if (!prefix || !language) return res.json({ ok: true, text: '' });
@@ -2254,51 +3572,64 @@ app.post('/api/ai-complete', async (req, res) => {
       return res.json({ ok: true, text: cached.text });
     }
 
-    // Take meaningful context (last 30 lines prefix, first 10 lines suffix)
-    const prefixCtx = prefix.split('\n').slice(-30).join('\n');
+    // Context windows
+    const prefixCtx = prefix.split('\n').slice(-40).join('\n');
     const suffixCtx = (suffix || '').split('\n').slice(0, 10).join('\n');
-    const lastLine = prefixCtx.split('\n').pop() || '';
+    const lastLine  = prefixCtx.split('\n').pop() || '';
 
-    // Skip if cursor is on an empty/whitespace-only line with no context
+    // Skip if cursor is on a completely empty line with almost no context
     if (!lastLine.trim() && prefixCtx.trim().split('\n').length < 2) {
       return res.json({ ok: true, text: '' });
     }
 
-    const systemPrompt = `You are an inline code completion engine for a competitive programming IDE. The user is writing ${language} code.
+    let rawText = '';
 
-YOUR ROLE: Complete the CURRENT line or add the next 1-3 lines. You are a typing assistant — predict what the user is about to type based on patterns and context.
+    // ── Primary: Google Gemini 2.0 Flash Lite ──────────────────────────────
+    if (geminiKey) {
+      const prompt = _buildGeminiPrompt(language, prefixCtx, suffixCtx);
+      const result = await _geminiComplete(geminiKey, prompt);
+      if (result.ok) rawText = result.content;
+    }
 
-STRICT RULES:
-1. Output ONLY the completion text — no explanations, no markdown, no code fences.
-2. Complete at most 1-3 lines. Prefer single-line completions.
-3. Match the user's coding style, indentation, and variable naming.
-4. You may complete: variable declarations, loop structures, I/O operations, function signatures, common patterns, brackets/braces, return statements.
-5. NEVER write algorithmic logic, problem-solving code, or solution implementations. If the context suggests a specific algorithm (DP, greedy, graph, etc.), do NOT fill in the logic — only complete structural syntax.
-6. NEVER output the prefix text that already exists — only the NEW text that should appear after the cursor.
-7. If unsure or the completion would be algorithmic, return an empty string.
-8. Do not add comments unless the user started writing one.`;
+    // ── Fallback: Groq llama-3.3-70b-versatile ────────────────────────────
+    if (!rawText && groqKey) {
+      const systemPrompt = `You are an expert inline code completion engine for a competitive programming IDE. Language: ${language}.
 
-    const userMsg = suffixCtx
-      ? `[CODE BEFORE CURSOR]\n${prefixCtx}\n[CURSOR]\n[CODE AFTER CURSOR]\n${suffixCtx}`
-      : `[CODE BEFORE CURSOR]\n${prefixCtx}\n[CURSOR]`;
+YOUR ROLE: Predict exactly what the programmer is about to type next. Output ONLY the raw completion — no markdown, no fences, no explanations.
 
-    const groqResult = await _groqChat(apiKey, [
-      { role: 'system', content: systemPrompt },
-      { role: 'user', content: userMsg },
-    ], { maxTokens: 128, temperature: 0.1, stop: ['\n\n\n', '```'] });
+RULES:
+1. Output at most 1-3 lines. Single-line is preferred.
+2. Match the user's indentation, style, and variable naming exactly.
+3. Complete: variable declarations, loop headers, I/O statements, function signatures, common data structure operations, return statements, include lines.
+4. You MAY complete short algorithmic patterns if the user has clearly started writing one (e.g., completing a for loop header, a sort call, a push_back).
+5. Do NOT output code that already appears before the cursor.
+6. If no confident completion exists, output nothing.`;
 
-    if (!groqResult.ok) return res.json({ ok: false, text: '' });
+      const userMsg = suffixCtx
+        ? `[BEFORE CURSOR]\n${prefixCtx}\n[CURSOR]\n[AFTER CURSOR]\n${suffixCtx}`
+        : `[BEFORE CURSOR]\n${prefixCtx}\n[CURSOR]`;
 
-    let text = groqResult.content.replace(/^```[\w]*\n?/, '').replace(/```$/, '').trimEnd();
+      const groqResult = await _groqChat(groqKey, [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userMsg },
+      ], { maxTokens: 150, temperature: 0.05, stop: ['\n\n\n', '```'], model: 'llama-3.3-70b-versatile' });
 
-    // Safety: strip if it looks like a full solution or algorithmic block
+      if (groqResult.ok) rawText = groqResult.content;
+    }
+
+    // Sanitise output
+    let text = rawText
+      .replace(/^```[\w]*\n?/, '').replace(/```$/, '')
+      .replace(/^Completion:\s*/i, '')
+      .trimEnd();
+
+    // Cap at 5 lines
     const lines = text.split('\n');
     if (lines.length > 5) text = lines.slice(0, 3).join('\n');
 
-    // Cache result
+    // Cache
     if (_aiCache.size >= AI_CACHE_MAX) {
-      const oldest = _aiCache.keys().next().value;
-      _aiCache.delete(oldest);
+      _aiCache.delete(_aiCache.keys().next().value);
     }
     _aiCache.set(cacheKey, { text, ts: Date.now() });
 
@@ -2307,7 +3638,7 @@ STRICT RULES:
 });
 
 // POST /api/ai-fix — detect and fix small syntax/compile errors
-app.post('/api/ai-fix', async (req, res) => {
+app.post('/api/ai-fix', aiLimiter, async (req, res) => {
   try {
     const apiKey = process.env.GROQ_API_KEY;
     if (!apiKey) return res.status(500).json({ ok: false, error: 'GROQ_API_KEY not configured' });
@@ -2632,7 +3963,14 @@ app.post('/api/dashboard-layout', async (req, res) => {
 /* ========== START ========== */
 const PORT = process.env.PORT || 3000;
 const server = http.createServer(app);
-const io = new SocketServer(server, { cors: { origin: '*' } });
+const io = new SocketServer(server, {
+  cors: {
+    origin: IS_PROD ? allowedOrigins : '*',
+    credentials: true,
+  },
+  pingTimeout: 60000,
+  pingInterval: 25000,
+});
 
 // Collaborative rooms (legacy)
 const rooms = {};
@@ -2740,6 +4078,53 @@ io.on('connection', (socket) => {
     io.to(to).emit('voice-ice-candidate', { from: socket.id, candidate });
   });
 
+  /* ===== Typing Indicators ===== */
+  socket.on('typing-start', ({ from, to }) => {
+    const recipientSockets = userSockets[to];
+    if (recipientSockets) {
+      for (const sid of recipientSockets) {
+        io.to(sid).emit('user-typing', { from });
+      }
+    }
+  });
+
+  socket.on('typing-stop', ({ from, to }) => {
+    const recipientSockets = userSockets[to];
+    if (recipientSockets) {
+      for (const sid of recipientSockets) {
+        io.to(sid).emit('user-stopped-typing', { from });
+      }
+    }
+  });
+
+  /* ===== Message read receipt ===== */
+  socket.on('mark-messages-read', async ({ from, to }) => {
+    try {
+      await run('UPDATE messages SET read=1 WHERE from_user=? AND to_user=? AND read=0', [from, to]);
+      const senderSockets = userSockets[from];
+      if (senderSockets) {
+        for (const sid of senderSockets) {
+          io.to(sid).emit('messages-read', { by: to });
+        }
+      }
+    } catch {}
+  });
+
+  /* ===== Room voice speaking indicator ===== */
+  socket.on('voice-speaking', ({ roomId, username, speaking }) => {
+    socket.to(`solve-${roomId}`).emit('voice-speaking-update', { username, speaking });
+  });
+
+  /* ===== Friend challenge ===== */
+  socket.on('challenge-friend', ({ from, to, problemId, problemTitle }) => {
+    const recipientSockets = userSockets[to];
+    if (recipientSockets) {
+      for (const sid of recipientSockets) {
+        io.to(sid).emit('challenge-received', { from, problemId, problemTitle });
+      }
+    }
+  });
+
   /* ===== Friend request notifications ===== */
   socket.on('notify-friend-request', ({ to, from }) => {
     const recipientSockets = userSockets[to];
@@ -2809,7 +4194,55 @@ io.on('connection', (socket) => {
 
 (async () => {
   await initDb();
-  server.listen(PORT, () => console.log(`Nexora running on http://localhost:${PORT}`));
+
+  /* ── Global 404 handler (after all routes) ── */
+  app.use((req, res) => {
+    if (req.path.startsWith('/api/')) {
+      return res.status(404).json({ ok: false, error: 'API endpoint not found' });
+    }
+    // SPA fallback — serve index.html for all non-API routes
+    res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+  });
+
+  /* ── Global error handler ── */
+  // eslint-disable-next-line no-unused-vars
+  app.use((err, req, res, next) => {
+    const status = err.status || err.statusCode || 500;
+    const isDev = !IS_PROD;
+    console.error(`[${new Date().toISOString()}] ${req.method} ${req.path} → ${status}:`, err.message);
+    res.status(status).json({
+      ok: false,
+      error: status < 500 ? err.message : 'Internal server error',
+      ...(isDev && { stack: err.stack }),
+    });
+  });
+
+  server.listen(PORT, () => {
+    console.log(`\n🚀 Nexora running on ${APP_URL}`);
+    console.log(`   NODE_ENV : ${process.env.NODE_ENV || 'development'}`);
+    console.log(`   Port     : ${PORT}`);
+    console.log(`   OAuth    : GitHub=${!!process.env.GITHUB_CLIENT_ID} Google=${!!process.env.GOOGLE_CLIENT_ID}\n`);
+  });
+
+  /* ── Graceful shutdown ── */
+  const shutdown = (signal) => {
+    console.log(`\n[shutdown] ${signal} received — closing server gracefully...`);
+    server.close(() => {
+      console.log('[shutdown] HTTP server closed. Goodbye.');
+      process.exit(0);
+    });
+    // Force close after 10s
+    setTimeout(() => { console.error('[shutdown] Forced exit.'); process.exit(1); }, 10000);
+  };
+  process.on('SIGTERM', () => shutdown('SIGTERM'));
+  process.on('SIGINT',  () => shutdown('SIGINT'));
+  process.on('uncaughtException', (err) => {
+    console.error('[uncaughtException]', err);
+    if (IS_PROD) shutdown('uncaughtException');
+  });
+  process.on('unhandledRejection', (reason) => {
+    console.error('[unhandledRejection]', reason);
+  });
 
   // Background pre-scraper: silently scrape un-cached statements
   _backgroundScrape();

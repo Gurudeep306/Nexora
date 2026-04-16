@@ -35,7 +35,10 @@ const API = {
   getLanguages() { return this._fetch('/api/languages'); },
 
   // Stats
-  getStats() { return this._fetch('/api/stats'); },
+  getStats(username) { 
+    const params = username ? `?username=${encodeURIComponent(username)}` : '';
+    return this._fetch(`/api/stats${params}`); 
+  },
   getPerformance() { return this._fetch('/api/performance'); },
   getScrapeStats() { return this._fetch('/api/scrape-stats'); },
   getDateActivity(date) { return this._fetch(`/api/activity/${encodeURIComponent(date)}`); },
@@ -92,8 +95,17 @@ const API = {
 
   // Social: User
   registerUser(data) { return this._fetch('/api/user/register', { method: 'POST', body: JSON.stringify(data) }); },
-  getUserProfile(username) { return this._fetch(`/api/user/profile/${encodeURIComponent(username)}`); },
+  loginUser(data) { return this._fetch('/api/user/login', { method: 'POST', body: JSON.stringify(data) }); },
+  updateProfile(data) { return this._fetch('/api/user/profile', { method: 'PUT', body: JSON.stringify(data) }); },
+  uploadAvatar(data) { return this._fetch('/api/user/avatar', { method: 'POST', body: JSON.stringify(data) }); },
+  getUserProfile(username, viewer) { return this._fetch(`/api/user/profile/${encodeURIComponent(username)}${viewer ? '?viewer=' + encodeURIComponent(viewer) : ''}`); },
   searchUsers(q) { return this._fetch(`/api/user/search?q=${encodeURIComponent(q)}`); },
+  checkUsername(username) { return this._fetch(`/api/user/check-username?username=${encodeURIComponent(username)}`); },
+
+  // Auth
+  getAuthStatus() { return this._fetch('/api/auth/status'); },
+  getAuthProviders() { return this._fetch('/api/auth/providers'); },
+  authLogout() { return this._fetch('/api/auth/logout', { method: 'POST' }); },
 
   // Social: Friends
   getFriends(username) { return this._fetch(`/api/friends/${encodeURIComponent(username)}`); },
@@ -118,6 +130,16 @@ const API = {
   // Social: Feed
   getFeed(username) { return this._fetch(`/api/feed/${encodeURIComponent(username)}`); },
 
+  // Leaderboard
+  getLeaderboard(type, limit) { return this._fetch(`/api/leaderboard?type=${type||'xp'}&limit=${limit||25}`); },
+
+  // Workshop Stats
+  getWorkshopStats(username) { return this._fetch(`/api/workshop/stats?username=${encodeURIComponent(username)}`); },
+
+  // Message Reactions
+  reactToMessage(msgId, username, emoji) { return this._fetch(`/api/messages/${msgId}/react`, { method: 'POST', body: JSON.stringify({ username, emoji }) }); },
+  getMessageReactions(msgId) { return this._fetch(`/api/messages/${msgId}/reactions`); },
+
   // AI Lab
   getAiProblems(category) { return this._fetch(`/api/ai-problems?category=${encodeURIComponent(category || 'all')}`); },
   getAiProblem(id) { return this._fetch(`/api/ai-problems/${id}`); },
@@ -140,4 +162,11 @@ const API = {
   // Dashboard Layout
   getDashboardLayout() { return this._fetch('/api/dashboard-layout'); },
   saveDashboardLayout(layout) { return this._fetch('/api/dashboard-layout', { method: 'POST', body: JSON.stringify({ layout }) }); },
+
+  // Contests & Quizzes
+  createContest(data) { return this._fetch('/api/contests/create', { method: 'POST', body: JSON.stringify(data) }); },
+  getMyContests(username) { return this._fetch(`/api/contests/mine?username=${encodeURIComponent(username)}`); },
+  joinContest(username, contest_code, password) { return this._fetch('/api/contests/join', { method: 'POST', body: JSON.stringify({ username, contest_code, password }) }); },
+  getContestDetails(id, username) { return this._fetch(`/api/contests/${id}?username=${encodeURIComponent(username || '')}`); },
+  deleteContest(id, username) { return this._fetch(`/api/contests/${id}`, { method: 'DELETE', body: JSON.stringify({ username }) }); },
 };

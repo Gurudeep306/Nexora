@@ -11,7 +11,7 @@
   <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
   <link rel="preload" href="/css/styles.css" as="style">
   <link rel="preload" href="/js/app.js" as="script">
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=JetBrains+Mono:wght@400;600&family=Share+Tech+Mono&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=JetBrains+Mono:wght@400;600&family=Share+Tech+Mono&family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Chakra+Petch:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/icons.css">
   <link rel="stylesheet" href="/css/styles.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
@@ -88,25 +88,21 @@
 
   <!-- Sidebar -->
   <nav id="sidebar">
+    <button class="sidebar-toggle-btn" id="sidebarToggle" onclick="App.toggleSidebar()" title="Hide sidebar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><polyline points="15 18 9 12 15 6"/></svg></button>
     <div class="sidebar-brand">
       <div class="brand-text-wrap">
         <span class="brand-text glitch" data-text="NEXORA">NEXORA</span>
         <span class="brand-sub">// enter_the_nexus()</span>
       </div>
     </div>
-    <div class="sidebar-player-card" id="sidebarPlayerCard">
-      <div class="player-badge-wrap">
-        <svg class="player-xp-ring" viewBox="0 0 44 44">
-          <circle class="xp-ring-bg" cx="22" cy="22" r="19" fill="none" stroke-width="2.5"/>
-          <circle class="xp-ring-fill" id="sidebarXpRing" cx="22" cy="22" r="19" fill="none" stroke-width="2.5"
-            stroke-dasharray="119.38" stroke-dashoffset="119.38" stroke-linecap="round"
-            transform="rotate(-90 22 22)"/>
-        </svg>
-        <div class="player-level-badge" id="sidebarLevel">1</div>
+    <div class="sidebar-player-card" id="sidebarPlayerCard" onclick="if(App._username) location.hash='#/profile/'+App._username" style="cursor:pointer" title="View Profile">
+      <div class="sidebar-badge-wrap" id="sidebarBadgeWrap">
+        <div class="sidebar-badge-avatar" id="sidebarAvatarIcon"><i class="icon-avatar-coder"></i></div>
+        <div class="sidebar-rift-badge" id="sidebarRiftBadge"></div>
       </div>
       <div class="player-mini-info">
         <div class="player-title-text" id="sidebarTitle">Bit</div>
-        <div class="player-xp-mini">
+        <div class="player-xp-mini" onclick="event.stopPropagation(); location.hash='#/nexus'" title="View Nexora Progression" style="cursor:pointer">
           <div class="player-xp-bar-mini"><div class="player-xp-fill-mini" id="sidebarXpFill" style="width:0%"></div></div>
           <span class="player-xp-text" id="sidebarXpText">0 XP</span>
         </div>
@@ -162,9 +158,11 @@
       </a>
     </div>
     <div class="sidebar-footer">
-      <button class="btn btn-ghost btn-sm full-width settings-trigger" onclick="App.openSettings()">
-        <i class="icon-settings"></i> <span>./config</span>
-      </button>
+      <a href="/studio" target="_blank" class="nav-item" style="margin:8px;border-radius:8px;border:1px solid #2a2a3d;background:linear-gradient(135deg,#1a1a2e,#16162a)">
+        <div class="nav-active-bar"></div>
+        <div class="nav-icon-wrap" style="font-size:18px">⚡</div>
+        <div class="nav-text-wrap"><span class="nav-label" style="background:linear-gradient(135deg,#6c63ff,#00d4ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:700">Creator Studio</span><span class="nav-desc">./studio --cms</span></div>
+      </a>
     </div>
   </nav>
 
@@ -256,6 +254,9 @@
             </button>
             <button class="btn btn-ghost btn-sm" onclick="App.resetCode()" title="Reset Code">
               <i class="icon-reset"></i>
+            </button>
+            <button class="btn btn-ghost btn-sm" onclick="App._copyCode()" data-tip="Copy code" id="copyCodeBtn">
+              <i class="icon-copy"></i>
             </button>
             <button class="btn btn-ghost btn-sm panel-toggle-btn" id="probPanelBtn" onclick="App.toggleProblemPanel()" title="Toggle problem panel">≡ prob</button>
             <button class="btn btn-ghost btn-sm panel-toggle-btn" id="tcPanelBtn" onclick="App.toggleTestPanel()" title="Toggle test panel">⌗ tc</button>
@@ -402,8 +403,98 @@
     </div>
   </div>
 
+  <!-- AI Lab Solve Overlay -->
+  <div id="ailabSolveOverlay" class="solve-overlay hidden">
+    <div class="solve-scanlines"></div>
+    <!-- HUD Bar -->
+    <div class="solve-hud">
+      <div class="solve-hud-left">
+        <button class="btn btn-ghost btn-sm solve-exit-btn hud-exit-btn" onclick="App._closeAilabSolve()">
+          <i class="icon-back"></i> &lt;exit
+        </button>
+        <div class="solve-hud-timer">
+          <i class="icon-clock"></i>
+          <span id="ailabTimerDisplay">00:00</span>
+        </div>
+      </div>
+      <div class="solve-hud-center">
+        <div class="solve-hud-quest" id="ailabHudTitle"></div>
+      </div>
+      <div class="solve-hud-right">
+        <span id="ailabSolveStatus" class="nf-solve-status unsolved"><i class="icon-square"></i> Unsolved</span>
+      </div>
+    </div>
+    <!-- Editor fills full container -->
+    <div class="solve-container">
+      <div class="solve-right">
+        <div class="editor-toolbar">
+          <div class="flex items-center gap-2">
+            <div class="nf-lang-info"><i class="icon-lang-python"></i> <span>Python 3</span></div>
+          </div>
+          <div class="editor-actions">
+            <button class="btn btn-ghost btn-sm" onclick="App._resetAiCode()" title="Reset Code"><i class="icon-reset"></i></button>
+            <button class="btn btn-run btn-sm" onclick="App._runAiCode()"><i class="icon-run"></i> <span>./run</span></button>
+            <button class="btn btn-submit btn-sm" id="ailabMarkSolvedBtn" onclick="App._ailabProblem && App._saveAiProgress(App._ailabProblem.id, 'solved')"><i class="icon-check"></i> <span>solved!</span></button>
+          </div>
+        </div>
+        <div class="keyshint-bar">
+          <span><kbd>Ctrl+Enter</kbd> run</span>
+          <span><kbd>Esc</kbd> exit</span>
+        </div>
+        <div id="ailabMonacoEditor" class="editor-container"></div>
+      </div>
+    </div>
+    <!-- Floating Problem Panel -->
+    <div class="solve-left" id="ailabSolveLeft">
+      <div class="solve-topbar">
+        <div id="ailabProblemBadges" class="solve-problem-badges"></div>
+        <button class="btn btn-ghost btn-sm float-close-btn" onclick="App._toggleAilabProblemPanel()" title="Hide panel">✕</button>
+      </div>
+      <div class="solve-tabs">
+        <button class="solve-tab active"><i class="icon-neural"></i> problem.md</button>
+      </div>
+      <div class="solve-tab-content">
+        <div id="ailabProblemContent" style="padding:16px 20px"></div>
+      </div>
+      <div class="fp-edge fp-edge-n"  data-dir="n"></div>
+      <div class="fp-edge fp-edge-ne" data-dir="ne"></div>
+      <div class="fp-edge fp-edge-e"  data-dir="e"></div>
+      <div class="fp-edge fp-edge-se" data-dir="se"></div>
+      <div class="fp-edge fp-edge-s"  data-dir="s"></div>
+      <div class="fp-edge fp-edge-sw" data-dir="sw"></div>
+      <div class="fp-edge fp-edge-w"  data-dir="w"></div>
+      <div class="fp-edge fp-edge-nw" data-dir="nw"></div>
+    </div>
+    <!-- Floating I/O Panel -->
+    <div class="bottom-panel" id="ailabBottomPanel">
+      <div class="bottom-panel-header">
+        <div class="bottom-tabs">
+          <button class="nf-bottom-tab bottom-tab active" data-nftab="input" onclick="App._switchNfBottomTab('input',this)"><i class="icon-download"></i> stdin</button>
+          <button class="nf-bottom-tab bottom-tab" data-nftab="output" onclick="App._switchNfBottomTab('output',this)"><i class="icon-terminal"></i> stdout</button>
+          <button class="nf-bottom-tab bottom-tab" data-nftab="samples" onclick="App._switchNfBottomTab('samples',this)"><i class="icon-test"></i> test/</button>
+        </div>
+        <div class="bottom-actions-right">
+          <button class="btn btn-ghost btn-sm float-close-btn" onclick="App._toggleAilabBottomPanel()" title="Hide panel">✕</button>
+        </div>
+      </div>
+      <div class="bottom-panel-body">
+        <div id="nfTabInput" class="nf-tab-panel"><textarea id="nfCustomInput" class="nf-io-textarea" placeholder="Enter custom input here..."></textarea></div>
+        <div id="nfTabOutput" class="nf-tab-panel hidden"><div id="nfOutputContent" class="nf-output-content"><div class="output-placeholder"><i class="icon-terminal" style="font-size:24px;opacity:0.3"></i><p>Run your code to see output</p></div></div></div>
+        <div id="nfTabSamples" class="nf-tab-panel hidden"><div id="nfSampleResults" class="nf-sample-results" style="padding:8px"></div></div>
+      </div>
+      <div class="fp-edge fp-edge-n"  data-dir="n"></div>
+      <div class="fp-edge fp-edge-ne" data-dir="ne"></div>
+      <div class="fp-edge fp-edge-e"  data-dir="e"></div>
+      <div class="fp-edge fp-edge-se" data-dir="se"></div>
+      <div class="fp-edge fp-edge-s"  data-dir="s"></div>
+      <div class="fp-edge fp-edge-sw" data-dir="sw"></div>
+      <div class="fp-edge fp-edge-w"  data-dir="w"></div>
+      <div class="fp-edge fp-edge-nw" data-dir="nw"></div>
+    </div>
+  </div>
+
   <!-- Achievement Popup -->
-  <div id="achievementPopup" class="achievement-popup hidden">
+  <div id="achievementPopup" class="achievement-popup hidden" style="cursor:pointer" title="Click to dismiss">
     <div class="achievement-popup-inner">
       <div class="achievement-popup-glow"></div>
       <div class="achievement-popup-icon" id="achievePopupIcon"></div>
@@ -411,6 +502,7 @@
         <div class="achievement-popup-label">// NEW ACHIEVEMENT UNLOCKED</div>
         <div class="achievement-popup-title" id="achievePopupTitle"></div>
         <div class="achievement-popup-xp" id="achievePopupXp"></div>
+        <div class="achievement-popup-desc" id="achievePopupDesc" style="font-size:10px;color:rgba(255,255,255,0.55);margin-top:2px;font-family:var(--mono)"></div>
       </div>
     </div>
   </div>
@@ -431,24 +523,349 @@
   <!-- Toast -->
   <div id="toasts" class="toast-container"></div>
 
-  <!-- User Setup Modal -->
-  <div id="userSetupModal" class="user-setup-modal hidden">
-    <div class="user-setup-box">
-      <div class="user-setup-header">
-        <h2><i class="icon-wave-hand"></i> // initializing nexora</h2>
-        <p>configure your identity to join the network</p>
+  <!-- ═══ NEXORA GATE — Login or Create Profile ═══ -->
+  <div id="gateScreen" class="gate-overlay hidden">
+    <canvas id="gateCanvas"></canvas>
+    <div class="gate-scanlines"></div>
+    <div class="gate-container">
+      <!-- Logo -->
+      <div class="gate-logo">
+        <svg viewBox="0 0 80 80" class="gate-hex-svg">
+          <polygon points="40,4 74,22 74,58 40,76 6,58 6,22" fill="none" stroke="url(#gateGrad)" stroke-width="1.5">
+            <animate attributeName="stroke-dasharray" values="0 300;300 0" dur="2s" fill="freeze"/>
+          </polygon>
+          <polygon points="40,16 62,28 62,52 40,64 18,52 18,28" fill="none" stroke="url(#gateGrad)" stroke-width="0.8" opacity="0.3">
+            <animateTransform attributeName="transform" type="rotate" values="0 40 40;360 40 40" dur="15s" repeatCount="indefinite"/>
+          </polygon>
+          <defs><linearGradient id="gateGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#60a5fa"/><stop offset="100%" stop-color="#a78bfa"/></linearGradient></defs>
+        </svg>
+        <span class="gate-logo-letter">N</span>
       </div>
-      <div class="user-setup-body">
-        <label class="setup-label">handle</label>
-        <input type="text" id="setupUsername" class="setup-input" placeholder="choose a unique handle" maxlength="20" pattern="[a-zA-Z0-9_]+" />
-        <label class="setup-label">display_name</label>
-        <input type="text" id="setupDisplayName" class="setup-input" placeholder="your display name" maxlength="30" />
-        <label class="setup-label">avatar</label>
-        <div class="avatar-picker" id="avatarPicker"></div>
-        <button class="btn btn-primary full-width" id="setupSubmitBtn" onclick="App.completeSetup()">
-          ./connect --init →
-        </button>
-        <p class="setup-error hidden" id="setupError"></p>
+      <h1 class="gate-title" data-text="NEXORA">NEXORA</h1>
+      <p class="gate-tagline">Competitive Programming Nexus</p>
+
+      <!-- Gate Panels -->
+      <div class="gate-panels">
+        <!-- Login Panel -->
+        <div class="gate-panel" id="gateLoginPanel">
+          <div class="gate-panel-head">
+            <i class="icon-bolt"></i>
+            <span>SIGN IN</span>
+          </div>
+          <div class="gate-panel-body">
+            <div class="gate-field">
+              <label class="gate-label">@username</label>
+              <div class="gate-input-wrap">
+                <input type="text" id="gateUsername" class="gate-input" placeholder="your_handle" maxlength="20" autocomplete="off" spellcheck="false" />
+                <span class="gate-input-status" id="gateUsernameStatus"></span>
+              </div>
+              <div class="gate-hint" id="gateLoginFeedback"></div>
+            </div>
+            <div class="gate-field">
+              <label class="gate-label">password</label>
+              <div class="gate-input-wrap">
+                <input type="password" id="gatePassword" class="gate-input" placeholder="••••••••" maxlength="64" autocomplete="off" />
+              </div>
+            </div>
+            <button class="gate-btn gate-btn-primary" id="gateLoginBtn" onclick="App._gateLogin()">
+              <i class="icon-chevron-right"></i> ENTER NEXUS
+            </button>
+            <div class="gate-divider"><span>or sign in with</span></div>
+            <div class="gate-oauth-row">
+              <button class="gate-oauth-btn gate-github" onclick="App._authGitHub()">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                GitHub
+              </button>
+              <button class="gate-oauth-btn gate-google" onclick="App._authGoogle()">
+                <svg viewBox="0 0 24 24" width="18" height="18"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+                Google
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Create Profile Panel -->
+        <div class="gate-panel" id="gateCreatePanel">
+          <div class="gate-panel-head">
+            <i class="icon-avatar-coder"></i>
+            <span>NEW AGENT</span>
+          </div>
+          <div class="gate-panel-body">
+            <p class="gate-panel-desc">First time here? Create your identity and join the nexus.</p>
+            <button class="gate-btn gate-btn-secondary" onclick="App._gateCreate()">
+              <i class="icon-shield"></i> CREATE PROFILE
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <p class="gate-footer">// enter the competitive programming nexus</p>
+    </div>
+  </div>
+
+  <!-- ═══ NEXORA PROFILE CREATION — Hacker Boot Sequence ═══ -->
+  <div id="userSetupModal" class="ob-overlay hidden">
+    <canvas id="onboardingCanvas"></canvas>
+    <div class="ob-scanlines"></div>
+    <div class="ob-code-rain" id="obCodeRain"></div>
+
+    <!-- Phase 0: Boot Sequence (auto-plays, then fades) -->
+    <div class="ob-boot" id="obBoot">
+      <div class="ob-boot-screen">
+        <div class="ob-boot-logo">
+          <svg viewBox="0 0 80 80" class="ob-boot-hex">
+            <polygon points="40,4 74,22 74,58 40,76 6,58 6,22" fill="none" stroke="url(#bootGrad)" stroke-width="1.5">
+              <animate attributeName="stroke-dasharray" values="0 300;300 0" dur="2s" fill="freeze"/>
+            </polygon>
+            <polygon points="40,16 62,28 62,52 40,64 18,52 18,28" fill="none" stroke="url(#bootGrad)" stroke-width="0.8" opacity="0.3">
+              <animateTransform attributeName="transform" type="rotate" values="0 40 40;360 40 40" dur="15s" repeatCount="indefinite"/>
+            </polygon>
+            <defs><linearGradient id="bootGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#60a5fa"/><stop offset="100%" stop-color="#a78bfa"/></linearGradient></defs>
+          </svg>
+          <div class="ob-boot-letter">N</div>
+        </div>
+        <div class="ob-boot-text" id="obBootText"></div>
+        <div class="ob-boot-progress">
+          <div class="ob-boot-bar" id="obBootBar"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 1: Main Creation UI (hidden until boot completes) -->
+    <div class="ob-main hidden" id="obMainUI">
+      <!-- Header -->
+      <div class="ob-header">
+        <div class="ob-header-line"></div>
+        <div class="ob-header-content">
+          <div class="ob-nexora-mark">
+            <svg viewBox="0 0 60 60" class="ob-mark-svg">
+              <polygon points="30,2 56,17 56,43 30,58 4,43 4,17" fill="none" stroke="url(#obGrad)" stroke-width="1.5"/>
+              <polygon points="30,10 48,20 48,40 30,50 12,40 12,20" fill="none" stroke="url(#obGrad)" stroke-width="0.8" opacity="0.4">
+                <animateTransform attributeName="transform" type="rotate" values="0 30 30;360 30 30" dur="20s" repeatCount="indefinite"/>
+              </polygon>
+              <defs><linearGradient id="obGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#60a5fa"/><stop offset="100%" stop-color="#a78bfa"/></linearGradient></defs>
+            </svg>
+            <span class="ob-mark-letter">N</span>
+          </div>
+          <div class="ob-header-text">
+            <span class="ob-header-title">NEXORA</span>
+            <span class="ob-header-sub">IDENTITY FORGE</span>
+          </div>
+          <!-- Step indicator -->
+          <div class="ob-steps" id="obSteps">
+            <div class="ob-step active" data-step="1"><span class="ob-step-num">1</span><span class="ob-step-label">IDENTITY</span></div>
+            <div class="ob-step-line"></div>
+            <div class="ob-step" data-step="2"><span class="ob-step-num">2</span><span class="ob-step-label">AVATAR</span></div>
+            <div class="ob-step-line"></div>
+            <div class="ob-step" data-step="3"><span class="ob-step-num">3</span><span class="ob-step-label">DEPLOY</span></div>
+          </div>
+          <div class="ob-header-xp" id="obXpCounter">
+            <span class="ob-xp-bolt">⚡</span> <span id="obXpVal">0</span> XP
+          </div>
+        </div>
+        <div class="ob-header-line"></div>
+      </div>
+
+      <!-- Body -->
+      <div class="ob-body">
+        <!-- Left: Steps (one at a time) -->
+        <div class="ob-form-col">
+          <div class="ob-form-scroll" id="obFormScroll">
+
+            <!-- STEP 1: Identity -->
+            <div class="ob-step-panel active" id="obPanel1">
+              <div class="ob-panel-header">
+                <div class="ob-panel-icon"><i class="icon-avatar-coder"></i></div>
+                <div>
+                  <div class="ob-panel-title">FORGE YOUR IDENTITY</div>
+                  <div class="ob-panel-sub">Choose your callsign and link your accounts</div>
+                </div>
+              </div>
+
+              <!-- OAuth -->
+              <div class="ob-card">
+                <div class="ob-card-head">
+                  <div class="ob-card-num">◆</div>
+                  <div class="ob-card-title">LINK ACCOUNTS</div>
+                  <div class="ob-card-badge">OPTIONAL</div>
+                </div>
+                <div class="ob-auth-row">
+                  <button class="ob-auth-btn ob-github" id="obGithubBtn" onclick="App._authGitHub()">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                    <span>GitHub</span>
+                  </button>
+                  <button class="ob-auth-btn ob-google" id="obGoogleBtn" onclick="App._authGoogle()">
+                    <svg viewBox="0 0 24 24" width="20" height="20"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+                    <span>Google</span>
+                  </button>
+                </div>
+                <div class="ob-connected-tag hidden" id="obConnectedTag">
+                  <span class="ob-connected-dot"></span>
+                  <span id="obConnectedText">Connected via GitHub</span>
+                </div>
+              </div>
+
+              <!-- Identity fields -->
+              <div class="ob-card">
+                <div class="ob-card-head">
+                  <div class="ob-card-num">◆</div>
+                  <div class="ob-card-title">SET CALLSIGN</div>
+                  <div class="ob-card-badge ob-required">REQUIRED</div>
+                </div>
+                <div class="ob-field">
+                  <label class="ob-label"><span class="ob-kw">const</span> <span class="ob-var">handle</span> =</label>
+                  <div class="ob-input-group">
+                    <span class="ob-prefix">@</span>
+                    <input type="text" id="setupUsername" class="ob-input" placeholder="your_unique_handle" maxlength="20" autocomplete="off" spellcheck="false" />
+                    <span class="ob-username-status" id="obUsernameStatus"></span>
+                  </div>
+                  <div class="ob-hint" id="obUsernameFeedback">// 2-20 chars • letters, numbers, underscores</div>
+                </div>
+                <div class="ob-field">
+                  <label class="ob-label"><span class="ob-kw">const</span> <span class="ob-var">displayName</span> =</label>
+                  <input type="text" id="setupDisplayName" class="ob-input ob-input-solo" placeholder="'Your Display Name'" maxlength="30" />
+                </div>
+                <div class="ob-field">
+                  <label class="ob-label"><span class="ob-kw">const</span> <span class="ob-var">email</span> =</label>
+                  <input type="email" id="setupEmail" class="ob-input ob-input-solo" placeholder="'you@example.com'" maxlength="100" />
+                </div>
+                <div class="ob-field">
+                  <label class="ob-label"><span class="ob-kw">const</span> <span class="ob-var">password</span> =</label>
+                  <input type="password" id="setupPassword" class="ob-input ob-input-solo" placeholder="'min 4 chars'" maxlength="64" />
+                  <div class="ob-hint">// optional but recommended for account security</div>
+                </div>
+              </div>
+
+              <div class="ob-nav-row">
+                <div></div>
+                <button class="ob-nav-btn ob-nav-next" onclick="App._obGoStep(2)">
+                  CHOOSE AVATAR <i class="icon-chevron-right"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- STEP 2: Avatar -->
+            <div class="ob-step-panel" id="obPanel2">
+              <div class="ob-panel-header">
+                <div class="ob-panel-icon"><i class="icon-shield"></i></div>
+                <div>
+                  <div class="ob-panel-title">SELECT YOUR AVATAR</div>
+                  <div class="ob-panel-sub">Choose the icon that represents you in the nexus</div>
+                </div>
+              </div>
+
+              <div class="ob-card">
+                <div class="ob-avatar-grid" id="avatarPicker"></div>
+              </div>
+
+              <div class="ob-nav-row">
+                <button class="ob-nav-btn ob-nav-back" onclick="App._obGoStep(1)">
+                  <i class="icon-back"></i> BACK
+                </button>
+                <button class="ob-nav-btn ob-nav-next" onclick="App._obGoStep(3)">
+                  FINALIZE <i class="icon-chevron-right"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- STEP 3: Bio + Deploy -->
+            <div class="ob-step-panel" id="obPanel3">
+              <div class="ob-panel-header">
+                <div class="ob-panel-icon"><i class="icon-rocket"></i></div>
+                <div>
+                  <div class="ob-panel-title">FINAL PREPARATIONS</div>
+                  <div class="ob-panel-sub">Add a bio and deploy your profile to the nexus</div>
+                </div>
+              </div>
+
+              <div class="ob-card">
+                <div class="ob-card-head">
+                  <div class="ob-card-num">◆</div>
+                  <div class="ob-card-title">WRITE BIO</div>
+                  <div class="ob-card-badge">OPTIONAL</div>
+                </div>
+                <div class="ob-field">
+                  <label class="ob-label"><span class="ob-kw">const</span> <span class="ob-var">bio</span> =</label>
+                  <textarea id="setupBio" class="ob-input ob-input-solo ob-textarea" placeholder="'I solve problems and break limits...'" maxlength="200" rows="3"></textarea>
+                  <div class="ob-hint">// max 200 chars — make it count</div>
+                </div>
+              </div>
+
+              <p class="ob-error hidden" id="setupError"></p>
+
+              <div class="ob-nav-row">
+                <button class="ob-nav-btn ob-nav-back" onclick="App._obGoStep(2)">
+                  <i class="icon-back"></i> BACK
+                </button>
+                <button class="ob-deploy" id="setupSubmitBtn" onclick="App.completeSetup()">
+                  <div class="ob-deploy-glow"></div>
+                  <div class="ob-deploy-content">
+                    <span class="ob-deploy-icon"><i class="icon-rocket"></i></span>
+                    <span class="ob-deploy-label">DEPLOY TO NEXUS</span>
+                    <span class="ob-deploy-cmd">$ make deploy && ./nexora</span>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Right: Live Preview Card -->
+        <div class="ob-preview-col">
+          <div class="ob-preview-sticky">
+            <div class="ob-preview-label">LIVE PREVIEW</div>
+            <div class="ob-preview-card" id="obLiveCard">
+              <div class="ob-prev-glow"></div>
+              <div class="ob-prev-banner"></div>
+              <div class="ob-prev-avatar" id="obLiveAvatar"><i class="icon-avatar-coder"></i></div>
+              <div class="ob-prev-info">
+                <div class="ob-prev-name" id="obLiveName">Player</div>
+                <div class="ob-prev-handle" id="obLiveHandle">@handle</div>
+              </div>
+              <div class="ob-prev-bio" id="obLiveBio">// awaiting input...</div>
+              <div class="ob-prev-divider"></div>
+              <div class="ob-prev-stats">
+                <div class="ob-prev-stat">
+                  <div class="ob-prev-stat-val">0</div>
+                  <div class="ob-prev-stat-lbl">XP</div>
+                </div>
+                <div class="ob-prev-stat">
+                  <div class="ob-prev-stat-val">1</div>
+                  <div class="ob-prev-stat-lbl">LEVEL</div>
+                </div>
+                <div class="ob-prev-stat">
+                  <div class="ob-prev-stat-val">Bit</div>
+                  <div class="ob-prev-stat-lbl">RANK</div>
+                </div>
+              </div>
+              <div class="ob-prev-rank">
+                <span class="ob-prev-rank-dot"></span>
+                <span>Nexora Level 1 — Bit</span>
+              </div>
+            </div>
+            <div class="ob-preview-hint">
+              <i class="icon-bolt"></i> Your card updates as you typ
+                </div>
+                <div class="ob-prev-stat">
+                  <div class="ob-prev-stat-val">1</div>
+                  <div class="ob-prev-stat-lbl">LEVEL</div>
+                </div>
+                <div class="ob-prev-stat">
+                  <div class="ob-prev-stat-val">Bit</div>
+                  <div class="ob-prev-stat-lbl">RANK</div>
+                </div>
+              </div>
+              <div class="ob-prev-rank">
+                <span class="ob-prev-rank-dot"></span>
+                <span>Nexora Level 1 — Bit</span>
+              </div>
+            </div>
+            <div class="ob-preview-hint">
+              <i class="icon-bolt"></i> Your card updates as you type
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

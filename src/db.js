@@ -246,9 +246,26 @@ async function initDb() {
     avatar TEXT DEFAULT '🧑‍💻',
     bio TEXT DEFAULT '',
     status TEXT DEFAULT 'offline',
+    role TEXT DEFAULT 'member',
+    xp_override INTEGER DEFAULT 0,
+    solved_override INTEGER DEFAULT 0,
+    auth_provider TEXT DEFAULT 'manual',
+    provider_id TEXT,
+    email TEXT,
+    avatar_url TEXT,
     last_seen TEXT,
     created_at TEXT NOT NULL
   )`);
+
+  // Add role/override columns if they don't exist (migration for existing DBs)
+  await run(`ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'member'`).catch(()=>{});
+  await run(`ALTER TABLE users ADD COLUMN xp_override INTEGER DEFAULT 0`).catch(()=>{});
+  await run(`ALTER TABLE users ADD COLUMN solved_override INTEGER DEFAULT 0`).catch(()=>{});
+  await run(`ALTER TABLE users ADD COLUMN auth_provider TEXT DEFAULT 'manual'`).catch(()=>{});
+  await run(`ALTER TABLE users ADD COLUMN provider_id TEXT`).catch(()=>{});
+  await run(`ALTER TABLE users ADD COLUMN email TEXT`).catch(()=>{});
+  await run(`ALTER TABLE users ADD COLUMN avatar_url TEXT`).catch(()=>{});
+  await run(`ALTER TABLE users ADD COLUMN password_hash TEXT`).catch(()=>{});
 
   // Friendships
   await run(`CREATE TABLE IF NOT EXISTS friendships (
@@ -401,6 +418,34 @@ async function initDb() {
   )`);
   await run('CREATE INDEX IF NOT EXISTS idx_forge_path ON forge_progress(path_id)');
 
+  // ===== CONTESTS & QUIZZES =====
+  await run(`CREATE TABLE IF NOT EXISTS custom_contests (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    creator TEXT NOT NULL,
+    title TEXT NOT NULL,
+    description TEXT DEFAULT '',
+    type TEXT DEFAULT 'speed',
+    contest_code TEXT UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    org_tag TEXT DEFAULT '',
+    start_time TEXT NOT NULL,
+    duration_mins INTEGER DEFAULT 60,
+    problems TEXT DEFAULT '[]',
+    max_participants INTEGER DEFAULT 50,
+    created_at TEXT DEFAULT (datetime('now'))
+  )`);
+  await run('CREATE INDEX IF NOT EXISTS idx_contests_creator ON custom_contests(creator)');
+  await run('CREATE INDEX IF NOT EXISTS idx_contests_code ON custom_contests(contest_code)');
+  await run(`CREATE TABLE IF NOT EXISTS contest_participants (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    contest_id INTEGER NOT NULL,
+    username TEXT NOT NULL,
+    joined_at TEXT DEFAULT (datetime('now')),
+    score INTEGER DEFAULT 0,
+    UNIQUE(contest_id, username)
+  )`);
+  await run('CREATE INDEX IF NOT EXISTS idx_contest_parts ON contest_participants(contest_id)');
+
   // ===== SEED AI PROBLEMS =====
   const aiCount = await get('SELECT COUNT(*) as c FROM ai_problems');
   if (!aiCount || aiCount.c === 0) {
@@ -421,6 +466,67 @@ async function initDb() {
   }
 
   console.log('Database initialized');
+
+  // ===== CMS TABLES (Creator Studio) =====
+  await run(`CREATE TABLE IF NOT EXISTS cms_courses (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    slug TEXT UNIQUE NOT NULL,
+    title TEXT NOT NULL,
+    description TEXT DEFAULT '',
+    icon TEXT DEFAULT '📚',
+    color TEXT DEFAULT '#6c63ff',
+    section TEXT DEFAULT 'learn',
+    order_idx INTEGER DEFAULT 0,
+    published INTEGER DEFAULT 0,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+  )`);
+
+  await run(`CREATE TABLE IF NOT EXISTS cms_chapters (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    course_id INTEGER NOT NULL REFERENCES cms_courses(id) ON DELETE CASCADE,
+    slug TEXT NOT NULL,
+    title TEXT NOT NULL,
+    description TEXT DEFAULT '',
+    order_idx INTEGER DEFAULT 0,
+    published INTEGER DEFAULT 0,
+    UNIQUE(course_id, slug)
+  )`);
+
+  await run(`CREATE TABLE IF NOT EXISTS cms_lessons (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    chapter_id INTEGER NOT NULL REFERENCES cms_chapters(id) ON DELETE CASCADE,
+    slug TEXT NOT NULL,
+    title TEXT NOT NULL,
+    content TEXT DEFAULT '',
+    content_type TEXT DEFAULT 'html',
+    duration_min INTEGER DEFAULT 10,
+    order_idx INTEGER DEFAULT 0,
+    published INTEGER DEFAULT 0,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(chapter_id, slug)
+  )`);
+
+  await run(`CREATE TABLE IF NOT EXISTS cms_lesson_problems (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    lesson_id INTEGER NOT NULL REFERENCES cms_lessons(id) ON DELETE CASCADE,
+    problem_id INTEGER REFERENCES problems(id),
+    custom_problem_id INTEGER REFERENCES custom_problems(id),
+    order_idx INTEGER DEFAULT 0
+  )`);
+
+  // ===== FORGE CONTENT OVERRIDES =====
+  await run(`CREATE TABLE IF NOT EXISTS forge_content (
+    topic_id TEXT PRIMARY KEY,
+    path_id TEXT NOT NULL,
+    title TEXT,
+    description TEXT,
+    content_html TEXT DEFAULT '',
+    difficulty TEXT,
+    time_estimate TEXT,
+    updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+  )`);
 }
 
 module.exports = { run, get, all, initDb };

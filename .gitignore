@@ -1,5 +1,34 @@
+# Dependencies
 node_modules/
+
+# Environment variables — NEVER commit real secrets
+.env
+.env.local
+.env.*.local
+
+# Database files
 tracker.db
 tracker.db-shm
 tracker.db-wal
-.env
+*.db
+*.db-shm
+*.db-wal
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+
+# OS / editor artifacts
+.DS_Store
+Thumbs.db
+.vscode/settings.json
+
+# Build outputs
+dist/
+build/
+
+# Uploads (if user-generated)
+public/uploads/*
+!public/uploads/.gitkeep
+

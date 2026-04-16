@@ -93,11 +93,65 @@ const App = {
 
   /* ===== AVATAR ICON HELPER ===== */
   _avatarIconMap: {coder:'icon-avatar-coder',fox:'icon-avatar-fox',cat:'icon-avatar-cat',wolf:'icon-avatar-wolf',sword:'icon-sword',shield:'icon-shield',trophy:'icon-trophy',diamond:'icon-diamond',fire:'icon-fire',bolt:'icon-bolt',star:'icon-star',target:'icon-target',crown:'icon-crown',robot:'icon-robot',gamepad:'icon-gamepad',brain:'icon-brain',tree:'icon-tree',globe:'icon-globe',moon:'icon-moon',dragon:'icon-dragon'},
-  _renderAvatar(avatar) {
+  _renderAvatar(avatar, avatarUrl) {
+    if (avatarUrl) return `<img src="${avatarUrl}" class="avatar-img" alt="avatar"/>`;
     const cls = this._avatarIconMap[avatar];
     if (cls) return `<i class="${cls}"></i>`;
     if (avatar && avatar.length <= 4) return avatar;
     return `<i class="icon-avatar-coder"></i>`;
+  },
+
+  /* ===== RIFT LEVEL BADGE SVGs — elite premium designs ===== */
+  _riftBadgeSVGs: {
+    // L1: Bit — Bronze circuit board fragment, raw silicon
+    1: () => {const id=`rb1_${Math.random().toString(36).slice(2,7)}`;return `<svg viewBox="0 0 80 80" class="rift-badge-svg"><defs><linearGradient id="${id}a" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#a8a29e"/><stop offset="50%" stop-color="#78716c"/><stop offset="100%" stop-color="#57534e"/></linearGradient><linearGradient id="${id}b" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#d6d3d1"/><stop offset="100%" stop-color="#a8a29e"/></linearGradient><filter id="${id}s"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.5"/></filter></defs><rect x="14" y="14" width="52" height="52" rx="6" fill="url(#${id}a)" stroke="url(#${id}b)" stroke-width="2" filter="url(#${id}s)"/><rect x="20" y="20" width="40" height="40" rx="3" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="0.8"/><g stroke="#a8a29e" stroke-width="1.5" stroke-linecap="round"><line x1="14" y1="28" x2="6" y2="28"/><line x1="14" y1="36" x2="6" y2="36"/><line x1="14" y1="44" x2="6" y2="44"/><line x1="66" y1="28" x2="74" y2="28"/><line x1="66" y1="36" x2="74" y2="36"/><line x1="66" y1="44" x2="74" y2="44"/><line x1="28" y1="14" x2="28" y2="6"/><line x1="40" y1="14" x2="40" y2="6"/><line x1="52" y1="14" x2="52" y2="6"/><line x1="28" y1="66" x2="28" y2="74"/><line x1="40" y1="66" x2="40" y2="74"/><line x1="52" y1="66" x2="52" y2="74"/></g><path d="M30 30 L30 35 L35 35 M50 30 L50 35 L45 35 M30 50 L30 45 L35 45 M50 50 L50 45 L45 45" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"/><circle cx="40" cy="40" r="3" fill="#d6d3d1" opacity="0.4"/><text x="40" y="43" text-anchor="middle" font-size="12" font-weight="900" fill="#e7e5e4" font-family="monospace" letter-spacing="1">BIT</text></svg>`;},
+
+    // L2: Byte — Emerald terminal console with scrolling code
+    2: () => {const id=`rb2_${Math.random().toString(36).slice(2,7)}`;return `<svg viewBox="0 0 80 80" class="rift-badge-svg"><defs><linearGradient id="${id}a" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a1a2e"/><stop offset="100%" stop-color="#0a0a15"/></linearGradient><linearGradient id="${id}b" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4ade80"/><stop offset="100%" stop-color="#16a34a"/></linearGradient><filter id="${id}g"><feGaussianBlur stdDeviation="2"/></filter><filter id="${id}s"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.6"/></filter></defs><rect x="8" y="10" width="64" height="52" rx="6" fill="url(#${id}a)" stroke="#4ade80" stroke-width="1.5" filter="url(#${id}s)"/><rect x="8" y="58" width="64" height="8" rx="3" fill="#111827" stroke="#4ade80" stroke-width="0.5"/><circle cx="40" cy="62" r="2" fill="#1f2937" stroke="#4ade80" stroke-width="0.5"/><rect x="13" y="14" width="54" height="42" rx="2" fill="#020617"/><rect x="13" y="14" width="54" height="42" rx="2" fill="none" stroke="rgba(74,222,128,0.15)" stroke-width="0.5"/><g font-family="monospace" fill="#4ade80" opacity="0.4" font-size="5"><text x="16" y="22">$ gcc -O2 main.c</text><text x="16" y="29">$ ./a.out</text><text x="16" y="36" opacity="0.3">running tests...</text></g><text x="16" y="46" font-size="14" font-weight="900" fill="#86efac" font-family="monospace">BYTE</text><rect x="56" y="43" width="8" height="2" rx="1" fill="#4ade80"><animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/></rect><circle cx="18" cy="14" r="0" fill="#4ade80" opacity="0.15"><animate attributeName="r" values="0;30;0" dur="3s" repeatCount="indefinite"/></circle></svg>`;},
+
+    // L3: Kilobyte — Emerald hexagonal gem with prismatic facets
+    3: () => {const id=`rb3_${Math.random().toString(36).slice(2,7)}`;return `<svg viewBox="0 0 80 80" class="rift-badge-svg"><defs><linearGradient id="${id}a" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#6ee7b7"/><stop offset="30%" stop-color="#34d399"/><stop offset="60%" stop-color="#059669"/><stop offset="100%" stop-color="#047857"/></linearGradient><linearGradient id="${id}b" x1="0.5" y1="0" x2="0.5" y2="1"><stop offset="0%" stop-color="#a7f3d0"/><stop offset="100%" stop-color="#059669"/></linearGradient><filter id="${id}g"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter><filter id="${id}s"><feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#059669" flood-opacity="0.4"/></filter></defs><polygon points="40,4 68,20 68,52 40,68 12,52 12,20" fill="url(#${id}a)" stroke="url(#${id}b)" stroke-width="2" filter="url(#${id}s)"/><polygon points="40,4 68,20 40,36 12,20" fill="rgba(255,255,255,0.12)"/><polygon points="40,36 68,20 68,52 40,68" fill="rgba(0,0,0,0.08)"/><polygon points="40,36 12,20 12,52 40,68" fill="rgba(0,0,0,0.15)"/><polygon points="40,16 56,26 56,46 40,56 24,46 24,26" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="0.8"/><line x1="40" y1="4" x2="40" y2="68" stroke="rgba(255,255,255,0.08)" stroke-width="0.5"/><line x1="12" y1="20" x2="68" y2="52" stroke="rgba(255,255,255,0.06)" stroke-width="0.5"/><line x1="68" y1="20" x2="12" y2="52" stroke="rgba(255,255,255,0.06)" stroke-width="0.5"/><circle cx="40" cy="36" r="2" fill="#fff" opacity="0.5"><animate attributeName="opacity" values="0.3;0.7;0.3" dur="2s" repeatCount="indefinite"/></circle><text x="40" y="33" text-anchor="middle" font-size="7" font-weight="800" fill="#ecfdf5" font-family="monospace" opacity="0.9">KILO</text><text x="40" y="48" text-anchor="middle" font-size="14" font-weight="900" fill="#fff" font-family="monospace">KB</text></svg>`;},
+
+    // L4: Megabyte — Cyan-teal tactical shield with glowing core
+    4: () => {const id=`rb4_${Math.random().toString(36).slice(2,7)}`;return `<svg viewBox="0 0 80 80" class="rift-badge-svg"><defs><linearGradient id="${id}a" x1="0.5" y1="0" x2="0.5" y2="1"><stop offset="0%" stop-color="#67e8f9"/><stop offset="40%" stop-color="#22d3ee"/><stop offset="100%" stop-color="#0891b2"/></linearGradient><linearGradient id="${id}b" x1="0.5" y1="0" x2="0.5" y2="1"><stop offset="0%" stop-color="#a5f3fc"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient><radialGradient id="${id}c" cx="50%" cy="40%"><stop offset="0%" stop-color="#cffafe" stop-opacity="0.3"/><stop offset="100%" stop-color="#0891b2" stop-opacity="0"/></radialGradient><filter id="${id}g"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter><filter id="${id}s"><feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#06b6d4" flood-opacity="0.5"/></filter></defs><path d="M40 4 L66 16 L66 44 Q66 62 40 72 Q14 62 14 44 L14 16 Z" fill="url(#${id}a)" stroke="url(#${id}b)" stroke-width="2" filter="url(#${id}s)"/><path d="M40 4 L66 16 L66 44 Q66 62 40 72" fill="rgba(0,0,0,0.08)"/><path d="M40 12 L58 22 L58 42 Q58 56 40 64 Q22 56 22 42 L22 22 Z" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/><ellipse cx="40" cy="36" rx="12" ry="12" fill="url(#${id}c)"/><path d="M30 30 L36 30 L36 24 M44 24 L44 30 L50 30 M50 42 L44 42 L44 48 M36 48 L36 42 L30 42" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" stroke-linecap="round"/><circle cx="40" cy="36" r="5" fill="rgba(6,182,212,0.3)" stroke="rgba(255,255,255,0.3)" stroke-width="1"><animate attributeName="r" values="4;6;4" dur="2s" repeatCount="indefinite"/></circle><text x="40" y="39" text-anchor="middle" font-size="6" font-weight="900" fill="#fff" font-family="monospace">MB</text><g fill="#a5f3fc" opacity="0.5"><circle cx="22" cy="20" r="1"/><circle cx="58" cy="20" r="1"/><circle cx="40" cy="10" r="1.2"/></g></svg>`;},
+
+    // L5: Gigabyte — Royal blue 8-point star with lightning core & particle ring
+    5: () => {const id=`rb5_${Math.random().toString(36).slice(2,7)}`;return `<svg viewBox="0 0 80 80" class="rift-badge-svg"><defs><linearGradient id="${id}a" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#93c5fd"/><stop offset="50%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#1e3a8a"/></linearGradient><radialGradient id="${id}b" cx="50%" cy="50%"><stop offset="0%" stop-color="#bfdbfe" stop-opacity="0.4"/><stop offset="100%" stop-color="#1e40af" stop-opacity="0"/></radialGradient><filter id="${id}g"><feGaussianBlur stdDeviation="3.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter><filter id="${id}s"><feDropShadow dx="0" dy="2" stdDeviation="5" flood-color="#2563eb" flood-opacity="0.5"/></filter></defs><polygon points="40,2 47,24 68,10 56,30 78,40 56,50 68,70 47,56 40,78 33,56 12,70 24,50 2,40 24,30 12,10 33,24" fill="url(#${id}a)" stroke="#93c5fd" stroke-width="1.5" filter="url(#${id}s)"/><circle cx="40" cy="40" r="16" fill="url(#${id}b)"/><circle cx="40" cy="40" r="16" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/><path d="M37 28 L33 39 L38 39 L34 52" fill="none" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><animate attributeName="opacity" values="1;0.6;1" dur="0.8s" repeatCount="indefinite"/></path><text x="47" y="44" text-anchor="middle" font-size="12" font-weight="900" fill="#fff" font-family="monospace">GB</text><circle cx="40" cy="40" r="22" fill="none" stroke="#60a5fa" stroke-width="0.5" stroke-dasharray="2 4"><animateTransform attributeName="transform" type="rotate" values="0 40 40;360 40 40" dur="12s" repeatCount="indefinite"/></circle></svg>`;},
+
+    // L6: Terabyte — Legendary purple diamond with inner fire & ornate frame
+    6: () => {const id=`rb6_${Math.random().toString(36).slice(2,7)}`;return `<svg viewBox="0 0 80 80" class="rift-badge-svg"><defs><linearGradient id="${id}a" x1="0.5" y1="0" x2="0.5" y2="1"><stop offset="0%" stop-color="#d8b4fe"/><stop offset="30%" stop-color="#a855f7"/><stop offset="70%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#4c1d95"/></linearGradient><linearGradient id="${id}b" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#e9d5ff"/><stop offset="100%" stop-color="#7c3aed"/></linearGradient><radialGradient id="${id}c" cx="50%" cy="40%"><stop offset="0%" stop-color="#f5f3ff" stop-opacity="0.3"/><stop offset="100%" stop-color="#6d28d9" stop-opacity="0"/></radialGradient><filter id="${id}g"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter><filter id="${id}s"><feDropShadow dx="0" dy="2" stdDeviation="5" flood-color="#7c3aed" flood-opacity="0.5"/></filter></defs><polygon points="40,2 72,40 40,78 8,40" fill="url(#${id}a)" stroke="url(#${id}b)" stroke-width="2" filter="url(#${id}s)"/><polygon points="40,2 72,40 40,40" fill="rgba(255,255,255,0.08)"/><polygon points="40,40 72,40 40,78" fill="rgba(0,0,0,0.1)"/><polygon points="40,14 60,40 40,66 20,40" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/><polygon points="40,26 50,40 40,54 30,40" fill="url(#${id}c)"/><line x1="40" y1="2" x2="40" y2="78" stroke="rgba(255,255,255,0.08)" stroke-width="0.5"/><line x1="8" y1="40" x2="72" y2="40" stroke="rgba(255,255,255,0.08)" stroke-width="0.5"/><circle cx="40" cy="40" r="2" fill="#fff" opacity="0.6"><animate attributeName="opacity" values="0.4;0.8;0.4" dur="1.5s" repeatCount="indefinite"/></circle><text x="40" y="36" text-anchor="middle" font-size="6" font-weight="800" fill="#f5f3ff" font-family="monospace">TERA</text><text x="40" y="50" text-anchor="middle" font-size="13" font-weight="900" fill="#fff" font-family="monospace">TB</text><g fill="#c084fc" opacity="0.4"><circle cx="40" cy="8" r="1.5"/><circle cx="66" cy="40" r="1.5"/><circle cx="40" cy="72" r="1.5"/><circle cx="14" cy="40" r="1.5"/></g></svg>`;},
+
+    // L7: Petabyte — Magenta blazing star with pentagonal inner glow
+    7: () => {const id=`rb7_${Math.random().toString(36).slice(2,7)}`;return `<svg viewBox="0 0 80 80" class="rift-badge-svg"><defs><linearGradient id="${id}a" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f0abfc"/><stop offset="50%" stop-color="#d946ef"/><stop offset="100%" stop-color="#86198f"/></linearGradient><radialGradient id="${id}b" cx="50%" cy="50%"><stop offset="0%" stop-color="#fae8ff" stop-opacity="0.35"/><stop offset="100%" stop-color="#a21caf" stop-opacity="0"/></radialGradient><filter id="${id}g"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter><filter id="${id}s"><feDropShadow dx="0" dy="2" stdDeviation="5" flood-color="#d946ef" flood-opacity="0.5"/></filter></defs><polygon points="40,2 48,26 74,26 53,42 62,68 40,52 18,68 27,42 6,26 32,26" fill="url(#${id}a)" stroke="#f0abfc" stroke-width="1.5" filter="url(#${id}s)"/><polygon points="40,2 48,26 74,26 53,42 40,36" fill="rgba(255,255,255,0.08)"/><polygon points="40,18 45,30 56,30 47,38 50,50 40,44 30,50 33,38 24,30 35,30" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="0.8"/><circle cx="40" cy="38" r="10" fill="url(#${id}b)"/><circle cx="40" cy="38" r="10" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/><text x="40" y="35" text-anchor="middle" font-size="6" font-weight="800" fill="#fdf4ff" font-family="monospace">PETA</text><text x="40" y="46" text-anchor="middle" font-size="11" font-weight="900" fill="#fff" font-family="monospace">PB</text><circle cx="40" cy="38" r="20" fill="none" stroke="#e879f9" stroke-width="0.4" stroke-dasharray="3 5"><animateTransform attributeName="transform" type="rotate" values="0 40 38;360 40 38" dur="15s" repeatCount="indefinite"/></circle></svg>`;},
+
+    // L8: Exabyte — Crimson dragon eye with slit pupil & flame wisps
+    8: () => {const id=`rb8_${Math.random().toString(36).slice(2,7)}`;return `<svg viewBox="0 0 80 80" class="rift-badge-svg"><defs><radialGradient id="${id}a" cx="50%" cy="50%"><stop offset="0%" stop-color="#fecaca"/><stop offset="25%" stop-color="#f87171"/><stop offset="60%" stop-color="#dc2626"/><stop offset="100%" stop-color="#7f1d1d"/></radialGradient><radialGradient id="${id}b" cx="50%" cy="50%"><stop offset="0%" stop-color="#fef2f2" stop-opacity="0.2"/><stop offset="100%" stop-color="#991b1b" stop-opacity="0"/></radialGradient><filter id="${id}g"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter><filter id="${id}s"><feDropShadow dx="0" dy="2" stdDeviation="5" flood-color="#dc2626" flood-opacity="0.5"/></filter></defs><ellipse cx="40" cy="38" rx="34" ry="22" fill="url(#${id}a)" stroke="#f87171" stroke-width="1.5" filter="url(#${id}s)"/><path d="M8 30 Q16 22 28 20" fill="none" stroke="#fca5a5" stroke-width="0.8" opacity="0.4"/><path d="M72 30 Q64 22 52 20" fill="none" stroke="#fca5a5" stroke-width="0.8" opacity="0.4"/><path d="M10 46 Q18 52 28 54" fill="none" stroke="#fca5a5" stroke-width="0.8" opacity="0.3"/><path d="M70 46 Q62 52 52 54" fill="none" stroke="#fca5a5" stroke-width="0.8" opacity="0.3"/><ellipse cx="40" cy="38" rx="7" ry="18" fill="#1c1917" opacity="0.85"/><ellipse cx="40" cy="38" rx="3.5" ry="14" fill="#0c0a09"/><circle cx="37" cy="30" r="3" fill="rgba(255,255,255,0.25)"/><circle cx="36" cy="29" r="1.2" fill="rgba(255,255,255,0.5)"/><ellipse cx="40" cy="38" rx="34" ry="22" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="0.5"/><path d="M26 12 Q30 18 32 22" fill="none" stroke="#ef4444" stroke-width="1" opacity="0.3"><animate attributeName="opacity" values="0.3;0.6;0.3" dur="2s" repeatCount="indefinite"/></path><path d="M54 12 Q50 18 48 22" fill="none" stroke="#ef4444" stroke-width="1" opacity="0.3"><animate attributeName="opacity" values="0.5;0.2;0.5" dur="2.5s" repeatCount="indefinite"/></path><text x="40" y="70" text-anchor="middle" font-size="9" font-weight="900" fill="#fecaca" font-family="monospace" letter-spacing="2">EXA</text></svg>`;},
+
+    // L9: Zettabyte — Atomic nucleus with 3 animated electron orbits & particle effects
+    9: () => {const id=`rb9_${Math.random().toString(36).slice(2,7)}`;return `<svg viewBox="0 0 80 80" class="rift-badge-svg"><defs><radialGradient id="${id}a" cx="50%" cy="50%"><stop offset="0%" stop-color="#fecaca"/><stop offset="50%" stop-color="#ef4444"/><stop offset="100%" stop-color="#7f1d1d"/></radialGradient><radialGradient id="${id}b" cx="50%" cy="50%"><stop offset="0%" stop-color="#fff" stop-opacity="0.9"/><stop offset="100%" stop-color="#fca5a5" stop-opacity="0.3"/></radialGradient><filter id="${id}g"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter><filter id="${id}s"><feDropShadow dx="0" dy="1" stdDeviation="4" flood-color="#ef4444" flood-opacity="0.5"/></filter></defs><circle cx="40" cy="40" r="36" fill="none" stroke="rgba(239,68,68,0.1)" stroke-width="0.5"/><ellipse cx="40" cy="40" rx="32" ry="12" fill="none" stroke="#ef4444" stroke-width="1.8" filter="url(#${id}g)"><animateTransform attributeName="transform" type="rotate" values="0 40 40;360 40 40" dur="4s" repeatCount="indefinite"/></ellipse><ellipse cx="40" cy="40" rx="32" ry="12" fill="none" stroke="#f87171" stroke-width="1.2"><animateTransform attributeName="transform" type="rotate" values="60 40 40;420 40 40" dur="5.5s" repeatCount="indefinite"/></ellipse><ellipse cx="40" cy="40" rx="32" ry="12" fill="none" stroke="#fca5a5" stroke-width="0.8"><animateTransform attributeName="transform" type="rotate" values="120 40 40;480 40 40" dur="7s" repeatCount="indefinite"/></ellipse><circle cx="40" cy="40" r="8" fill="url(#${id}a)" filter="url(#${id}s)"/><circle cx="40" cy="40" r="4" fill="url(#${id}b)"/><circle cx="40" cy="40" r="2" fill="#fff"><animate attributeName="r" values="1.5;2.5;1.5" dur="1.5s" repeatCount="indefinite"/></circle><g fill="#fca5a5" opacity="0.7"><circle cx="72" cy="40" r="1.5"><animateTransform attributeName="transform" type="rotate" values="0 40 40;360 40 40" dur="4s" repeatCount="indefinite"/></circle><circle cx="56" cy="16" r="1.2"><animateTransform attributeName="transform" type="rotate" values="60 40 40;420 40 40" dur="5.5s" repeatCount="indefinite"/></circle><circle cx="24" cy="64" r="1"><animateTransform attributeName="transform" type="rotate" values="120 40 40;480 40 40" dur="7s" repeatCount="indefinite"/></circle></g><text x="40" y="72" text-anchor="middle" font-size="7" font-weight="900" fill="#fecaca" font-family="monospace" letter-spacing="1">ZETTA</text></svg>`;},
+
+    // L10: Yottabyte — Ornate golden crown with jewels, velvet & filigree
+    10: () => {const id=`rb10_${Math.random().toString(36).slice(2,7)}`;return `<svg viewBox="0 0 80 80" class="rift-badge-svg"><defs><linearGradient id="${id}a" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fde68a"/><stop offset="50%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#92400e"/></linearGradient><linearGradient id="${id}b" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fef3c7"/><stop offset="100%" stop-color="#d97706"/></linearGradient><linearGradient id="${id}v" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#7f1d1d"/><stop offset="100%" stop-color="#450a0a"/></linearGradient><filter id="${id}g"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter><filter id="${id}s"><feDropShadow dx="0" dy="2" stdDeviation="5" flood-color="#f59e0b" flood-opacity="0.5"/></filter></defs><rect x="10" y="50" width="60" height="12" rx="3" fill="url(#${id}a)" stroke="url(#${id}b)" stroke-width="1.5"/><rect x="14" y="52" width="52" height="8" rx="2" fill="url(#${id}v)" opacity="0.3"/><path d="M10 50 L10 28 L22 38 L32 20 L40 14 L48 20 L58 38 L70 28 L70 50 Z" fill="url(#${id}a)" stroke="url(#${id}b)" stroke-width="2" filter="url(#${id}s)"/><path d="M10 28 L22 38 L32 20 L40 14 L40 50 L10 50 Z" fill="rgba(255,255,255,0.06)"/><circle cx="40" cy="18" r="4" fill="#ef4444" stroke="#fde68a" stroke-width="1"><animate attributeName="r" values="3.5;4.5;3.5" dur="2s" repeatCount="indefinite"/></circle><circle cx="24" cy="36" r="3" fill="#3b82f6" stroke="#fde68a" stroke-width="0.8"/><circle cx="56" cy="36" r="3" fill="#22c55e" stroke="#fde68a" stroke-width="0.8"/><circle cx="16" cy="34" r="2" fill="#a855f7" stroke="#fde68a" stroke-width="0.5"/><circle cx="64" cy="34" r="2" fill="#a855f7" stroke="#fde68a" stroke-width="0.5"/><line x1="14" y1="56" x2="66" y2="56" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/><g fill="#fde68a" opacity="0.3"><circle cx="20" cy="55" r="0.8"/><circle cx="30" cy="55" r="0.8"/><circle cx="40" cy="55" r="0.8"/><circle cx="50" cy="55" r="0.8"/><circle cx="60" cy="55" r="0.8"/></g><text x="40" y="74" text-anchor="middle" font-size="7" font-weight="900" fill="#fef3c7" font-family="monospace" letter-spacing="1">YOTTA</text></svg>`;},
+
+    // L11: ∞ Overflow — Ascended infinity halo, divine golden radiance, particle cosmos
+    11: () => {const id=`rb11_${Math.random().toString(36).slice(2,7)}`;return `<svg viewBox="0 0 80 80" class="rift-badge-svg"><defs><linearGradient id="${id}a" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#fef3c7"/><stop offset="25%" stop-color="#fbbf24"/><stop offset="50%" stop-color="#f59e0b"/><stop offset="75%" stop-color="#d97706"/><stop offset="100%" stop-color="#fef3c7"/></linearGradient><radialGradient id="${id}b" cx="50%" cy="50%"><stop offset="0%" stop-color="#fefce8" stop-opacity="0.3"/><stop offset="50%" stop-color="#f59e0b" stop-opacity="0.1"/><stop offset="100%" stop-color="#78350f" stop-opacity="0"/></radialGradient><filter id="${id}g"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter><filter id="${id}s"><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#f59e0b" flood-opacity="0.6"/></filter></defs><circle cx="40" cy="40" r="36" fill="url(#${id}b)"/><circle cx="40" cy="40" r="36" fill="none" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="3 2" filter="url(#${id}g)"><animateTransform attributeName="transform" type="rotate" values="0 40 40;360 40 40" dur="20s" repeatCount="indefinite"/></circle><circle cx="40" cy="40" r="32" fill="none" stroke="#f59e0b" stroke-width="0.8" stroke-dasharray="6 4"><animateTransform attributeName="transform" type="rotate" values="360 40 40;0 40 40" dur="15s" repeatCount="indefinite"/></circle><circle cx="40" cy="40" r="28" fill="url(#${id}a)" opacity="0.85" filter="url(#${id}s)"/><circle cx="40" cy="40" r="28" fill="none" stroke="#fef3c7" stroke-width="1"/><circle cx="40" cy="40" r="22" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="0.5"/><path d="M18 40 C18 30 28 26 33 33 C36 37 40 40 40 40 C40 40 44 43 47 47 C52 54 62 50 62 40 C62 30 52 26 47 33 C44 37 40 40 40 40 C40 40 36 43 33 47 C28 54 18 50 18 40 Z" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" filter="url(#${id}g)"/><circle cx="22" cy="40" r="2" fill="#fff" opacity="0.7"><animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/></circle><circle cx="58" cy="40" r="2" fill="#fff" opacity="0.7"><animate attributeName="opacity" values="1;0.5;1" dur="2s" repeatCount="indefinite"/></circle><circle cx="40" cy="40" r="3" fill="#fff" opacity="0.5"><animate attributeName="r" values="2;4;2" dur="3s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.3;0.6;0.3" dur="3s" repeatCount="indefinite"/></circle><g fill="#fde68a" opacity="0.4"><circle cx="18" cy="18" r="1"><animate attributeName="opacity" values="0.2;0.6;0.2" dur="3s" repeatCount="indefinite"/></circle><circle cx="62" cy="18" r="0.8"><animate attributeName="opacity" values="0.4;0.8;0.4" dur="2.5s" repeatCount="indefinite"/></circle><circle cx="18" cy="62" r="0.8"><animate attributeName="opacity" values="0.6;0.2;0.6" dur="2s" repeatCount="indefinite"/></circle><circle cx="62" cy="62" r="1"><animate attributeName="opacity" values="0.3;0.7;0.3" dur="3.5s" repeatCount="indefinite"/></circle><circle cx="40" cy="12" r="0.6"><animate attributeName="opacity" values="0.5;1;0.5" dur="1.8s" repeatCount="indefinite"/></circle><circle cx="40" cy="68" r="0.6"><animate attributeName="opacity" values="0.8;0.3;0.8" dur="2.2s" repeatCount="indefinite"/></circle></g><text x="40" y="68" text-anchor="middle" font-size="6" font-weight="900" fill="#fef3c7" font-family="monospace" letter-spacing="2">OVERFLOW</text></svg>`;},
+  },
+
+  /* Render a rift badge SVG by level number (1-11), at given size */
+  _renderRiftBadge(level, size = 32) {
+    const fn = this._riftBadgeSVGs[level];
+    if (!fn) return '';
+    return `<span class="rift-badge" style="width:${size}px;height:${size}px;display:inline-flex">${fn()}</span>`;
+  },
+
+  /* Render avatar with badge overlay — badge sits at bottom-right of avatar */
+  _renderAvatarWithBadge(avatar, level, avatarSize = 48, badgeSize = 20, avatarUrl = null) {
+    const avatarHtml = this._renderAvatar(avatar, avatarUrl);
+    const badgeHtml = this._renderRiftBadge(level, badgeSize);
+    return `<span class="avatar-badge-wrap" style="width:${avatarSize}px;height:${avatarSize}px">
+      <span class="avatar-badge-icon" style="font-size:${Math.round(avatarSize * 0.5)}px">${avatarHtml}</span>
+      <span class="avatar-badge-overlay">${badgeHtml}</span>
+    </span>`;
   },
 
   /* ===== ACHIEVEMENT ICON MAP ===== */
@@ -110,6 +164,9 @@ const App = {
   },
 
   /* ========== Init ========== */
+  _isAdmin: false,
+  _oauthUser: null,
+
   async init() {
     // Boot screen animation
     this._bootSequence();
@@ -117,8 +174,55 @@ const App = {
     window.addEventListener('hashchange', () => this.route());
     document.addEventListener('keydown', e => this.handleKeys(e));
     this.initResizer();
+
     await this._initSocial();
     await this._loadAndApplySettings();
+
+    // Check for OAuth callback in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const authProvider = urlParams.get('auth');
+    const authError = urlParams.get('auth_error');
+    
+    if (authError) {
+      // Clean URL
+      window.history.replaceState({}, '', window.location.pathname);
+      setTimeout(() => this.toast(`Auth error: ${authError.replace(/_/g, ' ')}`, 'error'), 3500);
+    }
+
+    if (authProvider) {
+      // Clean URL
+      window.history.replaceState({}, '', window.location.pathname);
+      // Fetch OAuth user data from session
+      try {
+        const authStatus = await API.getAuthStatus();
+        if (authStatus.ok && authStatus.authenticated) {
+          this._oauthUser = authStatus.user;
+        }
+      } catch {}
+    }
+
+    // Force onboarding if no profile exists
+    if (!this._username) {
+      setTimeout(() => this._dismissBoot(), 2800);
+      setTimeout(() => {
+        this.showGateScreen();
+        // If we have OAuth data, skip gate and go straight to setup with auto-fill
+        if (this._oauthUser) {
+          this._gateCreate();
+          setTimeout(() => this._handleOAuthComplete(), 500);
+        }
+      }, 3200);
+      return;
+    }
+
+    // Check admin status
+    try {
+      const profile = await API.getUserProfile(this._username);
+      if (profile.ok && profile.user?.role === 'admin') {
+        this._isAdmin = true;
+      }
+    } catch {}
+
     if (!location.hash) location.hash = '#/hub';
     else this.route();
     this._updateSidebarPlayer();
@@ -130,6 +234,38 @@ const App = {
 
     // Dismiss boot screen after content loads
     setTimeout(() => this._dismissBoot(), 2800);
+
+    // Restore sidebar state
+    if (localStorage.getItem('nexora_sidebar_collapsed') === '1') {
+      document.getElementById('sidebar')?.classList.add('sidebar-collapsed');
+      const btn = document.getElementById('sidebarToggle');
+      if (btn) { btn.title = 'Show sidebar'; btn.textContent = '▶'; btn.style.display = 'none'; }
+    }
+  },
+
+  toggleSidebar(forceOpen) {
+    const sb = document.getElementById('sidebar');
+    if (!sb) return;
+    if (forceOpen === true) {
+      sb.classList.remove('sidebar-collapsed');
+    } else {
+      sb.classList.toggle('sidebar-collapsed');
+    }
+    const collapsed = sb.classList.contains('sidebar-collapsed');
+    localStorage.setItem('nexora_sidebar_collapsed', collapsed ? '1' : '0');
+    const btn = document.getElementById('sidebarToggle');
+    if (btn) {
+      btn.title = collapsed ? 'Show sidebar' : 'Hide sidebar';
+      btn.innerHTML = collapsed
+        ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><polyline points="9 18 15 12 9 6"/></svg>'
+        : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><polyline points="15 18 9 12 15 6"/></svg>';
+      btn.style.display = collapsed ? 'none' : '';
+    }
+  },
+
+  expandSidebar() {
+    const sb = document.getElementById('sidebar');
+    if (sb && sb.classList.contains('sidebar-collapsed')) this.toggleSidebar(true);
   },
 
   _bootSequence() {
@@ -292,6 +428,9 @@ const App = {
     const page = parts[0] || 'dashboard';
     const subId = parts[1] || null;
 
+    // Auto-expand sidebar on navigation
+    this.expandSidebar();
+
     // Highlight the primary nav item
     const navPage = page;
     document.querySelectorAll('.nav-item').forEach(el => {
@@ -334,6 +473,10 @@ const App = {
       case 'workshop': this.renderWorkshop(content); break;
       case 'social': this.renderSocial(content); break;
       case 'hub': this.renderHub(content); break;
+      case 'profile':
+        if (subId) { this.renderUserProfile(content, subId); }
+        else { this.renderUserProfile(content, this._username); }
+        break;
       default: this.renderHub(content);
     }
   },
@@ -341,10 +484,9 @@ const App = {
   /* ========== Sidebar Player Card ========== */
   async _updateSidebarPlayer() {
     try {
-      const data = await API.getStats();
+      const data = await API.getStats(this._username);
       if (!data.ok) return;
       const lvl = data.level;
-      document.getElementById('sidebarLevel').textContent = lvl.level;
       document.getElementById('sidebarTitle').textContent = lvl.name;
       document.getElementById('sidebarTitle').style.color = lvl.color;
       if (lvl.glow && lvl.glow !== 'none') document.getElementById('sidebarTitle').style.textShadow = lvl.glow;
@@ -353,13 +495,33 @@ const App = {
       document.getElementById('sidebarXpFill').style.background = lvl.color;
       document.getElementById('sidebarXpText').textContent = data.totalXp + ' XP';
 
-      // Update XP ring
-      const ring = document.getElementById('sidebarXpRing');
-      if (ring) {
-        const circumference = 2 * Math.PI * 19; // r=19
-        const offset = circumference * (1 - pct / 100);
-        ring.style.strokeDashoffset = offset;
-        ring.style.stroke = lvl.color;
+      // Update rift badge in sidebar
+      const badgeEl = document.getElementById('sidebarRiftBadge');
+      if (badgeEl) badgeEl.innerHTML = this._renderRiftBadge(lvl.level, 20);
+
+      // Update avatar icon in sidebar
+      const avatarEl = document.getElementById('sidebarAvatarIcon');
+      if (avatarEl && this._username) {
+        try {
+          const profile = await API.getUserProfile(this._username);
+          if (profile.ok && profile.user) {
+            avatarEl.innerHTML = this._renderAvatar(profile.user.avatar, profile.user.avatar_url);
+            if (profile.user.role === 'admin') this._isAdmin = true;
+          }
+        } catch {}
+      }
+
+      // Admin crown indicator
+      const titleEl = document.getElementById('sidebarTitle');
+      if (titleEl && this._isAdmin) {
+        titleEl.innerHTML = `<span class="admin-crown">♛</span> ${lvl.name}`;
+      }
+
+      // Admin styling on sidebar card
+      const sidebarCard = document.getElementById('sidebarPlayerCard');
+      if (sidebarCard) {
+        if (this._isAdmin) sidebarCard.classList.add('admin-player');
+        else sidebarCard.classList.remove('admin-player');
       }
 
       // Update streak
@@ -395,12 +557,11 @@ const App = {
   ],
 
   async renderHub(el) {
-    const activeTab = this._hubTab || 'overview';
     el.innerHTML = `
       <div class="hub-header">
         <div class="hub-header-left">
           <h1 class="hub-title"><i class="icon-cpu" style="font-size:28px"></i> <span class="glitch" data-text="NEXORA HQ">NEXORA HQ</span></h1>
-          <p class="hub-subtitle">sys.init() => boot_sequence(modules: [stats, profile, activity])</p>
+          <p class="hub-subtitle">sys.init() => boot_sequence(modules: [stats, activity])</p>
         </div>
         <div class="hub-header-actions">
           <button class="btn btn-ghost btn-sm" onclick="App.openSettings()"><i class="icon-settings" style="font-size:13px"></i> ./config</button>
@@ -408,103 +569,152 @@ const App = {
           <button class="btn btn-primary btn-sm" onclick="App._openCustomizePanel()" id="hubCustomizeBtn"><i class="icon-dashboard" style="font-size:13px"></i> layout</button>
         </div>
       </div>
-      <div class="hub-tabs">
-        <button class="hub-tab ${activeTab === 'overview' ? 'active' : ''}" onclick="App._switchHubTab('overview')">
-          <i class="icon-dashboard"></i> ~/overview
-        </button>
-        <button class="hub-tab ${activeTab === 'profile' ? 'active' : ''}" onclick="App._switchHubTab('profile')">
-          <i class="icon-profile"></i> /profile --achievements
-        </button>
-      </div>
       <div class="hub-content" id="hubContent"></div>`;
 
     const hubContent = document.getElementById('hubContent');
-    if (activeTab === 'overview') {
-      await this._renderHubOverview(hubContent);
-    } else {
-      await this._renderHubProfile(hubContent);
-    }
-  },
-
-  _switchHubTab(tab) {
-    this._hubTab = tab;
-    // Animate tab switch
-    const content = document.getElementById('hubContent');
-    if (content) {
-      content.classList.add('hub-content-exit');
-      setTimeout(() => {
-        this.renderHub(document.getElementById('pageContent'));
-      }, 150);
-    } else {
-      this.renderHub(document.getElementById('pageContent'));
-    }
+    await this._renderHubOverview(hubContent);
   },
 
   async _renderHubProfile(el) {
     el.innerHTML = `
-      <div class="hub-profile-section">
-        <div class="hub-profile-hero" id="hubProfileHero">
-          <div class="hub-profile-avatar" style="font-size:48px;display:flex;align-items:center;justify-content:center;width:80px;height:80px;background:var(--glass);border-radius:16px;border:1px solid var(--glass-border)"><i class="icon-profile"></i></div>
-          <div class="hub-profile-info">
-            <div class="hub-profile-stats-row" id="hubProfileQuickStats"></div>
-          </div>
+      <div class="profile-page-hero" id="hubProfileHero">
+        <div class="profile-hero-left">
+          <div class="profile-hero-badge-large" id="profileAvatarBadge"></div>
+          <div id="profileRiftBadgeLarge"></div>
         </div>
-        <div class="card mb-3" id="rankProgressionCard">
-          <div class="card-header"><span class="card-title"><i class="icon-medal" style="font-size:16px"></i> rank.progression</span></div>
-          <div class="rank-progression" id="rankProgression"></div>
+        <div class="profile-hero-right">
+          <div class="profile-hero-name" id="profileHeroName"><i class="icon-profile"></i> Player</div>
+          <div class="profile-hero-handle" id="profileHeroHandle">@anonymous</div>
+          <div class="profile-hero-bio" id="profileHeroBio"></div>
+          <div class="profile-hero-level-tag" id="profileHeroLevelTag"></div>
+          <div class="profile-hero-stats" id="hubProfileQuickStats"></div>
         </div>
-        <div class="card mb-3">
-          <div class="card-header"><span class="card-title"><i class="icon-trophy" style="font-size:16px"></i> achievements[]</span>
-            <span class="badge badge-xp" id="achieveCountBadge">0/0</span></div>
-          <div class="achievements-grid" id="achievementsGrid"></div>
+      </div>
+      <div class="card mb-3" id="rankProgressionCard">
+        <div class="card-header"><span class="card-title"><i class="icon-star" style="font-size:16px"></i> nexora.progression()</span></div>
+        <div class="rank-progression" id="rankProgression"></div>
+      </div>
+      <div class="card mb-3">
+        <div class="card-header"><span class="card-title"><i class="icon-trophy" style="font-size:16px"></i> achievements[]</span>
+          <span class="badge badge-xp" id="achieveCountBadge">0/0</span></div>
+        <div class="achievements-grid" id="achievementsGrid"></div>
+      </div>
+      <div class="profile-grid">
+        <div class="card">
+          <div class="card-header"><span class="card-title"><i class="icon-chart" style="font-size:16px"></i> platform.dist()</span></div>
+          <div class="chart-container"><canvas id="platformChart"></canvas></div>
         </div>
-        <div class="profile-grid">
-          <div class="card">
-            <div class="card-header"><span class="card-title"><i class="icon-chart" style="font-size:16px"></i> platform.dist()</span></div>
-            <div class="chart-container"><canvas id="platformChart"></canvas></div>
-          </div>
-          <div class="card">
-            <div class="card-header"><span class="card-title"><i class="icon-star" style="font-size:16px"></i> player.stats</span></div>
-            <div id="solveStats"></div>
-          </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title"><i class="icon-star" style="font-size:16px"></i> player.stats</span></div>
+          <div id="solveStats"></div>
         </div>
       </div>`;
 
-    const [stats, settings] = await Promise.all([API.getStats(), API.getSettings()]);
+    const [stats, settings] = await Promise.all([API.getStats(this._username), API.getSettings()]);
     if (!stats.ok) return;
+
+    // Profile hero identity
+    let userAvatar = 'coder', userAvatarUrl = null, displayName = 'Player', handle = 'anonymous', bio = '';
+    if (this._username) {
+      try {
+        const profile = await API.getUserProfile(this._username);
+        if (profile.ok && profile.user) {
+          userAvatar = profile.user.avatar || 'coder';
+          userAvatarUrl = profile.user.avatar_url || null;
+          displayName = profile.user.display_name || profile.user.username;
+          handle = profile.user.username;
+          bio = profile.user.bio || '';
+        }
+      } catch {}
+    }
+
+    // Avatar with badge overlay (large)
+    const avatarBadgeEl = document.getElementById('profileAvatarBadge');
+    if (avatarBadgeEl) {
+      avatarBadgeEl.innerHTML = this._renderAvatarWithBadge(userAvatar, stats.level.level, 96, 36, userAvatarUrl);
+    }
+
+    // Large rift badge
+    const riftBadgeLargeEl = document.getElementById('profileRiftBadgeLarge');
+    if (riftBadgeLargeEl) {
+      riftBadgeLargeEl.innerHTML = this._renderRiftBadge(stats.level.level, 56);
+    }
+
+    // Name, handle, bio
+    const nameEl = document.getElementById('profileHeroName');
+    if (nameEl) {
+      const adminTag = this._isAdmin ? ' <span class="admin-tag">♛ ADMIN</span>' : '';
+      nameEl.innerHTML = `${this._esc(displayName)} ${this._renderRiftBadge(stats.level.level, 22)}${adminTag}`;
+    }
+    const handleEl = document.getElementById('profileHeroHandle');
+    if (handleEl) handleEl.textContent = `@${handle}`;
+    const bioEl = document.getElementById('profileHeroBio');
+    if (bioEl) bioEl.textContent = bio || '// no bio set';
+
+    // Admin glow on hero section
+    if (this._isAdmin) {
+      const heroEl = document.getElementById('hubProfileHero');
+      if (heroEl) {
+        heroEl.classList.add('admin-profile-hero');
+        heroEl.insertAdjacentHTML('afterbegin', '<div class="admin-hero-glow"></div>');
+      }
+    }
+
+    // Level tag
+    const levelTagEl = document.getElementById('profileHeroLevelTag');
+    if (levelTagEl) {
+      levelTagEl.style.color = stats.level.color;
+      levelTagEl.style.borderColor = stats.level.color;
+      if (stats.level.glow !== 'none') levelTagEl.style.boxShadow = stats.level.glow;
+      levelTagEl.innerHTML = `${this._renderRiftBadge(stats.level.level, 16)} Level ${stats.level.level} — ${stats.level.name}`;
+    }
 
     // Quick stats row in hero
     const qsEl = document.getElementById('hubProfileQuickStats');
     if (qsEl) {
       qsEl.innerHTML = `
-        <div class="hub-pstat"><span class="hub-pstat-val">${stats.solved}</span><span class="hub-pstat-lbl">Solved</span></div>
-        <div class="hub-pstat"><span class="hub-pstat-val">${stats.accuracy}%</span><span class="hub-pstat-lbl">Accuracy</span></div>
-        <div class="hub-pstat"><span class="hub-pstat-val">${stats.totalXp.toLocaleString()}</span><span class="hub-pstat-lbl">Total XP</span></div>
-        <div class="hub-pstat"><span class="hub-pstat-val">${stats.streak.current}</span><span class="hub-pstat-lbl">Day Streak</span></div>`;
+        <div class="profile-hero-stat"><span class="profile-hero-stat-val">${stats.solved}</span><span class="profile-hero-stat-lbl">Solved</span></div>
+        <div class="profile-hero-stat"><span class="profile-hero-stat-val">${stats.accuracy}%</span><span class="profile-hero-stat-lbl">Accuracy</span></div>
+        <div class="profile-hero-stat"><span class="profile-hero-stat-val">${stats.totalXp.toLocaleString()}</span><span class="profile-hero-stat-lbl">Total XP</span></div>
+        <div class="profile-hero-stat"><span class="profile-hero-stat-val">${stats.streak.current}</span><span class="profile-hero-stat-lbl">Day Streak</span></div>`;
     }
 
     // Rank Progression
     if (stats.allTitles?.length) {
       const rpEl = document.getElementById('rankProgression');
-      let rpHtml = '';
       const currentLvl = stats.level.level;
+      const pct = Math.round(((currentLvl - 1) / (stats.allTitles.length - 1)) * 100);
+      let rpHtml = `
+        <div class="np-track-wrap">
+          <div class="np-track-bg"></div>
+          <div class="np-track-fill" style="width:${pct}%"></div>
+          <div class="np-track-dots">
+            ${stats.allTitles.map((t, i) => {
+              const lvlNum = i + 1;
+              const reached = currentLvl >= lvlNum;
+              const isCurrent = currentLvl === lvlNum;
+              return `<div class="np-track-dot ${reached ? 'reached' : ''} ${isCurrent ? 'current' : ''}" style="${isCurrent ? 'background:' + t.color + ';box-shadow:0 0 8px ' + t.color : ''}"></div>`;
+            }).join('')}
+          </div>
+        </div>
+        <div class="badge-showcase-grid">`;
       for (let i = 0; i < stats.allTitles.length; i++) {
         const t = stats.allTitles[i];
         const lvlNum = i + 1;
         const reached = currentLvl >= lvlNum;
         const isCurrent = currentLvl === lvlNum;
         rpHtml += `
-          <div class="rank-node ${isCurrent ? 'rank-current' : ''}">
-            <div class="rank-dot ${reached ? 'reached' : ''} ${isCurrent ? 'current' : ''}" style="background:${t.color}${reached ? '' : ';opacity:0.3'};${reached && t.glow !== 'none' ? 'box-shadow:' + t.glow : ''}">
-              <span class="rank-badge">${t.badge || ''}</span>
+          <div class="badge-showcase-card ${reached ? 'reached' : 'locked-badge'} ${isCurrent ? 'current' : ''}" title="Level ${lvlNum}: ${t.title}&#10;${t.min_xp.toLocaleString()} XP · ${(t.min_problems||0).toLocaleString()} solved">
+            <div class="badge-showcase-icon">${this._renderRiftBadge(lvlNum, 52)}</div>
+            <div class="badge-showcase-level" style="color:${t.color}">L${lvlNum}</div>
+            <div class="badge-showcase-name" style="color:${t.color}">${t.title}</div>
+            <div class="badge-showcase-req">${t.min_xp > 0 ? t.min_xp.toLocaleString() + ' XP' : 'Starter'}</div>
+            <div class="badge-showcase-status ${reached ? 'unlocked' : 'locked'}">
+              ${isCurrent ? '<i class="icon-bolt" style="font-size:9px"></i> Active' : reached ? '<i class="icon-check" style="font-size:9px"></i> Done' : '<i class="icon-lock" style="font-size:9px"></i> Locked'}
             </div>
-            <div class="rank-name" style="color:${t.color}">${lvlNum}. ${t.title}</div>
-            <div class="rank-xp">${t.min_xp.toLocaleString()} XP · ${(t.min_problems||0).toLocaleString()} solved</div>
           </div>`;
-        if (i < stats.allTitles.length - 1) {
-          rpHtml += `<div class="rank-connector ${reached ? 'reached' : ''}"></div>`;
-        }
       }
+      rpHtml += '</div>';
       rpEl.innerHTML = rpHtml;
     }
 
@@ -564,6 +774,18 @@ const App = {
   },
 
   async _renderHubOverview(el) {
+    // Show skeleton immediately
+    el.innerHTML = `
+      <div style="padding:0">
+        <div class="skeleton-card" style="height:200px;margin-bottom:12px"></div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px">
+          ${Array.from({length:4}, () => `<div class="skeleton-card" style="height:90px"></div>`).join('')}
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+          ${Array.from({length:3}, () => `<div class="skeleton-card" style="height:110px"></div>`).join('')}
+        </div>
+      </div>`;
+
     const layoutData = await API.getDashboardLayout();
     const layout = layoutData.ok ? layoutData.layout : {};
     const isHidden = (section) => layout[section] === false;
@@ -594,11 +816,11 @@ const App = {
       charts: `<div class="dashboard-grid mt-3">
           <div class="card">
             <div class="card-header"><span class="card-title"><i class="icon-chart" style="font-size:16px"></i> rating.dist()</span></div>
-            <div class="chart-container"><canvas id="ratingChart"></canvas></div>
+            <div id="ratingChartWrap"></div>
           </div>
           <div class="card">
             <div class="card-header"><span class="card-title"><i class="icon-target" style="font-size:16px"></i> verdict.analysis()</span></div>
-            <div class="chart-container"><canvas id="verdictChart"></canvas></div>
+            <div id="verdictChartWrap"></div>
           </div>
         </div>`,
       skillradar: `<div id="skillRadarSection"></div>`,
@@ -615,6 +837,22 @@ const App = {
 
     el.innerHTML = `<div id="playerHud"></div>${sectionsMarkup}`;
 
+    // Show skeleton placeholders in HUD while data loads
+    document.getElementById('playerHud').innerHTML = `
+      <div style="padding:20px 0">
+        <div class="skeleton-row" style="justify-content:center;gap:20px;padding:12px 0">
+          <div class="skeleton skeleton-avatar" style="width:80px;height:80px;border-radius:50%"></div>
+          <div style="flex:0 0 180px;display:flex;flex-direction:column;gap:8px">
+            <div class="skeleton skeleton-line medium"></div>
+            <div class="skeleton skeleton-line short"></div>
+            <div class="skeleton skeleton-line full"></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:12px">
+          ${Array.from({length:5},()=>`<div class="skeleton skeleton-block" style="flex:1;height:70px;border-radius:8px"></div>`).join('')}
+        </div>
+      </div>`;
+
     await this._populateDashboardData();
   },
 
@@ -624,7 +862,7 @@ const App = {
   async _populateDashboardData() {
 
     // Fetch both APIs in parallel
-    const [data, perf] = await Promise.all([API.getStats(), API.getPerformance()]);
+    const [data, perf] = await Promise.all([API.getStats(this._username), API.getPerformance()]);
     if (!data.ok) return;
     const p = perf.ok ? perf : {};
 
@@ -687,7 +925,7 @@ const App = {
                 <path d="${ringPath}" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="2.5"/>
                 <path d="${ringPath}" fill="none" stroke="url(#hudRingGrad)" stroke-width="2.5" stroke-dasharray="${xpPct}, 100" stroke-linecap="round" class="hud-ring-fill-anim"/>
               </svg>
-              <div class="hud-level-num" style="color:${lvl.color};text-shadow:0 0 30px ${lvl.color}80">${lvl.level}</div>
+              <div class="hud-level-badge-inner" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;animation:levelNumPulse 3s ease-in-out infinite">${this._renderRiftBadge(lvl.level, 72)}</div>
             </div>
             <div class="hud-rank-title" style="color:${lvl.color};text-shadow:0 0 20px ${lvl.color}60">${this._esc(title.current.title)}</div>
             <div class="hud-power-row">
@@ -735,7 +973,7 @@ const App = {
     if (qaEl) {
       qaEl.innerHTML = `
         <div class="quick-actions-v2 mt-3">
-          <div class="qa-card" onclick="App.navigate('problems');App._randomProblem&&App._randomProblem()" data-glow="var(--brand)">
+          <div class="qa-card" onclick="App._randomProblem()" data-glow="var(--brand)">
             <div class="qa-icon-wrap" style="--qa-c:var(--brand)"><i class="icon-dice"></i></div>
             <div class="qa-text">
               <div class="qa-title">Random Mission</div>
@@ -743,7 +981,7 @@ const App = {
             </div>
             <div class="qa-arrow"><i class="icon-chevron-right"></i></div>
           </div>
-          <div class="qa-card" onclick="App.navigate('problems')" data-glow="var(--success)">
+          <div class="qa-card" onclick="location.hash='#/problems'" data-glow="var(--success)">
             <div class="qa-icon-wrap" style="--qa-c:var(--success)"><i class="icon-code"></i></div>
             <div class="qa-text">
               <div class="qa-title">Browse Problems</div>
@@ -751,15 +989,15 @@ const App = {
             </div>
             <div class="qa-arrow"><i class="icon-chevron-right"></i></div>
           </div>
-          <div class="qa-card" onclick="App.navigate('arena')" data-glow="var(--warning)">
+          <div class="qa-card" onclick="location.hash='#/forge'" data-glow="var(--warning)">
             <div class="qa-icon-wrap" style="--qa-c:var(--warning)"><i class="icon-sword"></i></div>
             <div class="qa-text">
-              <div class="qa-title">Arena Campaign</div>
-              <div class="qa-desc">Progress through structured levels</div>
+              <div class="qa-title">The Forge</div>
+              <div class="qa-desc">Build skills through structured paths</div>
             </div>
             <div class="qa-arrow"><i class="icon-chevron-right"></i></div>
           </div>
-          <div class="qa-card" onclick="App.navigate('contests')" data-glow="var(--purple)">
+          <div class="qa-card" onclick="location.hash='#/contests'" data-glow="var(--purple)">
             <div class="qa-icon-wrap" style="--qa-c:var(--purple)"><i class="icon-trophy"></i></div>
             <div class="qa-text">
               <div class="qa-title">Live Contests</div>
@@ -798,6 +1036,7 @@ const App = {
               <i class="icon-clock" style="font-size:12px"></i>
               <span>Day ${data.streak.current + 1}</span>
             </div>
+            <div class="hub-live-clock" id="hubLiveClock"><span class="live-dot"></span><span class="clock-time">--:--:--</span></div>
           </div>
           <div class="today-metrics-v2">
             <div class="today-metric-v2">
@@ -847,6 +1086,7 @@ const App = {
           </div>
           ${ts.solved >= dailyGoal ? '<div class="today-goal-hit-v2"><i class="icon-shield" style="font-size:16px"></i> <span>Daily objective complete — XP secured</span></div>' : `<div class="today-goal-bar-v2"><div class="today-goal-fill-v2" style="width:${todayPct}%"></div><span>${ts.solved}/${dailyGoal} daily objective</span></div>`}
         </div>`;
+      this._startLiveClock('hubLiveClock');
     }
 
     /* ═══════════════════════════════════════════════
@@ -986,15 +1226,18 @@ const App = {
     /* ═══════════════════════════════════════════════
        6. STATS GRID (6 cards)
        ═══════════════════════════════════════════════ */
-    document.getElementById('statsGrid').innerHTML = `
-      ${this._statCard('icon-check', 'green', data.solved, 'Problems Solved')}
-      ${this._statCard('icon-bolt', 'purple', data.totalXp.toLocaleString(), 'Total XP')}
-      ${this._statCard('icon-target', 'blue', data.accuracy + '%', 'Accuracy')}
-      ${this._statCard('icon-fire', 'amber', data.streak.current + ' days', 'Current Streak')}
-      ${this._statCard('icon-code', 'brand', data.submissions, 'Submissions')}
-      ${this._statCard('icon-trending', 'pink', (p.consistencyScore || 0) + '%', 'Consistency')}`;
-    // Trigger count-up animations
-    setTimeout(() => this._animateCountUps(), 100);
+    const statsGridEl = document.getElementById('statsGrid');
+    if (statsGridEl) {
+      statsGridEl.innerHTML = `
+        ${this._statCard('icon-check', 'green', data.solved, 'Problems Solved')}
+        ${this._statCard('icon-bolt', 'purple', data.totalXp.toLocaleString(), 'Total XP')}
+        ${this._statCard('icon-target', 'blue', data.accuracy + '%', 'Accuracy')}
+        ${this._statCard('icon-fire', 'amber', data.streak.current + ' days', 'Current Streak')}
+        ${this._statCard('icon-code', 'brand', data.submissions, 'Submissions')}
+        ${this._statCard('icon-trending', 'pink', (p.consistencyScore || 0) + '%', 'Consistency')}`;
+      // Trigger count-up animations (stats grid + HUD power level)
+      setTimeout(() => this._animateCountUps(), 120);
+    }
 
     /* ═══════════════════════════════════════════════
        7. STREAK TRACKER (enhanced with calendar)
@@ -1008,7 +1251,7 @@ const App = {
       </div>
       <div style="padding:12px 16px">
         <div class="streak-week">`;
-    for (const d2 of streak.lastWeek) {
+    for (const d2 of (streak.lastWeek || [])) {
       const dayName = ['Su','Mo','Tu','We','Th','Fr','Sa'][new Date(d2.date).getDay()];
       const isToday = d2.date === new Date().toISOString().slice(0, 10);
       streakHtml += `<div class="streak-day ${d2.solved > 0 ? 'active' : ''} ${isToday ? 'today' : ''}">
@@ -1028,7 +1271,7 @@ const App = {
       <span class="streak-milestone-text">${streak.current}/${nextMilestone} day milestone</span>
     </div>`;
     streakHtml += '</div></div>';
-    streakEl.innerHTML = streakHtml;
+    if (streakEl) streakEl.innerHTML = streakHtml;
 
     /* ═══════════════════════════════════════════════
        8. ANALYTICS — Consistency + Peak Hours + Languages
@@ -1112,13 +1355,19 @@ const App = {
     /* ═══════════════════════════════════════════════
        9. ACTIVITY — Interactive Heatmap
        ═══════════════════════════════════════════════ */
-    this.renderHeatmap(data.heatmap);
+    if (document.getElementById('heatmapContainer')) {
+      try { this.renderHeatmap(data.heatmap || []); } catch(e) { console.error('heatmap render error:', e); }
+    }
 
     /* ═══════════════════════════════════════════════
        10. CHARTS — Rating & Verdict Doughnuts
        ═══════════════════════════════════════════════ */
-    this.renderRatingChart(data.ratingDist);
-    this.renderVerdictChart(data.verdicts);
+    if (document.getElementById('ratingChartWrap')) {
+      try { this.renderRatingChart(data.ratingDist || []); } catch(e) { console.error('rating chart error:', e); }
+    }
+    if (document.getElementById('verdictChartWrap')) {
+      try { this.renderVerdictChart(data.verdicts || []); } catch(e) { console.error('verdict chart error:', e); }
+    }
 
     /* ═══════════════════════════════════════════════
        10b. SKILL RADAR — Tag-based skill breakdown
@@ -1293,18 +1542,20 @@ const App = {
   },
 
   _animateCountUps() {
-    document.querySelectorAll('.stat-value.counting[data-target]').forEach(el => {
+    document.querySelectorAll('.stat-value.counting[data-target], .hud-power-val.counting[data-target]').forEach(el => {
       const target = parseInt(el.dataset.target);
       if (!target || target <= 0) return;
-      const duration = 800;
+      const isPower = el.classList.contains('hud-power-val');
+      const duration = isPower ? 1200 : 800;
       const start = performance.now();
       el.textContent = '0';
       const step = (now) => {
         const progress = Math.min((now - start) / duration, 1);
         const eased = 1 - Math.pow(1 - progress, 3);
-        el.textContent = Math.round(target * eased);
+        const cur = Math.round(target * eased);
+        el.textContent = isPower ? cur.toLocaleString() : cur;
         if (progress < 1) requestAnimationFrame(step);
-        else { el.textContent = target; el.classList.remove('counting'); }
+        else { el.textContent = isPower ? target.toLocaleString() : target; el.classList.remove('counting'); }
       };
       requestAnimationFrame(step);
     });
@@ -1451,39 +1702,85 @@ const App = {
   },
 
   renderRatingChart(dist) {
-    const ctx = document.getElementById('ratingChart');
-    if (this.charts.rating) this.charts.rating.destroy();
-    const colors = {
-      'Newbie': '#808080', 'Pupil': '#22c55e', 'Specialist': '#14b8a6',
-      'Expert': '#3b82f6', 'Candidate Master': '#059669', 'Master': '#f59e0b', 'Grandmaster': '#ef4444',
-    };
-    this.charts.rating = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: dist.map(d => d.tier),
-        datasets: [{ data: dist.map(d => d.count), backgroundColor: dist.map(d => colors[d.tier] || '#666'), borderWidth: 0 }],
-      },
-      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: '#94a3b8', font: { size: 11 } } } } },
-    });
+    const wrap = document.getElementById('ratingChartWrap');
+    if (!wrap) return;
+    if (!dist.length) { wrap.innerHTML = '<div class="empty-state" style="padding:20px"><p>// no solved problems yet</p></div>'; return; }
+    const tierColors = { Newbie: '#6b7280', Pupil: '#22c55e', Specialist: '#14b8a6', Expert: '#3b82f6', 'Candidate Master': '#059669', Master: '#f59e0b', Grandmaster: '#ef4444' };
+    const maxCount = Math.max(...dist.map(d => d.count), 1);
+    const total = dist.reduce((s, d) => s + d.count, 0) || 1;
+    let html = '<div class="perf-rating-bars" style="padding:12px 16px 16px">';
+    for (const r of dist) {
+      const barPct = Math.round(r.count / maxCount * 100);
+      const sharePct = Math.round(r.count / total * 100);
+      const col = tierColors[r.tier] || 'var(--accent)';
+      html += `<div class="perf-rbar">
+        <span class="perf-rbar-label" style="color:${col}">${this._esc(r.tier)}</span>
+        <div class="perf-rbar-track"><div class="perf-rbar-fill" style="width:${barPct}%;background:${col}"></div></div>
+        <span class="perf-rbar-count">${r.count} <span style="color:var(--text-muted);font-size:10px">${sharePct}%</span></span>
+      </div>`;
+    }
+    html += '</div>';
+    wrap.innerHTML = html;
   },
 
   renderVerdictChart(verdicts) {
-    const ctx = document.getElementById('verdictChart');
-    if (this.charts.verdict) this.charts.verdict.destroy();
-    const colors = { AC: '#22c55e', WA: '#ef4444', TLE: '#f59e0b', CE: '#94a3b8', RE: '#059669', OK: '#3b82f6' };
-    this.charts.verdict = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: verdicts.map(v => v.verdict),
-        datasets: [{ data: verdicts.map(v => v.count), backgroundColor: verdicts.map(v => colors[v.verdict] || '#666'), borderWidth: 0 }],
-      },
-      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: '#94a3b8', font: { size: 11 } } } } },
-    });
+    const wrap = document.getElementById('verdictChartWrap');
+    if (!wrap) return;
+    if (!verdicts.length) { wrap.innerHTML = '<div class="empty-state" style="padding:20px"><p>// no submissions yet</p></div>'; return; }
+    const verdictColors = { AC: '#10b981', WA: '#ef4444', TLE: '#f59e0b', RE: '#f97316', CE: '#94a3b8', MLE: '#d4a017', OK: '#3b82f6' };
+    const totalV = verdicts.reduce((s, v) => s + v.count, 0) || 1;
+    const accuracy = Math.round((verdicts.find(v => v.verdict === 'AC')?.count || 0) / totalV * 100);
+    const donutR = 54, donutC = 2 * Math.PI * donutR;
+    let donutOffset = 0;
+    let svgSlices = '';
+    for (const v of verdicts) {
+      const dash = (v.count / totalV) * donutC;
+      const col = verdictColors[v.verdict] || '#6b7280';
+      svgSlices += `<circle cx="72" cy="72" r="${donutR}" fill="none" stroke="${col}" stroke-width="16"
+        stroke-dasharray="${dash.toFixed(1)} ${(donutC - dash).toFixed(1)}"
+        stroke-dashoffset="${(-donutOffset).toFixed(1)}" transform="rotate(-90 72 72)"
+        style="transition:stroke-dashoffset 0.5s"/>`;
+      donutOffset += dash;
+    }
+    let legendHtml = '';
+    for (const v of verdicts) {
+      const pct = Math.round(v.count / totalV * 100);
+      legendHtml += `<div class="perf-donut-item"><span class="perf-dot" style="background:${verdictColors[v.verdict] || '#6b7280'}"></span>${this._esc(v.verdict)} <span class="text-muted">${pct}% (${v.count})</span></div>`;
+    }
+    wrap.innerHTML = `<div class="perf-donut-wrap" style="padding:12px 16px 16px">
+      <svg width="144" height="144" viewBox="0 0 144 144">
+        <circle cx="72" cy="72" r="${donutR}" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="16"/>
+        ${svgSlices}
+        <text x="72" y="66" text-anchor="middle" fill="var(--text-bright)" font-size="20" font-weight="800">${accuracy}%</text>
+        <text x="72" y="82" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-weight="600">ACCURACY</text>
+      </svg>
+      <div class="perf-donut-legend">${legendHtml}</div>
+    </div>`;
   },
 
   /* ===================================================
      PROBLEMS
      =================================================== */
+
+  async _randomProblem() {
+    try {
+      const data = await API.getProblems();
+      if (!data.ok || !data.problems?.length) {
+        this.toast('No problems loaded yet', 'error');
+        return;
+      }
+      const unsolved = data.problems.filter(p => !p.solved);
+      const pool = unsolved.length ? unsolved : data.problems;
+      const pick = pool[Math.floor(Math.random() * pool.length)];
+      if (pick.id) {
+        location.hash = '#/problems';
+        setTimeout(() => this._openProblem && this._openProblem(pick), 300);
+      }
+    } catch {
+      location.hash = '#/problems';
+    }
+  },
+
   async renderProblems(el) {
     el.innerHTML = `
       <div class="page-header">
@@ -1551,6 +1848,21 @@ const App = {
     if (minR) params.minRating = minR;
     if (maxR) params.maxRating = maxR;
     if (status !== 'all') params.status = status;
+
+    // Show skeleton while loading
+    const tableEl = document.getElementById('problemsTable');
+    if (tableEl && !tableEl.querySelector('table')) {
+      tableEl.innerHTML = `<div style="display:flex;flex-direction:column;gap:8px;padding:8px 0">` +
+        Array.from({length: 10}, () => `
+          <div class="skeleton-row" style="padding:8px 4px">
+            <div class="skeleton skeleton-avatar" style="width:28px;height:28px;border-radius:4px"></div>
+            <div style="flex:1;display:flex;gap:8px;align-items:center">
+              <div class="skeleton skeleton-line short" style="width:40px;height:18px"></div>
+              <div class="skeleton skeleton-line" style="flex:1;height:14px"></div>
+              <div class="skeleton skeleton-line" style="width:50px;height:18px"></div>
+            </div>
+          </div>`).join('') + `</div>`;
+    }
 
     const data = await API.getProblems(params);
     if (!data.ok) return;
@@ -1682,7 +1994,7 @@ const App = {
         </div>
       </div>
       <div class="card mb-3" id="rankProgressionCard">
-        <div class="card-header"><span class="card-title"><i class="icon-medal" style="font-size:16px"></i> Rank Progression</span></div>
+        <div class="card-header"><span class="card-title"><i class="icon-star" style="font-size:16px"></i> Nexora Progression</span></div>
         <div class="rank-progression" id="rankProgression"></div>
       </div>
       <div class="card mb-3">
@@ -1701,32 +2013,47 @@ const App = {
         </div>
       </div>`;
 
-    const [stats, settings] = await Promise.all([API.getStats(), API.getSettings()]);
+    const [stats, settings] = await Promise.all([API.getStats(this._username), API.getSettings()]);
 
     if (!stats.ok) return;
 
-    // ---- Rift Progression ----
+    // ---- Nexora Progression ----
     if (stats.allTitles?.length) {
       const rpEl = document.getElementById('rankProgression');
-      let rpHtml = '';
       const currentLvl = stats.level.level;
+      // Progress track bar at the top
+      const pct = Math.round(((currentLvl - 1) / (stats.allTitles.length - 1)) * 100);
+      let rpHtml = `
+        <div class="np-track-wrap">
+          <div class="np-track-bg"></div>
+          <div class="np-track-fill" style="width:${pct}%"></div>
+          <div class="np-track-dots">
+            ${stats.allTitles.map((t, i) => {
+              const lvlNum = i + 1;
+              const reached = currentLvl >= lvlNum;
+              const isCurrent = currentLvl === lvlNum;
+              return `<div class="np-track-dot ${reached ? 'reached' : ''} ${isCurrent ? 'current' : ''}" style="${isCurrent ? 'background:' + t.color + ';box-shadow:0 0 8px ' + t.color : ''}"></div>`;
+            }).join('')}
+          </div>
+        </div>
+        <div class="badge-showcase-grid">`;
       for (let i = 0; i < stats.allTitles.length; i++) {
         const t = stats.allTitles[i];
         const lvlNum = i + 1;
         const reached = currentLvl >= lvlNum;
         const isCurrent = currentLvl === lvlNum;
         rpHtml += `
-          <div class="rank-node ${isCurrent ? 'rank-current' : ''}">
-            <div class="rank-dot ${reached ? 'reached' : ''} ${isCurrent ? 'current' : ''}" style="background:${t.color}${reached ? '' : ';opacity:0.3'};${reached && t.glow !== 'none' ? 'box-shadow:' + t.glow : ''}">
-              <span class="rank-badge">${t.badge || ''}</span>
+          <div class="badge-showcase-card ${reached ? 'reached' : 'locked-badge'} ${isCurrent ? 'current' : ''}" title="Level ${lvlNum}: ${t.title}&#10;${t.min_xp.toLocaleString()} XP · ${(t.min_problems||0).toLocaleString()} solved">
+            <div class="badge-showcase-icon">${this._renderRiftBadge(lvlNum, 52)}</div>
+            <div class="badge-showcase-level" style="color:${t.color}">L${lvlNum}</div>
+            <div class="badge-showcase-name" style="color:${t.color}">${t.title}</div>
+            <div class="badge-showcase-req">${t.min_xp > 0 ? t.min_xp.toLocaleString() + ' XP' : 'Starter'}</div>
+            <div class="badge-showcase-status ${reached ? 'unlocked' : 'locked'}">
+              ${isCurrent ? '<i class="icon-bolt" style="font-size:9px"></i> Active' : reached ? '<i class="icon-check" style="font-size:9px"></i> Done' : '<i class="icon-lock" style="font-size:9px"></i> Locked'}
             </div>
-            <div class="rank-name" style="color:${t.color}">${lvlNum}. ${t.title}</div>
-            <div class="rank-xp">${t.min_xp.toLocaleString()} XP · ${(t.min_problems||0).toLocaleString()} solved</div>
           </div>`;
-        if (i < stats.allTitles.length - 1) {
-          rpHtml += `<div class="rank-connector ${reached ? 'reached' : ''}"></div>`;
-        }
       }
+      rpHtml += '</div>';
       rpEl.innerHTML = rpHtml;
     }
 
@@ -1801,8 +2128,10 @@ const App = {
   async renderNexus(el) {
     el.innerHTML = `
       <div class="page-header">
-        <h1><i class="icon-arena" style="font-size:28px"></i> <span class="glitch" data-text="Progress">Progress</span></h1>
+        <h1><i class="icon-arena" style="font-size:28px"></i> <span class="glitch" data-text="Nexora Progression">Nexora Progression</span></h1>
         <p>cat /var/log/stats.log | sort -k2 -rn # rank + zones + XP</p>
+      </div>
+      <div class="tabs">
         <button class="tab active" onclick="App._switchNexusView('zones',this)"><i class="icon-arena"></i> /zones</button>
         <button class="tab" onclick="App._switchNexusView('performance',this)"><i class="icon-chart"></i> /perf</button>
       </div>
@@ -1838,14 +2167,25 @@ const App = {
     let html = `
       <div class="nexus-player-bar card mt-3">
         <div class="nexus-player-info">
-          <div class="hud-level-badge" style="background:${p.color};${p.glow !== 'none' ? 'box-shadow:' + p.glow : ''}">${p.level}</div>
+          <div class="hud-level-badge" style="background:transparent;${p.glow !== 'none' ? 'box-shadow:' + p.glow : ''}">${this._renderRiftBadge(p.level, 32)}</div>
           <div>
             <div class="nexus-player-name" style="color:${p.color}">${this._esc(p.name)}</div>
             <div class="text-sm text-muted">${p.xp.toLocaleString()} XP · Zone ${p.level}/${data.zones.length}</div>
           </div>
         </div>
         <div class="lrm-refresh">
-          <span class="text-sm text-muted"><i class="icon-clock" style="font-size:11px"></i> Problems refresh weekly</span>
+          ${(() => {
+            const msPerWeek = 7 * 24 * 60 * 60 * 1000;
+            const wSeed = roadmap.weekSeed || Math.floor(Date.now() / msPerWeek);
+            const nextRefreshMs = (wSeed + 1) * msPerWeek;
+            const msLeft = nextRefreshMs - Date.now();
+            const daysLeft = Math.ceil(msLeft / (24 * 60 * 60 * 1000));
+            const hoursLeft = Math.ceil(msLeft / (60 * 60 * 1000));
+            const refreshLabel = daysLeft <= 0 ? 'Refreshes today'
+              : daysLeft === 1 ? `Refreshes in ${hoursLeft}h`
+              : `Refreshes in ${daysLeft} days`;
+            return `<span class="text-sm text-muted"><i class="icon-clock" style="font-size:11px"></i> ${refreshLabel}</span>`;
+          })()}
         </div>
       </div>`;
 
@@ -1856,7 +2196,7 @@ const App = {
     for (const zone of data.zones) {
       const zoneNodes = data.nodes.filter(n => n.zone === zone.level);
       const rm = roadmapByLevel[zone.level];
-      const state = zone.completed ? 'completed' : zone.current ? 'current' : zone.unlocked ? 'unlocked' : 'locked';
+      const state = zone.completed ? 'completed' : zone.current ? 'current' : zone.locked ? 'locked' : 'unlocked';
       const nodeColor = zone.color;
       const totalProbs = rm ? rm.totalProblems : 0;
       const solvedProbs = rm ? rm.solvedCount : 0;
@@ -1882,90 +2222,96 @@ const App = {
             </div>
           </div>`;
 
-      if (state !== 'locked') {
-        html += '<div class="nexus-zone-nodes">';
+      // Always render zone content — locked zones show a requirement banner but still list problems
+      html += '<div class="nexus-zone-nodes">';
 
-        // Skill nodes section
-        if (zoneNodes.length) {
-          html += '<div class="nz-section-label"><i class="icon-tree" style="font-size:12px"></i> Skill Nodes</div>';
-          html += zoneNodes.map(n => {
-            const nState = n.completed ? 'completed' : n.unlocked ? (n.progress > 0 ? 'in-progress' : 'unlocked') : 'locked';
-            return `
-            <div class="nexus-skill ${nState}" onclick="App._openNexusNode('${n.id}')">
-              <div class="nexus-skill-icon">${n.icon}</div>
-              <div class="nexus-skill-body">
-                <div class="nexus-skill-name">${this._esc(n.name)}</div>
-                <div class="nexus-skill-desc text-sm text-muted">${this._esc(n.desc || '')}</div>
-                <div class="nexus-skill-bar"><div class="nexus-skill-fill" style="width:${n.progress}%;background:${nodeColor}"></div></div>
-                <div class="nexus-skill-meta text-sm">${n.solved}/${n.target} · ${n.progress}%${n.completed ? ' <i class="icon-check" style="color:var(--success);font-size:11px"></i>' : ''}</div>
-              </div>
-            </div>`;
-          }).join('');
-        }
-
-        // Practice problems section (from level roadmap)
-        if (rm && rm.topics.length) {
-          html += '<div class="nz-section-label" style="margin-top:12px"><i class="icon-path" style="font-size:12px"></i> Practice Problems</div>';
-          for (const topic of rm.topics) {
-            const topicSolved = topic.problems.filter(tp => tp.solve_status === 'solved').length;
-            const topicTotal = topic.problems.length;
-            const topicPct = topicTotal ? Math.round(topicSolved / topicTotal * 100) : 0;
-
-            html += `
-            <div class="lrm-topic">
-              <div class="lrm-topic-header" onclick="this.parentElement.classList.toggle('expanded')">
-                <div class="lrm-topic-info">
-                  <span class="lrm-topic-name">${this._esc(topic.name)}</span>
-                  <span class="lrm-topic-desc">${this._esc(topic.desc)}</span>
-                </div>
-                <div class="lrm-topic-right">
-                  <span class="lrm-topic-pool text-sm text-muted">${topic.solvedInPool}/${topic.totalPool} in pool</span>
-                  <span class="lrm-topic-count ${topicPct === 100 ? 'done' : ''}">${topicSolved}/${topicTotal}</span>
-                  <i class="icon-chevron-down lrm-topic-chevron"></i>
-                </div>
-              </div>
-              <div class="lrm-topic-problems">`;
-
-            if (topic.problems.length === 0) {
-              html += '<div class="lrm-empty">No problems available — sync more from Problems page</div>';
-            } else {
-              for (const prob of topic.problems) {
-                const solved = prob.solve_status === 'solved';
-                const attempted = prob.solve_status === 'attempted';
-                html += `
-                <div class="lrm-problem ${solved ? 'solved' : attempted ? 'attempted' : ''}" onclick="App.openSolve(${prob.id})">
-                  <div class="lrm-problem-status">
-                    ${solved ? '<i class="icon-check" style="font-size:12px;color:var(--success)"></i>' : attempted ? '<i class="icon-clock" style="font-size:12px;color:var(--warning)"></i>' : '<span class="lrm-problem-dot"></span>'}
-                  </div>
-                  <div class="lrm-problem-info">
-                    <span class="lrm-problem-title">${this._esc(prob.title)}</span>
-                    <span class="lrm-problem-id">${this._esc(prob.problem_id || '')}</span>
-                  </div>
-                  <span class="lrm-problem-rating ${this._ratingClass(prob.rating)}">${prob.rating || '?'}</span>
-                  <span class="badge ${prob.platform === 'codeforces' ? 'badge-cf' : prob.platform === 'codechef' ? 'badge-cc' : 'badge-at'}" style="font-size:9px">${prob.platform === 'codeforces' ? 'CF' : prob.platform === 'codechef' ? 'CC' : 'AT'}</span>
-                  ${prob.attempts > 0 && !solved ? '<span class="lrm-attempts text-sm text-muted">' + prob.attempts + ' tries</span>' : ''}
-                </div>`;
-              }
-            }
-            html += '</div></div>';
-          }
-        }
-
-        html += '</div>';
-      } else {
-        html += '<div class="nexus-zone-locked text-sm text-muted"><i class="icon-lock" style="font-size:12px"></i> Reach Level ' + zone.level + ' (' + zone.xpRequired.toLocaleString() + ' XP &amp; ' + zone.probsRequired.toLocaleString() + ' problems) to unlock</div>';
+      if (state === 'locked') {
+        html += `<div class="nexus-zone-locked-banner"><i class="icon-lock" style="font-size:12px"></i> Requires ${zone.xpRequired.toLocaleString()} XP &amp; ${zone.probsRequired.toLocaleString()} problems solved to progress — browse problems below to prepare</div>`;
       }
+
+      // Skill nodes section
+      if (zoneNodes.length) {
+        html += '<div class="nz-section-label"><i class="icon-tree" style="font-size:12px"></i> Skill Nodes</div>';
+        html += zoneNodes.map(n => {
+          const nState = n.completed ? 'completed' : n.unlocked ? (n.progress > 0 ? 'in-progress' : 'unlocked') : 'locked';
+          return `
+          <div class="nexus-skill ${nState}" onclick="App._openNexusNode('${n.id}')">
+            <div class="nexus-skill-icon">${n.icon}</div>
+            <div class="nexus-skill-body">
+              <div class="nexus-skill-name">${this._esc(n.name)}</div>
+              <div class="nexus-skill-desc text-sm text-muted">${this._esc(n.desc || '')}</div>
+              <div class="nexus-skill-bar"><div class="nexus-skill-fill" style="width:${n.progress}%;background:${nodeColor}"></div></div>
+              <div class="nexus-skill-meta text-sm">${n.solved}/${n.target} · ${n.progress}%${n.completed ? ' <i class="icon-check" style="color:var(--success);font-size:11px"></i>' : ''}</div>
+            </div>
+          </div>`;
+        }).join('');
+      }
+
+      // Practice problems section (from level roadmap)
+      if (rm && rm.topics.length) {
+        html += '<div class="nz-section-label" style="margin-top:12px"><i class="icon-path" style="font-size:12px"></i> Practice Problems</div>';
+        for (const topic of rm.topics) {
+          const topicSolved = topic.problems.filter(tp => tp.solve_status === 'solved').length;
+          const topicTotal = topic.problems.length;
+          const topicPct = topicTotal ? Math.round(topicSolved / topicTotal * 100) : 0;
+
+          html += `
+          <div class="lrm-topic">
+            <div class="lrm-topic-header" onclick="this.parentElement.classList.toggle('expanded')">
+              <div class="lrm-topic-info">
+                <span class="lrm-topic-name">${this._esc(topic.name)}</span>
+                <span class="lrm-topic-desc">${this._esc(topic.desc)}</span>
+              </div>
+              <div class="lrm-topic-right">
+                <span class="lrm-topic-pool text-sm text-muted">${topic.solvedInPool}/${topic.totalPool} in pool</span>
+                <span class="lrm-topic-count ${topicPct === 100 ? 'done' : ''}">${topicSolved}/${topicTotal}</span>
+                <i class="icon-chevron-down lrm-topic-chevron"></i>
+              </div>
+            </div>
+            <div class="lrm-topic-problems">`;
+
+          if (topic.problems.length === 0) {
+            html += '<div class="lrm-empty">No problems available — sync more from Problems page</div>';
+          } else {
+            for (const prob of topic.problems) {
+              const solved = prob.solve_status === 'solved';
+              const attempted = prob.solve_status === 'attempted';
+              html += `
+              <div class="lrm-problem ${solved ? 'solved' : attempted ? 'attempted' : ''}" onclick="App.openSolve(${prob.id})">
+                <div class="lrm-problem-status">
+                  ${solved ? '<i class="icon-check" style="font-size:12px;color:var(--success)"></i>' : attempted ? '<i class="icon-clock" style="font-size:12px;color:var(--warning)"></i>' : '<span class="lrm-problem-dot"></span>'}
+                </div>
+                <div class="lrm-problem-info">
+                  <span class="lrm-problem-title">${this._esc(prob.title)}</span>
+                  <span class="lrm-problem-id">${this._esc(prob.problem_id || '')}</span>
+                </div>
+                <span class="lrm-problem-rating ${this._ratingClass(prob.rating)}">${prob.rating || '?'}</span>
+                <span class="badge ${prob.platform === 'codeforces' ? 'badge-cf' : prob.platform === 'codechef' ? 'badge-cc' : 'badge-at'}" style="font-size:9px">${prob.platform === 'codeforces' ? 'CF' : prob.platform === 'codechef' ? 'CC' : 'AT'}</span>
+                ${prob.attempts > 0 && !solved ? '<span class="lrm-attempts text-sm text-muted">' + prob.attempts + ' tries</span>' : ''}
+              </div>`;
+            }
+          }
+          html += '</div></div>';
+        }
+      }
+
+      html += '</div>';
       html += '</div>';
     }
     html += '</div>';
     el.innerHTML = html;
 
-    // Auto-expand current zone
+    // Auto-expand all unlocked/completed/current zones so all reached levels are visible
+    el.querySelectorAll('.nexus-zone:not(.locked)').forEach(zone => {
+      zone.classList.add('expanded');
+    });
+    // Auto-expand first topic only for the current zone
     const currentZone = el.querySelector('.nexus-zone.current');
     if (currentZone) {
-      currentZone.classList.add('expanded');
       const firstTopic = currentZone.querySelector('.lrm-topic');
       if (firstTopic) firstTopic.classList.add('expanded');
+      // Scroll to current zone so user lands at their active level
+      setTimeout(() => currentZone.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
     }
   },
 
@@ -1993,8 +2339,8 @@ const App = {
       <div class="perf-hero-rank">
         <div class="perf-hero-ring" style="--pct:${xpPct};--ring-color:${lvl.color || 'var(--accent)'}">
           <div class="perf-hero-ring-inner">
-            <span class="perf-hero-lvl" style="color:${lvl.color || 'var(--accent)'}">${lvl.level || 1}</span>
-            <span class="perf-hero-title">${this._esc(lvl.name || 'Bit')}</span>
+            ${this._renderRiftBadge(lvl.level, 58)}
+            <span class="perf-hero-title" style="margin-top:2px">${this._esc(lvl.name || 'Bit')}</span>
           </div>
         </div>
         ${nextLvl ? `<div class="perf-hero-next">
@@ -2476,8 +2822,8 @@ const App = {
         const isPast = t.level < lvl.level;
         const cls = isCurrent ? 'current' : isPast ? 'past' : 'locked';
         html += `<div class="perf-rank ${cls}">
-          <div class="perf-rank-dot" style="background:${isPast || isCurrent ? t.color : 'var(--border)'}; box-shadow:${isCurrent ? '0 0 8px ' + t.color : 'none'}">
-            <span class="rank-badge">${t.badge || ''}</span>
+          <div class="perf-rank-dot" style="box-shadow:${isCurrent ? '0 0 8px ' + t.color : 'none'}">
+            ${this._renderRiftBadge(t.level, 28)}
           </div>
           <div class="perf-rank-info">
             <span class="perf-rank-name" style="color:${isPast || isCurrent ? t.color : 'var(--text-muted)'}">${this._esc(t.title)}</span>
@@ -2598,166 +2944,179 @@ const App = {
     const samples = JSON.parse(p.samples || '[]');
     const status = p.progress ? p.progress.status : 'unsolved';
     const catLabels = { ml: 'Machine Learning', dl: 'Deep Learning', nlp: 'NLP', cv: 'Computer Vision', genai: 'Generative AI', rl: 'Reinforcement Learning' };
+    const catColors = { ml: '#22c55e', dl: '#3b82f6', nlp: '#059669', cv: '#f59e0b', genai: '#d4a017', rl: '#14b8a6' };
     const catIcons = { ml: '<i class="icon-neural"></i>', dl: '<i class="icon-bolt"></i>', nlp: '<i class="icon-chat"></i>', cv: '<i class="icon-eye"></i>', genai: '<i class="icon-spark"></i>', rl: '<i class="icon-gamepad"></i>' };
     const diffClass = p.difficulty === 'beginner' ? 'green' : p.difficulty === 'intermediate' ? 'amber' : 'red';
 
-    el.innerHTML = `
-      <div class="nf-solve">
-        <div class="nf-solve-header">
-          <div class="fp-breadcrumb">
-            <a href="#/ailab" class="fp-bc-link"><i class="icon-neural"></i> AI Lab</a>
-            <i class="icon-chevron-right fp-bc-sep"></i>
-            <span class="fp-bc-current">${this._esc(p.title)}</span>
-          </div>
-          <div class="nf-solve-title-row">
-            <span class="ailab-modal-cat">${catIcons[p.category] || ''} ${catLabels[p.category] || p.category}</span>
-            <span class="ailab-diff ${diffClass}">${p.difficulty}</span>
-            <span class="nf-solve-status ${status}">${status === 'solved' ? '<i class="icon-circle-check"></i> Solved' : status === 'in-progress' ? '<i class="icon-sync"></i> In Progress' : '<i class="icon-square"></i> Unsolved'}</span>
-          </div>
-          <h2 class="nf-solve-title">${this._esc(p.title)}</h2>
-        </div>
-        <div class="nf-solve-body">
-          <div class="nf-solve-left" id="nfSolveLeft">
-            <div class="nf-statement-section">
-              <h3><i class="icon-book"></i> Problem Statement</h3>
-              <p>${this._esc(p.description)}</p>
-            </div>
-            ${p.input_format ? `<div class="nf-statement-section"><h3><i class="icon-download"></i> Input Format</h3><pre class="nf-format-block">${this._esc(p.input_format)}</pre></div>` : ''}
-            ${p.output_format ? `<div class="nf-statement-section"><h3><i class="icon-send"></i> Output Format</h3><pre class="nf-format-block">${this._esc(p.output_format)}</pre></div>` : ''}
-            ${p.constraints ? `<div class="nf-statement-section"><h3><i class="icon-shield"></i> Constraints</h3><pre class="nf-format-block">${this._esc(p.constraints)}</pre></div>` : ''}
-            ${samples.length ? `
-              <div class="nf-statement-section">
-                <h3><i class="icon-test"></i> Examples</h3>
-                ${samples.map((s, i) => `
-                  <div class="nf-sample">
-                    <div class="nf-sample-header">Example ${i + 1}</div>
-                    <div class="nf-sample-io">
-                      <div class="nf-sample-panel">
-                        <div class="nf-sample-label">Input</div>
-                        <pre class="nf-sample-pre">${this._esc(s.input)}</pre>
-                        <button class="nf-copy-btn" onclick="navigator.clipboard.writeText(${JSON.stringify(s.input).replace(/'/g,'\\\'')});App.toast('Copied!','success')" title="Copy input"><i class="icon-copy"></i></button>
-                      </div>
-                      <div class="nf-sample-panel">
-                        <div class="nf-sample-label">Output</div>
-                        <pre class="nf-sample-pre">${this._esc(s.output)}</pre>
-                      </div>
-                    </div>
-                  </div>`).join('')}
-              </div>` : ''}
-            ${p.solution_approach ? `
-              <div class="nf-statement-section">
-                <h3><i class="icon-lightbulb"></i> Approach</h3>
-                <div class="nf-approach-toggle" onclick="this.classList.toggle('revealed')">
-                  <div class="nf-approach-label"><i class="icon-lock"></i> Click to reveal approach</div>
-                  <p class="nf-approach-text">${this._esc(p.solution_approach)}</p>
-                </div>
-              </div>` : ''}
-            ${hints.length ? `
-              <div class="nf-statement-section">
-                <h3><i class="icon-target"></i> Hints</h3>
-                <div class="ailab-hints">
-                  ${hints.map((h, i) => `
-                    <div class="ailab-hint" onclick="this.classList.toggle('revealed')">
-                      <div class="ailab-hint-label"><i class="icon-lock"></i> Hint ${i + 1} <span class="ailab-hint-click">(click to reveal)</span></div>
-                      <div class="ailab-hint-text">${this._esc(h)}</div>
-                    </div>`).join('')}
-                </div>
-              </div>` : ''}
-            ${resources.length ? `
-              <div class="nf-statement-section">
-                <h3><i class="icon-external"></i> Resources</h3>
-                <ul class="nf-resources">${resources.map(r => `<li><a href="${this._esc(r)}" target="_blank" rel="noopener"><i class="icon-link"></i> ${this._esc(r)}</a></li>`).join('')}</ul>
-              </div>` : ''}
-          </div>
-          <div class="nf-solve-resizer" id="nfSolveResizer"></div>
-          <div class="nf-solve-right" id="nfSolveRight">
-            <div class="nf-editor-toolbar">
-              <div class="nf-lang-info">
-                <i class="icon-lang-python"></i> <span>Python 3</span>
-              </div>
-              <div class="nf-editor-actions">
-                <button class="btn btn-ghost btn-sm" onclick="App._resetAiCode()" title="Reset Code"><i class="icon-reset"></i></button>
-                <button class="btn btn-run btn-sm" onclick="App._runAiCode()" title="Run (Ctrl+Enter)"><i class="icon-run"></i> Run</button>
-                <button class="btn btn-submit btn-sm" onclick="App._saveAiProgress(${p.id}, 'solved')"><i class="icon-check"></i> Mark Solved</button>
-              </div>
-            </div>
-            <div id="nfMonacoEditor" class="nf-editor-container"></div>
-            <div class="nf-bottom-panel">
-              <div class="nf-bottom-tabs">
-                <button class="nf-bottom-tab active" data-nftab="input" onclick="App._switchNfBottomTab('input',this)">
-                  <i class="icon-download"></i> Custom Input
-                </button>
-                <button class="nf-bottom-tab" data-nftab="output" onclick="App._switchNfBottomTab('output',this)">
-                  <i class="icon-terminal"></i> Output
-                </button>
-                <button class="nf-bottom-tab" data-nftab="samples" onclick="App._switchNfBottomTab('samples',this)">
-                  <i class="icon-test"></i> Test Samples
-                </button>
-              </div>
-              <div class="nf-bottom-body">
-                <div id="nfTabInput" class="nf-tab-panel">
-                  <textarea id="nfCustomInput" class="nf-io-textarea" placeholder="Enter custom input here...">${samples.length ? this._esc(samples[0].input) : ''}</textarea>
-                </div>
-                <div id="nfTabOutput" class="nf-tab-panel hidden">
-                  <div id="nfOutputContent" class="nf-output-content">
-                    <div class="output-placeholder">
-                      <i class="icon-terminal" style="font-size:24px;opacity:0.3"></i>
-                      <p>Run your code to see output</p>
-                    </div>
-                  </div>
-                </div>
-                <div id="nfTabSamples" class="nf-tab-panel hidden">
-                  <div id="nfSampleResults" class="nf-sample-results">
-                    ${samples.map((s, i) => `
-                      <div class="nf-sample-result" id="nfSampleResult${i}">
-                        <div class="nf-sr-header"><span>Sample ${i + 1}</span><span class="nf-sr-status"><i class="icon-square"></i> Not tested</span></div>
-                        <div class="nf-sr-row"><span class="nf-sr-label">Input:</span><pre>${this._esc(s.input)}</pre></div>
-                        <div class="nf-sr-row"><span class="nf-sr-label">Expected:</span><pre>${this._esc(s.output)}</pre></div>
-                        <div class="nf-sr-row nf-sr-actual hidden"><span class="nf-sr-label">Got:</span><pre class="nf-sr-got"></pre></div>
-                      </div>`).join('')}
-                    ${!samples.length ? '<div class="output-placeholder"><p>No sample test cases for this problem</p></div>' : `<button class="btn btn-run btn-sm" onclick="App._runAiSamples()" style="margin-top:8px"><i class="icon-run"></i> Run All Samples</button>`}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>`;
+    // Show the full-screen AI Lab solve overlay
+    const overlay = document.getElementById('ailabSolveOverlay');
+    overlay.classList.remove('hidden');
 
-    // Scroll to top
-    document.getElementById('mainContent').scrollTop = 0;
+    // HUD title
+    document.getElementById('ailabHudTitle').innerHTML =
+      `<span style="font-weight:700;color:var(--text-bright);font-size:13px;font-family:var(--mono)">${this._esc(p.title)}</span>`;
+
+    // Status badge
+    const statusEl = document.getElementById('ailabSolveStatus');
+    statusEl.className = `nf-solve-status ${status}`;
+    statusEl.innerHTML = status === 'solved'
+      ? '<i class="icon-circle-check"></i> Solved'
+      : status === 'in-progress' ? '<i class="icon-sync"></i> In Progress'
+      : '<i class="icon-square"></i> Unsolved';
+
+    // Problem panel badges
+    document.getElementById('ailabProblemBadges').innerHTML =
+      `<span style="font-size:12px;font-weight:700;color:${catColors[p.category] || 'var(--brand)'}">${catIcons[p.category] || ''} ${catLabels[p.category] || p.category}</span>
+       <span class="ailab-diff ${diffClass}" style="margin-left:8px">${p.difficulty}</span>`;
+
+    // Problem statement content
+    document.getElementById('ailabProblemContent').innerHTML = `
+      <div class="nf-statement-section">
+        <h3><i class="icon-book"></i> Problem Statement</h3>
+        <p>${this._esc(p.description)}</p>
+      </div>
+      ${p.input_format ? `<div class="nf-statement-section"><h3><i class="icon-download"></i> Input Format</h3><pre class="nf-format-block">${this._esc(p.input_format)}</pre></div>` : ''}
+      ${p.output_format ? `<div class="nf-statement-section"><h3><i class="icon-send"></i> Output Format</h3><pre class="nf-format-block">${this._esc(p.output_format)}</pre></div>` : ''}
+      ${p.constraints ? `<div class="nf-statement-section"><h3><i class="icon-shield"></i> Constraints</h3><pre class="nf-format-block">${this._esc(p.constraints)}</pre></div>` : ''}
+      ${samples.length ? `
+        <div class="nf-statement-section">
+          <h3><i class="icon-test"></i> Examples</h3>
+          ${samples.map((s, i) => `
+            <div class="nf-sample">
+              <div class="nf-sample-header">Example ${i + 1}</div>
+              <div class="nf-sample-io">
+                <div class="nf-sample-panel">
+                  <div class="nf-sample-label">Input</div>
+                  <pre class="nf-sample-pre">${this._esc(s.input)}</pre>
+                  <button class="nf-copy-btn" onclick="navigator.clipboard.writeText(${JSON.stringify(s.input).replace(/'/g,'\\\'')});App.toast('Copied!','success')" title="Copy"><i class="icon-copy"></i></button>
+                </div>
+                <div class="nf-sample-panel">
+                  <div class="nf-sample-label">Output</div>
+                  <pre class="nf-sample-pre">${this._esc(s.output)}</pre>
+                </div>
+              </div>
+            </div>`).join('')}
+        </div>` : ''}
+      ${p.solution_approach ? `
+        <div class="nf-statement-section">
+          <h3><i class="icon-lightbulb"></i> Approach</h3>
+          <div class="nf-approach-toggle" onclick="this.classList.toggle('revealed')">
+            <div class="nf-approach-label"><i class="icon-lock"></i> Click to reveal approach</div>
+            <p class="nf-approach-text">${this._esc(p.solution_approach)}</p>
+          </div>
+        </div>` : ''}
+      ${hints.length ? `
+        <div class="nf-statement-section">
+          <h3><i class="icon-target"></i> Hints</h3>
+          <div class="ailab-hints">
+            ${hints.map((h, i) => `
+              <div class="ailab-hint" onclick="this.classList.toggle('revealed')">
+                <div class="ailab-hint-label"><i class="icon-lock"></i> Hint ${i + 1} <span class="ailab-hint-click">(click to reveal)</span></div>
+                <div class="ailab-hint-text">${this._esc(h)}</div>
+              </div>`).join('')}
+          </div>
+        </div>` : ''}
+      ${resources.length ? `
+        <div class="nf-statement-section">
+          <h3><i class="icon-external"></i> Resources</h3>
+          <ul class="nf-resources">${resources.map(r => `<li><a href="${this._esc(r)}" target="_blank" rel="noopener"><i class="icon-link"></i> ${this._esc(r)}</a></li>`).join('')}</ul>
+        </div>` : ''}`;
+
+    // Populate I/O panel
+    const inputEl = document.getElementById('nfCustomInput');
+    if (inputEl) inputEl.value = samples.length ? samples[0].input : '';
+
+    const samplesEl = document.getElementById('nfSampleResults');
+    if (samplesEl) {
+      samplesEl.innerHTML = samples.map((s, i) => `
+        <div class="nf-sample-result" id="nfSampleResult${i}">
+          <div class="nf-sr-header"><span>Sample ${i + 1}</span><span class="nf-sr-status"><i class="icon-square"></i> Not tested</span></div>
+          <div class="nf-sr-row"><span class="nf-sr-label">Input:</span><pre>${this._esc(s.input)}</pre></div>
+          <div class="nf-sr-row"><span class="nf-sr-label">Expected:</span><pre>${this._esc(s.output)}</pre></div>
+          <div class="nf-sr-row nf-sr-actual hidden"><span class="nf-sr-label">Got:</span><pre class="nf-sr-got"></pre></div>
+        </div>`).join('') +
+        (samples.length
+          ? `<button class="btn btn-run btn-sm" onclick="App._runAiSamples()" style="margin-top:8px"><i class="icon-run"></i> Run All Samples</button>`
+          : '<div class="output-placeholder"><p>No sample test cases for this problem</p></div>');
+    }
+
+    // Reset I/O tabs to input
+    document.querySelectorAll('.nf-bottom-tab').forEach(b => b.classList.remove('active'));
+    document.querySelector('.nf-bottom-tab[data-nftab="input"]')?.classList.add('active');
+    document.querySelectorAll('.nf-tab-panel').forEach(tp => tp.classList.add('hidden'));
+    document.getElementById('nfTabInput')?.classList.remove('hidden');
+
+    // Reset output panel
+    const outEl = document.getElementById('nfOutputContent');
+    if (outEl) outEl.innerHTML = `<div class="output-placeholder"><i class="icon-terminal" style="font-size:24px;opacity:0.3"></i><p>Run your code to see output</p></div>`;
 
     // Init Monaco editor
     this._initAiEditor(p);
 
-    // Resizer
-    const resizer = document.getElementById('nfSolveResizer');
-    if (resizer) {
-      resizer.addEventListener('mousedown', (e) => {
-        e.preventDefault();
-        const left = document.getElementById('nfSolveLeft');
-        const right = document.getElementById('nfSolveRight');
-        const startX = e.clientX;
-        const startW = left.offsetWidth;
-        const onMove = (ev) => {
-          const dx = ev.clientX - startX;
-          const newW = Math.max(300, Math.min(startW + dx, window.innerWidth - 400));
-          left.style.width = newW + 'px';
-          left.style.flex = 'none';
-        };
-        const onUp = () => {
-          document.removeEventListener('mousemove', onMove);
-          document.removeEventListener('mouseup', onUp);
-          if (this._ailabEditor) this._ailabEditor.layout();
-        };
-        document.addEventListener('mousemove', onMove);
-        document.addEventListener('mouseup', onUp);
-      });
+    // Init floating panels (drag + resize)
+    this._initAilabPanels();
+
+    // Start timer
+    this._startAilabTimer();
+  },
+
+  _initAilabPanels() {
+    const left = document.getElementById('ailabSolveLeft');
+    const bottom = document.getElementById('ailabBottomPanel');
+    if (left && !left._ailabDragInit) {
+      left._ailabDragInit = true;
+      this._makeDraggable(left, left.querySelector('.solve-topbar'));
+      this._attachResizeEdges(left);
+    }
+    if (bottom && !bottom._ailabDragInit) {
+      bottom._ailabDragInit = true;
+      this._makeDraggable(bottom, bottom.querySelector('.bottom-panel-header'));
+      this._attachResizeEdges(bottom);
     }
   },
 
+  _ailabTimer: null,
+  _ailabTimerSec: 0,
+
+  _startAilabTimer() {
+    clearInterval(this._ailabTimer);
+    this._ailabTimerSec = 0;
+    const el = document.getElementById('ailabTimerDisplay');
+    if (el) el.textContent = '00:00';
+    this._ailabTimer = setInterval(() => {
+      this._ailabTimerSec++;
+      const m = Math.floor(this._ailabTimerSec / 60).toString().padStart(2, '0');
+      const s = (this._ailabTimerSec % 60).toString().padStart(2, '0');
+      const el2 = document.getElementById('ailabTimerDisplay');
+      if (el2) el2.textContent = `${m}:${s}`;
+    }, 1000);
+  },
+
+  _closeAilabSolve() {
+    clearInterval(this._ailabTimer);
+    const overlay = document.getElementById('ailabSolveOverlay');
+    if (overlay) overlay.classList.add('hidden');
+    if (this._ailabEditor) { this._ailabEditor.dispose(); this._ailabEditor = null; }
+    // Reset drag-init flags so panels re-init on next open
+    const left = document.getElementById('ailabSolveLeft');
+    const bottom = document.getElementById('ailabBottomPanel');
+    if (left) { left._ailabDragInit = false; left.style.left = ''; left.style.top = ''; left.style.width = ''; left.style.height = ''; }
+    if (bottom) { bottom._ailabDragInit = false; bottom.style.left = ''; bottom.style.top = ''; bottom.style.right = ''; bottom.style.bottom = ''; bottom.style.width = ''; bottom.style.height = ''; }
+    location.hash = '#/ailab';
+  },
+
+  _toggleAilabProblemPanel() {
+    const panel = document.getElementById('ailabSolveLeft');
+    if (panel) panel.classList.toggle('float-hidden');
+  },
+
+  _toggleAilabBottomPanel() {
+    const panel = document.getElementById('ailabBottomPanel');
+    if (panel) panel.classList.toggle('float-hidden');
+  },
+
   _initAiEditor(problem) {
-    const container = document.getElementById('nfMonacoEditor');
+    const container = document.getElementById('ailabMonacoEditor');
     if (!container) return;
     const code = (problem.starter_code || '').replace(/\\n/g, '\n');
     if (typeof monaco !== 'undefined') {
@@ -2778,13 +3137,13 @@ const App = {
       });
       this._ailabEditor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => this._runAiCode());
     } else {
-      container.innerHTML = `<textarea id="nfCodeFallback" class="nf-io-textarea" style="height:100%;font-family:monospace;font-size:14px">${this._esc(code)}</textarea>`;
+      container.innerHTML = `<textarea id="ailabCodeFallback" class="nf-io-textarea" style="height:100%;font-family:monospace;font-size:14px">${this._esc(code)}</textarea>`;
     }
   },
 
   _getAiCode() {
     if (this._ailabEditor) return this._ailabEditor.getValue();
-    const fb = document.getElementById('nfCodeFallback');
+    const fb = document.getElementById('ailabCodeFallback');
     return fb ? fb.value : '';
   },
 
@@ -2792,7 +3151,7 @@ const App = {
     if (!this._ailabProblem) return;
     const code = (this._ailabProblem.starter_code || '').replace(/\\n/g, '\n');
     if (this._ailabEditor) this._ailabEditor.setValue(code);
-    else { const fb = document.getElementById('nfCodeFallback'); if (fb) fb.value = code; }
+    else { const fb = document.getElementById('ailabCodeFallback'); if (fb) fb.value = code; }
     this.toast('[reset] code reverted to template', 'info');
   },
 
@@ -2874,7 +3233,7 @@ const App = {
     if (status === 'solved') {
       this._ailabView = 'grid';
       this._ailabProblem = null;
-      location.hash = '#/ailab';
+      this._closeAilabSolve();
     }
   },
 
@@ -3655,100 +4014,669 @@ const App = {
   /* ===================================================
      WORKSHOP (Problem Creation)
      =================================================== */
+  /* ========== WORKSHOP ========== */
+  _wpView: 'cards', // cards | table
+  _wpFilter: 'all', // all | easy | medium | hard | extreme
+  _wpSearch: '',
+
   async renderWorkshop(el) {
     el.innerHTML = `
       <div class="page-header">
         <h1><i class="icon-code" style="font-size:28px"></i> <span class="glitch" data-text="Workshop">Workshop</span></h1>
-        <p>touch sandbox.cpp && g++ -O2 -o a.out sandbox.cpp</p>
+        <p>// design problems · host contests · run quizzes · sharpen blades.</p>
       </div>
-      <div class="flex gap-3 mb-3">
-        <button class="btn btn-primary" onclick="App.showCreateProblem()"><i class="icon-plus" style="font-size:14px"></i> touch problem.cpp</button>
+      <div class="workshop-tabs">
+        <button class="workshop-mode-tab active" data-mode="problems" onclick="App._switchWorkshopMode('problems',this)">▸ Problems</button>
+        <button class="workshop-mode-tab" data-mode="contests" onclick="App._switchWorkshopMode('contests',this)">⊛ Contests</button>
+        <button class="workshop-mode-tab" data-mode="join" onclick="App._switchWorkshopMode('join',this)">⊕ Join Contest</button>
+      </div>
+      <div id="workshopModeContent"></div>`;
+    this._switchWorkshopMode('problems', el.querySelector('[data-mode="problems"]'));
+  },
+
+  _switchWorkshopMode(mode, btn) {
+    document.querySelectorAll('.workshop-mode-tab').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    const el = document.getElementById('workshopModeContent');
+    if (!el) return;
+    if (mode === 'problems') this._renderWorkshopProblemsMode(el);
+    else if (mode === 'contests') this._renderWorkshopContestsMode(el);
+    else if (mode === 'join') this._renderWorkshopJoinMode(el);
+  },
+
+  _renderWorkshopProblemsMode(el) {
+    el.innerHTML = `
+      <div id="workshopStatsBar" class="workshop-stats-bar">
+        <div class="workshop-stat-card"><div class="workshop-stat-val" id="wsStat1">—</div><div class="workshop-stat-lbl">authored</div></div>
+        <div class="workshop-stat-card"><div class="workshop-stat-val" id="wsStat2">—</div><div class="workshop-stat-lbl">samples</div></div>
+        <div class="workshop-stat-card"><div class="workshop-stat-val" id="wsStat3">—</div><div class="workshop-stat-lbl">avg rating</div></div>
+        <div class="workshop-stat-card"><div class="workshop-stat-val" id="wsStat4">—</div><div class="workshop-stat-lbl">latest</div></div>
+      </div>
+      <div class="workshop-toolbar">
+        <div class="input-icon-wrap" style="flex:1;min-width:180px">
+          <i class="icon-search"></i>
+          <input class="input full-width" id="wpSearchInput" placeholder="Search problems..." oninput="App._wpSearchFilter(this.value)">
+        </div>
+        <button class="workshop-filter-btn ${this._wpFilter==='all'?'active':''}" onclick="App._wpSetFilter('all',this)">all</button>
+        <button class="workshop-filter-btn ${this._wpFilter==='easy'?'active':''}" onclick="App._wpSetFilter('easy',this)">easy</button>
+        <button class="workshop-filter-btn ${this._wpFilter==='medium'?'active':''}" onclick="App._wpSetFilter('medium',this)">medium</button>
+        <button class="workshop-filter-btn ${this._wpFilter==='hard'?'active':''}" onclick="App._wpSetFilter('hard',this)">hard</button>
+        <button class="workshop-filter-btn ${this._wpFilter==='extreme'?'active':''}" onclick="App._wpSetFilter('extreme',this)">extreme</button>
+        <div class="wp-view-toggle">
+          <button class="wp-view-btn ${this._wpView==='cards'?'active':''}" onclick="App._wpSetView('cards',this)" title="Card view"><i class="icon-grid"></i></button>
+          <button class="wp-view-btn ${this._wpView==='table'?'active':''}" onclick="App._wpSetView('table',this)" title="Table view"><i class="icon-list"></i></button>
+        </div>
+        <button class="btn btn-primary" onclick="App.showCreateProblem()"><i class="icon-plus" style="font-size:14px"></i> new problem</button>
       </div>
       <div id="workshopCreateForm" class="hidden"></div>
       <div id="workshopList"></div>`;
     this._loadWorkshopList();
   },
 
+  async _renderWorkshopContestsMode(el) {
+    el.innerHTML = `<div style="padding:20px 0;color:var(--text-muted);font-family:var(--mono);font-size:12px">// loading contests...</div>`;
+    const myContests = this._username ? await API.getMyContests(this._username) : { ok: false, contests: [] };
+    const contests = myContests.ok ? myContests.contests : [];
+
+    // Load user's custom problems for picker
+    const probData = await API.getCustomProblems();
+    const myProbs = (probData.ok ? probData.problems : []).filter(p => !this._username || p.creator === this._username);
+
+    const genId = () => {
+      const c = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      return 'NX-' + Array.from({length:6}, () => c[Math.floor(Math.random()*c.length)]).join('');
+    };
+
+    el.innerHTML = `
+      <div class="contests-toolbar">
+        <button class="btn btn-primary" onclick="App._showContestForm()"><i class="icon-plus" style="font-size:13px"></i> create contest</button>
+        <span style="font-family:var(--mono);font-size:12px;color:var(--text-muted)">${contests.length} contest${contests.length !== 1 ? 's' : ''} hosted</span>
+      </div>
+      <div id="contestCreateForm" class="hidden"></div>
+      <div class="contests-grid" id="contestsList">
+        ${contests.length ? contests.map(c => {
+          const now = Date.now();
+          const start = new Date(c.start_time).getTime();
+          const end = start + c.duration_mins * 60000;
+          const status = now < start ? 'upcoming' : now < end ? 'live' : 'ended';
+          const typeIcon = c.type === 'speed' ? '⚡' : c.type === 'accuracy' ? '✔' : '◆';
+          const probs = JSON.parse(c.problems || '[]');
+          return `<div class="contest-card type-${c.type}" onclick="App._viewContest(${c.id})">
+            <div class="contest-icon">${typeIcon}</div>
+            <div class="contest-info">
+              <div class="contest-title">${this._esc(c.title)}</div>
+              <div class="contest-meta-row">
+                <div class="contest-meta-item">⊞ <span>${c.contest_code}</span></div>
+                <div class="contest-meta-item">◌ <span>${c.duration_mins}min</span></div>
+                <div class="contest-meta-item">▸ <span>${probs.length} problems</span></div>
+                ${c.org_tag ? `<div class="contest-meta-item">⬡ <span>${this._esc(c.org_tag)}</span></div>` : ''}
+                ${c.participant_count > 0 ? `<div class="contest-meta-item">⚯ <span>${c.participant_count} joined</span></div>` : ''}
+              </div>
+            </div>
+            <div class="contest-badges">
+              <span class="contest-type-badge">${c.type}</span>
+              <span class="contest-status-badge ${status}">${status}</span>
+            </div>
+          </div>`;
+        }).join('') : `<div style="padding:30px;text-align:center;color:var(--text-muted);font-family:var(--mono);font-size:12px;background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-lg)">
+          // no contests yet — create one above
+        </div>`}
+      </div>`;
+
+    this._workshopContestProbs = myProbs;
+  },
+
+  _showContestForm() {
+    const el = document.getElementById('contestCreateForm');
+    if (!el) return;
+    el.classList.remove('hidden');
+    const genId = () => {
+      const c = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      return 'NX-' + Array.from({length:6}, () => c[Math.floor(Math.random()*c.length)]).join('');
+    };
+    let currentCode = genId();
+    const probs = this._workshopContestProbs || [];
+
+    el.innerHTML = `
+      <div class="contest-form-panel">
+        <div class="contest-form-title">create contest</div>
+        <div class="contest-form-grid">
+          <div class="contest-form-group full">
+            <label class="contest-form-label">contest title</label>
+            <input id="cfTitle" class="contest-form-input" placeholder="e.g. VITC Coding Round 1" />
+          </div>
+          <div class="contest-form-group full">
+            <label class="contest-form-label">description</label>
+            <input id="cfDesc" class="contest-form-input" placeholder="Brief description..." />
+          </div>
+          <div class="contest-form-group">
+            <label class="contest-form-label">type</label>
+            <select id="cfType" class="contest-form-select">
+              <option value="speed">⚡ Speed Race (first to solve)</option>
+              <option value="accuracy">✔ Accuracy (most solved)</option>
+              <option value="quiz">◆ Quiz (MCQ style)</option>
+            </select>
+          </div>
+          <div class="contest-form-group">
+            <label class="contest-form-label">university / org tag</label>
+            <input id="cfOrg" class="contest-form-input" placeholder="e.g. VIT Chennai" />
+          </div>
+          <div class="contest-form-group">
+            <label class="contest-form-label">contest id (auto-generated)</label>
+            <div class="contest-id-display">
+              <span id="cfCodeDisplay">${currentCode}</span>
+              <button class="contest-id-regen" onclick="(function(){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';document.getElementById('cfCodeDisplay').textContent='NX-'+Array.from({length:6},()=>c[Math.floor(Math.random()*c.length)]).join('')})()">↺ regenerate</button>
+            </div>
+          </div>
+          <div class="contest-form-group">
+            <label class="contest-form-label">password (for participants)</label>
+            <input id="cfPass" class="contest-form-input" type="password" placeholder="Min 4 characters" autocomplete="new-password" />
+          </div>
+          <div class="contest-form-group">
+            <label class="contest-form-label">start time</label>
+            <input id="cfStart" class="contest-form-input" type="datetime-local" />
+          </div>
+          <div class="contest-form-group">
+            <label class="contest-form-label">duration</label>
+            <select id="cfDuration" class="contest-form-select">
+              <option value="30">30 minutes</option>
+              <option value="60" selected>1 hour</option>
+              <option value="90">1.5 hours</option>
+              <option value="120">2 hours</option>
+              <option value="180">3 hours</option>
+              <option value="240">4 hours</option>
+            </select>
+          </div>
+          <div class="contest-form-group">
+            <label class="contest-form-label">max participants</label>
+            <input id="cfMax" class="contest-form-input" type="number" value="50" min="2" max="500" />
+          </div>
+          <div class="contest-form-group full">
+            <label class="contest-form-label">select problems (from your workshop)</label>
+            <div class="contest-prob-list" id="cfProbList">
+              ${probs.length ? probs.map(p => `
+                <label class="contest-prob-pick-item">
+                  <input type="checkbox" value="${p.id}" style="accent-color:var(--brand)"> 
+                  ${this._esc(p.title)} <span style="color:var(--text-muted);margin-left:6px">${p.difficulty || ''}</span>
+                </label>`).join('') : '<div style="color:var(--text-muted);font-family:var(--mono);font-size:11px;padding:8px">// no custom problems yet — create some in the Problems tab first</div>'}
+            </div>
+          </div>
+        </div>
+        <div class="contest-form-footer">
+          <button class="btn btn-ghost btn-sm" onclick="document.getElementById('contestCreateForm').classList.add('hidden')">cancel</button>
+          <button class="btn btn-primary btn-sm" onclick="App._saveContest()">⊛ create contest</button>
+        </div>
+      </div>`;
+  },
+
+  async _saveContest() {
+    const title = document.getElementById('cfTitle')?.value?.trim();
+    const desc = document.getElementById('cfDesc')?.value?.trim() || '';
+    const type = document.getElementById('cfType')?.value;
+    const org = document.getElementById('cfOrg')?.value?.trim() || '';
+    const code = document.getElementById('cfCodeDisplay')?.textContent?.trim();
+    const password = document.getElementById('cfPass')?.value;
+    const startTime = document.getElementById('cfStart')?.value;
+    const duration = parseInt(document.getElementById('cfDuration')?.value || '60');
+    const maxP = parseInt(document.getElementById('cfMax')?.value || '50');
+    const selectedProbs = [...document.querySelectorAll('#cfProbList input[type="checkbox"]:checked')].map(c => parseInt(c.value));
+
+    if (!title) { this.toast('Contest title required', 'error'); return; }
+    if (!password || password.length < 4) { this.toast('Password must be at least 4 characters', 'error'); return; }
+    if (!startTime) { this.toast('Start time required', 'error'); return; }
+
+    const data = await API.createContest({
+      creator: this._username,
+      title, description: desc, type, password, org_tag: org,
+      start_time: new Date(startTime).toISOString(),
+      duration_mins: duration, problems: selectedProbs, max_participants: maxP
+    });
+
+    if (data.ok) {
+      this.toast(`Contest created! ID: ${data.contest_code}`, 'success');
+      document.getElementById('contestCreateForm')?.classList.add('hidden');
+      // Refresh
+      const btn = document.querySelector('[data-mode="contests"]');
+      this._switchWorkshopMode('contests', btn);
+    } else {
+      this.toast(data.error || 'Failed to create contest', 'error');
+    }
+  },
+
+  async _viewContest(id) {
+    const overlay = document.getElementById('contestDetailOverlay');
+    if (!overlay) {
+      document.body.insertAdjacentHTML('beforeend', `<div id="contestDetailOverlay" class="contest-detail-overlay hidden"></div>`);
+    }
+    const ov = document.getElementById('contestDetailOverlay');
+    ov.classList.remove('hidden');
+    ov.innerHTML = `<div class="contest-detail-box"><div style="color:var(--text-muted);font-family:var(--mono);font-size:12px">// loading...</div></div>`;
+
+    const data = await API.getContestDetails(id, this._username);
+    if (!data.ok) {
+      ov.innerHTML = `<div class="contest-detail-box">
+        <div style="color:var(--danger);font-family:var(--mono)">${data.error || 'Not found'}</div>
+        <button class="btn btn-ghost btn-sm" style="margin-top:16px" onclick="document.getElementById('contestDetailOverlay').classList.add('hidden')">close</button>
+      </div>`;
+      return;
+    }
+    const c = data.contest;
+    const probs = JSON.parse(c.problems || '[]');
+    const typeIcon = c.type === 'speed' ? '⚡' : c.type === 'accuracy' ? '✔' : '◆';
+    const now = Date.now();
+    const start = new Date(c.start_time).getTime();
+    const end = start + c.duration_mins * 60000;
+    const status = now < start ? 'upcoming' : now < end ? 'live' : 'ended';
+
+    ov.innerHTML = `<div class="contest-detail-box">
+      <div class="contest-detail-header">
+        <div class="contest-detail-type-icon type-${c.type}" style="background:var(--brand-bg)">${typeIcon}</div>
+        <div>
+          <div class="contest-detail-title">${this._esc(c.title)}</div>
+          <span class="contest-status-badge ${status}" style="margin-top:4px;display:inline-block">${status}</span>
+        </div>
+        <button class="squad-action-btn" style="margin-left:auto" onclick="document.getElementById('contestDetailOverlay').classList.add('hidden')">✕</button>
+      </div>
+      <div class="contest-detail-id-row">
+        <span class="contest-detail-id-label">CONTEST ID:</span>
+        <span class="contest-detail-id" id="cdContestId">${c.contest_code}</span>
+        <button class="contest-detail-copy" onclick="navigator.clipboard.writeText('${c.contest_code}');App.toast('ID copied!','success')" title="Copy ID">⊕ copy</button>
+      </div>
+      ${c.description ? `<div style="color:var(--text-secondary);font-size:12px;margin-bottom:12px">${this._esc(c.description)}</div>` : ''}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">
+        <div style="background:var(--bg-3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px">
+          <div style="font-family:var(--mono);font-size:10px;color:var(--text-muted);margin-bottom:3px">TYPE</div>
+          <div style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--brand-light)">${c.type.toUpperCase()}</div>
+        </div>
+        <div style="background:var(--bg-3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px">
+          <div style="font-family:var(--mono);font-size:10px;color:var(--text-muted);margin-bottom:3px">DURATION</div>
+          <div style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--text-bright)">${c.duration_mins} min</div>
+        </div>
+        <div style="background:var(--bg-3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px">
+          <div style="font-family:var(--mono);font-size:10px;color:var(--text-muted);margin-bottom:3px">START</div>
+          <div style="font-family:var(--mono);font-size:12px;color:var(--text-bright)">${new Date(c.start_time).toLocaleString()}</div>
+        </div>
+        <div style="background:var(--bg-3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px">
+          <div style="font-family:var(--mono);font-size:10px;color:var(--text-muted);margin-bottom:3px">PARTICIPANTS</div>
+          <div style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--text-bright)">${data.participants.length} / ${c.max_participants}</div>
+        </div>
+      </div>
+      ${c.org_tag ? `<div style="margin-bottom:12px;font-family:var(--mono);font-size:12px;color:var(--text-secondary)">⬡ ${this._esc(c.org_tag)}</div>` : ''}
+      ${probs.length ? `<div style="font-family:var(--mono);font-size:11px;color:var(--text-muted);margin-bottom:8px;letter-spacing:1px">PROBLEMS (${probs.length})</div>
+      <div class="contest-detail-prob-list">${probs.map((pid, i) => `<div class="contest-detail-prob-item"><span class="contest-detail-prob-idx">${String.fromCharCode(65+i)}.</span> Problem #${pid}</div>`).join('')}</div>` : ''}
+      ${data.participants.length > 0 ? `<div style="font-family:var(--mono);font-size:11px;color:var(--text-muted);margin:16px 0 8px;letter-spacing:1px">PARTICIPANTS</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">${data.participants.slice(0,12).map(p => `<span style="padding:3px 10px;background:var(--bg-3);border:1px solid var(--border);border-radius:12px;font-family:var(--mono);font-size:11px;color:var(--text-secondary)">@${this._esc(p.username)}</span>`).join('')}</div>` : ''}
+      <div class="contest-detail-actions">
+        ${data.isOwner ? `<button class="btn btn-ghost btn-sm" onclick="App._deleteContest(${c.id})" style="color:var(--danger)">delete</button>` : ''}
+        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('contestDetailOverlay').classList.add('hidden')">close</button>
+      </div>
+    </div>`;
+  },
+
+  async _deleteContest(id) {
+    if (!confirm('Delete this contest? This cannot be undone.')) return;
+    const data = await API.deleteContest(id, this._username);
+    if (data.ok) {
+      this.toast('Contest deleted', 'success');
+      document.getElementById('contestDetailOverlay')?.classList.add('hidden');
+      const btn = document.querySelector('[data-mode="contests"]');
+      this._switchWorkshopMode('contests', btn);
+    } else {
+      this.toast(data.error || 'Failed to delete', 'error');
+    }
+  },
+
+  _renderWorkshopJoinMode(el) {
+    el.innerHTML = `
+      <div class="join-contest-panel">
+        <div class="contest-form-title">join a contest</div>
+        <p style="font-family:var(--mono);font-size:12px;color:var(--text-muted);margin-bottom:16px">// enter the contest ID and password shared by your professor or organizer</p>
+        <div class="join-contest-fields">
+          <div class="contest-form-group">
+            <label class="contest-form-label">contest id</label>
+            <input id="joinContestCode" class="contest-join-code-input" placeholder="NX-XXXXXX" maxlength="9" oninput="this.value=this.value.toUpperCase()" />
+          </div>
+          <div class="contest-form-group">
+            <label class="contest-form-label">password</label>
+            <input id="joinContestPass" class="contest-form-input" type="password" placeholder="Enter contest password" autocomplete="off" />
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="App._joinContestById()">⊕ join contest</button>
+      </div>
+      <div id="joinContestResult" style="margin-top:16px"></div>`;
+  },
+
+  async _joinContestById() {
+    const code = document.getElementById('joinContestCode')?.value?.trim().toUpperCase();
+    const pass = document.getElementById('joinContestPass')?.value;
+    const resEl = document.getElementById('joinContestResult');
+
+    if (!code || code.length < 6) { this.toast('Enter a valid contest ID', 'error'); return; }
+    if (!pass) { this.toast('Password required', 'error'); return; }
+
+    const data = await API.joinContest(this._username, code, pass);
+    if (data.ok) {
+      const c = data.contest;
+      const start = new Date(c.start_time).getTime();
+      const end = start + c.duration_mins * 60000;
+      const now = Date.now();
+      const status = now < start ? 'upcoming' : now < end ? 'live' : 'ended';
+      const typeIcon = c.type === 'speed' ? '⚡' : c.type === 'accuracy' ? '✔' : '◆';
+
+      resEl.innerHTML = `<div class="contest-form-panel" style="border-color:rgba(16,185,129,0.3)">
+        <div class="contest-form-title" style="color:var(--success)">✔ enrolled successfully</div>
+        <div class="contest-card type-${c.type}" style="margin-top:0;cursor:default" onclick="App._viewContest(${c.id})">
+          <div class="contest-icon">${typeIcon}</div>
+          <div class="contest-info">
+            <div class="contest-title">${this._esc(c.title)}</div>
+            <div class="contest-meta-row">
+              <div class="contest-meta-item">⊞ <span>${c.contest_code}</span></div>
+              <div class="contest-meta-item">◌ <span>${c.duration_mins}min</span></div>
+              ${c.org_tag ? `<div class="contest-meta-item">⬡ <span>${this._esc(c.org_tag)}</span></div>` : ''}
+            </div>
+          </div>
+          <div class="contest-badges">
+            <span class="contest-type-badge">${c.type}</span>
+            <span class="contest-status-badge ${status}">${status}</span>
+          </div>
+        </div>
+        <div style="margin-top:14px;font-family:var(--mono);font-size:12px;color:var(--text-muted)">
+          starts: ${new Date(c.start_time).toLocaleString()} · ${c.duration_mins} minutes · ${data.participant_count} participants
+        </div>
+      </div>`;
+      this.toast(`Joined ${c.title}!`, 'success');
+    } else {
+      resEl.innerHTML = `<div style="padding:14px;background:var(--danger-bg);border:1px solid rgba(239,68,68,0.3);border-radius:var(--radius);color:var(--danger);font-family:var(--mono);font-size:12px">// ${data.error || 'Failed to join'}</div>`;
+      this.toast(data.error || 'Failed to join contest', 'error');
+    }
+  },
+
+  _wpGetDiffClass(rating) {
+    if (rating < 1200) return 'wp-diff-easy';
+    if (rating < 1800) return 'wp-diff-medium';
+    if (rating < 2400) return 'wp-diff-hard';
+    return 'wp-diff-extreme';
+  },
+
+  _wpSetView(view, btn) {
+    this._wpView = view;
+    document.querySelectorAll('.wp-view-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    this._renderWorkshopProblems(this._wpAllProblems || []);
+  },
+
+  _wpSetFilter(filter, btn) {
+    this._wpFilter = filter;
+    document.querySelectorAll('.workshop-filter-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    this._renderWorkshopProblems(this._wpAllProblems || []);
+  },
+
+  _wpSearchFilter(q) {
+    this._wpSearch = q.toLowerCase();
+    this._renderWorkshopProblems(this._wpAllProblems || []);
+  },
+
   async _loadWorkshopList() {
     const el = document.getElementById('workshopList');
     const data = await API.getCustomProblems();
-    if (!data.ok || !data.problems.length) {
-      el.innerHTML = '<div class="empty-state"><div class="empty-icon" style="font-size:48px"><i class="icon-wrench"></i></div><h3>// workspace empty</h3><p>Run `touch problem.cpp` to create your first one</p></div>';
+    if (!data.ok) { el.innerHTML = '<p class="text-muted">Error loading problems</p>'; return; }
+    this._wpAllProblems = data.problems || [];
+
+    // Fill stats
+    const probs = this._wpAllProblems;
+    const s1 = document.getElementById('wsStat1');
+    const s2 = document.getElementById('wsStat2');
+    const s3 = document.getElementById('wsStat3');
+    const s4 = document.getElementById('wsStat4');
+    if (s1) s1.textContent = probs.length;
+    if (s2) s2.textContent = probs.reduce((a,p) => a + JSON.parse(p.samples||'[]').length, 0);
+    if (s3) s3.textContent = probs.length ? Math.round(probs.reduce((a,p) => a + p.difficulty, 0) / probs.length) : 0;
+    if (s4) s4.textContent = probs.length ? this._timeAgo(probs[0].created_at) : '—';
+
+    this._renderWorkshopProblems(probs);
+  },
+
+  _renderWorkshopProblems(probs) {
+    const el = document.getElementById('workshopList');
+    if (!el) return;
+
+    // Filter
+    let filtered = probs;
+    if (this._wpFilter !== 'all') {
+      const ranges = { easy: [0,1199], medium: [1200,1799], hard: [1800,2399], extreme: [2400,9999] };
+      const [lo, hi] = ranges[this._wpFilter] || [0,9999];
+      filtered = filtered.filter(p => p.difficulty >= lo && p.difficulty <= hi);
+    }
+    if (this._wpSearch) {
+      filtered = filtered.filter(p =>
+        p.title.toLowerCase().includes(this._wpSearch) ||
+        (p.tags && p.tags.toLowerCase().includes(this._wpSearch))
+      );
+    }
+
+    if (!filtered.length) {
+      el.innerHTML = `<div class="empty-state">
+        <span style="font-size:56px;opacity:0.3"><i class="icon-wrench"></i></span>
+        <h3 style="color:var(--text-secondary)">${probs.length ? '// no matches found' : '// workspace empty'}</h3>
+        <p style="color:var(--text-muted)">${probs.length ? 'Try a different filter or search term' : 'Click "new problem" to author your first problem'}</p>
+      </div>`;
       return;
     }
-    el.innerHTML = `<div class="card"><table class="problem-table"><thead><tr>
-      <th>Title</th><th style="width:100px">Difficulty</th><th style="width:80px">Samples</th><th style="width:140px">Created</th><th style="width:160px"></th>
-    </tr></thead><tbody>
-      ${data.problems.map(p => `<tr>
-        <td><span class="problem-title-link" onclick="App.openSolveCustom(${p.id})">${this._esc(p.title)}</span></td>
-        <td>${this._ratingBadge(p.difficulty)}</td>
-        <td class="text-muted">${JSON.parse(p.samples||'[]').length}</td>
-        <td class="text-sm text-muted">${this._timeAgo(p.created_at)}</td>
-        <td>
-          <button class="btn btn-outline btn-sm" onclick="App.openSolveCustom(${p.id})"><i class="icon-sword"></i> Solve</button>
-          <button class="btn btn-ghost btn-sm" onclick="App.editCustomProblem(${p.id})"><i class="icon-edit"></i></button>
-          <button class="btn btn-ghost btn-sm" style="color:var(--danger)" onclick="App.deleteCustomProblem(${p.id})"><i class="icon-trash"></i></button>
-        </td>
-      </tr>`).join('')}
-    </tbody></table></div>`;
+
+    if (this._wpView === 'cards') {
+      el.innerHTML = `<div class="workshop-cards-grid">${filtered.map(p => {
+        const samples = JSON.parse(p.samples||'[]');
+        const tags = (() => { try { return JSON.parse(p.tags||'[]'); } catch { return []; } })();
+        const diffCls = this._wpGetDiffClass(p.difficulty);
+        const descText = p.statement ? p.statement.replace(/<[^>]+>/g,'').substring(0,100) : '// no description';
+        return `<div class="wp-card ${diffCls}">
+          <div class="wp-card-accent"></div>
+          <div class="wp-card-body">
+            <div class="wp-card-meta">
+              ${this._ratingBadge(p.difficulty)}
+              <span class="wp-card-samples-badge"><i class="icon-document" style="font-size:11px"></i> ${samples.length} sample${samples.length!==1?'s':''}</span>
+            </div>
+            <div class="wp-card-title" onclick="App.openSolveCustom(${p.id})">${this._esc(p.title)}</div>
+            <div class="wp-card-desc">${this._esc(descText)}${descText.length===100?'...':''}</div>
+            ${tags.length ? `<div class="wp-card-tags">${tags.slice(0,4).map(t=>`<span class="wp-card-tag">${this._esc(t)}</span>`).join('')}</div>` : ''}
+          </div>
+          <div class="wp-card-footer">
+            <span class="wp-card-date"><i class="icon-clock" style="font-size:11px"></i> ${this._timeAgo(p.created_at)}</span>
+            <div class="wp-card-actions">
+              <button class="btn btn-outline btn-sm" onclick="App.openSolveCustom(${p.id})" title="Solve"><i class="icon-sword"></i></button>
+              <button class="btn btn-ghost btn-sm" onclick="App.editCustomProblem(${p.id})" title="Edit"><i class="icon-edit"></i></button>
+              <button class="btn btn-ghost btn-sm" onclick="App._wpCopyLink(${p.id},this)" title="Copy link"><i class="icon-copy"></i></button>
+              <button class="btn btn-ghost btn-sm" style="color:var(--danger)" onclick="App.deleteCustomProblem(${p.id})" title="Delete"><i class="icon-trash"></i></button>
+            </div>
+          </div>
+        </div>`;
+      }).join('')}</div>`;
+    } else {
+      el.innerHTML = `<div class="card"><table class="problem-table"><thead><tr>
+        <th>Title</th><th style="width:100px">Difficulty</th><th style="width:80px">Samples</th><th style="width:140px">Created</th><th style="width:200px">Actions</th>
+      </tr></thead><tbody>
+        ${filtered.map(p => {
+          const samples = JSON.parse(p.samples||'[]');
+          return `<tr>
+            <td><span class="problem-title-link" onclick="App.openSolveCustom(${p.id})">${this._esc(p.title)}</span></td>
+            <td>${this._ratingBadge(p.difficulty)}</td>
+            <td class="text-muted">${samples.length}</td>
+            <td class="text-sm text-muted">${this._timeAgo(p.created_at)}</td>
+            <td>
+              <button class="btn btn-outline btn-sm" onclick="App.openSolveCustom(${p.id})"><i class="icon-sword"></i> Solve</button>
+              <button class="btn btn-ghost btn-sm" onclick="App.editCustomProblem(${p.id})"><i class="icon-edit"></i></button>
+              <button class="btn btn-ghost btn-sm" onclick="App._wpCopyLink(${p.id},this)"><i class="icon-copy"></i></button>
+              <button class="btn btn-ghost btn-sm" style="color:var(--danger)" onclick="App.deleteCustomProblem(${p.id})"><i class="icon-trash"></i></button>
+            </td>
+          </tr>`;
+        }).join('')}
+      </tbody></table></div>`;
+    }
+  },
+
+  _wpCopyLink(id, btn) {
+    const url = `${window.location.origin}${window.location.pathname}#/workshop`;
+    navigator.clipboard.writeText(url).catch(()=>{});
+    this.toast('Link copied to clipboard!', 'success');
+    if (btn) { btn.classList.add('copy-flash'); setTimeout(() => btn.classList.remove('copy-flash'), 400); }
   },
 
   showCreateProblem(existing) {
     const form = document.getElementById('workshopCreateForm');
     const p = existing || {};
     const samples = existing ? JSON.parse(p.samples || '[]') : [{ input: '', output: '' }];
+    const tags = existing ? (() => { try { return JSON.parse(p.tags||'[]'); } catch { return []; } })() : [];
     form.classList.remove('hidden');
+    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
     form.innerHTML = `
       <div class="card mb-3">
-        <div class="card-header"><span class="card-title">${existing ? 'vim' : 'touch'} problem</span></div>
-        <div class="workshop-form">
+        <div class="card-header">
+          <span class="card-title"><i class="icon-edit" style="font-size:16px"></i> ${existing ? 'edit' : 'new'} problem</span>
+          <button class="btn btn-ghost btn-sm" onclick="document.getElementById('workshopCreateForm').classList.add('hidden')">✕ close</button>
+        </div>
+        <div class="workshop-form" style="padding:20px">
           <div class="flex gap-3">
-            <div style="flex:2"><label class="text-sm text-muted">Title</label>
-              <input class="input full-width" id="wpTitle" value="${this._esc(p.title || '')}" placeholder="Problem title"></div>
-            <div style="flex:1"><label class="text-sm text-muted">Difficulty</label>
-              <input class="input full-width" id="wpDifficulty" type="number" value="${p.difficulty || 1000}" min="0" max="3500"></div>
-          </div>
-          <div class="mt-2"><label class="text-sm text-muted">Statement (HTML)</label>
-            <textarea class="input full-width" id="wpStatement" rows="6" placeholder="Problem statement...">${this._esc(p.statement || '')}</textarea></div>
-          <div class="flex gap-3 mt-2">
-            <div style="flex:1"><label class="text-sm text-muted">Input Spec</label>
-              <textarea class="input full-width" id="wpInputSpec" rows="3">${this._esc(p.input_spec || '')}</textarea></div>
-            <div style="flex:1"><label class="text-sm text-muted">Output Spec</label>
-              <textarea class="input full-width" id="wpOutputSpec" rows="3">${this._esc(p.output_spec || '')}</textarea></div>
-          </div>
-          <div class="flex gap-3 mt-2">
-            <div style="flex:1"><label class="text-sm text-muted">Time Limit</label>
-              <input class="input full-width" id="wpTimeLimit" value="${p.time_limit || '2 seconds'}"></div>
-            <div style="flex:1"><label class="text-sm text-muted">Memory Limit</label>
-              <input class="input full-width" id="wpMemLimit" value="${p.memory_limit || '256 MB'}"></div>
-            <div style="flex:1"><label class="text-sm text-muted">Tags (comma-separated)</label>
-              <input class="input full-width" id="wpTags" value="${(existing ? JSON.parse(p.tags||'[]') : []).join(', ')}"></div>
-          </div>
-          <div class="mt-2"><label class="text-sm text-muted">Sample Test Cases</label>
-            <div id="wpSamples">${samples.map((s, i) => `
-              <div class="tc-add-grid mt-2">
-                <div><label class="text-sm text-muted">Input ${i+1}</label><textarea class="input full-width wp-sample-in" rows="2">${this._esc(s.input)}</textarea></div>
-                <div><label class="text-sm text-muted">Output ${i+1}</label><textarea class="input full-width wp-sample-out" rows="2">${this._esc(s.output)}</textarea></div>
-              </div>`).join('')}
+            <div style="flex:3">
+              <label class="text-sm text-muted">Problem Title *</label>
+              <input class="input full-width" id="wpTitle" value="${this._esc(p.title || '')}" placeholder="e.g. Maximum Subarray Sum" style="margin-top:4px">
             </div>
-            <button class="btn btn-ghost btn-sm mt-2" onclick="App._addWpSample()"><i class="icon-plus" style="font-size:12px"></i> +sample</button>
+            <div style="flex:1">
+              <label class="text-sm text-muted">Difficulty Rating</label>
+              <input class="input full-width" id="wpDifficulty" type="number" value="${p.difficulty || 1000}" min="0" max="3500" style="margin-top:4px" oninput="App._wpUpdateDiffPreview(this.value)">
+            </div>
+            <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; padding-top:18px">
+              <div id="wpDiffPreview">${this._ratingBadge(p.difficulty || 1000)}</div>
+            </div>
           </div>
-          <div class="flex gap-2 mt-3">
-            <button class="btn btn-primary" onclick="App.saveCustomProblem(${existing ? p.id : 'null'})">${existing ? ':w' : 'touch'}</button>
-            <button class="btn btn-ghost" onclick="document.getElementById('workshopCreateForm').classList.add('hidden')">:q</button>
+
+          <div class="mt-3">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+              <label class="text-sm text-muted">Problem Statement</label>
+              <div style="display:flex;gap:6px">
+                <span style="font-size:11px;color:var(--text-muted);align-self:center">Supports HTML</span>
+                <button class="btn btn-ghost btn-sm" onclick="App._toggleWpPreview()" id="wpPreviewToggleBtn">👁 Preview</button>
+              </div>
+            </div>
+            <div class="wp-editor-split" id="wpEditorSplit" style="height:300px">
+              <div class="wp-editor-pane">
+                <div class="wp-editor-pane-header">
+                  <span>problem.html</span>
+                  <span style="font-size:10px">Ctrl+P preview</span>
+                </div>
+                <textarea id="wpStatement" oninput="App._wpUpdatePreview()">${this._esc(p.statement || '')}</textarea>
+              </div>
+              <div class="wp-editor-pane" id="wpPreviewPane" style="display:none">
+                <div class="wp-editor-pane-header"><span>preview</span></div>
+                <div class="wp-preview-pane" id="wpPreviewContent"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex gap-3 mt-3">
+            <div style="flex:1">
+              <label class="text-sm text-muted">Input Specification</label>
+              <textarea class="input full-width" id="wpInputSpec" rows="3" placeholder="Describe input format..." style="margin-top:4px">${this._esc(p.input_spec || '')}</textarea>
+            </div>
+            <div style="flex:1">
+              <label class="text-sm text-muted">Output Specification</label>
+              <textarea class="input full-width" id="wpOutputSpec" rows="3" placeholder="Describe output format..." style="margin-top:4px">${this._esc(p.output_spec || '')}</textarea>
+            </div>
+          </div>
+
+          <div class="flex gap-3 mt-3">
+            <div style="flex:1">
+              <label class="text-sm text-muted">Time Limit</label>
+              <input class="input full-width" id="wpTimeLimit" value="${p.time_limit || '2 seconds'}" style="margin-top:4px">
+            </div>
+            <div style="flex:1">
+              <label class="text-sm text-muted">Memory Limit</label>
+              <input class="input full-width" id="wpMemLimit" value="${p.memory_limit || '256 MB'}" style="margin-top:4px">
+            </div>
+            <div style="flex:2">
+              <label class="text-sm text-muted">Tags (comma-separated)</label>
+              <input class="input full-width" id="wpTags" value="${tags.join(', ')}" placeholder="dp, greedy, graphs..." style="margin-top:4px">
+            </div>
+          </div>
+
+          <div class="mt-3">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+              <label class="text-sm text-muted">Sample Test Cases</label>
+              <button class="btn btn-ghost btn-sm" onclick="App._addWpSample()"><i class="icon-plus" style="font-size:11px"></i> Add Sample</button>
+            </div>
+            <div class="wp-sample-grid" id="wpSamples">
+              ${samples.map((s, i) => this._wpSampleHtml(i, s.input, s.output)).join('')}
+            </div>
+          </div>
+
+          <div class="flex gap-2 mt-4">
+            <button class="btn btn-primary" onclick="App.saveCustomProblem(${existing ? p.id : 'null'})">
+              <i class="icon-check" style="font-size:14px"></i> ${existing ? 'Save Changes' : 'Create Problem'}
+            </button>
+            <button class="btn btn-ghost" onclick="document.getElementById('workshopCreateForm').classList.add('hidden')">Cancel</button>
           </div>
         </div>
       </div>`;
   },
 
+  _wpSampleHtml(idx, inputVal = '', outputVal = '') {
+    return `<div class="wp-sample-item" id="wpSample_${idx}">
+      <div class="wp-sample-header">
+        <span>Sample ${idx + 1}</span>
+        <button class="btn btn-ghost" style="font-size:11px;padding:2px 8px;color:var(--danger)" onclick="App._removeWpSample(${idx})">✕ Remove</button>
+      </div>
+      <div class="wp-sample-cols">
+        <div class="wp-sample-col">
+          <label>Input</label>
+          <textarea class="wp-sample-in" rows="3" placeholder="Sample input...">${this._esc(inputVal)}</textarea>
+        </div>
+        <div class="wp-sample-col">
+          <label>Expected Output</label>
+          <textarea class="wp-sample-out" rows="3" placeholder="Expected output...">${this._esc(outputVal)}</textarea>
+        </div>
+      </div>
+    </div>`;
+  },
+
+  _wpUpdateDiffPreview(val) {
+    const el = document.getElementById('wpDiffPreview');
+    if (el) el.innerHTML = this._ratingBadge(+val || 0);
+  },
+
+  _wpUpdatePreview() {
+    const stmt = document.getElementById('wpStatement');
+    const preview = document.getElementById('wpPreviewContent');
+    if (stmt && preview) preview.innerHTML = stmt.value;
+  },
+
+  _toggleWpPreview() {
+    const pane = document.getElementById('wpPreviewPane');
+    const split = document.getElementById('wpEditorSplit');
+    const btn = document.getElementById('wpPreviewToggleBtn');
+    if (!pane) return;
+    const showing = pane.style.display !== 'none';
+    pane.style.display = showing ? 'none' : 'flex';
+    if (split) split.style.gridTemplateColumns = showing ? '1fr' : '1fr 1fr';
+    if (btn) btn.textContent = showing ? '👁 Preview' : '✕ Preview';
+    if (!showing) this._wpUpdatePreview();
+  },
+
   _addWpSample() {
     const container = document.getElementById('wpSamples');
-    const idx = container.querySelectorAll('.tc-add-grid').length;
+    const idx = container.querySelectorAll('.wp-sample-item').length;
     const div = document.createElement('div');
-    div.className = 'tc-add-grid mt-2';
-    div.innerHTML = `<div><label class="text-sm text-muted">Input ${idx+1}</label><textarea class="input full-width wp-sample-in" rows="2"></textarea></div>
-      <div><label class="text-sm text-muted">Output ${idx+1}</label><textarea class="input full-width wp-sample-out" rows="2"></textarea></div>`;
-    container.appendChild(div);
+    div.innerHTML = this._wpSampleHtml(idx);
+    container.appendChild(div.firstElementChild);
+  },
+
+  _removeWpSample(idx) {
+    const el = document.getElementById('wpSample_' + idx);
+    if (el) el.remove();
+    // Renumber remaining samples
+    document.querySelectorAll('.wp-sample-item').forEach((el, i) => {
+      const header = el.querySelector('.wp-sample-header span');
+      if (header) header.textContent = 'Sample ' + (i + 1);
+    });
   },
 
   async saveCustomProblem(id) {
@@ -4490,13 +5418,6 @@ const App = {
     this._socialSocket = io();
     this._socialSocket.emit('register-user', { username: this._username });
 
-    this._socialSocket.on('new-message', ({ message }) => {
-      if (this._currentChatUser === message.from_user) {
-        this._appendChatMessage(message, 'sidebar');
-      }
-      this._checkUnreadMessages();
-    });
-
     this._socialSocket.on('friend-request-received', ({ from }) => {
       this.toast(`${from} sent you a friend request!`, 'info');
       this._checkUnreadMessages();
@@ -4565,7 +5486,87 @@ const App = {
       const pc = this._peerConnections[from];
       if (pc && candidate) await pc.connection.addIceCandidate(new RTCIceCandidate(candidate));
     });
-  },
+
+    // Typing indicators
+    this._socialSocket.on('user-typing', ({ from }) => {
+      this._typingUsers[from] = true;
+      const indicator = document.getElementById(`chatWinTyping_${from}`);
+      if (indicator && this._activeChatUser === from) {
+        indicator.innerHTML = `<div class="typing-indicator"><span>${this._esc(from)}</span><div class="typing-dots"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div></div>`;
+      }
+      const convPreview = document.getElementById(`convPreview_${from}`);
+      if (convPreview) { convPreview.textContent = 'typing...'; convPreview.classList.add('typing-preview'); }
+    });
+
+    this._socialSocket.on('user-stopped-typing', ({ from }) => {
+      delete this._typingUsers[from];
+      const indicator = document.getElementById(`chatWinTyping_${from}`);
+      if (indicator) indicator.innerHTML = '';
+      const convPreview = document.getElementById(`convPreview_${from}`);
+      if (convPreview) { convPreview.classList.remove('typing-preview'); }
+    });
+
+    // Messages read receipts
+    this._socialSocket.on('messages-read', ({ by }) => {
+      // Mark all sent messages as read
+      document.querySelectorAll('.chat-read-receipt').forEach(el => {
+        el.textContent = '✓✓';
+        el.style.color = 'var(--primary)';
+      });
+    });
+
+    // Voice speaking updates
+    this._socialSocket.on('voice-speaking-update', ({ username, speaking }) => {
+      const chip = document.querySelector(`.voice-member-chip[data-username="${username}"]`);
+      if (chip) chip.classList.toggle('speaking', speaking);
+    });
+
+    // Challenge received notification
+    this._socialSocket.on('challenge-received', ({ from, problemTitle }) => {
+      const notif = document.createElement('div');
+      notif.className = 'squad-challenge-notif';
+      notif.innerHTML = `
+        <h4>⚔ challenge received</h4>
+        <p>@${this._esc(from)} challenges you to: ${this._esc(problemTitle || 'a coding duel')}</p>
+        <div class="squad-challenge-actions">
+          <button class="btn btn-primary btn-sm" onclick="location.hash='#/problems';this.closest('.squad-challenge-notif').remove()">accept</button>
+          <button class="btn btn-ghost btn-sm" onclick="this.closest('.squad-challenge-notif').remove()">✕</button>
+        </div>`;
+      document.body.appendChild(notif);
+      setTimeout(() => notif.remove(), 8000);
+    });
+
+    // New message — update both sidebar and inline chat
+    this._socialSocket.on('new-message', ({ message }) => {
+      // If inline chat is open for this sender, append message
+      if (this._activeChatUser === message.from_user) {
+        const container = document.getElementById(`chatWinMessages_${message.from_user}`);
+        if (container) {
+          this._appendInlineChatMessage(message, message.from_user);
+          // Clear typing
+          const indicator = document.getElementById(`chatWinTyping_${message.from_user}`);
+          if (indicator) indicator.innerHTML = '';
+          return;
+        }
+      }
+      // Otherwise update unread badge in conv list
+      const convItem = document.querySelector(`.chat-conv-item[data-username="${message.from_user}"]`);
+      if (convItem) {
+        let badge = convItem.querySelector('.chat-conv-unread');
+        const count = ((this._chatUnreads[message.from_user] || 0) + 1);
+        this._chatUnreads[message.from_user] = count;
+        if (!badge) {
+          const meta = convItem.querySelector('.chat-conv-meta');
+          if (meta) { badge = document.createElement('div'); badge.className = 'chat-conv-unread'; meta.appendChild(badge); }
+        }
+        if (badge) badge.textContent = count;
+        const preview = document.getElementById(`convPreview_${message.from_user}`);
+        if (preview) { preview.textContent = message.content?.substring(0, 30) || '...'; preview.classList.remove('typing-preview'); }
+      }
+      this._checkUnreadMessages();
+    });
+
+  }, // end _connectSocialSocket
 
   _updateFriendStatuses() {
     document.querySelectorAll('.friend-status-dot').forEach(el => {
@@ -4593,48 +5594,451 @@ const App = {
     } catch {}
   },
 
+  /* ═══ Gate Screen — Login or Create Profile ═══ */
+  showGateScreen() {
+    const gate = document.getElementById('gateScreen');
+    if (!gate) return;
+    gate.classList.remove('hidden');
+    const input = document.getElementById('gateUsername');
+    const pwInput = document.getElementById('gatePassword');
+    const loginOnEnter = e => { if (e.key === 'Enter') this._gateLogin(); };
+    if (input) input.addEventListener('keydown', loginOnEnter);
+    if (pwInput) pwInput.addEventListener('keydown', loginOnEnter);
+  },
+
+  async _gateLogin() {
+    const input = document.getElementById('gateUsername');
+    const pwInput = document.getElementById('gatePassword');
+    const feedback = document.getElementById('gateLoginFeedback');
+    const btn = document.getElementById('gateLoginBtn');
+    const username = (input?.value || '').trim().replace(/[^a-zA-Z0-9_]/g, '');
+    const password = pwInput?.value || '';
+    if (!username || username.length < 2) {
+      if (feedback) { feedback.textContent = '// username must be at least 2 characters'; feedback.style.color = '#ef4444'; }
+      input?.focus();
+      return;
+    }
+    btn.disabled = true;
+    btn.innerHTML = '<i class="icon-clock"></i> VERIFYING...';
+    try {
+      const res = await API.loginUser({ username, password });
+      if (res.ok && res.user) {
+        localStorage.setItem('cp_arena_username', username);
+        this._username = username;
+        if (feedback) { feedback.textContent = '// access granted'; feedback.style.color = '#22c55e'; }
+        btn.innerHTML = '<i class="icon-chevron-right"></i> ACCESS GRANTED';
+        setTimeout(() => {
+          document.getElementById('gateScreen')?.classList.add('hidden');
+          this._updateSidebarPlayer();
+          if (!location.hash || location.hash === '#/') location.hash = '#/hub';
+          else this.route();
+          this._connectSocialSocket();
+          this._checkUnreadMessages();
+          this.toast(`Welcome back, ${res.user.display_name || username}!`, 'success');
+          if (res.user.role === 'admin') this._isAdmin = true;
+          this._autoSync();
+          window.monacoReady?.then(() => this._registerAutocomplete());
+        }, 600);
+      } else {
+        if (feedback) { feedback.textContent = `// ${res.error || 'login failed'}`; feedback.style.color = '#ef4444'; }
+        btn.disabled = false;
+        btn.innerHTML = '<i class="icon-chevron-right"></i> ENTER NEXUS';
+      }
+    } catch (e) {
+      if (feedback) { feedback.textContent = '// connection error — try again'; feedback.style.color = '#ef4444'; }
+      btn.disabled = false;
+      btn.innerHTML = '<i class="icon-chevron-right"></i> ENTER NEXUS';
+    }
+  },
+
+  _gateCreate() {
+    document.getElementById('gateScreen')?.classList.add('hidden');
+    this.showUserSetup();
+  },
+
   showUserSetup() {
     const modal = document.getElementById('userSetupModal');
     const picker = document.getElementById('avatarPicker');
     const avatars = ['coder','fox','cat','wolf','sword','shield','trophy','diamond','fire','bolt','star','target','crown','robot','gamepad','brain','tree','globe','moon','dragon'];
     const avatarIconMap = {coder:'icon-avatar-coder',fox:'icon-avatar-fox',cat:'icon-avatar-cat',wolf:'icon-avatar-wolf',sword:'icon-sword',shield:'icon-shield',trophy:'icon-trophy',diamond:'icon-diamond',fire:'icon-fire',bolt:'icon-bolt',star:'icon-star',target:'icon-target',crown:'icon-crown',robot:'icon-robot',gamepad:'icon-gamepad',brain:'icon-brain',tree:'icon-tree',globe:'icon-globe',moon:'icon-moon',dragon:'icon-dragon'};
+    this._avatarIconMap = avatarIconMap;
     picker.innerHTML = avatars.map((a, i) =>
       `<button class="avatar-option${i===0?' selected':''}" data-avatar="${a}" onclick="App._pickAvatar(this)"><i class="${avatarIconMap[a]}"></i></button>`
     ).join('');
     modal.classList.remove('hidden');
+    this._obCurrentStep = 1;
+    this._initOnboardingCanvas();
+    this._initCodeRain();
+    this._initBootSequence();
+    this._setupUsernameChecker();
+    this._setupLivePreview();
+    this._obXp = 0;
+  },
+
+  _obCurrentStep: 1,
+
+  _obGoStep(step) {
+    // Validate before advancing
+    if (step === 2 && this._obCurrentStep === 1) {
+      const u = document.getElementById('setupUsername').value.trim();
+      if (!u || u.length < 2) {
+        this.toast('Set a callsign first (min 2 chars)', 'error');
+        document.getElementById('setupUsername').focus();
+        return;
+      }
+    }
+    this._obCurrentStep = step;
+    // Update step indicator
+    document.querySelectorAll('#obSteps .ob-step').forEach(s => {
+      const sNum = parseInt(s.dataset.step);
+      s.classList.remove('active', 'done');
+      if (sNum === step) s.classList.add('active');
+      else if (sNum < step) s.classList.add('done');
+    });
+    // Show correct panel
+    document.querySelectorAll('.ob-step-panel').forEach(p => p.classList.remove('active'));
+    const panel = document.getElementById('obPanel' + step);
+    if (panel) panel.classList.add('active');
+    // Scroll to top
+    const scroll = document.getElementById('obFormScroll');
+    if (scroll) scroll.scrollTop = 0;
+    // XP reward for progressing
+    if (step > 1) this._obAddXp(5);
+  },
+
+  _usernameCheckTimer: null,
+
+  /* Code rain effect */
+  _initCodeRain() {
+    const container = document.getElementById('obCodeRain');
+    if (!container) return;
+    const snippets = [
+      'const x = 42;','import {solve} from "nexora";','while(true) learn();','fn main() { }',
+      'git push origin main','npm run deploy','class Node {}','return dp[n];',
+      'for(i=0;i<n;i++)','if(valid(x)) push(x);','// TODO: optimize','await fetch(api);',
+      'export default App;','let ans = Infinity;','break;continue;','map.set(k,v);',
+    ];
+    for (let i = 0; i < 14; i++) {
+      const col = document.createElement('div');
+      col.className = 'ob-rain-col';
+      col.textContent = Array.from({length: 12}, () => snippets[Math.floor(Math.random() * snippets.length)]).join(' ');
+      col.style.left = (i * 7.5 + Math.random() * 3) + '%';
+      col.style.animationDuration = (12 + Math.random() * 10) + 's';
+      col.style.animationDelay = (-Math.random() * 15) + 's';
+      col.style.opacity = (0.3 + Math.random() * 0.7).toString();
+      container.appendChild(col);
+    }
+  },
+
+  /* Boot sequence animation */
+  _initBootSequence() {
+    const boot = document.getElementById('obBoot');
+    const mainUI = document.getElementById('obMainUI');
+    const textEl = document.getElementById('obBootText');
+    const barEl = document.getElementById('obBootBar');
+    if (!boot || !mainUI || !textEl || !barEl) {
+      // If boot elements missing, skip straight to main
+      if (mainUI) mainUI.classList.remove('hidden');
+      return;
+    }
+    boot.classList.remove('hidden');
+    mainUI.classList.add('hidden');
+
+    const lines = [
+      { text: '> nexora init --create-profile', cls: '', delay: 200 },
+      { text: '[OK] Nexora v3.0 kernel loaded', cls: 'ob-bl-ok', delay: 400 },
+      { text: '[INFO] Scanning neural pathways...', cls: 'ob-bl-info', delay: 600 },
+      { text: '[OK] Identity Forge module ready', cls: 'ob-bl-ok', delay: 800 },
+      { text: '[INFO] Connecting to the nexus...', cls: 'ob-bl-info', delay: 500 },
+      { text: '[OK] Secure channel established', cls: 'ob-bl-ok', delay: 400 },
+      { text: '[WARN] No profile detected — creating new identity', cls: 'ob-bl-warn', delay: 600 },
+      { text: '[OK] Launching Identity Forge...', cls: 'ob-bl-ok', delay: 500 },
+    ];
+
+    let i = 0;
+    const progress = [10, 25, 40, 55, 70, 82, 92, 100];
+
+    const showLine = () => {
+      if (i >= lines.length) {
+        // Boot complete — transition to main UI
+        setTimeout(() => {
+          boot.style.transition = 'opacity 0.6s ease';
+          boot.style.opacity = '0';
+          setTimeout(() => {
+            boot.classList.add('hidden');
+            boot.style.opacity = '';
+            mainUI.classList.remove('hidden');
+            mainUI.style.animation = 'obFadeIn 0.5s ease both';
+          }, 600);
+        }, 400);
+        return;
+      }
+      const line = lines[i];
+      const div = document.createElement('div');
+      div.className = 'ob-bl ' + line.cls;
+      div.textContent = line.text;
+      textEl.appendChild(div);
+      barEl.style.width = progress[i] + '%';
+      i++;
+      setTimeout(showLine, line.delay);
+    };
+
+    setTimeout(showLine, 800);
+  },
+
+  _setupUsernameChecker() {
+    const input = document.getElementById('setupUsername');
+    if (!input || input._checkerAttached) return;
+    input._checkerAttached = true;
+    input.addEventListener('input', () => {
+      clearTimeout(this._usernameCheckTimer);
+      const val = input.value.trim();
+      const status = document.getElementById('obUsernameStatus');
+      const feedback = document.getElementById('obUsernameFeedback');
+      if (!val || val.length < 2) {
+        if (status) { status.className = 'ob-username-status'; status.textContent = ''; }
+        if (feedback) { feedback.className = 'ob-hint'; feedback.textContent = '// 2-20 chars • letters, numbers, underscores'; }
+        return;
+      }
+      if (!/^[a-zA-Z0-9_]+$/.test(val)) {
+        if (status) { status.className = 'ob-username-status taken'; status.textContent = '✗'; }
+        if (feedback) { feedback.className = 'ob-hint taken'; feedback.textContent = '// only letters, numbers, underscores'; }
+        return;
+      }
+      if (status) { status.className = 'ob-username-status checking'; status.textContent = '⟳'; }
+      if (feedback) { feedback.className = 'ob-hint checking'; feedback.textContent = '// checking availability...'; }
+      this._usernameCheckTimer = setTimeout(async () => {
+        try {
+          const res = await API.checkUsername(val);
+          if (res.ok && res.available) {
+            if (status) { status.className = 'ob-username-status available'; status.textContent = '✓'; }
+            if (feedback) { feedback.className = 'ob-hint available'; feedback.textContent = '// handle available — locked & loaded'; }
+            this._obAddXp(10);
+          } else {
+            if (status) { status.className = 'ob-username-status taken'; status.textContent = '✗'; }
+            if (feedback) { feedback.className = 'ob-hint taken'; feedback.textContent = `// ${res.reason || 'username taken'}`; }
+          }
+        } catch {
+          if (status) { status.className = 'ob-username-status'; status.textContent = ''; }
+          if (feedback) { feedback.className = 'ob-hint'; feedback.textContent = ''; }
+        }
+      }, 400);
+    });
+  },
+
+  _setupLivePreview() {
+    const nameInput = document.getElementById('setupDisplayName');
+    const handleInput = document.getElementById('setupUsername');
+    const bioInput = document.getElementById('setupBio');
+    const updatePreview = () => {
+      const n = document.getElementById('obLiveName');
+      const h = document.getElementById('obLiveHandle');
+      const b = document.getElementById('obLiveBio');
+      if (n) n.textContent = nameInput?.value?.trim() || 'Player';
+      if (h) h.textContent = '@' + (handleInput?.value?.trim() || 'handle');
+      if (b) b.textContent = bioInput?.value?.trim() || '// awaiting input...';
+    };
+    if (nameInput) nameInput.addEventListener('input', updatePreview);
+    if (handleInput) handleInput.addEventListener('input', updatePreview);
+    if (bioInput) bioInput.addEventListener('input', updatePreview);
+  },
+
+  _obXp: 0,
+  _obAddXp(amount) {
+    this._obXp += amount;
+    const el = document.getElementById('obXpVal');
+    if (el) {
+      el.textContent = this._obXp;
+      el.parentElement.style.transform = 'scale(1.15)';
+      setTimeout(() => { el.parentElement.style.transform = ''; }, 300);
+    }
+  },
+
+  /* OAuth handlers */
+  _authGitHub() {
+    window.location.href = '/auth/github';
+  },
+  _authGoogle() {
+    window.location.href = '/auth/google';
+  },
+
+  _handleOAuthComplete() {
+    if (!this._oauthUser) return;
+    const u = this._oauthUser;
+    const usernameInput = document.getElementById('setupUsername');
+    const displayInput = document.getElementById('setupDisplayName');
+    const emailInput = document.getElementById('setupEmail');
+    if (usernameInput && u.username) usernameInput.value = u.username;
+    if (displayInput && u.displayName) displayInput.value = u.displayName;
+    if (emailInput && u.email) emailInput.value = u.email;
+    const tag = document.getElementById('obConnectedTag');
+    const text = document.getElementById('obConnectedText');
+    if (tag) {
+      tag.classList.remove('hidden');
+      if (text) text.textContent = `Connected via ${u.provider === 'github' ? 'GitHub' : 'Google'}`;
+    }
+    const btnId = u.provider === 'github' ? 'obGithubBtn' : 'obGoogleBtn';
+    const btn = document.getElementById(btnId);
+    if (btn) btn.classList.add('connected');
+    if (u.avatarUrl) {
+      this._oauthAvatarUrl = u.avatarUrl;
+      const liveAvatar = document.getElementById('obLiveAvatar');
+      if (liveAvatar) liveAvatar.innerHTML = `<img src="${this._esc(u.avatarUrl)}" alt="avatar" />`;
+    }
+    if (usernameInput) usernameInput.dispatchEvent(new Event('input'));
+    this._obAddXp(15);
+    this.toast(`Authenticated via ${u.provider === 'github' ? 'GitHub' : 'Google'}`, 'success');
   },
 
   _pickAvatar(btn) {
     document.querySelectorAll('.avatar-option').forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
+    const avatar = btn.dataset.avatar;
+    const cls = this._avatarIconMap[avatar];
+    const liveAvatar = document.getElementById('obLiveAvatar');
+    if (liveAvatar && !this._oauthAvatarUrl) {
+      liveAvatar.innerHTML = cls ? `<i class="${cls}"></i>` : `<i class="icon-avatar-coder"></i>`;
+    }
+    this._obAddXp(5);
+  },
+
+  _initOnboardingCanvas() {
+    const canvas = document.getElementById('onboardingCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const particles = [];
+    for (let i = 0; i < 100; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 2 + 0.3,
+        dx: (Math.random() - 0.5) * 0.4,
+        dy: (Math.random() - 0.5) * 0.4,
+        alpha: Math.random() * 0.5 + 0.1,
+        hue: Math.random() > 0.5 ? 220 : 270,
+      });
+    }
+    const animate = () => {
+      if (document.getElementById('userSetupModal')?.classList.contains('hidden')) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (const p of particles) {
+        p.x += p.dx; p.y += p.dy;
+        if (p.x < 0) p.x = canvas.width;
+        if (p.x > canvas.width) p.x = 0;
+        if (p.y < 0) p.y = canvas.height;
+        if (p.y > canvas.height) p.y = 0;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${p.hue},70%,65%,${p.alpha})`;
+        ctx.fill();
+      }
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 100) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(96,165,250,${0.06 * (1 - dist / 100)})`;
+            ctx.lineWidth = 0.4;
+            ctx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(animate);
+    };
+    animate();
   },
 
   async completeSetup() {
     const username = document.getElementById('setupUsername').value.trim();
     const displayName = document.getElementById('setupDisplayName').value.trim();
     const avatar = document.querySelector('.avatar-option.selected')?.dataset.avatar || 'coder';
+    const bio = document.getElementById('setupBio')?.value?.trim() || '';
+    const email = document.getElementById('setupEmail')?.value?.trim() || '';
     const errEl = document.getElementById('setupError');
+    const submitBtn = document.getElementById('setupSubmitBtn');
 
     if (!username || username.length < 2) {
-      errEl.textContent = 'Username must be at least 2 characters';
-      errEl.classList.remove('hidden');
+      if (errEl) { errEl.textContent = 'Username must be at least 2 characters'; errEl.classList.remove('hidden'); }
       return;
     }
 
-    const data = await API.registerUser({ username, display_name: displayName || username, avatar });
+    // Deploy animation
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.querySelector('.ob-deploy-label').textContent = 'DEPLOYING...';
+      submitBtn.querySelector('.ob-deploy-cmd').textContent = '$ compiling profile...';
+      submitBtn.querySelector('.ob-deploy-icon').innerHTML = '<i class="icon-sync" style="animation:spin 1s linear infinite"></i>';
+    }
+
+    const payload = { username, display_name: displayName || username, avatar, bio };
+    if (email) payload.email = email;
+    const setupPw = document.getElementById('setupPassword')?.value || '';
+    if (setupPw.length >= 4) payload.password = setupPw;
+    if (this._oauthUser) {
+      payload.provider = this._oauthUser.provider;
+      payload.provider_id = this._oauthUser.providerId;
+      if (!payload.email && this._oauthUser.email) payload.email = this._oauthUser.email;
+    }
+    if (this._oauthAvatarUrl) payload.avatar_url = this._oauthAvatarUrl;
+
+    const data = await API.registerUser(payload);
     if (!data.ok) {
-      errEl.textContent = data.error || 'Registration failed';
-      errEl.classList.remove('hidden');
+      if (errEl) { errEl.textContent = data.error || 'Registration failed'; errEl.classList.remove('hidden'); }
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.querySelector('.ob-deploy-label').textContent = 'DEPLOY TO NEXUS';
+        submitBtn.querySelector('.ob-deploy-cmd').textContent = '$ make deploy && ./nexora';
+        submitBtn.querySelector('.ob-deploy-icon').innerHTML = '<i class="icon-rocket"></i>';
+      }
       return;
     }
 
     localStorage.setItem('cp_arena_username', username);
     this._username = username;
-    document.getElementById('userSetupModal').classList.add('hidden');
-    this._connectSocialSocket();
-    this.toast(`Welcome, ${displayName || username}!`, 'success');
-    // Refresh social page if on it
-    if (location.hash === '#/social') this.renderSocial(document.getElementById('pageContent'));
+    this._isAdmin = data.user?.role === 'admin';
+
+    const modal = document.getElementById('userSetupModal');
+    modal.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+    modal.style.opacity = '0';
+    modal.style.transform = 'scale(1.08)';
+    
+    setTimeout(() => {
+      modal.classList.add('hidden');
+      modal.style.opacity = '';
+      modal.style.transform = '';
+      this._connectSocialSocket();
+      this.toast(`Welcome to the nexus, ${displayName || username}!`, 'success');
+      if (this._isAdmin) {
+        setTimeout(() => this.toast('Admin mode activated — all levels unlocked', 'success'), 1000);
+      }
+      location.hash = '#/hub';
+      this.route();
+      this._updateSidebarPlayer();
+      this._autoSync();
+      window.monacoReady?.then(() => this._registerAutocomplete());
+    }, 800);
+  },
+
+  logout() {
+    if (!this._username) return;
+    const name = this._username;
+    localStorage.removeItem('cp_arena_username');
+    this._username = null;
+    this._isAdmin = false;
+    this._oauthUser = null;
+    this._oauthAvatarUrl = null;
+    try { API.authLogout(); } catch {}
+    this.toast(`Logged out. See you soon, ${name}!`, 'info');
+    setTimeout(() => {
+      location.hash = '#/hub';
+      location.reload();
+    }, 600);
   },
 
   /* ===================================================
@@ -4645,11 +6049,13 @@ const App = {
       el.innerHTML = `
         <div class="page-header">
           <h1><i class="icon-globe" style="font-size:28px"></i> <span class="glitch" data-text="Community">Community</span></h1>
-          <p>ssh party@nexus.dev --join-squad</p>
-          <span style="font-size:64px;display:block;margin-bottom:20px"><i class="icon-wave-hand"></i></span>
-          <h2 style="margin-bottom:8px;color:var(--text-bright)">// identity not found</h2>
-          <p style="color:var(--text-secondary);margin-bottom:24px">Create a handle to join the squad, pair-program & compete</p>
-          <button class="btn btn-primary" onclick="App.showUserSetup()">useradd --create</button>
+          <p>// identity not found — create a handle to join the network</p>
+        </div>
+        <div class="squad-gate">
+          <div class="squad-gate-icon">⬡</div>
+          <h2 class="squad-gate-title">// access denied</h2>
+          <p class="squad-gate-sub">node not registered on the nexus</p>
+          <button class="btn btn-primary" onclick="App.showUserSetup()"><i class="icon-plus"></i> register node</button>
         </div>`;
       return;
     }
@@ -4657,37 +6063,571 @@ const App = {
     el.innerHTML = `
       <div class="page-header">
         <h1><i class="icon-globe" style="font-size:28px"></i> <span class="glitch" data-text="Community">Community</span></h1>
-        <p>ssh party@nexus.dev --join-squad</p>
-        <div class="social-tab-bar">
-          <button class="social-tab active" data-stab="friends" onclick="App._switchSocialTab('friends',this)">
-            <i class="icon-friends"></i> /allies
-          </button>
-          <button class="social-tab" data-stab="rooms" onclick="App._switchSocialTab('rooms',this)">
-            <i class="icon-house"></i> /rooms
-          </button>
-          <button class="social-tab" data-stab="feed" onclick="App._switchSocialTab('feed',this)">
-            <i class="icon-feed"></i> /feed
-          </button>
-        </div>
-        <div id="socialTabContent">
-          <div id="socialFriendsTab"></div>
-          <div id="socialRoomsTab" class="hidden"></div>
-          <div id="socialFeedTab" class="hidden"></div>
-        </div>
+        <p>// connected to nexus · ${this._username} online · squad network active</p>
+      </div>
+      <div class="squad-tab-nav">
+        <button class="squad-tab" data-stab="myprofile" onclick="App._switchSocialTab('myprofile',this)">
+          <span class="squad-tab-icon">◈</span>/me
+        </button>
+        <button class="squad-tab active" data-stab="friends" onclick="App._switchSocialTab('friends',this)">
+          <span class="squad-tab-icon">⬡</span>/allies
+        </button>
+        <button class="squad-tab" data-stab="chat" onclick="App._switchSocialTab('chat',this)">
+          <span class="squad-tab-icon">⌘</span>/chat
+          <span class="squad-tab-badge hidden" id="chatUnreadBadge">0</span>
+        </button>
+        <button class="squad-tab" data-stab="rooms" onclick="App._switchSocialTab('rooms',this)">
+          <span class="squad-tab-icon">⊞</span>/rooms
+        </button>
+        <button class="squad-tab" data-stab="feed" onclick="App._switchSocialTab('feed',this)">
+          <span class="squad-tab-icon">▸</span>/feed
+        </button>
+        <button class="squad-tab" data-stab="leaderboard" onclick="App._switchSocialTab('leaderboard',this)">
+          <span class="squad-tab-icon">◆</span>/top
+        </button>
+      </div>
+      <div id="socialTabContent" class="squad-content">
+        <div id="socialMyProfileTab" class="hidden"></div>
+        <div id="socialFriendsTab"></div>
+        <div id="socialChatTab" class="hidden"></div>
+        <div id="socialRoomsTab" class="hidden"></div>
+        <div id="socialFeedTab" class="hidden"></div>
+        <div id="socialLeaderboardTab" class="hidden"></div>
       </div>`;
 
-    this._loadFriendsTab();
+    this._switchSocialTab('friends', el.querySelector('[data-stab="friends"]'));
   },
 
   _switchSocialTab(tab, btn) {
-    document.querySelectorAll('.social-tab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.squad-tab').forEach(b => b.classList.remove('active'));
     if (btn) btn.classList.add('active');
-    document.getElementById('socialFriendsTab').classList.toggle('hidden', tab !== 'friends');
-    document.getElementById('socialRoomsTab').classList.toggle('hidden', tab !== 'rooms');
-    document.getElementById('socialFeedTab').classList.toggle('hidden', tab !== 'feed');
-    if (tab === 'friends') this._loadFriendsTab();
+    ['myprofile','friends','chat','rooms','feed','leaderboard'].forEach(t => {
+      const el = document.getElementById('social' + t.charAt(0).toUpperCase() + t.slice(1) + 'Tab');
+      if (el) el.classList.toggle('hidden', t !== tab);
+    });
+    if (tab === 'myprofile') this._loadMyProfileTab();
+    else if (tab === 'friends') this._loadFriendsTab();
+    else if (tab === 'chat') this._loadChatTab();
     else if (tab === 'rooms') this._loadRoomsTab();
     else if (tab === 'feed') this._loadFeedTab();
+    else if (tab === 'leaderboard') this._loadLeaderboardTab();
+  },
+
+  async _loadMyProfileTab() {
+    const el = document.getElementById('socialMyProfileTab');
+    if (!el || !this._username) return;
+    el.innerHTML = '<div class="chat-loading">Loading profile...</div>';
+    try {
+      const [profile, statsData] = await Promise.all([
+        API.getUserProfile(this._username),
+        API.getStats(this._username),
+      ]);
+      if (!profile.ok || !statsData.ok) { el.innerHTML = '<p class="text-muted">Failed to load profile</p>'; return; }
+      const u = profile.user;
+      const lvl = statsData.level;
+
+      el.innerHTML = `
+        <div class="profile-page-hero${this._isAdmin ? ' admin-profile-hero' : ''}" style="margin-top:16px">
+          ${this._isAdmin ? '<div class="admin-hero-glow"></div>' : ''}
+          <div class="profile-hero-left">
+            <div class="profile-hero-badge-large">
+              ${this._renderAvatarWithBadge(u.avatar, lvl.level, 96, 36)}
+            </div>
+            <div style="margin-top:8px">${this._renderRiftBadge(lvl.level, 56)}</div>
+          </div>
+          <div class="profile-hero-right">
+            <div class="profile-hero-name">${this._esc(u.display_name || u.username)} ${this._renderRiftBadge(lvl.level, 22)}${this._isAdmin ? ' <span class="admin-tag">♛ ADMIN</span>' : ''}</div>
+            <div class="profile-hero-handle">@${this._esc(u.username)}</div>
+            <div class="profile-hero-bio">${this._esc(u.bio) || '// no bio set'}</div>
+            <div class="profile-hero-level-tag" style="color:${lvl.color};border-color:${lvl.color};${lvl.glow !== 'none' ? 'box-shadow:' + lvl.glow : ''}">
+              ${this._renderRiftBadge(lvl.level, 16)} Level ${lvl.level} — ${lvl.name}
+            </div>
+            <div class="profile-hero-stats">
+              <div class="profile-hero-stat"><span class="profile-hero-stat-val">${statsData.solved}</span><span class="profile-hero-stat-lbl">Solved</span></div>
+              <div class="profile-hero-stat"><span class="profile-hero-stat-val">${statsData.accuracy}%</span><span class="profile-hero-stat-lbl">Accuracy</span></div>
+              <div class="profile-hero-stat"><span class="profile-hero-stat-val">${statsData.totalXp.toLocaleString()}</span><span class="profile-hero-stat-lbl">Total XP</span></div>
+              <div class="profile-hero-stat"><span class="profile-hero-stat-val">${statsData.streak.current}</span><span class="profile-hero-stat-lbl">Day Streak</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="card mt-3">
+          <div class="card-header"><span class="card-title"><i class="icon-settings" style="font-size:16px"></i> edit.profile()</span></div>
+          <div style="padding:16px;display:flex;flex-direction:column;gap:12px">
+            <div>
+              <label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:4px">Display Name</label>
+              <input type="text" id="editProfileName" class="setup-input" value="${this._esc(u.display_name || '')}" placeholder="Display name" />
+            </div>
+            <div>
+              <label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:4px">Bio</label>
+              <input type="text" id="editProfileBio" class="setup-input" value="${this._esc(u.bio || '')}" placeholder="Tell us about yourself..." maxlength="200" />
+            </div>
+            <button class="btn btn-primary" onclick="App._saveProfile()">save --profile</button>
+          </div>
+        </div>`;
+    } catch { el.innerHTML = '<p class="text-muted">Error loading profile</p>'; }
+  },
+
+  async _saveProfile() {
+    const displayName = document.getElementById('editProfileName')?.value?.trim();
+    const bio = document.getElementById('editProfileBio')?.value?.trim();
+    const data = await API.registerUser({ username: this._username, display_name: displayName, bio });
+    if (data.ok) {
+      this.toast('Profile updated!', 'success');
+      this._loadMyProfileTab();
+      this._updateSidebarPlayer();
+    } else {
+      this.toast(data.error || 'Failed to update', 'error');
+    }
+  },
+
+  /* View another user's profile — navigate to full profile page */
+  _viewUserProfile(username) {
+    location.hash = '#/profile/' + encodeURIComponent(username);
+  },
+
+  /* Full profile page renderer — gamified */
+  async renderUserProfile(el, username) {
+    if (!username) { el.innerHTML = '<p class="text-muted">No user specified</p>'; return; }
+    el.innerHTML = '<div class="page-loading"><div class="spinner"></div><p>Loading profile...</p></div>';
+    try {
+      const data = await API.getUserProfile(username, this._username);
+      if (!data.ok) { el.innerHTML = `<div class="empty-state"><p>User <strong>@${this._esc(username)}</strong> not found</p><button class="btn btn-primary" onclick="location.hash='#/hub'">Back to HQ</button></div>`; return; }
+      const u = data.user;
+      const lvl = data.level || { level: 1, name: 'Bit', color: '#6b7280', glow: 'none', xpInLevel: 0, xpForNext: 100, probsInLevel: 0, probsForNext: 10 };
+      const isMe = username === this._username;
+      const fs = data.friendStatus || 'none';
+      const friendCount = data.friendCount || 0;
+      const memberSince = data.memberSince ? new Date(data.memberSince).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Unknown';
+      const solved = data.stats?.solved || 0;
+      const totalXp = data.stats?.totalXp || 0;
+      const streak = data.streak || 0;
+
+      // XP ring progress (percentage toward next level)
+      const xpPct = lvl.xpForNext > 0 ? Math.min(100, (lvl.xpInLevel / lvl.xpForNext) * 100) : 100;
+      const circumference = 2 * Math.PI * 54;
+      const xpDash = (xpPct / 100) * circumference;
+
+      // Friend action button
+      let friendBtn = '';
+      if (!isMe) {
+        if (fs === 'friends') friendBtn = `<button class="up-action-btn up-friends-btn" disabled><i class="icon-friends"></i> Friends</button>`;
+        else if (fs === 'pending_sent') friendBtn = `<button class="up-action-btn up-pending-btn" disabled><i class="icon-clock"></i> Request Sent</button>`;
+        else if (fs === 'pending_received') friendBtn = `<button class="up-action-btn up-accept-btn" onclick="App._acceptFriendFromProfile('${this._esc(username)}')"><i class="icon-friends"></i> Accept Request</button>`;
+        else friendBtn = `<button class="up-action-btn up-add-btn" onclick="App._sendFriendFromProfile('${this._esc(username)}')"><i class="icon-friends"></i> Add Friend</button>`;
+      }
+
+      let messageBtn = '';
+      if (!isMe && fs === 'friends') {
+        messageBtn = `<button class="up-action-btn up-msg-btn" onclick="App.openChat('${this._esc(username)}')"><i class="icon-chat"></i> Message</button>`;
+      }
+
+      let editBtn = '';
+      if (isMe) {
+        editBtn = `<button class="up-action-btn up-edit-btn" onclick="App._toggleEditProfile()"><i class="icon-settings"></i> Edit Profile</button>`;
+      }
+
+      // Settings + Logout icons (own profile hero corner)
+      let heroIcons = '';
+      if (isMe) {
+        heroIcons = `<div class="up-hero-icons">
+          <button class="up-hero-icon" onclick="App.openSettings()" title="Settings"><i class="icon-settings"></i></button>
+          <button class="up-hero-icon up-hero-icon-logout" onclick="App.logout()" title="Logout"><i class="icon-logout"></i></button>
+        </div>`;
+      }
+
+      // Activity feed
+      let activityHtml = '';
+      if (data.activity && data.activity.length) {
+        activityHtml = data.activity.map(a => {
+          const time = this._timeAgo(a.created_at);
+          let icon = 'icon-bolt', label = a.content || a.type;
+          if (a.type === 'solve') { icon = 'icon-check'; label = 'Solved a problem'; }
+          else if (a.type === 'friend') { icon = 'icon-friends'; }
+          else if (a.type === 'room') { icon = 'icon-house'; }
+          return `<div class="up-activity-item"><i class="${icon}"></i><span class="up-activity-text">${this._esc(label)}</span><span class="up-activity-time">${time}</span></div>`;
+        }).join('');
+      } else {
+        activityHtml = '<div class="up-activity-empty">// no recent activity</div>';
+      }
+
+      // Level progression nodes
+      const LEVEL_NAMES = ['Bit','Byte','Kilobyte','Megabyte','Gigabyte','Terabyte','Petabyte','Exabyte','Zettabyte','Yottabyte','∞ Overflow'];
+      const LEVEL_COLORS = ['#6b7280','#84cc16','#22c55e','#06b6d4','#3b82f6','#8b5cf6','#d946ef','#f43f5e','#ef4444','#f59e0b','#fbbf24'];
+      let progressionHtml = LEVEL_NAMES.map((name, i) => {
+        const lNum = i + 1;
+        const reached = lvl.level >= lNum;
+        const current = lvl.level === lNum;
+        return `<div class="up-lvl-node ${reached ? 'reached' : ''} ${current ? 'current' : ''}">
+          <div class="up-lvl-dot" style="${reached && !current ? 'background:' + LEVEL_COLORS[i] + '18;border-color:' + LEVEL_COLORS[i] + '50' : current ? 'border-color:' + LEVEL_COLORS[i] : ''}">
+            ${this._renderRiftBadge(lNum, current ? 42 : reached ? 34 : 28)}
+          </div>
+          <span class="up-lvl-label" style="${reached ? 'color:' + LEVEL_COLORS[i] : ''}">${name}</span>
+          ${i < 10 ? '<div class="up-lvl-line' + (lvl.level > lNum ? ' filled' : '') + '"></div>' : ''}
+        </div>`;
+      }).join('');
+
+      el.innerHTML = `
+        <div class="up-container">
+          <div class="up-back-row">
+            <button class="up-back-btn" onclick="history.back()"><i class="icon-back"></i> Back</button>
+          </div>
+
+          <!-- Hero banner -->
+          <div class="up-hero ${u.role === 'admin' ? 'up-hero-admin' : ''}">
+            <div class="up-hero-bg"></div>
+            ${heroIcons}
+            <div class="up-hero-content">
+              <!-- XP Ring with avatar -->
+              <div class="up-avatar-section">
+                <div class="up-xp-ring">
+                  <svg viewBox="0 0 120 120" class="up-ring-svg">
+                    <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="5"/>
+                    <circle cx="60" cy="60" r="54" fill="none" stroke="${lvl.color}" stroke-width="5"
+                      stroke-dasharray="${xpDash} ${circumference}" stroke-dashoffset="0"
+                      stroke-linecap="round" transform="rotate(-90 60 60)"
+                      style="filter:drop-shadow(0 0 6px ${lvl.color});transition:stroke-dasharray 1s ease"/>
+                  </svg>
+                  <div class="up-ring-avatar">
+                    ${this._renderAvatarWithBadge(u.avatar, lvl.level, 80, 30, u.avatar_url)}
+                  </div>
+                  <div class="up-ring-pct" style="color:${lvl.color}">${Math.round(xpPct)}%</div>
+                </div>
+                <div class="up-status-dot ${u.status === 'online' || (this._onlineFriends && this._onlineFriends.has(username)) ? 'online' : 'offline'}"></div>
+              </div>
+
+              <div class="up-identity">
+                <div class="up-name-row">
+                  <h1 class="up-name">${this._esc(u.display_name || u.username)}</h1>
+                  ${this._renderRiftBadge(lvl.level, 28)}
+                  ${u.role === 'admin' ? '<span class="up-admin-badge">♛ ADMIN</span>' : ''}
+                </div>
+                <div class="up-handle">@${this._esc(u.username)}</div>
+                <div class="up-bio">${u.bio ? this._esc(u.bio) : '<span class="text-muted">// no bio set</span>'}</div>
+                <div class="up-level-tag" style="color:${lvl.color};border-color:${lvl.color}40;background:${lvl.color}12;${lvl.glow !== 'none' ? 'box-shadow:' + lvl.glow : ''}">
+                  ${this._renderRiftBadge(lvl.level, 16)} Level ${lvl.level} — ${lvl.name}
+                </div>
+                <div class="up-meta-row">
+                  <span class="up-meta"><i class="icon-clock"></i> Joined ${memberSince}</span>
+                  <span class="up-meta"><i class="icon-friends"></i> ${friendCount} friend${friendCount !== 1 ? 's' : ''}</span>
+                  ${streak > 0 ? `<span class="up-meta up-streak-meta"><i class="icon-fire"></i> ${streak} day streak</span>` : ''}
+                </div>
+              </div>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="up-actions">
+              ${friendBtn}${messageBtn}${editBtn}
+            </div>
+          </div>
+
+          <!-- Stats grid with animated counters -->
+          <div class="up-stats-grid">
+            <div class="up-stat-card up-stat-solved">
+              <div class="up-stat-glow" style="background:radial-gradient(circle,rgba(34,197,94,0.15) 0%,transparent 70%)"></div>
+              <div class="up-stat-icon" style="color:#22c55e"><i class="icon-check"></i></div>
+              <div class="up-stat-val">${solved.toLocaleString()}</div>
+              <div class="up-stat-lbl">Solved</div>
+              <div class="up-stat-bar"><div class="up-stat-bar-fill" style="width:${Math.min(100, (solved / 50) * 100)}%;background:#22c55e"></div></div>
+            </div>
+            <div class="up-stat-card up-stat-xp">
+              <div class="up-stat-glow" style="background:radial-gradient(circle,rgba(96,165,250,0.15) 0%,transparent 70%)"></div>
+              <div class="up-stat-icon" style="color:#60a5fa"><i class="icon-bolt"></i></div>
+              <div class="up-stat-val">${totalXp.toLocaleString()}</div>
+              <div class="up-stat-lbl">Total XP</div>
+              <div class="up-stat-bar"><div class="up-stat-bar-fill" style="width:${xpPct}%;background:#60a5fa"></div></div>
+            </div>
+            <div class="up-stat-card up-stat-streak">
+              <div class="up-stat-glow" style="background:radial-gradient(circle,rgba(251,146,60,0.15) 0%,transparent 70%)"></div>
+              <div class="up-stat-icon" style="color:#fb923c"><i class="icon-fire"></i></div>
+              <div class="up-stat-val">${streak}</div>
+              <div class="up-stat-lbl">Day Streak</div>
+              <div class="up-stat-bar"><div class="up-stat-bar-fill" style="width:${Math.min(100, (streak / 30) * 100)}%;background:#fb923c"></div></div>
+            </div>
+            <div class="up-stat-card up-stat-level">
+              <div class="up-stat-glow" style="background:radial-gradient(circle,${lvl.color}20 0%,transparent 70%)"></div>
+              <div class="up-stat-icon" style="color:${lvl.color}"><i class="icon-trophy"></i></div>
+              <div class="up-stat-val">${lvl.level}</div>
+              <div class="up-stat-lbl">Nexora Level</div>
+              <div class="up-stat-bar"><div class="up-stat-bar-fill" style="width:${(lvl.level / 11) * 100}%;background:${lvl.color}"></div></div>
+            </div>
+          </div>
+
+          <!-- Level Progression Timeline -->
+          <div class="up-section-card" onclick="location.hash='#/nexus'" style="cursor:pointer" title="View full progression in Progress section">
+            <div class="up-section-header">
+              <span class="up-section-title"><i class="icon-star"></i> Nexora Progression</span>
+              <span class="up-section-sub">Level ${lvl.level} of 11${lvl.level < 11 ? ' — ' + lvl.xpInLevel.toLocaleString() + '/' + lvl.xpForNext.toLocaleString() + ' XP to next' : ' — MAX LEVEL'} <i class="icon-arrow-right" style="font-size:11px;opacity:0.5"></i></span>
+            </div>
+            <div class="up-progression">${progressionHtml}</div>
+          </div>
+
+          ${isMe ? `<!-- Edit Profile Modal Overlay -->
+          <div class="ep-modal-overlay hidden" id="upEditOverlay" onclick="App._closeEditIfOverlay(event)">
+            <div class="ep-modal">
+              <div class="ep-modal-header">
+                <span class="ep-modal-title"><i class="icon-settings"></i> Edit Profile</span>
+                <button class="ep-modal-close" onclick="App._toggleEditProfile()">&times;</button>
+              </div>
+              <div class="ep-modal-body">
+                <!-- Avatar Editor -->
+                <div class="up-edit-field">
+                  <label class="up-edit-label">Avatar</label>
+                  <div class="up-avatar-editor">
+                    <div class="up-avatar-preview" id="upAvatarPreview">
+                      ${this._renderAvatar(u.avatar, u.avatar_url)}
+                    </div>
+                    <div class="up-avatar-actions">
+                      <label class="btn btn-ghost btn-sm up-avatar-upload-btn">
+                        <i class="icon-bolt"></i> Upload Photo
+                        <input type="file" id="upAvatarFileInput" accept="image/png,image/jpeg,image/webp" style="display:none" onchange="App._handleAvatarUpload(this)"/>
+                      </label>
+                      <span class="up-avatar-or">or pick an icon:</span>
+                    </div>
+                    <div class="up-avatar-picker" id="upAvatarPicker">
+                      ${['coder','fox','cat','wolf','sword','shield','trophy','diamond','fire','bolt','star','target','crown','robot','gamepad','brain','tree','globe','moon','dragon'].map(a =>
+                        `<button class="up-avatar-pick-btn${u.avatar === a ? ' selected' : ''}" data-avatar="${a}" onclick="App._pickEditAvatar(this)"><i class="${this._avatarIconMap[a] || 'icon-avatar-coder'}"></i></button>`
+                      ).join('')}
+                    </div>
+                  </div>
+                </div>
+                <div class="up-edit-divider"></div>
+                <div class="up-edit-field">
+                  <label class="up-edit-label">Username</label>
+                  <input type="text" id="upEditUsername" class="up-edit-input" value="${this._esc(u.username)}" maxlength="20" />
+                </div>
+                <div class="up-edit-field">
+                  <label class="up-edit-label">Display Name</label>
+                  <input type="text" id="upEditDisplayName" class="up-edit-input" value="${this._esc(u.display_name || '')}" maxlength="30" />
+                </div>
+                <div class="up-edit-field">
+                  <label class="up-edit-label">Bio</label>
+                  <input type="text" id="upEditBio" class="up-edit-input" value="${this._esc(u.bio || '')}" placeholder="Tell us about yourself..." maxlength="200" />
+                </div>
+                <div class="up-edit-divider"></div>
+                <div class="up-edit-field">
+                  <label class="up-edit-label">Current Password</label>
+                  <input type="password" id="upEditCurrentPw" class="up-edit-input" placeholder="required to change password" maxlength="64" />
+                </div>
+                <div class="up-edit-field">
+                  <label class="up-edit-label">New Password</label>
+                  <input type="password" id="upEditNewPw" class="up-edit-input" placeholder="leave blank to keep current" maxlength="64" />
+                </div>
+                <div class="up-edit-feedback" id="upEditFeedback"></div>
+                <button class="btn btn-primary ep-modal-save" onclick="App._saveProfileEdit()" id="upEditSaveBtn">save --profile</button>
+                <div class="up-edit-divider"></div>
+                <div class="up-edit-bottom-row">
+                  <button class="btn btn-ghost btn-sm" onclick="App.openSettings()"><i class="icon-settings"></i> Settings</button>
+                  <button class="up-logout-btn" onclick="App.logout()"><i class="icon-logout"></i> Logout</button>
+                </div>
+              </div>
+            </div>
+          </div>` : ''}
+
+          <!-- Achievements -->
+          <div class="up-section-card" id="upAchievementsSection">
+            <div class="up-section-header">
+              <span class="up-section-title"><i class="icon-trophy"></i> Achievements</span>
+              <span class="up-section-sub" id="upAchieveBadge"></span>
+            </div>
+            <div class="achievements-grid" id="upAchievementsGrid">
+              <div class="up-activity-empty">Loading achievements...</div>
+            </div>
+          </div>
+
+          <!-- Two column: Activity + Rank detail -->
+          <div class="up-two-col">
+            <div class="up-col">
+              <div class="up-section-card">
+                <div class="up-section-header">
+                  <span class="up-section-title"><i class="icon-bolt"></i> Recent Activity</span>
+                </div>
+                <div class="up-activity-list">${activityHtml}</div>
+              </div>
+            </div>
+            <div class="up-col">
+              <div class="up-section-card">
+                <div class="up-section-header">
+                  <span class="up-section-title"><i class="icon-trophy"></i> Rank Card</span>
+                </div>
+                <div class="up-rank-card-body">
+                  <div class="up-rank-big-badge">${this._renderRiftBadge(lvl.level, 64)}</div>
+                  <div class="up-rank-title" style="color:${lvl.color}">${lvl.name}</div>
+                  <div class="up-rank-subtitle">Nexora Level ${lvl.level}</div>
+                  <div class="up-rank-bars">
+                    <div class="up-rank-bar-row">
+                      <span class="up-rank-bar-label">XP</span>
+                      <div class="up-rank-bar-track"><div class="up-rank-bar-fill" style="width:${xpPct}%;background:${lvl.color}"></div></div>
+                      <span class="up-rank-bar-val">${Math.round(xpPct)}%</span>
+                    </div>
+                    <div class="up-rank-bar-row">
+                      <span class="up-rank-bar-label">Probs</span>
+                      <div class="up-rank-bar-track"><div class="up-rank-bar-fill" style="width:${lvl.probsForNext > 0 ? Math.min(100, (lvl.probsInLevel / lvl.probsForNext) * 100) : 100}%;background:${lvl.color}"></div></div>
+                      <span class="up-rank-bar-val">${lvl.probsForNext > 0 ? Math.round((lvl.probsInLevel / lvl.probsForNext) * 100) : 100}%</span>
+                    </div>
+                  </div>
+                  ${lvl.level < 11 ? `<div class="up-rank-next">Next: <strong style="color:${LEVEL_COLORS[lvl.level]}">${LEVEL_NAMES[lvl.level]}</strong></div>` : '<div class="up-rank-next up-rank-max">★ MAXIMUM NEXORA LEVEL ★</div>'}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>`;
+
+      // Load achievements
+      try {
+        const stats = await API.getStats(this._username);
+        if (stats.ok && stats.achievements) {
+          const unlocked = stats.achievements.filter(a => a.unlocked_at).length;
+          const badge = document.getElementById('upAchieveBadge');
+          if (badge) badge.textContent = `${unlocked}/${stats.achievements.length} unlocked`;
+          const grid = document.getElementById('upAchievementsGrid');
+          if (grid) {
+            grid.innerHTML = stats.achievements.map(a => {
+              const isUnlocked = !!a.unlocked_at;
+              const pct = Math.min(100, Math.round(a.progress / a.target * 100));
+              const icon = this._achieveIconMap[a.icon] || '<i class="icon-medal"></i>';
+              return `<div class="achievement-card ${isUnlocked ? 'unlocked' : 'locked'}">
+                <div class="achievement-icon-wrap">${icon}</div>
+                <div class="achievement-title">${a.title}</div>
+                <div class="achievement-desc">${a.description}</div>
+                <div class="achievement-xp-reward">+${a.xp_reward || 0} XP</div>
+                <div class="achievement-progress"><div class="achievement-progress-fill" style="width:${pct}%"></div></div>
+                <div class="text-sm text-muted mt-2">${a.progress}/${a.target}</div>
+              </div>`;
+            }).join('');
+          }
+        }
+      } catch {}
+    } catch (e) {
+      el.innerHTML = `<div class="empty-state"><p>Error loading profile</p><button class="btn btn-primary" onclick="location.hash='#/hub'">Back to HQ</button></div>`;
+    }
+  },
+
+  async _sendFriendFromProfile(username) {
+    const data = await API.sendFriendRequest(this._username, username);
+    if (data.ok) {
+      this.toast(`Friend request sent to @${username}`, 'success');
+      if (this._socialSocket) this._socialSocket.emit('notify-friend-request', { to: username, from: this._username });
+      this.renderUserProfile(document.getElementById('pageContent'), username);
+    } else {
+      this.toast(data.error || 'Failed to send request', 'error');
+    }
+  },
+
+  async _acceptFriendFromProfile(username) {
+    // Find the pending request ID
+    const reqData = await API.getFriendRequests(this._username);
+    if (reqData.ok) {
+      const req = reqData.incoming.find(r => r.username === username);
+      if (req) {
+        await API.acceptFriendRequest(req.id);
+        this.toast(`You and @${username} are now friends!`, 'success');
+        this.renderUserProfile(document.getElementById('pageContent'), username);
+        return;
+      }
+    }
+    this.toast('Could not find friend request', 'error');
+  },
+
+  _toggleEditProfile() {
+    const overlay = document.getElementById('upEditOverlay');
+    if (overlay) {
+      overlay.classList.toggle('hidden');
+      if (!overlay.classList.contains('hidden')) {
+        document.body.style.overflow = 'hidden';
+      } else {
+        document.body.style.overflow = '';
+      }
+    }
+  },
+
+  _closeEditIfOverlay(e) {
+    if (e.target.id === 'upEditOverlay') this._toggleEditProfile();
+  },
+
+  _pickEditAvatar(btn) {
+    document.querySelectorAll('.up-avatar-pick-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    this._editAvatar = btn.dataset.avatar;
+    this._editAvatarUrl = null;
+    const preview = document.getElementById('upAvatarPreview');
+    if (preview) preview.innerHTML = this._renderAvatar(this._editAvatar, null);
+  },
+
+  async _handleAvatarUpload(input) {
+    const file = input.files[0];
+    if (!file) return;
+    if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) {
+      this.toast('Only PNG, JPG, or WebP allowed', 'error'); return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      this.toast('Image must be under 2 MB', 'error'); return;
+    }
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const base64 = reader.result;
+      const preview = document.getElementById('upAvatarPreview');
+      if (preview) preview.innerHTML = `<img src="${base64}" class="avatar-img" alt="avatar"/>`;
+      try {
+        const res = await API.uploadAvatar({ username: this._username, image: base64 });
+        if (res.ok) {
+          this._editAvatarUrl = res.avatarUrl;
+          this._editAvatar = null;
+          document.querySelectorAll('.up-avatar-pick-btn').forEach(b => b.classList.remove('selected'));
+          this.toast('Avatar uploaded!', 'success');
+        } else {
+          this.toast(res.error || 'Upload failed', 'error');
+        }
+      } catch {
+        this.toast('Upload error', 'error');
+      }
+    };
+    reader.readAsDataURL(file);
+  },
+
+  async _saveProfileEdit() {
+    const btn = document.getElementById('upEditSaveBtn');
+    const feedback = document.getElementById('upEditFeedback');
+    const newUsername = document.getElementById('upEditUsername')?.value?.trim();
+    const displayName = document.getElementById('upEditDisplayName')?.value?.trim();
+    const bio = document.getElementById('upEditBio')?.value?.trim();
+    const currentPw = document.getElementById('upEditCurrentPw')?.value || '';
+    const newPw = document.getElementById('upEditNewPw')?.value || '';
+    
+    if (btn) { btn.disabled = true; btn.textContent = 'saving...'; }
+    if (feedback) { feedback.textContent = ''; feedback.className = 'up-edit-feedback'; }
+
+    const payload = { currentUsername: this._username };
+    if (newUsername && newUsername !== this._username) payload.newUsername = newUsername;
+    if (displayName !== undefined) payload.displayName = displayName;
+    if (bio !== undefined) payload.bio = bio;
+    if (this._editAvatar) { payload.avatar = this._editAvatar; payload.avatarUrl = null; }
+    if (this._editAvatarUrl) payload.avatarUrl = this._editAvatarUrl;
+    if (newPw.length >= 4) {
+      payload.password = newPw;
+      payload.currentPassword = currentPw;
+    } else if (newPw.length > 0 && newPw.length < 4) {
+      if (feedback) { feedback.textContent = '// password must be at least 4 characters'; feedback.className = 'up-edit-feedback up-edit-error'; }
+      if (btn) { btn.disabled = false; btn.textContent = 'save --profile'; }
+      return;
+    }
+
+    try {
+      const res = await API.updateProfile(payload);
+      if (res.ok) {
+        if (res.usernameChanged && res.user) {
+          localStorage.setItem('cp_arena_username', res.user.username);
+          this._username = res.user.username;
+        }
+        this.toast('Profile updated!', 'success');
+        this._updateSidebarPlayer();
+        this.renderUserProfile(document.getElementById('pageContent'), this._username);
+      } else {
+        if (feedback) { feedback.textContent = `// ${res.error || 'update failed'}`; feedback.className = 'up-edit-feedback up-edit-error'; }
+      }
+    } catch (e) {
+      if (feedback) { feedback.textContent = '// connection error'; feedback.className = 'up-edit-feedback up-edit-error'; }
+    }
+    if (btn) { btn.disabled = false; btn.textContent = 'save --profile'; }
   },
 
   async _loadFriendsTab() {
@@ -4699,70 +6639,100 @@ const App = {
     ]);
 
     let html = `
-      <div class="social-section">
-        <div class="social-section-header">
-          <h3>Add Friend</h3>
-        </div>
-        <div class="friend-search-row">
-          <input type="text" id="friendSearchInput" class="setup-input" placeholder="Search by username..."
+      <div class="squad-allies-header">
+        <h3>// node registry</h3>
+        <div class="input-icon-wrap" style="position:relative;max-width:220px">
+          <i class="icon-search" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:12px;pointer-events:none"></i>
+          <input type="text" id="friendSearchInput" class="squad-search-input" placeholder="search handle..." style="padding-left:30px"
             onkeydown="if(event.key==='Enter'){App._searchFriend()}" />
-          <button class="btn btn-primary btn-sm" onclick="App._searchFriend()">Search</button>
         </div>
-        <div id="friendSearchResults"></div>
-      </div>`;
+        <button class="btn btn-primary btn-sm" onclick="App._searchFriend()">+ add</button>
+      </div>
+      <div id="friendSearchResults" style="margin-bottom:10px"></div>`;
 
     // Pending requests
     if (requestsData.ok && requestsData.incoming.length) {
-      html += `<div class="social-section">
-        <div class="social-section-header"><h3>Pending Requests (${requestsData.incoming.length})</h3></div>
-        <div class="friends-grid">`;
+      html += `<div class="squad-section-label" style="color:var(--warning)">pending (${requestsData.incoming.length})</div>
+        <div class="squad-friend-grid" style="margin-bottom:16px">`;
       for (const r of requestsData.incoming) {
-        html += `<div class="friend-card request-card">
-          <span class="friend-avatar">${this._renderAvatar(r.avatar)}</span>
-          <div class="friend-info">
-            <span class="friend-name">${this._esc(r.display_name || r.username)}</span>
-            <span class="friend-username">@${this._esc(r.username)}</span>
+        html += `<div class="squad-ally-card pending">
+          <div class="squad-ally-avatar" onclick="App._viewUserProfile('${this._esc(r.username)}')" style="cursor:pointer">${this._avatarInitials(r.display_name || r.username)}</div>
+          <div class="squad-ally-info">
+            <div class="squad-ally-name" onclick="App._viewUserProfile('${this._esc(r.username)}')" style="cursor:pointer">${this._esc(r.display_name || r.username)}</div>
+            <div class="squad-ally-handle">@${this._esc(r.username)}</div>
+            <div class="squad-ally-status" style="color:var(--warning)">↗ ally request incoming</div>
           </div>
-          <div class="friend-actions">
-            <button class="btn btn-primary btn-sm" onclick="App._acceptFriend(${r.id})">Accept</button>
-            <button class="btn btn-ghost btn-sm" onclick="App._rejectFriend(${r.id})">Decline</button>
-          </div>
-        </div>`;
-      }
-      html += `</div></div>`;
-    }
-
-    // Friends list
-    html += `<div class="social-section">
-      <div class="social-section-header"><h3>Friends (${friendsData.ok ? friendsData.friends.length : 0})</h3></div>`;
-    if (friendsData.ok && friendsData.friends.length) {
-      html += `<div class="friends-grid">`;
-      for (const f of friendsData.friends) {
-        const isOnline = this._onlineFriends.has(f.username) || f.status === 'online';
-        if (isOnline) this._onlineFriends.add(f.username);
-        html += `<div class="friend-card">
-          <div class="friend-status-dot ${isOnline ? 'online' : 'offline'}" data-username="${this._esc(f.username)}"></div>
-          <span class="friend-avatar">${this._renderAvatar(f.avatar)}</span>
-          <div class="friend-info">
-            <span class="friend-name">${this._esc(f.display_name || f.username)}</span>
-            <span class="friend-username">@${this._esc(f.username)}</span>
-            <span class="friend-meta">${isOnline ? '<i class="icon-circle-fill" style="color:#22c55e;font-size:8px"></i> Online' : '<i class="icon-circle-fill" style="color:#555;font-size:8px"></i> ' + (f.last_seen ? this._timeAgo(f.last_seen) : 'Offline')}</span>
-          </div>
-          <div class="friend-actions">
-            <button class="btn btn-primary btn-sm" onclick="App.openChat('${this._esc(f.username)}')"><i class="icon-chat"></i> Chat</button>
-            <button class="btn btn-ghost btn-sm" onclick="App._inviteToRoom('${this._esc(f.username)}')"><i class="icon-house"></i> Invite</button>
+          <div class="squad-ally-actions">
+            <button class="squad-action-btn success" onclick="App._acceptFriend(${r.id})" title="Accept">✓</button>
+            <button class="squad-action-btn danger" onclick="App._rejectFriend(${r.id})" title="Decline">✕</button>
           </div>
         </div>`;
       }
       html += `</div>`;
-    } else {
+    }
+
+    // Friends list
+    const friends = (friendsData.ok ? friendsData.friends : []);
+    const online = friends.filter(f => this._onlineFriends.has(f.username) || f.status === 'online');
+    const offline = friends.filter(f => !this._onlineFriends.has(f.username) && f.status !== 'online');
+    online.forEach(f => this._onlineFriends.add(f.username));
+
+    if (online.length > 0) {
+      html += `<div class="squad-section-label" style="color:var(--success)">online (${online.length})</div>
+        <div class="squad-friend-grid" style="margin-bottom:14px">`;
+      for (const f of online) {
+        html += `<div class="squad-ally-card online">
+          <div class="squad-ally-avatar" onclick="App._viewUserProfile('${this._esc(f.username)}')" style="cursor:pointer">${this._avatarInitials(f.display_name || f.username)}</div>
+          <div class="squad-ally-info">
+            <div class="squad-ally-name">${this._esc(f.display_name || f.username)}</div>
+            <div class="squad-ally-handle">@${this._esc(f.username)}</div>
+            <div class="squad-ally-status online">● online</div>
+          </div>
+          <div class="squad-ally-actions">
+            <button class="squad-action-btn" onclick="App._switchSocialTab('chat');setTimeout(()=>App._openConversation('${this._esc(f.username)}'),100)" title="DM">⌘</button>
+            <button class="squad-action-btn" onclick="App._challengeFriend('${this._esc(f.username)}')" title="Challenge">⚔</button>
+            <button class="squad-action-btn" onclick="App._inviteToRoom('${this._esc(f.username)}')" title="Invite to room">⊞</button>
+            <button class="squad-action-btn" onclick="App._viewUserProfile('${this._esc(f.username)}')" title="Profile">◈</button>
+          </div>
+        </div>`;
+      }
+      html += `</div>`;
+    }
+
+    if (offline.length > 0) {
+      html += `<div class="squad-section-label">offline (${offline.length})</div>
+        <div class="squad-friend-grid">`;
+      for (const f of offline) {
+        html += `<div class="squad-ally-card">
+          <div class="squad-ally-avatar" onclick="App._viewUserProfile('${this._esc(f.username)}')" style="cursor:pointer" style="opacity:0.6">${this._avatarInitials(f.display_name || f.username)}</div>
+          <div class="squad-ally-info">
+            <div class="squad-ally-name" style="opacity:0.7">${this._esc(f.display_name || f.username)}</div>
+            <div class="squad-ally-handle">@${this._esc(f.username)}</div>
+            <div class="squad-ally-status offline">${f.last_seen ? '↻ ' + this._timeAgo(f.last_seen) : '● offline'}</div>
+          </div>
+          <div class="squad-ally-actions">
+            <button class="squad-action-btn" onclick="App._switchSocialTab('chat');setTimeout(()=>App._openConversation('${this._esc(f.username)}'),100)" title="DM">⌘</button>
+            <button class="squad-action-btn" onclick="App._viewUserProfile('${this._esc(f.username)}')" title="Profile">◈</button>
+          </div>
+        </div>`;
+      }
+      html += `</div>`;
+    }
+
+    if (!friends.length && !(requestsData.ok && requestsData.incoming.length)) {
       html += `<div class="empty-state">
-        <span style="font-size:48px"><i class="icon-friends"></i></span>
-        <p>// allies[] is empty — search handles above</p>
+        <div style="font-size:40px;opacity:0.15;font-family:var(--mono)">⬡</div>
+        <div style="font-family:var(--title);font-size:16px;color:var(--text-muted);letter-spacing:2px;margin:8px 0">// allies[].length === 0</div>
+        <p style="color:var(--text-muted);font-family:var(--mono);font-size:12px">search handles above to connect nodes</p>
       </div>`;
     }
-    html += `</div>`;
+
     el.innerHTML = html;
+  },
+
+  _avatarInitials(name) {
+    if (!name) return '?';
+    return name.toUpperCase().slice(0, 2);
   },
 
   async _searchFriend() {
@@ -4772,18 +6742,18 @@ const App = {
     const data = await API.searchUsers(q);
     const el = document.getElementById('friendSearchResults');
     if (!data.ok || !data.users.length) {
-      el.innerHTML = '<p class="text-muted" style="padding:8px">No users found</p>';
+      el.innerHTML = '<p style="padding:8px;font-family:var(--mono);font-size:12px;color:var(--text-muted)">// no users found</p>';
       return;
     }
     el.innerHTML = data.users
       .filter(u => u.username !== this._username)
-      .map(u => `<div class="friend-card compact">
-        <span class="friend-avatar">${this._renderAvatar(u.avatar)}</span>
-        <div class="friend-info">
-          <span class="friend-name">${this._esc(u.display_name || u.username)}</span>
-          <span class="friend-username">@${this._esc(u.username)}</span>
+      .map(u => `<div class="squad-ally-card" style="margin-top:6px;margin-bottom:4px">
+        <div class="squad-ally-avatar" onclick="App._viewUserProfile('${this._esc(u.username)}')" style="cursor:pointer">${this._avatarInitials(u.display_name || u.username)}</div>
+        <div class="squad-ally-info">
+          <div class="squad-ally-name" onclick="App._viewUserProfile('${this._esc(u.username)}')" style="cursor:pointer">${this._esc(u.display_name || u.username)}</div>
+          <div class="squad-ally-handle">@${this._esc(u.username)}</div>
         </div>
-        <button class="btn btn-primary btn-sm" onclick="App._sendFriendRequest('${this._esc(u.username)}')">Add Friend</button>
+        <button class="btn btn-primary btn-sm" onclick="App._sendFriendRequest('${this._esc(u.username)}')">+ add</button>
       </div>`).join('');
   },
 
@@ -4809,13 +6779,311 @@ const App = {
   },
 
   _inviteToRoom(username) {
-    this.toast(`Room invite sent to ${username}`, 'info');
+    this.toast(`Room invite sent to @${username}`, 'info');
+  },
+
+  _challengeFriend(username) {
+    // Send challenge notification to friend for a random problem
+    if (this._socialSocket) {
+      this._socialSocket.emit('challenge-friend', {
+        from: this._username,
+        to: username,
+        problemTitle: 'Random Problem'
+      });
+    }
+    this.toast(`⚔️ Challenge sent to @${username}!`, 'success');
   },
 
   /* ===================================================
-     CHAT SIDEBAR (DMs)
+     INLINE CHAT TAB
+     =================================================== */
+  _activeChatUser: null,
+  _chatUnreads: {},
+  _typingTimers: {},
+
+  async _loadChatTab() {
+    const el = document.getElementById('socialChatTab');
+    if (!el) return;
+    const friendsData = await API.getFriends(this._username);
+    const friends = friendsData.ok ? friendsData.friends : [];
+    const unreadData = await API.getUnreadMessages(this._username);
+    if (unreadData.ok) {
+      unreadData.counts.forEach(c => { this._chatUnreads[c.from_user] = c.count; });
+    }
+
+    el.innerHTML = `<div class="squad-chat-layout">
+      <div class="squad-conv-list">
+        <div class="squad-conv-search-wrap">
+          <input class="squad-conv-search" placeholder="// filter nodes..." oninput="App._filterChatConvs(this.value)">
+        </div>
+        <div class="squad-conv-items" id="chatConvList">
+          ${friends.length ? friends.map(f => {
+            const isOnline = this._onlineFriends.has(f.username) || f.status === 'online';
+            const unread = this._chatUnreads[f.username] || 0;
+            return `<div class="squad-conv-item ${this._activeChatUser === f.username ? 'active' : ''}" data-username="${this._esc(f.username)}" onclick="App._openConversation('${this._esc(f.username)}')">
+              <div class="squad-conv-avatar">
+                ${this._avatarInitials(f.display_name || f.username)}
+                ${isOnline ? '<div class="squad-conv-online-dot"></div>' : ''}
+              </div>
+              <div class="squad-conv-info">
+                <div class="squad-conv-name">${this._esc(f.display_name || f.username)}</div>
+                <div class="squad-conv-preview" id="convPreview_${this._esc(f.username)}">
+                  ${this._typingUsers?.[f.username] ? '// typing...' : (isOnline ? '● online' : '◌ offline')}
+                </div>
+              </div>
+              <div class="squad-conv-meta">
+                ${unread > 0 ? `<div class="squad-conv-unread">${unread}</div>` : ''}
+              </div>
+            </div>`;
+          }).join('') : '<div style="padding:24px;text-align:center;color:var(--text-muted);font-size:12px;font-family:var(--mono)">// allies[].length === 0<br><span style="opacity:0.5">add friends first</span></div>'}
+        </div>
+      </div>
+      <div class="squad-chat-window" id="chatMainWindow">
+        <div class="squad-chat-empty">
+          <div class="squad-chat-empty-icon">⌘</div>
+          <div class="squad-chat-empty-text">// select a node to establish link</div>
+        </div>
+      </div>
+    </div>`;
+
+    // If there was an active chat, reopen it
+    if (this._activeChatUser && friends.some(f => f.username === this._activeChatUser)) {
+      this._openConversation(this._activeChatUser);
+    }
+  },
+
+  _filterChatConvs(q) {
+    document.querySelectorAll('.squad-conv-item').forEach(el => {
+      const name = el.dataset.username || '';
+      el.style.display = name.toLowerCase().includes(q.toLowerCase()) ? '' : 'none';
+    });
+  },
+
+  async _openConversation(username) {
+    this._activeChatUser = username;
+
+    // Update active state in conv list
+    document.querySelectorAll('.squad-conv-item').forEach(el => {
+      el.classList.toggle('active', el.dataset.username === username);
+    });
+
+    // Clear unread for this user
+    this._chatUnreads[username] = 0;
+    const convItem = document.querySelector(`.squad-conv-item[data-username="${username}"]`);
+    if (convItem) convItem.querySelector('.squad-conv-unread')?.remove();
+
+    // Mark as read via socket
+    if (this._socialSocket) {
+      this._socialSocket.emit('mark-messages-read', { from: username, to: this._username });
+    }
+
+    const win = document.getElementById('chatMainWindow');
+    if (!win) return;
+
+    // Get friend info
+    const friendsData = await API.getFriends(this._username);
+    const friend = (friendsData.ok ? friendsData.friends : []).find(f => f.username === username);
+    const isOnline = this._onlineFriends.has(username);
+
+    win.innerHTML = `
+      <div class="squad-chat-win-header">
+        <div class="squad-chat-win-avatar">${this._avatarInitials(friend?.display_name || username)}</div>
+        <div style="flex:1">
+          <div class="squad-chat-win-name">${this._esc(friend?.display_name || username)}</div>
+          <div class="squad-chat-win-status ${isOnline ? 'online' : ''}" id="chatWinStatus_${this._esc(username)}">
+            ${isOnline ? '● online' : '◌ offline'}
+          </div>
+        </div>
+        <div class="squad-chat-win-actions">
+          <button class="squad-action-btn" onclick="App._viewUserProfile('${this._esc(username)}')" title="Profile">◈</button>
+          <button class="squad-action-btn" onclick="App._challengeFriend('${this._esc(username)}')" title="Challenge">⚔</button>
+        </div>
+      </div>
+      <div class="squad-chat-messages" id="chatWinMessages_${this._esc(username)}"></div>
+      <div class="squad-typing-indicator" id="chatWinTyping_${this._esc(username)}"></div>
+      <div style="position:relative">
+        <div class="squad-emoji-picker hidden" id="emojiPicker_${this._esc(username)}">
+          ${['😀','😂','🔥','❤️','👍','💯','🎉','😎','🤔','💪','⚡','🎯','🏆','✅','😅','🙏'].map(e =>
+            `<button onclick="App._insertEmoji('${this._esc(username)}','${e}')">${e}</button>`
+          ).join('')}
+        </div>
+      </div>
+      <div class="squad-chat-input-row">
+        <button class="squad-action-btn" onclick="App._toggleEmojiPicker('${this._esc(username)}')" title="Emoji" style="flex-shrink:0">☺</button>
+        <textarea class="squad-chat-textarea" id="chatWinInput_${this._esc(username)}" placeholder="// message @${this._esc(username)}... (Enter send · Shift+Enter newline)"
+          onkeydown="App._chatWinKeydown(event,'${this._esc(username)}')"
+          oninput="App._chatWinTyping('${this._esc(username)}')"></textarea>
+        <button class="btn btn-primary btn-sm" onclick="App._sendChatWin('${this._esc(username)}')" style="flex-shrink:0;padding:8px 14px">▶</button>
+      </div>`;
+
+    // Load messages
+    const msgEl = document.getElementById(`chatWinMessages_${username}`);
+    const data = await API.getMessages(this._username, username);
+    if (data.ok && data.messages.length) {
+      let lastDate = null;
+      for (const msg of data.messages) {
+        const msgDate = msg.created_at ? new Date(msg.created_at).toDateString() : null;
+        if (msgDate && msgDate !== lastDate) {
+          lastDate = msgDate;
+          const today = new Date().toDateString();
+          const yesterday = new Date(Date.now() - 86400000).toDateString();
+          const label = msgDate === today ? 'Today' : msgDate === yesterday ? 'Yesterday' : new Date(msg.created_at).toLocaleDateString();
+          msgEl.insertAdjacentHTML('beforeend', `<div class="chat-date-divider">${label}</div>`);
+        }
+        this._appendInlineChatMessage(msg, username);
+      }
+    } else {
+      msgEl.innerHTML = `<div class="chat-no-selection" style="min-height:200px">
+        <div class="chat-no-icon" style="font-size:40px;opacity:0.25"><i class="icon-chat"></i></div>
+        <p style="color:var(--text-muted)">No messages yet — say hi!</p>
+      </div>`;
+    }
+    msgEl.scrollTop = msgEl.scrollHeight;
+    this._checkUnreadMessages();
+  },
+
+  _appendInlineChatMessage(msg, targetUser) {
+    const container = document.getElementById(`chatWinMessages_${targetUser}`);
+    if (!container) return;
+    const isMine = msg.from_user === this._username;
+    const time = this._formatTime(msg.created_at);
+
+    const msgId = msg.id || Date.now();
+    const noEmptyPlaceholder = container.querySelector('.squad-chat-empty');
+    if (noEmptyPlaceholder) noEmptyPlaceholder.remove();
+
+    // Detect code blocks
+    const content = msg.content || '';
+    let bubbleHtml;
+    const codeMatch = content.match(/^```(\w*)\n?([\s\S]*?)```$/);
+    if (codeMatch) {
+      const lang = codeMatch[1] || 'code';
+      const code = this._esc(codeMatch[2]);
+      bubbleHtml = `<div class="squad-bubble has-code">
+        <div class="squad-bubble-code">
+          <div class="squad-bubble-code-hdr">
+            <span class="squad-bubble-code-lang">${lang}</span>
+            <button class="squad-bubble-code-copy" onclick="navigator.clipboard.writeText(${JSON.stringify(codeMatch[2])})">copy</button>
+          </div>
+          <pre>${code}</pre>
+        </div>
+      </div>`;
+    } else {
+      bubbleHtml = `<div class="squad-bubble">${this._esc(content).replace(/\n/g,'<br>')}</div>`;
+    }
+
+    container.insertAdjacentHTML('beforeend', `
+      <div class="squad-msg-wrap ${isMine ? 'mine' : 'theirs'}" data-msgid="${msgId}" style="position:relative">
+        ${bubbleHtml}
+        <button class="squad-react-trigger" onclick="App._showReactionBar(${msgId},'${targetUser}',this)">+ react</button>
+        <div class="squad-msg-meta">
+          <span>${time}</span>
+          ${isMine ? '<span class="squad-read-receipt" id="rr_' + msgId + '"></span>' : ''}
+        </div>
+        <div class="squad-msg-reactions" id="reactions_${msgId}"></div>
+      </div>`);
+    container.scrollTop = container.scrollHeight;
+  },
+
+  _chatWinKeydown(e, username) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      this._sendChatWin(username);
+    }
+  },
+
+  _chatTypingTimer: null,
+  _chatWinTyping(username) {
+    if (!this._socialSocket) return;
+    this._socialSocket.emit('typing-start', { from: this._username, to: username });
+    clearTimeout(this._chatTypingTimer);
+    this._chatTypingTimer = setTimeout(() => {
+      if (this._socialSocket) this._socialSocket.emit('typing-stop', { from: this._username, to: username });
+    }, 2500);
+  },
+
+  async _sendChatWin(username) {
+    const input = document.getElementById(`chatWinInput_${username}`);
+    if (!input || !input.value.trim()) return;
+    const content = input.value.trim();
+    input.value = '';
+    input.style.height = '';
+    if (this._socialSocket) {
+      this._socialSocket.emit('typing-stop', { from: this._username, to: username });
+      this._socialSocket.emit('direct-message', { from: this._username, to: username, content });
+    } else {
+      await API.sendMessage(this._username, username, content);
+    }
+    this._appendInlineChatMessage({ from_user: this._username, content, created_at: new Date().toISOString() }, username);
+  },
+
+  _toggleEmojiPicker(username) {
+    const picker = document.getElementById(`emojiPicker_${username}`);
+    if (picker) picker.classList.toggle('hidden');
+    document.addEventListener('click', (e) => {
+      if (!picker?.contains(e.target) && !e.target.closest('.chat-emoji-btn')) {
+        picker?.classList.add('hidden');
+      }
+    }, { once: true });
+  },
+
+  _insertEmoji(username, emoji) {
+    const input = document.getElementById(`chatWinInput_${username}`);
+    if (input) { input.value += emoji; input.focus(); }
+    document.getElementById(`emojiPicker_${username}`)?.classList.add('hidden');
+  },
+
+  _showReactionBar(msgId, username, btn) {
+    const existing = document.getElementById('floatingReactionBar');
+    if (existing) existing.remove();
+    const reactions = ['👍','❤️','😂','🔥','😮','😢','🎉','💯'];
+    const bar = document.createElement('div');
+    bar.id = 'floatingReactionBar';
+    bar.className = 'squad-reaction-bar';
+    bar.style.cssText = 'position:fixed;z-index:9999';
+    bar.innerHTML = reactions.map(e => `<button onclick="App._reactToMsg(${msgId},'${e}','${this._esc(username)}',this.closest('.squad-reaction-bar'))">${e}</button>`).join('');
+    document.body.appendChild(bar);
+    const rect = btn.getBoundingClientRect();
+    bar.style.left = Math.min(rect.left, window.innerWidth - 280) + 'px';
+    bar.style.top = (rect.top - bar.offsetHeight - 8) + 'px';
+    setTimeout(() => {
+      document.addEventListener('click', (e) => { if (!bar.contains(e.target)) bar.remove(); }, { once: true });
+    }, 50);
+  },
+
+  async _reactToMsg(msgId, emoji, username) {
+    document.getElementById('floatingReactionBar')?.remove();
+    if (!msgId || msgId.toString().startsWith('1')) return; // skip optimistic IDs
+    const data = await API.reactToMessage(msgId, this._username, emoji);
+    if (data.ok) {
+      const reactEl = document.getElementById(`reactions_${msgId}`);
+      if (reactEl) {
+        reactEl.innerHTML = Object.entries(data.reactions).map(([e, users]) =>
+          `<span class="squad-reaction-pill ${users.includes(this._username) ? 'mine' : ''}" onclick="App._reactToMsg(${msgId},'${e}','${username}')">
+            ${e} <span class="squad-reaction-count">${users.length}</span>
+          </span>`
+        ).join('');
+      }
+    }
+  },
+
+  _typingUsers: {},
+
+  /* ===================================================
+     CHAT SIDEBAR (DMs) — kept for backwards compat
      =================================================== */
   async openChat(username) {
+    // Switch to chat tab and open the conversation
+    location.hash = '#/social';
+    setTimeout(async () => {
+      const chatTab = document.querySelector('[data-stab="chat"]');
+      if (chatTab) { chatTab.click(); }
+      await new Promise(r => setTimeout(r, 200));
+      this._openConversation(username);
+    }, 100);
+  },
+
+  async openChatSidebar(username) {
     this._currentChatUser = username;
     const sidebar = document.getElementById('chatSidebar');
     const title = document.getElementById('chatSidebarTitle');
@@ -4887,55 +7155,68 @@ const App = {
     const data = await API.getRooms();
 
     let html = `
-      <div class="social-section">
-        <div class="social-section-header">
-          <h3>Create a Room</h3>
+      <div class="squad-section-label">spawn a room</div>
+      <div class="create-room-form" style="background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;margin-bottom:20px;max-width:500px">
+        <input type="text" id="roomNameInput" class="contest-form-input" placeholder="Room name..." maxlength="50" style="width:100%;margin-bottom:8px" />
+        <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+          <input type="number" id="roomProblemId" class="contest-form-input" placeholder="Problem ID (opt)" style="flex:1;min-width:130px" />
+          <select id="roomTopicSelect" class="contest-form-select" style="flex:1;min-width:130px">
+            <option value="">Topic tag...</option>
+            <option value="dp">Dynamic Programming</option>
+            <option value="graphs">Graphs</option>
+            <option value="trees">Trees</option>
+            <option value="strings">Strings</option>
+            <option value="math">Math</option>
+            <option value="greedy">Greedy</option>
+            <option value="interview">Interview Prep</option>
+            <option value="general">General</option>
+          </select>
+          <label style="display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:12px;color:var(--text-secondary);cursor:pointer;white-space:nowrap">
+            <input type="checkbox" id="roomVoiceCheck" style="accent-color:var(--brand)" /> ♪ voice
+          </label>
         </div>
-        <div class="create-room-form">
-          <input type="text" id="roomNameInput" class="setup-input" placeholder="Room name (e.g. DP Practice)" maxlength="50" />
-          <div class="room-form-row">
-            <input type="number" id="roomProblemId" class="setup-input" placeholder="Problem ID (optional)" style="flex:1" />
-            <label class="room-voice-toggle">
-              <input type="checkbox" id="roomVoiceCheck" /> <i class="icon-mic"></i> Voice
-            </label>
-          </div>
-          <button class="btn btn-primary" onclick="App._createSolveRoom()">Create Room</button>
-        </div>
+        <button class="btn btn-primary btn-sm" onclick="App._createSolveRoom()">+ spawn room</button>
       </div>
-      <div class="social-section">
-        <div class="social-section-header">
-          <h3>Join a Room</h3>
-          <div class="room-join-row">
-            <input type="text" id="joinRoomCode" class="setup-input" placeholder="Room code" style="width:140px" maxlength="6" />
-            <button class="btn btn-primary btn-sm" onclick="App._joinRoomByCode()">Join</button>
-          </div>
-        </div>`;
+
+      <div class="squad-section-label" style="margin-bottom:12px">
+        active rooms (${data.ok ? data.rooms.length : 0})
+        <div style="margin-left:auto;display:flex;gap:6px;align-items:center">
+          <input type="text" id="joinRoomCode" class="contest-form-input" placeholder="6-digit code" style="width:110px;padding:5px 10px;font-family:var(--mono);letter-spacing:2px" maxlength="6" />
+          <button class="btn btn-primary btn-sm" onclick="App._joinRoomByCode()">join</button>
+        </div>
+      </div>`;
 
     if (data.ok && data.rooms.length) {
-      html += `<div class="rooms-grid">`;
+      html += `<div class="squad-rooms-grid">`;
       for (const r of data.rooms) {
-        html += `<div class="room-card">
-          <div class="room-card-top">
-            <span class="room-name">${this._esc(r.name)}</span>
-            <span class="room-code">${r.id}</span>
+        const topic = r.topic || '';
+        const topicLabel = { dp: 'DP', graphs: 'Graphs', trees: 'Trees', strings: 'Strings', math: 'Math', greedy: 'Greedy', interview: 'Interview', general: 'General' }[topic] || topic;
+        const fillPct = Math.min(100, Math.round((r.member_count / r.max_members) * 100));
+        const fillColor = fillPct >= 80 ? 'var(--danger)' : fillPct >= 50 ? 'var(--warning)' : 'var(--success)';
+        html += `<div class="squad-room-card">
+          <div class="squad-room-header">
+            <span class="squad-room-name">${this._esc(r.name)}</span>
+            <span class="squad-room-code">#${r.id}</span>
           </div>
-          <div class="room-card-info">
-            <span class="room-creator">${this._renderAvatar(r.creator_avatar)} ${this._esc(r.creator)}</span>
-            ${r.problem_title ? `<span class="room-problem">${this._ratingBadge(r.problem_rating)} ${this._esc(r.problem_title)}</span>` : ''}
-            <span class="room-members-count"><i class="icon-friends"></i> ${r.member_count}/${r.max_members}</span>
-            ${r.is_voice ? '<span class="room-voice-badge"><i class="icon-mic"></i> Voice</span>' : ''}
+          <div class="squad-room-meta">
+            <div class="squad-room-detail">◈ @${this._esc(r.creator)}</div>
+            ${r.problem_title ? `<div class="squad-room-detail">▸ ${this._esc(r.problem_title)}</div>` : ''}
           </div>
-          <button class="btn btn-primary btn-sm full-width" onclick="App.joinSolveRoom('${r.id}')">Join Room</button>
+          <div class="squad-room-tags">
+            ${topicLabel ? `<span class="squad-room-tag">${topicLabel}</span>` : ''}
+            ${r.is_voice ? '<span class="squad-room-tag" style="color:var(--brand-light)">♪ voice</span>' : ''}
+          </div>
+          <div class="squad-room-fill-bar">
+            <div class="squad-room-fill-label"><span>capacity</span><span>${r.member_count}/${r.max_members}</span></div>
+            <div class="squad-room-fill-track"><div class="squad-room-fill-value" style="width:${fillPct}%;background:${fillColor}"></div></div>
+          </div>
+          <button class="btn btn-primary btn-sm full-width" onclick="App.joinSolveRoom('${r.id}')">▶ join room</button>
         </div>`;
       }
       html += `</div>`;
     } else {
-      html += `<div class="empty-state">
-        <span style="font-size:48px"><i class="icon-house"></i></span>
-        <p>// no rooms[] spawned yet — create one to begin</p>
-      </div>`;
+      html += `<div style="padding:30px;text-align:center;color:var(--text-muted);font-family:var(--mono);font-size:12px">// no rooms spawned yet</div>`;
     }
-    html += `</div>`;
     el.innerHTML = html;
   },
 
@@ -5058,9 +7339,12 @@ const App = {
   _renderRoomMembers(members) {
     const el = document.getElementById('roomMembersBar');
     if (!el) return;
-    el.innerHTML = members.map(m =>
-      `<span class="room-member-chip"><i class="icon-user"></i> ${this._esc(m)}</span>`
-    ).join('');
+    el.innerHTML = members.map(m => {
+      return `<div class="squad-voice-chip" data-username="${this._esc(m)}">
+        <div class="squad-voice-ring"></div>
+        <span>${this._esc(m)}</span>
+      </div>`;
+    }).join('');
   },
 
   leaveSolveRoom() {
@@ -5204,27 +7488,93 @@ const App = {
   /* ===================================================
      ACTIVITY FEED
      =================================================== */
+  async _loadLeaderboardTab() {
+    const el = document.getElementById('socialLeaderboardTab');
+    if (!el) return;
+    el.innerHTML = `<div class="squad-lb-types">
+        <button class="squad-lb-pill active" data-type="xp" onclick="App._switchLeaderboardType('xp',this)">⚡ XP</button>
+        <button class="squad-lb-pill" data-type="solved" onclick="App._switchLeaderboardType('solved',this)">✔ Solved</button>
+        <button class="squad-lb-pill" data-type="streak" onclick="App._switchLeaderboardType('streak',this)">↑ Streak</button>
+      </div>
+      <div id="lbContent"><div style="padding:20px;color:var(--text-muted);font-family:var(--mono);font-size:12px">// loading...</div></div>`;
+    this._renderLeaderboard('xp');
+  },
+
+  async _switchLeaderboardType(type, btn) {
+    document.querySelectorAll('.squad-lb-pill').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    this._renderLeaderboard(type);
+  },
+
+  async _renderLeaderboard(type) {
+    const el = document.getElementById('lbContent');
+    if (!el) return;
+    el.innerHTML = '<div style="padding:20px;color:var(--text-muted);font-family:var(--mono);font-size:12px">// loading...</div>';
+    const data = await API.getLeaderboard(type, 25);
+    const users = data.ok ? (data.leaderboard || data.users || []) : [];
+    if (!users.length) {
+      el.innerHTML = '<div style="padding:30px;text-align:center;color:var(--text-muted);font-family:var(--mono);font-size:12px">// no data yet</div>';
+      return;
+    }
+    // Normalize score field
+    const scoreKey = type === 'streak' ? 'best_streak' : type === 'solved' ? 'total_solved' : 'total_xp';
+    const scoreLabel = type === 'xp' ? 'XP' : type === 'solved' ? 'solved' : 'streak';
+    const mapped = users.map(u => ({ ...u, score: u[scoreKey] || 0 }));
+
+    const top3 = mapped.slice(0, 3);
+    const rest = mapped.slice(3);
+    const podiumOrder = [1, 0, 2];
+    let podiumHtml = `<div class="squad-lb-podium">`;
+    const pClass = ['p2', 'p1', 'p3'];
+    for (const i of podiumOrder) {
+      const u = top3[i];
+      if (!u) continue;
+      const rank = i + 1;
+      const isMe = u.username === this._username;
+      podiumHtml += `<div class="squad-podium-slot ${pClass[i]} ${isMe ? 'me' : ''}" onclick="App._viewUserProfile('${this._esc(u.username)}')" style="cursor:pointer">
+        <div class="squad-podium-rank">#${rank}</div>
+        <div class="squad-podium-avatar">${this._avatarInitials(u.display_name || u.username)}</div>
+        <div class="squad-podium-name">${this._esc(u.display_name || u.username)}</div>
+        <div class="squad-podium-score">${u.score.toLocaleString()} ${scoreLabel}</div>
+      </div>`;
+    }
+    podiumHtml += `</div>`;
+
+    let tableHtml = `<div class="squad-lb-table">`;
+    rest.forEach((u, i) => {
+      const rank = i + 4;
+      const isMe = u.username === this._username;
+      tableHtml += `<div class="squad-lb-row ${isMe ? 'me' : ''}" onclick="App._viewUserProfile('${this._esc(u.username)}')" style="cursor:pointer">
+        <div class="squad-lb-rank">${rank}</div>
+        <div class="squad-lb-avatar">${this._avatarInitials(u.display_name || u.username)}</div>
+        <div class="squad-lb-name">${this._esc(u.display_name || u.username)} ${isMe ? '<span style="color:var(--brand-light);font-size:10px">(you)</span>' : ''}</div>
+        <div class="squad-lb-score">${u.score.toLocaleString()}</div>
+      </div>`;
+    });
+    tableHtml += `</div>`;
+
+    el.innerHTML = podiumHtml + tableHtml;
+  },
+
   async _loadFeedTab() {
     const el = document.getElementById('socialFeedTab');
     if (!el) return;
     const data = await API.getFeed(this._username);
     if (!data.ok || !data.feed.length) {
-      el.innerHTML = `<div class="empty-state">
-        <span style="font-size:48px"><i class="icon-feed"></i></span>
-        <p>No activity yet. Add friends and start solving!</p>
-      </div>`;
+      el.innerHTML = `<div style="padding:30px;text-align:center;color:var(--text-muted);font-family:var(--mono);font-size:12px">// no activity yet — add friends and start solving!</div>`;
       return;
     }
 
-    el.innerHTML = `<div class="feed-list">${data.feed.map(item => `
-      <div class="feed-item">
-        <span class="feed-avatar">${this._renderAvatar(item.avatar)}</span>
-        <div class="feed-content">
-          <span class="feed-user">${this._esc(item.display_name || item.username)}</span>
-          <span class="feed-text">${this._esc(item.content)}</span>
-          ${item.problem_title ? `<span class="feed-problem">${this._ratingBadge(item.problem_rating)} ${this._esc(item.problem_title)}</span>` : ''}
+    el.innerHTML = `<div class="squad-feed-list">${data.feed.map(item => `
+      <div class="squad-feed-item">
+        <div class="squad-feed-dot"></div>
+        <span class="squad-feed-avatar">${this._avatarInitials(item.display_name || item.username)}</span>
+        <div class="squad-feed-body">
+          <span class="squad-feed-user">@${this._esc(item.display_name || item.username)}</span>
+          <span class="squad-feed-text"> ${this._esc(item.content)}</span>
+          ${item.problem_title ? `<div class="squad-feed-problem">▸ ${this._esc(item.problem_title)}</div>` : ''}
         </div>
-        <span class="feed-time">${this._timeAgo(item.created_at)}</span>
+        <span class="squad-feed-time">${this._timeAgo(item.created_at)}</span>
       </div>
     `).join('')}</div>`;
   },
@@ -5839,8 +8189,13 @@ const App = {
         this._solveCombo++;
         this._updateComboHud();
         this._showComboPopup(this._solveCombo);
-        // Editor green glow
-        if (editorEl) { editorEl.classList.remove('editor-running', 'editor-wa'); editorEl.classList.add('editor-ac'); }
+        // Editor green flash + glow
+        if (editorEl) {
+          editorEl.classList.remove('editor-running', 'editor-wa', 'flash-wa', 'flash-ac');
+          void editorEl.offsetWidth;
+          editorEl.classList.add('editor-ac', 'flash-ac');
+          setTimeout(() => editorEl.classList.remove('flash-ac'), 900);
+        }
         // XP popup and celebrations
         this._showXpPopup(p);
         this._checkNewAchievements(prevAchievements);
@@ -5848,12 +8203,16 @@ const App = {
         this._fireConfetti();
         if (this._aiBattle) this._completeAiBattle(true);
       } else if (result.verdict && result.verdict !== 'AC') {
-        // Wrong answer — HP down, screen shake
+        // Wrong answer — HP down, screen shake, red flash
         this._solveCombo = 0;
         this._updateComboHud();
         this._screenShake();
-        if (editorEl) { editorEl.classList.remove('editor-running', 'editor-ac'); editorEl.classList.add('editor-wa'); }
-        setTimeout(() => { if (editorEl) editorEl.classList.remove('editor-wa'); }, 2000);
+        if (editorEl) {
+          editorEl.classList.remove('editor-running', 'editor-ac', 'flash-ac', 'flash-wa');
+          void editorEl.offsetWidth;
+          editorEl.classList.add('editor-wa', 'flash-wa');
+          setTimeout(() => { if (editorEl) editorEl.classList.remove('editor-wa', 'flash-wa'); }, 2000);
+        }
       }
 
       const data = await API.getProblem(p.id);
@@ -5943,6 +8302,21 @@ const App = {
     if (this.editor) this.editor.setValue(this._defaultCode());
   },
 
+  _copyCode() {
+    if (!this.editor) return;
+    const code = this.editor.getValue();
+    navigator.clipboard.writeText(code).then(() => {
+      const btn = document.getElementById('copyCodeBtn');
+      if (btn) {
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<i class="icon-check"></i>';
+        btn.style.color = 'var(--success)';
+        setTimeout(() => { btn.innerHTML = orig; btn.style.color = ''; }, 1500);
+      }
+      this.toast('Code copied to clipboard', 'success', 2000);
+    }).catch(() => this.toast('Copy failed — try manual select', 'error'));
+  },
+
   /* ===================================================
      XP & ACHIEVEMENT POPUPS
      =================================================== */
@@ -5971,7 +8345,7 @@ const App = {
 
   async _checkNewAchievements(prevAchievements) {
     try {
-      const data = await API.getStats();
+      const data = await API.getStats(this._username);
       if (!data.ok) return;
       this._previousAchievements = data.achievements;
 
@@ -5994,8 +8368,17 @@ const App = {
     document.getElementById('achievePopupIcon').innerHTML = icon;
     document.getElementById('achievePopupTitle').textContent = achievement.title;
     document.getElementById('achievePopupXp').textContent = `+${achievement.xp_reward || 0} XP`;
+    // Add description if available
+    const descEl = document.getElementById('achievePopupDesc');
+    if (descEl) descEl.textContent = achievement.description || '';
     popup.classList.remove('hidden');
-    setTimeout(() => popup.classList.add('hidden'), 3500);
+    // Click to dismiss
+    popup.onclick = () => {
+      popup.classList.add('hidden');
+      clearTimeout(popup._timer);
+    };
+    clearTimeout(popup._timer);
+    popup._timer = setTimeout(() => popup.classList.add('hidden'), 4000);
   },
 
   /* ===================================================
@@ -6122,7 +8505,7 @@ const App = {
 
   async exportData() {
     try {
-      const [stats, settings] = await Promise.all([API.getStats(), API.getSettings()]);
+      const [stats, settings] = await Promise.all([API.getStats(this._username), API.getSettings()]);
       const data = { exportedAt: new Date().toISOString(), stats, settings: settings.settings };
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
@@ -6348,6 +8731,7 @@ const App = {
      KEYS
      =================================================== */
   handleKeys(e) {
+    const inInput = e.target.closest('input, textarea, [contenteditable]');
     // Command palette: Cmd/Ctrl + K
     if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
       e.preventDefault();
@@ -6366,13 +8750,15 @@ const App = {
       if (!document.getElementById('solveOverlay').classList.contains('hidden')) this.submitCode();
       return;
     }
+    // Run: Cmd/Ctrl + Enter
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
       e.preventDefault();
       if (!document.getElementById('solveOverlay').classList.contains('hidden')) this.runCode();
+      return;
     }
-    // Number navigation: Cmd/Ctrl + 1-5
-    if ((e.ctrlKey || e.metaKey) && e.key >= '1' && e.key <= '5') {
-      const pages = ['dashboard', 'problems', 'nexus', 'ailab', 'learn'];
+    // Number navigation: Cmd/Ctrl + 1-9
+    if ((e.ctrlKey || e.metaKey) && e.key >= '1' && e.key <= '9') {
+      const pages = ['dashboard', 'problems', 'nexus', 'ailab', 'learn', 'forge', 'workshop', 'social'];
       const idx = parseInt(e.key) - 1;
       if (pages[idx]) {
         e.preventDefault();
@@ -6380,14 +8766,28 @@ const App = {
       }
       return;
     }
+    // Ctrl+B / Cmd+B — random problem (battle shortcut)
+    if ((e.ctrlKey || e.metaKey) && e.key === 'b' && !e.shiftKey) {
+      if (!inInput) { e.preventDefault(); this._randomProblem(); }
+      return;
+    }
+    // Ctrl+/ or Cmd+/ — toggle comment (only in editor, else open shortcuts)
+    if ((e.ctrlKey || e.metaKey) && e.key === '/') {
+      if (!document.getElementById('solveOverlay').classList.contains('hidden')) return; // Monaco handles it
+      e.preventDefault();
+      this.openShortcuts();
+      return;
+    }
     if (e.key === 'Escape') {
       // Close in priority order
       if (!document.getElementById('cmdPalette').classList.contains('hidden')) { this.closeCmdPalette(); return; }
       if (!document.getElementById('shortcutsOverlay').classList.contains('hidden')) { this.closeShortcuts(); return; }
+      if (!document.getElementById('settingsOverlay')?.classList.contains('hidden')) { this.closeSettings(); return; }
+      if (!document.getElementById('ailabSolveOverlay').classList.contains('hidden')) { this._closeAilabSolve(); return; }
       if (!document.getElementById('solveOverlay').classList.contains('hidden')) this.closeSolve();
     }
     // ? key for shortcuts (only when not typing in input)
-    if (e.key === '?' && !e.target.closest('input, textarea, [contenteditable]') && !e.ctrlKey && !e.metaKey) {
+    if (e.key === '?' && !inInput && !e.ctrlKey && !e.metaKey) {
       this.openShortcuts();
     }
   },
@@ -6419,12 +8819,18 @@ const App = {
 
   _timeAgo(iso) {
     const diff = Date.now() - new Date(iso).getTime();
-    const min = Math.floor(diff / 60000);
-    if (min < 1) return 'just now';
+    const sec = Math.floor(diff / 1000);
+    if (sec < 10) return 'just now';
+    if (sec < 60) return `${sec}s ago`;
+    const min = Math.floor(sec / 60);
     if (min < 60) return `${min}m ago`;
     const hrs = Math.floor(min / 60);
     if (hrs < 24) return `${hrs}h ago`;
-    return `${Math.floor(hrs / 24)}d ago`;
+    const days = Math.floor(hrs / 24);
+    if (days < 30) return `${days}d ago`;
+    const months = Math.floor(days / 30);
+    if (months < 12) return `${months}mo ago`;
+    return `${Math.floor(months / 12)}y ago`;
   },
 
   /* ═══════════════════════════════════════════════════
@@ -7176,16 +9582,16 @@ const App = {
       pending: null,              // current AbortController
       debounceTimer: null,
       lastRequestMs: 0,
-      DEBOUNCE_MS: 600,           // wait before calling AI
-      CACHE_TTL: 60000,
-      MIN_PREFIX_LINES: 3,        // need at least 3 lines of context
+      DEBOUNCE_MS: 350,           // reduced: Gemini is fast enough
+      CACHE_TTL: 90000,           // match server cache TTL
+      MIN_PREFIX_LINES: 2,        // trigger earlier
       indicator: null,            // DOM element for AI status
     };
     this._aiState = aiState;      // expose for toggle
 
     // Build a cache key from cursor context
     const aiCacheKey = (prefix, suffix, lang) => {
-      const pLines = prefix.split('\n').slice(-6).join('\n').trim();
+      const pLines = prefix.split('\n').slice(-8).join('\n').trim();
       const sLines = (suffix || '').split('\n').slice(0, 3).join('\n').trim();
       return `${lang}::${pLines}::${sLines}`;
     };
@@ -7917,21 +10323,34 @@ contract Solution {
      COMMAND PALETTE
      =================================================== */
   _buildCmdItems() {
-    return [
-      { type: 'nav', label: 'HQ', desc: 'cd ~/command_center', icon: 'icon-dashboard', action: () => { location.hash = '#/hub'; } },
-      { type: 'nav', label: 'Problems', desc: 'grep -r "challenge"', icon: 'icon-problems', action: () => { location.hash = '#/problems'; } },
-      { type: 'nav', label: 'Progress', desc: 'cat stats.log', icon: 'icon-arena', action: () => { location.hash = '#/nexus'; } },
+    const isSolving = !document.getElementById('solveOverlay')?.classList.contains('hidden');
+    const base = [
+      { type: 'nav', label: 'HQ / Dashboard', desc: 'cd ~/command_center  [⌘1]', icon: 'icon-dashboard', action: () => { location.hash = '#/hub'; } },
+      { type: 'nav', label: 'Problems', desc: 'grep -r "challenge"  [⌘2]', icon: 'icon-problems', action: () => { location.hash = '#/problems'; } },
+      { type: 'nav', label: 'Progress (Nexus)', desc: 'cat stats.log  [⌘3]', icon: 'icon-arena', action: () => { location.hash = '#/nexus'; } },
+      { type: 'nav', label: 'AI Lab', desc: 'python3 neural.py  [⌘4]', icon: 'icon-neural', action: () => { location.hash = '#/ailab'; } },
+      { type: 'nav', label: 'Learn', desc: 'import knowledge  [⌘5]', icon: 'icon-learn', action: () => { location.hash = '#/learn'; } },
+      { type: 'nav', label: 'The Forge', desc: 'make build  [⌘6]', icon: 'icon-hammer', action: () => { location.hash = '#/forge'; } },
+      { type: 'nav', label: 'Workshop', desc: 'vim sandbox.cpp  [⌘7]', icon: 'icon-code', action: () => { location.hash = '#/workshop'; } },
       { type: 'nav', label: 'Contests', desc: './arena --live', icon: 'icon-contests', action: () => { location.hash = '#/contests'; } },
-      { type: 'nav', label: 'AI Lab', desc: 'python3 neural.py', icon: 'icon-neural', action: () => { location.hash = '#/ailab'; } },
-      { type: 'nav', label: 'Learn', desc: 'import knowledge', icon: 'icon-learn', action: () => { location.hash = '#/learn'; } },
-      { type: 'nav', label: 'The Forge', desc: 'make build', icon: 'icon-hammer', action: () => { location.hash = '#/forge'; } },
-      { type: 'nav', label: 'Workshop', desc: 'vim sandbox.cpp', icon: 'icon-code', action: () => { location.hash = '#/workshop'; } },
-      { type: 'nav', label: 'Squad', desc: 'ssh party@nexus', icon: 'icon-friends', action: () => { location.hash = '#/social'; } },
-      { type: 'action', label: './config', desc: 'open settings panel', icon: 'icon-settings', action: () => { this.openSettings(); } },
-      { type: 'action', label: 'git pull', desc: 'sync from OJs', icon: 'icon-sync', action: () => { this._autoSync(); } },
-      { type: 'action', label: 'shortcuts', desc: 'view keybinds', icon: 'icon-bolt', action: () => { this.openShortcuts(); } },
-      { type: 'action', label: 'zen mode', desc: 'toggle focus mode', icon: 'icon-focus', action: () => { this.toggleFocusMode(); } },
+      { type: 'nav', label: 'Squad / Social', desc: 'ssh party@nexus  [⌘8]', icon: 'icon-friends', action: () => { location.hash = '#/social'; } },
+      { type: 'nav', label: 'My Profile', desc: 'view your stats page', icon: 'icon-user', action: () => { location.hash = `#/profile/${this._username}`; } },
+      { type: 'action', label: 'Random Problem', desc: 'roll dice on unsolved  [⌘B]', icon: 'icon-dice', action: () => { this._randomProblem(); } },
+      { type: 'action', label: 'Settings', desc: 'open config panel', icon: 'icon-settings', action: () => { this.openSettings(); } },
+      { type: 'action', label: 'Sync Problems', desc: 'git pull from OJs', icon: 'icon-sync', action: () => { this._autoSync(); } },
+      { type: 'action', label: 'Keyboard Shortcuts', desc: 'view all keybinds  [?]', icon: 'icon-bolt', action: () => { this.openShortcuts(); } },
+      { type: 'action', label: 'Zen / Focus Mode', desc: 'toggle distraction-free  [⌘⇧F]', icon: 'icon-focus', action: () => { this.toggleFocusMode(); } },
+      { type: 'action', label: 'Daily Challenges', desc: 'view today\'s missions', icon: 'icon-sword', action: () => { location.hash = '#/hub'; setTimeout(() => { const el = document.getElementById('dailyChallengesSection'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }, 400); } },
+      { type: 'action', label: 'Fire Confetti', desc: 'test celebration effect', icon: 'icon-check', action: () => { this._fireConfetti(); } },
     ];
+    if (isSolving) {
+      base.unshift(
+        { type: 'action', label: 'Run Code', desc: 'execute against test cases  [⌘↵]', icon: 'icon-play', action: () => { this.runCode(); } },
+        { type: 'action', label: 'Submit Code', desc: 'judge final solution  [⌘⇧↵]', icon: 'icon-upload', action: () => { this.submitCode(); } },
+        { type: 'action', label: 'Reset Code', desc: 'restore default template', icon: 'icon-sync', action: () => { this.resetCode(); } },
+      );
+    }
+    return base;
   },
 
   openCmdPalette() {
@@ -8034,7 +10453,8 @@ contract Solution {
       { section: 'General', items: [
         { keys: `${mod} + K`, desc: 'Open Command Palette' },
         { keys: '?', desc: 'Show Keyboard Shortcuts' },
-        { keys: `${mod} + ⇧ + F`, desc: 'Toggle Focus Mode' },
+        { keys: `${mod} + ⇧ + F`, desc: 'Toggle Focus / Zen Mode' },
+        { keys: `${mod} + B`, desc: 'Random problem (Battle mode)' },
         { keys: 'Esc', desc: 'Close overlay / modal' },
       ]},
       { section: 'Editor', items: [
@@ -8044,9 +10464,12 @@ contract Solution {
       { section: 'Navigation', items: [
         { keys: `${mod} + 1`, desc: 'Dashboard' },
         { keys: `${mod} + 2`, desc: 'Problems' },
-        { keys: `${mod} + 3`, desc: 'Progress' },
+        { keys: `${mod} + 3`, desc: 'Progress (Nexus)' },
         { keys: `${mod} + 4`, desc: 'AI Lab' },
         { keys: `${mod} + 5`, desc: 'Learn' },
+        { keys: `${mod} + 6`, desc: 'Forge (Learning Paths)' },
+        { keys: `${mod} + 7`, desc: 'Workshop' },
+        { keys: `${mod} + 8`, desc: 'Social / Squad' },
       ]},
     ];
 
@@ -8078,50 +10501,64 @@ contract Solution {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    const colors = ['#1d4ed8', '#059669', '#14b8a6', '#d4a017', '#fbbf24', '#10b981', '#f59e0b', '#3b82f6'];
+    const colors = ['#1d4ed8','#059669','#14b8a6','#d4a017','#fbbf24','#10b981','#f59e0b','#3b82f6','#ec4899','#8b5cf6'];
     const particles = [];
 
-    for (let i = 0; i < 180; i++) {
-      particles.push({
-        x: canvas.width / 2 + (Math.random() - 0.5) * 300,
-        y: canvas.height * 0.6,
-        vx: (Math.random() - 0.5) * 24,
-        vy: -Math.random() * 20 - 8,
-        w: Math.random() * 10 + 4,
-        h: Math.random() * 6 + 2,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        rot: Math.random() * 360,
-        rotV: (Math.random() - 0.5) * 18,
-        gravity: 0.35 + Math.random() * 0.2,
-        alpha: 1,
-        decay: 0.004 + Math.random() * 0.008,
-      });
+    // Burst from 3 origins: center, bottom-left, bottom-right
+    const origins = [
+      { x: canvas.width / 2, y: canvas.height * 0.55 },
+      { x: canvas.width * 0.15, y: canvas.height },
+      { x: canvas.width * 0.85, y: canvas.height },
+    ];
+
+    for (const origin of origins) {
+      for (let i = 0; i < 70; i++) {
+        const angle = origin.y === canvas.height
+          ? -(Math.random() * 60 + 60) * (Math.PI / 180) + (origin.x < canvas.width / 2 ? Math.PI / 4 : Math.PI * 3 / 4)
+          : Math.random() * Math.PI * 2;
+        const speed = Math.random() * 14 + 6;
+        particles.push({
+          x: origin.x + (Math.random() - 0.5) * 60,
+          y: origin.y,
+          vx: Math.cos(angle) * speed * (origin.y < canvas.height ? 1 : 0.9),
+          vy: origin.y === canvas.height ? -Math.random() * 18 - 8 : Math.sin(angle) * speed,
+          w: Math.random() * 9 + 3,
+          h: Math.random() * 5 + 2,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rot: Math.random() * 360,
+          rotV: (Math.random() - 0.5) * 16,
+          gravity: 0.32 + Math.random() * 0.18,
+          alpha: 1,
+          decay: 0.005 + Math.random() * 0.007,
+          shape: Math.random() > 0.7 ? 'circle' : 'rect',
+        });
+      }
     }
 
-    function animate() {
+    const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       let alive = false;
       for (const p of particles) {
         if (p.alpha <= 0) continue;
         alive = true;
-        p.x += p.vx;
-        p.y += p.vy;
-        p.vy += p.gravity;
-        p.vx *= 0.99;
-        p.rot += p.rotV;
-        p.alpha -= p.decay;
-
+        p.x += p.vx; p.y += p.vy;
+        p.vy += p.gravity; p.vx *= 0.99;
+        p.rot += p.rotV; p.alpha -= p.decay;
         ctx.save();
         ctx.translate(p.x, p.y);
         ctx.rotate((p.rot * Math.PI) / 180);
         ctx.globalAlpha = Math.max(0, p.alpha);
         ctx.fillStyle = p.color;
-        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        if (p.shape === 'circle') {
+          ctx.beginPath(); ctx.arc(0, 0, p.w / 2, 0, Math.PI * 2); ctx.fill();
+        } else {
+          ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        }
         ctx.restore();
       }
       if (alive) requestAnimationFrame(animate);
       else canvas.remove();
-    }
+    };
     requestAnimationFrame(animate);
   },
 
@@ -8156,13 +10593,95 @@ contract Solution {
     this.toast(this._focusMode ? 'Focus mode on — distraction-free' : 'Focus mode off', 'info');
   },
 
-  toast(msg, type = 'info') {
+  toast(msg, type = 'info', duration = 3500) {
     const container = document.getElementById('toasts');
+    // Limit max visible toasts to 5
+    const existing = container.querySelectorAll('.toast');
+    if (existing.length >= 5) existing[0].remove();
+
+    const icons = { success: 'icon-check', error: 'icon-cross', warning: 'icon-bolt', info: 'icon-bolt' };
+    const iconClass = icons[type] || 'icon-bolt';
+    const iconColors = { success: '#6ee7b7', error: '#fca5a5', warning: '#fde68a', info: '#93c5fd' };
+    const ic = iconColors[type] || iconColors.info;
+
     const el = document.createElement('div');
     el.className = `toast ${type}`;
-    el.innerHTML = `<i class="icon-${type === 'success' ? 'check' : type === 'error' ? 'cross' : 'bolt'}" style="font-size:14px"></i> ${this._esc(msg)}`;
+    el.innerHTML = `
+      <span class="toast-icon-wrap"><i class="${iconClass}" style="font-size:15px;color:${ic}"></i></span>
+      <span class="toast-msg">${this._esc(msg)}</span>
+      <span class="toast-close" aria-label="dismiss">&times;</span>
+      <span class="toast-bar" style="width:100%;transition:width ${duration}ms linear;"></span>`;
+
+    const dismiss = () => {
+      if (el._dismissed) return;
+      el._dismissed = true;
+      el.classList.add('removing');
+      setTimeout(() => el.remove(), 320);
+    };
+
+    el.addEventListener('click', dismiss);
     container.appendChild(el);
-    setTimeout(() => el.remove(), 3000);
+
+    // Kick off progress bar shrink on next frame
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const bar = el.querySelector('.toast-bar');
+      if (bar) bar.style.width = '0%';
+    }));
+
+    el._timer = setTimeout(dismiss, duration);
+    return el;
+  },
+
+  /* ===================================================
+     ANIMATED COUNT-UP
+     =================================================== */
+  _animateCount(el, from, to, durationMs = 700) {
+    if (!el) return;
+    const start = performance.now();
+    const update = (now) => {
+      const t = Math.min((now - start) / durationMs, 1);
+      const ease = 1 - Math.pow(1 - t, 3);
+      const cur = Math.round(from + (to - from) * ease);
+      el.textContent = cur.toLocaleString();
+      if (t < 1) requestAnimationFrame(update);
+      else el.textContent = to.toLocaleString();
+    };
+    requestAnimationFrame(update);
+  },
+
+  /* ===================================================
+     SKELETON HELPERS
+     =================================================== */
+  _skeletonCard(rows = 3) {
+    const lines = Array.from({ length: rows }, (_, i) => {
+      const w = i === 0 ? 'medium' : i % 2 === 0 ? 'full' : 'short';
+      return `<div class="skeleton skeleton-line ${w}"></div>`;
+    }).join('');
+    return `<div class="skeleton-card">${lines}</div>`;
+  },
+
+  _skeletonGrid(cols = 4) {
+    return `<div style="display:grid;grid-template-columns:repeat(${cols},1fr);gap:10px">${
+      Array.from({ length: cols }, () => this._skeletonCard(3)).join('')
+    }</div>`;
+  },
+
+  /* ===================================================
+     LIVE CLOCK
+     =================================================== */
+  _startLiveClock(elId) {
+    const el = document.getElementById(elId);
+    if (!el) return;
+    const tick = () => {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const s = String(now.getSeconds()).padStart(2, '0');
+      el.querySelector('.clock-time').textContent = `${h}:${m}:${s}`;
+    };
+    tick();
+    if (this._clockInterval) clearInterval(this._clockInterval);
+    this._clockInterval = setInterval(tick, 1000);
   },
 };
 
