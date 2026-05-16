@@ -1,0 +1,619 @@
+/* ═══════════════════════════════════════════════════════════════
+   NEXORA — Premium Effects Engine v3.0
+   CDN Stack: GSAP 3 · Three.js · Lenis · Splitting.js
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── DESIGN TOKENS ──────────────────────────────────────────── */
+:root {
+  --nx-blur:       26px;
+  --nx-blur-sm:    12px;
+  --nx-glass:      rgba(5,9,20,0.72);
+  --nx-glass-2:    rgba(8,14,30,0.58);
+  --nx-glass-brd:  rgba(255,255,255,0.07);
+  --nx-glass-hi:   rgba(255,255,255,0.12);
+  --nx-glow-c:     rgba(0,212,255,0.22);
+  --nx-glow-p:     rgba(180,74,255,0.16);
+  --nx-glow-k:     rgba(255,45,149,0.12);
+  --nx-glow-g:     rgba(57,255,20,0.10);
+  --nx-depth:      700px;
+  --nx-ease:       cubic-bezier(0.16,1,0.3,1);
+  --nx-spring:     cubic-bezier(0.34,1.56,0.64,1);
+}
+
+/* ─── NOISE GRAIN OVERLAY ────────────────────────────────────── */
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  z-index: 9997; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  background-size: 300px 300px;
+  opacity: 0.028;
+  mix-blend-mode: overlay;
+  animation: nx-grain 0.45s steps(2) infinite;
+}
+@keyframes nx-grain {
+  0%   { transform: translate(0,0);      }
+  25%  { transform: translate(-2px,1px); }
+  50%  { transform: translate(1px,-2px); }
+  75%  { transform: translate(2px,2px);  }
+  100% { transform: translate(-1px,0);   }
+}
+
+/* ─── PERSPECTIVE STAGE ──────────────────────────────────────── */
+#mainContent { perspective: var(--nx-depth); perspective-origin: 50% 35%; }
+
+/* ─── ADVANCED GLASSMORPHISM ─────────────────────────────────── */
+.stat-card,.hub-card,.achievement-card,.social-card,
+.tutorial-card,.settings-section,.up-stat-card,
+.up-section-card,.nexus-card,.forge-card,.contest-card,
+.skill-node,.hub-module,.leaderboard-entry,.gate-panel,
+.ob-preview-card {
+  background:              var(--nx-glass)  !important;
+  backdrop-filter:         blur(var(--nx-blur)) saturate(1.6) brightness(1.08) !important;
+  -webkit-backdrop-filter: blur(var(--nx-blur)) saturate(1.6) brightness(1.08) !important;
+  border: 1px solid var(--nx-glass-brd) !important;
+  position: relative;
+  transform-style: preserve-3d;
+}
+.stat-card,.hub-card,.up-stat-card,.achievement-card,.hub-module {
+  box-shadow:
+    0 1px 0 0 rgba(255,255,255,0.09) inset,
+    0 -1px 0 0 rgba(0,212,255,0.06) inset,
+    0 8px 32px rgba(0,0,0,0.45) !important;
+}
+
+/* ─── SHEEN LAYER  (child .nx-sheen injected by JS) ─────────── */
+.nx-sheen {
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at var(--sx,50%) var(--sy,50%), rgba(255,255,255,0.06) 0%, transparent 55%);
+  pointer-events: none; opacity: 0; transition: opacity 0.3s; z-index: 2;
+  mix-blend-mode: screen;
+}
+
+/* ─── 3D TILT ────────────────────────────────────────────────── */
+.nx-tilt-card { will-change: transform; transform-style: preserve-3d; }
+.nx-glow-hover { transition: box-shadow 0.35s !important; }
+.nx-glow-hover:hover {
+  box-shadow:
+    0 22px 55px rgba(0,0,0,0.65),
+    0 0 35px rgba(0,212,255,0.09),
+    0 0 70px rgba(180,74,255,0.05),
+    0 1px 0 rgba(255,255,255,0.10) inset !important;
+}
+
+/* ─── HOLOGRAPHIC FOIL ───────────────────────────────────────── */
+.nx-holo { position: relative !important; isolation: isolate; }
+.nx-holo-layer {
+  position: absolute; inset: 0;
+  background: conic-gradient(
+    from 0deg at var(--hx,50%) var(--hy,50%),
+    rgba(0,212,255,0.07), rgba(180,74,255,0.06),
+    rgba(255,45,149,0.05), rgba(57,255,20,0.04),
+    rgba(251,191,36,0.05), rgba(0,212,255,0.07));
+  mix-blend-mode: screen; pointer-events: none; border-radius: inherit; z-index: 1;
+  opacity: 0; transition: opacity 0.4s;
+}
+.nx-holo:hover .nx-holo-layer { opacity: 1; }
+
+/* ─── CHROMATIC ABERRATION GLITCH ────────────────────────────── */
+.nx-glitch { position: relative; display: inline-block; }
+.nx-glitch::before,.nx-glitch::after {
+  content: attr(data-text);
+  position: absolute; top: 0; left: 0;
+  width: 100%; height: 100%; pointer-events: none;
+}
+.nx-glitch::before { color:#ff2d95; animation:nx-ca-r 8s infinite; mix-blend-mode:screen; z-index:1; }
+.nx-glitch::after  { color:#00d4ff; animation:nx-ca-c 8s infinite; mix-blend-mode:screen; z-index:2; }
+
+@keyframes nx-ca-r {
+  0%,85%,100% { clip-path:inset(50% 0 50% 0); transform:translate(0,0); }
+  86% { clip-path:inset(15% 0 42% 0); transform:translate(-3px,-1px); }
+  87% { clip-path:inset(55% 0 5% 0);  transform:translate(2px, 1px);  }
+  88% { clip-path:inset(8% 0 72% 0);  transform:translate(-2px,0);    }
+  89% { clip-path:inset(62% 0 1% 0);  transform:translate(0,-1px);    }
+  90% { clip-path:inset(30% 0 38% 0); transform:translate(3px,0);     }
+}
+@keyframes nx-ca-c {
+  0%,85%,100% { clip-path:inset(50% 0 50% 0); transform:translate(0,0); }
+  86% { clip-path:inset(40% 0 20% 0); transform:translate(3px, 1px);  }
+  87% { clip-path:inset(12% 0 55% 0); transform:translate(-2px,-1px); }
+  88% { clip-path:inset(68% 0 3% 0);  transform:translate(2px,0);     }
+  89% { clip-path:inset(5% 0 78% 0);  transform:translate(-1px,1px);  }
+  90% { clip-path:inset(44% 0 22% 0); transform:translate(-3px,0);    }
+}
+
+/* ─── SPLITTING.JS CHAR BASE ─────────────────────────────────── */
+.nx-split-title .char  { display:inline-block; will-change:transform,opacity; }
+.nx-split-title .word  { display:inline-flex; overflow:hidden; }
+
+/* ─── CUSTOM CURSOR ──────────────────────────────────────────── */
+html, body                   { cursor: none !important; }
+.monaco-editor,
+.monaco-editor *,
+.monaco-editor .view-cursor  { cursor: text    !important; }
+input, textarea              { cursor: text    !important; }
+select                       { cursor: default !important; }
+
+.nx-cursor-dot {
+  position:fixed; width:8px; height:8px; background:#00d4ff; border-radius:50%;
+  pointer-events:none; z-index:2000001; transform:translate(-50%,-50%); will-change:left,top;
+  box-shadow:0 0 8px #00d4ff,0 0 22px rgba(0,212,255,0.55),0 0 44px rgba(0,212,255,0.2);
+  mix-blend-mode:screen;
+  transition:width .15s,height .15s,background .15s,box-shadow .15s;
+}
+.nx-cursor-dot.nx-dot-hover { width:5px; height:5px; background:#b44aff; box-shadow:0 0 8px #b44aff,0 0 22px rgba(180,74,255,0.6); }
+.nx-cursor-dot.nx-dot-click { width:4px; height:4px; background:#ff2d95; box-shadow:0 0 12px #ff2d95,0 0 30px rgba(255,45,149,0.7); }
+
+.nx-cursor-ring {
+  position:fixed; width:38px; height:38px; border:1.5px solid rgba(0,212,255,0.52);
+  border-radius:50%; pointer-events:none; z-index:2000000;
+  transform:translate(-50%,-50%); will-change:left,top,width,height;
+  box-shadow:0 0 12px rgba(0,212,255,0.07),inset 0 0 10px rgba(0,212,255,0.04);
+  transition:width .28s var(--nx-ease),height .28s var(--nx-ease),border-color .22s,background .22s,box-shadow .22s;
+}
+.nx-cursor-ring.nx-ring-hover {
+  width:58px; height:58px; border-color:rgba(180,74,255,0.75);
+  background:rgba(180,74,255,0.04);
+  box-shadow:0 0 24px rgba(180,74,255,0.18),inset 0 0 14px rgba(180,74,255,0.06);
+}
+.nx-cursor-ring.nx-ring-click {
+  width:28px; height:28px; border-color:rgba(255,45,149,0.9);
+  background:rgba(255,45,149,0.07); box-shadow:0 0 22px rgba(255,45,149,0.45);
+}
+.nx-trail-canvas { position:fixed; inset:0; pointer-events:none; z-index:1999998; }
+
+/* ─── PARTICLE BURST ─────────────────────────────────────────── */
+.nx-particle {
+  position:fixed; border-radius:50%; pointer-events:none; z-index:2000002;
+  transform:translate(-50%,-50%); animation:nx-burst 0.9s var(--nx-ease) forwards;
+}
+@keyframes nx-burst {
+  0%   { transform:translate(-50%,-50%) scale(1); opacity:1; }
+  60%  { transform:translate(calc(-50% + var(--px)),calc(-50% + var(--py))) scale(0.7); opacity:0.8; }
+  100% { transform:translate(calc(-50% + var(--px)),calc(-50% + var(--py))) scale(0); opacity:0; }
+}
+
+/* ─── RIPPLE ─────────────────────────────────────────────────── */
+.nx-ripple-host { position:relative !important; overflow:hidden !important; }
+.nx-ripple {
+  position:absolute; border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,0.22) 0%,transparent 60%);
+  transform:scale(0); animation:nx-ripple-anim 0.72s var(--nx-ease) forwards;
+  pointer-events:none; z-index:10;
+}
+@keyframes nx-ripple-anim { to { transform:scale(1); opacity:0; } }
+
+/* ─── TOP PROGRESS BAR ───────────────────────────────────────── */
+.nx-topbar-progress {
+  position:fixed; top:0; left:0; height:2px; width:0%; z-index:100000;
+  background:linear-gradient(90deg,#00d4ff,#b44aff,#ff2d95);
+  box-shadow:0 0 14px rgba(0,212,255,0.75),0 0 28px rgba(180,74,255,0.45);
+  pointer-events:none;
+}
+.nx-topbar-glow {
+  position:absolute; right:0; top:-4px; width:60px; height:10px;
+  border-radius:50%; background:rgba(0,212,255,0.85); filter:blur(4px);
+}
+
+/* ─── PAGE VEIL ──────────────────────────────────────────────── */
+.nx-page-veil { position:fixed; inset:0; pointer-events:none; z-index:99999; background:rgba(0,0,0,0.28); opacity:0; }
+
+/* ─── SPOTLIGHT ──────────────────────────────────────────────── */
+.nx-spotlight {
+  position:absolute; width:520px; height:520px; border-radius:50%;
+  background:radial-gradient(circle,rgba(0,212,255,0.042) 0%,rgba(180,74,255,0.022) 40%,transparent 70%);
+  transform:translate(-50%,-50%); pointer-events:none; z-index:0;
+  will-change:left,top; mix-blend-mode:screen;
+}
+
+/* ─── NEON GRID BACKGROUND ───────────────────────────────────── */
+.nx-grid-bg {
+  position:fixed; inset:0; z-index:0; pointer-events:none;
+  background-image:
+    linear-gradient(rgba(0,212,255,0.024) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,212,255,0.024) 1px,transparent 1px);
+  background-size:50px 50px;
+  mask-image:radial-gradient(ellipse 80% 70% at 50% 30%,black,transparent);
+  -webkit-mask-image:radial-gradient(ellipse 80% 70% at 50% 30%,black,transparent);
+  animation:nx-grid-pulse 9s ease-in-out infinite;
+}
+@keyframes nx-grid-pulse { 0%,100%{opacity:0.55} 50%{opacity:1} }
+
+/* ─── COUNTER APEX FLASH ─────────────────────────────────────── */
+.nx-apex-flash { animation:nx-apex-flash-anim 0.45s ease-out; }
+@keyframes nx-apex-flash-anim {
+  0%   { box-shadow:0 0 0 0 rgba(0,212,255,0.55),inset 0 0 20px rgba(0,212,255,0.08); }
+  100% { box-shadow:0 0 0 22px rgba(0,212,255,0),inset 0 0 0 rgba(0,212,255,0); }
+}
+
+/* ─── XP BAR SHEEN ───────────────────────────────────────────── */
+#sidebarXpFill,.player-xp-fill-mini {
+  background:linear-gradient(90deg,#00d4ff,#b44aff) !important;
+  box-shadow:0 0 10px rgba(0,212,255,0.55),0 0 20px rgba(180,74,255,0.3) !important;
+  position:relative; overflow:hidden;
+}
+#sidebarXpFill::after,.player-xp-fill-mini::after {
+  content:""; position:absolute; top:0; right:0; bottom:0; width:28px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.45));
+  animation:nx-xp-sheen 2.2s ease-in-out infinite;
+}
+@keyframes nx-xp-sheen { 0%{transform:translateX(-120px)} 100%{transform:translateX(30px)} }
+
+/* ─── STAT BAR GRADIENT ──────────────────────────────────────── */
+.up-stat-bar-fill,.up-rank-bar-fill,.up-bar-fill {
+  background:linear-gradient(90deg,#00d4ff,#b44aff) !important;
+  box-shadow:0 0 8px rgba(0,212,255,0.45) !important;
+}
+
+/* ─── SIDEBAR EDGE GLOW ──────────────────────────────────────── */
+#sidebar {
+  box-shadow:2px 0 0 rgba(0,212,255,0.07),4px 0 32px rgba(0,0,0,0.5),inset -1px 0 0 rgba(0,212,255,0.055) !important;
+}
+
+/* ─── NAV ACTIVE ─────────────────────────────────────────────── */
+.nav-item.active { background:rgba(0,212,255,0.065) !important; box-shadow:inset 3px 0 0 #00d4ff !important; }
+.nav-item.active .nav-icon-i { color:#00d4ff; filter:drop-shadow(0 0 6px rgba(0,212,255,0.7)); }
+.nav-item.active .nav-label  { color:#00d4ff; text-shadow:0 0 14px rgba(0,212,255,0.45); }
+
+/* ─── BUTTON SHINE ───────────────────────────────────────────── */
+.btn-primary,.btn-submit,.btn-run,.gate-btn-primary,.ob-deploy,.ob-nav-next { position:relative; overflow:hidden; }
+.btn-primary::before,.btn-submit::before,.btn-run::before,
+.gate-btn-primary::before,.ob-deploy::before {
+  content:""; position:absolute; top:-50%; left:-60%; width:30%; height:200%;
+  background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,0.15) 50%,transparent 60%);
+  transform:skewX(-15deg); animation:nx-btn-shine 4s ease-in-out infinite;
+}
+@keyframes nx-btn-shine { 0%,40%{left:-60%} 60%,100%{left:130%} }
+
+/* ─── PROBLEM ROW ────────────────────────────────────────────── */
+.problem-row { border-left:2px solid transparent !important; transition:border-color .25s,background .25s,box-shadow .25s !important; }
+.problem-row:hover { border-left-color:#00d4ff !important; background:rgba(0,212,255,0.04) !important; box-shadow:3px 0 18px rgba(0,212,255,0.07) !important; }
+
+/* ─── DIFFICULTY BADGE GLOW ──────────────────────────────────── */
+.diff-easy,   .badge-easy   { box-shadow:0 0 8px rgba(16,185,129,0.38)  !important; }
+.diff-medium, .badge-medium { box-shadow:0 0 8px rgba(245,158,11,0.38)  !important; }
+.diff-hard,   .badge-hard   { box-shadow:0 0 8px rgba(239,68,68,0.38)   !important; }
+
+/* ─── ACHIEVEMENT GOLD ───────────────────────────────────────── */
+.achievement-card.unlocked {
+  box-shadow:0 0 22px rgba(251,191,36,0.16),inset 0 0 22px rgba(251,191,36,0.045) !important;
+  border-color:rgba(251,191,36,0.26) !important;
+}
+
+/* ─── XP RING GLOW ───────────────────────────────────────────── */
+.up-xp-ring circle:last-child { filter:drop-shadow(0 0 6px rgba(0,212,255,0.75)); }
+
+/* ─── LEADERBOARD TOP 3 ──────────────────────────────────────── */
+.leaderboard-entry:nth-child(1) { border-left:2px solid #fbbf24 !important; box-shadow:-4px 0 22px rgba(251,191,36,0.18) !important; }
+.leaderboard-entry:nth-child(2) { border-left:2px solid #94a3b8 !important; }
+.leaderboard-entry:nth-child(3) { border-left:2px solid #b45309 !important; }
+
+/* ─── SKILL NODES ────────────────────────────────────────────── */
+.skill-node.unlocked { box-shadow:0 0 22px rgba(57,255,20,0.22),0 0 44px rgba(57,255,20,0.09) !important; border-color:rgba(57,255,20,0.32) !important; }
+.skill-node.active   { box-shadow:0 0 28px rgba(0,212,255,0.32),0 0 55px rgba(0,212,255,0.13) !important; border-color:rgba(0,212,255,0.55) !important; }
+
+/* ─── LIVE CONTEST PULSE ─────────────────────────────────────── */
+.badge-live,.contest-live { box-shadow:0 0 10px rgba(239,68,68,0.55),0 0 22px rgba(239,68,68,0.22) !important; animation:nx-live-pulse 1.6s ease-in-out infinite; }
+@keyframes nx-live-pulse {
+  0%,100% { box-shadow:0 0 8px rgba(239,68,68,0.4),0 0 16px rgba(239,68,68,0.16); }
+  50%     { box-shadow:0 0 18px rgba(239,68,68,0.75),0 0 36px rgba(239,68,68,0.3); }
+}
+
+/* ─── CMD PALETTE ────────────────────────────────────────────── */
+.cmd-modal {
+  backdrop-filter:blur(36px) saturate(2.2) !important; -webkit-backdrop-filter:blur(36px) saturate(2.2) !important;
+  background:rgba(5,9,20,0.90) !important; border:1px solid rgba(0,212,255,0.16) !important;
+  box-shadow:0 32px 90px rgba(0,0,0,0.85),0 0 45px rgba(0,212,255,0.065) !important;
+}
+
+/* ─── SETTINGS GLASS ─────────────────────────────────────────── */
+.settings-panel {
+  backdrop-filter:blur(var(--nx-blur)) !important; background:rgba(5,9,20,0.90) !important;
+  border:1px solid rgba(255,255,255,0.08) !important; box-shadow:0 32px 90px rgba(0,0,0,0.85) !important;
+}
+
+/* ─── ACHIEVEMENT POPUP ──────────────────────────────────────── */
+.achievement-popup-inner {
+  backdrop-filter:blur(26px) !important;
+  background:linear-gradient(135deg,rgba(5,9,20,0.94),rgba(18,28,48,0.90)) !important;
+  border:1px solid rgba(251,191,36,0.26) !important;
+  box-shadow:0 22px 65px rgba(0,0,0,0.75),0 0 32px rgba(251,191,36,0.18),inset 0 1px 0 rgba(255,255,255,0.09) !important;
+}
+
+/* ─── AI FAB PULSE ───────────────────────────────────────────── */
+.ai-fab-pulse { animation:nx-ai-pulse 2.8s ease-in-out infinite !important; }
+@keyframes nx-ai-pulse {
+  0%,100% { transform:scale(1);   opacity:0.7; box-shadow:0 0 0 0 rgba(0,212,255,0.4); }
+  50%     { transform:scale(1.5); opacity:0;   box-shadow:0 0 0 18px rgba(0,212,255,0); }
+}
+
+/* ─── GATE SCREEN ────────────────────────────────────────────── */
+.gate-container { backdrop-filter:blur(var(--nx-blur)) !important; }
+.gate-panel { transition:transform 0.42s var(--nx-ease),box-shadow 0.42s !important; }
+.gate-panel:hover { transform:translateY(-5px) scale(1.012) !important; box-shadow:0 28px 65px rgba(0,0,0,0.65),0 0 32px rgba(0,212,255,0.09) !important; }
+
+/* ─── BOOT TITLE ─────────────────────────────────────────────── */
+.boot-glitch-title {
+  text-shadow:0 0 22px rgba(0,212,255,0.85),0 0 44px rgba(0,212,255,0.45),0 0 90px rgba(180,74,255,0.35) !important;
+}
+
+/* ─── SOLVE EDITOR ───────────────────────────────────────────── */
+.editor-container { box-shadow:inset 0 0 35px rgba(0,0,0,0.45) !important; }
+
+/* ─── TOAST ──────────────────────────────────────────────────── */
+.toast { backdrop-filter:blur(18px) !important; background:rgba(5,9,20,0.88) !important; border:1px solid rgba(255,255,255,0.08) !important; }
+
+/* ─── MOBILE SAFETY ──────────────────────────────────────────── */
+@media (pointer: coarse) {
+  html, body { cursor: auto !important; }
+  .nx-cursor-dot,.nx-cursor-ring,.nx-trail-canvas { display: none; }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   GAME-GRADE 3D SCROLL  — v4 additions
+   ════════════════════════════════════════════════════════════════ */
+
+/* ─── PERSPECTIVE STAGE (deep 3D depth for scroll) ───────────── */
+#mainContent {
+  perspective:          900px !important;
+  perspective-origin:   50% 30% !important;
+}
+#pageContent {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* ─── 3D ENTRY BASE (cards emerging from Z-space) ───────────── */
+.nx-3d-entry {
+  transform-style:  preserve-3d;
+  will-change:      transform, opacity;
+  backface-visibility: hidden;
+}
+
+/* ─── SECTIONS: preserve-3d so children stay in 3D space ─────── */
+.hub-section,.content-section,.page-section,
+.problems-section,.profile-section,.leaderboard-section,
+.hub-modules,.achievements-grid,.up-stats-grid {
+  transform-style: preserve-3d;
+}
+
+/* ─── ALL CARDS: deeper preserve-3d cascade ──────────────────── */
+.stat-card,.hub-card,.achievement-card,.social-card,
+.tutorial-card,.nexus-card,.forge-card,.up-stat-card,
+.up-section-card,.contest-card,.skill-node,.hub-module,
+.leaderboard-entry,.settings-section {
+  transform-style:     preserve-3d;
+  backface-visibility: hidden;
+  will-change:         transform, opacity;
+}
+
+/* ─── WARP FLASH (fast-scroll full-screen burst) ─────────────── */
+@keyframes nx-warp-flash {
+  0%   { opacity: 0; }
+  15%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+.nx-warp-flash {
+  position: fixed; inset: 0; pointer-events: none; z-index: 99998;
+  background: radial-gradient(ellipse at 50% 50%,
+    rgba(0,212,255,0.18) 0%,
+    rgba(180,74,255,0.09) 45%,
+    transparent 70%);
+  animation: nx-warp-flash 0.35s ease-out forwards;
+}
+
+/* ─── DEPTH FOG (distant content fades — DoF imitation) ──────── */
+.nx-depth-fog {
+  position: fixed; bottom: 0; left: 0; right: 0; height: 160px;
+  background: linear-gradient(to top, var(--bg-0, #04080f) 0%, transparent 100%);
+  pointer-events: none; z-index: 1;
+}
+
+/* ─── SCROLL PARALLAX LAYERS ─────────────────────────────────── */
+.nx-layer-near  { transform: translateZ(40px)  scale(0.96); }
+.nx-layer-mid   { transform: translateZ(0px);               }
+.nx-layer-far   { transform: translateZ(-60px) scale(1.08); }
+.nx-layer-deep  { transform: translateZ(-120px) scale(1.18); }
+
+/* ─── 3D GRID FLOOR ──────────────────────────────────────────── */
+.nx-3d-floor {
+  position: fixed; bottom: -30px; left: -20%; right: -20%;
+  height: 280px; pointer-events: none; z-index: 0;
+  background:
+    linear-gradient(rgba(0,212,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,212,255,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  transform: perspective(600px) rotateX(72deg) translateY(40px);
+  transform-origin: bottom center;
+  mask-image: linear-gradient(to top, black 0%, transparent 80%);
+  -webkit-mask-image: linear-gradient(to top, black 0%, transparent 80%);
+  animation: nx-grid-pulse 9s ease-in-out infinite;
+}
+
+/* ─── HOLOGRAPHIC BORDER ANIMATION ──────────────────────────── */
+@keyframes nx-holo-border {
+  0%   { border-color: rgba(0,212,255,0.25);  box-shadow: 0 0 18px rgba(0,212,255,0.15);  }
+  33%  { border-color: rgba(180,74,255,0.25); box-shadow: 0 0 18px rgba(180,74,255,0.15); }
+  66%  { border-color: rgba(255,45,149,0.25); box-shadow: 0 0 18px rgba(255,45,149,0.15); }
+  100% { border-color: rgba(0,212,255,0.25);  box-shadow: 0 0 18px rgba(0,212,255,0.15);  }
+}
+.nx-holo-border { animation: nx-holo-border 6s linear infinite; }
+
+/* ═══════════════════════════════════════════════════════════════
+   SPLINE  VIEWER  EMBED  STYLES
+   ═══════════════════════════════════════════════════════════════ */
+spline-viewer {
+  pointer-events: none !important;
+  display: block;
+}
+spline-viewer canvas {
+  pointer-events: none !important;
+}
+#gateScreen {
+  position: relative;
+  overflow: hidden;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CSS  PRE-RENDERED  3D  OVERLAYS
+   Perspective-transformed rings + floating orb + holographic grid
+   These simulate the look of baked 3D renders without extra WebGL.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── PERSPECTIVE RINGS ──────────────────────────────────────── */
+.nx-3d-ring {
+  position: fixed;
+  pointer-events: none;
+  z-index: 1;
+  border-radius: 50%;
+  background: transparent;
+}
+
+.nx-ring-a {
+  width: 420px; height: 420px;
+  top: -90px; right: -110px;
+  border: 1.5px solid rgba(0,212,255,0.22);
+  box-shadow:
+    0 0 60px rgba(0,212,255,0.09),
+    inset 0 0 60px rgba(0,212,255,0.04),
+    0 0 120px rgba(0,212,255,0.04);
+  transform: perspective(720px) rotateX(66deg) rotateZ(20deg);
+  transform-origin: center center;
+  animation: nx-ring-drift-a 13s ease-in-out infinite;
+}
+
+.nx-ring-b {
+  width: 310px; height: 310px;
+  bottom: 130px; left: -90px;
+  border: 1px solid rgba(180,74,255,0.18);
+  box-shadow:
+    0 0 50px rgba(180,74,255,0.08),
+    inset 0 0 50px rgba(180,74,255,0.03);
+  transform: perspective(620px) rotateX(73deg) rotateZ(-16deg);
+  animation: nx-ring-drift-b 15s ease-in-out infinite;
+  animation-delay: -4.5s;
+}
+
+.nx-ring-c {
+  width: 210px; height: 210px;
+  top: 42%; right: -55px;
+  border: 1px solid rgba(255,45,149,0.15);
+  box-shadow: 0 0 40px rgba(255,45,149,0.06);
+  transform: perspective(520px) rotateX(76deg) rotateZ(7deg);
+  animation: nx-ring-drift-b 11s ease-in-out infinite;
+  animation-delay: -7s;
+}
+
+@keyframes nx-ring-drift-a {
+  0%,100% { transform: perspective(720px) rotateX(66deg) rotateZ(20deg) translateY(0px);   }
+  50%     { transform: perspective(720px) rotateX(66deg) rotateZ(20deg) translateY(-22px); }
+}
+@keyframes nx-ring-drift-b {
+  0%,100% { transform: perspective(620px) rotateX(73deg) rotateZ(-16deg) translateY(0px);  }
+  50%     { transform: perspective(620px) rotateX(73deg) rotateZ(-16deg) translateY(18px); }
+}
+
+/* ─── HOLOGRAPHIC FLOATING ORB ───────────────────────────────── */
+.nx-3d-orb {
+  position: fixed;
+  right: 6%; top: 22%;
+  width: 190px; height: 190px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 32%,
+    rgba(0,212,255,0.20) 0%,
+    rgba(180,74,255,0.12) 38%,
+    rgba(255,45,149,0.07) 65%,
+    transparent 100%
+  );
+  box-shadow:
+    0 0 90px rgba(0,212,255,0.13),
+    0 0 45px rgba(180,74,255,0.09),
+    inset 0 0 50px rgba(0,212,255,0.07);
+  pointer-events: none;
+  z-index: 1;
+  backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(1px);
+  animation: nx-orb-drift 8s ease-in-out infinite;
+}
+
+@keyframes nx-orb-drift {
+  0%,100% { transform: translateY(0)   scale(1);    opacity: 0.70; }
+  33%     { transform: translateY(-14px) scale(1.05); opacity: 0.90; }
+  66%     { transform: translateY(9px)  scale(0.97); opacity: 0.60; }
+}
+
+/* ─── HOLOGRAPHIC GRID PLANE (bottom viewport) ───────────────── */
+.nx-holo-grid-plane {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  height: 260px;
+  background:
+    linear-gradient(rgba(0,212,255,0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,212,255,0.055) 1px, transparent 1px);
+  background-size: 52px 52px;
+  transform: perspective(520px) rotateX(74deg) translateY(90px);
+  transform-origin: bottom center;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 100%, black 20%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 100%, black 20%, transparent 80%);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.45;
+  animation: nx-holo-grid-scroll 9s linear infinite;
+}
+
+@keyframes nx-holo-grid-scroll {
+  from { background-position: 0 0, 0 0;   }
+  to   { background-position: 0 52px, 52px 0; }
+}
+
+/* ─── CRYSTAL SHIMMER (on hero 3D objects reflected in cards) ── */
+@keyframes nx-crystal-shimmer {
+  0%,100% { background-position: 200% center; }
+  50%     { background-position: -200% center; }
+}
+.nx-crystal-sheen {
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(0,212,255,0.12) 45%,
+    rgba(255,255,255,0.08) 50%,
+    rgba(180,74,255,0.10) 55%,
+    transparent 60%
+  );
+  background-size: 300% 100%;
+  animation: nx-crystal-shimmer 4s ease-in-out infinite;
+}
+
+/* ─── STAT CARD 3D FLOAT IDLE ────────────────────────────────── */
+@keyframes nx-float-3d {
+  0%,100% { transform: translateY(0)   rotateX(0deg)   rotateY(0deg); }
+  25%     { transform: translateY(-4px) rotateX(1deg)  rotateY(-1deg); }
+  75%     { transform: translateY(-6px) rotateX(-1deg) rotateY(1.5deg); }
+}
+/* Only apply when not being tilted by JS */
+.stat-card:not([data-nx-tilt]):not(:hover),
+.hub-module:not([data-nx-tilt]):not(:hover) {
+  animation: nx-float-3d 6s ease-in-out infinite;
+  animation-delay: calc(var(--nx-i, 0) * 0.4s);
+}
+
+/* ─── SCAN LINE OVERLAY (CRT game feel) ─────────────────────── */
+#mainContent::after {
+  content: "";
+  position: fixed; inset: 0;
+  z-index: 9996; pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 3px,
+    rgba(0,0,0,0.035) 3px,
+    rgba(0,0,0,0.035) 4px
+  );
+}
+
+/* ─── NEON EDGE GLOW (sides of mainContent) ─────────────────── */
+#mainContent {
+  box-shadow:
+    inset 3px 0 40px rgba(0,212,255,0.028),
+    inset -3px 0 40px rgba(180,74,255,0.022) !important;
+}

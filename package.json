@@ -7,6 +7,7 @@
     "start": "node src/server.js",
     "start:prod": "NODE_ENV=production node src/server.js",
     "dev": "NODE_ENV=development node --watch src/server.js",
+    "test": "node --test tests/*.test.js",
     "scrape": "node src/scraper.js",
     "scrape:100": "node src/scraper.js --limit 100",
     "scrape:500": "node src/scraper.js --limit 500",

@@ -4,6 +4,7 @@ const API = {
 
   async _fetch(url, opts = {}) {
     const res = await fetch(this.base + url, {
+      credentials: 'same-origin',
       headers: { 'Content-Type': 'application/json', ...opts.headers },
       ...opts,
     });

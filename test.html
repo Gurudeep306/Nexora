@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Asciinema Player Upload</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/asciinema-player@3.0.1/dist/bundle/asciinema-player.css">
+</head>
+
+<body>
+
+    <h2>Upload and Play .cast File</h2>
+
+    <!-- File input -->
+    <input type="file" id="fileInput" accept=".cast">
+
+    <br><br>
+
+    <!-- Player container -->
+    <div id="player"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/asciinema-player@3.0.1/dist/bundle/asciinema-player.min.js"></script>
+
+    <script>
+        document.getElementById("fileInput").addEventListener("change", function(event) {
+            const file = event.target.files[0];
+
+            if (file) {
+                const url = URL.createObjectURL(file);
+
+                // Clear previous player
+                document.getElementById("player").innerHTML = "";
+
+                AsciinemaPlayer.create(url, document.getElementById("player"), {
+                    autoplay: true,
+                    controls: true
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>
