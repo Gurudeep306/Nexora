@@ -5,6 +5,7 @@ import { Crown, Medal, Flame, Trophy } from 'lucide-react'
 import {
   Avatar,
   Badge,
+  RankGlyph,
   Card,
   EmptyState,
   ErrorState,
@@ -76,7 +77,7 @@ export function LeaderboardTab({ me }: { me: string }) {
           onChange={(id) => setType(id as LeaderboardType)}
         />
         <p className="text-[11px] text-foreground-faint">
-          Ranked by platform override stats · top 25
+          Ranked by each player's own XP & solves · top 25
         </p>
       </div>
 
@@ -116,7 +117,10 @@ export function LeaderboardTab({ me }: { me: string }) {
                     <span className={cn('flex items-center gap-1.5 font-display text-xs tracking-widest uppercase', p.cls)}>
                       {p.icon} #{p.place}
                     </span>
-                    <Avatar src={avatarSrc(row)} name={row.display_name || row.username} size="xl" />
+                    <div className="relative">
+                      <Avatar seed={row.username} avatar={row.avatar} src={avatarSrc(row)} name={row.display_name || row.username} size="xl" />
+                      <RankGlyph level={row.level ?? 1} size={30} animated={false} className="absolute -right-2 -bottom-1" />
+                    </div>
                     <div className="min-w-0">
                       <Link
                         to={`/profile/${encodeURIComponent(row.username)}`}
@@ -169,7 +173,7 @@ export function LeaderboardTab({ me }: { me: string }) {
                       </TD>
                       <TD>
                         <div className="flex items-center gap-2.5">
-                          <Avatar src={avatarSrc(r)} name={r.display_name || r.username} size="sm" />
+                          <Avatar seed={r.username} avatar={r.avatar} src={avatarSrc(r)} name={r.display_name || r.username} size="sm" />
                           <div className="min-w-0">
                             <Link
                               to={`/profile/${encodeURIComponent(r.username)}`}
@@ -178,8 +182,12 @@ export function LeaderboardTab({ me }: { me: string }) {
                               {r.display_name || r.username}
                               {isMe && <span className="ml-1.5 text-xs text-primary-bright">(you)</span>}
                             </Link>
-                            <p className="truncate text-xs text-foreground-faint">@{r.username}</p>
+                            <p className="truncate text-xs text-foreground-faint">
+                              @{r.username}
+                              {r.level_name && <span className="ml-1.5 text-primary-bright">· {r.level_name}</span>}
+                            </p>
                           </div>
+                          <RankGlyph level={r.level ?? 1} size={24} animated={false} className="ml-auto" />
                           {r.role === 'admin' && <Badge variant="gold">Admin</Badge>}
                         </div>
                       </TD>

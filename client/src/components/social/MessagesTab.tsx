@@ -283,6 +283,8 @@ export function MessagesTab({ me, socket }: Props) {
                     )}
                   >
                     <Avatar
+                      seed={f.username}
+                      avatar={f.avatar}
                       src={avatarSrc(f)}
                       name={f.display_name || f.username}
                       size="sm"
@@ -331,7 +333,7 @@ export function MessagesTab({ me, socket }: Props) {
               >
                 <ArrowLeft />
               </Button>
-              <Avatar name={peer} size="sm" />
+              <Avatar seed={peer} name={peer} size="sm" />
               <div className="min-w-0 flex-1">
                 <p className="truncate font-display text-sm tracking-wider text-foreground">
                   @{peer}

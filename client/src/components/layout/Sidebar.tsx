@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import { ChevronsLeft, Zap, LogOut, X, ArrowUpRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ACCOUNT_ITEMS, CREATE_SECTION, NAV_SECTIONS } from '@/config/nav'
-import { Avatar, XpBar } from '@/components/ui'
+import { Avatar, RankGlyph, XpBar } from '@/components/ui'
 import { useAuth } from '@/context/AuthContext'
 
 export function Sidebar({
@@ -87,7 +87,7 @@ export function Sidebar({
             {collapsed ? (
               <div className="flex flex-col items-center gap-2">
                 <NavLink to="/profile" onClick={onMobileClose} aria-label="Profile">
-                  <Avatar src={typeof user.avatar_url === 'string' ? user.avatar_url : undefined} name={user.username} size="sm" />
+                  <Avatar seed={user.username} avatar={user.avatar} src={typeof user.avatar_url === 'string' ? user.avatar_url : undefined} name={user.username} size="sm" />
                 </NavLink>
                 <button
                   onClick={handleLogout}
@@ -107,11 +107,12 @@ export function Sidebar({
                 />
                 <div className="flex items-center gap-2">
                   <NavLink to="/profile" onClick={onMobileClose} className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 rounded-lg p-1 transition-colors hover:bg-surface-2">
-                    <Avatar src={typeof user.avatar_url === 'string' ? user.avatar_url : undefined} name={user.username} size="sm" />
-                    <div className="min-w-0">
+                    <Avatar seed={user.username} avatar={user.avatar} src={typeof user.avatar_url === 'string' ? user.avatar_url : undefined} name={user.username} size="sm" />
+                    <div className="min-w-0 flex-1">
                       <p className="truncate text-xs font-semibold text-foreground">{user.username}</p>
                       <p className="truncate text-[10px] text-primary-bright">{user.title ?? `Level ${user.level ?? 1}`}</p>
                     </div>
+                    <RankGlyph level={Number(user.level) || 1} size={26} animated={false} />
                   </NavLink>
                   <button
                     onClick={handleLogout}

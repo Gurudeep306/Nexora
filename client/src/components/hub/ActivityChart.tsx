@@ -8,7 +8,8 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import { Activity } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { Activity, ArrowRight, Moon } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui'
 import type { StreakInfo, WeeklyProgressPoint } from './types'
 
@@ -45,16 +46,35 @@ export function ActivityChart({
   }))
   const weeks = weeklyProgress.slice(-8).map((w) => ({ week: w.week, solved: w.solved, xp: w.xp }))
   const showWeekly = weeks.some((w) => w.solved > 0)
+  const quietWeek = weekData.every((d) => d.solved === 0)
+  const weekTotal = weekData.reduce((s, d) => s + d.solved, 0)
 
   return (
     <Card className="h-full">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Activity className="size-4 text-cyan" aria-hidden="true" /> Recent activity
+          {!quietWeek && (
+            <span className="ml-auto font-mono text-[11px] font-normal text-foreground-faint tabular-nums">
+              {weekTotal} solved this week
+            </span>
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="h-40" role="img" aria-label="Problems solved in the last 7 days">
+        <div className="relative h-40" role="img" aria-label="Problems solved in the last 7 days">
+          {quietWeek && (
+            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 rounded-lg bg-surface/70 text-center backdrop-blur-[2px]">
+              <Moon className="size-5 text-foreground-faint" aria-hidden="true" />
+              <p className="text-xs text-foreground-dim">Quiet week so far — the rift is waiting.</p>
+              <Link
+                to="/problems"
+                className="inline-flex items-center gap-1 rounded-md border border-primary/40 bg-primary/10 px-2.5 py-1 text-[11px] font-semibold text-primary-bright transition-colors hover:bg-primary/20"
+              >
+                Solve one now <ArrowRight className="size-3" aria-hidden="true" />
+              </Link>
+            </div>
+          )}
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={weekData} margin={{ top: 4, right: 4, bottom: 0, left: -28 }}>
               <CartesianGrid stroke="var(--color-border)" strokeDasharray="3 3" vertical={false} />

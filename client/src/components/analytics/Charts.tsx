@@ -59,6 +59,7 @@ export function ChartFrame({
   title,
   sub,
   empty,
+  emptyText,
   children,
   height = 260,
 }: {
@@ -77,7 +78,7 @@ export function ChartFrame({
       </CardHeader>
       <CardContent>
         {empty ? (
-          <EmptyState title="No data yet" description="Solve problems to light up this chart." className="py-6" />
+          <EmptyState title="No data yet" description={emptyText ?? 'Solve problems to light up this chart.'} className="py-6" />
         ) : (
           <div style={{ height }} className="w-full">
             {children}
@@ -134,6 +135,15 @@ export function RatingClimbChart({ data, c }: { data: { rating: number; date: st
 
 /* ── weekly progress ── */
 
+/** sqlite strftime('%Y-W%W') for a date (weeks start Monday, week 00 before the first Monday). */
+function sqliteWeek(d: Date) {
+  const start = Date.UTC(d.getUTCFullYear(), 0, 1)
+  const yday = Math.floor((d.getTime() - start) / 86400000)
+  const wdayMon = (d.getUTCDay() + 6) % 7
+  const w = Math.floor((yday + 7 - wdayMon) / 7)
+  return `${d.getUTCFullYear()}-W${String(w).padStart(2, '0')}`
+}
+
 export function WeeklyProgressChart({
   data,
   c,
@@ -141,16 +151,33 @@ export function WeeklyProgressChart({
   data: { week: string; solved: number; xp: number; activeDays: number }[]
   c: ChartColors
 }) {
+  // Fill the gaps so the last 12 weeks always read left-to-right, even quiet ones.
+  const byWeek = new Map(data.map((d) => [d.week, d]))
+  const now = new Date()
+  const weeks = Array.from({ length: 12 }, (_, i) => {
+    const d = new Date(now.getTime() - (11 - i) * 7 * 86400000)
+    const key = sqliteWeek(d)
+    const row = byWeek.get(key)
+    return { week: `W${key.slice(-2)}`, solved: row?.solved ?? 0, xp: row?.xp ?? 0 }
+  })
+  const quiet = weeks.every((w) => w.solved === 0 && w.xp === 0)
   return (
-    <ChartFrame title="Weekly Momentum" sub="Solves & XP per week (last 12 weeks)" empty={data.length === 0} height={230}>
+    <ChartFrame
+      title="Weekly Momentum"
+      sub="Solves & XP per week (last 12 weeks)"
+      empty={quiet}
+      emptyText="No solves in the last 12 weeks — your next AC restarts the climb."
+      height={230}
+    >
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={data.slice(-12)} margin={{ top: 8, right: 8, bottom: 0, left: -18 }}>
+        <BarChart data={weeks} margin={{ top: 8, right: 0, bottom: 0, left: -18 }}>
           <CartesianGrid stroke={c.border} strokeDasharray="3 3" vertical={false} />
-          <XAxis dataKey="week" {...axisProps(c)} minTickGap={20} />
-          <YAxis {...axisProps(c)} width={50} />
+          <XAxis dataKey="week" {...axisProps(c)} minTickGap={12} />
+          <YAxis yAxisId="s" {...axisProps(c)} allowDecimals={false} width={40} />
+          <YAxis yAxisId="x" orientation="right" {...axisProps(c)} width={44} />
           <Tooltip {...tooltipStyle} cursor={{ fill: `${c.primary}18` }} />
-          <Bar dataKey="solved" name="solved" fill={c.bright} radius={[4, 4, 0, 0]} animationDuration={500} />
-          <Bar dataKey="xp" name="xp" fill={c.primary} radius={[4, 4, 0, 0]} animationDuration={500} />
+          <Bar yAxisId="s" dataKey="solved" name="solved" fill={c.bright} radius={[4, 4, 0, 0]} animationDuration={500} />
+          <Bar yAxisId="x" dataKey="xp" name="xp" fill={c.primary} fillOpacity={0.55} radius={[4, 4, 0, 0]} animationDuration={500} />
         </BarChart>
       </ResponsiveContainer>
     </ChartFrame>

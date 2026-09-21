@@ -66,6 +66,12 @@ export default function HubPage() {
     [],
   )
 
+  const settingsApi = useApi<{ settings: Record<string, string> }>(
+    () => api.get<{ settings: Record<string, string> }>('/api/settings'),
+    [],
+  )
+  const dailyGoal = Math.min(Math.max(Number(settingsApi.data?.settings?.daily_goal) || 3, 1), 50)
+
   const stats = statsApi.data
   const perf = perfApi.data
 
@@ -112,7 +118,14 @@ export default function HubPage() {
         }
       />
 
-      <GreetingHero displayName={displayName} avatarUrl={avatarUrl} stats={stats} />
+      <GreetingHero
+        displayName={displayName}
+        username={username}
+        avatar={typeof user?.avatar === 'string' ? user.avatar : null}
+        avatarUrl={avatarUrl}
+        stats={stats}
+        dailyGoal={dailyGoal}
+      />
 
       {/* Core stat cards */}
       <motion.div

@@ -64,12 +64,16 @@ function ProblemList({
             to={`/solve/${p.id}`}
             className="group flex cursor-pointer items-center gap-2 rounded-lg border border-border bg-surface px-2.5 py-2 transition-all duration-200 hover:border-primary hover:glow-box"
           >
-            <span className="min-w-0 flex-1 truncate text-xs text-foreground">{p.title}</span>
-            <span className="hidden font-mono text-[10px] text-foreground-faint tabular-nums sm:block">{p.meta}</span>
-            <PlatformBadge platform={p.platform} />
-            {p.rating > 0 && (
-              <span className="font-mono text-[11px] text-foreground-dim tabular-nums">{p.rating}</span>
-            )}
+            <span className="min-w-0 flex-1">
+              <span className="block truncate text-xs text-foreground" title={p.title}>
+                {p.title}
+              </span>
+              <span className="mt-0.5 flex items-center gap-1.5 font-mono text-[10px] text-foreground-faint tabular-nums">
+                <PlatformBadge platform={p.platform} />
+                {p.rating > 0 && <span className="text-foreground-dim">{p.rating}</span>}
+                <span className="truncate">· {p.meta}</span>
+              </span>
+            </span>
             <ArrowUpRight
               className="size-3 shrink-0 text-foreground-faint transition-colors group-hover:text-primary-bright"
               aria-hidden="true"
@@ -144,7 +148,7 @@ export function BestsPanel({ perf }: { perf: PerformanceResponse }) {
                   <Badge variant="cyan" className="w-20 justify-center font-mono normal-case">
                     {f.bracket}
                   </Badge>
-                  <span className="min-w-0 flex-1 truncate text-foreground-dim">{f.firstTitle}</span>
+                  <span className="min-w-0 flex-1 truncate text-foreground-dim" title={f.firstTitle}>{f.firstTitle}</span>
                   <span className="font-mono text-[10px] text-foreground-faint tabular-nums">
                     {f.firstDate ? formatDate(f.firstDate) : '—'}
                   </span>

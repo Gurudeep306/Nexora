@@ -15,7 +15,7 @@ export default function LearnPage() {
   return (
     <div>
       <PageHeader
-        title="LEARN"
+        title="Learn"
         subtitle="Study the craft — deep-dive tutorial chapters with practice problems, plus the Forge roadmap journeys from rookie to engineer."
       />
       <Tabs items={TABS} active={tab} onChange={setTab} className="mb-5" />

@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'motion/react'
-import { CalendarDays, Check, Clock, MessageSquare, ShieldCheck, UserCog, UserPlus, Users } from 'lucide-react'
-import { Avatar, Badge, Button, useToast } from '@/components/ui'
+import { CalendarDays, Check, Clock, Link2, MessageSquare, ShieldCheck, UserCog, UserPlus, Users } from 'lucide-react'
+import { Avatar, Badge, Button, RankGlyph, useToast } from '@/components/ui'
 import { api, ApiError } from '@/lib/api'
 import { useSocket } from '@/lib/socket'
 import { formatDate } from '@/lib/utils'
@@ -22,6 +22,16 @@ export function ProfileHero({
   const isSelf = !viewer || viewer === user.username
   const isAdmin = user.role === 'admin'
   const name = user.display_name || user.username
+  const toast = useToast()
+  const share = async () => {
+    const url = `${window.location.origin}/profile/${encodeURIComponent(user.username)}`
+    try {
+      await navigator.clipboard.writeText(url)
+      toast.success('Profile link copied', url)
+    } catch {
+      toast.info('Profile link', url)
+    }
+  }
 
   return (
     <motion.section
@@ -35,7 +45,14 @@ export function ProfileHero({
         aria-hidden="true"
       />
       <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center">
-        <Avatar src={user.avatar_url} name={name} size="xl" online={user.status === 'online'} />
+        <div className="relative w-fit shrink-0">
+          <span
+            className="absolute -inset-1.5 rounded-full bg-[conic-gradient(var(--color-primary),var(--color-accent),var(--color-cyan),var(--color-primary))] opacity-60 blur-[3px]"
+            aria-hidden="true"
+          />
+          <Avatar seed={user.username} avatar={user.avatar} src={user.avatar_url} name={name} size="2xl" online={user.status === 'online'} className="relative" />
+          <RankGlyph level={profile.level?.level ?? 1} size={40} className="absolute -right-3 -bottom-2" />
+        </div>
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <h2
@@ -48,6 +65,11 @@ export function ProfileHero({
             {isAdmin && (
               <Badge variant="gold">
                 <ShieldCheck aria-hidden="true" /> Admin
+              </Badge>
+            )}
+            {profile.level && (
+              <Badge variant="primary">
+                LVL {profile.level.level} · {profile.level.name}
               </Badge>
             )}
             <Badge variant={user.status === 'online' ? 'success' : 'default'}>
@@ -85,11 +107,9 @@ export function ProfileHero({
                   <UserCog aria-hidden="true" /> Edit profile
                 </Button>
               </Link>
-              <Link to="/social">
-                <Button variant="subtle" size="sm">
-                  <Users aria-hidden="true" /> Community
-                </Button>
-              </Link>
+              <Button variant="subtle" size="sm" onClick={() => void share()}>
+                <Link2 aria-hidden="true" /> Share
+              </Button>
             </>
           ) : (
             <FriendActions profile={profile} viewer={viewer!} onChanged={onChanged} />

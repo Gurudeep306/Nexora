@@ -145,9 +145,31 @@ export default function AnalyticsPage() {
                 <p className="mt-1 text-[10px] tracking-wider text-foreground-faint uppercase">XP Earned</p>
               </div>
             </div>
+            {/* last 7 days at a glance */}
+            <div className="flex items-end justify-between gap-1.5 px-5 pb-4" aria-label="Solves over the last 7 days">
+              {(() => {
+                const days = perf.streak.lastWeek.slice(-7)
+                const max = Math.max(1, ...days.map((d) => d.solved))
+                return days.map((d) => (
+                  <div key={d.date} className="flex flex-1 flex-col items-center gap-1" title={`${d.date}: ${d.solved} solved`}>
+                    <div className="flex h-14 w-full items-end">
+                      <div
+                        className={d.solved > 0 ? 'w-full rounded-t bg-gradient-to-t from-primary to-cyan' : 'w-full rounded-t bg-surface-2'}
+                        style={{ height: d.solved > 0 ? `${Math.max(12, (d.solved / max) * 100)}%` : '4px' }}
+                      />
+                    </div>
+                    <span className="font-mono text-[9px] text-foreground-faint uppercase">
+                      {new Date(`${d.date}T00:00:00`).toLocaleDateString(undefined, { weekday: 'narrow' })}
+                    </span>
+                  </div>
+                ))
+              })()}
+            </div>
             <div className="flex items-center gap-2 border-t border-border px-5 py-3 text-xs text-foreground-dim">
               <Sparkles className="size-3.5 text-gold" aria-hidden="true" />
-              {perf.streak.lastWeek.reduce((s, d) => s + d.solved, 0)} solves in the last 7 days
+              {perf.todayStats.solved === 0 && perf.todayStats.attempted === 0
+                ? 'Nothing logged today yet — one solve keeps the streak alive.'
+                : `${perf.streak.lastWeek.reduce((s, d) => s + d.solved, 0)} solves in the last 7 days`}
             </div>
           </div>
         </div>

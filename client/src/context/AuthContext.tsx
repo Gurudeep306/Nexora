@@ -16,8 +16,17 @@ export interface User {
   [key: string]: unknown
 }
 
+export interface OAuthPending {
+  provider: string
+  displayName: string
+  email: string
+  suggestedUsername: string
+}
+
 interface AuthContextValue {
   user: User | null
+  /** GitHub/Google login waiting for the user to choose a Nexora username */
+  oauthPending: OAuthPending | null
   loading: boolean
   refresh: () => Promise<void>
   login: (username: string, password: string) => Promise<User>
@@ -59,13 +68,17 @@ export function takeOAuthResult(): { provider: string | null; error: string | nu
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
+  const [oauthPending, setOauthPending] = useState<OAuthPending | null>(null)
   const [loading, setLoading] = useState(true)
   const [revision, setRevision] = useState(0)
 
   const refresh = useCallback(async () => {
     try {
-      const res = await api.get<{ authenticated?: boolean; user?: User }>('/api/auth/status')
+      const res = await api.get<{ authenticated?: boolean; user?: User; oauthPending?: OAuthPending | null }>(
+        '/api/auth/status',
+      )
       setUser(res.authenticated && res.user ? res.user : null)
+      setOauthPending(res.authenticated ? null : (res.oauthPending ?? null))
       setRevision((value) => value + 1)
     } catch {
       setUser(null)
@@ -89,6 +102,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const res = await api.post<{ user?: User } & User>('/api/user/register', { username, email, password })
     const u = (res as { user?: User }).user ?? (res as User)
     setUser(u)
+    setOauthPending(null)
     return u
   }, [])
 
@@ -124,7 +138,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [username, revision])
 
   return (
-    <AuthContext.Provider value={{ user, loading, refresh, login, register, logout }}>
+    <AuthContext.Provider value={{ user, oauthPending, loading, refresh, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   )

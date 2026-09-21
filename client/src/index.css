@@ -72,6 +72,12 @@
 }
 
 @layer base {
+  /* Grid/flex children may shrink below their content width — otherwise wide
+     charts, tables and the skill graph push the page sideways on phones. */
+  .grid > * {
+    min-width: 0;
+  }
+
   * {
     border-color: var(--color-border);
     letter-spacing: 0 !important;

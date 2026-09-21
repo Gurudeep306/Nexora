@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import '@/lib/monaco'
 import Editor, { type BeforeMount, type OnMount } from '@monaco-editor/react'
 import { useApi } from '@/hooks/useApi'
 import { api } from '@/lib/api'

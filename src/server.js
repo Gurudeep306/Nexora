@@ -1034,7 +1034,7 @@ app.get("/api/problems", async (req, res) => {
     const countSql = `SELECT COUNT(*) as total FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id AND pr.username=${meSql()} WHERE ${where.join(" AND ")}`;
     const dataSql = `SELECT p.*, COALESCE(pr.status,'unsolved') as solve_status, pr.attempts, pr.xp_earned, pr.solved_at
       FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id AND pr.username=${meSql()}
-      WHERE ${where.join(" AND ")} ORDER BY ${sortCol} ${sortDir} LIMIT ? OFFSET ?`;
+      WHERE ${where.join(" AND ")} ORDER BY ${sortCol === "p.rating" ? "(p.rating = 0), " : ""}${sortCol} ${sortDir} LIMIT ? OFFSET ?`;
 
     const { total } = await get(countSql, params);
     const problems = await all(dataSql, [...params, lim, off]);
@@ -4893,6 +4893,11 @@ app.get("/api/leaderboard", async (req, res) => {
       }
       rows.sort((a, b) => b.best_streak - a.best_streak || b.total_xp - a.total_xp);
       rows.splice(limit);
+    }
+    for (const r of rows) {
+      const lv = calcLevel(r.total_xp, r.total_solved);
+      r.level = lv.level;
+      r.level_name = lv.name;
     }
     res.json({ ok: true, leaderboard: rows, type });
   } catch (e) {

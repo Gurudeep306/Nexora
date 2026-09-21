@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
-import { SearchX } from 'lucide-react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { Dices, SearchX } from 'lucide-react'
 import {
+  Button,
   EmptyState,
   ErrorState,
   LoadingBlock,
@@ -42,6 +43,8 @@ export default function ProblemsPage() {
   const [sort, setSort] = useState<ProblemFilterState['sort']>('rating')
   const [order, setOrder] = useState<ProblemFilterState['order']>('asc')
   const [offset, setOffset] = useState(0)
+  const [rolling, setRolling] = useState(false)
+  const navigate = useNavigate()
   const [busyBookmarkId, setBusyBookmarkId] = useState<number | null>(null)
 
   // Keep the visible input in sync when ?q= changes externally (nav links, back button)
@@ -69,16 +72,19 @@ export default function ProblemsPage() {
 
   const band = DIFFICULTY_BANDS.find((b) => b.id === difficulty) ?? DIFFICULTY_BANDS[0]
 
+  const filterQuery = {
+    platform: platform === 'all' ? undefined : platform,
+    minRating: band.min,
+    maxRating: band.max,
+    tag: tag || undefined,
+    status: status === 'all' ? undefined : status,
+    search: qParam || undefined,
+  }
   const problemsApi = useApi<ProblemsResponse>(
     () =>
       api.get<ProblemsResponse>('/api/problems', {
         query: {
-          platform: platform === 'all' ? undefined : platform,
-          minRating: band.min,
-          maxRating: band.max,
-          tag: tag || undefined,
-          status: status === 'all' ? undefined : status,
-          search: qParam || undefined,
+          ...filterQuery,
           sort,
           order,
           limit: PAGE_SIZE,
@@ -158,11 +164,37 @@ export default function ProblemsPage() {
   const problems = problemsApi.data?.problems ?? []
   const total = problemsApi.data?.total ?? 0
 
+  // Jump to a random problem that matches the current filters.
+  const surpriseMe = async () => {
+    setRolling(true)
+    try {
+      const total = problemsApi.data?.total ?? 0
+      if (!total) {
+        toast.info('No problems match these filters')
+        return
+      }
+      const pick = await api.get<ProblemsResponse>('/api/problems', {
+        query: { ...filterQuery, limit: 1, offset: Math.floor(Math.random() * total) },
+      })
+      const p = pick.problems?.[0]
+      if (p) navigate(`/solve/${p.id}`)
+    } catch {
+      toast.error('Could not pick a problem — try again')
+    } finally {
+      setRolling(false)
+    }
+  }
+
   return (
     <div>
       <PageHeader
         title="Problem Arena"
         subtitle="Filter, bookmark and dive into problems across six competitive platforms."
+        actions={
+          <Button variant="accent" size="sm" loading={rolling} onClick={() => void surpriseMe()}>
+            {!rolling && <Dices aria-hidden="true" />} Surprise me
+          </Button>
+        }
       />
 
       <div className="space-y-4">

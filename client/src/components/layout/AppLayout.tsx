@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { Sidebar } from './Sidebar'
 import { Topbar } from './Topbar'
 import { PageErrorBoundary } from './PageErrorBoundary'
+import { CommandPalette } from './CommandPalette'
 import { cn } from '@/lib/utils'
 
 export function AppLayout() {
@@ -31,6 +32,11 @@ export function AppLayout() {
     }
   }, [mobileOpen])
 
+  // Start every page at the top (the old page's scroll position carried over).
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior })
+  }, [location.pathname])
+
   const toggle = () => {
     setCollapsed((c) => {
       localStorage.setItem('nexora.sidebar', c ? '0' : '1')
@@ -45,6 +51,7 @@ export function AppLayout() {
         <div className="grid-bg absolute inset-0 opacity-40" />
       </div>
 
+      <CommandPalette />
       <Sidebar
         collapsed={collapsed && !mobileOpen}
         onToggle={toggle}

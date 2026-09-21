@@ -20,8 +20,8 @@ export function PasswordForm({ user }: { user: ProfileUser }) {
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setError(undefined)
-    if (password.length < 4) {
-      setError('Password must be at least 4 characters.')
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters.')
       return
     }
     if (password !== confirm) {
@@ -74,7 +74,7 @@ export function PasswordForm({ user }: { user: ProfileUser }) {
                   />
                 </Field>
               )}
-              <Field label="New password" error={error} hint="Minimum 4 characters.">
+              <Field label="New password" error={error} hint="Minimum 6 characters — 8+ with a number and symbol is best.">
                 <Input
                   type="password"
                   value={password}

@@ -83,6 +83,8 @@ export interface LeaderboardRow {
   total_xp: number
   total_solved: number
   best_streak?: number
+  level?: number
+  level_name?: string
 }
 
 export type LeaderboardType = 'xp' | 'solved' | 'streak'

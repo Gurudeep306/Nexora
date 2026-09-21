@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { Code2, Save, SlidersHorizontal, Volume2 } from 'lucide-react'
+import { Code2, Save, SlidersHorizontal, Target, Volume2 } from 'lucide-react'
 import { Button, Card, CardContent, Field, Select, useToast } from '@/components/ui'
 import { api } from '@/lib/api'
 import { SettingsSection, ToggleRow } from './SettingsPrimitives'
@@ -17,6 +17,7 @@ interface Prefs {
   sound: boolean
   ai_difficulty: string
   ai_hints: boolean
+  daily_goal: string
 }
 
 /* Legacy defaults (public/js/app.js openSettings): everything default-off except
@@ -35,6 +36,7 @@ function fromSettings(s: Record<string, string>): Prefs {
     sound: s.sound === 'true',
     ai_difficulty: s.ai_difficulty || 'medium',
     ai_hints: s.ai_hints !== 'false',
+    daily_goal: String(Math.min(50, Math.max(1, parseInt(s.daily_goal, 10) || 3))),
   }
 }
 
@@ -68,6 +70,7 @@ export function PreferencesForm({
         sound: String(prefs.sound),
         ai_difficulty: prefs.ai_difficulty,
         ai_hints: String(prefs.ai_hints),
+        daily_goal: prefs.daily_goal,
       })
       if (!res?.ok) throw new Error(res?.error ?? 'Could not save preferences')
       localStorage.setItem('nexora.sidebar', prefs.compact_sidebar ? '1' : '0')
@@ -136,6 +139,35 @@ export function PreferencesForm({
                 checked={prefs.bracket_color}
                 onChange={(v) => patch({ bracket_color: v })}
               />
+            </div>
+          </SettingsSection>
+
+          <SettingsSection
+            title="Daily goal"
+            description="How many problems you want to solve each day. The ring on your Hub fills up as you go."
+            icon={<Target />}
+          >
+            <div className="flex flex-wrap items-center gap-2" role="radiogroup" aria-label="Daily goal">
+              {['1', '2', '3', '5', '8', '10'].map((v) => (
+                <button
+                  key={v}
+                  type="button"
+                  role="radio"
+                  aria-checked={prefs.daily_goal === v}
+                  onClick={() => patch({ daily_goal: v })}
+                  className={
+                    'min-w-12 cursor-pointer rounded-lg border px-3 py-2 font-display text-sm tabular-nums transition-colors ' +
+                    (prefs.daily_goal === v
+                      ? 'border-primary bg-primary/15 text-primary-bright glow-box'
+                      : 'border-border bg-surface-2/50 text-foreground-dim hover:border-primary/50 hover:text-foreground')
+                  }
+                >
+                  {v}
+                </button>
+              ))}
+              <span className="text-xs text-foreground-faint">
+                {Number(prefs.daily_goal) >= 8 ? 'Grind mode.' : Number(prefs.daily_goal) >= 3 ? 'Steady climb.' : 'Easy does it.'}
+              </span>
             </div>
           </SettingsSection>
 

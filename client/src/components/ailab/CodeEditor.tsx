@@ -2,7 +2,8 @@ import { lazy, Suspense } from 'react'
 import { Textarea } from '@/components/ui'
 
 const MonacoEditor = lazy(() =>
-  import('@monaco-editor/react').then((m) => ({ default: m.Editor })),
+  // Load the locally bundled Monaco first (see lib/monaco.ts), then the React wrapper.
+  import('@/lib/monaco').then(() => import('@monaco-editor/react')).then((m) => ({ default: m.Editor })),
 )
 
 /**

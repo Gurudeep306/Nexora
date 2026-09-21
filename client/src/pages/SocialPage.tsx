@@ -48,7 +48,7 @@ export default function SocialPage() {
   if (!me) {
     return (
       <div>
-        <PageHeader title="The Nexus" subtitle="Friends, messages, solve rooms & rankings" />
+        <PageHeader title="Social Guild" subtitle="Friends, messages, solve rooms & rankings" />
         <Card>
           <EmptyState
             icon={<Users />}
@@ -63,7 +63,7 @@ export default function SocialPage() {
   return (
     <div>
       <PageHeader
-        title="The Nexus"
+        title="Social Guild"
         subtitle="Your squad, your DMs, your co-op solve rooms — all wired to the realtime rift."
         actions={
           <span

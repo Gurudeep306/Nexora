@@ -188,6 +188,8 @@ export function FriendsTab({ me, socket }: Props) {
                     >
                       <div className="flex items-center gap-3 rounded-lg border border-border bg-surface-2/50 px-3 py-2.5 transition-colors duration-200 hover:border-primary/60">
                         <Avatar
+                          seed={f.username}
+                          avatar={f.avatar}
                           src={avatarSrc(f)}
                           name={f.display_name || f.username}
                           size="sm"
@@ -256,6 +258,8 @@ export function FriendsTab({ me, socket }: Props) {
                     className="flex items-center gap-3 rounded-lg border border-border bg-surface px-3 py-2"
                   >
                     <Avatar
+                      seed={u.username}
+                      avatar={u.avatar}
                       src={avatarSrc(u)}
                       name={u.display_name || u.username}
                       size="sm"
@@ -324,7 +328,7 @@ export function FriendsTab({ me, socket }: Props) {
                     key={r.id}
                     className="flex items-center gap-3 rounded-lg border border-accent/30 bg-surface-2/60 px-3 py-2.5"
                   >
-                    <Avatar src={avatarSrc(r)} name={r.display_name || r.username} size="sm" />
+                    <Avatar seed={r.username} avatar={r.avatar} src={avatarSrc(r)} name={r.display_name || r.username} size="sm" />
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-semibold text-foreground">
                         {r.display_name || r.username}
@@ -376,7 +380,7 @@ export function FriendsTab({ me, socket }: Props) {
                     key={r.id}
                     className="flex items-center gap-3 rounded-lg border border-border bg-surface px-3 py-2"
                   >
-                    <Avatar src={avatarSrc(r)} name={r.display_name || r.username} size="sm" />
+                    <Avatar seed={r.username} avatar={r.avatar} src={avatarSrc(r)} name={r.display_name || r.username} size="sm" />
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm text-foreground">@{r.username}</p>
                     </div>

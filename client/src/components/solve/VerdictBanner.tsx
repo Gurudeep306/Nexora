@@ -2,18 +2,24 @@ import { AnimatePresence, motion } from 'motion/react'
 import { Trophy, Zap } from 'lucide-react'
 import { VerdictBadge } from '@/components/shared/PlatformBadge'
 import { cn } from '@/lib/utils'
+import { Confetti } from '@/components/ui/Confetti'
 
 export function VerdictBanner({
   verdict,
   xpEarned,
+  burstId,
   onDismiss,
 }: {
   verdict: string | null
   xpEarned?: number | null
+  /** Changes once per new judge result so a repeat AC fires a fresh burst. */
+  burstId?: number
   onDismiss: () => void
 }) {
   const isAc = verdict === 'AC' || verdict === 'OK'
   return (
+    <>
+    {verdict === 'AC' && <Confetti key={burstId} burstKey={`${verdict}-${burstId ?? 0}`} />}
     <AnimatePresence>
       {verdict && (
         <motion.div
@@ -46,5 +52,6 @@ export function VerdictBanner({
         </motion.div>
       )}
     </AnimatePresence>
+    </>
   )
 }

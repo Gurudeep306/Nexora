@@ -22,7 +22,10 @@ import { Tooltip } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import type { NexusNode, NexusZone } from './types'
 
-export const ROW_H = 112
+export const ROW_H = 128
+/** Zone label strip at the top of each band — nodes sit below it so labels never overlap. */
+const HEADER_H = 28
+const nodeTop = (y: number) => y * ROW_H + HEADER_H + 6
 
 function nodeIcon(node: NexusNode) {
   const key = `${node.id} ${node.name} ${node.tags.join(' ')}`.toLowerCase()
@@ -59,8 +62,9 @@ function NodeHex({
   index: number
 }) {
   const reduce = useReducedMotion()
-  const left = `calc(${node.x}% )`
-  const top = node.y * ROW_H + ROW_H / 2 - 10
+  // Keep nodes away from the band edges so labels never clip.
+  const left = `calc(6% + ${node.x * 0.88}%)`
+  const top = nodeTop(node.y)
 
   const stateStyle = node.completed
     ? {
@@ -172,7 +176,8 @@ export function SkillGraph({
     return out
   }, [nodes, byId])
 
-  const yOf = (n: NexusNode) => n.y * ROW_H + ROW_H / 2 - 10
+  const yOf = (n: NexusNode) => nodeTop(n.y)
+  const xOf = (n: NexusNode) => `${6 + n.x * 0.88}%`
 
   return (
     <div className="overflow-x-auto rounded-xl border border-border bg-background/60">
@@ -183,11 +188,12 @@ export function SkillGraph({
             key={z.level}
             id={`zone-${z.level}`}
             className={cn(
-              'absolute inset-x-0 flex items-start justify-between border-b border-border/40 px-3 pt-1.5',
+              'absolute inset-x-0 border-b border-border/40',
               z.current && 'bg-primary/5',
             )}
             style={{ top: (z.level - 1) * ROW_H, height: ROW_H }}
           >
+            <div className="flex h-7 items-center justify-between gap-2 border-b border-border/25 bg-surface-2/30 px-3">
             <div className="flex items-center gap-2">
               <span
                 className="size-2 rounded-full"
@@ -204,7 +210,7 @@ export function SkillGraph({
               )}
             </div>
             {z.locked ? (
-              <span className="flex items-center gap-1 rounded border border-border bg-surface-2 px-2 py-0.5 text-[10px] text-foreground-faint">
+              <span className="flex items-center gap-1 rounded border border-border bg-surface-2 px-2 py-0.5 text-[10px] whitespace-nowrap text-foreground-faint">
                 <Lock className="size-3" aria-hidden="true" />
                 LVL {z.level} · {z.xpRequired.toLocaleString()} XP · {z.probsRequired} solves
               </span>
@@ -213,6 +219,7 @@ export function SkillGraph({
                 {z.nodesCompleted}/{z.nodeCount} nodes · {z.zoneProgress}%
               </span>
             )}
+            </div>
           </div>
         ))}
 
@@ -233,9 +240,9 @@ export function SkillGraph({
             return (
               <line
                 key={`${e.from.id}-${e.to.id}`}
-                x1={`${e.from.x}%`}
-                y1={yOf(e.from) + 24}
-                x2={`${e.to.x}%`}
+                x1={xOf(e.from)}
+                y1={yOf(e.from) + 48}
+                x2={xOf(e.to)}
                 y2={yOf(e.to)}
                 stroke={color}
                 strokeWidth={e.done || e.open ? 2 : 1.5}

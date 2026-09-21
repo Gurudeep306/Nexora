@@ -50,12 +50,15 @@ export function TestcaseDeck({
     <div className="flex h-full min-h-0 flex-col">
       <div className="flex flex-wrap items-center gap-1.5 border-b border-border px-3 py-2">
         <FlaskConical className="mr-1 size-3.5 text-cyan" aria-hidden="true" />
-        {testcases.map((tc, i) => (
+        {testcases.map((tc, i) => {
+          // Imported samples often all share one label ("Sample 1"); number them.
+          const shown = /^sample\s*\d*$/i.test(tc.label.trim()) ? `Sample ${i + 1}` : tc.label
+          return (
           <span key={tc.id ?? i} className="group relative">
             <button
               onClick={() => onSelect(i)}
               aria-pressed={selectedIndex === i}
-              aria-label={`Run against ${tc.label}`}
+              aria-label={`Run against ${shown}`}
               className={cn(
                 'cursor-pointer rounded-md border px-2.5 py-1 font-mono text-[11px] transition-all duration-150',
                 selectedIndex === i
@@ -63,7 +66,7 @@ export function TestcaseDeck({
                   : 'border-border bg-surface text-foreground-dim hover:border-border-glow hover:text-foreground',
               )}
             >
-              {tc.label}
+              {shown}
             </button>
             {tc.id != null && (
               <button
@@ -75,7 +78,8 @@ export function TestcaseDeck({
               </button>
             )}
           </span>
-        ))}
+          )
+        })}
         <button
           onClick={() => onSelect(-1)}
           aria-pressed={selectedIndex === -1}
@@ -146,7 +150,7 @@ export function TestcaseDeck({
           <div className="grid gap-3 md:grid-cols-2">
             <div>
               <p className="text-[10px] font-semibold tracking-wider text-foreground-faint uppercase">
-                Input · {testcases[selectedIndex].label}
+                Input · {/^sample\s*\d*$/i.test(testcases[selectedIndex].label.trim()) ? `Sample ${selectedIndex + 1}` : testcases[selectedIndex].label}
               </p>
               <pre className="mt-1 max-h-40 overflow-auto rounded-md bg-background p-2 font-mono text-xs whitespace-pre-wrap text-foreground">
                 {testcases[selectedIndex].input}

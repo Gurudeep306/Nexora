@@ -243,12 +243,12 @@ function createAuthRouter(deps) {
           return res.status(404).json({ ok: false, error: "User not found" });
 
         if (password && typeof password === "string") {
-          if (password.length < 4) {
+          if (password.length < 6) {
             return res
               .status(400)
               .json({
                 ok: false,
-                error: "Password must be at least 4 characters",
+                error: "Password must be at least 6 characters",
               });
           }
           if (user.password_hash) {

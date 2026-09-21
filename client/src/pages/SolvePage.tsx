@@ -181,7 +181,7 @@ export default function SolvePage({ custom = false }: { custom?: boolean }) {
   const [fixing, setFixing] = useState(false)
   const [runResult, setRunResult] = useState<RunResult | null>(null)
   const [judgeResult, setJudgeResult] = useState<JudgeResponse | null>(null)
-  const [banner, setBanner] = useState<{ verdict: string; xp: number | null } | null>(null)
+  const [banner, setBanner] = useState<{ verdict: string; xp: number | null; id: number } | null>(null)
   const [bottomTab, setBottomTab] = useState<'tests' | 'output'>('tests')
   const [mobilePane, setMobilePane] = useState<'problem' | 'code'>('problem')
   const [splitPct, setSplitPct] = useState(46)
@@ -378,7 +378,7 @@ export default function SolvePage({ custom = false }: { custom?: boolean }) {
       setJudgeResult(res)
       if (!custom) void saveReplay(code)
       const xp = res.verdict === 'AC' && !alreadySolved && !custom ? XP_BY_RATING(problem?.rating ?? 0) : null
-      setBanner({ verdict: res.verdict, xp })
+      setBanner({ verdict: res.verdict, xp, id: Date.now() })
       if (res.verdict === 'AC') {
         toast.success('Accepted!', xp ? `+${xp} XP awarded — nice solve.` : custom ? 'All workshop tests pass.' : 'Solved again — clean.')
         if (!custom) {
@@ -680,7 +680,7 @@ export default function SolvePage({ custom = false }: { custom?: boolean }) {
         onPointerUp={() => (draggingRef.current = false)}
         onPointerLeave={() => (draggingRef.current = false)}
       >
-        <VerdictBanner verdict={banner?.verdict ?? null} xpEarned={banner?.xp} onDismiss={() => setBanner(null)} />
+        <VerdictBanner verdict={banner?.verdict ?? null} xpEarned={banner?.xp} burstId={banner?.id} onDismiss={() => setBanner(null)} />
 
         {/* Problem pane */}
         <section

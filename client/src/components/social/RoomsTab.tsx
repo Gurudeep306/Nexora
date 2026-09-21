@@ -464,7 +464,7 @@ function RoomView({
               )}
               {members.map((u) => (
                 <li key={u} className="flex items-center gap-2 text-sm">
-                  <Avatar name={u} size="xs" online />
+                  <Avatar seed={u} name={u} size="xs" online />
                   <span className={cn('truncate', u === me ? 'font-semibold text-primary-bright' : 'text-foreground-dim')}>
                     {u === me ? `${u} (you)` : u}
                   </span>

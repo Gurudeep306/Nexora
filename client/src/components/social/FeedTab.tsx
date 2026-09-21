@@ -86,7 +86,7 @@ export function FeedTab({ me }: { me: string }) {
                     </span>
                     <div className="card-neon flex items-start gap-3 px-3.5 py-3">
                       <Link to={`/profile/${encodeURIComponent(row.username)}`} aria-label={`Open ${row.username}'s profile`}>
-                        <Avatar name={row.display_name || row.username} size="sm" />
+                        <Avatar seed={row.username} name={row.display_name || row.username} size="sm" />
                       </Link>
                       <div className="min-w-0 flex-1">
                         <p className="text-sm text-foreground-dim">

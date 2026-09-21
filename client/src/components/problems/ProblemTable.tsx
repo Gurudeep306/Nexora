@@ -99,10 +99,14 @@ export function ProblemTable({ problems, bookmarkedIds, onToggleBookmark, busyBo
                   <span className="flex items-center gap-2">
                     <span className="min-w-0">
                       <span className="block truncate font-medium text-foreground">{p.title}</span>
-                      <span className="mt-0.5 flex items-center gap-1.5 text-[11px] text-foreground-faint">
+                      <span className="mt-0.5 flex flex-wrap items-center gap-1.5 text-[11px] text-foreground-faint">
                         <span className="font-mono">{p.problem_id}</span>
-                        {tags.map((t) => (
-                          <Badge key={t} variant="outline" className="px-1.5 py-0 text-[10px]">
+                        {tags.map((t, ti) => (
+                          <Badge
+                            key={t}
+                            variant="outline"
+                            className={cn('max-w-40 truncate px-1.5 py-0 text-[10px]', ti > 0 && 'hidden sm:inline-flex')}
+                          >
                             {t}
                           </Badge>
                         ))}
