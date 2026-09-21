@@ -1,5 +1,6 @@
 const express = require('express');
 const forgePaths = require('../dev-roadmap-data');
+const { me, meSql } = require('../context');
 
 const TOPIC_TAG_MAP = {
   complexity: ['implementation', 'math'],
@@ -232,10 +233,10 @@ STRICT RULES:
         category === 'all'
           ? await all('SELECT * FROM ai_problems ORDER BY category, id')
           : await all('SELECT * FROM ai_problems WHERE category = ? ORDER BY id', [category]);
-      for (const p of problems) {
-        const prog = await get('SELECT * FROM ai_progress WHERE problem_id = ?', [p.id]);
-        p.status = prog ? prog.status : 'unsolved';
-      }
+      // One query for all progress rows instead of one per problem (N+1).
+      const progRows = await all('SELECT problem_id, status FROM ai_progress WHERE username = ?', [me()]);
+      const statusById = new Map(progRows.map((r) => [r.problem_id, r.status]));
+      for (const p of problems) p.status = statusById.get(p.id) || 'unsolved';
       res.json({ ok: true, problems });
     } catch (e) {
       res.status(500).json({ ok: false, error: e.message });
@@ -246,7 +247,7 @@ STRICT RULES:
     try {
       const problem = await get('SELECT * FROM ai_problems WHERE id = ?', [req.params.id]);
       if (!problem) return res.status(404).json({ ok: false, error: 'Not found' });
-      const prog = await get('SELECT * FROM ai_progress WHERE problem_id = ?', [problem.id]);
+      const prog = await get('SELECT * FROM ai_progress WHERE username = ? AND problem_id = ?', [me(), problem.id]);
       problem.progress = prog || null;
       res.json({ ok: true, problem });
     } catch (e) {
@@ -257,16 +258,18 @@ STRICT RULES:
   router.post('/api/ai-problems/:id/progress', async (req, res) => {
     try {
       const { status, notes } = req.body;
-      const existing = await get('SELECT * FROM ai_progress WHERE problem_id = ?', [req.params.id]);
+      const existing = await get('SELECT * FROM ai_progress WHERE username = ? AND problem_id = ?', [me(), req.params.id]);
       if (existing) {
-        await run('UPDATE ai_progress SET status = ?, notes = ?, completed_at = ? WHERE problem_id = ?', [
+        await run('UPDATE ai_progress SET status = ?, notes = ?, completed_at = ? WHERE username = ? AND problem_id = ?', [
           status || existing.status,
           notes !== undefined ? notes : existing.notes,
           status === 'solved' ? new Date().toISOString() : existing.completed_at,
+          me(),
           req.params.id,
         ]);
       } else {
-        await run('INSERT INTO ai_progress(problem_id, status, notes, completed_at) VALUES(?, ?, ?, ?)', [
+        await run('INSERT INTO ai_progress(username, problem_id, status, notes, completed_at) VALUES(?, ?, ?, ?, ?)', [
+          me(),
           req.params.id,
           status || 'in-progress',
           notes || '',
@@ -282,11 +285,11 @@ STRICT RULES:
   router.get('/api/ai-stats', async (_req, res) => {
     try {
       const total = await get('SELECT COUNT(*) as c FROM ai_problems');
-      const solved = await get("SELECT COUNT(*) as c FROM ai_progress WHERE status = 'solved'");
-      const inProgress = await get("SELECT COUNT(*) as c FROM ai_progress WHERE status = 'in-progress'");
+      const solved = await get("SELECT COUNT(*) as c FROM ai_progress WHERE username = ? AND status = 'solved'", [me()]);
+      const inProgress = await get("SELECT COUNT(*) as c FROM ai_progress WHERE username = ? AND status = 'in-progress'", [me()]);
       const byCategory = await all(`SELECT ap.category, COUNT(*) as total,
         SUM(CASE WHEN pr.status = 'solved' THEN 1 ELSE 0 END) as solved
-        FROM ai_problems ap LEFT JOIN ai_progress pr ON ap.id = pr.problem_id
+        FROM ai_problems ap LEFT JOIN ai_progress pr ON ap.id = pr.problem_id AND pr.username = ${meSql()}
         GROUP BY ap.category`);
       res.json({ ok: true, total: total.c, solved: solved.c, inProgress: inProgress.c, byCategory });
     } catch (e) {
@@ -302,7 +305,7 @@ STRICT RULES:
       const params = tags.map(t => `%${t}%`);
       const problems = await all(
         `SELECT p.*, COALESCE(pr.status,'unsolved') as solve_status
-         FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id
+         FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id AND pr.username=${meSql()}
          WHERE (${placeholders})
          ORDER BY p.rating ASC
          LIMIT 30`,
@@ -321,10 +324,10 @@ STRICT RULES:
         category && category !== 'all'
           ? await all('SELECT * FROM tutorials WHERE category = ? ORDER BY order_index', [category])
           : await all('SELECT * FROM tutorials ORDER BY category, order_index');
-      for (const t of tutorials) {
-        const prog = await get('SELECT * FROM tutorial_progress WHERE tutorial_id = ?', [t.id]);
-        t.completed = prog ? prog.completed : 0;
-      }
+      // One query for all progress rows instead of one per tutorial (N+1).
+      const progRows = await all('SELECT tutorial_id, completed FROM tutorial_progress WHERE username = ?', [me()]);
+      const doneById = new Map(progRows.map((r) => [r.tutorial_id, r.completed]));
+      for (const t of tutorials) t.completed = doneById.get(t.id) || 0;
       res.json({ ok: true, tutorials });
     } catch (e) {
       res.status(500).json({ ok: false, error: e.message });
@@ -335,7 +338,7 @@ STRICT RULES:
     try {
       const tutorial = await get('SELECT * FROM tutorials WHERE id = ?', [req.params.id]);
       if (!tutorial) return res.status(404).json({ ok: false, error: 'Not found' });
-      const prog = await get('SELECT * FROM tutorial_progress WHERE tutorial_id = ?', [tutorial.id]);
+      const prog = await get('SELECT * FROM tutorial_progress WHERE username = ? AND tutorial_id = ?', [me(), tutorial.id]);
       tutorial.completed = prog ? prog.completed : 0;
       res.json({ ok: true, tutorial });
     } catch (e) {
@@ -345,14 +348,16 @@ STRICT RULES:
 
   router.post('/api/tutorials/:id/complete', async (req, res) => {
     try {
-      const existing = await get('SELECT * FROM tutorial_progress WHERE tutorial_id = ?', [req.params.id]);
+      const existing = await get('SELECT * FROM tutorial_progress WHERE username = ? AND tutorial_id = ?', [me(), req.params.id]);
       if (existing) {
-        await run('UPDATE tutorial_progress SET completed = 1, completed_at = ? WHERE tutorial_id = ?', [
+        await run('UPDATE tutorial_progress SET completed = 1, completed_at = ? WHERE username = ? AND tutorial_id = ?', [
           new Date().toISOString(),
+          me(),
           req.params.id,
         ]);
       } else {
-        await run('INSERT INTO tutorial_progress(tutorial_id, completed, completed_at) VALUES(?, 1, ?)', [
+        await run('INSERT INTO tutorial_progress(username, tutorial_id, completed, completed_at) VALUES(?, ?, 1, ?)', [
+          me(),
           req.params.id,
           new Date().toISOString(),
         ]);
@@ -366,10 +371,10 @@ STRICT RULES:
   router.get('/api/tutorial-stats', async (_req, res) => {
     try {
       const total = await get('SELECT COUNT(*) as c FROM tutorials');
-      const completed = await get('SELECT COUNT(*) as c FROM tutorial_progress WHERE completed = 1');
+      const completed = await get('SELECT COUNT(*) as c FROM tutorial_progress WHERE username = ? AND completed = 1', [me()]);
       const byCategory = await all(`SELECT t.category, COUNT(*) as total,
         SUM(CASE WHEN tp.completed = 1 THEN 1 ELSE 0 END) as completed
-        FROM tutorials t LEFT JOIN tutorial_progress tp ON t.id = tp.tutorial_id
+        FROM tutorials t LEFT JOIN tutorial_progress tp ON t.id = tp.tutorial_id AND tp.username = ${meSql()}
         GROUP BY t.category`);
       res.json({ ok: true, total: total.c, completed: completed.c, byCategory });
     } catch (e) {
@@ -379,7 +384,7 @@ STRICT RULES:
 
   router.get('/api/forge/paths', async (_req, res) => {
     try {
-      const progress = await all('SELECT * FROM forge_progress');
+      const progress = await all('SELECT * FROM forge_progress WHERE username = ?', [me()]);
       const progressMap = {};
       for (const p of progress) progressMap[p.topic_id] = p;
 
@@ -411,7 +416,7 @@ STRICT RULES:
     try {
       const path = forgePaths.find(p => p.id === req.params.id);
       if (!path) return res.status(404).json({ ok: false, error: 'Path not found' });
-      const progress = await all('SELECT * FROM forge_progress WHERE path_id = ?', [path.id]);
+      const progress = await all('SELECT * FROM forge_progress WHERE username = ? AND path_id = ?', [me(), path.id]);
       const progressMap = {};
       for (const p of progress) progressMap[p.topic_id] = p;
       let totalTopics = 0;
@@ -439,15 +444,17 @@ STRICT RULES:
       if (!['not-started', 'in-progress', 'completed'].includes(status)) {
         return res.status(400).json({ ok: false, error: 'Invalid status' });
       }
-      const existing = await get('SELECT * FROM forge_progress WHERE topic_id = ?', [req.params.id]);
+      const existing = await get('SELECT * FROM forge_progress WHERE username = ? AND topic_id = ?', [me(), req.params.id]);
       if (existing) {
-        await run('UPDATE forge_progress SET status = ?, completed_at = ? WHERE topic_id = ?', [
+        await run('UPDATE forge_progress SET status = ?, completed_at = ? WHERE username = ? AND topic_id = ?', [
           status,
           status === 'completed' ? new Date().toISOString() : null,
+          me(),
           req.params.id,
         ]);
       } else {
-        await run('INSERT INTO forge_progress(topic_id, path_id, status, completed_at) VALUES(?, ?, ?, ?)', [
+        await run('INSERT INTO forge_progress(username, topic_id, path_id, status, completed_at) VALUES(?, ?, ?, ?, ?)', [
+          me(),
           req.params.id,
           pathId || '',
           status,
@@ -463,8 +470,8 @@ STRICT RULES:
   router.get('/api/forge/stats', async (_req, res) => {
     try {
       const total = forgePaths.reduce((sum, p) => sum + p.milestones.reduce((s, m) => s + m.topics.length, 0), 0);
-      const completed = await get('SELECT COUNT(*) as c FROM forge_progress WHERE status = ?', ['completed']);
-      const inProgress = await get('SELECT COUNT(*) as c FROM forge_progress WHERE status = ?', ['in-progress']);
+      const completed = await get('SELECT COUNT(*) as c FROM forge_progress WHERE username = ? AND status = ?', [me(), 'completed']);
+      const inProgress = await get('SELECT COUNT(*) as c FROM forge_progress WHERE username = ? AND status = ?', [me(), 'in-progress']);
       res.json({ ok: true, total, completed: completed.c, inProgress: inProgress.c });
     } catch (e) {
       res.status(500).json({ ok: false, error: e.message });
@@ -473,7 +480,7 @@ STRICT RULES:
 
   router.get('/api/dashboard-layout', async (_req, res) => {
     try {
-      const row = await get("SELECT value FROM settings WHERE key = 'dashboard_layout'");
+      const row = await get("SELECT value FROM settings WHERE username = ? AND key = 'dashboard_layout'", [me()]);
       const layout = row ? JSON.parse(row.value) : {};
       res.json({ ok: true, layout });
     } catch (e) {
@@ -484,7 +491,7 @@ STRICT RULES:
   router.post('/api/dashboard-layout', async (req, res) => {
     try {
       const { layout } = req.body;
-      await run("INSERT OR REPLACE INTO settings(key, value) VALUES('dashboard_layout', ?)", [JSON.stringify(layout)]);
+      await run("INSERT OR REPLACE INTO settings(username, key, value) VALUES(?, 'dashboard_layout', ?)", [me(), JSON.stringify(layout)]);
       res.json({ ok: true });
     } catch (e) {
       res.status(500).json({ ok: false, error: e.message });

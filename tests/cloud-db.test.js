@@ -113,10 +113,17 @@ test("login session and uploaded avatar survive a restart + disk wipe", async ()
 });
 
 test("user code is never executed on the host in remote judge mode", async () => {
+  const u = `cr${Date.now().toString(36)}`;
+  const reg = await fetch(`${BASE}/api/user/register`, {
+    method: "POST",
+    headers: H,
+    body: JSON.stringify({ username: u, email: `${u}@ci.test`, password: "secret123" }),
+  });
+  const cookie = reg.headers.get("set-cookie").split(";")[0];
   const r = await (
     await fetch(`${BASE}/api/run`, {
       method: "POST",
-      headers: H,
+      headers: { ...H, Cookie: cookie },
       body: JSON.stringify({ language: "javascript", input: "", code: "console.log(process.env.SESSION_SECRET)" }),
     })
   ).json();

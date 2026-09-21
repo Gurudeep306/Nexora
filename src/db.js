@@ -966,4 +966,162 @@ async function initDb() {
   )`);
 }
 
-module.exports = { run, get, all, runMany, initDb, dbInfo };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Per-user data migration (idempotent).
+//
+// Nexora started as a single-user app, so progress, submissions, XP, streaks,
+// notes and settings had no owner column — every account saw the same data.
+// This adds a `username` to each of those tables (rebuilding tables whose
+// UNIQUE keys must now include the user) and assigns all existing rows to
+// LEGACY_OWNER (default "gurudeep"). Runs once; later boots detect the column.
+// ─────────────────────────────────────────────────────────────────────────────
+const LEGACY_OWNER = process.env.LEGACY_OWNER || "gurudeep";
+
+async function columnsOf(table) {
+  const rows = await all(`PRAGMA table_info(${table})`);
+  return rows.map((r) => r.name);
+}
+
+/** Rebuild `table` using `ddl` (which must include a username column),
+ *  copying every old column and stamping rows with `ownerExpr`. */
+async function rebuildWithUsername(table, ddl, ownerExpr = "?") {
+  const cols = await columnsOf(table);
+  if (!cols.length || cols.includes("username")) return false;
+  const tmp = `${table}__peruser`;
+  await run(`DROP TABLE IF EXISTS ${tmp}`);
+  await run(ddl.replace(`CREATE TABLE ${table}`, `CREATE TABLE ${tmp}`));
+  const list = cols.join(", ");
+  await run(
+    `INSERT INTO ${tmp} (${list}, username) SELECT ${list}, ${ownerExpr} FROM ${table}`,
+    ownerExpr === "?" ? [LEGACY_OWNER] : [],
+  );
+  await run(`DROP TABLE ${table}`);
+  await run(`ALTER TABLE ${tmp} RENAME TO ${table}`);
+  return true;
+}
+
+/** Add a username column to tables whose keys don't change. */
+async function addUsernameColumn(table) {
+  const cols = await columnsOf(table);
+  if (!cols.length || cols.includes("username")) return false;
+  await run(`ALTER TABLE ${table} ADD COLUMN username TEXT NOT NULL DEFAULT ''`);
+  await run(`UPDATE ${table} SET username=?`, [LEGACY_OWNER]);
+  return true;
+}
+
+async function migratePerUser() {
+  const changed = [];
+  const note = (ok, t) => ok && changed.push(t);
+
+  note(await rebuildWithUsername("progress", `CREATE TABLE progress (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL DEFAULT '',
+    problem_rowid INTEGER NOT NULL,
+    status TEXT DEFAULT 'unsolved',
+    attempts INTEGER DEFAULT 0,
+    solved_at TEXT,
+    time_spent INTEGER DEFAULT 0,
+    notes TEXT DEFAULT '',
+    xp_earned INTEGER DEFAULT 0,
+    UNIQUE(username, problem_rowid),
+    FOREIGN KEY (problem_rowid) REFERENCES problems(id)
+  )`), "progress");
+
+  note(await rebuildWithUsername("daily_activity", `CREATE TABLE daily_activity (
+    username TEXT NOT NULL DEFAULT '',
+    date TEXT NOT NULL,
+    problems_solved INTEGER DEFAULT 0,
+    problems_attempted INTEGER DEFAULT 0,
+    xp_earned INTEGER DEFAULT 0,
+    time_spent INTEGER DEFAULT 0,
+    PRIMARY KEY (username, date)
+  )`), "daily_activity");
+
+  note(await rebuildWithUsername("decomposition_notes", `CREATE TABLE decomposition_notes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL DEFAULT '',
+    problem_rowid INTEGER NOT NULL,
+    approach TEXT DEFAULT '',
+    brute_force TEXT DEFAULT '',
+    optimization TEXT DEFAULT '',
+    data_structures TEXT DEFAULT '',
+    edge_cases TEXT DEFAULT '',
+    updated_at TEXT,
+    UNIQUE(username, problem_rowid)
+  )`), "decomposition_notes");
+
+  note(await rebuildWithUsername("skill_progress", `CREATE TABLE skill_progress (
+    username TEXT NOT NULL DEFAULT '',
+    skill_id TEXT NOT NULL,
+    problems_solved INTEGER DEFAULT 0,
+    unlocked INTEGER DEFAULT 0,
+    unlocked_at TEXT,
+    PRIMARY KEY (username, skill_id)
+  )`), "skill_progress");
+
+  note(await rebuildWithUsername("forge_progress", `CREATE TABLE forge_progress (
+    username TEXT NOT NULL DEFAULT '',
+    topic_id TEXT NOT NULL,
+    path_id TEXT NOT NULL,
+    status TEXT DEFAULT 'not-started',
+    completed_at TEXT,
+    PRIMARY KEY (username, topic_id)
+  )`), "forge_progress");
+
+  // Settings: `last_sync` and cached problem statements (`stmt_*`) stay
+  // site-wide (username ''); the rest (handles, dashboard layout) are personal.
+  note(await rebuildWithUsername("settings", `CREATE TABLE settings (
+    username TEXT NOT NULL DEFAULT '',
+    key TEXT NOT NULL,
+    value TEXT NOT NULL,
+    PRIMARY KEY (username, key)
+  )`, `CASE WHEN key = 'last_sync' OR key LIKE 'stmt\\_%' ESCAPE '\\' THEN '' ELSE '${LEGACY_OWNER.replace(/'/g, "''")}' END`), "settings");
+
+  for (const t of ["submissions", "tutorial_progress", "ai_progress", "ai_battles", "code_replays"]) {
+    note(await addUsernameColumn(t), t);
+  }
+
+  // Achievements: the table holds definitions; per-user progress lives here.
+  await run(`CREATE TABLE IF NOT EXISTS user_achievements (
+    username TEXT NOT NULL,
+    achievement_id TEXT NOT NULL,
+    progress INTEGER DEFAULT 0,
+    unlocked_at TEXT,
+    PRIMARY KEY (username, achievement_id)
+  )`);
+  // Daily challenges: the pick is shared, completion is per user.
+  await run(`CREATE TABLE IF NOT EXISTS user_daily_challenges (
+    username TEXT NOT NULL,
+    challenge_id INTEGER NOT NULL,
+    completed_at TEXT,
+    PRIMARY KEY (username, challenge_id)
+  )`);
+  const migrated = await get("SELECT value FROM settings WHERE username='' AND key='peruser_migrated'");
+  if (!migrated) {
+    await run(
+      `INSERT OR IGNORE INTO user_achievements(username, achievement_id, progress, unlocked_at)
+       SELECT ?, id, progress, unlocked_at FROM achievements WHERE progress > 0 OR unlocked_at IS NOT NULL`,
+      [LEGACY_OWNER],
+    );
+    await run(
+      `INSERT OR IGNORE INTO user_daily_challenges(username, challenge_id, completed_at)
+       SELECT ?, id, completed_at FROM daily_challenges WHERE completed = 1`,
+      [LEGACY_OWNER],
+    );
+    await run("INSERT OR REPLACE INTO settings(username, key, value) VALUES('', 'peruser_migrated', ?)", [new Date().toISOString()]);
+  }
+
+  for (const [t, c] of [
+    ["progress", "username, status"], ["submissions", "username, problem_rowid"],
+    ["daily_activity", "username, date"], ["tutorial_progress", "username, tutorial_id"],
+    ["ai_progress", "username, problem_id"], ["ai_battles", "username"],
+  ]) {
+    await run(`CREATE INDEX IF NOT EXISTS idx_${t}_user ON ${t}(${c})`).catch(() => {});
+  }
+  if (changed.length) {
+    console.log(`✓ Per-user data: added owners to ${changed.join(", ")} (existing rows → ${LEGACY_OWNER})`);
+  }
+}
+
+module.exports = { run, get, all, runMany, initDb, dbInfo, migratePerUser, LEGACY_OWNER };

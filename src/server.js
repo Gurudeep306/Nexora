@@ -19,9 +19,11 @@ const passport = require("passport");
 const GitHubStrategy = require("passport-github2").Strategy;
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const { Server: SocketServer } = require("socket.io");
-const { run, get, all, initDb, dbInfo } = require("./db");
+const { run, get, all, initDb, dbInfo, migratePerUser } = require("./db");
+const { requestContext, me, meSql } = require("./context");
 const { DbSessionStore } = require("./session-store");
 const { restoreUploads } = require("./upload-store");
+const { authz } = require("./middleware/authz");
 const {
   clearSessionUser,
   createStudioAuth,
@@ -711,6 +713,10 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
+// Remember who is making each request (per-user progress queries read it).
+app.use(requestContext(getSessionUser));
+// Enforce who-can-do-what on every /api route (see src/middleware/authz.js).
+app.use(authz());
 
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((obj, done) => done(null, obj));
@@ -876,6 +882,7 @@ app.use(
 /* ── Lightweight in-memory TTL cache for heavy read endpoints ── */
 const _apiCache = new Map();
 function cachedResponse(key, ttlMs, computeFn) {
+  key = `${me()}|${key}`; // cached per user — responses contain personal stats
   const entry = _apiCache.get(key);
   if (entry && Date.now() - entry.ts < ttlMs) return entry.promise;
   const promise = computeFn();
@@ -885,6 +892,14 @@ function cachedResponse(key, ttlMs, computeFn) {
 }
 function invalidateCache() {
   _apiCache.clear();
+}
+
+/** Achievement definitions joined with the signed-in user's progress. */
+function achievementsSql() {
+  return `SELECT a.id, a.title, a.description, a.icon, a.category, a.target, a.xp_reward,
+    COALESCE(ua.progress, 0) AS progress, ua.unlocked_at
+    FROM achievements a
+    LEFT JOIN user_achievements ua ON ua.achievement_id = a.id AND ua.username = ${meSql()}`;
 }
 
 /* ========== SYNC ========== */
@@ -1002,9 +1017,9 @@ app.get("/api/problems", async (req, res) => {
     const lim = Math.min(+(limit || 50), 200);
     const off = +(offset || 0);
 
-    const countSql = `SELECT COUNT(*) as total FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id WHERE ${where.join(" AND ")}`;
+    const countSql = `SELECT COUNT(*) as total FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id AND pr.username=${meSql()} WHERE ${where.join(" AND ")}`;
     const dataSql = `SELECT p.*, COALESCE(pr.status,'unsolved') as solve_status, pr.attempts, pr.xp_earned, pr.solved_at
-      FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id
+      FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id AND pr.username=${meSql()}
       WHERE ${where.join(" AND ")} ORDER BY ${sortCol} ${sortDir} LIMIT ? OFFSET ?`;
 
     const { total } = await get(countSql, params);
@@ -1019,7 +1034,7 @@ app.get("/api/problems/:id", async (req, res) => {
   try {
     const problem = await get(
       `SELECT p.*, COALESCE(pr.status,'unsolved') as solve_status, pr.attempts, pr.xp_earned, pr.notes
-      FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id WHERE p.id=?`,
+      FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id AND pr.username=${meSql()} WHERE p.id=?`,
       [req.params.id],
     );
     if (!problem)
@@ -1029,8 +1044,8 @@ app.get("/api/problems/:id", async (req, res) => {
       [req.params.id],
     );
     const submissions = await all(
-      "SELECT id,verdict,exec_time_ms,submitted_at FROM submissions WHERE problem_rowid=? ORDER BY submitted_at DESC LIMIT 20",
-      [req.params.id],
+      "SELECT id,verdict,exec_time_ms,submitted_at FROM submissions WHERE username=? AND problem_rowid=? ORDER BY submitted_at DESC LIMIT 20",
+      [me(), req.params.id],
     );
     res.json({ ok: true, problem, testcases, submissions });
   } catch (e) {
@@ -1092,7 +1107,7 @@ app.get("/api/problem-statement/:id", async (req, res) => {
     }
 
     // 2. Check legacy cache
-    const cached = await get("SELECT value FROM settings WHERE key=?", [
+    const cached = await get("SELECT value FROM settings WHERE username='' AND key=?", [
       `stmt_${problem.id}`,
     ]);
     if (cached) {
@@ -1204,7 +1219,7 @@ app.get("/api/bookmarks", async (req, res) => {
               pr.status AS solve_status, pr.xp_earned
          FROM bookmarks b
          JOIN problems p ON p.id = b.problem_id
-         LEFT JOIN progress pr ON pr.problem_rowid = p.id
+         LEFT JOIN progress pr ON pr.problem_rowid = p.id AND pr.username = b.username
         WHERE b.username = ?
         ORDER BY b.created_at DESC`,
       [username],
@@ -1264,15 +1279,15 @@ app.get("/api/activity/:date", async (req, res) => {
       return res.status(400).json({ ok: false, error: "Invalid date" });
     const dayStats = (await get(
       `SELECT COALESCE(problems_solved,0) as solved, COALESCE(problems_attempted,0) as attempted,
-      COALESCE(xp_earned,0) as xp FROM daily_activity WHERE date=?`,
-      [date],
+      COALESCE(xp_earned,0) as xp FROM daily_activity WHERE username=? AND date=?`,
+      [me(), date],
     )) || { solved: 0, attempted: 0, xp: 0 };
     const submissions = await all(
       `SELECT s.id, s.verdict, s.exec_time_ms, s.language, s.submitted_at,
       p.title, p.rating, p.platform, p.problem_id
       FROM submissions s JOIN problems p ON s.problem_rowid=p.id
-      WHERE date(s.submitted_at)=? ORDER BY s.submitted_at DESC`,
-      [date],
+      WHERE s.username=? AND date(s.submitted_at)=? ORDER BY s.submitted_at DESC`,
+      [me(), date],
     );
     res.json({ ok: true, date, stats: dayStats, submissions });
   } catch (e) {
@@ -1381,8 +1396,9 @@ app.post("/api/judge", judgeLimiter, async (req, res) => {
     // Record submission
     if (problem_id) {
       await run(
-        `INSERT INTO submissions(problem_rowid,code,language,verdict,exec_time_ms,submitted_at,test_results) VALUES(?,?,?,?,?,?,?)`,
+        `INSERT INTO submissions(username,problem_rowid,code,language,verdict,exec_time_ms,submitted_at,test_results) VALUES(?,?,?,?,?,?,?,?)`,
         [
+          me(),
           problem_id,
           code,
           lang,
@@ -1397,13 +1413,14 @@ app.post("/api/judge", judgeLimiter, async (req, res) => {
 
       // Update progress
       const existing = await get(
-        "SELECT * FROM progress WHERE problem_rowid=?",
-        [problem_id],
+        "SELECT * FROM progress WHERE username=? AND problem_rowid=?",
+        [me(), problem_id],
       );
       if (!existing) {
         await run(
-          `INSERT INTO progress(problem_rowid,status,attempts,solved_at,xp_earned) VALUES(?,?,?,?,?)`,
+          `INSERT INTO progress(username,problem_rowid,status,attempts,solved_at,xp_earned) VALUES(?,?,?,?,?,?)`,
           [
+            me(),
             problem_id,
             result.verdict === "AC" ? "solved" : "attempted",
             1,
@@ -1423,11 +1440,12 @@ app.post("/api/judge", judgeLimiter, async (req, res) => {
             ? await calcXp(problem_id)
             : existing.xp_earned;
         await run(
-          `UPDATE progress SET status=?, attempts=attempts+1, solved_at=COALESCE(solved_at,?), xp_earned=? WHERE problem_rowid=?`,
+          `UPDATE progress SET status=?, attempts=attempts+1, solved_at=COALESCE(solved_at,?), xp_earned=? WHERE username=? AND problem_rowid=?`,
           [
             newStatus,
             result.verdict === "AC" ? new Date().toISOString() : null,
             xp,
+            me(),
             problem_id,
           ],
         );
@@ -1436,12 +1454,13 @@ app.post("/api/judge", judgeLimiter, async (req, res) => {
       // Update daily activity
       const today = new Date().toISOString().slice(0, 10);
       await run(
-        `INSERT INTO daily_activity(date,problems_solved,problems_attempted,xp_earned)
-        VALUES(?,?,1,?) ON CONFLICT(date) DO UPDATE SET
+        `INSERT INTO daily_activity(username,date,problems_solved,problems_attempted,xp_earned)
+        VALUES(?,?,?,1,?) ON CONFLICT(username,date) DO UPDATE SET
         problems_attempted=problems_attempted+1,
         problems_solved=problems_solved+?,
         xp_earned=xp_earned+?`,
         [
+          me(),
           today,
           result.verdict === "AC" ? 1 : 0,
           result.verdict === "AC" ? await calcXp(problem_id) : 0,
@@ -1484,11 +1503,11 @@ app.get("/api/stats", async (req, res) => {
       // Batch core counts into a single query
       const counts = await get(`SELECT
       (SELECT COUNT(*) FROM problems) as total,
-      (SELECT COUNT(*) FROM progress WHERE status='solved') as solved,
-      (SELECT COUNT(*) FROM progress WHERE status='attempted') as attempted,
-      (SELECT COALESCE(SUM(xp_earned),0) FROM progress) as totalXp,
-      (SELECT COUNT(*) FROM submissions) as submissions,
-      (SELECT COUNT(*) FROM submissions WHERE verdict='AC') as acCount`);
+      (SELECT COUNT(*) FROM progress WHERE username=${meSql()} AND status='solved') as solved,
+      (SELECT COUNT(*) FROM progress WHERE username=${meSql()} AND status='attempted') as attempted,
+      (SELECT COALESCE(SUM(xp_earned),0) FROM progress WHERE username=${meSql()}) as totalXp,
+      (SELECT COUNT(*) FROM submissions WHERE username=${meSql()}) as submissions,
+      (SELECT COUNT(*) FROM submissions WHERE username=${meSql()} AND verdict='AC') as acCount`);
       let {
         total,
         solved,
@@ -1500,8 +1519,8 @@ app.get("/api/stats", async (req, res) => {
       const accuracy =
         submissionCount > 0 ? Math.round((acCount / submissionCount) * 100) : 0;
 
-      // Apply admin overrides if user is logged in
-      const username = req.query.username;
+      // Apply admin overrides for the signed-in user
+      const username = me();
       if (username) {
         const user = await get(
           "SELECT xp_override, solved_override, role FROM users WHERE username=?",
@@ -1535,19 +1554,19 @@ app.get("/api/stats", async (req, res) => {
           ELSE 'Grandmaster'
         END as tier,
         COUNT(*) as count
-        FROM progress pr JOIN problems p ON pr.problem_rowid=p.id WHERE pr.status='solved'
+        FROM progress pr JOIN problems p ON pr.problem_rowid=p.id WHERE pr.username=${meSql()} AND pr.status='solved'
         GROUP BY tier ORDER BY MIN(p.rating)`),
         all(`SELECT p.platform, COUNT(*) as count
-        FROM progress pr JOIN problems p ON pr.problem_rowid=p.id WHERE pr.status='solved'
+        FROM progress pr JOIN problems p ON pr.problem_rowid=p.id WHERE pr.username=${meSql()} AND pr.status='solved'
         GROUP BY p.platform`),
         calcStreak(),
         all(`SELECT date, problems_solved, xp_earned FROM daily_activity
-        WHERE date >= date('now','-365 days') ORDER BY date`),
+        WHERE username=${meSql()} AND date >= date('now','-365 days') ORDER BY date`),
         all(`SELECT s.id, s.verdict, s.exec_time_ms, s.submitted_at, p.title, p.problem_id, p.platform, p.rating
-        FROM submissions s JOIN problems p ON s.problem_rowid=p.id ORDER BY s.submitted_at DESC LIMIT 15`),
-        all("SELECT * FROM achievements ORDER BY category, target"),
+        FROM submissions s JOIN problems p ON s.problem_rowid=p.id WHERE s.username=${meSql()} ORDER BY s.submitted_at DESC LIMIT 15`),
+        all(`${achievementsSql()} ORDER BY a.category, a.target`),
         all(
-          `SELECT verdict, COUNT(*) as count FROM submissions GROUP BY verdict`,
+          `SELECT verdict, COUNT(*) as count FROM submissions WHERE username=${meSql()} GROUP BY verdict`,
         ),
         getDailyChallenges(),
       ]);
@@ -1569,8 +1588,8 @@ app.get("/api/stats", async (req, res) => {
       // Today's stats
       const today = new Date().toISOString().slice(0, 10);
       const todayStats = (await get(
-        `SELECT COALESCE(problems_solved,0) as solved, COALESCE(problems_attempted,0) as attempted, COALESCE(xp_earned,0) as xp FROM daily_activity WHERE date=?`,
-        [today],
+        `SELECT COALESCE(problems_solved,0) as solved, COALESCE(problems_attempted,0) as attempted, COALESCE(xp_earned,0) as xp FROM daily_activity WHERE username=? AND date=?`,
+        [me(), today],
       )) || { solved: 0, attempted: 0, xp: 0 };
 
       return {
@@ -1605,10 +1624,10 @@ app.get("/api/stats", async (req, res) => {
 app.get("/api/roadmap", async (req, res) => {
   try {
     const totalXp = (
-      await get("SELECT COALESCE(SUM(xp_earned),0) as s FROM progress")
+      await get("SELECT COALESCE(SUM(xp_earned),0) as s FROM progress WHERE username=?", [me()])
     ).s;
     const totalSolved = (
-      await get("SELECT COUNT(*) as c FROM progress WHERE status='solved'")
+      await get("SELECT COUNT(*) as c FROM progress WHERE username=? AND status='solved'", [me()])
     ).c;
     const playerLevel = calcLevel(totalXp, totalSolved);
 
@@ -1616,7 +1635,7 @@ app.get("/api/roadmap", async (req, res) => {
     for (const rl of RIFT_LEVELS) {
       const problems = await all(
         `SELECT p.*, COALESCE(pr.status,'unsolved') as solve_status
-        FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id
+        FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id AND pr.username=${meSql()}
         WHERE p.rating >= ? AND p.rating <= ? AND p.rating > 0
         ORDER BY p.rating ASC, RANDOM() LIMIT 30`,
         [rl.minR, rl.maxR],
@@ -1657,12 +1676,21 @@ app.get("/api/roadmap", async (req, res) => {
 });
 
 /* ========== CONTESTS ========== */
+// Contest lists change rarely; cache them so every page view doesn't hit
+// Codeforces/CodeChef (they rate-limit) and one slow site can't break the page.
+let _contestCache = { at: 0, contests: null };
+const CONTEST_TTL_MS = 10 * 60 * 1000;
 app.get("/api/contests", async (req, res) => {
   try {
-    const [cf, cc] = await Promise.all([
+    if (_contestCache.contests && Date.now() - _contestCache.at < CONTEST_TTL_MS) {
+      return res.json({ ok: true, contests: _contestCache.contests, cached: true });
+    }
+    const [cfR, ccR] = await Promise.allSettled([
       fetchCodeforcesContests(),
       fetchCodechefContests(),
     ]);
+    const cf = cfR.status === "fulfilled" ? cfR.value : [];
+    const cc = ccR.status === "fulfilled" ? ccR.value : [];
     const all = [...cf, ...cc].sort((a, b) => {
       const order = {
         RUNNING: 0,
@@ -1676,7 +1704,9 @@ app.get("/api/contests", async (req, res) => {
         (a.startTime || 0) - (b.startTime || 0)
       );
     });
-    res.json({ ok: true, contests: all });
+    // Keep serving the last good list if both sources failed this time.
+    if (all.length) _contestCache = { at: Date.now(), contests: all };
+    res.json({ ok: true, contests: all.length ? all : _contestCache.contests || [] });
   } catch (e) {
     res.status(500).json({ ok: false, error: e.message });
   }
@@ -1685,7 +1715,11 @@ app.get("/api/contests", async (req, res) => {
 /* ========== SETTINGS ========== */
 app.get("/api/settings", async (req, res) => {
   try {
-    const rows = await all("SELECT * FROM settings");
+    // Site-wide values (username '') first, then the user's own on top.
+    const rows = await all(
+      "SELECT username, key, value FROM settings WHERE (username='' AND key NOT LIKE 'stmt\\_%' ESCAPE '\\' AND key<>'peruser_migrated') OR username=? ORDER BY username=''  DESC",
+      [me()],
+    );
     const settings = {};
     for (const r of rows) settings[r.key] = r.value;
     res.json({ ok: true, settings });
@@ -1696,10 +1730,13 @@ app.get("/api/settings", async (req, res) => {
 
 app.post("/api/settings", async (req, res) => {
   try {
-    for (const [key, value] of Object.entries(req.body)) {
-      await run("INSERT OR REPLACE INTO settings(key,value) VALUES(?,?)", [
+    // Personal settings only (handles, layout…); keys/values are size-capped.
+    for (const [key, value] of Object.entries(req.body || {}).slice(0, 50)) {
+      if (!/^[a-z0-9_]{1,64}$/i.test(key) || key.startsWith("stmt_") || key === "last_sync") continue;
+      await run("INSERT OR REPLACE INTO settings(username,key,value) VALUES(?,?,?)", [
+        me(),
         key,
-        String(value),
+        String(value).slice(0, 4000),
       ]);
     }
     res.json({ ok: true });
@@ -1711,12 +1748,14 @@ app.post("/api/settings", async (req, res) => {
 /* ========== RESET PROGRESS ========== */
 app.post("/api/reset-progress", async (req, res) => {
   try {
-    await run("DELETE FROM progress");
-    await run("DELETE FROM submissions");
-    await run("DELETE FROM daily_activity");
-    await run("DELETE FROM code_replays");
-    await run("DELETE FROM achievements WHERE unlocked_at IS NOT NULL");
-    await run("UPDATE achievements SET progress=0");
+    // Resets only the signed-in user's own progress.
+    const u = me();
+    await run("DELETE FROM progress WHERE username=?", [u]);
+    await run("DELETE FROM code_replays WHERE username=?", [u]);
+    await run("DELETE FROM submissions WHERE username=?", [u]);
+    await run("DELETE FROM daily_activity WHERE username=?", [u]);
+    await run("DELETE FROM user_achievements WHERE username=?", [u]);
+    await run("DELETE FROM user_daily_challenges WHERE username=?", [u]);
     invalidateCache();
     res.json({ ok: true });
   } catch (e) {
@@ -1728,7 +1767,7 @@ app.post("/api/reset-progress", async (req, res) => {
 app.post("/api/sync-solved", async (req, res) => {
   try {
     const cfHandle = (
-      await get("SELECT value FROM settings WHERE key='cf_handle'")
+      await get("SELECT value FROM settings WHERE username=? AND key='cf_handle'", [me()])
     )?.value;
     if (!cfHandle)
       return res.json({ ok: true, synced: 0, message: "No CF handle set" });
@@ -1742,21 +1781,21 @@ app.post("/api/sync-solved", async (req, res) => {
       );
       if (!prob) continue;
       const existing = await get(
-        "SELECT * FROM progress WHERE problem_rowid=?",
-        [prob.id],
+        "SELECT * FROM progress WHERE username=? AND problem_rowid=?",
+        [me(), prob.id],
       );
       if (!existing) {
         const xp = await calcXp(prob.id);
         await run(
-          `INSERT INTO progress(problem_rowid,status,attempts,solved_at,xp_earned) VALUES(?,?,?,?,?)`,
-          [prob.id, "solved", 1, new Date().toISOString(), xp],
+          `INSERT INTO progress(username,problem_rowid,status,attempts,solved_at,xp_earned) VALUES(?,?,?,?,?,?)`,
+          [me(), prob.id, "solved", 1, new Date().toISOString(), xp],
         );
         synced++;
       } else if (existing.status !== "solved") {
         const xp = await calcXp(prob.id);
         await run(
-          `UPDATE progress SET status='solved', solved_at=COALESCE(solved_at,?), xp_earned=? WHERE problem_rowid=?`,
-          [new Date().toISOString(), xp, prob.id],
+          `UPDATE progress SET status='solved', solved_at=COALESCE(solved_at,?), xp_earned=? WHERE username=? AND problem_rowid=?`,
+          [new Date().toISOString(), xp, me(), prob.id],
         );
         synced++;
       }
@@ -1984,20 +2023,22 @@ function _buildLastWeek(sevenDayRows) {
   return lastWeek;
 }
 
-async function calcStreak() {
+async function calcStreak(username = me()) {
   // Current streak: only need recent consecutive days, not entire table
   const today = new Date().toISOString().slice(0, 10);
   const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
 
   // Last 7 days for the streak calendar widget
   const sevenDayRows = await all(
-    "SELECT date, problems_solved FROM daily_activity WHERE date >= date('now','-6 days') ORDER BY date ASC",
+    "SELECT date, problems_solved FROM daily_activity WHERE username=? AND date >= date('now','-6 days') ORDER BY date ASC",
+    [username],
   );
   const lastWeek = _buildLastWeek(sevenDayRows);
 
   // Fetch only last 400 days (more than enough for any reasonable streak)
   const rows = await all(
-    "SELECT date FROM daily_activity WHERE problems_solved > 0 AND date >= date('now','-400 days') ORDER BY date DESC",
+    "SELECT date FROM daily_activity WHERE username=? AND problems_solved > 0 AND date >= date('now','-400 days') ORDER BY date DESC",
+    [username],
   );
   if (!rows.length) return { current: 0, best: 0, lastWeek };
 
@@ -2036,177 +2077,111 @@ async function calcStreak() {
 
 async function checkAchievements(problemId, verdict) {
   if (verdict !== "AC") return;
-  const solved = (
-    await get("SELECT COUNT(*) as c FROM progress WHERE status='solved'")
-  ).c;
-  const prob = await get("SELECT * FROM problems WHERE id=?", [problemId]);
+  const u = me();
+  if (!u) return;
   const now = new Date().toISOString();
   const hour = new Date().getHours();
+  const today = now.slice(0, 10);
 
-  // Solve milestones
-  const solveMilestones = {
-    solve_10: 10,
-    solve_50: 50,
-    solve_100: 100,
-    solve_500: 500,
+  // Record progress for one achievement for this user; unlock (once) when
+  // progress reaches `target` (defaults to the achievement's own target).
+  const award = async (id, progress, target = null) => {
+    const def = await get("SELECT target FROM achievements WHERE id=?", [id]);
+    if (!def) return;
+    const goal = target ?? def.target ?? 1;
+    const p = Math.min(progress, goal);
+    await run(
+      `INSERT INTO user_achievements(username, achievement_id, progress, unlocked_at)
+       VALUES(?,?,?,?)
+       ON CONFLICT(username, achievement_id) DO UPDATE SET
+         progress = MAX(user_achievements.progress, excluded.progress),
+         unlocked_at = COALESCE(user_achievements.unlocked_at, excluded.unlocked_at)`,
+      [u, id, p, progress >= goal ? now : null],
+    );
   };
-  for (const [id, target] of Object.entries(solveMilestones)) {
-    await run(
-      `UPDATE achievements SET progress=?, unlocked_at=CASE WHEN ?>=target AND unlocked_at IS NULL THEN ? ELSE unlocked_at END WHERE id=?`,
-      [Math.min(solved, target), solved, now, id],
-    );
-  }
 
-  // First blood
-  if (solved >= 1) {
-    await run(
-      `UPDATE achievements SET progress=1, unlocked_at=COALESCE(unlocked_at,?) WHERE id='first_blood'`,
-      [now],
-    );
+  const solved = (
+    await get("SELECT COUNT(*) as c FROM progress WHERE username=? AND status='solved'", [u])
+  ).c;
+  const prob = await get("SELECT * FROM problems WHERE id=?", [problemId]);
+
+  // Solve milestones + first blood
+  for (const [id, target] of Object.entries({ solve_10: 10, solve_50: 50, solve_100: 100, solve_500: 500 })) {
+    await award(id, solved, target);
   }
+  if (solved >= 1) await award("first_blood", 1, 1);
 
   // Perfect score (first attempt AC)
   const existing = await get(
-    "SELECT attempts FROM progress WHERE problem_rowid=?",
-    [problemId],
+    "SELECT attempts FROM progress WHERE username=? AND problem_rowid=?",
+    [u, problemId],
   );
-  if (existing && existing.attempts <= 1) {
-    await run(
-      `UPDATE achievements SET progress=1, unlocked_at=COALESCE(unlocked_at,?) WHERE id='perfect_score'`,
-      [now],
-    );
-  }
+  if (existing && existing.attempts <= 1) await award("perfect_score", 1, 1);
 
-  // Night owl (midnight-4am)
-  if (hour >= 0 && hour < 4) {
-    await run(
-      `UPDATE achievements SET progress=1, unlocked_at=COALESCE(unlocked_at,?) WHERE id='night_owl'`,
-      [now],
-    );
-  }
-
-  // Early bird (5am-7am)
-  if (hour >= 5 && hour < 7) {
-    await run(
-      `UPDATE achievements SET progress=1, unlocked_at=COALESCE(unlocked_at,?) WHERE id='early_bird'`,
-      [now],
-    );
-  }
+  // Night owl (midnight–4am) / early bird (5–7am)
+  if (hour >= 0 && hour < 4) await award("night_owl", 1, 1);
+  if (hour >= 5 && hour < 7) await award("early_bird", 1, 1);
 
   // Marathon (5 in a day)
-  const today = new Date().toISOString().slice(0, 10);
   const todaySolved =
-    (
-      await get(
-        `SELECT COALESCE(problems_solved,0) as c FROM daily_activity WHERE date=?`,
-        [today],
-      )
-    )?.c || 0;
-  if (todaySolved >= 5) {
-    await run(
-      `UPDATE achievements SET progress=?, unlocked_at=CASE WHEN ?>=5 AND unlocked_at IS NULL THEN ? ELSE unlocked_at END WHERE id='marathon'`,
-      [Math.min(todaySolved, 5), todaySolved, now],
-    );
-  }
+    (await get(
+      "SELECT COALESCE(problems_solved,0) as c FROM daily_activity WHERE username=? AND date=?",
+      [u, today],
+    ))?.c || 0;
+  if (todaySolved >= 1) await award("marathon", todaySolved, 5);
 
-  // Tag master
-  const tagCount = await all(
-    `SELECT DISTINCT p.tags FROM progress pr JOIN problems p ON pr.problem_rowid=p.id WHERE pr.status='solved' AND p.tags != '[]'`,
+  // Tag master (10 distinct tags solved)
+  const tagRows = await all(
+    `SELECT DISTINCT p.tags FROM progress pr JOIN problems p ON pr.problem_rowid=p.id
+     WHERE pr.username=? AND pr.status='solved' AND p.tags != '[]'`,
+    [u],
   );
   const uniqueTags = new Set();
-  for (const r of tagCount) {
+  for (const r of tagRows) {
     try {
       JSON.parse(r.tags).forEach((t) => uniqueTags.add(t));
     } catch {}
   }
-  if (uniqueTags.size >= 10) {
-    await run(
-      `UPDATE achievements SET progress=?, unlocked_at=CASE WHEN ?>=10 AND unlocked_at IS NULL THEN ? ELSE unlocked_at END WHERE id='tag_master'`,
-      [Math.min(uniqueTags.size, 10), uniqueTags.size, now],
-    );
-  }
+  if (uniqueTags.size) await award("tag_master", uniqueTags.size, 10);
 
-  // Daily warrior
-  const completedDailies =
-    (await get(`SELECT COUNT(*) as c FROM daily_challenges WHERE completed=1`))
-      ?.c || 0;
-  if (completedDailies >= 7) {
-    await run(
-      `UPDATE achievements SET progress=?, unlocked_at=CASE WHEN ?>=7 AND unlocked_at IS NULL THEN ? ELSE unlocked_at END WHERE id='daily_warrior'`,
-      [Math.min(completedDailies, 7), completedDailies, now],
-    );
-  }
-
-  // Check & complete daily challenges
+  // Today's daily challenge → per-user completion + bonus XP
   const dailyChallenge = await get(
-    `SELECT * FROM daily_challenges WHERE date=? AND problem_rowid=? AND completed=0`,
-    [today, problemId],
+    `SELECT dc.* FROM daily_challenges dc
+     LEFT JOIN user_daily_challenges udc ON udc.challenge_id = dc.id AND udc.username = ?
+     WHERE dc.date=? AND dc.problem_rowid=? AND udc.challenge_id IS NULL`,
+    [u, today, problemId],
   );
   if (dailyChallenge) {
     await run(
-      `UPDATE daily_challenges SET completed=1, completed_at=? WHERE id=?`,
-      [now, dailyChallenge.id],
+      "INSERT OR IGNORE INTO user_daily_challenges(username, challenge_id, completed_at) VALUES(?,?,?)",
+      [u, dailyChallenge.id, now],
     );
-    // Bonus XP for daily
     await run(
-      `UPDATE progress SET xp_earned=xp_earned+? WHERE problem_rowid=?`,
-      [dailyChallenge.bonus_xp, problemId],
+      "UPDATE progress SET xp_earned=xp_earned+? WHERE username=? AND problem_rowid=?",
+      [dailyChallenge.bonus_xp, u, problemId],
     );
   }
+  const completedDailies =
+    (await get("SELECT COUNT(*) as c FROM user_daily_challenges WHERE username=?", [u]))?.c || 0;
+  if (completedDailies) await award("daily_warrior", completedDailies, 7);
 
   // Rating achievements
-  if (prob && prob.rating >= 1000)
-    await run(
-      `UPDATE achievements SET progress=1, unlocked_at=COALESCE(unlocked_at,?) WHERE id='rating_1000'`,
-      [now],
-    );
-  if (prob && prob.rating >= 1400)
-    await run(
-      `UPDATE achievements SET progress=1, unlocked_at=COALESCE(unlocked_at,?) WHERE id='rating_1400'`,
-      [now],
-    );
-  if (prob && prob.rating >= 1800)
-    await run(
-      `UPDATE achievements SET progress=1, unlocked_at=COALESCE(unlocked_at,?) WHERE id='rating_1800'`,
-      [now],
-    );
-  if (prob && prob.rating >= 2100)
-    await run(
-      `UPDATE achievements SET progress=1, unlocked_at=COALESCE(unlocked_at,?) WHERE id='rating_2100'`,
-      [now],
-    );
-
-  // Both platforms
-  const cfSolved = await get(
-    "SELECT COUNT(*) as c FROM progress pr JOIN problems p ON pr.problem_rowid=p.id WHERE pr.status='solved' AND p.platform='codeforces'",
-  );
-  const ccSolved = await get(
-    "SELECT COUNT(*) as c FROM progress pr JOIN problems p ON pr.problem_rowid=p.id WHERE pr.status='solved' AND p.platform='codechef'",
-  );
-  if (cfSolved.c > 0 && ccSolved.c > 0) {
-    await run(
-      `UPDATE achievements SET progress=2, unlocked_at=COALESCE(unlocked_at,?) WHERE id='both_platforms'`,
-      [now],
-    );
+  for (const r of [1000, 1400, 1800, 2100]) {
+    if (prob && prob.rating >= r) await award(`rating_${r}`, 1, 1);
   }
 
-  // Streak
-  const { current } = await calcStreak();
-  if (current >= 3)
-    await run(
-      `UPDATE achievements SET progress=?, unlocked_at=COALESCE(unlocked_at,?) WHERE id='streak_3'`,
-      [Math.min(current, 3), now],
-    );
-  if (current >= 7)
-    await run(
-      `UPDATE achievements SET progress=?, unlocked_at=COALESCE(unlocked_at,?) WHERE id='streak_7'`,
-      [Math.min(current, 7), now],
-    );
-  if (current >= 30)
-    await run(
-      `UPDATE achievements SET progress=?, unlocked_at=COALESCE(unlocked_at,?) WHERE id='streak_30'`,
-      [Math.min(current, 30), now],
-    );
+  // Both platforms
+  const plat = await all(
+    `SELECT p.platform, COUNT(*) as c FROM progress pr JOIN problems p ON pr.problem_rowid=p.id
+     WHERE pr.username=? AND pr.status='solved' AND p.platform IN ('codeforces','codechef')
+     GROUP BY p.platform`,
+    [u],
+  );
+  if (plat.length === 2) await award("both_platforms", 2, 2);
+
+  // Streaks
+  const { current } = await calcStreak(u);
+  for (const t of [3, 7, 30]) if (current >= 1) await award(`streak_${t}`, current, t);
 }
 
 function getPlayerTitle(xp, solvedCount = 0) {
@@ -2241,8 +2216,11 @@ async function getDailyChallenges() {
 
   // Check if today's challenges exist
   const existing = await all(
-    `SELECT dc.*, p.title, p.problem_id, p.platform, p.rating, p.url, p.tags
+      `SELECT dc.id, dc.date, dc.problem_rowid, dc.difficulty, dc.bonus_xp,
+      CASE WHEN udc.challenge_id IS NULL THEN 0 ELSE 1 END AS completed, udc.completed_at,
+      p.title, p.problem_id, p.platform, p.rating, p.url, p.tags
     FROM daily_challenges dc JOIN problems p ON dc.problem_rowid=p.id
+    LEFT JOIN user_daily_challenges udc ON udc.challenge_id = dc.id AND udc.username = ${meSql()}
     WHERE dc.date=? ORDER BY dc.difficulty`,
     [today],
   );
@@ -2259,10 +2237,9 @@ async function getDailyChallenges() {
   const challenges = [];
   for (const diff of difficulties) {
     const prob = await get(
+      // Same three picks for everyone each day (a shared daily challenge).
       `SELECT p.* FROM problems p
-       LEFT JOIN progress pr ON pr.problem_rowid = p.id
        WHERE p.rating >= ? AND p.rating <= ? AND p.rating > 0
-       AND (pr.status IS NULL OR pr.status != 'solved')
        ORDER BY RANDOM() LIMIT 1`,
       [diff.minR, diff.maxR],
     );
@@ -2285,9 +2262,12 @@ async function getDailyChallenges() {
   // Return fresh or combined
   if (challenges.length) {
     return await all(
-      `SELECT dc.*, p.title, p.problem_id, p.platform, p.rating, p.url, p.tags
-      FROM daily_challenges dc JOIN problems p ON dc.problem_rowid=p.id
-      WHERE dc.date=? ORDER BY dc.difficulty`,
+      `SELECT dc.id, dc.date, dc.problem_rowid, dc.difficulty, dc.bonus_xp,
+      CASE WHEN udc.challenge_id IS NULL THEN 0 ELSE 1 END AS completed, udc.completed_at,
+      p.title, p.problem_id, p.platform, p.rating, p.url, p.tags
+    FROM daily_challenges dc JOIN problems p ON dc.problem_rowid=p.id
+    LEFT JOIN user_daily_challenges udc ON udc.challenge_id = dc.id AND udc.username = ${meSql()}
+    WHERE dc.date=? ORDER BY dc.difficulty`,
       [today],
     );
   }
@@ -2309,13 +2289,11 @@ app.post("/api/ai-battle/start", async (req, res) => {
     else if (r < 1800) baseTime = 900000 + Math.random() * 1500000;
     else baseTime = 1200000 + Math.random() * 2400000;
     const aiTime = Math.round(baseTime * (0.7 + Math.random() * 0.6));
-    await run(
-      "INSERT INTO ai_battles(problem_rowid, ai_time_ms, played_at) VALUES(?,?,?)",
-      [problem_id, aiTime, new Date().toISOString()],
+    const ins = await run(
+      "INSERT INTO ai_battles(username, problem_rowid, ai_time_ms, played_at) VALUES(?,?,?,?)",
+      [me(), problem_id, aiTime, new Date().toISOString()],
     );
-    const battle = await get(
-      "SELECT * FROM ai_battles ORDER BY id DESC LIMIT 1",
-    );
+    const battle = { id: ins.lastID };
     res.json({ ok: true, battleId: battle.id, aiTimeMs: aiTime, rating: r });
   } catch (e) {
     res.status(500).json({ ok: false, error: e.message });
@@ -2325,8 +2303,8 @@ app.post("/api/ai-battle/complete", async (req, res) => {
   try {
     const { battleId, playerTimeMs, won } = req.body;
     await run(
-      "UPDATE ai_battles SET player_time_ms=?, player_won=? WHERE id=?",
-      [playerTimeMs, won ? 1 : 0, battleId],
+      "UPDATE ai_battles SET player_time_ms=?, player_won=? WHERE id=? AND username=?",
+      [playerTimeMs, won ? 1 : 0, battleId, me()],
     );
     res.json({ ok: true });
   } catch (e) {
@@ -2336,12 +2314,12 @@ app.post("/api/ai-battle/complete", async (req, res) => {
 app.get("/api/ai-battles/:problemId", async (req, res) => {
   try {
     const battles = await all(
-      "SELECT * FROM ai_battles WHERE problem_rowid=? ORDER BY played_at DESC LIMIT 10",
-      [req.params.problemId],
+      "SELECT * FROM ai_battles WHERE username=? AND problem_rowid=? ORDER BY played_at DESC LIMIT 10",
+      [me(), req.params.problemId],
     );
     const stats = await get(
-      "SELECT COUNT(*) as total, SUM(player_won) as wins FROM ai_battles WHERE problem_rowid=?",
-      [req.params.problemId],
+      "SELECT COUNT(*) as total, SUM(player_won) as wins FROM ai_battles WHERE username=? AND problem_rowid=?",
+      [me(), req.params.problemId],
     );
     res.json({
       ok: true,
@@ -2358,8 +2336,8 @@ app.get("/api/ai-battles/:problemId", async (req, res) => {
 app.get("/api/decomposition/:problemId", async (req, res) => {
   try {
     const note = await get(
-      "SELECT * FROM decomposition_notes WHERE problem_rowid=?",
-      [req.params.problemId],
+      "SELECT * FROM decomposition_notes WHERE username=? AND problem_rowid=?",
+      [me(), req.params.problemId],
     );
     res.json({
       ok: true,
@@ -2386,11 +2364,12 @@ app.post("/api/decomposition", async (req, res) => {
       edge_cases,
     } = req.body;
     await run(
-      `INSERT INTO decomposition_notes(problem_rowid, approach, brute_force, optimization, data_structures, edge_cases, updated_at)
-      VALUES(?,?,?,?,?,?,?) ON CONFLICT(problem_rowid) DO UPDATE SET
+      `INSERT INTO decomposition_notes(username, problem_rowid, approach, brute_force, optimization, data_structures, edge_cases, updated_at)
+      VALUES(?,?,?,?,?,?,?,?) ON CONFLICT(username, problem_rowid) DO UPDATE SET
       approach=excluded.approach, brute_force=excluded.brute_force, optimization=excluded.optimization,
       data_structures=excluded.data_structures, edge_cases=excluded.edge_cases, updated_at=excluded.updated_at`,
       [
+        me(),
         problem_id,
         approach || "",
         brute_force || "",
@@ -2410,9 +2389,13 @@ app.post("/api/decomposition", async (req, res) => {
 app.post("/api/code-replay", async (req, res) => {
   try {
     const { submission_id, events, duration_ms } = req.body;
+    // Only attach replays to your own submissions.
+    const own = await get("SELECT id FROM submissions WHERE id=? AND username=?", [submission_id, me()]);
+    if (!own) return res.status(403).json({ ok: false, error: "Not your submission" });
     await run(
-      "INSERT INTO code_replays(submission_id, events, duration_ms, created_at) VALUES(?,?,?,?)",
+      "INSERT INTO code_replays(username, submission_id, events, duration_ms, created_at) VALUES(?,?,?,?,?)",
       [
+        me(),
         submission_id,
         JSON.stringify(events),
         duration_ms || 0,
@@ -2427,8 +2410,8 @@ app.post("/api/code-replay", async (req, res) => {
 app.get("/api/code-replay/:submissionId", async (req, res) => {
   try {
     const replay = await get(
-      "SELECT * FROM code_replays WHERE submission_id=?",
-      [req.params.submissionId],
+      "SELECT * FROM code_replays WHERE submission_id=? AND username=?",
+      [req.params.submissionId, me()],
     );
     if (!replay) return res.json({ ok: false, error: "No replay" });
     res.json({
@@ -2447,11 +2430,11 @@ app.get("/api/performance", async (req, res) => {
       /* ── Batch core counts into single query ── */
       const counts = await get(`SELECT
       (SELECT COUNT(*) FROM problems) as total,
-      (SELECT COUNT(*) FROM progress WHERE status='solved') as solved,
-      (SELECT COUNT(*) FROM progress WHERE status='attempted') as attempted,
-      (SELECT COALESCE(SUM(xp_earned),0) FROM progress) as totalXp,
-      (SELECT COUNT(*) FROM submissions) as submissions,
-      (SELECT COUNT(*) FROM submissions WHERE verdict='AC') as acCount`);
+      (SELECT COUNT(*) FROM progress WHERE username=${meSql()} AND status='solved') as solved,
+      (SELECT COUNT(*) FROM progress WHERE username=${meSql()} AND status='attempted') as attempted,
+      (SELECT COALESCE(SUM(xp_earned),0) FROM progress WHERE username=${meSql()}) as totalXp,
+      (SELECT COUNT(*) FROM submissions WHERE username=${meSql()}) as submissions,
+      (SELECT COUNT(*) FROM submissions WHERE username=${meSql()} AND verdict='AC') as acCount`);
       const { total, solved, attempted, totalXp, submissions, acCount } =
         counts;
       const accuracy =
@@ -2484,20 +2467,19 @@ app.get("/api/performance", async (req, res) => {
           WHEN p.rating<1400 THEN 'Specialist' WHEN p.rating<1600 THEN 'Expert'
           WHEN p.rating<1900 THEN 'Candidate Master' WHEN p.rating<2100 THEN 'Master'
           ELSE 'Grandmaster' END as tier,
-        COUNT(*) as count FROM progress pr JOIN problems p ON pr.problem_rowid=p.id
+        COUNT(*) as count FROM progress pr JOIN problems p ON pr.problem_rowid=p.id AND pr.username=${meSql()}
         WHERE pr.status='solved' GROUP BY tier ORDER BY MIN(p.rating)`),
         all(`SELECT p.platform, COUNT(*) as count
-        FROM progress pr JOIN problems p ON pr.problem_rowid=p.id WHERE pr.status='solved' GROUP BY p.platform`),
+        FROM progress pr JOIN problems p ON pr.problem_rowid=p.id AND pr.username=${meSql()} WHERE pr.status='solved' GROUP BY p.platform`),
         all(
-          `SELECT verdict, COUNT(*) as count FROM submissions GROUP BY verdict`,
+          `SELECT verdict, COUNT(*) as count FROM submissions WHERE username=${meSql()} GROUP BY verdict`,
         ),
-        all(`SELECT date, problems_solved, xp_earned FROM daily_activity
-        WHERE date >= date('now','-365 days') ORDER BY date`),
+        all(`SELECT date, problems_solved, xp_earned FROM daily_activity WHERE username=${meSql()} AND date >= date('now','-365 days') ORDER BY date`),
         all(`SELECT s.id, s.verdict, s.exec_time_ms, s.memory_kb, s.submitted_at, s.language,
         p.title, p.problem_id, p.platform, p.rating, p.tags
-        FROM submissions s JOIN problems p ON s.problem_rowid=p.id ORDER BY s.submitted_at DESC LIMIT 20`),
+        FROM submissions s JOIN problems p ON s.problem_rowid=p.id AND s.username=${meSql()} ORDER BY s.submitted_at DESC LIMIT 20`),
         all(`SELECT p.rating, pr.solved_at as date
-        FROM progress pr JOIN problems p ON pr.problem_rowid=p.id
+        FROM progress pr JOIN problems p ON pr.problem_rowid=p.id AND pr.username=${meSql()}
         WHERE pr.status='solved' AND p.rating > 0 AND pr.solved_at IS NOT NULL
         ORDER BY pr.solved_at ASC`),
         all(`SELECT
@@ -2509,39 +2491,38 @@ app.get("/api/performance", async (req, res) => {
         ROUND(AVG(pr.attempts),1) as avgAttempts,
         COUNT(*) as count,
         ROUND(AVG(pr.time_spent)/60.0,1) as avgMinutes
-        FROM progress pr JOIN problems p ON pr.problem_rowid=p.id
+        FROM progress pr JOIN problems p ON pr.problem_rowid=p.id AND pr.username=${meSql()}
         WHERE pr.status='solved' AND p.rating>0
         GROUP BY bracket ORDER BY MIN(p.rating)`),
         all(`SELECT language, COUNT(*) as count,
         SUM(CASE WHEN verdict='AC' THEN 1 ELSE 0 END) as acCount
-        FROM submissions GROUP BY language ORDER BY count DESC`),
+        FROM submissions WHERE username=${meSql()} GROUP BY language ORDER BY count DESC`),
         all(`SELECT
         strftime('%Y-W%W', date) as week,
         SUM(problems_solved) as solved,
         SUM(xp_earned) as xp,
         COUNT(*) as activeDays
-        FROM daily_activity
-        WHERE date >= date('now','-84 days')
+        FROM daily_activity WHERE username=${meSql()} AND date >= date('now','-84 days')
         GROUP BY week ORDER BY week`),
         all(
-          "SELECT p.tags, p.rating FROM progress pr JOIN problems p ON pr.problem_rowid=p.id WHERE pr.status='solved' AND p.tags!='[]'",
+          `SELECT p.tags, p.rating FROM progress pr JOIN problems p ON pr.problem_rowid=p.id AND pr.username=${meSql()} WHERE pr.status='solved' AND p.tags!='[]'`,
         ),
         all(
-          "SELECT p.tags FROM progress pr JOIN problems p ON pr.problem_rowid=p.id WHERE pr.status='attempted' AND p.tags!='[]'",
+          `SELECT p.tags FROM progress pr JOIN problems p ON pr.problem_rowid=p.id AND pr.username=${meSql()} WHERE pr.status='attempted' AND p.tags!='[]'`,
         ),
         all(`SELECT
         CAST(strftime('%H', submitted_at) AS INTEGER) as hour,
         COUNT(*) as total,
         SUM(CASE WHEN verdict='AC' THEN 1 ELSE 0 END) as ac
-        FROM submissions WHERE submitted_at IS NOT NULL
+        FROM submissions WHERE username=${meSql()} AND submitted_at IS NOT NULL
         GROUP BY hour ORDER BY hour`),
         all(`SELECT p.id, p.title, p.problem_id, p.platform, p.rating, pr.attempts, pr.solved_at
-        FROM progress pr JOIN problems p ON pr.problem_rowid=p.id
+        FROM progress pr JOIN problems p ON pr.problem_rowid=p.id AND pr.username=${meSql()}
         WHERE pr.status='solved' AND p.rating>0
         ORDER BY p.rating DESC LIMIT 5`),
         all(`SELECT p.id, p.title, p.problem_id, p.platform, p.rating,
         pr.attempts, pr.status as solve_status
-        FROM progress pr JOIN problems p ON pr.problem_rowid=p.id
+        FROM progress pr JOIN problems p ON pr.problem_rowid=p.id AND pr.username=${meSql()}
         WHERE pr.attempts >= 2
         ORDER BY pr.attempts DESC LIMIT 5`),
         all(`SELECT
@@ -2553,12 +2534,12 @@ app.get("/api/performance", async (req, res) => {
           ELSE '2800+' END as bracket,
         MIN(pr.solved_at) as firstDate,
         p.title as firstTitle
-        FROM progress pr JOIN problems p ON pr.problem_rowid=p.id
+        FROM progress pr JOIN problems p ON pr.problem_rowid=p.id AND pr.username=${meSql()}
         WHERE pr.status='solved' AND p.rating>0 AND pr.solved_at IS NOT NULL
         GROUP BY bracket ORDER BY MIN(p.rating)`),
         get(
           `SELECT COALESCE(problems_solved,0) as solved, COALESCE(problems_attempted,0) as attempted,
-        COALESCE(xp_earned,0) as xp FROM daily_activity WHERE date=?`,
+        COALESCE(xp_earned,0) as xp FROM daily_activity WHERE username=${meSql()} AND date=?`,
           [today],
         ),
       ]);
@@ -2622,7 +2603,7 @@ app.get("/api/performance", async (req, res) => {
       for (const wt of weakTags) {
         const probs = await all(
           `SELECT p.id, p.title, p.problem_id, p.platform, p.rating, COALESCE(pr.status,'unsolved') as solve_status
-        FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id
+        FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id AND pr.username=${meSql()}
         WHERE p.tags LIKE ? AND (pr.status IS NULL OR pr.status!='solved') AND p.rating>0
         ORDER BY p.rating ASC LIMIT 5`,
           [`%${wt.tag}%`],
@@ -2720,10 +2701,10 @@ app.get("/api/performance", async (req, res) => {
 app.get("/api/weakness-analysis", async (req, res) => {
   try {
     const solved = await all(
-      "SELECT p.tags FROM progress pr JOIN problems p ON pr.problem_rowid=p.id WHERE pr.status='solved' AND p.tags!='[]'",
+      `SELECT p.tags FROM progress pr JOIN problems p ON pr.problem_rowid=p.id AND pr.username=${meSql()} WHERE pr.status='solved' AND p.tags!='[]'`,
     );
     const attempted = await all(
-      "SELECT p.tags FROM progress pr JOIN problems p ON pr.problem_rowid=p.id WHERE pr.status='attempted' AND p.tags!='[]'",
+      `SELECT p.tags FROM progress pr JOIN problems p ON pr.problem_rowid=p.id AND pr.username=${meSql()} WHERE pr.status='attempted' AND p.tags!='[]'`,
     );
     const tagStats = {};
     for (const r of solved) {
@@ -2762,7 +2743,7 @@ app.get("/api/weakness-analysis", async (req, res) => {
     for (const wt of weakTags) {
       const probs = await all(
         `SELECT p.id, p.title, p.problem_id, p.platform, p.rating, COALESCE(pr.status,'unsolved') as solve_status
-        FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id
+        FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id AND pr.username=${meSql()}
         WHERE p.tags LIKE ? AND (pr.status IS NULL OR pr.status!='solved') AND p.rating>0
         ORDER BY p.rating ASC LIMIT 5`,
         [`%${wt.tag}%`],
@@ -3456,10 +3437,10 @@ const ZONE_NAMES = [
 app.get("/api/nexus", async (req, res) => {
   try {
     const totalXp = (
-      await get("SELECT COALESCE(SUM(xp_earned),0) as s FROM progress")
+      await get(`SELECT COALESCE(SUM(xp_earned),0) as s FROM progress WHERE username=${meSql()}`)
     ).s;
     const totalSolved = (
-      await get("SELECT COUNT(*) as c FROM progress WHERE status='solved'")
+      await get(`SELECT COUNT(*) as c FROM progress WHERE username=${meSql()} AND status='solved'`)
     ).c;
     const playerLevel = calcLevel(totalXp, totalSolved);
 
@@ -3471,7 +3452,7 @@ app.get("/api/nexus", async (req, res) => {
         const cond = skill.tags.map(() => "p.tags LIKE ?").join(" OR ");
         const params = skill.tags.map((t) => `%${t}%`);
         const r = await get(
-          `SELECT COUNT(DISTINCT pr.problem_rowid) as c FROM progress pr JOIN problems p ON pr.problem_rowid=p.id WHERE pr.status='solved' AND (${cond})`,
+          `SELECT COUNT(DISTINCT pr.problem_rowid) as c FROM progress pr JOIN problems p ON pr.problem_rowid=p.id AND pr.username=${meSql()} WHERE pr.status='solved' AND (${cond})`,
           params,
         );
         solvedCount = r?.c || 0;
@@ -3479,7 +3460,7 @@ app.get("/api/nexus", async (req, res) => {
         solvedCount =
           (
             await get(
-              "SELECT COUNT(*) as c FROM progress WHERE status='solved'",
+              `SELECT COUNT(*) as c FROM progress WHERE username=${meSql()} AND status='solved'`,
             )
           )?.c || 0;
       }
@@ -4252,10 +4233,10 @@ function seededShuffle(arr, seed) {
 app.get("/api/level-roadmap", async (req, res) => {
   try {
     const totalXp = (
-      await get("SELECT COALESCE(SUM(xp_earned),0) as s FROM progress")
+      await get(`SELECT COALESCE(SUM(xp_earned),0) as s FROM progress WHERE username=${meSql()}`)
     ).s;
     const totalSolved = (
-      await get("SELECT COUNT(*) as c FROM progress WHERE status='solved'")
+      await get(`SELECT COUNT(*) as c FROM progress WHERE username=${meSql()} AND status='solved'`)
     ).c;
     const playerLevel = calcLevel(totalXp, totalSolved);
     const weekSeed = Math.floor(Date.now() / (7 * 24 * 60 * 60 * 1000));
@@ -4279,7 +4260,7 @@ app.get("/api/level-roadmap", async (req, res) => {
             COALESCE(pr.status,'unsolved') as solve_status,
             COALESCE(pr.attempts,0) as attempts
           FROM problems p
-          LEFT JOIN progress pr ON pr.problem_rowid = p.id
+          LEFT JOIN progress pr ON pr.problem_rowid = p.id AND pr.username=${meSql()}
           WHERE (${tagCond})
             AND p.rating >= ? AND p.rating <= ?
             AND p.rating > 0
@@ -4345,17 +4326,17 @@ app.get("/api/level-roadmap", async (req, res) => {
 app.get("/api/roadmap", async (req, res) => {
   try {
     const totalXp = (
-      await get("SELECT COALESCE(SUM(xp_earned),0) as s FROM progress")
+      await get("SELECT COALESCE(SUM(xp_earned),0) as s FROM progress WHERE username=?", [me()])
     ).s;
     const totalSolved = (
-      await get("SELECT COUNT(*) as c FROM progress WHERE status='solved'")
+      await get("SELECT COUNT(*) as c FROM progress WHERE username=? AND status='solved'", [me()])
     ).c;
     const playerLevel = calcLevel(totalXp, totalSolved);
     const result = [];
     for (const rl of RIFT_LEVELS) {
       const problems = await all(
         `SELECT p.*, COALESCE(pr.status,'unsolved') as solve_status
-        FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id
+        FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id AND pr.username=${meSql()}
         WHERE p.rating >= ? AND p.rating <= ? AND p.rating > 0
         ORDER BY p.rating ASC, RANDOM() LIMIT 30`,
         [rl.minR, rl.maxR],
@@ -4403,7 +4384,7 @@ app.get("/api/skill-tree", async (req, res) => {
         const cond = skill.tags.map(() => "p.tags LIKE ?").join(" OR ");
         const params = skill.tags.map((t) => `%${t}%`);
         const r = await get(
-          `SELECT COUNT(DISTINCT pr.problem_rowid) as c FROM progress pr JOIN problems p ON pr.problem_rowid=p.id WHERE pr.status='solved' AND (${cond})`,
+          `SELECT COUNT(DISTINCT pr.problem_rowid) as c FROM progress pr JOIN problems p ON pr.problem_rowid=p.id AND pr.username=${meSql()} WHERE pr.status='solved' AND (${cond})`,
           params,
         );
         solvedCount = r?.c || 0;
@@ -4411,7 +4392,7 @@ app.get("/api/skill-tree", async (req, res) => {
         solvedCount =
           (
             await get(
-              "SELECT COUNT(*) as c FROM progress WHERE status='solved'",
+              `SELECT COUNT(*) as c FROM progress WHERE username=${meSql()} AND status='solved'`,
             )
           )?.c || 0;
       }
@@ -4462,7 +4443,7 @@ app.get("/api/skill-tree/:nodeId/problems", async (req, res) => {
         COALESCE(pr.status,'unsolved') as solve_status,
         pr.solved_at
       FROM problems p
-      LEFT JOIN progress pr ON pr.problem_rowid = p.id
+      LEFT JOIN progress pr ON pr.problem_rowid = p.id AND pr.username=${meSql()}
       WHERE (${tagCond})
         AND p.rating >= ? AND p.rating <= ?
       ORDER BY
@@ -4856,45 +4837,33 @@ app.get("/api/leaderboard", async (req, res) => {
   try {
     const limit = Math.min(parseInt(req.query.limit) || 25, 100);
     const type = req.query.type || "xp"; // xp | solved | streak
-    let rows;
+    // Real per-user totals (progress rows) plus any admin override.
+    const rows = await all(
+      `
+      SELECT u.username, u.display_name, u.avatar, u.avatar_url, u.role, u.created_at,
+        COALESCE(u.xp_override,0) + COALESCE(pg.xp,0) as total_xp,
+        COALESCE(u.solved_override,0) + COALESCE(pg.solved,0) as total_solved,
+        COALESCE(da.active_days,0) as active_days
+      FROM users u
+      LEFT JOIN (SELECT username, SUM(xp_earned) as xp,
+                   SUM(CASE WHEN status='solved' THEN 1 ELSE 0 END) as solved
+                 FROM progress GROUP BY username) pg ON pg.username = u.username
+      LEFT JOIN (SELECT username, COUNT(*) as active_days FROM daily_activity
+                 WHERE problems_solved > 0 GROUP BY username) da ON da.username = u.username
+      WHERE u.username IS NOT NULL
+      ORDER BY ${type === "solved" ? "total_solved DESC, total_xp DESC" : "total_xp DESC, total_solved DESC"}
+      LIMIT ?`,
+      [type === "streak" ? 500 : limit],
+    );
     if (type === "streak") {
-      rows = await all(
-        `
-        SELECT u.username, u.display_name, u.avatar, u.avatar_url, u.role, u.created_at,
-          COALESCE(u.solved_override, 0) as total_solved,
-          COALESCE(u.xp_override, 0) as total_xp,
-          COALESCE(u.solved_override, 0) as best_streak
-        FROM users u
-        WHERE u.username IS NOT NULL
-        ORDER BY best_streak DESC, total_xp DESC
-        LIMIT ?`,
-        [limit],
-      );
-    } else if (type === "solved") {
-      rows = await all(
-        `
-        SELECT u.username, u.display_name, u.avatar, u.avatar_url, u.role, u.created_at,
-          COALESCE(u.solved_override, 0) as total_solved,
-          COALESCE(u.xp_override, 0) as total_xp
-        FROM users u
-        WHERE u.username IS NOT NULL
-        ORDER BY total_solved DESC, total_xp DESC
-        LIMIT ?`,
-        [limit],
-      );
-    } else {
-      // XP-based (default)
-      rows = await all(
-        `
-        SELECT u.username, u.display_name, u.avatar, u.avatar_url, u.role, u.created_at,
-          COALESCE(u.xp_override,0) as total_xp,
-          COALESCE(u.solved_override,0) as total_solved
-        FROM users u
-        WHERE u.username IS NOT NULL
-        ORDER BY total_xp DESC, total_solved DESC
-        LIMIT ?`,
-        [limit],
-      );
+      // Streaks are computed per user from their daily activity.
+      for (const r of rows) {
+        const s = r.active_days > 0 ? await calcStreak(r.username) : { best: 0, current: 0 };
+        r.best_streak = s.best;
+        r.current_streak = s.current;
+      }
+      rows.sort((a, b) => b.best_streak - a.best_streak || b.total_xp - a.total_xp);
+      rows.splice(limit);
     }
     res.json({ ok: true, leaderboard: rows, type });
   } catch (e) {
@@ -5255,17 +5224,17 @@ app.use(
 );
 
 // Initialize ExplainLab database
-initExplainLabDb().catch((e) =>
+const _explainInit = initExplainLabDb().catch((e) =>
   console.error("[ExplainLab] DB init error:", e.message),
 );
 
 // Initialize ForgeBuilder database
-initForgeDb().catch((e) =>
+const _forgeInit = initForgeDb().catch((e) =>
   console.error("[ForgeBuilder] DB init error:", e.message),
 );
 
 // Initialize LiveClass database
-initLiveDb().catch((e) =>
+const _liveInit = initLiveDb().catch((e) =>
   console.error("[LiveClass] DB init error:", e.message),
 );
 
@@ -5603,6 +5572,9 @@ io.on("connection", (socket) => {
 
 (async () => {
   await initDb();
+  await Promise.all([_explainInit, _forgeInit, _liveInit]);
+  // Give every account its own progress/XP/settings (one-time, idempotent).
+  await migratePerUser();
 
   /* ── Global 404 handler (after all routes) ── */
   app.use((req, res) => {

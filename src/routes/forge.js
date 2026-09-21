@@ -94,7 +94,7 @@ function createForgeRouter(deps = {}) {
     }
   });
 
-  router.put('/api/forge/pages/:id', isAdmin, async (req, res) => {
+  router.put('/pages/:id', isAdmin, async (req, res) => {
     try {
       const { title, route, description, layout_type, schema_json, css_json, change_note } = req.body;
       const existing = await get('SELECT * FROM forge_pages WHERE id = ?', [req.params.id]);
@@ -137,7 +137,7 @@ function createForgeRouter(deps = {}) {
     }
   });
 
-  router.delete('/api/forge/pages/:id', isAdmin, async (req, res) => {
+  router.delete('/pages/:id', isAdmin, async (req, res) => {
     try {
       await run('DELETE FROM forge_pages WHERE id = ?', [req.params.id]);
       res.json({ ok: true });

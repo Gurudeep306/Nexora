@@ -422,17 +422,17 @@ function createAuthRouter(deps) {
         return res.status(404).json({ ok: false, error: "User not found" });
 
       const baseSolved =
-        (await get("SELECT COUNT(*) as c FROM progress WHERE status='solved'"))
+        (await get("SELECT COUNT(*) as c FROM progress WHERE username=? AND status='solved'", [user.username]))
           ?.c || 0;
       const baseXp =
-        (await get("SELECT COALESCE(SUM(xp_earned),0) as s FROM progress"))
+        (await get("SELECT COALESCE(SUM(xp_earned),0) as s FROM progress WHERE username=?", [user.username]))
           ?.s || 0;
       const stats = {
         solved: baseSolved + (user.solved_override || 0),
         totalXp: baseXp + (user.xp_override || 0),
       };
       const level = calcLevel(stats.totalXp, stats.solved);
-      const streak = await calcStreak();
+      const streak = await calcStreak(user.username);
 
       let friendStatus = "none";
       const viewer = req.query.viewer;

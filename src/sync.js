@@ -17,8 +17,14 @@ async function fetchCodeforcesProblems() {
 }
 
 async function fetchCodeforcesContests() {
-  const res = await fetch('https://codeforces.com/api/contest.list');
-  const data = await res.json();
+  let data;
+  try {
+    const res = await fetch('https://codeforces.com/api/contest.list', { timeout: 8000 });
+    data = await res.json();
+  } catch (e) {
+    console.error('CF contests error:', e.message);
+    return [];
+  }
   if (data.status !== 'OK') return [];
   return data.result.slice(0, 50).map(c => ({
     platform: 'codeforces',
@@ -91,6 +97,7 @@ async function fetchCodechefContests() {
   try {
     const res = await fetch('https://www.codechef.com/api/list/contests/all', {
       headers: { 'User-Agent': 'Mozilla/5.0', Accept: 'application/json' },
+      timeout: 8000,
     });
     const data = await res.json();
     const mapped = [];

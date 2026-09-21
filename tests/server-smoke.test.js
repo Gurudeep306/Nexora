@@ -5,6 +5,7 @@ const { spawn } = require('node:child_process');
 let serverProc;
 let baseUrl;
 let cookieHeader = '';
+let sessionUsername = '';
 
 async function waitForServer(url, timeoutMs = 20000) {
   const start = Date.now();
@@ -66,6 +67,7 @@ test('manual auth creates a session and blocks unauthenticated profile writes', 
   });
   assert.equal(registerRes.status, 200);
   cookieHeader = registerRes.headers.get('set-cookie')?.split(';')[0] || '';
+  sessionUsername = username;
   assert.ok(cookieHeader.includes('nx.sid='));
 
   const authStatusRes = await fetch(`${baseUrl}/api/auth/status`, {
@@ -95,9 +97,16 @@ test('manual auth creates a session and blocks unauthenticated profile writes', 
 });
 
 test('quick run endpoint still executes code after refactor', async () => {
-  const runRes = await fetch(`${baseUrl}/api/run`, {
+  // Code execution requires an account (see src/middleware/authz.js).
+  const anon = await fetch(`${baseUrl}/api/run`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ language: 'javascript', code: 'console.log(8)', input: '' }),
+  });
+  assert.equal(anon.status, 401);
+  const runRes = await fetch(`${baseUrl}/api/run`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Cookie: cookieHeader },
     body: JSON.stringify({
       language: 'javascript',
       code: 'console.log(8)',
@@ -110,12 +119,13 @@ test('quick run endpoint still executes code after refactor', async () => {
 });
 
 test('message metadata routes are not treated as conversations', async () => {
-  const unread = await fetch(`${baseUrl}/api/messages/unread/ui_check`).then(res => res.json());
+  const auth = { headers: { Cookie: cookieHeader } };
+  const unread = await fetch(`${baseUrl}/api/messages/unread/${encodeURIComponent(sessionUsername)}`, auth).then(res => res.json());
   assert.deepEqual(unread.counts, []);
   assert.equal(unread.total, 0);
   assert.equal(unread.messages, undefined);
 
-  const reactions = await fetch(`${baseUrl}/api/messages/1/reactions`).then(res => res.json());
+  const reactions = await fetch(`${baseUrl}/api/messages/1/reactions`, auth).then(res => res.json());
   assert.deepEqual(reactions.reactions, {});
   assert.equal(reactions.messages, undefined);
 });
