@@ -87,7 +87,8 @@ function _wandboxRunOnce(code, input, lang) {
       code: processedCode,
       compiler: wb.compiler,
       stdin: input || '',
-      'compiler-option-raw': wb.options || '',
+      // Wandbox expects one compiler option per line, not space-separated.
+      'compiler-option-raw': (wb.options || '').split(/\s+/).filter(Boolean).join('\n'),
       'runtime-option-raw': '',
     });
     const start = Date.now();
