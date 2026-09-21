@@ -20,24 +20,8 @@
   --nx-spring:     cubic-bezier(0.34,1.56,0.64,1);
 }
 
-/* ─── NOISE GRAIN OVERLAY ────────────────────────────────────── */
-body::before {
-  content: "";
-  position: fixed; inset: 0;
-  z-index: 9997; pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-  background-size: 300px 300px;
-  opacity: 0.028;
-  mix-blend-mode: overlay;
-  animation: nx-grain 0.45s steps(2) infinite;
-}
-@keyframes nx-grain {
-  0%   { transform: translate(0,0);      }
-  25%  { transform: translate(-2px,1px); }
-  50%  { transform: translate(1px,-2px); }
-  75%  { transform: translate(2px,2px);  }
-  100% { transform: translate(-1px,0);   }
-}
+/* ─── NOISE GRAIN OVERLAY — Disabled for cleaner look ───────── */
+/* body::before { ... } — removed for performance and clarity */
 
 /* ─── PERSPECTIVE STAGE ──────────────────────────────────────── */
 #mainContent { perspective: var(--nx-depth); perspective-origin: 50% 35%; }
@@ -126,41 +110,22 @@ body::before {
 .nx-split-title .char  { display:inline-block; will-change:transform,opacity; }
 .nx-split-title .word  { display:inline-flex; overflow:hidden; }
 
-/* ─── CUSTOM CURSOR ──────────────────────────────────────────── */
-html, body                   { cursor: none !important; }
+/* ─── SIMPLE CUSTOM CURSOR (no animation, no circle) ─────────── */
+/* Use a clean, minimal arrow-style cursor */
+html, body {
+  cursor: default !important;
+}
 .monaco-editor,
 .monaco-editor *,
-.monaco-editor .view-cursor  { cursor: text    !important; }
-input, textarea              { cursor: text    !important; }
-select                       { cursor: default !important; }
+.monaco-editor .view-cursor { cursor: text !important; }
+input, textarea { cursor: text !important; }
+select { cursor: pointer !important; }
+a, button { cursor: pointer !important; }
 
-.nx-cursor-dot {
-  position:fixed; width:8px; height:8px; background:#00d4ff; border-radius:50%;
-  pointer-events:none; z-index:2000001; transform:translate(-50%,-50%); will-change:left,top;
-  box-shadow:0 0 8px #00d4ff,0 0 22px rgba(0,212,255,0.55),0 0 44px rgba(0,212,255,0.2);
-  mix-blend-mode:screen;
-  transition:width .15s,height .15s,background .15s,box-shadow .15s;
-}
-.nx-cursor-dot.nx-dot-hover { width:5px; height:5px; background:#b44aff; box-shadow:0 0 8px #b44aff,0 0 22px rgba(180,74,255,0.6); }
-.nx-cursor-dot.nx-dot-click { width:4px; height:4px; background:#ff2d95; box-shadow:0 0 12px #ff2d95,0 0 30px rgba(255,45,149,0.7); }
-
-.nx-cursor-ring {
-  position:fixed; width:38px; height:38px; border:1.5px solid rgba(0,212,255,0.52);
-  border-radius:50%; pointer-events:none; z-index:2000000;
-  transform:translate(-50%,-50%); will-change:left,top,width,height;
-  box-shadow:0 0 12px rgba(0,212,255,0.07),inset 0 0 10px rgba(0,212,255,0.04);
-  transition:width .28s var(--nx-ease),height .28s var(--nx-ease),border-color .22s,background .22s,box-shadow .22s;
-}
-.nx-cursor-ring.nx-ring-hover {
-  width:58px; height:58px; border-color:rgba(180,74,255,0.75);
-  background:rgba(180,74,255,0.04);
-  box-shadow:0 0 24px rgba(180,74,255,0.18),inset 0 0 14px rgba(180,74,255,0.06);
-}
-.nx-cursor-ring.nx-ring-click {
-  width:28px; height:28px; border-color:rgba(255,45,149,0.9);
-  background:rgba(255,45,149,0.07); box-shadow:0 0 22px rgba(255,45,149,0.45);
-}
-.nx-trail-canvas { position:fixed; inset:0; pointer-events:none; z-index:1999998; }
+/* Hide the animated cursor elements */
+.nx-cursor-dot,
+.nx-cursor-ring,
+.nx-trail-canvas { display: none !important; }
 
 /* ─── PARTICLE BURST ─────────────────────────────────────────── */
 .nx-particle {
@@ -584,32 +549,11 @@ spline-viewer canvas {
   animation: nx-crystal-shimmer 4s ease-in-out infinite;
 }
 
-/* ─── STAT CARD 3D FLOAT IDLE ────────────────────────────────── */
-@keyframes nx-float-3d {
-  0%,100% { transform: translateY(0)   rotateX(0deg)   rotateY(0deg); }
-  25%     { transform: translateY(-4px) rotateX(1deg)  rotateY(-1deg); }
-  75%     { transform: translateY(-6px) rotateX(-1deg) rotateY(1.5deg); }
-}
-/* Only apply when not being tilted by JS */
-.stat-card:not([data-nx-tilt]):not(:hover),
-.hub-module:not([data-nx-tilt]):not(:hover) {
-  animation: nx-float-3d 6s ease-in-out infinite;
-  animation-delay: calc(var(--nx-i, 0) * 0.4s);
-}
+/* ─── STAT CARD 3D FLOAT IDLE — Disabled for stability ───────── */
+/* Removed floating animation for a more stable, professional feel */
 
-/* ─── SCAN LINE OVERLAY (CRT game feel) ─────────────────────── */
-#mainContent::after {
-  content: "";
-  position: fixed; inset: 0;
-  z-index: 9996; pointer-events: none;
-  background: repeating-linear-gradient(
-    to bottom,
-    transparent 0px,
-    transparent 3px,
-    rgba(0,0,0,0.035) 3px,
-    rgba(0,0,0,0.035) 4px
-  );
-}
+/* ─── SCAN LINE OVERLAY — Disabled for cleaner look ─────────── */
+/* Removed CRT scanline effect for a cleaner, more professional appearance */
 
 /* ─── NEON EDGE GLOW (sides of mainContent) ─────────────────── */
 #mainContent {

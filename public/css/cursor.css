@@ -1,0 +1,232 @@
+/* ═══════════════════════════════════════════════════════════
+   Nexora Custom Cursor — Simple, clean, non-distracting
+   A subtle custom cursor that enhances without distracting
+   ═══════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════════
+   CUSTOM CURSOR — Default state
+   Only applied on non-touch devices via JS detection
+   ═══════════════════════════════════════════════════════════ */
+
+/* Main cursor dot */
+.custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
+  z-index: 10000;
+  mix-blend-mode: normal;
+  transition: transform 0.1s ease, opacity 0.15s ease;
+  /* Simple dot cursor */
+}
+
+.custom-cursor-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  background: var(--primary);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Outer ring — subtle hover indicator */
+.custom-cursor-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid var(--primary);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.5;
+  transition: all 0.15s ease;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CURSOR HOVER STATES
+   Applied when hovering over interactive elements
+   ═══════════════════════════════════════════════════════════ */
+
+.custom-cursor.hovering {
+  transform: scale(0.8);
+}
+
+.custom-cursor.hovering .custom-cursor-ring {
+  width: 16px;
+  height: 16px;
+  opacity: 0.8;
+  border-width: 2px;
+}
+
+.custom-cursor.hovering .custom-cursor-dot {
+  width: 4px;
+  height: 4px;
+}
+
+/* Clicking state */
+.custom-cursor.clicking {
+  transform: scale(0.7);
+}
+
+.custom-cursor.clicking .custom-cursor-ring {
+  width: 14px;
+  height: 14px;
+  opacity: 1;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CURSOR TEXT SELECTION STATE
+   When selecting text, use normal cursor
+   ═══════════════════════════════════════════════════════════ */
+
+.custom-cursor.selecting {
+  opacity: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ELEMENTS THAT SHOULD USE DEFAULT CURSOR
+   The custom cursor should NOT apply to these
+   ═══════════════════════════════════════════════════════════ */
+
+/* Form elements */
+input,
+textarea,
+select,
+[contenteditable="true"] {
+  cursor: text !important;
+}
+
+/* Code editors (Monaco) */
+.monaco-editor,
+.monaco-editor .margin,
+.monaco-editor .lines-content {
+  cursor: text !important;
+}
+
+/* Canvas elements (whiteboard, drawings) */
+canvas {
+  cursor: crosshair !important;
+}
+
+canvas.drawing-canvas {
+  cursor: crosshair !important;
+}
+
+/* Resize handles */
+.resize-handle,
+.ui-resizable-handle {
+  cursor: default !important;
+}
+
+/* Drag handles */
+.drag-handle {
+  cursor: grab !important;
+}
+
+.drag-handle:active {
+  cursor: grabbing !important;
+}
+
+/* Links */
+a,
+a:hover {
+  cursor: pointer;
+}
+
+/* Buttons */
+button,
+.btn {
+  cursor: pointer;
+}
+
+/* Disabled elements */
+button:disabled,
+.btn:disabled,
+input:disabled,
+textarea:disabled,
+select:disabled {
+  cursor: not-allowed !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TOUCH DEVICE — Disable custom cursor
+   ═══════════════════════════════════════════════════════════ */
+
+@media (pointer: coarse) {
+  .custom-cursor {
+    display: none !important;
+  }
+}
+
+@media (hover: none) {
+  .custom-cursor {
+    display: none !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   REDUCED MOTION — Disable cursor animations
+   ═══════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .custom-cursor {
+    transition: none !important;
+  }
+
+  .custom-cursor-ring {
+    transition: none !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CURSOR DISABLED STATE
+   When user turns off custom cursor in settings
+   ═══════════════════════════════════════════════════════════ */
+
+body.cursor-disabled .custom-cursor {
+  display: none !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CURSOR INITIALIZATION
+   Hidden by default, shown via JS when ready
+   ═══════════════════════════════════════════════════════════ */
+
+.custom-cursor {
+  opacity: 0;
+}
+
+.custom-cursor.active {
+  opacity: 1;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CURSOR OVER DARK BACKGROUNDS
+   Invert color for better visibility
+   ═══════════════════════════════════════════════════════════ */
+
+.custom-cursor.light-mode {
+  /* Default — works on light backgrounds */
+}
+
+.custom-cursor.light-mode .custom-cursor-dot {
+  background: var(--primary);
+}
+
+.custom-cursor.light-mode .custom-cursor-ring {
+  border-color: var(--primary);
+}
+
+/* Dark mode variant — handled by JS based on background */
+.custom-cursor.dark-bg .custom-cursor-dot {
+  background: #ffffff;
+}
+
+.custom-cursor.dark-bg .custom-cursor-ring {
+  border-color: rgba(255, 255, 255, 0.6);
+}

@@ -1,0 +1,392 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   NEXORA SIDEBAR v2 — "Floating Aurora Dock"
+   A from-scratch reimagining: an inset, floating, rounded icon-rail that
+   expands on hover (or when pinned). Collapsed by default → minimal & fast.
+   Fully overrides the previous neo-sidebar look. Loads LAST.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  --dock-w: 74px;          /* collapsed rail width */
+  --dock-w-open: 252px;    /* expanded width */
+  --dock-inset: 12px;      /* float margin from the viewport edge */
+  --dock-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --dock-accent: #8400ff;
+  --dock-accent-2: #c77dff;
+}
+
+/* ── The dock shell ─────────────────────────────────────────────────────── */
+#neo-sidebar {
+  position: fixed !important;
+  left: var(--dock-inset) !important;
+  top: var(--dock-inset) !important;
+  bottom: var(--dock-inset) !important;
+  height: auto !important;
+  width: var(--dock-w) !important;
+  padding: 14px 11px !important;
+  gap: 4px !important;
+  border-radius: 22px !important;
+  background:
+    radial-gradient(120% 80% at 50% 0%, rgba(132, 0, 255, 0.12), transparent 60%),
+    rgba(12, 9, 20, 0.82) !important;
+  border: 1px solid rgba(132, 0, 255, 0.16) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  backdrop-filter: blur(16px) !important;
+  box-shadow:
+    0 24px 60px -20px rgba(0, 0, 0, 0.75),
+    0 0 0 1px rgba(255, 255, 255, 0.02) inset !important;
+  overflow: hidden !important;
+  z-index: 500 !important;
+  transition: width 0.34s var(--dock-ease), box-shadow 0.34s ease !important;
+  will-change: width;
+}
+/* Expand on hover, or when pinned */
+#neo-sidebar:hover,
+body.dock-pinned #neo-sidebar {
+  width: var(--dock-w-open) !important;
+  box-shadow:
+    0 30px 80px -24px rgba(0, 0, 0, 0.85),
+    0 0 50px -20px rgba(132, 0, 255, 0.45) !important;
+}
+/* keep contents from wrapping during the width animation */
+#neo-sidebar * { min-width: 0; }
+
+/* Scrollbar — thin, only when content overflows on hover */
+#neo-sidebar { overflow-y: hidden !important; }
+#neo-sidebar:hover, body.dock-pinned #neo-sidebar { overflow-y: auto !important; }
+#neo-sidebar::-webkit-scrollbar { width: 5px; }
+#neo-sidebar::-webkit-scrollbar-thumb { background: rgba(132,0,255,0.4); border-radius: 99px; }
+
+/* Content sits beside the collapsed rail (no reflow on expand → smooth + fast) */
+body:has(#neo-sidebar) main,
+body:has(#neo-sidebar) #mainContent,
+body:has(#neo-sidebar) .main-content,
+body:has(#neo-sidebar) .app-content,
+body:has(#neo-sidebar) main.studio-main {
+  margin-left: calc(var(--dock-w) + var(--dock-inset) + 6px) !important;
+  transition: margin-left 0.34s var(--dock-ease) !important;
+}
+
+/* ── Header: logo + pin ─────────────────────────────────────────────────── */
+.neo-sidebar-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 10px !important;
+  padding: 4px 6px 10px !important;
+  margin-bottom: 6px !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  flex-direction: row !important;
+}
+.neo-logo-wrapper { gap: 11px !important; }
+.neo-logo-icon {
+  width: 42px !important; height: 42px !important;
+  border-radius: 13px !important;
+  background: linear-gradient(135deg, #8400ff, #c77dff) !important;
+  box-shadow: 0 6px 18px -4px rgba(132, 0, 255, 0.6) !important;
+  font-size: 19px !important;
+  flex-shrink: 0;
+}
+.neo-logo-text {
+  background: linear-gradient(120deg, #ffffff, #c77dff) !important;
+  -webkit-background-clip: text !important; background-clip: text !important;
+  font-size: 17px !important; letter-spacing: 0.04em;
+}
+/* the old "→" toggle becomes a PIN button */
+.neo-sidebar-toggle {
+  margin-left: auto;
+  width: 28px !important; height: 28px !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-radius: 9px !important;
+  color: var(--dock-accent-2) !important;
+}
+body.dock-pinned .neo-sidebar-toggle {
+  background: rgba(132, 0, 255, 0.25) !important;
+  color: #fff !important;
+}
+
+/* ── Section labels ─────────────────────────────────────────────────────── */
+.neo-nav-section { gap: 3px !important; }
+.neo-nav-section-title {
+  font-size: 9.5px !important;
+  letter-spacing: 0.16em !important;
+  text-transform: uppercase !important;
+  color: #5f5878 !important;
+  font-weight: 700 !important;
+  padding: 12px 12px 4px !important;
+  text-shadow: none !important;
+  white-space: nowrap;
+  overflow: hidden;
+  /* hidden text when collapsed (keeps spacing, no truncated labels) */
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+#neo-sidebar:hover .neo-nav-section-title,
+body.dock-pinned .neo-nav-section-title { opacity: 1; }
+
+/* ── Nav items: icon-first, label reveals on expand ─────────────────────── */
+.neo-nav-card {
+  position: relative;
+  height: 46px !important;
+  /* collapsed → centered icon; expanded → left-aligned icon + label */
+  justify-content: center !important;
+  padding: 0 !important;
+  border-radius: 13px !important;
+  background: transparent !important;
+  border: none !important;
+  gap: 14px !important;
+  overflow: hidden !important;
+  color: #9c93b5 !important;
+  transition: background 0.16s ease, color 0.16s ease, padding 0.3s var(--dock-ease) !important;
+}
+#neo-sidebar:hover .neo-nav-card,
+body.dock-pinned .neo-nav-card {
+  justify-content: flex-start !important;
+  padding-left: 17px !important;
+}
+.neo-nav-card::before { display: none !important; } /* kill the old gradients */
+
+.neo-nav-card-icon {
+  width: 22px !important; height: 22px !important;
+  flex-shrink: 0;
+  color: #8c84a6 !important;
+  transition: color 0.16s ease, transform 0.16s ease;
+}
+.neo-nav-card-icon svg { width: 19px; height: 19px; }
+
+.neo-nav-card-label {
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  color: inherit !important;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(-8px);
+  transition: opacity 0.2s ease, transform 0.25s var(--dock-ease);
+}
+#neo-sidebar:hover .neo-nav-card-label,
+body.dock-pinned .neo-nav-card-label { opacity: 1; transform: none; }
+
+.neo-nav-card:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #fff !important;
+}
+.neo-nav-card:hover .neo-nav-card-icon { color: var(--dock-accent-2) !important; }
+
+/* Active — glowing purple pill + left indicator */
+.neo-nav-card.active {
+  background: linear-gradient(90deg, rgba(132, 0, 255, 0.28), rgba(132, 0, 255, 0.08)) !important;
+  color: #fff !important;
+}
+.neo-nav-card.active::after {
+  content: "";
+  position: absolute;
+  left: 0; top: 50%;
+  transform: translateY(-50%);
+  width: 3px; height: 22px;
+  border-radius: 0 3px 3px 0;
+  background: var(--dock-accent);
+  box-shadow: 0 0 12px 1px var(--dock-accent);
+}
+.neo-nav-card.active .neo-nav-card-icon { color: #d9b8ff !important; }
+
+/* Badge → a small dot when collapsed, full pill when expanded */
+.neo-nav-card-badge {
+  position: absolute;
+  right: 14px;
+  background: var(--dock-accent) !important;
+  box-shadow: 0 0 10px -1px var(--dock-accent) !important;
+  font-size: 9px !important;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+#neo-sidebar:hover .neo-nav-card-badge,
+body.dock-pinned .neo-nav-card-badge { opacity: 1; }
+/* collapsed: show an unread dot on the icon instead */
+.neo-nav-card-badge::after {
+  content: "";
+  position: fixed;
+}
+
+/* ── Bottom status / player card ────────────────────────────────────────── */
+.neo-status-card {
+  margin-top: auto !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(132, 0, 255, 0.14) !important;
+  border-radius: 15px !important;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+#neo-sidebar:hover .neo-status-card,
+body.dock-pinned .neo-status-card { opacity: 1; }
+
+/* The collapsed-rail tooltip from before is not needed (labels reveal on hover) */
+.neo-tip { display: none !important; }
+
+/* Mobile: full slide-in panel */
+@media (max-width: 1024px) {
+  #neo-sidebar {
+    left: 0 !important; top: 0 !important; bottom: 0 !important;
+    width: var(--dock-w-open) !important;
+    border-radius: 0 20px 20px 0 !important;
+    transform: translateX(-100%);
+    transition: transform 0.3s var(--dock-ease) !important;
+  }
+  #neo-sidebar.mobile-open { transform: translateX(0); }
+  #neo-sidebar .neo-nav-card-label,
+  #neo-sidebar .neo-status-card { opacity: 1 !important; transform: none !important; }
+  body:has(#neo-sidebar) main,
+  body:has(#neo-sidebar) #mainContent,
+  body:has(#neo-sidebar) .main-content,
+  body:has(#neo-sidebar) .app-content,
+  body:has(#neo-sidebar) main.studio-main { margin-left: 0 !important; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PREMIUM PROFILE (top of dock) — avatar + level-progress ring
+   ═══════════════════════════════════════════════════════════════════════════ */
+.neo-profile-header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 4px 4px 12px !important;
+}
+.neo-profile-avatar {
+  position: relative;
+  width: 46px; height: 46px;
+  flex-shrink: 0;
+}
+.neo-ring { position: absolute; inset: 0; width: 46px; height: 46px; transform: rotate(-90deg); }
+.neo-ring-bg { fill: none; stroke: rgba(255,255,255,0.08); stroke-width: 2.5; }
+.neo-ring-fg {
+  fill: none;
+  stroke: #8400ff;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-dasharray: 125.6;
+  stroke-dashoffset: 50;   /* overridden by JS */
+  transition: stroke-dashoffset 0.8s var(--dock-ease), stroke 0.4s ease;
+  filter: drop-shadow(0 0 4px rgba(132,0,255,0.7));
+}
+.neo-avatar-core {
+  position: absolute;
+  inset: 6px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 15px; color: #fff;
+  background: linear-gradient(135deg, #8400ff, #c77dff);
+  border: 1.5px solid rgba(132,0,255,0.5);
+  letter-spacing: 0.02em;
+}
+.neo-online-dot {
+  position: absolute;
+  right: 1px; bottom: 1px;
+  width: 11px; height: 11px;
+  border-radius: 50%;
+  background: #34d399;
+  border: 2.5px solid #0c0914;
+  box-shadow: 0 0 8px rgba(52,211,153,0.8);
+}
+.neo-profile-info {
+  flex: 1; min-width: 0;
+  opacity: 0; transform: translateX(-8px);
+  transition: opacity 0.2s ease, transform 0.25s var(--dock-ease);
+}
+#neo-sidebar:hover .neo-profile-info,
+body.dock-pinned .neo-profile-info { opacity: 1; transform: none; }
+.neo-profile-name {
+  font-size: 14.5px; font-weight: 700; color: #fff;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  letter-spacing: 0.01em;
+}
+.neo-profile-level {
+  font-size: 11px; font-weight: 600;
+  color: #b89aff; white-space: nowrap;
+  margin-top: 1px;
+}
+
+/* Collapsed profile → just the avatar, centered; reveal info + pin on expand */
+.neo-profile-header { justify-content: center !important; }
+#neo-sidebar:hover .neo-profile-header,
+body.dock-pinned .neo-profile-header { justify-content: flex-start !important; }
+
+.neo-profile-info { width: 0; flex: 0 0 0 !important; overflow: hidden; }
+#neo-sidebar:hover .neo-profile-info,
+body.dock-pinned .neo-profile-info { width: auto; flex: 1 1 auto !important; }
+
+.neo-profile-header .neo-sidebar-toggle {
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+#neo-sidebar:hover .neo-profile-header .neo-sidebar-toggle,
+body.dock-pinned .neo-profile-header .neo-sidebar-toggle {
+  opacity: 1; pointer-events: auto;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   DOCK CONTROLS · MOVABLE (drag) · COLLAPSIBLE (minimize to orb)
+   ═══════════════════════════════════════════════════════════════════════════ */
+.neo-dock-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+#neo-sidebar:hover .neo-dock-controls,
+body.dock-pinned .neo-dock-controls { opacity: 1; pointer-events: auto; }
+.neo-dock-btn {
+  width: 26px; height: 26px;
+  border: none;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--dock-accent-2);
+  cursor: pointer;
+  font-size: 15px; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.16s ease, color 0.16s ease;
+}
+.neo-dock-btn:hover { background: rgba(132, 0, 255, 0.3); color: #fff; }
+body.dock-pinned .neo-dock-collapse + .neo-sidebar-toggle,
+body.dock-pinned .neo-sidebar-toggle { background: rgba(132, 0, 255, 0.28); color: #fff; }
+
+/* Grab cursor on the draggable header */
+.neo-sidebar-header { cursor: grab; }
+.neo-sidebar-header:active { cursor: grabbing; }
+.neo-profile-avatar, .neo-dock-btn { cursor: pointer; }
+
+/* Floating (after a drag) → overlay; content reclaims the left gutter */
+body.dock-floating main,
+body.dock-floating #mainContent,
+body.dock-floating .main-content,
+body.dock-floating .app-content,
+body.dock-floating main.studio-main { margin-left: 18px !important; }
+
+/* ── Minimized: a small floating orb (just the avatar). Click to restore. ── */
+body.dock-min #neo-sidebar {
+  width: 60px !important;
+  height: 60px !important;
+  min-height: 60px;
+  border-radius: 50% !important;
+  padding: 8px !important;
+  overflow: hidden !important;
+  cursor: pointer;
+}
+body.dock-min #neo-sidebar > *:not(.neo-sidebar-header) { display: none !important; }
+body.dock-min .neo-sidebar-header {
+  padding: 0 !important; margin: 0 !important; border: none !important;
+  justify-content: center !important; height: 100%;
+}
+body.dock-min .neo-profile-info,
+body.dock-min .neo-dock-controls { display: none !important; }
+body.dock-min .neo-profile-avatar { width: 44px; height: 44px; }
+body.dock-min .neo-ring { width: 44px; height: 44px; }
+body.dock-min #neo-sidebar:hover {
+  transform: scale(1.06);
+  box-shadow: 0 0 34px -6px rgba(132, 0, 255, 0.8) !important;
+}
+body.dock-min main,
+body.dock-min #mainContent,
+body.dock-min .main-content,
+body.dock-min .app-content,
+body.dock-min main.studio-main { margin-left: 18px !important; }

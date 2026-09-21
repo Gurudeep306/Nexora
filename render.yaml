@@ -1,0 +1,108 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Render Blueprint for Nexora — free plan.
+#
+# Render reads this file when you click "New → Blueprint" and pick this repo.
+# It creates:
+#   • nexora          — the live site, deployed from `main`
+#   • nexora-staging  — a test copy, deployed from `staging` (optional; delete
+#                       this block if you don't want it)
+#
+# Both deploy automatically on git push, but only AFTER the GitHub Actions CI
+# checks pass (autoDeployTrigger: checksPass) — a broken commit never goes live.
+#
+# Region: Virginia, next to the Turso database in aws-us-east-1, so each
+# database query takes ~1-2 ms instead of crossing an ocean.
+# ─────────────────────────────────────────────────────────────────────────────
+services:
+  - type: web
+    name: nexora
+    runtime: node
+    plan: free
+    region: virginia
+    branch: main
+    autoDeployTrigger: checksPass
+    buildCommand: npm ci --no-audit --no-fund && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    buildFilter:
+      ignoredPaths:
+        - "**/*.md"
+        - .github/**
+        - .devcontainer/**
+        - tests/**
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "22"
+      # Never run user-submitted code on this server — use Wandbox instead.
+      - key: JUDGE_MODE
+        value: remote
+      # No Chrome on the free plan; skip the headless-browser scraper fallback.
+      - key: DISABLE_PUPPETEER
+        value: "1"
+      - key: PUPPETEER_SKIP_DOWNLOAD
+        value: "1"
+      - key: SESSION_SECRET
+        generateValue: true
+      # ── Values you paste in the Render dashboard (never committed) ──
+      - key: TURSO_DATABASE_URL
+        sync: false
+      - key: TURSO_AUTH_TOKEN
+        sync: false
+      - key: GITHUB_CLIENT_ID
+        sync: false
+      - key: GITHUB_CLIENT_SECRET
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: STUDIO_PASSWORD
+        sync: false
+
+  - type: web
+    name: nexora-staging
+    runtime: node
+    plan: free
+    region: virginia
+    branch: staging
+    autoDeployTrigger: checksPass
+    buildCommand: npm ci --no-audit --no-fund && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    buildFilter:
+      ignoredPaths:
+        - "**/*.md"
+        - .github/**
+        - .devcontainer/**
+        - tests/**
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "22"
+      - key: JUDGE_MODE
+        value: remote
+      - key: DISABLE_PUPPETEER
+        value: "1"
+      - key: PUPPETEER_SKIP_DOWNLOAD
+        value: "1"
+      - key: SESSION_SECRET
+        generateValue: true
+      # Use a SEPARATE Turso database (e.g. nexora-staging) so tests never
+      # touch real users' data.
+      - key: TURSO_DATABASE_URL
+        sync: false
+      - key: TURSO_AUTH_TOKEN
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: STUDIO_PASSWORD
+        sync: false

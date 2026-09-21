@@ -1,5 +1,6 @@
 const express = require('express');
 const multer = require('multer');
+const { persistUpload, listUploads } = require('../upload-store');
 const forgePaths = require('../dev-roadmap-data');
 
 function createStudioRouter(deps) {
@@ -31,7 +32,9 @@ function createStudioRouter(deps) {
   router.post('/api/studio/upload', studioAuth, studioUpload.single('file'), (req, res) => {
     if (!req.file) return res.status(400).json({ ok: false, error: 'No file' });
     const url = `/uploads/studio/${req.file.filename}`;
-    res.json({ ok: true, url, name: req.file.originalname, size: req.file.size });
+    persistUpload(url, req.file.path).finally(() =>
+      res.json({ ok: true, url, name: req.file.originalname, size: req.file.size }),
+    );
   });
 
   router.get('/api/studio/courses', studioAuth, async (_req, res) => {
@@ -47,6 +50,98 @@ function createStudioRouter(deps) {
         }
       }
       res.json({ ok: true, courses });
+    } catch (e) {
+      res.status(500).json({ ok: false, error: e.message });
+    }
+  });
+
+  // ── Analytics: aggregate content + engagement metrics ──
+  router.get('/api/studio/analytics', studioAuth, async (_req, res) => {
+    // Each metric is isolated so a missing table never breaks the whole call.
+    const count = async (sql, params = []) => {
+      try {
+        const r = await get(sql, params);
+        return r ? Number(r.n || 0) : 0;
+      } catch {
+        return 0;
+      }
+    };
+    try {
+      const [
+        courses,
+        publishedCourses,
+        chapters,
+        lessons,
+        publishedLessons,
+        tutorials,
+        explanations,
+        liveClasses,
+        recordings,
+        doubts,
+        openDoubts,
+        notes,
+      ] = await Promise.all([
+        count('SELECT COUNT(*) n FROM cms_courses'),
+        count("SELECT COUNT(*) n FROM cms_courses WHERE published=1"),
+        count('SELECT COUNT(*) n FROM cms_chapters'),
+        count('SELECT COUNT(*) n FROM cms_lessons'),
+        count('SELECT COUNT(*) n FROM cms_lessons WHERE published=1'),
+        count('SELECT COUNT(*) n FROM tutorials'),
+        count('SELECT COUNT(*) n FROM explain_sessions'),
+        count('SELECT COUNT(*) n FROM live_classes'),
+        count('SELECT COUNT(*) n FROM live_class_recordings'),
+        count('SELECT COUNT(*) n FROM explain_doubts'),
+        count("SELECT COUNT(*) n FROM explain_doubts WHERE status='pending' OR status='open' OR status IS NULL"),
+        count('SELECT COUNT(*) n FROM explain_notes'),
+      ]);
+
+      // Per-course lesson distribution (top 8 by lesson count)
+      let courseBreakdown = [];
+      try {
+        courseBreakdown = await all(
+          `SELECT c.title AS title, c.icon AS icon, c.color AS color,
+                  COUNT(l.id) AS lessons
+             FROM cms_courses c
+             LEFT JOIN cms_chapters ch ON ch.course_id = c.id
+             LEFT JOIN cms_lessons  l  ON l.chapter_id = ch.id
+            GROUP BY c.id
+            ORDER BY lessons DESC, c.id
+            LIMIT 8`
+        );
+      } catch {
+        courseBreakdown = [];
+      }
+
+      // Content-type mix for the donut/bars
+      const contentMix = [
+        { label: 'Lessons', value: lessons, color: '#818cf8' },
+        { label: 'Tutorials', value: tutorials, color: '#22d3ee' },
+        { label: 'Explanations', value: explanations, color: '#a78bfa' },
+        { label: 'Recordings', value: recordings, color: '#34d399' },
+        { label: 'Notes', value: notes, color: '#fbbf24' },
+      ];
+
+      res.json({
+        ok: true,
+        analytics: {
+          totals: {
+            courses,
+            publishedCourses,
+            chapters,
+            lessons,
+            publishedLessons,
+            tutorials,
+            explanations,
+            liveClasses,
+            recordings,
+            doubts,
+            openDoubts,
+            notes,
+          },
+          courseBreakdown,
+          contentMix,
+        },
+      });
     } catch (e) {
       res.status(500).json({ ok: false, error: e.message });
     }
@@ -80,7 +175,12 @@ function createStudioRouter(deps) {
           icon=COALESCE(?,icon), color=COALESCE(?,color), section=COALESCE(?,section),
           order_idx=COALESCE(?,order_idx), published=COALESCE(?,published),
           updated_at=datetime('now') WHERE id=?`,
-        [title, description, icon, color, section, order_idx, published, req.params.id]
+        // undefined cannot bind to SQLite — coerce missing fields to null so
+        // COALESCE keeps the existing value (enables partial updates).
+        [
+          title ?? null, description ?? null, icon ?? null, color ?? null,
+          section ?? null, order_idx ?? null, published ?? null, req.params.id,
+        ]
       );
       res.json({ ok: true });
     } catch (e) {
@@ -121,7 +221,7 @@ function createStudioRouter(deps) {
       await run(
         `UPDATE cms_chapters SET title=COALESCE(?,title), description=COALESCE(?,description),
           order_idx=COALESCE(?,order_idx), published=COALESCE(?,published) WHERE id=?`,
-        [title, description, order_idx, published, req.params.id]
+        [title ?? null, description ?? null, order_idx ?? null, published ?? null, req.params.id]
       );
       res.json({ ok: true });
     } catch (e) {
@@ -183,7 +283,7 @@ function createStudioRouter(deps) {
         `UPDATE cms_lessons SET title=COALESCE(?,title), content=COALESCE(?,content),
           duration_min=COALESCE(?,duration_min), order_idx=COALESCE(?,order_idx),
           published=COALESCE(?,published), updated_at=datetime('now') WHERE id=?`,
-        [title, content, duration_min, order_idx, published, req.params.id]
+        [title ?? null, content ?? null, duration_min ?? null, order_idx ?? null, published ?? null, req.params.id]
       );
       res.json({ ok: true });
     } catch (e) {
@@ -344,11 +444,126 @@ function createStudioRouter(deps) {
     }
   });
 
-  router.get('/api/studio/media-list', studioAuth, (_req, res) => {
+  router.get('/api/studio/media-list', studioAuth, async (_req, res) => {
     try {
-      if (!fs.existsSync(studioUploadDir)) return res.json({ ok: true, files: [] });
-      const files = fs.readdirSync(studioUploadDir).filter(f => !f.startsWith('.')).map(name => ({ name, url: `/uploads/studio/${name}` }));
+      // Merge files on disk with those persisted in the database (the disk is
+      // wiped on free hosts after every restart).
+      const onDisk = fs.existsSync(studioUploadDir)
+        ? fs.readdirSync(studioUploadDir).filter(f => !f.startsWith('.'))
+        : [];
+      const inDb = await listUploads('studio').catch(() => []);
+      const names = [...new Set([...onDisk, ...inDb])];
+      const files = names.map(name => ({ name, url: `/uploads/studio/${name}` }));
       res.json({ ok: true, files });
+    } catch (e) {
+      res.status(500).json({ ok: false, error: e.message });
+    }
+  });
+
+  // ===== STUDIO NOTES (creator notes) =====
+  router.get('/api/studio/notes', studioAuth, async (_req, res) => {
+    try {
+      const notes = await all('SELECT * FROM studio_notes ORDER BY updated_at DESC, id DESC');
+      res.json({ ok: true, notes });
+    } catch (e) {
+      res.status(500).json({ ok: false, error: e.message });
+    }
+  });
+
+  router.post('/api/studio/notes', studioAuth, async (req, res) => {
+    try {
+      const { title, content = '', color = '#8400ff' } = req.body || {};
+      if (!title || !String(title).trim())
+        return res.status(400).json({ ok: false, error: 'title required' });
+      const r = await run(
+        'INSERT INTO studio_notes(title, content, color) VALUES(?,?,?)',
+        [String(title).trim(), content, color]
+      );
+      res.json({ ok: true, id: r.lastID });
+    } catch (e) {
+      res.status(500).json({ ok: false, error: e.message });
+    }
+  });
+
+  router.put('/api/studio/notes/:id', studioAuth, async (req, res) => {
+    try {
+      const { title, content, color } = req.body || {};
+      await run(
+        `UPDATE studio_notes SET title=COALESCE(?,title), content=COALESCE(?,content),
+          color=COALESCE(?,color), updated_at=datetime('now') WHERE id=?`,
+        [title ?? null, content ?? null, color ?? null, req.params.id]
+      );
+      res.json({ ok: true });
+    } catch (e) {
+      res.status(500).json({ ok: false, error: e.message });
+    }
+  });
+
+  router.delete('/api/studio/notes/:id', studioAuth, async (req, res) => {
+    try {
+      await run('DELETE FROM studio_notes WHERE id=?', [req.params.id]);
+      res.json({ ok: true });
+    } catch (e) {
+      res.status(500).json({ ok: false, error: e.message });
+    }
+  });
+
+  // ===== STUDIO DOUBTS (student Q&A inbox) =====
+  router.get('/api/studio/doubts', studioAuth, async (_req, res) => {
+    try {
+      // Seed a couple of examples the first time so the inbox isn't empty.
+      const n = await get('SELECT COUNT(*) c FROM studio_doubts');
+      if (n && Number(n.c) === 0) {
+        await run(
+          `INSERT INTO studio_doubts(question, student_name, source, status) VALUES
+            ('How do I implement a binary search tree?', 'Aarav', 'Data Structures Course', 'pending'),
+            ('What is the time complexity of quicksort?', 'Mei', 'Algorithms Course', 'pending')`
+        );
+      }
+      const doubts = await all(
+        'SELECT * FROM studio_doubts ORDER BY (status=\'pending\') DESC, created_at DESC'
+      );
+      res.json({ ok: true, doubts });
+    } catch (e) {
+      res.status(500).json({ ok: false, error: e.message });
+    }
+  });
+
+  router.post('/api/studio/doubts', studioAuth, async (req, res) => {
+    try {
+      const { question, student_name = 'Student', source = '' } = req.body || {};
+      if (!question || !String(question).trim())
+        return res.status(400).json({ ok: false, error: 'question required' });
+      const r = await run(
+        'INSERT INTO studio_doubts(question, student_name, source) VALUES(?,?,?)',
+        [String(question).trim(), student_name, source]
+      );
+      res.json({ ok: true, id: r.lastID });
+    } catch (e) {
+      res.status(500).json({ ok: false, error: e.message });
+    }
+  });
+
+  // Answer / resolve / reopen a doubt
+  router.put('/api/studio/doubts/:id', studioAuth, async (req, res) => {
+    try {
+      const { answer, status } = req.body || {};
+      await run(
+        `UPDATE studio_doubts SET answer=COALESCE(?,answer), status=COALESCE(?,status),
+          answered_at=CASE WHEN ? IS NOT NULL THEN datetime('now') ELSE answered_at END
+          WHERE id=?`,
+        [answer ?? null, status ?? null, answer ?? null, req.params.id]
+      );
+      res.json({ ok: true });
+    } catch (e) {
+      res.status(500).json({ ok: false, error: e.message });
+    }
+  });
+
+  router.delete('/api/studio/doubts/:id', studioAuth, async (req, res) => {
+    try {
+      await run('DELETE FROM studio_doubts WHERE id=?', [req.params.id]);
+      res.json({ ok: true });
     } catch (e) {
       res.status(500).json({ ok: false, error: e.message });
     }
@@ -709,7 +924,7 @@ function createStudioRouter(deps) {
           { role: 'system', content: system },
           { role: 'user', content: prompt },
         ],
-        { maxTokens: 2000, model: 'llama-3.3-70b-versatile', temperature: 0.15 }
+        { maxTokens: 2000, temperature: 0.15 }
       );
       if (!result.ok) return res.json({ ok: false, error: result.error });
       res.json({ ok: true, text: result.content });

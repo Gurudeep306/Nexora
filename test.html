@@ -5,36 +5,121 @@
     <title>Asciinema Player Upload</title>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/asciinema-player@3.0.1/dist/bundle/asciinema-player.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 1rem;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 2rem 3rem;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 900px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 2rem;
+            font-weight: 600;
+        }
+
+        /* Custom File Input */
+        .file-upload-wrapper {
+            margin-bottom: 2rem;
+        }
+
+        #fileInput {
+            display: none; /* Hide the default browser input */
+        }
+
+        .file-upload-label {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: #3498db;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .file-upload-label:hover {
+            background-color: #2980b9;
+        }
+
+        .file-name {
+            display: block;
+            margin-top: 15px;
+            font-style: italic;
+            color: #555;
+            height: 1em; /* Reserve space to prevent layout shift */
+        }
+
+        #player {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            min-height: 150px;
+            background: #f9f9f9;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        /* The player wrapper created by the library */
+        .asciinema-player-wrapper {
+            border-radius: 8px;
+            overflow: hidden; /* Ensures the inner player respects the container's border-radius */
+        }
+    </style>
 </head>
 
 <body>
+    <div class="container">
+        <h2>Upload and Play .cast File</h2>
 
-    <h2>Upload and Play .cast File</h2>
+        <!-- File input -->
+        <div class="file-upload-wrapper">
+            <label for="fileInput" class="file-upload-label">Choose a .cast File</label>
+            <input type="file" id="fileInput" accept=".cast">
+            <span id="fileName" class="file-name"></span>
+        </div>
 
-    <!-- File input -->
-    <input type="file" id="fileInput" accept=".cast">
-
-    <br><br>
-
-    <!-- Player container -->
-    <div id="player"></div>
+        <!-- Player container -->
+        <div id="player"></div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/asciinema-player@3.0.1/dist/bundle/asciinema-player.min.js"></script>
 
     <script>
         document.getElementById("fileInput").addEventListener("change", function(event) {
             const file = event.target.files[0];
+            const playerDiv = document.getElementById("player");
+            const fileNameSpan = document.getElementById("fileName");
 
             if (file) {
+                fileNameSpan.textContent = `Selected: ${file.name}`;
                 const url = URL.createObjectURL(file);
 
                 // Clear previous player
-                document.getElementById("player").innerHTML = "";
+                playerDiv.innerHTML = "";
 
-                AsciinemaPlayer.create(url, document.getElementById("player"), {
+                AsciinemaPlayer.create(url, playerDiv, {
                     autoplay: true,
                     controls: true
                 });
+            } else {
+                fileNameSpan.textContent = "";
             }
         });
     </script>

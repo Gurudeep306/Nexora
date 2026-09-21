@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ExplainLab Viewer - Nexora</title>
+<link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/explainlab-viewer.css">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+</head>
+<body class="explainlab-viewer-body">
+
+<!-- Top Navigation -->
+<header class="ev-toolbar">
+  <div class="ev-toolbar-left">
+    <a href="/" class="el-back-btn">← Nexora</a>
+    <div class="ev-session-title" id="sessionTitle">Loading...</div>
+  </div>
+  <div class="ev-toolbar-right">
+    <span class="ev-teacher-name" id="teacherName"></span>
+    <span class="ev-level-badge" id="levelBadge"></span>
+  </div>
+</header>
+
+<!-- Main Content -->
+<div class="ev-main">
+  <!-- Left: Video/Replay Area -->
+  <div class="ev-content-area">
+    <!-- Mode Tabs -->
+    <div class="ev-mode-tabs">
+      <button class="ev-mode-tab active" data-mode="video">📹 Video</button>
+      <button class="ev-mode-tab" data-mode="audio">🎧 Audio</button>
+      <button class="ev-mode-tab" data-mode="replay">🖊️ Replay Board</button>
+      <button class="ev-mode-tab" data-mode="typed">📝 Typed Notes</button>
+      <button class="ev-mode-tab" data-mode="handwritten">📄 Handwritten</button>
+      <button class="ev-mode-tab" data-mode="explanation">📖 Full Explanation</button>
+    </div>
+
+    <!-- Video Mode -->
+    <div class="ev-mode-content active" id="modeVideo">
+      <div class="ev-video-container">
+        <video id="videoPlayer" controls crossorigin="playsinline">
+          <source src="" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <div class="ev-video-placeholder" id="videoPlaceholder">
+          <div class="ev-placeholder-icon">🎥</div>
+          <p>Video explanation not available</p>
+          <p class="ev-placeholder-sub">Try another mode below</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Audio Mode -->
+    <div class="ev-mode-content" id="modeAudio">
+      <div class="ev-audio-container">
+        <div class="ev-audio-visual">
+          <div class="ev-audio-wave" id="audioWave"></div>
+        </div>
+        <audio id="audioPlayer" controls>
+          <source src="" type="audio/mp3">
+          Your browser does not support the audio tag.
+        </audio>
+        <div class="ev-audio-placeholder" id="audioPlaceholder">
+          <div class="ev-placeholder-icon">🎧</div>
+          <p>Audio explanation not available</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Replay Mode -->
+    <div class="ev-mode-content" id="modeReplay">
+      <div class="ev-replay-container">
+        <canvas id="replayCanvas"></canvas>
+        <div class="ev-replay-controls">
+          <button class="ev-replay-btn" id="btnReplayPlay" title="Play">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+          </button>
+          <button class="ev-replay-btn" id="btnReplayPause" title="Pause" style="display:none">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+          </button>
+          <div class="ev-replay-progress">
+            <input type="range" id="replaySeek" min="0" max="100" value="0">
+            <span id="replayTime">0:00 / 0:00</span>
+          </div>
+          <select id="replaySpeed" class="ev-speed-select">
+            <option value="0.5">0.5x</option>
+            <option value="1" selected>1x</option>
+            <option value="1.25">1.25x</option>
+            <option value="1.5">1.5x</option>
+            <option value="2">2x</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Typed Notes Mode -->
+    <div class="ev-mode-content" id="modeTyped">
+      <div class="ev-notes-container">
+        <div class="ev-notes-content" id="typedNotesContent">
+          <div class="ev-empty-state">
+            <p>Typed notes not available for this session.</p>
+          </div>
+        </div>
+        <div class="ev-notes-actions">
+          <button class="ev-action-btn" id="btnCopyNotes" title="Copy">📋 Copy</button>
+          <button class="ev-action-btn" id="btnDownloadNotes" title="Download">⬇ Download PDF</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Handwritten Notes Mode -->
+    <div class="ev-mode-content" id="modeHandwritten">
+      <div class="ev-handwritten-container">
+        <div class="ev-handwritten-thumbnails" id="handwrittenThumbs">
+          <div class="ev-empty-state">
+            <p>No handwritten notes available.</p>
+          </div>
+        </div>
+        <div class="ev-handwritten-viewer" id="handwrittenViewer">
+          <img id="handwrittenImage" src="" alt="Handwritten note">
+          <div class="ev-handwritten-controls">
+            <button class="ev-handwritten-btn" id="btnZoomIn" title="Zoom In">+</button>
+            <span id="zoomLevel">100%</span>
+            <button class="ev-handwritten-btn" id="btnZoomOut" title="Zoom Out">−</button>
+            <button class="ev-handwritten-btn" id="btnPrevPage" title="Previous">←</button>
+            <span id="pageIndicator">0/0</span>
+            <button class="ev-handwritten-btn" id="btnNextPage" title="Next">→</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Full Explanation Mode -->
+    <div class="ev-mode-content" id="modeExplanation">
+      <div class="ev-explanation-container">
+        <div class="ev-explanation-content" id="explanationContent">
+          <div class="ev-empty-state">
+            <p>Full explanation not available for this session.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: Sidebar -->
+  <aside class="ev-sidebar">
+    <!-- Chapters/Markers -->
+    <div class="ev-sidebar-section">
+      <h3 class="ev-sidebar-title">📍 Chapters</h3>
+      <div class="ev-chapters-list" id="chaptersList">
+        <p class="ev-empty-state">No chapters marked.</p>
+      </div>
+    </div>
+
+    <!-- Student Actions -->
+    <div class="ev-sidebar-section">
+      <h3 class="ev-sidebar-title">📌 Your Actions</h3>
+      <div class="ev-student-actions">
+        <button class="ev-student-btn" id="btnBookmark">🔖 Bookmark</button>
+        <button class="ev-student-btn" id="btnAddNote">📝 Add Note</button>
+        <button class="ev-student-btn" id="btnAskDoubt">❓ Ask Doubt</button>
+      </div>
+    </div>
+
+    <!-- My Notes -->
+    <div class="ev-sidebar-section">
+      <h3 class="ev-sidebar-title">📝 My Notes</h3>
+      <div class="ev-my-notes" id="myNotesList">
+        <p class="ev-empty-state">No notes yet.</p>
+      </div>
+    </div>
+
+    <!-- Doubts -->
+    <div class="ev-sidebar-section">
+      <h3 class="ev-sidebar-title">❓ Doubts</h3>
+      <div class="ev-doubts-list" id="doubtsList">
+        <p class="ev-empty-state">No doubts asked.</p>
+      </div>
+    </div>
+
+    <!-- AI Summary -->
+    <div class="ev-sidebar-section">
+      <h3 class="ev-sidebar-title">🤖 AI Summary</h3>
+      <button class="ev-ai-btn" id="btnGenerateSummary">Generate Summary</button>
+      <div class="ev-ai-summary" id="aiSummary">
+        <p class="ev-empty-state">Click to generate AI summary.</p>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<!-- Bottom Progress Bar -->
+<footer class="ev-bottom-bar">
+  <div class="ev-progress-info">
+    <span>Progress: <span id="progressPercent">0%</span></span>
+    <span id="lastWatched">Last watched: Never</span>
+  </div>
+  <div class="ev-completion-status" id="completionStatus">
+    <span class="ev-status-dot"></span>
+    <span id="statusText">Not started</span>
+  </div>
+</footer>
+
+<!-- Doubt Modal -->
+<div class="ev-modal" id="doubtModal">
+  <div class="ev-modal-content">
+    <h2>Ask a Doubt</h2>
+    <form id="doubtForm">
+      <div class="el-form-group">
+        <label>Your Question</label>
+        <textarea name="doubt_text" rows="4" required placeholder="What's confusing you?"></textarea>
+      </div>
+      <div class="el-form-group">
+        <label>Timestamp (optional)</label>
+        <input type="text" name="timestamp" placeholder="e.g., 5:30" id="doubtTimestamp">
+      </div>
+      <div class="el-form-actions">
+        <button type="button" class="el-btn el-btn-outline" onclick="document.getElementById('doubtModal').classList.add('hidden')">Cancel</button>
+        <button type="submit" class="el-btn el-btn-primary">Submit Doubt</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Note Modal -->
+<div class="ev-modal" id="noteModal">
+  <div class="ev-modal-content">
+    <h2>Add Personal Note</h2>
+    <form id="noteForm">
+      <div class="el-form-group">
+        <label>Your Note</label>
+        <textarea name="note_text" rows="4" required placeholder="Write your note..."></textarea>
+      </div>
+      <div class="el-form-group">
+        <label>Timestamp (optional)</label>
+        <input type="text" name="timestamp" placeholder="e.g., 5:30" id="noteTimestamp">
+      </div>
+      <div class="el-form-actions">
+        <button type="button" class="el-btn el-btn-outline" onclick="document.getElementById('noteModal').classList.add('hidden')">Cancel</button>
+        <button type="submit" class="el-btn el-btn-primary">Save Note</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div class="el-toast-container" id="toastContainer"></div>
+
+<!-- Scripts -->
+<script src="/js/explainlab/explainlab-api.js"></script>
+<script src="/js/explainlab/whiteboard-engine.js"></script>
+<script src="/js/explainlab/explainlab-viewer.js"></script>
+</body>
+</html>

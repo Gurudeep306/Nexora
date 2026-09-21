@@ -1,0 +1,236 @@
+/* ═══════════════════════════════════════════════════════════
+   Nexora Z-Index Management & Stacking Context
+   Ensures proper layering of all UI elements
+   ═══════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════════
+   Z-INDEX HIERARCHY (in ascending order)
+   ═══════════════════════════════════════════════════════════
+
+   0       Base elements
+   100     Dropdowns, popovers
+   200     Sticky elements, solve overlay
+   300     Fixed sidebars, navbars
+   400     Modal backdrops
+   500     Modals, dialogs
+   600     Popovers, tooltips
+   700     Tooltips, floating hints
+   900     Command palette
+   9999    Toast notifications
+
+   ═══════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════════
+   BASE LAYER (0)
+   ═══════════════════════════════════════════════════════════ */
+
+.content,
+.main-content,
+section,
+article {
+  position: relative;
+  z-index: var(--z-base);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   DROPDOWN LAYER (100)
+   ═══════════════════════════════════════════════════════════ */
+
+.dropdown,
+.dropdown-menu,
+[role="listbox"],
+[role="menu"] {
+  position: absolute;
+  z-index: var(--z-dropdown);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   STICKY LAYER (200)
+   ═══════════════════════════════════════════════════════════ */
+
+.sticky,
+.header,
+.navbar,
+.topbar,
+.solve-overlay,
+.solve-panel {
+  position: relative;
+  z-index: var(--z-sticky);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FIXED LAYER (300)
+   ═══════════════════════════════════════════════════════════ */
+
+.sidebar,
+.navbar-fixed,
+.fixed-element,
+.floating-panel {
+  position: fixed;
+  z-index: var(--z-fixed);
+}
+
+.sidebar-toggle-btn {
+  z-index: calc(var(--z-fixed) + 10);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MODAL BACKDROP LAYER (400)
+   ═══════════════════════════════════════════════════════════ */
+
+.modal-backdrop,
+.overlay,
+.overlay-backdrop,
+.dialog-backdrop {
+  position: fixed;
+  z-index: var(--z-modal-backdrop);
+  inset: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MODAL LAYER (500)
+   ═══════════════════════════════════════════════════════════ */
+
+.modal,
+.dialog,
+.alert,
+.sheet,
+.popover,
+.command-palette {
+  position: fixed;
+  z-index: var(--z-modal);
+}
+
+/* Special handling for solve rooms */
+.solve-room {
+  z-index: 8000; /* Higher than typical modals but below toast */
+}
+
+/* ═══════════════════════════════════════════════════════════
+   POPOVER & TOOLTIP LAYER (600-700)
+   ═══════════════════════════════════════════════════════════ */
+
+.popover {
+  z-index: var(--z-popover);
+}
+
+.tooltip,
+[role="tooltip"],
+.hint {
+  position: fixed;
+  z-index: var(--z-tooltip);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   COMMAND PALETTE LAYER (900)
+   ═══════════════════════════════════════════════════════════ */
+
+.cmd-palette,
+.command-palette,
+[role="combobox"] {
+  z-index: var(--z-command-palette);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TOAST/NOTIFICATION LAYER (9999)
+   ═══════════════════════════════════════════════════════════ */
+
+.toast,
+.notification,
+.alert-floating,
+[role="status"] {
+  position: fixed;
+  z-index: var(--z-toast);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   BOOT/GATE SCREEN (10000+)
+   ═══════════════════════════════════════════════════════════ */
+
+.boot-screen,
+.gate-overlay,
+.splash-screen {
+  position: fixed;
+  z-index: 10000;
+  inset: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   STACKING CONTEXT MANAGEMENT
+   ═══════════════════════════════════════════════════════════ */
+
+/* Ensure modals create new stacking context */
+.modal::backdrop {
+  z-index: var(--z-modal-backdrop);
+}
+
+/* Prevent z-index stacking issues */
+.solve-overlay {
+  isolation: isolate;
+}
+
+.sidebar {
+  isolation: isolate;
+}
+
+.modal {
+  isolation: isolate;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MOBILE ADJUSTMENTS
+   ═══════════════════════════════════════════════════════════ */
+
+@media (max-width: 1024px) {
+  /* Mobile sidebar should overlay content */
+  .sidebar.mobile-open {
+    z-index: calc(var(--z-fixed) + 20);
+  }
+
+  /* Mobile modal backdrops */
+  .modal-backdrop {
+    z-index: var(--z-modal-backdrop);
+  }
+
+  /* Mobile sidebar overlay */
+  .sidebar.mobile-open::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: calc(var(--z-fixed) - 1);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   DEBUGGING Z-INDEX (Uncomment to visualize stacking)
+   ═══════════════════════════════════════════════════════════ */
+
+/*
+* {
+  outline: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.dropdown { outline-color: red; }
+.sticky { outline-color: green; }
+.fixed-element { outline-color: blue; }
+.modal-backdrop { outline-color: yellow; }
+.modal { outline-color: purple; }
+.tooltip { outline-color: orange; }
+.toast { outline-color: pink; }
+*/
+
+/* ═══════════════════════════════════════════════════════════
+   FOCUS MANAGEMENT WITH Z-INDEX
+   ═══════════════════════════════════════════════════════════ */
+
+/* When an element is focused and above others */
+.modal:focus-within,
+.dialog:focus-within {
+  z-index: calc(var(--z-modal) + 1);
+}
+
+/* Ensure tooltips stay above most content */
+.tooltip:focus-within {
+  z-index: calc(var(--z-tooltip) + 1);
+}

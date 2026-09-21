@@ -732,8 +732,21 @@ async function _runLangLocal(code, input, lang = 'cpp') {
   }
 }
 
+/* On a public server, never execute user code on the host itself: set
+   JUDGE_MODE=remote and every run goes to Wandbox / Kotlin Playground. */
+const REMOTE_ONLY = process.env.JUDGE_MODE === 'remote';
+const remoteUnavailable = (lang) => ({
+  verdict: 'CE',
+  message: `${lang} is not available on the hosted server yet — pick another language.`,
+});
+
 /* Smart run: try local first, fallback to Wandbox/Kotlin Playground if runtime not found */
 async function runLang(code, input, lang = 'cpp') {
+  if (REMOTE_ONLY) {
+    if (WANDBOX_MAP[lang]) return await wandboxRun(code, input, lang);
+    if (lang === 'kotlin') return await kotlinPlaygroundRun(code, input);
+    throw remoteUnavailable(lang);
+  }
   try {
     const result = await _runLangLocal(code, input, lang);
     // If local runtime was not found, try remote
@@ -815,6 +828,12 @@ async function _judgeRemoteKotlin(code, testcases) {
 async function judge(code, testcases, lang = 'cpp') {
   const cfg = LANG_CONFIG[lang];
   if (!cfg) return { verdict: 'CE', compileError: `Unsupported language: ${lang}`, results: [] };
+
+  if (REMOTE_ONLY) {
+    if (lang === 'kotlin') return await _judgeRemoteKotlin(code, testcases);
+    if (WANDBOX_MAP[lang]) return await _judgeRemote(code, testcases, lang);
+    return { verdict: 'CE', compileError: remoteUnavailable(lang).message, results: [] };
+  }
 
   // === Compiled languages: compile once, run binary per testcase ===
   if (cfg.compiled) {

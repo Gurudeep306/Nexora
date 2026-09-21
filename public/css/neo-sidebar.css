@@ -1,0 +1,749 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Nexora Neo-Navigation Hub — Modern Unified Sidebar
+   Glassmorphism + Animated Cards | v1.0
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  --neo-sidebar-width: 280px;
+  --neo-sidebar-collapsed: 0;
+  --neo-transition: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --neo-border-radius: 16px;
+  --neo-glass-bg: rgba(255, 255, 255, 0.7);
+  --neo-glass-backdrop: rgba(255, 255, 255, 0.9);
+  --neo-card-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  --neo-card-shadow-hover: 0 16px 48px rgba(0, 0, 0, 0.12);
+  --neo-gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --neo-gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --neo-gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  --neo-gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  --neo-gradient-5: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+body.dark-theme {
+  --neo-glass-bg: rgba(20, 20, 35, 0.6);
+  --neo-glass-backdrop: rgba(20, 20, 35, 0.85);
+  --neo-card-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --neo-card-shadow-hover: 0 16px 48px rgba(0, 0, 0, 0.45);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   NEO-SIDEBAR ROOT CONTAINER
+   ═══════════════════════════════════════════════════════════════════════════ */
+#neo-sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: var(--neo-sidebar-width);
+  display: flex;
+  flex-direction: column;
+  background: var(--neo-glass-bg);
+  backdrop-filter: blur(20px) saturate(180%);
+  border-right: 1px solid rgba(255, 255, 255, 0.3);
+  z-index: 199;
+  transition: width var(--neo-transition), transform var(--neo-transition);
+  padding: 20px 12px;
+  gap: 12px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-shadow: var(--neo-card-shadow);
+}
+
+/* Scrollbar styling */
+#neo-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+#neo-sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#neo-sidebar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+#neo-sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+body.dark-theme #neo-sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+body.dark-theme #neo-sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Suppress old sidebars when neo-sidebar is present */
+body:has(#neo-sidebar) #orbitdock,
+body:has(#neo-sidebar) .sidebar,
+body:has(#neo-sidebar) .orbitdock-rail,
+body:has(#neo-sidebar) .orbitdock-panel {
+  display: none !important;
+}
+
+/* Adjust main content margin */
+body:has(#neo-sidebar) main,
+body:has(#neo-sidebar) #mainContent,
+body:has(#neo-sidebar) .main-content,
+body:has(#neo-sidebar) .app-content {
+  margin-left: var(--neo-sidebar-width);
+  transition: margin-left var(--neo-transition);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SIDEBAR HEADER
+   ═══════════════════════════════════════════════════════════════════════════ */
+.neo-sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 8px;
+  margin-bottom: 12px;
+  flex-shrink: 0;
+}
+
+.neo-logo-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.neo-logo-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--neo-border-radius);
+  background: var(--neo-gradient-1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 800;
+  font-size: 18px;
+  flex-shrink: 0;
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.neo-logo-icon::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.3) 50%, transparent 70%);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.neo-logo-text {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background: var(--neo-gradient-1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.neo-sidebar-toggle {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  transition: all var(--neo-transition);
+  flex-shrink: 0;
+}
+
+.neo-sidebar-toggle:hover {
+  background: rgba(0, 0, 0, 0.08);
+  color: var(--text-primary);
+  transform: scale(1.05);
+}
+
+.neo-sidebar-toggle:active {
+  transform: scale(0.95);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   NAV SECTIONS & CARDS
+   ═══════════════════════════════════════════════════════════════════════════ */
+.neo-nav-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.neo-nav-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  padding: 8px 12px 4px;
+  text-shadow: 0 2px 4px rgba(255, 255, 255, 0.3);
+}
+
+body.dark-theme .neo-nav-section-title {
+  text-shadow: none;
+}
+
+/* ─────────────────────────────────────────────────────────────────────── */
+.neo-nav-card {
+  position: relative;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: all var(--neo-transition);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--text-primary);
+  overflow: hidden;
+  height: 44px;
+
+  /* Gradient overlay (subtle, positioned behind content) */
+  --gradient-angle: 0deg;
+}
+
+.neo-nav-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  opacity: 0;
+  transition: opacity var(--neo-transition);
+  background: var(--neo-gradient-1);
+  z-index: 0;
+}
+
+.neo-nav-card.grad-2::before { background: var(--neo-gradient-2); }
+.neo-nav-card.grad-3::before { background: var(--neo-gradient-3); }
+.neo-nav-card.grad-4::before { background: var(--neo-gradient-4); }
+.neo-nav-card.grad-5::before { background: var(--neo-gradient-5); }
+
+.neo-nav-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.neo-nav-card-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  transition: all var(--neo-transition);
+}
+
+.neo-nav-card-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  transition: all var(--neo-transition);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.neo-nav-card-badge {
+  font-size: 10px;
+  font-weight: 700;
+  background: rgba(255, 59, 48, 0.9);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  flex-shrink: 0;
+  animation: pulse-badge 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-badge {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* Hover state */
+.neo-nav-card:hover {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(255, 255, 255, 0.7);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+}
+
+.neo-nav-card:hover::before {
+  opacity: 0.15;
+}
+
+.neo-nav-card:hover .neo-nav-card-icon {
+  color: var(--text-primary);
+  transform: scale(1.1);
+}
+
+.neo-nav-card:hover .neo-nav-card-label {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* Active state */
+.neo-nav-card.active {
+  background: rgba(255, 255, 255, 0.8);
+  border-color: rgba(255, 255, 255, 0.9);
+  box-shadow: var(--neo-card-shadow-hover);
+  transform: translateY(-1px);
+}
+
+.neo-nav-card.active::before {
+  opacity: 0.25;
+}
+
+.neo-nav-card.active .neo-nav-card-icon {
+  color: white;
+  transform: scale(1.15);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.neo-nav-card.active .neo-nav-card-label {
+  color: white;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   DARK THEME — Nexus premium nav cards
+   The base cards use light glassmorphism (white rgba fills); on the deep
+   dark background those read as washed-out pastel. Re-skin them as subtle
+   dark surfaces with an indigo-tinted hover/active and a soft glow.
+   ═══════════════════════════════════════════════════════════════════════════ */
+body.dark-theme .neo-nav-card {
+  background: rgba(255, 255, 255, 0.025);
+  border-color: rgba(255, 255, 255, 0.06);
+  color: var(--text-secondary);
+}
+
+body.dark-theme .neo-nav-card:hover {
+  background: rgba(129, 140, 248, 0.1);
+  border-color: rgba(129, 140, 248, 0.28);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.45);
+}
+
+body.dark-theme .neo-nav-card.active {
+  background: rgba(129, 140, 248, 0.16);
+  border-color: rgba(129, 140, 248, 0.42);
+  box-shadow:
+    0 0 0 1px rgba(129, 140, 248, 0.18),
+    0 8px 26px -6px rgba(129, 140, 248, 0.5);
+}
+
+/* In dark mode the gradient overlay is more legible — keep it whisper-subtle */
+body.dark-theme .neo-nav-card:hover::before {
+  opacity: 0.12;
+}
+body.dark-theme .neo-nav-card.active::before {
+  opacity: 0.16;
+}
+
+/* Active icon/label: tint with the brand rather than white-on-pastel */
+body.dark-theme .neo-nav-card.active .neo-nav-card-icon,
+body.dark-theme .neo-nav-card.active .neo-nav-card-label {
+  color: #c7cdfb;
+  text-shadow: none;
+}
+
+body.dark-theme .neo-status-card {
+  background: rgba(255, 255, 255, 0.025);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SPECIAL CARDS
+   ═══════════════════════════════════════════════════════════════════════════ */
+.neo-quick-create {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  margin-top: 12px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  background: var(--neo-gradient-5);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  transition: all var(--neo-transition);
+  color: white;
+  text-align: center;
+}
+
+.neo-quick-create:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 32px rgba(250, 112, 154, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.neo-quick-create-icon {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.neo-quick-create-text {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Status card */
+.neo-status-card {
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  color: var(--text-primary);
+  margin-top: 12px;
+}
+
+.neo-status-card-header {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.neo-status-card-items {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.neo-status-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.5);
+  text-align: center;
+}
+
+.neo-status-item-value {
+  font-size: 16px;
+  font-weight: 800;
+  background: var(--neo-gradient-1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.neo-status-item-label {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   FLOATING ACTION BUTTON (integrated at bottom)
+   ═══════════════════════════════════════════════════════════════════════════ */
+.neo-floating-action {
+  margin-top: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.neo-fab-button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--neo-transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: white;
+}
+
+.neo-fab-button.primary {
+  background: var(--neo-gradient-1);
+  box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+}
+
+.neo-fab-button.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(102, 126, 234, 0.4);
+}
+
+.neo-fab-button.secondary {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--text-primary);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.neo-fab-button.secondary:hover {
+  background: rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ANIMATIONS
+   ═══════════════════════════════════════════════════════════════════════════ */
+@keyframes slide-in-left {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes float-up {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.neo-nav-card {
+  animation: float-up var(--neo-transition) ease-out;
+}
+
+/* Stagger animation for cards */
+.neo-nav-card:nth-child(1) { animation-delay: 0.05s; }
+.neo-nav-card:nth-child(2) { animation-delay: 0.1s; }
+.neo-nav-card:nth-child(3) { animation-delay: 0.15s; }
+.neo-nav-card:nth-child(4) { animation-delay: 0.2s; }
+.neo-nav-card:nth-child(5) { animation-delay: 0.25s; }
+.neo-nav-card:nth-child(n+6) { animation-delay: 0.3s; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   MOBILE RESPONSIVENESS
+   ═══════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+  #neo-sidebar {
+    width: min(280px, 100vw - 60px);
+    transform: translateX(-100%);
+    border-right: none;
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.3);
+  }
+
+  #neo-sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  body:has(#neo-sidebar.mobile-open) main,
+  body:has(#neo-sidebar.mobile-open) #mainContent,
+  body:has(#neo-sidebar.mobile-open) .main-content,
+  body:has(#neo-sidebar.mobile-open) .app-content {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .neo-nav-card {
+    height: 40px;
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .neo-nav-card-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .neo-status-card-items {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PREMIUM SIDEBAR REDESIGN  (React Bits / Linear / Raycast-inspired)
+   Replaces the busy multi-colour gradient nav cards with a clean, minimal
+   rail: transparent rows, a soft hover, and a purple active state with an
+   accent bar + glow. Loads last in this file, so it wins.
+   ═══════════════════════════════════════════════════════════════════════════ */
+body.dark-theme #neo-sidebar {
+  background: rgba(9, 7, 16, 0.74) !important;
+  border-right: 1px solid rgba(132, 0, 255, 0.1) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(1.4);
+  backdrop-filter: blur(22px) saturate(1.4);
+}
+
+/* Section labels: tiny, tracked, muted */
+body.dark-theme .neo-nav-section-title {
+  font-size: 10px !important;
+  letter-spacing: 0.13em !important;
+  text-transform: uppercase !important;
+  color: #635c78 !important;
+  font-weight: 700 !important;
+  padding: 0 14px !important;
+  margin: 15px 0 6px !important;
+  text-shadow: none !important;
+}
+
+/* Nav rows: clean, no coloured gradients */
+body.dark-theme .neo-nav-card {
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  border-radius: 10px !important;
+  height: 40px !important;
+  color: #aaa2bd !important;
+  box-shadow: none !important;
+  transform: none !important;
+  transition: background 0.16s ease, color 0.16s ease, box-shadow 0.16s ease !important;
+}
+/* Kill the grad-1..5 overlay entirely */
+body.dark-theme .neo-nav-card::before { display: none !important; }
+
+body.dark-theme .neo-nav-card-icon {
+  color: #897fa3 !important;
+  transition: color 0.16s ease !important;
+  transform: none !important;
+}
+body.dark-theme .neo-nav-card-label {
+  color: inherit !important;
+  font-weight: 500 !important;
+  font-size: 13.5px !important;
+  text-shadow: none !important;
+}
+
+/* Hover: subtle lift in the surface, brighten text */
+body.dark-theme .neo-nav-card:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  transform: none !important;
+  color: #ffffff !important;
+}
+body.dark-theme .neo-nav-card:hover .neo-nav-card-icon { color: #c9b8ff !important; transform: none !important; }
+body.dark-theme .neo-nav-card:hover .neo-nav-card-label { color: #ffffff !important; }
+
+/* Active: purple wash + left accent bar + glow */
+body.dark-theme .neo-nav-card.active {
+  background: linear-gradient(90deg, rgba(132, 0, 255, 0.2), rgba(132, 0, 255, 0.05)) !important;
+  border-color: transparent !important;
+  box-shadow:
+    inset 2px 0 0 0 #8400ff,
+    0 0 20px -8px rgba(132, 0, 255, 0.7) !important;
+  color: #ffffff !important;
+}
+body.dark-theme .neo-nav-card.active .neo-nav-card-icon { color: #c9a6ff !important; transform: none !important; text-shadow: none !important; }
+body.dark-theme .neo-nav-card.active .neo-nav-card-label { color: #ffffff !important; font-weight: 600 !important; text-shadow: none !important; }
+
+/* "NEW" badge: refined pill */
+body.dark-theme .neo-nav-card-badge {
+  background: rgba(132, 0, 255, 0.92) !important;
+  box-shadow: 0 0 12px -2px rgba(132, 0, 255, 0.8) !important;
+  font-size: 9px !important;
+  letter-spacing: 0.04em !important;
+}
+
+/* Status / player card at the bottom */
+body.dark-theme .neo-status-card {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(132, 0, 255, 0.12) !important;
+  border-radius: 14px !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   COLLAPSIBLE SIDEBAR — desktop icon-rail (toggle via the header arrow)
+   `body.neo-collapsed` shrinks the rail to icons and reflows the content.
+   ═══════════════════════════════════════════════════════════════════════════ */
+:root { --neo-sidebar-collapsed: 76px; }
+
+body.neo-collapsed #neo-sidebar {
+  width: var(--neo-sidebar-collapsed) !important;
+}
+/* Hide everything textual; keep just the icons */
+body.neo-collapsed #neo-sidebar .neo-logo-text,
+body.neo-collapsed #neo-sidebar .neo-nav-card-label,
+body.neo-collapsed #neo-sidebar .neo-nav-section-title,
+body.neo-collapsed #neo-sidebar .neo-nav-card-badge,
+body.neo-collapsed #neo-sidebar .neo-status-card,
+body.neo-collapsed #neo-sidebar .neo-quick-create-text {
+  display: none !important;
+}
+/* Center the icons in the narrow rail */
+body.neo-collapsed #neo-sidebar .neo-nav-card {
+  justify-content: center !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  gap: 0 !important;
+}
+body.neo-collapsed #neo-sidebar .neo-logo-wrapper {
+  justify-content: center;
+}
+body.neo-collapsed #neo-sidebar .neo-sidebar-header {
+  flex-direction: column;
+  gap: 10px;
+}
+/* Keep the active accent bar visible even when collapsed */
+body.neo-collapsed #neo-sidebar .neo-nav-card.active {
+  box-shadow: inset 2px 0 0 0 #8400ff, 0 0 14px -6px rgba(132, 0, 255, 0.7) !important;
+}
+
+/* Reflow the main content to the narrow rail width */
+body.neo-collapsed:has(#neo-sidebar) main,
+body.neo-collapsed:has(#neo-sidebar) #mainContent,
+body.neo-collapsed:has(#neo-sidebar) .main-content,
+body.neo-collapsed:has(#neo-sidebar) .app-content {
+  margin-left: var(--neo-sidebar-collapsed) !important;
+}
+
+/* The toggle arrow stays clickable at all widths */
+.neo-sidebar-toggle { cursor: pointer; }
+
+/* Floating tooltip for the collapsed icon-rail */
+.neo-tip {
+  position: fixed;
+  transform: translateY(-50%) translateX(-6px);
+  background: rgba(14, 10, 24, 0.97);
+  color: #ece5ff;
+  border: 1px solid rgba(132, 0, 255, 0.35);
+  padding: 6px 12px;
+  border-radius: 9px;
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 100000;
+  box-shadow: 0 8px 26px -6px rgba(0, 0, 0, 0.65);
+  transition: opacity 0.14s ease, transform 0.14s ease;
+}
+.neo-tip.show {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}

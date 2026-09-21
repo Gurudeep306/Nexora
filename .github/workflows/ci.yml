@@ -1,0 +1,51 @@
+# Runs on every push and pull request. Render waits for these checks to pass
+# before deploying (autoDeployTrigger: checksPass in render.yaml), so a commit
+# that breaks the server or the client build never reaches the live site.
+name: CI
+
+on:
+  push:
+    branches: [main, staging]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PUPPETEER_SKIP_DOWNLOAD: "1"
+
+jobs:
+  server:
+    name: Server tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Syntax check
+        run: for f in src/*.js src/routes/*.js src/middleware/*.js scripts/*.js; do node --check "$f"; done
+      - name: Tests (incl. cloud-database end-to-end)
+        run: npm test
+
+  client:
+    name: Client build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+      - run: npm ci --prefix client --no-audit --no-fund
+      - name: Lint
+        run: npm run lint --prefix client
+      - name: Type-check + build
+        run: npm run build --prefix client

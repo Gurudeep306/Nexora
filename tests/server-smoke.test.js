@@ -108,3 +108,14 @@ test('quick run endpoint still executes code after refactor', async () => {
   const runBody = await runRes.json();
   assert.equal((runBody.output || '').trim(), '8');
 });
+
+test('message metadata routes are not treated as conversations', async () => {
+  const unread = await fetch(`${baseUrl}/api/messages/unread/ui_check`).then(res => res.json());
+  assert.deepEqual(unread.counts, []);
+  assert.equal(unread.total, 0);
+  assert.equal(unread.messages, undefined);
+
+  const reactions = await fetch(`${baseUrl}/api/messages/1/reactions`).then(res => res.json());
+  assert.deepEqual(reactions.reactions, {});
+  assert.equal(reactions.messages, undefined);
+});

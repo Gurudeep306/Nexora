@@ -1,0 +1,709 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Nexora — Premium FX Layer  (reactbits-inspired, vanilla)
+   Spotlight cards · Star-border buttons · Shiny gradient text · Aurora bg ·
+   Click spark · Count-up · smooth micro-interactions.
+   Decoupled from app class names: premium.js tags elements with px-* classes.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  --px-accent: #818cf8;
+  --px-accent-2: #22d3ee;
+  --px-accent-3: #a78bfa;
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   1 · SPOTLIGHT CARD  (radial glow follows the cursor + premium hover lift)
+   ─────────────────────────────────────────────────────────────────────────── */
+.px-card {
+  position: relative;
+  isolation: isolate;
+  transition:
+    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.35s ease,
+    box-shadow 0.35s ease;
+}
+.px-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  background: radial-gradient(
+    260px circle at var(--px-mx, 50%) var(--px-my, 50%),
+    rgba(129, 140, 248, 0.16),
+    rgba(34, 211, 238, 0.06) 40%,
+    transparent 65%
+  );
+  z-index: 0;
+}
+.px-card:hover::after { opacity: 1; }
+.px-card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 18px 40px -18px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(129, 140, 248, 0.22);
+}
+/* keep real content above the glow */
+.px-card > * { position: relative; z-index: 1; }
+
+/* Subtle gradient hairline that brightens on hover (reactbits "glass surface") */
+.px-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(129, 140, 248, 0.35),
+    rgba(34, 211, 238, 0.12) 45%,
+    transparent 70%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+.px-card:hover::before { opacity: 1; }
+
+/* ───────────────────────────────────────────────────────────────────────────
+   2 · STAR-BORDER / SHINE BUTTON  (animated sheen sweep across primary CTAs)
+   ─────────────────────────────────────────────────────────────────────────── */
+.px-btn {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.px-btn::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    100deg,
+    transparent,
+    rgba(255, 255, 255, 0.35),
+    transparent
+  );
+  transform: skewX(-18deg);
+  pointer-events: none;
+  z-index: 2;
+}
+.px-btn:hover::after {
+  animation: px-sheen 0.85s ease;
+}
+@keyframes px-sheen {
+  to { left: 150%; }
+}
+.px-btn:hover {
+  box-shadow:
+    0 0 0 1px rgba(129, 140, 248, 0.5),
+    0 8px 26px -8px rgba(129, 140, 248, 0.6);
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   3 · SHINY / GRADIENT TEXT  (animated shimmer on big headings)
+   ─────────────────────────────────────────────────────────────────────────── */
+.px-shiny {
+  background: linear-gradient(
+    100deg,
+    #b14aff 0%,
+    #ffffff 30%,
+    #8400ff 50%,
+    #ffffff 70%,
+    #c77dff 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: px-shine 6s linear infinite;
+}
+@keyframes px-shine {
+  to { background-position: 200% center; }
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   4 · AURORA BACKGROUND  (slow drifting gradient mesh behind everything)
+   ─────────────────────────────────────────────────────────────────────────── */
+.px-aurora {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 0.5;
+}
+.px-aurora::before,
+.px-aurora::after {
+  content: "";
+  position: absolute;
+  width: 60vw;
+  height: 60vw;
+  border-radius: 50%;
+  /* lighter blur + GPU-only transform = cheaper constant compositing */
+  filter: blur(64px);
+  will-change: transform;
+  transform: translateZ(0);
+}
+.px-aurora::before {
+  top: -20%;
+  left: -10%;
+  background: radial-gradient(circle, rgba(132, 0, 255, 0.5), transparent 62%);
+  animation: px-drift1 26s ease-in-out infinite;
+}
+.px-aurora::after {
+  bottom: -25%;
+  right: -10%;
+  background: radial-gradient(circle, rgba(199, 125, 255, 0.32), transparent 62%);
+  animation: px-drift2 32s ease-in-out infinite;
+}
+@keyframes px-drift1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(12vw, 8vh) scale(1.15); }
+}
+@keyframes px-drift2 {
+  0%, 100% { transform: translate(0, 0) scale(1.1); }
+  50% { transform: translate(-10vw, -6vh) scale(1); }
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   5 · CLICK SPARK  (tiny particle burst at the pointer on click)
+   ─────────────────────────────────────────────────────────────────────────── */
+.px-spark {
+  position: fixed;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--px-accent-2);
+  box-shadow: 0 0 8px var(--px-accent-2);
+  pointer-events: none;
+  z-index: 99999;
+  opacity: 1;
+  will-change: transform, opacity;
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   6 · COUNT-UP  (numbers fade in as they tick)
+   ─────────────────────────────────────────────────────────────────────────── */
+.px-counting { opacity: 0.96; }
+
+/* ───────────────────────────────────────────────────────────────────────────
+   7 · TILT  (3D parallax toward the cursor — reactbits "Tilted Card")
+   premium.js sets --px-rx / --px-ry and toggles .px-tilting.
+   ─────────────────────────────────────────────────────────────────────────── */
+.px-card {
+  transform-style: preserve-3d;
+}
+.px-card.px-tilting {
+  transition: transform 0.08s linear, box-shadow 0.35s ease, border-color 0.35s ease;
+  transform: perspective(900px) rotateX(var(--px-rx, 0deg)) rotateY(var(--px-ry, 0deg))
+    translateY(-4px);
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   8 · ANIMATED GRADIENT BORDER  (rotating conic hairline on hover)
+   Uses @property for a smooth angle animation where supported.
+   ─────────────────────────────────────────────────────────────────────────── */
+@property --px-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+.px-card:hover::before {
+  background: conic-gradient(
+    from var(--px-angle),
+    rgba(34, 211, 238, 0.7),
+    rgba(129, 140, 248, 0.7),
+    rgba(167, 139, 250, 0.7),
+    rgba(34, 211, 238, 0.7)
+  );
+  animation: px-rotate-border 4s linear infinite;
+}
+@keyframes px-rotate-border {
+  to { --px-angle: 360deg; }
+}
+
+/* Always-on animated gradient ring for hero CTAs */
+.px-glow-border {
+  position: relative;
+  isolation: isolate;
+}
+.px-glow-border::before {
+  content: "";
+  position: absolute;
+  inset: -1.5px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--px-angle),
+    var(--px-accent),
+    var(--px-accent-2),
+    var(--px-accent-3),
+    var(--px-accent)
+  );
+  animation: px-rotate-border 4s linear infinite;
+  z-index: -1;
+  opacity: 0.9;
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   9 · PAGE TRANSITION  (replayed when the SPA swaps views)
+   ─────────────────────────────────────────────────────────────────────────── */
+.px-page-in {
+  animation: px-page-in 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes px-page-in {
+  from { opacity: 0; transform: translateY(14px) scale(0.995); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   10 · SCROLL REVEAL  (fade + rise as elements enter the viewport)
+   Safety: a global fallback class force-reveals everything if JS misses.
+   ─────────────────────────────────────────────────────────────────────────── */
+/* Uses the independent `translate` property (not `transform`) so the reveal
+   composes cleanly with card hover-lift and tilt instead of fighting them. */
+.px-reveal {
+  opacity: 0;
+  translate: 0 22px;
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    translate 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, translate;
+}
+.px-reveal.px-revealed,
+body.px-reveal-off .px-reveal {
+  opacity: 1;
+  translate: 0 0;
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   11 · MAGNETIC BUTTON  (gentle pull toward the cursor — reactbits "Magnet")
+   premium.js sets the `translate` property so it composes with any transform.
+   ─────────────────────────────────────────────────────────────────────────── */
+.px-btn {
+  transition: translate 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   12 · GLOBAL PREMIUM CHROME  (scrollbars, focus glow, selection, smooth scroll)
+   ─────────────────────────────────────────────────────────────────────────── */
+html { scroll-behavior: smooth; }
+
+body.dark-theme ::-webkit-scrollbar { width: 11px; height: 11px; }
+body.dark-theme ::-webkit-scrollbar-track { background: transparent; }
+body.dark-theme ::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+  background-color: rgba(129, 140, 248, 0.32);
+  transition: background-color 0.2s ease;
+}
+body.dark-theme ::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(129, 140, 248, 0.55);
+}
+body.dark-theme {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(129, 140, 248, 0.4) transparent;
+}
+
+/* Premium glow on focused inputs/selects/textareas (skip the code editor) */
+body.dark-theme input:not([type="checkbox"]):not([type="radio"]):focus,
+body.dark-theme textarea:not(.inputarea):focus,
+body.dark-theme select:focus,
+body.dark-theme [contenteditable="true"]:focus {
+  outline: none;
+  border-color: rgba(129, 140, 248, 0.7) !important;
+  box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.18),
+    0 0 18px -6px rgba(129, 140, 248, 0.55) !important;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+/* Branded text selection */
+body.dark-theme ::selection {
+  background: rgba(129, 140, 248, 0.35);
+  color: #ffffff;
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   13 · PREMIUM GLASS TOASTS  (overrides the legacy toast styling)
+   ─────────────────────────────────────────────────────────────────────────── */
+body.dark-theme #toasts {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+body.dark-theme .toast {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 240px;
+  max-width: 380px;
+  padding: 13px 38px 13px 14px;
+  border-radius: 14px;
+  overflow: hidden;
+  color: var(--text, #f4f6fb);
+  background: rgba(14, 14, 26, 0.82) !important;
+  border: 1px solid rgba(129, 140, 248, 0.22) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  backdrop-filter: blur(14px) saturate(140%);
+  box-shadow:
+    0 14px 40px -12px rgba(0, 0, 0, 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+  animation: px-toast-in 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes px-toast-in {
+  from { opacity: 0; transform: translateX(40px) scale(0.96); }
+  to   { opacity: 1; transform: none; }
+}
+body.dark-theme .toast.removing {
+  animation: px-toast-out 0.3s ease forwards;
+}
+@keyframes px-toast-out {
+  to { opacity: 0; transform: translateX(40px) scale(0.96); }
+}
+/* Accent rail per type */
+body.dark-theme .toast::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--px-accent);
+  box-shadow: 0 0 14px var(--px-accent);
+}
+body.dark-theme .toast.success::before { background: #34d399; box-shadow: 0 0 14px #34d399; }
+body.dark-theme .toast.error::before   { background: #f87171; box-shadow: 0 0 14px #f87171; }
+body.dark-theme .toast.warning::before { background: #fbbf24; box-shadow: 0 0 14px #fbbf24; }
+body.dark-theme .toast-icon-wrap {
+  display: flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; flex-shrink: 0;
+  border-radius: 8px;
+  background: rgba(129, 140, 248, 0.12);
+}
+body.dark-theme .toast-msg { font-size: 13px; line-height: 1.4; flex: 1; }
+body.dark-theme .toast-close {
+  position: absolute; top: 8px; right: 11px;
+  font-size: 16px; line-height: 1; color: var(--text-muted, #8b93a7);
+  cursor: pointer; transition: color 0.2s ease;
+}
+body.dark-theme .toast-close:hover { color: var(--text, #fff); }
+body.dark-theme .toast-bar {
+  position: absolute; left: 0; bottom: 0; height: 2px;
+  background: linear-gradient(90deg, var(--px-accent), var(--px-accent-2));
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   15 · PREMIUM FORM CONTROLS  (checkboxes, range sliders, select caret)
+   Scoped to dark theme; native fallbacks remain intact.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* Accent color does most of the work for checkboxes/radios cheaply + safely */
+body.dark-theme input[type="checkbox"],
+body.dark-theme input[type="radio"] {
+  accent-color: var(--px-accent);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+/* Range sliders — premium track + glowing thumb */
+body.dark-theme input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--px-accent) 0%,
+    var(--px-accent-2) var(--px-range, 50%),
+    rgba(255, 255, 255, 0.1) var(--px-range, 50%)
+  );
+  outline: none;
+  cursor: pointer;
+}
+body.dark-theme input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--px-accent);
+  box-shadow: 0 0 10px rgba(129, 140, 248, 0.7);
+  transition: transform 0.15s ease;
+}
+body.dark-theme input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+body.dark-theme input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--px-accent);
+  box-shadow: 0 0 10px rgba(129, 140, 248, 0.7);
+}
+
+/* Selects — add a crisp custom caret without nuking native behavior on
+   selects that already opt out of appearance. */
+body.dark-theme select.px-caret,
+body.dark-theme .filter-select,
+body.dark-theme .studio-form select,
+body.dark-theme .el-form-group select,
+body.dark-theme .settings-select {
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23818cf8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   17 · PREMIUM PROBLEMS TABLE  (dense rows → spacious card-rows)
+   ─────────────────────────────────────────────────────────────────────────── */
+body.dark-theme .problem-table {
+  border-spacing: 0 7px;
+}
+body.dark-theme .problem-table th {
+  padding: 6px 16px 10px;
+  color: var(--text-tertiary, #8b93a7);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+body.dark-theme .problem-table tbody tr {
+  background: rgba(255, 255, 255, 0.022);
+  clip-path: none;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+    background 0.22s ease, box-shadow 0.22s ease;
+}
+body.dark-theme .problem-table tbody tr td {
+  padding: 14px 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.045);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.045);
+  background-clip: padding-box;
+}
+body.dark-theme .problem-table tbody tr td:first-child {
+  border-left: 1px solid rgba(255, 255, 255, 0.045);
+  border-radius: 11px 0 0 11px;
+}
+body.dark-theme .problem-table tbody tr td:last-child {
+  border-right: 1px solid rgba(255, 255, 255, 0.045);
+  border-radius: 0 11px 11px 0;
+}
+body.dark-theme .problem-table tbody tr:hover {
+  background: rgba(129, 140, 248, 0.09);
+  transform: translateX(3px);
+  box-shadow: 0 10px 28px -12px rgba(0, 0, 0, 0.75);
+}
+body.dark-theme .problem-table tbody tr:hover td {
+  border-color: rgba(129, 140, 248, 0.3);
+}
+body.dark-theme .problem-table tbody tr:hover td:first-child {
+  box-shadow: inset 3px 0 0 0 var(--px-accent);
+}
+body.dark-theme .problem-table .problem-title-link {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  transition: color 0.2s ease;
+}
+body.dark-theme .problem-table tbody tr:hover .problem-title-link {
+  color: var(--px-accent-2);
+}
+/* status dot glows on solved/hover for a premium read */
+body.dark-theme .problem-table .status-dot.solved {
+  box-shadow: 0 0 8px rgba(52, 211, 153, 0.8);
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   18b · BOOKMARK STAR  (problem rows)
+   ─────────────────────────────────────────────────────────────────────────── */
+.bm-star {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 17px;
+  line-height: 1;
+  padding: 4px;
+  color: var(--text-muted, #8b93a7);
+  transition: color 0.2s ease, transform 0.15s ease;
+}
+.bm-star:hover { color: #fbbf24; transform: scale(1.18); }
+.bm-star.active {
+  color: #fbbf24;
+  text-shadow: 0 0 10px rgba(251, 191, 36, 0.7);
+}
+.bm-star.bm-pop { animation: bm-pop 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+@keyframes bm-pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.5) rotate(12deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   19 · PREMIUM DASHBOARD (HQ)  — hero glow + stat cells as mini-cards
+   ─────────────────────────────────────────────────────────────────────────── */
+body.dark-theme .hub-profile-hero {
+  position: relative;
+  overflow: hidden;
+}
+body.dark-theme .hub-profile-hero::after {
+  content: "";
+  position: absolute;
+  top: -40%;
+  right: -10%;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(129, 140, 248, 0.18), transparent 65%);
+  pointer-events: none;
+  z-index: 0;
+}
+body.dark-theme .hub-pstat {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+body.dark-theme .hub-pstat-val {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+body.dark-theme .hub-pstat-lbl {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 10px;
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   20 · SCROLL PROGRESS BAR  (thin gradient bar tracking page scroll)
+   ─────────────────────────────────────────────────────────────────────────── */
+#px-progress {
+  position: fixed;
+  top: 0; left: 0;
+  height: 2.5px;
+  width: 0;
+  z-index: 99998;
+  background: linear-gradient(90deg, var(--px-accent), var(--px-accent-2), var(--px-accent-3));
+  box-shadow: 0 0 10px rgba(129, 140, 248, 0.6);
+  pointer-events: none;
+  transition: width 0.12s linear;
+}
+
+/* Respect reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  body.dark-theme .toast { animation: none; }
+  #px-progress { transition: none; }
+  .px-reveal { opacity: 1 !important; translate: none !important; }
+  .px-card.px-tilting { transform: none; }
+  .px-glow-border::before,
+  .px-card:hover::before { animation: none !important; }
+  .px-card,
+  .px-card::after,
+  .px-card::before,
+  .px-btn::after,
+  .px-shiny,
+  .px-aurora::before,
+  .px-aurora::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .px-card:hover { transform: none; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   21 · COHESION PASS — unify the old cyberpunk chrome with the React Bits look
+   (rounded buttons, purple primary, calmer page headers, rounded chips/pills)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Buttons: drop the sharp clip-path cuts, round them, soften the tracking */
+body.dark-theme .btn {
+  border-radius: 10px !important;
+  clip-path: none !important;
+  letter-spacing: 0.04em !important;
+}
+body.dark-theme .btn-primary,
+body.dark-theme .btn-submit {
+  background: linear-gradient(135deg, #8400ff 0%, #b14aff 100%) !important;
+  color: #fff !important;
+  box-shadow:
+    0 2px 14px -2px rgba(132, 0, 255, 0.4),
+    0 0 22px -8px rgba(132, 0, 255, 0.5) !important;
+}
+body.dark-theme .btn-primary:hover,
+body.dark-theme .btn-submit:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 6px 26px -4px rgba(132, 0, 255, 0.55),
+    0 0 40px -8px rgba(132, 0, 255, 0.6) !important;
+}
+/* Secondary / ghost / outline: consistent subtle dark with a faint purple edge */
+body.dark-theme .btn-secondary,
+body.dark-theme .btn-ghost,
+body.dark-theme .btn-outline {
+  border: 1px solid rgba(132, 0, 255, 0.18) !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+}
+body.dark-theme .btn-secondary:hover,
+body.dark-theme .btn-ghost:hover,
+body.dark-theme .btn-outline:hover {
+  border-color: rgba(132, 0, 255, 0.4) !important;
+  background: rgba(132, 0, 255, 0.08) !important;
+}
+
+/* Page headers: same gradient family as the brand, calmer tracking */
+body.dark-theme .page-header h1 {
+  letter-spacing: 0.01em !important;
+  background: linear-gradient(118deg, #ffffff 0%, #cbb0ff 55%, #8400ff 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+/* The terminal subtitle stays as flavour but recedes */
+body.dark-theme .page-header p,
+body.dark-theme .hub-subtitle {
+  color: #6b6480 !important;
+  opacity: 0.75;
+}
+
+/* Filter chips + status/platform pills: rounded, consistent */
+body.dark-theme .filter-chip,
+body.dark-theme .studio-filter-chip,
+body.dark-theme .chip {
+  border-radius: 999px !important;
+  clip-path: none !important;
+}
+body.dark-theme .filter-chip.active,
+body.dark-theme .studio-filter-chip.active {
+  background: rgba(132, 0, 255, 0.16) !important;
+  border-color: rgba(132, 0, 255, 0.45) !important;
+  color: #d9c6ff !important;
+}
+body.dark-theme .badge,
+body.dark-theme [class*="-badge"] {
+  clip-path: none !important;
+}
+
+/* Toggle switches → React Bits purple when on */
+body.dark-theme .settings-toggle input:checked + .toggle-slider,
+body.dark-theme .customize-toggle input:checked + .customize-toggle-slider,
+body.dark-theme input[type="checkbox"]:checked + .toggle-slider {
+  background: #8400ff !important;
+  box-shadow: 0 0 12px rgba(132, 0, 255, 0.5) !important;
+}
+
+/* Glitch-title offset layers → purple instead of blue/cyan */
+body.dark-theme .glitch::before { color: rgba(132, 0, 255, 0.7) !important; }
+body.dark-theme .glitch::after { color: rgba(199, 125, 255, 0.6) !important; }

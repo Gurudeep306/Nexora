@@ -1,0 +1,47 @@
+# Nightly copy of the live (Turso) database, kept as a private workflow
+# artifact for 14 days. Download one from: Actions → Nightly backup → a run →
+# Artifacts. Restore with:  npm run db:push-to-cloud -- <file.db> --force
+#
+# Needs repository secrets (Settings → Secrets and variables → Actions):
+#   TURSO_DATABASE_URL   libsql://nexora-<you>.aws-us-east-1.turso.io
+#   TURSO_BACKUP_TOKEN   a READ-ONLY Turso token (falls back to TURSO_AUTH_TOKEN)
+name: Nightly backup
+
+on:
+  schedule:
+    - cron: "30 21 * * *" # 03:00 IST every day
+  workflow_dispatch:
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PUPPETEER_SKIP_DOWNLOAD: "1"
+      TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
+      TURSO_AUTH_TOKEN: ${{ secrets.TURSO_BACKUP_TOKEN || secrets.TURSO_AUTH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci --omit=dev --no-audit --no-fund
+      - name: Skip when secrets are not configured yet
+        id: check
+        run: |
+          if [ -z "$TURSO_DATABASE_URL" ]; then
+            echo "TURSO_DATABASE_URL secret not set — skipping backup."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Download database
+        if: steps.check.outputs.skip != 'true'
+        run: |
+          npm run db:backup -- backups/nexora.db
+          gzip -9 backups/nexora.db
+      - uses: actions/upload-artifact@v4
+        if: steps.check.outputs.skip != 'true'
+        with:
+          name: nexora-db-${{ github.run_number }}
+          path: backups/nexora.db.gz
+          retention-days: 14

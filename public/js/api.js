@@ -25,6 +25,11 @@ const API = {
   // Tags
   getTags() { return this._fetch('/api/tags'); },
 
+  // Bookmarks
+  getBookmarks(username) { return this._fetch(`/api/bookmarks?username=${encodeURIComponent(username || '')}`); },
+  addBookmark(username, problemId) { return this._fetch('/api/bookmarks', { method: 'POST', body: JSON.stringify({ username, problemId }) }); },
+  removeBookmark(username, problemId) { return this._fetch(`/api/bookmarks/${problemId}?username=${encodeURIComponent(username || '')}`, { method: 'DELETE' }); },
+
   // Testcases
   addTestcase(data) { return this._fetch('/api/testcases', { method: 'POST', body: JSON.stringify(data) }); },
   updateTestcase(id, data) { return this._fetch(`/api/testcases/${id}`, { method: 'PUT', body: JSON.stringify(data) }); },

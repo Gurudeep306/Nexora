@@ -1,0 +1,411 @@
+/* ═══════════════════════════════════════════════════════════
+   Nexora UI Fixes & Enhancements
+   Comprehensive fixes for common UI issues
+   ═══════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════════
+   BUTTON STATE IMPROVEMENTS
+   ═══════════════════════════════════════════════════════════ */
+
+.btn {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Active/pressed state for all buttons */
+.btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+/* Loading state */
+.btn.loading {
+  pointer-events: none;
+  opacity: 0.8;
+  color: transparent;
+}
+
+.btn.loading::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Success state */
+.btn.success {
+  background: var(--success);
+  border-color: var(--success);
+  color: white;
+}
+
+.btn.success:hover:not(:disabled) {
+  background: #047857;
+  border-color: #047857;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   INPUT STATE IMPROVEMENTS
+   ═══════════════════════════════════════════════════════════ */
+
+.form-input,
+.form-textarea,
+.form-select {
+  transition: all var(--transition-fast);
+}
+
+/* Clear button for inputs */
+.form-input-clear {
+  position: absolute;
+  right: var(--space-3);
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: var(--space-1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--transition-fast);
+}
+
+.form-input-clear:hover {
+  color: var(--text-primary);
+}
+
+/* Filled state */
+.form-input.filled {
+  border-color: var(--primary);
+  background: var(--primary-bg);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CARD IMPROVEMENTS
+   ═══════════════════════════════════════════════════════════ */
+
+.card {
+  will-change: transform, box-shadow;
+}
+
+.card.interactive {
+  cursor: pointer;
+}
+
+.card.interactive:active {
+  transform: scale(0.98);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   BADGE IMPROVEMENTS
+   ═══════════════════════════════════════════════════════════ */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  background: var(--primary-bg);
+  color: var(--primary);
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge-primary {
+  background: var(--primary-bg);
+  color: var(--primary);
+}
+
+.badge-success {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.badge-danger {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.badge-warning {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+
+.badge-outline {
+  background: transparent;
+  border: 1px solid currentColor;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   AVATAR IMPROVEMENTS
+   ═══════════════════════════════════════════════════════════ */
+
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: 600;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: var(--primary-bg);
+  color: var(--primary);
+}
+
+.avatar-sm {
+  width: 32px;
+  height: 32px;
+  font-size: var(--text-xs);
+}
+
+.avatar-md {
+  width: 40px;
+  height: 40px;
+  font-size: var(--text-sm);
+}
+
+.avatar-lg {
+  width: 48px;
+  height: 48px;
+  font-size: var(--text-base);
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Avatar with border */
+.avatar-ring {
+  border: 2px solid var(--primary);
+  box-shadow: 0 0 0 2px var(--bg-secondary);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PROGRESS BAR IMPROVEMENTS
+   ═══════════════════════════════════════════════════════════ */
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--primary);
+  transition: width var(--transition-base);
+  border-radius: var(--radius-full);
+}
+
+.progress-fill.success {
+  background: var(--success);
+}
+
+.progress-fill.warning {
+  background: var(--warning);
+}
+
+.progress-fill.danger {
+  background: var(--danger);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   EMPTY STATE IMPROVEMENTS
+   ═══════════════════════════════════════════════════════════ */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-12);
+  text-align: center;
+  color: var(--text-muted);
+  min-height: 300px;
+}
+
+.empty-state-icon {
+  width: 64px;
+  height: 64px;
+  margin-bottom: var(--space-4);
+  opacity: 0.5;
+  color: var(--text-muted);
+}
+
+.empty-state-title {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-2);
+}
+
+.empty-state-description {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  margin-bottom: var(--space-4);
+  max-width: 400px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   DIVIDER IMPROVEMENTS
+   ═══════════════════════════════════════════════════════════ */
+
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: var(--space-4) 0;
+}
+
+.divider.vertical {
+  width: 1px;
+  height: auto;
+  margin: 0 var(--space-4);
+}
+
+.divider-text {
+  position: relative;
+  text-align: center;
+  margin: var(--space-6) 0;
+}
+
+.divider-text::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--border);
+}
+
+.divider-text span {
+  position: relative;
+  background: var(--bg-secondary);
+  padding: 0 var(--space-3);
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FLEX UTILITY FIXES
+   ═══════════════════════════════════════════════════════════ */
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.flex-start {
+  display: flex;
+  align-items: flex-start;
+}
+
+.flex-end {
+  display: flex;
+  align-items: flex-end;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   LIST IMPROVEMENTS
+   ═══════════════════════════════════════════════════════════ */
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.list-item {
+  padding: var(--space-3);
+  border-bottom: 1px solid var(--border-light);
+  transition: background-color var(--transition-fast);
+}
+
+.list-item:last-child {
+  border-bottom: none;
+}
+
+.list-item:hover {
+  background-color: var(--bg-hover);
+}
+
+.list-item.active {
+  background-color: var(--primary-bg);
+  border-left: 3px solid var(--primary);
+  padding-left: calc(var(--space-3) - 3px);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE IMAGE & VIDEO
+   ═══════════════════════════════════════════════════════════ */
+
+.responsive-media {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+}
+
+.responsive-media.aspect-video {
+  aspect-ratio: 16 / 9;
+}
+
+.responsive-media.aspect-square {
+  aspect-ratio: 1 / 1;
+}
+
+.responsive-media img,
+.responsive-media video,
+.responsive-media iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   DARK THEME COMPONENT FIXES
+   ═══════════════════════════════════════════════════════════ */
+
+body.dark-theme .card {
+  background: var(--bg-secondary);
+  border-color: var(--border);
+}
+
+body.dark-theme .badge {
+  background: rgba(99, 102, 241, 0.2);
+  color: #818cf8;
+}
+
+body.dark-theme .list-item:hover {
+  background-color: var(--bg-hover);
+}
+
+body.dark-theme .divider {
+  border-color: var(--border);
+}
+
+body.dark-theme .progress-bar {
+  background: var(--bg-tertiary);
+}
+
+body.dark-theme .empty-state {
+  color: var(--text-muted);
+}

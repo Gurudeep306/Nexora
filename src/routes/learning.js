@@ -96,7 +96,7 @@ ${(statement || 'No problem statement available').substring(0, 4000)}
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
         body: JSON.stringify({
-          model: 'llama-3.3-70b-versatile',
+          model: process.env.GROQ_MODEL || 'openai/gpt-oss-120b',
           messages,
           max_tokens: 1024,
           temperature: 0.6,
@@ -168,7 +168,7 @@ RULES:
             { role: 'system', content: systemPrompt },
             { role: 'user', content: userMsg },
           ],
-          { maxTokens: 150, temperature: 0.05, stop: ['\n\n\n', '```'], model: 'llama-3.3-70b-versatile' }
+          { maxTokens: 150, temperature: 0.05, stop: ['\n\n\n', '```'] }
         );
 
         if (groqResult.ok) rawText = groqResult.content;

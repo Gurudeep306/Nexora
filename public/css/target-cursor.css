@@ -1,0 +1,109 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   TargetCursor — React Bits, ported to vanilla. Global custom cursor with a
+   spinning corner-bracket frame that locks onto `.cursor-target` elements.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.target-cursor-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  z-index: 99999;
+  mix-blend-mode: difference;
+  transform: translate(-50%, -50%);
+}
+
+.target-cursor-dot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 4px;
+  height: 4px;
+  background: #fff;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  will-change: transform;
+}
+
+.target-cursor-corner {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  border: 3px solid #fff;
+  will-change: transform;
+}
+
+.corner-tl {
+  transform: translate(-150%, -150%);
+  border-right: none;
+  border-bottom: none;
+}
+.corner-tr {
+  transform: translate(50%, -150%);
+  border-left: none;
+  border-bottom: none;
+}
+.corner-br {
+  transform: translate(50%, 50%);
+  border-left: none;
+  border-top: none;
+}
+.corner-bl {
+  transform: translate(-150%, 50%);
+  border-right: none;
+  border-top: none;
+}
+
+/* When the target cursor is active, hide the native cursor app-wide. */
+body.target-cursor-active,
+body.target-cursor-active * {
+  cursor: none !important;
+}
+
+/* …but text-editing surfaces MUST keep a visible caret, or you can't see
+   where you're typing (inputs, textareas, contenteditable, and the Monaco /
+   CodeMirror code editors). Higher specificity beats the `*` rule above. */
+body.target-cursor-active input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="button"]):not([type="submit"]),
+body.target-cursor-active textarea,
+body.target-cursor-active [contenteditable="true"],
+body.target-cursor-active .monaco-editor,
+body.target-cursor-active .monaco-editor *,
+body.target-cursor-active .cm-editor,
+body.target-cursor-active .cm-editor * {
+  cursor: text !important;
+}
+/* The editor's own cursor regions (line numbers, scrollbars) keep their hints */
+body.target-cursor-active .monaco-editor .margin,
+body.target-cursor-active .monaco-editor .scrollbar,
+body.target-cursor-active .monaco-scrollable-element > .scrollbar {
+  cursor: default !important;
+}
+
+/* Drag/resize affordances must keep their cursor or panels feel un-resizable. */
+body.target-cursor-active [class*="resizer"],
+body.target-cursor-active [class*="resize-handle"],
+body.target-cursor-active [class*="splitter"],
+body.target-cursor-active [class*="col-resize"] {
+  cursor: col-resize !important;
+}
+body.target-cursor-active .bottom-panel-resizer,
+body.target-cursor-active [class*="resizer-h"],
+body.target-cursor-active [class*="row-resize"] {
+  cursor: row-resize !important;
+}
+body.target-cursor-active [class*="grab"],
+body.target-cursor-active [draggable="true"],
+body.target-cursor-active [class*="draggable"] {
+  cursor: grab !important;
+}
+
+/* On touch devices we don't render the custom cursor — restore native. */
+@media (hover: none), (pointer: coarse) {
+  body.target-cursor-active,
+  body.target-cursor-active * {
+    cursor: auto !important;
+  }
+}

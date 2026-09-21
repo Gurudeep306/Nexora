@@ -14,12 +14,28 @@
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=JetBrains+Mono:wght@400;600&family=Share+Tech+Mono&family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Chakra+Petch:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/icons.css">
   <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/command-palette.css">
   <link rel="stylesheet" href="/css/effects.css">
-  <link rel="stylesheet" href="https://unpkg.com/splitting/dist/splitting.css">
+  <link rel="stylesheet" href="/css/animations.css">
+  <link rel="stylesheet" href="/css/z-index.css">
+  <link rel="stylesheet" href="/css/accessibility.css">
+  <link rel="stylesheet" href="/css/orbitdock.css">
+  <link rel="stylesheet" href="/css/neo-sidebar.css">
+  <link rel="stylesheet" href="/css/premium.css">
+  <link rel="stylesheet" href="/css/target-cursor.css">
+  <link rel="stylesheet" href="/css/magic-bento.css">
+  <link rel="stylesheet" href="/css/sidebar-v2.css">
+  <link rel="stylesheet" href="/vendor/splitting.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
   <script src="/js/particles.js" defer></script>
+  <script src="/js/layout/theme.js" defer></script>
+  <!-- old cursor retired in favor of React Bits TargetCursor (loaded after gsap) -->
+  <!-- <script src="/js/layout/cursor.js" defer></script> -->
+  <script src="/js/layout/sidebar-config.js" defer></script>
+  <script src="/js/layout/orbitdock.js" defer></script>
+  <script src="/js/layout/neo-sidebar.js" defer></script>
 </head>
-<body>
+<body class="dark-theme">
   <!-- SVG Gradient Defs -->
   <svg style="position:absolute;width:0;height:0">
     <defs>
@@ -31,12 +47,14 @@
     </defs>
   </svg>
 
+  <!-- ORBITDOCK will be rendered here by JS -->
+
   <!-- ===== BOOT SCREEN ===== -->
   <div id="bootScreen" class="boot-screen">
     <canvas id="bootCanvas"></canvas>
     <div class="boot-content">
       <div class="boot-scanlines"></div>
-      <div class="boot-glitch-title" data-text="NEXORA">NEXORA</div>
+      <div class="boot-glitch-title ascii-wordmark" data-text="NEXORA">NEXORA</div>
       <div class="boot-tagline">[ SYSTEM BOOT SEQUENCE ]</div>
 
       <div class="boot-terminal" id="bootTerminal">
@@ -87,86 +105,21 @@
       <div class="shortcuts-body" id="shortcutsBody"></div>
     </div>
   </div>
-
-  <!-- Sidebar -->
-  <nav id="sidebar">
-    <button class="sidebar-toggle-btn" id="sidebarToggle" onclick="App.toggleSidebar()" title="Hide sidebar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><polyline points="15 18 9 12 15 6"/></svg></button>
-    <div class="sidebar-brand">
-      <div class="brand-text-wrap">
-        <span class="brand-text glitch" data-text="NEXORA">NEXORA</span>
-        <span class="brand-sub">// enter_the_nexus()</span>
+<!-- ===== LEGACY SIDEBAR (hidden — OrbitDock is now the navigation system) ===== -->
+  <!-- These hidden elements are kept so app.js can still update player card data -->
+  <div id="sidebar" style="display:none !important; position:absolute; left:-9999px; visibility:hidden;" aria-hidden="true">
+    <div id="sidebarPlayerCard">
+      <div id="sidebarBadgeWrap">
+        <div id="sidebarAvatarIcon"></div>
+        <div id="sidebarRiftBadge"></div>
       </div>
+      <div id="sidebarTitle">Bit</div>
+      <div id="sidebarXpFill" style="width:0%"></div>
+      <span id="sidebarXpText">0 XP</span>
+      <div id="sidebarStreak"></div>
     </div>
-    <div class="sidebar-player-card" id="sidebarPlayerCard" onclick="if(App._username) location.hash='#/profile/'+App._username" style="cursor:pointer" title="View Profile">
-      <div class="sidebar-badge-wrap" id="sidebarBadgeWrap">
-        <div class="sidebar-badge-avatar" id="sidebarAvatarIcon"><i class="icon-avatar-coder"></i></div>
-        <div class="sidebar-rift-badge" id="sidebarRiftBadge"></div>
-      </div>
-      <div class="player-mini-info">
-        <div class="player-title-text" id="sidebarTitle">Bit</div>
-        <div class="player-xp-mini" onclick="event.stopPropagation(); location.hash='#/nexus'" title="View Nexora Progression" style="cursor:pointer">
-          <div class="player-xp-bar-mini"><div class="player-xp-fill-mini" id="sidebarXpFill" style="width:0%"></div></div>
-          <span class="player-xp-text" id="sidebarXpText">0 XP</span>
-        </div>
-        <div class="player-streak-mini" id="sidebarStreak"></div>
-      </div>
-    </div>
-    <div class="sidebar-nav">
-      <a href="#/hub" class="nav-item active" data-page="hub">
-        <div class="nav-active-bar"></div>
-        <div class="nav-icon-wrap"><i class="icon-dashboard nav-icon-i"></i></div>
-        <div class="nav-text-wrap"><span class="nav-label">HQ</span><span class="nav-desc">~/command_center</span></div>
-      </a>
-      <a href="#/problems" class="nav-item" data-page="problems">
-        <div class="nav-active-bar"></div>
-        <div class="nav-icon-wrap"><i class="icon-problems nav-icon-i"></i></div>
-        <div class="nav-text-wrap"><span class="nav-label">Problems</span><span class="nav-desc">grep -r "challenge"</span></div>
-      </a>
-      <a href="#/nexus" class="nav-item" data-page="nexus">
-        <div class="nav-active-bar"></div>
-        <div class="nav-icon-wrap"><i class="icon-arena nav-icon-i"></i></div>
-        <div class="nav-text-wrap"><span class="nav-label">Progress</span><span class="nav-desc">cat stats.log</span></div>
-      </a>
-      <a href="#/contests" class="nav-item" data-page="contests">
-        <div class="nav-active-bar"></div>
-        <div class="nav-icon-wrap"><i class="icon-contests nav-icon-i"></i></div>
-        <div class="nav-text-wrap"><span class="nav-label">Contests</span><span class="nav-desc">./arena --live</span></div>
-      </a>
-      <a href="#/ailab" class="nav-item" data-page="ailab">
-        <div class="nav-active-bar"></div>
-        <div class="nav-icon-wrap"><i class="icon-neural nav-icon-i"></i></div>
-        <div class="nav-text-wrap"><span class="nav-label">AI Lab</span><span class="nav-desc">python3 neural.py</span></div>
-      </a>
-      <a href="#/learn" class="nav-item" data-page="learn">
-        <div class="nav-active-bar"></div>
-        <div class="nav-icon-wrap"><i class="icon-learn nav-icon-i"></i></div>
-        <div class="nav-text-wrap"><span class="nav-label">Learn</span><span class="nav-desc">import knowledge</span></div>
-      </a>
-      <a href="#/forge" class="nav-item" data-page="forge">
-        <div class="nav-active-bar"></div>
-        <div class="nav-icon-wrap"><i class="icon-hammer nav-icon-i"></i></div>
-        <div class="nav-text-wrap"><span class="nav-label">The Forge</span><span class="nav-desc">make build</span></div>
-      </a>
-      <a href="#/workshop" class="nav-item" data-page="workshop">
-        <div class="nav-active-bar"></div>
-        <div class="nav-icon-wrap"><i class="icon-code nav-icon-i"></i></div>
-        <div class="nav-text-wrap"><span class="nav-label">Workshop</span><span class="nav-desc">vim sandbox.cpp</span></div>
-      </a>
-      <a href="#/social" class="nav-item" data-page="social">
-        <div class="nav-active-bar"></div>
-        <div class="nav-icon-wrap"><i class="icon-friends nav-icon-i"></i></div>
-        <div class="nav-text-wrap"><span class="nav-label">Squad</span><span class="nav-desc">ssh party@nexus</span></div>
-        <span class="social-unread-badge hidden" id="socialUnreadBadge">0</span>
-      </a>
-    </div>
-    <div class="sidebar-footer">
-      <a href="/studio" target="_blank" class="nav-item" style="margin:8px;border-radius:8px;border:1px solid #2a2a3d;background:linear-gradient(135deg,#1a1a2e,#16162a)">
-        <div class="nav-active-bar"></div>
-        <div class="nav-icon-wrap" style="font-size:18px">⚡</div>
-        <div class="nav-text-wrap"><span class="nav-label" style="background:linear-gradient(135deg,#6c63ff,#00d4ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:700">Creator Studio</span><span class="nav-desc">./studio --cms</span></div>
-      </a>
-    </div>
-  </nav>
+    <span class="social-unread-badge hidden" id="socialUnreadBadge">0</span>
+  </div>
 
   <!-- Main Content -->
   <main id="mainContent">
@@ -1128,14 +1081,28 @@
   <script src="/js/app.config.js"></script>
   <script src="/js/api.js"></script>
   <script src="/js/app.js"></script>
-  <!-- Animation libraries -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://unpkg.com/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+  <!-- Animation libraries.
+       Monaco's AMD loader (above) sets define.amd, which makes these UMD libs
+       register as anonymous AMD modules instead of setting window globals. We
+       hide `define` across this synchronous block so they take the global path
+       (window.gsap / window.THREE …), then restore it for Monaco. -->
+  <script>window.__defBak = window.define; try { window.define = undefined; } catch (e) {}</script>
+  <script src="/vendor/gsap.min.js"></script>
+  <script src="/vendor/ScrollTrigger.min.js"></script>
+  <script src="/vendor/three.min.js"></script>
+  <script src="/vendor/GLTFLoader.js"></script>
+  <script src="/vendor/lenis.min.js"></script>
+  <script src="/vendor/splitting.min.js"></script>
+  <script>try { window.define = window.__defBak; } catch (e) {}</script>
+  <!-- spline viewer is an ES module (unaffected by AMD `define`) -->
   <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.82/build/spline-viewer.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
-  <script src="https://unpkg.com/splitting/dist/splitting.min.js"></script>
-  <script src="/js/nexora-effects-v3.js" defer></script>
+  <!-- old cyberpunk 3D-shapes background retired for the clean React Bits look -->
+  <!-- <script src="/js/nexora-effects-v3.js" defer></script> -->
+  <script src="/js/premium.js" defer></script>
+  <!-- React Bits ports (need global gsap/three already loaded above) -->
+  <script src="/js/reactbits/target-cursor.js" defer></script>
+  <script src="/js/reactbits/magic-bento.js" defer></script>
+  <script src="/js/reactbits/ascii-text.js" defer></script>
+  <script src="/js/reactbits/init.js" defer></script>
 </body>
 </html>

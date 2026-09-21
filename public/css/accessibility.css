@@ -1,0 +1,277 @@
+/* ═══════════════════════════════════════════════════════════
+   Nexora Accessibility & WCAG Compliance
+   Ensures proper contrast, focus states, and keyboard navigation
+   ═══════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════════
+   FOCUS STATES — Keyboard Navigation
+   ═══════════════════════════════════════════════════════════ */
+
+/* Reset default browser outlines */
+button,
+a,
+input,
+textarea,
+select,
+[role="button"],
+[tabindex] {
+  outline: none;
+}
+
+/* Custom focus visible style for all interactive elements */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+[role="button"]:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-md);
+}
+
+/* Special cases for buttons */
+.btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 0;
+}
+
+/* Links should be clearly visible */
+a:focus-visible {
+  text-decoration: underline;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   COLOR CONTRAST IMPROVEMENTS
+   ═══════════════════════════════════════════════════════════ */
+
+/* Ensure text-muted still meets WCAG AA on light backgrounds */
+:root {
+  /* Increase text-muted contrast for accessibility */
+  --text-muted: #737d8c; /* Higher contrast than #94a3b8 */
+}
+
+/* Dark theme muted text also needs good contrast */
+body.dark-theme {
+  --text-muted: #98a4b5; /* Better contrast on dark */
+}
+
+/* Warning text should be more prominent */
+.form-warning,
+.text-warning {
+  color: #b45309; /* Darker than #d97706 for better contrast */
+}
+
+/* Success text contrast */
+.form-success,
+.text-success {
+  color: #065f46; /* Darker green for better contrast */
+}
+
+/* Danger text contrast */
+.text-danger,
+.form-error {
+  color: #7f1d1d; /* Darker red for better contrast */
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SKIP LINKS — Screen Reader Navigation
+   ═══════════════════════════════════════════════════════════ */
+
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--primary);
+  color: white;
+  padding: 8px;
+  text-decoration: none;
+  z-index: 9999;
+  border-radius: 0 0 4px 0;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   REDUCED MOTION SUPPORT
+   ═══════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   HIGH CONTRAST MODE SUPPORT
+   ═══════════════════════════════════════════════════════════ */
+
+@media (prefers-contrast: more) {
+  :root {
+    --text-primary: #000000;
+    --text-secondary: #1e293b;
+    --border: #000000;
+  }
+
+  body.dark-theme {
+    --text-primary: #ffffff;
+    --text-secondary: #e5e7eb;
+    --border: #ffffff;
+  }
+
+  .btn-primary {
+    border: 2px solid currentColor;
+  }
+
+  .form-input,
+  .form-textarea,
+  .form-select {
+    border-width: 2px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   VISIBLE FOCUS INDICATORS
+   ═══════════════════════════════════════════════════════════ */
+
+/* Ensure form inputs have clear focus indicators */
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+  border-width: 2px;
+  padding: calc(var(--space-2) - 1px) calc(var(--space-3) - 1px);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ARIA LABELS & HIDDEN CONTENT
+   ═══════════════════════════════════════════════════════════ */
+
+/* Screen reader only content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Visually hidden but accessible to screen readers */
+.hidden-visual {
+  position: absolute;
+  left: -9999px;
+  top: -9999px;
+  visibility: hidden;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ERROR AND STATUS MESSAGES
+   ═══════════════════════════════════════════════════════════ */
+
+/* Ensure error messages are clear and visible */
+.error-message,
+[role="alert"] {
+  background: var(--danger-bg);
+  color: #7f1d1d;
+  border: 2px solid #dc2626;
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  margin-bottom: var(--space-4);
+  font-weight: 500;
+}
+
+/* Success messages */
+.success-message {
+  background: var(--success-bg);
+  color: #065f46;
+  border: 2px solid #059669;
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  margin-bottom: var(--space-4);
+  font-weight: 500;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TOOLTIP ACCESSIBILITY
+   ═══════════════════════════════════════════════════════════ */
+
+[role="tooltip"] {
+  position: absolute;
+  background: var(--text);
+  color: white;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  z-index: var(--z-tooltip);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   IMAGE AND ICON ACCESSIBILITY
+   ═══════════════════════════════════════════════════════════ */
+
+/* Ensure decorative icons are hidden from screen readers */
+[aria-hidden="true"] {
+  pointer-events: none;
+}
+
+/* Images should have alt text */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SCROLLABLE CONTENT
+   ═══════════════════════════════════════════════════════════ */
+
+/* Ensure scrollable regions are accessible */
+[role="region"],
+[role="main"],
+main {
+  outline: none;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   DARK MODE ACCESSIBILITY
+   ═══════════════════════════════════════════════════════════ */
+
+body.dark-theme {
+  background: #070710;
+  color: #f4f6fb;
+}
+
+body.dark-theme .form-input,
+body.dark-theme .form-textarea,
+body.dark-theme .form-select {
+  background: #1a1a2e;
+  color: #f1f5f9;
+  border-color: #2a2a45;
+}
+
+body.dark-theme .form-input:focus,
+body.dark-theme .form-textarea:focus,
+body.dark-theme .form-select:focus {
+  border-color: #6366f1;
+}
+
+body.dark-theme .error-message {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+body.dark-theme .success-message {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+}

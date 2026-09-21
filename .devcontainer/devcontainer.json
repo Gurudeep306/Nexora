@@ -1,0 +1,20 @@
+{
+  // Open this repo in GitHub Codespaces (Code → Codespaces → Create) to get a
+  // ready-to-code cloud dev machine: Node installed, dependencies installed,
+  // client built. Run `npm run dev` (server) and `npm run client:dev` (hot-
+  // reloading UI) — Codespaces gives you a private URL for each port.
+  "name": "Nexora",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:22",
+  "containerEnv": { "PUPPETEER_SKIP_DOWNLOAD": "1" },
+  "postCreateCommand": "npm ci --no-audit --no-fund && npm run build",
+  "forwardPorts": [3000, 5173],
+  "portsAttributes": {
+    "3000": { "label": "Nexora (server)", "onAutoForward": "notify" },
+    "5173": { "label": "Client dev server (hot reload)", "onAutoForward": "openBrowser" }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode", "bradlc.vscode-tailwindcss"]
+    }
+  }
+}

@@ -7,15 +7,21 @@
     "start": "node src/server.js",
     "start:prod": "NODE_ENV=production node src/server.js",
     "dev": "NODE_ENV=development node --watch src/server.js",
+    "client:dev": "cd client && npm run dev",
+    "client:build": "cd client && npm install && npm run build",
+    "build": "npm ci --prefix client --include=dev --no-audit --no-fund && npm run build --prefix client",
     "test": "node --test tests/*.test.js",
     "scrape": "node src/scraper.js",
     "scrape:100": "node src/scraper.js --limit 100",
     "scrape:500": "node src/scraper.js --limit 500",
     "scrape:easy": "node src/scraper.js --rating 800 1200 --limit 200",
     "scrape:medium": "node src/scraper.js --rating 1200 1800 --limit 200",
-    "scrape:hard": "node src/scraper.js --rating 1800 3500 --limit 200"
+    "scrape:hard": "node src/scraper.js --rating 1800 3500 --limit 200",
+    "db:push-to-cloud": "node scripts/migrate-to-turso.js",
+    "db:backup": "node scripts/backup-turso.js"
   },
   "dependencies": {
+    "@libsql/client": "^0.18.0",
     "better-sqlite3-session-store": "^0.1.0",
     "cheerio": "^1.0.0-rc.12",
     "compression": "^1.8.1",
@@ -33,5 +39,8 @@
     "puppeteer": "^24.40.0",
     "socket.io": "^4.8.3",
     "sqlite3": "^6.0.1"
+  },
+  "engines": {
+    "node": ">=22.12.0 <25"
   }
 }

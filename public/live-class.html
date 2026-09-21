@@ -1,0 +1,1440 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Live Class — Nexora</title>
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="stylesheet" href="/css/design-system.css" />
+        <link rel="stylesheet" href="/css/layout.css" />
+        <link rel="stylesheet" href="/css/effects.css" />
+        <link rel="stylesheet" href="/css/styles.css" />
+        <link rel="stylesheet" href="/css/animations.css" />
+        <link rel="stylesheet" href="/css/z-index.css" />
+        <link rel="stylesheet" href="/css/accessibility.css" />
+        <link rel="stylesheet" href="/css/sidebar.css" />
+        <link rel="stylesheet" href="/css/orbitdock.css" />
+        <link rel="stylesheet" href="/css/neo-sidebar.css" />
+        <link rel="stylesheet" href="/css/premium.css" />
+        <link rel="stylesheet" href="/css/target-cursor.css" />
+        <link rel="stylesheet" href="/css/magic-bento.css" />
+        <link rel="stylesheet" href="/css/sidebar-v2.css" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            /* ── CSS Variable Fallbacks ─────────────────────────────────
+       design-system.css uses --bg/--border/--text naming. These
+       pages were written with --bg-primary / --border-primary
+       conventions, so we bridge the gap here.
+    ────────────────────────────────────────────────────────── */
+            :root {
+                --bg-primary: #ffffff;
+                --bg-secondary: #f8fafc;
+                --bg-tertiary: #f1f5f9;
+                --border-primary: #e2e8f0;
+                --text-primary: #1e293b;
+            }
+
+            /* Live Class Specific Styles */
+            .live-container {
+                display: flex;
+                height: 100vh;
+                background: var(--bg-secondary);
+            }
+
+            .live-main {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                min-width: 0;
+            }
+
+            .live-topbar {
+                height: 56px;
+                background: var(--bg-primary);
+                border-bottom: 1px solid var(--border-primary);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 var(--space-5);
+                flex-shrink: 0;
+            }
+
+            .live-topbar-left {
+                display: flex;
+                align-items: center;
+                gap: var(--space-3);
+            }
+
+            .live-status {
+                display: flex;
+                align-items: center;
+                gap: var(--space-2);
+            }
+
+            .live-status-dot {
+                width: 8px;
+                height: 8px;
+                border-radius: var(--radius-full);
+                background: var(--danger);
+                animation: pulse 2s infinite;
+            }
+
+            .live-status-dot.active {
+                background: var(--success);
+            }
+
+            @keyframes pulse {
+                0%,
+                100% {
+                    opacity: 1;
+                }
+                50% {
+                    opacity: 0.5;
+                }
+            }
+
+            .live-status-text {
+                font-size: var(--text-sm);
+                font-weight: 500;
+                color: var(--text-primary);
+            }
+
+            .live-topbar-right {
+                display: flex;
+                align-items: center;
+                gap: var(--space-2);
+            }
+
+            .live-content {
+                flex: 1;
+                display: flex;
+                gap: var(--space-4);
+                padding: var(--space-4);
+                min-height: 0;
+            }
+
+            .live-video-area {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                gap: var(--space-4);
+                min-width: 0;
+            }
+
+            .live-video-main {
+                flex: 1;
+                background: var(--bg-primary);
+                border-radius: var(--radius-lg);
+                overflow: hidden;
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .live-video-placeholder {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: var(--space-4);
+                color: var(--text-muted);
+            }
+
+            .live-video-placeholder svg {
+                width: 64px;
+                height: 64px;
+                opacity: 0.5;
+            }
+
+            .live-video-placeholder-text {
+                font-size: var(--text-lg);
+                font-weight: 500;
+            }
+
+            .live-video-local {
+                position: absolute;
+                bottom: var(--space-4);
+                right: var(--space-4);
+                width: 200px;
+                height: 150px;
+                background: var(--bg-secondary);
+                border-radius: var(--radius-md);
+                overflow: hidden;
+                border: 2px solid var(--border-primary);
+            }
+
+            .live-video-local video {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .live-controls {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: var(--space-3);
+                padding: var(--space-4);
+                background: var(--bg-primary);
+                border-radius: var(--radius-lg);
+            }
+
+            .live-control-btn {
+                width: 48px;
+                height: 48px;
+                border-radius: var(--radius-lg);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: all var(--transition-fast);
+                border: none;
+                background: var(--bg-secondary);
+                color: var(--text-secondary);
+            }
+
+            .live-control-btn:hover {
+                background: var(--bg-tertiary);
+                color: var(--text-primary);
+            }
+
+            .live-control-btn.active {
+                background: var(--primary);
+                color: white;
+            }
+
+            .live-control-btn.danger {
+                background: var(--danger);
+                color: white;
+            }
+
+            .live-control-btn svg {
+                width: 20px;
+                height: 20px;
+            }
+
+            .live-sidebar {
+                width: 320px;
+                display: flex;
+                flex-direction: column;
+                gap: var(--space-4);
+                flex-shrink: 0;
+            }
+
+            .live-panel {
+                background: var(--bg-primary);
+                border-radius: var(--radius-lg);
+                border: 1px solid var(--border-primary);
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .live-panel-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: var(--space-3) var(--space-4);
+                border-bottom: 1px solid var(--border-primary);
+            }
+
+            .live-panel-title {
+                font-size: var(--text-sm);
+                font-weight: 600;
+                color: var(--text-primary);
+            }
+
+            .live-panel-count {
+                font-size: var(--text-xs);
+                color: var(--text-muted);
+                background: var(--bg-tertiary);
+                padding: 2px 8px;
+                border-radius: var(--radius-full);
+            }
+
+            .live-panel-body {
+                flex: 1;
+                overflow-y: auto;
+                padding: var(--space-3);
+            }
+
+            /* Chat Messages */
+            .live-chat-messages {
+                display: flex;
+                flex-direction: column;
+                gap: var(--space-3);
+                max-height: 300px;
+                overflow-y: auto;
+            }
+
+            .live-chat-message {
+                display: flex;
+                gap: var(--space-2);
+                font-size: var(--text-sm);
+            }
+
+            .live-chat-avatar {
+                width: 24px;
+                height: 24px;
+                border-radius: var(--radius-full);
+                background: var(--primary);
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: var(--text-xs);
+                font-weight: 600;
+                flex-shrink: 0;
+            }
+
+            .live-chat-content {
+                flex: 1;
+            }
+
+            .live-chat-name {
+                font-weight: 500;
+                color: var(--text-primary);
+                font-size: var(--text-xs);
+            }
+
+            .live-chat-text {
+                color: var(--text-secondary);
+                word-break: break-word;
+            }
+
+            .live-chat-input-area {
+                display: flex;
+                gap: var(--space-2);
+                padding: var(--space-3);
+                border-top: 1px solid var(--border-primary);
+            }
+
+            .live-chat-input {
+                flex: 1;
+                height: 36px;
+                padding: 0 var(--space-3);
+                font-size: var(--text-sm);
+                color: var(--text-primary);
+                background: var(--bg-secondary);
+                border: 1px solid var(--border-primary);
+                border-radius: var(--radius-md);
+                outline: none;
+            }
+
+            .live-chat-input:focus {
+                border-color: var(--primary);
+            }
+
+            .live-chat-send {
+                width: 36px;
+                height: 36px;
+                border-radius: var(--radius-md);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: var(--primary);
+                color: white;
+                cursor: pointer;
+                border: none;
+                transition: all var(--transition-fast);
+            }
+
+            .live-chat-send:hover {
+                background: var(--primary-dark);
+            }
+
+            .live-chat-send svg {
+                width: 16px;
+                height: 16px;
+            }
+
+            /* Participants */
+            .live-participants-list {
+                display: flex;
+                flex-direction: column;
+                gap: var(--space-2);
+            }
+
+            .live-participant {
+                display: flex;
+                align-items: center;
+                gap: var(--space-3);
+                padding: var(--space-2);
+                border-radius: var(--radius-md);
+                transition: background var(--transition-fast);
+            }
+
+            .live-participant:hover {
+                background: var(--bg-secondary);
+            }
+
+            .live-participant-avatar {
+                width: 32px;
+                height: 32px;
+                border-radius: var(--radius-full);
+                background: var(--bg-tertiary);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: var(--text-sm);
+                font-weight: 600;
+                color: var(--text-secondary);
+                position: relative;
+            }
+
+            .live-participant-status {
+                position: absolute;
+                bottom: -2px;
+                right: -2px;
+                width: 12px;
+                height: 12px;
+                border-radius: var(--radius-full);
+                border: 2px solid var(--bg-primary);
+            }
+
+            .live-participant-status.mic-on {
+                background: var(--success);
+            }
+
+            .live-participant-status.mic-off {
+                background: var(--danger);
+            }
+
+            .live-participant-info {
+                flex: 1;
+            }
+
+            .live-participant-name {
+                font-size: var(--text-sm);
+                font-weight: 500;
+                color: var(--text-primary);
+            }
+
+            .live-participant-role {
+                font-size: var(--text-xs);
+                color: var(--text-muted);
+            }
+
+            .live-participant-icons {
+                display: flex;
+                gap: var(--space-1);
+            }
+
+            .live-participant-icon {
+                width: 20px;
+                height: 20px;
+                border-radius: var(--radius-sm);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: var(--text-xs);
+            }
+
+            .live-participant-icon.mic {
+                background: var(--success-bg);
+                color: var(--success);
+            }
+
+            .live-participant-icon.mic-muted {
+                background: var(--bg-tertiary);
+                color: var(--text-muted);
+            }
+
+            .live-participant-icon.camera {
+                background: var(--info-bg);
+                color: var(--info);
+            }
+
+            .live-participant-icon.camera-off {
+                background: var(--bg-tertiary);
+                color: var(--text-muted);
+            }
+
+            /* Recording indicator */
+            .live-recording-indicator {
+                display: flex;
+                align-items: center;
+                gap: var(--space-2);
+                padding: var(--space-2) var(--space-3);
+                background: var(--danger-bg);
+                border-radius: var(--radius-md);
+                font-size: var(--text-sm);
+                color: var(--danger);
+                font-weight: 500;
+            }
+
+            .live-recording-dot {
+                width: 8px;
+                height: 8px;
+                border-radius: var(--radius-full);
+                background: var(--danger);
+                animation: pulse 1s infinite;
+            }
+
+            /* Empty state */
+            .live-empty {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: var(--space-8);
+                text-align: center;
+                color: var(--text-muted);
+            }
+
+            .live-empty svg {
+                width: 48px;
+                height: 48px;
+                opacity: 0.5;
+                margin-bottom: var(--space-3);
+            }
+
+            .live-empty-title {
+                font-size: var(--text-base);
+                font-weight: 500;
+                color: var(--text-secondary);
+                margin-bottom: var(--space-1);
+            }
+
+            .live-empty-desc {
+                font-size: var(--text-sm);
+            }
+
+            /* Schedule info */
+            .live-schedule-info {
+                padding: var(--space-4);
+                background: var(--bg-primary);
+                border-radius: var(--radius-lg);
+                border: 1px solid var(--border-primary);
+            }
+
+            .live-schedule-title {
+                font-size: var(--text-lg);
+                font-weight: 600;
+                color: var(--text-primary);
+                margin-bottom: var(--space-2);
+            }
+
+            .live-schedule-meta {
+                display: flex;
+                flex-direction: column;
+                gap: var(--space-1);
+                font-size: var(--text-sm);
+                color: var(--text-secondary);
+            }
+
+            .live-schedule-meta-item {
+                display: flex;
+                align-items: center;
+                gap: var(--space-2);
+            }
+
+            .live-schedule-meta-item svg {
+                width: 16px;
+                height: 16px;
+                color: var(--text-muted);
+            }
+
+            /* ── Back / Home Navigation ──────────────────────────── */
+            .live-back-btn {
+                display: inline-flex;
+                align-items: center;
+                gap: var(--space-2);
+                padding: var(--space-2) var(--space-3);
+                border-radius: var(--radius-md);
+                font-size: var(--text-sm);
+                font-weight: 500;
+                color: var(--text-secondary);
+                background: transparent;
+                border: 1px solid var(--border-primary);
+                cursor: pointer;
+                text-decoration: none;
+                transition: all 150ms ease;
+                white-space: nowrap;
+            }
+            .live-back-btn:hover {
+                background: var(--bg-tertiary);
+                color: var(--text-primary);
+                border-color: var(--text-muted);
+            }
+            .live-back-btn svg {
+                width: 14px;
+                height: 14px;
+                flex-shrink: 0;
+            }
+            .live-topbar-divider {
+                width: 1px;
+                height: 20px;
+                background: var(--border-primary);
+                flex-shrink: 0;
+            }
+
+            /* ── Mobile Responsive ───────────────────────────────── */
+            @media (max-width: 900px) {
+                .live-sidebar {
+                    width: 280px;
+                }
+            }
+
+            @media (max-width: 768px) {
+                .live-content {
+                    flex-direction: column;
+                    padding: var(--space-3);
+                    gap: var(--space-3);
+                    overflow-y: auto;
+                }
+
+                .live-sidebar {
+                    width: 100%;
+                    flex-direction: row;
+                    flex-shrink: 0;
+                }
+
+                .live-panel {
+                    flex: 1;
+                    min-width: 0;
+                }
+
+                .live-chat-messages {
+                    max-height: 200px;
+                }
+
+                .live-video-local {
+                    width: 120px;
+                    height: 90px;
+                }
+
+                .live-controls {
+                    flex-wrap: wrap;
+                    gap: var(--space-2);
+                    padding: var(--space-3);
+                }
+
+                .live-control-btn {
+                    width: 42px;
+                    height: 42px;
+                }
+            }
+
+            @media (max-width: 480px) {
+                .live-sidebar {
+                    flex-direction: column;
+                }
+
+                .live-topbar {
+                    padding: 0 var(--space-3);
+                }
+
+                .live-status-text#liveClassTitle {
+                    display: none;
+                }
+            }
+        </style>
+    </head>
+    <body class="dark-theme">
+        <div class="live-container">
+            <!-- Main Content -->
+            <div class="live-main">
+                <!-- Top Bar -->
+                <div class="live-topbar">
+                    <div class="live-topbar-left">
+                        <!-- Back to main app -->
+                        <a
+                            href="/"
+                            class="live-back-btn"
+                            title="Back to Nexora"
+                        >
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <polyline points="15 18 9 12 15 6" />
+                            </svg>
+                            Nexora
+                        </a>
+                        <div class="live-topbar-divider"></div>
+                        <div class="live-status">
+                            <div
+                                class="live-status-dot"
+                                id="liveStatusDot"
+                            ></div>
+                            <span class="live-status-text" id="liveStatusText"
+                                >Not Connected</span
+                            >
+                        </div>
+                        <div class="live-topbar-divider"></div>
+                        <span class="live-status-text" id="liveClassTitle"
+                            >Live Class</span
+                        >
+                    </div>
+                    <div class="live-topbar-right">
+                        <div
+                            class="live-recording-indicator"
+                            id="recordingIndicator"
+                            style="display: none"
+                        >
+                            <div class="live-recording-dot"></div>
+                            Recording
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content Area -->
+                <div class="live-content">
+                    <!-- Video Area -->
+                    <div class="live-video-area">
+                        <div class="live-video-main" id="liveVideoMain">
+                            <div
+                                class="live-video-placeholder"
+                                id="videoPlaceholder"
+                            >
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.5"
+                                >
+                                    <path d="M23 7l-7 5 7 5V7z" />
+                                    <rect
+                                        x="1"
+                                        y="5"
+                                        width="15"
+                                        height="14"
+                                        rx="2"
+                                        ry="2"
+                                    />
+                                </svg>
+                                <div class="live-video-placeholder-text">
+                                    Waiting to join class...
+                                </div>
+                            </div>
+                            <video
+                                id="localVideo"
+                                style="display: none"
+                                autoplay
+                                muted
+                                playsinline
+                            ></video>
+                            <video
+                                id="remoteVideo"
+                                style="display: none"
+                                autoplay
+                                playsinline
+                            ></video>
+                            <div
+                                class="live-video-local"
+                                id="localVideoContainer"
+                                style="display: none"
+                            >
+                                <video
+                                    id="localVideoPreview"
+                                    autoplay
+                                    muted
+                                    playsinline
+                                ></video>
+                            </div>
+                        </div>
+
+                        <!-- Controls -->
+                        <div class="live-controls">
+                            <button
+                                class="live-control-btn"
+                                id="btnMic"
+                                onclick="toggleMic()"
+                                title="Toggle Microphone"
+                            >
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <path
+                                        d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"
+                                    />
+                                    <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                                    <line x1="12" y1="19" x2="12" y2="23" />
+                                    <line x1="8" y1="23" x2="16" y2="23" />
+                                </svg>
+                            </button>
+                            <button
+                                class="live-control-btn"
+                                id="btnCamera"
+                                onclick="toggleCamera()"
+                                title="Toggle Camera"
+                            >
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <path d="M23 7l-7 5 7 5V7z" />
+                                    <rect
+                                        x="1"
+                                        y="5"
+                                        width="15"
+                                        height="14"
+                                        rx="2"
+                                        ry="2"
+                                    />
+                                </svg>
+                            </button>
+                            <button
+                                class="live-control-btn"
+                                id="btnScreen"
+                                onclick="toggleScreenShare()"
+                                title="Share Screen"
+                            >
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <rect
+                                        x="2"
+                                        y="3"
+                                        width="20"
+                                        height="14"
+                                        rx="2"
+                                        ry="2"
+                                    />
+                                    <line x1="8" y1="21" x2="16" y2="21" />
+                                    <line x1="12" y1="17" x2="12" y2="21" />
+                                </svg>
+                            </button>
+                            <button
+                                class="live-control-btn"
+                                id="btnRaiseHand"
+                                onclick="raiseHand()"
+                                title="Raise Hand"
+                            >
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <path
+                                        d="M18 16l-4-4V4a2 2 0 0 0-4 0v8l-4 4"
+                                    />
+                                    <path d="M12 16l-4 4h8l-4-4z" />
+                                </svg>
+                            </button>
+                            <button
+                                class="live-control-btn"
+                                id="btnRecord"
+                                onclick="toggleRecording()"
+                                title="Record Session"
+                            >
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <circle cx="12" cy="12" r="10" />
+                                    <circle cx="12" cy="12" r="4" />
+                                </svg>
+                            </button>
+                            <button
+                                class="live-control-btn danger"
+                                id="btnLeave"
+                                onclick="leaveClass()"
+                                title="Leave Class"
+                            >
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <path
+                                        d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"
+                                    />
+                                    <polyline points="16 17 21 12 16 7" />
+                                    <line x1="21" y1="12" x2="9" y2="12" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Sidebar -->
+                    <div class="live-sidebar">
+                        <!-- Chat Panel -->
+                        <div class="live-panel">
+                            <div class="live-panel-header">
+                                <div class="live-panel-title">Chat</div>
+                                <div class="live-panel-count" id="chatCount">
+                                    0
+                                </div>
+                            </div>
+                            <div class="live-panel-body">
+                                <div
+                                    class="live-chat-messages"
+                                    id="chatMessages"
+                                >
+                                    <div class="live-empty" id="chatEmpty">
+                                        <svg
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="1.5"
+                                        >
+                                            <path
+                                                d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+                                            />
+                                        </svg>
+                                        <div class="live-empty-title">
+                                            No messages yet
+                                        </div>
+                                        <div class="live-empty-desc">
+                                            Start the conversation
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="live-chat-input-area">
+                                <input
+                                    type="text"
+                                    class="live-chat-input"
+                                    id="chatInput"
+                                    placeholder="Type a message..."
+                                    onkeypress="
+                                        if (event.key === 'Enter') sendChat();
+                                    "
+                                />
+                                <button
+                                    class="live-chat-send"
+                                    onclick="sendChat()"
+                                >
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                    >
+                                        <line x1="22" y1="2" x2="11" y2="13" />
+                                        <polygon
+                                            points="22 2 15 22 11 13 2 9 22 2"
+                                        />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Participants Panel -->
+                        <div class="live-panel">
+                            <div class="live-panel-header">
+                                <div class="live-panel-title">Participants</div>
+                                <div
+                                    class="live-panel-count"
+                                    id="participantCount"
+                                >
+                                    0
+                                </div>
+                            </div>
+                            <div class="live-panel-body">
+                                <div
+                                    class="live-participants-list"
+                                    id="participantsList"
+                                >
+                                    <div
+                                        class="live-empty"
+                                        id="participantsEmpty"
+                                    >
+                                        <svg
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="1.5"
+                                        >
+                                            <path
+                                                d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"
+                                            />
+                                            <circle cx="9" cy="7" r="4" />
+                                            <path
+                                                d="M23 21v-2a4 4 0 0 0-3-3.87"
+                                            />
+                                            <path
+                                                d="M16 3.13a4 4 0 0 1 0 7.75"
+                                            />
+                                        </svg>
+                                        <div class="live-empty-title">
+                                            No participants
+                                        </div>
+                                        <div class="live-empty-desc">
+                                            Others will appear here
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="/js/api.js"></script>
+        <script src="/js/layout/theme.js" defer></script>
+        <!-- old cursor retired in favor of React Bits TargetCursor -->
+        <!-- <script src="/js/layout/cursor.js" defer></script> -->
+        <script src="/js/layout/sidebar-config.js" defer></script>
+        <script src="/js/layout/orbitdock.js" defer></script>
+        <script src="/js/layout/neo-sidebar.js" defer></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="/js/premium.js" defer></script>
+        <!-- React Bits ports (cursor + bento) -->
+        <script>window.__defBak = window.define; try { window.define = undefined; } catch (e) {}</script>
+        <script src="/vendor/gsap.min.js"></script>
+        <script>try { window.define = window.__defBak; } catch (e) {}</script>
+        <script src="/js/reactbits/target-cursor.js" defer></script>
+        <script src="/js/reactbits/magic-bento.js" defer></script>
+        <script src="/js/reactbits/init.js" defer></script>
+        <script>
+            // Live Class State
+            const LiveClass = {
+                socket: null,
+                roomId: null,
+                userId: null,
+                isTeacher: false,
+                micEnabled: false,
+                cameraEnabled: false,
+                screenSharing: false,
+                recording: false,
+                localStream: null,
+                screenStream: null,
+                mediaRecorder: null,
+                recordedChunks: [],
+                participants: [],
+                messages: [],
+            };
+
+            // Initialize
+            document.addEventListener("DOMContentLoaded", () => {
+                const params = new URLSearchParams(window.location.search);
+                LiveClass.roomId = params.get("room");
+                LiveClass.isTeacher = params.get("teacher") === "true";
+                LiveClass.userId =
+                    "user_" + Math.random().toString(36).substr(2, 9);
+
+                if (LiveClass.roomId) {
+                    connectToClass();
+                } else {
+                    showStatus("No room ID provided", false);
+                }
+            });
+
+            // Connect to class
+            function connectToClass() {
+                LiveClass.socket = io();
+
+                LiveClass.socket.on("connect", () => {
+                    console.log("Connected to server");
+                    joinRoom();
+                });
+
+                LiveClass.socket.on("live:participant-joined", (data) => {
+                    addParticipant(data);
+                });
+
+                LiveClass.socket.on("live:participant-left", (data) => {
+                    removeParticipant(data.userId);
+                });
+
+                LiveClass.socket.on("live:chat-message", (data) => {
+                    addChatMessage(data);
+                });
+
+                LiveClass.socket.on("live:recording-started", () => {
+                    LiveClass.recording = true;
+                    updateRecordingUI();
+                });
+
+                LiveClass.socket.on("live:recording-stopped", () => {
+                    LiveClass.recording = false;
+                    updateRecordingUI();
+                });
+
+                LiveClass.socket.on("live:class-ended", () => {
+                    alert("Class has ended by the teacher");
+                    leaveClass();
+                });
+            }
+
+            // Join room
+            function joinRoom() {
+                LiveClass.socket.emit("live:join-room", {
+                    roomId: LiveClass.roomId,
+                    userId: LiveClass.userId,
+                    isTeacher: LiveClass.isTeacher,
+                });
+                showStatus("Connected", true);
+            }
+
+            // Toggle microphone
+            async function toggleMic() {
+                try {
+                    if (LiveClass.micEnabled) {
+                        LiveClass.localStream
+                            .getAudioTracks()
+                            .forEach((track) => (track.enabled = false));
+                        LiveClass.micEnabled = false;
+                        document
+                            .getElementById("btnMic")
+                            .classList.remove("active");
+                    } else {
+                        if (!LiveClass.localStream) {
+                            LiveClass.localStream =
+                                await navigator.mediaDevices.getUserMedia({
+                                    audio: true,
+                                    video: false,
+                                });
+                        }
+                        LiveClass.localStream
+                            .getAudioTracks()
+                            .forEach((track) => (track.enabled = true));
+                        LiveClass.micEnabled = true;
+                        document
+                            .getElementById("btnMic")
+                            .classList.add("active");
+                    }
+                } catch (error) {
+                    console.error("Mic error:", error);
+                    alert("Could not access microphone: " + error.message);
+                }
+            }
+
+            // Toggle camera
+            async function toggleCamera() {
+                try {
+                    if (LiveClass.cameraEnabled) {
+                        LiveClass.localStream
+                            .getVideoTracks()
+                            .forEach((track) => (track.enabled = false));
+                        LiveClass.cameraEnabled = false;
+                        document
+                            .getElementById("btnCamera")
+                            .classList.remove("active");
+                        document.getElementById(
+                            "localVideoContainer",
+                        ).style.display = "none";
+                    } else {
+                        if (!LiveClass.localStream) {
+                            LiveClass.localStream =
+                                await navigator.mediaDevices.getUserMedia({
+                                    audio: false,
+                                    video: true,
+                                });
+                        }
+                        LiveClass.localStream
+                            .getVideoTracks()
+                            .forEach((track) => (track.enabled = true));
+                        LiveClass.cameraEnabled = true;
+                        document
+                            .getElementById("btnCamera")
+                            .classList.add("active");
+
+                        const localPreview =
+                            document.getElementById("localVideoPreview");
+                        localPreview.srcObject = LiveClass.localStream;
+                        document.getElementById(
+                            "localVideoContainer",
+                        ).style.display = "block";
+                    }
+                } catch (error) {
+                    console.error("Camera error:", error);
+                    alert("Could not access camera: " + error.message);
+                }
+            }
+
+            // Toggle screen share
+            async function toggleScreenShare() {
+                try {
+                    if (LiveClass.screenSharing) {
+                        if (LiveClass.screenStream) {
+                            LiveClass.screenStream
+                                .getTracks()
+                                .forEach((track) => track.stop());
+                            LiveClass.screenStream = null;
+                        }
+                        LiveClass.screenSharing = false;
+                        document
+                            .getElementById("btnScreen")
+                            .classList.remove("active");
+                    } else {
+                        LiveClass.screenStream =
+                            await navigator.mediaDevices.getDisplayMedia({
+                                video: true,
+                            });
+                        LiveClass.screenSharing = true;
+                        document
+                            .getElementById("btnScreen")
+                            .classList.add("active");
+
+                        // Handle stream end
+                        LiveClass.screenStream.getVideoTracks()[0].onended =
+                            () => {
+                                toggleScreenShare();
+                            };
+                    }
+                } catch (error) {
+                    console.error("Screen share error:", error);
+                    alert("Could not share screen: " + error.message);
+                }
+            }
+
+            // Raise hand
+            function raiseHand() {
+                if (LiveClass.socket) {
+                    LiveClass.socket.emit("live:raise-hand", {
+                        roomId: LiveClass.roomId,
+                        userId: LiveClass.userId,
+                    });
+                    document
+                        .getElementById("btnRaiseHand")
+                        .classList.toggle("active");
+                }
+            }
+
+            // Toggle recording
+            function toggleRecording() {
+                if (LiveClass.recording) {
+                    stopRecording();
+                } else {
+                    startRecording();
+                }
+            }
+
+            // Start recording
+            function startRecording() {
+                try {
+                    if (!LiveClass.localStream && !LiveClass.screenStream) {
+                        alert(
+                            "Please enable camera or screen sharing before recording",
+                        );
+                        return;
+                    }
+
+                    const stream =
+                        LiveClass.screenStream || LiveClass.localStream;
+                    LiveClass.mediaRecorder = new MediaRecorder(stream);
+                    LiveClass.recordedChunks = [];
+
+                    LiveClass.mediaRecorder.ondataavailable = (e) => {
+                        if (e.data.size > 0) {
+                            LiveClass.recordedChunks.push(e.data);
+                        }
+                    };
+
+                    LiveClass.mediaRecorder.onstop = async () => {
+                        const blob = new Blob(LiveClass.recordedChunks, {
+                            type: "video/webm",
+                        });
+                        // Upload would happen here
+                        console.log("Recording saved:", blob.size, "bytes");
+                    };
+
+                    LiveClass.mediaRecorder.start();
+                    LiveClass.recording = true;
+                    updateRecordingUI();
+
+                    if (LiveClass.socket) {
+                        LiveClass.socket.emit("live:recording-started", {
+                            roomId: LiveClass.roomId,
+                            userId: LiveClass.userId,
+                        });
+                    }
+                } catch (error) {
+                    console.error("Recording error:", error);
+                    alert("Could not start recording: " + error.message);
+                }
+            }
+
+            // Stop recording
+            function stopRecording() {
+                if (
+                    LiveClass.mediaRecorder &&
+                    LiveClass.mediaRecorder.state !== "inactive"
+                ) {
+                    LiveClass.mediaRecorder.stop();
+                    LiveClass.recording = false;
+                    updateRecordingUI();
+
+                    if (LiveClass.socket) {
+                        LiveClass.socket.emit("live:recording-stopped", {
+                            roomId: LiveClass.roomId,
+                            userId: LiveClass.userId,
+                        });
+                    }
+                }
+            }
+
+            // Update recording UI
+            function updateRecordingUI() {
+                const indicator = document.getElementById("recordingIndicator");
+                const btn = document.getElementById("btnRecord");
+
+                if (LiveClass.recording) {
+                    indicator.style.display = "flex";
+                    btn.classList.add("active");
+                } else {
+                    indicator.style.display = "none";
+                    btn.classList.remove("active");
+                }
+            }
+
+            // Leave class
+            function leaveClass() {
+                if (LiveClass.socket) {
+                    LiveClass.socket.emit("live:leave-room", {
+                        roomId: LiveClass.roomId,
+                        userId: LiveClass.userId,
+                    });
+                    LiveClass.socket.disconnect();
+                }
+
+                if (LiveClass.localStream) {
+                    LiveClass.localStream
+                        .getTracks()
+                        .forEach((track) => track.stop());
+                }
+
+                if (LiveClass.screenStream) {
+                    LiveClass.screenStream
+                        .getTracks()
+                        .forEach((track) => track.stop());
+                }
+
+                window.location.href = "/studio";
+            }
+
+            // Send chat message
+            function sendChat() {
+                const input = document.getElementById("chatInput");
+                const message = input.value.trim();
+
+                if (!message || !LiveClass.socket) return;
+
+                LiveClass.socket.emit("live:chat-message", {
+                    roomId: LiveClass.roomId,
+                    userId: LiveClass.userId,
+                    message: message,
+                    messageType: "chat",
+                });
+
+                input.value = "";
+            }
+
+            // Add chat message
+            function addChatMessage(data) {
+                const empty = document.getElementById("chatEmpty");
+                if (empty) empty.style.display = "none";
+
+                const messagesContainer =
+                    document.getElementById("chatMessages");
+                const msgDiv = document.createElement("div");
+                msgDiv.className = "live-chat-message";
+                msgDiv.innerHTML = `
+        <div class="live-chat-avatar">${(data.userName || "U").charAt(0).toUpperCase()}</div>
+        <div class="live-chat-content">
+          <div class="live-chat-name">${data.userName || "Anonymous"}</div>
+          <div class="live-chat-text">${escapeHtml(data.message)}</div>
+        </div>
+      `;
+                messagesContainer.appendChild(msgDiv);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+                // Update count
+                const count =
+                    messagesContainer.querySelectorAll(
+                        ".live-chat-message",
+                    ).length;
+                document.getElementById("chatCount").textContent = count;
+            }
+
+            // Add participant
+            function addParticipant(data) {
+                const empty = document.getElementById("participantsEmpty");
+                if (empty) empty.style.display = "none";
+
+                const list = document.getElementById("participantsList");
+                const participant = document.createElement("div");
+                participant.className = "live-participant";
+                participant.id = "participant-" + data.userId;
+                participant.innerHTML = `
+        <div class="live-participant-avatar">
+          ${(data.userName || "U").charAt(0).toUpperCase()}
+          <div class="live-participant-status mic-off"></div>
+        </div>
+        <div class="live-participant-info">
+          <div class="live-participant-name">${data.userName || "Anonymous"}</div>
+          <div class="live-participant-role">${data.isTeacher ? "Teacher" : "Student"}</div>
+        </div>
+        <div class="live-participant-icons">
+          <div class="live-participant-icon mic-muted">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="1" y1="1" x2="23" y2="23"/><path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"/><path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+          </div>
+        </div>
+      `;
+                list.appendChild(participant);
+
+                // Update count
+                const count = list.querySelectorAll(".live-participant").length;
+                document.getElementById("participantCount").textContent = count;
+            }
+
+            // Remove participant
+            function removeParticipant(userId) {
+                const participant = document.getElementById(
+                    "participant-" + userId,
+                );
+                if (participant) participant.remove();
+
+                const list = document.getElementById("participantsList");
+                const count = list.querySelectorAll(".live-participant").length;
+                document.getElementById("participantCount").textContent = count;
+
+                if (count === 0) {
+                    document.getElementById("participantsEmpty").style.display =
+                        "flex";
+                }
+            }
+
+            // Show status
+            function showStatus(text, active) {
+                document.getElementById("liveStatusText").textContent = text;
+                document
+                    .getElementById("liveStatusDot")
+                    .classList.toggle("active", active);
+            }
+
+            // Escape HTML
+            function escapeHtml(text) {
+                const div = document.createElement("div");
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        </script>
+    </body>
+</html>

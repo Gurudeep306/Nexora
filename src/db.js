@@ -1,29 +1,222 @@
-const sqlite3 = require('sqlite3').verbose();
-const path = require('path');
-const tutorialData = require('./tutorial-data');
-const aiProblemsData = require('./ai-problems-data');
-const forgePaths = require('./dev-roadmap-data');
+// ─────────────────────────────────────────────────────────────────────────────
+// Database driver selection
+//
+//  • Cloud (production): when TURSO_DATABASE_URL is set and NODE_ENV is
+//    "production" (or USE_CLOUD_DB=1), every query goes to a
+//    hosted libSQL/Turso database via @libsql/client. Free hosts wipe the local
+//    disk on every restart, so the data has to live off the server.
+//  • Local (your Mac): otherwise we use the on-disk SQLite file tracker.db via
+//    the native `sqlite3` addon, falling back to Node's built-in node:sqlite.
+//
+// All callers use the same promise API — run / get / all — and receive the same
+// shapes (`{ lastID, changes }`, a plain row object, an array of plain rows).
+// ─────────────────────────────────────────────────────────────────────────────
+const path = require("path");
+const tutorialData = require("./tutorial-data");
+const aiProblemsData = require("./ai-problems-data");
+const forgePaths = require("./dev-roadmap-data");
 
-const DB_PATH = path.join(__dirname, '..', 'tracker.db');
-const db = new sqlite3.Database(DB_PATH);
+const IS_TEST = process.env.NODE_ENV === "test";
+// The cloud DB is only used in production (Render sets NODE_ENV=production) or
+// when USE_CLOUD_DB=1 — so having TURSO_* in your local .env for the backup /
+// migration scripts never makes `npm start` on your Mac write to live data.
+const USE_CLOUD =
+  !IS_TEST &&
+  (process.env.NODE_ENV === "production" || process.env.USE_CLOUD_DB === "1");
+const REMOTE_URL = USE_CLOUD ? (process.env.TURSO_DATABASE_URL || "").trim() : "";
+const DRIVER = REMOTE_URL ? "libsql" : null;
 
-const run = (sql, params = []) => new Promise((resolve, reject) => {
-  db.run(sql, params, function (err) { err ? reject(err) : resolve(this); });
-});
-const get = (sql, params = []) => new Promise((resolve, reject) => {
-  db.get(sql, params, (err, row) => { err ? reject(err) : resolve(row); });
-});
-const all = (sql, params = []) => new Promise((resolve, reject) => {
-  db.all(sql, params, (err, rows) => { err ? reject(err) : resolve(rows); });
-});
+let sqlite3;
+let _usingBuiltinSqlite = false;
+let BuiltinDatabaseSync;
+let libsql = null; // @libsql/client instance (cloud mode)
+let db = null; // sqlite3 / node:sqlite handle (local mode)
+
+// Allow tests/CI to run fast and without touching the real on-disk DB.
+// - DB_PATH can be overridden explicitly via env var.
+// - In test mode we default to an in-memory DB.
+const DB_PATH =
+  process.env.DB_PATH ||
+  (IS_TEST ? ":memory:" : path.join(__dirname, "..", "tracker.db"));
+
+if (DRIVER === "libsql") {
+  // eslint-disable-next-line global-require
+  const { createClient } = require("@libsql/client");
+  libsql = createClient({
+    url: REMOTE_URL,
+    authToken: process.env.TURSO_AUTH_TOKEN || undefined,
+    intMode: "number",
+  });
+} else {
+  // NOTE: `sqlite3` is a native addon and may fail to load in some environments
+  // (e.g. mismatched architecture / prebuilt binaries). We fall back to Node's
+  // built-in SQLite binding when that happens, so the app (and tests) still run.
+  try {
+    // eslint-disable-next-line global-require
+    sqlite3 = require("sqlite3").verbose();
+  } catch (e) {
+    _usingBuiltinSqlite = true;
+    // eslint-disable-next-line global-require
+    ({ DatabaseSync: BuiltinDatabaseSync } = require("node:sqlite"));
+  }
+  db = _usingBuiltinSqlite
+    ? new BuiltinDatabaseSync(DB_PATH)
+    : new sqlite3.Database(DB_PATH);
+}
+
+/* ── libSQL helpers ── */
+// sqlite3 silently binds undefined → NULL and booleans → 0/1; libSQL is strict.
+function toLibsqlValue(v) {
+  if (v === undefined) return null;
+  if (typeof v === "boolean") return v ? 1 : 0;
+  return v;
+}
+function toLibsqlArgs(params) {
+  if (params == null) return [];
+  if (Array.isArray(params)) return params.map(toLibsqlValue);
+  if (typeof params === "object") {
+    // sqlite3 named params are written as { $name: v } / { :name: v } / { @name: v }
+    const out = {};
+    for (const [k, v] of Object.entries(params)) out[k.replace(/^[$:@]/, "")] = toLibsqlValue(v);
+    return out;
+  }
+  return [toLibsqlValue(params)];
+}
+function plainRow(row, columns) {
+  if (!row) return undefined;
+  const o = {};
+  for (const c of columns) o[c] = row[c];
+  return o;
+}
+async function libsqlExec(sql, params) {
+  try {
+    return await libsql.execute({ sql, args: toLibsqlArgs(params) });
+  } catch (err) {
+    // Surface the SQL in the message for easier debugging of cloud-only issues.
+    if (err && typeof err.message === "string" && !err.message.includes("[sql]")) {
+      err.message += ` [sql] ${String(sql).slice(0, 160)}`;
+    }
+    throw err;
+  }
+}
+
+const run = async (sql, params = []) => {
+  if (libsql) {
+    const rs = await libsqlExec(sql, params);
+    return {
+      // Keep compatibility with node-sqlite3's `{ lastID, changes }`
+      lastID: rs.lastInsertRowid == null ? 0 : Number(rs.lastInsertRowid),
+      changes: Number(rs.rowsAffected || 0),
+    };
+  }
+  return new Promise((resolve, reject) => {
+    if (_usingBuiltinSqlite) {
+      try {
+        const stmt = db.prepare(sql);
+        const r = Array.isArray(params) ? stmt.run(...params) : stmt.run(params);
+        resolve({
+          lastID: Number(r?.lastInsertRowid || 0),
+          changes: Number(r?.changes || 0),
+        });
+      } catch (err) {
+        reject(err);
+      }
+      return;
+    }
+    db.run(sql, params, function (err) {
+      err ? reject(err) : resolve(this);
+    });
+  });
+};
+
+const get = async (sql, params = []) => {
+  if (libsql) {
+    const rs = await libsqlExec(sql, params);
+    return plainRow(rs.rows[0], rs.columns);
+  }
+  return new Promise((resolve, reject) => {
+    if (_usingBuiltinSqlite) {
+      try {
+        const stmt = db.prepare(sql);
+        const row = Array.isArray(params) ? stmt.get(...params) : stmt.get(params);
+        resolve(row);
+      } catch (err) {
+        reject(err);
+      }
+      return;
+    }
+    db.get(sql, params, (err, row) => {
+      err ? reject(err) : resolve(row);
+    });
+  });
+};
+
+const all = async (sql, params = []) => {
+  if (libsql) {
+    const rs = await libsqlExec(sql, params);
+    return rs.rows.map((r) => plainRow(r, rs.columns));
+  }
+  return new Promise((resolve, reject) => {
+    if (_usingBuiltinSqlite) {
+      try {
+        const stmt = db.prepare(sql);
+        const rows = Array.isArray(params) ? stmt.all(...params) : stmt.all(params);
+        resolve(rows);
+      } catch (err) {
+        reject(err);
+      }
+      return;
+    }
+    db.all(sql, params, (err, rows) => {
+      err ? reject(err) : resolve(rows);
+    });
+  });
+};
+
+/**
+ * Run the same statement for many parameter rows. In cloud mode this is sent
+ * as one batched round-trip (in chunks) instead of one HTTP request per row,
+ * which keeps startup seeding fast.
+ */
+async function runMany(sql, rows, chunkSize = 200) {
+  if (!rows.length) return;
+  if (libsql) {
+    for (let i = 0; i < rows.length; i += chunkSize) {
+      const slice = rows.slice(i, i + chunkSize);
+      await libsql.batch(
+        slice.map((p) => ({ sql, args: toLibsqlArgs(p) })),
+        "write",
+      );
+    }
+    return;
+  }
+  for (const p of rows) await run(sql, p);
+}
+
+function dbInfo() {
+  return {
+    driver: libsql ? "libsql" : _usingBuiltinSqlite ? "node:sqlite" : "sqlite3",
+    target: libsql ? REMOTE_URL.replace(/\?.*$/, "") : DB_PATH,
+  };
+}
 
 async function initDb() {
-  await run('PRAGMA journal_mode=WAL');
-  await run('PRAGMA synchronous=NORMAL');
-  await run('PRAGMA cache_size=-8000');
-  await run('PRAGMA mmap_size=268435456');
-  await run('PRAGMA temp_store=MEMORY');
-  await run('PRAGMA foreign_keys=ON');
+  // Pragmas tuned for production/dev on-disk DB.
+  // In tests (often in-memory), keep pragmas lightweight to avoid slow startups.
+  if (!libsql) {
+    try {
+      await run(
+        `PRAGMA journal_mode=${DB_PATH === ":memory:" ? "MEMORY" : "WAL"}`,
+      );
+    } catch {}
+    try {
+      await run("PRAGMA synchronous=NORMAL");
+      await run("PRAGMA cache_size=-8000");
+      await run("PRAGMA mmap_size=268435456");
+      await run("PRAGMA temp_store=MEMORY");
+    } catch {}
+    await run("PRAGMA foreign_keys=ON");
+  }
 
   await run(`CREATE TABLE IF NOT EXISTS problems (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -47,6 +240,14 @@ async function initDb() {
     notes TEXT DEFAULT '',
     xp_earned INTEGER DEFAULT 0,
     FOREIGN KEY (problem_rowid) REFERENCES problems(id)
+  )`);
+
+  await run(`CREATE TABLE IF NOT EXISTS bookmarks (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL,
+    problem_id INTEGER NOT NULL,
+    created_at TEXT DEFAULT (datetime('now')),
+    UNIQUE(username, problem_id)
   )`);
 
   await run(`CREATE TABLE IF NOT EXISTS testcases (
@@ -120,49 +321,180 @@ async function initDb() {
 
   // Seed unified Rift Levels as titles
   const titles = [
-    ['Bit', 0, '#6b7280', 'none'],
-    ['Byte', 100, '#84cc16', 'none'],
-    ['Kilobyte', 400, '#22c55e', '0 0 6px rgba(34,197,94,0.3)'],
-    ['Megabyte', 1200, '#06b6d4', '0 0 8px rgba(6,182,212,0.3)'],
-    ['Gigabyte', 3500, '#3b82f6', '0 0 10px rgba(59,130,246,0.4)'],
-    ['Terabyte', 8000, '#8b5cf6', '0 0 12px rgba(139,92,246,0.5)'],
-    ['Petabyte', 18000, '#d946ef', '0 0 14px rgba(217,70,239,0.5)'],
-    ['Exabyte', 40000, '#f43f5e', '0 0 16px rgba(244,63,94,0.6)'],
-    ['Zettabyte', 85000, '#ef4444', '0 0 18px rgba(239,68,68,0.6)'],
-    ['Yottabyte', 180000, '#f59e0b', '0 0 22px rgba(245,158,11,0.7)'],
-    ['∞ Overflow', 400000, '#fbbf24', '0 0 28px rgba(251,191,36,0.8)'],
+    ["Bit", 0, "#6b7280", "none"],
+    ["Byte", 100, "#84cc16", "none"],
+    ["Kilobyte", 400, "#22c55e", "0 0 6px rgba(34,197,94,0.3)"],
+    ["Megabyte", 1200, "#06b6d4", "0 0 8px rgba(6,182,212,0.3)"],
+    ["Gigabyte", 3500, "#3b82f6", "0 0 10px rgba(59,130,246,0.4)"],
+    ["Terabyte", 8000, "#8b5cf6", "0 0 12px rgba(139,92,246,0.5)"],
+    ["Petabyte", 18000, "#d946ef", "0 0 14px rgba(217,70,239,0.5)"],
+    ["Exabyte", 40000, "#f43f5e", "0 0 16px rgba(244,63,94,0.6)"],
+    ["Zettabyte", 85000, "#ef4444", "0 0 18px rgba(239,68,68,0.6)"],
+    ["Yottabyte", 180000, "#f59e0b", "0 0 22px rgba(245,158,11,0.7)"],
+    ["∞ Overflow", 400000, "#fbbf24", "0 0 28px rgba(251,191,36,0.8)"],
   ];
-  for (const [title, xp, color, glow] of titles) {
-    await run(`INSERT OR IGNORE INTO player_titles(title,min_xp,color,glow) VALUES(?,?,?,?)`, [title, xp, color, glow]);
-  }
+  await runMany(
+    `INSERT OR IGNORE INTO player_titles(title,min_xp,color,glow) VALUES(?,?,?,?)`,
+    titles,
+  );
 
   // Seed achievements
   const achvs = [
-    ['first_blood','First Blood','Solve your first problem','sword','milestone',1,20],
-    ['streak_3','On Fire','3-day solve streak','fire','streak',3,30],
-    ['streak_7','Week Warrior','7-day solve streak','shield','streak',7,75],
-    ['streak_30','Monthly Beast','30-day solve streak','dragon','streak',30,200],
-    ['solve_10','Warm Up','Solve 10 problems','muscle','solve',10,50],
-    ['solve_50','Getting Serious','Solve 50 problems','target','solve',50,150],
-    ['solve_100','Centurion','Solve 100 problems','trophy','solve',100,300],
-    ['solve_500','Legend','Solve 500 problems','crown','solve',500,1000],
-    ['rating_1000','Pupil','Solve a 1000+ rated problem','medal_green','rating',1,25],
-    ['rating_1400','Expert','Solve a 1400+ rated problem','medal_blue','rating',1,50],
-    ['rating_1800','Master','Solve a 1800+ rated problem','medal_purple','rating',1,100],
-    ['rating_2100','Grandmaster','Solve a 2100+ rated problem','medal_red','rating',1,200],
-    ['both_platforms','Cross-Platform','Solve on both CF & CC','globe','special',2,75],
-    ['speed_demon','Speed Demon','AC in under 5 minutes','lightning','special',1,100],
-    ['perfect_score','Perfect Score','AC on first attempt','diamond','milestone',1,150],
-    ['night_owl','Night Owl','Solve at midnight','moon','special',1,50],
-    ['early_bird','Early Bird','Solve before 7 AM','sunrise','special',1,50],
-    ['marathon','Marathon','Solve 5 problems in one day','flag','daily',5,100],
-    ['tag_master','Tag Master','Solve 10 different tag types','tags','special',10,150],
-    ['daily_warrior','Daily Warrior','Complete 7 daily challenges','calendar','daily',7,200],
+    [
+      "first_blood",
+      "First Blood",
+      "Solve your first problem",
+      "sword",
+      "milestone",
+      1,
+      20,
+    ],
+    ["streak_3", "On Fire", "3-day solve streak", "fire", "streak", 3, 30],
+    [
+      "streak_7",
+      "Week Warrior",
+      "7-day solve streak",
+      "shield",
+      "streak",
+      7,
+      75,
+    ],
+    [
+      "streak_30",
+      "Monthly Beast",
+      "30-day solve streak",
+      "dragon",
+      "streak",
+      30,
+      200,
+    ],
+    ["solve_10", "Warm Up", "Solve 10 problems", "muscle", "solve", 10, 50],
+    [
+      "solve_50",
+      "Getting Serious",
+      "Solve 50 problems",
+      "target",
+      "solve",
+      50,
+      150,
+    ],
+    [
+      "solve_100",
+      "Centurion",
+      "Solve 100 problems",
+      "trophy",
+      "solve",
+      100,
+      300,
+    ],
+    ["solve_500", "Legend", "Solve 500 problems", "crown", "solve", 500, 1000],
+    [
+      "rating_1000",
+      "Pupil",
+      "Solve a 1000+ rated problem",
+      "medal_green",
+      "rating",
+      1,
+      25,
+    ],
+    [
+      "rating_1400",
+      "Expert",
+      "Solve a 1400+ rated problem",
+      "medal_blue",
+      "rating",
+      1,
+      50,
+    ],
+    [
+      "rating_1800",
+      "Master",
+      "Solve a 1800+ rated problem",
+      "medal_purple",
+      "rating",
+      1,
+      100,
+    ],
+    [
+      "rating_2100",
+      "Grandmaster",
+      "Solve a 2100+ rated problem",
+      "medal_red",
+      "rating",
+      1,
+      200,
+    ],
+    [
+      "both_platforms",
+      "Cross-Platform",
+      "Solve on both CF & CC",
+      "globe",
+      "special",
+      2,
+      75,
+    ],
+    [
+      "speed_demon",
+      "Speed Demon",
+      "AC in under 5 minutes",
+      "lightning",
+      "special",
+      1,
+      100,
+    ],
+    [
+      "perfect_score",
+      "Perfect Score",
+      "AC on first attempt",
+      "diamond",
+      "milestone",
+      1,
+      150,
+    ],
+    ["night_owl", "Night Owl", "Solve at midnight", "moon", "special", 1, 50],
+    [
+      "early_bird",
+      "Early Bird",
+      "Solve before 7 AM",
+      "sunrise",
+      "special",
+      1,
+      50,
+    ],
+    [
+      "marathon",
+      "Marathon",
+      "Solve 5 problems in one day",
+      "flag",
+      "daily",
+      5,
+      100,
+    ],
+    [
+      "tag_master",
+      "Tag Master",
+      "Solve 10 different tag types",
+      "tags",
+      "special",
+      10,
+      150,
+    ],
+    [
+      "daily_warrior",
+      "Daily Warrior",
+      "Complete 7 daily challenges",
+      "calendar",
+      "daily",
+      7,
+      200,
+    ],
   ];
-  for (const [id,title,desc,icon,cat,target,xpReward] of achvs) {
-    await run(`INSERT OR IGNORE INTO achievements(id,title,description,icon,category,target,xp_reward) VALUES(?,?,?,?,?,?,?)`,
-      [id,title,desc,icon,cat,target,xpReward || 0]);
-  }
+  await runMany(
+    `INSERT OR IGNORE INTO achievements(id,title,description,icon,category,target,xp_reward) VALUES(?,?,?,?,?,?,?)`,
+    achvs.map(([id, title, desc, icon, cat, target, xpReward]) => [
+      id, title, desc, icon, cat, target, xpReward || 0,
+    ]),
+  );
 
   // Problem statements table — own local database
   await run(`CREATE TABLE IF NOT EXISTS problem_statements (
@@ -215,6 +547,7 @@ async function initDb() {
   // Custom user-created problems
   await run(`CREATE TABLE IF NOT EXISTS custom_problems (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    creator TEXT DEFAULT '',
     title TEXT NOT NULL,
     statement TEXT NOT NULL DEFAULT '',
     input_spec TEXT DEFAULT '',
@@ -228,6 +561,10 @@ async function initDb() {
     created_at TEXT NOT NULL,
     updated_at TEXT
   )`);
+  // Migration: add creator column for existing databases
+  try {
+    await run("ALTER TABLE custom_problems ADD COLUMN creator TEXT DEFAULT ''");
+  } catch (e) {}
 
   // Skill tree progress
   await run(`CREATE TABLE IF NOT EXISTS skill_progress (
@@ -258,14 +595,22 @@ async function initDb() {
   )`);
 
   // Add role/override columns if they don't exist (migration for existing DBs)
-  await run(`ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'member'`).catch(()=>{});
-  await run(`ALTER TABLE users ADD COLUMN xp_override INTEGER DEFAULT 0`).catch(()=>{});
-  await run(`ALTER TABLE users ADD COLUMN solved_override INTEGER DEFAULT 0`).catch(()=>{});
-  await run(`ALTER TABLE users ADD COLUMN auth_provider TEXT DEFAULT 'manual'`).catch(()=>{});
-  await run(`ALTER TABLE users ADD COLUMN provider_id TEXT`).catch(()=>{});
-  await run(`ALTER TABLE users ADD COLUMN email TEXT`).catch(()=>{});
-  await run(`ALTER TABLE users ADD COLUMN avatar_url TEXT`).catch(()=>{});
-  await run(`ALTER TABLE users ADD COLUMN password_hash TEXT`).catch(()=>{});
+  await run(`ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'member'`).catch(
+    () => {},
+  );
+  await run(`ALTER TABLE users ADD COLUMN xp_override INTEGER DEFAULT 0`).catch(
+    () => {},
+  );
+  await run(
+    `ALTER TABLE users ADD COLUMN solved_override INTEGER DEFAULT 0`,
+  ).catch(() => {});
+  await run(
+    `ALTER TABLE users ADD COLUMN auth_provider TEXT DEFAULT 'manual'`,
+  ).catch(() => {});
+  await run(`ALTER TABLE users ADD COLUMN provider_id TEXT`).catch(() => {});
+  await run(`ALTER TABLE users ADD COLUMN email TEXT`).catch(() => {});
+  await run(`ALTER TABLE users ADD COLUMN avatar_url TEXT`).catch(() => {});
+  await run(`ALTER TABLE users ADD COLUMN password_hash TEXT`).catch(() => {});
 
   // Friendships
   await run(`CREATE TABLE IF NOT EXISTS friendships (
@@ -327,26 +672,62 @@ async function initDb() {
   )`);
 
   // Create indexes
-  await run('CREATE INDEX IF NOT EXISTS idx_problems_platform ON problems(platform)');
-  await run('CREATE INDEX IF NOT EXISTS idx_problems_rating ON problems(rating)');
-  await run('CREATE INDEX IF NOT EXISTS idx_submissions_problem ON submissions(problem_rowid)');
-  await run('CREATE INDEX IF NOT EXISTS idx_stmts_problem ON problem_statements(problem_rowid)');
-  await run('CREATE INDEX IF NOT EXISTS idx_friendships_users ON friendships(from_user, to_user)');
-  await run('CREATE INDEX IF NOT EXISTS idx_messages_users ON messages(from_user, to_user)');
-  await run('CREATE INDEX IF NOT EXISTS idx_room_messages ON room_messages(room_id)');
-  await run('CREATE INDEX IF NOT EXISTS idx_activity_user ON activity_feed(username)');
+  await run(
+    "CREATE INDEX IF NOT EXISTS idx_problems_platform ON problems(platform)",
+  );
+  await run(
+    "CREATE INDEX IF NOT EXISTS idx_problems_rating ON problems(rating)",
+  );
+  await run(
+    "CREATE INDEX IF NOT EXISTS idx_submissions_problem ON submissions(problem_rowid)",
+  );
+  await run(
+    "CREATE INDEX IF NOT EXISTS idx_stmts_problem ON problem_statements(problem_rowid)",
+  );
+  await run(
+    "CREATE INDEX IF NOT EXISTS idx_friendships_users ON friendships(from_user, to_user)",
+  );
+  await run(
+    "CREATE INDEX IF NOT EXISTS idx_messages_users ON messages(from_user, to_user)",
+  );
+  await run(
+    "CREATE INDEX IF NOT EXISTS idx_room_messages ON room_messages(room_id)",
+  );
+  await run(
+    "CREATE INDEX IF NOT EXISTS idx_activity_user ON activity_feed(username)",
+  );
 
   // Performance indexes — high-frequency query paths
-  await run('CREATE INDEX IF NOT EXISTS idx_progress_status ON progress(status)');
-  await run('CREATE INDEX IF NOT EXISTS idx_progress_status_solved ON progress(status, solved_at) WHERE status=\'solved\'');
-  await run('CREATE INDEX IF NOT EXISTS idx_submissions_submitted_at ON submissions(submitted_at DESC)');
-  await run('CREATE INDEX IF NOT EXISTS idx_submissions_verdict ON submissions(verdict)');
-  await run('CREATE INDEX IF NOT EXISTS idx_daily_activity_date ON daily_activity(date DESC)');
-  await run('CREATE INDEX IF NOT EXISTS idx_submissions_language ON submissions(language)');
-  await run('CREATE INDEX IF NOT EXISTS idx_progress_problem_rowid ON progress(problem_rowid)');
-  await run('CREATE INDEX IF NOT EXISTS idx_problems_rating_platform ON problems(rating, platform)');
-  await run('CREATE INDEX IF NOT EXISTS idx_daily_activity_solved ON daily_activity(date DESC, problems_solved)');
-  await run('CREATE INDEX IF NOT EXISTS idx_submissions_problem_verdict ON submissions(problem_rowid, verdict)');
+  await run(
+    "CREATE INDEX IF NOT EXISTS idx_progress_status ON progress(status)",
+  );
+  await run(
+    "CREATE INDEX IF NOT EXISTS idx_progress_status_solved ON progress(status, solved_at) WHERE status='solved'",
+  );
+  await run(
+    "CREATE INDEX IF NOT EXISTS idx_submissions_submitted_at ON submissions(submitted_at DESC)",
+  );
+  await run(
+    "CREATE INDEX IF NOT EXISTS idx_submissions_verdict ON submissions(verdict)",
+  );
+  await run(
+    "CREATE INDEX IF NOT EXISTS idx_daily_activity_date ON daily_activity(date DESC)",
+  );
+  await run(
+    "CREATE INDEX IF NOT EXISTS idx_submissions_language ON submissions(language)",
+  );
+  await run(
+    "CREATE INDEX IF NOT EXISTS idx_progress_problem_rowid ON progress(problem_rowid)",
+  );
+  await run(
+    "CREATE INDEX IF NOT EXISTS idx_problems_rating_platform ON problems(rating, platform)",
+  );
+  await run(
+    "CREATE INDEX IF NOT EXISTS idx_daily_activity_solved ON daily_activity(date DESC, problems_solved)",
+  );
+  await run(
+    "CREATE INDEX IF NOT EXISTS idx_submissions_problem_verdict ON submissions(problem_rowid, verdict)",
+  );
 
   // ===== AI LAB TABLES =====
   await run(`CREATE TABLE IF NOT EXISTS ai_problems (
@@ -368,10 +749,22 @@ async function initDb() {
   )`);
 
   // Migration: add new columns if table exists but lacks them
-  try { await run('ALTER TABLE ai_problems ADD COLUMN input_format TEXT DEFAULT ""'); } catch(e) {}
-  try { await run('ALTER TABLE ai_problems ADD COLUMN output_format TEXT DEFAULT ""'); } catch(e) {}
-  try { await run('ALTER TABLE ai_problems ADD COLUMN constraints TEXT DEFAULT ""'); } catch(e) {}
-  try { await run('ALTER TABLE ai_problems ADD COLUMN samples TEXT DEFAULT "[]"'); } catch(e) {}
+  try {
+    await run(
+      'ALTER TABLE ai_problems ADD COLUMN input_format TEXT DEFAULT ""',
+    );
+  } catch (e) {}
+  try {
+    await run(
+      'ALTER TABLE ai_problems ADD COLUMN output_format TEXT DEFAULT ""',
+    );
+  } catch (e) {}
+  try {
+    await run('ALTER TABLE ai_problems ADD COLUMN constraints TEXT DEFAULT ""');
+  } catch (e) {}
+  try {
+    await run('ALTER TABLE ai_problems ADD COLUMN samples TEXT DEFAULT "[]"');
+  } catch (e) {}
 
   await run(`CREATE TABLE IF NOT EXISTS ai_progress (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -406,8 +799,12 @@ async function initDb() {
     FOREIGN KEY (tutorial_id) REFERENCES tutorials(id)
   )`);
 
-  await run('CREATE INDEX IF NOT EXISTS idx_ai_problems_category ON ai_problems(category)');
-  await run('CREATE INDEX IF NOT EXISTS idx_tutorials_category ON tutorials(category)');
+  await run(
+    "CREATE INDEX IF NOT EXISTS idx_ai_problems_category ON ai_problems(category)",
+  );
+  await run(
+    "CREATE INDEX IF NOT EXISTS idx_tutorials_category ON tutorials(category)",
+  );
 
   // ===== FORGE (Dev Roadmap) TABLES =====
   await run(`CREATE TABLE IF NOT EXISTS forge_progress (
@@ -416,7 +813,9 @@ async function initDb() {
     status TEXT DEFAULT 'not-started',
     completed_at TEXT
   )`);
-  await run('CREATE INDEX IF NOT EXISTS idx_forge_path ON forge_progress(path_id)');
+  await run(
+    "CREATE INDEX IF NOT EXISTS idx_forge_path ON forge_progress(path_id)",
+  );
 
   // ===== CONTESTS & QUIZZES =====
   await run(`CREATE TABLE IF NOT EXISTS custom_contests (
@@ -434,8 +833,12 @@ async function initDb() {
     max_participants INTEGER DEFAULT 50,
     created_at TEXT DEFAULT (datetime('now'))
   )`);
-  await run('CREATE INDEX IF NOT EXISTS idx_contests_creator ON custom_contests(creator)');
-  await run('CREATE INDEX IF NOT EXISTS idx_contests_code ON custom_contests(contest_code)');
+  await run(
+    "CREATE INDEX IF NOT EXISTS idx_contests_creator ON custom_contests(creator)",
+  );
+  await run(
+    "CREATE INDEX IF NOT EXISTS idx_contests_code ON custom_contests(contest_code)",
+  );
   await run(`CREATE TABLE IF NOT EXISTS contest_participants (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     contest_id INTEGER NOT NULL,
@@ -444,28 +847,40 @@ async function initDb() {
     score INTEGER DEFAULT 0,
     UNIQUE(contest_id, username)
   )`);
-  await run('CREATE INDEX IF NOT EXISTS idx_contest_parts ON contest_participants(contest_id)');
+  await run(
+    "CREATE INDEX IF NOT EXISTS idx_contest_parts ON contest_participants(contest_id)",
+  );
 
-  // ===== SEED AI PROBLEMS =====
-  const aiCount = await get('SELECT COUNT(*) as c FROM ai_problems');
-  if (!aiCount || aiCount.c === 0) {
-    for (const p of aiProblemsData) {
-      const [cat,title,desc,diff,tags,code,approach,hints,resources,inputFmt,outputFmt,constraints,samples] = p;
-      await run(`INSERT INTO ai_problems(category,title,description,difficulty,tags,starter_code,solution_approach,hints,resources,input_format,output_format,constraints,samples) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-        [cat,title,desc,diff,tags,code,approach,hints,resources,inputFmt||'',outputFmt||'',constraints||'',samples||'[]']);
+  // ===== SEED AI PROBLEMS / TUTORIALS =====
+  // Seeding is helpful for local dev, but can make automated tests time out.
+  if (!IS_TEST) {
+    const aiCount = await get("SELECT COUNT(*) as c FROM ai_problems");
+    if (!aiCount || aiCount.c === 0) {
+      await runMany(
+        `INSERT INTO ai_problems(category,title,description,difficulty,tags,starter_code,solution_approach,hints,resources,input_format,output_format,constraints,samples) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+        aiProblemsData.map(
+          ([cat, title, desc, diff, tags, code, approach, hints, resources, inputFmt, outputFmt, constraints, samples]) => [
+            cat, title, desc, diff, tags, code, approach, hints, resources,
+            inputFmt || "", outputFmt || "", constraints || "", samples || "[]",
+          ],
+        ),
+        50,
+      );
+    }
+
+    const tutCount = await get("SELECT COUNT(*) as c FROM tutorials");
+    if (!tutCount || tutCount.c === 0) {
+      await runMany(
+        `INSERT INTO tutorials(category,topic,title,description,content,difficulty,order_index,estimated_time,code_examples) VALUES(?,?,?,?,?,?,?,?,?)`,
+        tutorialData.map(([cat, topic, title, desc, diff, order, time, content, examples]) => [
+          cat, topic, title, desc, content, diff, order, time, examples,
+        ]),
+        25,
+      );
     }
   }
 
-  // ===== SEED TUTORIALS =====
-  const tutCount = await get('SELECT COUNT(*) as c FROM tutorials');
-  if (!tutCount || tutCount.c === 0) {
-    for (const [cat, topic, title, desc, diff, order, time, content, examples] of tutorialData) {
-      await run(`INSERT INTO tutorials(category,topic,title,description,content,difficulty,order_index,estimated_time,code_examples) VALUES(?,?,?,?,?,?,?,?,?)`,
-        [cat, topic, title, desc, content, diff, order, time, examples]);
-    }
-  }
-
-  console.log('Database initialized');
+  console.log("Database initialized");
 
   // ===== CMS TABLES (Creator Studio) =====
   await run(`CREATE TABLE IF NOT EXISTS cms_courses (
@@ -527,6 +942,28 @@ async function initDb() {
     time_estimate TEXT,
     updated_at TEXT DEFAULT CURRENT_TIMESTAMP
   )`);
+
+  // ===== STUDIO NOTES (creator notes) =====
+  await run(`CREATE TABLE IF NOT EXISTS studio_notes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    content TEXT DEFAULT '',
+    color TEXT DEFAULT '#8400ff',
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+  )`);
+
+  // ===== STUDIO DOUBTS (student Q&A inbox for creators) =====
+  await run(`CREATE TABLE IF NOT EXISTS studio_doubts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    question TEXT NOT NULL,
+    student_name TEXT DEFAULT 'Student',
+    source TEXT DEFAULT '',
+    status TEXT DEFAULT 'pending',
+    answer TEXT DEFAULT '',
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    answered_at TEXT
+  )`);
 }
 
-module.exports = { run, get, all, initDb };
+module.exports = { run, get, all, runMany, initDb, dbInfo };

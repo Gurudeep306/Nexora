@@ -32,3 +32,9 @@ build/
 public/uploads/*
 !public/uploads/.gitkeep
 
+
+# Database backups downloaded by `npm run db:backup`
+backups/
+
+# Temporary archives
+*.tgz
