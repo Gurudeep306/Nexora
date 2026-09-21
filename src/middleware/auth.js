@@ -11,9 +11,11 @@ function sanitizeSessionUser(user) {
   };
 }
 
+// Only a completed Nexora sign-in counts. A pending GitHub/Google login
+// (session.oauthUser, before a Nexora username is chosen) is NOT an account —
+// treating it as one let an OAuth login act as whatever user matched its name.
 function getSessionUser(req) {
   if (req.session?.user) return req.session.user;
-  if (req.session?.oauthUser) return sanitizeSessionUser(req.session.oauthUser);
   return null;
 }
 

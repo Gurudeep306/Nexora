@@ -1,5 +1,6 @@
 const express = require("express");
 const { persistUpload } = require("../upload-store");
+const { sanitizeSessionUser } = require("../middleware/auth");
 
 function createAuthRouter(deps) {
   const {
@@ -30,7 +31,19 @@ function createAuthRouter(deps) {
     if (sessionUser?.username) {
       return res.json({ ok: true, authenticated: true, user: sessionUser });
     }
-    res.json({ ok: true, authenticated: false });
+    // A GitHub/Google login waiting for the user to pick a Nexora username.
+    const o = req.session?.oauthUser;
+    const oauthPending = o
+      ? {
+          provider: o.provider,
+          displayName: o.displayName || "",
+          email: o.email || "",
+          suggestedUsername: String(o.username || o.displayName || "")
+            .replace(/[^a-zA-Z0-9_]/g, "")
+            .slice(0, 20),
+        }
+      : null;
+    res.json({ ok: true, authenticated: false, oauthPending });
   });
 
   router.get("/api/auth/providers", (_req, res) => {
@@ -111,33 +124,30 @@ function createAuthRouter(deps) {
         clean,
       ]);
 
+      // Registering never touches an existing account (this used to overwrite
+      // it and sign the caller in as that user — an account takeover).
       if (existing) {
-        await run(
-          `UPDATE users SET display_name=?, avatar=?, bio=?, role=?, xp_override=?, solved_override=?,
-            auth_provider=COALESCE(?,auth_provider), provider_id=COALESCE(?,provider_id),
-            email=COALESCE(?,email), avatar_url=COALESCE(?,avatar_url) WHERE username=?`,
-          [
-            display_name || existing.display_name,
-            avatar || existing.avatar,
-            bio !== undefined ? bio : existing.bio,
-            isAdmin ? "admin" : existing.role,
-            isAdmin ? xpOverride : existing.xp_override,
-            isAdmin ? solvedOverride : existing.solved_override,
-            provider || null,
-            provider_id || null,
-            email || null,
-            avatar_url || null,
-            clean,
-          ],
-        );
-        const user = await get("SELECT * FROM users WHERE username=?", [clean]);
-        clearSessionUser(req);
-        persistSessionUser(req, user);
-        return res.json({ ok: true, user, updated: true });
+        return res.status(409).json({ ok: false, error: "That username is already taken" });
+      }
+
+      // A pending GitHub/Google login supplies the verified identity; otherwise
+      // a password is required.
+      const oauth = req.session?.oauthUser || null;
+      if (!oauth && (!password || typeof password !== "string" || password.length < 6)) {
+        return res.status(400).json({ ok: false, error: "Password must be at least 6 characters" });
+      }
+      if (oauth) {
+        const linked = await get("SELECT username FROM users WHERE auth_provider=? AND provider_id=?", [
+          oauth.provider,
+          String(oauth.providerId),
+        ]);
+        if (linked) {
+          return res.status(409).json({ ok: false, error: `This ${oauth.provider} account is already linked to @${linked.username}` });
+        }
       }
 
       let pwHash = null;
-      if (password && typeof password === "string" && password.length >= 4) {
+      if (password && typeof password === "string" && password.length >= 6) {
         pwHash = await hashPassword(password);
       }
 
@@ -153,10 +163,10 @@ function createAuthRouter(deps) {
           role,
           xpOverride,
           solvedOverride,
-          provider || "manual",
-          provider_id || null,
-          email || null,
-          avatar_url || null,
+          oauth ? oauth.provider : "manual",
+          oauth ? String(oauth.providerId) : null,
+          email || oauth?.email || null,
+          oauth?.avatarUrl || null,
           pwHash,
           new Date().toISOString(),
         ],
@@ -165,7 +175,7 @@ function createAuthRouter(deps) {
       const user = await get("SELECT * FROM users WHERE username=?", [clean]);
       clearSessionUser(req);
       persistSessionUser(req, user);
-      res.json({ ok: true, user, created: true });
+      res.json({ ok: true, user: sanitizeSessionUser(user), created: true });
     } catch (e) {
       res.status(500).json({ ok: false, error: e.message });
     }
@@ -184,16 +194,22 @@ function createAuthRouter(deps) {
       if (!user)
         return res.status(404).json({ ok: false, error: "User not found" });
 
-      if (user.password_hash) {
-        const valid = await verifyPassword(password, user.password_hash);
-        if (!valid)
-          return res
-            .status(401)
-            .json({ ok: false, error: "Incorrect password" });
+      // Accounts created through GitHub/Google have no password: never let
+      // anyone in to them with an arbitrary password.
+      if (!user.password_hash) {
+        return res.status(400).json({
+          ok: false,
+          error: `This account signs in with ${user.auth_provider === "google" ? "Google" : "GitHub"} — use that button instead`,
+        });
       }
+      const valid = await verifyPassword(password, user.password_hash);
+      if (!valid)
+        return res
+          .status(401)
+          .json({ ok: false, error: "Incorrect password" });
 
       persistSessionUser(req, user);
-      res.json({ ok: true, user });
+      res.json({ ok: true, user: sanitizeSessionUser(user) });
     } catch (e) {
       res.status(500).json({ ok: false, error: e.message });
     }
@@ -302,9 +318,24 @@ function createAuthRouter(deps) {
             cleanNew,
             currentUsername,
           ]).catch(() => {});
+          // Carry the user's own progress, XP, notes, settings and bookmarks over.
+          for (const [table, col] of [
+            ["progress", "username"], ["submissions", "username"], ["daily_activity", "username"],
+            ["decomposition_notes", "username"], ["skill_progress", "username"], ["forge_progress", "username"],
+            ["settings", "username"], ["tutorial_progress", "username"], ["ai_progress", "username"],
+            ["ai_battles", "username"], ["code_replays", "username"], ["user_achievements", "username"],
+            ["user_daily_challenges", "username"], ["bookmarks", "username"],
+            ["custom_problems", "creator"], ["custom_contests", "creator"], ["solve_rooms", "creator"],
+          ]) {
+            await run(`UPDATE ${table} SET ${col}=? WHERE ${col}=?`, [cleanNew, currentUsername]).catch(() => {});
+          }
           finalUsername = cleanNew;
         }
 
+        // Avatar: generated ("gen:<style>:<variant>") or a legacy preset key.
+        if (avatar !== undefined && (typeof avatar !== "string" || !/^[a-z0-9:_-]{1,40}$/i.test(avatar))) {
+          return res.status(400).json({ ok: false, error: "Invalid avatar" });
+        }
         if (
           displayName !== undefined ||
           bio !== undefined ||

@@ -20,7 +20,7 @@ const GitHubStrategy = require("passport-github2").Strategy;
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const { Server: SocketServer } = require("socket.io");
 const { run, get, all, initDb, dbInfo, migratePerUser } = require("./db");
-const { requestContext, me, meSql } = require("./context");
+const { requestContext, me, meSql, runAs } = require("./context");
 const { DbSessionStore } = require("./session-store");
 const { restoreUploads } = require("./upload-store");
 const { authz } = require("./middleware/authz");
@@ -774,6 +774,27 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
 }
 
 /* ── OAuth Routes ── */
+// Returning users: sign straight into the Nexora account linked to this
+// GitHub/Google identity. New users: keep the verified identity pending in the
+// session until they pick a username (POST /api/user/register).
+async function finishOAuth(req, res, next, provider) {
+  try {
+    const o = req.user;
+    const linked = await get(
+      "SELECT * FROM users WHERE auth_provider=? AND provider_id=?",
+      [provider, String(o.providerId)],
+    );
+    if (linked) {
+      delete req.session.oauthUser;
+      persistSessionUser(req, linked);
+      return req.session.save(() => res.redirect(`/?auth=${provider}&linked=1`));
+    }
+    req.session.oauthUser = o;
+    req.session.save(() => res.redirect(`/?auth=${provider}`));
+  } catch (e) {
+    next(e);
+  }
+}
 app.get("/auth/github", authLimiter, (req, res, next) => {
   if (!process.env.GITHUB_CLIENT_ID)
     return res.redirect("/?auth_error=github_not_configured");
@@ -784,11 +805,7 @@ app.get(
   passport.authenticate("github", {
     failureRedirect: "/?auth_error=github_failed",
   }),
-  (req, res) => {
-    // Store OAuth data in session and redirect to app
-    req.session.oauthUser = req.user;
-    res.redirect("/?auth=github");
-  },
+  (req, res, next) => finishOAuth(req, res, next, "github"),
 );
 
 app.get("/auth/google", authLimiter, (req, res, next) => {
@@ -805,10 +822,7 @@ app.get(
   passport.authenticate("google", {
     failureRedirect: "/?auth_error=google_failed",
   }),
-  (req, res) => {
-    req.session.oauthUser = req.user;
-    res.redirect("/?auth=google");
-  },
+  (req, res, next) => finishOAuth(req, res, next, "google"),
 );
 
 /* ── Health Check — for load balancers and uptime monitors ── */
@@ -1623,12 +1637,13 @@ app.get("/api/stats", async (req, res) => {
 /* ========== ROADMAP ========== */
 app.get("/api/roadmap", async (req, res) => {
   try {
-    const totalXp = (
+    let totalXp = (
       await get("SELECT COALESCE(SUM(xp_earned),0) as s FROM progress WHERE username=?", [me()])
     ).s;
-    const totalSolved = (
+    let totalSolved = (
       await get("SELECT COUNT(*) as c FROM progress WHERE username=? AND status='solved'", [me()])
     ).c;
+    { const ov = await myOverrides(); totalXp += ov.xp; totalSolved += ov.solved; }
     const playerLevel = calcLevel(totalXp, totalSolved);
 
     const result = [];
@@ -1980,6 +1995,14 @@ const RIFT_LEVELS = [
   },
 ];
 
+/** Admin-granted XP/solve bonuses for the signed-in user (0 for most users). */
+async function myOverrides() {
+  const u = me();
+  if (!u) return { xp: 0, solved: 0 };
+  const row = await get("SELECT xp_override, solved_override FROM users WHERE username=?", [u]);
+  return { xp: row?.xp_override || 0, solved: row?.solved_override || 0 };
+}
+
 function calcLevel(xp, solvedCount = 0) {
   let lvl = 1;
   for (let i = 1; i < RIFT_LEVELS.length; i++) {
@@ -2075,7 +2098,7 @@ async function calcStreak(username = me()) {
   return { current, best, lastWeek };
 }
 
-async function checkAchievements(problemId, verdict) {
+async function checkAchievements(problemId, verdict, { backfill = false } = {}) {
   if (verdict !== "AC") return;
   const u = me();
   if (!u) return;
@@ -2118,9 +2141,9 @@ async function checkAchievements(problemId, verdict) {
   );
   if (existing && existing.attempts <= 1) await award("perfect_score", 1, 1);
 
-  // Night owl (midnight–4am) / early bird (5–7am)
-  if (hour >= 0 && hour < 4) await award("night_owl", 1, 1);
-  if (hour >= 5 && hour < 7) await award("early_bird", 1, 1);
+  // Night owl (midnight–4am) / early bird (5–7am) — only for a live solve
+  if (!backfill && hour >= 0 && hour < 4) await award("night_owl", 1, 1);
+  if (!backfill && hour >= 5 && hour < 7) await award("early_bird", 1, 1);
 
   // Marathon (5 in a day)
   const todaySolved =
@@ -2145,7 +2168,7 @@ async function checkAchievements(problemId, verdict) {
   if (uniqueTags.size) await award("tag_master", uniqueTags.size, 10);
 
   // Today's daily challenge → per-user completion + bonus XP
-  const dailyChallenge = await get(
+  const dailyChallenge = backfill ? null : await get(
     `SELECT dc.* FROM daily_challenges dc
      LEFT JOIN user_daily_challenges udc ON udc.challenge_id = dc.id AND udc.username = ?
      WHERE dc.date=? AND dc.problem_rowid=? AND udc.challenge_id IS NULL`,
@@ -2435,8 +2458,11 @@ app.get("/api/performance", async (req, res) => {
       (SELECT COALESCE(SUM(xp_earned),0) FROM progress WHERE username=${meSql()}) as totalXp,
       (SELECT COUNT(*) FROM submissions WHERE username=${meSql()}) as submissions,
       (SELECT COUNT(*) FROM submissions WHERE username=${meSql()} AND verdict='AC') as acCount`);
-      const { total, solved, attempted, totalXp, submissions, acCount } =
-        counts;
+      const { total, attempted, submissions, acCount } = counts;
+      // Include admin bonuses so every page shows the same level as the Hub.
+      const ov = await myOverrides();
+      const totalXp = counts.totalXp + ov.xp;
+      const solved = counts.solved + ov.solved;
       const accuracy =
         submissions > 0 ? Math.round((acCount / submissions) * 100) : 0;
 
@@ -3436,12 +3462,13 @@ const ZONE_NAMES = [
 /* unified /api/nexus — replaces both /api/roadmap and /api/skill-tree */
 app.get("/api/nexus", async (req, res) => {
   try {
-    const totalXp = (
+    let totalXp = (
       await get(`SELECT COALESCE(SUM(xp_earned),0) as s FROM progress WHERE username=${meSql()}`)
     ).s;
-    const totalSolved = (
+    let totalSolved = (
       await get(`SELECT COUNT(*) as c FROM progress WHERE username=${meSql()} AND status='solved'`)
     ).c;
+    { const ov = await myOverrides(); totalXp += ov.xp; totalSolved += ov.solved; }
     const playerLevel = calcLevel(totalXp, totalSolved);
 
     // Build skill nodes with progress
@@ -4232,12 +4259,13 @@ function seededShuffle(arr, seed) {
 
 app.get("/api/level-roadmap", async (req, res) => {
   try {
-    const totalXp = (
+    let totalXp = (
       await get(`SELECT COALESCE(SUM(xp_earned),0) as s FROM progress WHERE username=${meSql()}`)
     ).s;
-    const totalSolved = (
+    let totalSolved = (
       await get(`SELECT COUNT(*) as c FROM progress WHERE username=${meSql()} AND status='solved'`)
     ).c;
+    { const ov = await myOverrides(); totalXp += ov.xp; totalSolved += ov.solved; }
     const playerLevel = calcLevel(totalXp, totalSolved);
     const weekSeed = Math.floor(Date.now() / (7 * 24 * 60 * 60 * 1000));
 
@@ -4325,12 +4353,13 @@ app.get("/api/level-roadmap", async (req, res) => {
 /* Keep /api/roadmap and /api/skill-tree as aliases for backward compat */
 app.get("/api/roadmap", async (req, res) => {
   try {
-    const totalXp = (
+    let totalXp = (
       await get("SELECT COALESCE(SUM(xp_earned),0) as s FROM progress WHERE username=?", [me()])
     ).s;
-    const totalSolved = (
+    let totalSolved = (
       await get("SELECT COUNT(*) as c FROM progress WHERE username=? AND status='solved'", [me()])
     ).c;
+    { const ov = await myOverrides(); totalXp += ov.xp; totalSolved += ov.solved; }
     const playerLevel = calcLevel(totalXp, totalSolved);
     const result = [];
     for (const rl of RIFT_LEVELS) {
@@ -5575,6 +5604,23 @@ io.on("connection", (socket) => {
   await Promise.all([_explainInit, _forgeInit, _liveInit]);
   // Give every account its own progress/XP/settings (one-time, idempotent).
   await migratePerUser();
+  // Award achievements already earned by existing progress (once per user).
+  try {
+    const owners = await all(
+      `SELECT DISTINCT p.username FROM progress p
+       WHERE p.status='solved' AND p.username<>''
+       AND NOT EXISTS (SELECT 1 FROM user_achievements ua WHERE ua.username=p.username)`,
+    );
+    for (const { username } of owners) {
+      const last = await get(
+        "SELECT problem_rowid FROM progress WHERE username=? AND status='solved' ORDER BY solved_at DESC LIMIT 1",
+        [username],
+      );
+      if (last) await runAs(username, () => checkAchievements(last.problem_rowid, "AC", { backfill: true }));
+    }
+  } catch (e) {
+    console.error("[achievements] backfill failed:", e.message);
+  }
 
   /* ── Global 404 handler (after all routes) ── */
   app.use((req, res) => {

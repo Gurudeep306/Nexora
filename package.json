@@ -18,7 +18,8 @@
     "scrape:medium": "node src/scraper.js --rating 1200 1800 --limit 200",
     "scrape:hard": "node src/scraper.js --rating 1800 3500 --limit 200",
     "db:push-to-cloud": "node scripts/migrate-to-turso.js",
-    "db:backup": "node scripts/backup-turso.js"
+    "db:backup": "node scripts/backup-turso.js",
+    "user:set-password": "node scripts/set-password.js"
   },
   "dependencies": {
     "@libsql/client": "^0.18.0",

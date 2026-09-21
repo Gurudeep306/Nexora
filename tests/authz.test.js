@@ -86,3 +86,22 @@ test('bookmarks belong to the session user', async () => {
   assert.equal(alices.problemIds.length, 0, "eve's bookmark must not land in alice's list");
   assert.ok(Array.isArray(mine.problemIds));
 });
+
+test('registering an existing username never signs you in as that user', async () => {
+  const r = await fetch(`${base}/api/user/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username: A, email: 'x@evil.io', password: 'whatever123' }),
+  });
+  assert.equal(r.status, 409);
+  assert.equal(r.headers.get('set-cookie'), null, 'no session for the attacker');
+});
+
+test('short passwords are rejected at sign-up', async () => {
+  const r = await fetch(`${base}/api/user/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username: `pw${Date.now().toString(36)}`, password: '123' }),
+  });
+  assert.equal(r.status, 400);
+});
