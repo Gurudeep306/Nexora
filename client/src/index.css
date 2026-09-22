@@ -456,3 +456,40 @@
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }
 }
+
+/* Statement media: zoomable images, broken-image hint, responsive embeds */
+.statement-html img {
+  cursor: zoom-in;
+  transition: box-shadow 150ms ease;
+}
+.statement-html img:hover {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 55%, transparent);
+}
+.statement-html img.nx-img-broken {
+  min-width: 120px;
+  min-height: 48px;
+  background: var(--color-surface-2);
+  border: 1px dashed var(--color-border-strong);
+  cursor: default;
+}
+.statement-html video,
+.statement-html audio {
+  max-width: 100%;
+  border-radius: 0.5rem;
+  margin: 0.6em 0;
+}
+.statement-html .nx-embed {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  margin: 0.8em 0;
+  border-radius: 0.6rem;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+}
+.statement-html .nx-embed iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}

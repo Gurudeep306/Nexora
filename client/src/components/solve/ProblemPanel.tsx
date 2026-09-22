@@ -4,6 +4,7 @@ import { Badge, DifficultyBadge, LoadingBlock, Select, Tabs } from '@/components
 import { api } from '@/lib/api'
 import { sanitizeHtml } from '@/components/ailab/sanitize'
 import { prepareMathHtml, renderMathIn } from '@/lib/math'
+import { useStatementMedia } from './StatementMedia'
 import { ThinkingPad } from './ThinkingPad'
 import { PlatformBadge, VerdictBadge } from '@/components/shared/PlatformBadge'
 import { cn, timeAgo } from '@/lib/utils'
@@ -63,6 +64,7 @@ export function ProblemPanel({
   const [translating, setTranslating] = useState(false)
   const [translateError, setTranslateError] = useState<string | null>(null)
   const statementRef = useRef<HTMLDivElement>(null)
+  const mediaLightbox = useStatementMedia()
 
   useEffect(() => {
     renderMathIn(statementRef.current)
@@ -90,6 +92,7 @@ export function ProblemPanel({
 
   return (
     <div className="flex h-full min-h-0 flex-col">
+      {mediaLightbox}
       <div className="border-b border-border px-4 pt-3 pb-0">
         <h1 className="font-display text-base leading-snug tracking-wide text-foreground md:text-lg">
           {problem.title}

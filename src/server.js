@@ -54,7 +54,7 @@ const {
   fetchSpojProblems,
   fetchProjectEulerProblems,
 } = require("./sync");
-const { judge, quickRun, LANG_CONFIG } = require("./judge");
+const { judge, quickRun, LANG_CONFIG, hasRemote, REMOTE_ONLY } = require("./judge");
 
 const IS_PROD = process.env.NODE_ENV === "production";
 const APP_URL =
@@ -104,14 +104,26 @@ function absolutizeUrl(src, origin) {
 function normalizeStatementHtml(html, problem) {
   if (!html) return html;
   const origin = PLATFORM_ORIGIN[problem.platform] || "";
-  let out = html.replace(
-    /(<img\b[^>]*?\ssrc\s*=\s*)(["'])([^"']*)\2/gi,
-    (_m, pre, q, src) => {
-      const abs = absolutizeUrl(src, origin);
-      if (!abs || abs.startsWith("data:")) return `${pre}${q}${src}${q}`;
-      return `${pre}${q}/api/imgproxy?url=${encodeURIComponent(abs)}${q}`;
-    },
+  // Images load straight from the source CDN with no Referer (that is what
+  // hotlink checks key on) — our own servers are often blocked by Cloudflare,
+  // so the proxy is only the fallback the client switches to on error.
+  let out = html.replace(/<img\b[^>]*>/gi, (tag) => {
+    const m = tag.match(/\ssrc\s*=\s*(["'])([^"']*)\1/i) || tag.match(/\ssrc\s*=\s*([^\s>"']+)/i);
+    const raw = m ? (m[2] ?? m[1]) : "";
+    const abs = absolutizeUrl(raw.replace(/&amp;/g, "&"), origin);
+    if (!abs) return tag;
+    let t = tag.replace(/\s(src|referrerpolicy|loading|decoding|data-proxy)\s*=\s*(["'])[^"']*\2/gi, "")
+               .replace(/\ssrc\s*=\s*[^\s>"']+/gi, "");
+    const attrs = [`src="${abs.replace(/"/g, "&quot;")}"`, 'referrerpolicy="no-referrer"', 'loading="lazy"', 'decoding="async"'];
+    if (/^https:/i.test(abs)) attrs.push(`data-proxy="/api/imgproxy?url=${encodeURIComponent(abs)}"`);
+    return t.replace(/^<img\b/i, `<img ${attrs.join(" ")}`);
+  });
+  // Videos / audio / <source>: absolute URLs, native controls, no referrer.
+  out = out.replace(
+    /(<(?:video|audio|source)\b[^>]*?\s(?:src|poster)\s*=\s*)(["'])([^"']*)\2/gi,
+    (_m, pre, q, src) => `${pre}${q}${absolutizeUrl(src, origin)}${q}`,
   );
+  out = out.replace(/<(video|audio)\b(?![^>]*\scontrols)/gi, '<$1 controls preload="metadata"');
   out = out.replace(
     /(<a\b[^>]*?\shref\s*=\s*)(["'])(?!https?:|#|mailto:)([^"']*)\2/gi,
     (_m, pre, q, href) => {
@@ -153,6 +165,10 @@ const IMG_PROXY_HOSTS = new Set([
   "www.spoj.com",
   "projecteuler.net",
   "web.archive.org",
+  "cdn.codechef.com",
+  "s3.amazonaws.com",
+  "codeforces.org",
+  "userpic.codeforces.org",
 ]);
 
 function _parseCFStatement($) {
@@ -709,9 +725,11 @@ app.use(
           "data:",
         ],
         imgSrc: ["'self'", "data:", "https:", "blob:"],
+        // Problem statements may embed videos / audio from the source sites.
+        mediaSrc: ["'self'", "https:", "blob:", "data:"],
         connectSrc: ["'self'", "wss:", "ws:", "https://api.groq.com"],
         workerSrc: ["'self'", "blob:"],
-        frameSrc: ["'self'", "https://www.youtube.com"],
+        frameSrc: ["'self'", "https://www.youtube.com", "https://www.youtube-nocookie.com", "https://player.vimeo.com"],
         objectSrc: ["'none'"],
         baseUri: ["'self'"],
         upgradeInsecureRequests: IS_PROD ? [] : null,
@@ -1764,7 +1782,27 @@ app.post("/api/run", judgeLimiter, async (req, res) => {
 
 /* ========== LANGUAGES ========== */
 app.get("/api/languages", (req, res) => {
-  res.json(Object.entries(LANG_CONFIG).map(([id, cfg]) => ({ id, ...cfg })));
+  // On the hosted server only languages with a remote sandbox can run.
+  res.json(
+    Object.entries(LANG_CONFIG).map(([id, cfg]) => ({
+      id,
+      ...cfg,
+      available: REMOTE_ONLY ? hasRemote(id) : true,
+    })),
+  );
+});
+
+/* Admin: run a tiny program in every language through the real judge.
+   GET /api/admin/judge-selftest?langs=cpp,python  (all languages when omitted) */
+app.get("/api/admin/judge-selftest", requireAdmin, async (req, res) => {
+  try {
+    const { selfTest } = require("./judge-selftest");
+    const only = typeof req.query.langs === "string" && req.query.langs ? req.query.langs.split(",") : null;
+    const results = await selfTest({ judge, LANG_CONFIG, hasRemote, REMOTE_ONLY }, only);
+    res.json({ ok: true, remote: REMOTE_ONLY, passed: results.filter((r) => r.ok).length, total: results.length, results });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message });
+  }
 });
 
 /* ========== STATS ========== */

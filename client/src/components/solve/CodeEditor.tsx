@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import '@/lib/monaco'
 import Editor, { type BeforeMount, type OnMount } from '@monaco-editor/react'
 import type { editor as MonacoNs } from 'monaco-editor'
@@ -6,19 +6,27 @@ import { initVimMode, type VimMode } from 'monaco-vim'
 import {
   Minus,
   Plus,
+  Braces,
+  Check,
   ClipboardCopy,
   Columns2,
   Download,
   FileCode2,
+  Keyboard,
   Map as MapIcon,
   Maximize2,
   Minimize2,
+  Redo2,
+  Search,
   Terminal,
+  Timer,
+  Undo2,
 } from 'lucide-react'
 import { useApi } from '@/hooks/useApi'
 import { api } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import { TEMPLATES, LANG_EXT } from '@/lib/templates'
+import { snippetsFor } from '@/lib/snippets'
 import type { Diag } from '@/lib/diagnostics'
 import type { ReplayEvent } from '@/components/submissions/replay'
 
@@ -29,6 +37,15 @@ const MONACO_LANG: Record<string, string> = {
   objectivec: 'objective-c',
   pascal: 'pascal',
   scheme: 'scheme',
+  // No dedicated Monaco grammar — borrow the closest one for highlighting.
+  ocaml: 'fsharp',
+  crystal: 'ruby',
+  groovy: 'java',
+  d: 'cpp',
+  zig: 'rust',
+  nim: 'python',
+  commonlisp: 'clojure',
+  haskell: 'plaintext',
 }
 
 /* ── Themes ─────────────────────────────────────────────────────────── */
@@ -156,6 +173,93 @@ const THEMES: Record<string, ThemeDef> = {
       'editorGutter.background': '#fbfbfd',
     },
   },
+  dracula: {
+    label: 'Dracula',
+    base: 'vs-dark',
+    rules: [
+      { token: 'comment', foreground: '6272a4', fontStyle: 'italic' },
+      { token: 'keyword', foreground: 'ff79c6' },
+      { token: 'string', foreground: 'f1fa8c' },
+      { token: 'number', foreground: 'bd93f9' },
+      { token: 'type', foreground: '8be9fd', fontStyle: 'italic' },
+      { token: 'function', foreground: '50fa7b' },
+      { token: 'variable', foreground: 'f8f8f2' },
+      { token: 'delimiter', foreground: 'f8f8f2' },
+    ],
+    colors: {
+      'editor.background': '#282a36',
+      'editor.foreground': '#f8f8f2',
+      'editorLineNumber.foreground': '#6272a4',
+      'editorLineNumber.activeForeground': '#f8f8f2',
+      'editor.selectionBackground': '#44475a',
+      'editor.lineHighlightBackground': '#44475a55',
+      'editorCursor.foreground': '#f8f8f0',
+      'editorIndentGuide.background1': '#424450',
+      'editorWidget.background': '#21222c',
+      'editorWidget.border': '#44475a',
+      'editorSuggestWidget.background': '#21222c',
+      'editorSuggestWidget.selectedBackground': '#44475a',
+      'editorGutter.background': '#282a36',
+    },
+  },
+  nord: {
+    label: 'Nord',
+    base: 'vs-dark',
+    rules: [
+      { token: 'comment', foreground: '616e88', fontStyle: 'italic' },
+      { token: 'keyword', foreground: '81a1c1' },
+      { token: 'string', foreground: 'a3be8c' },
+      { token: 'number', foreground: 'b48ead' },
+      { token: 'type', foreground: '8fbcbb' },
+      { token: 'function', foreground: '88c0d0' },
+      { token: 'variable', foreground: 'd8dee9' },
+      { token: 'delimiter', foreground: 'eceff4' },
+    ],
+    colors: {
+      'editor.background': '#2e3440',
+      'editor.foreground': '#d8dee9',
+      'editorLineNumber.foreground': '#4c566a',
+      'editorLineNumber.activeForeground': '#d8dee9',
+      'editor.selectionBackground': '#434c5eaa',
+      'editor.lineHighlightBackground': '#3b425266',
+      'editorCursor.foreground': '#d8dee9',
+      'editorIndentGuide.background1': '#3b4252',
+      'editorWidget.background': '#2e3440',
+      'editorWidget.border': '#434c5e',
+      'editorSuggestWidget.background': '#2e3440',
+      'editorSuggestWidget.selectedBackground': '#434c5e',
+      'editorGutter.background': '#2e3440',
+    },
+  },
+  'github-dark': {
+    label: 'GitHub Dark',
+    base: 'vs-dark',
+    rules: [
+      { token: 'comment', foreground: '8b949e', fontStyle: 'italic' },
+      { token: 'keyword', foreground: 'ff7b72' },
+      { token: 'string', foreground: 'a5d6ff' },
+      { token: 'number', foreground: '79c0ff' },
+      { token: 'type', foreground: 'ffa657' },
+      { token: 'function', foreground: 'd2a8ff' },
+      { token: 'variable', foreground: 'c9d1d9' },
+      { token: 'delimiter', foreground: 'c9d1d9' },
+    ],
+    colors: {
+      'editor.background': '#0d1117',
+      'editor.foreground': '#c9d1d9',
+      'editorLineNumber.foreground': '#484f58',
+      'editorLineNumber.activeForeground': '#c9d1d9',
+      'editor.selectionBackground': '#264f7866',
+      'editor.lineHighlightBackground': '#161b2266',
+      'editorCursor.foreground': '#58a6ff',
+      'editorIndentGuide.background1': '#21262d',
+      'editorWidget.background': '#161b22',
+      'editorWidget.border': '#30363d',
+      'editorSuggestWidget.background': '#161b22',
+      'editorSuggestWidget.selectedBackground': '#264f7844',
+      'editorGutter.background': '#0d1117',
+    },
+  },
 }
 
 /* Monaco renders inline "after" text only via a CSS class whose ::after supplies
@@ -215,6 +319,35 @@ function registerWordCompletions(monaco: Parameters<BeforeMount>[0]) {
   })
 }
 
+/* Competitive-programming snippets, inserted with live tab stops */
+function registerSnippets(monaco: Parameters<BeforeMount>[0], getLang: () => string) {
+  return monaco.languages.registerCompletionItemProvider('*', {
+    provideCompletionItems: (
+      model: { getWordUntilPosition(p: EditorPosition): { word: string } },
+      position: EditorPosition,
+    ) => {
+      const word = model.getWordUntilPosition(position)
+      const range = {
+        startLineNumber: position.lineNumber,
+        startColumn: position.column - word.word.length,
+        endLineNumber: position.lineNumber,
+        endColumn: position.column,
+      }
+      const suggestions = snippetsFor(getLang()).map((s) => ({
+        label: s.label,
+        kind: monaco.languages.CompletionItemKind.Snippet,
+        detail: s.detail,
+        documentation: s.detail,
+        insertText: s.body,
+        insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+        range,
+        sortText: 'a' + s.label,
+      }))
+      return { suggestions }
+    },
+  })
+}
+
 export function CodeEditor({
   value,
   language,
@@ -224,6 +357,7 @@ export function CodeEditor({
   aiInline = false,
   onRecord,
   diagnostics = [],
+  onExplain,
 }: {
   value: string
   language: string
@@ -236,6 +370,8 @@ export function CodeEditor({
   onRecord?: (event: ReplayEvent, fullText: string) => void
   /** Compiler/runtime errors to underline inline (error-lens style) */
   diagnostics?: Diag[]
+  /** Right-click "Explain selection with AI" — receives the selected source */
+  onExplain?: (selection: string) => void
 }) {
   const { data } = useApi(() => api.get<{ settings: Record<string, string> }>('/api/settings'), [])
   const settings = data?.settings ?? {}
@@ -243,6 +379,12 @@ export function CodeEditor({
   const [theme, setTheme] = useState(() => localStorage.getItem('nexora:editor-theme') ?? 'nexora-dark')
   const [vim, setVim] = useState(() => localStorage.getItem('nexora:editor-vim') === 'on')
   const [zen, setZen] = useState(false)
+  const [helpOpen, setHelpOpen] = useState(false)
+  const [snipOpen, setSnipOpen] = useState(false)
+  const [snipQuery, setSnipQuery] = useState('')
+  const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved'>('idle')
+  const [secs, setSecs] = useState(0)
+  const [indent, setIndent] = useState(4)
   const [fontSize, setFontSize] = useState(() => Number(localStorage.getItem('nexora:editor-font')) || 14)
   const [wrap, setWrap] = useState(() => localStorage.getItem('nexora:editor-wrap') !== 'off')
   const [minimap, setMinimap] = useState(() => localStorage.getItem('nexora:editor-minimap') === 'on')
@@ -258,6 +400,8 @@ export function CodeEditor({
   langRef.current = language
   const recordRef = useRef(onRecord)
   recordRef.current = onRecord
+  const explainRef = useRef(onExplain)
+  explainRef.current = onExplain
   const disposers = useRef<{ dispose: () => void }[]>([])
   const editorRef = useRef<Parameters<OnMount>[0] | null>(null)
   const monacoRef = useRef<Parameters<OnMount>[1] | null>(null)
@@ -297,6 +441,66 @@ export function CodeEditor({
   useEffect(() => {
     if (monacoRef.current) monacoRef.current.editor.setTheme(theme)
   }, [theme])
+
+  /* Session timer + autosave pulse + code stats */
+  useEffect(() => {
+    const t = setInterval(() => setSecs((s) => s + 1), 1000)
+    return () => clearInterval(t)
+  }, [])
+
+  const firstValue = useRef(true)
+  useEffect(() => {
+    if (firstValue.current) {
+      firstValue.current = false
+      return
+    }
+    setSaveState('saving')
+    const t = setTimeout(() => setSaveState('saved'), 700)
+    return () => clearTimeout(t)
+  }, [value])
+
+  useEffect(() => {
+    const t = Number(settings.tab_size)
+    if (t) setIndent(t)
+  }, [settings.tab_size])
+
+  const stats = useMemo(() => {
+    const lines = value.split('\n').length
+    const chars = value.length
+    const words = (value.match(/\S+/g) ?? []).length
+    return { lines, chars, words }
+  }, [value])
+
+  const filteredSnips = useMemo(() => {
+    const all = snippetsFor(language)
+    const q = snipQuery.trim().toLowerCase()
+    if (!q) return all
+    return all.filter((s) => s.label.toLowerCase().includes(q) || s.detail.toLowerCase().includes(q))
+  }, [language, snipQuery])
+
+  const sessionTime = useMemo(() => {
+    const h = Math.floor(secs / 3600)
+    const m = Math.floor((secs % 3600) / 60)
+    const s = secs % 60
+    const mm = String(m).padStart(2, '0')
+    const ss = String(s).padStart(2, '0')
+    return h > 0 ? `${h}:${mm}:${ss}` : `${m}:${ss}`
+  }, [secs])
+
+  const cycleIndent = () => {
+    const next = indent === 4 ? 2 : indent === 2 ? 8 : 4
+    setIndent(next)
+    editorRef.current?.updateOptions({ tabSize: next })
+  }
+
+  const insertSnippet = (body: string) => {
+    const editor = editorRef.current
+    if (!editor) return
+    editor.focus()
+    editor.trigger('snippets', 'editor.action.insertSnippet', { snippet: body })
+    setSnipOpen(false)
+    setSnipQuery('')
+  }
 
   /* Vim mode toggle */
   useEffect(() => {
@@ -428,12 +632,39 @@ export function CodeEditor({
       )
     }
     disposers.current.push(registerWordCompletions(monaco))
+    disposers.current.push(registerSnippets(monaco, () => langRef.current))
 
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => runRef.current())
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.Enter, () => submitRef.current())
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
       // The browser's save dialog is useless here; code is persisted on every keystroke.
       runRef.current()
+    })
+    editor.addAction({
+      id: 'nexora-run',
+      label: 'Run Code',
+      contextMenuGroupId: '9_nexora',
+      contextMenuOrder: 1,
+      run: () => runRef.current(),
+    })
+    editor.addAction({
+      id: 'nexora-submit',
+      label: 'Submit Solution',
+      contextMenuGroupId: '9_nexora',
+      contextMenuOrder: 2,
+      run: () => submitRef.current(),
+    })
+    editor.addAction({
+      id: 'nexora-explain',
+      label: 'Explain Selection with AI',
+      contextMenuGroupId: '9_nexora',
+      contextMenuOrder: 3,
+      run: (ed) => {
+        const model = ed.getModel()
+        const sel = ed.getSelection()
+        if (!model || !sel || sel.isEmpty() || !explainRef.current) return
+        explainRef.current(model.getValueInRange(sel))
+      },
     })
     editor.updateOptions({
       fontFamily: "'JetBrains Mono','Fira Code',monospace",
@@ -442,16 +673,26 @@ export function CodeEditor({
       smoothScrolling: true,
       cursorBlinking: 'smooth',
       cursorSmoothCaretAnimation: 'on',
+      cursorSurroundingLines: 3,
       renderLineHighlight: 'all',
+      renderWhitespace: 'selection',
+      renderControlCharacters: true,
       padding: { top: 12, bottom: 12 },
       stickyScroll: { enabled: true },
       guides: { bracketPairs: 'active', indentation: true, highlightActiveIndentation: true },
+      bracketPairColorization: { enabled: true, independentColorPoolPerBracketType: true },
+      matchBrackets: 'always',
+      foldingHighlight: true,
       linkedEditing: true,
-      suggest: { preview: true, showInlineDetails: true },
+      fixedOverflowWidgets: true,
+      suggest: { preview: true, showInlineDetails: true, insertMode: 'replace', localityBonus: true },
+      suggestSelection: 'first',
+      wordBasedSuggestions: 'currentDocument',
       occurrencesHighlight: 'singleFile',
       glyphMargin: true,
       quickSuggestions: { other: 'on', comments: 'off', strings: 'off' },
       tabCompletion: 'on',
+      find: { seedSearchStringFromSelection: 'selection', addExtraSpaceOnTop: false },
     })
   }
 
@@ -493,9 +734,9 @@ export function CodeEditor({
     'inline-flex size-7 cursor-pointer items-center justify-center rounded-md text-foreground-dim transition-colors hover:bg-surface-2 hover:text-foreground'
 
   return (
-    <div className={cn('flex h-full min-h-0 flex-col', zen && 'fixed inset-0 z-[100] bg-background')}>
+    <div className={cn('relative flex h-full min-h-0 flex-col', zen && 'fixed inset-0 z-[100] bg-background')}>
       {/* ── Editor toolbar ── */}
-      <div className="flex flex-wrap items-center gap-1 border-b border-border bg-surface px-2 py-1">
+      <div className="flex flex-wrap items-center gap-1.5 border-b border-border bg-surface px-2 py-1.5">
         <select
           value={theme}
           onChange={(e) => setTheme(e.target.value)}
@@ -509,64 +750,181 @@ export function CodeEditor({
           ))}
         </select>
 
-        <span className="mx-1 h-4 w-px bg-border" aria-hidden="true" />
+        <div className="flex items-center rounded-lg border border-border/60 bg-background/40 px-0.5 py-0.5">
+          <button className={toolBtn} onClick={() => setFontSize((f) => Math.max(10, f - 1))} aria-label="Decrease font size" title="Smaller font">
+            <Minus className="size-3.5" aria-hidden="true" />
+          </button>
+          <span className="w-6 text-center font-mono text-[10px] text-foreground-faint tabular-nums">{fontSize}</span>
+          <button className={toolBtn} onClick={() => setFontSize((f) => Math.min(24, f + 1))} aria-label="Increase font size" title="Larger font">
+            <Plus className="size-3.5" aria-hidden="true" />
+          </button>
+        </div>
 
-        <button className={toolBtn} onClick={() => setFontSize((f) => Math.max(10, f - 1))} aria-label="Decrease font size" title="Smaller font">
-          <Minus className="size-3.5" aria-hidden="true" />
-        </button>
-        <span className="w-6 text-center font-mono text-[10px] text-foreground-faint tabular-nums">{fontSize}</span>
-        <button className={toolBtn} onClick={() => setFontSize((f) => Math.min(24, f + 1))} aria-label="Increase font size" title="Larger font">
-          <Plus className="size-3.5" aria-hidden="true" />
-        </button>
+        <div className="flex items-center rounded-lg border border-border/60 bg-background/40 px-0.5 py-0.5">
+          <button
+            className={cn(toolBtn, wrap && 'bg-surface-2 text-primary-bright')}
+            onClick={() => setWrap((w) => !w)}
+            aria-pressed={wrap}
+            title="Word wrap"
+          >
+            <Columns2 className="size-3.5" aria-hidden="true" />
+          </button>
+          <button
+            className={cn(toolBtn, minimap && 'bg-surface-2 text-primary-bright')}
+            onClick={() => setMinimap((m) => !m)}
+            aria-pressed={minimap}
+            title="Minimap"
+          >
+            <MapIcon className="size-3.5" aria-hidden="true" />
+          </button>
+          <button
+            className={cn(toolBtn, vim && 'bg-surface-2 text-cyan')}
+            onClick={() => setVim((v) => !v)}
+            aria-pressed={vim}
+            title="Vim keybindings"
+          >
+            <Terminal className="size-3.5" aria-hidden="true" />
+          </button>
+        </div>
 
-        <span className="mx-1 h-4 w-px bg-border" aria-hidden="true" />
+        <div className="flex items-center rounded-lg border border-border/60 bg-background/40 px-0.5 py-0.5">
+          <button
+            className={cn(toolBtn, snipOpen && 'bg-surface-2 text-primary-bright')}
+            onClick={() => setSnipOpen((s) => !s)}
+            aria-pressed={snipOpen}
+            aria-label="Snippet library"
+            title="Snippet library"
+          >
+            <Braces className="size-3.5" aria-hidden="true" />
+          </button>
+          <button className={toolBtn} onClick={insertTemplate} title="Insert starter template">
+            <FileCode2 className="size-3.5" aria-hidden="true" />
+          </button>
+          <button className={toolBtn} onClick={copyCode} title="Copy code">
+            <ClipboardCopy className="size-3.5" aria-hidden="true" />
+          </button>
+          <button className={toolBtn} onClick={downloadCode} title="Download file">
+            <Download className="size-3.5" aria-hidden="true" />
+          </button>
+        </div>
 
-        <button
-          className={cn(toolBtn, wrap && 'bg-surface-2 text-primary-bright')}
-          onClick={() => setWrap((w) => !w)}
-          aria-pressed={wrap}
-          title="Word wrap"
-        >
-          <Columns2 className="size-3.5" aria-hidden="true" />
-        </button>
-        <button
-          className={cn(toolBtn, minimap && 'bg-surface-2 text-primary-bright')}
-          onClick={() => setMinimap((m) => !m)}
-          aria-pressed={minimap}
-          title="Minimap"
-        >
-          <MapIcon className="size-3.5" aria-hidden="true" />
-        </button>
-        <button
-          className={cn(toolBtn, vim && 'bg-surface-2 text-cyan')}
-          onClick={() => setVim((v) => !v)}
-          aria-pressed={vim}
-          title="Vim keybindings"
-        >
-          <Terminal className="size-3.5" aria-hidden="true" />
-        </button>
+        <div className="flex items-center rounded-lg border border-border/60 bg-background/40 px-0.5 py-0.5">
+          <button
+            className={toolBtn}
+            onClick={() => editorRef.current?.trigger('toolbar', 'undo', null)}
+            aria-label="Undo"
+            title="Undo"
+          >
+            <Undo2 className="size-3.5" aria-hidden="true" />
+          </button>
+          <button
+            className={toolBtn}
+            onClick={() => editorRef.current?.trigger('toolbar', 'redo', null)}
+            aria-label="Redo"
+            title="Redo"
+          >
+            <Redo2 className="size-3.5" aria-hidden="true" />
+          </button>
+        </div>
 
-        <span className="mx-1 h-4 w-px bg-border" aria-hidden="true" />
-
-        <button className={toolBtn} onClick={insertTemplate} title="Insert starter template">
-          <FileCode2 className="size-3.5" aria-hidden="true" />
-        </button>
-        <button className={toolBtn} onClick={copyCode} title="Copy code">
-          <ClipboardCopy className="size-3.5" aria-hidden="true" />
-        </button>
-        <button className={toolBtn} onClick={downloadCode} title="Download file">
-          <Download className="size-3.5" aria-hidden="true" />
-        </button>
-
-        <button
-          className={cn(toolBtn, 'ml-auto', zen && 'text-primary-bright')}
-          onClick={() => setZen((z) => !z)}
-          aria-label={zen ? 'Exit focus mode' : 'Focus mode'}
-          title="Focus mode"
-        >
-          {zen ? <Minimize2 className="size-3.5" aria-hidden="true" /> : <Maximize2 className="size-3.5" aria-hidden="true" />}
-        </button>
+        <div className="ml-auto flex items-center rounded-lg border border-border/60 bg-background/40 px-0.5 py-0.5">
+          <button
+            className={cn(toolBtn, helpOpen && 'bg-surface-2 text-primary-bright')}
+            onClick={() => setHelpOpen((h) => !h)}
+            aria-pressed={helpOpen}
+            aria-label="Keyboard shortcuts"
+            title="Keyboard shortcuts"
+          >
+            <Keyboard className="size-3.5" aria-hidden="true" />
+          </button>
+          <button
+            className={cn(toolBtn, zen && 'text-primary-bright')}
+            onClick={() => setZen((z) => !z)}
+            aria-label={zen ? 'Exit focus mode' : 'Focus mode'}
+            title="Focus mode"
+          >
+            {zen ? <Minimize2 className="size-3.5" aria-hidden="true" /> : <Maximize2 className="size-3.5" aria-hidden="true" />}
+          </button>
+        </div>
       </div>
+
+      {helpOpen && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setHelpOpen(false)} aria-hidden="true" />
+          <div
+            role="dialog"
+            aria-label="Keyboard shortcuts"
+            className="card-neon absolute right-2 top-10 z-50 w-72 overflow-hidden p-0"
+          >
+            <div className="border-b border-border px-3 py-2 text-[11px] font-semibold uppercase tracking-wider text-foreground-dim">
+              Keyboard shortcuts
+            </div>
+            <dl className="max-h-80 overflow-y-auto px-3 py-2 text-xs">
+              {[
+                ['Run code', '⌘/Ctrl + Enter'],
+                ['Submit solution', '⌘/Ctrl + Shift + Enter'],
+                ['Quick save · run', '⌘/Ctrl + S'],
+                ['Find / Replace', '⌘/Ctrl + F · ⌘/Ctrl + H'],
+                ['Go to line', '⌘/Ctrl + G'],
+                ['Trigger suggestion', 'Ctrl + Space'],
+                ['Select next occurrence', '⌘/Ctrl + D'],
+                ['Multi-cursor', 'Alt + Click'],
+                ['Move / duplicate line', 'Alt + ↑/↓ · Shift+Alt + ↓'],
+                ['Toggle comment', '⌘/Ctrl + /'],
+                ['Fold / unfold region', '⌘/Ctrl + Shift + [ / ]'],
+                ['Vim mode', 'Toolbar toggle'],
+              ].map(([label, keys]) => (
+                <div key={label} className="flex items-center justify-between gap-3 py-1.5">
+                  <dt className="text-foreground-dim">{label}</dt>
+                  <dd className="whitespace-nowrap rounded border border-border bg-background px-1.5 py-0.5 font-mono text-[10px] text-foreground">
+                    {keys}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </>
+      )}
+
+      {snipOpen && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setSnipOpen(false)} aria-hidden="true" />
+          <div
+            role="dialog"
+            aria-label="Snippet library"
+            className="card-neon absolute right-2 top-11 z-50 w-80 overflow-hidden p-0"
+          >
+            <div className="flex items-center gap-2 border-b border-border px-3 py-2">
+              <Search className="size-3.5 shrink-0 text-foreground-faint" aria-hidden="true" />
+              <input
+                autoFocus
+                value={snipQuery}
+                onChange={(e) => setSnipQuery(e.target.value)}
+                placeholder={`Search ${language} snippets…`}
+                aria-label="Search snippets"
+                className="w-full bg-transparent text-xs text-foreground outline-none placeholder:text-foreground-faint"
+              />
+            </div>
+            <div className="max-h-72 overflow-y-auto py-1">
+              {filteredSnips.map((s) => (
+                <button
+                  key={s.id}
+                  onClick={() => insertSnippet(s.body)}
+                  className="flex w-full items-baseline gap-2 px-3 py-1.5 text-left transition-colors hover:bg-surface-2"
+                >
+                  <span className="shrink-0 font-mono text-[11px] text-primary-bright">{s.label}</span>
+                  <span className="truncate text-[10px] text-foreground-faint">{s.detail}</span>
+                </button>
+              ))}
+              {filteredSnips.length === 0 && (
+                <div className="px-3 py-6 text-center text-[11px] text-foreground-faint">
+                  No snippets match — try “for”, “map”, “search”…
+                </div>
+              )}
+            </div>
+          </div>
+        </>
+      )}
 
       <div className="min-h-0 flex-1">
         <Editor
@@ -597,14 +955,27 @@ export function CodeEditor({
       </div>
 
       {/* ── Status bar ── */}
-      <div className="flex items-center gap-3 border-t border-border bg-surface px-3 py-1 font-mono text-[10px] text-foreground-faint">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 border-t border-border bg-surface px-3 py-1 font-mono text-[10px] text-foreground-faint">
         <span className="tabular-nums">
           Ln {cursor.line}, Col {cursor.col}
           {cursor.sel > 0 && <span className="text-primary-bright"> ({cursor.sel} selected)</span>}
         </span>
         <span className="uppercase">{language}</span>
-        <span>Spaces: {Number(settings.tab_size) || 4}</span>
-        <span className="hidden sm:inline">{wrap ? 'wrap on' : 'wrap off'}</span>
+        <button
+          onClick={cycleIndent}
+          title="Cycle indent width (4 → 2 → 8)"
+          className="rounded px-0.5 transition-colors hover:text-foreground"
+        >
+          Spaces: {indent}
+        </button>
+        <span className="hidden tabular-nums sm:inline">
+          {stats.lines} ln · {stats.chars} ch
+        </span>
+        <span className="hidden items-center gap-1 tabular-nums md:flex" title="Session time">
+          <Timer className="size-3" aria-hidden="true" />
+          {sessionTime}
+        </span>
+        <span className="hidden lg:inline">{wrap ? 'wrap on' : 'wrap off'}</span>
         {vim && (
           <div ref={vimStatusRef} className="text-cyan">
             VIM
@@ -613,6 +984,21 @@ export function CodeEditor({
         {diagnostics.length > 0 && (
           <span className="text-destructive">
             {diagnostics.length} issue{diagnostics.length > 1 ? 's' : ''}
+          </span>
+        )}
+        {saveState !== 'idle' && (
+          <span
+            className={cn(
+              'flex items-center gap-1',
+              saveState === 'saving' ? 'text-warning' : 'text-emerald-400',
+            )}
+          >
+            {saveState === 'saved' ? (
+              <Check className="size-3" aria-hidden="true" />
+            ) : (
+              <span className="size-1.5 animate-pulse rounded-full bg-current" aria-hidden="true" />
+            )}
+            {saveState}
           </span>
         )}
         <span className="ml-auto hidden md:inline">{THEMES[theme]?.label ?? theme}</span>

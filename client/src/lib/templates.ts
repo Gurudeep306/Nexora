@@ -24,6 +24,16 @@ export const TEMPLATES: Record<string, string> = {
   pascal: 'program arena;\nvar\n  n: longint;\nbegin\n  readln(n);\nend.\n',
   elixir: 'input = IO.read(:stdio, :all)\n\n',
   tcl: 'set line [gets stdin]\n\n',
+  fsharp: 'let n = stdin.ReadLine() |> int\n\n',
+  objectivec: '#import <objc/Object.h>\n#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n',
+  haskell: 'main :: IO ()\nmain = do\n    s <- getContents\n    let xs = map read (words s) :: [Int]\n    print (sum xs)\n',
+  ocaml: 'let () =\n  let n = Scanf.scanf " %d" (fun x -> x) in\n  Printf.printf "%d\\n" n\n',
+  d: 'import std.stdio;\n\nvoid main() {\n    int n;\n    readf(" %d", &n);\n    writeln(n);\n}\n',
+  nim: 'import strutils\n\nlet n = stdin.readLine.strip.parseInt\necho n\n',
+  zig: 'const std = @import("std");\n\npub fn main() !void {\n    const stdout = std.io.getStdOut().writer();\n    try stdout.print("{s}\\n", .{"hello"});\n}\n',
+  crystal: 'input = STDIN.gets_to_end.split\n\n',
+  groovy: 'def input = System.in.text.split()\n\n',
+  commonlisp: '(let ((n (read)))\n  (format t "~a~%" n))\n',
 }
 
 export const DEFAULT_CODE = (lang: string): string => TEMPLATES[lang] ?? ''
@@ -34,4 +44,5 @@ export const LANG_EXT: Record<string, string> = {
   lua: 'lua', shell: 'sh', r: 'r', scala: 'scala', swift: 'swift', dart: 'dart',
   powershell: 'ps1', julia: 'jl', fsharp: 'fsx', clojure: 'clj', scheme: 'scm',
   objectivec: 'm', pascal: 'pas', elixir: 'exs', tcl: 'tcl',
+  haskell: 'hs', ocaml: 'ml', d: 'd', nim: 'nim', zig: 'zig', crystal: 'cr', groovy: 'groovy', commonlisp: 'lisp',
 }

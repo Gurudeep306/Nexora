@@ -4,6 +4,10 @@ import { motion } from 'motion/react'
 import {
   ArrowLeft,
   Bot,
+  ChevronsDown,
+  ChevronsLeft,
+  ChevronsRight,
+  ChevronsUp,
   Code2,
   Loader2,
   Play,
@@ -18,7 +22,6 @@ import {
   EmptyState,
   ErrorState,
   LoadingBlock,
-  Select,
   Tabs,
   Tooltip,
   useToast,
@@ -50,6 +53,22 @@ import {
 } from '@/components/solve/types'
 
 import { DEFAULT_CODE } from '@/lib/templates'
+import { LanguagePicker } from '@/components/solve/LanguagePicker'
+import { Workspace } from '@/components/solve/workspace/Workspace'
+import { useWorkspace } from '@/components/solve/workspace/useWorkspace'
+import { LayoutMenu } from '@/components/solve/workspace/LayoutMenu'
+
+function useIsDesktop() {
+  const q = '(min-width: 1024px)'
+  const [v, setV] = useState(() => typeof window !== 'undefined' && window.matchMedia(q).matches)
+  useEffect(() => {
+    const m = window.matchMedia(q)
+    const on = () => setV(m.matches)
+    m.addEventListener('change', on)
+    return () => m.removeEventListener('change', on)
+  }, [])
+  return v
+}
 import { parseDiagnostics } from '@/lib/diagnostics'
 
 /* Workshop statements are "plain text or HTML" — render both safely */
@@ -161,6 +180,10 @@ export default function SolvePage({ custom = false }: { custom?: boolean }) {
     : platformStatementApi
   const storageId = custom ? `custom-${id}` : id
   const langsApi = useApi<Language[]>(() => api.get<Language[]>('/api/languages'), [])
+  // Only offer languages the judge can actually run here.
+  const languages = useMemo(() => (langsApi.data ?? []).filter((l) => l.available !== false), [langsApi.data])
+  const isDesktop = useIsDesktop()
+  const workspace = useWorkspace()
 
   const [language, setLanguage] = useState(
     () => localStorage.getItem('nexora:lang') ?? 'cpp',
@@ -174,11 +197,19 @@ export default function SolvePage({ custom = false }: { custom?: boolean }) {
   const [fixing, setFixing] = useState(false)
   const [runResult, setRunResult] = useState<RunResult | null>(null)
   const [judgeResult, setJudgeResult] = useState<JudgeResponse | null>(null)
+  const [runCase, setRunCase] = useState<{ label: string; expected: string } | null>(null)
   const [banner, setBanner] = useState<{ verdict: string; xp: number | null; id: number } | null>(null)
   const [bottomTab, setBottomTab] = useState<'tests' | 'output'>('tests')
   const [mobilePane, setMobilePane] = useState<'problem' | 'code'>('problem')
   const [splitPct, setSplitPct] = useState(46)
   const [tutorOpen, setTutorOpen] = useState(false)
+  const [tutorSeed, setTutorSeed] = useState<string | null>(null)
+  const [problemCollapsed, setProblemCollapsed] = useState(() => localStorage.getItem('nexora:panel:problem') === 'collapsed')
+  const [bottomH, setBottomH] = useState(() => {
+    const v = Number(localStorage.getItem('nexora:panel:bottom-h'))
+    return Number.isFinite(v) && v >= 140 && v <= 900 ? v : 240
+  })
+  const [bottomCollapsed, setBottomCollapsed] = useState(false)
   const [aiInline, setAiInline] = useState(() => localStorage.getItem('nexora:ai-inline') !== 'off')
 
   /* ── Code replay recorder ──
@@ -199,6 +230,9 @@ export default function SolvePage({ custom = false }: { custom?: boolean }) {
 
   const splitRef = useRef<HTMLDivElement>(null)
   const draggingRef = useRef(false)
+  const codeSectionRef = useRef<HTMLElement>(null)
+  const bottomDraggingRef = useRef(false)
+  const bottomHRef = useRef(bottomH)
   const autoImported = useRef(false)
   const codeInitialized = useRef('')
 
@@ -230,12 +264,12 @@ export default function SolvePage({ custom = false }: { custom?: boolean }) {
 
   /* ── Fall back to a supported language ── */
   useEffect(() => {
-    const langs = langsApi.data
-    if (!langs?.length) return
+    const langs = languages
+    if (!langs.length) return
     if (!langs.some((l) => l.id === language)) {
       setLanguage(langs.find((l) => l.compiled)?.id ?? langs[0].id)
     }
-  }, [langsApi.data, language])
+  }, [languages, language])
 
   /* ── Sample import ── */
   const importSamples = useCallback(
@@ -302,8 +336,9 @@ export default function SolvePage({ custom = false }: { custom?: boolean }) {
     setRunning(true)
     setBottomTab('output')
     setRunResult(null)
-    const input =
-      selectedTest >= 0 && testcases[selectedTest] ? testcases[selectedTest].input : customInput
+    const tc = selectedTest >= 0 ? testcases[selectedTest] : undefined
+    const input = tc ? tc.input : customInput
+    setRunCase(tc ? { label: tc.label || `Test ${selectedTest + 1}`, expected: tc.expected_output ?? '' } : null)
     try {
       const res = await api.post<RunResult>(
         '/api/run',
@@ -502,6 +537,28 @@ export default function SolvePage({ custom = false }: { custom?: boolean }) {
     setSplitPct(Math.min(75, Math.max(25, pct)))
   }, [])
 
+  /* ── Bottom panel: vertical resize + collapse ── */
+  const onBottomMove = useCallback((e: React.PointerEvent) => {
+    if (!bottomDraggingRef.current || !codeSectionRef.current) return
+    const rect = codeSectionRef.current.getBoundingClientRect()
+    const h = Math.min(Math.max(140, rect.bottom - e.clientY), rect.height - 240)
+    bottomHRef.current = Math.round(h)
+    setBottomH(bottomHRef.current)
+  }, [])
+
+  const endBottomDrag = useCallback(() => {
+    if (!bottomDraggingRef.current) return
+    bottomDraggingRef.current = false
+    localStorage.setItem('nexora:panel:bottom-h', String(bottomHRef.current))
+  }, [])
+
+  const toggleProblemCollapsed = useCallback(() => {
+    setProblemCollapsed((c) => {
+      localStorage.setItem('nexora:panel:problem', c ? 'open' : 'collapsed')
+      return !c
+    })
+  }, [])
+
   const toolbar = (
     <div className="card-neon flex flex-wrap items-center gap-2 px-3 py-2">
       <Tooltip label={custom ? 'Back to workshop' : 'Back to problems'}>
@@ -522,19 +579,12 @@ export default function SolvePage({ custom = false }: { custom?: boolean }) {
       </span>
 
       <div className="ml-auto flex flex-wrap items-center gap-2">
-        <Select
+        {isDesktop && <LayoutMenu api={workspace} />}
+        <LanguagePicker
+          languages={languages.length ? languages : [{ id: language, label: language, ext: '', compiled: true }]}
           value={language}
-          onChange={(e) => setLanguage(e.target.value)}
-          aria-label="Language"
-          className="h-8 w-36 text-xs"
-        >
-          {(langsApi.data ?? []).map((l) => (
-            <option key={l.id} value={l.id}>
-              {l.label}
-            </option>
-          ))}
-          {langsApi.data == null && <option value={language}>{language}</option>}
-        </Select>
+          onChange={setLanguage}
+        />
 
         <Tooltip label={aiInline ? 'AI autocomplete on — Tab to accept ghost text' : 'AI autocomplete off'}>
           <Button
@@ -604,52 +654,124 @@ export default function SolvePage({ custom = false }: { custom?: boolean }) {
     )
   }
 
-  const bottomPanel = (
-    <div className="card-neon flex h-56 min-h-0 flex-col md:h-64">
-      <Tabs
-        variant="pills"
-        className="m-2 w-auto self-start"
-        active={bottomTab}
-        onChange={(t) => setBottomTab(t as 'tests' | 'output')}
-        items={[
-          { id: 'tests', label: 'test/', icon: <Code2 className="size-3.5" />, badge: testcases.length },
-          {
-            id: 'output',
-            label: 'stdout',
-            icon: <TerminalSquare className="size-3.5" />,
-            badge: runResult || judgeResult ? '•' : undefined,
-          },
-        ]}
+  const problemContent = problemApi.loading ? (
+  <LoadingBlock rows={8} className="p-4" />
+) : (
+  <ProblemPanel
+    problem={problem}
+    statement={statementApi.data}
+    statementLoading={statementApi.loading}
+    statementError={statementApi.error}
+    submissions={submissions}
+    onImportSample={(i) => void importSamples([i])}
+    onImportAllSamples={() => void importSamples(samples.map((_, i) => i))}
+    importedSampleCount={importedSampleCount}
+    custom={custom}
+  />
+)
+
+  const editorEl = (
+    <CodeEditor
+      value={code}
+      language={language}
+      onChange={persistCode}
+      onRunShortcut={() => void handleRun()}
+      onSubmitShortcut={() => void handleSubmit()}
+      aiInline={aiInline}
+      onRecord={recordChange}
+      diagnostics={diagnostics}
+      onExplain={(sel) => {
+        setTutorSeed(`Explain what this code does, line by line:\n\`\`\`${language}\n${sel.slice(0, 2000)}\n\`\`\``)
+        setTutorOpen(true)
+      }}
+    />
+  )
+
+  const testsTabs = (className?: string) => (
+  <Tabs
+    variant="pills"
+    className={className}
+    active={bottomTab}
+    onChange={(t) => setBottomTab(t as 'tests' | 'output')}
+    items={[
+      { id: 'tests', label: 'test/', icon: <Code2 className="size-3.5" />, badge: testcases.length },
+      {
+        id: 'output',
+        label: 'stdout',
+        icon: <TerminalSquare className="size-3.5" />,
+        badge: runResult || judgeResult ? '•' : undefined,
+      },
+    ]}
+  />
+  )
+
+  const testsBody = (
+  <div className="h-full min-h-0 flex-1 overflow-y-auto">
+    {bottomTab === 'tests' ? (
+      <TestcaseDeck
+        testcases={testcases}
+        selectedIndex={selectedTest}
+        onSelect={setSelectedTest}
+        customInput={customInput}
+        onCustomInput={setCustomInput}
+        onAdd={addTestcase}
+        onDelete={deleteTestcase}
       />
-      <div className="min-h-0 flex-1 overflow-y-auto">
-        {bottomTab === 'tests' ? (
-          <TestcaseDeck
-            testcases={testcases}
-            selectedIndex={selectedTest}
-            onSelect={setSelectedTest}
-            customInput={customInput}
-            onCustomInput={setCustomInput}
-            onAdd={addTestcase}
-            onDelete={deleteTestcase}
-          />
-        ) : running || submitting ? (
-          <div className="flex h-full flex-col items-center justify-center gap-2 text-xs text-foreground-faint">
-            <Loader2 className="size-5 animate-spin text-primary-bright" aria-hidden="true" />
-            {submitting ? 'Judging against all testcases…' : 'Running your code…'}
-          </div>
-        ) : judgeResult ? (
-          <JudgeResults result={judgeResult} />
-        ) : runResult ? (
-          <RunOutput result={runResult} />
-        ) : (
-          <EmptyState
-            className="py-6"
-            icon={<TerminalSquare />}
-            title="No output yet"
-            description="Hit RUN (⌘/Ctrl + Enter) or SUBMIT to see results here."
-          />
-        )}
+    ) : running || submitting ? (
+      <div className="flex h-full flex-col items-center justify-center gap-2 text-xs text-foreground-faint">
+        <Loader2 className="size-5 animate-spin text-primary-bright" aria-hidden="true" />
+        {submitting ? 'Judging against all testcases…' : 'Running your code…'}
       </div>
+    ) : judgeResult ? (
+      <JudgeResults result={judgeResult} />
+    ) : runResult ? (
+      <RunOutput result={runResult} expected={runCase?.expected} caseLabel={runCase?.label} />
+    ) : (
+      <EmptyState
+        className="py-6"
+        icon={<TerminalSquare />}
+        title="No output yet"
+        description="Hit RUN (⌘/Ctrl + Enter) or SUBMIT to see results here."
+      />
+    )}
+  </div>
+  )
+
+  const bottomPanel = (
+    <div
+      className="card-neon flex min-h-0 flex-col"
+      style={bottomCollapsed ? undefined : { height: bottomH }}
+    >
+      {/* Vertical resize handle */}
+      <div
+        role="separator"
+        aria-orientation="horizontal"
+        aria-label="Resize tests panel"
+        tabIndex={0}
+        onPointerDown={(e) => {
+          bottomDraggingRef.current = true
+          ;(e.target as HTMLElement).setPointerCapture(e.pointerId)
+        }}
+        onKeyDown={(e) => {
+          if (e.key === 'ArrowUp') setBottomH((h) => Math.min(900, h + 16))
+          if (e.key === 'ArrowDown') setBottomH((h) => Math.max(140, h - 16))
+        }}
+        className="group flex h-2.5 shrink-0 cursor-ns-resize items-center justify-center"
+      >
+        <span className="h-1 w-10 rounded-full bg-border transition-colors duration-150 group-hover:bg-primary group-active:bg-primary-bright" />
+      </div>
+      <div className="flex items-center gap-2 pr-2">
+        {testsTabs('m-2 w-auto self-start')}
+        <button
+          onClick={() => setBottomCollapsed((c) => !c)}
+          aria-label={bottomCollapsed ? 'Expand tests panel' : 'Minimize tests panel'}
+          title={bottomCollapsed ? 'Expand panel' : 'Minimize panel'}
+          className="ml-auto flex size-6 items-center justify-center rounded-md text-foreground-faint transition-colors hover:bg-surface-2 hover:text-primary"
+        >
+          {bottomCollapsed ? <ChevronsUp className="size-4" /> : <ChevronsDown className="size-4" />}
+        </button>
+      </div>
+      {!bottomCollapsed && testsBody}
     </div>
   )
 
@@ -662,6 +784,21 @@ export default function SolvePage({ custom = false }: { custom?: boolean }) {
     >
       {toolbar}
 
+      {isDesktop ? (
+        <Workspace
+          api={workspace}
+          overlay={<VerdictBanner verdict={banner?.verdict ?? null} xpEarned={banner?.xp} burstId={banner?.id} onDismiss={() => setBanner(null)} />}
+          problem={{ title: 'Problem', icon: <ScrollText />, content: <div className="h-full overflow-hidden">{problemContent}</div> }}
+          tests={{
+            title: 'Tests',
+            icon: <Code2 />,
+            headerExtra: testsTabs('ml-1 flex-nowrap p-0.5 [&_button]:py-1 [&_button]:text-[12px]'),
+            content: testsBody,
+          }}
+          editor={editorEl}
+        />
+      ) : (
+      <>
       {/* Mobile pane switch */}
       <Tabs
         variant="pills"
@@ -684,79 +821,92 @@ export default function SolvePage({ custom = false }: { custom?: boolean }) {
       >
         <VerdictBanner verdict={banner?.verdict ?? null} xpEarned={banner?.xp} burstId={banner?.id} onDismiss={() => setBanner(null)} />
 
-        {/* Problem pane */}
-        <section
-          aria-label="Problem statement"
-          className={cn(
-            'card-neon min-h-0 flex-col overflow-hidden lg:flex lg:w-[var(--split)]',
-            mobilePane === 'problem' ? 'flex flex-1' : 'hidden',
-          )}
-        >
-          {problemApi.loading ? (
-            <LoadingBlock rows={8} className="p-4" />
-          ) : (
-            <ProblemPanel
-              problem={problem}
-              statement={statementApi.data}
-              statementLoading={statementApi.loading}
-              statementError={statementApi.error}
-              submissions={submissions}
-              onImportSample={(i) => void importSamples([i])}
-              onImportAllSamples={() => void importSamples(samples.map((_, i) => i))}
-              importedSampleCount={importedSampleCount}
-              custom={custom}
-            />
-          )}
-        </section>
+        {/* Problem pane: full panel or minimized rail */}
+        {problemCollapsed ? (
+          <button
+            onClick={toggleProblemCollapsed}
+            aria-label="Expand problem panel"
+            title={problem?.title ?? 'Expand problem panel'}
+            className="card-neon group hidden w-12 shrink-0 flex-col items-center gap-3 overflow-hidden py-4 lg:flex"
+          >
+            <ChevronsRight className="size-4 shrink-0 text-foreground-faint transition-colors group-hover:text-primary" />
+            <span className="min-h-0 flex-1 truncate text-xs text-foreground-faint [writing-mode:vertical-rl] rotate-180">
+              {problem?.title ?? 'Problem'}
+            </span>
+            <ScrollText className="size-4 shrink-0 text-foreground-faint/60" />
+          </button>
+        ) : (
+          <section
+            aria-label="Problem statement"
+            className={cn(
+              'card-neon relative min-h-0 flex-col overflow-hidden lg:flex lg:w-[var(--split)]',
+              mobilePane === 'problem' ? 'flex flex-1' : 'hidden',
+            )}
+          >
+            <button
+              onClick={toggleProblemCollapsed}
+              aria-label="Minimize problem panel"
+              title="Minimize panel"
+              className="absolute right-2.5 top-2.5 z-20 hidden size-7 items-center justify-center rounded-md border border-border bg-background/80 text-foreground-faint backdrop-blur transition-colors hover:border-primary hover:text-primary lg:flex"
+            >
+              <ChevronsLeft className="size-4" />
+            </button>
+            {problemContent}
+          </section>
+        )}
 
         {/* Draggable divider (desktop) */}
-        <div
-          role="separator"
-          aria-orientation="vertical"
-          aria-label="Resize panes"
-          tabIndex={0}
-          onPointerDown={(e) => {
-            draggingRef.current = true
-            ;(e.target as HTMLElement).setPointerCapture(e.pointerId)
-          }}
-          onKeyDown={(e) => {
-            if (e.key === 'ArrowLeft') setSplitPct((p) => Math.max(25, p - 2))
-            if (e.key === 'ArrowRight') setSplitPct((p) => Math.min(75, p + 2))
-          }}
-          className="group hidden w-2 shrink-0 cursor-col-resize items-center justify-center lg:flex"
-        >
-          <span className="h-10 w-1 rounded-full bg-border transition-colors duration-150 group-hover:bg-primary group-active:bg-primary-bright" />
-        </div>
+        {!problemCollapsed && (
+          <div
+            role="separator"
+            aria-orientation="vertical"
+            aria-label="Resize panes"
+            tabIndex={0}
+            onPointerDown={(e) => {
+              draggingRef.current = true
+              ;(e.target as HTMLElement).setPointerCapture(e.pointerId)
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'ArrowLeft') setSplitPct((p) => Math.max(25, p - 2))
+              if (e.key === 'ArrowRight') setSplitPct((p) => Math.min(75, p + 2))
+            }}
+            className="group hidden w-2 shrink-0 cursor-col-resize items-center justify-center lg:flex"
+          >
+            <span className="h-10 w-1 rounded-full bg-border transition-colors duration-150 group-hover:bg-primary group-active:bg-primary-bright" />
+          </div>
+        )}
 
         {/* Editor + results pane */}
         <section
+          ref={codeSectionRef}
           aria-label="Code editor and results"
+          onPointerMove={onBottomMove}
+          onPointerUp={endBottomDrag}
+          onPointerLeave={endBottomDrag}
           className={cn(
             'min-h-0 flex-1 flex-col gap-3 lg:flex',
             mobilePane === 'code' ? 'flex' : 'hidden',
           )}
         >
           <div className="card-neon min-h-40 flex-1 overflow-hidden">
-            <CodeEditor
-              value={code}
-              language={language}
-              onChange={persistCode}
-              onRunShortcut={() => void handleRun()}
-              onSubmitShortcut={() => void handleSubmit()}
-              aiInline={aiInline}
-              onRecord={recordChange}
-              diagnostics={diagnostics}
-            />
+            {editorEl}
           </div>
           {bottomPanel}
         </section>
       </div>
 
+      </>
+      )}
+
       <AiTutorModal
         open={tutorOpen}
-        onClose={() => setTutorOpen(false)}
+        onClose={() => {
+          setTutorOpen(false)
+          setTutorSeed(null)
+        }}
         statementText={statementText}
         problemTitle={problem?.title ?? `Problem #${id}`}
+        seed={tutorSeed}
       />
     </motion.div>
   )

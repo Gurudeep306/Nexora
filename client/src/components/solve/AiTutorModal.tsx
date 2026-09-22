@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Bot, Send, Sparkles, User } from 'lucide-react'
 import { Button, Modal, Textarea, useToast } from '@/components/ui'
 import { api } from '@/lib/api'
@@ -21,11 +21,14 @@ export function AiTutorModal({
   onClose,
   statementText,
   problemTitle,
+  seed,
 }: {
   open: boolean
   onClose: () => void
   statementText: string
   problemTitle: string
+  /** Pre-filled question asked automatically when the modal opens (e.g. "explain selection") */
+  seed?: string | null
 }) {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [question, setQuestion] = useState('')
@@ -65,6 +68,15 @@ export function AiTutorModal({
       })
     }
   }
+
+  const seededRef = useRef<string | null>(null)
+  useEffect(() => {
+    if (open && seed && seededRef.current !== seed) {
+      seededRef.current = seed
+      void ask(seed)
+    }
+    if (!open) seededRef.current = null
+  }, [open, seed])
 
   return (
     <Modal

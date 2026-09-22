@@ -60,6 +60,8 @@ export interface Language {
   ext: string
   compiled: boolean
   label: string
+  /** false when the hosted judge has no sandbox for it */
+  available?: boolean
 }
 
 /* POST /api/run — quickRun object directly (envelope exception) */

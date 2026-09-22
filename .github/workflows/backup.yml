@@ -21,8 +21,8 @@ jobs:
       TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
       TURSO_AUTH_TOKEN: ${{ secrets.TURSO_BACKUP_TOKEN || secrets.TURSO_AUTH_TOKEN }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version-file: .node-version
           cache: npm
@@ -39,7 +39,7 @@ jobs:
         run: |
           npm run db:backup -- backups/nexora.db
           gzip -9 backups/nexora.db
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         if: steps.check.outputs.skip != 'true'
         with:
           name: nexora-db-${{ github.run_number }}
