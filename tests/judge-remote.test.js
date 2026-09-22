@@ -1,6 +1,6 @@
 // The remote judging strategy, with the sandbox stubbed out so no network is
-// touched: one probe run decides compile errors, identical inputs are executed
-// once, and the rest fan out in parallel.
+// touched: every input is fired in one wave, identical inputs run once, and a
+// compile error is answered without waiting on the rest.
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const path = require('node:path');
@@ -41,13 +41,37 @@ function judgeWithStub(handler) {
 
 const tc = (input, expected) => ({ id: input, label: input, input, expected_output: expected });
 
-test('a compile error costs exactly one sandbox call, not one per testcase', async () => {
-  const { judge, calls, restore } = judgeWithStub(async () => ({ verdict: 'CE', stderr: 'error: expected ;' }));
+test('a compile error is answered after one compile, not after all of them', async () => {
+  // Each sandbox call takes 100ms here. The old code ran the probe, waited, and
+  // only then fanned out; the current code fires everything at once and answers
+  // the moment the first result says the build failed.
+  const { judge, restore } = judgeWithStub(async () => {
+    await new Promise((r) => setTimeout(r, 100));
+    return { verdict: 'CE', stderr: 'error: expected ;' };
+  });
   try {
-    const r = await judge.judge('bad code', [tc('1', 'a'), tc('2', 'b'), tc('3', 'c')], 'cpp');
+    const t0 = Date.now();
+    const r = await judge.judge('bad code', ['1', '2', '3', '4', '5'].map((i) => tc(i, 'x')), 'cpp');
+    const elapsed = Date.now() - t0;
     assert.equal(r.verdict, 'CE');
     assert.match(r.compileError, /expected ;/);
-    assert.equal(calls.length, 1, 'the probe short-circuits before the fan-out');
+    assert.ok(elapsed < 200, `answered in ${elapsed}ms — must not wait on the other compiles`);
+  } finally { restore(); }
+});
+
+test('a slow language is not made twice as slow by the compile probe', async () => {
+  // Four testcases, each a 120ms "compile". Serialising the probe would cost
+  // two waves; one wave is the whole point.
+  const { judge, restore } = judgeWithStub(async (input) => {
+    await new Promise((r) => setTimeout(r, 120));
+    return { stdout: input };
+  });
+  try {
+    const t0 = Date.now();
+    const r = await judge.judge('code', ['a', 'b', 'c', 'd'].map((i) => tc(i, i)), 'rust');
+    const elapsed = Date.now() - t0;
+    assert.equal(r.verdict, 'AC');
+    assert.ok(elapsed < 240, `took ${elapsed}ms — that is more than one wave of compiles`);
   } finally { restore(); }
 });
 

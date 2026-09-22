@@ -27,10 +27,25 @@ const crypto = require('crypto');
 
 /* ────────────────────────── configuration ────────────────────────── */
 
-/** Wall-clock budget for one remote request. Cold compiles (Go, Rust, Haskell,
- *  Julia) genuinely take 20-40s on a cold sandbox, so this has to be generous;
- *  a tighter cap turned slow-but-correct runs into bogus TLEs. */
+/**
+ * Wall-clock budget for one remote request.
+ *
+ * Measured end-to-end against the live sandboxes at six-way concurrency
+ * (Sep 2026), running the same "sum n numbers" program in every language:
+ *
+ *   rust 44s · haskell 43s · julia 40s · go 36s · scala 31s · zig 26s
+ *   java 24s · groovy 21s · cpp 17s · typescript 17s · crystal 14s · d 13s
+ *   …everything else under 13s, most under 5s.
+ *
+ * Those are cold *compiles*, not slow programs. A flat 60s cap left Rust and
+ * Haskell barely 35% headroom, so a busy afternoon on Wandbox would turn a
+ * perfectly good submission into a bogus TLE. The slow set gets a longer
+ * budget; it still fits inside the client's 180s ceiling for a judge run.
+ */
 const REQUEST_TIMEOUT = 60000;
+const SLOW_REQUEST_TIMEOUT = 120000;
+const SLOW_LANGS = new Set(['rust', 'haskell', 'julia', 'go', 'scala', 'zig', 'java', 'groovy', 'crystal', 'd', 'nim']);
+const timeoutFor = (lang) => (SLOW_LANGS.has(lang) ? SLOW_REQUEST_TIMEOUT : REQUEST_TIMEOUT);
 
 /** How long a successful run stays cached. */
 const CACHE_TTL = 10 * 60 * 1000;
@@ -90,9 +105,9 @@ function hasRemote(lang) {
 
 /* Keep-alive agents: a cold TLS handshake per testcase was costing ~300ms each. */
 const AGENTS = {
-  wandbox: new https.Agent({ keepAlive: true, maxSockets: 12, timeout: REQUEST_TIMEOUT }),
-  godbolt: new https.Agent({ keepAlive: true, maxSockets: 8, timeout: REQUEST_TIMEOUT }),
-  kotlin:  new https.Agent({ keepAlive: true, maxSockets: 8, timeout: REQUEST_TIMEOUT }),
+  wandbox: new https.Agent({ keepAlive: true, maxSockets: 12, timeout: SLOW_REQUEST_TIMEOUT }),
+  godbolt: new https.Agent({ keepAlive: true, maxSockets: 8, timeout: SLOW_REQUEST_TIMEOUT }),
+  kotlin:  new https.Agent({ keepAlive: true, maxSockets: 8, timeout: SLOW_REQUEST_TIMEOUT }),
 };
 
 /* ────────────────────────── HTTP plumbing ────────────────────────── */
@@ -101,7 +116,7 @@ const AGENTS = {
  * POST JSON and resolve `{ ok, status, body, timeMs, error, transient }`.
  * Never rejects: callers branch on `ok`.
  */
-function postJson({ hostname, path, payload, agent, headers }) {
+function postJson({ hostname, path, payload, agent, headers, timeout = REQUEST_TIMEOUT }) {
   return new Promise((resolve) => {
     const body = Buffer.from(payload, 'utf8');
     const start = Date.now();
@@ -113,7 +128,7 @@ function postJson({ hostname, path, payload, agent, headers }) {
       path,
       method: 'POST',
       agent,
-      timeout: REQUEST_TIMEOUT,
+      timeout,
       headers: {
         'Content-Type': 'application/json',
         'Content-Length': body.length,
@@ -173,6 +188,7 @@ async function runWandbox(code, input, lang) {
     hostname: 'wandbox.org',
     path: '/api/compile.json',
     agent: AGENTS.wandbox,
+    timeout: timeoutFor(lang),
     payload: JSON.stringify({
       code: preprocess(code, lang),
       compiler: wb.compiler,
@@ -182,7 +198,7 @@ async function runWandbox(code, input, lang) {
       'runtime-option-raw': '',
     }),
   });
-  if (!res.ok) return httpFailure(res, 'wandbox');
+  if (!res.ok) return httpFailure(res, 'wandbox', lang);
 
   return classifyWandbox(res.body, res.timeMs);
 }
@@ -232,6 +248,7 @@ async function runGodbolt(code, input, lang) {
     hostname: 'godbolt.org',
     path: `/api/compiler/${encodeURIComponent(gb.id)}/compile`,
     agent: AGENTS.godbolt,
+    timeout: timeoutFor(lang),
     payload: JSON.stringify({
       source: code,
       lang: gb.lang,
@@ -246,7 +263,7 @@ async function runGodbolt(code, input, lang) {
       allowStoreCodeDebug: false,
     }),
   });
-  if (!res.ok) return httpFailure(res, 'godbolt');
+  if (!res.ok) return httpFailure(res, 'godbolt', lang);
   return classifyGodbolt(res.body, res.timeMs);
 }
 
@@ -315,22 +332,23 @@ async function runKotlin(code, input) {
     hostname: 'api.kotlinlang.org',
     path: '/api/2.1.20/compiler/run',
     agent: AGENTS.kotlin,
+    timeout: timeoutFor('kotlin'),
     payload: JSON.stringify({
       args: '',
       confType: 'java',
       files: [{ name: 'File.kt', text: injectKotlinStdin(code, input), publicId: '' }],
     }),
   });
-  if (!res.ok) return httpFailure(res, 'kotlin');
+  if (!res.ok) return httpFailure(res, 'kotlin', 'kotlin');
   return classifyKotlin(res.body, res.timeMs);
 }
 
 /** Turn a failed HTTP exchange into a judge result. */
-function httpFailure(res, engine) {
+function httpFailure(res, engine, lang) {
   if (res.timedOut) {
     return {
       stdout: '',
-      stderr: `The ${engine} sandbox did not answer within ${Math.round(REQUEST_TIMEOUT / 1000)}s — the program may be stuck in a loop.`,
+      stderr: `The ${engine} sandbox did not answer within ${Math.round(timeoutFor(lang) / 1000)}s — the program may be stuck in a loop.`,
       exitCode: -1, timeMs: res.timeMs, verdict: 'TLE', engine, _transient: false,
     };
   }
@@ -442,4 +460,6 @@ module.exports = {
   WANDBOX_MAP,
   GODBOLT_MAP,
   REQUEST_TIMEOUT,
+  SLOW_REQUEST_TIMEOUT,
+  timeoutFor,
 };

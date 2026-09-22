@@ -692,13 +692,20 @@ const REMOTE_CONCURRENCY = Number(process.env.JUDGE_CONCURRENCY) || 6;
 /**
  * Judge every testcase on a remote sandbox.
  *
- * Two things keep this fast:
- *   • identical inputs are executed once and the result shared — duplicated
- *     samples and repeated edge cases cost nothing;
- *   • the first unique input is run alone as a probe. If the code does not
- *     compile, the user gets the compile error after a single round trip
- *     instead of after N of them; if it does compile, the probe doubles as
- *     that testcase's result and the rest fan out in parallel.
+ * Three things keep this quick:
+ *
+ *   • Identical inputs are executed once and the result shared, so duplicated
+ *     samples and repeated edge cases cost nothing.
+ *   • Every remaining input is fired in one wave (capped by REMOTE_CONCURRENCY)
+ *     rather than a probe followed by the rest. Each testcase is a full remote
+ *     *compile* — 44s for Rust, 43s for Haskell on a cold sandbox — so making
+ *     the first one finish before starting the others would literally double
+ *     the wait for every correct submission.
+ *   • The first input still doubles as a compile probe: the moment it comes
+ *     back with a compile error we answer, without waiting on the rest. Those
+ *     requests are already in flight and simply get discarded, which trades a
+ *     few wasted compiles on a broken build for halving the latency of every
+ *     working one.
  */
 async function _judgeRemote(code, testcases, lang) {
   if (!hasRemote(lang)) {
@@ -712,42 +719,51 @@ async function _judgeRemote(code, testcases, lang) {
 
   // Unique inputs, in first-seen order.
   const order = [];
-  const byInput = new Map();
+  const seen = new Set();
   testcases.forEach((tc) => {
     const key = tc.input ?? '';
-    if (!byInput.has(key)) { byInput.set(key, null); order.push(key); }
+    if (!seen.has(key)) { seen.add(key); order.push(key); }
   });
 
-  // Probe: one run decides whether it is even worth firing the rest.
-  const probe = await remoteRun(code, order[0], lang);
-  if (probe.verdict === 'CE') {
+  const runs = new Array(order.length);
+  let announceProbe;
+  const probeReady = new Promise((resolve) => { announceProbe = resolve; });
+
+  const all = promisePool(
+    order.map((input, i) => async () => {
+      const r = await remoteRun(code, input, lang);
+      runs[i] = r;
+      if (i === 0) announceProbe(r);
+      return r;
+    }),
+    REMOTE_CONCURRENCY,
+  );
+
+  // The first task starts in the first batch, so this settles after roughly one
+  // compile. Racing against `all` means a pool that finished some other way can
+  // never leave us waiting forever.
+  const probe = await Promise.race([probeReady, all.then(() => runs[0])]);
+  if (probe && probe.verdict === 'CE') {
+    all.catch(() => {}); // the in-flight runs are no longer interesting
     return { verdict: 'CE', compileError: probe.stderr, results: [], engine: probe.engine };
   }
-  byInput.set(order[0], probe);
 
-  if (order.length > 1) {
-    const rest = order.slice(1);
-    const runs = await promisePool(
-      rest.map((input) => () => remoteRun(code, input, lang)),
-      REMOTE_CONCURRENCY,
-    );
-    rest.forEach((input, i) => byInput.set(input, runs[i]));
-  }
+  await all;
 
-  // A compile error can still surface late (a flaky first run that succeeded
+  const byInput = new Map(order.map((input, i) => [input, runs[i]]));
+  // A compile error can still surface on a later case (a flaky first run served
   // from cache, say) — treat it the same way.
-  const ce = order.map(k => byInput.get(k)).find(r => r && r.verdict === 'CE');
+  const ce = runs.find((r) => r && r.verdict === 'CE');
   if (ce) return { verdict: 'CE', compileError: ce.stderr, results: [], engine: ce.engine };
 
-  const results = testcases.map((tc, i) => toResult(tc, byInput.get(tc.input ?? '') , i));
+  const results = testcases.map((tc, i) => toResult(tc, byInput.get(tc.input ?? ''), i));
   return {
     verdict: overallVerdict(results),
     compileError: null,
-    engine: probe.engine,
+    engine: (probe && probe.engine) || engineFor(lang),
     results,
   };
 }
-
 
 async function judge(code, testcases, lang = 'cpp') {
   const cfg = LANG_CONFIG[lang];
