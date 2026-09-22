@@ -6,6 +6,7 @@ import { Button, Kbd, Tooltip } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { Workspace, type PaneSpec } from './workspace/Workspace'
 import type { WorkspaceApi } from './workspace/useWorkspace'
+import { LayoutMenu } from './workspace/LayoutMenu'
 
 type FsDoc = Document & { webkitFullscreenElement?: Element; webkitExitFullscreen?: () => Promise<void> }
 type FsEl = HTMLElement & { webkitRequestFullscreen?: () => Promise<void> }
@@ -74,6 +75,8 @@ export function Arena({
 }) {
   const elapsed = useElapsed()
   const im = api.ws.immersive
+  const floating = api.ws.arenaMode === 'floating'
+  const hidden = (p: 'problem' | 'tests') => (floating ? im[p].minimized : api.ws[p].minimized)
 
   // Leaving browser full screen (Esc) closes the arena too.
   useEffect(() => {
@@ -97,7 +100,8 @@ export function Arena({
     }
   }, [onExit])
 
-  const toggle = (p: 'problem' | 'tests') => api.setImmersive(p, { minimized: !im[p].minimized })
+  const toggle = (p: 'problem' | 'tests') =>
+    floating ? api.setImmersive(p, { minimized: !im[p].minimized }) : api.minimize(p, !api.ws[p].minimized)
 
   return createPortal(
     <motion.div
@@ -135,13 +139,13 @@ export function Arena({
               ['tests', 'Tests', <Code2 key="t" />, 'Alt+2'],
             ] as const
           ).map(([id, label, icon, key]) => (
-            <Tooltip key={id} label={`${im[id].minimized ? 'Show' : 'Hide'} ${label.toLowerCase()} (${key})`} side="bottom">
+            <Tooltip key={id} label={`${hidden(id) ? 'Show' : 'Hide'} ${label.toLowerCase()} (${key})`} side="bottom">
               <button
                 onClick={() => toggle(id)}
-                aria-pressed={!im[id].minimized}
+                aria-pressed={!hidden(id)}
                 className={cn(
                   'flex h-8 cursor-pointer items-center gap-1.5 rounded-lg border px-2.5 text-xs font-medium transition-colors [&_svg]:size-3.5',
-                  im[id].minimized ? 'border-white/[0.06] text-foreground-faint hover:text-foreground' : 'border-primary/30 bg-primary/10 text-primary-bright',
+                  hidden(id) ? 'border-white/[0.06] text-foreground-faint hover:text-foreground' : 'border-primary/30 bg-primary/10 text-primary-bright',
                 )}
               >
                 {icon}
@@ -149,6 +153,7 @@ export function Arena({
               </button>
             </Tooltip>
           ))}
+          <LayoutMenu api={api} arena />
           <span className="mx-1 h-5 w-px bg-white/10" />
           {languagePicker}
           <Button variant="subtle" size="sm" onClick={onRun} loading={running} disabled={submitting}>
@@ -161,7 +166,14 @@ export function Arena({
       </div>
 
       <div className="relative flex min-h-0 flex-1 p-2">
-        <Workspace api={api} immersive overlay={overlay} problem={problem} tests={tests} editor={<div className="card-neon h-full overflow-hidden">{editor}</div>} />
+        <Workspace
+          api={api}
+          immersive={floating}
+          overlay={overlay}
+          problem={problem}
+          tests={tests}
+          editor={floating ? <div className="card-neon h-full overflow-hidden">{editor}</div> : editor}
+        />
       </div>
     </motion.div>,
     document.body,

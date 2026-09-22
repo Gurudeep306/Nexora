@@ -32,8 +32,10 @@ export function useWorkspace() {
   }, [])
   const applyPreset = useCallback((key: string) => {
     const p = PRESETS[key]
-    if (p) setWs((s) => ({ ...structuredClone(p.state), maximized: null, immersive: s.immersive }))
+    // In the arena a preset also switches the arena to the docked layout.
+    if (p) setWs((s) => ({ ...structuredClone(p.state), maximized: null, immersive: s.immersive, arenaMode: s.arenaMode }))
   }, [])
+  const setArenaMode = useCallback((m: 'floating' | 'docked') => setWs((s) => ({ ...s, arenaMode: m, maximized: null })), [])
   /** Window state inside the full-screen arena. */
   const setImmersive = useCallback((pane: PaneId, patch: Partial<FloatState> & { float?: Partial<Rect> }) => {
     setWs((s) => ({
@@ -54,7 +56,7 @@ export function useWorkspace() {
         return
       }
       if (!e.altKey || e.metaKey || e.ctrlKey) return
-      if ((e.code === 'Digit1' || e.code === 'Digit2') && arena) {
+      if ((e.code === 'Digit1' || e.code === 'Digit2') && arena && ws.arenaMode === 'floating') {
         e.preventDefault()
         const p = e.code === 'Digit1' ? 'problem' : 'tests'
         setWs((s) => ({ ...s, immersive: { ...s.immersive, [p]: { ...s.immersive[p], minimized: !s.immersive[p].minimized } } }))
@@ -71,9 +73,9 @@ export function useWorkspace() {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [ws.maximized, minimize, toggleMax, arena])
+  }, [ws.maximized, ws.arenaMode, minimize, toggleMax, arena])
 
-  return { ws, dock, setFloat, minimize, toggleMax, applyPreset, setImmersive, resetImmersive, arena, setArena }
+  return { ws, dock, setFloat, minimize, toggleMax, applyPreset, setImmersive, resetImmersive, arena, setArena, setArenaMode }
 }
 
 export type WorkspaceApi = ReturnType<typeof useWorkspace>

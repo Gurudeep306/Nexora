@@ -24,6 +24,8 @@ export interface WorkspaceState {
   maximized: PaneId | 'editor' | null
   /** Separate window positions for the full-screen arena. x/y < 0 = auto-place. */
   immersive: Record<PaneId, FloatState>
+  /** Arena layout: free-floating windows, or the same dock layout as the normal page */
+  arenaMode: 'floating' | 'docked'
 }
 
 export const IMMERSIVE_DEFAULT: Record<PaneId, FloatState> = {
@@ -40,7 +42,7 @@ export const ALLOWED_DOCKS: Record<PaneId, Dock[]> = {
 
 const KEY = 'nexora:workspace:v2'
 
-export const PRESETS: Record<string, { label: string; hint: string; state: Omit<WorkspaceState, 'maximized' | 'immersive'> }> = {
+export const PRESETS: Record<string, { label: string; hint: string; state: Omit<WorkspaceState, 'maximized' | 'immersive' | 'arenaMode'> }> = {
   classic: {
     label: 'Classic',
     hint: 'Problem left · tests under the editor',
@@ -84,7 +86,7 @@ export const PRESETS: Record<string, { label: string; hint: string; state: Omit<
 }
 
 export function loadWorkspace(): WorkspaceState {
-  const base: WorkspaceState = { ...structuredClone(PRESETS.classic.state), maximized: null, immersive: structuredClone(IMMERSIVE_DEFAULT) }
+  const base: WorkspaceState = { ...structuredClone(PRESETS.classic.state), maximized: null, immersive: structuredClone(IMMERSIVE_DEFAULT), arenaMode: 'floating' }
   try {
     const raw = localStorage.getItem(KEY)
     if (raw) {
@@ -95,6 +97,7 @@ export function loadWorkspace(): WorkspaceState {
         const im = v.immersive?.[id]
         if (im?.float) base.immersive[id] = { minimized: !!im.minimized, float: { ...base.immersive[id].float, ...im.float } }
       }
+      if (v.arenaMode === 'docked') base.arenaMode = 'docked'
       return base
     }
     // Carry over the older single-flag preferences.
