@@ -72,7 +72,7 @@ const RULES = [
   ["POST", /^\/api\/(settings|reset-progress|sync-solved)$/, { login: true }],
 
   // ── login required: code execution, AI, personal data writes ────
-  ["POST", /^\/api\/(ai\/coach|translate\/detect|judge|run|translate|ai-chat|ai-complete|ai-fix|decomposition|code-replay|testcases|ai-battle\/start|ai-battle\/complete|dashboard-layout)$/, { login: true }],
+  ["POST", /^\/api\/(ai\/coach|translate\/detect|judge|run|translate|ai-chat|ai-complete|ai-fix|decomposition|code-replay|testcases(\/bulk)?|ai-battle\/start|ai-battle\/complete|dashboard-layout)$/, { login: true }],
   ["PUT|DELETE", /^\/api\/testcases\/[^/]+$/, { login: true }],
   ["POST", /^\/api\/(ai-problems|tutorials|forge\/topic)\/[^/]+\/(progress|complete|status)$/, { login: true }],
 ];

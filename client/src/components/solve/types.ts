@@ -72,6 +72,10 @@ export interface RunResult {
   stderr: string
   timeMs: number
   error?: string
+  /** Which sandbox ran this: 'wandbox' | 'godbolt' | 'kotlin' | 'local'. */
+  engine?: string
+  /** True when the result came back from the judge's cache instead of a fresh run. */
+  cached?: boolean
 }
 
 export interface JudgeCaseResult {
@@ -84,6 +88,8 @@ export interface JudgeCaseResult {
   timeMs: number
   verdict: string
   passed: boolean
+  engine?: string
+  cached?: boolean
 }
 
 /* POST /api/judge */
@@ -92,6 +98,7 @@ export interface JudgeResponse {
   verdict: 'AC' | 'WA' | 'TLE' | 'RE' | 'CE' | string
   compileError: string | null
   results: JudgeCaseResult[]
+  engine?: string
 }
 
 /* POST /api/ai-fix */

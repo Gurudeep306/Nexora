@@ -31,52 +31,12 @@ const LANG_TIME_LIMIT = {
 };
 function getTimeLimit(lang) { return LANG_TIME_LIMIT[lang] || TIME_LIMIT; }
 
-/* ========== HTTPS Keep-Alive Agent (reuse TCP/TLS connections) ========== */
-const wandboxAgent = new https.Agent({ keepAlive: true, maxSockets: 6, timeout: 60000 });
-const kotlinAgent = new https.Agent({ keepAlive: true, maxSockets: 4, timeout: 60000 });
-
-/* ========== Wandbox Remote Execution Fallback ========== */
-const WANDBOX_MAP = {
-  cpp:        { compiler: 'gcc-13.2.0',        options: '-O2 -std=c++20' },
-  c:          { compiler: 'gcc-13.2.0-c',      options: '-O2 -std=c17 -lm' },
-  python:     { compiler: 'cpython-3.12.7' },
-  java:       { compiler: 'openjdk-jdk-22+36' },
-  javascript: { compiler: 'nodejs-20.17.0' },
-  typescript: { compiler: 'typescript-5.6.2' },
-  csharp:     { compiler: 'mono-6.12.0.199' },
-  go:         { compiler: 'go-1.23.2' },
-  rust:       { compiler: 'rust-1.82.0' },
-  ruby:       { compiler: 'ruby-3.4.9' },
-  php:        { compiler: 'php-8.3.12' },
-  perl:       { compiler: 'perl-5.42.0' },
-  lua:        { compiler: 'lua-5.4.7' },
-  shell:      { compiler: 'bash' },
-  r:          { compiler: 'r-4.4.1' },
-  scala:      { compiler: 'scala-2.13.15' },
-  julia:      { compiler: 'julia-1.10.5' },
-  pascal:     { compiler: 'fpc-3.2.2' },
-  haskell:    { compiler: 'ghc-9.10.1',        options: '-O2' },
-  d:          { compiler: 'dmd-2.109.1',       options: '-O' },
-  nim:        { compiler: 'nim-2.2.10',        options: '-d:release --hints:off' },
-  zig:        { compiler: 'zig-0.13.0' },
-  groovy:     { compiler: 'groovy-4.0.23' },
-  commonlisp: { compiler: 'clisp-2.49' },
-};
-/* Wandbox's Swift, Elixir, OCaml, Crystal and .NET images are broken (checked
-   Sep 2026), so these run on Compiler Explorer's execution sandbox instead. */
-const GODBOLT_MAP = {
-  swift:      { id: 'swift633',              lang: 'swift',   args: '-O' },
-  dart:       { id: 'dart373',               lang: 'dart' },
-  fsharp:     { id: 'dotnet90fsharpcoreclr', lang: 'fsharp' },
-  ocaml:      { id: 'ocaml5200',             lang: 'ocaml' },
-  crystal:    { id: 'crystal192',            lang: 'crystal', args: '--release' },
-  objectivec: { id: 'objcg650',              lang: 'objc',    args: '-std=gnu11 -O2' },
-};
-const godboltAgent = new https.Agent({ keepAlive: true, maxSockets: 4, timeout: 60000 });
-/** Languages that can run without any local toolchain (hosted server). */
-function hasRemote(lang) {
-  return !!(WANDBOX_MAP[lang] || GODBOLT_MAP[lang] || lang === 'kotlin');
-}
+/* ========== Remote execution sandboxes ========== */
+/* Wandbox / Compiler Explorer / Kotlin Playground, with caching, retries and
+   in-flight de-duplication, all live in ./remote-exec. */
+const {
+  remoteRun, hasRemote, engineFor, clearCache: clearRemoteCache,
+} = require('./remote-exec');
 
 /* Check if a command is available locally (cached, auto-refreshes on miss) */
 const _runtimeCache = {};
@@ -88,83 +48,6 @@ function hasRuntime(cmd) {
   return _runtimeCache[cmd];
 }
 function clearRuntimeCache() { Object.keys(_runtimeCache).forEach(k => delete _runtimeCache[k]); }
-
-/* Execute code remotely via Wandbox API (single attempt) */
-function _wandboxRunOnce(code, input, lang) {
-  return new Promise((resolve) => {
-    const wb = WANDBOX_MAP[lang];
-    if (!wb) {
-      resolve({ stdout: '', stderr: `No remote compiler available for ${lang}. Install the runtime locally.`, exitCode: -1, timeMs: 0, verdict: 'CE' });
-      return;
-    }
-
-    // Preprocess code for Wandbox compatibility
-    let processedCode = code;
-    if (lang === 'java') {
-      processedCode = processedCode.replace(/public\s+class\s+/g, 'class ');
-    }
-    // No @types/node on Wandbox: `import fs from "fs"` would fail type-checking.
-    if (lang === 'typescript' && !/@ts-nocheck/.test(processedCode)) {
-      processedCode = '// @ts-nocheck\n' + processedCode;
-    }
-
-    const payload = JSON.stringify({
-      code: processedCode,
-      compiler: wb.compiler,
-      stdin: input || '',
-      // Wandbox expects one compiler option per line, not space-separated.
-      'compiler-option-raw': (wb.options || '').split(/\s+/).filter(Boolean).join('\n'),
-      'runtime-option-raw': '',
-    });
-    const start = Date.now();
-    const req = https.request({
-      hostname: 'wandbox.org',
-      path: '/api/compile.json',
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Connection': 'keep-alive' },
-      agent: wandboxAgent,
-      // Cold remote compiles (Go, Rust, Kotlin…) routinely take 20-40s;
-      // a 30s cap turned slow-but-fine runs into bogus TLEs.
-      timeout: 60000,
-    }, res => {
-      let data = '';
-      res.on('data', c => data += c);
-      res.on('end', () => {
-        const timeMs = Date.now() - start;
-        try {
-          const r = JSON.parse(data);
-          // Wandbox also reports compiler *warnings* in compiler_error; it only
-          // failed to build when no program_* fields came back at all.
-          const ran = 'program_message' in r || 'program_output' in r || 'program_error' in r;
-          if (!ran && r.compiler_error && r.compiler_error.trim()) {
-            resolve({ stdout: '', stderr: r.compiler_error.trim(), exitCode: 1, timeMs, verdict: 'CE' });
-          } else if (r.status && r.status !== '0') {
-            resolve({ stdout: (r.program_output || '').trim(), stderr: (r.program_error || '').trim(), exitCode: parseInt(r.status) || 1, timeMs, verdict: 'RE' });
-          } else {
-            resolve({ stdout: (r.program_output || '').trim(), stderr: (r.program_error || '').trim(), exitCode: 0, timeMs, verdict: null });
-          }
-        } catch {
-          resolve({ stdout: '', stderr: 'Remote execution parse error', exitCode: -1, timeMs, verdict: 'RE', _transient: true });
-        }
-      });
-    });
-    req.on('timeout', () => { req.destroy(); resolve({ stdout: '', stderr: 'Remote TLE', exitCode: -1, timeMs: TIME_LIMIT, verdict: 'TLE' }); });
-    req.on('error', e => { resolve({ stdout: '', stderr: 'Remote unavailable: ' + e.message, exitCode: -1, timeMs: Date.now() - start, verdict: 'RE', _transient: true }); });
-    req.write(payload);
-    req.end();
-  });
-}
-
-/* Wandbox with retry on transient failures (network errors, parse errors) */
-async function wandboxRun(code, input, lang, retries = 1) {
-  const result = await _wandboxRunOnce(code, input, lang);
-  if (result._transient && retries > 0) {
-    await new Promise(r => setTimeout(r, 500));
-    return wandboxRun(code, input, lang, retries - 1);
-  }
-  delete result._transient;
-  return result;
-}
 
 /* Run promises with limited concurrency */
 async function promisePool(tasks, concurrency) {
@@ -180,142 +63,6 @@ async function promisePool(tasks, concurrency) {
   return results;
 }
 
-/* Shadow readLine() for Kotlin Playground so stdin-based I/O works (sandbox blocks System.setIn) */
-function _injectKotlinStdin(code, input) {
-  // The playground sandbox blocks System.setIn, so feed stdin through a
-  // private stream: readLine/readln/readlnOrNull and System.`in` (Scanner,
-  // BufferedReader…) all read from it. Declarations go after the imports.
-  const lit = JSON.stringify(input || '').replace(/\$/g, '${"$"}');
-  const pre = [
-    `private val __nxIn: java.io.InputStream = java.io.ByteArrayInputStream(${lit}.toByteArray())`,
-    'private val __nxR by lazy { java.io.BufferedReader(java.io.InputStreamReader(__nxIn)) }',
-    'private fun readLine(): String? = __nxR.readLine()',
-    'private fun readln(): String = __nxR.readLine() ?: throw RuntimeException("EOF")',
-    'private fun readlnOrNull(): String? = __nxR.readLine()',
-  ].join('\n');
-  const lines = code.split('\n');
-  let i = 0;
-  while (i < lines.length && /^\s*(package\s|import\s|@file:|\/\/|$)/.test(lines[i])) i++;
-  return [...lines.slice(0, i), pre, ...lines.slice(i)].join('\n').replace(/System\.`in`/g, '__nxIn');
-}
-
-/* Execute Kotlin remotely via Kotlin Playground API */
-function kotlinPlaygroundRun(code, input) {
-  return new Promise((resolve) => {
-    const transformedCode = _injectKotlinStdin(code, input);
-    const payload = JSON.stringify({
-      args: '',
-      confType: 'java',
-      files: [{ name: 'File.kt', text: transformedCode, publicId: '' }],
-    });
-    const start = Date.now();
-    const req = https.request({
-      hostname: 'api.kotlinlang.org',
-      path: '/api/2.1.20/compiler/run',
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Connection': 'keep-alive' },
-      agent: kotlinAgent,
-      timeout: 60000,
-    }, res => {
-      let data = '';
-      res.on('data', c => data += c);
-      res.on('end', () => {
-        const timeMs = Date.now() - start;
-        try {
-          const r = JSON.parse(data);
-          if (r.exception) {
-            resolve({ stdout: '', stderr: r.exception, exitCode: 1, timeMs, verdict: 'RE' });
-          } else if (r.errors && Object.values(r.errors).some(e => e.length > 0)) {
-            const errs = Object.values(r.errors).flat().map(e => e.message || JSON.stringify(e)).join('\n');
-            resolve({ stdout: '', stderr: errs, exitCode: 1, timeMs, verdict: 'CE' });
-          } else {
-            // Extract output from <outStream> tags
-            const out = (r.text || '').replace(/<\/?outStream>/g, '').replace(/<errStream>[\s\S]*?<\/errStream>/g, '').trim();
-            const err = ((r.text || '').match(/<errStream>([\s\S]*?)<\/errStream>/)?.[1] || '').trim();
-            resolve({ stdout: out, stderr: err, exitCode: 0, timeMs, verdict: null });
-          }
-        } catch {
-          resolve({ stdout: '', stderr: 'Kotlin playground parse error', exitCode: -1, timeMs, verdict: 'RE' });
-        }
-      });
-    });
-    req.on('timeout', () => { req.destroy(); resolve({ stdout: '', stderr: 'Remote TLE', exitCode: -1, timeMs: TIME_LIMIT, verdict: 'TLE' }); });
-    req.on('error', e => { resolve({ stdout: '', stderr: 'Remote unavailable: ' + e.message, exitCode: -1, timeMs: Date.now() - start, verdict: 'RE' }); });
-    req.write(payload);
-    req.end();
-  });
-}
-
-/* Execute on Compiler Explorer (godbolt.org) — compile + run with stdin */
-function godboltRun(code, input, lang) {
-  return new Promise((resolve) => {
-    const gb = GODBOLT_MAP[lang];
-    const payload = JSON.stringify({
-      source: code,
-      lang: gb.lang,
-      options: {
-        userArguments: gb.args || '',
-        executeParameters: { args: [], stdin: input || '' },
-        compilerOptions: { executorRequest: true },
-        filters: { execute: true },
-        tools: [],
-        libraries: [],
-      },
-      allowStoreCodeDebug: false,
-    });
-    const start = Date.now();
-    const req = https.request({
-      hostname: 'godbolt.org',
-      path: `/api/compiler/${encodeURIComponent(gb.id)}/compile`,
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'User-Agent': 'Nexora-Judge' },
-      agent: godboltAgent,
-      timeout: 60000,
-    }, res => {
-      let data = '';
-      res.on('data', c => data += c);
-      res.on('end', () => {
-        const timeMs = Date.now() - start;
-        try {
-          const r = JSON.parse(data);
-          const text = (arr) => (arr || []).map(x => x.text).join('\n');
-          const buildErr = text(r.buildResult && r.buildResult.stderr);
-          if (!r.didExecute) {
-            const msg = (buildErr || text(r.stderr) || 'Build failed').replace(/\x1b\[[0-9;]*m/g, '').replace(/^Build failed\n?/, '').trim();
-            return resolve({ stdout: '', stderr: msg, exitCode: 1, timeMs, verdict: 'CE' });
-          }
-          const stdout = text(r.stdout).trim();
-          const stderr = text(r.stderr).replace(/\x1b\[[0-9;]*m/g, '').trim();
-          if (r.timedOut) return resolve({ stdout, stderr, exitCode: -1, timeMs, verdict: 'TLE' });
-          if (r.code !== 0) return resolve({ stdout, stderr, exitCode: r.code, timeMs, verdict: 'RE' });
-          resolve({ stdout, stderr, exitCode: 0, timeMs: r.execTime ? Number(r.execTime) : timeMs, verdict: null });
-        } catch {
-          resolve({ stdout: '', stderr: 'Remote execution parse error', exitCode: -1, timeMs, verdict: 'RE', _transient: true });
-        }
-      });
-    });
-    req.on('timeout', () => { req.destroy(); resolve({ stdout: '', stderr: 'Remote TLE', exitCode: -1, timeMs: TIME_LIMIT, verdict: 'TLE' }); });
-    req.on('error', e => resolve({ stdout: '', stderr: 'Remote unavailable: ' + e.message, exitCode: -1, timeMs: Date.now() - start, verdict: 'RE', _transient: true }));
-    req.write(payload);
-    req.end();
-  });
-}
-
-/* Run on whichever remote sandbox supports the language (with one retry). */
-async function remoteRun(code, input, lang, retries = 1) {
-  if (WANDBOX_MAP[lang]) return wandboxRun(code, input, lang);
-  if (lang === 'kotlin') return kotlinPlaygroundRun(code, input);
-  if (GODBOLT_MAP[lang]) {
-    const r = await godboltRun(code, input, lang);
-    if (r._transient && retries > 0) {
-      await new Promise(res => setTimeout(res, 600));
-      return remoteRun(code, input, lang, retries - 1);
-    }
-    delete r._transient;
-    return r;
-  }
-  return { stdout: '', stderr: `No remote runner for ${lang}`, exitCode: -1, timeMs: 0, verdict: 'CE' };
-}
 
 /* ========== Language Configs ========== */
 const LANG_CONFIG = {
@@ -743,7 +490,7 @@ async function _runLangLocal(code, input, lang = 'cpp') {
     case 'kotlin': {
       // No local kotlinc? Use Kotlin Playground API
       if (!hasRuntime('kotlinc')) {
-        return await kotlinPlaygroundRun(code, input);
+        return await remoteRun(code, input, "kotlin");
       }
       const jar = await compileKotlin(code);
       const result = await runProcess('java', ['-jar', jar], input, tl);
@@ -895,66 +642,113 @@ async function runLang(code, input, lang = 'cpp') {
   }
 }
 
-/* Compare expected vs actual output */
+/* ========== Output comparison ========== */
+/* Judges normalise before comparing: CRLF, trailing blanks on each line and a
+   trailing newline are never the difference between AC and WA. */
+function normalizeOut(s) {
+  return String(s ?? '')
+    .replace(/\r\n?/g, '\n')
+    .split('\n')
+    .map(l => l.replace(/[ \t]+$/, ''))
+    .join('\n')
+    .replace(/\n+$/, '');
+}
 function compareOutput(expected, actual) {
-  const normalize = s => s.split('\n').map(l => l.trimEnd()).join('\n').trim();
-  return normalize(expected) === normalize(actual);
+  return normalizeOut(expected) === normalizeOut(actual);
 }
 
-/* Judge via Wandbox (remote fallback for all test cases — parallel execution) */
+/* Roll per-testcase verdicts up into one overall verdict. */
+function overallVerdict(results) {
+  if (results.every(r => r.passed)) return 'AC';
+  for (const v of ['CE', 'TLE', 'RE']) {
+    if (results.some(r => r.verdict === v)) return v;
+  }
+  return 'WA';
+}
+
+/* Shape one remote/local run into the result object the client renders. */
+function toResult(tc, run, i) {
+  const passed = run.verdict ? false : compareOutput(tc.expected_output, run.stdout);
+  return {
+    id: tc.id,
+    label: tc.label || `Test ${i + 1}`,
+    input: tc.input,
+    expected: tc.expected_output,
+    actual: run.stdout,
+    stderr: run.stderr,
+    timeMs: run.timeMs,
+    engine: run.engine || 'local',
+    cached: run.cached === true,
+    verdict: run.verdict || (passed ? 'AC' : 'WA'),
+    passed,
+  };
+}
+
+/* How many remote runs may be in flight at once. Every testcase is a full
+   remote *compile*, so the only way to keep a 10-case submission quick is to
+   overlap them; the sandboxes tolerate this comfortably and 429s are retried. */
+const REMOTE_CONCURRENCY = Number(process.env.JUDGE_CONCURRENCY) || 6;
+
+/**
+ * Judge every testcase on a remote sandbox.
+ *
+ * Two things keep this fast:
+ *   • identical inputs are executed once and the result shared — duplicated
+ *     samples and repeated edge cases cost nothing;
+ *   • the first unique input is run alone as a probe. If the code does not
+ *     compile, the user gets the compile error after a single round trip
+ *     instead of after N of them; if it does compile, the probe doubles as
+ *     that testcase's result and the rest fan out in parallel.
+ */
 async function _judgeRemote(code, testcases, lang) {
   if (!hasRemote(lang)) {
-    return { verdict: 'CE', compileError: `Language "${lang}" has no local runtime and no remote compiler. Install it locally.`, results: [] };
+    return {
+      verdict: 'CE',
+      compileError: `Language "${lang}" has no local runtime and no remote sandbox.`,
+      results: [],
+    };
   }
-  // Run test cases with limited concurrency to avoid rate-limiting
-  const runs = await promisePool(testcases.map(tc => () => remoteRun(code, tc.input, lang)), 3);
-  // Check for compile error (same code, so CE on any = CE on all)
-  const ceRun = runs.find(r => r.verdict === 'CE');
-  if (ceRun) return { verdict: 'CE', compileError: ceRun.stderr, results: [] };
+  if (!testcases.length) return { verdict: 'AC', compileError: null, results: [] };
 
-  let allPassed = true;
-  const results = runs.map((run, i) => {
-    const tc = testcases[i];
-    const passed = run.verdict ? false : compareOutput(tc.expected_output, run.stdout);
-    if (!passed) allPassed = false;
-    return {
-      id: tc.id, label: tc.label || `Test ${i + 1}`,
-      input: tc.input, expected: tc.expected_output, actual: run.stdout,
-      stderr: run.stderr, timeMs: run.timeMs,
-      verdict: run.verdict || (passed ? 'AC' : 'WA'), passed,
-    };
+  // Unique inputs, in first-seen order.
+  const order = [];
+  const byInput = new Map();
+  testcases.forEach((tc) => {
+    const key = tc.input ?? '';
+    if (!byInput.has(key)) { byInput.set(key, null); order.push(key); }
   });
+
+  // Probe: one run decides whether it is even worth firing the rest.
+  const probe = await remoteRun(code, order[0], lang);
+  if (probe.verdict === 'CE') {
+    return { verdict: 'CE', compileError: probe.stderr, results: [], engine: probe.engine };
+  }
+  byInput.set(order[0], probe);
+
+  if (order.length > 1) {
+    const rest = order.slice(1);
+    const runs = await promisePool(
+      rest.map((input) => () => remoteRun(code, input, lang)),
+      REMOTE_CONCURRENCY,
+    );
+    rest.forEach((input, i) => byInput.set(input, runs[i]));
+  }
+
+  // A compile error can still surface late (a flaky first run that succeeded
+  // from cache, say) — treat it the same way.
+  const ce = order.map(k => byInput.get(k)).find(r => r && r.verdict === 'CE');
+  if (ce) return { verdict: 'CE', compileError: ce.stderr, results: [], engine: ce.engine };
+
+  const results = testcases.map((tc, i) => toResult(tc, byInput.get(tc.input ?? '') , i));
   return {
-    verdict: allPassed ? 'AC' : results.find(r => r.verdict === 'TLE') ? 'TLE'
-      : results.find(r => r.verdict === 'RE') ? 'RE' : 'WA',
-    compileError: null, results,
+    verdict: overallVerdict(results),
+    compileError: null,
+    engine: probe.engine,
+    results,
   };
 }
 
-/* Judge via Kotlin Playground (remote fallback — limited concurrency) */
-async function _judgeRemoteKotlin(code, testcases) {
-  const runs = await promisePool(testcases.map(tc => () => kotlinPlaygroundRun(code, tc.input)), 3);
-  const ceRun = runs.find(r => r.verdict === 'CE');
-  if (ceRun) return { verdict: 'CE', compileError: ceRun.stderr, results: [] };
 
-  let allPassed = true;
-  const results = runs.map((run, i) => {
-    const tc = testcases[i];
-    const passed = run.verdict ? false : compareOutput(tc.expected_output, run.stdout);
-    if (!passed) allPassed = false;
-    return {
-      id: tc.id, label: tc.label || `Test ${i + 1}`,
-      input: tc.input, expected: tc.expected_output, actual: run.stdout,
-      stderr: run.stderr, timeMs: run.timeMs,
-      verdict: run.verdict || (passed ? 'AC' : 'WA'), passed,
-    };
-  });
-  return {
-    verdict: allPassed ? 'AC' : results.find(r => r.verdict === 'TLE') ? 'TLE'
-      : results.find(r => r.verdict === 'RE') ? 'RE' : 'WA',
-    compileError: null, results,
-  };
-}
 async function judge(code, testcases, lang = 'cpp') {
   const cfg = LANG_CONFIG[lang];
   if (!cfg) return { verdict: 'CE', compileError: `Unsupported language: ${lang}`, results: [] };
@@ -997,7 +791,6 @@ async function judge(code, testcases, lang = 'cpp') {
     }
 
     const results = [];
-    let allPassed = true;
     const tl = getTimeLimit(lang);
     for (let i = 0; i < testcases.length; i++) {
       const tc = testcases[i];
@@ -1009,14 +802,7 @@ async function judge(code, testcases, lang = 'cpp') {
         case 'jar':    run = await runProcess('java', ['-jar', binInfo.path], tc.input, tl); break;
         case 'script': run = await runProcess(binInfo.cmd, [binInfo.path], tc.input, tl); break;
       }
-      const passed = run.verdict ? false : compareOutput(tc.expected_output, run.stdout);
-      if (!passed) allPassed = false;
-      results.push({
-        id: tc.id, label: tc.label || `Test ${i + 1}`,
-        input: tc.input, expected: tc.expected_output, actual: run.stdout,
-        stderr: run.stderr, timeMs: run.timeMs,
-        verdict: run.verdict || (passed ? 'AC' : 'WA'), passed,
-      });
+      results.push(toResult(tc, run, i));
     }
     // Cleanup
     try {
@@ -1025,11 +811,7 @@ async function judge(code, testcases, lang = 'cpp') {
       if (binInfo.bin) fs.unlinkSync(binInfo.bin);
     } catch {}
 
-    return {
-      verdict: allPassed ? 'AC' : results.find(r => r.verdict === 'TLE') ? 'TLE'
-        : results.find(r => r.verdict === 'RE') ? 'RE' : 'WA',
-      compileError: null, results,
-    };
+    return { verdict: overallVerdict(results), compileError: null, engine: 'local', results };
   }
 
   // === Interpreted languages: prepare script once, run per testcase ===
@@ -1056,7 +838,6 @@ async function judge(code, testcases, lang = 'cpp') {
   else { cmd = interp || 'node'; cmdArgs = [script]; }
 
   const results = [];
-  let allPassed = true;
   const tl = getTimeLimit(lang);
   for (let i = 0; i < testcases.length; i++) {
     const tc = testcases[i];
@@ -1068,22 +849,11 @@ async function judge(code, testcases, lang = 'cpp') {
       return await _judgeRemote(code, testcases, lang);
     }
 
-    const passed = run.verdict ? false : compareOutput(tc.expected_output, run.stdout);
-    if (!passed) allPassed = false;
-    results.push({
-      id: tc.id, label: tc.label || `Test ${i + 1}`,
-      input: tc.input, expected: tc.expected_output, actual: run.stdout,
-      stderr: run.stderr, timeMs: run.timeMs,
-      verdict: run.verdict || (passed ? 'AC' : 'WA'), passed,
-    });
+    results.push(toResult(tc, run, i));
   }
   try { fs.unlinkSync(script); } catch {}
 
-  return {
-    verdict: allPassed ? 'AC' : results.find(r => r.verdict === 'TLE') ? 'TLE'
-      : results.find(r => r.verdict === 'RE') ? 'RE' : 'WA',
-    compileError: null, results,
-  };
+  return { verdict: overallVerdict(results), compileError: null, engine: 'local', results };
 }
 
 /* Quick run: compile and run with custom input (multi-language) */
@@ -1096,10 +866,16 @@ async function quickRun(code, input, lang = 'cpp') {
       output: run.stdout,
       stderr: run.stderr,
       timeMs: run.timeMs,
+      engine: run.engine || 'local',
+      cached: run.cached === true,
     };
   } catch (e) {
     return { ok: false, verdict: 'CE', error: e.message, output: '', stderr: '' };
   }
 }
 
-module.exports = { judge, quickRun, compileCpp, runBinary, runProcess, runLang, normalizeCpp, LANG_CONFIG, hasRemote, REMOTE_ONLY };
+module.exports = {
+  judge, quickRun, compileCpp, runBinary, runProcess, runLang, normalizeCpp,
+  LANG_CONFIG, LANG_TIME_LIMIT, hasRemote, engineFor, REMOTE_ONLY,
+  compareOutput, normalizeOut, overallVerdict, clearRemoteCache, clearRuntimeCache,
+};

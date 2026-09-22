@@ -51,8 +51,11 @@ export function TestcaseDeck({
       <div className="flex flex-wrap items-center gap-1.5 border-b border-border px-3 py-2">
         <FlaskConical className="mr-1 size-3.5 text-cyan" aria-hidden="true" />
         {testcases.map((tc, i) => {
-          // Imported samples often all share one label ("Sample 1"); number them.
-          const shown = /^sample\s*\d*$/i.test(tc.label.trim()) ? `Sample ${i + 1}` : tc.label
+          // Only unnumbered labels ("Sample", "Test") get a number appended —
+          // a real "Sample 2" keeps its own number even when it sits first.
+          const shown = /^(sample|test|case)$/i.test((tc.label || '').trim())
+            ? `${tc.label.trim()} ${i + 1}`
+            : tc.label || `Test ${i + 1}`
           return (
           <span key={tc.id ?? i} className="group relative">
             <button

@@ -48,3 +48,46 @@ test('judge self-test is admin only', async () => {
   const r = await fetch(`${base}/api/admin/judge-selftest`);
   assert.equal(r.status, 403);
 });
+
+/* ── output comparison & verdict rollup (no network) ── */
+const judgeMod = require('../src/judge');
+
+test('output comparison tolerates CRLF, trailing blanks and a final newline', () => {
+  const { compareOutput } = judgeMod;
+  assert.ok(compareOutput('6\n', '6'));
+  assert.ok(compareOutput('1 2\r\n3 4\r\n', '1 2\n3 4'));
+  assert.ok(compareOutput('hi   \n', 'hi'));
+  assert.ok(compareOutput('a\nb\n\n\n', 'a\nb'));
+  assert.ok(!compareOutput('6', '7'));
+  assert.ok(!compareOutput('a b', 'ab'), 'inner spacing still matters');
+});
+
+test('the worst verdict wins the rollup', () => {
+  const { overallVerdict } = judgeMod;
+  assert.equal(overallVerdict([{ passed: true, verdict: 'AC' }, { passed: true, verdict: 'AC' }]), 'AC');
+  assert.equal(overallVerdict([{ passed: true, verdict: 'AC' }, { passed: false, verdict: 'WA' }]), 'WA');
+  assert.equal(overallVerdict([{ passed: false, verdict: 'WA' }, { passed: false, verdict: 'TLE' }]), 'TLE');
+  assert.equal(overallVerdict([{ passed: false, verdict: 'RE' }, { passed: false, verdict: 'WA' }]), 'RE');
+});
+
+test('every runnable language is routed to a named sandbox', () => {
+  const { LANG_CONFIG, hasRemote, engineFor } = judgeMod;
+  for (const lang of Object.keys(LANG_CONFIG)) {
+    if (!hasRemote(lang)) continue;
+    assert.ok(['wandbox', 'godbolt', 'kotlin'].includes(engineFor(lang)), `${lang} -> ${engineFor(lang)}`);
+  }
+  assert.equal(engineFor('kotlin'), 'kotlin');
+  assert.equal(engineFor('swift'), 'godbolt');
+  assert.equal(engineFor('cpp'), 'wandbox');
+  assert.equal(engineFor('tcl'), null);
+});
+
+test('Kotlin stdin shim lands after the imports', () => {
+  const { injectKotlinStdin } = require('../src/remote-exec');
+  const out = injectKotlinStdin('import java.util.*\n\nfun main(){ println(readln()) }', 'hi\n');
+  const lines = out.split('\n');
+  const importAt = lines.findIndex((l) => l.startsWith('import '));
+  const shimAt = lines.findIndex((l) => l.includes('__nxIn'));
+  assert.ok(importAt >= 0 && shimAt > importAt, 'Kotlin rejects imports after a declaration');
+  assert.ok(out.includes('"hi\\n"'), 'the stdin literal is embedded');
+});

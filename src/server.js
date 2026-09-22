@@ -83,94 +83,9 @@ async function scrapePageHTTP(problem) {
    root-relative image paths and Codeforces hotlinks espresso.codeforces.com
    (which rejects foreign referers). Rewrite every image to our own proxy and
    make other URLs absolute so statements render identically everywhere. */
-const PLATFORM_ORIGIN = {
-  codeforces: "https://codeforces.com",
-  codechef: "https://www.codechef.com",
-  atcoder: "https://atcoder.jp",
-  leetcode: "https://leetcode.com",
-  spoj: "https://www.spoj.com",
-  euler: "https://projecteuler.net",
-};
-
-function absolutizeUrl(src, origin) {
-  const s = (src || "").trim();
-  if (!s || s.startsWith("data:")) return s;
-  if (s.startsWith("//")) return `https:${s}`;
-  if (/^https?:/i.test(s)) return s;
-  if (!origin) return s;
-  if (s.startsWith("/")) return origin + s;
-  return `${origin}/${s}`;
-}
-
-function normalizeStatementHtml(html, problem) {
-  if (!html) return html;
-  const origin = PLATFORM_ORIGIN[problem.platform] || "";
-  // Images load straight from the source CDN with no Referer (that is what
-  // hotlink checks key on) — our own servers are often blocked by Cloudflare,
-  // so the proxy is only the fallback the client switches to on error.
-  let out = html.replace(/<img\b[^>]*>/gi, (tag) => {
-    const m = tag.match(/\ssrc\s*=\s*(["'])([^"']*)\1/i) || tag.match(/\ssrc\s*=\s*([^\s>"']+)/i);
-    const raw = m ? (m[2] ?? m[1]) : "";
-    const abs = absolutizeUrl(raw.replace(/&amp;/g, "&"), origin);
-    if (!abs) return tag;
-    let t = tag.replace(/\s(src|referrerpolicy|loading|decoding|data-proxy)\s*=\s*(["'])[^"']*\2/gi, "")
-               .replace(/\ssrc\s*=\s*[^\s>"']+/gi, "");
-    const attrs = [`src="${abs.replace(/"/g, "&quot;")}"`, 'referrerpolicy="no-referrer"', 'loading="lazy"', 'decoding="async"'];
-    if (/^https:/i.test(abs)) attrs.push(`data-proxy="/api/imgproxy?url=${encodeURIComponent(abs)}"`);
-    return t.replace(/^<img\b/i, `<img ${attrs.join(" ")}`);
-  });
-  // Videos / audio / <source>: absolute URLs, native controls, no referrer.
-  out = out.replace(
-    /(<(?:video|audio|source)\b[^>]*?\s(?:src|poster)\s*=\s*)(["'])([^"']*)\2/gi,
-    (_m, pre, q, src) => `${pre}${q}${absolutizeUrl(src, origin)}${q}`,
-  );
-  out = out.replace(/<(video|audio)\b(?![^>]*\scontrols)/gi, '<$1 controls preload="metadata"');
-  out = out.replace(
-    /(<a\b[^>]*?\shref\s*=\s*)(["'])(?!https?:|#|mailto:)([^"']*)\2/gi,
-    (_m, pre, q, href) => {
-      const abs = absolutizeUrl(href, origin);
-      return `${pre}${q}${abs}${q}`;
-    },
-  );
-  return out;
-}
-
-function normalizeStatement(data, problem) {
-  if (!data) return data;
-  return {
-    ...data,
-    statement: normalizeStatementHtml(data.statement, problem),
-    inputSpec: normalizeStatementHtml(data.inputSpec, problem),
-    outputSpec: normalizeStatementHtml(data.outputSpec, problem),
-    note: normalizeStatementHtml(data.note, problem),
-  };
-}
-
-/* Hosts the image proxy is allowed to fetch from (statement CDNs only).
-   The route itself is registered further down, once Express exists. */
-const IMG_PROXY_HOSTS = new Set([
-  "espresso.codeforces.com",
-  "codeforces.com",
-  "www.codeforces.com",
-  "m1.codeforces.com",
-  "m2.codeforces.com",
-  "m3.codeforces.com",
-  "atcoder.jp",
-  "www.atcoder.jp",
-  "img.atcoder.jp",
-  "codechef.com",
-  "www.codechef.com",
-  "leetcode.com",
-  "assets.leetcode.com",
-  "spoj.com",
-  "www.spoj.com",
-  "projecteuler.net",
-  "web.archive.org",
-  "cdn.codechef.com",
-  "s3.amazonaws.com",
-  "codeforces.org",
-  "userpic.codeforces.org",
-]);
+/* Statement media (URL rewriting + the image-proxy allowlist) lives in its own
+   module so it can be unit-tested without booting the server. */
+const { isProxyableHost, normalizeStatement } = require("./statement-media");
 
 function _parseCFStatement($) {
   const stmt = $(".problem-statement");
@@ -1215,7 +1130,82 @@ async function _saveStatement(problemId, data) {
   );
 }
 
-/* ========== IMAGE PROXY (statement images) ========== */
+/* ========== IMAGE PROXY (statement images) ==========
+
+   Statement images load straight from the source CDN first (see
+   normalizeStatementHtml); this route is the fallback for the ones that
+   hotlink-block us. Because the same handful of images is requested by every
+   visitor to a problem, responses are cached in memory and revalidated with an
+   ETag, so only the very first viewer ever waits on the upstream fetch. */
+const IMG_CACHE_MAX_BYTES = 64 * 1024 * 1024;
+const IMG_CACHE_TTL = 7 * 24 * 60 * 60 * 1000;
+const IMG_MAX_BYTES = 8 * 1024 * 1024;
+const imgCache = new Map(); // url -> { buf, ctype, etag, at }
+let imgCacheBytes = 0;
+/** url -> Promise, so a burst of requests for one image does one upstream fetch. */
+const imgInflight = new Map();
+
+function imgCachePut(url, entry) {
+  const prev = imgCache.get(url);
+  if (prev) imgCacheBytes -= prev.buf.length;
+  imgCache.set(url, entry);
+  imgCacheBytes += entry.buf.length;
+  // Evict oldest-first until back under budget.
+  for (const [k, v] of imgCache) {
+    if (imgCacheBytes <= IMG_CACHE_MAX_BYTES) break;
+    if (k === url) continue;
+    imgCache.delete(k);
+    imgCacheBytes -= v.buf.length;
+  }
+}
+
+function imgCacheGet(url) {
+  const hit = imgCache.get(url);
+  if (!hit) return null;
+  if (Date.now() - hit.at > IMG_CACHE_TTL) {
+    imgCache.delete(url);
+    imgCacheBytes -= hit.buf.length;
+    return null;
+  }
+  return hit;
+}
+
+const MEDIA_TYPE_OK = /^(image|video|audio)\//;
+
+async function fetchProxiedMedia(startUrl) {
+  let target = startUrl;
+  let upstream = await fetch(target, {
+    headers: { "User-Agent": SCRAPE_UA, Accept: "image/avif,image/webp,image/*,video/*,audio/*,*/*;q=0.8" },
+    redirect: "manual",
+    signal: AbortSignal.timeout(15000),
+  });
+  // Follow at most three redirects, staying inside the allowlist.
+  for (let hops = 0; hops < 3 && [301, 302, 303, 307, 308].includes(upstream.status); hops++) {
+    const loc = upstream.headers.get("location");
+    if (!loc) break;
+    const next = new URL(loc, target);
+    if (next.protocol !== "https:" || !isProxyableHost(next.hostname)) break;
+    target = next;
+    upstream = await fetch(target, {
+      headers: { "User-Agent": SCRAPE_UA, Accept: "image/*,video/*,audio/*,*/*;q=0.8" },
+      redirect: "manual",
+      signal: AbortSignal.timeout(15000),
+    });
+  }
+  const ctype = (upstream.headers.get("content-type") || "").split(";")[0].trim();
+  if (!upstream.ok || !MEDIA_TYPE_OK.test(ctype)) {
+    throw new Error(`upstream ${upstream.status} ${ctype || "unknown type"}`);
+  }
+  const buf = Buffer.from(await upstream.arrayBuffer());
+  if (!buf.length || buf.length > IMG_MAX_BYTES) throw new Error("media too large or empty");
+  return {
+    buf,
+    ctype,
+    etag: '"' + crypto.createHash("sha1").update(buf).digest("hex").slice(0, 24) + '"',
+    at: Date.now(),
+  };
+}
+
 app.get("/api/imgproxy", async (req, res) => {
   const url = String(req.query.url || "");
   let parsed;
@@ -1224,44 +1214,35 @@ app.get("/api/imgproxy", async (req, res) => {
   } catch {
     return res.status(400).end();
   }
-  if (parsed.protocol !== "https:" || !IMG_PROXY_HOSTS.has(parsed.hostname)) {
+  if (parsed.protocol !== "https:" || !isProxyableHost(parsed.hostname)) {
     return res.status(403).end();
   }
-  try {
-    let target = parsed;
-    let upstream = await fetch(target, {
-      headers: {
-        "User-Agent": SCRAPE_UA,
-        Accept: "image/avif,image/webp,image/*,*/*;q=0.8",
-      },
-      redirect: "manual",
-      signal: AbortSignal.timeout(15000),
-    });
-    // Follow at most two redirects, staying inside the whitelist.
-    for (let hops = 0; hops < 2 && [301, 302, 303, 307, 308].includes(upstream.status); hops++) {
-      const loc = upstream.headers.get("location");
-      if (!loc) break;
-      const next = new URL(loc, target);
-      if (next.protocol !== "https:" || !IMG_PROXY_HOSTS.has(next.hostname)) break;
-      target = next;
-      upstream = await fetch(target, {
-        headers: { "User-Agent": SCRAPE_UA, Accept: "image/*,*/*;q=0.8" },
-        redirect: "manual",
-        signal: AbortSignal.timeout(15000),
-      });
-    }
-    const ctype = upstream.headers.get("content-type") || "";
-    if (!upstream.ok || !ctype.startsWith("image/")) {
-      return res.status(502).end();
-    }
-    const buf = Buffer.from(await upstream.arrayBuffer());
-    if (buf.length > 8 * 1024 * 1024) return res.status(502).end();
+  const key = parsed.toString();
+
+  const serve = (entry) => {
     res.set({
-      "Content-Type": ctype.split(";")[0],
+      "Content-Type": entry.ctype,
       "Cache-Control": "public, max-age=604800, immutable",
-      "Content-Length": String(buf.length),
+      ETag: entry.etag,
     });
-    res.send(buf);
+    // The browser already has this byte-for-byte: skip the body.
+    if (req.headers["if-none-match"] === entry.etag) return res.status(304).end();
+    res.set("Content-Length", String(entry.buf.length));
+    res.send(entry.buf);
+  };
+
+  const cached = imgCacheGet(key);
+  if (cached) return serve(cached);
+
+  try {
+    let work = imgInflight.get(key);
+    if (!work) {
+      work = fetchProxiedMedia(parsed).finally(() => imgInflight.delete(key));
+      imgInflight.set(key, work);
+    }
+    const entry = await work;
+    imgCachePut(key, entry);
+    serve(entry);
   } catch {
     res.status(502).end();
   }
@@ -1528,6 +1509,59 @@ app.get("/api/activity/:date", async (req, res) => {
 app.use(createAiAssistRouter({ get, run, aiLimiter }));
 
 /* ========== TESTCASES ========== */
+
+/* Testcases are compared on content, not on label: importing the same sample
+   twice (two clicks, an auto-import racing a manual one) must not duplicate it. */
+const tcKey = (input, expected) =>
+  `${String(input ?? "").replace(/\r\n?/g, "\n").trim()}\u0000${String(expected ?? "").replace(/\r\n?/g, "\n").trim()}`;
+
+/**
+ * Import several testcases at once.
+ *
+ * The sample-import button used to POST one testcase per request, so a problem
+ * with six samples meant six round trips and six chances to half-fail. This
+ * inserts the whole batch, skips anything already stored for that problem and
+ * reports exactly what happened.
+ */
+app.post("/api/testcases/bulk", async (req, res) => {
+  try {
+    const problemId = Number(req.body?.problem_rowid);
+    const incoming = Array.isArray(req.body?.testcases) ? req.body.testcases : [];
+    if (!problemId || !incoming.length) {
+      return res.status(400).json({ ok: false, error: "problem_rowid and testcases are required" });
+    }
+    if (incoming.length > 100) {
+      return res.status(400).json({ ok: false, error: "Too many testcases in one request (max 100)" });
+    }
+
+    const existing = await all(
+      "SELECT input, expected_output FROM testcases WHERE problem_rowid=?",
+      [problemId],
+    );
+    const seen = new Set(existing.map((t) => tcKey(t.input, t.expected_output)));
+
+    const added = [];
+    let skipped = 0;
+    for (const tc of incoming) {
+      const input = String(tc?.input ?? "");
+      const expected = String(tc?.expected_output ?? tc?.output ?? "");
+      if (!input.trim() && !expected.trim()) { skipped++; continue; }
+      const key = tcKey(input, expected);
+      if (seen.has(key)) { skipped++; continue; }
+      seen.add(key);
+      const r = await run(
+        "INSERT INTO testcases(problem_rowid,label,input,expected_output) VALUES(?,?,?,?)",
+        [problemId, String(tc?.label || "Sample").slice(0, 60), input, expected],
+      );
+      added.push({ id: r.lastID, label: tc?.label || "Sample", input, expected_output: expected });
+    }
+
+    res.json({ ok: true, added: added.length, skipped, testcases: added });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message });
+  }
+});
+
 app.post("/api/testcases", async (req, res) => {
   try {
     const { problem_rowid, label, input, expected_output } = req.body;

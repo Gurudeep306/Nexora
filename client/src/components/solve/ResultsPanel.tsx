@@ -91,6 +91,27 @@ function Mismatch({ expected, actual }: { expected: string; actual: string }) {
   )
 }
 
+/** Which sandbox produced a result — handy when a language silently falls back. */
+const ENGINE_LABEL: Record<string, string> = {
+  wandbox: 'Wandbox',
+  godbolt: 'Compiler Explorer',
+  kotlin: 'Kotlin Playground',
+  local: 'local judge',
+}
+
+function EngineChip({ engine, cached }: { engine?: string; cached?: boolean }) {
+  if (!engine) return null
+  return (
+    <span
+      className="rounded border border-border px-1.5 py-px font-mono text-[10px] text-foreground-faint"
+      title={cached ? 'Served from the judge cache — this exact code and input ran moments ago' : `Executed on ${ENGINE_LABEL[engine] ?? engine}`}
+    >
+      {ENGINE_LABEL[engine] ?? engine}
+      {cached ? ' · cached' : ''}
+    </span>
+  )
+}
+
 export function RunOutput({ result, expected, caseLabel }: { result: RunResult; expected?: string; caseLabel?: string }) {
   const compared = expected != null && expected.trim() !== '' && !result.error && result.verdict === 'OK'
   const match = compared && !firstMismatch(expected, result.output ?? '')
@@ -108,8 +129,11 @@ export function RunOutput({ result, expected, caseLabel }: { result: RunResult; 
             {match ? `matches ${caseLabel ?? 'expected'}` : `differs from ${caseLabel ?? 'expected'}`}
           </span>
         )}
-        <span className="ml-auto flex items-center gap-1 font-mono text-xs text-foreground-dim tabular-nums">
-          <Clock className="size-3" /> {result.timeMs} ms
+        <span className="ml-auto flex items-center gap-2 font-mono text-xs text-foreground-dim tabular-nums">
+          <EngineChip engine={result.engine} cached={result.cached} />
+          <span className="flex items-center gap-1">
+            <Clock className="size-3" /> {result.timeMs} ms
+          </span>
         </span>
       </div>
       {result.error && (
@@ -160,8 +184,11 @@ export function JudgeResults({ result }: { result: JudgeResponse }) {
               <span className={cn('font-mono tabular-nums', passedCount === total ? 'text-success' : 'text-warning')}>{passedCount}</span> /{' '}
               <span className="font-mono tabular-nums">{total}</span> testcases passed
             </span>
-            <span className="ml-auto flex items-center gap-1 font-mono text-foreground-faint tabular-nums">
-              <Clock className="size-3" /> max {maxMs} ms
+            <span className="ml-auto flex items-center gap-2 font-mono text-foreground-faint tabular-nums">
+              <EngineChip engine={result.engine ?? result.results[0]?.engine} />
+              <span className="flex items-center gap-1">
+                <Clock className="size-3" /> max {maxMs} ms
+              </span>
             </span>
           </div>
           <div className="flex h-1.5 gap-0.5 overflow-hidden rounded-full">

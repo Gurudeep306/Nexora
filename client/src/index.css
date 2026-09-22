@@ -384,6 +384,33 @@
   border-radius: 0.4rem;
   margin: 0.4em 0;
   background: #fff;
+  cursor: zoom-in;
+}
+.statement-html video,
+.statement-html audio {
+  max-width: 100%;
+  border-radius: 0.4rem;
+  margin: 0.5em 0;
+  background: #000;
+}
+.statement-html audio {
+  width: 100%;
+  background: transparent;
+}
+/* Neither the CDN nor our proxy could serve this one. */
+.statement-html .nx-media-broken {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 8rem;
+  min-height: 3rem;
+  padding: 0.6rem 0.9rem;
+  cursor: default;
+  border: 1px dashed var(--color-border-glow);
+  background: var(--color-surface);
+  color: var(--color-foreground-faint);
+  font-size: 0.75rem;
+  font-style: italic;
 }
 .statement-html a {
   color: var(--color-cyan);

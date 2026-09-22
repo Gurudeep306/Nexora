@@ -37,6 +37,8 @@ const PROGRAMS = {
   commonlisp: '(let ((n (read))) (format t "~a~%" (loop repeat n sum (read))))',
 };
 
+const CONCURRENCY = Number(process.env.SELFTEST_CONCURRENCY) || 8;
+
 async function selfTest({ judge, LANG_CONFIG, hasRemote, REMOTE_ONLY }, only) {
   const langs = Object.keys(LANG_CONFIG).filter((l) => !only || only.includes(l));
   const out = [];
@@ -61,6 +63,7 @@ async function selfTest({ judge, LANG_CONFIG, hasRemote, REMOTE_ONLY }, only) {
           ok: r.verdict === 'AC',
           status: r.verdict,
           ms: Date.now() - t0,
+          engine: r.engine || r.results?.[0]?.engine || 'unknown',
           detail: r.verdict === 'AC' ? '' : String(r.compileError || r.results?.[0]?.stderr || r.results?.[0]?.actual || '').slice(0, 600),
         });
       } catch (e) {
@@ -68,7 +71,7 @@ async function selfTest({ judge, LANG_CONFIG, hasRemote, REMOTE_ONLY }, only) {
       }
     }
   }
-  await Promise.all(Array.from({ length: 4 }, worker));
+  await Promise.all(Array.from({ length: CONCURRENCY }, worker));
   const order = Object.keys(LANG_CONFIG);
   return out.sort((a, b) => order.indexOf(a.lang) - order.indexOf(b.lang));
 }

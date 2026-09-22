@@ -149,6 +149,10 @@ function stripHtml(html: string): string {
   return el.textContent ?? ''
 }
 
+/** Identity of a testcase for de-duplication: content, never the label. */
+const sampleKey = (input: string, expected: string) =>
+  `${input.replace(/\r\n?/g, '\n').trim()}\u0000${expected.replace(/\r\n?/g, '\n').trim()}`
+
 export default function SolvePage({ custom = false }: { custom?: boolean }) {
   const { id = '' } = useParams()
   const navigate = useNavigate()
@@ -296,55 +300,77 @@ export default function SolvePage({ custom = false }: { custom?: boolean }) {
     }
   }, [languages, language])
 
-  /* ── Sample import ── */
-  const importSamples = useCallback(
-    async (indexes: number[]) => {
-      if (custom) {
-        const fresh = indexes
-          .map((i) => samples[i] && { label: `Sample ${i + 1}`, input: samples[i]!.input, expected_output: samples[i]!.output })
-          .filter((t): t is Testcase => !!t && !testcases.some((x) => x.label === t.label))
-        if (fresh.length) setTestcases((prev) => [...prev, ...fresh])
-        return fresh.length
-      }
-      let added = 0
-      for (const i of indexes) {
-        const s = samples[i]
-        if (!s) continue
-        try {
-          await api.post('/api/testcases', {
-            problem_rowid: Number(id),
-            label: `Sample ${i + 1}`,
-            input: s.input,
-            expected_output: s.output,
-          })
-          added++
-        } catch {
-          /* keep going with the rest */
-        }
-      }
-      if (added > 0) {
-        problemApi.refetch()
-        toast.success(`Imported ${added} sample${added > 1 ? 's' : ''} as testcases`)
-      }
-      return added
-    },
-    [samples, id, problemApi, toast, custom, testcases],
+  /* ── Sample import ──
+     Samples are matched on content, never on label: clicking "Import all"
+     twice, or an auto-import racing a manual one, can never duplicate a case. */
+  const existingKeys = useMemo(
+    () => new Set(testcases.map((t) => sampleKey(t.input ?? '', t.expected_output ?? ''))),
+    [testcases],
   )
 
-  /* Auto-import samples when the problem has no testcases yet */
+  const importSamples = useCallback(
+    async (indexes: number[]) => {
+      const seen = new Set(existingKeys)
+      const fresh = indexes
+        .map((i) => {
+          const s = samples[i]
+          if (!s) return null
+          const tc = { label: `Sample ${i + 1}`, input: s.input ?? '', expected_output: s.output ?? '' }
+          const key = sampleKey(tc.input, tc.expected_output)
+          if (seen.has(key) || (!tc.input.trim() && !tc.expected_output.trim())) return null
+          seen.add(key)
+          return tc
+        })
+        .filter((t): t is { label: string; input: string; expected_output: string } => t !== null)
+
+      if (!fresh.length) return 0
+
+      if (custom) {
+        setTestcases((prev) => [...prev, ...fresh])
+        return fresh.length
+      }
+
+      try {
+        // One request for the whole batch — the server skips anything it already has.
+        const res = await api.post<{ ok: boolean; added: number; skipped: number }>(
+          '/api/testcases/bulk',
+          { problem_rowid: Number(id), testcases: fresh },
+        )
+        const added = res?.added ?? 0
+        if (added > 0) {
+          problemApi.refetch()
+          toast.success(`Imported ${added} sample${added > 1 ? 's' : ''} as testcases`)
+        }
+        return added
+      } catch (e) {
+        toast.error(e instanceof Error ? e.message : 'Could not import the samples')
+        return 0
+      }
+    },
+    [samples, id, problemApi, toast, custom, existingKeys],
+  )
+
+  /* Auto-import samples the problem does not already have. Runs once per
+     problem, and no longer gives up just because *some* testcase exists. */
   useEffect(() => {
     if (autoImported.current || custom) return
-    if (!problemApi.data || !statementApi.data) return
-    const tcs = problemApi.data.testcases ?? []
-    if (tcs.length > 0 || samples.length === 0) return
+    if (!problemApi.data || !statementApi.data || samples.length === 0) return
     autoImported.current = true
-    void importSamples(samples.map((_, i) => i))
+    const stored = new Set(
+      (problemApi.data.testcases ?? []).map((t) => sampleKey(t.input ?? '', t.expected_output ?? '')),
+    )
+    const missing = samples
+      .map((s, i) => ({ s, i }))
+      .filter(({ s }) => !stored.has(sampleKey(s.input ?? '', s.output ?? '')))
+      .map(({ i }) => i)
+    if (missing.length) void importSamples(missing)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [problemApi.data, statementApi.data])
+  }, [problemApi.data, statementApi.data, samples.length])
 
+  /** How many of the statement's samples are already stored as testcases. */
   const importedSampleCount = useMemo(
-    () => testcases.filter((t) => /^Sample \d+$/i.test(t.label)).length,
-    [testcases],
+    () => samples.filter((s) => existingKeys.has(sampleKey(s.input ?? '', s.output ?? ''))).length,
+    [samples, existingKeys],
   )
 
   /* ── Run & Submit ── */
