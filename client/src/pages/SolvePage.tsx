@@ -4,6 +4,7 @@ import { motion } from 'motion/react'
 import {
   ArrowLeft,
   Bot,
+  Expand,
   ChevronsDown,
   ChevronsLeft,
   ChevronsRight,
@@ -59,6 +60,7 @@ import { useWorkspace } from '@/components/solve/workspace/useWorkspace'
 import { LayoutMenu } from '@/components/solve/workspace/LayoutMenu'
 import { useCoach } from '@/components/solve/coach'
 import { CoachPanel } from '@/components/solve/CoachPanel'
+import { Arena, enterBrowserFullscreen } from '@/components/solve/Arena'
 
 function useIsDesktop() {
   const q = '(min-width: 1024px)'
@@ -186,6 +188,27 @@ export default function SolvePage({ custom = false }: { custom?: boolean }) {
   const languages = useMemo(() => (langsApi.data ?? []).filter((l) => l.available !== false), [langsApi.data])
   const isDesktop = useIsDesktop()
   const workspace = useWorkspace()
+  const arena = workspace.arena
+  const openArena = useCallback(() => {
+    enterBrowserFullscreen()
+    workspace.setArena(true)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+  const closeArena = useCallback(() => workspace.setArena(false), [workspace])
+  // Alt+4 toggles the full-screen arena
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.altKey && !e.metaKey && !e.ctrlKey && e.code === 'Digit4') {
+        e.preventDefault()
+        if (workspace.arena) {
+          if (document.fullscreenElement) void document.exitFullscreen().catch(() => {})
+          workspace.setArena(false)
+        } else openArena()
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [workspace, openArena])
 
   const [language, setLanguage] = useState(
     () => localStorage.getItem('nexora:lang') ?? 'cpp',
@@ -617,6 +640,11 @@ export default function SolvePage({ custom = false }: { custom?: boolean }) {
 
       <div className="ml-auto flex flex-wrap items-center gap-2">
         {isDesktop && <LayoutMenu api={workspace} />}
+        <Tooltip label="Full-screen arena — just the editor, problem & tests (Alt+4)">
+          <Button variant="ghost" size="icon-sm" onClick={openArena} aria-label="Open full-screen arena">
+            <Expand aria-hidden="true" />
+          </Button>
+        </Tooltip>
         <LanguagePicker
           languages={languages.length ? languages : [{ id: language, label: language, ext: '', compiled: true }]}
           value={language}
@@ -717,6 +745,9 @@ export default function SolvePage({ custom = false }: { custom?: boolean }) {
       aiInline={aiInline}
       onRecord={recordChange}
       diagnostics={allDiagnostics}
+      minimal={arena}
+      focusMode={arena}
+      onFocusMode={arena ? closeArena : openArena}
       onExplain={(sel) => {
         setTutorSeed(`Explain what this code does, line by line:\n\`\`\`${language}\n${sel.slice(0, 2000)}\n\`\`\``)
         setTutorOpen(true)
@@ -829,7 +860,42 @@ export default function SolvePage({ custom = false }: { custom?: boolean }) {
     >
       {toolbar}
 
-      {isDesktop ? (
+      {arena ? (
+        <>
+          <div className="card-neon flex flex-1 flex-col items-center justify-center gap-3 text-sm text-foreground-dim">
+            <Expand className="size-6 text-primary-bright" />
+            You're in the full-screen arena.
+            <Button variant="subtle" size="sm" onClick={() => workspace.setArena(false)}>
+              Back to the normal layout
+            </Button>
+          </div>
+          <Arena
+            api={workspace}
+            title={problem?.title ?? `Problem #${id}`}
+            languagePicker={
+              <LanguagePicker
+                languages={languages.length ? languages : [{ id: language, label: language, ext: '', compiled: true }]}
+                value={language}
+                onChange={setLanguage}
+              />
+            }
+            overlay={<VerdictBanner verdict={banner?.verdict ?? null} xpEarned={banner?.xp} burstId={banner?.id} onDismiss={() => setBanner(null)} />}
+            problem={{ title: 'Problem', icon: <ScrollText />, content: <div className="h-full overflow-hidden">{problemContent}</div> }}
+            tests={{
+              title: 'Tests',
+              icon: <Code2 />,
+              headerExtra: testsTabs('ml-1 flex-nowrap p-0.5 [&_button]:py-1 [&_button]:text-[12px]'),
+              content: testsBody,
+            }}
+            editor={editorEl}
+            running={running}
+            submitting={submitting}
+            onRun={() => void handleRun()}
+            onSubmit={() => void handleSubmit()}
+            onExit={closeArena}
+          />
+        </>
+      ) : isDesktop ? (
         <Workspace
           api={workspace}
           overlay={<VerdictBanner verdict={banner?.verdict ?? null} xpEarned={banner?.xp} burstId={banner?.id} onDismiss={() => setBanner(null)} />}

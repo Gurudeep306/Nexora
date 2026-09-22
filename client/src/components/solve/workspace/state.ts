@@ -14,10 +14,23 @@ export interface PaneState {
   minimized: boolean
   float: Rect
 }
+export interface FloatState {
+  minimized: boolean
+  float: Rect
+}
 export interface WorkspaceState {
   problem: PaneState
   tests: PaneState
   maximized: PaneId | 'editor' | null
+  /** Separate window positions for the full-screen arena. x/y < 0 = auto-place. */
+  immersive: Record<PaneId, FloatState>
+}
+
+export const IMMERSIVE_DEFAULT: Record<PaneId, FloatState> = {
+  // Right-hand column so the start of your code stays visible:
+  // w -1 = 36% of the screen, h -2 = top 60%, h -3 = bottom 38%.
+  problem: { minimized: false, float: { x: -1, y: 12, w: -1, h: -2 } },
+  tests: { minimized: false, float: { x: -1, y: -1, w: -1, h: -3 } },
 }
 
 export const ALLOWED_DOCKS: Record<PaneId, Dock[]> = {
@@ -27,7 +40,7 @@ export const ALLOWED_DOCKS: Record<PaneId, Dock[]> = {
 
 const KEY = 'nexora:workspace:v2'
 
-export const PRESETS: Record<string, { label: string; hint: string; state: Omit<WorkspaceState, 'maximized'> }> = {
+export const PRESETS: Record<string, { label: string; hint: string; state: Omit<WorkspaceState, 'maximized' | 'immersive'> }> = {
   classic: {
     label: 'Classic',
     hint: 'Problem left · tests under the editor',
@@ -71,7 +84,7 @@ export const PRESETS: Record<string, { label: string; hint: string; state: Omit<
 }
 
 export function loadWorkspace(): WorkspaceState {
-  const base: WorkspaceState = { ...structuredClone(PRESETS.classic.state), maximized: null }
+  const base: WorkspaceState = { ...structuredClone(PRESETS.classic.state), maximized: null, immersive: structuredClone(IMMERSIVE_DEFAULT) }
   try {
     const raw = localStorage.getItem(KEY)
     if (raw) {
@@ -79,6 +92,8 @@ export function loadWorkspace(): WorkspaceState {
       for (const id of ['problem', 'tests'] as PaneId[]) {
         const p = v[id]
         if (p && ALLOWED_DOCKS[id].includes(p.dock)) base[id] = { ...base[id], ...p, float: { ...base[id].float, ...p.float } }
+        const im = v.immersive?.[id]
+        if (im?.float) base.immersive[id] = { minimized: !!im.minimized, float: { ...base.immersive[id].float, ...im.float } }
       }
       return base
     }

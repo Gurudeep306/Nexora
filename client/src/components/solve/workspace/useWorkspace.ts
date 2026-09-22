@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
-import { loadWorkspace, PRESETS, saveWorkspace, type Dock, type PaneId, type Rect, type WorkspaceState } from './state'
+import { IMMERSIVE_DEFAULT, loadWorkspace, PRESETS, saveWorkspace, type Dock, type FloatState, type PaneId, type Rect, type WorkspaceState } from './state'
 
 export function useWorkspace() {
   const [ws, setWs] = useState<WorkspaceState>(loadWorkspace)
+  const [arena, setArena] = useState(false)
   useEffect(() => saveWorkspace(ws), [ws])
 
   const dock = useCallback((pane: PaneId, d: Dock, float?: Partial<Rect>) => {
@@ -31,18 +32,33 @@ export function useWorkspace() {
   }, [])
   const applyPreset = useCallback((key: string) => {
     const p = PRESETS[key]
-    if (p) setWs({ ...structuredClone(p.state), maximized: null })
+    if (p) setWs((s) => ({ ...structuredClone(p.state), maximized: null, immersive: s.immersive }))
   }, [])
+  /** Window state inside the full-screen arena. */
+  const setImmersive = useCallback((pane: PaneId, patch: Partial<FloatState> & { float?: Partial<Rect> }) => {
+    setWs((s) => ({
+      ...s,
+      immersive: {
+        ...s.immersive,
+        [pane]: { ...s.immersive[pane], ...patch, float: { ...s.immersive[pane].float, ...patch.float } },
+      },
+    }))
+  }, [])
+  const resetImmersive = useCallback(() => setWs((s) => ({ ...s, immersive: structuredClone(IMMERSIVE_DEFAULT) })), [])
 
   // Alt+1 problem · Alt+2 tests · Alt+3 zoom editor · Esc restores a maximized pane
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && ws.maximized && !document.querySelector('[role="dialog"]')) {
+      if (e.key === 'Escape' && ws.maximized && !arena && !document.querySelector('[role="dialog"]')) {
         setWs((s) => ({ ...s, maximized: null }))
         return
       }
       if (!e.altKey || e.metaKey || e.ctrlKey) return
-      if (e.code === 'Digit1') {
+      if ((e.code === 'Digit1' || e.code === 'Digit2') && arena) {
+        e.preventDefault()
+        const p = e.code === 'Digit1' ? 'problem' : 'tests'
+        setWs((s) => ({ ...s, immersive: { ...s.immersive, [p]: { ...s.immersive[p], minimized: !s.immersive[p].minimized } } }))
+      } else if (e.code === 'Digit1') {
         e.preventDefault()
         minimize('problem')
       } else if (e.code === 'Digit2') {
@@ -55,9 +71,9 @@ export function useWorkspace() {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [ws.maximized, minimize, toggleMax])
+  }, [ws.maximized, minimize, toggleMax, arena])
 
-  return { ws, dock, setFloat, minimize, toggleMax, applyPreset }
+  return { ws, dock, setFloat, minimize, toggleMax, applyPreset, setImmersive, resetImmersive, arena, setArena }
 }
 
 export type WorkspaceApi = ReturnType<typeof useWorkspace>

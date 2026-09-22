@@ -358,6 +358,9 @@ export function CodeEditor({
   onRecord,
   diagnostics = [],
   onExplain,
+  minimal = false,
+  onFocusMode,
+  focusMode,
 }: {
   value: string
   language: string
@@ -372,6 +375,11 @@ export function CodeEditor({
   diagnostics?: Diag[]
   /** Right-click "Explain selection with AI" — receives the selected source */
   onExplain?: (selection: string) => void
+  /** Distraction-free chrome (full-screen arena): no toolbar, slim status bar */
+  minimal?: boolean
+  /** When given, the focus button opens the page-level full-screen arena instead */
+  onFocusMode?: () => void
+  focusMode?: boolean
 }) {
   const { data } = useApi(() => api.get<{ settings: Record<string, string> }>('/api/settings'), [])
   const settings = data?.settings ?? {}
@@ -735,8 +743,9 @@ export function CodeEditor({
 
   return (
     <div className={cn('relative flex h-full min-h-0 flex-col', zen && 'fixed inset-0 z-[100] bg-background')}>
-      {/* ── Editor toolbar ── */}
-      <div className="flex flex-wrap items-center gap-1.5 border-b border-border bg-surface px-2 py-1.5">
+      {/* ── Editor toolbar (one row; scrolls sideways when narrow so nothing gets cut off) ── */}
+      {!minimal && (
+      <div className="flex shrink-0 flex-nowrap items-center gap-1.5 overflow-x-auto border-b border-border bg-surface px-2 py-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [&>*]:shrink-0">
         <select
           value={theme}
           onChange={(e) => setTheme(e.target.value)}
@@ -827,7 +836,7 @@ export function CodeEditor({
           </button>
         </div>
 
-        <div className="ml-auto flex items-center rounded-lg border border-border/60 bg-background/40 px-0.5 py-0.5">
+        <div className="sticky right-0 z-10 ml-auto flex items-center rounded-lg border border-border/60 bg-surface px-0.5 py-0.5 shadow-[-10px_0_10px_-2px_var(--color-surface)]">
           <button
             className={cn(toolBtn, helpOpen && 'bg-surface-2 text-primary-bright')}
             onClick={() => setHelpOpen((h) => !h)}
@@ -838,15 +847,16 @@ export function CodeEditor({
             <Keyboard className="size-3.5" aria-hidden="true" />
           </button>
           <button
-            className={cn(toolBtn, zen && 'text-primary-bright')}
-            onClick={() => setZen((z) => !z)}
-            aria-label={zen ? 'Exit focus mode' : 'Focus mode'}
-            title="Focus mode"
+            className={cn(toolBtn, (focusMode ?? zen) && 'text-primary-bright')}
+            onClick={() => (onFocusMode ? onFocusMode() : setZen((z) => !z))}
+            aria-label={(focusMode ?? zen) ? 'Exit full screen' : 'Full-screen arena'}
+            title={onFocusMode ? 'Full-screen arena (Alt+4)' : 'Focus mode'}
           >
-            {zen ? <Minimize2 className="size-3.5" aria-hidden="true" /> : <Maximize2 className="size-3.5" aria-hidden="true" />}
+            {(focusMode ?? zen) ? <Minimize2 className="size-3.5" aria-hidden="true" /> : <Maximize2 className="size-3.5" aria-hidden="true" />}
           </button>
         </div>
       </div>
+      )}
 
       {helpOpen && (
         <>
@@ -955,7 +965,7 @@ export function CodeEditor({
       </div>
 
       {/* ── Status bar ── */}
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 border-t border-border bg-surface px-3 py-1 font-mono text-[10px] text-foreground-faint">
+      <div className="flex shrink-0 flex-nowrap items-center gap-x-3 overflow-hidden border-t border-border bg-surface px-3 py-1 font-mono text-[10px] whitespace-nowrap text-foreground-faint">
         <span className="tabular-nums">
           Ln {cursor.line}, Col {cursor.col}
           {cursor.sel > 0 && <span className="text-primary-bright"> ({cursor.sel} selected)</span>}

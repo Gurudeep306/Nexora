@@ -493,3 +493,39 @@
   height: 100%;
   border: 0;
 }
+
+/* Workspace floating windows: smooth size changes, instant while dragging */
+.nx-float {
+  transition: width 200ms cubic-bezier(0.22, 1, 0.36, 1), height 200ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 150ms ease;
+}
+.nx-float[data-live] {
+  transition: none;
+}
+.nx-edge {
+  position: absolute;
+  z-index: 20;
+  touch-action: none;
+  transition: background-color 120ms ease;
+}
+.nx-edge:hover,
+.nx-edge:active {
+  background: color-mix(in srgb, var(--color-primary) 45%, transparent);
+}
+.nx-corner {
+  position: absolute;
+  z-index: 21;
+  width: 14px;
+  height: 14px;
+  touch-action: none;
+}
+.nx-grip::after {
+  content: '';
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid var(--color-foreground-faint);
+  border-bottom: 2px solid var(--color-foreground-faint);
+  opacity: 0.6;
+}

@@ -54,7 +54,8 @@ export function PaneHeader({
     <div
       onPointerDown={(e) => {
         // The whole bar is a drag handle — except its buttons, tabs and inputs.
-        if ((e.target as HTMLElement).closest('button, a, input, select, textarea, [role="tab"], [role="menuitem"], [data-no-drag]')) return
+        // Tabs can start a drag too (a plain click still switches tab); other controls can't.
+        if ((e.target as HTMLElement).closest('button:not([role="tab"]), a, input, select, textarea, [role="menuitem"], [data-no-drag]')) return
         onDragStart(e)
       }}
       onDoubleClick={(e) => {
