@@ -57,6 +57,8 @@ import { LanguagePicker } from '@/components/solve/LanguagePicker'
 import { Workspace } from '@/components/solve/workspace/Workspace'
 import { useWorkspace } from '@/components/solve/workspace/useWorkspace'
 import { LayoutMenu } from '@/components/solve/workspace/LayoutMenu'
+import { useCoach } from '@/components/solve/coach'
+import { CoachPanel } from '@/components/solve/CoachPanel'
 
 function useIsDesktop() {
   const q = '(min-width: 1024px)'
@@ -199,7 +201,7 @@ export default function SolvePage({ custom = false }: { custom?: boolean }) {
   const [judgeResult, setJudgeResult] = useState<JudgeResponse | null>(null)
   const [runCase, setRunCase] = useState<{ label: string; expected: string } | null>(null)
   const [banner, setBanner] = useState<{ verdict: string; xp: number | null; id: number } | null>(null)
-  const [bottomTab, setBottomTab] = useState<'tests' | 'output'>('tests')
+  const [bottomTab, setBottomTab] = useState<'tests' | 'output' | 'coach'>('tests')
   const [mobilePane, setMobilePane] = useState<'problem' | 'code'>('problem')
   const [splitPct, setSplitPct] = useState(46)
   const [tutorOpen, setTutorOpen] = useState(false)
@@ -492,6 +494,26 @@ export default function SolvePage({ custom = false }: { custom?: boolean }) {
     [statementApi.data],
   )
 
+  /* ── AI coach: watches the code and explains what it sees ── */
+  const coachStatement = useMemo(() => {
+    const d = statementApi.data
+    if (!d) return ''
+    return stripHtml([d.statement, d.inputSpec ? `<p>INPUT:</p>${d.inputSpec}` : '', d.outputSpec ? `<p>OUTPUT:</p>${d.outputSpec}` : ''].join(' '))
+  }, [statementApi.data])
+  const coach = useCoach({
+    code,
+    language,
+    title: problem?.title ?? '',
+    statement: coachStatement,
+    template: DEFAULT_CODE(language),
+  })
+  const allDiagnostics = useMemo(() => {
+    const ai = (coach.insight?.issues ?? [])
+      .filter((i) => i.line && i.line > 0 && i.severity !== 'info')
+      .map((i) => ({ line: i.line as number, column: 1, message: `Coach: ${i.message}`, severity: i.severity === 'error' ? ('error' as const) : ('warning' as const) }))
+    return [...diagnostics, ...ai]
+  }, [diagnostics, coach.insight])
+
   /* ── Testcase mutations ── */
   const addTestcase = useCallback(
     async (tc: { label: string; input: string; expected_output: string }) => {
@@ -577,6 +599,21 @@ export default function SolvePage({ custom = false }: { custom?: boolean }) {
           {problem?.title ?? `Solve #${id}`}
         </span>
       </span>
+      {coach.insight && (
+        <Tooltip label={coach.insight.summary}>
+          <button
+            onClick={() => {
+              setBottomTab('coach')
+              workspace.minimize('tests', false)
+            }}
+            className="hidden h-7 max-w-72 cursor-pointer items-center gap-1.5 truncate rounded-full border border-primary/25 bg-primary/10 px-2.5 text-[11px] text-primary-bright transition-colors hover:border-primary/50 xl:flex"
+          >
+            <Bot className="size-3.5 shrink-0" />
+            <span className="truncate">{coach.insight.approach}</span>
+            <span className={cn('font-mono', coach.insight.fits === false ? 'text-[#f87171]' : 'text-foreground-dim')}>{coach.insight.time}</span>
+          </button>
+        </Tooltip>
+      )}
 
       <div className="ml-auto flex flex-wrap items-center gap-2">
         {isDesktop && <LayoutMenu api={workspace} />}
@@ -679,7 +716,7 @@ export default function SolvePage({ custom = false }: { custom?: boolean }) {
       onSubmitShortcut={() => void handleSubmit()}
       aiInline={aiInline}
       onRecord={recordChange}
-      diagnostics={diagnostics}
+      diagnostics={allDiagnostics}
       onExplain={(sel) => {
         setTutorSeed(`Explain what this code does, line by line:\n\`\`\`${language}\n${sel.slice(0, 2000)}\n\`\`\``)
         setTutorOpen(true)
@@ -692,7 +729,7 @@ export default function SolvePage({ custom = false }: { custom?: boolean }) {
     variant="pills"
     className={className}
     active={bottomTab}
-    onChange={(t) => setBottomTab(t as 'tests' | 'output')}
+    onChange={(t) => setBottomTab(t as 'tests' | 'output' | 'coach')}
     items={[
       { id: 'tests', label: 'test/', icon: <Code2 className="size-3.5" />, badge: testcases.length },
       {
@@ -701,13 +738,21 @@ export default function SolvePage({ custom = false }: { custom?: boolean }) {
         icon: <TerminalSquare className="size-3.5" />,
         badge: runResult || judgeResult ? '•' : undefined,
       },
+      {
+        id: 'coach',
+        label: 'coach',
+        icon: coach.loading ? <Loader2 className="size-3.5 animate-spin" /> : <Bot className="size-3.5" />,
+        badge: coach.insight?.issues.length ? coach.insight.issues.length : undefined,
+      },
     ]}
   />
   )
 
   const testsBody = (
   <div className="h-full min-h-0 flex-1 overflow-y-auto">
-    {bottomTab === 'tests' ? (
+    {bottomTab === 'coach' ? (
+      <CoachPanel coach={coach} judgeResult={judgeResult} onAddTest={addTestcase} />
+    ) : bottomTab === 'tests' ? (
       <TestcaseDeck
         testcases={testcases}
         selectedIndex={selectedTest}

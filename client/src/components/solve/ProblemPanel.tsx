@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
-import { Brain, Clock, Cpu, FileDown, GitCommitHorizontal, Languages, Loader2, ScrollText } from 'lucide-react'
-import { Badge, DifficultyBadge, LoadingBlock, Select, Tabs } from '@/components/ui'
-import { api } from '@/lib/api'
+import { Brain, Clock, Cpu, FileDown, GitCommitHorizontal, Loader2, ScrollText } from 'lucide-react'
+import { Badge, DifficultyBadge, LoadingBlock, Tabs } from '@/components/ui'
 import { sanitizeHtml } from '@/components/ailab/sanitize'
 import { prepareMathHtml, renderMathIn } from '@/lib/math'
 import { useStatementMedia } from './StatementMedia'
+import { TranslateBar } from './TranslateBar'
 import { ThinkingPad } from './ThinkingPad'
 import { PlatformBadge, VerdictBadge } from '@/components/shared/PlatformBadge'
 import { cn, timeAgo } from '@/lib/utils'
@@ -24,16 +24,6 @@ interface Props {
   custom?: boolean
 }
 
-const TRANSLATE_TO = [
-  { code: 'hi', label: 'हिन्दी' },
-  { code: 'te', label: 'తెలుగు' },
-  { code: 'ta', label: 'தமிழ்' },
-  { code: 'bn', label: 'বাংলা' },
-  { code: 'es', label: 'Español' },
-  { code: 'zh-CN', label: '中文' },
-  { code: 'ja', label: '日本語' },
-  { code: 'ru', label: 'Русский' },
-]
 
 function SpecSection({ title, html }: { title: string; html: string }) {
   if (!html || !html.trim()) return null
@@ -61,29 +51,12 @@ export function ProblemPanel({
 }: Props) {
   const [tab, setTab] = useState('statement')
   const [translated, setTranslated] = useState<{ lang: string; html: string } | null>(null)
-  const [translating, setTranslating] = useState(false)
-  const [translateError, setTranslateError] = useState<string | null>(null)
   const statementRef = useRef<HTMLDivElement>(null)
   const mediaLightbox = useStatementMedia()
 
   useEffect(() => {
     renderMathIn(statementRef.current)
   }, [statement, translated, tab])
-
-  const translate = async (lang: string) => {
-    setTranslateError(null)
-    if (!lang || !statement) return setTranslated(null)
-    setTranslating(true)
-    try {
-      const html = [statement.statement, statement.inputSpec, statement.outputSpec, statement.note].filter(Boolean).join('')
-      const res = await api.post<{ ok: boolean; translated?: string }>('/api/translate', { html, targetLang: lang }, { timeoutMs: 60000 })
-      setTranslated({ lang, html: sanitizeHtml(res.translated ?? '') })
-    } catch (err) {
-      setTranslateError(err instanceof Error ? err.message : 'Translation failed')
-    } finally {
-      setTranslating(false)
-    }
-  }
 
   if (!problem) return <LoadingBlock rows={6} className="p-4" />
 
@@ -150,25 +123,10 @@ export function ProblemPanel({
             {statement && !statementLoading && (
               <>
                 {!custom && (
-                  <div className="mb-3 flex items-center gap-2">
-                    <Languages className="size-3.5 text-foreground-faint" aria-hidden="true" />
-                    <Select
-                      value={translated?.lang ?? ''}
-                      onChange={(e) => void translate(e.target.value)}
-                      aria-label="Translate statement"
-                      className="h-7 w-40 text-xs"
-                      disabled={translating}
-                    >
-                      <option value="">Original language</option>
-                      {TRANSLATE_TO.map((l) => (
-                        <option key={l.code} value={l.code}>
-                          {l.label}
-                        </option>
-                      ))}
-                    </Select>
-                    {translating && <Loader2 className="size-3.5 animate-spin text-primary-bright" aria-hidden="true" />}
-                    {translateError && <span className="text-[11px] text-destructive">{translateError}</span>}
-                  </div>
+                  <TranslateBar
+                    html={[statement.statement, statement.inputSpec, statement.outputSpec, statement.note].filter(Boolean).join('')}
+                    onResult={(r) => setTranslated(r ? { lang: r.lang, html: sanitizeHtml(r.html) } : null)}
+                  />
                 )}
                 {translated ? (
                   <div

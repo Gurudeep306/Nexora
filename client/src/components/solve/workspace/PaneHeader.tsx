@@ -52,15 +52,23 @@ export function PaneHeader({
 }) {
   return (
     <div
+      onPointerDown={(e) => {
+        // The whole bar is a drag handle — except its buttons, tabs and inputs.
+        if ((e.target as HTMLElement).closest('button, a, input, select, textarea, [role="tab"], [role="menuitem"], [data-no-drag]')) return
+        onDragStart(e)
+      }}
+      onDoubleClick={(e) => {
+        if ((e.target as HTMLElement).closest('button, a, input, select, [role="tab"]')) return
+        onToggleMaximize()
+      }}
+      title="Drag to move · drop on an edge to dock · double-click to maximize"
       className={cn(
-        'flex h-9 shrink-0 items-center gap-1 border-b border-white/[0.06] bg-white/[0.015] pr-1 pl-1 select-none',
+        'flex h-9 shrink-0 cursor-grab touch-none items-center gap-1 border-b border-white/[0.06] bg-white/[0.015] pr-1 pl-1 select-none active:cursor-grabbing',
         className,
       )}
     >
       <div
-        onPointerDown={onDragStart}
-        className="flex min-w-0 cursor-grab items-center gap-1.5 self-stretch rounded-md px-1.5 text-foreground-faint active:cursor-grabbing hover:text-foreground-dim"
-        title="Drag to move · drop on an edge to dock"
+        className="flex min-w-0 items-center gap-1.5 self-stretch rounded-md px-1.5 text-foreground-faint hover:text-foreground-dim"
         aria-label={`Move ${title} panel`}
         role="button"
         tabIndex={-1}
@@ -69,7 +77,7 @@ export function PaneHeader({
         <span className="shrink-0 text-primary-bright/90 [&_svg]:size-3.5">{icon}</span>
         <span className="truncate text-[11px] font-semibold tracking-[0.1em] text-foreground-dim uppercase">{title}</span>
       </div>
-      <div className="flex min-w-0 flex-1 items-center gap-1 overflow-hidden">{children}</div>
+      <div className="flex min-w-0 flex-1 items-center gap-1 self-stretch overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">{children}</div>
 
       <Menu>
         <Tooltip label="Move panel">

@@ -55,6 +55,7 @@ const {
   fetchProjectEulerProblems,
 } = require("./sync");
 const { judge, quickRun, LANG_CONFIG, hasRemote, REMOTE_ONLY } = require("./judge");
+const { createAiAssistRouter } = require("./ai-assist");
 
 const IS_PROD = process.env.NODE_ENV === "production";
 const APP_URL =
@@ -1522,122 +1523,9 @@ app.get("/api/activity/:date", async (req, res) => {
   }
 });
 
-/* ========== TRANSLATE ==========
-   Google's free gtx endpoint rate-limits (429) when a long statement is sent
-   as many back-to-back chunks, so: cache every result (statements are static),
-   pace the chunk requests, retry with backoff, and fall back to MyMemory. */
-const _sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-
-async function _translateGoogle(chunk, tl) {
-  const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${encodeURIComponent(tl)}&dt=t&dj=1&q=${encodeURIComponent(chunk)}`;
-  const resp = await fetch(url, {
-    headers: { "User-Agent": "Mozilla/5.0" },
-    signal: AbortSignal.timeout(20000),
-  });
-  if (!resp.ok) throw new Error(`google ${resp.status}`);
-  const data = await resp.json();
-  const text = (data.sentences || []).map((s) => s.trans).join("");
-  if (!text) throw new Error("google empty response");
-  return text;
-}
-
-async function _translateMyMemory(chunk, tl) {
-  // MyMemory accepts ~500 chars per request: split on sentence boundaries.
-  const pieces = [];
-  let rest = chunk;
-  while (rest.length > 450) {
-    let cut = rest.lastIndexOf(". ", 450);
-    if (cut < 200) cut = rest.lastIndexOf(" ", 450);
-    if (cut < 200) cut = 450;
-    pieces.push(rest.slice(0, cut + 1));
-    rest = rest.slice(cut + 1);
-  }
-  if (rest) pieces.push(rest);
-  const out = [];
-  for (const p of pieces) {
-    const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(p)}&langpair=en|${encodeURIComponent(tl)}`;
-    const resp = await fetch(url, { signal: AbortSignal.timeout(20000) });
-    if (!resp.ok) throw new Error(`mymemory ${resp.status}`);
-    const j = await resp.json();
-    if (j.responseStatus !== 200 || !j.responseData?.translatedText)
-      throw new Error(`mymemory ${j.responseStatus}`);
-    out.push(j.responseData.translatedText);
-  }
-  return out.join("");
-}
-
-async function _translateChunk(chunk, tl) {
-  const backoff = [0, 900, 2200];
-  let lastErr;
-  for (const wait of backoff) {
-    if (wait) await _sleep(wait);
-    try {
-      return await _translateGoogle(chunk, tl);
-    } catch (e) {
-      lastErr = e;
-    }
-  }
-  // Google exhausted (usually 429): fall back so the user still gets text.
-  try {
-    return await _translateMyMemory(chunk, tl);
-  } catch (e) {
-    throw lastErr || e;
-  }
-}
-
-app.post("/api/translate", async (req, res) => {
-  try {
-    const { html, targetLang } = req.body;
-    if (!html || typeof html !== "string")
-      return res.status(400).json({ ok: false, error: "No html provided" });
-    const tl = (targetLang || "en").slice(0, 5);
-
-    const cacheKey = crypto
-      .createHash("sha1")
-      .update(`${tl}::${html}`)
-      .digest("hex");
-    const hit = await get("SELECT translated FROM translation_cache WHERE cache_key=?", [
-      cacheKey,
-    ]);
-    if (hit) return res.json({ ok: true, translated: hit.translated, detectedLang: "auto", cached: true });
-
-    // Split long text into chunks (Google Translate limit ~5000 chars per request)
-    const MAX_CHUNK = 4500;
-    const chunks = [];
-    let remaining = html;
-    while (remaining.length > 0) {
-      if (remaining.length <= MAX_CHUNK) {
-        chunks.push(remaining);
-        break;
-      }
-      // Find a good split point (after a closing tag or sentence end)
-      let splitAt = remaining.lastIndexOf(">", MAX_CHUNK);
-      if (splitAt < MAX_CHUNK * 0.5)
-        splitAt = remaining.lastIndexOf(". ", MAX_CHUNK);
-      if (splitAt < MAX_CHUNK * 0.5) splitAt = MAX_CHUNK;
-      chunks.push(remaining.slice(0, splitAt + 1));
-      remaining = remaining.slice(splitAt + 1);
-    }
-
-    const translated = [];
-    for (let i = 0; i < chunks.length; i++) {
-      if (i) await _sleep(350); // pace requests so the free tier doesn't 429
-      translated.push(await _translateChunk(chunks[i], tl));
-    }
-
-    const joined = translated.join("");
-    await run("INSERT OR REPLACE INTO translation_cache(cache_key,lang,translated,created_at) VALUES(?,?,?,?)", [
-      cacheKey,
-      tl,
-      joined,
-      new Date().toISOString(),
-    ]);
-    res.json({ ok: true, translated: joined, detectedLang: "auto" });
-  } catch (e) {
-    console.error("Translation error:", e.message);
-    res.status(500).json({ ok: false, error: e.message });
-  }
-});
+/* ========== TRANSLATE ========== (see src/ai-assist.js) */
+// Translation (with language detection + AI engine) and the coding coach.
+app.use(createAiAssistRouter({ get, run, aiLimiter }));
 
 /* ========== TESTCASES ========== */
 app.post("/api/testcases", async (req, res) => {

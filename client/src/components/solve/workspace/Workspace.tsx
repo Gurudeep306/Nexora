@@ -108,6 +108,7 @@ export function Workspace({
 
   const startDrag = (pane: PaneId) => (e: React.PointerEvent) => {
     if (e.button !== 0) return
+    e.preventDefault() // no text selection while dragging a pane
     const root = rootRef.current?.getBoundingClientRect()
     const f = ws[pane].float
     setFront(pane)
@@ -126,6 +127,7 @@ export function Workspace({
 
   useEffect(() => {
     if (!drag) return
+    document.body.style.userSelect = 'none'
     const move = (e: PointerEvent) => {
       setDrag((d) => {
         if (!d) return d
@@ -161,6 +163,7 @@ export function Workspace({
     return () => {
       window.removeEventListener('pointermove', move)
       window.removeEventListener('pointerup', up)
+      document.body.style.userSelect = ''
     }
   }, [drag, ws, zoneAt, setFloat, dock, clampRect])
 
@@ -333,7 +336,7 @@ export function Workspace({
 function HGroup({ id, panelIds, children }: { id: string; panelIds: string[]; children: ReactNode }) {
   const { defaultLayout, onLayoutChanged } = useDefaultLayout({ id: `nexora-ws-${id}`, panelIds, storage: localStorage })
   return (
-    <Group id={id} orientation="horizontal" defaultLayout={defaultLayout} onLayoutChanged={onLayoutChanged} className="min-h-0 min-w-0 flex-1">
+    <Group id={id} orientation="horizontal" defaultLayout={defaultLayout} onLayoutChanged={onLayoutChanged} resizeTargetMinimumSize={{ fine: 14, coarse: 36 }} className="min-h-0 min-w-0 flex-1">
       {children}
     </Group>
   )
@@ -342,7 +345,7 @@ function HGroup({ id, panelIds, children }: { id: string; panelIds: string[]; ch
 function VGroup({ id, panelIds, children }: { id: string; panelIds: string[]; children: ReactNode }) {
   const { defaultLayout, onLayoutChanged } = useDefaultLayout({ id: `nexora-ws-${id}`, panelIds, storage: localStorage })
   return (
-    <Group id={id} orientation="vertical" defaultLayout={defaultLayout} onLayoutChanged={onLayoutChanged} className="min-h-0 flex-1">
+    <Group id={id} orientation="vertical" defaultLayout={defaultLayout} onLayoutChanged={onLayoutChanged} resizeTargetMinimumSize={{ fine: 14, coarse: 36 }} className="min-h-0 flex-1">
       {children}
     </Group>
   )
@@ -365,32 +368,45 @@ function FloatingWindow({
   onResize: (r: Rect) => void
   children: ReactNode
 }) {
-  const startResize = (edge: 'r' | 'b' | 'rb' | 'l' | 'lb') => (e: React.PointerEvent) => {
+  type Edge = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw'
+  const CURSOR: Record<Edge, string> = { n: 'ns-resize', s: 'ns-resize', e: 'ew-resize', w: 'ew-resize', ne: 'nesw-resize', sw: 'nesw-resize', nw: 'nwse-resize', se: 'nwse-resize' }
+  /* Resize from any edge or corner; the opposite edge stays put, and the window
+     never shrinks below its minimum size. */
+  const startResize = (edge: Edge) => (e: React.PointerEvent) => {
     e.preventDefault()
     e.stopPropagation()
     const sx = e.clientX
     const sy = e.clientY
     const start = rect
+    const right = start.x + start.w
+    const bottom = start.y + start.h
     const move = (ev: PointerEvent) => {
       const dx = ev.clientX - sx
       const dy = ev.clientY - sy
       const next = { ...start }
-      if (edge.includes('r')) next.w = start.w + dx
-      if (edge.includes('l')) {
-        next.w = start.w - dx
-        next.x = start.x + dx
+      if (edge.includes('e')) next.w = Math.max(MIN_W, start.w + dx)
+      if (edge.includes('s')) next.h = Math.max(MIN_H, start.h + dy)
+      if (edge.includes('w')) {
+        next.x = Math.max(0, Math.min(start.x + dx, right - MIN_W))
+        next.w = right - next.x
       }
-      if (edge.includes('b')) next.h = start.h + dy
+      if (edge.includes('n')) {
+        next.y = Math.max(0, Math.min(start.y + dy, bottom - MIN_H))
+        next.h = bottom - next.y
+      }
       onResize(next)
     }
     const up = () => {
       window.removeEventListener('pointermove', move)
       document.body.style.cursor = ''
+      document.body.style.userSelect = ''
     }
-    document.body.style.cursor = edge === 'b' ? 'ns-resize' : edge === 'r' || edge === 'l' ? 'ew-resize' : edge === 'rb' ? 'nwse-resize' : 'nesw-resize'
+    document.body.style.cursor = CURSOR[edge]
+    document.body.style.userSelect = 'none'
     window.addEventListener('pointermove', move)
     window.addEventListener('pointerup', up, { once: true })
   }
+  const edgeCls = 'absolute z-20 transition-colors hover:bg-primary/40 active:bg-primary/60'
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.96 }}
@@ -408,13 +424,18 @@ function FloatingWindow({
       {children}
       {!minimized && (
         <>
-          <span onPointerDown={startResize('r')} className="absolute top-0 right-0 bottom-3 w-1.5 cursor-ew-resize" />
-          <span onPointerDown={startResize('l')} className="absolute top-0 bottom-3 left-0 w-1.5 cursor-ew-resize" />
-          <span onPointerDown={startResize('b')} className="absolute right-3 bottom-0 left-3 h-1.5 cursor-ns-resize" />
-          <span onPointerDown={startResize('lb')} className="absolute bottom-0 left-0 size-3 cursor-nesw-resize" />
+          {/* edges */}
+          <span onPointerDown={startResize('n')} className={cn(edgeCls, 'top-0 right-3 left-3 h-1.5 cursor-ns-resize')} aria-hidden="true" />
+          <span onPointerDown={startResize('s')} className={cn(edgeCls, 'right-3 bottom-0 left-3 h-1.5 cursor-ns-resize')} aria-hidden="true" />
+          <span onPointerDown={startResize('e')} className={cn(edgeCls, 'top-3 right-0 bottom-3 w-1.5 cursor-ew-resize')} aria-hidden="true" />
+          <span onPointerDown={startResize('w')} className={cn(edgeCls, 'top-3 bottom-3 left-0 w-1.5 cursor-ew-resize')} aria-hidden="true" />
+          {/* corners */}
+          <span onPointerDown={startResize('nw')} className="absolute top-0 left-0 z-20 size-3.5 cursor-nwse-resize" aria-hidden="true" />
+          <span onPointerDown={startResize('ne')} className="absolute top-0 right-0 z-20 size-3.5 cursor-nesw-resize" aria-hidden="true" />
+          <span onPointerDown={startResize('sw')} className="absolute bottom-0 left-0 z-20 size-3.5 cursor-nesw-resize" aria-hidden="true" />
           <span
-            onPointerDown={startResize('rb')}
-            className="absolute right-0 bottom-0 size-4 cursor-nwse-resize after:absolute after:right-1 after:bottom-1 after:size-2 after:border-r-2 after:border-b-2 after:border-foreground-faint/60 after:content-['']"
+            onPointerDown={startResize('se')}
+            className="absolute right-0 bottom-0 z-20 size-4 cursor-nwse-resize after:absolute after:right-1 after:bottom-1 after:size-2 after:border-r-2 after:border-b-2 after:border-foreground-faint/60 after:content-['']"
             aria-hidden="true"
           />
         </>
