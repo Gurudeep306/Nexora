@@ -77,18 +77,85 @@ async function scrapePageHTTP(problem) {
   return null;
 }
 
-async function _scrapeCF_HTTP(problem) {
-  const parts = problem.problem_id.match(/^(\d+)([A-Z]\d?)$/);
-  if (!parts) return null;
-  const [, contestId, index] = parts;
-  const url = `https://codeforces.com/problemset/problem/${contestId}/${index}`;
-  const resp = await fetch(url, {
-    headers: { "User-Agent": SCRAPE_UA },
-    timeout: 15000,
-  });
-  if (!resp.ok) return null;
-  const html = await resp.text();
-  const $ = cheerio.load(html);
+/* ========== Statement HTML normalization ==========
+   Scraped statements keep whatever URLs the source site used: AtCoder stores
+   root-relative image paths and Codeforces hotlinks espresso.codeforces.com
+   (which rejects foreign referers). Rewrite every image to our own proxy and
+   make other URLs absolute so statements render identically everywhere. */
+const PLATFORM_ORIGIN = {
+  codeforces: "https://codeforces.com",
+  codechef: "https://www.codechef.com",
+  atcoder: "https://atcoder.jp",
+  leetcode: "https://leetcode.com",
+  spoj: "https://www.spoj.com",
+  euler: "https://projecteuler.net",
+};
+
+function absolutizeUrl(src, origin) {
+  const s = (src || "").trim();
+  if (!s || s.startsWith("data:")) return s;
+  if (s.startsWith("//")) return `https:${s}`;
+  if (/^https?:/i.test(s)) return s;
+  if (!origin) return s;
+  if (s.startsWith("/")) return origin + s;
+  return `${origin}/${s}`;
+}
+
+function normalizeStatementHtml(html, problem) {
+  if (!html) return html;
+  const origin = PLATFORM_ORIGIN[problem.platform] || "";
+  let out = html.replace(
+    /(<img\b[^>]*?\ssrc\s*=\s*)(["'])([^"']*)\2/gi,
+    (_m, pre, q, src) => {
+      const abs = absolutizeUrl(src, origin);
+      if (!abs || abs.startsWith("data:")) return `${pre}${q}${src}${q}`;
+      return `${pre}${q}/api/imgproxy?url=${encodeURIComponent(abs)}${q}`;
+    },
+  );
+  out = out.replace(
+    /(<a\b[^>]*?\shref\s*=\s*)(["'])(?!https?:|#|mailto:)([^"']*)\2/gi,
+    (_m, pre, q, href) => {
+      const abs = absolutizeUrl(href, origin);
+      return `${pre}${q}${abs}${q}`;
+    },
+  );
+  return out;
+}
+
+function normalizeStatement(data, problem) {
+  if (!data) return data;
+  return {
+    ...data,
+    statement: normalizeStatementHtml(data.statement, problem),
+    inputSpec: normalizeStatementHtml(data.inputSpec, problem),
+    outputSpec: normalizeStatementHtml(data.outputSpec, problem),
+    note: normalizeStatementHtml(data.note, problem),
+  };
+}
+
+/* Hosts the image proxy is allowed to fetch from (statement CDNs only).
+   The route itself is registered further down, once Express exists. */
+const IMG_PROXY_HOSTS = new Set([
+  "espresso.codeforces.com",
+  "codeforces.com",
+  "www.codeforces.com",
+  "m1.codeforces.com",
+  "m2.codeforces.com",
+  "m3.codeforces.com",
+  "atcoder.jp",
+  "www.atcoder.jp",
+  "img.atcoder.jp",
+  "codechef.com",
+  "www.codechef.com",
+  "leetcode.com",
+  "assets.leetcode.com",
+  "spoj.com",
+  "www.spoj.com",
+  "projecteuler.net",
+  "web.archive.org",
+]);
+
+function _parseCFStatement($) {
   const stmt = $(".problem-statement");
   if (!stmt.length) return null;
 
@@ -137,6 +204,48 @@ async function _scrapeCF_HTTP(problem) {
     memLimit,
     samples,
   };
+}
+
+function _cfProblemUrl(problem) {
+  const parts = problem.problem_id.match(/^(\d+)([A-Z]\d?)$/);
+  if (!parts) return null;
+  return `https://codeforces.com/problemset/problem/${parts[1]}/${parts[2]}`;
+}
+
+async function _scrapeCF_HTTP(problem) {
+  const url = _cfProblemUrl(problem);
+  if (!url) return null;
+  const resp = await fetch(url, {
+    headers: { "User-Agent": SCRAPE_UA, "Accept-Language": "en-US,en;q=0.9" },
+    timeout: 15000,
+  });
+  if (!resp.ok) return null;
+  const html = await resp.text();
+  return _parseCFStatement(cheerio.load(html));
+}
+
+/* Cloudflare blocks plain HTTP from most datacenter IPs. The Wayback Machine
+   archives Codeforces statements verbatim (images included), so it is a
+   reliable browser-free source when both the live site and mirrors fail. */
+async function _scrapeCF_Wayback(problem) {
+  const url = _cfProblemUrl(problem);
+  if (!url) return null;
+  const avail = await fetch(
+    `https://archive.org/wayback/available?url=${encodeURIComponent(url)}`,
+    { headers: { "User-Agent": SCRAPE_UA }, signal: AbortSignal.timeout(12000) },
+  );
+  if (!avail.ok) return null;
+  const snap = (await avail.json())?.archived_snapshots?.closest;
+  if (!snap?.available || !snap.url) return null;
+  const resp = await fetch(snap.url, {
+    headers: { "User-Agent": SCRAPE_UA },
+    signal: AbortSignal.timeout(25000),
+  });
+  if (!resp.ok) return null;
+  const $ = cheerio.load(await resp.text());
+  // Strip the Wayback playback toolbar so it never leaks into statements.
+  $('[id^="wm-"], [class^="wm-"], #donato, #playback, #resumePlay').remove();
+  return _parseCFStatement($);
 }
 
 async function _scrapeCC_HTTP(problem) {
@@ -1087,6 +1196,58 @@ async function _saveStatement(problemId, data) {
   );
 }
 
+/* ========== IMAGE PROXY (statement images) ========== */
+app.get("/api/imgproxy", async (req, res) => {
+  const url = String(req.query.url || "");
+  let parsed;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return res.status(400).end();
+  }
+  if (parsed.protocol !== "https:" || !IMG_PROXY_HOSTS.has(parsed.hostname)) {
+    return res.status(403).end();
+  }
+  try {
+    let target = parsed;
+    let upstream = await fetch(target, {
+      headers: {
+        "User-Agent": SCRAPE_UA,
+        Accept: "image/avif,image/webp,image/*,*/*;q=0.8",
+      },
+      redirect: "manual",
+      signal: AbortSignal.timeout(15000),
+    });
+    // Follow at most two redirects, staying inside the whitelist.
+    for (let hops = 0; hops < 2 && [301, 302, 303, 307, 308].includes(upstream.status); hops++) {
+      const loc = upstream.headers.get("location");
+      if (!loc) break;
+      const next = new URL(loc, target);
+      if (next.protocol !== "https:" || !IMG_PROXY_HOSTS.has(next.hostname)) break;
+      target = next;
+      upstream = await fetch(target, {
+        headers: { "User-Agent": SCRAPE_UA, Accept: "image/*,*/*;q=0.8" },
+        redirect: "manual",
+        signal: AbortSignal.timeout(15000),
+      });
+    }
+    const ctype = upstream.headers.get("content-type") || "";
+    if (!upstream.ok || !ctype.startsWith("image/")) {
+      return res.status(502).end();
+    }
+    const buf = Buffer.from(await upstream.arrayBuffer());
+    if (buf.length > 8 * 1024 * 1024) return res.status(502).end();
+    res.set({
+      "Content-Type": ctype.split(";")[0],
+      "Cache-Control": "public, max-age=604800, immutable",
+      "Content-Length": String(buf.length),
+    });
+    res.send(buf);
+  } catch {
+    res.status(502).end();
+  }
+});
+
 /* ========== PROBLEM STATEMENT (fast HTTP scraping + Puppeteer fallback) ========== */
 app.get("/api/problem-statement/:id", async (req, res) => {
   try {
@@ -1106,12 +1267,21 @@ app.get("/api/problem-statement/:id", async (req, res) => {
       try {
         samples = JSON.parse(local.samples || "[]");
       } catch {}
+      const norm = normalizeStatement(
+        {
+          statement: local.statement,
+          inputSpec: local.input_spec,
+          outputSpec: local.output_spec,
+          note: local.note,
+        },
+        problem,
+      );
       return res.json({
         ok: true,
-        statement: local.statement,
-        inputSpec: local.input_spec,
-        outputSpec: local.output_spec,
-        note: local.note,
+        statement: norm.statement,
+        inputSpec: norm.inputSpec,
+        outputSpec: norm.outputSpec,
+        note: norm.note,
         timeLimit: local.time_limit,
         memLimit: local.memory_limit,
         samples,
@@ -1130,30 +1300,54 @@ app.get("/api/problem-statement/:id", async (req, res) => {
         if ((parsed.statement || "").trim().length > 10) {
           // Migrate legacy cache to problem_statements table
           await _saveStatement(problem.id, parsed);
-          return res.json({ ok: true, ...parsed, source: "cache" });
+          const norm = normalizeStatement(parsed, problem);
+          return res.json({ ok: true, ...norm, source: "cache" });
         }
       } catch {}
     }
 
-    // 3. FAST: HTTP scrape with fetch+cheerio (<1s) — skip for CF (Cloudflare blocks it)
-    if (problem.platform !== "codeforces") {
-      console.log(`[http-scrape] ${problem.platform} ${problem.problem_id}...`);
+    // 3. FAST: HTTP scrape with fetch+cheerio (<1s)
+    console.log(`[http-scrape] ${problem.platform} ${problem.problem_id}...`);
+    try {
+      const data = await scrapePageHTTP(problem);
+      if (data && (data.statement || "").trim().length > 10) {
+        await _saveStatement(problem.id, data);
+        console.log(
+          `[http-scrape] ✅ ${problem.problem_id} saved (${data.samples?.length || 0} samples)`,
+        );
+        const norm = normalizeStatement(data, problem);
+        return res.json({
+          ok: true,
+          ...norm,
+          platform: problem.platform,
+          source: "http",
+        });
+      }
+    } catch (e) {
+      console.log(`[http-scrape] ✗ ${problem.problem_id}: ${e.message}`);
+    }
+
+    // 3b. ARCHIVE: Wayback Machine (Codeforces sits behind Cloudflare, which
+    //     rejects plain HTTP from most servers; the archive has verbatim copies)
+    if (problem.platform === "codeforces") {
+      console.log(`[wayback] ${problem.problem_id}...`);
       try {
-        const data = await scrapePageHTTP(problem);
+        const data = await _scrapeCF_Wayback(problem);
         if (data && (data.statement || "").trim().length > 10) {
           await _saveStatement(problem.id, data);
           console.log(
-            `[http-scrape] ✅ ${problem.problem_id} saved (${data.samples?.length || 0} samples)`,
+            `[wayback] ✅ ${problem.problem_id} saved (${data.samples?.length || 0} samples)`,
           );
+          const norm = normalizeStatement(data, problem);
           return res.json({
             ok: true,
-            ...data,
+            ...norm,
             platform: problem.platform,
-            source: "http",
+            source: "archive",
           });
         }
       } catch (e) {
-        console.log(`[http-scrape] ✗ ${problem.problem_id}: ${e.message}`);
+        console.log(`[wayback] ✗ ${problem.problem_id}: ${e.message}`);
       }
     }
 
@@ -1166,9 +1360,10 @@ app.get("/api/problem-statement/:id", async (req, res) => {
         console.log(
           `[puppeteer] ✅ ${problem.problem_id} saved (${data.samples?.length || 0} samples)`,
         );
+        const norm = normalizeStatement(data, problem);
         return res.json({
           ok: true,
-          ...data,
+          ...norm,
           platform: problem.platform,
           source: "live",
         });
@@ -1309,13 +1504,84 @@ app.get("/api/activity/:date", async (req, res) => {
   }
 });
 
-/* ========== TRANSLATE ========== */
+/* ========== TRANSLATE ==========
+   Google's free gtx endpoint rate-limits (429) when a long statement is sent
+   as many back-to-back chunks, so: cache every result (statements are static),
+   pace the chunk requests, retry with backoff, and fall back to MyMemory. */
+const _sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+async function _translateGoogle(chunk, tl) {
+  const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${encodeURIComponent(tl)}&dt=t&dj=1&q=${encodeURIComponent(chunk)}`;
+  const resp = await fetch(url, {
+    headers: { "User-Agent": "Mozilla/5.0" },
+    signal: AbortSignal.timeout(20000),
+  });
+  if (!resp.ok) throw new Error(`google ${resp.status}`);
+  const data = await resp.json();
+  const text = (data.sentences || []).map((s) => s.trans).join("");
+  if (!text) throw new Error("google empty response");
+  return text;
+}
+
+async function _translateMyMemory(chunk, tl) {
+  // MyMemory accepts ~500 chars per request: split on sentence boundaries.
+  const pieces = [];
+  let rest = chunk;
+  while (rest.length > 450) {
+    let cut = rest.lastIndexOf(". ", 450);
+    if (cut < 200) cut = rest.lastIndexOf(" ", 450);
+    if (cut < 200) cut = 450;
+    pieces.push(rest.slice(0, cut + 1));
+    rest = rest.slice(cut + 1);
+  }
+  if (rest) pieces.push(rest);
+  const out = [];
+  for (const p of pieces) {
+    const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(p)}&langpair=en|${encodeURIComponent(tl)}`;
+    const resp = await fetch(url, { signal: AbortSignal.timeout(20000) });
+    if (!resp.ok) throw new Error(`mymemory ${resp.status}`);
+    const j = await resp.json();
+    if (j.responseStatus !== 200 || !j.responseData?.translatedText)
+      throw new Error(`mymemory ${j.responseStatus}`);
+    out.push(j.responseData.translatedText);
+  }
+  return out.join("");
+}
+
+async function _translateChunk(chunk, tl) {
+  const backoff = [0, 900, 2200];
+  let lastErr;
+  for (const wait of backoff) {
+    if (wait) await _sleep(wait);
+    try {
+      return await _translateGoogle(chunk, tl);
+    } catch (e) {
+      lastErr = e;
+    }
+  }
+  // Google exhausted (usually 429): fall back so the user still gets text.
+  try {
+    return await _translateMyMemory(chunk, tl);
+  } catch (e) {
+    throw lastErr || e;
+  }
+}
+
 app.post("/api/translate", async (req, res) => {
   try {
     const { html, targetLang } = req.body;
     if (!html || typeof html !== "string")
       return res.status(400).json({ ok: false, error: "No html provided" });
     const tl = (targetLang || "en").slice(0, 5);
+
+    const cacheKey = crypto
+      .createHash("sha1")
+      .update(`${tl}::${html}`)
+      .digest("hex");
+    const hit = await get("SELECT translated FROM translation_cache WHERE cache_key=?", [
+      cacheKey,
+    ]);
+    if (hit) return res.json({ ok: true, translated: hit.translated, detectedLang: "auto", cached: true });
 
     // Split long text into chunks (Google Translate limit ~5000 chars per request)
     const MAX_CHUNK = 4500;
@@ -1336,28 +1602,19 @@ app.post("/api/translate", async (req, res) => {
     }
 
     const translated = [];
-    for (const chunk of chunks) {
-      const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${encodeURIComponent(tl)}&dt=t&dj=1&q=${encodeURIComponent(chunk)}`;
-      const resp = await fetch(url, {
-        headers: { "User-Agent": "Mozilla/5.0" },
-      });
-      if (!resp.ok) throw new Error(`Translation API returned ${resp.status}`);
-      const data = await resp.json();
-      const text = (data.sentences || []).map((s) => s.trans).join("");
-      translated.push(text);
+    for (let i = 0; i < chunks.length; i++) {
+      if (i) await _sleep(350); // pace requests so the free tier doesn't 429
+      translated.push(await _translateChunk(chunks[i], tl));
     }
 
-    const detectedLang = (() => {
-      try {
-        const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${encodeURIComponent(tl)}&dt=t&dj=1&q=${encodeURIComponent(html.slice(0, 200))}`;
-        // We already fetched, use the first chunk's result
-        return "auto";
-      } catch {
-        return "auto";
-      }
-    })();
-
-    res.json({ ok: true, translated: translated.join(""), detectedLang });
+    const joined = translated.join("");
+    await run("INSERT OR REPLACE INTO translation_cache(cache_key,lang,translated,created_at) VALUES(?,?,?,?)", [
+      cacheKey,
+      tl,
+      joined,
+      new Date().toISOString(),
+    ]);
+    res.json({ ok: true, translated: joined, detectedLang: "auto" });
   } catch (e) {
     console.error("Translation error:", e.message);
     res.status(500).json({ ok: false, error: e.message });

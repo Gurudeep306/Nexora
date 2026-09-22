@@ -1,26 +1,29 @@
 @import 'tailwindcss';
 
 @theme {
-  /* ── Nexora synthwave palette ── */
-  --color-background: #111114;
-  --color-surface: #19191e;
-  --color-surface-2: #23232b;
-  --color-muted: #2b2b34;
-  --color-border: #383840;
-  --color-border-glow: #4c1d95;
+  /* ── Nexora "Refined Synthwave" palette ──
+     Deep ink surfaces, hairline borders, neon used as an accent — not everywhere. */
+  --color-background: #09090d;
+  --color-surface: #111117;
+  --color-surface-2: #18181f;
+  --color-surface-3: #202029;
+  --color-muted: #1f1f28;
+  --color-border: #25252f;
+  --color-border-strong: #353542;
+  --color-border-glow: #5b3fbf;
 
-  --color-foreground: #e2e8f0;
-  --color-foreground-dim: #94a3b8;
-  --color-foreground-faint: #9292a3;
+  --color-foreground: #eeeef3;
+  --color-foreground-dim: #a3a3b3;
+  --color-foreground-faint: #80808f;
 
-  --color-primary: #7c3aed;
-  --color-primary-bright: #a78bfa;
+  --color-primary: #8b5cf6;
+  --color-primary-bright: #c4b5fd;
   --color-on-primary: #ffffff;
   --color-secondary: #a78bfa;
   --color-accent: #f43f5e;
   --color-cyan: #22d3ee;
   --color-destructive: #ef4444;
-  --color-ring: #7c3aed;
+  --color-ring: #8b5cf6;
 
   /* verdict / status */
   --color-success: #34d399;
@@ -32,10 +35,15 @@
   --color-streak: #fb923c;
   --color-gold: #facc15;
 
-  /* fonts */
-  --font-display: 'Russo One', sans-serif;
-  --font-body: 'Chakra Petch', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  /* fonts — Space Grotesk headings, Geist UI text, Russo One only for the wordmark */
+  --font-display: 'Space Grotesk Variable', 'Geist Variable', sans-serif;
+  --font-body: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-brand: 'Russo One', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* elevation */
+  --shadow-card: inset 0 1px 0 0 rgb(255 255 255 / 0.04), 0 1px 2px rgb(0 0 0 / 0.4), 0 12px 32px -16px rgb(0 0 0 / 0.7);
+  --shadow-pop: inset 0 1px 0 0 rgb(255 255 255 / 0.06), 0 16px 48px -12px rgb(0 0 0 / 0.8), 0 0 0 1px rgb(255 255 255 / 0.04);
 
   /* motion */
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -80,7 +88,6 @@
 
   * {
     border-color: var(--color-border);
-    letter-spacing: 0 !important;
   }
 
   html {
@@ -91,8 +98,9 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-body);
-    font-size: 16px;
-    line-height: 1.5;
+    font-size: 15px;
+    line-height: 1.55;
+    font-feature-settings: 'ss01', 'cv11';
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
@@ -125,6 +133,7 @@
 
   h1, h2, h3 {
     font-family: var(--font-display);
+    letter-spacing: -0.015em;
     overflow-wrap: anywhere;
   }
 
@@ -150,42 +159,65 @@
 }
 
 @utility glow-text {
-  text-shadow:
-    0 0 8px color-mix(in srgb, var(--color-primary-bright) 70%, transparent),
-    0 0 24px color-mix(in srgb, var(--color-primary) 45%, transparent);
+  text-shadow: 0 0 20px color-mix(in srgb, var(--color-primary) 35%, transparent);
 }
 
 @utility glow-accent-text {
-  text-shadow:
-    0 0 8px color-mix(in srgb, var(--color-accent) 70%, transparent),
-    0 0 24px color-mix(in srgb, var(--color-accent) 40%, transparent);
+  text-shadow: 0 0 20px color-mix(in srgb, var(--color-accent) 35%, transparent);
 }
 
+/* Soft neon ring — used for selected / primary states only. */
 @utility glow-box {
   box-shadow:
-    0 0 12px color-mix(in srgb, var(--color-primary) 35%, transparent),
-    0 0 40px color-mix(in srgb, var(--color-primary) 15%, transparent);
+    0 0 0 1px color-mix(in srgb, var(--color-primary) 40%, transparent),
+    0 8px 28px -10px color-mix(in srgb, var(--color-primary) 55%, transparent);
 }
 
 @utility glow-box-accent {
   box-shadow:
-    0 0 12px color-mix(in srgb, var(--color-accent) 35%, transparent),
-    0 0 40px color-mix(in srgb, var(--color-accent) 15%, transparent);
+    0 0 0 1px color-mix(in srgb, var(--color-accent) 40%, transparent),
+    0 8px 28px -10px color-mix(in srgb, var(--color-accent) 55%, transparent);
 }
 
+/* The base surface every card sits on. */
 @utility card-neon {
-  background: var(--color-surface);
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 0.028), rgb(255 255 255 / 0.008)),
+    var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 0.5rem;
+  border-radius: 0.875rem;
+  box-shadow: var(--shadow-card);
   position: relative;
   transition: border-color 200ms ease, box-shadow 200ms ease, transform 200ms var(--ease-spring);
 }
 
+@utility glass {
+  background: color-mix(in srgb, var(--color-surface) 72%, transparent);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid rgb(255 255 255 / 0.06);
+}
+
+@utility pop-surface {
+  background: color-mix(in srgb, var(--color-surface-2) 92%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--color-border-strong);
+  border-radius: 0.75rem;
+  box-shadow: var(--shadow-pop);
+}
+
 @utility grid-bg {
   background-image:
-    linear-gradient(color-mix(in srgb, var(--color-border-glow) 22%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in srgb, var(--color-border-glow) 22%, transparent) 1px, transparent 1px);
-  background-size: 40px 40px;
+    linear-gradient(rgb(255 255 255 / 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.035) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse at 50% 0%, black 20%, transparent 75%);
+}
+
+@utility dot-bg {
+  background-image: radial-gradient(rgb(255 255 255 / 0.07) 1px, transparent 1px);
+  background-size: 22px 22px;
 }
 
 @utility scanlines {
@@ -199,14 +231,228 @@
   color: transparent;
 }
 
+/* Headline text that fades from white into the dim tone (Linear / Vercel style). */
+@utility text-heading-fade {
+  background: linear-gradient(180deg, #fff 30%, color-mix(in srgb, var(--color-foreground) 55%, transparent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility text-shimmer {
+  background: linear-gradient(110deg, var(--color-foreground-dim) 35%, #fff 50%, var(--color-foreground-dim) 65%);
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: var(--animate-shimmer);
+}
+
+/* Cursor-following highlight; JS sets --mx / --my on the element. */
+@utility spotlight {
+  background-image: radial-gradient(
+    420px circle at var(--mx, -999px) var(--my, -999px),
+    color-mix(in srgb, var(--color-primary) 10%, transparent),
+    transparent 45%
+  );
+}
+
+@utility hairline-top {
+  background-image: linear-gradient(90deg, transparent, color-mix(in srgb, var(--color-primary-bright) 55%, transparent), transparent);
+  background-size: 100% 1px;
+  background-repeat: no-repeat;
+}
+
 @utility skeleton {
   background: linear-gradient(
     90deg,
     var(--color-muted) 25%,
-    var(--color-surface-2) 50%,
+    var(--color-surface-3) 50%,
     var(--color-muted) 75%
   );
   background-size: 200% 100%;
   animation: var(--animate-shimmer);
   border-radius: 0.5rem;
+}
+
+@utility select-chevron {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' fill='none' stroke='%2380808f' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-size: 14px;
+  background-position: right 0.7rem center;
+  background-repeat: no-repeat;
+}
+
+/* App-wide ambient light behind everything. */
+.app-ambient {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(900px 520px at 12% -8%, color-mix(in srgb, var(--color-primary) 13%, transparent), transparent 70%),
+    radial-gradient(700px 480px at 100% 110%, color-mix(in srgb, var(--color-cyan) 7%, transparent), transparent 70%);
+}
+.app-ambient::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* sonner toasts in Nexora style */
+[data-sonner-toaster] [data-sonner-toast] {
+  font-family: var(--font-body);
+}
+
+@keyframes pop-in {
+  from { opacity: 0; transform: scale(0.96) translateY(-4px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes tip-in {
+  from { opacity: 0; transform: translateY(2px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Scraped problem statements (Codeforces / AtCoder / …) ───────────────
+   Source sites ship bare semantic HTML; without these rules statements
+   render as an unstyled wall of text. */
+.statement-html {
+  overflow-wrap: anywhere;
+}
+.statement-html p {
+  margin: 0.55em 0;
+}
+.statement-html h1,
+.statement-html h2,
+.statement-html h3,
+.statement-html h4 {
+  font-family: var(--font-display);
+  color: var(--color-foreground);
+  margin: 1em 0 0.4em;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.statement-html ul,
+.statement-html ol {
+  margin: 0.55em 0;
+  padding-left: 1.4em;
+}
+.statement-html ul {
+  list-style: disc;
+}
+.statement-html ol {
+  list-style: decimal;
+}
+.statement-html li {
+  margin: 0.25em 0;
+}
+.statement-html pre {
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: 0.4rem;
+  padding: 0.6rem 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--color-foreground);
+  overflow-x: auto;
+  margin: 0.55em 0;
+  white-space: pre;
+}
+.statement-html code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--color-surface-2);
+  border-radius: 0.25rem;
+  padding: 0.1em 0.35em;
+}
+.statement-html table {
+  border-collapse: collapse;
+  margin: 0.6em 0;
+  font-size: 0.85em;
+}
+.statement-html td,
+.statement-html th {
+  border: 1px solid var(--color-border);
+  padding: 0.35em 0.6em;
+}
+.statement-html img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.4rem;
+  margin: 0.4em 0;
+  background: #fff;
+}
+.statement-html a {
+  color: var(--color-cyan);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.statement-html blockquote {
+  border-left: 3px solid var(--color-border-glow);
+  padding-left: 0.8em;
+  margin: 0.6em 0;
+  color: var(--color-foreground-dim);
+}
+/* Codeforces TeX helper classes */
+.statement-html .tex-font-style-tt {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+.statement-html .tex-font-style-it {
+  font-style: italic;
+  font-family: Georgia, 'Times New Roman', serif;
+}
+.statement-html .tex-font-style-bf {
+  font-weight: 700;
+}
+.statement-html .tex-span {
+  font-family: Georgia, 'Times New Roman', serif;
+}
+/* KaTeX placeholders + rendered math */
+.statement-html .nx-math-block {
+  margin: 0.7em 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.2em 0;
+}
+.statement-html .nx-math-inline {
+  white-space: nowrap;
+}
+.statement-html .katex {
+  font-size: 1.02em;
+  color: var(--color-foreground);
+}
+
+/* ── Editor error-lens diagnostics (CodeEditor decorations) ── */
+.nx-diag-line-error {
+  background: color-mix(in srgb, var(--color-destructive) 9%, transparent);
+}
+.nx-diag-line-warn {
+  background: color-mix(in srgb, var(--color-warning) 9%, transparent);
+}
+.nx-diag-glyph-error::before,
+.nx-diag-glyph-warn::before {
+  content: '';
+  display: block;
+  width: 7px;
+  height: 7px;
+  margin: 0.55em auto 0;
+  border-radius: 50%;
+}
+.nx-diag-glyph-error::before {
+  background: var(--color-destructive);
+  box-shadow: 0 0 6px var(--color-destructive);
+}
+.nx-diag-glyph-warn::before {
+  background: var(--color-warning);
+  box-shadow: 0 0 6px var(--color-warning);
+}
+
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
 }

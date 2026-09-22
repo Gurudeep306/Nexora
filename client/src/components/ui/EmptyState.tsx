@@ -18,13 +18,14 @@ export function EmptyState({
   return (
     <div className={cn('flex flex-col items-center justify-center gap-3 px-6 py-14 text-center', className)}>
       {icon && (
-        <div className="flex size-14 items-center justify-center rounded-2xl border border-border-glow bg-surface text-primary-bright [&_svg]:size-6">
+        <div className="relative flex size-14 items-center justify-center rounded-2xl border border-white/[0.08] bg-gradient-to-b from-surface-3 to-surface text-primary-bright shadow-[inset_0_1px_0_rgb(255_255_255/0.06),0_10px_30px_-12px_rgb(139_92_246/0.5)] [&_svg]:size-6">
+          <span aria-hidden="true" className="absolute -inset-4 -z-10 rounded-full bg-primary/10 blur-2xl" />
           {icon}
         </div>
       )}
       <div>
-        <p className="font-display text-sm tracking-wider text-foreground">{title}</p>
-        {description && <p className="mx-auto mt-1 max-w-sm text-xs text-foreground-dim">{description}</p>}
+        <p className="font-display text-[15px] font-semibold text-foreground">{title}</p>
+        {description && <p className="mx-auto mt-1 max-w-sm text-[13px] text-foreground-dim">{description}</p>}
       </div>
       {action}
     </div>

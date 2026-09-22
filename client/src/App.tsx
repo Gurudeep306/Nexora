@@ -5,6 +5,7 @@ import { LoadingBlock } from '@/components/ui'
 import { useAuth } from '@/context/AuthContext'
 
 const AuthPage = lazy(() => import('@/pages/AuthPage'))
+const LandingPage = lazy(() => import('@/pages/LandingPage'))
 const HubPage = lazy(() => import('@/pages/HubPage'))
 const ProblemsPage = lazy(() => import('@/pages/ProblemsPage'))
 const SolvePage = lazy(() => import('@/pages/SolvePage'))
@@ -45,8 +46,8 @@ export default function App() {
       <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route path="/auth" element={<AuthPage />} />
+          <Route path="/" element={<LandingPage />} />
           <Route element={<RequireAuth><AppLayout /></RequireAuth>}>
-            <Route path="/" element={<Navigate to="/hub" replace />} />
             <Route path="/hub" element={<HubPage />} />
             <Route path="/problems" element={<ProblemsPage />} />
             <Route path="/solve/custom/:id" element={<SolvePage custom />} />

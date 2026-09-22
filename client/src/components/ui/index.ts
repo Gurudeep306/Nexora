@@ -14,3 +14,18 @@ export { RankGlyph, RIFT_TIERS, tierFor } from './RankGlyph'
 export { Confetti } from './Confetti'
 export { StatCard } from './StatCard'
 export { PageHeader } from './PageHeader'
+export { AnimatedNumber } from './AnimatedNumber'
+export { Kbd } from './Kbd'
+export {
+  Menu,
+  MenuTrigger,
+  MenuContent,
+  MenuItem,
+  MenuLabel,
+  MenuSeparator,
+  MenuGroup,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverClose,
+} from './Menu'

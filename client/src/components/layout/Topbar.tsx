@@ -1,56 +1,101 @@
-import { Menu, Search, Flame, Zap } from 'lucide-react'
+import { Link, useLocation } from 'react-router-dom'
+import { ChevronRight, Flame, Menu, Search, Zap } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
-import { Tooltip } from '@/components/ui'
+import { AnimatedNumber, Avatar, Kbd, Tooltip } from '@/components/ui'
+import { navMeta } from '@/config/nav'
 import { Notifications } from './Notifications'
 import { openCommandPalette } from './CommandPalette'
+import { UserMenu } from './UserMenu'
 
 const IS_MAC = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform)
 
 export function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
   const { user } = useAuth()
+  const { pathname } = useLocation()
+  const meta = navMeta(pathname)
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-border bg-background/80 px-4 backdrop-blur-md md:px-6">
+    <header className="sticky top-0 z-30 flex h-14 items-center gap-2 border-b border-white/[0.05] bg-background/70 px-3 backdrop-blur-xl backdrop-saturate-150 md:px-6">
       <button
         onClick={onMenuClick}
         aria-label="Open navigation"
-        className="cursor-pointer rounded-lg p-2 text-foreground-dim transition-colors hover:bg-surface-2 hover:text-foreground lg:hidden"
+        className="flex size-9 cursor-pointer items-center justify-center rounded-lg text-foreground-dim transition-colors hover:bg-white/[0.05] hover:text-foreground lg:hidden"
       >
         <Menu className="size-5" />
       </button>
+
+      {/* Breadcrumbs */}
+      <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-1.5 text-[13px]">
+        {meta.section && (
+          <>
+            <span className="hidden text-foreground-faint sm:inline">{meta.section}</span>
+            <ChevronRight className="hidden size-3.5 text-foreground-faint/60 sm:inline" aria-hidden="true" />
+          </>
+        )}
+        <span className="truncate font-medium text-foreground" aria-current="page">
+          {meta.label}
+        </span>
+      </nav>
 
       <button
         type="button"
         onClick={openCommandPalette}
         aria-label="Search problems and pages"
         aria-keyshortcuts="Control+K Meta+K /"
-        className="group relative flex h-9 min-w-0 max-w-md flex-1 cursor-pointer items-center gap-2 rounded-lg border border-border bg-surface pr-2 pl-3 text-left text-sm text-foreground-faint transition-colors hover:border-primary/60 hover:text-foreground-dim"
+        className="group mx-auto hidden h-8 w-full max-w-sm cursor-pointer items-center gap-2 rounded-lg border border-white/[0.06] bg-white/[0.025] pr-1.5 pl-3 text-left text-[13px] text-foreground-faint transition-colors hover:border-white/10 hover:bg-white/[0.04] hover:text-foreground-dim md:flex"
       >
-        <Search className="size-4 shrink-0" aria-hidden="true" />
+        <Search className="size-3.5 shrink-0" aria-hidden="true" />
         <span className="min-w-0 flex-1 truncate">Search problems, pages, actions…</span>
-        <kbd className="hidden shrink-0 rounded border border-border bg-surface-2 px-1.5 py-0.5 font-mono text-[10px] text-foreground-faint group-hover:border-primary/50 sm:block">
-          {IS_MAC ? '⌘' : 'Ctrl'} K
-        </kbd>
+        <span className="flex gap-0.5">
+          <Kbd>{IS_MAC ? '⌘' : 'Ctrl'}</Kbd>
+          <Kbd>K</Kbd>
+        </span>
       </button>
 
-      <div className="ml-auto flex items-center gap-1.5">
+      <div className="ml-auto flex items-center gap-1 md:ml-0">
+        <button
+          onClick={openCommandPalette}
+          aria-label="Search"
+          className="flex size-9 cursor-pointer items-center justify-center rounded-lg text-foreground-dim hover:bg-white/[0.05] md:hidden"
+        >
+          <Search className="size-[17px]" />
+        </button>
         {user?.streak != null && user.streak > 0 && (
-          <Tooltip label={`${user.streak}-day streak`}>
-            <span className="flex items-center gap-1 rounded-lg border border-streak/30 bg-streak/10 px-2.5 py-1.5 text-xs font-bold text-streak tabular-nums">
+          <Tooltip label={`${user.streak}-day streak — keep it alive`} side="bottom">
+            <span className="flex h-8 items-center gap-1 rounded-lg border border-streak/20 bg-streak/[0.08] px-2 text-xs font-semibold text-streak tabular-nums">
               <Flame className="size-3.5" />
               {user.streak}
             </span>
           </Tooltip>
         )}
         {user?.xp != null && (
-          <Tooltip label="Total XP">
-            <span className="hidden items-center gap-1 rounded-lg border border-primary/30 bg-primary/10 px-2.5 py-1.5 text-xs font-bold text-primary-bright tabular-nums sm:flex">
+          <Tooltip label="Total XP" side="bottom">
+            <Link
+              to="/analytics"
+              className="hidden h-8 items-center gap-1 rounded-lg border border-primary/20 bg-primary/[0.08] px-2 text-xs font-semibold text-primary-bright tabular-nums transition-colors hover:border-primary/40 sm:flex"
+            >
               <Zap className="size-3.5" />
-              {user.xp.toLocaleString()}
-            </span>
+              <AnimatedNumber value={user.xp} />
+            </Link>
           </Tooltip>
         )}
         <Notifications />
+        {user && (
+          <div className="lg:hidden">
+            <UserMenu side="bottom" align="end">
+              <button aria-label="Account menu" className="ml-0.5 cursor-pointer rounded-full">
+                <Avatar
+                  seed={user.username}
+                  avatar={user.avatar}
+                  src={typeof user.avatar_url === 'string' ? user.avatar_url : undefined}
+                  name={user.username}
+                  size="sm"
+                  ring={false}
+                />
+              </button>
+            </UserMenu>
+          </div>
+        )}
       </div>
     </header>
   )

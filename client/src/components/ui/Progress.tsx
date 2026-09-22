@@ -22,7 +22,7 @@ export function Progress({
       aria-valuenow={value}
       aria-valuemin={0}
       aria-valuemax={max}
-      className={cn('h-2 w-full overflow-hidden rounded-full bg-muted', className)}
+      className={cn('h-1.5 w-full overflow-hidden rounded-full bg-white/[0.06]', className)}
     >
       <div
         className={cn('h-full rounded-full bg-gradient-to-r from-primary to-primary-bright transition-[width] duration-500 ease-out', barClassName)}
@@ -37,7 +37,7 @@ export function XpBar({ xp, nextLevelXp, level, levelName }: { xp: number; nextL
   return (
     <div className="space-y-1.5">
       <div className="flex items-baseline justify-between text-xs">
-        <span className="font-display tracking-wider text-primary-bright">
+        <span className="font-display font-semibold text-primary-bright">
           {level != null && <>LVL {level} · </>}
           {levelName ?? 'Rift Walker'}
         </span>
@@ -45,11 +45,13 @@ export function XpBar({ xp, nextLevelXp, level, levelName }: { xp: number; nextL
           {xp.toLocaleString()} / {nextLevelXp.toLocaleString()} XP
         </span>
       </div>
-      <div className="h-2.5 w-full overflow-hidden rounded-full bg-muted border border-border">
+      <div className="relative h-2 w-full overflow-hidden rounded-full bg-white/[0.06]">
         <div
-          className="h-full rounded-full bg-gradient-to-r from-primary via-primary-bright to-cyan transition-[width] duration-700 ease-out"
-          style={{ width: `${pct}%`, boxShadow: '0 0 10px rgba(124,58,237,0.7)' }}
-        />
+          className="relative h-full overflow-hidden rounded-full bg-gradient-to-r from-primary via-primary-bright to-cyan transition-[width] duration-700 ease-out"
+          style={{ width: `${pct}%`, boxShadow: '0 0 12px rgb(139 92 246 / 0.55)' }}
+        >
+          <span aria-hidden="true" className="absolute inset-0 animate-shimmer bg-[linear-gradient(110deg,transparent_35%,rgb(255_255_255/0.35)_50%,transparent_65%)] bg-[length:200%_100%]" />
+        </div>
       </div>
     </div>
   )

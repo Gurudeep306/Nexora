@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
-import { BrainCircuit, CheckCircle2, Code2, Globe2, Swords, Trophy, Zap } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { BrainCircuit, CheckCircle2, Code2, Globe2, Swords, Trophy } from 'lucide-react'
+import { RiftBackground } from '@/components/fx/RiftBackground'
+import { LogoMark, Wordmark } from '@/components/brand/Logo'
 import { api } from '@/lib/api'
 import { Avatar, RankGlyph, RIFT_TIERS } from '@/components/ui'
 
@@ -45,7 +48,7 @@ while (!pq.isEmpty()) {
   },
 ]
 
-function TypingEditor() {
+export function TypingEditor() {
   const reduce = useReducedMotion()
   const [idx, setIdx] = useState(0)
   const [chars, setChars] = useState(0)
@@ -72,8 +75,8 @@ function TypingEditor() {
   }, [chars, done, reduce, snip.code.length])
 
   return (
-    <div className="card-neon overflow-hidden border-border-glow/70 shadow-[0_20px_60px_-20px_rgba(124,58,237,0.45)]">
-      <div className="flex items-center gap-2 border-b border-border bg-surface-2/70 px-4 py-2.5">
+    <div className="glass overflow-hidden rounded-2xl shadow-[0_30px_80px_-24px_rgb(139_92_246/0.55)]">
+      <div className="flex items-center gap-2 border-b border-white/[0.06] bg-black/20 px-4 py-2.5">
         <span className="size-2.5 rounded-full bg-accent/80" />
         <span className="size-2.5 rounded-full bg-warning/80" />
         <span className="size-2.5 rounded-full bg-success/80" />
@@ -86,7 +89,7 @@ function TypingEditor() {
           {!done && <span className="ml-px inline-block h-4 w-1.5 animate-pulse bg-primary-bright align-middle" />}
         </code>
       </pre>
-      <div className="h-11 border-t border-border bg-surface/80 px-4">
+      <div className="h-11 border-t border-white/[0.06] bg-black/20 px-4">
         <AnimatePresence mode="wait">
           {done ? (
             <motion.div
@@ -121,7 +124,7 @@ function TypingEditor() {
   )
 }
 
-function RankLadder() {
+export function RankLadder() {
   const reduce = useReducedMotion()
   const [active, setActive] = useState(0)
   useEffect(() => {
@@ -189,21 +192,15 @@ export function AuthShowcase() {
   return (
     <div className="relative flex h-full flex-col justify-between gap-8 overflow-hidden p-10 xl:p-14">
       {/* ambient layers */}
-      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-        <div className="grid-bg absolute inset-0 opacity-60" />
-        <div className="absolute -top-32 -left-24 size-[28rem] rounded-full bg-primary/25 blur-[110px]" />
-        <div className="absolute -right-20 -bottom-24 size-96 rounded-full bg-accent/20 blur-[110px]" />
-        <div className="absolute top-1/2 left-1/3 size-72 rounded-full bg-cyan/10 blur-[100px]" />
-      </div>
+      <RiftBackground intensity={0.75} />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-background/30 via-transparent to-background/70" aria-hidden="true" />
 
       <div className="relative">
-        <div className="flex items-center gap-3">
-          <div className="flex size-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-accent glow-box">
-            <Zap className="size-6 text-white" aria-hidden="true" />
-          </div>
-          <span className="font-display text-2xl tracking-widest text-foreground glow-text">NEXORA</span>
-        </div>
-        <h1 className="mt-8 max-w-lg font-display text-3xl leading-tight text-foreground xl:text-4xl">
+        <Link to="/" className="flex w-fit items-center gap-3">
+          <LogoMark size={36} className="drop-shadow-[0_6px_18px_rgb(139_92_246/0.6)]" />
+          <Wordmark className="text-xl" />
+        </Link>
+        <h1 className="text-heading-fade mt-8 max-w-lg font-display text-3xl leading-tight font-semibold tracking-tight xl:text-[40px]">
           Master the <span className="text-gradient">Rift</span>.
           <br />
           Conquer the leaderboard.

@@ -49,15 +49,8 @@ import {
   type CustomProblemResponse,
 } from '@/components/solve/types'
 
-const TEMPLATES: Record<string, string> = {
-  cpp: '#include <bits/stdc++.h>\nusing namespace std;\n\nint main() {\n    ios::sync_with_stdio(false);\n    cin.tie(nullptr);\n\n    return 0;\n}\n',
-  c: '#include <stdio.h>\n\nint main() {\n\n    return 0;\n}\n',
-  python: 'import sys\n\ndef main():\n    data = sys.stdin.read().split()\n\nif __name__ == "__main__":\n    main()\n',
-  java: 'import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n',
-  javascript: 'const input = require("fs").readFileSync(0, "utf8").trim();\n\n',
-}
-
-const DEFAULT_CODE = (lang: string) => TEMPLATES[lang] ?? ''
+import { DEFAULT_CODE } from '@/lib/templates'
+import { parseDiagnostics } from '@/lib/diagnostics'
 
 /* Workshop statements are "plain text or HTML" — render both safely */
 function richText(raw: string | undefined): string {
@@ -428,6 +421,15 @@ export default function SolvePage({ custom = false }: { custom?: boolean }) {
     return 'The code does not produce the expected output on the tests.'
   }, [judgeResult, runResult])
 
+  /* Line-accurate markers for the editor gutter (compile errors + runtime crashes) */
+  const diagnostics = useMemo(() => {
+    if (judgeResult?.compileError) return parseDiagnostics(judgeResult.compileError)
+    if (runResult && runResult.verdict !== 'OK') {
+      return parseDiagnostics([runResult.error, runResult.stderr].filter(Boolean).join('\n'))
+    }
+    return []
+  }, [judgeResult, runResult])
+
   const handleAiFix = useCallback(async () => {
     if (fixing || !code.trim()) return
     setFixing(true)
@@ -743,6 +745,7 @@ export default function SolvePage({ custom = false }: { custom?: boolean }) {
               onSubmitShortcut={() => void handleSubmit()}
               aiInline={aiInline}
               onRecord={recordChange}
+              diagnostics={diagnostics}
             />
           </div>
           {bottomPanel}

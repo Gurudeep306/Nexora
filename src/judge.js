@@ -98,7 +98,9 @@ function _wandboxRunOnce(code, input, lang) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Connection': 'keep-alive' },
       agent: wandboxAgent,
-      timeout: 30000,
+      // Cold remote compiles (Go, Rust, Kotlin…) routinely take 20-40s;
+      // a 30s cap turned slow-but-fine runs into bogus TLEs.
+      timeout: 60000,
     }, res => {
       let data = '';
       res.on('data', c => data += c);
@@ -176,7 +178,7 @@ function kotlinPlaygroundRun(code, input) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Connection': 'keep-alive' },
       agent: kotlinAgent,
-      timeout: 30000,
+      timeout: 60000,
     }, res => {
       let data = '';
       res.on('data', c => data += c);
@@ -269,7 +271,7 @@ function normalizeCpp(code) {
 #include <complex>
 #include <cstdio>
 #include <cstdlib>`;
-    code = headers + '\n' + code;
+    code = headers + '\n#line 1 "solution.cpp"\n' + code;
   }
   return code;
 }
@@ -305,8 +307,9 @@ function compileCpp(code) {
 function compileJava(code) {
   return new Promise((resolve, reject) => {
     const id = crypto.randomBytes(8).toString('hex');
-    // Extract public class name or use Main
-    const classMatch = code.match(/public\s+class\s+(\w+)/);
+    // javac requires the file name to match the public class; when there is no
+    // public class, fall back to whichever class the source actually declares.
+    const classMatch = code.match(/public\s+class\s+(\w+)/) || code.match(/\bclass\s+(\w+)/);
     const className = classMatch ? classMatch[1] : 'Main';
     const dir = path.join(TMP, `arena_java_${id}`);
     fs.mkdirSync(dir, { recursive: true });
@@ -426,13 +429,20 @@ function compileKotlin(code) {
     fs.writeFileSync(src, code);
     const compiler = spawn('kotlinc', [src, '-include-runtime', '-d', jar]);
     let stderr = '';
+    // kotlinc -include-runtime is slow (30-90s cold); don't hang forever.
+    const compileTimeout = setTimeout(() => {
+      compiler.kill('SIGKILL');
+      try { fs.unlinkSync(src); } catch {}
+      reject({ verdict: 'CE', message: 'Kotlin compile timed out' });
+    }, 120000);
     compiler.stderr.on('data', d => { stderr += d; });
     compiler.on('close', exitCode => {
+      clearTimeout(compileTimeout);
       try { fs.unlinkSync(src); } catch {}
       if (exitCode !== 0) reject({ verdict: 'CE', message: stderr.trim() });
       else resolve(jar);
     });
-    compiler.on('error', () => reject({ verdict: 'CE', message: 'Kotlin compiler not found (kotlinc)' }));
+    compiler.on('error', () => { clearTimeout(compileTimeout); reject({ verdict: 'CE', message: 'Kotlin compiler not found (kotlinc)' }); });
   });
 }
 
@@ -500,6 +510,7 @@ function compilePascal(code) {
 }
 
 /* Run a process (binary or interpreter) with stdin and optional custom time limit */
+const MAX_CAPTURE = 2 * 1024 * 1024; // runaway output must not eat the server's RAM
 function runProcess(cmd, args, input, timeLimitMs) {
   const limit = timeLimitMs || TIME_LIMIT;
   return new Promise(resolve => {
@@ -515,8 +526,11 @@ function runProcess(cmd, args, input, timeLimitMs) {
       proc.kill('SIGKILL');
     }, limit);
 
-    proc.stdout.on('data', d => { stdout += d; });
-    proc.stderr.on('data', d => { stderr += d; });
+    proc.stdout.on('data', d => { if (stdout.length < MAX_CAPTURE) stdout += d; });
+    proc.stderr.on('data', d => { if (stderr.length < MAX_CAPTURE) stderr += d; });
+    // Process can exit before we finish writing stdin (bad read pattern,
+    // early crash) — an unhandled EPIPE here would take the server down.
+    proc.stdin.on('error', () => {});
     proc.on('close', exitCode => {
       clearTimeout(timer);
       const timeMs = Date.now() - start;
@@ -534,8 +548,10 @@ function runProcess(cmd, args, input, timeLimitMs) {
       resolve({ stdout: '', stderr: notFound ? `RUNTIME_NOT_FOUND:${cmd}` : 'Execution error', exitCode: -1, timeMs: Date.now() - start, verdict: notFound ? 'RUNTIME_NOT_FOUND' : 'RE' });
     });
 
-    proc.stdin.write(input || '');
-    proc.stdin.end();
+    try {
+      proc.stdin.write(input || '');
+      proc.stdin.end();
+    } catch {}
   });
 }
 

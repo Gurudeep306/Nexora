@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Brain, Clock, Cpu, FileDown, GitCommitHorizontal, Languages, Loader2, ScrollText } from 'lucide-react'
 import { Badge, DifficultyBadge, LoadingBlock, Select, Tabs } from '@/components/ui'
 import { api } from '@/lib/api'
 import { sanitizeHtml } from '@/components/ailab/sanitize'
+import { prepareMathHtml, renderMathIn } from '@/lib/math'
 import { ThinkingPad } from './ThinkingPad'
 import { PlatformBadge, VerdictBadge } from '@/components/shared/PlatformBadge'
 import { cn, timeAgo } from '@/lib/utils'
@@ -40,7 +41,7 @@ function SpecSection({ title, html }: { title: string; html: string }) {
       <h3 className="font-display text-xs tracking-wider text-primary-bright uppercase">{title}</h3>
       <div
         className="statement-html mt-2 text-sm leading-relaxed text-foreground-dim"
-        dangerouslySetInnerHTML={{ __html: html }}
+        dangerouslySetInnerHTML={{ __html: prepareMathHtml(sanitizeHtml(html)) }}
       />
     </section>
   )
@@ -61,6 +62,11 @@ export function ProblemPanel({
   const [translated, setTranslated] = useState<{ lang: string; html: string } | null>(null)
   const [translating, setTranslating] = useState(false)
   const [translateError, setTranslateError] = useState<string | null>(null)
+  const statementRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    renderMathIn(statementRef.current)
+  }, [statement, translated, tab])
 
   const translate = async (lang: string) => {
     setTranslateError(null)
@@ -163,14 +169,16 @@ export function ProblemPanel({
                 )}
                 {translated ? (
                   <div
+                    ref={statementRef}
                     className="statement-html text-sm leading-relaxed text-foreground-dim [&_img]:max-w-full [&_pre]:overflow-x-auto [&_table]:w-full"
-                    dangerouslySetInnerHTML={{ __html: translated.html }}
+                    dangerouslySetInnerHTML={{ __html: prepareMathHtml(translated.html) }}
                   />
                 ) : (
                   <>
                     <div
+                      ref={statementRef}
                       className="statement-html text-sm leading-relaxed text-foreground-dim [&_img]:max-w-full [&_pre]:overflow-x-auto [&_table]:w-full"
-                      dangerouslySetInnerHTML={{ __html: statement.statement }}
+                      dangerouslySetInnerHTML={{ __html: prepareMathHtml(sanitizeHtml(statement.statement)) }}
                     />
                     <SpecSection title="Input" html={statement.inputSpec} />
                     <SpecSection title="Output" html={statement.outputSpec} />

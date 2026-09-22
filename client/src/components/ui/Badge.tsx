@@ -3,20 +3,20 @@ import type { HTMLAttributes } from 'react'
 import { cn } from '@/lib/utils'
 
 const badgeVariants = cva(
-  'inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[11px] font-semibold tracking-wide uppercase whitespace-nowrap [&_svg]:size-3',
+  'inline-flex items-center gap-1 rounded-md border px-1.5 py-px text-[10.5px] leading-[18px] font-semibold tracking-[0.04em] uppercase whitespace-nowrap [&_svg]:size-3',
   {
     variants: {
       variant: {
-        default: 'border-border bg-surface-2 text-foreground-dim',
-        primary: 'border-primary/50 bg-primary/15 text-primary-bright',
-        accent: 'border-accent/50 bg-accent/15 text-accent',
-        success: 'border-success/40 bg-success/10 text-success',
-        warning: 'border-warning/40 bg-warning/10 text-warning',
-        danger: 'border-destructive/40 bg-destructive/10 text-destructive',
-        info: 'border-info/40 bg-info/10 text-info',
-        cyan: 'border-cyan/40 bg-cyan/10 text-cyan',
-        gold: 'border-gold/40 bg-gold/10 text-gold',
-        outline: 'border-border-glow bg-transparent text-foreground',
+        default: 'border-white/[0.07] bg-white/[0.04] text-foreground-dim',
+        primary: 'border-primary/30 bg-primary/12 text-primary-bright',
+        accent: 'border-accent/30 bg-accent/10 text-[#fb7189]',
+        success: 'border-success/25 bg-success/[0.08] text-success',
+        warning: 'border-warning/25 bg-warning/[0.08] text-warning',
+        danger: 'border-destructive/25 bg-destructive/[0.08] text-[#f87171]',
+        info: 'border-info/25 bg-info/[0.08] text-info',
+        cyan: 'border-cyan/25 bg-cyan/[0.08] text-cyan',
+        gold: 'border-gold/25 bg-gold/[0.08] text-gold',
+        outline: 'border-border-strong bg-transparent text-foreground',
       },
     },
     defaultVariants: { variant: 'default' },

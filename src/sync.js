@@ -137,7 +137,12 @@ async function fetchAtcoderProblems() {
     for (const p of allProblems) {
       const model = models[p.id] || {};
       const difficulty = model.difficulty != null ? Math.max(0, Math.round(model.difficulty)) : 0;
-      // Map AtCoder difficulty to a rating-like scale
+      // kenkoooo difficulty is AtCoder-native: ≥400 is already rating-comparable,
+      // but the grey zone (<400) holds raw IRT values like 1 or 2 which make the
+      // shared 800-3500 filters useless. Stretch grey into 500-799 instead.
+      const rating = difficulty >= 400
+        ? difficulty
+        : Math.max(500, 800 - (400 - difficulty));
       const tags = [];
       if (p.id.includes('_a')) tags.push('implementation');
       else if (p.id.includes('_b')) tags.push('implementation', 'math');
@@ -151,7 +156,7 @@ async function fetchAtcoderProblems() {
         problem_id: p.id,
         title: p.title,
         url: `https://atcoder.jp/contests/${p.contest_id}/tasks/${p.id}`,
-        rating: difficulty,
+        rating,
         tags: JSON.stringify(tags),
         category: p.contest_id.replace(/\d+/g, '').replace(/_/g, ''),
       });

@@ -1,11 +1,8 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 // Self-hosted fonts (no Google Fonts request; works offline and under strict CSP)
-import '@fontsource/chakra-petch/300.css'
-import '@fontsource/chakra-petch/400.css'
-import '@fontsource/chakra-petch/500.css'
-import '@fontsource/chakra-petch/600.css'
-import '@fontsource/chakra-petch/700.css'
+import '@fontsource-variable/geist'
+import '@fontsource-variable/space-grotesk'
 import '@fontsource/russo-one/400.css'
 import '@fontsource/jetbrains-mono/400.css'
 import '@fontsource/jetbrains-mono/500.css'

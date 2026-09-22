@@ -14,10 +14,10 @@ import {
   ShieldCheck,
   UserRound,
   X,
-  Zap,
 } from 'lucide-react'
 import { Avatar, Button, useToast } from '@/components/ui'
 import { AuthShowcase } from '@/components/auth/AuthShowcase'
+import { LogoMark, Wordmark } from '@/components/brand/Logo'
 import { takeOAuthResult, useAuth } from '@/context/AuthContext'
 import { api, ApiError } from '@/lib/api'
 import { cn } from '@/lib/utils'
@@ -127,7 +127,9 @@ const inputClass =
   'h-12 w-full rounded-xl border border-border bg-surface-2/60 pr-11 pl-10 text-[15px] text-foreground placeholder:text-foreground-faint transition-[border-color,box-shadow] focus:border-primary focus:ring-4 focus:ring-primary/20 focus:outline-none aria-[invalid=true]:border-destructive'
 
 export default function AuthPage() {
-  const [mode, setMode] = useState<Mode>('login')
+  const [mode, setMode] = useState<Mode>(() =>
+    new URLSearchParams(window.location.search).get('mode') === 'register' ? 'register' : 'login',
+  )
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -253,7 +255,7 @@ export default function AuthPage() {
   return (
     <div className="grid min-h-dvh bg-background lg:grid-cols-[1.1fr_1fr]">
       {/* Showcase (desktop) */}
-      <aside className="relative hidden border-r border-border bg-surface/40 lg:block" aria-label="About Nexora">
+      <aside className="relative hidden border-r border-white/[0.06] lg:block" aria-label="About Nexora">
         <div className="sticky top-0 h-dvh">
           <AuthShowcase />
         </div>
@@ -274,15 +276,13 @@ export default function AuthPage() {
         >
           {/* Mobile brand */}
           <div className="mb-8 flex items-center gap-2.5 lg:hidden">
-            <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-accent glow-box">
-              <Zap className="size-5 text-white" aria-hidden="true" />
-            </div>
-            <span className="font-display text-xl tracking-widest text-foreground glow-text">NEXORA</span>
+            <LogoMark size={36} />
+            <Wordmark className="text-lg" />
           </div>
 
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h2 className="font-display text-3xl text-foreground">{title}</h2>
+              <h2 className="text-heading-fade font-display text-[30px] font-semibold tracking-tight">{title}</h2>
               <p className="mt-2 text-sm text-foreground-dim">{subtitle}</p>
             </div>
             <AnimatePresence>

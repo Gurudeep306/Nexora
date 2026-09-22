@@ -1,13 +1,19 @@
-import { useEffect, useId, useRef, type ReactNode } from 'react'
-import { createPortal } from 'react-dom'
+import type { ReactNode } from 'react'
+import { Dialog } from 'radix-ui'
 import { AnimatePresence, motion } from 'motion/react'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Button } from './Button'
 
+/**
+ * Dialog built on Radix (focus trap, scroll lock, Esc, aria) with a spring
+ * entrance. On phones it docks to the bottom like a native sheet.
+ */
 export function Modal({
   open,
   onClose,
   title,
+  description,
   children,
   className,
   size = 'md',
@@ -15,99 +21,71 @@ export function Modal({
   open: boolean
   onClose: () => void
   title?: ReactNode
+  description?: ReactNode
   children: ReactNode
   className?: string
   size?: 'sm' | 'md' | 'lg' | 'xl'
 }) {
-  const titleId = useId()
-  const dialogRef = useRef<HTMLDivElement>(null)
-  const closeRef = useRef(onClose)
-  closeRef.current = onClose
-  useEffect(() => {
-    if (!open) return
-    const previousFocus = document.activeElement as HTMLElement | null
-    const previousOverflow = document.body.style.overflow
-    const focusFrame = requestAnimationFrame(() => dialogRef.current?.focus())
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        e.preventDefault()
-        closeRef.current()
-      }
-      if (e.key !== 'Tab') return
-      const controls = Array.from(dialogRef.current?.querySelectorAll<HTMLElement>(
-        'button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex="0"]',
-      ) ?? []).filter((element) => element.getClientRects().length > 0)
-      const first = controls[0]
-      const last = controls.at(-1)
-      if (!first) {
-        e.preventDefault()
-      } else if (e.shiftKey && (document.activeElement === first || document.activeElement === dialogRef.current)) {
-        e.preventDefault()
-        last?.focus()
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault()
-        first.focus()
-      }
-    }
-    document.addEventListener('keydown', onKey)
-    document.body.style.overflow = 'hidden'
-    return () => {
-      document.removeEventListener('keydown', onKey)
-      cancelAnimationFrame(focusFrame)
-      document.body.style.overflow = previousOverflow
-      previousFocus?.focus()
-    }
-  }, [open])
+  const widths = { sm: 'sm:max-w-sm', md: 'sm:max-w-lg', lg: 'sm:max-w-2xl', xl: 'sm:max-w-4xl' }
 
-  const widths = { sm: 'max-w-sm', md: 'max-w-lg', lg: 'max-w-2xl', xl: 'max-w-4xl' }
-
-  return createPortal(
-    <AnimatePresence>
-      {open && (
-        <div className="fixed inset-0 z-1000 flex items-center justify-center p-4">
-          <motion.div
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.15 }}
-            onClick={onClose}
-          />
-          <motion.div
-            ref={dialogRef}
-            tabIndex={-1}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby={title ? titleId : undefined}
-            aria-label={title ? undefined : 'Dialog'}
-            className={cn(
-              'card-neon relative z-10 w-full border-border-glow glow-box max-h-[85vh] overflow-y-auto',
-              widths[size],
-              className,
-            )}
-            initial={{ opacity: 0, scale: 0.95, y: 12 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.97, y: 6 }}
-            transition={{ duration: 0.2, ease: [0.34, 1.56, 0.64, 1] }}
-          >
-            {title && (
-              <div className="flex items-center justify-between border-b border-border px-5 py-4">
-                <h2 id={titleId} className="min-w-0 break-words font-display text-base text-foreground">{title}</h2>
-                <button
-                  onClick={onClose}
-                  aria-label="Close dialog"
-                  className="cursor-pointer rounded-md p-1.5 text-foreground-dim transition-colors hover:bg-surface-2 hover:text-foreground"
+  return (
+    <Dialog.Root open={open} onOpenChange={(o) => !o && onClose()}>
+      <AnimatePresence>
+        {open && (
+          <Dialog.Portal forceMount>
+            <div className="fixed inset-0 z-1000 flex items-end justify-center sm:items-center sm:p-4">
+              <Dialog.Overlay asChild forceMount>
+                <motion.div
+                  className="absolute inset-0 bg-black/65 backdrop-blur-[6px]"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.18 }}
+                />
+              </Dialog.Overlay>
+              <Dialog.Content asChild forceMount>
+                <motion.div
+                  className={cn(
+                    'pop-surface relative z-10 flex max-h-[88vh] w-full flex-col overflow-hidden rounded-b-none bg-surface sm:rounded-2xl',
+                    'rounded-t-2xl',
+                    widths[size],
+                    className,
+                  )}
+                  initial={{ opacity: 0, y: 24, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 12, scale: 0.98, transition: { duration: 0.14 } }}
+                  transition={{ type: 'spring', stiffness: 420, damping: 34 }}
                 >
-                  <X className="size-4" />
-                </button>
-              </div>
-            )}
-            <div className="px-5 py-4">{children}</div>
-          </motion.div>
-        </div>
-      )}
-    </AnimatePresence>,
-    document.body,
+                  <span aria-hidden="true" className="hairline-top pointer-events-none absolute inset-x-0 top-0 h-px" />
+                  {title ? (
+                    <div className="flex items-start justify-between gap-4 border-b border-white/[0.06] px-5 py-4">
+                      <div className="min-w-0">
+                        <Dialog.Title className="min-w-0 font-display text-[17px] font-semibold break-words text-foreground">
+                          {title}
+                        </Dialog.Title>
+                        {description && (
+                          <Dialog.Description className="mt-1 text-[13px] text-foreground-dim">{description}</Dialog.Description>
+                        )}
+                      </div>
+                      <Dialog.Close
+                        aria-label="Close dialog"
+                        className="-mr-1.5 cursor-pointer rounded-md p-1.5 text-foreground-faint transition-colors hover:bg-white/[0.06] hover:text-foreground"
+                      >
+                        <X className="size-4" />
+                      </Dialog.Close>
+                    </div>
+                  ) : (
+                    <Dialog.Title className="sr-only">Dialog</Dialog.Title>
+                  )}
+                  {!description && <Dialog.Description className="sr-only">Dialog content</Dialog.Description>}
+                  <div className="overflow-y-auto px-5 py-4">{children}</div>
+                </motion.div>
+              </Dialog.Content>
+            </div>
+          </Dialog.Portal>
+        )}
+      </AnimatePresence>
+    </Dialog.Root>
   )
 }
 
@@ -132,25 +110,15 @@ export function ConfirmDialog({
 }) {
   return (
     <Modal open={open} onClose={onClose} title={title} size="sm">
-      <div className="space-y-4">
+      <div className="space-y-5">
         <div className="text-sm text-foreground-dim">{message}</div>
         <div className="flex justify-end gap-2">
-          <button
-            onClick={onClose}
-            className="h-9 cursor-pointer rounded-lg px-4 text-sm font-semibold text-foreground-dim transition-colors hover:bg-surface-2 hover:text-foreground"
-          >
+          <Button variant="ghost" onClick={onClose}>
             Cancel
-          </button>
-          <button
-            onClick={onConfirm}
-            disabled={loading}
-            className={cn(
-              'h-9 cursor-pointer rounded-lg px-4 text-sm font-semibold text-white transition-all active:scale-[0.97] disabled:opacity-50',
-              danger ? 'bg-destructive hover:brightness-110' : 'bg-primary glow-box hover:bg-primary-bright',
-            )}
-          >
-            {loading ? 'Working…' : confirmLabel}
-          </button>
+          </Button>
+          <Button variant={danger ? 'danger' : 'primary'} loading={loading} onClick={onConfirm}>
+            {confirmLabel}
+          </Button>
         </div>
       </div>
     </Modal>

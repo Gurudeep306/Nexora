@@ -82,3 +82,29 @@ export const ACCOUNT_ITEMS: NavItem[] = [
   { to: '/profile', label: 'Profile', icon: User },
   { to: '/settings', label: 'Settings', icon: Settings },
 ]
+
+/** Section + label for the current path — used by the topbar breadcrumbs. */
+export function navMeta(pathname: string): { section?: string; label: string } {
+  if (pathname.startsWith('/solve')) return { section: 'Play', label: 'Solve' }
+  if (pathname.startsWith('/profile/')) return { section: 'Players', label: decodeURIComponent(pathname.split('/')[2] ?? '') }
+  for (const sec of [...NAV_SECTIONS, CREATE_SECTION, { title: 'Account', items: ACCOUNT_ITEMS }]) {
+    const hit = sec.items.find((i) => pathname === i.to || pathname.startsWith(`${i.to}/`))
+    if (hit) return { section: sec.title, label: hit.label }
+  }
+  return { label: 'Nexora' }
+}
+
+/** Keyboard "g then x" shortcuts. */
+export const GO_SHORTCUTS: Record<string, string> = {
+  h: '/hub',
+  p: '/problems',
+  c: '/contests',
+  n: '/nexus',
+  a: '/analytics',
+  l: '/learn',
+  s: '/social',
+  b: '/bookmarks',
+  u: '/submissions',
+  i: '/ailab',
+  ',': '/settings',
+}

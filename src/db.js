@@ -510,6 +510,15 @@ async function initDb() {
     FOREIGN KEY (problem_rowid) REFERENCES problems(id)
   )`);
 
+  // Problem statements are static, so translations of them never expire.
+  // Caching keeps repeat requests off the (rate-limited) translation APIs.
+  await run(`CREATE TABLE IF NOT EXISTS translation_cache (
+    cache_key TEXT PRIMARY KEY,
+    lang TEXT NOT NULL,
+    translated TEXT NOT NULL,
+    created_at TEXT NOT NULL
+  )`);
+
   // AI Battle tracking
   await run(`CREATE TABLE IF NOT EXISTS ai_battles (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

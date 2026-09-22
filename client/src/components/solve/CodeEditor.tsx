@@ -1,8 +1,25 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import '@/lib/monaco'
 import Editor, { type BeforeMount, type OnMount } from '@monaco-editor/react'
+import type { editor as MonacoNs } from 'monaco-editor'
+import { initVimMode, type VimMode } from 'monaco-vim'
+import {
+  Minus,
+  Plus,
+  ClipboardCopy,
+  Columns2,
+  Download,
+  FileCode2,
+  Map as MapIcon,
+  Maximize2,
+  Minimize2,
+  Terminal,
+} from 'lucide-react'
 import { useApi } from '@/hooks/useApi'
 import { api } from '@/lib/api'
+import { cn } from '@/lib/utils'
+import { TEMPLATES, LANG_EXT } from '@/lib/templates'
+import type { Diag } from '@/lib/diagnostics'
 import type { ReplayEvent } from '@/components/submissions/replay'
 
 /* Maps backend language ids to Monaco language ids where they differ */
@@ -14,12 +31,18 @@ const MONACO_LANG: Record<string, string> = {
   scheme: 'scheme',
 }
 
-const NEXORA_THEME = 'nexora-dark'
+/* ── Themes ─────────────────────────────────────────────────────────── */
+interface ThemeDef {
+  label: string
+  base: 'vs-dark' | 'vs'
+  rules: { token: string; foreground: string; fontStyle?: string }[]
+  colors: Record<string, string>
+}
 
-const beforeMount: BeforeMount = (monaco) => {
-  monaco.editor.defineTheme(NEXORA_THEME, {
+const THEMES: Record<string, ThemeDef> = {
+  'nexora-dark': {
+    label: 'Nexora Dark',
     base: 'vs-dark',
-    inherit: true,
     rules: [
       { token: 'comment', foreground: '64748b', fontStyle: 'italic' },
       { token: 'keyword', foreground: 'c4b5fd' },
@@ -45,16 +68,152 @@ const beforeMount: BeforeMount = (monaco) => {
       'editorSuggestWidget.selectedBackground': '#27273b',
       'editorGutter.background': '#12122a',
     },
-  })
+  },
+  abyss: {
+    label: 'Abyss',
+    base: 'vs-dark',
+    rules: [
+      { token: 'comment', foreground: '546178', fontStyle: 'italic' },
+      { token: 'keyword', foreground: '82aaff' },
+      { token: 'string', foreground: 'c3e88d' },
+      { token: 'number', foreground: 'f78c6c' },
+      { token: 'type', foreground: 'ffcb6b' },
+      { token: 'function', foreground: '82aaff' },
+      { token: 'variable', foreground: 'd6deeb' },
+      { token: 'delimiter', foreground: '7d8bab' },
+    ],
+    colors: {
+      'editor.background': '#0a0e1a',
+      'editor.foreground': '#d6deeb',
+      'editorLineNumber.foreground': '#3b4a6b',
+      'editorLineNumber.activeForeground': '#82aaff',
+      'editor.selectionBackground': '#1d3b5377',
+      'editor.lineHighlightBackground': '#11224455',
+      'editorCursor.foreground': '#82aaff',
+      'editorIndentGuide.background1': '#1f2b47',
+      'editorWidget.background': '#0d1526',
+      'editorWidget.border': '#1d3b53',
+      'editorSuggestWidget.background': '#0d1526',
+      'editorSuggestWidget.selectedBackground': '#1d3b53',
+      'editorGutter.background': '#0a0e1a',
+    },
+  },
+  monokai: {
+    label: 'Monokai',
+    base: 'vs-dark',
+    rules: [
+      { token: 'comment', foreground: '75715e', fontStyle: 'italic' },
+      { token: 'keyword', foreground: 'f92672' },
+      { token: 'string', foreground: 'e6db74' },
+      { token: 'number', foreground: 'ae81ff' },
+      { token: 'type', foreground: '66d9ef', fontStyle: 'italic' },
+      { token: 'function', foreground: 'a6e22e' },
+      { token: 'variable', foreground: 'f8f8f2' },
+      { token: 'delimiter', foreground: 'f8f8f2' },
+    ],
+    colors: {
+      'editor.background': '#272822',
+      'editor.foreground': '#f8f8f2',
+      'editorLineNumber.foreground': '#6d6a5f',
+      'editorLineNumber.activeForeground': '#f8f8f2',
+      'editor.selectionBackground': '#49483e',
+      'editor.lineHighlightBackground': '#3e3d32',
+      'editorCursor.foreground': '#f8f8f0',
+      'editorIndentGuide.background1': '#403e3a',
+      'editorWidget.background': '#1e1f1c',
+      'editorWidget.border': '#49483e',
+      'editorSuggestWidget.background': '#1e1f1c',
+      'editorSuggestWidget.selectedBackground': '#49483e',
+      'editorGutter.background': '#272822',
+    },
+  },
+  light: {
+    label: 'Daylight',
+    base: 'vs',
+    rules: [
+      { token: 'comment', foreground: '008000', fontStyle: 'italic' },
+      { token: 'keyword', foreground: '0000ff' },
+      { token: 'string', foreground: 'a31515' },
+      { token: 'number', foreground: '098658' },
+      { token: 'type', foreground: '267f99' },
+      { token: 'function', foreground: '795e26' },
+      { token: 'variable', foreground: '001080' },
+      { token: 'delimiter', foreground: '393a34' },
+    ],
+    colors: {
+      'editor.background': '#fbfbfd',
+      'editor.foreground': '#1f2328',
+      'editorLineNumber.foreground': '#9aa2ad',
+      'editorLineNumber.activeForeground': '#7c3aed',
+      'editor.selectionBackground': '#d4c5fb88',
+      'editor.lineHighlightBackground': '#7c3aed0d',
+      'editorCursor.foreground': '#7c3aed',
+      'editorIndentGuide.background1': '#e2e5ea',
+      'editorWidget.background': '#ffffff',
+      'editorWidget.border': '#d0d7de',
+      'editorSuggestWidget.background': '#ffffff',
+      'editorSuggestWidget.selectedBackground': '#7c3aed1a',
+      'editorGutter.background': '#fbfbfd',
+    },
+  },
+}
+
+/* Monaco renders inline "after" text only via a CSS class whose ::after supplies
+   the content, so each diagnostic gets a generated rule in one managed <style>. */
+function setLensStyles(entries: { cls: string; message: string; severity: Diag['severity'] }[]) {
+  let el = document.getElementById('nx-lens-styles') as HTMLStyleElement | null
+  if (!el) {
+    el = document.createElement('style')
+    el.id = 'nx-lens-styles'
+    document.head.appendChild(el)
+  }
+  el.textContent = entries
+    .map((e) => {
+      const msg = e.message.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\s+/g, ' ')
+      const color = e.severity === 'error' ? '#f87171' : '#fbbf24'
+      return `.${e.cls}::after{content:"  // ${msg}";color:${color};font-style:italic;opacity:.9;}`
+    })
+    .join('\n')
 }
 
 /* Languages the /api/ai-complete endpoint handles well */
-/* Minimal structural types — monaco-editor's own typings aren't a dependency here */
 interface EditorPosition { lineNumber: number; column: number }
 interface EditorModel { getOffsetAt(position: EditorPosition): number; getValue(): string }
 interface CancelToken { isCancellationRequested: boolean }
 
 const AI_LANGS = ['cpp', 'c', 'python', 'java', 'javascript', 'typescript', 'go', 'rust', 'kotlin', 'csharp']
+
+/* Word-based completion for every language (Monaco only ships TS/JS/CSS intelligence) */
+function registerWordCompletions(monaco: Parameters<BeforeMount>[0]) {
+  return monaco.languages.registerCompletionItemProvider('*', {
+    provideCompletionItems: (
+      model: { getValue(): string; getWordUntilPosition(p: EditorPosition): { word: string } },
+      position: EditorPosition,
+    ) => {
+      const word = model.getWordUntilPosition(position)
+      const text = model.getValue()
+      const found = new Set<string>()
+      for (const m of text.matchAll(/[A-Za-z_][A-Za-z0-9_]{2,}/g)) found.add(m[0])
+      const range = {
+        startLineNumber: position.lineNumber,
+        startColumn: position.column - word.word.length,
+        endLineNumber: position.lineNumber,
+        endColumn: position.column,
+      }
+      const items = [...found]
+        .filter((w) => w !== word.word)
+        .slice(0, 60)
+        .map((w) => ({
+          label: w,
+          kind: monaco.languages.CompletionItemKind.Text,
+          insertText: w,
+          range,
+          sortText: 'z' + w,
+        }))
+      return { suggestions: items }
+    },
+  })
+}
 
 export function CodeEditor({
   value,
@@ -64,6 +223,7 @@ export function CodeEditor({
   onSubmitShortcut,
   aiInline = false,
   onRecord,
+  diagnostics = [],
 }: {
   value: string
   language: string
@@ -74,9 +234,20 @@ export function CodeEditor({
   aiInline?: boolean
   /** Receives every content change as a replay delta (see components/submissions/replay.ts) */
   onRecord?: (event: ReplayEvent, fullText: string) => void
+  /** Compiler/runtime errors to underline inline (error-lens style) */
+  diagnostics?: Diag[]
 }) {
   const { data } = useApi(() => api.get<{ settings: Record<string, string> }>('/api/settings'), [])
   const settings = data?.settings ?? {}
+
+  const [theme, setTheme] = useState(() => localStorage.getItem('nexora:editor-theme') ?? 'nexora-dark')
+  const [vim, setVim] = useState(() => localStorage.getItem('nexora:editor-vim') === 'on')
+  const [zen, setZen] = useState(false)
+  const [fontSize, setFontSize] = useState(() => Number(localStorage.getItem('nexora:editor-font')) || 14)
+  const [wrap, setWrap] = useState(() => localStorage.getItem('nexora:editor-wrap') !== 'off')
+  const [minimap, setMinimap] = useState(() => localStorage.getItem('nexora:editor-minimap') === 'on')
+  const [cursor, setCursor] = useState({ line: 1, col: 1, sel: 0 })
+
   const runRef = useRef(onRunShortcut)
   runRef.current = onRunShortcut
   const submitRef = useRef(onSubmitShortcut)
@@ -88,23 +259,134 @@ export function CodeEditor({
   const recordRef = useRef(onRecord)
   recordRef.current = onRecord
   const disposers = useRef<{ dispose: () => void }[]>([])
+  const editorRef = useRef<Parameters<OnMount>[0] | null>(null)
+  const monacoRef = useRef<Parameters<OnMount>[1] | null>(null)
+  const vimModeRef = useRef<VimMode | null>(null)
+  const decorationsRef = useRef<MonacoNs.IEditorDecorationsCollection | null>(null)
+  const vimStatusRef = useRef<HTMLDivElement>(null)
+
+  /* Persist editor prefs locally and on the server so they follow you across devices */
+  useEffect(() => {
+    localStorage.setItem('nexora:editor-theme', theme)
+    localStorage.setItem('nexora:editor-vim', vim ? 'on' : 'off')
+    localStorage.setItem('nexora:editor-wrap', wrap ? 'on' : 'off')
+    localStorage.setItem('nexora:editor-minimap', minimap ? 'on' : 'off')
+    localStorage.setItem('nexora:editor-font', String(fontSize))
+    const t = setTimeout(() => {
+      void api
+        .post('/api/settings', {
+          font_size: String(fontSize),
+          word_wrap: wrap ? 'true' : 'false',
+          minimap: minimap ? 'true' : 'false',
+          editor_theme: theme,
+        })
+        .catch(() => {})
+    }, 600)
+    return () => clearTimeout(t)
+  }, [theme, vim, wrap, minimap, fontSize])
+
+  /* Live option updates without remounting the editor */
+  useEffect(() => {
+    editorRef.current?.updateOptions({
+      fontSize,
+      wordWrap: wrap ? 'on' : 'off',
+      minimap: { enabled: minimap },
+    })
+  }, [fontSize, wrap, minimap])
+
+  useEffect(() => {
+    if (monacoRef.current) monacoRef.current.editor.setTheme(theme)
+  }, [theme])
+
+  /* Vim mode toggle */
+  useEffect(() => {
+    const editor = editorRef.current
+    if (!editor) return
+    if (vim && !vimModeRef.current) {
+      vimModeRef.current = initVimMode(editor, vimStatusRef.current ?? undefined)
+    } else if (!vim && vimModeRef.current) {
+      vimModeRef.current.dispose()
+      vimModeRef.current = null
+    }
+  }, [vim])
+
+  /* Error-lens: markers + inline message decorations */
+  useEffect(() => {
+    const editor = editorRef.current
+    const monaco = monacoRef.current
+    if (!editor || !monaco) return
+    const model = editor.getModel()
+    if (!model) return
+    const visible = diagnostics.filter((d) => d.line <= model.getLineCount())
+    monaco.editor.setModelMarkers(
+      model,
+      'nexora-diag',
+      visible.map((d) => ({
+        severity: d.severity === 'error' ? monaco.MarkerSeverity.Error : monaco.MarkerSeverity.Warning,
+        startLineNumber: d.line,
+        startColumn: d.column,
+        endLineNumber: d.line,
+        endColumn: Math.min(model.getLineMaxColumn(d.line), d.column + 40),
+        message: d.message,
+      })),
+    )
+    const lensEntries: { cls: string; message: string; severity: Diag['severity'] }[] = []
+    decorationsRef.current?.set(
+      visible.slice(0, 12).flatMap((d, i) => {
+        const endCol = model.getLineMaxColumn(d.line)
+        const tint = {
+          range: new monaco.Range(d.line, 1, d.line, 1),
+          options: {
+            isWholeLine: true,
+            className: d.severity === 'error' ? 'nx-diag-line-error' : 'nx-diag-line-warn',
+            glyphMarginClassName: d.severity === 'error' ? 'nx-diag-glyph-error' : 'nx-diag-glyph-warn',
+          },
+        }
+        const cls = `nx-lens-${i}`
+        lensEntries.push({ cls, message: d.message, severity: d.severity })
+        const lens = {
+          range: new monaco.Range(d.line, endCol, d.line, endCol),
+          options: { afterContentClassName: cls },
+        }
+        return [tint, lens]
+      }),
+    )
+    setLensStyles(lensEntries)
+  }, [diagnostics])
 
   useEffect(
     () => () => {
       disposers.current.forEach((d) => d.dispose())
       disposers.current = []
+      vimModeRef.current?.dispose()
+      vimModeRef.current = null
+      setLensStyles([])
     },
     [],
   )
 
   const handleMount: OnMount = (editor, monaco) => {
+    editorRef.current = editor
+    monacoRef.current = monaco
+    decorationsRef.current = editor.createDecorationsCollection()
+    monaco.editor.setTheme(theme)
     const started = Date.now()
     disposers.current.push(
       editor.onDidChangeModelContent((e) => {
-        recordRef.current?.({
-          t: Date.now() - started,
-          changes: e.changes.map((c) => ({ range: c.range, text: c.text })),
-        }, editor.getValue())
+        recordRef.current?.(
+          {
+            t: Date.now() - started,
+            changes: e.changes.map((c) => ({ range: c.range, text: c.text })),
+          },
+          editor.getValue(),
+        )
+      }),
+      editor.onDidChangeCursorPosition((e) => {
+        setCursor((c) => ({ ...c, line: e.position.lineNumber, col: e.position.column }))
+      }),
+      editor.onDidChangeCursorSelection((e) => {
+        const sel = editor.getModel()?.getValueInRange(e.selection) ?? ''
+        setCursor((c) => ({ ...c, sel: sel.length }))
       }),
     )
 
@@ -145,46 +427,196 @@ export function CodeEditor({
         }),
       )
     }
+    disposers.current.push(registerWordCompletions(monaco))
 
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => runRef.current())
-    editor.addCommand(
-      monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.Enter,
-      () => submitRef.current(),
-    )
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.Enter, () => submitRef.current())
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
+      // The browser's save dialog is useless here; code is persisted on every keystroke.
+      runRef.current()
+    })
     editor.updateOptions({
       fontFamily: "'JetBrains Mono','Fira Code',monospace",
+      fontLigatures: true,
       scrollBeyondLastLine: false,
       smoothScrolling: true,
       cursorBlinking: 'smooth',
       cursorSmoothCaretAnimation: 'on',
-      renderLineHighlight: 'line',
+      renderLineHighlight: 'all',
       padding: { top: 12, bottom: 12 },
+      stickyScroll: { enabled: true },
+      guides: { bracketPairs: 'active', indentation: true, highlightActiveIndentation: true },
+      linkedEditing: true,
+      suggest: { preview: true, showInlineDetails: true },
+      occurrencesHighlight: 'singleFile',
+      glyphMargin: true,
+      quickSuggestions: { other: 'on', comments: 'off', strings: 'off' },
+      tabCompletion: 'on',
     })
   }
 
-  return (
-    <Editor
-      height="100%"
-      beforeMount={beforeMount}
-      onMount={handleMount}
-      theme={NEXORA_THEME}
-      language={MONACO_LANG[language] ?? language}
-      value={value}
-      onChange={(v) => onChange(v ?? '')}
-      loading={
-        <div className="flex h-full items-center justify-center bg-surface text-xs text-foreground-faint">
-          Loading editor…
-        </div>
+  const insertTemplate = () => {
+    const tpl = TEMPLATES[language]
+    const editor = editorRef.current
+    if (!tpl || !editor) return
+    if (editor.getValue().trim() === '') {
+      onChange(tpl)
+    } else {
+      const model = editor.getModel()
+      if (model) {
+        const last = model.getLineCount()
+        const col = model.getLineMaxColumn(last)
+        editor.executeEdits('template', [
+          { range: { startLineNumber: last, startColumn: col, endLineNumber: last, endColumn: col }, text: '\n' + tpl },
+        ])
       }
-      options={{
-        automaticLayout: true,
-        fontSize: Number(settings.font_size) || 14,
-        tabSize: Number(settings.tab_size) || 4,
-        wordWrap: settings.word_wrap === 'true' ? 'on' : 'off',
-        minimap: { enabled: settings.minimap === 'true' },
-        bracketPairColorization: { enabled: settings.bracket_color !== 'false' },
-        inlineSuggest: { enabled: true },
-      }}
-    />
+    }
+    editor.focus()
+  }
+
+  const copyCode = () => {
+    void navigator.clipboard?.writeText(value).catch(() => {})
+  }
+
+  const downloadCode = () => {
+    const ext = LANG_EXT[language] ?? 'txt'
+    const blob = new Blob([value], { type: 'text/plain' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `nexora_${language}.${ext}`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
+  const toolBtn =
+    'inline-flex size-7 cursor-pointer items-center justify-center rounded-md text-foreground-dim transition-colors hover:bg-surface-2 hover:text-foreground'
+
+  return (
+    <div className={cn('flex h-full min-h-0 flex-col', zen && 'fixed inset-0 z-[100] bg-background')}>
+      {/* ── Editor toolbar ── */}
+      <div className="flex flex-wrap items-center gap-1 border-b border-border bg-surface px-2 py-1">
+        <select
+          value={theme}
+          onChange={(e) => setTheme(e.target.value)}
+          aria-label="Editor theme"
+          className="h-7 cursor-pointer rounded-md border border-border bg-background px-1.5 text-[11px] text-foreground-dim outline-none hover:text-foreground"
+        >
+          {Object.entries(THEMES).map(([id, t]) => (
+            <option key={id} value={id}>
+              {t.label}
+            </option>
+          ))}
+        </select>
+
+        <span className="mx-1 h-4 w-px bg-border" aria-hidden="true" />
+
+        <button className={toolBtn} onClick={() => setFontSize((f) => Math.max(10, f - 1))} aria-label="Decrease font size" title="Smaller font">
+          <Minus className="size-3.5" aria-hidden="true" />
+        </button>
+        <span className="w-6 text-center font-mono text-[10px] text-foreground-faint tabular-nums">{fontSize}</span>
+        <button className={toolBtn} onClick={() => setFontSize((f) => Math.min(24, f + 1))} aria-label="Increase font size" title="Larger font">
+          <Plus className="size-3.5" aria-hidden="true" />
+        </button>
+
+        <span className="mx-1 h-4 w-px bg-border" aria-hidden="true" />
+
+        <button
+          className={cn(toolBtn, wrap && 'bg-surface-2 text-primary-bright')}
+          onClick={() => setWrap((w) => !w)}
+          aria-pressed={wrap}
+          title="Word wrap"
+        >
+          <Columns2 className="size-3.5" aria-hidden="true" />
+        </button>
+        <button
+          className={cn(toolBtn, minimap && 'bg-surface-2 text-primary-bright')}
+          onClick={() => setMinimap((m) => !m)}
+          aria-pressed={minimap}
+          title="Minimap"
+        >
+          <MapIcon className="size-3.5" aria-hidden="true" />
+        </button>
+        <button
+          className={cn(toolBtn, vim && 'bg-surface-2 text-cyan')}
+          onClick={() => setVim((v) => !v)}
+          aria-pressed={vim}
+          title="Vim keybindings"
+        >
+          <Terminal className="size-3.5" aria-hidden="true" />
+        </button>
+
+        <span className="mx-1 h-4 w-px bg-border" aria-hidden="true" />
+
+        <button className={toolBtn} onClick={insertTemplate} title="Insert starter template">
+          <FileCode2 className="size-3.5" aria-hidden="true" />
+        </button>
+        <button className={toolBtn} onClick={copyCode} title="Copy code">
+          <ClipboardCopy className="size-3.5" aria-hidden="true" />
+        </button>
+        <button className={toolBtn} onClick={downloadCode} title="Download file">
+          <Download className="size-3.5" aria-hidden="true" />
+        </button>
+
+        <button
+          className={cn(toolBtn, 'ml-auto', zen && 'text-primary-bright')}
+          onClick={() => setZen((z) => !z)}
+          aria-label={zen ? 'Exit focus mode' : 'Focus mode'}
+          title="Focus mode"
+        >
+          {zen ? <Minimize2 className="size-3.5" aria-hidden="true" /> : <Maximize2 className="size-3.5" aria-hidden="true" />}
+        </button>
+      </div>
+
+      <div className="min-h-0 flex-1">
+        <Editor
+          height="100%"
+          beforeMount={((monaco) => {
+            for (const [id, t] of Object.entries(THEMES)) {
+              monaco.editor.defineTheme(id, { base: t.base, inherit: true, rules: t.rules, colors: t.colors })
+            }
+          }) as BeforeMount}
+          onMount={handleMount}
+          theme={theme}
+          language={MONACO_LANG[language] ?? language}
+          value={value}
+          onChange={(v) => onChange(v ?? '')}
+          loading={
+            <div className="flex h-full items-center justify-center bg-surface text-xs text-foreground-faint">Loading editor…</div>
+          }
+          options={{
+            automaticLayout: true,
+            fontSize,
+            tabSize: Number(settings.tab_size) || 4,
+            wordWrap: wrap ? 'on' : 'off',
+            minimap: { enabled: minimap },
+            bracketPairColorization: { enabled: settings.bracket_color !== 'false' },
+            inlineSuggest: { enabled: true, showToolbar: 'onHover' },
+          }}
+        />
+      </div>
+
+      {/* ── Status bar ── */}
+      <div className="flex items-center gap-3 border-t border-border bg-surface px-3 py-1 font-mono text-[10px] text-foreground-faint">
+        <span className="tabular-nums">
+          Ln {cursor.line}, Col {cursor.col}
+          {cursor.sel > 0 && <span className="text-primary-bright"> ({cursor.sel} selected)</span>}
+        </span>
+        <span className="uppercase">{language}</span>
+        <span>Spaces: {Number(settings.tab_size) || 4}</span>
+        <span className="hidden sm:inline">{wrap ? 'wrap on' : 'wrap off'}</span>
+        {vim && (
+          <div ref={vimStatusRef} className="text-cyan">
+            VIM
+          </div>
+        )}
+        {diagnostics.length > 0 && (
+          <span className="text-destructive">
+            {diagnostics.length} issue{diagnostics.length > 1 ? 's' : ''}
+          </span>
+        )}
+        <span className="ml-auto hidden md:inline">{THEMES[theme]?.label ?? theme}</span>
+      </div>
+    </div>
   )
 }

@@ -2,11 +2,11 @@ import { cloneElement, isValidElement, useId, forwardRef, type InputHTMLAttribut
 import { cn } from '@/lib/utils'
 
 const fieldBase =
-  'w-full rounded-lg border border-border bg-surface px-3.5 text-sm text-foreground placeholder:text-foreground-faint transition-colors duration-200 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:cursor-not-allowed disabled:opacity-50'
+  'w-full rounded-lg border border-border bg-black/20 px-3.5 text-sm text-foreground shadow-[inset_0_1px_2px_rgb(0_0_0/0.25)] placeholder:text-foreground-faint/80 transition-[border-color,box-shadow,background-color] duration-150 hover:border-border-strong focus:border-primary/70 focus:bg-black/30 focus:outline-none focus:ring-4 focus:ring-primary/15 disabled:cursor-not-allowed disabled:opacity-50 aria-[invalid=true]:border-destructive/60'
 
 export const Input = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement>>(
   ({ className, ...props }, ref) => (
-    <input ref={ref} className={cn(fieldBase, 'h-10', className)} {...props} />
+    <input ref={ref} className={cn(fieldBase, 'h-9.5', className)} {...props} />
   ),
 )
 Input.displayName = 'Input'
@@ -20,7 +20,15 @@ Textarea.displayName = 'Textarea'
 
 export const Select = forwardRef<HTMLSelectElement, SelectHTMLAttributes<HTMLSelectElement>>(
   ({ className, children, ...props }, ref) => (
-    <select ref={ref} className={cn(fieldBase, 'h-10 cursor-pointer appearance-none bg-surface-2 pr-8', className)} {...props}>
+    <select
+      ref={ref}
+      className={cn(
+        fieldBase,
+        'select-chevron h-9.5 cursor-pointer appearance-none bg-surface-2 pr-9',
+        className,
+      )}
+      {...props}
+    >
       {children}
     </select>
   ),
@@ -30,7 +38,7 @@ Select.displayName = 'Select'
 export function Label({ className, ...props }: React.LabelHTMLAttributes<HTMLLabelElement>) {
   return (
     <label
-      className={cn('mb-1.5 block text-xs font-semibold tracking-wider text-foreground-dim uppercase', className)}
+      className={cn('mb-1.5 block text-[12.5px] font-medium text-foreground-dim', className)}
       {...props}
     />
   )
