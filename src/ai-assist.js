@@ -410,6 +410,60 @@ function createAiAssistRouter({ get, run, aiLimiter }) {
     }
   });
 
+  /* ── AI problem finder: natural language → database filters ── */
+  const searchCache = new Map();
+  router.post("/api/ai/problem-search", aiLimiter, async (req, res) => {
+    try {
+      const query = String(req.body?.query || "").trim().slice(0, 400);
+      if (!query) return res.status(400).json({ ok: false, error: "Describe what you want to practice first" });
+      const platforms = Array.isArray(req.body?.platforms) ? req.body.platforms.map(String) : [];
+      const tags = Array.isArray(req.body?.tags) ? req.body.tags.map(String) : [];
+      const bands = Array.isArray(req.body?.bands) ? req.body.bands.map(String) : [];
+
+      const cacheKey = `${query}::${platforms.join(",")}::${bands.join(",")}`;
+      const hit = searchCache.get(cacheKey);
+      if (hit) return res.json({ ok: true, ...hit, cached: true });
+
+      const out = await llm(
+        [
+          {
+            role: "system",
+            content: `You are the search brain of a competitive-programming problem database. Convert the user's natural-language request into query filters.
+Reply with JSON ONLY, exactly these keys:
+{"platform": one of [${platforms.join(", ")}] or "all",
+ "difficulty": one of [${bands.join(", ")}] or "all",
+ "tags": up to 3 most relevant items chosen from [${tags.slice(0, 120).join(", ")}] (use [] if none fit),
+ "search": 1-3 lowercase keywords likely to appear in problem titles, or "",
+ "status": one of ["all","unsolved","attempted","solved"],
+ "sort": one of ["rating","title","id"],
+ "summary": one friendly sentence (max 18 words) restating what the user will get}
+Pick the single closest platform/difficulty; never invent tags outside the list.`,
+          },
+          { role: "user", content: query },
+        ],
+        { json: true, maxTokens: 300, temperature: 0.1 },
+      );
+      const j = parseJson(out);
+      if (!j) return res.status(502).json({ ok: false, error: "AI returned an unreadable answer — try rephrasing" });
+
+      const filters = {
+        platform: platforms.includes(j.platform) ? j.platform : "all",
+        difficulty: bands.includes(j.difficulty) ? j.difficulty : "all",
+        tags: (Array.isArray(j.tags) ? j.tags : []).filter((t) => tags.includes(t)).slice(0, 3),
+        search: typeof j.search === "string" ? j.search.slice(0, 60) : "",
+        status: ["all", "unsolved", "attempted", "solved"].includes(j.status) ? j.status : "all",
+        sort: ["rating", "title", "id"].includes(j.sort) ? j.sort : "rating",
+        summary: typeof j.summary === "string" ? j.summary.slice(0, 140) : "Here is what I found for you",
+      };
+      const payload = { filters };
+      searchCache.set(cacheKey, payload);
+      if (searchCache.size > 300) searchCache.delete(searchCache.keys().next().value);
+      res.json({ ok: true, ...payload });
+    } catch (e) {
+      res.status(500).json({ ok: false, error: e.message });
+    }
+  });
+
   /* ── Coding coach ── */
   const COACH_RULES = `You are "Nexora Coach", an expert competitive-programming mentor watching a student code in an online judge.
 Hard rules: NEVER write the full solution or large code blocks. At most one short line of code in a hint. Be concrete and brief.`;

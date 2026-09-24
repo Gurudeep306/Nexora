@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { useEffect, useRef, type ReactNode } from 'react'
 import { ArrowDownWideNarrow, Search, X } from 'lucide-react'
 import { Button, Input, Select } from '@/components/ui'
 import { cn } from '@/lib/utils'
@@ -25,6 +25,7 @@ export interface ProblemFilterState {
 interface Props {
   filters: ProblemFilterState
   tags: string[]
+  resultCount?: number
   onSearchInput: (v: string) => void
   onChange: (patch: Partial<ProblemFilterState>) => void
 }
@@ -54,12 +55,56 @@ function FilterSelect({
   )
 }
 
-export function ProblemFilters({ filters, tags, onSearchInput, onChange }: Props) {
-  const hasActiveFilters =
-    filters.platform !== 'all' ||
-    filters.difficulty !== 'all' ||
-    filters.status !== 'all' ||
-    filters.tag !== ''
+function FilterChip({ label, onRemove }: { label: string; onRemove: () => void }) {
+  return (
+    <span className="inline-flex items-center gap-1 rounded-full border border-primary/40 bg-primary/10 py-0.5 pr-1 pl-2.5 text-[11px] text-primary-bright">
+      {label}
+      <button
+        onClick={onRemove}
+        aria-label={`Remove filter ${label}`}
+        className="cursor-pointer rounded-full p-0.5 transition-colors hover:bg-primary/25"
+      >
+        <X className="size-3" aria-hidden="true" />
+      </button>
+    </span>
+  )
+}
+
+export function ProblemFilters({ filters, tags, resultCount, onSearchInput, onChange }: Props) {
+  const searchRef = useRef<HTMLInputElement>(null)
+
+  /* "/" jumps to search from anywhere on the page */
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== '/' || e.metaKey || e.ctrlKey || e.altKey) return
+      const el = document.activeElement as HTMLElement | null
+      if (el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT' || el.isContentEditable))
+        return
+      e.preventDefault()
+      searchRef.current?.focus()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
+
+  const presets: { label: string; patch: Partial<ProblemFilterState>; show?: boolean }[] = [
+    { label: 'Warm-up', patch: { difficulty: 'easy', status: 'unsolved', sort: 'rating', order: 'asc' } },
+    { label: 'DP grind', patch: { tag: 'dp' }, show: tags.includes('dp') },
+    { label: 'Graph lab', patch: { tag: 'graphs' }, show: tags.includes('graphs') },
+    { label: 'Strings', patch: { tag: 'strings' }, show: tags.includes('strings') },
+    { label: 'Math club', patch: { tag: 'math' }, show: tags.includes('math') },
+    { label: 'Boss level', patch: { difficulty: 'elite', order: 'asc' } },
+  ]
+
+  const bandLabel = DIFFICULTY_BANDS.find((b) => b.id === filters.difficulty)?.label
+  const chips: { label: string; remove: () => void }[] = []
+  if (filters.platform !== 'all')
+    chips.push({ label: filters.platform, remove: () => onChange({ platform: 'all' }) })
+  if (filters.difficulty !== 'all' && bandLabel)
+    chips.push({ label: bandLabel, remove: () => onChange({ difficulty: 'all' }) })
+  if (filters.status !== 'all')
+    chips.push({ label: filters.status, remove: () => onChange({ status: 'all' }) })
+  if (filters.tag) chips.push({ label: `#${filters.tag}`, remove: () => onChange({ tag: '' }) })
 
   return (
     <div className="card-neon p-4">
@@ -70,10 +115,11 @@ export function ProblemFilters({ filters, tags, onSearchInput, onChange }: Props
             aria-hidden="true"
           />
           <Input
+            ref={searchRef}
             type="search"
             value={filters.search}
             onChange={(e) => onSearchInput(e.target.value)}
-            placeholder="Search problems by title or ID…"
+            placeholder="Search problems by title or ID…  ( / )"
             aria-label="Search problems"
             className="pl-9"
           />
@@ -160,15 +206,38 @@ export function ProblemFilters({ filters, tags, onSearchInput, onChange }: Props
         </div>
       </div>
 
-      {hasActiveFilters && (
-        <div className="mt-3 flex items-center gap-2">
+      <div className="mt-3 flex flex-wrap items-center gap-1.5">
+        <span className="mr-1 text-[10px] font-semibold tracking-wider text-foreground-faint uppercase">
+          Quick sets
+        </span>
+        {presets
+          .filter((p) => p.show !== false)
+          .map((p) => (
+            <button
+              key={p.label}
+              onClick={() => onChange(p.patch)}
+              className="cursor-pointer rounded-full border border-border bg-background/60 px-2.5 py-1 text-[11px] text-foreground-dim transition-colors hover:border-accent/60 hover:text-accent"
+            >
+              {p.label}
+            </button>
+          ))}
+        {typeof resultCount === 'number' && (
+          <span className="ml-auto text-[11px] text-foreground-faint tabular-nums">
+            {resultCount.toLocaleString()} problem{resultCount === 1 ? '' : 's'}
+          </span>
+        )}
+      </div>
+
+      {chips.length > 0 && (
+        <div className="mt-3 flex flex-wrap items-center gap-1.5">
+          {chips.map((c) => (
+            <FilterChip key={c.label} label={c.label} onRemove={c.remove} />
+          ))}
           <button
-            onClick={() =>
-              onChange({ platform: 'all', difficulty: 'all', status: 'all', tag: '' })
-            }
-            className="inline-flex cursor-pointer items-center gap-1 text-xs font-semibold text-accent transition-colors hover:text-foreground"
+            onClick={() => onChange({ platform: 'all', difficulty: 'all', status: 'all', tag: '' })}
+            className="inline-flex cursor-pointer items-center gap-1 ml-1 text-xs font-semibold text-accent transition-colors hover:text-foreground"
           >
-            <X className="size-3" aria-hidden="true" /> Clear filters
+            <X className="size-3" aria-hidden="true" /> Clear all
           </button>
         </div>
       )}

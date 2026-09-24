@@ -23,6 +23,7 @@ import {
   ProblemFilters,
   type ProblemFilterState,
 } from '@/components/problems/ProblemFilters'
+import { AiProblemFinder, type AiProblemFilters } from '@/components/problems/AiProblemFinder'
 import { ProblemTable } from '@/components/problems/ProblemTable'
 import { Pagination } from '@/components/problems/Pagination'
 
@@ -44,6 +45,7 @@ export default function ProblemsPage() {
   const [order, setOrder] = useState<ProblemFilterState['order']>('asc')
   const [offset, setOffset] = useState(0)
   const [rolling, setRolling] = useState(false)
+  const [aiSummary, setAiSummary] = useState<string | null>(null)
   const navigate = useNavigate()
   const [busyBookmarkId, setBusyBookmarkId] = useState<number | null>(null)
 
@@ -151,6 +153,28 @@ export default function ProblemsPage() {
     setOffset(0)
   }, [])
 
+  /* AI finder results become ordinary filter state, so everything stays composable */
+  const applyAiFilters = useCallback((f: AiProblemFilters) => {
+    setPlatform(f.platform || 'all')
+    setDifficulty((f.difficulty || 'all') as ProblemFilterState['difficulty'])
+    setStatus(f.status || 'all')
+    setTag(f.tags?.[0] ?? '')
+    setSort(f.sort || 'rating')
+    setSearchInput(f.search || '')
+    setAiSummary(f.summary || null)
+    setOffset(0)
+  }, [])
+
+  const clearAiFilters = useCallback(() => {
+    setAiSummary(null)
+    setPlatform('all')
+    setDifficulty('all')
+    setStatus('all')
+    setTag('')
+    setSearchInput('')
+    setOffset(0)
+  }, [])
+
   const filters: ProblemFilterState = {
     search: searchInput,
     platform,
@@ -198,9 +222,17 @@ export default function ProblemsPage() {
       />
 
       <div className="space-y-4">
+        <AiProblemFinder
+          tags={tagsApi.data?.tags ?? []}
+          onApply={applyAiFilters}
+          summary={aiSummary}
+          onClearSummary={clearAiFilters}
+        />
+
         <ProblemFilters
           filters={filters}
           tags={tagsApi.data?.tags ?? []}
+          resultCount={problemsApi.data ? total : undefined}
           onSearchInput={setSearchInput}
           onChange={handleFilterChange}
         />
@@ -215,9 +247,18 @@ export default function ProblemsPage() {
               icon={<SearchX />}
               title="No problems match"
               description={
-                qParam
-                  ? `Nothing found for "${qParam}". Try different keywords or clear the filters.`
-                  : 'Try widening your filters.'
+                aiSummary
+                  ? `The AI narrowed things too far — "${aiSummary}" returned nothing. Clear its filters to browse everything.`
+                  : qParam
+                    ? `Nothing found for "${qParam}". Try different keywords or clear the filters.`
+                    : 'Try widening your filters.'
+              }
+              action={
+                aiSummary ? (
+                  <Button variant="subtle" size="sm" onClick={clearAiFilters}>
+                    Clear AI filters
+                  </Button>
+                ) : undefined
               }
             />
           </div>
