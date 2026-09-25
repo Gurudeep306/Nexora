@@ -14,6 +14,7 @@ import { useApi } from '@/hooks/useApi'
 import { useAuth } from '@/context/AuthContext'
 import {
   DIFFICULTY_BANDS,
+  type AiFindResponse,
   type BookmarksResponse,
   type ProblemsResponse,
   type Problem,
@@ -23,7 +24,8 @@ import {
   ProblemFilters,
   type ProblemFilterState,
 } from '@/components/problems/ProblemFilters'
-import { AiProblemFinder, type AiProblemFilters } from '@/components/problems/AiProblemFinder'
+import { AiProblemFinder } from '@/components/problems/AiProblemFinder'
+import { AiProblemResults } from '@/components/problems/AiProblemResults'
 import { ProblemTable } from '@/components/problems/ProblemTable'
 import { Pagination } from '@/components/problems/Pagination'
 
@@ -45,7 +47,7 @@ export default function ProblemsPage() {
   const [order, setOrder] = useState<ProblemFilterState['order']>('asc')
   const [offset, setOffset] = useState(0)
   const [rolling, setRolling] = useState(false)
-  const [aiSummary, setAiSummary] = useState<string | null>(null)
+  const [aiResults, setAiResults] = useState<AiFindResponse | null>(null)
   const navigate = useNavigate()
   const [busyBookmarkId, setBusyBookmarkId] = useState<number | null>(null)
 
@@ -153,27 +155,13 @@ export default function ProblemsPage() {
     setOffset(0)
   }, [])
 
-  /* AI finder results become ordinary filter state, so everything stays composable */
-  const applyAiFilters = useCallback((f: AiProblemFilters) => {
-    setPlatform(f.platform || 'all')
-    setDifficulty((f.difficulty || 'all') as ProblemFilterState['difficulty'])
-    setStatus(f.status || 'all')
-    setTag(f.tags?.[0] ?? '')
-    setSort(f.sort || 'rating')
-    setSearchInput(f.search || '')
-    setAiSummary(f.summary || null)
+  /* AI finder returns real, re-ranked problems — shown as their own result set */
+  const handleAiResults = useCallback((res: AiFindResponse) => {
+    setAiResults(res)
     setOffset(0)
   }, [])
 
-  const clearAiFilters = useCallback(() => {
-    setAiSummary(null)
-    setPlatform('all')
-    setDifficulty('all')
-    setStatus('all')
-    setTag('')
-    setSearchInput('')
-    setOffset(0)
-  }, [])
+  const clearAiResults = useCallback(() => setAiResults(null), [])
 
   const filters: ProblemFilterState = {
     search: searchInput,
@@ -222,55 +210,53 @@ export default function ProblemsPage() {
       />
 
       <div className="space-y-4">
-        <AiProblemFinder
-          tags={tagsApi.data?.tags ?? []}
-          onApply={applyAiFilters}
-          summary={aiSummary}
-          onClearSummary={clearAiFilters}
-        />
+        <AiProblemFinder tags={tagsApi.data?.tags ?? []} onResults={handleAiResults} />
 
-        <ProblemFilters
-          filters={filters}
-          tags={tagsApi.data?.tags ?? []}
-          resultCount={problemsApi.data ? total : undefined}
-          onSearchInput={setSearchInput}
-          onChange={handleFilterChange}
-        />
-
-        {problemsApi.loading ? (
-          <LoadingBlock rows={8} />
-        ) : problemsApi.error ? (
-          <ErrorState message={problemsApi.error} onRetry={problemsApi.refetch} />
-        ) : problems.length === 0 ? (
-          <div className="card-neon">
-            <EmptyState
-              icon={<SearchX />}
-              title="No problems match"
-              description={
-                aiSummary
-                  ? `The AI narrowed things too far — "${aiSummary}" returned nothing. Clear its filters to browse everything.`
-                  : qParam
-                    ? `Nothing found for "${qParam}". Try different keywords or clear the filters.`
-                    : 'Try widening your filters.'
-              }
-              action={
-                aiSummary ? (
-                  <Button variant="subtle" size="sm" onClick={clearAiFilters}>
-                    Clear AI filters
-                  </Button>
-                ) : undefined
-              }
-            />
-          </div>
+        {aiResults ? (
+          <AiProblemResults
+            data={aiResults}
+            bookmarkedIds={bookmarkedIds}
+            onToggleBookmark={toggleBookmark}
+            busyBookmarkId={busyBookmarkId}
+            onClear={clearAiResults}
+          />
         ) : (
           <>
-            <ProblemTable
-              problems={problems}
-              bookmarkedIds={bookmarkedIds}
-              onToggleBookmark={toggleBookmark}
-              busyBookmarkId={busyBookmarkId}
+            <ProblemFilters
+              filters={filters}
+              tags={tagsApi.data?.tags ?? []}
+              resultCount={problemsApi.data ? total : undefined}
+              onSearchInput={setSearchInput}
+              onChange={handleFilterChange}
             />
-            <Pagination total={total} limit={PAGE_SIZE} offset={offset} onPageChange={setOffset} />
+
+            {problemsApi.loading ? (
+              <LoadingBlock rows={8} />
+            ) : problemsApi.error ? (
+              <ErrorState message={problemsApi.error} onRetry={problemsApi.refetch} />
+            ) : problems.length === 0 ? (
+              <div className="card-neon">
+                <EmptyState
+                  icon={<SearchX />}
+                  title="No problems match"
+                  description={
+                    qParam
+                      ? `Nothing found for "${qParam}". Try different keywords or clear the filters.`
+                      : 'Try widening your filters.'
+                  }
+                />
+              </div>
+            ) : (
+              <>
+                <ProblemTable
+                  problems={problems}
+                  bookmarkedIds={bookmarkedIds}
+                  onToggleBookmark={toggleBookmark}
+                  busyBookmarkId={busyBookmarkId}
+                />
+                <Pagination total={total} limit={PAGE_SIZE} offset={offset} onPageChange={setOffset} />
+              </>
+            )}
           </>
         )}
       </div>

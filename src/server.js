@@ -1506,7 +1506,7 @@ app.get("/api/activity/:date", async (req, res) => {
 
 /* ========== TRANSLATE ========== (see src/ai-assist.js) */
 // Translation (with language detection + AI engine) and the coding coach.
-app.use(createAiAssistRouter({ get, run, aiLimiter }));
+app.use(createAiAssistRouter({ get, all, run, aiLimiter }));
 
 /* ========== TESTCASES ========== */
 

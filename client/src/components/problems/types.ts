@@ -35,6 +35,25 @@ export interface TagsResponse {
   tags: string[]
 }
 
+export interface AiFoundProblem {
+  problem: Problem
+  reason: string
+}
+
+export interface AiFindResponse {
+  ok: boolean
+  understanding: string
+  matchedTags: string[]
+  platform: string
+  status: string
+  minRating: number | null
+  maxRating: number | null
+  count: number
+  results: AiFoundProblem[]
+  cached?: boolean
+  error?: string
+}
+
 export const PLATFORM_OPTIONS = [
   'codeforces',
   'codechef',

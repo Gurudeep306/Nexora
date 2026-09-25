@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Bot, Send, Sparkles, User } from 'lucide-react'
 import { Button, Modal, Textarea, useToast } from '@/components/ui'
+import { MarkdownLite } from '@/components/ailab/MarkdownLite'
 import { api } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import type { AiChatResponse } from './types'
@@ -128,16 +129,15 @@ export function AiTutorModal({
               >
                 {m.role === 'user' ? <User className="size-3.5" /> : <Bot className="size-3.5" />}
               </span>
-              <p
-                className={cn(
-                  'max-w-[80%] rounded-xl border px-3 py-2 text-sm whitespace-pre-wrap',
-                  m.role === 'user'
-                    ? 'border-accent/30 bg-accent/5 text-foreground'
-                    : 'border-border bg-surface text-foreground-dim',
-                )}
-              >
-                {m.content}
-              </p>
+              {m.role === 'user' ? (
+                <p className="max-w-[80%] rounded-xl border border-accent/30 bg-accent/5 px-3 py-2 text-sm whitespace-pre-wrap text-foreground">
+                  {m.content}
+                </p>
+              ) : (
+                <div className="max-w-[85%] rounded-xl border border-border bg-surface px-3.5 py-2.5 text-sm leading-relaxed text-foreground-dim">
+                  <MarkdownLite text={m.content} />
+                </div>
+              )}
             </div>
           ))}
           {busy && (

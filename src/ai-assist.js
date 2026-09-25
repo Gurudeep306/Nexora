@@ -5,6 +5,7 @@
      failure explanations — hints only, never full solutions. */
 const express = require("express");
 const crypto = require("crypto");
+const { meSql } = require("./context");
 
 const LANGUAGES = [
   // Indian languages
@@ -144,7 +145,7 @@ async function myMemory(chunk, tl, sl) {
 }
 
 /* LLM: Groq first (fast), Gemini as fallback. */
-async function llm(messages, { json = false, maxTokens = 1200, temperature = 0.2 } = {}) {
+async function llm(messages, { json = false, maxTokens = 1200, temperature = 0.2, reasoning = "low" } = {}) {
   const groqKey = process.env.GROQ_API_KEY;
   const model = process.env.GROQ_MODEL || "openai/gpt-oss-120b";
   if (groqKey) {
@@ -158,7 +159,7 @@ async function llm(messages, { json = false, maxTokens = 1200, temperature = 0.2
           max_tokens: maxTokens,
           temperature,
           ...(json ? { response_format: { type: "json_object" } } : {}),
-          ...(/gpt-oss/.test(model) ? { reasoning_effort: "low" } : {}),
+          ...(/gpt-oss/.test(model) ? { reasoning_effort: reasoning } : {}),
         }),
         signal: AbortSignal.timeout(45000),
       }).catch((e) => ({ ok: false, status: 0, text: async () => e.message }));
@@ -338,7 +339,7 @@ async function translateWithGoogle(html, target, source) {
 }
 
 /* ── Router ── */
-function createAiAssistRouter({ get, run, aiLimiter }) {
+function createAiAssistRouter({ get, all, run, aiLimiter }) {
   const router = express.Router();
 
   router.get("/api/translate/languages", (_req, res) => res.json({ ok: true, languages: LANGUAGES }));
@@ -464,9 +465,204 @@ Pick the single closest platform/difficulty; never invent tags outside the list.
     }
   });
 
+  /* ── Semantic problem finder ──
+     Understand the request → pull a relevance-scored candidate pool from SQL →
+     let the LLM re-rank the ACTUAL problems by topic fit (not title-word overlap)
+     and return real rows with a one-line reason each. */
+  const findCache = new Map();
+  const clean = (p) => {
+    const { relevance, ...rest } = p;
+    return rest;
+  };
+  router.post("/api/ai/find-problems", aiLimiter, async (req, res) => {
+    try {
+      const query = String(req.body?.query || "").trim().slice(0, 500);
+      if (!query) return res.status(400).json({ ok: false, error: "Describe what you want to practice first" });
+      const platforms = Array.isArray(req.body?.platforms) ? req.body.platforms.map(String) : [];
+      const vocab = Array.isArray(req.body?.tags) ? req.body.tags.map(String) : [];
+      const want = Math.min(Math.max(+(req.body?.limit || 12) || 12, 1), 24);
+
+      const cacheKey = crypto.createHash("sha1").update(`${meSql()}::${want}::${query.toLowerCase()}`).digest("hex");
+      const cached = findCache.get(cacheKey);
+      if (cached) return res.json({ ok: true, ...cached, cached: true });
+
+      /* 1) Understand the request → structured intent */
+      const intentOut = await llm(
+        [
+          {
+            role: "system",
+            content: `You are the semantic search brain of a competitive-programming database (Codeforces, CodeChef, AtCoder, LeetCode, SPOJ, Project Euler). Problem titles are often cryptic, so TAGS and DIFFICULTY carry more signal than title words.
+Read the request and reply with JSON ONLY:
+{"tags": up to 4 objects [{"tag": <EXACTLY one of the allowed tags>, "weight": 1-3, 3 = the core topic}] most relevant first ([] if none fit),
+ "keywords": 2-5 lowercase concrete words likely to appear literally in a problem TITLE for this topic (include singular AND plural forms and obvious synonyms, e.g. for digit problems: "digit","digits","number","sum"). Use [] only for purely abstract requests with no concrete noun,
+ "minRating": integer|null, "maxRating": integer|null,
+ "platform": one of [${platforms.join(", ")}] or "all",
+ "status": one of ["all","unsolved","attempted","solved"],
+ "understanding": one short sentence (max 16 words) describing what you searched for}
+Difficulty guide: easy≈[null,1200], medium≈[1200,1600], hard≈[1600,1900], elite≈[1900,null], "around X"≈[X-200,X+200]; leave null when open-ended.
+"not solved yet"/"unattempted" → status "unsolved". Allowed tags: [${vocab.join(", ")}]. NEVER invent a tag outside this list; if the request is vague still choose the closest tags.`,
+          },
+          { role: "user", content: query },
+        ],
+        { json: true, maxTokens: 420, temperature: 0.1, reasoning: "medium" },
+      );
+      const intent = parseJson(intentOut) || {};
+
+      const tags = (Array.isArray(intent.tags) ? intent.tags : [])
+        .filter((t) => t && vocab.includes(t.tag))
+        .slice(0, 4)
+        .map((t) => ({ tag: t.tag, weight: Math.min(3, Math.max(1, +t.weight || 2)) }));
+      const keywords = (Array.isArray(intent.keywords) ? intent.keywords : [])
+        .map((k) => String(k).toLowerCase().replace(/[^a-z0-9 ]/g, "").trim())
+        .filter((k) => k.length >= 3)
+        .slice(0, 5);
+      const platform = platforms.includes(intent.platform) ? intent.platform : "all";
+      const status = ["all", "unsolved", "attempted", "solved"].includes(intent.status) ? intent.status : "all";
+      const num = (v) => (v === null || v === "" || v === undefined || !Number.isFinite(+v) ? null : +v);
+      const minRating = num(intent.minRating);
+      const maxRating = num(intent.maxRating);
+      const understanding =
+        typeof intent.understanding === "string" && intent.understanding.trim()
+          ? intent.understanding.trim().slice(0, 140)
+          : `Problems matching "${query.slice(0, 60)}"`;
+
+      /* 2) Candidate pool — SQL relevance score over tags + title keywords.
+            SELECT-clause params bind before WHERE-clause params, so keep two lists. */
+      const selectParams = [];
+      const score = [];
+      for (const t of tags) {
+        score.push(`(CASE WHEN p.tags LIKE ? THEN ${t.weight} ELSE 0 END)`);
+        selectParams.push(`%${t.tag}%`);
+      }
+      for (const k of keywords) {
+        score.push(`(CASE WHEN lower(p.title) LIKE ? THEN 2 ELSE 0 END)`);
+        selectParams.push(`%${k}%`);
+      }
+
+      const where = ["1=1"];
+      const whereParams = [];
+      if (platform !== "all") {
+        where.push("p.platform=?");
+        whereParams.push(platform);
+      }
+      if (minRating != null) {
+        where.push("p.rating>=?");
+        whereParams.push(minRating);
+      }
+      if (maxRating != null) {
+        where.push("p.rating<=?");
+        whereParams.push(maxRating);
+      }
+      if (status === "solved") where.push("COALESCE(pr.status,'unsolved')='solved'");
+      else if (status === "attempted") where.push("COALESCE(pr.status,'unsolved')='attempted'");
+      else if (status === "unsolved") where.push("(pr.status IS NULL OR pr.status='unsolved')");
+
+      if (tags.length + keywords.length > 0) {
+        const ors = [];
+        for (const t of tags) {
+          ors.push("p.tags LIKE ?");
+          whereParams.push(`%${t.tag}%`);
+        }
+        for (const k of keywords) {
+          ors.push("lower(p.title) LIKE ?");
+          whereParams.push(`%${k}%`);
+        }
+        where.push(`(${ors.join(" OR ")})`);
+      }
+
+      const scoreExpr = score.length ? score.join(" + ") : "0";
+      const candidates = await all(
+        `SELECT p.id, p.platform, p.problem_id, p.title, p.rating, p.tags, p.category, p.url,
+                COALESCE(pr.status,'unsolved') as solve_status, pr.attempts, pr.xp_earned, pr.solved_at,
+                (${scoreExpr}) as relevance
+         FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id AND pr.username=${meSql()}
+         WHERE ${where.join(" AND ")}
+         ORDER BY relevance DESC, (p.rating=0), p.rating ASC
+         LIMIT 60`,
+        [...selectParams, ...whereParams],
+      );
+
+      if (!candidates.length) {
+        const payload = { understanding, matchedTags: tags.map((t) => t.tag), platform, status, minRating, maxRating, count: 0, results: [] };
+        findCache.set(cacheKey, payload);
+        if (findCache.size > 200) findCache.delete(findCache.keys().next().value);
+        return res.json({ ok: true, ...payload });
+      }
+
+      /* 3) LLM re-rank the real candidates by topic fit.
+            Keep the prompt small (top 30) and reasoning light so the JSON is not
+            truncated by the model's own reasoning tokens. */
+      const pool = candidates.slice(0, 30);
+      const listing = pool
+        .map((c, i) => `${i}. [${c.platform}] "${c.title}" — rating ${c.rating || "?"}, tags: ${c.tags || "none"}`)
+        .join("\n");
+      let results = null;
+      try {
+        const rankOut = await llm(
+          [
+            {
+              role: "system",
+              content: `You rank competitive-programming problems by how well each matches a practice request. Judge the real topic (infer from title + tags), NOT literal word overlap — a cryptic title with the right tags is a good match. Reply JSON ONLY: {"results":[{"i": <index from the list>, "reason": "<=10 words on why it fits>"}]} — best matches first, at most ${want}, OMIT anything that clearly does not fit.`,
+            },
+            { role: "user", content: `Request: "${query}"\n\nNumbered problems:\n${listing}` },
+          ],
+          { json: true, maxTokens: 1200, temperature: 0.1, reasoning: "low" },
+        );
+        const ranked = parseJson(rankOut);
+        if (ranked && Array.isArray(ranked.results)) {
+          const seen = new Set();
+          results = [];
+          for (const r of ranked.results) {
+            const idx = +r?.i;
+            if (!Number.isInteger(idx) || idx < 0 || idx >= pool.length || seen.has(idx)) continue;
+            seen.add(idx);
+            results.push({ problem: clean(pool[idx]), reason: String(r.reason || "").slice(0, 90) });
+            if (results.length >= want) break;
+          }
+        }
+      } catch {
+        /* fall back to SQL order below */
+      }
+
+      // Trust the model's ranking exactly — it omits non-matches on purpose, so
+      // never pad the list with lower-relevance rows. Only fall back to the SQL
+      // relevance order when the re-rank produced nothing at all.
+      if (!results || results.length === 0) {
+        results = candidates.slice(0, want).map((p) => ({ problem: clean(p), reason: "" }));
+      }
+
+      const payload = {
+        understanding,
+        matchedTags: tags.map((t) => t.tag),
+        platform,
+        status,
+        minRating,
+        maxRating,
+        count: results.length,
+        results,
+      };
+      findCache.set(cacheKey, payload);
+      if (findCache.size > 200) findCache.delete(findCache.keys().next().value);
+      res.json({ ok: true, ...payload });
+    } catch (e) {
+      console.error("find-problems error:", e.message);
+      res.status(500).json({ ok: false, error: e.message });
+    }
+  });
+
   /* ── Coding coach ── */
-  const COACH_RULES = `You are "Nexora Coach", an expert competitive-programming mentor watching a student code in an online judge.
-Hard rules: NEVER write the full solution or large code blocks. At most one short line of code in a hint. Be concrete and brief.`;
+  const COACH_RULES = `You are "Nexora Coach", a world-class competitive-programming mentor sitting beside a student in an online judge. You have the problem statement and the student's current code.
+
+How you talk:
+- Plain, warm, precise sentences. No filler ("great question", "I hope this helps"), no hedging stacks, no emojis.
+- Correct grammar and spelling. Short sentences. One idea per sentence.
+- Use clean GitHub markdown: **bold** for key terms, \`code\` for identifiers/values, - bullets for lists, and reference code as line L12.
+- Be specific to THIS code and THIS problem. Quote the exact variable, line, or test value. Never give generic advice the student could get anywhere.
+
+Hard rules:
+- NEVER write the full solution and never a code block longer than one short line. Guide, don't hand over.
+- If you are not sure of something (an expected output, a complexity), say so plainly instead of inventing it.
+- Stay on the student's language and the actual problem; do not drift into unrelated theory.`;
 
   router.post("/api/ai/coach", aiLimiter, async (req, res) => {
     try {
@@ -484,18 +680,20 @@ Hard rules: NEVER write the full solution or large code blocks. At most one shor
               content: `Problem: ${title}\n---\n${stmt}\n---\nStudent's ${language} code (line numbers added):\n${src
                 .split("\n")
                 .map((l, i) => `${i + 1}| ${l}`)
-                .join("\n")}\n\nAnalyse what the student is doing. Reply JSON only:
-{"summary": "one sentence: what the code currently does / tries to do",
- "approach": "short name of the technique (e.g. two pointers, prefix sums, BFS) or 'unclear'",
- "time": "Big-O time of the code as written", "space": "Big-O memory",
- "fits": true|false|null  (would it pass typical limits for this problem?),
- "progress": 0-100 (how complete the solution looks),
- "issues": [{"line": n, "severity": "error"|"warning"|"info", "message": "specific bug / risk (overflow, off-by-one, TLE, uninitialised, I/O)"}],
- "edgeCases": ["short edge case the code may miss"],
- "nextStep": "one concrete hint for what to do next (no full code)"}`,
+                .join("\n")}\n\nRead the code carefully and analyse what the student is actually doing. Reply JSON only:
+{"summary": "one crisp sentence: what this code currently does or tries to do (name the real approach, not vague wording)",
+ "approach": "short standard name of the technique (e.g. two pointers, prefix sums, BFS on a grid, DP over subsets) or 'unclear'",
+ "time": "tight Big-O time of the code AS WRITTEN, e.g. O(n log n)",
+ "space": "tight Big-O extra memory, e.g. O(n)",
+ "fits": true|false|null  (would it pass typical limits, ~1e8 ops/sec, for this problem's constraints? null if constraints unknown),
+ "progress": 0-100 (how complete and correct the solution looks),
+ "issues": [{"line": <int line number>, "severity": "error"|"warning"|"info", "message": "one specific, actionable sentence about a real bug or risk in THIS code (overflow, off-by-one, wrong edge case, TLE, uninitialised, I/O format). Only include issues you can point to a line for."}],
+ "edgeCases": ["a concrete input case this code likely mishandles, described in a few words"],
+ "nextStep": "one concrete hint for the single most important thing to do next (no full code)"}
+Keep every string short and human. Do not pad lists — an empty list is better than a weak entry.`,
             },
           ],
-          { json: true, maxTokens: 900, temperature: 0.2 },
+          { json: true, maxTokens: 1000, temperature: 0.2, reasoning: "medium" },
         );
         const j = parseJson(out);
         if (!j) return res.status(502).json({ ok: false, error: "AI returned an unreadable answer" });
@@ -510,11 +708,17 @@ Hard rules: NEVER write the full solution or large code blocks. At most one shor
             { role: "system", content: COACH_RULES },
             {
               role: "user",
-              content: `Problem: ${title}\n---\n${stmt}\n---\nPropose 4 small, VALID tricky test inputs that follow the exact input format above (edge cases: minimum sizes, equal values, large values, special structure). For each, compute the correct expected output by careful reasoning; if you are not certain, use an empty string for "expected". Reply JSON only:
-{"tests": [{"label": "short name", "input": "exact stdin", "expected": "exact stdout or empty", "why": "what it checks"}]}`,
+              content: `Problem: ${title}\n---\n${stmt}\n---\nDesign 4 small, tricky test cases that STRESS THIS PROBLEM's logic. Follow the exact input format and every stated constraint (T test cases, ranges, array sizes) precisely — an input that violates the format is useless.
+
+Cover different edge shapes: minimum size, all-equal values, maximum/near-limit values, and any special structure the statement hints at.
+
+For each case, compute the expected output yourself by carefully hand-tracing the problem rules. Only fill "expected" when you are confident it is exactly right; otherwise use an empty string so the student can run and inspect it. Never guess an expected value.
+
+Reply JSON only:
+{"tests": [{"label": "2-3 word name of what it checks", "input": "exact stdin, with real newlines", "expected": "exact stdout, or empty string if unsure", "why": "one short sentence: what this case is designed to catch"}]}`,
             },
           ],
-          { json: true, maxTokens: 1400, temperature: 0.3 },
+          { json: true, maxTokens: 1600, temperature: 0.2, reasoning: "high" },
         );
         const j = parseJson(out);
         const tests = Array.isArray(j?.tests) ? j.tests.slice(0, 6) : [];
@@ -534,10 +738,17 @@ Hard rules: NEVER write the full solution or large code blocks. At most one shor
               role: "user",
               content: `Problem: ${title}\n---\n${stmt.slice(0, 3000)}\n---\nCode (${language}):\n${src}\n\nVerdict: ${verdict || "unknown"}\n${
                 failing ? `Failing case:\nINPUT:\n${String(failing.input || "").slice(0, 1500)}\nEXPECTED:\n${String(failing.expected || "").slice(0, 800)}\nGOT:\n${String(failing.actual || "").slice(0, 800)}\nSTDERR:\n${String(failing.stderr || "").slice(0, 800)}` : ""
-              }\n\nExplain in 3-6 short markdown bullet points WHY this verdict happens and where in the code (line numbers), then give one hint to fix it. No full solution.`,
+              }\n\nExplain this verdict so the student understands and can fix it themselves. Use exactly this markdown structure, keeping each part tight:
+
+**What happened** — one sentence on what the verdict means for this submission.
+**Where** — 1-3 bullets pointing at the specific line(s) (L##) and the exact value/variable that goes wrong; trace the failing input concretely if one is given.
+**Why** — one or two sentences on the root cause (logic gap, wrong edge case, overflow, complexity, I/O format).
+**Try this** — one concrete hint for the fix. Do NOT give the corrected code.
+
+If the verdict is a compile error, focus on the exact syntax/type problem and the line. Be accurate; if the failing output is not shown, reason from the code.`,
             },
           ],
-          { maxTokens: 700, temperature: 0.3 },
+          { maxTokens: 800, temperature: 0.2, reasoning: "medium" },
         );
         return res.json({ ok: true, explanation: out.trim() });
       }
@@ -546,10 +757,10 @@ Hard rules: NEVER write the full solution or large code blocks. At most one shor
         const q = String(req.body.question || "").slice(0, 1500);
         const out = await llm(
           [
-            { role: "system", content: COACH_RULES + reply },
+            { role: "system", content: COACH_RULES + reply + " Answer the question directly first, then add only the detail that helps. Format in clean markdown (bullets, `code`, **bold**). Keep it focused — typically under 150 words." },
             { role: "user", content: `Problem: ${title}\n---\n${stmt.slice(0, 3500)}\n---\nCurrent ${language} code:\n${src}\n\nQuestion: ${q}` },
           ],
-          { maxTokens: 800, temperature: 0.4 },
+          { maxTokens: 800, temperature: 0.4, reasoning: "medium" },
         );
         return res.json({ ok: true, answer: out.trim() });
       }

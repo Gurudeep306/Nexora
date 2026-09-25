@@ -1,36 +1,22 @@
 import { useState } from 'react'
-import { Sparkles, Wand2, X } from 'lucide-react'
+import { Sparkles, Wand2 } from 'lucide-react'
 import { Button, Input, useToast } from '@/components/ui'
 import { api } from '@/lib/api'
-import { DIFFICULTY_BANDS, PLATFORM_OPTIONS, type DifficultyBandId } from './types'
-
-export interface AiProblemFilters {
-  platform: string
-  difficulty: DifficultyBandId | 'all'
-  tags: string[]
-  search: string
-  status: 'all' | 'solved' | 'attempted' | 'unsolved'
-  sort: 'rating' | 'title' | 'id'
-  summary: string
-}
+import { PLATFORM_OPTIONS, type AiFindResponse } from './types'
 
 const EXAMPLES = [
   'easy graph problems for a beginner',
   'hard Codeforces DP I have not solved yet',
-  'medium string problems around rating 1400',
-  'math puzzles to warm up',
+  'problems where I count digits or sums of digits',
+  'warm-up implementation problems under 1000',
 ]
 
 export function AiProblemFinder({
   tags,
-  onApply,
-  summary,
-  onClearSummary,
+  onResults,
 }: {
   tags: string[]
-  onApply: (filters: AiProblemFilters) => void
-  summary: string | null
-  onClearSummary: () => void
+  onResults: (res: AiFindResponse) => void
 }) {
   const [query, setQuery] = useState('')
   const [busy, setBusy] = useState(false)
@@ -43,17 +29,12 @@ export function AiProblemFinder({
     setBusy(true)
     setError(null)
     try {
-      const res = await api.post<{ ok: boolean; filters?: AiProblemFilters; error?: string }>(
-        '/api/ai/problem-search',
-        {
-          query: text,
-          platforms: [...PLATFORM_OPTIONS],
-          tags,
-          bands: DIFFICULTY_BANDS.map((b) => b.id),
-        },
-        { timeoutMs: 60000 },
+      const res = await api.post<AiFindResponse>(
+        '/api/ai/find-problems',
+        { query: text, platforms: [...PLATFORM_OPTIONS], tags, limit: 12 },
+        { timeoutMs: 90000 },
       )
-      if (res.ok && res.filters) onApply(res.filters)
+      if (res.ok) onResults(res)
       else throw new Error(res.error || 'AI search failed')
     } catch (err) {
       const msg = err instanceof Error ? err.message : undefined
@@ -78,7 +59,7 @@ export function AiProblemFinder({
           <div>
             <div className="text-sm font-semibold text-foreground">AI Problem Finder</div>
             <div className="text-[11px] text-foreground-faint">
-              Describe what you want to practice — the AI sets the filters and finds the problems for you.
+              Describe anything you want to practice — the AI understands the topic and hand-picks matching problems, not just title keywords.
             </div>
           </div>
         </div>
@@ -93,7 +74,7 @@ export function AiProblemFinder({
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder={'e.g. "medium shortest-path problems on Codeforces I haven\u2019t solved yet"'}
+            placeholder={'e.g. "tricky two-pointer problems on sorted arrays, medium difficulty"'}
             aria-label="Describe the problems you want"
             className="flex-1"
           />
@@ -119,22 +100,12 @@ export function AiProblemFinder({
           ))}
         </div>
 
-        {error && <div className="text-xs text-destructive">{error}</div>}
-
-        {summary && (
-          <div className="flex items-center gap-2 rounded-lg border border-primary/40 bg-primary/10 px-3 py-1.5 text-xs text-primary-bright">
-            <Sparkles className="size-3.5 shrink-0" aria-hidden="true" />
-            <span className="min-w-0 flex-1 truncate">{summary}</span>
-            <button
-              onClick={onClearSummary}
-              aria-label="Clear AI filters"
-              title="Clear AI filters"
-              className="cursor-pointer rounded p-0.5 transition-colors hover:bg-primary/20"
-            >
-              <X className="size-3.5" aria-hidden="true" />
-            </button>
-          </div>
+        {busy && (
+          <p className="flex items-center gap-2 text-xs text-foreground-faint">
+            <span className="skeleton inline-block h-3 w-40" /> reading your request and scanning the library…
+          </p>
         )}
+        {error && <div className="text-xs text-destructive">{error}</div>}
       </div>
     </div>
   )
