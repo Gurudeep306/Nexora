@@ -282,6 +282,137 @@
   background-repeat: no-repeat;
 }
 
+/* ── Premium flourishes (Linear / Vercel / Stripe vocabulary) ─────────────
+   Reusable, GPU-cheap, and silenced by the global prefers-reduced-motion rule. */
+
+/* Animatable angle so a conic gradient can spin smoothly. */
+@property --nx-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+/* Animated conic "beam" that endlessly traces an element's border.
+   Element must have a border-radius + position (relative). */
+.beam-border {
+  position: relative;
+}
+.beam-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(
+    from var(--nx-angle),
+    transparent 0deg,
+    color-mix(in srgb, var(--color-primary) 90%, transparent) 42deg,
+    color-mix(in srgb, var(--color-cyan) 85%, transparent) 74deg,
+    transparent 128deg,
+    transparent 360deg
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: nx-beam 6s linear infinite;
+  pointer-events: none;
+}
+@keyframes nx-beam {
+  to {
+    --nx-angle: 360deg;
+  }
+}
+
+/* Specular sheen that sweeps across a button/link on hover. */
+.sheen {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.sheen::after {
+  content: '';
+  position: absolute;
+  top: -20%;
+  left: -160%;
+  z-index: 1;
+  width: 55%;
+  height: 140%;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.45), transparent);
+  transform: skewX(-18deg);
+  transition: left 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+.sheen:hover::after {
+  left: 165%;
+}
+
+/* Drifting aurora glow — three blurred blobs, transform-only animation. */
+.aurora {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.aurora span {
+  position: absolute;
+  display: block;
+  border-radius: 9999px;
+  filter: blur(72px);
+  will-change: transform;
+}
+.aurora .a1 {
+  width: 46vw;
+  height: 46vw;
+  left: -10vw;
+  top: -14vw;
+  opacity: 0.5;
+  background: radial-gradient(circle at 30% 30%, var(--color-primary), transparent 68%);
+  animation: nx-drift1 19s ease-in-out infinite;
+}
+.aurora .a2 {
+  width: 40vw;
+  height: 40vw;
+  right: -8vw;
+  top: 2vw;
+  opacity: 0.42;
+  background: radial-gradient(circle at 60% 40%, var(--color-cyan), transparent 68%);
+  animation: nx-drift2 23s ease-in-out infinite;
+}
+.aurora .a3 {
+  width: 42vw;
+  height: 42vw;
+  left: 20vw;
+  bottom: -18vw;
+  opacity: 0.3;
+  background: radial-gradient(circle at 50% 50%, var(--color-accent), transparent 68%);
+  animation: nx-drift3 27s ease-in-out infinite;
+}
+@keyframes nx-drift1 {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(6vw, 4vw, 0) scale(1.12); }
+}
+@keyframes nx-drift2 {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(-5vw, 6vw, 0) scale(1.08); }
+}
+@keyframes nx-drift3 {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(4vw, -5vw, 0) scale(1.15); }
+}
+
+/* Editorial line reveal: a child span slides up from behind this mask. */
+.line-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+}
+
 /* App-wide ambient light behind everything. */
 .app-ambient {
   position: fixed;

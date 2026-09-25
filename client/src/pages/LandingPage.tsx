@@ -160,6 +160,11 @@ export default function LandingPage() {
       {/* ── Hero ── */}
       <section className="relative isolate overflow-hidden pt-36 pb-24 sm:pt-44">
         <RiftBackground className="-z-10" />
+        <div className="aurora -z-10 opacity-45" aria-hidden="true">
+          <span className="a1" />
+          <span className="a2" />
+          <span className="a3" />
+        </div>
         <div className="absolute inset-x-0 bottom-0 -z-10 h-64 bg-gradient-to-b from-transparent to-background" aria-hidden="true" />
         <div className="mx-auto max-w-6xl px-5 text-center">
           <motion.a
@@ -198,7 +203,7 @@ export default function LandingPage() {
           >
             <Link
               to="/auth?mode=register"
-              className="group flex h-12 items-center gap-2 rounded-xl bg-gradient-to-b from-[#9d74ff] to-primary px-6 text-[15px] font-semibold text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.3),0_0_0_1px_rgb(139_92_246/0.6),0_14px_40px_-10px_rgb(139_92_246/0.9)] transition-transform hover:scale-[1.03]"
+              className="sheen group flex h-12 items-center gap-2 rounded-xl bg-gradient-to-b from-[#9d74ff] to-primary px-6 text-[15px] font-semibold text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.3),0_0_0_1px_rgb(139_92_246/0.6),0_14px_40px_-10px_rgb(139_92_246/0.9)] transition-transform hover:scale-[1.03]"
             >
               Enter the rift <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
@@ -332,7 +337,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── Final CTA ── */}
-      <section className="relative isolate mx-5 mb-16 overflow-hidden rounded-3xl border border-white/[0.06] px-6 py-24 text-center sm:mx-auto sm:max-w-6xl" data-reveal>
+      <section className="beam-border relative isolate mx-5 mb-16 overflow-hidden rounded-3xl border border-white/[0.06] px-6 py-24 text-center sm:mx-auto sm:max-w-6xl" data-reveal>
         <RiftBackground className="-z-10" grid={false} intensity={0.9} />
         <Sparkles className="mx-auto mb-5 size-7 text-primary-bright" />
         <h2 className="text-heading-fade mx-auto max-w-2xl font-display text-4xl font-semibold tracking-tight sm:text-6xl">The rift is open.</h2>

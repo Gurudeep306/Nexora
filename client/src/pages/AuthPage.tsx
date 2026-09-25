@@ -265,14 +265,18 @@ export default function AuthPage() {
       <main className="relative flex items-center justify-center px-5 py-10 sm:px-10">
         <div className="pointer-events-none absolute inset-0 lg:hidden" aria-hidden="true">
           <div className="grid-bg absolute inset-0 opacity-50" />
-          <div className="absolute -top-24 left-1/2 size-80 -translate-x-1/2 rounded-full bg-primary/25 blur-[100px]" />
+          <div className="aurora opacity-80">
+            <span className="a1" />
+            <span className="a2" />
+            <span className="a3" />
+          </div>
         </div>
 
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, ease: 'easeOut' }}
-          className="relative w-full max-w-[26rem]"
+          className="glass beam-border relative w-full max-w-[26rem] rounded-2xl p-6 sm:p-8"
         >
           {/* Mobile brand */}
           <div className="mb-8 flex items-center gap-2.5 lg:hidden">
@@ -483,7 +487,7 @@ export default function AuthPage() {
               size="lg"
               loading={submitting}
               disabled={!canSubmit}
-              className="group h-12 w-full font-display text-base tracking-widest"
+              className="sheen group h-12 w-full font-display text-base tracking-widest"
             >
               {oauthPending ? 'FINISH SIGN-UP' : mode === 'login' ? 'ENTER THE RIFT' : 'FORGE ACCOUNT'}
               {!submitting && <ArrowRight className="transition-transform group-hover:translate-x-1" aria-hidden="true" />}
