@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils'
 
 export function Skeleton({ className }: { className?: string }) {
-  return <div className={cn('skeleton', className)} aria-hidden="true" />
+  return <div className={cn('animate-pulse bg-surface-2 rounded', className)} aria-hidden="true" />
 }
 
 export function Progress({
@@ -22,10 +22,10 @@ export function Progress({
       aria-valuenow={value}
       aria-valuemin={0}
       aria-valuemax={max}
-      className={cn('h-1.5 w-full overflow-hidden rounded-full bg-white/[0.06]', className)}
+      className={cn('h-1.5 w-full overflow-hidden rounded-full bg-border/20', className)}
     >
       <div
-        className={cn('h-full rounded-full bg-gradient-to-r from-primary to-primary-bright transition-[width] duration-500 ease-out', barClassName)}
+        className={cn('h-full rounded-full bg-primary/20 transition-[width] duration-500 ease-out', barClassName)}
         style={{ width: `${pct}%` }}
       />
     </div>
@@ -35,22 +35,26 @@ export function Progress({
 export function XpBar({ xp, nextLevelXp, level, levelName }: { xp: number; nextLevelXp: number; level?: number | string; levelName?: string }) {
   const pct = nextLevelXp > 0 ? Math.min(100, (xp / nextLevelXp) * 100) : 0
   return (
-    <div className="space-y-1.5">
-      <div className="flex items-baseline justify-between text-xs">
-        <span className="font-display font-semibold text-primary-bright">
-          {level != null && <>LVL {level} · </>}
-          {levelName ?? 'Rift Walker'}
+    <div className="space-y-2">
+      <div className="flex items-baseline justify-between text-sm font-medium">
+        <span className="flex items-center gap-1">
+          {level != null && (
+            <>
+              <span className="text-xs font-mono text-foreground/60">LVL {level} · </span>
+            </>
+          )}
+          <span className="text-foreground">{levelName ?? 'Rift Walker'}</span>
         </span>
-        <span className="font-mono text-foreground-dim tabular-nums">
+        <span className="font-mono text-foreground/60 tabular-nums">
           {xp.toLocaleString()} / {nextLevelXp.toLocaleString()} XP
         </span>
       </div>
-      <div className="relative h-2 w-full overflow-hidden rounded-full bg-white/[0.06]">
+      <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-border/20">
         <div
-          className="relative h-full overflow-hidden rounded-full bg-gradient-to-r from-primary via-primary-bright to-cyan transition-[width] duration-700 ease-out"
-          style={{ width: `${pct}%`, boxShadow: '0 0 12px rgb(139 92 246 / 0.55)' }}
+          className="h-full rounded-full bg-primary/20 transition-[width] duration-700 ease-out"
+          style={{ width: `${pct}%` }}
         >
-          <span aria-hidden="true" className="absolute inset-0 animate-shimmer bg-[linear-gradient(110deg,transparent_35%,rgb(255_255_255/0.35)_50%,transparent_65%)] bg-[length:200%_100%]" />
+          <span aria-hidden="true" className="absolute inset-0 animate-pulse bg-[linear-gradient(90deg,transparent_0%,primary_50%,transparent_100%)] bg-[length:200%_100%]" />
         </div>
       </div>
     </div>

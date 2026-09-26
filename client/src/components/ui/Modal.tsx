@@ -46,8 +46,8 @@ export function Modal({
               <Dialog.Content asChild forceMount>
                 <motion.div
                   className={cn(
-                    'pop-surface relative z-10 flex max-h-[88vh] w-full flex-col overflow-hidden rounded-b-none bg-surface sm:rounded-2xl',
-                    'rounded-t-2xl',
+                    'card relative z-10 flex max-h-[88vh] w-full flex-col overflow-hidden rounded-xl bg-surface-3 border border-border',
+                    'shadow-lg',
                     widths[size],
                     className,
                   )}
@@ -58,18 +58,18 @@ export function Modal({
                 >
                   <span aria-hidden="true" className="hairline-top pointer-events-none absolute inset-x-0 top-0 h-px" />
                   {title ? (
-                    <div className="flex items-start justify-between gap-4 border-b border-white/[0.06] px-5 py-4">
+                    <div className="flex items-start justify-between gap-4 border-b border-border px-5 py-4">
                       <div className="min-w-0">
                         <Dialog.Title className="min-w-0 font-display text-[17px] font-semibold break-words text-foreground">
                           {title}
                         </Dialog.Title>
                         {description && (
-                          <Dialog.Description className="mt-1 text-[13px] text-foreground-dim">{description}</Dialog.Description>
+                          <Dialog.Description className="mt-1 text-[13px] text-foreground-muted">{description}</Dialog.Description>
                         )}
                       </div>
                       <Dialog.Close
                         aria-label="Close dialog"
-                        className="-mr-1.5 cursor-pointer rounded-md p-1.5 text-foreground-faint transition-colors hover:bg-white/[0.06] hover:text-foreground"
+                        className="-mr-1.5 cursor-pointer rounded-md p-1.5 text-foreground-muted transition-colors hover:bg-border/20 hover:text-foreground"
                       >
                         <X className="size-4" />
                       </Dialog.Close>
@@ -111,12 +111,12 @@ export function ConfirmDialog({
   return (
     <Modal open={open} onClose={onClose} title={title} size="sm">
       <div className="space-y-5">
-        <div className="text-sm text-foreground-dim">{message}</div>
+        <div className="text-sm text-foreground-muted">{message}</div>
         <div className="flex justify-end gap-2">
-          <Button variant="ghost" onClick={onClose}>
+          <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          <Button variant={danger ? 'danger' : 'primary'} loading={loading} onClick={onConfirm}>
+          <Button variant={danger ? 'destructive' : 'primary'} loading={loading} onClick={onConfirm}>
             {confirmLabel}
           </Button>
         </div>

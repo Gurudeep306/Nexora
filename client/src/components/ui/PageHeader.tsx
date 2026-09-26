@@ -32,15 +32,15 @@ export function PageHeader({
     >
       <div className="flex min-w-0 items-start gap-4">
         {icon && (
-          <div className="mt-1 hidden size-11 shrink-0 items-center justify-center rounded-xl border border-primary/25 bg-gradient-to-b from-primary/20 to-primary/5 text-primary-bright shadow-[inset_0_1px_0_rgb(255_255_255/0.08)] sm:flex [&_svg]:size-5">
+          <div className="mt-1 hidden size-11 shrink-0 items-center justify-center rounded-xl border border-primary/20 bg-gradient-to-b from-primary/20 to-primary/5 text-primary/80 shadow-[inset_0_1px_0_foreground/10] sm:flex [&_svg]:size-5">
             {icon}
           </div>
         )}
         <div className="min-w-0">
           {eyebrow && (
-            <p className="mb-1 text-[11px] font-semibold tracking-[0.14em] text-primary-bright/80 uppercase">{eyebrow}</p>
+            <p className="mb-1 text-[11px] font-semibold tracking-[0.14em] text-primary/80 uppercase">{eyebrow}</p>
           )}
-          <h1 className="text-heading-fade font-display text-[26px] leading-tight font-semibold tracking-tight md:text-[32px]">
+          <h1 className="font-display text-[26px] leading-tight font-semibold tracking-tight md:text-[32px] text-foreground/90">
             {title}
           </h1>
           {subtitle && <p className="mt-1.5 max-w-2xl text-sm text-foreground-dim">{subtitle}</p>}

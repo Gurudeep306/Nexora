@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo, type ReactNode } from 'react'
+import { createContext, useContext, useContext, useMemo, type ReactNode } from 'react'
 import { Toaster, toast as sonner } from 'sonner'
 import { AlertTriangle, CheckCircle2, Info, XCircle } from 'lucide-react'
 
@@ -14,7 +14,7 @@ interface ToastApi {
 
 const ToastContext = createContext<ToastApi | null>(null)
 
-/** Stacked, swipe-to-dismiss toasts (sonner) behind the same useToast() API. */
+/** Modern toast notifications using the new design system. */
 export function ToastProvider({ children }: { children: ReactNode }) {
   const api = useMemo<ToastApi>(() => {
     const toast = (kind: ToastKind, title: string, description?: string) => sonner[kind](title, { description })
@@ -33,22 +33,26 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       <Toaster
         theme="dark"
         position="bottom-right"
-        gap={10}
-        visibleToasts={4}
+        gap={4}
+        visibleToasts={3}
         closeButton
+        duration={5000}
+        swipeDirection="right-to-left"
         icons={{
-          success: <CheckCircle2 className="size-4 text-success" />,
-          error: <XCircle className="size-4 text-destructive" />,
-          warning: <AlertTriangle className="size-4 text-warning" />,
-          info: <Info className="size-4 text-info" />,
+          success: <CheckCircle2 className="h-4 w-4 text-success" />,
+          error: <XCircle className="h-4 w-4 text-error" />,
+          warning: <AlertTriangle className="h-4 w-4 text-warning" />,
+          info: <Info className="h-4 w-4 text-info" />,
         }}
         toastOptions={{
           classNames: {
             toast:
-              '!rounded-xl !border !border-white/[0.08] !bg-[#15151c]/95 !backdrop-blur-xl !shadow-[0_16px_48px_-12px_rgb(0_0_0/0.8)] !text-foreground !font-[inherit]',
-            title: '!text-[13px] !font-semibold',
-            description: '!text-xs !text-foreground-dim',
-            closeButton: '!bg-surface-2 !border-white/10 !text-foreground-dim',
+              '!rounded-lg !border !border-border/20 !bg-surface-3/90 !shadow-lg !text-foreground !font-body',
+            title: '!text-sm !font-medium',
+            description: '!text-xs !text-foreground-muted',
+            closeButton: '!bg-surface-2 !border-border/20 !text-foreground/60 hover:text-foreground',
+            action: '!text-sm !font-medium text-primary hover:text-primary/80',
+            actionButton: '!bg-primary/10 hover:bg-primary/20',
           },
         }}
       />

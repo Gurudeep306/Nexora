@@ -7,17 +7,17 @@ import { cn } from '@/lib/utils'
  * sidebar, Hub, profiles and the leaderboard.
  */
 export const RIFT_TIERS = [
-  { level: 1, name: 'Bit', color: '#9ca3af' },
-  { level: 2, name: 'Byte', color: '#84cc16' },
-  { level: 3, name: 'Kilobyte', color: '#22c55e' },
-  { level: 4, name: 'Megabyte', color: '#06b6d4' },
-  { level: 5, name: 'Gigabyte', color: '#3b82f6' },
-  { level: 6, name: 'Terabyte', color: '#8b5cf6' },
-  { level: 7, name: 'Petabyte', color: '#d946ef' },
-  { level: 8, name: 'Exabyte', color: '#f43f5e' },
-  { level: 9, name: 'Zettabyte', color: '#ef4444' },
-  { level: 10, name: 'Yottabyte', color: '#f59e0b' },
-  { level: 11, name: '∞ Overflow', color: '#fbbf24' },
+  { level: 1, name: 'Bit', color: 'color-foreground-dim' },
+  { level: 2, name: 'Byte', color: 'color-primary' },
+  { level: 3, name: 'Kilobyte', color: 'color-accent' },
+  { level: 4, name: 'Megabyte', color: 'color-info' },
+  { level: 5, name: 'Gigabyte', color: 'color-primary' },
+  { level: 6, name: 'Terabyte', color: 'color-primary-dark' },
+  { level: 7, name: 'Petabyte', color: 'color-error' },
+  { level: 8, name: 'Exabyte', color: 'color-accent-dark' },
+  { level: 9, name: 'Zettabyte', color: 'color-warning' },
+  { level: 10, name: 'Yottabyte', color: 'color-warning-dark' },
+  { level: 11, name: '∞ Overflow', color: 'color-xp' },
 ] as const
 
 export function tierFor(level: number) {
@@ -38,7 +38,7 @@ function star(n: number, r1: number, r2: number) {
   }).join(' ')
 }
 
-/** Core symbol per level, drawn in a 64×64 box. */
+/* Core symbol per level, drawn in a 64×64 box. */
 function Core({ level, c }: { level: number; c: string }) {
   switch (level) {
     case 1:

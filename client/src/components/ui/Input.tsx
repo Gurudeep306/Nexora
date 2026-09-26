@@ -1,19 +1,19 @@
 import { cloneElement, isValidElement, useId, forwardRef, type InputHTMLAttributes, type TextareaHTMLAttributes, type SelectHTMLAttributes } from 'react'
 import { cn } from '@/lib/utils'
 
-const fieldBase =
-  'w-full rounded-lg border border-border bg-black/20 px-3.5 text-sm text-foreground shadow-[inset_0_1px_2px_rgb(0_0_0/0.25)] placeholder:text-foreground-faint/80 transition-[border-color,box-shadow,background-color] duration-150 hover:border-border-strong focus:border-primary/70 focus:bg-black/30 focus:outline-none focus:ring-4 focus:ring-primary/15 disabled:cursor-not-allowed disabled:opacity-50 aria-[invalid=true]:border-destructive/60'
+const inputBase =
+  'input-base w-full'
 
 export const Input = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement>>(
   ({ className, ...props }, ref) => (
-    <input ref={ref} className={cn(fieldBase, 'h-9.5', className)} {...props} />
+    <input ref={ref} className={cn(inputBase, className)} {...props} />
   ),
 )
 Input.displayName = 'Input'
 
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaHTMLAttributes<HTMLTextAreaElement>>(
   ({ className, ...props }, ref) => (
-    <textarea ref={ref} className={cn(fieldBase, 'min-h-20 py-2.5', className)} {...props} />
+    <textarea ref={ref} className={cn(inputBase, 'min-h-[100px] resize-y', className)} {...props} />
   ),
 )
 Textarea.displayName = 'Textarea'
@@ -23,8 +23,8 @@ export const Select = forwardRef<HTMLSelectElement, SelectHTMLAttributes<HTMLSel
     <select
       ref={ref}
       className={cn(
-        fieldBase,
-        'select-chevron h-9.5 cursor-pointer appearance-none bg-surface-2 pr-9',
+        inputBase,
+        'appearance-none pr-9',
         className,
       )}
       {...props}
@@ -38,7 +38,7 @@ Select.displayName = 'Select'
 export function Label({ className, ...props }: React.LabelHTMLAttributes<HTMLLabelElement>) {
   return (
     <label
-      className={cn('mb-1.5 block text-[12.5px] font-medium text-foreground-dim', className)}
+      className={cn('mb-2 block text-sm font-medium text-foreground', className)}
       {...props}
     />
   )
@@ -58,9 +58,9 @@ export function Field({ label, error, hint, children }: { label?: string; error?
         'aria-invalid': error ? true : undefined,
       }) : children}
       {error ? (
-        <p id={descriptionId} role="alert" className="mt-1.5 text-xs text-destructive">{error}</p>
+        <p id={descriptionId} role="alert" className="mt-1 block text-sm text-error">{error}</p>
       ) : hint ? (
-        <p id={descriptionId} className="mt-1.5 text-xs text-foreground-faint">{hint}</p>
+        <p id={descriptionId} className="mt-1 block text-sm text-foreground-muted">{hint}</p>
       ) : null}
     </div>
   )

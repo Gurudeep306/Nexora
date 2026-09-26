@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, useReducedMotion } from 'motion/react'
 
-const COLORS = ['var(--color-primary-bright)', 'var(--color-accent)', 'var(--color-cyan)', 'var(--color-gold)', 'var(--color-success)']
+const COLORS = ['var(--color-primary-light)', 'var(--color-accent)', 'var(--color-info)', 'var(--color-warning)', 'var(--color-success)']
 
 /**
  * One-shot burst of rift shards — plays when you get Accepted.

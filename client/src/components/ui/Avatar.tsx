@@ -3,12 +3,12 @@ import { cn } from '@/lib/utils'
 import { avatarDataUrl, parseAvatar } from '@/lib/avatar'
 
 const SIZES = {
-  xs: 'size-6 text-[10px]',
-  sm: 'size-8 text-xs',
-  md: 'size-10 text-sm',
-  lg: 'size-14 text-lg',
-  xl: 'size-20 text-2xl',
-  '2xl': 'size-28 text-3xl',
+  xs: 'h-6 w-6 text-[10px]',
+  sm: 'h-8 w-8 text-xs',
+  md: 'h-10 w-10 text-sm',
+  lg: 'h-12 w-12 text-lg',
+  xl: 'h-14 w-14 text-2xl',
+  '2xl': 'h-16 w-16 text-3xl',
 }
 
 /**
@@ -56,23 +56,23 @@ export function Avatar({
           onError={() => setFailed(imgSrc)}
           className={cn(
             SIZES[size],
-            'rounded-full object-cover',
-            ring && 'ring-2 ring-border-glow',
+            'rounded-full object-cover border border-border',
+            ring && 'ring-2 ring-primary/20',
           )}
         />
       ) : (
         <img
           src={generated ?? undefined}
           alt={name ? `${name}'s avatar` : 'avatar'}
-          className={cn(SIZES[size], 'rounded-full bg-surface-2', ring && 'ring-2 ring-border-glow')}
+          className={cn(SIZES[size], 'rounded-full bg-surface-2', ring && 'ring-2 ring-primary/20')}
           draggable={false}
         />
       )}
       {online != null && (
         <span
           className={cn(
-            'absolute right-0 bottom-0 size-2.5 rounded-full border-2 border-background',
-            online ? 'bg-success' : 'bg-foreground-faint',
+            'absolute -bottom-1 -right-0 h-2.5 w-2.5 rounded-full border-2 border-background',
+            online ? 'bg-success' : 'bg-foreground-muted',
           )}
           aria-label={online ? 'online' : 'offline'}
         />

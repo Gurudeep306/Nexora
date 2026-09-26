@@ -10,22 +10,22 @@ export function Table({ className, ...props }: HTMLAttributes<HTMLTableElement>)
 }
 
 export function THead({ className, ...props }: HTMLAttributes<HTMLTableSectionElement>) {
-  return <thead className={cn('[&_tr]:border-b [&_tr]:border-white/[0.06] [&_tr]:hover:bg-transparent', className)} {...props} />
+  return <thead className={cn('[&_tr]:border-b [&_tr]:border-border/20', className)} {...props} />
 }
 
 export function TBody({ className, ...props }: HTMLAttributes<HTMLTableSectionElement>) {
-  return <tbody className={cn('[&_tr]:border-b [&_tr]:border-white/[0.04] [&_tr:last-child]:border-0', className)} {...props} />
+  return <tbody className={cn('[&_tr]:border-b [&_tr]:border-border/10 [&_tr:last-child]:border-0', className)} {...props} />
 }
 
 export function TR({ className, ...props }: HTMLAttributes<HTMLTableRowElement>) {
-  return <tr className={cn('transition-colors duration-150 hover:bg-white/[0.025]', className)} {...props} />
+  return <tr className={cn('transition-colors duration-200 hover:bg-surface-2', className)} {...props} />
 }
 
 export function TH({ className, ...props }: ThHTMLAttributes<HTMLTableCellElement>) {
   return (
     <th
       className={cn(
-        'px-4 py-2.5 text-left text-[11px] font-medium tracking-[0.08em] text-foreground-faint uppercase whitespace-nowrap',
+        'px-4 py-3 text-left text-xs font-medium text-foreground/60 uppercase whitespace-nowrap',
         className,
       )}
       {...props}
@@ -34,5 +34,5 @@ export function TH({ className, ...props }: ThHTMLAttributes<HTMLTableCellElemen
 }
 
 export function TD({ className, ...props }: TdHTMLAttributes<HTMLTableCellElement>) {
-  return <td className={cn('px-4 py-3 text-foreground-dim', className)} {...props} />
+  return <td className={cn('px-4 py-3 text-foreground', className)} {...props} />
 }

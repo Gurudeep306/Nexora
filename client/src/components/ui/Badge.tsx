@@ -3,23 +3,21 @@ import type { HTMLAttributes } from 'react'
 import { cn } from '@/lib/utils'
 
 const badgeVariants = cva(
-  'inline-flex items-center gap-1 rounded-md border px-1.5 py-px text-[10.5px] leading-[18px] font-semibold tracking-[0.04em] uppercase whitespace-nowrap [&_svg]:size-3',
+  'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium',
   {
     variants: {
       variant: {
-        default: 'border-white/[0.07] bg-white/[0.04] text-foreground-dim',
-        primary: 'border-primary/30 bg-primary/12 text-primary-bright',
-        accent: 'border-accent/30 bg-accent/10 text-[#fb7189]',
-        success: 'border-success/25 bg-success/[0.08] text-success',
-        warning: 'border-warning/25 bg-warning/[0.08] text-warning',
-        danger: 'border-destructive/25 bg-destructive/[0.08] text-[#f87171]',
-        info: 'border-info/25 bg-info/[0.08] text-info',
-        cyan: 'border-cyan/25 bg-cyan/[0.08] text-cyan',
-        gold: 'border-gold/25 bg-gold/[0.08] text-gold',
-        outline: 'border-border-strong bg-transparent text-foreground',
+        default: 'border border-border/20 bg-surface-2 text-foreground/60',
+        primary: 'border border-primary/20 bg-primary/10 text-primary',
+        secondary: 'border border-border/20 bg-surface-3 text-foreground',
+        success: 'border border-success/20 bg-success/10 text-success',
+        warning: 'border border-warning/20 bg-warning/10 text-warning',
+        destructive: 'border border-error/20 bg-error/10 text-error',
+        info: 'border border-info/20 bg-info/10 text-info',
+        outline: 'border border-border/20 bg-transparent text-foreground',
       },
     },
-    defaultVariants: { variant: 'default' },
+    defaultVariants: { variant: 'secondary' },
   },
 )
 
@@ -34,12 +32,12 @@ export { badgeVariants }
 export const DIFFICULTY_VARIANT: Record<string, BadgeProps['variant']> = {
   easy: 'success',
   medium: 'warning',
-  hard: 'danger',
-  beginner: 'cyan',
-  advanced: 'accent',
+  hard: 'destructive',
+  beginner: 'secondary',
+  advanced: 'primary',
 }
 
 export function DifficultyBadge({ difficulty, rating }: { difficulty?: string; rating?: number }) {
-  const label = difficulty ?? (rating ? (rating < 1200 ? 'easy' : rating < 1600 ? 'medium' : 'hard') : 'unknown')
-  return <Badge variant={DIFFICULTY_VARIANT[label.toLowerCase()] ?? 'default'}>{label}</Badge>
+  const label = difficulty ?? (rating ? (rating < 1200 ? 'easy' : rating < 1600 ? 'medium' : 'destructive') : 'unknown')
+  return <Badge variant={DIFFICULTY_VARIANT[label.toLowerCase()] ?? 'secondary'}>{label}</Badge>
 }
