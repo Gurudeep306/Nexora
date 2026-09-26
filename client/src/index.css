@@ -410,7 +410,7 @@
   }
 
   .avatar-online::after {
-    @apply content-[''] absolute -bottom-1 -right-1 h-2 w-2 bg-state-success rounded-full border-2 border-background;
+    @apply content-[''] absolute -bottom-1 -right-1 h-2 w-2 bg-state-success rounded-full border-2 border-border;
   }
 
   /* Toast Notification Styles */
@@ -599,7 +599,7 @@
 }
 
 .focus-visible\:ring-offset-2:focus-visible {
-  @apply ring-offset-2 ring-offset-background;
+  @apply ring-offset-2 ring-offset-bg-app;
 }
 
 /* ── Reduced Motion Support ── */
