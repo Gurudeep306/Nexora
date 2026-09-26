@@ -52,7 +52,7 @@ export const CommandPalette = ({ className = "" }: CommandPaletteProps) => {
      
       <Command className={`w-[24rem] max-w-full ${className}`}>
         <CommandGroup>
-          <CommandInput placeholder="Search commands..." onValueChange=setQuery />
+          <CommandInput placeholder="Search commands..." onValueChange={setQuery} />
           <CommandList>
             {commands.length > 0 ? (
               commands
