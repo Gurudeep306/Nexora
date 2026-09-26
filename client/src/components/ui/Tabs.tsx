@@ -63,11 +63,11 @@ export function Tabs({
               pill
                 ? cn(
                     'flex cursor-pointer items-center gap-2 rounded-lg px-3.5 py-1.5 text-sm font-medium transition-colors',
-                    on ? 'bg-primary/15 text-primary-bright' : 'text-foreground/60 hover:bg-white/[0.04] hover:text-foreground',
+                    on ? 'bg-accent-brand/15 text-accent-brand' : 'text-text-primary/60 hover:bg-white/[0.04] hover:text-text-primary',
                   )
                 : cn(
-                    'flex cursor-pointer items-center gap-2 border-b-2 border-transparent px-4 py-2 text-sm font-medium text-foreground/60',
-                    on ? 'border-primary text-foreground' : 'hover:border-primary/20 hover:text-foreground',
+                    'flex cursor-pointer items-center gap-2 border-b-2 border-transparent px-4 py-2 text-sm font-medium text-text-primary/60',
+                    on ? 'border-accent-brand text-text-primary' : 'hover:border-accent-brand/20 hover:text-text-primary',
                   ),
             )}
           >
@@ -75,7 +75,7 @@ export function Tabs({
               {item.icon}
               {item.label}
               {item.badge != null && (
-                <span className="ml-2 flex items-center gap-1 rounded-full bg-primary/10 text-primary px-2 py-0.5 text-xs">
+                <span className="ml-2 flex items-center gap-1 rounded-full bg-accent-brand/10 text-accent-brand px-2 py-0.5 text-xs">
                   {item.badge}
                 </span>
               )}

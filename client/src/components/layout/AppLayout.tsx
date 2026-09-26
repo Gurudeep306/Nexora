@@ -8,6 +8,7 @@ import { CommandPalette } from './CommandPalette'
 import { ShortcutsDialog } from './ShortcutsDialog'
 import { MobileTabBar } from './MobileTabBar'
 import { RouteProgress } from './RouteProgress'
+import { RiftBackground } from '../fx/RiftBackground'
 import { cn } from '@/lib/utils'
 
 export function AppLayout() {
@@ -58,12 +59,11 @@ export function AppLayout() {
     <div className="relative min-h-dvh">
       <a
         href="#main-content"
-        className="fixed top-2 left-2 z-[1400] -translate-y-20 rounded-lg bg-primary px-3 py-2 text-sm font-semibold text-white transition-transform focus:translate-y-0"
+        className="fixed top-2 left-2 z-[1400] -translate-y-20 rounded-lg bg-accent-brand px-3 py-2 text-sm font-semibold text-text-primary/90 transition-transform focus:translate-y-0"
       >
         Skip to content
       </a>
-      <div className="app-ambient" aria-hidden="true" />
-      <div className="grid-bg pointer-events-none fixed inset-x-0 top-0 z-0 h-[480px] opacity-60" aria-hidden="true" />
+      <RiftBackground className="pointer-events-none" grid={true} intensity={1} />
 
       <RouteProgress />
       <CommandPalette />

@@ -41,7 +41,7 @@ export function Notifications() {
       <PopoverTrigger asChild>
         <button
           aria-label={total ? `Notifications (${total} unread)` : 'Notifications'}
-          className="relative flex size-9 cursor-pointer items-center justify-center rounded-lg text-foreground-dim transition-colors hover:bg-white/[0.05] hover:text-foreground data-[state=open]:bg-white/[0.06] data-[state=open]:text-foreground"
+          className="relative flex size-9 cursor-pointer items-center justify-center rounded-lg text-text-primary/60 transition-colors hover:bg-bg-app/5 hover:text-text-primary data-[state=open]:bg-bg-app/8 data-[state=open]:text-text-primary"
         >
           <Bell className="size-[17px]" />
           <AnimatePresence>
@@ -50,7 +50,7 @@ export function Notifications() {
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 exit={{ scale: 0 }}
-                className="absolute top-1 right-1 flex min-w-4 items-center justify-center rounded-full bg-accent px-1 text-[10px] leading-4 font-semibold text-white ring-2 ring-background"
+                className="absolute top-1 right-1 flex min-w-4 items-center justify-center rounded-full bg-accent-brand px-1 text-[10px] leading-4 font-semibold text-white ring-2 ring-border"
               >
                 {total > 99 ? '99+' : total}
               </motion.span>
@@ -59,9 +59,9 @@ export function Notifications() {
         </button>
       </PopoverTrigger>
       <PopoverContent className="w-[min(360px,calc(100vw-16px))] p-0">
-        <div className="flex items-center justify-between border-b border-white/[0.06] px-4 py-3">
-          <p className="text-sm font-semibold text-foreground">Inbox</p>
-          {total > 0 && <span className="rounded-full bg-accent/15 px-2 py-0.5 text-[11px] font-medium text-[#fb7189]">{total} new</span>}
+        <div className="flex items-center justify-between border-b border-border/10 px-4 py-3">
+          <p className="text-sm font-semibold text-text-primary">Inbox</p>
+          {total > 0 && <span className="rounded-full bg-accent-brand/15 px-2 py-0.5 text-[11px] font-medium text-state-error">{total} new</span>}
         </div>
         <div className="max-h-[60vh] overflow-y-auto p-1.5">
           {loading && !data ? (
@@ -73,11 +73,11 @@ export function Notifications() {
             <ErrorState message={error} onRetry={refetch} />
           ) : !total ? (
             <div className="flex flex-col items-center gap-2 px-6 py-10 text-center">
-              <span className="flex size-10 items-center justify-center rounded-full bg-success/10 text-success">
+              <span className="flex size-10 items-center justify-center rounded-full bg-state-success/10 text-state-success">
                 <CheckCheck className="size-5" />
               </span>
-              <p className="text-sm font-medium text-foreground">You're all caught up</p>
-              <p className="text-xs text-foreground-faint">No unread messages or friend requests.</p>
+              <p className="text-sm font-medium text-text-primary">You're all caught up</p>
+              <p className="text-xs text-text-primary/60">No unread messages or friend requests.</p>
             </div>
           ) : (
             <>
@@ -86,13 +86,13 @@ export function Notifications() {
                   key={r.id}
                   to="/social?tab=friends"
                   onClick={() => setOpen(false)}
-                  className="flex items-start gap-3 rounded-lg px-2.5 py-2.5 text-[13px] transition-colors hover:bg-white/[0.04]"
+                  className="flex items-start gap-3 rounded-lg px-2.5 py-2.5 text-[13px] transition-colors hover:bg-bg-app/5"
                 >
                   <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-cyan/10 text-cyan">
                     <UserPlus className="size-4" />
                   </span>
-                  <span className="min-w-0 text-foreground-dim">
-                    <strong className="font-semibold text-foreground">{r.display_name || r.username}</strong> wants to join your squad.
+                  <span className="min-w-0 text-text-primary/60">
+                    <strong className="font-semibold text-text-primary">{r.display_name || r.username}</strong> wants to join your squad.
                   </span>
                 </Link>
               ))}
@@ -101,13 +101,13 @@ export function Notifications() {
                   key={m.from_user}
                   to={`/social?tab=messages&peer=${encodeURIComponent(m.from_user)}`}
                   onClick={() => setOpen(false)}
-                  className="flex items-start gap-3 rounded-lg px-2.5 py-2.5 text-[13px] transition-colors hover:bg-white/[0.04]"
+                  className="flex items-start gap-3 rounded-lg px-2.5 py-2.5 text-[13px] transition-colors hover:bg-bg-app/5"
                 >
-                  <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary-bright">
+                  <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-accent-brand/15 text-accent-brand">
                     <MessageSquare className="size-4" />
                   </span>
-                  <span className="min-w-0 text-foreground-dim">
-                    <strong className="font-semibold text-foreground">{m.from_user}</strong> sent {m.count} {m.count === 1 ? 'message' : 'messages'}
+                  <span className="min-w-0 text-text-primary/60">
+                    <strong className="font-semibold text-text-primary">{m.from_user}</strong> sent {m.count} {m.count === 1 ? 'message' : 'messages'}
                   </span>
                 </Link>
               ))}

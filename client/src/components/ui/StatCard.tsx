@@ -4,14 +4,14 @@ import { Card } from './Card'
 import { AnimatedNumber } from './AnimatedNumber'
 
 const ACCENTS = {
-  primary: { text: 'text-primary', tile: 'from-primary/10 to-primary/5', ring: 'ring-primary/20' },
-  secondary: { text: 'text-foreground', tile: 'from-transparent to-transparent', ring: 'ring-border/20' },
-  accent: { text: 'text-accent', tile: 'from-accent/10 to-accent/5', ring: 'ring-accent/20' },
-  success: { text: 'text-success', tile: 'from-success/10 to-success/5', ring: 'ring-success/20' },
-  warning: { text: 'text-warning', tile: 'from-warning/10 to-warning/5', ring: 'ring-warning/20' },
-  cyan: { text: 'text-cyan', tile: 'from-cyan/10 to-cyan/5', ring: 'ring-cyan/20' },
-  gold: { text: 'text-gold', tile: 'from-gold/10 to-gold/5', ring: 'ring-gold/20' },
-  destructive: { text: 'text-destructive', tile: 'from-destructive/10 to-destructive/5', ring: 'ring-destructive/20' },
+  primary: { text: 'text-accent-brand', tile: 'from-accent-brand/10 to-accent-brand/5', ring: 'ring-accent-brand/20' },
+  secondary: { text: 'text-text-primary', tile: 'from-transparent to-transparent', ring: 'ring-border/20' },
+  accent: { text: 'text-accent-brand', tile: 'from-accent-brand/10 to-accent-brand/5', ring: 'ring-accent-brand/20' },
+  success: { text: 'text-state-success', tile: 'from-state-success/10 to-state-success/5', ring: 'ring-state-success/20' },
+  warning: { text: 'text-state-warning', tile: 'from-state-warning/10 to-state-warning/5', ring: 'ring-state-warning/20' },
+  cyan: { text: 'text-state-info', tile: 'from-state-info/10 to-state-info/5', ring: 'ring-state-info/20' },
+  gold: { text: 'text-state-gold', tile: 'from-state-gold/10 to-state-gold/5', ring: 'ring-state-gold/20' },
+  destructive: { text: 'text-state-error', tile: 'from-state-error/10 to-state-error/5', ring: 'ring-state-error/20' },
 }
 
 export function StatCard({
@@ -34,11 +34,11 @@ export function StatCard({
     <Card className={cn('p-4', className)}>
       <div className="relative flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <p className="text-xs font-medium text-foreground/60 uppercase tracking-wider">{label}</p>
-          <p className="mt-1.5 truncate font-display text-2xl sm:text-3xl leading-none font-semibold tracking-tight text-foreground tabular-nums">
+          <p className="text-xs font-medium text-text-primary/60 uppercase tracking-wider">{label}</p>
+          <p className="mt-1.5 truncate font-display text-2xl sm:text-3xl leading-none font-semibold tracking-tight text-text-primary tabular-nums">
             {typeof value === 'number' ? <AnimatedNumber value={value} /> : value}
           </p>
-          {sub && <div className="mt-2 text-xs text-foreground/60">{sub}</div>}
+          {sub && <div className="mt-2 text-xs text-text-primary/60">{sub}</div>}
         </div>
         {icon && (
           <div className={cn(

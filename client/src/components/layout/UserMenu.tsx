@@ -24,10 +24,10 @@ export function UserMenu({ children, side = 'top', align = 'start' }: { children
             size="md"
           />
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-semibold text-foreground">
+            <p className="truncate text-sm font-semibold text-text-primary">
               {typeof user.display_name === 'string' && user.display_name ? user.display_name : user.username}
             </p>
-            <p className="truncate text-xs text-foreground-faint">@{user.username}</p>
+            <p className="truncate text-xs text-text-primary/60">@{user.username}</p>
           </div>
           <RankGlyph level={level} size={30} animated={false} />
         </div>

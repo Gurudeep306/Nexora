@@ -38,7 +38,7 @@ Select.displayName = 'Select'
 export function Label({ className, ...props }: React.LabelHTMLAttributes<HTMLLabelElement>) {
   return (
     <label
-      className={cn('mb-2 block text-sm font-medium text-foreground', className)}
+      className={cn('mb-2 block text-sm font-medium text-text-primary', className)}
       {...props}
     />
   )
@@ -58,9 +58,9 @@ export function Field({ label, error, hint, children }: { label?: string; error?
         'aria-invalid': error ? true : undefined,
       }) : children}
       {error ? (
-        <p id={descriptionId} role="alert" className="mt-1 block text-sm text-error">{error}</p>
+        <p id={descriptionId} role="alert" className="mt-1 block text-sm text-state-error">{error}</p>
       ) : hint ? (
-        <p id={descriptionId} className="mt-1 block text-sm text-foreground-muted">{hint}</p>
+        <p id={descriptionId} className="mt-1 block text-sm text-text-muted">{hint}</p>
       ) : null}
     </div>
   )

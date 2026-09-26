@@ -11,9 +11,9 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
     <div
       ref={ref}
       className={cn(
-        'card-neon',
-        glow && 'glow-box',
-        interactive && 'cursor-pointer hover:-translate-y-0.5 hover:border-primary/40',
+        'card',
+        glow && 'glow-box-accent',
+        interactive && 'cursor-pointer hover:-translate-y-0.5 hover:border-accent-brand/20',
         className,
       )}
       {...props}
@@ -32,7 +32,7 @@ export function CardTitle({ className, ...props }: HTMLAttributes<HTMLHeadingEle
   return (
     <h3
       className={cn(
-        'text-lg font-semibold text-foreground mb-2',
+        'text-lg font-semibold text-text-primary mb-2',
         className,
       )}
       {...props}
@@ -41,7 +41,7 @@ export function CardTitle({ className, ...props }: HTMLAttributes<HTMLHeadingEle
 }
 
 export function CardDescription({ className, ...props }: HTMLAttributes<HTMLParagraphElement>) {
-  return <p className={cn('text-sm text-foreground-muted mb-2', className)} {...props} />
+  return <p className={cn('text-sm text-text-muted mb-2', className)} {...props} />
 }
 
 export function CardContent({ className, ...props }: HTMLAttributes<HTMLDivElement>) {

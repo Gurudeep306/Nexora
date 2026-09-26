@@ -17,7 +17,7 @@ export function MobileTabBar() {
   return (
     <nav
       aria-label="Quick navigation"
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-white/[0.06] bg-[#0c0c11]/85 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-border/10 bg-bg-app/85 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl lg:hidden"
     >
       <div className="mx-auto grid h-14 max-w-md grid-cols-5">
         {TABS.map((t) =>
@@ -25,7 +25,7 @@ export function MobileTabBar() {
             <button
               key={t.to}
               onClick={openCommandPalette}
-              className="flex cursor-pointer flex-col items-center justify-center gap-0.5 text-foreground-faint"
+              className="flex cursor-pointer flex-col items-center justify-center gap-0.5 text-text-primary/60"
               aria-label="Search"
             >
               <span className="flex size-9 items-center justify-center rounded-xl bg-gradient-to-b from-[#9d74ff] to-primary text-white shadow-[0_6px_20px_-6px_rgb(139_92_246/0.8)]">
@@ -39,7 +39,7 @@ export function MobileTabBar() {
               className={({ isActive }) =>
                 cn(
                   'relative flex flex-col items-center justify-center gap-0.5 text-[10px] font-medium transition-colors',
-                  isActive ? 'text-foreground' : 'text-foreground-faint',
+                  isActive ? 'text-text-primary' : 'text-text-primary/60',
                 )
               }
             >
@@ -51,7 +51,7 @@ export function MobileTabBar() {
                       className="absolute top-0 h-0.5 w-8 rounded-b-full bg-primary-bright shadow-[0_0_10px_rgb(167_139_250/0.9)]"
                     />
                   )}
-                  <t.icon className={cn('size-[19px]', isActive && 'text-primary-bright')} />
+                  <t.icon className={cn('size-[19px]', isActive && 'text-accent-brand')} />
                   {t.label}
                 </>
               )}

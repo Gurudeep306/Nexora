@@ -18,7 +18,7 @@ export function RouteProgress() {
         <motion.div
           key={run.key}
           aria-hidden="true"
-          className="fixed top-0 left-0 z-[1300] h-[2px] bg-gradient-to-r from-primary via-primary-bright to-cyan shadow-[0_0_12px_rgb(139_92_246/0.9)]"
+          className="fixed top-0 left-0 z-[1300] h-[2px] bg-gradient-to-r from-accent-brand via-accent-brand-hover to-state-info shadow-[0_0_12px_rgb(167_139_250/0.9)]"
           initial={{ width: '0%', opacity: 1 }}
           animate={{ width: '85%' }}
           exit={{ width: '100%', opacity: 0, transition: { duration: 0.25 } }}

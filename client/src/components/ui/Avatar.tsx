@@ -57,22 +57,22 @@ export function Avatar({
           className={cn(
             SIZES[size],
             'rounded-full object-cover border border-border',
-            ring && 'ring-2 ring-primary/20',
+            ring && 'ring-2 ring-accent-brand/20',
           )}
         />
       ) : (
         <img
           src={generated ?? undefined}
           alt={name ? `${name}'s avatar` : 'avatar'}
-          className={cn(SIZES[size], 'rounded-full bg-surface-2', ring && 'ring-2 ring-primary/20')}
+          className={cn(SIZES[size], 'rounded-full bg-bg-surface-2', ring && 'ring-2 ring-accent-brand/20')}
           draggable={false}
         />
       )}
       {online != null && (
         <span
           className={cn(
-            'absolute -bottom-1 -right-0 h-2.5 w-2.5 rounded-full border-2 border-background',
-            online ? 'bg-success' : 'bg-foreground-muted',
+            'absolute -bottom-1 -right-0 h-2.5 w-2.5 rounded-full border-2 border-bg-app/50',
+            online ? 'bg-state-success' : 'bg-text-text-primary/60',
           )}
           aria-label={online ? 'online' : 'offline'}
         />

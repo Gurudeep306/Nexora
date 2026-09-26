@@ -64,7 +64,7 @@ export function ShortcutsDialog() {
     <Modal open={open} onClose={() => setOpen(false)} title="Keyboard shortcuts" description="Move around Nexora without touching the mouse." size="md">
       <div className="grid gap-6 sm:grid-cols-2">
         <section>
-          <h3 className="mb-2 text-[11px] font-semibold tracking-[0.1em] text-foreground-faint uppercase">General</h3>
+          <h3 className="mb-2 text-[11px] font-semibold tracking-[0.1em] text-text-primary/60 uppercase">General</h3>
           <ul className="space-y-1.5 text-sm">
             <Row label="Search / command palette" keys={['⌘', 'K']} onClick={() => { setOpen(false); openCommandPalette() }} />
             <Row label="Quick search" keys={['/']} />
@@ -73,7 +73,7 @@ export function ShortcutsDialog() {
           </ul>
         </section>
         <section>
-          <h3 className="mb-2 text-[11px] font-semibold tracking-[0.1em] text-foreground-faint uppercase">Go to</h3>
+          <h3 className="mb-2 text-[11px] font-semibold tracking-[0.1em] text-text-primary/60 uppercase">Go to</h3>
           <ul className="space-y-1.5 text-sm">
             {Object.entries(GO_SHORTCUTS).map(([k, to]) => (
               <Row key={k} label={LABELS[to] ?? to} keys={['G', k.toUpperCase()]} />
@@ -89,11 +89,11 @@ function Row({ label, keys, onClick }: { label: string; keys: string[]; onClick?
   return (
     <li className="flex items-center justify-between gap-3 rounded-md px-1 py-0.5">
       {onClick ? (
-        <button onClick={onClick} className="cursor-pointer text-left text-foreground-dim hover:text-foreground">
+        <button onClick={onClick} className="cursor-pointer text-left text-text-primary/60 hover:text-text-primary">
           {label}
         </button>
       ) : (
-        <span className="text-foreground-dim">{label}</span>
+        <span className="text-text-primary/60">{label}</span>
       )}
       <span className="flex gap-1">
         {keys.map((k) => (

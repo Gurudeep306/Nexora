@@ -36,7 +36,7 @@ export function Modal({
             <div className="fixed inset-0 z-1000 flex items-end justify-center sm:items-center sm:p-4">
               <Dialog.Overlay asChild forceMount>
                 <motion.div
-                  className="absolute inset-0 bg-black/65 backdrop-blur-[6px]"
+                  className="absolute inset-0 bg-bg-app/90 backdrop-blur-[6px]"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
@@ -46,7 +46,7 @@ export function Modal({
               <Dialog.Content asChild forceMount>
                 <motion.div
                   className={cn(
-                    'card relative z-10 flex max-h-[88vh] w-full flex-col overflow-hidden rounded-xl bg-surface-3 border border-border',
+                    'card relative z-10 flex max-h-[88vh] w-full flex-col overflow-hidden rounded-xl bg-bg-surface-3 border border-border',
                     'shadow-lg',
                     widths[size],
                     className,
@@ -60,16 +60,16 @@ export function Modal({
                   {title ? (
                     <div className="flex items-start justify-between gap-4 border-b border-border px-5 py-4">
                       <div className="min-w-0">
-                        <Dialog.Title className="min-w-0 font-display text-[17px] font-semibold break-words text-foreground">
+                        <Dialog.Title className="min-w-0 font-display text-[17px] font-semibold break-words text-text-primary">
                           {title}
                         </Dialog.Title>
                         {description && (
-                          <Dialog.Description className="mt-1 text-[13px] text-foreground-muted">{description}</Dialog.Description>
+                          <Dialog.Description className="mt-1 text-[13px] text-text-primary/60">{description}</Dialog.Description>
                         )}
                       </div>
                       <Dialog.Close
                         aria-label="Close dialog"
-                        className="-mr-1.5 cursor-pointer rounded-md p-1.5 text-foreground-muted transition-colors hover:bg-border/20 hover:text-foreground"
+                        className="-mr-1.5 cursor-pointer rounded-md p-1.5 text-text-primary/60 transition-colors hover:bg-border/20 hover:text-text-primary"
                       >
                         <X className="size-4" />
                       </Dialog.Close>
@@ -111,7 +111,7 @@ export function ConfirmDialog({
   return (
     <Modal open={open} onClose={onClose} title={title} size="sm">
       <div className="space-y-5">
-        <div className="text-sm text-foreground-muted">{message}</div>
+        <div className="text-sm text-text-primary/60">{message}</div>
         <div className="flex justify-end gap-2">
           <Button variant="outline" onClick={onClose}>
             Cancel
