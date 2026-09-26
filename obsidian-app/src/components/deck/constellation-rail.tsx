@@ -70,7 +70,7 @@ const ConstellationNode = ({
   onNodeMouseLeave: (nodeId: string) => void;
   onNodeClick: (nodeId: string) => void;
 }) => {
-  const { id, label, description, href, children, isActive = false } = node;
+  const { id, label, description, href, children, icon, isActive = false } = node;
   
   // Motion values for this node
   const scale = useMotionValue(1);
