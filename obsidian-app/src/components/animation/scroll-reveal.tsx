@@ -31,22 +31,28 @@ export const ScrollReveal = ({
   const [isVisible, setIsVisible] = useState(false);
   const [hasAnimated, setHasAnimated] = useState(false);
 
-  // Check if scroll-driven animations are supported
-  const isScrollTimelineSupported = useRef(
-    "scrollTimeline" in document.documentElement.style
-  ).current;
+  // Check if scroll-driven animations are supported (safe for SSR)
+  const isScrollTimelineSupported = useRef(false);
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      isScrollTimelineSupported.current = "scrollTimeline" in document.documentElement.style;
+    }
+  }, []);
 
-  // Check if prefers-reduced-motion is enabled
-  const prefersReducedMotion = window.matchMedia(
-    "(prefers-reduced-motion: reduce)"
-  ).matches;
+  // Check if prefers-reduced-motion is enabled (safe for SSR)
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setPrefersReducedMotion(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+    }
+  }, []);
 
   useEffect(() => {
     if (!elementRef.current) return;
 
     // If scroll-driven animations are not supported or reduced motion is enabled,
     // fall back to Intersection Observer
-    if (!isScrollTimelineSupported || prefersReducedMotion) {
+    if (!isScrollTimelineSupported.current || prefersReducedMotion) {
       const observer = new IntersectionObserver(
         ([entry]) => {
           const shouldAnimate = entry.isIntersecting;
@@ -100,7 +106,7 @@ export const ScrollReveal = ({
     threshold,
     rootMargin,
     reset,
-    isScrollTimelineSupported,
+    isScrollTimelineSupported.current,
     prefersReducedMotion,
   ]);
 
