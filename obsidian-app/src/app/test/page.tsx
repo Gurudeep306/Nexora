@@ -12,36 +12,36 @@ const constellationNodes = [
   {
     id: "dashboard",
     label: "Dashboard",
-    icon: Home,
+    icon: "home",
     description: "Overview of your projects",
     isActive: true,
   },
   {
     id: "projects",
     label: "Projects",
-    icon: Users,
+    icon: "users",
     description: "Manage your projects",
   },
   {
     id: "editor",
     label: "Editor",
-    icon: Code,
+    icon: "code",
     description: "Code editor",
     children: [
-      { id: "editor-new", label: "New File", icon: Zap },
-      { id: "editor-open", label: "Open File", icon: Search },
+      { id: "editor-new", label: "New File", icon: "zap" },
+      { id: "editor-open", label: "Open File", icon: "search" },
     ],
   },
   {
     id: "analytics",
     label: "Analytics",
-    icon: BarChart2,
+    icon: "bar-chart-2",
     description: "View statistics",
   },
   {
     id: "settings",
     label: "Settings",
-    icon: Settings,
+    icon: "settings",
     description: "Application settings",
   },
 ];
