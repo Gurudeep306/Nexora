@@ -8,12 +8,20 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary: 'btn-base bg-primary text-on-primary hover:bg-primary-light',
-        secondary: 'btn-base bg-surface-2 text-foreground border border-border-hover hover:bg-surface-3 hover:border-primary/20',
-        outline: 'btn-base border border-primary/20 text-primary hover:bg-primary/10 hover:border-primary/30',
-        ghost: 'btn-base text-foreground/70 hover:text-primary hover:bg-primary/5',
-        destructive: 'btn-base bg-error text-white hover:bg-error-dark',
-        success: 'btn-base bg-success text-white hover:bg-success-dark',
+        primary:
+          'bg-gradient-to-b from-primary-light to-primary text-on-primary shadow-[inset_0_1px_0_rgb(255_255_255/0.25),0_0_0_1px_rgb(99_102_241/0.6),0_6px_20px_-6px_rgb(99_102_241/0.7)] hover:brightness-110',
+        secondary:
+          'border border-border bg-surface-2 text-foreground shadow-[inset_0_1px_0_rgb(255_255_255/0.04)] hover:border-border-strong hover:bg-surface-3',
+        outline:
+          'border border-border-strong bg-surface/40 text-foreground hover:border-primary/60 hover:bg-primary/10 hover:text-white',
+        ghost: 'text-foreground-dim hover:bg-white/[0.05] hover:text-foreground',
+        subtle:
+          'border border-border bg-surface-2 text-foreground shadow-[inset_0_1px_0_rgb(255_255_255/0.04)] hover:border-border-strong hover:bg-surface-3',
+        destructive: 'bg-gradient-to-b from-[#f87171] to-destructive text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.2)] hover:brightness-110',
+        danger: 'bg-gradient-to-b from-[#f87171] to-destructive text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.2)] hover:brightness-110',
+        success: 'bg-success text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.2)] hover:brightness-110',
+        accent:
+          'bg-gradient-to-b from-accent-light to-accent text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.25),0_0_0_1px_rgb(16_185_129/0.6),0_6px_20px_-6px_rgb(16_185_129/0.7)] hover:brightness-110',
         link: 'text-primary-bright underline-offset-4 hover:underline',
       },
       size: {

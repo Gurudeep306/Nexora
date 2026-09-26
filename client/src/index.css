@@ -16,6 +16,7 @@
 
   --color-border: #1e1e1e;               /* Subtle separation */
   --color-border-strong: #2a2a2a;        /* Stronger dividers */
+  --color-border-hover: #3a3a3a;         /* Hover-state borders */
   --color-border-input: #333333;         /* Input borders */
 
   --color-foreground: #e0e0e0;           /* Primary text - soft white for reduced strain */
@@ -46,6 +47,13 @@
   --color-error-dark: #dc2626;
   --color-info: #3b82f6;                 /* Blue */
   --color-info-dark: #2563eb;
+  --color-destructive: #ef4444;          /* Alias for error - destructive actions */
+  --color-destructive-dark: #dc2626;
+
+  /* ── Extended Accents ── */
+  --color-primary-bright: #818cf8;       /* Brighter primary for links/highlights */
+  --color-cyan: #06b6d4;                 /* Cyan - informational highlights */
+  --color-gold: #fbbf24;                 /* Gold - premium/achievement */
 
   /* ── Syntax Highlighting (Optimized for readability) ── */
   --color-syntax-comment: #6b7280;       /* Gray-500 */
@@ -86,6 +94,7 @@
   --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.08);
   --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
   --shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 0.06);
+  --shadow-input-focus: 0 0 0 2px color-mix(in srgb, var(--color-primary) 30%, transparent);
 
   /* ── Outline/Ring System (for focus states) ── */
   --ring-color: #6366f1;                 /* Primary for focus rings */
@@ -109,98 +118,103 @@
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
   /* ── Animation System (Purposeful, not decorative) ── */
-  @keyframes pulse-subtle {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.85; }
-  }
+  --animate-pulse-subtle: pulse-subtle 2s ease-in-out infinite;
+  --animate-slide-in-up: slide-in-up 300ms ease-out;
+  --animate-fade-in: fade-in 300ms ease-out;
+  --animate-scale-in: scale-in 200ms ease-out;
+}
 
-  @keyframes slide-in-up {
-    from {
-      transform: translateY(20px);
-      opacity: 0;
-    }
-    to {
-      transform: translateY(0);
-      opacity: 1;
-    }
-  }
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.85; }
+}
 
-  @keyframes fade-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
+@keyframes slide-in-up {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
   }
-
-  @keyframes scale-in {
-    from {
-      transform: scale(0.95);
-      opacity: 0;
-    }
-    to {
-      transform: scale(1);
-      opacity: 1;
-    }
+  to {
+    transform: translateY(0);
+    opacity: 1;
   }
+}
 
-  /* ── Utility Classes ── */
-  /* Glassmorphism effect for premium overlays */
-  @utility glass {
-    background: color-mix(in srgb, var(--color-surface-3) 70%, transparent);
-    backdrop-filter: blur(20px) saturate(150%);
-    -webkit-backdrop-filter: blur(20px) saturate(150%);
-    border: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scale-in {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
   }
-
-  /* Elevated card with subtle shadow */
-  @utility card {
-    background-color: var(--color-surface-3);
-    border: 1px solid var(--color-border);
-    border-radius: 0.75rem;
-    box-shadow: var(--shadow);
+  to {
+    transform: scale(1);
+    opacity: 1;
   }
+}
 
-  /* Premium button base */
-  @utility btn-base {
-    font-weight: 500;
-    border-radius: 0.5rem;
-    transition-property: color, background-color, border-color, box-shadow, transform;
-    transition-duration: var(--duration-200);
-    transition-timing-function: var(--ease-in-out);
-  }
+/* ── Utility Classes ── */
+/* Glassmorphism effect for premium overlays */
+@utility glass {
+  background: color-mix(in srgb, var(--color-surface-3) 70%, transparent);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
+}
 
-  /* Input base styling */
-  @utility input-base {
-    border-radius: 0.5rem;
-    border-width: 1px;
-    border-color: var(--color-border-input);
-    background-color: var(--color-surface-2);
-    color: var(--color-foreground);
-    padding: 0.75rem 1rem;
-    font-size: 0.875rem;
-    transition: border-color var(--duration-200) ease,
-                box-shadow var(--duration-200) ease,
-                background-color var(--duration-200) ease;
-  }
+/* Elevated card with subtle shadow */
+@utility card {
+  background-color: var(--color-surface-3);
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  box-shadow: var(--shadow);
+}
 
-  @utility input-base:focus {
+/* Premium button base */
+@utility btn-base {
+  font-weight: 500;
+  border-radius: 0.5rem;
+  transition-property: color, background-color, border-color, box-shadow, transform;
+  transition-duration: var(--duration-200);
+  transition-timing-function: var(--ease-in-out);
+}
+
+/* Input base styling */
+@utility input-base {
+  border-radius: 0.5rem;
+  border-width: 1px;
+  border-color: var(--color-border-input);
+  background-color: var(--color-surface-2);
+  color: var(--color-foreground);
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  transition: border-color var(--duration-200) ease,
+              box-shadow var(--duration-200) ease,
+              background-color var(--duration-200) ease;
+
+  &:focus {
     border-color: var(--color-primary);
     box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 30%, transparent);
     outline: 2px solid transparent;
     background-color: var(--color-surface-3);
   }
 
-  @utility input-base::placeholder {
+  &::placeholder {
     color: var(--color-foreground-muted);
     opacity: 0.7;
   }
+}
 
-  /* Text utilities */
-  @utility text-balance {
-    text-wrap: balance;
-  }
+/* Text utilities */
+@utility text-balance {
+  text-wrap: balance;
+}
 
-  @utility text-pretty {
-    text-wrap: pretty;
-  }
+@utility text-pretty {
+  text-wrap: pretty;
 }
 
 /* ── Base Styles ── */
@@ -210,7 +224,7 @@
   }
 
   html {
-    @apply scrollbar-thin;
+    scrollbar-width: thin;
     scrollbar-color: var(--color-border) var(--color-background);
   }
 
@@ -307,7 +321,7 @@
   }
 
   .btn-outline {
-    @apply btn-base border border-primary/20 text-primary px-4 py-2.5 text-sm font-medium background-transparent;
+    @apply btn-base border border-primary/20 text-primary px-4 py-2.5 text-sm font-medium bg-transparent;
     @apply hover:bg-primary/10 hover:border-primary/30;
     @apply active:bg-primary/20;
   }
@@ -402,10 +416,10 @@
   /* Toast Notification Styles */
   .toast {
     @apply fixed bottom-4 right-4 max-w-sm w-full p-4 mb-4;
-    @apply card-shadow rounded-lg border border-border-hover;
+    @apply shadow-lg rounded-lg border border-border-hover;
     @apply bg-surface-3 text-foreground;
     @apply transform translate-y-[20px] opacity-0;
-    @apply animate-[slide-in-up_300ms_ease-out forwards fade-in_300ms ease-out];
+    animation: slide-in-up 300ms ease-out forwards, fade-in 300ms ease-out;
     @apply z-50;
   }
 
@@ -561,7 +575,7 @@
   }
 
   .no-print {
-    @apply display-none;
+    @apply hidden;
   }
 
   .card {
@@ -574,7 +588,10 @@
 
 /* ── Accessibility Enhancements ── */
 .sr-only {
-  @apply pointer-events-none absolute width-px height-px overflow-hidden hidden-whitespace;
+  @apply absolute w-px h-px overflow-hidden whitespace-nowrap;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }
 
 .focus-visible\:ring-2:focus-visible {
@@ -588,7 +605,8 @@
 /* ── Reduced Motion Support ── */
 @media (prefers-reduced-motion: reduce) {
   * {
-    @apply animation-none transition-none !important;
+    animation: none !important;
+    transition: none !important;
   }
 
   /* Keep essential feedback */

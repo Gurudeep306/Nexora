@@ -37,10 +37,10 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         visibleToasts={3}
         closeButton
         duration={5000}
-        swipeDirection="right-to-left"
+        swipeDirections={['right']}
         icons={{
           success: <CheckCircle2 className="h-4 w-4 text-success" />,
-          error: <XCircle className="h-4 w-4 text-error" />,
+          error: <XCircle className="h-4 w-4 text-destructive" />,
           warning: <AlertTriangle className="h-4 w-4 text-warning" />,
           info: <Info className="h-4 w-4 text-info" />,
         }}
@@ -51,7 +51,6 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             title: '!text-sm !font-medium',
             description: '!text-xs !text-foreground-muted',
             closeButton: '!bg-surface-2 !border-border/20 !text-foreground/60 hover:text-foreground',
-            action: '!text-sm !font-medium text-primary hover:text-primary/80',
             actionButton: '!bg-primary/10 hover:bg-primary/20',
           },
         }}

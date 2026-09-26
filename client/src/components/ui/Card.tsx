@@ -1,12 +1,19 @@
-import { forwardRef, useCallback, type HTMLAttributes, type MouseEvent } from 'react'
+import { forwardRef, type HTMLAttributes } from 'react'
 import { cn } from '@/lib/utils'
 
-export const Card = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
-  ({ className, children, ...props }, ref) => (
+export interface CardProps extends HTMLAttributes<HTMLDivElement> {
+  glow?: boolean
+  interactive?: boolean
+}
+
+export const Card = forwardRef<HTMLDivElement, CardProps>(
+  ({ className, children, glow, interactive, ...props }, ref) => (
     <div
       ref={ref}
       className={cn(
-        'card hover:shadow-lg transition-shadow duration-300',
+        'card-neon',
+        glow && 'glow-box',
+        interactive && 'cursor-pointer hover:-translate-y-0.5 hover:border-primary/40',
         className,
       )}
       {...props}

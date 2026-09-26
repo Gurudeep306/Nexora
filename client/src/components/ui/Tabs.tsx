@@ -14,12 +14,15 @@ export function Tabs({
   active,
   onChange,
   className,
+  variant = 'underline',
 }: {
   items: TabItem[]
   active?: string
   onChange?: (id: string) => void
   className?: string
+  variant?: 'underline' | 'pill' | (string & {})
 }) {
+  const pill = variant === 'pill'
   const [internal, setInternal] = useState(items[0]?.id ?? '')
   const current = active ?? internal
   const uid = useId()
@@ -40,7 +43,7 @@ export function Tabs({
   return (
     <div
       className={cn(
-        'flex items-center gap-1 border-b border-border',
+        pill ? 'flex flex-wrap items-center gap-1' : 'flex items-center gap-1 border-b border-border',
         className,
       )}
       role="tablist"
@@ -57,8 +60,15 @@ export function Tabs({
             onKeyDown={(e) => onKey(e, i)}
             onClick={() => select(item.id)}
             className={cn(
-              'flex items-center gap-2 px-4 py-2 text-sm font-medium text-foreground/60 border-b-2 border-transparent',
-              on ? 'text-foreground border-b-2 border-primary' : 'hover:text-foreground hover:border-primary/20',
+              pill
+                ? cn(
+                    'flex cursor-pointer items-center gap-2 rounded-lg px-3.5 py-1.5 text-sm font-medium transition-colors',
+                    on ? 'bg-primary/15 text-primary-bright' : 'text-foreground/60 hover:bg-white/[0.04] hover:text-foreground',
+                  )
+                : cn(
+                    'flex cursor-pointer items-center gap-2 border-b-2 border-transparent px-4 py-2 text-sm font-medium text-foreground/60',
+                    on ? 'border-primary text-foreground' : 'hover:border-primary/20 hover:text-foreground',
+                  ),
             )}
           >
             <span className="flex items-center gap-2">

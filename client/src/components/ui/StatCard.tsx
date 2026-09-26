@@ -3,6 +3,17 @@ import { cn } from '@/lib/utils'
 import { Card } from './Card'
 import { AnimatedNumber } from './AnimatedNumber'
 
+const ACCENTS = {
+  primary: { text: 'text-primary', tile: 'from-primary/10 to-primary/5', ring: 'ring-primary/20' },
+  secondary: { text: 'text-foreground', tile: 'from-transparent to-transparent', ring: 'ring-border/20' },
+  accent: { text: 'text-accent', tile: 'from-accent/10 to-accent/5', ring: 'ring-accent/20' },
+  success: { text: 'text-success', tile: 'from-success/10 to-success/5', ring: 'ring-success/20' },
+  warning: { text: 'text-warning', tile: 'from-warning/10 to-warning/5', ring: 'ring-warning/20' },
+  cyan: { text: 'text-cyan', tile: 'from-cyan/10 to-cyan/5', ring: 'ring-cyan/20' },
+  gold: { text: 'text-gold', tile: 'from-gold/10 to-gold/5', ring: 'ring-gold/20' },
+  destructive: { text: 'text-destructive', tile: 'from-destructive/10 to-destructive/5', ring: 'ring-destructive/20' },
+}
+
 export function StatCard({
   icon,
   label,
@@ -18,15 +29,6 @@ export function StatCard({
   accent?: keyof typeof ACCENTS
   className?: string
 }) {
-  const ACCENTS = {
-    primary: { text: 'text-primary', tile: 'from-primary/10 to-primary/5', ring: 'ring-primary/20' },
-    secondary: { text: 'text-foreground', tile: 'from-transparent to-transparent', ring: 'ring-border/20' },
-    accent: { text: 'text-accent', tile: 'from-accent/10 to-accent/5', ring: 'ring-accent/20' },
-    success: { text: 'text-success', tile: 'from-success/10 to-success/5', ring: 'ring-success/20' },
-    warning: { text: 'text-warning', tile: 'from-warning/10 to-warning/5', ring: 'ring-warning/20' },
-    destructive: { text: 'text-error', tile: 'from-error/10 to-error/5', ring: 'ring-error/20' },
-  }
-
   const a = ACCENTS[accent]
   return (
     <Card className={cn('p-4', className)}>

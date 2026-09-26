@@ -12,7 +12,8 @@ import {
 import { api } from '@/lib/api'
 import { useApi } from '@/hooks/useApi'
 import { useAuth } from '@/context/AuthContext'
-import { PlatformContestCard, contestBucket } from '@/components/contests/PlatformContestCard'
+import { PlatformContestCard } from '@/components/contests/PlatformContestCard'
+import { contestBucket } from '@/components/contests/contestUtils'
 import { CustomContestsSection } from '@/components/contests/CustomContestsSection'
 import type { PlatformContest } from '@/components/contests/types'
 
