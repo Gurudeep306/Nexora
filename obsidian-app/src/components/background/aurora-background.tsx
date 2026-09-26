@@ -9,6 +9,7 @@ interface AuroraBackgroundProps {
 export const AuroraBackground = ({ className = "" }: AuroraBackgroundProps) => {
   const [isWebGLSupported, setIsWebGLSupported] = useState(true);
   const [isVisible, setIsVisible] = useState(true);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Check WebGL support and set up fallbacks
@@ -32,6 +33,13 @@ export const AuroraBackground = ({ className = "" }: AuroraBackgroundProps) => {
     };
   }, []);
 
+  // Check for prefers-reduced-motion media query
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setPrefersReducedMotion(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+    }
+  }, []);
+
   // Set up intersection observer for performance when off-screen
   useEffect(() => {
     if (!containerRef.current) return;
@@ -50,10 +58,6 @@ export const AuroraBackground = ({ className = "" }: AuroraBackgroundProps) => {
   }, []);
 
   // Fallback to CSS gradient if WebGL not supported or reduced motion
-  const prefersReducedMotion = window.matchMedia(
-    "(prefers-reduced-motion: reduce)"
-  ).matches;
-
   if (!isWebGLSupported || prefersReducedMotion || !isVisible) {
     return (
       <div
