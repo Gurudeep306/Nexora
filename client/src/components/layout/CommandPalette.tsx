@@ -245,7 +245,7 @@ export function CommandPalette() {
             </div>
             <div ref={listRef} id="palette-list" role="listbox" className="max-h-[55vh] overflow-y-auto p-2">
               {items.length === 0 && (
-                <p className="px-3 py-8 text-center text-sm text-foreground-faint">
+                <p className="px-3 py-8 text-center text-sm text-text-primary/60">
                   {searching ? 'Searching the rift…' : 'Nothing matches that. Try a problem name or page.'}
                 </p>
               )}
@@ -256,7 +256,7 @@ export function CommandPalette() {
                 return (
                   <div key={item.id}>
                     {header && (
-                      <p className="px-3 pt-3 pb-1.5 text-[10.5px] font-semibold tracking-[0.12em] text-foreground-faint uppercase">
+                      <p className="px-3 pt-3 pb-1.5 text-[10.5px] font-semibold tracking-[0.12em] text-text-primary/60 uppercase">
                         {header}
                         {header === 'Problems' && searching && <span className="ml-2 normal-case">searching…</span>}
                       </p>
