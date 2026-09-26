@@ -66,7 +66,7 @@ export default function WorkshopPage() {
 
   const allProblems = problemsApi.data?.problems ?? []
   const myContests = contestsApi.data?.contests ?? []
-  const problemsById = useMemo(() => new Map(allProblems.map((p) => [p.id, p])), [allProblems])
+  const problemsById = new Map(allProblems.map((p) => [p.id, p]))
 
   async function removeProblem() {
     if (!deleteProblem) return

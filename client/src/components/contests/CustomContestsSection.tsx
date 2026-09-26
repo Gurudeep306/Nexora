@@ -53,6 +53,15 @@ export function CustomContestsSection({ me }: { me: string }) {
   const [active, setActive] = useState<CustomContestDetail | null>(null)
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const [now, setNow] = useState(Date.now())
+
+  // Update now every second to keep timing accurate
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setNow(Date.now())
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [])
 
   const load = useCallback(async (): Promise<CustomContestDetail[]> => {
     setLoading(true)
@@ -84,11 +93,7 @@ export function CustomContestsSection({ me }: { me: string }) {
 
   useEffect(() => {
     void load()
-  }, [load])
-
-  function phaseOf(c: CustomContest) {
-    return contestPhase(c, Date.now())
-  }
+  }, [me])
 
   async function deleteContest() {
     if (!active) return
@@ -115,9 +120,9 @@ export function CustomContestsSection({ me }: { me: string }) {
     }
   }
 
-  const live = details.filter((d) => phaseOf(d.contest) === 'live')
-  const upcoming = details.filter((d) => phaseOf(d.contest) === 'upcoming')
-  const ended = details.filter((d) => phaseOf(d.contest) === 'ended')
+  const live = details.filter((d) => contestPhase(d.contest, now) === 'live')
+  const upcoming = details.filter((d) => contestPhase(d.contest, now) === 'upcoming')
+  const ended = details.filter((d) => contestPhase(d.contest, now) === 'ended')
   const ordered = [...live, ...upcoming, ...ended]
 
   return (
@@ -163,7 +168,7 @@ export function CustomContestsSection({ me }: { me: string }) {
       ) : (
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
           {ordered.map((d, i) => {
-            const phase = phaseOf(d.contest)
+            const phase = contestPhase(d.contest, now)
             const startMs = new Date(d.contest.start_time).getTime()
             const endMs = startMs + (d.contest.duration_mins ?? 60) * 60_000
             return (
@@ -249,9 +254,9 @@ export function CustomContestsSection({ me }: { me: string }) {
         {active && (
           <div className="space-y-4">
             <div className="flex flex-wrap items-center gap-2">
-              {phaseOf(active.contest) === 'live' && <Badge variant="accent" className="animate-pulse-glow">Live</Badge>}
-              {phaseOf(active.contest) === 'upcoming' && <Badge variant="cyan">Upcoming</Badge>}
-              {phaseOf(active.contest) === 'ended' && <Badge variant="default">Ended</Badge>}
+              {contestPhase(active.contest, now) === 'live' && <Badge variant="accent" className="animate-pulse-glow">Live</Badge>}
+              {contestPhase(active.contest, now) === 'upcoming' && <Badge variant="cyan">Upcoming</Badge>}
+              {contestPhase(active.contest, now) === 'ended' && <Badge variant="default">Ended</Badge>}
               {active.contest.type && <Badge variant="primary">{active.contest.type}</Badge>}
               {active.contest.org_tag && <Badge variant="outline">{active.contest.org_tag}</Badge>}
               <button
@@ -294,7 +299,7 @@ export function CustomContestsSection({ me }: { me: string }) {
 
             <ContestProblems
               ids={contestProblemIdList(active.contest.problems)}
-              unlocked={active.isOwner || contestPhase(active.contest, Date.now()) !== 'upcoming'}
+              unlocked={active.isOwner || contestPhase(active.contest, now) !== 'upcoming'}
             />
 
             <div>

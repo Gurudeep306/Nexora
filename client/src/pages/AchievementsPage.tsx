@@ -33,27 +33,23 @@ export default function AchievementsPage() {
   )
 
   const achievements = data?.achievements ?? []
-  const earned = useMemo(() => achievements.filter((a) => a.unlocked_at), [achievements])
-
+  const earned = achievements.filter((a) => a.unlocked_at)
   const categories = useMemo(() => {
     const set = new Set(achievements.map((a) => a.category))
     return ['all', ...Array.from(set)]
   }, [achievements])
+  const filtered = useMemo(() => {
+    return achievements.filter((a) => {
+      if (status === 'earned' && !a.unlocked_at) return false
+      if (status === 'locked' && a.unlocked_at) return false
+      if (category !== 'all' && a.category !== category) return false
+      return true
+    })
+  }, [achievements, status, category])
 
-  const filtered = useMemo(
-    () =>
-      achievements.filter((a) => {
-        if (status === 'earned' && !a.unlocked_at) return false
-        if (status === 'locked' && a.unlocked_at) return false
-        if (category !== 'all' && a.category !== category) return false
-        return true
-      }),
-    [achievements, status, category],
-  )
-
-  const earnedXp = earned.reduce((s, a) => s + a.xp_reward, 0)
-  const inProgress = achievements.filter((a) => !a.unlocked_at && a.progress > 0).length
-  const completion = achievements.length ? Math.round((earned.length / achievements.length) * 100) : 0
+  const earnedXp = useMemo(() => earned.reduce((s, a) => s + a.xp_reward, 0), [earned])
+  const inProgress = useMemo(() => achievements.filter((a) => !a.unlocked_at && a.progress > 0).length, [achievements])
+  const completion = useMemo(() => achievements.length ? Math.round((earned.length / achievements.length) * 100) : 0, [earned, achievements.length])
 
   return (
     <div>
@@ -69,14 +65,14 @@ export default function AchievementsPage() {
       />
 
       <div className="mb-4 grid grid-cols-2 gap-3 xl:grid-cols-4">
-        <StatCard label="Unlocked" value={earned.length} icon={<Medal />} accent="gold" sub={`of ${achievements.length} · ${completion}%`} />
-        <StatCard label="Trophy XP" value={earnedXp.toLocaleString()} icon={<Award />} sub="earned from achievements" />
-        <StatCard label="In Progress" value={inProgress} icon={<Lock />} accent="cyan" sub="partially complete" />
+        <StatCard label="Unlocked" value={earned.length} icon={<Medal />} accent="success" sub={`of ${achievements.length} · ${completion}%`} />
+        <StatCard label="Trophy XP" value={earnedXp.toLocaleString()} icon={<Award />} accent="accent" sub="earned from achievements" />
+        <StatCard label="In Progress" value={inProgress} icon={<Lock />} accent="warning" sub="partially complete" />
         <StatCard
           label="Categories"
           value={categories.length - 1}
           icon={<Award />}
-          accent="accent"
+          accent="secondary"
           sub="milestones, streaks, rating…"
         />
       </div>

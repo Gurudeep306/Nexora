@@ -35,10 +35,9 @@ export default function ContestsPage() {
     return c
   }, [contests])
 
-  const visible = useMemo(
-    () => (bucket === 'all' ? contests : contests.filter((c) => contestBucket(c) === bucket)),
-    [contests, bucket],
-  )
+  const visible = useMemo(() => {
+    return bucket === 'all' ? contests : contests.filter((c) => contestBucket(c) === bucket)
+  }, [contests, bucket])
 
   return (
     <div>
