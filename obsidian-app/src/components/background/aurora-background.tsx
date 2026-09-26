@@ -58,7 +58,7 @@ export const AuroraBackground = ({ className = "" }: AuroraBackgroundProps) => {
       <div
         ref={containerRef}
         className={`
-          fixed inset-0 z-[-1]
+          fixed inset-0 z-[-9999]
           bg-gradient-to-b from-indigo-950 via-violet-900 to-indigo-900
           ${className}
         `}
@@ -68,7 +68,7 @@ export const AuroraBackground = ({ className = "" }: AuroraBackgroundProps) => {
   }
 
   return (
-    <div ref={containerRef} className={`fixed inset-0 z-[-1] ${className}`} aria-hidden="true">
+    <div ref={containerRef} className={`fixed inset-0 z-[-9999] ${className}`} aria-hidden="true">
       <Canvas
         gl={{ antialias: false, powerPreference: "low-power" }}
         camera={{ position: [0, 0, 5], fov: 35 }}
