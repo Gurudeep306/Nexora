@@ -292,7 +292,7 @@ export function CommandPalette() {
                       {item.problem ? (
                         <PlatformBadge platform={item.problem.platform} />
                       ) : (
-                        item.hint && <span className="font-mono text-[11px] text-foreground-faint">{item.hint}</span>
+                        item.hint && <span className="font-mono text-[11px] text-text-primary/60">{item.hint}</span>
                       )}
                       {i === active && <ArrowRight className="size-3.5 text-accent-brand" aria-hidden="true" />}
                     </button>
