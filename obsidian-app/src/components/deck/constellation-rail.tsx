@@ -1,3 +1,4 @@
+"use client";
 import { useState, useEffect, useRef } from "react";
 import {
   useMotionValue,
@@ -33,12 +34,12 @@ export const ConstellationRail = ({
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const [expandedNode, setExpandedNode] = useState<string | null>(null);
   const railRef = useRef<HTMLDivElement>(null);
-  
+   
   // Motion values for each node
   const scaleValues = new Map<string, MotionValue<number>>();
   const rotateValues = new Map<string, MotionValue<number>>();
   const glowValues = new Map<string, MotionValue<number>>();
-  
+   
   // Initialize motion values
   useEffect(() => {
     nodes.forEach((node) => {
@@ -47,12 +48,12 @@ export const ConstellationRail = ({
       glowValues.set(node.id, useMotionValue(0));
     });
   }, [nodes]);
-
+ 
   // Handle mouse enter on rail
   const handleRailMouseEnter = () => {
     // Could implement hover effects here
   };
-
+ 
   // Handle mouse leave on rail
   const handleRailMouseLeave = () => {
     setHoveredNode(null);
@@ -63,15 +64,15 @@ export const ConstellationRail = ({
       glowValues.get(node.id)?.set(node.isActive ? 1 : 0);
     });
   };
-
+ 
   // Handle node hover
   const handleNodeMouseEnter = (nodeId: string) => {
     setHoveredNode(nodeId);
-    
+     
     // Animate hovered node
     scaleValues.get(nodeId)?.set(1.2);
     rotateValues.get(nodeId)?.set(0); // Reset rotation
-    
+     
     // Orbital drift for neighbors
     const nodeIndex = nodes.findIndex((node) => node.id === nodeId);
     if (nodeIndex > 0) {
@@ -82,47 +83,47 @@ export const ConstellationRail = ({
       const rightNeighbor = nodes[nodeIndex + 1].id;
       rotateValues.get(rightNeighbor)?.set(5); // Slight right rotation
     }
-    
+     
     // Glow effect for active node
     if (nodes[nodeIndex]?.isActive) {
       glowValues.get(nodeId)?.set(1);
     }
   };
-
+ 
   const handleNodeMouseLeave = (nodeId: string) => {
     if (hoveredNode === nodeId) {
       setHoveredNode(null);
     }
-    
+     
     // Reset node
     scaleValues.get(nodeId)?.set(1);
     rotateValues.get(nodeId)?.set(0);
-    
+     
     // Reset neighbors
     nodes.forEach((node) => {
       if (node.id !== nodeId) {
         rotateValues.get(node.id)?.set(0);
       }
     });
-    
+     
     // Reset glow unless active
     const node = nodes.find((n) => n.id === nodeId);
     if (node && !node.isActive) {
       glowValues.get(nodeId)?.set(0);
     }
   };
-
+ 
   const handleNodeClick = (nodeId: string) => {
     setExpandedNode(expandedNode === nodeId ? null : nodeId);
     onNodeSelect?.(nodeId);
   };
-
+ 
   // Handle keyboard navigation
   const handleKeyDown = (e: KeyboardEvent) => {
     const focusedIndex = nodes.findIndex(
       (node) => node.id === hoveredNode || node.id === expandedNode
     );
-    
+     
     if (e.key === "ArrowDown" && focusedIndex < nodes.length - 1) {
       const nextNode = nodes[focusedIndex + 1];
       setHoveredNode(nextNode.id);
@@ -152,18 +153,18 @@ export const ConstellationRail = ({
       }
     }
   };
-
+ 
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown as EventListener);
     return () => document.removeEventListener("keydown", handleKeyDown as EventListener);
   }, []);
-
+ 
   // Adaptive ordering logic (simplified)
   useEffect(() => {
     // In a real implementation, we would track usage frequency
     // and adjust positions accordingly
   }, []);
-
+ 
   return (
     <motion.div
       ref={railRef}
@@ -180,13 +181,13 @@ export const ConstellationRail = ({
     >
       {/* Vertical rail line */}
       <motion.div className="w-0.5 bg-border/20" />
-      
+       
       {/* Nodes */}
       {nodes.map((node, index) => {
         const isActive = node.isActive || false;
         const isHovered = hoveredNode === node.id;
         const isExpanded = expandedNode === node.id;
-        
+         
         return (
           <motion.div
             key={node.id}
@@ -218,7 +219,7 @@ export const ConstellationRail = ({
                 transition={{ opacity: { duration: 0.2 } }}
               />
             )}
-            
+             
             {/* Node background (glass effect) */}
             <motion.div
               className="absolute inset-0 bg-background/40 backdrop-blur-sm
@@ -228,7 +229,7 @@ export const ConstellationRail = ({
               }}
               transition={{ opacity: { duration: 0.2 } }}
             />
-            
+             
             {/* Active indicator ring */}
             {isActive && (
               <motion.div
@@ -240,7 +241,7 @@ export const ConstellationRail = ({
                 transition={{ opacity: { duration: 0.2 } }}
               />
             )}
-            
+             
             {/* Node content */}
             <div className="flex items-center justify-center z-10">
               {node.href ? (
@@ -268,7 +269,7 @@ export const ConstellationRail = ({
                   />
                 </button>
               )}
-              
+             
               {/* Label flyout on hover */}
               {isHovered && !isExpanded && (
                 <div className="absolute left-full ml-3 flex items-center gap-2 
@@ -283,7 +284,7 @@ export const ConstellationRail = ({
                   )}
                 </div>
               )}
-              
+             
               {/* Expanded children (radial arc) */}
               {isExpanded && node.children && node.children!.length > 0 && (
                 <motion.div
@@ -312,10 +313,10 @@ export const ConstellationRail = ({
                       >
                         <div className="absolute inset-0 bg-background/50 backdrop-blur-sm
                                  border border-border/20 rounded-full opacity-0"
-                          style={{
-                            opacity: 0.2,
-                            transition: "opacity 0.2s"
-                          }}
+                         style={{
+                           opacity: 0.2,
+                           transition: "opacity 0.2s"
+                         }}
                         />
                         <div className="flex items-center justify-center z-10">
                           <button
@@ -336,7 +337,7 @@ export const ConstellationRail = ({
           </motion.div>
         );
       })}
-      
+     
       {/* Bottom glow effect for active node when expanded */}
       {expandedNode && (
         <motion.div

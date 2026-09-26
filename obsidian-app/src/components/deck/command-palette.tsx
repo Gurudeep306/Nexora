@@ -1,3 +1,4 @@
+"use client";
 import { Command, CommandInput, CommandItem, CommandList, CommandEmpty, CommandGroup } from "cmdk";
 import { useState } from "react";
 import { Search, ChevronDown, Terminal, Zap, Moon, Sun } from "lucide-react";
@@ -48,10 +49,10 @@ export const CommandPalette = ({ className = "" }: CommandPaletteProps) => {
   ];
 
   return (
-    
+     
       <Command className={`w-[24rem] max-w-full ${className}`}>
         <CommandGroup>
-          <CommandInput placeholder="Search commands..." onValueChange={setQuery} />
+          <CommandInput placeholder="Search commands..." onValueChange=setQuery />
           <CommandList>
             {commands.length > 0 ? (
               commands
@@ -85,6 +86,6 @@ export const CommandPalette = ({ className = "" }: CommandPaletteProps) => {
           </CommandList>
         </CommandGroup>
       </Command>
-    
+     
   );
-};
+}

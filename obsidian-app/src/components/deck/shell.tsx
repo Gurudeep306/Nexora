@@ -1,3 +1,4 @@
+"use client";
 import { ConstellationRail } from "./constellation-rail";
 import { StatusRibbon } from "./status-ribbon";
 import { CommandPalette } from "./command-palette";
@@ -110,10 +111,10 @@ export const DeckShell = ({
         <div className="relative">
           {/* Orbiting node */}
           <div className="w-10 h-10 flex items-center justify-center bg-popover/80 backdrop-blur-lg 
-                    border border-border/20 rounded-full hover:bg-popover/90 transition-all 
-                    shadow-lg" 
-              onClick={() => setShowCommandPalette(true)}
-              title="Menu">
+                     border border-border/20 rounded-full hover:bg-popover/90 transition-all 
+                     shadow-lg" 
+               onClick={() => setShowCommandPalette(true)}
+               title="Menu">
             {/* Icon would go here */}
             <div className="text-foreground">☰</div>
           </div>
@@ -159,4 +160,4 @@ export const DeckShell = ({
       {showCommandPalette && <CommandPalette />}
     </div>
   );
-};
+}

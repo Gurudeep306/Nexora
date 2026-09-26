@@ -1,3 +1,4 @@
+"use client";
 import { useState, useEffect, useRef } from "react";
 import {
   useMotionValue,
@@ -109,7 +110,7 @@ export const Dock = ({ items, className = "" }: DockProps) => {
             {/* Glass background for item */}
             <motion.div
               className="absolute inset-0 bg-background/30 backdrop-blur-sm 
-                        border border-border/20 rounded-lg opacity-0"
+                         border border-border/20 rounded-lg opacity-0"
               style={{
                 opacity: isHovered ? 0.6 : 0,
               }}
@@ -150,8 +151,8 @@ export const Dock = ({ items, className = "" }: DockProps) => {
               {/* Label flyout on hover */}
               {isHovered && (
                 <div className="absolute bottom-full mb-2 px-3 py-1 text-xs 
-                            bg-background/80 backdrop-blur-lg border border-border/20 
-                            rounded-md text-foreground/90 whitespace-nowrap">
+                             bg-background/80 backdrop-blur-lg border border-border/20 
+                             rounded-md text-foreground/90 whitespace-nowrap">
                   {item.label}
                 </div>
               )}
