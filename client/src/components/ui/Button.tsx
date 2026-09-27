@@ -9,7 +9,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          'bg-accent-brand text-on-accent-brand shadow-[inset_0_1px_0_oklch(98%_0%_0%/0.2),0_0_0_1px_oklch(var(--oklch-accent-0)/0.6),0_6px_20px_-6px_oklch(var(--oklch-accent-0)/0.7)] hover:bg-accent-brand/90',
+          'bg-accent-brand text-on-accent-brand shadow-[inset_0_1px_0_oklch(98%_0%_0%/0.2),0_0_0_1px_color-mix(in_oklch,var(--color-accent-brand)_60%,transparent),0_6px_20px_-6px_color-mix(in_oklch,var(--color-accent-brand)_70%,transparent)] hover:bg-accent-brand/90',
         secondary:
           'border border-border bg-bg-surface-2 text-text-primary shadow-[inset_0_1px_0_oklch(98%_0%_0%/0.04)] hover:border-border-strong hover:bg-bg-surface-3',
         outline:
@@ -21,7 +21,7 @@ const buttonVariants = cva(
         danger: 'bg-state-error text-white shadow-[inset_0_1px_0_oklch(98%_0%_0%/0.2)] hover:bg-state-error/90',
         success: 'bg-state-success text-white shadow-[inset_0_1px_0_oklch(98%_0%_0%/0.2)] hover:bg-state-success/90',
         accent:
-          'bg-gradient-to-b from-accent-brand to-accent-brand-hover text-on-accent-brand shadow-[inset_0_1px_0_oklch(98%_0%_0%/0.25),0_0_0_1px_oklch(var(--oklch-accent-0)/0.6),0_6px_20px_-6px_oklch(var(--oklch-accent-0)/0.7)] hover:brightness-110',
+          'bg-gradient-to-b from-accent-brand to-accent-brand-hover text-on-accent-brand shadow-[inset_0_1px_0_oklch(98%_0%_0%/0.25),0_0_0_1px_color-mix(in_oklch,var(--color-accent-brand)_60%,transparent),0_6px_20px_-6px_color-mix(in_oklch,var(--color-accent-brand)_70%,transparent)] hover:brightness-110',
         link: 'text-accent-brand underline-offset-4 hover:underline',
       },
       size: {

@@ -13,7 +13,8 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
       className={cn(
         'card',
         glow && 'glow-box-accent',
-        interactive && 'cursor-pointer hover:-translate-y-0.5 hover:border-accent-brand/20',
+        interactive &&
+          'cursor-pointer hover:-translate-y-0.5 hover:border-accent-brand/40 hover:shadow-[inset_0_1px_0_color-mix(in_oklch,var(--oklch-fg-0)_8%,transparent),0_16px_40px_-16px_color-mix(in_oklch,var(--color-accent-brand)_40%,transparent)]',
         className,
       )}
       {...props}

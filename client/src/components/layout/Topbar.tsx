@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { ChevronRight, Flame, Menu, Search, Zap } from 'lucide-react'
+import { ChevronRight, Flame, Search, Zap } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { AnimatedNumber, Avatar, Kbd, Tooltip } from '@/components/ui'
 import { navMeta } from '@/config/nav'
@@ -9,21 +9,13 @@ import { UserMenu } from './UserMenu'
 
 const IS_MAC = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform)
 
-export function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
+export function Topbar() {
   const { user } = useAuth()
   const { pathname } = useLocation()
   const meta = navMeta(pathname)
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-2 border-b border-border/50 bg-bg-app/50 px-3 backdrop-blur-xl backdrop-saturate-150 md:px-6 animate-fade-in">
-      <button
-        onClick={onMenuClick}
-        aria-label="Open navigation"
-        className="flex size-9 cursor-pointer items-center justify-center rounded-lg text-text-primary/60 transition-colors hover:bg-accent-brand/5 hover:text-text-primary lg:hidden"
-      >
-        <Menu className="size-5" />
-      </button>
-
       {/* Breadcrumbs */}
       <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-1.5 text-[13px]">
         {meta.section && (
@@ -81,20 +73,18 @@ export function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
         )}
         <Notifications />
         {user && (
-          <div className="lg:hidden">
-            <UserMenu side="bottom" align="end">
-              <button aria-label="Account menu" className="ml-0.5 cursor-pointer rounded-full">
-                <Avatar
-                  seed={user.username}
-                  avatar={user.avatar}
-                  src={typeof user.avatar_url === 'string' ? user.avatar_url : undefined}
-                  name={user.username}
-                  size="sm"
-                  ring={false}
-                />
-              </button>
-            </UserMenu>
-          </div>
+          <UserMenu side="bottom" align="end">
+            <button aria-label="Account menu" className="ml-0.5 cursor-pointer rounded-full">
+              <Avatar
+                seed={user.username}
+                avatar={user.avatar}
+                src={typeof user.avatar_url === 'string' ? user.avatar_url : undefined}
+                name={user.username}
+                size="sm"
+                ring={false}
+              />
+            </button>
+          </UserMenu>
         )}
       </div>
     </header>
