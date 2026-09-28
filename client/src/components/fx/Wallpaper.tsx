@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTheme } from '@/context/ThemeContext'
+import { useSurfaceLight } from './useSurfaceLight'
 import { originalUrl, photoUrl, type Tone, type Wallpaper as WallpaperT } from '@/theme/catalog'
 
 interface Layer {
@@ -49,6 +50,7 @@ const FADE_MS = 760
  */
 export function Wallpaper() {
   const { wallpaper, resolved } = useTheme()
+  useSurfaceLight()
   const next = useMemo(() => sourceFor(wallpaper, resolved), [wallpaper, resolved])
   const [layers, setLayers] = useState<Layer[]>(() => (next ? [{ ...next, ready: false }] : []))
   const [shown, setShown] = useState(next?.key ?? null)

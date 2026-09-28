@@ -68,6 +68,7 @@
   /* Text fields: a recessed well on ink, a plain white card on paper. */
   --field: oklch(0.162 0.004 265);
   --field-shadow: oklch(0 0 0 / 0.32);
+  --rank-ink: oklch(0.16 0.02 272);
 
   --elev-1: 0 1px 2px oklch(0 0 0 / 0.36), 0 4px 12px -4px oklch(0 0 0 / 0.5);
   --elev-2: 0 2px 6px oklch(0 0 0 / 0.4), 0 16px 40px -12px oklch(0 0 0 / 0.66);
@@ -109,6 +110,7 @@
   --overlay-ink: oklch(0.18 0.01 265);
   --field: oklch(1 0 0);
   --field-shadow: oklch(0 0 0 / 0.07);
+  --rank-ink: oklch(0.975 0.008 265);
 
   --elev-1: 0 1px 2px oklch(0 0 0 / 0.06), 0 3px 8px -2px oklch(0 0 0 / 0.08);
   --elev-2: 0 2px 6px oklch(0 0 0 / 0.07), 0 12px 32px -10px oklch(0 0 0 / 0.14);
@@ -150,6 +152,8 @@
     --overlay-ink: oklch(0.18 0.01 265);
     --field: oklch(1 0 0);
     --field-shadow: oklch(0 0 0 / 0.07);
+    --rank-ink: oklch(0.975 0.008 265);
+  --rank-ink: oklch(0.975 0.008 265);
 
     --elev-1: 0 1px 2px oklch(0 0 0 / 0.06), 0 3px 8px -2px oklch(0 0 0 / 0.08);
     --elev-2: 0 2px 6px oklch(0 0 0 / 0.07), 0 12px 32px -10px oklch(0 0 0 / 0.14);
@@ -279,6 +283,9 @@
   --color-info: var(--oklch-cyan);
   --color-gold: var(--oklch-gold);
   --color-xp: var(--oklch-accent-1);
+  --color-primary-dark: color-mix(in oklch, var(--oklch-accent-0) 78%, oklch(0.25 0.05 265));
+  --color-accent-dark: color-mix(in oklch, var(--oklch-emerald) 78%, oklch(0.25 0.05 160));
+  --color-warning-dark: color-mix(in oklch, var(--oklch-amber) 80%, oklch(0.4 0.12 40));
   --color-streak: oklch(0.72 0.18 50);
   --color-ring: var(--oklch-accent-0);
 
@@ -352,6 +359,7 @@
   --overlay-ink: oklch(1 0 0);
   --field: oklch(0.162 0.004 265);
   --field-shadow: oklch(0 0 0 / 0.32);
+  --rank-ink: oklch(0.16 0.02 272);
   --elev-1: 0 1px 2px oklch(0 0 0 / 0.36), 0 4px 12px -4px oklch(0 0 0 / 0.5);
   --elev-2: 0 2px 6px oklch(0 0 0 / 0.4), 0 16px 40px -12px oklch(0 0 0 / 0.66);
   --elev-3: 0 8px 20px oklch(0 0 0 / 0.46), 0 32px 72px -20px oklch(0 0 0 / 0.74);
@@ -468,7 +476,9 @@
    quiet inset fill instead of stacking a second blur. */
 @utility card {
   background-color: var(--card-fill, var(--color-bg-surface));
-  background-image: var(--card-sheen, none);
+  background-image:
+    radial-gradient(420px circle at var(--mx, -999px) var(--my, -999px), var(--spot-color, transparent), transparent 65%),
+    var(--card-sheen, none);
   -webkit-backdrop-filter: var(--card-filter, var(--glass-filter, none));
   backdrop-filter: var(--card-filter, var(--glass-filter, none));
   border: 1px solid var(--card-edge, var(--color-border));
@@ -485,7 +495,9 @@
 @utility card-neon {
   position: relative;
   background-color: var(--card-fill, var(--color-bg-surface));
-  background-image: var(--card-sheen, none);
+  background-image:
+    radial-gradient(420px circle at var(--mx, -999px) var(--my, -999px), var(--spot-color, transparent), transparent 65%),
+    var(--card-sheen, none);
   -webkit-backdrop-filter: var(--card-filter, var(--glass-filter, none));
   backdrop-filter: var(--card-filter, var(--glass-filter, none));
   border: 1px solid var(--card-edge, var(--color-border));
@@ -1108,25 +1120,31 @@
 /* (Blue is the palette's own default, so it needs no block.) */
 
 /* ── Glass over a wallpaper ────────────────────────────────────────────────
-   macOS gets its look from three things, and each is here:
-     1. desktop tinting — the window colour takes a little of the wallpaper
-        (--glass-ink mixes in --wall-tint),
-     2. vibrancy — a heavy blur with a saturation boost, so colour behind a
-        pane glows through instead of turning grey,
-     3. a lit edge — a one-pixel highlight on top and a sheen falling off
-        down the face, over a real drop shadow.
-   Fills *inside* glass (surface-2/3, borders, input wells) become
-   translucent overlays rather than opaque greys, so a row or a button on a
-   pane looks like part of the pane. */
+   What separates real glass from a "paper" panel is what it does to the
+   colour behind it. A light, milky film over a vivid wallpaper greys it
+   out — that is what makes a translucent card read as tracing paper. So:
+
+     1. Dark glass is *smoked*, not frosted grey: a deep, cool ink that
+        darkens what is behind it while a strong saturation boost keeps its
+        colour glowing through. Light glass is crystal — bright, but thin.
+     2. There is no grain over glass. Texture is what makes a surface read
+        as a material like paper; glass is smooth.
+     3. Fills inside a pane are recessed or barely lifted — never another
+        milky layer — so nothing inside a card looks like a sheet on a sheet.
+     4. The edge is lit: a bright rim along the top, a faint one on the left,
+        a dark lip along the bottom, and a soft glow from the top-left corner
+        across the face. Under the pointer, a spot of light follows the
+        cursor across the pane (--mx/--my, set by LookSurface).
+     5. Desktop tinting: the ink takes a little of the wallpaper's colour. */
 html:is([data-wall='original'], [data-wall='photo']) {
-  --glass-ink: color-mix(in oklch, var(--glass-base) 84%, var(--wall-tint, var(--glass-base)));
+  --glass-ink: color-mix(in oklch, var(--glass-base) var(--ink-mix, 82%), var(--wall-tint, var(--glass-base)));
   --material: color-mix(in oklch, var(--glass-ink) var(--ga), transparent);
   --material-thin: color-mix(in oklch, var(--glass-ink) var(--ga-thin), transparent);
   --material-thick: color-mix(in oklch, var(--glass-ink) var(--ga-thick), transparent);
   --material-bar: color-mix(in oklch, var(--glass-ink) var(--ga-bar), transparent);
   --material-pop: color-mix(in oklch, var(--glass-ink) var(--ga-pop), transparent);
-  --glass-filter: blur(var(--gblur)) saturate(var(--gsat));
-  --glass-filter-strong: blur(calc(var(--gblur) * 1.45)) saturate(var(--gsat));
+  --glass-filter: blur(var(--gblur)) saturate(var(--gsat)) brightness(var(--gbright, 1));
+  --glass-filter-strong: blur(calc(var(--gblur) * 1.45)) saturate(var(--gsat)) brightness(var(--gbright, 1));
 
   --color-bg-surface: var(--material);
   --color-bg-surface-2: var(--fill-2);
@@ -1139,58 +1157,90 @@ html:is([data-wall='original'], [data-wall='photo']) {
   --color-bg-field: var(--well);
   --field: var(--well);
 
+  /* The older vocabulary, which most panels still use: bg-surface is a
+     panel *inside* a pane, bg-background a recessed well (code, inputs). */
+  --color-surface: var(--inset);
+  --color-surface-2: var(--fill-2);
+  --color-surface-3: var(--fill-3);
+  --color-muted: var(--fill-3);
+  --color-background: var(--well);
+
   /* Frosted is the default. */
-  --ga: 56%; --ga-thin: 40%; --ga-thick: 76%; --ga-bar: 62%; --ga-pop: 88%;
-  --gblur: 28px; --gsat: 185%;
+  --ga: 50%; --ga-thin: 36%; --ga-thick: 72%; --ga-bar: 58%; --ga-pop: 90%;
+  --gblur: 30px; --gsat: 200%;
 }
 
 html.dark:is([data-wall='original'], [data-wall='photo']) {
-  --glass-base: oklch(0.205 0.008 265);
-  --fill-2: oklch(1 0 0 / 0.07);
-  --fill-3: oklch(1 0 0 / 0.11);
-  --fill-4: oklch(1 0 0 / 0.16);
-  --edge: oklch(1 0 0 / 0.10);
-  --edge-strong: oklch(1 0 0 / 0.17);
-  --well: oklch(0 0 0 / 0.26);
-  --glass-edge: oklch(1 0 0 / 0.12);
-  --card-edge: oklch(1 0 0 / 0.11);
-  --specular: oklch(1 0 0 / 0.13);
-  --card-sheen: linear-gradient(180deg, oklch(1 0 0 / 0.055), oklch(1 0 0 / 0) 42%);
-  --card-shadow: 0 1px 2px oklch(0 0 0 / 0.22), 0 16px 40px -16px oklch(0 0 0 / 0.6);
-  --pop-shadow: 0 2px 8px oklch(0 0 0 / 0.3), 0 28px 70px -18px oklch(0 0 0 / 0.7);
+  --glass-base: oklch(0.135 0.018 272);
+  --ink-mix: 80%;
+  --gbright: 0.92;
+  --fill-2: oklch(1 0 0 / 0.045);
+  --fill-3: oklch(1 0 0 / 0.085);
+  --fill-4: oklch(1 0 0 / 0.13);
+  --inset: oklch(0.1 0.015 272 / 0.42);
+  --well: oklch(0.07 0.012 272 / 0.5);
+  --edge: oklch(1 0 0 / 0.085);
+  --edge-strong: oklch(1 0 0 / 0.15);
+  --glass-edge: oklch(1 0 0 / 0.1);
+  --card-edge: oklch(1 0 0 / 0.09);
+  --specular: oklch(1 0 0 / 0.16);
+  --spot-color: oklch(1 0 0 / 0.065);
+  --card-sheen:
+    radial-gradient(120% 90% at 0% 0%, oklch(1 0 0 / 0.07), oklch(1 0 0 / 0) 55%),
+    linear-gradient(180deg, oklch(1 0 0 / 0.02), oklch(0 0 0 / 0.08));
+  --card-shadow:
+    inset 1px 0 0 oklch(1 0 0 / 0.035),
+    inset 0 -1px 0 oklch(0 0 0 / 0.28),
+    0 1px 1px oklch(0 0 0 / 0.28),
+    0 12px 32px -12px oklch(0 0 0 / 0.62);
+  --pop-shadow:
+    inset 0 -1px 0 oklch(0 0 0 / 0.3),
+    0 2px 8px oklch(0 0 0 / 0.32),
+    0 30px 72px -18px oklch(0 0 0 / 0.72);
 }
 
 html:not(.dark):is([data-wall='original'], [data-wall='photo']) {
-  --glass-base: oklch(0.985 0.003 265);
-  --fill-2: oklch(1 0 0 / 0.58);
-  --fill-3: oklch(1 0 0 / 0.82);
-  --fill-4: oklch(0 0 0 / 0.07);
-  --edge: oklch(0.2 0.02 265 / 0.09);
-  --edge-strong: oklch(0.2 0.02 265 / 0.15);
-  --well: oklch(1 0 0 / 0.72);
-  --glass-edge: oklch(1 0 0 / 0.6);
-  --card-edge: oklch(1 0 0 / 0.62);
-  --specular: oklch(1 0 0 / 0.95);
-  --card-sheen: linear-gradient(180deg, oklch(1 0 0 / 0.32), oklch(1 0 0 / 0) 46%);
+  --glass-base: oklch(0.99 0.004 265);
+  --ink-mix: 88%;
+  --gbright: 1.06;
+  --fill-2: oklch(1 0 0 / 0.5);
+  --fill-3: oklch(1 0 0 / 0.78);
+  --fill-4: oklch(0.2 0.02 265 / 0.06);
+  --inset: oklch(1 0 0 / 0.46);
+  --well: oklch(1 0 0 / 0.62);
+  --edge: oklch(0.25 0.03 265 / 0.085);
+  --edge-strong: oklch(0.25 0.03 265 / 0.15);
+  --glass-edge: oklch(1 0 0 / 0.65);
+  --card-edge: oklch(1 0 0 / 0.7);
+  --specular: oklch(1 0 0 / 1);
+  --spot-color: oklch(1 0 0 / 0.4);
+  --card-sheen:
+    radial-gradient(120% 90% at 0% 0%, oklch(1 0 0 / 0.45), oklch(1 0 0 / 0) 55%);
   --card-shadow:
-    0 0 0 0.5px oklch(0.25 0.03 265 / 0.07),
-    0 1px 2px oklch(0.25 0.03 265 / 0.06),
-    0 14px 36px -14px oklch(0.25 0.05 265 / 0.24);
+    0 0 0 0.5px oklch(0.25 0.04 265 / 0.08),
+    0 1px 2px oklch(0.25 0.04 265 / 0.06),
+    0 14px 34px -14px oklch(0.25 0.06 265 / 0.26);
   --pop-shadow:
-    0 0 0 0.5px oklch(0.25 0.03 265 / 0.1),
-    0 2px 8px oklch(0.25 0.03 265 / 0.08),
-    0 28px 64px -18px oklch(0.25 0.05 265 / 0.3);
-  --ga: 60%; --ga-thin: 44%; --ga-thick: 78%; --ga-bar: 64%; --ga-pop: 90%;
+    0 0 0 0.5px oklch(0.25 0.04 265 / 0.1),
+    0 2px 8px oklch(0.25 0.04 265 / 0.08),
+    0 28px 64px -18px oklch(0.25 0.06 265 / 0.32);
+  --ga: 48%; --ga-thin: 34%; --ga-thick: 72%; --ga-bar: 56%; --ga-pop: 90%;
+}
+
+/* No grain over glass — texture is what makes a translucent pane look like
+   paper. (The wallpapers carry their own fine grain, under the blur.) */
+html:is([data-wall='original'], [data-wall='photo']) body::after {
+  display: none;
 }
 
 /* Clear: less frosting, more wallpaper — Liquid Glass's "Clear" mode. */
 html.dark[data-glass='clear']:is([data-wall='original'], [data-wall='photo']) {
-  --ga: 30%; --ga-thin: 18%; --ga-thick: 56%; --ga-bar: 36%; --ga-pop: 80%;
-  --gblur: 14px; --gsat: 165%;
+  --ga: 26%; --ga-thin: 16%; --ga-thick: 54%; --ga-bar: 34%; --ga-pop: 82%;
+  --gblur: 12px; --gsat: 170%;
 }
 html:not(.dark)[data-glass='clear']:is([data-wall='original'], [data-wall='photo']) {
-  --ga: 36%; --ga-thin: 24%; --ga-thick: 60%; --ga-bar: 40%; --ga-pop: 82%;
-  --gblur: 14px; --gsat: 165%;
+  --ga: 28%; --ga-thin: 18%; --ga-thick: 56%; --ga-bar: 36%; --ga-pop: 84%;
+  --gblur: 12px; --gsat: 170%;
 }
 
 /* A dark window over a bright photo (or a light one over a dark photo)
@@ -1210,6 +1260,7 @@ html[data-glass='solid']:is([data-wall='original'], [data-wall='photo']) {
   --glass-filter: none;
   --glass-filter-strong: none;
   --card-sheen: none;
+  --spot-color: transparent;
 }
 @media (prefers-reduced-transparency: reduce) {
   html:is([data-wall='original'], [data-wall='photo']) {

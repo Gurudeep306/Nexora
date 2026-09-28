@@ -6,18 +6,20 @@ import { cn } from '@/lib/utils'
  * geometry to the core symbol so rank is readable at a glance — used in the
  * sidebar, Hub, profiles and the leaderboard.
  */
+// Tier colours are CSS values (theme tokens). They used to be bare token
+// names, which are not valid colours, so every emblem painted black.
 export const RIFT_TIERS = [
-  { level: 1, name: 'Bit', color: 'color-foreground-dim' },
-  { level: 2, name: 'Byte', color: 'color-primary' },
-  { level: 3, name: 'Kilobyte', color: 'color-accent' },
-  { level: 4, name: 'Megabyte', color: 'color-info' },
-  { level: 5, name: 'Gigabyte', color: 'color-primary' },
-  { level: 6, name: 'Terabyte', color: 'color-primary-dark' },
-  { level: 7, name: 'Petabyte', color: 'color-error' },
-  { level: 8, name: 'Exabyte', color: 'color-accent-dark' },
-  { level: 9, name: 'Zettabyte', color: 'color-warning' },
-  { level: 10, name: 'Yottabyte', color: 'color-warning-dark' },
-  { level: 11, name: '∞ Overflow', color: 'color-xp' },
+  { level: 1, name: 'Bit', color: 'var(--color-foreground-dim)' },
+  { level: 2, name: 'Byte', color: 'var(--color-primary)' },
+  { level: 3, name: 'Kilobyte', color: 'var(--color-accent)' },
+  { level: 4, name: 'Megabyte', color: 'var(--color-info)' },
+  { level: 5, name: 'Gigabyte', color: 'var(--color-primary)' },
+  { level: 6, name: 'Terabyte', color: 'var(--color-primary-dark)' },
+  { level: 7, name: 'Petabyte', color: 'var(--color-error)' },
+  { level: 8, name: 'Exabyte', color: 'var(--color-accent-dark)' },
+  { level: 9, name: 'Zettabyte', color: 'var(--color-warning)' },
+  { level: 10, name: 'Yottabyte', color: 'var(--color-warning-dark)' },
+  { level: 11, name: '∞ Overflow', color: 'var(--color-xp)' },
 ] as const
 
 export function tierFor(level: number) {
@@ -58,7 +60,7 @@ function Core({ level, c }: { level: number; c: string }) {
       return (
         <g>
           <polygon points={polygon(5, 12)} fill={c} />
-          <circle cx="32" cy="32" r="3.5" fill="#0f0f1a" />
+          <circle cx="32" cy="32" r="3.5" style={{ fill: 'var(--rank-ink)' }} />
         </g>
       )
     case 6:
@@ -67,7 +69,7 @@ function Core({ level, c }: { level: number; c: string }) {
       return (
         <g>
           <polygon points={star(7, 14, 7)} fill={c} />
-          <circle cx="32" cy="32" r="3" fill="#0f0f1a" />
+          <circle cx="32" cy="32" r="3" style={{ fill: 'var(--rank-ink)' }} />
         </g>
       )
     case 8:
@@ -124,7 +126,9 @@ export function RankGlyph({
 }) {
   const id = useId().replace(/:/g, '')
   const tier = tierFor(level)
-  const c = tier.color
+  // The SVG draws in currentColor and the <svg> sets color to the tier's
+  // theme token, so the glyph follows the appearance and accent.
+  const c = 'currentColor'
   const sides = level >= 9 ? 8 : 6
   return (
     <svg
@@ -132,6 +136,7 @@ export function RankGlyph({
       width={size}
       height={size}
       className={cn('shrink-0', className)}
+      style={{ color: tier.color }}
       role="img"
       aria-label={title ?? `Rank: ${tier.name}`}
     >
@@ -139,7 +144,7 @@ export function RankGlyph({
       <defs>
         <radialGradient id={`rg${id}`} cx="0.5" cy="0.4" r="0.7">
           <stop offset="0" stopColor={c} stopOpacity="0.35" />
-          <stop offset="1" stopColor="#0f0f1a" stopOpacity="0.95" />
+          <stop offset="1" style={{ stopColor: 'var(--rank-ink)' }} stopOpacity="0.95" />
         </radialGradient>
         <filter id={`gl${id}`} x="-40%" y="-40%" width="180%" height="180%">
           <feGaussianBlur stdDeviation={level >= 6 ? 2.2 : 1.2} result="b" />

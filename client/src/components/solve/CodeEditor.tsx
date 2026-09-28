@@ -57,6 +57,10 @@ interface ThemeDef {
   colors: Record<string, string>
 }
 
+/* The two default themes (Nexora Dark and the light one) have a transparent
+   background, so the code sits directly on the pane's glass and the editor
+   reads as part of the window rather than a dark slab dropped into it. The
+   named themes (Monokai, Dracula…) keep their own backgrounds on purpose. */
 const THEMES: Record<string, ThemeDef> = {
   'nexora-dark': {
     label: 'Nexora Dark',
@@ -72,7 +76,7 @@ const THEMES: Record<string, ThemeDef> = {
       { token: 'delimiter', foreground: '94a3b8' },
     ],
     colors: {
-      'editor.background': '#12122a',
+      'editor.background': '#00000000',
       'editor.foreground': '#e2e8f0',
       'editorLineNumber.foreground': '#4c5578',
       'editorLineNumber.activeForeground': '#a78bfa',
@@ -84,7 +88,7 @@ const THEMES: Record<string, ThemeDef> = {
       'editorWidget.border': '#4c1d95',
       'editorSuggestWidget.background': '#16162e',
       'editorSuggestWidget.selectedBackground': '#27273b',
-      'editorGutter.background': '#12122a',
+      'editorGutter.background': '#00000000',
     },
   },
   abyss: {
@@ -159,7 +163,7 @@ const THEMES: Record<string, ThemeDef> = {
       { token: 'delimiter', foreground: '393a34' },
     ],
     colors: {
-      'editor.background': '#fbfbfd',
+      'editor.background': '#00000000',
       'editor.foreground': '#1f2328',
       'editorLineNumber.foreground': '#9aa2ad',
       'editorLineNumber.activeForeground': '#7c3aed',
@@ -171,7 +175,7 @@ const THEMES: Record<string, ThemeDef> = {
       'editorWidget.border': '#d0d7de',
       'editorSuggestWidget.background': '#ffffff',
       'editorSuggestWidget.selectedBackground': '#7c3aed1a',
-      'editorGutter.background': '#fbfbfd',
+      'editorGutter.background': '#00000000',
     },
   },
   dracula: {
