@@ -28,7 +28,7 @@ export function MobileTabBar() {
               className="flex cursor-pointer flex-col items-center justify-center gap-0.5 text-text-primary/60"
               aria-label="Search"
             >
-              <span className="flex size-9 items-center justify-center rounded-xl bg-gradient-to-b from-[#9d74ff] to-primary text-white shadow-[0_6px_20px_-6px_rgb(139_92_246/0.8)]">
+              <span className="flex size-9 items-center justify-center rounded-xl bg-gradient-to-b from-[#9d74ff] to-primary text-on-accent-brand shadow-[0_6px_20px_-6px_rgb(139_92_246/0.8)]">
                 <t.icon className="size-[18px]" />
               </span>
             </button>

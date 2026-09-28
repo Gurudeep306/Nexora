@@ -64,7 +64,7 @@ export function PaneHeader({
       }}
       title="Drag to move · drop on an edge to dock · double-click to maximize"
       className={cn(
-        'flex h-9 shrink-0 cursor-grab touch-none items-center gap-1 border-b border-white/[0.06] bg-white/[0.015] pr-1 pl-1 select-none active:cursor-grabbing',
+        'flex h-9 shrink-0 cursor-grab touch-none items-center gap-1 border-b border-hairline/[0.06] bg-white/[0.015] pr-1 pl-1 select-none active:cursor-grabbing',
         className,
       )}
     >

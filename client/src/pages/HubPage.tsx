@@ -254,7 +254,7 @@ export default function HubPage() {
               </div>
               <Link
                 to="/problems"
-                className="shrink-0 cursor-pointer rounded-lg bg-accent px-4 py-2 text-xs font-semibold text-white glow-box-accent transition-all duration-200 hover:brightness-110"
+                className="shrink-0 cursor-pointer rounded-lg bg-accent px-4 py-2 text-xs font-semibold text-on-accent-brand glow-box-accent transition-all duration-200 hover:brightness-110"
               >
                 Fight now
               </Link>

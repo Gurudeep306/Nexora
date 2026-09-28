@@ -113,7 +113,7 @@ export function Arena({
       aria-label="Full-screen arena"
     >
       {/* slim command bar */}
-      <div className="flex h-12 shrink-0 items-center gap-2 border-b border-white/[0.06] bg-[#0c0c11]/90 px-3 backdrop-blur-xl">
+      <div className="flex h-12 shrink-0 items-center gap-2 border-b border-hairline/[0.06] bg-bg-surface/90 px-3 backdrop-blur-xl">
         <Tooltip label="Exit full screen (Esc)" side="bottom">
           <Button
             variant="ghost"
@@ -128,7 +128,7 @@ export function Arena({
           </Button>
         </Tooltip>
         <span className="min-w-0 truncate font-display text-sm font-semibold text-foreground">{title}</span>
-        <span className="hidden items-center gap-1 rounded-full border border-white/[0.06] px-2 py-0.5 font-mono text-[11px] text-foreground-faint tabular-nums sm:flex" title="Time in arena">
+        <span className="hidden items-center gap-1 rounded-full border border-hairline/[0.06] px-2 py-0.5 font-mono text-[11px] text-foreground-faint tabular-nums sm:flex" title="Time in arena">
           <Timer className="size-3" /> {elapsed}
         </span>
 
@@ -145,7 +145,7 @@ export function Arena({
                 aria-pressed={!hidden(id)}
                 className={cn(
                   'flex h-8 cursor-pointer items-center gap-1.5 rounded-lg border px-2.5 text-xs font-medium transition-colors [&_svg]:size-3.5',
-                  hidden(id) ? 'border-white/[0.06] text-foreground-faint hover:text-foreground' : 'border-primary/30 bg-primary/10 text-primary-bright',
+                  hidden(id) ? 'border-hairline/[0.06] text-foreground-faint hover:text-foreground' : 'border-primary/30 bg-primary/10 text-primary-bright',
                 )}
               >
                 {icon}

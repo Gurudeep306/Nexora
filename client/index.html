@@ -1,12 +1,29 @@
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/nexora.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0F0F23" />
+    <meta name="theme-color" content="#1c1d22" />
     <meta name="description" content="Nexora — the ultimate competitive programming learning platform" />
     <title>Nexora — Master the Rift</title>
+    <script>
+      /* Resolve the appearance before the first paint so the page never
+         flashes the wrong one. Mirrors src/context/ThemeContext.tsx. */
+      (function () {
+        try {
+          var stored = localStorage.getItem('nexora:appearance');
+          if (stored === 'light' || stored === 'dark') {
+            document.documentElement.setAttribute('data-theme', stored);
+          }
+          var dark = stored ? stored === 'dark'
+            : matchMedia('(prefers-color-scheme: dark)').matches;
+          document.documentElement.classList.toggle('dark', dark);
+          var m = document.querySelector('meta[name="theme-color"]');
+          if (m) m.setAttribute('content', dark ? '#1c1d22' : '#f2f2f5');
+        } catch (e) { /* storage blocked — the CSS media query still applies */ }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

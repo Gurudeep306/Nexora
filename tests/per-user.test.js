@@ -105,3 +105,75 @@ test("settings and reset are personal", async () => {
   const a = await call('GET', '/api/stats', alice);
   assert.equal(a.body.solved, 1, "bob's reset must not touch alice");
 });
+
+test("testcases belong to the account that created them", async () => {
+  // Alice adds a case of her own to the shared problem.
+  const made = await call('POST', '/api/testcases', alice, {
+    problem_rowid: pid, label: 'Alice only', input: '42\n', expected_output: '84',
+  });
+  assert.equal(made.status, 200);
+  const tcId = made.body.id;
+
+  // Bob must not see it.
+  const bobView = await call('GET', `/api/problems/${pid}`, bob);
+  const labels = (bobView.body.testcases || []).map((t) => t.label);
+  assert.ok(!labels.includes('Alice only'), `bob saw alice's testcase: ${labels.join(', ')}`);
+
+  // Alice does.
+  const aliceView = await call('GET', `/api/problems/${pid}`, alice);
+  assert.ok((aliceView.body.testcases || []).some((t) => t.label === 'Alice only'));
+
+  // And bob cannot reach it by id, for either verb.
+  const edit = await call('PUT', `/api/testcases/${tcId}`, bob, {
+    label: 'hijacked', input: 'x', expected_output: 'y',
+  });
+  assert.equal(edit.status, 404, "bob must not be able to edit alice's testcase");
+  const del = await call('DELETE', `/api/testcases/${tcId}`, bob);
+  assert.equal(del.status, 404, "bob must not be able to delete alice's testcase");
+
+  // Alice's case survived both attempts, unchanged.
+  const after = await call('GET', `/api/problems/${pid}`, alice);
+  const mine = (after.body.testcases || []).find((t) => t.id === tcId);
+  assert.ok(mine, 'alice still has her testcase');
+  assert.equal(mine.label, 'Alice only');
+  assert.equal(mine.expected_output, '84');
+});
+
+test("bulk sample import is scoped per account", async () => {
+  const samples = { problem_rowid: pid, testcases: [{ label: 'Sample 1', input: '9\n', expected_output: '18' }] };
+  // Both import the same sample; each gets their own row.
+  assert.equal((await call('POST', '/api/testcases/bulk', alice, samples)).body.added, 1);
+  assert.equal(
+    (await call('POST', '/api/testcases/bulk', bob, samples)).body.added, 1,
+    "bob's import must not be de-duplicated against alice's rows",
+  );
+  // Re-importing is still a no-op within one account.
+  assert.equal((await call('POST', '/api/testcases/bulk', bob, samples)).body.added, 0);
+
+  const a = (await call('GET', `/api/problems/${pid}`, alice)).body.testcases || [];
+  const b = (await call('GET', `/api/problems/${pid}`, bob)).body.testcases || [];
+  assert.equal(b.filter((t) => t.label === 'Sample 1').length, 1, 'bob sees exactly his own copy');
+  assert.ok(a.every((t) => !b.some((x) => x.id === t.id)), 'no row is shared between the two accounts');
+});
+
+test("a signed-out visitor gets no testcases at all", async () => {
+  const anon = await call('GET', `/api/problems/${pid}`, null);
+  assert.equal((anon.body.testcases || []).length, 0);
+});
+
+test("'my contests' cannot be read for someone else", async () => {
+  const made = await call('POST', '/api/contests/create', alice, {
+    title: 'Alice Cup', type: 'speed', password: 'joinme', duration_mins: 60,
+    start_time: new Date(Date.now() + 3600e3).toISOString(), problems: '[]',
+  });
+  assert.equal(made.status, 200, `contest create failed: ${made.body.error}`);
+  // Bob asks for alice's contests by name — the old route trusted ?username=.
+  const asBob = await call('GET', `/api/contests/mine?username=al${stamp}`, bob);
+  assert.equal(asBob.status, 200);
+  assert.ok(
+    !(asBob.body.contests || []).some((c) => c.title === 'Alice Cup'),
+    'bob must only ever see his own contests, whatever username he asks for',
+  );
+  const asAlice = await call('GET', '/api/contests/mine', alice);
+  assert.ok((asAlice.body.contests || []).some((c) => c.title === 'Alice Cup'));
+});

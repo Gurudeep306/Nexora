@@ -150,13 +150,13 @@ export function TranslateBar({
   const targetInfo = langs.find((l) => l.code === target)
 
   return (
-    <div className="mb-4 rounded-xl border border-white/[0.06] bg-white/[0.015] p-2">
+    <div className="mb-4 rounded-xl border border-hairline/[0.06] bg-white/[0.015] p-2">
       <div className="flex flex-wrap items-center gap-2">
         <Languages className="ml-1 size-4 shrink-0 text-primary-bright" aria-hidden="true" />
 
         {/* detected language */}
         <Tooltip label={detected ? `Detected by ${detected.method} · ${Math.round(detected.confidence * 100)}% sure` : 'Detecting language…'}>
-          <span className="flex h-7 items-center gap-1.5 rounded-md border border-white/[0.06] bg-black/20 px-2 text-[11px] text-foreground-dim">
+          <span className="flex h-7 items-center gap-1.5 rounded-md border border-hairline/[0.06] bg-bg-field px-2 text-[11px] text-foreground-dim">
             {detecting ? <Loader2 className="size-3 animate-spin" /> : <ScanSearch className="size-3 text-cyan" />}
             {detected ? (
               <>
@@ -184,7 +184,7 @@ export function TranslateBar({
             </button>
           </PopoverTrigger>
           <PopoverContent align="start" className="w-72 p-0">
-            <div className="flex items-center gap-2 border-b border-white/[0.06] px-3">
+            <div className="flex items-center gap-2 border-b border-hairline/[0.06] px-3">
               <Search className="size-3.5 text-foreground-faint" />
               <input
                 autoFocus
@@ -227,7 +227,7 @@ export function TranslateBar({
         </Popover>
 
         {/* engine */}
-        <div className="flex h-7 items-center rounded-md border border-white/[0.06] bg-black/20 p-0.5 text-[11px]" role="radiogroup" aria-label="Translation engine">
+        <div className="flex h-7 items-center rounded-md border border-hairline/[0.06] bg-bg-field p-0.5 text-[11px]" role="radiogroup" aria-label="Translation engine">
           {(
             [
               ['auto', 'Fast', <Zap key="z" className="size-3" />],
@@ -282,7 +282,7 @@ export function TranslateBar({
               {showing.engine === 'ai' ? 'AI' : 'Google'} · formulas and samples are unchanged
             </span>
           )}
-          {error && <span className="text-[#f87171]">{error}</span>}
+          {error && <span className="text-state-error">{error}</span>}
           {showing && !busy && (
             <button onClick={() => void run('')} className="ml-auto cursor-pointer text-primary-bright hover:underline">
               Show original

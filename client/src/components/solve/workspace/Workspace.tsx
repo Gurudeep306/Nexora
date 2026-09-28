@@ -424,7 +424,7 @@ export function Workspace({
         {overlay}
         <div className="absolute inset-0 overflow-hidden">{editor}</div>
         <AnimatePresence>
-          {PANES.filter((p) => !ws.immersive[p].minimized).map((p) => (
+          {PANES.filter((p) => !ws.immersive[p].minimized && !(maxFloat === 'problem' && p === 'tests')).map((p) => (
             <motion.div
               key={p}
               initial={{ opacity: 0, scale: 0.96 }}
@@ -537,7 +537,7 @@ export function Workspace({
         {(['tests', 'problem'] as PaneId[]).filter((p) => minimizedAt(p, 'right')).map((p) => rail(p, 'right'))}
       </AnimatePresence>
 
-      {PANES.filter((p) => ws[p].dock === 'float').map((p) => floatingWindow(p))}
+      {PANES.filter((p) => ws[p].dock === 'float' && !(maxFloat === 'problem' && p === 'tests')).map((p) => floatingWindow(p))}
       {overlayLayer}
     </div>
   )
@@ -578,7 +578,7 @@ function VGroup({ id, panelIds, children }: { id: string; panelIds: string[]; ch
 function DockTargets({ pane, zone }: { pane: PaneId; zone: Dock | null }) {
   const allowed = ALLOWED_DOCKS[pane]
   const target = (d: Dock) =>
-    zone === d ? 'border-primary bg-primary/20 text-white shadow-[0_0_30px_rgb(139_92_246/0.45)] scale-[1.02]' : 'border-white/10 bg-black/30 text-foreground-faint'
+    zone === d ? 'border-primary bg-primary/20 text-on-accent-brand shadow-[0_0_30px_rgb(139_92_246/0.45)] scale-[1.02]' : 'border-white/10 bg-bg-field text-foreground-faint'
   const base = 'absolute flex items-center justify-center gap-2 rounded-xl border-2 border-dashed text-xs font-semibold transition-[background-color,border-color,transform,color] duration-150'
   return (
     <motion.div

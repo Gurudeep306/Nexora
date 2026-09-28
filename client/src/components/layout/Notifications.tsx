@@ -50,7 +50,7 @@ export function Notifications() {
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 exit={{ scale: 0 }}
-                className="absolute top-1 right-1 flex min-w-4 items-center justify-center rounded-full bg-accent-brand px-1 text-[10px] leading-4 font-semibold text-white ring-2 ring-border"
+                className="absolute top-1 right-1 flex min-w-4 items-center justify-center rounded-full bg-accent-brand px-1 text-[10px] leading-4 font-semibold text-on-accent-brand ring-2 ring-border"
               >
                 {total > 99 ? '99+' : total}
               </motion.span>

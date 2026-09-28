@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { useTheme } from '@/context/ThemeContext'
 import '@/lib/monaco'
 import Editor, { type BeforeMount, type OnMount } from '@monaco-editor/react'
 import type { editor as MonacoNs } from 'monaco-editor'
@@ -384,7 +385,22 @@ export function CodeEditor({
   const { data } = useApi(() => api.get<{ settings: Record<string, string> }>('/api/settings'), [])
   const settings = data?.settings ?? {}
 
-  const [theme, setTheme] = useState(() => localStorage.getItem('nexora:editor-theme') ?? 'nexora-dark')
+  /* The editor follows the app's appearance until the reader picks a theme of
+     their own from the dropdown. A dark editor on a light page is the one
+     thing that gives away a theme that was bolted on rather than designed. */
+  const { resolved: appAppearance } = useTheme()
+  const editorThemePinned = () => {
+    try { return localStorage.getItem('nexora:editor-theme-pinned') === '1' } catch { return false }
+  }
+  const themeForAppearance = (a: 'light' | 'dark') => (a === 'light' ? 'light' : 'nexora-dark')
+  const [theme, setTheme] = useState(() =>
+    editorThemePinned()
+      ? (localStorage.getItem('nexora:editor-theme') ?? 'nexora-dark')
+      : themeForAppearance(appAppearance),
+  )
+  useEffect(() => {
+    if (!editorThemePinned()) setTheme(themeForAppearance(appAppearance))
+  }, [appAppearance])
   const [vim, setVim] = useState(() => localStorage.getItem('nexora:editor-vim') === 'on')
   const [zen, setZen] = useState(false)
   const [helpOpen, setHelpOpen] = useState(false)
@@ -748,7 +764,10 @@ export function CodeEditor({
       <div className="flex shrink-0 flex-nowrap items-center gap-1.5 overflow-x-auto border-b border-border bg-surface px-2 py-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [&>*]:shrink-0">
         <select
           value={theme}
-          onChange={(e) => setTheme(e.target.value)}
+          onChange={(e) => {
+            try { localStorage.setItem('nexora:editor-theme-pinned', '1') } catch { /* storage off */ }
+            setTheme(e.target.value)
+          }}
           aria-label="Editor theme"
           className="h-7 cursor-pointer rounded-md border border-border bg-background px-1.5 text-[11px] text-foreground-dim outline-none hover:text-foreground"
         >

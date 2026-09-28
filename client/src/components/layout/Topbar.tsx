@@ -4,6 +4,7 @@ import { useAuth } from '@/context/AuthContext'
 import { AnimatedNumber, Avatar, Kbd, Tooltip } from '@/components/ui'
 import { navMeta } from '@/config/nav'
 import { Notifications } from './Notifications'
+import { AppearanceButton } from './AppearanceToggle'
 import { openCommandPalette } from './CommandPalette'
 import { UserMenu } from './UserMenu'
 
@@ -71,6 +72,7 @@ export function Topbar() {
             </Link>
           </Tooltip>
         )}
+        <AppearanceButton className="size-8" />
         <Notifications />
         {user && (
           <UserMenu side="bottom" align="end">

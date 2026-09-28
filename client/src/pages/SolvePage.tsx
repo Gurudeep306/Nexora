@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties }
 import { useNavigate, useParams } from 'react-router-dom'
 import { motion } from 'motion/react'
 import {
+  AlertTriangle,
   ArrowLeft,
   Bot,
   Expand,
@@ -10,6 +11,7 @@ import {
   ChevronsRight,
   ChevronsUp,
   Code2,
+  History,
   Loader2,
   Play,
   ScrollText,
@@ -17,6 +19,7 @@ import {
   TerminalSquare,
   Wand2,
   Sparkles,
+  X,
 } from 'lucide-react'
 import {
   Button,
@@ -35,6 +38,7 @@ import { CodeEditor } from '@/components/solve/CodeEditor'
 import { ProblemPanel } from '@/components/solve/ProblemPanel'
 import { TestcaseDeck } from '@/components/solve/TestcaseDeck'
 import { JudgeResults, RunOutput } from '@/components/solve/ResultsPanel'
+import { VerdictBadge } from '@/components/shared/PlatformBadge'
 import { VerdictBanner } from '@/components/solve/VerdictBanner'
 import { AiTutorModal } from '@/components/solve/AiTutorModal'
 import { sanitizeHtml } from '@/components/ailab/sanitize'
@@ -228,7 +232,7 @@ export default function SolvePage({ custom = false }: { custom?: boolean }) {
   const [judgeResult, setJudgeResult] = useState<JudgeResponse | null>(null)
   const [runCase, setRunCase] = useState<{ label: string; expected: string } | null>(null)
   const [banner, setBanner] = useState<{ verdict: string; xp: number | null; id: number } | null>(null)
-  const [bottomTab, setBottomTab] = useState<'tests' | 'output' | 'coach'>('tests')
+  const [bottomTab, setBottomTab] = useState<'tests' | 'output' | 'coach' | 'subs' | 'issues'>('tests')
   const [mobilePane, setMobilePane] = useState<'problem' | 'code'>('problem')
   const [splitPct, setSplitPct] = useState(46)
   const [tutorOpen, setTutorOpen] = useState(false)
@@ -239,6 +243,7 @@ export default function SolvePage({ custom = false }: { custom?: boolean }) {
     return Number.isFinite(v) && v >= 140 && v <= 900 ? v : 240
   })
   const [bottomCollapsed, setBottomCollapsed] = useState(false)
+  const [bottomHidden, setBottomHidden] = useState(() => localStorage.getItem('nexora:panel:bottom-hidden') === '1')
   const [aiInline, setAiInline] = useState(() => localStorage.getItem('nexora:ai-inline') !== 'off')
 
   /* ── Code replay recorder ──
@@ -630,6 +635,13 @@ export default function SolvePage({ custom = false }: { custom?: boolean }) {
     })
   }, [])
 
+  const toggleBottomHidden = useCallback(() => {
+    setBottomHidden((h) => {
+      localStorage.setItem('nexora:panel:bottom-hidden', h ? '0' : '1')
+      return !h
+    })
+  }, [])
+
   const toolbar = (
     <div className="card-neon flex flex-wrap items-center gap-2 px-3 py-2">
       <Tooltip label={custom ? 'Back to workshop' : 'Back to problems'}>
@@ -659,7 +671,7 @@ export default function SolvePage({ custom = false }: { custom?: boolean }) {
           >
             <Bot className="size-3.5 shrink-0" />
             <span className="truncate">{coach.insight.approach}</span>
-            <span className={cn('font-mono', coach.insight.fits === false ? 'text-[#f87171]' : 'text-foreground-dim')}>{coach.insight.time}</span>
+            <span className={cn('font-mono', coach.insight.fits === false ? 'text-state-error' : 'text-foreground-dim')}>{coach.insight.time}</span>
           </button>
         </Tooltip>
       )}
@@ -786,7 +798,7 @@ export default function SolvePage({ custom = false }: { custom?: boolean }) {
     variant="pills"
     className={className}
     active={bottomTab}
-    onChange={(t) => setBottomTab(t as 'tests' | 'output' | 'coach')}
+    onChange={(t) => setBottomTab(t as 'tests' | 'output' | 'coach' | 'subs' | 'issues')}
     items={[
       { id: 'tests', label: 'test/', icon: <Code2 className="size-3.5" />, badge: testcases.length },
       {
@@ -800,6 +812,18 @@ export default function SolvePage({ custom = false }: { custom?: boolean }) {
         label: 'coach',
         icon: coach.loading ? <Loader2 className="size-3.5 animate-spin" /> : <Bot className="size-3.5" />,
         badge: coach.insight?.issues.length ? coach.insight.issues.length : undefined,
+      },
+      {
+        id: 'subs',
+        label: 'subs',
+        icon: <History className="size-3.5" />,
+        badge: submissions.length || undefined,
+      },
+      {
+        id: 'issues',
+        label: 'issues',
+        icon: <AlertTriangle className="size-3.5" />,
+        badge: allDiagnostics.length || undefined,
       },
     ]}
   />
@@ -819,6 +843,47 @@ export default function SolvePage({ custom = false }: { custom?: boolean }) {
         onAdd={addTestcase}
         onDelete={deleteTestcase}
       />
+    ) : bottomTab === 'subs' ? (
+      <div className="space-y-1.5 p-3">
+        {submissions.length === 0 ? (
+          <EmptyState
+            className="py-6"
+            icon={<History />}
+            title="No submissions yet"
+            description="Submit your code and the verdict history lands here."
+          />
+        ) : (
+          submissions.map((s) => (
+            <div key={s.id} className="flex items-center gap-2.5 rounded-lg border border-hairline/[0.05] bg-bg-field px-2.5 py-2 text-xs">
+              <VerdictBadge verdict={s.verdict} />
+              <span className="font-mono text-foreground-dim tabular-nums">{s.exec_time_ms} ms</span>
+              <span className="ml-auto truncate text-foreground-faint">{new Date(s.submitted_at).toLocaleString()}</span>
+            </div>
+          ))
+        )}
+      </div>
+    ) : bottomTab === 'issues' ? (
+      <div className="space-y-1.5 p-3">
+        {allDiagnostics.length === 0 ? (
+          <EmptyState
+            className="py-6"
+            icon={<AlertTriangle />}
+            title="No issues"
+            description="Compile errors and coach warnings surface here as soon as they appear."
+          />
+        ) : (
+          allDiagnostics.map((d, i) => (
+            <div key={i} className="flex items-start gap-2 rounded-lg border border-hairline/[0.05] bg-bg-field px-2.5 py-2 text-xs">
+              <span
+                className={cn('mt-1 size-1.5 shrink-0 rounded-full', d.severity === 'error' ? 'bg-destructive' : 'bg-warning')}
+                aria-hidden="true"
+              />
+              <span className="shrink-0 font-mono text-foreground-faint tabular-nums">Ln {d.line}</span>
+              <span className="min-w-0 text-foreground-dim">{d.message}</span>
+            </div>
+          ))
+        )}
+      </div>
     ) : running || submitting ? (
       <div className="flex h-full flex-col items-center justify-center gap-2 text-xs text-foreground-faint">
         <Loader2 className="size-5 animate-spin text-primary-bright" aria-hidden="true" />
@@ -839,7 +904,17 @@ export default function SolvePage({ custom = false }: { custom?: boolean }) {
   </div>
   )
 
-  const bottomPanel = (
+  const bottomPanel = bottomHidden ? (
+    <button
+      onClick={toggleBottomHidden}
+      aria-label="Show tests panel"
+      title="Show tests panel"
+      className="card-neon flex h-8 shrink-0 cursor-pointer items-center gap-2 px-3 text-[11px] font-semibold tracking-[0.12em] text-foreground-faint uppercase transition-colors hover:border-primary/40 hover:text-foreground"
+    >
+      <ChevronsUp className="size-3.5 text-primary-bright" aria-hidden="true" />
+      Tests panel hidden — click to show
+    </button>
+  ) : (
     <div
       className="card-neon flex min-h-0 flex-col"
       style={bottomCollapsed ? undefined : { height: bottomH }}
@@ -862,13 +937,21 @@ export default function SolvePage({ custom = false }: { custom?: boolean }) {
       >
         <span className="h-1 w-10 rounded-full bg-border transition-colors duration-150 group-hover:bg-primary group-active:bg-primary-bright" />
       </div>
-      <div className="flex items-center gap-2 pr-2">
+      <div className="flex items-center gap-2 border-b border-hairline/[0.04] bg-white/[0.015] pr-2">
         {testsTabs('m-2 w-auto self-start')}
+        <button
+          onClick={toggleBottomHidden}
+          aria-label="Hide tests panel"
+          title="Hide panel"
+          className="ml-auto flex size-6 items-center justify-center rounded-md text-foreground-faint transition-colors hover:bg-surface-2 hover:text-primary"
+        >
+          <X className="size-4" />
+        </button>
         <button
           onClick={() => setBottomCollapsed((c) => !c)}
           aria-label={bottomCollapsed ? 'Expand tests panel' : 'Minimize tests panel'}
           title={bottomCollapsed ? 'Expand panel' : 'Minimize panel'}
-          className="ml-auto flex size-6 items-center justify-center rounded-md text-foreground-faint transition-colors hover:bg-surface-2 hover:text-primary"
+          className="flex size-6 items-center justify-center rounded-md text-foreground-faint transition-colors hover:bg-surface-2 hover:text-primary"
         >
           {bottomCollapsed ? <ChevronsUp className="size-4" /> : <ChevronsDown className="size-4" />}
         </button>

@@ -255,7 +255,7 @@ export default function AuthPage() {
   return (
     <div className="grid min-h-dvh bg-background lg:grid-cols-[1.1fr_1fr]">
       {/* Showcase (desktop) */}
-      <aside className="relative hidden border-r border-white/[0.06] lg:block" aria-label="About Nexora">
+      <aside className="relative hidden border-r border-hairline/[0.06] lg:block" aria-label="About Nexora">
         <div className="sticky top-0 h-dvh">
           <AuthShowcase />
         </div>

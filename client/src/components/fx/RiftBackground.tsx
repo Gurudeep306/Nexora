@@ -19,7 +19,7 @@ export function RiftBackground({
     <div
       className={cn('pointer-events-none absolute inset-0 overflow-hidden', className)}
       aria-hidden="true"
-      style={{ opacity: Math.min(1, 0.55 * intensity + 0.25) }}
+      style={{ opacity: Math.min(1, 0.4 * intensity + 0.22) }}
     >
       {/* Drifting aurora blobs */}
       <div className="rift-blob rift-blob-a" />

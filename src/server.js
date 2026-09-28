@@ -845,9 +845,14 @@ app.get("/auth/github", authLimiter, (req, res, next) => {
 });
 app.get(
   "/auth/github/callback",
-  passport.authenticate("github", {
-    failureRedirect: "/?auth_error=github_failed",
-  }),
+  // Without this guard an unconfigured provider throws "Unknown authentication
+  // strategy" and the caller gets a raw 500 instead of a readable message.
+  (req, res, next) => {
+    if (!process.env.GITHUB_CLIENT_ID) {
+      return res.redirect("/?auth_error=github_not_configured");
+    }
+    passport.authenticate("github", { failureRedirect: "/?auth_error=github_failed" })(req, res, next);
+  },
   (req, res, next) => finishOAuth(req, res, next, "github"),
 );
 
@@ -862,9 +867,14 @@ app.get("/auth/google", authLimiter, (req, res, next) => {
 });
 app.get(
   "/auth/google/callback",
-  passport.authenticate("google", {
-    failureRedirect: "/?auth_error=google_failed",
-  }),
+  // Without this guard an unconfigured provider throws "Unknown authentication
+  // strategy" and the caller gets a raw 500 instead of a readable message.
+  (req, res, next) => {
+    if (!process.env.GOOGLE_CLIENT_ID) {
+      return res.redirect("/?auth_error=google_not_configured");
+    }
+    passport.authenticate("google", { failureRedirect: "/?auth_error=google_failed" })(req, res, next);
+  },
   (req, res, next) => finishOAuth(req, res, next, "google"),
 );
 
@@ -1096,9 +1106,11 @@ app.get("/api/problems/:id", async (req, res) => {
     );
     if (!problem)
       return res.status(404).json({ ok: false, error: "Not found" });
+    // Only this account's testcases: a custom case one user adds must never
+    // show up in anyone else's deck.
     const testcases = await all(
-      "SELECT * FROM testcases WHERE problem_rowid=?",
-      [req.params.id],
+      "SELECT * FROM testcases WHERE problem_rowid=? AND username=? ORDER BY id",
+      [req.params.id, me()],
     );
     const submissions = await all(
       "SELECT id,verdict,exec_time_ms,submitted_at FROM submissions WHERE username=? AND problem_rowid=? ORDER BY submitted_at DESC LIMIT 20",
@@ -1535,8 +1547,8 @@ app.post("/api/testcases/bulk", async (req, res) => {
     }
 
     const existing = await all(
-      "SELECT input, expected_output FROM testcases WHERE problem_rowid=?",
-      [problemId],
+      "SELECT input, expected_output FROM testcases WHERE problem_rowid=? AND username=?",
+      [problemId, me()],
     );
     const seen = new Set(existing.map((t) => tcKey(t.input, t.expected_output)));
 
@@ -1550,8 +1562,8 @@ app.post("/api/testcases/bulk", async (req, res) => {
       if (seen.has(key)) { skipped++; continue; }
       seen.add(key);
       const r = await run(
-        "INSERT INTO testcases(problem_rowid,label,input,expected_output) VALUES(?,?,?,?)",
-        [problemId, String(tc?.label || "Sample").slice(0, 60), input, expected],
+        "INSERT INTO testcases(problem_rowid,label,input,expected_output,username) VALUES(?,?,?,?,?)",
+        [problemId, String(tc?.label || "Sample").slice(0, 60), input, expected, me()],
       );
       added.push({ id: r.lastID, label: tc?.label || "Sample", input, expected_output: expected });
     }
@@ -1566,8 +1578,8 @@ app.post("/api/testcases", async (req, res) => {
   try {
     const { problem_rowid, label, input, expected_output } = req.body;
     const r = await run(
-      "INSERT INTO testcases(problem_rowid,label,input,expected_output) VALUES(?,?,?,?)",
-      [problem_rowid, label || "Sample", input, expected_output],
+      "INSERT INTO testcases(problem_rowid,label,input,expected_output,username) VALUES(?,?,?,?,?)",
+      [problem_rowid, label || "Sample", input, expected_output, me()],
     );
     res.json({ ok: true, id: r.lastID });
   } catch (e) {
@@ -1578,10 +1590,13 @@ app.post("/api/testcases", async (req, res) => {
 app.put("/api/testcases/:id", async (req, res) => {
   try {
     const { label, input, expected_output } = req.body;
-    await run(
-      "UPDATE testcases SET label=?, input=?, expected_output=? WHERE id=?",
-      [label, input, expected_output, req.params.id],
+    // The username predicate is the real guard: without it any signed-in user
+    // could edit any testcase just by guessing its id.
+    const r = await run(
+      "UPDATE testcases SET label=?, input=?, expected_output=? WHERE id=? AND username=?",
+      [label, input, expected_output, req.params.id, me()],
     );
+    if (!r.changes) return res.status(404).json({ ok: false, error: "Testcase not found" });
     res.json({ ok: true });
   } catch (e) {
     res.status(500).json({ ok: false, error: e.message });
@@ -1590,7 +1605,8 @@ app.put("/api/testcases/:id", async (req, res) => {
 
 app.delete("/api/testcases/:id", async (req, res) => {
   try {
-    await run("DELETE FROM testcases WHERE id=?", [req.params.id]);
+    const r = await run("DELETE FROM testcases WHERE id=? AND username=?", [req.params.id, me()]);
+    if (!r.changes) return res.status(404).json({ ok: false, error: "Testcase not found" });
     res.json({ ok: true });
   } catch (e) {
     res.status(500).json({ ok: false, error: e.message });
@@ -5222,9 +5238,10 @@ app.post("/api/contests/create", async (req, res) => {
 // List contests by creator
 app.get("/api/contests/mine", async (req, res) => {
   try {
-    const username = req.query.username;
-    if (!username)
-      return res.status(400).json({ ok: false, error: "username required" });
+    // "Mine" means the signed-in account. This took ?username= from the caller,
+    // so anyone could list anyone else's contests just by asking for them.
+    const username = me();
+    if (!username) return res.status(401).json({ ok: false, error: "Please sign in first" });
     const contests = await all(
       `SELECT id, title, description, type, contest_code, org_tag, start_time, duration_mins, problems, max_participants, created_at,
        (SELECT COUNT(*) FROM contest_participants WHERE contest_id = custom_contests.id) as participant_count

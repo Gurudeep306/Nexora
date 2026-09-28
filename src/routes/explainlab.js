@@ -1098,8 +1098,13 @@ function createExplainLabRouter(deps) {
   });
 
   // Serve teacher dashboard page
+  // The dashboard page was never built — this pointed at a file that has never
+  // existed, so every visit returned an ENOENT. Send people to the ExplainLab
+  // page that does exist instead of to a broken response.
   router.get('/explainlab/dashboard', requireAuthenticatedUser, (_req, res) => {
-    res.sendFile(path.join(__dirname, '..', '..', 'public', 'explainlab-dashboard.html'));
+    const built = path.join(__dirname, '..', '..', 'public', 'explainlab.html');
+    if (fs.existsSync(built)) return res.sendFile(built);
+    res.redirect('/explainlab');
   });
 
   return router;

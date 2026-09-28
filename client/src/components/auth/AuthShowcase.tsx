@@ -76,7 +76,7 @@ export function TypingEditor() {
 
   return (
     <div className="glass overflow-hidden rounded-2xl shadow-[0_30px_80px_-24px_rgb(139_92_246/0.55)]">
-      <div className="flex items-center gap-2 border-b border-white/[0.06] bg-black/20 px-4 py-2.5">
+      <div className="flex items-center gap-2 border-b border-hairline/[0.06] bg-bg-field px-4 py-2.5">
         <span className="size-2.5 rounded-full bg-accent/80" />
         <span className="size-2.5 rounded-full bg-warning/80" />
         <span className="size-2.5 rounded-full bg-success/80" />
@@ -89,7 +89,7 @@ export function TypingEditor() {
           {!done && <span className="ml-px inline-block h-4 w-1.5 animate-pulse bg-primary-bright align-middle" />}
         </code>
       </pre>
-      <div className="h-11 border-t border-white/[0.06] bg-black/20 px-4">
+      <div className="h-11 border-t border-hairline/[0.06] bg-bg-field px-4">
         <AnimatePresence mode="wait">
           {done ? (
             <motion.div

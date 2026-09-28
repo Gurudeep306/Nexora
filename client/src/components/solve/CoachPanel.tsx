@@ -75,7 +75,7 @@ export function CoachPanel({
         </Button>
       </div>
 
-      {error && !insight && <p className="rounded-md border border-destructive/30 bg-destructive/10 px-2.5 py-1.5 text-xs text-[#f87171]">{error}</p>}
+      {error && !insight && <p className="rounded-md border border-destructive/30 bg-destructive/10 px-2.5 py-1.5 text-xs text-state-error">{error}</p>}
       {!insight && !loading && !error && (
         <div className="rounded-lg border border-dashed border-white/10 px-3 py-5 text-center text-xs text-foreground-faint">
           <Brain className="mx-auto mb-2 size-5 text-primary-bright" />
@@ -116,7 +116,7 @@ export function CoachPanel({
             <Section icon={<ShieldAlert className="size-3.5 text-warning" />} title={`Things to check · ${insight.issues.length}`}>
               <ul className="space-y-1">
                 {insight.issues.map((i, k) => (
-                  <li key={k} className="flex gap-2 rounded-md bg-black/20 px-2 py-1.5 text-xs">
+                  <li key={k} className="flex gap-2 rounded-md bg-bg-field px-2 py-1.5 text-xs">
                     {i.severity === 'error' ? (
                       <AlertTriangle className="mt-0.5 size-3.5 shrink-0 text-destructive" />
                     ) : i.severity === 'warning' ? (
@@ -216,7 +216,7 @@ export function CoachPanel({
         ) : (
           <ul className="space-y-1.5">
             {tests.map((t, k) => (
-              <li key={k} className="rounded-md border border-white/[0.06] bg-black/20 p-2">
+              <li key={k} className="rounded-md border border-hairline/[0.06] bg-bg-field p-2">
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-semibold text-foreground">{t.label}</span>
                   {!t.expected && <span className="text-[10px] text-warning">no expected output — run it to inspect</span>}
@@ -232,7 +232,7 @@ export function CoachPanel({
                   </button>
                 </div>
                 <p className="mt-0.5 text-[11px] text-foreground-faint">{t.why}</p>
-                <pre className="mt-1 max-h-24 overflow-auto rounded bg-black/30 px-2 py-1 font-mono text-[11px] text-foreground-dim">{t.input}</pre>
+                <pre className="mt-1 max-h-24 overflow-auto rounded bg-bg-field px-2 py-1 font-mono text-[11px] text-foreground-dim">{t.input}</pre>
               </li>
             ))}
           </ul>
@@ -260,20 +260,20 @@ export function CoachPanel({
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
             placeholder="e.g. Why is my loop O(n²)? What does line 12 do?"
-            className="h-8 min-w-0 flex-1 rounded-lg border border-border bg-black/20 px-2.5 text-xs text-foreground placeholder:text-foreground-faint focus:border-primary/60 focus:outline-none"
+            className="h-8 min-w-0 flex-1 rounded-lg border border-border bg-bg-field px-2.5 text-xs text-foreground placeholder:text-foreground-faint focus:border-primary/60 focus:outline-none"
           />
           <Button size="sm" className="h-8" type="submit" loading={asking} aria-label="Ask the coach">
             {!asking && <Send className="size-3.5" />}
           </Button>
         </form>
         {answer && (
-          <div className="mt-2 rounded-md border border-white/[0.06] bg-black/20 p-2 text-xs text-foreground-dim">
+          <div className="mt-2 rounded-md border border-hairline/[0.06] bg-bg-field p-2 text-xs text-foreground-dim">
             <MarkdownLite text={answer} />
           </div>
         )}
       </Section>
 
-      {err && <p className="text-xs text-[#f87171]">{err}</p>}
+      {err && <p className="text-xs text-state-error">{err}</p>}
       <p className="text-[10px] text-foreground-faint">AI can be wrong — treat it as a second opinion. It never writes the solution for you.</p>
     </div>
   )
@@ -281,9 +281,9 @@ export function CoachPanel({
 
 function Stat({ label, value, mono, tone }: { label: string; value: string; mono?: boolean; tone?: 'ok' | 'bad' }) {
   return (
-    <div className="rounded-lg border border-white/[0.06] bg-black/20 px-2.5 py-2">
+    <div className="rounded-lg border border-hairline/[0.06] bg-bg-field px-2.5 py-2">
       <p className="text-[10px] tracking-wider text-foreground-faint uppercase">{label}</p>
-      <p className={cn('mt-0.5 truncate text-xs text-foreground', mono && 'font-mono', tone === 'ok' && 'text-success', tone === 'bad' && 'text-[#f87171]')} title={value}>
+      <p className={cn('mt-0.5 truncate text-xs text-foreground', mono && 'font-mono', tone === 'ok' && 'text-success', tone === 'bad' && 'text-state-error')} title={value}>
         {value}
       </p>
     </div>
@@ -292,7 +292,7 @@ function Stat({ label, value, mono, tone }: { label: string; value: string; mono
 
 function Section({ icon, title, children }: { icon: React.ReactNode; title: string; children: React.ReactNode }) {
   return (
-    <section className="rounded-lg border border-white/[0.05] bg-white/[0.015] p-2.5">
+    <section className="rounded-lg border border-hairline/[0.05] bg-white/[0.015] p-2.5">
       <h4 className="mb-1.5 flex items-center gap-1.5 text-[11px] font-semibold tracking-[0.08em] text-foreground-dim uppercase">
         {icon} {title}
       </h4>

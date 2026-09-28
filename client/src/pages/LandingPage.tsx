@@ -174,7 +174,7 @@ export default function LandingPage() {
             transition={{ duration: 0.5 }}
             className="glass mx-auto inline-flex items-center gap-2 rounded-full py-1 pr-3 pl-1 text-xs text-foreground-dim hover:text-foreground"
           >
-            <span className="rounded-full bg-gradient-to-r from-primary to-accent px-2 py-0.5 text-[10.5px] font-semibold text-white">NEW</span>
+            <span className="rounded-full bg-gradient-to-r from-primary to-accent px-2 py-0.5 text-[10.5px] font-semibold text-on-accent-brand">NEW</span>
             AI tutor, battles & live solve rooms
             <ArrowRight className="size-3" />
           </motion.a>
@@ -204,7 +204,7 @@ export default function LandingPage() {
           >
             <Link
               to="/auth?mode=register"
-              className="sheen group flex h-12 items-center gap-2 rounded-xl bg-gradient-to-b from-[#9d74ff] to-primary px-6 text-[15px] font-semibold text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.3),0_0_0_1px_rgb(139_92_246/0.6),0_14px_40px_-10px_rgb(139_92_246/0.9)] transition-transform hover:scale-[1.03]"
+              className="sheen group flex h-12 items-center gap-2 rounded-xl bg-gradient-to-b from-[#9d74ff] to-primary px-6 text-[15px] font-semibold text-on-accent-brand shadow-[inset_0_1px_0_rgb(255_255_255/0.3),0_0_0_1px_rgb(139_92_246/0.6),0_14px_40px_-10px_rgb(139_92_246/0.9)] transition-transform hover:scale-[1.03]"
             >
               Enter the rift <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
@@ -245,7 +245,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── Judges marquee ── */}
-      <section className="border-y border-white/[0.05] bg-white/[0.01] py-8" aria-label="Supported judges">
+      <section className="border-y border-hairline/[0.05] bg-white/[0.01] py-8" aria-label="Supported judges">
         <p className="mb-5 text-center text-[11px] font-semibold tracking-[0.18em] text-foreground-faint uppercase">
           Problems synced from the judges you already use
         </p>
@@ -278,14 +278,14 @@ export default function LandingPage() {
           <Bento className="md:col-span-4" icon={<Code2 />} title="A real judge, in your browser" text="Monaco editor with Vim mode, error lens and templates. Run against samples, submit in 30+ languages, get the verdict in seconds.">
             <div className="mt-5 grid grid-cols-3 gap-2 sm:grid-cols-6">
               {LANGS.map((l) => (
-                <span key={l} className="rounded-md border border-white/[0.06] bg-black/30 px-2 py-1.5 text-center font-mono text-[11px] text-foreground-dim">{l}</span>
+                <span key={l} className="rounded-md border border-hairline/[0.06] bg-bg-field px-2 py-1.5 text-center font-mono text-[11px] text-foreground-dim">{l}</span>
               ))}
             </div>
           </Bento>
           <Bento className="md:col-span-2" icon={<BrainCircuit />} title="AI tutor" text="Stuck? Get hints that teach the idea instead of dumping the answer.">
             <div className="mt-5 space-y-2 text-xs">
               <div className="ml-auto w-fit max-w-[85%] rounded-xl rounded-br-sm bg-primary/20 px-3 py-2 text-foreground">Why is my DP TLE?</div>
-              <div className="w-fit max-w-[90%] rounded-xl rounded-bl-sm border border-white/[0.06] bg-black/30 px-3 py-2 text-foreground-dim">
+              <div className="w-fit max-w-[90%] rounded-xl rounded-bl-sm border border-hairline/[0.06] bg-bg-field px-3 py-2 text-foreground-dim">
                 Your inner loop recomputes prefix sums — cache them and it drops to O(n).
               </div>
             </div>
@@ -310,7 +310,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── Ranks ── */}
-      <section id="ranks" className="relative scroll-mt-24 overflow-hidden border-y border-white/[0.05] py-28">
+      <section id="ranks" className="relative scroll-mt-24 overflow-hidden border-y border-hairline/[0.05] py-28">
         <div className="dot-bg absolute inset-0 opacity-40 [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)]" aria-hidden="true" />
         <div className="relative mx-auto max-w-6xl px-5">
           <SectionHead eyebrow="11 rift ranks" title="From Bit to ∞ Overflow." sub="Every solve earns XP scaled to difficulty. Each rank has its own sigil — wear it on your profile, the leaderboard and in every room you join." />
@@ -332,12 +332,12 @@ export default function LandingPage() {
           <p className="mb-3 text-[11px] font-semibold tracking-[0.16em] text-primary-bright uppercase">Live leaderboard</p>
           <h2 className="text-heading-fade font-display text-4xl font-semibold tracking-tight sm:text-5xl">Your name belongs up here.</h2>
           <p className="mt-4 max-w-md text-foreground-dim">Ranked by each player's own XP. Every rating bracket you conquer, every streak day, every AC counts.</p>
-          <Link to="/auth?mode=register" className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-primary-bright hover:text-white">
+          <Link to="/auth?mode=register" className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-primary-bright hover:text-text-primary">
             Claim your spot <ArrowRight className="size-4" />
           </Link>
         </div>
         <div data-reveal className="glass overflow-hidden rounded-2xl">
-          <div className="flex items-center gap-2 border-b border-white/[0.06] px-5 py-3.5 text-sm font-semibold">
+          <div className="flex items-center gap-2 border-b border-hairline/[0.06] px-5 py-3.5 text-sm font-semibold">
             <Trophy className="size-4 text-gold" /> Top of the rift
           </div>
           <ul className="divide-y divide-white/[0.04]">
@@ -359,7 +359,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── Final CTA ── */}
-      <section className="beam-border relative isolate mx-5 mb-16 overflow-hidden rounded-3xl border border-white/[0.06] px-6 py-24 text-center sm:mx-auto sm:max-w-6xl" data-reveal>
+      <section className="beam-border relative isolate mx-5 mb-16 overflow-hidden rounded-3xl border border-hairline/[0.06] px-6 py-24 text-center sm:mx-auto sm:max-w-6xl" data-reveal>
         <RiftBackground className="-z-10" grid={false} intensity={0.9} />
         <Sparkles className="mx-auto mb-5 size-7 text-primary-bright" />
         <h2 className="text-heading-fade mx-auto max-w-2xl font-display text-4xl font-semibold tracking-tight sm:text-6xl">The rift is open.</h2>
@@ -372,7 +372,7 @@ export default function LandingPage() {
         </Link>
       </section>
 
-      <footer className="border-t border-white/[0.05]">
+      <footer className="border-t border-hairline/[0.05]">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-4 px-5 py-8 text-xs text-foreground-faint">
           <LogoMark size={20} />
           <span>© {new Date().getFullYear()} Nexora · built for competitive programmers</span>
@@ -488,15 +488,15 @@ function MiniBars() {
 function HeroShot() {
   return (
     <div className="glass overflow-hidden rounded-2xl p-1.5 shadow-[0_40px_120px_-30px_rgb(139_92_246/0.6)]">
-      <div className="overflow-hidden rounded-xl border border-white/[0.06] bg-[#0c0c11]">
-        <div className="flex items-center gap-2 border-b border-white/[0.06] px-4 py-2.5">
+      <div className="overflow-hidden rounded-xl border border-hairline/[0.06] bg-bg-surface">
+        <div className="flex items-center gap-2 border-b border-hairline/[0.06] px-4 py-2.5">
           <span className="size-2.5 rounded-full bg-[#ff5f57]" />
           <span className="size-2.5 rounded-full bg-[#febc2e]" />
           <span className="size-2.5 rounded-full bg-[#28c840]" />
           <span className="mx-auto rounded-md bg-white/[0.04] px-3 py-0.5 font-mono text-[11px] text-foreground-faint">nexora.app/solve</span>
         </div>
         <div className="grid text-left md:grid-cols-[1fr_1.15fr]">
-          <div className="hidden border-r border-white/[0.06] p-5 md:block">
+          <div className="hidden border-r border-hairline/[0.06] p-5 md:block">
             <div className="flex items-center gap-2">
               <span className="rounded-md border border-cyan/25 bg-cyan/[0.08] px-1.5 text-[10px] font-semibold text-cyan">CODEFORCES</span>
               <span className="font-mono text-[11px] text-foreground-faint">1400</span>
@@ -505,7 +505,7 @@ function HeroShot() {
             <p className="mt-3 text-[13px] leading-relaxed text-foreground-dim">
               There are <span className="font-mono text-foreground">n</span> stones. A frog on stone <span className="font-mono text-foreground">i</span> can jump to <span className="font-mono text-foreground">i+1</span> or <span className="font-mono text-foreground">i+2</span>, paying the height difference. Find the minimum total cost to reach the last stone.
             </p>
-            <div className="mt-4 rounded-lg border border-white/[0.06] bg-black/30 p-3 font-mono text-[12px] text-foreground-dim">
+            <div className="mt-4 rounded-lg border border-hairline/[0.06] bg-bg-field p-3 font-mono text-[12px] text-foreground-dim">
               <p className="mb-1 text-[10px] tracking-wider text-foreground-faint uppercase">Sample</p>
               4<br />10 30 40 20
             </div>

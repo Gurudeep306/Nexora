@@ -1087,7 +1087,10 @@ async function migratePerUser() {
     PRIMARY KEY (username, key)
   )`, `CASE WHEN key = 'last_sync' OR key LIKE 'stmt\\_%' ESCAPE '\\' THEN '' ELSE '${LEGACY_OWNER.replace(/'/g, "''")}' END`), "settings");
 
-  for (const t of ["submissions", "tutorial_progress", "ai_progress", "ai_battles", "code_replays"]) {
+  // `testcases` was shared by everyone: one user's custom case showed up in
+  // every other user's deck, and PUT/DELETE by id let anyone edit or delete
+  // someone else's. Each row now belongs to the account that created it.
+  for (const t of ["submissions", "tutorial_progress", "ai_progress", "ai_battles", "code_replays", "testcases"]) {
     note(await addUsernameColumn(t), t);
   }
 
@@ -1125,6 +1128,7 @@ async function migratePerUser() {
     ["progress", "username, status"], ["submissions", "username, problem_rowid"],
     ["daily_activity", "username, date"], ["tutorial_progress", "username, tutorial_id"],
     ["ai_progress", "username, problem_id"], ["ai_battles", "username"],
+    ["testcases", "username, problem_rowid"],
   ]) {
     await run(`CREATE INDEX IF NOT EXISTS idx_${t}_user ON ${t}(${c})`).catch(() => {});
   }

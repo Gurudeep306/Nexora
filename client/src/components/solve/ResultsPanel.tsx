@@ -62,8 +62,8 @@ function OutputBlock({
       </div>
       <pre
         className={cn(
-          'mt-1 max-h-52 overflow-auto rounded-md border border-white/[0.05] bg-black/30 py-1.5 font-mono text-xs',
-          tone === 'error' ? 'text-[#fca5a5]' : tone === 'ok' ? 'text-[#86efac]' : 'text-foreground',
+          'mt-1 max-h-52 overflow-auto rounded-md border border-hairline/[0.05] bg-bg-field py-1.5 font-mono text-xs',
+          tone === 'error' ? 'text-state-error' : tone === 'ok' ? 'text-state-success' : 'text-foreground',
         )}
       >
         {lines.map((l, i) => (
@@ -85,8 +85,8 @@ function Mismatch({ expected, actual }: { expected: string; actual: string }) {
   if (!m) return null
   return (
     <p className="rounded-md border border-destructive/25 bg-destructive/[0.07] px-2.5 py-1.5 font-mono text-[11px] text-foreground-dim">
-      <span className="text-[#f87171]">Line {m.line}</span> · expected <span className="text-[#86efac]">{m.expected.slice(0, 80)}</span> but got{' '}
-      <span className="text-[#fca5a5]">{m.actual.slice(0, 80)}</span>
+      <span className="text-state-error">Line {m.line}</span> · expected <span className="text-state-success">{m.expected.slice(0, 80)}</span> but got{' '}
+      <span className="text-state-error">{m.actual.slice(0, 80)}</span>
     </p>
   )
 }
@@ -123,7 +123,7 @@ export function RunOutput({ result, expected, caseLabel }: { result: RunResult; 
           <span
             className={cn(
               'rounded-md border px-1.5 py-px text-[10.5px] font-semibold uppercase',
-              match ? 'border-success/30 bg-success/10 text-success' : 'border-destructive/30 bg-destructive/10 text-[#f87171]',
+              match ? 'border-success/30 bg-success/10 text-success' : 'border-destructive/30 bg-destructive/10 text-state-error',
             )}
           >
             {match ? `matches ${caseLabel ?? 'expected'}` : `differs from ${caseLabel ?? 'expected'}`}
@@ -137,7 +137,7 @@ export function RunOutput({ result, expected, caseLabel }: { result: RunResult; 
         </span>
       </div>
       {result.error && (
-        <pre className="max-h-48 overflow-auto rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 font-mono text-xs whitespace-pre-wrap text-[#fca5a5]">
+        <pre className="max-h-48 overflow-auto rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 font-mono text-xs whitespace-pre-wrap text-state-error">
           {result.error}
         </pre>
       )}
@@ -230,7 +230,7 @@ export function JudgeResults({ result }: { result: JudgeResponse }) {
                 <ChevronDown className={cn('size-3.5 text-foreground-faint transition-transform', expanded && 'rotate-180')} />
               </button>
               {expanded && (
-                <div className="space-y-2 border-t border-white/[0.05] px-2.5 pt-2 pb-2.5">
+                <div className="space-y-2 border-t border-hairline/[0.05] px-2.5 pt-2 pb-2.5">
                   {!r.passed && r.verdict === 'WA' && <Mismatch expected={r.expected} actual={r.actual} />}
                   <div className="grid gap-2 md:grid-cols-3">
                     <OutputBlock label="Input" text={r.input} />

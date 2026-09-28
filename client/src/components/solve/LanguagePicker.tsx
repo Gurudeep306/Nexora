@@ -102,7 +102,7 @@ export function LanguagePicker({
         </button>
       </PopoverTrigger>
       <PopoverContent align="end" className="w-72 p-0">
-        <div className="flex items-center gap-2 border-b border-white/[0.06] px-3">
+        <div className="flex items-center gap-2 border-b border-hairline/[0.06] px-3">
           <Search className="size-3.5 text-foreground-faint" />
           <input
             autoFocus
