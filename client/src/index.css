@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import './theme/legacy.css';
 
 /* ═══════════════════════════════════════════════════════════════════════════
    NEXORA — "Aurora", a macOS appearance system
@@ -45,8 +46,10 @@
 
   /* One accent carries meaning. macOS system blue, with the violet kept as
      the secondary so the brand gradient still reads as Nexora. */
-  --oklch-accent-0: oklch(0.646 0.184 256);  /* system blue  */
-  --oklch-accent-1: oklch(0.606 0.214 292);  /* violet       */
+  --oklch-accent-0: var(--acc-d0, oklch(0.646 0.184 256));  /* system blue  */
+  --oklch-accent-1: var(--acc-d1, oklch(0.606 0.214 292));  /* violet       */
+  --on-accent: var(--acc-d-on, oklch(1 0 0));
+  --accent-bright: color-mix(in oklch, var(--oklch-accent-0) 62%, oklch(0.97 0.01 265));
 
   --oklch-cyan:    oklch(0.792 0.126 213);
   --oklch-emerald: oklch(0.762 0.192 148);
@@ -87,8 +90,10 @@
   --oklch-fg-3: oklch(1 0 0);             /* text on a dark fill */
 
   /* The same hues, darkened until they hold contrast against white. */
-  --oklch-accent-0: oklch(0.546 0.206 256);
-  --oklch-accent-1: oklch(0.506 0.232 292);
+  --oklch-accent-0: var(--acc-l0, oklch(0.546 0.206 256));
+  --oklch-accent-1: var(--acc-l1, oklch(0.506 0.232 292));
+  --on-accent: var(--acc-l-on, oklch(1 0 0));
+  --accent-bright: color-mix(in oklch, var(--oklch-accent-0) 88%, oklch(0.2 0.02 265));
 
   --oklch-cyan:    oklch(0.532 0.108 213);
   --oklch-emerald: oklch(0.522 0.132 148);
@@ -126,8 +131,10 @@
     --oklch-fg-2: oklch(0.606 0.010 265);
     --oklch-fg-3: oklch(1 0 0);
 
-    --oklch-accent-0: oklch(0.546 0.206 256);
-    --oklch-accent-1: oklch(0.506 0.232 292);
+    --oklch-accent-0: var(--acc-l0, oklch(0.546 0.206 256));
+    --oklch-accent-1: var(--acc-l1, oklch(0.506 0.232 292));
+    --on-accent: var(--acc-l-on, oklch(1 0 0));
+    --accent-bright: color-mix(in oklch, var(--oklch-accent-0) 88%, oklch(0.2 0.02 265));
 
     --oklch-cyan:    oklch(0.532 0.108 213);
     --oklch-emerald: oklch(0.522 0.132 148);
@@ -170,7 +177,7 @@
 
   --color-accent-brand: var(--oklch-accent-0);
   --color-accent-brand-hover: var(--oklch-accent-1);
-  --color-on-accent-brand: oklch(1 0 0);
+  --color-on-accent-brand: var(--on-accent);
 
   --color-state-success: var(--oklch-emerald);
   --color-state-warning: var(--oklch-amber);
@@ -238,6 +245,77 @@
   --font-mono: 'SF Mono', 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, Menlo, Monaco, monospace;
   --font-brand: -apple-system, BlinkMacSystemFont, 'Inter Variable', 'Inter', sans-serif;
 
+  /* ── Legacy names ──
+     Most components were written against an older vocabulary — text-foreground,
+     bg-surface, text-primary-bright, border-border-glow … (about two thousand
+     class uses). Those tokens stopped existing when the palette was rewritten,
+     so none of those classes produced any CSS: secondary text lost its tone,
+     status colours vanished, and many panels had no fill. Aliasing the old
+     names onto the semantic roles brings all of it back, and it follows the
+     appearance, the accent and the wallpaper for free. */
+  --color-background: var(--oklch-bg-0);
+  --color-surface: var(--color-bg-surface);
+  --color-surface-2: var(--color-bg-surface-2);
+  --color-surface-3: var(--color-bg-surface-3);
+  --color-muted: var(--color-bg-surface-3);
+  --color-border-glow: color-mix(in oklch, var(--oklch-accent-0) 45%, var(--oklch-bg-4));
+  --color-foreground: var(--oklch-fg-0);
+  --color-foreground-dim: var(--oklch-fg-1);
+  --color-foreground-faint: var(--oklch-fg-2);
+  --color-foreground-muted: var(--oklch-fg-2);
+  --color-popover-foreground: var(--oklch-fg-0);
+  --color-primary: var(--oklch-accent-0);
+  --color-primary-light: var(--accent-bright);
+  --color-primary-bright: var(--accent-bright);
+  --color-on-primary: var(--on-accent);
+  --color-secondary: var(--oklch-accent-1);
+  --color-accent: var(--oklch-emerald);
+  --color-on-accent: oklch(0.18 0.02 150);
+  --color-cyan: var(--oklch-cyan);
+  --color-success: var(--oklch-emerald);
+  --color-warning: var(--oklch-amber);
+  --color-error: var(--oklch-red);
+  --color-destructive: var(--oklch-red);
+  --color-info: var(--oklch-cyan);
+  --color-gold: var(--oklch-gold);
+  --color-xp: var(--oklch-accent-1);
+  --color-streak: oklch(0.72 0.18 50);
+  --color-ring: var(--oklch-accent-0);
+
+  --shadow-card: inset 0 1px 0 0 var(--specular), var(--elev-1);
+  --shadow-pop: inset 0 1px 0 0 var(--specular), var(--elev-3);
+
+  --animate-pulse-glow: pulse-glow 2.4s ease-in-out infinite;
+  --animate-shimmer: shimmer 2s linear infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-scan: scan 8s linear infinite;
+  --animate-glitch: glitch 0.3s linear;
+
+  @keyframes pulse-glow {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+  }
+  @keyframes shimmer {
+    from { background-position: 200% 0; }
+    to { background-position: -200% 0; }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  @keyframes scan {
+    from { transform: translateY(-100%); }
+    to { transform: translateY(100vh); }
+  }
+  @keyframes glitch {
+    0% { transform: translate(0); }
+    20% { transform: translate(-2px, 2px); }
+    40% { transform: translate(2px, -2px); }
+    60% { transform: translate(-1px, -1px); }
+    80% { transform: translate(1px, 1px); }
+    100% { transform: translate(0); }
+  }
+
   --animate-pulse-subtle: pulse-subtle 2.4s ease-in-out infinite;
   --animate-slide-in-up: slide-in-up 180ms var(--ease-smooth);
   --animate-fade-in: fade-in 160ms var(--ease-smooth);
@@ -262,8 +340,10 @@
   --oklch-fg-1: oklch(0.745 0.008 265);
   --oklch-fg-2: oklch(0.575 0.010 265);
   --oklch-fg-3: oklch(0.180 0.004 265);
-  --oklch-accent-0: oklch(0.646 0.184 256);
-  --oklch-accent-1: oklch(0.606 0.214 292);
+  --oklch-accent-0: var(--acc-d0, oklch(0.646 0.184 256));
+  --oklch-accent-1: var(--acc-d1, oklch(0.606 0.214 292));
+  --on-accent: var(--acc-d-on, oklch(1 0 0));
+  --accent-bright: color-mix(in oklch, var(--oklch-accent-0) 62%, oklch(0.97 0.01 265));
   --material: oklch(0.252 0.006 265 / 0.72);
   --material-thin: oklch(0.288 0.007 265 / 0.55);
   --material-thick: oklch(0.219 0.005 265 / 0.88);
@@ -290,10 +370,23 @@
   --color-border-input: var(--oklch-bg-4);
   --color-accent-brand: var(--oklch-accent-0);
   --color-accent-brand-hover: var(--oklch-accent-1);
+  --color-on-accent-brand: var(--on-accent);
   --color-bg-glass: var(--material);
   --color-border-glass: var(--hairline);
   --color-bg-field: var(--field);
   --color-hairline: var(--overlay-ink);
+  --color-on-accent-brand: var(--on-accent);
+  --color-background: var(--oklch-bg-0);
+  --color-surface: var(--oklch-bg-1);
+  --color-surface-2: var(--oklch-bg-2);
+  --color-surface-3: var(--oklch-bg-3);
+  --color-muted: var(--oklch-bg-3);
+  --color-foreground: var(--oklch-fg-0);
+  --color-foreground-dim: var(--oklch-fg-1);
+  --color-foreground-faint: var(--oklch-fg-2);
+  --color-primary: var(--oklch-accent-0);
+  --color-primary-bright: var(--accent-bright);
+  --color-border-glow: color-mix(in oklch, var(--oklch-accent-0) 45%, var(--oklch-bg-4));
 }
 
 @keyframes pulse-subtle {
@@ -329,51 +422,79 @@
 }
 
 /* ── Utility Classes ── */
+/* Every translucent surface reads its fill and its blur from variables. With
+   no wallpaper the fallbacks are the plain Aurora materials; with one, the
+   Look layer at the end of this file swaps in wallpaper-tinted glass, and
+   the Solid glass style (macOS "Reduce transparency") turns blur off. */
+
 /* Liquid-glass effect for premium overlays */
 @utility glass {
-  background: var(--material);
-  backdrop-filter: blur(30px) saturate(180%);
-  -webkit-backdrop-filter: blur(30px) saturate(180%);
-  border: 1px solid var(--hairline);
+  background-color: var(--material);
+  -webkit-backdrop-filter: var(--glass-filter, blur(30px) saturate(180%));
+  backdrop-filter: var(--glass-filter, blur(30px) saturate(180%));
+  border: 1px solid var(--glass-edge, var(--hairline));
 }
 
 /* A lighter pane for things that sit close to the page. */
 @utility glass-thin {
-  background: var(--material-thin);
-  backdrop-filter: blur(20px) saturate(170%);
-  -webkit-backdrop-filter: blur(20px) saturate(170%);
-  border: 1px solid var(--hairline);
+  background-color: var(--material-thin);
+  -webkit-backdrop-filter: var(--glass-filter, blur(20px) saturate(170%));
+  backdrop-filter: var(--glass-filter, blur(20px) saturate(170%));
+  border: 1px solid var(--glass-edge, var(--hairline));
 }
 
-/* Menus, popovers and sheets float above everything, so they take the
-   thickest material and the deepest shadow. */
+/* Menus, popovers, docks and sheets float above everything, so they take
+   the thickest material and the deepest shadow. */
 @utility glass-thick {
-  background: var(--material-thick);
-  backdrop-filter: blur(40px) saturate(190%);
-  -webkit-backdrop-filter: blur(40px) saturate(190%);
-  border: 1px solid var(--hairline);
+  background-color: var(--material-thick);
+  -webkit-backdrop-filter: var(--glass-filter-strong, blur(40px) saturate(190%));
+  backdrop-filter: var(--glass-filter-strong, blur(40px) saturate(190%));
+  border: 1px solid var(--glass-edge, var(--hairline));
   box-shadow: inset 0 1px 0 0 var(--specular), var(--elev-3);
 }
 
 /* A toolbar strip, as at the top of a macOS window. */
 @utility titlebar {
-  background: var(--material-thick);
-  backdrop-filter: blur(36px) saturate(180%);
-  -webkit-backdrop-filter: blur(36px) saturate(180%);
-  border-bottom: 1px solid var(--hairline);
+  background-color: var(--material-bar, var(--material-thick));
+  -webkit-backdrop-filter: var(--glass-filter-strong, blur(36px) saturate(180%));
+  backdrop-filter: var(--glass-filter-strong, blur(36px) saturate(180%));
+  border-bottom: 1px solid var(--glass-edge, var(--hairline));
 }
 
-/* Elevated card with subtle shadow */
+/* The card every panel sits on. Over a wallpaper it is a pane of glass:
+   blurred desktop behind, a lit top edge, a soft sheen falling off down the
+   face, and a shadow that lifts it off the desktop. A card inside another
+   card (or inside any glass) sets --card-fill/--card-filter so it becomes a
+   quiet inset fill instead of stacking a second blur. */
 @utility card {
-  /* An opaque pane with a specular top edge and a real drop shadow — the
-     two things that make a surface look lifted rather than merely tinted. */
-  background-color: var(--color-bg-surface);
-  border: 1px solid var(--color-border);
+  background-color: var(--card-fill, var(--color-bg-surface));
+  background-image: var(--card-sheen, none);
+  -webkit-backdrop-filter: var(--card-filter, var(--glass-filter, none));
+  backdrop-filter: var(--card-filter, var(--glass-filter, none));
+  border: 1px solid var(--card-edge, var(--color-border));
   border-radius: var(--radius-card);
-  box-shadow: inset 0 1px 0 0 var(--specular), var(--elev-1);
+  box-shadow: inset 0 1px 0 0 var(--specular), var(--card-shadow, var(--elev-1));
   transition:
     border-color var(--duration-200) var(--ease-smooth),
     box-shadow var(--duration-200) var(--ease-smooth),
+    background-color var(--duration-300) var(--ease-smooth),
+    transform var(--duration-200) var(--ease-smooth);
+}
+
+/* The older name for the same surface; forty panels still use it. */
+@utility card-neon {
+  position: relative;
+  background-color: var(--card-fill, var(--color-bg-surface));
+  background-image: var(--card-sheen, none);
+  -webkit-backdrop-filter: var(--card-filter, var(--glass-filter, none));
+  backdrop-filter: var(--card-filter, var(--glass-filter, none));
+  border: 1px solid var(--card-edge, var(--color-border));
+  border-radius: var(--radius-card);
+  box-shadow: inset 0 1px 0 0 var(--specular), var(--card-shadow, var(--elev-1));
+  transition:
+    border-color var(--duration-200) var(--ease-smooth),
+    box-shadow var(--duration-200) var(--ease-smooth),
+    background-color var(--duration-300) var(--ease-smooth),
     transform var(--duration-200) var(--ease-smooth);
 }
 
@@ -920,60 +1041,251 @@
 }
 /* ── Elevated popover surface (menus, popovers, floating windows) ──
    Must stay effectively opaque: these float above page content, so any real
-   transparency lets the text underneath bleed through the menu. */
+   transparency lets the text underneath bleed through the menu. Over a
+   wallpaper it is the densest glass (~90%) with a strong blur, which reads
+   as frosted without ever letting text show through. */
 .pop-surface {
   border-radius: 0.875rem;
-  border: 1px solid color-mix(in oklch, var(--oklch-fg-0) 10%, transparent);
-  background-color: color-mix(in oklch, var(--color-bg-surface-2) 97%, transparent);
-  -webkit-backdrop-filter: blur(24px) saturate(140%);
-  backdrop-filter: blur(24px) saturate(140%);
+  border: 1px solid var(--glass-edge, color-mix(in oklch, var(--oklch-fg-0) 10%, transparent));
+  background-color: var(--material-pop, color-mix(in oklch, var(--oklch-bg-2) 97%, transparent));
+  -webkit-backdrop-filter: var(--glass-filter-strong, blur(24px) saturate(140%));
+  backdrop-filter: var(--glass-filter-strong, blur(24px) saturate(140%));
   box-shadow:
-    inset 0 1px 0 color-mix(in oklch, var(--oklch-fg-0) 7%, transparent),
-    0 2px 6px rgb(0 0 0 / 0.45),
-    0 24px 60px -16px rgb(0 0 0 / 0.75);
+    inset 0 1px 0 var(--specular),
+    var(--pop-shadow, 0 2px 6px rgb(0 0 0 / 0.45), 0 24px 60px -16px rgb(0 0 0 / 0.75));
 }
 
-/* ── The Rift: GPU-safe CSS aurora backdrop ── */
-.rift-blob {
+/* ═══════════════════════════════════════════════════════════════════════════
+   THE LOOK — wallpaper, glass and accent
+   ═══════════════════════════════════════════════════════════════════════════
+
+   ThemeProvider (and, for the first paint, the script in index.html) writes
+   the user's look onto <html>:
+
+     class="dark"               resolved appearance
+     data-accent="purple"       resolved accent (Multicolour is resolved to
+                                the wallpaper's own colour before it lands)
+     data-glass="frosted"       frosted · clear · solid
+     data-wall="photo"          original · photo · none
+     data-wall-tone="light"     the tone of whatever is behind the glass
+     --wall-tint / --wall-color the wallpaper's dominant colours
+
+   Everything below keys off those. */
+
+/* ── Accent colours ────────────────────────────────────────────────────────
+   Each accent has a dark-appearance and a light-appearance pair (the light
+   one darkened until it holds contrast on white), plus the colour of text
+   drawn on it: bright accents such as yellow and green take dark text, the
+   way macOS does. The palette blocks above read these through --acc-*. */
+:root[data-accent='purple'] {
+  --acc-d0: oklch(0.672 0.200 305); --acc-d1: oklch(0.650 0.210 332); --acc-d-on: oklch(1 0 0);
+  --acc-l0: oklch(0.530 0.220 303); --acc-l1: oklch(0.520 0.220 328); --acc-l-on: oklch(1 0 0);
+}
+:root[data-accent='pink'] {
+  --acc-d0: oklch(0.668 0.215 8);   --acc-d1: oklch(0.650 0.210 340); --acc-d-on: oklch(1 0 0);
+  --acc-l0: oklch(0.565 0.210 8);   --acc-l1: oklch(0.530 0.210 340); --acc-l-on: oklch(1 0 0);
+}
+:root[data-accent='red'] {
+  --acc-d0: oklch(0.662 0.210 27);  --acc-d1: oklch(0.640 0.210 12);  --acc-d-on: oklch(1 0 0);
+  --acc-l0: oklch(0.552 0.210 27);  --acc-l1: oklch(0.520 0.210 15);  --acc-l-on: oklch(1 0 0);
+}
+:root[data-accent='orange'] {
+  --acc-d0: oklch(0.785 0.165 62);  --acc-d1: oklch(0.725 0.180 45);  --acc-d-on: oklch(0.21 0.04 55);
+  --acc-l0: oklch(0.600 0.180 48);  --acc-l1: oklch(0.570 0.190 38);  --acc-l-on: oklch(1 0 0);
+}
+:root[data-accent='yellow'] {
+  --acc-d0: oklch(0.870 0.170 92);  --acc-d1: oklch(0.820 0.170 78);  --acc-d-on: oklch(0.22 0.04 85);
+  --acc-l0: oklch(0.660 0.150 78);  --acc-l1: oklch(0.620 0.150 65);  --acc-l-on: oklch(0.20 0.04 80);
+}
+:root[data-accent='green'] {
+  --acc-d0: oklch(0.770 0.190 148); --acc-d1: oklch(0.730 0.150 170); --acc-d-on: oklch(0.20 0.04 150);
+  --acc-l0: oklch(0.550 0.150 148); --acc-l1: oklch(0.520 0.120 172); --acc-l-on: oklch(1 0 0);
+}
+:root[data-accent='graphite'] {
+  --acc-d0: oklch(0.760 0.012 265); --acc-d1: oklch(0.680 0.012 265); --acc-d-on: oklch(0.18 0.004 265);
+  --acc-l0: oklch(0.460 0.010 265); --acc-l1: oklch(0.400 0.010 265); --acc-l-on: oklch(1 0 0);
+}
+/* (Blue is the palette's own default, so it needs no block.) */
+
+/* ── Glass over a wallpaper ────────────────────────────────────────────────
+   macOS gets its look from three things, and each is here:
+     1. desktop tinting — the window colour takes a little of the wallpaper
+        (--glass-ink mixes in --wall-tint),
+     2. vibrancy — a heavy blur with a saturation boost, so colour behind a
+        pane glows through instead of turning grey,
+     3. a lit edge — a one-pixel highlight on top and a sheen falling off
+        down the face, over a real drop shadow.
+   Fills *inside* glass (surface-2/3, borders, input wells) become
+   translucent overlays rather than opaque greys, so a row or a button on a
+   pane looks like part of the pane. */
+html:is([data-wall='original'], [data-wall='photo']) {
+  --glass-ink: color-mix(in oklch, var(--glass-base) 84%, var(--wall-tint, var(--glass-base)));
+  --material: color-mix(in oklch, var(--glass-ink) var(--ga), transparent);
+  --material-thin: color-mix(in oklch, var(--glass-ink) var(--ga-thin), transparent);
+  --material-thick: color-mix(in oklch, var(--glass-ink) var(--ga-thick), transparent);
+  --material-bar: color-mix(in oklch, var(--glass-ink) var(--ga-bar), transparent);
+  --material-pop: color-mix(in oklch, var(--glass-ink) var(--ga-pop), transparent);
+  --glass-filter: blur(var(--gblur)) saturate(var(--gsat));
+  --glass-filter-strong: blur(calc(var(--gblur) * 1.45)) saturate(var(--gsat));
+
+  --color-bg-surface: var(--material);
+  --color-bg-surface-2: var(--fill-2);
+  --color-bg-surface-3: var(--fill-3);
+  --color-bg-surface-4: var(--fill-4);
+  --color-border: var(--edge);
+  --color-border-input: var(--edge-strong);
+  --color-border-strong: var(--edge-strong);
+  --color-border-hover: var(--edge-strong);
+  --color-bg-field: var(--well);
+  --field: var(--well);
+
+  /* Frosted is the default. */
+  --ga: 56%; --ga-thin: 40%; --ga-thick: 76%; --ga-bar: 62%; --ga-pop: 88%;
+  --gblur: 28px; --gsat: 185%;
+}
+
+html.dark:is([data-wall='original'], [data-wall='photo']) {
+  --glass-base: oklch(0.205 0.008 265);
+  --fill-2: oklch(1 0 0 / 0.07);
+  --fill-3: oklch(1 0 0 / 0.11);
+  --fill-4: oklch(1 0 0 / 0.16);
+  --edge: oklch(1 0 0 / 0.10);
+  --edge-strong: oklch(1 0 0 / 0.17);
+  --well: oklch(0 0 0 / 0.26);
+  --glass-edge: oklch(1 0 0 / 0.12);
+  --card-edge: oklch(1 0 0 / 0.11);
+  --specular: oklch(1 0 0 / 0.13);
+  --card-sheen: linear-gradient(180deg, oklch(1 0 0 / 0.055), oklch(1 0 0 / 0) 42%);
+  --card-shadow: 0 1px 2px oklch(0 0 0 / 0.22), 0 16px 40px -16px oklch(0 0 0 / 0.6);
+  --pop-shadow: 0 2px 8px oklch(0 0 0 / 0.3), 0 28px 70px -18px oklch(0 0 0 / 0.7);
+}
+
+html:not(.dark):is([data-wall='original'], [data-wall='photo']) {
+  --glass-base: oklch(0.985 0.003 265);
+  --fill-2: oklch(1 0 0 / 0.58);
+  --fill-3: oklch(1 0 0 / 0.82);
+  --fill-4: oklch(0 0 0 / 0.07);
+  --edge: oklch(0.2 0.02 265 / 0.09);
+  --edge-strong: oklch(0.2 0.02 265 / 0.15);
+  --well: oklch(1 0 0 / 0.72);
+  --glass-edge: oklch(1 0 0 / 0.6);
+  --card-edge: oklch(1 0 0 / 0.62);
+  --specular: oklch(1 0 0 / 0.95);
+  --card-sheen: linear-gradient(180deg, oklch(1 0 0 / 0.32), oklch(1 0 0 / 0) 46%);
+  --card-shadow:
+    0 0 0 0.5px oklch(0.25 0.03 265 / 0.07),
+    0 1px 2px oklch(0.25 0.03 265 / 0.06),
+    0 14px 36px -14px oklch(0.25 0.05 265 / 0.24);
+  --pop-shadow:
+    0 0 0 0.5px oklch(0.25 0.03 265 / 0.1),
+    0 2px 8px oklch(0.25 0.03 265 / 0.08),
+    0 28px 64px -18px oklch(0.25 0.05 265 / 0.3);
+  --ga: 60%; --ga-thin: 44%; --ga-thick: 78%; --ga-bar: 64%; --ga-pop: 90%;
+}
+
+/* Clear: less frosting, more wallpaper — Liquid Glass's "Clear" mode. */
+html.dark[data-glass='clear']:is([data-wall='original'], [data-wall='photo']) {
+  --ga: 30%; --ga-thin: 18%; --ga-thick: 56%; --ga-bar: 36%; --ga-pop: 80%;
+  --gblur: 14px; --gsat: 165%;
+}
+html:not(.dark)[data-glass='clear']:is([data-wall='original'], [data-wall='photo']) {
+  --ga: 36%; --ga-thin: 24%; --ga-thick: 60%; --ga-bar: 40%; --ga-pop: 82%;
+  --gblur: 14px; --gsat: 165%;
+}
+
+/* A dark window over a bright photo (or a light one over a dark photo)
+   cannot lean on the wallpaper for contrast, so the glass thickens. */
+html.dark[data-wall-tone='light'][data-glass='frosted']:is([data-wall='photo']),
+html:not(.dark)[data-wall-tone='dark'][data-glass='frosted']:is([data-wall='photo']) {
+  --ga: 78%; --ga-thin: 66%; --ga-thick: 88%; --ga-bar: 82%; --ga-pop: 93%;
+}
+html.dark[data-wall-tone='light'][data-glass='clear']:is([data-wall='photo']),
+html:not(.dark)[data-wall-tone='dark'][data-glass='clear']:is([data-wall='photo']) {
+  --ga: 64%; --ga-thin: 52%; --ga-thick: 80%; --ga-bar: 70%; --ga-pop: 90%;
+}
+
+/* Solid — "Reduce transparency": tinted but opaque, and no blur at all. */
+html[data-glass='solid']:is([data-wall='original'], [data-wall='photo']) {
+  --ga: 100%; --ga-thin: 100%; --ga-thick: 100%; --ga-bar: 100%; --ga-pop: 100%;
+  --glass-filter: none;
+  --glass-filter-strong: none;
+  --card-sheen: none;
+}
+@media (prefers-reduced-transparency: reduce) {
+  html:is([data-wall='original'], [data-wall='photo']) {
+    --ga: 100%; --ga-thin: 100%; --ga-thick: 100%; --ga-bar: 100%; --ga-pop: 100%;
+    --glass-filter: none;
+    --glass-filter-strong: none;
+  }
+}
+
+/* Glass inside glass stays one layer of blur: nested panes become an inset
+   fill. (The blur would sample only the parent pane anyway, so this costs
+   nothing visually and saves a lot of compositing.) */
+:is(.card, .card-neon, .glass, .glass-thick, .pop-surface, .titlebar) :is(.card, .card-neon) {
+  --card-fill: var(--color-bg-surface-2);
+  --card-filter: none;
+  --card-sheen: none;
+  --card-shadow: 0 0 0 0 transparent;
+}
+
+/* The desktop itself. */
+html:is([data-wall='original'], [data-wall='photo']) body {
+  background-color: var(--wall-color, var(--color-bg-app));
+}
+
+/* The wallpaper layer (components/fx/Wallpaper.tsx). A scrim keeps text
+   that sits straight on the desktop — page titles, section labels —
+   readable: light for originals (they were drawn for it), heavier over
+   photos, heaviest when the photo's tone fights the appearance. */
+.wallpaper {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background-color: var(--wall-color, var(--color-bg-app));
+  transition: background-color 400ms var(--ease-smooth);
+}
+.wallpaper-layer {
   position: absolute;
-  border-radius: 9999px;
-  filter: blur(96px);
-  will-change: transform;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 700ms var(--ease-smooth);
 }
-.rift-blob-a {
-  width: 60vw; height: 60vw; left: -12vw; top: -22vw;
-  background: radial-gradient(circle at 30% 30%, color-mix(in oklch, var(--oklch-accent-1) 30%, transparent), transparent 70%);
-  animation: rift-drift-a 26s ease-in-out infinite alternate;
+.wallpaper-layer[data-ready='true'] {
+  opacity: 1;
 }
-.rift-blob-b {
-  width: 50vw; height: 50vw; right: -16vw; top: -12vw;
-  background: radial-gradient(circle at 60% 40%, color-mix(in oklch, var(--oklch-cyan) 18%, transparent), transparent 70%);
-  animation: rift-drift-b 32s ease-in-out infinite alternate;
+.wallpaper-scrim {
+  position: absolute;
+  inset: 0;
+  background: var(--wall-scrim, none);
+  transition: background 400ms var(--ease-smooth);
 }
-.rift-blob-c {
-  width: 46vw; height: 46vw; left: 22vw; bottom: -22vw;
-  background: radial-gradient(circle at 50% 50%, color-mix(in oklch, var(--oklch-accent-0) 16%, transparent), transparent 70%);
-  animation: rift-drift-c 38s ease-in-out infinite alternate;
+html.dark[data-wall='original'] {
+  --wall-scrim: linear-gradient(180deg, oklch(0 0 0 / 0.18), oklch(0 0 0 / 0.04) 26%, oklch(0 0 0 / 0.14));
 }
-.rift-grid {
-  position: absolute; left: 0; right: 0; bottom: 0; height: 38%;
-  background-image:
-    linear-gradient(color-mix(in oklch, var(--oklch-accent-1) 14%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in oklch, var(--oklch-accent-1) 14%, transparent) 1px, transparent 1px);
-  background-size: 48px 48px;
-  transform: perspective(400px) rotateX(60deg);
-  transform-origin: bottom;
-  -webkit-mask-image: linear-gradient(to top, black, transparent 80%);
-  mask-image: linear-gradient(to top, black, transparent 80%);
-  opacity: 0.14;
+html:not(.dark)[data-wall='original'] {
+  --wall-scrim: linear-gradient(180deg, oklch(1 0 0 / 0.22), oklch(1 0 0 / 0) 30%);
 }
-.rift-scrim {
-  position: absolute; inset: 0;
-  background: radial-gradient(120% 90% at 50% 12%, color-mix(in oklch, var(--oklch-bg-0) 58%, transparent), var(--oklch-bg-0) 68%);
+html.dark[data-wall='photo'] {
+  --wall-scrim: linear-gradient(180deg, oklch(0 0 0 / 0.46), oklch(0 0 0 / 0.2) 30%, oklch(0 0 0 / 0.34));
 }
-@keyframes rift-drift-a { from { transform: translate3d(0,0,0) scale(1); } to { transform: translate3d(6vw,4vw,0) scale(1.12); } }
-@keyframes rift-drift-b { from { transform: translate3d(0,0,0) scale(1.05); } to { transform: translate3d(-5vw,5vw,0) scale(0.95); } }
-@keyframes rift-drift-c { from { transform: translate3d(0,0,0) scale(0.95); } to { transform: translate3d(4vw,-4vw,0) scale(1.1); } }
-@media (prefers-reduced-motion: reduce) {
-  .rift-blob { animation: none; }
+html.dark[data-wall='photo'][data-wall-tone='light'] {
+  --wall-scrim: linear-gradient(180deg, oklch(0.12 0.01 265 / 0.66), oklch(0.12 0.01 265 / 0.44) 34%, oklch(0.12 0.01 265 / 0.56));
+}
+html:not(.dark)[data-wall='photo'] {
+  --wall-scrim: linear-gradient(180deg, oklch(1 0 0 / 0.42), oklch(1 0 0 / 0.1) 32%, oklch(1 0 0 / 0.08));
+}
+html:not(.dark)[data-wall='photo'][data-wall-tone='dark'] {
+  --wall-scrim: linear-gradient(180deg, oklch(0.97 0.005 265 / 0.62), oklch(0.97 0.005 265 / 0.38) 34%, oklch(0.97 0.005 265 / 0.46));
+}
+
+/* Text set straight on the desktop gets the faint shadow macOS gives
+   desktop icon labels, so it never depends on the wallpaper for contrast. */
+html.dark:is([data-wall='original'], [data-wall='photo']) #main-content h1 {
+  text-shadow: 0 1px 12px oklch(0 0 0 / 0.35);
 }

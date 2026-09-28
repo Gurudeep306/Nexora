@@ -80,7 +80,7 @@ function DockIcon({ item, mouseX }: { item: DeckItem; mouseX: number | null }) {
         }
       >
         <Icon className="size-5" aria-hidden="true" />
-        <span className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 rounded-md border border-border/60 bg-bg-surface-3/95 px-2 py-1 text-[11px] font-medium whitespace-nowrap text-text-primary opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
+        <span className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 pop-surface !rounded-md px-2 py-1 text-[11px] font-medium whitespace-nowrap text-text-primary opacity-0 transition-opacity group-hover:opacity-100">
           {item.label}
         </span>
         {active && (
@@ -108,7 +108,11 @@ export function Deck() {
       onMouseLeave={() => setMouseX(null)}
       className="fixed bottom-4 left-1/2 z-40 hidden -translate-x-1/2 md:block"
     >
-      <div className="relative flex items-end gap-1 rounded-2xl border border-border/60 bg-bg-surface-2/80 px-2 py-2 shadow-[0_16px_48px_-16px_rgb(0_0_0/0.8),inset_0_1px_0_color-mix(in_oklch,var(--oklch-fg-0)_6%,transparent)] backdrop-blur-xl">
+      <div className="relative flex items-end gap-1 px-2 py-2">
+        {/* The glass is a sibling layer, not the container: an element with a
+            backdrop filter clips the backdrop of everything inside it, which
+            would leave the tooltips and the More menu unfrosted. */}
+        <span aria-hidden="true" className="glass-thick pointer-events-none absolute inset-0 -z-10 rounded-[1.35rem]" />
         {CORE.map((item) => (
           <DockIcon key={item.to} item={item} mouseX={mouseX} />
         ))}
@@ -145,7 +149,7 @@ export function Deck() {
           </button>
 
           {moreOpen && (
-            <div className="absolute bottom-full right-0 mb-3 grid w-56 grid-cols-2 gap-1 rounded-2xl border border-border/60 bg-bg-surface-2/95 p-2 shadow-[0_16px_48px_-16px_rgb(0_0_0/0.8)] backdrop-blur-xl">
+            <div className="pop-surface absolute bottom-full right-0 mb-3 grid w-56 grid-cols-2 gap-1 !rounded-2xl p-2">
               {MORE.map((item) => (
                 <NavLink
                   key={item.to}

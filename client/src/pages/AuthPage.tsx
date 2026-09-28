@@ -21,6 +21,7 @@ import { LogoMark, Wordmark } from '@/components/brand/Logo'
 import { takeOAuthResult, useAuth } from '@/context/AuthContext'
 import { api, ApiError } from '@/lib/api'
 import { cn } from '@/lib/utils'
+import { Wallpaper } from '@/components/fx/Wallpaper'
 
 type Mode = 'login' | 'register'
 
@@ -253,24 +254,23 @@ export default function AuthPage() {
   const previewName = username.trim() || 'nexora'
 
   return (
-    <div className="grid min-h-dvh bg-background lg:grid-cols-[1.1fr_1fr]">
+    <div className="relative grid min-h-dvh lg:grid-cols-[1.1fr_1fr]">
+      {/* The desktop, as on the macOS login screen: the chosen wallpaper
+          behind a frosted sidebar and a glass sign-in card. */}
+      <Wallpaper />
+
       {/* Showcase (desktop) */}
-      <aside className="relative hidden border-r border-hairline/[0.06] lg:block" aria-label="About Nexora">
+      <aside
+        className="glass-thin relative z-10 hidden !border-y-0 !border-l-0 lg:block"
+        aria-label="About Nexora"
+      >
         <div className="sticky top-0 h-dvh">
           <AuthShowcase />
         </div>
       </aside>
 
       {/* Form */}
-      <main className="relative flex items-center justify-center px-5 py-10 sm:px-10">
-        <div className="pointer-events-none absolute inset-0 lg:hidden" aria-hidden="true">
-          <div className="grid-bg absolute inset-0 opacity-50" />
-          <div className="aurora opacity-80">
-            <span className="a1" />
-            <span className="a2" />
-            <span className="a3" />
-          </div>
-        </div>
+      <main className="relative z-10 flex items-center justify-center px-5 py-10 sm:px-10">
 
         <motion.div
           initial={{ opacity: 0, y: 16 }}

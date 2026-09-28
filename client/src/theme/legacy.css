@@ -1,0 +1,511 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Legacy vocabulary
+   ═══════════════════════════════════════════════════════════════════════════
+
+   Components across the app still use the class names of the earlier design
+   systems — glow-box, statement-html, nx-edge, skeleton, beam-border… — but
+   their definitions were dropped when index.css was rewritten, so those
+   classes rendered nothing: problem statements came out unstyled, resize
+   handles were invisible, glows and skeletons were missing. They are
+   restored here, reading colour from the current semantic tokens (the old
+   names are aliased onto them in index.css), so they follow the appearance,
+   the accent and the wallpaper like everything else. */
+
+@utility glow-text {
+  text-shadow: 0 0 20px color-mix(in srgb, var(--color-primary) 35%, transparent);
+}
+
+@utility glow-accent-text {
+  text-shadow: 0 0 20px color-mix(in srgb, var(--color-accent) 35%, transparent);
+}
+
+/* Soft neon ring — used for selected / primary states only. */
+@utility glow-box {
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--color-primary) 40%, transparent),
+    0 8px 28px -10px color-mix(in srgb, var(--color-primary) 55%, transparent);
+}
+
+@utility glow-box-accent {
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--color-accent) 40%, transparent),
+    0 8px 28px -10px color-mix(in srgb, var(--color-accent) 55%, transparent);
+}
+
+
+
+
+@utility grid-bg {
+  background-image:
+    linear-gradient(color-mix(in oklch, var(--overlay-ink) 3.5%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklch, var(--overlay-ink) 3.5%, transparent) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse at 50% 0%, black 20%, transparent 75%);
+}
+
+@utility dot-bg {
+  background-image: radial-gradient(color-mix(in oklch, var(--overlay-ink) 7%, transparent) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+@utility scanlines {
+  position: relative;
+}
+
+
+/* Headline text that fades from white into the dim tone (Linear / Vercel style). */
+@utility text-heading-fade {
+  background: linear-gradient(180deg, var(--color-text-primary) 30%, color-mix(in srgb, var(--color-text-primary) 55%, transparent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility text-shimmer {
+  background: linear-gradient(110deg, var(--color-foreground-dim) 35%, var(--color-text-primary) 50%, var(--color-foreground-dim) 65%);
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: var(--animate-shimmer);
+}
+
+/* Cursor-following highlight; JS sets --mx / --my on the element. */
+@utility spotlight {
+  background-image: radial-gradient(
+    420px circle at var(--mx, -999px) var(--my, -999px),
+    color-mix(in srgb, var(--color-primary) 10%, transparent),
+    transparent 45%
+  );
+}
+
+@utility hairline-top {
+  background-image: linear-gradient(90deg, transparent, color-mix(in srgb, var(--color-primary-bright) 55%, transparent), transparent);
+  background-size: 100% 1px;
+  background-repeat: no-repeat;
+}
+
+@utility skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-muted) 25%,
+    var(--color-surface-3) 50%,
+    var(--color-muted) 75%
+  );
+  background-size: 200% 100%;
+  animation: var(--animate-shimmer);
+  border-radius: 0.5rem;
+}
+
+@utility select-chevron {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' fill='none' stroke='%2380808f' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-size: 14px;
+  background-position: right 0.7rem center;
+  background-repeat: no-repeat;
+}
+
+/* ── Premium flourishes (Linear / Vercel / Stripe vocabulary) ─────────────
+   Reusable, GPU-cheap, and silenced by the global prefers-reduced-motion rule. */
+
+/* Animatable angle so a conic gradient can spin smoothly. */
+@property --nx-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+/* Animated conic "beam" that endlessly traces an element's border.
+   Element must have a border-radius + position (relative). */
+.beam-border {
+  position: relative;
+}
+.beam-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(
+    from var(--nx-angle),
+    transparent 0deg,
+    color-mix(in srgb, var(--color-primary) 90%, transparent) 42deg,
+    color-mix(in srgb, var(--color-cyan) 85%, transparent) 74deg,
+    transparent 128deg,
+    transparent 360deg
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: nx-beam 6s linear infinite;
+  pointer-events: none;
+}
+@keyframes nx-beam {
+  to {
+    --nx-angle: 360deg;
+  }
+}
+
+/* Specular sheen that sweeps across a button/link on hover. */
+.sheen {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.sheen::after {
+  content: '';
+  position: absolute;
+  top: -20%;
+  left: -160%;
+  z-index: 1;
+  width: 55%;
+  height: 140%;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.45), transparent);
+  transform: skewX(-18deg);
+  transition: left 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+.sheen:hover::after {
+  left: 165%;
+}
+
+/* Drifting aurora glow — three blurred blobs, transform-only animation. */
+.aurora {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.aurora span {
+  position: absolute;
+  display: block;
+  border-radius: 9999px;
+  filter: blur(72px);
+  will-change: transform;
+}
+.aurora .a1 {
+  width: 46vw;
+  height: 46vw;
+  left: -10vw;
+  top: -14vw;
+  opacity: 0.5;
+  background: radial-gradient(circle at 30% 30%, var(--color-primary), transparent 68%);
+  animation: nx-drift1 19s ease-in-out infinite;
+}
+.aurora .a2 {
+  width: 40vw;
+  height: 40vw;
+  right: -8vw;
+  top: 2vw;
+  opacity: 0.42;
+  background: radial-gradient(circle at 60% 40%, var(--color-cyan), transparent 68%);
+  animation: nx-drift2 23s ease-in-out infinite;
+}
+.aurora .a3 {
+  width: 42vw;
+  height: 42vw;
+  left: 20vw;
+  bottom: -18vw;
+  opacity: 0.3;
+  background: radial-gradient(circle at 50% 50%, var(--color-accent), transparent 68%);
+  animation: nx-drift3 27s ease-in-out infinite;
+}
+@keyframes nx-drift1 {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(6vw, 4vw, 0) scale(1.12); }
+}
+@keyframes nx-drift2 {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(-5vw, 6vw, 0) scale(1.08); }
+}
+@keyframes nx-drift3 {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(4vw, -5vw, 0) scale(1.15); }
+}
+
+/* Editorial line reveal: a child span slides up from behind this mask. */
+.line-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+}
+
+/* App-wide ambient light behind everything. */
+.app-ambient {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(900px 520px at 12% -8%, color-mix(in srgb, var(--color-primary) 13%, transparent), transparent 70%),
+    radial-gradient(700px 480px at 100% 110%, color-mix(in srgb, var(--color-cyan) 7%, transparent), transparent 70%);
+}
+.app-ambient::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* sonner toasts in Nexora style */
+[data-sonner-toaster] [data-sonner-toast] {
+  font-family: var(--font-body);
+}
+
+@keyframes pop-in {
+  from { opacity: 0; transform: scale(0.96) translateY(-4px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes tip-in {
+  from { opacity: 0; transform: translateY(2px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Scraped problem statements (Codeforces / AtCoder / …) ───────────────
+   Source sites ship bare semantic HTML; without these rules statements
+   render as an unstyled wall of text. */
+.statement-html {
+  overflow-wrap: anywhere;
+}
+.statement-html p {
+  margin: 0.55em 0;
+}
+.statement-html h1,
+.statement-html h2,
+.statement-html h3,
+.statement-html h4 {
+  font-family: var(--font-display);
+  color: var(--color-foreground);
+  margin: 1em 0 0.4em;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.statement-html ul,
+.statement-html ol {
+  margin: 0.55em 0;
+  padding-left: 1.4em;
+}
+.statement-html ul {
+  list-style: disc;
+}
+.statement-html ol {
+  list-style: decimal;
+}
+.statement-html li {
+  margin: 0.25em 0;
+}
+.statement-html pre {
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: 0.4rem;
+  padding: 0.6rem 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--color-foreground);
+  overflow-x: auto;
+  margin: 0.55em 0;
+  white-space: pre;
+}
+.statement-html code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--color-surface-2);
+  border-radius: 0.25rem;
+  padding: 0.1em 0.35em;
+}
+.statement-html table {
+  border-collapse: collapse;
+  margin: 0.6em 0;
+  font-size: 0.85em;
+}
+.statement-html td,
+.statement-html th {
+  border: 1px solid var(--color-border);
+  padding: 0.35em 0.6em;
+}
+.statement-html img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.4rem;
+  margin: 0.4em 0;
+  background: #fff;
+  cursor: zoom-in;
+}
+.statement-html video,
+.statement-html audio {
+  max-width: 100%;
+  border-radius: 0.4rem;
+  margin: 0.5em 0;
+  background: #000;
+}
+.statement-html audio {
+  width: 100%;
+  background: transparent;
+}
+/* Neither the CDN nor our proxy could serve this one. */
+.statement-html .nx-media-broken {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 8rem;
+  min-height: 3rem;
+  padding: 0.6rem 0.9rem;
+  cursor: default;
+  border: 1px dashed var(--color-border-glow);
+  background: var(--color-surface);
+  color: var(--color-foreground-faint);
+  font-size: 0.75rem;
+  font-style: italic;
+}
+.statement-html a {
+  color: var(--color-cyan);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.statement-html blockquote {
+  border-left: 3px solid var(--color-border-glow);
+  padding-left: 0.8em;
+  margin: 0.6em 0;
+  color: var(--color-foreground-dim);
+}
+/* Codeforces TeX helper classes */
+.statement-html .tex-font-style-tt {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+.statement-html .tex-font-style-it {
+  font-style: italic;
+  font-family: Georgia, 'Times New Roman', serif;
+}
+.statement-html .tex-font-style-bf {
+  font-weight: 700;
+}
+.statement-html .tex-span {
+  font-family: Georgia, 'Times New Roman', serif;
+}
+/* KaTeX placeholders + rendered math */
+.statement-html .nx-math-block {
+  margin: 0.7em 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.2em 0;
+}
+.statement-html .nx-math-inline {
+  white-space: nowrap;
+}
+.statement-html .katex {
+  font-size: 1.02em;
+  color: var(--color-foreground);
+}
+
+/* ── Editor error-lens diagnostics (CodeEditor decorations) ── */
+.nx-diag-line-error {
+  background: color-mix(in srgb, var(--color-destructive) 9%, transparent);
+}
+.nx-diag-line-warn {
+  background: color-mix(in srgb, var(--color-warning) 9%, transparent);
+}
+.nx-diag-glyph-error::before,
+.nx-diag-glyph-warn::before {
+  content: '';
+  display: block;
+  width: 7px;
+  height: 7px;
+  margin: 0.55em auto 0;
+  border-radius: 50%;
+}
+.nx-diag-glyph-error::before {
+  background: var(--color-destructive);
+  box-shadow: 0 0 6px var(--color-destructive);
+}
+.nx-diag-glyph-warn::before {
+  background: var(--color-warning);
+  box-shadow: 0 0 6px var(--color-warning);
+}
+
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* Statement media: zoomable images, broken-image hint, responsive embeds */
+.statement-html img {
+  cursor: zoom-in;
+  transition: box-shadow 150ms ease;
+}
+.statement-html img:hover {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 55%, transparent);
+}
+.statement-html img.nx-img-broken {
+  min-width: 120px;
+  min-height: 48px;
+  background: var(--color-surface-2);
+  border: 1px dashed var(--color-border-strong);
+  cursor: default;
+}
+.statement-html video,
+.statement-html audio {
+  max-width: 100%;
+  border-radius: 0.5rem;
+  margin: 0.6em 0;
+}
+.statement-html .nx-embed {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  margin: 0.8em 0;
+  border-radius: 0.6rem;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+}
+.statement-html .nx-embed iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* Workspace floating windows: smooth size changes, instant while dragging */
+.nx-float {
+  transition: width 200ms cubic-bezier(0.22, 1, 0.36, 1), height 200ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 150ms ease;
+}
+.nx-float[data-live] {
+  transition: none;
+}
+.nx-edge {
+  position: absolute;
+  z-index: 20;
+  touch-action: none;
+  transition: background-color 120ms ease;
+}
+.nx-edge:hover,
+.nx-edge:active {
+  background: color-mix(in srgb, var(--color-primary) 45%, transparent);
+}
+.nx-corner {
+  position: absolute;
+  z-index: 21;
+  width: 14px;
+  height: 14px;
+  touch-action: none;
+}
+.nx-grip::after {
+  content: '';
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid var(--color-foreground-faint);
+  border-bottom: 2px solid var(--color-foreground-faint);
+  opacity: 0.6;
+}

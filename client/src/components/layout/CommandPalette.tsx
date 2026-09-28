@@ -210,7 +210,7 @@ export function CommandPalette() {
       {open && (
         <div className="fixed inset-0 z-[1050] flex items-start justify-center p-3 pt-[10vh] sm:p-4 sm:pt-[14vh]" onKeyDown={onKeyDown}>
           <motion.div
-            className="absolute inset-0 bg-bg-app/90 backdrop-blur-[6px]"
+            className="absolute inset-0 bg-bg-app/55 backdrop-blur-[3px]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -220,7 +220,7 @@ export function CommandPalette() {
             role="dialog"
             aria-modal="true"
             aria-label="Command palette"
-            className="pop-surface relative w-full max-w-[640px] overflow-hidden rounded-2xl bg-bg-surface-2/95"
+            className="pop-surface relative w-full max-w-[640px] overflow-hidden !rounded-2xl"
             initial={{ opacity: 0, y: -10, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -6, scale: 0.98, transition: { duration: 0.1 } }}

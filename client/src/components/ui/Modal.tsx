@@ -36,7 +36,7 @@ export function Modal({
             <div className="fixed inset-0 z-1000 flex items-end justify-center sm:items-center sm:p-4">
               <Dialog.Overlay asChild forceMount>
                 <motion.div
-                  className="absolute inset-0 bg-bg-app/90 backdrop-blur-[6px]"
+                  className="absolute inset-0 bg-bg-app/55 backdrop-blur-[3px]"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
@@ -46,8 +46,7 @@ export function Modal({
               <Dialog.Content asChild forceMount>
                 <motion.div
                   className={cn(
-                    'card relative z-10 flex max-h-[88vh] w-full flex-col overflow-hidden rounded-xl bg-bg-surface-3 border border-border',
-                    'shadow-lg',
+                    'pop-surface relative z-10 flex max-h-[88vh] w-full flex-col overflow-hidden !rounded-2xl',
                     widths[size],
                     className,
                   )}

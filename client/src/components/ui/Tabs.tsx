@@ -43,7 +43,10 @@ export function Tabs({
   return (
     <div
       className={cn(
-        pill ? 'flex flex-wrap items-center gap-1' : 'flex items-center gap-1 border-b border-border',
+        pill
+          ? 'flex flex-wrap items-center gap-1'
+          : // Scroll sideways on narrow screens instead of pushing the page wider.
+            'flex items-center gap-1 overflow-x-auto overscroll-x-contain border-b border-border [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
         className,
       )}
       role="tablist"
@@ -66,7 +69,7 @@ export function Tabs({
                     on ? 'bg-accent-brand/15 text-accent-brand' : 'text-text-primary/60 hover:bg-white/[0.04] hover:text-text-primary',
                   )
                 : cn(
-                    'flex cursor-pointer items-center gap-2 border-b-2 border-transparent px-4 py-2 text-sm font-medium text-text-primary/60',
+                    'flex shrink-0 cursor-pointer items-center gap-2 border-b-2 border-transparent px-4 py-2 text-sm font-medium whitespace-nowrap text-text-primary/60',
                     on ? 'border-accent-brand text-text-primary' : 'hover:border-accent-brand/20 hover:text-text-primary',
                   ),
             )}

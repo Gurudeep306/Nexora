@@ -17,7 +17,7 @@ export function MobileTabBar() {
   return (
     <nav
       aria-label="Quick navigation"
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-border/10 bg-bg-app/85 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl md:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 glass-thick border-x-0 border-b-0 !shadow-none pb-[env(safe-area-inset-bottom)] md:hidden"
     >
       <div className="mx-auto grid h-14 max-w-md grid-cols-5">
         {TABS.map((t) =>

@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { motion } from 'motion/react'
-import { Link2, SlidersHorizontal, TriangleAlert, UserRound } from 'lucide-react'
+import { Link2, Palette, SlidersHorizontal, TriangleAlert, UserRound } from 'lucide-react'
 import { ErrorState, LoadingBlock, PageHeader, Tabs } from '@/components/ui'
 import { api } from '@/lib/api'
 import { useApi } from '@/hooks/useApi'
@@ -11,10 +12,12 @@ import { PasswordForm } from '@/components/account/PasswordForm'
 import { HandlesForm } from '@/components/account/HandlesForm'
 import { PreferencesForm } from '@/components/account/PreferencesForm'
 import { DangerZone } from '@/components/account/DangerZone'
+import { LookPanel } from '@/components/look/LookPanel'
 import type { LanguageOption, ProfileUser, SettingsResponse } from '@/components/account/types'
 
 const TABS = [
   { id: 'account', label: 'Account', icon: <UserRound className="size-3.5" aria-hidden="true" /> },
+  { id: 'look', label: 'Appearance', icon: <Palette className="size-3.5" aria-hidden="true" /> },
   { id: 'platform', label: 'Platforms', icon: <Link2 className="size-3.5" aria-hidden="true" /> },
   {
     id: 'prefs',
@@ -30,7 +33,12 @@ const TABS = [
 
 export default function SettingsPage() {
   const { user } = useAuth()
-  const [tab, setTab] = useState('account')
+  // The tab lives in the URL (?tab=look), so the top-bar Look popover can
+  // deep-link here and the tab survives a reload.
+  const [params, setParams] = useSearchParams()
+  const linked = params.get('tab')
+  const tab = linked && TABS.some((t) => t.id === linked) ? linked : 'account'
+  const setTab = (id: string) => setParams(id === 'account' ? {} : { tab: id }, { replace: true })
 
   const settingsApi = useApi<SettingsResponse>(() => api.get<SettingsResponse>('/api/settings'), [])
   /* Envelope exception: /api/languages returns a bare array */
@@ -64,12 +72,14 @@ export default function SettingsPage() {
     <div className="space-y-5">
       <PageHeader
         title="Settings"
-        subtitle="Tune your identity, platform links, editor behaviour and account safety."
+        subtitle="Tune your identity, the look of the app, platform links, editor behaviour and account safety."
       />
 
       <Tabs items={TABS} active={tab} onChange={setTab} variant="pills" />
 
-      {settingsApi.error ? (
+      {tab === 'look' ? (
+        <LookPanel />
+      ) : settingsApi.error ? (
         <div className="card-neon">
           <ErrorState message={settingsApi.error} onRetry={settingsApi.refetch} />
         </div>

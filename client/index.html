@@ -8,17 +8,47 @@
     <meta name="description" content="Nexora — the ultimate competitive programming learning platform" />
     <title>Nexora — Master the Rift</title>
     <script>
-      /* Resolve the appearance before the first paint so the page never
-         flashes the wrong one. Mirrors src/context/ThemeContext.tsx. */
+      /* Resolve the whole look before the first paint, so the page never
+         flashes the wrong appearance, accent or desktop colour while React
+         boots. Mirrors src/context/ThemeContext.tsx; the wallpaper table is
+         injected from src/theme/catalog.ts by vite.config.ts. */
       (function () {
+        var d = document.documentElement;
         try {
           var stored = localStorage.getItem('nexora:appearance');
-          if (stored === 'light' || stored === 'dark') {
-            document.documentElement.setAttribute('data-theme', stored);
-          }
-          var dark = stored ? stored === 'dark'
+          if (stored === 'light' || stored === 'dark') d.setAttribute('data-theme', stored);
+          var dark = stored === 'light' || stored === 'dark'
+            ? stored === 'dark'
             : matchMedia('(prefers-color-scheme: dark)').matches;
-          document.documentElement.classList.toggle('dark', dark);
+          d.classList.toggle('dark', dark);
+
+          var W = /*__WALLPAPERS__*/{};
+          var look = {};
+          try { look = JSON.parse(localStorage.getItem('nexora:look') || '{}') || {}; } catch (e) {}
+          var id = W[look.wallpaper] ? look.wallpaper : 'aurora';
+          var w = W[id] || ['n', 'blue'];
+          var tone = dark ? 'dark' : 'light', wallTone = tone, color = '', tint = '';
+          if (w[0] === 'o') { color = dark ? w[2] : w[3]; tint = dark ? w[4] : w[5]; }
+          else if (w[0] === 'p') { wallTone = w[2]; color = w[3]; tint = w[4]; }
+          var accents = ' blue purple pink red orange yellow green graphite ';
+          var accent = look.accent && accents.indexOf(' ' + look.accent + ' ') >= 0 ? look.accent : w[1];
+          d.setAttribute('data-accent', accent);
+          d.setAttribute('data-glass', /^(frosted|clear|solid)$/.test(look.glass) ? look.glass : 'frosted');
+          d.setAttribute('data-wall', w[0] === 'o' ? 'original' : w[0] === 'p' ? 'photo' : 'none');
+          d.setAttribute('data-wall-tone', wallTone);
+          if (color) {
+            d.style.setProperty('--wall-color', color);
+            d.style.setProperty('--wall-tint', tint);
+          }
+          if (w[0] === 'o') {
+            /* Start fetching the desktop now rather than after the bundle. */
+            var l = document.createElement('link');
+            l.rel = 'preload';
+            l.as = 'image';
+            l.setAttribute('imagesrcset', '/wallpapers/' + id + '-' + tone + '-1280.webp 1280w, /wallpapers/' + id + '-' + tone + '.webp 2560w');
+            l.setAttribute('imagesizes', '100vw');
+            document.head.appendChild(l);
+          }
           var m = document.querySelector('meta[name="theme-color"]');
           if (m) m.setAttribute('content', dark ? '#1c1d22' : '#f2f2f5');
         } catch (e) { /* storage blocked — the CSS media query still applies */ }

@@ -4,7 +4,7 @@ import { useAuth } from '@/context/AuthContext'
 import { AnimatedNumber, Avatar, Kbd, Tooltip } from '@/components/ui'
 import { navMeta } from '@/config/nav'
 import { Notifications } from './Notifications'
-import { AppearanceButton } from './AppearanceToggle'
+import { LookPopover } from '@/components/look/LookPopover'
 import { openCommandPalette } from './CommandPalette'
 import { UserMenu } from './UserMenu'
 
@@ -16,7 +16,7 @@ export function Topbar() {
   const meta = navMeta(pathname)
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center gap-2 border-b border-border/50 bg-bg-app/50 px-3 backdrop-blur-xl backdrop-saturate-150 md:px-6 animate-fade-in">
+    <header className="sticky top-0 z-30 flex h-14 items-center gap-2 titlebar px-3 md:px-6 animate-fade-in">
       {/* Breadcrumbs */}
       <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-1.5 text-[13px]">
         {meta.section && (
@@ -72,7 +72,7 @@ export function Topbar() {
             </Link>
           </Tooltip>
         )}
-        <AppearanceButton className="size-8" />
+        <LookPopover />
         <Notifications />
         {user && (
           <UserMenu side="bottom" align="end">

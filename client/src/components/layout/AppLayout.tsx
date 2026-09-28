@@ -8,7 +8,8 @@ import { ShortcutsDialog } from './ShortcutsDialog'
 import { MobileTabBar } from './MobileTabBar'
 import { Deck } from './Deck'
 import { RouteProgress } from './RouteProgress'
-import { RiftBackground } from '../fx/RiftBackground'
+import { Wallpaper } from '../fx/Wallpaper'
+import { LookSync } from '../look/LookSync'
 import { cn } from '@/lib/utils'
 
 export function AppLayout() {
@@ -29,7 +30,8 @@ export function AppLayout() {
       >
         Skip to content
       </a>
-      <RiftBackground className="pointer-events-none" grid={true} intensity={1} />
+      <Wallpaper />
+      <LookSync />
 
       <RouteProgress />
       <CommandPalette />
@@ -49,10 +51,13 @@ export function AppLayout() {
             <AnimatePresence mode="wait">
               <motion.div
                 key={location.pathname}
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, transition: { duration: 0.08 } }}
-                transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                /* Position only: an opacity fade would make this wrapper a
+                   backdrop root, and every glass card inside would lose its
+                   blur for the length of the transition. */
+                initial={{ y: 8 }}
+                animate={{ y: 0 }}
+                exit={{ transition: { duration: 0 } }}
+                transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
               >
                 <PageErrorBoundary key={location.pathname}>
                   <Outlet />

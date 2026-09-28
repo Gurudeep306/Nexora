@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { Link } from 'react-router-dom'
 import { BrainCircuit, CheckCircle2, Code2, Globe2, Swords, Trophy } from 'lucide-react'
-import { RiftBackground } from '@/components/fx/RiftBackground'
 import { LogoMark, Wordmark } from '@/components/brand/Logo'
 import { api } from '@/lib/api'
 import { Avatar, RankGlyph, RIFT_TIERS } from '@/components/ui'
@@ -192,8 +191,6 @@ export function AuthShowcase() {
   return (
     <div className="relative flex h-full flex-col justify-between gap-8 overflow-hidden p-10 xl:p-14">
       {/* ambient layers */}
-      <RiftBackground intensity={0.75} />
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-background/30 via-transparent to-background/70" aria-hidden="true" />
 
       <div className="relative">
         <Link to="/" className="flex w-fit items-center gap-3">

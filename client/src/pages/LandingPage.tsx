@@ -19,7 +19,7 @@ import {
   Users,
   Zap,
 } from 'lucide-react'
-import { RiftBackground } from '@/components/fx/RiftBackground'
+import { Wallpaper } from '@/components/fx/Wallpaper'
 import { LogoMark, Wordmark } from '@/components/brand/Logo'
 import { TypingEditor } from '@/components/auth/AuthShowcase'
 import { AnimatedNumber, Avatar, RankGlyph, RIFT_TIERS } from '@/components/ui'
@@ -130,7 +130,8 @@ export default function LandingPage() {
   if (oauthPending || oauthReturn) return <Navigate to="/auth" replace />
 
   return (
-    <div ref={root} className="relative min-h-dvh overflow-x-clip bg-background text-foreground">
+    <div ref={root} className="relative min-h-dvh overflow-x-clip text-foreground">
+      <Wallpaper />
       {/* ── Nav ── */}
       <header className="fixed inset-x-0 top-0 z-50">
         <div className="mx-auto mt-3 flex h-14 max-w-6xl items-center gap-6 rounded-2xl px-4 sm:px-5 glass mx-3 sm:mx-auto">
@@ -159,7 +160,6 @@ export default function LandingPage() {
 
       {/* ── Hero ── */}
       <section className="relative isolate overflow-hidden pt-36 pb-24 sm:pt-44">
-        <RiftBackground className="-z-10" />
         <div className="aurora -z-10 opacity-45" aria-hidden="true">
           <span className="a1" />
           <span className="a2" />
@@ -359,8 +359,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── Final CTA ── */}
-      <section className="beam-border relative isolate mx-5 mb-16 overflow-hidden rounded-3xl border border-hairline/[0.06] px-6 py-24 text-center sm:mx-auto sm:max-w-6xl" data-reveal>
-        <RiftBackground className="-z-10" grid={false} intensity={0.9} />
+      <section className="card beam-border relative isolate mx-5 mb-16 overflow-hidden !rounded-3xl px-6 py-24 text-center sm:mx-auto sm:max-w-6xl" data-reveal>
         <Sparkles className="mx-auto mb-5 size-7 text-primary-bright" />
         <h2 className="text-heading-fade mx-auto max-w-2xl font-display text-4xl font-semibold tracking-tight sm:text-6xl">The rift is open.</h2>
         <p className="mx-auto mt-4 max-w-md text-foreground-dim">Create an account in ten seconds. Your first AC is waiting.</p>

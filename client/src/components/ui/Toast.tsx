@@ -46,11 +46,13 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         }}
         toastOptions={{
           classNames: {
+            // Sonner paints its own background with a more specific selector,
+            // so the glass has to be forced.
             toast:
-              '!rounded-lg !border !border-border/20 !bg-bg-surface-3/90 !shadow-lg !text-text-primary !font-body',
+              'pop-surface !rounded-xl !text-text-primary !font-body ![background-color:var(--material-pop,var(--color-bg-surface-3))] !border-[var(--glass-edge,var(--color-border))] ![backdrop-filter:var(--glass-filter-strong,blur(24px))] !shadow-[inset_0_1px_0_var(--specular),var(--pop-shadow,var(--elev-3))]',
             title: '!text-sm !font-medium',
             description: '!text-xs !text-text-primary/60',
-            closeButton: '!bg-bg-surface-2 !border-border/20 !text-text-primary/60 hover:text-text-primary',
+            closeButton: '![background-color:var(--material-pop,var(--color-bg-surface-2))] !border-border !text-text-primary/60 hover:text-text-primary',
             actionButton: '!bg-accent-brand/10 hover:bg-accent-brand/20',
           },
         }}
