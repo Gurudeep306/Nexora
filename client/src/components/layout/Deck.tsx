@@ -18,6 +18,7 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { openCommandPalette } from './CommandPalette'
 
 interface DeckItem {
   to: string
@@ -118,7 +119,7 @@ export function Deck() {
         <motion.div style={{ scale: 1 }} className="relative">
           <button
             type="button"
-            onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))}
+            onClick={openCommandPalette}
             aria-label="Open command palette"
             className="group flex size-11 items-center justify-center rounded-xl text-text-primary/60 transition-colors hover:bg-accent-brand/10 hover:text-text-primary"
           >

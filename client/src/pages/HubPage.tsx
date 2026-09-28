@@ -22,7 +22,6 @@ import {
   PageHeader,
   Skeleton,
   StatCard,
-  XpBar,
 } from '@/components/ui'
 import { api } from '@/lib/api'
 import { useApi } from '@/hooks/useApi'
@@ -183,78 +182,69 @@ export default function HubPage() {
         />
       </motion.div>
 
-      {/* Level progress */}
-      <Card>
-        <CardContent className="py-4">
-          <div className="grid gap-4 md:grid-cols-[1fr_220px] md:items-center">
-            <XpBar
-              xp={stats.level.xpInLevel}
-              nextLevelXp={stats.level.xpForNext}
-              level={stats.level.level}
-              levelName={stats.level.name}
-            />
-            <div className="grid grid-cols-2 gap-3 text-xs md:text-right">
-              <div>
-                <p className="text-[10px] tracking-wider text-foreground-faint uppercase">Solves this level</p>
-                <p className="font-mono text-foreground tabular-nums">
-                  {stats.level.probsInLevel} / {stats.level.probsForNext}
-                </p>
-              </div>
-              <div>
-                <p className="text-[10px] tracking-wider text-foreground-faint uppercase">Consistency</p>
-                <p className="font-mono text-foreground tabular-nums">
-                  {perf ? `${perf.consistencyScore}%` : '—'}
-                </p>
-              </div>
-            </div>
-          </div>
-          {perf?.nextLevel && (
-            <p className="mt-3 text-xs text-foreground-dim">
-              <Trophy className="mr-1 inline size-3.5 text-gold" aria-hidden="true" />
-              Next rift: <span className="text-foreground">{perf.nextLevel.name}</span> —{' '}
-              <span className="font-mono text-primary-bright tabular-nums">
-                {formatNumber(perf.nextLevel.xpNeeded)} XP
-              </span>{' '}
-              + <span className="font-mono text-primary-bright tabular-nums">{perf.nextLevel.probsNeeded}</span>{' '}
-              solves
-              {perf.nextLevel.daysEstimate != null && perf.avgDailyXp > 0 && (
-                <> · ≈ {perf.nextLevel.daysEstimate} days at your pace</>
-              )}
-            </p>
+      {/* Bento dashboard grid */}
+      <div className="grid gap-4 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+          {perf ? (
+            <ActivityChart streak={stats.streak} weeklyProgress={perf.weeklyProgress ?? []} />
+          ) : (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="size-4 text-cyan" aria-hidden="true" /> Recent activity
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="h-40 w-full" />
+              </CardContent>
+            </Card>
           )}
-        </CardContent>
-      </Card>
+        </div>
 
-      {/* Activity + challenges */}
-      <div className="grid gap-4 lg:grid-cols-2">
-        {perf ? (
-          <ActivityChart streak={stats.streak} weeklyProgress={perf.weeklyProgress ?? []} />
-        ) : (
+        <DailyChallenges challenges={stats.dailyChallenges ?? []} />
+
+        <div className="lg:col-span-2">
+          <RecentSubmissions submissions={recentSubmissions} />
+        </div>
+
+        <div className="space-y-3">
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Activity className="size-4 text-cyan" aria-hidden="true" /> Recent activity
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Skeleton className="h-40 w-full" />
+            <CardContent className="space-y-2.5 py-4">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-[10px] tracking-wider text-foreground-faint uppercase">Solves this level</span>
+                <span className="font-mono text-foreground tabular-nums">
+                  {stats.level.probsInLevel} / {stats.level.probsForNext}
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-[10px] tracking-wider text-foreground-faint uppercase">Consistency</span>
+                <span className="font-mono text-foreground tabular-nums">
+                  {perf ? `${perf.consistencyScore}%` : '—'}
+                </span>
+              </div>
+              {perf?.nextLevel && (
+                <p className="pt-1 text-xs text-foreground-dim">
+                  <Trophy className="mr-1 inline size-3.5 text-gold" aria-hidden="true" />
+                  Next rift: <span className="text-foreground">{perf.nextLevel.name}</span> —{' '}
+                  <span className="font-mono text-primary-bright tabular-nums">
+                    {formatNumber(perf.nextLevel.xpNeeded)} XP
+                  </span>{' '}
+                  + <span className="font-mono text-primary-bright tabular-nums">{perf.nextLevel.probsNeeded}</span>{' '}
+                  solves
+                  {perf.nextLevel.daysEstimate != null && perf.avgDailyXp > 0 && (
+                    <> · ≈ {perf.nextLevel.daysEstimate}d at your pace</>
+                  )}
+                </p>
+              )}
             </CardContent>
           </Card>
-        )}
-        <DailyChallenges challenges={stats.dailyChallenges ?? []} />
-      </div>
 
-      {/* Submissions + quick links */}
-      <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
-        <RecentSubmissions submissions={recentSubmissions} />
-        <div className="space-y-3">
           <QuickLinks />
+
           <Card className="p-4">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <p className="font-display text-xs tracking-wider text-foreground uppercase">
-                  Ready to climb?
-                </p>
+                <p className="font-display text-xs tracking-wider text-foreground uppercase">Ready to climb?</p>
                 <p className="mt-1 text-xs text-foreground-dim">
                   <Medal className="mr-1 inline size-3.5 text-gold" aria-hidden="true" />
                   {stats.todayStats.solved > 0

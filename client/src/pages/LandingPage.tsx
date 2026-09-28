@@ -182,9 +182,10 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
-            className="text-heading-fade mx-auto mt-7 max-w-5xl font-display text-[42px] leading-[1.02] font-semibold tracking-[-0.035em] sm:text-7xl lg:text-[84px]"
+            className="text-gradient mx-auto mt-7 max-w-5xl font-display text-[42px] leading-[1.02] font-semibold tracking-[-0.035em] sm:text-7xl lg:text-[84px]"
           >
-            Competitive programming, <span className="text-gradient">levelled up.</span>
+            Competitive programming,{' '}
+            <span className="bg-gradient-to-r from-primary-bright to-accent bg-clip-text text-transparent">levelled up.</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 14 }}
@@ -212,6 +213,27 @@ export default function LandingPage() {
             </Link>
           </motion.div>
           <p className="mt-4 text-xs text-foreground-faint">Free forever · no card · your progress stays yours</p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            className="mx-auto mt-10 flex flex-wrap items-center justify-center gap-x-10 gap-y-4"
+          >
+            {[
+              { v: problemCount || 27718, s: '', l: 'problems synced' },
+              { v: 30, s: '+', l: 'languages judged' },
+              { v: 11, s: '', l: 'rift ranks' },
+            ].map(({ v, s, l }) => (
+              <div key={l} className="flex items-baseline gap-2">
+                <span className="font-display text-2xl font-semibold tracking-tight text-foreground tabular-nums sm:text-3xl">
+                  <AnimatedNumber value={v} />
+                  {s}
+                </span>
+                <span className="text-xs text-foreground-faint">{l}</span>
+              </div>
+            ))}
+          </motion.div>
         </div>
 
         {/* Product shot */}
