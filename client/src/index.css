@@ -49,7 +49,7 @@
   --oklch-accent-0: var(--acc-d0, oklch(0.646 0.184 256));  /* system blue  */
   --oklch-accent-1: var(--acc-d1, oklch(0.606 0.214 292));  /* violet       */
   --on-accent: var(--acc-d-on, oklch(1 0 0));
-  --accent-bright: color-mix(in oklch, var(--oklch-accent-0) 62%, oklch(0.97 0.01 265));
+  --accent-bright: color-mix(in oklab, var(--oklch-accent-0) 62%, oklch(0.97 0.01 265));
 
   --oklch-cyan:    oklch(0.792 0.126 213);
   --oklch-emerald: oklch(0.762 0.192 148);
@@ -94,7 +94,7 @@
   --oklch-accent-0: var(--acc-l0, oklch(0.546 0.206 256));
   --oklch-accent-1: var(--acc-l1, oklch(0.506 0.232 292));
   --on-accent: var(--acc-l-on, oklch(1 0 0));
-  --accent-bright: color-mix(in oklch, var(--oklch-accent-0) 88%, oklch(0.2 0.02 265));
+  --accent-bright: color-mix(in oklab, var(--oklch-accent-0) 88%, oklch(0.2 0.02 265));
 
   --oklch-cyan:    oklch(0.532 0.108 213);
   --oklch-emerald: oklch(0.522 0.132 148);
@@ -136,7 +136,7 @@
     --oklch-accent-0: var(--acc-l0, oklch(0.546 0.206 256));
     --oklch-accent-1: var(--acc-l1, oklch(0.506 0.232 292));
     --on-accent: var(--acc-l-on, oklch(1 0 0));
-    --accent-bright: color-mix(in oklch, var(--oklch-accent-0) 88%, oklch(0.2 0.02 265));
+    --accent-bright: color-mix(in oklab, var(--oklch-accent-0) 88%, oklch(0.2 0.02 265));
 
     --oklch-cyan:    oklch(0.532 0.108 213);
     --oklch-emerald: oklch(0.522 0.132 148);
@@ -175,8 +175,8 @@
   --color-text-invert: var(--oklch-fg-3);
 
   --color-border: var(--oklch-bg-4);
-  --color-border-strong: color-mix(in oklch, var(--oklch-bg-4) 70%, var(--oklch-fg-2));
-  --color-border-hover: color-mix(in oklch, var(--oklch-bg-4) 50%, var(--oklch-fg-2));
+  --color-border-strong: color-mix(in oklab, var(--oklch-bg-4) 70%, var(--oklch-fg-2));
+  --color-border-hover: color-mix(in oklab, var(--oklch-bg-4) 50%, var(--oklch-fg-2));
   --color-border-input: var(--oklch-bg-4);
 
   --color-accent-brand: var(--oklch-accent-0);
@@ -210,7 +210,7 @@
   --shadow-xl: var(--elev-3);
   --shadow-2xl: var(--elev-3);
   --shadow-inner: inset 0 1px 2px var(--field-shadow);
-  --shadow-input-focus: 0 0 0 4px color-mix(in oklch, var(--oklch-accent-0) 28%, transparent);
+  --shadow-input-focus: 0 0 0 4px color-mix(in oklab, var(--oklch-accent-0) 28%, transparent);
 
   --ring-color: var(--oklch-accent-0);
   --ring-offset-color: var(--oklch-bg-0);
@@ -262,7 +262,7 @@
   --color-surface-2: var(--color-bg-surface-2);
   --color-surface-3: var(--color-bg-surface-3);
   --color-muted: var(--color-bg-surface-3);
-  --color-border-glow: color-mix(in oklch, var(--oklch-accent-0) 45%, var(--oklch-bg-4));
+  --color-border-glow: color-mix(in oklab, var(--oklch-accent-0) 45%, var(--oklch-bg-4));
   --color-foreground: var(--oklch-fg-0);
   --color-foreground-dim: var(--oklch-fg-1);
   --color-foreground-faint: var(--oklch-fg-2);
@@ -283,9 +283,9 @@
   --color-info: var(--oklch-cyan);
   --color-gold: var(--oklch-gold);
   --color-xp: var(--oklch-accent-1);
-  --color-primary-dark: color-mix(in oklch, var(--oklch-accent-0) 78%, oklch(0.25 0.05 265));
-  --color-accent-dark: color-mix(in oklch, var(--oklch-emerald) 78%, oklch(0.25 0.05 160));
-  --color-warning-dark: color-mix(in oklch, var(--oklch-amber) 80%, oklch(0.4 0.12 40));
+  --color-primary-dark: color-mix(in oklab, var(--oklch-accent-0) 78%, oklch(0.25 0.05 265));
+  --color-accent-dark: color-mix(in oklab, var(--oklch-emerald) 78%, oklch(0.25 0.05 160));
+  --color-warning-dark: color-mix(in oklab, var(--oklch-amber) 80%, oklch(0.4 0.12 40));
   --color-streak: oklch(0.72 0.18 50);
   --color-ring: var(--oklch-accent-0);
 
@@ -350,7 +350,7 @@
   --oklch-accent-0: var(--acc-d0, oklch(0.646 0.184 256));
   --oklch-accent-1: var(--acc-d1, oklch(0.606 0.214 292));
   --on-accent: var(--acc-d-on, oklch(1 0 0));
-  --accent-bright: color-mix(in oklch, var(--oklch-accent-0) 62%, oklch(0.97 0.01 265));
+  --accent-bright: color-mix(in oklab, var(--oklch-accent-0) 62%, oklch(0.97 0.01 265));
   --material: oklch(0.252 0.006 265 / 0.72);
   --material-thin: oklch(0.288 0.007 265 / 0.55);
   --material-thick: oklch(0.219 0.005 265 / 0.88);
@@ -374,7 +374,7 @@
   --color-text-muted: var(--oklch-fg-2);
   --color-text-invert: var(--oklch-fg-3);
   --color-border: var(--oklch-bg-4);
-  --color-border-strong: color-mix(in oklch, var(--oklch-bg-4) 70%, var(--oklch-fg-2));
+  --color-border-strong: color-mix(in oklab, var(--oklch-bg-4) 70%, var(--oklch-fg-2));
   --color-border-input: var(--oklch-bg-4);
   --color-accent-brand: var(--oklch-accent-0);
   --color-accent-brand-hover: var(--oklch-accent-1);
@@ -394,7 +394,7 @@
   --color-foreground-faint: var(--oklch-fg-2);
   --color-primary: var(--oklch-accent-0);
   --color-primary-bright: var(--accent-bright);
-  --color-border-glow: color-mix(in oklch, var(--oklch-accent-0) 45%, var(--oklch-bg-4));
+  --color-border-glow: color-mix(in oklab, var(--oklch-accent-0) 45%, var(--oklch-bg-4));
 }
 
 @keyframes pulse-subtle {
@@ -515,7 +515,7 @@
   background-image: linear-gradient(
     100deg,
     var(--color-text-primary) 10%,
-    color-mix(in oklch, var(--color-text-primary) 62%, var(--oklch-accent-1)) 55%,
+    color-mix(in oklab, var(--color-text-primary) 62%, var(--oklch-accent-1)) 55%,
     var(--color-accent-brand-hover) 95%
   );
   -webkit-background-clip: text;
@@ -631,14 +631,14 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: color-mix(in oklch, var(--color-text-muted) 45%, transparent);
+    background: color-mix(in oklab, var(--color-text-muted) 45%, transparent);
     border-radius: 999px;
     border: 3px solid transparent;
     background-clip: content-box;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: color-mix(in oklch, var(--color-text-muted) 75%, transparent);
+    background: color-mix(in oklab, var(--color-text-muted) 75%, transparent);
     background-clip: content-box;
   }
 
@@ -655,7 +655,7 @@
     outline: none;
     box-shadow:
       0 0 0 1px var(--color-accent-brand),
-      0 0 0 4px color-mix(in oklch, var(--color-accent-brand) 28%, transparent);
+      0 0 0 4px color-mix(in oklab, var(--color-accent-brand) 28%, transparent);
     border-radius: var(--radius-control);
   }
 
@@ -1039,7 +1039,7 @@
 
   /* Strengthen borders and text */
   :root {
-    --color-border: color-mix(in oklch, var(--oklch-bg-4) 80%, var(--oklch-bg-2));
+    --color-border: color-mix(in oklab, var(--oklch-bg-4) 80%, var(--oklch-bg-2));
     --color-text-primary: oklch(0.880 0.006 250.20);
     --color-text-secondary: oklch(0.620 0.012 255.65);
   }
@@ -1058,8 +1058,8 @@
    as frosted without ever letting text show through. */
 .pop-surface {
   border-radius: 0.875rem;
-  border: 1px solid var(--glass-edge, color-mix(in oklch, var(--oklch-fg-0) 10%, transparent));
-  background-color: var(--material-pop, color-mix(in oklch, var(--oklch-bg-2) 97%, transparent));
+  border: 1px solid var(--glass-edge, color-mix(in oklab, var(--oklch-fg-0) 10%, transparent));
+  background-color: var(--material-pop, color-mix(in oklab, var(--oklch-bg-2) 97%, transparent));
   -webkit-backdrop-filter: var(--glass-filter-strong, blur(24px) saturate(140%));
   backdrop-filter: var(--glass-filter-strong, blur(24px) saturate(140%));
   box-shadow:
@@ -1137,12 +1137,12 @@
         cursor across the pane (--mx/--my, set by LookSurface).
      5. Desktop tinting: the ink takes a little of the wallpaper's colour. */
 html:is([data-wall='original'], [data-wall='photo']) {
-  --glass-ink: color-mix(in oklch, var(--glass-base) var(--ink-mix, 82%), var(--wall-tint, var(--glass-base)));
-  --material: color-mix(in oklch, var(--glass-ink) var(--ga), transparent);
-  --material-thin: color-mix(in oklch, var(--glass-ink) var(--ga-thin), transparent);
-  --material-thick: color-mix(in oklch, var(--glass-ink) var(--ga-thick), transparent);
-  --material-bar: color-mix(in oklch, var(--glass-ink) var(--ga-bar), transparent);
-  --material-pop: color-mix(in oklch, var(--glass-ink) var(--ga-pop), transparent);
+  --glass-ink: color-mix(in oklab, var(--glass-base) var(--ink-mix, 82%), var(--wall-tint, var(--glass-base)));
+  --material: color-mix(in oklab, var(--glass-ink) var(--ga), transparent);
+  --material-thin: color-mix(in oklab, var(--glass-ink) var(--ga-thin), transparent);
+  --material-thick: color-mix(in oklab, var(--glass-ink) var(--ga-thick), transparent);
+  --material-bar: color-mix(in oklab, var(--glass-ink) var(--ga-bar), transparent);
+  --material-pop: color-mix(in oklab, var(--glass-ink) var(--ga-pop), transparent);
   --glass-filter: blur(var(--gblur)) saturate(var(--gsat)) brightness(var(--gbright, 1));
   --glass-filter-strong: blur(calc(var(--gblur) * 1.45)) saturate(var(--gsat)) brightness(var(--gbright, 1));
 
@@ -1339,4 +1339,59 @@ html:not(.dark)[data-wall='photo'][data-wall-tone='dark'] {
    desktop icon labels, so it never depends on the wallpaper for contrast. */
 html.dark:is([data-wall='original'], [data-wall='photo']) #main-content h1 {
   text-shadow: 0 1px 12px oklch(0 0 0 / 0.35);
+}
+
+/* ── The Rift Tree (components/nexus/SkillGraph.tsx) ─────────────────────── */
+.nx-band-line { stroke: var(--color-border); }
+.nx-link-locked { stroke: var(--color-border-strong); }
+.nx-link-open { animation: nx-flow 1.1s linear infinite; }
+@keyframes nx-flow { to { stroke-dashoffset: -24; } }
+
+.nx-orb-track { stroke: color-mix(in oklab, var(--zc) 22%, var(--color-border)); }
+.nx-orb .nx-orb-core {
+  transition: background-color 200ms var(--ease-smooth), box-shadow 200ms var(--ease-smooth), color 200ms;
+}
+/* Mastered: a lit orb in the zone's colour. */
+.nx-orb[data-state='done'] .nx-orb-core {
+  color: #fff;
+  background: radial-gradient(circle at 35% 30%, color-mix(in oklab, var(--zc) 55%, white), var(--zc) 55%, color-mix(in oklab, var(--zc) 70%, black));
+  box-shadow: 0 0 18px color-mix(in oklab, var(--zc) 55%, transparent), inset 0 1px 0 rgb(255 255 255 / 0.45);
+}
+/* Open: a glass orb tinted with the zone colour. */
+.nx-orb[data-state='open'] .nx-orb-core {
+  color: color-mix(in oklab, var(--zc) 70%, var(--color-text-primary));
+  background: color-mix(in oklab, var(--zc) 16%, var(--color-bg-surface-3));
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.14), 0 4px 14px -6px color-mix(in oklab, var(--zc) 60%, transparent);
+}
+/* Locked: present but quiet. */
+.nx-orb[data-state='locked'] .nx-orb-core {
+  color: var(--color-text-muted);
+  background: var(--color-bg-surface-2);
+  box-shadow: inset 0 0 0 1px var(--color-border);
+}
+.nx-orb:hover .nx-orb-core { box-shadow: 0 0 0 4px color-mix(in oklab, var(--zc) 22%, transparent), 0 6px 20px -6px color-mix(in oklab, var(--zc) 70%, transparent); }
+.nx-orb[data-selected] { transform: scale(1.08); }
+.nx-orb[data-selected]::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 9999px;
+  border: 2px solid var(--color-accent-brand);
+  box-shadow: 0 0 16px color-mix(in oklab, var(--color-accent-brand) 50%, transparent);
+}
+/* What you can work on right now breathes, softly. */
+.nx-orb-pulse {
+  position: absolute;
+  inset: -4px;
+  border-radius: 9999px;
+  border: 2px solid var(--zc);
+  opacity: 0;
+  animation: nx-pulse 2.4s var(--ease-smooth) infinite;
+}
+@keyframes nx-pulse {
+  0% { transform: scale(0.92); opacity: 0.7; }
+  80%, 100% { transform: scale(1.35); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nx-link-open, .nx-orb-pulse { animation: none; }
 }

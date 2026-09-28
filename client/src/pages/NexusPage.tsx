@@ -9,6 +9,7 @@ import {
   ErrorState,
   LoadingBlock,
   PageHeader,
+  RankGlyph,
   Tabs,
   XpBar,
 } from '@/components/ui'
@@ -100,13 +101,7 @@ export default function NexusPage() {
         <CardContent className="grid gap-4 md:grid-cols-[1fr_auto] md:items-center">
           <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-2">
-              <span
-                className="flex size-9 items-center justify-center rounded-xl border text-base"
-                style={{ borderColor: player.color, color: player.color, boxShadow: `0 0 12px color-mix(in srgb, ${player.color} 40%, transparent)` }}
-                aria-hidden="true"
-              >
-                {player.badge}
-              </span>
+              <RankGlyph level={player.level} size={40} />
               <div>
                 <p className="font-display text-base tracking-wider text-foreground">
                   LVL {player.level} · {player.name}
@@ -212,7 +207,7 @@ export default function NexusPage() {
         ))}
       </div>
 
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_380px]">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-4 xl:grid-cols-[minmax(0,1fr)_380px]">
         <div className="space-y-4">
           <SkillGraph
             nodes={nodes}
@@ -253,7 +248,7 @@ export default function NexusPage() {
                     </Badge>
                   </div>
                   <p className="text-[11px] text-foreground-faint">
-                    Animated links show an open path to the next skill. The weekly pool reshuffles every 7 days.
+                    Hover a skill to trace everything it needs and everything it unlocks. Pulsing skills are open to you now; flowing links lead to them. The weekly pool reshuffles every 7 days.
                   </p>
                 </div>
               </CardContent>
