@@ -9,6 +9,7 @@ const PLATFORMS: Record<string, { label: string; className: string }> = {
   spoj: { label: 'SPOJ', className: 'border-cyan/40 bg-cyan/10 text-cyan' },
   'project euler': { label: 'Euler', className: 'border-accent/40 bg-accent/10 text-accent' },
   projecteuler: { label: 'Euler', className: 'border-accent/40 bg-accent/10 text-accent' },
+  learn: { label: 'Nexora Learn', className: 'border-success/40 bg-success/10 text-success' },
   custom: { label: 'Custom', className: 'border-primary/40 bg-primary/10 text-primary-bright' },
   ai: { label: 'AI', className: 'border-primary/40 bg-primary/10 text-primary-bright' },
 }

@@ -1,0 +1,489 @@
+import type { Question } from '../../../questions/types'
+
+const T = 'arrays'
+
+/* Conceptual, tracing and prediction questions — graded on the page. */
+const concept: Question[] = [
+  // ── What an array is
+  {
+    id: 'arr-q-address', topic: T, page: 'what-is-an-array', kind: 'numeric', difficulty: 'easy',
+    title: 'Where does arr[5] live?',
+    prompt: 'An `int` array (4 bytes per element) starts at address **1000**. At which address does `arr[5]` begin? (Answer in decimal.)',
+    answer: 1020,
+    explain: 'address = base + i × size = 1000 + 5 × 4 = 1020.',
+  },
+  {
+    id: 'arr-q-zero-index', topic: T, page: 'what-is-an-array', kind: 'mcq', difficulty: 'easy',
+    title: 'Why 0-based?',
+    prompt: 'Why do most languages number array elements from 0?',
+    options: [
+      'Because the index is an offset from the start: element i is at base + i × size, so the first element needs no offset',
+      'Because 0 is faster to store than 1',
+      'Because arrays always contain a hidden element at index 0',
+      'It is an arbitrary convention with no technical reason',
+    ],
+    answer: 0,
+    explain: 'The index says how many elements to skip. With 0-based indexing the address formula is base + i × size, with no extra subtraction.',
+  },
+  {
+    id: 'arr-q-access-cost', topic: T, page: 'what-is-an-array', kind: 'mcq', difficulty: 'easy',
+    title: 'Cost of arr[i]',
+    prompt: 'An array holds 10 million elements. Compared with reading `arr[3]`, reading `arr[9999999]` is…',
+    options: ['About 3 million times slower', 'O(log n) slower', 'The same cost — O(1)', 'Impossible without a loop'],
+    answer: 2,
+    explain: 'Both are one multiplication and one addition to compute the address. Random access does not depend on the index or on n.',
+  },
+  {
+    id: 'arr-q-oob-lang', topic: T, page: 'what-is-an-array', kind: 'multi', difficulty: 'medium',
+    title: 'Reading past the end',
+    prompt: 'In which languages does reading `a[n]` (one past the end of a plain array) raise an error at run time? Select all that apply.',
+    options: ['Java', 'Python', 'C', 'JavaScript', 'C++ with operator[]'],
+    answers: [0, 1],
+    explain: 'Java throws ArrayIndexOutOfBoundsException and Python IndexError. JavaScript returns undefined silently; C and C++ (operator[]) perform no check — undefined behaviour. C++ `.at()` does check.',
+  },
+  {
+    id: 'arr-q-last-index', topic: T, page: 'what-is-an-array', kind: 'numeric', difficulty: 'easy',
+    title: 'The last valid index',
+    prompt: 'An array has 64 elements. What is the largest valid index?',
+    answer: 63,
+    explain: 'Indexes run from 0 to n − 1 = 63. Index 64 is one past the end.',
+  },
+
+  // ── Traversal
+  {
+    id: 'arr-q-max-init', topic: T, page: 'traversal', kind: 'mcq', difficulty: 'easy',
+    title: 'Initialising the maximum',
+    prompt: 'This code finds the maximum: `best = 0; for x in a: if x > best: best = x`. For which input does it give a **wrong** answer?',
+    options: ['[3, 9, 2]', '[0, 0, 0]', '[-4, -2, -7]', '[5]'],
+    answer: 2,
+    explain: 'All values are negative, so nothing beats the initial 0 and the code reports 0 — a value not in the array. Initialise with a[0] (or −∞).',
+  },
+  {
+    id: 'arr-q-loop-count', topic: T, page: 'traversal', kind: 'numeric', difficulty: 'easy',
+    title: 'How many iterations?',
+    prompt: 'How many times does the body run in `for (int i = 2; i <= 10; i++)`?',
+    answer: 9,
+    explain: 'Inclusive range 2…10 has 10 − 2 + 1 = 9 values. With a half-open range (i < 10) it would be 8.',
+  },
+  {
+    id: 'arr-q-trace-sum', topic: T, page: 'traversal', kind: 'numeric', difficulty: 'easy',
+    title: 'Trace the loop',
+    prompt: 'What does this print for `a = [4, 7, 1, 8, 3]`?\n\n```python\ns = 0\nfor i in range(1, len(a), 2):\n    s += a[i]\nprint(s)\n```',
+    answer: 15,
+    explain: 'range(1, 5, 2) gives i = 1, 3 → a[1] + a[3] = 7 + 8 = 15.',
+  },
+  {
+    id: 'arr-q-overflow', topic: T, page: 'traversal', kind: 'mcq', difficulty: 'medium',
+    title: 'Choosing the sum type',
+    prompt: 'You sum up to 200,000 values, each up to 10⁹, in C++. Which type should hold the sum?',
+    options: ['int', 'long long', 'short', 'float'],
+    answer: 1,
+    explain: 'The sum can reach 2 × 10¹⁴; int overflows past about 2.1 × 10⁹. A 64-bit long long holds up to about 9.2 × 10¹⁸. float would lose precision.',
+  },
+  {
+    id: 'arr-q-second', topic: T, page: 'traversal', kind: 'numeric', difficulty: 'medium',
+    title: 'Second largest distinct',
+    prompt: 'What is the second largest **distinct** value of `[5, 9, 9, 3, 7, 9]`?',
+    answer: 7,
+    explain: 'The distinct values are 3, 5, 7, 9. The largest is 9; the second largest distinct is 7 (the repeated 9s do not count twice).',
+  },
+
+  // ── Insert / delete
+  {
+    id: 'arr-q-insert-moves', topic: T, page: 'insert-delete', kind: 'numeric', difficulty: 'easy',
+    title: 'Counting shifts',
+    prompt: 'An array holds 10 elements (with spare capacity). How many elements must move to insert a new value at index 3?',
+    answer: 7,
+    explain: 'Indexes 3…9 each move one slot right: 10 − 3 = 7 moves.',
+  },
+  {
+    id: 'arr-q-insert-order', topic: T, page: 'insert-delete', kind: 'mcq', difficulty: 'medium',
+    title: 'Which direction to shift?',
+    prompt: 'To insert at index k, you shift elements right. Why must the loop run from the **end** towards k, not from k towards the end?',
+    options: [
+      'It is faster from the end',
+      'Going from k upwards overwrites a[k+1] before it is copied, so one value gets copied into every slot',
+      'Arrays can only be written from right to left',
+      'There is no difference',
+    ],
+    answer: 1,
+    explain: 'a[k+1] = a[k] destroys the old a[k+1]; the next step copies the same value again. Copying right-to-left moves each value before its slot is overwritten.',
+  },
+  {
+    id: 'arr-q-trace-insert', topic: T, page: 'insert-delete', kind: 'array', difficulty: 'easy',
+    title: 'Predict the array after insert',
+    prompt: 'Start with `[3, 8, 14, 20]`. Insert **11** at index **2**. What is the array?',
+    answer: [3, 8, 11, 14, 20],
+    explain: '14 and 20 shift right, 11 goes into index 2.',
+  },
+  {
+    id: 'arr-q-trace-delete', topic: T, page: 'insert-delete', kind: 'array', difficulty: 'easy',
+    title: 'Predict the array after delete',
+    prompt: 'Start with `[5, 10, 15, 20, 25]`. Delete the element at index **1**, then delete the element at index **2** of the result. What is left?',
+    answer: [5, 15, 25],
+    explain: 'After the first delete: [5, 15, 20, 25]. Index 2 is now 20; deleting it gives [5, 15, 25].',
+  },
+  {
+    id: 'arr-q-pop0', topic: T, page: 'insert-delete', kind: 'mcq', difficulty: 'medium',
+    title: 'A hidden quadratic',
+    prompt: 'A Python loop runs `while lst: x = lst.pop(0); process(x)` on a list of n items. What is the total time?',
+    options: ['O(n)', 'O(n log n)', 'O(n²)', 'O(1)'],
+    answer: 2,
+    explain: 'pop(0) removes the front, shifting the other n − 1 items: O(n) each, O(n²) in total. Use collections.deque.popleft() (O(1)) or iterate instead.',
+  },
+
+  // ── Searching
+  {
+    id: 'arr-q-linear-worst', topic: T, page: 'searching', kind: 'numeric', difficulty: 'easy',
+    title: 'Worst case comparisons',
+    prompt: 'Linear search on an array of 1000 elements. How many comparisons in the worst case?',
+    answer: 1000,
+    explain: 'Target absent (or last): every element is compared once.',
+  },
+  {
+    id: 'arr-q-linear-avg', topic: T, page: 'searching', kind: 'numeric', difficulty: 'medium',
+    title: 'Average comparisons',
+    prompt: 'The target is in an array of 9 distinct elements, equally likely at any position. What is the average number of comparisons for linear search?',
+    answer: 5,
+    explain: 'Position k (1-based) costs k comparisons; the average of 1…9 is (9 + 1) / 2 = 5.',
+  },
+  {
+    id: 'arr-q-search-many', topic: T, page: 'searching', kind: 'mcq', difficulty: 'medium',
+    title: 'Many searches',
+    prompt: 'You must answer 100,000 "is x present?" questions on the same array of 100,000 numbers. Which plan is fastest overall?',
+    options: [
+      'Linear search for every question',
+      'Sort once, then binary search each question',
+      'Reverse the array before every question',
+      'Linear search from both ends at once',
+    ],
+    answer: 1,
+    explain: 'Linear: 10⁵ × 10⁵ = 10¹⁰ steps. Sorting once (≈ 1.7 × 10⁶) plus 10⁵ binary searches (≈ 1.7 × 10⁶) is thousands of times faster. A hash set would also work.',
+  },
+  {
+    id: 'arr-q-first-last', topic: T, page: 'searching', kind: 'text', difficulty: 'easy',
+    title: 'First and last',
+    prompt: 'For `[4, 2, 7, 2, 9, 2]`, give the first and last index of **2**, separated by a space (e.g. `0 3`).',
+    accept: ['1 5', '1,5', '1, 5'],
+    explain: '2 appears at indexes 1, 3 and 5: first 1, last 5.',
+  },
+
+  // ── Reverse / rotate
+  {
+    id: 'arr-q-reverse-swaps', topic: T, page: 'reverse-rotate', kind: 'numeric', difficulty: 'easy',
+    title: 'Swaps to reverse',
+    prompt: 'How many swaps does the two-pointer reversal make on an array of **11** elements?',
+    answer: 5,
+    explain: '⌊11 / 2⌋ = 5 swaps; the middle element (index 5) stays where it is.',
+  },
+  {
+    id: 'arr-q-trace-rotate', topic: T, page: 'reverse-rotate', kind: 'array', difficulty: 'easy',
+    title: 'Rotate right',
+    prompt: 'Rotate `[1, 2, 3, 4, 5, 6]` **right** by **2**.',
+    answer: [5, 6, 1, 2, 3, 4],
+    explain: 'The last two elements (5, 6) wrap around to the front.',
+  },
+  {
+    id: 'arr-q-rotate-mod', topic: T, page: 'reverse-rotate', kind: 'array', difficulty: 'medium',
+    title: 'A big k',
+    prompt: 'Rotate `[10, 20, 30, 40, 50]` right by **12**.',
+    answer: [40, 50, 10, 20, 30],
+    explain: '12 mod 5 = 2, so this is a rotation by 2: [40, 50, 10, 20, 30].',
+  },
+  {
+    id: 'arr-q-rotate-steps', topic: T, page: 'reverse-rotate', kind: 'order', difficulty: 'medium',
+    title: 'Order the rotation steps',
+    prompt: 'Put the steps of the in-place right rotation by k in order.',
+    items: ['k ← k mod n', 'Reverse the whole array', 'Reverse the first k elements', 'Reverse the remaining n − k elements'],
+    explain: 'Reduce k, reverse everything (B^R A^R), then reverse each block back (B A).',
+  },
+  {
+    id: 'arr-q-rotate-left', topic: T, page: 'reverse-rotate', kind: 'numeric', difficulty: 'medium',
+    title: 'Left as right',
+    prompt: 'Rotating an array of length 9 **left** by 4 is the same as rotating it **right** by how many positions?',
+    answer: 5,
+    explain: 'Left by k = right by n − k = 9 − 4 = 5.',
+  },
+
+  // ── Dynamic arrays
+  {
+    id: 'arr-q-amortized', topic: T, page: 'dynamic-arrays', kind: 'mcq', difficulty: 'medium',
+    title: 'What amortized means',
+    prompt: '“push_back is amortized O(1)” means…',
+    options: [
+      'Every single push_back takes constant time',
+      'Over any sequence of n pushes the total is O(n), so the average per push is O(1), even though a single push can take O(n)',
+      'push_back is O(1) only on average over random inputs',
+      'push_back never copies elements',
+    ],
+    answer: 1,
+    explain: 'Amortized is a worst-case guarantee on the total of a sequence, not a statement about random inputs. Individual resizes are expensive but rare.',
+  },
+  {
+    id: 'arr-q-copies', topic: T, page: 'dynamic-arrays', kind: 'numeric', difficulty: 'medium',
+    title: 'Counting copies',
+    prompt: 'A dynamic array starts with capacity 1 and doubles when full. How many element **copies** happen in total while pushing 9 elements?',
+    answer: 15,
+    explain: 'Resizes happen when pushing the 2nd, 3rd, 5th and 9th elements, copying 1 + 2 + 4 + 8 = 15 elements.',
+  },
+  {
+    id: 'arr-q-growth-add', topic: T, page: 'dynamic-arrays', kind: 'mcq', difficulty: 'medium',
+    title: 'Growing by a constant',
+    prompt: 'If a dynamic array grows its capacity by **+10** each time it is full (instead of doubling), the total cost of n appends is…',
+    options: ['O(n)', 'O(n log n)', 'O(n²)', 'O(10n)'],
+    answer: 2,
+    explain: 'Copies of 10, 20, 30, … up to n add up to about n²/20 — quadratic. Multiplying the capacity is what keeps the total linear.',
+  },
+  {
+    id: 'arr-q-capacity-after', topic: T, page: 'dynamic-arrays', kind: 'numeric', difficulty: 'easy',
+    title: 'Capacity after pushes',
+    prompt: 'Starting from capacity 1 and doubling when full, what is the capacity after pushing 20 elements?',
+    answer: 32,
+    explain: 'Capacities go 1, 2, 4, 8, 16, 32. 16 is not enough for 20 elements, so it is 32.',
+  },
+  {
+    id: 'arr-q-invalidate', topic: T, page: 'dynamic-arrays', kind: 'mcq', difficulty: 'hard',
+    title: 'The dangling reference',
+    prompt: 'In C++: `int &first = v[0]; v.push_back(7); cout << first;` — what can happen?',
+    options: [
+      'Always prints v[0]',
+      'If push_back reallocates, first refers to freed memory: undefined behaviour',
+      'Compile error',
+      'push_back never reallocates when a reference exists',
+    ],
+    answer: 1,
+    explain: 'A reallocation moves the elements to a new buffer; references, pointers and iterators into the old buffer dangle.',
+  },
+
+  // ── Prefix sums
+  {
+    id: 'arr-q-prefix-formula', topic: T, page: 'prefix-sums', kind: 'mcq', difficulty: 'easy',
+    title: 'The range-sum formula',
+    prompt: 'With P[0] = 0 and P[i + 1] = P[i] + a[i], the sum of a[l..r] (inclusive) is…',
+    options: ['P[r] − P[l]', 'P[r + 1] − P[l]', 'P[r] − P[l − 1]', 'P[r + 1] − P[l + 1]'],
+    answer: 1,
+    explain: 'P[r + 1] is the sum of the first r + 1 elements (indexes 0…r); subtracting P[l] removes indexes 0…l − 1.',
+  },
+  {
+    id: 'arr-q-prefix-build', topic: T, page: 'prefix-sums', kind: 'array', difficulty: 'easy',
+    title: 'Build the prefix array',
+    prompt: 'Write the prefix array P (with P[0] = 0) for `a = [2, 5, 1, 4]`.',
+    answer: [0, 2, 7, 8, 12],
+    explain: '0, 0+2, 2+5, 7+1, 8+4.',
+  },
+  {
+    id: 'arr-q-prefix-query', topic: T, page: 'prefix-sums', kind: 'numeric', difficulty: 'easy',
+    title: 'Answer a query',
+    prompt: 'P = `[0, 3, 4, 8, 9, 14, 23]`. What is the sum of a[2..4]?',
+    answer: 10,
+    explain: 'P[5] − P[2] = 14 − 4 = 10.',
+  },
+  {
+    id: 'arr-q-prefix-queries-cost', topic: T, page: 'prefix-sums', kind: 'mcq', difficulty: 'medium',
+    title: 'Total cost',
+    prompt: 'n = 10⁵ values and q = 10⁵ range-sum queries. Total work with prefix sums?',
+    options: ['O(n·q) ≈ 10¹⁰', 'O(n + q) ≈ 2 × 10⁵', 'O(q log n)', 'O(n²)'],
+    answer: 1,
+    explain: 'O(n) to build plus O(1) per query.',
+  },
+  {
+    id: 'arr-q-diff', topic: T, page: 'prefix-sums', kind: 'array', difficulty: 'medium',
+    title: 'Difference array in action',
+    prompt: 'An array of 6 zeros receives two updates: add 3 to indexes 1…3, then add 2 to indexes 2…5. What is the final array?',
+    answer: [0, 3, 5, 5, 2, 2],
+    explain: 'D after the updates: [0, 3, 2, 0, −3, 0, −2]; its running sum gives [0, 3, 5, 5, 2, 2].',
+  },
+
+  // ── Two pointers
+  {
+    id: 'arr-q-2p-why', topic: T, page: 'two-pointers', kind: 'mcq', difficulty: 'medium',
+    title: 'Why lo++ is safe',
+    prompt: 'In pair-sum on a sorted array, a[lo] + a[hi] < T. Why may we discard a[lo]?',
+    options: [
+      'Because a[lo] is the smallest value',
+      'Because a[lo] paired with the largest remaining value is still too small, so it is too small with every other remaining value',
+      'Because the array is reversed',
+      'Because hi will always move next',
+    ],
+    answer: 1,
+    explain: 'Every other remaining partner is ≤ a[hi], so every pair using a[lo] sums to less than T.',
+  },
+  {
+    id: 'arr-q-2p-trace', topic: T, page: 'two-pointers', kind: 'text', difficulty: 'medium',
+    title: 'Which pair is found?',
+    prompt: 'Run pair-sum on `[1, 2, 4, 7, 11, 15]` with T = 15. Which **indices** (lo hi) are reported? Answer like `1 4`.',
+    accept: ['2 4', '2,4', '2, 4'],
+    explain: '1+15=16>15 → hi=4; 1+11=12<15 → lo=1; 2+11=13<15 → lo=2; 4+11=15 ✓ → indices 2 and 4.',
+  },
+  {
+    id: 'arr-q-dedupe-result', topic: T, page: 'two-pointers', kind: 'numeric', difficulty: 'easy',
+    title: 'How many unique?',
+    prompt: 'What length does in-place dedupe return for `[0, 0, 1, 1, 1, 2, 2, 3, 3, 4]`?',
+    answer: 5,
+    explain: 'Unique values 0, 1, 2, 3, 4.',
+  },
+  {
+    id: 'arr-q-2p-order', topic: T, page: 'two-pointers', kind: 'array', difficulty: 'easy',
+    title: 'Move the zeroes',
+    prompt: 'Apply the stable move-zeroes algorithm to `[0, 1, 0, 3, 12]`.',
+    answer: [1, 3, 12, 0, 0],
+    explain: 'Non-zeros keep their order (1, 3, 12); zeroes go to the end.',
+  },
+  {
+    id: 'arr-q-2p-sorted-needed', topic: T, page: 'two-pointers', kind: 'mcq', difficulty: 'medium',
+    title: 'Unsorted input',
+    prompt: 'The array is **not** sorted and you need a pair with sum T in O(n) time. What do you use?',
+    options: ['Opposite-end two pointers as is', 'A hash set of values seen so far', 'Kadane’s algorithm', 'A sliding window'],
+    answer: 1,
+    explain: 'The two-pointer argument needs sorted order. Without sorting, check T − x in a hash set as you scan (O(n) average), or sort first (O(n log n)).',
+  },
+
+  // ── Sliding window
+  {
+    id: 'arr-q-window-update', topic: T, page: 'sliding-window', kind: 'mcq', difficulty: 'easy',
+    title: 'Sliding the sum',
+    prompt: 'The window a[i−k..i−1] has sum s. After sliding one step right, the new sum is…',
+    options: ['s + a[i]', 's + a[i] − a[i − k]', 's − a[i] + a[i − k]', 's + a[i] − a[i − 1]'],
+    answer: 1,
+    explain: 'a[i] enters and a[i − k] leaves.',
+  },
+  {
+    id: 'arr-q-window-trace', topic: T, page: 'sliding-window', kind: 'numeric', difficulty: 'easy',
+    title: 'Best window of 3',
+    prompt: 'Maximum sum of 3 consecutive elements in `[4, 2, 1, 7, 8, 1, 2, 8, 1, 0]`?',
+    answer: 16,
+    explain: 'Windows: 7, 10, 16, 16, 11, 11, 11, 9 → maximum 16 (1+7+8 or 7+8+1).',
+  },
+  {
+    id: 'arr-q-window-on', topic: T, page: 'sliding-window', kind: 'mcq', difficulty: 'medium',
+    title: 'Why O(n)?',
+    prompt: 'The variable window has a `while` loop inside a `for` loop. Why is it still O(n)?',
+    options: [
+      'The while loop runs at most once',
+      'Both lo and hi only move forward, each at most n times, so the total work is at most 2n',
+      'Because the array is sorted',
+      'It is actually O(n²)',
+    ],
+    answer: 1,
+    explain: 'Count pointer moves rather than loop nesting: each index enters once and leaves once.',
+  },
+  {
+    id: 'arr-q-window-negative', topic: T, page: 'sliding-window', kind: 'mcq', difficulty: 'hard',
+    title: 'Negative numbers',
+    prompt: 'Why can the shrink-from-the-left window fail for "shortest subarray with sum ≥ S" when the array has negative numbers?',
+    options: [
+      'Because negative numbers cannot be added',
+      'Because removing an element no longer always decreases the sum, so the condition is not monotonic and valid windows can be skipped',
+      'Because the window becomes too large',
+      'It does not fail',
+    ],
+    answer: 1,
+    explain: 'With negatives, dropping a negative element from the left increases the sum, breaking the reasoning that lets the window only move forward.',
+  },
+  {
+    id: 'arr-q-window-count', topic: T, page: 'sliding-window', kind: 'numeric', difficulty: 'easy',
+    title: 'How many windows?',
+    prompt: 'How many windows of size k = 4 are there in an array of n = 10 elements?',
+    answer: 7,
+    explain: 'n − k + 1 = 7 starting positions (0…6).',
+  },
+
+  // ── Kadane
+  {
+    id: 'arr-q-kadane-meaning', topic: T, page: 'kadane', kind: 'mcq', difficulty: 'medium',
+    title: 'What cur means',
+    prompt: 'In Kadane’s algorithm, after processing index i, `cur` equals…',
+    options: [
+      'The sum of all elements so far',
+      'The best sum of a subarray that ends exactly at i',
+      'The best sum found anywhere so far',
+      'The maximum element so far',
+    ],
+    answer: 1,
+    explain: 'cur is the best sum ending at i; best tracks the maximum of cur over all i.',
+  },
+  {
+    id: 'arr-q-kadane-trace', topic: T, page: 'kadane', kind: 'numeric', difficulty: 'medium',
+    title: 'Run Kadane',
+    prompt: 'Maximum subarray sum of `[3, -4, 5, -1, 2, -6, 4]`?',
+    answer: 6,
+    explain: 'The subarray [5, −1, 2] sums to 6; nothing beats it.',
+  },
+  {
+    id: 'arr-q-kadane-neg', topic: T, page: 'kadane', kind: 'numeric', difficulty: 'easy',
+    title: 'All negative',
+    prompt: 'Maximum (non-empty) subarray sum of `[-8, -3, -6, -2, -5]`?',
+    answer: -2,
+    explain: 'Every subarray is negative; the best is the single largest element, −2.',
+  },
+  {
+    id: 'arr-q-kadane-restart', topic: T, page: 'kadane', kind: 'mcq', difficulty: 'medium',
+    title: 'When to restart',
+    prompt: 'Kadane starts a fresh subarray at a[i] exactly when…',
+    options: ['a[i] is negative', 'cur (ending at i − 1) is negative', 'best is negative', 'i is even'],
+    answer: 1,
+    explain: 'max(a[i], cur + a[i]) picks a[i] alone precisely when cur < 0.',
+  },
+
+  // ── 2D arrays
+  {
+    id: 'arr-q-rowmajor', topic: T, page: '2d-arrays', kind: 'numeric', difficulty: 'easy',
+    title: 'Row-major offset',
+    prompt: 'A 5 × 8 matrix is stored row-major. At which offset is M[3][6]?',
+    answer: 30,
+    explain: 'r × C + c = 3 × 8 + 6 = 30.',
+  },
+  {
+    id: 'arr-q-rowmajor-col', topic: T, page: '2d-arrays', kind: 'numeric', difficulty: 'medium',
+    title: 'Column-major offset',
+    prompt: 'The same 5 × 8 matrix stored **column-major** (like Fortran/MATLAB). Offset of M[3][6]?',
+    answer: 33,
+    explain: 'c × R + r = 6 × 5 + 3 = 33.',
+  },
+  {
+    id: 'arr-q-python-rows', topic: T, page: '2d-arrays', kind: 'mcq', difficulty: 'medium',
+    title: 'Python grid bug',
+    prompt: '`g = [[0] * 3] * 2; g[0][1] = 5; print(g)` prints…',
+    options: ['[[0, 5, 0], [0, 0, 0]]', '[[0, 5, 0], [0, 5, 0]]', '[[5, 5, 5], [0, 0, 0]]', 'An error'],
+    answer: 1,
+    explain: 'Both rows are the same list object, so the write shows up in both.',
+  },
+  {
+    id: 'arr-q-transpose-shape', topic: T, page: '2d-arrays', kind: 'text', difficulty: 'easy',
+    title: 'Shape of a transpose',
+    prompt: 'A matrix has 3 rows and 7 columns. What is the shape of its transpose? Answer as `rows x cols`.',
+    accept: ['7 x 3', '7x3', '7 × 3', '7×3'],
+    explain: 'Rows become columns: 7 × 3.',
+  },
+]
+
+/* Coding problems — each opens the judge. */
+const code = (id: string, page: string, title: string, difficulty: Question['difficulty'], prompt: string): Question => ({
+  id, topic: T, page, kind: 'code', difficulty, title, prompt, explain: '', slug: id,
+})
+
+const coding: Question[] = [
+  code('arr-c-sum', 'traversal', 'Sum of the array', 'easy', 'Read n numbers and print their sum. Values can be large — mind the type.'),
+  code('arr-c-max-min', 'traversal', 'Maximum and minimum', 'easy', 'Print the largest and the smallest value in one pass.'),
+  code('arr-c-second', 'traversal', 'Second largest distinct', 'medium', 'Print the second largest distinct value, or -1 if there is none.'),
+  code('arr-c-insert', 'insert-delete', 'Insert at a position', 'easy', 'Insert x at position p and print the new array.'),
+  code('arr-c-delete', 'insert-delete', 'Delete at a position', 'easy', 'Delete the element at position p and print the array.'),
+  code('arr-c-linear-search', 'searching', 'First occurrence', 'easy', 'Print the index of the first occurrence of x, or -1.'),
+  code('arr-c-count', 'searching', 'Answer occurrence queries', 'medium', 'For each query value, print how many times it occurs.'),
+  code('arr-c-reverse', 'reverse-rotate', 'Reverse the array', 'easy', 'Print the array in reverse, reversing it in place.'),
+  code('arr-c-rotate', 'reverse-rotate', 'Rotate right by k', 'medium', 'Rotate the array right by k (k can exceed n).'),
+  code('arr-c-range-sum', 'prefix-sums', 'Range sum queries', 'medium', 'Answer q range-sum queries fast.'),
+  code('arr-c-equilibrium', 'prefix-sums', 'Equilibrium index', 'medium', 'First index where the sum on the left equals the sum on the right.'),
+  code('arr-c-range-add', 'prefix-sums', 'Many range additions', 'medium', 'Apply m range additions, then print the array.'),
+  code('arr-c-pair-sum', 'two-pointers', 'Pair with sum in a sorted array', 'easy', 'Decide whether two different positions sum to T.'),
+  code('arr-c-dedupe', 'two-pointers', 'Remove duplicates from a sorted array', 'easy', 'Print how many unique values, then the values.'),
+  code('arr-c-move-zeroes', 'two-pointers', 'Move zeroes to the end', 'easy', 'Keep the order of the non-zero values.'),
+  code('arr-c-window-max', 'sliding-window', 'Best window of size k', 'easy', 'Maximum sum of k consecutive elements.'),
+  code('arr-c-min-len', 'sliding-window', 'Shortest subarray with sum ≥ S', 'medium', 'Positive values; print 0 if impossible.'),
+  code('arr-c-longest-ones', 'sliding-window', 'Longest run of ones with k flips', 'medium', 'Flip at most k zeroes to ones; longest block of ones.'),
+  code('arr-c-kadane', 'kadane', 'Maximum subarray sum', 'medium', 'The largest sum of a non-empty contiguous subarray.'),
+  code('arr-c-transpose', '2d-arrays', 'Transpose a matrix', 'easy', 'Print the transpose of an R × C matrix.'),
+  code('arr-c-spiral', '2d-arrays', 'Spiral order', 'medium', 'Print the matrix elements in clockwise spiral order.'),
+]
+
+export const questions: Question[] = [...concept, ...coding]

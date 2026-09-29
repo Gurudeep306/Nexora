@@ -35,6 +35,7 @@ const {
 } = require("./middleware/auth");
 const { createAuthRouter } = require("./routes/auth");
 const { createLearningRouter } = require("./routes/learning");
+const { createLearnRouter } = require("./routes/learn");
 const { createStudioRouter } = require("./routes/studio");
 const { createExplainLabRouter } = require("./routes/explainlab");
 const { createForgeRouter } = require("./routes/forge");
@@ -5536,6 +5537,9 @@ app.use(
     run,
   }),
 );
+
+// Nexora Learn: course coding problems + per-user progress
+app.use(createLearnRouter({ get, all, run }));
 
 // ForgeBuilder routes
 app.use("/api/forge", createForgeRouter({ all, get, run }));

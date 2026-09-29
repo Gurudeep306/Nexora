@@ -148,7 +148,8 @@ export function storeCode(problemId: string | number, language: string, code: st
 
 /* GET /api/custom-problems/:id — Workshop problem; samples/testcases/tags are JSON strings */
 export interface CustomProblemDetail {
-  id: number
+  /** Workshop problems have numeric ids; Learn problems use their slug. */
+  id: number | string
   title: string
   statement?: string
   input_spec?: string
@@ -160,6 +161,8 @@ export interface CustomProblemDetail {
   time_limit?: string
   memory_limit?: string
   creator?: string | null
+  /** Set on Nexora Learn problems: the lesson this problem belongs to. */
+  learn?: { topic: string; page: string }
 }
 
 export interface CustomProblemResponse {

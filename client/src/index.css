@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import './theme/legacy.css';
+@import './learn/learn.css';
 
 /* ═══════════════════════════════════════════════════════════════════════════
    NEXORA — "Aurora", a macOS appearance system

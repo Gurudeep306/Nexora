@@ -1,3 +1,4 @@
+import { codeKey, mark as markLearn } from '@/learn/progress'
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { motion } from 'motion/react'
@@ -116,9 +117,10 @@ function adaptCustom(res: CustomProblemResponse): { detail: ProblemDetailRespons
     detail: {
       ok: true,
       problem: {
-        id: p.id,
-        platform: 'custom',
-        problem_id: `WS-${p.id}`,
+        // Learn problems are keyed by slug; the IDE only needs a number here.
+        id: typeof p.id === 'number' ? p.id : 0,
+        platform: p.learn ? 'learn' : 'custom',
+        problem_id: p.learn ? 'LEARN' : `WS-${p.id}`,
         title: p.title,
         url: '',
         rating: p.difficulty ?? 0,
@@ -141,8 +143,8 @@ function adaptCustom(res: CustomProblemResponse): { detail: ProblemDetailRespons
       timeLimit: p.time_limit ?? '',
       memLimit: p.memory_limit ?? '',
       samples,
-      platform: 'custom',
-      source: p.creator ? `workshop · @${p.creator}` : 'workshop',
+      platform: p.learn ? 'learn' : 'custom',
+      source: p.learn ? `Nexora Learn · ${p.learn.topic}` : p.creator ? `workshop · @${p.creator}` : 'workshop',
     },
   }
 }
@@ -157,7 +159,12 @@ function stripHtml(html: string): string {
 const sampleKey = (input: string, expected: string) =>
   `${input.replace(/\r\n?/g, '\n').trim()}\u0000${expected.replace(/\r\n?/g, '\n').trim()}`
 
-export default function SolvePage({ custom = false }: { custom?: boolean }) {
+/**
+ * The IDE. `custom` opens a Workshop problem and `learn` a Nexora Learn
+ * problem; both are judged on the problem's own tests without platform XP.
+ */
+export default function SolvePage({ custom: customProp = false, learn = false }: { custom?: boolean; learn?: boolean }) {
+  const custom = customProp || learn
   const { id = '' } = useParams()
   const navigate = useNavigate()
   const { refresh } = useAuth()
@@ -174,7 +181,7 @@ export default function SolvePage({ custom = false }: { custom?: boolean }) {
     { skip: custom },
   )
   const customApi = useApi<CustomProblemResponse>(
-    () => api.get<CustomProblemResponse>(`/api/custom-problems/${id}`),
+    () => api.get<CustomProblemResponse>(learn ? `/api/learn/problems/${id}` : `/api/custom-problems/${id}`),
     [id],
     { skip: !custom },
   )
@@ -190,7 +197,8 @@ export default function SolvePage({ custom = false }: { custom?: boolean }) {
   const statementApi = custom
     ? { data: adapted?.statement ?? null, loading: customApi.loading, error: customApi.error }
     : platformStatementApi
-  const storageId = custom ? `custom-${id}` : id
+  const storageId = learn ? `learn-${id}` : custom ? `custom-${id}` : id
+  const lessonHref = customApi.data?.problem.learn ? `/learn/dsa/${customApi.data.problem.learn.topic}/${customApi.data.problem.learn.page}` : '/learn'
   const langsApi = useApi<Language[]>(() => api.get<Language[]>('/api/languages'), [])
   // Only offer languages the judge can actually run here.
   const languages = useMemo(() => (langsApi.data ?? []).filter((l) => l.available !== false), [langsApi.data])
@@ -463,8 +471,9 @@ export default function SolvePage({ custom = false }: { custom?: boolean }) {
       if (!custom) void saveReplay(code)
       const xp = res.verdict === 'AC' && !alreadySolved && !custom ? XP_BY_RATING(problem?.rating ?? 0) : null
       setBanner({ verdict: res.verdict, xp, id: Date.now() })
+      if (learn && id) markLearn(codeKey(id), res.verdict === 'AC' ? 'solved' : 'attempted')
       if (res.verdict === 'AC') {
-        toast.success('Accepted!', xp ? `+${xp} XP awarded — nice solve.` : custom ? 'All workshop tests pass.' : 'Solved again — clean.')
+        toast.success('Accepted!', xp ? `+${xp} XP awarded — nice solve.` : learn ? 'All tests pass — marked solved in your course.' : custom ? 'All workshop tests pass.' : 'Solved again — clean.')
         if (!custom) {
           void refresh()
           problemApi.refetch()
@@ -480,7 +489,7 @@ export default function SolvePage({ custom = false }: { custom?: boolean }) {
     } finally {
       setSubmitting(false)
     }
-  }, [running, submitting, code, id, language, testcases, problem, toast, refresh, problemApi, custom, storageId, saveReplay])
+  }, [running, submitting, code, id, language, testcases, problem, toast, refresh, problemApi, custom, learn, storageId, saveReplay])
 
   /* Global shortcuts (Monaco handles its own via addCommand) */
   const runRef = useRef(handleRun)
@@ -644,12 +653,12 @@ export default function SolvePage({ custom = false }: { custom?: boolean }) {
 
   const toolbar = (
     <div className="card-neon flex flex-wrap items-center gap-2 px-3 py-2">
-      <Tooltip label={custom ? 'Back to workshop' : 'Back to problems'}>
+      <Tooltip label={learn ? 'Back to the lesson' : custom ? 'Back to workshop' : 'Back to problems'}>
         <Button
           variant="ghost"
           size="icon-sm"
-          onClick={() => navigate(custom ? '/workshop' : '/problems')}
-          aria-label={custom ? 'Back to workshop' : 'Back to problems'}
+          onClick={() => navigate(learn ? lessonHref : custom ? '/workshop' : '/problems')}
+          aria-label={learn ? 'Back to the lesson' : custom ? 'Back to workshop' : 'Back to problems'}
         >
           <ArrowLeft aria-hidden="true" />
         </Button>
