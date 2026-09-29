@@ -1,4 +1,7 @@
-import { Droplets, Image as ImageIcon, Palette, SunMoon } from 'lucide-react'
+import { useState } from 'react'
+import { Droplets, Image as ImageIcon, PanelBottom, Palette, SunMoon } from 'lucide-react'
+import { Button } from '@/components/ui'
+import { DockEditor } from '@/components/layout/DockEditor'
 import { Card, CardContent } from '@/components/ui'
 import { useTheme } from '@/context/ThemeContext'
 import {
@@ -42,6 +45,7 @@ function Row({
  *  account, so the look follows the user to any browser they sign in on. */
 export function LookPanel() {
   const { look, wallpaper, resolvedAccent } = useTheme()
+  const [dockOpen, setDockOpen] = useState(false)
   return (
     <Card>
       <CardContent className="divide-y divide-border px-5 py-4 md:px-6">
@@ -81,6 +85,13 @@ export function LookPanel() {
           }
         >
           <WallpaperGrid />
+        </Row>
+
+        <Row icon={<PanelBottom />} title="Dock" hint="Choose and order the icons in the Dock and the phone tab bar. You can also right-click the Dock.">
+          <Button variant="secondary" size="sm" onClick={() => setDockOpen(true)}>
+            Customize Dock…
+          </Button>
+          <DockEditor open={dockOpen} onClose={() => setDockOpen(false)} />
         </Row>
       </CardContent>
     </Card>

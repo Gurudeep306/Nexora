@@ -10,6 +10,7 @@ import { Deck } from './Deck'
 import { RouteProgress } from './RouteProgress'
 import { Wallpaper } from '../fx/Wallpaper'
 import { LookSync } from '../look/LookSync'
+import { DockSync } from './DockSync'
 import { cn } from '@/lib/utils'
 
 export function AppLayout() {
@@ -32,6 +33,7 @@ export function AppLayout() {
       </a>
       <Wallpaper />
       <LookSync />
+      <DockSync />
 
       <RouteProgress />
       <CommandPalette />
