@@ -267,8 +267,38 @@ for (int i = 0; i < n; i++) {
 }`,
       },
     },
-    { t: 'check', title: 'Check yourself', ids: ['arr-q-max-init', 'arr-q-loop-count', 'arr-q-trace-sum', 'arr-q-overflow', 'arr-q-second'] },
-    { t: 'practice', title: 'Practice', ids: ['arr-c-sum', 'arr-c-max-min', 'arr-c-second'] },
+    {
+      t: 'md',
+      md: `
+        ## Scanning from the right
+
+        Nothing says a traversal must go left to right. Some questions are about **what comes after** each element — "is this bigger than everything to its right?" — and those are natural right-to-left. Walking backwards, "everything to the right" is exactly "everything seen so far", so one running value (the maximum so far) answers the question for every index in a single pass.
+
+        An element is a **leader** if it is strictly greater than every element to its right. The last element is always a leader.
+      `,
+    },
+    { t: 'viz', algo: 'arr-leaders', caption: 'The dim band is everything to the right, summarised by one number: its maximum.' },
+    {
+      t: 'md',
+      md: `
+        ## One pass, one candidate: the majority vote
+
+        A **majority element** appears more than $n/2$ times. Counting every value needs a hash map (O(n) extra space). The **Boyer–Moore voting** algorithm needs two variables.
+
+        Picture each element as a vote. Whenever two *different* values meet, both are thrown away — they cancel. A value that holds more than half of all votes cannot be cancelled completely: even if every other vote is spent against it, some of its votes remain. So after one pass the survivor is the only possible majority.
+
+        The survivor is only a *candidate*: if there is no majority, some value still survives. A second pass counts it to confirm.
+      `,
+    },
+    { t: 'viz', algo: 'arr-majority', caption: 'The stack holds the candidate’s uncancelled votes. A different value pops one.' },
+    {
+      t: 'callout',
+      kind: 'interview',
+      title: 'Why interviewers like it',
+      md: `Majority vote is the classic "O(1) space" follow-up to a problem that looks like it needs counting. Be ready to explain **why** the survivor must be the majority (cancelling argument) and **why** a verification pass is still needed.`,
+    },
+    { t: 'check', title: 'Check yourself', ids: ['arr-q-max-init', 'arr-q-loop-count', 'arr-q-trace-sum', 'arr-q-overflow', 'arr-q-second', 'arr-q-fill-max', 'arr-q-leaders-trace', 'arr-q-majority-trace', 'arr-q-majority-verify'] },
+    { t: 'practice', title: 'Practice', ids: ['arr-c-sum', 'arr-c-max-min', 'arr-c-second', 'arr-c-leaders', 'arr-c-majority'] },
   ],
 }
 
@@ -349,7 +379,7 @@ export const insertDelete: Page = {
         \`vector::insert\` / \`erase\`, \`ArrayList.add(i, x)\` / \`remove(i)\`, Python's \`list.insert\` / \`del\` / \`pop(i)\`, and JavaScript's \`splice\` all shift elements internally. They are convenient, not free: calling \`list.insert(0, x)\` inside a loop turns an O(n) algorithm into O(n²). If you need fast insertion at **both ends**, use a deque (\`std::deque\`, \`ArrayDeque\`, \`collections.deque\`).
       `,
     },
-    { t: 'check', title: 'Check yourself', ids: ['arr-q-insert-moves', 'arr-q-insert-order', 'arr-q-trace-insert', 'arr-q-trace-delete', 'arr-q-pop0'] },
+    { t: 'check', title: 'Check yourself', ids: ['arr-q-insert-moves', 'arr-q-insert-order', 'arr-q-trace-insert', 'arr-q-trace-delete', 'arr-q-pop0', 'arr-q-fill-insert', 'arr-q-match-ops'] },
     { t: 'practice', title: 'Practice', ids: ['arr-c-insert', 'arr-c-delete'] },
   ],
 }
@@ -519,7 +549,7 @@ d = deque(a); d.rotate(k)   # O(k)`,
 }`,
       },
     },
-    { t: 'check', title: 'Check yourself', ids: ['arr-q-reverse-swaps', 'arr-q-trace-rotate', 'arr-q-rotate-mod', 'arr-q-rotate-steps', 'arr-q-rotate-left'] },
+    { t: 'check', title: 'Check yourself', ids: ['arr-q-reverse-swaps', 'arr-q-trace-rotate', 'arr-q-rotate-mod', 'arr-q-rotate-steps', 'arr-q-rotate-left', 'arr-q-fill-reverse'] },
     { t: 'practice', title: 'Practice', ids: ['arr-c-reverse', 'arr-c-rotate'] },
   ],
 }

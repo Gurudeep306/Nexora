@@ -7,6 +7,8 @@ export interface ParsedCode {
 }
 
 const MARK = /\s*(?:\/\/|#|--)\s*@([\w,.-]+)\s*$/
+/** A marker after a real comment: `x = 1   // 1 op   @init` keeps "// 1 op". */
+const MARK_NOTE = /(\/\/|#)(\s*)([^@]*?\S)\s+@([\w,.-]+)\s*$/
 
 /**
  * Code is authored with trailing step markers, e.g.
@@ -21,9 +23,13 @@ export function parseCode(src: string): ParsedCode {
   const steps = new Map<string, number[]>()
   raw.forEach((line, i) => {
     const m = MARK.exec(line)
+    const n = m ? null : MARK_NOTE.exec(line)
     if (m) {
       for (const s of m[1].split(',')) steps.set(s, [...(steps.get(s) ?? []), i])
       lines.push(line.slice(0, m.index).replace(/\s+$/, ''))
+    } else if (n) {
+      for (const s of n[4].split(',')) steps.set(s, [...(steps.get(s) ?? []), i])
+      lines.push(line.slice(0, n.index) + n[1] + n[2] + n[3])
     } else lines.push(line)
   })
   return { lines, steps }

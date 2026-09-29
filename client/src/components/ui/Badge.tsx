@@ -42,6 +42,6 @@ export const DIFFICULTY_VARIANT: Record<string, BadgeProps['variant']> = {
 }
 
 export function DifficultyBadge({ difficulty, rating }: { difficulty?: string; rating?: number }) {
-  const label = difficulty ?? (rating ? (rating < 1200 ? 'easy' : rating < 1600 ? 'medium' : 'destructive') : 'unknown')
+  const label = difficulty ?? (rating ? (rating < 1200 ? 'easy' : rating < 1600 ? 'medium' : 'hard') : 'unknown')
   return <Badge variant={DIFFICULTY_VARIANT[label.toLowerCase()] ?? 'secondary'}>{label}</Badge>
 }

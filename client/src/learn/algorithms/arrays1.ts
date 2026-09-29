@@ -270,7 +270,7 @@ int insert_at(int *arr, int n, int k, int x) {
       a.ptr('k', pos)
       t.step('start', `Insert ${x} at index ${pos}. Every element from index ${pos} to ${n - 1} has to move one slot right to open a gap — ${n - pos} move${n - pos === 1 ? '' : 's'}.`, { n, k: pos, x: x as number })
       for (let j = n - 1; j >= pos; j--) {
-        a.clear().ptr('j', j).role(j, 'active')
+        a.clear().ptr('j', j).role(j, 'active').arrow(j, j + 1, 'copy')
         t.step('loop', `j = ${j}: move from the right end first, so nothing is overwritten before it is copied.`, { n, k: pos, j })
         a.move(j + 1, j)
         a.role(j + 1, 'swap')
@@ -350,7 +350,7 @@ int delete_at(int *arr, int n, int k) {
       a.set(pos, null)
       for (let j = pos; j < n - 1; j++) {
         a.clear().ptr('j', j)
-        a.role(j + 1, 'active')
+        a.role(j + 1, 'active').arrow(j + 1, j, 'copy')
         t.step('loop', `j = ${j}: fill the gap at ${j} with its right neighbour.`, { n, k: pos, j })
         a.move(j, j + 1)
         a.clear().ptr('j', j).role(j, 'swap')
@@ -518,6 +518,7 @@ void reverse_range(int *arr, int lo, int hi) {
         if (lo >= hi) break
         a.role(lo, 'swap').role(hi, 'swap')
         a.swap(lo, hi)
+        a.arrow(lo, hi, undefined, 'swap').arrow(hi, lo, undefined, 'swap')
         t.step('swap', `Swap arr[${lo}] and arr[${hi}].`, { lo, hi })
         lo++
         hi--
@@ -601,6 +602,7 @@ void rotate_right(int *a, int n, int k) {
         while (lo < hi) {
           a.clear().role(lo, 'swap').role(hi, 'swap')
           a.swap(lo, hi)
+          a.arrow(lo, hi, undefined, 'swap').arrow(hi, lo, undefined, 'swap')
           t.step(step, `Swap positions ${lo} and ${hi}.`, { n, k: kk, lo, hi })
           lo++
           hi--

@@ -31,6 +31,14 @@ export interface Cell {
   v: Scalar
 }
 
+/** A curved arrow between two cells: "this value goes there", "these two are added". */
+export interface Arrow {
+  from: number
+  to: number
+  label?: string
+  role?: Role
+}
+
 export interface Range {
   from: number
   to: number // inclusive
@@ -52,6 +60,7 @@ export interface ArrayState {
   bars?: boolean
   /** Show memory addresses above the cells: base + i * size. */
   address?: { base: number; size: number }
+  arrows?: Arrow[]
 }
 
 export interface VarsState {
@@ -61,6 +70,8 @@ export interface VarsState {
   vars: Record<string, Scalar>
   /** Names whose value changed in this frame (flash). */
   changed?: string[]
+  /** The value each changed name had before this frame. */
+  prev?: Record<string, Scalar>
 }
 
 export interface StackState {
@@ -89,6 +100,20 @@ export interface GridState {
   colLabels?: string[]
 }
 
+/**
+ * A cost meter: a running count (operations, copies, memory cells) drawn as a
+ * bar against reference marks such as n, n log n and n², so growth is seen,
+ * not just computed.
+ */
+export interface MeterState {
+  kind: 'meter'
+  id: string
+  label?: string
+  value: number
+  marks?: { label: string; value: number }[]
+  role?: Role
+}
+
 export interface OutputState {
   kind: 'output'
   id: string
@@ -96,7 +121,7 @@ export interface OutputState {
   lines: string[]
 }
 
-export type Structure = ArrayState | VarsState | StackState | QueueState | GridState | OutputState
+export type Structure = ArrayState | VarsState | StackState | QueueState | GridState | OutputState | MeterState
 
 export interface Frame {
   /** Step id; code lines tagged `@step` light up. */
@@ -142,6 +167,8 @@ export interface Algorithm {
   code: Partial<Record<Lang, string>>
   /** Runs the algorithm on the inputs and records the frames. */
   run: (inp: Inputs) => Frame[]
+  /** What each colour means in this animation, where the generic word would mislead. */
+  legend?: Partial<Record<Role, string>>
   /** Random input generator (for the shuffle button). */
   random?: () => Record<string, string>
 }

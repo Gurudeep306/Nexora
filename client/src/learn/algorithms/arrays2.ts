@@ -92,7 +92,7 @@ long long range_sum(const long long *P, int l, int r) {
         t.step('loop', `i = ${i}.`, { i, 'P[i]': s })
         s += v[i]
         P.push(s)
-        P.clear().role(i + 1, 'write')
+        P.clear().role(i + 1, 'write').arrow(i, i + 1, `+${v[i]}`)
         t.step('build', `P[${i + 1}] = P[${i}] + arr[${i}] = ${s - v[i]} + ${v[i]} = ${s}. Each entry reuses the previous one, so building is O(n).`, { i, 'P[i+1]': s })
       }
       a.clear().ptr('i', null).range([{ from: L, to: R, role: 'best', label: `arr[${L}..${R}]` }])
@@ -304,7 +304,7 @@ int dedupe(int *a, int n) {
         t.step('cmp', `Is arr[r] = ${a.get(r)} different from the last kept value arr[w−1] = ${a.get(w - 1)}? ${same ? 'No — a duplicate, skip it.' : 'Yes — keep it.'}`, { w, r })
         if (!same) {
           a.set(w, a.get(r) as number)
-          a.clear().role(w, 'write').ptr('w', w).ptr('r', r)
+          a.clear().role(w, 'write').ptr('w', w).ptr('r', r).arrow(r, w, 'copy')
           w++
           a.range([{ from: 0, to: w - 1, role: 'done', label: 'kept' }])
           t.step('write', `Copy it to arr[${w - 1}] and advance w to ${w}.`, { w, r })
@@ -390,6 +390,7 @@ void move_zeroes(int *a, int n) {
         if (nz) {
           a.role(w, 'swap').role(r, 'swap')
           a.swap(w, r)
+          a.arrow(w, r, undefined, 'swap').arrow(r, w, undefined, 'swap')
           w++
           a.ptr('w', w).range([{ from: 0, to: w - 1, role: 'done', label: 'placed' }])
           t.step('swap', w - 1 === r ? `w = r, so the swap does nothing; advance w to ${w}.` : `Swap arr[${w - 1}] and arr[${r}], advance w to ${w}.`, { w, r })

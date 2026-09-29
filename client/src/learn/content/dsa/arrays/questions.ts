@@ -455,6 +455,186 @@ const concept: Question[] = [
     accept: ['7 x 3', '7x3', '7 × 3', '7×3'],
     explain: 'Rows become columns: 7 × 3.',
   },
+
+  // ── Added: fill-the-code, matching, new techniques
+  {
+    id: 'arr-q-fill-max', topic: T, page: 'traversal', kind: 'fill', difficulty: 'easy',
+    title: 'Complete the maximum',
+    prompt: 'Fill in the blanks so the function returns the largest value — it must work even when every value is negative.',
+    code: `
+best = [[0]]
+for i in range(1, len(a)):
+    if a[i] [[1]] best:
+        best = a[i]
+return best`,
+    blanks: [['a[0]'], ['>', '>=']],
+    hint: 'Start from a value that is certainly in the array.',
+    explain: 'Start with `a[0]` (never 0 or a made-up value), then replace `best` whenever `a[i] > best`. `>=` also works — it only changes *which* copy of an equal maximum you remember.',
+  },
+  {
+    id: 'arr-q-leaders-trace', topic: T, page: 'traversal', kind: 'array', difficulty: 'medium',
+    title: 'Find the leaders',
+    prompt: 'List the leaders of `[7, 10, 4, 10, 6, 5, 2]` from left to right. (A leader is **strictly** greater than everything to its right.)',
+    answer: [10, 6, 5, 2],
+    hint: 'Walk from the right with a running maximum.',
+    explain: 'From the right: 2 (max −∞) → leader; 5 > 2 → leader; 6 > 5 → leader; 10 > 6 → leader; 4 < 10; 10 is **not** > 10; 7 < 10. Left to right: 10, 6, 5, 2 — the second 10.',
+  },
+  {
+    id: 'arr-q-majority-trace', topic: T, page: 'traversal', kind: 'numeric', difficulty: 'medium',
+    title: 'Trace the vote',
+    prompt: 'Run Boyer–Moore voting on `[3, 3, 4, 2, 4, 4, 2, 4, 4]`. What is `count` at the end of the pass?',
+    answer: 3,
+    hint: 'count = 0 means the next value becomes the candidate.',
+    explain: '3(c=1) 3(2) 4(1) 2(0) 4 adopted (1) 4(2) 2(1) 4(2) 4(3). Candidate 4, count 3. The count is not the number of 4s (there are 5) — it is the votes left after cancelling.',
+  },
+  {
+    id: 'arr-q-majority-verify', topic: T, page: 'traversal', kind: 'mcq', difficulty: 'medium',
+    title: 'Why the second pass?',
+    prompt: 'After the voting pass on `[1, 2, 3]`, the candidate is…',
+    options: ['1', '2', '3, even though it is not a majority', 'None — the pass detects that there is no majority'],
+    answer: 2,
+    explain: '1 is adopted, 2 cancels it, 3 is adopted with count 1. The survivor is 3 — but it appears once out of three. Voting only guarantees "if a majority exists, it is the survivor", so a second counting pass must confirm it.',
+  },
+  {
+    id: 'arr-q-fill-insert', topic: T, page: 'insert-delete', kind: 'fill', difficulty: 'easy',
+    title: 'Complete the insertion',
+    prompt: 'Insert `x` at index `k` of an array holding `n` values (there is room for one more).',
+    code: `
+for (int j = n - 1; j >= k; j--)
+    arr[[[0]]] = arr[j];
+arr[k] = x;
+n[[1]];`,
+    blanks: [['j + 1'], ['++', '+= 1', '=n+1']],
+    hint: 'Each value moves one slot to the right.',
+    explain: '`arr[j + 1] = arr[j]` shifts each value right, from the end backwards so nothing is overwritten; finally the size grows: `n++`.',
+  },
+  {
+    id: 'arr-q-match-ops', topic: T, page: 'insert-delete', kind: 'match', difficulty: 'easy',
+    title: 'Match the cost',
+    prompt: 'Match each array operation with its time cost.',
+    left: ['Read `arr[i]`', 'Insert at the front', 'Append to a dynamic array', 'Find a value in an unsorted array', 'Find a value in a sorted array'],
+    right: ['O(1)', 'O(n) — everything shifts', 'O(1) amortized', 'O(n) — may check everything', 'O(log n)'],
+    explain: 'Indexing is address arithmetic; inserting at the front shifts all n values; appends are O(1) on average thanks to doubling; unsorted search is linear; sorted search can halve the range each step (binary search).',
+  },
+  {
+    id: 'arr-q-fill-reverse', topic: T, page: 'reverse-rotate', kind: 'fill', difficulty: 'easy',
+    title: 'Complete the reversal',
+    prompt: 'Reverse the list in place with two pointers.',
+    code: `
+lo, hi = 0, len(a) - 1
+while lo [[0]] hi:
+    a[lo], a[hi] = a[hi], a[lo]
+    lo += 1
+    [[1]]`,
+    blanks: [['<', '!='], ['hi -= 1', 'hi = hi - 1']],
+    explain: 'Swap while `lo < hi`, moving both pointers inward. With `<=` the middle element would be swapped with itself (harmless); `!=` breaks for even lengths when the pointers cross — so `<` is the safe choice.',
+  },
+  {
+    id: 'arr-q-diff-trace', topic: T, page: 'prefix-sums', kind: 'array', difficulty: 'medium',
+    title: 'Build the difference array',
+    prompt: 'n = 5 and D starts as six zeros. Apply "add 3 to [0, 2]" and then "add 2 to [1, 4]". What is D (all 6 entries)?',
+    answer: [3, 2, 0, -3, 0, -2],
+    hint: 'Each update touches D[l] and D[r + 1] only.',
+    explain: 'First update: D[0] += 3, D[3] −= 3. Second: D[1] += 2, D[5] −= 2. So D = [3, 2, 0, −3, 0, −2]; its running sum [3, 5, 5, 2, 2] is what each index received.',
+  },
+  {
+    id: 'arr-q-fill-prefix', topic: T, page: 'prefix-sums', kind: 'fill', difficulty: 'medium',
+    title: 'Complete the prefix sums',
+    prompt: 'Fill in the build step and the O(1) range query.',
+    code: `
+P[0] = 0;
+for (int i = 0; i < n; i++)
+    P[i + 1] = [[0]];
+// sum of arr[l..r], inclusive
+long long s = [[1]];`,
+    blanks: [['P[i] + arr[i]', 'arr[i] + P[i]'], ['P[r + 1] - P[l]', '-P[l] + P[r + 1]']],
+    explain: 'Each prefix extends the previous one by one element. The range l…r is "first r + 1 elements" minus "first l elements": `P[r + 1] − P[l]`.',
+  },
+  {
+    id: 'arr-q-dutch-trace', topic: T, page: 'two-pointers', kind: 'array', difficulty: 'medium',
+    title: 'One step of the flag',
+    prompt: 'Run **one** iteration of the Dutch national flag loop on `[2, 0, 1, 2, 0]` (lo = mid = 0, hi = 4). What does the array look like?',
+    answer: [0, 0, 1, 2, 2],
+    explain: 'a[mid] = 2, so it is swapped with a[hi]: positions 0 and 4 trade places → [0, 0, 1, 2, 2], and hi becomes 3. mid stays at 0 because the 0 that arrived still has to be looked at.',
+  },
+  {
+    id: 'arr-q-dutch-mid', topic: T, page: 'two-pointers', kind: 'mcq', difficulty: 'medium',
+    title: 'Why mid stays put',
+    prompt: 'In the Dutch flag algorithm, after swapping a 2 with `a[hi]`, why is `mid` **not** incremented?',
+    options: [
+      'The value swapped in from hi has never been examined — it could be 0, 1 or 2',
+      'Incrementing mid would make the loop run forever',
+      'mid must always equal lo',
+      'It is only an optimisation; incrementing would also be correct',
+    ],
+    answer: 0,
+    explain: 'Everything in (hi, n) is 2 and everything below mid is 0 or 1 — but a[hi] itself was in the unknown zone. After the swap it sits at mid, still unknown, so the next iteration must inspect it. After swapping with lo, by contrast, the value that comes back is a known 1 (or the same 0), so mid can advance.',
+  },
+  {
+    id: 'arr-q-merge-cmp', topic: T, page: 'two-pointers', kind: 'numeric', difficulty: 'medium',
+    title: 'Comparisons in a merge',
+    prompt: 'How many comparisons `A[i] <= B[j]` does the merge make on A = `[1, 2, 3]` and B = `[4, 5, 6]`?',
+    answer: 3,
+    hint: 'Comparisons stop as soon as one array runs out.',
+    explain: '1≤4, 2≤4, 3≤4 — then A is used up and B is copied without comparing. The worst case is n + m − 1 comparisons (for interleaved values), the best is min(n, m).',
+  },
+  {
+    id: 'arr-q-fill-merge', topic: T, page: 'two-pointers', kind: 'fill', difficulty: 'medium',
+    title: 'Complete the merge',
+    prompt: 'Complete the merge of sorted A (size n) and B (size m) into C.',
+    code: `
+while (i < n && j < m) {
+    if (A[i] [[0]] B[j]) C[k++] = A[i++];
+    else                 C[k++] = [[1]];
+}
+while (i < n) C[k++] = [[2]];
+while (j < m) C[k++] = B[j++];`,
+    blanks: [['<=', '<'], ['B[j++]'], ['A[i++]']],
+    hint: 'Take from A when its front is not larger.',
+    explain: 'Take the smaller front, advancing that pointer. `<=` takes from A on ties, which keeps the merge **stable** (equal values keep their original order) — that is why merge sort uses it. `<` still merges correctly, but is not stable.',
+  },
+  {
+    id: 'arr-q-match-technique', topic: T, page: 'sliding-window', kind: 'match', difficulty: 'medium',
+    title: 'Pick the technique',
+    prompt: 'Match each problem with the technique that solves it in linear time (or O(1) per query).',
+    left: [
+      'Many sum-of-range queries on an array that never changes',
+      'Shortest subarray with sum ≥ S (all values positive)',
+      'Two values with sum T in a **sorted** array',
+      'Largest sum of a contiguous subarray (values may be negative)',
+      'Many "add v to range [l, r]" updates, then print the array',
+    ],
+    right: ['Prefix sums', 'Sliding window', 'Two pointers from both ends', 'Kadane', 'Difference array'],
+    explain: 'Static range sums → prefix sums. Positive values make the window monotone → sliding window. Sorted order lets one pointer at each end discard values → two pointers. Negative values break windows; Kadane keeps "best sum ending here". Batched range updates → difference array.',
+  },
+  {
+    id: 'arr-q-fill-kadane', topic: T, page: 'kadane', kind: 'fill', difficulty: 'medium',
+    title: 'Complete Kadane',
+    prompt: 'Complete Kadane’s algorithm.',
+    code: `
+cur = best = a[0]
+for x in a[1:]:
+    cur = max(x, [[0]])
+    best = [[1]]`,
+    blanks: [['cur + x', 'x + cur'], ['max(best, cur)', 'max(cur, best)']],
+    hint: 'cur is the best sum of a subarray that ends exactly at x.',
+    explain: 'A subarray ending at x either starts fresh at x or extends the best one ending just before: `max(x, cur + x)`. The answer is the best of those over all positions.',
+  },
+  {
+    id: 'arr-q-spiral-order', topic: T, page: '2d-arrays', kind: 'array', difficulty: 'easy',
+    title: 'Spiral of a 3 × 3',
+    prompt: 'The matrix is\n\n```\n1 2 3\n4 5 6\n7 8 9\n```\n\nWrite its clockwise spiral order.',
+    answer: [1, 2, 3, 6, 9, 8, 7, 4, 5],
+    explain: 'Top row 1 2 3, right column 6 9, bottom row backwards 8 7, left column upward 4, then the inner ring is just 5.',
+  },
+  {
+    id: 'arr-q-spiral-guard', topic: T, page: '2d-arrays', kind: 'mcq', difficulty: 'hard',
+    title: 'The missing guard',
+    prompt: 'Remove the `if top <= bottom` check before the bottom row. What does the spiral print for the 1 × 3 matrix `[[1, 2, 3]]`?',
+    options: ['1 2 3', '1 2 3 2 1', '1 2 3 3', 'It crashes'],
+    answer: 1,
+    explain: 'After the top row, top = 1 > bottom = 0 and right = 1. Without the guard the "bottom row" loop walks row 0 again from column 1 down to 0, printing 2 1 a second time: 1 2 3 2 1.',
+  },
 ]
 
 /* Coding problems — each opens the judge. */
@@ -484,6 +664,11 @@ const coding: Question[] = [
   code('arr-c-kadane', 'kadane', 'Maximum subarray sum', 'medium', 'The largest sum of a non-empty contiguous subarray.'),
   code('arr-c-transpose', '2d-arrays', 'Transpose a matrix', 'easy', 'Print the transpose of an R × C matrix.'),
   code('arr-c-spiral', '2d-arrays', 'Spiral order', 'medium', 'Print the matrix elements in clockwise spiral order.'),
+  code('arr-c-rotate-matrix', '2d-arrays', 'Rotate a square matrix', 'medium', 'Rotate an N × N matrix 90° clockwise in place.'),
+  code('arr-c-leaders', 'traversal', 'Leaders of an array', 'easy', 'Print every element greater than all elements to its right.'),
+  code('arr-c-majority', 'traversal', 'Majority element', 'medium', 'Print the value that appears more than n/2 times, or -1 — in O(1) extra space.'),
+  code('arr-c-dutch', 'two-pointers', 'Sort 0s, 1s and 2s', 'medium', 'Sort in one pass without counting.'),
+  code('arr-c-merge', 'two-pointers', 'Merge two sorted arrays', 'easy', 'Merge A and B into one sorted array in O(n + m).'),
 ]
 
 export const questions: Question[] = [...concept, ...coding]

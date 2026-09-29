@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
-import { motion } from 'motion/react'
-import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, Clock, ListChecks } from 'lucide-react'
+import { motion, useScroll, useSpring } from 'motion/react'
+import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, ChevronDown, Clock, Code2, ListChecks, PlayCircle, HelpCircle } from 'lucide-react'
 import { ErrorState, LoadingBlock } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { isDone, mark, pageKey, useProgress } from '../progress'
@@ -19,6 +19,10 @@ export default function TopicPage() {
   const { items } = useProgress()
   const navigate = useNavigate()
   const end = useRef<HTMLDivElement>(null)
+  const [navFor, setNavFor] = useState<string | null>(null)
+  const navOpen = navFor != null && navFor === (pageId ?? '')
+  const { scrollYProgress } = useScroll()
+  const readBar = useSpring(scrollYProgress, { stiffness: 200, damping: 30 })
 
   const pageIndex = topic ? Math.max(0, topic.pages.findIndex((p) => p.id === pageId)) : 0
   const page = topic?.pages[pageIndex]
@@ -50,9 +54,13 @@ export default function TopicPage() {
   const next = topic.pages[pageIndex + 1]
   const nonCode = topic.questions.filter((q) => q.kind !== 'code').length
   const code = topic.questions.length - nonCode
+  const vizCount = page.blocks.filter((b) => b.t === 'viz').length
+  const checkCount = page.blocks.reduce((n, b) => n + (b.t === 'check' ? b.ids.length : 0), 0)
+  const practiceCount = page.blocks.reduce((n, b) => n + (b.t === 'practice' ? b.ids.length : 0), 0)
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[250px_minmax(0,1fr)]">
+    <div className="grid gap-6 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-8">
+      <motion.div className="learn-readbar fixed inset-x-0 top-0 z-[60] h-[3px] origin-left" style={{ scaleX: readBar }} aria-hidden="true" />
       {/* sidebar */}
       <aside className="lg:sticky lg:top-20 lg:max-h-[calc(100dvh-7rem)] lg:self-start lg:overflow-y-auto">
         <Link to="/learn" className="mb-3 inline-flex items-center gap-1.5 text-[12.5px] text-text-muted !no-underline hover:text-text-primary">
@@ -67,7 +75,17 @@ export default function TopicPage() {
           <p className="mt-1.5 mb-3 font-mono text-[11px] text-text-muted">
             {read}/{topic.pages.length} pages read
           </p>
-          <nav className="-mx-2 space-y-0.5" aria-label="Pages">
+          <button
+            type="button"
+            onClick={() => setNavFor(navOpen ? null : (pageId ?? ''))}
+            aria-expanded={navOpen}
+            className="mb-2 flex w-full cursor-pointer items-center gap-2 rounded-xl bg-bg-surface-2 px-3 py-2 text-left text-[13px] text-text-primary ring-1 ring-border hover:!scale-100 lg:hidden"
+          >
+            <span className="font-mono text-[11px] text-accent-brand">{pageIndex + 1}.</span>
+            <span className="min-w-0 flex-1 truncate font-medium">{page.title}</span>
+            <ChevronDown className={cn('size-4 text-text-muted transition-transform', navOpen && 'rotate-180')} />
+          </button>
+          <nav className={cn('-mx-2 space-y-0.5', !navOpen && 'hidden lg:block')} aria-label="Pages">
             {topic.pages.map((p, i) => {
               const done = isDone(items[pageKey(topic.id, p.id)])
               const on = i === pageIndex
@@ -114,6 +132,25 @@ export default function TopicPage() {
           </p>
           <h2 className="mb-2 !text-[30px] leading-tight font-bold tracking-tight text-text-primary sm:!text-[36px]">{page.title}</h2>
           <p className="mb-0 text-[16px] leading-relaxed text-text-secondary">{page.summary}</p>
+          {(vizCount > 0 || checkCount > 0 || practiceCount > 0) && (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {vizCount > 0 && (
+                <span className="learn-pill">
+                  <PlayCircle className="size-3.5" /> {vizCount} animation{vizCount === 1 ? '' : 's'}
+                </span>
+              )}
+              {checkCount > 0 && (
+                <span className="learn-pill">
+                  <HelpCircle className="size-3.5" /> {checkCount} question{checkCount === 1 ? '' : 's'}
+                </span>
+              )}
+              {practiceCount > 0 && (
+                <span className="learn-pill">
+                  <Code2 className="size-3.5" /> {practiceCount} coding problem{practiceCount === 1 ? '' : 's'}
+                </span>
+              )}
+            </div>
+          )}
         </header>
 
         <div className="space-y-6">

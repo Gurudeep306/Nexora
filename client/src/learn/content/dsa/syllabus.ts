@@ -15,8 +15,8 @@ export const DSA_UNITS: { id: string; title: string; blurb: string }[] = [
 ]
 
 export const DSA_TOPICS: SyllabusEntry[] = [
-  { id: 'arrays', unit: 'foundations', title: 'Arrays', blurb: 'Memory, traversal, shifting, rotation, dynamic arrays, prefix sums, two pointers, sliding windows, Kadane, 2D.', pages: 12, load: () => import('./arrays').then((m) => m.default) },
-  { id: 'complexity', unit: 'foundations', title: 'Complexity & Big-O', blurb: 'Counting steps, growth rates, best/worst/average and amortized cost.' },
+  { id: 'arrays', unit: 'foundations', title: 'Arrays', blurb: 'Memory, traversal, leaders, majority vote, shifting, rotation, dynamic arrays, prefix and difference arrays, two and three pointers, merging, sliding windows, Kadane, 2D.', pages: 12, load: () => import('./arrays').then((m) => m.default) },
+  { id: 'complexity', unit: 'foundations', title: 'Complexity & Big-O', blurb: 'Counting steps, Big-O/Ω/Θ, loops and logs, growth classes, constraints, cases, space, amortized cost, recurrences.', pages: 11, load: () => import('./complexity').then((m) => m.default) },
   { id: 'strings', unit: 'foundations', title: 'Strings', blurb: 'Characters, encodings, palindromes, anagrams, pattern matching basics.' },
   { id: 'recursion', unit: 'foundations', title: 'Recursion', blurb: 'The call stack, base cases, recursion trees and memoisation.' },
   { id: 'bits', unit: 'foundations', title: 'Bit manipulation', blurb: 'Binary, masks, XOR tricks and subsets.' },

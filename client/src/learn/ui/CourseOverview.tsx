@@ -31,7 +31,7 @@ export function CourseOverview() {
             {[
               { icon: Clapperboard, label: 'Step-by-step animations', sub: 'data structures, line by line' },
               { icon: Languages, label: '6 languages', sub: 'pseudo · C++ · Java · Python · JS · C' },
-              { icon: ListChecks, label: 'Question bank', sub: 'MCQ, predict, order, numeric…' },
+              { icon: ListChecks, label: 'Question bank', sub: 'MCQ, fill the code, match, order, predict…' },
               { icon: Code2, label: 'Judged problems', sub: 'hidden tests, any language' },
             ].map((f) => (
               <div key={f.label} className="rounded-2xl bg-bg-surface-2 p-3.5 ring-1 ring-border">

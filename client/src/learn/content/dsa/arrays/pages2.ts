@@ -91,7 +91,8 @@ for (int i = 0; i < n; i++) { run += D[i]; a[i] += run; }
 free(D);`,
       },
     },
-    { t: 'check', title: 'Check yourself', ids: ['arr-q-prefix-formula', 'arr-q-prefix-build', 'arr-q-prefix-query', 'arr-q-prefix-queries-cost', 'arr-q-diff'] },
+    { t: 'viz', algo: 'arr-diff', caption: 'Each update touches just two cells of D. The final running sum hands every index its total. Try your own updates as "l r v; l r v".' },
+    { t: 'check', title: 'Check yourself', ids: ['arr-q-prefix-formula', 'arr-q-prefix-build', 'arr-q-prefix-query', 'arr-q-prefix-queries-cost', 'arr-q-diff', 'arr-q-diff-trace', 'arr-q-fill-prefix'] },
     { t: 'practice', title: 'Practice', ids: ['arr-c-range-sum', 'arr-c-equilibrium', 'arr-c-range-add'] },
   ],
 }
@@ -205,8 +206,35 @@ export const twoPointers: Page = {
       title: 'Say the invariant',
       md: `In an interview, don't just move pointers — state the **invariant**: "everything left of \`w\` is final", or "no pair outside \`[lo, hi]\` can sum to T". The invariant is the proof that the O(n) scan is correct, and naming it is what separates a guess from a solution.`,
     },
-    { t: 'check', title: 'Check yourself', ids: ['arr-q-2p-why', 'arr-q-2p-trace', 'arr-q-dedupe-result', 'arr-q-2p-order', 'arr-q-2p-sorted-needed'] },
-    { t: 'practice', title: 'Practice', ids: ['arr-c-pair-sum', 'arr-c-dedupe', 'arr-c-move-zeroes'] },
+    {
+      t: 'md',
+      md: `
+        ## Three pointers: the Dutch national flag
+
+        Sorting an array that holds only **0s, 1s and 2s** does not need a general sort. Keep three pointers and four zones:
+
+        | zone | indices | contains |
+        |---|---|---|
+        | 0s | \`[0, lo)\` | only 0 |
+        | 1s | \`[lo, mid)\` | only 1 |
+        | unknown | \`[mid, hi]\` | not yet looked at |
+        | 2s | \`(hi, n)\` | only 2 |
+
+        Look at \`a[mid]\`: a **0** is swapped to \`lo\` (both zones grow), a **1** is already in place (\`mid++\`), a **2** is swapped to \`hi\` (\`hi--\`, but \`mid\` stays because the value that came back is unknown). The unknown zone shrinks by one every step, so it is one pass.
+      `,
+    },
+    { t: 'viz', algo: 'arr-dutch-flag', caption: 'Green, cyan and gold bands are the finished zones; the gap between them is still unknown.' },
+    {
+      t: 'md',
+      md: `
+        ## Same direction, two arrays: merging
+
+        Two pointers can also walk **two different arrays**. To merge sorted \`A\` and \`B\`, the smallest remaining value is always at the front of one of them — compare \`A[i]\` and \`B[j]\`, take the smaller, advance that pointer. When one array runs out, the rest of the other is copied as is. This is exactly the "merge" step of merge sort.
+      `,
+    },
+    { t: 'viz', algo: 'arr-merge-sorted', caption: 'Every comparison places one value for good. Ties take from A first, which keeps equal values in order (stability).' },
+    { t: 'check', title: 'Check yourself', ids: ['arr-q-2p-why', 'arr-q-2p-trace', 'arr-q-dedupe-result', 'arr-q-2p-order', 'arr-q-2p-sorted-needed', 'arr-q-dutch-trace', 'arr-q-dutch-mid', 'arr-q-merge-cmp', 'arr-q-fill-merge'] },
+    { t: 'practice', title: 'Practice', ids: ['arr-c-pair-sum', 'arr-c-dedupe', 'arr-c-move-zeroes', 'arr-c-dutch', 'arr-c-merge'] },
   ],
 }
 
@@ -317,7 +345,7 @@ export const slidingWindow: Page = {
 }`,
       },
     },
-    { t: 'check', title: 'Check yourself', ids: ['arr-q-window-update', 'arr-q-window-trace', 'arr-q-window-on', 'arr-q-window-negative', 'arr-q-window-count'] },
+    { t: 'check', title: 'Check yourself', ids: ['arr-q-window-update', 'arr-q-window-trace', 'arr-q-window-on', 'arr-q-window-negative', 'arr-q-window-count', 'arr-q-match-technique'] },
     { t: 'practice', title: 'Practice', ids: ['arr-c-window-max', 'arr-c-min-len', 'arr-c-longest-ones'] },
   ],
 }
@@ -408,7 +436,7 @@ export const kadane: Page = {
 }`,
       },
     },
-    { t: 'check', title: 'Check yourself', ids: ['arr-q-kadane-meaning', 'arr-q-kadane-trace', 'arr-q-kadane-neg', 'arr-q-kadane-restart'] },
+    { t: 'check', title: 'Check yourself', ids: ['arr-q-kadane-meaning', 'arr-q-kadane-trace', 'arr-q-kadane-neg', 'arr-q-kadane-restart', 'arr-q-fill-kadane'] },
     { t: 'practice', title: 'Practice', ids: ['arr-c-kadane'] },
   ],
 }
@@ -484,8 +512,8 @@ for (int r = 0; r < R; r++)
       title: 'Python’s shared-row trap',
       md: `\`[[0] * C] * R\` builds **one** row and puts **R references to it** in the outer list — writing \`M[0][0] = 1\` changes the first element of every row. Always build rows in a comprehension: \`[[0] * C for _ in range(R)]\`.`,
     },
-    { t: 'check', title: 'Check yourself', ids: ['arr-q-rowmajor', 'arr-q-rowmajor-col', 'arr-q-python-rows', 'arr-q-transpose-shape'] },
-    { t: 'practice', title: 'Practice', ids: ['arr-c-transpose', 'arr-c-spiral'] },
+    { t: 'check', title: 'Check yourself', ids: ['arr-q-rowmajor', 'arr-q-rowmajor-col', 'arr-q-python-rows', 'arr-q-transpose-shape', 'arr-q-spiral-order', 'arr-q-spiral-guard'] },
+    { t: 'practice', title: 'Practice', ids: ['arr-c-transpose', 'arr-c-spiral', 'arr-c-rotate-matrix'] },
   ],
 }
 

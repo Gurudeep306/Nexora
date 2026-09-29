@@ -15,6 +15,8 @@ interface Base {
   prompt: string
   /** Shown after answering (right or wrong). */
   explain: string
+  /** A nudge shown on request, before the answer. */
+  hint?: string
   tags?: string[]
 }
 
@@ -26,6 +28,10 @@ export type Question =
   | (Base & { kind: 'order'; items: string[] }) // items in the correct order
   | (Base & { kind: 'array'; answer: (number | string)[]; placeholder?: string }) // "what does the array look like after …"
   | (Base & { kind: 'code'; slug: string; stdin?: string })
+  /** Code with blanks written as [[0]], [[1]]…; each blank lists accepted answers (whitespace is ignored). */
+  | (Base & { kind: 'fill'; code: string; lang?: string; blanks: string[][] })
+  /** Pair each left item with its right item; right[i] belongs to left[i] (shown shuffled). */
+  | (Base & { kind: 'match'; left: string[]; right: string[] })
 
 export type QuestionKind = Question['kind']
 
@@ -37,4 +43,6 @@ export const KIND_LABEL: Record<QuestionKind, string> = {
   order: 'Put in order',
   array: 'Predict the array',
   code: 'Coding',
+  fill: 'Fill the code',
+  match: 'Match',
 }

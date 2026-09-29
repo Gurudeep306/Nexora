@@ -1,4 +1,4 @@
-import type { ArrayState, Cell, Frame, GridState, OutputState, QueueState, Range, Role, Scalar, StackState, Structure, VarsState } from './types'
+import type { Arrow, ArrayState, Cell, Frame, GridState, MeterState, OutputState, QueueState, Range, Role, Scalar, StackState, Structure, VarsState } from './types'
 
 let uid = 0
 const nextId = () => `c${++uid}`
@@ -12,6 +12,7 @@ export class TArray {
   roles: Record<number, Role> = {}
   pointers: Record<string, number> = {}
   ranges: Range[] = []
+  arrows: Arrow[] = []
   capacity?: number
   id: string
   opts: { label?: string; capacity?: number; bars?: boolean; address?: { base: number; size: number } }
@@ -59,8 +60,14 @@ export class TArray {
     else this.roles[i] = r
     return this
   }
+  /** Clears roles and arrows (pointers and ranges stay until changed). */
   clear() {
     this.roles = {}
+    this.arrows = []
+    return this
+  }
+  arrow(from: number, to: number, label?: string, role?: Role) {
+    this.arrows.push({ from, to, label, role })
     return this
   }
   ptr(name: string, i: number | null) {
@@ -87,7 +94,28 @@ export class TArray {
       ranges: this.ranges.map((r) => ({ ...r })),
       bars: this.opts.bars,
       address: this.opts.address,
+      arrows: this.arrows.map((a) => ({ ...a })),
     }
+  }
+}
+
+export class TMeter {
+  value = 0
+  role?: Role
+  id: string
+  label?: string
+  marks: { label: string; value: number }[]
+  constructor(id: string, label?: string, marks: { label: string; value: number }[] = []) {
+    this.id = id
+    this.label = label
+    this.marks = marks
+  }
+  add(k = 1) {
+    this.value += k
+    return this
+  }
+  snap(): MeterState {
+    return { kind: 'meter', id: this.id, label: this.label, value: this.value, marks: this.marks.map((m) => ({ ...m })), role: this.role }
   }
 }
 
@@ -111,6 +139,23 @@ export class TStack {
   peek() {
     return this.kind === 'stack' ? this.items[this.items.length - 1] : this.items[0]
   }
+  get length() {
+    return this.items.length
+  }
+  role(i: number, r: Role | null) {
+    if (r == null) delete this.roles[i]
+    else this.roles[i] = r
+    return this
+  }
+  /** Sets a value in place (e.g. a stack frame's partial result). */
+  set(i: number, v: Scalar) {
+    if (this.items[i]) this.items[i] = { ...this.items[i], v }
+    return this
+  }
+  clear() {
+    this.roles = {}
+    return this
+  }
   snap(): StackState | QueueState {
     return { kind: this.kind, id: this.id, label: this.label, items: this.items.map((c) => ({ ...c })), roles: { ...this.roles } }
   }
@@ -132,6 +177,16 @@ export class TGrid {
   role(r: number, c: number, role: Role | null) {
     if (role == null) delete this.roles[`${r},${c}`]
     else this.roles[`${r},${c}`] = role
+    return this
+  }
+  clear() {
+    this.roles = {}
+    return this
+  }
+  /** Keep these roles, drop the rest (e.g. keep 'done' cells, clear 'active'). */
+  keep(...roles: Role[]) {
+    for (const k of Object.keys(this.roles)) if (!roles.includes(this.roles[k])) delete this.roles[k]
+    return this
   }
   snap(): GridState {
     return { kind: 'grid', id: this.id, label: this.opts.label, rows: this.rows.map((r) => [...r]), roles: { ...this.roles }, rowLabels: this.opts.rowLabels, colLabels: this.opts.colLabels }
@@ -171,6 +226,15 @@ export class Tracer {
     this.live.push(g)
     return g
   }
+  meter(id: string, label?: string, marks?: { label: string; value: number }[]) {
+    const m = new TMeter(id, label, marks)
+    this.live.push(m)
+    return m
+  }
+  /** Moves a structure to the bottom of the stage (e.g. keep a meter below arrays added later). */
+  last(s: { snap(): Structure }) {
+    this.live = [...this.live.filter((x) => x !== s), s]
+  }
   /** Removes a structure from later frames (e.g. an old buffer after a resize). */
   drop(s: { snap(): Structure }) {
     this.live = this.live.filter((x) => x !== s)
@@ -184,10 +248,12 @@ export class Tracer {
     const prev = this.vars
     const next = vars ? { ...vars } : prev
     const changed = vars ? Object.keys(next).filter((k) => prev[k] !== next[k]) : []
+    const was: Record<string, Scalar> = {}
+    for (const k of changed) if (k in prev) was[k] = prev[k]
     this.vars = next
     const structures: Structure[] = this.live.map((s) => s.snap())
     if (Object.keys(next).length) {
-      const v: VarsState = { kind: 'vars', id: '__vars', vars: { ...next }, changed }
+      const v: VarsState = { kind: 'vars', id: '__vars', vars: { ...next }, changed, prev: was }
       structures.push(v)
     }
     if (this.hasOut) {
