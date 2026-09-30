@@ -1,4 +1,5 @@
 const express = require('express');
+const { errMessage } = require("../http-error");
 const multer = require('multer');
 const { persistUpload, listUploads } = require('../upload-store');
 const forgePaths = require('../dev-roadmap-data');
@@ -51,7 +52,7 @@ function createStudioRouter(deps) {
       }
       res.json({ ok: true, courses });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -143,7 +144,7 @@ function createStudioRouter(deps) {
         },
       });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -163,7 +164,7 @@ function createStudioRouter(deps) {
       ]);
       res.json({ ok: true, id: r.lastID, slug });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -184,7 +185,7 @@ function createStudioRouter(deps) {
       );
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -193,7 +194,7 @@ function createStudioRouter(deps) {
       await run('DELETE FROM cms_courses WHERE id=?', [req.params.id]);
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -211,7 +212,7 @@ function createStudioRouter(deps) {
       ]);
       res.json({ ok: true, id: r.lastID, slug });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -225,7 +226,7 @@ function createStudioRouter(deps) {
       );
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -234,7 +235,7 @@ function createStudioRouter(deps) {
       await run('DELETE FROM cms_chapters WHERE id=?', [req.params.id]);
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -253,7 +254,7 @@ function createStudioRouter(deps) {
       );
       res.json({ ok: true, lesson });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -272,7 +273,7 @@ function createStudioRouter(deps) {
       ]);
       res.json({ ok: true, id: r.lastID, slug });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -287,7 +288,7 @@ function createStudioRouter(deps) {
       );
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -296,7 +297,7 @@ function createStudioRouter(deps) {
       await run('DELETE FROM cms_lessons WHERE id=?', [req.params.id]);
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -314,7 +315,7 @@ function createStudioRouter(deps) {
       ]);
       res.json({ ok: true, id: r.lastID });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -323,7 +324,7 @@ function createStudioRouter(deps) {
       await run('DELETE FROM cms_lesson_problems WHERE id=? AND lesson_id=?', [req.params.linkId, req.params.lessonId]);
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -361,7 +362,7 @@ function createStudioRouter(deps) {
       );
       res.json({ ok: true, id: r.lastID });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -383,7 +384,7 @@ function createStudioRouter(deps) {
       }
       res.json({ ok: true, courses });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -402,7 +403,7 @@ function createStudioRouter(deps) {
       );
       res.json({ ok: true, lesson });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -416,7 +417,7 @@ function createStudioRouter(deps) {
       }
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -440,7 +441,7 @@ function createStudioRouter(deps) {
       }
       res.json({ ok: true, results });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -456,7 +457,7 @@ function createStudioRouter(deps) {
       const files = names.map(name => ({ name, url: `/uploads/studio/${name}` }));
       res.json({ ok: true, files });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -466,7 +467,7 @@ function createStudioRouter(deps) {
       const notes = await all('SELECT * FROM studio_notes ORDER BY updated_at DESC, id DESC');
       res.json({ ok: true, notes });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -481,7 +482,7 @@ function createStudioRouter(deps) {
       );
       res.json({ ok: true, id: r.lastID });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -495,7 +496,7 @@ function createStudioRouter(deps) {
       );
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -504,7 +505,7 @@ function createStudioRouter(deps) {
       await run('DELETE FROM studio_notes WHERE id=?', [req.params.id]);
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -525,7 +526,7 @@ function createStudioRouter(deps) {
       );
       res.json({ ok: true, doubts });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -540,7 +541,7 @@ function createStudioRouter(deps) {
       );
       res.json({ ok: true, id: r.lastID });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -556,7 +557,7 @@ function createStudioRouter(deps) {
       );
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -565,7 +566,7 @@ function createStudioRouter(deps) {
       await run('DELETE FROM studio_doubts WHERE id=?', [req.params.id]);
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -579,7 +580,7 @@ function createStudioRouter(deps) {
       }
       res.json({ ok: true, grouped, total: rows.length });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -589,7 +590,7 @@ function createStudioRouter(deps) {
       if (!row) return res.status(404).json({ ok: false, error: 'Not found' });
       res.json({ ok: true, tutorial: row });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -602,7 +603,7 @@ function createStudioRouter(deps) {
       );
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -622,7 +623,7 @@ function createStudioRouter(deps) {
       ]);
       res.json({ ok: true, id: r.lastID });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -631,7 +632,7 @@ function createStudioRouter(deps) {
       await run('DELETE FROM tutorials WHERE id=?', [req.params.id]);
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -645,7 +646,7 @@ function createStudioRouter(deps) {
       }
       res.json({ ok: true, grouped, total: rows.length });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -655,7 +656,7 @@ function createStudioRouter(deps) {
       if (!row) return res.status(404).json({ ok: false, error: 'Not found' });
       res.json({ ok: true, problem: row });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -673,7 +674,7 @@ function createStudioRouter(deps) {
       if (sets.length) await run(`UPDATE ai_problems SET ${sets.join(',')} WHERE id=?`, [...vals, req.params.id]);
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -687,7 +688,7 @@ function createStudioRouter(deps) {
       );
       res.json({ ok: true, id: r.lastID });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -696,7 +697,7 @@ function createStudioRouter(deps) {
       await run('DELETE FROM ai_problems WHERE id=?', [req.params.id]);
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -732,7 +733,7 @@ function createStudioRouter(deps) {
       }));
       res.json({ ok: true, paths });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -752,7 +753,7 @@ function createStudioRouter(deps) {
       }
       res.json({ ok: true, override: ov || null, static: staticTopic });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -766,7 +767,7 @@ function createStudioRouter(deps) {
       );
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -785,7 +786,7 @@ function createStudioRouter(deps) {
       const tot = await get(`SELECT COUNT(*) as c FROM problems ${where}`, q ? [`%${q}%`] : []);
       res.json({ ok: true, problems: rows, total: tot.c });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -816,7 +817,7 @@ function createStudioRouter(deps) {
       }
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -828,7 +829,7 @@ function createStudioRouter(deps) {
         : await all('SELECT id,title,difficulty,tags,created_at FROM custom_problems ORDER BY id DESC LIMIT 100');
       res.json({ ok: true, problems: rows });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -838,7 +839,7 @@ function createStudioRouter(deps) {
       if (!row) return res.status(404).json({ ok: false, error: 'Not found' });
       res.json({ ok: true, problem: row });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -850,7 +851,7 @@ function createStudioRouter(deps) {
       await run(`UPDATE custom_problems SET ${sf.map(([f]) => `${f}=?`).join(',')},updated_at=datetime('now') WHERE id=?`, [...sf.map(([, v]) => v), req.params.id]);
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -900,7 +901,7 @@ function createStudioRouter(deps) {
       res.json({ ok: false, error: d.message || 'Execution failed' });
     } catch (e) {
       if (e.name === 'AbortError') return res.json({ ok: false, error: 'Execution timed out (15s)' });
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -929,7 +930,7 @@ function createStudioRouter(deps) {
       if (!result.ok) return res.json({ ok: false, error: result.error });
       res.json({ ok: true, text: result.content });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 

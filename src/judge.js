@@ -374,23 +374,41 @@ function compilePascal(code) {
 
 /* Run a process (binary or interpreter) with stdin and optional custom time limit */
 const MAX_CAPTURE = 2 * 1024 * 1024; // runaway output must not eat the server's RAM
+const HARD_OUTPUT_KILL = 8 * 1024 * 1024; // past this the process is a runaway — kill it
 function runProcess(cmd, args, input, timeLimitMs) {
   const limit = timeLimitMs || TIME_LIMIT;
   return new Promise(resolve => {
     const start = Date.now();
+    // detached:true puts the child in its own process group so a timeout can
+    // SIGKILL the whole tree (a fork bomb or spawned subprocess can't survive).
     const proc = spawn(cmd, args, {
       stdio: ['pipe', 'pipe', 'pipe'],
+      detached: process.platform !== 'win32',
     });
     let stdout = '', stderr = '';
     let killed = false;
+    let rawBytes = 0;
 
-    const timer = setTimeout(() => {
+    const killTree = () => {
       killed = true;
-      proc.kill('SIGKILL');
-    }, limit);
+      try {
+        if (process.platform !== 'win32') process.kill(-proc.pid, 'SIGKILL');
+        else proc.kill('SIGKILL');
+      } catch { try { proc.kill('SIGKILL'); } catch {} }
+    };
 
-    proc.stdout.on('data', d => { if (stdout.length < MAX_CAPTURE) stdout += d; });
-    proc.stderr.on('data', d => { if (stderr.length < MAX_CAPTURE) stderr += d; });
+    const timer = setTimeout(killTree, limit);
+
+    proc.stdout.on('data', d => {
+      rawBytes += d.length;
+      if (stdout.length < MAX_CAPTURE) stdout += d;
+      if (rawBytes > HARD_OUTPUT_KILL) { clearTimeout(timer); killTree(); }
+    });
+    proc.stderr.on('data', d => {
+      rawBytes += d.length;
+      if (stderr.length < MAX_CAPTURE) stderr += d;
+      if (rawBytes > HARD_OUTPUT_KILL) { clearTimeout(timer); killTree(); }
+    });
     // Process can exit before we finish writing stdin (bad read pattern,
     // early crash) — an unhandled EPIPE here would take the server down.
     proc.stdin.on('error', () => {});
@@ -613,8 +631,13 @@ async function _runLangLocal(code, input, lang = 'cpp') {
 }
 
 /* On a public server, never execute user code on the host itself: set
-   JUDGE_MODE=remote and every run goes to Wandbox / Kotlin Playground. */
-const REMOTE_ONLY = process.env.JUDGE_MODE === 'remote';
+   JUDGE_MODE=remote and every run goes to Wandbox / Kotlin Playground.
+   In production we default to remote-only unless an operator explicitly opts
+   into local execution (JUDGE_MODE=local) — host RCE is not a safe default. */
+const IS_PROD = process.env.NODE_ENV === 'production';
+const REMOTE_ONLY = process.env.JUDGE_MODE
+  ? process.env.JUDGE_MODE === 'remote'
+  : IS_PROD;
 const remoteUnavailable = (lang) => ({
   verdict: 'CE',
   message: `${lang} is not available on the hosted server yet — pick another language.`,

@@ -1,4 +1,5 @@
 const express = require("express");
+const { errMessage } = require("../http-error");
 const { persistUpload } = require("../upload-store");
 const { sanitizeSessionUser } = require("../middleware/auth");
 
@@ -79,7 +80,7 @@ function createAuthRouter(deps) {
       ]);
       res.json({ ok: true, available: !exists });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -177,7 +178,7 @@ function createAuthRouter(deps) {
       persistSessionUser(req, user);
       res.json({ ok: true, user: sanitizeSessionUser(user), created: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -211,7 +212,7 @@ function createAuthRouter(deps) {
       persistSessionUser(req, user);
       res.json({ ok: true, user: sanitizeSessionUser(user) });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -367,7 +368,7 @@ function createAuthRouter(deps) {
           usernameChanged: finalUsername !== currentUsername,
         });
       } catch (e) {
-        res.status(500).json({ ok: false, error: e.message });
+        res.status(500).json({ ok: false, error: errMessage(e) });
       }
     },
   );
@@ -425,7 +426,7 @@ function createAuthRouter(deps) {
         persistSessionUser(req, updated);
         res.json({ ok: true, avatar_url: avatarUrl });
       } catch (e) {
-        res.status(500).json({ ok: false, error: e.message });
+        res.status(500).json({ ok: false, error: errMessage(e) });
       }
     },
   );
@@ -440,7 +441,7 @@ function createAuthRouter(deps) {
       );
       res.json({ ok: true, users });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -510,7 +511,7 @@ function createAuthRouter(deps) {
         memberSince,
       });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -520,7 +521,7 @@ function createAuthRouter(deps) {
       await run("UPDATE users SET role=? WHERE username=?", [role, targetUser]);
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -531,7 +532,7 @@ function createAuthRouter(deps) {
       );
       res.json({ ok: true, users });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 

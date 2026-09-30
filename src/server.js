@@ -2,6 +2,7 @@ require("dotenv").config({
   path: require("path").join(__dirname, "..", ".env"),
 });
 const crypto = require("crypto");
+const { errMessage } = require("./http-error");
 const fs = require("fs");
 const express = require("express");
 const compression = require("compression");
@@ -1027,7 +1028,7 @@ app.post("/api/sync", async (req, res) => {
     );
     res.json({ ok: true, inserted, total });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -1094,7 +1095,7 @@ app.get("/api/problems", async (req, res) => {
     const problems = await all(dataSql, [...params, lim, off]);
     res.json({ ok: true, total, problems, limit: lim, offset: off });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -1119,7 +1120,7 @@ app.get("/api/problems/:id", async (req, res) => {
     );
     res.json({ ok: true, problem, testcases, submissions });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -1404,7 +1405,7 @@ app.get("/api/problem-statement/:id", async (req, res) => {
       source: "fallback",
     });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -1426,7 +1427,7 @@ app.get("/api/scrape-stats", async (_req, res) => {
       byPlatform,
     });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -1452,7 +1453,7 @@ app.get("/api/bookmarks", async (req, res) => {
       problemIds: rows.map((r) => r.id),
     });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -1470,7 +1471,7 @@ app.post("/api/bookmarks", async (req, res) => {
     );
     res.json({ ok: true });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -1489,7 +1490,7 @@ app.delete("/api/bookmarks/:problemId", async (req, res) => {
     ]);
     res.json({ ok: true });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -1513,7 +1514,7 @@ app.get("/api/activity/:date", async (req, res) => {
     );
     res.json({ ok: true, date, stats: dayStats, submissions });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -1571,7 +1572,7 @@ app.post("/api/testcases/bulk", async (req, res) => {
 
     res.json({ ok: true, added: added.length, skipped, testcases: added });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -1584,7 +1585,7 @@ app.post("/api/testcases", async (req, res) => {
     );
     res.json({ ok: true, id: r.lastID });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -1600,7 +1601,7 @@ app.put("/api/testcases/:id", async (req, res) => {
     if (!r.changes) return res.status(404).json({ ok: false, error: "Testcase not found" });
     res.json({ ok: true });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -1610,7 +1611,7 @@ app.delete("/api/testcases/:id", async (req, res) => {
     if (!r.changes) return res.status(404).json({ ok: false, error: "Testcase not found" });
     res.json({ ok: true });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -1704,7 +1705,7 @@ app.post("/api/judge", judgeLimiter, async (req, res) => {
 
     res.json({ ok: true, ...result });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -1715,7 +1716,7 @@ app.post("/api/run", judgeLimiter, async (req, res) => {
     const result = await quickRun(code, input || "", lang);
     res.json(result);
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -1740,7 +1741,7 @@ app.get("/api/admin/judge-selftest", requireAdmin, async (req, res) => {
     const results = await selfTest({ judge, LANG_CONFIG, hasRemote, REMOTE_ONLY }, only);
     res.json({ ok: true, remote: REMOTE_ONLY, passed: results.filter((r) => r.ok).length, total: results.length, results });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -1864,7 +1865,7 @@ app.get("/api/stats", async (req, res) => {
     }); // end cachedResponse
     res.json(result);
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -1920,7 +1921,7 @@ app.get("/api/roadmap", async (req, res) => {
 
     res.json({ ok: true, levels: result });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -1957,7 +1958,7 @@ app.get("/api/contests", async (req, res) => {
     if (all.length) _contestCache = { at: Date.now(), contests: all };
     res.json({ ok: true, contests: all.length ? all : _contestCache.contests || [] });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -1973,7 +1974,7 @@ app.get("/api/settings", async (req, res) => {
     for (const r of rows) settings[r.key] = r.value;
     res.json({ ok: true, settings });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -1990,7 +1991,7 @@ app.post("/api/settings", async (req, res) => {
     }
     res.json({ ok: true });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -2008,7 +2009,7 @@ app.post("/api/reset-progress", async (req, res) => {
     invalidateCache();
     res.json({ ok: true });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -2052,7 +2053,7 @@ app.post("/api/sync-solved", async (req, res) => {
     invalidateCache();
     res.json({ ok: true, synced, total: solvedIds.length });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -2070,7 +2071,7 @@ app.get("/api/tags", async (req, res) => {
     }
     res.json({ ok: true, tags: [...tagSet].sort() });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -2553,7 +2554,7 @@ app.post("/api/ai-battle/start", async (req, res) => {
     const battle = { id: ins.lastID };
     res.json({ ok: true, battleId: battle.id, aiTimeMs: aiTime, rating: r });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 app.post("/api/ai-battle/complete", async (req, res) => {
@@ -2565,7 +2566,7 @@ app.post("/api/ai-battle/complete", async (req, res) => {
     );
     res.json({ ok: true });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 app.get("/api/ai-battles/:problemId", async (req, res) => {
@@ -2585,7 +2586,7 @@ app.get("/api/ai-battles/:problemId", async (req, res) => {
       total: stats?.total || 0,
     });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -2607,7 +2608,7 @@ app.get("/api/decomposition/:problemId", async (req, res) => {
       },
     });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 app.post("/api/decomposition", async (req, res) => {
@@ -2638,7 +2639,7 @@ app.post("/api/decomposition", async (req, res) => {
     );
     res.json({ ok: true });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -2661,7 +2662,7 @@ app.post("/api/code-replay", async (req, res) => {
     );
     res.json({ ok: true });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 app.get("/api/code-replay/:submissionId", async (req, res) => {
@@ -2676,7 +2677,7 @@ app.get("/api/code-replay/:submissionId", async (req, res) => {
       replay: { ...replay, events: JSON.parse(replay.events || "[]") },
     });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -2953,7 +2954,7 @@ app.get("/api/performance", async (req, res) => {
     }); // end cachedResponse
     res.json(result);
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -3017,7 +3018,7 @@ app.get("/api/weakness-analysis", async (req, res) => {
     }
     res.json({ ok: true, analysis, recommendations });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -3029,7 +3030,7 @@ app.get("/api/custom-problems", async (req, res) => {
     );
     res.json({ ok: true, problems });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 app.get("/api/custom-problems/:id", async (req, res) => {
@@ -3041,7 +3042,7 @@ app.get("/api/custom-problems/:id", async (req, res) => {
       return res.status(404).json({ ok: false, error: "Not found" });
     res.json({ ok: true, problem });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 app.post("/api/custom-problems", async (req, res) => {
@@ -3079,7 +3080,7 @@ app.post("/api/custom-problems", async (req, res) => {
     );
     res.json({ ok: true, id: r.lastID });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 app.put("/api/custom-problems/:id", async (req, res) => {
@@ -3116,7 +3117,7 @@ app.put("/api/custom-problems/:id", async (req, res) => {
     );
     res.json({ ok: true });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 app.delete("/api/custom-problems/:id", async (req, res) => {
@@ -3124,7 +3125,7 @@ app.delete("/api/custom-problems/:id", async (req, res) => {
     await run("DELETE FROM custom_problems WHERE id=?", [req.params.id]);
     res.json({ ok: true });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -3782,7 +3783,7 @@ app.get("/api/nexus", async (req, res) => {
       riftLevels: RIFT_LEVELS,
     });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -4580,64 +4581,11 @@ app.get("/api/level-roadmap", async (req, res) => {
 
     res.json({ ok: true, levels, player: playerLevel, weekSeed });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
 /* Keep /api/roadmap and /api/skill-tree as aliases for backward compat */
-app.get("/api/roadmap", async (req, res) => {
-  try {
-    let totalXp = (
-      await get("SELECT COALESCE(SUM(xp_earned),0) as s FROM progress WHERE username=?", [me()])
-    ).s;
-    let totalSolved = (
-      await get("SELECT COUNT(*) as c FROM progress WHERE username=? AND status='solved'", [me()])
-    ).c;
-    { const ov = await myOverrides(); totalXp += ov.xp; totalSolved += ov.solved; }
-    const playerLevel = calcLevel(totalXp, totalSolved);
-    const result = [];
-    for (const rl of RIFT_LEVELS) {
-      const problems = await all(
-        `SELECT p.*, COALESCE(pr.status,'unsolved') as solve_status
-        FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id AND pr.username=${meSql()}
-        WHERE p.rating >= ? AND p.rating <= ? AND p.rating > 0
-        ORDER BY p.rating ASC, RANDOM() LIMIT 30`,
-        [rl.minR, rl.maxR],
-      );
-      const solvedCount = problems.filter(
-        (p) => p.solve_status === "solved",
-      ).length;
-      result.push({
-        level: rl.level,
-        title: rl.name,
-        subtitle: `Rating ${rl.minR}–${rl.maxR}`,
-        minR: rl.minR,
-        maxR: rl.maxR,
-        count: 30,
-        xpRequired: rl.xp,
-        probsRequired: rl.minProblems,
-        color: rl.color,
-        glow: rl.glow,
-        problems,
-        solvedCount,
-        totalCount: problems.length,
-        completed:
-          solvedCount >= problems.length && playerLevel.level >= rl.level,
-        unlocked:
-          playerLevel.level >= rl.level ||
-          playerLevel.level === rl.level - 1 ||
-          solvedCount > 0,
-        progress: problems.length
-          ? Math.round((solvedCount / problems.length) * 100)
-          : 0,
-      });
-    }
-    res.json({ ok: true, levels: result });
-  } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
-  }
-});
-
 app.get("/api/skill-tree", async (req, res) => {
   try {
     const nodes = [];
@@ -4684,7 +4632,7 @@ app.get("/api/skill-tree", async (req, res) => {
       tierColors: RIFT_LEVELS.map((r) => r.color),
     });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -4734,7 +4682,7 @@ app.get("/api/skill-tree/:nodeId/problems", async (req, res) => {
       skill: { ...skill, solvedCount, totalAvailable },
     });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -4758,8 +4706,21 @@ function verifyPassword(password, hash) {
   });
 }
 
+const studioPassword = process.env.STUDIO_PASSWORD;
+if (!studioPassword) {
+  if (IS_PROD) {
+    console.error(
+      "[FATAL] STUDIO_PASSWORD must be set in production — refusing to start with the insecure built-in default.",
+    );
+    process.exit(1);
+  } else {
+    console.warn(
+      "[WARN] STUDIO_PASSWORD not set — using insecure dev fallback. Set it before going to production!",
+    );
+  }
+}
 const studioAuth = createStudioAuth({
-  studioPass: process.env.STUDIO_PASSWORD || "nexora-studio",
+  studioPass: studioPassword || "nexora-studio-dev-only",
 });
 
 app.use(
@@ -4795,7 +4756,7 @@ app.get("/api/user/search", async (req, res) => {
     );
     res.json({ ok: true, users });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -4812,7 +4773,7 @@ app.get("/api/friends/:username", async (req, res) => {
     );
     res.json({ ok: true, friends });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -4831,7 +4792,7 @@ app.get("/api/friends/:username/requests", async (req, res) => {
     );
     res.json({ ok: true, incoming, outgoing });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -4869,7 +4830,7 @@ app.post("/api/friends/request", async (req, res) => {
     );
     res.json({ ok: true });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -4894,7 +4855,7 @@ app.post("/api/friends/accept", async (req, res) => {
     );
     res.json({ ok: true });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -4907,7 +4868,7 @@ app.post("/api/friends/reject", async (req, res) => {
     ]);
     res.json({ ok: true });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -4916,7 +4877,7 @@ app.delete("/api/friends/:id", async (req, res) => {
     await run("DELETE FROM friendships WHERE id=?", [req.params.id]);
     res.json({ ok: true });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -4930,7 +4891,7 @@ app.get("/api/messages/unread/:username", async (req, res) => {
     const total = counts.reduce((s, c) => s + c.count, 0);
     res.json({ ok: true, counts, total });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -4950,7 +4911,7 @@ app.get("/api/messages/:user1/:user2", async (req, res, next) => {
     );
     res.json({ ok: true, messages: msgs });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -4967,7 +4928,7 @@ app.post("/api/messages", async (req, res) => {
     const msg = await get("SELECT * FROM messages ORDER BY id DESC LIMIT 1");
     res.json({ ok: true, message: msg });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -4988,7 +4949,7 @@ app.get("/api/rooms", async (req, res) => {
     }
     res.json({ ok: true, rooms });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -5026,7 +4987,7 @@ app.post("/api/rooms", async (req, res) => {
     );
     res.json({ ok: true, room });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -5042,7 +5003,7 @@ app.get("/api/rooms/:id", async (req, res) => {
     room.members = solveRoomMembers[room.id] || [];
     res.json({ ok: true, room });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -5053,7 +5014,7 @@ app.delete("/api/rooms/:id", async (req, res) => {
     ]);
     res.json({ ok: true });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -5066,7 +5027,7 @@ app.get("/api/rooms/:id/messages", async (req, res) => {
     );
     res.json({ ok: true, messages: msgs });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -5091,7 +5052,7 @@ app.get("/api/feed/:username", async (req, res) => {
     );
     res.json({ ok: true, feed });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -5135,7 +5096,7 @@ app.get("/api/leaderboard", async (req, res) => {
     }
     res.json({ ok: true, leaderboard: rows, type });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -5155,7 +5116,7 @@ app.get("/api/workshop/stats", async (req, res) => {
       : 0;
     res.json({ ok: true, totalCustom, totalContests });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -5232,7 +5193,7 @@ app.post("/api/contests/create", async (req, res) => {
     );
     res.json({ ok: true, contest_id: r.lastID, contest_code: code });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -5251,7 +5212,7 @@ app.get("/api/contests/mine", async (req, res) => {
     );
     res.json({ ok: true, contests });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -5288,7 +5249,7 @@ app.post("/api/contests/join", async (req, res) => {
       participant_count: count.c + 1,
     });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -5317,7 +5278,7 @@ app.get("/api/contests/:id", async (req, res) => {
     const { password_hash, ...safe } = contest;
     res.json({ ok: true, contest: safe, participants, isOwner });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -5338,7 +5299,7 @@ app.delete("/api/contests/:id", async (req, res) => {
     await run("DELETE FROM custom_contests WHERE id=?", [req.params.id]);
     res.json({ ok: true });
   } catch (e) {
-    res.status(500).json({ ok: false, error: e.message });
+    res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
@@ -5606,7 +5567,7 @@ io.on("connection", (socket) => {
       // Confirm to sender
       socket.emit("message-sent", { message: msg });
     } catch (e) {
-      socket.emit("social-error", { error: e.message });
+      socket.emit("social-error", { error: errMessage(e) });
     }
   });
 

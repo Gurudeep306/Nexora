@@ -4,6 +4,7 @@
  */
 
 const express = require('express');
+const { errMessage } = require("../http-error");
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -83,7 +84,7 @@ function createExplainLabRouter(deps) {
       const session = await eldb.getSession(sessionId);
       res.json({ ok: true, session, initialPageId: pageId });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -108,7 +109,7 @@ function createExplainLabRouter(deps) {
 
       res.json({ ok: true, session });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -138,7 +139,7 @@ function createExplainLabRouter(deps) {
 
       res.json({ ok: true, ...result });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -157,7 +158,7 @@ function createExplainLabRouter(deps) {
       const updated = await eldb.getSession(req.params.id);
       res.json({ ok: true, session: updated });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -175,7 +176,7 @@ function createExplainLabRouter(deps) {
       const updated = await eldb.getSession(req.params.id);
       res.json({ ok: true, session: updated });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -192,7 +193,7 @@ function createExplainLabRouter(deps) {
       await eldb.deleteSession(req.params.id);
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -213,7 +214,7 @@ function createExplainLabRouter(deps) {
 
       res.json({ ok: true, html: session.typed_notes_html || '' });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -230,7 +231,7 @@ function createExplainLabRouter(deps) {
       await eldb.updateSession(req.params.id, { typed_notes_html: html });
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -250,7 +251,7 @@ function createExplainLabRouter(deps) {
 
       res.json({ ok: true, html: session.full_explanation_html || '' });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -267,7 +268,7 @@ function createExplainLabRouter(deps) {
       await eldb.updateSession(req.params.id, { full_explanation_html: html });
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -278,7 +279,7 @@ function createExplainLabRouter(deps) {
       const pages = await eldb.getPagesBySession(req.params.id);
       res.json({ ok: true, pages });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -306,7 +307,7 @@ function createExplainLabRouter(deps) {
 
       res.json({ ok: true, pageId });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -323,7 +324,7 @@ function createExplainLabRouter(deps) {
       await eldb.updatePage(req.params.pageId, req.body);
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -340,7 +341,7 @@ function createExplainLabRouter(deps) {
       await eldb.deletePage(req.params.pageId);
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -370,7 +371,7 @@ function createExplainLabRouter(deps) {
 
       res.json({ ok: true, eventId });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -391,7 +392,7 @@ function createExplainLabRouter(deps) {
       await eldb.createEventsBulk(req.params.id, events);
       res.json({ ok: true, count: events.length });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -423,7 +424,7 @@ function createExplainLabRouter(deps) {
 
       res.json({ ok: true, events });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -453,7 +454,7 @@ function createExplainLabRouter(deps) {
 
       res.json({ ok: true, eventId });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -484,7 +485,7 @@ function createExplainLabRouter(deps) {
 
       res.json({ ok: true, events });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -495,7 +496,7 @@ function createExplainLabRouter(deps) {
       const notes = await eldb.getHandwrittenNotesBySession(req.params.id);
       res.json({ ok: true, notes });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -523,7 +524,7 @@ function createExplainLabRouter(deps) {
 
       res.json({ ok: true, noteId });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -532,7 +533,7 @@ function createExplainLabRouter(deps) {
       await eldb.deleteHandwrittenNote(req.params.noteId);
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -543,7 +544,7 @@ function createExplainLabRouter(deps) {
       const markers = await eldb.getMarkersBySession(req.params.id);
       res.json({ ok: true, markers });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -571,7 +572,7 @@ function createExplainLabRouter(deps) {
 
       res.json({ ok: true, markerId });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -580,7 +581,7 @@ function createExplainLabRouter(deps) {
       await eldb.deleteMarker(req.params.markerId);
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -591,7 +592,7 @@ function createExplainLabRouter(deps) {
       const clips = await eldb.getClipsBySession(req.params.id);
       res.json({ ok: true, clips });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -619,7 +620,7 @@ function createExplainLabRouter(deps) {
 
       res.json({ ok: true, clipId });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -628,7 +629,7 @@ function createExplainLabRouter(deps) {
       await eldb.deleteClip(req.params.clipId);
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -639,7 +640,7 @@ function createExplainLabRouter(deps) {
       const notes = await eldb.getStudentNotesBySession(req.params.id, req.sessionUser.username);
       res.json({ ok: true, notes });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -661,7 +662,7 @@ function createExplainLabRouter(deps) {
 
       res.json({ ok: true, noteId });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -670,7 +671,7 @@ function createExplainLabRouter(deps) {
       await eldb.deleteStudentNote(req.params.noteId, req.sessionUser.username);
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -681,7 +682,7 @@ function createExplainLabRouter(deps) {
       const bookmarks = await eldb.getBookmarksBySession(req.params.id, req.sessionUser.username);
       res.json({ ok: true, bookmarks });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -701,7 +702,7 @@ function createExplainLabRouter(deps) {
 
       res.json({ ok: true, bookmarkId });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -710,7 +711,7 @@ function createExplainLabRouter(deps) {
       await eldb.deleteBookmark(req.params.bookmarkId, req.sessionUser.username);
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -736,7 +737,7 @@ function createExplainLabRouter(deps) {
 
       res.json({ ok: true, doubts });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -766,7 +767,7 @@ function createExplainLabRouter(deps) {
 
       res.json({ ok: true, doubtId });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -787,7 +788,7 @@ function createExplainLabRouter(deps) {
 
       res.json({ ok: true, replyId });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -796,7 +797,7 @@ function createExplainLabRouter(deps) {
       await eldb.resolveDoubt(parseInt(req.params.doubtId), req.sessionUser.username);
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -807,7 +808,7 @@ function createExplainLabRouter(deps) {
       const progress = await eldb.getProgress(req.params.id, req.sessionUser.username);
       res.json({ ok: true, progress: progress || null });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -820,7 +821,7 @@ function createExplainLabRouter(deps) {
       });
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -839,7 +840,7 @@ function createExplainLabRouter(deps) {
       const analytics = await eldb.getSessionAnalytics(req.params.id);
       res.json({ ok: true, analytics });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -852,7 +853,7 @@ function createExplainLabRouter(deps) {
       });
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -871,7 +872,7 @@ function createExplainLabRouter(deps) {
       // For now, return placeholder - actual upload handled by existing studio upload
       res.json({ ok: false, error: 'Use /api/studio/upload for media uploads' });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -911,7 +912,7 @@ function createExplainLabRouter(deps) {
 
       res.json({ ok: true, summary: result.content });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -944,7 +945,7 @@ function createExplainLabRouter(deps) {
 
       res.json({ ok: true, notes_html: result.content });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -987,7 +988,7 @@ function createExplainLabRouter(deps) {
 
       res.json({ ok: true, explanation_html: result.content });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -1034,7 +1035,7 @@ function createExplainLabRouter(deps) {
 
       res.json({ ok: true, quiz });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -1076,7 +1077,7 @@ function createExplainLabRouter(deps) {
 
       res.json({ ok: true, flashcards });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -1093,7 +1094,7 @@ function createExplainLabRouter(deps) {
       });
       res.json({ ok: true, ...result });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 

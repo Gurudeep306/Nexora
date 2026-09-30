@@ -4,6 +4,7 @@
  */
 
 const express = require('express');
+const { errMessage } = require("../http-error");
 const { run, get, all } = require('../db');
 const { initLiveDb } = require('../live-db');
 
@@ -58,7 +59,7 @@ function createLiveRouter(deps = {}) {
 
       res.json({ ok: true, classes, total: total.count });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -96,7 +97,7 @@ function createLiveRouter(deps = {}) {
         isParticipant: participants.some(p => p.user_id === req.session.user.username),
       });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -123,7 +124,7 @@ function createLiveRouter(deps = {}) {
 
       res.json({ ok: true, class: cls });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -146,7 +147,7 @@ function createLiveRouter(deps = {}) {
 
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -162,7 +163,7 @@ function createLiveRouter(deps = {}) {
       await run('DELETE FROM live_classes WHERE id = ?', [req.params.id]);
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -182,7 +183,7 @@ function createLiveRouter(deps = {}) {
 
       res.json({ ok: true, class: await get('SELECT * FROM live_classes WHERE id = ?', [req.params.id]) });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -214,7 +215,7 @@ function createLiveRouter(deps = {}) {
 
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -240,7 +241,7 @@ function createLiveRouter(deps = {}) {
 
       res.json({ ok: true, participant });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -250,7 +251,7 @@ function createLiveRouter(deps = {}) {
       await leaveLiveClass(req.params.id, req.session.user.username);
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -267,7 +268,7 @@ function createLiveRouter(deps = {}) {
 
       res.json({ ok: true, participants });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -281,7 +282,7 @@ function createLiveRouter(deps = {}) {
       );
       res.json({ ok: true, messages });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -304,7 +305,7 @@ function createLiveRouter(deps = {}) {
 
       res.json({ ok: true, message: msg });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -317,7 +318,7 @@ function createLiveRouter(deps = {}) {
       );
       res.json({ ok: true, recordings });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -334,7 +335,7 @@ function createLiveRouter(deps = {}) {
 
       res.json({ ok: true, id: result.lastID });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -356,7 +357,7 @@ function createLiveRouter(deps = {}) {
 
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -373,7 +374,7 @@ function createLiveRouter(deps = {}) {
 
       res.json({ ok: true, id: result.lastID });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -402,7 +403,7 @@ function createLiveRouter(deps = {}) {
         }
       });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 

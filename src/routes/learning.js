@@ -1,4 +1,5 @@
 const express = require('express');
+const { errMessage } = require("../http-error");
 const forgePaths = require('../dev-roadmap-data');
 const { me, meSql } = require('../context');
 
@@ -116,7 +117,7 @@ ${(statement || 'No problem statement available').substring(0, 4000)}
       const reply = data.choices?.[0]?.message?.content || 'No response generated.';
       res.json({ ok: true, reply });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -225,7 +226,7 @@ STRICT RULES:
       if (fixedCode === 'NO_FIX') return res.json({ ok: false, error: 'AI could not safely fix this code' });
       res.json({ ok: true, code: fixedCode });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -242,7 +243,7 @@ STRICT RULES:
       for (const p of problems) p.status = statusById.get(p.id) || 'unsolved';
       res.json({ ok: true, problems });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -254,7 +255,7 @@ STRICT RULES:
       problem.progress = prog || null;
       res.json({ ok: true, problem });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -281,7 +282,7 @@ STRICT RULES:
       }
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -296,7 +297,7 @@ STRICT RULES:
         GROUP BY ap.category`);
       res.json({ ok: true, total: total.c, solved: solved.c, inProgress: inProgress.c, byCategory });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -316,7 +317,7 @@ STRICT RULES:
       );
       res.json({ ok: true, problems });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -333,7 +334,7 @@ STRICT RULES:
       for (const t of tutorials) t.completed = doneById.get(t.id) || 0;
       res.json({ ok: true, tutorials });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -345,7 +346,7 @@ STRICT RULES:
       tutorial.completed = prog ? prog.completed : 0;
       res.json({ ok: true, tutorial });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -367,7 +368,7 @@ STRICT RULES:
       }
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -381,7 +382,7 @@ STRICT RULES:
         GROUP BY t.category`);
       res.json({ ok: true, total: total.c, completed: completed.c, byCategory });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -411,7 +412,7 @@ STRICT RULES:
       });
       res.json({ ok: true, paths });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -437,7 +438,7 @@ STRICT RULES:
       const pct = totalTopics > 0 ? Math.round((completedTopics / totalTopics) * 100) : 0;
       res.json({ ok: true, path: { ...path, milestones, totalTopics, completedTopics, progress: pct } });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -466,7 +467,7 @@ STRICT RULES:
       }
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -477,7 +478,7 @@ STRICT RULES:
       const inProgress = await get('SELECT COUNT(*) as c FROM forge_progress WHERE username = ? AND status = ?', [me(), 'in-progress']);
       res.json({ ok: true, total, completed: completed.c, inProgress: inProgress.c });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -487,7 +488,7 @@ STRICT RULES:
       const layout = row ? JSON.parse(row.value) : {};
       res.json({ ok: true, layout });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -497,7 +498,7 @@ STRICT RULES:
       await run("INSERT OR REPLACE INTO settings(username, key, value) VALUES(?, 'dashboard_layout', ?)", [me(), JSON.stringify(layout)]);
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 

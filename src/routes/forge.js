@@ -4,6 +4,7 @@
  */
 
 const express = require('express');
+const { errMessage } = require("../http-error");
 const { run, get, all } = require('../db');
 const { initForgeDb } = require('../forge-db');
 const { requireAdmin } = require('../middleware/auth');
@@ -45,7 +46,7 @@ function createForgeRouter(deps = {}) {
         }
       });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -62,7 +63,7 @@ function createForgeRouter(deps = {}) {
       const total = await get(`SELECT COUNT(*) as count FROM forge_pages WHERE ${where}`);
       res.json({ ok: true, pages, total: total.count });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -73,7 +74,7 @@ function createForgeRouter(deps = {}) {
       const versions = await all('SELECT * FROM forge_page_versions WHERE page_id = ? ORDER BY version_number DESC LIMIT 10', [req.params.id]);
       res.json({ ok: true, page: { ...page, schema_json: JSON.parse(page.schema_json || '{}'), css_json: JSON.parse(page.css_json || '{}') }, versions });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -90,7 +91,7 @@ function createForgeRouter(deps = {}) {
       res.json({ ok: true, id: result.lastID });
     } catch (e) {
       if (e.code === 'SQLITE_CONSTRAINT') return res.status(400).json({ ok: false, error: 'Route already exists' });
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -115,7 +116,7 @@ function createForgeRouter(deps = {}) {
       res.json({ ok: true });
     } catch (e) {
       if (e.code === 'SQLITE_CONSTRAINT') return res.status(400).json({ ok: false, error: 'Route already exists' });
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -124,7 +125,7 @@ function createForgeRouter(deps = {}) {
       await run('UPDATE forge_pages SET is_published = 1, published_at = CURRENT_TIMESTAMP WHERE id = ?', [req.params.id]);
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -133,7 +134,7 @@ function createForgeRouter(deps = {}) {
       await run('UPDATE forge_pages SET is_published = 0 WHERE id = ?', [req.params.id]);
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -142,7 +143,7 @@ function createForgeRouter(deps = {}) {
       await run('DELETE FROM forge_pages WHERE id = ?', [req.params.id]);
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -151,7 +152,7 @@ function createForgeRouter(deps = {}) {
       const versions = await all('SELECT * FROM forge_page_versions WHERE page_id = ? ORDER BY version_number DESC', [req.params.id]);
       res.json({ ok: true, versions });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -167,7 +168,7 @@ function createForgeRouter(deps = {}) {
 
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -177,7 +178,7 @@ function createForgeRouter(deps = {}) {
       const components = await all('SELECT * FROM forge_components ORDER BY category, name');
       res.json({ ok: true, components });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -190,7 +191,7 @@ function createForgeRouter(deps = {}) {
       );
       res.json({ ok: true, id: result.lastID });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -200,7 +201,7 @@ function createForgeRouter(deps = {}) {
       const models = await all('SELECT * FROM forge_data_models ORDER BY created_at DESC');
       res.json({ ok: true, models });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -217,7 +218,7 @@ function createForgeRouter(deps = {}) {
       res.json({ ok: true, id: result.lastID });
     } catch (e) {
       if (e.code === 'SQLITE_CONSTRAINT') return res.status(400).json({ ok: false, error: 'Slug already exists' });
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -227,7 +228,7 @@ function createForgeRouter(deps = {}) {
       const forms = await all('SELECT * FROM forge_forms ORDER BY created_at DESC');
       res.json({ ok: true, forms });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -244,7 +245,7 @@ function createForgeRouter(deps = {}) {
       res.json({ ok: true, id: result.lastID });
     } catch (e) {
       if (e.code === 'SQLITE_CONSTRAINT') return res.status(400).json({ ok: false, error: 'Slug already exists' });
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -254,7 +255,7 @@ function createForgeRouter(deps = {}) {
       const workflows = await all('SELECT * FROM forge_workflows ORDER BY created_at DESC');
       res.json({ ok: true, workflows });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -270,7 +271,7 @@ function createForgeRouter(deps = {}) {
 
       res.json({ ok: true, id: result.lastID });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -279,7 +280,7 @@ function createForgeRouter(deps = {}) {
       await run('UPDATE forge_workflows SET is_active = 1 WHERE id = ?', [req.params.id]);
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -288,7 +289,7 @@ function createForgeRouter(deps = {}) {
       await run('UPDATE forge_workflows SET is_active = 0 WHERE id = ?', [req.params.id]);
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -298,7 +299,7 @@ function createForgeRouter(deps = {}) {
       const navigation = await all('SELECT * FROM forge_navigation WHERE is_active = 1');
       res.json({ ok: true, navigation });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -314,7 +315,7 @@ function createForgeRouter(deps = {}) {
 
       res.json({ ok: true, id: result.lastID });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -324,7 +325,7 @@ function createForgeRouter(deps = {}) {
       const themes = await all('SELECT * FROM forge_themes ORDER BY is_active DESC, created_at DESC');
       res.json({ ok: true, themes });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -340,7 +341,7 @@ function createForgeRouter(deps = {}) {
 
       res.json({ ok: true, id: result.lastID });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -350,7 +351,7 @@ function createForgeRouter(deps = {}) {
       await run('UPDATE forge_themes SET is_active = 1 WHERE id = ?', [req.params.id]);
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -364,7 +365,7 @@ function createForgeRouter(deps = {}) {
       }
       res.json({ ok: true, settings: result });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -378,7 +379,7 @@ function createForgeRouter(deps = {}) {
       }
       res.json({ ok: true });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -434,7 +435,7 @@ function createForgeRouter(deps = {}) {
         }
       });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 

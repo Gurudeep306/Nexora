@@ -1,4 +1,5 @@
 const express = require('express');
+const { errMessage } = require("../http-error");
 const fs = require('fs');
 const path = require('path');
 const { me } = require('../context');
@@ -81,7 +82,7 @@ function createLearnRouter({ get, all, run }) {
       for (const r of rows) items[r.item] = { status: r.status, attempts: r.attempts, doneAt: r.first_done_at, updatedAt: r.updated_at };
       res.json({ ok: true, items });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -107,7 +108,7 @@ function createLearnRouter({ get, all, run }) {
       }
       res.json({ ok: true, item, status: nextStatus, attempts });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
