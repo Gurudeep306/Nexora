@@ -35,9 +35,9 @@ export function Topbar() {
         onClick={openCommandPalette}
         aria-label="Search problems and pages"
         aria-keyshortcuts="Control+K Meta+K /"
-        className="group mx-auto hidden h-8 w-full max-w-sm cursor-pointer items-center gap-2 rounded-lg border border-accent-brand/20 bg-accent-brand/5 pr-1.5 pl-3 text-left text-[13px] text-text-primary/60 transition-colors hover:border-accent-brand/30 hover:bg-accent-brand/10 hover:text-text-primary md:flex"
+        className="group mx-auto hidden h-8 w-full max-w-sm cursor-pointer items-center gap-2 rounded-lg border border-accent-brand/20 bg-accent-brand/5 pr-1.5 pl-3 text-left text-[13px] text-text-primary/60 transition-all duration-200 hover:border-accent-brand/35 hover:bg-accent-brand/10 hover:text-text-primary hover:shadow-[0_0_0_3px_color-mix(in_oklab,var(--color-accent-brand)_10%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-brand/50 md:flex"
       >
-        <Search className="size-3.5 shrink-0" aria-hidden="true" />
+        <Search className="size-3.5 shrink-0 transition-colors group-hover:text-accent-brand" aria-hidden="true" />
         <span className="min-w-0 flex-1 truncate">Search problems, pages, actions…</span>
         <span className="flex gap-0.5">
           <Kbd>{IS_MAC ? '⌘' : 'Ctrl'}</Kbd>

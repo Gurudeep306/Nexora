@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import { Link } from 'react-router-dom'
-import { Search, UserPlus, UserCheck, UserX, Users, Mail, Clock } from 'lucide-react'
+import { UserPlus, UserCheck, UserX, Users, Mail, Clock } from 'lucide-react'
 import type { Socket } from 'socket.io-client'
 import {
   Avatar,
@@ -10,8 +10,8 @@ import {
   Card,
   EmptyState,
   ErrorState,
-  Input,
   LoadingBlock,
+  SearchInput,
   useToast,
 } from '@/components/ui'
 import { api, ApiError } from '@/lib/api'
@@ -233,19 +233,13 @@ export function FriendsTab({ me, socket }: Props) {
             </h2>
           </div>
           <div className="space-y-3 p-4">
-            <div className="relative">
-              <Search
-                className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-foreground-faint"
-                aria-hidden="true"
-              />
-              <Input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search by username (min 2 chars)…"
-                aria-label="Search users"
-                className="pl-9"
-              />
-            </div>
+            <SearchInput
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onClear={() => setQuery('')}
+              placeholder="Search by username (min 2 chars)…"
+              aria-label="Search users"
+            />
             {searching && <LoadingBlock rows={2} />}
             {!searching && results && results.length === 0 && (
               <p className="px-1 text-xs text-foreground-faint">No coders match “{debounced}”.</p>

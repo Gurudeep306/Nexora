@@ -1,4 +1,5 @@
-import { cloneElement, isValidElement, useId, forwardRef, type InputHTMLAttributes, type TextareaHTMLAttributes, type SelectHTMLAttributes } from 'react'
+import { cloneElement, isValidElement, useId, forwardRef, type InputHTMLAttributes, type TextareaHTMLAttributes } from 'react'
+import { Search, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const inputBase =
@@ -18,22 +19,47 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaHTMLAttributes<H
 )
 Textarea.displayName = 'Textarea'
 
-export const Select = forwardRef<HTMLSelectElement, SelectHTMLAttributes<HTMLSelectElement>>(
-  ({ className, children, ...props }, ref) => (
-    <select
-      ref={ref}
-      className={cn(
-        inputBase,
-        'appearance-none pr-9',
-        className,
-      )}
-      {...props}
-    >
-      {children}
-    </select>
-  ),
+export interface SearchInputProps extends InputHTMLAttributes<HTMLInputElement> {
+  /** Wrap-only styling (width/layout). The field itself takes `className`. */
+  containerClassName?: string
+  /** When provided, a clear (×) button appears while there is text. */
+  onClear?: () => void
+}
+
+/* A themed search field: leading icon that lights up on focus, an optional
+   clear button, and the OS's own search "×" suppressed so the look is
+   consistent everywhere. Drop-in for `<Input type="search">`. */
+export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
+  ({ className, containerClassName, onClear, value, ...props }, ref) => {
+    const hasValue = value != null && String(value).length > 0
+    return (
+      <div className={cn('group/search relative flex items-center', containerClassName)}>
+        <Search
+          aria-hidden="true"
+          className="pointer-events-none absolute left-3 size-4 text-foreground-faint transition-colors duration-200 group-focus-within/search:text-primary-bright"
+        />
+        <input
+          ref={ref}
+          type="search"
+          value={value}
+          className={cn(inputBase, 'w-full pl-9', hasValue && onClear && 'pr-9', className)}
+          {...props}
+        />
+        {hasValue && onClear && (
+          <button
+            type="button"
+            onClick={onClear}
+            aria-label="Clear search"
+            className="absolute right-2 flex size-6 cursor-pointer items-center justify-center rounded-md text-foreground-faint transition-colors hover:bg-foreground/10 hover:text-foreground"
+          >
+            <X className="size-3.5" aria-hidden="true" />
+          </button>
+        )}
+      </div>
+    )
+  },
 )
-Select.displayName = 'Select'
+SearchInput.displayName = 'SearchInput'
 
 export function Label({ className, ...props }: React.LabelHTMLAttributes<HTMLLabelElement>) {
   return (

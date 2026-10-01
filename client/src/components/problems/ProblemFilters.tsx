@@ -1,6 +1,6 @@
 import { useEffect, useRef, type ReactNode } from 'react'
-import { ArrowDownWideNarrow, Search, X } from 'lucide-react'
-import { Button, Input, Select } from '@/components/ui'
+import { ArrowDownWideNarrow, X } from 'lucide-react'
+import { Button, SearchInput, Select } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import {
   DIFFICULTY_BANDS,
@@ -109,21 +109,15 @@ export function ProblemFilters({ filters, tags, resultCount, onSearchInput, onCh
   return (
     <div className="card-neon p-4">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-end">
-        <div className="relative flex-1">
-          <Search
-            className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-foreground-faint"
-            aria-hidden="true"
-          />
-          <Input
-            ref={searchRef}
-            type="search"
-            value={filters.search}
-            onChange={(e) => onSearchInput(e.target.value)}
-            placeholder="Search problems by title or ID…  ( / )"
-            aria-label="Search problems"
-            className="pl-9"
-          />
-        </div>
+        <SearchInput
+          ref={searchRef}
+          value={filters.search}
+          onChange={(e) => onSearchInput(e.target.value)}
+          onClear={() => onSearchInput('')}
+          placeholder="Search problems by title or ID…  ( / )"
+          aria-label="Search problems"
+          containerClassName="flex-1"
+        />
 
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:flex lg:items-end">
           <FilterSelect

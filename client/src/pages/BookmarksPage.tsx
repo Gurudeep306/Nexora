@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'motion/react'
-import { BookmarkX, Search, Star } from 'lucide-react'
+import { BookmarkX, Star } from 'lucide-react'
 import {
   Button,
   Card,
@@ -9,9 +9,9 @@ import {
   ConfirmDialog,
   EmptyState,
   ErrorState,
-  Input,
   LoadingBlock,
   PageHeader,
+  SearchInput,
   Select,
   useToast,
 } from '@/components/ui'
@@ -116,20 +116,13 @@ export default function BookmarksPage() {
       >
         <Card>
           <CardContent className="grid grid-cols-1 gap-3 py-4 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="relative">
-              <Search
-                className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-foreground-faint"
-                aria-hidden="true"
-              />
-              <Input
-                type="search"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search bookmarks…"
-                aria-label="Search bookmarks"
-                className="pl-9"
-              />
-            </div>
+            <SearchInput
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onClear={() => setSearch('')}
+              placeholder="Search bookmarks…"
+              aria-label="Search bookmarks"
+            />
             <Select
               value={platform}
               onChange={(e) => setPlatform(e.target.value)}
