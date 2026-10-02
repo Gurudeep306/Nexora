@@ -18,7 +18,7 @@ type Mode = 'idle' | 'busy'
 const SIZE = 64 // logical viewBox, matches public/nexora.svg
 const SCALE = 2 // render resolution for crispness
 const FRAME_MS = 50 // ~20fps — plenty for a 16px icon, cheap on battery
-const BASE_TITLE = 'Nexora — Master the Rift'
+const BASE_TITLE = 'Nexora — Learn computer science, step by step'
 
 // The N walk, in viewBox coordinates.
 const PATH: ReadonlyArray<readonly [number, number]> = [

@@ -48,7 +48,7 @@ function parseInputs(algo: Algorithm, raw: Record<string, string>): { inputs?: I
   return { inputs: out }
 }
 
-function StructureView({ s }: { s: Structure }) {
+export function StructureView({ s }: { s: Structure }) {
   switch (s.kind) {
     case 'array':
       return <ArrayView s={s} />
@@ -67,7 +67,7 @@ function StructureView({ s }: { s: Structure }) {
   }
 }
 
-function CodePanel({ algo, lang, step }: { algo: Algorithm; lang: Lang; step: string }) {
+export function CodePanel({ algo, lang, step }: { algo: Algorithm; lang: Lang; step: string }) {
   const src = algo.code[lang] ?? algo.code.pseudo ?? ''
   const { lines, steps } = parsed(src)
   const hot = new Set(steps.get(step) ?? [])

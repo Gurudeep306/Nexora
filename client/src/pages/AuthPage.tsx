@@ -17,6 +17,7 @@ import {
 } from 'lucide-react'
 import { Avatar, Button, useToast } from '@/components/ui'
 import { AuthShowcase } from '@/components/auth/AuthShowcase'
+import { AlgoTheater } from '@/components/showcase/AlgoTheater'
 import { LogoMark, Wordmark } from '@/components/brand/Logo'
 import { takeOAuthResult, useAuth } from '@/context/AuthContext'
 import { api, ApiError } from '@/lib/api'
@@ -56,7 +57,7 @@ const STRENGTH = [
   { label: 'Weak', color: 'bg-accent', text: 'text-accent' },
   { label: 'Okay', color: 'bg-warning', text: 'text-warning' },
   { label: 'Strong', color: 'bg-success', text: 'text-success' },
-  { label: 'Rift-proof', color: 'bg-cyan', text: 'text-cyan' },
+  { label: 'Excellent', color: 'bg-cyan', text: 'text-cyan' },
 ]
 
 function PasswordMeter({ password }: { password: string }) {
@@ -232,10 +233,10 @@ export default function AuthPage() {
     try {
       if (mode === 'login') {
         await login(username.trim(), password)
-        toast.success('Welcome back, challenger')
+        toast.success('Welcome back', 'Picking up right where you left off.')
       } else {
         await register(username.trim(), email.trim(), password)
-        toast.success('Account forged — enter the Rift', 'Your unique avatar is ready. Change it any time in Settings.')
+        toast.success('Welcome to Nexora', 'Your account and avatar are ready. Change the avatar any time in Settings.')
       }
       navigate(from, { replace: true })
     } catch (err) {
@@ -249,8 +250,8 @@ export default function AuthPage() {
   const subtitle = oauthPending
     ? `Connected with ${oauthPending.provider === 'google' ? 'Google' : 'GitHub'}${oauthPending.displayName ? ` as ${oauthPending.displayName}` : ''} — pick your Nexora username to finish.`
     : mode === 'login'
-      ? 'Sign in to pick up your streak where you left it.'
-      : 'Free forever. Your progress, XP and rank are yours alone.'
+      ? 'Sign in to continue your courses, practice and streak.'
+      : 'Free forever. Courses, practice, an AI tutor and your progress in one place.'
   const previewName = username.trim() || 'nexora'
 
   return (
@@ -261,7 +262,7 @@ export default function AuthPage() {
 
       {/* Showcase (desktop) */}
       <aside
-        className="glass-thin relative z-10 hidden !border-y-0 !border-l-0 lg:block"
+        className="glass-thin relative z-10 hidden min-w-0 !border-y-0 !border-l-0 lg:block"
         aria-label="About Nexora"
       >
         <div className="sticky top-0 h-dvh">
@@ -270,7 +271,7 @@ export default function AuthPage() {
       </aside>
 
       {/* Form */}
-      <main className="relative z-10 flex items-center justify-center px-5 py-10 sm:px-10">
+      <main className="relative z-10 flex min-w-0 flex-col items-center justify-center gap-8 px-5 py-10 sm:px-10">
 
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -487,9 +488,9 @@ export default function AuthPage() {
               size="lg"
               loading={submitting}
               disabled={!canSubmit}
-              className="sheen group h-12 w-full font-display text-base tracking-widest"
+              className="sheen group h-12 w-full text-[15px] font-semibold"
             >
-              {oauthPending ? 'FINISH SIGN-UP' : mode === 'login' ? 'ENTER THE RIFT' : 'FORGE ACCOUNT'}
+              {oauthPending ? 'Finish sign-up' : mode === 'login' ? 'Continue learning' : 'Start learning'}
               {!submitting && <ArrowRight className="transition-transform group-hover:translate-x-1" aria-hidden="true" />}
             </Button>
           </motion.form>
@@ -504,14 +505,14 @@ export default function AuthPage() {
               </button>
             ) : mode === 'login' ? (
               <>
-                New to the rift?{' '}
+                New to Nexora?{' '}
                 <button onClick={() => switchMode('register')} className="cursor-pointer font-semibold text-primary-bright hover:underline">
                   Create an account
                 </button>
               </>
             ) : (
               <>
-                Already a challenger?{' '}
+                Already have an account?{' '}
                 <button onClick={() => switchMode('login')} className="cursor-pointer font-semibold text-primary-bright hover:underline">
                   Sign in
                 </button>
@@ -526,6 +527,11 @@ export default function AuthPage() {
             <UserRound /> Nexora sign in
           </p>
         </motion.div>
+
+        {/* Phones and tablets get the live lesson under the form. */}
+        <div className="w-full max-w-[26rem] lg:hidden">
+          <AlgoTheater compact />
+        </div>
       </main>
     </div>
   )
