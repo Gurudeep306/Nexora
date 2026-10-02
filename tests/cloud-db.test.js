@@ -23,6 +23,7 @@ const env = {
   PORT: String(APP_PORT),
   APP_URL: BASE,
   SESSION_SECRET: "ci-secret-ci-secret-ci-secret-ci-secret-1234",
+  STUDIO_PASSWORD: "ci-studio-password",
   TURSO_DATABASE_URL: `http://127.0.0.1:${DB_PORT}`,
   TURSO_AUTH_TOKEN: "",
   JUDGE_MODE: "remote",
