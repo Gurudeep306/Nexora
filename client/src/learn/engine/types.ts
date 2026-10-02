@@ -98,6 +98,119 @@ export interface GridState {
   roles?: Record<string, Role> // "r,c"
   rowLabels?: string[]
   colLabels?: string[]
+  /** Dependency arrows between cells — "dp[i][j] comes from these". */
+  arrows?: GridArrow[]
+}
+
+export interface GridArrow {
+  from: [number, number]
+  to: [number, number]
+  label?: string
+  role?: Role
+}
+
+/* ── Linked structures ─────────────────────────────────────────────── */
+
+export interface ListNode {
+  id: string
+  v: Scalar
+  /** Id of the next node, or null for the end of the list. */
+  next: string | null
+  /** Doubly linked lists only. */
+  prev?: string | null
+}
+
+/**
+ * A linked list as boxes in memory, drawn left to right in `nodes` order
+ * (which need not be list order — a half-reversed list shows its arrows
+ * pointing backwards). Each node's `next` is an arrow; pointer variables
+ * (head, prev, cur, slow, fast…) ride under the node they point at.
+ */
+export interface ListState {
+  kind: 'list'
+  id: string
+  label?: string
+  nodes: ListNode[]
+  doubly?: boolean
+  roles?: Record<string, Role> // node id → role
+  /** Role of a node's `next` arrow, keyed by the node id. */
+  linkRoles?: Record<string, Role>
+  pointers?: Record<string, string | null>
+}
+
+export interface TreeNode {
+  id: string
+  v: Scalar
+  /** Child ids in order. Binary trees use [left, right] with null for a missing child. */
+  children: (string | null)[]
+  /** Small text under the node: a range, a height, a count, an index… */
+  note?: string
+  /** Labels on the edges to each child (a trie's letters, a decision "x ≤ 4"). */
+  edgeLabels?: (string | null)[]
+}
+
+/**
+ * A rooted tree or forest, laid out automatically (tidy, children centred
+ * under their parent). Nodes keep their ids, so a rotation, an insertion or a
+ * sift-down animates as nodes gliding to their new places. Nodes not reachable
+ * from any root are drawn as their own little trees, to the right.
+ */
+export interface TreeState {
+  kind: 'tree'
+  id: string
+  label?: string
+  nodes: TreeNode[]
+  roots: string[]
+  /** Binary: keep left/right slots apart even when one child is missing. */
+  binary?: boolean
+  roles?: Record<string, Role>
+  /** Edge roles keyed "parentId>childId". */
+  edgeRoles?: Record<string, Role>
+  pointers?: Record<string, string | null>
+}
+
+export interface GraphNode {
+  id: string
+  label?: string
+  /** Position in a 0–100 box; omitted → automatic circular layout. */
+  x?: number
+  y?: number
+  /** Badge above the node: a distance, a colour, a discovery time… */
+  note?: string
+}
+
+export interface GraphEdge {
+  from: string
+  to: string
+  w?: Scalar
+}
+
+/**
+ * A graph drawn as circles and lines. Edge roles light up the edges being
+ * relaxed, the BFS frontier, the MST so far; an 'active' edge carries a pulse
+ * travelling from `from` to `to`.
+ */
+export interface GraphState {
+  kind: 'graph'
+  id: string
+  label?: string
+  nodes: GraphNode[]
+  edges: GraphEdge[]
+  directed?: boolean
+  roles?: Record<string, Role> // node id → role
+  /** Edge roles keyed "from-to" (for undirected graphs either order matches). */
+  edgeRoles?: Record<string, Role>
+  pointers?: Record<string, string | null>
+}
+
+/** A hash table with separate chaining: one row per bucket, its chain to the right. */
+export interface HashState {
+  kind: 'hash'
+  id: string
+  label?: string
+  buckets: Cell[][]
+  /** "b" for a whole bucket, "b,i" for one entry. */
+  roles?: Record<string, Role>
 }
 
 /**
@@ -121,7 +234,18 @@ export interface OutputState {
   lines: string[]
 }
 
-export type Structure = ArrayState | VarsState | StackState | QueueState | GridState | OutputState | MeterState
+export type Structure =
+  | ArrayState
+  | VarsState
+  | StackState
+  | QueueState
+  | GridState
+  | OutputState
+  | MeterState
+  | ListState
+  | TreeState
+  | GraphState
+  | HashState
 
 export interface Frame {
   /** Step id; code lines tagged `@step` light up. */

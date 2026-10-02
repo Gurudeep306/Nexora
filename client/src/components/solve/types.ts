@@ -162,7 +162,14 @@ export interface CustomProblemDetail {
   memory_limit?: string
   creator?: string | null
   /** Set on Nexora Learn problems: the lesson this problem belongs to. */
-  learn?: { topic: string; page: string }
+  learn?: {
+    topic: string
+    page: string
+    /** Markdown write-up: intuition, approach, proof, complexity, pitfalls. */
+    editorial?: string | null
+    /** Verified solutions keyed by language (cpp, java, python, js, c). */
+    solutions?: Partial<Record<'cpp' | 'java' | 'python' | 'js' | 'c', string>>
+  }
 }
 
 export interface CustomProblemResponse {

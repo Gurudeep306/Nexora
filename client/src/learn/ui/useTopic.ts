@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { findTopic } from '../content/dsa/syllabus'
+import { registerAlgorithms } from '../engine/registry'
 import type { Topic } from '../types'
 
 const cache = new Map<string, Topic>()
@@ -15,6 +16,7 @@ export function useTopic(id: string | undefined) {
     entry
       .load()
       .then((t) => {
+        registerAlgorithms(t.algorithms)
         cache.set(entry.id, t)
         if (live) setTopic(t)
       })

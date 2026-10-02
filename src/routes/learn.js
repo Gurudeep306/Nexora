@@ -8,19 +8,56 @@ const { me } = require('../context');
  * Nexora Learn — the coding questions of the course and each learner's
  * progress through lessons and the question bank.
  *
- * Coding problems live in src/learn/problems.json, generated (with their
- * tests) by scripts/learn/build_problems.py. They are served in the same
+
+
  * shape as Workshop problems, so the Solve page runs them unchanged.
  */
 
-const PROBLEMS_FILE = path.join(__dirname, '..', 'learn', 'problems.json');
-let cache = null;
-function problems() {
-  if (!cache) {
-    const raw = JSON.parse(fs.readFileSync(PROBLEMS_FILE, 'utf8'));
-    cache = new Map(raw.problems.map((p) => [p.slug, p]));
+/*
+ * Problems are stored one file per topic (src/learn/problems/<topic>.json) and
+ * loaded on demand: the full set is large (tests, editorials, five-language
+ * solutions), and a free server has little memory. The first request builds a
+ * light index (slug → topic, plus list metadata); topic files are then parsed
+ * when a problem in them is opened and kept in a small LRU cache.
+ */
+const PROBLEMS_DIR = path.join(__dirname, '..', 'learn', 'problems');
+const CACHE_TOPICS = 6;
+let index = null; // Map slug → summary
+const topicCache = new Map(); // topic → Map slug → problem (insertion order = LRU)
+
+function readTopic(topic) {
+  const file = path.join(PROBLEMS_DIR, `${topic}.json`);
+  const raw = JSON.parse(fs.readFileSync(file, 'utf8'));
+  return new Map(raw.problems.map((p) => [p.slug, p]));
+}
+
+function problemIndex() {
+  if (!index) {
+    index = new Map();
+    let files = [];
+    try {
+      files = fs.readdirSync(PROBLEMS_DIR).filter((f) => f.endsWith('.json'));
+    } catch {
+      files = [];
+    }
+    for (const f of files.sort()) {
+      for (const p of readTopic(f.slice(0, -5)).values()) {
+        index.set(p.slug, { slug: p.slug, title: p.title, topic: p.topic, page: p.page, difficulty: p.difficulty, tags: p.tags });
+      }
+    }
   }
-  return cache;
+  return index;
+}
+
+function findProblem(slug) {
+  const meta = problemIndex().get(slug);
+  if (!meta) return null;
+  let probs = topicCache.get(meta.topic);
+  if (probs) topicCache.delete(meta.topic);
+  else probs = readTopic(meta.topic);
+  topicCache.set(meta.topic, probs);
+  while (topicCache.size > CACHE_TOPICS) topicCache.delete(topicCache.keys().next().value);
+  return probs.get(slug) || null;
 }
 
 const ITEM_RE = /^(q|code|page):[a-z0-9_./-]{1,100}$/i;
@@ -42,7 +79,12 @@ function createLearnRouter({ get, all, run }) {
 
   /* A coding problem, in the Workshop problem shape the Solve page adapts. */
   router.get('/api/learn/problems/:slug', (req, res) => {
-    const p = problems().get(req.params.slug);
+    let p;
+    try {
+      p = findProblem(req.params.slug);
+    } catch (e) {
+      return res.status(500).json({ ok: false, error: errMessage(e) });
+    }
     if (!p) return res.status(404).json({ ok: false, error: 'Unknown problem' });
     res.json({
       ok: true,
@@ -59,17 +101,23 @@ function createLearnRouter({ get, all, run }) {
         time_limit: p.time_limit,
         memory_limit: p.memory_limit,
         creator: '',
-        learn: { topic: p.topic, page: p.page },
+        learn: {
+          topic: p.topic,
+          page: p.page,
+          editorial: p.editorial || null,
+          solutions: p.solutions || {},
+        },
       },
     });
   });
 
   /* Titles and difficulty of every coding problem (for the question bank). */
   router.get('/api/learn/problems', (_req, res) => {
-    res.json({
-      ok: true,
-      problems: [...problems().values()].map((p) => ({ slug: p.slug, title: p.title, topic: p.topic, page: p.page, difficulty: p.difficulty, tags: p.tags })),
-    });
+    try {
+      res.json({ ok: true, problems: [...problemIndex().values()] });
+    } catch (e) {
+      res.status(500).json({ ok: false, error: errMessage(e) });
+    }
   });
 
   router.get('/api/learn/progress', async (_req, res) => {

@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
-import { Brain, Clock, Cpu, FileDown, GitCommitHorizontal, Loader2, ScrollText } from 'lucide-react'
+import { Brain, Clock, Cpu, FileDown, GitCommitHorizontal, Lightbulb, Loader2, ScrollText } from 'lucide-react'
 import { Badge, DifficultyBadge, LoadingBlock, Tabs } from '@/components/ui'
 import { sanitizeHtml } from '@/components/ailab/sanitize'
 import { prepareMathHtml, renderMathIn } from '@/lib/math'
 import { useStatementMedia } from './StatementMedia'
 import { TranslateBar } from './TranslateBar'
 import { ThinkingPad } from './ThinkingPad'
+import { SolutionTab } from './SolutionTab'
+import type { Lang } from '@/learn/engine/types'
 import { PlatformBadge, VerdictBadge } from '@/components/shared/PlatformBadge'
 import { cn, timeAgo } from '@/lib/utils'
 import { parseTags } from '@/components/problems/types'
@@ -22,6 +24,8 @@ interface Props {
   importedSampleCount: number
   /** Workshop problems have no decomposition notes or translation */
   custom?: boolean
+  /** Nexora Learn problems: the written solution, shown in its own tab. */
+  learnSolution?: { slug: string; editorial: string | null; solutions: Partial<Record<Lang, string>> }
 }
 
 
@@ -48,6 +52,7 @@ export function ProblemPanel({
   onImportAllSamples,
   importedSampleCount,
   custom = false,
+  learnSolution,
 }: Props) {
   const [tab, setTab] = useState('statement')
   const [translated, setTranslated] = useState<{ lang: string; html: string } | null>(null)
@@ -101,6 +106,7 @@ export function ProblemPanel({
           items={[
             { id: 'statement', label: 'Statement', icon: <ScrollText className="size-3.5" /> },
             ...(custom ? [] : [{ id: 'thinking', label: 'Thinking', icon: <Brain className="size-3.5" /> }]),
+            ...(learnSolution ? [{ id: 'solution', label: 'Solution', icon: <Lightbulb className="size-3.5" /> }] : []),
             {
               id: 'submissions',
               label: 'Submissions',
@@ -230,6 +236,8 @@ export function ProblemPanel({
         )}
 
         {tab === 'thinking' && !custom && <ThinkingPad problemId={problem.id} />}
+
+        {tab === 'solution' && learnSolution && <SolutionTab {...learnSolution} />}
 
         {tab === 'submissions' && (
           <>
