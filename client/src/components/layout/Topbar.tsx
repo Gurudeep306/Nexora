@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom'
 import { ChevronRight, Flame, Search, Zap } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
-import { AnimatedNumber, Avatar, Kbd, Tooltip } from '@/components/ui'
+import { AnimatedNumber, Avatar, Kbd, RotatingText, Tooltip } from '@/components/ui'
 import { navMeta } from '@/config/nav'
 import { Notifications } from './Notifications'
 import { LookPopover } from '@/components/look/LookPopover'
@@ -35,11 +35,20 @@ export function Topbar() {
         onClick={openCommandPalette}
         aria-label="Search problems and pages"
         aria-keyshortcuts="Control+K Meta+K /"
-        className="group mx-auto hidden h-8 w-full max-w-sm cursor-pointer items-center gap-2 rounded-lg border border-accent-brand/20 bg-accent-brand/5 pr-1.5 pl-3 text-left text-[13px] text-text-primary/60 transition-all duration-200 hover:border-accent-brand/35 hover:bg-accent-brand/10 hover:text-text-primary hover:shadow-[0_0_0_3px_color-mix(in_oklab,var(--color-accent-brand)_10%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-brand/50 md:flex"
+        className="group relative mx-auto hidden h-9 w-full max-w-md cursor-pointer items-center gap-2.5 overflow-hidden rounded-xl border border-border/60 bg-bg-app/60 pr-1.5 pl-1.5 text-left backdrop-blur-md transition-all duration-300 hover:border-accent-brand/40 hover:bg-accent-brand/[0.07] hover:shadow-[0_0_0_3px_color-mix(in_oklab,var(--color-accent-brand)_9%,transparent),0_10px_28px_-14px_color-mix(in_oklab,var(--color-accent-brand)_55%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-brand/50 md:flex"
       >
-        <Search className="size-3.5 shrink-0 transition-colors group-hover:text-accent-brand" aria-hidden="true" />
-        <span className="min-w-0 flex-1 truncate">Search problems, pages, actions…</span>
-        <span className="flex gap-0.5">
+        {/* shimmer sweep on hover */}
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-text-primary/10 to-transparent transition-transform duration-[900ms] ease-out group-hover:translate-x-full"
+        />
+        <span className="relative flex size-6 shrink-0 items-center justify-center rounded-lg border border-accent-brand/25 bg-accent-brand/10 text-accent-brand transition-all duration-300 group-hover:border-accent-brand/45 group-hover:bg-accent-brand/15 group-hover:shadow-[0_0_14px_-2px_color-mix(in_oklab,var(--color-accent-brand)_70%,transparent)]">
+          <Search className="size-3.5" aria-hidden="true" />
+        </span>
+        <span className="relative min-w-0 flex-1 text-[13px] font-medium text-text-primary/55 transition-colors duration-300 group-hover:text-text-primary/80">
+          <RotatingText items={['Search problems…', 'Jump to a page…', 'Find a topic…', 'Run an action…']} />
+        </span>
+        <span className="relative flex shrink-0 items-center gap-0.5">
           <Kbd>{IS_MAC ? '⌘' : 'Ctrl'}</Kbd>
           <Kbd>K</Kbd>
         </span>

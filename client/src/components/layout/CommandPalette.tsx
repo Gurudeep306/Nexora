@@ -233,7 +233,7 @@ export function CommandPalette() {
                 ref={inputRef}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Jump to a page, search problems, or run an action…"
+                placeholder="Search problems, pages, actions…"
                 aria-label="Command palette search"
                 role="combobox"
                 aria-expanded="true"

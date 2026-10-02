@@ -237,7 +237,7 @@ export function FriendsTab({ me, socket }: Props) {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onClear={() => setQuery('')}
-              placeholder="Search by username (min 2 chars)…"
+              placeholder="Search people…"
               aria-label="Search users"
             />
             {searching && <LoadingBlock rows={2} />}

@@ -33,10 +33,16 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
   ({ className, containerClassName, onClear, value, ...props }, ref) => {
     const hasValue = value != null && String(value).length > 0
     return (
-      <div className={cn('group/search relative flex items-center', containerClassName)}>
+      <div
+        className={cn(
+          'group/search relative flex items-center rounded-[var(--radius-control)] transition-shadow duration-200',
+          'focus-within:shadow-[0_0_0_3px_color-mix(in_oklab,var(--color-accent-brand)_12%,transparent)]',
+          containerClassName,
+        )}
+      >
         <Search
           aria-hidden="true"
-          className="pointer-events-none absolute left-3 size-4 text-foreground-faint transition-colors duration-200 group-focus-within/search:text-primary-bright"
+          className="pointer-events-none absolute left-3 z-10 size-4 text-foreground-faint transition-all duration-200 group-focus-within/search:scale-110 group-focus-within/search:text-primary-bright"
         />
         <input
           ref={ref}
@@ -50,7 +56,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
             type="button"
             onClick={onClear}
             aria-label="Clear search"
-            className="absolute right-2 flex size-6 cursor-pointer items-center justify-center rounded-md text-foreground-faint transition-colors hover:bg-foreground/10 hover:text-foreground"
+            className="absolute right-2 z-10 flex size-6 cursor-pointer items-center justify-center rounded-full text-foreground-faint transition-all duration-150 hover:scale-105 hover:bg-foreground/10 hover:text-foreground active:scale-95"
           >
             <X className="size-3.5" aria-hidden="true" />
           </button>

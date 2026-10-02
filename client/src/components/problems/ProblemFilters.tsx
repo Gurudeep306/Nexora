@@ -114,7 +114,7 @@ export function ProblemFilters({ filters, tags, resultCount, onSearchInput, onCh
           value={filters.search}
           onChange={(e) => onSearchInput(e.target.value)}
           onClear={() => onSearchInput('')}
-          placeholder="Search problems by title or ID…  ( / )"
+          placeholder="Search problems…"
           aria-label="Search problems"
           containerClassName="flex-1"
         />
