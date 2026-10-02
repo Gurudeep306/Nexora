@@ -24,6 +24,7 @@ const BookmarksPage = lazy(() => import('@/pages/BookmarksPage'))
 const ProfilePage = lazy(() => import('@/pages/ProfilePage'))
 const SettingsPage = lazy(() => import('@/pages/SettingsPage'))
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
+const VizLab = import.meta.env.DEV ? lazy(() => import('@/learn/ui/VizLab')) : null
 
 function PageLoader() {
   return (
@@ -49,6 +50,7 @@ export default function App() {
         <Routes>
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/" element={<LandingPage />} />
+          {VizLab && <Route path="/viz-lab" element={<VizLab />} />}
           <Route element={<RequireAuth><AppLayout /></RequireAuth>}>
             <Route path="/hub" element={<HubPage />} />
             <Route path="/problems" element={<ProblemsPage />} />

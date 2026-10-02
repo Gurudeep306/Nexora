@@ -786,6 +786,11 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
     onImportAllSamples={() => void importSamples(samples.map((_, i) => i))}
     importedSampleCount={importedSampleCount}
     custom={custom}
+    learnSolution={
+      learn && customApi.data?.problem.learn
+        ? { slug: String(customApi.data.problem.id), editorial: customApi.data.problem.learn.editorial ?? null, solutions: customApi.data.problem.learn.solutions ?? {} }
+        : undefined
+    }
   />
 )
 

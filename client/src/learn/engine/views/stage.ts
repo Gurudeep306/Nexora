@@ -49,7 +49,9 @@ export function rolesIn(structures: Structure[]): Role[] {
     if (s.kind === 'array') {
       Object.values(s.roles ?? {}).forEach((r) => seen.add(r))
       ;(s.ranges ?? []).forEach((r) => seen.add(r.role))
-    } else if (s.kind === 'stack' || s.kind === 'queue' || s.kind === 'grid') Object.values(s.roles ?? {}).forEach((r) => seen.add(r))
+    } else if (s.kind === 'stack' || s.kind === 'queue' || s.kind === 'grid' || s.kind === 'hash') Object.values(s.roles ?? {}).forEach((r) => seen.add(r))
+    else if (s.kind === 'list') [...Object.values(s.roles ?? {}), ...Object.values(s.linkRoles ?? {})].forEach((r) => seen.add(r))
+    else if (s.kind === 'tree' || s.kind === 'graph') [...Object.values(s.roles ?? {}), ...Object.values(s.edgeRoles ?? {})].forEach((r) => seen.add(r))
     else if (s.kind === 'meter' && s.role) seen.add(s.role)
   }
   const order: Role[] = ['active', 'compare', 'swap', 'write', 'new', 'window', 'best', 'pivot', 'found', 'done', 'removed', 'dim']

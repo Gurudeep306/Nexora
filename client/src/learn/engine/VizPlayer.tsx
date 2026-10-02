@@ -8,6 +8,7 @@ import { LANGS, type Algorithm, type Frame, type Inputs, type Lang, type Structu
 import { ArrayView } from './views/ArrayView'
 import { roleClass } from './views/format'
 import { GridView, MeterView, OutputView, QueueView, StackView, VarsView } from './views/Others'
+import { GraphView, HashView, ListView, TreeView } from './views/Linked'
 import { ROLE_LABEL, StageContext, rolesIn, type StageInfo } from './views/stage'
 
 const LANG_KEY = 'nexora:learn-lang'
@@ -64,6 +65,14 @@ export function StructureView({ s }: { s: Structure }) {
       return <OutputView s={s} />
     case 'meter':
       return <MeterView s={s} />
+    case 'list':
+      return <ListView s={s} />
+    case 'tree':
+      return <TreeView s={s} />
+    case 'graph':
+      return <GraphView s={s} />
+    case 'hash':
+      return <HashView s={s} />
   }
 }
 

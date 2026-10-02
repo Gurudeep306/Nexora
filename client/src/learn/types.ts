@@ -1,4 +1,4 @@
-import type { Lang } from './engine/types'
+import type { Algorithm, Lang } from './engine/types'
 import type { Question } from './questions/types'
 
 export type CalloutKind = 'note' | 'tip' | 'warn' | 'insight' | 'interview' | 'pitfall'
@@ -27,6 +27,14 @@ export interface Topic {
   blurb: string
   pages: Page[]
   questions: Question[]
+  /** Animations this topic's lessons embed (registered when the topic loads). */
+  algorithms?: Algorithm[]
+}
+
+/** Per-topic status read by the syllabus without loading the topic itself. */
+export interface TopicMeta {
+  ready: boolean
+  pages: number
 }
 
 export interface SyllabusEntry {

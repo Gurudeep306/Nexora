@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import type { GridState, MeterState, OutputState, QueueState, StackState, VarsState } from '../types'
 import { cn } from '@/lib/utils'
 import { fmt, roleClass } from './format'
+import { useStage } from './stage'
 
 const spring = { type: 'spring', stiffness: 380, damping: 32 } as const
 
@@ -65,44 +66,99 @@ export function QueueView({ s }: { s: QueueState }) {
   )
 }
 
-/** A table of cells — a matrix, a DP table, or the (i, j) pairs a loop visits. */
+/**
+ * A table of cells — a matrix, a DP table, or the (i, j) pairs a loop visits.
+ * Cells are laid out on a fixed pitch so dependency arrows ("dp[i][j] comes
+ * from dp[i-1][j-1]") can be drawn between them.
+ */
 export function GridView({ s }: { s: GridState }) {
+  const { width: stageW } = useStage()
   const cols = Math.max(0, ...s.rows.map((r) => r.length))
-  const dense = cols > 9
+  const longest = Math.max(1, ...s.rows.flat().map((v) => (v === null ? 0 : fmt(v).length)))
+  const rowLab = s.rowLabels ? Math.max(18, ...s.rowLabels.map((l) => l.length * 7 + 8)) : 0
+  const colLab = s.colLabels ? 18 : 0
+  const GAP = cols > 9 ? 3 : 4
+  const want = Math.max(cols > 9 ? 28 : 38, longest * 8 + 12)
+  const CW = Math.max(22, Math.min(want, Math.floor((stageW - 16 - rowLab) / Math.max(1, cols)) - GAP))
+  const CH = CW < 30 ? 28 : 34
+  const W = rowLab + cols * (CW + GAP)
+  const Ht = colLab + s.rows.length * (CH + GAP)
+  const cx = (c: number) => rowLab + c * (CW + GAP) + CW / 2
+  const cy = (r: number) => colLab + r * (CH + GAP) + CH / 2
+  const arrows = s.arrows ?? []
   return (
     <div className="viz-grid overflow-x-auto">
       {s.label && <p className="viz-label">{s.label}</p>}
-      <table className={cn('mx-auto border-separate', dense ? 'border-spacing-[3px]' : 'border-spacing-1')}>
-        {s.colLabels && (
-          <thead>
-            <tr>
-              {s.rowLabels && <th />}
-              {s.colLabels.map((c, i) => (
-                <th key={i} className="viz-grid-head px-1">
-                  {c}
-                </th>
-              ))}
-            </tr>
-          </thead>
+      <div className="relative mx-auto" style={{ width: W, height: Ht }}>
+        {s.colLabels?.map((c, i) => (
+          <span key={i} className="viz-grid-head absolute text-center" style={{ left: cx(i) - CW / 2, width: CW, top: 0 }}>
+            {c}
+          </span>
+        ))}
+        {s.rowLabels?.map((l, r) => (
+          <span key={r} className="viz-grid-head absolute pr-1.5 text-right" style={{ left: 0, width: rowLab, top: cy(r) - 8 }}>
+            {l}
+          </span>
+        ))}
+        {s.rows.map((row, r) =>
+          row.map((v, c) => {
+            const role = s.roles?.[`${r},${c}`]
+            return (
+              <div
+                key={`${r},${c}`}
+                className={cn('viz-cell viz-grid-cell absolute flex items-center justify-center rounded-md !p-0', cols > 9 && 'viz-grid-dense', roleClass(role), role === 'active' && 'viz-pulse')}
+                style={{ left: cx(c) - CW / 2, top: cy(r) - CH / 2, width: CW, height: CH, minWidth: 0 }}
+              >
+                <motion.span key={String(v)} initial={{ opacity: 0, scale: 1.4 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.25 }} className="viz-value inline-block">
+                  {v === null ? '' : fmt(v)}
+                </motion.span>
+              </div>
+            )
+          }),
         )}
-        <tbody>
-          {s.rows.map((row, r) => (
-            <tr key={r}>
-              {s.rowLabels && <th className="viz-grid-head pr-1.5 text-right">{s.rowLabels[r]}</th>}
-              {row.map((v, c) => {
-                const role = s.roles?.[`${r},${c}`]
-                return (
-                  <td key={c} className={cn('viz-cell viz-grid-cell rounded-md text-center', dense && 'viz-grid-dense', roleClass(role), role === 'active' && 'viz-pulse')}>
-                    <motion.span key={String(v)} initial={{ opacity: 0, scale: 1.4 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.25 }} className="viz-value inline-block">
-                      {v === null ? '' : fmt(v)}
-                    </motion.span>
-                  </td>
-                )
-              })}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+        {arrows.length > 0 && (
+          <svg className="pointer-events-none absolute inset-0 overflow-visible" width={W} height={Ht} aria-hidden="true">
+            <defs>
+              <marker id={`ga-${s.id}`} viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" className="viz-garrow-head" />
+              </marker>
+            </defs>
+            {arrows.map((a, k) => {
+              const x1 = cx(a.from[1])
+              const y1 = cy(a.from[0])
+              const x2 = cx(a.to[1])
+              const y2 = cy(a.to[0])
+              const dx = x2 - x1
+              const dy = y2 - y1
+              const len = Math.hypot(dx, dy) || 1
+              const sx = x1 + (dx / len) * Math.min(CW, CH) * 0.32
+              const sy = y1 + (dy / len) * Math.min(CW, CH) * 0.32
+              const ex = x2 - (dx / len) * Math.min(CW, CH) * 0.42
+              const ey = y2 - (dy / len) * Math.min(CW, CH) * 0.42
+              const bend = len > CW * 1.6 ? 0.18 : 0
+              const qx = (sx + ex) / 2 - dy * bend
+              const qy = (sy + ey) / 2 + dx * bend
+              return (
+                <g key={`${k}-${a.from}-${a.to}`} className={cn('viz-garrow', a.role ? roleClass(a.role) : 'viz-role-write')}>
+                  <motion.path
+                    d={`M ${sx} ${sy} Q ${qx} ${qy} ${ex} ${ey}`}
+                    fill="none"
+                    markerEnd={`url(#ga-${s.id})`}
+                    initial={{ pathLength: 0, opacity: 0 }}
+                    animate={{ pathLength: 1, opacity: 1 }}
+                    transition={{ duration: 0.4, ease: 'easeOut' }}
+                  />
+                  {a.label && (
+                    <text x={qx} y={qy - 4} textAnchor="middle" className="viz-arrow-label">
+                      {a.label}
+                    </text>
+                  )}
+                </g>
+              )
+            })}
+          </svg>
+        )}
+      </div>
     </div>
   )
 }

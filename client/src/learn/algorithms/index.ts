@@ -1,4 +1,5 @@
 import type { Algorithm } from '../engine/types'
+import { registerAlgorithms } from '../engine/registry'
 import { arrAccess, arrDelete, arrDynamic, arrInsert, arrLinear, arrReverse, arrRotate, arrTraverse } from './arrays1'
 import { arrDiff, arrDutch, arrLeaders, arrMajority, arrMerge, arrSpiral } from './arrays3'
 import { cxAmortized, cxCases, cxCountOps, cxGrowth, cxHalving, cxHarmonic, cxMergeLevels, cxNLogN, cxNested, cxRecSpace, cxSqrt, cxTriangle } from './complexity'
@@ -43,3 +44,5 @@ export const ALGORITHMS: Record<string, Algorithm> = Object.fromEntries(
     cxSqrt,
   ].map((a) => [a.id, a]),
 )
+
+registerAlgorithms(Object.values(ALGORITHMS))

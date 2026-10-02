@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom'
 import { AlertTriangle, BriefcaseBusiness, CheckCircle2, ChevronRight, Code2, Info, Lightbulb, Sparkles, Zap } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { ALGORITHMS } from '../algorithms'
+import '../algorithms'
+import { getAlgorithm } from '../engine/registry'
 import { VizPlayer } from '../engine/VizPlayer'
 import { Markdown } from '../md'
 import { codeKey, isDone, useProgress } from '../progress'
@@ -62,7 +63,7 @@ export function LessonBlock({ b, bank }: { b: Block; bank: Map<string, Question>
     case 'md':
       return <Markdown md={b.md} />
     case 'viz': {
-      const algo = ALGORITHMS[b.algo]
+      const algo = getAlgorithm(b.algo)
       if (!algo) return <p className="text-state-error">Missing animation: {b.algo}</p>
       return (
         <figure className="-mx-1 my-2 sm:-mx-4 lg:-mx-10">

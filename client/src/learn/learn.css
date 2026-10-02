@@ -356,3 +356,89 @@ html:not(.dark) .tok-fn { color: oklch(0.5 0.15 240); }
 .learn-readbar { background: linear-gradient(90deg, var(--color-accent-brand), oklch(0.72 0.17 300)); }
 .learn-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 500; color: var(--color-text-secondary); background: var(--color-bg-surface-2); box-shadow: inset 0 0 0 1px var(--color-border); }
 .learn-pill svg { color: var(--color-accent-brand); }
+
+/* ═══ Linked structures: lists, trees, graphs, hash tables, grid arrows ═══ */
+
+/* linked list nodes: value | next */
+.viz-lnode { padding: 0; }
+.viz-lnode-next { border-left: 1.5px solid var(--color-border-strong); height: 100%; }
+.viz-lnode[class*='viz-role-'] .viz-lnode-next { border-left-color: var(--rc); }
+.viz-lnode-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-text-secondary); }
+.viz-lnode-null::after {
+  content: '';
+  position: absolute;
+  inset: 6px 5px;
+  background: linear-gradient(to top right, transparent calc(50% - 1px), var(--color-text-muted) calc(50% - 1px), var(--color-text-muted) calc(50% + 1px), transparent calc(50% + 1px));
+}
+.viz-link { fill: none; stroke: color-mix(in oklab, var(--color-text-secondary) 75%, transparent); stroke-width: 2; stroke-linecap: round; transition: stroke 220ms; }
+.viz-link[class*='viz-role-'] { stroke: var(--rc); stroke-width: 2.6; }
+.viz-link-prev { stroke-dasharray: 4 3; opacity: 0.75; }
+.viz-link-head { fill: color-mix(in oklab, var(--color-text-secondary) 85%, transparent); }
+.viz-null-mark { font: 600 11px var(--font-mono); fill: var(--color-text-muted); }
+
+/* pointer tags drawn inside SVG (lists, trees, graphs) */
+.viz-ptr-svg { --pc: oklch(0.68 0.17 var(--ph, 255)); }
+.viz-ptr-svg-arrow { fill: var(--pc); }
+.viz-ptr-svg-name { font: 700 11px var(--font-mono); fill: var(--pc); paint-order: stroke; stroke: var(--color-background); stroke-width: 3px; stroke-linejoin: round; }
+.viz-null-ptrs { margin-top: 4px; text-align: center; font: 600 11px var(--font-mono); color: var(--color-text-muted); }
+
+/* trees */
+.viz-tnode circle, .viz-tnode rect {
+  fill: var(--viz-cell, var(--color-bg-surface-3));
+  stroke: var(--color-border-strong);
+  stroke-width: 1.5;
+  transition: fill 220ms, stroke 220ms;
+}
+.viz-tnode[class*='viz-role-'] circle, .viz-tnode[class*='viz-role-'] rect {
+  fill: color-mix(in oklab, var(--rc) 28%, var(--viz-cell, var(--color-bg-surface-3)));
+  stroke: var(--rc);
+  stroke-width: 2.4;
+  filter: drop-shadow(0 0 6px color-mix(in oklab, var(--rc) 55%, transparent));
+}
+.viz-tnode.viz-role-dim { opacity: 0.35; }
+.viz-tnode.viz-role-removed { opacity: 0.5; }
+.viz-tnode-text { font: 600 13px var(--font-mono); fill: var(--color-text-primary); font-variant-numeric: tabular-nums; }
+.viz-tnode-note { font: 500 10px var(--font-mono); fill: var(--color-text-muted); }
+.viz-tedge { stroke: color-mix(in oklab, var(--color-text-muted) 70%, transparent); stroke-width: 1.8; transition: stroke 220ms; }
+.viz-tedge[class*='viz-role-'] { stroke: var(--rc); stroke-width: 3; }
+.viz-tedge.viz-role-dim { opacity: 0.25; }
+.viz-tedge-label { font: 700 11px var(--font-mono); fill: var(--color-accent-brand); paint-order: stroke; stroke: var(--color-background); stroke-width: 3px; }
+
+/* graphs */
+.viz-gnode circle {
+  fill: var(--viz-cell, var(--color-bg-surface-3));
+  stroke: var(--color-border-strong);
+  stroke-width: 1.6;
+  transition: fill 240ms, stroke 240ms;
+}
+.viz-gnode[class*='viz-role-'] circle {
+  fill: color-mix(in oklab, var(--rc) 30%, var(--viz-cell, var(--color-bg-surface-3)));
+  stroke: var(--rc);
+  stroke-width: 2.6;
+  filter: drop-shadow(0 0 7px color-mix(in oklab, var(--rc) 60%, transparent));
+}
+.viz-gnode.viz-role-dim { opacity: 0.35; }
+.viz-gnode-text { font: 700 12.5px var(--font-mono); fill: var(--color-text-primary); }
+.viz-gnote-bg { fill: var(--color-bg-surface-2); stroke: color-mix(in oklab, var(--color-accent-brand) 50%, transparent); stroke-width: 1; }
+.viz-gnote { font: 700 10.5px var(--font-mono); fill: var(--color-accent-brand); }
+.viz-gedge-line { fill: none; stroke: color-mix(in oklab, var(--color-text-muted) 60%, transparent); stroke-width: 1.8; transition: stroke 240ms, stroke-width 240ms; }
+.viz-gedge[class*='viz-role-'] .viz-gedge-line { stroke: var(--rc); stroke-width: 3.2; }
+.viz-gedge.viz-role-dim { opacity: 0.2; }
+.viz-gedge-head { fill: color-mix(in oklab, var(--color-text-muted) 80%, transparent); }
+.viz-gedge-pulse { fill: var(--rc, var(--color-accent-brand)); filter: drop-shadow(0 0 5px var(--rc, var(--color-accent-brand))); }
+.viz-gedge-w { font: 700 10.5px var(--font-mono); fill: var(--color-text-secondary); paint-order: stroke; stroke: var(--color-background); stroke-width: 4px; stroke-linejoin: round; }
+
+/* hash tables */
+.viz-hash-idx { font: 600 12px var(--font-mono); color: var(--color-text-muted); }
+.viz-hash-bucket[class*='viz-role-'] .viz-hash-idx { color: var(--color-text-primary); }
+.viz-hash-stem { width: 18px; height: 2px; background: color-mix(in oklab, var(--color-text-muted) 60%, transparent); }
+.viz-hash-stem-empty { opacity: 0.35; }
+.viz-hash-link { width: 14px; height: 2px; background: color-mix(in oklab, var(--color-text-muted) 60%, transparent); position: relative; }
+.viz-hash-link::after { content: ''; position: absolute; right: -1px; top: -3px; border: 4px solid transparent; border-left-color: color-mix(in oklab, var(--color-text-muted) 80%, transparent); border-right: 0; }
+.viz-hash-empty { font: 500 10.5px var(--font-mono); color: var(--color-text-muted); opacity: 0.6; padding-left: 4px; }
+
+/* grid dependency arrows */
+.viz-garrow path:first-of-type { stroke: var(--rc); stroke-width: 1.8; }
+.viz-garrow-head { fill: var(--color-text-secondary); }
+/* opaque underlay so edges never show through translucent (glass) node fills */
+.viz-tnode .viz-under, .viz-gnode .viz-under { fill: var(--color-background) !important; stroke: none !important; filter: none !important; }
