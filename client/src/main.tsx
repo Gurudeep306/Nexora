@@ -14,6 +14,9 @@ import { AuthProvider } from './context/AuthContext'
 import { ToastProvider } from './components/ui'
 import { SocketProvider } from './lib/socket'
 import { ThemeProvider } from './context/ThemeContext'
+import { initFaviconFx } from './lib/faviconFx'
+
+initFaviconFx()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

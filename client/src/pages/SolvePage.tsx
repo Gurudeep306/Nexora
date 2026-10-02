@@ -35,6 +35,7 @@ import { api } from '@/lib/api'
 import { useApi } from '@/hooks/useApi'
 import { useAuth } from '@/context/AuthContext'
 import { cn } from '@/lib/utils'
+import { setFaviconMode, celebrateFavicon } from '@/lib/faviconFx'
 import { CodeEditor } from '@/components/solve/CodeEditor'
 import { ProblemPanel } from '@/components/solve/ProblemPanel'
 import { TestcaseDeck } from '@/components/solve/TestcaseDeck'
@@ -473,6 +474,7 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
       setBanner({ verdict: res.verdict, xp, id: Date.now() })
       if (learn && id) markLearn(codeKey(id), res.verdict === 'AC' ? 'solved' : 'attempted')
       if (res.verdict === 'AC') {
+        celebrateFavicon()
         toast.success('Accepted!', xp ? `+${xp} XP awarded — nice solve.` : learn ? 'All tests pass — marked solved in your course.' : custom ? 'All workshop tests pass.' : 'Solved again — clean.')
         if (!custom) {
           void refresh()
@@ -490,6 +492,11 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
       setSubmitting(false)
     }
   }, [running, submitting, code, id, language, testcases, problem, toast, refresh, problemApi, custom, learn, storageId, saveReplay])
+
+  /* Drive the animated browser-tab favicon: fast pulse while judging. */
+  useEffect(() => {
+    setFaviconMode(running || submitting ? 'busy' : 'idle')
+  }, [running, submitting])
 
   /* Global shortcuts (Monaco handles its own via addCommand) */
   const runRef = useRef(handleRun)

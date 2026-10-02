@@ -7,6 +7,7 @@ import { useAuth } from '@/context/AuthContext'
 import { useApi } from '@/hooks/useApi'
 import { api } from '@/lib/api'
 import { useSocket } from '@/lib/socket'
+import { setFaviconBadge } from '@/lib/faviconFx'
 import type { FriendRequest, UnreadCount } from '@/components/social/types'
 
 /** Bell + inbox popover: friend requests and unread DMs, live over the socket. */
@@ -35,6 +36,10 @@ export function Notifications() {
   }, [socket, refetch])
 
   const total = data?.total ?? 0
+
+  // Mirror the unread count onto the browser tab title, e.g. "(3) Nexora — …".
+  useEffect(() => setFaviconBadge(total), [total])
+  useEffect(() => () => setFaviconBadge(0), [])
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
