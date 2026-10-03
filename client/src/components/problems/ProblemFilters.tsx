@@ -125,7 +125,7 @@ export function ProblemFilters({ filters, tags, resultCount, onSearchInput, onCh
   if (filters.tag) chips.push({ label: `#${filters.tag}`, remove: () => onChange({ tag: '' }) })
 
   return (
-    <div className="card-neon p-4">
+    <div className="card-neon relative z-20 p-4">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-end">
         <SearchCombobox
           ref={searchRef}
