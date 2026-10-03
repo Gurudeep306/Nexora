@@ -1,19 +1,88 @@
-import { Link, useLocation } from 'react-router-dom'
-import { ChevronRight, Flame, Search, Zap } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { ChevronRight, Flame, Keyboard, Search, Swords, Zap } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
-import { AnimatedNumber, Avatar, Kbd, RotatingText, Tooltip } from '@/components/ui'
-import { navMeta } from '@/config/nav'
+import { AnimatedNumber, Avatar, Kbd, RotatingText, SearchCombobox, Tooltip, type ComboboxItem } from '@/components/ui'
+import { ACCOUNT_ITEMS, CREATE_SECTION, NAV_SECTIONS, navMeta } from '@/config/nav'
 import { Notifications } from './Notifications'
 import { LookPopover } from '@/components/look/LookPopover'
 import { openCommandPalette } from './CommandPalette'
 import { UserMenu } from './UserMenu'
+import { api } from '@/lib/api'
+import { PlatformBadge } from '@/components/shared/PlatformBadge'
+import type { Problem, ProblemsResponse } from '@/components/problems/types'
 
 const IS_MAC = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform)
 
 export function Topbar() {
   const { user } = useAuth()
   const { pathname } = useLocation()
+  const navigate = useNavigate()
   const meta = navMeta(pathname)
+
+  const [query, setQuery] = useState('')
+  const [results, setResults] = useState<Problem[]>([])
+  const [searching, setSearching] = useState(false)
+
+  useEffect(() => {
+    const q = query.trim()
+    if (q.length < 2) {
+      setResults([])
+      setSearching(false)
+      return
+    }
+    setSearching(true)
+    const t = setTimeout(async () => {
+      try {
+        const res = await api.get<ProblemsResponse>('/api/problems', { query: { search: q, limit: 6 } })
+        setResults(res.problems ?? [])
+      } catch {
+        setResults([])
+      } finally {
+        setSearching(false)
+      }
+    }, 220)
+    return () => clearTimeout(t)
+  }, [query])
+
+  const items = useMemo<ComboboxItem[]>(() => {
+    const q = query.trim().toLowerCase()
+    const pages: ComboboxItem[] = [
+      ...NAV_SECTIONS.flatMap((s) => s.items),
+      ...CREATE_SECTION.items.filter((i) => !i.adminOnly || user?.role === 'admin'),
+      ...ACCOUNT_ITEMS,
+    ]
+      .filter((n) => !q || n.label.toLowerCase().includes(q) || n.to.toLowerCase().includes(q))
+      .map((n) => ({
+        id: `page:${n.to}`,
+        group: 'Go to',
+        label: n.label,
+        hint: n.to,
+        icon: n.icon,
+        onSelect: () => (n.external ? (window.location.href = n.to) : navigate(n.to)),
+      }))
+    const problems: ComboboxItem[] = results.map((p) => ({
+      id: `problem:${p.id}`,
+      group: 'Problems',
+      label: p.title,
+      icon: Swords,
+      trailing: <PlatformBadge platform={p.platform} />,
+      onSelect: () => navigate(`/solve/${p.id}`),
+    }))
+    const tail: ComboboxItem[] =
+      q.length >= 2
+        ? [
+            {
+              id: 'all',
+              group: 'Problems',
+              label: `Search all problems for “${query.trim()}”`,
+              icon: Search,
+              onSelect: () => navigate(`/problems?q=${encodeURIComponent(query.trim())}`),
+            },
+          ]
+        : []
+    return [...pages, ...problems, ...tail]
+  }, [query, results, user?.role, navigate])
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-2 titlebar px-3 md:px-6 animate-fade-in">
@@ -30,29 +99,32 @@ export function Topbar() {
         </span>
       </nav>
 
-      <button
-        type="button"
-        onClick={openCommandPalette}
+      <SearchCombobox
+        items={items}
+        value={query}
+        onValueChange={setQuery}
+        onSelect={() => setQuery('')}
+        loading={searching}
+        emptyText="Nothing matches. Try a problem name or page."
+        placeholderNode={<RotatingText items={['Search problems…', 'Jump to a page…', 'Find a topic…', 'Run an action…']} />}
+        containerClassName="mx-auto hidden w-full max-w-md md:block"
+        className="text-[13px]"
         aria-label="Search problems and pages"
-        aria-keyshortcuts="Control+K Meta+K /"
-        className="group relative mx-auto hidden h-9 w-full max-w-md cursor-pointer items-center gap-2.5 overflow-hidden rounded-xl border border-border/60 bg-bg-app/60 pr-1.5 pl-1.5 text-left backdrop-blur-md transition-all duration-300 hover:border-accent-brand/40 hover:bg-accent-brand/[0.07] hover:shadow-[0_0_0_3px_color-mix(in_oklab,var(--color-accent-brand)_9%,transparent),0_10px_28px_-14px_color-mix(in_oklab,var(--color-accent-brand)_55%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-brand/50 md:flex"
-      >
-        {/* shimmer sweep on hover */}
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-text-primary/10 to-transparent transition-transform duration-[900ms] ease-out group-hover:translate-x-full"
-        />
-        <span className="relative flex size-6 shrink-0 items-center justify-center rounded-lg border border-accent-brand/25 bg-accent-brand/10 text-accent-brand transition-all duration-300 group-hover:border-accent-brand/45 group-hover:bg-accent-brand/15 group-hover:shadow-[0_0_14px_-2px_color-mix(in_oklab,var(--color-accent-brand)_70%,transparent)]">
-          <Search className="size-3.5" aria-hidden="true" />
-        </span>
-        <span className="relative min-w-0 flex-1 text-[13px] font-medium text-text-primary/55 transition-colors duration-300 group-hover:text-text-primary/80">
-          <RotatingText items={['Search problems…', 'Jump to a page…', 'Find a topic…', 'Run an action…']} />
-        </span>
-        <span className="relative flex shrink-0 items-center gap-0.5">
-          <Kbd>{IS_MAC ? '⌘' : 'Ctrl'}</Kbd>
-          <Kbd>K</Kbd>
-        </span>
-      </button>
+        footer={
+          <button
+            type="button"
+            onClick={openCommandPalette}
+            className="flex w-full cursor-pointer items-center gap-2 rounded-lg px-2.5 py-2 text-[12px] text-foreground-faint transition-colors hover:bg-foreground/5 hover:text-foreground"
+          >
+            <Keyboard className="size-3.5" aria-hidden="true" />
+            <span className="flex-1 text-left">Open the full command palette</span>
+            <span className="flex gap-0.5">
+              <Kbd>{IS_MAC ? '⌘' : 'Ctrl'}</Kbd>
+              <Kbd>K</Kbd>
+            </span>
+          </button>
+        }
+      />
 
       <div className="ml-auto flex items-center gap-1 md:ml-0">
         <button
