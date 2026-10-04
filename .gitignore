@@ -38,3 +38,7 @@ backups/
 
 # Temporary archives
 *.tgz
+
+# Python bytecode
+__pycache__/
+*.pyc
