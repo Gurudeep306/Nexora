@@ -37,6 +37,7 @@ const {
 const { createAuthRouter } = require("./routes/auth");
 const { createLearningRouter } = require("./routes/learning");
 const { createLearnRouter } = require("./routes/learn");
+const { createGateRouter } = require("./routes/gate");
 const { createStudioRouter } = require("./routes/studio");
 const { createExplainLabRouter } = require("./routes/explainlab");
 const { createForgeRouter } = require("./routes/forge");
@@ -5506,6 +5507,9 @@ app.use(
 
 // Nexora Learn: course coding problems + per-user progress
 app.use(createLearnRouter({ get, all, run }));
+
+// GATE CSE / IT / DA past-year question bank
+app.use(createGateRouter());
 
 // ForgeBuilder routes
 app.use("/api/forge", createForgeRouter({ all, get, run }));
