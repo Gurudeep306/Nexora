@@ -1,5 +1,7 @@
-import { Card, CardContent, SearchInput, Select } from '@/components/ui'
+import { Swords } from 'lucide-react'
+import { Card, CardContent, SearchCombobox, Select, type ComboboxItem } from '@/components/ui'
 import { PLATFORM_OPTIONS } from '@/components/problems/types'
+import { useProblemSuggestions } from '@/hooks/useProblemSuggestions'
 import { DAY_RANGES, VERDICT_OPTIONS } from './types'
 
 export interface SubmissionFilterState {
@@ -19,14 +21,25 @@ export function SubmissionsFilters({
   languages: string[]
   onChange: (patch: Partial<SubmissionFilterState>) => void
 }) {
+  const { problems, loading } = useProblemSuggestions(filters.search)
+  const items: ComboboxItem[] = problems.map((p) => ({
+    id: `problem:${p.id}`,
+    label: p.title,
+    hint: p.problem_id || undefined,
+    icon: Swords,
+    onSelect: () => onChange({ search: p.title }),
+  }))
+
   return (
-    <Card>
+    <Card className="relative z-20">
       <CardContent className="grid grid-cols-1 gap-3 py-4 sm:grid-cols-2 lg:grid-cols-5">
-        <SearchInput
+        <SearchCombobox
           value={filters.search}
-          onChange={(e) => onChange({ search: e.target.value })}
-          onClear={() => onChange({ search: '' })}
+          onValueChange={(v) => onChange({ search: v })}
+          items={items}
+          loading={loading}
           placeholder="Search problems…"
+          emptyText="No problems match."
           aria-label="Search submissions by problem title"
           containerClassName="sm:col-span-2 lg:col-span-1"
         />

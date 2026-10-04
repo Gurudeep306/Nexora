@@ -1,6 +1,9 @@
-import { useEffect, useRef, type ReactNode } from 'react'
-import { ArrowDownWideNarrow, X } from 'lucide-react'
-import { Button, SearchInput, Select } from '@/components/ui'
+import { useEffect, useMemo, useRef, type ReactNode } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { ArrowDownWideNarrow, Swords, X } from 'lucide-react'
+import { Button, SearchCombobox, Select, type ComboboxItem } from '@/components/ui'
+import { useProblemSuggestions } from '@/hooks/useProblemSuggestions'
+import { PlatformBadge } from '@/components/shared/PlatformBadge'
 import { cn } from '@/lib/utils'
 import {
   DIFFICULTY_BANDS,
@@ -72,6 +75,21 @@ function FilterChip({ label, onRemove }: { label: string; onRemove: () => void }
 
 export function ProblemFilters({ filters, tags, resultCount, onSearchInput, onChange }: Props) {
   const searchRef = useRef<HTMLInputElement>(null)
+  const navigate = useNavigate()
+  const { problems: suggestions, loading } = useProblemSuggestions(filters.search)
+
+  const suggestionItems = useMemo<ComboboxItem[]>(
+    () =>
+      suggestions.map((p) => ({
+        id: `problem:${p.id}`,
+        label: p.title,
+        hint: p.problem_id ? `${p.problem_id}${p.rating ? ` · ${p.rating}` : ''}` : undefined,
+        icon: Swords,
+        trailing: <PlatformBadge platform={p.platform} />,
+        onSelect: () => navigate(`/solve/${p.id}`),
+      })),
+    [suggestions, navigate],
+  )
 
   /* "/" jumps to search from anywhere on the page */
   useEffect(() => {
@@ -107,14 +125,16 @@ export function ProblemFilters({ filters, tags, resultCount, onSearchInput, onCh
   if (filters.tag) chips.push({ label: `#${filters.tag}`, remove: () => onChange({ tag: '' }) })
 
   return (
-    <div className="card-neon p-4">
+    <div className="card-neon relative z-20 p-4">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-end">
-        <SearchInput
+        <SearchCombobox
           ref={searchRef}
           value={filters.search}
-          onChange={(e) => onSearchInput(e.target.value)}
-          onClear={() => onSearchInput('')}
+          onValueChange={onSearchInput}
+          items={suggestionItems}
+          loading={loading}
           placeholder="Search problems…"
+          emptyText="No problems match."
           aria-label="Search problems"
           containerClassName="flex-1"
         />

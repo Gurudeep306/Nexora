@@ -37,6 +37,7 @@ const {
 const { createAuthRouter } = require("./routes/auth");
 const { createLearningRouter } = require("./routes/learning");
 const { createLearnRouter } = require("./routes/learn");
+const { createGateRouter } = require("./routes/gate");
 const { createStudioRouter } = require("./routes/studio");
 const { createExplainLabRouter } = require("./routes/explainlab");
 const { createForgeRouter } = require("./routes/forge");
@@ -4507,18 +4508,22 @@ app.get("/api/level-roadmap", async (req, res) => {
     const levels = [];
     for (const lt of LEVEL_TOPICS) {
       const rl = RIFT_LEVELS[lt.level - 1];
-      const topicsResult = [];
 
       // For ∞ Overflow (level 11), lower the floor to 2200 and remove the ceiling
       // so practice problems actually appear in the DB (very few problems rated 2800+ exist)
       const queryMinR = lt.level === 11 ? 2200 : rl.minR;
       const queryMaxR = lt.level === 11 ? 99999 : rl.maxR;
 
-      for (const topic of lt.topics) {
-        const tagCond = topic.tags.map(() => "p.tags LIKE ?").join(" OR ");
-        const tagParams = topic.tags.map((t) => `%${t}%`);
-        const pool = await all(
-          `
+      // Each topic runs its own tag/rating query. Against the remote (Turso) DB
+      // these are network round-trips, so fire a level's topics concurrently
+      // instead of serially — same queries, same deterministic selection, just
+      // ~10x fewer sequential waits. Promise.all preserves topic order.
+      const topicsResult = await Promise.all(
+        lt.topics.map(async (topic) => {
+          const tagCond = topic.tags.map(() => "p.tags LIKE ?").join(" OR ");
+          const tagParams = topic.tags.map((t) => `%${t}%`);
+          const pool = await all(
+            `
           SELECT p.id, p.problem_id, p.title, p.rating, p.platform, p.tags, p.url,
             COALESCE(pr.status,'unsolved') as solve_status,
             COALESCE(pr.attempts,0) as attempts
@@ -4529,30 +4534,31 @@ app.get("/api/level-roadmap", async (req, res) => {
             AND p.rating > 0
           ORDER BY p.rating DESC
         `,
-          [...tagParams, queryMinR, queryMaxR],
-        );
+            [...tagParams, queryMinR, queryMaxR],
+          );
 
-        const shuffled = seededShuffle(
-          pool,
-          weekSeed + lt.level * 100 + topic.tags.length,
-        );
-        const unsolved = shuffled.filter((p) => p.solve_status !== "solved");
-        const solved = shuffled.filter((p) => p.solve_status === "solved");
-        const selected = [
-          ...unsolved.slice(0, topic.count),
-          ...solved.slice(0, Math.max(0, topic.count - unsolved.length)),
-        ].slice(0, topic.count);
-        selected.sort((a, b) => a.rating - b.rating);
+          const shuffled = seededShuffle(
+            pool,
+            weekSeed + lt.level * 100 + topic.tags.length,
+          );
+          const unsolved = shuffled.filter((p) => p.solve_status !== "solved");
+          const solved = shuffled.filter((p) => p.solve_status === "solved");
+          const selected = [
+            ...unsolved.slice(0, topic.count),
+            ...solved.slice(0, Math.max(0, topic.count - unsolved.length)),
+          ].slice(0, topic.count);
+          selected.sort((a, b) => a.rating - b.rating);
 
-        topicsResult.push({
-          name: topic.name,
-          desc: topic.desc,
-          tags: topic.tags,
-          problems: selected,
-          totalPool: pool.length,
-          solvedInPool: pool.filter((p) => p.solve_status === "solved").length,
-        });
-      }
+          return {
+            name: topic.name,
+            desc: topic.desc,
+            tags: topic.tags,
+            problems: selected,
+            totalPool: pool.length,
+            solvedInPool: pool.filter((p) => p.solve_status === "solved").length,
+          };
+        }),
+      );
 
       const allProbs = topicsResult.flatMap((t) => t.problems);
       const solvedCount = allProbs.filter(
@@ -5501,6 +5507,9 @@ app.use(
 
 // Nexora Learn: course coding problems + per-user progress
 app.use(createLearnRouter({ get, all, run }));
+
+// GATE CSE / IT / DA past-year question bank
+app.use(createGateRouter());
 
 // ForgeBuilder routes
 app.use("/api/forge", createForgeRouter({ all, get, run }));
