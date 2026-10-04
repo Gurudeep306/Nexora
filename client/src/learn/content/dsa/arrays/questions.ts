@@ -637,38 +637,4 @@ for x in a[1:]:
   },
 ]
 
-/* Coding problems — each opens the judge. */
-const code = (id: string, page: string, title: string, difficulty: Question['difficulty'], prompt: string): Question => ({
-  id, topic: T, page, kind: 'code', difficulty, title, prompt, explain: '', slug: id,
-})
-
-const coding: Question[] = [
-  code('arr-c-sum', 'traversal', 'Sum of the array', 'easy', 'Read n numbers and print their sum. Values can be large — mind the type.'),
-  code('arr-c-max-min', 'traversal', 'Maximum and minimum', 'easy', 'Print the largest and the smallest value in one pass.'),
-  code('arr-c-second', 'traversal', 'Second largest distinct', 'medium', 'Print the second largest distinct value, or -1 if there is none.'),
-  code('arr-c-insert', 'insert-delete', 'Insert at a position', 'easy', 'Insert x at position p and print the new array.'),
-  code('arr-c-delete', 'insert-delete', 'Delete at a position', 'easy', 'Delete the element at position p and print the array.'),
-  code('arr-c-linear-search', 'searching', 'First occurrence', 'easy', 'Print the index of the first occurrence of x, or -1.'),
-  code('arr-c-count', 'searching', 'Answer occurrence queries', 'medium', 'For each query value, print how many times it occurs.'),
-  code('arr-c-reverse', 'reverse-rotate', 'Reverse the array', 'easy', 'Print the array in reverse, reversing it in place.'),
-  code('arr-c-rotate', 'reverse-rotate', 'Rotate right by k', 'medium', 'Rotate the array right by k (k can exceed n).'),
-  code('arr-c-range-sum', 'prefix-sums', 'Range sum queries', 'medium', 'Answer q range-sum queries fast.'),
-  code('arr-c-equilibrium', 'prefix-sums', 'Equilibrium index', 'medium', 'First index where the sum on the left equals the sum on the right.'),
-  code('arr-c-range-add', 'prefix-sums', 'Many range additions', 'medium', 'Apply m range additions, then print the array.'),
-  code('arr-c-pair-sum', 'two-pointers', 'Pair with sum in a sorted array', 'easy', 'Decide whether two different positions sum to T.'),
-  code('arr-c-dedupe', 'two-pointers', 'Remove duplicates from a sorted array', 'easy', 'Print how many unique values, then the values.'),
-  code('arr-c-move-zeroes', 'two-pointers', 'Move zeroes to the end', 'easy', 'Keep the order of the non-zero values.'),
-  code('arr-c-window-max', 'sliding-window', 'Best window of size k', 'easy', 'Maximum sum of k consecutive elements.'),
-  code('arr-c-min-len', 'sliding-window', 'Shortest subarray with sum ≥ S', 'medium', 'Positive values; print 0 if impossible.'),
-  code('arr-c-longest-ones', 'sliding-window', 'Longest run of ones with k flips', 'medium', 'Flip at most k zeroes to ones; longest block of ones.'),
-  code('arr-c-kadane', 'kadane', 'Maximum subarray sum', 'medium', 'The largest sum of a non-empty contiguous subarray.'),
-  code('arr-c-transpose', '2d-arrays', 'Transpose a matrix', 'easy', 'Print the transpose of an R × C matrix.'),
-  code('arr-c-spiral', '2d-arrays', 'Spiral order', 'medium', 'Print the matrix elements in clockwise spiral order.'),
-  code('arr-c-rotate-matrix', '2d-arrays', 'Rotate a square matrix', 'medium', 'Rotate an N × N matrix 90° clockwise in place.'),
-  code('arr-c-leaders', 'traversal', 'Leaders of an array', 'easy', 'Print every element greater than all elements to its right.'),
-  code('arr-c-majority', 'traversal', 'Majority element', 'medium', 'Print the value that appears more than n/2 times, or -1 — in O(1) extra space.'),
-  code('arr-c-dutch', 'two-pointers', 'Sort 0s, 1s and 2s', 'medium', 'Sort in one pass without counting.'),
-  code('arr-c-merge', 'two-pointers', 'Merge two sorted arrays', 'easy', 'Merge A and B into one sorted array in O(n + m).'),
-]
-
-export const questions: Question[] = [...concept, ...coding]
+export const questions: Question[] = concept

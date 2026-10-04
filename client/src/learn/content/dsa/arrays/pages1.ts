@@ -464,7 +464,18 @@ int count_of(const int *a, int n, int x) {
       title: 'The sentinel trick',
       md: `A tight loop checks two things each time: \`i < n\` and \`a[i] == x\`. Put \`x\` itself at \`a[n]\` (a spare slot) and the bounds check disappears — the loop is guaranteed to stop at the sentinel. Afterwards, \`i == n\` means "not found". A micro-optimisation, but a lovely example of changing the data to simplify the code.`,
     },
-    { t: 'check', title: 'Check yourself', ids: ['arr-q-linear-worst', 'arr-q-linear-avg', 'arr-q-search-many', 'arr-q-first-last'] },
+    { t: 'viz', algo: 'arr-sentinel', caption: 'The purple slot is the planted sentinel. Count the comparisons against the plain loop, then try an x that really is the last element.' },
+    {
+      t: 'md',
+      md: `
+        ### Why the sentinel version is still correct
+
+        The plain loop stops for one of two reasons (found, or ran out); the sentinel loop stops for only one (found) because \`x\` is guaranteed to be at index $n - 1$. That shifts the "ran out" question to after the loop: if it stopped *before* $n - 1$, it found a real match; if it stopped *at* $n - 1$, the original last element decides (\`last == x\` means found, otherwise absent). Restoring \`a[n − 1]\` keeps the function free of side effects.
+
+        This saves one comparison per element — roughly halving the loop's tests. Modern compilers and CPUs make the saving small, but the idea — **change the data so the loop needs fewer cases** — reappears everywhere: dummy head nodes in linked lists, padding a grid with a border of walls, \`P[0] = 0\` in prefix sums, $+\\infty$ at the end of each half in merge sort.
+      `,
+    },
+    { t: 'check', title: 'Check yourself', ids: ['arr-q-linear-worst', 'arr-q-linear-avg', 'arr-q-search-many', 'arr-q-first-last', 'arr-q-sentinel'] },
     { t: 'practice', title: 'Practice', ids: ['arr-c-linear-search', 'arr-c-count'] },
   ],
 }
