@@ -153,7 +153,7 @@ export function DockEditor({ open, onClose }: { open: boolean; onClose: () => vo
         </section>
 
         {/* Behaviour */}
-        <section className="grid gap-3 border-t border-border pt-5 sm:grid-cols-2">
+        <section className="grid gap-3 border-t border-border pt-5 sm:grid-cols-2 lg:grid-cols-3">
           <div className="flex items-center justify-between gap-4 rounded-xl bg-bg-surface-2 px-4 py-3 ring-1 ring-border">
             <div>
               <p className="mb-0 text-[13px] font-medium text-text-primary">Magnification</p>
@@ -167,6 +167,15 @@ export function DockEditor({ open, onClose }: { open: boolean; onClose: () => vo
               <p className="mb-0 text-[11.5px] text-text-muted">Off for plain monochrome glyphs.</p>
             </div>
             <Toggle on={!mono} onChange={(c) => setDock({ iconStyle: c ? 'colour' : 'mono' })} label="Colour icons" />
+          </div>
+          <div className="flex items-center justify-between gap-4 rounded-xl bg-bg-surface-2 px-4 py-3 ring-1 ring-border">
+            <div>
+              <p className="mb-0 text-[13px] font-medium text-text-primary">Auto-hide</p>
+              <p className="mb-0 text-[11.5px] text-text-muted">
+                Slips away until your cursor nears the bottom. Always hidden on Problems, Solve and Learn.
+              </p>
+            </div>
+            <Toggle on={dock.autoHide} onChange={(autoHide) => setDock({ autoHide })} label="Auto-hide the Dock" />
           </div>
         </section>
 
