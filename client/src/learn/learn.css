@@ -442,3 +442,71 @@ html:not(.dark) .tok-fn { color: oklch(0.5 0.15 240); }
 .viz-garrow-head { fill: var(--color-text-secondary); }
 /* opaque underlay so edges never show through translucent (glass) node fills */
 .viz-tnode .viz-under, .viz-gnode .viz-under { fill: var(--color-background) !important; stroke: none !important; filter: none !important; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   GATE past-year question bank
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.gate-search { background: var(--color-background); border: 1.5px solid var(--color-border-strong); transition: border-color 160ms, box-shadow 160ms; }
+.gate-search:focus-within { border-color: var(--color-accent-brand); box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-accent-brand) 16%, transparent); }
+
+.gate-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 3px 10px; border-radius: 999px; cursor: pointer;
+  font-size: 12px; font-weight: 500;
+  color: var(--color-text-secondary);
+  background: var(--color-bg-surface-2);
+  box-shadow: inset 0 0 0 1px var(--color-border);
+  transition: background-color 150ms, color 150ms, box-shadow 150ms;
+}
+.gate-pill:hover { transform: none !important; color: var(--color-text-primary); background: var(--color-bg-surface-3); }
+.gate-pill-on {
+  color: var(--color-on-accent-brand);
+  background: var(--color-accent-brand);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-accent-brand) 70%, transparent);
+}
+.gate-pill-n {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 18px; padding: 0 4px; border-radius: 999px;
+  font: 600 10px var(--font-mono);
+  background: color-mix(in oklab, var(--color-text-muted) 22%, transparent);
+}
+.gate-pill-on .gate-pill-n { background: rgb(255 255 255 / 0.25); }
+
+.gate-card { border-radius: 16px; }
+.gate-paper { font: 600 11.5px var(--font-body); letter-spacing: 0.01em; color: var(--color-accent-brand); }
+.gate-qno { font: 600 11.5px var(--font-mono); color: var(--color-text-secondary); }
+.gate-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 1px 7px; border-radius: 999px;
+  font-size: 10.5px; font-weight: 600;
+  background: var(--color-bg-surface-3); color: var(--color-text-secondary);
+}
+.gate-chip-warn { background: color-mix(in oklab, var(--color-state-warning) 16%, transparent); color: var(--color-state-warning); }
+.gate-chip-ok { background: color-mix(in oklab, var(--color-state-success) 16%, transparent); color: var(--color-state-success); }
+.gate-chip-soft { background: color-mix(in oklab, var(--color-accent-brand) 14%, transparent); color: var(--color-accent-brand); }
+.gate-icon-link { display: inline-flex; padding: 4px; border-radius: 8px; color: var(--color-text-muted); cursor: pointer; }
+.gate-icon-link:hover { background: var(--color-bg-surface-3); color: var(--color-text-primary); transform: none !important; }
+
+.gate-prompt { font-size: 15px; }
+.gate-figure img {
+  max-width: 100%; height: auto; border-radius: 10px;
+  background: #fff; padding: 6px;
+  border: 1px solid var(--color-border);
+}
+html.dark .gate-figure img { filter: invert(1) hue-rotate(180deg); background: #111; }
+
+.gate-option {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 7px 12px; border-radius: 10px;
+  border: 1px solid var(--color-border);
+  background: color-mix(in oklab, var(--color-bg-surface-2) 60%, transparent);
+}
+.gate-option-right { border-color: var(--color-state-success); background: color-mix(in oklab, var(--color-state-success) 12%, var(--color-bg-surface-2)); }
+.gate-option-label {
+  flex-shrink: 0; width: 20px;
+  font: 700 12.5px var(--font-mono); line-height: 22px;
+  color: var(--color-text-muted);
+}
+.gate-option-right .gate-option-label { color: var(--color-state-success); }
+.gate-answer { background: color-mix(in oklab, var(--color-accent-brand) 7%, transparent); border: 1px solid color-mix(in oklab, var(--color-accent-brand) 25%, transparent); }
