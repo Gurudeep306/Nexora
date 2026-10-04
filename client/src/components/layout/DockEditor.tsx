@@ -172,7 +172,7 @@ export function DockEditor({ open, onClose }: { open: boolean; onClose: () => vo
             <div>
               <p className="mb-0 text-[13px] font-medium text-text-primary">Auto-hide</p>
               <p className="mb-0 text-[11.5px] text-text-muted">
-                Slips away until your cursor nears the bottom. Always hidden on Problems, Solve and Learn.
+                Slips away until your cursor nears the bottom. Always hidden while solving a problem or reading a lesson.
               </p>
             </div>
             <Toggle on={dock.autoHide} onChange={(autoHide) => setDock({ autoHide })} label="Auto-hide the Dock" />

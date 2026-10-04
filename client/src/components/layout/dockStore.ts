@@ -4,6 +4,7 @@ import {
   ChartNoAxesCombined,
   FlaskConical,
   GraduationCap,
+  FileQuestion,
   Hammer,
   LayoutGrid,
   ListChecks,
@@ -48,6 +49,7 @@ export const DOCK_ITEMS: DockItem[] = [
   { id: 'contests', label: 'Contests', icon: Trophy, hue: 78, to: '/contests' },
   { id: 'nexus', label: 'Nexus', icon: Network, hue: 295, to: '/nexus' },
   { id: 'learn', label: 'Learn', icon: GraduationCap, hue: 150, to: '/learn' },
+  { id: 'gate', label: 'GATE', icon: FileQuestion, hue: 170, to: '/gate' },
   { id: 'analytics', label: 'Analytics', icon: ChartNoAxesCombined, hue: 210, to: '/analytics' },
   { id: 'social', label: 'Social', icon: Users, hue: 185, to: '/social' },
   { id: 'ailab', label: 'AI Lab', icon: FlaskConical, hue: 330, to: '/ailab' },
@@ -77,15 +79,16 @@ export interface DockPrefs {
 }
 
 export const DEFAULT_DOCK: DockPrefs = {
-  pinned: ['hub', 'problems', 'contests', 'nexus', 'learn', 'analytics', 'social', 'ailab', 'submissions', 'bookmarks', 'search'],
+  pinned: ['hub', 'problems', 'contests', 'nexus', 'learn', 'gate', 'analytics', 'social', 'ailab', 'submissions', 'bookmarks', 'search'],
   magnify: true,
   iconStyle: 'colour',
   autoHide: false,
 }
 
-/** Full-focus surfaces where the Dock never appears, so nothing distracts from
- *  solving a problem or working through a lesson — regardless of auto-hide. */
-export const DOCK_FOCUS_PREFIXES = ['/problems', '/solve', '/learn']
+/** Full-focus surfaces where the Dock never appears — while solving a problem
+ *  or reading a lesson — regardless of auto-hide. Navigation hubs like the
+ *  Problem Arena and Learn home keep the Dock so there's always a way out. */
+export const DOCK_FOCUS_PREFIXES = ['/solve', '/learn/dsa']
 
 export function isDockFocusRoute(pathname: string): boolean {
   return DOCK_FOCUS_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`))
