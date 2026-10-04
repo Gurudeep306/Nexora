@@ -72,12 +72,23 @@ export interface DockPrefs {
   magnify: boolean
   /** Colour tiles, or plain monochrome glyphs. */
   iconStyle: 'colour' | 'mono'
+  /** Slip the Dock off-screen until the cursor nears the bottom edge. */
+  autoHide: boolean
 }
 
 export const DEFAULT_DOCK: DockPrefs = {
   pinned: ['hub', 'problems', 'contests', 'nexus', 'learn', 'analytics', 'social', 'ailab', 'submissions', 'bookmarks', 'search'],
   magnify: true,
   iconStyle: 'colour',
+  autoHide: false,
+}
+
+/** Full-focus surfaces where the Dock never appears, so nothing distracts from
+ *  solving a problem or working through a lesson — regardless of auto-hide. */
+export const DOCK_FOCUS_PREFIXES = ['/problems', '/solve', '/learn']
+
+export function isDockFocusRoute(pathname: string): boolean {
+  return DOCK_FOCUS_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`))
 }
 
 const KEY = 'nexora:dock'
@@ -91,6 +102,7 @@ export function sanitizeDock(raw: unknown): DockPrefs {
     pinned: pinned.length ? pinned : DEFAULT_DOCK.pinned,
     magnify: typeof r.magnify === 'boolean' ? r.magnify : DEFAULT_DOCK.magnify,
     iconStyle: r.iconStyle === 'mono' ? 'mono' : 'colour',
+    autoHide: typeof r.autoHide === 'boolean' ? r.autoHide : DEFAULT_DOCK.autoHide,
   }
 }
 

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import {
   motion,
@@ -13,12 +13,16 @@ import { MoreHorizontal, SlidersHorizontal } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { openCommandPalette } from './CommandPalette'
 import { DockEditor } from './DockEditor'
-import { DOCK_BY_ID, DOCK_ITEMS, tileStyle, useDock, type DockItem } from './dockStore'
+import { DOCK_BY_ID, DOCK_ITEMS, isDockFocusRoute, tileStyle, useDock, type DockItem } from './dockStore'
 
 /** Resting icon size, the size under the pointer, and how far the swell reaches. */
 const BASE = 46
 const PEAK = 72
 const REACH = 160
+/** How close to the bottom edge the cursor must be to summon an auto-hidden Dock. */
+const REVEAL_EDGE = 96
+/** Grace period before the Dock slips away after the cursor leaves the edge. */
+const HIDE_DELAY = 480
 
 function isActive(item: DockItem, pathname: string) {
   if (!item.to || item.external) return false
@@ -173,13 +177,56 @@ export function Deck() {
   const mono = dock.iconStyle === 'mono'
   const moreActive = rest.some((i) => isActive(i, pathname))
 
+  const autoHide = dock.autoHide
+  const [revealed, setRevealed] = useState(!autoHide)
+  const hideTimer = useRef<number | null>(null)
+
+  // Auto-hide: summon the Dock when the cursor nears the bottom edge, and slip
+  // it away again shortly after the cursor leaves. Only wired while enabled.
+  useEffect(() => {
+    if (!autoHide) {
+      setRevealed(true)
+      return
+    }
+    const clear = () => {
+      if (hideTimer.current !== null) {
+        window.clearTimeout(hideTimer.current)
+        hideTimer.current = null
+      }
+    }
+    const onMove = (e: MouseEvent) => {
+      if (e.clientY >= window.innerHeight - REVEAL_EDGE) {
+        clear()
+        setRevealed(true)
+      } else if (hideTimer.current === null) {
+        hideTimer.current = window.setTimeout(() => {
+          hideTimer.current = null
+          setRevealed(false)
+        }, HIDE_DELAY)
+      }
+    }
+    window.addEventListener('mousemove', onMove)
+    return () => {
+      window.removeEventListener('mousemove', onMove)
+      clear()
+    }
+  }, [autoHide])
+
+  // Full-focus surfaces (Problems, Solve, Learn) never show the Dock.
+  if (isDockFocusRoute(pathname)) return null
+
+  // Keep the Dock up while a menu or the editor is open, even if the cursor has
+  // drifted away from the bottom edge.
+  const hidden = autoHide && !revealed && !moreOpen && !editing
+
   return (
     <>
       <motion.nav
         aria-label="Dock"
-        initial={reduce ? false : { y: 110 }}
-        animate={{ y: 0 }}
-        transition={{ type: 'spring', stiffness: 260, damping: 28, delay: 0.1 }}
+        aria-hidden={hidden || undefined}
+        initial={reduce ? false : { y: hidden ? 130 : 110, opacity: hidden ? 0 : 1 }}
+        animate={{ y: hidden ? 130 : 0, opacity: hidden ? 0 : 1 }}
+        transition={{ type: 'spring', stiffness: 260, damping: 28, delay: hidden ? 0 : 0.1 }}
         onMouseMove={(e) => mouseX.set(e.clientX)}
         onMouseLeave={() => mouseX.set(Infinity)}
         onContextMenu={(e) => {
@@ -187,7 +234,10 @@ export function Deck() {
           mouseX.set(Infinity)
           setEditing(true)
         }}
-        className="fixed bottom-3 left-1/2 z-40 hidden -translate-x-1/2 md:block"
+        className={cn(
+          'fixed bottom-3 left-1/2 z-40 hidden -translate-x-1/2 md:block',
+          hidden && 'pointer-events-none',
+        )}
       >
         <div className="relative flex h-[64px] items-end gap-[7px] px-2.5 pb-[9px]">
           {/* The glass is a sibling layer, not the container: an element with a
