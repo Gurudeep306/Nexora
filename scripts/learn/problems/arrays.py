@@ -566,3 +566,922 @@ add('arr-c-merge', 'Merge two sorted arrays', 'arrays', 'two-pointers', 900, ['a
     ["4 5\n1 4 7 9\n2 3 8 10 12\n", "3 3\n1 2 3\n4 5 6\n"],
     ["1 1\n5\n5\n", "2 3\n-5 -1\n-9 0 0\n", "3 1\n1 1 1\n1\n"], gen_merge)
 
+
+
+# ─────────────────────────── Round 3: the deeper pages ───────────────────────────
+# Every efficient reference below is cross-checked against a brute force on
+# small random inputs before any test is generated.
+
+from collections import Counter, deque
+from itertools import combinations
+
+
+def _check(fast, brute, gen, rounds=300):
+    for _ in range(rounds):
+        s = gen()
+        assert fast(s) == brute(s), (s, fast(s), brute(s))
+
+
+def read_arr(s):
+    v = ints(s)
+    return v[0], v[1:1 + v[0]]
+
+
+# ── index as hash ──
+def sol_missing_number(s):
+    n, a = read_arr(s)
+    return str(n * (n + 1) // 2 - sum(a))
+
+
+def gen_missing(n=None):
+    n = n or random.randint(1, SIZE)
+    vals = list(range(n + 1))
+    vals.remove(random.randint(0, n))
+    random.shuffle(vals)
+    return arr_input(vals)
+
+
+add('arr-c-missing-number', 'The missing number', 'arrays', 'index-as-hash', 900, ['arrays', 'math', 'xor'],
+    '<p>The array holds n <b>distinct</b> numbers taken from 0, 1, …, n — so exactly one number of that range is missing. Print it.</p><p>Do it in O(n) time and O(1) extra space (sum formula or XOR).</p>',
+    '<p>First line n (1 ≤ n ≤ 2·10<sup>5</sup>). Second line n distinct integers from 0…n.</p>', '<p>The missing number.</p>', sol_missing_number,
+    [arr_input([3, 0, 1]), arr_input([9, 6, 4, 2, 3, 5, 7, 0, 1])],
+    [arr_input([0]), arr_input([1]), arr_input([1, 2]), arr_input([0, 2])],
+    gen_missing, large=lambda: gen_missing(20000))
+
+
+def sol_find_dups(s):
+    n, a = read_arr(s)
+    d = sorted(v for v, c in Counter(a).items() if c == 2)
+    return fmt(d) if d else '-1'
+
+
+def gen_dups(n=None):
+    n = n or random.randint(1, 600)
+    pool = list(range(1, n + 1))
+    random.shuffle(pool)
+    a = []
+    while len(a) < n:
+        v = pool.pop()
+        a.append(v)
+        if len(a) < n and random.random() < 0.4:
+            a.append(v)
+    random.shuffle(a)
+    return arr_input(a)
+
+
+add('arr-c-find-duplicates', 'All duplicates', 'arrays', 'index-as-hash', 1200, ['arrays', 'in-place', 'index as hash'],
+    '<p>Every value is between 1 and n, and each value appears <b>once or twice</b>. Print, in increasing order, every value that appears twice — or <code>-1</code> if none does.</p><p>Aim for O(n) time and O(1) extra space: use the sign of a[|x| − 1] as a "seen" flag.</p>',
+    '<p>First line n (1 ≤ n ≤ 2·10<sup>5</sup>). Second line n integers, 1 ≤ a<sub>i</sub> ≤ n.</p>', '<p>The repeated values in increasing order, or -1.</p>', sol_find_dups,
+    [arr_input([4, 3, 2, 7, 8, 2, 3, 1]), arr_input([1, 2])],
+    [arr_input([1]), arr_input([1, 1]), arr_input([2, 2, 1, 1]), arr_input([3, 1, 2])],
+    gen_dups, large=lambda: gen_dups(20000))
+
+
+def sol_first_missing(s):
+    n, a = read_arr(s)
+    have = set(a)
+    k = 1
+    while k in have:
+        k += 1
+    return str(k)
+
+
+def gen_first_missing(n=None):
+    n = n or random.randint(1, SIZE)
+    mode = random.random()
+    if mode < 0.4:
+        a = list(range(1, n + 1))
+        if n > 1:
+            a[random.randrange(n)] = random.choice([-5, 0, n + 7, 10**9])
+    else:
+        a = [random.randint(-n, n + 2) for _ in range(n)]
+    random.shuffle(a)
+    return arr_input(a)
+
+
+add('arr-c-first-missing', 'First missing positive', 'arrays', 'index-as-hash', 1500, ['arrays', 'cyclic sort', 'index as hash'],
+    '<p>Print the smallest positive integer that does <b>not</b> occur in the array.</p><p>The answer is always between 1 and n + 1. The classic target is O(n) time and O(1) extra space: place every value v ∈ [1, n] at index v − 1 (cyclic sort), then scan.</p>',
+    '<p>First line n (1 ≤ n ≤ 2·10<sup>5</sup>). Second line n integers (|a<sub>i</sub>| ≤ 10<sup>9</sup>).</p>', '<p>One integer.</p>', sol_first_missing,
+    [arr_input([3, 4, -1, 1]), arr_input([7, 8, 9, 11, 12]), arr_input([1, 2, 0])],
+    [arr_input([1]), arr_input([2]), arr_input([1, 1]), arr_input([2, 1]), arr_input([-1000000000, 1000000000])],
+    gen_first_missing, large=lambda: gen_first_missing(20000))
+
+
+# ── prefix sums + hashing ──
+def sol_sub_k(s):
+    v = ints(s)
+    n, k = v[0], v[1]
+    a = v[2:2 + n]
+    seen = Counter({0: 1})
+    p = cnt = 0
+    for x in a:
+        p += x
+        cnt += seen[p - k]
+        seen[p] += 1
+    return str(cnt)
+
+
+def brute_sub_k(s):
+    v = ints(s)
+    n, k = v[0], v[1]
+    a = v[2:2 + n]
+    return str(sum(1 for i in range(n) for j in range(i, n) if sum(a[i:j + 1]) == k))
+
+
+def gen_sub_k(n=None, lo=-3, hi=3):
+    n = n or random.randint(1, 1000)
+    a = [random.randint(lo, hi) for _ in range(n)]
+    return arr_input(a, extra_before=str(random.randint(-4, 4)))
+
+
+_check(sol_sub_k, brute_sub_k, lambda: gen_sub_k(random.randint(1, 12)))
+add('arr-c-subarray-sum-k', 'Count subarrays with sum k', 'arrays', 'prefix-hashing', 1400, ['arrays', 'prefix sums', 'hashing'],
+    '<p>Count the contiguous subarrays whose sum is exactly k. Values may be negative, so a sliding window does not work.</p><p>Hint: a subarray (i, j] has sum P[j] − P[i]. For each prefix P[j], how many earlier prefixes equal P[j] − k?</p>',
+    '<p>First line n and k (1 ≤ n ≤ 2·10<sup>5</sup>, |k| ≤ 10<sup>9</sup>). Second line n integers (|a<sub>i</sub>| ≤ 10<sup>4</sup>).</p>', '<p>One integer: the number of subarrays (it can exceed 2<sup>31</sup>).</p>', sol_sub_k,
+    [arr_input([1, 1, 1], extra_before='2'), arr_input([1, 2, 3], extra_before='3'), arr_input([3, 4, 7, 2, -3, 1, 4, 2], extra_before='7')],
+    [arr_input([0] * 50, extra_before='0'), arr_input([5], extra_before='5'), arr_input([5], extra_before='4'), arr_input([1, -1] * 30, extra_before='0')],
+    gen_sub_k, large=lambda: arr_input([random.randint(-1, 1) for _ in range(20000)], extra_before='0'))
+
+
+def sol_longest_k(s):
+    v = ints(s)
+    n, k = v[0], v[1]
+    a = v[2:2 + n]
+    first = {0: 0}
+    p = best = 0
+    for j, x in enumerate(a, 1):
+        p += x
+        if p - k in first:
+            best = max(best, j - first[p - k])
+        first.setdefault(p, j)
+    return str(best)
+
+
+def brute_longest_k(s):
+    v = ints(s)
+    n, k = v[0], v[1]
+    a = v[2:2 + n]
+    return str(max([j - i + 1 for i in range(n) for j in range(i, n) if sum(a[i:j + 1]) == k] or [0]))
+
+
+_check(sol_longest_k, brute_longest_k, lambda: gen_sub_k(random.randint(1, 12)))
+add('arr-c-longest-sum-k', 'Longest subarray with sum k', 'arrays', 'prefix-hashing', 1400, ['arrays', 'prefix sums', 'hashing'],
+    '<p>Print the length of the longest contiguous subarray whose sum is exactly k, or 0 if there is none. Values may be negative.</p><p>Hint: store the <b>first</b> index at which each prefix sum appears.</p>',
+    '<p>First line n and k (1 ≤ n ≤ 2·10<sup>5</sup>, |k| ≤ 10<sup>9</sup>). Second line n integers (|a<sub>i</sub>| ≤ 10<sup>4</sup>).</p>', '<p>One integer.</p>', sol_longest_k,
+    [arr_input([1, -1, 5, -2, 3], extra_before='3'), arr_input([-2, -1, 2, 1], extra_before='1')],
+    [arr_input([7], extra_before='3'), arr_input([3], extra_before='3'), arr_input([0, 0, 0], extra_before='0'), arr_input([1, 2, 3], extra_before='100')],
+    gen_sub_k, large=lambda: arr_input([random.randint(-2, 2) for _ in range(20000)], extra_before='1'))
+
+
+MOD = 10**9 + 7
+
+
+def sol_prod_except(s):
+    n, a = read_arr(s)
+    pre = [1] * (n + 1)
+    for i in range(n):
+        pre[i + 1] = pre[i] * a[i] % MOD
+    out = [0] * n
+    suf = 1
+    for i in range(n - 1, -1, -1):
+        out[i] = pre[i] * suf % MOD
+        suf = suf * a[i] % MOD
+    return fmt(out)
+
+
+def brute_prod_except(s):
+    n, a = read_arr(s)
+    out = []
+    for i in range(n):
+        p = 1
+        for j in range(n):
+            if j != i:
+                p = p * a[j] % MOD
+        out.append(p)
+    return fmt(out)
+
+
+def gen_prod(n=None):
+    n = n or random.randint(1, SIZE)
+    return arr_input([random.choice([0, 1, 2, random.randint(0, 10**9)]) if random.random() < 0.2 else random.randint(1, 10**9) for _ in range(n)])
+
+
+_check(sol_prod_except, brute_prod_except, lambda: gen_prod(random.randint(1, 8)))
+add('arr-c-product-except', 'Product of array except self', 'arrays', 'prefix-hashing', 1300, ['arrays', 'prefix products'],
+    '<p>For every index i print the product of all elements <b>except</b> a<sub>i</sub>, modulo 10<sup>9</sup> + 7.</p><p>Division is not allowed (and does not work with zeros or under a modulus): combine a prefix product and a suffix product.</p>',
+    '<p>First line n (1 ≤ n ≤ 2·10<sup>5</sup>). Second line n integers (0 ≤ a<sub>i</sub> ≤ 10<sup>9</sup>).</p>', '<p>n integers. For n = 1 the empty product is 1.</p>', sol_prod_except,
+    [arr_input([1, 2, 3, 4]), arr_input([0, 5, 2, 0, 3])],
+    [arr_input([7]), arr_input([0]), arr_input([0, 0]), arr_input([10**9, 10**9, 10**9])],
+    gen_prod, large=lambda: gen_prod(20000))
+
+
+def sol_equal01(s):
+    n, a = read_arr(s)
+    first = {0: 0}
+    p = best = 0
+    for j, x in enumerate(a, 1):
+        p += 1 if x == 1 else -1
+        if p in first:
+            best = max(best, j - first[p])
+        else:
+            first[p] = j
+    return str(best)
+
+
+def brute_equal01(s):
+    n, a = read_arr(s)
+    return str(max([j - i + 1 for i in range(n) for j in range(i, n) if a[i:j + 1].count(0) == a[i:j + 1].count(1)] or [0]))
+
+
+def gen01(n=None):
+    n = n or random.randint(1, SIZE)
+    return arr_input([random.randint(0, 1) for _ in range(n)])
+
+
+_check(sol_equal01, brute_equal01, lambda: gen01(random.randint(1, 12)))
+add('arr-c-equal-zero-one', 'Equal zeros and ones', 'arrays', 'prefix-hashing', 1300, ['arrays', 'prefix sums', 'hashing'],
+    '<p>The array contains only 0s and 1s. Print the length of the longest contiguous subarray with as many 0s as 1s (0 if there is none).</p><p>Hint: count a 0 as −1 — the question becomes "longest subarray with sum 0".</p>',
+    '<p>First line n (1 ≤ n ≤ 2·10<sup>5</sup>). Second line n values, each 0 or 1.</p>', '<p>One integer.</p>', sol_equal01,
+    [arr_input([0, 1, 0]), arr_input([0, 1, 1, 1, 0, 0, 1])],
+    [arr_input([1]), arr_input([0, 0, 0]), arr_input([1, 0]), arr_input([1, 1, 0, 0, 1, 0])],
+    gen01, large=lambda: gen01(20000))
+
+
+# ── 2D ranges ──
+def sol_sum2d(s):
+    L = lines_of(s)
+    R, C, q = map(int, L[0].split())
+    M = [list(map(int, L[1 + i].split())) for i in range(R)]
+    P = [[0] * (C + 1) for _ in range(R + 1)]
+    for i in range(R):
+        for j in range(C):
+            P[i + 1][j + 1] = M[i][j] + P[i][j + 1] + P[i + 1][j] - P[i][j]
+    out = []
+    for line in L[1 + R:1 + R + q]:
+        r1, c1, r2, c2 = map(int, line.split())
+        out.append(P[r2 + 1][c2 + 1] - P[r1][c2 + 1] - P[r2 + 1][c1] + P[r1][c1])
+    return '\n'.join(map(str, out))
+
+
+def brute_sum2d(s):
+    L = lines_of(s)
+    R, C, q = map(int, L[0].split())
+    M = [list(map(int, L[1 + i].split())) for i in range(R)]
+    out = []
+    for line in L[1 + R:1 + R + q]:
+        r1, c1, r2, c2 = map(int, line.split())
+        out.append(sum(M[i][j] for i in range(r1, r2 + 1) for j in range(c1, c2 + 1)))
+    return '\n'.join(map(str, out))
+
+
+def gen_sum2d(R=None, C=None, q=None, big=10**9):
+    R = R or random.randint(1, 30)
+    C = C or random.randint(1, 30)
+    q = q or random.randint(1, 200)
+    rows = [' '.join(str(random.randint(-big, big)) for _ in range(C)) for _ in range(R)]
+    qs = []
+    for _ in range(q):
+        r1, r2 = sorted(random.randint(0, R - 1) for _ in range(2))
+        c1, c2 = sorted(random.randint(0, C - 1) for _ in range(2))
+        qs.append(f"{r1} {c1} {r2} {c2}")
+    return f"{R} {C} {q}\n" + '\n'.join(rows) + '\n' + '\n'.join(qs) + '\n'
+
+
+_check(sol_sum2d, brute_sum2d, lambda: gen_sum2d(random.randint(1, 5), random.randint(1, 5), random.randint(1, 6), 9))
+add('arr-c-range-sum-2d', 'Rectangle sum queries', 'arrays', 'range-2d', 1300, ['arrays', 'prefix sums', '2d'],
+    '<p>Answer q queries on an R × C matrix: each gives a rectangle by its top-left (r1, c1) and bottom-right (r2, c2) corners (0-based, inclusive) and asks for the sum of the values inside.</p><p>Build a 2D prefix sum once; each query is then four lookups (inclusion–exclusion).</p>',
+    '<p>First line R C q (1 ≤ R, C ≤ 500, 1 ≤ q ≤ 2·10<sup>5</sup>). Next R lines: C integers each (|v| ≤ 10<sup>9</sup>). Next q lines: r1 c1 r2 c2 with r1 ≤ r2, c1 ≤ c2.</p>', '<p>q lines, one sum each.</p>', sol_sum2d,
+    ["3 4 3\n3 0 1 4\n5 6 3 2\n1 2 0 1\n0 0 1 1\n1 1 2 3\n0 0 2 3\n"],
+    ["1 1 1\n-7\n0 0 0 0\n", "2 2 2\n1000000000 1000000000\n1000000000 1000000000\n0 0 1 1\n1 0 1 1\n"],
+    gen_sum2d, n_rand=6, large=lambda: gen_sum2d(80, 80, 3000))
+
+
+def sol_add2d(s):
+    L = lines_of(s)
+    R, C, m = map(int, L[0].split())
+    M = [list(map(int, L[1 + i].split())) for i in range(R)]
+    D = [[0] * (C + 1) for _ in range(R + 1)]
+    for line in L[1 + R:1 + R + m]:
+        r1, c1, r2, c2, v = map(int, line.split())
+        D[r1][c1] += v
+        D[r1][c2 + 1] -= v
+        D[r2 + 1][c1] -= v
+        D[r2 + 1][c2 + 1] += v
+    for i in range(R + 1):
+        for j in range(C + 1):
+            D[i][j] += (D[i - 1][j] if i else 0) + (D[i][j - 1] if j else 0) - (D[i - 1][j - 1] if i and j else 0)
+    return '\n'.join(fmt(M[i][j] + D[i][j] for j in range(C)) for i in range(R))
+
+
+def brute_add2d(s):
+    L = lines_of(s)
+    R, C, m = map(int, L[0].split())
+    M = [list(map(int, L[1 + i].split())) for i in range(R)]
+    for line in L[1 + R:1 + R + m]:
+        r1, c1, r2, c2, v = map(int, line.split())
+        for i in range(r1, r2 + 1):
+            for j in range(c1, c2 + 1):
+                M[i][j] += v
+    return '\n'.join(fmt(r) for r in M)
+
+
+def gen_add2d(R=None, C=None, m=None):
+    R = R or random.randint(1, 30)
+    C = C or random.randint(1, 30)
+    m = m or random.randint(1, 300)
+    rows = [' '.join(str(random.randint(-10**6, 10**6)) for _ in range(C)) for _ in range(R)]
+    ups = []
+    for _ in range(m):
+        r1, r2 = sorted(random.randint(0, R - 1) for _ in range(2))
+        c1, c2 = sorted(random.randint(0, C - 1) for _ in range(2))
+        ups.append(f"{r1} {c1} {r2} {c2} {random.randint(-10**6, 10**6)}")
+    return f"{R} {C} {m}\n" + '\n'.join(rows) + '\n' + '\n'.join(ups) + '\n'
+
+
+_check(sol_add2d, brute_add2d, lambda: gen_add2d(random.randint(1, 5), random.randint(1, 5), random.randint(1, 6)))
+add('arr-c-range-add-2d', 'Rectangle updates', 'arrays', 'range-2d', 1400, ['arrays', 'difference array', '2d'],
+    '<p>Apply m updates to an R × C matrix; each adds v to every cell of the rectangle (r1, c1)–(r2, c2) (0-based, inclusive). Print the final matrix.</p><p>Each update should cost O(1): write four corners of a 2D difference array, then take its 2D prefix sum once.</p>',
+    '<p>First line R C m (1 ≤ R, C ≤ 500, 1 ≤ m ≤ 2·10<sup>5</sup>). Next R lines: C integers (|v| ≤ 10<sup>6</sup>). Next m lines: r1 c1 r2 c2 v (r1 ≤ r2, c1 ≤ c2, |v| ≤ 10<sup>6</sup>).</p>', '<p>R lines with C integers each.</p>', sol_add2d,
+    ["3 3 2\n0 0 0\n0 0 0\n0 0 0\n0 0 1 1 5\n1 1 2 2 -2\n"],
+    ["1 1 1\n4\n0 0 0 0 -4\n", "2 3 1\n1 2 3\n4 5 6\n0 0 1 2 1000000\n"],
+    gen_add2d, n_rand=6, large=lambda: gen_add2d(60, 60, 4000))
+
+
+# ── k-sum ──
+def sol_three_sum(s):
+    n, a = read_arr(s)
+    a = sorted(a)
+    cnt = 0
+    for i in range(n):
+        if i and a[i] == a[i - 1]:
+            continue
+        lo, hi = i + 1, n - 1
+        while lo < hi:
+            t = a[i] + a[lo] + a[hi]
+            if t < 0:
+                lo += 1
+            elif t > 0:
+                hi -= 1
+            else:
+                cnt += 1
+                lo += 1
+                while lo < hi and a[lo] == a[lo - 1]:
+                    lo += 1
+                hi -= 1
+    return str(cnt)
+
+
+def brute_three_sum(s):
+    n, a = read_arr(s)
+    return str(len({tuple(sorted(c)) for c in combinations(a, 3) if sum(c) == 0}))
+
+
+def gen_three(n=None, lo=-6, hi=6):
+    n = n or random.randint(1, 3000)
+    span = max(6, n // 3) if lo == -6 and n > 50 else hi
+    return arr_input([random.randint(-span, span) for _ in range(n)])
+
+
+_check(sol_three_sum, brute_three_sum, lambda: gen_three(random.randint(1, 12)))
+add('arr-c-three-sum', '3-sum: count the triplets', 'arrays', 'k-sum', 1500, ['arrays', 'two pointers', 'sorting'],
+    '<p>Count the <b>distinct</b> triplets of values {x, y, z} (taken from three different positions) with x + y + z = 0. Two triplets are the same if they contain the same values, e.g. (−1, 0, 1) and (0, 1, −1).</p><p>Sort, fix the first element, and run two pointers on the rest — skipping duplicates — for O(n²).</p>',
+    '<p>First line n (1 ≤ n ≤ 3000). Second line n integers (|a<sub>i</sub>| ≤ 10<sup>5</sup>).</p>', '<p>One integer.</p>', sol_three_sum,
+    [arr_input([-1, 0, 1, 2, -1, -4]), arr_input([0, 0, 0, 0])],
+    [arr_input([0]), arr_input([1, -1]), arr_input([0, 0, 0]), arr_input([1, 2, 3]), arr_input([-2, 1, 1, 1, -2, 4])],
+    gen_three, n_rand=6, large=lambda: arr_input([random.randint(-1500, 1500) for _ in range(3000)]))
+
+
+def sol_four_sum(s):
+    v = ints(s)
+    n, T = v[0], v[1]
+    a = sorted(v[2:2 + n])
+    cnt = 0
+    for i in range(n):
+        if i and a[i] == a[i - 1]:
+            continue
+        for j in range(i + 1, n):
+            if j > i + 1 and a[j] == a[j - 1]:
+                continue
+            lo, hi = j + 1, n - 1
+            while lo < hi:
+                t = a[i] + a[j] + a[lo] + a[hi]
+                if t < T:
+                    lo += 1
+                elif t > T:
+                    hi -= 1
+                else:
+                    cnt += 1
+                    lo += 1
+                    while lo < hi and a[lo] == a[lo - 1]:
+                        lo += 1
+                    hi -= 1
+    return str(cnt)
+
+
+def brute_four_sum(s):
+    v = ints(s)
+    n, T = v[0], v[1]
+    return str(len({tuple(sorted(c)) for c in combinations(v[2:2 + n], 4) if sum(c) == T}))
+
+
+def gen_four(n=None):
+    n = n or random.randint(1, 200)
+    span = max(4, n // 4)
+    return arr_input([random.randint(-span, span) for _ in range(n)], extra_before=str(random.randint(-span, span)))
+
+
+_check(sol_four_sum, brute_four_sum, lambda: gen_four(random.randint(1, 10)))
+add('arr-c-four-sum', '4-sum: count the quadruplets', 'arrays', 'k-sum', 1600, ['arrays', 'two pointers', 'sorting'],
+    '<p>Count the distinct quadruplets of values (from four different positions) whose sum is T. As in 3-sum, quadruplets with the same multiset of values count once.</p><p>Two nested loops plus two pointers: O(n³).</p>',
+    '<p>First line n and T (1 ≤ n ≤ 200, |T| ≤ 10<sup>9</sup>). Second line n integers (|a<sub>i</sub>| ≤ 10<sup>9</sup>).</p>', '<p>One integer.</p>', sol_four_sum,
+    [arr_input([1, 0, -1, 0, -2, 2], extra_before='0'), arr_input([2, 2, 2, 2, 2], extra_before='8')],
+    [arr_input([1, 2, 3], extra_before='6'), arr_input([10**9] * 4, extra_before=str(4 * 10**9 % (10**9 + 1))), arr_input([0, 0, 0, 0], extra_before='0')],
+    gen_four, n_rand=6, large=lambda: arr_input([random.randint(-60, 60) for _ in range(200)], extra_before='3'))
+
+
+def sol_three_closest(s):
+    v = ints(s)
+    n, T = v[0], v[1]
+    a = sorted(v[2:2 + n])
+    best = None
+    for i in range(n):
+        lo, hi = i + 1, n - 1
+        while lo < hi:
+            t = a[i] + a[lo] + a[hi]
+            if best is None or abs(t - T) < abs(best - T) or (abs(t - T) == abs(best - T) and t < best):
+                best = t
+            if t < T:
+                lo += 1
+            elif t > T:
+                hi -= 1
+            else:
+                return str(t)
+    return str(best)
+
+
+def brute_three_closest(s):
+    v = ints(s)
+    n, T = v[0], v[1]
+    sums = [sum(c) for c in combinations(v[2:2 + n], 3)]
+    return str(min(sums, key=lambda t: (abs(t - T), t)))
+
+
+def gen_closest(n=None):
+    n = n or random.randint(3, 3000)
+    return arr_input([random.randint(-10**4, 10**4) for _ in range(n)], extra_before=str(random.randint(-3 * 10**4, 3 * 10**4)))
+
+
+_check(sol_three_closest, brute_three_closest, lambda: arr_input([random.randint(-9, 9) for _ in range(random.randint(3, 9))], extra_before=str(random.randint(-30, 30))))
+add('arr-c-three-closest', '3-sum closest', 'arrays', 'k-sum', 1500, ['arrays', 'two pointers', 'sorting'],
+    '<p>Choose three elements at different positions whose sum is as close as possible to T. Print that sum. If two sums are equally close, print the smaller one.</p>',
+    '<p>First line n and T (3 ≤ n ≤ 3000, |T| ≤ 3·10<sup>4</sup>). Second line n integers (|a<sub>i</sub>| ≤ 10<sup>4</sup>).</p>', '<p>One integer.</p>', sol_three_closest,
+    [arr_input([-1, 2, 1, -4], extra_before='1'), arr_input([0, 0, 0], extra_before='1')],
+    [arr_input([1, 1, 1], extra_before='100'), arr_input([1, 2, 4, 8], extra_before='10'), arr_input([-3, 0, 3, 5], extra_before='1')],
+    gen_closest, n_rand=6)
+
+
+# ── water ──
+def sol_container(s):
+    n, h = read_arr(s)
+    i, j, best = 0, n - 1, 0
+    while i < j:
+        best = max(best, (j - i) * min(h[i], h[j]))
+        if h[i] < h[j]:
+            i += 1
+        else:
+            j -= 1
+    return str(best)
+
+
+def brute_container(s):
+    n, h = read_arr(s)
+    return str(max([(j - i) * min(h[i], h[j]) for i in range(n) for j in range(i + 1, n)] or [0]))
+
+
+def gen_heights(n=None, hi=10**4):
+    n = n or random.randint(2, SIZE)
+    return arr_input([random.randint(0, hi) for _ in range(n)])
+
+
+_check(sol_container, brute_container, lambda: gen_heights(random.randint(2, 12), 9))
+add('arr-c-container', 'Container with most water', 'arrays', 'water-problems', 1300, ['arrays', 'two pointers', 'greedy'],
+    '<p>Vertical lines stand at x = 0, 1, …, n − 1 with heights h<sub>i</sub>. Two lines and the x-axis form a container holding (j − i) · min(h<sub>i</sub>, h<sub>j</sub>) water. Print the maximum.</p><p>O(n): start with the widest pair and always move the shorter line inward.</p>',
+    '<p>First line n (2 ≤ n ≤ 2·10<sup>5</sup>). Second line n integers (0 ≤ h<sub>i</sub> ≤ 10<sup>4</sup>).</p>', '<p>One integer.</p>', sol_container,
+    [arr_input([1, 8, 6, 2, 5, 4, 8, 3, 7]), arr_input([1, 1])],
+    [arr_input([0, 0]), arr_input([5, 0, 0, 5]), arr_input([1, 2, 3, 4, 5]), arr_input([10000] * 7)],
+    gen_heights, large=lambda: gen_heights(20000))
+
+
+def sol_trap(s):
+    n, h = read_arr(s)
+    i, j, lmax, rmax, water = 0, n - 1, 0, 0, 0
+    while i <= j:
+        if lmax <= rmax:
+            lmax = max(lmax, h[i])
+            water += lmax - h[i]
+            i += 1
+        else:
+            rmax = max(rmax, h[j])
+            water += rmax - h[j]
+            j -= 1
+    return str(water)
+
+
+def brute_trap(s):
+    n, h = read_arr(s)
+    return str(sum(max(0, min(max(h[:i + 1]), max(h[i:])) - h[i]) for i in range(n)))
+
+
+_check(sol_trap, brute_trap, lambda: gen_heights(random.randint(1, 12), 6))
+add('arr-c-trap-rain', 'Trapping rain water', 'arrays', 'water-problems', 1500, ['arrays', 'two pointers', 'prefix max'],
+    '<p>Bars of width 1 have heights h<sub>0</sub> … h<sub>n−1</sub>. After it rains, how many units of water are trapped between them?</p><p>The water above bar i is min(highest bar to its left, highest bar to its right) − h<sub>i</sub>. Prefix maxima give O(n) time; two pointers give O(1) space.</p>',
+    '<p>First line n (1 ≤ n ≤ 2·10<sup>5</sup>). Second line n integers (0 ≤ h<sub>i</sub> ≤ 10<sup>4</sup>).</p>', '<p>One integer.</p>', sol_trap,
+    [arr_input([0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1]), arr_input([4, 2, 0, 3, 2, 5])],
+    [arr_input([5]), arr_input([1, 2, 3, 4]), arr_input([4, 3, 2, 1]), arr_input([3, 0, 3]), arr_input([0, 0, 0])],
+    lambda: gen_heights(random.randint(1, SIZE)), large=lambda: gen_heights(20000))
+
+
+# ── window counting ──
+def sol_exact_odd(s):
+    v = ints(s)
+    n, k = v[0], v[1]
+    a = v[2:2 + n]
+    seen = Counter({0: 1})
+    p = cnt = 0
+    for x in a:
+        p += x & 1
+        cnt += seen[p - k]
+        seen[p] += 1
+    return str(cnt)
+
+
+def brute_exact_odd(s):
+    v = ints(s)
+    n, k = v[0], v[1]
+    a = v[2:2 + n]
+    return str(sum(1 for i in range(n) for j in range(i, n) if sum(x & 1 for x in a[i:j + 1]) == k))
+
+
+def gen_odd(n=None):
+    n = n or random.randint(1, SIZE)
+    return arr_input([random.randint(1, 10**5) for _ in range(n)], extra_before=str(random.randint(1, max(1, min(n, 6)))))
+
+
+_check(sol_exact_odd, brute_exact_odd, lambda: gen_odd(random.randint(1, 12)))
+add('arr-c-exactly-k-odd', 'Subarrays with exactly k odd numbers', 'arrays', 'window-counting', 1500, ['arrays', 'sliding window', 'counting'],
+    '<p>Count the contiguous subarrays that contain exactly k odd numbers.</p><p>"Exactly k" = "at most k" − "at most k − 1", and each "at most" is a sliding-window count.</p>',
+    '<p>First line n and k (1 ≤ k ≤ n ≤ 2·10<sup>5</sup>). Second line n integers (1 ≤ a<sub>i</sub> ≤ 10<sup>5</sup>).</p>', '<p>One integer (it can exceed 2<sup>31</sup>).</p>', sol_exact_odd,
+    [arr_input([1, 1, 2, 1, 1], extra_before='3'), arr_input([2, 4, 6], extra_before='1'), arr_input([2, 2, 2, 1, 2, 2, 1, 2, 2, 2], extra_before='2')],
+    [arr_input([1], extra_before='1'), arr_input([1] * 40, extra_before='1'), arr_input([2] * 30 + [1], extra_before='1')],
+    gen_odd, large=lambda: arr_input([random.choice([1, 2]) for _ in range(20000)], extra_before='50'))
+
+
+def sol_k_distinct(s):
+    v = ints(s)
+    n, k = v[0], v[1]
+    a = v[2:2 + n]
+    cnt = Counter()
+    lo = best = 0
+    for hi, x in enumerate(a):
+        cnt[x] += 1
+        while len(cnt) > k:
+            cnt[a[lo]] -= 1
+            if cnt[a[lo]] == 0:
+                del cnt[a[lo]]
+            lo += 1
+        best = max(best, hi - lo + 1)
+    return str(best)
+
+
+def brute_k_distinct(s):
+    v = ints(s)
+    n, k = v[0], v[1]
+    a = v[2:2 + n]
+    return str(max([j - i + 1 for i in range(n) for j in range(i, n) if len(set(a[i:j + 1])) <= k] or [0]))
+
+
+def gen_kd(n=None):
+    n = n or random.randint(1, SIZE)
+    vals = random.randint(1, max(1, n // 3))
+    return arr_input([random.randint(1, vals) for _ in range(n)], extra_before=str(random.randint(1, 5)))
+
+
+_check(sol_k_distinct, brute_k_distinct, lambda: gen_kd(random.randint(1, 12)))
+add('arr-c-k-distinct', 'Longest subarray with at most k distinct values', 'arrays', 'window-counting', 1400, ['arrays', 'sliding window', 'hashing'],
+    '<p>Print the length of the longest contiguous subarray containing at most k distinct values.</p><p>Keep a count of each value in the window; shrink from the left whenever more than k values are present.</p>',
+    '<p>First line n and k (1 ≤ k ≤ n ≤ 2·10<sup>5</sup>). Second line n integers (1 ≤ a<sub>i</sub> ≤ 10<sup>9</sup>).</p>', '<p>One integer.</p>', sol_k_distinct,
+    [arr_input([1, 2, 1, 2, 3], extra_before='2'), arr_input([1, 2, 1, 3, 4, 3, 5, 3], extra_before='2')],
+    [arr_input([7], extra_before='1'), arr_input([1, 2, 3, 4], extra_before='1'), arr_input([1, 2, 3, 4], extra_before='4'), arr_input([10**9, 1, 10**9], extra_before='1')],
+    gen_kd, large=lambda: gen_kd(20000))
+
+
+def sol_window_maxes(s):
+    v = ints(s)
+    n, k = v[0], v[1]
+    a = v[2:2 + n]
+    dq, out = deque(), []
+    for i, x in enumerate(a):
+        while dq and a[dq[-1]] <= x:
+            dq.pop()
+        dq.append(i)
+        if dq[0] <= i - k:
+            dq.popleft()
+        if i >= k - 1:
+            out.append(a[dq[0]])
+    return fmt(out)
+
+
+def brute_window_maxes(s):
+    v = ints(s)
+    n, k = v[0], v[1]
+    a = v[2:2 + n]
+    return fmt(max(a[i:i + k]) for i in range(n - k + 1))
+
+
+def gen_wm(n=None):
+    n = n or random.randint(1, SIZE)
+    return arr_input([random.randint(-10**9, 10**9) for _ in range(n)], extra_before=str(random.randint(1, n)))
+
+
+_check(sol_window_maxes, brute_window_maxes, lambda: gen_wm(random.randint(1, 12)))
+add('arr-c-window-maxima', 'Sliding window maximum', 'arrays', 'window-counting', 1500, ['arrays', 'monotonic deque', 'sliding window'],
+    '<p>For every window of k consecutive elements, print its maximum (n − k + 1 values, left to right).</p><p>Recomputing each maximum is O(nk). A <b>monotonic deque</b> of indices — values decreasing from front to back — gives O(n) overall.</p>',
+    '<p>First line n and k (1 ≤ k ≤ n ≤ 2·10<sup>5</sup>). Second line n integers (|a<sub>i</sub>| ≤ 10<sup>9</sup>).</p>', '<p>n − k + 1 integers.</p>', sol_window_maxes,
+    [arr_input([1, 3, -1, -3, 5, 3, 6, 7], extra_before='3'), arr_input([4, 2], extra_before='1')],
+    [arr_input([5], extra_before='1'), arr_input([1, 2, 3, 4, 5], extra_before='5'), arr_input([5, 4, 3, 2, 1], extra_before='2'), arr_input([7, 7, 7, 7], extra_before='2')],
+    gen_wm, large=lambda: arr_input([random.randint(-10**9, 10**9) for _ in range(20000)], extra_before='700'))
+
+
+# ── Kadane variants ──
+def sol_max_product(s):
+    n, a = read_arr(s)
+    hi = lo = best = a[0]
+    for x in a[1:]:
+        if x < 0:
+            hi, lo = lo, hi
+        hi = max(x, hi * x)
+        lo = min(x, lo * x)
+        best = max(best, hi)
+    return str(best)
+
+
+def brute_max_product(s):
+    n, a = read_arr(s)
+    best = None
+    for i in range(n):
+        p = 1
+        for j in range(i, n):
+            p *= a[j]
+            best = p if best is None else max(best, p)
+    return str(best)
+
+
+def gen_mp(n=None):
+    n = n or random.randint(1, 62)
+    return arr_input([random.choice([-2, -1, 0, 1, 2, 2, -2, 1]) for _ in range(n)])
+
+
+_check(sol_max_product, brute_max_product, lambda: gen_mp(random.randint(1, 12)))
+add('arr-c-max-product', 'Maximum product subarray', 'arrays', 'kadane-variants', 1400, ['arrays', 'dynamic programming', 'kadane'],
+    '<p>Print the largest product of a non-empty contiguous subarray.</p><p>A negative number turns the smallest product into the largest — so track both the maximum and the minimum product ending at each index.</p>',
+    '<p>First line n (1 ≤ n ≤ 62). Second line n integers, each between −2 and 2 (so every product fits in a signed 64-bit integer).</p>', '<p>One integer.</p>', sol_max_product,
+    [arr_input([2, 2, -2, 2]), arr_input([-2, 0, -1])],
+    [arr_input([-2]), arr_input([0]), arr_input([-2, -2]), arr_input([-1, -1, -1]), arr_input([2] * 62), arr_input([-2] * 62), arr_input([-2] * 61)],
+    gen_mp, n_rand=8)
+
+
+def sol_circular(s):
+    n, a = read_arr(s)
+    cur_max = cur_min = 0
+    best_max, best_min = a[0], a[0]
+    total = 0
+    cmx = cmn = None
+    for x in a:
+        total += x
+        cmx = x if cmx is None else max(x, cmx + x)
+        cmn = x if cmn is None else min(x, cmn + x)
+        best_max = max(best_max, cmx)
+        best_min = min(best_min, cmn)
+    if best_max < 0:
+        return str(best_max)
+    return str(max(best_max, total - best_min))
+
+
+def brute_circular(s):
+    n, a = read_arr(s)
+    best = None
+    for i in range(n):
+        t = 0
+        for L in range(1, n + 1):
+            t += a[(i + L - 1) % n]
+            best = t if best is None else max(best, t)
+    return str(best)
+
+
+def gen_circ(n=None):
+    n = n or random.randint(1, SIZE)
+    return arr_input([random.randint(-10**9, 10**9) if random.random() < 0.5 else random.randint(-5, 5) for _ in range(n)])
+
+
+_check(sol_circular, brute_circular, lambda: arr_input([random.randint(-6, 6) for _ in range(random.randint(1, 9))]))
+add('arr-c-circular-max', 'Maximum circular subarray sum', 'arrays', 'kadane-variants', 1500, ['arrays', 'kadane'],
+    '<p>The array is circular: after the last element comes the first. Print the largest sum of a non-empty contiguous subarray, where a subarray may wrap around the end (but uses each element at most once).</p><p>A wrapping subarray is the whole array minus a non-wrapping middle part — so subtract the <b>minimum</b> subarray sum from the total. Watch out when every element is negative.</p>',
+    '<p>First line n (1 ≤ n ≤ 2·10<sup>5</sup>). Second line n integers (|a<sub>i</sub>| ≤ 10<sup>9</sup>).</p>', '<p>One integer.</p>', sol_circular,
+    [arr_input([5, -3, 5]), arr_input([1, -2, 3, -2]), arr_input([-3, -2, -3])],
+    [arr_input([-5]), arr_input([7]), arr_input([3, -1, 2, -1]), arr_input([-2, 4, -5, 4, -5, 9, 4])],
+    gen_circ, large=lambda: gen_circ(20000))
+
+
+def sol_one_del(s):
+    n, a = read_arr(s)
+    keep, dele, best = a[0], float('-inf'), a[0]
+    for x in a[1:]:
+        dele = max(dele + x, keep)
+        keep = max(keep + x, x)
+        best = max(best, keep, dele)
+    return str(best)
+
+
+def brute_one_del(s):
+    n, a = read_arr(s)
+    best = None
+    for i in range(n):
+        for j in range(i, n):
+            seg = a[i:j + 1]
+            cands = [sum(seg)] + ([sum(seg) - min(seg)] if len(seg) > 1 else [])
+            m = max(cands)
+            best = m if best is None else max(best, m)
+    return str(best)
+
+
+_check(sol_one_del, brute_one_del, lambda: arr_input([random.randint(-6, 6) for _ in range(random.randint(1, 9))]))
+add('arr-c-one-deletion', 'Maximum subarray sum with one deletion', 'arrays', 'kadane-variants', 1600, ['arrays', 'dynamic programming', 'kadane'],
+    '<p>Choose a non-empty contiguous subarray and optionally delete <b>at most one</b> element from it; the subarray must still be non-empty after the deletion. Print the largest possible sum.</p><p>Run Kadane with two states per index: best sum ending here with no deletion yet, and with one deletion already used.</p>',
+    '<p>First line n (1 ≤ n ≤ 2·10<sup>5</sup>). Second line n integers (|a<sub>i</sub>| ≤ 10<sup>9</sup>).</p>', '<p>One integer.</p>', sol_one_del,
+    [arr_input([1, -2, 0, 3]), arr_input([1, -2, -2, 3]), arr_input([-1, -1, -1, -1])],
+    [arr_input([-7]), arr_input([5]), arr_input([2, -100, 2]), arr_input([-3, 8])],
+    gen_circ, large=lambda: gen_circ(20000))
+
+
+# ── majority n/3 ──
+def sol_maj3(s):
+    n, a = read_arr(s)
+    c = Counter(a)
+    res = sorted(v for v, k in c.items() if 3 * k > n)
+    return fmt(res) if res else '-1'
+
+
+def gen_maj3(n=None):
+    n = n or random.randint(1, SIZE)
+    hot = [random.randint(-10**9, 10**9) for _ in range(2)]
+    a = [random.choice(hot) if random.random() < random.choice([0.3, 0.7, 0.8]) else random.randint(-10**9, 10**9) for _ in range(n)]
+    return arr_input(a)
+
+
+add('arr-c-majority-n3', 'Elements appearing more than n/3 times', 'arrays', 'majority-vote', 1500, ['arrays', 'boyer-moore', 'voting'],
+    '<p>Print, in increasing order, every value that occurs more than ⌊n/3⌋ times — that is, strictly more than n/3 times. There can be at most two. Print <code>-1</code> if there are none.</p><p>Extended Boyer–Moore: keep two candidates and two counters, then verify both in a second pass. O(n) time, O(1) space.</p>',
+    '<p>First line n (1 ≤ n ≤ 2·10<sup>5</sup>). Second line n integers (|a<sub>i</sub>| ≤ 10<sup>9</sup>, a<sub>i</sub> ≠ −1).</p>', '<p>The values in increasing order, or -1.</p>', sol_maj3,
+    [arr_input([3, 2, 3]), arr_input([1, 1, 1, 3, 3, 2, 2, 2]), arr_input([1, 2, 3])],
+    [arr_input([5]), arr_input([1, 2]), arr_input([2, 2, 1, 1, 3, 3]), arr_input([4, 4, 4, 4])],
+    gen_maj3, large=lambda: gen_maj3(20000))
+
+
+# ── matrices ──
+def sol_set_zeroes(s):
+    L = lines_of(s)
+    R, C = map(int, L[0].split())
+    M = [list(map(int, L[1 + i].split())) for i in range(R)]
+    rows = {i for i in range(R) if 0 in M[i]}
+    cols = {j for j in range(C) if any(M[i][j] == 0 for i in range(R))}
+    return '\n'.join(fmt(0 if (i in rows or j in cols) else M[i][j] for j in range(C)) for i in range(R))
+
+
+def gen_mat_z(R=None, C=None):
+    R = R or random.randint(1, 60)
+    C = C or random.randint(1, 60)
+    p = random.choice([0.0, 0.02, 0.1])
+    rows = [' '.join(str(0 if random.random() < p else random.randint(-10**9, 10**9)) for _ in range(C)) for _ in range(R)]
+    return f"{R} {C}\n" + '\n'.join(rows) + '\n'
+
+
+add('arr-c-set-zeroes', 'Set matrix zeroes', 'arrays', 'matrix-techniques', 1200, ['arrays', 'matrix', 'in-place'],
+    '<p>Wherever the matrix holds a 0, set its entire row and column to 0. Print the result.</p><p>Only zeros of the <b>original</b> matrix count — zeros you write must not spread further. The O(1)-space trick stores the row/column flags in the first row and column.</p>',
+    '<p>First line R C (1 ≤ R, C ≤ 500). Next R lines: C integers (|v| ≤ 10<sup>9</sup>).</p>', '<p>R lines with C integers.</p>', sol_set_zeroes,
+    ["3 3\n1 1 1\n1 0 1\n1 1 1\n", "3 4\n0 1 2 0\n3 4 5 2\n1 3 1 5\n"],
+    ["1 1\n0\n", "1 1\n5\n", "2 2\n1 2\n3 4\n", "2 3\n1 0 3\n4 5 6\n"],
+    gen_mat_z, n_rand=6, large=lambda: gen_mat_z(150, 150))
+
+
+def sol_staircase(s):
+    L = lines_of(s)
+    R, C = map(int, L[0].split())
+    M = [list(map(int, L[1 + i].split())) for i in range(R)]
+    present = {v for row in M for v in row}
+    q = int(L[1 + R])
+    return '\n'.join('YES' if int(x) in present else 'NO' for x in L[2 + R].split()[:q])
+
+
+def gen_stair(R=None, C=None, q=None):
+    R = R or random.randint(1, 40)
+    C = C or random.randint(1, 40)
+    q = q or random.randint(1, 200)
+    M = [[0] * C for _ in range(R)]
+    for i in range(R):
+        for j in range(C):
+            base = max(M[i - 1][j] if i else -50, M[i][j - 1] if j else -50)
+            M[i][j] = base + random.randint(0, 3)
+    vals = [random.randint(-60, M[-1][-1] + 5) for _ in range(q)]
+    return f"{R} {C}\n" + '\n'.join(fmt(r) for r in M) + f"\n{q}\n" + fmt(vals) + '\n'
+
+
+add('arr-c-staircase', 'Search a sorted matrix', 'arrays', 'matrix-techniques', 1200, ['arrays', 'matrix', 'two pointers'],
+    '<p>Every row of the matrix is sorted left to right and every column top to bottom. For each query x, print YES if x occurs in the matrix and NO otherwise.</p><p>Start at the top-right corner: if the value is too big go left, if too small go down — O(R + C) per query.</p>',
+    '<p>First line R C (1 ≤ R, C ≤ 300). Next R lines: C integers (|v| ≤ 10<sup>9</sup>), sorted as described. Then q (1 ≤ q ≤ 300) and a line with q integers.</p>', '<p>q lines, YES or NO.</p>', sol_staircase,
+    ["3 4\n1 4 7 11\n2 5 8 12\n3 6 9 16\n3\n5 13 1\n"],
+    ["1 1\n7\n2\n7 8\n", "2 2\n1 1\n1 1\n2\n1 0\n"],
+    gen_stair, n_rand=6, large=lambda: gen_stair(300, 300, 300))
+
+
+# ── more classics ──
+def sol_next_perm(s):
+    n, a = read_arr(s)
+    i = n - 2
+    while i >= 0 and a[i] >= a[i + 1]:
+        i -= 1
+    if i >= 0:
+        j = n - 1
+        while a[j] <= a[i]:
+            j -= 1
+        a[i], a[j] = a[j], a[i]
+    a[i + 1:] = reversed(a[i + 1:])
+    return fmt(a)
+
+
+def brute_next_perm(s):
+    from itertools import permutations
+    n, a = read_arr(s)
+    perms = sorted(set(permutations(a)))
+    k = perms.index(tuple(a))
+    return fmt(perms[(k + 1) % len(perms)])
+
+
+_check(sol_next_perm, brute_next_perm, lambda: arr_input([random.randint(1, 4) for _ in range(random.randint(1, 6))]))
+add('arr-c-next-permutation', 'Next permutation', 'arrays', 'reverse-rotate', 1400, ['arrays', 'two pointers', 'permutations'],
+    '<p>Rearrange the array into the next lexicographically greater permutation of its values. If it is already the largest, wrap around to the smallest (sorted ascending). Print the result.</p><p>Find the rightmost i with a<sub>i</sub> &lt; a<sub>i+1</sub>, swap a<sub>i</sub> with the rightmost larger element, then reverse the suffix — O(n), in place.</p>',
+    '<p>First line n (1 ≤ n ≤ 2·10<sup>5</sup>). Second line n integers (|a<sub>i</sub>| ≤ 10<sup>9</sup>); values may repeat.</p>', '<p>The next permutation.</p>', sol_next_perm,
+    [arr_input([1, 2, 3]), arr_input([3, 2, 1]), arr_input([1, 1, 5])],
+    [arr_input([7]), arr_input([1, 3, 2]), arr_input([2, 3, 1]), arr_input([1, 5, 1]), arr_input([5, 5, 5])],
+    lambda: arr_input([random.randint(-5, 5) for _ in range(random.randint(1, SIZE))]), large=lambda: arr_input(list(range(20000, 0, -1))[:-3] + [3, 1, 2]))
+
+
+def sol_stock(s):
+    n, a = read_arr(s)
+    lo, best = a[0], 0
+    for x in a[1:]:
+        best = max(best, x - lo)
+        lo = min(lo, x)
+    return str(best)
+
+
+def brute_stock(s):
+    n, a = read_arr(s)
+    return str(max([a[j] - a[i] for i in range(n) for j in range(i + 1, n)] + [0]))
+
+
+_check(sol_stock, brute_stock, lambda: arr_input([random.randint(1, 9) for _ in range(random.randint(1, 10))]))
+add('arr-c-stock', 'Best time to buy and sell', 'arrays', 'kadane', 1000, ['arrays', 'greedy', 'kadane'],
+    '<p>a<sub>i</sub> is a stock price on day i. Buy on one day and sell on a <b>later</b> day to maximise profit. Print the best profit, or 0 if no trade makes money.</p><p>Scan once, remembering the cheapest price so far.</p>',
+    '<p>First line n (1 ≤ n ≤ 2·10<sup>5</sup>). Second line n integers (1 ≤ a<sub>i</sub> ≤ 10<sup>9</sup>).</p>', '<p>One integer.</p>', sol_stock,
+    [arr_input([7, 1, 5, 3, 6, 4]), arr_input([7, 6, 4, 3, 1])],
+    [arr_input([5]), arr_input([1, 10**9]), arr_input([10**9, 1]), arr_input([3, 3, 3])],
+    lambda: arr_input([random.randint(1, 10**9) for _ in range(random.randint(1, SIZE))]), large=lambda: arr_input([random.randint(1, 10**9) for _ in range(20000)]))
+
+
+def sol_dyn(s):
+    n = int(s.split()[0])
+    cap, copies = 1, 0
+    while cap < n:
+        copies += cap
+        cap *= 2
+    return f"{copies} {cap}"
+
+
+def brute_dyn(s):
+    n = int(s.split()[0])
+    cap = size = copies = 0
+    cap = 1
+    for _ in range(n):
+        if size == cap:
+            copies += size
+            cap *= 2
+        size += 1
+    return f"{copies} {cap}"
+
+
+_check(sol_dyn, brute_dyn, lambda: f"{random.randint(1, 3000)}\n")
+add('arr-c-dyn-copies', 'Cost of a growing array', 'arrays', 'amortized-analysis', 1100, ['arrays', 'amortized analysis', 'math'],
+    '<p>A dynamic array starts with capacity 1 and size 0. Each push appends one element; when the array is full before a push, it first doubles its capacity, copying every existing element to the new block. After n pushes, print the total number of element copies and the final capacity.</p><p>n can be 10<sup>18</sup> — you cannot simulate. Count the copies at each doubling.</p>',
+    '<p>One integer n (1 ≤ n ≤ 10<sup>18</sup>).</p>', '<p>Two integers: total copies and final capacity.</p>', sol_dyn,
+    ["1\n", "5\n", "8\n"],
+    ["2\n", "3\n", "1000000000000000000\n", str(2**59) + "\n", str(2**59 + 1) + "\n"],
+    lambda: f"{random.choice([random.randint(1, 1000), random.randint(1, 10**18)])}\n", n_rand=6)
