@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'motion/react'
-import { BookmarkX, Star } from 'lucide-react'
+import { BookmarkX, Star, Swords } from 'lucide-react'
 import {
   Button,
   Card,
@@ -11,10 +11,12 @@ import {
   ErrorState,
   LoadingBlock,
   PageHeader,
-  SearchInput,
+  SearchCombobox,
   Select,
   useToast,
+  type ComboboxItem,
 } from '@/components/ui'
+import { PlatformBadge } from '@/components/shared/PlatformBadge'
 import { api } from '@/lib/api'
 import { useApi } from '@/hooks/useApi'
 import { useAuth } from '@/context/AuthContext'
@@ -28,6 +30,7 @@ export default function BookmarksPage() {
   const { user } = useAuth()
   const username = user?.username ?? ''
   const toast = useToast()
+  const navigate = useNavigate()
 
   const [search, setSearch] = useState('')
   const [platform, setPlatform] = useState('all')
@@ -43,6 +46,25 @@ export default function BookmarksPage() {
   )
 
   const problems = bookmarksApi.data?.problems ?? []
+
+  const suggestions = useMemo<ComboboxItem[]>(() => {
+    const q = search.trim().toLowerCase()
+    if (q.length < 2) return []
+    return problems
+      .filter(
+        (p) =>
+          p.title.toLowerCase().includes(q) || p.problem_id?.toLowerCase().includes(q),
+      )
+      .slice(0, 6)
+      .map((p) => ({
+        id: 'bookmark:' + p.id,
+        label: p.title,
+        hint: p.problem_id || undefined,
+        icon: Swords,
+        trailing: <PlatformBadge platform={p.platform} />,
+        onSelect: () => navigate(`/solve/${p.id}`),
+      }))
+  }, [problems, search, navigate])
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase()
@@ -113,14 +135,17 @@ export default function BookmarksPage() {
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.2, ease: [0.34, 1.56, 0.64, 1] }}
+        className="relative z-20"
       >
         <Card>
           <CardContent className="grid grid-cols-1 gap-3 py-4 sm:grid-cols-2 lg:grid-cols-4">
-            <SearchInput
+            <SearchCombobox
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              onClear={() => setSearch('')}
+              onValueChange={setSearch}
+              onSelect={() => setSearch('')}
+              items={suggestions}
               placeholder="Search bookmarks…"
+              emptyText="No bookmarks match."
               aria-label="Search bookmarks"
             />
             <Select

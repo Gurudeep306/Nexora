@@ -18,6 +18,7 @@ const AiLabPage = lazy(() => import('@/pages/AiLabPage'))
 const LearnPage = lazy(() => import('@/pages/LearnPage'))
 const LearnTopicPage = lazy(() => import('@/learn/ui/TopicPage'))
 const LearnPracticePage = lazy(() => import('@/learn/ui/PracticePage'))
+const GatePage = lazy(() => import('@/pages/GatePage'))
 const SocialPage = lazy(() => import('@/pages/SocialPage'))
 const SubmissionsPage = lazy(() => import('@/pages/SubmissionsPage'))
 const BookmarksPage = lazy(() => import('@/pages/BookmarksPage'))
@@ -66,6 +67,7 @@ export default function App() {
             <Route path="/learn" element={<LearnPage />} />
             <Route path="/learn/dsa/:topic/practice" element={<LearnPracticePage />} />
             <Route path="/learn/dsa/:topic/:page?" element={<LearnTopicPage />} />
+            <Route path="/gate" element={<GatePage />} />
             <Route path="/social" element={<SocialPage />} />
             <Route path="/submissions" element={<SubmissionsPage />} />
             <Route path="/bookmarks" element={<BookmarksPage />} />
