@@ -451,6 +451,23 @@ for (int i = 0; i < m; i++) { size_t L = strlen(words[i]); memcpy(p, words[i], L
 *p = '\\0';`,
       },
     },
+    {
+      t: 'md',
+      md: `
+        ## Seeing the hidden costs
+
+        Three costs that never show up in a Big-O written from the code alone: copying an immutable string on every \`+\`, the cache deciding which of two "identical" loops is fast, and a hash table whose keys all collide.
+      `,
+    },
+    { t: 'viz', algo: 'cx-string-concat', caption: 'The copy meter climbs by the current length on every +: 1 + 2 + … + n characters. The builder copies each character once.' },
+    { t: 'viz', algo: 'cx-cache', caption: 'Both orders touch every cell once — same Big-O. Count the misses: row order uses every loaded line fully, column order throws most of each line away.' },
+    { t: 'viz', algo: 'cx-hash-collide', caption: 'With h(k) = k mod m and keys that are all multiples of m, every key lands in bucket 0 and each insert scans the whole chain. Change m to 7 and the keys spread out.' },
+    {
+      t: 'callout',
+      kind: 'warn',
+      title: 'Average-case guarantees can be attacked',
+      md: 'Hash tables are O(1) *expected* only if keys spread out. An attacker who knows your hash function can send keys that all collide, turning every lookup into O(n) — a real denial-of-service technique. Randomised hashing (a secret seed, as in Python and Java\'s string hashing) restores the expected bound.',
+    },
     { t: 'check', title: 'Check yourself', ids: ['cx-q-pop0', 'cx-q-string-concat', 'cx-q-in-list', 'cx-q-slice-rec', 'cx-q-by-value', 'cx-q-match-containers'] },
   ],
 }

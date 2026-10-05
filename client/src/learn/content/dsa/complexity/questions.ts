@@ -677,19 +677,4 @@ def total_loop(a):            # extra space: [[1]]
   },
 ]
 
-const code = (id: string, page: string, title: string, difficulty: Question['difficulty'], prompt: string): Question => ({
-  id, topic: T, page, kind: 'code', difficulty, title, prompt, explain: '', slug: id,
-})
-
-const coding: Question[] = [
-  code('cx-c-sum-n', 'why-measure', 'Sum 1 to n, modulo', 'easy', 'n up to 10¹⁸: a loop is hopeless, a formula is O(1). Mind the overflow.'),
-  code('cx-c-distinct', 'loops', 'Count distinct values', 'easy', 'n up to 2·10⁵: replace the pairwise check with sorting.'),
-  code('cx-c-pairs', 'loops', 'Count pairs with sum T', 'medium', 'Count i < j with aᵢ + aⱼ = T — without checking every pair.'),
-  code('cx-c-halvings', 'logarithms', 'How many halvings?', 'easy', 'For each n ≤ 10¹⁸, how many times can you halve it before reaching 1?'),
-  code('cx-c-powmod', 'logarithms', 'Fast modular power', 'medium', 'aᵇ mod m with b up to 10¹⁸ — O(log b) per query.'),
-  code('cx-c-harmonic', 'logarithms', 'Sum of ⌊n / i⌋', 'hard', 'n up to 10¹²: group the i with equal quotients for O(√n).'),
-  code('cx-c-divisors', 'growth-classes', 'Count the divisors', 'easy', 'n up to 10¹²: stop at √n.'),
-  code('cx-c-prime', 'growth-classes', 'Prime or not', 'medium', 'Up to 20 numbers, each up to 10¹².'),
-]
-
-export const questions: Question[] = [...concept, ...coding]
+export const questions: Question[] = concept
