@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
 import { motion, useScroll, useSpring } from 'motion/react'
 import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, ChevronDown, Clock, Code2, ListChecks, PlayCircle, HelpCircle } from 'lucide-react'
-import { ErrorState, LoadingBlock } from '@/components/ui'
+import { ErrorState, LoadingBlock, BackButton } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { isDone, mark, pageKey, useProgress } from '../progress'
 import { LessonBlock } from './Blocks'
@@ -63,9 +63,9 @@ export default function TopicPage() {
       <motion.div className="learn-readbar fixed inset-x-0 top-0 z-[60] h-[3px] origin-left" style={{ scaleX: readBar }} aria-hidden="true" />
       {/* sidebar */}
       <aside className="lg:sticky lg:top-20 lg:max-h-[calc(100dvh-7rem)] lg:self-start lg:overflow-y-auto">
-        <Link to="/learn" className="mb-3 inline-flex items-center gap-1.5 text-[12.5px] text-text-muted !no-underline hover:text-text-primary">
-          <ArrowLeft className="size-3.5" /> DSA course
-        </Link>
+        <div className="mb-3">
+          <BackButton to="/learn" size="sm" label="Back to DSA course" />
+        </div>
         <div className="card p-4">
           <p className="mb-0 text-[11px] font-bold tracking-[0.12em] text-accent-brand uppercase">Topic</p>
           <h1 className="mb-2 !text-[22px] font-bold text-text-primary">{topic.title}</h1>

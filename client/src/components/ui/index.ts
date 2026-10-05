@@ -1,4 +1,5 @@
 export { Button, buttonVariants, type ButtonProps } from './Button'
+export { BackButton } from './BackButton'
 export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from './Card'
 export { Badge, badgeVariants, DifficultyBadge, DIFFICULTY_VARIANT, type BadgeProps } from './Badge'
 export { Input, Textarea, SearchInput, Label, Field } from './Input'

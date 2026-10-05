@@ -4,7 +4,6 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { motion } from 'motion/react'
 import {
   AlertTriangle,
-  ArrowLeft,
   Bot,
   Expand,
   ChevronsDown,
@@ -24,6 +23,7 @@ import {
 } from 'lucide-react'
 import {
   Button,
+  BackButton,
   EmptyState,
   ErrorState,
   LoadingBlock,
@@ -660,16 +660,11 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
 
   const toolbar = (
     <div className="card-neon flex flex-wrap items-center gap-2 px-3 py-2">
-      <Tooltip label={learn ? 'Back to the lesson' : custom ? 'Back to workshop' : 'Back to problems'}>
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          onClick={() => navigate(learn ? lessonHref : custom ? '/workshop' : '/problems')}
-          aria-label={learn ? 'Back to the lesson' : custom ? 'Back to workshop' : 'Back to problems'}
-        >
-          <ArrowLeft aria-hidden="true" />
-        </Button>
-      </Tooltip>
+      <BackButton
+        size="sm"
+        label={learn ? 'Back to the lesson' : custom ? 'Back to workshop' : 'Back to problems'}
+        onClick={() => navigate(learn ? lessonHref : custom ? '/workshop' : '/problems')}
+      />
       <span className="hidden min-w-0 items-center gap-2 md:flex">
         <TerminalSquare className="size-4 shrink-0 text-primary-bright" aria-hidden="true" />
         <span className="max-w-56 truncate font-display text-xs tracking-wider text-foreground uppercase lg:max-w-96">
