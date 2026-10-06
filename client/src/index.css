@@ -1360,8 +1360,101 @@ html[data-icon-pack='vibrant'] .icon-pod svg.lucide,
 html[data-icon-pack='vibrant'] [data-icon-pod] svg.lucide {
   filter: drop-shadow(0 1px 2px oklch(0 0 0 / 0.25));
 }
+/* ═══════════════════════════════════════════════════════════════════════════
+   TYPOGRAPHY ENGINE — Modern, Handwriting, Cyber Mono, Serif, 8-Bit Retro
+   ═══════════════════════════════════════════════════════════════════════════ */
 
+/* 1. Handwriting Theme (Caveat, Kalam, Architects Daughter) */
+html[data-font-style='handwriting'] {
+  --font-display: 'Caveat', 'Architects Daughter', cursive;
+  --font-body: 'Kalam', 'Caveat', cursive;
+  --font-brand: 'Caveat', cursive;
+}
+html[data-font-style='handwriting'] body {
+  font-family: 'Kalam', 'Caveat', cursive;
+  letter-spacing: 0.01em;
+}
+html[data-font-style='handwriting'] h1,
+html[data-font-style='handwriting'] h2,
+html[data-font-style='handwriting'] h3,
+html[data-font-style='handwriting'] h4,
+html[data-font-style='handwriting'] h5,
+html[data-font-style='handwriting'] h6,
+html[data-font-style='handwriting'] .font-display,
+html[data-font-style='handwriting'] .font-brand {
+  font-family: 'Caveat', 'Architects Daughter', cursive !important;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+html[data-font-style='handwriting'] button,
+html[data-font-style='handwriting'] input,
+html[data-font-style='handwriting'] textarea {
+  font-family: 'Kalam', cursive;
+}
 
+/* 2. Cyber Mono Theme (JetBrains Mono) */
+html[data-font-style='cyber'] {
+  --font-display: 'JetBrains Mono', 'SF Mono', monospace;
+  --font-body: 'JetBrains Mono', 'SF Mono', monospace;
+  --font-brand: 'JetBrains Mono', monospace;
+}
+html[data-font-style='cyber'] body,
+html[data-font-style='cyber'] h1,
+html[data-font-style='cyber'] h2,
+html[data-font-style='cyber'] h3,
+html[data-font-style='cyber'] h4,
+html[data-font-style='cyber'] h5,
+html[data-font-style='cyber'] h6,
+html[data-font-style='cyber'] button,
+html[data-font-style='cyber'] input,
+html[data-font-style='cyber'] .font-display,
+html[data-font-style='cyber'] .font-brand {
+  font-family: 'JetBrains Mono', 'SF Mono', monospace !important;
+  letter-spacing: -0.02em;
+}
+
+/* 3. Classic Serif Theme (Playfair Display) */
+html[data-font-style='serif'] {
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-brand: 'Playfair Display', Georgia, serif;
+}
+html[data-font-style='serif'] h1,
+html[data-font-style='serif'] h2,
+html[data-font-style='serif'] h3,
+html[data-font-style='serif'] h4,
+html[data-font-style='serif'] h5,
+html[data-font-style='serif'] h6,
+html[data-font-style='serif'] .font-display,
+html[data-font-style='serif'] .font-brand {
+  font-family: 'Playfair Display', Georgia, serif !important;
+  letter-spacing: -0.01em;
+}
+
+/* 4. 8-Bit Retro Theme (Press Start 2P + JetBrains Mono) */
+html[data-font-style='retro'] {
+  --font-display: 'Press Start 2P', monospace;
+  --font-body: 'JetBrains Mono', monospace;
+  --font-brand: 'Press Start 2P', monospace;
+}
+html[data-font-style='retro'] body {
+  font-family: 'JetBrains Mono', monospace;
+}
+html[data-font-style='retro'] h1,
+html[data-font-style='retro'] h2,
+html[data-font-style='retro'] h3,
+html[data-font-style='retro'] .font-brand {
+  font-family: 'Press Start 2P', monospace !important;
+  line-height: 1.6;
+}
+html[data-font-style='retro'] h1 {
+  font-size: clamp(1.3rem, 3.2vw, 2rem) !important;
+}
+html[data-font-style='retro'] h2 {
+  font-size: clamp(1rem, 2.2vw, 1.4rem) !important;
+}
+html[data-font-style='retro'] h3 {
+  font-size: clamp(0.85rem, 1.8vw, 1.1rem) !important;
+}
 
 /* ── Glass over a wallpaper ────────────────────────────────────────────────
    What separates real glass from a "paper" panel is what it does to the

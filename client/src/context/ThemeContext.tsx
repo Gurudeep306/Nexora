@@ -10,6 +10,7 @@ import {
   type AccentId,
   type CardStyle,
   type CustomWallpaper,
+  type FontStyle,
   type GlassStyle,
   type IconPack,
   type IconShape,
@@ -26,6 +27,7 @@ export interface Look {
   cardStyle: CardStyle
   iconPack: IconPack
   iconShape: IconShape
+  fontStyle: FontStyle
 }
 
 const APPEARANCE_KEY = 'nexora:appearance'
@@ -38,6 +40,7 @@ const DEFAULT_LOOK: Look = {
   cardStyle: 'glass',
   iconPack: 'vibrant',
   iconShape: 'squircle',
+  fontStyle: 'modern',
 }
 
 interface ThemeValue {
@@ -57,6 +60,7 @@ interface ThemeValue {
   setCardStyle: (cs: CardStyle) => void
   setIconPack: (ip: IconPack) => void
   setIconShape: (is: IconShape) => void
+  setFontStyle: (fs: FontStyle) => void
   customWallpapers: CustomWallpaper[]
   addCustomWallpaper: (wp: CustomWallpaper) => void
   deleteCustomWallpaper: (id: string) => void
@@ -95,6 +99,7 @@ export function sanitizeLook(raw: unknown): Look {
   const cardStyles: CardStyle[] = ['glass', 'neon', 'minimal', 'holo', 'gradient']
   const iconPacks: IconPack[] = ['vibrant', 'neon', 'minimal', 'duotone', 'clay']
   const iconShapes: IconShape[] = ['squircle', 'circle', 'hexagon', 'free']
+  const fontStyles: FontStyle[] = ['modern', 'handwriting', 'cyber', 'serif', 'retro']
 
   return {
     wallpaper: findWallpaper(r.wallpaper).id,
@@ -103,6 +108,7 @@ export function sanitizeLook(raw: unknown): Look {
     cardStyle: cardStyles.includes(r.cardStyle as CardStyle) ? (r.cardStyle as CardStyle) : DEFAULT_LOOK.cardStyle,
     iconPack: iconPacks.includes(r.iconPack as IconPack) ? (r.iconPack as IconPack) : DEFAULT_LOOK.iconPack,
     iconShape: iconShapes.includes(r.iconShape as IconShape) ? (r.iconShape as IconShape) : DEFAULT_LOOK.iconShape,
+    fontStyle: fontStyles.includes(r.fontStyle as FontStyle) ? (r.fontStyle as FontStyle) : DEFAULT_LOOK.fontStyle,
   }
 }
 
@@ -148,6 +154,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     root.dataset.cardStyle = look.cardStyle
     root.dataset.iconPack = look.iconPack
     root.dataset.iconShape = look.iconShape
+    root.dataset.fontStyle = look.fontStyle
     root.dataset.wall = wallpaper.kind
     root.dataset.wallTone = wallTone
 
@@ -180,6 +187,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     look.cardStyle,
     look.iconPack,
     look.iconShape,
+    look.fontStyle,
     wallpaper,
     wallTone,
   ])
@@ -250,6 +258,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       setCardStyle: (cardStyle) => update({ cardStyle }),
       setIconPack: (iconPack) => update({ iconPack }),
       setIconShape: (iconShape) => update({ iconShape }),
+      setFontStyle: (fontStyle) => update({ fontStyle }),
       customWallpapers: customList,
       addCustomWallpaper,
       deleteCustomWallpaper,
