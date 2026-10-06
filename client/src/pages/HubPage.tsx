@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { motion } from 'motion/react'
 import {
   Activity,
   Medal,
@@ -33,10 +32,10 @@ import type { PerformanceResponse, StatsResponse } from '@/components/hub/types'
 function HubSkeleton() {
   return (
     <div className="space-y-6" aria-busy="true" aria-label="Loading hub">
-      <Skeleton className="h-32 w-full" />
+      <Skeleton className="h-44 w-full rounded-3xl" />
       <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <Skeleton key={i} className="h-24 w-full" />
+          <Skeleton key={i} className="h-24 w-full rounded-2xl" />
         ))}
       </div>
       <LoadingBlock rows={6} />
@@ -89,10 +88,15 @@ export default function HubPage() {
   if (!stats) return <HubSkeleton />
 
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Home"
-        subtitle="Your launchpad — jump straight into any corner of Nexora, then track the climb."
+    <div className="space-y-7">
+      {/* Supreme Mission Control Hero: Avatar, Level, XP, Rank Glyph, Daily Goal Ring & Stat Pills */}
+      <HomeHero
+        displayName={displayName}
+        username={username}
+        avatar={typeof user?.avatar === 'string' ? user.avatar : null}
+        avatarUrl={avatarUrl}
+        stats={stats}
+        dailyGoal={dailyGoal}
         actions={
           <Button
             variant="outline"
@@ -103,6 +107,7 @@ export default function HubPage() {
               void refresh()
             }}
             aria-label="Refresh dashboard"
+            className="glass-thin border-border-glass bg-bg-surface-2/60 text-xs backdrop-blur-md transition-all hover:bg-bg-surface-3"
           >
             <RefreshCw
               className={statsApi.loading || perfApi.loading ? 'animate-spin' : undefined}
@@ -113,73 +118,8 @@ export default function HubPage() {
         }
       />
 
-      <GreetingHero
-        displayName={displayName}
-        username={username}
-        avatar={typeof user?.avatar === 'string' ? user.avatar : null}
-        avatarUrl={avatarUrl}
-        stats={stats}
-        dailyGoal={dailyGoal}
-      />
-
-      {/* The launchpad: every destination, one beautiful jump-off point */}
+      {/* The launchpad: every destination as interactive glowing cards with category filtering */}
       <LaunchGrid />
-
-      {/* Core stat cards */}
-      <motion.div
-        className="grid grid-cols-2 gap-3 xl:grid-cols-4"
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.25, delay: 0.05 }}
-      >
-        <StatCard
-          icon={<Zap />}
-          label="Total XP"
-          value={formatNumber(stats.totalXp)}
-          sub={
-            <>
-              <span className="font-mono tabular-nums">{formatNumber(stats.level.xpInLevel)}</span> /{' '}
-              <span className="font-mono tabular-nums">{formatNumber(stats.level.xpForNext)}</span> in LVL{' '}
-              {stats.level.level}
-            </>
-          }
-          accent="primary"
-        />
-        <StatCard
-          icon={<Flame />}
-          label="Streak"
-          value={`${stats.streak.current}d`}
-          sub={<>Best: <span className="font-mono tabular-nums">{stats.streak.best}d</span></>}
-          accent="warning"
-        />
-        <StatCard
-          icon={<Target />}
-          label="Solved"
-          value={`${stats.solved}`}
-          sub={
-            <>
-              of <span className="font-mono tabular-nums">{formatNumber(stats.total)}</span> ·{' '}
-              <span className="font-mono tabular-nums">{stats.accuracy}%</span> acc
-            </>
-          }
-          accent="success"
-        />
-        <StatCard
-          icon={<Crown />}
-          label="Rank"
-          value={<span className="text-base leading-8">{stats.title.current.title}</span>}
-          sub={
-            stats.title.next ? (
-              <>
-                Next in <span className="font-mono tabular-nums">{formatNumber(stats.title.xpToNext)}</span> XP
-              </>
-            ) : (
-              'Max rank'
-            )
-          }
-          accent="gold"
-        />
-      </motion.div>
 
       {/* Bento dashboard grid */}
       <div className="grid gap-4 lg:grid-cols-3">

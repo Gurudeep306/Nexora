@@ -144,8 +144,39 @@ async function myMemory(chunk, tl, sl) {
   return out.join("");
 }
 
-/* LLM: Groq first (fast), Gemini as fallback. */
+/* LLM: Nexora-Core private model first, then Groq, then Gemini as fallback. */
 async function llm(messages, { json = false, maxTokens = 1200, temperature = 0.2, reasoning = "low" } = {}) {
+  const nexoraCoreUrl = process.env.NEXORA_CORE_URL;
+  const nexoraCoreKey = process.env.NEXORA_CORE_KEY || process.env.NEXORA_INTERNAL_SECRET;
+  if (nexoraCoreUrl) {
+    try {
+      const headers = { "Content-Type": "application/json" };
+      if (nexoraCoreKey) {
+        headers["Authorization"] = `Bearer ${nexoraCoreKey}`;
+        headers["X-Nexora-Secret"] = nexoraCoreKey;
+      }
+      const r = await fetch(nexoraCoreUrl, {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          model: process.env.NEXORA_CORE_MODEL || "nexora-core-7b",
+          messages,
+          max_tokens: maxTokens,
+          temperature,
+          ...(json ? { response_format: { type: "json_object" } } : {}),
+        }),
+        signal: AbortSignal.timeout(45000),
+      }).catch(() => null);
+      if (r?.ok) {
+        const d = await r.json();
+        const content = d.choices?.[0]?.message?.content || "";
+        if (content.trim()) return content;
+      }
+    } catch {
+      /* fallback to secondary */
+    }
+  }
+
   const groqKey = process.env.GROQ_API_KEY;
   const model = process.env.GROQ_MODEL || "openai/gpt-oss-120b";
   if (groqKey) {
@@ -766,6 +797,44 @@ If the verdict is a compile error, focus on the exact syntax/type problem and th
       }
 
       res.status(400).json({ ok: false, error: "Unknown coach mode" });
+    } catch (e) {
+      res.status(500).json({ ok: false, error: e.message });
+    }
+  });
+
+  /* ── AI Animation Generator: Algorithmic frames for Nexora VizPlayer ── */
+  router.post("/api/ai/animate", aiLimiter, async (req, res) => {
+    try {
+      const topic = String(req.body?.topic || "two pointers").slice(0, 150);
+      const input = Array.isArray(req.body?.input) ? req.body.input.slice(0, 12) : null;
+
+      const out = await llm(
+        [
+          {
+            role: "system",
+            content: `You are the animation synthesizer for Nexora. Output JSON ONLY matching this format:
+{"title": "${topic}",
+ "type": "nexora_visualization",
+ "data_structure": "array",
+ "frames": [
+   {"step": 1, "explanation": "string description", "state": {"kind": "array", "id": "arr", "cells": [{"id": "c0", "v": 1}], "pointers": {"left": 0}, "roles": {0: "active"}}}
+ ]}
+Keep frames concise (between 4 and 8 steps). Roles can be: active, compare, swap, done, found.`,
+          },
+          {
+            role: "user",
+            content: `Generate visual frames for ${topic}${input ? ` with input array [${input.join(", ")}]` : ""}`,
+          },
+        ],
+        { json: true, maxTokens: 1200, temperature: 0.1 },
+      );
+
+      const parsed = parseJson(out);
+      if (!parsed || !Array.isArray(parsed.frames)) {
+        return res.status(502).json({ ok: false, error: "Could not generate animation frames" });
+      }
+
+      res.json({ ok: true, visualization: parsed });
     } catch (e) {
       res.status(500).json({ ok: false, error: e.message });
     }

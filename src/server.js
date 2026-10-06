@@ -5348,8 +5348,37 @@ const _aiCache = new Map();
 const AI_CACHE_TTL = 90000; // 90 seconds
 const AI_CACHE_MAX = 300;
 
-// ── Gemini 2.0 Flash Lite — primary completion engine (free, best at code) ──
+// ── Gemini 2.0 Flash Lite — completion engine (Nexora-Omni prioritized) ──
 async function _geminiComplete(apiKey, prompt) {
+  // 1. Try proprietary Nexora-Omni private model first
+  const nexoraCoreUrl = process.env.NEXORA_CORE_URL || "http://127.0.0.1:8000";
+  const nexoraCoreKey = process.env.NEXORA_CORE_KEY || "nexora-proprietary-secret-key-2026";
+  try {
+    const nexRes = await fetch(`${nexoraCoreUrl}/v1/chat/completions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${nexoraCoreKey}`,
+        "X-Nexora-Secret": nexoraCoreKey,
+      },
+      body: JSON.stringify({
+        model: "nexora-omni-v1",
+        messages: [{ role: "user", content: prompt }],
+        max_tokens: 150,
+        temperature: 0.05,
+      }),
+      signal: AbortSignal.timeout(3000),
+    }).catch(() => null);
+    if (nexRes?.ok) {
+      const data = await nexRes.json();
+      const text = data.choices?.[0]?.message?.content || data.choices?.[0]?.text || "";
+      if (text.trim()) return { ok: true, content: text, provider: "nexora-omni" };
+    }
+  } catch {
+    /* Fallback to Gemini */
+  }
+
+  if (!apiKey) return { ok: false, error: "GEMINI_API_KEY not configured" };
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${apiKey}`;
   const res = await fetch(url, {
     method: "POST",
@@ -5381,7 +5410,7 @@ async function _geminiComplete(apiKey, prompt) {
   return { ok: true, content: text };
 }
 
-// ── Groq — fallback completion engine ──
+// ── Groq / Nexora-Omni — primary chat and reasoning engine ──
 async function _groqChat(apiKey, messages, opts = {}) {
   const {
     maxTokens = 128,
@@ -5390,6 +5419,43 @@ async function _groqChat(apiKey, messages, opts = {}) {
     retries = 1,
     model = process.env.GROQ_MODEL || "openai/gpt-oss-120b",
   } = opts;
+
+  // 1. Try proprietary Nexora-Omni private model first
+  const nexoraCoreUrl = process.env.NEXORA_CORE_URL || "http://127.0.0.1:8000";
+  const nexoraCoreKey = process.env.NEXORA_CORE_KEY || "nexora-proprietary-secret-key-2026";
+  try {
+    const nexRes = await fetch(`${nexoraCoreUrl}/v1/chat/completions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${nexoraCoreKey}`,
+        "X-Nexora-Secret": nexoraCoreKey,
+      },
+      body: JSON.stringify({
+        model: "nexora-omni-v1",
+        messages,
+        max_tokens: maxTokens,
+        temperature,
+        ...(stop ? { stop } : {}),
+      }),
+      signal: AbortSignal.timeout(4000),
+    }).catch(() => null);
+
+    if (nexRes?.ok) {
+      const data = await nexRes.json();
+      const content = data.choices?.[0]?.message?.content || "";
+      if (content.trim()) return { ok: true, content, provider: "nexora-omni" };
+    }
+  } catch {
+    /* Fallback to secondary */
+  }
+
+  // 2. Fallback to Groq if Nexora engine is offline or cold
+  const actualKey = apiKey || process.env.GROQ_API_KEY;
+  if (!actualKey) {
+    return { ok: false, error: "No AI provider available (start Nexora-Omni server or configure GROQ_API_KEY)" };
+  }
+
   for (let attempt = 0; attempt <= retries; attempt++) {
     const groqRes = await fetch(
       "https://api.groq.com/openai/v1/chat/completions",
@@ -5397,7 +5463,7 @@ async function _groqChat(apiKey, messages, opts = {}) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${apiKey}`,
+          Authorization: `Bearer ${actualKey}`,
         },
         body: JSON.stringify({
           model,
@@ -5419,7 +5485,7 @@ async function _groqChat(apiKey, messages, opts = {}) {
     if (!groqRes.ok)
       return { ok: false, status: groqRes.status, error: await groqRes.text() };
     const data = await groqRes.json();
-    return { ok: true, content: data.choices?.[0]?.message?.content || "" };
+    return { ok: true, content: data.choices?.[0]?.message?.content || "", provider: "groq" };
   }
   return { ok: false, error: "rate limited" };
 }

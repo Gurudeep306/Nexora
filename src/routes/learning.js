@@ -2,6 +2,7 @@ const express = require('express');
 const { errMessage } = require("../http-error");
 const forgePaths = require('../dev-roadmap-data');
 const { me, meSql } = require('../context');
+const { synthesizeAnimationFromCode } = require('../animation-synthesizer');
 
 const TOPIC_TAG_MAP = {
   complexity: ['implementation', 'math'],
@@ -59,13 +60,24 @@ function createLearningRouter(deps) {
 
   router.post('/api/ai-chat', aiLimiter, async (req, res) => {
     try {
-      const apiKey = process.env.GROQ_API_KEY;
-      if (!apiKey) return res.status(500).json({ ok: false, error: 'GROQ_API_KEY not configured in .env' });
-
-      const { statement, question, history } = req.body;
+      const { statement, question, history, animate } = req.body;
       if (!question || !question.trim()) return res.status(400).json({ ok: false, error: 'Question is required' });
 
-      const systemPrompt = `You are an expert, encouraging competitive-programming tutor inside a problem-solving IDE. The student is working on one specific problem and wants conceptual help — not the answer handed to them.
+      const isAnimate = Boolean(animate) || /animate|visualiz|simulation|step through|show animation|animation/i.test(question);
+      let visualization = null;
+      if (isAnimate) {
+        try {
+          visualization = synthesizeAnimationFromCode(question);
+        } catch (e) {
+          console.error('[AiChat] animation synthesis error:', e);
+        }
+      }
+
+      const systemPrompt = isAnimate
+        ? `You are Nexora's Quantum Algorithm Visualizer & Coach. The student provided code or pseudo-code to be animated.
+Explain the algorithm's intuition, time/space complexity, loop invariants, and key state transitions that they can observe in the kinetic 3D Cyber-Matrix visualizer below.
+Do not dump walls of text. Be concise, sharp, and structured with bold highlights and bullet points.`
+        : `You are an expert, encouraging competitive-programming tutor inside a problem-solving IDE. The student is working on one specific problem and wants conceptual help — not the answer handed to them.
 
 How you respond:
 - Lead with the direct answer to what they asked, then add only the detail that builds understanding.
@@ -97,25 +109,28 @@ ${(statement || 'No problem statement available').substring(0, 4000)}
       }
       messages.push({ role: 'user', content: String(question).substring(0, 2000) });
 
-      const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
-        body: JSON.stringify({
-          model: process.env.GROQ_MODEL || 'openai/gpt-oss-120b',
-          messages,
-          max_tokens: 1024,
+      let reply = '';
+      try {
+        const chatRes = await _groqChat(process.env.GROQ_API_KEY, messages, {
+          maxTokens: 1024,
           temperature: 0.6,
-        }),
-      });
-
-      if (!groqRes.ok) {
-        const err = await groqRes.text();
-        return res.status(groqRes.status).json({ ok: false, error: `Groq API error: ${err.substring(0, 200)}` });
+        });
+        if (chatRes && chatRes.ok && chatRes.content) {
+          reply = chatRes.content;
+        }
+      } catch (err) {
+        console.warn('[AiChat] LLM error:', err.message);
       }
 
-      const data = await groqRes.json();
-      const reply = data.choices?.[0]?.message?.content || 'No response generated.';
-      res.json({ ok: true, reply });
+      if (!reply) {
+        if (visualization) {
+          reply = `### 🎬 ${visualization.title}\n\n**Algorithm:** ${visualization.algorithm}  \n**Time Complexity:** \`${visualization.time_complexity}\`  \n**Space Complexity:** \`${visualization.space_complexity}\`\n\nBelow is your interactive **3D Cyber-Matrix kinetic animation**. You can step forward, step backward, play the simulation, scrub the timeline, and observe the parabolic hops and memory register updates in real-time.`;
+        } else {
+          return res.status(500).json({ ok: false, error: 'Could not generate AI response. Please ensure Nexora-Omni or GROQ_API_KEY is configured.' });
+        }
+      }
+
+      res.json({ ok: true, reply, visualization });
     } catch (e) {
       res.status(500).json({ ok: false, error: errMessage(e) });
     }

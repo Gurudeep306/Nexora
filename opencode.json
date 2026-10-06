@@ -1,29 +1,23 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "nvidia/nemotron-3-super",
   "providers": {
-    "nvidia": {
-      "name": "NVIDIA NIM",
-      "env": ["NVIDIA_API_KEY"],
+    "codecraft": {
+      "name": "CodeCraft API",
+      "env": ["cc_03dp7fFqV671C5Y5r7Sew6zzHklBArzjzWkIN0UbGq3HeyE5"],
       "package": "@opencode/ai/providers/openai-compatible",
       "settings": {
-        "baseURL": "https://integrate.api.nvidia.com/v1"
+        "baseURL": "https://codecraftapi.com/v1"
       },
       "models": {
-        "nemotron-3-super": {
-          "name": "Nemotron 3 Super 120B A12B",
-          "modelID": "nvidia/nemotron-3-super-120b-a12b",
-          "capabilities": {
-            "tools": true,
-            "input": ["text"],
-            "output": ["text"]
-          },
+        "claude-opus-5.5": {
+          "name": "Claude Opus 5.5",
           "limit": {
-            "context": 262144,
-            "output": 32768
+            "context": 1000000,
+            "output": 65536
           }
         }
       }
     }
-  }
+  },
+  "model": "codecraft/claude-opus-5.5"
 }
