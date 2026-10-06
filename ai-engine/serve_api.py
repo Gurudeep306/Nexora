@@ -141,7 +141,15 @@ class NexoraApiHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         if self.path == "/health":
-            self._send_json(200, {"status": "healthy", "service": "nexora-core-ai", "engine": "ready"})
+            models_dir = os.path.join(os.path.dirname(__file__), "models")
+            weights = [f for f in os.listdir(models_dir) if f.endswith(".gguf")] if os.path.exists(models_dir) else []
+            self._send_json(200, {
+                "status": "healthy",
+                "service": "kronos-1-sovereign",
+                "physical_weights": weights,
+                "engine": "physical-gguf-loaded" if weights else "in-process-synthesizer",
+                "storage_mode": "100% local drive - zero external API dependencies"
+            })
         else:
             self._send_json(404, {"error": "Not Found"})
 

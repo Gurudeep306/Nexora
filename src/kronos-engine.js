@@ -20,34 +20,38 @@ const KRONOS_SECRET = process.env.KRONOS_SECRET || 'kronos-sovereign-intelligenc
  * Attempt to query local standalone Python Kronos daemon (llama.cpp / vLLM / serve_api.py)
  */
 async function queryLocalDaemon(messages, opts = {}) {
-  try {
-    const payload = JSON.stringify({
-      model: 'kronos-1-sovereign',
-      messages,
-      max_tokens: opts.maxTokens || 1024,
-      temperature: opts.temperature || 0.2,
-    });
+  const ports = [process.env.KRONOS_PORT || '8000', '8080'];
+  for (const p of ports) {
+    try {
+      const url = `http://127.0.0.1:${p}`;
+      const payload = JSON.stringify({
+        model: 'kronos-1-sovereign',
+        messages,
+        max_tokens: opts.maxTokens || 1024,
+        temperature: opts.temperature || 0.2,
+      });
 
-    const res = await fetch(`${KRONOS_LOCAL_URL}/v1/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${KRONOS_SECRET}`,
-        'X-Nexora-Secret': KRONOS_SECRET,
-      },
-      body: payload,
-      signal: AbortSignal.timeout(3500),
-    }).catch(() => null);
+      const res = await fetch(`${url}/v1/chat/completions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${KRONOS_SECRET}`,
+          'X-Nexora-Secret': KRONOS_SECRET,
+        },
+        body: payload,
+        signal: AbortSignal.timeout(2500),
+      }).catch(() => null);
 
-    if (res && res.ok) {
-      const data = await res.json();
-      const content = data.choices?.[0]?.message?.content || '';
-      if (content.trim()) {
-        return { ok: true, content, source: 'kronos-daemon' };
+      if (res && res.ok) {
+        const data = await res.json();
+        const content = data.choices?.[0]?.message?.content || '';
+        if (content.trim()) {
+          return { ok: true, content, source: 'kronos-daemon' };
+        }
       }
+    } catch {
+      /* daemon offline or cold on this port */
     }
-  } catch {
-    /* daemon offline or cold */
   }
   return null;
 }
