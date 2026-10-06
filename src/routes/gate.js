@@ -99,6 +99,8 @@ function createGateRouter() {
       q = "",
       exam = "",
       year = "",
+      minYear = "",
+      maxYear = "",
       paper = "",
       subject = "",
       topic = "",
@@ -106,6 +108,7 @@ function createGateRouter() {
       section = "",
       marks = "",
       answered = "",
+      hasFigure = "",
       sort = "year-desc",
     } = req.query;
 
@@ -122,6 +125,8 @@ function createGateRouter() {
     let rows = b.questions.filter((x) => {
       if (exams.length && !exams.includes(x.exam)) return false;
       if (years.length && !years.includes(x.year)) return false;
+      if (minYear && x.year < Number(minYear)) return false;
+      if (maxYear && x.year > Number(maxYear)) return false;
       if (papersF.length && !papersF.includes(x.paper)) return false;
       if (subjects.length && !subjects.includes(x.subject)) return false;
       if (topics.length && !topics.includes(`${x.subject}/${x.topic}`) && !topics.includes(x.topic)) return false;
@@ -133,6 +138,8 @@ function createGateRouter() {
       if (marksF.length && !marksF.includes(Number(x.marks))) return false;
       if (answered === "yes" && (x.answer === null || x.answer === undefined)) return false;
       if (answered === "no" && x.answer !== null && x.answer !== undefined) return false;
+      if (hasFigure === "yes" && (!x.figures || x.figures.length === 0)) return false;
+      if (hasFigure === "no" && x.figures && x.figures.length > 0) return false;
       if (words.length && !words.every((w) => x._hay.includes(w))) return false;
       return true;
     });
@@ -159,12 +166,17 @@ function createGateRouter() {
     const limit = Math.min(Number(req.query.limit) || 25, 100);
     const offset = Math.max(Number(req.query.offset) || 0, 0);
 
-    // Per-subject counts for the current result set, so the facets stay useful.
-    const facets = { subject: {}, year: {}, type: {} };
+    // Per-subject, year, type and topic facets for the current result set
+    const facets = { subject: {}, year: {}, type: {}, topic: {} };
     for (const x of rows) {
       facets.subject[x.subject] = (facets.subject[x.subject] || 0) + 1;
       facets.year[x.year] = (facets.year[x.year] || 0) + 1;
       facets.type[x.type] = (facets.type[x.type] || 0) + 1;
+      if (x.topic) {
+        const topKey = `${x.subject}/${x.topic}`;
+        facets.topic[topKey] = (facets.topic[topKey] || 0) + 1;
+        facets.topic[x.topic] = (facets.topic[x.topic] || 0) + 1;
+      }
     }
 
     res.json({

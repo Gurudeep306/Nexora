@@ -510,3 +510,59 @@ html.dark .gate-figure img { filter: invert(1) hue-rotate(180deg); background: #
 }
 .gate-option-right .gate-option-label { color: var(--color-state-success); }
 .gate-answer { background: color-mix(in oklab, var(--color-accent-brand) 7%, transparent); border: 1px solid color-mix(in oklab, var(--color-accent-brand) 25%, transparent); }
+
+/* Gate Filter Panel Enhancements */
+.gate-filter-panel {
+  border-radius: 18px;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 4px 20px -4px oklch(0 0 0 / 0.08);
+}
+
+.gate-preset-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 12px; border-radius: 999px; cursor: pointer;
+  font-size: 12px; font-weight: 600;
+  color: var(--color-text-secondary);
+  background: var(--color-bg-surface-2);
+  border: 1px solid var(--color-border);
+  transition: all 180ms cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+}
+.gate-preset-chip:hover {
+  color: var(--color-text-primary);
+  background: var(--color-bg-surface-3);
+  border-color: var(--color-border-hover);
+  transform: translateY(-1px);
+}
+.gate-preset-chip-on {
+  color: var(--color-on-accent-brand);
+  background: var(--color-accent-brand);
+  border-color: var(--color-accent-brand);
+  box-shadow: 0 2px 8px -2px color-mix(in oklab, var(--color-accent-brand) 40%, transparent);
+}
+
+.gate-domain-box {
+  border-radius: 14px;
+  padding: 12px 14px;
+  background: color-mix(in oklab, var(--color-bg-surface-2) 65%, transparent);
+  border: 1px solid var(--color-border);
+  transition: border-color 150ms;
+}
+.gate-domain-box:hover {
+  border-color: var(--color-border-hover);
+}
+
+.gate-active-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 9px; border-radius: 999px;
+  font-size: 11.5px; font-weight: 600;
+  color: var(--color-accent-brand);
+  background: color-mix(in oklab, var(--color-accent-brand) 12%, transparent);
+  border: 1px solid color-mix(in oklab, var(--color-accent-brand) 28%, transparent);
+  transition: all 140ms ease;
+}
+.gate-active-badge:hover {
+  background: color-mix(in oklab, var(--color-accent-brand) 20%, transparent);
+}
+
