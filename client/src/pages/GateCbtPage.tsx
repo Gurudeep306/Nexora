@@ -20,7 +20,7 @@ export default function GateCbtPage() {
   const navigate = useNavigate()
   const [selectedPaper, setSelectedPaper] = useState<string | null>(paperId || null)
   const [search, setSearch] = useState('')
-  const [examFilter, setExamFilter] = useState<'ALL' | 'CSE' | 'DA'>('ALL')
+  const [examFilter, setExamFilter] = useState<'ALL' | 'CSE' | 'DA' | 'IT'>('ALL')
 
   const meta = useApi<GateMeta>(() => api.get<GateMeta>('/api/gate/meta'), [])
 
@@ -147,6 +147,13 @@ export default function GateCbtPage() {
               className={cn('rounded-lg px-3 py-1.5 transition-colors cursor-pointer', examFilter === 'DA' && 'bg-bg-surface text-accent-brand shadow-sm')}
             >
               Data Science & AI (DA)
+            </button>
+            <button
+              type="button"
+              onClick={() => setExamFilter('IT')}
+              className={cn('rounded-lg px-3 py-1.5 transition-colors cursor-pointer', examFilter === 'IT' && 'bg-bg-surface text-accent-brand shadow-sm')}
+            >
+              Information Technology (IT)
             </button>
           </div>
         </div>

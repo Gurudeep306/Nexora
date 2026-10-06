@@ -82,9 +82,13 @@ export interface GateList {
   offset: number
   limit: number
   facets: {
+    exam?: Record<string, number>
     subject: Record<string, number>
     year: Record<string, number>
     type: Record<string, number>
+    marks?: Record<string, number>
+    hasFigure?: { yes: number; no: number }
+    paper?: Record<string, number>
     topic?: Record<string, number>
   }
   questions: GateQuestion[]

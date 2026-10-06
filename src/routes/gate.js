@@ -18,12 +18,13 @@ let bank = null;
 let lastMtime = 0;
 
 function load() {
+  let mtime = 0;
   try {
-    const mtime = fs.statSync(FILE).mtimeMs;
+    mtime = fs.statSync(FILE).mtimeMs;
     if (bank && mtime === lastMtime) return bank;
-    lastMtime = mtime;
   } catch (_) {}
-  if (bank && lastMtime !== 0) return bank;
+  if (bank && mtime === 0) return bank;
+  lastMtime = mtime;
   const raw = JSON.parse(fs.readFileSync(FILE, "utf8"));
   const questions = raw.questions.map((q) => ({
     ...q,
@@ -76,19 +77,42 @@ function createGateRouter() {
     const bySubject = {};
     const byYear = {};
     const byType = {};
+    const byExam = {};
+
+    // Clone subjects so we can dynamically register any missing topics
+    const subjects = JSON.parse(JSON.stringify(b.subjects || { CSE: {}, DA: {} }));
+
     for (const q of b.questions) {
+      if (!q || !q.subject) continue;
       const key = `${q.exam === "DA" ? "DA" : "CSE"}:${q.subject}`;
       bySubject[key] = (bySubject[key] || 0) + 1;
       byYear[q.year] = (byYear[q.year] || 0) + 1;
       byType[q.type] = (byType[q.type] || 0) + 1;
+      byExam[q.exam] = (byExam[q.exam] || 0) + 1;
+
+      // Ensure every subject and topic present on any question is registered in meta
+      const stream = q.exam === "DA" ? "DA" : "CSE";
+      if (!subjects[stream]) subjects[stream] = {};
+      if (!subjects[stream][q.subject]) {
+        subjects[stream][q.subject] = {
+          name: q.subject.toUpperCase(),
+          topics: {},
+        };
+      }
+      if (q.topic && !subjects[stream][q.subject].topics[q.topic]) {
+        subjects[stream][q.subject].topics[q.topic] = q.topic
+          .replace(/-/g, " ")
+          .replace(/\b\w/g, (c) => c.toUpperCase());
+      }
     }
+
     res.json({
       ok: true,
       generated: b.generated,
       total: b.questions.length,
       papers: b.papers,
-      subjects: b.subjects,
-      counts: { bySubject, byYear, byType },
+      subjects,
+      counts: { bySubject, byYear, byType, byExam },
     });
   });
 
@@ -166,12 +190,20 @@ function createGateRouter() {
     const limit = Math.min(Number(req.query.limit) || 25, 100);
     const offset = Math.max(Number(req.query.offset) || 0, 0);
 
-    // Per-subject, year, type and topic facets for the current result set
-    const facets = { subject: {}, year: {}, type: {}, topic: {} };
+    // Per-exam, subject, year, type, marks, figures, and topic facets for the current result set
+    const facets = { exam: {}, subject: {}, year: {}, type: {}, marks: {}, hasFigure: { yes: 0, no: 0 }, paper: {}, topic: {} };
     for (const x of rows) {
+      facets.exam[x.exam] = (facets.exam[x.exam] || 0) + 1;
       facets.subject[x.subject] = (facets.subject[x.subject] || 0) + 1;
       facets.year[x.year] = (facets.year[x.year] || 0) + 1;
       facets.type[x.type] = (facets.type[x.type] || 0) + 1;
+      facets.marks[String(x.marks)] = (facets.marks[String(x.marks)] || 0) + 1;
+      if (x.figures && x.figures.length > 0) {
+        facets.hasFigure.yes += 1;
+      } else {
+        facets.hasFigure.no += 1;
+      }
+      if (x.paper) facets.paper[x.paper] = (facets.paper[x.paper] || 0) + 1;
       if (x.topic) {
         const topKey = `${x.subject}/${x.topic}`;
         facets.topic[topKey] = (facets.topic[topKey] || 0) + 1;
