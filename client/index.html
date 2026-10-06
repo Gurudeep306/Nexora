@@ -8,6 +8,9 @@
     <meta name="theme-color" content="#1c1d22" />
     <meta name="description" content="Nexora — learn computer science end to end: animated courses, practice on a real judge, an AI tutor and career roadmaps." />
     <title>Nexora — Learn computer science, step by step</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Caveat:wght@400..700&family=Indie+Flower&family=JetBrains+Mono:wght@400;600;700&family=Kalam:wght@400;700&family=Playfair+Display:ital,wght@0,600;1,400&family=Press+Start+2P&display=swap" rel="stylesheet" />
     <script>
       /* Resolve the whole look before the first paint, so the page never
          flashes the wrong appearance, accent or desktop colour while React
@@ -31,10 +34,14 @@
           var tone = dark ? 'dark' : 'light', wallTone = tone, color = '', tint = '';
           if (w[0] === 'o') { color = dark ? w[2] : w[3]; tint = dark ? w[4] : w[5]; }
           else if (w[0] === 'p') { wallTone = w[2]; color = w[3]; tint = w[4]; }
-          var accents = ' blue purple pink red orange yellow green graphite ';
+          var accents = ' blue purple pink red orange yellow green graphite cyan ice plasma ';
           var accent = look.accent && accents.indexOf(' ' + look.accent + ' ') >= 0 ? look.accent : w[1];
           d.setAttribute('data-accent', accent);
           d.setAttribute('data-glass', /^(frosted|clear|solid)$/.test(look.glass) ? look.glass : 'frosted');
+          d.setAttribute('data-card-style', look.cardStyle || 'glass');
+          d.setAttribute('data-icon-pack', look.iconPack || 'vibrant');
+          d.setAttribute('data-icon-shape', look.iconShape || 'squircle');
+          d.setAttribute('data-font-style', look.fontStyle || 'modern');
           d.setAttribute('data-wall', w[0] === 'o' ? 'original' : w[0] === 'p' ? 'photo' : 'none');
           d.setAttribute('data-wall-tone', wallTone);
           if (color) {

@@ -25,7 +25,8 @@ import {
   ORIGINALS,
   PHOTOS,
   PLAIN,
-  THEME_PRESETS,
+  THEME_PACKS,
+  FONT_STYLES,
   findWallpaper,
   creditLinks,
   originalUrl,
@@ -328,20 +329,28 @@ export function CustomWallpaperUploader({ onAdded }: { onAdded?: () => void }) {
 /* ── Wallpaper Grid with Category Navigation ────────────────────────────── */
 export function WallpaperGrid({ compact = false, className }: { compact?: boolean; className?: string }) {
   const { customWallpapers, deleteCustomWallpaper } = useTheme()
-  const [selectedCat, setSelectedCat] = useState<'all' | 'originals' | 'cyber' | 'space' | 'abstract' | 'nature' | 'custom'>('all')
+  const [selectedCat, setSelectedCat] = useState<
+    'all' | 'anime' | 'gaming' | 'series' | 'space' | 'cyber' | 'abstract' | 'nature' | 'originals' | 'custom'
+  >('all')
 
-  const cyberPhotos = PHOTOS.filter((p) => p.category === 'cyber')
+  const animePhotos = PHOTOS.filter((p) => p.category === 'anime')
+  const gamingPhotos = PHOTOS.filter((p) => p.category === 'gaming')
+  const seriesPhotos = PHOTOS.filter((p) => p.category === 'series')
   const spacePhotos = PHOTOS.filter((p) => p.category === 'space')
+  const cyberPhotos = PHOTOS.filter((p) => p.category === 'cyber')
   const abstractPhotos = PHOTOS.filter((p) => p.category === 'abstract')
   const naturePhotos = PHOTOS.filter((p) => p.category === 'nature')
 
   const groups: { id: string; label: string; hint?: string; items: Wallpaper[] }[] = [
-    { id: 'originals', label: 'Nexora Originals', hint: 'Dynamic — follow Light & Dark', items: ORIGINALS },
-    { id: 'cyber', label: 'Cyberpunk & Matrix', hint: 'High-tech neon cities & circuitry', items: cyberPhotos },
-    { id: 'space', label: 'Cosmic Deep Space', hint: 'Nebulas, galaxies & orbital horizons', items: spacePhotos },
-    { id: 'abstract', label: 'Abstract & 3D Art', hint: 'Liquid obsidian & raytraced geometry', items: abstractPhotos },
-    { id: 'nature', label: 'Atmospheric Landscapes', hint: 'Moody peaks, ocean swells & twilight', items: naturePhotos },
-    { id: 'custom', label: 'Your Custom Wallpapers', hint: 'Locally uploaded & personal images', items: customWallpapers },
+    { id: 'anime', label: 'Anime & Studio Ghibli', hint: 'Ghibli, Your Name, Demon Slayer & Makoto Shinkai', items: animePhotos },
+    { id: 'gaming', label: 'Pokemon & Legendary Gaming', hint: 'Pikachu Volt, Elden Ring, Night City & Charizard Core', items: gamingPhotos },
+    { id: 'series', label: 'Famous Sci-Fi & Pop Culture Series', hint: 'Interstellar Gargantua, Spider-Verse, Matrix & Arcane', items: seriesPhotos },
+    { id: 'space', label: 'Cosmic Deep Space (NASA 4K)', hint: 'James Webb Carina, Pillars of Creation & Orbit', items: spacePhotos },
+    { id: 'cyber', label: 'Cyberpunk & Matrix Tech', hint: 'High-tech neon cities, quantum silicon & synthwave', items: cyberPhotos },
+    { id: 'abstract', label: 'Abstract 3D & Octane Art', hint: 'Liquid obsidian mercury & prismatic caustics', items: abstractPhotos },
+    { id: 'nature', label: 'Atmospheric 4K Landscapes', hint: 'Glacial alpine mirrors, aurora borealis & Fuji twilight', items: naturePhotos },
+    { id: 'originals', label: 'Nexora Dynamic Originals', hint: 'Dynamic wallpapers that follow Light & Dark', items: ORIGINALS },
+    { id: 'custom', label: 'Your Custom Wallpapers', hint: 'Locally uploaded & personal high-res images', items: customWallpapers },
     { id: 'plain', label: 'Minimal Plain', hint: 'Distraction-free solid background', items: [PLAIN] },
   ]
 
@@ -357,11 +366,14 @@ export function WallpaperGrid({ compact = false, className }: { compact?: boolea
         <div className="flex flex-wrap items-center gap-1.5 border-b border-border pb-3">
           {[
             { id: 'all', label: 'All Collections' },
-            { id: 'originals', label: 'Originals' },
-            { id: 'cyber', label: 'Cyber & Matrix' },
+            { id: 'anime', label: 'Anime & Ghibli' },
+            { id: 'gaming', label: 'Pokemon & Gaming' },
+            { id: 'series', label: 'Famous Series' },
             { id: 'space', label: 'Deep Space' },
+            { id: 'cyber', label: 'Cyberpunk' },
             { id: 'abstract', label: 'Abstract 3D' },
             { id: 'nature', label: 'Nature' },
+            { id: 'originals', label: 'Originals' },
             { id: 'custom', label: `Custom (${customWallpapers.length})` },
           ].map((cat) => (
             <button
@@ -371,8 +383,8 @@ export function WallpaperGrid({ compact = false, className }: { compact?: boolea
               className={cn(
                 'rounded-lg px-2.5 py-1 text-xs font-medium transition-colors',
                 selectedCat === cat.id
-                  ? 'bg-accent-brand text-on-accent-brand'
-                  : 'bg-bg-surface-2 text-text-muted hover:text-text-primary',
+                  ? 'bg-accent-brand text-on-accent-brand shadow-xs'
+                  : 'bg-bg-surface-2 text-text-muted hover:text-text-primary hover:bg-bg-surface-3',
               )}
             >
               {cat.label}
@@ -416,109 +428,228 @@ export function WallpaperGrid({ compact = false, className }: { compact?: boolea
   )
 }
 
-/* ── Curated Theme Presets Gallery ────────────────────────────────────────── */
-export function ThemePresetsPicker({ className }: { className?: string }) {
+/* ── Curated Complete Theme Packs Gallery ────────────────────────────────── */
+export function ThemePackPicker({ className }: { className?: string }) {
   const { look, applyLook } = useTheme()
+  const [selectedGenre, setSelectedGenre] = useState<string>('all')
+
+  const genrePills = [
+    { id: 'all', label: `All Packs (${THEME_PACKS.length})` },
+    { id: 'anime', label: 'Anime & Ghibli' },
+    { id: 'gaming', label: 'Pokemon & Gaming' },
+    { id: 'series', label: 'Famous Series' },
+    { id: 'cyber', label: 'Cyberpunk' },
+    { id: 'space', label: 'Deep Space' },
+    { id: 'minimal', label: 'Minimal & Zen' },
+  ]
+
+  const filteredPacks =
+    selectedGenre === 'all'
+      ? THEME_PACKS
+      : THEME_PACKS.filter((p) => p.genre === selectedGenre)
+
+  return (
+    <div className={cn('space-y-4', className)}>
+      {/* Genre Filter Tabs */}
+      <div className="flex flex-wrap items-center gap-1.5 border-b border-border pb-3">
+        {genrePills.map((pill) => (
+          <button
+            key={pill.id}
+            type="button"
+            onClick={() => setSelectedGenre(pill.id)}
+            className={cn(
+              'rounded-lg px-2.5 py-1 text-xs font-medium transition-colors',
+              selectedGenre === pill.id
+                ? 'bg-accent-brand text-on-accent-brand shadow-xs'
+                : 'bg-bg-surface-2 text-text-muted hover:text-text-primary hover:bg-bg-surface-3',
+            )}
+          >
+            {pill.label}
+          </button>
+        ))}
+      </div>
+
+      <div
+        role="radiogroup"
+        aria-label="Curated Theme Packs"
+        className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+      >
+        {filteredPacks.map((p) => {
+          const active =
+            look.wallpaper === p.wallpaper &&
+            look.accent === p.accent &&
+            look.cardStyle === p.cardStyle &&
+            look.iconPack === p.iconPack &&
+            look.fontStyle === p.fontStyle
+          const wp = findWallpaper(p.wallpaper)
+          const bgThumb = thumbUrl(wp, 'dark')
+
+          return (
+            <button
+              key={p.id}
+              type="button"
+              role="radio"
+              aria-checked={active}
+              onClick={() =>
+                applyLook({
+                  wallpaper: p.wallpaper,
+                  accent: p.accent,
+                  cardStyle: p.cardStyle,
+                  iconPack: p.iconPack,
+                  iconShape: p.iconShape,
+                  fontStyle: p.fontStyle,
+                })
+              }
+              className={cn(
+                'group relative flex cursor-pointer flex-col overflow-hidden rounded-2xl border text-left transition-all duration-300',
+                active
+                  ? 'border-accent-brand ring-2 ring-accent-brand/40 shadow-xl scale-[1.01]'
+                  : 'border-border bg-bg-surface-2 hover:border-border-strong hover:bg-bg-surface-3 hover:-translate-y-0.5',
+              )}
+            >
+              {/* Visual banner thumbnail */}
+              <div className="relative h-28 w-full overflow-hidden bg-bg-surface-3">
+                {bgThumb ? (
+                  <img
+                    src={bgThumb}
+                    alt={p.name}
+                    loading="lazy"
+                    decoding="async"
+                    onError={hideBroken}
+                    className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                ) : (
+                  <div
+                    className="size-full"
+                    style={{
+                      background: `linear-gradient(135deg, ${p.glowColor}33, #0b0c10)`,
+                    }}
+                  />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-bg-surface via-bg-surface/30 to-transparent" />
+
+                {/* Badge */}
+                <span className="absolute top-2 left-2 rounded-md bg-black/70 px-2 py-0.5 text-[10px] font-semibold tracking-wider uppercase text-white backdrop-blur-md shadow-xs">
+                  {p.badge}
+                </span>
+
+                {/* Active check pill */}
+                {active && (
+                  <span className="absolute top-2 right-2 flex items-center gap-1 rounded-full bg-accent-brand px-2.5 py-0.5 text-[11px] font-semibold text-white shadow-md">
+                    <Check className="size-3 stroke-[2.5]" />
+                    Active Pack
+                  </span>
+                )}
+              </div>
+
+              {/* Content & attributes */}
+              <div className="flex flex-1 flex-col justify-between p-3.5">
+                <div>
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-sm font-bold text-text-primary group-hover:text-accent-brand transition-colors">
+                      {p.name}
+                    </span>
+                    <span
+                      className="size-3.5 shrink-0 rounded-full border border-white/20 shadow-sm"
+                      style={{ background: p.glowColor }}
+                      title={`Accent: ${p.accent}`}
+                    />
+                  </div>
+                  <p className="mt-1 line-clamp-2 text-[11.5px] leading-relaxed text-text-muted">
+                    {p.description}
+                  </p>
+                </div>
+
+                {/* Tag pills for attributes */}
+                <div className="mt-3 flex flex-wrap items-center gap-1.5 pt-1 text-[10px] font-medium text-text-secondary">
+                  <span className="rounded bg-bg-surface-3 border border-border px-1.5 py-0.5 capitalize">
+                    {p.cardStyle} Card
+                  </span>
+                  <span className="rounded bg-bg-surface-3 border border-border px-1.5 py-0.5 capitalize">
+                    {p.iconPack} Icons
+                  </span>
+                  <span className="rounded bg-bg-surface-3 border border-border px-1.5 py-0.5 capitalize">
+                    {p.fontStyle === 'handwriting'
+                      ? '✍️ Handwriting'
+                      : p.fontStyle === 'cyber'
+                        ? '⚡ Cyber Mono'
+                        : p.fontStyle === 'retro'
+                          ? '👾 8-Bit Retro'
+                          : p.fontStyle === 'serif'
+                            ? '📖 Editorial Serif'
+                            : '✨ Modern Sans'}
+                  </span>
+                </div>
+              </div>
+            </button>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+/** Backwards-compatible export */
+export const ThemePresetsPicker = ThemePackPicker
+
+/* ── Typography & Handwriting Engine Picker ───────────────────────────────── */
+export function FontStylePicker({ className }: { className?: string }) {
+  const { look, setFontStyle } = useTheme()
 
   return (
     <div
       role="radiogroup"
-      aria-label="Curated Theme Presets"
-      className={cn('grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4', className)}
+      aria-label="Typography Style"
+      className={cn('grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3', className)}
     >
-      {THEME_PRESETS.map((p) => {
-        const active =
-          look.wallpaper === p.wallpaper &&
-          look.accent === p.accent &&
-          look.cardStyle === p.cardStyle &&
-          look.iconPack === p.iconPack
-        const wp = findWallpaper(p.wallpaper)
-        const bgThumb = thumbUrl(wp, 'dark')
-
+      {FONT_STYLES.map((f) => {
+        const active = look.fontStyle === f.id
         return (
           <button
-            key={p.id}
+            key={f.id}
             type="button"
             role="radio"
             aria-checked={active}
-            onClick={() =>
-              applyLook({
-                wallpaper: p.wallpaper,
-                accent: p.accent,
-                cardStyle: p.cardStyle,
-                iconPack: p.iconPack,
-                iconShape: p.iconShape,
-              })
-            }
+            onClick={() => setFontStyle(f.id)}
             className={cn(
-              'group relative flex cursor-pointer flex-col overflow-hidden rounded-2xl border text-left transition-all duration-300',
+              'group relative flex cursor-pointer flex-col justify-between overflow-hidden rounded-2xl border p-4 text-left transition-all duration-200',
               active
-                ? 'border-accent-brand ring-2 ring-accent-brand/40 shadow-xl scale-[1.01]'
+                ? 'border-accent-brand bg-accent-brand/[0.08] ring-2 ring-accent-brand/40 shadow-lg scale-[1.01]'
                 : 'border-border bg-bg-surface-2 hover:border-border-strong hover:bg-bg-surface-3 hover:-translate-y-0.5',
             )}
           >
-            {/* Visual banner thumbnail */}
-            <div className="relative h-24 w-full overflow-hidden bg-bg-surface-3">
-              {bgThumb ? (
-                <img
-                  src={bgThumb}
-                  alt={p.name}
-                  loading="lazy"
-                  decoding="async"
-                  onError={hideBroken}
-                  className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-              ) : (
-                <div
-                  className="size-full"
-                  style={{
-                    background: `linear-gradient(135deg, ${p.glowColor}33, #0b0c10)`,
-                  }}
-                />
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-bg-surface to-transparent opacity-90" />
-
-              {/* Category tag */}
-              <span className="absolute top-2 left-2 rounded-md bg-black/60 px-2 py-0.5 text-[10px] font-semibold tracking-wider uppercase text-white backdrop-blur-md">
-                {p.badge}
-              </span>
-
-              {/* Active check pill */}
-              {active && (
-                <span className="absolute top-2 right-2 flex items-center gap-1 rounded-full bg-accent-brand px-2 py-0.5 text-[11px] font-semibold text-white shadow-md">
-                  <Check className="size-3 stroke-[2.5]" />
-                  Active
+            <div>
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-xs font-bold text-text-primary tracking-wide">
+                  {f.label}
                 </span>
-              )}
+                {active && (
+                  <span className="flex size-4 items-center justify-center rounded-full bg-accent-brand text-white shadow-xs">
+                    <Check className="size-2.5 stroke-[3]" />
+                  </span>
+                )}
+              </div>
+              <p className="mt-1 text-[11px] leading-relaxed text-text-muted">
+                {f.hint}
+              </p>
             </div>
 
-            {/* Content & attributes */}
-            <div className="p-3.5">
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-sm font-bold text-text-primary group-hover:text-accent-brand transition-colors">
-                  {p.name}
-                </span>
-                <span
-                  className="size-3.5 shrink-0 rounded-full border border-white/20 shadow-sm"
-                  style={{ background: p.glowColor }}
-                  title={`Accent: ${p.accent}`}
-                />
-              </div>
-              <p className="mt-1 line-clamp-2 text-[11.5px] leading-relaxed text-text-muted">
-                {p.description}
-              </p>
-
-              {/* Tag pills for attributes */}
-              <div className="mt-2.5 flex flex-wrap items-center gap-1.5 pt-1 text-[10px] font-medium text-text-secondary">
-                <span className="rounded bg-bg-surface-3 border border-border px-1.5 py-0.5 capitalize">
-                  {p.cardStyle} Card
-                </span>
-                <span className="rounded bg-bg-surface-3 border border-border px-1.5 py-0.5 capitalize">
-                  {p.iconPack} Icons
-                </span>
-                <span className="rounded bg-bg-surface-3 border border-border px-1.5 py-0.5 capitalize">
-                  {p.iconShape}
-                </span>
+            {/* Live font sample preview */}
+            <div className="mt-4 rounded-xl border border-border/60 bg-bg-surface-1/60 p-3">
+              <span className="text-[10px] uppercase font-semibold text-text-muted block mb-1 tracking-wider">
+                {f.badge}
+              </span>
+              <div
+                className={cn(
+                  'transition-colors',
+                  f.id === 'handwriting' && "font-['Caveat',cursive] text-lg font-bold text-accent-brand",
+                  f.id === 'cyber' && "font-['JetBrains_Mono',monospace] text-xs font-semibold text-emerald-400",
+                  f.id === 'serif' && "font-['Playfair_Display',serif] text-base italic text-purple-300",
+                  f.id === 'retro' && "font-['Press_Start_2P',monospace] text-[10px] leading-relaxed text-amber-400",
+                  f.id === 'modern' && "font-sans font-semibold text-text-primary text-sm",
+                )}
+              >
+                {f.sample}
               </div>
             </div>
           </button>
@@ -527,6 +658,7 @@ export function ThemePresetsPicker({ className }: { className?: string }) {
     </div>
   )
 }
+
 
 /* ── Card Style Customizer ────────────────────────────────────────────────── */
 export function CardStylePicker({ className }: { className?: string }) {

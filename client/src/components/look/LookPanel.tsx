@@ -8,6 +8,7 @@ import {
   Layers,
   Shapes,
   Sparkles,
+  PenTool,
 } from 'lucide-react'
 import { Button, Card, CardContent } from '@/components/ui'
 import { DockEditor } from '@/components/layout/DockEditor'
@@ -16,14 +17,15 @@ import {
   AccentPicker,
   AppearanceCards,
   CardStylePicker,
+  FontStylePicker,
   GlassSegmented,
   IconPackPicker,
   IconShapePicker,
   PhotoCredit,
-  ThemePresetsPicker,
+  ThemePackPicker,
   WallpaperGrid,
 } from './LookControls'
-import { CARD_STYLES, GLASS_STYLES, ICON_PACKS } from '@/theme/catalog'
+import { CARD_STYLES, FONT_STYLES, GLASS_STYLES, ICON_PACKS } from '@/theme/catalog'
 
 function Row({
   icon,
@@ -52,7 +54,7 @@ function Row({
   )
 }
 
-/** Settings → Appearance: Full suite of appearance, wallpapers, card styles, and icon packs. */
+/** Settings → Appearance: Full suite of appearance, theme packs, typography, wallpapers, card styles, and icon packs. */
 export function LookPanel() {
   const { look, wallpaper, resolvedAccent } = useTheme()
   const [dockOpen, setDockOpen] = useState(false)
@@ -62,10 +64,10 @@ export function LookPanel() {
       <CardContent className="divide-y divide-border px-5 py-4 md:px-6">
         <Row
           icon={<Sparkles />}
-          title="Theme Presets"
-          hint="Curated complete environments pairing wallpapers, chromatic accents, card styles, and icon packs in one click."
+          title="Curated Theme Packs"
+          hint="One-click complete environments bundling 4K wallpapers, chromatic accents, card styling, icon packs, and typography across Anime, Gaming, Series & Deep Space."
         >
-          <ThemePresetsPicker />
+          <ThemePackPicker />
         </Row>
 
         <Row icon={<SunMoon />} title="Appearance" hint="Auto follows your system, switching at sunset if it does.">
@@ -87,6 +89,14 @@ export function LookPanel() {
           }
         >
           <AccentPicker />
+        </Row>
+
+        <Row
+          icon={<PenTool />}
+          title="Typography & Handwriting"
+          hint={FONT_STYLES.find((f) => f.id === look.fontStyle)?.hint ?? 'Choose typography engine across the app.'}
+        >
+          <FontStylePicker />
         </Row>
 
         <Row
@@ -117,10 +127,10 @@ export function LookPanel() {
 
         <Row
           icon={<ImageIcon />}
-          title="Wallpaper"
+          title="4K Wallpaper Gallery"
           hint={
             <>
-              Choose from dynamic originals, cyberpunk, deep space, abstract 3D, landscapes, or upload your own image.
+              Explore curated 4K collections across Anime & Ghibli, Pokemon & Gaming, Famous Series, Deep Space NASA, Cyberpunk, Abstract 3D, Landscapes, or upload your own custom high-res image.
               <PhotoCredit className="mt-2" />
             </>
           }
@@ -138,3 +148,4 @@ export function LookPanel() {
     </Card>
   )
 }
+
