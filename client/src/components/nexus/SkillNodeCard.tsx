@@ -34,8 +34,9 @@ export function SkillNodeCard({
       )}
     >
       <span
+        data-icon-pod
         className={cn(
-          'flex size-10 shrink-0 items-center justify-center rounded-xl border bg-surface-2 transition-colors',
+          'icon-pod flex size-10 shrink-0 items-center justify-center border transition-colors',
           state === 'completed' ? 'border-success/50 text-success' : state === 'locked' ? 'border-border text-foreground-faint' : 'text-primary-bright',
         )}
         style={state === 'unlocked' || state === 'in-progress' ? { borderColor: zoneColor } : undefined}

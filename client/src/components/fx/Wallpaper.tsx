@@ -25,6 +25,13 @@ function sourceFor(w: WallpaperT, tone: Tone): Omit<Layer, 'ready'> | null {
       srcSet: [1280, 1920, 2560, 3200].map((px) => `${photoUrl(w, px)} ${px}w`).join(', '),
     }
   }
+  if (w.kind === 'custom') {
+    return {
+      key: w.id,
+      src: w.src,
+      srcSet: w.src,
+    }
+  }
   return null
 }
 
