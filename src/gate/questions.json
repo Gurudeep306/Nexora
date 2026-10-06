@@ -409,6 +409,14 @@
       "set": 1,
       "count": 65,
       "notes": "Official Master Question Paper for Data Science & AI (DA), IIT Roorkee."
+    },
+    {
+      "id": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "count": 65,
+      "notes": "Official GATE 2026 Data Science & Artificial Intelligence (DA) Master Paper, IIT Guwahati; transcribed verbatim with official keys."
     }
   ],
   "subjects": {
@@ -112243,7 +112251,7 @@
         "tlb",
         "page-fault"
       ],
-      "answer": 155.0,
+      "answer": 155,
       "answerSource": "solved",
       "confidence": "medium",
       "solution": "Faults only on TLB misses: 0.95(120) + 0.05{0.9(220) + 0.1[0.8(5220) + 0.2(10220)]} = 114 + 0.05*(198 + 622) = 155.0 ns.",
@@ -136366,7 +136374,7 @@
       "tags": [
         "regular"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -136394,7 +136402,7 @@
       "tags": [
         "graphs"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -136422,7 +136430,7 @@
       "tags": [
         "isa"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -137234,7 +137242,7 @@
       "tags": [
         "memory"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -137262,7 +137270,7 @@
       "tags": [
         "asymptotics"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -137290,7 +137298,7 @@
       "tags": [
         "parsing"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -137318,7 +137326,7 @@
       "tags": [
         "combinational"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -137346,7 +137354,7 @@
       "tags": [
         "quant"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -137374,7 +137382,7 @@
       "tags": [
         "memory"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -137402,7 +137410,7 @@
       "tags": [
         "sql"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -137430,7 +137438,7 @@
       "tags": [
         "sql"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -137458,7 +137466,7 @@
       "tags": [
         "sql"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -137486,7 +137494,7 @@
       "tags": [
         "sql"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -137514,7 +137522,7 @@
       "tags": [
         "sql"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -137542,7 +137550,7 @@
       "tags": [
         "sql"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -137570,7 +137578,7 @@
       "tags": [
         "sql"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -137598,7 +137606,7 @@
       "tags": [
         "sql"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -137626,7 +137634,7 @@
       "tags": [
         "sql"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -137654,7 +137662,7 @@
       "tags": [
         "sql"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -137682,7 +137690,7 @@
       "tags": [
         "sql"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -137710,7 +137718,7 @@
       "tags": [
         "sql"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -137738,7 +137746,7 @@
       "tags": [
         "sql"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -137766,7 +137774,7 @@
       "tags": [
         "sql"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -137794,7 +137802,7 @@
       "tags": [
         "sql"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -139029,7 +139037,7 @@
       "tags": [
         "quant"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -139057,7 +139065,7 @@
       "tags": [
         "parsing"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -139085,7 +139093,7 @@
       "tags": [
         "computer-science"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -139113,7 +139121,7 @@
       "tags": [
         "computer-science"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -139141,7 +139149,7 @@
       "tags": [
         "computer-science"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -139169,7 +139177,7 @@
       "tags": [
         "computer-science"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -139197,7 +139205,7 @@
       "tags": [
         "isa"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -139225,7 +139233,7 @@
       "tags": [
         "sql"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -140153,7 +140161,7 @@
       "tags": [
         "sql"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -140181,7 +140189,7 @@
       "tags": [
         "quant"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -140209,7 +140217,7 @@
       "tags": [
         "graphs"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -140237,7 +140245,7 @@
       "tags": [
         "quant"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -140265,7 +140273,7 @@
       "tags": [
         "sql"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -140293,7 +140301,7 @@
       "tags": [
         "quant"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -140321,7 +140329,7 @@
       "tags": [
         "quant"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -140349,7 +140357,7 @@
       "tags": [
         "isa"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -140377,7 +140385,7 @@
       "tags": [
         "quant"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -140405,7 +140413,7 @@
       "tags": [
         "parsing"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -141705,7 +141713,7 @@
       "tags": [
         "isa"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -141733,7 +141741,7 @@
       "tags": [
         "isa"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -141761,7 +141769,7 @@
       "tags": [
         "computer-science"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -141789,7 +141797,7 @@
       "tags": [
         "c-prog"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -141817,7 +141825,7 @@
       "tags": [
         "quant"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -141845,7 +141853,7 @@
       "tags": [
         "c-prog"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -142777,7 +142785,7 @@
       "tags": [
         "graphs"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -142805,7 +142813,7 @@
       "tags": [
         "c-prog"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -142833,7 +142841,7 @@
       "tags": [
         "c-prog"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -142861,7 +142869,7 @@
       "tags": [
         "quant"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -142889,7 +142897,7 @@
       "tags": [
         "parsing"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -142917,7 +142925,7 @@
       "tags": [
         "graphs"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -142945,7 +142953,7 @@
       "tags": [
         "graphs"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -142973,7 +142981,7 @@
       "tags": [
         "regular"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -143001,7 +143009,7 @@
       "tags": [
         "cache"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -143029,7 +143037,7 @@
       "tags": [
         "network"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -143057,7 +143065,7 @@
       "tags": [
         "sql"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -144480,7 +144488,7 @@
       "tags": [
         "sql"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -144508,7 +144516,7 @@
       "tags": [
         "isa"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -144536,7 +144544,7 @@
       "tags": [
         "graphs"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -144564,7 +144572,7 @@
       "tags": [
         "isa"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -145402,7 +145410,7 @@
       "tags": [
         "quant"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -145430,7 +145438,7 @@
       "tags": [
         "computer-science"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -145458,7 +145466,7 @@
       "tags": [
         "quant"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -145486,7 +145494,7 @@
       "tags": [
         "c-prog"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -145514,7 +145522,7 @@
       "tags": [
         "network"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -145542,7 +145550,7 @@
       "tags": [
         "cfl"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -145570,7 +145578,7 @@
       "tags": [
         "graphs"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -145598,7 +145606,7 @@
       "tags": [
         "regular"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -145626,7 +145634,7 @@
       "tags": [
         "memory"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -145654,7 +145662,7 @@
       "tags": [
         "computer-science"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -145682,7 +145690,7 @@
       "tags": [
         "sql"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -145710,7 +145718,7 @@
       "tags": [
         "sql"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -147223,7 +147231,7 @@
       "tags": [
         "relations"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -147251,7 +147259,7 @@
       "tags": [
         "quant"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -148044,7 +148052,7 @@
       "tags": [
         "quant"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -148072,7 +148080,7 @@
       "tags": [
         "network"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -148100,7 +148108,7 @@
       "tags": [
         "quant"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -148128,7 +148136,7 @@
       "tags": [
         "normalization"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -148156,7 +148164,7 @@
       "tags": [
         "c-prog"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -148184,7 +148192,7 @@
       "tags": [
         "quant"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -148212,7 +148220,7 @@
       "tags": [
         "graphs"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -148240,7 +148248,7 @@
       "tags": [
         "graph-theory"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -148268,7 +148276,7 @@
       "tags": [
         "quant"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -148296,7 +148304,7 @@
       "tags": [
         "regular"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -148324,7 +148332,7 @@
       "tags": [
         "quant"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -148352,7 +148360,7 @@
       "tags": [
         "memory"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -148380,7 +148388,7 @@
       "tags": [
         "parsing"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -149705,7 +149713,7 @@
       "tags": [
         "dsa"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -149733,7 +149741,7 @@
       "tags": [
         "sql"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -149761,7 +149769,7 @@
       "tags": [
         "quant"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -149789,7 +149797,7 @@
       "tags": [
         "sql"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -149817,7 +149825,7 @@
       "tags": [
         "data-science"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -149845,7 +149853,7 @@
       "tags": [
         "matrices"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -150720,7 +150728,7 @@
       "tags": [
         "sql"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -150748,7 +150756,7 @@
       "tags": [
         "probability"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -150776,7 +150784,7 @@
       "tags": [
         "sql"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -150804,7 +150812,7 @@
       "tags": [
         "data-science"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -150832,7 +150840,7 @@
       "tags": [
         "probability"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -150860,7 +150868,7 @@
       "tags": [
         "data-science"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -150888,7 +150896,7 @@
       "tags": [
         "sql"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -150916,7 +150924,7 @@
       "tags": [
         "dsa"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -150944,7 +150952,7 @@
       "tags": [
         "quant"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -150972,7 +150980,7 @@
       "tags": [
         "probability"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -151000,7 +151008,7 @@
       "tags": [
         "probability"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -152280,7 +152288,7 @@
       "tags": [
         "quant"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -152308,7 +152316,7 @@
       "tags": [
         "computer-science"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -152336,7 +152344,7 @@
       "tags": [
         "isa"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -152364,7 +152372,7 @@
       "tags": [
         "computer-science"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -152392,7 +152400,7 @@
       "tags": [
         "quant"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -152420,7 +152428,7 @@
       "tags": [
         "asymptotics"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -152448,7 +152456,7 @@
       "tags": [
         "trees"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -153151,7 +153159,7 @@
       "tags": [
         "c-prog"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -153179,7 +153187,7 @@
       "tags": [
         "codegen"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -153207,7 +153215,7 @@
       "tags": [
         "sql"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -153235,7 +153243,7 @@
       "tags": [
         "memory"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -153263,7 +153271,7 @@
       "tags": [
         "sql"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -153291,7 +153299,7 @@
       "tags": [
         "codegen"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -153319,7 +153327,7 @@
       "tags": [
         "codegen"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -153347,7 +153355,7 @@
       "tags": [
         "computer-science"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -153375,7 +153383,7 @@
       "tags": [
         "sequential"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -153403,7 +153411,7 @@
       "tags": [
         "isa"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -153431,7 +153439,7 @@
       "tags": [
         "asymptotics"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -153459,7 +153467,7 @@
       "tags": [
         "c-prog"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -153487,7 +153495,7 @@
       "tags": [
         "c-prog"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -153515,7 +153523,7 @@
       "tags": [
         "isa"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -153543,7 +153551,7 @@
       "tags": [
         "computer-science"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -154958,7 +154966,7 @@
       "tags": [
         "quant"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -154986,7 +154994,7 @@
       "tags": [
         "c-prog"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -155014,7 +155022,7 @@
       "tags": [
         "network"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -155042,7 +155050,7 @@
       "tags": [
         "trees"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -155925,7 +155933,7 @@
       "tags": [
         "sql"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -155953,7 +155961,7 @@
       "tags": [
         "c-prog"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -155981,7 +155989,7 @@
       "tags": [
         "c-prog"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -156009,7 +156017,7 @@
       "tags": [
         "memory"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -156037,7 +156045,7 @@
       "tags": [
         "quant"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -156065,7 +156073,7 @@
       "tags": [
         "regular"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -156093,7 +156101,7 @@
       "tags": [
         "quant"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -156121,7 +156129,7 @@
       "tags": [
         "c-prog"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -156149,7 +156157,7 @@
       "tags": [
         "c-prog"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -156177,7 +156185,7 @@
       "tags": [
         "sql"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -156205,7 +156213,7 @@
       "tags": [
         "sql"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -157583,7 +157591,7 @@
       "tags": [
         "sql"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -157611,7 +157619,7 @@
       "tags": [
         "data-science"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -157639,7 +157647,7 @@
       "tags": [
         "sql"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -157667,7 +157675,7 @@
       "tags": [
         "data-science"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -157695,7 +157703,7 @@
       "tags": [
         "supervised"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -158758,7 +158766,7 @@
       "tags": [
         "data-science"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -158786,7 +158794,7 @@
       "tags": [
         "sql"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -158814,7 +158822,7 @@
       "tags": [
         "sql"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -158842,7 +158850,7 @@
       "tags": [
         "sql"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -158870,7 +158878,7 @@
       "tags": [
         "data-science"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -158898,7 +158906,7 @@
       "tags": [
         "dsa"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
@@ -158926,12 +158934,2758 @@
       "tags": [
         "search"
       ],
-      "answer": 1.0,
+      "answer": 1,
       "answerSource": "solved",
       "confidence": "high",
       "solution": "Evaluating the analytical boundary condition yields 1.",
       "textSource": "pdf",
       "sourceUrl": null,
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-ga-1",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "ga",
+      "number": "1",
+      "marks": 1,
+      "type": "MCQ",
+      "text": "Verbosity : Brevity :: Insolence : ___________. Choose the word that best fills the blank.",
+      "options": [
+        {
+          "l": "A",
+          "t": "Innocence"
+        },
+        {
+          "l": "B",
+          "t": "Respect"
+        },
+        {
+          "l": "C",
+          "t": "Solace"
+        },
+        {
+          "l": "D",
+          "t": "Wealth"
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "ga",
+      "topic": "verbal",
+      "tags": [
+        "ga",
+        "verbal"
+      ],
+      "answer": "B",
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: B. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-ga-2",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "ga",
+      "number": "2",
+      "marks": 1,
+      "type": "MCQ",
+      "text": "The product of the digits of a three-digit number is 70. The sum of the digits of this three-digit number is _____.",
+      "options": [
+        {
+          "l": "A",
+          "t": "12"
+        },
+        {
+          "l": "B",
+          "t": "14"
+        },
+        {
+          "l": "C",
+          "t": "16"
+        },
+        {
+          "l": "D",
+          "t": "18"
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "ga",
+      "topic": "quant",
+      "tags": [
+        "ga",
+        "quant"
+      ],
+      "answer": "B",
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: B. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-ga-3",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "ga",
+      "number": "3",
+      "marks": 1,
+      "type": "MCQ",
+      "text": "The four pieces of a puzzle are shown in the figure below. Which one of the figures labelled as P, Q, R, and S can be constructed by using each of the four pieces only once without overlaps? [Figure: four puzzle pieces and four candidate shapes P, Q, R, S — not captured in text extraction]",
+      "options": [
+        {
+          "l": "A",
+          "t": "P"
+        },
+        {
+          "l": "B",
+          "t": "Q"
+        },
+        {
+          "l": "C",
+          "t": "R"
+        },
+        {
+          "l": "D",
+          "t": "S"
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "ga",
+      "topic": "quant",
+      "tags": [
+        "ga",
+        "quant"
+      ],
+      "answer": "A",
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: A. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": true,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-ga-4",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "ga",
+      "number": "4",
+      "marks": 1,
+      "type": "MCQ",
+      "text": "Consider two distinct positive real numbers m, n, with m > n. Let x = n^(log10(m)) and y = m^(log10(n)). The relation between x and y is _______.",
+      "options": [
+        {
+          "l": "A",
+          "t": "x > y"
+        },
+        {
+          "l": "B",
+          "t": "x < y"
+        },
+        {
+          "l": "C",
+          "t": "x = y"
+        },
+        {
+          "l": "D",
+          "t": "x = log10(y)"
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "ga",
+      "topic": "quant",
+      "tags": [
+        "ga",
+        "quant"
+      ],
+      "answer": "C",
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: C. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-ga-5",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "ga",
+      "number": "5",
+      "marks": 1,
+      "type": "MCQ",
+      "text": "‘If his latest movie had been a commercial success, the actor would have made enough money to sponsor his next movie.’ Based only on the above sentence, which one of the following statements is true?",
+      "options": [
+        {
+          "l": "A",
+          "t": "The actor will certainly sponsor his next movie."
+        },
+        {
+          "l": "B",
+          "t": "His latest movie was a commercial success."
+        },
+        {
+          "l": "C",
+          "t": "The actor made enough money from his latest movie."
+        },
+        {
+          "l": "D",
+          "t": "His latest movie was not commercially successful."
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "ga",
+      "topic": "verbal",
+      "tags": [
+        "ga",
+        "verbal"
+      ],
+      "answer": "D",
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: D. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-ga-6",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "ga",
+      "number": "6",
+      "marks": 2,
+      "type": "MCQ",
+      "text": "‘My friend and I parted __ the door __ the cabin that I had rented __ the night.’ Choose the option with the correct sequence of words to fill the blanks.",
+      "options": [
+        {
+          "l": "A",
+          "t": "at; of; for"
+        },
+        {
+          "l": "B",
+          "t": "for; at; of"
+        },
+        {
+          "l": "C",
+          "t": "of; for; in"
+        },
+        {
+          "l": "D",
+          "t": "in; of; for"
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "ga",
+      "topic": "verbal",
+      "tags": [
+        "ga",
+        "verbal"
+      ],
+      "answer": "A",
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: A. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-ga-7",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "ga",
+      "number": "7",
+      "marks": 2,
+      "type": "MCQ",
+      "text": "Five integers are picked from 0 to 20, with possible repetitions, such that their mean is 12, median is 18, and they have a single mode of 20. Ignoring permutations, the number of ways to pick these five integers is _____.",
+      "options": [
+        {
+          "l": "A",
+          "t": "0"
+        },
+        {
+          "l": "B",
+          "t": "1"
+        },
+        {
+          "l": "C",
+          "t": "2"
+        },
+        {
+          "l": "D",
+          "t": "3"
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "ga",
+      "topic": "quant",
+      "tags": [
+        "ga",
+        "quant"
+      ],
+      "answer": "B",
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: B. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-ga-8",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "ga",
+      "number": "8",
+      "marks": 2,
+      "type": "MCQ",
+      "text": "Rishi and Swathi are students of Class 5. Pavan and Tanvi are students of Class 4. Rishi and Pavan are boys. Swathi and Tanvi are girls. The four students played a total of three games of chess. The games were played one after another. A player who lost a game did not participate in any more games. It was observed that: (i) the first game was the only game where two students of the same class played against each other, (ii) the students of Class 5 won more games than the students of Class 4, and (iii) the boys won two games and the girls won one game. The student who did not lose any game is __________.",
+      "options": [
+        {
+          "l": "A",
+          "t": "Pavan"
+        },
+        {
+          "l": "B",
+          "t": "Rishi"
+        },
+        {
+          "l": "C",
+          "t": "Swathi"
+        },
+        {
+          "l": "D",
+          "t": "Tanvi"
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "ga",
+      "topic": "verbal",
+      "tags": [
+        "ga",
+        "verbal"
+      ],
+      "answer": "D",
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: D. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-ga-9",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "ga",
+      "number": "9",
+      "marks": 2,
+      "type": "MCQ",
+      "text": "P, Q, R, S, X, and Y are distinct single-digit whole numbers taking values from 0 to 9. PQ is a two-digit number with Q being in the units place and P in the tens place. Similarly, RS is a two-digit number. It is known that PQ and RS are consecutive numbers and (PQ)^2 + (RS)^2 = XYP, with XYP being a three-digit number. The value of Y is __________.",
+      "options": [
+        {
+          "l": "A",
+          "t": "4"
+        },
+        {
+          "l": "B",
+          "t": "5"
+        },
+        {
+          "l": "C",
+          "t": "6"
+        },
+        {
+          "l": "D",
+          "t": "7"
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "ga",
+      "topic": "quant",
+      "tags": [
+        "ga",
+        "quant"
+      ],
+      "answer": "C",
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: C. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-ga-10",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "ga",
+      "number": "10",
+      "marks": 2,
+      "type": "MCQ",
+      "text": "In the given figure, P, Q, and R are three points on a circle of radius 10 cm with O as its center, PQ = RQ, and ∠PQR = 45°. The figure is representative. The area of the shaded region PQRO is ______________ cm². [Figure: circle with center O and shaded region PQRO — not captured in text extraction]",
+      "options": [
+        {
+          "l": "A",
+          "t": "50"
+        },
+        {
+          "l": "B",
+          "t": "25√2"
+        },
+        {
+          "l": "C",
+          "t": "50√2"
+        },
+        {
+          "l": "D",
+          "t": "100"
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "ga",
+      "topic": "quant",
+      "tags": [
+        "ga",
+        "quant"
+      ],
+      "answer": "C",
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: C. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": true,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-1",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "1",
+      "marks": 1,
+      "type": "MCQ",
+      "text": "For a classification problem, Principal Component Analysis (PCA) has been used to reduce the dimensionality of a feature space from 100 to 10. Which of the following options is true about the angle θ between the first and the tenth principal components?",
+      "options": [
+        {
+          "l": "A",
+          "t": "θ = 0°"
+        },
+        {
+          "l": "B",
+          "t": "θ = 90°"
+        },
+        {
+          "l": "C",
+          "t": "90° < θ ≤ 180°"
+        },
+        {
+          "l": "D",
+          "t": "0 < θ < 90°"
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "ml",
+      "topic": "dimensionality-reduction",
+      "tags": [
+        "ml",
+        "dimensionality-reduction"
+      ],
+      "answer": "B",
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: B. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-2",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "2",
+      "marks": 1,
+      "type": "MCQ",
+      "text": "Consider that you are training a classifier for a 10-class classification problem. Each input is represented as a 512-dimensional vector. There are 1000 samples, out of which first 100 will be used for testing. Let Leave-One-Out-Cross-Validation (LOOCV) be used for selection of the classifier model before testing. Which of the following options is the correct number of validation splits that will be generated?",
+      "options": [
+        {
+          "l": "A",
+          "t": "10"
+        },
+        {
+          "l": "B",
+          "t": "512"
+        },
+        {
+          "l": "C",
+          "t": "900"
+        },
+        {
+          "l": "D",
+          "t": "1000"
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "ml",
+      "topic": "model-evaluation",
+      "tags": [
+        "ml",
+        "model-evaluation"
+      ],
+      "answer": "C",
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: C. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-3",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "3",
+      "marks": 1,
+      "type": "MCQ",
+      "text": "Which of the following algorithms is NOT an example of uninformed search?",
+      "options": [
+        {
+          "l": "A",
+          "t": "Breadth First Search"
+        },
+        {
+          "l": "B",
+          "t": "Depth First Search"
+        },
+        {
+          "l": "C",
+          "t": "A* Search"
+        },
+        {
+          "l": "D",
+          "t": "Depth-limited Search"
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "ai",
+      "topic": "search",
+      "tags": [
+        "ai",
+        "search"
+      ],
+      "answer": "C",
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: C. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-4",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "4",
+      "marks": 1,
+      "type": "MCQ",
+      "text": "Which of the following statements is NOT true? (The names of the predicates are intuitive.)",
+      "options": [
+        {
+          "l": "A",
+          "t": "∀x ∀y Classmate(x, y) ⇒ Classmate(y, x)"
+        },
+        {
+          "l": "B",
+          "t": "∀x Likes(x, Icecream) ⇒ ¬∃x ¬Likes(x, Icecream)"
+        },
+        {
+          "l": "C",
+          "t": "“Each king is a person” is equivalent to ∀x IsKing(x) ⋀ IsPerson(x)"
+        },
+        {
+          "l": "D",
+          "t": "“All humans are mortal” is equivalent to ∀x IsHuman(x) ⇒ IsMortal(x)"
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "ai",
+      "topic": "knowledge-representation",
+      "tags": [
+        "ai",
+        "knowledge-representation"
+      ],
+      "answer": "C",
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: C. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-5",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "5",
+      "marks": 1,
+      "type": "MCQ",
+      "text": "Consider that the quick sort algorithm is used to sort an array of n distinct randomly ordered elements. In every call, the pivot is chosen as the first element of the current subarray. Let T(n) denote the expected time to sort the array. Assume that the time to partition is linear in the size of the current subarray. Which of the following recurrence relations correctly represents T(n) in this scenario?",
+      "options": [
+        {
+          "l": "A",
+          "t": "T(n) = T(1) + T(n - 1) + O(n)"
+        },
+        {
+          "l": "B",
+          "t": "T(n) = T(n/4) + T(3n/4) + O(n)"
+        },
+        {
+          "l": "C",
+          "t": "T(n) = 2T(n/2) + O(n)"
+        },
+        {
+          "l": "D",
+          "t": "T(n) = (1/n) Σ_{k=0}^{n-1} [T(k) + T(n - k - 1)] + O(n)"
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "pdsa",
+      "topic": "complexity",
+      "tags": [
+        "pdsa",
+        "complexity"
+      ],
+      "answer": "D",
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: D. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-6",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "6",
+      "marks": 1,
+      "type": "MCQ",
+      "text": "Consider the given Python program.\ndef append_to_lst(val, lst=[]):\n    lst.append(val)\n    return lst\nprint(append_to_lst(1))\nprint(append_to_lst(2))\nprint(append_to_lst(3, []))\nWhich of the following is the correct output of this program?",
+      "options": [
+        {
+          "l": "A",
+          "t": "[1] / [2] / [3]"
+        },
+        {
+          "l": "B",
+          "t": "[1] / [1, 2] / [3]"
+        },
+        {
+          "l": "C",
+          "t": "[1] / [2] / [1, 2, 3]"
+        },
+        {
+          "l": "D",
+          "t": "[1] / [1, 2] / [1, 3]"
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "pdsa",
+      "topic": "python-and-c-programming",
+      "tags": [
+        "pdsa",
+        "python-and-c-programming"
+      ],
+      "answer": "B",
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: B. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-7",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "7",
+      "marks": 1,
+      "type": "MCQ",
+      "text": "Let R(A,B,C,D,E) be a relational schema with functional dependency set F = {A → BC, CD → E, E → A}. Which of the following statements is correct?",
+      "options": [
+        {
+          "l": "A",
+          "t": "AD, ED and CD are the only candidate keys of R."
+        },
+        {
+          "l": "B",
+          "t": "AD and ED are the only candidate keys of R."
+        },
+        {
+          "l": "C",
+          "t": "A, E and CD are the only candidate keys of R."
+        },
+        {
+          "l": "D",
+          "t": "A and CD are the only candidate keys of R."
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "dbw",
+      "topic": "normalisation",
+      "tags": [
+        "dbw",
+        "normalisation"
+      ],
+      "answer": "A",
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: A. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-8",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "8",
+      "marks": 1,
+      "type": "MCQ",
+      "text": "Consider that the visualization of a 3-dimensional data cube is showing Sales Quantity for each combination of the attributes Product Type, Month and Country. From this, if we want to further visualize the Sales Quantity for each combination of Product Type, Month and State, which of the following OLAP operations should be performed?",
+      "options": [
+        {
+          "l": "A",
+          "t": "Slicing"
+        },
+        {
+          "l": "B",
+          "t": "Dicing"
+        },
+        {
+          "l": "C",
+          "t": "Roll-up"
+        },
+        {
+          "l": "D",
+          "t": "Drill-down"
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "dbw",
+      "topic": "data-warehousing-and-olap",
+      "tags": [
+        "dbw",
+        "data-warehousing-and-olap"
+      ],
+      "answer": "D",
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: D. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-9",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "9",
+      "marks": 1,
+      "type": "MCQ",
+      "text": "Let M be a randomly chosen non-empty subset of S = {1, 2, 3, …, 2026}. Which of the following is the probability that the product of all the elements of M is even?",
+      "options": [
+        {
+          "l": "A",
+          "t": "2^1013(2^1013 - 1)/2^2026"
+        },
+        {
+          "l": "B",
+          "t": "2^1013/2^2026"
+        },
+        {
+          "l": "C",
+          "t": "2^1013(2^1013 - 1)/(2^2026 - 1)"
+        },
+        {
+          "l": "D",
+          "t": "1/(2^2026 - 1)"
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "prob",
+      "topic": "probability-and-statistics",
+      "tags": [
+        "prob",
+        "probability-and-statistics"
+      ],
+      "answer": "C",
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: C. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-10",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "10",
+      "marks": 1,
+      "type": "MCQ",
+      "text": "Suppose that a computer program provides a non-negative and integer-valued random solution to the equation n1 + n2 + n3 + n4 = 20. Which of the following is the probability that all of n1, n2, n3, n4 in the provided solution are positive?",
+      "options": [
+        {
+          "l": "A",
+          "t": "C(19,3)/C(23,3)"
+        },
+        {
+          "l": "B",
+          "t": "C(20,4)/C(24,4)"
+        },
+        {
+          "l": "C",
+          "t": "C(20,3)/C(23,3)"
+        },
+        {
+          "l": "D",
+          "t": "C(19,4)/C(24,4)"
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "prob",
+      "topic": "probability-and-statistics",
+      "tags": [
+        "prob",
+        "probability-and-statistics"
+      ],
+      "answer": "A",
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: A. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-11",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "11",
+      "marks": 1,
+      "type": "MCQ",
+      "text": "Let M = [[cosθ, -sinθ], [sinθ, cosθ]] be a 2 × 2 matrix, where θ = 2π/5, and I2 = [[1,0],[0,1]]. Which of the following options is equal to M^2026?",
+      "options": [
+        {
+          "l": "A",
+          "t": "M^2"
+        },
+        {
+          "l": "B",
+          "t": "M"
+        },
+        {
+          "l": "C",
+          "t": "M^(-1)"
+        },
+        {
+          "l": "D",
+          "t": "I2"
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "la",
+      "topic": "linear-algebra",
+      "tags": [
+        "la",
+        "linear-algebra"
+      ],
+      "answer": "B",
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: B. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-12",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "12",
+      "marks": 1,
+      "type": "MCQ",
+      "text": "Consider a set S1 = {x = (x1, x2, x3)^T ∈ ℝ^3 | x^T x ≤ 16}. Let S2 be another set which is a subspace of ℝ^3 with dimension two. Which of the following gives the area of S1 ∩ S2?",
+      "options": [
+        {
+          "l": "A",
+          "t": "16π"
+        },
+        {
+          "l": "B",
+          "t": "4π"
+        },
+        {
+          "l": "C",
+          "t": "4π^2"
+        },
+        {
+          "l": "D",
+          "t": "16π^2"
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "la",
+      "topic": "linear-algebra",
+      "tags": [
+        "la",
+        "linear-algebra"
+      ],
+      "answer": "A",
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: A. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-13",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "13",
+      "marks": 1,
+      "type": "MSQ",
+      "text": "In the following table, the Task column lists a few tasks related to machine learning. The Algorithm column lists a few algorithms. Each entry “t” from the Task column is to be matched with an appropriate entry “a” from the Algorithm column such that the task “t” can be solved using the algorithm “a”. Denote such a match as t:a.\nTask: T1 – Clustering; T2 – Classification; T3 – Sampling; T4 – Feature Extraction\nAlgorithm: A1 – Markov Chain Monte Carlo; A2 – K-Medoid; A3 – Linear Discriminant Analysis; A4 – Naive Bayes\nWhich of the following options is/are the correct matching(s)?",
+      "options": [
+        {
+          "l": "A",
+          "t": "T1:A4, T2:A3, T3:A1, T4:A2"
+        },
+        {
+          "l": "B",
+          "t": "T1:A2, T2:A4, T3:A1, T4:A3"
+        },
+        {
+          "l": "C",
+          "t": "T1:A3, T2:A4, T3:A1, T4:A2"
+        },
+        {
+          "l": "D",
+          "t": "T1:A4, T2:A2, T3:A1, T4:A3"
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "ml",
+      "topic": "classification",
+      "tags": [
+        "ml",
+        "classification"
+      ],
+      "answer": [
+        "B"
+      ],
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: B. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-14",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "14",
+      "marks": 1,
+      "type": "MSQ",
+      "text": "Sentence X is said to entail Sentence Y if whenever X is TRUE, Y also must hold TRUE. Which of the following statements is/are correct if X entails Y?",
+      "options": [
+        {
+          "l": "A",
+          "t": "X ⇒ Y"
+        },
+        {
+          "l": "B",
+          "t": "X ⋀ ¬Y is FALSE"
+        },
+        {
+          "l": "C",
+          "t": "if X then Y"
+        },
+        {
+          "l": "D",
+          "t": "if Y then X"
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "ai",
+      "topic": "logic-and-reasoning",
+      "tags": [
+        "ai",
+        "logic-and-reasoning"
+      ],
+      "answer": [
+        "A",
+        "B",
+        "C"
+      ],
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: A,B,C. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-15",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "15",
+      "marks": 1,
+      "type": "MSQ",
+      "text": "You are given the following Pre-order and In-order traversals of a Binary Tree T with nodes E, F, G, P, Q, R, S.\nPre-order: P Q S E R F G\nIn-order: S Q E P F R G\nWhich of the following statements is/are true about the Binary Tree T?",
+      "options": [
+        {
+          "l": "A",
+          "t": "Node P is the root of T"
+        },
+        {
+          "l": "B",
+          "t": "The Post-order traversal of T is: S E Q F G R P"
+        },
+        {
+          "l": "C",
+          "t": "Node Q has only one child"
+        },
+        {
+          "l": "D",
+          "t": "The left subtree of node R contains the node G"
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "pdsa",
+      "topic": "trees",
+      "tags": [
+        "pdsa",
+        "trees"
+      ],
+      "answer": [
+        "A",
+        "B"
+      ],
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: A,B. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-16",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "16",
+      "marks": 1,
+      "type": "MSQ",
+      "text": "Consider two relations r and s defined on the relational schemas R(A,B) and S(E,C), respectively. A is the primary key of R and E is a foreign key of S referencing A in R. Which of the following operations will NEVER violate the foreign key constraint?",
+      "options": [
+        {
+          "l": "A",
+          "t": "Inserting records into relation r"
+        },
+        {
+          "l": "B",
+          "t": "Deleting records from relation s"
+        },
+        {
+          "l": "C",
+          "t": "Deleting records from relation r"
+        },
+        {
+          "l": "D",
+          "t": "Inserting records into relation s"
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "dbw",
+      "topic": "relational-model",
+      "tags": [
+        "dbw",
+        "relational-model"
+      ],
+      "answer": [
+        "A",
+        "B"
+      ],
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: A,B. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-17",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "17",
+      "marks": 1,
+      "type": "MSQ",
+      "text": "Let f(x) = x^3 - 3x^2 + 2 be a function defined on (-1, 3]. Which of the following statements is/are correct?",
+      "options": [
+        {
+          "l": "A",
+          "t": "f(x) has exactly two roots in [-0.9, 0]."
+        },
+        {
+          "l": "B",
+          "t": "f(x) has a minimum at 2 only."
+        },
+        {
+          "l": "C",
+          "t": "f(x) has maximum at 0 only."
+        },
+        {
+          "l": "D",
+          "t": "f(x) has a root at 1."
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "calc",
+      "topic": "calculus-and-optimisation",
+      "tags": [
+        "calc",
+        "calculus-and-optimisation"
+      ],
+      "answer": [
+        "B",
+        "D"
+      ],
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: B,D. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-18",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "18",
+      "marks": 1,
+      "type": "MSQ",
+      "text": "Suppose a random variable Z follows Normal(μ = 0, σ^2 = 1) distribution with probability density function g(z) and cumulative distribution function G(z). Another random variable Y follows t1 distribution (Student’s t with 1 degree of freedom) with probability density function h(y) and cumulative distribution function H(y). Let c be the positive real number for which g(c) = h(c). Which of the following statements is/are correct?",
+      "options": [
+        {
+          "l": "A",
+          "t": "G(0) = H(0)"
+        },
+        {
+          "l": "B",
+          "t": "G(c) < H(c)"
+        },
+        {
+          "l": "C",
+          "t": "G(-c) < H(-c)"
+        },
+        {
+          "l": "D",
+          "t": "g(0) = h(0)"
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "prob",
+      "topic": "probability-and-statistics",
+      "tags": [
+        "prob",
+        "probability-and-statistics"
+      ],
+      "answer": [
+        "A",
+        "C"
+      ],
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: A,C. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-19",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "19",
+      "marks": 1,
+      "type": "NAT",
+      "text": "Consider that for a supervised learning task, the objective function being minimized is f_w(x) = wx, where x ∈ ℝ is the input and w ∈ ℝ is the parameter. Stochastic Gradient Descent with learning rate of 0.10 is used for parameter updates. Suppose that at the end of iteration i, the value of w becomes 10.00. Let x = 10.00 be the input for iteration (i + 1). The value of w at the end of iteration (i + 1) is __________ . (Rounded off to two decimal places)",
+      "options": [],
+      "figures": [],
+      "group": null,
+      "subject": "ml",
+      "topic": "supervised-learning",
+      "tags": [
+        "ml",
+        "supervised-learning"
+      ],
+      "answer": {
+        "min": 8.9,
+        "max": 9.1
+      },
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: [object Object]. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-20",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "20",
+      "marks": 1,
+      "type": "NAT",
+      "text": "Consider the game tree for a two-player turn-taking minimax game as shown in the figure. The value of a terminal node represents the utility of the game state if the game ends there. The numbers written next to the edges denote the strategies. There are two players MAX and MIN. At any particular state of the game, MAX prefers to move to a state of maximum value. On the other hand, MIN prefers to move to a state of minimum value. Suppose MAX starts the game at the root and has three strategies: 1, 2 and 3. Next, MIN plays and also has three strategies: 1, 2 and 3. The game ends there. Both players always take optimal strategies throughout the game. At the root, the best strategy for MAX is ___________ . (Answer in integer) [Figure: game tree — not captured in text extraction]",
+      "options": [],
+      "figures": [],
+      "group": null,
+      "subject": "ai",
+      "topic": "search",
+      "tags": [
+        "ai",
+        "search"
+      ],
+      "answer": 2,
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: 2. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": true,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-21",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "21",
+      "marks": 1,
+      "type": "NAT",
+      "text": "Let A be a sorted array containing 1000 distinct integers. You perform a recursive binary search on A to find an element y. Suppose each comparison checks whether the middle element computed during the current recursive step is equal to, less than, or greater than y. The maximum number of comparisons that may have to be performed if y is not an element of A is _______ . (Answer in integer)",
+      "options": [],
+      "figures": [],
+      "group": null,
+      "subject": "pdsa",
+      "topic": "searching-and-sorting",
+      "tags": [
+        "pdsa",
+        "searching-and-sorting"
+      ],
+      "answer": 10,
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: 10. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-22",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "22",
+      "marks": 1,
+      "type": "NAT",
+      "text": "In a relational database, a B+ Tree Index is to be constructed for a relation on a key field. In a B+ Tree, a Node Pointer points to a sub-tree and a Data Record Pointer points to a block of database records. Let, Node size = 4096 bytes, Node Pointer size = 10 bytes, Search Key Field size = 11 bytes and Data Record Pointer size = 12 bytes. The maximum number of Node Pointers that can be present in a non-leaf node of the B+ Tree is ________ . (Answer in integer)",
+      "options": [],
+      "figures": [],
+      "group": null,
+      "subject": "dbw",
+      "topic": "relational-model",
+      "tags": [
+        "dbw",
+        "relational-model"
+      ],
+      "answer": 195,
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: 195. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-23",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "23",
+      "marks": 1,
+      "type": "NAT",
+      "text": "The number of bijections f(·) from the set S = {1, 2, 3, 4} to itself such that f(f(n)) = n, for all n ∈ S, is __________ . (Answer in integer)",
+      "options": [],
+      "figures": [],
+      "group": null,
+      "subject": "prob",
+      "topic": "probability-and-statistics",
+      "tags": [
+        "prob",
+        "probability-and-statistics"
+      ],
+      "answer": 10,
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: 10. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-24",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "24",
+      "marks": 1,
+      "type": "NAT",
+      "text": "Let X be an exponentially distributed random variable with mean λ (> 0). If P(X > 5) = 0.35, then the conditional probability P(X > 10 | X > 5) is ___________ . (Rounded off to two decimal places)",
+      "options": [],
+      "figures": [],
+      "group": null,
+      "subject": "prob",
+      "topic": "probability-and-statistics",
+      "tags": [
+        "prob",
+        "probability-and-statistics"
+      ],
+      "answer": {
+        "min": 0.34,
+        "max": 0.36
+      },
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: [object Object]. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-25",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "25",
+      "marks": 1,
+      "type": "NAT",
+      "text": "The value of Σ_{i=0}^{∞} Σ_{j=1}^{∞} 2^(-i) 3^(-j) is ______________ . (Answer in integer)",
+      "options": [],
+      "figures": [],
+      "group": null,
+      "subject": "calc",
+      "topic": "calculus-and-optimisation",
+      "tags": [
+        "calc",
+        "calculus-and-optimisation"
+      ],
+      "answer": 1,
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: 1. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-26",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "26",
+      "marks": 2,
+      "type": "MCQ",
+      "text": "Let four points in three-dimensional space be: P1: [2, 3, -1], P2: [3, 1, 1], P3: [5, -2, 3] and P4: [3, 3, 3]. Hierarchical Agglomerative Clustering is used to cluster the above points. If Manhattan Distance is used as the distance metric during clustering, which of the following options indicates the two points that will be merged first?",
+      "options": [
+        {
+          "l": "A",
+          "t": "P1, P2"
+        },
+        {
+          "l": "B",
+          "t": "P2, P3"
+        },
+        {
+          "l": "C",
+          "t": "P3, P4"
+        },
+        {
+          "l": "D",
+          "t": "P2, P4"
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "ml",
+      "topic": "clustering",
+      "tags": [
+        "ml",
+        "clustering"
+      ],
+      "answer": "D",
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: D. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-27",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "27",
+      "marks": 2,
+      "type": "MCQ",
+      "text": "Which of the following statements is true for Ridge Regression?",
+      "options": [
+        {
+          "l": "A",
+          "t": "The regularizer in the objective function of Ridge Regression is used to guard against scenarios where the model works well for the test data, but poorly for the training data."
+        },
+        {
+          "l": "B",
+          "t": "The regularizer of Ridge Regression uses L1 norm."
+        },
+        {
+          "l": "C",
+          "t": "Ridge Regression aims to reduce the number of parameters that have negative values."
+        },
+        {
+          "l": "D",
+          "t": "The regularizer of Ridge Regression may increase the bias of the model, but it helps in reducing the variance in predictions."
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "ml",
+      "topic": "regression",
+      "tags": [
+        "ml",
+        "regression"
+      ],
+      "answer": "D",
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: D. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-28",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "28",
+      "marks": 2,
+      "type": "MCQ",
+      "text": "Assume that a Creative (C) person will Succeed (S) if the person is also Disciplined (D), but will not succeed otherwise. Now, consider the following statements:\n(i) C ⋀ S ⇔ D\n(ii) C ⇒ (S ⇔ D)\n(iii) C ⇔ ((D ⇒ S) ∨ ¬S)\nWhich of the following options is correct?",
+      "options": [
+        {
+          "l": "A",
+          "t": "Both (i) and (ii) are TRUE"
+        },
+        {
+          "l": "B",
+          "t": "Only (ii) is TRUE"
+        },
+        {
+          "l": "C",
+          "t": "Both (ii) and (iii) are TRUE"
+        },
+        {
+          "l": "D",
+          "t": "Only (iii) is TRUE"
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "ai",
+      "topic": "logic-and-reasoning",
+      "tags": [
+        "ai",
+        "logic-and-reasoning"
+      ],
+      "answer": "B",
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: B. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-29",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "29",
+      "marks": 2,
+      "type": "MCQ",
+      "text": "A recursive function in Python is given.\ndef mystery(n):\n    if n <= 0:\n        return 1\n    else:\n        return mystery(n-1) + mystery(n-2)\nNow, consider the following function call: mystery(4). Assume that a typical runtime stack is used to manage function calls. Each function call is pushed onto the stack and removed only after it finishes execution. Which of the following options denotes the total number of function calls (i.e., the total number of stack activations), including the initial call, to compute mystery(4)?",
+      "options": [
+        {
+          "l": "A",
+          "t": "5"
+        },
+        {
+          "l": "B",
+          "t": "9"
+        },
+        {
+          "l": "C",
+          "t": "15"
+        },
+        {
+          "l": "D",
+          "t": "17"
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "pdsa",
+      "topic": "python-and-c-programming",
+      "tags": [
+        "pdsa",
+        "python-and-c-programming"
+      ],
+      "answer": "C",
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: C. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-30",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "30",
+      "marks": 2,
+      "type": "MCQ",
+      "text": "Consider a directed graph G = (V, E), where V is the finite set of vertices and E is the set of directed edges between the vertices. G may contain cycles but there is no self-loop. Further, G may not be strongly connected. Let G^R be the graph obtained by reversing the directions of all the edges in G without changing the set of vertices. Assume that Breadth First Search (BFS) or Depth First Search (DFS) from any given vertex v of a graph visits only the reachable vertices from v in that graph. Which of the following statements must always be true, regardless of the structure of G?",
+      "options": [
+        {
+          "l": "A",
+          "t": "If u is a reachable vertex in the BFS of G^R from v, then u is also a reachable vertex in the DFS of G from v."
+        },
+        {
+          "l": "B",
+          "t": "In G^R, the BFS traversal from v will visit exactly the same set of vertices as the DFS from v in G."
+        },
+        {
+          "l": "C",
+          "t": "The order of vertices visited in the BFS of G^R from v is the reverse of the order of vertices visited in the DFS of G from v."
+        },
+        {
+          "l": "D",
+          "t": "If u is a reachable vertex in the DFS of G from v, then v is also a reachable vertex in the BFS of G^R from u."
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "pdsa",
+      "topic": "trees-and-graphs",
+      "tags": [
+        "pdsa",
+        "trees-and-graphs"
+      ],
+      "answer": "D",
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: D. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-31",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "31",
+      "marks": 2,
+      "type": "MCQ",
+      "text": "Consider a B+ Tree where the maximum number of key values in each leaf node is 2 and the maximum number of pointers in each non-leaf node is 3. Let the content of the B+ Tree be as shown in the figure. Which of the following options denotes the key value(s) stored in the root node after inserting a key value 3 in the given B+ Tree? [Figure: initial B+ Tree — not captured in text extraction]",
+      "options": [
+        {
+          "l": "A",
+          "t": "5"
+        },
+        {
+          "l": "B",
+          "t": "8"
+        },
+        {
+          "l": "C",
+          "t": "3 and 5"
+        },
+        {
+          "l": "D",
+          "t": "3, 5 and 8"
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "dbw",
+      "topic": "relational-model",
+      "tags": [
+        "dbw",
+        "relational-model"
+      ],
+      "answer": "A",
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: A. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": true,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-32",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "32",
+      "marks": 2,
+      "type": "MCQ",
+      "text": "Consider the given relations X, Y and Z. The relation X has three columns P, Q and R. The relation Y has three columns P, Q and S. The relation Z has two columns P and T.\nX(P,Q,R): (P1,Q1,R1), (P2,Q2,R2), (P3,Q3,R2)\nY(P,Q,S): (P1,Q1,2), (P1,Q2,5), (P2,Q1,6), (P3,Q3,1)\nZ(P,T): (P1,T1), (P3,T2), (P4,T3), (P4,NULL)\nConsider the relational algebra expression ∏_{PRS}[ (σ_{(Q=Q3 ∨ R=R2)}[X ⋈ Y]) ⋈ (σ_{(S>1)}[Y ⋈ Z]) ] where ⋈ denotes natural join operation. Which of the following options is the correct output for the given expression?",
+      "options": [
+        {
+          "l": "A",
+          "t": "Two rows (P1, R1, 2) and (P1, R1, 5)"
+        },
+        {
+          "l": "B",
+          "t": "Three rows (P1, R1, 2), (P1, R1, 5) and (P2, R2, 6)"
+        },
+        {
+          "l": "C",
+          "t": "One row (P1, R1, 2)"
+        },
+        {
+          "l": "D",
+          "t": "Zero rows"
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "dbw",
+      "topic": "relational-model",
+      "tags": [
+        "dbw",
+        "relational-model"
+      ],
+      "answer": "D",
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: D. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-33",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "33",
+      "marks": 2,
+      "type": "MCQ",
+      "text": "Consider the concept hierarchies as shown in the figure. Which of the following options denotes the total number of possible data cuboids from these concept hierarchies? [Figure: concept hierarchies — not captured in text extraction]",
+      "options": [
+        {
+          "l": "A",
+          "t": "4^3"
+        },
+        {
+          "l": "B",
+          "t": "2^3"
+        },
+        {
+          "l": "C",
+          "t": "3!"
+        },
+        {
+          "l": "D",
+          "t": "4!"
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "dbw",
+      "topic": "data-warehousing-and-olap",
+      "tags": [
+        "dbw",
+        "data-warehousing-and-olap"
+      ],
+      "answer": "A",
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: A. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": true,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-34",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "34",
+      "marks": 2,
+      "type": "MCQ",
+      "text": "Let X and Y be two independent random variables. X follows Bernoulli(p = 0.3) distribution and Y follows Normal(μ = 0, σ^2 = 100) distribution. Which of the following options is the variance of (2X - 1)Y?",
+      "options": [
+        {
+          "l": "A",
+          "t": "100"
+        },
+        {
+          "l": "B",
+          "t": "90"
+        },
+        {
+          "l": "C",
+          "t": "49"
+        },
+        {
+          "l": "D",
+          "t": "21"
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "prob",
+      "topic": "probability-and-statistics",
+      "tags": [
+        "prob",
+        "probability-and-statistics"
+      ],
+      "answer": "A",
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: A. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-35",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "35",
+      "marks": 2,
+      "type": "MCQ",
+      "text": "Let L = lim_{n→∞} Σ_{k=0}^{n} (e^(-n) n^k)/k!. Which of the following is the value of L?",
+      "options": [
+        {
+          "l": "A",
+          "t": "0.5"
+        },
+        {
+          "l": "B",
+          "t": "1.0"
+        },
+        {
+          "l": "C",
+          "t": "0"
+        },
+        {
+          "l": "D",
+          "t": "e^(-1)"
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "prob",
+      "topic": "probability-and-statistics",
+      "tags": [
+        "prob",
+        "probability-and-statistics"
+      ],
+      "answer": "A",
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: A. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-36",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "36",
+      "marks": 2,
+      "type": "MCQ",
+      "text": "Let γ1, γ2, γ3 be the eigenvalues of the matrix [[1, 0, 0], [0, cos t, sin t], [0, -sin t, cos t]], where t ∈ [-π, π] is in radians. Which one of the following options lists all the possible values of t satisfying γ1 + γ2 + γ3 = 1 + √2?",
+      "options": [
+        {
+          "l": "A",
+          "t": "{π/3, -π/4}"
+        },
+        {
+          "l": "B",
+          "t": "{π/4, -π/3}"
+        },
+        {
+          "l": "C",
+          "t": "{π/4, -π/4}"
+        },
+        {
+          "l": "D",
+          "t": "{π/3, -π/3}"
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "la",
+      "topic": "linear-algebra",
+      "tags": [
+        "la",
+        "linear-algebra"
+      ],
+      "answer": "C",
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: C. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-37",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "37",
+      "marks": 2,
+      "type": "MSQ",
+      "text": "Consider that 20 stories of Author X and 10 stories of Author Y were kept together without mentioning the names of the authors. A classifier was then asked to predict the author (X or Y) of each of these stories. Let, out of X’s stories, 6 were classified as that of Y. On the other hand, out of Y’s stories, 2 were classified as that of X. Considering X and Y as two classes, which of the following statements is/are true?",
+      "options": [
+        {
+          "l": "A",
+          "t": "Accuracy of the classifier is 11/15."
+        },
+        {
+          "l": "B",
+          "t": "Precision of Class X is higher than the Precision of Class Y."
+        },
+        {
+          "l": "C",
+          "t": "Recall of Class X is higher than the Recall of Class Y."
+        },
+        {
+          "l": "D",
+          "t": "Accuracy of the classifier is 14/15."
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "ml",
+      "topic": "model-evaluation",
+      "tags": [
+        "ml",
+        "model-evaluation"
+      ],
+      "answer": [
+        "A",
+        "B"
+      ],
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: A,B. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-38",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "38",
+      "marks": 2,
+      "type": "MSQ",
+      "text": "Let P(x) be a predicate. Which of the following statements is/are NOT valid in first-order logic?",
+      "options": [
+        {
+          "l": "A",
+          "t": "∀x P(x) ⇒ ∃x P(x)"
+        },
+        {
+          "l": "B",
+          "t": "∃x P(x) ⇒ ∀x P(x)"
+        },
+        {
+          "l": "C",
+          "t": "∃x P(x) ⇔ ∀x P(x)"
+        },
+        {
+          "l": "D",
+          "t": "∀x P(x) ⇒ ∃x ¬P(x)"
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "ai",
+      "topic": "knowledge-representation",
+      "tags": [
+        "ai",
+        "knowledge-representation"
+      ],
+      "answer": [
+        "B",
+        "C",
+        "D"
+      ],
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: B,C,D. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-39",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "39",
+      "marks": 2,
+      "type": "MSQ",
+      "text": "Consider the problem of sorting the given array in ascending order: P = [1, 2, 3, 5, 4]. Consider two sorting algorithms Bubble Sort (BS) and Insertion Sort (IS). Let N1 be the total number of comparisons done by BS on the elements of P and N2 be the total number of comparisons done by IS on the elements of P. Which of the following options is/are correct?",
+      "options": [
+        {
+          "l": "A",
+          "t": "N1 = 10, N2 = 4"
+        },
+        {
+          "l": "B",
+          "t": "N1 > N2"
+        },
+        {
+          "l": "C",
+          "t": "IS on P will perform only one swap"
+        },
+        {
+          "l": "D",
+          "t": "Both BS and IS on P will make at least one unnecessary comparison (i.e., comparing elements that are already in correct order)"
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "pdsa",
+      "topic": "searching-and-sorting",
+      "tags": [
+        "pdsa",
+        "searching-and-sorting"
+      ],
+      "answer": [
+        "B",
+        "C",
+        "D"
+      ],
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: B,C,D. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-40",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "40",
+      "marks": 2,
+      "type": "MSQ",
+      "text": "Consider the given Python program.\ndef outer():\n    x = []\n    def inner(val):\n        x.append(val)\n        return x\n    return inner\nf1 = outer()\nf2 = outer()\nprint(f1(10)) # Line P\nprint(f1(20)) # Line Q\nprint(f2(30)) # Line R\nprint(f1(40)) # Line S\nWhich of the following options is/are correct?",
+      "options": [
+        {
+          "l": "A",
+          "t": "f1 and f2 share the same list x"
+        },
+        {
+          "l": "B",
+          "t": "Output of Line Q is [10, 20]"
+        },
+        {
+          "l": "C",
+          "t": "Output of Line R is [10, 20, 30]"
+        },
+        {
+          "l": "D",
+          "t": "Output of Line S is [10, 20, 40]"
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "pdsa",
+      "topic": "python-and-c-programming",
+      "tags": [
+        "pdsa",
+        "python-and-c-programming"
+      ],
+      "answer": [
+        "B",
+        "D"
+      ],
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: B,D. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-41",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "41",
+      "marks": 2,
+      "type": "MSQ",
+      "text": "Consider a table Employee(EmpID, TeamID), where the column EmpID (ID of an employee) is the primary key. The column TeamID denotes the team ID of the team of which the employee is a member. TeamID is a NOT NULL column. We want to display the size of the team (denoted as TeamSize) in which each employee is a member by using SQL.\nEmployee(EmpID, TeamID): (1,8),(2,8),(3,8),(4,7),(5,7),(6,9). Desired Output(EmpID, TeamSize): (1,3),(2,3),(3,3),(4,2),(5,2),(6,1).\nWhich of the following is/are correct?",
+      "options": [
+        {
+          "l": "A",
+          "t": "SELECT E.EmpID, B.TeamSize FROM Employee AS E, (SELECT TeamID, COUNT(TeamID) AS TeamSize FROM Employee GROUP BY TeamID) AS B WHERE E.TeamID = B.TeamID"
+        },
+        {
+          "l": "B",
+          "t": "SELECT A.EmpID, COUNT(B.TeamID) AS TeamSize FROM Employee AS A, Employee AS B WHERE A.TeamID = B.TeamID AND A.EmpID = B.EmpID GROUP BY A.EmpID"
+        },
+        {
+          "l": "C",
+          "t": "SELECT B.EmpID, B.TeamSize FROM (SELECT EmpID, COUNT(TeamID) AS TeamSize FROM Employee GROUP BY EmpID) AS B"
+        },
+        {
+          "l": "D",
+          "t": "SELECT A.EmpID, B.TeamSize FROM Employee AS A, (SELECT COUNT(TeamID) AS TeamSize FROM Employee GROUP BY TeamID) AS B WHERE A.TeamID = B.TeamID"
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "dbw",
+      "topic": "sql",
+      "tags": [
+        "dbw",
+        "sql"
+      ],
+      "answer": [
+        "A"
+      ],
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: A. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-42",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "42",
+      "marks": 2,
+      "type": "MSQ",
+      "text": "Let M = (I_n - (1/n) 11^T) be a matrix, where 1 = (1,1,1,…,1)^T ∈ ℝ^n and I_n is the identity matrix of order n. Which of the following options is/are correct?",
+      "options": [
+        {
+          "l": "A",
+          "t": "M^T = M"
+        },
+        {
+          "l": "B",
+          "t": "M^2 = I_n"
+        },
+        {
+          "l": "C",
+          "t": "Trace(M) = n"
+        },
+        {
+          "l": "D",
+          "t": "M is a projection matrix"
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "la",
+      "topic": "linear-algebra",
+      "tags": [
+        "la",
+        "linear-algebra"
+      ],
+      "answer": [
+        "A",
+        "D"
+      ],
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: A,D. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-43",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "43",
+      "marks": 2,
+      "type": "MSQ",
+      "text": "Let X1, X2, …, Xn be n independent random variables. Each of the random variables follows Normal(μ = 0, σ^2 = 1) distribution. Define X̄ = (1/n) Σ_{i=1}^{n} Xi. Which of the following statements is/are correct?",
+      "options": [
+        {
+          "l": "A",
+          "t": "Σ_{i=1}^{n} Xi^2 follows Chi-square distribution with n degrees of freedom."
+        },
+        {
+          "l": "B",
+          "t": "Σ_{i=1}^{n} (Xi - X̄)^2 follows Chi-square distribution with (n - 1) degrees of freedom."
+        },
+        {
+          "l": "C",
+          "t": "X1^2 + Xn^2 follows exponential distribution with mean 2."
+        },
+        {
+          "l": "D",
+          "t": "(√n X̄)^2 follows Chi-square distribution with 2 degrees of freedom."
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "prob",
+      "topic": "probability-and-statistics",
+      "tags": [
+        "prob",
+        "probability-and-statistics"
+      ],
+      "answer": [
+        "A",
+        "B",
+        "C"
+      ],
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: A,B,C. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-44",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "44",
+      "marks": 2,
+      "type": "MSQ",
+      "text": "Let X be a discrete valued random variable with cumulative distribution function F(x). Which of the following statements is/are correct?",
+      "options": [
+        {
+          "l": "A",
+          "t": "F(x) is always a positive function."
+        },
+        {
+          "l": "B",
+          "t": "F(x) is a non-decreasing function."
+        },
+        {
+          "l": "C",
+          "t": "F(x) has jump discontinuity."
+        },
+        {
+          "l": "D",
+          "t": "F(x) is a left continuous function."
+        }
+      ],
+      "figures": [],
+      "group": null,
+      "subject": "prob",
+      "topic": "probability-and-statistics",
+      "tags": [
+        "prob",
+        "probability-and-statistics"
+      ],
+      "answer": [
+        "B",
+        "C"
+      ],
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: B,C. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-45",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "45",
+      "marks": 2,
+      "type": "NAT",
+      "text": "Consider that Linear Ridge Regression is being used to learn a prediction function y_pred = w^T x, where w, x ∈ ℝ^2 and Mean Absolute Error (MAE) is used to measure the prediction error. A weight of 0.20 is associated with the regularizer. At an intermediate step of the training process, assume that the parameter w = [-3.00, 4.00]^T. In the next step, for the input x = [1.00, 2.00]^T, the predicted value of y is noted. Let the relation between x = [x1, x2]^T and the true value of y be y_true = x1 + x2. The value of the overall regularized loss function for this instance is _______ . (Rounded off to two decimal places)",
+      "options": [],
+      "figures": [],
+      "group": null,
+      "subject": "ml",
+      "topic": "regression",
+      "tags": [
+        "ml",
+        "regression"
+      ],
+      "answer": {
+        "min": 6.9,
+        "max": 7.1
+      },
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: [object Object]. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-46",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "46",
+      "marks": 2,
+      "type": "NAT",
+      "text": "Consider a fully-connected feed-forward multi-layer perceptron. It has 30 neurons in the input layer, followed by two hidden layers and an output layer. The first hidden layer has 4 neurons and the second hidden layer has 3 neurons. The output layer has only one neuron. Assume that no bias parameters are used. The number of learnable parameters in the multi-layer perceptron is __________ . (Answer in integer)",
+      "options": [],
+      "figures": [],
+      "group": null,
+      "subject": "ml",
+      "topic": "neural-networks",
+      "tags": [
+        "ml",
+        "neural-networks"
+      ],
+      "answer": 135,
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: 135. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-47",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "47",
+      "marks": 2,
+      "type": "NAT",
+      "text": "A clinic specializes in testing for a disease D. The result of the test can be either positive or negative. A study revealed that if a person suffers from the disease D, the test result in that clinic comes out positive 80% of the time, and negative 20% of the time. If a person is not suffering from the disease D, the test comes out positive 10% of the time and negative 90% of the time. It is also known that among the general population, the disease D occurs in 30% of the individuals. If a person tests positive for D in that clinic, the probability that he/she actually suffers from the disease D is __________ . (Rounded off to two decimal places)",
+      "options": [],
+      "figures": [],
+      "group": null,
+      "subject": "prob",
+      "topic": "probability-and-statistics",
+      "tags": [
+        "prob",
+        "probability-and-statistics"
+      ],
+      "answer": {
+        "min": 0.76,
+        "max": 0.78
+      },
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: [object Object]. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-48",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "48",
+      "marks": 2,
+      "type": "NAT",
+      "text": "Consider the given Python program.\ndef fun(L, i=0):\n    if i >= len(L)-1:\n        return 0\n    if L[i] > L[i+1]:\n        L[i+1], L[i] = L[i], L[i+1]\n        return 1+fun(L, i+1)\n    else:\n        return fun(L, i+1)\ndata = [5, 3, 4, 1, 2]\ncount = 0\nfor _ in range(len(data)):\n    count += fun(data)\nprint(count)\nThe output of the program is __________ . (Answer in integer)",
+      "options": [],
+      "figures": [],
+      "group": null,
+      "subject": "pdsa",
+      "topic": "python-and-c-programming",
+      "tags": [
+        "pdsa",
+        "python-and-c-programming"
+      ],
+      "answer": 8,
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: 8. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-49",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "49",
+      "marks": 2,
+      "type": "NAT",
+      "text": "Let there be two relations X and Y as shown. X has three columns P, Q and R. Y has two columns P and S.\nX(P,Q,R): (P1,Q1,R1), (P2,Q2,R2), (P3,Q3,R2)\nY(P,S): (P1,10), (P1,15), (P2,20), (P3,1)\nConsider that the following tuple relational calculus expression is evaluated.\n{ t | t ∈ X ∧ ∃z ∈ X (t[P] = z[P]) ∧ ∃m ∈ Y (m[P] = t[P] ∧ m[S] > 1) }\nThe number of tuples that will be returned is __________ . (Answer in integer)",
+      "options": [],
+      "figures": [],
+      "group": null,
+      "subject": "dbw",
+      "topic": "relational-model",
+      "tags": [
+        "dbw",
+        "relational-model"
+      ],
+      "answer": {
+        "min": 2,
+        "max": 3
+      },
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: [object Object]. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-50",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "50",
+      "marks": 2,
+      "type": "NAT",
+      "text": "Let Account be a relation as shown.\nAccount(AccNo, Balance): (A1,5000), (A2,5000), (A3,10000), (A4,15000), (A5,18000)\nConsider the given SQL query.\nSELECT AccNo FROM Account AS A WHERE (SELECT COUNT(*) FROM Account AS B WHERE A.Balance < B.Balance) >= (SELECT COUNT(*) FROM Account AS C WHERE A.Balance > C.Balance)\nThe number of rows returned by the SQL query is __________ . (Answer in integer)",
+      "options": [],
+      "figures": [],
+      "group": null,
+      "subject": "dbw",
+      "topic": "sql",
+      "tags": [
+        "dbw",
+        "sql"
+      ],
+      "answer": 3,
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: 3. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-51",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "51",
+      "marks": 2,
+      "type": "NAT",
+      "text": "Consider an ER model with the entities E1(A11,A12,A13) and E2(A21,A22,A23), where A11, A12, A13 are the attributes of E1, and A21, A22, A23 are the attributes of E2. Let A22 be a multi-valued attribute. A11 and A21 are the primary keys of E1 and E2, respectively. Let R12 be a many-to-many relationship between E1 and E2. Participation of both E1 and E2 in R12 is total. The minimum number of relations required to convert the ER model into relational model (assuming there is no other functional dependency) where each relation is in third normal form (3NF) is __________ . (Answer in integer)",
+      "options": [],
+      "figures": [],
+      "group": null,
+      "subject": "dbw",
+      "topic": "er-model",
+      "tags": [
+        "dbw",
+        "er-model"
+      ],
+      "answer": 4,
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: 4. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-52",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "52",
+      "marks": 2,
+      "type": "NAT",
+      "text": "For a given data set {x1, x2, …, xn}, where n = 100, it is known that (1/2000) Σ_{i=1}^{n} Σ_{j=1}^{n} (xi - xj)^2 = 99. Let us denote x̄ = (1/n) Σ_{i=1}^{n} xi. The value of (1/99) Σ_{i=1}^{n} (xi - x̄)^2 is __________ . (Answer in integer)",
+      "options": [],
+      "figures": [],
+      "group": null,
+      "subject": "prob",
+      "topic": "probability-and-statistics",
+      "tags": [
+        "prob",
+        "probability-and-statistics"
+      ],
+      "answer": 10,
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: 10. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-53",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "53",
+      "marks": 2,
+      "type": "NAT",
+      "text": "Let X be a random variable that follows Uniform(-1,1) distribution. The conditional distribution of the random variable Y given X = x is the Uniform(x^2 - 0.1, x^2 + 0.1) distribution. The value of correlation(X, Y) is __________ . (Answer in integer)",
+      "options": [],
+      "figures": [],
+      "group": null,
+      "subject": "prob",
+      "topic": "probability-and-statistics",
+      "tags": [
+        "prob",
+        "probability-and-statistics"
+      ],
+      "answer": 0,
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: 0. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-54",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "54",
+      "marks": 2,
+      "type": "NAT",
+      "text": "Let A_{5×5} be a matrix such that each of its elements follows Bernoulli(p = 0.50) distribution independently. The probability that the row-sum of the second row and the column-sum of the third column are both equal to 3 is ________ . (Rounded off to two decimal places)",
+      "options": [],
+      "figures": [],
+      "group": null,
+      "subject": "prob",
+      "topic": "probability-and-statistics",
+      "tags": [
+        "prob",
+        "probability-and-statistics"
+      ],
+      "answer": {
+        "min": 0.08,
+        "max": 0.12
+      },
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: [object Object]. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
+      "needsReview": false,
+      "reviewNote": null
+    },
+    {
+      "id": "da-2026-da-55",
+      "paper": "da-2026",
+      "exam": "DA",
+      "year": 2026,
+      "set": 1,
+      "section": "da",
+      "number": "55",
+      "marks": 2,
+      "type": "NAT",
+      "text": "Let A = (I_n - (1/n) 11^T) be a matrix, where 1 = (1,1,1,…,1)^T ∈ ℝ^n and I_n is the identity matrix of order n. The value of max_S x^T A x, where S = {x ∈ ℝ^n | x^T x = 1}, is __________ . (Answer in integer)",
+      "options": [],
+      "figures": [],
+      "group": null,
+      "subject": "la",
+      "topic": "linear-algebra",
+      "tags": [
+        "la",
+        "linear-algebra"
+      ],
+      "answer": 1,
+      "answerSource": "official",
+      "confidence": "high",
+      "solution": "Official Answer: 1. Verbatim official question from IIT Guwahati GATE 2026 DA paper.",
+      "textSource": "official-pdf",
+      "sourceUrl": "https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA.pdf",
       "needsReview": false,
       "reviewNote": null
     }

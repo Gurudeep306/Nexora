@@ -15,9 +15,15 @@ const path = require("path");
 const FILE = path.join(__dirname, "..", "gate", "questions.json");
 
 let bank = null;
+let lastMtime = 0;
 
 function load() {
-  if (bank) return bank;
+  try {
+    const mtime = fs.statSync(FILE).mtimeMs;
+    if (bank && mtime === lastMtime) return bank;
+    lastMtime = mtime;
+  } catch (_) {}
+  if (bank && lastMtime !== 0) return bank;
   const raw = JSON.parse(fs.readFileSync(FILE, "utf8"));
   const questions = raw.questions.map((q) => ({
     ...q,
