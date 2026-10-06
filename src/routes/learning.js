@@ -286,7 +286,6 @@ ${(statement || 'No problem statement available').substring(0, 4000)}
     try {
       const geminiKey = process.env.GEMINI_API_KEY;
       const groqKey = process.env.GROQ_API_KEY;
-      if (!geminiKey && !groqKey) return res.json({ ok: false, text: '' });
 
       const { prefix, suffix, language } = req.body;
       if (!prefix || !language) return res.json({ ok: true, text: '' });
@@ -305,14 +304,14 @@ ${(statement || 'No problem statement available').substring(0, 4000)}
       }
 
       let rawText = '';
-      if (geminiKey) {
+      try {
         const prompt = _buildGeminiPrompt(language, prefixCtx, suffixCtx);
-        const result = await _geminiComplete(geminiKey, prompt);
-        if (result.ok) rawText = result.content;
-      }
+        const result = await _geminiComplete(geminiKey || 'kronos-sovereign', prompt);
+        if (result && result.ok) rawText = result.content;
+      } catch (_) {}
 
-      if (!rawText && groqKey) {
-        const systemPrompt = `You are an expert inline code completion engine for a competitive programming IDE. Language: ${language}.
+      if (!rawText) {
+        const systemPrompt = `You are Kronos-1: expert inline code completion engine for a competitive programming IDE. Language: ${language}.
 
 YOUR ROLE: Predict exactly what the programmer is about to type next. Output ONLY the raw completion — no markdown, no fences, no explanations.
 
@@ -329,7 +328,7 @@ RULES:
           : `[BEFORE CURSOR]\n${prefixCtx}\n[CURSOR]`;
 
         const groqResult = await _groqChat(
-          groqKey,
+          groqKey || 'kronos-sovereign',
           [
             { role: 'system', content: systemPrompt },
             { role: 'user', content: userMsg },
@@ -337,10 +336,10 @@ RULES:
           { maxTokens: 150, temperature: 0.05, stop: ['\n\n\n', '```'] }
         );
 
-        if (groqResult.ok) rawText = groqResult.content;
+        if (groqResult && groqResult.ok) rawText = groqResult.content;
       }
 
-      let text = rawText.replace(/^```[\w]*\n?/, '').replace(/```$/, '').replace(/^Completion:\s*/i, '').trimEnd();
+      let text = (rawText || '').replace(/^```[\w]*\n?/, '').replace(/```$/, '').replace(/^Completion:\s*/i, '').trimEnd();
       const lines = text.split('\n');
       if (lines.length > 5) text = lines.slice(0, 3).join('\n');
 
@@ -355,8 +354,7 @@ RULES:
 
   router.post('/api/ai-fix', aiLimiter, async (req, res) => {
     try {
-      const apiKey = process.env.GROQ_API_KEY;
-      if (!apiKey) return res.status(500).json({ ok: false, error: 'GROQ_API_KEY not configured' });
+      const apiKey = process.env.GROQ_API_KEY || 'kronos-sovereign';
 
       const { code, language, error } = req.body;
       if (!code || !language) return res.status(400).json({ ok: false, error: 'code and language required' });

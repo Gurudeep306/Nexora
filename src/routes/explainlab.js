@@ -883,8 +883,7 @@ function createExplainLabRouter(deps) {
       const session = await eldb.getSession(req.params.id);
       if (!session) return res.status(404).json({ ok: false, error: 'Session not found' });
 
-      const apiKey = process.env.GROQ_API_KEY;
-      if (!apiKey) return res.json({ ok: false, error: 'GROQ_API_KEY not configured' });
+      const apiKey = process.env.GROQ_API_KEY || 'kronos-sovereign';
 
       // Get events for context
       const events = await eldb.getEventsBySession(req.params.id);
@@ -921,8 +920,7 @@ function createExplainLabRouter(deps) {
       const session = await eldb.getSession(req.params.id);
       if (!session) return res.status(404).json({ ok: false, error: 'Session not found' });
 
-      const apiKey = process.env.GROQ_API_KEY;
-      if (!apiKey) return res.json({ ok: false, error: 'GROQ_API_KEY not configured' });
+      const apiKey = process.env.GROQ_API_KEY || 'kronos-sovereign';
 
       const prompt = `Based on this teaching session titled "${session.title}", generate structured typed notes in HTML format.
       Include: key concepts, important formulas, examples, and common mistakes.
@@ -954,8 +952,7 @@ function createExplainLabRouter(deps) {
       const session = await eldb.getSession(req.params.id);
       if (!session) return res.status(404).json({ ok: false, error: 'Session not found' });
 
-      const apiKey = process.env.GROQ_API_KEY;
-      if (!apiKey) return res.json({ ok: false, error: 'GROQ_API_KEY not configured' });
+      const apiKey = process.env.GROQ_API_KEY || 'kronos-sovereign';
 
       const prompt = `Create a comprehensive full explanation for this teaching session titled "${session.title}".
       
@@ -997,8 +994,7 @@ function createExplainLabRouter(deps) {
       const session = await eldb.getSession(req.params.id);
       if (!session) return res.status(404).json({ ok: false, error: 'Session not found' });
 
-      const apiKey = process.env.GROQ_API_KEY;
-      if (!apiKey) return res.json({ ok: false, error: 'GROQ_API_KEY not configured' });
+      const apiKey = process.env.GROQ_API_KEY || 'kronos-sovereign';
 
       const prompt = `Generate 5 multiple-choice quiz questions based on this teaching session titled "${session.title}".
       Return ONLY a valid JSON array in this format:
@@ -1044,8 +1040,7 @@ function createExplainLabRouter(deps) {
       const session = await eldb.getSession(req.params.id);
       if (!session) return res.status(404).json({ ok: false, error: 'Session not found' });
 
-      const apiKey = process.env.GROQ_API_KEY;
-      if (!apiKey) return res.json({ ok: false, error: 'GROQ_API_KEY not configured' });
+      const apiKey = process.env.GROQ_API_KEY || 'kronos-sovereign';
 
       const prompt = `Generate 10 flashcards for quick revision based on this teaching session titled "${session.title}".
       Return ONLY a valid JSON array in this format:
