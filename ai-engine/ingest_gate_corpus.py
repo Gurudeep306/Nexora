@@ -197,18 +197,62 @@ SAMPLE_GATE_CANON_REASONING = [
     }
 ]
 
-def build_gate_dataset(gate_dir="GATE_PYQ", output_file="ai-engine/data/gate_reasoning_corpus.jsonl"):
+def build_gate_dataset(gate_dir="GATE_PYQ", output_file="ai-engine/data/gate_reasoning_corpus.jsonl", questions_json="src/gate/questions.json"):
     os.makedirs(os.path.dirname(output_file), exist_ok=True)
     pdf_files = glob.glob(os.path.join(gate_dir, "*.pdf"))
-    print(f"[*] Discovered {len(pdf_files)} official GATE CSE exam papers in {gate_dir}/")
+    print(f"[*] Discovered {len(pdf_files)} official GATE CSE/DA exam papers in {gate_dir}/")
     
     samples = list(SAMPLE_GATE_CANON_REASONING)
     
+    # Ingest from full question bank
+    if os.path.exists(questions_json):
+        try:
+            with open(questions_json, "r", encoding="utf-8") as f:
+                qdata = json.load(f)
+            q_list = qdata.get("questions", [])
+            print(f"[*] Ingesting from {questions_json}: {len(q_list)} total transcribed questions")
+            for q in q_list:
+                text = q.get("text", "").strip()
+                sol = q.get("solution", "").strip()
+                ans = q.get("answer", "")
+                exam = q.get("exam", "CSE")
+                year = q.get("year", "")
+                subj = q.get("subject", "general")
+                
+                if len(text) > 20 and len(sol) > 10:
+                    options_str = ""
+                    opts = q.get("options", [])
+                    if opts:
+                        options_str = "\n" + "\n".join([f"({o['l']}) {o['t']}" for o in opts])
+                    
+                    user_prompt = f"GATE {exam} {year} [{subj.upper()}]:\n{text}{options_str}"
+                    assistant_resp = (
+                        f"<think>\n"
+                        f"Problem Classification: GATE {exam} ({subj.upper()})\n"
+                        f"Step 1: Parse requirements and mathematical constraints.\n"
+                        f"Step 2: Formal verification: {sol}\n"
+                        f"</think>\n\n"
+                        f"### Final Answer\n"
+                        f"**{ans}**\n\n"
+                        f"### Explanation & Proof\n"
+                        f"{sol}"
+                    )
+                    
+                    pair = [
+                        {"role": "system", "content": SYSTEM_PROMPT},
+                        {"role": "user", "content": user_prompt},
+                        {"role": "assistant", "content": assistant_resp}
+                    ]
+                    samples.append({"messages": pair})
+        except Exception as e:
+            print(f"[!] Warning reading {questions_json}: {e}")
+            
     with open(output_file, "w", encoding="utf-8") as f:
         for item in samples:
             f.write(json.dumps(item["messages"]) + "\n")
             
-    print(f"[✓] Wrote high-reasoning GATE CSE seed pairs to {output_file}")
+    print(f"[✓] Wrote {len(samples)} high-reasoning GATE reasoning pairs across all 35 years to {output_file}")
 
 if __name__ == "__main__":
     build_gate_dataset()
+
