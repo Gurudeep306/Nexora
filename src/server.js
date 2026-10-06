@@ -3705,28 +3705,27 @@ app.get("/api/nexus", async (req, res) => {
     let totalSolved = (
       await get(`SELECT COUNT(*) as c FROM progress WHERE username=${meSql()} AND status='solved'`)
     ).c;
+    const rawTotalSolved = totalSolved;
     { const ov = await myOverrides(); totalXp += ov.xp; totalSolved += ov.solved; }
     const playerLevel = calcLevel(totalXp, totalSolved);
+
+    // Fetch all distinct solved problems and their tags in ONE query instead of 40+ round trips
+    const solvedProblems = await all(
+      `SELECT DISTINCT p.id, COALESCE(p.tags, '') as tags FROM progress pr JOIN problems p ON pr.problem_rowid=p.id AND pr.username=${meSql()} WHERE pr.status='solved'`
+    );
+    const solvedTagList = (solvedProblems || []).map((p) => (p.tags || "").toLowerCase());
 
     // Build skill nodes with progress
     const nodes = [];
     for (const skill of NEXUS_NODES) {
       let solvedCount = 0;
       if (skill.tags.length > 0) {
-        const cond = skill.tags.map(() => "p.tags LIKE ?").join(" OR ");
-        const params = skill.tags.map((t) => `%${t}%`);
-        const r = await get(
-          `SELECT COUNT(DISTINCT pr.problem_rowid) as c FROM progress pr JOIN problems p ON pr.problem_rowid=p.id AND pr.username=${meSql()} WHERE pr.status='solved' AND (${cond})`,
-          params,
-        );
-        solvedCount = r?.c || 0;
+        const lowerTags = skill.tags.map((t) => t.toLowerCase());
+        solvedCount = solvedTagList.filter((tags) =>
+          lowerTags.some((t) => tags.includes(t))
+        ).length;
       } else {
-        solvedCount =
-          (
-            await get(
-              `SELECT COUNT(*) as c FROM progress WHERE username=${meSql()} AND status='solved'`,
-            )
-          )?.c || 0;
+        solvedCount = rawTotalSolved || 0;
       }
       const prereqsMet =
         skill.requires.length === 0 ||
@@ -4506,85 +4505,83 @@ app.get("/api/level-roadmap", async (req, res) => {
     const playerLevel = calcLevel(totalXp, totalSolved);
     const weekSeed = Math.floor(Date.now() / (7 * 24 * 60 * 60 * 1000));
 
-    const levels = [];
-    for (const lt of LEVEL_TOPICS) {
-      const rl = RIFT_LEVELS[lt.level - 1];
+    const levels = await Promise.all(
+      LEVEL_TOPICS.map(async (lt) => {
+        const rl = RIFT_LEVELS[lt.level - 1];
 
-      // For ∞ Overflow (level 11), lower the floor to 2200 and remove the ceiling
-      // so practice problems actually appear in the DB (very few problems rated 2800+ exist)
-      const queryMinR = lt.level === 11 ? 2200 : rl.minR;
-      const queryMaxR = lt.level === 11 ? 99999 : rl.maxR;
+        // For ∞ Overflow (level 11), lower the floor to 2200 and remove the ceiling
+        // so practice problems actually appear in the DB (very few problems rated 2800+ exist)
+        const queryMinR = lt.level === 11 ? 2200 : rl.minR;
+        const queryMaxR = lt.level === 11 ? 99999 : rl.maxR;
 
-      // Each topic runs its own tag/rating query. Against the remote (Turso) DB
-      // these are network round-trips, so fire a level's topics concurrently
-      // instead of serially — same queries, same deterministic selection, just
-      // ~10x fewer sequential waits. Promise.all preserves topic order.
-      const topicsResult = await Promise.all(
-        lt.topics.map(async (topic) => {
-          const tagCond = topic.tags.map(() => "p.tags LIKE ?").join(" OR ");
-          const tagParams = topic.tags.map((t) => `%${t}%`);
-          const pool = await all(
-            `
-          SELECT p.id, p.problem_id, p.title, p.rating, p.platform, p.tags, p.url,
-            COALESCE(pr.status,'unsolved') as solve_status,
-            COALESCE(pr.attempts,0) as attempts
-          FROM problems p
-          LEFT JOIN progress pr ON pr.problem_rowid = p.id AND pr.username=${meSql()}
-          WHERE (${tagCond})
-            AND p.rating >= ? AND p.rating <= ?
-            AND p.rating > 0
-          ORDER BY p.rating DESC
-        `,
-            [...tagParams, queryMinR, queryMaxR],
-          );
+        // Each topic runs its own tag/rating query concurrently
+        const topicsResult = await Promise.all(
+          lt.topics.map(async (topic) => {
+            const tagCond = topic.tags.map(() => "p.tags LIKE ?").join(" OR ");
+            const tagParams = topic.tags.map((t) => `%${t}%`);
+            const pool = await all(
+              `
+            SELECT p.id, p.problem_id, p.title, p.rating, p.platform, p.tags, p.url,
+              COALESCE(pr.status,'unsolved') as solve_status,
+              COALESCE(pr.attempts,0) as attempts
+            FROM problems p
+            LEFT JOIN progress pr ON pr.problem_rowid = p.id AND pr.username=${meSql()}
+            WHERE (${tagCond})
+              AND p.rating >= ? AND p.rating <= ?
+              AND p.rating > 0
+            ORDER BY p.rating DESC
+          `,
+              [...tagParams, queryMinR, queryMaxR],
+            );
 
-          const shuffled = seededShuffle(
-            pool,
-            weekSeed + lt.level * 100 + topic.tags.length,
-          );
-          const unsolved = shuffled.filter((p) => p.solve_status !== "solved");
-          const solved = shuffled.filter((p) => p.solve_status === "solved");
-          const selected = [
-            ...unsolved.slice(0, topic.count),
-            ...solved.slice(0, Math.max(0, topic.count - unsolved.length)),
-          ].slice(0, topic.count);
-          selected.sort((a, b) => a.rating - b.rating);
+            const shuffled = seededShuffle(
+              pool,
+              weekSeed + lt.level * 100 + topic.tags.length,
+            );
+            const unsolved = shuffled.filter((p) => p.solve_status !== "solved");
+            const solved = shuffled.filter((p) => p.solve_status === "solved");
+            const selected = [
+              ...unsolved.slice(0, topic.count),
+              ...solved.slice(0, Math.max(0, topic.count - unsolved.length)),
+            ].slice(0, topic.count);
+            selected.sort((a, b) => a.rating - b.rating);
 
-          return {
-            name: topic.name,
-            desc: topic.desc,
-            tags: topic.tags,
-            problems: selected,
-            totalPool: pool.length,
-            solvedInPool: pool.filter((p) => p.solve_status === "solved").length,
-          };
-        }),
-      );
+            return {
+              name: topic.name,
+              desc: topic.desc,
+              tags: topic.tags,
+              problems: selected,
+              totalPool: pool.length,
+              solvedInPool: pool.filter((p) => p.solve_status === "solved").length,
+            };
+          }),
+        );
 
-      const allProbs = topicsResult.flatMap((t) => t.problems);
-      const solvedCount = allProbs.filter(
-        (p) => p.solve_status === "solved",
-      ).length;
+        const allProbs = topicsResult.flatMap((t) => t.problems);
+        const solvedCount = allProbs.filter(
+          (p) => p.solve_status === "solved",
+        ).length;
 
-      levels.push({
-        level: lt.level,
-        name: rl.name,
-        color: rl.color,
-        glow: rl.glow,
-        minR: rl.minR,
-        maxR: rl.maxR,
-        xpRequired: rl.xp,
-        probsRequired: rl.minProblems,
-        unlocked: true, // all levels are always browsable
-        current: playerLevel.level === lt.level,
-        topics: topicsResult,
-        totalProblems: allProbs.length,
-        solvedCount,
-        progress: allProbs.length
-          ? Math.round((solvedCount / allProbs.length) * 100)
-          : 0,
-      });
-    }
+        return {
+          level: lt.level,
+          name: rl.name,
+          color: rl.color,
+          glow: rl.glow,
+          minR: rl.minR,
+          maxR: rl.maxR,
+          xpRequired: rl.xp,
+          probsRequired: rl.minProblems,
+          unlocked: true, // all levels are always browsable
+          current: playerLevel.level === lt.level,
+          topics: topicsResult,
+          totalProblems: allProbs.length,
+          solvedCount,
+          progress: allProbs.length
+            ? Math.round((solvedCount / allProbs.length) * 100)
+            : 0,
+        };
+      }),
+    );
 
     res.json({ ok: true, levels, player: playerLevel, weekSeed });
   } catch (e) {
@@ -4595,24 +4592,24 @@ app.get("/api/level-roadmap", async (req, res) => {
 /* Keep /api/roadmap and /api/skill-tree as aliases for backward compat */
 app.get("/api/skill-tree", async (req, res) => {
   try {
+    const rawTotalSolved = (
+      await get(`SELECT COUNT(*) as c FROM progress WHERE username=${meSql()} AND status='solved'`)
+    )?.c || 0;
+    const solvedProblems = await all(
+      `SELECT DISTINCT p.id, COALESCE(p.tags, '') as tags FROM progress pr JOIN problems p ON pr.problem_rowid=p.id AND pr.username=${meSql()} WHERE pr.status='solved'`
+    );
+    const solvedTagList = (solvedProblems || []).map((p) => (p.tags || "").toLowerCase());
+
     const nodes = [];
     for (const skill of NEXUS_NODES) {
       let solvedCount = 0;
       if (skill.tags.length > 0) {
-        const cond = skill.tags.map(() => "p.tags LIKE ?").join(" OR ");
-        const params = skill.tags.map((t) => `%${t}%`);
-        const r = await get(
-          `SELECT COUNT(DISTINCT pr.problem_rowid) as c FROM progress pr JOIN problems p ON pr.problem_rowid=p.id AND pr.username=${meSql()} WHERE pr.status='solved' AND (${cond})`,
-          params,
-        );
-        solvedCount = r?.c || 0;
+        const lowerTags = skill.tags.map((t) => t.toLowerCase());
+        solvedCount = solvedTagList.filter((tags) =>
+          lowerTags.some((t) => tags.includes(t))
+        ).length;
       } else {
-        solvedCount =
-          (
-            await get(
-              `SELECT COUNT(*) as c FROM progress WHERE username=${meSql()} AND status='solved'`,
-            )
-          )?.c || 0;
+        solvedCount = rawTotalSolved;
       }
       const prereqsMet =
         skill.requires.length === 0 ||
