@@ -26,7 +26,6 @@ import { LaunchGrid } from '@/components/hub/LaunchGrid'
 import { ActivityChart } from '@/components/hub/ActivityChart'
 import { DailyChallenges } from '@/components/hub/DailyChallenges'
 import { RecentSubmissions } from '@/components/hub/RecentSubmissions'
-import { QuickLinks } from '@/components/hub/QuickLinks'
 import type { PerformanceResponse, StatsResponse } from '@/components/hub/types'
 
 function HubSkeleton() {
@@ -89,7 +88,7 @@ export default function HubPage() {
 
   return (
     <div className="space-y-7">
-      {/* Supreme Mission Control Hero: Avatar, Level, XP, Rank Glyph, Daily Goal Ring & Stat Pills */}
+      {/* Who you are, today's goal, and the two main doors */}
       <HomeHero
         displayName={displayName}
         username={username}
@@ -107,7 +106,7 @@ export default function HubPage() {
               void refresh()
             }}
             aria-label="Refresh dashboard"
-            className="glass-thin border-border-glass bg-bg-surface-2/60 text-xs backdrop-blur-md transition-all hover:bg-bg-surface-3"
+            className="text-xs"
           >
             <RefreshCw
               className={statsApi.loading || perfApi.loading ? 'animate-spin' : undefined}
@@ -118,7 +117,7 @@ export default function HubPage() {
         }
       />
 
-      {/* The launchpad: every destination as interactive glowing cards with category filtering */}
+      {/* Every destination, filterable by area */}
       <LaunchGrid />
 
       {/* Bento dashboard grid */}
@@ -148,54 +147,45 @@ export default function HubPage() {
 
         <div className="space-y-3">
           <Card>
-            <CardContent className="space-y-2.5 py-4">
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-[10px] tracking-wider text-foreground-faint uppercase">Solves this level</span>
-                <span className="font-mono text-foreground tabular-nums">
+            <CardContent className="space-y-3 py-4">
+              <div className="flex items-center justify-between text-[13px]">
+                <span className="text-text-muted">Solves this level</span>
+                <span className="font-semibold text-text-primary tabular-nums">
                   {stats.level.probsInLevel} / {stats.level.probsForNext}
                 </span>
               </div>
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-[10px] tracking-wider text-foreground-faint uppercase">Consistency</span>
-                <span className="font-mono text-foreground tabular-nums">
+              <div className="flex items-center justify-between text-[13px]">
+                <span className="text-text-muted">Consistency</span>
+                <span className="font-semibold text-text-primary tabular-nums">
                   {perf ? `${perf.consistencyScore}%` : '—'}
                 </span>
               </div>
               {perf?.nextLevel && (
-                <p className="pt-1 text-xs text-foreground-dim">
-                  <Trophy className="mr-1 inline size-3.5 text-gold" aria-hidden="true" />
-                  Next rift: <span className="text-foreground">{perf.nextLevel.name}</span> —{' '}
-                  <span className="font-mono text-primary-bright tabular-nums">
-                    {formatNumber(perf.nextLevel.xpNeeded)} XP
-                  </span>{' '}
-                  + <span className="font-mono text-primary-bright tabular-nums">{perf.nextLevel.probsNeeded}</span>{' '}
-                  solves
+                <p className="mb-0 border-t border-border pt-3 text-[13px] text-text-muted">
+                  <Trophy className="mr-1.5 inline size-3.5 text-gold" aria-hidden="true" />
+                  Next level <span className="font-semibold text-text-primary">{perf.nextLevel.name}</span>:{' '}
+                  {formatNumber(perf.nextLevel.xpNeeded)} XP and {perf.nextLevel.probsNeeded} solves
                   {perf.nextLevel.daysEstimate != null && perf.avgDailyXp > 0 && (
-                    <> · ≈ {perf.nextLevel.daysEstimate}d at your pace</>
+                    <> · about {perf.nextLevel.daysEstimate} days at your pace</>
                   )}
                 </p>
               )}
             </CardContent>
           </Card>
 
-          <QuickLinks />
-
           <Card className="p-4">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <p className="font-display text-xs tracking-wider text-foreground uppercase">Ready to climb?</p>
-                <p className="mt-1 text-xs text-foreground-dim">
+                <p className="mb-0 text-[15px] font-semibold text-text-primary">Ready for today?</p>
+                <p className="mt-1 mb-0 text-[13px] text-text-muted">
                   <Medal className="mr-1 inline size-3.5 text-gold" aria-hidden="true" />
                   {stats.todayStats.solved > 0
-                    ? `${stats.todayStats.solved} solved today — keep the streak alive.`
-                    : 'No solves yet today — your streak needs you.'}
+                    ? `${stats.todayStats.solved} solved today. Keep the streak going.`
+                    : 'Nothing solved yet today.'}
                 </p>
               </div>
-              <Link
-                to="/problems"
-                className="shrink-0 cursor-pointer rounded-lg bg-accent px-4 py-2 text-xs font-semibold text-on-accent-brand glow-box-accent transition-all duration-200 hover:brightness-110"
-              >
-                Fight now
+              <Link to="/problems" className="btn-primary shrink-0 !px-3.5 !py-2 !text-[13px] !no-underline">
+                Solve one
               </Link>
             </div>
           </Card>
