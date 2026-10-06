@@ -1289,6 +1289,24 @@ html[data-icon-shape='hexagon'] .dock-tile {
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%) !important;
   border-radius: 0 !important;
 }
+html[data-icon-shape='diamond'] .icon-pod,
+html[data-icon-shape='diamond'] [data-icon-pod],
+html[data-icon-shape='diamond'] .dock-tile {
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%) !important;
+  border-radius: 0 !important;
+}
+html[data-icon-shape='shield'] .icon-pod,
+html[data-icon-shape='shield'] [data-icon-pod],
+html[data-icon-shape='shield'] .dock-tile {
+  clip-path: polygon(50% 0%, 100% 15%, 100% 70%, 50% 100%, 0% 70%, 0% 15%) !important;
+  border-radius: 0 !important;
+}
+html[data-icon-shape='pill'] .icon-pod,
+html[data-icon-shape='pill'] [data-icon-pod],
+html[data-icon-shape='pill'] .dock-tile {
+  border-radius: 9999px !important;
+  aspect-ratio: 1.25 / 1 !important;
+}
 html[data-icon-shape='free'] .icon-pod,
 html[data-icon-shape='free'] [data-icon-pod],
 html[data-icon-shape='free'] .dock-tile {
@@ -1313,7 +1331,73 @@ html[data-icon-pack='neon'] [data-icon-pod] svg.lucide {
   filter: drop-shadow(0 0 6px currentColor);
 }
 
-/* 2. Clay 3D Icon Pack */
+/* 2. Anime Pastel Aura Icon Pack */
+html[data-icon-pack='anime'] .icon-pod,
+html[data-icon-pack='anime'] [data-icon-pod] {
+  background: linear-gradient(135deg, color-mix(in oklch, var(--color-accent-brand) 50%, #f472b6), color-mix(in oklch, var(--color-accent-brand) 75%, #818cf8)) !important;
+  border: 1.5px solid oklch(1 0 0 / 0.5) !important;
+  box-shadow: 0 0 20px -2px color-mix(in oklch, var(--color-accent-brand) 65%, #f472b6), inset 0 1.5px 2px oklch(1 0 0 / 0.8) !important;
+  color: #ffffff !important;
+}
+html[data-icon-pack='anime'] .icon-pod svg.lucide,
+html[data-icon-pack='anime'] [data-icon-pod] svg.lucide {
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+/* 3. Chromatic Glitch Icon Pack */
+html[data-icon-pack='glitch'] .icon-pod,
+html[data-icon-pack='glitch'] [data-icon-pod] {
+  background: #090a0f !important;
+  border: 1.5px solid #06b6d4 !important;
+  box-shadow: -2px 0 0 #f43f5e, 2px 0 0 #06b6d4, 0 0 14px color-mix(in oklch, var(--color-accent-brand) 40%, transparent) !important;
+  color: #22d3ee !important;
+}
+html[data-icon-pack='glitch'] .icon-pod svg.lucide,
+html[data-icon-pack='glitch'] [data-icon-pod] svg.lucide {
+  filter: drop-shadow(-1px 0 0 #f43f5e) drop-shadow(1px 0 0 #06b6d4);
+}
+
+/* 4. Crystal Prism Glass Icon Pack */
+html[data-icon-pack='crystal'] .icon-pod,
+html[data-icon-pack='crystal'] [data-icon-pod] {
+  background: linear-gradient(135deg, oklch(1 0 0 / 0.22), oklch(1 0 0 / 0.05)) !important;
+  backdrop-filter: blur(16px) saturate(180%) !important;
+  border: 1.5px solid oklch(1 0 0 / 0.45) !important;
+  box-shadow: inset 0 2px 3px oklch(1 0 0 / 0.6), 0 8px 24px -4px color-mix(in oklch, var(--color-accent-brand) 35%, transparent) !important;
+  color: oklch(1 0 0) !important;
+}
+html[data-icon-pack='crystal'] .icon-pod svg.lucide,
+html[data-icon-pack='crystal'] [data-icon-pod] svg.lucide {
+  filter: drop-shadow(0 2px 8px color-mix(in oklch, var(--color-accent-brand) 80%, white));
+}
+
+/* 5. 8-Bit Retro Arcade Box Icon Pack */
+html[data-icon-pack='retro'] .icon-pod,
+html[data-icon-pack='retro'] [data-icon-pod] {
+  background: #111827 !important;
+  border: 2px solid var(--color-accent-brand) !important;
+  box-shadow: 3px 3px 0 0 var(--color-accent-brand), inset 0 0 0 1px #000 !important;
+  color: var(--color-accent-brand) !important;
+}
+html[data-icon-pack='retro'] .icon-pod svg.lucide,
+html[data-icon-pack='retro'] [data-icon-pod] svg.lucide {
+  stroke-width: 2.75px !important;
+}
+
+/* 6. Matrix Phosphor Emerald Icon Pack */
+html[data-icon-pack='emerald'] .icon-pod,
+html[data-icon-pack='emerald'] [data-icon-pod] {
+  background: radial-gradient(circle at 50% 50%, #052e16, #021208) !important;
+  border: 1.5px solid #22c55e !important;
+  box-shadow: 0 0 14px #22c55e66, inset 0 0 8px #22c55e33 !important;
+  color: #4ade80 !important;
+}
+html[data-icon-pack='emerald'] .icon-pod svg.lucide,
+html[data-icon-pack='emerald'] [data-icon-pod] svg.lucide {
+  filter: drop-shadow(0 0 5px #22c55e);
+}
+
+/* 7. Clay 3D Icon Pack */
 html[data-icon-pack='clay'] .icon-pod,
 html[data-icon-pack='clay'] [data-icon-pod] {
   background: linear-gradient(180deg, color-mix(in oklch, var(--color-accent-brand) 45%, var(--color-bg-surface-2)), color-mix(in oklch, var(--color-accent-brand) 20%, var(--color-bg-surface-2))) !important;
@@ -1326,7 +1410,7 @@ html[data-icon-pack='clay'] [data-icon-pod] svg.lucide {
   filter: drop-shadow(0 1.5px 2px oklch(0 0 0 / 0.45));
 }
 
-/* 3. Duotone Icon Pack */
+/* 8. Duotone Icon Pack */
 html[data-icon-pack='duotone'] .icon-pod,
 html[data-icon-pack='duotone'] [data-icon-pod] {
   background: linear-gradient(135deg, color-mix(in oklch, var(--color-accent-brand) 30%, transparent), color-mix(in oklch, var(--color-accent-brand) 8%, transparent)) !important;
@@ -1335,7 +1419,7 @@ html[data-icon-pack='duotone'] [data-icon-pod] {
   color: var(--color-accent-brand) !important;
 }
 
-/* 4. Minimal Icon Pack */
+/* 9. Minimal Icon Pack */
 html[data-icon-pack='minimal'] .icon-pod,
 html[data-icon-pack='minimal'] [data-icon-pod] {
   background: oklch(1 0 0 / 0.05) !important;
@@ -1348,7 +1432,7 @@ html[data-icon-pack='minimal'] [data-icon-pod] svg.lucide {
   filter: none;
 }
 
-/* 5. Vibrant Gradient Icon Pack */
+/* 10. Vibrant Gradient Icon Pack */
 html[data-icon-pack='vibrant'] .icon-pod,
 html[data-icon-pack='vibrant'] [data-icon-pod] {
   background: linear-gradient(145deg, color-mix(in oklch, var(--color-accent-brand) 85%, white), var(--color-accent-brand)) !important;
@@ -1364,15 +1448,19 @@ html[data-icon-pack='vibrant'] [data-icon-pod] svg.lucide {
    TYPOGRAPHY ENGINE — Modern, Handwriting, Cyber Mono, Serif, 8-Bit Retro
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* 1. Handwriting Theme (Caveat, Kalam, Architects Daughter) */
-html[data-font-style='handwriting'] {
-  --font-display: 'Caveat', 'Architects Daughter', cursive;
-  --font-body: 'Kalam', 'Caveat', cursive;
+/* 1a. Handwriting Theme — Caveat (Calligraphic Flow) */
+html[data-font-style='handwriting'],
+html[data-font-style='handwriting-caveat'] {
+  --font-display: 'Caveat', cursive;
+  --font-body: 'Caveat', cursive;
   --font-brand: 'Caveat', cursive;
 }
-html[data-font-style='handwriting'] body {
-  font-family: 'Kalam', 'Caveat', cursive;
-  letter-spacing: 0.01em;
+html[data-font-style='handwriting'] body,
+html[data-font-style='handwriting-caveat'] body {
+  font-family: 'Caveat', cursive;
+  font-size: 1.15rem;
+  letter-spacing: 0.02em;
+  line-height: 1.45;
 }
 html[data-font-style='handwriting'] h1,
 html[data-font-style='handwriting'] h2,
@@ -1381,15 +1469,109 @@ html[data-font-style='handwriting'] h4,
 html[data-font-style='handwriting'] h5,
 html[data-font-style='handwriting'] h6,
 html[data-font-style='handwriting'] .font-display,
-html[data-font-style='handwriting'] .font-brand {
-  font-family: 'Caveat', 'Architects Daughter', cursive !important;
+html[data-font-style='handwriting'] .font-brand,
+html[data-font-style='handwriting-caveat'] h1,
+html[data-font-style='handwriting-caveat'] h2,
+html[data-font-style='handwriting-caveat'] h3,
+html[data-font-style='handwriting-caveat'] h4,
+html[data-font-style='handwriting-caveat'] h5,
+html[data-font-style='handwriting-caveat'] h6,
+html[data-font-style='handwriting-caveat'] .font-display,
+html[data-font-style='handwriting-caveat'] .font-brand {
+  font-family: 'Caveat', cursive !important;
   font-weight: 700;
   letter-spacing: 0.02em;
 }
 html[data-font-style='handwriting'] button,
 html[data-font-style='handwriting'] input,
-html[data-font-style='handwriting'] textarea {
+html[data-font-style='handwriting'] textarea,
+html[data-font-style='handwriting-caveat'] button,
+html[data-font-style='handwriting-caveat'] input,
+html[data-font-style='handwriting-caveat'] textarea {
+  font-family: 'Caveat', cursive;
+}
+
+/* 1b. Handwriting Theme — Kalam (Casual Brush Marker) */
+html[data-font-style='handwriting-kalam'] {
+  --font-display: 'Kalam', cursive;
+  --font-body: 'Kalam', cursive;
+  --font-brand: 'Kalam', cursive;
+}
+html[data-font-style='handwriting-kalam'] body {
   font-family: 'Kalam', cursive;
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+html[data-font-style='handwriting-kalam'] h1,
+html[data-font-style='handwriting-kalam'] h2,
+html[data-font-style='handwriting-kalam'] h3,
+html[data-font-style='handwriting-kalam'] h4,
+html[data-font-style='handwriting-kalam'] h5,
+html[data-font-style='handwriting-kalam'] h6,
+html[data-font-style='handwriting-kalam'] .font-display,
+html[data-font-style='handwriting-kalam'] .font-brand {
+  font-family: 'Kalam', cursive !important;
+  font-weight: 700;
+}
+html[data-font-style='handwriting-kalam'] button,
+html[data-font-style='handwriting-kalam'] input,
+html[data-font-style='handwriting-kalam'] textarea {
+  font-family: 'Kalam', cursive;
+}
+
+/* 1c. Handwriting Theme — Architects Daughter (Draftsman) */
+html[data-font-style='handwriting-architect'] {
+  --font-display: 'Architects Daughter', cursive;
+  --font-body: 'Architects Daughter', cursive;
+  --font-brand: 'Architects Daughter', cursive;
+}
+html[data-font-style='handwriting-architect'] body {
+  font-family: 'Architects Daughter', cursive;
+  font-size: 1.02rem;
+  letter-spacing: 0.02em;
+}
+html[data-font-style='handwriting-architect'] h1,
+html[data-font-style='handwriting-architect'] h2,
+html[data-font-style='handwriting-architect'] h3,
+html[data-font-style='handwriting-architect'] h4,
+html[data-font-style='handwriting-architect'] h5,
+html[data-font-style='handwriting-architect'] h6,
+html[data-font-style='handwriting-architect'] .font-display,
+html[data-font-style='handwriting-architect'] .font-brand {
+  font-family: 'Architects Daughter', cursive !important;
+  font-weight: 700;
+}
+html[data-font-style='handwriting-architect'] button,
+html[data-font-style='handwriting-architect'] input,
+html[data-font-style='handwriting-architect'] textarea {
+  font-family: 'Architects Daughter', cursive;
+}
+
+/* 1d. Handwriting Theme — Indie Flower (Playful Doodler) */
+html[data-font-style='handwriting-indie'] {
+  --font-display: 'Indie Flower', cursive;
+  --font-body: 'Indie Flower', cursive;
+  --font-brand: 'Indie Flower', cursive;
+}
+html[data-font-style='handwriting-indie'] body {
+  font-family: 'Indie Flower', cursive;
+  font-size: 1.1rem;
+}
+html[data-font-style='handwriting-indie'] h1,
+html[data-font-style='handwriting-indie'] h2,
+html[data-font-style='handwriting-indie'] h3,
+html[data-font-style='handwriting-indie'] h4,
+html[data-font-style='handwriting-indie'] h5,
+html[data-font-style='handwriting-indie'] h6,
+html[data-font-style='handwriting-indie'] .font-display,
+html[data-font-style='handwriting-indie'] .font-brand {
+  font-family: 'Indie Flower', cursive !important;
+  font-weight: 700;
+}
+html[data-font-style='handwriting-indie'] button,
+html[data-font-style='handwriting-indie'] input,
+html[data-font-style='handwriting-indie'] textarea {
+  font-family: 'Indie Flower', cursive;
 }
 
 /* 2. Cyber Mono Theme (JetBrains Mono) */

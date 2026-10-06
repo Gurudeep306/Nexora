@@ -39,11 +39,37 @@ export type GlassStyle = 'frosted' | 'clear' | 'solid'
 
 export type CardStyle = 'glass' | 'neon' | 'minimal' | 'holo' | 'gradient'
 
-export type IconPack = 'vibrant' | 'neon' | 'minimal' | 'duotone' | 'clay'
+export type IconPack =
+  | 'vibrant'
+  | 'neon'
+  | 'anime'
+  | 'glitch'
+  | 'crystal'
+  | 'retro'
+  | 'emerald'
+  | 'duotone'
+  | 'clay'
+  | 'minimal'
 
-export type IconShape = 'squircle' | 'circle' | 'hexagon' | 'free'
+export type IconShape =
+  | 'squircle'
+  | 'circle'
+  | 'diamond'
+  | 'shield'
+  | 'hexagon'
+  | 'pill'
+  | 'free'
 
-export type FontStyle = 'modern' | 'handwriting' | 'cyber' | 'serif' | 'retro'
+export type FontStyle =
+  | 'modern'
+  | 'handwriting'
+  | 'handwriting-caveat'
+  | 'handwriting-kalam'
+  | 'handwriting-architect'
+  | 'handwriting-indie'
+  | 'cyber'
+  | 'serif'
+  | 'retro'
 
 export const GLASS_STYLES: { id: GlassStyle; label: string; hint: string }[] = [
   { id: 'frosted', label: 'Frosted', hint: 'Soft, diffused glass — the macOS NSVisualEffectView standard.' },
@@ -84,57 +110,101 @@ export const CARD_STYLES: { id: CardStyle; label: string; hint: string; previewC
   },
 ]
 
-export const ICON_PACKS: { id: IconPack; label: string; hint: string }[] = [
-  { id: 'vibrant', label: 'Vibrant Tiles', hint: 'macOS-inspired rich saturated gradient tiles with specular top sheen.' },
-  { id: 'neon', label: 'Cyber Neon', hint: 'Electric glowing laser strokes with dark background pods and neon aura.' },
-  { id: 'minimal', label: 'Minimal Monochrome', hint: 'Sleek, distraction-free neutral glyphs with subtle hover lift.' },
-  { id: 'duotone', label: 'Duotone Layered', hint: 'Two-tone depth with tinted translucent secondary fills.' },
-  { id: 'clay', label: '3D Embossed', hint: 'Soft isometric tactile bevel and specular embossed lighting.' },
+export const ICON_PACKS: { id: IconPack; label: string; hint: string; previewBadge: string }[] = [
+  { id: 'vibrant', label: 'Vibrant Tiles', hint: 'macOS-inspired rich saturated gradient tiles with specular top glass sheen.', previewBadge: 'macOS' },
+  { id: 'neon', label: 'Cyber Neon', hint: 'Electric glowing laser strokes with dark background pods and neon aura bloom.', previewBadge: 'Cyber' },
+  { id: 'anime', label: 'Anime Pastel Aura', hint: 'Pastel celestial shimmer with kawaii glowing aura and soft star highlights.', previewBadge: 'Anime' },
+  { id: 'glitch', label: 'Chromatic Glitch', hint: 'Split-channel cyan and magenta RGB shift with scanline edges.', previewBadge: 'Glitch' },
+  { id: 'crystal', label: 'Crystal Prism Glass', hint: 'Hyper-refractive diamond glassmorphism with iridescent chromatic borders.', previewBadge: 'Prism' },
+  { id: 'retro', label: '8-Bit Arcade Box', hint: 'Chunky pixelated border with 80s arcade gaming nostalgia.', previewBadge: '8-Bit' },
+  { id: 'emerald', label: 'Matrix Phosphor', hint: 'Cathode terminal CRT phosphor glow with circuit outline.', previewBadge: 'Matrix' },
+  { id: 'duotone', label: 'Duotone Layered', hint: 'Two-tone depth with tinted translucent secondary fills.', previewBadge: 'Duotone' },
+  { id: 'clay', label: '3D Embossed Clay', hint: 'Soft isometric tactile bevel and specular embossed lighting.', previewBadge: '3D Clay' },
+  { id: 'minimal', label: 'Minimal Monochrome', hint: 'Sleek, distraction-free neutral glyphs with subtle hover lift.', previewBadge: 'Minimal' },
 ]
 
-export const ICON_SHAPES: { id: IconShape; label: string }[] = [
-  { id: 'squircle', label: 'Squircle (28%)' },
-  { id: 'circle', label: 'Circular Pod' },
-  { id: 'hexagon', label: 'Cyber Hexagon' },
-  { id: 'free', label: 'Floating Glyph' },
+export const ICON_SHAPES: { id: IconShape; label: string; hint: string }[] = [
+  { id: 'squircle', label: 'Squircle (28%)', hint: 'Apple iOS continuous curvature' },
+  { id: 'circle', label: 'Circular Pod', hint: 'Floating rounded coin pod' },
+  { id: 'diamond', label: 'Diamond Rhombus', hint: '45-degree angled squircle' },
+  { id: 'shield', label: 'Crest Shield', hint: 'Heraldic gaming badge crest' },
+  { id: 'hexagon', label: 'Cyber Hexagon', hint: 'Sci-fi six-sided polygon' },
+  { id: 'pill', label: 'Capsule Pill', hint: 'Extended smooth capsule' },
+  { id: 'free', label: 'Floating Glyph', hint: 'Pure borderless glyph' },
 ]
 
 /* ── Typography & Handwriting Options ────────────────────────────────────── */
-export const FONT_STYLES: { id: FontStyle; label: string; hint: string; sample: string; badge: string }[] = [
+export const FONT_STYLES: {
+  id: FontStyle
+  label: string
+  hint: string
+  sample: string
+  badge: string
+  category: 'handwriting' | 'standard'
+}[] = [
+  {
+    id: 'handwriting-caveat',
+    label: 'Caveat (Fluid Calligraphy)',
+    hint: 'Organic flowing cursive handwriting with energetic pen strokes and natural ligature.',
+    sample: 'Quick thoughts & elegant notes ✨',
+    badge: 'Cursive Script',
+    category: 'handwriting',
+  },
+  {
+    id: 'handwriting-kalam',
+    label: 'Kalam (Casual Brush Marker)',
+    hint: 'Warm, relaxed felt-tip handwriting with friendly organic letterforms.',
+    sample: 'Daily code practice & journal 📝',
+    badge: 'Brush Marker',
+    category: 'handwriting',
+  },
+  {
+    id: 'handwriting-architect',
+    label: 'Architects Daughter (Draftsman)',
+    hint: 'Crisp architectural hand lettering inspired by blueprint drafting pencils.',
+    sample: 'Algorithm design & blueprints 📐',
+    badge: 'Blueprint Draft',
+    category: 'handwriting',
+  },
+  {
+    id: 'handwriting-indie',
+    label: 'Indie Flower (Playful Doodler)',
+    hint: 'Carefree, bubbly doodle handwriting with charming carefree personality.',
+    sample: 'Creative ideas & doodles 🌸',
+    badge: 'Doodle Sketch',
+    category: 'handwriting',
+  },
   {
     id: 'modern',
     label: 'Modern Sans',
-    hint: 'Native Apple SF Pro & Inter typography for crisp UI clarity.',
-    sample: 'Algorithms & Code',
+    hint: 'Native Apple SF Pro & Inter typography for crisp UI clarity and fast scanning.',
+    sample: 'Clean System UI & Code',
     badge: 'Clean Sans',
-  },
-  {
-    id: 'handwriting',
-    label: 'Handwriting Script',
-    hint: 'Organic expressive calligraphy (Caveat & Kalam) for a personalized handwritten vibe.',
-    sample: 'Quick notes & ideas ✨',
-    badge: 'Handwritten',
+    category: 'standard',
   },
   {
     id: 'cyber',
-    label: 'Cyber Mono',
+    label: 'Cyber Monospace',
     hint: 'Developer monospace terminal code style (JetBrains Mono & Fira Code).',
     sample: 'const solve = () => 42;',
-    badge: 'Monospace',
+    badge: 'Terminal Mono',
+    category: 'standard',
   },
   {
     id: 'serif',
     label: 'Classic Editorial',
     hint: 'Refined literary serif with high academic elegance (Playfair Display).',
     sample: 'Philosophy of Computing',
-    badge: 'Editorial',
+    badge: 'Editorial Serif',
+    category: 'standard',
   },
   {
     id: 'retro',
     label: '8-Bit Arcade',
     hint: 'Nostalgic pixelated gaming font from the golden 8-bit arcade era.',
-    sample: 'READY PLAYER ONE',
-    badge: 'Retro 8-Bit',
+    sample: 'READY PLAYER ONE 👾',
+    badge: '8-Bit Pixel',
+    category: 'standard',
   },
 ]
 
@@ -158,110 +228,110 @@ export const THEME_PACKS: ThemePack[] = [
   /* Anime & Studio Ghibli */
   {
     id: 'ghibli-meadow',
-    name: 'Studio Ghibli Meadow',
+    name: 'Studio Ghibli Countryside',
     genre: 'anime',
-    badge: 'Anime Classic',
-    description: 'Tranquil countryside meadow under summer cumulus anime clouds with handwritten cursive warmth.',
+    badge: 'Ghibli Masterpiece',
+    description: 'Authentic hand-painted anime countryside with wildflower hills, rustic mill, and fluid Caveat cursive handwriting.',
     wallpaper: 'ghibli-meadow',
     accent: 'green',
     cardStyle: 'glass',
-    iconPack: 'vibrant',
+    iconPack: 'anime',
     iconShape: 'circle',
-    fontStyle: 'handwriting',
+    fontStyle: 'handwriting-caveat',
     glowColor: '#32d74b',
   },
   {
     id: 'your-name-dusk',
     name: 'Your Name Twilight Comet',
     genre: 'anime',
-    badge: 'Anime Romance',
-    description: 'Makoto Shinkai style cosmic twilight dusk sky, hyper violet plasma, holographic cards and handwritten notes.',
+    badge: 'Makoto Shinkai',
+    description: 'Iconic Katawaredoki twilight scene: Taki & Mitsuha under the splitting cosmic meteor over the crater lake with Kalam handwriting.',
     wallpaper: 'your-name-dusk',
     accent: 'plasma',
     cardStyle: 'holo',
-    iconPack: 'duotone',
+    iconPack: 'crystal',
     iconShape: 'squircle',
-    fontStyle: 'handwriting',
+    fontStyle: 'handwriting-kalam',
     glowColor: '#d946ef',
   },
   {
-    id: 'neo-tokyo-rain',
-    name: 'Neo-Tokyo Edgerunners',
+    id: 'demon-slayer-wisteria',
+    name: 'Demon Slayer: Mount Fujikasane',
     genre: 'anime',
-    badge: 'Anime Cyberpunk',
-    description: 'Rain-slicked Shibuya alley with vibrant lanterns, Cyber Neon cards, cyber mono font and neon laser glyphs.',
-    wallpaper: 'tokyo-rain-neon',
+    badge: 'Demon Slayer',
+    description: 'Mount Fujikasane draped in glowing wisteria blossoms under a radiant full moon, Tanjiro & Nezuko, with anime aura icons.',
+    wallpaper: 'demon-slayer-wisteria',
     accent: 'purple',
-    cardStyle: 'neon',
-    iconPack: 'neon',
-    iconShape: 'hexagon',
-    fontStyle: 'cyber',
+    cardStyle: 'glass',
+    iconPack: 'anime',
+    iconShape: 'circle',
+    fontStyle: 'handwriting-caveat',
     glowColor: '#bf5af2',
   },
   {
-    id: 'wisteria-moon',
-    name: 'Demon Slayer Wisteria',
+    id: 'solo-leveling',
+    name: 'Solo Leveling: Shadow Monarch',
     genre: 'anime',
-    badge: 'Anime Fantasy',
-    description: 'Glowing purple wisteria blossoms under moonlight, deep violet accents, and floating glass cards.',
-    wallpaper: 'wisteria-moon',
+    badge: 'Solo Leveling',
+    description: 'Sung Jin-woo wielding glowing cyan daggers with his ethereal shadow extraction army, Cyber Neon cards, and crest shield icons.',
+    wallpaper: 'solo-leveling-monarch',
     accent: 'purple',
-    cardStyle: 'glass',
-    iconPack: 'vibrant',
-    iconShape: 'circle',
-    fontStyle: 'handwriting',
-    glowColor: '#bf5af2',
+    cardStyle: 'neon',
+    iconPack: 'neon',
+    iconShape: 'shield',
+    fontStyle: 'cyber',
+    glowColor: '#a855f7',
   },
 
   /* Pokemon & Gaming Legends */
   {
     id: 'pikachu-volt',
-    name: 'Pikachu Thunderbolt',
+    name: 'Pikachu Thunderbolt Arena',
     genre: 'gaming',
     badge: 'Pokemon Electric',
-    description: 'Crackling electric storm lightning, intense Cyber Gold accent, Neon glowing cards and 8-bit retro arcade vibes.',
+    description: 'Dynamic Pikachu unleashing crackling high-voltage thunderbolts in the championship stadium, with diamond icons and 8-bit arcade font.',
     wallpaper: 'pikachu-volt',
     accent: 'yellow',
     cardStyle: 'neon',
     iconPack: 'vibrant',
-    iconShape: 'circle',
+    iconShape: 'diamond',
     fontStyle: 'retro',
     glowColor: '#ffd60a',
   },
   {
     id: 'charizard-core',
-    name: 'Charizard Volcanic Core',
+    name: 'Charizard Volcanic Vortex',
     genre: 'gaming',
     badge: 'Pokemon Fire',
-    description: 'Roaring molten magma core, solar flare amber glow, Aurora Mesh flowing cards and tactile clay pods.',
+    description: 'Fierce Charizard unleashing a towering dragon firestorm tornado into the volcanic sky, with tactile 3D clay pods and drafting hand.',
     wallpaper: 'charizard-core',
     accent: 'orange',
     cardStyle: 'gradient',
     iconPack: 'clay',
     iconShape: 'squircle',
-    fontStyle: 'modern',
+    fontStyle: 'handwriting-architect',
     glowColor: '#ff9f0a',
   },
   {
-    id: 'lavender-mystic',
-    name: 'Lavender Town Mystical',
+    id: 'cyberpunk-edgerunners',
+    name: 'Cyberpunk Edgerunners: Moon',
     genre: 'gaming',
-    badge: 'Pokemon Ghost',
-    description: 'Ethereal lavender nebula fog, phantom purple lighting, holographic cards and mysterious cursive script.',
-    wallpaper: 'lavender-fog',
-    accent: 'purple',
-    cardStyle: 'holo',
-    iconPack: 'duotone',
-    iconShape: 'circle',
-    fontStyle: 'handwriting',
-    glowColor: '#bf5af2',
+    badge: 'Night City',
+    description: 'David and Lucy on the high-rise rooftop looking up at the giant neon moon over Arasaka Night City, with chromatic glitch icons.',
+    wallpaper: 'cyberpunk-edgerunners',
+    accent: 'cyan',
+    cardStyle: 'neon',
+    iconPack: 'glitch',
+    iconShape: 'hexagon',
+    fontStyle: 'cyber',
+    glowColor: '#06b6d4',
   },
   {
     id: 'elden-tree',
-    name: 'Elden Ring Erdtree',
+    name: 'Elden Ring Erdtree Grace',
     genre: 'gaming',
     badge: 'Soulslike Fantasy',
-    description: 'Colossal radiant golden tree glowing in the twilight mist, golden grace accent and refined literary serif.',
+    description: 'Radiant Erdtree glowing through the gothic mist, golden grace accent, tactile clay pods and literary editorial serif.',
     wallpaper: 'elden-tree',
     accent: 'yellow',
     cardStyle: 'glass',
@@ -270,77 +340,63 @@ export const THEME_PACKS: ThemePack[] = [
     fontStyle: 'serif',
     glowColor: '#ffd60a',
   },
-  {
-    id: 'cyberpunk-2077',
-    name: 'Cyberpunk 2077 Night City',
-    genre: 'gaming',
-    badge: 'Sci-Fi RPG',
-    description: 'Towering megacity skyline, Quantum Cyan laser grids, cyber hexagon icons and monospace terminal font.',
-    wallpaper: 'night-city-2077',
-    accent: 'cyan',
-    cardStyle: 'neon',
-    iconPack: 'neon',
-    iconShape: 'hexagon',
-    fontStyle: 'cyber',
-    glowColor: '#06b6d4',
-  },
 
   /* Famous Sci-Fi & Pop Culture Series */
   {
-    id: 'interstellar-void',
-    name: 'Interstellar Gargantua',
+    id: 'spider-multiverse',
+    name: 'Spider-Verse: Multiverse Rift',
+    genre: 'series',
+    badge: 'Marvel Multiverse',
+    description: 'Halftone comic reality tear shattering across the neon Brooklyn skyline, graffiti street art energy, and playful doodler handwriting.',
+    wallpaper: 'spider-verse-multiverse',
+    accent: 'pink',
+    cardStyle: 'neon',
+    iconPack: 'glitch',
+    iconShape: 'diamond',
+    fontStyle: 'handwriting-indie',
+    glowColor: '#ff375f',
+  },
+  {
+    id: 'matrix-terminal',
+    name: 'The Matrix: Digital Green Rain',
+    genre: 'series',
+    badge: 'Cult Sci-Fi',
+    description: 'Cascading emerald green Katakana digital rain streaming down CRT monitors, Matrix phosphor icons, and developer monospace.',
+    wallpaper: 'matrix-digital-rain',
+    accent: 'green',
+    cardStyle: 'neon',
+    iconPack: 'emerald',
+    iconShape: 'hexagon',
+    fontStyle: 'cyber',
+    glowColor: '#22c55e',
+  },
+  {
+    id: 'arcane-hextech',
+    name: 'Arcane: Piltover Hextech Core',
+    genre: 'series',
+    badge: 'Piltover Tech',
+    description: 'Ornate brass steampunk astrolabe housing the glowing electric cyan Hextech gemstone crystal, crystal prism icons, and crest shield.',
+    wallpaper: 'arcane-hextech',
+    accent: 'cyan',
+    cardStyle: 'holo',
+    iconPack: 'crystal',
+    iconShape: 'shield',
+    fontStyle: 'serif',
+    glowColor: '#06b6d4',
+  },
+  {
+    id: 'interstellar-gargantua',
+    name: 'Interstellar: Gargantua Singularity',
     genre: 'series',
     badge: 'Sci-Fi Epic',
-    description: 'Gravitational accretion disk around a supermassive black hole, Solar Flare gold rim, and 3D Hologram cards.',
-    wallpaper: 'gargantua-hole',
+    description: 'Scientifically accurate gravitational lensing and blinding golden accretion disk around Gargantua black hole with 3D hologram cards.',
+    wallpaper: 'interstellar-gargantua',
     accent: 'orange',
     cardStyle: 'holo',
     iconPack: 'clay',
     iconShape: 'circle',
     fontStyle: 'modern',
     glowColor: '#ff9f0a',
-  },
-  {
-    id: 'spider-glitch',
-    name: 'Spider-Verse Multiverse',
-    genre: 'series',
-    badge: 'Marvel Multiverse',
-    description: 'Chromatic glitch reality tears, Neon Cherry crimson pulses, cyber neon cards and street-art comic energy.',
-    wallpaper: 'spider-portal',
-    accent: 'pink',
-    cardStyle: 'neon',
-    iconPack: 'neon',
-    iconShape: 'hexagon',
-    fontStyle: 'cyber',
-    glowColor: '#ff375f',
-  },
-  {
-    id: 'matrix-terminal',
-    name: 'The Matrix Terminal',
-    genre: 'series',
-    badge: 'Cult Sci-Fi',
-    description: 'Cascading emerald green digital code on obsidian terminal, pure green neon cards and developer monospace.',
-    wallpaper: 'matrix-terminal',
-    accent: 'green',
-    cardStyle: 'neon',
-    iconPack: 'neon',
-    iconShape: 'hexagon',
-    fontStyle: 'cyber',
-    glowColor: '#32d74b',
-  },
-  {
-    id: 'arcane-hextech',
-    name: 'Arcane Hextech Core',
-    genre: 'series',
-    badge: 'Piltover Tech',
-    description: 'Pulsating electric cyan hextech crystal core, brass astrolabe contours, holographic cards and classic serif font.',
-    wallpaper: 'arcane-hextech',
-    accent: 'cyan',
-    cardStyle: 'holo',
-    iconPack: 'duotone',
-    iconShape: 'squircle',
-    fontStyle: 'serif',
-    glowColor: '#06b6d4',
   },
 
   /* Minimal & Nature */
@@ -359,31 +415,17 @@ export const THEME_PACKS: ThemePack[] = [
     glowColor: '#8e8e93',
   },
   {
-    id: 'synthwave-outrun',
-    name: '80s Synthwave Outrun',
-    genre: 'cyber',
-    badge: 'Retro Futurism',
-    description: 'Neon wireframe horizon, gradient glowing sun, Hyper Plasma neon cards and 8-bit retro gaming typography.',
-    wallpaper: 'synthwave-grid',
-    accent: 'plasma',
-    cardStyle: 'gradient',
-    iconPack: 'vibrant',
-    iconShape: 'squircle',
-    fontStyle: 'retro',
-    glowColor: '#d946ef',
-  },
-  {
     id: 'alpine-frost',
     name: 'Alpine Glacial Mist',
     genre: 'nature',
     badge: 'Crisp & Clean',
-    description: 'Mirror-still turquoise glacial lake, Frost Ice accent, macOS crystal glass cards and handwritten script.',
+    description: 'Mirror-still turquoise glacial lake, Frost Ice accent, macOS crystal glass cards and fluid Caveat handwriting script.',
     wallpaper: 'alpine-mirror',
     accent: 'ice',
     cardStyle: 'glass',
     iconPack: 'vibrant',
     iconShape: 'circle',
-    fontStyle: 'handwriting',
+    fontStyle: 'handwriting-caveat',
     glowColor: '#38bdf8',
   },
 ]
@@ -474,28 +516,28 @@ export const ORIGINALS: OriginalWallpaper[] = [
 export const PHOTOS: PhotoWallpaper[] = [
   /* ── 1. Anime & Studio Ghibli ── */
   {
-    id: 'ghibli-meadow', name: 'Ghibli Summer Meadow', kind: 'photo', category: 'anime', tone: 'light', accent: 'green',
-    src: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb',
+    id: 'ghibli-meadow', name: 'Studio Ghibli Countryside', kind: 'photo', category: 'anime', tone: 'light', accent: 'green',
+    src: '/wallpapers/ghibli-meadow.jpg',
     color: '#1a3318', tint: '#2f5e2c',
-    credit: { name: 'Bailey Zindel', username: 'baileyzindel', photoId: 'meadow-valley' },
+    credit: { name: 'Studio Ghibli Aesthetic', username: 'local', photoId: 'ghibli-meadow' },
   },
   {
     id: 'your-name-dusk', name: 'Your Name Twilight Comet', kind: 'photo', category: 'anime', tone: 'dark', accent: 'plasma',
-    src: 'https://images.unsplash.com/photo-1519681393784-d120267933ba',
+    src: '/wallpapers/your-name-dusk.jpg',
     color: '#1a102b', tint: '#3e2469',
-    credit: { name: 'Benjamin Davies', username: 'bendavisual', photoId: 'milky-way-shooting-star' },
+    credit: { name: 'Makoto Shinkai (Kimi no Na wa)', username: 'local', photoId: 'your-name' },
   },
   {
-    id: 'tokyo-rain-neon', name: 'Neo-Tokyo Neon Rain', kind: 'photo', category: 'anime', tone: 'dark', accent: 'purple',
-    src: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26',
-    color: '#0d1326', tint: '#1f2e5c',
-    credit: { name: 'Aleksandar Pasaric', username: 'apasaric', photoId: 'tokyo-shinjuku-neon' },
-  },
-  {
-    id: 'wisteria-moon', name: 'Demon Slayer Sakura Moonlight', kind: 'photo', category: 'anime', tone: 'dark', accent: 'purple',
-    src: 'https://images.unsplash.com/photo-1522383225653-ed111181a951',
+    id: 'demon-slayer-wisteria', name: 'Demon Slayer: Mount Fujikasane', kind: 'photo', category: 'anime', tone: 'dark', accent: 'purple',
+    src: '/wallpapers/demon-slayer-wisteria.jpg',
     color: '#24081c', tint: '#571342',
-    credit: { name: 'AJ', username: 'aj_blossoms', photoId: 'sakura-night' },
+    credit: { name: 'Kimetsu no Yaiba', username: 'local', photoId: 'demon-slayer' },
+  },
+  {
+    id: 'solo-leveling-monarch', name: 'Solo Leveling: Shadow Monarch', kind: 'photo', category: 'anime', tone: 'dark', accent: 'purple',
+    src: '/wallpapers/solo-leveling-monarch.jpg',
+    color: '#0e0b1f', tint: '#291e54',
+    credit: { name: 'Solo Leveling (Sung Jin-woo)', username: 'local', photoId: 'solo-leveling' },
   },
   {
     id: 'anime-shrine', name: 'Fushimi Inari Torii Shrine', kind: 'photo', category: 'anime', tone: 'dark', accent: 'orange',
@@ -512,22 +554,22 @@ export const PHOTOS: PhotoWallpaper[] = [
 
   /* ── 2. Pokemon & Legendary Gaming ── */
   {
-    id: 'pikachu-volt', name: 'Pikachu Thunderbolt Storm', kind: 'photo', category: 'gaming', tone: 'dark', accent: 'yellow',
-    src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Port_and_lighthouse_overnight_storm_with_lightning_in_Port-la-Nouvelle.jpg/1920px-Port_and_lighthouse_overnight_storm_with_lightning_in_Port-la-Nouvelle.jpg',
+    id: 'pikachu-volt', name: 'Pikachu Thunderbolt Arena', kind: 'photo', category: 'gaming', tone: 'dark', accent: 'yellow',
+    src: '/wallpapers/pikachu-volt.jpg',
     color: '#1a1829', tint: '#38325e',
-    credit: { name: 'Christian Ferrer', username: 'wikimedia', photoId: 'lightning-storm' },
+    credit: { name: 'Pokemon: Pikachu Championship Arena', username: 'local', photoId: 'pikachu-volt' },
   },
   {
-    id: 'charizard-core', name: 'Charizard Volcanic Magma', kind: 'photo', category: 'gaming', tone: 'dark', accent: 'orange',
-    src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/001_Volcano_eruption_of_Litli-Hr%C3%BAtur_in_Iceland_in_2023_Photo_by_Giles_Laurent.jpg/1920px-001_Volcano_eruption_of_Litli-Hr%C3%BAtur_in_Iceland_in_2023_Photo_by_Giles_Laurent.jpg',
+    id: 'charizard-core', name: 'Charizard Volcanic Vortex', kind: 'photo', category: 'gaming', tone: 'dark', accent: 'orange',
+    src: '/wallpapers/charizard-core.jpg',
     color: '#2b0a04', tint: '#661a0b',
-    credit: { name: 'Giles Laurent', username: 'wikimedia', photoId: 'volcano-eruption' },
+    credit: { name: 'Pokemon: Charizard Dragon Flame', username: 'local', photoId: 'charizard-fire' },
   },
   {
-    id: 'lavender-fog', name: 'Lavender Town Ethereal Mist', kind: 'photo', category: 'gaming', tone: 'dark', accent: 'purple',
-    src: 'https://images.unsplash.com/photo-1534447677768-be436bb09401',
-    color: '#150824', tint: '#37145c',
-    credit: { name: 'Johannes Plenio', username: 'jplenio', photoId: 'ethereal-lake-mist' },
+    id: 'cyberpunk-edgerunners', name: 'Cyberpunk Edgerunners: Moon', kind: 'photo', category: 'gaming', tone: 'dark', accent: 'cyan',
+    src: '/wallpapers/cyberpunk-edgerunners.jpg',
+    color: '#071829', tint: '#0d385e',
+    credit: { name: 'Cyberpunk: Edgerunners Night City', username: 'local', photoId: 'edgerunners-moon' },
   },
   {
     id: 'elden-tree', name: 'Elden Ring Stormveil Citadel', kind: 'photo', category: 'gaming', tone: 'dark', accent: 'yellow',
@@ -536,10 +578,10 @@ export const PHOTOS: PhotoWallpaper[] = [
     credit: { name: 'Benjamin Davies', username: 'bendavisual', photoId: 'gothic-citadel-fog' },
   },
   {
-    id: 'night-city-2077', name: 'Cyberpunk 2077 Night City', kind: 'photo', category: 'gaming', tone: 'dark', accent: 'cyan',
-    src: 'https://images.unsplash.com/photo-1514565131-fce0801e5785',
-    color: '#071829', tint: '#0d385e',
-    credit: { name: 'Sasha Freemind', username: 'sashafreemind', photoId: 'night-city-skyline' },
+    id: 'lavender-fog', name: 'Lavender Town Ethereal Mist', kind: 'photo', category: 'gaming', tone: 'dark', accent: 'purple',
+    src: 'https://images.unsplash.com/photo-1534447677768-be436bb09401',
+    color: '#150824', tint: '#37145c',
+    credit: { name: 'Johannes Plenio', username: 'jplenio', photoId: 'ethereal-lake-mist' },
   },
   {
     id: 'pallet-dusk', name: 'Pallet Town Horizon', kind: 'photo', category: 'gaming', tone: 'dark', accent: 'green',
@@ -550,28 +592,28 @@ export const PHOTOS: PhotoWallpaper[] = [
 
   /* ── 3. Sci-Fi & Pop Culture Series ── */
   {
-    id: 'gargantua-hole', name: 'Interstellar Cosmic Bubble', kind: 'photo', category: 'series', tone: 'dark', accent: 'orange',
-    src: 'https://images.unsplash.com/photo-1462331940025-496dfbfc7564',
+    id: 'interstellar-gargantua', name: 'Interstellar: Gargantua Singularity', kind: 'photo', category: 'series', tone: 'dark', accent: 'orange',
+    src: '/wallpapers/interstellar-gargantua.jpg',
     color: '#1f0d05', tint: '#4f200c',
-    credit: { name: 'NASA / JPL', username: 'nasa', photoId: 'supermassive-accretion' },
+    credit: { name: 'Interstellar Gargantua Accretion Disk', username: 'local', photoId: 'gargantua-singularity' },
   },
   {
-    id: 'spider-portal', name: 'Spider-Verse Neon Crossing', kind: 'photo', category: 'series', tone: 'dark', accent: 'pink',
-    src: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989',
+    id: 'spider-verse-multiverse', name: 'Spider-Verse: Multiverse Rift', kind: 'photo', category: 'series', tone: 'dark', accent: 'pink',
+    src: '/wallpapers/spider-verse-multiverse.jpg',
     color: '#260621', tint: '#5c104f',
-    credit: { name: 'Jezael Melgoza', username: 'jezael', photoId: 'shibuya-neon-crossing' },
+    credit: { name: 'Spider-Verse Dimensional Tear', username: 'local', photoId: 'spider-multiverse' },
   },
   {
-    id: 'matrix-terminal', name: 'Matrix Digital Rain', kind: 'photo', category: 'series', tone: 'dark', accent: 'green',
-    src: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5',
+    id: 'matrix-digital-rain', name: 'The Matrix: Digital Green Rain', kind: 'photo', category: 'series', tone: 'dark', accent: 'green',
+    src: '/wallpapers/matrix-digital-rain.jpg',
     color: '#031a0a', tint: '#084519',
-    credit: { name: 'Markus Spiske', username: 'markusspiske', photoId: 'matrix-code-stream' },
+    credit: { name: 'The Matrix Cyber Rain', username: 'local', photoId: 'matrix-rain' },
   },
   {
-    id: 'arcane-hextech', name: 'Arcane Hextech Core', kind: 'photo', category: 'series', tone: 'dark', accent: 'cyan',
-    src: 'https://images.unsplash.com/photo-1563089145-599997674d42',
+    id: 'arcane-hextech', name: 'Arcane: Piltover Hextech Core', kind: 'photo', category: 'series', tone: 'dark', accent: 'cyan',
+    src: '/wallpapers/arcane-hextech.jpg',
     color: '#071b26', tint: '#0f445e',
-    credit: { name: 'Steve Johnson', username: 'steve_j', photoId: 'hextech-prism' },
+    credit: { name: 'Arcane Piltover Hextech Gemstone', username: 'local', photoId: 'hextech-crystal' },
   },
   {
     id: 'hyperspace-jump', name: 'Star Wars Hyperspace', kind: 'photo', category: 'series', tone: 'dark', accent: 'blue',
@@ -737,6 +779,9 @@ export function wallpaperTone(w: Wallpaper, appearance: Tone): Tone {
 
 /** Delivers ultra-high resolution images up to 3840px 4K with premium compression (q=88). */
 export function photoUrl(w: PhotoWallpaper, width: number): string {
+  if (w.src.startsWith('/wallpapers/')) {
+    return w.src
+  }
   if (w.src.startsWith('https://upload.wikimedia.org') || w.src.startsWith('https://thumb.wikimedia.org')) {
     return w.src
   }
@@ -754,6 +799,9 @@ export function originalUrl(w: OriginalWallpaper, tone: Tone, size: 'full' | 'sm
 export function thumbUrl(w: Wallpaper, tone: Tone): string | null {
   if (w.kind === 'original') return originalUrl(w, tone, 'thumb')
   if (w.kind === 'photo') {
+    if (w.src.startsWith('/wallpapers/')) {
+      return w.src
+    }
     if (w.src.startsWith('https://upload.wikimedia.org') || w.src.startsWith('https://thumb.wikimedia.org')) {
       return w.src
     }
@@ -764,6 +812,13 @@ export function thumbUrl(w: Wallpaper, tone: Tone): string | null {
 }
 
 export function creditLinks(w: PhotoWallpaper) {
+  if (w.credit.username === 'local' || w.src.startsWith('/wallpapers/')) {
+    return {
+      photographer: '#',
+      photo: w.src,
+      unsplash: '#',
+    }
+  }
   if (w.credit.username === 'wikimedia' || w.credit.username === 'nasa') {
     return {
       photographer: `https://commons.wikimedia.org/`,

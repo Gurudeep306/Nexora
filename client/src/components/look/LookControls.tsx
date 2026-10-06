@@ -600,10 +600,10 @@ export function FontStylePicker({ className }: { className?: string }) {
     <div
       role="radiogroup"
       aria-label="Typography Style"
-      className={cn('grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3', className)}
+      className={cn('grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3', className)}
     >
       {FONT_STYLES.map((f) => {
-        const active = look.fontStyle === f.id
+        const active = look.fontStyle === f.id || (f.id === 'handwriting-caveat' && look.fontStyle === 'handwriting')
         return (
           <button
             key={f.id}
@@ -642,7 +642,10 @@ export function FontStylePicker({ className }: { className?: string }) {
               <div
                 className={cn(
                   'transition-colors',
-                  f.id === 'handwriting' && "font-['Caveat',cursive] text-lg font-bold text-accent-brand",
+                  (f.id === 'handwriting-caveat' || f.id === 'handwriting') && "font-['Caveat',cursive] text-xl font-bold text-accent-brand",
+                  f.id === 'handwriting-kalam' && "font-['Kalam',cursive] text-base font-bold text-amber-300",
+                  f.id === 'handwriting-architect' && "font-['Architects_Daughter',cursive] text-sm font-bold text-cyan-300",
+                  f.id === 'handwriting-indie' && "font-['Indie_Flower',cursive] text-base font-bold text-pink-300",
                   f.id === 'cyber' && "font-['JetBrains_Mono',monospace] text-xs font-semibold text-emerald-400",
                   f.id === 'serif' && "font-['Playfair_Display',serif] text-base italic text-purple-300",
                   f.id === 'retro' && "font-['Press_Start_2P',monospace] text-[10px] leading-relaxed text-amber-400",
@@ -766,6 +769,31 @@ export function IconPackPicker({ className }: { className?: string }) {
                   <Zap className="size-4.5 drop-shadow-[0_0_6px_currentColor]" />
                 </span>
               )}
+              {p.id === 'anime' && (
+                <span className="flex size-9 items-center justify-center rounded-xl bg-gradient-to-tr from-pink-400 to-indigo-400 text-white shadow-[0_0_12px_rgba(244,114,182,0.6)]">
+                  <Sparkles className="size-4.5" />
+                </span>
+              )}
+              {p.id === 'glitch' && (
+                <span className="flex size-9 items-center justify-center rounded-xl border border-cyan-400 bg-neutral-950 text-cyan-300 shadow-[-2px_0_0_#f43f5e,2px_0_0_#06b6d4]">
+                  <Zap className="size-4.5 drop-shadow-[-1px_0_0_#f43f5e]" />
+                </span>
+              )}
+              {p.id === 'crystal' && (
+                <span className="flex size-9 items-center justify-center rounded-xl border border-white/40 bg-white/20 text-white backdrop-blur-md shadow-[inset_0_1px_2px_rgba(255,255,255,0.6),0_4px_16px_rgba(255,255,255,0.2)]">
+                  <Sparkles className="size-4.5 drop-shadow-[0_0_6px_rgba(255,255,255,0.8)]" />
+                </span>
+              )}
+              {p.id === 'retro' && (
+                <span className="flex size-9 items-center justify-center rounded-sm border-2 border-amber-400 bg-neutral-900 text-amber-400 shadow-[2px_2px_0_0_#f59e0b]">
+                  <Flame className="size-4.5" />
+                </span>
+              )}
+              {p.id === 'emerald' && (
+                <span className="flex size-9 items-center justify-center rounded-xl border border-emerald-400 bg-emerald-950 text-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.5)]">
+                  <Zap className="size-4.5 drop-shadow-[0_0_4px_currentColor]" />
+                </span>
+              )}
               {p.id === 'clay' && (
                 <span className="flex size-9 items-center justify-center rounded-xl bg-gradient-to-b from-purple-500 to-indigo-700 text-white shadow-[inset_0_2px_3px_rgba(255,255,255,0.45),0_6px_12px_rgba(0,0,0,0.4)]">
                   <Flame className="size-4.5" />
@@ -801,7 +829,7 @@ export function IconShapePicker({ className }: { className?: string }) {
   const { look, setIconShape } = useTheme()
 
   return (
-    <div role="radiogroup" aria-label="Icon Shape" className={cn('grid grid-cols-2 gap-2 sm:grid-cols-4', className)}>
+    <div role="radiogroup" aria-label="Icon Shape" className={cn('grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7', className)}>
       {ICON_SHAPES.map((s) => {
         const on = look.iconShape === s.id
         return (
@@ -812,7 +840,7 @@ export function IconShapePicker({ className }: { className?: string }) {
             aria-checked={on}
             onClick={() => setIconShape(s.id)}
             className={cn(
-              'flex cursor-pointer items-center gap-2.5 rounded-xl border p-2.5 text-xs font-medium transition-all',
+              'flex cursor-pointer items-center gap-2 rounded-xl border p-2 text-xs font-medium transition-all',
               on
                 ? 'border-accent-brand bg-accent-brand/15 text-accent-brand ring-1 ring-accent-brand'
                 : 'border-border bg-bg-surface-2 text-text-muted hover:text-text-primary hover:border-border-strong',
@@ -824,14 +852,17 @@ export function IconShapePicker({ className }: { className?: string }) {
                 'flex size-7 shrink-0 items-center justify-center bg-accent-brand/20 text-accent-brand border border-accent-brand/40',
                 s.id === 'circle' && 'rounded-full',
                 s.id === 'squircle' && 'rounded-[28%]',
+                s.id === 'diamond' && 'rounded-none [clip-path:polygon(50%_0%,100%_50%,50%_100%,0%_50%)]',
+                s.id === 'shield' && 'rounded-none [clip-path:polygon(50%_0%,100%_15%,100%_70%,50%_100%,0%_70%,0%_15%)]',
                 s.id === 'hexagon' && 'rounded-none [clip-path:polygon(50%_0%,100%_25%,100%_75%,50%_100%,0%_75%,0%_25%)]',
+                s.id === 'pill' && 'rounded-full aspect-[1.3/1]',
                 s.id === 'free' && 'rounded-none bg-transparent border-transparent shadow-none',
               )}
             >
               <Sparkles className="size-3.5" />
             </span>
-            <span className="flex-1 text-left">{s.label}</span>
-            {on && <Check className="size-3.5 shrink-0" />}
+            <span className="flex-1 text-left truncate text-[11.5px]">{s.label}</span>
+            {on && <Check className="size-3 shrink-0" />}
           </button>
         )
       })}

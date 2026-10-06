@@ -97,9 +97,30 @@ export function sanitizeLook(raw: unknown): Look {
     'graphite',
   ]
   const cardStyles: CardStyle[] = ['glass', 'neon', 'minimal', 'holo', 'gradient']
-  const iconPacks: IconPack[] = ['vibrant', 'neon', 'minimal', 'duotone', 'clay']
-  const iconShapes: IconShape[] = ['squircle', 'circle', 'hexagon', 'free']
-  const fontStyles: FontStyle[] = ['modern', 'handwriting', 'cyber', 'serif', 'retro']
+  const iconPacks: IconPack[] = [
+    'vibrant',
+    'neon',
+    'anime',
+    'glitch',
+    'crystal',
+    'retro',
+    'emerald',
+    'duotone',
+    'clay',
+    'minimal',
+  ]
+  const iconShapes: IconShape[] = ['squircle', 'circle', 'diamond', 'shield', 'hexagon', 'pill', 'free']
+  const fontStyles: FontStyle[] = [
+    'modern',
+    'handwriting',
+    'handwriting-caveat',
+    'handwriting-kalam',
+    'handwriting-architect',
+    'handwriting-indie',
+    'cyber',
+    'serif',
+    'retro',
+  ]
 
   return {
     wallpaper: findWallpaper(r.wallpaper).id,
