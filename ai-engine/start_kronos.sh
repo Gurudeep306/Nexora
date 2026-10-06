@@ -1,24 +1,15 @@
 #!/usr/bin/env bash
-# ==============================================================================
-# Nexora Kronos-1: Launch Sovereign In-House AI Daemon
-# 100% Offline · Zero External API Dependencies · Localhost Only
-# ==============================================================================
-
+# Start the local Kronos-1 model server (127.0.0.1 only, no external calls).
 set -euo pipefail
 
-PORT="${PORT:-8000}"
-SECRET="${KRONOS_SECRET:-kronos-sovereign-intelligence-2026}"
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+export PORT="${PORT:-8000}"
+export NEXORA_INTERNAL_SECRET="${KRONOS_SECRET:-kronos-sovereign-intelligence-2026}"
 
-echo "============================================================"
-echo "  [⚡] STARTING KRONOS-1 SOVEREIGN NEURAL DAEMON"
-echo "  Port:      ${PORT}"
-echo "  Isolation: Localhost (127.0.0.1) Only - No Data Leaks"
-echo "  Status:    Active"
-echo "============================================================"
-
-export PORT="${PORT}"
-if [ -f "ai-engine/.venv/bin/python" ]; then
-  exec ai-engine/.venv/bin/python ai-engine/serve_api.py
+if [ -x "$ROOT/ai-engine/.venv/bin/python" ]; then
+  PY="$ROOT/ai-engine/.venv/bin/python"
 else
-  exec python3 ai-engine/serve_api.py
+  PY="python3"
 fi
+
+exec "$PY" "$ROOT/ai-engine/serve_api.py"
