@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import {
   ArrowDownWideNarrow,
   Binary,
@@ -10,6 +10,7 @@ import {
   ChevronUp,
   Cpu,
   Layers,
+  Play,
   RotateCcw,
   Search,
   SearchX,
@@ -310,6 +311,33 @@ export default function GatePage() {
             : 'Past-year questions from every GATE CSE, IT and DA paper.'
         }
       />
+
+      {/* ── Official GATE CBT Exam Mode Launch Banner ── */}
+      <div className="card relative overflow-hidden border-accent-brand/40 bg-gradient-to-r from-accent-brand/15 via-bg-surface-2/60 to-bg-surface p-4 sm:p-5 flex flex-wrap items-center justify-between gap-4 shadow-md">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <span className="rounded-lg bg-emerald-500/20 px-2.5 py-0.5 text-[11px] font-bold text-emerald-400 uppercase tracking-wider">
+              Real Exam Simulator
+            </span>
+            <span className="rounded-lg bg-accent-brand/20 px-2.5 py-0.5 text-[11px] font-bold text-accent-brand uppercase tracking-wider">
+              Official TCS iON CBT Mode
+            </span>
+          </div>
+          <h3 className="text-lg font-black text-text-primary">
+            Attempt Real 3-Hour GATE Papers in Authentic CBT Mode
+          </h3>
+          <p className="text-[13px] text-text-muted max-w-xl">
+            Experience real GATE exam pressure: 180-min timer, 5-state question palette, official virtual scientific calculator, and instant post-exam AI attempt analysis with Predicted All India Rank.
+          </p>
+        </div>
+
+        <Link
+          to="/gate/cbt"
+          className="btn-primary inline-flex items-center gap-2 !px-5 !py-2.5 !text-[13.5px] font-bold shadow-lg shadow-accent-brand/25 transition-all hover:scale-105 cursor-pointer"
+        >
+          <Play className="size-4" /> Launch CBT Exam Mode
+        </Link>
+      </div>
 
       {/* ── Quick Curated Presets Bar ── */}
       <div className="overflow-x-auto pb-1 scrollbar-none">
