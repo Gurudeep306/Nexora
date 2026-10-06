@@ -6,6 +6,7 @@
 const express = require("express");
 const crypto = require("crypto");
 const { meSql } = require("./context");
+const { kronosChat } = require("./kronos-engine");
 
 const LANGUAGES = [
   // Indian languages
@@ -144,37 +145,15 @@ async function myMemory(chunk, tl, sl) {
   return out.join("");
 }
 
-/* LLM: Nexora-Core private model first, then Groq, then Gemini as fallback. */
+/* LLM: Kronos sovereign AI engine first, zero external API required. */
 async function llm(messages, { json = false, maxTokens = 1200, temperature = 0.2, reasoning = "low" } = {}) {
-  const nexoraCoreUrl = process.env.NEXORA_CORE_URL;
-  const nexoraCoreKey = process.env.NEXORA_CORE_KEY || process.env.NEXORA_INTERNAL_SECRET;
-  if (nexoraCoreUrl) {
-    try {
-      const headers = { "Content-Type": "application/json" };
-      if (nexoraCoreKey) {
-        headers["Authorization"] = `Bearer ${nexoraCoreKey}`;
-        headers["X-Nexora-Secret"] = nexoraCoreKey;
-      }
-      const r = await fetch(nexoraCoreUrl, {
-        method: "POST",
-        headers,
-        body: JSON.stringify({
-          model: process.env.NEXORA_CORE_MODEL || "nexora-core-7b",
-          messages,
-          max_tokens: maxTokens,
-          temperature,
-          ...(json ? { response_format: { type: "json_object" } } : {}),
-        }),
-        signal: AbortSignal.timeout(45000),
-      }).catch(() => null);
-      if (r?.ok) {
-        const d = await r.json();
-        const content = d.choices?.[0]?.message?.content || "";
-        if (content.trim()) return content;
-      }
-    } catch {
-      /* fallback to secondary */
+  try {
+    const kRes = await kronosChat(null, messages, { maxTokens, temperature, json });
+    if (kRes && kRes.ok && kRes.content) {
+      return kRes.content;
     }
+  } catch {
+    /* fallback to secondary */
   }
 
   const groqKey = process.env.GROQ_API_KEY;

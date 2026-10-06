@@ -164,6 +164,9 @@ export function CyberMatrixPlayer({ visualization }: Props) {
           <div>
             <h4 className="font-display text-sm font-semibold tracking-wide text-white">{title}</h4>
             <div className="flex items-center gap-2 text-[11px] text-foreground-dim">
+              <span className="rounded border border-pink-500/40 bg-pink-500/15 px-1.5 py-0.2 text-[9px] font-bold tracking-wider text-pink-300 uppercase">
+                Kronos-1
+              </span>
               <span>{algorithm}</span>
               <span>·</span>
               <span className="font-mono text-cyan">{time_complexity}</span>

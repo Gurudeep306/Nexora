@@ -133,10 +133,10 @@ export function AiChatPanel() {
               ? 'border-pink-500/80 bg-gradient-to-r from-cyan/20 via-pink-500/20 to-purple-500/20 text-white shadow-[0_0_16px_rgba(236,72,153,0.4)]'
               : 'hover:border-cyan/50 hover:text-cyan'
           )}
-          title="Toggle Code & Pseudo-Code Kinetic 3D Animator"
+          title="Toggle Kronos Code & Pseudo-Code Kinetic 3D Animator"
         >
           <Film className="size-3.5 text-pink-400" />
-          <span>✨ Animate Code Mode</span>
+          <span>✨ Kronos 3D Animator</span>
           {animateMode && <span className="ml-1 size-1.5 rounded-full bg-cyan animate-pulse" />}
         </Button>
 
@@ -193,10 +193,15 @@ export function AiChatPanel() {
               <Sparkles className="size-6" />
             </div>
             <div>
-              <p className="font-display text-sm tracking-wider text-foreground">NEXORA QUANTUM AI TUTOR & ANIMATOR</p>
+              <div className="inline-flex items-center gap-1.5 rounded-full border border-pink-500/30 bg-pink-500/10 px-2.5 py-0.5 text-[10px] font-bold tracking-widest text-pink-300 uppercase">
+                Sovereign Neural Core · No External APIs
+              </div>
+              <p className="mt-2 font-display text-base font-bold tracking-wider text-foreground">
+                KRONOS-1 AI INTELLIGENCE
+              </p>
               <p className="mx-auto mt-1 max-w-md text-xs text-foreground-dim">
-                Conceptual coaching for competitive programming + 3D kinetic algorithm visualizer.
-                Paste any code or pseudo-code to generate interactive state machine animations.
+                100% In-house private neural brain. Socratic conceptual coaching + 3D kinetic
+                algorithm visualizer generated from scratch for any code or pseudo-code.
               </p>
             </div>
             <div className="flex max-w-xl flex-wrap justify-center gap-2">
@@ -341,7 +346,7 @@ export function AiChatPanel() {
         </Button>
       </div>
       <p className="flex items-center gap-1.5 text-[11px] text-foreground-faint">
-        <TriangleAlert className="size-3" /> Powered by Nexora-Omni Private Engine · Animate Code mode converts raw code into kinetic 3D state machines.
+        <TriangleAlert className="size-3 text-pink-400" /> Powered by Kronos-1 Sovereign Intelligence · 100% in-house private neural engine · No external APIs.
       </p>
     </div>
   )
