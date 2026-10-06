@@ -10,7 +10,7 @@ export default function NotFoundPage() {
       description="This sector doesn't exist. Teleport back to the hub."
       action={
         <Link to="/hub">
-          <Button variant="primary">Back to Hub</Button>
+          <Button variant="primary">Back to Home</Button>
         </Link>
       }
       className="py-24"

@@ -3,13 +3,9 @@ import { Link } from 'react-router-dom'
 import { motion } from 'motion/react'
 import {
   Activity,
-  Crown,
-  Flame,
   Medal,
   RefreshCw,
-  Target,
   Trophy,
-  Zap,
 } from 'lucide-react'
 import {
   Button,
@@ -21,13 +17,13 @@ import {
   LoadingBlock,
   PageHeader,
   Skeleton,
-  StatCard,
 } from '@/components/ui'
 import { api } from '@/lib/api'
 import { useApi } from '@/hooks/useApi'
 import { useAuth } from '@/context/AuthContext'
 import { formatNumber } from '@/lib/utils'
-import { GreetingHero } from '@/components/hub/GreetingHero'
+import { HomeHero } from '@/components/hub/HomeHero'
+import { LaunchGrid } from '@/components/hub/LaunchGrid'
 import { ActivityChart } from '@/components/hub/ActivityChart'
 import { DailyChallenges } from '@/components/hub/DailyChallenges'
 import { RecentSubmissions } from '@/components/hub/RecentSubmissions'
@@ -84,7 +80,7 @@ export default function HubPage() {
   if (statsApi.error && !stats) {
     return (
       <div>
-        <PageHeader title="Nexora HQ" subtitle="Your mission control" />
+        <PageHeader title="Home" subtitle="Your mission control" />
         <ErrorState message={statsApi.error} onRetry={statsApi.refetch} />
       </div>
     )
@@ -95,8 +91,8 @@ export default function HubPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Nexora HQ"
-        subtitle="Track XP, streaks and daily missions — then jump straight back into the arena."
+        title="Home"
+        subtitle="Your launchpad — jump straight into any corner of Nexora, then track the climb."
         actions={
           <Button
             variant="outline"
@@ -125,6 +121,9 @@ export default function HubPage() {
         stats={stats}
         dailyGoal={dailyGoal}
       />
+
+      {/* The launchpad: every destination, one beautiful jump-off point */}
+      <LaunchGrid />
 
       {/* Core stat cards */}
       <motion.div
