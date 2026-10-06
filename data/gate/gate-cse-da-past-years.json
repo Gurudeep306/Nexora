@@ -159,7 +159,13 @@
         2026
       ],
       "set_notes": "Some years were conducted in multiple sets/sessions (the set count differs per year and per source). The exact set list for each year is recorded inside that year's paper entries at population time — never guessed here.",
-      "populated_years": []
+      "populated_years": [
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ]
     },
     "DA": {
       "first_year": 2024,
@@ -172,6 +178,7 @@
       "set_notes": "The DA (Data Science & Artificial Intelligence) paper was introduced in GATE 2024.",
       "populated_years": [
         2024,
+        2025,
         2026
       ]
     }
