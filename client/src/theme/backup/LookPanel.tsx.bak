@@ -1,29 +1,17 @@
 import { useState } from 'react'
-import {
-  Droplets,
-  Image as ImageIcon,
-  PanelBottom,
-  Palette,
-  SunMoon,
-  Layers,
-  Shapes,
-  Sparkles,
-} from 'lucide-react'
-import { Button, Card, CardContent } from '@/components/ui'
+import { Droplets, Image as ImageIcon, PanelBottom, Palette, SunMoon } from 'lucide-react'
+import { Button } from '@/components/ui'
 import { DockEditor } from '@/components/layout/DockEditor'
+import { Card, CardContent } from '@/components/ui'
 import { useTheme } from '@/context/ThemeContext'
 import {
   AccentPicker,
   AppearanceCards,
-  CardStylePicker,
   GlassSegmented,
-  IconPackPicker,
-  IconShapePicker,
   PhotoCredit,
-  ThemePresetsPicker,
   WallpaperGrid,
 } from './LookControls'
-import { CARD_STYLES, GLASS_STYLES, ICON_PACKS } from '@/theme/catalog'
+import { GLASS_STYLES } from '@/theme/catalog'
 
 function Row({
   icon,
@@ -37,7 +25,7 @@ function Row({
   children: React.ReactNode
 }) {
   return (
-    <div className="grid gap-4 py-5 first:pt-1 last:pb-1 md:grid-cols-[220px_1fr] md:gap-8">
+    <div className="grid gap-4 py-5 first:pt-1 last:pb-1 md:grid-cols-[210px_1fr] md:gap-8">
       <div>
         <div className="flex items-center gap-2 text-[13.5px] font-semibold text-text-primary">
           <span className="flex size-6 items-center justify-center rounded-md bg-accent-brand/15 text-accent-brand [&_svg]:size-3.5">
@@ -52,22 +40,15 @@ function Row({
   )
 }
 
-/** Settings → Appearance: Full suite of appearance, wallpapers, card styles, and icon packs. */
+/** Settings → Appearance: the System Settings "Appearance" and "Wallpaper"
+ *  panes, together. Every change applies instantly and is saved to the
+ *  account, so the look follows the user to any browser they sign in on. */
 export function LookPanel() {
   const { look, wallpaper, resolvedAccent } = useTheme()
   const [dockOpen, setDockOpen] = useState(false)
-
   return (
     <Card>
       <CardContent className="divide-y divide-border px-5 py-4 md:px-6">
-        <Row
-          icon={<Sparkles />}
-          title="Theme Presets"
-          hint="Curated complete environments pairing wallpapers, chromatic accents, card styles, and icon packs in one click."
-        >
-          <ThemePresetsPicker />
-        </Row>
-
         <Row icon={<SunMoon />} title="Appearance" hint="Auto follows your system, switching at sunset if it does.">
           <AppearanceCards />
         </Row>
@@ -82,33 +63,11 @@ export function LookPanel() {
                 <span className="text-accent-brand">{resolvedAccent}</span>.
               </>
             ) : (
-              'Buttons, selections, focus rings and glowing rims.'
+              'Buttons, selections, links and focus rings.'
             )
           }
         >
           <AccentPicker />
-        </Row>
-
-        <Row
-          icon={<Layers />}
-          title="Card Aesthetics"
-          hint={CARD_STYLES.find((c) => c.id === look.cardStyle)?.hint ?? 'Choose card container styling.'}
-        >
-          <CardStylePicker />
-        </Row>
-
-        <Row
-          icon={<Shapes />}
-          title="Icon Pack & Shape"
-          hint={ICON_PACKS.find((p) => p.id === look.iconPack)?.hint ?? 'Customize dock and dashboard icons.'}
-        >
-          <div className="space-y-3">
-            <IconPackPicker />
-            <div className="pt-1">
-              <span className="mb-2 block text-xs font-semibold text-text-secondary">Icon Shape</span>
-              <IconShapePicker />
-            </div>
-          </div>
         </Row>
 
         <Row icon={<Droplets />} title="Glass" hint={GLASS_STYLES.find((g) => g.id === look.glass)?.hint}>
@@ -120,7 +79,7 @@ export function LookPanel() {
           title="Wallpaper"
           hint={
             <>
-              Choose from dynamic originals, cyberpunk, deep space, abstract 3D, landscapes, or upload your own image.
+              Originals are drawn for Nexora and change with Light and Dark — hover one to see its other half.
               <PhotoCredit className="mt-2" />
             </>
           }

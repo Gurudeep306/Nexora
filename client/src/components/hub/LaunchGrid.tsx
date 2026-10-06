@@ -57,15 +57,38 @@ const ITEM_CATEGORY: Record<string, CategoryId> = {
   search: 'core',
 }
 
+import { useTheme } from '@/context/ThemeContext'
+
 /** The icon tile, tinted by the destination's hue like its Dock icon. */
 function Tile({ item, icon: Icon }: { item: DockItem; icon: LucideIcon }) {
+  const { look } = useTheme()
+  const shapeClass =
+    look.iconShape === 'circle'
+      ? 'rounded-full'
+      : look.iconShape === 'hexagon'
+        ? 'rounded-none'
+        : look.iconShape === 'free'
+          ? 'rounded-none'
+          : 'rounded-xl'
+
   return (
     <span
-      className="flex size-9 shrink-0 items-center justify-center rounded-xl sm:size-10 shadow-[inset_0_1px_0_oklch(100%_0_0/0.28)]"
-      style={tileStyle(item)}
+      data-icon-pod
+      className={cn('icon-pod flex size-9 shrink-0 items-center justify-center sm:size-10 transition-all duration-200', shapeClass)}
+      style={tileStyle(item, look.iconPack, look.iconShape)}
       aria-hidden="true"
     >
-      <Icon className="size-4.5 text-white sm:size-5" strokeWidth={2.1} />
+      <Icon
+        className={cn(
+          'size-4.5 sm:size-5',
+          look.iconPack === 'minimal'
+            ? 'text-text-primary'
+            : look.iconPack === 'neon'
+              ? 'text-white drop-shadow-[0_0_8px_currentColor]'
+              : 'text-white',
+        )}
+        strokeWidth={look.iconPack === 'minimal' ? 1.8 : 2.1}
+      />
     </span>
   )
 }

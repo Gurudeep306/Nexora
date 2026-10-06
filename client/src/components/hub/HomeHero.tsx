@@ -63,8 +63,11 @@ function StatTile({
   sub?: ReactNode
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-2xl bg-bg-surface-2 p-3.5 ring-1 ring-border">
-      <span className="hidden size-10 shrink-0 items-center justify-center rounded-xl bg-accent-brand/12 text-accent-brand sm:flex">
+    <div className="card-neon flex items-center gap-3 p-3.5 transition-all duration-200">
+      <span
+        data-icon-pod
+        className="icon-pod hidden size-10 shrink-0 items-center justify-center sm:flex"
+      >
         <Icon className="size-5" aria-hidden="true" />
       </span>
       <div className="min-w-0 flex-1">

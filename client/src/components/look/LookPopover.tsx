@@ -12,10 +12,15 @@ function CurrentSwatch() {
   const src =
     wallpaper.kind === 'original'
       ? originalUrl(wallpaper, resolved, 'thumb')
-      : wallpaper.kind === 'photo'
+      : wallpaper.kind === 'photo' || wallpaper.kind === 'custom'
         ? thumbUrl(wallpaper, resolved)
         : null
-  const bg = wallpaper.kind === 'original' ? wallpaper.color[resolved] : wallpaper.kind === 'photo' ? wallpaper.color : undefined
+  const bg =
+    wallpaper.kind === 'original'
+      ? wallpaper.color[resolved]
+      : wallpaper.kind === 'photo' || wallpaper.kind === 'custom'
+        ? wallpaper.color
+        : undefined
   return (
     <span
       className="relative block size-[18px] overflow-hidden rounded-[5px] shadow-[inset_0_0_0_1px_rgb(255_255_255/0.2),0_1px_2px_rgb(0_0_0/0.3)]"

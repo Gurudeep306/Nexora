@@ -2,43 +2,39 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import {
   DEFAULT_WALLPAPER,
   findWallpaper,
-  getCustomWallpapers,
-  removeCustomWallpaper,
   resolveAccent,
-  saveCustomWallpaper,
   wallpaperTone,
   type AccentId,
-  type CardStyle,
-  type CustomWallpaper,
   type GlassStyle,
-  type IconPack,
-  type IconShape,
   type Tone,
   type Wallpaper,
 } from '@/theme/catalog'
 
+/**
+ * The whole "look", the way macOS System Settings splits it:
+ *
+ *   Appearance   Light · Dark · Auto (follow the system)
+ *   Wallpaper    an original, a photo, or none
+ *   Colour       an accent, or Multicolour (take the wallpaper's own)
+ *   Glass        Frosted · Clear · Solid — Solid is "Reduce transparency"
+ *
+ * Everything lands on <html> as data attributes plus one custom property
+ * (the wallpaper tint), and index.css does the rest. The first paint is
+ * handled by the inline script in index.html, which reads the same storage
+ * keys, so there is no flash of the wrong look while React boots.
+ */
 export type Appearance = 'light' | 'dark' | 'system'
 
 export interface Look {
   wallpaper: string
   accent: AccentId
   glass: GlassStyle
-  cardStyle: CardStyle
-  iconPack: IconPack
-  iconShape: IconShape
 }
 
 const APPEARANCE_KEY = 'nexora:appearance'
 export const LOOK_KEY = 'nexora:look'
 
-const DEFAULT_LOOK: Look = {
-  wallpaper: DEFAULT_WALLPAPER,
-  accent: 'multicolor',
-  glass: 'frosted',
-  cardStyle: 'glass',
-  iconPack: 'vibrant',
-  iconShape: 'squircle',
-}
+const DEFAULT_LOOK: Look = { wallpaper: DEFAULT_WALLPAPER, accent: 'multicolor', glass: 'frosted' }
 
 interface ThemeValue {
   appearance: Appearance
@@ -54,12 +50,6 @@ interface ThemeValue {
   setWallpaper: (id: string) => void
   setAccent: (a: AccentId) => void
   setGlass: (g: GlassStyle) => void
-  setCardStyle: (cs: CardStyle) => void
-  setIconPack: (ip: IconPack) => void
-  setIconShape: (is: IconShape) => void
-  customWallpapers: CustomWallpaper[]
-  addCustomWallpaper: (wp: CustomWallpaper) => void
-  deleteCustomWallpaper: (id: string) => void
   /** Replace the whole look at once (used when an account's saved look loads). */
   applyLook: (l: Partial<Look>) => void
 }
@@ -78,31 +68,11 @@ function readAppearance(): Appearance {
 
 export function sanitizeLook(raw: unknown): Look {
   const r = (raw && typeof raw === 'object' ? raw : {}) as Partial<Look>
-  const accents: AccentId[] = [
-    'multicolor',
-    'blue',
-    'cyan',
-    'ice',
-    'purple',
-    'plasma',
-    'pink',
-    'red',
-    'orange',
-    'yellow',
-    'green',
-    'graphite',
-  ]
-  const cardStyles: CardStyle[] = ['glass', 'neon', 'minimal', 'holo', 'gradient']
-  const iconPacks: IconPack[] = ['vibrant', 'neon', 'minimal', 'duotone', 'clay']
-  const iconShapes: IconShape[] = ['squircle', 'circle', 'hexagon', 'free']
-
+  const accents: AccentId[] = ['multicolor', 'blue', 'purple', 'pink', 'red', 'orange', 'yellow', 'green', 'graphite']
   return {
     wallpaper: findWallpaper(r.wallpaper).id,
     accent: accents.includes(r.accent as AccentId) ? (r.accent as AccentId) : DEFAULT_LOOK.accent,
     glass: r.glass === 'clear' || r.glass === 'solid' || r.glass === 'frosted' ? r.glass : DEFAULT_LOOK.glass,
-    cardStyle: cardStyles.includes(r.cardStyle as CardStyle) ? (r.cardStyle as CardStyle) : DEFAULT_LOOK.cardStyle,
-    iconPack: iconPacks.includes(r.iconPack as IconPack) ? (r.iconPack as IconPack) : DEFAULT_LOOK.iconPack,
-    iconShape: iconShapes.includes(r.iconShape as IconShape) ? (r.iconShape as IconShape) : DEFAULT_LOOK.iconShape,
   }
 }
 
@@ -123,7 +93,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [appearance, setAppearanceState] = useState<Appearance>(readAppearance)
   const [systemDark, setSystemDark] = useState(systemPrefersDark)
   const [look, setLook] = useState<Look>(readLook)
-  const [customList, setCustomList] = useState<CustomWallpaper[]>(getCustomWallpapers)
 
   useEffect(() => {
     const mq = window.matchMedia?.('(prefers-color-scheme: dark)')
@@ -145,44 +114,20 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     root.classList.toggle('dark', resolved === 'dark')
     root.dataset.accent = resolvedAccent
     root.dataset.glass = look.glass
-    root.dataset.cardStyle = look.cardStyle
-    root.dataset.iconPack = look.iconPack
-    root.dataset.iconShape = look.iconShape
     root.dataset.wall = wallpaper.kind
     root.dataset.wallTone = wallTone
-
     const tint =
-      wallpaper.kind === 'original'
-        ? wallpaper.tint[resolved]
-        : wallpaper.kind === 'photo' || wallpaper.kind === 'custom'
-          ? wallpaper.tint
-          : ''
+      wallpaper.kind === 'original' ? wallpaper.tint[resolved] : wallpaper.kind === 'photo' ? wallpaper.tint : ''
     const color =
-      wallpaper.kind === 'original'
-        ? wallpaper.color[resolved]
-        : wallpaper.kind === 'photo' || wallpaper.kind === 'custom'
-          ? wallpaper.color
-          : ''
-
+      wallpaper.kind === 'original' ? wallpaper.color[resolved] : wallpaper.kind === 'photo' ? wallpaper.color : ''
     if (tint) root.style.setProperty('--wall-tint', tint)
     else root.style.removeProperty('--wall-tint')
     if (color) root.style.setProperty('--wall-color', color)
     else root.style.removeProperty('--wall-color')
-
     document
       .querySelector('meta[name="theme-color"]')
       ?.setAttribute('content', resolved === 'dark' ? '#1c1d22' : '#f2f2f5')
-  }, [
-    appearance,
-    resolved,
-    resolvedAccent,
-    look.glass,
-    look.cardStyle,
-    look.iconPack,
-    look.iconShape,
-    wallpaper,
-    wallTone,
-  ])
+  }, [appearance, resolved, resolvedAccent, look.glass, wallpaper, wallTone])
 
   const persist = (next: Look) => {
     try {
@@ -214,26 +159,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     })
   }, [])
 
-  const addCustomWallpaper = useCallback(
-    (wp: CustomWallpaper) => {
-      saveCustomWallpaper(wp)
-      setCustomList(getCustomWallpapers())
-      update({ wallpaper: wp.id })
-    },
-    [update],
-  )
-
-  const deleteCustomWallpaper = useCallback(
-    (id: string) => {
-      removeCustomWallpaper(id)
-      setCustomList(getCustomWallpapers())
-      if (look.wallpaper === id) {
-        update({ wallpaper: DEFAULT_WALLPAPER })
-      }
-    },
-    [look.wallpaper, update],
-  )
-
   const value = useMemo<ThemeValue>(
     () => ({
       appearance,
@@ -247,28 +172,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       setWallpaper: (id) => update({ wallpaper: id }),
       setAccent: (accent) => update({ accent }),
       setGlass: (glass) => update({ glass }),
-      setCardStyle: (cardStyle) => update({ cardStyle }),
-      setIconPack: (iconPack) => update({ iconPack }),
-      setIconShape: (iconShape) => update({ iconShape }),
-      customWallpapers: customList,
-      addCustomWallpaper,
-      deleteCustomWallpaper,
       applyLook: (l) => update(l),
     }),
-    [
-      appearance,
-      resolved,
-      setAppearance,
-      cycle,
-      look,
-      wallpaper,
-      wallTone,
-      resolvedAccent,
-      customList,
-      addCustomWallpaper,
-      deleteCustomWallpaper,
-      update,
-    ],
+    [appearance, resolved, setAppearance, cycle, look, wallpaper, wallTone, resolvedAccent, update],
   )
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
 }

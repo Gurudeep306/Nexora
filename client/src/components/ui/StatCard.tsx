@@ -41,10 +41,12 @@ export function StatCard({
           {sub && <div className="mt-2 text-xs text-text-primary/60">{sub}</div>}
         </div>
         {icon && (
-          <div className={cn(
-            'flex items-center justify-center rounded-lg border border-border/20 p-2',
-            a.tile,
-          )}
+          <div
+            data-icon-pod
+            className={cn(
+              'icon-pod flex size-10 shrink-0 items-center justify-center p-2',
+              a.tile,
+            )}
           >
             <span className={cn(a.text)}>{icon}</span>
           </div>
