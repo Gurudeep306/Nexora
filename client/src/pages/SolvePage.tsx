@@ -1,6 +1,6 @@
 import { codeKey, mark as markLearn } from '@/learn/progress'
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { motion } from 'motion/react'
 import {
   AlertTriangle,
@@ -23,7 +23,6 @@ import {
 } from 'lucide-react'
 import {
   Button,
-  BackButton,
   EmptyState,
   ErrorState,
   LoadingBlock,
@@ -167,7 +166,6 @@ const sampleKey = (input: string, expected: string) =>
 export default function SolvePage({ custom: customProp = false, learn = false }: { custom?: boolean; learn?: boolean }) {
   const custom = customProp || learn
   const { id = '' } = useParams()
-  const navigate = useNavigate()
   const { refresh } = useAuth()
   const toast = useToast()
 
@@ -199,7 +197,6 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
     ? { data: adapted?.statement ?? null, loading: customApi.loading, error: customApi.error }
     : platformStatementApi
   const storageId = learn ? `learn-${id}` : custom ? `custom-${id}` : id
-  const lessonHref = customApi.data?.problem.learn ? `/learn/dsa/${customApi.data.problem.learn.topic}/${customApi.data.problem.learn.page}` : '/learn'
   const langsApi = useApi<Language[]>(() => api.get<Language[]>('/api/languages'), [])
   // Only offer languages the judge can actually run here.
   const languages = useMemo(() => (langsApi.data ?? []).filter((l) => l.available !== false), [langsApi.data])
@@ -660,11 +657,6 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
 
   const toolbar = (
     <div className="card-neon flex flex-wrap items-center gap-2 px-3 py-2">
-      <BackButton
-        size="sm"
-        label={learn ? 'Back to the lesson' : custom ? 'Back to workshop' : 'Back to problems'}
-        onClick={() => navigate(learn ? lessonHref : custom ? '/workshop' : '/problems')}
-      />
       <span className="hidden min-w-0 items-center gap-2 md:flex">
         <TerminalSquare className="size-4 shrink-0 text-primary-bright" aria-hidden="true" />
         <span className="max-w-56 truncate font-display text-xs tracking-wider text-foreground uppercase lg:max-w-96">

@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
-import { Navigate, useParams } from 'react-router-dom'
-import { ErrorState, LoadingBlock, PageHeader, BackButton } from '@/components/ui'
+import { Link, Navigate, useParams } from 'react-router-dom'
+import { ArrowLeft } from 'lucide-react'
+import { ErrorState, LoadingBlock, PageHeader } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { codeKey, isDone, qKey, useProgress } from '../progress'
 import { KIND_LABEL, type Question, type QuestionKind } from '../questions/types'
@@ -55,9 +56,9 @@ export default function PracticePage() {
 
   return (
     <div className="mx-auto max-w-[900px]">
-      <div className="mb-3">
-        <BackButton to={`/learn/dsa/${topic.id}`} size="sm" label={`Back to ${topic.title}`} />
-      </div>
+      <Link to={`/learn/dsa/${topic.id}`} className="mb-3 inline-flex items-center gap-1.5 text-[12.5px] text-text-muted !no-underline hover:text-text-primary">
+        <ArrowLeft className="size-3.5" /> {topic.title}
+      </Link>
       <PageHeader title={`${topic.title} — question bank`} subtitle={`${total} questions: ${topic.questions.filter((q) => q.kind !== 'code').length} answered right here, ${topic.questions.filter((q) => q.kind === 'code').length} judged in the editor. ${done} done.`} />
 
       <div className="card mb-5 space-y-3 p-4">

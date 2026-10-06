@@ -6,7 +6,7 @@ import {
   GraduationCap,
   FileQuestion,
   Hammer,
-  LayoutGrid,
+  House,
   ListChecks,
   Medal,
   Network,
@@ -44,7 +44,7 @@ export interface DockItem {
 }
 
 export const DOCK_ITEMS: DockItem[] = [
-  { id: 'hub', label: 'Hub', icon: LayoutGrid, hue: 255, to: '/hub' },
+  { id: 'hub', label: 'Home', icon: House, hue: 255, to: '/hub' },
   { id: 'problems', label: 'Problems', icon: Swords, hue: 25, to: '/problems' },
   { id: 'contests', label: 'Contests', icon: Trophy, hue: 78, to: '/contests' },
   { id: 'nexus', label: 'Nexus', icon: Network, hue: 295, to: '/nexus' },
