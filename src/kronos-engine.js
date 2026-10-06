@@ -64,7 +64,7 @@ async function queryLocalDaemon(messages, opts = {}) {
 function synthesizeFromScratch(messages, opts = {}) {
   const lastUserMsg = [...messages].reverse().find((m) => m.role === 'user')?.content || '';
   const text = lastUserMsg.trim();
-  const isAnimation = opts.animate || /animate|visualiz|simulation|step through|show animation|animation/i.test(text);
+  const isAnimation = Boolean(opts.animate) || /animate|visualiz|simulation|step through|show animation|animation/i.test(text) || /^\s*(?:while|for|function|def|void|int|swap|let|const|\{)/i.test(text);
 
   // 1. DYNAMIC CODE ANIMATION GENERATION
   if (isAnimation) {
@@ -77,7 +77,7 @@ function synthesizeFromScratch(messages, opts = {}) {
   }
 
   // 3. CODE DEBUGGING / ERROR DIAGNOSTIC
-  if (/fix|error|bug|fail|wrong answer|tle|wa/i.test(text)) {
+  if (/\b(?:fix|error|bug|fail|wrong answer|tle|syntax error)\b/i.test(text)) {
     return generateDynamicFix(text);
   }
 

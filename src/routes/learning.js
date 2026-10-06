@@ -156,6 +156,7 @@ ${(statement || 'No problem statement available').substring(0, 4000)}
         const chatRes = await _groqChat(process.env.GROQ_API_KEY, messages, {
           maxTokens: isAnimate ? 2048 : 1024,
           temperature: isAnimate ? 0.2 : 0.6,
+          animate: isAnimate,
         });
         if (chatRes && chatRes.ok && chatRes.content) {
           reply = chatRes.content;
