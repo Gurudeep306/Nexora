@@ -59,13 +59,66 @@ function createLearningRouter(deps) {
 
   router.post('/api/ai-chat', aiLimiter, async (req, res) => {
     try {
-      const apiKey = process.env.GROQ_API_KEY;
-      if (!apiKey) return res.status(500).json({ ok: false, error: 'GROQ_API_KEY not configured in .env' });
-
-      const { statement, question, history } = req.body;
+      const { statement, question, history, animate, username: reqUser } = req.body;
       if (!question || !question.trim()) return res.status(400).json({ ok: false, error: 'Question is required' });
 
-      const systemPrompt = `You are an expert, encouraging competitive-programming tutor inside a problem-solving IDE. The student is working on one specific problem and wants conceptual help — not the answer handed to them.
+      const activeUser = me() || reqUser || 'guest';
+      const isAnimate = Boolean(animate) || /animate|visualiz|simulation|step through|show animation|animation/i.test(question);
+
+      let systemPrompt = '';
+      if (isAnimate) {
+        systemPrompt = `You are Kronos-1: Sovereign CS Neural Engine & 3D Kinetic Algorithm Visualizer.
+The student provided code, pseudo-code, or an algorithm:
+"${question}"
+
+DO NOT use hardcoded templates. Analyze their input code completely FROM SCRATCH, trace every line, variable, and state transition, and output TWO parts in your response:
+
+### PART 1: Pedagogical Walkthrough
+- Intuition & core invariant of this algorithm
+- Step-by-step logic breakdown
+- Exact Time Complexity (e.g. \`O(N)\`) and Space Complexity (e.g. \`O(1)\`)
+
+### PART 2: 3D Kinetic State Machine (Generated from Scratch)
+Provide a complete kinetic animation specification JSON inside a \`\`\`nexora_animation block matching this exact structure:
+
+\`\`\`nexora_animation
+{
+  "title": "<Concise descriptive title based on their exact code>",
+  "algorithm": "<Name of algorithm or data structure>",
+  "data_structure": "<array | linked_list | stack | queue | tree | matrix | graph>",
+  "time_complexity": "<e.g. O(N)>",
+  "space_complexity": "<e.g. O(1)>",
+  "pseudo_lines": [
+    "<line 1 of the algorithm>",
+    "<line 2 of the algorithm>",
+    "<line 3 of the algorithm>"
+  ],
+  "frames": [
+    {
+      "step": 1,
+      "explanation": "<Specific narration of what happens at this exact step>",
+      "cells": [
+        {"id": "c0", "v": 45, "addr": "0x1000", "role": "active", "elevation": -16},
+        {"id": "c1", "v": 12, "addr": "0x1004", "role": "idle", "elevation": 0}
+      ],
+      "pointers": {"left": 0, "right": 1},
+      "roles": {"0": "active", "1": "active"},
+      "soundEffect": "hop",
+      "codeLine": 1
+    }
+  ]
+}
+\`\`\`
+
+Animation Construction Rules:
+- Build 4 to 10 step frames demonstrating the progression of the data structure.
+- Persistent cell IDs ("c0", "c1", ...) must stick with their corresponding elements so FLIP physics show true spatial movement.
+- Cell roles: "active" (examined/focused), "compare" (being compared), "swap" (hopping to new positions, elevation -16 to -32), "done" (final locked position), "found" (target found), "idle" (inactive).
+- Sound cues: "hop", "compare", "swap", "done".
+- Map "codeLine" to the corresponding line in "pseudo_lines".
+- Generate everything organically from scratch to match the user's specific code and data values.`;
+      } else {
+        systemPrompt = `You are an expert, encouraging competitive-programming tutor inside a problem-solving IDE. The student is working on one specific problem and wants conceptual help — not the answer handed to them.
 
 How you respond:
 - Lead with the direct answer to what they asked, then add only the detail that builds understanding.
@@ -86,6 +139,7 @@ The student is working on this problem:
 ---
 ${(statement || 'No problem statement available').substring(0, 4000)}
 ---`;
+      }
 
       const messages = [{ role: 'system', content: systemPrompt }];
       if (Array.isArray(history)) {
@@ -97,25 +151,133 @@ ${(statement || 'No problem statement available').substring(0, 4000)}
       }
       messages.push({ role: 'user', content: String(question).substring(0, 2000) });
 
-      const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
-        body: JSON.stringify({
-          model: process.env.GROQ_MODEL || 'openai/gpt-oss-120b',
-          messages,
-          max_tokens: 1024,
-          temperature: 0.6,
-        }),
-      });
-
-      if (!groqRes.ok) {
-        const err = await groqRes.text();
-        return res.status(groqRes.status).json({ ok: false, error: `Groq API error: ${err.substring(0, 200)}` });
+      let reply = '';
+      try {
+        const chatRes = await _groqChat(process.env.GROQ_API_KEY, messages, {
+          maxTokens: isAnimate ? 2048 : 1024,
+          temperature: isAnimate ? 0.2 : 0.6,
+          animate: isAnimate,
+        });
+        if (chatRes && chatRes.ok && chatRes.content) {
+          reply = chatRes.content;
+        }
+      } catch (err) {
+        console.warn('[AiChat] LLM error:', err.message);
       }
 
-      const data = await groqRes.json();
-      const reply = data.choices?.[0]?.message?.content || 'No response generated.';
-      res.json({ ok: true, reply });
+      let visualization = null;
+
+      if (isAnimate && reply) {
+        // Extract the animation specification generated from scratch by the AI model
+        const animMatch = reply.match(/```(?:nexora_animation|json)?\s*(\{[\s\S]*?"frames"[\s\S]*?\})\s*```/i)
+          || reply.match(/(\{[\s\S]*?"title"[\s\S]*?"frames"\s*:\s*\[[\s\S]*?\}\s*\]\s*\})/i);
+
+        if (animMatch) {
+          try {
+            visualization = JSON.parse(animMatch[1]);
+            // Strip the raw code fence from markdown reply so the chat UI presents the clean text explanation + visualizer
+            reply = reply.replace(/```(?:nexora_animation|json)?\s*\{[\s\S]*?"frames"[\s\S]*?\}\s*```/i, '').trim();
+          } catch (e) {
+            console.warn('[AiChat] Failed to parse model-generated animation JSON:', e);
+          }
+        }
+      }
+
+      // Normalize whatever kinetic state machine the AI generated from scratch to fit the Cyber-Matrix theme perfectly
+      if (visualization && Array.isArray(visualization.frames)) {
+        visualization.frames = visualization.frames.map((frame, fIdx) => {
+          const rawCells = frame.cells || frame.state?.cells || [];
+          const cells = rawCells.map((c, cIdx) => {
+            if (typeof c === 'object' && c !== null) {
+              return {
+                id: c.id || `c${cIdx}`,
+                v: c.v !== undefined ? c.v : (c.value !== undefined ? c.value : cIdx),
+                addr: c.addr || `0x${(4096 + cIdx * 4).toString(16)}`,
+                role: c.role || (frame.roles && frame.roles[cIdx]) || 'idle',
+                elevation: c.elevation !== undefined ? c.elevation : (c.role === 'swap' ? -20 : c.role === 'compare' ? -28 : 0),
+              };
+            }
+            return {
+              id: `c${cIdx}`,
+              v: c,
+              addr: `0x${(4096 + cIdx * 4).toString(16)}`,
+              role: (frame.roles && frame.roles[cIdx]) || 'idle',
+              elevation: 0,
+            };
+          });
+
+          return {
+            step: frame.step || fIdx + 1,
+            explanation: frame.explanation || `Execution step ${fIdx + 1}`,
+            cells,
+            pointers: frame.pointers || frame.state?.pointers || {},
+            roles: frame.roles || frame.state?.roles || {},
+            soundEffect: frame.soundEffect || (frame.roles && Object.values(frame.roles).includes('swap') ? 'swap' : 'hop'),
+            codeLine: frame.codeLine || 1,
+          };
+        });
+
+        visualization.total_frames = visualization.frames.length;
+      }
+
+      if (!reply) {
+        return res.status(500).json({ ok: false, error: 'Could not generate AI response from Kronos-1 neural engine.' });
+      }
+
+      // Persist conversation and 3D kinetic visualization per user
+      try {
+        const now = new Date().toISOString();
+        await run(
+          'INSERT INTO ai_user_chats (username, role, content, visualization, created_at) VALUES (?, ?, ?, ?, ?)',
+          [activeUser, 'user', String(question).substring(0, 4000), null, now]
+        );
+        await run(
+          'INSERT INTO ai_user_chats (username, role, content, visualization, created_at) VALUES (?, ?, ?, ?, ?)',
+          [activeUser, 'assistant', reply, visualization ? JSON.stringify(visualization) : null, now]
+        );
+      } catch (dbErr) {
+        console.warn('[AiChat] Failed to persist user chat history:', dbErr.message);
+      }
+
+      res.json({ ok: true, reply, visualization, username: activeUser });
+    } catch (e) {
+      res.status(500).json({ ok: false, error: errMessage(e) });
+    }
+  });
+
+  // Multi-user isolated chat history retrieval
+  router.get('/api/ai-chat/history', async (req, res) => {
+    try {
+      const activeUser = me() || req.query.username || 'guest';
+      const rows = await all(
+        'SELECT id, role, content, visualization, created_at FROM ai_user_chats WHERE username = ? ORDER BY id ASC LIMIT 100',
+        [activeUser]
+      );
+      const history = (rows || []).map(r => {
+        let vis = null;
+        if (r.visualization) {
+          try { vis = JSON.parse(r.visualization); } catch (_) {}
+        }
+        return {
+          id: r.id,
+          role: r.role,
+          content: r.content,
+          visualization: vis,
+          createdAt: r.created_at,
+        };
+      });
+      res.json({ ok: true, username: activeUser, history });
+    } catch (e) {
+      res.status(500).json({ ok: false, error: errMessage(e) });
+    }
+  });
+
+  // Clear chat history for specific user
+  router.delete('/api/ai-chat/history', async (req, res) => {
+    try {
+      const activeUser = me() || req.query.username || req.body?.username || 'guest';
+      await run('DELETE FROM ai_user_chats WHERE username = ?', [activeUser]);
+      res.json({ ok: true, message: `Chat history cleared for ${activeUser}` });
     } catch (e) {
       res.status(500).json({ ok: false, error: errMessage(e) });
     }
@@ -125,7 +287,6 @@ ${(statement || 'No problem statement available').substring(0, 4000)}
     try {
       const geminiKey = process.env.GEMINI_API_KEY;
       const groqKey = process.env.GROQ_API_KEY;
-      if (!geminiKey && !groqKey) return res.json({ ok: false, text: '' });
 
       const { prefix, suffix, language } = req.body;
       if (!prefix || !language) return res.json({ ok: true, text: '' });
@@ -144,14 +305,14 @@ ${(statement || 'No problem statement available').substring(0, 4000)}
       }
 
       let rawText = '';
-      if (geminiKey) {
+      try {
         const prompt = _buildGeminiPrompt(language, prefixCtx, suffixCtx);
-        const result = await _geminiComplete(geminiKey, prompt);
-        if (result.ok) rawText = result.content;
-      }
+        const result = await _geminiComplete(geminiKey || 'kronos-sovereign', prompt);
+        if (result && result.ok) rawText = result.content;
+      } catch (_) {}
 
-      if (!rawText && groqKey) {
-        const systemPrompt = `You are an expert inline code completion engine for a competitive programming IDE. Language: ${language}.
+      if (!rawText) {
+        const systemPrompt = `You are Kronos-1: expert inline code completion engine for a competitive programming IDE. Language: ${language}.
 
 YOUR ROLE: Predict exactly what the programmer is about to type next. Output ONLY the raw completion — no markdown, no fences, no explanations.
 
@@ -168,7 +329,7 @@ RULES:
           : `[BEFORE CURSOR]\n${prefixCtx}\n[CURSOR]`;
 
         const groqResult = await _groqChat(
-          groqKey,
+          groqKey || 'kronos-sovereign',
           [
             { role: 'system', content: systemPrompt },
             { role: 'user', content: userMsg },
@@ -176,10 +337,10 @@ RULES:
           { maxTokens: 150, temperature: 0.05, stop: ['\n\n\n', '```'] }
         );
 
-        if (groqResult.ok) rawText = groqResult.content;
+        if (groqResult && groqResult.ok) rawText = groqResult.content;
       }
 
-      let text = rawText.replace(/^```[\w]*\n?/, '').replace(/```$/, '').replace(/^Completion:\s*/i, '').trimEnd();
+      let text = (rawText || '').replace(/^```[\w]*\n?/, '').replace(/```$/, '').replace(/^Completion:\s*/i, '').trimEnd();
       const lines = text.split('\n');
       if (lines.length > 5) text = lines.slice(0, 3).join('\n');
 
@@ -194,8 +355,7 @@ RULES:
 
   router.post('/api/ai-fix', aiLimiter, async (req, res) => {
     try {
-      const apiKey = process.env.GROQ_API_KEY;
-      if (!apiKey) return res.status(500).json({ ok: false, error: 'GROQ_API_KEY not configured' });
+      const apiKey = process.env.GROQ_API_KEY || 'kronos-sovereign';
 
       const { code, language, error } = req.body;
       if (!code || !language) return res.status(400).json({ ok: false, error: 'code and language required' });

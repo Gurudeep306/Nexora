@@ -909,8 +909,7 @@ function createStudioRouter(deps) {
     try {
       const { prompt, type } = req.body;
       if (!prompt) return res.status(400).json({ ok: false, error: 'prompt required' });
-      const apiKey = process.env.GROQ_API_KEY;
-      if (!apiKey) return res.json({ ok: false, error: 'GROQ_API_KEY not configured' });
+      const apiKey = process.env.GROQ_API_KEY || 'kronos-sovereign';
       const systems = {
         problem: 'You are an expert competitive programming problem setter. Write a clear, detailed problem description in HTML (use <p>, <ul>, <li>, <strong>, <code>, <pre> tags). Include: problem statement, constraints, examples with explanations. No markdown.',
         tutorial: 'You are an expert technical educator. Write a comprehensive tutorial section in HTML using <h2>, <h3>, <p>, <ul>, <li>, <code>, <pre> tags. Include explanations, examples and code snippets. No markdown.',

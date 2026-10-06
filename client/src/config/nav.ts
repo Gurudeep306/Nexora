@@ -1,5 +1,5 @@
 import {
-  LayoutDashboard,
+  House,
   Swords,
   Trophy,
   Hammer,
@@ -39,7 +39,7 @@ export const NAV_SECTIONS: NavSection[] = [
   {
     title: 'Play',
     items: [
-      { to: '/hub', label: 'Hub', icon: LayoutDashboard },
+      { to: '/hub', label: 'Home', icon: House },
       { to: '/problems', label: 'Problems', icon: Swords },
       { to: '/contests', label: 'Contests', icon: Trophy },
       { to: '/workshop', label: 'Workshop', icon: Hammer },
