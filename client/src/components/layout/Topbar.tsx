@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { ChevronRight, Flame, Keyboard, Search, Swords, Zap } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
-import { AnimatedNumber, Avatar, Kbd, RotatingText, SearchCombobox, Tooltip, type ComboboxItem } from '@/components/ui'
+import { AnimatedNumber, Avatar, BackButton, Kbd, RotatingText, SearchCombobox, Tooltip, type ComboboxItem } from '@/components/ui'
 import { ACCOUNT_ITEMS, CREATE_SECTION, NAV_SECTIONS, navMeta } from '@/config/nav'
 import { Notifications } from './Notifications'
 import { LookPopover } from '@/components/look/LookPopover'
@@ -86,6 +86,10 @@ export function Topbar() {
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-2 titlebar px-3 md:px-6 animate-fade-in">
+      {/* Universal back: Home is the root of the hierarchy, so every page
+          except Home itself carries a keycap that returns there. */}
+      {pathname !== '/hub' && <BackButton to="/hub" size="sm" label="Back to Home" />}
+
       {/* Breadcrumbs */}
       <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-1.5 text-[13px]">
         {meta.section && (

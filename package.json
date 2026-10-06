@@ -19,7 +19,10 @@
     "scrape:hard": "node src/scraper.js --rating 1800 3500 --limit 200",
     "db:push-to-cloud": "node scripts/migrate-to-turso.js",
     "db:backup": "node scripts/backup-turso.js",
-    "user:set-password": "node scripts/set-password.js"
+    "user:set-password": "node scripts/set-password.js",
+    "model:bootstrap": "node ai-engine/scripts/bootstrap_model.js",
+    "model:train": "python3 ai-engine/train_local_kronos.py",
+    "model:serve": "bash ai-engine/start_kronos.sh"
   },
   "dependencies": {
     "@libsql/client": "^0.18.0",

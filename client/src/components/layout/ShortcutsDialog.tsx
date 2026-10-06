@@ -7,7 +7,7 @@ import { openCommandPalette } from './CommandPalette'
 export const openShortcuts = () => window.dispatchEvent(new Event('nexora:shortcuts'))
 
 const LABELS: Record<string, string> = {
-  '/hub': 'Hub',
+  '/hub': 'Home',
   '/problems': 'Problems',
   '/contests': 'Contests',
   '/nexus': 'Nexus',

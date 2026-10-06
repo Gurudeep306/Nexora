@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexora Cyber-Matrix: Next-Gen Quantum Algorithm Visualizer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #05070d;
+      --card-bg: rgba(13, 17, 28, 0.75);
+      --accent: #6366f1;
+      --accent-glow: rgba(99, 102, 241, 0.6);
+      --cyan: #06b6d4;
+      --cyan-glow: rgba(6, 182, 212, 0.6);
+      --amber: #f59e0b;
+      --amber-glow: rgba(245, 158, 11, 0.7);
+      --emerald: #10b981;
+      --pink: #ec4899;
+      --text-main: #f8fafc;
+      --text-dim: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: 'Outfit', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      overflow-x: hidden;
+      perspective: 1200px;
+    }
+
+    /* Ambient Quantum Grid & Aurora Background */
+    #particle-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .aurora-blur {
+      position: fixed;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.15;
+      animation: float 14s infinite alternate ease-in-out;
+    }
+    .aurora-1 { top: -100px; left: -100px; background: var(--accent); }
+    .aurora-2 { bottom: -100px; right: -100px; background: var(--cyan); animation-delay: -7s; }
+
+    @keyframes float {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(120px, 80px) scale(1.2); }
+    }
+
+    /* 3D Reactive Holographic Deck */
+    .deck-container {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 1040px;
+      background: var(--card-bg);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 32px;
+      padding: 2.5rem;
+      backdrop-filter: blur(32px);
+      box-shadow: 
+        0 30px 100px rgba(0, 0, 0, 0.8),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2),
+        0 0 40px rgba(99, 102, 241, 0.15);
+      transform-style: preserve-3d;
+      transition: transform 0.15s ease-out, box-shadow 0.3s ease;
+    }
+
+    /* Header Bar */
+    .deck-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 1.5rem;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      color: #a5b4fc;
+      padding: 5px 14px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .chip-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 10px var(--cyan);
+      animation: pulse-dot 1.8s infinite;
+    }
+    @keyframes pulse-dot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.8); } }
+
+    h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.85rem;
+      color: #fff;
+      margin-top: 0.5rem;
+      letter-spacing: -0.02em;
+    }
+
+    .meta-metrics {
+      display: flex;
+      gap: 1.25rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+    .metric-val { color: var(--cyan); font-weight: 700; }
+
+    /* Dual Console: Spatial Narration + Quantum Code Terminal */
+    .console-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .narration-panel {
+      background: rgba(22, 27, 44, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 22px;
+      padding: 1.5rem 1.75rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .narration-panel::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; width: 3px; height: 100%;
+      background: linear-gradient(180deg, var(--cyan), var(--accent));
+    }
+
+    .step-counter {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      color: var(--cyan);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .narration-body {
+      font-size: 15.5px;
+      line-height: 1.6;
+      color: #e2e8f0;
+      min-height: 60px;
+    }
+
+    /* Futuristic Code Terminal */
+    .terminal-panel {
+      background: #040508;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 22px;
+      padding: 1.25rem 1.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      line-height: 1.8;
+      color: #475569;
+      position: relative;
+      box-shadow: inset 0 2px 10px rgba(0,0,0,0.8);
+    }
+
+    .terminal-line {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 2px 6px;
+      border-radius: 6px;
+      transition: all 0.25s ease;
+    }
+    .line-num { color: #334155; font-size: 10px; width: 14px; }
+    .terminal-line.active {
+      background: rgba(99, 102, 241, 0.2);
+      color: #fff;
+      transform: translateX(4px);
+    }
+    .terminal-line.active .line-num { color: var(--cyan); font-weight: 700; }
+
+    /* ── The Quantum Hardware Memory Stage ── */
+    .stage-chassis {
+      margin: 3.5rem 0 2rem;
+      background: radial-gradient(circle at 50% 50%, rgba(18, 24, 43, 0.7), rgba(8, 11, 20, 0.95));
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 26px;
+      padding: 4.5rem 2rem 5rem;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.8);
+      overflow: hidden;
+    }
+
+    /* Laser Wire SVG Layer */
+    #laser-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .quantum-stage {
+      position: relative;
+      height: 80px;
+      z-index: 10;
+    }
+
+    /* Fixed Silicon Circuit Slots */
+    .memory-slot {
+      position: absolute;
+      top: 0;
+      width: 72px;
+      height: 72px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.015);
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5);
+    }
+
+    .slot-bus-addr {
+      position: absolute;
+      top: -28px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      color: #475569;
+      letter-spacing: 0.05em;
+    }
+
+    .slot-index {
+      position: absolute;
+      bottom: -26px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: #64748b;
+      font-weight: 600;
+    }
+
+    /* Physical Floating Quantum Cells */
+    .quantum-cell {
+      position: absolute;
+      top: 0;
+      width: 72px;
+      height: 72px;
+      background: linear-gradient(135deg, rgba(30, 41, 69, 0.9), rgba(15, 23, 42, 0.95));
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.65rem;
+      font-weight: 700;
+      color: #fff;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      z-index: 10;
+      cursor: grab;
+      user-select: none;
+      /* Physics Spring Curve */
+      transition: 
+        transform 0.7s cubic-bezier(0.34, 1.45, 0.64, 1),
+        border-color 0.35s ease,
+        box-shadow 0.35s ease,
+        background 0.35s ease;
+      will-change: transform;
+    }
+
+    /* Cell Quantum States */
+    .quantum-cell.state-active {
+      border-color: var(--cyan);
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.25), rgba(14, 116, 144, 0.4));
+      box-shadow: 0 0 35px var(--cyan-glow), inset 0 0 15px rgba(6, 182, 212, 0.4);
+      z-index: 25;
+    }
+
+    .quantum-cell.state-swap {
+      border-color: var(--amber);
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.3), rgba(180, 83, 9, 0.45));
+      box-shadow: 0 20px 50px var(--amber-glow), inset 0 0 20px rgba(245, 158, 11, 0.5);
+      z-index: 40;
+    }
+
+    .quantum-cell.state-done {
+      border-color: var(--emerald);
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.18), rgba(6, 78, 59, 0.3));
+      color: #6ee7b7;
+      box-shadow: 0 0 25px rgba(16, 185, 129, 0.3);
+    }
+
+    /* Gliding Laser Pointers */
+    .pointer-carrier {
+      position: absolute;
+      bottom: -68px;
+      left: 0;
+      right: 0;
+      height: 36px;
+      pointer-events: none;
+    }
+
+    .laser-pointer {
+      position: absolute;
+      top: 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 9px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.7s cubic-bezier(0.34, 1.45, 0.64, 1);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+      will-change: transform;
+    }
+
+    .laser-pointer.ptr-left {
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+
+    .laser-pointer.ptr-right {
+      background: linear-gradient(135deg, #ec4899, #db2777);
+      box-shadow: 0 0 20px rgba(236, 72, 153, 0.6);
+    }
+
+    .laser-pointer::before {
+      content: '';
+      position: absolute;
+      top: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 0 5px 6px 5px;
+      border-style: solid;
+      border-color: transparent transparent inherit transparent;
+    }
+
+    /* Controls & Audio Synthesizer Toggle */
+    .deck-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 1.75rem;
+    }
+
+    .btn-row { display: flex; gap: 10px; align-items: center; }
+
+    button {
+      background: rgba(255, 255, 255, 0.05);
+      color: #f1f5f9;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 11px 20px;
+      border-radius: 14px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    button:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.25);
+      transform: translateY(-2px);
+    }
+
+    button.btn-primary {
+      background: linear-gradient(135deg, var(--accent), #4338ca);
+      border-color: var(--accent-bright);
+      box-shadow: 0 8px 25px var(--accent-glow);
+    }
+
+    button.btn-primary:hover {
+      box-shadow: 0 12px 35px var(--accent-glow);
+      filter: brightness(1.15);
+    }
+
+    button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    /* Scrub Timeline Slider */
+    .scrub-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+      max-width: 280px;
+      margin: 0 1.5rem;
+    }
+
+    .scrub-slider {
+      width: 100%;
+      -webkit-appearance: none;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 999px;
+      outline: none;
+    }
+
+    .scrub-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 12px var(--cyan);
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    .scrub-slider::-webkit-slider-thumb:hover { transform: scale(1.3); }
+
+    .audio-toggle {
+      font-size: 12px;
+      padding: 8px 14px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.03);
+    }
+    .audio-toggle.active {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: var(--emerald);
+      color: #6ee7b7;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient WebGL & Aurora Background -->
+  <canvas id="particle-canvas"></canvas>
+  <div class="aurora-blur aurora-1"></div>
+  <div class="aurora-blur aurora-2"></div>
+
+  <!-- 3D Interactive Tilt Chassis -->
+  <div class="deck-container" id="deckContainer">
+    <div class="deck-header">
+      <div>
+        <div class="chip">
+          <span class="chip-dot"></span>
+          Nexora Cyber-Matrix Synthesizer
+        </div>
+        <h1>Two Pointers: Spatial In-Place Reversal</h1>
+      </div>
+      <div class="meta-metrics">
+        <div>TIME: <span class="metric-val">O(N)</span></div>
+        <div>SPACE: <span class="metric-val">O(1)</span></div>
+        <div>INVARIANTS: <span class="metric-val">2P-STRICT</span></div>
+      </div>
+    </div>
+
+    <!-- Dual Console Display -->
+    <div class="console-grid">
+      <div class="narration-panel">
+        <div class="step-counter" id="stepCounter">FRAME 1 / 5</div>
+        <div class="narration-body" id="narrationBody">Synchronizing initial memory registers...</div>
+      </div>
+      <div class="terminal-panel">
+        <div class="terminal-line" id="code-1"><span class="line-num">01</span><span>left = 0, right = arr.len - 1;</span></div>
+        <div class="terminal-line" id="code-2"><span class="line-num">02</span><span>while (left &lt; right) {</span></div>
+        <div class="terminal-line" id="code-3"><span class="line-num">03</span><span>&nbsp;&nbsp;swap(arr[left], arr[right]);</span></div>
+        <div class="terminal-line" id="code-4"><span class="line-num">04</span><span>&nbsp;&nbsp;left++; right--;</span></div>
+        <div class="terminal-line" id="code-5"><span class="line-num">05</span><span>} return arr;</span></div>
+      </div>
+    </div>
+
+    <!-- ── The Hardware Memory Stage ── -->
+    <div class="stage-chassis">
+      <svg id="laser-svg"></svg>
+      <div class="quantum-stage" id="stage">
+        <!-- Static Memory Slots -->
+        <div id="slotsGroup"></div>
+        <!-- Physical Translating Quantum Cells -->
+        <div id="cellsGroup"></div>
+        <!-- Lateral Sliding Laser Pointers -->
+        <div class="pointer-carrier" id="pointersGroup"></div>
+      </div>
+    </div>
+
+    <!-- Interactive Deck Controls -->
+    <div class="deck-controls">
+      <div class="btn-row">
+        <button id="prevBtn" onclick="prevStep()">‹ Step</button>
+        <button class="btn-primary" id="playBtn" onclick="togglePlay()">▶ Quantum Run</button>
+        <button id="nextBtn" onclick="nextStep()">Step ›</button>
+      </div>
+
+      <div class="scrub-container">
+        <span style="font-size: 11px; color: var(--text-dim); font-family: 'JetBrains Mono';">SCRUB</span>
+        <input type="range" min="0" max="4" value="0" class="scrub-slider" id="scrubber" oninput="scrubTo(this.value)">
+      </div>
+
+      <div class="btn-row">
+        <button class="audio-toggle active" id="audioToggle" onclick="toggleAudio()">🔊 FX Synthesizer</button>
+        <button onclick="reset()">↺ Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ── Web Audio Synthesizer (Zero External MP3s: Real-time Audio Oscillators) ── */
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    let audioEnabled = true;
+
+    function playSound(type) {
+      if (!audioEnabled || audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      if (!audioEnabled) return;
+
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      const now = audioCtx.currentTime;
+
+      if (type === 'swap') {
+        // High-tech resonant double sweep
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(440, now);
+        osc.frequency.exponentialRampToValueAtTime(880, now + 0.12);
+        osc.frequency.exponentialRampToValueAtTime(320, now + 0.28);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+        osc.start(now);
+        osc.stop(now + 0.28);
+      } else if (type === 'step') {
+        // Crisp spatial tactile click
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(520, now);
+        osc.frequency.exponentialRampToValueAtTime(260, now + 0.08);
+        gain.gain.setValueAtTime(0.15, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+        osc.start(now);
+        osc.stop(now + 0.08);
+      } else if (type === 'done') {
+        // Victorious resonant chord
+        [523.25, 659.25, 783.99].forEach(freq => {
+          const o = audioCtx.createOscillator();
+          const g = audioCtx.createGain();
+          o.connect(g);
+          g.connect(audioCtx.destination);
+          o.frequency.setValueAtTime(freq, now);
+          g.gain.setValueAtTime(0.12, now);
+          g.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+          o.start(now);
+          o.stop(now + 0.5);
+        });
+      }
+    }
+
+    function toggleAudio() {
+      audioEnabled = !audioEnabled;
+      document.getElementById('audioToggle').classList.toggle('active', audioEnabled);
+      document.getElementById('audioToggle').textContent = audioEnabled ? '🔊 FX Synthesizer' : '🔇 FX Muted';
+    }
+
+    /* ── Ambient Background Particle Engine ── */
+    const canvas = document.getElementById('particle-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class Particle {
+      constructor() { this.reset(); }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 2 + 0.5;
+        this.speedX = (Math.random() - 0.5) * 0.4;
+        this.speedY = (Math.random() - 0.5) * 0.4;
+        this.alpha = Math.random() * 0.4 + 0.1;
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset();
+      }
+      draw() {
+        ctx.fillStyle = `rgba(99, 102, 241, ${this.alpha})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+    for (let i = 0; i < 45; i++) particles.push(new Particle());
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => { p.update(); p.draw(); });
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    /* ── 3D Reactive Mouse Parallax (Card Tilt) ── */
+    const deck = document.getElementById('deckContainer');
+    document.addEventListener('mousemove', (e) => {
+      const cx = window.innerWidth / 2;
+      const cy = window.innerHeight / 2;
+      const dx = (e.clientX - cx) / cx;
+      const dy = (e.clientY - cy) / cy;
+      deck.style.transform = `rotateX(${-dy * 4.5}deg) rotateY(${dx * 4.5}deg)`;
+    });
+
+    /* ── Hardware Memory Stage State Machine ── */
+    const CELL_SIZE = 72;
+    const GAP = 18;
+    const PITCH = CELL_SIZE + GAP;
+
+    const ENTITIES = [
+      { id: 'c0', v: 5 },
+      { id: 'c1', v: 12 },
+      { id: 'c2', v: 19 },
+      { id: 'c3', v: 31 },
+      { id: 'c4', v: 48 }
+    ];
+
+    const FRAMES = [
+      {
+        step: 1,
+        codeLine: 'code-1',
+        explanation: "Initialize pointer 'left' at memory offset 0x1000 (val: 5) and 'right' at 0x1010 (val: 48).",
+        slots: ['c0', 'c1', 'c2', 'c3', 'c4'],
+        pointers: { left: 0, right: 4 },
+        roles: { c0: 'state-active', c4: 'state-active' },
+        hopping: [],
+        sound: 'step'
+      },
+      {
+        step: 2,
+        codeLine: 'code-3',
+        explanation: "Quantum Inversion: Values 5 and 48 lift into parabolic 3D orbit and exchange memory addresses.",
+        slots: ['c4', 'c1', 'c2', 'c3', 'c0'],
+        pointers: { left: 0, right: 4 },
+        roles: { c0: 'state-swap', c4: 'state-swap' },
+        hopping: ['c0', 'c4'],
+        sound: 'swap'
+      },
+      {
+        step: 3,
+        codeLine: 'code-4',
+        explanation: "Advance 'left' pointer inward to slot [1] and decrement 'right' pointer to slot [3]. Previous cells locked.",
+        slots: ['c4', 'c1', 'c2', 'c3', 'c0'],
+        pointers: { left: 1, right: 3 },
+        roles: { c4: 'state-done', c0: 'state-done', c1: 'state-active', c3: 'state-active' },
+        hopping: [],
+        sound: 'step'
+      },
+      {
+        step: 4,
+        codeLine: 'code-3',
+        explanation: "Inner Inversion: Values 12 and 31 leap over center median 19 to finalize their inverted slots.",
+        slots: ['c4', 'c3', 'c2', 'c1', 'c0'],
+        pointers: { left: 1, right: 3 },
+        roles: { c4: 'state-done', c0: 'state-done', c1: 'state-swap', c3: 'state-swap' },
+        hopping: ['c1', 'c3'],
+        sound: 'swap'
+      },
+      {
+        step: 5,
+        codeLine: 'code-5',
+        explanation: "Pointers meet at median index [2]. Array in-place inversion is 100% verified: [48, 31, 19, 12, 5].",
+        slots: ['c4', 'c3', 'c2', 'c1', 'c0'],
+        pointers: { left: 2, right: 2 },
+        roles: { c4: 'state-done', c3: 'state-done', c2: 'state-done', c1: 'state-done', c0: 'state-done' },
+        hopping: [],
+        sound: 'done'
+      }
+    ];
+
+    let currentFrame = 0;
+    let isPlaying = false;
+    let playTimer = null;
+
+    const stage = document.getElementById('stage');
+    stage.style.width = `${ENTITIES.length * PITCH - GAP}px`;
+
+    const slotsGroup = document.getElementById('slotsGroup');
+    const cellsGroup = document.getElementById('cellsGroup');
+    const pointersGroup = document.getElementById('pointersGroup');
+
+    // Build Static Memory Slots
+    ENTITIES.forEach((_, idx) => {
+      const slot = document.createElement('div');
+      slot.className = 'memory-slot';
+      slot.style.left = `${idx * PITCH}px`;
+      slot.innerHTML = `
+        <span class="slot-bus-addr">0x${(0x1000 + idx * 4).toString(16)}</span>
+        <span class="slot-index">[${idx}]</span>
+      `;
+      slotsGroup.appendChild(slot);
+    });
+
+    // Build Persistent Quantum Cells
+    const cellElements = {};
+    ENTITIES.forEach((item, idx) => {
+      const el = document.createElement('div');
+      el.className = 'quantum-cell';
+      el.id = `qcell-${item.id}`;
+      el.textContent = item.v;
+      el.style.transform = `translate3d(${idx * PITCH}px, 0, 0)`;
+      cellsGroup.appendChild(el);
+      cellElements[item.id] = el;
+    });
+
+    // Build Laser Pointers
+    const ptrLeft = document.createElement('div');
+    ptrLeft.className = 'laser-pointer ptr-left';
+    ptrLeft.textContent = 'left (0)';
+    pointersGroup.appendChild(ptrLeft);
+
+    const ptrRight = document.createElement('div');
+    ptrRight.className = 'laser-pointer ptr-right';
+    ptrRight.textContent = 'right (4)';
+    pointersGroup.appendChild(ptrRight);
+
+    function update() {
+      const frame = FRAMES[currentFrame];
+
+      document.getElementById('stepCounter').textContent = `FRAME ${currentFrame + 1} / ${FRAMES.length}`;
+      document.getElementById('narrationBody').textContent = frame.explanation;
+      document.getElementById('scrubber').value = currentFrame;
+
+      // Terminal Highlight
+      document.querySelectorAll('.terminal-line').forEach(l => l.classList.remove('active'));
+      const activeLine = document.getElementById(frame.codeLine);
+      if (activeLine) activeLine.classList.add('active');
+
+      document.getElementById('prevBtn').disabled = currentFrame === 0;
+      document.getElementById('nextBtn').disabled = currentFrame === FRAMES.length - 1;
+
+      // Play sound
+      if (frame.sound) playSound(frame.sound);
+
+      // FLIP 3D Kinetic Translation
+      frame.slots.forEach((cellId, targetSlotIdx) => {
+        const el = cellElements[cellId];
+        const isHopping = frame.hopping.includes(cellId);
+        const arcY = isHopping ? -38 : 0; // Dramatic 3D parabolic elevation
+        const scale = isHopping ? 1.18 : 1.0;
+        const targetX = targetSlotIdx * PITCH;
+
+        el.className = 'quantum-cell';
+        if (frame.roles[cellId]) {
+          el.classList.add(frame.roles[cellId]);
+        }
+
+        el.style.transform = `translate3d(${targetX}px, ${arcY}px, 0) scale(${scale})`;
+      });
+
+      // Pointer Glide
+      const leftX = frame.pointers.left * PITCH + (CELL_SIZE / 2) - 34;
+      const rightX = frame.pointers.right * PITCH + (CELL_SIZE / 2) - 36;
+      ptrLeft.style.transform = `translate3d(${leftX}px, 0, 0)`;
+      ptrLeft.textContent = `left [${frame.pointers.left}]`;
+      ptrRight.style.transform = `translate3d(${rightX}px, 0, 0)`;
+      ptrRight.textContent = `right [${frame.pointers.right}]`;
+    }
+
+    function nextStep() {
+      if (currentFrame < FRAMES.length - 1) {
+        currentFrame++;
+        update();
+      } else {
+        pause();
+      }
+    }
+
+    function prevStep() {
+      if (currentFrame > 0) {
+        currentFrame--;
+        update();
+      }
+    }
+
+    function scrubTo(val) {
+      currentFrame = parseInt(val, 10);
+      update();
+    }
+
+    function togglePlay() {
+      if (isPlaying) pause();
+      else play();
+    }
+
+    function play() {
+      isPlaying = true;
+      document.getElementById('playBtn').textContent = '⏸ Pause Quantum';
+      if (currentFrame === FRAMES.length - 1) {
+        currentFrame = 0;
+        update();
+      }
+      playTimer = setInterval(() => {
+        if (currentFrame < FRAMES.length - 1) {
+          nextStep();
+        } else {
+          pause();
+        }
+      }, 1600);
+    }
+
+    function pause() {
+      isPlaying = false;
+      document.getElementById('playBtn').textContent = '▶ Quantum Run';
+      clearInterval(playTimer);
+    }
+
+    function reset() {
+      pause();
+      currentFrame = 0;
+      update();
+    }
+
+    update();
+  </script>
+</body>
+</html>

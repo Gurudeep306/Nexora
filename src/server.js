@@ -42,6 +42,7 @@ const { createStudioRouter } = require("./routes/studio");
 const { createExplainLabRouter } = require("./routes/explainlab");
 const { createForgeRouter } = require("./routes/forge");
 const { createLiveRouter } = require("./routes/live");
+const { kronosChat, kronosComplete } = require("./kronos-engine");
 const { initExplainLabDb } = require("./explainlab-db");
 const { initForgeDb } = require("./forge-db");
 const { initLiveDb } = require("./live-db");
@@ -5348,80 +5349,13 @@ const _aiCache = new Map();
 const AI_CACHE_TTL = 90000; // 90 seconds
 const AI_CACHE_MAX = 300;
 
-// ── Gemini 2.0 Flash Lite — primary completion engine (free, best at code) ──
+// ── Kronos-1 Sovereign In-House AI Core (Primary intelligence for all Nexora features) ──
 async function _geminiComplete(apiKey, prompt) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${apiKey}`;
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: {
-        temperature: 0.05,
-        maxOutputTokens: 150,
-        stopSequences: ["\n\n\n", "```", "// [END]", "/* [END] */"],
-      },
-      safetySettings: [
-        { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
-        { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
-        {
-          category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-          threshold: "BLOCK_NONE",
-        },
-        {
-          category: "HARM_CATEGORY_DANGEROUS_CONTENT",
-          threshold: "BLOCK_NONE",
-        },
-      ],
-    }),
-  });
-  if (!res.ok) return { ok: false, error: await res.text() };
-  const data = await res.json();
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-  return { ok: true, content: text };
+  return kronosComplete(apiKey, prompt);
 }
 
-// ── Groq — fallback completion engine ──
 async function _groqChat(apiKey, messages, opts = {}) {
-  const {
-    maxTokens = 128,
-    temperature = 0.1,
-    stop,
-    retries = 1,
-    model = process.env.GROQ_MODEL || "openai/gpt-oss-120b",
-  } = opts;
-  for (let attempt = 0; attempt <= retries; attempt++) {
-    const groqRes = await fetch(
-      "https://api.groq.com/openai/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify({
-          model,
-          messages,
-          max_tokens: maxTokens,
-          temperature,
-          ...(stop ? { stop } : {}),
-        }),
-      },
-    );
-    if (groqRes.status === 429 && attempt < retries) {
-      const retryAfter = parseInt(
-        groqRes.headers.get("retry-after") || "2",
-        10,
-      );
-      await new Promise((r) => setTimeout(r, Math.max(retryAfter, 2) * 1000));
-      continue;
-    }
-    if (!groqRes.ok)
-      return { ok: false, status: groqRes.status, error: await groqRes.text() };
-    const data = await groqRes.json();
-    return { ok: true, content: data.choices?.[0]?.message?.content || "" };
-  }
-  return { ok: false, error: "rate limited" };
+  return kronosChat(apiKey, messages, opts);
 }
 
 function _aiCacheKey(prefix, suffix, lang) {
