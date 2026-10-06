@@ -2,7 +2,6 @@ const express = require('express');
 const { errMessage } = require("../http-error");
 const forgePaths = require('../dev-roadmap-data');
 const { me, meSql } = require('../context');
-const { synthesizeAnimationFromCode } = require('../animation-synthesizer');
 
 const TOPIC_TAG_MAP = {
   complexity: ['implementation', 'math'],
@@ -64,20 +63,61 @@ function createLearningRouter(deps) {
       if (!question || !question.trim()) return res.status(400).json({ ok: false, error: 'Question is required' });
 
       const isAnimate = Boolean(animate) || /animate|visualiz|simulation|step through|show animation|animation/i.test(question);
-      let visualization = null;
-      if (isAnimate) {
-        try {
-          visualization = synthesizeAnimationFromCode(question);
-        } catch (e) {
-          console.error('[AiChat] animation synthesis error:', e);
-        }
-      }
 
-      const systemPrompt = isAnimate
-        ? `You are Nexora's Quantum Algorithm Visualizer & Coach. The student provided code or pseudo-code to be animated.
-Explain the algorithm's intuition, time/space complexity, loop invariants, and key state transitions that they can observe in the kinetic 3D Cyber-Matrix visualizer below.
-Do not dump walls of text. Be concise, sharp, and structured with bold highlights and bullet points.`
-        : `You are an expert, encouraging competitive-programming tutor inside a problem-solving IDE. The student is working on one specific problem and wants conceptual help — not the answer handed to them.
+      let systemPrompt = '';
+      if (isAnimate) {
+        systemPrompt = `You are Nexora-Omni: Universal CS & 3D Kinetic Algorithm Visualizer.
+The student provided code, pseudo-code, or an algorithm:
+"${question}"
+
+DO NOT use hardcoded templates. Analyze their input code completely FROM SCRATCH, trace every line, variable, and state transition, and output TWO parts in your response:
+
+### PART 1: Pedagogical Walkthrough
+- Intuition & core invariant of this algorithm
+- Step-by-step logic breakdown
+- Exact Time Complexity (e.g. \`O(N)\`) and Space Complexity (e.g. \`O(1)\`)
+
+### PART 2: 3D Kinetic State Machine (Generated from Scratch)
+Provide a complete kinetic animation specification JSON inside a \`\`\`nexora_animation block matching this exact structure:
+
+\`\`\`nexora_animation
+{
+  "title": "<Concise descriptive title based on their exact code>",
+  "algorithm": "<Name of algorithm or data structure>",
+  "data_structure": "<array | linked_list | stack | queue | tree | matrix | graph>",
+  "time_complexity": "<e.g. O(N)>",
+  "space_complexity": "<e.g. O(1)>",
+  "pseudo_lines": [
+    "<line 1 of the algorithm>",
+    "<line 2 of the algorithm>",
+    "<line 3 of the algorithm>"
+  ],
+  "frames": [
+    {
+      "step": 1,
+      "explanation": "<Specific narration of what happens at this exact step>",
+      "cells": [
+        {"id": "c0", "v": 45, "addr": "0x1000", "role": "active", "elevation": -16},
+        {"id": "c1", "v": 12, "addr": "0x1004", "role": "idle", "elevation": 0}
+      ],
+      "pointers": {"left": 0, "right": 1},
+      "roles": {"0": "active", "1": "active"},
+      "soundEffect": "hop",
+      "codeLine": 1
+    }
+  ]
+}
+\`\`\`
+
+Animation Construction Rules:
+- Build 4 to 10 step frames demonstrating the progression of the data structure.
+- Persistent cell IDs ("c0", "c1", ...) must stick with their corresponding elements so FLIP physics show true spatial movement.
+- Cell roles: "active" (examined/focused), "compare" (being compared), "swap" (hopping to new positions, elevation -16 to -32), "done" (final locked position), "found" (target found), "idle" (inactive).
+- Sound cues: "hop", "compare", "swap", "done".
+- Map "codeLine" to the corresponding line in "pseudo_lines".
+- Generate everything organically from scratch to match the user's specific code and data values.`;
+      } else {
+        systemPrompt = `You are an expert, encouraging competitive-programming tutor inside a problem-solving IDE. The student is working on one specific problem and wants conceptual help — not the answer handed to them.
 
 How you respond:
 - Lead with the direct answer to what they asked, then add only the detail that builds understanding.
@@ -98,6 +138,7 @@ The student is working on this problem:
 ---
 ${(statement || 'No problem statement available').substring(0, 4000)}
 ---`;
+      }
 
       const messages = [{ role: 'system', content: systemPrompt }];
       if (Array.isArray(history)) {
@@ -112,8 +153,8 @@ ${(statement || 'No problem statement available').substring(0, 4000)}
       let reply = '';
       try {
         const chatRes = await _groqChat(process.env.GROQ_API_KEY, messages, {
-          maxTokens: 1024,
-          temperature: 0.6,
+          maxTokens: isAnimate ? 2048 : 1024,
+          temperature: isAnimate ? 0.2 : 0.6,
         });
         if (chatRes && chatRes.ok && chatRes.content) {
           reply = chatRes.content;
@@ -122,12 +163,63 @@ ${(statement || 'No problem statement available').substring(0, 4000)}
         console.warn('[AiChat] LLM error:', err.message);
       }
 
-      if (!reply) {
-        if (visualization) {
-          reply = `### 🎬 ${visualization.title}\n\n**Algorithm:** ${visualization.algorithm}  \n**Time Complexity:** \`${visualization.time_complexity}\`  \n**Space Complexity:** \`${visualization.space_complexity}\`\n\nBelow is your interactive **3D Cyber-Matrix kinetic animation**. You can step forward, step backward, play the simulation, scrub the timeline, and observe the parabolic hops and memory register updates in real-time.`;
-        } else {
-          return res.status(500).json({ ok: false, error: 'Could not generate AI response. Please ensure Nexora-Omni or GROQ_API_KEY is configured.' });
+      let visualization = null;
+
+      if (isAnimate && reply) {
+        // Extract the animation specification generated from scratch by the AI model
+        const animMatch = reply.match(/```(?:nexora_animation|json)?\s*(\{[\s\S]*?"frames"[\s\S]*?\})\s*```/i)
+          || reply.match(/(\{[\s\S]*?"title"[\s\S]*?"frames"\s*:\s*\[[\s\S]*?\}\s*\]\s*\})/i);
+
+        if (animMatch) {
+          try {
+            visualization = JSON.parse(animMatch[1]);
+            // Strip the raw code fence from markdown reply so the chat UI presents the clean text explanation + visualizer
+            reply = reply.replace(/```(?:nexora_animation|json)?\s*\{[\s\S]*?"frames"[\s\S]*?\}\s*```/i, '').trim();
+          } catch (e) {
+            console.warn('[AiChat] Failed to parse model-generated animation JSON:', e);
+          }
         }
+      }
+
+      // Normalize whatever kinetic state machine the AI generated from scratch to fit the Cyber-Matrix theme perfectly
+      if (visualization && Array.isArray(visualization.frames)) {
+        visualization.frames = visualization.frames.map((frame, fIdx) => {
+          const rawCells = frame.cells || frame.state?.cells || [];
+          const cells = rawCells.map((c, cIdx) => {
+            if (typeof c === 'object' && c !== null) {
+              return {
+                id: c.id || `c${cIdx}`,
+                v: c.v !== undefined ? c.v : (c.value !== undefined ? c.value : cIdx),
+                addr: c.addr || `0x${(4096 + cIdx * 4).toString(16)}`,
+                role: c.role || (frame.roles && frame.roles[cIdx]) || 'idle',
+                elevation: c.elevation !== undefined ? c.elevation : (c.role === 'swap' ? -20 : c.role === 'compare' ? -28 : 0),
+              };
+            }
+            return {
+              id: `c${cIdx}`,
+              v: c,
+              addr: `0x${(4096 + cIdx * 4).toString(16)}`,
+              role: (frame.roles && frame.roles[cIdx]) || 'idle',
+              elevation: 0,
+            };
+          });
+
+          return {
+            step: frame.step || fIdx + 1,
+            explanation: frame.explanation || `Execution step ${fIdx + 1}`,
+            cells,
+            pointers: frame.pointers || frame.state?.pointers || {},
+            roles: frame.roles || frame.state?.roles || {},
+            soundEffect: frame.soundEffect || (frame.roles && Object.values(frame.roles).includes('swap') ? 'swap' : 'hop'),
+            codeLine: frame.codeLine || 1,
+          };
+        });
+
+        visualization.total_frames = visualization.frames.length;
+      }
+
+      if (!reply) {
+        return res.status(500).json({ ok: false, error: 'Could not generate AI response. Please ensure Nexora-Omni or GROQ_API_KEY is configured.' });
       }
 
       res.json({ ok: true, reply, visualization });
