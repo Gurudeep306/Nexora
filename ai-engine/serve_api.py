@@ -18,6 +18,36 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 NEXORA_SECRET = os.environ.get("NEXORA_INTERNAL_SECRET", "nexora-secret-key-change-me")
 PORT = int(os.environ.get("PORT", 8080))
 
+LLM_INSTANCE = None
+
+def get_llama_model():
+    global LLM_INSTANCE
+    if LLM_INSTANCE is not None:
+        return LLM_INSTANCE
+    try:
+        from llama_cpp import Llama
+        models_dir = os.path.join(os.path.dirname(__file__), "models")
+        preferred = ["kronos-coder-1.5b.gguf", "kronos-coder-0.5b.gguf"]
+        model_path = None
+        for p in preferred:
+            full = os.path.join(models_dir, p)
+            if os.path.exists(full):
+                model_path = full
+                break
+        if model_path:
+            print(f"[*] Initializing local Kronos physical neural model: {model_path}")
+            LLM_INSTANCE = Llama(
+                model_path=model_path,
+                n_ctx=2048,
+                n_threads=6,
+                verbose=False
+            )
+            print("[*] Kronos local physical neural model loaded successfully!")
+            return LLM_INSTANCE
+    except Exception as e:
+        print(f"[*] Running with high-speed sovereign AST synthesizer: {e}")
+    return None
+
 def dynamic_code_to_animation(code_text: str):
     """
     Synthesizes a complete 3D Cyber-Matrix state machine dynamically from scratch
@@ -206,7 +236,17 @@ class NexoraApiHandler(BaseHTTPRequestHandler):
                     f"```nexora_animation\n{json.dumps(anim_spec, indent=2)}\n```"
                 )
             else:
-                reply = (
+                llama = get_llama_model()
+                generated = None
+                if llama:
+                    try:
+                        prompt_str = f"<|im_start|>system\nYou are Kronos-1, the sovereign CS educational and engineering intelligence.<|im_end|>\n<|im_start|>user\n{user_content}<|im_end|>\n<|im_start|>assistant\n"
+                        out = llama(prompt_str, max_tokens=1024, stop=["<|im_end|>", "<|endoftext|>"])
+                        generated = out["choices"][0]["text"].strip()
+                    except Exception as e:
+                        print(f"[!] Llama inference error: {e}")
+
+                reply = generated or (
                     f"### ⚡ Kronos-1 Sovereign Intelligence\n\n"
                     f"Analyzing request: *{user_content[:120]}*\n\n"
                     "1. **Core Conceptual Invariant**: Establish monotonic state progress across each step of the computation.\n"

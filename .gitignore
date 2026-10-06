@@ -47,3 +47,10 @@ __pycache__/
 ai-engine/models/*.gguf
 ai-engine/models/*.bin
 ai-engine/models/*.safetensors
+
+# Python environments
+.venv/
+*/.venv/
+venv/
+*/venv/
+

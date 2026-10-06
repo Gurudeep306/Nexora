@@ -17,6 +17,8 @@ echo "  Status:    Active"
 echo "============================================================"
 
 export PORT="${PORT}"
-export NEXORA_INTERNAL_SECRET="${SECRET}"
-
-python3 ai-engine/serve_api.py
+if [ -f "ai-engine/.venv/bin/python" ]; then
+  exec ai-engine/.venv/bin/python ai-engine/serve_api.py
+else
+  exec python3 ai-engine/serve_api.py
+fi
