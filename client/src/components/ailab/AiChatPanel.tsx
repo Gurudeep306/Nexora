@@ -47,7 +47,33 @@ export function AiChatPanel() {
   const scrollRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
-  // Persist locally (no server-side chat history endpoint exists).
+  // Fetch isolated user chat history from Kronos database
+  useEffect(() => {
+    let active = true
+    async function loadUserHistory() {
+      try {
+        const res = await api.get<{ ok: boolean; username?: string; history?: any[] }>('/api/ai-chat/history', {
+          query: { username: user?.username || 'guest' }
+        })
+        if (active && res.ok && Array.isArray(res.history) && res.history.length > 0) {
+          const loaded: ChatMessage[] = res.history.map((h, i) => ({
+            id: h.id || (Date.now() + i),
+            role: h.role,
+            content: h.content,
+            visualization: h.visualization,
+            ts: h.createdAt ? new Date(h.createdAt).getTime() : Date.now(),
+          }))
+          setMessages(loaded)
+        }
+      } catch {
+        // Fall back gracefully to localStorage
+      }
+    }
+    void loadUserHistory()
+    return () => { active = false }
+  }, [user?.username])
+
+  // Persist locally for immediate offline cache
   useEffect(() => {
     try {
       localStorage.setItem(storageKey, JSON.stringify(messages.slice(-100)))
@@ -74,6 +100,7 @@ export function AiChatPanel() {
           statement: statement.trim() || undefined,
           question,
           animate: isAnimate,
+          username: user?.username || 'guest',
           history: messages.slice(-10).map((m) => ({ role: m.role, content: m.content })),
         })
         if (!res.ok || !res.reply) {
@@ -100,8 +127,21 @@ export function AiChatPanel() {
         inputRef.current?.focus()
       }
     },
-    [sending, statement, messages, animateMode, toast],
+    [sending, statement, messages, animateMode, toast, user?.username],
   )
+
+  const clearHistory = useCallback(async () => {
+    setMessages([])
+    try {
+      localStorage.removeItem(storageKey)
+      await api.delete('/api/ai-chat/history', {
+        query: { username: user?.username || 'guest' }
+      })
+      toast.success('Chat Cleared', 'Your history has been erased.')
+    } catch {
+      // ignore
+    }
+  }, [storageKey, user?.username, toast])
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -150,7 +190,7 @@ export function AiChatPanel() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setMessages([])}
+              onClick={() => void clearHistory()}
               disabled={!messages.length}
               aria-label="Clear conversation"
             >

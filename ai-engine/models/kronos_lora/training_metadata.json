@@ -1,0 +1,16 @@
+{
+  "model_id": "kronos-1-sovereign",
+  "base_model": "kronos-coder-1.5b.gguf",
+  "dataset_samples": 221,
+  "epochs": 3,
+  "learning_rate": 0.0002,
+  "lora_rank": 16,
+  "completed_at": "2026-10-06 07:57:35 UTC",
+  "status": "trained",
+  "capabilities": [
+    "DSA Expert Invariants",
+    "GATE CSE Systematic Proofs",
+    "System Design Distributed Architecture",
+    "Kinetic 3D Algorithm AST State-Machine Synthesizer"
+  ]
+}

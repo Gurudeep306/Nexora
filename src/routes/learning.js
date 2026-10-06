@@ -59,14 +59,15 @@ function createLearningRouter(deps) {
 
   router.post('/api/ai-chat', aiLimiter, async (req, res) => {
     try {
-      const { statement, question, history, animate } = req.body;
+      const { statement, question, history, animate, username: reqUser } = req.body;
       if (!question || !question.trim()) return res.status(400).json({ ok: false, error: 'Question is required' });
 
+      const activeUser = me() || reqUser || 'guest';
       const isAnimate = Boolean(animate) || /animate|visualiz|simulation|step through|show animation|animation/i.test(question);
 
       let systemPrompt = '';
       if (isAnimate) {
-        systemPrompt = `You are Nexora-Omni: Universal CS & 3D Kinetic Algorithm Visualizer.
+        systemPrompt = `You are Kronos-1: Sovereign CS Neural Engine & 3D Kinetic Algorithm Visualizer.
 The student provided code, pseudo-code, or an algorithm:
 "${question}"
 
@@ -219,10 +220,63 @@ ${(statement || 'No problem statement available').substring(0, 4000)}
       }
 
       if (!reply) {
-        return res.status(500).json({ ok: false, error: 'Could not generate AI response. Please ensure Nexora-Omni or GROQ_API_KEY is configured.' });
+        return res.status(500).json({ ok: false, error: 'Could not generate AI response from Kronos-1 neural engine.' });
       }
 
-      res.json({ ok: true, reply, visualization });
+      // Persist conversation and 3D kinetic visualization per user
+      try {
+        const now = new Date().toISOString();
+        await run(
+          'INSERT INTO ai_user_chats (username, role, content, visualization, created_at) VALUES (?, ?, ?, ?, ?)',
+          [activeUser, 'user', String(question).substring(0, 4000), null, now]
+        );
+        await run(
+          'INSERT INTO ai_user_chats (username, role, content, visualization, created_at) VALUES (?, ?, ?, ?, ?)',
+          [activeUser, 'assistant', reply, visualization ? JSON.stringify(visualization) : null, now]
+        );
+      } catch (dbErr) {
+        console.warn('[AiChat] Failed to persist user chat history:', dbErr.message);
+      }
+
+      res.json({ ok: true, reply, visualization, username: activeUser });
+    } catch (e) {
+      res.status(500).json({ ok: false, error: errMessage(e) });
+    }
+  });
+
+  // Multi-user isolated chat history retrieval
+  router.get('/api/ai-chat/history', async (req, res) => {
+    try {
+      const activeUser = me() || req.query.username || 'guest';
+      const rows = await all(
+        'SELECT id, role, content, visualization, created_at FROM ai_user_chats WHERE username = ? ORDER BY id ASC LIMIT 100',
+        [activeUser]
+      );
+      const history = (rows || []).map(r => {
+        let vis = null;
+        if (r.visualization) {
+          try { vis = JSON.parse(r.visualization); } catch (_) {}
+        }
+        return {
+          id: r.id,
+          role: r.role,
+          content: r.content,
+          visualization: vis,
+          createdAt: r.created_at,
+        };
+      });
+      res.json({ ok: true, username: activeUser, history });
+    } catch (e) {
+      res.status(500).json({ ok: false, error: errMessage(e) });
+    }
+  });
+
+  // Clear chat history for specific user
+  router.delete('/api/ai-chat/history', async (req, res) => {
+    try {
+      const activeUser = me() || req.query.username || req.body?.username || 'guest';
+      await run('DELETE FROM ai_user_chats WHERE username = ?', [activeUser]);
+      res.json({ ok: true, message: `Chat history cleared for ${activeUser}` });
     } catch (e) {
       res.status(500).json({ ok: false, error: errMessage(e) });
     }

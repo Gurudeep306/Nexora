@@ -530,6 +530,17 @@ async function initDb() {
     FOREIGN KEY (problem_rowid) REFERENCES problems(id)
   )`);
 
+  // Multi-user isolated AI chat & kinetic animation history
+  await run(`CREATE TABLE IF NOT EXISTS ai_user_chats (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL,
+    role TEXT NOT NULL,
+    content TEXT NOT NULL,
+    visualization TEXT,
+    created_at TEXT NOT NULL
+  )`);
+  await run(`CREATE INDEX IF NOT EXISTS idx_ai_user_chats_user ON ai_user_chats(username)`);
+
   // Decomposition / thinking notes
   await run(`CREATE TABLE IF NOT EXISTS decomposition_notes (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
