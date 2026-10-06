@@ -199,16 +199,17 @@ class NexoraApiHandler(BaseHTTPRequestHandler):
                 )
             else:
                 reply = (
-                    f"### Nexora-Omni Analysis\n\n"
-                    f"Analyzing your request: *{user_content[:120]}*\n\n"
-                    "1. **Conceptual Intuition**: Deconstruct the problem space into state, transition function, and termination invariant.\n"
-                    "2. **Complexity Trade-Offs**: Aim for minimal auxiliary allocations while maintaining optimal time bounds.\n"
-                    "3. **Guidance**: Walk through edge cases such as empty inputs, single element boundaries, and integer overflow."
+                    f"### ⚡ Kronos-1 Sovereign Intelligence\n\n"
+                    f"Analyzing request: *{user_content[:120]}*\n\n"
+                    "1. **Core Conceptual Invariant**: Establish monotonic state progress across each step of the computation.\n"
+                    "2. **Complexity Target**: Minimize auxiliary memory allocations while achieving optimal asymptotic time bounds.\n"
+                    "3. **Proof & Correctness**: Verify base cases, edge cases (empty or singular inputs), and termination safety."
                 )
 
             self._send_json(200, {
-                "id": "chatcmpl-nexora-omni",
+                "id": "chatcmpl-kronos-1",
                 "object": "chat.completion",
+                "model": "kronos-1-sovereign",
                 "choices": [{
                     "index": 0,
                     "message": {
