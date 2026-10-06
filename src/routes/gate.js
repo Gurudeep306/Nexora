@@ -206,6 +206,327 @@ function createGateRouter() {
     });
   });
 
+  /* Full paper for CBT Examination Mode */
+  router.get("/api/gate/paper/:paperId", (req, res) => {
+    const b = load();
+    const paper = b.papers.find((p) => p.id === req.params.paperId);
+    if (!paper) return res.status(404).json({ ok: false, error: "Paper not found" });
+
+    const questions = b.questions
+      .filter((x) => x.paper === paper.id)
+      .slice()
+      .sort((a, c) => {
+        // General Aptitude first, then subject questions
+        const aSec = a.section === "ga" ? 0 : 1;
+        const cSec = c.section === "ga" ? 0 : 1;
+        if (aSec !== cSec) return aSec - cSec;
+        return (
+          Number(a.number) - Number(c.number) ||
+          String(a.number).localeCompare(String(c.number), undefined, { numeric: true }) ||
+          (a.id < c.id ? -1 : 1)
+        );
+      });
+
+    const gaQuestions = questions.filter((q) => q.section === "ga");
+    const subQuestions = questions.filter((q) => q.section !== "ga");
+
+    const sections = [
+      {
+        id: "ga",
+        title: "General Aptitude",
+        count: gaQuestions.length,
+        marks: gaQuestions.reduce((acc, q) => acc + (q.marks || 1), 0),
+      },
+      {
+        id: "subject",
+        title: paper.exam === "DA" ? "Data Science & AI" : "Computer Science & IT",
+        count: subQuestions.length,
+        marks: subQuestions.reduce((acc, q) => acc + (q.marks || 1), 0),
+      },
+    ];
+
+    const totalMarks = questions.reduce((acc, q) => acc + (q.marks || 1), 0);
+
+    res.json({
+      ok: true,
+      paper,
+      sections,
+      totalQuestions: questions.length,
+      totalMarks,
+      durationMinutes: 180,
+      questions: questions.map(strip),
+    });
+  });
+
+  /* Official GATE Examination Evaluator */
+  router.post("/api/gate/evaluate", (req, res) => {
+    const b = load();
+    const { paperId, responses = {}, timeSpent = {} } = req.body || {};
+    const paper = b.papers.find((p) => p.id === paperId);
+    if (!paper) return res.status(404).json({ ok: false, error: "Paper not found" });
+
+    const questions = b.questions.filter((x) => x.paper === paper.id);
+
+    let totalScore = 0;
+    let maxMarks = 0;
+    let positiveMarks = 0;
+    let negativeMarks = 0;
+    let correctCount = 0;
+    let incorrectCount = 0;
+    let unattemptedCount = 0;
+
+    const sectionStats = {
+      ga: { score: 0, max: 0, correct: 0, incorrect: 0, unattempted: 0 },
+      subject: { score: 0, max: 0, correct: 0, incorrect: 0, unattempted: 0 },
+    };
+
+    const subjectStats = {};
+
+    const evaluationDetails = questions.map((q) => {
+      const qMarks = q.marks != null ? q.marks : 1;
+      maxMarks += qMarks;
+
+      const secKey = q.section === "ga" ? "ga" : "subject";
+      sectionStats[secKey].max += qMarks;
+
+      if (!subjectStats[q.subject]) {
+        subjectStats[q.subject] = { score: 0, max: 0, correct: 0, incorrect: 0, unattempted: 0 };
+      }
+      subjectStats[q.subject].max += qMarks;
+
+      const userAns = responses[q.id];
+      const time = timeSpent[q.id] || 0;
+
+      let isAttempted = false;
+      let isCorrect = false;
+      let marksAwarded = 0;
+
+      if (userAns !== undefined && userAns !== null && userAns !== "" && !(Array.isArray(userAns) && userAns.length === 0)) {
+        isAttempted = true;
+      }
+
+      if (!isAttempted) {
+        unattemptedCount++;
+        sectionStats[secKey].unattempted++;
+        subjectStats[q.subject].unattempted++;
+      } else {
+        if (q.type === "MSQ") {
+          let uArr = Array.isArray(userAns) ? userAns : [userAns];
+          uArr = uArr.map((x) => String(x).trim().toUpperCase()).sort();
+          let tArr = [];
+          if (Array.isArray(q.answer)) tArr = q.answer.map((x) => String(x).trim().toUpperCase());
+          else if (typeof q.answer === "string") tArr = q.answer.split(/[,;\s]+/).map((x) => x.trim().toUpperCase()).filter(Boolean);
+          tArr.sort();
+          isCorrect = uArr.length === tArr.length && uArr.every((v, i) => v === tArr[i]);
+          if (isCorrect) {
+            marksAwarded = qMarks;
+          } else {
+            // MSQ has zero negative marking
+            marksAwarded = 0;
+          }
+        } else if (q.type === "NAT") {
+          const userNum = Number(userAns);
+          if (!isNaN(userNum)) {
+            if (typeof q.answer === "number") {
+              isCorrect = Math.abs(userNum - q.answer) <= 0.05;
+            } else if (typeof q.answer === "string" && q.answer.includes(":")) {
+              const [lo, hi] = q.answer.split(":").map(Number);
+              isCorrect = userNum >= lo - 0.01 && userNum <= hi + 0.01;
+            } else {
+              isCorrect = Math.abs(userNum - Number(q.answer)) <= 0.05;
+            }
+          }
+          if (isCorrect) {
+            marksAwarded = qMarks;
+          } else {
+            // NAT has zero negative marking
+            marksAwarded = 0;
+          }
+        } else {
+          // Standard MCQ
+          isCorrect = String(userAns).trim().toUpperCase() === String(q.answer).trim().toUpperCase();
+          if (isCorrect) {
+            marksAwarded = qMarks;
+          } else {
+            // 1-mark: -1/3, 2-mark: -2/3
+            marksAwarded = -(qMarks / 3);
+          }
+        }
+
+        if (isCorrect) {
+          correctCount++;
+          positiveMarks += qMarks;
+          sectionStats[secKey].correct++;
+          subjectStats[q.subject].correct++;
+        } else {
+          incorrectCount++;
+          if (marksAwarded < 0) {
+            negativeMarks += Math.abs(marksAwarded);
+          }
+          sectionStats[secKey].incorrect++;
+          subjectStats[q.subject].incorrect++;
+        }
+      }
+
+      totalScore += marksAwarded;
+      sectionStats[secKey].score += marksAwarded;
+      subjectStats[q.subject].score += marksAwarded;
+
+      return {
+        id: q.id,
+        number: q.number,
+        section: q.section,
+        subject: q.subject,
+        topic: q.topic,
+        type: q.type,
+        marks: qMarks,
+        userAnswer: userAns,
+        officialAnswer: q.answer,
+        isAttempted,
+        isCorrect,
+        marksAwarded: Number(marksAwarded.toFixed(2)),
+        timeSpentSeconds: time,
+      };
+    });
+
+    // Clean decimals
+    totalScore = Math.max(0, Number(totalScore.toFixed(2)));
+    positiveMarks = Number(positiveMarks.toFixed(2));
+    negativeMarks = Number(negativeMarks.toFixed(2));
+    sectionStats.ga.score = Number(sectionStats.ga.score.toFixed(2));
+    sectionStats.subject.score = Number(sectionStats.subject.score.toFixed(2));
+
+    for (const k of Object.keys(subjectStats)) {
+      subjectStats[k].score = Number(subjectStats[k].score.toFixed(2));
+      const att = subjectStats[k].correct + subjectStats[k].incorrect;
+      subjectStats[k].accuracy = att > 0 ? Math.round((subjectStats[k].correct / att) * 100) : 0;
+    }
+
+    const totalAttempted = correctCount + incorrectCount;
+    const accuracy = totalAttempted > 0 ? Math.round((correctCount / totalAttempted) * 100) : 0;
+
+    // Rank and Percentile calculation
+    let predictedAir = "15000+";
+    let percentile = 70.0;
+    if (totalScore >= 80) {
+      predictedAir = "1 – 30 (Top Tier)";
+      percentile = 99.99;
+    } else if (totalScore >= 70) {
+      predictedAir = "31 – 150 (IISc / Top IITs)";
+      percentile = 99.8;
+    } else if (totalScore >= 60) {
+      predictedAir = "151 – 500 (Old IITs)";
+      percentile = 99.3;
+    } else if (totalScore >= 50) {
+      predictedAir = "501 – 1500 (Top NITs / Newer IITs)";
+      percentile = 98.0;
+    } else if (totalScore >= 40) {
+      predictedAir = "1501 – 4000";
+      percentile = 95.0;
+    } else if (totalScore >= 30) {
+      predictedAir = "4001 – 9000";
+      percentile = 89.0;
+    } else if (totalScore >= 25) {
+      predictedAir = "9001 – 15000 (Qualified)";
+      percentile = 78.0;
+    } else {
+      predictedAir = "Below Cutoff (< 25 marks)";
+      percentile = Math.max(10, Math.round((totalScore / 25) * 65));
+    }
+
+    res.json({
+      ok: true,
+      paperId,
+      paperTitle: `GATE ${paper.exam} ${paper.year}${paper.set ? ` Set ${paper.set}` : ""}`,
+      totalScore,
+      maxMarks,
+      positiveMarks,
+      negativeMarks,
+      accuracy,
+      attemptedCount: totalAttempted,
+      unattemptedCount,
+      correctCount,
+      incorrectCount,
+      sectionStats,
+      subjectStats,
+      predictedAir,
+      percentile,
+      evaluationDetails,
+    });
+  });
+
+  /* AI Attempt Diagnostic Analyzer */
+  router.post("/api/gate/ai-analysis", (req, res) => {
+    const { evalResult, attemptHistory = {} } = req.body || {};
+    if (!evalResult) return res.status(400).json({ ok: false, error: "Evaluation data required" });
+
+    const { totalScore, maxMarks, accuracy, negativeMarks, attemptedCount, subjectStats, sectionStats } = evalResult;
+
+    // Diagnose cognitive patterns
+    const negativeRatio = totalScore > 0 ? Number(((negativeMarks / (totalScore + negativeMarks)) * 100).toFixed(1)) : 0;
+    let negativeRisk = "Safe & Disciplined";
+    if (negativeMarks >= 6) negativeRisk = "High Risk (Aggressive Guessing)";
+    else if (negativeMarks >= 3) negativeRisk = "Moderate Risk (Occasional Gamble)";
+
+    // Identify strong vs weak subjects
+    const strengths = [];
+    const vulnerabilities = [];
+    for (const [subj, data] of Object.entries(subjectStats || {})) {
+      if (data.max >= 4) {
+        if (data.accuracy >= 70 && data.score >= data.max * 0.6) {
+          strengths.push({ subject: subj, score: data.score, max: data.max, accuracy: data.accuracy });
+        } else if (data.accuracy < 50 || data.score <= data.max * 0.3) {
+          vulnerabilities.push({ subject: subj, score: data.score, max: data.max, accuracy: data.accuracy });
+        }
+      }
+    }
+
+    strengths.sort((a, b) => b.accuracy - a.accuracy);
+    vulnerabilities.sort((a, b) => a.accuracy - b.accuracy);
+
+    // Speed vs accuracy profiling
+    let speedAccuracyProfile = "Balanced Test-Taker";
+    if (accuracy >= 80 && attemptedCount >= 45) {
+      speedAccuracyProfile = "High Mastery & High Velocity (Elite Ranker Track)";
+    } else if (accuracy >= 80 && attemptedCount < 40) {
+      speedAccuracyProfile = "High Precision, Low Volume (Too Cautious, missed easy scoring opportunities)";
+    } else if (accuracy < 60 && attemptedCount >= 50) {
+      speedAccuracyProfile = "Rushed Attempt with Excessive Friction (Over-attempting without validation)";
+    } else if (accuracy < 60 && attemptedCount < 40) {
+      speedAccuracyProfile = "Foundational Knowledge Gaps (Requires conceptual strengthening)";
+    }
+
+    // Actionable 3-point prescription
+    const recommendations = [];
+    if (vulnerabilities.length > 0) {
+      const topWeak = vulnerabilities.slice(0, 2).map((v) => v.subject.toUpperCase()).join(" and ");
+      recommendations.push(`Intensive Targeted Revision: Focus on ${topWeak} where low accuracy incurred point penalties.`);
+    }
+    if (negativeMarks >= 4) {
+      recommendations.push(`Cut Down Flawed MCQ Guesses: You surrendered ${negativeMarks} marks to negative marking. Restrict 50-50 elimination gambles.`);
+    } else {
+      recommendations.push(`Maximize NAT & MSQ Boldness: Numerical (NAT) and Multiple-Select (MSQ) questions have 0 negative marks; always attempt high-confidence calculations.`);
+    }
+    if (sectionStats?.ga?.score < 11) {
+      recommendations.push(`General Aptitude Boost: GA yields 15 relatively high-yield marks with moderate effort. Practicing 15 mins daily can recover 4–6 additional marks.`);
+    } else {
+      recommendations.push(`Maintain GA Pacing: Keep your General Aptitude completion time strictly under 18–20 minutes to preserve deep problem-solving time for 2-mark CS problems.`);
+    }
+
+    res.json({
+      ok: true,
+      analysis: {
+        speedAccuracyProfile,
+        negativeRisk,
+        negativePenaltyRatio: `${negativeRatio}%`,
+        strengths,
+        vulnerabilities,
+        recommendations,
+        executiveSummary: `Scored ${totalScore}/${maxMarks} with ${accuracy}% accuracy. Negative penalty was ${negativeMarks} marks. ${strengths.length} subject strength areas identified.`,
+      },
+    });
+  });
+
   return router;
 }
 
