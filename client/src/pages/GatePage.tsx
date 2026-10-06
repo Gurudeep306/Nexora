@@ -26,7 +26,7 @@ import { api } from '@/lib/api'
 import { useApi } from '@/hooks/useApi'
 import { cn } from '@/lib/utils'
 import { QuestionView } from '@/gate/QuestionView'
-import { TYPE_LABEL, type GateList, type GateMeta, type QType } from '@/gate/types'
+import { TYPE_LABEL, paperLabel, type GateList, type GateMeta, type QType } from '@/gate/types'
 
 const PAGE_SIZE = 25
 const TYPES: QType[] = ['MCQ', 'MSQ', 'NAT', 'FILL', 'MATCH', 'DESC', 'TF']
@@ -104,6 +104,12 @@ const DOMAIN_GROUPS = [
     icon: Sparkles,
     subjects: ['ga'],
   },
+  {
+    id: 'legacy',
+    title: 'Hardware & Legacy Systems',
+    icon: Binary,
+    subjects: ['legacy'],
+  },
 ]
 
 export default function GatePage() {
@@ -122,6 +128,7 @@ export default function GatePage() {
   const page = Math.max(1, Number(params.get('page') ?? 1))
 
   const [exam, toggleExam, setExam] = useListParam('exam')
+  const [paper, togglePaper, setPaper] = useListParam('paper')
   const [year, toggleYear, setYear] = useListParam('year')
   const [subject, toggleSubject, setSubject] = useListParam('subject')
   const [topic, toggleTopic, setTopic] = useListParam('topic')
@@ -151,6 +158,7 @@ export default function GatePage() {
   const query = {
     q,
     exam: exam.join(','),
+    paper: paper.join(','),
     year: year.join(','),
     subject: subject.join(','),
     topic: topic.join(','),
@@ -165,7 +173,7 @@ export default function GatePage() {
 
   const list = useApi<GateList>(
     () => api.get<GateList>('/api/gate/questions', { query }),
-    [q, exam.join(), year.join(), subject.join(), topic.join(), type.join(), marks.join(), section.join(), hasFigure, sort, page],
+    [q, exam.join(), paper.join(), year.join(), subject.join(), topic.join(), type.join(), marks.join(), section.join(), hasFigure, sort, page],
   )
 
   const setPage = (p: number) => {
@@ -274,18 +282,24 @@ export default function GatePage() {
     return [...set].sort((a, b) => b - a).map((y) => ({ id: String(y), label: String(y) }))
   }, [meta.data])
 
-  // Era helper functions
+  // Era helper functions with toggle capability
   const selectEra = (startYear: number, endYear: number) => {
     const eraYears = years.filter((y) => {
       const yr = Number(y.id)
       return yr >= startYear && yr <= endYear
     }).map((y) => y.id)
-    setYear(eraYears)
+    const isEraSelected = eraYears.length > 0 && eraYears.length === year.length && eraYears.every((y) => year.includes(y))
+    if (isEraSelected) {
+      setYear([])
+    } else {
+      setYear(eraYears)
+    }
   }
 
   // Active filters count
   const activeCount =
     exam.length +
+    paper.length +
     year.length +
     subject.length +
     topic.length +
@@ -360,8 +374,12 @@ export default function GatePage() {
           <button
             type="button"
             onClick={() => {
-              setExam(['DA'])
-              setSubject([])
+              if (exam.length === 1 && exam[0] === 'DA') {
+                setExam([])
+              } else {
+                setExam(['DA'])
+                setSubject([])
+              }
             }}
             className={cn('gate-preset-chip', exam.length === 1 && exam[0] === 'DA' && 'gate-preset-chip-on')}
           >
@@ -371,7 +389,11 @@ export default function GatePage() {
           <button
             type="button"
             onClick={() => {
-              setExam(['CSE'])
+              if (exam.length === 1 && exam[0] === 'CSE') {
+                setExam([])
+              } else {
+                setExam(['CSE'])
+              }
             }}
             className={cn('gate-preset-chip', exam.length === 1 && exam[0] === 'CSE' && 'gate-preset-chip-on')}
           >
@@ -380,7 +402,13 @@ export default function GatePage() {
 
           <button
             type="button"
-            onClick={() => setMarks(['2'])}
+            onClick={() => {
+              if (marks.length === 1 && marks[0] === '2') {
+                setMarks([])
+              } else {
+                setMarks(['2'])
+              }
+            }}
             className={cn('gate-preset-chip', marks.length === 1 && marks[0] === '2' && 'gate-preset-chip-on')}
           >
             🎯 2-Mark High Scorers
@@ -389,7 +417,11 @@ export default function GatePage() {
           <button
             type="button"
             onClick={() => {
-              setSubject(['ml', 'ai'])
+              if (subject.length === 2 && subject.includes('ml') && subject.includes('ai')) {
+                setSubject([])
+              } else {
+                setSubject(['ml', 'ai'])
+              }
             }}
             className={cn(
               'gate-preset-chip',
@@ -402,7 +434,11 @@ export default function GatePage() {
           <button
             type="button"
             onClick={() => {
-              setSubject(['dm', 'la'])
+              if (subject.length === 2 && subject.includes('dm') && subject.includes('la')) {
+                setSubject([])
+              } else {
+                setSubject(['dm', 'la'])
+              }
             }}
             className={cn(
               'gate-preset-chip',
@@ -415,7 +451,11 @@ export default function GatePage() {
           <button
             type="button"
             onClick={() => {
-              setSubject(['os', 'cn'])
+              if (subject.length === 2 && subject.includes('os') && subject.includes('cn')) {
+                setSubject([])
+              } else {
+                setSubject(['os', 'cn'])
+              }
             }}
             className={cn(
               'gate-preset-chip',
@@ -428,11 +468,15 @@ export default function GatePage() {
           <button
             type="button"
             onClick={() => {
-              setSubject(['algo', 'pds'])
+              if (subject.includes('algo') && subject.includes('pds')) {
+                setSubject([])
+              } else {
+                setSubject(['algo', 'pds', 'pdsa'])
+              }
             }}
             className={cn(
               'gate-preset-chip',
-              subject.length === 2 && subject.includes('algo') && subject.includes('pds') && 'gate-preset-chip-on',
+              subject.includes('algo') && subject.includes('pds') && 'gate-preset-chip-on',
             )}
           >
             ⚡ Algorithms & Data Structures
@@ -440,7 +484,13 @@ export default function GatePage() {
 
           <button
             type="button"
-            onClick={() => setType(['NAT'])}
+            onClick={() => {
+              if (type.length === 1 && type[0] === 'NAT') {
+                setType([])
+              } else {
+                setType(['NAT'])
+              }
+            }}
             className={cn('gate-preset-chip', type.length === 1 && type[0] === 'NAT' && 'gate-preset-chip-on')}
           >
             🔢 Numerical (NAT)
@@ -448,7 +498,13 @@ export default function GatePage() {
 
           <button
             type="button"
-            onClick={() => setType(['MSQ'])}
+            onClick={() => {
+              if (type.length === 1 && type[0] === 'MSQ') {
+                setType([])
+              } else {
+                setType(['MSQ'])
+              }
+            }}
             className={cn('gate-preset-chip', type.length === 1 && type[0] === 'MSQ' && 'gate-preset-chip-on')}
           >
             🔘 Multiple Select (MSQ)
@@ -544,6 +600,16 @@ export default function GatePage() {
               </button>
             ))}
 
+            {paper.map((p) => {
+              const pObj = meta.data?.papers?.find((item) => item.id === p)
+              const label = pObj ? paperLabel(pObj) : p
+              return (
+                <button key={p} type="button" onClick={() => togglePaper(p)} className="gate-active-badge">
+                  Paper: {label} <X className="size-3" />
+                </button>
+              )
+            })}
+
             {subject.map((s) => (
               <button key={s} type="button" onClick={() => toggleSubject(s)} className="gate-active-badge">
                 Subject: {subjectName(s)} <X className="size-3" />
@@ -601,22 +667,60 @@ export default function GatePage() {
         {showFilters && (
           <div className="mt-4 space-y-5 border-t border-border pt-4">
             {/* 1. Exam & Stream */}
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="w-20 shrink-0 text-[11px] font-bold tracking-wide text-text-muted uppercase">Exam Stream</span>
-              <div className="flex flex-wrap gap-1.5">
-                {exams.map((e) => {
-                  const on = exam.includes(e.id)
-                  return (
-                    <button
-                      key={e.id}
-                      type="button"
-                      onClick={() => toggleExam(e.id)}
-                      className={cn('gate-pill font-semibold', on && 'gate-pill-on')}
-                    >
-                      {e.label}
+            <div className="space-y-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="w-24 shrink-0 text-[11px] font-bold tracking-wide text-text-muted uppercase">Exam Stream</span>
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setExam([])}
+                    className={cn('gate-pill font-semibold', exam.length === 0 && 'gate-pill-on')}
+                  >
+                    All Streams
+                  </button>
+                  {exams.map((e) => {
+                    const on = exam.includes(e.id)
+                    const count = list.data?.facets?.exam?.[e.id]
+                    return (
+                      <button
+                        key={e.id}
+                        type="button"
+                        onClick={() => toggleExam(e.id)}
+                        className={cn('gate-pill font-semibold', on && 'gate-pill-on')}
+                      >
+                        <span>{e.label}</span>
+                        {count != null && <span className="gate-pill-n">{count}</span>}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* Official Paper Selector */}
+              <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-border/40">
+                <span className="w-24 shrink-0 text-[11px] font-bold tracking-wide text-text-muted uppercase">Official Paper</span>
+                <div className="flex flex-wrap items-center gap-2 flex-1">
+                  <select
+                    value={paper[0] ?? ''}
+                    onChange={(e) => setPaper(e.target.value ? [e.target.value] : [])}
+                    className="rounded-xl bg-bg-surface-2 px-3 py-1.5 text-[12.5px] font-semibold text-text-primary border border-border outline-none cursor-pointer max-w-lg"
+                  >
+                    <option value="">All Papers ({meta.data?.papers?.length ?? 0} official papers from 1991 to 2026)</option>
+                    {(meta.data?.papers ?? []).map((p) => {
+                      const count = list.data?.facets?.paper?.[p.id]
+                      return (
+                        <option key={p.id} value={p.id}>
+                          {paperLabel(p)} ({count != null ? `${count} matching` : `${p.count} Qs`})
+                        </option>
+                      )
+                    })}
+                  </select>
+                  {paper.length > 0 && (
+                    <button type="button" onClick={() => setPaper([])} className="text-[11px] font-medium text-accent-brand hover:underline">
+                      Clear Paper
                     </button>
-                  )
-                })}
+                  )}
+                </div>
               </div>
             </div>
 
@@ -639,11 +743,29 @@ export default function GatePage() {
                   const grpSubjects = subjectBlocks.filter((s) => grp.subjects.includes(s.id))
                   if (!grpSubjects.length) return null
 
+                  const allInGrp = grpSubjects.map((s) => s.id)
+                  const allActive = allInGrp.every((id) => subject.includes(id))
+
                   return (
                     <div key={grp.id} className="gate-domain-box space-y-2">
-                      <div className="flex items-center gap-1.5 text-[12px] font-bold text-text-primary">
-                        <GrpIcon className="size-3.5 text-accent-brand shrink-0" />
-                        <span>{grp.title}</span>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1.5 text-[12px] font-bold text-text-primary">
+                          <GrpIcon className="size-3.5 text-accent-brand shrink-0" />
+                          <span>{grp.title}</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (allActive) {
+                              setSubject(subject.filter((id) => !allInGrp.includes(id)))
+                            } else {
+                              setSubject([...new Set([...subject, ...allInGrp])])
+                            }
+                          }}
+                          className="text-[10px] font-semibold text-text-muted hover:text-accent-brand transition-colors cursor-pointer"
+                        >
+                          {allActive ? 'Deselect All' : 'Select All'}
+                        </button>
                       </div>
 
                       <div className="flex flex-wrap gap-1.5">
@@ -673,7 +795,7 @@ export default function GatePage() {
             <div className="space-y-2.5 pt-2 border-t border-border">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="text-[11px] font-bold tracking-wider text-text-muted uppercase flex items-center gap-1.5">
-                  <Binary className="size-3.5 text-accent-brand" /> Topics Explorer
+                  <Binary className="size-3.5 text-accent-brand" /> Topics Explorer ({availableTopics.length} topics)
                   {subject.length > 0 && <span className="text-text-muted lowercase font-normal">(filtered by selected subjects)</span>}
                 </span>
 
@@ -730,21 +852,26 @@ export default function GatePage() {
                 <span className="text-[11px] font-bold tracking-wider text-text-muted uppercase">Years & Examination Era</span>
                 <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
                   <span className="text-text-muted">Quick Era:</span>
-                  <button type="button" onClick={() => selectEra(2024, 2026)} className="gate-chip hover:text-accent-brand cursor-pointer">
-                    2024–2026
-                  </button>
-                  <button type="button" onClick={() => selectEra(2020, 2023)} className="gate-chip hover:text-accent-brand cursor-pointer">
-                    2020–2023
-                  </button>
-                  <button type="button" onClick={() => selectEra(2014, 2019)} className="gate-chip hover:text-accent-brand cursor-pointer">
-                    2014–2019
-                  </button>
-                  <button type="button" onClick={() => selectEra(2000, 2013)} className="gate-chip hover:text-accent-brand cursor-pointer">
-                    2000–2013
-                  </button>
-                  <button type="button" onClick={() => selectEra(1991, 1999)} className="gate-chip hover:text-accent-brand cursor-pointer">
-                    1990s
-                  </button>
+                  {[
+                    { label: '2024–2026', start: 2024, end: 2026 },
+                    { label: '2020–2023', start: 2020, end: 2023 },
+                    { label: '2014–2019', start: 2014, end: 2019 },
+                    { label: '2000–2013', start: 2000, end: 2013 },
+                    { label: '1990s', start: 1991, end: 1999 },
+                  ].map((era) => {
+                    const eraYrs = years.filter((y) => Number(y.id) >= era.start && Number(y.id) <= era.end).map((y) => y.id)
+                    const on = eraYrs.length > 0 && eraYrs.length === year.length && eraYrs.every((y) => year.includes(y))
+                    return (
+                      <button
+                        key={era.label}
+                        type="button"
+                        onClick={() => selectEra(era.start, era.end)}
+                        className={cn('gate-chip hover:text-accent-brand cursor-pointer', on && 'gate-preset-chip-on !text-accent-brand')}
+                      >
+                        {era.label}
+                      </button>
+                    )
+                  })}
                   {year.length > 0 && (
                     <button type="button" onClick={() => setYear([])} className="text-accent-brand hover:underline font-semibold ml-1">
                       Clear ({year.length})
@@ -807,6 +934,7 @@ export default function GatePage() {
                     { id: '5', label: '5 Marks (Legacy)' },
                   ].map((m) => {
                     const on = marks.includes(m.id)
+                    const count = list.data?.facets?.marks?.[m.id]
                     return (
                       <button
                         key={m.id}
@@ -814,7 +942,8 @@ export default function GatePage() {
                         onClick={() => toggleMarks(m.id)}
                         className={cn('gate-pill font-semibold text-[11.5px]', on && 'gate-pill-on')}
                       >
-                        {m.label}
+                        <span>{m.label}</span>
+                        {count != null && <span className="gate-pill-n">{count}</span>}
                       </button>
                     )
                   })}
@@ -837,14 +966,21 @@ export default function GatePage() {
                     onClick={() => setFigureFilter('yes')}
                     className={cn('gate-pill text-[11.5px]', hasFigure === 'yes' && 'gate-pill-on')}
                   >
-                    <ImageIcon className="size-3" /> Has Diagram
+                    <ImageIcon className="size-3" />
+                    <span>Has Diagram</span>
+                    {list.data?.facets?.hasFigure?.yes != null && (
+                      <span className="gate-pill-n">{list.data.facets.hasFigure.yes}</span>
+                    )}
                   </button>
                   <button
                     type="button"
                     onClick={() => setFigureFilter('no')}
                     className={cn('gate-pill text-[11.5px]', hasFigure === 'no' && 'gate-pill-on')}
                   >
-                    Text Only
+                    <span>Text Only</span>
+                    {list.data?.facets?.hasFigure?.no != null && (
+                      <span className="gate-pill-n">{list.data.facets.hasFigure.no}</span>
+                    )}
                   </button>
                 </div>
               </div>
@@ -860,11 +996,24 @@ export default function GatePage() {
       ) : list.error ? (
         <ErrorState message={list.error} />
       ) : total === 0 ? (
-        <EmptyState
-          icon={<SearchX className="size-8" />}
-          title="No questions match"
-          description="Try broadening your subject/topic filters, adjusting the year range, or clearing the search terms."
-        />
+        <div className="card p-8 text-center space-y-4">
+          <EmptyState
+            icon={<SearchX className="size-8" />}
+            title="No questions match your current filters"
+            description="Try broadening your subject/topic filters, selecting a different exam paper or year, or clearing the search keyword."
+          />
+          {activeCount > 0 && (
+            <div className="flex justify-center">
+              <button
+                type="button"
+                onClick={clearAll}
+                className="btn-primary inline-flex items-center gap-2 !py-2.5 !px-5 text-[13px] font-bold shadow-md cursor-pointer"
+              >
+                <RotateCcw className="size-4" /> Reset All Filters ({activeCount})
+              </button>
+            </div>
+          )}
+        </div>
       ) : (
         <>
           <div className="flex items-center justify-between mb-3 text-[13px] text-text-muted">
