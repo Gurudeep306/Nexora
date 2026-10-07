@@ -17,6 +17,8 @@ import {
   CheckCircle2,
   AlertTriangle,
   Flame,
+  Volume2,
+  VolumeX,
   Radio,
   Copy,
   Check,
@@ -24,6 +26,13 @@ import {
   HardDrive,
   Activity,
 } from 'lucide-react'
+import { WirePacketHexView } from './WirePacketHexView'
+import {
+  playPacketTransmitSound,
+  playPacketArriveSound,
+  playNodeCrashSound,
+  playStepClickSound,
+} from '../utils/audioEffects'
 
 interface SystemVisualizerProps {
   system: SystemDesignModel
@@ -56,10 +65,22 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
   const [failedNodes, setFailedNodes] = useState<Record<string, boolean>>({})
   const [copiedPayload, setCopiedPayload] = useState<boolean>(false)
   const [trafficProfile, setTrafficProfile] = useState<'normal' | 'peak' | 'spike'>('normal')
+  const [soundEnabled, setSoundEnabled] = useState<boolean>(false)
+  const [showTelemetryHud, setShowTelemetryHud] = useState<boolean>(true)
+  const [packetInspectorMode, setPacketInspectorMode] = useState<'json' | 'hex'>('json')
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const steps = system.animationSteps
   const currentStep = steps[currentStepIndex] || steps[0]
+
+  // Audio trigger on step transitions
+  useEffect(() => {
+    if (soundEnabled) {
+      playPacketTransmitSound()
+      const t = setTimeout(() => playPacketArriveSound(), 400)
+      return () => clearTimeout(t)
+    }
+  }, [currentStepIndex, soundEnabled])
 
   // Playback timer loop
   useEffect(() => {
@@ -90,6 +111,7 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
 
   const handleNext = () => {
     setIsPlaying(false)
+    if (soundEnabled) playStepClickSound()
     if (currentStepIndex < steps.length - 1) {
       onStepChange(currentStepIndex + 1)
     }
@@ -97,6 +119,7 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
 
   const handlePrev = () => {
     setIsPlaying(false)
+    if (soundEnabled) playStepClickSound()
     if (currentStepIndex > 0) {
       onStepChange(currentStepIndex - 1)
     }
@@ -104,12 +127,14 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
 
   const handleReset = () => {
     setIsPlaying(false)
+    if (soundEnabled) playStepClickSound()
     onStepChange(0)
   }
 
   const handleNodeClick = (node: ServiceNode) => {
     if (chaosMode) {
       // Toggle failure simulation
+      if (soundEnabled) playNodeCrashSound()
       setFailedNodes((prev) => ({ ...prev, [node.id]: !prev[node.id] }))
     } else {
       setSelectedNode(node)
@@ -259,6 +284,32 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
               50k Spike
             </button>
           </div>
+
+          {/* Audio Effects Toggle */}
+          <button
+            onClick={() => setSoundEnabled(!soundEnabled)}
+            title={soundEnabled ? 'Mute Audio Effects' : 'Enable Cyber Audio Synthesizer'}
+            className={`flex size-8 items-center justify-center rounded-lg transition ring-1 ${
+              soundEnabled
+                ? 'bg-sky-500/20 text-sky-400 ring-sky-500/50 shadow-[0_0_8px_#38bdf8]'
+                : 'bg-bg-surface-1 text-text-muted hover:text-text-primary ring-border'
+            }`}
+          >
+            {soundEnabled ? <Volume2 className="size-3.5" /> : <VolumeX className="size-3.5" />}
+          </button>
+
+          {/* Telemetry HUD Toggle */}
+          <button
+            onClick={() => setShowTelemetryHud(!showTelemetryHud)}
+            title={showTelemetryHud ? 'Hide Telemetry HUD' : 'Show Telemetry HUD'}
+            className={`flex size-8 items-center justify-center rounded-lg transition ring-1 ${
+              showTelemetryHud
+                ? 'bg-accent-brand/20 text-accent-brand ring-accent-brand/50 shadow-[0_0_8px_var(--color-accent-brand)]'
+                : 'bg-bg-surface-1 text-text-muted hover:text-text-primary ring-border'
+            }`}
+          >
+            <Activity className="size-3.5" />
+          </button>
         </div>
       </div>
 
@@ -273,6 +324,95 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
             backgroundSize: '36px 36px',
           }}
         />
+
+        {/* Floating Telemetry HUD */}
+        {showTelemetryHud && (
+          <div className="absolute top-3 right-3 z-30 rounded-xl bg-black/80 p-2.5 ring-1 ring-border/80 backdrop-blur-md font-mono text-[10.5px] space-y-1.5 shadow-2xl min-w-[210px] pointer-events-auto">
+            <div className="flex items-center justify-between border-b border-border/40 pb-1">
+              <span className="flex items-center gap-1.5 text-text-muted font-bold uppercase text-[9.5px]">
+                <Activity className={`size-3 ${Object.values(failedNodes).some(Boolean) ? 'text-rose-400 animate-pulse' : 'text-accent-brand'}`} />
+                Live Telemetry HUD
+              </span>
+              <span
+                className={`size-2 rounded-full ${
+                  Object.values(failedNodes).some(Boolean)
+                    ? 'bg-rose-500 shadow-[0_0_8px_#f43f5e] animate-ping'
+                    : 'bg-emerald-400 shadow-[0_0_8px_#34d399]'
+                }`}
+              />
+            </div>
+
+            <div className="grid grid-cols-3 gap-2 pt-0.5 text-center">
+              <div>
+                <span className="text-[9px] text-text-muted block">Throughput</span>
+                <span className="font-bold text-sky-400 block">
+                  {trafficProfile === 'spike' ? '50k/s' : trafficProfile === 'peak' ? '12.5k/s' : '1k/s'}
+                </span>
+              </div>
+              <div>
+                <span className="text-[9px] text-text-muted block">p99 Latency</span>
+                <span
+                  className={`font-bold block ${
+                    Object.values(failedNodes).some(Boolean)
+                      ? 'text-rose-400 animate-pulse'
+                      : 'text-emerald-400'
+                  }`}
+                >
+                  {Object.values(failedNodes).some(Boolean)
+                    ? '142ms'
+                    : trafficProfile === 'spike'
+                    ? '34.6ms'
+                    : trafficProfile === 'peak'
+                    ? '8.4ms'
+                    : '1.9ms'}
+                </span>
+              </div>
+              <div>
+                <span className="text-[9px] text-text-muted block">Error Rate</span>
+                <span
+                  className={`font-bold block ${
+                    Object.values(failedNodes).some(Boolean)
+                      ? 'text-rose-400 animate-pulse'
+                      : 'text-text-muted'
+                  }`}
+                >
+                  {Object.values(failedNodes).some(Boolean)
+                    ? '34.2%'
+                    : trafficProfile === 'spike'
+                    ? '0.12%'
+                    : '0.00%'}
+                </span>
+              </div>
+            </div>
+
+            {/* Sparkline Load Curve */}
+            <div className="pt-1">
+              <svg viewBox="0 0 120 20" className="w-full h-4 overflow-visible">
+                <polyline
+                  fill="none"
+                  stroke={
+                    Object.values(failedNodes).some(Boolean)
+                      ? '#f43f5e'
+                      : trafficProfile === 'spike'
+                      ? '#f59e0b'
+                      : '#00F0FF'
+                  }
+                  strokeWidth="1.8"
+                  points={
+                    Object.values(failedNodes).some(Boolean)
+                      ? '0,14 15,12 30,15 45,5 60,2 75,3 90,1 105,2 120,1'
+                      : trafficProfile === 'spike'
+                      ? '0,16 15,14 30,10 45,8 60,6 75,5 90,4 105,5 120,3'
+                      : trafficProfile === 'peak'
+                      ? '0,18 15,15 30,14 45,12 60,11 75,12 90,10 105,11 120,9'
+                      : '0,19 15,18 30,19 45,17 60,18 75,17 90,18 105,17 120,18'
+                  }
+                  className="transition-all duration-300"
+                />
+              </svg>
+            </div>
+          </div>
+        )}
 
         {/* SVG Connection Lines & Animated Flow Particles */}
         <svg className="absolute inset-0 size-full pointer-events-none">
@@ -535,10 +675,29 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
 
         {/* Live Wire Packet Inspector */}
         <div className="p-5 space-y-2.5 bg-black/40">
-          <div className="flex items-center justify-between">
-            <span className="font-mono text-[11.5px] font-bold text-sky-400 uppercase tracking-wider flex items-center gap-1.5">
-              <Zap className="size-3.5" /> Wire Packet Frame Inspector
-            </span>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex items-center gap-1 rounded-lg bg-bg-surface-2 p-0.5 text-[10.5px] font-mono ring-1 ring-border">
+              <button
+                onClick={() => setPacketInspectorMode('json')}
+                className={`rounded px-2.5 py-0.5 transition ${
+                  packetInspectorMode === 'json'
+                    ? 'bg-sky-500 text-black font-bold'
+                    : 'text-text-muted hover:text-white'
+                }`}
+              >
+                JSON Payload
+              </button>
+              <button
+                onClick={() => setPacketInspectorMode('hex')}
+                className={`rounded px-2.5 py-0.5 transition ${
+                  packetInspectorMode === 'hex'
+                    ? 'bg-emerald-500 text-black font-bold'
+                    : 'text-text-muted hover:text-white'
+                }`}
+              >
+                Binary Wire & Hex
+              </button>
+            </div>
 
             <div className="flex items-center gap-2">
               <span className="rounded bg-sky-500/10 px-2 py-0.5 font-mono text-[10px] text-sky-300 ring-1 ring-sky-500/30">
@@ -554,10 +713,14 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
             </div>
           </div>
 
-          {/* Formatted JSON Payload */}
-          <div className="relative rounded-xl bg-black/70 p-3 ring-1 ring-border text-[11px] font-mono text-emerald-300 overflow-x-auto max-h-[140px]">
-            <pre className="whitespace-pre">{JSON.stringify(currentStep.payload, null, 2)}</pre>
-          </div>
+          {/* Conditional Packet Inspector View */}
+          {packetInspectorMode === 'json' ? (
+            <div className="relative rounded-xl bg-black/70 p-3 ring-1 ring-border text-[11px] font-mono text-emerald-300 overflow-x-auto max-h-[140px]">
+              <pre className="whitespace-pre">{JSON.stringify(currentStep.payload, null, 2)}</pre>
+            </div>
+          ) : (
+            <WirePacketHexView currentStep={currentStep} />
+          )}
 
           <div className="flex items-center justify-between text-[10.5px] font-mono text-text-muted pt-1">
             <span>From: {currentStep.fromNode}</span>

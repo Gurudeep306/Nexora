@@ -6,6 +6,8 @@ import { CodeTalksViewer } from './CodeTalksViewer'
 import { SystemNotesReader } from './SystemNotesReader'
 import { InteractiveCapacityCalculator } from './InteractiveCapacityCalculator'
 import { InfrastructureTopologyMatrix } from './InfrastructureTopologyMatrix'
+import { SequenceDiagramViewer } from './SequenceDiagramViewer'
+import { ChapterConceptAnimator } from './ConceptAnimators'
 import {
   BookOpen,
   Layers,
@@ -17,6 +19,8 @@ import {
   Shield,
   Calculator,
   Activity,
+  Radio,
+  Sparkles,
 } from 'lucide-react'
 
 const CATEGORIES: ('All' | SystemCategory)[] = [
@@ -31,7 +35,7 @@ const CATEGORIES: ('All' | SystemCategory)[] = [
 
 export const SystemDesignStudio: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'visualizer' | 'notes'>('visualizer')
-  const [systemView, setSystemView] = useState<'simulation' | 'capacity' | 'matrix'>('simulation')
+  const [systemView, setSystemView] = useState<'simulation' | 'sequence' | 'simulators' | 'capacity' | 'matrix'>('simulation')
   const [selectedCategory, setSelectedCategory] = useState<'All' | SystemCategory>('All')
   const [selectedSystemId, setSelectedSystemId] = useState<string>('tinyurl')
   const [currentStepIndex, setCurrentStepIndex] = useState<number>(0)
@@ -224,10 +228,30 @@ export const SystemDesignStudio: React.FC = () => {
                 <Activity className="size-3.5" /> Simulation & Code Walks
               </button>
               <button
+                onClick={() => setSystemView('sequence')}
+                className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 transition ${
+                  systemView === 'sequence'
+                    ? 'bg-sky-400 text-black font-bold shadow-sm'
+                    : 'text-text-muted hover:text-text-primary'
+                }`}
+              >
+                <Radio className="size-3.5" /> UML Sequence Flow
+              </button>
+              <button
+                onClick={() => setSystemView('simulators')}
+                className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 transition ${
+                  systemView === 'simulators'
+                    ? 'bg-rose-500 text-white font-bold shadow-sm'
+                    : 'text-text-muted hover:text-text-primary'
+                }`}
+              >
+                <Sparkles className="size-3.5" /> 10 Concept Simulators
+              </button>
+              <button
                 onClick={() => setSystemView('capacity')}
                 className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 transition ${
                   systemView === 'capacity'
-                    ? 'bg-sky-500 text-black font-bold shadow-sm'
+                    ? 'bg-amber-400 text-black font-bold shadow-sm'
                     : 'text-text-muted hover:text-text-primary'
                 }`}
               >
@@ -259,6 +283,21 @@ export const SystemDesignStudio: React.FC = () => {
 
               {/* Code Interlock: How Code Talks With Each Other */}
               <CodeTalksViewer system={currentSystem} currentStep={currentStep} />
+            </div>
+          ) : systemView === 'sequence' ? (
+            /* Interactive UML Sequence Flow & Code Interlock */
+            <div className="grid gap-6 xl:grid-cols-[1.1fr_1fr]">
+              <SequenceDiagramViewer
+                system={currentSystem}
+                currentStepIndex={currentStepIndex}
+                onStepChange={setCurrentStepIndex}
+              />
+              <CodeTalksViewer system={currentSystem} currentStep={currentStep} />
+            </div>
+          ) : systemView === 'simulators' ? (
+            /* 10 Interactive Concept Simulators */
+            <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border shadow-xl">
+              <ChapterConceptAnimator unitId="unit-1" chapterNumber={1} />
             </div>
           ) : systemView === 'capacity' ? (
             /* Interactive Capacity Calculator */
