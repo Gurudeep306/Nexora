@@ -757,9 +757,25 @@ export const DoubleRatchetCryptoEngine: React.FC = () => {
   )
 }
 
+interface SpecializedDomainEnginesProps {
+  systemId?: string
+}
+
 // Master Domain Engines Selector
-export const SpecializedDomainEngines: React.FC = () => {
-  const [activeEngine, setActiveEngine] = useState<'lob' | 'snowflake' | 'doubleratchet'>('lob')
+export const SpecializedDomainEngines: React.FC<SpecializedDomainEnginesProps> = ({ systemId }) => {
+  const getInitialEngine = () => {
+    if (systemId === 'trading-exchange' || systemId === 'payment-system') return 'lob'
+    if (systemId === 'unique-id-generator' || systemId === 'url-shortener') return 'snowflake'
+    if (systemId === 'whatsapp-messenger' || systemId === 'collaborative-editor') return 'doubleratchet'
+    return 'lob'
+  }
+  const [activeEngine, setActiveEngine] = useState<'lob' | 'snowflake' | 'doubleratchet'>(getInitialEngine)
+
+  useEffect(() => {
+    if (systemId === 'trading-exchange' || systemId === 'payment-system') setActiveEngine('lob')
+    else if (systemId === 'unique-id-generator' || systemId === 'url-shortener') setActiveEngine('snowflake')
+    else if (systemId === 'whatsapp-messenger' || systemId === 'collaborative-editor') setActiveEngine('doubleratchet')
+  }, [systemId])
 
   return (
     <div className="space-y-4">
