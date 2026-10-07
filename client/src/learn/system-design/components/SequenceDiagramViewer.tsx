@@ -11,6 +11,7 @@ import {
   Layers,
   Clock,
 } from 'lucide-react'
+import { playStepClickSound } from '../utils/audioEffects'
 
 interface SequenceDiagramViewerProps {
   system: SystemDesignModel
@@ -130,7 +131,10 @@ export const SequenceDiagramViewer: React.FC<SequenceDiagramViewerProps> = ({
               return (
                 <div
                   key={st.step}
-                  onClick={() => onStepChange(stepIdx)}
+                  onClick={() => {
+                    playStepClickSound()
+                    onStepChange(stepIdx)
+                  }}
                   className={`group relative cursor-pointer rounded-xl p-3.5 transition-all ${
                     isCurrent
                       ? 'bg-sky-500/10 ring-1 ring-sky-400/60 shadow-lg'
@@ -159,7 +163,7 @@ export const SequenceDiagramViewer: React.FC<SequenceDiagramViewerProps> = ({
                         {st.protocol}
                       </span>
                       <span className="text-[10px] text-text-muted flex items-center gap-1">
-                        <Clock className="size-3" /> ~{(Math.random() * 4 + 1.2).toFixed(1)}ms
+                        <Clock className="size-3" /> ~{((st.step * 1.37) % 3.4 + 0.9).toFixed(1)}ms
                       </span>
                     </div>
                   </div>
@@ -179,6 +183,14 @@ export const SequenceDiagramViewer: React.FC<SequenceDiagramViewerProps> = ({
                           isCurrent ? 'bg-sky-400 shadow-[0_0_10px_#38bdf8]' : 'bg-border-strong group-hover:bg-sky-400/50'
                         }`}
                       />
+
+                      {/* Directional In-Flight Pulse on Active Step */}
+                      {isCurrent && !isSelf && (
+                        <div
+                          className="absolute -top-[3px] size-2 rounded-full bg-cyan-300 shadow-[0_0_8px_#22d3ee] animate-pulse pointer-events-none"
+                          style={{ left: isLeftToRight ? '65%' : '35%' }}
+                        />
+                      )}
 
                       {/* Directional Arrow Head */}
                       {!isSelf && (

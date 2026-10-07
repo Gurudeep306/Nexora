@@ -430,7 +430,16 @@
   }
 }
 
+.animate-fadeIn {
+  animation: fade-in 220ms var(--ease-smooth);
+}
+
+.animate-flow-dash {
+  animation: nx-flow 0.9s linear infinite;
+}
+
 /* ── Utility Classes ── */
+
 /* Every translucent surface reads its fill and its blur from variables. With
    no wallpaper the fallbacks are the plain Aurora materials; with one, the
    Look layer at the end of this file swaps in wallpaper-tinted glass, and

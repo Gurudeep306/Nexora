@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import type { AnimationStep } from '../types'
 import { Copy, Check } from 'lucide-react'
+import { playStepClickSound } from '../utils/audioEffects'
 
 interface WirePacketHexViewProps {
   currentStep: AnimationStep
@@ -38,6 +39,7 @@ export const WirePacketHexView: React.FC<WirePacketHexViewProps> = ({ currentSte
   }
 
   const handleCopy = () => {
+    playStepClickSound()
     navigator.clipboard.writeText(rawJson)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
@@ -49,7 +51,10 @@ export const WirePacketHexView: React.FC<WirePacketHexViewProps> = ({ currentSte
       <div className="flex items-center justify-between border-b border-border/50 pb-2">
         <div className="flex items-center gap-1.5">
           <button
-            onClick={() => setActiveSubTab('osi')}
+            onClick={() => {
+              playStepClickSound()
+              setActiveSubTab('osi')
+            }}
             className={`rounded px-2.5 py-1 transition ${
               activeSubTab === 'osi'
                 ? 'bg-sky-500/20 text-sky-400 font-bold ring-1 ring-sky-500/40'
@@ -59,7 +64,10 @@ export const WirePacketHexView: React.FC<WirePacketHexViewProps> = ({ currentSte
             OSI Network Frame Headers
           </button>
           <button
-            onClick={() => setActiveSubTab('hexdump')}
+            onClick={() => {
+              playStepClickSound()
+              setActiveSubTab('hexdump')
+            }}
             className={`rounded px-2.5 py-1 transition ${
               activeSubTab === 'hexdump'
                 ? 'bg-emerald-500/20 text-emerald-400 font-bold ring-1 ring-emerald-500/40'
@@ -70,18 +78,23 @@ export const WirePacketHexView: React.FC<WirePacketHexViewProps> = ({ currentSte
           </button>
         </div>
 
-        <button
-          onClick={handleCopy}
-          className="flex items-center gap-1 text-[10px] text-text-muted hover:text-text-primary"
-        >
-          {copied ? <Check className="size-3 text-emerald-400" /> : <Copy className="size-3" />}
-          {copied ? 'Copied' : 'Copy'}
-        </button>
+        <div className="flex items-center gap-3">
+          <span className="hidden sm:flex items-center gap-1.5 text-[10px] text-emerald-400 font-mono">
+            <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" /> Live Capture
+          </span>
+          <button
+            onClick={handleCopy}
+            className="flex items-center gap-1 text-[10px] text-text-muted hover:text-text-primary"
+          >
+            {copied ? <Check className="size-3 text-emerald-400" /> : <Copy className="size-3" />}
+            {copied ? 'Copied' : 'Copy'}
+          </button>
+        </div>
       </div>
 
       {activeSubTab === 'osi' ? (
         /* OSI Layer Headers Breakdown */
-        <div className="space-y-2 text-[10.5px]">
+        <div className="space-y-2 text-[10.5px] animate-fadeIn">
           {/* Layer 2: Ethernet */}
           <div className="rounded-lg bg-bg-surface-1 p-2 ring-1 ring-border/50 space-y-0.5">
             <span className="text-purple-400 font-bold uppercase block">[Layer 2] Ethernet II Frame</span>
