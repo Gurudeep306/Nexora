@@ -26,7 +26,8 @@ function load() {
   if (bank && mtime === 0) return bank;
   lastMtime = mtime;
   const raw = JSON.parse(fs.readFileSync(FILE, "utf8"));
-  const questions = raw.questions.map((q) => ({
+  const rawQuestions = Array.isArray(raw) ? raw : (raw.questions || []);
+  const questions = rawQuestions.map((q) => ({
     ...q,
     // One lower-cased haystack per question so search is a single scan.
     _hay: [
@@ -41,7 +42,8 @@ function load() {
       .join(" \u0000 ")
       .toLowerCase(),
   }));
-  bank = { ...raw, questions, byId: new Map(questions.map((q) => [q.id, q])) };
+  const baseObj = Array.isArray(raw) ? { version: 1, generated: "2026-10-05", papers: [], subjects: { CSE: {}, DA: {} } } : raw;
+  bank = { ...baseObj, questions, byId: new Map(questions.map((q) => [q.id, q])) };
   return bank;
 }
 
