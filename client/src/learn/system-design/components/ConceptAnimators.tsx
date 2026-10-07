@@ -16,6 +16,14 @@ import {
   Car,
   Plus,
   Users,
+  Clock,
+  Network,
+  Filter,
+  Radio,
+  Lock,
+  Unlock,
+  HardDrive,
+  AlertTriangle,
 } from 'lucide-react'
 import {
   playPacketTransmitSound,
@@ -2223,22 +2231,1476 @@ export const UberH3SpatialDispatchAnimator: React.FC = () => {
   )
 }
 
+// ==========================================
+// 11. VECTOR CLOCK CAUSALITY ANIMATOR
+// ==========================================
+export const VectorClockAnimator: React.FC = () => {
+  const [clocks, setClocks] = useState<{ A: [number, number, number]; B: [number, number, number]; C: [number, number, number] }>({
+    A: [0, 0, 0],
+    B: [0, 0, 0],
+    C: [0, 0, 0],
+  })
+  const [log, setLog] = useState<string>('System initialized. All process vector clocks set to [0, 0, 0].')
+  const [lastCausality, setLastCausality] = useState<string>('Equilibrium: No concurrent conflicts.')
+
+  const handleLocalEvent = (proc: 'A' | 'B' | 'C') => {
+    playStepClickSound()
+    setClocks((prev) => {
+      const idx = proc === 'A' ? 0 : proc === 'B' ? 1 : 2
+      const nextArr = [...prev[proc]] as [number, number, number]
+      nextArr[idx]++
+      return { ...prev, [proc]: nextArr }
+    })
+    setLog(`⚡ Local event executed on Process P_${proc}. Clock incremented locally.`)
+    setLastCausality(`Process P_${proc} advanced its causal sequence counter.`)
+  }
+
+  const handleSendMessage = (from: 'A' | 'B', to: 'B' | 'C') => {
+    playPacketTransmitSound()
+    setTimeout(() => {
+      playPacketArriveSound()
+      setClocks((prev) => {
+        const fromIdx = from === 'A' ? 0 : 1
+        const toIdx = to === 'B' ? 1 : 2
+
+        const senderClock = [...prev[from]] as [number, number, number]
+        senderClock[fromIdx]++
+
+        const receiverClock = [
+          Math.max(prev[to][0], senderClock[0]),
+          Math.max(prev[to][1], senderClock[1]),
+          Math.max(prev[to][2], senderClock[2]),
+        ] as [number, number, number]
+        receiverClock[toIdx]++
+
+        return {
+          ...prev,
+          [from]: senderClock,
+          [to]: receiverClock,
+        }
+      })
+      setLog(`📨 Message transmitted P_${from} -> P_${to}. P_${to} merged component-wise maximum and incremented its clock.`)
+      setLastCausality(`Causal Order Proven: Event on P_${from} strictly happened-before (->) receive event on P_${to}.`)
+    }, 350)
+  }
+
+  const handleReset = () => {
+    playSuccessChimeSound()
+    setClocks({ A: [0, 0, 0], B: [0, 0, 0], C: [0, 0, 0] })
+    setLog('All vector clocks reset to initial state [0, 0, 0].')
+    setLastCausality('Equilibrium: No concurrent conflicts.')
+  }
+
+  return (
+    <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border shadow-xl space-y-4 font-mono text-[12px]">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/50 pb-3">
+        <div>
+          <span className="font-bold text-[14px] text-text-primary flex items-center gap-2">
+            <Clock className="size-4 text-purple-400" /> Vector Clocks & Causal Ordering Simulator
+          </span>
+          <p className="text-[11px] text-text-muted mt-0.5 font-sans">
+            Tracks partial causal ordering across independent distributed processes without synchronized physical clocks.
+          </p>
+        </div>
+        <button
+          onClick={handleReset}
+          className="flex items-center gap-1 rounded-lg bg-bg-surface-1 px-2.5 py-1 text-[11px] text-text-muted hover:text-text-primary ring-1 ring-border"
+        >
+          <RotateCcw className="size-3" /> Reset
+        </button>
+      </div>
+
+      {/* Process Nodes Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        {(['A', 'B', 'C'] as const).map((proc, pIdx) => {
+          const colors = [
+            'border-sky-500/40 bg-sky-500/5 text-sky-400',
+            'border-emerald-500/40 bg-emerald-500/5 text-emerald-400',
+            'border-amber-500/40 bg-amber-500/5 text-amber-400',
+          ][pIdx]
+
+          return (
+            <div key={proc} className={`rounded-xl p-4 border ${colors} space-y-3`}>
+              <div className="flex items-center justify-between">
+                <span className="font-bold text-[13px]">{`Process P_${proc}`}</span>
+                <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-black/40">
+                  Node {pIdx + 1}
+                </span>
+              </div>
+
+              <div className="rounded-lg bg-black/50 p-2 text-center ring-1 ring-border/50">
+                <span className="text-[10px] text-text-muted uppercase block mb-1">Vector Clock [P_A, P_B, P_C]</span>
+                <span className="text-[18px] font-bold tracking-widest text-text-primary">
+                  [{clocks[proc].join(', ')}]
+                </span>
+              </div>
+
+              <div className="space-y-1.5 pt-1">
+                <button
+                  onClick={() => handleLocalEvent(proc)}
+                  className="w-full rounded bg-bg-surface-1 hover:bg-bg-surface-3 py-1.5 text-[11px] font-bold text-text-primary ring-1 ring-border transition"
+                >
+                  ⚡ Local Event (Tick)
+                </button>
+                {proc === 'A' && (
+                  <button
+                    onClick={() => handleSendMessage('A', 'B')}
+                    className="w-full rounded bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 py-1 text-[10.5px] font-bold transition ring-1 ring-sky-500/30"
+                  >
+                    Send P_A → P_B
+                  </button>
+                )}
+                {proc === 'B' && (
+                  <button
+                    onClick={() => handleSendMessage('B', 'C')}
+                    className="w-full rounded bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 py-1 text-[10.5px] font-bold transition ring-1 ring-emerald-500/30"
+                  >
+                    Send P_B → P_C
+                  </button>
+                )}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Causality Analysis Status */}
+      <div className="rounded-xl bg-purple-500/10 border border-purple-500/20 p-3 space-y-1">
+        <span className="text-[10.5px] font-bold text-purple-400 uppercase tracking-wider block">
+          Formal Causal Invariant:
+        </span>
+        <p className="text-[12px] text-text-primary font-mono">{lastCausality}</p>
+        <p className="text-[11px] text-text-muted font-sans mt-1">
+          If $V(A) \le V(B)$ for all components, event $A$ happened-before event $B$. If neither dominates, events are concurrent ($A \parallel B$).
+        </p>
+      </div>
+
+      <div className="rounded-xl bg-black/60 p-3 ring-1 ring-border text-[11px] text-cyan-300 font-mono">
+        <span className="text-cyan-400 font-bold">Execution Log: </span>{log}
+      </div>
+    </div>
+  )
+}
+
+// ==========================================
+// 12. MVCC SNAPSHOT VISIBILITY ANIMATOR
+// ==========================================
+export const MvccVisibilityAnimator: React.FC = () => {
+  const [selectedTx, setSelectedTx] = useState<'Tx102' | 'Tx106' | 'Tx108'>('Tx102')
+
+  const versions = [
+    { id: 'v1', value: '$100', xmin: 100, xmax: 105, state: 'Committed at LSN 105' },
+    { id: 'v2', value: '$150', xmin: 105, xmax: 108, state: 'Committed at LSN 108' },
+    { id: 'v3', value: '$200', xmin: 108, xmax: null, state: 'In-Flight (Uncommitted Tx 108)' },
+  ]
+
+  const getVisibleVersion = () => {
+    if (selectedTx === 'Tx102') return 'v1' // Snapshot at 102: Sees v1 (xmin 100 <= 102, xmax 105 > 102)
+    if (selectedTx === 'Tx106') return 'v2' // Snapshot at 106: Sees v2 (xmin 105 <= 106, xmax 108 > 106)
+    return 'v3' // Tx108 sees its own uncommitted write
+  }
+
+  const visibleId = getVisibleVersion()
+
+  return (
+    <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border shadow-xl space-y-4 font-mono text-[12px]">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/50 pb-3">
+        <div>
+          <span className="font-bold text-[14px] text-text-primary flex items-center gap-2">
+            <Database className="size-4 text-emerald-400" /> PostgreSQL MVCC & Snapshot Isolation Simulator
+          </span>
+          <p className="text-[11px] text-text-muted mt-0.5 font-sans">
+            Demonstrates why readers never block writers and writers never block readers via historical row version chains.
+          </p>
+        </div>
+      </div>
+
+      {/* Transaction Snapshot Selector */}
+      <div className="flex flex-wrap items-center gap-2 bg-bg-surface-1 p-2 rounded-xl ring-1 ring-border">
+        <span className="text-[11px] text-text-muted font-bold uppercase mr-1">Active Reader Query:</span>
+        <button
+          onClick={() => { playStepClickSound(); setSelectedTx('Tx102') }}
+          className={`px-3 py-1.5 rounded-lg font-bold transition ${
+            selectedTx === 'Tx102' ? 'bg-sky-400 text-black shadow-sm' : 'bg-bg-surface-2 text-text-muted hover:text-text-primary'
+          }`}
+        >
+          Transaction A (Snapshot LSN 102)
+        </button>
+        <button
+          onClick={() => { playStepClickSound(); setSelectedTx('Tx106') }}
+          className={`px-3 py-1.5 rounded-lg font-bold transition ${
+            selectedTx === 'Tx106' ? 'bg-emerald-400 text-black shadow-sm' : 'bg-bg-surface-2 text-text-muted hover:text-text-primary'
+          }`}
+        >
+          Transaction B (Snapshot LSN 106)
+        </button>
+        <button
+          onClick={() => { playStepClickSound(); setSelectedTx('Tx108') }}
+          className={`px-3 py-1.5 rounded-lg font-bold transition ${
+            selectedTx === 'Tx108' ? 'bg-amber-400 text-black shadow-sm' : 'bg-bg-surface-2 text-text-muted hover:text-text-primary'
+          }`}
+        >
+          Writer Tx C (Uncommitted LSN 108)
+        </button>
+      </div>
+
+      {/* Row Version Chain */}
+      <div className="space-y-2">
+        <span className="text-[10.5px] uppercase font-bold text-text-muted block">
+          Heap Page Historical Tuple Version Chain:
+        </span>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          {versions.map((v) => {
+            const isVis = v.id === visibleId
+            return (
+              <div
+                key={v.id}
+                className={`rounded-xl p-3.5 border transition-all duration-300 ${
+                  isVis
+                    ? 'border-emerald-500 bg-emerald-500/15 ring-2 ring-emerald-500/50 shadow-lg'
+                    : 'border-border bg-bg-surface-1 opacity-60'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-bold text-[13px] text-text-primary font-mono">{v.id.toUpperCase()}</span>
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
+                    isVis ? 'bg-emerald-500 text-black' : 'bg-bg-surface-3 text-text-muted'
+                  }`}>
+                    {isVis ? 'VISIBLE' : 'INVISIBLE'}
+                  </span>
+                </div>
+                <div className="text-[18px] font-bold text-text-primary mb-2">{v.value}</div>
+                <div className="space-y-1 text-[11px] text-text-muted border-t border-border/50 pt-2">
+                  <div>xmin (Created Tx): <strong className="text-text-primary">{v.xmin}</strong></div>
+                  <div>xmax (Deleted/Updated): <strong className="text-text-primary">{v.xmax ?? 'Active'}</strong></div>
+                  <div className="text-[10px] text-sky-400">{v.state}</div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      <div className="rounded-xl bg-black/60 p-3 ring-1 ring-border text-[11.5px] font-mono text-emerald-300">
+        <span className="text-emerald-400 font-bold">Visibility Proof: </span>
+        {selectedTx === 'Tx102' && 'Tx A took snapshot at LSN 102. Reads V1 ($100) because V2 was committed at LSN 105 (after snapshot creation).'}
+        {selectedTx === 'Tx106' && 'Tx B took snapshot at LSN 106. Reads V2 ($150) because V2 committed before 106, while V3 is uncommitted.'}
+        {selectedTx === 'Tx108' && 'Writer Tx C sees its own uncommitted write V3 ($200) through Read-Your-Own-Writes semantics.'}
+      </div>
+    </div>
+  )
+}
+
+// ==========================================
+// 13. BLOOM FILTER PROBABILISTIC ANIMATOR
+// ==========================================
+export const BloomFilterProbabilisticAnimator: React.FC = () => {
+  const [bitArray, setBitArray] = useState<boolean[]>(new Array(24).fill(false))
+  const [insertedKeys, setInsertedKeys] = useState<string[]>(['user_42', 'session_89'])
+  const [testKey, setTestKey] = useState<string>('user_42')
+  const [queryResult, setQueryResult] = useState<{ match: boolean; bits: number[]; isFalsePositive?: boolean } | null>(null)
+
+  const hashKey = (key: string) => {
+    let sum = 0
+    for (let i = 0; i < key.length; i++) sum += key.charCodeAt(i)
+    const h1 = (sum * 7) % 24
+    const h2 = (sum * 13 + 5) % 24
+    const h3 = (sum * 31 + 11) % 24
+    return [h1, h2, h3]
+  }
+
+  // Initialize default keys
+  useEffect(() => {
+    const bits = new Array(24).fill(false)
+    ;['user_42', 'session_89'].forEach((k) => {
+      hashKey(k).forEach((b) => (bits[b] = true))
+    })
+    setBitArray(bits)
+  }, [])
+
+  const handleInsert = (keyToInsert: string) => {
+    if (!keyToInsert || insertedKeys.includes(keyToInsert)) return
+    playStepClickSound()
+    const hashes = hashKey(keyToInsert)
+    setBitArray((prev) => {
+      const next = [...prev]
+      hashes.forEach((b) => (next[b] = true))
+      return next
+    })
+    setInsertedKeys((prev) => [...prev, keyToInsert])
+  }
+
+  const handleTestKey = (key: string) => {
+    playPacketTransmitSound()
+    const hashes = hashKey(key)
+    const allSet = hashes.every((b) => bitArray[b])
+    const wasActuallyInserted = insertedKeys.includes(key)
+    const isFalsePositive = allSet && !wasActuallyInserted
+
+    if (allSet) playTradeMatchSound()
+    else playSuccessChimeSound()
+
+    setQueryResult({
+      match: allSet,
+      bits: hashes,
+      isFalsePositive,
+    })
+  }
+
+  return (
+    <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border shadow-xl space-y-4 font-mono text-[12px]">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/50 pb-3">
+        <div>
+          <span className="font-bold text-[14px] text-text-primary flex items-center gap-2">
+            <Filter className="size-4 text-sky-400" /> LSM-Tree Bloom Filter Probabilistic Point-Query Simulator
+          </span>
+          <p className="text-[11px] text-text-muted mt-0.5 font-sans">
+            Guarantees zero false negatives: if a bit is 0, the key is 100% NOT in the SSTable on disk, saving random disk I/O.
+          </p>
+        </div>
+      </div>
+
+      {/* Bit Array Visual Grid (24 bits) */}
+      <div className="space-y-1.5">
+        <span className="text-[10px] uppercase font-bold text-text-muted block">
+          24-Bit In-Memory Filter Bitset [0..23]:
+        </span>
+        <div className="grid grid-cols-8 sm:grid-cols-12 gap-1.5">
+          {bitArray.map((bit, idx) => {
+            const isQueried = queryResult?.bits.includes(idx)
+            return (
+              <div
+                key={idx}
+                className={`p-2 rounded text-center font-bold text-[11px] transition-all duration-300 border ${
+                  isQueried
+                    ? 'ring-2 ring-accent-brand border-accent-brand scale-105'
+                    : 'border-border/60'
+                } ${bit ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : 'bg-bg-surface-1 text-text-muted'}`}
+              >
+                <div className="text-[8px] text-text-muted">{idx}</div>
+                <div>{bit ? '1' : '0'}</div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Action Controls */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+        <div className="rounded-xl bg-bg-surface-1 p-3 ring-1 ring-border space-y-2">
+          <span className="text-[10.5px] uppercase font-bold text-text-muted block">Insert Key into SSTable:</span>
+          <div className="flex gap-1.5">
+            <input
+              type="text"
+              value={testKey}
+              onChange={(e) => setTestKey(e.target.value)}
+              placeholder="e.g. user_99"
+              className="w-full rounded bg-bg-surface-2 px-2.5 py-1 text-text-primary ring-1 ring-border text-[11.5px]"
+            />
+            <button
+              onClick={() => handleInsert(testKey)}
+              className="bg-accent-brand text-bg-base px-3 py-1 rounded font-bold hover:opacity-90 whitespace-nowrap"
+            >
+              Insert
+            </button>
+          </div>
+          <div className="text-[10px] text-text-muted">
+            Keys in filter: {insertedKeys.join(', ')}
+          </div>
+        </div>
+
+        <div className="rounded-xl bg-bg-surface-1 p-3 ring-1 ring-border space-y-2">
+          <span className="text-[10.5px] uppercase font-bold text-text-muted block">Query Member Key:</span>
+          <div className="flex gap-1.5">
+            <button
+              onClick={() => handleTestKey(testKey)}
+              className="w-full bg-sky-500 text-black py-1.5 rounded font-bold hover:opacity-90"
+            >
+              Check Membership of "{testKey}"
+            </button>
+            <button
+              onClick={() => handleTestKey('random_missing_key')}
+              className="bg-bg-surface-2 px-2.5 py-1 text-[10px] text-text-muted hover:text-text-primary rounded ring-1 ring-border whitespace-nowrap"
+            >
+              Test Absent Key
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Query Result Verdict */}
+      {queryResult && (
+        <div className={`rounded-xl p-3 border font-mono text-[11.5px] ${
+          !queryResult.match
+            ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
+            : queryResult.isFalsePositive
+            ? 'bg-rose-500/10 border-rose-500/30 text-rose-300'
+            : 'bg-sky-500/10 border-sky-500/30 text-sky-300'
+        }`}>
+          <span className="font-bold uppercase tracking-wider block mb-0.5">
+            Verdict on Hashes [{queryResult.bits.join(', ')}]:
+          </span>
+          {!queryResult.match
+            ? '✅ DEFINITE NEGATIVE (100% Guaranteed NOT in SSTable on disk). Zero disk seeks performed!'
+            : queryResult.isFalsePositive
+            ? '⚠️ FALSE POSITIVE: Key was never inserted, but all 3 hash bits collided with other keys! Triggers 1 unnecessary disk read.'
+            : '⚡ PROBABLE POSITIVE: All 3 bits set to 1. Key exists in SSTable; worker proceeds to fetch row from NVMe SSD.'}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ==========================================
+// 14. L4 VS L7 LOAD BALANCER ANIMATOR
+// ==========================================
+export const L4VsL7LoadBalancerAnimator: React.FC = () => {
+  const [balancerMode, setBalancerMode] = useState<'L4' | 'L7'>('L7')
+  const [requestPath, setRequestPath] = useState<string>('/api/v1/orders')
+  const [routedNode, setRoutedNode] = useState<string>('order-service')
+
+  const handleSimulate = (path: string) => {
+    playPacketTransmitSound()
+    setRequestPath(path)
+    setTimeout(() => {
+      playPacketArriveSound()
+      if (balancerMode === 'L4') {
+        // L4 hashes IP/Port blindly across all instances
+        const randomTarget = Math.random() > 0.5 ? 'backend-pod-1 (IP Hash)' : 'backend-pod-2 (IP Hash)'
+        setRoutedNode(randomTarget)
+      } else {
+        // L7 inspects URL path and routes intelligently
+        if (path.includes('order')) setRoutedNode('order-microservice-pod')
+        else if (path.includes('user')) setRoutedNode('auth-user-service-pod')
+        else setRoutedNode('static-asset-cdn-pod')
+      }
+    }, 250)
+  }
+
+  return (
+    <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border shadow-xl space-y-4 font-mono text-[12px]">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/50 pb-3">
+        <div>
+          <span className="font-bold text-[14px] text-text-primary flex items-center gap-2">
+            <Network className="size-4 text-amber-400" /> OSI Layer 4 vs Layer 7 Reverse Proxy & Multiplexer
+          </span>
+          <p className="text-[11px] text-text-muted mt-0.5 font-sans">
+            Compares ultra-fast TCP packet-level hashing (L4 IPVS) with intelligent HTTP/2 URL path and header routing (L7 Envoy).
+          </p>
+        </div>
+        <div className="flex rounded-lg bg-bg-surface-1 p-0.5 ring-1 ring-border">
+          <button
+            onClick={() => { playStepClickSound(); setBalancerMode('L4') }}
+            className={`px-3 py-1 rounded font-bold ${
+              balancerMode === 'L4' ? 'bg-amber-400 text-black shadow-sm' : 'text-text-muted hover:text-text-primary'
+            }`}
+          >
+            Layer 4 (TCP / IP Hash)
+          </button>
+          <button
+            onClick={() => { playStepClickSound(); setBalancerMode('L7') }}
+            className={`px-3 py-1 rounded font-bold ${
+              balancerMode === 'L7' ? 'bg-accent-brand text-bg-base shadow-sm' : 'text-text-muted hover:text-text-primary'
+            }`}
+          >
+            Layer 7 (HTTP/2 Application)
+          </button>
+        </div>
+      </div>
+
+      {/* Simulator Actions */}
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-[11px] text-text-muted font-bold uppercase">Send Inbound Request:</span>
+        <button
+          onClick={() => handleSimulate('/api/v1/orders')}
+          className="px-2.5 py-1 rounded bg-bg-surface-1 hover:bg-bg-surface-3 text-sky-400 ring-1 ring-border font-bold"
+        >
+          POST /api/v1/orders
+        </button>
+        <button
+          onClick={() => handleSimulate('/api/v1/users/profile')}
+          className="px-2.5 py-1 rounded bg-bg-surface-1 hover:bg-bg-surface-3 text-emerald-400 ring-1 ring-border font-bold"
+        >
+          GET /api/v1/users/profile
+        </button>
+        <button
+          onClick={() => handleSimulate('/static/images/logo.png')}
+          className="px-2.5 py-1 rounded bg-bg-surface-1 hover:bg-bg-surface-3 text-purple-400 ring-1 ring-border font-bold"
+        >
+          GET /static/images/logo.png
+        </button>
+      </div>
+
+      {/* Visual Pipeline */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center">
+        <div className="rounded-xl bg-bg-surface-1 p-3 ring-1 ring-border">
+          <span className="text-[10px] text-text-muted uppercase block mb-1">1. Client Request</span>
+          <span className="font-bold text-text-primary block">{requestPath}</span>
+          <span className="text-[10px] text-text-muted">TCP Stream (Port 443)</span>
+        </div>
+
+        <div className="rounded-xl bg-bg-surface-3 p-3 ring-1 ring-border">
+          <span className="text-[10px] text-text-muted uppercase block mb-1">
+            2. {balancerMode === 'L4' ? 'L4 Load Balancer (IPVS)' : 'L7 Proxy (Envoy / NGINX)'}
+          </span>
+          <span className={`font-bold block ${balancerMode === 'L4' ? 'text-amber-400' : 'text-accent-brand'}`}>
+            {balancerMode === 'L4' ? 'Zero Packet Inspection' : 'Parses Headers & Path'}
+          </span>
+          <span className="text-[10px] text-text-muted">
+            {balancerMode === 'L4' ? 'Throughput: >1M pkts/sec' : 'Overhead: ~1.2ms'}
+          </span>
+        </div>
+
+        <div className="rounded-xl bg-bg-surface-1 p-3 ring-1 ring-border">
+          <span className="text-[10px] text-text-muted uppercase block mb-1">3. Selected Backend</span>
+          <span className="font-bold text-emerald-400 block">{routedNode}</span>
+          <span className="text-[10px] text-text-muted">Target Microservice Pod</span>
+        </div>
+      </div>
+
+      <div className="rounded-xl bg-black/60 p-3 ring-1 ring-border text-[11.5px] font-mono text-amber-300">
+        <span className="text-amber-400 font-bold">Architectural Trade-Off: </span>
+        {balancerMode === 'L4'
+          ? 'L4 operates at the transport layer without decrypting or parsing HTTP. Fast and cheap, but cannot route based on URLs, cookies, or JWT headers.'
+          : 'L7 terminates TLS, parses HTTP/2 streams, and routes paths dynamically. Enables microservice segregation, rate limiting, and circuit breaking.'}
+      </div>
+    </div>
+  )
+}
+
+// ==========================================
+// 15. GOSSIP PROTOCOL EPIDEMIC ANIMATOR
+// ==========================================
+export const GossipProtocolEpidemicAnimator: React.FC = () => {
+  const [infectedNodes, setInfectedNodes] = useState<number[]>([0])
+  const [rounds, setRounds] = useState<number>(0)
+  const totalNodes = 10
+
+  const handleNextRound = () => {
+    if (infectedNodes.length >= totalNodes) return
+    playPacketTransmitSound()
+    setRounds((r) => r + 1)
+
+    setInfectedNodes((prev) => {
+      const nextSet = new Set(prev)
+      prev.forEach(() => {
+        // Each infected node picks 2 random peers
+        const target1 = Math.floor(Math.random() * totalNodes)
+        const target2 = Math.floor(Math.random() * totalNodes)
+        nextSet.add(target1)
+        nextSet.add(target2)
+      })
+      const result = Array.from(nextSet)
+      if (result.length >= totalNodes) playSuccessChimeSound()
+      return result
+    })
+  }
+
+  const handleReset = () => {
+    playStepClickSound()
+    setInfectedNodes([0])
+    setRounds(0)
+  }
+
+  return (
+    <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border shadow-xl space-y-4 font-mono text-[12px]">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/50 pb-3">
+        <div>
+          <span className="font-bold text-[14px] text-text-primary flex items-center gap-2">
+            <Radio className="size-4 text-emerald-400" /> Decentralized Gossip (Epidemic) State Dissemination
+          </span>
+          <p className="text-[11px] text-text-muted mt-0.5 font-sans">
+            Guarantees exponential O(log N) information convergence across massive DynamoDB and Cassandra clusters without a single master.
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleNextRound}
+            disabled={infectedNodes.length >= totalNodes}
+            className="bg-accent-brand text-bg-base px-3 py-1.5 rounded-lg font-bold hover:opacity-90 disabled:opacity-40"
+          >
+            Step Gossip Round ({rounds})
+          </button>
+          <button
+            onClick={handleReset}
+            className="bg-bg-surface-1 text-text-muted hover:text-text-primary px-2.5 py-1.5 rounded-lg ring-1 ring-border"
+          >
+            <RotateCcw className="size-3" />
+          </button>
+        </div>
+      </div>
+
+      {/* Cluster Nodes Visual Grid */}
+      <div className="grid grid-cols-5 sm:grid-cols-10 gap-2">
+        {Array.from({ length: totalNodes }).map((_, idx) => {
+          const isInfected = infectedNodes.includes(idx)
+          return (
+            <div
+              key={idx}
+              className={`rounded-xl p-3 text-center border transition-all duration-300 ${
+                isInfected
+                  ? 'bg-emerald-500/20 border-emerald-500 text-emerald-300 ring-2 ring-emerald-500/40 scale-105'
+                  : 'bg-bg-surface-1 border-border text-text-muted'
+              }`}
+            >
+              <div className="text-[9px] uppercase font-bold text-text-muted">Node</div>
+              <div className="text-[14px] font-bold text-text-primary">{idx}</div>
+              <div className="text-[9px] mt-1">{isInfected ? 'SYNCED' : 'STALE'}</div>
+            </div>
+          )
+        })}
+      </div>
+
+      <div className="grid grid-cols-2 gap-3 text-center">
+        <div className="rounded-xl bg-bg-surface-1 p-2.5 ring-1 ring-border">
+          <span className="text-[10px] text-text-muted uppercase block">Cluster Convergence</span>
+          <span className="text-[16px] font-bold text-emerald-400">
+            {((infectedNodes.length / totalNodes) * 100).toFixed(0)}% Synchronized
+          </span>
+        </div>
+        <div className="rounded-xl bg-bg-surface-1 p-2.5 ring-1 ring-border">
+          <span className="text-[10px] text-text-muted uppercase block">Gossip Rounds Elapsed</span>
+          <span className="text-[16px] font-bold text-text-primary">{rounds} Rounds</span>
+        </div>
+      </div>
+
+      <div className="rounded-xl bg-black/60 p-3 ring-1 ring-border text-[11.5px] font-mono text-emerald-300">
+        <span className="text-emerald-400 font-bold">Mathematical Convergence: </span>
+        {infectedNodes.length >= totalNodes
+          ? `🎉 Complete cluster convergence achieved in ${rounds} rounds! Exponential rumor spreading reached 100% quorum.`
+          : `Round ${rounds}: ${infectedNodes.length} of ${totalNodes} nodes informed. Epidemic spreads in O(log N) rounds with zero master bottleneck.`}
+      </div>
+    </div>
+  )
+}
+
+// ==========================================
+// 16. NTP PHYSICAL CLOCK DRIFT & SKEW ANIMATOR
+// ==========================================
+export const NtpClockDriftAnimator: React.FC = () => {
+  const [driftPpm, setDriftPpm] = useState<number>(45)
+  const [activeStep, setActiveStep] = useState<number>(0)
+  const [clientOffsetMs, setClientOffsetMs] = useState<number>(68)
+  const [lwwBugTriggered, setLwwBugTriggered] = useState<boolean>(false)
+  const [syncApplied, setSyncApplied] = useState<boolean>(false)
+
+  const handleSendNtpProbe = () => {
+    playPacketTransmitSound()
+    setActiveStep(1)
+    setTimeout(() => {
+      playPacketArriveSound()
+      setActiveStep(2)
+      setTimeout(() => {
+        playPacketTransmitSound()
+        setActiveStep(3)
+        setTimeout(() => {
+          playSuccessChimeSound()
+          setActiveStep(4)
+          setClientOffsetMs(1.2)
+          setSyncApplied(true)
+        }, 600)
+      }, 500)
+    }, 600)
+  }
+
+  const handleSimulateLwwConflict = () => {
+    playNodeCrashSound()
+    setLwwBugTriggered(true)
+  }
+
+  const handleReset = () => {
+    playStepClickSound()
+    setActiveStep(0)
+    setClientOffsetMs(68)
+    setLwwBugTriggered(false)
+    setSyncApplied(false)
+  }
+
+  return (
+    <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border shadow-xl space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 pb-3">
+        <div className="flex items-center gap-2">
+          <Clock className="size-5 text-amber-400" />
+          <div>
+            <h4 className="font-extrabold text-[15px] text-text-primary font-mono">
+              NTP Physical Clock Drift & Last-Write-Wins (LWW) Anomaly
+            </h4>
+            <p className="text-[11.5px] text-text-secondary">
+              Quartz oscillator drift (ppm), NTP roundtrip packet exchange, and silent data loss under wall-clock ordering.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleSendNtpProbe}
+            disabled={activeStep > 0 && activeStep < 4}
+            className="flex items-center gap-1.5 rounded-lg bg-sky-500 text-black px-3 py-1.5 text-[11.5px] font-mono font-bold hover:bg-sky-400 disabled:opacity-40 transition shadow-sm"
+          >
+            <Radio className="size-3.5" /> Transmit NTP Sync Probe
+          </button>
+          <button
+            onClick={handleSimulateLwwConflict}
+            className="flex items-center gap-1.5 rounded-lg bg-rose-500/20 text-rose-300 ring-1 ring-rose-500/40 px-3 py-1.5 text-[11.5px] font-mono font-bold hover:bg-rose-500/30 transition"
+          >
+            <AlertTriangle className="size-3.5" /> Simulate LWW Data Loss
+          </button>
+          <button
+            onClick={handleReset}
+            className="flex size-7 items-center justify-center rounded-lg bg-bg-surface-1 text-text-muted hover:text-text-primary ring-1 ring-border"
+          >
+            <RotateCcw className="size-3.5" />
+          </button>
+        </div>
+      </div>
+
+      {/* Clock Drift Slider & Gauges */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 font-mono text-[11px]">
+        <div className="rounded-xl bg-bg-surface-1 p-3 ring-1 ring-border space-y-1.5">
+          <div className="flex justify-between text-text-muted text-[10px] uppercase">
+            <span>Quartz Drift Rate</span>
+            <span className="text-amber-400 font-bold">±{driftPpm} PPM</span>
+          </div>
+          <input
+            type="range"
+            min={10}
+            max={100}
+            value={driftPpm}
+            onChange={(e) => setDriftPpm(Number(e.target.value))}
+            className="w-full accent-amber-400 h-1.5 bg-bg-surface-3 rounded-lg cursor-pointer"
+          />
+          <p className="text-[10px] text-text-muted">Diverges by ~{((driftPpm * 86400) / 1000000).toFixed(1)} seconds per day.</p>
+        </div>
+
+        <div className="rounded-xl bg-bg-surface-1 p-3 ring-1 ring-border text-center">
+          <span className="text-text-muted uppercase text-[10px] block">Calculated Skew Offset</span>
+          <span className={`text-[16px] font-bold block mt-0.5 ${syncApplied ? 'text-emerald-400' : 'text-amber-400 animate-pulse'}`}>
+            {syncApplied ? '±1.2 ms (Calibrated)' : `+${clientOffsetMs} ms (Desynchronized)`}
+          </span>
+          <span className="text-[10px] text-text-muted">Stratum-1 Reference Delay: 18.4ms</span>
+        </div>
+
+        <div className="rounded-xl bg-bg-surface-1 p-3 ring-1 ring-border text-center">
+          <span className="text-text-muted uppercase text-[10px] block">NTP Correction Formula</span>
+          <span className="text-[12px] font-bold text-sky-400 block mt-1">
+            θ = ((t₁ - t₀) + (t₂ - t₃)) / 2
+          </span>
+          <span className="text-[10px] text-text-muted">Symmetric propagation assumption</span>
+        </div>
+      </div>
+
+      {/* Visual Timeline Diagram */}
+      <div className="rounded-xl bg-black/60 p-4 ring-1 ring-border space-y-3 font-mono">
+        <div className="flex justify-between items-center text-[11px] pb-2 border-b border-border/50">
+          <div className="flex items-center gap-2 text-sky-400 font-bold">
+            <Server className="size-4" /> Stratum-0 Atomic Reference (True UTC: 12:00:00.000)
+          </div>
+          <div className="flex items-center gap-2 text-amber-400 font-bold">
+            <Clock className="size-4" /> Client Node A (Local Quartz: {syncApplied ? '12:00:00.001' : '12:00:00.068'})
+          </div>
+        </div>
+
+        <div className="relative py-6 px-4">
+          <div className="flex justify-between items-center text-[10.5px]">
+            <div className={`p-2 rounded-lg border text-center transition ${activeStep >= 1 ? 'border-sky-400 bg-sky-500/10 text-sky-300' : 'border-border text-text-muted'}`}>
+              <div className="font-bold">t₀ (Client Send)</div>
+              <div>12:00:00.068</div>
+            </div>
+
+            <div className={`text-[18px] transition ${activeStep === 1 ? 'text-sky-400 animate-pulse font-bold' : 'text-border'}`}>
+              ──► Packet In Flight (9.2ms) ──►
+            </div>
+
+            <div className={`p-2 rounded-lg border text-center transition ${activeStep >= 2 ? 'border-emerald-400 bg-emerald-500/10 text-emerald-300' : 'border-border text-text-muted'}`}>
+              <div className="font-bold">t₁ (Server Recv)</div>
+              <div>12:00:00.009</div>
+            </div>
+          </div>
+
+          <div className="flex justify-between items-center text-[10.5px] mt-4">
+            <div className={`p-2 rounded-lg border text-center transition ${activeStep >= 4 ? 'border-emerald-400 bg-emerald-500/10 text-emerald-300' : 'border-border text-text-muted'}`}>
+              <div className="font-bold">t₃ (Client Recv & Adjust)</div>
+              <div>12:00:00.091 (Offset Applied)</div>
+            </div>
+
+            <div className={`text-[18px] transition ${activeStep === 3 ? 'text-emerald-400 animate-pulse font-bold' : 'text-border'}`}>
+              ◄── NTP Reply Packet (9.2ms) ◄──
+            </div>
+
+            <div className={`p-2 rounded-lg border text-center transition ${activeStep >= 3 ? 'border-sky-400 bg-sky-500/10 text-sky-300' : 'border-border text-text-muted'}`}>
+              <div className="font-bold">t₂ (Server Send)</div>
+              <div>12:00:00.012</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* LWW Bug Exploded Box */}
+      {lwwBugTriggered && (
+        <div className="rounded-xl border border-rose-500/40 bg-rose-500/10 p-3.5 space-y-2 animate-fadeIn font-mono text-[11.5px]">
+          <div className="flex items-center gap-2 text-rose-400 font-bold">
+            <AlertTriangle className="size-4" /> Cassandra / Dynamo Last-Write-Wins (LWW) Silent Data Loss!
+          </div>
+          <p className="text-text-secondary">
+            1. Client 1 writes <strong className="text-text-primary">item.balance = $100</strong> to Node 1 at physical UTC 12:00:00.050. Node 1 clock is fast (+60ms), stamping write at <strong className="text-amber-400">12:00:00.110</strong>.
+            <br />
+            2. Client 2 writes <strong className="text-text-primary">item.balance = $200</strong> to Node 2 at physical UTC 12:00:00.080 (strictly AFTER Client 1 in real time!). But Node 2 clock is lagging (-30ms), stamping write at <strong className="text-rose-400">12:00:00.050</strong>.
+            <br />
+            3. The database compares timestamps: <code className="bg-black/40 px-1 text-emerald-400">12:00:00.110 &gt; 12:00:00.050</code>. 
+            Client 2's newer write is <strong className="text-rose-400">silently discarded and lost forever</strong>!
+          </p>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ==========================================
+// 17. GOOGLE SPANNER TRUETIME & COMMIT-WAIT ANIMATOR
+// ==========================================
+export const SpannerTrueTimeAnimator: React.FC = () => {
+  const [uncertaintyEpsilonMs, setUncertaintyEpsilonMs] = useState<number>(5)
+  const [stage, setStage] = useState<'idle' | 'picked' | 'waiting' | 'committed' | 't2-started'>('idle')
+  const [countdown, setCountdown] = useState<number>(0)
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  const handleStartCommit = () => {
+    playStepClickSound()
+    setStage('picked')
+  }
+
+  const handleRunCommitWait = () => {
+    playPacketTransmitSound()
+    setStage('waiting')
+    const waitTime = uncertaintyEpsilonMs * 2
+    setCountdown(waitTime)
+
+    if (timerRef.current) clearInterval(timerRef.current)
+    let left = waitTime
+    timerRef.current = setInterval(() => {
+      left -= 1
+      setCountdown(Math.max(0, left))
+      if (left <= 0) {
+        if (timerRef.current) clearInterval(timerRef.current)
+        playSuccessChimeSound()
+        setStage('committed')
+      }
+    }, 150)
+  }
+
+  const handleStartT2 = () => {
+    playPacketArriveSound()
+    setStage('t2-started')
+  }
+
+  const handleReset = () => {
+    if (timerRef.current) clearInterval(timerRef.current)
+    setStage('idle')
+    setCountdown(0)
+  }
+
+  return (
+    <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border shadow-xl space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 pb-3">
+        <div className="flex items-center gap-2">
+          <Shield className="size-5 text-sky-400" />
+          <div>
+            <h4 className="font-extrabold text-[15px] text-text-primary font-mono">
+              Google Spanner TrueTime API & Commit-Wait Rule Simulator
+            </h4>
+            <p className="text-[11.5px] text-text-secondary">
+              GPS receivers + Atomic Rubidium clocks with bounded uncertainty [t - ε, t + ε] guaranteeing External Consistency globally.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          {stage === 'idle' && (
+            <button
+              onClick={handleStartCommit}
+              className="flex items-center gap-1.5 rounded-lg bg-sky-400 text-black px-3 py-1.5 text-[11.5px] font-mono font-bold hover:bg-sky-300 transition"
+            >
+              1. Coordinator Picks Timestamp s₁
+            </button>
+          )}
+          {stage === 'picked' && (
+            <button
+              onClick={handleRunCommitWait}
+              className="flex items-center gap-1.5 rounded-lg bg-amber-400 text-black px-3 py-1.5 text-[11.5px] font-mono font-bold hover:bg-amber-300 transition animate-pulse"
+            >
+              2. Execute Commit-Wait (Pause 2ε = {uncertaintyEpsilonMs * 2}ms)
+            </button>
+          )}
+          {stage === 'committed' && (
+            <button
+              onClick={handleStartT2}
+              className="flex items-center gap-1.5 rounded-lg bg-emerald-400 text-black px-3 py-1.5 text-[11.5px] font-mono font-bold hover:bg-emerald-300 transition"
+            >
+              3. Client Starts Subsequent T₂
+            </button>
+          )}
+          <button
+            onClick={handleReset}
+            className="flex size-7 items-center justify-center rounded-lg bg-bg-surface-1 text-text-muted hover:text-text-primary ring-1 ring-border"
+          >
+            <RotateCcw className="size-3.5" />
+          </button>
+        </div>
+      </div>
+
+      {/* Uncertainty bound slider */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 font-mono text-[11px]">
+        <div className="rounded-xl bg-bg-surface-1 p-3 ring-1 ring-border space-y-1.5">
+          <div className="flex justify-between text-text-muted text-[10px] uppercase">
+            <span>TrueTime Uncertainty (ε)</span>
+            <span className="text-sky-400 font-bold">±{uncertaintyEpsilonMs} ms</span>
+          </div>
+          <input
+            type="range"
+            min={1}
+            max={12}
+            value={uncertaintyEpsilonMs}
+            onChange={(e) => setUncertaintyEpsilonMs(Number(e.target.value))}
+            className="w-full accent-sky-400 h-1.5 bg-bg-surface-3 rounded-lg cursor-pointer"
+          />
+          <p className="text-[10px] text-text-muted">Spanner requires 2ε wait = {uncertaintyEpsilonMs * 2}ms delay per commit.</p>
+        </div>
+
+        <div className="rounded-xl bg-bg-surface-1 p-3 ring-1 ring-border text-center">
+          <span className="text-text-muted uppercase text-[10px] block">TrueTime.now() Interval</span>
+          <span className="text-[14px] font-bold text-accent-brand block mt-1">
+            [1000 - {uncertaintyEpsilonMs}, 1000 + {uncertaintyEpsilonMs}]
+          </span>
+          <span className="text-[10px] text-text-muted">Bounded by GPS + Atomic Clocks</span>
+        </div>
+
+        <div className="rounded-xl bg-bg-surface-1 p-3 ring-1 ring-border text-center">
+          <span className="text-text-muted uppercase text-[10px] block">Commit-Wait Invariant</span>
+          <span className="text-[12px] font-bold text-emerald-400 block mt-1">
+            s₁ &lt; t_absolute_finish ≤ s₂
+          </span>
+          <span className="text-[10px] text-text-muted">Guarantees External Consistency</span>
+        </div>
+      </div>
+
+      {/* Visual Timeline of Commit-Wait */}
+      <div className="rounded-xl bg-black/60 p-4 ring-1 ring-border space-y-3 font-mono">
+        <div className="flex justify-between items-center text-[11px]">
+          <span className="text-text-muted uppercase">Transaction T₁ (Write: Alice -$500, Bob +$500)</span>
+          <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+            stage === 'committed' || stage === 't2-started'
+              ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
+              : stage === 'waiting'
+              ? 'bg-amber-400/20 text-amber-300 border border-amber-400/40 animate-pulse'
+              : 'bg-bg-surface-1 text-text-muted'
+          }`}>
+            {stage === 'idle' ? 'Ready' : stage === 'picked' ? 'Timestamp Picked' : stage === 'waiting' ? `Commit-Wait Pausing (${countdown}ms left)` : 'Locks Released & Committed'}
+          </span>
+        </div>
+
+        <div className="space-y-2">
+          <div className="flex items-center gap-3">
+            <span className="w-24 text-[10.5px] text-text-muted">Uncertainty:</span>
+            <div className="flex-1 bg-bg-surface-3 h-5 rounded-lg overflow-hidden flex items-center relative px-2 text-[10px] text-sky-300">
+              <span className="absolute left-2 font-bold">earliest: {1000 - uncertaintyEpsilonMs}ms</span>
+              <span className="mx-auto text-text-muted">True Absolute Time t</span>
+              <span className="absolute right-2 font-bold">latest: {1000 + uncertaintyEpsilonMs}ms</span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <span className="w-24 text-[10.5px] text-text-muted">Commit s₁:</span>
+            <div className="flex-1 bg-bg-surface-1 h-5 rounded-lg border border-border flex items-center px-2 text-[10.5px]">
+              <span className="text-accent-brand font-bold">
+                s₁ = TT.now().latest = {1000 + uncertaintyEpsilonMs}ms
+              </span>
+              {stage === 'waiting' && (
+                <span className="ml-auto text-amber-400 font-bold animate-pulse">
+                  Coordinator Paused (Commit-Wait in progress...)
+                </span>
+              )}
+            </div>
+          </div>
+
+          {stage === 't2-started' && (
+            <div className="flex items-center gap-3 animate-fadeIn">
+              <span className="w-24 text-[10.5px] text-emerald-400 font-bold">T₂ Read:</span>
+              <div className="flex-1 bg-emerald-500/10 border border-emerald-500/30 h-5 rounded-lg flex items-center px-2 text-[10.5px] text-emerald-300 font-bold">
+                s₂ = TT.now().earliest = {1000 + uncertaintyEpsilonMs * 2 + 2}ms &gt; s₁ ({1000 + uncertaintyEpsilonMs}ms). Strict Linearizability Guaranteed!
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ==========================================
+// 18. BYZANTINE FAULT TOLERANCE (BFT 3f+1) ANIMATOR
+// ==========================================
+export const ByzantineFaultAnimator: React.FC = () => {
+  const [traitorActive, setTraitorActive] = useState<boolean>(true)
+  const [phase, setPhase] = useState<'round1' | 'round2' | 'resolved'>('round1')
+
+  const handleNextPhase = () => {
+    if (phase === 'round1') {
+      playPacketTransmitSound()
+      setPhase('round2')
+    } else if (phase === 'round2') {
+      playSuccessChimeSound()
+      setPhase('resolved')
+    }
+  }
+
+  const handleReset = () => {
+    playStepClickSound()
+    setPhase('round1')
+  }
+
+  return (
+    <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border shadow-xl space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 pb-3">
+        <div className="flex items-center gap-2">
+          <Shield className="size-5 text-purple-400" />
+          <div>
+            <h4 className="font-extrabold text-[15px] text-text-primary font-mono">
+              Byzantine Fault Tolerance (BFT) 3f+1 Oral Messages Simulator
+            </h4>
+            <p className="text-[11.5px] text-text-secondary">
+              Lamport, Shostak & Pease (1982) proof: Why N ≥ 3f + 1 nodes are mathematically required to tolerate f arbitrary/malicious nodes.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setTraitorActive(!traitorActive)}
+            className={`rounded-lg px-3 py-1.5 text-[11.5px] font-mono font-bold ring-1 transition ${
+              traitorActive
+                ? 'bg-rose-500/20 text-rose-300 ring-rose-500/40'
+                : 'bg-emerald-500/20 text-emerald-300 ring-emerald-500/40'
+            }`}
+          >
+            {traitorActive ? '🎭 Traitor Node (L2) Active' : '✅ All Honest (0 Traitors)'}
+          </button>
+          {phase !== 'resolved' ? (
+            <button
+              onClick={handleNextPhase}
+              className="flex items-center gap-1.5 rounded-lg bg-accent-brand text-bg-base px-3 py-1.5 text-[11.5px] font-mono font-bold hover:opacity-90 transition"
+            >
+              {phase === 'round1' ? 'Advance to Round 2: Lieutenants Exchange' : 'Calculate Majority Quorum'}
+            </button>
+          ) : (
+            <button
+              onClick={handleReset}
+              className="flex items-center gap-1.5 rounded-lg bg-bg-surface-1 text-text-primary px-3 py-1.5 text-[11.5px] font-mono font-bold hover:bg-bg-surface-3 transition"
+            >
+              <RotateCcw className="size-3.5" /> Replay BFT Consensus
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Nodes visual cluster */}
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 font-mono text-[11px]">
+        {/* Commander */}
+        <div className="rounded-xl bg-bg-surface-1 p-3 ring-1 ring-border text-center space-y-1">
+          <span className="text-[10px] text-text-muted uppercase block">General (Commander)</span>
+          <span className="text-[14px] font-bold text-sky-400 block">Sends: ATTACK (1)</span>
+          <span className="text-[10px] text-text-muted">Honest root initiator</span>
+        </div>
+
+        {/* Lieutenant 1 */}
+        <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/30 p-3 text-center space-y-1">
+          <span className="text-[10px] text-emerald-400 uppercase block">Lieutenant 1 (Honest)</span>
+          <span className="text-[12px] font-bold text-text-primary">
+            {phase === 'round1' ? 'Recv: ATTACK' : 'Vector: [1, 1, 1]'}
+          </span>
+          <span className="text-[10px] text-emerald-400 font-bold">
+            {phase === 'resolved' ? 'Quorum: ATTACK ✅' : 'Awaiting exchange'}
+          </span>
+        </div>
+
+        {/* Lieutenant 2 (Traitor) */}
+        <div className={`rounded-xl p-3 text-center space-y-1 transition ${
+          traitorActive
+            ? 'bg-rose-500/20 border border-rose-500/50 text-rose-300'
+            : 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-300'
+        }`}>
+          <span className="text-[10px] uppercase font-bold block">
+            {traitorActive ? 'Lieutenant 2 (TRAITOR)' : 'Lieutenant 2 (Honest)'}
+          </span>
+          <span className="text-[12px] font-bold">
+            {traitorActive
+              ? phase === 'round1'
+                ? 'Recv: ATTACK (Plots Lie)'
+                : 'Sends ATTACK to L1, RETREAT to L3'
+              : 'Honest relay'}
+          </span>
+          <span className="text-[10px]">{traitorActive ? 'Malicious / Faulty' : 'Synchronized'}</span>
+        </div>
+
+        {/* Lieutenant 3 */}
+        <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/30 p-3 text-center space-y-1">
+          <span className="text-[10px] text-emerald-400 uppercase block">Lieutenant 3 (Honest)</span>
+          <span className="text-[12px] font-bold text-text-primary">
+            {phase === 'round1'
+              ? 'Recv: ATTACK'
+              : traitorActive
+              ? 'Vector: [1, 0, 1]'
+              : 'Vector: [1, 1, 1]'}
+          </span>
+          <span className="text-[10px] text-emerald-400 font-bold">
+            {phase === 'resolved' ? 'Quorum: ATTACK ✅' : 'Awaiting exchange'}
+          </span>
+        </div>
+      </div>
+
+      {/* Resolution analysis */}
+      <div className="rounded-xl bg-black/60 p-4 ring-1 ring-border font-mono text-[11.5px] space-y-2">
+        <div className="flex items-center gap-2 text-emerald-400 font-bold">
+          <CheckCircle2 className="size-4" /> BFT Safety Theorem: N ≥ 3f + 1
+        </div>
+        <p className="text-text-secondary leading-relaxed">
+          With N = 4 nodes and f = 1 traitor, the two honest Lieutenants (L1 and L3) both receive the General's true order (1). In Round 2, even though Traitor L2 lies to L3 (sending 0), L3 applies majority voting: <code className="bg-bg-surface-3 px-1.5 py-0.5 rounded text-sky-300">majority(1, 0, 1) = 1 (ATTACK)</code>.
+          Both honest nodes execute the exact same command. If the cluster only had N = 3 nodes, a single traitor would create an unresolvable 1 vs 1 tie!
+        </p>
+      </div>
+    </div>
+  )
+}
+
+// ==========================================
+// 19. ZERO-COPY LINUX SENDFILE VS TRADITIONAL IO ANIMATOR
+// ==========================================
+export const ZeroCopySendfileAnimator: React.FC = () => {
+  const [isZeroCopy, setIsZeroCopy] = useState<boolean>(true)
+  const [animating, setAnimating] = useState<boolean>(false)
+
+  const handleTransmit = () => {
+    playPacketTransmitSound()
+    setAnimating(true)
+    setTimeout(() => {
+      playSuccessChimeSound()
+      setAnimating(false)
+    }, 1200)
+  }
+
+  return (
+    <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border shadow-xl space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 pb-3">
+        <div className="flex items-center gap-2">
+          <HardDrive className="size-5 text-emerald-400" />
+          <div>
+            <h4 className="font-extrabold text-[15px] text-text-primary font-mono">
+              Linux Zero-Copy (sendfile) vs. Traditional IO Data Path
+            </h4>
+            <p className="text-[11.5px] text-text-secondary">
+              How Apache Kafka and high-performance proxies achieve 10 GB/s throughput by eliminating CPU buffer copies and context switches.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <div className="flex items-center rounded-lg bg-bg-surface-1 p-0.5 ring-1 ring-border text-[11px] font-mono">
+            <button
+              onClick={() => setIsZeroCopy(false)}
+              className={`px-3 py-1 rounded transition ${!isZeroCopy ? 'bg-amber-400 text-black font-bold' : 'text-text-muted hover:text-text-primary'}`}
+            >
+              Traditional read() + write()
+            </button>
+            <button
+              onClick={() => setIsZeroCopy(true)}
+              className={`px-3 py-1 rounded transition ${isZeroCopy ? 'bg-emerald-400 text-black font-bold' : 'text-text-muted hover:text-text-primary'}`}
+            >
+              ⚡ Zero-Copy (sendfile)
+            </button>
+          </div>
+
+          <button
+            onClick={handleTransmit}
+            disabled={animating}
+            className="flex items-center gap-1.5 rounded-lg bg-accent-brand text-bg-base px-3 py-1.5 text-[11.5px] font-mono font-bold hover:opacity-90 disabled:opacity-40 transition"
+          >
+            <Play className="size-3.5 fill-current" /> Stream 1GB Chunk
+          </button>
+        </div>
+      </div>
+
+      {/* Metrics Bar */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 font-mono text-[11px] text-center">
+        <div className="rounded-xl bg-bg-surface-1 p-2.5 ring-1 ring-border">
+          <span className="text-text-muted uppercase text-[10px] block">Context Switches</span>
+          <span className={`text-[16px] font-bold ${isZeroCopy ? 'text-emerald-400' : 'text-rose-400'}`}>
+            {isZeroCopy ? '2 Switches' : '4 Switches'}
+          </span>
+        </div>
+        <div className="rounded-xl bg-bg-surface-1 p-2.5 ring-1 ring-border">
+          <span className="text-text-muted uppercase text-[10px] block">CPU Memory Copies</span>
+          <span className={`text-[16px] font-bold ${isZeroCopy ? 'text-emerald-400' : 'text-rose-400'}`}>
+            {isZeroCopy ? '0 CPU Copies (DMA Only)' : '2 CPU Copies'}
+          </span>
+        </div>
+        <div className="rounded-xl bg-bg-surface-1 p-2.5 ring-1 ring-border">
+          <span className="text-text-muted uppercase text-[10px] block">CPU Core Utilization</span>
+          <span className={`text-[16px] font-bold ${isZeroCopy ? 'text-emerald-400' : 'text-amber-400'}`}>
+            {isZeroCopy ? '3.8%' : '64.2%'}
+          </span>
+        </div>
+        <div className="rounded-xl bg-bg-surface-1 p-2.5 ring-1 ring-border">
+          <span className="text-text-muted uppercase text-[10px] block">Throughput Ceiling</span>
+          <span className="text-[16px] font-bold text-accent-brand">
+            {isZeroCopy ? '9.8 GB/sec (Line Rate)' : '1.4 GB/sec (Bus Saturated)'}
+          </span>
+        </div>
+      </div>
+
+      {/* Data Flow Architecture Diagram */}
+      <div className="rounded-xl bg-black/60 p-4 ring-1 ring-border space-y-3 font-mono text-[11px]">
+        <div className="grid grid-cols-1 sm:grid-cols-5 gap-2 items-center text-center">
+          <div className="rounded-lg bg-bg-surface-1 p-2.5 border border-border">
+            <span className="text-text-muted text-[10px] block">Source</span>
+            <span className="font-bold text-text-primary">NVMe SSD Storage</span>
+          </div>
+
+          <div className="text-emerald-400 font-bold text-[10px]">
+            ──► DMA Read ──►
+          </div>
+
+          <div className="rounded-lg bg-sky-500/10 border border-sky-500/30 p-2.5 text-sky-300">
+            <span className="text-text-muted text-[10px] block">OS Kernel</span>
+            <span className="font-bold">Page Cache (Buffer)</span>
+          </div>
+
+          <div className={`text-[10px] font-bold ${isZeroCopy ? 'text-emerald-400' : 'text-rose-400 animate-pulse'}`}>
+            {isZeroCopy ? '──► Descriptor Pointer ──►' : '▲ CPU Copy to User Space ▲'}
+          </div>
+
+          <div className="rounded-lg bg-emerald-500/10 border border-emerald-500/30 p-2.5 text-emerald-300">
+            <span className="text-text-muted text-[10px] block">Target</span>
+            <span className="font-bold">NIC DMA (Network)</span>
+          </div>
+        </div>
+
+        <div className="pt-2 border-t border-border/50 text-[11px] text-text-secondary leading-relaxed">
+          {isZeroCopy ? (
+            <p className="text-emerald-300">
+              <strong className="text-emerald-400 font-bold">Zero-Copy Path: </strong>
+              The kernel never copies data into user-space RAM. The disk DMA controller transfers data directly to the Page Cache, and scatter-gather DMA copies directly from the Page Cache to the NIC. Kafka brokers act as pure network routers!
+            </p>
+          ) : (
+            <p className="text-amber-300">
+              <strong className="text-rose-400 font-bold">Traditional Path: </strong>
+              Every read/write requires copying data from Kernel Page Cache into User Memory Buffer, then copying User Memory Buffer back into the Kernel Socket Buffer. This pollutes CPU L1/L2 caches and halves memory bus throughput.
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ==========================================
+// 20. ZOOKEEPER SEQUENTIAL EPHEMERAL DISTRIBUTED LOCK ANIMATOR
+// ==========================================
+export const ZookeeperDistributedLockAnimator: React.FC = () => {
+  const [lockHolder, setLockHolder] = useState<'Worker A' | 'Worker B' | 'Worker C' | 'None'>('Worker A')
+  const [eventLog, setEventLog] = useState<string[]>([
+    'Worker A created ephemeral node /locks/mutex-0001 (Lock Acquired)',
+    'Worker B created /locks/mutex-0002 (Watching mutex-0001)',
+    'Worker C created /locks/mutex-0003 (Watching mutex-0002)',
+  ])
+
+  const handleWorkerRelease = () => {
+    playStepClickSound()
+    if (lockHolder === 'Worker A') {
+      playSuccessChimeSound()
+      setLockHolder('Worker B')
+      setEventLog((prev) => [
+        'Worker A cleanly released lock /locks/mutex-0001.',
+        'Watch triggered on Worker B! Worker B now holds the distributed lock.',
+        ...prev,
+      ])
+    } else if (lockHolder === 'Worker B') {
+      playSuccessChimeSound()
+      setLockHolder('Worker C')
+      setEventLog((prev) => [
+        'Worker B cleanly released lock /locks/mutex-0002.',
+        'Watch triggered on Worker C! Worker C now holds the distributed lock.',
+        ...prev,
+      ])
+    } else {
+      setLockHolder('None')
+      setEventLog((prev) => ['All locks released. Mutex queue empty.', ...prev])
+    }
+  }
+
+  const handleWorkerCrash = () => {
+    playNodeCrashSound()
+    if (lockHolder === 'Worker A') {
+      setLockHolder('Worker B')
+      setEventLog((prev) => [
+        '⚠️ Worker A heartbeats timed out! ZooKeeper session expired.',
+        'Ephemeral znode /locks/mutex-0001 automatically destroyed by ZK server.',
+        'Watch fired on Worker B! Worker B safely promoted to lock owner without Thundering Herd.',
+        ...prev,
+      ])
+    } else if (lockHolder === 'Worker B') {
+      setLockHolder('Worker C')
+      setEventLog((prev) => [
+        '⚠️ Worker B crashed! Znode /locks/mutex-0002 auto-deleted.',
+        'Watch fired on Worker C! Worker C promoted to lock owner.',
+        ...prev,
+      ])
+    }
+  }
+
+  const handleReset = () => {
+    playStepClickSound()
+    setLockHolder('Worker A')
+    setEventLog([
+      'Worker A created ephemeral node /locks/mutex-0001 (Lock Acquired)',
+      'Worker B created /locks/mutex-0002 (Watching mutex-0001)',
+      'Worker C created /locks/mutex-0003 (Watching mutex-0002)',
+    ])
+  }
+
+  return (
+    <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border shadow-xl space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 pb-3">
+        <div className="flex items-center gap-2">
+          <Lock className="size-5 text-amber-400" />
+          <div>
+            <h4 className="font-extrabold text-[15px] text-text-primary font-mono">
+              ZooKeeper Ephemeral Sequential Nodes & Distributed Lock Simulator
+            </h4>
+            <p className="text-[11.5px] text-text-secondary">
+              Solving the Thundering Herd: Predecessor watches, O(1) failover notifications, and crash detection via session heartbeat drop.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleWorkerRelease}
+            disabled={lockHolder === 'None'}
+            className="flex items-center gap-1.5 rounded-lg bg-emerald-400 text-black px-3 py-1.5 text-[11.5px] font-mono font-bold hover:bg-emerald-300 disabled:opacity-40 transition"
+          >
+            <Unlock className="size-3.5" /> Release Lock ({lockHolder})
+          </button>
+          <button
+            onClick={handleWorkerCrash}
+            disabled={lockHolder === 'None'}
+            className="flex items-center gap-1.5 rounded-lg bg-rose-500/20 text-rose-300 ring-1 ring-rose-500/40 px-3 py-1.5 text-[11.5px] font-mono font-bold hover:bg-rose-500/30 disabled:opacity-40 transition"
+          >
+            <AlertTriangle className="size-3.5" /> Simulate Node Crash
+          </button>
+          <button
+            onClick={handleReset}
+            className="flex size-7 items-center justify-center rounded-lg bg-bg-surface-1 text-text-muted hover:text-text-primary ring-1 ring-border"
+          >
+            <RotateCcw className="size-3.5" />
+          </button>
+        </div>
+      </div>
+
+      {/* Distributed ZNode Queue */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 font-mono text-[11px]">
+        <div className={`rounded-xl p-3 ring-1 transition ${
+          lockHolder === 'Worker A'
+            ? 'bg-amber-400/20 ring-amber-400/50 text-amber-300 shadow-[0_0_12px_rgba(251,191,36,0.2)]'
+            : 'bg-bg-surface-1 ring-border text-text-muted line-through opacity-50'
+        }`}>
+          <div className="flex justify-between items-center text-[10px] uppercase font-bold">
+            <span>/locks/mutex-0001</span>
+            {lockHolder === 'Worker A' && <span className="text-amber-400">LOCK HELD</span>}
+          </div>
+          <span className="text-[13px] font-bold block mt-1">Worker A (Client 1)</span>
+          <span className="text-[10px]">Session ID: 0x18a93ef (Active)</span>
+        </div>
+
+        <div className={`rounded-xl p-3 ring-1 transition ${
+          lockHolder === 'Worker B'
+            ? 'bg-emerald-400/20 ring-emerald-400/50 text-emerald-300 shadow-[0_0_12px_rgba(52,211,153,0.2)]'
+            : lockHolder === 'Worker A'
+            ? 'bg-bg-surface-1 ring-sky-400/30 text-sky-300'
+            : 'bg-bg-surface-1 ring-border text-text-muted line-through opacity-50'
+        }`}>
+          <div className="flex justify-between items-center text-[10px] uppercase font-bold">
+            <span>/locks/mutex-0002</span>
+            {lockHolder === 'Worker B' ? <span className="text-emerald-400">LOCK HELD</span> : <span>WATCHING #0001</span>}
+          </div>
+          <span className="text-[13px] font-bold block mt-1">Worker B (Client 2)</span>
+          <span className="text-[10px]">{lockHolder === 'Worker B' ? 'Active Lock Owner' : 'Watching Predecessor (O(1))'}</span>
+        </div>
+
+        <div className={`rounded-xl p-3 ring-1 transition ${
+          lockHolder === 'Worker C'
+            ? 'bg-emerald-400/20 ring-emerald-400/50 text-emerald-300 shadow-[0_0_12px_rgba(52,211,153,0.2)]'
+            : 'bg-bg-surface-1 ring-sky-400/30 text-sky-300'
+        }`}>
+          <div className="flex justify-between items-center text-[10px] uppercase font-bold">
+            <span>/locks/mutex-0003</span>
+            {lockHolder === 'Worker C' ? <span className="text-emerald-400">LOCK HELD</span> : <span>WATCHING #0002</span>}
+          </div>
+          <span className="text-[13px] font-bold block mt-1">Worker C (Client 3)</span>
+          <span className="text-[10px]">{lockHolder === 'Worker C' ? 'Active Lock Owner' : 'Watching Predecessor (O(1))'}</span>
+        </div>
+      </div>
+
+      {/* Live Event Log */}
+      <div className="rounded-xl bg-black/60 p-3 ring-1 ring-border font-mono text-[11px] space-y-1 max-h-28 overflow-y-auto">
+        <span className="text-[10px] text-text-muted uppercase block font-bold">ZooKeeper Zab Event Stream:</span>
+        {eventLog.map((log, idx) => (
+          <div key={idx} className="flex items-center gap-2 text-text-secondary">
+            <span className="size-1 rounded-full bg-accent-brand shrink-0" />
+            <span>{log}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 // Master component selector mapped to chapter or manual tabs
 interface ChapterAnimatorProps {
   unitId: string
   chapterNumber: number
 }
 
-export const ChapterConceptAnimator: React.FC<ChapterAnimatorProps> = ({ unitId }) => {
+export const ChapterConceptAnimator: React.FC<ChapterAnimatorProps> = ({ unitId, chapterNumber }) => {
   const [activeWidget, setActiveWidget] = useState<string>('auto')
 
-  // Automatically determine default widget based on Unit / Chapter
+  // Automatically determine default widget based on Unit AND Chapter Number
   let defaultWidget = 'cap'
-  if (unitId === 'unit-1') defaultWidget = 'consistenthash'
+  if (chapterNumber === 1 || chapterNumber === 2 || chapterNumber === 3) defaultWidget = 'cap'
+  else if (chapterNumber === 4) defaultWidget = 'ntp'
+  else if (chapterNumber === 5) defaultWidget = 'vectorclock'
+  else if (chapterNumber === 6) defaultWidget = 'spanner'
+  else if (chapterNumber === 7) defaultWidget = 'byzantine'
+  else if (chapterNumber === 8 || chapterNumber === 9 || chapterNumber === 10) defaultWidget = '2pc'
+  else if (chapterNumber === 11 || chapterNumber === 12 || chapterNumber === 13 || chapterNumber === 14) defaultWidget = 'mvcc'
+  else if (chapterNumber === 15 || chapterNumber === 16 || chapterNumber === 17) defaultWidget = 'lsm'
+  else if (chapterNumber === 18 || chapterNumber === 19 || chapterNumber === 20 || chapterNumber === 21) defaultWidget = 'bloom'
+  else if (chapterNumber >= 22 && chapterNumber <= 28) defaultWidget = 'cache'
+  else if (chapterNumber === 29 || chapterNumber === 30 || chapterNumber === 31) defaultWidget = 'l4l7'
+  else if (chapterNumber >= 32 && chapterNumber <= 35) defaultWidget = 'ratelimit'
+  else if (chapterNumber === 36 || chapterNumber === 37 || chapterNumber === 38) defaultWidget = 'kafka'
+  else if (chapterNumber === 39) defaultWidget = 'zerocopy'
+  else if (chapterNumber === 40 || chapterNumber === 41 || chapterNumber === 42) defaultWidget = 'kafka'
+  else if (chapterNumber === 43 || chapterNumber === 44) defaultWidget = 'raft'
+  else if (chapterNumber === 45) defaultWidget = 'zookeeper'
+  else if (chapterNumber >= 46 && chapterNumber <= 48) defaultWidget = 'gossip'
+  else if (chapterNumber === 49 || chapterNumber === 50) defaultWidget = 'disruptor'
+  else if (chapterNumber === 51 || chapterNumber === 52) defaultWidget = 'ratelimit'
+  else if (chapterNumber === 53 || chapterNumber === 54) defaultWidget = 'uber'
+  else if (chapterNumber === 55 || chapterNumber === 56) defaultWidget = 'consistenthash'
+  else if (unitId === 'unit-1') defaultWidget = 'cap'
   else if (unitId === 'unit-2') defaultWidget = '2pc'
   else if (unitId === 'unit-3') defaultWidget = 'lsm'
   else if (unitId === 'unit-4') defaultWidget = 'cache'
-  else if (unitId === 'unit-5') defaultWidget = 'disruptor'
+  else if (unitId === 'unit-5') defaultWidget = 'l4l7'
   else if (unitId === 'unit-6') defaultWidget = 'kafka'
   else if (unitId === 'unit-7') defaultWidget = 'raft'
   else if (unitId === 'unit-8') defaultWidget = 'uber'
@@ -2250,26 +3712,36 @@ export const ChapterConceptAnimator: React.FC<ChapterAnimatorProps> = ({ unitId 
       {/* Widget Tabs */}
       <div className="flex flex-wrap items-center justify-between gap-2">
         <span className="text-[11px] font-mono uppercase tracking-wider text-accent-brand font-bold flex items-center gap-1.5">
-          <Sparkles className="size-3.5" /> Interactive Concept Simulator
+          <Sparkles className="size-3.5" /> Interactive Concept Simulator (Chapter {chapterNumber})
         </span>
 
-        <div className="flex flex-wrap gap-1.5 text-[11px] font-mono">
+        <div className="flex flex-wrap gap-1 text-[10.5px] font-mono max-h-24 overflow-y-auto pr-1">
           {[
             { id: 'cap', label: 'CAP Partition' },
-            { id: 'consistenthash', label: 'Consistent Hash Ring' },
+            { id: 'ntp', label: 'NTP Clock Drift' },
+            { id: 'vectorclock', label: 'Vector Clocks' },
+            { id: 'spanner', label: 'Spanner TrueTime' },
+            { id: 'byzantine', label: 'Byzantine 3f+1' },
             { id: '2pc', label: '2PC Transactions' },
+            { id: 'mvcc', label: 'Postgres MVCC' },
             { id: 'lsm', label: 'LSM vs B+ Tree' },
-            { id: 'cache', label: 'LRU Cache & Stampede' },
+            { id: 'bloom', label: 'Bloom Filter' },
+            { id: 'cache', label: 'LRU & Stampede' },
+            { id: 'l4l7', label: 'L4 vs L7 Proxy' },
+            { id: 'ratelimit', label: 'Token Bucket' },
             { id: 'kafka', label: 'Kafka Rebalance' },
+            { id: 'zerocopy', label: 'Zero-Copy Sendfile' },
             { id: 'raft', label: 'Raft Consensus' },
-            { id: 'disruptor', label: 'Disruptor Ring Buffer' },
-            { id: 'ratelimit', label: 'Token Bucket Limiter' },
+            { id: 'zookeeper', label: 'ZooKeeper Locks' },
+            { id: 'gossip', label: 'Gossip Epidemic' },
+            { id: 'disruptor', label: 'LMAX Disruptor' },
             { id: 'uber', label: 'Uber H3 Dispatch' },
+            { id: 'consistenthash', label: 'Consistent Hashing' },
           ].map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveWidget(tab.id)}
-              className={`rounded-lg px-2.5 py-1 transition ${
+              className={`rounded-lg px-2 py-0.5 transition ${
                 currentWidget === tab.id
                   ? 'bg-accent-brand/20 text-accent-brand font-bold ring-1 ring-accent-brand/40'
                   : 'bg-bg-surface-1 text-text-muted hover:text-text-primary'
@@ -2283,16 +3755,28 @@ export const ChapterConceptAnimator: React.FC<ChapterAnimatorProps> = ({ unitId 
 
       {/* Render Active Animator */}
       {currentWidget === 'cap' && <CapPartitionAnimator />}
-      {currentWidget === 'consistenthash' && <ConsistentHashRingAnimator />}
+      {currentWidget === 'ntp' && <NtpClockDriftAnimator />}
+      {currentWidget === 'vectorclock' && <VectorClockAnimator />}
+      {currentWidget === 'spanner' && <SpannerTrueTimeAnimator />}
+      {currentWidget === 'byzantine' && <ByzantineFaultAnimator />}
       {currentWidget === '2pc' && <TwoPhaseCommitAnimator />}
+      {currentWidget === 'mvcc' && <MvccVisibilityAnimator />}
       {currentWidget === 'lsm' && <LsmTreeVsBTreeAnimator />}
+      {currentWidget === 'bloom' && <BloomFilterProbabilisticAnimator />}
       {currentWidget === 'cache' && <CacheEvictionAndStampedeAnimator />}
-      {currentWidget === 'kafka' && <KafkaPartitionRebalanceAnimator />}
-      {currentWidget === 'raft' && <RaftConsensusAnimator />}
-      {currentWidget === 'disruptor' && <DisruptorRingBufferAnimator />}
+      {currentWidget === 'l4l7' && <L4VsL7LoadBalancerAnimator />}
       {currentWidget === 'ratelimit' && <RateLimiterTokenBucketAnimator />}
+      {currentWidget === 'kafka' && <KafkaPartitionRebalanceAnimator />}
+      {currentWidget === 'zerocopy' && <ZeroCopySendfileAnimator />}
+      {currentWidget === 'raft' && <RaftConsensusAnimator />}
+      {currentWidget === 'zookeeper' && <ZookeeperDistributedLockAnimator />}
+      {currentWidget === 'gossip' && <GossipProtocolEpidemicAnimator />}
+      {currentWidget === 'disruptor' && <DisruptorRingBufferAnimator />}
       {currentWidget === 'uber' && <UberH3SpatialDispatchAnimator />}
+      {currentWidget === 'consistenthash' && <ConsistentHashRingAnimator />}
     </div>
   )
 }
+
+
 

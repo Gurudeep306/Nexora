@@ -34,8 +34,10 @@ import {
   ChevronUp,
   Network,
   Table,
+  BookOpen,
 } from 'lucide-react'
 import { SYSTEM_METADATA_REGISTRY } from '../data/systemMetadataRegistry'
+import { getSystemDeepExploration } from '../data/systemDeepExplorationRegistry'
 import { WirePacketHexView } from './WirePacketHexView'
 import {
   playPacketTransmitSound,
@@ -162,6 +164,7 @@ export interface SystemVisualizerProps {
   layoutMode?: 'split' | 'blueprint'
   onToggleLayout?: () => void
   onSwitchToFromScratch?: () => void
+  defaultShowcaseTab?: 'components' | 'connections' | 'deep-dive' | 'slas'
 }
 
 const ICON_MAP: Record<string, React.ReactNode> = {
@@ -242,6 +245,10 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
   currentStepIndex,
   onStepChange,
   onSelectNode,
+  layoutMode: _layoutMode,
+  onToggleLayout: _onToggleLayout,
+  onSwitchToFromScratch: _onSwitchToFromScratch,
+  defaultShowcaseTab,
 }) => {
   const [isPlaying, setIsPlaying] = useState<boolean>(false)
   const [playbackSpeed, setPlaybackSpeed] = useState<number>(1) // 0.5x, 1x, 2x
@@ -268,7 +275,15 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
 
   const meta = SYSTEM_METADATA_REGISTRY[system.id]
   const [showReqsAccordion, setShowReqsAccordion] = useState<boolean>(false)
-  const [activeShowcaseTab, setActiveShowcaseTab] = useState<'components' | 'connections' | 'slas'>('components')
+  const [activeShowcaseTab, setActiveShowcaseTab] = useState<'components' | 'connections' | 'deep-dive' | 'slas'>(
+    defaultShowcaseTab || 'components'
+  )
+
+  useEffect(() => {
+    if (defaultShowcaseTab) {
+      setActiveShowcaseTab(defaultShowcaseTab)
+    }
+  }, [defaultShowcaseTab])
   const [selectedShowcaseTier, setSelectedShowcaseTier] = useState<string>('all')
   const inspectorRef = useRef<HTMLDivElement>(null)
 
@@ -461,13 +476,25 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
             </p>
           </div>
 
-          <button
-            onClick={() => setShowReqsAccordion(!showReqsAccordion)}
-            className="flex items-center gap-1.5 rounded-lg bg-bg-surface-3 px-3 py-1.5 text-[11.5px] font-mono font-bold text-text-primary hover:bg-bg-surface-1 ring-1 ring-border transition shrink-0"
-          >
-            {showReqsAccordion ? <ChevronUp className="size-3.5" /> : <ChevronDown className="size-3.5" />}
-            {showReqsAccordion ? 'Hide Requirements & SLAs' : 'View Requirements & SLAs'}
-          </button>
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={() => {
+                setActiveShowcaseTab('deep-dive')
+                const el = document.getElementById('system-showcase-tabs-container')
+                el?.scrollIntoView({ behavior: 'smooth' })
+              }}
+              className="flex items-center gap-1.5 rounded-lg bg-purple-500/15 text-purple-300 hover:bg-purple-500/25 px-3 py-1.5 text-[11.5px] font-mono font-bold ring-1 ring-purple-500/40 transition shrink-0 shadow-sm"
+            >
+              <BookOpen className="size-3.5" /> 📖 Staff+ Deep Blueprint
+            </button>
+            <button
+              onClick={() => setShowReqsAccordion(!showReqsAccordion)}
+              className="flex items-center gap-1.5 rounded-lg bg-bg-surface-3 px-3 py-1.5 text-[11.5px] font-mono font-bold text-text-primary hover:bg-bg-surface-1 ring-1 ring-border transition shrink-0"
+            >
+              {showReqsAccordion ? <ChevronUp className="size-3.5" /> : <ChevronDown className="size-3.5" />}
+              {showReqsAccordion ? 'Hide Requirements & SLAs' : 'View Requirements & SLAs'}
+            </button>
+          </div>
         </div>
 
         {/* Distributed Invariant Highlight */}
@@ -1580,7 +1607,7 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
       })()}
 
       {/* SECTION B: COMPREHENSIVE ARCHITECTURAL COMPONENT SHOWCASE */}
-      <div className="border-t border-border bg-bg-surface-1 p-5 sm:p-7 space-y-6">
+      <div id="system-showcase-tabs-container" className="border-t border-border bg-bg-surface-1 p-5 sm:p-7 space-y-6 scroll-mt-12">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 pb-4">
           <div>
             <h3 className="text-[17px] font-extrabold text-text-primary flex items-center gap-2 font-mono">
@@ -1592,7 +1619,7 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
             </p>
           </div>
 
-          <div className="flex items-center gap-1.5 rounded-xl bg-bg-surface-2 p-1 ring-1 ring-border">
+          <div className="flex flex-wrap items-center gap-1.5 rounded-xl bg-bg-surface-2 p-1 ring-1 ring-border">
             <button
               onClick={() => setActiveShowcaseTab('components')}
               className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[11.5px] font-mono font-bold transition ${
@@ -1612,6 +1639,16 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
               }`}
             >
               <Network className="size-3.5" /> Connections ({system.connections.length})
+            </button>
+            <button
+              onClick={() => setActiveShowcaseTab('deep-dive')}
+              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[11.5px] font-mono font-bold transition ${
+                activeShowcaseTab === 'deep-dive'
+                  ? 'bg-amber-400 text-black shadow-sm font-extrabold'
+                  : 'text-text-muted hover:text-text-primary'
+              }`}
+            >
+              <BookOpen className="size-3.5" /> 📖 Deep Blueprint
             </button>
             <button
               onClick={() => setActiveShowcaseTab('slas')}
@@ -1843,7 +1880,209 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
           </div>
         )}
 
-        {/* TAB 3: SLAS, INVARIANTS & CAPACITY ESTIMATIONS */}
+        {/* TAB 3: COMPLETE ARCHITECTURE BLUEPRINT & COMPONENT ANATOMY */}
+        {activeShowcaseTab === 'deep-dive' && (() => {
+          const deep = getSystemDeepExploration(system.id, system.name, system.category)
+          return (
+            <div className="space-y-6 font-mono text-[12px] animate-fadeIn">
+              {/* 1. Executive Summary & Why It's Hard */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="rounded-xl bg-bg-surface-2 p-5 ring-1 ring-border space-y-2">
+                  <span className="text-[11px] uppercase tracking-wider font-bold text-accent-brand flex items-center gap-1.5">
+                    <Sparkles className="size-3.5" /> Executive Architecture Blueprint
+                  </span>
+                  <p className="text-[13px] text-text-primary leading-relaxed font-sans">
+                    {deep.executiveArchitectureSummary}
+                  </p>
+                </div>
+
+                <div className="rounded-xl bg-rose-500/5 p-5 ring-1 ring-rose-500/20 space-y-2">
+                  <span className="text-[11px] uppercase tracking-wider font-bold text-rose-400 flex items-center gap-1.5">
+                    <AlertTriangle className="size-3.5" /> Core Problem & Why This Is Hard
+                  </span>
+                  <p className="text-[13px] text-rose-200/90 leading-relaxed font-sans">
+                    {deep.problemStatementAndWhyHard}
+                  </p>
+                </div>
+              </div>
+
+              {/* 2. End-to-End Request Lifecycles (Read Path vs Write Path) */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                {/* Read Path */}
+                <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border space-y-3">
+                  <div className="flex items-center justify-between border-b border-border/50 pb-2.5">
+                    <span className="font-bold text-[13px] text-emerald-400 flex items-center gap-1.5">
+                      📥 End-to-End Read Path Request Lifecycle
+                    </span>
+                    <span className="text-[10px] text-text-muted">Target SLA: {system.latency}</span>
+                  </div>
+
+                  <div className="space-y-2.5">
+                    {deep.readPathLifecycle.map((step) => (
+                      <div key={step.stepNumber} className="flex items-start gap-3 rounded-lg bg-bg-surface-1 p-3 ring-1 ring-border/50">
+                        <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-[11px]">
+                          {step.stepNumber}
+                        </span>
+                        <div className="space-y-1 flex-1">
+                          <div className="flex items-center justify-between text-[11px]">
+                            <span className="font-bold text-text-primary">{step.component}</span>
+                            <span className="text-emerald-400 font-bold">{step.latencyEstimate}</span>
+                          </div>
+                          <p className="text-[11.5px] text-text-secondary leading-relaxed font-sans">
+                            {step.action}
+                          </p>
+                          <span className="inline-block rounded bg-bg-surface-3 px-1.5 py-0.2 text-[9px] text-text-muted">
+                            Protocol: {step.protocol}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Write Path */}
+                <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border space-y-3">
+                  <div className="flex items-center justify-between border-b border-border/50 pb-2.5">
+                    <span className="font-bold text-[13px] text-amber-400 flex items-center gap-1.5">
+                      📤 End-to-End Write Path Request Lifecycle
+                    </span>
+                    <span className="text-[10px] text-text-muted">ACID / Quorum Durability</span>
+                  </div>
+
+                  <div className="space-y-2.5">
+                    {deep.writePathLifecycle.map((step) => (
+                      <div key={step.stepNumber} className="flex items-start gap-3 rounded-lg bg-bg-surface-1 p-3 ring-1 ring-border/50">
+                        <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-amber-500/20 text-amber-400 font-bold text-[11px]">
+                          {step.stepNumber}
+                        </span>
+                        <div className="space-y-1 flex-1">
+                          <div className="flex items-center justify-between text-[11px]">
+                            <span className="font-bold text-text-primary">{step.component}</span>
+                            <span className="text-amber-400 font-bold">{step.latencyEstimate}</span>
+                          </div>
+                          <p className="text-[11.5px] text-text-secondary leading-relaxed font-sans">
+                            {step.action}
+                          </p>
+                          <span className="inline-block rounded bg-bg-surface-3 px-1.5 py-0.2 text-[9px] text-text-muted">
+                            Protocol: {step.protocol}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* 3. Data Storage & Schema Design */}
+              <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border space-y-4">
+                <div className="flex items-center justify-between border-b border-border/50 pb-2.5">
+                  <span className="font-bold text-[13px] text-sky-400 flex items-center gap-1.5">
+                    <Database className="size-4" /> Data Storage Architecture & Partition Key Design
+                  </span>
+                  <span className="text-[10px] text-text-muted">Sharding & B+ Tree Indexes</span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {deep.dataStorageAndSchemaDesign.map((ds, idx) => (
+                    <div key={idx} className="rounded-xl bg-bg-surface-1 p-4 ring-1 ring-border space-y-2.5">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-text-primary text-[12.5px]">{ds.entity}</span>
+                        <span className="rounded bg-sky-500/10 px-2 py-0.5 text-[10px] font-bold text-sky-400 ring-1 ring-sky-500/30">
+                          {ds.storageType}
+                        </span>
+                      </div>
+
+                      <div className="text-[11px] space-y-1 text-text-muted">
+                        <div>Primary Key: <strong className="text-emerald-400">{ds.primaryKey}</strong></div>
+                        <div>Partition Key: <strong className="text-amber-400">{ds.partitionKey}</strong></div>
+                      </div>
+
+                      <div className="rounded-lg bg-black/60 p-2.5 text-[10.5px] text-sky-200 overflow-x-auto ring-1 ring-border/40 font-mono">
+                        {ds.schemaDefinition}
+                      </div>
+
+                      <p className="text-[11px] text-text-secondary font-sans leading-relaxed">
+                        <strong>Indexing Rationale:</strong> {ds.indexingRationale}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* 4. Staff+ Architectural Trade-Offs */}
+              <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border space-y-4">
+                <span className="font-bold text-[13px] text-purple-400 flex items-center gap-1.5 border-b border-border/50 pb-2.5">
+                  ⚖️ Staff+ Architectural Trade-Offs & Why Alternatives Were Rejected
+                </span>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {deep.keyTradeoffsAndDecisions.map((td, idx) => (
+                    <div key={idx} className="rounded-xl bg-bg-surface-1 p-4 ring-1 ring-border space-y-2">
+                      <span className="font-bold text-[12px] text-text-primary block">{td.decision}</span>
+                      <div className="space-y-1 text-[11px]">
+                        <div className="text-emerald-400">
+                          <strong>✓ Chosen: </strong>{td.chosenApproach}
+                        </div>
+                        <div className="text-rose-400">
+                          <strong>✗ Rejected: </strong>{td.rejectedAlternative}
+                        </div>
+                      </div>
+                      <p className="text-[11.5px] text-text-secondary font-sans leading-relaxed border-t border-border/40 pt-2">
+                        <strong>Staff Rationale: </strong>{td.rationale}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* 5. Failure Modes & Automated Recovery Playbooks */}
+              <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border space-y-4">
+                <span className="font-bold text-[13px] text-rose-400 flex items-center gap-1.5 border-b border-border/50 pb-2.5">
+                  🚨 Production Failure Modes & Automated Chaos Recovery
+                </span>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {deep.failureModesAndRecovery.map((fm, idx) => (
+                    <div key={idx} className="rounded-xl bg-bg-surface-1 p-4 ring-1 ring-border space-y-2">
+                      <span className="font-bold text-[12px] text-rose-300 block">{fm.failureScenario}</span>
+                      <div className="text-[11px] text-text-muted space-y-0.5">
+                        <div>Impact: <span className="text-text-primary font-sans">{fm.impact}</span></div>
+                        <div>Detection: <span className="text-sky-300 font-sans">{fm.detectionMechanism}</span></div>
+                      </div>
+                      <div className="rounded-lg bg-emerald-500/10 p-2.5 text-[11px] text-emerald-300 border border-emerald-500/20 font-sans">
+                        <strong>Automated Recovery: </strong>{fm.automatedRecovery}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* 6. Production Capacity Calculations Deep-Dive */}
+              <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border space-y-4">
+                <span className="font-bold text-[13px] text-sky-400 flex items-center gap-1.5 border-b border-border/50 pb-2.5">
+                  📐 Capacity Sizing & Production Math Deep Dive
+                </span>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {deep.capacityCalculationsDeepDive.map((cc, idx) => (
+                    <div key={idx} className="rounded-xl bg-bg-surface-1 p-4 ring-1 ring-border space-y-2">
+                      <span className="font-bold text-[12px] text-text-primary block">{cc.metric}</span>
+                      <div className="text-[10.5px] text-text-muted space-y-1">
+                        <div>Assumption: {cc.assumption}</div>
+                        <div className="font-mono text-amber-300">{cc.calculation}</div>
+                      </div>
+                      <div className="rounded bg-bg-surface-3 p-2 text-[11px] text-emerald-400 font-bold border border-border">
+                        {cc.finalRequirement}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )
+        })()}
+
+        {/* TAB 4: SLAS, INVARIANTS & CAPACITY ESTIMATIONS */}
         {activeShowcaseTab === 'slas' && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="rounded-xl bg-bg-surface-2 p-4 ring-1 ring-border space-y-2">
