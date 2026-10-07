@@ -591,8 +591,23 @@ def main():
         json.dump(questions, f, indent=2)
 
     print(f"[6/7] Synchronizing updated dataset to {SRC_PATH}...")
+    try:
+        with open(SRC_PATH) as f:
+            existing_src = json.load(f)
+            if not isinstance(existing_src, dict):
+                existing_src = {}
+    except Exception:
+        existing_src = {}
+
+    src_obj = {
+        "version": existing_src.get("version", 1),
+        "generated": existing_src.get("generated", "2026-10-05"),
+        "papers": existing_src.get("papers", []),
+        "subjects": existing_src.get("subjects", {}),
+        "questions": questions
+    }
     with open(SRC_PATH, "w") as f:
-        json.dump(questions, f, indent=2)
+        json.dump(src_obj, f, indent=2)
 
     # 6. Verification Audit
     print("[7/7] Executing rigorous verification audit...")
