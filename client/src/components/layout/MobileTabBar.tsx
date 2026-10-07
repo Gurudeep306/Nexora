@@ -9,9 +9,10 @@ import { DOCK_BY_ID, isDockFocusRoute, useDock, type DockItem } from './dockStor
  *  pages in the user's Dock, so customizing the Dock customizes this too. */
 export function MobileTabBar() {
   const { pathname } = useLocation()
+  const dock = useDock()
+
   if (isDockFocusRoute(pathname)) return null
 
-  const dock = useDock()
   const pages = dock.pinned
     .map((id) => DOCK_BY_ID.get(id))
     .filter((i): i is DockItem => !!i && !!i.to && !i.external && !i.action && !i.to.includes('?'))
