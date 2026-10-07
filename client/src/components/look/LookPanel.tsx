@@ -18,6 +18,8 @@ import {
   AppearanceCards,
   CardStylePicker,
   FontStylePicker,
+  FontSizePicker,
+  FontColorPicker,
   GlassSegmented,
   IconPackPicker,
   IconShapePicker,
@@ -25,6 +27,7 @@ import {
   ThemePackPicker,
   WallpaperGrid,
 } from './LookControls'
+
 import { CARD_STYLES, FONT_STYLES, GLASS_STYLES, ICON_PACKS } from '@/theme/catalog'
 
 function Row({
@@ -96,8 +99,19 @@ export function LookPanel() {
           title="Typography & Handwriting"
           hint={FONT_STYLES.find((f) => f.id === look.fontStyle)?.hint ?? 'Choose typography engine across the app.'}
         >
-          <FontStylePicker />
+          <div className="space-y-4">
+            <FontStylePicker />
+
+            {/* Typography Tuning: Scale & Text Color */}
+            <div className="rounded-2xl border border-border/80 bg-bg-surface-2/60 p-4 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <FontSizePicker />
+                <FontColorPicker />
+              </div>
+            </div>
+          </div>
         </Row>
+
 
         <Row
           icon={<Layers />}

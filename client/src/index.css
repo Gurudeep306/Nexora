@@ -1445,10 +1445,245 @@ html[data-icon-pack='vibrant'] [data-icon-pod] svg.lucide {
   filter: drop-shadow(0 1px 2px oklch(0 0 0 / 0.25));
 }
 /* ═══════════════════════════════════════════════════════════════════════════
-   TYPOGRAPHY ENGINE — Modern, Handwriting, Cyber Mono, Serif, 8-Bit Retro
+   TYPOGRAPHY ENGINE — 10 Unique Curated Fonts, Scale & Luminescence
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* 1a. Handwriting Theme — Caveat (Calligraphic Flow) */
+/* ── Typography Size Scale ───────────────────────────────────────────────── */
+:root,
+html {
+  --font-scale: 1.05;
+}
+html[data-font-size='normal'] {
+  --font-scale: 1.02;
+}
+html[data-font-size='comfortable'] {
+  --font-scale: 1.12;
+}
+html[data-font-size='large'] {
+  --font-scale: 1.22;
+}
+html[data-font-size='huge'] {
+  --font-scale: 1.35;
+}
+
+body {
+  font-size: calc(1rem * var(--font-scale, 1.05));
+  line-height: 1.55;
+}
+
+/* ── Typography Color Luminescence ───────────────────────────────────────── */
+html[data-font-color='white'] {
+  --color-text-primary: #ffffff !important;
+  --color-text-secondary: #f1f5f9 !important;
+}
+html[data-font-color='cyan'] {
+  --color-text-primary: #a5f3fc !important;
+  --color-text-secondary: #67e8f9 !important;
+  --color-text-muted: #38bdf8 !important;
+}
+html[data-font-color='amber'] {
+  --color-text-primary: #fef08a !important;
+  --color-text-secondary: #fde047 !important;
+  --color-text-muted: #eab308 !important;
+}
+html[data-font-color='emerald'] {
+  --color-text-primary: #bbf7d0 !important;
+  --color-text-secondary: #86efac !important;
+  --color-text-muted: #4ade80 !important;
+}
+html[data-font-color='rose'] {
+  --color-text-primary: #fbcfe8 !important;
+  --color-text-secondary: #f472b6 !important;
+  --color-text-muted: #ec4899 !important;
+}
+html[data-font-color='violet'] {
+  --color-text-primary: #e9d5ff !important;
+  --color-text-secondary: #c084fc !important;
+  --color-text-muted: #a855f7 !important;
+}
+html[data-font-color='ice'] {
+  --color-text-primary: #f0f9ff !important;
+  --color-text-secondary: #bae6fd !important;
+  --color-text-muted: #7dd3fc !important;
+}
+html[data-font-color='gold'] {
+  --color-text-primary: #fef9c3 !important;
+  --color-text-secondary: #fde68a !important;
+  --color-text-muted: #f59e0b !important;
+}
+
+/* Light appearance text contrast calibration */
+html[data-theme='light'][data-font-color='white'] {
+  --color-text-primary: #09090b !important;
+  --color-text-secondary: #27272a !important;
+}
+html[data-theme='light'][data-font-color='cyan'] {
+  --color-text-primary: #0369a1 !important;
+  --color-text-secondary: #0284c7 !important;
+  --color-text-muted: #0ea5e9 !important;
+}
+html[data-theme='light'][data-font-color='amber'] {
+  --color-text-primary: #854d0e !important;
+  --color-text-secondary: #a16207 !important;
+  --color-text-muted: #ca8a04 !important;
+}
+html[data-theme='light'][data-font-color='emerald'] {
+  --color-text-primary: #14532d !important;
+  --color-text-secondary: #15803d !important;
+  --color-text-muted: #16a34a !important;
+}
+html[data-theme='light'][data-font-color='rose'] {
+  --color-text-primary: #831843 !important;
+  --color-text-secondary: #9d174d !important;
+  --color-text-muted: #be185d !important;
+}
+html[data-theme='light'][data-font-color='violet'] {
+  --color-text-primary: #581c87 !important;
+  --color-text-secondary: #6b21a8 !important;
+  --color-text-muted: #7e22ce !important;
+}
+html[data-theme='light'][data-font-color='ice'] {
+  --color-text-primary: #075985 !important;
+  --color-text-secondary: #0369a1 !important;
+  --color-text-muted: #0284c7 !important;
+}
+html[data-theme='light'][data-font-color='gold'] {
+  --color-text-primary: #78350f !important;
+  --color-text-secondary: #92400e !important;
+  --color-text-muted: #b45309 !important;
+}
+
+/* ── 1. Syne Avant-Garde ─────────────────────────────────────────────────── */
+html[data-font-style='syne'],
+html[data-font-style='handwriting-architect'] {
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'Syne', sans-serif;
+  --font-brand: 'Syne', sans-serif;
+}
+html[data-font-style='syne'] body,
+html[data-font-style='handwriting-architect'] body {
+  font-family: 'Syne', sans-serif;
+  font-size: calc(1.08rem * var(--font-scale, 1.05));
+  letter-spacing: -0.01em;
+}
+html[data-font-style='syne'] h1,
+html[data-font-style='syne'] h2,
+html[data-font-style='syne'] h3,
+html[data-font-style='syne'] h4,
+html[data-font-style='syne'] h5,
+html[data-font-style='syne'] h6,
+html[data-font-style='syne'] .font-display,
+html[data-font-style='syne'] .font-brand,
+html[data-font-style='handwriting-architect'] h1,
+html[data-font-style='handwriting-architect'] h2,
+html[data-font-style='handwriting-architect'] h3,
+html[data-font-style='handwriting-architect'] .font-display,
+html[data-font-style='handwriting-architect'] .font-brand {
+  font-family: 'Syne', sans-serif !important;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+/* ── 2. Space Grotesk (Aerospace Tech) ───────────────────────────────────── */
+html[data-font-style='space-grotesk'],
+html[data-font-style='modern'] {
+  --font-display: 'Space Grotesk Variable', 'Space Grotesk', sans-serif;
+  --font-body: 'Space Grotesk Variable', 'Space Grotesk', sans-serif;
+  --font-brand: 'Space Grotesk Variable', 'Space Grotesk', sans-serif;
+}
+html[data-font-style='space-grotesk'] body,
+html[data-font-style='modern'] body {
+  font-family: 'Space Grotesk Variable', 'Space Grotesk', sans-serif;
+  font-size: calc(1.06rem * var(--font-scale, 1.05));
+  letter-spacing: -0.01em;
+}
+html[data-font-style='space-grotesk'] h1,
+html[data-font-style='space-grotesk'] h2,
+html[data-font-style='space-grotesk'] h3,
+html[data-font-style='space-grotesk'] h4,
+html[data-font-style='space-grotesk'] .font-display,
+html[data-font-style='space-grotesk'] .font-brand,
+html[data-font-style='modern'] h1,
+html[data-font-style='modern'] h2,
+html[data-font-style='modern'] h3,
+html[data-font-style='modern'] .font-display,
+html[data-font-style='modern'] .font-brand {
+  font-family: 'Space Grotesk Variable', 'Space Grotesk', sans-serif !important;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* ── 3. Orbitron Cyber HUD ───────────────────────────────────────────────── */
+html[data-font-style='orbitron'] {
+  --font-display: 'Orbitron', sans-serif;
+  --font-body: 'Space Grotesk Variable', 'Orbitron', sans-serif;
+  --font-brand: 'Orbitron', sans-serif;
+}
+html[data-font-style='orbitron'] body {
+  font-family: 'Space Grotesk Variable', 'Orbitron', sans-serif;
+  font-size: calc(1.06rem * var(--font-scale, 1.05));
+}
+html[data-font-style='orbitron'] h1,
+html[data-font-style='orbitron'] h2,
+html[data-font-style='orbitron'] h3,
+html[data-font-style='orbitron'] h4,
+html[data-font-style='orbitron'] .font-display,
+html[data-font-style='orbitron'] .font-brand {
+  font-family: 'Orbitron', sans-serif !important;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+/* ── 4. Bricolage Grotesque (Modern Editorial) ───────────────────────────── */
+html[data-font-style='bricolage'],
+html[data-font-style='handwriting-indie'] {
+  --font-display: 'Bricolage Grotesque', sans-serif;
+  --font-body: 'Bricolage Grotesque', sans-serif;
+  --font-brand: 'Bricolage Grotesque', sans-serif;
+}
+html[data-font-style='bricolage'] body,
+html[data-font-style='handwriting-indie'] body {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: calc(1.08rem * var(--font-scale, 1.05));
+  letter-spacing: -0.015em;
+}
+html[data-font-style='bricolage'] h1,
+html[data-font-style='bricolage'] h2,
+html[data-font-style='bricolage'] h3,
+html[data-font-style='bricolage'] .font-display,
+html[data-font-style='bricolage'] .font-brand,
+html[data-font-style='handwriting-indie'] h1,
+html[data-font-style='handwriting-indie'] h2,
+html[data-font-style='handwriting-indie'] h3,
+html[data-font-style='handwriting-indie'] .font-display,
+html[data-font-style='handwriting-indie'] .font-brand {
+  font-family: 'Bricolage Grotesque', sans-serif !important;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+}
+
+/* ── 5. Unbounded Cosmic ─────────────────────────────────────────────────── */
+html[data-font-style='unbounded'] {
+  --font-display: 'Unbounded', sans-serif;
+  --font-body: 'Space Grotesk Variable', 'Unbounded', sans-serif;
+  --font-brand: 'Unbounded', sans-serif;
+}
+html[data-font-style='unbounded'] body {
+  font-family: 'Space Grotesk Variable', 'Unbounded', sans-serif;
+  font-size: calc(1.06rem * var(--font-scale, 1.05));
+}
+html[data-font-style='unbounded'] h1,
+html[data-font-style='unbounded'] h2,
+html[data-font-style='unbounded'] h3,
+html[data-font-style='unbounded'] h4,
+html[data-font-style='unbounded'] .font-display,
+html[data-font-style='unbounded'] .font-brand {
+  font-family: 'Unbounded', sans-serif !important;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+/* ── 6. Caveat Studio Ghibli (Calligraphy Script) ─────────────────────────── */
 html[data-font-style='handwriting'],
 html[data-font-style='handwriting-caveat'] {
   --font-display: 'Caveat', cursive;
@@ -1458,40 +1693,27 @@ html[data-font-style='handwriting-caveat'] {
 html[data-font-style='handwriting'] body,
 html[data-font-style='handwriting-caveat'] body {
   font-family: 'Caveat', cursive;
-  font-size: 1.15rem;
+  font-size: calc(1.28rem * var(--font-scale, 1.05)) !important;
   letter-spacing: 0.02em;
-  line-height: 1.45;
+  line-height: 1.5;
 }
 html[data-font-style='handwriting'] h1,
 html[data-font-style='handwriting'] h2,
 html[data-font-style='handwriting'] h3,
 html[data-font-style='handwriting'] h4,
-html[data-font-style='handwriting'] h5,
-html[data-font-style='handwriting'] h6,
 html[data-font-style='handwriting'] .font-display,
 html[data-font-style='handwriting'] .font-brand,
 html[data-font-style='handwriting-caveat'] h1,
 html[data-font-style='handwriting-caveat'] h2,
 html[data-font-style='handwriting-caveat'] h3,
-html[data-font-style='handwriting-caveat'] h4,
-html[data-font-style='handwriting-caveat'] h5,
-html[data-font-style='handwriting-caveat'] h6,
 html[data-font-style='handwriting-caveat'] .font-display,
 html[data-font-style='handwriting-caveat'] .font-brand {
   font-family: 'Caveat', cursive !important;
   font-weight: 700;
   letter-spacing: 0.02em;
 }
-html[data-font-style='handwriting'] button,
-html[data-font-style='handwriting'] input,
-html[data-font-style='handwriting'] textarea,
-html[data-font-style='handwriting-caveat'] button,
-html[data-font-style='handwriting-caveat'] input,
-html[data-font-style='handwriting-caveat'] textarea {
-  font-family: 'Caveat', cursive;
-}
 
-/* 1b. Handwriting Theme — Kalam (Casual Brush Marker) */
+/* ── 7. Kalam Felt Marker ────────────────────────────────────────────────── */
 html[data-font-style='handwriting-kalam'] {
   --font-display: 'Kalam', cursive;
   --font-body: 'Kalam', cursive;
@@ -1499,144 +1721,85 @@ html[data-font-style='handwriting-kalam'] {
 }
 html[data-font-style='handwriting-kalam'] body {
   font-family: 'Kalam', cursive;
-  font-size: 1.05rem;
-  line-height: 1.5;
+  font-size: calc(1.16rem * var(--font-scale, 1.05)) !important;
+  line-height: 1.55;
 }
 html[data-font-style='handwriting-kalam'] h1,
 html[data-font-style='handwriting-kalam'] h2,
 html[data-font-style='handwriting-kalam'] h3,
 html[data-font-style='handwriting-kalam'] h4,
-html[data-font-style='handwriting-kalam'] h5,
-html[data-font-style='handwriting-kalam'] h6,
 html[data-font-style='handwriting-kalam'] .font-display,
 html[data-font-style='handwriting-kalam'] .font-brand {
   font-family: 'Kalam', cursive !important;
   font-weight: 700;
 }
-html[data-font-style='handwriting-kalam'] button,
-html[data-font-style='handwriting-kalam'] input,
-html[data-font-style='handwriting-kalam'] textarea {
-  font-family: 'Kalam', cursive;
-}
 
-/* 1c. Handwriting Theme — Architects Daughter (Draftsman) */
-html[data-font-style='handwriting-architect'] {
-  --font-display: 'Architects Daughter', cursive;
-  --font-body: 'Architects Daughter', cursive;
-  --font-brand: 'Architects Daughter', cursive;
-}
-html[data-font-style='handwriting-architect'] body {
-  font-family: 'Architects Daughter', cursive;
-  font-size: 1.02rem;
-  letter-spacing: 0.02em;
-}
-html[data-font-style='handwriting-architect'] h1,
-html[data-font-style='handwriting-architect'] h2,
-html[data-font-style='handwriting-architect'] h3,
-html[data-font-style='handwriting-architect'] h4,
-html[data-font-style='handwriting-architect'] h5,
-html[data-font-style='handwriting-architect'] h6,
-html[data-font-style='handwriting-architect'] .font-display,
-html[data-font-style='handwriting-architect'] .font-brand {
-  font-family: 'Architects Daughter', cursive !important;
-  font-weight: 700;
-}
-html[data-font-style='handwriting-architect'] button,
-html[data-font-style='handwriting-architect'] input,
-html[data-font-style='handwriting-architect'] textarea {
-  font-family: 'Architects Daughter', cursive;
-}
-
-/* 1d. Handwriting Theme — Indie Flower (Playful Doodler) */
-html[data-font-style='handwriting-indie'] {
-  --font-display: 'Indie Flower', cursive;
-  --font-body: 'Indie Flower', cursive;
-  --font-brand: 'Indie Flower', cursive;
-}
-html[data-font-style='handwriting-indie'] body {
-  font-family: 'Indie Flower', cursive;
-  font-size: 1.1rem;
-}
-html[data-font-style='handwriting-indie'] h1,
-html[data-font-style='handwriting-indie'] h2,
-html[data-font-style='handwriting-indie'] h3,
-html[data-font-style='handwriting-indie'] h4,
-html[data-font-style='handwriting-indie'] h5,
-html[data-font-style='handwriting-indie'] h6,
-html[data-font-style='handwriting-indie'] .font-display,
-html[data-font-style='handwriting-indie'] .font-brand {
-  font-family: 'Indie Flower', cursive !important;
-  font-weight: 700;
-}
-html[data-font-style='handwriting-indie'] button,
-html[data-font-style='handwriting-indie'] input,
-html[data-font-style='handwriting-indie'] textarea {
-  font-family: 'Indie Flower', cursive;
-}
-
-/* 2. Cyber Mono Theme (JetBrains Mono) */
+/* ── 8. JetBrains Cyber Mono (Developer Terminal) ────────────────────────── */
 html[data-font-style='cyber'] {
-  --font-display: 'JetBrains Mono', 'SF Mono', monospace;
-  --font-body: 'JetBrains Mono', 'SF Mono', monospace;
-  --font-brand: 'JetBrains Mono', monospace;
+  --font-display: 'JetBrains Mono Variable', 'JetBrains Mono', monospace;
+  --font-body: 'JetBrains Mono Variable', 'JetBrains Mono', monospace;
+  --font-brand: 'JetBrains Mono Variable', 'JetBrains Mono', monospace;
 }
 html[data-font-style='cyber'] body,
 html[data-font-style='cyber'] h1,
 html[data-font-style='cyber'] h2,
 html[data-font-style='cyber'] h3,
 html[data-font-style='cyber'] h4,
-html[data-font-style='cyber'] h5,
-html[data-font-style='cyber'] h6,
-html[data-font-style='cyber'] button,
-html[data-font-style='cyber'] input,
 html[data-font-style='cyber'] .font-display,
 html[data-font-style='cyber'] .font-brand {
-  font-family: 'JetBrains Mono', 'SF Mono', monospace !important;
-  letter-spacing: -0.02em;
+  font-family: 'JetBrains Mono Variable', 'JetBrains Mono', monospace !important;
+  font-size: calc(1.06rem * var(--font-scale, 1.05));
+  letter-spacing: -0.015em;
 }
 
-/* 3. Classic Serif Theme (Playfair Display) */
+/* ── 9. Cinzel Royal Inscription (Mythic Neoclassical Serif) ──────────────── */
+html[data-font-style='cinzel'],
 html[data-font-style='serif'] {
-  --font-display: 'Playfair Display', Georgia, serif;
-  --font-brand: 'Playfair Display', Georgia, serif;
+  --font-display: 'Cinzel', Georgia, serif;
+  --font-body: 'Space Grotesk Variable', Georgia, serif;
+  --font-brand: 'Cinzel', Georgia, serif;
 }
+html[data-font-style='cinzel'] body,
+html[data-font-style='serif'] body {
+  font-family: 'Space Grotesk Variable', Georgia, serif;
+  font-size: calc(1.06rem * var(--font-scale, 1.05));
+}
+html[data-font-style='cinzel'] h1,
+html[data-font-style='cinzel'] h2,
+html[data-font-style='cinzel'] h3,
+html[data-font-style='cinzel'] h4,
+html[data-font-style='cinzel'] .font-display,
+html[data-font-style='cinzel'] .font-brand,
 html[data-font-style='serif'] h1,
 html[data-font-style='serif'] h2,
 html[data-font-style='serif'] h3,
-html[data-font-style='serif'] h4,
-html[data-font-style='serif'] h5,
-html[data-font-style='serif'] h6,
 html[data-font-style='serif'] .font-display,
 html[data-font-style='serif'] .font-brand {
-  font-family: 'Playfair Display', Georgia, serif !important;
-  letter-spacing: -0.01em;
+  font-family: 'Cinzel', Georgia, serif !important;
+  font-weight: 700;
+  letter-spacing: 0.035em;
 }
 
-/* 4. 8-Bit Retro Theme (Press Start 2P + JetBrains Mono) */
+/* ── 10. Russo One Arcade (Heavy Game Title) ─────────────────────────────── */
 html[data-font-style='retro'] {
-  --font-display: 'Press Start 2P', monospace;
-  --font-body: 'JetBrains Mono', monospace;
-  --font-brand: 'Press Start 2P', monospace;
+  --font-display: 'Russo One', sans-serif;
+  --font-body: 'Space Grotesk Variable', sans-serif;
+  --font-brand: 'Russo One', sans-serif;
 }
 html[data-font-style='retro'] body {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Space Grotesk Variable', sans-serif;
+  font-size: calc(1.06rem * var(--font-scale, 1.05));
 }
 html[data-font-style='retro'] h1,
 html[data-font-style='retro'] h2,
 html[data-font-style='retro'] h3,
+html[data-font-style='retro'] .font-display,
 html[data-font-style='retro'] .font-brand {
-  font-family: 'Press Start 2P', monospace !important;
-  line-height: 1.6;
+  font-family: 'Russo One', sans-serif !important;
+  letter-spacing: 0.02em;
+  line-height: 1.35;
 }
-html[data-font-style='retro'] h1 {
-  font-size: clamp(1.3rem, 3.2vw, 2rem) !important;
-}
-html[data-font-style='retro'] h2 {
-  font-size: clamp(1rem, 2.2vw, 1.4rem) !important;
-}
-html[data-font-style='retro'] h3 {
-  font-size: clamp(0.85rem, 1.8vw, 1.1rem) !important;
-}
+
 
 /* ── Glass over a wallpaper ────────────────────────────────────────────────
    What separates real glass from a "paper" panel is what it does to the

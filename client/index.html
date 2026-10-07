@@ -10,7 +10,7 @@
     <title>Nexora — Learn computer science, step by step</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Caveat:wght@400..700&family=Indie+Flower&family=JetBrains+Mono:wght@400;600;700&family=Kalam:wght@400;700&family=Playfair+Display:ital,wght@0,600;1,400&family=Press+Start+2P&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Caveat:wght@600;700&family=Cinzel:wght@600;700;800;900&family=Kalam:wght@600;700&family=Orbitron:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800&family=Syne:wght@600;700;800&family=Unbounded:wght@600;700;800;900&display=swap" rel="stylesheet" />
     <script>
       /* Resolve the whole look before the first paint, so the page never
          flashes the wrong appearance, accent or desktop colour while React
@@ -41,9 +41,12 @@
           d.setAttribute('data-card-style', look.cardStyle || 'glass');
           d.setAttribute('data-icon-pack', look.iconPack || 'vibrant');
           d.setAttribute('data-icon-shape', look.iconShape || 'squircle');
-          d.setAttribute('data-font-style', look.fontStyle || 'modern');
+          d.setAttribute('data-font-style', look.fontStyle || 'space-grotesk');
+          d.setAttribute('data-font-size', look.fontSize || 'comfortable');
+          d.setAttribute('data-font-color', look.fontColor || 'default');
           d.setAttribute('data-wall', w[0] === 'o' ? 'original' : w[0] === 'p' ? 'photo' : 'none');
           d.setAttribute('data-wall-tone', wallTone);
+
           if (color) {
             d.style.setProperty('--wall-color', color);
             d.style.setProperty('--wall-tint', tint);
