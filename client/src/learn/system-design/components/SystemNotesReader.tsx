@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { THEORY_UNITS, ALL_THEORY_CHAPTERS } from '../data/theoryNotesData'
 import { ChapterConceptAnimator } from './ConceptAnimators'
+import { Markdown } from '@/learn/md'
+import { playStepClickSound } from '../utils/audioEffects'
 import {
   Search,
   CheckCircle2,
@@ -33,6 +35,7 @@ export const SystemNotesReader: React.FC = () => {
 
   const handlePrevChapter = () => {
     if (currentChapterIndex > 0) {
+      playStepClickSound()
       setSelectedChapterId(ALL_THEORY_CHAPTERS[currentChapterIndex - 1].id)
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }
@@ -40,12 +43,14 @@ export const SystemNotesReader: React.FC = () => {
 
   const handleNextChapter = () => {
     if (currentChapterIndex < ALL_THEORY_CHAPTERS.length - 1) {
+      playStepClickSound()
       setSelectedChapterId(ALL_THEORY_CHAPTERS[currentChapterIndex + 1].id)
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
 
   const toggleKeypoint = (kp: string) => {
+    playStepClickSound()
     setCheckedKeypoints((prev) => ({ ...prev, [kp]: !prev[kp] }))
   }
 
@@ -99,7 +104,10 @@ export const SystemNotesReader: React.FC = () => {
             return (
               <button
                 key={chap.id}
-                onClick={() => setSelectedChapterId(chap.id)}
+                onClick={() => {
+                  playStepClickSound()
+                  setSelectedChapterId(chap.id)
+                }}
                 className={`w-full text-left rounded-xl p-3 transition-all ${
                   isSelected
                     ? 'bg-accent-brand/10 ring-1 ring-accent-brand/40 text-text-primary'
@@ -163,8 +171,11 @@ export const SystemNotesReader: React.FC = () => {
         />
 
         {/* In-Depth Markdown Content */}
-        <div className="prose prose-invert max-w-none text-[14px] leading-relaxed text-text-secondary space-y-4">
-          <div className="whitespace-pre-line leading-relaxed font-sans">{currentChapter.deepContentMarkdown}</div>
+        <div className="rounded-2xl bg-bg-surface-1/80 p-6 sm:p-8 ring-1 ring-border/80 shadow-lg">
+          <div className="flex items-center gap-2 mb-4 text-[11px] font-mono font-bold uppercase tracking-wider text-accent-brand">
+            <Sparkles className="size-3.5" /> Comprehensive Engineering Deep-Dive
+          </div>
+          <Markdown md={currentChapter.deepContentMarkdown} className="leading-relaxed text-text-secondary text-[14px]" />
         </div>
 
         {/* Equations & Math Formulas Box */}

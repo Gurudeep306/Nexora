@@ -25,6 +25,9 @@ import {
   Sparkles,
   Award,
   TrendingUp,
+  LayoutGrid,
+  Maximize2,
+  Columns,
 } from 'lucide-react'
 
 const CATEGORIES: ('All' | SystemCategory)[] = [
@@ -44,6 +47,8 @@ export const SystemDesignStudio: React.FC = () => {
   const [selectedSystemId, setSelectedSystemId] = useState<string>('tinyurl')
   const [currentStepIndex, setCurrentStepIndex] = useState<number>(0)
   const [systemSearch, setSystemSearch] = useState<string>('')
+  const [browseMode, setBrowseMode] = useState<'carousel' | 'catalog'>('carousel')
+  const [canvasLayout, setCanvasLayout] = useState<'blueprint' | 'split'>('blueprint')
 
   // Filter systems
   const filteredSystems = ALL_SYSTEM_DESIGNS.filter((sys) => {
@@ -81,7 +86,7 @@ export const SystemDesignStudio: React.FC = () => {
                 System Design Interactive Studio
               </h2>
               <p className="mt-1 text-[14.5px] text-text-secondary max-w-2xl leading-relaxed">
-                Step-by-step visual animation simulations of 30 top-level production systems showing how code talks across services, paired with 56 chapters of in-depth architectural notes.
+                Step-by-step visual animation simulations of 30+ top-level production systems showing how code talks across services, paired with 56 chapters of in-depth architectural notes.
               </p>
             </div>
 
@@ -95,7 +100,7 @@ export const SystemDesignStudio: React.FC = () => {
                     : 'text-text-muted hover:text-text-primary'
                 }`}
               >
-                <Cpu className="size-4" /> 30 Interactive Systems
+                <Cpu className="size-4" /> 30+ Interactive Systems
               </button>
               <button
                 onClick={() => setActiveTab('notes')}
@@ -134,42 +139,127 @@ export const SystemDesignStudio: React.FC = () => {
                 ))}
               </div>
 
-              {/* Quick Search */}
-              <div className="relative w-full sm:w-64">
-                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-text-muted" />
-                <input
-                  type="text"
-                  placeholder="Filter 30 systems..."
-                  value={systemSearch}
-                  onChange={(e) => setSystemSearch(e.target.value)}
-                  className="w-full rounded-lg bg-bg-surface-2 pl-8 pr-3 py-1.5 text-[12px] text-text-primary ring-1 ring-border placeholder:text-text-muted focus:outline-none focus:ring-1 focus:ring-accent-brand"
-                />
+              {/* Quick Search & Catalog Grid Toggle */}
+              <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                <button
+                  onClick={() => setBrowseMode(browseMode === 'catalog' ? 'carousel' : 'catalog')}
+                  className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[12px] font-mono font-bold transition ring-1 ${
+                    browseMode === 'catalog'
+                      ? 'bg-accent-brand text-bg-base ring-accent-brand shadow-sm'
+                      : 'bg-bg-surface-2 text-text-primary ring-border hover:bg-bg-surface-3'
+                  }`}
+                >
+                  <LayoutGrid className="size-3.5" />
+                  {browseMode === 'catalog' ? 'Switch to Carousel' : 'Browse All 31 Systems Catalog'}
+                </button>
+
+                <div className="relative w-full sm:w-56">
+                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-text-muted" />
+                  <input
+                    type="text"
+                    placeholder="Filter 31 systems..."
+                    value={systemSearch}
+                    onChange={(e) => setSystemSearch(e.target.value)}
+                    className="w-full rounded-lg bg-bg-surface-2 pl-8 pr-3 py-1.5 text-[12px] text-text-primary ring-1 ring-border placeholder:text-text-muted focus:outline-none focus:ring-1 focus:ring-accent-brand"
+                  />
+                </div>
               </div>
             </div>
 
-            {/* Horizontal Scrollable Systems Carousel */}
-            <div className="flex gap-2.5 overflow-x-auto pb-2 scrollbar-none">
-              {filteredSystems.map((sys) => {
-                const isSelected = sys.id === currentSystem.id
-                return (
-                  <button
-                    key={sys.id}
-                    onClick={() => handleSelectSystem(sys.id)}
-                    className={`flex shrink-0 items-center gap-2 rounded-xl px-3.5 py-2 transition-all ${
-                      isSelected
-                        ? 'bg-accent-brand/15 ring-2 ring-accent-brand text-text-primary shadow-sm font-semibold'
-                        : 'bg-bg-surface-2 ring-1 ring-border text-text-muted hover:bg-bg-surface-3 hover:text-text-primary'
-                    }`}
-                  >
-                    <span className="flex size-2 rounded-full bg-accent-brand" />
-                    <span className="text-[12px] whitespace-nowrap">{sys.name}</span>
-                    <span className="rounded bg-bg-surface-1 px-1.5 py-0.2 font-mono text-[9px] uppercase text-text-muted">
-                      {sys.category.split(' ')[0]}
-                    </span>
-                  </button>
-                )
-              })}
-            </div>
+            {/* View Mode 1: 31 Systems Bento Grid Catalog */}
+            {browseMode === 'catalog' ? (
+              <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border shadow-xl space-y-4 animate-fadeIn">
+                <div className="flex items-center justify-between border-b border-border/50 pb-3">
+                  <div>
+                    <h3 className="text-[16px] font-bold text-text-primary flex items-center gap-2">
+                      <LayoutGrid className="size-4 text-accent-brand" />
+                      All 31 Real-World FAANG Distributed Systems Catalog
+                    </h3>
+                    <p className="text-[12px] text-text-muted mt-0.5">
+                      Select any production architecture blueprint to simulate code execution, packet transmission, and state transitions.
+                    </p>
+                  </div>
+                  <span className="rounded-lg bg-bg-surface-1 px-2.5 py-1 font-mono text-[11px] font-bold text-accent-brand ring-1 ring-border">
+                    {filteredSystems.length} Systems Available
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 max-h-[520px] overflow-y-auto pr-1">
+                  {filteredSystems.map((sys) => {
+                    const isSelected = sys.id === currentSystem.id
+                    return (
+                      <div
+                        key={sys.id}
+                        onClick={() => {
+                          handleSelectSystem(sys.id)
+                          setBrowseMode('carousel')
+                        }}
+                        className={`cursor-pointer rounded-xl p-4 transition-all duration-200 flex flex-col justify-between ${
+                          isSelected
+                            ? 'bg-accent-brand/10 ring-2 ring-accent-brand shadow-lg'
+                            : 'bg-bg-surface-1 hover:bg-bg-surface-3/80 ring-1 ring-border hover:ring-border-strong hover:scale-[1.01]'
+                        }`}
+                      >
+                        <div>
+                          <div className="flex items-center justify-between gap-2 mb-2">
+                            <span className="rounded bg-bg-surface-2 px-2 py-0.5 font-mono text-[9.5px] font-bold text-accent-brand uppercase ring-1 ring-border/50">
+                              {sys.category}
+                            </span>
+                            <span className="font-mono text-[10px] text-text-muted font-semibold">
+                              {sys.difficulty}
+                            </span>
+                          </div>
+
+                          <h4 className="font-bold text-[14px] text-text-primary font-mono leading-snug">
+                            {sys.name}
+                          </h4>
+                          <p className="text-[12px] text-text-secondary mt-1.5 line-clamp-2 leading-relaxed">
+                            {sys.tagline}
+                          </p>
+                        </div>
+
+                        <div className="mt-4 pt-3 border-t border-border/40 grid grid-cols-2 gap-2 text-[10.5px] font-mono text-text-muted">
+                          <div>
+                            <span className="block text-[8.5px] uppercase font-bold text-text-muted/80">Throughput</span>
+                            <span className="text-text-primary font-semibold truncate block">
+                              {sys.throughput.split(' ')[0]} {sys.throughput.split(' ')[1] || ''}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="block text-[8.5px] uppercase font-bold text-text-muted/80">Latency SLA</span>
+                            <span className="text-accent-brand font-semibold truncate block">{sys.latency}</span>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            ) : (
+              /* View Mode 2: Horizontal Scrollable Systems Carousel */
+              <div className="flex gap-2.5 overflow-x-auto pb-2 scrollbar-none">
+                {filteredSystems.map((sys) => {
+                  const isSelected = sys.id === currentSystem.id
+                  return (
+                    <button
+                      key={sys.id}
+                      onClick={() => handleSelectSystem(sys.id)}
+                      className={`flex shrink-0 items-center gap-2 rounded-xl px-3.5 py-2 transition-all ${
+                        isSelected
+                          ? 'bg-accent-brand/15 ring-2 ring-accent-brand text-text-primary shadow-sm font-semibold'
+                          : 'bg-bg-surface-2 ring-1 ring-border text-text-muted hover:bg-bg-surface-3 hover:text-text-primary'
+                      }`}
+                    >
+                      <span className="flex size-2 rounded-full bg-accent-brand" />
+                      <span className="text-[12px] whitespace-nowrap">{sys.name}</span>
+                      <span className="rounded bg-bg-surface-1 px-1.5 py-0.2 font-mono text-[9px] uppercase text-text-muted">
+                        {sys.category.split(' ')[0]}
+                      </span>
+                    </button>
+                  )
+                })}
+              </div>
+            )}
           </div>
 
           {/* Active System Hero Banner */}
@@ -296,17 +386,61 @@ export const SystemDesignStudio: React.FC = () => {
 
           {/* Conditional View Rendering */}
           {systemView === 'simulation' ? (
-            /* Side-by-Side or Stacked Visualizer and Code Inspector */
-            <div className="grid gap-6 xl:grid-cols-[1.1fr_1fr]">
-              {/* Live Interactive Architecture Visualizer */}
-              <SystemVisualizer
-                system={currentSystem}
-                currentStepIndex={currentStepIndex}
-                onStepChange={setCurrentStepIndex}
-              />
+            <div className="space-y-4">
+              {/* Canvas Layout Switcher */}
+              <div className="flex flex-wrap items-center justify-between gap-3 px-1">
+                <div className="flex items-center gap-2 text-[11.5px] font-mono text-text-muted">
+                  <span className="size-2 rounded-full bg-accent-brand animate-pulse" />
+                  <span>Architecture Canvas Layout:</span>
+                  <div className="flex items-center rounded-lg bg-bg-surface-1 p-0.5 ring-1 ring-border">
+                    <button
+                      onClick={() => setCanvasLayout('blueprint')}
+                      className={`flex items-center gap-1.5 rounded px-2.5 py-1 text-[11px] font-bold transition ${
+                        canvasLayout === 'blueprint'
+                          ? 'bg-accent-brand text-bg-base shadow-sm'
+                          : 'text-text-muted hover:text-text-primary'
+                      }`}
+                    >
+                      <Maximize2 className="size-3" /> Big Architecture Canvas
+                    </button>
+                    <button
+                      onClick={() => setCanvasLayout('split')}
+                      className={`flex items-center gap-1.5 rounded px-2.5 py-1 text-[11px] font-bold transition ${
+                        canvasLayout === 'split'
+                          ? 'bg-accent-brand text-bg-base shadow-sm'
+                          : 'text-text-muted hover:text-text-primary'
+                      }`}
+                    >
+                      <Columns className="size-3" /> Split View (Side-by-Side)
+                    </button>
+                  </div>
+                </div>
+                <span className="font-mono text-[11px] text-text-muted">
+                  ⚡ Click any service card on the chart to inspect its code & invoke test RPCs
+                </span>
+              </div>
 
-              {/* Code Interlock: How Code Talks With Each Other */}
-              <CodeTalksViewer system={currentSystem} currentStep={currentStep} />
+              {canvasLayout === 'blueprint' ? (
+                /* Wide Blueprint Layout: Full Width Visualizer + Docked Code Talks */
+                <div className="space-y-6">
+                  <SystemVisualizer
+                    system={currentSystem}
+                    currentStepIndex={currentStepIndex}
+                    onStepChange={setCurrentStepIndex}
+                  />
+                  <CodeTalksViewer system={currentSystem} currentStep={currentStep} />
+                </div>
+              ) : (
+                /* Split Screen Layout */
+                <div className="grid gap-6 xl:grid-cols-[1.1fr_1fr]">
+                  <SystemVisualizer
+                    system={currentSystem}
+                    currentStepIndex={currentStepIndex}
+                    onStepChange={setCurrentStepIndex}
+                  />
+                  <CodeTalksViewer system={currentSystem} currentStep={currentStep} />
+                </div>
+              )}
             </div>
           ) : systemView === 'sequence' ? (
             /* Interactive UML Sequence Flow & Code Interlock */
