@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { ChevronRight, Flame, Keyboard, Search, Swords, Zap } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
@@ -84,11 +84,48 @@ export function Topbar() {
     return [...pages, ...problems, ...tail]
   }, [query, results, user?.role, navigate])
 
+  const handleUniversalBack = useCallback(() => {
+    // If browser history has a previous entry in this session, navigate back
+    const hasHistory = typeof window !== 'undefined' && window.history.state && typeof window.history.state.idx === 'number' && window.history.state.idx > 0
+    if (hasHistory) {
+      navigate(-1)
+      return
+    }
+
+    // Contextual hierarchical fallback based on route
+    if (pathname.startsWith('/gate/cbt/')) {
+      navigate('/gate/cbt')
+    } else if (pathname === '/gate/cbt') {
+      navigate('/gate')
+    } else if (pathname.startsWith('/solve/')) {
+      navigate('/problems')
+    } else if (pathname.startsWith('/learn/dsa/')) {
+      navigate('/learn')
+    } else if (pathname.startsWith('/contests/')) {
+      navigate('/contests')
+    } else {
+      navigate('/hub')
+    }
+  }, [navigate, pathname])
+
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-2 titlebar px-3 md:px-6 animate-fade-in">
-      {/* Universal back: Home is the root of the hierarchy, so every page
-          except Home itself carries a keycap that returns there. */}
-      {pathname !== '/hub' && <BackButton to="/hub" size="sm" label="Back to Home" />}
+      {/* Contextual / History-aware back button */}
+      {pathname !== '/hub' && (
+        <BackButton
+          onClick={handleUniversalBack}
+          size="sm"
+          label={
+            pathname.startsWith('/gate/cbt/')
+              ? 'Back to Paper List'
+              : pathname === '/gate/cbt'
+                ? 'Back to Question Bank'
+                : pathname.startsWith('/solve/')
+                  ? 'Back to Problems'
+                  : 'Go Back'
+          }
+        />
+      )}
 
       {/* Breadcrumbs */}
       <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-1.5 text-[13px]">

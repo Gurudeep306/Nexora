@@ -11,6 +11,9 @@ import {
   Send,
   X,
   User,
+  Maximize,
+  Minimize,
+  ZoomIn,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Markdown } from '@/learn/md'
@@ -60,6 +63,29 @@ export function GateCbtExam({
   const [showInstructions, setShowInstructions] = useState(false)
   const [showSubmitModal, setShowSubmitModal] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isFullscreen, setIsFullscreen] = useState(false)
+  const [zoomFigure, setZoomFigure] = useState<string | null>(null)
+
+  // Sync fullscreen state with browser
+  useEffect(() => {
+    const handleFsChange = () => {
+      setIsFullscreen(!!document.fullscreenElement)
+    }
+    document.addEventListener('fullscreenchange', handleFsChange)
+    return () => document.removeEventListener('fullscreenchange', handleFsChange)
+  }, [])
+
+  const toggleFullscreen = async () => {
+    try {
+      if (!document.fullscreenElement) {
+        await document.documentElement.requestFullscreen()
+      } else {
+        await document.exitFullscreen()
+      }
+    } catch (e) {
+      console.warn('Fullscreen request failed:', e)
+    }
+  }
 
   // Post-submission Evaluation
   const [evalResult, setEvalResult] = useState<ExamEvaluation | null>(null)
@@ -311,24 +337,44 @@ export function GateCbtExam({
   const isTimerUrgent = timeRemaining < 10 * 60 // under 10 mins
 
   return (
-    <div className="fixed inset-0 z-40 flex flex-col bg-[#0f131a] text-gray-200 select-none font-sans overflow-hidden">
+    <div className="fixed inset-0 z-[100] flex flex-col bg-[#0f131a] text-gray-200 select-none font-sans overflow-hidden">
       {/* ── Top TCS iON Header Bar ── */}
       <header className="flex h-14 shrink-0 items-center justify-between border-b border-white/10 bg-[#161b24] px-3 sm:px-6">
-        <div className="flex items-center gap-3">
-          <span className="rounded bg-accent-brand/20 px-2 py-0.5 text-[11px] font-mono font-bold tracking-wider text-accent-brand uppercase">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <button
+            type="button"
+            onClick={onExit}
+            className="flex items-center gap-1 rounded-lg border border-white/15 bg-white/5 px-2.5 py-1.5 text-[12px] font-semibold text-gray-200 hover:bg-white/15 hover:text-white transition-all cursor-pointer shadow-sm"
+            title="Exit Exam and return to Question Paper List"
+          >
+            <ChevronLeft className="size-4 text-accent-brand" />
+            <span className="hidden xs:inline">Paper List</span>
+          </button>
+
+          <span className="hidden sm:inline rounded bg-accent-brand/20 px-2 py-0.5 text-[11px] font-mono font-bold tracking-wider text-accent-brand uppercase">
             TCS iON CBT SIMULATOR
           </span>
-          <h2 className="hidden text-[14px] font-bold text-white sm:inline truncate max-w-md">
+          <h2 className="hidden text-[14px] font-bold text-white md:inline truncate max-w-xs lg:max-w-md">
             {data.paper.exam} {data.paper.year} {data.paper.set ? `Set ${data.paper.set}` : ''}
           </h2>
         </div>
 
-        {/* Utilities: Calculator, Question Paper, Instructions, Timer */}
-        <div className="flex items-center gap-2 sm:gap-4">
+        {/* Utilities: Calculator, Question Paper, Instructions, Fullscreen, Timer */}
+        <div className="flex items-center gap-1.5 sm:gap-3">
+          <button
+            type="button"
+            onClick={toggleFullscreen}
+            className="flex items-center gap-1.5 rounded-lg border border-white/15 bg-white/5 px-2.5 py-1.5 text-[12px] font-semibold text-gray-200 hover:bg-white/10 cursor-pointer transition-colors"
+            title={isFullscreen ? 'Exit Fullscreen Mode (Esc)' : 'Enter Fullscreen Exam Mode'}
+          >
+            {isFullscreen ? <Minimize className="size-4 text-accent-brand" /> : <Maximize className="size-4 text-accent-brand" />}
+            <span className="hidden lg:inline">{isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}</span>
+          </button>
+
           <button
             type="button"
             onClick={() => setShowCalc(true)}
-            className="flex items-center gap-1.5 rounded-lg border border-white/15 bg-white/5 px-2.5 py-1.5 text-[12px] font-semibold text-gray-200 hover:bg-white/10"
+            className="flex items-center gap-1.5 rounded-lg border border-white/15 bg-white/5 px-2.5 py-1.5 text-[12px] font-semibold text-gray-200 hover:bg-white/10 cursor-pointer transition-colors"
             title="Open GATE Virtual Scientific Calculator"
           >
             <CalcIcon className="size-4 text-emerald-400" />
@@ -338,7 +384,7 @@ export function GateCbtExam({
           <button
             type="button"
             onClick={() => setShowQuestionPaper(true)}
-            className="flex items-center gap-1.5 rounded-lg border border-white/15 bg-white/5 px-2.5 py-1.5 text-[12px] font-semibold text-gray-200 hover:bg-white/10"
+            className="flex items-center gap-1.5 rounded-lg border border-white/15 bg-white/5 px-2.5 py-1.5 text-[12px] font-semibold text-gray-200 hover:bg-white/10 cursor-pointer transition-colors"
             title="View Complete Question Paper"
           >
             <FileText className="size-4 text-blue-400" />
@@ -348,7 +394,7 @@ export function GateCbtExam({
           <button
             type="button"
             onClick={() => setShowInstructions(true)}
-            className="flex items-center gap-1.5 rounded-lg border border-white/15 bg-white/5 px-2.5 py-1.5 text-[12px] font-semibold text-gray-200 hover:bg-white/10"
+            className="flex items-center gap-1.5 rounded-lg border border-white/15 bg-white/5 px-2.5 py-1.5 text-[12px] font-semibold text-gray-200 hover:bg-white/10 cursor-pointer transition-colors"
             title="Exam Guidelines & Instructions"
           >
             <HelpCircle className="size-4 text-amber-400" />
@@ -358,7 +404,7 @@ export function GateCbtExam({
           {/* Countdown Clock */}
           <div
             className={cn(
-              'flex items-center gap-2 rounded-xl border px-3 py-1 font-mono text-[14px] font-bold shadow-sm',
+              'flex items-center gap-2 rounded-xl border px-2.5 sm:px-3 py-1 font-mono text-[13px] sm:text-[14px] font-bold shadow-sm',
               isTimerUrgent
                 ? 'border-red-500/50 bg-red-500/15 text-red-400 animate-pulse'
                 : 'border-white/15 bg-[#0f131a] text-emerald-400',
@@ -371,8 +417,8 @@ export function GateCbtExam({
           <button
             type="button"
             onClick={onExit}
-            className="rounded p-1 text-gray-400 hover:bg-white/10 hover:text-white"
-            title="Exit Exam"
+            className="rounded p-1 text-gray-400 hover:bg-white/10 hover:text-white cursor-pointer"
+            title="Exit Exam to Paper List"
           >
             <X className="size-5" />
           </button>
@@ -458,8 +504,22 @@ export function GateCbtExam({
                 {/* Diagrams if present */}
                 {currentQuestion.figures.map((f) => (
                   <figure key={f.f} className="my-3 max-w-lg">
-                    <img src={`/gate-fig/${f.f}`} alt={f.alt} className="rounded-xl border border-white/10 bg-white/5" />
-                    {f.alt && <figcaption className="mt-1 text-[12px] text-gray-400">{f.alt}</figcaption>}
+                    <div
+                      onClick={() => setZoomFigure(`/gate-fig/${f.f}`)}
+                      className="group relative cursor-zoom-in rounded-xl border border-white/20 bg-white p-3 shadow-md inline-block max-w-full transition-transform hover:scale-[1.01]"
+                      title="Click to view full enlarged diagram"
+                    >
+                      <img
+                        src={`/gate-fig/${f.f}`}
+                        alt={f.alt}
+                        className="max-h-72 w-auto rounded object-contain"
+                      />
+                      <div className="absolute top-2 right-2 rounded-lg bg-black/75 p-1.5 text-white opacity-0 transition-opacity group-hover:opacity-100 flex items-center gap-1 text-[11px] font-mono">
+                        <ZoomIn className="size-3.5" />
+                        <span>Enlarge</span>
+                      </div>
+                    </div>
+                    {f.alt && <figcaption className="mt-1.5 text-[12px] text-gray-400 font-sans leading-relaxed">{f.alt}</figcaption>}
                   </figure>
                 ))}
 
@@ -807,6 +867,38 @@ export function GateCbtExam({
                 {isSubmitting ? 'Evaluating...' : 'Yes, Submit Exam'}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── High-Resolution Diagram Zoom Lightbox Modal ── */}
+      {zoomFigure && (
+        <div
+          className="fixed inset-0 z-[250] flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-fade-in"
+          onClick={() => setZoomFigure(null)}
+        >
+          <div
+            className="relative max-w-4xl max-h-[92vh] overflow-auto rounded-2xl bg-white p-4 sm:p-6 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between pb-3 mb-3 border-b border-gray-200">
+              <span className="text-[13px] font-bold text-gray-800">
+                GATE Diagram Viewer · Crisp Schematic View
+              </span>
+              <button
+                type="button"
+                onClick={() => setZoomFigure(null)}
+                className="rounded-lg bg-gray-100 p-1.5 text-gray-600 hover:bg-gray-200 hover:text-gray-900 transition-colors cursor-pointer"
+                title="Close diagram"
+              >
+                <X className="size-5" />
+              </button>
+            </div>
+            <img
+              src={zoomFigure}
+              alt="Enlarged GATE Schematic"
+              className="max-h-[75vh] w-auto mx-auto object-contain rounded"
+            />
           </div>
         </div>
       )}

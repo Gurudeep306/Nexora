@@ -41,6 +41,7 @@ export default defineConfig({
       '/auth/github': { target: 'http://localhost:3000', changeOrigin: true },
       '/auth/google': { target: 'http://localhost:3000', changeOrigin: true },
       '/uploads': { target: 'http://localhost:3000', changeOrigin: true },
+      '/gate-fig': { target: 'http://localhost:3000', changeOrigin: true },
       '/socket.io': { target: 'http://localhost:3000', ws: true },
     },
   },

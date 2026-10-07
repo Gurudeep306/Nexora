@@ -162194,10 +162194,12 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "db",
-      "topic": "sql",
+      "subject": "prob",
+      "topic": "probability",
       "tags": [
-        "sql"
+        "prob",
+        "probability",
+        "urn-models"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -162239,10 +162241,12 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "toc",
-      "topic": "turing",
+      "subject": "la",
+      "topic": "matrices",
       "tags": [
-        "turing"
+        "la",
+        "matrices",
+        "rank"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -162284,10 +162288,12 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "db",
-      "topic": "sql",
+      "subject": "la",
+      "topic": "eigenvalues",
       "tags": [
-        "sql"
+        "la",
+        "eigenvalues",
+        "multiplicity"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -162329,10 +162335,11 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "c-prog",
+      "subject": "coa",
+      "topic": "isa",
       "tags": [
-        "c-prog"
+        "coa",
+        "addressing-modes"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -162374,10 +162381,12 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "c-prog",
+      "subject": "coa",
+      "topic": "pipelining",
       "tags": [
-        "c-prog"
+        "coa",
+        "load-store",
+        "isa"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -162419,10 +162428,12 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "c-prog",
+      "subject": "coa",
+      "topic": "pipelining",
       "tags": [
-        "c-prog"
+        "coa",
+        "hazards",
+        "data-dependencies"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -162467,7 +162478,9 @@
       "subject": "algo",
       "topic": "asymptotics",
       "tags": [
-        "asymptotics"
+        "algo",
+        "recurrences",
+        "divide-and-conquer"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -162512,7 +162525,9 @@
       "subject": "cn",
       "topic": "transport",
       "tags": [
-        "transport"
+        "cn",
+        "tcp",
+        "connection-states"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -162557,7 +162572,10 @@
       "subject": "cn",
       "topic": "app",
       "tags": [
-        "app"
+        "cn",
+        "http",
+        "dns",
+        "web"
       ],
       "answer": "A, B",
       "answerSource": "official",
@@ -162599,10 +162617,12 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "db",
-      "topic": "sql",
+      "subject": "la",
+      "topic": "eigenvalues",
       "tags": [
-        "sql"
+        "la",
+        "eigenvectors",
+        "linear-algebra"
       ],
       "answer": "A, B",
       "answerSource": "official",
@@ -162647,7 +162667,9 @@
       "subject": "dl",
       "topic": "combinational",
       "tags": [
-        "combinational"
+        "dl",
+        "boolean-logic",
+        "xor-gates"
       ],
       "answer": "A, B",
       "answerSource": "official",
@@ -162689,10 +162711,12 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "dl",
+      "topic": "number-representations",
       "tags": [
-        "quant"
+        "dl",
+        "sign-magnitude",
+        "fixed-point"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -162734,10 +162758,12 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "algo",
+      "topic": "heaps",
       "tags": [
-        "quant"
+        "algo",
+        "binary-heaps",
+        "priority-queues"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -162779,10 +162805,12 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "general",
+      "subject": "algo",
+      "topic": "hashing",
       "tags": [
-        "computer-science"
+        "algo",
+        "hash-tables",
+        "probing"
       ],
       "answer": "A, B",
       "answerSource": "official",
@@ -162827,7 +162855,9 @@
       "subject": "cd",
       "topic": "parsing",
       "tags": [
-        "parsing"
+        "cd",
+        "grammars",
+        "cfg"
       ],
       "answer": "A, B",
       "answerSource": "official",
@@ -162872,7 +162902,9 @@
       "subject": "toc",
       "topic": "regular",
       "tags": [
-        "regular"
+        "toc",
+        "nfa",
+        "finite-automata"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -162915,9 +162947,11 @@
       "figures": [],
       "group": null,
       "subject": "pds",
-      "topic": "general",
+      "topic": "c-prog",
       "tags": [
-        "computer-science"
+        "pds",
+        "c-pointers",
+        "string-literals"
       ],
       "answer": "A, B",
       "answerSource": "official",
@@ -162959,10 +162993,12 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "general",
+      "subject": "os",
+      "topic": "processes",
       "tags": [
-        "computer-science"
+        "os",
+        "threads",
+        "concurrency"
       ],
       "answer": "A, B",
       "answerSource": "official",
@@ -163007,7 +163043,9 @@
       "subject": "os",
       "topic": "deadlock",
       "tags": [
-        "deadlock"
+        "os",
+        "deadlocks",
+        "concurrency"
       ],
       "answer": "A, B",
       "answerSource": "official",
@@ -163050,9 +163088,11 @@
       "figures": [],
       "group": null,
       "subject": "db",
-      "topic": "sql",
+      "topic": "normalization",
       "tags": [
-        "sql"
+        "db",
+        "functional-dependencies",
+        "closures"
       ],
       "answer": "A, B",
       "answerSource": "official",
@@ -163094,10 +163134,13 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "dl",
-      "topic": "combinational",
+      "subject": "db",
+      "topic": "normalization",
       "tags": [
-        "combinational"
+        "db",
+        "bcnf",
+        "3nf",
+        "decomposition"
       ],
       "answer": "A, B",
       "answerSource": "official",
@@ -163122,10 +163165,12 @@
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "db",
-      "topic": "sql",
+      "subject": "calc",
+      "topic": "calculus",
       "tags": [
-        "sql"
+        "calc",
+        "continuity",
+        "differentiability"
       ],
       "answer": 1,
       "answerSource": "official",
@@ -163150,10 +163195,12 @@
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "db",
-      "topic": "sql",
+      "subject": "pds",
+      "topic": "trees",
       "tags": [
-        "sql"
+        "pds",
+        "binary-trees",
+        "tree-height"
       ],
       "answer": 1,
       "answerSource": "official",
@@ -163181,7 +163228,9 @@
       "subject": "pds",
       "topic": "c-prog",
       "tags": [
-        "c-prog"
+        "pds",
+        "c-recursion",
+        "functions"
       ],
       "answer": 1,
       "answerSource": "official",
@@ -163209,7 +163258,9 @@
       "subject": "os",
       "topic": "deadlock",
       "tags": [
-        "deadlock"
+        "os",
+        "bankers-algorithm",
+        "resource-allocation"
       ],
       "answer": 1,
       "answerSource": "official",
@@ -163252,9 +163303,11 @@
       "figures": [],
       "group": null,
       "subject": "coa",
-      "topic": "isa",
+      "topic": "data-types",
       "tags": [
-        "isa"
+        "coa",
+        "ieee-754",
+        "floating-point"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -163299,7 +163352,9 @@
       "subject": "dl",
       "topic": "sequential",
       "tags": [
-        "sequential"
+        "dl",
+        "counters",
+        "finite-state-machines"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -163341,10 +163396,12 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "db",
-      "topic": "sql",
+      "subject": "coa",
+      "topic": "cache-memory",
       "tags": [
-        "sql"
+        "coa",
+        "cache-memory",
+        "address-mapping"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -163389,7 +163446,9 @@
       "subject": "pds",
       "topic": "c-prog",
       "tags": [
-        "c-prog"
+        "pds",
+        "c-pointers",
+        "linked-lists"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -163434,7 +163493,9 @@
       "subject": "pds",
       "topic": "trees",
       "tags": [
-        "trees"
+        "pds",
+        "bst",
+        "permutations"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -163479,7 +163540,9 @@
       "subject": "algo",
       "topic": "graphs",
       "tags": [
-        "graphs"
+        "algo",
+        "shortest-paths",
+        "weighted-graphs"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -163524,7 +163587,9 @@
       "subject": "cd",
       "topic": "codegen",
       "tags": [
-        "codegen"
+        "cd",
+        "control-flow",
+        "basic-blocks"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -163567,8 +163632,10 @@
       "figures": [],
       "group": null,
       "subject": "db",
-      "topic": "sql",
+      "topic": "relational-algebra",
       "tags": [
+        "db",
+        "relational-algebra",
         "sql"
       ],
       "answer": "A",
@@ -163611,10 +163678,12 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "db",
-      "topic": "sql",
+      "subject": "cn",
+      "topic": "transport",
       "tags": [
-        "sql"
+        "cn",
+        "tcp",
+        "congestion-control"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -163656,10 +163725,12 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "os",
-      "topic": "memory",
+      "subject": "cn",
+      "topic": "data-link",
       "tags": [
-        "memory"
+        "cn",
+        "sliding-window",
+        "bandwidth-delay"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -163701,10 +163772,12 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "general",
+      "subject": "calc",
+      "topic": "calculus",
       "tags": [
-        "computer-science"
+        "calc",
+        "extrema",
+        "differentiability"
       ],
       "answer": "A, B",
       "answerSource": "official",
@@ -163746,10 +163819,12 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "general",
+      "subject": "dm",
+      "topic": "graph-theory",
       "tags": [
-        "computer-science"
+        "dm",
+        "vertex-cover",
+        "graph-theory"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -163794,7 +163869,9 @@
       "subject": "dl",
       "topic": "combinational",
       "tags": [
-        "combinational"
+        "dl",
+        "k-map",
+        "boolean-minimization"
       ],
       "answer": "A, B",
       "answerSource": "official",
@@ -163839,7 +163916,10 @@
       "subject": "algo",
       "topic": "graphs",
       "tags": [
-        "graphs"
+        "algo",
+        "mst",
+        "kruskal",
+        "prim"
       ],
       "answer": "A, B",
       "answerSource": "official",
@@ -163884,7 +163964,9 @@
       "subject": "algo",
       "topic": "graphs",
       "tags": [
-        "graphs"
+        "algo",
+        "dfs",
+        "edge-classification"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -163929,7 +164011,9 @@
       "subject": "toc",
       "topic": "regular",
       "tags": [
-        "regular"
+        "toc",
+        "closure-properties",
+        "regular-languages"
       ],
       "answer": "A, B",
       "answerSource": "official",
@@ -163974,7 +164058,9 @@
       "subject": "toc",
       "topic": "cfl",
       "tags": [
-        "cfl"
+        "toc",
+        "cfg",
+        "context-free-languages"
       ],
       "answer": "A, B",
       "answerSource": "official",
@@ -164016,10 +164102,12 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "cd",
+      "topic": "sdd",
       "tags": [
-        "quant"
+        "cd",
+        "syntax-directed-definitions",
+        "type-checking"
       ],
       "answer": "A, B",
       "answerSource": "official",
@@ -164064,7 +164152,10 @@
       "subject": "os",
       "topic": "memory",
       "tags": [
-        "memory"
+        "os",
+        "mmu",
+        "cache",
+        "paging"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -164106,10 +164197,12 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "general",
+      "subject": "dm",
+      "topic": "graph-theory",
       "tags": [
-        "computer-science"
+        "dm",
+        "graph-coloring",
+        "bipartite-graphs"
       ],
       "answer": "A, B",
       "answerSource": "official",
@@ -164151,10 +164244,12 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "db",
-      "topic": "sql",
+      "subject": "cn",
+      "topic": "network",
       "tags": [
-        "sql"
+        "cn",
+        "cidr",
+        "ip-addressing"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -164179,10 +164274,12 @@
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "general",
+      "subject": "dm",
+      "topic": "graph-theory",
       "tags": [
-        "computer-science"
+        "dm",
+        "matchings",
+        "paths"
       ],
       "answer": 1,
       "answerSource": "official",
@@ -164207,10 +164304,12 @@
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "coa",
-      "topic": "isa",
+      "subject": "prob",
+      "topic": "random-variables",
       "tags": [
-        "isa"
+        "prob",
+        "random-variables",
+        "expectation"
       ],
       "answer": 1,
       "answerSource": "official",
@@ -164235,10 +164334,12 @@
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "os",
+      "topic": "disk-scheduling",
       "tags": [
-        "quant"
+        "os",
+        "disk-latency",
+        "rpm"
       ],
       "answer": 1,
       "answerSource": "official",
@@ -164263,10 +164364,12 @@
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "coa",
+      "topic": "pipelining",
       "tags": [
-        "quant"
+        "coa",
+        "pipelining",
+        "stages"
       ],
       "answer": 1,
       "answerSource": "official",
@@ -164294,7 +164397,9 @@
       "subject": "algo",
       "topic": "asymptotics",
       "tags": [
-        "asymptotics"
+        "algo",
+        "recurrence-complexity",
+        "recursion"
       ],
       "answer": 1,
       "answerSource": "official",
@@ -164322,7 +164427,9 @@
       "subject": "pds",
       "topic": "trees",
       "tags": [
-        "trees"
+        "pds",
+        "bst",
+        "preorder-traversal"
       ],
       "answer": 1,
       "answerSource": "official",
@@ -164350,7 +164457,9 @@
       "subject": "pds",
       "topic": "c-prog",
       "tags": [
-        "c-prog"
+        "pds",
+        "c-pointers",
+        "arrays"
       ],
       "answer": 1,
       "answerSource": "official",
@@ -164384,10 +164493,12 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "general",
+      "subject": "os",
+      "topic": "cpu-scheduling",
       "tags": [
-        "computer-science"
+        "os",
+        "priority-scheduling",
+        "real-time"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -164415,7 +164526,9 @@
       "subject": "db",
       "topic": "normalization",
       "tags": [
-        "normalization"
+        "db",
+        "candidate-keys",
+        "superkeys"
       ],
       "answer": 1,
       "answerSource": "official",
@@ -164910,7 +165023,9 @@
       "subject": "dm",
       "topic": "logic",
       "tags": [
-        "logic"
+        "dm",
+        "predicate-logic",
+        "first-order-logic"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -164955,7 +165070,9 @@
       "subject": "pds",
       "topic": "trees",
       "tags": [
-        "trees"
+        "pds",
+        "binary-trees",
+        "tree-traversals"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -165000,7 +165117,9 @@
       "subject": "toc",
       "topic": "turing",
       "tags": [
-        "turing"
+        "toc",
+        "turing-machines",
+        "decidability"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -165042,10 +165161,12 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "coa",
-      "topic": "isa",
+      "subject": "prob",
+      "topic": "random-variables",
       "tags": [
-        "isa"
+        "prob",
+        "pdf",
+        "continuous-rv"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -165088,9 +165209,11 @@
       "figures": [],
       "group": null,
       "subject": "db",
-      "topic": "sql",
+      "topic": "architecture",
       "tags": [
-        "sql"
+        "db",
+        "schemas",
+        "data-models"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -165132,10 +165255,12 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "dm",
+      "topic": "boolean-algebra",
       "tags": [
-        "quant"
+        "dm",
+        "boolean-algebra",
+        "distributive-laws"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -165178,9 +165303,11 @@
       "figures": [],
       "group": null,
       "subject": "pds",
-      "topic": "trees",
+      "topic": "c-prog",
       "tags": [
-        "trees"
+        "pds",
+        "c-runtime",
+        "heap-stack"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -165225,7 +165352,9 @@
       "subject": "coa",
       "topic": "isa",
       "tags": [
-        "isa"
+        "coa",
+        "interrupts",
+        "cpu-architecture"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -165270,7 +165399,9 @@
       "subject": "pds",
       "topic": "c-prog",
       "tags": [
-        "c-prog"
+        "pds",
+        "c-pointers",
+        "macros"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -165312,10 +165443,12 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "general",
+      "subject": "db",
+      "topic": "transactions",
       "tags": [
-        "computer-science"
+        "db",
+        "concurrency",
+        "conflict-serializability"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -165357,10 +165490,12 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "general",
+      "subject": "cn",
+      "topic": "network",
       "tags": [
-        "computer-science"
+        "cn",
+        "delays",
+        "transmission-propagation"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -165402,10 +165537,13 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "cd",
-      "topic": "codegen",
+      "subject": "cn",
+      "topic": "network",
       "tags": [
-        "codegen"
+        "cn",
+        "protocols",
+        "arp",
+        "broadcast"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -165450,7 +165588,9 @@
       "subject": "os",
       "topic": "cpu-scheduling",
       "tags": [
-        "cpu-scheduling"
+        "os",
+        "scheduling-algorithms",
+        "non-preemptive"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -165495,7 +165635,9 @@
       "subject": "algo",
       "topic": "asymptotics",
       "tags": [
-        "asymptotics"
+        "algo",
+        "asymptotics",
+        "growth-rates"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -165540,7 +165682,9 @@
       "subject": "algo",
       "topic": "asymptotics",
       "tags": [
-        "asymptotics"
+        "algo",
+        "recurrences",
+        "masters-theorem"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -165582,10 +165726,12 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "db",
-      "topic": "sql",
+      "subject": "dm",
+      "topic": "relations",
       "tags": [
-        "sql"
+        "dm",
+        "binary-relations",
+        "equivalence-relations"
       ],
       "answer": "A, B",
       "answerSource": "official",
@@ -165627,10 +165773,12 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "general",
+      "subject": "calc",
+      "topic": "calculus",
       "tags": [
-        "computer-science"
+        "calc",
+        "definite-integrals",
+        "calculus"
       ],
       "answer": "A, B",
       "answerSource": "official",
@@ -165672,10 +165820,12 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "dl",
+      "topic": "number-representations",
       "tags": [
-        "quant"
+        "dl",
+        "twos-complement",
+        "binary-arithmetic"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -165720,7 +165870,9 @@
       "subject": "cd",
       "topic": "parsing",
       "tags": [
-        "parsing"
+        "cd",
+        "ambiguity",
+        "cfg"
       ],
       "answer": "A, B",
       "answerSource": "official",
@@ -165745,10 +165897,12 @@
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "general",
+      "subject": "algo",
+      "topic": "hashing",
       "tags": [
-        "computer-science"
+        "algo",
+        "hash-tables",
+        "collision-resolution"
       ],
       "answer": 1,
       "answerSource": "official",
@@ -165773,10 +165927,12 @@
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "coa",
-      "topic": "isa",
+      "subject": "la",
+      "topic": "linear-systems",
       "tags": [
-        "isa"
+        "la",
+        "linear-equations",
+        "rank-solutions"
       ],
       "answer": 1,
       "answerSource": "official",
@@ -165801,10 +165957,12 @@
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "algo",
+      "topic": "sorting",
       "tags": [
-        "quant"
+        "algo",
+        "merge-sort",
+        "inversions"
       ],
       "answer": 1,
       "answerSource": "official",
@@ -165832,7 +165990,9 @@
       "subject": "cn",
       "topic": "network",
       "tags": [
-        "network"
+        "cn",
+        "subnetting",
+        "ip-addresses"
       ],
       "answer": 1,
       "answerSource": "official",
@@ -165857,10 +166017,12 @@
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "general",
+      "subject": "coa",
+      "topic": "data-types",
       "tags": [
-        "computer-science"
+        "coa",
+        "ieee-754",
+        "single-precision"
       ],
       "answer": 1,
       "answerSource": "official",
@@ -165886,9 +166048,11 @@
       "figures": [],
       "group": null,
       "subject": "cd",
-      "topic": "codegen",
+      "topic": "lexical",
       "tags": [
-        "codegen"
+        "cd",
+        "lexical-analysis",
+        "regular-expressions"
       ],
       "answer": 1,
       "answerSource": "official",
@@ -165930,10 +166094,12 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "dm",
+      "topic": "graph-theory",
       "tags": [
-        "quant"
+        "dm",
+        "spanning-trees",
+        "cayley-formula"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -165978,7 +166144,9 @@
       "subject": "algo",
       "topic": "graphs",
       "tags": [
-        "graphs"
+        "algo",
+        "dag",
+        "topological-sort"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -166020,10 +166188,12 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "algo",
+      "topic": "searching",
       "tags": [
-        "quant"
+        "algo",
+        "binary-search",
+        "comparisons"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -166068,7 +166238,9 @@
       "subject": "algo",
       "topic": "dp",
       "tags": [
-        "dp"
+        "algo",
+        "dynamic-programming",
+        "memoization"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -166110,10 +166282,12 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "dl",
+      "topic": "combinational",
       "tags": [
-        "quant"
+        "dl",
+        "k-map",
+        "boolean-minimization"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -166158,7 +166332,9 @@
       "subject": "cd",
       "topic": "parsing",
       "tags": [
-        "parsing"
+        "cd",
+        "lr-parsing",
+        "shift-reduce"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -166200,10 +166376,12 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "cd",
-      "topic": "codegen",
+      "subject": "db",
+      "topic": "normalization",
       "tags": [
-        "codegen"
+        "db",
+        "functional-dependencies",
+        "bcnf"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -166248,7 +166426,9 @@
       "subject": "cn",
       "topic": "data-link",
       "tags": [
-        "data-link"
+        "cn",
+        "crc",
+        "error-detection"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -166290,10 +166470,12 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "c-prog",
+      "subject": "coa",
+      "topic": "isa",
       "tags": [
-        "c-prog"
+        "coa",
+        "instruction-encoding",
+        "registers"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -166338,7 +166520,9 @@
       "subject": "cd",
       "topic": "codegen",
       "tags": [
-        "codegen"
+        "cd",
+        "control-flow",
+        "live-variables"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -166383,7 +166567,9 @@
       "subject": "db",
       "topic": "indexing",
       "tags": [
-        "indexing"
+        "db",
+        "dense-index",
+        "sparse-index"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -166425,10 +166611,12 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "general",
+      "subject": "toc",
+      "topic": "regular",
       "tags": [
-        "computer-science"
+        "toc",
+        "dfa-minimization",
+        "equivalence"
       ],
       "answer": "A, B",
       "answerSource": "official",
@@ -166473,7 +166661,9 @@
       "subject": "toc",
       "topic": "cfl",
       "tags": [
-        "cfl"
+        "toc",
+        "pumping-lemma",
+        "context-free"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -166518,7 +166708,9 @@
       "subject": "pds",
       "topic": "trees",
       "tags": [
-        "trees"
+        "pds",
+        "bst",
+        "leaf-nodes"
       ],
       "answer": "A, B",
       "answerSource": "official",
@@ -166561,9 +166753,11 @@
       "figures": [],
       "group": null,
       "subject": "pds",
-      "topic": "c-prog",
+      "topic": "stacks-queues",
       "tags": [
-        "c-prog"
+        "pds",
+        "stacks",
+        "queues"
       ],
       "answer": "A, B",
       "answerSource": "official",
@@ -166608,7 +166802,9 @@
       "subject": "os",
       "topic": "sync",
       "tags": [
-        "sync"
+        "os",
+        "synchronization",
+        "semaphores"
       ],
       "answer": "A, B",
       "answerSource": "official",
@@ -166650,10 +166846,12 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "verbal",
+      "subject": "coa",
+      "topic": "cache-memory",
       "tags": [
-        "verbal"
+        "coa",
+        "cache-memory",
+        "hit-ratio"
       ],
       "answer": "A, B",
       "answerSource": "official",
@@ -166678,10 +166876,12 @@
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "c-prog",
+      "subject": "os",
+      "topic": "file-systems",
       "tags": [
-        "c-prog"
+        "os",
+        "file-systems",
+        "free-space-bitmap"
       ],
       "answer": 1,
       "answerSource": "official",
@@ -166709,7 +166909,9 @@
       "subject": "os",
       "topic": "memory",
       "tags": [
-        "memory"
+        "os",
+        "tlb-reach",
+        "virtual-memory"
       ],
       "answer": 1,
       "answerSource": "official",
@@ -166734,10 +166936,12 @@
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "general",
+      "subject": "os",
+      "topic": "memory",
       "tags": [
-        "computer-science"
+        "os",
+        "variable-partitioning",
+        "fragmentation"
       ],
       "answer": 1,
       "answerSource": "official",
@@ -166762,10 +166966,12 @@
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "verbal",
+      "subject": "os",
+      "topic": "memory",
       "tags": [
-        "verbal"
+        "os",
+        "paging",
+        "effective-access-time"
       ],
       "answer": 1,
       "answerSource": "official",
@@ -166790,10 +166996,12 @@
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "coa",
+      "topic": "pipelining",
       "tags": [
-        "quant"
+        "coa",
+        "clock-rate",
+        "speedup"
       ],
       "answer": 1,
       "answerSource": "official",
@@ -166821,7 +167029,9 @@
       "subject": "cn",
       "topic": "transport",
       "tags": [
-        "transport"
+        "cn",
+        "tcp-flow-control",
+        "window-size"
       ],
       "answer": 1,
       "answerSource": "official",
@@ -166846,10 +167056,12 @@
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "db",
-      "topic": "sql",
+      "subject": "dl",
+      "topic": "combinational",
       "tags": [
-        "sql"
+        "dl",
+        "multiplexers",
+        "logic-circuits"
       ],
       "answer": 1,
       "answerSource": "official",
@@ -166877,7 +167089,9 @@
       "subject": "pds",
       "topic": "c-prog",
       "tags": [
-        "c-prog"
+        "pds",
+        "c-pointers",
+        "dereferencing"
       ],
       "answer": 1,
       "answerSource": "official",
@@ -166902,10 +167116,12 @@
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "db",
-      "topic": "sql",
+      "subject": "pds",
+      "topic": "c-prog",
       "tags": [
-        "sql"
+        "pds",
+        "c-prog",
+        "subarrays"
       ],
       "answer": 1,
       "answerSource": "official",
@@ -166930,10 +167146,12 @@
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "coa",
-      "topic": "isa",
+      "subject": "la",
+      "topic": "matrices",
       "tags": [
-        "isa"
+        "la",
+        "determinants",
+        "matrix-properties"
       ],
       "answer": 1,
       "answerSource": "official",
@@ -166961,7 +167179,9 @@
       "subject": "prob",
       "topic": "probability",
       "tags": [
-        "probability"
+        "prob",
+        "binomial-distribution",
+        "coin-tosses"
       ],
       "answer": 1,
       "answerSource": "official",
@@ -166986,10 +167206,12 @@
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "general",
+      "subject": "dm",
+      "topic": "set-theory",
       "tags": [
-        "computer-science"
+        "dm",
+        "countability",
+        "uncountable-sets"
       ],
       "answer": 1,
       "answerSource": "official",
@@ -167014,10 +167236,12 @@
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "cd",
-      "topic": "codegen",
+      "subject": "cn",
+      "topic": "data-link",
       "tags": [
-        "codegen"
+        "cn",
+        "framing",
+        "link-layer-protocols"
       ],
       "answer": 1,
       "answerSource": "official",

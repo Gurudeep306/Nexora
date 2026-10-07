@@ -488,13 +488,23 @@ html:not(.dark) .tok-fn { color: oklch(0.5 0.15 240); }
 .gate-icon-link { display: inline-flex; padding: 4px; border-radius: 8px; color: var(--color-text-muted); cursor: pointer; }
 .gate-icon-link:hover { background: var(--color-bg-surface-3); color: var(--color-text-primary); transform: none !important; }
 
-.gate-prompt { font-size: 15px; }
 .gate-figure img {
-  max-width: 100%; height: auto; border-radius: 10px;
-  background: #fff; padding: 6px;
+  max-width: 100%; height: auto; border-radius: 12px;
+  background: #ffffff; padding: 8px;
   border: 1px solid var(--color-border);
+  box-shadow: 0 4px 14px -3px rgba(0, 0, 0, 0.08);
+  image-rendering: auto;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
-html.dark .gate-figure img { filter: invert(1) hue-rotate(180deg); background: #111; }
+.gate-figure img:hover {
+  transform: scale(1.01);
+  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.15);
+}
+html.dark .gate-figure img {
+  background: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 20px -3px rgba(0, 0, 0, 0.5);
+}
 
 .gate-option {
   display: flex; align-items: flex-start; gap: 10px;
