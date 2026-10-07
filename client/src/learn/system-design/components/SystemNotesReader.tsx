@@ -116,13 +116,25 @@ export const SystemNotesReader: React.FC = () => {
     setQuizAnswers({})
   }, [selectedChapterId])
 
+  const sanitizeForVoice = (text: string) => {
+    return text
+      .replace(/```[\s\S]*?```/g, ' [Production code configuration omitted for audio narration] ')
+      .replace(/`([^`]+)`/g, '$1')
+      .replace(/\$([^\$]+)\$/g, '$1')
+      .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1')
+      .replace(/#{1,6}\s+/g, '')
+      .replace(/[*_~>-]/g, ' ')
+      .replace(/\|[\s\S]*?\|/g, '')
+      .replace(/\s+/g, ' ')
+      .trim()
+  }
+
   const handleStartNarration = () => {
     if (!('speechSynthesis' in window)) return
     window.speechSynthesis.cancel()
 
-    const rawText = `${currentChapter.title}. ${currentChapter.summary}. Foundational Axioms: ${currentChapter.coreConcepts.join(
-      '. '
-    )}. Deep Dive Overview: ${currentChapter.deepContentMarkdown.slice(0, 1000).replace(/[#*`_]/g, '')}`
+    const cleanDeepContent = sanitizeForVoice(currentChapter.deepContentMarkdown).slice(0, 3000)
+    const rawText = `Chapter ${currentChapter.chapterNumber}: ${currentChapter.title}. Unit: ${currentChapter.unitTitle}. Executive Summary: ${currentChapter.summary}. Core Invariants and Axioms: ${currentChapter.coreConcepts.join('. ')}. Architectural Deep Dive: ${cleanDeepContent}. Case Study: ${currentWarStory.company}. ${currentWarStory.incident}. Root cause: ${currentWarStory.rootCause}. Architectural fix: ${currentWarStory.architecturalFix}.`
 
     const utterance = new SpeechSynthesisUtterance(rawText)
     utterance.rate = narrationSpeed
@@ -355,9 +367,17 @@ Architectural Fix: ${currentWarStory.architecturalFix}
               </button>
 
               {isNarrating && (
-                <div className="flex items-center gap-1">
-                  <span className="size-1.5 rounded-full bg-emerald-400 animate-ping" />
-                  <span className="text-[11px] font-mono text-emerald-400">Synthesizing audio...</span>
+                <div className="flex items-center gap-2.5 pl-2.5 border-l border-border/60">
+                  <div className="flex items-end gap-1 h-4 py-0.5">
+                    <span className="w-1 bg-emerald-400 rounded-full animate-bounce [animation-delay:0ms] h-2" />
+                    <span className="w-1 bg-sky-400 rounded-full animate-bounce [animation-delay:150ms] h-4" />
+                    <span className="w-1 bg-accent-brand rounded-full animate-bounce [animation-delay:300ms] h-3.5" />
+                    <span className="w-1 bg-emerald-400 rounded-full animate-bounce [animation-delay:75ms] h-3" />
+                    <span className="w-1 bg-amber-400 rounded-full animate-bounce [animation-delay:225ms] h-4" />
+                  </div>
+                  <span className="text-[11px] font-mono text-emerald-400 font-bold">
+                    Staff+ Voice Narrator Active
+                  </span>
                 </div>
               )}
             </div>
