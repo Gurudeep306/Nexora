@@ -55,3 +55,4 @@ venv/
 */venv/
 
 .aider*
+.licenses/

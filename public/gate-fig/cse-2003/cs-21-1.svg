@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 240" width="100%" height="100%">
+  <rect width="100%" height="100%" rx="16" fill="#0b1329" stroke="#1e293b" stroke-width="1.5" />
+  <rect x="20" y="16" width="160" height="24" rx="6" fill="#1e293b" />
+  <text x="30" y="32" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">GRAPH / NETWORK</text>
+  <!-- Edges -->
+  <line x1="217.4534814025576" y1="80.12081585130133" x2="342.5465185974424" y2="80.12081585130133" stroke="#475569" stroke-width="2" />
+  <rect x="270.0" y="72.12081585130133" width="20" height="16" rx="4" fill="#0f172a" stroke="#64748b" stroke-width="1" />
+  <text x="280.0" y="84.12081585130133" text-anchor="middle" fill="#38bdf8" font-size="10" font-weight="bold" font-family="monospace">2</text>
+  <line x1="342.5465185974424" y1="80.12081585130133" x2="357.99423297454587" y2="147.80167471650515" stroke="#475569" stroke-width="2" />
+  <rect x="340.27037578599413" y="105.96124528390324" width="20" height="16" rx="4" fill="#0f172a" stroke="#64748b" stroke-width="1" />
+  <text x="350.27037578599413" y="117.96124528390324" text-anchor="middle" fill="#38bdf8" font-size="10" font-weight="bold" font-family="monospace">3</text>
+  <line x1="357.99423297454587" y1="147.80167471650515" x2="314.71069912940465" y2="202.07750943219355" stroke="#475569" stroke-width="2" />
+  <rect x="326.3524660519753" y="166.93959207434935" width="20" height="16" rx="4" fill="#0f172a" stroke="#64748b" stroke-width="1" />
+  <text x="336.3524660519753" y="178.93959207434935" text-anchor="middle" fill="#38bdf8" font-size="10" font-weight="bold" font-family="monospace">5</text>
+  <line x1="314.71069912940465" y1="202.07750943219355" x2="245.28930087059535" y2="202.07750943219355" stroke="#475569" stroke-width="2" />
+  <rect x="270.0" y="194.07750943219355" width="20" height="16" rx="4" fill="#0f172a" stroke="#64748b" stroke-width="1" />
+  <text x="280.0" y="206.07750943219355" text-anchor="middle" fill="#38bdf8" font-size="10" font-weight="bold" font-family="monospace">7</text>
+  <line x1="245.28930087059535" y1="202.07750943219355" x2="202.0057670254541" y2="147.80167471650515" stroke="#475569" stroke-width="2" />
+  <rect x="213.64753394802472" y="166.93959207434935" width="20" height="16" rx="4" fill="#0f172a" stroke="#64748b" stroke-width="1" />
+  <text x="223.64753394802472" y="178.93959207434935" text-anchor="middle" fill="#38bdf8" font-size="10" font-weight="bold" font-family="monospace">4</text>
+  <line x1="202.0057670254541" y1="147.80167471650515" x2="217.4534814025576" y2="80.12081585130133" stroke="#475569" stroke-width="2" />
+  <rect x="199.72962421400587" y="105.96124528390324" width="20" height="16" rx="4" fill="#0f172a" stroke="#64748b" stroke-width="1" />
+  <text x="209.72962421400587" y="117.96124528390324" text-anchor="middle" fill="#38bdf8" font-size="10" font-weight="bold" font-family="monospace">2</text>
+  <line x1="217.4534814025576" y1="80.12081585130133" x2="357.99423297454587" y2="147.80167471650515" stroke="#10b981" stroke-width="2.5" stroke-dasharray="4 2" />
+  <!-- Vertices -->
+  <circle cx="217.4534814025576" cy="80.12081585130133" r="18" fill="#1e293b" stroke="#38bdf8" stroke-width="2" />
+  <text x="217.4534814025576" y="85.12081585130133" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold" font-family="monospace">a</text>
+  <circle cx="342.5465185974424" cy="80.12081585130133" r="18" fill="#1e293b" stroke="#38bdf8" stroke-width="2" />
+  <text x="342.5465185974424" y="85.12081585130133" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold" font-family="monospace">b</text>
+  <circle cx="357.99423297454587" cy="147.80167471650515" r="18" fill="#1e293b" stroke="#38bdf8" stroke-width="2" />
+  <text x="357.99423297454587" y="152.80167471650515" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold" font-family="monospace">e</text>
+  <circle cx="314.71069912940465" cy="202.07750943219355" r="18" fill="#1e293b" stroke="#38bdf8" stroke-width="2" />
+  <text x="314.71069912940465" y="207.07750943219355" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold" font-family="monospace">f</text>
+  <circle cx="245.28930087059535" cy="202.07750943219355" r="18" fill="#1e293b" stroke="#38bdf8" stroke-width="2" />
+  <text x="245.28930087059535" y="207.07750943219355" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold" font-family="monospace">g</text>
+  <circle cx="202.0057670254541" cy="147.80167471650515" r="18" fill="#1e293b" stroke="#38bdf8" stroke-width="2" />
+  <text x="202.0057670254541" y="152.80167471650515" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold" font-family="monospace">h</text>
+</svg>

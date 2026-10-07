@@ -8,23 +8,14 @@ import {
   Eye,
   EyeOff,
   Link2,
-  Sparkles,
-  ZoomIn,
-  X,
+  Bookmark,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Markdown } from '@/learn/md'
 import { GateVisualizer } from './GateVisualizer'
+import { HandwrittenSolution } from './HandwrittenSolution'
+import { ReconstructedDiagram } from './ReconstructedDiagram'
 import { TYPE_LABEL, paperLabel, type GateQuestion } from './types'
-
-/** NAT answers are stored as a number or as "lo:hi" for an accepted range. */
-function answerText(q: GateQuestion): string {
-  const a = q.answer
-  if (a === null || a === undefined) return '—'
-  if (Array.isArray(a)) return a.join(', ')
-  if (typeof a === 'string' && /^-?[\d.]+:-?[\d.]+$/.test(a)) return a.replace(':', ' to ')
-  return String(a)
-}
 
 function checkIsCorrect(q: GateQuestion, pick: any): boolean {
   if (pick === undefined || pick === null || pick === '') return false
@@ -55,44 +46,45 @@ export function SubjectChip({
   topicName,
 }: {
   subject: string
-  topic: string
+  topic?: string
   name?: string
   topicName?: string
 }) {
   return (
-    <span className="gate-chip" title={topicName}>
-      <span className="font-semibold">{name ?? subject}</span>
+    <span
+      className="inline-flex items-center gap-1 rounded-lg bg-bg-surface-2 px-2.5 py-0.5 text-[11px] font-semibold text-text-secondary border border-border/70"
+      title={topicName || topic}
+    >
+      <span className="font-bold text-accent-brand">{name ?? subject.toUpperCase()}</span>
       {topicName && <span className="opacity-70"> · {topicName}</span>}
-      <span className="sr-only">{topic}</span>
     </span>
   )
 }
 
-/**
- * One past-year question with Interactive Self-Practice Mode & Master Solution Derivation.
- */
 export function QuestionView({
   q,
   subjectName,
   topicName,
   compact,
   onOpen,
+  initialShowSolution = false,
 }: {
   q: GateQuestion
   subjectName?: string
   topicName?: string
   compact?: boolean
   onOpen?: () => void
+  initialShowSolution?: boolean
 }) {
-  const [show, setShow] = useState(false)
+  const [showSolution, setShowSolution] = useState(initialShowSolution)
   const [userPick, setUserPick] = useState<any>(undefined)
   const [hasChecked, setHasChecked] = useState(false)
+  const [bookmarked, setBookmarked] = useState(false)
 
-  const correct = q.options.find((o) => o.l === q.answer)
   const isUserCorrect = checkIsCorrect(q, userPick)
 
   const handlePickOption = (optLabel: string) => {
-    if (show) return // already revealed
+    if (showSolution) return
     if (q.type === 'MSQ') {
       const list: string[] = Array.isArray(userPick) ? userPick : []
       const next = list.includes(optLabel) ? list.filter((x) => x !== optLabel) : [...list, optLabel]
@@ -104,113 +96,136 @@ export function QuestionView({
 
   const handleCheckPractice = () => {
     setHasChecked(true)
-    setShow(true)
+    setShowSolution(true)
   }
 
-  const [zoomFigure, setZoomFigure] = useState<string | null>(null)
-
   return (
-    <article id={q.id} className="gate-card card scroll-mt-24 overflow-hidden p-0">
-      <header className="flex flex-wrap items-center gap-x-2 gap-y-1.5 border-b border-border px-4 py-2.5 sm:px-5">
-        <span className="gate-paper">{paperLabel(q)}</span>
-        <span className="gate-qno">
-          {q.section === 'ga' ? 'GA ' : ''}Q{q.number}
-        </span>
-        {q.marks != null && <span className="gate-chip">{q.marks} mark{q.marks === 1 ? '' : 's'}</span>}
-        <span className="gate-chip">{TYPE_LABEL[q.type]}</span>
-        <SubjectChip subject={q.subject} topic={q.topic} name={subjectName} topicName={topicName} />
-        <span className="flex-1" />
-        {q.needsReview && (
-          <span className="gate-chip gate-chip-warn" title={q.reviewNote ?? 'Flagged for review'}>
-            <AlertTriangle className="size-3" /> check
+    <article id={q.id} className="relative overflow-hidden rounded-3xl border border-border/80 bg-bg-surface p-0 shadow-lg transition-all hover:border-border hover:shadow-xl">
+      {/* ── Card Header ── */}
+      <header className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b border-border/70 bg-bg-surface-2/40 px-4 py-3 sm:px-6">
+        <div className="flex flex-wrap items-center gap-2 text-[12px]">
+          <span className="rounded-lg bg-accent-brand/15 px-2.5 py-1 font-bold text-accent-brand border border-accent-brand/20">
+            {paperLabel(q)}
           </span>
-        )}
-        {onOpen ? (
-          <button type="button" onClick={onOpen} className="gate-icon-link" title="Open this question">
-            <Link2 className="size-3.5" />
+          <span className="font-mono font-bold text-text-primary text-[13px]">
+            {q.section === 'ga' ? 'GA ' : ''}Q{q.number}
+          </span>
+          {q.marks != null && (
+            <span className="rounded-lg bg-bg-surface-2 px-2 py-0.5 font-semibold text-text-secondary border border-border/60">
+              {q.marks} Mark{q.marks === 1 ? '' : 's'}
+            </span>
+          )}
+          <span className="rounded-lg bg-bg-surface-2 px-2 py-0.5 font-medium text-text-muted border border-border/60">
+            {TYPE_LABEL[q.type]}
+          </span>
+          <SubjectChip subject={q.subject} topic={q.topic} name={subjectName} topicName={topicName} />
+        </div>
+
+        <div className="flex items-center gap-1.5">
+          <button
+            type="button"
+            onClick={() => setBookmarked((b) => !b)}
+            className={cn(
+              'rounded-xl p-1.5 transition-colors cursor-pointer',
+              bookmarked ? 'bg-amber-500/20 text-amber-400' : 'text-text-muted hover:bg-bg-surface-2 hover:text-text-primary',
+            )}
+            title={bookmarked ? 'Remove bookmark' : 'Bookmark question'}
+          >
+            <Bookmark className={cn('size-4', bookmarked && 'fill-current')} />
           </button>
-        ) : null}
+
+          {onOpen && (
+            <button
+              type="button"
+              onClick={onOpen}
+              className="rounded-xl p-1.5 text-text-muted hover:bg-bg-surface-2 hover:text-text-primary transition-colors cursor-pointer"
+              title="Open full question link"
+            >
+              <Link2 className="size-4" />
+            </button>
+          )}
+        </div>
       </header>
 
-      <div className="px-4 py-4 sm:px-5">
-        <Markdown md={q.text} className="gate-prompt" />
+      {/* ── Question Body ── */}
+      <div className="p-4 sm:p-6 space-y-4">
+        {/* Question Text */}
+        <div className="text-[14.5px] sm:text-[15px] leading-relaxed text-text-primary font-normal">
+          <Markdown md={q.text} />
+        </div>
 
-        {q.figures.map((f) => (
-          <figure key={f.f} className="gate-figure my-3">
-            <div
-              onClick={() => setZoomFigure(`/gate-fig/${f.f}`)}
-              className="group relative cursor-zoom-in inline-block rounded-xl"
-              title="Click to view full enlarged diagram"
-            >
-              <img src={`/gate-fig/${f.f}`} alt={f.alt} loading="lazy" />
-              <div className="absolute top-2 right-2 rounded-lg bg-black/75 p-1 text-white opacity-0 transition-opacity group-hover:opacity-100 flex items-center gap-1 text-[11px] font-mono shadow">
-                <ZoomIn className="size-3.5" />
-                <span className="hidden sm:inline">Zoom</span>
-              </div>
-            </div>
-            {f.alt && <figcaption className="mt-1.5 text-[12px] text-text-muted">{f.alt}</figcaption>}
-          </figure>
-        ))}
+        {/* Reconstructed Diagrams or Scanned Figures */}
+        {q.figures && q.figures.length > 0 && (
+          <ReconstructedDiagram
+            questionId={q.id}
+            figures={q.figures}
+            subject={q.subject}
+            topic={q.topic}
+          />
+        )}
 
         {/* Options (Interactive Practice Selector) */}
-        {q.options.length > 0 && (
-          <ol className="mt-3 grid gap-1.5">
+        {q.options && q.options.length > 0 && (
+          <ol className="grid gap-2 pt-1">
             {q.options.map((o) => {
               const isOfficialAns =
-                show && (o.l === q.answer || (Array.isArray(q.answer) && q.answer.includes(o.l)))
+                showSolution &&
+                (o.l === q.answer || (Array.isArray(q.answer) && q.answer.includes(o.l)))
               const isPicked =
                 q.type === 'MSQ'
                   ? Array.isArray(userPick) && userPick.includes(o.l)
                   : userPick === o.l
-              const isWrongPick = show && isPicked && !isOfficialAns
+              const isWrongPick = showSolution && isPicked && !isOfficialAns
 
               return (
                 <li
                   key={o.l}
                   onClick={() => handlePickOption(o.l)}
                   className={cn(
-                    'gate-option transition-all cursor-pointer',
-                    !show && isPicked && '!border-accent-brand !bg-accent-brand/10',
-                    isOfficialAns && 'gate-option-right',
-                    isWrongPick && '!border-red-500/50 !bg-red-500/10',
+                    'group flex items-center gap-3 rounded-2xl border p-3.5 transition-all duration-150 cursor-pointer',
+                    !showSolution && !isPicked && 'border-border/70 bg-bg-surface-2/30 hover:border-accent-brand/50 hover:bg-bg-surface-2/70',
+                    !showSolution && isPicked && 'border-accent-brand bg-accent-brand/10 shadow-sm ring-1 ring-accent-brand/30',
+                    isOfficialAns && 'border-emerald-500 bg-emerald-500/10 shadow-sm ring-1 ring-emerald-500/30',
+                    isWrongPick && 'border-red-500 bg-red-500/10 ring-1 ring-red-500/30',
                   )}
                 >
                   <span
                     className={cn(
-                      'gate-option-label',
-                      !show && isPicked && '!bg-accent-brand !text-white',
-                      isOfficialAns && '!bg-state-success !text-white',
-                      isWrongPick && '!bg-red-500 !text-white',
+                      'flex size-7 shrink-0 items-center justify-center rounded-xl font-mono text-[13px] font-bold transition-all',
+                      !showSolution && !isPicked && 'bg-bg-surface-2 text-text-muted group-hover:text-text-primary',
+                      !showSolution && isPicked && 'bg-accent-brand text-white shadow-sm',
+                      isOfficialAns && 'bg-emerald-600 text-white shadow-sm',
+                      isWrongPick && 'bg-red-500 text-white shadow-sm',
                     )}
                   >
                     {o.l}
                   </span>
-                  <span className="min-w-0 flex-1">
-                    <Markdown md={o.t} className="!text-[14px] [&_p]:!m-0" />
+                  <span className="min-w-0 flex-1 text-[14px] text-text-primary">
+                    <Markdown md={o.t} className="[&_p]:!m-0" />
                   </span>
-                  {isOfficialAns && <CheckCircle2 className="size-4 shrink-0 text-state-success" />}
-                  {isWrongPick && <XCircle className="size-4 shrink-0 text-red-500" />}
+                  {isOfficialAns && <CheckCircle2 className="size-5 shrink-0 text-emerald-500" />}
+                  {isWrongPick && <XCircle className="size-5 shrink-0 text-red-500" />}
                 </li>
               )
             })}
           </ol>
         )}
 
-        {/* NAT Practice Numerical Input */}
-        {q.type === 'NAT' && !show && (
-          <div className="mt-3 flex flex-wrap items-center gap-2 max-w-sm">
+        {/* NAT Practice Input */}
+        {q.type === 'NAT' && !showSolution && (
+          <div className="flex flex-wrap items-center gap-2 max-w-sm pt-2">
             <input
               type="text"
               value={userPick ?? ''}
               onChange={(e) => setUserPick(e.target.value.replace(/[^0-9.-]/g, ''))}
               placeholder="Enter numerical answer..."
-              className="flex-1 rounded-xl border border-border bg-bg-surface px-3 py-1.5 font-mono text-[13.5px] text-text-primary outline-none focus:border-accent-brand"
+              className="flex-1 rounded-xl border border-border/80 bg-bg-surface-2 px-3.5 py-2 font-mono text-[14px] text-text-primary outline-none focus:border-accent-brand focus:ring-1 focus:ring-accent-brand"
             />
             {userPick !== undefined && userPick !== '' && (
               <button
                 type="button"
                 onClick={handleCheckPractice}
-                className="btn-primary !px-3 !py-1.5 !text-[12.5px] font-bold"
+                className="btn-primary !px-4 !py-2 !text-[13px] font-bold cursor-pointer"
               >
                 Verify
               </button>
@@ -218,153 +233,89 @@ export function QuestionView({
           </div>
         )}
 
-        {/* Practice verification status badge if tested */}
+        {/* Interactive Response Banner */}
         {hasChecked && (
           <div
             className={cn(
-              'mt-3 flex items-center gap-2 rounded-xl p-2.5 text-[13px] font-bold',
-              isUserCorrect ? 'bg-state-success/15 text-state-success' : 'bg-red-500/15 text-red-400',
+              'flex items-center gap-2.5 rounded-2xl p-3 text-[13px] font-bold shadow-sm',
+              isUserCorrect ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30' : 'bg-red-500/15 text-red-400 border border-red-500/30',
             )}
           >
-            {isUserCorrect ? <CheckCircle2 className="size-4" /> : <XCircle className="size-4" />}
+            {isUserCorrect ? <CheckCircle2 className="size-5" /> : <XCircle className="size-5" />}
             <span>
               {isUserCorrect
-                ? `Excellent! Correct answer (+${q.marks ?? 1} Mark).`
-                : `Incorrect response (${q.type === 'MCQ' ? `-${((q.marks ?? 1) / 3).toFixed(2)} Mark` : '0 negative'}). Review master solution below.`}
+                ? `Excellent! Correct answer (+${q.marks ?? 1} Marks). Master derivation below.`
+                : `Incorrect answer (${q.type === 'MCQ' ? `-${((q.marks ?? 1) / 3).toFixed(2)} Mark` : '0 negative'}). Review full derivation below.`}
             </span>
           </div>
         )}
 
+        {/* Practice Actions Bar */}
         {!compact && (
-          <div className="mt-4 flex flex-wrap items-center gap-2">
-            {!show && userPick !== undefined && q.type !== 'NAT' && (
+          <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+            <div className="flex items-center gap-2">
+              {!showSolution && userPick !== undefined && q.type !== 'NAT' && (
+                <button
+                  type="button"
+                  onClick={handleCheckPractice}
+                  className="btn-primary inline-flex items-center gap-1.5 !px-4 !py-2 !text-[13px] font-bold shadow-md cursor-pointer"
+                >
+                  <CheckCircle2 className="size-4" /> Check My Answer
+                </button>
+              )}
+
               <button
                 type="button"
-                onClick={handleCheckPractice}
-                className="btn-primary inline-flex items-center gap-1.5 !px-3.5 !py-1.5 !text-[12.5px] font-bold shadow-sm"
+                onClick={() => setShowSolution((s) => !s)}
+                className="btn-secondary inline-flex items-center gap-1.5 !px-3.5 !py-2 !text-[13px] font-semibold cursor-pointer"
               >
-                <CheckCircle2 className="size-3.5" /> Check My Answer
+                {showSolution ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                <span>{showSolution ? 'Hide Solution' : '✍️ View Step-by-Step Solution & Tricks'}</span>
               </button>
-            )}
+            </div>
 
-            <button
-              type="button"
-              onClick={() => setShow((s) => !s)}
-              className="btn-secondary inline-flex items-center gap-1.5 !px-3 !py-1.5 !text-[12.5px]"
-            >
-              {show ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}
-              {show ? 'Hide Solution' : 'Show Solution & Answer'}
-            </button>
+            {q.sourceUrl && (
+              <a
+                href={q.sourceUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1 text-[12px] text-accent-brand hover:underline font-semibold"
+              >
+                Official PDF Reference <ExternalLink className="size-3" />
+              </a>
+            )}
           </div>
         )}
 
-        {/* ── Deep Master Solution View ── */}
+        {/* ── Deep Handwritten Master Solution View ── */}
         <AnimatePresence initial={false}>
-          {show && (
+          {showSolution && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               className="overflow-hidden"
             >
-              <div className="gate-answer mt-3 rounded-2xl border border-border/80 bg-bg-surface-2/40 px-4 py-3.5 sm:px-5 space-y-3">
-                {/* Answer Summary Badge */}
-                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/60 pb-2.5">
-                  <div className="flex items-center gap-2 text-[11px] font-bold tracking-wider text-text-muted uppercase">
-                    <span>Official Answer:</span>
-                    <span
-                      className={cn('gate-chip', q.answerSource === 'official' ? 'gate-chip-ok' : 'gate-chip-soft')}
-                    >
-                      {q.answerSource === 'official' ? 'Official Key' : 'Nexora Master Solution'}
-                    </span>
-                  </div>
+              {/* Interactive Dynamic Visualizer if applicable (immediate animated visual solution) */}
+              <GateVisualizer q={q} subject={q.subject} topic={q.topic} />
 
-                  <span className="font-mono text-[16px] font-black text-emerald-400">
-                    {answerText(q)}
-                    {correct && <span className="ml-2 font-sans text-[13px] font-normal text-text-secondary">{correct.t.replace(/[$`]/g, '')}</span>}
-                  </span>
+              {/* Handwritten Solution Notebook */}
+              <HandwrittenSolution
+                q={q}
+                subjectName={subjectName}
+                topicName={topicName}
+              />
+
+              {q.reviewNote && (
+                <div className="mt-3 flex items-start gap-2 rounded-xl bg-amber-500/10 p-3 text-[12px] text-amber-300 border border-amber-500/20">
+                  <AlertTriangle className="size-4 shrink-0 mt-0.5 text-amber-400" />
+                  <span>{q.reviewNote}</span>
                 </div>
-
-                {/* Step-by-Step Derivation */}
-                {q.solution && (
-                  <div className="space-y-1.5">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-text-muted">
-                      Master Step-by-Step Explanation:
-                    </span>
-                    <Markdown md={q.solution} className="!text-[13.5px] leading-relaxed text-text-primary" />
-                  </div>
-                )}
-
-                {/* Interactive Dynamic Visualizer if applicable */}
-                <GateVisualizer subject={q.subject} topic={q.topic} />
-
-                {/* Exam Pro-Tip & Common Trap Notice */}
-                <div className="rounded-xl border border-accent-brand/20 bg-accent-brand/5 p-3 text-[12.5px] text-text-secondary flex items-start gap-2.5">
-                  <Sparkles className="size-4 text-accent-brand shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="text-text-primary font-semibold">GATE Strategy Insight:</strong>{' '}
-                    {q.type === 'NAT'
-                      ? 'Pay close attention to rounding decimal precision specified in the question stem (e.g. 2 decimal places).'
-                      : q.type === 'MSQ'
-                        ? 'MSQ questions have NO negative marking and NO partial credit. Make sure to scrutinize all boundary counter-examples.'
-                        : 'For MCQs, use option elimination to weed out distractors before executing complex algebra.'}
-                  </div>
-                </div>
-
-                {q.reviewNote && (
-                  <p className="mt-2 mb-0 flex gap-2 text-[12px] text-text-muted">
-                    <AlertTriangle className="mt-0.5 size-3.5 shrink-0 text-state-warning" />
-                    {q.reviewNote}
-                  </p>
-                )}
-
-                {q.sourceUrl && (
-                  <a
-                    href={q.sourceUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-1 text-[12px] text-accent-brand hover:underline font-semibold"
-                  >
-                    Original Paper Reference <ExternalLink className="size-3" />
-                  </a>
-                )}
-              </div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
       </div>
-
-      {/* ── High-Resolution Diagram Zoom Lightbox Modal ── */}
-      {zoomFigure && (
-        <div
-          className="fixed inset-0 z-[250] flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-fade-in"
-          onClick={() => setZoomFigure(null)}
-        >
-          <div
-            className="relative max-w-4xl max-h-[92vh] overflow-auto rounded-2xl bg-white p-4 sm:p-6 shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between pb-3 mb-3 border-b border-gray-200">
-              <span className="text-[13px] font-bold text-gray-800">
-                GATE Diagram Viewer · Crisp Schematic View
-              </span>
-              <button
-                type="button"
-                onClick={() => setZoomFigure(null)}
-                className="rounded-lg bg-gray-100 p-1.5 text-gray-600 hover:bg-gray-200 hover:text-gray-900 transition-colors cursor-pointer"
-                title="Close diagram"
-              >
-                <X className="size-5" />
-              </button>
-            </div>
-            <img
-              src={zoomFigure}
-              alt="Enlarged GATE Schematic"
-              className="max-h-[75vh] w-auto mx-auto object-contain rounded"
-            />
-          </div>
-        </div>
-      )}
     </article>
   )
 }
