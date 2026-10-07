@@ -29,7 +29,13 @@ import {
   Send,
   X,
   FileCode,
+  Sparkles,
+  ChevronDown,
+  ChevronUp,
+  Network,
+  Table,
 } from 'lucide-react'
+import { SYSTEM_METADATA_REGISTRY } from '../data/systemMetadataRegistry'
 import { WirePacketHexView } from './WirePacketHexView'
 import {
   playPacketTransmitSound,
@@ -148,11 +154,14 @@ func ${defaultSnippet} {
   }
 }
 
-interface SystemVisualizerProps {
+export interface SystemVisualizerProps {
   system: SystemDesignModel
   currentStepIndex: number
   onStepChange: (index: number) => void
   onSelectNode?: (node: ServiceNode) => void
+  layoutMode?: 'split' | 'blueprint'
+  onToggleLayout?: () => void
+  onSwitchToFromScratch?: () => void
 }
 
 const ICON_MAP: Record<string, React.ReactNode> = {
@@ -256,6 +265,22 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
 
   // Mathematically guaranteed collision-free layout across all 31 systems
   const resolvedPositions = useMemo(() => getResolvedNodeLayout(system.services), [system.services])
+
+  const meta = SYSTEM_METADATA_REGISTRY[system.id]
+  const [showReqsAccordion, setShowReqsAccordion] = useState<boolean>(false)
+  const [activeShowcaseTab, setActiveShowcaseTab] = useState<'components' | 'connections' | 'slas'>('components')
+
+  // Calculate unique active tiers for visual swimlane bands
+  const activeTiers = useMemo(() => {
+    const tierMap: Record<string, { name: string; x: number; count: number }> = {}
+    Object.values(resolvedPositions).forEach((pos) => {
+      if (!tierMap[pos.tierName]) {
+        tierMap[pos.tierName] = { name: pos.tierName, x: pos.x, count: 0 }
+      }
+      tierMap[pos.tierName].count++
+    })
+    return Object.values(tierMap).sort((a, b) => a.x - b.x)
+  }, [resolvedPositions])
 
   // Service Deep Inspector State
   const [inspectorTab, setInspectorTab] = useState<'code' | 'test' | 'logs'>('code')
@@ -392,6 +417,96 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
 
   return (
     <div className="flex flex-col rounded-2xl bg-bg-surface-2 ring-1 ring-border shadow-2xl overflow-hidden">
+      {/* SECTION A: SYSTEM ARCHITECTURE OVERVIEW & INVARIANT HERO BANNER */}
+      <div className="border-b border-border bg-gradient-to-r from-bg-surface-1 via-bg-surface-2 to-bg-surface-1 p-5 sm:p-6 space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="rounded-md bg-amber-400/10 px-2.5 py-1 font-mono text-[11px] font-bold text-amber-400 ring-1 ring-amber-400/30">
+              ⚡ {meta?.realWorldArchetype || system.name}
+            </span>
+            <span className="rounded-md bg-sky-400/10 px-2.5 py-1 font-mono text-[11px] font-bold text-sky-400 ring-1 ring-sky-400/30">
+              🏛️ Pattern: {meta?.architecturePattern || system.category}
+            </span>
+            <span className="rounded-md bg-purple-400/10 px-2 py-0.5 font-mono text-[10.5px] font-bold text-purple-400 ring-1 ring-purple-400/30">
+              {meta?.difficulty || system.difficulty}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-3 text-[11px] font-mono text-text-muted">
+            <span>Throughput: <strong className="text-text-primary">{system.throughput}</strong></span>
+            <span>•</span>
+            <span>Latency SLA: <strong className="text-emerald-400">{system.latency}</strong></span>
+            <span>•</span>
+            <span>Scale: <strong className="text-text-primary">{system.storageScale}</strong></span>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap items-start justify-between gap-4 pt-1">
+          <div className="max-w-3xl space-y-1">
+            <h2 className="text-[20px] sm:text-[22px] font-extrabold text-text-primary tracking-tight font-mono">
+              {system.name}
+            </h2>
+            <p className="text-[13px] text-text-secondary leading-relaxed">
+              {meta?.whatItDoes || system.tagline}
+            </p>
+          </div>
+
+          <button
+            onClick={() => setShowReqsAccordion(!showReqsAccordion)}
+            className="flex items-center gap-1.5 rounded-lg bg-bg-surface-3 px-3 py-1.5 text-[11.5px] font-mono font-bold text-text-primary hover:bg-bg-surface-1 ring-1 ring-border transition shrink-0"
+          >
+            {showReqsAccordion ? <ChevronUp className="size-3.5" /> : <ChevronDown className="size-3.5" />}
+            {showReqsAccordion ? 'Hide Requirements & SLAs' : 'View Requirements & SLAs'}
+          </button>
+        </div>
+
+        {/* Distributed Invariant Highlight */}
+        {meta?.keyInvariant && (
+          <div className="rounded-xl bg-accent-brand/5 p-3 ring-1 ring-accent-brand/20 flex items-start gap-2.5 text-[12px] font-mono text-accent-brand">
+            <Sparkles className="size-4 shrink-0 mt-0.5 text-accent-brand" />
+            <div>
+              <span className="font-bold uppercase tracking-wider text-[10px] block text-accent-brand/80">
+                Core Distributed System Invariant:
+              </span>
+              <span className="text-text-primary font-medium">{meta.keyInvariant}</span>
+            </div>
+          </div>
+        )}
+
+        {/* Collapsible Requirements Breakdown */}
+        {showReqsAccordion && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 text-[12px] font-mono">
+            <div className="rounded-xl bg-bg-surface-3/60 p-3.5 ring-1 ring-border space-y-1.5">
+              <span className="font-bold text-emerald-400 text-[11px] uppercase tracking-wider block">
+                ✓ Functional Requirements:
+              </span>
+              <ul className="space-y-1 text-text-secondary font-sans text-[12.5px]">
+                {system.functionalReqs.map((req, i) => (
+                  <li key={i} className="flex items-start gap-2">
+                    <span className="text-emerald-400 shrink-0 font-mono">•</span>
+                    <span>{req}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="rounded-xl bg-bg-surface-3/60 p-3.5 ring-1 ring-border space-y-1.5">
+              <span className="font-bold text-amber-400 text-[11px] uppercase tracking-wider block">
+                ⚡ Non-Functional Requirements & SLAs:
+              </span>
+              <ul className="space-y-1 text-text-secondary font-sans text-[12.5px]">
+                {system.nonFunctionalReqs.map((req, i) => (
+                  <li key={i} className="flex items-start gap-2">
+                    <span className="text-amber-400 shrink-0 font-mono">•</span>
+                    <span>{req}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Visualizer Top Control Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-bg-surface-3/60 px-5 py-3">
         <div className="flex items-center gap-3">
@@ -680,6 +795,40 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
               </feMerge>
             </filter>
           </defs>
+
+          {/* Architectural Tier Swimlane Columns */}
+          {activeTiers.map((tier) => {
+            const colWidth = 14
+            const startX = Math.max(0.5, tier.x - colWidth / 2)
+            return (
+              <g key={tier.name} className="transition-all duration-300">
+                {/* Translucent Tier Column Band */}
+                <rect
+                  x={`${startX}%`}
+                  y="2%"
+                  width={`${colWidth}%`}
+                  height="96%"
+                  rx="14"
+                  fill="rgba(255, 255, 255, 0.012)"
+                  stroke="rgba(255, 255, 255, 0.06)"
+                  strokeDasharray="4 4"
+                />
+                {/* Tier Title Label */}
+                <text
+                  x={`${tier.x}%`}
+                  y="4.5%"
+                  textAnchor="middle"
+                  fill="rgba(148, 163, 184, 0.75)"
+                  fontSize="8"
+                  fontFamily="monospace"
+                  fontWeight="bold"
+                  letterSpacing="0.08em"
+                >
+                  {tier.name.toUpperCase()} ({tier.count})
+                </text>
+              </g>
+            )
+          })}
 
           {/* Connection Wires with Resolved Non-Overlapping Coordinates */}
           {system.connections.map((conn) => {
@@ -1415,6 +1564,276 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
           </div>
         )
       })()}
+
+      {/* SECTION B: COMPREHENSIVE ARCHITECTURAL COMPONENT SHOWCASE */}
+      <div className="border-t border-border bg-bg-surface-1 p-5 sm:p-7 space-y-6">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 pb-4">
+          <div>
+            <h3 className="text-[17px] font-extrabold text-text-primary flex items-center gap-2 font-mono">
+              <Layers className="size-4 text-accent-brand" />
+              Architectural Subsystem Breakdown & Component Showcase
+            </h3>
+            <p className="text-[12px] text-text-muted mt-0.5">
+              Deep-dive into each microservice, edge gateway, in-memory tier, and persistent storage engine in {system.name}.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-1.5 rounded-xl bg-bg-surface-2 p-1 ring-1 ring-border">
+            <button
+              onClick={() => setActiveShowcaseTab('components')}
+              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[11.5px] font-mono font-bold transition ${
+                activeShowcaseTab === 'components'
+                  ? 'bg-accent-brand text-bg-base shadow-sm'
+                  : 'text-text-muted hover:text-text-primary'
+              }`}
+            >
+              <Cpu className="size-3.5" /> All Services ({system.services.length})
+            </button>
+            <button
+              onClick={() => setActiveShowcaseTab('connections')}
+              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[11.5px] font-mono font-bold transition ${
+                activeShowcaseTab === 'connections'
+                  ? 'bg-accent-brand text-bg-base shadow-sm'
+                  : 'text-text-muted hover:text-text-primary'
+              }`}
+            >
+              <Network className="size-3.5" /> Connections ({system.connections.length})
+            </button>
+            <button
+              onClick={() => setActiveShowcaseTab('slas')}
+              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[11.5px] font-mono font-bold transition ${
+                activeShowcaseTab === 'slas'
+                  ? 'bg-accent-brand text-bg-base shadow-sm'
+                  : 'text-text-muted hover:text-text-primary'
+              }`}
+            >
+              <Table className="size-3.5" /> SLAs & Invariants
+            </button>
+          </div>
+        </div>
+
+        {/* TAB 1: ALL SERVICES DETAILED SHOWCASE */}
+        {activeShowcaseTab === 'components' && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {system.services.map((node) => {
+              const pos = resolvedPositions[node.id]
+              const isSelected = selectedNode?.id === node.id
+              const isNodeCrashed = !!failedNodes[node.id]
+
+              // Hardware recommendation heuristics based on node type
+              let hwSpec = 'AWS c6i.2xlarge (8 vCPU, 16GB RAM) · 10Gbps'
+              let failureMode = 'Auto-heals via Kubernetes Deployment replica restart'
+              if (node.type === 'client') {
+                hwSpec = 'Edge Mobile/Browser Client · WebAssembly + TLS 1.3'
+                failureMode = 'Local SQLite offline cache + Exponential retry'
+              } else if (node.type === 'gateway') {
+                hwSpec = 'AWS c6i.8xlarge (32 vCPU, 64GB RAM) · 25Gbps Anycast DNS'
+                failureMode = 'Active-Active Envoy proxy with upstream circuit breaker'
+              } else if (node.type === 'cache') {
+                hwSpec = 'AWS r6i.4xlarge (16 vCPU, 128GB RAM) · In-Memory Cluster'
+                failureMode = 'Master-Replica Redis Sentinel with auto-failover'
+              } else if (node.type === 'queue') {
+                hwSpec = 'AWS i3en.3xlarge (12 vCPU, 96GB RAM, NVMe SSD) · Kafka'
+                failureMode = 'Replication factor 3, min.insync.replicas=2 quorum'
+              } else if (node.type === 'database') {
+                hwSpec = 'AWS r6i.8xlarge (32 vCPU, 256GB RAM) · Multi-AZ IOPS SSD'
+                failureMode = 'Synchronous WAL replication + Hot-standby replica failover'
+              } else if (node.type === 'storage') {
+                hwSpec = 'AWS S3 Distributed Blob Cluster · 11 9s Durability'
+                failureMode = 'Reed-Solomon erasure coding (8+4 redundancy)'
+              }
+
+              return (
+                <div
+                  key={node.id}
+                  className={`rounded-xl p-4 transition-all duration-200 flex flex-col justify-between ring-1 ${
+                    isSelected
+                      ? 'bg-accent-brand/10 ring-2 ring-accent-brand shadow-lg'
+                      : isNodeCrashed
+                      ? 'bg-rose-500/10 ring-1 ring-rose-500/40'
+                      : 'bg-bg-surface-2 ring-border hover:bg-bg-surface-3 hover:ring-border-strong'
+                  }`}
+                >
+                  <div className="space-y-2.5">
+                    {/* Header */}
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <span className="flex size-7 items-center justify-center rounded-lg bg-bg-surface-1 text-accent-brand ring-1 ring-border">
+                          {ICON_MAP[node.icon] || <Server className="size-4" />}
+                        </span>
+                        <div>
+                          <span className="font-bold text-[13px] text-text-primary block font-mono">
+                            {node.name}
+                          </span>
+                          <span className="text-[10px] font-mono text-text-muted">
+                            {pos?.tierName || 'Microservice Tier'}
+                          </span>
+                        </div>
+                      </div>
+
+                      <span className={`rounded px-1.5 py-0.5 text-[9.5px] font-mono font-bold uppercase ${
+                        node.type === 'gateway' ? 'bg-purple-500/10 text-purple-400 ring-1 ring-purple-500/30' :
+                        node.type === 'cache' ? 'bg-amber-500/10 text-amber-400 ring-1 ring-amber-500/30' :
+                        node.type === 'queue' ? 'bg-sky-500/10 text-sky-400 ring-1 ring-sky-500/30' :
+                        node.type === 'database' ? 'bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/30' :
+                        'bg-bg-surface-3 text-text-secondary ring-1 ring-border'
+                      }`}>
+                        {node.type}
+                      </span>
+                    </div>
+
+                    {/* Role & Responsibility */}
+                    <p className="text-[12px] text-text-secondary leading-relaxed font-sans">
+                      {node.details || node.role}
+                    </p>
+
+                    {/* Production Specifications */}
+                    <div className="rounded-lg bg-bg-surface-1 p-2.5 text-[10.5px] font-mono space-y-1 ring-1 ring-border/50">
+                      <div>
+                        <span className="text-text-muted">Tech Stack: </span>
+                        <span className="text-text-primary font-bold">{node.techStack}</span>
+                      </div>
+                      <div>
+                        <span className="text-text-muted">Hardware: </span>
+                        <span className="text-sky-300">{hwSpec}</span>
+                      </div>
+                      <div>
+                        <span className="text-text-muted">Resiliency: </span>
+                        <span className="text-emerald-400">{failureMode}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="mt-3 pt-2.5 border-t border-border/50 flex items-center justify-between text-[11px] font-mono">
+                    <button
+                      onClick={() => handleNodeClick(node)}
+                      className="text-accent-brand hover:underline font-bold flex items-center gap-1"
+                    >
+                      {isSelected ? '✓ In Focus' : '🔍 Inspect Node'}
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        if (soundEnabled) playNodeCrashSound()
+                        setFailedNodes((prev) => ({ ...prev, [node.id]: !prev[node.id] }))
+                      }}
+                      className={`text-[10px] px-2 py-0.5 rounded font-bold transition ring-1 ${
+                        isNodeCrashed
+                          ? 'bg-emerald-500/20 text-emerald-400 ring-emerald-500/50'
+                          : 'bg-rose-500/10 text-rose-400 ring-rose-500/30 hover:bg-rose-500/20'
+                      }`}
+                    >
+                      {isNodeCrashed ? 'Revive' : 'Crash'}
+                    </button>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        )}
+
+        {/* TAB 2: NETWORK CONNECTIONS & RPC CONTRACTS TABLE */}
+        {activeShowcaseTab === 'connections' && (
+          <div className="overflow-x-auto rounded-xl ring-1 ring-border">
+            <table className="w-full text-left text-[12px] font-mono border-collapse">
+              <thead className="bg-bg-surface-2 text-[10.5px] uppercase text-text-muted border-b border-border">
+                <tr>
+                  <th className="p-3">Source Service</th>
+                  <th className="p-3">Target Service</th>
+                  <th className="p-3">Protocol</th>
+                  <th className="p-3">Contract / Action</th>
+                  <th className="p-3">Latency Budget</th>
+                  <th className="p-3">Resiliency Pattern</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border bg-bg-surface-1">
+                {system.connections.map((conn) => {
+                  const fromNode = system.services.find((s) => s.id === conn.from)
+                  const toNode = system.services.find((s) => s.id === conn.to)
+                  const isCurrent =
+                    (currentStep?.fromNode === conn.from && currentStep?.toNode === conn.to) ||
+                    (currentStep?.fromNode === conn.to && currentStep?.toNode === conn.from)
+
+                  return (
+                    <tr
+                      key={conn.id}
+                      className={`hover:bg-bg-surface-2/60 transition ${
+                        isCurrent ? 'bg-accent-brand/10 font-bold' : ''
+                      }`}
+                    >
+                      <td className="p-3 text-text-primary">
+                        <span className="text-accent-brand">{fromNode?.name || conn.from}</span>
+                      </td>
+                      <td className="p-3 text-text-primary">
+                        <span className="text-sky-400">{toNode?.name || conn.to}</span>
+                      </td>
+                      <td className="p-3">
+                        <span className="rounded bg-bg-surface-3 px-1.5 py-0.5 text-[10px] text-text-secondary">
+                          {conn.protocol}
+                        </span>
+                      </td>
+                      <td className="p-3 text-text-secondary font-sans">{conn.label}</td>
+                      <td className="p-3 text-emerald-400">
+                        {conn.protocol === 'Redis' || conn.protocol === 'TCP' ? '< 2ms' :
+                         conn.protocol === 'gRPC' ? '< 15ms' :
+                         conn.protocol === 'SQL' ? '< 25ms' : '< 100ms'}
+                      </td>
+                      <td className="p-3 text-text-muted font-sans text-[11px]">
+                        {conn.protocol === 'Kafka' ? 'At-least-once with idempotent consumer' :
+                         conn.protocol === 'gRPC' ? 'Circuit breaker + 3x exponential backoff' :
+                         conn.protocol === 'SQL' ? 'Connection pooler (PgBouncer) + Read replica' :
+                         'TLS 1.3 keepalive + HTTP/2 multiplexing'}
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* TAB 3: SLAS, INVARIANTS & CAPACITY ESTIMATIONS */}
+        {activeShowcaseTab === 'slas' && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="rounded-xl bg-bg-surface-2 p-4 ring-1 ring-border space-y-2">
+              <span className="text-[11px] font-mono font-bold text-sky-400 uppercase tracking-wider block">
+                ⚡ Throughput & Scaling SLA
+              </span>
+              <div className="text-[20px] font-bold text-text-primary font-mono">
+                {system.throughput}
+              </div>
+              <p className="text-[12px] text-text-muted leading-relaxed">
+                Horizontal scaling target handled through stateless container replicas, sharded partition keys, and load balanced ingress.
+              </p>
+            </div>
+
+            <div className="rounded-xl bg-bg-surface-2 p-4 ring-1 ring-border space-y-2">
+              <span className="text-[11px] font-mono font-bold text-emerald-400 uppercase tracking-wider block">
+                ⏱️ Latency Budget (P99 SLA)
+              </span>
+              <div className="text-[20px] font-bold text-emerald-400 font-mono">
+                {system.latency}
+              </div>
+              <p className="text-[12px] text-text-muted leading-relaxed">
+                Aggressive P99 bounds enforced via multi-tier caching (L1 in-process + L2 Redis), connection pooling, and asynchronous event offloading.
+              </p>
+            </div>
+
+            <div className="rounded-xl bg-bg-surface-2 p-4 ring-1 ring-border space-y-2">
+              <span className="text-[11px] font-mono font-bold text-purple-400 uppercase tracking-wider block">
+                💾 Storage Scale & Footprint
+              </span>
+              <div className="text-[20px] font-bold text-purple-400 font-mono">
+                {system.storageScale}
+              </div>
+              <p className="text-[12px] text-text-muted leading-relaxed">
+                Partitioned storage tier with cold data archival, LSM-tree compaction, and tier-appropriate retention policies.
+              </p>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   )
 }

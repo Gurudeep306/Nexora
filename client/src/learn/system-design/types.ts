@@ -123,6 +123,9 @@ export interface SystemDesignModel {
   latency: string
   storageScale: string
   overview: string
+  realWorldArchetype?: string
+  primaryUseCase?: string
+  architecturePattern?: string
   functionalReqs: string[]
   nonFunctionalReqs: string[]
   calculations: Calculation[]
@@ -157,6 +160,9 @@ export interface TheoryChapter {
   equationsAndMath?: { name: string; formula: string; explanation: string }[]
   tradeoffMatrix?: { option: string; pros: string[]; cons: string[]; bestFor: string }[]
   interviewKeypoints: string[]
+  warStory?: { incident: string; company: string; lessonsLearned: string }
+  productionConfigSnippet?: { title: string; language: string; content: string }
+  staffQuiz?: { question: string; options: string[]; answerIndex: number; explanation: string }[]
 }
 
 export interface TheoryUnit {
