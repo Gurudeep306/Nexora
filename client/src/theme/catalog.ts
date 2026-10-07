@@ -61,15 +61,36 @@ export type IconShape =
   | 'free'
 
 export type FontStyle =
-  | 'modern'
-  | 'handwriting'
+  | 'syne'
+  | 'space-grotesk'
+  | 'orbitron'
+  | 'bricolage'
+  | 'unbounded'
   | 'handwriting-caveat'
   | 'handwriting-kalam'
+  | 'cyber'
+  | 'cinzel'
+  | 'retro'
+  // Legacy aliases
+  | 'modern'
+  | 'handwriting'
   | 'handwriting-architect'
   | 'handwriting-indie'
-  | 'cyber'
   | 'serif'
-  | 'retro'
+
+export type FontSize = 'normal' | 'comfortable' | 'large' | 'huge'
+
+export type FontColor =
+  | 'default'
+  | 'white'
+  | 'cyan'
+  | 'amber'
+  | 'emerald'
+  | 'rose'
+  | 'violet'
+  | 'ice'
+  | 'gold'
+
 
 export const GLASS_STYLES: { id: GlassStyle; label: string; hint: string }[] = [
   { id: 'frosted', label: 'Frosted', hint: 'Soft, diffused glass — the macOS NSVisualEffectView standard.' },
@@ -133,80 +154,128 @@ export const ICON_SHAPES: { id: IconShape; label: string; hint: string }[] = [
   { id: 'free', label: 'Floating Glyph', hint: 'Pure borderless glyph' },
 ]
 
-/* ── Typography & Handwriting Options ────────────────────────────────────── */
+/* ── Curated 10 Elite Typography & Handwriting Engines ───────────────────── */
 export const FONT_STYLES: {
   id: FontStyle
   label: string
   hint: string
   sample: string
   badge: string
-  category: 'handwriting' | 'standard'
+  category: 'avant-garde' | 'cyber' | 'editorial' | 'handwriting' | 'arcade'
 }[] = [
   {
+    id: 'syne',
+    label: 'Syne Avant-Garde',
+    hint: 'Hyper-aesthetic French avant-garde geometry with distinctive sculpted curves and high-fashion editorial presence.',
+    sample: 'Sculpted Design & Deep Codecraft ✨',
+    badge: 'Avant-Garde',
+    category: 'avant-garde',
+  },
+  {
+    id: 'space-grotesk',
+    label: 'Space Grotesk',
+    hint: 'High-tech neo-grotesque developed for aerospace telemetry with idiosyncratic angles and razor-sharp clarity.',
+    sample: 'Next-Gen Planetary Intelligence 🚀',
+    badge: 'Aerospace Tech',
+    category: 'cyber',
+  },
+  {
+    id: 'orbitron',
+    label: 'Orbitron Cyber HUD',
+    hint: 'Precision-cut cybernetic typography inspired by aerospace heads-up displays, mech cockpits, and holographic terminals.',
+    sample: 'CYBERNETIC COCKPIT TELEMETRY 🛰️',
+    badge: 'Cyber HUD',
+    category: 'cyber',
+  },
+  {
+    id: 'bricolage',
+    label: 'Bricolage Grotesque',
+    hint: 'Expressive Parisian editorial grotesque with dynamic optical weight, vibrant vitality, and effortless readability.',
+    sample: 'Expressive Thinking & Codecraft 💡',
+    badge: 'Modern Editorial',
+    category: 'editorial',
+  },
+  {
+    id: 'unbounded',
+    label: 'Unbounded Cosmic',
+    hint: 'Horizon-spanning extended geometric display with subtle character tilts, engineered for bold futuristic interfaces.',
+    sample: 'UNBOUNDED HORIZON PROTOCOL 🌌',
+    badge: 'Cosmic Display',
+    category: 'avant-garde',
+  },
+  {
     id: 'handwriting-caveat',
-    label: 'Caveat (Fluid Calligraphy)',
-    hint: 'Organic flowing cursive handwriting with energetic pen strokes and natural ligature.',
-    sample: 'Quick thoughts & elegant notes ✨',
-    badge: 'Cursive Script',
+    label: 'Caveat Studio Ghibli',
+    hint: 'Flowing Japanese anime-style calligraphy brush script with energetic pen strokes and natural organic warmth.',
+    sample: 'Quick thoughts & elegant notes 🍃',
+    badge: 'Fluid Script',
     category: 'handwriting',
   },
   {
     id: 'handwriting-kalam',
-    label: 'Kalam (Casual Brush Marker)',
-    hint: 'Warm, relaxed felt-tip handwriting with friendly organic letterforms.',
+    label: 'Kalam Felt Marker',
+    hint: 'Warm, relaxed felt-tip handwriting with open organic curves, generous letter height, and friendly personality.',
     sample: 'Daily code practice & journal 📝',
-    badge: 'Brush Marker',
+    badge: 'Felt Marker',
     category: 'handwriting',
-  },
-  {
-    id: 'handwriting-architect',
-    label: 'Architects Daughter (Draftsman)',
-    hint: 'Crisp architectural hand lettering inspired by blueprint drafting pencils.',
-    sample: 'Algorithm design & blueprints 📐',
-    badge: 'Blueprint Draft',
-    category: 'handwriting',
-  },
-  {
-    id: 'handwriting-indie',
-    label: 'Indie Flower (Playful Doodler)',
-    hint: 'Carefree, bubbly doodle handwriting with charming carefree personality.',
-    sample: 'Creative ideas & doodles 🌸',
-    badge: 'Doodle Sketch',
-    category: 'handwriting',
-  },
-  {
-    id: 'modern',
-    label: 'Modern Sans',
-    hint: 'Native Apple SF Pro & Inter typography for crisp UI clarity and fast scanning.',
-    sample: 'Clean System UI & Code',
-    badge: 'Clean Sans',
-    category: 'standard',
   },
   {
     id: 'cyber',
-    label: 'Cyber Monospace',
-    hint: 'Developer monospace terminal code style (JetBrains Mono & Fira Code).',
-    sample: 'const solve = () => 42;',
+    label: 'JetBrains Cyber Mono',
+    hint: 'Developer terminal monospace with code ligatures, high-contrast punctuation, and hacker aesthetic.',
+    sample: 'const solve = async () => 0x42; ⚡',
     badge: 'Terminal Mono',
-    category: 'standard',
+    category: 'cyber',
   },
   {
-    id: 'serif',
-    label: 'Classic Editorial',
-    hint: 'Refined literary serif with high academic elegance (Playfair Display).',
-    sample: 'Philosophy of Computing',
-    badge: 'Editorial Serif',
-    category: 'standard',
+    id: 'cinzel',
+    label: 'Cinzel Royal Serif',
+    hint: 'Majestic Roman inscriptional serif inspired by classical architecture, ancient monuments, and mythic academia.',
+    sample: 'The Classical Canon of Logic 🏛️',
+    badge: 'Neoclassical',
+    category: 'editorial',
   },
   {
     id: 'retro',
-    label: '8-Bit Arcade',
-    hint: 'Nostalgic pixelated gaming font from the golden 8-bit arcade era.',
-    sample: 'READY PLAYER ONE 👾',
-    badge: '8-Bit Pixel',
-    category: 'standard',
+    label: 'Russo One Arcade',
+    hint: 'Punchy geometric gaming arcade title font with rounded high-impact geometry. Massive, bold, and ultra-readable.',
+    sample: 'LEVEL 99: READY PLAYER ONE 🕹️',
+    badge: 'Heavy Arcade',
+    category: 'arcade',
   },
 ]
+
+/* ── Typography Size Scale ───────────────────────────────────────────────── */
+export const FONT_SIZES: {
+  id: FontSize
+  label: string
+  hint: string
+  scale: string
+}[] = [
+  { id: 'normal', label: '100% Standard', hint: 'Compact balanced text size', scale: '1.02' },
+  { id: 'comfortable', label: '112% Comfortable', hint: 'Relaxed reading with enhanced optical clarity', scale: '1.12' },
+  { id: 'large', label: '122% Large', hint: 'Large high-legibility text across all panels', scale: '1.22' },
+  { id: 'huge', label: '135% Maximum', hint: 'Maximum extra-large legibility and contrast', scale: '1.35' },
+]
+
+/* ── Typography Luminescence & Hue Colors ─────────────────────────────────── */
+export const FONT_COLORS: {
+  id: FontColor
+  label: string
+  hint: string
+  dot: string
+}[] = [
+  { id: 'default', label: 'Dynamic Neutral', hint: 'Balanced native ink calibrated to theme', dot: 'var(--color-text-primary)' },
+  { id: 'white', label: 'Luminous White', hint: 'Pure crisp 100% white with high specular clarity', dot: '#ffffff' },
+  { id: 'cyan', label: 'Radiant Cyan', hint: 'Cyberpunk neon cyan glow with ambient luminescence', dot: '#38bdf8' },
+  { id: 'amber', label: 'Solar Amber', hint: 'Warm golden solar glow inspired by amber terminals', dot: '#fbbf24' },
+  { id: 'emerald', label: 'Matrix Emerald', hint: 'Terminal CRT phosphor green with high digital contrast', dot: '#4ade80' },
+  { id: 'rose', label: 'Sakura Rose', hint: 'Aesthetic pastel anime blossom pink', dot: '#f472b6' },
+  { id: 'violet', label: 'Arcane Violet', hint: 'Deep electric violet with mystical luminescence', dot: '#c084fc' },
+  { id: 'ice', label: 'Glacial Ice', hint: 'Cool diamond-frosted ice blue sheen', dot: '#7dd3fc' },
+  { id: 'gold', label: 'Imperial Gold', hint: 'Rich warm champagne gold luxury luster', dot: '#facc15' },
+]
+
 
 /* ── Curated Complete Theme Packs ────────────────────────────────────────── */
 export interface ThemePack {
@@ -303,13 +372,13 @@ export const THEME_PACKS: ThemePack[] = [
     name: 'Charizard Volcanic Vortex',
     genre: 'gaming',
     badge: 'Pokemon Fire',
-    description: 'Fierce Charizard unleashing a towering dragon firestorm tornado into the volcanic sky, with tactile 3D clay pods and drafting hand.',
+    description: 'Fierce Charizard unleashing a towering dragon firestorm tornado into the volcanic sky, with tactile 3D clay pods and avant-garde display.',
     wallpaper: 'charizard-core',
     accent: 'orange',
     cardStyle: 'gradient',
     iconPack: 'clay',
     iconShape: 'squircle',
-    fontStyle: 'handwriting-architect',
+    fontStyle: 'syne',
     glowColor: '#ff9f0a',
   },
   {
@@ -331,13 +400,13 @@ export const THEME_PACKS: ThemePack[] = [
     name: 'Elden Ring Erdtree Grace',
     genre: 'gaming',
     badge: 'Soulslike Fantasy',
-    description: 'Radiant Erdtree glowing through the gothic mist, golden grace accent, tactile clay pods and literary editorial serif.',
+    description: 'Radiant Erdtree glowing through the gothic mist, golden grace accent, tactile clay pods and royal inscriptional serif.',
     wallpaper: 'elden-tree',
     accent: 'yellow',
     cardStyle: 'glass',
     iconPack: 'clay',
     iconShape: 'circle',
-    fontStyle: 'serif',
+    fontStyle: 'cinzel',
     glowColor: '#ffd60a',
   },
 
@@ -347,13 +416,13 @@ export const THEME_PACKS: ThemePack[] = [
     name: 'Spider-Verse: Multiverse Rift',
     genre: 'series',
     badge: 'Marvel Multiverse',
-    description: 'Halftone comic reality tear shattering across the neon Brooklyn skyline, graffiti street art energy, and playful doodler handwriting.',
+    description: 'Halftone comic reality tear shattering across the neon Brooklyn skyline, graffiti street art energy, and expressive Parisian editorial typography.',
     wallpaper: 'spider-verse-multiverse',
     accent: 'pink',
     cardStyle: 'neon',
     iconPack: 'glitch',
     iconShape: 'diamond',
-    fontStyle: 'handwriting-indie',
+    fontStyle: 'bricolage',
     glowColor: '#ff375f',
   },
   {
@@ -375,13 +444,13 @@ export const THEME_PACKS: ThemePack[] = [
     name: 'Arcane: Piltover Hextech Core',
     genre: 'series',
     badge: 'Piltover Tech',
-    description: 'Ornate brass steampunk astrolabe housing the glowing electric cyan Hextech gemstone crystal, crystal prism icons, and crest shield.',
+    description: 'Ornate brass steampunk astrolabe housing the glowing electric cyan Hextech gemstone crystal, crystal prism icons, and unbounded cosmic geometry.',
     wallpaper: 'arcane-hextech',
     accent: 'cyan',
     cardStyle: 'holo',
     iconPack: 'crystal',
     iconShape: 'shield',
-    fontStyle: 'serif',
+    fontStyle: 'unbounded',
     glowColor: '#06b6d4',
   },
   {
@@ -389,13 +458,13 @@ export const THEME_PACKS: ThemePack[] = [
     name: 'Interstellar: Gargantua Singularity',
     genre: 'series',
     badge: 'Sci-Fi Epic',
-    description: 'Scientifically accurate gravitational lensing and blinding golden accretion disk around Gargantua black hole with 3D hologram cards.',
+    description: 'Scientifically accurate gravitational lensing and blinding golden accretion disk around Gargantua black hole with Space Grotesk engineering typography.',
     wallpaper: 'interstellar-gargantua',
     accent: 'orange',
     cardStyle: 'holo',
     iconPack: 'clay',
     iconShape: 'circle',
-    fontStyle: 'modern',
+    fontStyle: 'space-grotesk',
     glowColor: '#ff9f0a',
   },
 
@@ -405,13 +474,13 @@ export const THEME_PACKS: ThemePack[] = [
     name: 'Monolith Minimal Zen',
     genre: 'minimal',
     badge: 'Brutalist Focus',
-    description: 'Pure graphite geometric monoliths, clean 1px hairline matte cards, zero blur and distraction-free clarity.',
+    description: 'Pure graphite geometric monoliths, clean 1px hairline matte cards, zero blur and Space Grotesk clarity.',
     wallpaper: 'dark-geometry',
     accent: 'graphite',
     cardStyle: 'minimal',
     iconPack: 'minimal',
     iconShape: 'free',
-    fontStyle: 'modern',
+    fontStyle: 'space-grotesk',
     glowColor: '#8e8e93',
   },
   {

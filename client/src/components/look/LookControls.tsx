@@ -27,6 +27,8 @@ import {
   PLAIN,
   THEME_PACKS,
   FONT_STYLES,
+  FONT_SIZES,
+  FONT_COLORS,
   findWallpaper,
   creditLinks,
   originalUrl,
@@ -36,6 +38,8 @@ import {
   type Tone,
   type Wallpaper,
 } from '@/theme/catalog'
+
+
 import { cn } from '@/lib/utils'
 
 function hideBroken(e: React.SyntheticEvent<HTMLImageElement>) {
@@ -592,7 +596,7 @@ export function ThemePackPicker({ className }: { className?: string }) {
 /** Backwards-compatible export */
 export const ThemePresetsPicker = ThemePackPicker
 
-/* ── Typography & Handwriting Engine Picker ───────────────────────────────── */
+/* ── Curated 10 Typography Engines Picker ────────────────────────────────── */
 export function FontStylePicker({ className }: { className?: string }) {
   const { look, setFontStyle } = useTheme()
 
@@ -600,10 +604,15 @@ export function FontStylePicker({ className }: { className?: string }) {
     <div
       role="radiogroup"
       aria-label="Typography Style"
-      className={cn('grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3', className)}
+      className={cn('grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3', className)}
     >
       {FONT_STYLES.map((f) => {
-        const active = look.fontStyle === f.id || (f.id === 'handwriting-caveat' && look.fontStyle === 'handwriting')
+        const active =
+          look.fontStyle === f.id ||
+          (f.id === 'space-grotesk' && look.fontStyle === 'modern') ||
+          (f.id === 'handwriting-caveat' && (look.fontStyle === 'handwriting' || look.fontStyle === 'handwriting-indie')) ||
+          (f.id === 'cinzel' && look.fontStyle === 'serif') ||
+          (f.id === 'syne' && look.fontStyle === 'handwriting-architect')
         return (
           <button
             key={f.id}
@@ -612,15 +621,15 @@ export function FontStylePicker({ className }: { className?: string }) {
             aria-checked={active}
             onClick={() => setFontStyle(f.id)}
             className={cn(
-              'group relative flex cursor-pointer flex-col justify-between overflow-hidden rounded-2xl border p-4 text-left transition-all duration-200',
+              'group relative flex cursor-pointer flex-col justify-between overflow-hidden rounded-2xl border p-3.5 text-left transition-all duration-200',
               active
-                ? 'border-accent-brand bg-accent-brand/[0.08] ring-2 ring-accent-brand/40 shadow-lg scale-[1.01]'
+                ? 'border-accent-brand bg-accent-brand/[0.1] ring-2 ring-accent-brand/50 shadow-md scale-[1.01]'
                 : 'border-border bg-bg-surface-2 hover:border-border-strong hover:bg-bg-surface-3 hover:-translate-y-0.5',
             )}
           >
             <div>
               <div className="flex items-center justify-between gap-2">
-                <span className="text-xs font-bold text-text-primary tracking-wide">
+                <span className="text-[12.5px] font-bold text-text-primary tracking-wide">
                   {f.label}
                 </span>
                 {active && (
@@ -629,27 +638,29 @@ export function FontStylePicker({ className }: { className?: string }) {
                   </span>
                 )}
               </div>
-              <p className="mt-1 text-[11px] leading-relaxed text-text-muted">
+              <p className="mt-1 text-[11px] leading-relaxed text-text-muted line-clamp-2">
                 {f.hint}
               </p>
             </div>
 
-            {/* Live font sample preview */}
-            <div className="mt-4 rounded-xl border border-border/60 bg-bg-surface-1/60 p-3">
-              <span className="text-[10px] uppercase font-semibold text-text-muted block mb-1 tracking-wider">
+            {/* Live rendered font sample preview */}
+            <div className="mt-3.5 rounded-xl border border-border/60 bg-bg-surface-1/60 p-2.5">
+              <span className="text-[9.5px] uppercase font-bold tracking-wider text-text-muted block mb-1">
                 {f.badge}
               </span>
               <div
                 className={cn(
-                  'transition-colors',
-                  (f.id === 'handwriting-caveat' || f.id === 'handwriting') && "font-['Caveat',cursive] text-xl font-bold text-accent-brand",
-                  f.id === 'handwriting-kalam' && "font-['Kalam',cursive] text-base font-bold text-amber-300",
-                  f.id === 'handwriting-architect' && "font-['Architects_Daughter',cursive] text-sm font-bold text-cyan-300",
-                  f.id === 'handwriting-indie' && "font-['Indie_Flower',cursive] text-base font-bold text-pink-300",
-                  f.id === 'cyber' && "font-['JetBrains_Mono',monospace] text-xs font-semibold text-emerald-400",
-                  f.id === 'serif' && "font-['Playfair_Display',serif] text-base italic text-purple-300",
-                  f.id === 'retro' && "font-['Press_Start_2P',monospace] text-[10px] leading-relaxed text-amber-400",
-                  f.id === 'modern' && "font-sans font-semibold text-text-primary text-sm",
+                  'transition-colors leading-snug',
+                  f.id === 'syne' && "font-['Syne',sans-serif] text-[15px] font-black text-accent-brand",
+                  f.id === 'space-grotesk' && "font-['Space_Grotesk',sans-serif] text-[13.5px] font-bold text-text-primary",
+                  f.id === 'orbitron' && "font-['Orbitron',sans-serif] text-[11px] font-black tracking-widest text-cyan-300",
+                  f.id === 'bricolage' && "font-['Bricolage_Grotesque',sans-serif] text-[14.5px] font-extrabold text-pink-300",
+                  f.id === 'unbounded' && "font-['Unbounded',sans-serif] text-[11.5px] font-black tracking-wide text-amber-300",
+                  f.id === 'handwriting-caveat' && "font-['Caveat',cursive] text-[20px] font-bold text-emerald-400",
+                  f.id === 'handwriting-kalam' && "font-['Kalam',cursive] text-[16px] font-bold text-amber-400",
+                  f.id === 'cyber' && "font-['JetBrains_Mono',monospace] text-[12px] font-semibold text-emerald-300",
+                  f.id === 'cinzel' && "font-['Cinzel',serif] text-[13px] font-bold tracking-wider text-purple-300",
+                  f.id === 'retro' && "font-['Russo_One',sans-serif] text-[13px] font-bold text-orange-400",
                 )}
               >
                 {f.sample}
@@ -661,6 +672,117 @@ export function FontStylePicker({ className }: { className?: string }) {
     </div>
   )
 }
+
+/* ── Typography Size Scale Controller ────────────────────────────────────── */
+export function FontSizePicker({ className }: { className?: string }) {
+  const { look, setFontSize } = useTheme()
+  const currentSize = look.fontSize || 'comfortable'
+
+  return (
+    <div className={cn('space-y-2', className)}>
+      <div className="flex items-center justify-between">
+        <label className="text-[12px] font-bold text-text-primary tracking-wide">
+          Text Size Scale
+        </label>
+        <span className="text-[11px] font-mono font-bold text-accent-brand">
+          {FONT_SIZES.find((s) => s.id === currentSize)?.label}
+        </span>
+      </div>
+
+      <div
+        role="radiogroup"
+        aria-label="Text Size Scale"
+        className="grid grid-cols-2 sm:grid-cols-4 gap-2"
+      >
+        {FONT_SIZES.map((s) => {
+          const active = currentSize === s.id
+          return (
+            <button
+              key={s.id}
+              type="button"
+              role="radio"
+              aria-checked={active}
+              onClick={() => setFontSize(s.id)}
+              className={cn(
+                'group relative flex flex-col items-center justify-center rounded-xl border p-2.5 text-center transition-all cursor-pointer',
+                active
+                  ? 'border-accent-brand bg-accent-brand/15 ring-2 ring-accent-brand/40 shadow-sm font-bold text-text-primary'
+                  : 'border-border bg-bg-surface-2 hover:border-border-strong text-text-muted hover:text-text-primary',
+              )}
+            >
+              <span
+                className={cn(
+                  'block font-black transition-transform',
+                  s.id === 'normal' && 'text-xs scale-90',
+                  s.id === 'comfortable' && 'text-sm scale-100',
+                  s.id === 'large' && 'text-base scale-110',
+                  s.id === 'huge' && 'text-lg scale-120',
+                  active ? 'text-accent-brand' : 'text-text-primary',
+                )}
+              >
+                Aa
+              </span>
+              <span className="mt-1 text-[11px] font-medium">{s.label}</span>
+            </button>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+/* ── Typography Color & Luminescence Controller ──────────────────────────── */
+export function FontColorPicker({ className }: { className?: string }) {
+  const { look, setFontColor } = useTheme()
+  const currentColor = look.fontColor || 'default'
+
+  return (
+    <div className={cn('space-y-2', className)}>
+      <div className="flex items-center justify-between">
+        <label className="text-[12px] font-bold text-text-primary tracking-wide">
+          Text Luminescence Color
+        </label>
+        <span className="text-[11px] font-semibold text-accent-brand">
+          {FONT_COLORS.find((c) => c.id === currentColor)?.label}
+        </span>
+      </div>
+
+      <div
+        role="radiogroup"
+        aria-label="Text Luminescence Color"
+        className="flex flex-wrap gap-2"
+      >
+        {FONT_COLORS.map((c) => {
+          const active = currentColor === c.id
+          return (
+            <button
+              key={c.id}
+              type="button"
+              role="radio"
+              aria-checked={active}
+              onClick={() => setFontColor(c.id)}
+              title={`${c.label} — ${c.hint}`}
+              className={cn(
+                'group relative flex items-center gap-1.5 rounded-xl border px-2.5 py-1.5 transition-all cursor-pointer',
+                active
+                  ? 'border-accent-brand bg-accent-brand/15 ring-2 ring-accent-brand/40 shadow-sm text-text-primary font-bold'
+                  : 'border-border bg-bg-surface-2 hover:border-border-strong text-text-muted hover:text-text-primary',
+              )}
+            >
+              <span
+                className="size-3 rounded-full border border-white/20 shadow-xs shrink-0"
+                style={{ backgroundColor: c.dot }}
+              />
+              <span className="text-[11.5px]">{c.label}</span>
+              {active && <Check className="size-3 text-accent-brand stroke-[3] ml-0.5" />}
+            </button>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
 
 
 /* ── Card Style Customizer ────────────────────────────────────────────────── */

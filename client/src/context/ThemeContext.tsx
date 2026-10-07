@@ -10,6 +10,8 @@ import {
   type AccentId,
   type CardStyle,
   type CustomWallpaper,
+  type FontColor,
+  type FontSize,
   type FontStyle,
   type GlassStyle,
   type IconPack,
@@ -28,6 +30,8 @@ export interface Look {
   iconPack: IconPack
   iconShape: IconShape
   fontStyle: FontStyle
+  fontSize: FontSize
+  fontColor: FontColor
 }
 
 const APPEARANCE_KEY = 'nexora:appearance'
@@ -40,7 +44,9 @@ const DEFAULT_LOOK: Look = {
   cardStyle: 'glass',
   iconPack: 'vibrant',
   iconShape: 'squircle',
-  fontStyle: 'modern',
+  fontStyle: 'space-grotesk',
+  fontSize: 'comfortable',
+  fontColor: 'default',
 }
 
 interface ThemeValue {
@@ -61,12 +67,15 @@ interface ThemeValue {
   setIconPack: (ip: IconPack) => void
   setIconShape: (is: IconShape) => void
   setFontStyle: (fs: FontStyle) => void
+  setFontSize: (fs: FontSize) => void
+  setFontColor: (fc: FontColor) => void
   customWallpapers: CustomWallpaper[]
   addCustomWallpaper: (wp: CustomWallpaper) => void
   deleteCustomWallpaper: (id: string) => void
   /** Replace the whole look at once (used when an account's saved look loads). */
   applyLook: (l: Partial<Look>) => void
 }
+
 
 const ThemeContext = createContext<ThemeValue | null>(null)
 
@@ -111,16 +120,41 @@ export function sanitizeLook(raw: unknown): Look {
   ]
   const iconShapes: IconShape[] = ['squircle', 'circle', 'diamond', 'shield', 'hexagon', 'pill', 'free']
   const fontStyles: FontStyle[] = [
-    'modern',
-    'handwriting',
+    'syne',
+    'space-grotesk',
+    'orbitron',
+    'bricolage',
+    'unbounded',
     'handwriting-caveat',
     'handwriting-kalam',
+    'cyber',
+    'cinzel',
+    'retro',
+    'modern',
+    'handwriting',
     'handwriting-architect',
     'handwriting-indie',
-    'cyber',
     'serif',
-    'retro',
   ]
+  const fontSizes: FontSize[] = ['normal', 'comfortable', 'large', 'huge']
+  const fontColors: FontColor[] = [
+    'default',
+    'white',
+    'cyan',
+    'amber',
+    'emerald',
+    'rose',
+    'violet',
+    'ice',
+    'gold',
+  ]
+
+  let fs = (r.fontStyle && fontStyles.includes(r.fontStyle as FontStyle) ? r.fontStyle : DEFAULT_LOOK.fontStyle) as FontStyle
+  // Normalize legacy aliases
+  if (fs === 'modern') fs = 'space-grotesk'
+  else if (fs === 'handwriting' || fs === 'handwriting-indie') fs = 'handwriting-caveat'
+  else if (fs === 'handwriting-architect') fs = 'syne'
+  else if (fs === 'serif') fs = 'cinzel'
 
   return {
     wallpaper: findWallpaper(r.wallpaper).id,
@@ -129,7 +163,9 @@ export function sanitizeLook(raw: unknown): Look {
     cardStyle: cardStyles.includes(r.cardStyle as CardStyle) ? (r.cardStyle as CardStyle) : DEFAULT_LOOK.cardStyle,
     iconPack: iconPacks.includes(r.iconPack as IconPack) ? (r.iconPack as IconPack) : DEFAULT_LOOK.iconPack,
     iconShape: iconShapes.includes(r.iconShape as IconShape) ? (r.iconShape as IconShape) : DEFAULT_LOOK.iconShape,
-    fontStyle: fontStyles.includes(r.fontStyle as FontStyle) ? (r.fontStyle as FontStyle) : DEFAULT_LOOK.fontStyle,
+    fontStyle: fs,
+    fontSize: fontSizes.includes(r.fontSize as FontSize) ? (r.fontSize as FontSize) : DEFAULT_LOOK.fontSize,
+    fontColor: fontColors.includes(r.fontColor as FontColor) ? (r.fontColor as FontColor) : DEFAULT_LOOK.fontColor,
   }
 }
 
@@ -176,8 +212,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     root.dataset.iconPack = look.iconPack
     root.dataset.iconShape = look.iconShape
     root.dataset.fontStyle = look.fontStyle
+    root.dataset.fontSize = look.fontSize
+    root.dataset.fontColor = look.fontColor
     root.dataset.wall = wallpaper.kind
     root.dataset.wallTone = wallTone
+
 
     const tint =
       wallpaper.kind === 'original'
@@ -209,9 +248,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     look.iconPack,
     look.iconShape,
     look.fontStyle,
+    look.fontSize,
+    look.fontColor,
     wallpaper,
     wallTone,
   ])
+
 
   const persist = (next: Look) => {
     try {
@@ -280,7 +322,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       setIconPack: (iconPack) => update({ iconPack }),
       setIconShape: (iconShape) => update({ iconShape }),
       setFontStyle: (fontStyle) => update({ fontStyle }),
+      setFontSize: (fontSize) => update({ fontSize }),
+      setFontColor: (fontColor) => update({ fontColor }),
       customWallpapers: customList,
+
       addCustomWallpaper,
       deleteCustomWallpaper,
       applyLook: (l) => update(l),
