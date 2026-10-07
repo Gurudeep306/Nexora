@@ -84,7 +84,7 @@ export const DEFAULT_DOCK: DockPrefs = {
   autoHide: false,
 }
 
-export const DOCK_FOCUS_PREFIXES = ['/solve', '/learn/dsa']
+export const DOCK_FOCUS_PREFIXES = ['/solve', '/learn/dsa', '/gate/cbt']
 
 export function isDockFocusRoute(pathname: string): boolean {
   return DOCK_FOCUS_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`))

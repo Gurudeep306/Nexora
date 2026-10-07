@@ -14,8 +14,6 @@ import tempfile
 import pypdf
 
 CSE_RULES = [
-    ("ga", "verbal", ["antonym", "synonym", "passage", "grammatical", "sentence", "analogy", "word", "statement 1:", "phrase", "fill in the blank", "meaning of the word"]),
-    ("ga", "quant", ["ratio", "speed", "distance", "clock", "calendar", "cube", "percentage", "profit", "dice", "cards", "triangle", "perimeter", "cylinder", "probability of drawing"]),
     ("toc", "regular", ["regular language", "regular expression", "dfa", "nfa", "finite automaton", "pumping lemma", "myhill", "state diagram"]),
     ("toc", "cfl", ["context-free", "pda", "pushdown", "cfg", "chomsky", "ambiguous grammar"]),
     ("toc", "turing", ["turing machine", "decidable", "undecidable", "recursively enumerable", "halting problem", "rice"]),
@@ -56,8 +54,6 @@ CSE_RULES = [
 ]
 
 DA_RULES = [
-    ("ga", "verbal", ["antonym", "synonym", "passage", "grammatical", "sentence", "analogy", "word", "statement 1:", "phrase", "fill in the blank", "meaning"]),
-    ("ga", "quant", ["ratio", "speed", "distance", "clock", "calendar", "cube", "percentage", "profit", "dice", "cards", "triangle"]),
     ("ml", "supervised", ["linear regression", "logistic regression", "svm", "support vector", "decision tree", "random forest", "k-nearest", "knn", "naive bayes", "overfitting", "regularization", "lasso", "ridge"]),
     ("ml", "unsupervised", ["k-means", "hierarchical clustering", "pca", "principal component", "dimensionality reduction", "silhouette"]),
     ("ml", "neural-nets", ["neural network", "backpropagation", "activation function", "relu", "sigmoid", "gradient descent", "loss function", "cnn", "rnn"]),

@@ -9,6 +9,8 @@ import {
   EyeOff,
   Link2,
   Sparkles,
+  ZoomIn,
+  X,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Markdown } from '@/learn/md'
@@ -105,6 +107,8 @@ export function QuestionView({
     setShow(true)
   }
 
+  const [zoomFigure, setZoomFigure] = useState<string | null>(null)
+
   return (
     <article id={q.id} className="gate-card card scroll-mt-24 overflow-hidden p-0">
       <header className="flex flex-wrap items-center gap-x-2 gap-y-1.5 border-b border-border px-4 py-2.5 sm:px-5">
@@ -133,7 +137,17 @@ export function QuestionView({
 
         {q.figures.map((f) => (
           <figure key={f.f} className="gate-figure my-3">
-            <img src={`/gate-fig/${f.f}`} alt={f.alt} loading="lazy" />
+            <div
+              onClick={() => setZoomFigure(`/gate-fig/${f.f}`)}
+              className="group relative cursor-zoom-in inline-block rounded-xl"
+              title="Click to view full enlarged diagram"
+            >
+              <img src={`/gate-fig/${f.f}`} alt={f.alt} loading="lazy" />
+              <div className="absolute top-2 right-2 rounded-lg bg-black/75 p-1 text-white opacity-0 transition-opacity group-hover:opacity-100 flex items-center gap-1 text-[11px] font-mono shadow">
+                <ZoomIn className="size-3.5" />
+                <span className="hidden sm:inline">Zoom</span>
+              </div>
+            </div>
             {f.alt && <figcaption className="mt-1.5 text-[12px] text-text-muted">{f.alt}</figcaption>}
           </figure>
         ))}
@@ -319,6 +333,38 @@ export function QuestionView({
           )}
         </AnimatePresence>
       </div>
+
+      {/* ── High-Resolution Diagram Zoom Lightbox Modal ── */}
+      {zoomFigure && (
+        <div
+          className="fixed inset-0 z-[250] flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-fade-in"
+          onClick={() => setZoomFigure(null)}
+        >
+          <div
+            className="relative max-w-4xl max-h-[92vh] overflow-auto rounded-2xl bg-white p-4 sm:p-6 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between pb-3 mb-3 border-b border-gray-200">
+              <span className="text-[13px] font-bold text-gray-800">
+                GATE Diagram Viewer · Crisp Schematic View
+              </span>
+              <button
+                type="button"
+                onClick={() => setZoomFigure(null)}
+                className="rounded-lg bg-gray-100 p-1.5 text-gray-600 hover:bg-gray-200 hover:text-gray-900 transition-colors cursor-pointer"
+                title="Close diagram"
+              >
+                <X className="size-5" />
+              </button>
+            </div>
+            <img
+              src={zoomFigure}
+              alt="Enlarged GATE Schematic"
+              className="max-h-[75vh] w-auto mx-auto object-contain rounded"
+            />
+          </div>
+        </div>
+      )}
     </article>
   )
 }

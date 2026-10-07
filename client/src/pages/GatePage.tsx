@@ -4,6 +4,7 @@ import {
   ArrowDownWideNarrow,
   Binary,
   Brain,
+  Calendar,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
@@ -124,6 +125,7 @@ export default function GatePage() {
   const setSearchInput = (v: string) => setSearch({ input: v, from: q })
 
   const [showFilters, setShowFilters] = useState(true)
+  const [filterTab, setFilterTab] = useState<'subject' | 'year' | 'more'>('subject')
   const [topicSearch, setTopicSearch] = useState('')
   const page = Math.max(1, Number(params.get('page') ?? 1))
 
@@ -246,11 +248,10 @@ export default function GatePage() {
 
   const subjectBlocks = useMemo(() => Array.from(allSubjectMap.values()), [allSubjectMap])
 
-  // Topics corresponding to selected subjects, or all topics if no subject is picked
+  // Topics corresponding strictly to selected subjects
   const availableTopics = useMemo(() => {
-    const targetBlocks = subject.length > 0
-      ? subjectBlocks.filter((s) => subject.includes(s.id))
-      : subjectBlocks
+    if (subject.length === 0) return []
+    const targetBlocks = subjectBlocks.filter((s) => subject.includes(s.id))
 
     const list: { id: string; subjId: string; label: string; key: string }[] = []
     for (const s of targetBlocks) {
@@ -265,6 +266,17 @@ export default function GatePage() {
     }
     return list
   }, [subjectBlocks, subject])
+
+  const topicLabel = useCallback((t: string) => {
+    if (t.includes('/')) {
+      const [sId, tKey] = t.split('/')
+      return allSubjectMap.get(sId)?.topics[tKey] || t
+    }
+    for (const s of subjectBlocks) {
+      if (s.topics[t]) return s.topics[t]
+    }
+    return t
+  }, [allSubjectMap, subjectBlocks])
 
   const filteredTopics = useMemo(() => {
     if (!topicSearch.trim()) return availableTopics
@@ -617,7 +629,7 @@ export default function GatePage() {
             ))}
 
             {topic.map((t) => {
-              const label = availableTopics.find((at) => at.id === t)?.label ?? t
+              const label = topicLabel(t)
               return (
                 <button key={t} type="button" onClick={() => toggleTopic(t)} className="gate-active-badge">
                   Topic: {label} <X className="size-3" />
@@ -663,328 +675,451 @@ export default function GatePage() {
           </div>
         )}
 
-        {/* ── Collapsible Deep Filters ── */}
+        {/* ── Mode-Based Filter Panel ── */}
         {showFilters && (
-          <div className="mt-4 space-y-5 border-t border-border pt-4">
-            {/* 1. Exam & Stream */}
-            <div className="space-y-3">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="w-24 shrink-0 text-[11px] font-bold tracking-wide text-text-muted uppercase">Exam Stream</span>
-                <div className="flex flex-wrap items-center gap-1.5">
-                  <button
-                    type="button"
-                    onClick={() => setExam([])}
-                    className={cn('gate-pill font-semibold', exam.length === 0 && 'gate-pill-on')}
-                  >
-                    All Streams
-                  </button>
-                  {exams.map((e) => {
-                    const on = exam.includes(e.id)
-                    const count = list.data?.facets?.exam?.[e.id]
-                    return (
-                      <button
-                        key={e.id}
-                        type="button"
-                        onClick={() => toggleExam(e.id)}
-                        className={cn('gate-pill font-semibold', on && 'gate-pill-on')}
-                      >
-                        <span>{e.label}</span>
-                        {count != null && <span className="gate-pill-n">{count}</span>}
-                      </button>
-                    )
-                  })}
-                </div>
-              </div>
+          <div className="mt-4 space-y-4 border-t border-border pt-4">
+            {/* Filter Navigation Tabs */}
+            <div className="flex flex-wrap items-center gap-1.5 border-b border-border pb-3 text-[12px] sm:text-[13px] font-bold">
+              <button
+                type="button"
+                onClick={() => setFilterTab('subject')}
+                className={cn(
+                  'flex items-center gap-2 rounded-xl px-3.5 py-2 transition-all cursor-pointer border',
+                  filterTab === 'subject'
+                    ? 'border-accent-brand bg-accent-brand/15 text-accent-brand shadow-sm'
+                    : 'border-transparent text-text-muted hover:bg-bg-surface-2 hover:text-text-primary',
+                )}
+              >
+                <Layers className="size-4" />
+                <span>Browse by Subject & Topics</span>
+                {subject.length > 0 && (
+                  <span className="gate-pill-n !bg-accent-brand !text-white">{subject.length}</span>
+                )}
+              </button>
 
-              {/* Official Paper Selector */}
-              <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-border/40">
-                <span className="w-24 shrink-0 text-[11px] font-bold tracking-wide text-text-muted uppercase">Official Paper</span>
-                <div className="flex flex-wrap items-center gap-2 flex-1">
-                  <select
-                    value={paper[0] ?? ''}
-                    onChange={(e) => setPaper(e.target.value ? [e.target.value] : [])}
-                    className="rounded-xl bg-bg-surface-2 px-3 py-1.5 text-[12.5px] font-semibold text-text-primary border border-border outline-none cursor-pointer max-w-lg"
-                  >
-                    <option value="">All Papers ({meta.data?.papers?.length ?? 0} official papers from 1991 to 2026)</option>
-                    {(meta.data?.papers ?? []).map((p) => {
-                      const count = list.data?.facets?.paper?.[p.id]
-                      return (
-                        <option key={p.id} value={p.id}>
-                          {paperLabel(p)} ({count != null ? `${count} matching` : `${p.count} Qs`})
-                        </option>
-                      )
-                    })}
-                  </select>
-                  {paper.length > 0 && (
-                    <button type="button" onClick={() => setPaper([])} className="text-[11px] font-medium text-accent-brand hover:underline">
-                      Clear Paper
-                    </button>
-                  )}
-                </div>
-              </div>
+              <button
+                type="button"
+                onClick={() => setFilterTab('year')}
+                className={cn(
+                  'flex items-center gap-2 rounded-xl px-3.5 py-2 transition-all cursor-pointer border',
+                  filterTab === 'year'
+                    ? 'border-accent-brand bg-accent-brand/15 text-accent-brand shadow-sm'
+                    : 'border-transparent text-text-muted hover:bg-bg-surface-2 hover:text-text-primary',
+                )}
+              >
+                <Calendar className="size-4" />
+                <span>Browse by Year & Papers</span>
+                {(year.length > 0 || paper.length > 0) && (
+                  <span className="gate-pill-n !bg-accent-brand !text-white">{year.length + paper.length}</span>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setFilterTab('more')}
+                className={cn(
+                  'flex items-center gap-2 rounded-xl px-3.5 py-2 transition-all cursor-pointer border',
+                  filterTab === 'more'
+                    ? 'border-accent-brand bg-accent-brand/15 text-accent-brand shadow-sm'
+                    : 'border-transparent text-text-muted hover:bg-bg-surface-2 hover:text-text-primary',
+                )}
+              >
+                <SlidersHorizontal className="size-4" />
+                <span>Question Type & Marks</span>
+                {(type.length > 0 || marks.length > 0 || hasFigure || exam.length > 0) && (
+                  <span className="gate-pill-n !bg-accent-brand !text-white">
+                    {type.length + marks.length + (hasFigure ? 1 : 0) + exam.length}
+                  </span>
+                )}
+              </button>
             </div>
 
-            {/* 2. Categorized Subjects by Domain */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] font-bold tracking-wider text-text-muted uppercase flex items-center gap-1.5">
-                  <Layers className="size-3.5 text-accent-brand" /> Subjects by Domain
-                </span>
-                {subject.length > 0 && (
-                  <button type="button" onClick={() => setSubject([])} className="text-[11px] font-medium text-accent-brand hover:underline">
-                    Clear Subjects ({subject.length})
-                  </button>
-                )}
-              </div>
+            {/* TAB 1: SUBJECT & TOPICS HIERARCHY */}
+            {filterTab === 'subject' && (
+              <div className="space-y-4 animate-fade-in">
+                {/* 1. Subjects Grid grouped by domain */}
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-bold tracking-wider text-text-muted uppercase flex items-center gap-1.5">
+                      <Layers className="size-3.5 text-accent-brand" /> 1. Select a Subject
+                    </span>
+                    {subject.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSubject([])
+                          setTopic([])
+                        }}
+                        className="text-[11px] font-semibold text-accent-brand hover:underline cursor-pointer"
+                      >
+                        Clear Selected Subjects ({subject.length})
+                      </button>
+                    )}
+                  </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                {DOMAIN_GROUPS.map((grp) => {
-                  const GrpIcon = grp.icon
-                  const grpSubjects = subjectBlocks.filter((s) => grp.subjects.includes(s.id))
-                  if (!grpSubjects.length) return null
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {DOMAIN_GROUPS.map((grp) => {
+                      const GrpIcon = grp.icon
+                      const grpSubjects = subjectBlocks.filter((s) => grp.subjects.includes(s.id))
+                      if (!grpSubjects.length) return null
 
-                  const allInGrp = grpSubjects.map((s) => s.id)
-                  const allActive = allInGrp.every((id) => subject.includes(id))
+                      const allInGrp = grpSubjects.map((s) => s.id)
+                      const allActive = allInGrp.every((id) => subject.includes(id))
 
-                  return (
-                    <div key={grp.id} className="gate-domain-box space-y-2">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-1.5 text-[12px] font-bold text-text-primary">
-                          <GrpIcon className="size-3.5 text-accent-brand shrink-0" />
-                          <span>{grp.title}</span>
+                      return (
+                        <div key={grp.id} className="gate-domain-box space-y-2">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-1.5 text-[12px] font-bold text-text-primary">
+                              <GrpIcon className="size-3.5 text-accent-brand shrink-0" />
+                              <span>{grp.title}</span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (allActive) {
+                                  setSubject(subject.filter((id) => !allInGrp.includes(id)))
+                                } else {
+                                  setSubject([...new Set([...subject, ...allInGrp])])
+                                }
+                              }}
+                              className="text-[10px] font-semibold text-text-muted hover:text-accent-brand transition-colors cursor-pointer"
+                            >
+                              {allActive ? 'Deselect All' : 'Select All'}
+                            </button>
+                          </div>
+
+                          <div className="flex flex-wrap gap-1.5">
+                            {grpSubjects.map((s) => {
+                              const on = subject.includes(s.id)
+                              const count = list.data?.facets?.subject?.[s.id]
+                              return (
+                                <button
+                                  key={s.id}
+                                  type="button"
+                                  onClick={() => toggleSubject(s.id)}
+                                  className={cn('gate-pill text-[11.5px]', on && 'gate-pill-on')}
+                                >
+                                  <span>{s.label}</span>
+                                  {count != null && <span className="gate-pill-n">{count}</span>}
+                                </button>
+                              )
+                            })}
+                          </div>
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            if (allActive) {
-                              setSubject(subject.filter((id) => !allInGrp.includes(id)))
-                            } else {
-                              setSubject([...new Set([...subject, ...allInGrp])])
-                            }
-                          }}
-                          className="text-[10px] font-semibold text-text-muted hover:text-accent-brand transition-colors cursor-pointer"
-                        >
-                          {allActive ? 'Deselect All' : 'Select All'}
-                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+
+                {/* 2. Subtopics Shelf (Appears strictly when subject is selected) */}
+                {subject.length > 0 ? (
+                  <div className="rounded-2xl border border-accent-brand/35 bg-accent-brand/5 p-4 space-y-3 animate-fade-in shadow-inner">
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-accent-brand/20 pb-2.5">
+                      <div className="flex flex-wrap items-center gap-2 text-[12.5px] font-bold text-text-primary">
+                        <Binary className="size-4 text-accent-brand" />
+                        <span>2. Subtopics of</span>
+                        <span className="text-accent-brand">
+                          {subject.map((s) => subjectName(s)).join(', ')}
+                        </span>
+                        <span className="text-[11px] font-mono text-text-muted">({filteredTopics.length} topics)</span>
                       </div>
 
-                      <div className="flex flex-wrap gap-1.5">
-                        {grpSubjects.map((s) => {
-                          const on = subject.includes(s.id)
-                          const count = list.data?.facets?.subject?.[s.id]
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1.5 rounded-lg bg-bg-surface px-2.5 py-1 border border-border text-[12px]">
+                          <Search className="size-3 text-text-muted" />
+                          <input
+                            value={topicSearch}
+                            onChange={(e) => setTopicSearch(e.target.value)}
+                            placeholder="Filter subtopics..."
+                            className="w-28 sm:w-36 bg-transparent outline-none text-text-primary text-[11.5px] placeholder:text-text-muted"
+                          />
+                          {topicSearch && (
+                            <button type="button" onClick={() => setTopicSearch('')} className="text-text-muted hover:text-text-primary">
+                              <X className="size-3" />
+                            </button>
+                          )}
+                        </div>
+                        {topic.length > 0 && (
+                          <button type="button" onClick={() => setTopic([])} className="text-[11px] font-semibold text-accent-brand hover:underline">
+                            Clear Topics ({topic.length})
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    {filteredTopics.length > 0 ? (
+                      <div className="flex flex-wrap gap-1.5 p-1 max-h-52 overflow-y-auto">
+                        {filteredTopics.map((t) => {
+                          const on = topic.includes(t.id) || topic.includes(t.key)
+                          const count = list.data?.facets?.topic?.[t.id] ?? list.data?.facets?.topic?.[t.key]
                           return (
                             <button
-                              key={s.id}
+                              key={t.id}
                               type="button"
-                              onClick={() => toggleSubject(s.id)}
-                              className={cn('gate-pill text-[11.5px]', on && 'gate-pill-on')}
+                              onClick={() => toggleTopic(t.id)}
+                              className={cn('gate-pill text-[12px] py-1 px-3 font-medium', on && 'gate-pill-on')}
                             >
-                              <span>{s.label}</span>
+                              {subject.length > 1 && (
+                                <span className="text-text-muted text-[10px] uppercase font-mono mr-1">{t.subjId}:</span>
+                              )}
+                              <span>{t.label}</span>
                               {count != null && <span className="gate-pill-n">{count}</span>}
                             </button>
                           )
                         })}
                       </div>
-                    </div>
-                  )
-                })}
+                    ) : (
+                      <p className="text-[12px] text-text-muted italic py-1">No topics match "{topicSearch}".</p>
+                    )}
+                  </div>
+                ) : (
+                  <div className="rounded-xl border border-dashed border-border/80 bg-bg-surface-2/30 p-4 text-center text-[12.5px] text-text-muted">
+                    💡 <strong className="text-text-primary">Select any subject above</strong> (such as Discrete Mathematics, Algorithms, or Operating Systems) to reveal its subtopics and filter specifically by topic.
+                  </div>
+                )}
               </div>
-            </div>
+            )}
 
-            {/* 3. Deep Topic Explorer */}
-            <div className="space-y-2.5 pt-2 border-t border-border">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <span className="text-[11px] font-bold tracking-wider text-text-muted uppercase flex items-center gap-1.5">
-                  <Binary className="size-3.5 text-accent-brand" /> Topics Explorer ({availableTopics.length} topics)
-                  {subject.length > 0 && <span className="text-text-muted lowercase font-normal">(filtered by selected subjects)</span>}
-                </span>
+            {/* TAB 2: YEAR-WISE & OFFICIAL PAPERS */}
+            {filterTab === 'year' && (
+              <div className="space-y-4 animate-fade-in">
+                {/* 1. Era Quick Picker & Timeline */}
+                <div className="space-y-2.5">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span className="text-[11px] font-bold tracking-wider text-text-muted uppercase">
+                      Select Examination Year (1991–2026)
+                    </span>
+                    <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
+                      <span className="text-text-muted">Era Presets:</span>
+                      {[
+                        { label: '2024–2026 (Latest)', start: 2024, end: 2026 },
+                        { label: '2020–2023', start: 2020, end: 2023 },
+                        { label: '2014–2019', start: 2014, end: 2019 },
+                        { label: '2000–2013', start: 2000, end: 2013 },
+                        { label: '1990s', start: 1991, end: 1999 },
+                      ].map((era) => {
+                        const eraYrs = years.filter((y) => Number(y.id) >= era.start && Number(y.id) <= era.end).map((y) => y.id)
+                        const on = eraYrs.length > 0 && eraYrs.length === year.length && eraYrs.every((y) => year.includes(y))
+                        return (
+                          <button
+                            key={era.label}
+                            type="button"
+                            onClick={() => selectEra(era.start, era.end)}
+                            className={cn('gate-chip hover:text-accent-brand cursor-pointer', on && 'gate-preset-chip-on !text-accent-brand')}
+                          >
+                            {era.label}
+                          </button>
+                        )
+                      })}
+                      {year.length > 0 && (
+                        <button type="button" onClick={() => setYear([])} className="text-accent-brand hover:underline font-semibold ml-1 cursor-pointer">
+                          Clear Years ({year.length})
+                        </button>
+                      )}
+                    </div>
+                  </div>
 
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1.5 rounded-lg bg-bg-surface-2 px-2.5 py-1 border border-border text-[12px]">
-                    <Search className="size-3 text-text-muted" />
-                    <input
-                      value={topicSearch}
-                      onChange={(e) => setTopicSearch(e.target.value)}
-                      placeholder="Filter topics..."
-                      className="w-28 sm:w-36 bg-transparent outline-none text-text-primary text-[11.5px] placeholder:text-text-muted"
-                    />
-                    {topicSearch && (
-                      <button type="button" onClick={() => setTopicSearch('')} className="text-text-muted hover:text-text-primary">
-                        <X className="size-3" />
+                  <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto p-1.5 rounded-xl bg-bg-surface-2/40 border border-border/60">
+                    {years.map((y) => {
+                      const on = year.includes(y.id)
+                      const count = list.data?.facets?.year?.[y.id]
+                      return (
+                        <button
+                          key={y.id}
+                          type="button"
+                          onClick={() => toggleYear(y.id)}
+                          className={cn('gate-pill font-mono text-[11.5px]', on && 'gate-pill-on')}
+                        >
+                          <span>{y.label}</span>
+                          {count != null && <span className="gate-pill-n">{count}</span>}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+
+                {/* 2. Official Paper Cards for Selected Year or Search */}
+                <div className="space-y-2.5 pt-2 border-t border-border">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span className="text-[11px] font-bold tracking-wider text-text-muted uppercase">
+                      Official Master Papers {year.length > 0 ? `(${year.join(', ')})` : ''}
+                    </span>
+                    {paper.length > 0 && (
+                      <button type="button" onClick={() => setPaper([])} className="text-[11px] font-semibold text-accent-brand hover:underline cursor-pointer">
+                        Clear Paper ({paper.length})
                       </button>
                     )}
                   </div>
-                  {topic.length > 0 && (
-                    <button type="button" onClick={() => setTopic([])} className="text-[11px] font-medium text-accent-brand hover:underline">
-                      Clear Topics ({topic.length})
-                    </button>
-                  )}
-                </div>
-              </div>
 
-              {filteredTopics.length > 0 ? (
-                <div className="flex flex-wrap gap-1.5 max-h-48 overflow-y-auto p-1 rounded-xl bg-bg-surface-2/40 border border-border/60">
-                  {filteredTopics.map((t) => {
-                    const on = topic.includes(t.id) || topic.includes(t.key)
-                    const count = list.data?.facets?.topic?.[t.id] ?? list.data?.facets?.topic?.[t.key]
-                    return (
-                      <button
-                        key={t.id}
-                        type="button"
-                        onClick={() => toggleTopic(t.id)}
-                        className={cn('gate-pill text-[11.5px]', on && 'gate-pill-on')}
-                      >
-                        <span className="text-text-muted text-[10px] uppercase font-mono mr-0.5">{t.subjId}:</span>
-                        <span>{t.label}</span>
-                        {count != null && <span className="gate-pill-n">{count}</span>}
-                      </button>
-                    )
-                  })}
-                </div>
-              ) : (
-                <p className="text-[12px] text-text-muted italic py-1">No topics match "{topicSearch}".</p>
-              )}
-            </div>
+                  {/* Fast 1-click Paper Selection Chips */}
+                  <div className="flex flex-wrap gap-2">
+                    {(meta.data?.papers ?? [])
+                      .filter((p) => year.length === 0 || year.includes(String(p.year)))
+                      .map((p) => {
+                        const on = paper.includes(p.id)
+                        const count = list.data?.facets?.paper?.[p.id]
+                        return (
+                          <button
+                            key={p.id}
+                            type="button"
+                            onClick={() => togglePaper(p.id)}
+                            className={cn(
+                              'flex items-center gap-2 rounded-xl px-3 py-1.5 text-[12px] font-semibold border transition-all cursor-pointer',
+                              on
+                                ? 'border-accent-brand bg-accent-brand/15 text-accent-brand shadow-sm'
+                                : 'border-border bg-bg-surface-2/60 text-text-secondary hover:border-accent-brand/40 hover:text-text-primary',
+                            )}
+                          >
+                            <span>{p.exam} {p.year} {p.set ? `Set ${p.set}` : ''}</span>
+                            <span className="rounded bg-black/10 dark:bg-white/10 px-1.5 py-0.2 font-mono text-[10.5px]">
+                              {count != null ? count : `${p.count} Qs`}
+                            </span>
+                          </button>
+                        )
+                      })}
+                  </div>
 
-            {/* 4. Years & Era Quick Select */}
-            <div className="space-y-2.5 pt-2 border-t border-border">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <span className="text-[11px] font-bold tracking-wider text-text-muted uppercase">Years & Examination Era</span>
-                <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
-                  <span className="text-text-muted">Quick Era:</span>
-                  {[
-                    { label: '2024–2026', start: 2024, end: 2026 },
-                    { label: '2020–2023', start: 2020, end: 2023 },
-                    { label: '2014–2019', start: 2014, end: 2019 },
-                    { label: '2000–2013', start: 2000, end: 2013 },
-                    { label: '1990s', start: 1991, end: 1999 },
-                  ].map((era) => {
-                    const eraYrs = years.filter((y) => Number(y.id) >= era.start && Number(y.id) <= era.end).map((y) => y.id)
-                    const on = eraYrs.length > 0 && eraYrs.length === year.length && eraYrs.every((y) => year.includes(y))
-                    return (
-                      <button
-                        key={era.label}
-                        type="button"
-                        onClick={() => selectEra(era.start, era.end)}
-                        className={cn('gate-chip hover:text-accent-brand cursor-pointer', on && 'gate-preset-chip-on !text-accent-brand')}
-                      >
-                        {era.label}
-                      </button>
-                    )
-                  })}
-                  {year.length > 0 && (
-                    <button type="button" onClick={() => setYear([])} className="text-accent-brand hover:underline font-semibold ml-1">
-                      Clear ({year.length})
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto p-1 rounded-xl bg-bg-surface-2/30 border border-border/40">
-                {years.map((y) => {
-                  const on = year.includes(y.id)
-                  const count = list.data?.facets?.year?.[y.id]
-                  return (
-                    <button
-                      key={y.id}
-                      type="button"
-                      onClick={() => toggleYear(y.id)}
-                      className={cn('gate-pill font-mono text-[11.5px]', on && 'gate-pill-on')}
+                  {/* Complete Official Paper Dropdown */}
+                  <div className="pt-1">
+                    <select
+                      value={paper[0] ?? ''}
+                      onChange={(e) => setPaper(e.target.value ? [e.target.value] : [])}
+                      className="rounded-xl bg-bg-surface-2 px-3 py-2 text-[12.5px] font-semibold text-text-primary border border-border outline-none cursor-pointer w-full max-w-lg"
                     >
-                      <span>{y.label}</span>
-                      {count != null && <span className="gate-pill-n">{count}</span>}
-                    </button>
-                  )
-                })}
+                      <option value="">All Official Papers ({meta.data?.papers?.length ?? 0} papers from 1991 to 2026)</option>
+                      {(meta.data?.papers ?? []).map((p) => {
+                        const count = list.data?.facets?.paper?.[p.id]
+                        return (
+                          <option key={p.id} value={p.id}>
+                            {paperLabel(p)} ({count != null ? `${count} matching` : `${p.count} Qs`})
+                          </option>
+                        )
+                      })}
+                    </select>
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
 
-            {/* 5. Format, Marks & Characteristics */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 border-t border-border">
-              {/* Question Type */}
-              <div className="space-y-1.5">
-                <span className="text-[11px] font-bold tracking-wider text-text-muted uppercase">Question Type</span>
-                <div className="flex flex-wrap gap-1.5">
-                  {TYPES.map((t) => {
-                    const on = type.includes(t)
-                    const count = list.data?.facets?.type?.[t]
-                    return (
+            {/* TAB 3: FORMAT, MARKS & STREAM */}
+            {filterTab === 'more' && (
+              <div className="space-y-4 animate-fade-in">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {/* Stream */}
+                  <div className="space-y-2">
+                    <span className="text-[11px] font-bold tracking-wider text-text-muted uppercase">Exam Stream</span>
+                    <div className="flex flex-wrap gap-1.5">
                       <button
-                        key={t}
                         type="button"
-                        onClick={() => toggleType(t)}
-                        title={TYPE_LABEL[t]}
-                        className={cn('gate-pill text-[11.5px]', on && 'gate-pill-on')}
+                        onClick={() => setExam([])}
+                        className={cn('gate-pill font-semibold', exam.length === 0 && 'gate-pill-on')}
                       >
-                        <span>{t}</span>
-                        {count != null && <span className="gate-pill-n">{count}</span>}
+                        All
                       </button>
-                    )
-                  })}
-                </div>
-              </div>
+                      {exams.map((e) => {
+                        const on = exam.includes(e.id)
+                        const count = list.data?.facets?.exam?.[e.id]
+                        return (
+                          <button
+                            key={e.id}
+                            type="button"
+                            onClick={() => toggleExam(e.id)}
+                            className={cn('gate-pill font-semibold', on && 'gate-pill-on')}
+                          >
+                            <span>{e.id}</span>
+                            {count != null && <span className="gate-pill-n">{count}</span>}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
 
-              {/* Marks Weightage */}
-              <div className="space-y-1.5">
-                <span className="text-[11px] font-bold tracking-wider text-text-muted uppercase">Marks Weightage</span>
-                <div className="flex flex-wrap gap-1.5">
-                  {[
-                    { id: '1', label: '1 Mark' },
-                    { id: '2', label: '2 Marks' },
-                    { id: '5', label: '5 Marks (Legacy)' },
-                  ].map((m) => {
-                    const on = marks.includes(m.id)
-                    const count = list.data?.facets?.marks?.[m.id]
-                    return (
+                  {/* Question Type */}
+                  <div className="space-y-2">
+                    <span className="text-[11px] font-bold tracking-wider text-text-muted uppercase">Question Type</span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {TYPES.map((t) => {
+                        const on = type.includes(t)
+                        const count = list.data?.facets?.type?.[t]
+                        return (
+                          <button
+                            key={t}
+                            type="button"
+                            onClick={() => toggleType(t)}
+                            title={TYPE_LABEL[t]}
+                            className={cn('gate-pill text-[11.5px]', on && 'gate-pill-on')}
+                          >
+                            <span>{t}</span>
+                            {count != null && <span className="gate-pill-n">{count}</span>}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Marks Weightage */}
+                  <div className="space-y-2">
+                    <span className="text-[11px] font-bold tracking-wider text-text-muted uppercase">Marks</span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {[
+                        { id: '1', label: '1 Mark' },
+                        { id: '2', label: '2 Marks' },
+                        { id: '5', label: '5 Marks' },
+                      ].map((m) => {
+                        const on = marks.includes(m.id)
+                        const count = list.data?.facets?.marks?.[m.id]
+                        return (
+                          <button
+                            key={m.id}
+                            type="button"
+                            onClick={() => toggleMarks(m.id)}
+                            className={cn('gate-pill font-semibold text-[11.5px]', on && 'gate-pill-on')}
+                          >
+                            <span>{m.label}</span>
+                            {count != null && <span className="gate-pill-n">{count}</span>}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Diagrams & Visuals */}
+                  <div className="space-y-2">
+                    <span className="text-[11px] font-bold tracking-wider text-text-muted uppercase">Diagrams & Figures</span>
+                    <div className="flex flex-wrap gap-1.5">
                       <button
-                        key={m.id}
                         type="button"
-                        onClick={() => toggleMarks(m.id)}
-                        className={cn('gate-pill font-semibold text-[11.5px]', on && 'gate-pill-on')}
+                        onClick={() => setFigureFilter('')}
+                        className={cn('gate-pill text-[11.5px]', !hasFigure && 'gate-pill-on')}
                       >
-                        <span>{m.label}</span>
-                        {count != null && <span className="gate-pill-n">{count}</span>}
+                        All
                       </button>
-                    )
-                  })}
+                      <button
+                        type="button"
+                        onClick={() => setFigureFilter('yes')}
+                        className={cn('gate-pill text-[11.5px]', hasFigure === 'yes' && 'gate-pill-on')}
+                      >
+                        <ImageIcon className="size-3" />
+                        <span>Has Diagram</span>
+                        {list.data?.facets?.hasFigure?.yes != null && (
+                          <span className="gate-pill-n">{list.data.facets.hasFigure.yes}</span>
+                        )}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setFigureFilter('no')}
+                        className={cn('gate-pill text-[11.5px]', hasFigure === 'no' && 'gate-pill-on')}
+                      >
+                        <span>Text Only</span>
+                        {list.data?.facets?.hasFigure?.no != null && (
+                          <span className="gate-pill-n">{list.data.facets.hasFigure.no}</span>
+                        )}
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
-
-              {/* Diagrams & Visuals */}
-              <div className="space-y-1.5">
-                <span className="text-[11px] font-bold tracking-wider text-text-muted uppercase">Diagrams & Figures</span>
-                <div className="flex flex-wrap gap-1.5">
-                  <button
-                    type="button"
-                    onClick={() => setFigureFilter('')}
-                    className={cn('gate-pill text-[11.5px]', !hasFigure && 'gate-pill-on')}
-                  >
-                    All Questions
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setFigureFilter('yes')}
-                    className={cn('gate-pill text-[11.5px]', hasFigure === 'yes' && 'gate-pill-on')}
-                  >
-                    <ImageIcon className="size-3" />
-                    <span>Has Diagram</span>
-                    {list.data?.facets?.hasFigure?.yes != null && (
-                      <span className="gate-pill-n">{list.data.facets.hasFigure.yes}</span>
-                    )}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setFigureFilter('no')}
-                    className={cn('gate-pill text-[11.5px]', hasFigure === 'no' && 'gate-pill-on')}
-                  >
-                    <span>Text Only</span>
-                    {list.data?.facets?.hasFigure?.no != null && (
-                      <span className="gate-pill-n">{list.data.facets.hasFigure.no}</span>
-                    )}
-                  </button>
-                </div>
-              </div>
-            </div>
+            )}
           </div>
         )}
       </div>

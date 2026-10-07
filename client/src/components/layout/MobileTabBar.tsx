@@ -1,13 +1,16 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, useLocation } from 'react-router-dom'
 import { motion } from 'motion/react'
 import { Search } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { openCommandPalette } from './CommandPalette'
-import { DOCK_BY_ID, useDock, type DockItem } from './dockStore'
+import { DOCK_BY_ID, isDockFocusRoute, useDock, type DockItem } from './dockStore'
 
 /** Native-feeling bottom tab bar on phones. Its four tabs are the first four
  *  pages in the user's Dock, so customizing the Dock customizes this too. */
 export function MobileTabBar() {
+  const { pathname } = useLocation()
+  if (isDockFocusRoute(pathname)) return null
+
   const dock = useDock()
   const pages = dock.pinned
     .map((id) => DOCK_BY_ID.get(id))
