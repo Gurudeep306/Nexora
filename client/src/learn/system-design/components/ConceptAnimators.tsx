@@ -12,6 +12,10 @@ import {
   RefreshCw,
   Shield,
   Activity,
+  Search,
+  Car,
+  Plus,
+  Users,
 } from 'lucide-react'
 
 // ==========================================
@@ -860,6 +864,826 @@ export const RateLimiterTokenBucketAnimator: React.FC = () => {
   )
 }
 
+// ==========================================
+// 7. CONSISTENT HASH RING & VIRTUAL NODES ANIMATOR
+// ==========================================
+export const ConsistentHashRingAnimator: React.FC = () => {
+  const [useVnodes, setUseVnodes] = useState<boolean>(true)
+  const [selectedKey, setSelectedKey] = useState<string>('user_94218')
+  const [customInput, setCustomInput] = useState<string>('')
+  const [removedNodeId, setRemovedNodeId] = useState<string | null>(null)
+  const [isScanning, setIsScanning] = useState<boolean>(false)
+  const [scanAngle, setScanAngle] = useState<number>(0)
+  const [activeTarget, setActiveTarget] = useState<{ nodeId: string; angle: number } | null>(null)
+
+  const baseNodes = [
+    { id: 'node-a', name: 'Node Alpha (US-East)', color: '#00F0FF', ip: '10.0.1.10', baseAngle: 35 },
+    { id: 'node-b', name: 'Node Beta (US-West)', color: '#A855F7', ip: '10.0.1.20', baseAngle: 110 },
+    { id: 'node-c', name: 'Node Gamma (EU-Central)', color: '#10B981', ip: '10.0.1.30', baseAngle: 210 },
+    { id: 'node-d', name: 'Node Delta (AP-South)', color: '#F59E0B', ip: '10.0.1.40', baseAngle: 305 },
+  ]
+
+  const activeNodes = baseNodes.filter((n) => n.id !== removedNodeId)
+
+  const ringTokens: { id: string; nodeId: string; name: string; color: string; angle: number; isVnode: boolean }[] = []
+  activeNodes.forEach((node) => {
+    if (useVnodes) {
+      const offsets = [0, 90, 180]
+      offsets.forEach((offset, idx) => {
+        const angle = (node.baseAngle + offset) % 360
+        ringTokens.push({
+          id: `${node.id}-v${idx}`,
+          nodeId: node.id,
+          name: `${node.name.split(' ')[1]}#${idx + 1}`,
+          color: node.color,
+          angle,
+          isVnode: idx > 0,
+        })
+      })
+    } else {
+      ringTokens.push({
+        id: `${node.id}-p`,
+        nodeId: node.id,
+        name: node.name.split(' ')[1],
+        color: node.color,
+        angle: node.baseAngle,
+        isVnode: false,
+      })
+    }
+  })
+
+  ringTokens.sort((a, b) => a.angle - b.angle)
+
+  const computeKeyAngle = (key: string) => {
+    let hash = 5381
+    for (let i = 0; i < key.length; i++) {
+      hash = (hash << 5) + hash + key.charCodeAt(i)
+    }
+    return Math.abs(hash) % 360
+  }
+
+  const activeKey = customInput.trim() || selectedKey
+  const keyAngle = computeKeyAngle(activeKey)
+
+  const targetToken =
+    ringTokens.find((t) => t.angle >= keyAngle) ||
+    ringTokens[0] || { nodeId: 'none', angle: 0, name: 'None', color: '#fff' }
+
+  const handleLookup = () => {
+    setIsScanning(true)
+    setScanAngle(keyAngle)
+    setActiveTarget(null)
+
+    let curr = keyAngle
+    const dest = targetToken.angle >= keyAngle ? targetToken.angle : targetToken.angle + 360
+    const interval = setInterval(() => {
+      curr += 10
+      if (curr >= dest) {
+        clearInterval(interval)
+        setIsScanning(false)
+        setActiveTarget({ nodeId: targetToken.nodeId, angle: targetToken.angle })
+      } else {
+        setScanAngle(curr % 360)
+      }
+    }, 20)
+  }
+
+  const getCoordinates = (angle: number, radius = 95) => {
+    const rad = ((angle - 90) * Math.PI) / 180
+    return {
+      x: 130 + radius * Math.cos(rad),
+      y: 130 + radius * Math.sin(rad),
+    }
+  }
+
+  const keyCoords = getCoordinates(keyAngle, 95)
+  const scanCoords = getCoordinates(scanAngle, 95)
+
+  return (
+    <div className="space-y-4 rounded-xl bg-bg-surface-2 p-5 ring-1 ring-border text-text-primary">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/50 pb-3">
+        <div>
+          <span className="font-mono text-[11px] font-bold text-accent-brand uppercase tracking-wider block">
+            Consistent Hashing Architecture
+          </span>
+          <h3 className="text-base font-bold text-text-primary">Consistent Hash Ring with Virtual Nodes</h3>
+        </div>
+        <button
+          onClick={() => setUseVnodes(!useVnodes)}
+          className={`rounded-lg px-2.5 py-1 text-[11px] font-mono font-bold transition ring-1 ${
+            useVnodes
+              ? 'bg-purple-500/20 text-purple-300 ring-purple-500/40'
+              : 'bg-bg-surface-1 text-text-muted ring-border'
+          }`}
+        >
+          {useVnodes ? '✨ Virtual Nodes: ON (3 vnodes/server)' : 'Virtual Nodes: OFF (1:1)'}
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+        <div className="lg:col-span-6 flex flex-col items-center justify-center">
+          <div className="relative size-[260px]">
+            <svg viewBox="0 0 260 260" className="size-full overflow-visible">
+              <circle
+                cx="130"
+                cy="130"
+                r="95"
+                fill="none"
+                stroke="currentColor"
+                className="text-border"
+                strokeWidth="2"
+                strokeDasharray="4 4"
+              />
+
+              {[0, 90, 180, 270].map((deg) => {
+                const c = getCoordinates(deg, 108)
+                return (
+                  <text
+                    key={deg}
+                    x={c.x}
+                    y={c.y}
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    className="fill-text-muted text-[8px] font-mono select-none"
+                  >
+                    {deg}°
+                  </text>
+                )
+              })}
+
+              {isScanning && (
+                <line
+                  x1="130"
+                  y1="130"
+                  x2={scanCoords.x}
+                  y2={scanCoords.y}
+                  stroke="#00F0FF"
+                  strokeWidth="2.5"
+                  className="animate-pulse"
+                />
+              )}
+
+              {ringTokens.map((token) => {
+                const coords = getCoordinates(token.angle, 95)
+                const isTarget = activeTarget?.angle === token.angle
+                return (
+                  <g key={token.id} className="transition-all duration-300">
+                    <circle
+                      cx={coords.x}
+                      cy={coords.y}
+                      r={isTarget ? 7 : token.isVnode ? 4 : 5.5}
+                      fill={token.color}
+                      stroke="#000"
+                      strokeWidth="1.5"
+                      className={isTarget ? 'animate-bounce shadow-lg' : ''}
+                    />
+                    <text
+                      x={getCoordinates(token.angle, 114).x}
+                      y={getCoordinates(token.angle, 114).y}
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                      fill={token.color}
+                      className="text-[8px] font-mono font-bold select-none drop-shadow"
+                    >
+                      {token.name}
+                    </text>
+                  </g>
+                )
+              })}
+
+              <g>
+                <circle
+                  cx={keyCoords.x}
+                  cy={keyCoords.y}
+                  r="6"
+                  fill="#F43F5E"
+                  stroke="#fff"
+                  strokeWidth="2"
+                  className="shadow-xl"
+                />
+                <circle
+                  cx={keyCoords.x}
+                  cy={keyCoords.y}
+                  r="12"
+                  fill="none"
+                  stroke="#F43F5E"
+                  strokeWidth="1"
+                  className="animate-ping opacity-75"
+                />
+              </g>
+
+              <circle cx="130" cy="130" r="30" fill="rgba(10, 15, 25, 0.9)" stroke="var(--color-border)" strokeWidth="1" />
+              <text x="130" y="126" textAnchor="middle" className="fill-text-muted text-[8px] font-mono uppercase">
+                Tokens
+              </text>
+              <text x="130" y="138" textAnchor="middle" className="fill-accent-brand text-[9px] font-bold font-mono">
+                2³² - 1
+              </text>
+            </svg>
+          </div>
+          <span className="text-[10px] font-mono text-text-muted mt-2 text-center">
+            Clockwise traversal finds first replica token where token.angle ≥ key.angle
+          </span>
+        </div>
+
+        <div className="lg:col-span-6 space-y-3">
+          <div className="rounded-xl bg-bg-surface-1 p-3 ring-1 ring-border space-y-2">
+            <span className="text-[11px] font-mono font-bold uppercase text-text-muted block">
+              Test Key Lookup
+            </span>
+            <div className="flex flex-wrap gap-1.5">
+              {['user_94218', 'session_tok', 'video_4k_98', 'cart_2039', 'order_882'].map((k) => (
+                <button
+                  key={k}
+                  onClick={() => {
+                    setSelectedKey(k)
+                    setCustomInput('')
+                    setActiveTarget(null)
+                  }}
+                  className={`rounded-md px-2 py-1 text-[11px] font-mono transition ${
+                    activeKey === k
+                      ? 'bg-accent-brand text-bg-base font-bold'
+                      : 'bg-bg-surface-2 text-text-muted hover:text-text-primary ring-1 ring-border'
+                  }`}
+                >
+                  {k}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex gap-2 pt-1">
+              <input
+                type="text"
+                placeholder="Custom key name..."
+                value={customInput}
+                onChange={(e) => setCustomInput(e.target.value)}
+                className="flex-1 rounded-lg bg-bg-surface-2 px-2.5 py-1 text-[11px] font-mono text-text-primary ring-1 ring-border focus:ring-accent-brand focus:outline-none"
+              />
+              <button
+                onClick={handleLookup}
+                disabled={isScanning}
+                className="rounded-lg bg-accent-brand px-3 py-1 text-[11px] font-bold text-bg-base hover:opacity-90 disabled:opacity-50 flex items-center gap-1 shadow-sm"
+              >
+                <Search className="size-3" /> Find Node
+              </button>
+            </div>
+          </div>
+
+          <div className="rounded-xl bg-bg-surface-1 p-3 ring-1 ring-border space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-mono font-bold uppercase text-text-muted block">
+                Cluster Health & Chaos Toggle
+              </span>
+              {removedNodeId && (
+                <button
+                  onClick={() => setRemovedNodeId(null)}
+                  className="text-[10px] font-mono text-cyan-400 hover:underline flex items-center gap-1"
+                >
+                  <RotateCcw className="size-2.5" /> Restore All
+                </button>
+              )}
+            </div>
+            <div className="grid grid-cols-2 gap-2 text-[11px] font-mono">
+              {baseNodes.map((n) => {
+                const isKilled = removedNodeId === n.id
+                return (
+                  <button
+                    key={n.id}
+                    onClick={() => setRemovedNodeId(isKilled ? null : n.id)}
+                    className={`flex items-center justify-between rounded-lg p-2 ring-1 transition ${
+                      isKilled
+                        ? 'bg-rose-500/10 text-rose-400 ring-rose-500/30'
+                        : 'bg-bg-surface-2 text-text-primary ring-border hover:bg-bg-surface-3'
+                    }`}
+                  >
+                    <span className="flex items-center gap-1.5 truncate">
+                      <span className="size-2 rounded-full" style={{ backgroundColor: n.color }} />
+                      {n.name.split(' ')[1]}
+                    </span>
+                    <span className={`text-[10px] font-bold ${isKilled ? 'text-rose-400' : 'text-emerald-400'}`}>
+                      {isKilled ? 'DEAD' : 'ALIVE'}
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
+          <div className="rounded-xl bg-black/60 p-3 ring-1 ring-border text-[11px] font-mono space-y-1">
+            <div className="flex items-center justify-between text-text-muted border-b border-border/40 pb-1">
+              <span>Active Key: <span className="text-rose-400 font-bold">{activeKey}</span></span>
+              <span>Hash Angle: <span className="text-amber-400 font-bold">{keyAngle}°</span></span>
+            </div>
+            <p className="text-cyan-300 pt-1">
+              Clockwise Target: <strong style={{ color: targetToken.color }}>{targetToken.name}</strong> at{' '}
+              <span className="text-amber-300">{targetToken.angle}°</span> (Server IP: {activeNodes.find((n) => n.id === targetToken.nodeId)?.ip || '10.0.1.X'}).
+            </p>
+            {removedNodeId && (
+              <p className="text-rose-300 text-[10px] pt-1">
+                ⚠️ Minimal Migration: Only 1/N (~25%) of keys moved to neighbor. In naive modulo hashing (hash % N), 75% of keys would be invalidated!
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ==========================================
+// 8. KAFKA PARTITION & COOPERATIVE REBALANCE ANIMATOR
+// ==========================================
+export const KafkaPartitionRebalanceAnimator: React.FC = () => {
+  const [c2Alive, setC2Alive] = useState<boolean>(true)
+  const [isRebalancing, setIsRebalancing] = useState<boolean>(false)
+  const [rebalanceStep, setRebalanceStep] = useState<string>('Normal steady-state consuming.')
+  const [producedCount, setProducedCount] = useState<number>(6)
+  const [selectedKey, setSelectedKey] = useState<string>('order_101')
+
+  const [partitions, setPartitions] = useState([
+    { id: 0, msgs: [100, 101], consumerId: 'C1' },
+    { id: 1, msgs: [200, 201], consumerId: 'C2' },
+    { id: 2, msgs: [300, 301], consumerId: 'C3' },
+  ])
+
+  const handleProduce = () => {
+    let hash = 0
+    for (let i = 0; i < selectedKey.length; i++) hash += selectedKey.charCodeAt(i)
+    const partIdx = hash % 3
+    const newMsgId = 100 * (partIdx + 1) + partitions[partIdx].msgs.length
+
+    setPartitions((prev) =>
+      prev.map((p) => (p.id === partIdx ? { ...p, msgs: [...p.msgs, newMsgId] } : p))
+    )
+    setProducedCount((c) => c + 1)
+  }
+
+  const handlePollCommit = () => {
+    setPartitions((prev) =>
+      prev.map((p) => (p.msgs.length > 1 ? { ...p, msgs: p.msgs.slice(1) } : p))
+    )
+  }
+
+  const handleToggleC2 = () => {
+    if (c2Alive) {
+      setC2Alive(false)
+      setIsRebalancing(true)
+      setRebalanceStep('1/4: Consumer C2 missed heartbeat! Coordinator triggers group rebalance...')
+
+      setTimeout(() => {
+        setRebalanceStep('2/4: JoinGroup & SyncGroup phases executed by Kafka Group Coordinator.')
+      }, 900)
+
+      setTimeout(() => {
+        setRebalanceStep('3/4: Cooperative Sticky Assignor assigns Partition 1 to Consumer C1 without revoking P0 or P2!')
+        setPartitions((prev) =>
+          prev.map((p) => (p.id === 1 ? { ...p, consumerId: 'C1' } : p))
+        )
+      }, 1800)
+
+      setTimeout(() => {
+        setRebalanceStep('4/4: Rebalance complete! Steady-state consuming resumed with 0 cluster downtime.')
+        setIsRebalancing(false)
+      }, 2700)
+    } else {
+      setC2Alive(true)
+      setIsRebalancing(true)
+      setRebalanceStep('Consumer C2 rejoins group. Partition 1 gracefully returned to C2.')
+      setTimeout(() => {
+        setPartitions((prev) =>
+          prev.map((p) => (p.id === 1 ? { ...p, consumerId: 'C2' } : p))
+        )
+        setIsRebalancing(false)
+        setRebalanceStep('Normal steady-state consuming.')
+      }, 1200)
+    }
+  }
+
+  return (
+    <div className="space-y-4 rounded-xl bg-bg-surface-2 p-5 ring-1 ring-border text-text-primary">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/50 pb-3">
+        <div>
+          <span className="font-mono text-[11px] font-bold text-accent-brand uppercase tracking-wider block">
+            Event Streaming Architecture
+          </span>
+          <h3 className="text-base font-bold text-text-primary">Kafka Partitions & Cooperative Sticky Rebalance</h3>
+        </div>
+        <button
+          onClick={handleToggleC2}
+          disabled={isRebalancing}
+          className={`rounded-lg px-3 py-1.5 text-[11.5px] font-mono font-bold transition ring-1 flex items-center gap-1.5 ${
+            c2Alive
+              ? 'bg-rose-500/20 text-rose-300 ring-rose-500/40 hover:bg-rose-500/30'
+              : 'bg-emerald-500/20 text-emerald-300 ring-emerald-500/40 hover:bg-emerald-500/30'
+          }`}
+        >
+          {c2Alive ? '💥 Crash Consumer C2' : '✨ Revive Consumer C2'}
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+        <div className="md:col-span-7 space-y-2.5">
+          <span className="text-[11px] font-mono font-bold uppercase text-text-muted flex items-center gap-1.5">
+            <Layers className="size-3.5 text-cyan-400" /> Topic: orders-stream (3 Partitions)
+          </span>
+
+          {partitions.map((p) => (
+            <div key={p.id} className="rounded-xl bg-bg-surface-1 p-3 ring-1 ring-border space-y-1.5">
+              <div className="flex items-center justify-between text-[11.5px] font-mono">
+                <span className="text-text-primary font-bold">Partition {p.id}</span>
+                <span className="text-text-muted text-[10px]">
+                  Assigned To:{' '}
+                  <strong className={p.consumerId === 'C1' ? 'text-cyan-400' : p.consumerId === 'C2' ? 'text-purple-400' : 'text-emerald-400'}>
+                    Consumer {p.consumerId}
+                  </strong>
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5 overflow-x-auto py-1">
+                {p.msgs.map((m, idx) => (
+                  <span
+                    key={idx}
+                    className="rounded bg-black/60 px-2 py-0.5 font-mono text-[10px] text-accent-brand ring-1 ring-accent-brand/30 shrink-0"
+                  >
+                    offset #{idx} (ID:{m})
+                  </span>
+                ))}
+                {p.msgs.length === 0 && (
+                  <span className="text-[10px] font-mono text-text-muted italic">All caught up (0 lag)</span>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="md:col-span-5 space-y-2.5">
+          <span className="text-[11px] font-mono font-bold uppercase text-text-muted flex items-center gap-1.5">
+            <Users className="size-3.5 text-purple-400" /> Consumer Group: order-workers
+          </span>
+
+          <div className="rounded-xl bg-bg-surface-1 p-3 ring-1 ring-border flex items-center justify-between">
+            <div>
+              <span className="text-[12px] font-mono font-bold text-cyan-400 block">Consumer C1</span>
+              <span className="text-[10px] text-text-muted font-mono">
+                Assigned: {partitions.filter((p) => p.consumerId === 'C1').map((p) => `P${p.id}`).join(', ')}
+              </span>
+            </div>
+            <span className="rounded bg-emerald-500/20 px-2 py-0.5 text-[10px] font-mono font-bold text-emerald-300">
+              HEALTHY
+            </span>
+          </div>
+
+          <div
+            className={`rounded-xl p-3 ring-1 transition ${
+              c2Alive ? 'bg-bg-surface-1 ring-border' : 'bg-rose-500/10 ring-rose-500/30'
+            } flex items-center justify-between`}
+          >
+            <div>
+              <span className={`text-[12px] font-mono font-bold block ${c2Alive ? 'text-purple-400' : 'text-rose-400'}`}>
+                Consumer C2
+              </span>
+              <span className="text-[10px] text-text-muted font-mono">
+                {c2Alive ? 'Assigned: P1' : 'Heartbeat Missed (45s)'}
+              </span>
+            </div>
+            <span
+              className={`rounded px-2 py-0.5 text-[10px] font-mono font-bold ${
+                c2Alive ? 'bg-emerald-500/20 text-emerald-300' : 'bg-rose-500/20 text-rose-300 animate-pulse'
+              }`}
+            >
+              {c2Alive ? 'HEALTHY' : 'OFFLINE'}
+            </span>
+          </div>
+
+          <div className="rounded-xl bg-bg-surface-1 p-3 ring-1 ring-border flex items-center justify-between">
+            <div>
+              <span className="text-[12px] font-mono font-bold text-emerald-400 block">Consumer C3</span>
+              <span className="text-[10px] text-text-muted font-mono">Assigned: P2</span>
+            </div>
+            <span className="rounded bg-emerald-500/20 px-2 py-0.5 text-[10px] font-mono font-bold text-emerald-300">
+              HEALTHY
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+        <div className="flex items-center gap-2">
+          <input
+            type="text"
+            value={selectedKey}
+            onChange={(e) => setSelectedKey(e.target.value)}
+            className="w-32 rounded-lg bg-bg-surface-1 px-2.5 py-1.5 text-[11px] font-mono ring-1 ring-border text-text-primary"
+            placeholder="Key (e.g. order_101)"
+          />
+          <button
+            onClick={handleProduce}
+            className="rounded-lg bg-accent-brand px-3 py-1.5 text-[11px] font-bold text-bg-base hover:opacity-90 active:scale-95 flex items-center gap-1.5 shadow-sm"
+          >
+            <Plus className="size-3" /> Publish Event
+          </button>
+          <button
+            onClick={handlePollCommit}
+            className="rounded-lg bg-bg-surface-1 px-3 py-1.5 text-[11px] font-bold text-text-primary ring-1 ring-border hover:bg-bg-surface-3 active:scale-95"
+          >
+            Poll & Commit (Lag -1)
+          </button>
+        </div>
+        <span className="text-[10.5px] font-mono text-text-muted">
+          Total Produced: <strong className="text-accent-brand">{producedCount}</strong>
+        </span>
+      </div>
+
+      <div className="rounded-xl bg-black/60 p-3 ring-1 ring-border text-[11.5px] font-mono text-cyan-300">
+        <span className="text-cyan-400 font-bold">Group Coordinator Protocol: </span> {rebalanceStep}
+      </div>
+    </div>
+  )
+}
+
+// ==========================================
+// 9. LMAX DISRUPTOR LOCK-FREE RING BUFFER ANIMATOR
+// ==========================================
+export const DisruptorRingBufferAnimator: React.FC = () => {
+  const [producerCursor, setProducerCursor] = useState<number>(3)
+  const [consumerCursor, setConsumerCursor] = useState<number>(1)
+  const [log, setLog] = useState<string>('Disruptor running lock-free via CPU Memory Barriers.')
+  const bufferSize = 8 // Power of 2 for fast bitwise masking
+
+  const slots = Array.from({ length: bufferSize }, (_, idx) => {
+    const isProduced = idx <= producerCursor % bufferSize
+    const isConsumed = idx <= consumerCursor % bufferSize
+    return {
+      index: idx,
+      seq: idx,
+      status: isConsumed ? 'consumed' : isProduced ? 'pending' : 'empty',
+    }
+  })
+
+  const handleWrite = () => {
+    // Check if buffer is full: producer cannot lap consumer
+    if (producerCursor - consumerCursor >= bufferSize) {
+      setLog('⚠️ Ring Buffer FULL: Producer back-pressured! Cannot overwrite unread sequence.')
+      return
+    }
+    const nextP = producerCursor + 1
+    setProducerCursor(nextP)
+    setLog(`✅ Atomic CAS Write: Sequence #${nextP} written to Slot #${nextP & (bufferSize - 1)} without mutex locks.`)
+  }
+
+  const handleConsume = () => {
+    if (consumerCursor >= producerCursor) {
+      setLog('Consumer caught up to Producer cursor. Waiting for next batch.')
+      return
+    }
+    const nextC = consumerCursor + 1
+    setConsumerCursor(nextC)
+    setLog(`⚡ Matching Engine Processed: Sequence #${nextC} executed in sub-microsecond latency.`)
+  }
+
+  return (
+    <div className="space-y-4 rounded-xl bg-bg-surface-2 p-5 ring-1 ring-border text-text-primary">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/50 pb-3">
+        <div>
+          <span className="font-mono text-[11px] font-bold text-accent-brand uppercase tracking-wider block">
+            Ultra Low Latency Architecture
+          </span>
+          <h3 className="text-base font-bold text-text-primary">LMAX Disruptor Lock-Free Ring Buffer</h3>
+        </div>
+        <span className="rounded bg-sky-500/10 px-2 py-0.5 text-[10.5px] font-mono text-sky-400 ring-1 ring-sky-500/20 font-bold">
+          Zero-GC Off-Heap Circular Array
+        </span>
+      </div>
+
+      <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-2">
+        {slots.map((slot) => {
+          const isProducerHead = slot.index === (producerCursor % bufferSize)
+          const isConsumerHead = slot.index === (consumerCursor % bufferSize)
+          return (
+            <div
+              key={slot.index}
+              className={`rounded-xl p-3 ring-1 text-center font-mono space-y-1 transition ${
+                isProducerHead
+                  ? 'bg-cyan-500/20 ring-cyan-500/60 shadow-[0_0_12px_rgba(6,182,212,0.3)]'
+                  : isConsumerHead
+                  ? 'bg-emerald-500/20 ring-emerald-500/60'
+                  : 'bg-bg-surface-1 ring-border/60'
+              }`}
+            >
+              <span className="text-[10px] text-text-muted block">Slot #{slot.index}</span>
+              <span className="text-sm font-bold text-text-primary block">[{slot.seq}]</span>
+              <div className="pt-1 flex flex-col gap-0.5 text-[9px] font-bold">
+                {isProducerHead && <span className="text-cyan-400">P_HEAD</span>}
+                {isConsumerHead && <span className="text-emerald-400">C_READ</span>}
+                {!isProducerHead && !isConsumerHead && (
+                  <span className="text-text-muted opacity-40">READY</span>
+                )}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleWrite}
+            className="rounded-lg bg-cyan-500 px-3.5 py-1.5 text-[11.5px] font-bold text-black hover:bg-cyan-400 active:scale-95 shadow-sm"
+          >
+            Push Trade (Producer CAS)
+          </button>
+          <button
+            onClick={handleConsume}
+            className="rounded-lg bg-emerald-500 px-3.5 py-1.5 text-[11.5px] font-bold text-black hover:bg-emerald-400 active:scale-95 shadow-sm"
+          >
+            Match Engine (Consumer Read)
+          </button>
+        </div>
+        <div className="flex items-center gap-4 text-[11px] font-mono">
+          <span>Producer Cursor: <strong className="text-cyan-400">{producerCursor}</strong></span>
+          <span>Consumer Cursor: <strong className="text-emerald-400">{consumerCursor}</strong></span>
+          <span>Lag: <strong className="text-amber-400">{producerCursor - consumerCursor}</strong></span>
+        </div>
+      </div>
+
+      <div className="rounded-xl bg-bg-surface-1 p-3 ring-1 ring-border text-[11px] font-mono space-y-1">
+        <span className="text-text-muted font-bold block uppercase text-[10px]">
+          Hardware Mechanical Sympathy Optimization:
+        </span>
+        <p className="text-text-muted">
+          • <strong className="text-text-primary">Cache-Line Padding (64 Bytes):</strong> Pre-allocates unused 56-byte dummy long fields (<code className="text-cyan-300">p1..p7</code>) to ensure Producer and Consumer cursors reside on completely separate CPU L1 cache lines, eliminating False Sharing across multi-core CPUs.
+        </p>
+      </div>
+
+      <div className="rounded-xl bg-black/60 p-3 ring-1 ring-border text-[11.5px] font-mono text-cyan-300">
+        <span className="text-cyan-400 font-bold">Ring Engine: </span> {log}
+      </div>
+    </div>
+  )
+}
+
+// ==========================================
+// 10. UBER H3 SPATIAL HEXAGONAL DISPATCH ANIMATOR
+// ==========================================
+export const UberH3SpatialDispatchAnimator: React.FC = () => {
+  const [dispatchStage, setDispatchStage] = useState<'idle' | 'h3_encode' | 'ring0' | 'ring1' | 'matched'>('idle')
+  const [matchedDriver, setMatchedDriver] = useState<string | null>(null)
+  const [log, setLog] = useState<string>('Ready for rider dispatch request.')
+
+  const drivers = [
+    { id: 'D1', name: 'Alex M.', car: 'Toyota Camry (UberX)', eta: '4.2m', rating: '4.92', cell: 'N1' },
+    { id: 'D2', name: 'Sarah K.', car: 'Tesla Model 3 (Comfort)', eta: '2.1m', rating: '4.98', cell: 'Origin' },
+    { id: 'D3', name: 'Marcus R.', car: 'Chevy Bolt (UberX)', eta: '5.8m', rating: '4.85', cell: 'N3' },
+    { id: 'D4', name: 'Elena B.', car: 'BMW 5-Series (Black)', eta: '3.4m', rating: '4.95', cell: 'N5' },
+  ]
+
+  const handleStartDispatch = () => {
+    setDispatchStage('h3_encode')
+    setMatchedDriver(null)
+    setLog('1/4: Rider Lat/Lon GPS bits converted to H3 Hex Index (0x882681a339fffff) in O(1) bitwise operations.')
+
+    setTimeout(() => {
+      setDispatchStage('ring0')
+      setLog('2/4: Scanning Origin Hexagon (k-ring radius 0). Found 1 online driver.')
+    }, 1000)
+
+    setTimeout(() => {
+      setDispatchStage('ring1')
+      setLog('3/4: Expanding to 6 adjacent neighbor hexagons (k-ring radius 1). Found 3 additional drivers.')
+    }, 2000)
+
+    setTimeout(() => {
+      setDispatchStage('matched')
+      setMatchedDriver('D2')
+      setLog('4/4: Hungarian Matching optimization selected Driver Sarah K. (2.1m ETA, 4.98 rating, minimal wait time)!')
+    }, 3000)
+  }
+
+  return (
+    <div className="space-y-4 rounded-xl bg-bg-surface-2 p-5 ring-1 ring-border text-text-primary">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/50 pb-3">
+        <div>
+          <span className="font-mono text-[11px] font-bold text-accent-brand uppercase tracking-wider block">
+            Geospatial Dispatch Engine
+          </span>
+          <h3 className="text-base font-bold text-text-primary">Uber H3 Spatial Hexagonal Dispatch</h3>
+        </div>
+        <button
+          onClick={handleStartDispatch}
+          className="rounded-lg bg-accent-brand px-3.5 py-1.5 text-[11.5px] font-bold text-bg-base hover:opacity-90 active:scale-95 shadow-sm flex items-center gap-1.5"
+        >
+          <Car className="size-3.5" /> Request Ride Dispatch
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+        {/* Visual Hexagonal Grid */}
+        <div className="md:col-span-6 flex flex-col items-center justify-center p-3">
+          <div className="relative size-[230px]">
+            <svg viewBox="0 0 240 240" className="size-full overflow-visible">
+              {/* Origin Hexagon (Center) */}
+              <polygon
+                points="120,70 160,95 160,145 120,170 80,145 80,95"
+                fill={dispatchStage === 'ring0' || dispatchStage === 'matched' ? 'rgba(0, 240, 255, 0.25)' : 'rgba(255, 255, 255, 0.05)'}
+                stroke={dispatchStage === 'ring0' || dispatchStage === 'matched' ? '#00F0FF' : 'rgba(255, 255, 255, 0.2)'}
+                strokeWidth="2"
+                className="transition-all duration-300"
+              />
+              <text x="120" y="115" textAnchor="middle" className="fill-accent-brand text-[10px] font-mono font-bold">
+                Origin Hex
+              </text>
+              <text x="120" y="127" textAnchor="middle" className="fill-text-muted text-[8px] font-mono">
+                0x882681a
+              </text>
+
+              {/* Rider Pin */}
+              <circle cx="120" cy="100" r="5" fill="#F43F5E" stroke="#fff" strokeWidth="1.5" />
+
+              {/* Ring 1 Neighbors (6 hexagons) */}
+              {[
+                { name: 'N1', cx: 120, cy: 30 },
+                { name: 'N2', cx: 180, cy: 65 },
+                { name: 'N3', cx: 180, cy: 155 },
+                { name: 'N4', cx: 120, cy: 195 },
+                { name: 'N5', cx: 60, cy: 155 },
+                { name: 'N6', cx: 60, cy: 65 },
+              ].map((hex, i) => (
+                <g key={i}>
+                  <circle
+                    cx={hex.cx}
+                    cy={hex.cy}
+                    r="24"
+                    fill={dispatchStage === 'ring1' || dispatchStage === 'matched' ? 'rgba(168, 85, 247, 0.15)' : 'rgba(255, 255, 255, 0.03)'}
+                    stroke={dispatchStage === 'ring1' || dispatchStage === 'matched' ? '#A855F7' : 'rgba(255, 255, 255, 0.1)'}
+                    strokeWidth="1.5"
+                    strokeDasharray="2 2"
+                    className="transition-all duration-300"
+                  />
+                  <text x={hex.cx} y={hex.cy} textAnchor="middle" dominantBaseline="middle" className="fill-text-muted text-[8.5px] font-mono">
+                    {hex.name}
+                  </text>
+                </g>
+              ))}
+
+              {/* Route Trajectory when matched */}
+              {dispatchStage === 'matched' && (
+                <path
+                  d="M 120 140 Q 130 120 120 100"
+                  fill="none"
+                  stroke="#10B981"
+                  strokeWidth="3"
+                  strokeDasharray="4 4"
+                  className="animate-pulse"
+                />
+              )}
+            </svg>
+          </div>
+          <span className="text-[10px] font-mono text-text-muted mt-1">
+            H3 Hierarchical Hexagonal Indexing (Resolution 8 ~460m aperture)
+          </span>
+        </div>
+
+        {/* Candidate Drivers List */}
+        <div className="md:col-span-6 space-y-2">
+          <span className="text-[11px] font-mono font-bold uppercase text-text-muted block">
+            Nearby Available Drivers (k-Ring Search)
+          </span>
+          {drivers.map((d) => {
+            const isWinner = matchedDriver === d.id
+            return (
+              <div
+                key={d.id}
+                className={`rounded-xl p-2.5 ring-1 transition flex items-center justify-between ${
+                  isWinner
+                    ? 'bg-emerald-500/20 ring-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.3)]'
+                    : 'bg-bg-surface-1 ring-border'
+                }`}
+              >
+                <div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="font-mono text-[11.5px] font-bold text-text-primary">{d.name}</span>
+                    <span className="text-[10px] text-text-muted">({d.cell})</span>
+                  </div>
+                  <span className="text-[10.5px] text-text-muted block">{d.car}</span>
+                </div>
+                <div className="text-right">
+                  <span className={`text-[12px] font-bold font-mono block ${isWinner ? 'text-emerald-400' : 'text-accent-brand'}`}>
+                    ETA {d.eta}
+                  </span>
+                  <span className="text-[10px] text-text-muted">★ {d.rating}</span>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      <div className="rounded-xl bg-black/60 p-3 ring-1 ring-border text-[11.5px] font-mono text-cyan-300">
+        <span className="text-cyan-400 font-bold">Dispatch Step: </span> {log}
+      </div>
+    </div>
+  )
+}
+
 // Master component selector mapped to chapter or manual tabs
 interface ChapterAnimatorProps {
   unitId: string
@@ -871,14 +1695,14 @@ export const ChapterConceptAnimator: React.FC<ChapterAnimatorProps> = ({ unitId 
 
   // Automatically determine default widget based on Unit / Chapter
   let defaultWidget = 'cap'
-  if (unitId === 'unit-1') defaultWidget = 'cap'
+  if (unitId === 'unit-1') defaultWidget = 'consistenthash'
   else if (unitId === 'unit-2') defaultWidget = '2pc'
   else if (unitId === 'unit-3') defaultWidget = 'lsm'
   else if (unitId === 'unit-4') defaultWidget = 'cache'
-  else if (unitId === 'unit-5') defaultWidget = 'cap'
-  else if (unitId === 'unit-6') defaultWidget = 'cache'
+  else if (unitId === 'unit-5') defaultWidget = 'disruptor'
+  else if (unitId === 'unit-6') defaultWidget = 'kafka'
   else if (unitId === 'unit-7') defaultWidget = 'raft'
-  else if (unitId === 'unit-8') defaultWidget = 'ratelimit'
+  else if (unitId === 'unit-8') defaultWidget = 'uber'
 
   const currentWidget = activeWidget === 'auto' ? defaultWidget : activeWidget
 
@@ -893,11 +1717,15 @@ export const ChapterConceptAnimator: React.FC<ChapterAnimatorProps> = ({ unitId 
         <div className="flex flex-wrap gap-1.5 text-[11px] font-mono">
           {[
             { id: 'cap', label: 'CAP Partition' },
+            { id: 'consistenthash', label: 'Consistent Hash Ring' },
             { id: '2pc', label: '2PC Transactions' },
             { id: 'lsm', label: 'LSM vs B+ Tree' },
             { id: 'cache', label: 'LRU Cache & Stampede' },
+            { id: 'kafka', label: 'Kafka Rebalance' },
             { id: 'raft', label: 'Raft Consensus' },
+            { id: 'disruptor', label: 'Disruptor Ring Buffer' },
             { id: 'ratelimit', label: 'Token Bucket Limiter' },
+            { id: 'uber', label: 'Uber H3 Dispatch' },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -916,11 +1744,16 @@ export const ChapterConceptAnimator: React.FC<ChapterAnimatorProps> = ({ unitId 
 
       {/* Render Active Animator */}
       {currentWidget === 'cap' && <CapPartitionAnimator />}
+      {currentWidget === 'consistenthash' && <ConsistentHashRingAnimator />}
       {currentWidget === '2pc' && <TwoPhaseCommitAnimator />}
       {currentWidget === 'lsm' && <LsmTreeVsBTreeAnimator />}
       {currentWidget === 'cache' && <CacheEvictionAndStampedeAnimator />}
+      {currentWidget === 'kafka' && <KafkaPartitionRebalanceAnimator />}
       {currentWidget === 'raft' && <RaftConsensusAnimator />}
+      {currentWidget === 'disruptor' && <DisruptorRingBufferAnimator />}
       {currentWidget === 'ratelimit' && <RateLimiterTokenBucketAnimator />}
+      {currentWidget === 'uber' && <UberH3SpatialDispatchAnimator />}
     </div>
   )
 }
+
