@@ -20,6 +20,9 @@ import {
   Radio,
   Copy,
   Check,
+  Terminal,
+  HardDrive,
+  Activity,
 } from 'lucide-react'
 
 interface SystemVisualizerProps {
@@ -52,6 +55,7 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
   const [chaosMode, setChaosMode] = useState<boolean>(false)
   const [failedNodes, setFailedNodes] = useState<Record<string, boolean>>({})
   const [copiedPayload, setCopiedPayload] = useState<boolean>(false)
+  const [trafficProfile, setTrafficProfile] = useState<'normal' | 'peak' | 'spike'>('normal')
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const steps = system.animationSteps
@@ -218,6 +222,43 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
               </button>
             ))}
           </div>
+
+          {/* Simulated Traffic Load Generator */}
+          <div className="ml-1 flex items-center rounded-lg bg-bg-surface-1 p-0.5 ring-1 ring-border text-[11px] font-mono">
+            <button
+              onClick={() => setTrafficProfile('normal')}
+              title="1,000 QPS Baseline Traffic"
+              className={`rounded px-2 py-0.5 transition ${
+                trafficProfile === 'normal'
+                  ? 'bg-sky-500 text-black font-bold'
+                  : 'text-text-muted hover:text-text-primary'
+              }`}
+            >
+              1k QPS
+            </button>
+            <button
+              onClick={() => setTrafficProfile('peak')}
+              title="10,000 QPS Peak Load"
+              className={`rounded px-2 py-0.5 transition ${
+                trafficProfile === 'peak'
+                  ? 'bg-amber-400 text-black font-bold'
+                  : 'text-text-muted hover:text-text-primary'
+              }`}
+            >
+              10k QPS
+            </button>
+            <button
+              onClick={() => setTrafficProfile('spike')}
+              title="50,000 QPS Flash Spike"
+              className={`rounded px-2 py-0.5 transition ${
+                trafficProfile === 'spike'
+                  ? 'bg-rose-500 text-white font-bold animate-pulse'
+                  : 'text-text-muted hover:text-text-primary'
+              }`}
+            >
+              50k Spike
+            </button>
+          </div>
         </div>
       </div>
 
@@ -320,8 +361,13 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
                 className="animate-ping"
               />
 
-              {/* 3 Traveling Particles (Progress Stream) */}
-              {[0.3, 0.5, 0.7].map((offset, idx) => {
+              {/* Traveling Particles (Progress Stream) */}
+              {(trafficProfile === 'spike'
+                ? [0.12, 0.25, 0.38, 0.51, 0.64, 0.77, 0.9]
+                : trafficProfile === 'peak'
+                ? [0.2, 0.35, 0.5, 0.65, 0.8]
+                : [0.3, 0.5, 0.7]
+              ).map((offset, idx) => {
                 const px = fromNodeObj.x + (toNodeObj.x - fromNodeObj.x) * offset
                 const py = fromNodeObj.y + (toNodeObj.y - fromNodeObj.y) * offset - 3
                 return (
@@ -329,8 +375,8 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
                     key={idx}
                     cx={`${px}%`}
                     cy={`${py}%`}
-                    r={idx === 1 ? 6.5 : 4}
-                    fill="url(#activeGrad)"
+                    r={trafficProfile === 'spike' ? 6 : idx === 1 ? 6.5 : 4}
+                    fill={trafficProfile === 'spike' ? '#f43f5e' : 'url(#activeGrad)'}
                     filter="url(#laserGlow)"
                     className="animate-pulse"
                   />
@@ -543,6 +589,47 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
             </button>
           </div>
 
+          {/* Hardware & Network Telemetry Gauges */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 font-mono text-[11px]">
+            <div className="rounded-xl bg-bg-surface-1 p-2.5 ring-1 ring-border">
+              <span className="text-text-muted flex items-center gap-1 text-[10px] uppercase">
+                <Cpu className="size-3 text-sky-400" /> CPU Core Load
+              </span>
+              <span className={`text-[13px] font-bold block mt-0.5 ${
+                trafficProfile === 'spike' ? 'text-rose-400' : trafficProfile === 'peak' ? 'text-amber-400' : 'text-emerald-400'
+              }`}>
+                {trafficProfile === 'spike' ? '94%' : trafficProfile === 'peak' ? '68%' : '26%'}
+              </span>
+            </div>
+
+            <div className="rounded-xl bg-bg-surface-1 p-2.5 ring-1 ring-border">
+              <span className="text-text-muted flex items-center gap-1 text-[10px] uppercase">
+                <HardDrive className="size-3 text-purple-400" /> RAM Memory
+              </span>
+              <span className="text-[13px] font-bold text-purple-300 block mt-0.5">
+                {trafficProfile === 'spike' ? '14.2 GB' : trafficProfile === 'peak' ? '6.8 GB' : '2.1 GB'} / 16 GB
+              </span>
+            </div>
+
+            <div className="rounded-xl bg-bg-surface-1 p-2.5 ring-1 ring-border">
+              <span className="text-text-muted flex items-center gap-1 text-[10px] uppercase">
+                <Activity className="size-3 text-emerald-400" /> Active Connections
+              </span>
+              <span className="text-[13px] font-bold text-emerald-400 block mt-0.5">
+                {(trafficProfile === 'spike' ? 42800 : trafficProfile === 'peak' ? 8400 : 920).toLocaleString()} Sockets
+              </span>
+            </div>
+
+            <div className="rounded-xl bg-bg-surface-1 p-2.5 ring-1 ring-border">
+              <span className="text-text-muted flex items-center gap-1 text-[10px] uppercase">
+                <Zap className="size-3 text-amber-400" /> p99 Latency
+              </span>
+              <span className="text-[13px] font-bold text-amber-300 block mt-0.5">
+                {trafficProfile === 'spike' ? '18.4ms' : trafficProfile === 'peak' ? '5.8ms' : '1.9ms'}
+              </span>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-[12.5px]">
             <div className="rounded-xl bg-bg-surface-1 p-3 ring-1 ring-border">
               <span className="font-mono text-[11px] text-text-muted uppercase font-bold">Tech Stack:</span>
@@ -552,6 +639,25 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
               <span className="font-mono text-[11px] text-text-muted uppercase font-bold">Responsibilities & Internal Mechanics:</span>
               <p className="mt-1 text-text-secondary leading-relaxed">{selectedNode.details}</p>
             </div>
+          </div>
+
+          {/* Microservice Live Stdout Console */}
+          <div className="rounded-xl bg-black/80 p-3 ring-1 ring-border font-mono text-[11px] space-y-1">
+            <div className="flex items-center gap-1.5 text-text-muted border-b border-border/50 pb-1.5 mb-1.5">
+              <Terminal className="size-3.5 text-accent-brand" />
+              <span className="uppercase text-[10px] tracking-wider text-accent-brand font-bold">
+                Stdout Stream: {selectedNode.id}.service.internal
+              </span>
+            </div>
+            <p className="text-text-muted">
+              [SYSTEM] Process container pid 1042 active. GC pause: 0.14ms.
+            </p>
+            <p className="text-sky-400">
+              [INGRESS] Handled request {currentStep.protocol} with payload size {JSON.stringify(currentStep.payload).length} bytes.
+            </p>
+            <p className="text-emerald-400">
+              [STATE] Transitioned to "{currentStep.stateChange}".
+            </p>
           </div>
         </div>
       )}
