@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import {
   Play,
   RotateCcw,
@@ -17,6 +17,14 @@ import {
   Plus,
   Users,
 } from 'lucide-react'
+import {
+  playPacketTransmitSound,
+  playPacketArriveSound,
+  playNodeCrashSound,
+  playStepClickSound,
+  playTradeMatchSound,
+  playSuccessChimeSound,
+} from '../utils/audioEffects'
 
 // ==========================================
 // 1. CAP & PACELC THEOREM ANIMATOR
@@ -29,18 +37,28 @@ export const CapPartitionAnimator: React.FC = () => {
   const [lastEvent, setLastEvent] = useState<string>('System operating normally in equilibrium.')
   const [inFlightWrite, setInFlightWrite] = useState<boolean>(false)
   const [writeSuccess, setWriteSuccess] = useState<boolean | null>(null)
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    }
+  }, [])
 
   const handleDeposit = () => {
     setInFlightWrite(true)
     setWriteSuccess(null)
+    playPacketTransmitSound()
     const amount = 50
     const newBal = balance + amount
 
-    setTimeout(() => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    timeoutRef.current = setTimeout(() => {
       if (isPartitioned) {
         if (mode === 'CP') {
           // CP Mode: Must reject write to maintain consistency across partition
           setWriteSuccess(false)
+          playNodeCrashSound()
           setLastEvent(
             `❌ CP REJECTION: Network partitioned! Node A cannot reach quorum with Node B. Deposit of $${amount} REFUSED to guarantee consistency.`
           )
@@ -48,6 +66,7 @@ export const CapPartitionAnimator: React.FC = () => {
           // AP Mode: Accept write on Node A, but Node B becomes stale
           setBalance(newBal)
           setWriteSuccess(true)
+          playTradeMatchSound()
           setLastEvent(
             `⚠️ AP ACCEPTANCE: Node A accepted $${amount} (New balance: $${newBal}). But Node B is partitioned and STALE ($${nodeBBalance})!`
           )
@@ -57,6 +76,7 @@ export const CapPartitionAnimator: React.FC = () => {
         setBalance(newBal)
         setNodeBBalance(newBal)
         setWriteSuccess(true)
+        playSuccessChimeSound()
         setLastEvent(`✅ Synced write of $${amount} committed to both Node A and Node B. Balance: $${newBal}`)
       }
       setInFlightWrite(false)
@@ -68,9 +88,11 @@ export const CapPartitionAnimator: React.FC = () => {
       // Healing partition: Reconcile state
       setIsPartitioned(false)
       setNodeBBalance(balance)
+      playSuccessChimeSound()
       setLastEvent(`⚡ Partition HEALED: Node B synchronized with Node A via Anti-Entropy Merkle tree reconciliation.`)
     } else {
       setIsPartitioned(true)
+      playNodeCrashSound()
       setLastEvent(`🚨 NETWORK SPLIT: Network switch failure isolated Node A from Node B!`)
     }
   }
@@ -239,35 +261,54 @@ export const TwoPhaseCommitAnimator: React.FC = () => {
     db3: 'PENDING',
   })
   const [log, setLog] = useState<string>('Click "Execute Distributed Transaction" to start 2PC protocol.')
+  const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([])
+
+  const clearAllTimeouts = () => {
+    timeoutsRef.current.forEach((t) => clearTimeout(t))
+    timeoutsRef.current = []
+  }
+
+  useEffect(() => {
+    return () => clearAllTimeouts()
+  }, [])
 
   const runTransaction = () => {
+    clearAllTimeouts()
     setPhase('PREPARE')
     setDbVotes({ db1: 'PENDING', db2: 'PENDING', db3: 'PENDING' })
     setLog('Phase 1 (PREPARE): Coordinator broadcasts PREPARE query and acquires row locks.')
+    playPacketTransmitSound()
 
-    setTimeout(() => {
+    const t1 = setTimeout(() => {
       setPhase('VOTING')
       const db2Vote = simulateFail ? 'NO' : 'YES'
       setDbVotes({ db1: 'YES', db2: db2Vote, db3: 'YES' })
+      playStepClickSound()
       setLog(
         simulateFail
           ? 'Phase 1 Voting: DB2 returned VOTE_ABORT due to constraint failure! Quorum not reached.'
           : 'Phase 1 Voting: All 3 participants successfully replied VOTE_COMMIT.'
       )
 
-      setTimeout(() => {
+      const t2 = setTimeout(() => {
         if (simulateFail) {
           setPhase('ABORT')
+          playNodeCrashSound()
           setLog('Phase 2 (GLOBAL_ROLLBACK): Coordinator sends ROLLBACK. All participants release locks safely.')
         } else {
           setPhase('COMMIT')
+          playSuccessChimeSound()
           setLog('Phase 2 (GLOBAL_COMMIT): Coordinator sends COMMIT. All participants write to disk WAL and ACK.')
         }
       }, 1000)
+      timeoutsRef.current.push(t2)
     }, 1000)
+    timeoutsRef.current.push(t1)
   }
 
   const reset = () => {
+    clearAllTimeouts()
+    playStepClickSound()
     setPhase('IDLE')
     setDbVotes({ db1: 'PENDING', db2: 'PENDING', db3: 'PENDING' })
     setLog('Ready to start transaction.')
@@ -313,7 +354,7 @@ export const TwoPhaseCommitAnimator: React.FC = () => {
                 className={`rounded-full px-3 py-1 font-mono text-[10.5px] font-bold transition ${
                   isActive
                     ? p === 'ABORT'
-                      ? 'bg-rose-500 text-white'
+                      ? 'bg-rose-500 text-white shadow-[0_0_12px_#f43f5e]'
                       : 'bg-purple-500 text-white shadow-[0_0_12px_#a855f7]'
                     : 'bg-bg-surface-2 text-text-muted'
                 }`}
@@ -333,11 +374,32 @@ export const TwoPhaseCommitAnimator: React.FC = () => {
           <span className="text-[10px] font-mono text-text-muted">Manages 2PC State Machine</span>
         </div>
 
-        {/* Branching Wires */}
-        <div className="my-4 h-6 w-full flex justify-around items-center px-10">
-          <div className="h-full w-0.5 bg-purple-500/40" />
-          <div className="h-full w-0.5 bg-purple-500/40" />
-          <div className="h-full w-0.5 bg-purple-500/40" />
+        {/* Branching SVG Wires */}
+        <div className="my-3 h-10 w-full relative">
+          <svg className="size-full overflow-visible pointer-events-none" viewBox="0 0 300 40" preserveAspectRatio="none">
+            {/* Wires from Coordinator (150, 0) to 3 DBs (50, 40), (150, 40), (250, 40) */}
+            {[50, 150, 250].map((destX, i) => (
+              <g key={i}>
+                <line
+                  x1="150"
+                  y1="0"
+                  x2={destX}
+                  y2="40"
+                  stroke={
+                    phase === 'ABORT' && i === 1
+                      ? '#f43f5e'
+                      : phase === 'COMMIT'
+                      ? '#10b981'
+                      : '#a855f7'
+                  }
+                  strokeWidth="2"
+                  strokeDasharray={phase !== 'IDLE' ? '6 6' : '3 3'}
+                  className={phase !== 'IDLE' ? 'animate-flow-dash' : ''}
+                  opacity={phase !== 'IDLE' ? 0.9 : 0.4}
+                />
+              </g>
+            ))}
+          </svg>
         </div>
 
         {/* 3 Participant DBs */}
@@ -409,14 +471,27 @@ export const LsmTreeVsBTreeAnimator: React.FC = () => {
   const [sstableL0, setSstableL0] = useState<string[]>(['user:01', 'user:05', 'user:09'])
   const [isFlushing, setIsFlushing] = useState<boolean>(false)
   const [log, setLog] = useState<string>('LSM Engine: Fast append-only writes to RAM MemTable and WAL disk.')
+  const [btreeRoot, setBtreeRoot] = useState<number[]>([30])
+  const [btreeLeaves, setBtreeLeaves] = useState<number[][]>([[10, 20], [30, 45]])
+  const [btreeSplits, setBtreeSplits] = useState<number>(0)
+  const flushTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (flushTimeoutRef.current) clearTimeout(flushTimeoutRef.current)
+    }
+  }, [])
 
   const handleInsert = () => {
+    playStepClickSound()
     const nextKey = `user:${Math.floor(Math.random() * 890 + 100)}`
     if (memTable.length >= 4) {
       // Trigger flush
       setIsFlushing(true)
       setLog(`MemTable threshold exceeded (4 items). Flushing sorted immutable run to SSTable Level 0 on NVMe...`)
-      setTimeout(() => {
+      if (flushTimeoutRef.current) clearTimeout(flushTimeoutRef.current)
+      flushTimeoutRef.current = setTimeout(() => {
+        playTradeMatchSound()
         setSstableL0((prev) => [...prev, ...memTable].sort())
         setMemTable([nextKey])
         setIsFlushing(false)
@@ -425,6 +500,34 @@ export const LsmTreeVsBTreeAnimator: React.FC = () => {
     } else {
       setMemTable((prev) => [...prev, nextKey].sort())
       setLog(`Sequential write: ${nextKey} appended to WAL and inserted into SkipList MemTable in O(log N).`)
+    }
+  }
+
+  const handleBtreeInsert = () => {
+    playStepClickSound()
+    const newKey = Math.floor(Math.random() * 75 + 12)
+    const targetIdx = newKey >= (btreeRoot[0] || 0) ? btreeLeaves.length - 1 : 0
+    const currentLeaf = [...(btreeLeaves[targetIdx] || [10])]
+
+    if (!currentLeaf.includes(newKey)) {
+      currentLeaf.push(newKey)
+      currentLeaf.sort((a, b) => a - b)
+    }
+
+    if (currentLeaf.length > 3) {
+      playTradeMatchSound()
+      const mid = currentLeaf[Math.floor(currentLeaf.length / 2)]
+      const leftPart = currentLeaf.slice(0, 2)
+      const rightPart = currentLeaf.slice(2)
+      setBtreeLeaves([leftPart, rightPart])
+      setBtreeRoot([mid])
+      setBtreeSplits((s) => s + 1)
+      setLog(`⚡ B+ Tree Leaf Overflow! Leaf page split into 2 disk blocks. Promoted pivot [${mid}] to Root directory index.`)
+    } else {
+      const updated = [...btreeLeaves]
+      updated[targetIdx] = currentLeaf
+      setBtreeLeaves(updated)
+      setLog(`In-Place Page Rewrite: Key [${newKey}] written to 4KB Disk Leaf Page #${targetIdx + 1} (incurred random disk I/O).`)
     }
   }
 
@@ -446,6 +549,7 @@ export const LsmTreeVsBTreeAnimator: React.FC = () => {
         <div className="flex rounded-lg bg-bg-surface-1 p-0.5 ring-1 ring-border text-[11px] font-mono">
           <button
             onClick={() => {
+              playStepClickSound()
               setEngineType('LSM')
               setLog('LSM Engine selected: RocksDB / Cassandra append-only design.')
             }}
@@ -457,6 +561,7 @@ export const LsmTreeVsBTreeAnimator: React.FC = () => {
           </button>
           <button
             onClick={() => {
+              playStepClickSound()
               setEngineType('BTREE')
               setLog('B+ Tree selected: PostgreSQL / MySQL InnoDB page updates.')
             }}
@@ -497,7 +602,7 @@ export const LsmTreeVsBTreeAnimator: React.FC = () => {
               disabled={isFlushing}
               className="mt-4 w-full rounded-lg bg-emerald-500 py-2 text-[11.5px] font-bold text-black shadow-md hover:bg-emerald-400 disabled:opacity-50"
             >
-              + Write New Key-Value Pair
+              + Write New Key-Value Pair (Sequential I/O)
             </button>
           </div>
 
@@ -528,17 +633,80 @@ export const LsmTreeVsBTreeAnimator: React.FC = () => {
           </div>
         </div>
       ) : (
-        /* B+ Tree View */
-        <div className="my-6 rounded-xl bg-black/40 p-6 text-center ring-1 ring-border space-y-4">
-          <div className="inline-flex rounded-xl bg-emerald-500/10 p-3 text-emerald-400 ring-1 ring-emerald-500/30">
-            <Layers className="size-8" />
+        /* Interactive B+ Tree View */
+        <div className="my-6 rounded-xl bg-black/40 p-6 ring-1 ring-border space-y-5">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/40 pb-3">
+            <div className="flex items-center gap-2 text-emerald-400">
+              <Layers className="size-5" />
+              <span className="font-bold text-[13px]">B+ Tree 4KB-16KB Disk Page Hierarchy</span>
+            </div>
+            <div className="flex items-center gap-2 text-[11px] font-mono text-text-muted">
+              <span>Page Splits: <strong className="text-amber-400">{btreeSplits}</strong></span>
+              <span className="rounded bg-amber-500/10 px-2 py-0.5 text-amber-300 ring-1 ring-amber-500/30">
+                Random Disk I/O: High
+              </span>
+            </div>
           </div>
-          <h5 className="text-[14px] font-bold">B+ Tree Disk Page Hierarchies</h5>
-          <p className="max-w-xl mx-auto text-[12.5px] text-text-secondary leading-relaxed">
-            Data resides in fixed 4KB-16KB pages. Writes require finding the target leaf page, modifying bytes in place,
-            and splitting pages when node fan-out exceeds $M$. Delivers predictable $O(\log N)$ point reads, but incurs
-            random disk I/O on heavy write workloads.
-          </p>
+
+          {/* Tree Diagram */}
+          <div className="flex flex-col items-center space-y-4">
+            {/* Root Page */}
+            <div className="flex flex-col items-center">
+              <span className="text-[9.5px] font-mono text-text-muted uppercase mb-1">Root Directory Page</span>
+              <div className="flex gap-1.5 rounded-xl bg-sky-500/20 p-2.5 ring-1 ring-sky-500/50 shadow-md">
+                {btreeRoot.map((k, i) => (
+                  <span key={i} className="rounded bg-sky-500 px-3 py-1 font-mono text-[12px] font-bold text-black shadow">
+                    [{k}]
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Tree Branch Connectors */}
+            <div className="h-6 w-48 relative">
+              <svg className="size-full overflow-visible pointer-events-none" viewBox="0 0 100 24">
+                <line x1="50" y1="0" x2="20" y2="24" stroke="#0284c7" strokeWidth="2" strokeDasharray="3 3" />
+                <line x1="50" y1="0" x2="80" y2="24" stroke="#0284c7" strokeWidth="2" strokeDasharray="3 3" />
+              </svg>
+            </div>
+
+            {/* Leaf Pages Linked Horizontally */}
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              {btreeLeaves.map((leaf, leafIdx) => (
+                <div key={leafIdx} className="flex items-center gap-3">
+                  <div className="rounded-xl bg-emerald-500/10 p-3 ring-1 ring-emerald-500/40 text-center space-y-1 shadow-md">
+                    <span className="text-[9.5px] font-mono text-emerald-400 block font-bold">
+                      Leaf Page #{leafIdx + 1}
+                    </span>
+                    <div className="flex gap-1">
+                      {leaf.map((k, kIdx) => (
+                        <span key={kIdx} className="rounded bg-emerald-500/20 px-2 py-1 font-mono text-[11px] font-bold text-emerald-300 ring-1 ring-emerald-500/30">
+                          {k}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  {leafIdx < btreeLeaves.length - 1 && (
+                    <span className="font-mono text-emerald-400 font-bold text-[13px] animate-pulse">
+                      ⇄
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+            <span className="text-[10px] font-mono text-text-muted">
+              Leaf pages form a continuous Doubly-Linked List (⇄) for fast sequential range scans ($O(K)$).
+            </span>
+          </div>
+
+          <div className="flex justify-center pt-2">
+            <button
+              onClick={handleBtreeInsert}
+              className="rounded-lg bg-emerald-500 px-4 py-2 text-[12px] font-bold text-black shadow hover:bg-emerald-400 active:scale-95"
+            >
+              + Write Key (Simulate In-Place Disk Page Write & Page Split)
+            </button>
+          </div>
         </div>
       )}
 
@@ -556,14 +724,23 @@ export const CacheEvictionAndStampedeAnimator: React.FC = () => {
   const [cache, setCache] = useState<string[]>(['Key_A', 'Key_B', 'Key_C', 'Key_D'])
   const [log, setLog] = useState<string>('Cache capacity: 4 slots. Double-linked list maintains LRU order.')
   const [isStampedeActive, setIsStampedeActive] = useState<boolean>(false)
+  const stampedeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (stampedeTimeoutRef.current) clearTimeout(stampedeTimeoutRef.current)
+    }
+  }, [])
 
   const accessKey = (k: string) => {
+    playStepClickSound()
     // Move to front (MRU)
     setCache((prev) => [k, ...prev.filter((item) => item !== k)])
     setLog(`Accessed [${k}]! Promoted to Head (MRU - Most Recently Used).`)
   }
 
   const insertNewKey = () => {
+    playStepClickSound()
     const newKey = `Key_${String.fromCharCode(65 + Math.floor(Math.random() * 26))}_${Math.floor(Math.random() * 99)}`
     setCache((prev) => {
       const evicted = prev[prev.length - 1]
@@ -575,9 +752,12 @@ export const CacheEvictionAndStampedeAnimator: React.FC = () => {
 
   const simulateStampede = () => {
     setIsStampedeActive(true)
+    playNodeCrashSound()
     setLog(`🚨 50 Concurrent threads requested expired key 'HOT_DEAL'! Singleflight mutex locks 1 DB query, 49 threads wait on channel.`)
-    setTimeout(() => {
+    if (stampedeTimeoutRef.current) clearTimeout(stampedeTimeoutRef.current)
+    stampedeTimeoutRef.current = setTimeout(() => {
       setIsStampedeActive(false)
+      playSuccessChimeSound()
       accessKey('HOT_DEAL')
       setLog(`✅ Database queried ONCE (10ms). Hot key cached in Redis. 50 requests served without database overload!`)
     }, 1200)
@@ -607,6 +787,38 @@ export const CacheEvictionAndStampedeAnimator: React.FC = () => {
         </button>
       </div>
 
+      {/* Visual Singleflight Stampede Gate Banner (when stampede is active) */}
+      {isStampedeActive && (
+        <div className="my-4 rounded-xl bg-amber-500/10 p-4 ring-1 ring-amber-500/40 animate-fadeIn space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-mono font-bold text-amber-300 uppercase flex items-center gap-1.5">
+              <Shield className="size-4 text-amber-400 animate-pulse" /> Singleflight Mutex Gate (50 Requests Coalesced)
+            </span>
+            <span className="rounded bg-rose-500/20 px-2 py-0.5 text-[10px] font-mono text-rose-300 ring-1 ring-rose-500/30 font-bold">
+              1 DB Query In Flight
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-[11px] font-mono">
+            <div className="rounded-lg bg-black/50 p-2.5 ring-1 ring-border text-center space-y-1">
+              <span className="text-text-muted text-[10px] block">Incoming Stampede</span>
+              <span className="text-amber-400 font-bold block text-[13px]">50 Threads</span>
+              <span className="text-text-muted text-[9.5px]">Requesting 'HOT_DEAL'</span>
+            </div>
+            <div className="rounded-lg bg-amber-500/20 p-2.5 ring-1 ring-amber-500/50 text-center space-y-1">
+              <span className="text-amber-300 text-[10px] block font-bold">Singleflight Mutex</span>
+              <span className="text-white font-bold block text-[13px]">1 Lock Holder</span>
+              <span className="text-amber-300 text-[9.5px]">49 Waiting on sync.WaitGroup</span>
+            </div>
+            <div className="rounded-lg bg-emerald-500/10 p-2.5 ring-1 ring-emerald-500/30 text-center space-y-1">
+              <span className="text-emerald-400 text-[10px] block font-bold">Origin DB Impact</span>
+              <span className="text-emerald-300 font-bold block text-[13px]">1 Query (10ms)</span>
+              <span className="text-emerald-400 text-[9.5px]">49 Avoided DB Crashes!</span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Cache Slots View */}
       <div className="my-6 rounded-xl bg-black/40 p-6 ring-1 ring-border">
         <div className="flex items-center justify-between text-[11px] font-mono text-text-muted mb-3">
@@ -631,7 +843,7 @@ export const CacheEvictionAndStampedeAnimator: React.FC = () => {
         <div className="mt-4 flex items-center justify-center">
           <button
             onClick={insertNewKey}
-            className="rounded-lg bg-bg-surface-2 px-4 py-1.5 text-[11.5px] font-semibold text-text-primary ring-1 ring-border hover:bg-bg-surface-3"
+            className="rounded-lg bg-bg-surface-2 px-4 py-1.5 text-[11.5px] font-semibold text-text-primary ring-1 ring-border hover:bg-bg-surface-3 active:scale-95"
           >
             + Insert Key to Trigger LRU Eviction
           </button>
@@ -652,23 +864,62 @@ export const RaftConsensusAnimator: React.FC = () => {
   const [leaderId, setLeaderId] = useState<number | null>(1)
   const [term, setTerm] = useState<number>(1)
   const [isElecting, setIsElecting] = useState<boolean>(false)
+  const [isReplicating, setIsReplicating] = useState<boolean>(false)
+  const [committedEntries, setCommittedEntries] = useState<string[]>(['x=10', 'x=25'])
   const [log, setLog] = useState<string>('Node 1 is the elected Leader in Term 1, pulsing periodic heartbeats.')
+  const electionTimeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([])
+
+  const clearElectionTimeouts = () => {
+    electionTimeoutsRef.current.forEach((t) => clearTimeout(t))
+    electionTimeoutsRef.current = []
+  }
+
+  useEffect(() => {
+    return () => clearElectionTimeouts()
+  }, [])
 
   const triggerElection = () => {
+    clearElectionTimeouts()
     setIsElecting(true)
     setLeaderId(null)
+    playNodeCrashSound()
     const nextTerm = term + 1
     setTerm(nextTerm)
     setLog(`Leader crashed! Node 2 election timeout fired. Transitions to CANDIDATE for Term ${nextTerm}.`)
 
-    setTimeout(() => {
+    const t1 = setTimeout(() => {
+      playPacketTransmitSound()
       setLog(`Node 2 broadcasted RequestVote RPCs to Node 1 and Node 3. Received 2/3 votes (Quorum achieved).`)
-      setTimeout(() => {
+      const t2 = setTimeout(() => {
         setLeaderId(2)
         setIsElecting(false)
+        playSuccessChimeSound()
         setLog(`🎉 Node 2 elected LEADER for Term ${nextTerm}! Broadcasting AppendEntries heartbeats.`)
       }, 900)
+      electionTimeoutsRef.current.push(t2)
     }, 900)
+    electionTimeoutsRef.current.push(t1)
+  }
+
+  const handleClientWrite = () => {
+    if (!leaderId || isElecting || isReplicating) return
+    setIsReplicating(true)
+    playPacketTransmitSound()
+    const nextVal = `x=${Math.floor(Math.random() * 80 + 30)}`
+    setLog(`1/3: Client sent write [${nextVal}] to Leader (Node ${leaderId}). Leader writes to uncommitted WAL...`)
+
+    const t1 = setTimeout(() => {
+      playStepClickSound()
+      setLog(`2/3: Leader broadcasted AppendEntries to Follower nodes. 2/3 ACKs received (Quorum reached!).`)
+      const t2 = setTimeout(() => {
+        setCommittedEntries((prev) => [...prev, nextVal])
+        setIsReplicating(false)
+        playSuccessChimeSound()
+        setLog(`3/3: Entry [${nextVal}] COMMITTED to State Machine! Returned HTTP 200 OK to Client.`)
+      }, 700)
+      electionTimeoutsRef.current.push(t2)
+    }, 800)
+    electionTimeoutsRef.current.push(t1)
   }
 
   return (
@@ -678,7 +929,7 @@ export const RaftConsensusAnimator: React.FC = () => {
           <div className="flex items-center gap-2">
             <span className="flex size-2.5 rounded-full bg-rose-400 animate-pulse" />
             <h4 className="font-mono text-[13px] font-bold tracking-wider text-rose-400 uppercase">
-              Raft Consensus Leader Election Simulator
+              Raft Consensus Leader Election & Quorum Simulator
             </h4>
           </div>
           <p className="text-[12px] text-text-muted mt-0.5">
@@ -686,13 +937,18 @@ export const RaftConsensusAnimator: React.FC = () => {
           </p>
         </div>
 
-        <div className="rounded-md bg-rose-500/20 px-3 py-1 font-mono text-[12px] font-bold text-rose-300 ring-1 ring-rose-500/40">
-          Current Term: {term}
+        <div className="flex items-center gap-2 font-mono text-[11px]">
+          <div className="rounded-md bg-rose-500/20 px-3 py-1 font-bold text-rose-300 ring-1 ring-rose-500/40">
+            Current Term: {term}
+          </div>
+          <div className="rounded-md bg-bg-surface-1 px-2.5 py-1 text-text-muted ring-1 ring-border">
+            Committed Log: [{committedEntries.join(', ')}]
+          </div>
         </div>
       </div>
 
       {/* Nodes Display */}
-      <div className="my-6 grid grid-cols-3 gap-6">
+      <div className="my-6 grid grid-cols-3 gap-6 relative">
         {[1, 2, 3].map((id) => {
           const isLeader = leaderId === id
           const isCandidate = isElecting && id === 2
@@ -700,7 +956,7 @@ export const RaftConsensusAnimator: React.FC = () => {
           return (
             <div
               key={id}
-              className={`flex flex-col items-center rounded-2xl p-5 text-center ring-1 transition-all ${
+              className={`relative flex flex-col items-center rounded-2xl p-5 text-center ring-1 transition-all ${
                 isLeader
                   ? 'bg-amber-500/10 ring-amber-400 shadow-[0_0_20px_rgba(251,191,36,0.2)]'
                   : isCandidate
@@ -708,10 +964,15 @@ export const RaftConsensusAnimator: React.FC = () => {
                   : 'bg-bg-surface-2 ring-border'
               }`}
             >
+              {/* Leader Heartbeat Radar Ring */}
+              {isLeader && (
+                <div className="absolute -inset-1 rounded-2xl bg-amber-400/20 blur-sm animate-pulse pointer-events-none" />
+              )}
+
               <div
-                className={`flex size-14 items-center justify-center rounded-2xl ${
+                className={`flex size-14 items-center justify-center rounded-2xl transition-all ${
                   isLeader
-                    ? 'bg-amber-400 text-black'
+                    ? 'bg-amber-400 text-black shadow-lg shadow-amber-400/30'
                     : isCandidate
                     ? 'bg-rose-500 text-white'
                     : 'bg-bg-surface-3 text-text-muted'
@@ -727,19 +988,33 @@ export const RaftConsensusAnimator: React.FC = () => {
               >
                 {isLeader ? '👑 LEADER' : isCandidate ? 'CANDIDATE' : 'FOLLOWER'}
               </span>
+
+              {/* Log State for this Node */}
+              <div className="mt-2 rounded bg-black/50 px-2 py-0.5 text-[9.5px] font-mono text-text-muted">
+                Log Index: #{committedEntries.length}
+              </div>
             </div>
           )
         })}
       </div>
 
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-        <button
-          onClick={triggerElection}
-          disabled={isElecting}
-          className="flex items-center gap-1.5 rounded-xl bg-rose-500 px-4 py-2 text-[12px] font-bold text-white shadow-lg hover:bg-rose-400 active:scale-95 disabled:opacity-50"
-        >
-          <Play className="size-3.5 fill-current" /> Trigger Leader Failure & Election
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={triggerElection}
+            disabled={isElecting || isReplicating}
+            className="flex items-center gap-1.5 rounded-xl bg-rose-500 px-4 py-2 text-[12px] font-bold text-white shadow-lg hover:bg-rose-400 active:scale-95 disabled:opacity-50"
+          >
+            <Play className="size-3.5 fill-current" /> Trigger Leader Failure & Election
+          </button>
+          <button
+            onClick={handleClientWrite}
+            disabled={isElecting || isReplicating || !leaderId}
+            className="flex items-center gap-1.5 rounded-xl bg-amber-500 px-4 py-2 text-[12px] font-bold text-black shadow-lg hover:bg-amber-400 active:scale-95 disabled:opacity-50"
+          >
+            <Zap className="size-3.5 fill-current" /> Client Write (Quorum Log Commit)
+          </button>
+        </div>
 
         <div className="flex-1 rounded-xl bg-black/60 p-3 ring-1 ring-border text-[12px] font-mono text-rose-300">
           <span className="text-rose-400 font-bold">Raft Event: </span> {log}
@@ -770,9 +1045,11 @@ export const RateLimiterTokenBucketAnimator: React.FC = () => {
     if (tokens >= cost) {
       setTokens((prev) => prev - cost)
       setLastStatus('ALLOWED')
+      playStepClickSound()
       setLog(`✅ Request ALLOWED! Consumed ${cost} token(s). Tokens remaining: ${tokens - cost}`)
     } else {
       setLastStatus('REJECTED')
+      playNodeCrashSound()
       setLog(`❌ HTTP 429 Too Many Requests! Bucket empty (0 tokens). Retry-After: 1.5s`)
     }
   }
@@ -929,19 +1206,30 @@ export const ConsistentHashRingAnimator: React.FC = () => {
     ringTokens.find((t) => t.angle >= keyAngle) ||
     ringTokens[0] || { nodeId: 'none', angle: 0, name: 'None', color: '#fff' }
 
+  const scanIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (scanIntervalRef.current) clearInterval(scanIntervalRef.current)
+    }
+  }, [])
+
   const handleLookup = () => {
+    if (scanIntervalRef.current) clearInterval(scanIntervalRef.current)
     setIsScanning(true)
     setScanAngle(keyAngle)
     setActiveTarget(null)
+    playPacketTransmitSound()
 
     let curr = keyAngle
     const dest = targetToken.angle >= keyAngle ? targetToken.angle : targetToken.angle + 360
-    const interval = setInterval(() => {
+    scanIntervalRef.current = setInterval(() => {
       curr += 10
       if (curr >= dest) {
-        clearInterval(interval)
+        if (scanIntervalRef.current) clearInterval(scanIntervalRef.current)
         setIsScanning(false)
         setActiveTarget({ nodeId: targetToken.nodeId, angle: targetToken.angle })
+        playTradeMatchSound()
       } else {
         setScanAngle(curr % 360)
       }
@@ -1031,12 +1319,32 @@ export const ConsistentHashRingAnimator: React.FC = () => {
                     <circle
                       cx={coords.x}
                       cy={coords.y}
-                      r={isTarget ? 7 : token.isVnode ? 4 : 5.5}
+                      r={isTarget ? 7.5 : token.isVnode ? 4 : 5.5}
                       fill={token.color}
-                      stroke="#000"
-                      strokeWidth="1.5"
-                      className={isTarget ? 'animate-bounce shadow-lg' : ''}
+                      stroke={isTarget ? '#fff' : '#000'}
+                      strokeWidth={isTarget ? 2 : 1.5}
+                      style={{
+                        filter: isTarget ? `drop-shadow(0 0 10px ${token.color})` : undefined,
+                      }}
                     />
+                    {isTarget && (
+                      <g transform={`translate(${coords.x}, ${coords.y})`}>
+                        <circle
+                          cx="0"
+                          cy="0"
+                          r="14"
+                          fill="none"
+                          stroke={token.color}
+                          strokeWidth="1.5"
+                          opacity="0.8"
+                          style={{
+                            transformBox: 'fill-box',
+                            transformOrigin: 'center',
+                            animation: 'ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite',
+                          }}
+                        />
+                      </g>
+                    )}
                     <text
                       x={getCoordinates(token.angle, 114).x}
                       y={getCoordinates(token.angle, 114).y}
@@ -1061,15 +1369,22 @@ export const ConsistentHashRingAnimator: React.FC = () => {
                   strokeWidth="2"
                   className="shadow-xl"
                 />
-                <circle
-                  cx={keyCoords.x}
-                  cy={keyCoords.y}
-                  r="12"
-                  fill="none"
-                  stroke="#F43F5E"
-                  strokeWidth="1"
-                  className="animate-ping opacity-75"
-                />
+                <g transform={`translate(${keyCoords.x}, ${keyCoords.y})`}>
+                  <circle
+                    cx="0"
+                    cy="0"
+                    r="12"
+                    fill="none"
+                    stroke="#F43F5E"
+                    strokeWidth="1.2"
+                    opacity="0.8"
+                    style={{
+                      transformBox: 'fill-box',
+                      transformOrigin: 'center',
+                      animation: 'ping 1.2s cubic-bezier(0, 0, 0.2, 1) infinite',
+                    }}
+                  />
+                </g>
               </g>
 
               <circle cx="130" cy="130" r="30" fill="rgba(10, 15, 25, 0.9)" stroke="var(--color-border)" strokeWidth="1" />
@@ -1205,8 +1520,19 @@ export const KafkaPartitionRebalanceAnimator: React.FC = () => {
     { id: 1, msgs: [200, 201], consumerId: 'C2' },
     { id: 2, msgs: [300, 301], consumerId: 'C3' },
   ])
+  const rebalanceTimeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([])
+
+  const clearRebalanceTimeouts = () => {
+    rebalanceTimeoutsRef.current.forEach((t) => clearTimeout(t))
+    rebalanceTimeoutsRef.current = []
+  }
+
+  useEffect(() => {
+    return () => clearRebalanceTimeouts()
+  }, [])
 
   const handleProduce = () => {
+    playPacketTransmitSound()
     let hash = 0
     for (let i = 0; i < selectedKey.length; i++) hash += selectedKey.charCodeAt(i)
     const partIdx = hash % 3
@@ -1219,43 +1545,50 @@ export const KafkaPartitionRebalanceAnimator: React.FC = () => {
   }
 
   const handlePollCommit = () => {
+    playPacketArriveSound()
     setPartitions((prev) =>
       prev.map((p) => (p.msgs.length > 1 ? { ...p, msgs: p.msgs.slice(1) } : p))
     )
   }
 
   const handleToggleC2 = () => {
+    clearRebalanceTimeouts()
     if (c2Alive) {
+      playNodeCrashSound()
       setC2Alive(false)
       setIsRebalancing(true)
       setRebalanceStep('1/4: Consumer C2 missed heartbeat! Coordinator triggers group rebalance...')
 
-      setTimeout(() => {
+      const t1 = setTimeout(() => {
         setRebalanceStep('2/4: JoinGroup & SyncGroup phases executed by Kafka Group Coordinator.')
       }, 900)
 
-      setTimeout(() => {
+      const t2 = setTimeout(() => {
         setRebalanceStep('3/4: Cooperative Sticky Assignor assigns Partition 1 to Consumer C1 without revoking P0 or P2!')
         setPartitions((prev) =>
           prev.map((p) => (p.id === 1 ? { ...p, consumerId: 'C1' } : p))
         )
       }, 1800)
 
-      setTimeout(() => {
+      const t3 = setTimeout(() => {
+        playSuccessChimeSound()
         setRebalanceStep('4/4: Rebalance complete! Steady-state consuming resumed with 0 cluster downtime.')
         setIsRebalancing(false)
       }, 2700)
+      rebalanceTimeoutsRef.current.push(t1, t2, t3)
     } else {
+      playSuccessChimeSound()
       setC2Alive(true)
       setIsRebalancing(true)
       setRebalanceStep('Consumer C2 rejoins group. Partition 1 gracefully returned to C2.')
-      setTimeout(() => {
+      const t4 = setTimeout(() => {
         setPartitions((prev) =>
           prev.map((p) => (p.id === 1 ? { ...p, consumerId: 'C2' } : p))
         )
         setIsRebalancing(false)
         setRebalanceStep('Normal steady-state consuming.')
       }, 1200)
+      rebalanceTimeoutsRef.current.push(t4)
     }
   }
 
@@ -1410,21 +1743,26 @@ export const DisruptorRingBufferAnimator: React.FC = () => {
   const bufferSize = 8 // Power of 2 for fast bitwise masking
 
   const slots = Array.from({ length: bufferSize }, (_, idx) => {
-    const isProduced = idx <= producerCursor % bufferSize
-    const isConsumed = idx <= consumerCursor % bufferSize
+    const isProduced = idx <= (producerCursor % bufferSize)
+    const isConsumed = idx <= (consumerCursor % bufferSize)
+    const angle = ((idx * 45 - 90) * Math.PI) / 180
     return {
       index: idx,
       seq: idx,
       status: isConsumed ? 'consumed' : isProduced ? 'pending' : 'empty',
+      cx: 120 + 74 * Math.cos(angle),
+      cy: 120 + 74 * Math.sin(angle),
     }
   })
 
   const handleWrite = () => {
     // Check if buffer is full: producer cannot lap consumer
     if (producerCursor - consumerCursor >= bufferSize) {
+      playNodeCrashSound()
       setLog('⚠️ Ring Buffer FULL: Producer back-pressured! Cannot overwrite unread sequence.')
       return
     }
+    playStepClickSound()
     const nextP = producerCursor + 1
     setProducerCursor(nextP)
     setLog(`✅ Atomic CAS Write: Sequence #${nextP} written to Slot #${nextP & (bufferSize - 1)} without mutex locks.`)
@@ -1435,10 +1773,14 @@ export const DisruptorRingBufferAnimator: React.FC = () => {
       setLog('Consumer caught up to Producer cursor. Waiting for next batch.')
       return
     }
+    playTradeMatchSound()
     const nextC = consumerCursor + 1
     setConsumerCursor(nextC)
     setLog(`⚡ Matching Engine Processed: Sequence #${nextC} executed in sub-microsecond latency.`)
   }
+
+  const producerAngle = ((producerCursor % bufferSize) * 45 - 90)
+  const consumerAngle = ((consumerCursor % bufferSize) * 45 - 90)
 
   return (
     <div className="space-y-4 rounded-xl bg-bg-surface-2 p-5 ring-1 ring-border text-text-primary">
@@ -1447,71 +1789,161 @@ export const DisruptorRingBufferAnimator: React.FC = () => {
           <span className="font-mono text-[11px] font-bold text-accent-brand uppercase tracking-wider block">
             Ultra Low Latency Architecture
           </span>
-          <h3 className="text-base font-bold text-text-primary">LMAX Disruptor Lock-Free Ring Buffer</h3>
+          <h3 className="text-base font-bold text-text-primary">LMAX Disruptor Lock-Free Circular Ring Buffer</h3>
         </div>
         <span className="rounded bg-sky-500/10 px-2 py-0.5 text-[10.5px] font-mono text-sky-400 ring-1 ring-sky-500/20 font-bold">
           Zero-GC Off-Heap Circular Array
         </span>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-2">
-        {slots.map((slot) => {
-          const isProducerHead = slot.index === (producerCursor % bufferSize)
-          const isConsumerHead = slot.index === (consumerCursor % bufferSize)
-          return (
-            <div
-              key={slot.index}
-              className={`rounded-xl p-3 ring-1 text-center font-mono space-y-1 transition ${
-                isProducerHead
-                  ? 'bg-cyan-500/20 ring-cyan-500/60 shadow-[0_0_12px_rgba(6,182,212,0.3)]'
-                  : isConsumerHead
-                  ? 'bg-emerald-500/20 ring-emerald-500/60'
-                  : 'bg-bg-surface-1 ring-border/60'
-              }`}
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+        {/* Circular SVG Ring Buffer Visualizer */}
+        <div className="md:col-span-5 flex flex-col items-center justify-center">
+          <div className="relative size-[240px]">
+            <svg viewBox="0 0 240 240" className="size-full overflow-visible">
+              {/* Outer Ring Track */}
+              <circle
+                cx="120"
+                cy="120"
+                r="74"
+                fill="none"
+                stroke="var(--color-border)"
+                strokeWidth="28"
+                className="opacity-40"
+              />
+
+              {/* 8 Circular Slots */}
+              {slots.map((slot) => {
+                const isP = slot.index === (producerCursor % bufferSize)
+                const isC = slot.index === (consumerCursor % bufferSize)
+                return (
+                  <g key={slot.index} className="transition-all duration-300">
+                    <circle
+                      cx={slot.cx}
+                      cy={slot.cy}
+                      r="13"
+                      fill={
+                        isP
+                          ? 'rgba(6, 182, 212, 0.4)'
+                          : isC
+                          ? 'rgba(16, 185, 129, 0.4)'
+                          : 'var(--color-bg-surface-1)'
+                      }
+                      stroke={isP ? '#06b6d4' : isC ? '#10b981' : 'var(--color-border)'}
+                      strokeWidth={isP || isC ? 2 : 1}
+                    />
+                    <text
+                      x={slot.cx}
+                      y={slot.cy + 3.5}
+                      textAnchor="middle"
+                      fill={isP ? '#22d3ee' : isC ? '#34d399' : '#94a3b8'}
+                      fontSize="9.5"
+                      fontFamily="var(--font-mono)"
+                      fontWeight="bold"
+                    >
+                      {slot.index}
+                    </text>
+                  </g>
+                )
+              })}
+
+              {/* Producer Pointer Line (Cyan) */}
+              <line
+                x1="120"
+                y1="120"
+                x2={120 + 52 * Math.cos((producerAngle * Math.PI) / 180)}
+                y2={120 + 52 * Math.sin((producerAngle * Math.PI) / 180)}
+                stroke="#06b6d4"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                className="transition-all duration-300"
+              />
+
+              {/* Consumer Pointer Line (Emerald) */}
+              <line
+                x1="120"
+                y1="120"
+                x2={120 + 44 * Math.cos((consumerAngle * Math.PI) / 180)}
+                y2={120 + 44 * Math.sin((consumerAngle * Math.PI) / 180)}
+                stroke="#10b981"
+                strokeWidth="2"
+                strokeLinecap="round"
+                className="transition-all duration-300"
+              />
+
+              {/* Center Core HUD */}
+              <circle cx="120" cy="120" r="32" fill="var(--color-bg-surface-3)" stroke="var(--color-border)" strokeWidth="1.2" />
+              <text x="120" y="116" textAnchor="middle" fill="#38bdf8" fontSize="8" fontWeight="bold" fontFamily="var(--font-mono)">
+                RING
+              </text>
+              <text x="120" y="129" textAnchor="middle" fill="var(--color-text-primary)" fontSize="10" fontWeight="extrabold" fontFamily="var(--font-mono)">
+                LAG: {producerCursor - consumerCursor}
+              </text>
+            </svg>
+          </div>
+          <div className="flex gap-4 mt-2 text-[10px] font-mono">
+            <span className="flex items-center gap-1 text-cyan-400 font-bold">
+              <span className="size-2 rounded-full bg-cyan-400" /> P_HEAD #{producerCursor}
+            </span>
+            <span className="flex items-center gap-1 text-emerald-400 font-bold">
+              <span className="size-2 rounded-full bg-emerald-400" /> C_READ #{consumerCursor}
+            </span>
+          </div>
+        </div>
+
+        {/* Slot Strip and Metrics */}
+        <div className="md:col-span-7 space-y-3">
+          <div className="grid grid-cols-4 sm:grid-cols-8 gap-1.5">
+            {slots.map((slot) => {
+              const isProducerHead = slot.index === (producerCursor % bufferSize)
+              const isConsumerHead = slot.index === (consumerCursor % bufferSize)
+              return (
+                <div
+                  key={slot.index}
+                  className={`rounded-lg p-2 ring-1 text-center font-mono space-y-0.5 transition ${
+                    isProducerHead
+                      ? 'bg-cyan-500/20 ring-cyan-500/60 shadow-[0_0_10px_rgba(6,182,212,0.3)]'
+                      : isConsumerHead
+                      ? 'bg-emerald-500/20 ring-emerald-500/60'
+                      : 'bg-bg-surface-1 ring-border/60'
+                  }`}
+                >
+                  <span className="text-[9px] text-text-muted block">#{slot.index}</span>
+                  <span className="text-xs font-bold text-text-primary block">[{slot.seq}]</span>
+                  <div className="flex flex-col text-[8px] font-bold">
+                    {isProducerHead && <span className="text-cyan-400">P_HEAD</span>}
+                    {isConsumerHead && <span className="text-emerald-400">C_READ</span>}
+                    {!isProducerHead && !isConsumerHead && <span className="text-text-muted opacity-30">IDLE</span>}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2 pt-1">
+            <button
+              onClick={handleWrite}
+              className="rounded-lg bg-cyan-500 px-3.5 py-1.5 text-[11.5px] font-bold text-black hover:bg-cyan-400 active:scale-95 shadow-sm"
             >
-              <span className="text-[10px] text-text-muted block">Slot #{slot.index}</span>
-              <span className="text-sm font-bold text-text-primary block">[{slot.seq}]</span>
-              <div className="pt-1 flex flex-col gap-0.5 text-[9px] font-bold">
-                {isProducerHead && <span className="text-cyan-400">P_HEAD</span>}
-                {isConsumerHead && <span className="text-emerald-400">C_READ</span>}
-                {!isProducerHead && !isConsumerHead && (
-                  <span className="text-text-muted opacity-40">READY</span>
-                )}
-              </div>
-            </div>
-          )
-        })}
-      </div>
+              Push Trade (Producer CAS)
+            </button>
+            <button
+              onClick={handleConsume}
+              className="rounded-lg bg-emerald-500 px-3.5 py-1.5 text-[11.5px] font-bold text-black hover:bg-emerald-400 active:scale-95 shadow-sm"
+            >
+              Match Engine (Consumer Read)
+            </button>
+          </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handleWrite}
-            className="rounded-lg bg-cyan-500 px-3.5 py-1.5 text-[11.5px] font-bold text-black hover:bg-cyan-400 active:scale-95 shadow-sm"
-          >
-            Push Trade (Producer CAS)
-          </button>
-          <button
-            onClick={handleConsume}
-            className="rounded-lg bg-emerald-500 px-3.5 py-1.5 text-[11.5px] font-bold text-black hover:bg-emerald-400 active:scale-95 shadow-sm"
-          >
-            Match Engine (Consumer Read)
-          </button>
+          <div className="rounded-xl bg-bg-surface-1 p-3 ring-1 ring-border text-[11px] font-mono space-y-1">
+            <span className="text-text-muted font-bold block uppercase text-[10px]">
+              Hardware Mechanical Sympathy Optimization:
+            </span>
+            <p className="text-text-muted">
+              • <strong className="text-text-primary">Cache-Line Padding (64 Bytes):</strong> Pre-allocates unused 56-byte dummy long fields (<code className="text-cyan-300">p1..p7</code>) to ensure Producer and Consumer cursors reside on completely separate CPU L1 cache lines, eliminating False Sharing across multi-core CPUs.
+            </p>
+          </div>
         </div>
-        <div className="flex items-center gap-4 text-[11px] font-mono">
-          <span>Producer Cursor: <strong className="text-cyan-400">{producerCursor}</strong></span>
-          <span>Consumer Cursor: <strong className="text-emerald-400">{consumerCursor}</strong></span>
-          <span>Lag: <strong className="text-amber-400">{producerCursor - consumerCursor}</strong></span>
-        </div>
-      </div>
-
-      <div className="rounded-xl bg-bg-surface-1 p-3 ring-1 ring-border text-[11px] font-mono space-y-1">
-        <span className="text-text-muted font-bold block uppercase text-[10px]">
-          Hardware Mechanical Sympathy Optimization:
-        </span>
-        <p className="text-text-muted">
-          • <strong className="text-text-primary">Cache-Line Padding (64 Bytes):</strong> Pre-allocates unused 56-byte dummy long fields (<code className="text-cyan-300">p1..p7</code>) to ensure Producer and Consumer cursors reside on completely separate CPU L1 cache lines, eliminating False Sharing across multi-core CPUs.
-        </p>
       </div>
 
       <div className="rounded-xl bg-black/60 p-3 ring-1 ring-border text-[11.5px] font-mono text-cyan-300">
@@ -1528,34 +1960,71 @@ export const UberH3SpatialDispatchAnimator: React.FC = () => {
   const [dispatchStage, setDispatchStage] = useState<'idle' | 'h3_encode' | 'ring0' | 'ring1' | 'matched'>('idle')
   const [matchedDriver, setMatchedDriver] = useState<string | null>(null)
   const [log, setLog] = useState<string>('Ready for rider dispatch request.')
+  const dispatchTimeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([])
+
+  const clearDispatchTimeouts = () => {
+    dispatchTimeoutsRef.current.forEach((t) => clearTimeout(t))
+    dispatchTimeoutsRef.current = []
+  }
+
+  useEffect(() => {
+    return () => clearDispatchTimeouts()
+  }, [])
 
   const drivers = [
-    { id: 'D1', name: 'Alex M.', car: 'Toyota Camry (UberX)', eta: '4.2m', rating: '4.92', cell: 'N1' },
-    { id: 'D2', name: 'Sarah K.', car: 'Tesla Model 3 (Comfort)', eta: '2.1m', rating: '4.98', cell: 'Origin' },
-    { id: 'D3', name: 'Marcus R.', car: 'Chevy Bolt (UberX)', eta: '5.8m', rating: '4.85', cell: 'N3' },
-    { id: 'D4', name: 'Elena B.', car: 'BMW 5-Series (Black)', eta: '3.4m', rating: '4.95', cell: 'N5' },
+    { id: 'D1', name: 'Alex M.', car: 'Toyota Camry (UberX)', eta: '4.2m', rating: '4.92', cell: 'N1', x: 120, y: 58 },
+    { id: 'D2', name: 'Sarah K.', car: 'Tesla Model 3 (Comfort)', eta: '2.1m', rating: '4.98', cell: 'Origin', x: 132, y: 130 },
+    { id: 'D3', name: 'Marcus R.', car: 'Chevy Bolt (UberX)', eta: '5.8m', rating: '4.85', cell: 'N3', x: 171, y: 149 },
+    { id: 'D4', name: 'Elena B.', car: 'BMW 5-Series (Black)', eta: '3.4m', rating: '4.95', cell: 'N5', x: 69, y: 149 },
+  ]
+
+  // Regular flat-topped hexagon vertex calculator (shares exact seamless edges)
+  const hexRadius = 34
+  const hexDistance = Math.sqrt(3) * hexRadius // ~58.89
+  const getHexPoints = (cx: number, cy: number, r: number): string => {
+    return Array.from({ length: 6 }, (_, i) => {
+      const angleRad = ((60 * i) * Math.PI) / 180
+      const x = cx + r * Math.cos(angleRad)
+      const y = cy + r * Math.sin(angleRad)
+      return `${x.toFixed(1)},${y.toFixed(1)}`
+    }).join(' ')
+  }
+
+  const ring1Neighbors = [
+    { name: 'N1', cx: 120, cy: +(120 - hexDistance).toFixed(1) },
+    { name: 'N2', cx: +(120 + hexDistance * (Math.sqrt(3) / 2)).toFixed(1), cy: +(120 - hexDistance / 2).toFixed(1) },
+    { name: 'N3', cx: +(120 + hexDistance * (Math.sqrt(3) / 2)).toFixed(1), cy: +(120 + hexDistance / 2).toFixed(1) },
+    { name: 'N4', cx: 120, cy: +(120 + hexDistance).toFixed(1) },
+    { name: 'N5', cx: +(120 - hexDistance * (Math.sqrt(3) / 2)).toFixed(1), cy: +(120 + hexDistance / 2).toFixed(1) },
+    { name: 'N6', cx: +(120 - hexDistance * (Math.sqrt(3) / 2)).toFixed(1), cy: +(120 - hexDistance / 2).toFixed(1) },
   ]
 
   const handleStartDispatch = () => {
+    clearDispatchTimeouts()
     setDispatchStage('h3_encode')
     setMatchedDriver(null)
-    setLog('1/4: Rider Lat/Lon GPS bits converted to H3 Hex Index (0x882681a339fffff) in O(1) bitwise operations.')
+    playPacketTransmitSound()
+    setLog('1/4: Rider GPS bits converted to H3 Hex Index (0x882681a339fffff) in O(1) bitwise operations.')
 
-    setTimeout(() => {
+    const t1 = setTimeout(() => {
       setDispatchStage('ring0')
-      setLog('2/4: Scanning Origin Hexagon (k-ring radius 0). Found 1 online driver.')
+      playStepClickSound()
+      setLog('2/4: Scanning Origin Hexagon (k-ring radius 0). Found 1 online driver (Sarah K.).')
     }, 1000)
 
-    setTimeout(() => {
+    const t2 = setTimeout(() => {
       setDispatchStage('ring1')
-      setLog('3/4: Expanding to 6 adjacent neighbor hexagons (k-ring radius 1). Found 3 additional drivers.')
+      playTradeMatchSound()
+      setLog('3/4: Expanding to 6 adjacent neighbor hexagons (k-ring radius 1). Found 3 additional drivers in N1, N3, N5.')
     }, 2000)
 
-    setTimeout(() => {
+    const t3 = setTimeout(() => {
       setDispatchStage('matched')
       setMatchedDriver('D2')
-      setLog('4/4: Hungarian Matching optimization selected Driver Sarah K. (2.1m ETA, 4.98 rating, minimal wait time)!')
+      playSuccessChimeSound()
+      setLog('4/4: Hungarian bipartite optimization selected Driver Sarah K. (2.1m ETA, 4.98 rating, minimal wait time)!')
     }, 3000)
+    dispatchTimeoutsRef.current.push(t1, t2, t3)
   }
 
   return (
@@ -1569,71 +2038,141 @@ export const UberH3SpatialDispatchAnimator: React.FC = () => {
         </div>
         <button
           onClick={handleStartDispatch}
-          className="rounded-lg bg-accent-brand px-3.5 py-1.5 text-[11.5px] font-bold text-bg-base hover:opacity-90 active:scale-95 shadow-sm flex items-center gap-1.5"
+          className="rounded-lg bg-accent-brand px-3.5 py-1.5 text-[11.5px] font-bold text-bg-base hover:opacity-90 active:scale-95 shadow-sm flex items-center gap-1.5 transition"
         >
           <Car className="size-3.5" /> Request Ride Dispatch
         </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
-        {/* Visual Hexagonal Grid */}
+        {/* Visual Hexagonal Honeycomb Grid */}
         <div className="md:col-span-6 flex flex-col items-center justify-center p-3">
-          <div className="relative size-[230px]">
+          <div className="relative size-[240px]">
             <svg viewBox="0 0 240 240" className="size-full overflow-visible">
+              <defs>
+                <filter id="hexGlow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="2.5" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+              </defs>
+
+              {/* Ring 1 Neighbors (6 regular hexagons perfectly tiling with origin) */}
+              {ring1Neighbors.map((hex, i) => {
+                const isRing1Active = dispatchStage === 'ring1' || dispatchStage === 'matched'
+                return (
+                  <g key={i}>
+                    <polygon
+                      points={getHexPoints(hex.cx, hex.cy, hexRadius)}
+                      fill={isRing1Active ? 'rgba(168, 85, 247, 0.16)' : 'rgba(255, 255, 255, 0.02)'}
+                      stroke={isRing1Active ? '#A855F7' : 'rgba(255, 255, 255, 0.12)'}
+                      strokeWidth={isRing1Active ? '1.8' : '1'}
+                      strokeDasharray={isRing1Active ? 'none' : '3 3'}
+                      className="transition-all duration-300"
+                    />
+                    <text
+                      x={hex.cx}
+                      y={hex.cy}
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                      className="fill-text-muted text-[9px] font-mono font-semibold select-none"
+                    >
+                      {hex.name}
+                    </text>
+                  </g>
+                )
+              })}
+
               {/* Origin Hexagon (Center) */}
               <polygon
-                points="120,70 160,95 160,145 120,170 80,145 80,95"
-                fill={dispatchStage === 'ring0' || dispatchStage === 'matched' ? 'rgba(0, 240, 255, 0.25)' : 'rgba(255, 255, 255, 0.05)'}
-                stroke={dispatchStage === 'ring0' || dispatchStage === 'matched' ? '#00F0FF' : 'rgba(255, 255, 255, 0.2)'}
-                strokeWidth="2"
+                points={getHexPoints(120, 120, hexRadius)}
+                fill={
+                  dispatchStage === 'ring0' || dispatchStage === 'matched'
+                    ? 'rgba(0, 240, 255, 0.25)'
+                    : dispatchStage === 'h3_encode'
+                    ? 'rgba(0, 240, 255, 0.12)'
+                    : 'rgba(255, 255, 255, 0.05)'
+                }
+                stroke={
+                  dispatchStage === 'ring0' || dispatchStage === 'matched'
+                    ? '#00F0FF'
+                    : dispatchStage === 'h3_encode'
+                    ? '#38bdf8'
+                    : 'rgba(255, 255, 255, 0.25)'
+                }
+                strokeWidth={dispatchStage !== 'idle' ? '2.2' : '1.5'}
+                filter={dispatchStage === 'ring0' || dispatchStage === 'matched' ? 'url(#hexGlow)' : undefined}
                 className="transition-all duration-300"
               />
-              <text x="120" y="115" textAnchor="middle" className="fill-accent-brand text-[10px] font-mono font-bold">
+              <text x="120" y="104" textAnchor="middle" className="fill-accent-brand text-[9.5px] font-mono font-bold select-none">
                 Origin Hex
               </text>
-              <text x="120" y="127" textAnchor="middle" className="fill-text-muted text-[8px] font-mono">
+              <text x="120" y="115" textAnchor="middle" className="fill-text-muted text-[7.5px] font-mono select-none">
                 0x882681a
               </text>
 
-              {/* Rider Pin */}
-              <circle cx="120" cy="100" r="5" fill="#F43F5E" stroke="#fff" strokeWidth="1.5" />
+              {/* Driver Position Markers */}
+              {drivers.map((d) => {
+                const isMatched = matchedDriver === d.id
+                return (
+                  <g key={d.id} className="transition-all duration-300">
+                    {/* Glowing ring if matched */}
+                    {isMatched && (
+                      <circle
+                        cx={d.x}
+                        cy={d.y}
+                        r="11"
+                        fill="none"
+                        stroke="#10B981"
+                        strokeWidth="2"
+                        className="animate-ping"
+                        style={{ transformOrigin: `${d.x}px ${d.y}px` }}
+                      />
+                    )}
+                    <circle
+                      cx={d.x}
+                      cy={d.y}
+                      r="6.5"
+                      fill={isMatched ? '#10B981' : '#38bdf8'}
+                      stroke="#fff"
+                      strokeWidth="1.5"
+                      className="shadow-sm"
+                    />
+                    <text
+                      x={d.x}
+                      y={d.y - 8}
+                      textAnchor="middle"
+                      className={`text-[8px] font-mono font-extrabold ${isMatched ? 'fill-emerald-400' : 'fill-sky-300'}`}
+                    >
+                      {d.id}
+                    </text>
+                  </g>
+                )
+              })}
 
-              {/* Ring 1 Neighbors (6 hexagons) */}
-              {[
-                { name: 'N1', cx: 120, cy: 30 },
-                { name: 'N2', cx: 180, cy: 65 },
-                { name: 'N3', cx: 180, cy: 155 },
-                { name: 'N4', cx: 120, cy: 195 },
-                { name: 'N5', cx: 60, cy: 155 },
-                { name: 'N6', cx: 60, cy: 65 },
-              ].map((hex, i) => (
-                <g key={i}>
-                  <circle
-                    cx={hex.cx}
-                    cy={hex.cy}
-                    r="24"
-                    fill={dispatchStage === 'ring1' || dispatchStage === 'matched' ? 'rgba(168, 85, 247, 0.15)' : 'rgba(255, 255, 255, 0.03)'}
-                    stroke={dispatchStage === 'ring1' || dispatchStage === 'matched' ? '#A855F7' : 'rgba(255, 255, 255, 0.1)'}
-                    strokeWidth="1.5"
-                    strokeDasharray="2 2"
-                    className="transition-all duration-300"
-                  />
-                  <text x={hex.cx} y={hex.cy} textAnchor="middle" dominantBaseline="middle" className="fill-text-muted text-[8.5px] font-mono">
-                    {hex.name}
-                  </text>
-                </g>
-              ))}
+              {/* Rider Pin at Center */}
+              <g>
+                <circle cx="110" cy="130" r="5" fill="#F43F5E" stroke="#fff" strokeWidth="1.5" />
+                <text x="110" y="142" textAnchor="middle" className="fill-rose-400 text-[7.5px] font-mono font-bold select-none">
+                  Rider
+                </text>
+              </g>
 
-              {/* Route Trajectory when matched */}
+              {/* Animated Laser Route Trajectory when matched */}
               {dispatchStage === 'matched' && (
-                <path
-                  d="M 120 140 Q 130 120 120 100"
-                  fill="none"
-                  stroke="#10B981"
-                  strokeWidth="3"
-                  strokeDasharray="4 4"
-                  className="animate-pulse"
-                />
+                <g>
+                  <path
+                    d="M 132 130 Q 124 135 110 130"
+                    fill="none"
+                    stroke="#10B981"
+                    strokeWidth="2.8"
+                    strokeDasharray="4 4"
+                    className="animate-flow-dash"
+                  />
+                  <circle cx="121" cy="132" r="3" fill="#34D399" className="animate-pulse" />
+                </g>
               )}
             </svg>
           </div>

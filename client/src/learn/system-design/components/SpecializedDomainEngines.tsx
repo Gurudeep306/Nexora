@@ -1,8 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import {
   TrendingUp,
   TrendingDown,
-  Lock,
   Shield,
   Zap,
   Sparkles,
@@ -10,6 +9,14 @@ import {
   Send,
   Key,
 } from 'lucide-react'
+import {
+  playTradeMatchSound,
+  playStepClickSound,
+  playPacketTransmitSound,
+  playNodeCrashSound,
+  playSuccessChimeSound,
+  playPacketArriveSound,
+} from '../utils/audioEffects'
 
 // =========================================================================
 // 1. LIMIT ORDER BOOK (LOB) DEPTH OF MARKET & MATCHING ENGINE
@@ -76,6 +83,7 @@ export const LimitOrderBookEngine: React.FC = () => {
           side: 'BUY',
         }
         setTrades((prev) => [newTrade, ...prev.slice(0, 5)])
+        playTradeMatchSound()
 
         // Decrement volume at best ask
         setAsks((prev) => {
@@ -91,6 +99,7 @@ export const LimitOrderBookEngine: React.FC = () => {
         setExecutionLog(`⚡ AGGRESSIVE FILL: Buy order of ${qty} matched with Best Ask @ $${execPrice.toFixed(2)} in sub-microsecond latency.`)
       } else {
         // Resting Limit Order -> Insert into Bids
+        playStepClickSound()
         setBids((prev) => {
           const updated = [...prev, { price, volume: qty, depth: qty }].sort((a, b) => b.price - a.price)
           return updated
@@ -109,6 +118,7 @@ export const LimitOrderBookEngine: React.FC = () => {
           side: 'SELL',
         }
         setTrades((prev) => [newTrade, ...prev.slice(0, 5)])
+        playTradeMatchSound()
 
         setBids((prev) => {
           const updated = [...prev]
@@ -122,6 +132,7 @@ export const LimitOrderBookEngine: React.FC = () => {
 
         setExecutionLog(`⚡ AGGRESSIVE FILL: Sell order of ${qty} matched with Best Bid @ $${execPrice.toFixed(2)}.`)
       } else {
+        playStepClickSound()
         setAsks((prev) => {
           const updated = [...prev, { price, volume: qty, depth: qty }].sort((a, b) => a.price - b.price)
           return updated
@@ -162,16 +173,24 @@ export const LimitOrderBookEngine: React.FC = () => {
                 <span>Qty</span>
                 <span>Depth</span>
               </div>
-              {bids.map((b, i) => (
-                <div
-                  key={i}
-                  className="flex justify-between items-center px-1.5 py-0.5 rounded hover:bg-emerald-500/10 transition"
-                >
-                  <span className="font-bold text-emerald-400">${b.price.toFixed(2)}</span>
-                  <span className="text-text-primary">{b.volume.toLocaleString()}</span>
-                  <span className="text-text-muted text-[10px]">{b.depth.toLocaleString()}</span>
-                </div>
-              ))}
+              {bids.map((b, i) => {
+                const depthPct = Math.min(100, Math.round((b.depth / 10000) * 100))
+                return (
+                  <div
+                    key={i}
+                    className="relative flex justify-between items-center px-1.5 py-0.5 rounded hover:bg-emerald-500/10 transition overflow-hidden"
+                  >
+                    {/* Visual Volume Depth Bar */}
+                    <div
+                      className="absolute inset-y-0 right-0 bg-emerald-500/15 rounded pointer-events-none transition-all duration-300"
+                      style={{ width: `${depthPct}%` }}
+                    />
+                    <span className="relative z-10 font-bold text-emerald-400">${b.price.toFixed(2)}</span>
+                    <span className="relative z-10 text-text-primary">{b.volume.toLocaleString()}</span>
+                    <span className="relative z-10 text-text-muted text-[10px]">{b.depth.toLocaleString()}</span>
+                  </div>
+                )
+              })}
             </div>
           </div>
 
@@ -186,16 +205,24 @@ export const LimitOrderBookEngine: React.FC = () => {
                 <span>Qty</span>
                 <span>Depth</span>
               </div>
-              {asks.map((a, i) => (
-                <div
-                  key={i}
-                  className="flex justify-between items-center px-1.5 py-0.5 rounded hover:bg-rose-500/10 transition"
-                >
-                  <span className="font-bold text-rose-400">${a.price.toFixed(2)}</span>
-                  <span className="text-text-primary">{a.volume.toLocaleString()}</span>
-                  <span className="text-text-muted text-[10px]">{a.depth.toLocaleString()}</span>
-                </div>
-              ))}
+              {asks.map((a, i) => {
+                const depthPct = Math.min(100, Math.round((a.depth / 10000) * 100))
+                return (
+                  <div
+                    key={i}
+                    className="relative flex justify-between items-center px-1.5 py-0.5 rounded hover:bg-rose-500/10 transition overflow-hidden"
+                  >
+                    {/* Visual Volume Depth Bar */}
+                    <div
+                      className="absolute inset-y-0 left-0 bg-rose-500/15 rounded pointer-events-none transition-all duration-300"
+                      style={{ width: `${depthPct}%` }}
+                    />
+                    <span className="relative z-10 font-bold text-rose-400">${a.price.toFixed(2)}</span>
+                    <span className="relative z-10 text-text-primary">{a.volume.toLocaleString()}</span>
+                    <span className="relative z-10 text-text-muted text-[10px]">{a.depth.toLocaleString()}</span>
+                  </div>
+                )
+              })}
             </div>
           </div>
         </div>
@@ -315,6 +342,15 @@ export const SnowflakeIdGeneratorEngine: React.FC = () => {
   const [workerId, setWorkerId] = useState<number>(12)
   const [sequence, setSequence] = useState<number>(104)
   const [generatedId, setGeneratedId] = useState<string>('1758204918239019008')
+  const [isClockSkew, setIsClockSkew] = useState<boolean>(false)
+  const skewTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (skewTimerRef.current) clearTimeout(skewTimerRef.current)
+    }
+  }, [])
+
   const [bitView, setBitView] = useState({
     sign: '0',
     timestampBits: '01100011010111100010101011100100101011101',
@@ -350,10 +386,15 @@ export const SnowflakeIdGeneratorEngine: React.FC = () => {
     // Simulate 64-bit ID string
     const simulated64Bit = (BigInt(diff) << 22n) | (BigInt(datacenterId) << 17n) | (BigInt(workerId) << 12n) | BigInt(nextSeq)
     setGeneratedId(simulated64Bit.toString())
+    playStepClickSound()
     setLog(`✅ New 64-bit ID generated: ${simulated64Bit} (Timestamp delta: ${diff}ms, Sequence: ${nextSeq})`)
   }
 
   const handleClockDrift = () => {
+    setIsClockSkew(true)
+    playNodeCrashSound()
+    if (skewTimerRef.current) clearTimeout(skewTimerRef.current)
+    skewTimerRef.current = setTimeout(() => setIsClockSkew(false), 2500)
     setLog(`⚠️ NTP CLOCK SKEW DETECTED! Clock moved backward by 4ms. Generator spin-waits on Monotonic sequence borrowing to prevent collision!`)
   }
 
@@ -369,7 +410,11 @@ export const SnowflakeIdGeneratorEngine: React.FC = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={handleClockDrift}
-            className="rounded-lg bg-amber-500/20 px-2.5 py-1 text-[11px] font-mono font-bold text-amber-300 ring-1 ring-amber-500/40 hover:bg-amber-500/30 flex items-center gap-1"
+            className={`rounded-lg px-2.5 py-1 text-[11px] font-mono font-bold ring-1 transition flex items-center gap-1 ${
+              isClockSkew
+                ? 'bg-rose-500/30 text-rose-300 ring-rose-500 shadow-[0_0_12px_rgba(244,63,94,0.4)] animate-pulse'
+                : 'bg-amber-500/20 text-amber-300 ring-amber-500/40 hover:bg-amber-500/30'
+            }`}
           >
             <AlertTriangle className="size-3" /> Simulate NTP Drift (-4ms)
           </button>
@@ -390,9 +435,17 @@ export const SnowflakeIdGeneratorEngine: React.FC = () => {
           </div>
 
           {/* Timestamp bits (41 bits) */}
-          <div className="col-span-6 rounded bg-cyan-950/40 p-2 ring-1 ring-cyan-500/40">
-            <span className="text-[9px] text-cyan-400 block font-bold">Timestamp Delta (41 bits ~ 69.7 Years)</span>
-            <span className="text-cyan-300 font-bold truncate block tracking-wider">{bitView.timestampBits}</span>
+          <div className={`col-span-6 rounded p-2 ring-1 transition-all duration-300 ${
+            isClockSkew
+              ? 'bg-rose-950/70 ring-rose-500 shadow-[0_0_15px_rgba(244,63,94,0.35)] animate-pulse'
+              : 'bg-cyan-950/40 ring-cyan-500/40'
+          }`}>
+            <span className={`text-[9px] block font-bold ${isClockSkew ? 'text-rose-400' : 'text-cyan-400'}`}>
+              {isClockSkew ? '⚠️ NTP BACKWARD SKEW (-4ms)' : 'Timestamp Delta (41 bits ~ 69.7 Years)'}
+            </span>
+            <span className={`${isClockSkew ? 'text-rose-200 font-extrabold' : 'text-cyan-300 font-bold'} truncate block tracking-wider`}>
+              {bitView.timestampBits}
+            </span>
           </div>
 
           {/* Datacenter ID (5 bits) */}
@@ -482,21 +535,42 @@ export const DoubleRatchetCryptoEngine: React.FC = () => {
   const [messageKey, setMessageKey] = useState<string>('0x9A4E...118D')
   const [cipherText, setCipherText] = useState<string>('AES-256-GCM[8f2d91a9f02c]')
   const [log, setLog] = useState<string>('End-to-end encrypted session established. Diffie-Hellman ratchet primed.')
+  const transitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (transitTimerRef.current) clearTimeout(transitTimerRef.current)
+    }
+  }, [])
 
   const handleAliceSend = () => {
+    if (transitTimerRef.current) clearTimeout(transitTimerRef.current)
     setStage('alice_sends')
     const newMsgKey = `0x${Math.random().toString(16).slice(2, 6)}...${Math.random().toString(16).slice(2, 6)}`
     setMessageKey(newMsgKey)
     setCipherText(`AES-256-GCM[${Math.random().toString(16).slice(2, 14)}]`)
-    setLog('1/2: Alice advanced Symmetric Sending Chain: KDF(CKs) -> MessageKey Derived. Message encrypted with AES-256-GCM.')
+    playPacketTransmitSound()
+    setLog('1/2: Alice advanced Symmetric Sending Chain: KDF(CKs) -> MessageKey Derived. Message encrypted with AES-256-GCM in flight.')
+
+    transitTimerRef.current = setTimeout(() => {
+      playPacketArriveSound()
+      setLog('1/2: Bob received Alice message packet! Bob successfully derived matching MK with CK_recv and authenticated ciphertext!')
+    }, 800)
   }
 
   const handleBobReply = () => {
+    if (transitTimerRef.current) clearTimeout(transitTimerRef.current)
     setStage('bob_replies')
     const newRk = `0x${Math.random().toString(16).slice(2, 6)}...${Math.random().toString(16).slice(2, 6)}`
     setAliceRootKey(newRk)
     setBobRootKey(newRk)
-    setLog('2/2: Bob generates fresh Ephemeral DH Keypair! Diffie-Hellman Ratchet step advances Root Key -> Guarantees Forward Secrecy & Break-in Recovery!')
+    playPacketTransmitSound()
+    setLog('2/2: Bob generates fresh Ephemeral DH Keypair! Transmitting Curve25519 public key along wire to Alice...')
+
+    transitTimerRef.current = setTimeout(() => {
+      playSuccessChimeSound()
+      setLog('2/2: Alice received Bob DH public key! Diffie-Hellman Ratchet step advances Root Key -> Guarantees Forward Secrecy & Break-in Recovery!')
+    }, 800)
   }
 
   return (
@@ -527,7 +601,7 @@ export const DoubleRatchetCryptoEngine: React.FC = () => {
           </div>
           <button
             onClick={handleAliceSend}
-            className="w-full rounded-lg bg-sky-500 py-1.5 text-[11px] font-bold text-black hover:bg-sky-400 active:scale-95 shadow flex items-center justify-center gap-1"
+            className="w-full rounded-lg bg-sky-500 py-1.5 text-[11px] font-bold text-black hover:bg-sky-400 active:scale-95 shadow flex items-center justify-center gap-1 transition"
           >
             <Send className="size-3" /> Alice Sends Encrypted Message
           </button>
@@ -535,12 +609,111 @@ export const DoubleRatchetCryptoEngine: React.FC = () => {
 
         {/* Wire In-Flight */}
         <div className="md:col-span-2 flex flex-col items-center justify-center text-center space-y-1">
-          <Lock className="size-5 text-accent-brand animate-pulse" />
-          <span className="text-[9px] font-mono text-text-muted uppercase">Untrusted Wire ({stage})</span>
-          <span className="text-[9.5px] font-mono text-emerald-300 truncate max-w-[110px]">
+          <div className="relative w-full h-14 flex items-center justify-center px-1">
+            <svg viewBox="0 0 160 48" className="w-full h-full overflow-visible">
+              <defs>
+                <filter id="packetLaserGlow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="3" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+              </defs>
+
+              {/* Untrusted Fiber Wire */}
+              <line
+                x1="10"
+                y1="24"
+                x2="150"
+                y2="24"
+                stroke="rgba(255,255,255,0.18)"
+                strokeWidth="2"
+                strokeDasharray="4 4"
+              />
+
+              {/* Active Laser Channel */}
+              {stage !== 'idle' && (
+                <line
+                  x1="10"
+                  y1="24"
+                  x2="150"
+                  y2="24"
+                  stroke={stage === 'alice_sends' ? '#38bdf8' : '#c084fc'}
+                  strokeWidth="2.8"
+                  strokeDasharray="8 6"
+                  filter="url(#packetLaserGlow)"
+                  className="animate-flow-dash"
+                />
+              )}
+
+              {/* Alice -> Bob Encrypted Packet */}
+              {stage === 'alice_sends' && (
+                <g filter="url(#packetLaserGlow)" className="transition-all duration-700 ease-out">
+                  <rect
+                    x="50"
+                    y="12"
+                    width="60"
+                    height="24"
+                    rx="6"
+                    fill="#0284c7"
+                    stroke="#38bdf8"
+                    strokeWidth="1.6"
+                    className="shadow-lg"
+                  />
+                  <text
+                    x="80"
+                    y="27"
+                    textAnchor="middle"
+                    fill="#ffffff"
+                    fontSize="8.5"
+                    fontWeight="bold"
+                    fontFamily="monospace"
+                  >
+                    🔒 AES-GCM
+                  </text>
+                </g>
+              )}
+
+              {/* Bob -> Alice Ephemeral DH Ratchet Packet */}
+              {stage === 'bob_replies' && (
+                <g filter="url(#packetLaserGlow)" className="transition-all duration-700 ease-out">
+                  <rect
+                    x="48"
+                    y="12"
+                    width="64"
+                    height="24"
+                    rx="6"
+                    fill="#7e22ce"
+                    stroke="#c084fc"
+                    strokeWidth="1.6"
+                    className="shadow-lg"
+                  />
+                  <text
+                    x="80"
+                    y="27"
+                    textAnchor="middle"
+                    fill="#ffffff"
+                    fontSize="8.5"
+                    fontWeight="bold"
+                    fontFamily="monospace"
+                  >
+                    🔑 Curve25519
+                  </text>
+                </g>
+              )}
+
+              {stage === 'idle' && (
+                <circle cx="80" cy="24" r="5" fill="rgba(0, 240, 255, 0.4)" />
+              )}
+            </svg>
+          </div>
+
+          <span className="text-[9px] font-mono text-text-muted uppercase">Untrusted Fiber Wire</span>
+          <span className="text-[9.5px] font-mono text-emerald-300 truncate max-w-[120px]">
             {cipherText}
           </span>
-          <span className="text-[8.5px] font-mono text-cyan-300 truncate max-w-[110px]">
+          <span className="text-[8.5px] font-mono text-cyan-300 truncate max-w-[120px]">
             MK: {messageKey}
           </span>
         </div>

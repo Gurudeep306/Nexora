@@ -52,6 +52,68 @@ const ICON_MAP: Record<string, React.ReactNode> = {
   Cpu: <Cpu className="size-5" />,
 }
 
+const getProtocolTheme = (protocol: string = '') => {
+  const p = protocol.toUpperCase()
+  if (p.includes('GRPC') || p.includes('PROTO') || p.includes('HTTP/2') || p.includes('QUIC')) {
+    return {
+      particle: '#10b981',
+      particleAlt: '#34d399',
+      glow: '#059669',
+      line: '#10b981',
+      badgeBorder: '#10b981',
+      badgeText: '#34d399',
+    }
+  }
+  if (p.includes('KAFKA') || p.includes('EVENT') || p.includes('STREAM') || p.includes('PUBSUB') || p.includes('QUEUE')) {
+    return {
+      particle: '#c084fc',
+      particleAlt: '#e879f9',
+      glow: '#9333ea',
+      line: '#a855f7',
+      badgeBorder: '#c084fc',
+      badgeText: '#e879f9',
+    }
+  }
+  if (p.includes('SQL') || p.includes('POSTGRES') || p.includes('MYSQL') || p.includes('WAL') || p.includes('ROCKSDB')) {
+    return {
+      particle: '#fbbf24',
+      particleAlt: '#fde047',
+      glow: '#d97706',
+      line: '#f59e0b',
+      badgeBorder: '#fbbf24',
+      badgeText: '#fde047',
+    }
+  }
+  if (p.includes('REDIS') || p.includes('CACHE') || p.includes('MEMCACHE')) {
+    return {
+      particle: '#38bdf8',
+      particleAlt: '#67e8f9',
+      glow: '#0284c7',
+      line: '#38bdf8',
+      badgeBorder: '#38bdf8',
+      badgeText: '#67e8f9',
+    }
+  }
+  if (p.includes('WS') || p.includes('WEBSOCKET')) {
+    return {
+      particle: '#a3e635',
+      particleAlt: '#bef264',
+      glow: '#65a30d',
+      line: '#84cc16',
+      badgeBorder: '#a3e635',
+      badgeText: '#bef264',
+    }
+  }
+  return {
+    particle: 'var(--color-accent-brand)',
+    particleAlt: '#38bdf8',
+    glow: '#818cf8',
+    line: 'var(--color-accent-brand)',
+    badgeBorder: 'var(--color-accent-brand)',
+    badgeText: 'var(--color-text-primary)',
+  }
+}
+
 export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
   system,
   currentStepIndex,
@@ -68,7 +130,16 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
   const [soundEnabled, setSoundEnabled] = useState<boolean>(false)
   const [showTelemetryHud, setShowTelemetryHud] = useState<boolean>(true)
   const [packetInspectorMode, setPacketInspectorMode] = useState<'json' | 'hex'>('json')
+  const [hoveredConn, setHoveredConn] = useState<{
+    id: string
+    midX: number
+    midY: number
+    fromName: string
+    toName: string
+    protocol: string
+  } | null>(null)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
 
   const steps = system.animationSteps
   const currentStep = steps[currentStepIndex] || steps[0]
@@ -94,11 +165,26 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
         }
       }, duration)
     }
-
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current)
     }
   }, [isPlaying, currentStepIndex, steps.length, playbackSpeed, currentStep, onStepChange])
+
+  // Continuous smooth packet stream motion
+  const [flowTick, setFlowTick] = useState<number>(0)
+  useEffect(() => {
+    let animId: number
+    const speedMult = trafficProfile === 'spike' ? 2.2 : trafficProfile === 'peak' ? 1.5 : 1.0
+    let lastTime = performance.now()
+    const loop = (now: number) => {
+      const dt = (now - lastTime) / 1000
+      lastTime = now
+      setFlowTick((prev) => (prev + dt * speedMult * playbackSpeed) % 1000)
+      animId = requestAnimationFrame(loop)
+    }
+    animId = requestAnimationFrame(loop)
+    return () => cancelAnimationFrame(animId)
+  }, [trafficProfile, playbackSpeed])
 
   const handlePlayPause = () => {
     if (currentStepIndex >= steps.length - 1 && !isPlaying) {
@@ -415,7 +501,7 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
         )}
 
         {/* SVG Connection Lines & Animated Flow Particles */}
-        <svg className="absolute inset-0 size-full pointer-events-none">
+        <svg className="absolute inset-0 size-full pointer-events-none overflow-visible">
           <defs>
             <linearGradient id="activeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="var(--color-accent-brand)" />
@@ -423,8 +509,8 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
             </linearGradient>
 
             <filter id="laserGlow" x="-50%" y="-50%" width="200%" height="200%">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur1" />
-              <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur2" />
+              <feGaussianBlur in="SourceGraphic" stdDeviation="3.5" result="blur1" />
+              <feGaussianBlur in="SourceGraphic" stdDeviation="7" result="blur2" />
               <feMerge>
                 <feMergeNode in="blur2" />
                 <feMergeNode in="blur1" />
@@ -444,6 +530,7 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
               (currentStep?.fromNode === conn.to && currentStep?.toNode === conn.from)
 
             const isBlocked = failedNodes[conn.from] || failedNodes[conn.to]
+            const protoTheme = getProtocolTheme(currentStep?.protocol)
 
             // Calculate subtle curvature control point
             const midX = (from.x + to.x) / 2
@@ -460,7 +547,7 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
                     isBlocked
                       ? '#f43f5e'
                       : isCurrentActiveConn
-                      ? 'var(--color-accent-brand)'
+                      ? protoTheme.line
                       : 'var(--color-border-strong)'
                   }
                   strokeWidth={isCurrentActiveConn ? 3 : 1.2}
@@ -469,85 +556,237 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
                   className="transition-all duration-300"
                 />
 
-                {/* Animated Flow Pulse on Active Connection */}
+                {/* Animated Streaming Laser Wave on Active Connection */}
                 {isCurrentActiveConn && !isBlocked && (
                   <path
                     d={pathD}
                     fill="none"
-                    stroke="#38bdf8"
-                    strokeWidth="4"
-                    strokeDasharray="12 40"
-                    opacity="0.8"
+                    stroke={protoTheme.particle}
+                    strokeWidth="3.5"
+                    strokeDasharray="10 24"
+                    opacity="0.9"
                     filter="url(#laserGlow)"
-                    className="animate-pulse"
+                    className="animate-flow-dash"
                   />
                 )}
+
+                {/* Invisible wide hover hit rail */}
+                <path
+                  d={pathD}
+                  fill="none"
+                  stroke="transparent"
+                  strokeWidth="24"
+                  className="pointer-events-auto cursor-pointer"
+                  onMouseEnter={() =>
+                    setHoveredConn({
+                      id: conn.id,
+                      midX,
+                      midY,
+                      fromName: from.name,
+                      toName: to.name,
+                      protocol: conn.protocol || currentStep.protocol || 'TCP/IP',
+                    })
+                  }
+                  onMouseLeave={() => setHoveredConn(null)}
+                />
               </g>
             )
           })}
 
           {/* Traveling Multi-Particle Stream & Protocol Badge */}
-          {fromNodeObj && toNodeObj && !isSelfNode && !failedNodes[currentStep.fromNode] && (
-            <g className="transition-all duration-700 ease-in-out">
-              {/* Target Node Receiving Waves */}
-              <circle
-                cx={`${toNodeObj.x}%`}
-                cy={`${toNodeObj.y}%`}
-                r="36"
-                fill="none"
-                stroke="var(--color-accent-brand)"
-                strokeWidth="1.5"
-                opacity="0.5"
-                className="animate-ping"
-              />
-
-              {/* Traveling Particles (Progress Stream) */}
-              {(trafficProfile === 'spike'
-                ? [0.12, 0.25, 0.38, 0.51, 0.64, 0.77, 0.9]
+          {fromNodeObj && toNodeObj && !isSelfNode && !failedNodes[currentStep.fromNode] && (() => {
+            const midX = (fromNodeObj.x + toNodeObj.x) / 2
+            const midY = (fromNodeObj.y + toNodeObj.y) / 2 - 4
+            const protoTheme = getProtocolTheme(currentStep.protocol)
+            const baseOffsets =
+              trafficProfile === 'spike'
+                ? [0.0, 0.15, 0.3, 0.45, 0.6, 0.75, 0.9]
                 : trafficProfile === 'peak'
-                ? [0.2, 0.35, 0.5, 0.65, 0.8]
-                : [0.3, 0.5, 0.7]
-              ).map((offset, idx) => {
-                const px = fromNodeObj.x + (toNodeObj.x - fromNodeObj.x) * offset
-                const py = fromNodeObj.y + (toNodeObj.y - fromNodeObj.y) * offset - 3
-                return (
-                  <circle
-                    key={idx}
-                    cx={`${px}%`}
-                    cy={`${py}%`}
-                    r={trafficProfile === 'spike' ? 6 : idx === 1 ? 6.5 : 4}
-                    fill={trafficProfile === 'spike' ? '#f43f5e' : 'url(#activeGrad)'}
-                    filter="url(#laserGlow)"
-                    className="animate-pulse"
-                  />
-                )
-              })}
+                ? [0.0, 0.22, 0.44, 0.66, 0.88]
+                : [0.1, 0.4, 0.7]
 
-              {/* Protocol Floating Badge on Wire */}
-              <g
-                transform={`translate(calc(${(fromNodeObj.x + toNodeObj.x) / 2}% - 30px), calc(${
-                  (fromNodeObj.y + toNodeObj.y) / 2
-                }% - 26px))`}
-              >
+            return (
+              <g className="transition-all duration-700 ease-in-out">
+                {/* Target Node Receiving Waves - Centered via group transform */}
+                <g style={{ transform: `translate(${toNodeObj.x}%, ${toNodeObj.y}%)`, transformBox: 'view-box' }}>
+                  <circle
+                    cx="0"
+                    cy="0"
+                    r="38"
+                    fill="none"
+                    stroke={protoTheme.particle}
+                    strokeWidth="1.8"
+                    opacity="0.6"
+                    style={{
+                      transformBox: 'fill-box',
+                      transformOrigin: 'center',
+                      animation: 'ping 1.4s cubic-bezier(0, 0, 0.2, 1) infinite',
+                    }}
+                  />
+                </g>
+
+                {/* Traveling Particles along True Quadratic Bezier Path */}
+                {baseOffsets.map((baseOffset, idx) => {
+                  const t = (baseOffset + (flowTick * 0.35)) % 1
+                  const oneMinusT = 1 - t
+                  const px =
+                    oneMinusT * oneMinusT * fromNodeObj.x +
+                    2 * oneMinusT * t * midX +
+                    t * t * toNodeObj.x
+                  const py =
+                    oneMinusT * oneMinusT * fromNodeObj.y +
+                    2 * oneMinusT * t * midY +
+                    t * t * toNodeObj.y
+
+                  return (
+                    <circle
+                      key={idx}
+                      cx={`${px}%`}
+                      cy={`${py}%`}
+                      r={trafficProfile === 'spike' ? 6 : idx === 1 ? 6.5 : 4.5}
+                      fill={trafficProfile === 'spike' ? '#f43f5e' : protoTheme.particle}
+                      filter="url(#laserGlow)"
+                      className="transition-all"
+                    />
+                  )
+                })}
+
+                {/* Protocol Floating Badge on Wire */}
+                <g style={{ transform: `translate(${midX}%, ${midY}%)`, transformBox: 'view-box' }}>
+                  <g transform="translate(-32, -14)">
+                    <rect
+                      width="64"
+                      height="20"
+                      rx="6"
+                      fill="var(--color-bg-surface-3)"
+                      stroke={protoTheme.badgeBorder}
+                      strokeWidth="1.4"
+                      className="shadow-lg"
+                    />
+                    <text
+                      x="32"
+                      y="14"
+                      fill={protoTheme.badgeText}
+                      fontSize="10"
+                      fontWeight="800"
+                      fontFamily="var(--font-mono)"
+                      textAnchor="middle"
+                    >
+                      {currentStep.protocol}
+                    </text>
+                  </g>
+                </g>
+              </g>
+            )
+          })()}
+
+          {/* Self-Node In-Memory Execution Animation */}
+          {fromNodeObj && isSelfNode && !failedNodes[currentStep.fromNode] && (
+            <g
+              className="transition-all duration-700 ease-in-out"
+              style={{ transform: `translate(${fromNodeObj.x}%, ${fromNodeObj.y}%)`, transformBox: 'view-box' }}
+            >
+              {/* Concentric Rotating Dash Ring */}
+              <circle
+                cx="0"
+                cy="0"
+                r="42"
+                fill="none"
+                stroke="#38bdf8"
+                strokeWidth="2"
+                strokeDasharray="6 8"
+                filter="url(#laserGlow)"
+                style={{
+                  transformBox: 'fill-box',
+                  transformOrigin: 'center',
+                  animation: 'spin 3s linear infinite',
+                }}
+              />
+              {/* Soft Pulsing Core Aura */}
+              <circle
+                cx="0"
+                cy="0"
+                r="26"
+                fill="#38bdf8"
+                opacity="0.15"
+                className="animate-pulse"
+              />
+              {/* Dual Orbiting Particles */}
+              <circle
+                cx={42 * Math.cos(flowTick * 3)}
+                cy={42 * Math.sin(flowTick * 3)}
+                r="5"
+                fill="#00F0FF"
+                filter="url(#laserGlow)"
+                className="shadow-lg"
+              />
+              <circle
+                cx={42 * Math.cos(flowTick * 3 + Math.PI)}
+                cy={42 * Math.sin(flowTick * 3 + Math.PI)}
+                r="3.5"
+                fill="#38bdf8"
+                filter="url(#laserGlow)"
+                className="shadow-lg"
+              />
+              {/* In-Memory Local Badge */}
+              <g transform="translate(-36, -46)">
                 <rect
-                  width="60"
-                  height="18"
-                  rx="5"
+                  width="72"
+                  height="19"
+                  rx="6"
                   fill="var(--color-bg-surface-3)"
-                  stroke="var(--color-accent-brand)"
-                  strokeWidth="1.2"
+                  stroke="#38bdf8"
+                  strokeWidth="1.3"
                   className="shadow-lg"
                 />
                 <text
-                  x="30"
-                  y="12.5"
-                  fill="var(--color-text-primary)"
-                  fontSize="10"
+                  x="36"
+                  y="13"
+                  fill="#38bdf8"
+                  fontSize="9.5"
                   fontWeight="800"
                   fontFamily="var(--font-mono)"
                   textAnchor="middle"
                 >
-                  {currentStep.protocol}
+                  IN-MEMORY
+                </text>
+              </g>
+            </g>
+          )}
+
+          {/* Hovered Wire Holographic HUD Tooltip */}
+          {hoveredConn && (
+            <g style={{ transform: `translate(${hoveredConn.midX}%, ${hoveredConn.midY}%)`, transformBox: 'view-box' }}>
+              <g transform="translate(-75, -50)" className="pointer-events-none">
+                <rect
+                  width="150"
+                  height="38"
+                  rx="8"
+                  fill="rgba(10, 15, 26, 0.95)"
+                  stroke="var(--color-accent-brand)"
+                  strokeWidth="1.2"
+                  filter="url(#laserGlow)"
+                />
+                <text
+                  x="75"
+                  y="15"
+                  fill="var(--color-accent-brand)"
+                  fontSize="9"
+                  fontWeight="800"
+                  fontFamily="var(--font-mono)"
+                  textAnchor="middle"
+                >
+                  ⚡ {hoveredConn.protocol} WIRE
+                </text>
+                <text
+                  x="75"
+                  y="28"
+                  fill="#94a3b8"
+                  fontSize="8"
+                  fontFamily="var(--font-mono)"
+                  textAnchor="middle"
+                >
+                  {hoveredConn.fromName} → {hoveredConn.toName}
                 </text>
               </g>
             </g>
@@ -725,7 +964,9 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
           <div className="flex items-center justify-between text-[10.5px] font-mono text-text-muted pt-1">
             <span>From: {currentStep.fromNode}</span>
             <span>To: {currentStep.toNode}</span>
-            <span className="text-accent-brand font-bold">Latency: ~{(Math.random() * 8 + 2).toFixed(1)}ms</span>
+            <span className="text-accent-brand font-bold">
+              Latency: ~{(((currentStepIndex * 1.7 + 2.1) % 5.8) + (trafficProfile === 'spike' ? 18.2 : trafficProfile === 'peak' ? 6.4 : 1.8)).toFixed(1)}ms
+            </span>
           </div>
         </div>
       </div>

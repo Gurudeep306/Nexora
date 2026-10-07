@@ -9,6 +9,7 @@ import {
   Flame,
   Radio,
 } from 'lucide-react'
+import { playSuccessChimeSound, playStepClickSound } from '../utils/audioEffects'
 
 interface MockInterviewSimulatorProps {
   system: SystemDesignModel
@@ -37,41 +38,59 @@ export const MockInterviewSimulator: React.FC<MockInterviewSimulatorProps> = ({ 
   const [celebrityStrategy, setCelebrityStrategy] = useState<string>('')
   const [redisFailureStrategy, setRedisFailureStrategy] = useState<string>('')
 
-  // Score Calculations
-  const calculateScore = () => {
-    let score = 0
-    // Stage 1
+  // Dynamic Rubric Breakdown Calculations
+  const stage1Score = (() => {
+    let s = 0
     const reqCount = Object.values(selectedReqs).filter(Boolean).length
-    if (reqCount >= 3) score += 20
-    if (qpsGuess.trim()) score += 5
+    if (reqCount >= 3) s += 20
+    else if (reqCount > 0) s += 10
+    if (qpsGuess.trim()) s += 5
+    return Math.min(25, s)
+  })()
 
-    // Stage 2
-    if (selectedBlocks.includes('cdn') && selectedBlocks.includes('lb') && selectedBlocks.includes('api') && selectedBlocks.includes('cache') && selectedBlocks.includes('db')) {
-      score += 25
+  const stage2Score = (() => {
+    let s = 0
+    if (
+      selectedBlocks.includes('cdn') &&
+      selectedBlocks.includes('lb') &&
+      selectedBlocks.includes('api') &&
+      selectedBlocks.includes('cache') &&
+      selectedBlocks.includes('db')
+    ) {
+      s += 25
     } else if (selectedBlocks.length >= 3) {
-      score += 15
+      s += 18
+    } else if (selectedBlocks.length > 0) {
+      s += 10
     }
+    return Math.min(25, s)
+  })()
 
-    // Stage 3
-    if (partitionChoice === 'consistent_hash') score += 10
-    else if (partitionChoice) score += 6
+  const stage3Score = (() => {
+    let s = 0
+    if (partitionChoice === 'consistent_hash') s += 10
+    else if (partitionChoice) s += 6
 
-    if (cacheChoice === 'cache_aside') score += 8
-    else if (cacheChoice) score += 5
+    if (cacheChoice === 'cache_aside') s += 8
+    else if (cacheChoice) s += 5
 
-    if (consistencyChoice === 'eventual_quorum' || consistencyChoice === 'strong_raft') score += 7
+    if (consistencyChoice === 'eventual_quorum' || consistencyChoice === 'strong_raft') s += 7
+    else if (consistencyChoice) s += 4
+    return Math.min(25, s)
+  })()
 
-    // Stage 4
-    if (celebrityStrategy === 'scatter_gather_vnodes') score += 13
-    else if (celebrityStrategy) score += 7
+  const stage4Score = (() => {
+    let s = 0
+    if (celebrityStrategy === 'scatter_gather_vnodes') s += 13
+    else if (celebrityStrategy) s += 7
 
-    if (redisFailureStrategy === 'circuit_breaker_sentinel') score += 12
-    else if (redisFailureStrategy) score += 6
+    if (redisFailureStrategy === 'circuit_breaker_sentinel') s += 12
+    else if (redisFailureStrategy) s += 6
+    return Math.min(25, s)
+  })()
 
-    return Math.min(100, score)
-  }
+  const finalScore = stage1Score + stage2Score + stage3Score + stage4Score
 
-  const finalScore = calculateScore()
 
   const getInterviewLevel = (s: number) => {
     if (s >= 90) return { title: 'Staff Software Engineer (L6 / E6)', color: 'text-emerald-400', badge: 'STRONG HIRE (L6)' }
@@ -81,6 +100,7 @@ export const MockInterviewSimulator: React.FC<MockInterviewSimulatorProps> = ({ 
   }
 
   const handleReset = () => {
+    playStepClickSound()
     setCurrentStage(1)
     setSelectedReqs({})
     setQpsGuess('')
@@ -222,7 +242,10 @@ export const MockInterviewSimulator: React.FC<MockInterviewSimulatorProps> = ({ 
 
           <div className="flex justify-end pt-3">
             <button
-              onClick={() => setCurrentStage(2)}
+              onClick={() => {
+                playStepClickSound()
+                setCurrentStage(2)
+              }}
               className="rounded-lg bg-accent-brand px-5 py-2 text-[12px] font-bold text-bg-base hover:opacity-90 flex items-center gap-1.5 shadow"
             >
               Proceed to Stage 2: High-Level Architecture <ArrowRight className="size-3.5" />
@@ -302,13 +325,19 @@ export const MockInterviewSimulator: React.FC<MockInterviewSimulatorProps> = ({ 
 
           <div className="flex justify-between pt-3">
             <button
-              onClick={() => setCurrentStage(1)}
+              onClick={() => {
+                playStepClickSound()
+                setCurrentStage(1)
+              }}
               className="rounded-lg bg-bg-surface-2 px-4 py-2 text-[12px] font-mono text-text-muted hover:text-text-primary"
             >
               Back
             </button>
             <button
-              onClick={() => setCurrentStage(3)}
+              onClick={() => {
+                playStepClickSound()
+                setCurrentStage(3)
+              }}
               className="rounded-lg bg-accent-brand px-5 py-2 text-[12px] font-bold text-bg-base hover:opacity-90 flex items-center gap-1.5 shadow"
             >
               Proceed to Stage 3: Deep Dive & Sharding <ArrowRight className="size-3.5" />
@@ -405,13 +434,19 @@ export const MockInterviewSimulator: React.FC<MockInterviewSimulatorProps> = ({ 
 
           <div className="flex justify-between pt-3">
             <button
-              onClick={() => setCurrentStage(2)}
+              onClick={() => {
+                playStepClickSound()
+                setCurrentStage(2)
+              }}
               className="rounded-lg bg-bg-surface-2 px-4 py-2 text-[12px] font-mono text-text-muted hover:text-text-primary"
             >
               Back
             </button>
             <button
-              onClick={() => setCurrentStage(4)}
+              onClick={() => {
+                playStepClickSound()
+                setCurrentStage(4)
+              }}
               className="rounded-lg bg-accent-brand px-5 py-2 text-[12px] font-bold text-bg-base hover:opacity-90 flex items-center gap-1.5 shadow"
             >
               Proceed to Stage 4: Chaos & Failure Modes <ArrowRight className="size-3.5" />
@@ -488,14 +523,26 @@ export const MockInterviewSimulator: React.FC<MockInterviewSimulatorProps> = ({ 
             </div>
           </div>
 
-          <button
-            onClick={() => {
-              setCurrentStage(5)
-            }}
-            className="rounded-lg bg-accent-brand px-5 py-2.5 text-[12px] font-bold text-bg-base hover:opacity-90 shadow"
-          >
-            Generate Staff Interview Scorecard 🏆
-          </button>
+          <div className="flex justify-between items-center pt-3">
+            <button
+              onClick={() => {
+                playStepClickSound()
+                setCurrentStage(3)
+              }}
+              className="rounded-lg bg-bg-surface-2 px-4 py-2 text-[12px] font-mono text-text-muted hover:text-text-primary"
+            >
+              Back
+            </button>
+            <button
+              onClick={() => {
+                playSuccessChimeSound()
+                setCurrentStage(5)
+              }}
+              className="rounded-lg bg-accent-brand px-5 py-2.5 text-[12px] font-bold text-bg-base hover:opacity-90 shadow flex items-center gap-1.5"
+            >
+              <Award className="size-4" /> Generate Staff Interview Scorecard 🏆
+            </button>
+          </div>
         </div>
       )}
 
@@ -503,7 +550,7 @@ export const MockInterviewSimulator: React.FC<MockInterviewSimulatorProps> = ({ 
       {/* STAGE 5: FINAL STAFF ENGINEER SCORECARD & ASSESSMENT RUBRIC */}
       {/* ========================================================================= */}
       {currentStage === 5 && (
-        <div className="space-y-6 rounded-xl bg-bg-surface-1 p-6 sm:p-8 ring-1 ring-border">
+        <div className="space-y-6 rounded-xl bg-bg-surface-1 p-6 sm:p-8 ring-1 ring-border animate-fadeIn">
           <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border/50 pb-5">
             <div>
               <span className="font-mono text-[11px] font-bold uppercase text-accent-brand block">
@@ -526,19 +573,19 @@ export const MockInterviewSimulator: React.FC<MockInterviewSimulatorProps> = ({ 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center font-mono">
             <div className="rounded-xl bg-bg-surface-2 p-3 ring-1 ring-border">
               <span className="text-[10px] text-text-muted uppercase block">Scoping & Math</span>
-              <span className="text-lg font-bold text-emerald-400">25 / 25</span>
+              <span className="text-lg font-bold text-emerald-400">{stage1Score} / 25</span>
             </div>
             <div className="rounded-xl bg-bg-surface-2 p-3 ring-1 ring-border">
               <span className="text-[10px] text-text-muted uppercase block">Architecture Flow</span>
-              <span className="text-lg font-bold text-cyan-400">25 / 25</span>
+              <span className="text-lg font-bold text-cyan-400">{stage2Score} / 25</span>
             </div>
             <div className="rounded-xl bg-bg-surface-2 p-3 ring-1 ring-border">
               <span className="text-[10px] text-text-muted uppercase block">Sharding Strategy</span>
-              <span className="text-lg font-bold text-purple-400">25 / 25</span>
+              <span className="text-lg font-bold text-purple-400">{stage3Score} / 25</span>
             </div>
             <div className="rounded-xl bg-bg-surface-2 p-3 ring-1 ring-border">
               <span className="text-[10px] text-text-muted uppercase block">Chaos Resilience</span>
-              <span className="text-lg font-bold text-amber-400">25 / 25</span>
+              <span className="text-lg font-bold text-amber-400">{stage4Score} / 25</span>
             </div>
           </div>
 
