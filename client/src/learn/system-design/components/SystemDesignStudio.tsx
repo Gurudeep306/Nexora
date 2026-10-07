@@ -400,6 +400,17 @@ export const SystemDesignStudio: React.FC = () => {
                   >
                     <LayoutGrid className="size-3" /> Catalog
                   </button>
+                  <button
+                    onClick={() => setBrowseMode('table')}
+                    className={`px-2 py-1 text-[11px] font-mono font-bold rounded flex items-center gap-1 ${
+                      browseMode === 'table'
+                        ? 'bg-accent-brand text-bg-base'
+                        : 'text-text-muted hover:text-text-primary'
+                    }`}
+                    title="High-Density Architecture Comparison Table"
+                  >
+                    <Table className="size-3" /> Table
+                  </button>
                 </div>
 
                 {/* Search Bar */}
@@ -569,7 +580,7 @@ export const SystemDesignStudio: React.FC = () => {
                 )
               })}
             </div>
-          ) : (
+          ) : browseMode === 'catalog' ? (
             /* VIEW MODE B: FLAT BENTO CATALOG VIEW */
             <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border shadow-xl space-y-4">
               <div className="flex items-center justify-between border-b border-border/50 pb-3">
@@ -647,6 +658,104 @@ export const SystemDesignStudio: React.FC = () => {
                     </div>
                   )
                 })}
+              </div>
+            </div>
+          ) : (
+            /* VIEW MODE C: HIGH-DENSITY ARCHITECTURE COMPARISON TABLE VIEW */
+            <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border shadow-xl space-y-4">
+              <div className="flex items-center justify-between border-b border-border/50 pb-3">
+                <div>
+                  <span className="text-[14px] font-bold text-text-primary font-mono block">
+                    High-Density Architecture Comparison Table ({filteredSystems.length} Systems)
+                  </span>
+                  <span className="text-[11px] font-mono text-text-muted">
+                    Compare protocols, storage footprints, latency budgets, and real-world archetypes side-by-side
+                  </span>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto rounded-xl ring-1 ring-border max-h-[600px]">
+                <table className="w-full text-left text-[12px] border-collapse font-mono">
+                  <thead className="bg-bg-surface-3 text-text-muted uppercase text-[10px] tracking-wider sticky top-0 z-10">
+                    <tr>
+                      <th className="p-3">System Name</th>
+                      <th className="p-3">Archetype</th>
+                      <th className="p-3">Domain</th>
+                      <th className="p-3">What It Does & Core Invariant</th>
+                      <th className="p-3">Throughput</th>
+                      <th className="p-3">Latency SLA</th>
+                      <th className="p-3">Architecture Pattern</th>
+                      <th className="p-3">Difficulty</th>
+                      <th className="p-3">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border/60 bg-bg-surface-1">
+                    {filteredSystems.map((sys) => {
+                      const meta = SYSTEM_METADATA_REGISTRY[sys.id]
+                      const isSelected = sys.id === currentSystem.id
+                      const domainStyle = DOMAIN_COLOR_MAP[meta?.domain || ''] || {
+                        badge: 'bg-accent-brand/10 text-accent-brand ring-1 ring-accent-brand/30',
+                        text: 'text-accent-brand',
+                        border: 'border-accent-brand',
+                      }
+
+                      return (
+                        <tr
+                          key={sys.id}
+                          className={`hover:bg-bg-surface-2/70 transition cursor-pointer ${
+                            isSelected ? 'bg-accent-brand/10 font-bold' : ''
+                          }`}
+                          onClick={() => handleSelectSystem(sys.id)}
+                        >
+                          <td className="p-3 whitespace-nowrap">
+                            <span className="text-text-primary font-bold block">{sys.name}</span>
+                            <span className="text-[10px] text-text-muted">{sys.services.length} services · {sys.animationSteps.length} steps</span>
+                          </td>
+                          <td className="p-3 whitespace-nowrap">
+                            <span className="text-amber-400 font-bold">
+                              ⚡ {meta?.realWorldArchetype || sys.name}
+                            </span>
+                          </td>
+                          <td className="p-3 whitespace-nowrap">
+                            <span className={`rounded px-1.5 py-0.5 text-[9.5px] font-bold uppercase ${domainStyle.badge}`}>
+                              {meta?.domain || sys.category}
+                            </span>
+                          </td>
+                          <td className="p-3 font-sans text-text-secondary text-[11.5px] max-w-[280px] leading-relaxed">
+                            {meta?.whatItDoes || sys.tagline}
+                          </td>
+                          <td className="p-3 text-text-primary font-bold whitespace-nowrap">
+                            {sys.throughput}
+                          </td>
+                          <td className="p-3 text-emerald-400 font-bold whitespace-nowrap">
+                            {sys.latency}
+                          </td>
+                          <td className="p-3 text-sky-400 text-[11px] truncate max-w-[160px]">
+                            {meta?.architecturePattern || sys.category}
+                          </td>
+                          <td className="p-3 text-purple-400 whitespace-nowrap font-bold">
+                            {meta?.difficulty || sys.difficulty}
+                          </td>
+                          <td className="p-3 whitespace-nowrap">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                handleSelectSystem(sys.id)
+                              }}
+                              className={`px-3 py-1.5 rounded text-[11px] font-bold font-mono transition shadow-sm ${
+                                isSelected
+                                  ? 'bg-accent-brand text-bg-base'
+                                  : 'bg-bg-surface-2 text-text-primary hover:bg-accent-brand hover:text-bg-base ring-1 ring-border'
+                              }`}
+                            >
+                              {isSelected ? 'Simulating ▶' : 'Launch →'}
+                            </button>
+                          </td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
               </div>
             </div>
           )}

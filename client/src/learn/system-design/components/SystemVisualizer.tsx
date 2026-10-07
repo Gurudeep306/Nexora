@@ -269,6 +269,16 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
   const meta = SYSTEM_METADATA_REGISTRY[system.id]
   const [showReqsAccordion, setShowReqsAccordion] = useState<boolean>(false)
   const [activeShowcaseTab, setActiveShowcaseTab] = useState<'components' | 'connections' | 'slas'>('components')
+  const [selectedShowcaseTier, setSelectedShowcaseTier] = useState<string>('all')
+  const inspectorRef = useRef<HTMLDivElement>(null)
+
+  const handleInspectFromShowcase = (node: ServiceNode) => {
+    setSelectedNode(node)
+    if (onSelectNode) onSelectNode(node)
+    setTimeout(() => {
+      inspectorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }, 60)
+  }
 
   // Calculate unique active tiers for visual swimlane bands
   const activeTiers = useMemo(() => {
@@ -1329,7 +1339,11 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
         const isFailed = !!failedNodes[selectedNode.id]
 
         return (
-          <div className="border-t border-border bg-bg-surface-3/95 p-5 space-y-4 animate-fadeIn">
+          <div
+            ref={inspectorRef}
+            id="service-inspector-panel"
+            className="border-t border-border bg-bg-surface-3/95 p-5 space-y-4 animate-fadeIn scroll-mt-24 ring-2 ring-accent-brand/30"
+          >
             {/* Header */}
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/50 pb-3">
               <div className="flex items-center gap-3">
@@ -1614,122 +1628,158 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
 
         {/* TAB 1: ALL SERVICES DETAILED SHOWCASE */}
         {activeShowcaseTab === 'components' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {system.services.map((node) => {
-              const pos = resolvedPositions[node.id]
-              const isSelected = selectedNode?.id === node.id
-              const isNodeCrashed = !!failedNodes[node.id]
-
-              // Hardware recommendation heuristics based on node type
-              let hwSpec = 'AWS c6i.2xlarge (8 vCPU, 16GB RAM) · 10Gbps'
-              let failureMode = 'Auto-heals via Kubernetes Deployment replica restart'
-              if (node.type === 'client') {
-                hwSpec = 'Edge Mobile/Browser Client · WebAssembly + TLS 1.3'
-                failureMode = 'Local SQLite offline cache + Exponential retry'
-              } else if (node.type === 'gateway') {
-                hwSpec = 'AWS c6i.8xlarge (32 vCPU, 64GB RAM) · 25Gbps Anycast DNS'
-                failureMode = 'Active-Active Envoy proxy with upstream circuit breaker'
-              } else if (node.type === 'cache') {
-                hwSpec = 'AWS r6i.4xlarge (16 vCPU, 128GB RAM) · In-Memory Cluster'
-                failureMode = 'Master-Replica Redis Sentinel with auto-failover'
-              } else if (node.type === 'queue') {
-                hwSpec = 'AWS i3en.3xlarge (12 vCPU, 96GB RAM, NVMe SSD) · Kafka'
-                failureMode = 'Replication factor 3, min.insync.replicas=2 quorum'
-              } else if (node.type === 'database') {
-                hwSpec = 'AWS r6i.8xlarge (32 vCPU, 256GB RAM) · Multi-AZ IOPS SSD'
-                failureMode = 'Synchronous WAL replication + Hot-standby replica failover'
-              } else if (node.type === 'storage') {
-                hwSpec = 'AWS S3 Distributed Blob Cluster · 11 9s Durability'
-                failureMode = 'Reed-Solomon erasure coding (8+4 redundancy)'
-              }
-
-              return (
-                <div
-                  key={node.id}
-                  className={`rounded-xl p-4 transition-all duration-200 flex flex-col justify-between ring-1 ${
-                    isSelected
-                      ? 'bg-accent-brand/10 ring-2 ring-accent-brand shadow-lg'
-                      : isNodeCrashed
-                      ? 'bg-rose-500/10 ring-1 ring-rose-500/40'
-                      : 'bg-bg-surface-2 ring-border hover:bg-bg-surface-3 hover:ring-border-strong'
+          <div className="space-y-4">
+            {/* Filter by Architectural Tier Pills */}
+            <div className="flex flex-wrap items-center gap-1.5 p-1 rounded-xl bg-bg-surface-1 ring-1 ring-border text-[11px] font-mono">
+              <span className="text-text-muted px-2 font-bold uppercase text-[10px]">Filter by Tier:</span>
+              <button
+                onClick={() => setSelectedShowcaseTier('all')}
+                className={`rounded px-2.5 py-1 font-bold transition ${
+                  selectedShowcaseTier === 'all'
+                    ? 'bg-accent-brand text-bg-base shadow-sm'
+                    : 'text-text-muted hover:text-text-primary'
+                }`}
+              >
+                All Components ({system.services.length})
+              </button>
+              {activeTiers.map((tier) => (
+                <button
+                  key={tier.name}
+                  onClick={() => setSelectedShowcaseTier(selectedShowcaseTier === tier.name ? 'all' : tier.name)}
+                  className={`rounded px-2.5 py-1 font-bold transition ${
+                    selectedShowcaseTier === tier.name
+                      ? 'bg-accent-brand text-bg-base shadow-sm'
+                      : 'text-text-muted hover:text-text-primary hover:bg-bg-surface-2'
                   }`}
                 >
-                  <div className="space-y-2.5">
-                    {/* Header */}
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2">
-                        <span className="flex size-7 items-center justify-center rounded-lg bg-bg-surface-1 text-accent-brand ring-1 ring-border">
-                          {ICON_MAP[node.icon] || <Server className="size-4" />}
-                        </span>
-                        <div>
-                          <span className="font-bold text-[13px] text-text-primary block font-mono">
-                            {node.name}
+                  {tier.name} ({tier.count})
+                </button>
+              ))}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {system.services
+                .filter((node) => {
+                  if (selectedShowcaseTier === 'all') return true
+                  const pos = resolvedPositions[node.id]
+                  return (pos?.tierName || node.role) === selectedShowcaseTier
+                })
+                .map((node) => {
+                  const pos = resolvedPositions[node.id]
+                  const isSelected = selectedNode?.id === node.id
+                  const isNodeCrashed = !!failedNodes[node.id]
+
+                  // Hardware recommendation heuristics based on node type
+                  let hwSpec = 'AWS c6i.2xlarge (8 vCPU, 16GB RAM) · 10Gbps'
+                  let failureMode = 'Auto-heals via Kubernetes Deployment replica restart'
+                  if (node.type === 'client') {
+                    hwSpec = 'Edge Mobile/Browser Client · WebAssembly + TLS 1.3'
+                    failureMode = 'Local SQLite offline cache + Exponential retry'
+                  } else if (node.type === 'gateway') {
+                    hwSpec = 'AWS c6i.8xlarge (32 vCPU, 64GB RAM) · 25Gbps Anycast DNS'
+                    failureMode = 'Active-Active Envoy proxy with upstream circuit breaker'
+                  } else if (node.type === 'cache') {
+                    hwSpec = 'AWS r6i.4xlarge (16 vCPU, 128GB RAM) · In-Memory Cluster'
+                    failureMode = 'Master-Replica Redis Sentinel with auto-failover'
+                  } else if (node.type === 'queue') {
+                    hwSpec = 'AWS i3en.3xlarge (12 vCPU, 96GB RAM, NVMe SSD) · Kafka'
+                    failureMode = 'Replication factor 3, min.insync.replicas=2 quorum'
+                  } else if (node.type === 'database') {
+                    hwSpec = 'AWS r6i.8xlarge (32 vCPU, 256GB RAM) · Multi-AZ IOPS SSD'
+                    failureMode = 'Synchronous WAL replication + Hot-standby replica failover'
+                  } else if (node.type === 'storage') {
+                    hwSpec = 'AWS S3 Distributed Blob Cluster · 11 9s Durability'
+                    failureMode = 'Reed-Solomon erasure coding (8+4 redundancy)'
+                  }
+
+                  return (
+                    <div
+                      key={node.id}
+                      className={`rounded-xl p-4 transition-all duration-200 flex flex-col justify-between ring-1 ${
+                        isSelected
+                          ? 'bg-accent-brand/10 ring-2 ring-accent-brand shadow-lg'
+                          : isNodeCrashed
+                          ? 'bg-rose-500/10 ring-1 ring-rose-500/40'
+                          : 'bg-bg-surface-2 ring-border hover:bg-bg-surface-3 hover:ring-border-strong'
+                      }`}
+                    >
+                      <div className="space-y-2.5">
+                        {/* Header */}
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2">
+                            <span className="flex size-7 items-center justify-center rounded-lg bg-bg-surface-1 text-accent-brand ring-1 ring-border">
+                              {ICON_MAP[node.icon] || <Server className="size-4" />}
+                            </span>
+                            <div>
+                              <span className="font-bold text-[13px] text-text-primary block font-mono">
+                                {node.name}
+                              </span>
+                              <span className="text-[10px] font-mono text-text-muted">
+                                {pos?.tierName || 'Microservice Tier'}
+                              </span>
+                            </div>
+                          </div>
+
+                          <span className={`rounded px-1.5 py-0.5 text-[9.5px] font-mono font-bold uppercase ${
+                            node.type === 'gateway' ? 'bg-purple-500/10 text-purple-400 ring-1 ring-purple-500/30' :
+                            node.type === 'cache' ? 'bg-amber-500/10 text-amber-400 ring-1 ring-amber-500/30' :
+                            node.type === 'queue' ? 'bg-sky-500/10 text-sky-400 ring-1 ring-sky-500/30' :
+                            node.type === 'database' ? 'bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/30' :
+                            'bg-bg-surface-3 text-text-secondary ring-1 ring-border'
+                          }`}>
+                            {node.type}
                           </span>
-                          <span className="text-[10px] font-mono text-text-muted">
-                            {pos?.tierName || 'Microservice Tier'}
-                          </span>
+                        </div>
+
+                        {/* Role & Responsibility */}
+                        <p className="text-[12px] text-text-secondary leading-relaxed font-sans">
+                          {node.details || node.role}
+                        </p>
+
+                        {/* Production Specifications */}
+                        <div className="rounded-lg bg-bg-surface-1 p-2.5 text-[10.5px] font-mono space-y-1 ring-1 ring-border/50">
+                          <div>
+                            <span className="text-text-muted">Tech Stack: </span>
+                            <span className="text-text-primary font-bold">{node.techStack}</span>
+                          </div>
+                          <div>
+                            <span className="text-text-muted">Hardware: </span>
+                            <span className="text-sky-300">{hwSpec}</span>
+                          </div>
+                          <div>
+                            <span className="text-text-muted">Resiliency: </span>
+                            <span className="text-emerald-400">{failureMode}</span>
+                          </div>
                         </div>
                       </div>
 
-                      <span className={`rounded px-1.5 py-0.5 text-[9.5px] font-mono font-bold uppercase ${
-                        node.type === 'gateway' ? 'bg-purple-500/10 text-purple-400 ring-1 ring-purple-500/30' :
-                        node.type === 'cache' ? 'bg-amber-500/10 text-amber-400 ring-1 ring-amber-500/30' :
-                        node.type === 'queue' ? 'bg-sky-500/10 text-sky-400 ring-1 ring-sky-500/30' :
-                        node.type === 'database' ? 'bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/30' :
-                        'bg-bg-surface-3 text-text-secondary ring-1 ring-border'
-                      }`}>
-                        {node.type}
-                      </span>
-                    </div>
+                      {/* Actions */}
+                      <div className="mt-3 pt-2.5 border-t border-border/50 flex items-center justify-between text-[11px] font-mono">
+                        <button
+                          onClick={() => handleInspectFromShowcase(node)}
+                          className="text-accent-brand hover:underline font-bold flex items-center gap-1"
+                        >
+                          {isSelected ? '✓ In Focus (Viewing Code)' : '🔍 Inspect Node & Code →'}
+                        </button>
 
-                    {/* Role & Responsibility */}
-                    <p className="text-[12px] text-text-secondary leading-relaxed font-sans">
-                      {node.details || node.role}
-                    </p>
-
-                    {/* Production Specifications */}
-                    <div className="rounded-lg bg-bg-surface-1 p-2.5 text-[10.5px] font-mono space-y-1 ring-1 ring-border/50">
-                      <div>
-                        <span className="text-text-muted">Tech Stack: </span>
-                        <span className="text-text-primary font-bold">{node.techStack}</span>
-                      </div>
-                      <div>
-                        <span className="text-text-muted">Hardware: </span>
-                        <span className="text-sky-300">{hwSpec}</span>
-                      </div>
-                      <div>
-                        <span className="text-text-muted">Resiliency: </span>
-                        <span className="text-emerald-400">{failureMode}</span>
+                        <button
+                          onClick={() => {
+                            if (soundEnabled) playNodeCrashSound()
+                            setFailedNodes((prev) => ({ ...prev, [node.id]: !prev[node.id] }))
+                          }}
+                          className={`text-[10px] px-2 py-0.5 rounded font-bold transition ring-1 ${
+                            isNodeCrashed
+                              ? 'bg-emerald-500/20 text-emerald-400 ring-emerald-500/50'
+                              : 'bg-rose-500/10 text-rose-400 ring-rose-500/30 hover:bg-rose-500/20'
+                          }`}
+                        >
+                          {isNodeCrashed ? 'Revive' : 'Crash'}
+                        </button>
                       </div>
                     </div>
-                  </div>
-
-                  {/* Actions */}
-                  <div className="mt-3 pt-2.5 border-t border-border/50 flex items-center justify-between text-[11px] font-mono">
-                    <button
-                      onClick={() => handleNodeClick(node)}
-                      className="text-accent-brand hover:underline font-bold flex items-center gap-1"
-                    >
-                      {isSelected ? '✓ In Focus' : '🔍 Inspect Node'}
-                    </button>
-
-                    <button
-                      onClick={() => {
-                        if (soundEnabled) playNodeCrashSound()
-                        setFailedNodes((prev) => ({ ...prev, [node.id]: !prev[node.id] }))
-                      }}
-                      className={`text-[10px] px-2 py-0.5 rounded font-bold transition ring-1 ${
-                        isNodeCrashed
-                          ? 'bg-emerald-500/20 text-emerald-400 ring-emerald-500/50'
-                          : 'bg-rose-500/10 text-rose-400 ring-rose-500/30 hover:bg-rose-500/20'
-                      }`}
-                    >
-                      {isNodeCrashed ? 'Revive' : 'Crash'}
-                    </button>
-                  </div>
-                </div>
-              )
-            })}
+                  )
+                })}
+            </div>
           </div>
         )}
 
