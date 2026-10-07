@@ -8,6 +8,8 @@ import { InteractiveCapacityCalculator } from './InteractiveCapacityCalculator'
 import { InfrastructureTopologyMatrix } from './InfrastructureTopologyMatrix'
 import { SequenceDiagramViewer } from './SequenceDiagramViewer'
 import { ChapterConceptAnimator } from './ConceptAnimators'
+import { MockInterviewSimulator } from './MockInterviewSimulator'
+import { SpecializedDomainEngines } from './SpecializedDomainEngines'
 import {
   BookOpen,
   Layers,
@@ -21,6 +23,8 @@ import {
   Activity,
   Radio,
   Sparkles,
+  Award,
+  TrendingUp,
 } from 'lucide-react'
 
 const CATEGORIES: ('All' | SystemCategory)[] = [
@@ -35,7 +39,7 @@ const CATEGORIES: ('All' | SystemCategory)[] = [
 
 export const SystemDesignStudio: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'visualizer' | 'notes'>('visualizer')
-  const [systemView, setSystemView] = useState<'simulation' | 'sequence' | 'simulators' | 'capacity' | 'matrix'>('simulation')
+  const [systemView, setSystemView] = useState<'simulation' | 'sequence' | 'simulators' | 'interview' | 'engines' | 'capacity' | 'matrix'>('simulation')
   const [selectedCategory, setSelectedCategory] = useState<'All' | SystemCategory>('All')
   const [selectedSystemId, setSelectedSystemId] = useState<string>('tinyurl')
   const [currentStepIndex, setCurrentStepIndex] = useState<number>(0)
@@ -248,6 +252,26 @@ export const SystemDesignStudio: React.FC = () => {
                 <Sparkles className="size-3.5" /> 10 Concept Simulators
               </button>
               <button
+                onClick={() => setSystemView('interview')}
+                className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 transition ${
+                  systemView === 'interview'
+                    ? 'bg-emerald-500 text-black font-bold shadow-sm'
+                    : 'text-text-muted hover:text-text-primary'
+                }`}
+              >
+                <Award className="size-3.5" /> Mock Interview Mode
+              </button>
+              <button
+                onClick={() => setSystemView('engines')}
+                className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 transition ${
+                  systemView === 'engines'
+                    ? 'bg-cyan-500 text-black font-bold shadow-sm'
+                    : 'text-text-muted hover:text-text-primary'
+                }`}
+              >
+                <TrendingUp className="size-3.5" /> Domain Engines
+              </button>
+              <button
                 onClick={() => setSystemView('capacity')}
                 className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 transition ${
                   systemView === 'capacity'
@@ -298,6 +322,14 @@ export const SystemDesignStudio: React.FC = () => {
             /* 10 Interactive Concept Simulators */
             <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border shadow-xl">
               <ChapterConceptAnimator unitId="unit-1" chapterNumber={1} />
+            </div>
+          ) : systemView === 'interview' ? (
+            /* FAANG Mock Interview Simulator */
+            <MockInterviewSimulator system={currentSystem} onSelectSystem={handleSelectSystem} />
+          ) : systemView === 'engines' ? (
+            /* Specialized Domain Infrastructure Engines */
+            <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border shadow-xl">
+              <SpecializedDomainEngines />
             </div>
           ) : systemView === 'capacity' ? (
             /* Interactive Capacity Calculator */
