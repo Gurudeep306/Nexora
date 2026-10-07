@@ -70,6 +70,19 @@ const asList = (v) =>
     .map((s) => s.trim())
     .filter(Boolean);
 
+function sortPaperQuestions(questions) {
+  return questions.slice().sort((a, c) => {
+    const aSec = a.section === "ga" ? 0 : 1;
+    const cSec = c.section === "ga" ? 0 : 1;
+    if (aSec !== cSec) return aSec - cSec;
+    return (
+      Number(a.number) - Number(c.number) ||
+      String(a.number).localeCompare(String(c.number), undefined, { numeric: true }) ||
+      (a.id < c.id ? -1 : 1)
+    );
+  });
+}
+
 function createGateRouter() {
   const router = express.Router();
 
@@ -183,7 +196,14 @@ function createGateRouter() {
         const cm = c.marks || 0;
         if (am !== cm) return (am - cm) * dir;
       }
+      // If questions belong to the same paper, General Aptitude questions (GA 1..10) strictly precede subject questions (1..55)
+      if (a.paper === c.paper) {
+        const aSec = a.section === "ga" ? 0 : 1;
+        const cSec = c.section === "ga" ? 0 : 1;
+        if (aSec !== cSec) return aSec - cSec;
+      }
       return (
+        Number(a.number) - Number(c.number) ||
         String(a.number).localeCompare(String(c.number), undefined, { numeric: true }) ||
         (a.id < c.id ? -1 : 1)
       );
@@ -228,9 +248,9 @@ function createGateRouter() {
     const b = load();
     const q = b.byId.get(req.params.id);
     if (!q) return res.status(404).json({ ok: false, error: "Unknown question" });
-    const samePaper = b.questions.filter((x) => x.paper === q.paper);
-    const i = samePaper.indexOf(q);
-    const group = q.group ? b.questions.filter((x) => x.paper === q.paper && x.group === q.group) : [];
+    const samePaper = sortPaperQuestions(b.questions.filter((x) => x.paper === q.paper));
+    const i = samePaper.findIndex((x) => x.id === q.id);
+    const group = q.group ? samePaper.filter((x) => x.group === q.group) : [];
     res.json({
       ok: true,
       question: strip(q),
@@ -246,20 +266,7 @@ function createGateRouter() {
     const paper = b.papers.find((p) => p.id === req.params.paperId);
     if (!paper) return res.status(404).json({ ok: false, error: "Paper not found" });
 
-    const questions = b.questions
-      .filter((x) => x.paper === paper.id)
-      .slice()
-      .sort((a, c) => {
-        // General Aptitude first, then subject questions
-        const aSec = a.section === "ga" ? 0 : 1;
-        const cSec = c.section === "ga" ? 0 : 1;
-        if (aSec !== cSec) return aSec - cSec;
-        return (
-          Number(a.number) - Number(c.number) ||
-          String(a.number).localeCompare(String(c.number), undefined, { numeric: true }) ||
-          (a.id < c.id ? -1 : 1)
-        );
-      });
+    const questions = sortPaperQuestions(b.questions.filter((x) => x.paper === paper.id));
 
     const gaQuestions = questions.filter((q) => q.section === "ga");
     const subQuestions = questions.filter((q) => q.section !== "ga");
@@ -299,7 +306,7 @@ function createGateRouter() {
     const paper = b.papers.find((p) => p.id === paperId);
     if (!paper) return res.status(404).json({ ok: false, error: "Paper not found" });
 
-    const questions = b.questions.filter((x) => x.paper === paper.id);
+    const questions = sortPaperQuestions(b.questions.filter((x) => x.paper === paper.id));
 
     let totalScore = 0;
     let maxMarks = 0;

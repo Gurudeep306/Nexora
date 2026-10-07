@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 460" width="100%" height="100%">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrow-white" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#f8fafc" />
+    </marker>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#38bdf8" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <rect width="100%" height="100%" fill="#0b1329" rx="16"/>
+  <g transform="translate(60, 40)">
+    <!-- Edges -->
+    <!-- Row 0 (bottom, y=300) -->
+    <line x1="20" y1="300" x2="85" y2="300" stroke="#94a3b8" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <line x1="115" y1="300" x2="185" y2="300" stroke="#94a3b8" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <line x1="215" y1="300" x2="285" y2="300" stroke="#94a3b8" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+    <!-- Row 1 (y=200) -->
+    <line x1="85" y1="200" x2="18" y2="200" stroke="#94a3b8" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <line x1="115" y1="200" x2="185" y2="200" stroke="#94a3b8" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <line x1="285" y1="200" x2="218" y2="200" stroke="#94a3b8" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+    <!-- Row 2 (y=100) -->
+    <line x1="15" y1="100" x2="85" y2="100" stroke="#94a3b8" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <line x1="115" y1="100" x2="185" y2="100" stroke="#94a3b8" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <line x1="215" y1="100" x2="285" y2="100" stroke="#94a3b8" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+    <!-- Row 3 (top, y=0) -->
+    <line x1="15" y1="0" x2="85" y2="0" stroke="#94a3b8" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <line x1="185" y1="0" x2="118" y2="0" stroke="#94a3b8" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <line x1="215" y1="0" x2="285" y2="0" stroke="#94a3b8" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+    <!-- Column 0 (x=0) -->
+    <!-- (0,300) <-> (0,200) -->
+    <line x1="0" y1="285" x2="0" y2="218" stroke="#94a3b8" stroke-width="2.5" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+    <!-- (0,200) <-> (0,100) -->
+    <line x1="0" y1="185" x2="0" y2="118" stroke="#94a3b8" stroke-width="2.5" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+    <!-- (0,100) <-> (0,0) -->
+    <line x1="0" y1="85" x2="0" y2="18" stroke="#94a3b8" stroke-width="2.5" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+
+    <!-- Column 1 (x=100) -->
+    <line x1="100" y1="285" x2="100" y2="218" stroke="#94a3b8" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <line x1="100" y1="118" x2="100" y2="185" stroke="#94a3b8" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <line x1="100" y1="15" x2="100" y2="85" stroke="#94a3b8" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+    <!-- Column 2 (x=200) -->
+    <line x1="200" y1="218" x2="200" y2="285" stroke="#94a3b8" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <line x1="200" y1="185" x2="200" y2="118" stroke="#94a3b8" stroke-width="2.5" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+    <line x1="200" y1="85" x2="200" y2="18" stroke="#94a3b8" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+    <!-- Column 3 (x=300) -->
+    <line x1="300" y1="285" x2="300" y2="218" stroke="#94a3b8" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <line x1="300" y1="185" x2="300" y2="118" stroke="#94a3b8" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <line x1="300" y1="85" x2="300" y2="18" stroke="#94a3b8" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+    <!-- Vertices -->
+    <!-- (x, y) coordinates: x in [0, 100, 200, 300], y in [0, 100, 200, 300] -->
+    <circle cx="0" cy="0" r="9" fill="#38bdf8" stroke="#f8fafc" stroke-width="2.5" filter="url(#glow)"/>
+    <circle cx="0" cy="100" r="9" fill="#38bdf8" stroke="#f8fafc" stroke-width="2.5" filter="url(#glow)"/>
+    <circle cx="0" cy="200" r="9" fill="#38bdf8" stroke="#f8fafc" stroke-width="2.5" filter="url(#glow)"/>
+    <circle cx="0" cy="300" r="9" fill="#38bdf8" stroke="#f8fafc" stroke-width="2.5" filter="url(#glow)"/>
+    <circle cx="100" cy="0" r="9" fill="#38bdf8" stroke="#f8fafc" stroke-width="2.5" filter="url(#glow)"/>
+    <circle cx="100" cy="100" r="9" fill="#38bdf8" stroke="#f8fafc" stroke-width="2.5" filter="url(#glow)"/>
+    <circle cx="100" cy="200" r="9" fill="#38bdf8" stroke="#f8fafc" stroke-width="2.5" filter="url(#glow)"/>
+    <circle cx="100" cy="300" r="9" fill="#38bdf8" stroke="#f8fafc" stroke-width="2.5" filter="url(#glow)"/>
+    <circle cx="200" cy="0" r="9" fill="#38bdf8" stroke="#f8fafc" stroke-width="2.5" filter="url(#glow)"/>
+    <circle cx="200" cy="100" r="9" fill="#38bdf8" stroke="#f8fafc" stroke-width="2.5" filter="url(#glow)"/>
+    <circle cx="200" cy="200" r="9" fill="#38bdf8" stroke="#f8fafc" stroke-width="2.5" filter="url(#glow)"/>
+    <circle cx="200" cy="300" r="9" fill="#38bdf8" stroke="#f8fafc" stroke-width="2.5" filter="url(#glow)"/>
+    <circle cx="300" cy="0" r="9" fill="#38bdf8" stroke="#f8fafc" stroke-width="2.5" filter="url(#glow)"/>
+    <circle cx="300" cy="100" r="9" fill="#38bdf8" stroke="#f8fafc" stroke-width="2.5" filter="url(#glow)"/>
+    <circle cx="300" cy="200" r="9" fill="#38bdf8" stroke="#f8fafc" stroke-width="2.5" filter="url(#glow)"/>
+    <circle cx="300" cy="300" r="9" fill="#38bdf8" stroke="#f8fafc" stroke-width="2.5" filter="url(#glow)"/>
+
+    <!-- Vertex S label -->
+    <text x="-24" y="307" font-family="sans-serif" font-size="22" font-weight="bold" fill="#38bdf8">S</text>
+  </g>
+</svg>

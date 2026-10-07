@@ -416,11 +416,22 @@ export function GateAiReport({
                       <Markdown md={q.text} className="mt-1 !text-[14px]" />
                     </div>
 
-                    {q.figures.map((f) => (
-                      <figure key={f.f} className="my-2 max-w-md">
-                        <img src={`/gate-fig/${f.f}`} alt={f.alt} className="rounded-lg border border-border" />
-                      </figure>
-                    ))}
+                    {q.figures.map((f) => {
+                      const svgPath = f.svg || f.f.replace(/\.(png|jpg|jpeg)$/i, '.svg')
+                      return (
+                        <figure key={f.f} className="my-3 max-w-lg">
+                          <div className="overflow-hidden rounded-xl border border-border/80 bg-[#0b1329] p-3 shadow-md inline-block max-w-full">
+                            <img
+                              src={`/gate-fig/${svgPath}`}
+                              alt={f.alt || 'GATE Schematic'}
+                              className="max-h-72 w-auto rounded object-contain"
+                              loading="lazy"
+                            />
+                          </div>
+                          {f.alt && <figcaption className="mt-1 text-[11.5px] text-text-muted">{f.alt}</figcaption>}
+                        </figure>
+                      )
+                    })}
 
                     {q.options.length > 0 && (
                       <div className="space-y-1.5 pt-2 border-t border-border/50">
@@ -442,9 +453,11 @@ export function GateAiReport({
                                 )}
                               >
                                 <span className="font-bold font-mono">({opt.l})</span>
-                                <span className="flex-1">{opt.t}</span>
-                                {isOfficial && <span className="text-[11px] font-bold uppercase">Official Key</span>}
-                                {isUserChoice && !isOfficial && <span className="text-[11px] font-bold text-red-400">Your Pick</span>}
+                                <div className="flex-1 min-w-0">
+                                  <Markdown md={opt.t} className="[&_p]:!m-0" />
+                                </div>
+                                {isOfficial && <span className="text-[11px] font-bold uppercase shrink-0">Official Key</span>}
+                                {isUserChoice && !isOfficial && <span className="text-[11px] font-bold text-red-400 shrink-0">Your Pick</span>}
                               </div>
                             )
                           })}
