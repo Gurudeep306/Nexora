@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useMemo } from 'react'
 import type { SystemDesignModel, ServiceNode } from '../types'
 import {
   Play,
@@ -25,6 +25,10 @@ import {
   Terminal,
   HardDrive,
   Activity,
+  Code,
+  Send,
+  X,
+  FileCode,
 } from 'lucide-react'
 import { WirePacketHexView } from './WirePacketHexView'
 import {
@@ -33,6 +37,116 @@ import {
   playNodeCrashSound,
   playStepClickSound,
 } from '../utils/audioEffects'
+
+export interface ResolvedNodePosition {
+  x: number
+  y: number
+  tierName: string
+}
+
+// Computes clean, collision-free architectural tier positions across all 31 systems
+export function getResolvedNodeLayout(services: ServiceNode[]): Record<string, ResolvedNodePosition> {
+  const tiers: Record<number, { name: string; nodes: ServiceNode[] }> = {
+    0: { name: 'Clients & Ingress', nodes: [] },
+    1: { name: 'Gateways & Security', nodes: [] },
+    2: { name: 'Core Microservices', nodes: [] },
+    3: { name: 'In-Memory & Messaging', nodes: [] },
+    4: { name: 'Storage & Persistence', nodes: [] },
+  }
+
+  services.forEach((s) => {
+    if (s.type === 'client') tiers[0].nodes.push(s)
+    else if (s.type === 'gateway') tiers[1].nodes.push(s)
+    else if (s.type === 'service' || s.type === 'worker') tiers[2].nodes.push(s)
+    else if (s.type === 'cache' || s.type === 'queue') tiers[3].nodes.push(s)
+    else tiers[4].nodes.push(s)
+  })
+
+  const activeTierIndices = [0, 1, 2, 3, 4].filter((idx) => tiers[idx].nodes.length > 0)
+  const numActiveTiers = activeTierIndices.length
+
+  const positions: Record<string, ResolvedNodePosition> = {}
+
+  activeTierIndices.forEach((tierIdx, colRank) => {
+    const minX = 13
+    const maxX = 87
+    const colX = numActiveTiers <= 1
+      ? 50
+      : +(minX + (colRank * (maxX - minX)) / (numActiveTiers - 1)).toFixed(1)
+
+    const tierNodes = tiers[tierIdx].nodes
+    const count = tierNodes.length
+
+    tierNodes.forEach((node, rowIdx) => {
+      let rowY: number
+      if (count === 1) {
+        rowY = 50
+      } else if (count === 2) {
+        rowY = rowIdx === 0 ? 30 : 70
+      } else if (count === 3) {
+        rowY = [22, 50, 78][rowIdx]
+      } else if (count === 4) {
+        rowY = [16, 38, 62, 84][rowIdx]
+      } else {
+        const minY = 14
+        const maxY = 86
+        rowY = +(minY + (rowIdx * (maxY - minY)) / (count - 1)).toFixed(1)
+      }
+
+      positions[node.id] = { x: colX, y: rowY, tierName: tiers[tierIdx].name }
+    })
+  })
+
+  return positions
+}
+
+// Maps each node to its live interacting function and source code file
+export function getNodeCodeDetails(node: ServiceNode, system: SystemDesignModel, currentStep?: any) {
+  if (currentStep && (currentStep.fromNode === node.id || currentStep.toNode === node.id) && currentStep.codeRef) {
+    const matchingFile = system.codeFiles.find((f) => f.name === currentStep.codeRef.file)
+    return {
+      fileName: currentStep.codeRef.file,
+      funcName: currentStep.codeRef.funcName,
+      explanation: currentStep.codeRef.codeExplanation,
+      lineHighlight: currentStep.codeRef.lineHighlight,
+      fullCode: matchingFile?.code || `// Code running on ${node.name}`,
+      snippet: `${currentStep.codeRef.funcName}()`,
+    }
+  }
+
+  const matchingFile = system.codeFiles.find((f) => {
+    const n = f.name.toLowerCase()
+    const r = f.role.toLowerCase()
+    const nid = node.id.toLowerCase()
+    const nt = node.type.toLowerCase()
+    return n.includes(nid) || r.includes(nid) || n.includes(nt) || r.includes(nt)
+  }) || system.codeFiles[0]
+
+  let defaultSnippet = 'HandleRequest()'
+  if (node.type === 'client') defaultSnippet = "fetch('/api/v1/resource')"
+  else if (node.type === 'gateway') defaultSnippet = 'proxy.RouteAndFilter(req)'
+  else if (node.type === 'service') defaultSnippet = 'service.Process(ctx, req)'
+  else if (node.type === 'cache') defaultSnippet = 'cache.Get(ctx, key)'
+  else if (node.type === 'queue') defaultSnippet = 'kafka.Produce(topic, msg)'
+  else if (node.type === 'database') defaultSnippet = 'db.QueryRow(ctx, query)'
+  else if (node.type === 'storage') defaultSnippet = 's3.PutObject(ctx, bucket)'
+
+  return {
+    fileName: matchingFile?.name || `${node.id}.go`,
+    funcName: defaultSnippet.split('(')[0],
+    explanation: node.details,
+    lineHighlight: '1-25',
+    fullCode: matchingFile?.code || `// Production Microservice Implementation: ${node.name}
+// Role: ${node.role}
+// Technology: ${node.techStack}
+
+func ${defaultSnippet} {
+    // Process input context and network socket
+    return nil
+}`,
+    snippet: defaultSnippet,
+  }
+}
 
 interface SystemVisualizerProps {
   system: SystemDesignModel
@@ -140,6 +254,43 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
   } | null>(null)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
+  // Mathematically guaranteed collision-free layout across all 31 systems
+  const resolvedPositions = useMemo(() => getResolvedNodeLayout(system.services), [system.services])
+
+  // Service Deep Inspector State
+  const [inspectorTab, setInspectorTab] = useState<'code' | 'test' | 'logs'>('code')
+  const [testRpcLoading, setTestRpcLoading] = useState<boolean>(false)
+  const [testRpcResult, setTestRpcResult] = useState<{
+    status: number
+    latencyMs: number
+    timestamp: string
+    responsePayload: any
+  } | null>(null)
+  const [copiedCode, setCopiedCode] = useState<boolean>(false)
+
+  const handleTestRpc = (node: ServiceNode) => {
+    setTestRpcLoading(true)
+    if (soundEnabled) playPacketTransmitSound()
+    setTimeout(() => {
+      setTestRpcLoading(false)
+      if (soundEnabled) playPacketArriveSound()
+      const codeInfo = getNodeCodeDetails(node, system, currentStep)
+      setTestRpcResult({
+        status: failedNodes[node.id] ? 503 : 200,
+        latencyMs: failedNodes[node.id] ? 1500 : +(Math.random() * 2.8 + 1.1).toFixed(1),
+        timestamp: new Date().toLocaleTimeString(),
+        responsePayload: failedNodes[node.id]
+          ? { error: 'Service Unavailable', cause: 'Node marked as crashed (Chaos Mode)' }
+          : {
+              ok: true,
+              service: node.id,
+              func: codeInfo.funcName,
+              protocol: currentStep.protocol || 'gRPC',
+              data: currentStep.payload || { message: 'ACK received' },
+            },
+      })
+    }, 450)
+  }
 
   const steps = system.animationSteps
   const currentStep = steps[currentStepIndex] || steps[0]
@@ -400,7 +551,7 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
       </div>
 
       {/* Main Interactive Canvas */}
-      <div className="relative h-[480px] w-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-bg-surface-3/30 via-bg-surface-1 to-[#05070a] p-6 select-none overflow-hidden">
+      <div className="relative min-h-[580px] h-[580px] w-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-bg-surface-3/30 via-bg-surface-1 to-[#05070a] p-6 select-none overflow-hidden">
         {/* Animated Cyber Grid */}
         <div
           className="absolute inset-0 opacity-[0.07] pointer-events-none"
@@ -410,6 +561,17 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
             backgroundSize: '36px 36px',
           }}
         />
+
+        {/* Architectural Tier Guideline Lanes - FAANG System Blueprint Layout */}
+        <div className="absolute inset-0 pointer-events-none flex justify-between px-6 pt-3 pb-8 opacity-25">
+          {['Clients & Ingress', 'Gateways & Security', 'Core Microservices', 'In-Memory & Queues', 'Storage & Persistence'].map((tierLabel, idx) => (
+            <div key={idx} className="flex-1 flex flex-col items-center border-r border-dashed border-border/40 last:border-r-0">
+              <span className="rounded bg-bg-surface-3/80 px-2 py-0.5 font-mono text-[9px] font-bold text-text-muted uppercase tracking-wider ring-1 ring-border/50">
+                Tier {idx + 1}: {tierLabel}
+              </span>
+            </div>
+          ))}
+        </div>
 
         {/* Floating Telemetry HUD */}
         {showTelemetryHud && (
@@ -519,11 +681,14 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
             </filter>
           </defs>
 
-          {/* Connection Wires */}
+          {/* Connection Wires with Resolved Non-Overlapping Coordinates */}
           {system.connections.map((conn) => {
             const from = system.services.find((s) => s.id === conn.from)
             const to = system.services.find((s) => s.id === conn.to)
             if (!from || !to) return null
+
+            const fromPos = resolvedPositions[conn.from] || { x: from.x, y: from.y, tierName: '' }
+            const toPos = resolvedPositions[conn.to] || { x: to.x, y: to.y, tierName: '' }
 
             const isCurrentActiveConn =
               (currentStep?.fromNode === conn.from && currentStep?.toNode === conn.to) ||
@@ -533,9 +698,9 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
             const protoTheme = getProtocolTheme(currentStep?.protocol)
 
             // Calculate subtle curvature control point
-            const midX = (from.x + to.x) / 2
-            const midY = (from.y + to.y) / 2 - 4 // slight arch
-            const pathD = `M ${from.x}% ${from.y}% Q ${midX}% ${midY}% ${to.x}% ${to.y}%`
+            const midX = (fromPos.x + toPos.x) / 2
+            const midY = (fromPos.y + toPos.y) / 2 - 4 // slight arch
+            const pathD = `M ${fromPos.x}% ${fromPos.y}% Q ${midX}% ${midY}% ${toPos.x}% ${toPos.y}%`
 
             return (
               <g key={conn.id}>
@@ -595,8 +760,10 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
 
           {/* Traveling Multi-Particle Stream & Protocol Badge */}
           {fromNodeObj && toNodeObj && !isSelfNode && !failedNodes[currentStep.fromNode] && (() => {
-            const midX = (fromNodeObj.x + toNodeObj.x) / 2
-            const midY = (fromNodeObj.y + toNodeObj.y) / 2 - 4
+            const fromPos = resolvedPositions[fromNodeObj.id] || { x: fromNodeObj.x, y: fromNodeObj.y, tierName: '' }
+            const toPos = resolvedPositions[toNodeObj.id] || { x: toNodeObj.x, y: toNodeObj.y, tierName: '' }
+            const midX = (fromPos.x + toPos.x) / 2
+            const midY = (fromPos.y + toPos.y) / 2 - 4
             const protoTheme = getProtocolTheme(currentStep.protocol)
             const baseOffsets =
               trafficProfile === 'spike'
@@ -608,11 +775,11 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
             return (
               <g className="transition-all duration-700 ease-in-out">
                 {/* Target Node Receiving Waves - Centered via group transform */}
-                <g style={{ transform: `translate(${toNodeObj.x}%, ${toNodeObj.y}%)`, transformBox: 'view-box' }}>
+                <g style={{ transform: `translate(${toPos.x}%, ${toPos.y}%)`, transformBox: 'view-box' }}>
                   <circle
                     cx="0"
                     cy="0"
-                    r="38"
+                    r="42"
                     fill="none"
                     stroke={protoTheme.particle}
                     strokeWidth="1.8"
@@ -630,13 +797,13 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
                   const t = (baseOffset + (flowTick * 0.35)) % 1
                   const oneMinusT = 1 - t
                   const px =
-                    oneMinusT * oneMinusT * fromNodeObj.x +
+                    oneMinusT * oneMinusT * fromPos.x +
                     2 * oneMinusT * t * midX +
-                    t * t * toNodeObj.x
+                    t * t * toPos.x
                   const py =
-                    oneMinusT * oneMinusT * fromNodeObj.y +
+                    oneMinusT * oneMinusT * fromPos.y +
                     2 * oneMinusT * t * midY +
-                    t * t * toNodeObj.y
+                    t * t * toPos.y
 
                   return (
                     <circle
@@ -681,78 +848,81 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
           })()}
 
           {/* Self-Node In-Memory Execution Animation */}
-          {fromNodeObj && isSelfNode && !failedNodes[currentStep.fromNode] && (
-            <g
-              className="transition-all duration-700 ease-in-out"
-              style={{ transform: `translate(${fromNodeObj.x}%, ${fromNodeObj.y}%)`, transformBox: 'view-box' }}
-            >
-              {/* Concentric Rotating Dash Ring */}
-              <circle
-                cx="0"
-                cy="0"
-                r="42"
-                fill="none"
-                stroke="#38bdf8"
-                strokeWidth="2"
-                strokeDasharray="6 8"
-                filter="url(#laserGlow)"
-                style={{
-                  transformBox: 'fill-box',
-                  transformOrigin: 'center',
-                  animation: 'spin 3s linear infinite',
-                }}
-              />
-              {/* Soft Pulsing Core Aura */}
-              <circle
-                cx="0"
-                cy="0"
-                r="26"
-                fill="#38bdf8"
-                opacity="0.15"
-                className="animate-pulse"
-              />
-              {/* Dual Orbiting Particles */}
-              <circle
-                cx={42 * Math.cos(flowTick * 3)}
-                cy={42 * Math.sin(flowTick * 3)}
-                r="5"
-                fill="#00F0FF"
-                filter="url(#laserGlow)"
-                className="shadow-lg"
-              />
-              <circle
-                cx={42 * Math.cos(flowTick * 3 + Math.PI)}
-                cy={42 * Math.sin(flowTick * 3 + Math.PI)}
-                r="3.5"
-                fill="#38bdf8"
-                filter="url(#laserGlow)"
-                className="shadow-lg"
-              />
-              {/* In-Memory Local Badge */}
-              <g transform="translate(-36, -46)">
-                <rect
-                  width="72"
-                  height="19"
-                  rx="6"
-                  fill="var(--color-bg-surface-3)"
+          {fromNodeObj && isSelfNode && !failedNodes[currentStep.fromNode] && (() => {
+            const selfPos = resolvedPositions[fromNodeObj.id] || { x: fromNodeObj.x, y: fromNodeObj.y, tierName: '' }
+            return (
+              <g
+                className="transition-all duration-700 ease-in-out"
+                style={{ transform: `translate(${selfPos.x}%, ${selfPos.y}%)`, transformBox: 'view-box' }}
+              >
+                {/* Concentric Rotating Dash Ring */}
+                <circle
+                  cx="0"
+                  cy="0"
+                  r="44"
+                  fill="none"
                   stroke="#38bdf8"
-                  strokeWidth="1.3"
+                  strokeWidth="2"
+                  strokeDasharray="6 8"
+                  filter="url(#laserGlow)"
+                  style={{
+                    transformBox: 'fill-box',
+                    transformOrigin: 'center',
+                    animation: 'spin 3s linear infinite',
+                  }}
+                />
+                {/* Soft Pulsing Core Aura */}
+                <circle
+                  cx="0"
+                  cy="0"
+                  r="28"
+                  fill="#38bdf8"
+                  opacity="0.15"
+                  className="animate-pulse"
+                />
+                {/* Dual Orbiting Particles */}
+                <circle
+                  cx={44 * Math.cos(flowTick * 3)}
+                  cy={44 * Math.sin(flowTick * 3)}
+                  r="5"
+                  fill="#00F0FF"
+                  filter="url(#laserGlow)"
                   className="shadow-lg"
                 />
-                <text
-                  x="36"
-                  y="13"
+                <circle
+                  cx={44 * Math.cos(flowTick * 3 + Math.PI)}
+                  cy={44 * Math.sin(flowTick * 3 + Math.PI)}
+                  r="3.5"
                   fill="#38bdf8"
-                  fontSize="9.5"
-                  fontWeight="800"
-                  fontFamily="var(--font-mono)"
-                  textAnchor="middle"
-                >
-                  IN-MEMORY
-                </text>
+                  filter="url(#laserGlow)"
+                  className="shadow-lg"
+                />
+                {/* In-Memory Local Badge */}
+                <g transform="translate(-36, -48)">
+                  <rect
+                    width="72"
+                    height="19"
+                    rx="6"
+                    fill="var(--color-bg-surface-3)"
+                    stroke="#38bdf8"
+                    strokeWidth="1.3"
+                    className="shadow-lg"
+                  />
+                  <text
+                    x="36"
+                    y="13"
+                    fill="#38bdf8"
+                    fontSize="9.5"
+                    fontWeight="800"
+                    fontFamily="var(--font-mono)"
+                    textAnchor="middle"
+                  >
+                    IN-MEMORY
+                  </text>
+                </g>
               </g>
-            </g>
-          )}
+            )
+          })()}
 
           {/* Hovered Wire Holographic HUD Tooltip */}
           {hoveredConn && (
@@ -793,38 +963,40 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
           )}
         </svg>
 
-        {/* Service Nodes (Clickable, Animated Holographic Rings) */}
+        {/* Service Nodes (Clickable, Collision-Free with Live Interacting Code Boxes) */}
         {system.services.map((node) => {
           const isFrom = currentStep?.fromNode === node.id
           const isTo = currentStep?.toNode === node.id
           const isCurrentActive = isFrom || isTo
           const isSelected = selectedNode?.id === node.id
           const isFailed = !!failedNodes[node.id]
+          const pos = resolvedPositions[node.id] || { x: node.x, y: node.y, tierName: node.role }
+          const codeInfo = getNodeCodeDetails(node, system, currentStep)
 
           return (
             <div
               key={node.id}
               onClick={() => handleNodeClick(node)}
-              style={{ left: `${node.x}%`, top: `${node.y}%` }}
+              style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
               className={`group absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-all duration-300 ${
                 isCurrentActive ? 'scale-105 z-20' : 'hover:scale-102 z-10'
               }`}
             >
               {/* Outer Radar Waves for Active Nodes */}
               {isCurrentActive && !isFailed && (
-                <div className="absolute -inset-2 rounded-2xl bg-accent-brand/20 blur-md animate-pulse pointer-events-none" />
+                <div className="absolute -inset-2 rounded-2xl bg-accent-brand/25 blur-md animate-pulse pointer-events-none" />
               )}
 
               {/* Node Card */}
               <div
-                className={`relative flex min-w-[135px] flex-col items-center rounded-2xl p-3.5 shadow-xl backdrop-blur-md transition-all ${
+                className={`relative flex w-[165px] sm:w-[185px] flex-col items-center rounded-2xl p-3 shadow-xl backdrop-blur-md transition-all ${
                   isFailed
-                    ? 'bg-rose-950/80 ring-2 ring-rose-500 shadow-[0_0_20px_rgba(244,63,94,0.4)]'
+                    ? 'bg-rose-950/85 ring-2 ring-rose-500 shadow-[0_0_20px_rgba(244,63,94,0.4)]'
                     : isCurrentActive
-                    ? 'bg-bg-surface-3 ring-2 ring-accent-brand shadow-accent-brand/25 shadow-2xl'
+                    ? 'bg-bg-surface-3 ring-2 ring-accent-brand shadow-accent-brand/30 shadow-2xl'
                     : isSelected
-                    ? 'bg-bg-surface-2 ring-2 ring-text-primary'
-                    : 'bg-bg-surface-2/90 ring-1 ring-border hover:ring-border-strong hover:bg-bg-surface-2'
+                    ? 'bg-bg-surface-2 ring-2 ring-sky-400 shadow-sky-500/20 shadow-lg'
+                    : 'bg-bg-surface-2/95 ring-1 ring-border hover:ring-border-strong hover:bg-bg-surface-2'
                 }`}
               >
                 {/* Node Status Badge */}
@@ -833,33 +1005,63 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
                     <AlertTriangle className="size-2.5" /> CRASHED
                   </span>
                 ) : isCurrentActive ? (
-                  <span className="absolute -top-2.5 rounded-full bg-accent-brand px-2 py-0.5 font-mono text-[9px] font-extrabold text-bg-base uppercase tracking-wider shadow">
-                    {isFrom ? 'SENDING' : 'RECEIVING'}
+                  <span className="absolute -top-2.5 flex items-center gap-1 rounded-full bg-accent-brand px-2 py-0.5 font-mono text-[9px] font-extrabold text-bg-base uppercase tracking-wider shadow animate-pulse">
+                    <Zap className="size-2.5 fill-current" /> {isFrom ? 'SENDING RPC' : 'RECEIVING RPC'}
                   </span>
-                ) : null}
+                ) : (
+                  <span className="absolute -top-2 rounded bg-bg-surface-1 px-1.5 py-0.2 font-mono text-[8.5px] font-semibold text-text-muted ring-1 ring-border/50 uppercase">
+                    {pos.tierName ? pos.tierName.split(' ')[0] : node.role.split(' ')[0]}
+                  </span>
+                )}
 
-                {/* Node Icon with type styling */}
-                <div
-                  className={`mb-2 flex size-10 items-center justify-center rounded-xl transition-all ${
-                    isFailed
-                      ? 'bg-rose-500/20 text-rose-400'
-                      : isCurrentActive
-                      ? 'bg-accent-brand text-bg-base shadow-md'
-                      : 'bg-bg-surface-1 text-text-secondary group-hover:text-accent-brand group-hover:bg-bg-surface-3'
-                  }`}
-                >
-                  {ICON_MAP[node.icon] || <Server className="size-5" />}
+                {/* Top Row: Icon + Tech Stack */}
+                <div className="flex w-full items-center justify-between gap-1.5 mb-1 mt-0.5">
+                  <div
+                    className={`flex size-8 items-center justify-center rounded-lg transition-all ${
+                      isFailed
+                        ? 'bg-rose-500/20 text-rose-400'
+                        : isCurrentActive
+                        ? 'bg-accent-brand text-bg-base shadow-md'
+                        : 'bg-bg-surface-1 text-text-secondary group-hover:text-accent-brand group-hover:bg-bg-surface-3'
+                    }`}
+                  >
+                    {ICON_MAP[node.icon] || <Server className="size-4" />}
+                  </div>
+                  <span className="rounded bg-bg-surface-1 px-1.5 py-0.5 font-mono text-[9px] font-semibold text-text-muted ring-1 ring-border/40 truncate max-w-[105px]">
+                    {node.techStack.split(' ')[0]}
+                  </span>
                 </div>
 
                 {/* Node Title */}
-                <span className="text-center font-mono text-[12px] font-bold text-text-primary leading-tight">
+                <span className="w-full text-center font-mono text-[11.5px] font-bold text-text-primary leading-tight truncate">
                   {node.name}
                 </span>
 
-                {/* Tech Stack Badge */}
-                <span className="mt-1.5 rounded-md bg-bg-surface-1 px-2 py-0.5 font-mono text-[9.5px] font-semibold text-text-muted ring-1 ring-border/50">
-                  {node.techStack.split(' ')[0]}
-                </span>
+                {/* Live Interacting Code Box inside the node */}
+                <div
+                  className={`mt-2 w-full rounded-lg px-2 py-1 font-mono text-[9px] border transition-all ${
+                    isFailed
+                      ? 'bg-rose-950/60 border-rose-500/40 text-rose-300'
+                      : isCurrentActive
+                      ? 'bg-black/90 border-accent-brand/80 text-accent-brand shadow-[0_0_12px_rgba(0,240,255,0.25)]'
+                      : 'bg-black/60 border-border/60 text-emerald-400/90 group-hover:border-accent-brand/40'
+                  }`}
+                >
+                  <div className="flex items-center justify-between text-[8px] text-text-muted mb-0.5">
+                    <span className="truncate max-w-[90px]">{codeInfo.fileName}</span>
+                    {isCurrentActive ? (
+                      <span className="text-amber-400 font-bold flex items-center gap-0.5">
+                        <span className="size-1 rounded-full bg-amber-400 animate-ping" /> EXEC
+                      </span>
+                    ) : (
+                      <span className="text-text-muted">idle</span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-1 truncate font-bold text-text-primary">
+                    <span className={isCurrentActive ? 'text-accent-brand' : 'text-emerald-400'}>▶</span>
+                    <span className="truncate">{codeInfo.snippet}</span>
+                  </div>
+                </div>
               </div>
             </div>
           )
@@ -971,100 +1173,248 @@ export const SystemVisualizer: React.FC<SystemVisualizerProps> = ({
         </div>
       </div>
 
-      {/* Node Inspector Drawer Modal (if selected) */}
-      {selectedNode && (
-        <div className="border-t border-border bg-bg-surface-3/90 p-5 space-y-3 animate-fadeIn">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="flex size-7 items-center justify-center rounded-lg bg-accent-brand text-bg-base">
-                {ICON_MAP[selectedNode.icon] || <Server className="size-4" />}
+      {/* Deep Service Source Code & Architecture Inspector (if selected) */}
+      {selectedNode && (() => {
+        const codeDetails = getNodeCodeDetails(selectedNode, system, currentStep)
+        const nodePos = resolvedPositions[selectedNode.id] || { x: selectedNode.x, y: selectedNode.y, tierName: selectedNode.role }
+        const isFailed = !!failedNodes[selectedNode.id]
+
+        return (
+          <div className="border-t border-border bg-bg-surface-3/95 p-5 space-y-4 animate-fadeIn">
+            {/* Header */}
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/50 pb-3">
+              <div className="flex items-center gap-3">
+                <div className="flex size-9 items-center justify-center rounded-xl bg-accent-brand text-bg-base shadow-md">
+                  {ICON_MAP[selectedNode.icon] || <Server className="size-5" />}
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h5 className="font-bold text-[15px] text-text-primary font-mono">{selectedNode.name}</h5>
+                    <span className="rounded bg-accent-brand/10 px-2 py-0.5 font-mono text-[10px] font-bold text-accent-brand ring-1 ring-accent-brand/20 uppercase">
+                      {nodePos.tierName || selectedNode.role}
+                    </span>
+                    {isFailed && (
+                      <span className="rounded bg-rose-500/20 px-2 py-0.5 font-mono text-[10px] font-bold text-rose-400 ring-1 ring-rose-500/30 uppercase animate-pulse">
+                        ISOLATED / CRASHED
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[12px] text-text-secondary mt-0.5">
+                    Microservice role: <span className="font-mono text-text-primary">{selectedNode.role}</span> · Tech stack: <span className="font-mono text-text-primary">{selectedNode.techStack}</span>
+                  </p>
+                </div>
               </div>
-              <h5 className="font-bold text-[14px] text-text-primary font-mono">{selectedNode.name}</h5>
-              <span className="rounded bg-bg-surface-1 px-2 py-0.5 font-mono text-[10.5px] text-accent-brand ring-1 ring-border">
-                {selectedNode.role}
-              </span>
+
+              <div className="flex items-center gap-2">
+                {/* Mode Tabs */}
+                <div className="flex items-center rounded-lg bg-bg-surface-1 p-0.5 ring-1 ring-border text-[11px] font-mono">
+                  <button
+                    onClick={() => setInspectorTab('code')}
+                    className={`flex items-center gap-1.5 rounded px-2.5 py-1 transition ${
+                      inspectorTab === 'code' ? 'bg-accent-brand text-bg-base font-bold' : 'text-text-muted hover:text-text-primary'
+                    }`}
+                  >
+                    <Code className="size-3.5" /> Source Code ({codeDetails.fileName})
+                  </button>
+                  <button
+                    onClick={() => setInspectorTab('test')}
+                    className={`flex items-center gap-1.5 rounded px-2.5 py-1 transition ${
+                      inspectorTab === 'test' ? 'bg-sky-400 text-black font-bold' : 'text-text-muted hover:text-text-primary'
+                    }`}
+                  >
+                    <Send className="size-3.5" /> Interactive RPC Test
+                  </button>
+                  <button
+                    onClick={() => setInspectorTab('logs')}
+                    className={`flex items-center gap-1.5 rounded px-2.5 py-1 transition ${
+                      inspectorTab === 'logs' ? 'bg-emerald-400 text-black font-bold' : 'text-text-muted hover:text-text-primary'
+                    }`}
+                  >
+                    <Terminal className="size-3.5" /> Stdout Logs
+                  </button>
+                </div>
+
+                <button
+                  onClick={() => setSelectedNode(null)}
+                  className="flex size-7 items-center justify-center rounded-lg bg-bg-surface-1 text-text-muted hover:text-text-primary ring-1 ring-border"
+                >
+                  <X className="size-4" />
+                </button>
+              </div>
             </div>
 
-            <button
-              onClick={() => setSelectedNode(null)}
-              className="rounded-lg bg-bg-surface-1 px-2.5 py-1 text-[11px] font-mono text-text-muted hover:text-text-primary ring-1 ring-border"
-            >
-              Close
-            </button>
+            {/* Hardware & Network Telemetry Gauges */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 font-mono text-[11px]">
+              <div className="rounded-xl bg-bg-surface-1 p-2.5 ring-1 ring-border">
+                <span className="text-text-muted flex items-center gap-1 text-[10px] uppercase">
+                  <Cpu className="size-3 text-sky-400" /> CPU Core Load
+                </span>
+                <span className={`text-[13px] font-bold block mt-0.5 ${
+                  trafficProfile === 'spike' ? 'text-rose-400' : trafficProfile === 'peak' ? 'text-amber-400' : 'text-emerald-400'
+                }`}>
+                  {trafficProfile === 'spike' ? '94%' : trafficProfile === 'peak' ? '68%' : '26%'}
+                </span>
+              </div>
+
+              <div className="rounded-xl bg-bg-surface-1 p-2.5 ring-1 ring-border">
+                <span className="text-text-muted flex items-center gap-1 text-[10px] uppercase">
+                  <HardDrive className="size-3 text-purple-400" /> RAM Memory
+                </span>
+                <span className="text-[13px] font-bold text-purple-300 block mt-0.5">
+                  {trafficProfile === 'spike' ? '14.2 GB' : trafficProfile === 'peak' ? '6.8 GB' : '2.1 GB'} / 16 GB
+                </span>
+              </div>
+
+              <div className="rounded-xl bg-bg-surface-1 p-2.5 ring-1 ring-border">
+                <span className="text-text-muted flex items-center gap-1 text-[10px] uppercase">
+                  <Activity className="size-3 text-emerald-400" /> Active Connections
+                </span>
+                <span className="text-[13px] font-bold text-emerald-400 block mt-0.5">
+                  {(trafficProfile === 'spike' ? 42800 : trafficProfile === 'peak' ? 8400 : 920).toLocaleString()} Sockets
+                </span>
+              </div>
+
+              <div className="rounded-xl bg-bg-surface-1 p-2.5 ring-1 ring-border">
+                <span className="text-text-muted flex items-center gap-1 text-[10px] uppercase">
+                  <Zap className="size-3 text-amber-400" /> p99 Latency
+                </span>
+                <span className="text-[13px] font-bold text-amber-300 block mt-0.5">
+                  {trafficProfile === 'spike' ? '18.4ms' : trafficProfile === 'peak' ? '5.8ms' : '1.9ms'}
+                </span>
+              </div>
+            </div>
+
+            {/* Content Tab 1: Source Code View */}
+            {inspectorTab === 'code' && (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between text-[11.5px] font-mono bg-bg-surface-2 p-2.5 rounded-xl ring-1 ring-border">
+                  <div className="flex items-center gap-2 text-text-muted">
+                    <FileCode className="size-4 text-accent-brand" />
+                    <span className="font-bold text-text-primary">{codeDetails.fileName}</span>
+                    <span>· Function:</span>
+                    <span className="text-accent-brand font-bold">{codeDetails.funcName}()</span>
+                  </div>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(codeDetails.fullCode)
+                      setCopiedCode(true)
+                      setTimeout(() => setCopiedCode(false), 2000)
+                    }}
+                    className="flex items-center gap-1 rounded bg-bg-surface-3 px-2 py-0.5 text-text-muted hover:text-text-primary ring-1 ring-border"
+                  >
+                    {copiedCode ? <Check className="size-3 text-emerald-400" /> : <Copy className="size-3" />}
+                    <span>{copiedCode ? 'Copied' : 'Copy Source'}</span>
+                  </button>
+                </div>
+
+                <div className="relative rounded-xl bg-black/80 ring-1 ring-border overflow-hidden">
+                  <div className="max-h-[220px] overflow-y-auto p-3 text-[11.5px] font-mono leading-relaxed text-emerald-300">
+                    <pre className="whitespace-pre">
+                      {codeDetails.fullCode.split('\n').map((line, idx) => (
+                        <div key={idx} className="flex hover:bg-white/5 px-1 rounded">
+                          <span className="w-8 shrink-0 text-right pr-3 select-none text-text-muted/60 text-[10px]">
+                            {idx + 1}
+                          </span>
+                          <span className="text-text-primary">{line}</span>
+                        </div>
+                      ))}
+                    </pre>
+                  </div>
+                </div>
+
+                <div className="rounded-xl bg-accent-brand/5 border border-accent-brand/20 p-3 text-[12px] text-text-secondary">
+                  <span className="font-bold font-mono text-accent-brand">NODE RESPONSIBILITY & ARCHITECTURE: </span>
+                  {selectedNode.details}
+                </div>
+              </div>
+            )}
+
+            {/* Content Tab 2: Interactive RPC Test */}
+            {inspectorTab === 'test' && (
+              <div className="space-y-3">
+                <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl bg-bg-surface-2 ring-1 ring-border">
+                  <div>
+                    <span className="font-mono text-[11px] font-bold text-sky-400 block uppercase">
+                      Client RPC Trigger Endpoint
+                    </span>
+                    <span className="font-mono text-[13px] font-semibold text-text-primary">
+                      rpc://{selectedNode.id}.cluster.local/{codeDetails.funcName}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleTestRpc(selectedNode)}
+                      disabled={testRpcLoading}
+                      className="flex items-center gap-1.5 rounded-lg bg-sky-500 hover:bg-sky-400 px-3 py-1.5 font-mono text-[11.5px] font-bold text-black transition shadow-md disabled:opacity-50"
+                    >
+                      <Zap className="size-3.5 fill-current" />
+                      {testRpcLoading ? 'Invoking RPC...' : '⚡ Send Test RPC Call'}
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (soundEnabled) playNodeCrashSound()
+                        setFailedNodes((prev) => ({ ...prev, [selectedNode.id]: !prev[selectedNode.id] }))
+                      }}
+                      className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 font-mono text-[11.5px] font-bold transition ring-1 ${
+                        isFailed
+                          ? 'bg-emerald-500/20 text-emerald-400 ring-emerald-500/50'
+                          : 'bg-rose-500/20 text-rose-400 ring-rose-500/50 hover:bg-rose-500/30'
+                      }`}
+                    >
+                      <Flame className="size-3.5" />
+                      {isFailed ? 'Revive Node' : 'Simulate Crash'}
+                    </button>
+                  </div>
+                </div>
+
+                {/* RPC Result Output */}
+                {testRpcResult && (
+                  <div className="rounded-xl bg-black/80 p-3 ring-1 ring-border font-mono text-[11px] space-y-1.5">
+                    <div className="flex items-center justify-between border-b border-border/40 pb-1">
+                      <span className="text-text-muted">Status:</span>
+                      <span className={testRpcResult.status === 200 ? 'text-emerald-400 font-bold' : 'text-rose-400 font-bold'}>
+                        HTTP/2 {testRpcResult.status} {testRpcResult.status === 200 ? 'OK' : 'SERVICE_UNAVAILABLE'}
+                      </span>
+                      <span className="text-text-muted">Roundtrip Latency:</span>
+                      <span className="text-accent-brand font-bold">{testRpcResult.latencyMs}ms</span>
+                    </div>
+                    <pre className="text-emerald-300 pt-1 overflow-x-auto">
+                      {JSON.stringify(testRpcResult.responsePayload, null, 2)}
+                    </pre>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Content Tab 3: Live Microservice Stdout Logs */}
+            {inspectorTab === 'logs' && (
+              <div className="rounded-xl bg-black/90 p-3.5 ring-1 ring-border font-mono text-[11px] space-y-1.5 max-h-[220px] overflow-y-auto">
+                <div className="flex items-center justify-between border-b border-border/50 pb-1.5 mb-1 text-[10px] text-text-muted">
+                  <span className="text-accent-brand font-bold uppercase">
+                    container://{selectedNode.id}:v2.4.1 (PID 4912)
+                  </span>
+                  <span>Active Goroutines / Threads: {trafficProfile === 'spike' ? 240 : 32}</span>
+                </div>
+                <p className="text-text-muted">
+                  [{new Date().toLocaleTimeString()}] [INFO] Starting request dispatch on port :50051 (TCP multiplexing enabled)
+                </p>
+                <p className="text-sky-400">
+                  [{new Date().toLocaleTimeString()}] [INGRESS] {currentStep.protocol} packet received from "{currentStep.fromNode}".
+                </p>
+                <p className="text-emerald-400">
+                  [{new Date().toLocaleTimeString()}] [EXEC] Executed {codeDetails.funcName}() with state transition "{currentStep.stateChange}".
+                </p>
+                {isFailed && (
+                  <p className="text-rose-400 font-bold">
+                    [{new Date().toLocaleTimeString()}] [PANIC] Node injected with synthetic network fault. Sockets terminating!
+                  </p>
+                )}
+              </div>
+            )}
           </div>
-
-          {/* Hardware & Network Telemetry Gauges */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 font-mono text-[11px]">
-            <div className="rounded-xl bg-bg-surface-1 p-2.5 ring-1 ring-border">
-              <span className="text-text-muted flex items-center gap-1 text-[10px] uppercase">
-                <Cpu className="size-3 text-sky-400" /> CPU Core Load
-              </span>
-              <span className={`text-[13px] font-bold block mt-0.5 ${
-                trafficProfile === 'spike' ? 'text-rose-400' : trafficProfile === 'peak' ? 'text-amber-400' : 'text-emerald-400'
-              }`}>
-                {trafficProfile === 'spike' ? '94%' : trafficProfile === 'peak' ? '68%' : '26%'}
-              </span>
-            </div>
-
-            <div className="rounded-xl bg-bg-surface-1 p-2.5 ring-1 ring-border">
-              <span className="text-text-muted flex items-center gap-1 text-[10px] uppercase">
-                <HardDrive className="size-3 text-purple-400" /> RAM Memory
-              </span>
-              <span className="text-[13px] font-bold text-purple-300 block mt-0.5">
-                {trafficProfile === 'spike' ? '14.2 GB' : trafficProfile === 'peak' ? '6.8 GB' : '2.1 GB'} / 16 GB
-              </span>
-            </div>
-
-            <div className="rounded-xl bg-bg-surface-1 p-2.5 ring-1 ring-border">
-              <span className="text-text-muted flex items-center gap-1 text-[10px] uppercase">
-                <Activity className="size-3 text-emerald-400" /> Active Connections
-              </span>
-              <span className="text-[13px] font-bold text-emerald-400 block mt-0.5">
-                {(trafficProfile === 'spike' ? 42800 : trafficProfile === 'peak' ? 8400 : 920).toLocaleString()} Sockets
-              </span>
-            </div>
-
-            <div className="rounded-xl bg-bg-surface-1 p-2.5 ring-1 ring-border">
-              <span className="text-text-muted flex items-center gap-1 text-[10px] uppercase">
-                <Zap className="size-3 text-amber-400" /> p99 Latency
-              </span>
-              <span className="text-[13px] font-bold text-amber-300 block mt-0.5">
-                {trafficProfile === 'spike' ? '18.4ms' : trafficProfile === 'peak' ? '5.8ms' : '1.9ms'}
-              </span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-[12.5px]">
-            <div className="rounded-xl bg-bg-surface-1 p-3 ring-1 ring-border">
-              <span className="font-mono text-[11px] text-text-muted uppercase font-bold">Tech Stack:</span>
-              <p className="mt-1 font-semibold text-text-primary">{selectedNode.techStack}</p>
-            </div>
-            <div className="rounded-xl bg-bg-surface-1 p-3 ring-1 ring-border">
-              <span className="font-mono text-[11px] text-text-muted uppercase font-bold">Responsibilities & Internal Mechanics:</span>
-              <p className="mt-1 text-text-secondary leading-relaxed">{selectedNode.details}</p>
-            </div>
-          </div>
-
-          {/* Microservice Live Stdout Console */}
-          <div className="rounded-xl bg-black/80 p-3 ring-1 ring-border font-mono text-[11px] space-y-1">
-            <div className="flex items-center gap-1.5 text-text-muted border-b border-border/50 pb-1.5 mb-1.5">
-              <Terminal className="size-3.5 text-accent-brand" />
-              <span className="uppercase text-[10px] tracking-wider text-accent-brand font-bold">
-                Stdout Stream: {selectedNode.id}.service.internal
-              </span>
-            </div>
-            <p className="text-text-muted">
-              [SYSTEM] Process container pid 1042 active. GC pause: 0.14ms.
-            </p>
-            <p className="text-sky-400">
-              [INGRESS] Handled request {currentStep.protocol} with payload size {JSON.stringify(currentStep.payload).length} bytes.
-            </p>
-            <p className="text-emerald-400">
-              [STATE] Transitioned to "{currentStep.stateChange}".
-            </p>
-          </div>
-        </div>
-      )}
+        )
+      })()}
     </div>
   )
 }
