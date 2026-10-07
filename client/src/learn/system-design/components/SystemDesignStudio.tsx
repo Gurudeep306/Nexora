@@ -95,7 +95,7 @@ const DOMAIN_ICON_MAP: Record<string, React.ReactNode> = {
 export const SystemDesignStudio: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'visualizer' | 'notes'>('visualizer')
   const [systemView, setSystemView] = useState<
-    'simulation' | 'from-scratch' | 'sequence' | 'simulators' | 'interview' | 'engines' | 'capacity' | 'matrix'
+    'simulation' | 'deep-blueprint' | 'from-scratch' | 'sequence' | 'simulators' | 'interview' | 'engines' | 'capacity' | 'matrix'
   >('simulation')
 
   /* Navigation & Filter State */
@@ -845,6 +845,16 @@ export const SystemDesignStudio: React.FC = () => {
                 <Activity className="size-3.5" /> Simulation & Code Walks
               </button>
               <button
+                onClick={() => setSystemView('deep-blueprint')}
+                className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 transition ${
+                  systemView === 'deep-blueprint'
+                    ? 'bg-purple-500 text-white font-bold shadow-sm'
+                    : 'text-text-muted hover:text-text-primary'
+                }`}
+              >
+                <BookOpen className="size-3.5" /> 📖 Staff+ Deep Blueprint
+              </button>
+              <button
                 onClick={() => setSystemView('from-scratch')}
                 className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 transition ${
                   systemView === 'from-scratch'
@@ -917,6 +927,22 @@ export const SystemDesignStudio: React.FC = () => {
                   currentStep={currentStep}
                 />
               </div>
+            </div>
+          )}
+
+          {systemView === 'deep-blueprint' && (
+            <div className="space-y-6 animate-fadeIn">
+              <SystemVisualizer
+                system={currentSystem}
+                currentStepIndex={currentStepIndex}
+                onStepChange={setCurrentStepIndex}
+                layoutMode={canvasLayout}
+                onToggleLayout={() =>
+                  setCanvasLayout(canvasLayout === 'blueprint' ? 'split' : 'blueprint')
+                }
+                onSwitchToFromScratch={() => setSystemView('from-scratch')}
+                defaultShowcaseTab="deep-dive"
+              />
             </div>
           )}
 
