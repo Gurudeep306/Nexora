@@ -20,6 +20,7 @@ import { Markdown } from '@/learn/md'
 import { api } from '@/lib/api'
 import { GateCalculator } from './GateCalculator'
 import { GateAiReport, type ExamEvaluation, type AiDiagnostic } from './GateAiReport'
+import { ReconstructedDiagram } from './ReconstructedDiagram'
 import type { GateQuestion, GatePaper } from './types'
 
 export type QuestionStatus =
@@ -501,27 +502,15 @@ export function GateCbtExam({
               <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5 text-[14.5px] leading-relaxed">
                 <Markdown md={currentQuestion.text} className="text-gray-200 leading-relaxed font-sans" />
 
-                {/* Diagrams if present */}
-                {currentQuestion.figures.map((f) => (
-                  <figure key={f.f} className="my-3 max-w-lg">
-                    <div
-                      onClick={() => setZoomFigure(`/gate-fig/${f.f}`)}
-                      className="group relative cursor-zoom-in rounded-xl border border-white/20 bg-white p-3 shadow-md inline-block max-w-full transition-transform hover:scale-[1.01]"
-                      title="Click to view full enlarged diagram"
-                    >
-                      <img
-                        src={`/gate-fig/${f.f}`}
-                        alt={f.alt}
-                        className="max-h-72 w-auto rounded object-contain"
-                      />
-                      <div className="absolute top-2 right-2 rounded-lg bg-black/75 p-1.5 text-white opacity-0 transition-opacity group-hover:opacity-100 flex items-center gap-1 text-[11px] font-mono">
-                        <ZoomIn className="size-3.5" />
-                        <span>Enlarge</span>
-                      </div>
-                    </div>
-                    {f.alt && <figcaption className="mt-1.5 text-[12px] text-gray-400 font-sans leading-relaxed">{f.alt}</figcaption>}
-                  </figure>
-                ))}
+                {/* Reconstructed Diagrams or Official Figures */}
+                {currentQuestion.figures && currentQuestion.figures.length > 0 && (
+                  <ReconstructedDiagram
+                    questionId={currentQuestion.id}
+                    figures={currentQuestion.figures}
+                    subject={currentQuestion.subject}
+                    topic={currentQuestion.topic}
+                  />
+                )}
 
                 {/* Response Input Selection */}
                 {currentQuestion.type === 'NAT' ? (
@@ -762,26 +751,66 @@ export function GateCbtExam({
               <h3 className="text-[15px] font-bold text-white">Full Question Paper View</h3>
               <button
                 type="button"
+                id="close-question-paper"
                 onClick={() => setShowQuestionPaper(false)}
-                className="rounded p-1 text-gray-400 hover:text-white"
+                className="rounded p-1 text-gray-400 hover:text-white cursor-pointer"
               >
                 <X className="size-5" />
               </button>
             </div>
             <div className="flex-1 overflow-y-auto p-5 space-y-6">
               {questions.map((q, i) => (
-                <div key={q.id} className="rounded-xl border border-white/10 bg-[#0f131a] p-4 space-y-2">
+                <div key={q.id} className="rounded-xl border border-white/10 bg-[#0f131a] p-4 space-y-3">
                   <div className="flex items-center justify-between font-mono text-[12px] text-gray-400">
                     <span className="font-bold text-white">Q{i + 1} ({q.section.toUpperCase()})</span>
                     <span>{q.type} · {q.marks} Marks</span>
                   </div>
-                  <Markdown md={q.text} className="text-gray-300 text-[13.5px]" />
-                  {q.options.map((opt) => (
-                    <div key={opt.l} className="flex gap-2 text-[13px] text-gray-400">
-                      <span className="font-bold font-mono">({opt.l})</span>
-                      <span>{opt.t}</span>
+                  <Markdown md={q.text} className="text-gray-200 text-[14px]" />
+
+                  {/* Render Diagrams if present */}
+                  {q.figures && q.figures.length > 0 && (
+                    <div className="my-3 flex flex-wrap gap-3">
+                      {q.figures.map((f) => {
+                        const svgPath = f.svg || f.f.replace(/\.(png|jpg|jpeg)$/i, '.svg')
+                        const imgSrc = `/gate-fig/${svgPath}`
+                        return (
+                          <figure key={f.f} className="max-w-md">
+                            <div
+                              onClick={() => setZoomFigure(imgSrc)}
+                              className="group relative cursor-zoom-in rounded-xl border border-white/20 bg-[#0b1329] p-3 shadow-md inline-block max-w-full transition-transform hover:scale-[1.01]"
+                              title="Click to view full enlarged diagram"
+                            >
+                              <img
+                                src={imgSrc}
+                                alt={f.alt || `Q${i + 1} Schematic`}
+                                className="max-h-60 w-auto rounded object-contain"
+                                loading="lazy"
+                              />
+                              <div className="absolute top-2 right-2 rounded-lg bg-black/75 p-1.5 text-white opacity-0 transition-opacity group-hover:opacity-100 flex items-center gap-1 text-[11px] font-mono">
+                                <ZoomIn className="size-3.5" />
+                                <span>HD Zoom</span>
+                              </div>
+                            </div>
+                            {f.alt && <figcaption className="mt-1 text-[11.5px] text-gray-400">{f.alt}</figcaption>}
+                          </figure>
+                        )
+                      })}
                     </div>
-                  ))}
+                  )}
+
+                  {/* Render Options with full markdown & image support */}
+                  {q.options && q.options.length > 0 && (
+                    <div className="space-y-1.5 pt-1">
+                      {q.options.map((opt) => (
+                        <div key={opt.l} className="flex items-start gap-2.5 text-[13.5px] text-gray-300">
+                          <span className="font-bold font-mono text-accent-brand shrink-0">({opt.l})</span>
+                          <div className="flex-1 min-w-0">
+                            <Markdown md={opt.t} className="[&_p]:!m-0 text-gray-300" />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -878,17 +907,37 @@ export function GateCbtExam({
           onClick={() => setZoomFigure(null)}
         >
           <div
-            className="relative max-w-4xl max-h-[92vh] overflow-auto rounded-2xl bg-white p-4 sm:p-6 shadow-2xl"
+            className={cn(
+              'relative max-w-4xl max-h-[92vh] overflow-auto rounded-2xl p-4 sm:p-6 shadow-2xl border transition-all',
+              zoomFigure.endsWith('.svg')
+                ? 'bg-[#0b1329] border-white/20 text-white'
+                : 'bg-white border-gray-200 text-gray-900',
+            )}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between pb-3 mb-3 border-b border-gray-200">
-              <span className="text-[13px] font-bold text-gray-800">
-                GATE Diagram Viewer · Crisp Schematic View
+            <div
+              className={cn(
+                'flex items-center justify-between pb-3 mb-3 border-b',
+                zoomFigure.endsWith('.svg') ? 'border-white/10' : 'border-gray-200',
+              )}
+            >
+              <span
+                className={cn(
+                  'text-[13px] font-bold',
+                  zoomFigure.endsWith('.svg') ? 'text-white' : 'text-gray-800',
+                )}
+              >
+                ⚡ GATE Diagram Viewer · High-Definition Vector
               </span>
               <button
                 type="button"
                 onClick={() => setZoomFigure(null)}
-                className="rounded-lg bg-gray-100 p-1.5 text-gray-600 hover:bg-gray-200 hover:text-gray-900 transition-colors cursor-pointer"
+                className={cn(
+                  'rounded-lg p-1.5 transition-colors cursor-pointer',
+                  zoomFigure.endsWith('.svg')
+                    ? 'bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900',
+                )}
                 title="Close diagram"
               >
                 <X className="size-5" />

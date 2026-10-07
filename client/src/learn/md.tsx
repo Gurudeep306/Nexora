@@ -22,7 +22,7 @@ function math(src: string, display: boolean) {
 
 export function Inline({ text }: { text: string }) {
   const nodes: ReactNode[] = []
-  const re = /(\$[^$\n]+\$)|(`[^`]+`)|(\*\*[^*]+\*\*)|(\*[^*\s][^*]*\*)|(\[[^\]]+\]\([^)]+\))/g
+  const re = /(\$[^$\n]+\$)|(`[^`]+`)|(\*\*[^*]+\*\*)|(\*[^*\s][^*]*\*)|(!\[[^\]]*\]\([^)]+\))|(\[[^\]]+\]\([^)]+\))/g
   let last = 0
   let m: RegExpExecArray | null
   let k = 0
@@ -34,7 +34,18 @@ export function Inline({ text }: { text: string }) {
     else if (m[3]) nodes.push(<strong key={k++}><Inline text={tok.slice(2, -2)} /></strong>)
     else if (m[4]) nodes.push(<em key={k++}><Inline text={tok.slice(1, -1)} /></em>)
     else if (m[5]) {
-      const [, label, href] = /\[([^\]]+)\]\(([^)]+)\)/.exec(tok)!
+      const [, alt, src] = /^!\[([^\]]*)\]\(([^)]+)\)$/.exec(tok)!
+      nodes.push(
+        <img
+          key={k++}
+          src={src}
+          alt={alt || 'Figure'}
+          loading="lazy"
+          className="inline-block max-h-56 max-w-full rounded-xl border border-white/20 bg-[#0b1329] p-2 shadow-sm my-1.5 align-middle object-contain"
+        />,
+      )
+    } else if (m[6]) {
+      const [, label, href] = /^\[([^\]]+)\]\(([^)]+)\)$/.exec(tok)!
       const external = /^https?:/.test(href)
       nodes.push(
         <a key={k++} href={href} {...(external ? { target: '_blank', rel: 'noreferrer' } : {})}>
