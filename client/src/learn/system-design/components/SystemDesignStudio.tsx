@@ -4,6 +4,8 @@ import { ALL_SYSTEM_DESIGNS } from '../data/systemsData'
 import { SystemVisualizer } from './SystemVisualizer'
 import { CodeTalksViewer } from './CodeTalksViewer'
 import { SystemNotesReader } from './SystemNotesReader'
+import { InteractiveCapacityCalculator } from './InteractiveCapacityCalculator'
+import { InfrastructureTopologyMatrix } from './InfrastructureTopologyMatrix'
 import {
   BookOpen,
   Layers,
@@ -13,6 +15,8 @@ import {
   Search,
   CheckCircle,
   Shield,
+  Calculator,
+  Activity,
 } from 'lucide-react'
 
 const CATEGORIES: ('All' | SystemCategory)[] = [
@@ -27,6 +31,7 @@ const CATEGORIES: ('All' | SystemCategory)[] = [
 
 export const SystemDesignStudio: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'visualizer' | 'notes'>('visualizer')
+  const [systemView, setSystemView] = useState<'simulation' | 'capacity' | 'matrix'>('simulation')
   const [selectedCategory, setSelectedCategory] = useState<'All' | SystemCategory>('All')
   const [selectedSystemId, setSelectedSystemId] = useState<string>('tinyurl')
   const [currentStepIndex, setCurrentStepIndex] = useState<number>(0)
@@ -205,18 +210,70 @@ export const SystemDesignStudio: React.FC = () => {
             </div>
           </div>
 
-          {/* Side-by-Side or Stacked Visualizer and Code Inspector */}
-          <div className="grid gap-6 xl:grid-cols-[1.1fr_1fr]">
-            {/* Live Interactive Architecture Visualizer */}
-            <SystemVisualizer
-              system={currentSystem}
-              currentStepIndex={currentStepIndex}
-              onStepChange={setCurrentStepIndex}
-            />
-
-            {/* Code Interlock: How Code Talks With Each Other */}
-            <CodeTalksViewer system={currentSystem} currentStep={currentStep} />
+          {/* Sub-view Navigation Pills */}
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-2">
+            <div className="flex flex-wrap items-center gap-1.5 rounded-xl bg-bg-surface-2 p-1 ring-1 ring-border text-[12px] font-mono">
+              <button
+                onClick={() => setSystemView('simulation')}
+                className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 transition ${
+                  systemView === 'simulation'
+                    ? 'bg-accent-brand text-bg-base font-bold shadow-sm'
+                    : 'text-text-muted hover:text-text-primary'
+                }`}
+              >
+                <Activity className="size-3.5" /> Simulation & Code Walks
+              </button>
+              <button
+                onClick={() => setSystemView('capacity')}
+                className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 transition ${
+                  systemView === 'capacity'
+                    ? 'bg-sky-500 text-black font-bold shadow-sm'
+                    : 'text-text-muted hover:text-text-primary'
+                }`}
+              >
+                <Calculator className="size-3.5" /> Interactive Capacity Sizer
+              </button>
+              <button
+                onClick={() => setSystemView('matrix')}
+                className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 transition ${
+                  systemView === 'matrix'
+                    ? 'bg-purple-500 text-white font-bold shadow-sm'
+                    : 'text-text-muted hover:text-text-primary'
+                }`}
+              >
+                <Layers className="size-3.5" /> 31 Systems Infrastructure Matrix
+              </button>
+            </div>
           </div>
+
+          {/* Conditional View Rendering */}
+          {systemView === 'simulation' ? (
+            /* Side-by-Side or Stacked Visualizer and Code Inspector */
+            <div className="grid gap-6 xl:grid-cols-[1.1fr_1fr]">
+              {/* Live Interactive Architecture Visualizer */}
+              <SystemVisualizer
+                system={currentSystem}
+                currentStepIndex={currentStepIndex}
+                onStepChange={setCurrentStepIndex}
+              />
+
+              {/* Code Interlock: How Code Talks With Each Other */}
+              <CodeTalksViewer system={currentSystem} currentStep={currentStep} />
+            </div>
+          ) : systemView === 'capacity' ? (
+            /* Interactive Capacity Calculator */
+            <InteractiveCapacityCalculator system={currentSystem} />
+          ) : (
+            /* All 31 Systems Infrastructure Matrix */
+            <InfrastructureTopologyMatrix
+              systems={ALL_SYSTEM_DESIGNS}
+              selectedSystemId={currentSystem.id}
+              onSelectSystem={(id) => {
+                handleSelectSystem(id)
+                setSystemView('simulation')
+              }}
+            />
+          )}
 
           {/* Deep-Dive Architectural Specifications */}
           <div className="rounded-2xl bg-bg-surface-2 p-6 sm:p-8 ring-1 ring-border space-y-6">
