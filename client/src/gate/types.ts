@@ -20,6 +20,7 @@ export interface GateOption {
 export interface GateFigure {
   f: string
   alt: string
+  svg?: string
 }
 
 export interface GateQuestion {

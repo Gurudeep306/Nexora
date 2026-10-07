@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 240" width="100%" height="100%">
+  <defs>
+    <pattern id="hatch-pat-cse-2004-cs-67" width="8" height="8" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="0" x2="0" y2="8" stroke="#38bdf8" stroke-width="2" />
+    </pattern>
+  </defs>
+  <rect width="100%" height="100%" rx="16" fill="#0b1329" stroke="#1e293b" stroke-width="1.5" />
+  <rect x="20" y="16" width="160" height="24" rx="6" fill="#1e293b" />
+  <text x="30" y="32" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">MEMORY HIERARCHY</text>
+  <rect x="60" y="100" width="440" height="50" rx="6" fill="#0f172a" stroke="#38bdf8" stroke-width="2" />
+  <rect x="60" y="100" width="80" height="50" fill="url(#hatch-pat-cse-2004-cs-67)" stroke="#38bdf8" stroke-width="1" />
+  <text x="100.0" y="170" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="monospace">50 KB</text>
+  <rect x="140" y="100" width="140" height="50" fill="#1e293b" stroke="#334155" stroke-width="1" />
+  <text x="210.0" y="170" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="monospace">150 KB (Free)</text>
+  <rect x="280" y="100" width="100" height="50" fill="url(#hatch-pat-cse-2004-cs-67)" stroke="#38bdf8" stroke-width="1" />
+  <text x="330.0" y="170" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="monospace">300 KB</text>
+  <rect x="380" y="100" width="120" height="50" fill="#1e293b" stroke="#334155" stroke-width="1" />
+  <text x="440.0" y="170" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="monospace">350 KB (Free)</text>
+</svg>

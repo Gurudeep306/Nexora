@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 240" width="100%" height="100%">
+  <defs>
+    <marker id="arr-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-emerald" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#34d399" />
+    </marker>
+    <marker id="arr-amber" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#f59e0b" />
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" rx="16" fill="#0b1329" stroke="#1e293b" stroke-width="1.5" />
+  <!-- Header / Badge -->
+  <rect x="20" y="16" width="160" height="24" rx="6" fill="#1e293b" />
+  <text x="30" y="32" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">FINITE AUTOMATON</text>
+  <line x1="20" y1="130" x2="42" y2="130" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#arr-blue)" />
+  <text x="24" y="122" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">Start</text>
+  <path d="M 58.0 106 C 42.0 65, 98.0 65, 82.0 106" fill="none" stroke="#818cf8" stroke-width="1.8" marker-end="url(#arr-blue)" />
+  <text x="70.0" y="62" text-anchor="middle" fill="#818cf8" font-size="12" font-weight="bold" font-family="monospace">0</text>
+  <circle cx="70.0" cy="130" r="27" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5" />
+  <text x="70.0" y="135" text-anchor="middle" fill="#f8fafc" font-size="15" font-weight="bold" font-family="system-ui">D</text>
+</svg>

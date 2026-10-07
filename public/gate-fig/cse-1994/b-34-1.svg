@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 240" width="100%" height="100%">
+  <rect width="100%" height="100%" rx="16" fill="#0b1329" stroke="#1e293b" stroke-width="1.5" />
+  <rect x="20" y="16" width="160" height="24" rx="6" fill="#1e293b" />
+  <text x="30" y="32" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">TIMING WAVEFORM</text>
+  <text x="100" y="82" text-anchor="end" fill="#94a3b8" font-size="11" font-weight="bold" font-family="monospace">JK</text>
+  <path d="M 120 88 L 180 88 L 180 70 L 240 70 L 240 88 L 320 88 L 320 70 L 400 70 L 400 88 L 480 88" fill="none" stroke="#38bdf8" stroke-width="2" />
+  <text x="100" y="124" text-anchor="end" fill="#94a3b8" font-size="11" font-weight="bold" font-family="monospace">Q2</text>
+  <path d="M 120 130 L 180 130 L 180 112 L 240 112 L 240 130 L 320 130 L 320 112 L 400 112 L 400 130 L 480 130" fill="none" stroke="#38bdf8" stroke-width="2" />
+  <text x="100" y="166" text-anchor="end" fill="#94a3b8" font-size="11" font-weight="bold" font-family="monospace">Q0-</text>
+  <path d="M 120 172 L 180 172 L 180 154 L 240 154 L 240 172 L 320 172 L 320 154 L 400 154 L 400 172 L 480 172" fill="none" stroke="#38bdf8" stroke-width="2" />
+  <text x="100" y="208" text-anchor="end" fill="#94a3b8" font-size="11" font-weight="bold" font-family="monospace">Q1</text>
+  <path d="M 120 214 L 180 214 L 180 196 L 240 196 L 240 214 L 320 214 L 320 196 L 400 196 L 400 214 L 480 214" fill="none" stroke="#38bdf8" stroke-width="2" />
+</svg>

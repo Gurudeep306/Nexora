@@ -162,8 +162,8 @@ function createGateRouter() {
       if (marksF.length && !marksF.includes(Number(x.marks))) return false;
       if (answered === "yes" && (x.answer === null || x.answer === undefined)) return false;
       if (answered === "no" && x.answer !== null && x.answer !== undefined) return false;
-      if (hasFigure === "yes" && (!x.figures || x.figures.length === 0)) return false;
-      if (hasFigure === "no" && x.figures && x.figures.length > 0) return false;
+      if ((hasFigure === "yes" || hasFigure === "true" || hasFigure === true) && (!x.figures || x.figures.length === 0)) return false;
+      if ((hasFigure === "no" || hasFigure === "false" || hasFigure === false) && x.figures && x.figures.length > 0) return false;
       if (words.length && !words.every((w) => x._hay.includes(w))) return false;
       return true;
     });
