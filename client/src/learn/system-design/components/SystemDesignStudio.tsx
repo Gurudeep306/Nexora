@@ -10,6 +10,7 @@ import { SequenceDiagramViewer } from './SequenceDiagramViewer'
 import { ChapterConceptAnimator } from './ConceptAnimators'
 import { MockInterviewSimulator } from './MockInterviewSimulator'
 import { SpecializedDomainEngines } from './SpecializedDomainEngines'
+import { BuildFromScratchGuideViewer } from './BuildFromScratchGuideViewer'
 import {
   BookOpen,
   Layers,
@@ -28,6 +29,7 @@ import {
   LayoutGrid,
   Maximize2,
   Columns,
+  Hammer,
 } from 'lucide-react'
 
 const CATEGORIES: ('All' | SystemCategory)[] = [
@@ -42,7 +44,7 @@ const CATEGORIES: ('All' | SystemCategory)[] = [
 
 export const SystemDesignStudio: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'visualizer' | 'notes'>('visualizer')
-  const [systemView, setSystemView] = useState<'simulation' | 'sequence' | 'simulators' | 'interview' | 'engines' | 'capacity' | 'matrix'>('simulation')
+  const [systemView, setSystemView] = useState<'simulation' | 'from-scratch' | 'sequence' | 'simulators' | 'interview' | 'engines' | 'capacity' | 'matrix'>('simulation')
   const [selectedCategory, setSelectedCategory] = useState<'All' | SystemCategory>('All')
   const [selectedSystemId, setSelectedSystemId] = useState<string>('tinyurl')
   const [currentStepIndex, setCurrentStepIndex] = useState<number>(0)
@@ -322,6 +324,16 @@ export const SystemDesignStudio: React.FC = () => {
                 <Activity className="size-3.5" /> Simulation & Code Walks
               </button>
               <button
+                onClick={() => setSystemView('from-scratch')}
+                className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 transition ${
+                  systemView === 'from-scratch'
+                    ? 'bg-amber-400 text-black font-bold shadow-sm'
+                    : 'text-text-muted hover:text-text-primary'
+                }`}
+              >
+                <Hammer className="size-3.5" /> 🏗️ How It's Built From Scratch
+              </button>
+              <button
                 onClick={() => setSystemView('sequence')}
                 className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 transition ${
                   systemView === 'sequence'
@@ -385,7 +397,13 @@ export const SystemDesignStudio: React.FC = () => {
           </div>
 
           {/* Conditional View Rendering */}
-          {systemView === 'simulation' ? (
+          {systemView === 'from-scratch' ? (
+            /* From Scratch Architectural Breakdown & Deep Code Walkthrough */
+            <BuildFromScratchGuideViewer
+              system={currentSystem}
+              onSwitchToVisualizer={() => setSystemView('simulation')}
+            />
+          ) : systemView === 'simulation' ? (
             <div className="space-y-4">
               {/* Canvas Layout Switcher */}
               <div className="flex flex-wrap items-center justify-between gap-3 px-1">
@@ -415,9 +433,19 @@ export const SystemDesignStudio: React.FC = () => {
                     </button>
                   </div>
                 </div>
-                <span className="font-mono text-[11px] text-text-muted">
-                  ⚡ Click any service card on the chart to inspect its code & invoke test RPCs
-                </span>
+
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    onClick={() => setSystemView('from-scratch')}
+                    className="flex items-center gap-1.5 rounded-lg bg-amber-400/10 hover:bg-amber-400/20 px-3 py-1 text-[11.5px] font-bold text-amber-400 ring-1 ring-amber-400/30 transition shadow-sm"
+                  >
+                    <Hammer className="size-3" />
+                    <span>How This System Is Built From Scratch →</span>
+                  </button>
+                  <span className="font-mono text-[11px] text-text-muted hidden md:inline">
+                    ⚡ Click any service card on the chart to inspect its code & invoke test RPCs
+                  </span>
+                </div>
               </div>
 
               {canvasLayout === 'blueprint' ? (
