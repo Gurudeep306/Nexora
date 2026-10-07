@@ -79,6 +79,40 @@ export interface Calculation {
   result: string
 }
 
+export interface BuildStep {
+  stepNumber: number
+  title: string
+  subtitle: string
+  concept: string
+  codeSnippet: string
+  language: 'go' | 'rust' | 'typescript' | 'python' | 'sql' | 'lua'
+  fileName: string
+  explanation: string
+  keyTakeaway: string
+}
+
+export interface FromScratchGuide {
+  problemStatement: string
+  naiveApproach: {
+    description: string
+    whyItBreaks: string[]
+  }
+  coreDataStructures: {
+    name: string
+    purpose: string
+    timeComplexity: string
+    spaceComplexity: string
+    asciiDiagram?: string
+  }[]
+  steps: BuildStep[]
+  disasterScenarios: {
+    incident: string
+    impact: string
+    mitigationCodeOrStrategy: string
+  }[]
+  faangInterviewTips: string[]
+}
+
 export interface SystemDesignModel {
   id: string
   name: string
@@ -96,6 +130,7 @@ export interface SystemDesignModel {
   connections: ServiceConnection[]
   animationSteps: AnimationStep[]
   codeFiles: CodeFile[]
+  fromScratchGuide?: FromScratchGuide
   deepDive: {
     architectureSummary: string
     databaseSchema: string
