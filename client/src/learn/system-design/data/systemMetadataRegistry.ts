@@ -390,4 +390,35 @@ export const SYSTEM_METADATA_REGISTRY: Record<string, SystemArchetypeMeta> = {
     technologies: ['Kafka', 'APNs/FCM', 'SendGrid', 'Twilio', 'PostgreSQL'],
     keyInvariant: 'Deduplicate notifications over a 5-minute sliding window to prevent blasting users during accidental backend trigger loops.',
   },
+  pastebin: {
+    id: 'pastebin',
+    name: 'Distributed Text Snippet Service',
+    realWorldArchetype: 'Pastebin / GitHub Gist',
+    whatItDoes: 'Stores and shares plain text snippets with Base62 short links, automatic expiration, and high-speed retrieval using S3 storage and Redis caching.',
+    architecturePattern: 'Polyglot Storage: Object Storage for text bodies + SQL Metadata Table',
+    domain: 'Media Streaming & Cloud Storage',
+    difficulty: 'Foundational',
+    technologies: ['Base62', 'Amazon S3', 'Redis', 'PostgreSQL'],
+    keyInvariant: 'Decouple large text bodies from database rows; store raw text in S3 and metadata in relational tables.',
+  },
+  'fraud-detection': {
+    id: 'fraud-detection',
+    name: 'Real-Time Fraud Detection & Risk Scoring',
+    realWorldArchetype: 'Stripe Radar / PayPal Risk Engine',
+    whatItDoes: 'Scores transactions in under 30ms using real-time feature extraction, sliding-window velocity checks, and machine learning risk models.',
+    architecturePattern: 'Real-Time Feature Store + Sub-30ms In-Memory Model Scoring Pipeline',
+    domain: 'Financial & High-Frequency Engines',
+    difficulty: 'Staff+',
+    technologies: ['Redis Feature Store', 'Apache Flink', 'ONNX / LightGBM', 'Kafka'],
+    keyInvariant: 'Feature evaluation must terminate within strict 30ms deadlines before payment gateway authorization expires.',
+  },
 }
+
+// Aliases for unified ID access
+SYSTEM_METADATA_REGISTRY['job-scheduler'] = SYSTEM_METADATA_REGISTRY['distributed-job-scheduler']
+SYSTEM_METADATA_REGISTRY['collab-docs'] = SYSTEM_METADATA_REGISTRY['collaborative-editor']
+SYSTEM_METADATA_REGISTRY['object-storage'] = SYSTEM_METADATA_REGISTRY['s3-object-storage']
+SYSTEM_METADATA_REGISTRY['twitter'] = SYSTEM_METADATA_REGISTRY['twitter-feed']
+SYSTEM_METADATA_REGISTRY['netflix'] = SYSTEM_METADATA_REGISTRY['youtube-stream']
+SYSTEM_METADATA_REGISTRY['uber'] = SYSTEM_METADATA_REGISTRY['uber-dispatch']
+
