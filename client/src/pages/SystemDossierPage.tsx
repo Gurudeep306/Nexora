@@ -14,7 +14,6 @@ import {
   Maximize2,
   Minimize2,
   Play,
-  Pause,
   Zap,
   Network,
   Copy,
@@ -28,6 +27,15 @@ import {
   getDomainThemeByNameOrId,
   SYSTEM_METADATA_REGISTRY,
 } from '@/learn/system-design/data/systemMetadataRegistry'
+import { SystemVisualizer } from '@/learn/system-design/components/SystemVisualizer'
+import { AlgorithmPlayground } from '@/learn/system-design/components/AlgorithmPlayground'
+import { SpecializedDomainEngines } from '@/learn/system-design/components/SpecializedDomainEngines'
+import { ChapterConceptAnimator } from '@/learn/system-design/components/ConceptAnimators'
+import {
+  SystemHeroBlueprint,
+  SystemInternalEngineDiagram,
+  SystemTopologyMiniRadar,
+} from '@/learn/system-design/components/SystemBespokeArchitecturalVisuals'
 
 const CHAPTER_META_ICONS: Record<number, { shortTitle: string; icon: any; tag: string }> = {
   1: { shortTitle: 'Scope & SLAs', icon: BookOpen, tag: 'Non-Negotiables' },
@@ -95,6 +103,10 @@ export default function SystemDossierPage() {
 
   // Copied code status
   const [copiedCodeKey, setCopiedCodeKey] = useState<string | null>(null)
+
+  // Live Visualizer Step & Selected Node for Chapter 4
+  const [visualizerStep, setVisualizerStep] = useState<number>(0)
+  const [, setSelectedVisualizerNode] = useState<any>(null)
 
   // Sync when URL params change
   useEffect(() => {
@@ -169,25 +181,7 @@ export default function SystemDossierPage() {
     }
   }, [calcDau, calcReqsPerUser, calcPayloadKb, calcReadRatio])
 
-  // 2. Interactive Packet Simulator
-  const [simStep, setSimStep] = useState<number>(0)
-  const [simIsPlaying, setSimIsPlaying] = useState<boolean>(false)
-  const [simSpeed, setSimSpeed] = useState<number>(2000) // ms
-  const totalSteps = dossier.system.animationSteps.length || 1
-
-  useEffect(() => {
-    let timer: any
-    if (simIsPlaying) {
-      timer = setInterval(() => {
-        setSimStep((prev) => (prev + 1) % totalSteps)
-      }, simSpeed)
-    }
-    return () => clearInterval(timer)
-  }, [simIsPlaying, simSpeed, totalSteps])
-
-  const activeAnimationStep = dossier.system.animationSteps[simStep] || dossier.system.animationSteps[0]
-
-  // 3. Interactive Chaos Simulator
+  // 2. Interactive Chaos Simulator
   const [chaosState, setChaosState] = useState<{
     dbStatus: 'healthy' | 'crashed' | 'failover_promoting' | 'recovered'
     breakerStatus: 'CLOSED' | 'OPEN' | 'HALF_OPEN'
@@ -247,111 +241,6 @@ export default function SystemDossierPage() {
       })
     }
   }
-
-  // 4. Interactive Algorithm Sandbox State (Chapter 6)
-  const [sandboxAlgo, setSandboxAlgo] = useState<'hash-ring' | 'token-bucket' | 'lru-cache'>('hash-ring')
-  const [ringNodes, setRingNodes] = useState<{ id: string; angle: number; color: string }[]>([
-    { id: 'Node-A', angle: 30, color: '#38bdf8' },
-    { id: 'Node-B', angle: 120, color: '#34d399' },
-    { id: 'Node-C', angle: 210, color: '#f472b6' },
-    { id: 'Node-D', angle: 300, color: '#fbbf24' },
-  ])
-  const [ringKeys, setRingKeys] = useState<{ id: string; angle: number; assignedNode: string }[]>([
-    { id: 'usr:104', angle: 45, assignedNode: 'Node-B' },
-    { id: 'order:891', angle: 150, assignedNode: 'Node-C' },
-    { id: 'item:32', angle: 250, assignedNode: 'Node-D' },
-    { id: 'session:7', angle: 340, assignedNode: 'Node-A' },
-  ])
-  const [ringStatusMsg, setRingStatusMsg] = useState<string>(
-    'Consistent Hash Ring active with 4 server nodes. Keys map clockwise to the nearest successor.'
-  )
-
-  const addRingNode = () => {
-    if (ringNodes.some((n) => n.id === 'Node-E')) {
-      setRingStatusMsg('Node-E already active on ring.')
-      return
-    }
-    const newNodes = [...ringNodes, { id: 'Node-E', angle: 165, color: '#a855f7' }].sort(
-      (a, b) => a.angle - b.angle
-    )
-    setRingNodes(newNodes)
-    setRingKeys((prev) =>
-      prev.map((k) => {
-        if (k.angle > 120 && k.angle <= 165) {
-          return { ...k, assignedNode: 'Node-E' }
-        }
-        return k
-      })
-    )
-    setRingStatusMsg('Scaled Ring: Added Node-E at 165°. Only keys in (120°-165°) relocated to Node-E!')
-  }
-
-  const removeRingNode = () => {
-    if (ringNodes.length <= 3) {
-      setRingStatusMsg('Minimum quorum threshold reached: cannot remove more nodes.')
-      return
-    }
-    const updated = ringNodes.filter((n) => n.id !== 'Node-B')
-    setRingNodes(updated)
-    setRingKeys((prev) =>
-      prev.map((k) => (k.assignedNode === 'Node-B' ? { ...k, assignedNode: 'Node-C' } : k))
-    )
-    setRingStatusMsg('Simulated Failure: Removed Node-B. Keys (30°-120°) seamlessly failed over to Node-C!')
-  }
-
-  // Token Bucket Simulator
-  const [bucketTokens, setBucketTokens] = useState<number>(7)
-  const [bucketStatus, setBucketStatus] = useState<string>('Normal flow: Token Bucket refilling at 1 token / 1.5s')
-  const [bucketIsRejected, setBucketIsRejected] = useState<boolean>(false)
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setBucketTokens((prev) => (prev < 10 ? prev + 1 : prev))
-    }, 1500)
-    return () => clearInterval(timer)
-  }, [])
-
-  const consumeTokens = (count: number) => {
-    if (bucketTokens >= count) {
-      setBucketTokens((prev) => prev - count)
-      setBucketIsRejected(false)
-      setBucketStatus(`Allowed: Consumed ${count} token(s). Remaining: ${bucketTokens - count}/10`)
-    } else {
-      setBucketIsRejected(true)
-      setBucketStatus(`THROTTLED: Insufficient tokens! HTTP 429 Too Many Requests generated.`)
-      setTimeout(() => setBucketIsRejected(false), 2000)
-    }
-  }
-
-  // LRU Cache Simulator
-  const [lruSlots, setLruSlots] = useState<{ key: string; val: string }[]>([
-    { key: 'usr:101', val: 'Alice (Cached)' },
-    { key: 'usr:102', val: 'Bob (Cached)' },
-    { key: 'usr:103', val: 'Carol (Cached)' },
-  ])
-  const [lruMsg, setLruMsg] = useState<string>(
-    'LRU Cache holding 3 items. Head is most recently used; Tail is evicted on capacity overflow.'
-  )
-
-  const accessLruKey = (key: string) => {
-    const item = lruSlots.find((s) => s.key === key)
-    if (!item) return
-    const remaining = lruSlots.filter((s) => s.key !== key)
-    setLruSlots([item, ...remaining])
-    setLruMsg(`Cache HIT: Accessed ${key}. Moved node to Doubly Linked List HEAD.`)
-  }
-
-  const insertLruKey = (key: string, val: string) => {
-    if (lruSlots.some((s) => s.key === key)) {
-      accessLruKey(key)
-      return
-    }
-    const newItems = [{ key, val }, ...lruSlots.slice(0, 2)]
-    const evicted = lruSlots[2]
-    setLruSlots(newItems)
-    setLruMsg(`Cache MISS & EVICT: Inserted ${key} at HEAD. Evicted ${evicted.key} from TAIL in O(1) time.`)
-  }
-
 
   return (
     <div className={`min-h-screen ${isFullscreen ? 'p-2 sm:p-4 bg-bg-base' : 'pb-24'}`}>
@@ -422,100 +311,102 @@ export default function SystemDossierPage() {
       <div
         className="relative overflow-hidden rounded-2xl p-6 sm:p-8 ring-1 shadow-2xl mb-6 transition-all"
         style={{
-          background: `linear-gradient(135deg, #131722 0%, ${domainTheme.color}12 50%, #0d1117 100%)`,
+          background: `linear-gradient(135deg, #131722 0%, ${domainTheme.color}15 50%, #0d1117 100%)`,
           borderColor: `${domainTheme.color}40`,
           boxShadow: `0 20px 40px -15px ${domainTheme.color}20`,
         }}
       >
-        {/* Blueprint background accent */}
-        <div className="absolute right-0 top-0 h-full w-1/3 opacity-15 pointer-events-none hidden lg:block overflow-hidden">
-          <img
-            src="/images/distributed-systems-blueprint.jpg"
-            alt="Distributed Systems Blueprint"
-            className="h-full w-full object-cover object-center filter saturate-150"
-          />
-        </div>
-
-        <div className="relative z-10 max-w-4xl space-y-4">
-          <div className="flex flex-wrap items-center gap-2">
-            <span
-              className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-mono font-bold"
-              style={{
-                backgroundColor: `${domainTheme.color}20`,
-                color: domainTheme.color,
-                boxShadow: `inset 0 0 0 1px ${domainTheme.color}50`,
-              }}
-            >
-              <span>{domainTheme.icon}</span>
-              <span>{domainTheme.badge}</span>
-            </span>
-
-            {meta?.realWorldArchetype && (
-              <span className="rounded-full bg-bg-surface-3/90 px-3 py-1 text-[11px] font-mono font-medium text-text-secondary ring-1 ring-border">
-                Archetype: {meta.realWorldArchetype}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          <div className="lg:col-span-7 space-y-4">
+            <div className="flex flex-wrap items-center gap-2">
+              <span
+                className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-mono font-bold"
+                style={{
+                  backgroundColor: `${domainTheme.color}20`,
+                  color: domainTheme.color,
+                  boxShadow: `inset 0 0 0 1px ${domainTheme.color}50`,
+                }}
+              >
+                <span>{domainTheme.icon}</span>
+                <span>{domainTheme.badge}</span>
               </span>
-            )}
 
-            {meta?.architecturePattern && (
-              <span className="rounded-full bg-amber-500/10 px-3 py-1 text-[11px] font-mono font-bold text-amber-400 ring-1 ring-amber-500/30">
-                {meta.architecturePattern}
+              {meta?.realWorldArchetype && (
+                <span className="rounded-full bg-bg-surface-3/90 px-3 py-1 text-[11px] font-mono font-medium text-text-secondary ring-1 ring-border">
+                  Archetype: {meta.realWorldArchetype}
+                </span>
+              )}
+
+              {meta?.architecturePattern && (
+                <span className="rounded-full bg-amber-500/10 px-3 py-1 text-[11px] font-mono font-bold text-amber-400 ring-1 ring-amber-500/30">
+                  {meta.architecturePattern}
+                </span>
+              )}
+
+              <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-[11px] font-mono font-bold text-emerald-400 ring-1 ring-emerald-500/30 flex items-center gap-1.5">
+                <Zap className="size-3" /> {dossier.system.throughput}
               </span>
-            )}
+              <span className="rounded-full bg-sky-500/10 px-3 py-1 text-[11px] font-mono font-bold text-sky-400 ring-1 ring-sky-500/30 flex items-center gap-1.5">
+                <Clock className="size-3" /> P99 {dossier.system.latency}
+              </span>
+            </div>
 
-            <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-[11px] font-mono font-bold text-emerald-400 ring-1 ring-emerald-500/30 flex items-center gap-1.5">
-              <Zap className="size-3" /> {dossier.system.throughput}
-            </span>
-            <span className="rounded-full bg-sky-500/10 px-3 py-1 text-[11px] font-mono font-bold text-sky-400 ring-1 ring-sky-500/30 flex items-center gap-1.5">
-              <Clock className="size-3" /> P99 {dossier.system.latency}
-            </span>
+            <div>
+              <div className="text-[11px] font-mono uppercase tracking-widest text-text-muted mb-1">
+                Comprehensive Masterclass Dossier • 10 Interactive Chapters
+              </div>
+              <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-text-primary leading-tight">
+                {dossier.system.name}
+              </h1>
+            </div>
+
+            <p className="text-sm sm:text-base text-text-secondary leading-relaxed max-w-3xl">
+              {dossier.executiveSummary}
+            </p>
+
+            {/* Quick Metrics & Progress Strip */}
+            <div className="pt-4 border-t border-border/50 flex flex-wrap items-center justify-between gap-4 text-xs">
+              <div className="flex flex-wrap items-center gap-6">
+                <div>
+                  <span className="text-text-muted block text-[10px] uppercase font-mono">Storage Scale</span>
+                  <span className="font-semibold text-text-primary font-mono">{dossier.system.storageScale}</span>
+                </div>
+                <div>
+                  <span className="text-text-muted block text-[10px] uppercase font-mono">Reading Time</span>
+                  <span className="font-semibold text-text-primary font-mono">{dossier.totalReadingTimeMinutes} mins</span>
+                </div>
+                <div>
+                  <span className="text-text-muted block text-[10px] uppercase font-mono">Curriculum</span>
+                  <span className="font-semibold font-mono" style={{ color: domainTheme.color }}>
+                    10 Dedicated Chapters
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="text-right">
+                  <span className="text-[10px] uppercase font-mono text-text-muted block">Masterclass Progress</span>
+                  <span className="text-xs font-mono font-bold text-emerald-400">
+                    {(completedChapters[systemId] || []).length} of 10 Chapters ({Math.round(((completedChapters[systemId]?.length || 0) / 10) * 100)}%)
+                  </span>
+                </div>
+                <div className="w-24 h-2 bg-bg-surface-3 rounded-full overflow-hidden ring-1 ring-border">
+                  <div
+                    className="h-full bg-emerald-400 rounded-full transition-all duration-300"
+                    style={{ width: `${((completedChapters[systemId]?.length || 0) / 10) * 100}%` }}
+                  />
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div>
-            <div className="text-[11px] font-mono uppercase tracking-widest text-text-muted mb-1">
-              Comprehensive Masterclass Dossier • 10 Interactive Chapters
-            </div>
-            <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-text-primary leading-tight">
-              {dossier.system.name}
-            </h1>
-          </div>
-
-          <p className="text-sm sm:text-base text-text-secondary leading-relaxed max-w-3xl">
-            {dossier.executiveSummary}
-          </p>
-
-          {/* Quick Metrics & Progress Strip */}
-          <div className="pt-4 border-t border-border/50 flex flex-wrap items-center justify-between gap-4 text-xs">
-            <div className="flex flex-wrap items-center gap-6">
-              <div>
-                <span className="text-text-muted block text-[10px] uppercase font-mono">Storage Scale</span>
-                <span className="font-semibold text-text-primary font-mono">{dossier.system.storageScale}</span>
-              </div>
-              <div>
-                <span className="text-text-muted block text-[10px] uppercase font-mono">Reading Time</span>
-                <span className="font-semibold text-text-primary font-mono">{dossier.totalReadingTimeMinutes} mins</span>
-              </div>
-              <div>
-                <span className="text-text-muted block text-[10px] uppercase font-mono">Curriculum</span>
-                <span className="font-semibold font-mono" style={{ color: domainTheme.color }}>
-                  10 Dedicated Chapters
-                </span>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div className="text-right">
-                <span className="text-[10px] uppercase font-mono text-text-muted block">Masterclass Progress</span>
-                <span className="text-xs font-mono font-bold text-emerald-400">
-                  {(completedChapters[systemId] || []).length} of 10 Chapters ({Math.round(((completedChapters[systemId]?.length || 0) / 10) * 100)}%)
-                </span>
-              </div>
-              <div className="w-24 h-2 bg-bg-surface-3 rounded-full overflow-hidden ring-1 ring-border">
-                <div
-                  className="h-full bg-emerald-400 rounded-full transition-all duration-300"
-                  style={{ width: `${((completedChapters[systemId]?.length || 0) / 10) * 100}%` }}
-                />
-              </div>
-            </div>
+          {/* Bespoke System Hero Blueprint Graphic */}
+          <div className="lg:col-span-5">
+            <SystemHeroBlueprint
+              systemId={dossier.system.id}
+              system={dossier.system}
+              domainColor={domainTheme.color}
+            />
           </div>
         </div>
       </div>
@@ -690,22 +581,8 @@ export default function SystemDossierPage() {
             </div>
           </div>
 
-          {/* Quick Architecture Diagram Thumbnail */}
-          <div className="rounded-xl bg-bg-surface-2 p-4 ring-1 ring-border shadow-md space-y-2">
-            <h4 className="text-xs font-bold text-text-primary flex items-center gap-2">
-              <Network className="size-3.5 text-sky-400" /> Distributed Topology Overview
-            </h4>
-            <div className="rounded-lg overflow-hidden border border-border/80">
-              <img
-                src="/images/lld-internals-blueprint.jpg"
-                alt="System Architecture Diagram"
-                className="w-full h-32 object-cover"
-              />
-            </div>
-            <p className="text-[11px] text-text-muted leading-tight">
-              Hardware-level event loops, lock-free queues, and memory buffers driving this architecture.
-            </p>
-          </div>
+          {/* Live Cluster Topology Mini Radar */}
+          <SystemTopologyMiniRadar system={dossier.system} domainColor={domainTheme.color} />
         </div>
 
         {/* RIGHT COLUMN: CHAPTER CONTENT & INTERACTIVE LAB (8 cols) */}
@@ -870,416 +747,145 @@ export default function SystemDossierPage() {
             </div>
           )}
 
-          {currentChapter.interactiveModuleType === 'packet-flow' && (
-            <div className="rounded-2xl bg-bg-surface-2 p-6 ring-1 ring-sky-500/40 shadow-2xl space-y-4">
-              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 pb-3">
-                <h3 className="text-sm font-bold text-text-primary flex items-center gap-2">
-                  <Activity className="size-4 text-sky-400 animate-pulse" /> Live Request Packet Tracer & Simulator
-                </h3>
-
-                {/* Simulator Controls */}
+          {/* CHAPTER 4: LIVE INTERACTIVE ARCHITECTURAL VISUALIZER & WIRE FLOW SIMULATOR */}
+          {activeChapterIndex === 3 && (
+            <div className="rounded-2xl bg-bg-surface-2 p-5 sm:p-6 ring-1 ring-border shadow-2xl space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/60 pb-3">
                 <div className="flex items-center gap-2">
-                  <div className="flex items-center rounded-lg bg-bg-surface-1 p-0.5 ring-1 ring-border text-[10px] font-mono">
-                    <button
-                      onClick={() => setSimSpeed(3000)}
-                      className={`px-2 py-1 rounded ${simSpeed === 3000 ? 'bg-sky-500 text-bg-base font-bold' : 'text-text-muted hover:text-text-primary'}`}
-                    >
-                      0.5x
-                    </button>
-                    <button
-                      onClick={() => setSimSpeed(2000)}
-                      className={`px-2 py-1 rounded ${simSpeed === 2000 ? 'bg-sky-500 text-bg-base font-bold' : 'text-text-muted hover:text-text-primary'}`}
-                    >
-                      1x
-                    </button>
-                    <button
-                      onClick={() => setSimSpeed(1000)}
-                      className={`px-2 py-1 rounded ${simSpeed === 1000 ? 'bg-sky-500 text-bg-base font-bold' : 'text-text-muted hover:text-text-primary'}`}
-                    >
-                      2x
-                    </button>
-                  </div>
-                  <button
-                    onClick={() => setSimIsPlaying(!simIsPlaying)}
-                    className="flex items-center gap-1.5 rounded-lg bg-sky-500/20 px-3 py-1.5 text-xs font-bold text-sky-400 ring-1 ring-sky-500/50 hover:bg-sky-500/30 transition"
-                  >
-                    {simIsPlaying ? <Pause className="size-3.5" /> : <Play className="size-3.5" />}
-                    {simIsPlaying ? 'Pause Simulation' : 'Auto Play'}
-                  </button>
-                  <button
-                    onClick={() => setSimStep((prev) => (prev + 1) % totalSteps)}
-                    className="rounded-lg bg-bg-surface-1 px-3 py-1.5 text-xs font-bold text-text-secondary hover:text-text-primary ring-1 ring-border transition"
-                  >
-                    Step Next ➔
-                  </button>
-                </div>
-              </div>
-
-              {/* Active Animation Step Spotlight */}
-              <div className="rounded-xl bg-bg-surface-1 p-4 ring-1 ring-border space-y-3">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-mono font-bold text-sky-400 uppercase tracking-wider">
-                    Step {activeAnimationStep.step} of {totalSteps}: {activeAnimationStep.title}
-                  </span>
-                  <span className="rounded bg-sky-500/10 px-2 py-0.5 font-mono text-[11px] text-sky-300">
-                    {activeAnimationStep.protocol}
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-center gap-4 py-3 text-xs font-mono font-bold">
-                  <div className="rounded-lg bg-bg-surface-3 px-3 py-2 border border-sky-500/50 text-text-primary text-center">
-                    {activeAnimationStep.fromNode}
-                  </div>
-                  <div className="flex items-center text-sky-400 animate-pulse">
-                    ──────────►
-                  </div>
-                  <div className="rounded-lg bg-bg-surface-3 px-3 py-2 border border-emerald-500/50 text-emerald-400 text-center">
-                    {activeAnimationStep.toNode}
-                  </div>
-                </div>
-
-                <p className="text-xs text-text-secondary">
-                  {activeAnimationStep.description}
-                </p>
-
-                {activeAnimationStep.codeRef && (
-                  <div className="rounded bg-bg-base/80 p-2 font-mono text-[11px] text-text-muted border border-border/50">
-                    <span className="text-accent-brand">{activeAnimationStep.codeRef.file}</span>:
-                    <span className="text-text-secondary ml-1">{activeAnimationStep.codeRef.funcName}()</span> — {activeAnimationStep.codeRef.codeExplanation}
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {currentChapter.interactiveModuleType === 'chaos-simulator' && (
-            <div className="rounded-2xl bg-bg-surface-2 p-6 ring-1 ring-rose-500/40 shadow-2xl space-y-4">
-              <div className="flex items-center justify-between border-b border-border/60 pb-3">
-                <h3 className="text-sm font-bold text-text-primary flex items-center gap-2">
-                  <ShieldAlert className="size-4 text-rose-400" /> Chaos Engineering & Resiliency Lab
-                </h3>
-                <span className="text-[11px] font-mono font-bold text-rose-400 uppercase">
-                  Production Incident Drill
-                </span>
-              </div>
-
-              {/* Chaos Buttons */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-bold">
-                <button
-                  onClick={() => triggerChaosScenario('kill_db')}
-                  className="rounded-lg bg-rose-500/15 p-2.5 text-rose-400 ring-1 ring-rose-500/40 hover:bg-rose-500/25 transition text-left"
-                >
-                  💥 Kill DB Primary
-                </button>
-                <button
-                  onClick={() => triggerChaosScenario('surge_traffic')}
-                  className="rounded-lg bg-amber-500/15 p-2.5 text-amber-400 ring-1 ring-amber-500/40 hover:bg-amber-500/25 transition text-left"
-                >
-                  🌊 10x Flash Surge
-                </button>
-                <button
-                  onClick={() => triggerChaosScenario('split_brain')}
-                  className="rounded-lg bg-purple-500/15 p-2.5 text-purple-400 ring-1 ring-purple-500/40 hover:bg-purple-500/25 transition text-left"
-                >
-                  ⚡ Network Split-Brain
-                </button>
-                <button
-                  onClick={() => triggerChaosScenario('reset')}
-                  className="rounded-lg bg-bg-surface-1 p-2.5 text-text-secondary ring-1 ring-border hover:text-text-primary transition text-left"
-                >
-                  🔄 Reset Topology
-                </button>
-              </div>
-
-              {/* Live Status Board */}
-              <div className="rounded-xl bg-bg-surface-1 p-4 ring-1 ring-border space-y-2 text-xs">
-                <div className="flex items-center justify-between">
-                  <span className="text-text-muted">Circuit Breaker State:</span>
-                  <span
-                    className={`font-mono font-bold px-2 py-0.5 rounded text-[11px] ${
-                      chaosState.breakerStatus === 'CLOSED'
-                        ? 'bg-emerald-500/20 text-emerald-400'
-                        : chaosState.breakerStatus === 'HALF_OPEN'
-                        ? 'bg-amber-500/20 text-amber-400'
-                        : 'bg-rose-500/20 text-rose-400 animate-pulse'
-                    }`}
-                  >
-                    {chaosState.breakerStatus}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-text-muted">Cluster Health:</span>
-                  <span className="font-mono font-bold text-text-primary">{chaosState.dbStatus.toUpperCase()}</span>
-                </div>
-                <div className="rounded bg-bg-surface-3 p-2.5 text-text-secondary font-mono text-[11.5px] border border-border/80">
-                  {chaosState.activeIncidentText}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* INTERACTIVE ALGORITHM & CONCURRENCY SANDBOX (Chapter 6) */}
-          {currentChapter.interactiveModuleType === 'code-sandbox' && (
-            <div className="rounded-2xl bg-bg-surface-2 p-6 ring-1 ring-cyan-500/40 shadow-2xl space-y-5">
-              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 pb-3">
-                <div className="flex items-center gap-2">
-                  <div className="size-2 rounded-full bg-cyan-400 animate-ping" />
+                  <div className="size-2.5 rounded-full bg-emerald-400 animate-ping" />
                   <h3 className="text-sm font-bold text-text-primary flex items-center gap-2">
-                    <Zap className="size-4 text-cyan-400" /> Interactive Algorithm & Concurrency Sandbox
+                    <Network className="size-4" style={{ color: domainTheme.color }} /> Live Architectural Topology & Distributed Wire Flow Simulator
                   </h3>
                 </div>
-                <div className="flex items-center gap-1.5 rounded-lg bg-bg-surface-1 p-1 ring-1 ring-border text-xs">
+                <span className="text-[11px] font-mono px-2 py-0.5 rounded border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 font-bold">
+                  {(dossier.system.services || []).length} Microservices • {(dossier.system.animationSteps || []).length} Wire Flow Steps
+                </span>
+              </div>
+              <p className="text-xs text-text-secondary leading-relaxed">
+                Step through distributed request journeys, trace network protocols, toggle playback speed, and trigger live chaos injection to test resilience against real-world node failures.
+              </p>
+              <SystemVisualizer
+                system={dossier.system}
+                currentStepIndex={visualizerStep}
+                onStepChange={(step) => setVisualizerStep(step)}
+                onSelectNode={(node) => setSelectedVisualizerNode(node)}
+              />
+            </div>
+          )}
+
+          {/* CHAPTER 5: LOW-LEVEL COMPONENT ENGINE & HARDWARE EVENT LOOPS */}
+          {activeChapterIndex === 4 && (
+            <SystemInternalEngineDiagram
+              systemId={dossier.system.id}
+              system={dossier.system}
+              domainColor={domainTheme.color}
+            />
+          )}
+
+          {/* CHAPTER 6: LIVE INTERACTIVE ALGORITHMIC ENGINE & CONCURRENCY SANDBOX */}
+          {activeChapterIndex === 5 && (
+            <div className="space-y-6">
+              <SpecializedDomainEngines systemId={dossier.system.id} />
+              <div className="rounded-2xl border border-border bg-bg-surface-2 p-5 sm:p-6 shadow-2xl space-y-4">
+                <div className="flex items-center justify-between border-b border-border/60 pb-3">
+                  <h3 className="text-sm font-bold text-text-primary flex items-center gap-2">
+                    <Zap className="size-4 text-cyan-400" /> Interactive Algorithmic Engine & State Simulator
+                  </h3>
+                  <span className="text-[11px] font-mono text-cyan-400 font-semibold">
+                    Live Memory & State Mutations
+                  </span>
+                </div>
+                <AlgorithmPlayground systemId={dossier.system.id} />
+              </div>
+            </div>
+          )}
+
+          {/* CHAPTER 7: STORAGE CONSENSUS & DISTRIBUTED STATE ENGINES */}
+          {activeChapterIndex === 6 && (
+            <div className="rounded-2xl border border-border bg-bg-surface-2 p-5 sm:p-6 shadow-2xl space-y-4">
+              <div className="flex items-center justify-between border-b border-border/60 pb-3">
+                <h3 className="text-sm font-bold text-text-primary flex items-center gap-2">
+                  <Sparkles className="size-4 text-amber-400" /> Distributed Consensus & Replication Simulator
+                </h3>
+                <span className="text-[11px] font-mono text-amber-400 font-semibold">
+                  Raft / Paxos / 2PC Interactive
+                </span>
+              </div>
+              <ChapterConceptAnimator unitId="unit-7" chapterNumber={43} />
+            </div>
+          )}
+
+          {/* CHAPTER 8: FAULT TOLERANCE, HIGH AVAILABILITY & CHAOS DRILLS */}
+          {activeChapterIndex === 7 && (
+            <div className="space-y-6">
+              <div className="rounded-2xl bg-bg-surface-2 p-5 sm:p-6 ring-1 ring-rose-500/40 shadow-2xl space-y-4">
+                <div className="flex items-center justify-between border-b border-border/60 pb-3">
+                  <h3 className="text-sm font-bold text-text-primary flex items-center gap-2">
+                    <ShieldAlert className="size-4 text-rose-400" /> Chaos Engineering & Resiliency Lab
+                  </h3>
+                  <span className="text-[11px] font-mono font-bold text-rose-400 uppercase">
+                    Production Incident Drill
+                  </span>
+                </div>
+
+                {/* Chaos Buttons */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-bold">
                   <button
-                    onClick={() => setSandboxAlgo('hash-ring')}
-                    className={`px-2.5 py-1 rounded-md font-semibold transition ${
-                      sandboxAlgo === 'hash-ring'
-                        ? 'bg-cyan-500/20 text-cyan-300 ring-1 ring-cyan-500/40'
-                        : 'text-text-muted hover:text-text-primary'
-                    }`}
+                    onClick={() => triggerChaosScenario('kill_db')}
+                    className="rounded-lg bg-rose-500/15 p-2.5 text-rose-400 ring-1 ring-rose-500/40 hover:bg-rose-500/25 transition text-left"
                   >
-                    Consistent Hash Ring
+                    💥 Kill DB Primary
                   </button>
                   <button
-                    onClick={() => setSandboxAlgo('token-bucket')}
-                    className={`px-2.5 py-1 rounded-md font-semibold transition ${
-                      sandboxAlgo === 'token-bucket'
-                        ? 'bg-cyan-500/20 text-cyan-300 ring-1 ring-cyan-500/40'
-                        : 'text-text-muted hover:text-text-primary'
-                    }`}
+                    onClick={() => triggerChaosScenario('surge_traffic')}
+                    className="rounded-lg bg-amber-500/15 p-2.5 text-amber-400 ring-1 ring-amber-500/40 hover:bg-amber-500/25 transition text-left"
                   >
-                    Token Bucket Limiter
+                    🌊 10x Flash Surge
                   </button>
                   <button
-                    onClick={() => setSandboxAlgo('lru-cache')}
-                    className={`px-2.5 py-1 rounded-md font-semibold transition ${
-                      sandboxAlgo === 'lru-cache'
-                        ? 'bg-cyan-500/20 text-cyan-300 ring-1 ring-cyan-500/40'
-                        : 'text-text-muted hover:text-text-primary'
-                    }`}
+                    onClick={() => triggerChaosScenario('split_brain')}
+                    className="rounded-lg bg-purple-500/15 p-2.5 text-purple-400 ring-1 ring-purple-500/40 hover:bg-purple-500/25 transition text-left"
                   >
-                    LRU Cache Eviction
+                    ⚡ Network Split-Brain
                   </button>
+                  <button
+                    onClick={() => triggerChaosScenario('reset')}
+                    className="rounded-lg bg-bg-surface-1 p-2.5 text-text-secondary ring-1 ring-border hover:text-text-primary transition text-left"
+                  >
+                    🔄 Reset Topology
+                  </button>
+                </div>
+
+                {/* Live Status Board */}
+                <div className="rounded-xl bg-bg-surface-1 p-4 ring-1 ring-border space-y-2 text-xs">
+                  <div className="flex items-center justify-between">
+                    <span className="text-text-muted">Circuit Breaker State:</span>
+                    <span
+                      className={`font-mono font-bold px-2 py-0.5 rounded text-[11px] ${
+                        chaosState.breakerStatus === 'CLOSED'
+                          ? 'bg-emerald-500/20 text-emerald-400'
+                          : chaosState.breakerStatus === 'HALF_OPEN'
+                          ? 'bg-amber-500/20 text-amber-400'
+                          : 'bg-rose-500/20 text-rose-400 animate-pulse'
+                      }`}
+                    >
+                      {chaosState.breakerStatus}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-text-muted">Cluster Health:</span>
+                    <span className="font-mono font-bold text-text-primary">{chaosState.dbStatus.toUpperCase()}</span>
+                  </div>
+                  <div className="rounded bg-bg-surface-3 p-2.5 text-text-secondary font-mono text-[11.5px] border border-border/80">
+                    {chaosState.activeIncidentText}
+                  </div>
                 </div>
               </div>
 
-              {/* 1. Consistent Hash Ring Visualizer */}
-              {sandboxAlgo === 'hash-ring' && (
-                <div className="space-y-4">
-                  <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
-                    <span className="text-text-secondary">
-                      Active Ring Nodes: <strong className="text-text-primary">{ringNodes.length} servers</strong>
-                    </span>
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={addRingNode}
-                        className="rounded-lg bg-cyan-500/20 px-3 py-1.5 text-cyan-300 font-bold hover:bg-cyan-500/30 ring-1 ring-cyan-500/40 transition"
-                      >
-                        + Add Server (Node-E)
-                      </button>
-                      <button
-                        onClick={removeRingNode}
-                        className="rounded-lg bg-rose-500/20 px-3 py-1.5 text-rose-300 font-bold hover:bg-rose-500/30 ring-1 ring-rose-500/40 transition"
-                      >
-                        - Kill Server (Node-B)
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* SVG 360-degree Ring */}
-                  <div className="relative flex items-center justify-center p-4 bg-bg-surface-1 rounded-xl border border-border">
-                    <svg viewBox="0 0 320 320" className="size-64 sm:size-72">
-                      {/* Ring Track */}
-                      <circle cx="160" cy="160" r="110" fill="none" stroke="currentColor" strokeWidth="3" className="text-border" strokeDasharray="6 6" />
-
-                      {/* Server Nodes */}
-                      {ringNodes.map((node) => {
-                        const rad = ((node.angle - 90) * Math.PI) / 180
-                        const cx = 160 + 110 * Math.cos(rad)
-                        const cy = 160 + 110 * Math.sin(rad)
-                        return (
-                          <g key={node.id} className="transition-all duration-500">
-                            <circle cx={cx} cy={cy} r="14" fill="#0f172a" stroke={node.color} strokeWidth="3" />
-                            <circle cx={cx} cy={cy} r="6" fill={node.color} className="animate-pulse" />
-                            <text
-                              x={cx}
-                              y={cy > 160 ? cy + 22 : cy - 16}
-                              textAnchor="middle"
-                              fill={node.color}
-                              fontSize="11"
-                              fontFamily="monospace"
-                              fontWeight="bold"
-                            >
-                              {node.id}
-                            </text>
-                          </g>
-                        )
-                      })}
-
-                      {/* Keys mapped on ring */}
-                      {ringKeys.map((k) => {
-                        const rad = ((k.angle - 90) * Math.PI) / 180
-                        const cx = 160 + 110 * Math.cos(rad)
-                        const cy = 160 + 110 * Math.sin(rad)
-                        return (
-                          <g key={k.id} className="transition-all duration-500">
-                            <circle cx={cx} cy={cy} r="5" fill="#facc15" stroke="#000" strokeWidth="1" />
-                            <text
-                              x={cx}
-                              y={cy < 160 ? cy - 8 : cy + 14}
-                              textAnchor="middle"
-                              fill="#facc15"
-                              fontSize="9"
-                              fontFamily="monospace"
-                            >
-                              {k.id}
-                            </text>
-                          </g>
-                        )
-                      })}
-
-                      {/* Center Hub */}
-                      <circle cx="160" cy="160" r="40" fill="#0f172a" stroke="#334155" strokeWidth="2" />
-                      <text x="160" y="156" textAnchor="middle" fill="#94a3b8" fontSize="10" fontFamily="monospace">
-                        Murmur3
-                      </text>
-                      <text x="160" y="172" textAnchor="middle" fill="#38bdf8" fontSize="12" fontWeight="bold" fontFamily="monospace">
-                        2^32 RING
-                      </text>
-                    </svg>
-                  </div>
-
-                  <div className="rounded-lg bg-bg-surface-3 p-3 text-xs font-mono text-cyan-300 border border-cyan-500/20">
-                    ℹ️ {ringStatusMsg}
-                  </div>
-                </div>
-              )}
-
-              {/* 2. Token Bucket Rate Limiter Visualizer */}
-              {sandboxAlgo === 'token-bucket' && (
-                <div className="space-y-4">
-                  <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
-                    <span className="text-text-secondary">
-                      Bucket Capacity: <strong className="text-text-primary">10 Tokens</strong> (Refill: 1 token / 1.5s)
-                    </span>
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => consumeTokens(1)}
-                        className="rounded-lg bg-emerald-500/20 px-3 py-1.5 text-emerald-300 font-bold hover:bg-emerald-500/30 ring-1 ring-emerald-500/40 transition"
-                      >
-                        Send Request (1 Token)
-                      </button>
-                      <button
-                        onClick={() => consumeTokens(5)}
-                        className="rounded-lg bg-amber-500/20 px-3 py-1.5 text-amber-300 font-bold hover:bg-amber-500/30 ring-1 ring-amber-500/40 transition"
-                      >
-                        Burst Batch (5 Tokens)
-                      </button>
-                      <button
-                        onClick={() => consumeTokens(12)}
-                        className="rounded-lg bg-rose-500/20 px-3 py-1.5 text-rose-300 font-bold hover:bg-rose-500/30 ring-1 ring-rose-500/40 transition"
-                      >
-                        Spike Test (12 Tokens)
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Bucket Visual Display */}
-                  <div className="rounded-xl bg-bg-surface-1 p-6 border border-border flex flex-col sm:flex-row items-center justify-around gap-6">
-                    <div className="flex flex-col items-center gap-2">
-                      <span className="text-xs text-text-muted font-mono">Current Available Tokens</span>
-                      <div className="relative w-40 h-28 border-4 border-t-0 border-cyan-500/60 rounded-b-2xl bg-bg-base/80 p-2 flex flex-wrap-reverse content-start gap-1.5 overflow-hidden">
-                        {Array.from({ length: bucketTokens }).map((_, i) => (
-                          <div
-                            key={i}
-                            className="size-6 rounded-full bg-cyan-400 shadow-lg shadow-cyan-500/50 flex items-center justify-center text-[10px] font-bold text-slate-900 animate-bounce"
-                            style={{ animationDuration: `${0.8 + i * 0.1}s` }}
-                          >
-                            🪙
-                          </div>
-                        ))}
-                      </div>
-                      <span className="font-mono text-base font-extrabold text-cyan-400">
-                        {bucketTokens} / 10 Tokens
-                      </span>
-                    </div>
-
-                    <div className="space-y-3 text-xs w-full sm:w-64">
-                      <div className="flex justify-between items-center p-2 rounded bg-bg-surface-2 border border-border">
-                        <span className="text-text-muted">Status:</span>
-                        <span
-                          className={`font-mono font-bold px-2 py-0.5 rounded text-[11px] ${
-                            bucketIsRejected ? 'bg-rose-500/20 text-rose-400 animate-pulse' : 'bg-emerald-500/20 text-emerald-400'
-                          }`}
-                        >
-                          {bucketIsRejected ? 'HTTP 429 REJECTED' : '200 OK ALLOWED'}
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center p-2 rounded bg-bg-surface-2 border border-border">
-                        <span className="text-text-muted">Refill Rate:</span>
-                        <span className="font-mono text-text-primary">+1 token every 1500ms</span>
-                      </div>
-                      <div className="p-2.5 rounded bg-bg-surface-3 font-mono text-[11.5px] text-cyan-300 border border-cyan-500/20">
-                        {bucketStatus}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* 3. LRU Cache Simulator */}
-              {sandboxAlgo === 'lru-cache' && (
-                <div className="space-y-4">
-                  <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
-                    <span className="text-text-secondary">
-                      Max Capacity: <strong className="text-text-primary">3 Keys</strong> (Doubly Linked List + Hash Map)
-                    </span>
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => accessLruKey('usr:102')}
-                        className="rounded-lg bg-sky-500/20 px-3 py-1.5 text-sky-300 font-bold hover:bg-sky-500/30 ring-1 ring-sky-500/40 transition"
-                      >
-                        Access usr:102
-                      </button>
-                      <button
-                        onClick={() => insertLruKey(`usr:${Math.floor(Math.random() * 800 + 200)}`, 'New Data')}
-                        className="rounded-lg bg-emerald-500/20 px-3 py-1.5 text-emerald-300 font-bold hover:bg-emerald-500/30 ring-1 ring-emerald-500/40 transition"
-                      >
-                        + Insert New Key
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Visual Doubly Linked List */}
-                  <div className="p-6 bg-bg-surface-1 rounded-xl border border-border space-y-4">
-                    <div className="flex items-center justify-center gap-2 sm:gap-4 overflow-x-auto pb-2">
-                      <div className="px-3 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-400 text-xs font-mono font-bold border border-emerald-500/30">
-                        [HEAD]
-                      </div>
-                      {lruSlots.map((slot, idx) => (
-                        <div key={slot.key} className="flex items-center gap-2 sm:gap-4">
-                          <span className="text-text-muted font-mono text-xs">⇄</span>
-                          <div
-                            onClick={() => accessLruKey(slot.key)}
-                            className="cursor-pointer p-3 rounded-xl bg-bg-surface-3 hover:bg-bg-surface-2 border border-border shadow-md transition-all text-center min-w-[100px]"
-                          >
-                            <span className="text-xs font-mono font-bold text-accent-brand block">{slot.key}</span>
-                            <span className="text-[10px] text-text-muted">{slot.val}</span>
-                            <span className="text-[9px] font-mono text-text-secondary block mt-1">Slot #{idx + 1}</span>
-                          </div>
-                        </div>
-                      ))}
-                      <span className="text-text-muted font-mono text-xs">⇄</span>
-                      <div className="px-3 py-1.5 rounded-lg bg-rose-500/20 text-rose-400 text-xs font-mono font-bold border border-rose-500/30">
-                        [TAIL / EVICT]
-                      </div>
-                    </div>
-
-                    <div className="rounded-lg bg-bg-surface-3 p-3 text-xs font-mono text-cyan-300 border border-cyan-500/20">
-                      ℹ️ {lruMsg}
-                    </div>
-                  </div>
-                </div>
-              )}
+              {/* Concept Animator for Split Brain / Network Partition */}
+              <div className="rounded-2xl border border-border bg-bg-surface-2 p-5 sm:p-6 shadow-2xl space-y-3">
+                <ChapterConceptAnimator unitId="unit-1" chapterNumber={1} />
+              </div>
             </div>
           )}
 
