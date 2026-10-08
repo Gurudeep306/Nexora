@@ -19,6 +19,144 @@ export interface DomainCategoryInfo {
   archetypesSummary: string
 }
 
+export interface DomainTheme {
+  id: string
+  name: string
+  shortName: string
+  badgeText: string
+  description: string
+  archetypesSummary: string
+  icon: string
+  color: string
+  border: string
+  activeRing: string
+  badge: string
+  ribbon: string
+  accentText: string
+  bgTint: string
+  glow: string
+  gradient: string
+}
+
+export const DOMAIN_THEMES: Record<string, DomainTheme> = {
+  core: {
+    id: 'core',
+    name: 'Distributed Core & Consensus',
+    shortName: 'Distributed Core',
+    badgeText: 'Primitives & Quorum',
+    description: 'Fundamental building blocks: consistent hashing, monotonic ID generation, commit log brokers, quorum stores, and distributed locking.',
+    archetypesSummary: 'Bitly, Redis, Kafka, Snowflake, DynamoDB, Redlock',
+    icon: 'Cpu',
+    color: '#06b6d4',
+    border: 'border-cyan-500/40 hover:border-cyan-400',
+    activeRing: 'ring-2 ring-cyan-400 border-cyan-400',
+    badge: 'bg-cyan-500/10 text-cyan-400 ring-1 ring-cyan-500/30',
+    ribbon: 'from-cyan-500 to-teal-500 text-slate-950',
+    accentText: 'text-cyan-400',
+    bgTint: 'bg-cyan-500/5',
+    glow: 'rgba(6, 182, 212, 0.18)',
+    gradient: 'from-cyan-500/15 via-teal-500/5 to-transparent',
+  },
+  social: {
+    id: 'social',
+    name: 'High-Concurrency Social & Feeds',
+    shortName: 'Social & Concurrency',
+    badgeText: 'Scale & Fanout',
+    description: 'Ultra-high write concurrency, real-time fan-out timelines, zero-loss instant messaging, flash sale inventory, and collaborative CRDTs.',
+    archetypesSummary: 'Twitter/X, WhatsApp, Flash Sales, Google Docs',
+    icon: 'Activity',
+    color: '#a855f7',
+    border: 'border-purple-500/40 hover:border-purple-400',
+    activeRing: 'ring-2 ring-purple-400 border-purple-400',
+    badge: 'bg-purple-500/10 text-purple-400 ring-1 ring-purple-500/30',
+    ribbon: 'from-purple-500 to-fuchsia-500 text-white',
+    accentText: 'text-purple-400',
+    bgTint: 'bg-purple-500/5',
+    glow: 'rgba(168, 85, 247, 0.18)',
+    gradient: 'from-purple-500/15 via-fuchsia-500/5 to-transparent',
+  },
+  streaming: {
+    id: 'streaming',
+    name: 'Media Streaming & Cloud Storage',
+    shortName: 'Media & Storage',
+    badgeText: 'Terabytes & CDN',
+    description: 'Petabyte-scale blob pipelines: adaptive bitrate video transcoding, content-defined deduplication sync, and Reed-Solomon erasure coding.',
+    archetypesSummary: 'Netflix, YouTube, Google Drive, Amazon S3',
+    icon: 'Video',
+    color: '#f59e0b',
+    border: 'border-amber-500/40 hover:border-amber-400',
+    activeRing: 'ring-2 ring-amber-400 border-amber-400',
+    badge: 'bg-amber-500/10 text-amber-400 ring-1 ring-amber-500/30',
+    ribbon: 'from-amber-500 to-orange-500 text-slate-950',
+    accentText: 'text-amber-400',
+    bgTint: 'bg-amber-500/5',
+    glow: 'rgba(245, 158, 11, 0.18)',
+    gradient: 'from-amber-500/15 via-orange-500/5 to-transparent',
+  },
+  fintech: {
+    id: 'fintech',
+    name: 'Financial & High-Frequency Engines',
+    shortName: 'Fintech & Low-Latency',
+    badgeText: 'Sub-Millisecond & Ledger',
+    description: 'Mission-critical consistency: double-entry bookkeeping ledgers, sub-10 microsecond limit order book matching, and multi-tier rate limiters.',
+    archetypesSummary: 'Stripe, NASDAQ, Cloudflare Rate Limiter',
+    icon: 'CreditCard',
+    color: '#10b981',
+    border: 'border-emerald-500/40 hover:border-emerald-400',
+    activeRing: 'ring-2 ring-emerald-400 border-emerald-400',
+    badge: 'bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/30',
+    ribbon: 'from-emerald-500 to-green-500 text-slate-950',
+    accentText: 'text-emerald-400',
+    bgTint: 'bg-emerald-500/5',
+    glow: 'rgba(16, 185, 129, 0.18)',
+    gradient: 'from-emerald-500/15 via-green-500/5 to-transparent',
+  },
+  geospatial: {
+    id: 'geospatial',
+    name: 'Geospatial & Information Retrieval',
+    shortName: 'Geospatial & Search',
+    badgeText: 'Spatial & Search',
+    description: 'Location-aware real-time dispatch, spatial hexagon indexing, full-text inverted indexes with BM25, and politeness web crawling.',
+    archetypesSummary: 'Uber H3, Googlebot, Elasticsearch, Google Maps',
+    icon: 'MapPin',
+    color: '#3b82f6',
+    border: 'border-blue-500/40 hover:border-blue-400',
+    activeRing: 'ring-2 ring-blue-400 border-blue-400',
+    badge: 'bg-blue-500/10 text-blue-400 ring-1 ring-blue-500/30',
+    ribbon: 'from-blue-500 to-indigo-500 text-white',
+    accentText: 'text-blue-400',
+    bgTint: 'bg-blue-500/5',
+    glow: 'rgba(59, 130, 246, 0.18)',
+    gradient: 'from-blue-500/15 via-indigo-500/5 to-transparent',
+  },
+  infra: {
+    id: 'infra',
+    name: 'Cloud Infrastructure & Reliability',
+    shortName: 'Infrastructure & Edge',
+    badgeText: 'Edge & Observability',
+    description: 'Edge L7 reverse proxies, global Anycast CDNs, time-series metrics TSDBs, distributed cron schedulers, and webhook retry engines.',
+    archetypesSummary: 'Envoy, Cloudflare CDN, Prometheus, Twilio, Datadog',
+    icon: 'Shield',
+    color: '#f43f5e',
+    border: 'border-rose-500/40 hover:border-rose-400',
+    activeRing: 'ring-2 ring-rose-400 border-rose-400',
+    badge: 'bg-rose-500/10 text-rose-400 ring-1 ring-rose-500/30',
+    ribbon: 'from-rose-500 to-pink-500 text-white',
+    accentText: 'text-rose-400',
+    bgTint: 'bg-rose-500/5',
+    glow: 'rgba(244, 63, 94, 0.18)',
+    gradient: 'from-rose-500/15 via-pink-500/5 to-transparent',
+  },
+}
+
+export function getDomainThemeByNameOrId(nameOrId: string): DomainTheme {
+  const byId = DOMAIN_THEMES[nameOrId]
+  if (byId) return byId
+  const byName = Object.values(DOMAIN_THEMES).find((t) => t.name === nameOrId)
+  if (byName) return byName
+  return DOMAIN_THEMES.core
+}
+
 export const DOMAIN_CATEGORIES: DomainCategoryInfo[] = [
   {
     id: 'core',

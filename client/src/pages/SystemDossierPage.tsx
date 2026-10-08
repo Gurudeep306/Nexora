@@ -23,6 +23,24 @@ import {
   Lightbulb,
 } from 'lucide-react'
 import { getSystemDossier, getAllSystemDossierSummaries } from '@/learn/system-design/data/systemDossierEngine'
+import {
+  DOMAIN_CATEGORIES,
+  getDomainThemeByNameOrId,
+  SYSTEM_METADATA_REGISTRY,
+} from '@/learn/system-design/data/systemMetadataRegistry'
+
+const CHAPTER_META_ICONS: Record<number, { shortTitle: string; icon: any; tag: string }> = {
+  1: { shortTitle: 'Scope & SLAs', icon: BookOpen, tag: 'Non-Negotiables' },
+  2: { shortTitle: 'Scale Math', icon: Sliders, tag: 'Capacity Lab' },
+  3: { shortTitle: 'Failure Autopsy', icon: AlertTriangle, tag: 'Naive Collapse' },
+  4: { shortTitle: 'Architecture', icon: Layers, tag: 'HLD Blueprint' },
+  5: { shortTitle: 'Component LLD', icon: Network, tag: 'Low-Level Internals' },
+  6: { shortTitle: 'Live Sandbox', icon: Play, tag: 'Interactive Algorithms' },
+  7: { shortTitle: 'Data & Raft', icon: Sparkles, tag: 'Storage Consensus' },
+  8: { shortTitle: 'Chaos Drills', icon: ShieldAlert, tag: 'Fault Tolerance' },
+  9: { shortTitle: 'Observability', icon: Activity, tag: 'SLOs & Runbooks' },
+  10: { shortTitle: 'Trade-off Matrix', icon: Zap, tag: 'Interview War Room' },
+}
 
 export default function SystemDossierPage() {
   const { systemId = 'tinyurl', chapterNumber } = useParams<{ systemId: string; chapterNumber?: string }>()
@@ -31,6 +49,33 @@ export default function SystemDossierPage() {
   // Load dossier
   const dossier = useMemo(() => getSystemDossier(systemId) || getSystemDossier('tinyurl')!, [systemId])
   const allSummaries = useMemo(() => getAllSystemDossierSummaries(), [])
+
+  // Domain metadata & theme
+  const meta = useMemo(() => SYSTEM_METADATA_REGISTRY[dossier.system.id], [dossier.system.id])
+  const domainTheme = useMemo(
+    () => getDomainThemeByNameOrId(meta?.domain || dossier.system.category),
+    [meta, dossier.system.category]
+  )
+
+  const summariesByDomain = useMemo(() => {
+    const groups: Record<string, typeof allSummaries> = {}
+    DOMAIN_CATEGORIES.forEach((cat) => {
+      groups[cat.name] = []
+    })
+    allSummaries.forEach((s) => {
+      const sMeta = SYSTEM_METADATA_REGISTRY[s.id]
+      const domainName = sMeta?.domain || s.category
+      if (!groups[domainName]) groups[domainName] = []
+      groups[domainName].push(s)
+    })
+    return groups
+  }, [allSummaries])
+
+  const nextSystemInDomain = useMemo(() => {
+    const currentDomain = meta?.domain || dossier.system.category
+    const list = (summariesByDomain[currentDomain] || []).filter((s) => s.id !== systemId)
+    return list[0] || allSummaries.find((s) => s.id !== systemId)
+  }, [systemId, summariesByDomain, allSummaries, meta, dossier.system.category])
 
   // Active Chapter State
   const initialChapter = chapterNumber ? Math.max(1, Math.min(10, parseInt(chapterNumber, 10) || 1)) : 1
@@ -312,7 +357,7 @@ export default function SystemDossierPage() {
     <div className={`min-h-screen ${isFullscreen ? 'p-2 sm:p-4 bg-bg-base' : 'pb-24'}`}>
       {/* TOP HEADER / BREADCRUMB NAVIGATION */}
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-border/60 pb-4">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2.5 text-xs">
           <Link
             to="/learn?tab=sysdesign"
             className="flex items-center gap-1.5 rounded-lg bg-bg-surface-2 px-3 py-1.5 text-xs font-semibold text-text-secondary hover:text-text-primary ring-1 ring-border transition"
@@ -320,29 +365,45 @@ export default function SystemDossierPage() {
             <ArrowLeft className="size-3.5" /> Back to Studio
           </Link>
           <span className="text-border">/</span>
-          <span className="text-xs font-mono font-bold text-accent-brand uppercase tracking-wider">
-            {dossier.system.category}
+          <span
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-mono font-bold uppercase tracking-wider"
+            style={{
+              backgroundColor: `${domainTheme.color}15`,
+              color: domainTheme.color,
+              boxShadow: `inset 0 0 0 1px ${domainTheme.color}35`,
+            }}
+          >
+            <span>{domainTheme.icon}</span>
+            <span>{domainTheme.name}</span>
           </span>
           <span className="text-border">/</span>
-          <span className="text-xs font-semibold text-text-primary truncate max-w-[200px] sm:max-w-none">
+          <span className="font-bold text-text-primary truncate max-w-[180px] sm:max-w-none">
             {dossier.system.name}
           </span>
         </div>
 
         {/* System Switcher & Utility Buttons */}
         <div className="flex items-center gap-2.5">
-          {/* Quick System Switcher Dropdown */}
+          {/* Quick System Switcher Dropdown Grouped by Architectural Domain */}
           <div className="relative">
             <select
               value={systemId}
               onChange={(e) => navigate(`/learn/system-design/${e.target.value}/1`)}
               className="rounded-lg bg-bg-surface-2 px-3 py-1.5 text-xs font-semibold text-text-primary ring-1 ring-border focus:ring-accent-brand focus:outline-none cursor-pointer"
             >
-              {allSummaries.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.name} ({s.category})
-                </option>
-              ))}
+              {DOMAIN_CATEGORIES.map((cat) => {
+                const sysList = summariesByDomain[cat.name] || []
+                if (sysList.length === 0) return null
+                return (
+                  <optgroup key={cat.id} label={`${cat.icon} ${cat.name} (${sysList.length})`}>
+                    {sysList.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.name}
+                      </option>
+                    ))}
+                  </optgroup>
+                )
+              })}
             </select>
           </div>
 
@@ -357,8 +418,16 @@ export default function SystemDossierPage() {
         </div>
       </div>
 
-      {/* HERO BANNER FOR THE SYSTEM */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-bg-surface-2 via-bg-surface-3/80 to-bg-surface-2 p-6 sm:p-8 ring-1 ring-border shadow-2xl mb-8">
+      {/* DOMAIN-THEMED HERO BANNER FOR THE SYSTEM */}
+      <div
+        className="relative overflow-hidden rounded-2xl p-6 sm:p-8 ring-1 shadow-2xl mb-6 transition-all"
+        style={{
+          background: `linear-gradient(135deg, #131722 0%, ${domainTheme.color}12 50%, #0d1117 100%)`,
+          borderColor: `${domainTheme.color}40`,
+          boxShadow: `0 20px 40px -15px ${domainTheme.color}20`,
+        }}
+      >
+        {/* Blueprint background accent */}
         <div className="absolute right-0 top-0 h-full w-1/3 opacity-15 pointer-events-none hidden lg:block overflow-hidden">
           <img
             src="/images/distributed-systems-blueprint.jpg"
@@ -368,10 +437,31 @@ export default function SystemDossierPage() {
         </div>
 
         <div className="relative z-10 max-w-4xl space-y-4">
-          <div className="flex flex-wrap items-center gap-2.5">
-            <span className="rounded-full bg-accent-brand/10 px-3 py-1 text-[11px] font-mono font-bold text-accent-brand ring-1 ring-accent-brand/30">
-              {dossier.system.difficulty} Architecture
+          <div className="flex flex-wrap items-center gap-2">
+            <span
+              className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-mono font-bold"
+              style={{
+                backgroundColor: `${domainTheme.color}20`,
+                color: domainTheme.color,
+                boxShadow: `inset 0 0 0 1px ${domainTheme.color}50`,
+              }}
+            >
+              <span>{domainTheme.icon}</span>
+              <span>{domainTheme.badge}</span>
             </span>
+
+            {meta?.realWorldArchetype && (
+              <span className="rounded-full bg-bg-surface-3/90 px-3 py-1 text-[11px] font-mono font-medium text-text-secondary ring-1 ring-border">
+                Archetype: {meta.realWorldArchetype}
+              </span>
+            )}
+
+            {meta?.architecturePattern && (
+              <span className="rounded-full bg-amber-500/10 px-3 py-1 text-[11px] font-mono font-bold text-amber-400 ring-1 ring-amber-500/30">
+                {meta.architecturePattern}
+              </span>
+            )}
+
             <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-[11px] font-mono font-bold text-emerald-400 ring-1 ring-emerald-500/30 flex items-center gap-1.5">
               <Zap className="size-3" /> {dossier.system.throughput}
             </span>
@@ -380,35 +470,148 @@ export default function SystemDossierPage() {
             </span>
           </div>
 
-          <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-text-primary leading-tight">
-            {dossier.system.name}
-          </h1>
+          <div>
+            <div className="text-[11px] font-mono uppercase tracking-widest text-text-muted mb-1">
+              Comprehensive Masterclass Dossier • 10 Interactive Chapters
+            </div>
+            <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-text-primary leading-tight">
+              {dossier.system.name}
+            </h1>
+          </div>
 
-          <p className="text-sm sm:text-base text-text-secondary leading-relaxed">
+          <p className="text-sm sm:text-base text-text-secondary leading-relaxed max-w-3xl">
             {dossier.executiveSummary}
           </p>
 
-          {/* Quick Metrics Strip */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-border/50 text-xs">
-            <div>
-              <span className="text-text-muted block">Storage Scale:</span>
-              <span className="font-semibold text-text-primary font-mono">{dossier.system.storageScale}</span>
+          {/* Quick Metrics & Progress Strip */}
+          <div className="pt-4 border-t border-border/50 flex flex-wrap items-center justify-between gap-4 text-xs">
+            <div className="flex flex-wrap items-center gap-6">
+              <div>
+                <span className="text-text-muted block text-[10px] uppercase font-mono">Storage Scale</span>
+                <span className="font-semibold text-text-primary font-mono">{dossier.system.storageScale}</span>
+              </div>
+              <div>
+                <span className="text-text-muted block text-[10px] uppercase font-mono">Reading Time</span>
+                <span className="font-semibold text-text-primary font-mono">{dossier.totalReadingTimeMinutes} mins</span>
+              </div>
+              <div>
+                <span className="text-text-muted block text-[10px] uppercase font-mono">Curriculum</span>
+                <span className="font-semibold font-mono" style={{ color: domainTheme.color }}>
+                  10 Dedicated Chapters
+                </span>
+              </div>
             </div>
-            <div>
-              <span className="text-text-muted block">Architecture Curriculum:</span>
-              <span className="font-semibold text-accent-brand font-mono">10 Exhaustive Chapters</span>
-            </div>
-            <div>
-              <span className="text-text-muted block">Total Reading Time:</span>
-              <span className="font-semibold text-text-primary font-mono">{dossier.totalReadingTimeMinutes} mins</span>
-            </div>
-            <div>
-              <span className="text-text-muted block">Your Progress:</span>
-              <span className="font-semibold text-emerald-400 font-mono">
-                {((completedChapters[systemId]?.length || 0) / 10) * 100}% Completed
-              </span>
+
+            <div className="flex items-center gap-3">
+              <div className="text-right">
+                <span className="text-[10px] uppercase font-mono text-text-muted block">Masterclass Progress</span>
+                <span className="text-xs font-mono font-bold text-emerald-400">
+                  {(completedChapters[systemId] || []).length} of 10 Chapters ({Math.round(((completedChapters[systemId]?.length || 0) / 10) * 100)}%)
+                </span>
+              </div>
+              <div className="w-24 h-2 bg-bg-surface-3 rounded-full overflow-hidden ring-1 ring-border">
+                <div
+                  className="h-full bg-emerald-400 rounded-full transition-all duration-300"
+                  style={{ width: `${((completedChapters[systemId]?.length || 0) / 10) * 100}%` }}
+                />
+              </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* 10-CHAPTER MASTERCLASS CURRICULUM DECK */}
+      <div className="mb-8 rounded-2xl bg-bg-surface-2/95 backdrop-blur-md p-4 ring-1 ring-border shadow-xl">
+        <div className="flex items-center justify-between border-b border-border/60 pb-3 mb-3">
+          <div className="flex items-center gap-2">
+            <span className="flex size-6 items-center justify-center rounded-md bg-accent-brand/10 text-accent-brand">
+              <BookOpen className="size-3.5" />
+            </span>
+            <span className="text-xs font-bold uppercase tracking-wider text-text-primary">
+              Masterclass Curriculum Roadmap
+            </span>
+            <span className="text-[11px] font-mono text-text-muted hidden md:inline">
+              (Click any chapter to jump directly to its dedicated deep dive)
+            </span>
+          </div>
+          <span className="text-xs font-mono font-bold" style={{ color: domainTheme.color }}>
+            Chapter {activeChapterIndex + 1} of 10 Active
+          </span>
+        </div>
+
+        {/* Horizontal Chapter Stepper Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-10 gap-2">
+          {dossier.chapters.map((ch, idx) => {
+            const isActive = idx === activeChapterIndex
+            const isDone = (completedChapters[systemId] || []).includes(ch.chapterNumber)
+            const metaIcon = CHAPTER_META_ICONS[ch.chapterNumber]
+            const ChapterIcon = metaIcon?.icon || BookOpen
+
+            return (
+              <button
+                key={ch.id}
+                onClick={() => handleSelectChapter(idx)}
+                className={`group relative flex flex-col items-center text-center p-2.5 rounded-xl transition-all cursor-pointer ${
+                  isActive
+                    ? 'bg-bg-surface-3 shadow-lg ring-2 font-bold scale-[1.02] z-10'
+                    : 'bg-bg-surface-1/70 hover:bg-bg-surface-3/60 ring-1 ring-border/50 text-text-muted hover:text-text-primary'
+                }`}
+                style={{
+                  borderColor: isActive ? domainTheme.color : undefined,
+                  boxShadow: isActive ? `0 0 15px -3px ${domainTheme.color}40` : undefined,
+                }}
+                title={`Chapter ${ch.chapterNumber}: ${ch.title}`}
+              >
+                {/* Completed checkmark badge */}
+                {isDone && (
+                  <span className="absolute -top-1.5 -right-1.5 bg-emerald-500 text-bg-base rounded-full p-0.5 shadow-sm">
+                    <CheckCircle2 className="size-3 text-bg-base fill-current" />
+                  </span>
+                )}
+
+                <div className="flex items-center justify-between w-full mb-1">
+                  <span
+                    className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded"
+                    style={{
+                      backgroundColor: isActive ? `${domainTheme.color}25` : 'rgba(255,255,255,0.05)',
+                      color: isActive ? domainTheme.color : undefined,
+                    }}
+                  >
+                    Ch.{ch.chapterNumber.toString().padStart(2, '0')}
+                  </span>
+                  <ChapterIcon
+                    className={`size-3.5 transition-colors ${
+                      isActive ? '' : 'text-text-muted group-hover:text-text-primary'
+                    }`}
+                    style={{ color: isActive ? domainTheme.color : undefined }}
+                  />
+                </div>
+
+                <div
+                  className={`text-[11px] font-semibold leading-tight line-clamp-1 w-full text-left sm:text-center ${
+                    isActive ? 'text-text-primary' : 'text-text-secondary group-hover:text-text-primary'
+                  }`}
+                >
+                  {metaIcon?.shortTitle || ch.badge}
+                </div>
+
+                <div className="text-[9px] text-text-muted font-mono mt-1 w-full flex items-center justify-between">
+                  <span>{ch.estimatedMinutes}m</span>
+                  <span className="hidden lg:inline text-[8px] text-text-muted truncate max-w-[45px]">
+                    {metaIcon?.tag || ch.badge}
+                  </span>
+                </div>
+
+                {/* Active indicator bar */}
+                {isActive && (
+                  <div
+                    className="absolute bottom-0 left-2 right-2 h-0.5 rounded-full"
+                    style={{ backgroundColor: domainTheme.color }}
+                  />
+                )}
+              </button>
+            )
+          })}
         </div>
       </div>
 
@@ -419,9 +622,9 @@ export default function SystemDossierPage() {
           <div className="rounded-xl bg-bg-surface-2 p-4 ring-1 ring-border shadow-lg space-y-3">
             <div className="flex items-center justify-between border-b border-border/60 pb-3">
               <h3 className="text-xs font-bold uppercase tracking-wider text-text-muted flex items-center gap-2">
-                <BookOpen className="size-3.5 text-accent-brand" /> Table of Contents
+                <BookOpen className="size-3.5" style={{ color: domainTheme.color }} /> Table of Contents
               </h3>
-              <span className="text-xs font-mono font-bold text-accent-brand">
+              <span className="text-xs font-mono font-bold" style={{ color: domainTheme.color }}>
                 Chapter {activeChapterIndex + 1} of 10
               </span>
             </div>
@@ -431,6 +634,8 @@ export default function SystemDossierPage() {
               {dossier.chapters.map((ch, idx) => {
                 const isActive = idx === activeChapterIndex
                 const isDone = (completedChapters[systemId] || []).includes(ch.chapterNumber)
+                const metaIcon = CHAPTER_META_ICONS[ch.chapterNumber]
+                const ChapterIcon = metaIcon?.icon || BookOpen
 
                 return (
                   <button
@@ -438,20 +643,30 @@ export default function SystemDossierPage() {
                     onClick={() => handleSelectChapter(idx)}
                     className={`w-full text-left rounded-lg p-2.5 transition flex items-start gap-2.5 text-xs ${
                       isActive
-                        ? 'bg-accent-brand/15 text-accent-brand ring-1 ring-accent-brand/50 shadow-sm font-semibold'
+                        ? 'font-semibold shadow-sm'
                         : 'text-text-secondary hover:bg-bg-surface-3 hover:text-text-primary'
                     }`}
+                    style={
+                      isActive
+                        ? {
+                            backgroundColor: `${domainTheme.color}15`,
+                            color: domainTheme.color,
+                            boxShadow: `inset 0 0 0 1px ${domainTheme.color}50`,
+                          }
+                        : undefined
+                    }
                   >
                     <div className="mt-0.5 shrink-0">
                       {isDone ? (
                         <CheckCircle2 className="size-4 text-emerald-400" />
                       ) : (
                         <div
-                          className={`size-4 rounded-full border flex items-center justify-center text-[10px] font-mono ${
-                            isActive
-                              ? 'border-accent-brand text-accent-brand font-bold'
-                              : 'border-border text-text-muted'
-                          }`}
+                          className="size-4 rounded-full border flex items-center justify-center text-[10px] font-mono"
+                          style={{
+                            borderColor: isActive ? domainTheme.color : 'var(--color-border, #333)',
+                            color: isActive ? domainTheme.color : 'var(--color-text-muted, #888)',
+                            fontWeight: isActive ? 700 : 400,
+                          }}
                         >
                           {ch.chapterNumber}
                         </div>
@@ -459,9 +674,12 @@ export default function SystemDossierPage() {
                     </div>
 
                     <div className="grow min-w-0">
-                      <div className="truncate font-medium">{ch.title.replace(/^Chapter \d+:\s*/, '')}</div>
+                      <div className="flex items-center gap-1.5 font-medium truncate">
+                        <ChapterIcon className="size-3 shrink-0 opacity-70" />
+                        <span className="truncate">{ch.title.replace(/^Chapter \d+:\s*/, '')}</span>
+                      </div>
                       <div className="text-[10px] text-text-muted flex items-center gap-2 mt-0.5">
-                        <span>{ch.badge}</span>
+                        <span className="truncate">{metaIcon?.tag || ch.badge}</span>
                         <span>•</span>
                         <span>{ch.estimatedMinutes}m read</span>
                       </div>
@@ -1209,35 +1427,95 @@ export default function SystemDossierPage() {
           </div>
 
           {/* BOTTOM PAGINATION CONTROLS */}
-          <div className="flex items-center justify-between gap-4 rounded-xl bg-bg-surface-2 p-4 ring-1 border-border shadow-lg">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 rounded-2xl bg-bg-surface-2 p-4 sm:p-5 ring-1 ring-border shadow-xl">
             <button
               onClick={() => handleSelectChapter(Math.max(0, activeChapterIndex - 1))}
               disabled={activeChapterIndex === 0}
-              className="flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-bold transition disabled:opacity-30 disabled:pointer-events-none bg-bg-surface-1 text-text-secondary hover:text-text-primary ring-1 ring-border"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition disabled:opacity-30 disabled:pointer-events-none bg-bg-surface-1 text-text-secondary hover:text-text-primary ring-1 ring-border"
             >
-              <ArrowLeft className="size-3.5" /> Previous Chapter
+              <ArrowLeft className="size-3.5" />
+              <span>
+                {activeChapterIndex > 0 ? (
+                  <>
+                    Prev: <span className="font-mono text-accent-brand">Ch.{activeChapterIndex}</span>{' '}
+                    {CHAPTER_META_ICONS[activeChapterIndex]?.shortTitle}
+                  </>
+                ) : (
+                  'First Chapter'
+                )}
+              </span>
             </button>
 
-            <span className="text-xs font-mono text-text-muted hidden sm:inline">
-              Chapter {activeChapterIndex + 1} of 10
-            </span>
+            {/* Middle: Mark Complete button */}
+            <button
+              onClick={() => toggleChapterComplete(currentChapter.chapterNumber)}
+              className={`w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition shadow-sm ${
+                isCurrentChapterComplete
+                  ? 'bg-emerald-500/20 text-emerald-400 ring-1 ring-emerald-500/50'
+                  : 'bg-bg-surface-3 text-text-secondary hover:text-text-primary ring-1 ring-border'
+              }`}
+            >
+              <CheckCircle2 className="size-4" />
+              {isCurrentChapterComplete ? 'Chapter Completed ✓' : 'Mark Chapter Complete'}
+            </button>
 
             {activeChapterIndex < 9 ? (
               <button
                 onClick={() => handleSelectChapter(activeChapterIndex + 1)}
-                className="flex items-center gap-2 rounded-lg bg-accent-brand px-4 py-2 text-xs font-bold text-bg-base hover:opacity-90 transition shadow-sm"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-xs font-bold text-bg-base hover:opacity-90 transition shadow-lg cursor-pointer"
+                style={{ backgroundColor: domainTheme.color }}
               >
-                Next Chapter <ArrowRight className="size-3.5" />
+                <span>
+                  Next: <span className="font-mono opacity-90">Ch.{activeChapterIndex + 2}</span>{' '}
+                  {CHAPTER_META_ICONS[activeChapterIndex + 2]?.shortTitle}
+                </span>
+                <ArrowRight className="size-3.5" />
               </button>
             ) : (
               <Link
                 to="/learn?tab=sysdesign"
-                className="flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-2 text-xs font-bold text-bg-base hover:bg-emerald-600 transition shadow-sm"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-emerald-500 px-5 py-2.5 text-xs font-bold text-bg-base hover:bg-emerald-600 transition shadow-lg"
               >
-                Complete Masterclass Dossier <CheckCircle2 className="size-3.5" />
+                <span>Complete Masterclass Dossier</span>
+                <CheckCircle2 className="size-3.5" />
               </Link>
             )}
           </div>
+
+          {/* On Chapter 10: NEXT SYSTEM IN DOMAIN RECOMMENDATION CARD */}
+          {activeChapterIndex === 9 && nextSystemInDomain && (
+            <div
+              className="mt-6 rounded-2xl p-6 ring-1 shadow-2xl relative overflow-hidden transition-all"
+              style={{
+                background: `linear-gradient(135deg, ${domainTheme.color}15 0%, #161b22 100%)`,
+                borderColor: `${domainTheme.color}40`,
+              }}
+            >
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-base">{domainTheme.icon}</span>
+                    <span className="text-xs font-mono font-bold uppercase tracking-wider" style={{ color: domainTheme.color }}>
+                      Recommended Next System in {domainTheme.name}
+                    </span>
+                  </div>
+                  <h3 className="text-xl font-black text-text-primary">{nextSystemInDomain.name}</h3>
+                  <p className="text-xs text-text-secondary max-w-xl">
+                    Continue mastering this domain by exploring the complete 10-chapter architectural dossier for {nextSystemInDomain.name}.
+                  </p>
+                </div>
+
+                <Link
+                  to={`/learn/system-design/${nextSystemInDomain.id}/1`}
+                  className="shrink-0 flex items-center gap-2 rounded-xl px-5 py-3 text-xs font-bold text-bg-base hover:opacity-90 transition shadow-xl"
+                  style={{ backgroundColor: domainTheme.color }}
+                >
+                  <span>Launch {nextSystemInDomain.name} Masterclass</span>
+                  <ArrowRight className="size-4" />
+                </Link>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

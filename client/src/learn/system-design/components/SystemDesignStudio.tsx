@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 import { ALL_SYSTEM_DESIGNS } from '../data/systemsData'
 import {
   DOMAIN_CATEGORIES,
+  DOMAIN_THEMES,
+  getDomainThemeByNameOrId,
   SYSTEM_METADATA_REGISTRY,
 } from '../data/systemMetadataRegistry'
 import { SystemVisualizer } from './SystemVisualizer'
@@ -51,46 +53,23 @@ const TECH_PILLS = [
 
 const DIFFICULTY_PILLS = ['All', 'Foundational', 'Advanced', 'Staff+']
 
-const DOMAIN_COLOR_MAP: Record<string, { badge: string; text: string; border: string }> = {
-  'Distributed Core & Consensus': {
-    badge: 'bg-amber-400/10 text-amber-400 ring-1 ring-amber-400/30',
-    text: 'text-amber-400',
-    border: 'border-amber-400',
-  },
-  'High-Concurrency Social & Feeds': {
-    badge: 'bg-rose-500/10 text-rose-400 ring-1 ring-rose-500/30',
-    text: 'text-rose-400',
-    border: 'border-rose-500',
-  },
-  'Media Streaming & Cloud Storage': {
-    badge: 'bg-purple-500/10 text-purple-400 ring-1 ring-purple-500/30',
-    text: 'text-purple-400',
-    border: 'border-purple-500',
-  },
-  'Financial & High-Frequency Engines': {
-    badge: 'bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/30',
-    text: 'text-emerald-400',
-    border: 'border-emerald-500',
-  },
-  'Geospatial & Information Retrieval': {
-    badge: 'bg-sky-400/10 text-sky-400 ring-1 ring-sky-400/30',
-    text: 'text-sky-400',
-    border: 'border-sky-400',
-  },
-  'Cloud Infrastructure & Reliability': {
-    badge: 'bg-indigo-400/10 text-indigo-400 ring-1 ring-indigo-400/30',
-    text: 'text-indigo-400',
-    border: 'border-indigo-400',
-  },
-}
-
-const DOMAIN_ICON_MAP: Record<string, React.ReactNode> = {
-  Cpu: <Cpu className="size-4" />,
-  Activity: <Activity className="size-4" />,
-  Video: <Video className="size-4" />,
-  CreditCard: <CreditCard className="size-4" />,
-  MapPin: <MapPin className="size-4" />,
-  Shield: <Shield className="size-4" />,
+const renderDomainIcon = (icon: string, className = 'size-5') => {
+  switch (icon) {
+    case 'Cpu':
+      return <Cpu className={className} />
+    case 'Activity':
+      return <Activity className={className} />
+    case 'Video':
+      return <Video className={className} />
+    case 'CreditCard':
+      return <CreditCard className={className} />
+    case 'MapPin':
+      return <MapPin className={className} />
+    case 'Shield':
+      return <Shield className={className} />
+    default:
+      return <Cpu className={className} />
+  }
 }
 
 export const SystemDesignStudio: React.FC = () => {
@@ -230,15 +209,21 @@ export const SystemDesignStudio: React.FC = () => {
       {activeTab === 'visualizer' ? (
         <div className="space-y-6">
           {/* SECTION 1: ARCHITECTURAL DOMAIN CATEGORY HUB */}
-          <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border shadow-xl space-y-4">
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/50 pb-3">
+          <div className="rounded-2xl bg-bg-surface-2 p-5 sm:p-6 ring-1 ring-border shadow-2xl space-y-5">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/50 pb-4">
               <div>
-                <h3 className="text-[16px] font-bold text-text-primary flex items-center gap-2">
-                  <SlidersHorizontal className="size-4 text-accent-brand" />
-                  Architectural Domains & System Archetypes
+                <div className="flex items-center gap-2">
+                  <span className="flex size-2 rounded-full bg-accent-brand animate-ping" />
+                  <span className="text-[10.5px] font-mono font-bold uppercase tracking-wider text-accent-brand">
+                    Domain Taxonomy & Core Disciplines
+                  </span>
+                </div>
+                <h3 className="text-lg sm:text-xl font-extrabold text-text-primary flex items-center gap-2 mt-0.5">
+                  <SlidersHorizontal className="size-4.5 text-accent-brand" />
+                  Explore 31 Systems by Architectural Category
                 </h3>
-                <p className="text-[12px] text-text-muted mt-0.5">
-                  Click any architectural domain to inspect systems by their core distributed engineering discipline.
+                <p className="text-xs text-text-muted mt-1 max-w-2xl">
+                  Filter distributed systems by their underlying engineering discipline. Each category tackles unique concurrency, consistency, and storage challenges.
                 </p>
               </div>
 
@@ -247,97 +232,159 @@ export const SystemDesignStudio: React.FC = () => {
                   onClick={() => setShowCompareModal(true)}
                   className="flex items-center gap-1.5 rounded-lg bg-bg-surface-1 px-3 py-1.5 text-[11.5px] font-mono font-bold text-sky-400 hover:text-sky-300 ring-1 ring-sky-500/30 transition shadow-sm"
                 >
-                  <Table className="size-3.5" /> Compare All 31 Systems Side-by-Side
+                  <Table className="size-3.5" /> Compare All 31 Systems
                 </button>
                 <button
                   onClick={() => setSelectedDomainId('all')}
-                  className={`rounded-lg px-3 py-1.5 text-[11.5px] font-mono font-bold transition ring-1 ${
+                  className={`rounded-lg px-3.5 py-1.5 text-[11.5px] font-mono font-bold transition ring-1 ${
                     selectedDomainId === 'all'
-                      ? 'bg-accent-brand text-bg-base ring-accent-brand'
+                      ? 'bg-accent-brand text-bg-base ring-accent-brand shadow-sm'
                       : 'bg-bg-surface-1 text-text-muted ring-border hover:text-text-primary'
                   }`}
                 >
-                  All 31 Systems
+                  Reset / All 31 Systems
                 </button>
               </div>
             </div>
 
-            {/* Interactive Domain Taxonomy Bar */}
-            <div className="flex flex-wrap gap-1.5 p-1 rounded-xl bg-bg-surface-1 ring-1 ring-border">
-              <button
-                onClick={() => setSelectedDomainId('all')}
-                className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[11.5px] font-mono font-bold transition ${
-                  selectedDomainId === 'all'
-                    ? 'bg-accent-brand text-bg-base shadow-sm'
-                    : 'text-text-muted hover:text-text-primary hover:bg-bg-surface-2'
-                }`}
-              >
-                <span>🌐 All 31 Systems</span>
-                <span className="rounded-full bg-black/20 px-1.5 py-0.2 text-[9.5px]">31</span>
-              </button>
+            {/* 6 ARCHITECTURAL DOMAIN BENTO CARDS */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
               {DOMAIN_CATEGORIES.map((domain) => {
+                const theme = DOMAIN_THEMES[domain.id] || DOMAIN_THEMES.core
                 const count = domainCounts[domain.id] || 0
                 const isSelected = selectedDomainId === domain.id
+
                 return (
-                  <button
+                  <div
                     key={domain.id}
                     onClick={() => setSelectedDomainId(isSelected ? 'all' : domain.id)}
-                    className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[11.5px] font-mono font-bold transition ${
+                    className={`group relative cursor-pointer overflow-hidden rounded-2xl p-4 transition-all duration-300 ring-1 flex flex-col justify-between ${
                       isSelected
-                        ? 'bg-accent-brand text-bg-base shadow-sm'
-                        : 'text-text-muted hover:text-text-primary hover:bg-bg-surface-2'
+                        ? `${theme.activeRing} bg-gradient-to-br ${theme.gradient} shadow-2xl scale-[1.02]`
+                        : `bg-bg-surface-1/90 ring-border hover:ring-border-strong hover:bg-bg-surface-2 hover:scale-[1.01] ${theme.border}`
                     }`}
+                    style={{
+                      boxShadow: isSelected ? `0 10px 25px -5px ${theme.glow}` : undefined,
+                    }}
                   >
-                    <span>{DOMAIN_ICON_MAP[domain.icon]}</span>
-                    <span>{domain.name.split('&')[0].trim()}</span>
-                    <span className="rounded-full bg-black/20 px-1.5 py-0.2 text-[9.5px]">
-                      {count}
-                    </span>
-                  </button>
+                    <div className="space-y-2.5">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex items-center gap-2.5">
+                          <span
+                            className={`flex size-9 items-center justify-center rounded-xl transition ${
+                              isSelected
+                                ? 'bg-black/30 text-white shadow-inner ring-1 ring-white/20'
+                                : 'bg-bg-surface-2 text-text-secondary group-hover:text-text-primary'
+                            }`}
+                            style={{ color: isSelected ? undefined : theme.color }}
+                          >
+                            {renderDomainIcon(domain.icon, 'size-5')}
+                          </span>
+                          <div>
+                            <span className={`font-mono text-[10px] font-bold uppercase tracking-wider block ${theme.accentText}`}>
+                              {theme.shortName}
+                            </span>
+                            <h4 className="font-extrabold text-[15px] text-text-primary leading-tight font-mono">
+                              {domain.name.split('&')[0].trim()}
+                            </h4>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-1.5">
+                          <span
+                            className={`rounded-full px-2.5 py-0.5 text-[11px] font-mono font-extrabold transition ${
+                              isSelected
+                                ? 'bg-black/40 text-white ring-1 ring-white/30'
+                                : `${theme.badge}`
+                            }`}
+                          >
+                            {count} Systems
+                          </span>
+                        </div>
+                      </div>
+
+                      <p className="text-[12px] text-text-secondary line-clamp-2 leading-relaxed font-sans">
+                        {domain.description}
+                      </p>
+
+                      <div className="rounded-lg bg-bg-surface-2/60 p-2 text-[10.5px] font-mono text-text-muted border border-border/40">
+                        <span className="text-text-secondary font-bold block mb-0.5">Key Archetypes:</span>
+                        <span className="text-text-primary font-medium truncate block">
+                          {domain.archetypesSummary}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="pt-3 mt-3 border-t border-border/40 flex items-center justify-between text-[11px] font-mono">
+                      <span className="text-text-muted flex items-center gap-1">
+                        <Sparkles className="size-3 text-amber-400" />
+                        {domain.badgeText}
+                      </span>
+                      <span
+                        className={`font-bold transition flex items-center gap-1 ${
+                          isSelected ? 'text-white' : theme.accentText
+                        }`}
+                      >
+                        {isSelected ? 'Active Filter ✓' : 'Filter by Category →'}
+                      </span>
+                    </div>
+                  </div>
                 )
               })}
             </div>
 
-            {/* Active Domain Explainer Banner */}
-            {selectedDomainId !== 'all' ? (
-              (() => {
-                const activeDomain = DOMAIN_CATEGORIES.find((d) => d.id === selectedDomainId)
-                if (!activeDomain) return null
-                return (
-                  <div className="rounded-xl bg-accent-brand/5 border border-accent-brand/20 p-3.5 flex flex-wrap items-center justify-between gap-3 text-[12px] animate-fadeIn">
-                    <div className="flex items-center gap-2.5">
-                      <span className="flex size-7 items-center justify-center rounded-lg bg-accent-brand/20 text-accent-brand">
-                        {DOMAIN_ICON_MAP[activeDomain.icon]}
-                      </span>
-                      <div>
-                        <span className="font-mono font-bold text-accent-brand block">
-                          {activeDomain.name} · {activeDomain.badgeText}
-                        </span>
-                        <p className="text-text-secondary text-[11.5px] mt-0.5 font-sans">
-                          {activeDomain.description}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="font-mono text-[11px] text-text-muted">
-                      Archetypes: <strong className="text-text-primary">{activeDomain.archetypesSummary}</strong>
-                    </div>
-                  </div>
-                )
-              })()
-            ) : (
-              <div className="rounded-xl bg-bg-surface-1 p-2.5 flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-text-muted border border-border/60">
-                <div className="flex items-center gap-2">
-                  <span className="size-2 rounded-full bg-accent-brand animate-ping" />
-                  <span>Showing all 31 distributed systems across 6 architectural disciplines.</span>
-                </div>
-                <span className="text-accent-brand font-bold">Select any domain tab to isolate specific system types</span>
+            {/* Quick-Switch Horizontal Category Chips */}
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-border/50">
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="text-[11px] font-mono font-bold text-text-muted uppercase mr-1">
+                  Category:
+                </span>
+                <button
+                  onClick={() => setSelectedDomainId('all')}
+                  className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[11px] font-mono font-bold transition ring-1 ${
+                    selectedDomainId === 'all'
+                      ? 'bg-accent-brand text-bg-base ring-accent-brand shadow-sm'
+                      : 'bg-bg-surface-1 text-text-muted ring-border hover:text-text-primary'
+                  }`}
+                >
+                  <span>🌐 All 31</span>
+                </button>
+                {DOMAIN_CATEGORIES.map((domain) => {
+                  const theme = DOMAIN_THEMES[domain.id] || DOMAIN_THEMES.core
+                  const count = domainCounts[domain.id] || 0
+                  const isSelected = selectedDomainId === domain.id
+                  return (
+                    <button
+                      key={domain.id}
+                      onClick={() => setSelectedDomainId(isSelected ? 'all' : domain.id)}
+                      className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[11px] font-mono font-bold transition ring-1 ${
+                        isSelected
+                          ? `${theme.activeRing} ${theme.badge} shadow-sm`
+                          : 'bg-bg-surface-1 text-text-muted ring-border hover:text-text-primary'
+                      }`}
+                    >
+                      <span className="size-2 rounded-full shrink-0" style={{ backgroundColor: theme.color }} />
+                      <span>{theme.shortName}</span>
+                      <span className="rounded-full bg-black/20 px-1.5 py-0.2 text-[9px]">{count}</span>
+                    </button>
+                  )
+                })}
               </div>
-            )}
+
+              {/* System Count Feedback */}
+              <div className="text-[11.5px] font-mono text-text-muted">
+                Showing <strong className="text-text-primary">{filteredSystems.length}</strong> of 31 systems
+                {selectedDomainId !== 'all' && (
+                  <span className="text-accent-brand ml-1">
+                    in {DOMAIN_THEMES[selectedDomainId]?.shortName || selectedDomainId}
+                  </span>
+                )}
+              </div>
+            </div>
 
             {/* Secondary Filter Bar: Tech Stack & Difficulty & Search */}
             <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-border/50">
               <div className="flex flex-wrap items-center gap-2">
-                {/* Tech Pills */}
                 <span className="text-[11px] font-mono font-bold text-text-muted uppercase mr-1">
                   Tech:
                 </span>
@@ -444,6 +491,7 @@ export const SystemDesignStudio: React.FC = () => {
               {DOMAIN_CATEGORIES.filter(
                 (d) => selectedDomainId === 'all' || d.id === selectedDomainId
               ).map((domain) => {
+                const theme = DOMAIN_THEMES[domain.id] || DOMAIN_THEMES.core
                 const domainSystems = filteredSystems.filter(
                   (s) => SYSTEM_METADATA_REGISTRY[s.id]?.domain === domain.name
                 )
@@ -452,25 +500,40 @@ export const SystemDesignStudio: React.FC = () => {
                 return (
                   <div
                     key={domain.id}
-                    className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border shadow-xl space-y-4"
+                    className="rounded-2xl bg-bg-surface-2 p-5 sm:p-6 ring-1 ring-border shadow-xl space-y-4"
                   >
                     {/* Domain Category Banner */}
-                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/50 pb-3">
-                      <div className="flex items-center gap-2.5">
-                        <span className="flex size-7 items-center justify-center rounded-lg bg-accent-brand/10 text-accent-brand ring-1 ring-accent-brand/20">
-                          {DOMAIN_ICON_MAP[domain.icon] || <Cpu className="size-4" />}
+                    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/50 pb-3">
+                      <div className="flex items-center gap-3">
+                        <span
+                          className="flex size-9 items-center justify-center rounded-xl bg-bg-surface-1 shadow-sm ring-1 ring-border"
+                          style={{ color: theme.color }}
+                        >
+                          {renderDomainIcon(domain.icon, 'size-5')}
                         </span>
                         <div>
-                          <h4 className="font-extrabold text-[16px] text-text-primary font-mono">
+                          <div className="flex items-center gap-2">
+                            <span className={`text-[10px] font-mono font-bold uppercase tracking-wider ${theme.accentText}`}>
+                              {theme.shortName}
+                            </span>
+                            <span className="text-border">•</span>
+                            <span className="text-[10.5px] font-mono text-text-muted">
+                              {theme.badgeText}
+                            </span>
+                          </div>
+                          <h4 className="font-extrabold text-[17px] text-text-primary font-mono leading-tight">
                             {domain.name}
                           </h4>
-                          <p className="text-[11.5px] text-text-muted">
+                          <p className="text-[12px] text-text-muted mt-0.5">
                             {domain.description}
                           </p>
                         </div>
                       </div>
-                      <span className="font-mono text-[11px] text-accent-brand font-bold bg-bg-surface-1 px-2.5 py-1 rounded-lg ring-1 ring-border">
-                        {domainSystems.length} Production Systems
+                      <span
+                        className="font-mono text-[11px] font-extrabold px-3 py-1 rounded-lg ring-1 shadow-sm"
+                        style={{ backgroundColor: `${theme.color}15`, color: theme.color, borderColor: `${theme.color}40` }}
+                      >
+                        {domainSystems.length} Systems in Category
                       </span>
                     </div>
 
@@ -479,102 +542,105 @@ export const SystemDesignStudio: React.FC = () => {
                       {domainSystems.map((sys) => {
                         const meta = SYSTEM_METADATA_REGISTRY[sys.id]
                         const isSelected = sys.id === currentSystem.id
-                        const domainStyle = DOMAIN_COLOR_MAP[meta?.domain || ''] || {
-                          badge: 'bg-accent-brand/10 text-accent-brand ring-1 ring-accent-brand/30',
-                          text: 'text-accent-brand',
-                          border: 'border-accent-brand',
-                        }
 
                         return (
                           <div
                             key={sys.id}
-                            onClick={() => handleSelectSystem(sys.id)}
-                            className={`cursor-pointer rounded-xl p-4.5 transition-all duration-200 flex flex-col justify-between ring-1 ${
+                            className={`group rounded-2xl overflow-hidden transition-all duration-200 flex flex-col justify-between ring-1 shadow-md ${
                               isSelected
-                                ? 'bg-accent-brand/15 ring-2 ring-accent-brand shadow-xl scale-[1.01]'
-                                : 'bg-bg-surface-1/90 ring-border hover:bg-bg-surface-3 hover:ring-border-strong hover:scale-[1.01]'
+                                ? 'ring-2 ring-accent-brand shadow-2xl scale-[1.01] bg-bg-surface-1'
+                                : 'bg-bg-surface-1/95 ring-border hover:ring-border-strong hover:bg-bg-surface-2 hover:scale-[1.01]'
                             }`}
                           >
-                            <div className="space-y-2">
-                              {/* Header Badges */}
-                              <div className="flex flex-wrap items-center justify-between gap-2">
-                                <span className={`rounded-md px-2 py-0.5 font-mono text-[10px] font-bold truncate ${domainStyle.badge}`}>
-                                  {meta?.domain || sys.category}
-                                </span>
-                                <span className="font-mono text-[10px] text-text-muted font-bold shrink-0">
-                                  {meta?.difficulty || sys.difficulty}
-                                </span>
+                            {/* TOP DOMAIN RIBBON (Unmistakable Category Tagging) */}
+                            <div className={`flex items-center justify-between px-3.5 py-1.5 bg-gradient-to-r ${theme.ribbon} font-mono text-[10px] font-extrabold tracking-wide shadow-sm`}>
+                              <div className="flex items-center gap-1.5 truncate">
+                                {renderDomainIcon(theme.icon, 'size-3.5')}
+                                <span className="uppercase">{theme.shortName}</span>
                               </div>
-
-                              <div>
-                                <span className="text-[11px] font-mono text-amber-400 font-bold block mb-0.5">
-                                  ⚡ Modeled on: {meta?.realWorldArchetype || sys.name}
-                                </span>
-                                <h5 className="font-bold text-[15px] text-text-primary font-mono leading-snug">
-                                  {sys.name}
-                                </h5>
-                              </div>
-
-                              {/* WHAT IT DOES CALLOUT (Core value explanation) */}
-                              <div className={`my-2 rounded-lg bg-bg-surface-2 p-2.5 text-[11.5px] leading-relaxed text-text-secondary border-l-2 ${domainStyle.border} font-sans shadow-inner`}>
-                                <span className={`font-bold text-[10px] uppercase font-mono block mb-0.5 ${domainStyle.text}`}>
-                                  What It Does & Why It Exists:
-                                </span>
-                                {meta?.whatItDoes || sys.tagline}
-                              </div>
-
-                              {/* Core Pattern & Tech */}
-                              <div className="space-y-1">
-                                <div className="flex items-center gap-1.5 text-[11px] font-mono text-sky-400 font-medium">
-                                  <Sparkles className="size-3 shrink-0" />
-                                  <span className="truncate">
-                                    {meta?.architecturePattern || sys.category}
-                                  </span>
-                                </div>
-
-                                <div className="flex flex-wrap gap-1 pt-0.5">
-                                  {(meta?.technologies || []).slice(0, 4).map((tech, tIdx) => (
-                                    <span
-                                      key={tIdx}
-                                      className="rounded bg-bg-surface-3 px-1.5 py-0.2 text-[9.5px] font-mono text-text-muted ring-1 ring-border"
-                                    >
-                                      {tech}
-                                    </span>
-                                  ))}
-                                </div>
-                              </div>
+                              <span className="text-[9.5px] font-bold px-2 py-0.2 rounded-full bg-black/30 text-white shrink-0">
+                                {meta?.difficulty || sys.difficulty}
+                              </span>
                             </div>
 
-                            {/* Scale SLAs & Action Footer */}
-                            <div className="pt-3 mt-2 border-t border-border/40 space-y-2">
-                              <div className="grid grid-cols-2 gap-2 text-[10px] font-mono">
+                            <div className="p-4 space-y-2.5 grow flex flex-col justify-between">
+                              <div className="space-y-2">
                                 <div>
-                                  <span className="text-text-muted uppercase block text-[8.5px]">Throughput:</span>
-                                  <span className="font-bold text-text-primary truncate block">
-                                    {sys.throughput.split(' ')[0]} {sys.throughput.split(' ')[1] || ''}
+                                  <span className="text-[11px] font-mono text-amber-400 font-bold block mb-0.5">
+                                    ⚡ Modeled on: {meta?.realWorldArchetype || sys.name}
                                   </span>
+                                  <h5 className="font-extrabold text-[16px] text-text-primary font-mono leading-snug">
+                                    {sys.name}
+                                  </h5>
                                 </div>
-                                <div>
-                                  <span className="text-text-muted uppercase block text-[8.5px]">Latency SLA:</span>
-                                  <span className="font-bold text-emerald-400 truncate block">{sys.latency}</span>
+
+                                {/* WHAT IT DOES CALLOUT (Core value explanation with domain color bar) */}
+                                <div
+                                  className="my-2 rounded-lg bg-bg-surface-2 p-2.5 text-[11.5px] leading-relaxed text-text-secondary font-sans shadow-inner border-l-4"
+                                  style={{ borderLeftColor: theme.color }}
+                                >
+                                  <span className="font-bold text-[10px] uppercase font-mono block mb-0.5" style={{ color: theme.color }}>
+                                    What It Does & Core Value:
+                                  </span>
+                                  {meta?.whatItDoes || sys.tagline}
+                                </div>
+
+                                {/* Core Pattern & Tech */}
+                                <div className="space-y-1">
+                                  <div className="flex items-center gap-1.5 text-[11px] font-mono text-sky-400 font-medium">
+                                    <Sparkles className="size-3 shrink-0" />
+                                    <span className="truncate">
+                                      {meta?.architecturePattern || sys.category}
+                                    </span>
+                                  </div>
+
+                                  <div className="flex flex-wrap gap-1 pt-0.5">
+                                    {(meta?.technologies || []).slice(0, 4).map((tech, tIdx) => (
+                                      <span
+                                        key={tIdx}
+                                        className="rounded bg-bg-surface-3 px-1.5 py-0.2 text-[9.5px] font-mono text-text-muted ring-1 ring-border"
+                                      >
+                                        {tech}
+                                      </span>
+                                    ))}
+                                  </div>
                                 </div>
                               </div>
 
-                              <div className="flex items-center justify-between pt-1 gap-2">
-                                <Link
-                                  to={`/learn/system-design/${sys.id}/1`}
-                                  onClick={(e) => e.stopPropagation()}
-                                  className="text-[10px] font-mono font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1 transition"
-                                >
-                                  <BookOpen className="size-3" /> 10-Chapter Masterclass ↗
-                                </Link>
-                                <button className={`text-[11px] font-mono font-bold px-2 py-1 rounded transition ${
-                                  isSelected
-                                    ? 'bg-accent-brand text-bg-base'
-                                    : 'text-accent-brand hover:underline'
-                                }`}>
-                                  {isSelected ? 'Simulating ▶' : 'Launch →'}
-                                </button>
+                              {/* Scale SLAs & Action Footer */}
+                              <div className="pt-3 mt-2 border-t border-border/40 space-y-2.5">
+                                <div className="grid grid-cols-2 gap-2 text-[10px] font-mono">
+                                  <div>
+                                    <span className="text-text-muted uppercase block text-[8.5px]">Throughput:</span>
+                                    <span className="font-bold text-text-primary truncate block">
+                                      {sys.throughput.split(' ')[0]} {sys.throughput.split(' ')[1] || ''}
+                                    </span>
+                                  </div>
+                                  <div>
+                                    <span className="text-text-muted uppercase block text-[8.5px]">Latency SLA:</span>
+                                    <span className="font-bold text-emerald-400 truncate block">{sys.latency}</span>
+                                  </div>
+                                </div>
+
+                                <div className="flex items-center gap-2 pt-1">
+                                  <Link
+                                    to={`/learn/system-design/${sys.id}/1`}
+                                    className="flex-1 flex items-center justify-center gap-1.5 rounded-lg py-2 px-3 text-xs font-bold font-mono transition shadow-sm bg-accent-brand text-bg-base hover:opacity-90"
+                                  >
+                                    <BookOpen className="size-3.5" /> 10-Ch Masterclass ↗
+                                  </Link>
+                                  <button
+                                    onClick={() => handleSelectSystem(sys.id)}
+                                    className={`px-3 py-2 rounded-lg text-xs font-mono font-bold transition ring-1 ring-border ${
+                                      isSelected
+                                        ? 'bg-sky-500/20 text-sky-400 ring-sky-500/50'
+                                        : 'bg-bg-surface-2 text-text-muted hover:text-text-primary'
+                                    }`}
+                                    title="Preview Simulation"
+                                  >
+                                    {isSelected ? 'Simulating' : 'Simulate'}
+                                  </button>
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -587,77 +653,96 @@ export const SystemDesignStudio: React.FC = () => {
             </div>
           ) : browseMode === 'catalog' ? (
             /* VIEW MODE B: FLAT BENTO CATALOG VIEW */
-            <div className="rounded-2xl bg-bg-surface-2 p-5 ring-1 ring-border shadow-xl space-y-4">
+            <div className="rounded-2xl bg-bg-surface-2 p-5 sm:p-6 ring-1 ring-border shadow-xl space-y-4">
               <div className="flex items-center justify-between border-b border-border/50 pb-3">
                 <span className="text-[14px] font-bold text-text-primary font-mono">
                   All Systems Catalog ({filteredSystems.length} Results)
                 </span>
                 <span className="text-[11px] font-mono text-text-muted">
-                  Click any card to load its architecture
+                  Click '10-Ch Masterclass' for individual chapter analysis
                 </span>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 max-h-[600px] overflow-y-auto pr-1">
                 {filteredSystems.map((sys) => {
                   const meta = SYSTEM_METADATA_REGISTRY[sys.id]
+                  const theme = getDomainThemeByNameOrId(meta?.domain || '')
                   const isSelected = sys.id === currentSystem.id
-                  const domainStyle = DOMAIN_COLOR_MAP[meta?.domain || ''] || {
-                    badge: 'bg-accent-brand/10 text-accent-brand ring-1 ring-accent-brand/30',
-                    text: 'text-accent-brand',
-                    border: 'border-accent-brand',
-                  }
 
                   return (
                     <div
                       key={sys.id}
-                      onClick={() => handleSelectSystem(sys.id)}
-                      className={`cursor-pointer rounded-xl p-4 transition-all duration-200 flex flex-col justify-between ring-1 ${
+                      className={`group rounded-2xl overflow-hidden transition-all duration-200 flex flex-col justify-between ring-1 shadow-sm ${
                         isSelected
-                          ? 'bg-accent-brand/15 ring-2 ring-accent-brand shadow-lg'
-                          : 'bg-bg-surface-1 hover:bg-bg-surface-3 ring-border hover:ring-border-strong'
+                          ? 'ring-2 ring-accent-brand shadow-lg bg-bg-surface-1'
+                          : 'bg-bg-surface-1/95 ring-border hover:ring-border-strong hover:bg-bg-surface-3'
                       }`}
                     >
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between gap-2">
-                          <span className={`rounded px-2 py-0.5 font-mono text-[9.5px] font-bold uppercase truncate ${domainStyle.badge}`}>
-                            {meta?.domain || sys.category}
-                          </span>
-                          <span className="font-mono text-[10px] text-text-muted font-bold shrink-0">
-                            {sys.difficulty}
-                          </span>
+                      {/* TOP DOMAIN RIBBON */}
+                      <div className={`flex items-center justify-between px-3 py-1.5 bg-gradient-to-r ${theme.ribbon} font-mono text-[9.5px] font-extrabold tracking-wide`}>
+                        <div className="flex items-center gap-1.5 truncate">
+                          {renderDomainIcon(theme.icon, 'size-3')}
+                          <span className="uppercase">{theme.shortName}</span>
                         </div>
-
-                        <div>
-                          <span className="text-[10.5px] font-mono text-amber-400 font-bold block mb-0.5">
-                            ⚡ Modeled on: {meta?.realWorldArchetype || sys.name}
-                          </span>
-                          <h4 className="font-bold text-[14px] text-text-primary font-mono leading-snug">
-                            {sys.name}
-                          </h4>
-                        </div>
-
-                        {/* WHAT IT DOES CALLOUT */}
-                        <div className={`my-1.5 rounded-lg bg-bg-surface-2 p-2 text-[11px] leading-relaxed text-text-secondary border-l-2 ${domainStyle.border} font-sans`}>
-                          <span className={`font-bold text-[9.5px] uppercase font-mono block mb-0.5 ${domainStyle.text}`}>
-                            What It Does:
-                          </span>
-                          {meta?.whatItDoes || sys.tagline}
-                        </div>
-
-                        <div className="flex items-center gap-1.5 text-[10.5px] font-mono text-sky-400 font-medium">
-                          <Sparkles className="size-3 shrink-0" />
-                          <span className="truncate">{meta?.architecturePattern || sys.category}</span>
-                        </div>
+                        <span className="text-[9px] font-bold px-1.5 py-0.2 rounded-full bg-black/30 text-white shrink-0">
+                          {sys.difficulty}
+                        </span>
                       </div>
 
-                      <div className="mt-3 pt-2.5 border-t border-border/40 grid grid-cols-2 gap-2 text-[10.5px] font-mono text-text-muted">
-                        <div>
-                          <span className="text-[8.5px] uppercase block">Throughput</span>
-                          <span className="text-text-primary font-bold truncate block">{sys.throughput}</span>
+                      <div className="p-4 space-y-2 grow flex flex-col justify-between">
+                        <div className="space-y-2">
+                          <div>
+                            <span className="text-[10.5px] font-mono text-amber-400 font-bold block mb-0.5">
+                              ⚡ Modeled on: {meta?.realWorldArchetype || sys.name}
+                            </span>
+                            <h4 className="font-bold text-[15px] text-text-primary font-mono leading-snug">
+                              {sys.name}
+                            </h4>
+                          </div>
+
+                          {/* WHAT IT DOES CALLOUT */}
+                          <div
+                            className="my-1.5 rounded-lg bg-bg-surface-2 p-2 text-[11px] leading-relaxed text-text-secondary font-sans border-l-4"
+                            style={{ borderLeftColor: theme.color }}
+                          >
+                            <span className="font-bold text-[9.5px] uppercase font-mono block mb-0.5" style={{ color: theme.color }}>
+                              What It Does:
+                            </span>
+                            {meta?.whatItDoes || sys.tagline}
+                          </div>
+
+                          <div className="flex items-center gap-1.5 text-[10.5px] font-mono text-sky-400 font-medium">
+                            <Sparkles className="size-3 shrink-0" />
+                            <span className="truncate">{meta?.architecturePattern || sys.category}</span>
+                          </div>
                         </div>
-                        <div>
-                          <span className="text-[8.5px] uppercase block">Latency</span>
-                          <span className="text-emerald-400 font-bold truncate block">{sys.latency}</span>
+
+                        <div className="mt-3 pt-2.5 border-t border-border/40 space-y-2">
+                          <div className="grid grid-cols-2 gap-2 text-[10.5px] font-mono text-text-muted">
+                            <div>
+                              <span className="text-[8.5px] uppercase block">Throughput</span>
+                              <span className="text-text-primary font-bold truncate block">{sys.throughput}</span>
+                            </div>
+                            <div>
+                              <span className="text-[8.5px] uppercase block">Latency</span>
+                              <span className="text-emerald-400 font-bold truncate block">{sys.latency}</span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2 pt-1">
+                            <Link
+                              to={`/learn/system-design/${sys.id}/1`}
+                              className="flex-1 flex items-center justify-center gap-1 rounded-lg py-1.5 px-2.5 text-[11px] font-bold font-mono transition bg-accent-brand text-bg-base hover:opacity-90"
+                            >
+                              <BookOpen className="size-3" /> Masterclass ↗
+                            </Link>
+                            <button
+                              onClick={() => handleSelectSystem(sys.id)}
+                              className="px-2.5 py-1.5 rounded-lg text-[11px] font-mono font-bold bg-bg-surface-2 text-text-muted hover:text-text-primary ring-1 ring-border"
+                            >
+                              Simulate
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -685,7 +770,7 @@ export const SystemDesignStudio: React.FC = () => {
                     <tr>
                       <th className="p-3">System Name</th>
                       <th className="p-3">Archetype</th>
-                      <th className="p-3">Domain</th>
+                      <th className="p-3">Domain Category</th>
                       <th className="p-3">What It Does & Core Invariant</th>
                       <th className="p-3">Throughput</th>
                       <th className="p-3">Latency SLA</th>
@@ -697,12 +782,8 @@ export const SystemDesignStudio: React.FC = () => {
                   <tbody className="divide-y divide-border/60 bg-bg-surface-1">
                     {filteredSystems.map((sys) => {
                       const meta = SYSTEM_METADATA_REGISTRY[sys.id]
+                      const theme = getDomainThemeByNameOrId(meta?.domain || '')
                       const isSelected = sys.id === currentSystem.id
-                      const domainStyle = DOMAIN_COLOR_MAP[meta?.domain || ''] || {
-                        badge: 'bg-accent-brand/10 text-accent-brand ring-1 ring-accent-brand/30',
-                        text: 'text-accent-brand',
-                        border: 'border-accent-brand',
-                      }
 
                       return (
                         <tr
@@ -722,8 +803,8 @@ export const SystemDesignStudio: React.FC = () => {
                             </span>
                           </td>
                           <td className="p-3 whitespace-nowrap">
-                            <span className={`rounded px-1.5 py-0.5 text-[9.5px] font-bold uppercase ${domainStyle.badge}`}>
-                              {meta?.domain || sys.category}
+                            <span className={`rounded-md px-2 py-0.5 text-[10px] font-bold uppercase ${theme.badge}`}>
+                              {theme.shortName}
                             </span>
                           </td>
                           <td className="p-3 font-sans text-text-secondary text-[11.5px] max-w-[280px] leading-relaxed">
@@ -741,19 +822,26 @@ export const SystemDesignStudio: React.FC = () => {
                           <td className="p-3 text-purple-400 whitespace-nowrap font-bold">
                             {meta?.difficulty || sys.difficulty}
                           </td>
-                          <td className="p-3 whitespace-nowrap">
+                          <td className="p-3 whitespace-nowrap flex items-center gap-2">
+                            <Link
+                              to={`/learn/system-design/${sys.id}/1`}
+                              onClick={(e) => e.stopPropagation()}
+                              className="px-2.5 py-1 rounded bg-accent-brand text-bg-base font-bold text-[10.5px] hover:opacity-90 transition"
+                            >
+                              10-Ch Dossier ↗
+                            </Link>
                             <button
                               onClick={(e) => {
                                 e.stopPropagation()
                                 handleSelectSystem(sys.id)
                               }}
-                              className={`px-3 py-1.5 rounded text-[11px] font-bold font-mono transition shadow-sm ${
+                              className={`px-2.5 py-1 rounded text-[10.5px] font-bold font-mono transition ${
                                 isSelected
-                                  ? 'bg-accent-brand text-bg-base'
-                                  : 'bg-bg-surface-2 text-text-primary hover:bg-accent-brand hover:text-bg-base ring-1 ring-border'
+                                  ? 'bg-sky-500/20 text-sky-400'
+                                  : 'bg-bg-surface-2 text-text-muted hover:text-text-primary ring-1 ring-border'
                               }`}
                             >
-                              {isSelected ? 'Simulating ▶' : 'Launch →'}
+                              Simulate
                             </button>
                           </td>
                         </tr>
