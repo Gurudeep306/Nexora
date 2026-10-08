@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import { ALL_SYSTEM_DESIGNS } from '../data/systemsData'
 import {
   DOMAIN_CATEGORIES,
@@ -559,10 +560,14 @@ export const SystemDesignStudio: React.FC = () => {
                                 </div>
                               </div>
 
-                              <div className="flex items-center justify-between pt-1">
-                                <span className="text-[10px] font-mono text-text-muted">
-                                  {sys.services.length} Microservices · {sys.animationSteps.length} Steps
-                                </span>
+                              <div className="flex items-center justify-between pt-1 gap-2">
+                                <Link
+                                  to={`/learn/system-design/${sys.id}/1`}
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="text-[10px] font-mono font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1 transition"
+                                >
+                                  <BookOpen className="size-3" /> 10-Chapter Masterclass ↗
+                                </Link>
                                 <button className={`text-[11px] font-mono font-bold px-2 py-1 rounded transition ${
                                   isSelected
                                     ? 'bg-accent-brand text-bg-base'
@@ -829,11 +834,32 @@ export const SystemDesignStudio: React.FC = () => {
                 <p className="mt-0.5 text-[13px] font-bold text-emerald-400 truncate">{currentSystem.services.length} Microservices</p>
               </div>
             </div>
+
+            {/* Direct Link to Dedicated 10-Chapter Masterclass Page */}
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-border/50">
+              <div className="flex items-center gap-2 text-xs text-text-secondary">
+                <BookOpen className="size-4 text-accent-brand shrink-0" />
+                <span>Need complete end-to-end 10-chapter analysis from scratch with scale math, polyglot schemas, and chaos drills?</span>
+              </div>
+              <Link
+                to={`/learn/system-design/${currentSystem.id}/1`}
+                className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-accent-brand to-amber-500 px-5 py-2.5 text-xs font-bold text-bg-base shadow-lg hover:opacity-90 transition shrink-0"
+              >
+                <BookOpen className="size-4" />
+                Open 10-Chapter Masterclass Dossier (Individual Page) ↗
+              </Link>
+            </div>
           </div>
 
           {/* SECTION 4: SUB-VIEW TAB NAVIGATION */}
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
             <div className="flex flex-wrap items-center gap-1.5 rounded-xl bg-bg-surface-2 p-1 ring-1 ring-border text-[12px] font-mono shadow-sm">
+              <Link
+                to={`/learn/system-design/${currentSystem.id}/1`}
+                className="flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 bg-gradient-to-r from-accent-brand/20 to-amber-500/20 text-accent-brand ring-1 ring-accent-brand/40 font-bold hover:bg-accent-brand/30 transition shadow-sm"
+              >
+                <BookOpen className="size-3.5" /> 📖 Full 10-Chapter Dossier ↗
+              </Link>
               <button
                 onClick={() => setSystemView('simulation')}
                 className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 transition ${

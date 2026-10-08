@@ -18,6 +18,7 @@ const AiLabPage = lazy(() => import('@/pages/AiLabPage'))
 const LearnPage = lazy(() => import('@/pages/LearnPage'))
 const LearnTopicPage = lazy(() => import('@/learn/ui/TopicPage'))
 const LearnPracticePage = lazy(() => import('@/learn/ui/PracticePage'))
+const SystemDossierPage = lazy(() => import('@/pages/SystemDossierPage'))
 const GatePage = lazy(() => import('@/pages/GatePage'))
 const GateCbtPage = lazy(() => import('@/pages/GateCbtPage'))
 const SocialPage = lazy(() => import('@/pages/SocialPage'))
@@ -66,6 +67,8 @@ export default function App() {
             <Route path="/achievements" element={<AchievementsPage />} />
             <Route path="/ailab" element={<AiLabPage />} />
             <Route path="/learn" element={<LearnPage />} />
+            <Route path="/learn/system-design/:systemId/:chapterNumber" element={<SystemDossierPage />} />
+            <Route path="/learn/system-design/:systemId" element={<SystemDossierPage />} />
             <Route path="/learn/dsa/:topic/practice" element={<LearnPracticePage />} />
             <Route path="/learn/dsa/:topic/:page?" element={<LearnTopicPage />} />
             <Route path="/gate" element={<GatePage />} />
