@@ -20,6 +20,11 @@ export interface DossierContentSection {
     explanation?: string
   }
   diagramAsciiOrSvg?: string
+  image?: {
+    url: string
+    alt: string
+    caption: string
+  }
   table?: {
     headers: string[]
     rows: string[][]
@@ -48,6 +53,51 @@ export interface SystemDossier {
   chapters: DossierChapter[]
 }
 
+export function getCategoryBannerImage(category: string, systemId: string): string {
+  if (
+    category === 'Storage & Databases' ||
+    systemId === 'dynamo-kv' ||
+    systemId === 'distributed-cache' ||
+    systemId === 'distributed-lock' ||
+    systemId === 'object-storage' ||
+    systemId === 'metrics-tsdb' ||
+    systemId === 'kafka-broker'
+  ) {
+    return '/images/storage-consensus-blueprint.jpg'
+  }
+  if (
+    category === 'Geospatial & Search' ||
+    systemId === 'uber-dispatch' ||
+    systemId === 'google-maps' ||
+    systemId === 'web-crawler' ||
+    systemId === 'search-engine'
+  ) {
+    return '/images/geospatial-streaming-blueprint.jpg'
+  }
+  if (
+    category === 'Financial & Reliability' ||
+    systemId === 'payment-ledger' ||
+    systemId === 'order-book' ||
+    systemId === 'rate-limiter' ||
+    systemId === 'fraud-detection'
+  ) {
+    return '/images/financial-ledger-blueprint.jpg'
+  }
+  if (
+    category === 'Low-Latency & Streaming' ||
+    category === 'Cloud Infrastructure & Reliability' ||
+    systemId === 'api-gateway' ||
+    systemId === 'cdn-network' ||
+    systemId === 'dns-resolver' ||
+    systemId === 'webhook-engine' ||
+    systemId === 'youtube-stream' ||
+    systemId === 'game-server'
+  ) {
+    return '/images/cdn-edge-gateway-blueprint.jpg'
+  }
+  return '/images/distributed-systems-blueprint.jpg'
+}
+
 /**
  * Builds an exhaustive, textbook-grade 10-Chapter System Design Analysis Dossier
  * for any system in Nexora.
@@ -59,6 +109,8 @@ export function getSystemDossier(systemId: string): SystemDossier | null {
   const guide = FROM_SCRATCH_GUIDES[systemId]
   const deep = SYSTEM_DEEP_EXPLORATION_REGISTRY[systemId]
   const meta = SYSTEM_METADATA_REGISTRY[systemId]
+
+  const categoryBanner = getCategoryBannerImage(sys.category, sys.id)
 
   // Chapter 1: Problem Anatomy & SLAs
   const chapter1: DossierChapter = {
@@ -86,13 +138,22 @@ export function getSystemDossier(systemId: string): SystemDossier | null {
             'When interviewing for Staff / Principal Engineer roles, the opening 5 minutes determine the trajectory. Never jump straight to drawing boxes. Anchor the conversation on scale parameters, read-to-write ratios, and consistency guarantees (strong vs eventual).',
         },
       },
+      ...(deep?.problemStatementAndWhyHard
+        ? [
+            {
+              heading: '1.2 Problem Complexity & Core Invariant',
+              description: deep.problemStatementAndWhyHard,
+              bulletPoints: meta?.keyInvariant ? [`Architectural Invariant: ${meta.keyInvariant}`] : undefined,
+            },
+          ]
+        : []),
       {
-        heading: '1.2 Functional Requirements (P0 Must-Haves)',
+        heading: '1.3 Functional Requirements (P0 Must-Haves)',
         description: 'The core business capabilities the system must deliver unconditionally:',
         bulletPoints: sys.functionalReqs.map((req, idx) => `P0.${idx + 1} - ${req}`),
       },
       {
-        heading: '1.3 Non-Functional Requirements & Engineering SLAs',
+        heading: '1.4 Non-Functional Requirements & Engineering SLAs',
         description: 'The operational constraints and quality attributes required under peak stress:',
         bulletPoints: [
           ...sys.nonFunctionalReqs,
@@ -111,7 +172,7 @@ export function getSystemDossier(systemId: string): SystemDossier | null {
         },
       },
       {
-        heading: '1.4 Out-of-Scope Boundaries',
+        heading: '1.5 Out-of-Scope Boundaries',
         description: 'To maintain laser focus on core distributed systems scaling, explicit non-goals include:',
         bulletPoints: [
           'Billing, invoice rendering, and payment gateway account reconciliation (handled by dedicated ERP).',
@@ -148,8 +209,25 @@ export function getSystemDossier(systemId: string): SystemDossier | null {
           rows: sys.calculations.map((c) => [c.metric, c.formula, c.result]),
         },
       },
+      ...(deep?.capacityCalculationsDeepDive && deep.capacityCalculationsDeepDive.length > 0
+        ? [
+            {
+              heading: '2.2 Domain-Specific Hardware & Scale Sizing',
+              description: 'Detailed resource derivations specific to this architectural pattern:',
+              table: {
+                headers: ['Metric / Resource', 'Underlying Assumption', 'Calculation Derivation', 'Production Sizing'],
+                rows: deep.capacityCalculationsDeepDive.map((d) => [
+                  d.metric,
+                  d.assumption,
+                  d.calculation,
+                  d.finalRequirement,
+                ]),
+              },
+            },
+          ]
+        : []),
       {
-        heading: '2.2 Memory Tier Sizing (Pareto 80/20 Caching)',
+        heading: '2.3 Memory Tier Sizing (Pareto 80/20 Caching)',
         description:
           'In large-scale distributed architectures, 80% of read requests target the top 20% of active records. Sizing the Redis caching cluster to hold this working set in RAM ensures hit rates exceed 95%.',
         callout: {
@@ -160,7 +238,7 @@ export function getSystemDossier(systemId: string): SystemDossier | null {
         },
       },
       {
-        heading: '2.3 Ingress & Egress Bandwidth Sizing',
+        heading: '2.4 Ingress & Egress Bandwidth Sizing',
         description:
           'Network saturation is often the invisible bottleneck before CPU or disk limits are reached. Sizing 10Gbps and 40Gbps network interfaces across gateway fleets ensures no packet drop.',
         bulletPoints: [
@@ -232,7 +310,16 @@ export function getSystemDossier(systemId: string): SystemDossier | null {
     ],
     contentSections: [
       {
-        heading: '4.1 End-to-End Architectural Nodes',
+        heading: '4.1 Architectural Blueprint Diagram',
+        description: `Visual systems architecture blueprint for ${sys.name} (${sys.category} domain):`,
+        image: {
+          url: categoryBanner,
+          alt: `${sys.name} Distributed Systems Blueprint`,
+          caption: `Figure 4.1: Production-grade architectural schematic for ${sys.name} featuring edge ingress, decoupled microservice mesh, and multi-tier persistence.`,
+        },
+      },
+      {
+        heading: '4.2 End-to-End Architectural Nodes',
         description:
           'Every component has a strictly isolated responsibility, preventing blast radiuses from expanding during localized outages:',
         table: {
@@ -246,7 +333,7 @@ export function getSystemDossier(systemId: string): SystemDossier | null {
         },
       },
       {
-        heading: '4.2 Wire Protocols & Inter-Service Connections',
+        heading: '4.3 Wire Protocols & Inter-Service Connections',
         description:
           'Network boundaries are strictly governed by protocol contracts. High-volume inter-service hops utilize binary gRPC with Protobuf to cut serialization latency by 60% compared to JSON.',
         bulletPoints: sys.connections.map(
@@ -281,6 +368,7 @@ export function getSystemDossier(systemId: string): SystemDossier | null {
           language: 'sql',
           filename: 'schema.sql',
           code:
+            deep?.dataStorageAndSchemaDesign?.[0]?.schemaDefinition ||
             sys.deepDive?.databaseSchema ||
             `-- Production Database Schema
 CREATE TABLE IF NOT EXISTS records (
@@ -294,11 +382,29 @@ CREATE TABLE IF NOT EXISTS records (
 
 CREATE INDEX idx_records_partition ON records (partition_key, created_at DESC);`,
           explanation:
+            deep?.dataStorageAndSchemaDesign?.[0]?.indexingRationale ||
             'Compound index on (partition_key, created_at DESC) allows the database to locate all records for a partition with a single index seek without scanning the underlying table.',
         },
       },
+      ...(deep?.dataStorageAndSchemaDesign && deep.dataStorageAndSchemaDesign.length > 0
+        ? [
+            {
+              heading: '5.2 Polyglot Storage Entities & Partitioning Strategy',
+              description: 'Storage tier mapping across physical persistence engines:',
+              table: {
+                headers: ['Storage Layer', 'Entity Name', 'Primary Key', 'Partition Key / Shard Strategy'],
+                rows: deep.dataStorageAndSchemaDesign.map((sm) => [
+                  sm.storageType,
+                  sm.entity,
+                  sm.primaryKey,
+                  sm.partitionKey,
+                ]),
+              },
+            },
+          ]
+        : []),
       {
-        heading: '5.2 Polyglot Storage Strategy & Selection Rationale',
+        heading: '5.3 Polyglot Storage Strategy & Selection Rationale',
         description:
           'No single database solves all distributed needs. Storage tiers are selected based on workload access patterns:',
         table: {
@@ -332,7 +438,16 @@ CREATE INDEX idx_records_partition ON records (partition_key, created_at DESC);`
     ],
     contentSections: [
       {
-        heading: '6.1 Core Data Structures & Complexity Matrix',
+        heading: '6.1 Hardware & Kernel Concurrency Blueprint',
+        description: 'Low-level hardware, memory hierarchy, ring buffers, and storage NVMe engine blueprint:',
+        image: {
+          url: '/images/lld-internals-blueprint.jpg',
+          alt: 'Low-Level Design and Hardware Concurrency Architecture',
+          caption: 'Figure 6.1: High-throughput low-level architecture showing non-blocking epoll, lock-free ring buffers, and NVMe SSD write paths.',
+        },
+      },
+      {
+        heading: '6.2 Core Data Structures & Complexity Matrix',
         description:
           'The in-memory data structures driving the algorithmic core of the system:',
         table: {
@@ -351,22 +466,34 @@ CREATE INDEX idx_records_partition ON records (partition_key, created_at DESC);`
         },
       },
       {
-        heading: '6.2 Production Code Implementation',
+        heading: '6.3 Production Code Implementation (Written from Scratch)',
         description:
-          'Production-tested implementation demonstrating the algorithmic mechanics:',
+          guide?.steps?.[0]?.subtitle || 'Production-tested implementation demonstrating the algorithmic mechanics:',
         codeBlock: {
-          language: sys.codeFiles[0]?.language || 'go',
-          filename: sys.codeFiles[0]?.name || 'core_engine.go',
+          language: guide?.steps?.[0]?.language || sys.codeFiles[0]?.language || 'go',
+          filename: guide?.steps?.[0]?.fileName || sys.codeFiles[0]?.name || 'core_engine.go',
           code:
+            guide?.steps?.[0]?.codeSnippet ||
             sys.codeFiles[0]?.code ||
-            (guide?.steps[0]?.codeSnippet ??
-              `// Production Engine Core\npackage main\n\nimport "sync"\n\ntype Engine struct {\n    mu sync.RWMutex\n    data map[string]string\n}\n\nfunc NewEngine() *Engine {\n    return &Engine{data: make(map[string]string)}\n}`),
+            `// Production Engine Core\npackage main\n\nimport "sync"\n\ntype Engine struct {\n    mu sync.RWMutex\n    data map[string]string\n}\n\nfunc NewEngine() *Engine {\n    return &Engine{data: make(map[string]string)}\n}`,
           explanation:
+            guide?.steps?.[0]?.explanation ||
             sys.codeFiles[0]?.role ||
-            guide?.steps[0]?.explanation ||
             'Core algorithm handling atomic state mutations and zero-copy packet serialization.',
         },
       },
+      ...(guide?.steps && guide.steps.length > 1
+        ? guide.steps.slice(1).map((st) => ({
+            heading: `6.${st.stepNumber + 2} ${st.title}`,
+            description: st.concept,
+            codeBlock: {
+              language: st.language,
+              filename: st.fileName,
+              code: st.codeSnippet,
+              explanation: st.explanation,
+            },
+          }))
+        : []),
     ],
   }
 
@@ -387,17 +514,52 @@ CREATE INDEX idx_records_partition ON records (partition_key, created_at DESC);`
       'Real-time packet inspection of headers, token claims, and binary payloads.',
     ],
     contentSections: [
+      ...(deep?.readPathLifecycle && deep.readPathLifecycle.length > 0
+        ? [
+            {
+              heading: '7.1 Low-Latency Read Path Wire Journey',
+              description: 'Step-by-step telemetry as a read packet travels from client to response:',
+              table: {
+                headers: ['Step', 'Component / Gateway', 'Action Executed', 'Estimated Latency', 'Protocol'],
+                rows: deep.readPathLifecycle.map((r) => [
+                  `Step ${r.stepNumber}`,
+                  r.component,
+                  r.action,
+                  r.latencyEstimate,
+                  r.protocol,
+                ]),
+              },
+            },
+          ]
+        : []),
+      ...(deep?.writePathLifecycle && deep.writePathLifecycle.length > 0
+        ? [
+            {
+              heading: '7.2 High-Throughput Write Path Lifecycle',
+              description: 'Step-by-step telemetry as a state mutation is ingested, validated, and persisted:',
+              table: {
+                headers: ['Step', 'Component / Gateway', 'Action Executed', 'Estimated Latency', 'Protocol'],
+                rows: deep.writePathLifecycle.map((w) => [
+                  `Step ${w.stepNumber}`,
+                  w.component,
+                  w.action,
+                  w.latencyEstimate,
+                  w.protocol,
+                ]),
+              },
+            },
+          ]
+        : []),
       {
-        heading: '7.1 Step-by-Step Request Timeline',
-        description:
-          'The chronological sequence of network transmissions and computational state transformations:',
+        heading: '7.3 Chronological Event Steps',
+        description: 'The architectural sequence of state transformations across the node topology:',
         bulletPoints: sys.animationSteps.map(
           (step) =>
             `Step ${step.step}: ${step.title} (${step.protocol}) - From [${step.fromNode}] to [${step.toNode}]. ${step.description}`
         ),
       },
       {
-        heading: '7.2 Latency Waterfall Budget',
+        heading: '7.4 Latency Waterfall Budget',
         description:
           'Breakdown of where milliseconds are spent across the entire round-trip lifecycle:',
         table: {
@@ -608,7 +770,7 @@ CREATE INDEX idx_records_partition ON records (partition_key, created_at DESC);`
       `Production-grade Staff+ architectural dossier for ${sys.name}. Covering 0-to-1 design, mathematical scale derivations, polyglot data models, packet lifecycles, and chaos fault-tolerance playbooks.`,
     totalChapters: chapters.length,
     totalReadingTimeMinutes: totalReadingTime,
-    heroBannerImage: '/images/distributed-systems-blueprint.jpg',
+    heroBannerImage: categoryBanner,
     chapters,
   }
 }

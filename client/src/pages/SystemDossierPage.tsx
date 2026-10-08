@@ -203,6 +203,111 @@ export default function SystemDossierPage() {
     }
   }
 
+  // 4. Interactive Algorithm Sandbox State (Chapter 6)
+  const [sandboxAlgo, setSandboxAlgo] = useState<'hash-ring' | 'token-bucket' | 'lru-cache'>('hash-ring')
+  const [ringNodes, setRingNodes] = useState<{ id: string; angle: number; color: string }[]>([
+    { id: 'Node-A', angle: 30, color: '#38bdf8' },
+    { id: 'Node-B', angle: 120, color: '#34d399' },
+    { id: 'Node-C', angle: 210, color: '#f472b6' },
+    { id: 'Node-D', angle: 300, color: '#fbbf24' },
+  ])
+  const [ringKeys, setRingKeys] = useState<{ id: string; angle: number; assignedNode: string }[]>([
+    { id: 'usr:104', angle: 45, assignedNode: 'Node-B' },
+    { id: 'order:891', angle: 150, assignedNode: 'Node-C' },
+    { id: 'item:32', angle: 250, assignedNode: 'Node-D' },
+    { id: 'session:7', angle: 340, assignedNode: 'Node-A' },
+  ])
+  const [ringStatusMsg, setRingStatusMsg] = useState<string>(
+    'Consistent Hash Ring active with 4 server nodes. Keys map clockwise to the nearest successor.'
+  )
+
+  const addRingNode = () => {
+    if (ringNodes.some((n) => n.id === 'Node-E')) {
+      setRingStatusMsg('Node-E already active on ring.')
+      return
+    }
+    const newNodes = [...ringNodes, { id: 'Node-E', angle: 165, color: '#a855f7' }].sort(
+      (a, b) => a.angle - b.angle
+    )
+    setRingNodes(newNodes)
+    setRingKeys((prev) =>
+      prev.map((k) => {
+        if (k.angle > 120 && k.angle <= 165) {
+          return { ...k, assignedNode: 'Node-E' }
+        }
+        return k
+      })
+    )
+    setRingStatusMsg('Scaled Ring: Added Node-E at 165°. Only keys in (120°-165°) relocated to Node-E!')
+  }
+
+  const removeRingNode = () => {
+    if (ringNodes.length <= 3) {
+      setRingStatusMsg('Minimum quorum threshold reached: cannot remove more nodes.')
+      return
+    }
+    const updated = ringNodes.filter((n) => n.id !== 'Node-B')
+    setRingNodes(updated)
+    setRingKeys((prev) =>
+      prev.map((k) => (k.assignedNode === 'Node-B' ? { ...k, assignedNode: 'Node-C' } : k))
+    )
+    setRingStatusMsg('Simulated Failure: Removed Node-B. Keys (30°-120°) seamlessly failed over to Node-C!')
+  }
+
+  // Token Bucket Simulator
+  const [bucketTokens, setBucketTokens] = useState<number>(7)
+  const [bucketStatus, setBucketStatus] = useState<string>('Normal flow: Token Bucket refilling at 1 token / 1.5s')
+  const [bucketIsRejected, setBucketIsRejected] = useState<boolean>(false)
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setBucketTokens((prev) => (prev < 10 ? prev + 1 : prev))
+    }, 1500)
+    return () => clearInterval(timer)
+  }, [])
+
+  const consumeTokens = (count: number) => {
+    if (bucketTokens >= count) {
+      setBucketTokens((prev) => prev - count)
+      setBucketIsRejected(false)
+      setBucketStatus(`Allowed: Consumed ${count} token(s). Remaining: ${bucketTokens - count}/10`)
+    } else {
+      setBucketIsRejected(true)
+      setBucketStatus(`THROTTLED: Insufficient tokens! HTTP 429 Too Many Requests generated.`)
+      setTimeout(() => setBucketIsRejected(false), 2000)
+    }
+  }
+
+  // LRU Cache Simulator
+  const [lruSlots, setLruSlots] = useState<{ key: string; val: string }[]>([
+    { key: 'usr:101', val: 'Alice (Cached)' },
+    { key: 'usr:102', val: 'Bob (Cached)' },
+    { key: 'usr:103', val: 'Carol (Cached)' },
+  ])
+  const [lruMsg, setLruMsg] = useState<string>(
+    'LRU Cache holding 3 items. Head is most recently used; Tail is evicted on capacity overflow.'
+  )
+
+  const accessLruKey = (key: string) => {
+    const item = lruSlots.find((s) => s.key === key)
+    if (!item) return
+    const remaining = lruSlots.filter((s) => s.key !== key)
+    setLruSlots([item, ...remaining])
+    setLruMsg(`Cache HIT: Accessed ${key}. Moved node to Doubly Linked List HEAD.`)
+  }
+
+  const insertLruKey = (key: string, val: string) => {
+    if (lruSlots.some((s) => s.key === key)) {
+      accessLruKey(key)
+      return
+    }
+    const newItems = [{ key, val }, ...lruSlots.slice(0, 2)]
+    const evicted = lruSlots[2]
+    setLruSlots(newItems)
+    setLruMsg(`Cache MISS & EVICT: Inserted ${key} at HEAD. Evicted ${evicted.key} from TAIL in O(1) time.`)
+  }
+
+
   return (
     <div className={`min-h-screen ${isFullscreen ? 'p-2 sm:p-4 bg-bg-base' : 'pb-24'}`}>
       {/* TOP HEADER / BREADCRUMB NAVIGATION */}
@@ -695,6 +800,271 @@ export default function SystemDossierPage() {
             </div>
           )}
 
+          {/* INTERACTIVE ALGORITHM & CONCURRENCY SANDBOX (Chapter 6) */}
+          {currentChapter.interactiveModuleType === 'code-sandbox' && (
+            <div className="rounded-2xl bg-bg-surface-2 p-6 ring-1 ring-cyan-500/40 shadow-2xl space-y-5">
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 pb-3">
+                <div className="flex items-center gap-2">
+                  <div className="size-2 rounded-full bg-cyan-400 animate-ping" />
+                  <h3 className="text-sm font-bold text-text-primary flex items-center gap-2">
+                    <Zap className="size-4 text-cyan-400" /> Interactive Algorithm & Concurrency Sandbox
+                  </h3>
+                </div>
+                <div className="flex items-center gap-1.5 rounded-lg bg-bg-surface-1 p-1 ring-1 ring-border text-xs">
+                  <button
+                    onClick={() => setSandboxAlgo('hash-ring')}
+                    className={`px-2.5 py-1 rounded-md font-semibold transition ${
+                      sandboxAlgo === 'hash-ring'
+                        ? 'bg-cyan-500/20 text-cyan-300 ring-1 ring-cyan-500/40'
+                        : 'text-text-muted hover:text-text-primary'
+                    }`}
+                  >
+                    Consistent Hash Ring
+                  </button>
+                  <button
+                    onClick={() => setSandboxAlgo('token-bucket')}
+                    className={`px-2.5 py-1 rounded-md font-semibold transition ${
+                      sandboxAlgo === 'token-bucket'
+                        ? 'bg-cyan-500/20 text-cyan-300 ring-1 ring-cyan-500/40'
+                        : 'text-text-muted hover:text-text-primary'
+                    }`}
+                  >
+                    Token Bucket Limiter
+                  </button>
+                  <button
+                    onClick={() => setSandboxAlgo('lru-cache')}
+                    className={`px-2.5 py-1 rounded-md font-semibold transition ${
+                      sandboxAlgo === 'lru-cache'
+                        ? 'bg-cyan-500/20 text-cyan-300 ring-1 ring-cyan-500/40'
+                        : 'text-text-muted hover:text-text-primary'
+                    }`}
+                  >
+                    LRU Cache Eviction
+                  </button>
+                </div>
+              </div>
+
+              {/* 1. Consistent Hash Ring Visualizer */}
+              {sandboxAlgo === 'hash-ring' && (
+                <div className="space-y-4">
+                  <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
+                    <span className="text-text-secondary">
+                      Active Ring Nodes: <strong className="text-text-primary">{ringNodes.length} servers</strong>
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={addRingNode}
+                        className="rounded-lg bg-cyan-500/20 px-3 py-1.5 text-cyan-300 font-bold hover:bg-cyan-500/30 ring-1 ring-cyan-500/40 transition"
+                      >
+                        + Add Server (Node-E)
+                      </button>
+                      <button
+                        onClick={removeRingNode}
+                        className="rounded-lg bg-rose-500/20 px-3 py-1.5 text-rose-300 font-bold hover:bg-rose-500/30 ring-1 ring-rose-500/40 transition"
+                      >
+                        - Kill Server (Node-B)
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* SVG 360-degree Ring */}
+                  <div className="relative flex items-center justify-center p-4 bg-bg-surface-1 rounded-xl border border-border">
+                    <svg viewBox="0 0 320 320" className="size-64 sm:size-72">
+                      {/* Ring Track */}
+                      <circle cx="160" cy="160" r="110" fill="none" stroke="currentColor" strokeWidth="3" className="text-border" strokeDasharray="6 6" />
+
+                      {/* Server Nodes */}
+                      {ringNodes.map((node) => {
+                        const rad = ((node.angle - 90) * Math.PI) / 180
+                        const cx = 160 + 110 * Math.cos(rad)
+                        const cy = 160 + 110 * Math.sin(rad)
+                        return (
+                          <g key={node.id} className="transition-all duration-500">
+                            <circle cx={cx} cy={cy} r="14" fill="#0f172a" stroke={node.color} strokeWidth="3" />
+                            <circle cx={cx} cy={cy} r="6" fill={node.color} className="animate-pulse" />
+                            <text
+                              x={cx}
+                              y={cy > 160 ? cy + 22 : cy - 16}
+                              textAnchor="middle"
+                              fill={node.color}
+                              fontSize="11"
+                              fontFamily="monospace"
+                              fontWeight="bold"
+                            >
+                              {node.id}
+                            </text>
+                          </g>
+                        )
+                      })}
+
+                      {/* Keys mapped on ring */}
+                      {ringKeys.map((k) => {
+                        const rad = ((k.angle - 90) * Math.PI) / 180
+                        const cx = 160 + 110 * Math.cos(rad)
+                        const cy = 160 + 110 * Math.sin(rad)
+                        return (
+                          <g key={k.id} className="transition-all duration-500">
+                            <circle cx={cx} cy={cy} r="5" fill="#facc15" stroke="#000" strokeWidth="1" />
+                            <text
+                              x={cx}
+                              y={cy < 160 ? cy - 8 : cy + 14}
+                              textAnchor="middle"
+                              fill="#facc15"
+                              fontSize="9"
+                              fontFamily="monospace"
+                            >
+                              {k.id}
+                            </text>
+                          </g>
+                        )
+                      })}
+
+                      {/* Center Hub */}
+                      <circle cx="160" cy="160" r="40" fill="#0f172a" stroke="#334155" strokeWidth="2" />
+                      <text x="160" y="156" textAnchor="middle" fill="#94a3b8" fontSize="10" fontFamily="monospace">
+                        Murmur3
+                      </text>
+                      <text x="160" y="172" textAnchor="middle" fill="#38bdf8" fontSize="12" fontWeight="bold" fontFamily="monospace">
+                        2^32 RING
+                      </text>
+                    </svg>
+                  </div>
+
+                  <div className="rounded-lg bg-bg-surface-3 p-3 text-xs font-mono text-cyan-300 border border-cyan-500/20">
+                    ℹ️ {ringStatusMsg}
+                  </div>
+                </div>
+              )}
+
+              {/* 2. Token Bucket Rate Limiter Visualizer */}
+              {sandboxAlgo === 'token-bucket' && (
+                <div className="space-y-4">
+                  <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
+                    <span className="text-text-secondary">
+                      Bucket Capacity: <strong className="text-text-primary">10 Tokens</strong> (Refill: 1 token / 1.5s)
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => consumeTokens(1)}
+                        className="rounded-lg bg-emerald-500/20 px-3 py-1.5 text-emerald-300 font-bold hover:bg-emerald-500/30 ring-1 ring-emerald-500/40 transition"
+                      >
+                        Send Request (1 Token)
+                      </button>
+                      <button
+                        onClick={() => consumeTokens(5)}
+                        className="rounded-lg bg-amber-500/20 px-3 py-1.5 text-amber-300 font-bold hover:bg-amber-500/30 ring-1 ring-amber-500/40 transition"
+                      >
+                        Burst Batch (5 Tokens)
+                      </button>
+                      <button
+                        onClick={() => consumeTokens(12)}
+                        className="rounded-lg bg-rose-500/20 px-3 py-1.5 text-rose-300 font-bold hover:bg-rose-500/30 ring-1 ring-rose-500/40 transition"
+                      >
+                        Spike Test (12 Tokens)
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Bucket Visual Display */}
+                  <div className="rounded-xl bg-bg-surface-1 p-6 border border-border flex flex-col sm:flex-row items-center justify-around gap-6">
+                    <div className="flex flex-col items-center gap-2">
+                      <span className="text-xs text-text-muted font-mono">Current Available Tokens</span>
+                      <div className="relative w-40 h-28 border-4 border-t-0 border-cyan-500/60 rounded-b-2xl bg-bg-base/80 p-2 flex flex-wrap-reverse content-start gap-1.5 overflow-hidden">
+                        {Array.from({ length: bucketTokens }).map((_, i) => (
+                          <div
+                            key={i}
+                            className="size-6 rounded-full bg-cyan-400 shadow-lg shadow-cyan-500/50 flex items-center justify-center text-[10px] font-bold text-slate-900 animate-bounce"
+                            style={{ animationDuration: `${0.8 + i * 0.1}s` }}
+                          >
+                            🪙
+                          </div>
+                        ))}
+                      </div>
+                      <span className="font-mono text-base font-extrabold text-cyan-400">
+                        {bucketTokens} / 10 Tokens
+                      </span>
+                    </div>
+
+                    <div className="space-y-3 text-xs w-full sm:w-64">
+                      <div className="flex justify-between items-center p-2 rounded bg-bg-surface-2 border border-border">
+                        <span className="text-text-muted">Status:</span>
+                        <span
+                          className={`font-mono font-bold px-2 py-0.5 rounded text-[11px] ${
+                            bucketIsRejected ? 'bg-rose-500/20 text-rose-400 animate-pulse' : 'bg-emerald-500/20 text-emerald-400'
+                          }`}
+                        >
+                          {bucketIsRejected ? 'HTTP 429 REJECTED' : '200 OK ALLOWED'}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center p-2 rounded bg-bg-surface-2 border border-border">
+                        <span className="text-text-muted">Refill Rate:</span>
+                        <span className="font-mono text-text-primary">+1 token every 1500ms</span>
+                      </div>
+                      <div className="p-2.5 rounded bg-bg-surface-3 font-mono text-[11.5px] text-cyan-300 border border-cyan-500/20">
+                        {bucketStatus}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* 3. LRU Cache Simulator */}
+              {sandboxAlgo === 'lru-cache' && (
+                <div className="space-y-4">
+                  <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
+                    <span className="text-text-secondary">
+                      Max Capacity: <strong className="text-text-primary">3 Keys</strong> (Doubly Linked List + Hash Map)
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => accessLruKey('usr:102')}
+                        className="rounded-lg bg-sky-500/20 px-3 py-1.5 text-sky-300 font-bold hover:bg-sky-500/30 ring-1 ring-sky-500/40 transition"
+                      >
+                        Access usr:102
+                      </button>
+                      <button
+                        onClick={() => insertLruKey(`usr:${Math.floor(Math.random() * 800 + 200)}`, 'New Data')}
+                        className="rounded-lg bg-emerald-500/20 px-3 py-1.5 text-emerald-300 font-bold hover:bg-emerald-500/30 ring-1 ring-emerald-500/40 transition"
+                      >
+                        + Insert New Key
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Visual Doubly Linked List */}
+                  <div className="p-6 bg-bg-surface-1 rounded-xl border border-border space-y-4">
+                    <div className="flex items-center justify-center gap-2 sm:gap-4 overflow-x-auto pb-2">
+                      <div className="px-3 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-400 text-xs font-mono font-bold border border-emerald-500/30">
+                        [HEAD]
+                      </div>
+                      {lruSlots.map((slot, idx) => (
+                        <div key={slot.key} className="flex items-center gap-2 sm:gap-4">
+                          <span className="text-text-muted font-mono text-xs">⇄</span>
+                          <div
+                            onClick={() => accessLruKey(slot.key)}
+                            className="cursor-pointer p-3 rounded-xl bg-bg-surface-3 hover:bg-bg-surface-2 border border-border shadow-md transition-all text-center min-w-[100px]"
+                          >
+                            <span className="text-xs font-mono font-bold text-accent-brand block">{slot.key}</span>
+                            <span className="text-[10px] text-text-muted">{slot.val}</span>
+                            <span className="text-[9px] font-mono text-text-secondary block mt-1">Slot #{idx + 1}</span>
+                          </div>
+                        </div>
+                      ))}
+                      <span className="text-text-muted font-mono text-xs">⇄</span>
+                      <div className="px-3 py-1.5 rounded-lg bg-rose-500/20 text-rose-400 text-xs font-mono font-bold border border-rose-500/30">
+                        [TAIL / EVICT]
+                      </div>
+                    </div>
+
+                    <div className="rounded-lg bg-bg-surface-3 p-3 text-xs font-mono text-cyan-300 border border-cyan-500/20">
+                      ℹ️ {lruMsg}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* DETAILED CONTENT SECTIONS */}
           <div className="space-y-6">
             {currentChapter.contentSections.map((sec, secIdx) => (
@@ -709,6 +1079,30 @@ export default function SystemDossierPage() {
                 <p className="text-sm text-text-secondary leading-relaxed">
                   {sec.description}
                 </p>
+
+                {/* Blueprint Image if present */}
+                {sec.image && (
+                  <div className="rounded-xl overflow-hidden border border-border/80 bg-bg-surface-1 shadow-2xl space-y-2 p-2">
+                    <div className="relative overflow-hidden rounded-lg group">
+                      <img
+                        src={sec.image.url}
+                        alt={sec.image.alt}
+                        className="w-full h-auto object-cover max-h-[480px] rounded-lg transition-transform duration-500 group-hover:scale-[1.01]"
+                        loading="lazy"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+                      <span className="absolute bottom-3 left-3 px-2.5 py-1 rounded bg-black/70 backdrop-blur-md text-[11px] font-mono text-cyan-400 border border-cyan-500/30 flex items-center gap-1.5">
+                        <Network className="size-3" /> Architectural Blueprint
+                      </span>
+                    </div>
+                    {sec.image.caption && (
+                      <p className="text-xs text-text-muted italic px-2 pb-1 text-center">
+                        {sec.image.caption}
+                      </p>
+                    )}
+                  </div>
+                )}
+
 
                 {/* Callout box if present */}
                 {sec.callout && (

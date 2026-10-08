@@ -1,4 +1,5 @@
 import type { FromScratchGuide } from '../types'
+import { ADDITIONAL_FROM_SCRATCH_GUIDES } from './additionalFromScratchGuides'
 
 export const FROM_SCRATCH_GUIDES: Record<string, FromScratchGuide> = {
   tinyurl: {
@@ -4586,6 +4587,10 @@ func (rl *Redlock) LockWithRetry(resource string, maxRetries int) (string, bool)
     ],
   },
 }
+
+Object.assign(FROM_SCRATCH_GUIDES, ADDITIONAL_FROM_SCRATCH_GUIDES)
+FROM_SCRATCH_GUIDES['collab-docs'] = FROM_SCRATCH_GUIDES['collaborative-editor']
+
 
 
 // Helper to retrieve or generate a rich FromScratchGuide for any of the 31 systems
