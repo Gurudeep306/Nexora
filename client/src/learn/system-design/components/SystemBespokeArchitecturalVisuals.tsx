@@ -1234,6 +1234,25 @@ export const SystemInternalEngineDiagram: React.FC<{
   const [ringAngle, setRingAngle] = useState<number>(45)
   const [corruptedDisks, setCorruptedDisks] = useState<number[]>([])
 
+  // States for all bespoke archetypes
+  const [ratchetSeq, setRatchetSeq] = useState<number>(4)
+  const [transcodeStage, setTranscodeStage] = useState<'1080p' | '720p' | '480p'>('1080p')
+  const [queryTerm, setQueryTerm] = useState<'distributed' | 'cache'>('distributed')
+  const [tsdbMetricPoint, setTsdbMetricPoint] = useState<number>(42.8)
+  const [dagStage, setDagStage] = useState<number>(2)
+  const [dnsHop, setDnsHop] = useState<number>(3)
+  const [webhookRetryCount, setWebhookRetryCount] = useState<number>(2)
+  const [envoyStep, setEnvoyStep] = useState<number>(2)
+  const [activeEdgePop, setActiveEdgePop] = useState<'NRT' | 'FRA' | 'IAD'>('NRT')
+  const [clientPredictionTick, setClientPredictionTick] = useState<number>(104)
+  const [crdtLength, setCrdtLength] = useState<number>(14)
+  const [pasteHashCounter, setPasteHashCounter] = useState<number>(1)
+  const [fraudScore, setFraudScore] = useState<number>(18)
+  const [redlockLeaseOk, setRedlockLeaseOk] = useState<boolean>(true)
+  const [vectorClocks, setVectorClocks] = useState<{ a: number; b: number }>({ a: 2, b: 1 })
+  const [isCelebrityUser, setIsCelebrityUser] = useState<boolean>(false)
+  const [frontierUrls, setFrontierUrls] = useState<number>(1420)
+
   const handleAppendLog = () => {
     setLogOffsets((prev) => [...prev.slice(1), prev[prev.length - 1] + 1])
   }
@@ -1614,38 +1633,731 @@ export const SystemInternalEngineDiagram: React.FC<{
         </div>
       )}
 
-      {/* 10. Fallback / Generic Pipeline for other archetypes */}
-      {config.lldDiagramType !== 'commit-log' &&
-        config.lldDiagramType !== 'lru-doubly-linked' &&
-        config.lldDiagramType !== 'bitfield-64' &&
-        config.lldDiagramType !== 'order-book' &&
-        config.lldDiagramType !== 'double-entry' &&
-        config.lldDiagramType !== 'token-bucket' &&
-        config.lldDiagramType !== 'spatial-hex' &&
-        config.lldDiagramType !== 'erasure-coding' &&
-        config.lldDiagramType !== 'hash-ring' && (
-          <div className="space-y-3 font-mono text-xs">
-            <div className="text-[11px] text-text-secondary">
-              <strong>End-to-End Microservice State Pipeline & Handshake</strong>:
+      {/* 10. Signal Double Ratchet E2EE (WhatsApp) */}
+      {config.lldDiagramType === 'crypto-ratchet' && (
+        <div className="space-y-3 font-mono text-xs">
+          <div className="flex items-center justify-between text-[11px] text-text-secondary">
+            <span>
+              <strong>Signal Double Ratchet E2EE Key Derivation State</strong>:
+            </span>
+            <button
+              onClick={() => setRatchetSeq((s) => s + 1)}
+              className="px-2.5 py-1 rounded bg-purple-500/20 text-purple-300 border border-purple-500/40 hover:bg-purple-500/30 transition text-[10px] font-bold"
+            >
+              + Advance DH Ratchet (#{ratchetSeq})
+            </button>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
+            <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/30">
+              <div className="text-[10px] text-purple-400 font-bold">Alice Ephemeral</div>
+              <div className="truncate text-text-primary text-[11px] mt-1">DH: 0x4F...B2</div>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {config.flowNodes.slice(0, 4).map((n, i) => (
-                <div key={i} className="p-3 rounded-xl bg-bg-surface-2 border border-border space-y-1">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-text-muted">Tier #{i + 1}</span>
-                    <span className="size-2 rounded-full bg-emerald-400 animate-pulse" />
-                  </div>
-                  <div className="font-bold text-text-primary">{n.name}</div>
-                  <div className="text-[10px] text-text-muted">{n.role}</div>
-                </div>
-              ))}
+            <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/30">
+              <div className="text-[10px] text-purple-400 font-bold">Bob Ephemeral</div>
+              <div className="truncate text-text-primary text-[11px] mt-1">DH: 0x8A...E1</div>
             </div>
-            <div className="p-3 rounded-xl bg-bg-base/80 border border-border text-[11px] text-text-muted flex items-center justify-between">
-              <span>Concurrency: {config.specs.concurrencyModel}</span>
-              <span className="text-emerald-400">{config.specs.failureGuarantee}</span>
+            <div className="p-3 rounded-xl bg-bg-surface-2 border border-border">
+              <div className="text-[10px] text-text-muted">KDF Root Key</div>
+              <div className="truncate text-text-primary text-[11px] mt-1">Chain #{ratchetSeq * 2}</div>
+            </div>
+            <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
+              <div className="text-[10px] text-emerald-400 font-bold">Message Cipher</div>
+              <div className="truncate text-emerald-300 text-[11px] mt-1">AES-256-GCM</div>
             </div>
           </div>
-        )}
+          <div className="p-3 rounded-xl bg-bg-base/80 border border-border text-[11px] text-text-muted flex items-center justify-between">
+            <span>Epoll Gateway: 2,000,000 Concurrent WebSockets</span>
+            <span className="text-emerald-400">Forward Secrecy & Break-in Recovery Active</span>
+          </div>
+        </div>
+      )}
+
+      {/* 11. HLS / DASH Video Transcoding (YouTube) */}
+      {config.lldDiagramType === 'video-chunk' && (
+        <div className="space-y-3 font-mono text-xs">
+          <div className="flex items-center justify-between text-[11px] text-text-secondary">
+            <span>
+              <strong>Adaptive Bitrate Transcode Ladder & HLS Manifest</strong>:
+            </span>
+            <div className="flex gap-1">
+              {(['1080p', '720p', '480p'] as const).map((res) => (
+                <button
+                  key={res}
+                  onClick={() => setTranscodeStage(res)}
+                  className={`px-2 py-0.5 rounded text-[10px] font-bold border transition ${
+                    transcodeStage === res
+                      ? 'bg-rose-500/20 text-rose-300 border-rose-500/50'
+                      : 'bg-bg-surface-2 text-text-muted border-border'
+                  }`}
+                >
+                  {res}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="grid grid-cols-4 gap-2 text-center">
+            {['chunk_001.ts (4.0s)', 'chunk_002.ts (4.0s)', 'chunk_003.ts (4.0s)', 'master.m3u8'].map(
+              (chunk, i) => (
+                <div
+                  key={i}
+                  className={`p-3 rounded-xl border ${
+                    i === 3
+                      ? 'border-rose-500/40 bg-rose-500/10 text-rose-300 font-bold'
+                      : 'border-border bg-bg-surface-2 text-text-secondary'
+                  }`}
+                >
+                  <div className="text-[10px] text-text-muted">{transcodeStage} Segment</div>
+                  <div className="truncate text-[11px] mt-1">{chunk}</div>
+                </div>
+              )
+            )}
+          </div>
+          <div className="p-3 rounded-xl bg-bg-base/80 border border-border text-[11px] text-text-muted flex items-center justify-between">
+            <span>Codec: H.264 / AV1 Video Stream</span>
+            <span className="text-cyan-400">FFmpeg Cluster: 16 Parallel Transcode Workers</span>
+          </div>
+        </div>
+      )}
+
+      {/* 12. Inverted Index with Skip Pointers (Search Engine) */}
+      {config.lldDiagramType === 'inverted-index' && (
+        <div className="space-y-3 font-mono text-xs">
+          <div className="flex items-center justify-between text-[11px] text-text-secondary">
+            <span>
+              <strong>Inverted Index Postings List with Skip Pointers</strong>:
+            </span>
+            <div className="flex gap-1">
+              {(['distributed', 'cache'] as const).map((term) => (
+                <button
+                  key={term}
+                  onClick={() => setQueryTerm(term)}
+                  className={`px-2 py-0.5 rounded text-[10px] font-bold border transition ${
+                    queryTerm === term
+                      ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/50'
+                      : 'bg-bg-surface-2 text-text-muted border-border'
+                  }`}
+                >
+                  Term: "{term}"
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            <div className="p-2.5 rounded-lg bg-bg-surface-3 border border-border text-cyan-300 font-bold text-[11px]">
+              FST: "{queryTerm}"
+            </div>
+            <span className="text-text-muted">➜</span>
+            <div className="p-2.5 rounded-lg bg-bg-surface-2 border border-border text-text-primary text-[11px]">
+              Doc: #12 (TF: 4)
+            </div>
+            <span className="text-cyan-400 text-[10px] font-bold">[Skip ➜]</span>
+            <div className="p-2.5 rounded-lg bg-emerald-500/20 border border-emerald-500/50 text-emerald-300 font-bold text-[11px]">
+              Doc: #45 (BM25: 3.42)
+            </div>
+            <span className="text-text-muted">➜</span>
+            <div className="p-2.5 rounded-lg bg-bg-surface-2 border border-border text-text-primary text-[11px]">
+              Doc: #89 (TF: 2)
+            </div>
+          </div>
+          <div className="p-3 rounded-xl bg-bg-base/80 border border-border text-[11px] text-text-muted flex items-center justify-between">
+            <span>Postings Intersection: <code>O(M + N)</code></span>
+            <span className="text-emerald-400">Skip Pointer Speedup: 4.8x faster traversal</span>
+          </div>
+        </div>
+      )}
+
+      {/* 13. Gorilla TSDB XOR Compression (Metrics TSDB) */}
+      {config.lldDiagramType === 'tsdb-xor' && (
+        <div className="space-y-3 font-mono text-xs">
+          <div className="flex items-center justify-between text-[11px] text-text-secondary">
+            <span>
+              <strong>Gorilla Time-Series Delta-of-Delta & Float XOR</strong>:
+            </span>
+            <button
+              onClick={() => setTsdbMetricPoint((p) => +(p + 0.4).toFixed(1))}
+              className="px-2.5 py-1 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 transition text-[10px] font-bold"
+            >
+              + Stream Sample ({tsdbMetricPoint}°C)
+            </button>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
+            <div className="p-3 rounded-xl bg-bg-surface-2 border border-border">
+              <div className="text-[10px] text-text-muted">Timestamp Delta</div>
+              <div className="text-emerald-400 text-[11px] font-bold mt-1">D = 0 ➜ Bit '0'</div>
+            </div>
+            <div className="p-3 rounded-xl bg-bg-surface-2 border border-border">
+              <div className="text-[10px] text-text-muted">Prev Float</div>
+              <div className="text-text-primary text-[11px] mt-1">{tsdbMetricPoint - 0.4}°C</div>
+            </div>
+            <div className="p-3 rounded-xl bg-bg-surface-2 border border-border">
+              <div className="text-[10px] text-text-muted">Current Float</div>
+              <div className="text-text-primary text-[11px] mt-1">{tsdbMetricPoint}°C</div>
+            </div>
+            <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30">
+              <div className="text-[10px] text-amber-400 font-bold">XOR Bitstream</div>
+              <div className="text-amber-300 text-[11px] mt-1">14 Lead Zeros</div>
+            </div>
+          </div>
+          <div className="p-3 rounded-xl bg-bg-base/80 border border-border text-[11px] text-text-muted flex items-center justify-between">
+            <span>Storage: 1.37 Bytes / Data Point</span>
+            <span className="text-emerald-400">92.8% In-Memory RAM Compression Ratio</span>
+          </div>
+        </div>
+      )}
+
+      {/* 14. DAG Task Orchestrator (Job Scheduler) */}
+      {config.lldDiagramType === 'dag-graph' && (
+        <div className="space-y-3 font-mono text-xs">
+          <div className="flex items-center justify-between text-[11px] text-text-secondary">
+            <span>
+              <strong>Directed Acyclic Graph (DAG) Task Execution Leases</strong>:
+            </span>
+            <button
+              onClick={() => setDagStage((s) => (s % 4) + 1)}
+              className="px-2.5 py-1 rounded bg-sky-500/20 text-sky-300 border border-sky-500/40 hover:bg-sky-500/30 transition text-[10px] font-bold"
+            >
+              Advance DAG Stage ({dagStage}/4)
+            </button>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
+            {[
+              { name: '1. Extract S3', status: dagStage >= 1 ? 'COMPLETED' : 'PENDING' },
+              { name: '2. Map Partition', status: dagStage === 2 ? 'RUNNING' : dagStage > 2 ? 'COMPLETED' : 'PENDING' },
+              { name: '3. Aggregate', status: dagStage === 3 ? 'RUNNING' : dagStage > 3 ? 'COMPLETED' : 'PENDING' },
+              { name: '4. Write Parquet', status: dagStage === 4 ? 'RUNNING' : 'PENDING' },
+            ].map((task, i) => (
+              <div
+                key={i}
+                className={`p-3 rounded-xl border ${
+                  task.status === 'RUNNING'
+                    ? 'border-sky-500/50 bg-sky-500/15 text-sky-300 font-bold animate-pulse'
+                    : task.status === 'COMPLETED'
+                    ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300'
+                    : 'border-border bg-bg-surface-2 text-text-muted'
+                }`}
+              >
+                <div className="text-[10px]">{task.name}</div>
+                <div className="text-[9px] mt-1 font-bold">{task.status}</div>
+              </div>
+            ))}
+          </div>
+          <div className="p-3 rounded-xl bg-bg-base/80 border border-border text-[11px] text-text-muted flex items-center justify-between">
+            <span>Timer Wheel: O(1) Bucket Invariant</span>
+            <span className="text-cyan-400">Worker-04 holds distributed heartbeat lease</span>
+          </div>
+        </div>
+      )}
+
+      {/* 15. Recursive DNS Tree (DNS Resolver) */}
+      {config.lldDiagramType === 'dns-tree' && (
+        <div className="space-y-3 font-mono text-xs">
+          <div className="flex items-center justify-between text-[11px] text-text-secondary">
+            <span>
+              <strong>Hierarchical Recursive DNS Resolution Tree</strong>:
+            </span>
+            <button
+              onClick={() => setDnsHop((h) => (h % 4) + 1)}
+              className="px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30 transition text-[10px] font-bold"
+            >
+              Step Iterative Hop ({dnsHop}/4)
+            </button>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
+            {[
+              { name: 'Client ➜ Resolver', detail: 'UDP port 53' },
+              { name: 'Resolver ➜ Root (.)', detail: 'Referral to .com' },
+              { name: 'Resolver ➜ TLD (.com)', detail: 'Referral to NS' },
+              { name: 'Resolver ➜ Auth NS', detail: 'A: 104.21.5.19' },
+            ].map((hop, i) => (
+              <div
+                key={i}
+                className={`p-3 rounded-xl border ${
+                  i + 1 === dnsHop
+                    ? 'border-emerald-500/50 bg-emerald-500/15 text-emerald-300 font-bold animate-pulse'
+                    : 'border-border bg-bg-surface-2 text-text-secondary'
+                }`}
+              >
+                <div className="text-[10px]">Hop #{i + 1}</div>
+                <div className="text-[11px] mt-0.5 truncate">{hop.name}</div>
+                <div className="text-[9px] text-text-muted mt-1">{hop.detail}</div>
+              </div>
+            ))}
+          </div>
+          <div className="p-3 rounded-xl bg-bg-base/80 border border-border text-[11px] text-text-muted flex items-center justify-between">
+            <span>DNSSEC: Cryptographically Signed Records</span>
+            <span className="text-emerald-400">Response Cached in RAM (TTL: 300s)</span>
+          </div>
+        </div>
+      )}
+
+      {/* 16. Webhook Exponential Backoff Jitter (Webhook Engine) */}
+      {config.lldDiagramType === 'webhook-jitter' && (
+        <div className="space-y-3 font-mono text-xs">
+          <div className="flex items-center justify-between text-[11px] text-text-secondary">
+            <span>
+              <strong>Exponential Backoff with Full Jitter Retry Schedule</strong>:
+            </span>
+            <button
+              onClick={() => setWebhookRetryCount((c) => (c % 3) + 1)}
+              className="px-2.5 py-1 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 transition text-[10px] font-bold"
+            >
+              Simulate Retry #{webhookRetryCount}
+            </button>
+          </div>
+          <div className="grid grid-cols-3 gap-2 text-center">
+            {[
+              { attempt: 'Attempt 1', time: 'T+1.0s', status: '504 GATEWAY TIMEOUT' },
+              { attempt: 'Attempt 2', time: 'T+2.8s', status: '502 BAD GATEWAY' },
+              { attempt: 'Attempt 3', time: 'T+6.4s', status: webhookRetryCount === 3 ? '200 OK SUCCESS' : 'PENDING RETRY' },
+            ].map((ret, i) => (
+              <div
+                key={i}
+                className={`p-3 rounded-xl border ${
+                  ret.status.includes('SUCCESS')
+                    ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300'
+                    : 'border-border bg-bg-surface-2 text-text-secondary'
+                }`}
+              >
+                <div className="text-[10px] text-text-muted">{ret.attempt}</div>
+                <div className="text-[11px] font-bold mt-0.5">{ret.time}</div>
+                <div className="text-[9px] text-amber-400 mt-1">{ret.status}</div>
+              </div>
+            ))}
+          </div>
+          <div className="p-3 rounded-xl bg-bg-base/80 border border-border text-[11px] text-text-muted flex items-center justify-between">
+            <span>HMAC Header: <code>X-Signature-SHA256: 7d1a49f8bc2...</code></span>
+            <span className="text-emerald-400">At-Least-Once Delivery Guarantee</span>
+          </div>
+        </div>
+      )}
+
+      {/* 17. Envoy L7 Filter Chain (API Gateway) */}
+      {config.lldDiagramType === 'api-filters' && (
+        <div className="space-y-3 font-mono text-xs">
+          <div className="flex items-center justify-between text-[11px] text-text-secondary">
+            <span>
+              <strong>Envoy L7 Non-Blocking Filter Chain Pipeline</strong>:
+            </span>
+            <button
+              onClick={() => setEnvoyStep((s) => (s % 4) + 1)}
+              className="px-2.5 py-1 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 hover:bg-cyan-500/30 transition text-[10px] font-bold"
+            >
+              Step Filter ({envoyStep}/4)
+            </button>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
+            {[
+              { name: '1. TLS 1.3 Term', desc: 'Cert Verification' },
+              { name: '2. JWT Auth', desc: 'JWKS Claim Parse' },
+              { name: '3. Rate Limiter', desc: 'Token Bucket Check' },
+              { name: '4. Dynamic Route', desc: 'gRPC Upstream Forward' },
+            ].map((flt, i) => (
+              <div
+                key={i}
+                className={`p-3 rounded-xl border ${
+                  i + 1 === envoyStep
+                    ? 'border-cyan-500/50 bg-cyan-500/15 text-cyan-300 font-bold animate-pulse'
+                    : i + 1 < envoyStep
+                    ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300'
+                    : 'border-border bg-bg-surface-2 text-text-secondary'
+                }`}
+              >
+                <div className="text-[10px]">{flt.name}</div>
+                <div className="text-[9px] text-text-muted mt-1">{flt.desc}</div>
+              </div>
+            ))}
+          </div>
+          <div className="p-3 rounded-xl bg-bg-base/80 border border-border text-[11px] text-text-muted flex items-center justify-between">
+            <span>Filter Overhead: &lt; 1.2ms P99</span>
+            <span className="text-emerald-400">Hot-reloaded routes via Envoy xDS APIs</span>
+          </div>
+        </div>
+      )}
+
+      {/* 18. BGP Anycast Global Edge Routing (CDN Network) */}
+      {config.lldDiagramType === 'anycast-edge' && (
+        <div className="space-y-3 font-mono text-xs">
+          <div className="flex items-center justify-between text-[11px] text-text-secondary">
+            <span>
+              <strong>BGP Anycast Edge POP Routing & Origin Shield</strong>:
+            </span>
+            <div className="flex gap-1">
+              {(['NRT', 'FRA', 'IAD'] as const).map((pop) => (
+                <button
+                  key={pop}
+                  onClick={() => setActiveEdgePop(pop)}
+                  className={`px-2 py-0.5 rounded text-[10px] font-bold border transition ${
+                    activeEdgePop === pop
+                      ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/50'
+                      : 'bg-bg-surface-2 text-text-muted border-border'
+                  }`}
+                >
+                  Client in {pop}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="grid grid-cols-3 gap-2 text-center">
+            {[
+              { pop: 'NRT (Tokyo)', rtt: '12ms RTT', status: activeEdgePop === 'NRT' ? 'ACTIVE ROUTE' : 'STANDBY' },
+              { pop: 'FRA (Frankfurt)', rtt: '14ms RTT', status: activeEdgePop === 'FRA' ? 'ACTIVE ROUTE' : 'STANDBY' },
+              { pop: 'IAD (Virginia)', rtt: '15ms RTT', status: activeEdgePop === 'IAD' ? 'ACTIVE ROUTE' : 'STANDBY' },
+            ].map((edge, i) => (
+              <div
+                key={i}
+                className={`p-3 rounded-xl border ${
+                  edge.status === 'ACTIVE ROUTE'
+                    ? 'border-emerald-500/50 bg-emerald-500/15 text-emerald-300 font-bold'
+                    : 'border-border bg-bg-surface-2 text-text-secondary'
+                }`}
+              >
+                <div className="text-[10px] text-text-muted">{edge.pop}</div>
+                <div className="text-[11px] font-bold mt-0.5">{edge.rtt}</div>
+                <div className="text-[9px] text-cyan-300 mt-1">{edge.status}</div>
+              </div>
+            ))}
+          </div>
+          <div className="p-3 rounded-xl bg-bg-base/80 border border-border text-[11px] text-text-muted flex items-center justify-between">
+            <span>Origin Shield: Regional Cache Consolidation</span>
+            <span className="text-emerald-400">Edge Cache Hit Ratio: 98.2%</span>
+          </div>
+        </div>
+      )}
+
+      {/* 19. 64Hz Tick Loop & Client Prediction (Game Server) */}
+      {config.lldDiagramType === 'udp-prediction' && (
+        <div className="space-y-3 font-mono text-xs">
+          <div className="flex items-center justify-between text-[11px] text-text-secondary">
+            <span>
+              <strong>64Hz Tick Loop, Client Prediction & Rollback</strong>:
+            </span>
+            <button
+              onClick={() => setClientPredictionTick((t) => t + 1)}
+              className="px-2.5 py-1 rounded bg-purple-500/20 text-purple-300 border border-purple-500/40 hover:bg-purple-500/30 transition text-[10px] font-bold"
+            >
+              + Next Tick ({clientPredictionTick})
+            </button>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
+            <div className="p-3 rounded-xl bg-bg-surface-2 border border-border">
+              <div className="text-[10px] text-text-muted">Client Input</div>
+              <div className="text-text-primary text-[11px] mt-1">Move (+1.5 X)</div>
+            </div>
+            <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/30">
+              <div className="text-[10px] text-purple-400 font-bold">Predicted Pos</div>
+              <div className="text-purple-300 text-[11px] mt-1">X: 142.5 (Tick {clientPredictionTick})</div>
+            </div>
+            <div className="p-3 rounded-xl bg-bg-surface-2 border border-border">
+              <div className="text-[10px] text-text-muted">Server Snapshot</div>
+              <div className="text-text-primary text-[11px] mt-1">X: 142.0 (Tick {clientPredictionTick - 2})</div>
+            </div>
+            <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
+              <div className="text-[10px] text-emerald-400 font-bold">Reconcile Delta</div>
+              <div className="text-emerald-300 text-[11px] mt-1">Δ 0.5 (Smooth Replay)</div>
+            </div>
+          </div>
+          <div className="p-3 rounded-xl bg-bg-base/80 border border-border text-[11px] text-text-muted flex items-center justify-between">
+            <span>Tick Delta: 15.625ms per frame</span>
+            <span className="text-cyan-400">128-Tick Rewind Ring Buffer Cached</span>
+          </div>
+        </div>
+      )}
+
+      {/* 20. CRDT State Tree (Collab Docs) */}
+      {config.lldDiagramType === 'crdt-tree' && (
+        <div className="space-y-3 font-mono text-xs">
+          <div className="flex items-center justify-between text-[11px] text-text-secondary">
+            <span>
+              <strong>Conflict-Free Replicated Data Type (CRDT) State Tree</strong>:
+            </span>
+            <button
+              onClick={() => setCrdtLength((l) => l + 1)}
+              className="px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30 transition text-[10px] font-bold"
+            >
+              + Insert Char at #{crdtLength}
+            </button>
+          </div>
+          <div className="p-4 rounded-xl bg-bg-surface-1 border border-border flex flex-wrap items-center justify-center gap-1.5">
+            {['S', 'y', 's', 't', 'e', 'm', ' ', 'D', 'e', 's', 'i', 'g', 'n'].map((ch, i) => (
+              <div key={i} className="p-2 rounded bg-bg-surface-3 border border-border text-center min-w-[28px]">
+                <div className="font-bold text-emerald-400">{ch}</div>
+                <div className="text-[7px] text-text-muted">({i + 1}, A)</div>
+              </div>
+            ))}
+          </div>
+          <div className="p-3 rounded-xl bg-bg-base/80 border border-border text-[11px] text-text-muted flex items-center justify-between">
+            <span>Mathematical Convergence: Strong Eventual Consistency</span>
+            <span className="text-emerald-400">Zero merge conflicts across peer replicas</span>
+          </div>
+        </div>
+      )}
+
+      {/* 21. Multi-Channel Fanout Router (Notification System) */}
+      {config.lldDiagramType === 'fanout-matrix' && (
+        <div className="space-y-3 font-mono text-xs">
+          <div className="flex items-center justify-between text-[11px] text-text-secondary">
+            <span>
+              <strong>Multi-Channel Notification Dispatch Matrix</strong>:
+            </span>
+            <span className="text-[10px] text-emerald-400 font-bold">Circuit Breakers: 100% HEALTHY</span>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
+            {[
+              { name: 'Apple APNS', status: 'HEALTHY (99.9%)', type: 'iOS Push' },
+              { name: 'Google FCM', status: 'HEALTHY (99.8%)', type: 'Android Push' },
+              { name: 'Twilio SMS', status: 'HEALTHY (99.5%)', type: 'Transactional' },
+              { name: 'SendGrid Email', status: 'FAILOVER (SES)', type: 'Digest Bulk' },
+            ].map((chan, i) => (
+              <div key={i} className="p-3 rounded-xl bg-bg-surface-2 border border-border">
+                <div className="text-[10px] font-bold text-text-primary">{chan.name}</div>
+                <div className="text-[9px] text-text-muted mt-0.5">{chan.type}</div>
+                <div className="text-[9px] text-emerald-400 font-bold mt-1">{chan.status}</div>
+              </div>
+            ))}
+          </div>
+          <div className="p-3 rounded-xl bg-bg-base/80 border border-border text-[11px] text-text-muted flex items-center justify-between">
+            <span>Priority Queue: Transactional SMS bypasses bulk queue</span>
+            <span className="text-cyan-400">User Mute & Opt-out Filters Evaluated in Redis</span>
+          </div>
+        </div>
+      )}
+
+      {/* 22. Content-Addressable Storage CAS (Pastebin) */}
+      {config.lldDiagramType === 'paste-cas' && (
+        <div className="space-y-3 font-mono text-xs">
+          <div className="flex items-center justify-between text-[11px] text-text-secondary">
+            <span>
+              <strong>Content-Addressable Storage (CAS) with SHA-256</strong>:
+            </span>
+            <button
+              onClick={() => setPasteHashCounter((c) => c + 1)}
+              className="px-2.5 py-1 rounded bg-sky-500/20 text-sky-300 border border-sky-500/40 hover:bg-sky-500/30 transition text-[10px] font-bold"
+            >
+              Hash Snippet #{pasteHashCounter}
+            </button>
+          </div>
+          <div className="p-3 rounded-xl bg-bg-surface-1 border border-border space-y-2">
+            <div className="flex justify-between text-[10px] text-text-muted">
+              <span>SHA-256 Digest:</span>
+              <span className="font-mono text-cyan-300">dffd6021bb2bd5b0af676290809ec3a53191dd81</span>
+            </div>
+            <div className="p-2 rounded bg-bg-surface-3 text-[10px] font-mono text-text-secondary break-all">
+              Path: /s3-bucket/chunks/df/fd/6021bb2bd5b0af676290809ec3a53191dd81.bin
+            </div>
+          </div>
+          <div className="p-3 rounded-xl bg-bg-base/80 border border-border text-[11px] text-text-muted flex items-center justify-between">
+            <span>TTL Auto-Sweeper: Expiring in 23h 58m</span>
+            <span className="text-emerald-400">Collision Probability: &lt; 10^-30</span>
+          </div>
+        </div>
+      )}
+
+      {/* 23. Real-Time Velocity Risk Scorer (Fraud Detection) */}
+      {config.lldDiagramType === 'risk-score' && (
+        <div className="space-y-3 font-mono text-xs">
+          <div className="flex items-center justify-between text-[11px] text-text-secondary">
+            <span>
+              <strong>Real-Time Sliding Window Velocity Risk Scorer</strong>:
+            </span>
+            <button
+              onClick={() => setFraudScore((s) => (s > 50 ? 18 : 84))}
+              className={`px-2.5 py-1 rounded text-[10px] font-bold border transition ${
+                fraudScore > 50
+                  ? 'bg-rose-500/20 text-rose-300 border-rose-500/50'
+                  : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/50'
+              }`}
+            >
+              {fraudScore > 50 ? 'Reset to Normal Flow' : 'Simulate Card Velocity Attack'}
+            </button>
+          </div>
+          <div className="grid grid-cols-3 gap-2 text-center">
+            <div className="p-3 rounded-xl bg-bg-surface-2 border border-border">
+              <div className="text-[10px] text-text-muted">Card Tries / 60s</div>
+              <div className={`text-[11px] font-bold mt-1 ${fraudScore > 50 ? 'text-rose-400' : 'text-emerald-400'}`}>
+                {fraudScore > 50 ? '12 attempts' : '1 attempt'}
+              </div>
+            </div>
+            <div className="p-3 rounded-xl bg-bg-surface-2 border border-border">
+              <div className="text-[10px] text-text-muted">Geo-IP Velocity</div>
+              <div className={`text-[11px] font-bold mt-1 ${fraudScore > 50 ? 'text-rose-400' : 'text-emerald-400'}`}>
+                {fraudScore > 50 ? '2,400 km/h (Anomaly)' : 'Local Country'}
+              </div>
+            </div>
+            <div
+              className={`p-3 rounded-xl border ${
+                fraudScore > 50
+                  ? 'border-rose-500/50 bg-rose-500/15 text-rose-300'
+                  : 'border-emerald-500/50 bg-emerald-500/15 text-emerald-300'
+              }`}
+            >
+              <div className="text-[10px] font-bold">Decision Gate</div>
+              <div className="text-[11px] font-bold mt-1">
+                {fraudScore > 50 ? 'CHALLENGE (3DS OTP)' : 'ALLOW (LOW RISK)'}
+              </div>
+            </div>
+          </div>
+          <div className="p-3 rounded-xl bg-bg-base/80 border border-border text-[11px] text-text-muted flex items-center justify-between">
+            <span>Evaluation Latency: &lt; 28ms P99</span>
+            <span className={fraudScore > 50 ? 'text-rose-400 font-bold' : 'text-emerald-400'}>
+              Risk Score: {fraudScore} / 100
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* 24. Redlock 5-Node Consensus (Distributed Lock) */}
+      {config.lldDiagramType === 'redlock-consensus' && (
+        <div className="space-y-3 font-mono text-xs">
+          <div className="flex items-center justify-between text-[11px] text-text-secondary">
+            <span>
+              <strong>Redlock 5-Node Multi-Master Quorum & Drift Clock</strong>:
+            </span>
+            <button
+              onClick={() => setRedlockLeaseOk((ok) => !ok)}
+              className="px-2.5 py-1 rounded bg-sky-500/20 text-sky-300 border border-sky-500/40 hover:bg-sky-500/30 transition text-[10px] font-bold"
+            >
+              Toggle Master-4 Failure
+            </button>
+          </div>
+          <div className="grid grid-cols-5 gap-2 text-center">
+            {['Master-1', 'Master-2', 'Master-3', 'Master-4', 'Master-5'].map((node, i) => {
+              const isDown = i === 3 && !redlockLeaseOk
+              return (
+                <div
+                  key={i}
+                  className={`p-3 rounded-xl border ${
+                    isDown
+                      ? 'border-rose-500/50 bg-rose-500/15 text-rose-400'
+                      : 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300 font-bold'
+                  }`}
+                >
+                  <div className="text-[10px]">{node}</div>
+                  <div className="text-[9px] mt-1">{isDown ? 'TIMEOUT' : 'LOCKED (TTL)'}</div>
+                </div>
+              )
+            })}
+          </div>
+          <div className="p-3 rounded-xl bg-bg-base/80 border border-border text-[11px] text-text-muted flex items-center justify-between">
+            <span>Quorum: {redlockLeaseOk ? '5/5 Nodes' : '4/5 Nodes (Quorum >= 3 OK)'}</span>
+            <span className="text-emerald-400">Fencing Token: Monotonic integer #9042</span>
+          </div>
+        </div>
+      )}
+
+      {/* 25. Vector Clock Causality Matrix (Dynamo KV) */}
+      {config.lldDiagramType === 'vector-clocks' && (
+        <div className="space-y-3 font-mono text-xs">
+          <div className="flex items-center justify-between text-[11px] text-text-secondary">
+            <span>
+              <strong>Dynamo Vector Clock Causality Matrix & Merkle Sync</strong>:
+            </span>
+            <button
+              onClick={() => setVectorClocks((prev) => ({ a: prev.a + 1, b: prev.b }))}
+              className="px-2.5 py-1 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 hover:bg-cyan-500/30 transition text-[10px] font-bold"
+            >
+              + Node-A Update (A:{vectorClocks.a + 1})
+            </button>
+          </div>
+          <div className="grid grid-cols-3 gap-2 text-center">
+            <div className="p-3 rounded-xl bg-bg-surface-2 border border-border">
+              <div className="text-[10px] text-text-muted">Node-A Vector</div>
+              <div className="text-cyan-300 text-[11px] font-bold mt-1">[A:{vectorClocks.a}, B:0]</div>
+            </div>
+            <div className="p-3 rounded-xl bg-bg-surface-2 border border-border">
+              <div className="text-[10px] text-text-muted">Node-B Vector</div>
+              <div className="text-cyan-300 text-[11px] font-bold mt-1">[A:1, B:{vectorClocks.b}]</div>
+            </div>
+            <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
+              <div className="text-[10px] text-emerald-400 font-bold">Causality Check</div>
+              <div className="text-emerald-300 text-[11px] mt-1">Descendant (Ordered)</div>
+            </div>
+          </div>
+          <div className="p-3 rounded-xl bg-bg-base/80 border border-border text-[11px] text-text-muted flex items-center justify-between">
+            <span>Sloppy Quorum: R=2, W=2, N=3</span>
+            <span className="text-cyan-400">Merkle Anti-Entropy Sync Every 500ms</span>
+          </div>
+        </div>
+      )}
+
+      {/* 26. Fanout Queues (Twitter Feed) */}
+      {config.lldDiagramType === 'fanout-queues' && (
+        <div className="space-y-3 font-mono text-xs">
+          <div className="flex items-center justify-between text-[11px] text-text-secondary">
+            <span>
+              <strong>Timeline Fanout-on-Write vs Fanout-on-Read Hybrid</strong>:
+            </span>
+            <button
+              onClick={() => setIsCelebrityUser((c) => !c)}
+              className={`px-2.5 py-1 rounded text-[10px] font-bold border transition ${
+                isCelebrityUser
+                  ? 'bg-purple-500/20 text-purple-300 border-purple-500/50'
+                  : 'bg-sky-500/20 text-sky-300 border-sky-500/50'
+              }`}
+            >
+              {isCelebrityUser ? 'Active: Celebrity User (>10M)' : 'Active: Normal User (<100k)'}
+            </button>
+          </div>
+          <div className="grid grid-cols-3 gap-2 text-center">
+            <div className="p-3 rounded-xl bg-bg-surface-2 border border-border">
+              <div className="text-[10px] text-text-muted">Follower Count</div>
+              <div className="text-text-primary text-[11px] font-bold mt-1">
+                {isCelebrityUser ? '42,000,000' : '2,400'}
+              </div>
+            </div>
+            <div className="p-3 rounded-xl bg-bg-surface-2 border border-border">
+              <div className="text-[10px] text-text-muted">Strategy</div>
+              <div className="text-sky-300 text-[11px] font-bold mt-1">
+                {isCelebrityUser ? 'Fanout-on-Read (Pull)' : 'Fanout-on-Write (Push)'}
+              </div>
+            </div>
+            <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
+              <div className="text-[10px] text-emerald-400 font-bold">Redis Operation</div>
+              <div className="text-emerald-300 text-[11px] mt-1">
+                {isCelebrityUser ? 'Merge on Read' : 'RPUSH Home Timelines'}
+              </div>
+            </div>
+          </div>
+          <div className="p-3 rounded-xl bg-bg-base/80 border border-border text-[11px] text-text-muted flex items-center justify-between">
+            <span>Memory: 800 tweet IDs * 8 bytes = 6.4 KB / user</span>
+            <span className="text-cyan-400">P99 Timeline Delivery &lt; 2.5 seconds</span>
+          </div>
+        </div>
+      )}
+
+      {/* 27. Mercator Crawler Frontier (Web Crawler) */}
+      {config.lldDiagramType === 'crawler-frontier' && (
+        <div className="space-y-3 font-mono text-xs">
+          <div className="flex items-center justify-between text-[11px] text-text-secondary">
+            <span>
+              <strong>Mercator URL Frontier with Host Politeness</strong>:
+            </span>
+            <button
+              onClick={() => setFrontierUrls((u) => u + 50)}
+              className="px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30 transition text-[10px] font-bold"
+            >
+              + Enqueue Batch ({frontierUrls} URLs)
+            </button>
+          </div>
+          <div className="grid grid-cols-3 gap-2 text-center">
+            <div className="p-3 rounded-xl bg-bg-surface-2 border border-border">
+              <div className="text-[10px] text-text-muted">Host Queue</div>
+              <div className="text-text-primary text-[11px] font-bold mt-1">wikipedia.org (FIFO)</div>
+            </div>
+            <div className="p-3 rounded-xl bg-bg-surface-2 border border-border">
+              <div className="text-[10px] text-text-muted">Crawl Delay</div>
+              <div className="text-amber-300 text-[11px] font-bold mt-1">1,000ms Politeness</div>
+            </div>
+            <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
+              <div className="text-[10px] text-emerald-400 font-bold">Bloom Filter</div>
+              <div className="text-emerald-300 text-[11px] mt-1">Unvisited (Dedup OK)</div>
+            </div>
+          </div>
+          <div className="p-3 rounded-xl bg-bg-base/80 border border-border text-[11px] text-text-muted flex items-center justify-between">
+            <span>Frontier Capacity: 10,000,000 URLs in queue</span>
+            <span className="text-emerald-400">Throughput: 25,000 pages / second</span>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
