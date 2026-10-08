@@ -73,21 +73,40 @@ test('the proxy allowlist covers subdomains but nothing else', () => {
 
 /* ── the proxy route itself ── */
 const { spawn } = require('node:child_process');
+const path = require('node:path');
 let proc, base;
+let serverLog = '';
+
 test.before(async () => {
-  const port = 4700 + Math.floor(Math.random() * 200);
+  const port = 25000 + Math.floor(Math.random() * 1000);
   base = `http://127.0.0.1:${port}`;
+  serverLog = '';
   proc = spawn(process.execPath, ['src/server.js'], {
-    env: { ...process.env, PORT: String(port), NODE_ENV: 'test' },
-    stdio: 'ignore',
+    cwd: path.join(__dirname, '..'),
+    env: {
+      ...process.env,
+      PORT: String(port),
+      NODE_ENV: 'test',
+      DISABLE_PUPPETEER: '1',
+      DISABLE_SCRAPER: '1',
+    },
+    stdio: ['ignore', 'pipe', 'pipe'],
   });
-  for (let i = 0; i < 80; i++) {
+  proc.stdout.on('data', (d) => { serverLog += d; });
+  proc.stderr.on('data', (d) => { serverLog += d; });
+  for (let i = 0; i < 160; i++) {
     try { if ((await fetch(`${base}/api/health`)).ok) return; } catch { /* not up yet */ }
+    if (proc.exitCode !== null) throw new Error(`server exited early (${proc.exitCode}): ${serverLog}`);
     await new Promise((r) => setTimeout(r, 250));
   }
-  throw new Error('server not ready');
+  throw new Error(`server not ready within 40s: ${serverLog}`);
 });
-test.after(() => proc?.kill('SIGKILL'));
+test.after(async () => {
+  if (!proc) return;
+  const done = new Promise((r) => proc.once('exit', r));
+  proc.kill('SIGKILL');
+  await done;
+});
 
 test('the image proxy refuses anything outside the allowlist', async () => {
   assert.equal((await fetch(`${base}/api/imgproxy?url=not-a-url`)).status, 400);
