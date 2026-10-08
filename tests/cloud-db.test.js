@@ -28,22 +28,28 @@ const env = {
   TURSO_AUTH_TOKEN: "",
   JUDGE_MODE: "remote",
   DISABLE_PUPPETEER: "1",
+  DISABLE_SCRAPER: "1",
   DB_PATH: path.join(tmp, "unused.db"),
 };
 
+let appLog = '';
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
-async function waitFor(url, tries = 120) {
+async function waitFor(url, tries = 160) {
   for (let i = 0; i < tries; i++) {
     try {
       const r = await fetch(url);
       if (r.ok) return;
     } catch {}
+    if (app && app.exitCode !== null) throw new Error(`app exited early (${app.exitCode}): ${appLog}`);
     await wait(250);
   }
-  throw new Error(`timeout waiting for ${url}`);
+  throw new Error(`timeout waiting for ${url}: ${appLog}`);
 }
 function startApp() {
-  app = spawn(process.execPath, ["src/server.js"], { cwd: ROOT, env, stdio: "ignore" });
+  appLog = '';
+  app = spawn(process.execPath, ["src/server.js"], { cwd: ROOT, env, stdio: ["ignore", "pipe", "pipe"] });
+  app.stdout.on("data", (d) => { appLog += d; });
+  app.stderr.on("data", (d) => { appLog += d; });
   return waitFor(`${BASE}/api/health`);
 }
 async function stopApp() {

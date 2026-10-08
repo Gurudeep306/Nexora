@@ -1,34 +1,46 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { spawn } = require('node:child_process');
+const path = require('node:path');
 
 let serverProc;
 let baseUrl;
 let cookieHeader = '';
 let sessionUsername = '';
+let serverLog = '';
 
-async function waitForServer(url, timeoutMs = 20000) {
+async function waitForServer(url, timeoutMs = 50000) {
   const start = Date.now();
   while (Date.now() - start < timeoutMs) {
     try {
       const res = await fetch(`${url}/api/health`);
       if (res.ok) return;
     } catch {}
-    await new Promise(r => setTimeout(r, 300));
+    if (serverProc && serverProc.exitCode !== null) {
+      throw new Error(`server exited early (${serverProc.exitCode}): ${serverLog}`);
+    }
+    await new Promise(r => setTimeout(r, 250));
   }
-  throw new Error(`Server did not become ready within ${timeoutMs}ms`);
+  throw new Error(`Server did not become ready within ${timeoutMs}ms: ${serverLog}`);
 }
 
 test.before(async () => {
-  const port = 3300 + Math.floor(Math.random() * 400);
+  const port = 21000 + Math.floor(Math.random() * 1000);
   baseUrl = `http://127.0.0.1:${port}`;
+  serverLog = '';
   serverProc = spawn(process.execPath, ['src/server.js'], {
-    cwd: process.cwd(),
-    env: { ...process.env, PORT: String(port), NODE_ENV: 'test' },
+    cwd: path.join(__dirname, '..'),
+    env: {
+      ...process.env,
+      PORT: String(port),
+      NODE_ENV: 'test',
+      DISABLE_PUPPETEER: '1',
+      DISABLE_SCRAPER: '1',
+    },
     stdio: ['ignore', 'pipe', 'pipe'],
   });
-  serverProc.stdout.on('data', () => {});
-  serverProc.stderr.on('data', () => {});
+  serverProc.stdout.on('data', (d) => { serverLog += d; });
+  serverProc.stderr.on('data', (d) => { serverLog += d; });
   await waitForServer(baseUrl);
 });
 

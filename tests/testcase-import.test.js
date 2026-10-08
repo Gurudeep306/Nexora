@@ -11,6 +11,7 @@ const path = require('node:path');
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'nexora-tcimport-'));
 const DB = path.join(tmp, 'test.db');
 let proc, base, cookie, pid;
+let serverLog = '';
 
 const call = async (method, p, ck, body) => {
   const r = await fetch(`${base}${p}`, {
@@ -22,16 +23,35 @@ const call = async (method, p, ck, body) => {
 };
 
 test.before(async () => {
-  const port = 4400 + Math.floor(Math.random() * 300);
+  const port = 26000 + Math.floor(Math.random() * 1000);
   base = `http://127.0.0.1:${port}`;
+  serverLog = '';
   proc = spawn(process.execPath, ['src/server.js'], {
-    env: { ...process.env, PORT: String(port), NODE_ENV: 'test', DB_PATH: DB },
-    stdio: 'ignore',
+    cwd: path.join(__dirname, '..'),
+    env: {
+      ...process.env,
+      PORT: String(port),
+      NODE_ENV: 'test',
+      DB_PATH: DB,
+      DISABLE_PUPPETEER: '1',
+      DISABLE_SCRAPER: '1',
+    },
+    stdio: ['ignore', 'pipe', 'pipe'],
   });
-  for (let i = 0; i < 80; i++) {
-    try { if ((await fetch(`${base}/api/health`)).ok) break; } catch { /* not up yet */ }
+  proc.stdout.on('data', (d) => { serverLog += d; });
+  proc.stderr.on('data', (d) => { serverLog += d; });
+  let ready = false;
+  for (let i = 0; i < 160; i++) {
+    try {
+      if ((await fetch(`${base}/api/health`)).ok) {
+        ready = true;
+        break;
+      }
+    } catch { /* not up yet */ }
+    if (proc.exitCode !== null) throw new Error(`server exited early (${proc.exitCode}): ${serverLog}`);
     await new Promise((r) => setTimeout(r, 250));
   }
+  if (!ready) throw new Error(`server not ready within 40s: ${serverLog}`);
   const { DatabaseSync } = require('node:sqlite');
   const db = new DatabaseSync(DB);
   db.exec("INSERT INTO problems(platform, problem_id, title, url, rating, tags) VALUES('codeforces','8881A','Sum it','https://x',800,'[]')");
@@ -41,7 +61,12 @@ test.before(async () => {
   const r = await call('POST', '/api/user/register', null, { username: name, email: `${name}@t.io`, password: 'secret123' });
   cookie = r.headers.get('set-cookie').split(';')[0];
 });
-test.after(() => proc?.kill('SIGKILL'));
+test.after(async () => {
+  if (!proc) return;
+  const done = new Promise((r) => proc.once('exit', r));
+  proc.kill('SIGKILL');
+  await done;
+});
 
 const SAMPLES = [
   { label: 'Sample 1', input: '3\n1 2 3\n', expected_output: '6' },

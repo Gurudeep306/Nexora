@@ -5833,7 +5833,9 @@ io.on("connection", (socket) => {
   });
 
   // Background pre-scraper: silently scrape un-cached statements
-  _backgroundScrape();
+  if (process.env.NODE_ENV !== "test" && process.env.DISABLE_SCRAPER !== "1") {
+    _backgroundScrape();
+  }
 })();
 
 /* ========== Background Pre-Scraper ========== */

@@ -10,13 +10,15 @@ const path = require('node:path');
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'nexora-peruser-'));
 const DB = path.join(tmp, 'test.db');
 let proc, base;
+let serverLog = '';
 
 async function waitFor(url) {
-  for (let i = 0; i < 80; i++) {
+  for (let i = 0; i < 160; i++) {
     try { if ((await fetch(url)).ok) return; } catch {}
+    if (proc && proc.exitCode !== null) throw new Error(`server exited early (${proc.exitCode}): ${serverLog}`);
     await new Promise((r) => setTimeout(r, 250));
   }
-  throw new Error('server not ready');
+  throw new Error(`server not ready within 40s: ${serverLog}`);
 }
 const call = async (method, p, cookie, body) => {
   const r = await fetch(`${base}${p}`, {
@@ -36,12 +38,23 @@ const stamp = Date.now().toString(36);
 let alice, bob, pid;
 
 test.before(async () => {
-  const port = 4100 + Math.floor(Math.random() * 300);
+  const port = 24000 + Math.floor(Math.random() * 1000);
   base = `http://127.0.0.1:${port}`;
+  serverLog = '';
   proc = spawn(process.execPath, ['src/server.js'], {
-    env: { ...process.env, PORT: String(port), NODE_ENV: 'test', DB_PATH: DB },
-    stdio: 'ignore',
+    cwd: path.join(__dirname, '..'),
+    env: {
+      ...process.env,
+      PORT: String(port),
+      NODE_ENV: 'test',
+      DB_PATH: DB,
+      DISABLE_PUPPETEER: '1',
+      DISABLE_SCRAPER: '1',
+    },
+    stdio: ['ignore', 'pipe', 'pipe'],
   });
+  proc.stdout.on('data', (d) => { serverLog += d; });
+  proc.stderr.on('data', (d) => { serverLog += d; });
   await waitFor(`${base}/api/health`);
   // Seed one problem + a testcase straight into the database file.
   const { DatabaseSync } = require('node:sqlite');
@@ -52,7 +65,12 @@ test.before(async () => {
   alice = await signup(`al${stamp}`);
   bob = await signup(`bo${stamp}`);
 });
-test.after(() => proc?.kill('SIGKILL'));
+test.after(async () => {
+  if (!proc) return;
+  const done = new Promise((r) => proc.once('exit', r));
+  proc.kill('SIGKILL');
+  await done;
+});
 
 test("a new account starts at zero", async () => {
   const s = await call('GET', '/api/stats', bob);

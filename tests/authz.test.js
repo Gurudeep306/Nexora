@@ -3,16 +3,19 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { spawn } = require('node:child_process');
+const path = require('node:path');
 
 let proc;
 let base;
+let serverLog = '';
 
 async function waitFor(url) {
-  for (let i = 0; i < 80; i++) {
+  for (let i = 0; i < 160; i++) {
     try { if ((await fetch(url)).ok) return; } catch {}
+    if (proc && proc.exitCode !== null) throw new Error(`server exited early (${proc.exitCode}): ${serverLog}`);
     await new Promise((r) => setTimeout(r, 250));
   }
-  throw new Error('server not ready');
+  throw new Error(`server not ready within 40s: ${serverLog}`);
 }
 async function signup(name) {
   const r = await fetch(`${base}/api/user/register`, {
@@ -34,18 +37,33 @@ let alice, bob, eve;
 const A = `al${Date.now().toString(36)}`, B = `bo${Date.now().toString(36)}`, E = `ev${Date.now().toString(36)}`;
 
 test.before(async () => {
-  const port = 3800 + Math.floor(Math.random() * 300);
+  const port = 22000 + Math.floor(Math.random() * 1000);
   base = `http://127.0.0.1:${port}`;
+  serverLog = '';
   proc = spawn(process.execPath, ['src/server.js'], {
-    env: { ...process.env, PORT: String(port), NODE_ENV: 'test' },
-    stdio: 'ignore',
+    cwd: path.join(__dirname, '..'),
+    env: {
+      ...process.env,
+      PORT: String(port),
+      NODE_ENV: 'test',
+      DISABLE_PUPPETEER: '1',
+      DISABLE_SCRAPER: '1',
+    },
+    stdio: ['ignore', 'pipe', 'pipe'],
   });
+  proc.stdout.on('data', (d) => { serverLog += d; });
+  proc.stderr.on('data', (d) => { serverLog += d; });
   await waitFor(`${base}/api/health`);
   alice = await signup(A);
   bob = await signup(B);
   eve = await signup(E);
 });
-test.after(() => proc?.kill('SIGKILL'));
+test.after(async () => {
+  if (!proc) return;
+  const done = new Promise((r) => proc.once('exit', r));
+  proc.kill('SIGKILL');
+  await done;
+});
 
 test('messages are sent as the logged-in user, not the claimed sender', async () => {
   const r = await (await call('POST', '/api/messages', eve, { from: A, to: B, content: 'hi from "alice"' })).json();
