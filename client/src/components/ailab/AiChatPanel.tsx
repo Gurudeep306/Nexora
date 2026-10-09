@@ -1,13 +1,35 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
-import { Bot, Eraser, FileText, Send, Sparkles, TriangleAlert, User, Film, PlayCircle } from 'lucide-react'
+import {
+  Bot,
+  Eraser,
+  FileText,
+  Send,
+  Sparkles,
+  TriangleAlert,
+  User,
+  Film,
+  PlayCircle,
+  Cpu,
+  Download,
+} from 'lucide-react'
 import { Button, Textarea, Tooltip, useToast } from '@/components/ui'
-import { api, ApiError } from '@/lib/api'
 import { useAuth } from '@/context/AuthContext'
 import { MarkdownLite } from './MarkdownLite'
 import { CyberMatrixPlayer } from './CyberMatrixPlayer'
-import { aiErrorMessage, type ChatMessage } from './types'
+import type { ChatMessage } from './types'
 import { cn } from '@/lib/utils'
+import {
+  llmEngine,
+  ENGINE_MODELS,
+  savedModelId,
+  rememberModelId,
+  webgpuSupported,
+  extractAnimationSpec,
+  stripAnimationBlock,
+  type ChatTurn,
+} from '@/lib/llm-engine'
+import { tutorSystemPrompt, animateSystemPrompt, wantsAnimation } from '@/lib/llm-prompts'
 
 const SUGGESTIONS = [
   'How do I recognize a binary search problem?',
@@ -30,6 +52,10 @@ export function AiChatPanel() {
   const toast = useToast()
   const storageKey = `nexora:ailab:chat:${user?.username ?? 'guest'}`
 
+  const engine = useSyncExternalStore(llmEngine.subscribe, llmEngine.getSnapshot, llmEngine.getSnapshot)
+  const [modelId, setModelId] = useState<string>(savedModelId)
+  const [showModelPicker, setShowModelPicker] = useState(false)
+
   const [messages, setMessages] = useState<ChatMessage[]>(() => {
     try {
       const raw = localStorage.getItem(storageKey)
@@ -43,37 +69,14 @@ export function AiChatPanel() {
   const [showContext, setShowContext] = useState(false)
   const [animateMode, setAnimateMode] = useState(false)
   const [statement, setStatement] = useState('')
+  /** Live-streamed text for the message currently being generated. */
+  const [streamText, setStreamText] = useState('')
+  const abortRef = useRef<AbortController | null>(null)
 
   const scrollRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
-  // Fetch isolated user chat history from Kronos database
-  useEffect(() => {
-    let active = true
-    async function loadUserHistory() {
-      try {
-        const res = await api.get<{ ok: boolean; username?: string; history?: any[] }>('/api/ai-chat/history', {
-          query: { username: user?.username || 'guest' }
-        })
-        if (active && res.ok && Array.isArray(res.history) && res.history.length > 0) {
-          const loaded: ChatMessage[] = res.history.map((h, i) => ({
-            id: h.id || (Date.now() + i),
-            role: h.role,
-            content: h.content,
-            visualization: h.visualization,
-            ts: h.createdAt ? new Date(h.createdAt).getTime() : Date.now(),
-          }))
-          setMessages(loaded)
-        }
-      } catch {
-        // Fall back gracefully to localStorage
-      }
-    }
-    void loadUserHistory()
-    return () => { active = false }
-  }, [user?.username])
-
-  // Persist locally for immediate offline cache
+  // Persist locally (conversation lives on-device now)
   useEffect(() => {
     try {
       localStorage.setItem(storageKey, JSON.stringify(messages.slice(-100)))
@@ -84,64 +87,83 @@ export function AiChatPanel() {
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
-  }, [messages, sending])
+  }, [messages, sending, streamText])
+
+  const ensureModel = useCallback(async (): Promise<boolean> => {
+    if (engine.state === 'ready' && engine.modelId === modelId) return true
+    try {
+      rememberModelId(modelId)
+      await llmEngine.load(modelId)
+      return true
+    } catch {
+      return false
+    }
+  }, [engine.state, engine.modelId, modelId])
 
   const send = useCallback(
     async (text: string, forceAnimate = false) => {
       const question = text.trim()
       if (!question || sending) return
-      const isAnimate = forceAnimate || animateMode || /animate|visualiz|simulation|pseudo-code|code/i.test(question)
+      const isAnimate = forceAnimate || animateMode || wantsAnimation(question)
       const userMsg: ChatMessage = { id: nextId++, role: 'user', content: question, ts: Date.now() }
+      const history = messages.slice(-10).map((m) => ({ role: m.role, content: m.content })) as ChatTurn[]
       setMessages((m) => [...m, userMsg])
       setInput('')
       setSending(true)
+      setStreamText('')
+
+      if (!(await ensureModel())) {
+        toast.error('Model unavailable', 'The on-device model could not start — check the model panel below.')
+        setMessages((m) => m.filter((x) => x.id !== userMsg.id))
+        setInput(question)
+        setSending(false)
+        return
+      }
+
+      const system = isAnimate ? animateSystemPrompt(question) : tutorSystemPrompt(statement.trim() || undefined)
+      const turns: ChatTurn[] = [
+        { role: 'system', content: system },
+        ...history,
+        { role: 'user', content: isAnimate ? question : question.slice(0, 4000) },
+      ]
+      const ctrl = new AbortController()
+      abortRef.current = ctrl
       try {
-        const res = await api.post<{ ok: boolean; reply?: string; visualization?: any; error?: string }>('/api/ai-chat', {
-          statement: statement.trim() || undefined,
-          question,
-          animate: isAnimate,
-          username: user?.username || 'guest',
-          history: messages.slice(-10).map((m) => ({ role: m.role, content: m.content })),
+        const full = await llmEngine.generate(turns, {
+          temperature: isAnimate ? 0.2 : 0.6,
+          maxTokens: isAnimate ? 2048 : 1024,
+          signal: ctrl.signal,
+          onChunk: (soFar) => setStreamText(soFar),
         })
-        if (!res.ok || !res.reply) {
-          throw new ApiError(200, res.error ?? 'No response generated')
-        }
+        const spec = isAnimate ? extractAnimationSpec(full) : null
+        const prose = spec ? stripAnimationBlock(full) : full
         setMessages((m) => [
           ...m,
-          {
-            id: nextId++,
-            role: 'assistant',
-            content: res.reply!,
-            visualization: res.visualization,
-            ts: Date.now(),
-          },
+          { id: nextId++, role: 'assistant', content: prose, visualization: spec ?? undefined, ts: Date.now() },
         ])
       } catch (err) {
-        const { title, hint } = aiErrorMessage(err)
-        toast.error(title, hint)
-        // put the question back so the user can retry without retyping
+        toast.error('Generation failed', err instanceof Error ? err.message : undefined)
         setMessages((m) => m.filter((x) => x.id !== userMsg.id))
         setInput(question)
       } finally {
+        abortRef.current = null
+        setStreamText('')
         setSending(false)
         inputRef.current?.focus()
       }
     },
-    [sending, statement, messages, animateMode, toast, user?.username],
+    [sending, statement, messages, animateMode, toast, ensureModel],
   )
 
-  const clearHistory = useCallback(async () => {
+  const clearHistory = useCallback(() => {
     setMessages([])
     try {
       localStorage.removeItem(storageKey)
-      await api.delete('/api/ai-chat/history', {
-        query: { username: user?.username || 'guest' }
-      })
-      toast.success('Chat Cleared', 'Your history has been erased.')
     } catch {
-      // ignore
+      /* ignore */
     }
-  }, [storageKey, user?.username, toast])
+    toast.success('Chat Cleared', 'Your conversation has been erased from this device.')
+  }, [storageKey, toast])
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -149,6 +171,8 @@ export function AiChatPanel() {
       void send(input)
     }
   }
+
+  const gpuOk = webgpuSupported()
 
   return (
     <div className="flex flex-col gap-3">
@@ -173,11 +197,32 @@ export function AiChatPanel() {
               ? 'border-pink-500/80 bg-gradient-to-r from-cyan/20 via-pink-500/20 to-purple-500/20 text-white shadow-[0_0_16px_rgba(236,72,153,0.4)]'
               : 'hover:border-cyan/50 hover:text-cyan'
           )}
-          title="Toggle Kronos Code & Pseudo-Code Kinetic 3D Animator"
+          title="Toggle 3D Kinetic Algorithm Animator"
         >
           <Film className="size-3.5 text-pink-400" />
-          <span>✨ Kronos 3D Animator</span>
+          <span>✨ 3D Animator</span>
           {animateMode && <span className="ml-1 size-1.5 rounded-full bg-cyan animate-pulse" />}
+        </Button>
+
+        <Button
+          variant={showModelPicker ? 'primary' : 'outline'}
+          size="sm"
+          onClick={() => setShowModelPicker((s) => !s)}
+          aria-expanded={showModelPicker}
+          className={cn(
+            engine.state === 'ready' && 'border-emerald-500/50 text-emerald-300 hover:text-emerald-200',
+            engine.state === 'error' && 'border-red-500/50 text-red-300',
+          )}
+          title="On-device model"
+        >
+          <Cpu className="size-3.5" />
+          {engine.state === 'ready'
+            ? ENGINE_MODELS.find((m) => m.id === engine.modelId)?.label ?? 'Model ready'
+            : engine.state === 'loading'
+              ? `Loading… ${Math.round(engine.progress * 100)}%`
+              : engine.state === 'error'
+                ? 'Model error'
+                : 'Load model'}
         </Button>
 
         {statement.trim() && (
@@ -190,7 +235,7 @@ export function AiChatPanel() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => void clearHistory()}
+              onClick={clearHistory}
               disabled={!messages.length}
               aria-label="Clear conversation"
             >
@@ -199,6 +244,82 @@ export function AiChatPanel() {
           </Tooltip>
         </div>
       </div>
+
+      {/* Model picker / downloader */}
+      <AnimatePresence initial={false}>
+        {showModelPicker && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden"
+          >
+            <div className="rounded-xl border border-border bg-surface p-4">
+              <div className="flex items-center gap-2 text-xs font-bold tracking-widest text-foreground uppercase">
+                <Download className="size-3.5 text-cyan" /> On-device model — pick one
+              </div>
+              <p className="mt-1 text-xs text-foreground-dim">
+                The model downloads once to your browser and then runs entirely on your GPU (WebGPU).
+                No servers, no API keys, fully private. Bigger models answer better but need more VRAM
+                and disk.
+              </p>
+              {!gpuOk && (
+                <p className="mt-2 flex items-center gap-1.5 rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-xs text-red-300">
+                  <TriangleAlert className="size-3.5 shrink-0" />
+                  WebGPU not detected in this browser. Use a recent Chrome, Edge or Safari 18+.
+                </p>
+              )}
+              <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                {ENGINE_MODELS.map((m) => {
+                  const selected = modelId === m.id
+                  const active = engine.modelId === m.id && engine.state === 'ready'
+                  return (
+                    <button
+                      key={m.id}
+                      onClick={() => {
+                        setModelId(m.id)
+                        rememberModelId(m.id)
+                        void llmEngine.load(m.id).catch(() => undefined)
+                      }}
+                      disabled={engine.state === 'loading'}
+                      className={cn(
+                        'cursor-pointer rounded-lg border px-3 py-2 text-left transition-all',
+                        selected ? 'border-cyan bg-cyan/10' : 'border-border bg-surface-2 hover:border-cyan/60',
+                        engine.state === 'loading' && 'cursor-wait opacity-60',
+                      )}
+                    >
+                      <span className="flex items-center justify-between text-xs font-semibold text-foreground">
+                        {m.label}
+                        {active && <span className="text-[10px] font-bold text-emerald-300">● ACTIVE</span>}
+                      </span>
+                      <span className="mt-0.5 block text-[11px] text-foreground-dim">{m.hint}</span>
+                    </button>
+                  )
+                })}
+              </div>
+              {engine.state === 'loading' && (
+                <div className="mt-3">
+                  <div className="h-1.5 w-full overflow-hidden rounded-full bg-surface-2">
+                    <motion.div
+                      className="h-full rounded-full bg-gradient-to-r from-cyan to-pink-500"
+                      animate={{ width: `${Math.max(engine.progress * 100, 2)}%` }}
+                      transition={{ duration: 0.3 }}
+                    />
+                  </div>
+                  <p className="mt-1.5 font-mono text-[10px] text-foreground-faint">{engine.progressText}</p>
+                </div>
+              )}
+              {engine.state === 'error' && (
+                <p className="mt-3 rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-xs text-red-300">
+                  {engine.error}
+                </p>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <AnimatePresence initial={false}>
         {showContext && (
           <motion.div
@@ -234,15 +355,30 @@ export function AiChatPanel() {
             </div>
             <div>
               <div className="inline-flex items-center gap-1.5 rounded-full border border-pink-500/30 bg-pink-500/10 px-2.5 py-0.5 text-[10px] font-bold tracking-widest text-pink-300 uppercase">
-                Sovereign Neural Core · No External APIs
+                On-Device Neural Engine · No Servers · No API Keys
               </div>
               <p className="mt-2 font-display text-base font-bold tracking-wider text-foreground">
-                KRONOS-1 AI INTELLIGENCE
+                {engine.state === 'ready' ? 'MODEL READY — ASK ANYTHING' : 'PRIVATE IN-BROWSER AI TUTOR'}
               </p>
               <p className="mx-auto mt-1 max-w-md text-xs text-foreground-dim">
-                100% In-house private neural brain. Socratic conceptual coaching + 3D kinetic
-                algorithm visualizer generated from scratch for any code or pseudo-code.
+                {engine.state === 'ready'
+                  ? 'A real open-weight model is running on your GPU right now. Socratic coaching + 3D kinetic algorithm visualizer.'
+                  : 'A real open-weight LLM runs entirely inside your browser via WebGPU — downloads once, then works offline. Load a model to begin.'}
               </p>
+              {engine.state !== 'ready' && (
+                <Button
+                  variant="primary"
+                  size="sm"
+                  className="mt-3"
+                  disabled={engine.state === 'loading' || !gpuOk}
+                  onClick={() => void llmEngine.load(modelId).catch(() => undefined)}
+                >
+                  <Download className="size-3.5" />
+                  {engine.state === 'loading'
+                    ? `Loading… ${Math.round(engine.progress * 100)}%`
+                    : `Load ${ENGINE_MODELS.find((m) => m.id === modelId)?.label ?? 'model'}`}
+                </Button>
+              )}
             </div>
             <div className="flex max-w-xl flex-wrap justify-center gap-2">
               {(animateMode ? ANIMATION_PRESETS.map((p) => p.label) : SUGGESTIONS).map((s) => {
@@ -313,24 +449,36 @@ export function AiChatPanel() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.2 }}
               className="flex items-end gap-2"
-              aria-label="Tutor is synthesizing response"
+              aria-label="Tutor is generating response"
             >
               <span className="flex size-8 shrink-0 items-center justify-center rounded-full border border-cyan/40 bg-surface-2 text-cyan">
                 <Bot className="size-4" />
               </span>
-              <div className="flex items-center gap-1.5 rounded-xl rounded-bl-sm border border-cyan/30 bg-surface-2 px-4 py-3.5">
-                {[0, 1, 2].map((d) => (
-                  <motion.span
-                    key={d}
-                    className="size-1.5 rounded-full bg-cyan"
-                    animate={{ opacity: [0.3, 1, 0.3], y: [0, -3, 0] }}
-                    transition={{ duration: 1, repeat: Infinity, delay: d * 0.15 }}
-                  />
-                ))}
-                {animateMode && (
-                  <span className="ml-2 font-mono text-[10px] text-pink-400">Synthesizing 3D kinetic frames…</span>
-                )}
-              </div>
+              {streamText ? (
+                <div className="max-w-[85%] rounded-xl rounded-bl-sm border border-cyan/30 bg-surface-2 px-4 py-3 text-sm leading-relaxed text-foreground-dim">
+                  <MarkdownLite text={streamText} />
+                  <span className="ml-0.5 inline-block size-1.5 animate-pulse rounded-full bg-cyan align-middle" />
+                </div>
+              ) : (
+                <div className="flex items-center gap-1.5 rounded-xl rounded-bl-sm border border-cyan/30 bg-surface-2 px-4 py-3.5">
+                  {[0, 1, 2].map((d) => (
+                    <motion.span
+                      key={d}
+                      className="size-1.5 rounded-full bg-cyan"
+                      animate={{ opacity: [0.3, 1, 0.3], y: [0, -3, 0] }}
+                      transition={{ duration: 1, repeat: Infinity, delay: d * 0.15 }}
+                    />
+                  ))}
+                  {engine.state === 'loading' && (
+                    <span className="ml-2 font-mono text-[10px] text-cyan">
+                      Loading model… {Math.round(engine.progress * 100)}%
+                    </span>
+                  )}
+                  {animateMode && engine.state !== 'loading' && (
+                    <span className="ml-2 font-mono text-[10px] text-pink-400">Synthesizing 3D kinetic frames...</span>
+                  )}
+                </div>
+              )}
             </motion.div>
           )}
         </div>
@@ -362,9 +510,11 @@ export function AiChatPanel() {
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={onKeyDown}
           placeholder={
-            animateMode
-              ? 'Paste code or pseudo-code to animate… (e.g. while (left < right) swap(arr[left++], arr[right--]))'
-              : 'Ask the tutor… (Enter to send, Shift+Enter for newline)'
+            engine.state !== 'ready'
+              ? 'Load the on-device model first (button above)…'
+              : animateMode
+                ? 'Paste code or pseudo-code to animate... (e.g. while (left < right) swap(arr[left++], arr[right--]))'
+                : 'Ask the tutor... (Enter to send, Shift+Enter for newline)'
           }
           aria-label="Message the AI tutor"
           rows={2}
@@ -374,7 +524,7 @@ export function AiChatPanel() {
         <Button
           onClick={() => void send(input)}
           loading={sending}
-          disabled={!input.trim()}
+          disabled={!input.trim() || (!gpuOk && engine.state !== 'ready')}
           aria-label="Send message"
           className={cn(
             'h-11',
@@ -386,7 +536,10 @@ export function AiChatPanel() {
         </Button>
       </div>
       <p className="flex items-center gap-1.5 text-[11px] text-foreground-faint">
-        <TriangleAlert className="size-3 text-pink-400" /> Powered by Kronos-1 Sovereign Intelligence · 100% in-house private neural engine · No external APIs.
+        <TriangleAlert className="size-3 text-pink-400" />
+        {engine.state === 'ready'
+          ? `Running ${ENGINE_MODELS.find((m) => m.id === engine.modelId)?.label ?? 'local model'} on your GPU · 100% on-device · no servers, no API keys.`
+          : 'Powered by a real open-weight LLM running in your browser via WebGPU · downloads once, works offline · no servers, no API keys.'}
       </p>
     </div>
   )
