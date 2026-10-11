@@ -99,6 +99,10 @@ export interface JudgeResponse {
   compileError: string | null
   results: JudgeCaseResult[]
   engine?: string
+  /** false when the verdict did not count toward progress (e.g. no stored tests) */
+  recorded?: boolean
+  /** Explanation when nothing could be judged */
+  message?: string
 }
 
 /* POST /api/ai-fix */

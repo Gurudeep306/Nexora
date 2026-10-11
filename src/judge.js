@@ -139,6 +139,30 @@ function normalizeCpp(code) {
   return code;
 }
 
+/* Spawn a compiler with no stdin, so `#include "/dev/stdin"` reads EOF instead
+   of hanging, and a wall-clock budget. On timeout the whole process group is
+   killed and an explanation is pushed onto stderr, so every compile helper's
+   existing `close` handler rejects with a CE carrying that message. The text
+   deliberately avoids "timed out": runLang treats that phrase as a missing
+   toolchain and would retry the same bomb on a remote sandbox. */
+const COMPILE_TIMEOUT = Number(process.env.JUDGE_COMPILE_TIMEOUT_MS) || 30000;
+function spawnCompiler(cmd, args, timeoutMs = COMPILE_TIMEOUT) {
+  const proc = spawn(cmd, args, {
+    stdio: ['ignore', 'pipe', 'pipe'],
+    detached: process.platform !== 'win32',
+  });
+  const timer = setTimeout(() => {
+    proc.stderr.emit('data', `\nCompilation exceeded the ${Math.round(timeoutMs / 1000)}s limit`);
+    try {
+      if (process.platform !== 'win32') process.kill(-proc.pid, 'SIGKILL');
+      else proc.kill('SIGKILL');
+    } catch { try { proc.kill('SIGKILL'); } catch {} }
+  }, timeoutMs);
+  proc.on('close', () => clearTimeout(timer));
+  proc.on('error', () => clearTimeout(timer));
+  return proc;
+}
+
 /* Compile C++ source to binary, return binary path or throw */
 function compileCpp(code) {
   return new Promise((resolve, reject) => {
@@ -148,7 +172,7 @@ function compileCpp(code) {
     code = normalizeCpp(code);
     fs.writeFileSync(src, code);
 
-    const compiler = spawn('clang++', [
+    const compiler = spawnCompiler('clang++', [
       '-std=c++20', '-O2', '-o', bin, src,
       '-DONLINE_JUDGE',
     ]);
@@ -179,7 +203,7 @@ function compileJava(code) {
     const src = path.join(dir, `${className}.java`);
     fs.writeFileSync(src, code);
 
-    const compiler = spawn('javac', [src]);
+    const compiler = spawnCompiler('javac', [src]);
     let stderr = '';
     compiler.stderr.on('data', d => { stderr += d; });
     compiler.on('close', exitCode => {
@@ -210,7 +234,7 @@ function compileC(code) {
     const src = path.join(TMP, `arena_${id}.c`);
     const bin = path.join(TMP, `arena_${id}`);
     fs.writeFileSync(src, code);
-    const compiler = spawn('cc', ['-std=c17', '-O2', '-o', bin, src, '-lm']);
+    const compiler = spawnCompiler('cc', ['-std=c17', '-O2', '-o', bin, src, '-lm']);
     let stderr = '';
     compiler.stderr.on('data', d => { stderr += d; });
     compiler.on('close', exitCode => {
@@ -230,7 +254,7 @@ function compileCSharp(code) {
     const bin = path.join(TMP, `arena_${id}.exe`);
     fs.writeFileSync(src, code);
     // Try mcs (mono) first
-    const compiler = spawn('mcs', ['-out:' + bin, src]);
+    const compiler = spawnCompiler('mcs', ['-out:' + bin, src]);
     let stderr = '';
     compiler.stderr.on('data', d => { stderr += d; });
     compiler.on('close', exitCode => {
@@ -252,7 +276,7 @@ function compileGo(code) {
     const src = path.join(TMP, `arena_${id}.go`);
     const bin = path.join(TMP, `arena_${id}_go`);
     fs.writeFileSync(src, code);
-    const compiler = spawn('go', ['build', '-o', bin, src]);
+    const compiler = spawnCompiler('go', ['build', '-o', bin, src]);
     let stderr = '';
     compiler.stderr.on('data', d => { stderr += d; });
     compiler.on('close', exitCode => {
@@ -271,7 +295,7 @@ function compileRust(code) {
     const src = path.join(TMP, `arena_${id}.rs`);
     const bin = path.join(TMP, `arena_${id}_rs`);
     fs.writeFileSync(src, code);
-    const compiler = spawn('rustc', ['-O', '-o', bin, src]);
+    const compiler = spawnCompiler('rustc', ['-O', '-o', bin, src]);
     let stderr = '';
     compiler.stderr.on('data', d => { stderr += d; });
     compiler.on('close', exitCode => {
@@ -290,7 +314,7 @@ function compileKotlin(code) {
     const src = path.join(TMP, `arena_${id}.kt`);
     const jar = path.join(TMP, `arena_${id}.jar`);
     fs.writeFileSync(src, code);
-    const compiler = spawn('kotlinc', [src, '-include-runtime', '-d', jar]);
+    const compiler = spawnCompiler('kotlinc', [src, '-include-runtime', '-d', jar], 130000);
     let stderr = '';
     // kotlinc -include-runtime is slow (30-90s cold); don't hang forever.
     const compileTimeout = setTimeout(() => {
@@ -316,7 +340,7 @@ function compileSwift(code) {
     const src = path.join(TMP, `arena_${id}.swift`);
     const bin = path.join(TMP, `arena_${id}_swift`);
     fs.writeFileSync(src, code);
-    const compiler = spawn('swiftc', ['-O', '-o', bin, src]);
+    const compiler = spawnCompiler('swiftc', ['-O', '-o', bin, src], 40000);
     let stderr = '';
     const compileTimeout = setTimeout(() => {
       compiler.kill('SIGKILL');
@@ -340,7 +364,7 @@ function compileObjectiveC(code) {
     const src = path.join(TMP, `arena_${id}.m`);
     const bin = path.join(TMP, `arena_${id}_objc`);
     fs.writeFileSync(src, code);
-    const compiler = spawn('clang', ['-framework', 'Foundation', '-o', bin, src]);
+    const compiler = spawnCompiler('clang', ['-framework', 'Foundation', '-o', bin, src]);
     let stderr = '';
     compiler.stderr.on('data', d => { stderr += d; });
     compiler.on('close', exitCode => {
@@ -358,7 +382,7 @@ function compilePascal(code) {
     const src = path.join(TMP, `arena_${id}.pas`);
     const bin = path.join(TMP, `arena_${id}_pas`);
     fs.writeFileSync(src, code);
-    const compiler = spawn('fpc', ['-o' + bin, src]);
+    const compiler = spawnCompiler('fpc', ['-o' + bin, src]);
     let stderr = '';
     compiler.stderr.on('data', d => { stderr += d; });
     compiler.stdout.on('data', d => { stderr += d; });
@@ -420,7 +444,7 @@ function runProcess(cmd, args, input, timeLimitMs) {
       } else if (exitCode !== 0) {
         resolve({ stdout, stderr, exitCode, timeMs, verdict: 'RE' });
       } else {
-        resolve({ stdout: stdout.trim(), stderr: stderr.trim(), exitCode, timeMs, verdict: null });
+        resolve({ stdout: stdout.trimEnd(), stderr: stderr.trim(), exitCode, timeMs, verdict: null });
       }
     });
     proc.on('error', (err) => {
@@ -680,8 +704,11 @@ function compareOutput(expected, actual) {
   return normalizeOut(expected) === normalizeOut(actual);
 }
 
-/* Roll per-testcase verdicts up into one overall verdict. */
+/* Roll per-testcase verdicts up into one overall verdict. Nothing was checked
+   when there are no results, so that can never be an Accepted. */
+const NO_TESTS = 'NO_TESTS';
 function overallVerdict(results) {
+  if (!results || !results.length) return NO_TESTS;
   if (results.every(r => r.passed)) return 'AC';
   for (const v of ['CE', 'TLE', 'RE']) {
     if (results.some(r => r.verdict === v)) return v;
@@ -738,7 +765,7 @@ async function _judgeRemote(code, testcases, lang) {
       results: [],
     };
   }
-  if (!testcases.length) return { verdict: 'AC', compileError: null, results: [] };
+  if (!testcases.length) return { verdict: NO_TESTS, compileError: null, results: [] };
 
   // Unique inputs, in first-seen order.
   const order = [];
@@ -791,6 +818,9 @@ async function _judgeRemote(code, testcases, lang) {
 async function judge(code, testcases, lang = 'cpp') {
   const cfg = LANG_CONFIG[lang];
   if (!cfg) return { verdict: 'CE', compileError: `Unsupported language: ${lang}`, results: [] };
+  if (!Array.isArray(testcases) || !testcases.length) {
+    return { verdict: NO_TESTS, compileError: null, results: [] };
+  }
 
   if (REMOTE_ONLY) {
     if (hasRemote(lang)) return await _judgeRemote(code, testcases, lang);
@@ -917,4 +947,5 @@ module.exports = {
   judge, quickRun, compileCpp, runBinary, runProcess, runLang, normalizeCpp,
   LANG_CONFIG, LANG_TIME_LIMIT, hasRemote, engineFor, REMOTE_ONLY,
   compareOutput, normalizeOut, overallVerdict, clearRemoteCache, clearRuntimeCache,
+  NO_TESTS,
 };
