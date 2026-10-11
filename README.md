@@ -63,11 +63,13 @@ Support for 30+ programming languages with verdicts: AC, WA, TLE, RE, CE, MLE
 - **Forge Roadmap** - Software development career paths with milestones
 
 ### 🤖 **AI Integration**
-- **AI Chat** - Context-aware tutoring without code answers
-- **Code Completion** - Inline ghost-text suggestions
-- **Error Detection** - Automatic syntax error repair
-- **AI Battle** - 1v1 time-based racing against AI
-- Powered by **Groq API** with LLaMA models
+One server-side AI agent (`src/ai/`), powered only by **Groq**, behind every AI feature:
+- **Nexora AI assistant** - a slide-over on every page (⌘J / Ctrl+J) that sees the page you're on, streams answers, can look up your stats, weak topics, problems, submissions, GATE questions and course content, and suggest pages to open
+- **Tutor pedagogy** - graded hints (nudge → approach → pseudocode) on problems you haven't solved; full solutions only once you have
+- **Coach, code completion, AI fix** - live code insight, tricky tests and verdict explanations; inline ghost text; minimal syntax fixes
+- **Translation, AI problem finder, ExplainLab notes/quizzes, Studio drafts, GATE debrief** and the AI Lab's 3D algorithm animator
+- Needs `GROQ_API_KEY`; without it AI endpoints answer `503` and the rest of the site works. Per-user rate limits and a daily token budget (`AI_DAILY_TOKENS`) apply.
+- **AI Battle** - 1v1 time-based racing against a simulated opponent
 
 ### 🎨 **Editor & IDE**
 - **Monaco Editor** - Professional code editor with syntax highlighting
@@ -92,7 +94,7 @@ Support for 30+ programming languages with verdicts: AC, WA, TLE, RE, CE, MLE
 - **Real-time:** Socket.io
 - **Web Scraping:** Cheerio (HTTP), Puppeteer (Browser automation)
 - **Authentication:** Passport.js (GitHub & Google OAuth)
-- **AI:** Groq API (LLaMA models)
+- **AI:** Groq (OpenAI-compatible API via fetch) — one server-side agent in `src/ai/`
 - **Session Management:** Express-session
 
 ### Frontend
@@ -130,7 +132,9 @@ Create a `.env` file in the root directory:
 ```env
 PORT=3000
 NODE_ENV=development
-GROQ_API_KEY=your_groq_api_key_here
+GROQ_API_KEY=your_groq_api_key_here   # optional: AI features are off without it
+# GROQ_MODEL=openai/gpt-oss-120b  GROQ_FAST_MODEL=llama-3.1-8b-instant
+# GROQ_FALLBACK_MODEL=llama-3.3-70b-versatile  AI_DAILY_TOKENS=200000
 GITHUB_CLIENT_ID=your_github_client_id
 GITHUB_CLIENT_SECRET=your_github_client_secret
 GOOGLE_CLIENT_ID=your_google_client_id
@@ -231,10 +235,12 @@ nexora/
 - `GET /api/rooms` - Active rooms list
 - `POST /api/room/messages` - Send room chat
 
-### AI Integration
-- `POST /api/ai-chat` - Context-aware tutoring
-- `POST /api/ai-complete` - Code completion
-- `POST /api/ai-fix` - Error detection and fixing
+### AI Agent (all require login)
+- `POST /api/agent/chat` - Streaming assistant (Server-Sent Events: `meta`, `token`, `tool`, `action`, `animation`, `done`, `error`)
+- `POST /api/agent/task` - One-shot tasks: `complete`, `fix`, `tutor`, `coach_insight`, `coach_tests`, `coach_explain`, `coach_ask`, `animate`, `gate_narrative`, `studio_author` (studio rights)
+- `GET /api/agent/conversations`, `GET|DELETE /api/agent/conversations/:id` - Your own chat history
+- `GET /api/agent/status` - Whether AI is configured, and today's token use
+- `POST /api/translate`, `POST /api/ai/find-problems`, ExplainLab `/ai/*` - feature endpoints that use the same agent
 
 ### User Management
 - `POST /api/register` - User registration
