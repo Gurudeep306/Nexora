@@ -74,12 +74,34 @@ const RULES = [
   // ── login required: code execution, AI, personal data writes ────
   ["POST", /^\/api\/(ai\/coach|translate\/detect|judge|run|translate|ai-chat|ai-complete|ai-fix|decomposition|code-replay|testcases(\/bulk)?|ai-battle\/start|ai-battle\/complete|dashboard-layout)$/, { login: true }],
   ["PUT|DELETE", /^\/api\/testcases\/[^/]+$/, { login: true }],
+  // AI chat history is private: only ever your own.
+  ["GET|DELETE", /^\/api\/ai-chat\/history$/, { login: true }],
   ["POST", /^\/api\/(ai-problems|tutorials|forge\/topic)\/[^/]+\/(progress|complete|status)$/, { login: true }],
 ];
+
+// The session caches the user's role from sign-in time. Re-read it from the
+// database (one primary-key lookup) so a demoted admin loses admin rights on
+// their very next request, and a deleted account stops working.
+async function refreshSessionRole(req) {
+  const cached = req.session?.user;
+  if (!cached?.username) return;
+  const row = await get("SELECT role FROM users WHERE username=?", [cached.username]);
+  if (!row) {
+    delete req.session.user;
+    return;
+  }
+  const role = row.role || "member";
+  if (cached.role !== role) req.session.user = { ...cached, role };
+}
 
 function authz() {
   return async (req, res, next) => {
     if (!req.path.startsWith("/api/")) return next();
+    try {
+      await refreshSessionRole(req);
+    } catch (e) {
+      return next(e); // fail closed rather than trust a stale role
+    }
     const rule = RULES.find(([m, re]) => m.split("|").includes(req.method) && re.test(req.path));
     if (!rule) return next();
     const [, re, r] = rule;
