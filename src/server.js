@@ -1186,7 +1186,42 @@ function imgCacheGet(url) {
   return hit;
 }
 
-const MEDIA_TYPE_OK = /^(image|video|audio)\//;
+// Host/bucket allowlist and the raster-image/video/audio type allowlist (no SVG).
+const { isProxyableUrl, isProxyableMediaType } = require("./statement-media");
+
+/** Drop an unread response body so its socket is released (node-fetch stream or web stream). */
+function discardBody(upstream) {
+  const body = upstream && upstream.body;
+  if (!body) return;
+  try {
+    if (typeof body.destroy === "function") body.destroy();
+    else if (typeof body.cancel === "function") body.cancel().catch(() => {});
+  } catch {}
+}
+
+/** Read a fetch body into a Buffer, aborting as soon as it passes `max` bytes. */
+async function readBodyCapped(upstream, max) {
+  const declared = Number(upstream.headers.get("content-length"));
+  if (Number.isFinite(declared) && declared > max) {
+    discardBody(upstream);
+    throw new Error("media too large");
+  }
+  if (!upstream.body) return Buffer.alloc(0);
+  const parts = [];
+  let total = 0;
+  // node-fetch bodies are Node streams and web bodies are ReadableStreams;
+  // both are async-iterable, and returning early from the loop destroys/cancels them.
+  for await (const chunk of upstream.body) {
+    const b = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
+    total += b.length;
+    if (total > max) {
+      discardBody(upstream);
+      throw new Error("media too large");
+    }
+    parts.push(b);
+  }
+  return Buffer.concat(parts, total);
+}
 
 async function fetchProxiedMedia(startUrl) {
   let target = startUrl;
@@ -1200,7 +1235,8 @@ async function fetchProxiedMedia(startUrl) {
     const loc = upstream.headers.get("location");
     if (!loc) break;
     const next = new URL(loc, target);
-    if (next.protocol !== "https:" || !isProxyableHost(next.hostname)) break;
+    if (!isProxyableUrl(next)) break;
+    discardBody(upstream);
     target = next;
     upstream = await fetch(target, {
       headers: { "User-Agent": SCRAPE_UA, Accept: "image/*,video/*,audio/*,*/*;q=0.8" },
@@ -1208,12 +1244,13 @@ async function fetchProxiedMedia(startUrl) {
       signal: AbortSignal.timeout(15000),
     });
   }
-  const ctype = (upstream.headers.get("content-type") || "").split(";")[0].trim();
-  if (!upstream.ok || !MEDIA_TYPE_OK.test(ctype)) {
+  const ctype = (upstream.headers.get("content-type") || "").split(";")[0].trim().toLowerCase();
+  if (!upstream.ok || !isProxyableMediaType(ctype)) {
+    discardBody(upstream);
     throw new Error(`upstream ${upstream.status} ${ctype || "unknown type"}`);
   }
-  const buf = Buffer.from(await upstream.arrayBuffer());
-  if (!buf.length || buf.length > IMG_MAX_BYTES) throw new Error("media too large or empty");
+  const buf = await readBodyCapped(upstream, IMG_MAX_BYTES);
+  if (!buf.length) throw new Error("media empty");
   return {
     buf,
     ctype,
@@ -1230,16 +1267,21 @@ app.get("/api/imgproxy", async (req, res) => {
   } catch {
     return res.status(400).end();
   }
-  if (parsed.protocol !== "https:" || !isProxyableHost(parsed.hostname)) {
+  if (!isProxyableUrl(parsed)) {
     return res.status(403).end();
   }
   const key = parsed.toString();
 
   const serve = (entry) => {
+    // Third-party bytes on our origin: never sniffed, never scriptable.
+    const ext = (entry.ctype.split("/")[1] || "bin").replace(/[^a-z0-9]/gi, "").slice(0, 8) || "bin";
     res.set({
       "Content-Type": entry.ctype,
       "Cache-Control": "public, max-age=604800, immutable",
       ETag: entry.etag,
+      "Content-Security-Policy": "default-src 'none'; sandbox",
+      "X-Content-Type-Options": "nosniff",
+      "Content-Disposition": `inline; filename="media.${ext}"`,
     });
     // The browser already has this byte-for-byte: skip the body.
     if (req.headers["if-none-match"] === entry.etag) return res.status(304).end();

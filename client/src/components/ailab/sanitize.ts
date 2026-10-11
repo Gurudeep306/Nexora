@@ -1,28 +1,85 @@
+import DOMPurify from 'dompurify'
+
 /**
- * Minimal HTML sanitizer for server-seeded rich text (tutorial content, scraped
- * problem statements). Strips scriptable elements and event-handler attributes.
- * Content originates from our own backend, this is defense-in-depth only.
+ * HTML sanitizer for every piece of rich text we inject with
+ * dangerouslySetInnerHTML: scraped problem statements, user-authored Workshop
+ * statements, translations and tutorial content. Backed by DOMPurify, which
+ * parses with the browser's own HTML parser, so the usual regex bypasses
+ * (unquoted/slash-separated handlers, entity-encoded `javascript:` URLs,
+ * nested tags) have nothing to slip through.
  *
- * Video embeds from YouTube / Vimeo are kept (sandboxed); every other iframe goes.
+ * Normal statement markup (tables, code, images, video/audio, inline SVG and
+ * MathML) is kept. Video embeds from YouTube / Vimeo are kept, sandboxed; every
+ * other iframe goes. Links that open a new tab get rel="noopener noreferrer".
  */
-const EMBED_OK = /^https:\/\/(www\.youtube\.com\/embed\/|www\.youtube-nocookie\.com\/embed\/|player\.vimeo\.com\/video\/)[\w\-/?=&%.]+$/i
+
+const EMBED_HOSTS = new Set(['www.youtube.com', 'youtube.com', 'www.youtube-nocookie.com', 'youtube-nocookie.com', 'player.vimeo.com'])
+const EMBED_PATH = /^\/(embed|video)\//
+
+/** The https URL of an allowed video embed, or null. */
+function embedUrl(src: string | null): string | null {
+  if (!src) return null
+  let u: URL
+  try {
+    u = new URL(src.trim(), 'https://invalid.invalid')
+  } catch {
+    return null
+  }
+  if (u.protocol !== 'https:' || !EMBED_HOSTS.has(u.hostname.toLowerCase())) return null
+  if (!EMBED_PATH.test(u.pathname)) return null
+  return u.toString()
+}
+
+let purifier: ReturnType<typeof DOMPurify> | null = null
+
+function getPurifier() {
+  if (purifier) return purifier
+  const p = DOMPurify(window)
+
+  p.addHook('afterSanitizeAttributes', (node) => {
+    const el = node as Element
+    if (el.nodeName === 'IFRAME') {
+      const url = embedUrl(el.getAttribute('src'))
+      if (!url) {
+        el.parentNode?.removeChild(el)
+        return
+      }
+      el.setAttribute('src', url)
+      el.setAttribute('loading', 'lazy')
+      el.setAttribute('referrerpolicy', 'no-referrer')
+      el.setAttribute('allow', 'encrypted-media; picture-in-picture; fullscreen')
+      el.setAttribute('allowfullscreen', '')
+      el.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-presentation')
+      return
+    }
+    if (el.hasAttribute('target')) {
+      if (el.getAttribute('target') === '_blank') el.setAttribute('rel', 'noopener noreferrer')
+      else el.removeAttribute('target')
+    }
+  })
+
+  purifier = p
+  return p
+}
 
 export function sanitizeHtml(raw: string): string {
-  const embeds: string[] = []
-  const withTokens = raw.replace(/<\s*iframe\b[^>]*\bsrc\s*=\s*(["'])([^"']+)\1[^>]*>\s*<\s*\/\s*iframe\s*>/gi, (m, _q, src: string) => {
-    const url = src.replace(/&amp;/g, '&').replace(/^\/\//, 'https://')
-    if (!EMBED_OK.test(url)) return m
-    embeds.push(
-      `<div class="nx-embed"><iframe src="${url.replace(/"/g, '&quot;')}" loading="lazy" referrerpolicy="no-referrer" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen sandbox="allow-scripts allow-same-origin allow-presentation"></iframe></div>`,
-    )
-    return `\u0000EMBED${embeds.length - 1}\u0000`
+  if (!raw) return ''
+  const body = getPurifier().sanitize(raw, {
+    ADD_TAGS: ['iframe'],
+    ADD_ATTR: ['target', 'allowfullscreen', 'frameborder', 'loading', 'referrerpolicy', 'decoding'],
+    // No page-wide CSS or fake login forms from untrusted statements.
+    FORBID_TAGS: ['style', 'form', 'input', 'button', 'textarea', 'select', 'option'],
+    FORBID_ATTR: ['srcdoc', 'formaction'],
+    RETURN_DOM: true,
+  }) as HTMLElement
+  // Wrap each surviving embed in the responsive container the CSS expects.
+  body.querySelectorAll('iframe').forEach((f) => {
+    const parent = f.parentElement
+    if (parent && parent.classList.contains('nx-embed')) return
+    const wrap = f.ownerDocument.createElement('div')
+    wrap.className = 'nx-embed'
+    f.replaceWith(wrap)
+    wrap.appendChild(f)
   })
-  return withTokens
-    .replace(/<\s*(script|iframe|object|embed|link|meta|style)[^>]*>[\s\S]*?<\s*\/\s*\1\s*>/gi, '')
-    .replace(/<\s*(script|iframe|object|embed|link|meta|style)[^>]*\/?\s*>/gi, '')
-    .replace(/\son\w+\s*=\s*"[^"]*"/gi, '')
-    .replace(/\son\w+\s*=\s*'[^']*'/gi, '')
-    .replace(/\son\w+\s*=\s*[^\s>]+/gi, '')
-    .replace(/javascript\s*:/gi, '')
-    .replace(/\u0000EMBED(\d+)\u0000/g, (_m, i: string) => embeds[Number(i)] ?? '')
+  return body.innerHTML
 }
