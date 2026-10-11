@@ -322,7 +322,7 @@ function RoomView({
   // Join socket room, wire listeners, leave on unmount
   useEffect(() => {
     if (!socket) return
-    socket.emit('join-solve-room', { roomId, username: meRef.current })
+    socket.emit('join-solve-room', { roomId })
     const onMembers = ({ roomId: rid, members: m }: { roomId: string; members: string[] }) => {
       if (rid === roomId) setMembers(m)
     }
@@ -360,7 +360,7 @@ function RoomView({
       socket.off('room-members-updated', onMembers)
       socket.off('room-chat-message', onChat)
       socket.off('room-code-update', onCode)
-      socket.emit('leave-solve-room', { roomId, username: meRef.current })
+      socket.emit('leave-solve-room', { roomId })
     }
   }, [socket, roomId])
 
@@ -375,7 +375,7 @@ function RoomView({
       toast.warning('Offline', 'Room chat needs the realtime socket.')
       return
     }
-    socket.emit('room-chat', { roomId, username: meRef.current, content: content.slice(0, 2000) })
+    socket.emit('room-chat', { roomId, content: content.slice(0, 2000) })
     setChatDraft('')
     // Optimistic echo is unnecessary — server broadcasts back to sender too (io.to room).
   }, [chatDraft, socket, roomId, toast])
@@ -387,7 +387,7 @@ function RoomView({
     // Throttle code-sync emits to ~4/sec
     if (emitTimer.current) clearTimeout(emitTimer.current)
     emitTimer.current = setTimeout(() => {
-      socket?.emit('room-code-change', { roomId, code: codeRef.current, username: meRef.current })
+      socket?.emit('room-code-change', { roomId, code: codeRef.current })
     }, 250)
   }
 

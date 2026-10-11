@@ -3,9 +3,12 @@ const { errMessage } = require("../http-error");
 const multer = require('multer');
 const { persistUpload, listUploads } = require('../upload-store');
 const forgePaths = require('../dev-roadmap-data');
+const { getSessionUser } = require('../middleware/auth');
+const { runTask } = require('../ai/agent');
+const { sendError } = require('./agent');
 
 function createStudioRouter(deps) {
-  const { get, all, run, fetch, path, fs, studioAuth, _groqChat } = deps;
+  const { get, all, run, fetch, path, fs, studioAuth } = deps;
   const router = express.Router();
 
   const studioUploadDir = path.join(__dirname, '..', '..', 'public', 'uploads', 'studio');
@@ -75,7 +78,6 @@ function createStudioRouter(deps) {
         lessons,
         publishedLessons,
         tutorials,
-        explanations,
         liveClasses,
         recordings,
         doubts,
@@ -88,12 +90,11 @@ function createStudioRouter(deps) {
         count('SELECT COUNT(*) n FROM cms_lessons'),
         count('SELECT COUNT(*) n FROM cms_lessons WHERE published=1'),
         count('SELECT COUNT(*) n FROM tutorials'),
-        count('SELECT COUNT(*) n FROM explain_sessions'),
         count('SELECT COUNT(*) n FROM live_classes'),
         count('SELECT COUNT(*) n FROM live_class_recordings'),
-        count('SELECT COUNT(*) n FROM explain_doubts'),
-        count("SELECT COUNT(*) n FROM explain_doubts WHERE status='pending' OR status='open' OR status IS NULL"),
-        count('SELECT COUNT(*) n FROM explain_notes'),
+        count('SELECT COUNT(*) n FROM studio_doubts'),
+        count("SELECT COUNT(*) n FROM studio_doubts WHERE status='pending'"),
+        count('SELECT COUNT(*) n FROM studio_notes'),
       ]);
 
       // Per-course lesson distribution (top 8 by lesson count)
@@ -117,7 +118,6 @@ function createStudioRouter(deps) {
       const contentMix = [
         { label: 'Lessons', value: lessons, color: '#818cf8' },
         { label: 'Tutorials', value: tutorials, color: '#22d3ee' },
-        { label: 'Explanations', value: explanations, color: '#a78bfa' },
         { label: 'Recordings', value: recordings, color: '#34d399' },
         { label: 'Notes', value: notes, color: '#fbbf24' },
       ];
@@ -132,7 +132,6 @@ function createStudioRouter(deps) {
             lessons,
             publishedLessons,
             tutorials,
-            explanations,
             liveClasses,
             recordings,
             doubts,
@@ -636,71 +635,6 @@ function createStudioRouter(deps) {
     }
   });
 
-  router.get('/api/studio/ai-problems-list', studioAuth, async (_req, res) => {
-    try {
-      const rows = await all('SELECT id,category,title,difficulty,tags FROM ai_problems ORDER BY category,id');
-      const grouped = {};
-      for (const r of rows) {
-        if (!grouped[r.category]) grouped[r.category] = [];
-        grouped[r.category].push(r);
-      }
-      res.json({ ok: true, grouped, total: rows.length });
-    } catch (e) {
-      res.status(500).json({ ok: false, error: errMessage(e) });
-    }
-  });
-
-  router.get('/api/studio/ai-problems/:id', studioAuth, async (req, res) => {
-    try {
-      const row = await get('SELECT * FROM ai_problems WHERE id=?', [req.params.id]);
-      if (!row) return res.status(404).json({ ok: false, error: 'Not found' });
-      res.json({ ok: true, problem: row });
-    } catch (e) {
-      res.status(500).json({ ok: false, error: errMessage(e) });
-    }
-  });
-
-  router.put('/api/studio/ai-problems/:id', studioAuth, async (req, res) => {
-    try {
-      const fields = ['title', 'description', 'difficulty', 'tags', 'starter_code', 'solution_approach', 'hints', 'resources', 'input_format', 'output_format', 'constraints', 'samples', 'category'];
-      const sets = [];
-      const vals = [];
-      for (const f of fields) {
-        if (req.body[f] != null) {
-          sets.push(`${f}=?`);
-          vals.push(req.body[f]);
-        }
-      }
-      if (sets.length) await run(`UPDATE ai_problems SET ${sets.join(',')} WHERE id=?`, [...vals, req.params.id]);
-      res.json({ ok: true });
-    } catch (e) {
-      res.status(500).json({ ok: false, error: errMessage(e) });
-    }
-  });
-
-  router.post('/api/studio/ai-problems-new', studioAuth, async (req, res) => {
-    try {
-      const { category, title, description, difficulty, tags, starter_code, solution_approach, hints, resources, input_format, output_format, constraints, samples } = req.body;
-      if (!title || !category) return res.status(400).json({ ok: false, error: 'title and category required' });
-      const r = await run(
-        'INSERT INTO ai_problems(category,title,description,difficulty,tags,starter_code,solution_approach,hints,resources,input_format,output_format,constraints,samples) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)',
-        [category, title, description || '', difficulty || 'beginner', tags || '[]', starter_code || '', solution_approach || '', hints || '[]', resources || '[]', input_format || '', output_format || '', constraints || '', samples || '[]']
-      );
-      res.json({ ok: true, id: r.lastID });
-    } catch (e) {
-      res.status(500).json({ ok: false, error: errMessage(e) });
-    }
-  });
-
-  router.delete('/api/studio/ai-problems/:id', studioAuth, async (req, res) => {
-    try {
-      await run('DELETE FROM ai_problems WHERE id=?', [req.params.id]);
-      res.json({ ok: true });
-    } catch (e) {
-      res.status(500).json({ ok: false, error: errMessage(e) });
-    }
-  });
-
   router.get('/api/studio/forge', studioAuth, async (_req, res) => {
     try {
       const overrides = await all('SELECT * FROM forge_content');
@@ -909,27 +843,12 @@ function createStudioRouter(deps) {
     try {
       const { prompt, type } = req.body;
       if (!prompt) return res.status(400).json({ ok: false, error: 'prompt required' });
-      const apiKey = process.env.GROQ_API_KEY || 'kronos-sovereign';
-      const systems = {
-        problem: 'You are an expert competitive programming problem setter. Write a clear, detailed problem description in HTML (use <p>, <ul>, <li>, <strong>, <code>, <pre> tags). Include: problem statement, constraints, examples with explanations. No markdown.',
-        tutorial: 'You are an expert technical educator. Write a comprehensive tutorial section in HTML using <h2>, <h3>, <p>, <ul>, <li>, <code>, <pre> tags. Include explanations, examples and code snippets. No markdown.',
-        hints: 'You are a helpful competitive programming mentor. Provide 3-5 progressive hints as a JSON array of strings. Return ONLY valid JSON: ["hint1", "hint2", ...]',
-        description: 'You are a technical content writer. Write a clear, concise HTML description using <p> and <ul> tags. No markdown.',
-        improve: 'You are a senior technical editor. Improve the given content: fix grammar, enhance clarity, add better examples, improve structure. Return improved HTML content only.',
-      };
-      const system = systems[type] || systems.description;
-      const result = await _groqChat(
-        apiKey,
-        [
-          { role: 'system', content: system },
-          { role: 'user', content: prompt },
-        ],
-        { maxTokens: 2000, temperature: 0.15 }
-      );
-      if (!result.ok) return res.json({ ok: false, error: result.error });
-      res.json({ ok: true, text: result.content });
+      // Login is enforced by authz; the agent bills the signed-in account.
+      const user = getSessionUser(req);
+      const result = await runTask('studio_author', { prompt, type }, { user });
+      res.json({ ok: true, text: result.text });
     } catch (e) {
-      res.status(500).json({ ok: false, error: errMessage(e) });
+      sendError(res, e, 'studio.ai-assist');
     }
   });
 

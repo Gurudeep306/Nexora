@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { api } from '@/lib/api'
+import { agentTask, aiErrorKind, aiErrorText, isAiUnavailable, type AiErrorKind } from '@/lib/agent'
 
 export interface CoachIssue {
   line?: number
@@ -50,6 +50,7 @@ export function useCoach({
   const [insight, setInsight] = useState<CoachInsight | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [errorKind, setErrorKind] = useState<AiErrorKind>('other')
   const [live, setLiveState] = useState(() => {
     try {
       return localStorage.getItem(LIVE_KEY) !== 'off'
@@ -71,15 +72,17 @@ export function useCoach({
       setLoading(true)
       setError(null)
       try {
-        const r = await api.post<{ insight: CoachInsight }>(
-          '/api/ai/coach',
-          { mode: 'insight', code, language, title, statement: statement.slice(0, 5000) },
+        const insight = await agentTask<CoachInsight>(
+          'coach_insight',
+          { code, language, title, statement: statement.slice(0, 5000) },
           { timeoutMs: 60000 },
         )
-        setInsight(r.insight)
+        setInsight(insight)
         setAnalysedAt(Date.now())
       } catch (e) {
-        setError(e instanceof Error ? e.message : 'Coach unavailable')
+        if (isAiUnavailable(e)) setLiveState(false) // no AI on this server: stop live polling
+        setError(aiErrorText(e))
+        setErrorKind(aiErrorKind(e))
       } finally {
         setLoading(false)
       }
@@ -109,35 +112,27 @@ export function useCoach({
   }
 
   const tests = useCallback(async () => {
-    const r = await api.post<{ tests: CoachTest[] }>('/api/ai/coach', { mode: 'tests', title, statement: statement.slice(0, 5000), language }, { timeoutMs: 90000 })
-    return r.tests ?? []
+    const tests = await agentTask<CoachTest[]>('coach_tests', { title, statement: statement.slice(0, 5000), language }, { timeoutMs: 100000 })
+    return tests ?? []
   }, [title, statement, language])
 
   const explain = useCallback(
-    async (verdict: string, failing?: { input?: string; expected?: string; actual?: string; stderr?: string }) => {
-      const r = await api.post<{ explanation: string }>(
-        '/api/ai/coach',
-        { mode: 'explain', code, language, title, statement: statement.slice(0, 4000), verdict, failing },
+    async (verdict: string, failing?: { input?: string; expected?: string; actual?: string; stderr?: string }) =>
+      agentTask<string>(
+        'coach_explain',
+        { code, language, title, statement: statement.slice(0, 4000), verdict, failing },
         { timeoutMs: 60000 },
-      )
-      return r.explanation
-    },
+      ),
     [code, language, title, statement],
   )
 
   const ask = useCallback(
-    async (question: string) => {
-      const r = await api.post<{ answer: string }>(
-        '/api/ai/coach',
-        { mode: 'ask', code, language, title, statement: statement.slice(0, 4000), question },
-        { timeoutMs: 60000 },
-      )
-      return r.answer
-    },
+    async (question: string) =>
+      agentTask<string>('coach_ask', { code, language, title, statement: statement.slice(0, 4000), question }, { timeoutMs: 60000 }),
     [code, language, title, statement],
   )
 
-  return { insight, loading, error, analyse, live, setLive, analysedAt, tests, explain, ask }
+  return { insight, loading, error, errorKind, analyse, live, setLive, analysedAt, tests, explain, ask }
 }
 
 export type CoachApi = ReturnType<typeof useCoach>

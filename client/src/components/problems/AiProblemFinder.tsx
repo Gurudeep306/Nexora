@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Sparkles, Wand2 } from 'lucide-react'
 import { Button, SearchInput, useToast } from '@/components/ui'
 import { api } from '@/lib/api'
+import { aiErrorText, isAiUnavailable } from '@/lib/agent'
 import { PLATFORM_OPTIONS, type AiFindResponse } from './types'
 
 const EXAMPLES = [
@@ -37,9 +38,9 @@ export function AiProblemFinder({
       if (res.ok) onResults(res)
       else throw new Error(res.error || 'AI search failed')
     } catch (err) {
-      const msg = err instanceof Error ? err.message : undefined
-      setError(msg ?? 'AI search failed — check your connection and try again.')
-      toast.error('AI search failed', msg)
+      const msg = aiErrorText(err)
+      setError(isAiUnavailable(err) ? `${msg} Use the filters below instead.` : msg)
+      if (!isAiUnavailable(err)) toast.error('AI search failed', msg)
     } finally {
       setBusy(false)
     }

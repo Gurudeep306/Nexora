@@ -62,7 +62,8 @@ const RULES = [
     adminBypass: true,
     owner: async (req, me) => {
       const p = await get("SELECT creator FROM custom_problems WHERE id=?", [req.params0[1]]);
-      return !p || !p.creator || p.creator === me;
+      // Legacy rows with no recorded author belong to nobody: admin only.
+      return !p || (!!p.creator && p.creator === me);
     },
   }],
 
@@ -72,14 +73,40 @@ const RULES = [
   ["POST", /^\/api\/(settings|reset-progress|sync-solved)$/, { login: true }],
 
   // ── login required: code execution, AI, personal data writes ────
-  ["POST", /^\/api\/(ai\/coach|translate\/detect|judge|run|translate|ai-chat|ai-complete|ai-fix|decomposition|code-replay|testcases(\/bulk)?|ai-battle\/start|ai-battle\/complete|dashboard-layout)$/, { login: true }],
+  ["POST", /^\/api\/(ai\/find-problems|studio\/ai-assist|translate\/detect|judge|run|translate|decomposition|code-replay|testcases(\/bulk)?|ai-battle\/start|ai-battle\/complete|dashboard-layout)$/, { login: true }],
   ["PUT|DELETE", /^\/api\/testcases\/[^/]+$/, { login: true }],
-  ["POST", /^\/api\/(ai-problems|tutorials|forge\/topic)\/[^/]+\/(progress|complete|status)$/, { login: true }],
+  // The AI agent (chat, tasks, private conversation history): own account only.
+  ["GET|POST|DELETE", /^\/api\/agent(\/.*)?$/, { login: true }],
+  ["POST", /^\/api\/(tutorials|forge\/topic)\/[^/]+\/(progress|complete|status)$/, { login: true }],
 ];
+
+// The session caches the user's role from sign-in time. Re-read it from the
+// database (one primary-key lookup) so a demoted admin loses admin rights on
+// their very next request, and a deleted account stops working.
+async function refreshSessionRole(req) {
+  const cached = req.session?.user;
+  if (!cached?.username) return;
+  // The session store usually read this row in the same query as the session
+  // itself (this request, moments ago); otherwise look it up.
+  const pre = req.sessionStore?.takeUserRow?.(req.sessionID, cached.username);
+  const row =
+    pre !== undefined ? pre : await get("SELECT role FROM users WHERE username=?", [cached.username]);
+  if (!row) {
+    delete req.session.user;
+    return;
+  }
+  const role = row.role || "member";
+  if (cached.role !== role) req.session.user = { ...cached, role };
+}
 
 function authz() {
   return async (req, res, next) => {
     if (!req.path.startsWith("/api/")) return next();
+    try {
+      await refreshSessionRole(req);
+    } catch (e) {
+      return next(e); // fail closed rather than trust a stale role
+    }
     const rule = RULES.find(([m, re]) => m.split("|").includes(req.method) && re.test(req.path));
     if (!rule) return next();
     const [, re, r] = rule;

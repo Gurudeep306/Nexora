@@ -3,6 +3,7 @@ import { Link, Navigate, useParams } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
 import { ErrorState, LoadingBlock, PageHeader } from '@/components/ui'
 import { cn } from '@/lib/utils'
+import { useAgentPageContext } from '@/context/AgentContext'
 import { codeKey, isDone, qKey, useProgress } from '../progress'
 import { KIND_LABEL, type Question, type QuestionKind } from '../questions/types'
 import { QuestionCard } from './QuestionCard'
@@ -31,6 +32,10 @@ export default function PracticePage() {
   const [diff, setDiff] = useState<Question['difficulty'] | 'all'>('all')
   const [page, setPage] = useState<string>('all')
   const [status, setStatus] = useState<Status>('all')
+  useAgentPageContext({
+    learnTopic: `${topic?.title ?? topicId ?? 'Topic'} · question bank`,
+    filters: [kind !== 'all' && `kind ${kind}`, diff !== 'all' && `difficulty ${diff}`, page !== 'all' && `page ${page}`, status !== 'all' && status].filter(Boolean).join(', ') || undefined,
+  })
 
   const doneOf = (q: Question) => isDone(items[q.kind === 'code' ? codeKey(q.slug) : qKey(q.id)])
   const list = useMemo(

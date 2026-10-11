@@ -11,6 +11,7 @@ import {
   Bookmark,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useAgentPageContext } from '@/context/AgentContext'
 import { Markdown } from '@/learn/md'
 import { GateVisualizer } from './GateVisualizer'
 import { HandwrittenSolution } from './HandwrittenSolution'
@@ -68,6 +69,7 @@ export function QuestionView({
   compact,
   onOpen,
   initialShowSolution = false,
+  reportToAssistant = false,
 }: {
   q: GateQuestion
   subjectName?: string
@@ -75,6 +77,8 @@ export function QuestionView({
   compact?: boolean
   onOpen?: () => void
   initialShowSolution?: boolean
+  /** This is the question in focus: tell the floating assistant about it. */
+  reportToAssistant?: boolean
 }) {
   const [showSolution, setShowSolution] = useState(initialShowSolution)
   const [userPick, setUserPick] = useState<any>(undefined)
@@ -82,6 +86,28 @@ export function QuestionView({
   const [bookmarked, setBookmarked] = useState(false)
 
   const isUserCorrect = checkIsCorrect(q, userPick)
+
+  const answered = hasChecked || showSolution
+  useAgentPageContext(
+    reportToAssistant
+      ? {
+          gateQuestionId: q.id,
+          title: `${paperLabel(q)} Q${q.number}`,
+          gateAnswered: answered,
+          gateQuestionText: [
+            `${paperLabel(q)} Q${q.number} · ${TYPE_LABEL[q.type]}${q.marks != null ? ` · ${q.marks} marks` : ''} · ${subjectName ?? q.subject}${topicName ? ` / ${topicName}` : ''}`,
+            q.text,
+            ...q.options.map((o) => `(${o.l}) ${o.t}`),
+            userPick !== undefined ? `Student's pick: ${Array.isArray(userPick) ? userPick.join(', ') : String(userPick)}` : '',
+          ]
+            .filter(Boolean)
+            .join('\n')
+            .slice(0, 3000),
+          // Only what the student has already revealed on screen.
+          visibleText: answered ? `Answer shown on screen: ${JSON.stringify(q.answer)}\nSolution shown:\n${q.solution ?? ''}`.slice(0, 6000) : undefined,
+        }
+      : null,
+  )
 
   const handlePickOption = (optLabel: string) => {
     if (showSolution) return

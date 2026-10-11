@@ -62,5 +62,5 @@ Every page starts with `<PageHeader title=… subtitle=… actions=… />` unles
 - Default-export page components; they're lazy-loaded from `src/App.tsx` — keep that pattern.
 
 ## Routes (already wired in App.tsx)
-/hub /problems /solve/:id /contests /workshop /nexus /analytics /achievements /ailab /learn /social
+/hub /problems /solve/:id /contests /workshop /nexus /analytics /achievements /learn /social
 /submissions /bookmarks /profile /settings /auth + 404.

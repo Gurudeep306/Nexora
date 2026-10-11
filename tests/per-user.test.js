@@ -79,6 +79,8 @@ test("a new account starts at zero", async () => {
 });
 
 test("solving as alice updates only alice", async () => {
+  // The judge uses the stored testcases, not ones sent with the submission.
+  await call('POST', '/api/testcases', alice, { problem_rowid: pid, label: 'T', input: '21', expected_output: '42' });
   const j = await call('POST', '/api/judge', alice, {
     problem_id: pid,
     language: 'javascript',

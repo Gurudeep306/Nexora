@@ -92,12 +92,32 @@ const API = {
   getSkillTree() { return this._fetch('/api/skill-tree'); },
   getSkillNodeProblems(nodeId) { return this._fetch(`/api/skill-tree/${nodeId}/problems`); },
 
-  // AI Chat
-  aiChat(statement, question, history) { return this._fetch('/api/ai-chat', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ statement, question, history }) }); },
-
-  // AI Code Helper
-  aiComplete(prefix, suffix, language) { return this._fetch('/api/ai-complete', { method: 'POST', body: JSON.stringify({ prefix, suffix, language }) }); },
-  aiFix(code, language, error) { return this._fetch('/api/ai-fix', { method: 'POST', body: JSON.stringify({ code, language, error }) }); },
+  // AI — everything goes through the server's Groq agent (/api/agent/task).
+  // These wrappers keep the old response shapes the legacy pages expect.
+  async _agentTask(mode, input) {
+    try {
+      return await this._fetch('/api/agent/task', { method: 'POST', body: JSON.stringify({ ...input, mode }) });
+    } catch (e) {
+      return { ok: false, error: 'AI is unavailable right now' };
+    }
+  },
+  async aiChat(statement, question, history) {
+    const r = await this._agentTask('tutor', { statement, question, history });
+    return r.ok ? { ok: true, reply: r.result } : { ok: false, error: r.error || 'AI is unavailable right now' };
+  },
+  async aiComplete(prefix, suffix, language) {
+    if (this._aiOff) return { ok: false, text: '' };
+    const r = await this._agentTask('complete', { prefix, suffix, language });
+    if (r.code === 'not_configured') this._aiOff = true; // no AI on this server: stop asking
+    return { ok: !!r.ok, text: (r.ok && r.result && r.result.text) || '' };
+  },
+  async aiFix(code, language, error) {
+    const r = await this._agentTask('fix', { code, language, error });
+    if (!r.ok) return { ok: false, message: r.error || 'AI is unavailable right now' };
+    return r.result && r.result.code
+      ? { ok: true, fixed: true, code: r.result.code }
+      : { ok: true, fixed: false, message: (r.result && r.result.reason) || 'No syntax fix found — may be a logic issue' };
+  },
 
   // Social: User
   registerUser(data) { return this._fetch('/api/user/register', { method: 'POST', body: JSON.stringify(data) }); },
@@ -145,12 +165,6 @@ const API = {
   // Message Reactions
   reactToMessage(msgId, username, emoji) { return this._fetch(`/api/messages/${msgId}/react`, { method: 'POST', body: JSON.stringify({ username, emoji }) }); },
   getMessageReactions(msgId) { return this._fetch(`/api/messages/${msgId}/reactions`); },
-
-  // AI Lab
-  getAiProblems(category) { return this._fetch(`/api/ai-problems?category=${encodeURIComponent(category || 'all')}`); },
-  getAiProblem(id) { return this._fetch(`/api/ai-problems/${id}`); },
-  updateAiProgress(id, data) { return this._fetch(`/api/ai-problems/${id}/progress`, { method: 'POST', body: JSON.stringify(data) }); },
-  getAiStats() { return this._fetch('/api/ai-stats'); },
 
   // Tutorials
   getTutorials(category) { return this._fetch(`/api/tutorials?category=${encodeURIComponent(category || 'all')}`); },

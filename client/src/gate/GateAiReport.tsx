@@ -15,6 +15,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Markdown } from '@/learn/md'
+import { AiMarkdown } from '@/components/ai/AiMarkdown'
 import { GateVisualizer } from './GateVisualizer'
 import type { GateQuestion } from './types'
 
@@ -62,6 +63,8 @@ export interface AiDiagnostic {
   vulnerabilities: Array<{ subject: string; score: number; max: number; accuracy: number }>
   recommendations: string[]
   executiveSummary: string
+  /** Optional AI-written debrief (agent task 'gate_narrative'); absent when AI is off. */
+  narrative?: string
 }
 
 export function GateAiReport({
@@ -222,6 +225,12 @@ export function GateAiReport({
             <p className="mt-2.5 text-[13.5px] text-text-secondary leading-relaxed">
               {aiAnalysis.executiveSummary}
             </p>
+            {aiAnalysis.narrative && (
+              <div className="mt-3 border-t border-border pt-3">
+                <p className="mb-1.5 flex items-center gap-1.5 text-[11px] font-bold tracking-wider text-accent-brand uppercase">AI debrief</p>
+                <AiMarkdown text={aiAnalysis.narrative} />
+              </div>
+            )}
           </div>
 
           {/* Actionable 3-Point Improvement Roadmap */}

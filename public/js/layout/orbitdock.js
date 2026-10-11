@@ -51,7 +51,6 @@ class OrbitDock {
     }
     const path = window.location.pathname;
     if (path.includes("studio")) return "studio";
-    if (path.includes("explainlab")) return "explainlab";
     if (path.includes("live-class")) return "live-class";
     if (path.includes("forgebuilder")) return "forgebuilder";
     return "hub";
@@ -60,7 +59,6 @@ class OrbitDock {
   _detectMode() {
     const path = window.location.pathname;
     if (path.includes("studio")) return "creator";
-    if (path.includes("explainlab")) return "creator";
     if (path.includes("live-class")) return "creator";
     if (path.includes("forgebuilder")) return "admin";
     return "student";
@@ -164,7 +162,6 @@ class OrbitDock {
       studio: "creator",
       live: "creator",
       build: "admin",
-      ai: "student",
     };
 
     // ── Orbit items ────────────────────────────────────────────────────────
@@ -790,11 +787,9 @@ class OrbitDock {
       workshop: "learn",
       achievements: "learn", // achievements → progress/nexus section
       skills: "hq",
-      ailab: "ai",
-      analytics: "ai",
+      analytics: "hq",
       social: "hq",
       studio: "studio",
-      explainlab: "studio",
       liveclass: "live",
       "live-class": "live",
       forgebuilder: "build",
@@ -1035,9 +1030,6 @@ class OrbitDock {
       joinLive: () => {
         window.location.href = "/live-class";
       },
-      openAI: () => {
-        window.location.hash = "#/ailab";
-      },
 
       // ── Creator actions ───────────────────────────────────────────────────
       createCourse: () => {
@@ -1055,12 +1047,6 @@ class OrbitDock {
           window.location.href = "/studio";
           this._showToast("Navigate to Studio to create a lesson", "info");
         }
-      },
-      openPad: () => {
-        window.location.href = "/explainlab?mode=whiteboard";
-      },
-      newExplain: () => {
-        window.location.href = "/explainlab";
       },
       startLive: () => {
         window.location.href = "/live-class";
@@ -1139,17 +1125,6 @@ class OrbitDock {
         window.location.hash = "#/learn?tab=live";
       },
 
-      // ── Context: ailab ────────────────────────────────────────────────────
-      aiPractice: () => {
-        window.location.hash = "#/ailab";
-      },
-      filterML: () => {
-        window.location.hash = "#/ailab?cat=ml";
-      },
-      filterDL: () => {
-        window.location.hash = "#/ailab?cat=dl";
-      },
-
       // ── Context: social ───────────────────────────────────────────────────
       findFriends: () => {
         window.location.hash = "#/social?tab=allies";
@@ -1189,40 +1164,6 @@ class OrbitDock {
       },
       toggleRecord: () => {
         this._showToast("Use the record button in LiveClass", "info");
-      },
-
-      // ── Context: explainlab ───────────────────────────────────────────────
-      selectPen: () => {
-        const btn = document.querySelector('[data-tool="pen"]');
-        if (btn) btn.click();
-        else this._showToast("Select pen tool from ExplainLab toolbar", "info");
-      },
-      selectEraser: () => {
-        const btn = document.querySelector('[data-tool="eraser"]');
-        if (btn) btn.click();
-        else
-          this._showToast("Select eraser tool from ExplainLab toolbar", "info");
-      },
-      selectShapes: () => {
-        const btn = document.querySelector('[data-tool="shapes"]');
-        if (btn) btn.click();
-        else
-          this._showToast("Select shapes tool from ExplainLab toolbar", "info");
-      },
-      addPage: () => {
-        const btn = document.querySelector('[data-action="add-page"]');
-        if (btn) btn.click();
-        else this._showToast("Use Add Page button in ExplainLab", "info");
-      },
-      saveDraft: () => {
-        const btn = document.querySelector('[data-action="save-draft"]');
-        if (btn) btn.click();
-        else this._showToast("Use Save button in ExplainLab", "info");
-      },
-      publish: () => {
-        const btn = document.querySelector('[data-action="publish"]');
-        if (btn) btn.click();
-        else this._showToast("Use Publish button in ExplainLab", "info");
       },
 
       // ── AI generation ─────────────────────────────────────────────────────
@@ -1378,8 +1319,7 @@ if (typeof window !== "undefined") {
     const mode = (() => {
       const path = window.location.pathname;
       if (path.includes("studio")) return "creator";
-      if (path.includes("explainlab")) return "creator";
-      if (path.includes("live-class")) return "creator";
+        if (path.includes("live-class")) return "creator";
       if (path.includes("forgebuilder")) return "admin";
       return "student";
     })();
@@ -1399,14 +1339,6 @@ if (typeof window !== "undefined") {
           icon: "layers",
           action: () => {
             window.location.href = "/studio";
-          },
-        },
-        {
-          id: "od-explainlab",
-          label: "Open ExplainLab",
-          icon: "presentation",
-          action: () => {
-            window.location.href = "/explainlab";
           },
         },
         {

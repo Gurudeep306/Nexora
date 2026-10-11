@@ -25,6 +25,7 @@ import {
 } from 'lucide-react'
 import { useApi } from '@/hooks/useApi'
 import { api } from '@/lib/api'
+import { agentTask, isAiUnavailable } from '@/lib/agent'
 import { cn } from '@/lib/utils'
 import { TEMPLATES, LANG_EXT } from '@/lib/templates'
 import { snippetsFor } from '@/lib/snippets'
@@ -285,7 +286,7 @@ function setLensStyles(entries: { cls: string; message: string; severity: Diag['
     .join('\n')
 }
 
-/* Languages the /api/ai-complete endpoint handles well */
+/* Languages the AI ghost completion (agent task 'complete') handles well */
 interface EditorPosition { lineNumber: number; column: number }
 interface EditorModel { getOffsetAt(position: EditorPosition): number; getValue(): string }
 interface CancelToken { isCancellationRequested: boolean }
@@ -372,7 +373,7 @@ export function CodeEditor({
   onChange: (code: string) => void
   onRunShortcut: () => void
   onSubmitShortcut: () => void
-  /** Ghost-text completions from POST /api/ai-complete (Gemini → Groq on the server) */
+  /** Ghost-text completions from the AI agent (task 'complete', fast Groq model) */
   aiInline?: boolean
   /** Receives every content change as a replay delta (see components/submissions/replay.ts) */
   onRecord?: (event: ReplayEvent, fullText: string) => void
@@ -623,11 +624,12 @@ export function CodeEditor({
     )
 
     let lastRequest = 0
+    let aiOffline = false
     for (const lang of AI_LANGS) {
       disposers.current.push(
         monaco.languages.registerInlineCompletionsProvider(MONACO_LANG[lang] ?? lang, {
           provideInlineCompletions: async (model: EditorModel, position: EditorPosition, _context: unknown, token: CancelToken) => {
-            if (!aiRef.current || !AI_LANGS.includes(langRef.current)) return { items: [] }
+            if (aiOffline || !aiRef.current || !AI_LANGS.includes(langRef.current)) return { items: [] }
             const stamp = ++lastRequest
             await new Promise((r) => setTimeout(r, 700)) // debounce keystrokes
             if (token.isCancellationRequested || stamp !== lastRequest) return { items: [] }
@@ -636,13 +638,13 @@ export function CodeEditor({
             const prefix = full.slice(Math.max(0, offset - 3000), offset)
             if (prefix.trim().length < 12) return { items: [] }
             try {
-              const res = await api.post<{ ok: boolean; text?: string }>(
-                '/api/ai-complete',
+              const res = await agentTask<{ text: string }>(
+                'complete',
                 { prefix, suffix: full.slice(offset, offset + 1000), language: langRef.current },
-                { timeoutMs: 15000 },
+                { timeoutMs: 10000 },
               )
-              const text = (res.text ?? '').replace(/^```\w*\n?|```$/g, '')
-              if (!res.ok || !text.trim() || token.isCancellationRequested) return { items: [] }
+              const text = (res?.text ?? '').replace(/^```\w*\n?|```$/g, '')
+              if (!text.trim() || token.isCancellationRequested) return { items: [] }
               return {
                 items: [
                   {
@@ -651,7 +653,9 @@ export function CodeEditor({
                   },
                 ],
               }
-            } catch {
+            } catch (err) {
+              // No AI on this server: stop asking for the rest of this editor's life.
+              if (isAiUnavailable(err)) aiOffline = true
               return { items: [] }
             }
           },

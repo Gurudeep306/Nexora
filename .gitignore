@@ -44,9 +44,9 @@ __pycache__/
 *.pyc
 
 # Heavy neural network binary weights (>100MB exceed GitHub push limits)
-ai-engine/models/*.gguf
-ai-engine/models/*.bin
-ai-engine/models/*.safetensors
+archive/ai-engine/models/*.gguf
+archive/ai-engine/models/*.bin
+archive/ai-engine/models/*.safetensors
 
 # Python environments
 .venv/
@@ -56,3 +56,6 @@ venv/
 
 .aider*
 .licenses/
+
+# Local AI-tool config (may hold API keys)
+opencode.json

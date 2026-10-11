@@ -92,7 +92,8 @@ test('friend requests cannot be forged or accepted by a third party', async () =
 
 test('code execution and AI need an account; catalog sync needs admin', async () => {
   assert.equal((await call('POST', '/api/run', null, { language: 'python', code: 'print(1)' })).status, 401);
-  assert.equal((await call('POST', '/api/ai-chat', null, { question: 'x' })).status, 401);
+  assert.equal((await call('POST', '/api/agent/chat', null, { message: 'x' })).status, 401);
+  assert.equal((await call('POST', '/api/agent/task', null, { mode: 'complete' })).status, 401);
   assert.equal((await call('POST', '/api/sync', eve, {})).status, 403);
   assert.equal((await call('POST', '/api/settings', null, { cf_handle: 'x' })).status, 401);
 });

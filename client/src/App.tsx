@@ -1,32 +1,32 @@
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { LoadingBlock } from '@/components/ui'
 import { useAuth } from '@/context/AuthContext'
+import { idlePrefetchCommonRoutes, pageLoaders } from '@/routes'
 
-const AuthPage = lazy(() => import('@/pages/AuthPage'))
-const LandingPage = lazy(() => import('@/pages/LandingPage'))
-const HubPage = lazy(() => import('@/pages/HubPage'))
-const ProblemsPage = lazy(() => import('@/pages/ProblemsPage'))
-const SolvePage = lazy(() => import('@/pages/SolvePage'))
-const ContestsPage = lazy(() => import('@/pages/ContestsPage'))
-const WorkshopPage = lazy(() => import('@/pages/WorkshopPage'))
-const NexusPage = lazy(() => import('@/pages/NexusPage'))
-const AnalyticsPage = lazy(() => import('@/pages/AnalyticsPage'))
-const AchievementsPage = lazy(() => import('@/pages/AchievementsPage'))
-const AiLabPage = lazy(() => import('@/pages/AiLabPage'))
-const LearnPage = lazy(() => import('@/pages/LearnPage'))
-const LearnTopicPage = lazy(() => import('@/learn/ui/TopicPage'))
-const LearnPracticePage = lazy(() => import('@/learn/ui/PracticePage'))
-const SystemDossierPage = lazy(() => import('@/pages/SystemDossierPage'))
-const GatePage = lazy(() => import('@/pages/GatePage'))
-const GateCbtPage = lazy(() => import('@/pages/GateCbtPage'))
-const SocialPage = lazy(() => import('@/pages/SocialPage'))
-const SubmissionsPage = lazy(() => import('@/pages/SubmissionsPage'))
-const BookmarksPage = lazy(() => import('@/pages/BookmarksPage'))
-const ProfilePage = lazy(() => import('@/pages/ProfilePage'))
-const SettingsPage = lazy(() => import('@/pages/SettingsPage'))
-const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
+const AuthPage = lazy(pageLoaders.AuthPage)
+const LandingPage = lazy(pageLoaders.LandingPage)
+const HubPage = lazy(pageLoaders.HubPage)
+const ProblemsPage = lazy(pageLoaders.ProblemsPage)
+const SolvePage = lazy(pageLoaders.SolvePage)
+const ContestsPage = lazy(pageLoaders.ContestsPage)
+const WorkshopPage = lazy(pageLoaders.WorkshopPage)
+const NexusPage = lazy(pageLoaders.NexusPage)
+const AnalyticsPage = lazy(pageLoaders.AnalyticsPage)
+const AchievementsPage = lazy(pageLoaders.AchievementsPage)
+const LearnPage = lazy(pageLoaders.LearnPage)
+const LearnTopicPage = lazy(pageLoaders.LearnTopicPage)
+const LearnPracticePage = lazy(pageLoaders.LearnPracticePage)
+const SystemDossierPage = lazy(pageLoaders.SystemDossierPage)
+const GatePage = lazy(pageLoaders.GatePage)
+const GateCbtPage = lazy(pageLoaders.GateCbtPage)
+const SocialPage = lazy(pageLoaders.SocialPage)
+const SubmissionsPage = lazy(pageLoaders.SubmissionsPage)
+const BookmarksPage = lazy(pageLoaders.BookmarksPage)
+const ProfilePage = lazy(pageLoaders.ProfilePage)
+const SettingsPage = lazy(pageLoaders.SettingsPage)
+const NotFoundPage = lazy(pageLoaders.NotFoundPage)
 const VizLab = import.meta.env.DEV ? lazy(() => import('@/learn/ui/VizLab')) : null
 
 function PageLoader() {
@@ -38,12 +38,18 @@ function PageLoader() {
   )
 }
 
+/** Once a signed-in page has rendered, warm the other common page chunks. */
+function IdlePrefetch({ children }: { children: React.ReactNode }) {
+  useEffect(() => idlePrefetchCommonRoutes(), [])
+  return <>{children}</>
+}
+
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
   const location = useLocation()
   if (loading) return <PageLoader />
   if (!user) return <Navigate to="/auth" state={{ from: location }} replace />
-  return <>{children}</>
+  return <IdlePrefetch>{children}</IdlePrefetch>
 }
 
 export default function App() {
@@ -65,7 +71,8 @@ export default function App() {
             <Route path="/nexus" element={<NexusPage />} />
             <Route path="/analytics" element={<AnalyticsPage />} />
             <Route path="/achievements" element={<AchievementsPage />} />
-            <Route path="/ailab" element={<AiLabPage />} />
+            {/* AI Lab was retired; AI courses live under Learn. Keep old links working. */}
+            <Route path="/ailab/*" element={<Navigate to="/learn" replace />} />
             <Route path="/learn" element={<LearnPage />} />
             <Route path="/learn/system-design/:systemId/:chapterNumber" element={<SystemDossierPage />} />
             <Route path="/learn/system-design/:systemId" element={<SystemDossierPage />} />

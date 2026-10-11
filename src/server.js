@@ -21,7 +21,8 @@ const GitHubStrategy = require("passport-github2").Strategy;
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const { Server: SocketServer } = require("socket.io");
 const { run, get, all, initDb, dbInfo, migratePerUser } = require("./db");
-const { requestContext, me, meSql, runAs } = require("./context");
+const { getCatalog, topicPool } = require("./problem-catalog");
+const { requestContext, me, meSql, runAs, queryCount } = require("./context");
 const { DbSessionStore } = require("./session-store");
 const { restoreUploads } = require("./upload-store");
 const { authz } = require("./middleware/authz");
@@ -39,11 +40,10 @@ const { createLearningRouter } = require("./routes/learning");
 const { createLearnRouter } = require("./routes/learn");
 const { createGateRouter } = require("./routes/gate");
 const { createStudioRouter } = require("./routes/studio");
-const { createExplainLabRouter } = require("./routes/explainlab");
+const { createAgentRouter } = require("./routes/agent");
+const { weaknessAnalysis } = require("./ai/data");
 const { createForgeRouter } = require("./routes/forge");
 const { createLiveRouter } = require("./routes/live");
-const { kronosChat, kronosComplete } = require("./kronos-engine");
-const { initExplainLabDb } = require("./explainlab-db");
 const { initForgeDb } = require("./forge-db");
 const { initLiveDb } = require("./live-db");
 const {
@@ -647,7 +647,7 @@ app.use(
         imgSrc: ["'self'", "data:", "https:", "blob:"],
         // Problem statements may embed videos / audio from the source sites.
         mediaSrc: ["'self'", "https:", "blob:", "data:"],
-        connectSrc: ["'self'", "wss:", "ws:", "https://api.groq.com"],
+        connectSrc: ["'self'", "wss:", "ws:"],
         workerSrc: ["'self'", "blob:"],
         frameSrc: ["'self'", "https://www.youtube.com", "https://www.youtube-nocookie.com", "https://player.vimeo.com"],
         objectSrc: ["'none'"],
@@ -740,28 +740,40 @@ if (!sessionSecret || sessionSecret.length < 32) {
   }
 }
 
-app.use(
-  session({
-    secret: sessionSecret || "nexora-dev-fallback-secret-do-not-use-in-prod",
-    // Sessions are stored in the database so logins survive restarts/redeploys.
-    store: new DbSessionStore(),
-    resave: false,
-    saveUninitialized: false,
-    name: "nx.sid",
-    cookie: {
-      secure: IS_PROD, // HTTPS only in production
-      httpOnly: true, // Not accessible via JS
-      // "lax" (not "strict") so the session cookie is sent when GitHub/Google
-      // redirect back to /auth/*/callback — strict drops it on that hop.
-      sameSite: "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    },
-  }),
-);
+// Kept in a variable so socket.io can reuse it (see io.engine.use below) and
+// identify sockets by the same signed-in session as HTTP requests.
+const sessionMiddleware = session({
+  secret: sessionSecret || "nexora-dev-fallback-secret-do-not-use-in-prod",
+  // Sessions are stored in the database so logins survive restarts/redeploys.
+  store: new DbSessionStore(),
+  resave: false,
+  saveUninitialized: false,
+  name: "nx.sid",
+  cookie: {
+    secure: IS_PROD, // HTTPS only in production
+    httpOnly: true, // Not accessible via JS
+    // "lax" (not "strict") so the session cookie is sent when GitHub/Google
+    // redirect back to /auth/*/callback — strict drops it on that hop.
+    sameSite: "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+  },
+});
+app.use(sessionMiddleware);
 app.use(passport.initialize());
 app.use(passport.session());
 // Remember who is making each request (per-user progress queries read it).
 app.use(requestContext(getSessionUser));
+// DB_QUERY_STATS=1 logs DB round trips + wall time per API request (perf tooling).
+if (process.env.DB_QUERY_STATS === "1") {
+  app.use("/api", (req, res, next) => {
+    const t0 = process.hrtime.bigint();
+    res.on("finish", () => {
+      const ms = Number(process.hrtime.bigint() - t0) / 1e6;
+      console.log(`[dbq] ${req.method} ${req.originalUrl.split("?")[0]} q=${queryCount()} ${ms.toFixed(1)}ms`);
+    });
+    next();
+  });
+}
 // Enforce who-can-do-what on every /api route (see src/middleware/authz.js).
 app.use(authz());
 
@@ -831,8 +843,12 @@ async function finishOAuth(req, res, next, provider) {
       "SELECT * FROM users WHERE auth_provider=? AND provider_id=?",
       [provider, String(o.providerId)],
     );
+    // Fresh session id once the provider has vouched for this person, so a
+    // session id planted beforehand never becomes signed in (fixation).
+    await new Promise((resolve, reject) =>
+      req.session.regenerate((err) => (err ? reject(err) : resolve())),
+    );
     if (linked) {
-      delete req.session.oauthUser;
       persistSessionUser(req, linked);
       return req.session.save(() => res.redirect(`/?auth=${provider}&linked=1`));
     }
@@ -931,7 +947,7 @@ app.use(
     etag: true,
     lastModified: true,
     // Resolve extensionless paths to their .html file so the sidebar links
-    // /forgebuilder, /live-class, /explainlab serve the real pages instead
+    // /forgebuilder, /live-class serve the real pages instead
     // of falling through to the SPA catch-all (which served index.html).
     extensions: ["html"],
     setHeaders(res, filePath) {
@@ -1085,16 +1101,19 @@ app.get("/api/problems", async (req, res) => {
       { rating: "p.rating", title: "p.title", id: "p.problem_id" }[sort] ||
       "p.rating";
     const sortDir = order === "desc" ? "DESC" : "ASC";
-    const lim = Math.min(+(limit || 50), 200);
-    const off = +(offset || 0);
+    // Clamp both: LIMIT -1 means "no limit" to SQLite, and NaN binds as NULL.
+    const lim = Math.min(Math.max(Math.trunc(+limit) || 50, 1), 200);
+    const off = Math.max(Math.trunc(+offset) || 0, 0);
 
     const countSql = `SELECT COUNT(*) as total FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id AND pr.username=${meSql()} WHERE ${where.join(" AND ")}`;
     const dataSql = `SELECT p.*, COALESCE(pr.status,'unsolved') as solve_status, pr.attempts, pr.xp_earned, pr.solved_at
       FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id AND pr.username=${meSql()}
       WHERE ${where.join(" AND ")} ORDER BY ${sortCol === "p.rating" ? "(p.rating = 0), " : ""}${sortCol} ${sortDir} LIMIT ? OFFSET ?`;
 
-    const { total } = await get(countSql, params);
-    const problems = await all(dataSql, [...params, lim, off]);
+    const [{ total }, problems] = await Promise.all([
+      get(countSql, params),
+      all(dataSql, [...params, lim, off]),
+    ]);
     res.json({ ok: true, total, problems, limit: lim, offset: off });
   } catch (e) {
     res.status(500).json({ ok: false, error: errMessage(e) });
@@ -1186,7 +1205,42 @@ function imgCacheGet(url) {
   return hit;
 }
 
-const MEDIA_TYPE_OK = /^(image|video|audio)\//;
+// Host/bucket allowlist and the raster-image/video/audio type allowlist (no SVG).
+const { isProxyableUrl, isProxyableMediaType } = require("./statement-media");
+
+/** Drop an unread response body so its socket is released (node-fetch stream or web stream). */
+function discardBody(upstream) {
+  const body = upstream && upstream.body;
+  if (!body) return;
+  try {
+    if (typeof body.destroy === "function") body.destroy();
+    else if (typeof body.cancel === "function") body.cancel().catch(() => {});
+  } catch {}
+}
+
+/** Read a fetch body into a Buffer, aborting as soon as it passes `max` bytes. */
+async function readBodyCapped(upstream, max) {
+  const declared = Number(upstream.headers.get("content-length"));
+  if (Number.isFinite(declared) && declared > max) {
+    discardBody(upstream);
+    throw new Error("media too large");
+  }
+  if (!upstream.body) return Buffer.alloc(0);
+  const parts = [];
+  let total = 0;
+  // node-fetch bodies are Node streams and web bodies are ReadableStreams;
+  // both are async-iterable, and returning early from the loop destroys/cancels them.
+  for await (const chunk of upstream.body) {
+    const b = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
+    total += b.length;
+    if (total > max) {
+      discardBody(upstream);
+      throw new Error("media too large");
+    }
+    parts.push(b);
+  }
+  return Buffer.concat(parts, total);
+}
 
 async function fetchProxiedMedia(startUrl) {
   let target = startUrl;
@@ -1200,7 +1254,8 @@ async function fetchProxiedMedia(startUrl) {
     const loc = upstream.headers.get("location");
     if (!loc) break;
     const next = new URL(loc, target);
-    if (next.protocol !== "https:" || !isProxyableHost(next.hostname)) break;
+    if (!isProxyableUrl(next)) break;
+    discardBody(upstream);
     target = next;
     upstream = await fetch(target, {
       headers: { "User-Agent": SCRAPE_UA, Accept: "image/*,video/*,audio/*,*/*;q=0.8" },
@@ -1208,12 +1263,13 @@ async function fetchProxiedMedia(startUrl) {
       signal: AbortSignal.timeout(15000),
     });
   }
-  const ctype = (upstream.headers.get("content-type") || "").split(";")[0].trim();
-  if (!upstream.ok || !MEDIA_TYPE_OK.test(ctype)) {
+  const ctype = (upstream.headers.get("content-type") || "").split(";")[0].trim().toLowerCase();
+  if (!upstream.ok || !isProxyableMediaType(ctype)) {
+    discardBody(upstream);
     throw new Error(`upstream ${upstream.status} ${ctype || "unknown type"}`);
   }
-  const buf = Buffer.from(await upstream.arrayBuffer());
-  if (!buf.length || buf.length > IMG_MAX_BYTES) throw new Error("media too large or empty");
+  const buf = await readBodyCapped(upstream, IMG_MAX_BYTES);
+  if (!buf.length) throw new Error("media empty");
   return {
     buf,
     ctype,
@@ -1230,16 +1286,21 @@ app.get("/api/imgproxy", async (req, res) => {
   } catch {
     return res.status(400).end();
   }
-  if (parsed.protocol !== "https:" || !isProxyableHost(parsed.hostname)) {
+  if (!isProxyableUrl(parsed)) {
     return res.status(403).end();
   }
   const key = parsed.toString();
 
   const serve = (entry) => {
+    // Third-party bytes on our origin: never sniffed, never scriptable.
+    const ext = (entry.ctype.split("/")[1] || "bin").replace(/[^a-z0-9]/gi, "").slice(0, 8) || "bin";
     res.set({
       "Content-Type": entry.ctype,
       "Cache-Control": "public, max-age=604800, immutable",
       ETag: entry.etag,
+      "Content-Security-Policy": "default-src 'none'; sandbox",
+      "X-Content-Type-Options": "nosniff",
+      "Content-Disposition": `inline; filename="media.${ext}"`,
     });
     // The browser already has this byte-for-byte: skip the body.
     if (req.headers["if-none-match"] === entry.etag) return res.status(304).end();
@@ -1618,14 +1679,128 @@ app.delete("/api/testcases/:id", async (req, res) => {
 });
 
 /* ========== JUDGE ========== */
+/* Every testcase is a full execution (often a remote compile), so one request
+   may carry only so many of them, and only so much stdin in total. */
+const MAX_JUDGE_TESTCASES = 100;
+const MAX_JUDGE_INPUT_BYTES = 1024 * 1024;
+
+const parseJsonList = (v) => {
+  try {
+    const x = typeof v === "string" ? JSON.parse(v || "[]") : v;
+    return Array.isArray(x) ? x : [];
+  } catch {
+    return [];
+  }
+};
+
+/** One testcase in the shape judge() expects; `extra` overrides fields. */
+const toCase = (tc, extra = {}) => ({
+  id: tc?.id ?? undefined,
+  label: tc?.label ? String(tc.label).slice(0, 60) : undefined,
+  input: String(tc?.input ?? ""),
+  expected_output: String(tc?.expected_output ?? tc?.output ?? ""),
+  ...extra,
+});
+const isBlankCase = (c) => !c.input.trim() && !c.expected_output.trim();
+
+function testcaseCapError(cases) {
+  if (cases.length > MAX_JUDGE_TESTCASES)
+    return `Too many testcases (max ${MAX_JUDGE_TESTCASES} per submission)`;
+  const bytes = cases.reduce((n, c) => n + Buffer.byteLength(c.input), 0);
+  if (bytes > MAX_JUDGE_INPUT_BYTES) return "Testcase input is too large (max 1 MB in total)";
+  return null;
+}
+
+/**
+ * What a platform problem is judged against — loaded here, never taken from
+ * the request (a client-supplied list let anyone "solve" anything by sending
+ * an empty or self-matching set). The statement's scraped samples always
+ * count; the caller's own stored cases are added on top.
+ */
+async function problemTestcases(problemId) {
+  const own = await all(
+    "SELECT id, label, input, expected_output FROM testcases WHERE problem_rowid=? AND username=? ORDER BY id",
+    [problemId, me()],
+  );
+  const cases = own.map((t) => toCase(t)).filter((c) => !isBlankCase(c));
+  const seen = new Set(cases.map((c) => tcKey(c.input, c.expected_output)));
+  const stmt = await get("SELECT samples FROM problem_statements WHERE problem_rowid=?", [problemId]);
+  parseJsonList(stmt?.samples).forEach((s, i) => {
+    const c = toCase(s, { id: undefined, label: `Sample ${i + 1}` });
+    const k = tcKey(c.input, c.expected_output);
+    if (isBlankCase(c) || seen.has(k)) return;
+    seen.add(k);
+    cases.push(c);
+  });
+  return cases;
+}
+
+/** Only a Workshop problem's author (or an admin) may see its hidden tests. */
+function canSeeHiddenTests(req, problem) {
+  const u = me();
+  if (u && problem.creator && problem.creator === u) return true;
+  return getSessionUser(req)?.role === "admin";
+}
+
+/** A Workshop problem's samples (visible) and testcases (hidden). */
+function customProblemTestcases(problem) {
+  const samples = parseJsonList(problem.samples)
+    .map((s, i) => toCase(s, { id: undefined, label: `Sample ${i + 1}` }))
+    .filter((c) => !isBlankCase(c));
+  const hidden = parseJsonList(problem.testcases)
+    .map((t, i) => toCase(t, { id: undefined, label: `Hidden ${i + 1}`, hidden: true }))
+    .filter((c) => !isBlankCase(c));
+  return [...samples, ...hidden];
+}
+
 app.post("/api/judge", judgeLimiter, async (req, res) => {
   try {
-    const { problem_id, code, testcases, language } = req.body;
+    const { problem_id, custom_problem_id, code, testcases, language } = req.body || {};
     const lang = LANG_CONFIG[language] ? language : "cpp";
-    const result = await judge(code, testcases || [], lang);
+    if (testcases != null && (!Array.isArray(testcases) || testcases.length > MAX_JUDGE_TESTCASES)) {
+      return res.status(400).json({ ok: false, error: `testcases must be a list of at most ${MAX_JUDGE_TESTCASES}` });
+    }
+    const clientCases = (testcases || []).map((t) => toCase(t));
+
+    let cases;
+    let recordFor = null; // platform problem whose progress this verdict may update
+    let redactHidden = false;
+    if (problem_id) {
+      const prob = await get("SELECT id FROM problems WHERE id=?", [problem_id]);
+      if (!prob) return res.status(404).json({ ok: false, error: "Problem not found" });
+      cases = await problemTestcases(prob.id);
+      // With nothing stored there is nothing to check, so nothing to record.
+      if (cases.length) recordFor = prob.id;
+    } else if (custom_problem_id) {
+      const p = await get("SELECT creator, samples, testcases FROM custom_problems WHERE id=?", [custom_problem_id]);
+      if (!p) return res.status(404).json({ ok: false, error: "Problem not found" });
+      redactHidden = !canSeeHiddenTests(req, p);
+      // Stored cases always run; the solver's own extra cases ride along.
+      cases = customProblemTestcases(p);
+      const seen = new Set(cases.map((c) => tcKey(c.input, c.expected_output)));
+      for (const c of clientCases) {
+        const k = tcKey(c.input, c.expected_output);
+        if (!seen.has(k)) { seen.add(k); cases.push(c); }
+      }
+    } else {
+      // Practice runs with no stored problem (Learn, scratch): nothing is recorded.
+      cases = clientCases;
+    }
+    const capError = testcaseCapError(cases);
+    if (capError) return res.status(400).json({ ok: false, error: capError });
+
+    const result = await judge(code, cases, lang);
+    if (redactHidden) {
+      result.results = result.results.map((r, i) =>
+        cases[i]?.hidden
+          ? { ...r, input: "", expected: "", actual: "", stderr: r.passed ? "" : "Hidden testcase", hidden: true }
+          : r,
+      );
+    }
 
     // Record submission
-    if (problem_id) {
+    if (recordFor) {
+      const problem_id = recordFor;
       await run(
         `INSERT INTO submissions(username,problem_rowid,code,language,verdict,exec_time_ms,submitted_at,test_results) VALUES(?,?,?,?,?,?,?,?)`,
         [
@@ -1642,11 +1817,14 @@ app.post("/api/judge", judgeLimiter, async (req, res) => {
         ],
       );
 
-      // Update progress
+      // Update progress. XP and the solved count are earned once per problem:
+      // re-submitting an accepted solution must not farm either.
       const existing = await get(
         "SELECT * FROM progress WHERE username=? AND problem_rowid=?",
         [me(), problem_id],
       );
+      const firstSolve = result.verdict === "AC" && existing?.status !== "solved";
+      const gainedXp = firstSolve ? await calcXp(problem_id) : 0;
       if (!existing) {
         await run(
           `INSERT INTO progress(username,problem_rowid,status,attempts,solved_at,xp_earned) VALUES(?,?,?,?,?,?)`,
@@ -1656,7 +1834,7 @@ app.post("/api/judge", judgeLimiter, async (req, res) => {
             result.verdict === "AC" ? "solved" : "attempted",
             1,
             result.verdict === "AC" ? new Date().toISOString() : null,
-            result.verdict === "AC" ? await calcXp(problem_id) : 0,
+            gainedXp,
           ],
         );
       } else {
@@ -1666,10 +1844,7 @@ app.post("/api/judge", judgeLimiter, async (req, res) => {
             : existing.status === "solved"
               ? "solved"
               : "attempted";
-        const xp =
-          result.verdict === "AC" && existing.status !== "solved"
-            ? await calcXp(problem_id)
-            : existing.xp_earned;
+        const xp = firstSolve ? gainedXp : existing.xp_earned;
         await run(
           `UPDATE progress SET status=?, attempts=attempts+1, solved_at=COALESCE(solved_at,?), xp_earned=? WHERE username=? AND problem_rowid=?`,
           [
@@ -1693,10 +1868,10 @@ app.post("/api/judge", judgeLimiter, async (req, res) => {
         [
           me(),
           today,
-          result.verdict === "AC" ? 1 : 0,
-          result.verdict === "AC" ? await calcXp(problem_id) : 0,
-          result.verdict === "AC" ? 1 : 0,
-          result.verdict === "AC" ? await calcXp(problem_id) : 0,
+          firstSolve ? 1 : 0,
+          gainedXp,
+          firstSolve ? 1 : 0,
+          gainedXp,
         ],
       );
 
@@ -1705,7 +1880,14 @@ app.post("/api/judge", judgeLimiter, async (req, res) => {
       invalidateCache();
     }
 
-    res.json({ ok: true, ...result });
+    res.json({
+      ok: true,
+      ...result,
+      recorded: !!recordFor,
+      ...(problem_id && !recordFor
+        ? { message: "This problem has no testcases yet — import the samples or add one, then submit." }
+        : {}),
+    });
   } catch (e) {
     res.status(500).json({ ok: false, error: errMessage(e) });
   }
@@ -1713,9 +1895,12 @@ app.post("/api/judge", judgeLimiter, async (req, res) => {
 
 app.post("/api/run", judgeLimiter, async (req, res) => {
   try {
-    const { code, input, language } = req.body;
+    const { code, input, language } = req.body || {};
     const lang = LANG_CONFIG[language] ? language : "cpp";
-    const result = await quickRun(code, input || "", lang);
+    const stdin = input == null ? "" : String(input);
+    if (Buffer.byteLength(stdin) > MAX_JUDGE_INPUT_BYTES)
+      return res.status(400).json({ ok: false, error: "Input is too large (max 1 MB)" });
+    const result = await quickRun(code, stdin, lang);
     res.json(result);
   } catch (e) {
     res.status(500).json({ ok: false, error: errMessage(e) });
@@ -1751,49 +1936,18 @@ app.get("/api/admin/judge-selftest", requireAdmin, async (req, res) => {
 app.get("/api/stats", async (req, res) => {
   try {
     const result = await cachedResponse("stats", 3000, async () => {
-      // Batch core counts into a single query
-      const counts = await get(`SELECT
-      (SELECT COUNT(*) FROM problems) as total,
-      (SELECT COUNT(*) FROM progress WHERE username=${meSql()} AND status='solved') as solved,
-      (SELECT COUNT(*) FROM progress WHERE username=${meSql()} AND status='attempted') as attempted,
-      (SELECT COALESCE(SUM(xp_earned),0) FROM progress WHERE username=${meSql()}) as totalXp,
-      (SELECT COUNT(*) FROM submissions WHERE username=${meSql()}) as submissions,
-      (SELECT COUNT(*) FROM submissions WHERE username=${meSql()} AND verdict='AC') as acCount`);
-      let {
-        total,
-        solved,
-        attempted,
-        totalXp,
-        submissions: submissionCount,
-        acCount,
-      } = counts;
-      const accuracy =
-        submissionCount > 0 ? Math.round((acCount / submissionCount) * 100) : 0;
-
-      // Apply admin overrides for the signed-in user
+      // Every read below is independent, so they are all started at once
+      // (one round trip of latency instead of four sequential stages).
       const username = me();
-      if (username) {
-        const user = await get(
-          "SELECT xp_override, solved_override, role FROM users WHERE username=?",
-          [username],
-        );
-        if (user) {
-          totalXp += user.xp_override || 0;
-          solved += user.solved_override || 0;
-        }
-      }
-
-      // Parallel independent queries
-      const [
-        ratingDist,
-        platformDist,
-        streak,
-        heatmap,
-        recent,
-        achievements,
-        verdicts,
-        dailyChallenges,
-      ] = await Promise.all([
+      const today = new Date().toISOString().slice(0, 10);
+      const userP = username
+        ? get("SELECT xp_override, solved_override, role FROM users WHERE username=?", [username])
+        : Promise.resolve(null);
+      const todayP = get(
+        `SELECT COALESCE(problems_solved,0) as solved, COALESCE(problems_attempted,0) as attempted, COALESCE(xp_earned,0) as xp FROM daily_activity WHERE username=? AND date=?`,
+        [username, today],
+      );
+      const restP = Promise.all([
         all(`SELECT
         CASE
           WHEN p.rating < 1000 THEN 'Newbie'
@@ -1821,6 +1975,45 @@ app.get("/api/stats", async (req, res) => {
         ),
         getDailyChallenges(),
       ]);
+      // Avoid unhandled rejections if an earlier await throws first.
+      for (const pr of [userP, todayP, restP]) pr.catch(() => {});
+
+      // Batch core counts into a single query
+      const counts = await get(`SELECT
+      (SELECT COUNT(*) FROM problems) as total,
+      (SELECT COUNT(*) FROM progress WHERE username=${meSql()} AND status='solved') as solved,
+      (SELECT COUNT(*) FROM progress WHERE username=${meSql()} AND status='attempted') as attempted,
+      (SELECT COALESCE(SUM(xp_earned),0) FROM progress WHERE username=${meSql()}) as totalXp,
+      (SELECT COUNT(*) FROM submissions WHERE username=${meSql()}) as submissions,
+      (SELECT COUNT(*) FROM submissions WHERE username=${meSql()} AND verdict='AC') as acCount`);
+      let {
+        total,
+        solved,
+        attempted,
+        totalXp,
+        submissions: submissionCount,
+        acCount,
+      } = counts;
+      const accuracy =
+        submissionCount > 0 ? Math.round((acCount / submissionCount) * 100) : 0;
+
+      // Apply admin overrides for the signed-in user
+      const user = await userP;
+      if (user) {
+        totalXp += user.xp_override || 0;
+        solved += user.solved_override || 0;
+      }
+
+      const [
+        ratingDist,
+        platformDist,
+        streak,
+        heatmap,
+        recent,
+        achievements,
+        verdicts,
+        dailyChallenges,
+      ] = await restP;
 
       // Level & Title (unified Rift Levels)
       const level = calcLevel(totalXp, solved);
@@ -1837,11 +2030,7 @@ app.get("/api/stats", async (req, res) => {
       }));
 
       // Today's stats
-      const today = new Date().toISOString().slice(0, 10);
-      const todayStats = (await get(
-        `SELECT COALESCE(problems_solved,0) as solved, COALESCE(problems_attempted,0) as attempted, COALESCE(xp_earned,0) as xp FROM daily_activity WHERE username=? AND date=?`,
-        [me(), today],
-      )) || { solved: 0, attempted: 0, xp: 0 };
+      const todayStats = (await todayP) || { solved: 0, attempted: 0, xp: 0 };
 
       return {
         ok: true,
@@ -1985,6 +2174,14 @@ app.post("/api/settings", async (req, res) => {
     // Personal settings only (handles, layout…); keys/values are size-capped.
     for (const [key, value] of Object.entries(req.body || {}).slice(0, 50)) {
       if (!/^[a-z0-9_]{1,64}$/i.test(key) || key.startsWith("stmt_") || key === "last_sync") continue;
+      // A Codeforces handle imports that account's solves (/api/sync-solved),
+      // so one handle can be linked to only one Nexora account.
+      if (key === "cf_handle" && String(value).trim()) {
+        if (!CF_HANDLE_RE.test(String(value).trim()))
+          return res.status(400).json({ ok: false, error: "That is not a valid Codeforces handle" });
+        if (await cfHandleOwnedByOther(String(value).trim()))
+          return res.status(409).json({ ok: false, error: "That Codeforces handle is already linked to another account" });
+      }
       await run("INSERT OR REPLACE INTO settings(username,key,value) VALUES(?,?,?)", [
         me(),
         key,
@@ -2016,13 +2213,32 @@ app.post("/api/reset-progress", async (req, res) => {
 });
 
 /* ========== SYNC SOLVED ========== */
+const CF_HANDLE_RE = /^[A-Za-z0-9_.-]{3,24}$/;
+/** True when another account already has this Codeforces handle linked. */
+async function cfHandleOwnedByOther(handle) {
+  const row = await get(
+    "SELECT username FROM settings WHERE key='cf_handle' AND username<>'' AND username<>? AND LOWER(TRIM(value))=LOWER(?) LIMIT 1",
+    [me(), String(handle).trim()],
+  );
+  return !!row;
+}
+
 app.post("/api/sync-solved", async (req, res) => {
   try {
+    // Only ever the handle linked to the signed-in account — anything in the
+    // request (body/query) is ignored.
     const cfHandle = (
       await get("SELECT value FROM settings WHERE username=? AND key='cf_handle'", [me()])
-    )?.value;
+    )?.value?.trim();
     if (!cfHandle)
       return res.json({ ok: true, synced: 0, message: "No CF handle set" });
+    if (!CF_HANDLE_RE.test(cfHandle))
+      return res.status(400).json({ ok: false, error: "Your saved Codeforces handle is not valid" });
+    if (await cfHandleOwnedByOther(cfHandle))
+      return res.status(409).json({
+        ok: false,
+        error: "That Codeforces handle is linked to more than one account — sync is disabled for it",
+      });
 
     const solvedIds = await fetchCodeforcesSolved(cfHandle);
     let synced = 0;
@@ -2240,6 +2456,25 @@ async function myOverrides() {
   return { xp: row?.xp_override || 0, solved: row?.solved_override || 0 };
 }
 
+/** The signed-in user's XP / solved totals, with admin overrides applied —
+ *  both reads run in parallel (one round trip). raw* exclude the overrides. */
+async function myTotals() {
+  const [row, ov] = await Promise.all([
+    get(
+      `SELECT COALESCE(SUM(xp_earned),0) as xp, COUNT(CASE WHEN status='solved' THEN 1 END) as solved FROM progress WHERE username=${meSql()}`,
+    ),
+    myOverrides(),
+  ]);
+  const rawXp = row?.xp || 0;
+  const rawSolved = row?.solved || 0;
+  return { rawXp, rawSolved, xp: rawXp + ov.xp, solved: rawSolved + ov.solved };
+}
+
+/** Tags of every problem the signed-in user has solved (one row per problem). */
+function solvedTagsSql() {
+  return `SELECT DISTINCT p.id, COALESCE(p.tags, '') as tags FROM progress pr JOIN problems p ON pr.problem_rowid=p.id AND pr.username=${meSql()} WHERE pr.status='solved'`;
+}
+
 function calcLevel(xp, solvedCount = 0) {
   let lvl = 1;
   for (let i = 1; i < RIFT_LEVELS.length; i++) {
@@ -2284,23 +2519,30 @@ function _buildLastWeek(sevenDayRows) {
 }
 
 async function calcStreak(username = me()) {
-  // Current streak: only need recent consecutive days, not entire table
-  const today = new Date().toISOString().slice(0, 10);
-  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
-
-  // Last 7 days for the streak calendar widget
-  const sevenDayRows = await all(
-    "SELECT date, problems_solved FROM daily_activity WHERE username=? AND date >= date('now','-6 days') ORDER BY date ASC",
-    [username],
-  );
+  // Last 7 days for the streak calendar widget, and the active days of the
+  // last 400 (more than enough for any reasonable streak) — fetched together.
+  const [sevenDayRows, rows] = await Promise.all([
+    all(
+      "SELECT date, problems_solved FROM daily_activity WHERE username=? AND date >= date('now','-6 days') ORDER BY date ASC",
+      [username],
+    ),
+    all(
+      "SELECT date FROM daily_activity WHERE username=? AND problems_solved > 0 AND date >= date('now','-400 days') ORDER BY date DESC",
+      [username],
+    ),
+  ]);
   const lastWeek = _buildLastWeek(sevenDayRows);
+  return { ...streakFromDates(rows), lastWeek };
+}
 
-  // Fetch only last 400 days (more than enough for any reasonable streak)
-  const rows = await all(
-    "SELECT date FROM daily_activity WHERE username=? AND problems_solved > 0 AND date >= date('now','-400 days') ORDER BY date DESC",
-    [username],
-  );
-  if (!rows.length) return { current: 0, best: 0, lastWeek };
+/**
+ * Current and best streak from active-day rows ({ date: 'YYYY-MM-DD' }),
+ * newest first. Current only counts if the newest day is today or yesterday.
+ */
+function streakFromDates(rows, now = Date.now()) {
+  const today = new Date(now).toISOString().slice(0, 10);
+  const yesterday = new Date(now - 86400000).toISOString().slice(0, 10);
+  if (!rows.length) return { current: 0, best: 0 };
 
   let current = 0;
   let prev = null;
@@ -2332,7 +2574,31 @@ async function calcStreak(username = me()) {
   }
   if (streak > best) best = streak;
 
-  return { current, best, lastWeek };
+  return { current, best };
+}
+
+/** Streaks for many users from ONE query (instead of two per user). */
+async function streaksFor(usernames) {
+  const out = new Map(usernames.map((u) => [u, { current: 0, best: 0 }]));
+  if (!usernames.length) return out;
+  const byUser = new Map();
+  // Chunked to stay well under SQLite's bound-parameter limit.
+  for (let i = 0; i < usernames.length; i += 400) {
+    const chunk = usernames.slice(i, i + 400);
+    const rows = await all(
+      `SELECT username, date FROM daily_activity
+       WHERE username IN (${chunk.map(() => "?").join(",")})
+         AND problems_solved > 0 AND date >= date('now','-400 days')
+       ORDER BY username, date DESC`,
+      chunk,
+    );
+    for (const r of rows) {
+      if (!byUser.has(r.username)) byUser.set(r.username, []);
+      byUser.get(r.username).push(r);
+    }
+  }
+  for (const [u, rows] of byUser) out.set(u, streakFromDates(rows));
+  return out;
 }
 
 async function checkAchievements(problemId, verdict, { backfill = false } = {}) {
@@ -2687,7 +2953,9 @@ app.get("/api/code-replay/:submissionId", async (req, res) => {
 app.get("/api/performance", async (req, res) => {
   try {
     const result = await cachedResponse("performance", 3000, async () => {
-      /* ── Batch core counts into single query ── */
+      /* ── Batch core counts into single query (overrides fetched alongside) ── */
+      const ovP = myOverrides();
+      ovP.catch(() => {});
       const counts = await get(`SELECT
       (SELECT COUNT(*) FROM problems) as total,
       (SELECT COUNT(*) FROM progress WHERE username=${meSql()} AND status='solved') as solved,
@@ -2697,7 +2965,7 @@ app.get("/api/performance", async (req, res) => {
       (SELECT COUNT(*) FROM submissions WHERE username=${meSql()} AND verdict='AC') as acCount`);
       const { total, attempted, submissions, acCount } = counts;
       // Include admin bonuses so every page shows the same level as the Hub.
-      const ov = await myOverrides();
+      const ov = await ovP;
       const totalXp = counts.totalXp + ov.xp;
       const solved = counts.solved + ov.solved;
       const accuracy =
@@ -2863,21 +3131,26 @@ app.get("/api/performance", async (req, res) => {
       /* ── Recommended practice (weak areas) ── */
       const weakTags = tagAnalysis.filter((a) => a.solveRate < 70).slice(0, 5);
       const recommendations = [];
-      for (const wt of weakTags) {
-        const probs = await all(
-          `SELECT p.id, p.title, p.problem_id, p.platform, p.rating, COALESCE(pr.status,'unsolved') as solve_status
+      const weakTagProblems = await Promise.all(
+        weakTags.map((wt) =>
+          all(
+            `SELECT p.id, p.title, p.problem_id, p.platform, p.rating, COALESCE(pr.status,'unsolved') as solve_status
         FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id AND pr.username=${meSql()}
         WHERE p.tags LIKE ? AND (pr.status IS NULL OR pr.status!='solved') AND p.rating>0
         ORDER BY p.rating ASC LIMIT 5`,
-          [`%${wt.tag}%`],
-        );
+            [`%${wt.tag}%`],
+          ),
+        ),
+      );
+      weakTags.forEach((wt, i) => {
+        const probs = weakTagProblems[i];
         if (probs.length)
           recommendations.push({
             tag: wt.tag,
             solveRate: wt.solveRate,
             problems: probs,
           });
-      }
+      });
 
       /* ── Milestones & forecasting ── */
       const nextLevel = RIFT_LEVELS[level.level] || null;
@@ -2963,61 +3236,8 @@ app.get("/api/performance", async (req, res) => {
 /* ========== WEAKNESS ANALYSIS ========== */
 app.get("/api/weakness-analysis", async (req, res) => {
   try {
-    const solved = await all(
-      `SELECT p.tags FROM progress pr JOIN problems p ON pr.problem_rowid=p.id AND pr.username=${meSql()} WHERE pr.status='solved' AND p.tags!='[]'`,
-    );
-    const attempted = await all(
-      `SELECT p.tags FROM progress pr JOIN problems p ON pr.problem_rowid=p.id AND pr.username=${meSql()} WHERE pr.status='attempted' AND p.tags!='[]'`,
-    );
-    const tagStats = {};
-    for (const r of solved) {
-      try {
-        JSON.parse(r.tags).forEach((t) => {
-          if (!tagStats[t]) tagStats[t] = { solved: 0, attempted: 0 };
-          tagStats[t].solved++;
-        });
-      } catch {}
-    }
-    for (const r of attempted) {
-      try {
-        JSON.parse(r.tags).forEach((t) => {
-          if (!tagStats[t]) tagStats[t] = { solved: 0, attempted: 0 };
-          tagStats[t].attempted++;
-        });
-      } catch {}
-    }
-    const analysis = Object.entries(tagStats)
-      .map(([tag, s]) => ({
-        tag,
-        solved: s.solved,
-        attempted: s.attempted,
-        total: s.solved + s.attempted,
-        solveRate:
-          s.solved + s.attempted > 0
-            ? Math.round((s.solved / (s.solved + s.attempted)) * 100)
-            : 0,
-        strength:
-          s.solved >= 10 ? "strong" : s.solved >= 5 ? "moderate" : "weak",
-      }))
-      .filter((a) => a.total >= 2)
-      .sort((a, b) => a.solveRate - b.solveRate);
-    const weakTags = analysis.filter((a) => a.solveRate < 70).slice(0, 5);
-    const recommendations = [];
-    for (const wt of weakTags) {
-      const probs = await all(
-        `SELECT p.id, p.title, p.problem_id, p.platform, p.rating, COALESCE(pr.status,'unsolved') as solve_status
-        FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id AND pr.username=${meSql()}
-        WHERE p.tags LIKE ? AND (pr.status IS NULL OR pr.status!='solved') AND p.rating>0
-        ORDER BY p.rating ASC LIMIT 5`,
-        [`%${wt.tag}%`],
-      );
-      if (probs.length)
-        recommendations.push({
-          tag: wt.tag,
-          solveRate: wt.solveRate,
-          problems: probs,
-        });
-    }
+    // Shared with the AI agent's get_weak_tags tool (src/ai/data.js).
+    const { analysis, recommendations } = await weaknessAnalysis();
     res.json({ ok: true, analysis, recommendations });
   } catch (e) {
     res.status(500).json({ ok: false, error: errMessage(e) });
@@ -3025,12 +3245,23 @@ app.get("/api/weakness-analysis", async (req, res) => {
 });
 
 /* ========== CUSTOM PROBLEMS (WORKSHOP) ========== */
+/* Hidden testcases are the answer key: only the author (or an admin) gets them.
+   Everyone else sees the samples and a count; /api/judge runs the hidden ones
+   server-side via custom_problem_id. */
+function withoutHiddenTests(req, problem) {
+  if (canSeeHiddenTests(req, problem)) return problem;
+  return {
+    ...problem,
+    testcases: "[]",
+    hidden_count: parseJsonList(problem.testcases).length,
+  };
+}
 app.get("/api/custom-problems", async (req, res) => {
   try {
     const problems = await all(
       "SELECT * FROM custom_problems ORDER BY created_at DESC",
     );
-    res.json({ ok: true, problems });
+    res.json({ ok: true, problems: problems.map((p) => withoutHiddenTests(req, p)) });
   } catch (e) {
     res.status(500).json({ ok: false, error: errMessage(e) });
   }
@@ -3042,7 +3273,7 @@ app.get("/api/custom-problems/:id", async (req, res) => {
     ]);
     if (!problem)
       return res.status(404).json({ ok: false, error: "Not found" });
-    res.json({ ok: true, problem });
+    res.json({ ok: true, problem: withoutHiddenTests(req, problem) });
   } catch (e) {
     res.status(500).json({ ok: false, error: errMessage(e) });
   }
@@ -3063,10 +3294,15 @@ app.post("/api/custom-problems", async (req, res) => {
     } = req.body;
     if (!title || typeof title !== "string")
       return res.status(400).json({ ok: false, error: "Title required" });
+    // The author is the signed-in account (authz also pins body.creator) —
+    // never left blank, which would let anyone edit or delete the problem.
+    const creator = me();
+    if (!creator) return res.status(401).json({ ok: false, error: "Please sign in first" });
     const r = await run(
-      `INSERT INTO custom_problems(title,statement,input_spec,output_spec,difficulty,tags,samples,testcases,time_limit,memory_limit,created_at)
-      VALUES(?,?,?,?,?,?,?,?,?,?,?)`,
+      `INSERT INTO custom_problems(creator,title,statement,input_spec,output_spec,difficulty,tags,samples,testcases,time_limit,memory_limit,created_at)
+      VALUES(?,?,?,?,?,?,?,?,?,?,?,?)`,
       [
+        creator,
         title,
         statement || "",
         input_spec || "",
@@ -3699,20 +3935,13 @@ const ZONE_NAMES = [
 /* unified /api/nexus — replaces both /api/roadmap and /api/skill-tree */
 app.get("/api/nexus", async (req, res) => {
   try {
-    let totalXp = (
-      await get(`SELECT COALESCE(SUM(xp_earned),0) as s FROM progress WHERE username=${meSql()}`)
-    ).s;
-    let totalSolved = (
-      await get(`SELECT COUNT(*) as c FROM progress WHERE username=${meSql()} AND status='solved'`)
-    ).c;
-    const rawTotalSolved = totalSolved;
-    { const ov = await myOverrides(); totalXp += ov.xp; totalSolved += ov.solved; }
-    const playerLevel = calcLevel(totalXp, totalSolved);
-
-    // Fetch all distinct solved problems and their tags in ONE query instead of 40+ round trips
-    const solvedProblems = await all(
-      `SELECT DISTINCT p.id, COALESCE(p.tags, '') as tags FROM progress pr JOIN problems p ON pr.problem_rowid=p.id AND pr.username=${meSql()} WHERE pr.status='solved'`
-    );
+    // Totals, overrides and solved tags are independent: one parallel round trip.
+    const [totals, solvedProblems] = await Promise.all([
+      myTotals(),
+      all(solvedTagsSql()),
+    ]);
+    const rawTotalSolved = totals.rawSolved;
+    const playerLevel = calcLevel(totals.xp, totals.solved);
     const solvedTagList = (solvedProblems || []).map((p) => (p.tags || "").toLowerCase());
 
     // Build skill nodes with progress
@@ -4495,109 +4724,111 @@ function seededShuffle(arr, seed) {
 
 app.get("/api/level-roadmap", async (req, res) => {
   try {
-    let totalXp = (
-      await get(`SELECT COALESCE(SUM(xp_earned),0) as s FROM progress WHERE username=${meSql()}`)
-    ).s;
-    let totalSolved = (
-      await get(`SELECT COUNT(*) as c FROM progress WHERE username=${meSql()} AND status='solved'`)
-    ).c;
-    { const ov = await myOverrides(); totalXp += ov.xp; totalSolved += ov.solved; }
-    const playerLevel = calcLevel(totalXp, totalSolved);
-    const weekSeed = Math.floor(Date.now() / (7 * 24 * 60 * 60 * 1000));
-
-    const levels = await Promise.all(
-      LEVEL_TOPICS.map(async (lt) => {
-        const rl = RIFT_LEVELS[lt.level - 1];
-
-        // For ∞ Overflow (level 11), lower the floor to 2200 and remove the ceiling
-        // so practice problems actually appear in the DB (very few problems rated 2800+ exist)
-        const queryMinR = lt.level === 11 ? 2200 : rl.minR;
-        const queryMaxR = lt.level === 11 ? 99999 : rl.maxR;
-
-        // Each topic runs its own tag/rating query concurrently
-        const topicsResult = await Promise.all(
-          lt.topics.map(async (topic) => {
-            const tagCond = topic.tags.map(() => "p.tags LIKE ?").join(" OR ");
-            const tagParams = topic.tags.map((t) => `%${t}%`);
-            const pool = await all(
-              `
-            SELECT p.id, p.problem_id, p.title, p.rating, p.platform, p.tags, p.url,
-              COALESCE(pr.status,'unsolved') as solve_status,
-              COALESCE(pr.attempts,0) as attempts
-            FROM problems p
-            LEFT JOIN progress pr ON pr.problem_rowid = p.id AND pr.username=${meSql()}
-            WHERE (${tagCond})
-              AND p.rating >= ? AND p.rating <= ?
-              AND p.rating > 0
-            ORDER BY p.rating DESC
-          `,
-              [...tagParams, queryMinR, queryMaxR],
-            );
-
-            const shuffled = seededShuffle(
-              pool,
-              weekSeed + lt.level * 100 + topic.tags.length,
-            );
-            const unsolved = shuffled.filter((p) => p.solve_status !== "solved");
-            const solved = shuffled.filter((p) => p.solve_status === "solved");
-            const selected = [
-              ...unsolved.slice(0, topic.count),
-              ...solved.slice(0, Math.max(0, topic.count - unsolved.length)),
-            ].slice(0, topic.count);
-            selected.sort((a, b) => a.rating - b.rating);
-
-            return {
-              name: topic.name,
-              desc: topic.desc,
-              tags: topic.tags,
-              problems: selected,
-              totalPool: pool.length,
-              solvedInPool: pool.filter((p) => p.solve_status === "solved").length,
-            };
-          }),
-        );
-
-        const allProbs = topicsResult.flatMap((t) => t.problems);
-        const solvedCount = allProbs.filter(
-          (p) => p.solve_status === "solved",
-        ).length;
-
-        return {
-          level: lt.level,
-          name: rl.name,
-          color: rl.color,
-          glow: rl.glow,
-          minR: rl.minR,
-          maxR: rl.maxR,
-          xpRequired: rl.xp,
-          probsRequired: rl.minProblems,
-          unlocked: true, // all levels are always browsable
-          current: playerLevel.level === lt.level,
-          topics: topicsResult,
-          totalProblems: allProbs.length,
-          solvedCount,
-          progress: allProbs.length
-            ? Math.round((solvedCount / allProbs.length) * 100)
-            : 0,
-        };
-      }),
-    );
-
-    res.json({ ok: true, levels, player: playerLevel, weekSeed });
+    // Three independent reads in one parallel round trip; the topic pools are
+    // filtered from the in-memory problem catalog instead of ~100 LIKE scans.
+    const [totals, progressRows, catalog] = await Promise.all([
+      myTotals(),
+      all("SELECT problem_rowid, status, attempts FROM progress WHERE username=?", [me()]),
+      getCatalog(),
+    ]);
+    res.json(buildLevelRoadmap(catalog, progressRows, calcLevel(totals.xp, totals.solved)));
   } catch (e) {
     res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
+/**
+ * The weekly practice pool for every level (pure: catalog + the user's
+ * progress rows in, response body out). Same selection as the old per-topic
+ * SQL: pool = problems with any topic tag in the level's rating band, ordered
+ * by rating DESC, seeded-shuffled by week, unsolved first.
+ */
+function buildLevelRoadmap(catalog, progressRows, playerLevel, now = Date.now()) {
+  const weekSeed = Math.floor(now / (7 * 24 * 60 * 60 * 1000));
+  const progress = new Map();
+  for (const pr of progressRows || []) progress.set(pr.problem_rowid, pr);
+  const statusOf = (row) => {
+    const pr = progress.get(row.id);
+    return (pr && pr.status) || "unsolved";
+  };
+  const shape = (row) => {
+    const pr = progress.get(row.id);
+    return {
+      id: row.id,
+      problem_id: row.problem_id,
+      title: row.title,
+      rating: row.rating,
+      platform: row.platform,
+      tags: row.tags,
+      url: row.url,
+      solve_status: (pr && pr.status) || "unsolved",
+      attempts: (pr && pr.attempts) || 0,
+    };
+  };
+
+  const levels = LEVEL_TOPICS.map((lt) => {
+    const rl = RIFT_LEVELS[lt.level - 1];
+
+    // For ∞ Overflow (level 11), lower the floor to 2200 and remove the ceiling
+    // so practice problems actually appear in the DB (very few problems rated 2800+ exist)
+    const queryMinR = lt.level === 11 ? 2200 : rl.minR;
+    const queryMaxR = lt.level === 11 ? 99999 : rl.maxR;
+
+    const topicsResult = lt.topics.map((topic) => {
+      const pool = topicPool(catalog, topic.tags, queryMinR, queryMaxR).map((i) => catalog.rows[i]);
+      const shuffled = seededShuffle(pool, weekSeed + lt.level * 100 + topic.tags.length);
+      const unsolved = shuffled.filter((p) => statusOf(p) !== "solved");
+      const solved = shuffled.filter((p) => statusOf(p) === "solved");
+      const selected = [
+        ...unsolved.slice(0, topic.count),
+        ...solved.slice(0, Math.max(0, topic.count - unsolved.length)),
+      ]
+        .slice(0, topic.count)
+        .map(shape);
+      selected.sort((a, b) => a.rating - b.rating);
+
+      return {
+        name: topic.name,
+        desc: topic.desc,
+        tags: topic.tags,
+        problems: selected,
+        totalPool: pool.length,
+        solvedInPool: solved.length,
+      };
+    });
+
+    const allProbs = topicsResult.flatMap((t) => t.problems);
+    const solvedCount = allProbs.filter((p) => p.solve_status === "solved").length;
+
+    return {
+      level: lt.level,
+      name: rl.name,
+      color: rl.color,
+      glow: rl.glow,
+      minR: rl.minR,
+      maxR: rl.maxR,
+      xpRequired: rl.xp,
+      probsRequired: rl.minProblems,
+      unlocked: true, // all levels are always browsable
+      current: playerLevel.level === lt.level,
+      topics: topicsResult,
+      totalProblems: allProbs.length,
+      solvedCount,
+      progress: allProbs.length ? Math.round((solvedCount / allProbs.length) * 100) : 0,
+    };
+  });
+
+  return { ok: true, levels, player: playerLevel, weekSeed };
+}
+
 /* Keep /api/roadmap and /api/skill-tree as aliases for backward compat */
 app.get("/api/skill-tree", async (req, res) => {
   try {
-    const rawTotalSolved = (
-      await get(`SELECT COUNT(*) as c FROM progress WHERE username=${meSql()} AND status='solved'`)
-    )?.c || 0;
-    const solvedProblems = await all(
-      `SELECT DISTINCT p.id, COALESCE(p.tags, '') as tags FROM progress pr JOIN problems p ON pr.problem_rowid=p.id AND pr.username=${meSql()} WHERE pr.status='solved'`
-    );
+    const [solvedRow, solvedProblems] = await Promise.all([
+      get(`SELECT COUNT(*) as c FROM progress WHERE username=${meSql()} AND status='solved'`),
+      all(solvedTagsSql()),
+    ]);
+    const rawTotalSolved = solvedRow?.c || 0;
     const solvedTagList = (solvedProblems || []).map((p) => (p.tags || "").toLowerCase());
 
     const nodes = [];
@@ -4652,8 +4883,9 @@ app.get("/api/skill-tree/:nodeId/problems", async (req, res) => {
     const tagCond = skill.tags.map(() => "p.tags LIKE ?").join(" OR ");
     const tagParams = skill.tags.map((t) => `%${t}%`);
 
-    const problems = await all(
-      `
+    const [problems, totalRow] = await Promise.all([
+      all(
+        `
       SELECT p.id, p.problem_id, p.title, p.rating, p.platform, p.tags,
         COALESCE(pr.status,'unsolved') as solve_status,
         pr.solved_at
@@ -4666,19 +4898,18 @@ app.get("/api/skill-tree/:nodeId/problems", async (req, res) => {
         p.rating ASC
       LIMIT 50
     `,
-      [...tagParams, minDiff, maxDiff],
-    );
+        [...tagParams, minDiff, maxDiff],
+      ),
+      get(
+        `SELECT COUNT(*) as c FROM problems p WHERE (${tagCond}) AND p.rating >= ? AND p.rating <= ?`,
+        [...tagParams, minDiff, maxDiff],
+      ),
+    ]);
 
     const solvedCount = problems.filter(
       (p) => p.solve_status === "solved",
     ).length;
-    const totalAvailable =
-      (
-        await get(
-          `SELECT COUNT(*) as c FROM problems p WHERE (${tagCond}) AND p.rating >= ? AND p.rating <= ?`,
-          [...tagParams, minDiff, maxDiff],
-        )
-      )?.c || 0;
+    const totalAvailable = totalRow?.c || 0;
 
     res.json({
       ok: true,
@@ -4886,6 +5117,22 @@ app.delete("/api/friends/:id", async (req, res) => {
 });
 
 /* ========== SOCIAL: MESSAGES ========== */
+/** Store a DM and return the stored row (selected by its own id — selecting
+ *  "the newest message" could return a concurrent insert meant for someone
+ *  else). Returns null when the recipient does not exist. */
+async function insertDirectMessage(from, to, content) {
+  const recipient = await get("SELECT username FROM users WHERE username=?", [
+    to,
+  ]);
+  if (!recipient) return null;
+  const sanitized = String(content).trim().substring(0, 2000);
+  const { lastID } = await run(
+    "INSERT INTO messages(from_user,to_user,content,created_at) VALUES(?,?,?,?)",
+    [from, to, sanitized, new Date().toISOString()],
+  );
+  return get("SELECT * FROM messages WHERE id=?", [lastID]);
+}
+
 app.get("/api/messages/unread/:username", async (req, res) => {
   try {
     const counts = await all(
@@ -4924,12 +5171,10 @@ app.post("/api/messages", async (req, res) => {
     const { from, to, content } = req.body;
     if (!from || !to || !content?.trim())
       return res.status(400).json({ ok: false, error: "Missing fields" });
-    const sanitized = content.trim().substring(0, 2000);
-    await run(
-      "INSERT INTO messages(from_user,to_user,content,created_at) VALUES(?,?,?,?)",
-      [from, to, sanitized, new Date().toISOString()],
-    );
-    const msg = await get("SELECT * FROM messages ORDER BY id DESC LIMIT 1");
+    // `from` is pinned to the signed-in user by authz (src/middleware/authz.js).
+    const msg = await insertDirectMessage(from, to, content);
+    if (!msg)
+      return res.status(404).json({ ok: false, error: "User not found" });
     res.json({ ok: true, message: msg });
   } catch (e) {
     res.status(500).json({ ok: false, error: errMessage(e) });
@@ -5084,9 +5329,10 @@ app.get("/api/leaderboard", async (req, res) => {
       [type === "streak" ? 500 : limit],
     );
     if (type === "streak") {
-      // Streaks are computed per user from their daily activity.
+      // Streaks are computed from daily activity — for every candidate in one query.
+      const streaks = await streaksFor(rows.filter((r) => r.active_days > 0).map((r) => r.username));
       for (const r of rows) {
-        const s = r.active_days > 0 ? await calcStreak(r.username) : { best: 0, current: 0 };
+        const s = r.active_days > 0 ? streaks.get(r.username) : { best: 0, current: 0 };
         r.best_streak = s.best;
         r.current_streak = s.current;
       }
@@ -5126,11 +5372,21 @@ app.get("/api/workshop/stats", async (req, res) => {
 
 /* ========== CUSTOM CONTESTS & QUIZZES ========== */
 
-function hashPass(pass) {
+// Contest passwords use the same salted scrypt as account passwords
+// ("salt:key"). Older contests stored a static-salt SHA-256; those still
+// verify, compared in constant time.
+function legacyContestHash(pass) {
   return crypto
     .createHash("sha256")
     .update(pass + "nexora_salt")
     .digest("hex");
+}
+async function verifyContestPassword(pass, stored) {
+  if (typeof stored !== "string" || !stored) return false;
+  if (stored.includes(":")) return verifyPassword(pass, stored).catch(() => false);
+  const a = Buffer.from(legacyContestHash(pass), "hex");
+  const b = Buffer.from(stored, "hex");
+  return a.length === b.length && crypto.timingSafeEqual(a, b);
 }
 
 function genContestCode() {
@@ -5187,7 +5443,7 @@ app.post("/api/contests/create", async (req, res) => {
         description || "",
         type || "speed",
         code,
-        hashPass(password),
+        await hashPassword(String(password)),
         org_tag || "",
         start_time,
         duration_mins || 60,
@@ -5232,7 +5488,7 @@ app.post("/api/contests/join", async (req, res) => {
     );
     if (!contest)
       return res.status(404).json({ ok: false, error: "Contest not found" });
-    if (contest.password_hash !== hashPass(password))
+    if (!(await verifyContestPassword(String(password), contest.password_hash)))
       return res.status(401).json({ ok: false, error: "Wrong password" });
     const count = await get(
       "SELECT COUNT(*) as c FROM contest_participants WHERE contest_id=?",
@@ -5260,13 +5516,15 @@ app.post("/api/contests/join", async (req, res) => {
 // Get single contest details (public fields only if participant)
 app.get("/api/contests/:id", async (req, res) => {
   try {
-    const { username } = req.query;
+    // Ownership/enrolment is decided by the session, never by ?username=,
+    // which let anyone read a private contest by naming its creator.
+    const username = me();
     const contest = await get("SELECT * FROM custom_contests WHERE id=?", [
       req.params.id,
     ]);
     if (!contest)
       return res.status(404).json({ ok: false, error: "Not found" });
-    const isOwner = contest.creator === username;
+    const isOwner = !!username && contest.creator === username;
     const isParticipant = username
       ? !!(await get(
           "SELECT id FROM contest_participants WHERE contest_id=? AND username=?",
@@ -5311,10 +5569,29 @@ app.delete("/api/contests/:id", async (req, res) => {
 // In-memory reactions store (persists until server restart; lightweight for small squads)
 const msgReactions = {}; // { msgId: { emoji: Set<username> } }
 
-app.post("/api/messages/:id/react", (req, res) => {
+/** True when `username` sent or received DM `id`. */
+async function isMessageParticipant(id, username) {
+  if (!username) return false;
+  const m = await get("SELECT from_user, to_user FROM messages WHERE id=?", [
+    id,
+  ]);
+  return !!m && (m.from_user === username || m.to_user === username);
+}
+
+app.post("/api/messages/:id/react", async (req, res) => {
+  // authz requires a session and pins `username` to it.
   const { username, emoji } = req.body;
-  const id = req.params.id;
-  if (!username || !emoji) return res.status(400).json({ ok: false });
+  const id = String(Number(req.params.id));
+  if (!username || typeof emoji !== "string" || !emoji || emoji.length > 16)
+    return res.status(400).json({ ok: false });
+  try {
+    if (!(await isMessageParticipant(id, username)))
+      return res
+        .status(403)
+        .json({ ok: false, error: "You can only react to your own conversations" });
+  } catch (e) {
+    return res.status(500).json({ ok: false, error: errMessage(e) });
+  }
   if (!msgReactions[id]) msgReactions[id] = {};
   if (!msgReactions[id][emoji]) msgReactions[id][emoji] = new Set();
   if (msgReactions[id][emoji].has(username)) {
@@ -5330,52 +5607,25 @@ app.post("/api/messages/:id/react", (req, res) => {
   res.json({ ok: true, reactions });
 });
 
-app.get("/api/messages/:id/reactions", (req, res) => {
+app.get("/api/messages/:id/reactions", async (req, res) => {
   const reactions = {};
-  const r = msgReactions[req.params.id] || {};
+  const id = String(Number(req.params.id));
+  let allowed = false;
+  try {
+    allowed = await isMessageParticipant(id, getSessionUser(req)?.username);
+  } catch {}
+  // Non-participants see no reactions (same shape, nothing leaked).
+  const r = (allowed && msgReactions[id]) || {};
   for (const [e, users] of Object.entries(r)) {
     if (users.size > 0) reactions[e] = [...users];
   }
   res.json({ ok: true, reactions });
 });
 
-/* ========== AI CODE HELPER (inline completion + error fix) ========== */
-
-// In-memory completion cache (key → {text, ts})
-const _aiCache = new Map();
-const AI_CACHE_TTL = 90000; // 90 seconds
-const AI_CACHE_MAX = 300;
-
-// ── Kronos-1 Sovereign In-House AI Core (Primary intelligence for all Nexora features) ──
-async function _geminiComplete(apiKey, prompt) {
-  return kronosComplete(apiKey, prompt);
-}
-
-async function _groqChat(apiKey, messages, opts = {}) {
-  return kronosChat(apiKey, messages, opts);
-}
-
-function _aiCacheKey(prefix, suffix, lang) {
-  const pLines = prefix.split("\n").slice(-8).join("\n").trim();
-  const sLines = (suffix || "").split("\n").slice(0, 4).join("\n").trim();
-  return `${lang}::${pLines}::${sLines}`;
-}
-
-// Build a fill-in-the-middle prompt for Gemini
-function _buildGeminiPrompt(language, prefixCtx, suffixCtx) {
-  return `You are an expert inline code completion assistant for a competitive programming IDE.
-Language: ${language}
-
-Complete ONLY the missing code exactly where [CURSOR] is. Output raw code only — no markdown, no fences, no explanations. 1-3 lines maximum.
-
-[CODE BEFORE CURSOR]
-${prefixCtx}
-[CURSOR]
-[CODE AFTER CURSOR]
-${suffixCtx || ""}
-
-Completion:`;
-}
+/* ========== AI AGENT (Groq) ========== */
+// One server-side agent behind every AI feature: streaming chat, completion,
+// fix, coach, … (src/ai/*, src/routes/agent.js).
+app.use(createAgentRouter({ getSessionUser, requireAuthenticatedUser, studioAuth }));
 
 app.use(
   createStudioRouter({
@@ -5386,13 +5636,7 @@ app.use(
     path,
     run,
     studioAuth,
-    _groqChat,
   }),
-);
-
-// Initialize ExplainLab database
-const _explainInit = initExplainLabDb().catch((e) =>
-  console.error("[ExplainLab] DB init error:", e.message),
 );
 
 // Initialize ForgeBuilder database
@@ -5406,29 +5650,7 @@ const _liveInit = initLiveDb().catch((e) =>
 );
 
 app.use(
-  createExplainLabRouter({
-    all,
-    fetch,
-    fs,
-    get,
-    getSessionUser,
-    path,
-    requireAuthenticatedUser,
-    run,
-    _groqChat,
-  }),
-);
-
-app.use(
   createLearningRouter({
-    AI_CACHE_MAX,
-    AI_CACHE_TTL,
-    _aiCache,
-    _aiCacheKey,
-    _buildGeminiPrompt,
-    _geminiComplete,
-    _groqChat,
-    aiLimiter,
     all,
     fetch,
     get,
@@ -5437,6 +5659,24 @@ app.use(
 );
 
 // Nexora Learn: course coding problems + per-user progress
+// Bundled, read-only content (GATE bank, Learn problem set) is the same for
+// everyone and changes only on deploy: let the browser reuse it for a minute,
+// then revalidate cheaply with the ETag Express already sends (304).
+app.get(
+  [
+    "/api/gate/meta",
+    "/api/gate/questions",
+    "/api/gate/questions/:id",
+    "/api/gate/paper/:paperId",
+    "/api/learn/problems",
+    "/api/learn/problems/:slug",
+  ],
+  (req, res, next) => {
+    res.set("Cache-Control", "private, max-age=60");
+    next();
+  },
+);
+
 app.use(createLearnRouter({ get, all, run }));
 
 // GATE CSE / IT / DA past-year question bank
@@ -5469,41 +5709,110 @@ const onlineUsers = {};
 // username -> Set of socketIds
 const userSockets = {};
 
+/* ── Socket authentication ──
+ * Every socket is tied to the signed-in express session; the username used for
+ * DMs, presence, rooms and signaling comes from that session, never from the
+ * event payload (clients used to send `username` / `from` and the server
+ * believed them, so anyone could act as anyone).
+ *
+ * The session middleware only runs on the handshake request — later polling
+ * requests / the websocket upgrade carry the engine.io `sid` instead. */
+io.engine.use((req, res, next) => {
+  if (req._query?.sid === undefined) return sessionMiddleware(req, res, next);
+  next();
+});
+
+function isAllowedSocketOrigin(req) {
+  const origin = req.headers.origin;
+  // Browsers always send Origin on websocket/XHR; non-browser clients have no
+  // ambient cookies to abuse. In dev the Vite proxy forwards from localhost.
+  if (!IS_PROD || !origin) return true;
+  if (allowedOrigins.includes(origin)) return true;
+  try {
+    return new URL(origin).host === req.headers.host;
+  } catch {
+    return false;
+  }
+}
+
+io.use((socket, next) => {
+  if (!isAllowedSocketOrigin(socket.request))
+    return next(new Error("Origin not allowed"));
+  const user = getSessionUser(socket.request);
+  if (!user?.username) return next(new Error("Authentication required"));
+  socket.data.username = user.username;
+  next();
+});
+
+/** Payloads come straight from the client — never destructure null. */
+const payloadOf = (p) => (p && typeof p === "object" ? p : {});
+const isId = (v) => typeof v === "string" && v.length > 0 && v.length <= 64;
+
+function emitToUser(username, event, payload) {
+  const sids = userSockets[username];
+  if (!sids) return;
+  for (const sid of sids) io.to(sid).emit(event, payload);
+}
+
+async function areFriends(a, b) {
+  const row = await get(
+    "SELECT id FROM friendships WHERE ((from_user=? AND to_user=?) OR (from_user=? AND to_user=?)) AND status='accepted'",
+    [a, b, b, a],
+  );
+  return !!row;
+}
+
+/** The socket joined this solve room via join-solve-room. */
+const inSolveRoom = (socket, roomId) =>
+  isId(roomId) && socket.rooms.has(`solve-${roomId}`);
+
+/** WebRTC signaling may only reach a socket sharing a solve room with us. */
+function sharesSolveRoom(socket, targetId) {
+  if (!isId(targetId) || targetId === socket.id) return false;
+  const target = io.sockets.sockets.get(targetId);
+  if (!target) return false;
+  for (const room of socket.rooms) {
+    if (room.startsWith("solve-") && target.rooms.has(room)) return true;
+  }
+  return false;
+}
+
 io.on("connection", (socket) => {
+  // Set by the io.use() auth middleware from the session — the only identity
+  // any handler below trusts.
+  const me = socket.data.username;
+
   /* ===== User registration & presence ===== */
-  socket.on("register-user", async ({ username }) => {
-    if (!username) return;
-    onlineUsers[socket.id] = { username, socketId: socket.id };
-    if (!userSockets[username]) userSockets[username] = new Set();
-    userSockets[username].add(socket.id);
+  const registerPresence = async () => {
+    if (onlineUsers[socket.id]) return;
+    onlineUsers[socket.id] = { username: me, socketId: socket.id };
+    if (!userSockets[me]) userSockets[me] = new Set();
+    userSockets[me].add(socket.id);
     // Update DB status
     try {
       await run(
         "UPDATE users SET status='online', last_seen=? WHERE username=?",
-        [new Date().toISOString(), username],
+        [new Date().toISOString(), me],
       );
     } catch {}
     // Broadcast online status to friends
-    socket.broadcast.emit("user-online", { username });
+    socket.broadcast.emit("user-online", { username: me });
+  };
+  registerPresence();
+  // Kept for older clients; any `username` in the payload is ignored.
+  socket.on("register-user", () => {
+    registerPresence();
   });
 
   /* ===== Direct Messaging ===== */
-  socket.on("direct-message", async ({ from, to, content }) => {
-    if (!from || !to || !content?.trim()) return;
-    const sanitized = content.trim().substring(0, 2000);
+  socket.on("direct-message", async (p) => {
+    const { to, content } = payloadOf(p);
+    if (!isId(to) || typeof content !== "string" || !content.trim()) return;
     try {
-      await run(
-        "INSERT INTO messages(from_user,to_user,content,created_at) VALUES(?,?,?,?)",
-        [from, to, sanitized, new Date().toISOString()],
-      );
-      const msg = await get("SELECT * FROM messages ORDER BY id DESC LIMIT 1");
+      const msg = await insertDirectMessage(me, to, content);
+      if (!msg) return socket.emit("social-error", { error: "User not found" });
       // Send to recipient's sockets
-      const recipientSockets = userSockets[to];
-      if (recipientSockets) {
-        for (const sid of recipientSockets) {
-          io.to(sid).emit("new-message", { message: msg });
-        }
-      }
+      emitToUser(to, "new-message", { message: msg });
       // Confirm to sender
       socket.emit("message-sent", { message: msg });
     } catch (e) {
@@ -5512,13 +5821,35 @@ io.on("connection", (socket) => {
   });
 
   /* ===== Solve Room Events ===== */
-  socket.on("join-solve-room", ({ roomId, username }) => {
+  // Joining awaits a DB lookup; a leave sent meanwhile (fast unmount) bumps the
+  // generation so the stale join does not complete afterwards.
+  const joinGen = new Map();
+  const bumpJoinGen = (roomId) => {
+    const gen = (joinGen.get(roomId) || 0) + 1;
+    joinGen.set(roomId, gen);
+    return gen;
+  };
+  socket.on("join-solve-room", async (p) => {
+    const { roomId } = payloadOf(p);
+    if (!isId(roomId)) return;
+    const gen = bumpJoinGen(roomId);
+    let room;
+    try {
+      room = await get("SELECT id, status FROM solve_rooms WHERE id=?", [
+        roomId,
+      ]);
+    } catch {
+      return;
+    }
+    if (joinGen.get(roomId) !== gen || !socket.connected) return;
+    if (!room || room.status !== "open") {
+      socket.emit("social-error", { error: "Room not found" });
+      return;
+    }
     if (!solveRoomMembers[roomId]) solveRoomMembers[roomId] = [];
-    const existing = solveRoomMembers[roomId].find(
-      (m) => m.username === username,
-    );
+    const existing = solveRoomMembers[roomId].find((m) => m.username === me);
     if (!existing) {
-      solveRoomMembers[roomId].push({ username, socketId: socket.id });
+      solveRoomMembers[roomId].push({ username: me, socketId: socket.id });
     } else {
       existing.socketId = socket.id;
     }
@@ -5529,10 +5860,14 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on("leave-solve-room", ({ roomId, username }) => {
+  socket.on("leave-solve-room", (p) => {
+    const { roomId } = payloadOf(p);
+    if (!isId(roomId)) return;
+    bumpJoinGen(roomId);
+    if (!inSolveRoom(socket, roomId)) return;
     if (solveRoomMembers[roomId]) {
       solveRoomMembers[roomId] = solveRoomMembers[roomId].filter(
-        (m) => m.username !== username,
+        (m) => m.username !== me,
       );
       if (solveRoomMembers[roomId].length === 0)
         delete solveRoomMembers[roomId];
@@ -5544,145 +5879,167 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on("room-chat", async ({ roomId, username, content }) => {
-    if (!roomId || !username || !content?.trim()) return;
+  socket.on("room-chat", async (p) => {
+    const { roomId, content } = payloadOf(p);
+    if (!inSolveRoom(socket, roomId)) return;
+    if (typeof content !== "string" || !content.trim()) return;
     const sanitized = content.trim().substring(0, 2000);
     try {
       await run(
         "INSERT INTO room_messages(room_id,username,content,created_at) VALUES(?,?,?,?)",
-        [roomId, username, sanitized, new Date().toISOString()],
+        [roomId, me, sanitized, new Date().toISOString()],
       );
       const user = await get(
         "SELECT display_name, avatar FROM users WHERE username=?",
-        [username],
+        [me],
       );
       io.to(`solve-${roomId}`).emit("room-chat-message", {
         roomId,
-        username,
+        username: me,
         content: sanitized,
-        display_name: user?.display_name || username,
+        display_name: user?.display_name || me,
         avatar: user?.avatar || "coder",
         created_at: new Date().toISOString(),
       });
     } catch {}
   });
 
-  socket.on("room-code-change", ({ roomId, code, username }) => {
-    socket.to(`solve-${roomId}`).emit("room-code-update", { code, username });
+  socket.on("room-code-change", (p) => {
+    const { roomId, code } = payloadOf(p);
+    if (!inSolveRoom(socket, roomId) || typeof code !== "string") return;
+    socket
+      .to(`solve-${roomId}`)
+      .emit("room-code-update", { code: code.slice(0, 200000), username: me });
   });
 
   /* ===== WebRTC Voice Signaling ===== */
-  socket.on("voice-join", ({ roomId, username }) => {
+  socket.on("voice-join", (p) => {
+    const { roomId } = payloadOf(p);
+    if (!inSolveRoom(socket, roomId)) return;
     socket
       .to(`solve-${roomId}`)
-      .emit("voice-user-joined", { username, socketId: socket.id });
+      .emit("voice-user-joined", { username: me, socketId: socket.id });
   });
 
-  socket.on("voice-leave", ({ roomId, username }) => {
-    socket.to(`solve-${roomId}`).emit("voice-user-left", { username });
+  socket.on("voice-leave", (p) => {
+    const { roomId } = payloadOf(p);
+    if (!inSolveRoom(socket, roomId)) return;
+    socket.to(`solve-${roomId}`).emit("voice-user-left", { username: me });
   });
 
-  socket.on("voice-offer", ({ to, offer, from }) => {
+  socket.on("voice-offer", (p) => {
+    const { to, offer } = payloadOf(p);
+    if (!sharesSolveRoom(socket, to)) return;
     io.to(to).emit("voice-offer", {
       from: socket.id,
       offer,
-      fromUsername: from,
+      fromUsername: me,
     });
   });
 
-  socket.on("voice-answer", ({ to, answer }) => {
+  socket.on("voice-answer", (p) => {
+    const { to, answer } = payloadOf(p);
+    if (!sharesSolveRoom(socket, to)) return;
     io.to(to).emit("voice-answer", { from: socket.id, answer });
   });
 
-  socket.on("voice-ice-candidate", ({ to, candidate }) => {
+  socket.on("voice-ice-candidate", (p) => {
+    const { to, candidate } = payloadOf(p);
+    if (!sharesSolveRoom(socket, to)) return;
     io.to(to).emit("voice-ice-candidate", { from: socket.id, candidate });
   });
 
   /* ===== Typing Indicators ===== */
-  socket.on("typing-start", ({ from, to }) => {
-    const recipientSockets = userSockets[to];
-    if (recipientSockets) {
-      for (const sid of recipientSockets) {
-        io.to(sid).emit("user-typing", { from });
-      }
-    }
+  socket.on("typing-start", (p) => {
+    const { to } = payloadOf(p);
+    if (!isId(to) || to === me) return;
+    emitToUser(to, "user-typing", { from: me });
   });
 
-  socket.on("typing-stop", ({ from, to }) => {
-    const recipientSockets = userSockets[to];
-    if (recipientSockets) {
-      for (const sid of recipientSockets) {
-        io.to(sid).emit("user-stopped-typing", { from });
-      }
-    }
+  socket.on("typing-stop", (p) => {
+    const { to } = payloadOf(p);
+    if (!isId(to) || to === me) return;
+    emitToUser(to, "user-stopped-typing", { from: me });
   });
 
   /* ===== Message read receipt ===== */
-  socket.on("mark-messages-read", async ({ from, to }) => {
+  // The reader is always the session user: marks `from`'s messages to me read.
+  socket.on("mark-messages-read", async (p) => {
+    const { from } = payloadOf(p);
+    if (!isId(from)) return;
     try {
       await run(
         "UPDATE messages SET read=1 WHERE from_user=? AND to_user=? AND read=0",
-        [from, to],
+        [from, me],
       );
-      const senderSockets = userSockets[from];
-      if (senderSockets) {
-        for (const sid of senderSockets) {
-          io.to(sid).emit("messages-read", { by: to });
-        }
-      }
+      emitToUser(from, "messages-read", { by: me });
     } catch {}
   });
 
   /* ===== Room voice speaking indicator ===== */
-  socket.on("voice-speaking", ({ roomId, username, speaking }) => {
+  socket.on("voice-speaking", (p) => {
+    const { roomId, speaking } = payloadOf(p);
+    if (!inSolveRoom(socket, roomId)) return;
     socket
       .to(`solve-${roomId}`)
-      .emit("voice-speaking-update", { username, speaking });
+      .emit("voice-speaking-update", { username: me, speaking: !!speaking });
   });
 
   /* ===== Friend challenge ===== */
-  socket.on("challenge-friend", ({ from, to, problemId, problemTitle }) => {
-    const recipientSockets = userSockets[to];
-    if (recipientSockets) {
-      for (const sid of recipientSockets) {
-        io.to(sid).emit("challenge-received", {
-          from,
-          problemId,
-          problemTitle,
-        });
-      }
+  socket.on("challenge-friend", async (p) => {
+    const { to, problemId, problemTitle } = payloadOf(p);
+    if (!isId(to)) return;
+    try {
+      if (!(await areFriends(me, to))) return;
+    } catch {
+      return;
     }
+    emitToUser(to, "challenge-received", {
+      from: me,
+      problemId,
+      problemTitle:
+        typeof problemTitle === "string" ? problemTitle.slice(0, 200) : "",
+    });
   });
 
   /* ===== Friend request notifications ===== */
-  socket.on("notify-friend-request", ({ to, from }) => {
-    const recipientSockets = userSockets[to];
-    if (recipientSockets) {
-      for (const sid of recipientSockets) {
-        io.to(sid).emit("friend-request-received", { from });
-      }
+  // Only relayed when the REST request actually created a friendship row.
+  socket.on("notify-friend-request", async (p) => {
+    const { to } = payloadOf(p);
+    if (!isId(to)) return;
+    try {
+      const f = await get(
+        "SELECT id FROM friendships WHERE (from_user=? AND to_user=?) OR (from_user=? AND to_user=? AND status='accepted')",
+        [me, to, to, me],
+      );
+      if (!f) return;
+    } catch {
+      return;
     }
+    emitToUser(to, "friend-request-received", { from: me });
   });
 
   /* ===== Legacy collab rooms ===== */
-  socket.on("create-room", (data) => {
+  socket.on("create-room", (p) => {
+    const data = payloadOf(p);
     const roomId = Math.random().toString(36).slice(2, 8).toUpperCase();
     rooms[roomId] = {
       host: socket.id,
       problem: data.problemId,
-      code: data.code || "",
+      code: typeof data.code === "string" ? data.code : "",
       users: [socket.id],
     };
     socket.join(roomId);
     socket.emit("room-created", { roomId });
   });
-  socket.on("join-room", ({ roomId }) => {
-    const room = rooms[roomId];
+  socket.on("join-room", (p) => {
+    const { roomId } = payloadOf(p);
+    const room = isId(roomId) && Object.hasOwn(rooms, roomId) && rooms[roomId];
     if (!room) {
       socket.emit("room-error", { error: "Room not found" });
       return;
     }
-    room.users.push(socket.id);
+    if (!room.users.includes(socket.id)) room.users.push(socket.id);
     socket.join(roomId);
     socket.emit("room-joined", {
       roomId,
@@ -5691,11 +6048,16 @@ io.on("connection", (socket) => {
     });
     io.to(roomId).emit("user-count", { count: room.users.length });
   });
-  socket.on("code-change", ({ roomId, code }) => {
-    if (rooms[roomId]) rooms[roomId].code = code;
+  socket.on("code-change", (p) => {
+    const { roomId, code } = payloadOf(p);
+    if (!isId(roomId) || !socket.rooms.has(roomId) || !rooms[roomId]) return;
+    if (typeof code !== "string") return;
+    rooms[roomId].code = code;
     socket.to(roomId).emit("code-update", { code });
   });
-  socket.on("cursor-move", ({ roomId, position }) => {
+  socket.on("cursor-move", (p) => {
+    const { roomId, position } = payloadOf(p);
+    if (!isId(roomId) || !socket.rooms.has(roomId) || !rooms[roomId]) return;
     socket.to(roomId).emit("cursor-update", { userId: socket.id, position });
   });
 
@@ -5745,7 +6107,7 @@ io.on("connection", (socket) => {
 
 (async () => {
   await initDb();
-  await Promise.all([_explainInit, _forgeInit, _liveInit]);
+  await Promise.all([_forgeInit, _liveInit]);
   // Give every account its own progress/XP/settings (one-time, idempotent).
   await migratePerUser();
   // Award achievements already earned by existing progress (once per user).
@@ -5805,6 +6167,10 @@ io.on("connection", (socket) => {
     console.log(
       `   OAuth    : GitHub=${!!process.env.GITHUB_CLIENT_ID} Google=${!!process.env.GOOGLE_CLIENT_ID}\n`,
     );
+    // Warm the in-memory problem catalog so the first Nexus visit doesn't pay for it.
+    if (process.env.NODE_ENV !== "test") {
+      getCatalog().catch((e) => console.warn("[catalog] warm-up failed:", e.message));
+    }
   });
 
   /* ── Graceful shutdown ── */

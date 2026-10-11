@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Kbd, Modal } from '@/components/ui'
 import { GO_SHORTCUTS } from '@/config/nav'
 import { openCommandPalette } from './CommandPalette'
+import { openAssistantEvent } from '@/context/AgentContext'
 
 export const openShortcuts = () => window.dispatchEvent(new Event('nexora:shortcuts'))
 
@@ -16,7 +17,6 @@ const LABELS: Record<string, string> = {
   '/social': 'Social',
   '/bookmarks': 'Bookmarks',
   '/submissions': 'Submissions',
-  '/ailab': 'AI Lab',
   '/settings': 'Settings',
 }
 
@@ -68,6 +68,7 @@ export function ShortcutsDialog() {
           <ul className="space-y-1.5 text-sm">
             <Row label="Search / command palette" keys={['⌘', 'K']} onClick={() => { setOpen(false); openCommandPalette() }} />
             <Row label="Quick search" keys={['/']} />
+            <Row label="AI assistant" keys={['⌘', 'J']} onClick={() => { setOpen(false); openAssistantEvent() }} />
             <Row label="This cheat-sheet" keys={['?']} />
             <Row label="Close dialogs" keys={['Esc']} />
           </ul>

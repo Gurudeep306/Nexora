@@ -11,6 +11,7 @@ import {
 import { EmptyState, ErrorState, LoadingBlock } from '@/components/ui'
 import { api } from '@/lib/api'
 import { useApi } from '@/hooks/useApi'
+import { useAgentPageContext } from '@/context/AgentContext'
 import { GateFilterStudio, type ViewMode } from '@/gate/GateFilterStudio'
 import { GateFocusDeck } from '@/gate/GateFocusDeck'
 import { GateSplitStudio } from '@/gate/GateSplitStudio'
@@ -86,6 +87,13 @@ export default function GatePage() {
   const [marks, toggleMarks] = useListParam('marks')
   const [section] = useListParam('section')
 
+  useAgentPageContext({
+    filters:
+      [q && `search "${q}"`, exam.length && `exam ${exam.join('/')}`, year.length && `year ${year.join(', ')}`, subject.length && `subject ${subject.join(', ')}`, topic.length && `topic ${topic.join(', ')}`, type.length && `type ${type.join(', ')}`, marks.length && `marks ${marks.join(', ')}`]
+        .filter(Boolean)
+        .join('; ') || undefined,
+  })
+
   // Debounced search sync
   useEffect(() => {
     if (searchInput === q) return
@@ -104,7 +112,7 @@ export default function GatePage() {
     return () => clearTimeout(t)
   }, [searchInput, q, setParams])
 
-  const meta = useApi<GateMeta>(() => api.get<GateMeta>('/api/gate/meta'), [])
+  const meta = useApi<GateMeta>(() => api.get<GateMeta>('/api/gate/meta'), [], { cacheKey: 'gate:meta' })
 
   const query = {
     q,
@@ -125,6 +133,7 @@ export default function GatePage() {
   const list = useApi<GateList>(
     () => api.get<GateList>('/api/gate/questions', { query }),
     [q, exam.join(), paper.join(), year.join(), subject.join(), topic.join(), type.join(), marks.join(), section.join(), hasFigure, sort, page],
+    { cacheKey: `gate:list:${JSON.stringify(query)}` },
   )
 
   const setPage = (p: number) => {

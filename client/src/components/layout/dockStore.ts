@@ -12,12 +12,10 @@ import {
   Palette,
   Search,
   Settings,
-  Sparkles,
   Swords,
   Trophy,
   UserRound,
   UsersRound,
-  FlaskConical,
   type LucideIcon,
 } from 'lucide-react'
 import type { IconPack, IconShape } from '@/theme/catalog'
@@ -51,12 +49,10 @@ export const DOCK_ITEMS: DockItem[] = [
   { id: 'gate', label: 'GATE', icon: BrainCircuit, hue: 175, to: '/gate' },
   { id: 'analytics', label: 'Analytics', icon: Activity, hue: 210, to: '/analytics' },
   { id: 'social', label: 'Social', icon: UsersRound, hue: 185, to: '/social' },
-  { id: 'ailab', label: 'AI Lab', icon: FlaskConical, hue: 330, to: '/ailab' },
   { id: 'workshop', label: 'Workshop', icon: Code2, hue: 50, to: '/workshop' },
   { id: 'achievements', label: 'Achievements', icon: Medal, hue: 95, to: '/achievements' },
   { id: 'submissions', label: 'Submissions', icon: ListChecks, hue: 270, to: '/submissions' },
   { id: 'bookmarks', label: 'Bookmarks', icon: Bookmark, hue: 12, to: '/bookmarks' },
-  { id: 'explainlab', label: 'ExplainLab', icon: Sparkles, hue: 350, to: '/explainlab', external: true },
   { id: 'profile', label: 'Profile', icon: UserRound, hue: 235, to: '/profile' },
   { id: 'look', label: 'Appearance', icon: Palette, hue: 310, to: '/settings?tab=look' },
   { id: 'settings', label: 'Settings', icon: Settings, hue: 260, chroma: 0.02, to: '/settings' },
@@ -78,7 +74,7 @@ export interface DockPrefs {
 }
 
 export const DEFAULT_DOCK: DockPrefs = {
-  pinned: ['hub', 'problems', 'contests', 'nexus', 'learn', 'gate', 'analytics', 'social', 'ailab', 'submissions', 'bookmarks', 'search'],
+  pinned: ['hub', 'problems', 'contests', 'nexus', 'learn', 'gate', 'analytics', 'social', 'submissions', 'bookmarks', 'search'],
   magnify: true,
   iconStyle: 'colour',
   autoHide: false,

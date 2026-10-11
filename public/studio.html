@@ -248,34 +248,6 @@
                         </div>
                         <div
                             class="studio-nav-item"
-                            data-tab="explainlab"
-                            onclick="Studio.switchTab('explainlab')"
-                        >
-                            <span class="studio-nav-item-icon">
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                >
-                                    <rect
-                                        x="2"
-                                        y="3"
-                                        width="20"
-                                        height="14"
-                                        rx="2"
-                                        ry="2"
-                                    />
-                                    <line x1="8" y1="21" x2="16" y2="21" />
-                                    <line x1="12" y1="17" x2="12" y2="21" />
-                                </svg>
-                            </span>
-                            <span>ExplainLab</span>
-                        </div>
-                        <div
-                            class="studio-nav-item"
                             data-tab="writingpad"
                             onclick="Studio.switchTab('writingpad')"
                         >
@@ -816,48 +788,6 @@
                                 </div>
                                 <div
                                     class="quick-action-card"
-                                    onclick="Studio.createExplanation()"
-                                >
-                                    <div class="quick-action-icon">
-                                        <svg
-                                            viewBox="0 0 24 24"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            stroke-width="2"
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                        >
-                                            <rect
-                                                x="2"
-                                                y="3"
-                                                width="20"
-                                                height="14"
-                                                rx="2"
-                                                ry="2"
-                                            />
-                                            <line
-                                                x1="8"
-                                                y1="21"
-                                                x2="16"
-                                                y2="21"
-                                            />
-                                            <line
-                                                x1="12"
-                                                y1="17"
-                                                x2="12"
-                                                y2="21"
-                                            />
-                                        </svg>
-                                    </div>
-                                    <div class="quick-action-title">
-                                        Record Explanation
-                                    </div>
-                                    <div class="quick-action-desc">
-                                        Create a replayable ExplainLab session
-                                    </div>
-                                </div>
-                                <div
-                                    class="quick-action-card"
                                     onclick="Studio.uploadNotes()"
                                 >
                                     <div class="quick-action-icon">
@@ -966,69 +896,6 @@
                                 </h2>
                             </div>
                             <div class="tools-grid">
-                                <div class="tool-card">
-                                    <div class="tool-card-header">
-                                        <div class="tool-card-icon">
-                                            <svg
-                                                viewBox="0 0 24 24"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                stroke-width="2"
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                            >
-                                                <rect
-                                                    x="2"
-                                                    y="3"
-                                                    width="20"
-                                                    height="14"
-                                                    rx="2"
-                                                    ry="2"
-                                                />
-                                                <line
-                                                    x1="8"
-                                                    y1="21"
-                                                    x2="16"
-                                                    y2="21"
-                                                />
-                                                <line
-                                                    x1="12"
-                                                    y1="17"
-                                                    x2="12"
-                                                    y2="21"
-                                                />
-                                            </svg>
-                                        </div>
-                                        <div class="tool-card-info">
-                                            <h3 class="tool-card-title">
-                                                ExplainLab
-                                            </h3>
-                                            <p class="tool-card-desc">
-                                                Create replayable explanations
-                                                with video, audio, whiteboard,
-                                                and notes. Perfect for flipped
-                                                classroom content.
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="tool-card-actions">
-                                        <button
-                                            class="btn btn-primary btn-sm"
-                                            onclick="
-                                                window.location.href =
-                                                    '/explainlab'
-                                            "
-                                        >
-                                            Open ExplainLab
-                                        </button>
-                                        <button
-                                            class="btn btn-secondary btn-sm"
-                                            onclick="Studio.viewExplanations()"
-                                        >
-                                            View Sessions
-                                        </button>
-                                    </div>
-                                </div>
 
                                 <div class="tool-card">
                                     <div class="tool-card-header">
@@ -1162,17 +1029,6 @@
                                         0
                                     </div>
                                     <div class="stat-card-label">Lessons</div>
-                                </div>
-                                <div class="stat-card">
-                                    <div
-                                        class="stat-card-value"
-                                        id="stat-explanations"
-                                    >
-                                        0
-                                    </div>
-                                    <div class="stat-card-label">
-                                        Explanations
-                                    </div>
                                 </div>
                                 <div class="stat-card">
                                     <div
@@ -1395,23 +1251,6 @@
                         </div>
                     </div>
 
-                    <!-- EXPLAINLAB TAB -->
-                    <div class="studio-tab-content" id="tab-explainlab">
-                        <div class="studio-section-header">
-                            <h2 class="studio-section-title">
-                                ExplainLab Sessions
-                            </h2>
-                            <button
-                                class="btn btn-primary"
-                                onclick="window.location.href = '/explainlab'"
-                            >
-                                New Explanation
-                            </button>
-                        </div>
-                        <div class="content-list" id="explainlab-list">
-                            <!-- Populated by JS -->
-                        </div>
-                    </div>
 
                     <!-- WRITING PAD TAB -->
                     <div class="studio-tab-content" id="tab-writingpad">
@@ -1938,7 +1777,6 @@
                         courses: "Courses",
                         lessons: "Lessons",
                         tutorials: "Tutorials",
-                        explainlab: "ExplainLab",
                         writingpad: "Writing Pad",
                         liveclass: "LiveClass",
                         recordings: "Recordings",
@@ -1956,7 +1794,6 @@
                     else if (tab === "courses") this.renderCourses();
                     else if (tab === "lessons") this.renderLessons();
                     else if (tab === "tutorials") this.renderTutorials();
-                    else if (tab === "explainlab") this.renderExplainLab();
                     else if (tab === "writingpad") this.renderWritingPad();
                     else if (tab === "liveclass") this.renderLiveClass();
                     else if (tab === "recordings") this.renderRecordings();
@@ -1988,8 +1825,6 @@
                         this.courses.length;
                     document.getElementById("stat-lessons").textContent =
                         totalLessons;
-                    document.getElementById("stat-explanations").textContent =
-                        Math.floor(Math.random() * 20);
                     document.getElementById("stat-students").textContent =
                         Math.floor(Math.random() * 500) + 50;
                 },
@@ -2049,12 +1884,6 @@
                             value: t.tutorials,
                             sub: "block-based",
                             color: "#a78bfa",
-                        },
-                        {
-                            label: "Explanations",
-                            value: t.explanations,
-                            sub: "ExplainLab sessions",
-                            color: "#34d399",
                         },
                         {
                             label: "Live Classes",
@@ -2216,12 +2045,6 @@
                     const list = document.getElementById("tutorials-list");
                     list.innerHTML =
                         '<div class="studio-empty"><div class="studio-empty-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/></svg></div><h3 class="studio-empty-title">No tutorials yet</h3><p class="studio-empty-desc">Create block-based tutorials using the tutorial editor.</p></div>';
-                },
-
-                renderExplainLab() {
-                    const list = document.getElementById("explainlab-list");
-                    list.innerHTML =
-                        '<div class="studio-empty"><div class="studio-empty-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/></svg></div><h3 class="studio-empty-title">No explanations yet</h3><p class="studio-empty-desc">Record your first ExplainLab session to create replayable explanations.</p><button class="btn btn-primary" onclick="window.location.href=\'/explainlab\'">Open ExplainLab</button></div>';
                 },
 
                 renderWritingPad() {
@@ -2468,12 +2291,8 @@
                     this.toast("Lesson created!", "success");
                 },
 
-                createExplanation() {
-                    window.location.href = "/explainlab";
-                },
-
                 openWritingPad() {
-                    window.location.href = "/explainlab?mode=whiteboard";
+                    this.toast("Writing pad coming soon", "info");
                 },
 
                 uploadNotes() {
@@ -2488,16 +2307,55 @@
                     this.switchTab("ai-tools");
                 },
 
-                aiGenerate(type) {
+                // AI authoring via the site's Groq agent (needs a Nexora login
+                // plus the studio password). The draft is shown as plain text
+                // to copy into a lesson — never injected as HTML here.
+                async aiGenerate(type) {
                     const topic = prompt(`Enter topic for ${type}:`);
                     if (!topic) return;
                     this.toast(`Generating ${type} for "${topic}"...`, "info");
-                    setTimeout(() => {
-                        this.toast(
-                            `${type} generated successfully!`,
-                            "success",
-                        );
-                    }, 2000);
+                    const d = await this.api("/api/agent/task", {
+                        method: "POST",
+                        body: { mode: "studio_author", type, prompt: topic },
+                    });
+                    if (!d.ok || !d.result) return;
+                    this.showAiDraft(`AI ${type}: ${topic}`, d.result.text || "");
+                },
+
+                showAiDraft(title, text) {
+                    document.getElementById("studio-ai-draft")?.remove();
+                    const wrap = document.createElement("div");
+                    wrap.id = "studio-ai-draft";
+                    wrap.style.cssText =
+                        "position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.6);padding:16px";
+                    const box = document.createElement("div");
+                    box.style.cssText =
+                        "width:min(760px,100%);max-height:90vh;display:flex;flex-direction:column;gap:10px;background:#11131a;border:1px solid #2a2f3a;border-radius:12px;padding:16px;color:#e6e6e6";
+                    const h = document.createElement("strong");
+                    h.textContent = title;
+                    const area = document.createElement("textarea");
+                    area.readOnly = true;
+                    area.value = text;
+                    area.style.cssText =
+                        "flex:1;min-height:50vh;width:100%;font:12px/1.5 ui-monospace,monospace;background:#0b0d12;color:#e6e6e6;border:1px solid #2a2f3a;border-radius:8px;padding:10px";
+                    const row = document.createElement("div");
+                    row.style.cssText = "display:flex;gap:8px;justify-content:flex-end";
+                    const copy = document.createElement("button");
+                    copy.className = "btn btn-primary btn-sm";
+                    copy.textContent = "Copy";
+                    copy.onclick = () => {
+                        navigator.clipboard?.writeText(text);
+                        this.toast("Copied to clipboard", "success");
+                    };
+                    const close = document.createElement("button");
+                    close.className = "btn btn-sm";
+                    close.textContent = "Close";
+                    close.onclick = () => wrap.remove();
+                    row.append(copy, close);
+                    box.append(h, area, row);
+                    wrap.append(box);
+                    wrap.addEventListener("click", (e) => e.target === wrap && wrap.remove());
+                    document.body.append(wrap);
                 },
 
                 uploadMedia() {
@@ -2544,10 +2402,6 @@
 
                 scheduleClass() {
                     this.toast("Scheduling coming soon", "info");
-                },
-
-                viewExplanations() {
-                    this.switchTab("explainlab");
                 },
 
                 viewBoards() {
@@ -2644,14 +2498,6 @@
                             desc: "Launch whiteboard",
                             icon: "pencil",
                             action: () => this.openWritingPad(),
-                        },
-                        {
-                            id: "explainlab",
-                            label: "ExplainLab",
-                            desc: "Record explanation",
-                            icon: "presentation",
-                            action: () =>
-                                (window.location.href = "/explainlab"),
                         },
                         {
                             id: "upload-notes",
@@ -2783,8 +2629,6 @@
                         "live-class": () =>
                             (window.location.href = "/live-class"),
                         "writing-pad": () => this.openWritingPad(),
-                        explainlab: () =>
-                            (window.location.href = "/explainlab"),
                         "upload-notes": () => this.uploadNotes(),
                         "ai-generate": () => this.generateWithAI(),
                         "view-courses": () => this.switchTab("courses"),
