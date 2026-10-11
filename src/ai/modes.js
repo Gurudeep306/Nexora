@@ -56,11 +56,6 @@ function stripFences(text) {
 }
 
 const replyLang = (uiLang) => (uiLang && uiLang.code !== "en" ? ` Write all human-readable strings in ${uiLang.name}.` : "");
-const sessionBlock = (i) =>
-  P.data(
-    "explainlab-session",
-    `Title: ${str(i.title, 200)}\nDescription: ${str(i.description, 2000) || "No description"}\nKey moments: ${str(i.markers, 1500) || "none"}`,
-  );
 const problemBlock = (i, max = 5000) => P.data("problem", `Title: ${str(i.title, 200)}\n---\n${str(i.statement, max)}`);
 
 const MODES = {
@@ -305,76 +300,6 @@ Explain this verdict so the student can fix it themselves. Use exactly this mark
       const out = extractAnimation(raw);
       if (!out.visualization) throw new AiError("Could not generate animation frames — try rephrasing", 502, "bad_output");
       return out;
-    },
-  },
-
-  /* ── ExplainLab ── */
-  el_summary: {
-    model: "main",
-    maxTokens: 500,
-    temperature: 0.3,
-    build: (i) => [
-      { role: "system", content: P.EL_SYSTEM.summary },
-      { role: "user", content: `${sessionBlock(i)}\nWrite a short plain-text paragraph summary (3-5 sentences) of this teaching session.` },
-    ],
-    post: (raw) => String(raw).trim(),
-  },
-  el_notes: {
-    model: "main",
-    maxTokens: 3000,
-    temperature: 0.2,
-    build: (i) => [
-      { role: "system", content: P.EL_SYSTEM.notes },
-      { role: "user", content: `${sessionBlock(i)}\nGenerate structured typed notes in HTML: key concepts, important formulas, examples, and common mistakes.` },
-    ],
-    post: (raw) => stripFences(raw).trim(),
-  },
-  el_full: {
-    model: "main",
-    maxTokens: 4000,
-    temperature: 0.2,
-    build: (i) => [
-      { role: "system", content: P.EL_SYSTEM.full },
-      {
-        role: "user",
-        content: `${sessionBlock(i)}\nCreate a comprehensive explanation in HTML with sections: Introduction, Prerequisites, Main Concept, Step-by-step breakdown, Examples and applications, Common mistakes, Summary and key takeaways, Practice suggestions.`,
-      },
-    ],
-    post: (raw) => stripFences(raw).trim(),
-  },
-  el_quiz: {
-    model: "main",
-    json: true,
-    maxTokens: 2000,
-    temperature: 0.3,
-    build: (i) => [
-      { role: "system", content: P.EL_SYSTEM.quiz },
-      {
-        role: "user",
-        content: `${sessionBlock(i)}\nGenerate 5 multiple-choice questions. JSON only: {"questions":[{"question":"...","options":["A","B","C","D"],"correctIndex":0,"explanation":"..."}]}`,
-      },
-    ],
-    post: (raw) => {
-      const j = need(parseJson(raw), "Failed to parse quiz JSON");
-      const list = Array.isArray(j) ? j : j.questions;
-      if (!Array.isArray(list)) throw new AiError("Failed to parse quiz JSON", 502, "bad_output");
-      return list.slice(0, 10);
-    },
-  },
-  el_flashcards: {
-    model: "main",
-    json: true,
-    maxTokens: 2000,
-    temperature: 0.3,
-    build: (i) => [
-      { role: "system", content: P.EL_SYSTEM.flashcards },
-      { role: "user", content: `${sessionBlock(i)}\nGenerate 10 revision flashcards. JSON only: {"cards":[{"front":"term or question","back":"definition or answer"}]}` },
-    ],
-    post: (raw) => {
-      const j = need(parseJson(raw), "Failed to parse flashcards JSON");
-      const list = Array.isArray(j) ? j : j.cards || j.flashcards;
-      if (!Array.isArray(list)) throw new AiError("Failed to parse flashcards JSON", 502, "bad_output");
-      return list.slice(0, 20);
     },
   },
 

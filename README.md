@@ -67,7 +67,7 @@ One server-side AI agent (`src/ai/`), powered only by **Groq**, behind every AI 
 - **Nexora AI assistant** - a slide-over on every page (⌘J / Ctrl+J) that sees the page you're on, streams answers, can look up your stats, weak topics, problems, submissions, GATE questions and course content, and suggest pages to open
 - **Tutor pedagogy** - graded hints (nudge → approach → pseudocode) on problems you haven't solved; full solutions only once you have
 - **Coach, code completion, AI fix** - live code insight, tricky tests and verdict explanations; inline ghost text; minimal syntax fixes
-- **Translation, AI problem finder, ExplainLab notes/quizzes, Studio drafts, GATE debrief** and the AI Lab's 3D algorithm animator
+- **Translation, AI problem finder, Studio drafts, GATE debrief** and the AI Lab's 3D algorithm animator
 - Needs `GROQ_API_KEY`; without it AI endpoints answer `503` and the rest of the site works. Per-user rate limits and a daily token budget (`AI_DAILY_TOKENS`) apply.
 - **AI Battle** - 1v1 time-based racing against a simulated opponent
 
@@ -240,7 +240,7 @@ nexora/
 - `POST /api/agent/task` - One-shot tasks: `complete`, `fix`, `tutor`, `coach_insight`, `coach_tests`, `coach_explain`, `coach_ask`, `animate`, `gate_narrative`, `studio_author` (studio rights)
 - `GET /api/agent/conversations`, `GET|DELETE /api/agent/conversations/:id` - Your own chat history
 - `GET /api/agent/status` - Whether AI is configured, and today's token use
-- `POST /api/translate`, `POST /api/ai/find-problems`, ExplainLab `/ai/*` - feature endpoints that use the same agent
+- `POST /api/translate`, `POST /api/ai/find-problems` - feature endpoints that use the same agent
 
 ### User Management
 - `POST /api/register` - User registration

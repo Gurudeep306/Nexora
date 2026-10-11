@@ -86,7 +86,11 @@ const RULES = [
 async function refreshSessionRole(req) {
   const cached = req.session?.user;
   if (!cached?.username) return;
-  const row = await get("SELECT role FROM users WHERE username=?", [cached.username]);
+  // The session store usually read this row in the same query as the session
+  // itself (this request, moments ago); otherwise look it up.
+  const pre = req.sessionStore?.takeUserRow?.(req.sessionID, cached.username);
+  const row =
+    pre !== undefined ? pre : await get("SELECT role FROM users WHERE username=?", [cached.username]);
   if (!row) {
     delete req.session.user;
     return;

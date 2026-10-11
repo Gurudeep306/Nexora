@@ -1,4 +1,4 @@
-// Regression tests for LiveClass (/api/live) and ExplainLab access control:
+// Regression tests for LiveClass (/api/live) access control:
 // the live routes used to 500 on every write, private classes were open to
 // everyone, and any signed-in user could delete other teachers' content.
 const test = require('node:test');
@@ -148,46 +148,4 @@ test("another teacher can't add or publish recordings on someone else's class", 
   assert.equal((await call('POST', `/api/live/classes/${cls.id}/publish-recording`, teacher2, body)).status, 403);
   assert.equal((await call('GET', `/api/live/classes/${cls.id}/attendance`, teacher2)).status, 403);
   assert.equal((await call('POST', `/api/live/classes/${cls.id}/publish-recording`, teacher1, body)).status, 200);
-});
-
-test('explainlab: drafts and markers belong to their teacher', async () => {
-  const s = await json(call('POST', '/api/explainlab/sessions', teacher1, { title: 'Draft lesson' }));
-  assert.equal(s.ok, true);
-  const sid = s.session.id;
-  assert.equal((await call('GET', `/api/explainlab/sessions/${sid}`, teacher1)).status, 200, 'owner sees own draft');
-  assert.equal((await call('GET', `/api/explainlab/sessions/${sid}`, stranger)).status, 403);
-  assert.equal((await call('GET', `/api/explainlab/sessions/${sid}/markers`, stranger)).status, 403);
-  assert.equal((await call('GET', `/api/explainlab/sessions?status=draft&teacher_id=${T1}`, stranger)).status, 403);
-  const own = await json(call('GET', '/api/explainlab/sessions?status=draft', teacher1));
-  assert.ok(own.sessions.some((x) => x.id === sid));
-
-  const m = await json(call('POST', `/api/explainlab/sessions/${sid}/markers`, teacher1, { timestamp_ms: 1000, title: 'Intro' }));
-  assert.equal((await call('DELETE', `/api/explainlab/markers/${m.markerId}`, stranger)).status, 403);
-  assert.equal((await call('DELETE', `/api/explainlab/markers/${m.markerId}`, teacher1)).status, 200);
-});
-
-test('explainlab: doubts are answered by the teacher; analytics ignore forged identity', async () => {
-  const s = await json(call('POST', '/api/explainlab/sessions', teacher1, { title: 'Public lesson' }));
-  const sid = s.session.id;
-  await call('PUT', `/api/explainlab/sessions/${sid}`, teacher1, { allow_public_doubts: 1 });
-  assert.equal((await call('POST', `/api/explainlab/sessions/${sid}/publish`, teacher1)).status, 200);
-
-  const d = await json(call('POST', `/api/explainlab/sessions/${sid}/doubts`, stranger, { doubt_text: 'why?' }));
-  assert.equal((await call('POST', `/api/explainlab/doubts/${d.doubtId}/reply`, teacher2, { reply_text: 'no' })).status, 403);
-  assert.equal((await call('POST', `/api/explainlab/doubts/${d.doubtId}/reply`, teacher1, { reply_text: 'because' })).status, 200);
-  assert.equal((await call('PUT', `/api/explainlab/doubts/${d.doubtId}/resolve`, teacher2)).status, 403);
-  assert.equal((await call('PUT', `/api/explainlab/doubts/${d.doubtId}/resolve`, stranger)).status, 200);
-
-  const a = await call('POST', `/api/explainlab/sessions/${sid}/analytics`, null, {
-    event_type: 'session_start', user_id: T2, session_id: 999999, timestamp_ms: 5,
-  });
-  assert.equal(a.status, 200);
-  const big = await call('POST', `/api/explainlab/sessions/${sid}/analytics`, null, {
-    event_type: 'x', payload_json: 'y'.repeat(5000),
-  });
-  assert.equal(big.status, 413);
-  const stats = await json(call('GET', `/api/explainlab/sessions/${sid}/analytics`, teacher1));
-  const ev = stats.analytics.recentEvents.find((e) => e.event_type === 'session_start');
-  assert.ok(ev, 'event stored on this session');
-  assert.equal(ev.user_id, null, 'anonymous event is not attributed to a forged user');
 });

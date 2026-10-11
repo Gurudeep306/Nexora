@@ -25,7 +25,6 @@ async function initLiveDb() {
     recording_url TEXT,
     audio_url TEXT,
     screen_recording_url TEXT,
-    explain_session_id INTEGER,
     settings_json TEXT DEFAULT '{}',
     is_public INTEGER DEFAULT 0,
     max_participants INTEGER DEFAULT 100,

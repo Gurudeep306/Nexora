@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { api, ApiError } from '@/lib/api'
-import { aiErrorText, isAiUnavailable, streamChat, stripAnimationBlock, type AgentPage, type NavAction } from '@/lib/agent'
+import { aiErrorKind, aiErrorText, isAiUnavailable, streamChat, stripAnimationBlock, type AgentPage, type AiErrorKind, type NavAction } from '@/lib/agent'
 
 export interface AgentToolChip {
   name: string
@@ -17,7 +17,13 @@ export interface AgentMessage {
   tools?: AgentToolChip[]
   actions?: NavAction[]
   error?: boolean
+  errorKind?: AiErrorKind
+  /** Friendly error text (shown in the error callout). */
+  errorText?: string
   streaming?: boolean
+  /** Stopped by the user before the reply finished. */
+  stopped?: boolean
+  createdAt?: number
 }
 
 export type AgentStatus = 'idle' | 'streaming' | 'error' | 'unavailable'
@@ -59,6 +65,7 @@ export function useAgent() {
   const [conversationId, setConversationId] = useState<string | null>(savedConversation)
   const abortRef = useRef<AbortController | null>(null)
   const loadedRef = useRef(false)
+  const lastSendRef = useRef<{ text: string; opts: SendOptions } | null>(null)
 
   // Restore the tab's conversation once.
   useEffect(() => {
@@ -82,9 +89,11 @@ export function useAgent() {
     async (text: string, opts: SendOptions = {}) => {
       const message = text.trim()
       if (!message || abortRef.current) return
-      const userMsg: AgentMessage = { id: uid(), role: 'user', content: message }
+      lastSendRef.current = { text: message, opts }
+      const now = Date.now()
+      const userMsg: AgentMessage = { id: uid(), role: 'user', content: message, createdAt: now }
       const botId = uid()
-      setMessages((list) => [...list, userMsg, { id: botId, role: 'assistant', content: '', streaming: true, tools: [], actions: [] }])
+      setMessages((list) => [...list, userMsg, { id: botId, role: 'assistant', content: '', streaming: true, tools: [], actions: [], createdAt: now }])
       setStatus('streaming')
       setError(null)
 
@@ -126,11 +135,12 @@ export function useAgent() {
         const unavailable = isAiUnavailable(err)
         setStatus(unavailable ? 'unavailable' : 'error')
         setError(aiErrorText(err))
-        patch(botId, (m) => ({ ...m, streaming: false, error: true, content: m.content || aiErrorText(err) }))
+        // Keep any partial reply; the error itself is shown as a callout.
+        patch(botId, (m) => ({ ...m, streaming: false, error: true, errorKind: aiErrorKind(err), errorText: aiErrorText(err) }))
         return
       }
       setStatus('idle')
-      patch(botId, (m) => ({ ...m, streaming: false, content: m.content || (ctrl.signal.aborted ? '_Stopped._' : m.content) }))
+      patch(botId, (m) => ({ ...m, streaming: false, stopped: ctrl.signal.aborted }))
     },
     [conversationId],
   )
@@ -141,6 +151,17 @@ export function useAgent() {
     setStatus('idle')
   }, [])
 
+  /** Ask the last question again (after an error, a stop, or a weak answer). */
+  const retry = useCallback(() => {
+    if (abortRef.current) return
+    const i = messages.findLastIndex((m) => m.role === 'user')
+    if (i < 0) return
+    const text = messages[i].content
+    const opts = lastSendRef.current?.text === text ? lastSendRef.current.opts : {}
+    setMessages((list) => list.slice(0, i))
+    void send(text, opts)
+  }, [messages, send])
+
   /** Start a fresh conversation (the old one stays on the server). */
   const reset = useCallback(() => {
     abortRef.current?.abort()
@@ -150,6 +171,7 @@ export function useAgent() {
     setError(null)
     setConversationId(null)
     rememberConversation(null)
+    lastSendRef.current = null
   }, [])
 
   /** Delete the current conversation from the server too. */
@@ -161,7 +183,7 @@ export function useAgent() {
 
   const actions = messages.flatMap((m) => m.actions ?? [])
 
-  return { messages, send, stop, reset, clear, status, error, conversationId, actions }
+  return { messages, send, stop, retry, reset, clear, status, error, conversationId, actions }
 }
 
 export type AgentApi = ReturnType<typeof useAgent>

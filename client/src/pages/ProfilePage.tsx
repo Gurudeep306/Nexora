@@ -49,12 +49,12 @@ export default function ProfilePage() {
         query: { viewer: me },
       }),
     [username, me],
-    { skip: !username },
+    { skip: !username, cacheKey: `profile:${username}:${me}` },
   )
   const statsApi = useApi<StatsForProfile>(
     () => api.get<StatsForProfile>('/api/stats', { query: { username } }),
     [username],
-    { skip: !username || !isSelf },
+    { skip: !username || !isSelf, cacheKey: `stats:${username}` },
   )
   const settingsApi = useApi<SettingsResponse>(() => api.get<SettingsResponse>('/api/settings'), [], { skip: !isSelf })
 

@@ -32,4 +32,15 @@ function meSql() {
   return `'${me().replace(/'/g, "''")}'`;
 }
 
-module.exports = { requestContext, me, meSql, runAs };
+/** Count one DB round trip against the current request (see DB_QUERY_STATS). */
+function countQuery() {
+  const s = store.getStore();
+  if (s) s.dbq = (s.dbq || 0) + 1;
+}
+
+/** Number of DB round trips the current request has made so far. */
+function queryCount() {
+  return store.getStore()?.dbq || 0;
+}
+
+module.exports = { requestContext, me, meSql, runAs, countQuery, queryCount };
