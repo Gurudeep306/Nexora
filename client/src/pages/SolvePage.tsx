@@ -41,7 +41,7 @@ import { TestcaseDeck } from '@/components/solve/TestcaseDeck'
 import { JudgeResults, RunOutput } from '@/components/solve/ResultsPanel'
 import { VerdictBadge } from '@/components/shared/PlatformBadge'
 import { VerdictBanner } from '@/components/solve/VerdictBanner'
-import { agentTask, aiErrorText } from '@/lib/agent'
+import { agentTask, aiErrorText, plainAiText } from '@/lib/agent'
 import { useAgentContext, useAgentPageContext } from '@/context/AgentContext'
 import { sanitizeHtml } from '@/components/ailab/sanitize'
 import type { ReplayEvent } from '@/components/submissions/replay'
@@ -548,7 +548,7 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
         persistCode(res.code)
         toast.success('AI fix applied', 'Review the diff in the editor, then run again.')
       } else {
-        toast.warning('No fix', res.reason ?? 'AI could not safely fix this code.')
+        toast.warning('No fix', res.reason ? plainAiText(res.reason) : 'AI could not safely fix this code.')
       }
     } catch (err) {
       toast.error('AI fix failed', aiErrorText(err))
