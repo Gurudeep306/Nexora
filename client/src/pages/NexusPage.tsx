@@ -16,6 +16,7 @@ import {
 import { useApi } from '@/hooks/useApi'
 import { api } from '@/lib/api'
 import { useAuth } from '@/context/AuthContext'
+import { useAgentPageContext } from '@/context/AgentContext'
 import { cn, formatNumber } from '@/lib/utils'
 import { SkillGraph } from '@/components/nexus/SkillGraph'
 import { NodePanel } from '@/components/nexus/NodePanel'
@@ -44,6 +45,26 @@ export default function NexusPage() {
     () => nexus?.nodes.find((n) => n.id === selectedId) ?? null,
     [nexus, selectedId],
   )
+
+  // The floating assistant sees the player's zone and the node in focus.
+  const nexusBrief = useMemo(() => {
+    if (!nexus) return undefined
+    const { player, zones, nodes } = nexus
+    const zoneNow = zones.find((z) => z.level === (selectedNode?.zone ?? player.level))
+    const next = nodes.filter((n) => n.unlocked && !n.completed).slice(0, 8)
+    return [
+      `Player: level ${player.level} (${player.name}), ${player.xp} XP; ${player.xpInLevel}/${player.xpForNext} XP and ${player.probsInLevel}/${player.probsForNext} problems toward the next level.`,
+      `Zones: ${zones.map((z) => `${z.level}. ${z.name} ${z.zoneProgress}%${z.locked ? ' (locked)' : ''}${z.current ? ' (current)' : ''}`).join('; ')}`,
+      zoneNow ? `Zone in view: ${zoneNow.name} — ratings ${zoneNow.minR}-${zoneNow.maxR}, ${zoneNow.nodesCompleted}/${zoneNow.nodeCount} nodes done.` : '',
+      selectedNode
+        ? `Selected node: ${selectedNode.name} — ${selectedNode.desc} Tags: ${selectedNode.tags.join(', ')}. Progress ${selectedNode.solved}/${selectedNode.target}; difficulty ${selectedNode.difficulty.join('-')}; ${selectedNode.completed ? 'completed' : selectedNode.unlocked ? 'unlocked' : `locked (requires ${selectedNode.requires.join(', ')})`}.`
+        : '',
+      next.length ? `Open nodes to work on: ${next.map((n) => `${n.name} (${n.solved}/${n.target})`).join(', ')}` : '',
+    ]
+      .filter(Boolean)
+      .join('\n')
+  }, [nexus, selectedNode])
+  useAgentPageContext({ label: selectedNode ? `Nexus · ${selectedNode.name}` : 'Nexus', visibleText: nexusBrief })
 
   if (loading && !nexus) {
     return (

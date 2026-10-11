@@ -43,7 +43,7 @@ import { VerdictBadge } from '@/components/shared/PlatformBadge'
 import { VerdictBanner } from '@/components/solve/VerdictBanner'
 import { agentTask, aiErrorText, plainAiText } from '@/lib/agent'
 import { useAgentContext, useAgentPageContext } from '@/context/AgentContext'
-import { sanitizeHtml } from '@/components/ailab/sanitize'
+import { sanitizeHtml } from '@/lib/sanitize'
 import type { ReplayEvent } from '@/components/submissions/replay'
 import {
   loadStoredCode,
@@ -566,12 +566,24 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
      Platform problems are looked up server-side (statement + solved status);
      Workshop/Learn problems pass their visible statement. */
   const { openAssistant } = useAgentContext()
+  const verdictText = useMemo(() => {
+    if (judgeResult) {
+      const passed = judgeResult.results.filter((r) => r.passed).length
+      const head = `Submit: ${judgeResult.verdict} (${passed}/${judgeResult.results.length} tests passed)`
+      if (judgeResult.verdict === 'AC') return head
+      return `${head}\n${lastError}`.slice(0, 1500)
+    }
+    if (runResult) return `Run: ${runResult.verdict}${runResult.verdict !== 'OK' ? `\n${lastError}` : ''}`.slice(0, 1500)
+    return undefined
+  }, [judgeResult, runResult, lastError])
   useAgentPageContext({
     problemId: id,
     title: problem?.title,
-    code: code.slice(0, 8000),
+    code: code.slice(0, 12000),
     language,
-    visibleText: custom ? statementText.slice(0, 5000) : undefined,
+    verdict: verdictText,
+    // Platform problems are looked up on the server; course/workshop problems send what's on screen.
+    visibleText: custom ? statementText.slice(0, 6000) : undefined,
   })
 
   /* ── AI coach: watches the code and explains what it sees ── */

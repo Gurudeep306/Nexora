@@ -162,7 +162,6 @@ class OrbitDock {
       studio: "creator",
       live: "creator",
       build: "admin",
-      ai: "student",
     };
 
     // ── Orbit items ────────────────────────────────────────────────────────
@@ -788,8 +787,7 @@ class OrbitDock {
       workshop: "learn",
       achievements: "learn", // achievements → progress/nexus section
       skills: "hq",
-      ailab: "ai",
-      analytics: "ai",
+      analytics: "hq",
       social: "hq",
       studio: "studio",
       liveclass: "live",
@@ -1032,9 +1030,6 @@ class OrbitDock {
       joinLive: () => {
         window.location.href = "/live-class";
       },
-      openAI: () => {
-        window.location.hash = "#/ailab";
-      },
 
       // ── Creator actions ───────────────────────────────────────────────────
       createCourse: () => {
@@ -1128,17 +1123,6 @@ class OrbitDock {
       },
       upcomingClasses: () => {
         window.location.hash = "#/learn?tab=live";
-      },
-
-      // ── Context: ailab ────────────────────────────────────────────────────
-      aiPractice: () => {
-        window.location.hash = "#/ailab";
-      },
-      filterML: () => {
-        window.location.hash = "#/ailab?cat=ml";
-      },
-      filterDL: () => {
-        window.location.hash = "#/ailab?cat=dl";
       },
 
       // ── Context: social ───────────────────────────────────────────────────

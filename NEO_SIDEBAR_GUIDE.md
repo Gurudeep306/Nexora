@@ -33,7 +33,6 @@ The sidebar has been completely redesigned from the boring two-layer OrbitDock s
 │ ║ 💻  Code            [grad-2] ║ │
 │ ║ 📚  Learn           [grad-3] ║ │
 │ ║ 🎬  Studio          [grad-4] ║ │
-│ ║ 🤖  AI              [grad-5] ║ │
 ├─────────────────────────────────┤
 │ PRACTICE                        │
 │ ║ 🧩  Problems        [grad-1] ║ │

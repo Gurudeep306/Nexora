@@ -80,14 +80,6 @@
 ### 8. **Learning Resources**
 - **Tutorials System:** Categorized lessons with progress tracking
 - **Learn System:** 30+ topics with curated problem paths
-- **AI Lab:** Domain-specific problems:
-  - Machine Learning (ML)
-  - Deep Learning (DL)
-  - Natural Language Processing (NLP)
-  - Computer Vision (CV)
-  - Generative AI (GenAI)
-  - Reinforcement Learning (RL)
-
 - **Forge Roadmap:** Software development career paths with milestones:
   - Frontend Development
   - Backend Development
@@ -98,7 +90,7 @@
   - Cloud Architecture
 
 ### 9. **AI Integration Features**
-- **Nexora AI assistant:** global slide-over (⌘J) with page context, tools and streaming answers; the AI Lab chat shares its thread
+- **Nexora AI assistant:** global slide-over (⌘J) with page context, tools and streaming answers
 - **Tutor pedagogy:** graded hints on unsolved problems; full solutions only after solving
 - **Coach / Code Completion / AI Fix:** live code insight, ghost text (fast model), minimal syntax fixes
 - **Also AI-backed:** translation, problem finder, Studio drafts, GATE debrief, algorithm animations
@@ -201,7 +193,6 @@ nexora/
 │   ├── judge.js                     # Code compilation & execution engine
 │   ├── scraper.js                   # Problem scraper CLI tool
 │   ├── sync.js                      # Platform API sync functions
-│   ├── ai-problems-data.js          # AI/ML problem database
 │   ├── dev-roadmap-data.js          # Forge roadmap paths & milestones
 │   ├── tutorial-data.js             # Tutorial content definitions
 │   │
@@ -357,7 +348,6 @@ GET  /api/problems/:id/submissions       # Get submission history
 POST /api/agent/chat                      # AI assistant (SSE stream; see AI Integration)
 GET  /api/tutorials                      # List tutorials
 GET  /api/tutorials/:id                  # Get tutorial content
-GET  /api/ai-problems                    # List AI/ML problems
 GET  /api/forge-paths                    # List dev roadmap paths
 GET  /api/forge-paths/:id                # Get path details
 ```

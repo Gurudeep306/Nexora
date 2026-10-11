@@ -77,7 +77,7 @@ const RULES = [
   ["PUT|DELETE", /^\/api\/testcases\/[^/]+$/, { login: true }],
   // The AI agent (chat, tasks, private conversation history): own account only.
   ["GET|POST|DELETE", /^\/api\/agent(\/.*)?$/, { login: true }],
-  ["POST", /^\/api\/(ai-problems|tutorials|forge\/topic)\/[^/]+\/(progress|complete|status)$/, { login: true }],
+  ["POST", /^\/api\/(tutorials|forge\/topic)\/[^/]+\/(progress|complete|status)$/, { login: true }],
 ];
 
 // The session caches the user's role from sign-in time. Re-read it from the

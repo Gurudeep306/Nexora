@@ -15,7 +15,6 @@ const WorkshopPage = lazy(pageLoaders.WorkshopPage)
 const NexusPage = lazy(pageLoaders.NexusPage)
 const AnalyticsPage = lazy(pageLoaders.AnalyticsPage)
 const AchievementsPage = lazy(pageLoaders.AchievementsPage)
-const AiLabPage = lazy(pageLoaders.AiLabPage)
 const LearnPage = lazy(pageLoaders.LearnPage)
 const LearnTopicPage = lazy(pageLoaders.LearnTopicPage)
 const LearnPracticePage = lazy(pageLoaders.LearnPracticePage)
@@ -72,7 +71,8 @@ export default function App() {
             <Route path="/nexus" element={<NexusPage />} />
             <Route path="/analytics" element={<AnalyticsPage />} />
             <Route path="/achievements" element={<AchievementsPage />} />
-            <Route path="/ailab" element={<AiLabPage />} />
+            {/* AI Lab was retired; AI courses live under Learn. Keep old links working. */}
+            <Route path="/ailab/*" element={<Navigate to="/learn" replace />} />
             <Route path="/learn" element={<LearnPage />} />
             <Route path="/learn/system-design/:systemId/:chapterNumber" element={<SystemDossierPage />} />
             <Route path="/learn/system-design/:systemId" element={<SystemDossierPage />} />

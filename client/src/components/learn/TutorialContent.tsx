@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { FileQuestion } from 'lucide-react'
-import { sanitizeHtml } from '@/components/ailab/sanitize'
+import { sanitizeHtml } from '@/lib/sanitize'
 import { cn } from '@/lib/utils'
 
 /** Studio-authored content blocks: paragraphs carry HTML, headings/pyq are markers. */

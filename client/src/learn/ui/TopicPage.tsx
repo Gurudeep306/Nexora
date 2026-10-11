@@ -4,6 +4,7 @@ import { motion, useScroll, useSpring } from 'motion/react'
 import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, ChevronDown, Clock, Code2, ListChecks, PlayCircle, HelpCircle } from 'lucide-react'
 import { ErrorState, LoadingBlock } from '@/components/ui'
 import { cn } from '@/lib/utils'
+import { useAgentPageContext } from '@/context/AgentContext'
 import { isDone, mark, pageKey, useProgress } from '../progress'
 import { LessonBlock } from './Blocks'
 import { useTopic } from './useTopic'
@@ -27,6 +28,11 @@ export default function TopicPage() {
   const pageIndex = topic ? Math.max(0, topic.pages.findIndex((p) => p.id === pageId)) : 0
   const page = topic?.pages[pageIndex]
   const bank = useMemo(() => new Map((topic?.questions ?? []).map((q) => [q.id, q])), [topic])
+  useAgentPageContext(
+    topic && page
+      ? { learnTopic: `${topic.title} · ${page.title}`, title: page.title }
+      : { learnTopic: topicId ?? 'DSA course' },
+  )
 
   // Reaching the end of a page marks it read.
   useEffect(() => {
@@ -120,7 +126,7 @@ export default function TopicPage() {
       </aside>
 
       {/* lesson */}
-      <motion.article key={page.id} initial={{ y: 8 }} animate={{ y: 0 }} transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }} className="mx-auto w-full max-w-[820px] min-w-0">
+      <motion.article data-agent-content key={page.id} initial={{ y: 8 }} animate={{ y: 0 }} transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }} className="mx-auto w-full max-w-[820px] min-w-0">
         <header className="mb-7">
           <p className="mb-2 flex items-center gap-3 text-[12px] text-text-muted">
             <span className="inline-flex items-center gap-1.5 font-semibold tracking-[0.1em] text-accent-brand uppercase">
