@@ -25,7 +25,6 @@ const ROUTES = [
   /^\/nexus$/,
   /^\/analytics$/,
   /^\/achievements$/,
-  /^\/ailab$/,
   /^\/learn$/,
   /^\/learn\/system-design\/[a-z0-9-]{1,60}(\/\d{1,3})?$/,
   /^\/learn\/dsa\/[a-z0-9-]{1,60}\/practice$/,

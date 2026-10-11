@@ -19,6 +19,7 @@ import { cn } from '@/lib/utils'
 import { Markdown } from '@/learn/md'
 import { api } from '@/lib/api'
 import { agentTask } from '@/lib/agent'
+import { useAgentPageContext } from '@/context/AgentContext'
 import { GateCalculator } from './GateCalculator'
 import { GateAiReport, type ExamEvaluation, type AiDiagnostic } from './GateAiReport'
 import { ReconstructedDiagram } from './ReconstructedDiagram'
@@ -146,6 +147,21 @@ export function GateCbtExam({
   if (currentQuestion) {
     currentQIdRef.current = currentQuestion.id
   }
+
+  // The floating assistant: concept help only while the paper is running
+  // (the server enforces this too); full explanations once it's submitted.
+  useAgentPageContext(
+    evalResult
+      ? { examReview: true, title: `${data?.paper.exam ?? 'GATE'} ${data?.paper.year ?? ''} mock — results` }
+      : {
+          examActive: true,
+          title: data ? `${data.paper.exam} ${data.paper.year} mock` : 'GATE mock',
+          gateQuestionId: currentQuestion?.id,
+          gateQuestionText: currentQuestion
+            ? [`Q${currentQuestion.number} (${currentQuestion.type})`, currentQuestion.text, ...currentQuestion.options.map((o) => `(${o.l}) ${o.t}`)].join('\n').slice(0, 3000)
+            : undefined,
+        },
+  )
 
   // Format seconds into HH:MM:SS
   const formatTime = (secs: number) => {

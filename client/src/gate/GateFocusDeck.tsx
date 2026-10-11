@@ -135,6 +135,7 @@ export function GateFocusDeck({
           q={activeQuestion}
           subjectName={subjectName(activeQuestion.subject)}
           topicName={topicName(activeQuestion.subject, activeQuestion.topic)}
+          reportToAssistant
         />
       </div>
 

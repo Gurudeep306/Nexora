@@ -129,6 +129,7 @@ export function GateSplitStudio({
           q={activeQuestion}
           subjectName={subjectName(activeQuestion.subject)}
           topicName={topicName(activeQuestion.subject, activeQuestion.topic)}
+          reportToAssistant
         />
       </div>
     </div>
