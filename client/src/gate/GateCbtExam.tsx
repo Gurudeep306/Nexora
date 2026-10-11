@@ -122,18 +122,14 @@ export function GateCbtExam({
     }
   }, [paperId])
 
-  // Timer countdown
+  // Timer countdown. The updater is kept pure (it only decrements); the
+  // time-out submit is triggered by a separate effect below so it always
+  // uses the latest responses and fires exactly once (StrictMode-safe).
+  const timeUp = timeRemaining <= 0
   useEffect(() => {
-    if (loading || evalResult) return
+    if (loading || evalResult || timeUp) return
     const timer = setInterval(() => {
-      setTimeRemaining((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer)
-          handleSubmitExam()
-          return 0
-        }
-        return prev - 1
-      })
+      setTimeRemaining((prev) => Math.max(0, prev - 1))
 
       // Track time spent on current question
       if (currentQIdRef.current) {
@@ -142,7 +138,7 @@ export function GateCbtExam({
       }
     }, 1000)
     return () => clearInterval(timer)
-  }, [loading, evalResult])
+  }, [loading, evalResult, timeUp])
 
   const questions = data?.questions || []
   const currentQuestion = questions[currentIndex]
@@ -263,6 +259,22 @@ export function GateCbtExam({
     }
   }
 
+  // Always point at the latest handler so the auto-submit sees current
+  // responses/timeSpent rather than a stale first-render closure.
+  const submitRef = useRef(handleSubmitExam)
+  useEffect(() => {
+    submitRef.current = handleSubmitExam
+  })
+
+  // Auto-submit once when the clock hits zero.
+  const autoSubmittedRef = useRef(false)
+  useEffect(() => {
+    if (!timeUp || loading || evalResult || isSubmitting) return
+    if (autoSubmittedRef.current) return
+    autoSubmittedRef.current = true
+    void submitRef.current()
+  }, [timeUp, loading, evalResult, isSubmitting])
+
   // Count palette states
   const counts = {
     answered: 0,
@@ -287,6 +299,7 @@ export function GateCbtExam({
     setAiAnalysis(null)
     setResponses({})
     setTimeRemaining(180 * 60)
+    autoSubmittedRef.current = false
     setTimeSpent({})
     setCurrentIndex(0)
     const initialStatus: Record<string, QuestionStatus> = {}

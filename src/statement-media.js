@@ -19,8 +19,10 @@ const PLATFORM_ORIGIN = {
 
 /* Domains the image proxy may fetch from. Matched by suffix, because problem
    statements reference a long tail of subdomains (m1/m2/m3.codeforces.com,
-   img.atcoder.jp, one-off S3 and CloudFront buckets) that an exact list could
-   never keep up with. */
+   img.atcoder.jp, abc123.contest.atcoder.jp) that an exact list could never
+   keep up with. Only the judges' own domains belong here: a shared hosting
+   suffix (amazonaws.com, cloudfront.net, githubusercontent.com) would let
+   anyone put a file behind our origin. */
 const IMG_PROXY_DOMAINS = [
   "codeforces.com",
   "codeforces.org",
@@ -39,20 +41,64 @@ const IMG_PROXY_DOMAINS = [
   "e-olymp.com",
   "web.archive.org",
   "archive.org",
-  // Object storage / CDNs the platforms above redirect their media to.
-  "amazonaws.com",
-  "cloudfront.net",
-  "akamaized.net",
-  "githubusercontent.com",
-  "imgur.com",
-  "cloudinary.com",
-  "jsdelivr.net",
 ];
 
-/** True when `host` is one of the allowed domains, or a subdomain of one. */
+/* Exact hosts on shared object storage / CDNs that the platforms above keep
+   statement media on. */
+const IMG_PROXY_HOSTS = [
+  "s3-lc-upload.s3.amazonaws.com", // LeetCode
+  "hr-challenge-images.s3.amazonaws.com", // HackerRank
+  "hr-assets.s3.amazonaws.com",
+  "raw.githubusercontent.com",
+  "user-images.githubusercontent.com",
+  "i.imgur.com",
+];
+
+/* Path-style S3 (https://s3.amazonaws.com/<bucket>/…): only these buckets. */
+const IMG_PROXY_S3_BUCKETS = ["codechef_shared", "hr-challenge-images", "hr-assets", "s3-lc-upload"];
+
+/** True when `host` is an allowed host, or one of the allowed domains or a subdomain of one. */
 function isProxyableHost(host) {
-  const h = String(host || "").toLowerCase();
-  return IMG_PROXY_DOMAINS.some((d) => h === d || h.endsWith("." + d));
+  const h = String(host || "").toLowerCase().replace(/\.$/, "");
+  if (!h) return false;
+  return IMG_PROXY_HOSTS.includes(h) || IMG_PROXY_DOMAINS.some((d) => h === d || h.endsWith("." + d));
+}
+
+/** True when the image proxy may fetch `url` (string or URL): https on an allowed host or S3 bucket. */
+function isProxyableUrl(url) {
+  let u;
+  try {
+    u = url instanceof URL ? url : new URL(String(url));
+  } catch {
+    return false;
+  }
+  if (u.protocol !== "https:" || u.username || u.password) return false;
+  if (u.port && u.port !== "443") return false;
+  if (isProxyableHost(u.hostname)) return true;
+  if (u.hostname.toLowerCase() === "s3.amazonaws.com") {
+    let bucket = "";
+    try {
+      bucket = decodeURIComponent(u.pathname.split("/")[1] || "");
+    } catch {
+      return false;
+    }
+    return IMG_PROXY_S3_BUCKETS.includes(bucket);
+  }
+  return false;
+}
+
+/* What the proxy relays: raster images, video and audio. SVG — or anything
+   else a browser could run script in — is never served from our origin. */
+const PROXY_MEDIA_TYPES = new Set([
+  "image/png", "image/jpeg", "image/pjpeg", "image/gif", "image/webp", "image/avif",
+  "image/bmp", "image/x-icon", "image/vnd.microsoft.icon",
+  "video/mp4", "video/webm", "video/ogg", "video/quicktime",
+  "audio/mpeg", "audio/mp4", "audio/ogg", "audio/wav", "audio/x-wav", "audio/wave", "audio/webm", "audio/aac",
+]);
+
+/** True for an upstream Content-Type the image proxy may pass through. */
+function isProxyableMediaType(ctype) {
+  return PROXY_MEDIA_TYPES.has(String(ctype || "").split(";")[0].trim().toLowerCase());
 }
 
 function absolutizeUrl(src, origin) {
@@ -150,7 +196,10 @@ function normalizeStatement(data, problem) {
 module.exports = {
   PLATFORM_ORIGIN,
   IMG_PROXY_DOMAINS,
+  IMG_PROXY_HOSTS,
   isProxyableHost,
+  isProxyableUrl,
+  isProxyableMediaType,
   absolutizeUrl,
   proxyUrlFor,
   normalizeStatementHtml,

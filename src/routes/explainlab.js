@@ -8,7 +8,13 @@ const { errMessage } = require("../http-error");
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const rateLimit = require('express-rate-limit');
 const eldb = require('../explainlab-db');
+
+const EDIT = { edit: true };
+const VIEW = { edit: false };
+const forbid = (res) => res.status(403).json({ ok: false, error: 'Unauthorized' });
+const clampInt = (v, def, max) => Math.min(Math.max(parseInt(v) || def, 0), max);
 
 function createExplainLabRouter(deps) {
   const { get, all, run, fetch, fs, getSessionUser, requireAuthenticatedUser, _groqChat } = deps;
@@ -33,6 +39,38 @@ function createExplainLabRouter(deps) {
       const ok = /\.(jpg|jpeg|png|gif|webp|mp4|webm|mov|pdf|svg|mp3|wav|ogg|m4a)$/i.test(file.originalname);
       cb(ok ? null : new Error('Unsupported file type'), ok);
     },
+  });
+
+  // ==================== Access helpers ====================
+
+  // The session's teacher and admins may edit it; drafts are visible only to them.
+  const canEdit = (user, session) =>
+    !!user?.username && (user.username === session.teacher_id || user.role === 'admin');
+  const canView = (user, session) => session.status !== 'draft' || canEdit(user, session);
+
+  // Loads a session and checks access. On failure it sends the 404/403 itself
+  // and returns null, so callers just `if (!session) return;`.
+  async function loadSession(req, res, id, { edit }) {
+    const session = await eldb.getSession(id);
+    if (!session) {
+      res.status(404).json({ ok: false, error: 'Session not found' });
+      return null;
+    }
+    const user = req.sessionUser || getSessionUser(req);
+    if (!(edit ? canEdit(user, session) : canView(user, session))) {
+      forbid(res);
+      return null;
+    }
+    return session;
+  }
+
+  // Anonymous viewers post analytics, so cap how fast one IP can write rows.
+  const analyticsLimiter = rateLimit({
+    windowMs: 60 * 1000,
+    max: 120,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { ok: false, error: 'Too many analytics events — please slow down.' },
   });
 
   // ==================== Pages ====================
@@ -91,16 +129,8 @@ function createExplainLabRouter(deps) {
   // Get session by ID
   router.get('/api/explainlab/sessions/:id', async (req, res) => {
     try {
-      const session = await eldb.getSession(req.params.id);
-      if (!session) return res.status(404).json({ ok: false, error: 'Session not found' });
-
-      // Check permissions - draft sessions only visible to creator/admin
-      if (session.status === 'draft') {
-        const user = getSessionUser(req);
-        if (!user || user.username !== session.teacher_id || user.role !== 'admin') {
-          return res.status(403).json({ ok: false, error: 'Unauthorized' });
-        }
-      }
+      const session = await loadSession(req, res, req.params.id, VIEW);
+      if (!session) return;
 
       // Enrich with related data
       session.pages = await eldb.getPagesBySession(session.id);
@@ -121,20 +151,33 @@ function createExplainLabRouter(deps) {
         status, search, limit, offset
       } = req.query;
 
+      // Anything other than published sessions (drafts, 'all') is private to
+      // its teacher: non-admins only ever get their own.
+      const wantStatus = status || 'published';
+      let teacherFilter = teacher_id;
+      if (wantStatus !== 'published') {
+        const user = getSessionUser(req);
+        if (!user?.username) return res.status(401).json({ ok: false, error: 'Authentication required' });
+        if (user.role !== 'admin') {
+          if (search || (teacherFilter && teacherFilter !== user.username)) return forbid(res);
+          teacherFilter = user.username;
+        }
+      }
+
       if (search) {
         const result = await eldb.searchSessions(search, {
-          status: status || 'published',
-          limit: parseInt(limit) || 20,
-          offset: parseInt(offset) || 0
+          status: wantStatus,
+          limit: clampInt(limit, 20, 100),
+          offset: clampInt(offset, 0, 1e6)
         });
         return res.json({ ok: true, ...result });
       }
 
       const result = await eldb.getSessionsByFilters({
-        teacher_id, course_id, chapter_id, lesson_id, problem_id,
-        status: status || 'published',
-        limit: parseInt(limit) || 50,
-        offset: parseInt(offset) || 0
+        teacher_id: teacherFilter, course_id, chapter_id, lesson_id, problem_id,
+        status: wantStatus,
+        limit: clampInt(limit, 50, 100),
+        offset: clampInt(offset, 0, 1e6)
       });
 
       res.json({ ok: true, ...result });
@@ -146,13 +189,8 @@ function createExplainLabRouter(deps) {
   // Update session
   router.put('/api/explainlab/sessions/:id', requireAuthenticatedUser, async (req, res) => {
     try {
-      const session = await eldb.getSession(req.params.id);
-      if (!session) return res.status(404).json({ ok: false, error: 'Session not found' });
-
-      // Check ownership
-      if (req.sessionUser.username !== session.teacher_id && req.sessionUser.role !== 'admin') {
-        return res.status(403).json({ ok: false, error: 'Unauthorized' });
-      }
+      const session = await loadSession(req, res, req.params.id, EDIT);
+      if (!session) return;
 
       await eldb.updateSession(req.params.id, req.body);
       const updated = await eldb.getSession(req.params.id);
@@ -165,12 +203,8 @@ function createExplainLabRouter(deps) {
   // Publish session
   router.post('/api/explainlab/sessions/:id/publish', requireAuthenticatedUser, async (req, res) => {
     try {
-      const session = await eldb.getSession(req.params.id);
-      if (!session) return res.status(404).json({ ok: false, error: 'Session not found' });
-
-      if (req.sessionUser.username !== session.teacher_id && req.sessionUser.role !== 'admin') {
-        return res.status(403).json({ ok: false, error: 'Unauthorized' });
-      }
+      const session = await loadSession(req, res, req.params.id, EDIT);
+      if (!session) return;
 
       await eldb.publishSession(req.params.id);
       const updated = await eldb.getSession(req.params.id);
@@ -183,12 +217,8 @@ function createExplainLabRouter(deps) {
   // Delete session
   router.delete('/api/explainlab/sessions/:id', requireAuthenticatedUser, async (req, res) => {
     try {
-      const session = await eldb.getSession(req.params.id);
-      if (!session) return res.status(404).json({ ok: false, error: 'Session not found' });
-
-      if (req.sessionUser.username !== session.teacher_id && req.sessionUser.role !== 'admin') {
-        return res.status(403).json({ ok: false, error: 'Unauthorized' });
-      }
+      const session = await loadSession(req, res, req.params.id, EDIT);
+      if (!session) return;
 
       await eldb.deleteSession(req.params.id);
       res.json({ ok: true });
@@ -201,16 +231,8 @@ function createExplainLabRouter(deps) {
 
   router.get('/api/explainlab/sessions/:id/typed-notes', async (req, res) => {
     try {
-      const session = await eldb.getSession(req.params.id);
-      if (!session) return res.status(404).json({ ok: false, error: 'Session not found' });
-
-      // Check permissions
-      if (session.status === 'draft') {
-        const user = getSessionUser(req);
-        if (!user || user.username !== session.teacher_id || user.role !== 'admin') {
-          return res.status(403).json({ ok: false, error: 'Unauthorized' });
-        }
-      }
+      const session = await loadSession(req, res, req.params.id, VIEW);
+      if (!session) return;
 
       res.json({ ok: true, html: session.typed_notes_html || '' });
     } catch (e) {
@@ -220,12 +242,8 @@ function createExplainLabRouter(deps) {
 
   router.put('/api/explainlab/sessions/:id/typed-notes', requireAuthenticatedUser, async (req, res) => {
     try {
-      const session = await eldb.getSession(req.params.id);
-      if (!session) return res.status(404).json({ ok: false, error: 'Session not found' });
-
-      if (req.sessionUser.username !== session.teacher_id && req.sessionUser.role !== 'admin') {
-        return res.status(403).json({ ok: false, error: 'Unauthorized' });
-      }
+      const session = await loadSession(req, res, req.params.id, EDIT);
+      if (!session) return;
 
       const { html } = req.body;
       await eldb.updateSession(req.params.id, { typed_notes_html: html });
@@ -239,15 +257,8 @@ function createExplainLabRouter(deps) {
 
   router.get('/api/explainlab/sessions/:id/full-explanation', async (req, res) => {
     try {
-      const session = await eldb.getSession(req.params.id);
-      if (!session) return res.status(404).json({ ok: false, error: 'Session not found' });
-
-      if (session.status === 'draft') {
-        const user = getSessionUser(req);
-        if (!user || user.username !== session.teacher_id || user.role !== 'admin') {
-          return res.status(403).json({ ok: false, error: 'Unauthorized' });
-        }
-      }
+      const session = await loadSession(req, res, req.params.id, VIEW);
+      if (!session) return;
 
       res.json({ ok: true, html: session.full_explanation_html || '' });
     } catch (e) {
@@ -257,12 +268,8 @@ function createExplainLabRouter(deps) {
 
   router.put('/api/explainlab/sessions/:id/full-explanation', requireAuthenticatedUser, async (req, res) => {
     try {
-      const session = await eldb.getSession(req.params.id);
-      if (!session) return res.status(404).json({ ok: false, error: 'Session not found' });
-
-      if (req.sessionUser.username !== session.teacher_id && req.sessionUser.role !== 'admin') {
-        return res.status(403).json({ ok: false, error: 'Unauthorized' });
-      }
+      const session = await loadSession(req, res, req.params.id, EDIT);
+      if (!session) return;
 
       const { html } = req.body;
       await eldb.updateSession(req.params.id, { full_explanation_html: html });
@@ -276,6 +283,7 @@ function createExplainLabRouter(deps) {
 
   router.get('/api/explainlab/sessions/:id/pages', async (req, res) => {
     try {
+      if (!(await loadSession(req, res, req.params.id, VIEW))) return;
       const pages = await eldb.getPagesBySession(req.params.id);
       res.json({ ok: true, pages });
     } catch (e) {
@@ -285,12 +293,8 @@ function createExplainLabRouter(deps) {
 
   router.post('/api/explainlab/sessions/:id/pages', requireAuthenticatedUser, async (req, res) => {
     try {
-      const session = await eldb.getSession(req.params.id);
-      if (!session) return res.status(404).json({ ok: false, error: 'Session not found' });
-
-      if (req.sessionUser.username !== session.teacher_id && req.sessionUser.role !== 'admin') {
-        return res.status(403).json({ ok: false, error: 'Unauthorized' });
-      }
+      const session = await loadSession(req, res, req.params.id, EDIT);
+      if (!session) return;
 
       const pages = await eldb.getPagesBySession(req.params.id);
       const nextPageIndex = pages.length;
@@ -315,11 +319,7 @@ function createExplainLabRouter(deps) {
     try {
       const page = await eldb.getPage(req.params.pageId);
       if (!page) return res.status(404).json({ ok: false, error: 'Page not found' });
-
-      const session = await eldb.getSession(page.session_id);
-      if (req.sessionUser.username !== session.teacher_id && req.sessionUser.role !== 'admin') {
-        return res.status(403).json({ ok: false, error: 'Unauthorized' });
-      }
+      if (!(await loadSession(req, res, page.session_id, EDIT))) return;
 
       await eldb.updatePage(req.params.pageId, req.body);
       res.json({ ok: true });
@@ -332,11 +332,7 @@ function createExplainLabRouter(deps) {
     try {
       const page = await eldb.getPage(req.params.pageId);
       if (!page) return res.status(404).json({ ok: false, error: 'Page not found' });
-
-      const session = await eldb.getSession(page.session_id);
-      if (req.sessionUser.username !== session.teacher_id && req.sessionUser.role !== 'admin') {
-        return res.status(403).json({ ok: false, error: 'Unauthorized' });
-      }
+      if (!(await loadSession(req, res, page.session_id, EDIT))) return;
 
       await eldb.deletePage(req.params.pageId);
       res.json({ ok: true });
@@ -349,12 +345,8 @@ function createExplainLabRouter(deps) {
 
   router.post('/api/explainlab/sessions/:id/events', requireAuthenticatedUser, async (req, res) => {
     try {
-      const session = await eldb.getSession(req.params.id);
-      if (!session) return res.status(404).json({ ok: false, error: 'Session not found' });
-
-      if (req.sessionUser.username !== session.teacher_id && req.sessionUser.role !== 'admin') {
-        return res.status(403).json({ ok: false, error: 'Unauthorized' });
-      }
+      const session = await loadSession(req, res, req.params.id, EDIT);
+      if (!session) return;
 
       const { page_id, timestamp_ms, event_type, payload_json } = req.body;
       if (!event_type || timestamp_ms === undefined) {
@@ -377,12 +369,8 @@ function createExplainLabRouter(deps) {
 
   router.post('/api/explainlab/sessions/:id/events/bulk', requireAuthenticatedUser, async (req, res) => {
     try {
-      const session = await eldb.getSession(req.params.id);
-      if (!session) return res.status(404).json({ ok: false, error: 'Session not found' });
-
-      if (req.sessionUser.username !== session.teacher_id && req.sessionUser.role !== 'admin') {
-        return res.status(403).json({ ok: false, error: 'Unauthorized' });
-      }
+      const session = await loadSession(req, res, req.params.id, EDIT);
+      if (!session) return;
 
       const { events } = req.body;
       if (!Array.isArray(events)) {
@@ -398,16 +386,8 @@ function createExplainLabRouter(deps) {
 
   router.get('/api/explainlab/sessions/:id/events', async (req, res) => {
     try {
-      const session = await eldb.getSession(req.params.id);
-      if (!session) return res.status(404).json({ ok: false, error: 'Session not found' });
-
-      // Check permissions
-      if (session.status === 'draft') {
-        const user = getSessionUser(req);
-        if (!user || user.username !== session.teacher_id || user.role !== 'admin') {
-          return res.status(403).json({ ok: false, error: 'Unauthorized' });
-        }
-      }
+      const session = await loadSession(req, res, req.params.id, VIEW);
+      if (!session) return;
 
       const { start_time, end_time, page_id } = req.query;
       const events = await eldb.getEventsBySession(
@@ -432,12 +412,8 @@ function createExplainLabRouter(deps) {
 
   router.post('/api/explainlab/sessions/:id/code-events', requireAuthenticatedUser, async (req, res) => {
     try {
-      const session = await eldb.getSession(req.params.id);
-      if (!session) return res.status(404).json({ ok: false, error: 'Session not found' });
-
-      if (req.sessionUser.username !== session.teacher_id && req.sessionUser.role !== 'admin') {
-        return res.status(403).json({ ok: false, error: 'Unauthorized' });
-      }
+      const session = await loadSession(req, res, req.params.id, EDIT);
+      if (!session) return;
 
       const { timestamp_ms, language, event_type, payload_json } = req.body;
       if (!event_type || timestamp_ms === undefined) {
@@ -460,15 +436,8 @@ function createExplainLabRouter(deps) {
 
   router.get('/api/explainlab/sessions/:id/code-events', async (req, res) => {
     try {
-      const session = await eldb.getSession(req.params.id);
-      if (!session) return res.status(404).json({ ok: false, error: 'Session not found' });
-
-      if (session.status === 'draft') {
-        const user = getSessionUser(req);
-        if (!user || user.username !== session.teacher_id || user.role !== 'admin') {
-          return res.status(403).json({ ok: false, error: 'Unauthorized' });
-        }
-      }
+      const session = await loadSession(req, res, req.params.id, VIEW);
+      if (!session) return;
 
       const { start_time, end_time } = req.query;
       const events = await eldb.getCodeEventsBySession(
@@ -493,6 +462,7 @@ function createExplainLabRouter(deps) {
 
   router.get('/api/explainlab/sessions/:id/handwritten-notes', async (req, res) => {
     try {
+      if (!(await loadSession(req, res, req.params.id, VIEW))) return;
       const notes = await eldb.getHandwrittenNotesBySession(req.params.id);
       res.json({ ok: true, notes });
     } catch (e) {
@@ -502,12 +472,8 @@ function createExplainLabRouter(deps) {
 
   router.post('/api/explainlab/sessions/:id/handwritten-notes', requireAuthenticatedUser, async (req, res) => {
     try {
-      const session = await eldb.getSession(req.params.id);
-      if (!session) return res.status(404).json({ ok: false, error: 'Session not found' });
-
-      if (req.sessionUser.username !== session.teacher_id && req.sessionUser.role !== 'admin') {
-        return res.status(403).json({ ok: false, error: 'Unauthorized' });
-      }
+      const session = await loadSession(req, res, req.params.id, EDIT);
+      if (!session) return;
 
       const notes = await eldb.getHandwrittenNotesBySession(req.params.id);
       const nextPageIndex = notes.length;
@@ -530,6 +496,9 @@ function createExplainLabRouter(deps) {
 
   router.delete('/api/explainlab/handwritten-notes/:noteId', requireAuthenticatedUser, async (req, res) => {
     try {
+      const item = await eldb.getHandwrittenNote(req.params.noteId);
+      if (!item) return res.status(404).json({ ok: false, error: 'Note not found' });
+      if (!(await loadSession(req, res, item.session_id, EDIT))) return;
       await eldb.deleteHandwrittenNote(req.params.noteId);
       res.json({ ok: true });
     } catch (e) {
@@ -541,6 +510,7 @@ function createExplainLabRouter(deps) {
 
   router.get('/api/explainlab/sessions/:id/markers', async (req, res) => {
     try {
+      if (!(await loadSession(req, res, req.params.id, VIEW))) return;
       const markers = await eldb.getMarkersBySession(req.params.id);
       res.json({ ok: true, markers });
     } catch (e) {
@@ -550,12 +520,8 @@ function createExplainLabRouter(deps) {
 
   router.post('/api/explainlab/sessions/:id/markers', requireAuthenticatedUser, async (req, res) => {
     try {
-      const session = await eldb.getSession(req.params.id);
-      if (!session) return res.status(404).json({ ok: false, error: 'Session not found' });
-
-      if (req.sessionUser.username !== session.teacher_id && req.sessionUser.role !== 'admin') {
-        return res.status(403).json({ ok: false, error: 'Unauthorized' });
-      }
+      const session = await loadSession(req, res, req.params.id, EDIT);
+      if (!session) return;
 
       const { timestamp_ms, title, description, marker_type } = req.body;
       if (!timestamp_ms || !title) {
@@ -578,6 +544,9 @@ function createExplainLabRouter(deps) {
 
   router.delete('/api/explainlab/markers/:markerId', requireAuthenticatedUser, async (req, res) => {
     try {
+      const item = await eldb.getMarker(req.params.markerId);
+      if (!item) return res.status(404).json({ ok: false, error: 'Marker not found' });
+      if (!(await loadSession(req, res, item.session_id, EDIT))) return;
       await eldb.deleteMarker(req.params.markerId);
       res.json({ ok: true });
     } catch (e) {
@@ -589,6 +558,7 @@ function createExplainLabRouter(deps) {
 
   router.get('/api/explainlab/sessions/:id/clips', async (req, res) => {
     try {
+      if (!(await loadSession(req, res, req.params.id, VIEW))) return;
       const clips = await eldb.getClipsBySession(req.params.id);
       res.json({ ok: true, clips });
     } catch (e) {
@@ -598,12 +568,8 @@ function createExplainLabRouter(deps) {
 
   router.post('/api/explainlab/sessions/:id/clips', requireAuthenticatedUser, async (req, res) => {
     try {
-      const session = await eldb.getSession(req.params.id);
-      if (!session) return res.status(404).json({ ok: false, error: 'Session not found' });
-
-      if (req.sessionUser.username !== session.teacher_id && req.sessionUser.role !== 'admin') {
-        return res.status(403).json({ ok: false, error: 'Unauthorized' });
-      }
+      const session = await loadSession(req, res, req.params.id, EDIT);
+      if (!session) return;
 
       const { title, start_ms, end_ms, description } = req.body;
       if (!title || start_ms === undefined || end_ms === undefined) {
@@ -626,6 +592,9 @@ function createExplainLabRouter(deps) {
 
   router.delete('/api/explainlab/clips/:clipId', requireAuthenticatedUser, async (req, res) => {
     try {
+      const item = await eldb.getClip(req.params.clipId);
+      if (!item) return res.status(404).json({ ok: false, error: 'Clip not found' });
+      if (!(await loadSession(req, res, item.session_id, EDIT))) return;
       await eldb.deleteClip(req.params.clipId);
       res.json({ ok: true });
     } catch (e) {
@@ -719,12 +688,12 @@ function createExplainLabRouter(deps) {
 
   router.get('/api/explainlab/sessions/:id/doubts', requireAuthenticatedUser, async (req, res) => {
     try {
-      const session = await eldb.getSession(req.params.id);
-      if (!session) return res.status(404).json({ ok: false, error: 'Session not found' });
+      const session = await loadSession(req, res, req.params.id, VIEW);
+      if (!session) return;
 
       // Students see their own doubts, teachers see all
       let doubts;
-      if (req.sessionUser.username === session.teacher_id || req.sessionUser.role === 'admin') {
+      if (canEdit(req.sessionUser, session)) {
         doubts = await eldb.getDoubtsBySession(req.params.id);
         // Include replies
         for (const doubt of doubts) {
@@ -743,10 +712,10 @@ function createExplainLabRouter(deps) {
 
   router.post('/api/explainlab/sessions/:id/doubts', requireAuthenticatedUser, async (req, res) => {
     try {
-      const session = await eldb.getSession(req.params.id);
-      if (!session) return res.status(404).json({ ok: false, error: 'Session not found' });
+      const session = await loadSession(req, res, req.params.id, VIEW);
+      if (!session) return;
 
-      if (!session.allow_public_doubts && req.sessionUser.username !== session.teacher_id) {
+      if (!session.allow_public_doubts && !canEdit(req.sessionUser, session)) {
         return res.status(403).json({ ok: false, error: 'Doubts are not allowed on this session' });
       }
 
@@ -778,6 +747,11 @@ function createExplainLabRouter(deps) {
         return res.status(400).json({ ok: false, error: 'reply_text required' });
       }
 
+      // Replies are stored as the teacher's answer: session teacher/admin only.
+      const doubt = await eldb.getDoubt(req.params.doubtId);
+      if (!doubt) return res.status(404).json({ ok: false, error: 'Doubt not found' });
+      if (!(await loadSession(req, res, doubt.session_id, EDIT))) return;
+
       const replyId = await eldb.createDoubtReply({
         doubt_id: parseInt(req.params.doubtId),
         teacher_id: req.sessionUser.username,
@@ -794,6 +768,12 @@ function createExplainLabRouter(deps) {
 
   router.put('/api/explainlab/doubts/:doubtId/resolve', requireAuthenticatedUser, async (req, res) => {
     try {
+      // The student who asked, the session teacher, or an admin may resolve it.
+      const doubt = await eldb.getDoubt(req.params.doubtId);
+      if (!doubt) return res.status(404).json({ ok: false, error: 'Doubt not found' });
+      if (doubt.student_id !== req.sessionUser.username) {
+        if (!(await loadSession(req, res, doubt.session_id, EDIT))) return;
+      }
       await eldb.resolveDoubt(parseInt(req.params.doubtId), req.sessionUser.username);
       res.json({ ok: true });
     } catch (e) {
@@ -815,9 +795,9 @@ function createExplainLabRouter(deps) {
   router.post('/api/explainlab/sessions/:id/progress', requireAuthenticatedUser, async (req, res) => {
     try {
       await eldb.updateProgress({
+        ...req.body,
         session_id: req.params.id,
-        user_id: req.sessionUser.username,
-        ...req.body
+        user_id: req.sessionUser.username
       });
       res.json({ ok: true });
     } catch (e) {
@@ -829,13 +809,8 @@ function createExplainLabRouter(deps) {
 
   router.get('/api/explainlab/sessions/:id/analytics', requireAuthenticatedUser, async (req, res) => {
     try {
-      const session = await eldb.getSession(req.params.id);
-      if (!session) return res.status(404).json({ ok: false, error: 'Session not found' });
-
-      // Only teacher/admin can view analytics
-      if (req.sessionUser.username !== session.teacher_id && req.sessionUser.role !== 'admin') {
-        return res.status(403).json({ ok: false, error: 'Unauthorized' });
-      }
+      const session = await loadSession(req, res, req.params.id, EDIT);
+      if (!session) return;
 
       const analytics = await eldb.getSessionAnalytics(req.params.id);
       res.json({ ok: true, analytics });
@@ -844,12 +819,27 @@ function createExplainLabRouter(deps) {
     }
   });
 
-  router.post('/api/explainlab/sessions/:id/analytics', async (req, res) => {
+  router.post('/api/explainlab/sessions/:id/analytics', analyticsLimiter, async (req, res) => {
     try {
+      const { event_type, timestamp_ms, payload_json } = req.body || {};
+      if (!event_type || typeof event_type !== 'string') {
+        return res.status(400).json({ ok: false, error: 'event_type required' });
+      }
+      if (!(await loadSession(req, res, req.params.id, VIEW))) return;
+
+      // Only whitelisted, size-capped fields; identity comes from the session.
+      const payload = payload_json == null ? null
+        : typeof payload_json === 'string' ? payload_json : JSON.stringify(payload_json);
+      if (payload && payload.length > 4096) {
+        return res.status(413).json({ ok: false, error: 'payload_json too large' });
+      }
+      const ts = Number(timestamp_ms);
       await eldb.logAnalyticsEvent({
         session_id: req.params.id,
-        user_id: req.sessionUser?.username || null,
-        ...req.body
+        user_id: getSessionUser(req)?.username || null,
+        event_type: event_type.slice(0, 64),
+        timestamp_ms: Number.isFinite(ts) ? Math.max(0, Math.floor(ts)) : 0,
+        payload_json: payload
       });
       res.json({ ok: true });
     } catch (e) {
@@ -861,12 +851,8 @@ function createExplainLabRouter(deps) {
 
   router.post('/api/explainlab/sessions/:id/upload-media', requireAuthenticatedUser, async (req, res) => {
     try {
-      const session = await eldb.getSession(req.params.id);
-      if (!session) return res.status(404).json({ ok: false, error: 'Session not found' });
-
-      if (req.sessionUser.username !== session.teacher_id && req.sessionUser.role !== 'admin') {
-        return res.status(403).json({ ok: false, error: 'Unauthorized' });
-      }
+      const session = await loadSession(req, res, req.params.id, EDIT);
+      if (!session) return;
 
       // Handle file upload via multer
       // For now, return placeholder - actual upload handled by existing studio upload
@@ -880,8 +866,8 @@ function createExplainLabRouter(deps) {
 
   router.post('/api/explainlab/sessions/:id/ai/summary', requireAuthenticatedUser, async (req, res) => {
     try {
-      const session = await eldb.getSession(req.params.id);
-      if (!session) return res.status(404).json({ ok: false, error: 'Session not found' });
+      const session = await loadSession(req, res, req.params.id, VIEW);
+      if (!session) return;
 
       const apiKey = process.env.GROQ_API_KEY || 'kronos-sovereign';
 
@@ -917,8 +903,8 @@ function createExplainLabRouter(deps) {
 
   router.post('/api/explainlab/sessions/:id/ai/notes', requireAuthenticatedUser, async (req, res) => {
     try {
-      const session = await eldb.getSession(req.params.id);
-      if (!session) return res.status(404).json({ ok: false, error: 'Session not found' });
+      const session = await loadSession(req, res, req.params.id, VIEW);
+      if (!session) return;
 
       const apiKey = process.env.GROQ_API_KEY || 'kronos-sovereign';
 
@@ -949,8 +935,8 @@ function createExplainLabRouter(deps) {
 
   router.post('/api/explainlab/sessions/:id/ai/full-explanation', requireAuthenticatedUser, async (req, res) => {
     try {
-      const session = await eldb.getSession(req.params.id);
-      if (!session) return res.status(404).json({ ok: false, error: 'Session not found' });
+      const session = await loadSession(req, res, req.params.id, VIEW);
+      if (!session) return;
 
       const apiKey = process.env.GROQ_API_KEY || 'kronos-sovereign';
 
@@ -991,8 +977,8 @@ function createExplainLabRouter(deps) {
 
   router.post('/api/explainlab/sessions/:id/ai/quiz', requireAuthenticatedUser, async (req, res) => {
     try {
-      const session = await eldb.getSession(req.params.id);
-      if (!session) return res.status(404).json({ ok: false, error: 'Session not found' });
+      const session = await loadSession(req, res, req.params.id, VIEW);
+      if (!session) return;
 
       const apiKey = process.env.GROQ_API_KEY || 'kronos-sovereign';
 
@@ -1037,8 +1023,8 @@ function createExplainLabRouter(deps) {
 
   router.post('/api/explainlab/sessions/:id/ai/flashcards', requireAuthenticatedUser, async (req, res) => {
     try {
-      const session = await eldb.getSession(req.params.id);
-      if (!session) return res.status(404).json({ ok: false, error: 'Session not found' });
+      const session = await loadSession(req, res, req.params.id, VIEW);
+      if (!session) return;
 
       const apiKey = process.env.GROQ_API_KEY || 'kronos-sovereign';
 
