@@ -64,9 +64,9 @@ services:
       - key: GROQ_MODEL
         value: openai/gpt-oss-120b
       - key: GROQ_FAST_MODEL
-        value: llama-3.1-8b-instant
+        value: openai/gpt-oss-20b
       - key: GROQ_FALLBACK_MODEL
-        value: llama-3.3-70b-versatile
+        value: openai/gpt-oss-20b
       - key: AI_DAILY_TOKENS
         value: "200000"
       - key: STUDIO_PASSWORD
@@ -113,9 +113,9 @@ services:
       - key: GROQ_MODEL
         value: openai/gpt-oss-120b
       - key: GROQ_FAST_MODEL
-        value: llama-3.1-8b-instant
+        value: openai/gpt-oss-20b
       - key: GROQ_FALLBACK_MODEL
-        value: llama-3.3-70b-versatile
+        value: openai/gpt-oss-20b
       - key: AI_DAILY_TOKENS
         value: "200000"
       - key: STUDIO_PASSWORD

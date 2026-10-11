@@ -15,8 +15,8 @@ const DEFAULT_BASE_URL = "https://api.groq.com/openai/v1";
 function models() {
   return {
     main: process.env.GROQ_MODEL || "openai/gpt-oss-120b",
-    fast: process.env.GROQ_FAST_MODEL || "llama-3.1-8b-instant",
-    fallback: process.env.GROQ_FALLBACK_MODEL || "llama-3.3-70b-versatile",
+    fast: process.env.GROQ_FAST_MODEL || "openai/gpt-oss-20b",
+    fallback: process.env.GROQ_FALLBACK_MODEL || "openai/gpt-oss-20b",
   };
 }
 
