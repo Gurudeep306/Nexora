@@ -2488,16 +2488,55 @@
                     this.switchTab("ai-tools");
                 },
 
-                aiGenerate(type) {
+                // AI authoring via the site's Groq agent (needs a Nexora login
+                // plus the studio password). The draft is shown as plain text
+                // to copy into a lesson — never injected as HTML here.
+                async aiGenerate(type) {
                     const topic = prompt(`Enter topic for ${type}:`);
                     if (!topic) return;
                     this.toast(`Generating ${type} for "${topic}"...`, "info");
-                    setTimeout(() => {
-                        this.toast(
-                            `${type} generated successfully!`,
-                            "success",
-                        );
-                    }, 2000);
+                    const d = await this.api("/api/agent/task", {
+                        method: "POST",
+                        body: { mode: "studio_author", type, prompt: topic },
+                    });
+                    if (!d.ok || !d.result) return;
+                    this.showAiDraft(`AI ${type}: ${topic}`, d.result.text || "");
+                },
+
+                showAiDraft(title, text) {
+                    document.getElementById("studio-ai-draft")?.remove();
+                    const wrap = document.createElement("div");
+                    wrap.id = "studio-ai-draft";
+                    wrap.style.cssText =
+                        "position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.6);padding:16px";
+                    const box = document.createElement("div");
+                    box.style.cssText =
+                        "width:min(760px,100%);max-height:90vh;display:flex;flex-direction:column;gap:10px;background:#11131a;border:1px solid #2a2f3a;border-radius:12px;padding:16px;color:#e6e6e6";
+                    const h = document.createElement("strong");
+                    h.textContent = title;
+                    const area = document.createElement("textarea");
+                    area.readOnly = true;
+                    area.value = text;
+                    area.style.cssText =
+                        "flex:1;min-height:50vh;width:100%;font:12px/1.5 ui-monospace,monospace;background:#0b0d12;color:#e6e6e6;border:1px solid #2a2f3a;border-radius:8px;padding:10px";
+                    const row = document.createElement("div");
+                    row.style.cssText = "display:flex;gap:8px;justify-content:flex-end";
+                    const copy = document.createElement("button");
+                    copy.className = "btn btn-primary btn-sm";
+                    copy.textContent = "Copy";
+                    copy.onclick = () => {
+                        navigator.clipboard?.writeText(text);
+                        this.toast("Copied to clipboard", "success");
+                    };
+                    const close = document.createElement("button");
+                    close.className = "btn btn-sm";
+                    close.textContent = "Close";
+                    close.onclick = () => wrap.remove();
+                    row.append(copy, close);
+                    box.append(h, area, row);
+                    wrap.append(box);
+                    wrap.addEventListener("click", (e) => e.target === wrap && wrap.remove());
+                    document.body.append(wrap);
                 },
 
                 uploadMedia() {
