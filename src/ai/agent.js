@@ -123,43 +123,114 @@ async function loadHistory(username, conversationId) {
     .map((r) => ({ role: r.role, content: String(r.content).slice(0, 4000) }));
 }
 
-/** Server-verified page context: what's on the student's screen, plus solved status. */
-async function pageContext(page = {}) {
+/* ── page context ──
+   What the student is looking at, sent by the floating assistant with every
+   message. All of it is untrusted: it is capped, stringified, and only ever
+   reaches the model inside a <data> block. The page kind and exam state are
+   decided here, on the server. */
+const PAGE_LIMITS = {
+  path: 200,
+  title: 200,
+  label: 120,
+  code: 12000,
+  language: 20,
+  selection: 3000,
+  visibleText: 6000,
+  gateQuestionId: 60,
+  gateQuestionText: 3000,
+  learnTopic: 120,
+  verdict: 300,
+  filters: 600,
+};
+
+const str = (v, max) => (v == null || typeof v === "object" ? "" : String(v).slice(0, max).trim());
+
+/** Coerce the client's page object into capped strings and real booleans. */
+function normalizePage(page) {
+  const src = page && typeof page === "object" && !Array.isArray(page) ? page : {};
+  const out = {};
+  for (const [k, max] of Object.entries(PAGE_LIMITS)) {
+    const v = str(src[k], max);
+    if (v) out[k] = v;
+  }
+  const pid = src.problemId;
+  if (typeof pid === "number" || typeof pid === "string") {
+    const v = String(pid).slice(0, 80).trim();
+    if (v) out.problemId = v;
+  }
+  out.kind = P.pageKind(out.path);
+  out.gateAnswered = src.gateAnswered === true;
+  // A /gate/cbt/<paper> page is an active exam unless the client says the
+  // paper has been submitted; the client may also flag an exam anywhere.
+  out.examActive = src.examActive === true || (out.kind === "gate-exam" && src.examReview !== true);
+  return out;
+}
+
+/**
+ * Pure: the page-context text for the model, from a normalized page and any
+ * server lookups ({ problem, learnSolved }). Returns { text, solved }.
+ */
+function describePage(page, { problem = null, learnSolved = false } = {}) {
   const parts = [];
   let solved = false;
-  const path = String(page.path || "").slice(0, 200);
-  if (path) parts.push(`Page: ${path}`);
-  const pid = page.problemId != null ? String(page.problemId).slice(0, 80) : "";
+  const pid = page.problemId || "";
+  if (page.path) parts.push(`Page: ${page.path} (${page.kind})`);
+  if (page.examActive) parts.push("EXAM STATUS: a timed GATE mock exam is ACTIVE — answers must not be revealed.");
 
-  if (/^\d+$/.test(pid)) {
-    const p = await D.getProblem(pid, { maxChars: 5000 }).catch(() => null);
-    if (p) {
-      solved = p.status === "solved";
-      parts.push(
-        `Problem #${p.id}: ${p.title} [${p.platform} ${p.code}] rating ${p.rating ?? "?"}, tags: ${p.tags.join(", ") || "none"}`,
-        `Student status on this problem: ${p.status.toUpperCase()}`,
-      );
-      if (p.statement) parts.push(`Statement:\n${p.statement}`);
-    }
-  } else if (pid && /^\/solve\/learn\//.test(path)) {
-    const r = await get("SELECT status FROM learn_progress WHERE username=? AND item=?", [
-      me(),
-      `code:${pid}`,
-    ]).catch(() => null);
-    solved = r?.status === "solved" || r?.status === "correct";
+  if (problem) {
+    solved = problem.status === "solved";
+    parts.push(
+      `Problem #${problem.id}: ${problem.title} [${problem.platform} ${problem.code}] rating ${problem.rating ?? "?"}, tags: ${(problem.tags || []).join(", ") || "none"}`,
+      `Student status on this problem: ${String(problem.status || "unsolved").toUpperCase()}`,
+    );
+    if (problem.statement) parts.push(`Statement:\n${String(problem.statement).slice(0, 5000)}`);
+  } else if (pid && /^\/solve\/learn\//.test(page.path || "")) {
+    solved = !!learnSolved;
     parts.push(`Course problem: ${pid}`, `Student status on this problem: ${solved ? "SOLVED" : "UNSOLVED"}`);
   } else if (pid) {
     parts.push(`Problem: ${pid}`, "Student status on this problem: UNSOLVED");
   }
-  if (page.title && !/^\d+$/.test(pid)) parts.push(`Title: ${String(page.title).slice(0, 200)}`);
-  if (page.visibleText && !(/^\d+$/.test(pid) && parts.some((x) => x.startsWith("Statement:")))) {
-    parts.push(`On screen:\n${String(page.visibleText).slice(0, 5000)}`);
+  if (page.title && !problem) parts.push(`Title: ${page.title}`);
+  if (page.learnTopic) parts.push(`Topic: ${page.learnTopic}`);
+  if (page.filters) parts.push(`Active filters: ${page.filters}`);
+  if (page.verdict) parts.push(`Last verdict: ${page.verdict}`);
+  if (page.gateQuestionId) {
+    parts.push(`GATE question on screen: ${page.gateQuestionId}`);
+    if (!page.examActive) {
+      parts.push(page.gateAnswered ? "The student has answered/checked this question (review mode)." : "The student has NOT answered this question yet.");
+    }
   }
-  if (page.gateQuestionId) parts.push(`GATE question on screen: ${String(page.gateQuestionId).slice(0, 60)}`);
-  if (page.learnTopic) parts.push(`Course topic: ${String(page.learnTopic).slice(0, 80)}`);
-  if (page.code) parts.push(`Student's current ${String(page.language || "").slice(0, 20)} code:\n${String(page.code).slice(0, 8000)}`);
-  if (page.selection) parts.push(`Selected code:\n${String(page.selection).slice(0, 3000)}`);
+  if (page.gateQuestionText) parts.push(`Question text:\n${page.gateQuestionText}`);
+  if (page.visibleText && !(problem && problem.statement)) parts.push(`On screen:\n${page.visibleText}`);
+  if (page.code) parts.push(`Student's current ${page.language || ""} code:\n${page.code}`);
+  if (page.selection) parts.push(`Selected text:\n${page.selection}`);
   return { text: parts.join("\n\n"), solved };
+}
+
+/** Server-verified page context: looks up the problem and solved status, then describes the page. */
+async function pageContext(rawPage = {}) {
+  const page = normalizePage(rawPage);
+  const pid = page.problemId || "";
+  let problem = null;
+  let learnSolved = false;
+  if (/^\d+$/.test(pid)) {
+    problem = await D.getProblem(pid, { maxChars: 5000 }).catch(() => null);
+  } else if (pid && /^\/solve\/learn\//.test(page.path || "")) {
+    const r = await get("SELECT status FROM learn_progress WHERE username=? AND item=?", [me(), `code:${pid}`]).catch(() => null);
+    learnSolved = r?.status === "solved" || r?.status === "correct";
+  }
+  return { ...describePage(page, { problem, learnSolved }), page };
+}
+
+/** Pure: the message list for one chat turn (system prompt, page data, history, question). */
+function buildChatMessages({ ctx, history = [], text, animate = false }) {
+  const { page } = ctx;
+  return [
+    { role: "system", content: P.chatSystem({ solved: ctx.solved && !page.examActive, animate, kind: page.kind, examActive: page.examActive }) },
+    ...(ctx.text ? [{ role: "system", content: `What the student is looking at right now:\n${P.data("page", ctx.text, 30000)}` }] : []),
+    ...history,
+    { role: "user", content: text },
+  ];
 }
 
 async function persistTurn(username, conversationId, role, content, visualization = null) {
@@ -187,14 +258,9 @@ async function runChat({ user, conversationId, message, page = {}, animate = fal
 
   const history = await loadHistory(username, convId);
   const ctx = await runAs(username, () => pageContext(page || {}));
-  const wantAnim = !!animate || wantsAnimation(text);
-
-  const messages = [
-    { role: "system", content: P.chatSystem({ solved: ctx.solved, animate: wantAnim }) },
-    ...(ctx.text ? [{ role: "system", content: `What the student is looking at right now:\n${P.data("page", ctx.text, 20000)}` }] : []),
-    ...history,
-    { role: "user", content: text },
-  ];
+  // No animated walkthroughs during an exam: they would solve the question.
+  const wantAnim = !ctx.page.examActive && (!!animate || wantsAnimation(text));
+  const messages = buildChatMessages({ ctx, history, text, animate: wantAnim });
 
   const llm = client || groq();
   const usage = { prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 };
@@ -229,7 +295,7 @@ async function runChat({ user, conversationId, message, page = {}, animate = fal
     for (let i = 0; i < calls.length; i += MAX_PARALLEL_TOOLS) {
       const batch = calls.slice(i, i + MAX_PARALLEL_TOOLS);
       for (const c of batch) onEvent("tool", { name: c.function.name, status: "running" });
-      const results = await Promise.all(batch.map((c) => tools.runTool(c, { username, page })));
+      const results = await Promise.all(batch.map((c) => tools.runTool(c, { username, page: ctx.page })));
       results.forEach((r, j) => {
         onEvent("tool", { name: r.name, status: "done", ok: r.ok });
         if (r.action) onEvent("action", r.action);
@@ -301,6 +367,10 @@ async function deleteConversation(username, conversationId) {
 
 module.exports = {
   runChat,
+  normalizePage,
+  describePage,
+  buildChatMessages,
+  PAGE_LIMITS,
   runTask,
   listConversations,
   getConversation,
