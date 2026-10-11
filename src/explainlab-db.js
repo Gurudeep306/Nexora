@@ -266,7 +266,8 @@ async function getSessionsByFilters(filters) {
   if (chapter_id) { where.push('chapter_id=?'); params.push(chapter_id); }
   if (lesson_id) { where.push('lesson_id=?'); params.push(lesson_id); }
   if (problem_id) { where.push('problem_id=?'); params.push(problem_id); }
-  if (status) { where.push('status=?'); params.push(status); }
+  // 'all' means no status filter (the teacher dashboard asks for every status).
+  if (status && status !== 'all') { where.push('status=?'); params.push(status); }
 
   const whereClause = where.length ? 'WHERE ' + where.join(' AND ') : '';
   const sessions = await all(
@@ -423,6 +424,10 @@ async function getHandwrittenNotesBySession(sessionId) {
   return await all('SELECT * FROM explain_handwritten_notes WHERE session_id=? ORDER BY page_index', [sessionId]);
 }
 
+async function getHandwrittenNote(id) {
+  return await get('SELECT * FROM explain_handwritten_notes WHERE id=?', [id]);
+}
+
 async function deleteHandwrittenNote(id) {
   await run('DELETE FROM explain_handwritten_notes WHERE id=?', [id]);
 }
@@ -443,6 +448,10 @@ async function getMarkersBySession(sessionId) {
   return await all('SELECT * FROM explain_markers WHERE session_id=? ORDER BY timestamp_ms', [sessionId]);
 }
 
+async function getMarker(id) {
+  return await get('SELECT * FROM explain_markers WHERE id=?', [id]);
+}
+
 async function deleteMarker(id) {
   await run('DELETE FROM explain_markers WHERE id=?', [id]);
 }
@@ -461,6 +470,10 @@ async function createClip(data) {
 
 async function getClipsBySession(sessionId) {
   return await all('SELECT * FROM explain_clips WHERE session_id=? ORDER BY start_ms', [sessionId]);
+}
+
+async function getClip(id) {
+  return await get('SELECT * FROM explain_clips WHERE id=?', [id]);
 }
 
 async function deleteClip(id) {
@@ -543,6 +556,10 @@ async function createDoubt(data) {
     [session_id, student_id, page_id || null, timestamp_ms || 0, x || null, y || null, doubt_text]
   );
   return r.lastID;
+}
+
+async function getDoubt(id) {
+  return await get('SELECT * FROM explain_doubts WHERE id=?', [id]);
 }
 
 async function getDoubtsBySession(sessionId, status = null) {
@@ -717,14 +734,17 @@ module.exports = {
   // Handwritten Notes
   createHandwrittenNote,
   getHandwrittenNotesBySession,
+  getHandwrittenNote,
   deleteHandwrittenNote,
   // Markers
   createMarker,
   getMarkersBySession,
+  getMarker,
   deleteMarker,
   // Clips
   createClip,
   getClipsBySession,
+  getClip,
   deleteClip,
   // Student Notes
   createStudentNote,
@@ -736,6 +756,7 @@ module.exports = {
   deleteBookmark,
   // Doubts
   createDoubt,
+  getDoubt,
   getDoubtsBySession,
   getDoubtsByStudent,
   resolveDoubt,
