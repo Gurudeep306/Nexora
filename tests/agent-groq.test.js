@@ -119,11 +119,18 @@ test('a hung request is aborted by the timeout', async () => {
         init.signal.addEventListener('abort', () => reject(init.signal.reason));
       }),
   });
+  // AbortSignal.timeout's timer is unref'd; on Node 22 nothing else keeps the
+  // test's event loop alive while the hung fetch waits for it.
+  const keepAlive = setInterval(() => {}, 1000);
   const t0 = Date.now();
-  await assert.rejects(
-    client.chat({ messages: [], timeoutMs: 50, fallbackModel: null }),
-    (e) => e instanceof AiError && e.status === 504,
-  );
+  try {
+    await assert.rejects(
+      client.chat({ messages: [], timeoutMs: 50, fallbackModel: null }),
+      (e) => e instanceof AiError && e.status === 504,
+    );
+  } finally {
+    clearInterval(keepAlive);
+  }
   assert.ok(Date.now() - t0 < 2000);
 });
 
