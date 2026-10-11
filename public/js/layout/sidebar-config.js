@@ -376,13 +376,6 @@ const ORBITDOCK_CONFIG = {
           title: "Teaching Tools",
           items: [
             {
-              id: "explain",
-              label: "ExplainLab",
-              icon: "presentation",
-              route: "/explainlab",
-              badge: null,
-            },
-            {
               id: "liveclass",
               label: "LiveClass",
               icon: "video",
@@ -497,7 +490,7 @@ const ORBITDOCK_CONFIG = {
         },
       ],
 
-      pinnedTools: ["courses", "lessons", "explain", "live"],
+      pinnedTools: ["courses", "lessons", "live"],
 
       statusCard: {
         title: "Today in Studio",
@@ -754,13 +747,6 @@ const ORBITDOCK_CONFIG = {
         icon: "plus",
         action: "createLesson",
       },
-      { id: "openpad", label: "Writing Pad", icon: "pen", action: "openPad" },
-      {
-        id: "newexplain",
-        label: "New Explanation",
-        icon: "presentation",
-        action: "newExplain",
-      },
       {
         id: "startlive",
         label: "Start Live Class",
@@ -791,16 +777,6 @@ const ORBITDOCK_CONFIG = {
       },
       { id: "chat", label: "Chat", icon: "message", action: "toggleChat" },
       { id: "record", label: "Record", icon: "circle", action: "toggleRecord" },
-    ],
-
-    explainlab: [
-      { id: "pen", label: "Pen", icon: "pen", action: "selectPen" },
-      { id: "eraser", label: "Eraser", icon: "eraser", action: "selectEraser" },
-      { id: "shapes", label: "Shapes", icon: "square", action: "selectShapes" },
-      { id: "addpage", label: "Add Page", icon: "plus", action: "addPage" },
-      { id: "record", label: "Record", icon: "circle", action: "toggleRecord" },
-      { id: "save", label: "Save Draft", icon: "save", action: "saveDraft" },
-      { id: "publish", label: "Publish", icon: "upload", action: "publish" },
     ],
 
     forgebuilder: [
@@ -860,13 +836,6 @@ const ORBITDOCK_CONFIG = {
         label: "Create Lesson",
         icon: "notepad",
         action: "createLesson",
-      },
-      { id: "pad", label: "Writing Pad", icon: "pen", action: "openPad" },
-      {
-        id: "explain",
-        label: "New Explanation",
-        icon: "presentation",
-        action: "newExplain",
       },
       { id: "live", label: "Start Live", icon: "video", action: "startLive" },
       {
@@ -1029,7 +998,7 @@ const ORBITDOCK_ICONS = {
   notepad:
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
 
-  /** Monitor / screen with stand — Presentation / ExplainLab */
+  /** Monitor / screen with stand — Presentation */
   presentation:
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>',
 
@@ -1254,14 +1223,6 @@ const SIDEBAR_CONFIG = {
       id: "teaching",
       title: "Teaching",
       items: [
-        {
-          id: "explainlab",
-          label: "ExplainLab",
-          route: "/explainlab",
-          icon: "presentation",
-          badge: null,
-          roles: ["admin", "teacher", "student"],
-        },
         {
           id: "studio",
           label: "Studio",

@@ -14,8 +14,8 @@ const agent = require("../ai/agent");
 const { isConfigured, NOT_CONFIGURED } = require("../ai/groq");
 const { MODES } = require("../ai/modes");
 
-// Modes a page may call directly. Internal pipelines (translate, find-problems,
-// ExplainLab) go through their own endpoints, which call runTask themselves.
+// Modes a page may call directly. Internal pipelines (translate, find-problems)
+// go through their own endpoints, which call runTask themselves.
 const PUBLIC_MODES = new Set([
   "complete",
   "fix",

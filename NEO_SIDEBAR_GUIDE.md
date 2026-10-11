@@ -128,10 +128,6 @@ These rotate through all nav items for visual rhythm.
    - Added neo-sidebar CSS and JS
    - Added theme and sidebar config scripts
 
-5. **`/public/explainlab.html`**
-   - Added neo-sidebar CSS and JS
-   - Added theme and sidebar config scripts
-
 ---
 
 ## 🚀 How It Works
@@ -146,7 +142,7 @@ window.neoSidebar = new NeoSidebar();
 ### 2. **Role Detection**
 Automatically detects user mode from URL:
 - **Student**: `/` or hash routes
-- **Creator**: `/studio`, `/explainlab`, `/live-class`
+- **Creator**: `/studio`, `/live-class`
 - **Admin**: `/forgebuilder`
 
 ### 3. **Navigation Data**

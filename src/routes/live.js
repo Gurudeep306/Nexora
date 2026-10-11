@@ -342,7 +342,7 @@ function createLiveRouter(deps = {}) {
 
   router.post('/classes/:id/publish-recording', isTeacher, async (req, res) => {
     try {
-      const { recording_id, explain_session_id } = req.body;
+      const { recording_id } = req.body;
       const cls = await loadClass(req, res, { manage: true });
       if (!cls) return;
 
@@ -352,7 +352,6 @@ function createLiveRouter(deps = {}) {
 
       await updateLiveClass(req.params.id, {
         recording_url: recording.file_url,
-        explain_session_id: explain_session_id || null,
         status: cls.status === 'ended' ? 'ended' : 'recording_published',
       });
 

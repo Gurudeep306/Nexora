@@ -101,7 +101,7 @@
 - **Nexora AI assistant:** global slide-over (⌘J) with page context, tools and streaming answers; the AI Lab chat shares its thread
 - **Tutor pedagogy:** graded hints on unsolved problems; full solutions only after solving
 - **Coach / Code Completion / AI Fix:** live code insight, ghost text (fast model), minimal syntax fixes
-- **Also AI-backed:** translation, problem finder, ExplainLab, Studio drafts, GATE debrief, algorithm animations
+- **Also AI-backed:** translation, problem finder, Studio drafts, GATE debrief, algorithm animations
 - **AI Battle:** 1v1 time-based racing against a simulated opponent (not an LLM)
 - **Powered by:** Groq only — `GROQ_MODEL` (default `openai/gpt-oss-120b`), `GROQ_FAST_MODEL` (`openai/gpt-oss-20b`), `GROQ_FALLBACK_MODEL` (`openai/gpt-oss-20b`)
 - **Limits:** per-user rate limits, daily token budget (`AI_DAILY_TOKENS`), LRU cache for completions
@@ -655,7 +655,7 @@ App = {
 
 ## 🔗 External Integrations
 
-- **Groq API:** the only AI provider (assistant, tutor, coach, completion, fix, translation, ExplainLab, Studio)
+- **Groq API:** the only AI provider (assistant, tutor, coach, completion, fix, translation, Studio)
 - **GitHub OAuth:** User authentication
 - **Google OAuth:** User authentication
 - **Wandbox:** Remote code execution fallback

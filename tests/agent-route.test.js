@@ -186,7 +186,7 @@ test('one-shot tasks return results; unknown modes are refused', async () => {
   const r = await call(base, 'POST', '/api/agent/task', alice, { mode: 'complete', prefix: 'int main() {\n  int', suffix: '', language: 'cpp' });
   assert.equal(r.status, 200, r.text);
   assert.deepEqual(r.body, { ok: true, result: { text: 'int x = 0;' } });
-  assert.equal((await call(base, 'POST', '/api/agent/task', alice, { mode: 'el_summary' })).status, 400);
+  assert.equal((await call(base, 'POST', '/api/agent/task', alice, { mode: 'translate' })).status, 400, 'internal modes are not public');
   assert.equal((await call(base, 'POST', '/api/agent/task', alice, { mode: 'nope' })).status, 400);
   // Studio authoring also needs studio rights.
   assert.equal((await call(base, 'POST', '/api/agent/task', alice, { mode: 'studio_author', prompt: 'x' })).status, 401);
