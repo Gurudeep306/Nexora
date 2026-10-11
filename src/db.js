@@ -64,6 +64,41 @@ if (DRIVER === "libsql") {
     : new sqlite3.Database(DB_PATH);
 }
 
+/* ── Query accounting (dev/perf tooling) ──
+ * Every run/get/all is one network round trip on Turso, so the number of
+ * queries per request is what dominates latency in production. Each call is
+ * counted against the current request (logged when DB_QUERY_STATS=1; each
+ * statement is printed with DB_QUERY_LOG=1), and
+ * DB_SIM_LATENCY_MS adds an artificial per-query delay so a local SQLite DB
+ * behaves like a remote one when profiling. Both are no-ops by default. */
+const { countQuery } = require("./context");
+const SIM_LATENCY_MS = Number(process.env.DB_SIM_LATENCY_MS) || 0;
+const LOG_QUERIES = process.env.DB_QUERY_LOG === "1";
+async function beforeQuery(sql) {
+  countQuery();
+  if (LOG_QUERIES) console.log("[sql]", String(sql).replace(/\s+/g, " ").slice(0, 160));
+  if (SIM_LATENCY_MS > 0) await new Promise((r) => setTimeout(r, SIM_LATENCY_MS));
+}
+
+/* ── Write hooks ──
+ * In-memory caches (problem catalog, session/role lookups) register a pattern
+ * here and are invalidated whenever this process writes to the table they
+ * mirror, so they never serve data older than the last write made through
+ * run()/runMany(). */
+const writeHooks = [];
+function onWrite(pattern, fn) {
+  writeHooks.push([pattern, fn]);
+}
+function notifyWrite(sql) {
+  for (const [pattern, fn] of writeHooks) {
+    if (pattern.test(sql)) {
+      try {
+        fn(sql);
+      } catch {}
+    }
+  }
+}
+
 /* ── libSQL helpers ── */
 // sqlite3 silently binds undefined → NULL and booleans → 0/1; libSQL is strict.
 function toLibsqlValue(v) {
@@ -101,6 +136,17 @@ async function libsqlExec(sql, params) {
 }
 
 const run = async (sql, params = []) => {
+  await beforeQuery(sql);
+  try {
+    return await runRaw(sql, params);
+  } finally {
+    // After the write lands (or fails), so a cache reload that raced it is
+    // seen as stale rather than tagged as current.
+    if (writeHooks.length) notifyWrite(sql);
+  }
+};
+
+const runRaw = async (sql, params) => {
   if (libsql) {
     const rs = await libsqlExec(sql, params);
     return {
@@ -130,6 +176,7 @@ const run = async (sql, params = []) => {
 };
 
 const get = async (sql, params = []) => {
+  await beforeQuery(sql);
   if (libsql) {
     const rs = await libsqlExec(sql, params);
     return plainRow(rs.rows[0], rs.columns);
@@ -152,6 +199,7 @@ const get = async (sql, params = []) => {
 };
 
 const all = async (sql, params = []) => {
+  await beforeQuery(sql);
   if (libsql) {
     const rs = await libsqlExec(sql, params);
     return rs.rows.map((r) => plainRow(r, rs.columns));
@@ -181,12 +229,17 @@ const all = async (sql, params = []) => {
 async function runMany(sql, rows, chunkSize = 200) {
   if (!rows.length) return;
   if (libsql) {
-    for (let i = 0; i < rows.length; i += chunkSize) {
-      const slice = rows.slice(i, i + chunkSize);
-      await libsql.batch(
-        slice.map((p) => ({ sql, args: toLibsqlArgs(p) })),
-        "write",
-      );
+    try {
+      for (let i = 0; i < rows.length; i += chunkSize) {
+        const slice = rows.slice(i, i + chunkSize);
+        countQuery();
+        await libsql.batch(
+          slice.map((p) => ({ sql, args: toLibsqlArgs(p) })),
+          "write",
+        );
+      }
+    } finally {
+      if (writeHooks.length) notifyWrite(sql);
     }
     return;
   }
@@ -1160,4 +1213,4 @@ async function migratePerUser() {
   }
 }
 
-module.exports = { run, get, all, runMany, initDb, dbInfo, migratePerUser, LEGACY_OWNER };
+module.exports = { run, get, all, runMany, initDb, dbInfo, migratePerUser, LEGACY_OWNER, onWrite };
