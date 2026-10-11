@@ -40,9 +40,10 @@ const { createLearnRouter } = require("./routes/learn");
 const { createGateRouter } = require("./routes/gate");
 const { createStudioRouter } = require("./routes/studio");
 const { createExplainLabRouter } = require("./routes/explainlab");
+const { createAgentRouter } = require("./routes/agent");
+const { weaknessAnalysis } = require("./ai/data");
 const { createForgeRouter } = require("./routes/forge");
 const { createLiveRouter } = require("./routes/live");
-const { kronosChat, kronosComplete } = require("./kronos-engine");
 const { initExplainLabDb } = require("./explainlab-db");
 const { initForgeDb } = require("./forge-db");
 const { initLiveDb } = require("./live-db");
@@ -647,7 +648,7 @@ app.use(
         imgSrc: ["'self'", "data:", "https:", "blob:"],
         // Problem statements may embed videos / audio from the source sites.
         mediaSrc: ["'self'", "https:", "blob:", "data:"],
-        connectSrc: ["'self'", "wss:", "ws:", "https://api.groq.com"],
+        connectSrc: ["'self'", "wss:", "ws:"],
         workerSrc: ["'self'", "blob:"],
         frameSrc: ["'self'", "https://www.youtube.com", "https://www.youtube-nocookie.com", "https://player.vimeo.com"],
         objectSrc: ["'none'"],
@@ -3162,61 +3163,8 @@ app.get("/api/performance", async (req, res) => {
 /* ========== WEAKNESS ANALYSIS ========== */
 app.get("/api/weakness-analysis", async (req, res) => {
   try {
-    const solved = await all(
-      `SELECT p.tags FROM progress pr JOIN problems p ON pr.problem_rowid=p.id AND pr.username=${meSql()} WHERE pr.status='solved' AND p.tags!='[]'`,
-    );
-    const attempted = await all(
-      `SELECT p.tags FROM progress pr JOIN problems p ON pr.problem_rowid=p.id AND pr.username=${meSql()} WHERE pr.status='attempted' AND p.tags!='[]'`,
-    );
-    const tagStats = {};
-    for (const r of solved) {
-      try {
-        JSON.parse(r.tags).forEach((t) => {
-          if (!tagStats[t]) tagStats[t] = { solved: 0, attempted: 0 };
-          tagStats[t].solved++;
-        });
-      } catch {}
-    }
-    for (const r of attempted) {
-      try {
-        JSON.parse(r.tags).forEach((t) => {
-          if (!tagStats[t]) tagStats[t] = { solved: 0, attempted: 0 };
-          tagStats[t].attempted++;
-        });
-      } catch {}
-    }
-    const analysis = Object.entries(tagStats)
-      .map(([tag, s]) => ({
-        tag,
-        solved: s.solved,
-        attempted: s.attempted,
-        total: s.solved + s.attempted,
-        solveRate:
-          s.solved + s.attempted > 0
-            ? Math.round((s.solved / (s.solved + s.attempted)) * 100)
-            : 0,
-        strength:
-          s.solved >= 10 ? "strong" : s.solved >= 5 ? "moderate" : "weak",
-      }))
-      .filter((a) => a.total >= 2)
-      .sort((a, b) => a.solveRate - b.solveRate);
-    const weakTags = analysis.filter((a) => a.solveRate < 70).slice(0, 5);
-    const recommendations = [];
-    for (const wt of weakTags) {
-      const probs = await all(
-        `SELECT p.id, p.title, p.problem_id, p.platform, p.rating, COALESCE(pr.status,'unsolved') as solve_status
-        FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id AND pr.username=${meSql()}
-        WHERE p.tags LIKE ? AND (pr.status IS NULL OR pr.status!='solved') AND p.rating>0
-        ORDER BY p.rating ASC LIMIT 5`,
-        [`%${wt.tag}%`],
-      );
-      if (probs.length)
-        recommendations.push({
-          tag: wt.tag,
-          solveRate: wt.solveRate,
-          problems: probs,
-        });
-    }
+    // Shared with the AI agent's get_weak_tags tool (src/ai/data.js).
+    const { analysis, recommendations } = await weaknessAnalysis();
     res.json({ ok: true, analysis, recommendations });
   } catch (e) {
     res.status(500).json({ ok: false, error: errMessage(e) });
@@ -5605,43 +5553,10 @@ app.get("/api/messages/:id/reactions", async (req, res) => {
   res.json({ ok: true, reactions });
 });
 
-/* ========== AI CODE HELPER (inline completion + error fix) ========== */
-
-// In-memory completion cache (key → {text, ts})
-const _aiCache = new Map();
-const AI_CACHE_TTL = 90000; // 90 seconds
-const AI_CACHE_MAX = 300;
-
-// ── Kronos-1 Sovereign In-House AI Core (Primary intelligence for all Nexora features) ──
-async function _geminiComplete(apiKey, prompt) {
-  return kronosComplete(apiKey, prompt);
-}
-
-async function _groqChat(apiKey, messages, opts = {}) {
-  return kronosChat(apiKey, messages, opts);
-}
-
-function _aiCacheKey(prefix, suffix, lang) {
-  const pLines = prefix.split("\n").slice(-8).join("\n").trim();
-  const sLines = (suffix || "").split("\n").slice(0, 4).join("\n").trim();
-  return `${lang}::${pLines}::${sLines}`;
-}
-
-// Build a fill-in-the-middle prompt for Gemini
-function _buildGeminiPrompt(language, prefixCtx, suffixCtx) {
-  return `You are an expert inline code completion assistant for a competitive programming IDE.
-Language: ${language}
-
-Complete ONLY the missing code exactly where [CURSOR] is. Output raw code only — no markdown, no fences, no explanations. 1-3 lines maximum.
-
-[CODE BEFORE CURSOR]
-${prefixCtx}
-[CURSOR]
-[CODE AFTER CURSOR]
-${suffixCtx || ""}
-
-Completion:`;
-}
+/* ========== AI AGENT (Groq) ========== */
+// One server-side agent behind every AI feature: streaming chat, completion,
+// fix, coach, … (src/ai/*, src/routes/agent.js).
+app.use(createAgentRouter({ getSessionUser, requireAuthenticatedUser, studioAuth }));
 
 app.use(
   createStudioRouter({
@@ -5652,7 +5567,6 @@ app.use(
     path,
     run,
     studioAuth,
-    _groqChat,
   }),
 );
 
@@ -5681,20 +5595,11 @@ app.use(
     path,
     requireAuthenticatedUser,
     run,
-    _groqChat,
   }),
 );
 
 app.use(
   createLearningRouter({
-    AI_CACHE_MAX,
-    AI_CACHE_TTL,
-    _aiCache,
-    _aiCacheKey,
-    _buildGeminiPrompt,
-    _geminiComplete,
-    _groqChat,
-    aiLimiter,
     all,
     fetch,
     get,

@@ -3,9 +3,12 @@ const { errMessage } = require("../http-error");
 const multer = require('multer');
 const { persistUpload, listUploads } = require('../upload-store');
 const forgePaths = require('../dev-roadmap-data');
+const { getSessionUser } = require('../middleware/auth');
+const { runTask } = require('../ai/agent');
+const { sendError } = require('./agent');
 
 function createStudioRouter(deps) {
-  const { get, all, run, fetch, path, fs, studioAuth, _groqChat } = deps;
+  const { get, all, run, fetch, path, fs, studioAuth } = deps;
   const router = express.Router();
 
   const studioUploadDir = path.join(__dirname, '..', '..', 'public', 'uploads', 'studio');
@@ -909,27 +912,12 @@ function createStudioRouter(deps) {
     try {
       const { prompt, type } = req.body;
       if (!prompt) return res.status(400).json({ ok: false, error: 'prompt required' });
-      const apiKey = process.env.GROQ_API_KEY || 'kronos-sovereign';
-      const systems = {
-        problem: 'You are an expert competitive programming problem setter. Write a clear, detailed problem description in HTML (use <p>, <ul>, <li>, <strong>, <code>, <pre> tags). Include: problem statement, constraints, examples with explanations. No markdown.',
-        tutorial: 'You are an expert technical educator. Write a comprehensive tutorial section in HTML using <h2>, <h3>, <p>, <ul>, <li>, <code>, <pre> tags. Include explanations, examples and code snippets. No markdown.',
-        hints: 'You are a helpful competitive programming mentor. Provide 3-5 progressive hints as a JSON array of strings. Return ONLY valid JSON: ["hint1", "hint2", ...]',
-        description: 'You are a technical content writer. Write a clear, concise HTML description using <p> and <ul> tags. No markdown.',
-        improve: 'You are a senior technical editor. Improve the given content: fix grammar, enhance clarity, add better examples, improve structure. Return improved HTML content only.',
-      };
-      const system = systems[type] || systems.description;
-      const result = await _groqChat(
-        apiKey,
-        [
-          { role: 'system', content: system },
-          { role: 'user', content: prompt },
-        ],
-        { maxTokens: 2000, temperature: 0.15 }
-      );
-      if (!result.ok) return res.json({ ok: false, error: result.error });
-      res.json({ ok: true, text: result.content });
+      // Login is enforced by authz; the agent bills the signed-in account.
+      const user = getSessionUser(req);
+      const result = await runTask('studio_author', { prompt, type }, { user });
+      res.json({ ok: true, text: result.text });
     } catch (e) {
-      res.status(500).json({ ok: false, error: errMessage(e) });
+      sendError(res, e, 'studio.ai-assist');
     }
   });
 
