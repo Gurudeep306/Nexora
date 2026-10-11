@@ -124,7 +124,7 @@ export function FriendsTab({ me, socket }: Props) {
         toast.warning('Request not sent', res.error)
       } else {
         toast.success('Request sent', `Friend request sent to ${to}`)
-        socket?.emit('notify-friend-request', { to, from: me })
+        socket?.emit('notify-friend-request', { to })
         requestsApi.refetch()
       }
     } catch (err) {
