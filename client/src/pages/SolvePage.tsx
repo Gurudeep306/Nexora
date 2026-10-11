@@ -150,9 +150,9 @@ function adaptCustom(res: CustomProblemResponse): { detail: ProblemDetailRespons
 }
 
 function stripHtml(html: string): string {
-  const el = document.createElement('div')
-  el.innerHTML = html
-  return el.textContent ?? ''
+  // DOMParser documents are inert: unlike a detached <div>, nothing in them
+  // loads or runs (no <img onerror>), so untrusted HTML is safe to parse here.
+  return new DOMParser().parseFromString(html, 'text/html').body.textContent ?? ''
 }
 
 /** Identity of a testcase for de-duplication: content, never the label. */
