@@ -21,31 +21,31 @@ import { SkillGraph } from '@/components/nexus/SkillGraph'
 import { NodePanel } from '@/components/nexus/NodePanel'
 import { WeeklyPool } from '@/components/nexus/WeeklyPool'
 import { TitleTrack } from '@/components/nexus/TitleTrack'
-import type { NexusResponse, NexusStatsResponse, RoadmapResponse } from '@/components/nexus/types'
+import type { NexusStatsResponse } from '@/components/nexus/types'
+import { fetchNexus, fetchRoadmap, NEXUS_KEY, ROADMAP_KEY } from '@/components/nexus/data'
 
 export default function NexusPage() {
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [tab, setTab] = useState<'map' | 'ranks'>('map')
   const { user } = useAuth()
   const username = user?.username ?? ''
-  const { data, loading, error, refetch } = useApi(
-    () =>
-      Promise.all([api.get<NexusResponse>('/api/nexus'), api.get<RoadmapResponse>('/api/level-roadmap')]).then(
-        ([nexus, roadmap]) => ({ nexus, roadmap }),
-      ),
-    [],
-  )
+  // The tree and the weekly pool load in parallel and independently: the
+  // skill map renders as soon as /api/nexus answers, the (heavier) weekly
+  // pool fills in when it arrives. Both are cached, so revisits are instant.
+  const { data: nexus, loading, error, refetch } = useApi(fetchNexus, [], { cacheKey: NEXUS_KEY })
+  const roadmapApi = useApi(fetchRoadmap, [], { cacheKey: ROADMAP_KEY })
   const statsApi = useApi<NexusStatsResponse>(
     () => api.get<NexusStatsResponse>('/api/stats', { query: { username: username || undefined } }),
     [username],
+    { cacheKey: `stats:${username}` },
   )
 
   const selectedNode = useMemo(
-    () => data?.nexus.nodes.find((n) => n.id === selectedId) ?? null,
-    [data, selectedId],
+    () => nexus?.nodes.find((n) => n.id === selectedId) ?? null,
+    [nexus, selectedId],
   )
 
-  if (loading) {
+  if (loading && !nexus) {
     return (
       <div>
         <PageHeader title="The Nexus" subtitle="Your competitive programming skill tree" />
@@ -54,7 +54,7 @@ export default function NexusPage() {
     )
   }
 
-  if (error || !data) {
+  if (error || !nexus) {
     return (
       <div>
         <PageHeader title="The Nexus" subtitle="Your competitive programming skill tree" />
@@ -63,12 +63,14 @@ export default function NexusPage() {
     )
   }
 
-  const { nexus, roadmap } = data
+  const roadmap = roadmapApi.data
+  // Same formula as the server; shown before the roadmap response arrives.
+  const weekSeed = roadmap?.weekSeed ?? Math.floor(Date.now() / (7 * 24 * 60 * 60 * 1000))
   const { player, zones, nodes } = nexus
   const activeZone = selectedNode?.zone ?? player.level
   const zone = zones.find((z) => z.level === activeZone)
   const zoneColor = zone?.color ?? 'var(--color-primary)'
-  const roadmapLevel = roadmap.levels.find((l) => l.level === activeZone)
+  const roadmapLevel = roadmap?.levels.find((l) => l.level === activeZone)
   const completedNodes = nodes.filter((n) => n.completed).length
 
   const scrollToZone = (level: number) => {
@@ -86,11 +88,12 @@ export default function NexusPage() {
             size="sm"
             onClick={() => {
               refetch()
+              roadmapApi.refetch()
               statsApi.refetch()
             }}
             aria-label="Refresh nexus data"
           >
-            <RefreshCw className={cn('size-3.5', (loading || statsApi.loading) && 'animate-spin')} />
+            <RefreshCw className={cn('size-3.5', (loading || roadmapApi.loading || statsApi.loading) && 'animate-spin')} />
             Refresh
           </Button>
         }
@@ -151,7 +154,7 @@ export default function NexusPage() {
               <p className="text-[10px] tracking-wider text-foreground-faint uppercase">Rank</p>
             </div>
             <div className="text-center">
-              <p className="font-display text-2xl text-cyan tabular-nums">{roadmap.weekSeed % 1000}</p>
+              <p className="font-display text-2xl text-cyan tabular-nums">{weekSeed % 1000}</p>
               <p className="text-[10px] tracking-wider text-foreground-faint uppercase">Week Seed</p>
             </div>
           </div>
@@ -215,7 +218,17 @@ export default function NexusPage() {
             selectedId={selectedId}
             onSelect={(id) => setSelectedId((cur) => (cur === id ? null : id))}
           />
-          <WeeklyPool level={roadmapLevel} weekSeed={roadmap.weekSeed} accentColor={zoneColor} />
+          {roadmap ? (
+            <WeeklyPool level={roadmapLevel} weekSeed={roadmap.weekSeed} accentColor={zoneColor} />
+          ) : roadmapApi.error ? (
+            <ErrorState message={roadmapApi.error} onRetry={roadmapApi.refetch} />
+          ) : (
+            <Card>
+              <CardContent>
+                <LoadingBlock rows={4} />
+              </CardContent>
+            </Card>
+          )}
         </div>
 
         <div>
