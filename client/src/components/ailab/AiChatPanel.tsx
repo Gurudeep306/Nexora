@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
-import { Eraser, FileText, Film, PlayCircle, Send, Sparkles, Square, TriangleAlert } from 'lucide-react'
+import { Eraser, FileText, Film, MessageSquareText, PlayCircle, Send, Sparkles, Square, TriangleAlert } from 'lucide-react'
 import { Button, Textarea, Tooltip, useToast } from '@/components/ui'
 import { useAgentContext } from '@/context/AgentContext'
 import { AgentThread, AiUnavailableNotice } from '@/components/agent/AgentThread'
@@ -32,6 +32,7 @@ export function AiChatPanel() {
   const [animateMode, setAnimateMode] = useState(false)
   const [statement, setStatement] = useState('')
   const sending = agent.status === 'streaming'
+  const scrollRef = useRef<HTMLDivElement>(null)
 
   const send = (text: string, forceAnimate = false) => {
     const q = text.trim()
@@ -98,9 +99,9 @@ export function AiChatPanel() {
         )}
       </AnimatePresence>
 
-      {agent.status === 'unavailable' && <AiUnavailableNotice />}
+      {agent.status === 'unavailable' && !agent.messages.length && <AiUnavailableNotice />}
 
-      <div className="h-[56vh] min-h-80 overflow-y-auto rounded-xl border border-border bg-surface p-4" role="log" aria-label="AI tutor conversation" aria-live="polite">
+      <div ref={scrollRef} className="h-[60vh] min-h-80 overflow-y-auto overscroll-contain rounded-xl border border-border bg-surface px-4 py-5 sm:px-6" role="log" aria-label="AI tutor conversation" aria-live="polite">
         {agent.messages.length === 0 ? (
           <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
             <div className="flex size-14 items-center justify-center rounded-2xl border border-cyan/40 bg-surface-2 text-cyan glow-box">
@@ -112,20 +113,19 @@ export function AiChatPanel() {
                 Socratic coaching for problems and concepts, plus a 3D kinetic algorithm visualizer. The same assistant is one keystroke away on every page (⌘J).
               </p>
             </div>
-            <div className="flex max-w-xl flex-wrap justify-center gap-2">
+            <div className="grid w-full max-w-xl grid-cols-1 gap-2 sm:grid-cols-2">
               {(animateMode ? ANIMATION_PRESETS : SUGGESTIONS.map((s) => ({ label: s, code: '' }))).map((s) => (
-                <button
-                  key={s.label}
-                  onClick={() => (s.code ? send(s.code, true) : send(s.label))}
-                  className="cursor-pointer rounded-lg border border-border bg-surface-2 px-3 py-1.5 text-xs text-foreground-dim transition-all duration-200 hover:border-cyan hover:text-cyan-bright"
-                >
-                  {s.label}
+                <button key={s.label} type="button" onClick={() => (s.code ? send(s.code, true) : send(s.label))} className="ai-prompt-card">
+                  {s.code ? <Film aria-hidden="true" /> : <MessageSquareText aria-hidden="true" />}
+                  <span className="flex-1">{s.label}</span>
                 </button>
               ))}
             </div>
           </div>
         ) : (
-          <AgentThread messages={agent.messages} />
+          <div className="mx-auto max-w-3xl">
+            <AgentThread messages={agent.messages} onRetry={agent.retry} scrollRef={scrollRef} />
+          </div>
         )}
       </div>
 

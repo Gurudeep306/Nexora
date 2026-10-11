@@ -3,8 +3,8 @@
  *  - agentTask(mode, input)      one-shot tasks: completion, fix, coach, …
  *  - streamChat(body, handlers)  the streaming assistant (Server-Sent Events)
  *
- * The model's text is untrusted: render it with MarkdownLite (text nodes only),
- * never as HTML, and pass any HTML it produces through sanitizeHtml. */
+ * The model's text is untrusted: render it with <AiMarkdown> (react-markdown,
+ * no raw HTML), never as HTML, and pass any HTML it produces through sanitizeHtml. */
 import { api, ApiError } from './api'
 
 export const AI_NOT_CONFIGURED = 'AI is not configured'
@@ -20,6 +20,30 @@ export function aiErrorText(err: unknown): string {
   if (err instanceof ApiError && err.status === 429) return err.message || 'AI is busy — try again in a moment.'
   if (err instanceof ApiError && err.status === 401) return 'Sign in to use the AI assistant.'
   return err instanceof Error ? err.message : 'AI request failed'
+}
+
+export type AiErrorKind = 'unavailable' | 'budget' | 'rate' | 'auth' | 'network' | 'other'
+
+/** Which friendly error callout to show for an AI failure. */
+export function aiErrorKind(err: unknown): AiErrorKind {
+  if (!(err instanceof ApiError)) return 'other'
+  if (err.status === 503) return 'unavailable'
+  if (err.status === 429) return /budget/i.test(err.message) || (err.data as { code?: string } | null)?.code === 'budget' ? 'budget' : 'rate'
+  if (err.status === 401) return 'auth'
+  if (err.status === 0) return 'network'
+  return 'other'
+}
+
+/** Model markdown flattened to one line of plain text, for toasts and titles. */
+export function plainAiText(md: string): string {
+  return md
+    .replace(/```[\s\S]*?```/g, ' ')
+    .replace(/`([^`]*)`/g, '$1')
+    .replace(/\*\*([^*]+)\*\*|__([^_]+)__/g, '$1$2')
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+    .replace(/^\s{0,3}(#{1,6}|>|[-*+]|\d+[.)])\s+/gm, '')
+    .replace(/\s+/g, ' ')
+    .trim()
 }
 
 export async function agentTask<T>(mode: string, input: Record<string, unknown> = {}, opts: { timeoutMs?: number; signal?: AbortSignal } = {}): Promise<T> {

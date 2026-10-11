@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'motion/react'
-import { Plus, Send, Sparkles, Square, X } from 'lucide-react'
+import { CornerDownLeft, MessageSquareText, Plus, Send, Sparkles, Square, X } from 'lucide-react'
 import { Button, Kbd, Textarea, Tooltip } from '@/components/ui'
 import { useAgentContext } from '@/context/AgentContext'
 import { AgentThread, AiUnavailableNotice } from '@/components/agent/AgentThread'
+import { preloadAiMarkdown } from '@/components/ai/preload'
 
 const SUGGESTIONS: Record<string, string[]> = {
   solve: ['Give me a hint without spoiling it', "What's wrong with my code?", 'What approach fits these constraints?'],
@@ -25,6 +26,7 @@ export function AgentPanel() {
   const { agent, open, closeAssistant, toggleAssistant, ask, pageContext } = useAgentContext()
   const [input, setInput] = useState('')
   const inputRef = useRef<HTMLTextAreaElement>(null)
+  const scrollRef = useRef<HTMLDivElement>(null)
   const busy = agent.status === 'streaming'
 
   useEffect(() => {
@@ -41,7 +43,9 @@ export function AgentPanel() {
   }, [open, toggleAssistant, closeAssistant])
 
   useEffect(() => {
-    if (open) requestAnimationFrame(() => inputRef.current?.focus())
+    if (!open) return
+    preloadAiMarkdown()
+    requestAnimationFrame(() => inputRef.current?.focus())
   }, [open])
 
   const submit = (text = input) => {
@@ -85,28 +89,30 @@ export function AgentPanel() {
             </Tooltip>
           </header>
 
-          <div className="flex-1 overflow-y-auto px-4 py-4" role="log" aria-live="polite">
-            {agent.status === 'unavailable' && <AiUnavailableNotice className="mb-3" />}
+          <div ref={scrollRef} className="flex-1 overflow-y-auto overscroll-contain px-4 py-5" role="log" aria-live="polite" aria-label="Conversation">
             {agent.messages.length === 0 ? (
-              <div className="flex h-full flex-col items-center justify-center gap-3 text-center">
-                <Sparkles className="size-6 text-cyan" aria-hidden="true" />
-                <p className="max-w-xs text-sm text-foreground-dim">
-                  Ask about the problem, your code, a GATE question or what to practise next. On unsolved problems you get hints, not answers.
-                </p>
-                <div className="flex flex-wrap justify-center gap-2">
+              <div className="flex min-h-full flex-col justify-center gap-5 py-4">
+                <div className="text-center">
+                  <span className="mx-auto mb-3 flex size-11 items-center justify-center rounded-2xl border border-primary/30 bg-primary/10 text-primary-bright">
+                    <Sparkles className="size-5" aria-hidden="true" />
+                  </span>
+                  <p className="text-[15px] font-semibold text-foreground">How can I help?</p>
+                  <p className="mx-auto mt-1 max-w-xs text-[12.5px] leading-relaxed text-foreground-dim">
+                    Ask about the problem, your code, a GATE question or what to practise next. On unsolved problems you get hints, not answers.
+                  </p>
+                </div>
+                {agent.status === 'unavailable' && <AiUnavailableNotice />}
+                <div className="flex flex-col gap-2">
                   {suggestionsFor(path).map((s) => (
-                    <button
-                      key={s}
-                      onClick={() => submit(s)}
-                      className="cursor-pointer rounded-lg border border-border bg-surface-2 px-3 py-1.5 text-xs text-foreground-dim transition-colors hover:border-cyan hover:text-cyan"
-                    >
-                      {s}
+                    <button key={s} type="button" onClick={() => submit(s)} className="ai-prompt-card">
+                      <MessageSquareText aria-hidden="true" />
+                      <span className="flex-1">{s}</span>
                     </button>
                   ))}
                 </div>
               </div>
             ) : (
-              <AgentThread messages={agent.messages} compact onNavigate={closeAssistant} />
+              <AgentThread messages={agent.messages} compact onNavigate={closeAssistant} onRetry={agent.retry} scrollRef={scrollRef} />
             )}
           </div>
 
@@ -143,9 +149,9 @@ export function AgentPanel() {
                 </Button>
               )}
             </div>
-            <p className="mt-1.5 flex items-center gap-1 text-[10px] text-foreground-faint">
-              <Kbd>⌘</Kbd>
-              <Kbd>J</Kbd> toggles · the assistant sees the page you're on · powered by Groq
+            <p className="mt-1.5 flex flex-wrap items-center gap-1 text-[10px] text-foreground-faint">
+              <CornerDownLeft className="size-3" aria-hidden="true" /> send · <Kbd>⌘</Kbd>
+              <Kbd>J</Kbd> toggles · sees the page you're on · AI can be wrong
             </p>
           </form>
         </motion.aside>
