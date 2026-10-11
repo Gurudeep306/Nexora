@@ -540,6 +540,18 @@ async function initDb() {
     created_at TEXT NOT NULL
   )`);
   await run(`CREATE INDEX IF NOT EXISTS idx_ai_user_chats_user ON ai_user_chats(username)`);
+  // The AI agent groups turns into conversations (src/ai/agent.js).
+  await run(`ALTER TABLE ai_user_chats ADD COLUMN conversation_id TEXT`).catch(() => {});
+  await run(
+    `CREATE INDEX IF NOT EXISTS idx_ai_user_chats_conv ON ai_user_chats(username, conversation_id)`,
+  );
+  // Per-user daily AI token budget (AI_DAILY_TOKENS).
+  await run(`CREATE TABLE IF NOT EXISTS ai_usage (
+    username TEXT NOT NULL,
+    day TEXT NOT NULL,
+    tokens INTEGER NOT NULL DEFAULT 0,
+    PRIMARY KEY (username, day)
+  )`);
 
   // Decomposition / thinking notes
   await run(`CREATE TABLE IF NOT EXISTS decomposition_notes (

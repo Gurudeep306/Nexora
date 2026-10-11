@@ -638,11 +638,15 @@
       showToast('Generating AI summary...', 'info');
       try {
         const result = await ExplainLabAPI.aiSummary(state.sessionId);
+        // Model output is untrusted: insert it as text, never as HTML.
+        const p = document.createElement('p');
         if (result.ok) {
-          elements.aiSummary.innerHTML = `<p>${result.summary}</p>`;
+          p.textContent = result.summary;
         } else {
-          elements.aiSummary.innerHTML = '<p class="ev-empty-state">Failed to generate summary.</p>';
+          p.className = 'ev-empty-state';
+          p.textContent = result.error || 'Failed to generate summary.';
         }
+        elements.aiSummary.replaceChildren(p);
       } catch(e) {
         elements.aiSummary.innerHTML = '<p class="ev-empty-state">AI not available.</p>';
       }

@@ -105,20 +105,6 @@ export interface JudgeResponse {
   message?: string
 }
 
-/* POST /api/ai-fix */
-export interface AiFixResponse {
-  ok: boolean
-  code?: string
-  error?: string
-}
-
-/* POST /api/ai-chat */
-export interface AiChatResponse {
-  ok: boolean
-  reply?: string
-  error?: string
-}
-
 export const XP_BY_RATING = (rating: number): number => {
   if (rating >= 2200) return 150
   if (rating >= 2000) return 100

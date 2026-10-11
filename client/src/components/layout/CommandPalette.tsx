@@ -2,9 +2,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
-import { ArrowRight, CornerDownLeft, Dices, Keyboard, LogOut, Search, Settings, Swords, UserRound } from 'lucide-react'
+import { ArrowRight, CornerDownLeft, Dices, Keyboard, LogOut, Search, Settings, Sparkles, Swords, UserRound } from 'lucide-react'
 import { Kbd } from '@/components/ui'
 import { openShortcuts } from './ShortcutsDialog'
+import { openAssistantEvent } from '@/context/AgentContext'
 import { api } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import { ACCOUNT_ITEMS, CREATE_SECTION, NAV_SECTIONS } from '@/config/nav'
@@ -146,6 +147,17 @@ export function CommandPalette() {
         run: () => {
           close()
           openShortcuts()
+        },
+      },
+      {
+        id: 'act:assistant',
+        group: 'Actions',
+        label: q.length >= 2 ? `Ask Nexora AI: “${query.trim()}”` : 'Ask Nexora AI',
+        hint: '⌘J',
+        icon: Sparkles,
+        run: () => {
+          close()
+          openAssistantEvent(q.length >= 2 ? query.trim() : undefined)
         },
       },
       {

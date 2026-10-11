@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { ChevronRight, Flame, Keyboard, Search, Swords, Zap } from 'lucide-react'
+import { ChevronRight, Flame, Keyboard, Search, Sparkles, Swords, Zap } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { AnimatedNumber, Avatar, BackButton, Kbd, RotatingText, SearchCombobox, Tooltip, type ComboboxItem } from '@/components/ui'
 import { ACCOUNT_ITEMS, CREATE_SECTION, NAV_SECTIONS, navMeta } from '@/config/nav'
 import { Notifications } from './Notifications'
 import { LookPopover } from '@/components/look/LookPopover'
 import { openCommandPalette } from './CommandPalette'
+import { openAssistantEvent } from '@/context/AgentContext'
 import { UserMenu } from './UserMenu'
 import { api } from '@/lib/api'
 import { PlatformBadge } from '@/components/shared/PlatformBadge'
@@ -194,6 +195,15 @@ export function Topbar() {
             </Link>
           </Tooltip>
         )}
+        <Tooltip label="Nexora AI (⌘J)" side="bottom">
+          <button
+            onClick={() => openAssistantEvent()}
+            aria-label="Open AI assistant"
+            className="flex size-9 cursor-pointer items-center justify-center rounded-lg text-text-primary/60 transition-colors hover:bg-accent-brand/5 hover:text-accent-brand"
+          >
+            <Sparkles className="size-[17px]" />
+          </button>
+        </Tooltip>
         <LookPopover />
         <Notifications />
         {user && (
