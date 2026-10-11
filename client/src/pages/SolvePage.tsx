@@ -41,14 +41,14 @@ import { TestcaseDeck } from '@/components/solve/TestcaseDeck'
 import { JudgeResults, RunOutput } from '@/components/solve/ResultsPanel'
 import { VerdictBadge } from '@/components/shared/PlatformBadge'
 import { VerdictBanner } from '@/components/solve/VerdictBanner'
-import { AiTutorModal } from '@/components/solve/AiTutorModal'
+import { agentTask, aiErrorText } from '@/lib/agent'
+import { useAgentContext, useAgentPageContext } from '@/context/AgentContext'
 import { sanitizeHtml } from '@/components/ailab/sanitize'
 import type { ReplayEvent } from '@/components/submissions/replay'
 import {
   loadStoredCode,
   storeCode,
   XP_BY_RATING,
-  type AiFixResponse,
   type JudgeResponse,
   type Language,
   type ProblemDetailResponse,
@@ -241,8 +241,6 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
   const [bottomTab, setBottomTab] = useState<'tests' | 'output' | 'coach' | 'subs' | 'issues'>('tests')
   const [mobilePane, setMobilePane] = useState<'problem' | 'code'>('problem')
   const [splitPct, setSplitPct] = useState(46)
-  const [tutorOpen, setTutorOpen] = useState(false)
-  const [tutorSeed, setTutorSeed] = useState<string | null>(null)
   const [problemCollapsed, setProblemCollapsed] = useState(() => localStorage.getItem('nexora:panel:problem') === 'collapsed')
   const [bottomH, setBottomH] = useState(() => {
     const v = Number(localStorage.getItem('nexora:panel:bottom-h'))
@@ -541,19 +539,19 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
     if (fixing || !code.trim()) return
     setFixing(true)
     try {
-      const res = await api.post<AiFixResponse>(
-        '/api/ai-fix',
+      const res = await agentTask<{ code: string | null; reason?: string }>(
+        'fix',
         { code, language, error: lastError },
         { timeoutMs: 120000 },
       )
-      if (res.ok && res.code) {
+      if (res.code) {
         persistCode(res.code)
         toast.success('AI fix applied', 'Review the diff in the editor, then run again.')
       } else {
-        toast.warning('No fix', res.error ?? 'AI could not safely fix this code.')
+        toast.warning('No fix', res.reason ?? 'AI could not safely fix this code.')
       }
     } catch (err) {
-      toast.error('AI fix failed', err instanceof Error ? err.message : undefined)
+      toast.error('AI fix failed', aiErrorText(err))
     } finally {
       setFixing(false)
     }
@@ -563,6 +561,18 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
     () => stripHtml(statementApi.data?.statement ?? ''),
     [statementApi.data],
   )
+
+  /* ── Global assistant (⌘J): tell it what's on screen ──
+     Platform problems are looked up server-side (statement + solved status);
+     Workshop/Learn problems pass their visible statement. */
+  const { openAssistant } = useAgentContext()
+  useAgentPageContext({
+    problemId: id,
+    title: problem?.title,
+    code: code.slice(0, 8000),
+    language,
+    visibleText: custom ? statementText.slice(0, 5000) : undefined,
+  })
 
   /* ── AI coach: watches the code and explains what it sees ── */
   const coachStatement = useMemo(() => {
@@ -722,7 +732,7 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
           </Button>
         </Tooltip>
         <Tooltip label="AI tutor — hints & explanations">
-          <Button variant="outline" size="sm" onClick={() => setTutorOpen(true)} aria-label="Open AI tutor">
+          <Button variant="outline" size="sm" onClick={() => openAssistant()} aria-label="Open AI tutor">
             <Bot aria-hidden="true" /> Tutor
           </Button>
         </Tooltip>
@@ -798,8 +808,9 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
       focusMode={arena}
       onFocusMode={arena ? closeArena : openArena}
       onExplain={(sel) => {
-        setTutorSeed(`Explain what this code does, line by line:\n\`\`\`${language}\n${sel.slice(0, 2000)}\n\`\`\``)
-        setTutorOpen(true)
+        openAssistant(`Explain what this code does, line by line:\n\`\`\`${language}\n${sel.slice(0, 2000)}\n\`\`\``, {
+          page: { selection: sel.slice(0, 3000) },
+        })
       }}
     />
   )
@@ -1128,17 +1139,6 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
 
       </>
       )}
-
-      <AiTutorModal
-        open={tutorOpen}
-        onClose={() => {
-          setTutorOpen(false)
-          setTutorSeed(null)
-        }}
-        statementText={statementText}
-        problemTitle={problem?.title ?? `Problem #${id}`}
-        seed={tutorSeed}
-      />
     </motion.div>
   )
 }

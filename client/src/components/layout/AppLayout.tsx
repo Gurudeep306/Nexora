@@ -11,6 +11,8 @@ import { RouteProgress } from './RouteProgress'
 import { Wallpaper } from '../fx/Wallpaper'
 import { LookSync } from '../look/LookSync'
 import { DockSync } from './DockSync'
+import { AgentPanel } from './AgentPanel'
+import { AgentProvider } from '@/context/AgentContext'
 import { cn } from '@/lib/utils'
 
 export function AppLayout() {
@@ -24,6 +26,7 @@ export function AppLayout() {
   }, [location.pathname])
 
   return (
+    <AgentProvider>
     <div className="relative min-h-dvh">
       <a
         href="#main-content"
@@ -71,6 +74,8 @@ export function AppLayout() {
       </div>
       <MobileTabBar />
       <Deck />
+      <AgentPanel />
     </div>
+    </AgentProvider>
   )
 }

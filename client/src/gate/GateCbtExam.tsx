@@ -18,6 +18,7 @@ import {
 import { cn } from '@/lib/utils'
 import { Markdown } from '@/learn/md'
 import { api } from '@/lib/api'
+import { agentTask } from '@/lib/agent'
 import { GateCalculator } from './GateCalculator'
 import { GateAiReport, type ExamEvaluation, type AiDiagnostic } from './GateAiReport'
 import { ReconstructedDiagram } from './ReconstructedDiagram'
@@ -249,6 +250,26 @@ export function GateCbtExam({
           evalResult: evalRes,
         })
         setAiAnalysis(diagRes.analysis)
+        // Optional AI debrief on top of the rule-based analysis (silently skipped without AI).
+        const a = diagRes.analysis
+        agentTask<string>(
+          'gate_narrative',
+          {
+            analysis: {
+              score: `${evalRes.totalScore}/${evalRes.maxMarks}`,
+              accuracy: evalRes.accuracy,
+              negativeMarks: evalRes.negativeMarks,
+              attempted: evalRes.attemptedCount,
+              profile: a.speedAccuracyProfile,
+              strengths: a.strengths,
+              weaknesses: a.vulnerabilities,
+              sections: evalRes.sectionStats,
+            },
+          },
+          { timeoutMs: 45000 },
+        )
+          .then((narrative) => narrative && setAiAnalysis((prev) => (prev ? { ...prev, narrative } : prev)))
+          .catch(() => undefined)
       } catch {
         // Fallback without AI diagnostic if endpoint fails
       }
