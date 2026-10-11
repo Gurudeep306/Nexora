@@ -1,4 +1,4 @@
-// Persists user uploads (avatars, Studio/ExplainLab media) in the database.
+// Persists user uploads (avatars, Studio media) in the database.
 //
 // Free hosts give you a throwaway disk: everything under public/uploads is
 // deleted on every restart or redeploy. Each uploaded file is therefore also
@@ -102,10 +102,23 @@ async function listUploads(folder) {
   return rows.map((r) => r.path.slice(folder.length + 1)).filter((n) => n && !n.includes("/"));
 }
 
+/* Uploads are user content served from our own origin. An SVG (or anything we
+   don't recognise) opened directly could run script as us, so those get a
+   sandboxing CSP; inside an <img> the CSP is irrelevant and they still render. */
+const SANDBOX_CSP = "default-src 'none'; style-src 'unsafe-inline'; sandbox";
+
+function setUploadSecurityHeaders(res, key) {
+  const ext = path.extname(String(key || "")).toLowerCase();
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  if (ext === ".svg" || !MIME[ext]) res.setHeader("Content-Security-Policy", SANDBOX_CSP);
+}
+
 /** Express middleware: restore /uploads/* files missing from disk. Mount before express.static. */
 function restoreUploads() {
   return async (req, res, next) => {
     if (req.method !== "GET" && req.method !== "HEAD") return next();
+    // Applies to the on-disk copy served by express.static after next() too.
+    setUploadSecurityHeaders(res, req.path);
     const key = keyFromUrl(req.path);
     if (!key) return next();
     const abs = path.join(UPLOADS_DIR, key);

@@ -140,7 +140,7 @@ function FriendActions({ profile, viewer, onChanged }: { profile: ProfileRespons
       if (res.ok === false) {
         toast.warning('Request not sent', res.error)
       } else {
-        socket?.emit('notify-friend-request', { to: target, from: viewer })
+        socket?.emit('notify-friend-request', { to: target })
         toast.success('Friend request sent', `@${target} will see it in Social.`)
       }
       onChanged?.()

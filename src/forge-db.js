@@ -173,7 +173,6 @@ async function initForgeDb() {
     { name: 'Video Player', type: 'video', category: 'media', description: 'Video player component' },
     { name: 'Course Card', type: 'course-card', category: 'learning', description: 'Course preview card' },
     { name: 'Problem List', type: 'problem-list', category: 'learning', description: 'List of problems' },
-    { name: 'ExplainLab Session', type: 'explainlab-session', category: 'learning', description: 'ExplainLab session player' },
     { name: 'Live Class', type: 'live-class', category: 'learning', description: 'Live class viewer' },
     { name: 'Stats Widget', type: 'stats-widget', category: 'dashboard', description: 'Statistics display' },
     { name: 'Chart', type: 'chart', category: 'dashboard', description: 'Data chart' }

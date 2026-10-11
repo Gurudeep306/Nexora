@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Check, ChevronsUpDown, Eye, Languages, Loader2, ScanSearch, Search, Sparkles, Zap } from 'lucide-react'
 import { Popover, PopoverContent, PopoverTrigger, Tooltip } from '@/components/ui'
 import { api } from '@/lib/api'
+import { aiErrorText } from '@/lib/agent'
 import { cn } from '@/lib/utils'
 
 export interface LangInfo {
@@ -116,7 +117,7 @@ export function TranslateBar({
       setShowing({ lang, engine: res.engine })
       onResult({ lang, html: res.translated, engine: res.engine })
     } catch (err) {
-      if (id === reqId.current) setError(err instanceof Error ? err.message : 'Translation failed')
+      if (id === reqId.current) setError(aiErrorText(err))
     } finally {
       if (id === reqId.current) setBusy(false)
     }

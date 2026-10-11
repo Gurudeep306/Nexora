@@ -41,14 +41,14 @@ import { TestcaseDeck } from '@/components/solve/TestcaseDeck'
 import { JudgeResults, RunOutput } from '@/components/solve/ResultsPanel'
 import { VerdictBadge } from '@/components/shared/PlatformBadge'
 import { VerdictBanner } from '@/components/solve/VerdictBanner'
-import { AiTutorModal } from '@/components/solve/AiTutorModal'
-import { sanitizeHtml } from '@/components/ailab/sanitize'
+import { agentTask, aiErrorText, plainAiText } from '@/lib/agent'
+import { useAgentContext, useAgentPageContext } from '@/context/AgentContext'
+import { sanitizeHtml } from '@/lib/sanitize'
 import type { ReplayEvent } from '@/components/submissions/replay'
 import {
   loadStoredCode,
   storeCode,
   XP_BY_RATING,
-  type AiFixResponse,
   type JudgeResponse,
   type Language,
   type ProblemDetailResponse,
@@ -150,9 +150,9 @@ function adaptCustom(res: CustomProblemResponse): { detail: ProblemDetailRespons
 }
 
 function stripHtml(html: string): string {
-  const el = document.createElement('div')
-  el.innerHTML = html
-  return el.textContent ?? ''
+  // DOMParser documents are inert: unlike a detached <div>, nothing in them
+  // loads or runs (no <img onerror>), so untrusted HTML is safe to parse here.
+  return new DOMParser().parseFromString(html, 'text/html').body.textContent ?? ''
 }
 
 /** Identity of a testcase for de-duplication: content, never the label. */
@@ -241,8 +241,6 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
   const [bottomTab, setBottomTab] = useState<'tests' | 'output' | 'coach' | 'subs' | 'issues'>('tests')
   const [mobilePane, setMobilePane] = useState<'problem' | 'code'>('problem')
   const [splitPct, setSplitPct] = useState(46)
-  const [tutorOpen, setTutorOpen] = useState(false)
-  const [tutorSeed, setTutorSeed] = useState<string | null>(null)
   const [problemCollapsed, setProblemCollapsed] = useState(() => localStorage.getItem('nexora:panel:problem') === 'collapsed')
   const [bottomH, setBottomH] = useState(() => {
     const v = Number(localStorage.getItem('nexora:panel:bottom-h'))
@@ -454,6 +452,9 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
         '/api/judge',
         {
           problem_id: custom ? undefined : Number(id),
+          // Workshop problems are judged against their stored tests (hidden
+          // ones included) server-side; our list only adds extra cases.
+          custom_problem_id: custom && !learn ? Number(id) : undefined,
           code,
           language,
           testcases: testcases.map((t) => ({
@@ -478,7 +479,7 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
           problemApi.refetch()
         }
       } else {
-        toast.error(`Verdict: ${res.verdict}`, 'Check the testcase results below.')
+        toast.error(`Verdict: ${res.verdict}`, res.message ?? 'Check the testcase results below.')
       }
     } catch (err) {
       toast.error('Submit failed', err instanceof Error ? err.message : undefined)
@@ -538,19 +539,19 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
     if (fixing || !code.trim()) return
     setFixing(true)
     try {
-      const res = await api.post<AiFixResponse>(
-        '/api/ai-fix',
+      const res = await agentTask<{ code: string | null; reason?: string }>(
+        'fix',
         { code, language, error: lastError },
         { timeoutMs: 120000 },
       )
-      if (res.ok && res.code) {
+      if (res.code) {
         persistCode(res.code)
         toast.success('AI fix applied', 'Review the diff in the editor, then run again.')
       } else {
-        toast.warning('No fix', res.error ?? 'AI could not safely fix this code.')
+        toast.warning('No fix', res.reason ? plainAiText(res.reason) : 'AI could not safely fix this code.')
       }
     } catch (err) {
-      toast.error('AI fix failed', err instanceof Error ? err.message : undefined)
+      toast.error('AI fix failed', aiErrorText(err))
     } finally {
       setFixing(false)
     }
@@ -560,6 +561,30 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
     () => stripHtml(statementApi.data?.statement ?? ''),
     [statementApi.data],
   )
+
+  /* ── Global assistant (⌘J): tell it what's on screen ──
+     Platform problems are looked up server-side (statement + solved status);
+     Workshop/Learn problems pass their visible statement. */
+  const { openAssistant } = useAgentContext()
+  const verdictText = useMemo(() => {
+    if (judgeResult) {
+      const passed = judgeResult.results.filter((r) => r.passed).length
+      const head = `Submit: ${judgeResult.verdict} (${passed}/${judgeResult.results.length} tests passed)`
+      if (judgeResult.verdict === 'AC') return head
+      return `${head}\n${lastError}`.slice(0, 1500)
+    }
+    if (runResult) return `Run: ${runResult.verdict}${runResult.verdict !== 'OK' ? `\n${lastError}` : ''}`.slice(0, 1500)
+    return undefined
+  }, [judgeResult, runResult, lastError])
+  useAgentPageContext({
+    problemId: id,
+    title: problem?.title,
+    code: code.slice(0, 12000),
+    language,
+    verdict: verdictText,
+    // Platform problems are looked up on the server; course/workshop problems send what's on screen.
+    visibleText: custom ? statementText.slice(0, 6000) : undefined,
+  })
 
   /* ── AI coach: watches the code and explains what it sees ── */
   const coachStatement = useMemo(() => {
@@ -719,7 +744,7 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
           </Button>
         </Tooltip>
         <Tooltip label="AI tutor — hints & explanations">
-          <Button variant="outline" size="sm" onClick={() => setTutorOpen(true)} aria-label="Open AI tutor">
+          <Button variant="outline" size="sm" onClick={() => openAssistant()} aria-label="Open AI tutor">
             <Bot aria-hidden="true" /> Tutor
           </Button>
         </Tooltip>
@@ -795,8 +820,9 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
       focusMode={arena}
       onFocusMode={arena ? closeArena : openArena}
       onExplain={(sel) => {
-        setTutorSeed(`Explain what this code does, line by line:\n\`\`\`${language}\n${sel.slice(0, 2000)}\n\`\`\``)
-        setTutorOpen(true)
+        openAssistant(`Explain what this code does, line by line:\n\`\`\`${language}\n${sel.slice(0, 2000)}\n\`\`\``, {
+          page: { selection: sel.slice(0, 3000) },
+        })
       }}
     />
   )
@@ -1125,17 +1151,6 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
 
       </>
       )}
-
-      <AiTutorModal
-        open={tutorOpen}
-        onClose={() => {
-          setTutorOpen(false)
-          setTutorSeed(null)
-        }}
-        statementText={statementText}
-        problemTitle={problem?.title ?? `Problem #${id}`}
-        seed={tutorSeed}
-      />
     </motion.div>
   )
 }

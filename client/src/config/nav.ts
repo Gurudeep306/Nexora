@@ -6,7 +6,6 @@ import {
   Network,
   BarChart3,
   Medal,
-  Sparkles,
   GraduationCap,
   Users,
   History,
@@ -14,7 +13,6 @@ import {
   User,
   Settings,
   Clapperboard,
-  PenTool,
   Blocks,
   type LucideIcon,
 } from 'lucide-react'
@@ -51,7 +49,6 @@ export const NAV_SECTIONS: NavSection[] = [
       { to: '/nexus', label: 'Nexus', icon: Network },
       { to: '/analytics', label: 'Analytics', icon: BarChart3 },
       { to: '/achievements', label: 'Achievements', icon: Medal },
-      { to: '/ailab', label: 'AI Lab', icon: Sparkles },
       { to: '/learn', label: 'Learn', icon: GraduationCap },
     ],
   },
@@ -73,7 +70,6 @@ export const CREATE_SECTION: NavSection = {
   title: 'Create',
   items: [
     { to: '/studio', label: 'Creator Studio', icon: Clapperboard, external: true, adminOnly: true },
-    { to: '/explainlab', label: 'ExplainLab', icon: PenTool, external: true },
     { to: '/forgebuilder', label: 'ForgeBuilder', icon: Blocks, external: true, adminOnly: true },
   ],
 }
@@ -105,6 +101,5 @@ export const GO_SHORTCUTS: Record<string, string> = {
   s: '/social',
   b: '/bookmarks',
   u: '/submissions',
-  i: '/ailab',
   ',': '/settings',
 }

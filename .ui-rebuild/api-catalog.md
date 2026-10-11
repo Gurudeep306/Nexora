@@ -1,6 +1,6 @@
 # Nexora API + Feature Catalog (contract for React rebuild)
 
-Derived from: `src/server.js` (~5,700 ln), `src/routes/{auth,learning,studio,explainlab,forge,live}.js`, `src/middleware/auth.js`, `src/db.js`, `src/judge.js`, `src/explainlab-db.js`, `src/forge-db.js`, `src/live-db.js`, `public/js/{app.js,api.js,app.config.js}`, `public/index.html`, sub-app HTML.
+Derived from: `src/server.js` (~5,700 ln), `src/routes/{auth,learning,studio,forge,live}.js`, `src/middleware/auth.js`, `src/db.js`, `src/judge.js`, `src/forge-db.js`, `src/live-db.js`, `public/js/{app.js,api.js,app.config.js}`, `public/index.html`, sub-app HTML.
 Rule: unless stated otherwise, every response is JSON `{ ok: true, ... }` on success and `{ ok: false, error: string }` on failure. Exceptions are flagged.
 
 ---
@@ -208,14 +208,10 @@ Two different things share the prefix:
 | `POST /api/ai-complete` | `{prefix, suffix, language}` | `{ok, text}` (Gemini 2.0 Flash Lite primary, Groq fallback; 90 s in-memory cache max 300). **On error returns HTTP 200 `{ok:false, text:''}`** |
 | `POST /api/ai-fix` | `{code, language, error}` | `{ok, code}` or `{ok:false,error}` (`NO_FIX` → `'AI could not safely fix this code'`) |
 
-### 2.12 AI Lab problems & Tutorials (learning.js)
+### 2.12 Tutorials (learning.js)
 
 | Endpoint | Response |
 |---|---|
-| `GET /api/ai-problems?category` (def `all`) | `{ok, problems[{id,category(ml|dl|nlp|cv|genai|rl),title,description,difficulty(beginner|intermediate|advanced),tags(JSON str),starter_code,solution_approach,hints(JSON str),resources(JSON str),input_format,output_format,constraints,samples(JSON str),created_at,status,progress}]}` |
-| `GET /api/ai-problems/:id` | `{ok, problem(+progress|null)}` |
-| `POST /api/ai-problems/:id/progress` | body `{status:'solved'|'in-progress'|'unsolved', notes}` → `{ok}` |
-| `GET /api/ai-stats` | `{ok, total, solved, inProgress, byCategory[{category,total,solved}]}` |
 | `GET /api/tutorials?category` | `{ok, tutorials[{id,category,topic,title,description,content,difficulty,order_index,estimated_time,prerequisites,code_examples,completed(0|1)}]}` |
 | `GET /api/tutorials/:id` | `{ok, tutorial}` |
 | `POST /api/tutorials/:id/complete` | `{ok}` |
@@ -282,8 +278,6 @@ Two different things share the prefix:
 | `POST /api/studio/doubts` / `PUT /:id {answer,status}` / `DELETE /:id` | – | `{ok}` |
 | `GET /api/studio/tutorials` | – | `{ok, grouped(by category), total}` |
 | `GET/PUT/POST/DELETE /api/studio/tutorials/:id` | – | `{ok,...}` |
-| `GET /api/studio/ai-problems-list` | – | `{ok, grouped, total}` |
-| `GET/PUT/DELETE /api/studio/ai-problems/:id`, `POST /api/studio/ai-problems-new` | – | `{ok,...}` |
 | `GET /api/studio/forge` | – | `{ok, paths(topics incl has_override)}` |
 | `GET /api/studio/forge/:topicId` | – | `{ok, override|null, static|null}` |
 | `PUT /api/studio/forge/:topicId` | `{path_id,title,description,content_html,difficulty,time_estimate}` | `{ok}` |
@@ -294,52 +288,6 @@ Two different things share the prefix:
 | `POST /api/studio/run-code` | `{language, code, stdin}` — Piston (emkc.org), 15 s timeout, 22 langs | `{ok, output, stderr, exitCode}` or `{ok:false,error}` |
 | `POST /api/studio/ai-assist` | `{prompt, type:'problem'|'tutorial'|'hints'|'description'|'improve'}` | `{ok, text}` (Groq) |
 | `GET /studio` | – | serves `studio.html` |
-
-### 2.16 ExplainLab (explainlab.js — session-authenticated; DB `explainlab-db.js`)
-
-Pages: `GET /explainlab` (builder, `explainlab.html`), `GET /explainlab/view/:id` (viewer, `explainlab-viewer.html`), `GET /explainlab/dashboard` → **references `explainlab-dashboard.html` which DOES NOT EXIST in public/** (will 500/error).
-
-Writes use `requireAuthenticatedUser` (session user = `req.sessionUser`). Draft reads use a **buggy check**: `if (user.username !== session.teacher_id || user.role !== 'admin') → 403` — with `||`, non-admin owners are locked out of their own drafts; effectively only admins can read drafts.
-
-| Endpoint | Params | Response |
-|---|---|---|
-| `POST /api/explainlab/sessions` | `{course_id?, chapter_id?, lesson_id?, problem_id?, custom_problem_id?, title(required), description?, explanation_type?, level?, language?}` | `{ok, session, initialPageId}` (first page auto-created) |
-| `GET /api/explainlab/sessions` | `?teacher_id, course_id, chapter_id, lesson_id, problem_id, status(def 'published'), search, limit(def 50; 20 when search), offset` | `{ok, sessions, total, ...}` |
-| `GET /api/explainlab/sessions/:id` | – | `{ok, session(+pages[], markers[], clips[])}` — full `explain_sessions` row: `{id,teacher_id,course_id,chapter_id,lesson_id,problem_id,custom_problem_id,title,description,explanation_type,level,language,status:'draft'|'published',duration_ms,thumbnail_url,video_url,audio_url,final_board_snapshot_url,typed_notes_html,full_explanation_html,allow_downloads,allow_public_doubts,created_at,updated_at,published_at}` |
-| `PUT /api/explainlab/sessions/:id` | partial | `{ok}` (owner/admin) |
-| `POST /api/explainlab/sessions/:id/publish`, `DELETE /api/explainlab/sessions/:id` | – | `{ok}` |
-| `GET/PUT /api/explainlab/sessions/:id/typed-notes` | PUT `{html}` | `{ok, html}` / `{ok}` |
-| `GET/PUT /api/explainlab/sessions/:id/full-explanation` | PUT `{html}` | same |
-| `GET/POST /api/explainlab/sessions/:id/pages` | `{title, background_type, background_data, is_handwritten_note}` | `{ok,pages}` / `{ok,pageId}` |
-| `PUT/DELETE /api/explainlab/pages/:pageId` | – | `{ok}` |
-| `POST /api/explainlab/sessions/:id/events` | `{page_id, timestamp_ms, event_type, payload_json}` | `{ok, eventId}` |
-| `POST .../events/bulk` | `{events:[...]}` | `{ok, count}` |
-| `GET .../events?start_time&end_time&page_id` | – | `{ok, events}` (`payload` parsed, `payload_json` removed) |
-| `POST/GET .../code-events` | `{timestamp_ms, language, event_type, payload_json}` | `{ok,...}` |
-| `GET/POST .../handwritten-notes` | `{title, file_url, file_type, source_type}` | `{ok,notes}` / `{ok,noteId}` |
-| `DELETE /api/explainlab/handwritten-notes/:noteId` | – | `{ok}` |
-| `GET/POST .../markers` | `{timestamp_ms, title, description, marker_type(def 'chapter')}` | `{ok,markers}` / `{ok,markerId}` |
-| `DELETE /api/explainlab/markers/:markerId` | – | `{ok}` |
-| `GET/POST .../clips` | `{title, start_ms, end_ms, description}` | `{ok,clips}` / `{ok,clipId}` |
-| `DELETE /api/explainlab/clips/:clipId` | – | `{ok}` |
-| `GET/POST .../notes` (student notes) | `{timestamp_ms, page_id, note_text, visibility(def 'private')}` | `{ok,notes}` / `{ok,noteId}` |
-| `DELETE /api/explainlab/notes/:noteId` | – | `{ok}` |
-| `GET/POST .../bookmarks` | `{timestamp_ms, label}` | `{ok,bookmarks}` / `{ok,bookmarkId}` |
-| `DELETE /api/explainlab/bookmarks/:bookmarkId` | – | `{ok}` |
-| `GET .../doubts` | teacher sees all + `replies[]`; students see own | `{ok, doubts[{...,x,y,doubt_text,status:'open'|'resolved',replies}]}` |
-| `POST .../doubts` | `{page_id, timestamp_ms, x, y, doubt_text}` | `{ok, doubtId}` (blocked if `!allow_public_doubts` and not teacher) |
-| `POST /api/explainlab/doubts/:doubtId/reply` | `{reply_text, reply_type, payload_json}` | `{ok, replyId}` |
-| `PUT /api/explainlab/doubts/:doubtId/resolve` | – | `{ok}` |
-| `GET/POST .../progress` | POST `{last_position_ms?, completed?, watch_time_ms?}` | `{ok, progress|null}` / `{ok}` |
-| `GET .../analytics` | teacher/admin | `{ok, analytics}` |
-| `POST .../analytics` | event body; **no auth middleware** (uses `req.sessionUser?.username`) | `{ok}` |
-| `POST .../upload-media` | – | always `{ok:false, error:'Use /api/studio/upload for media uploads'}` |
-| `POST .../ai/summary` | [auth] | `{ok, summary}` |
-| `POST .../ai/notes` | [auth] | `{ok, notes_html}` |
-| `POST .../ai/full-explanation` | [auth] | `{ok, explanation_html}` |
-| `POST .../ai/quiz` | [auth] | `{ok, quiz:[{question, options[4], correctIndex, explanation}]}` |
-| `POST .../ai/flashcards` | [auth] | `{ok, flashcards:[{front, back}]}` |
-| `GET /api/explainlab/teacher/sessions?status` | [auth] | `{ok, ...sessions result}` |
 
 ### 2.17 Live Classes (live.js — DB `live-db.js`; ⚠ MOSTLY BROKEN)
 
@@ -432,7 +380,6 @@ localStorage keys (only two): `cp_arena_username`, `nexora_sidebar_collapsed`. S
 | `#/bookmarks` | `renderBookmarks` | Saved-problems table; `GET /api/bookmarks?username`. |
 | `#/contests` | `renderContests` | Live/upcoming CF+CC contests, tabs all/live/queue/past filtering `phase`; `GET /api/contests`. Cards link out to platform URL. |
 | `#/nexus`, `#/skills`, `#/submissions`, `#/achievements` | `renderNexus` | "Nexora Progression". Tabs `/zones` + `/perf`. Zones: `GET /api/nexus` + `GET /api/level-roadmap` merged per level — zone accordion (locked banner shows XP/problem requirements), skill nodes, weekly practice problems per topic; week-refresh countdown from `weekSeed`. Node click → side panel with prereqs, resources, `GET /api/skill-tree/:nodeId/problems` (first 12). `/perf` tab → `GET /api/performance` analytics. |
-| `#/ailab`, `#/ailab/:id` | `renderAILab` / `_openAiProblemPage` | AI/ML practice problems (categories all/ml/dl/nlp/cv/genai/rl). `GET /api/ai-stats`, `GET /api/ai-problems?category`. `:id` opens **full-screen AI-lab solve overlay** (separate Monaco instance, Python-only): problem panel (description, hints, resources, samples), bottom panel tabs `stdin/stdout/test/`; Run → `POST /api/run` with custom input, then per-sample runs; "solved!" → `POST /api/ai-problems/:id/progress {status:'solved'}`. |
 | `#/learn`, `#/learn/:subject`, `#/learn/:subject/:id`, `#/learn/:id` | `renderLearn` / `renderLearnTopics` / `_openTutorialPage` | Subject grid grouped: DSA / AI-ML / GATE / Languages / System Design / More (client-side `_learnSubjects` catalog). Topics: `GET /api/tutorials?all` filtered by subject category/topic. Tutorial page: rendered `content`, code examples, practice problems via `GET /api/tutorial-problems/:topic`, mark complete `POST /api/tutorials/:id/complete`. Stats bar `GET /api/tutorial-stats`. |
 | `#/forge`, `#/forge/:id` | `renderForge` / `_openForgePath` | Dev roadmap paths (cards with progress ring): `GET /api/forge/paths` + `GET /api/forge/stats`. Path detail: milestones → topics with status `<select>` → `POST /api/forge/topic/:id/status`. (This is learning.js forge, NOT the admin builder.) |
 | `#/workshop` | `renderWorkshop` | Tabs: **Problems** (stats bar `GET /api/workshop/stats`; list `GET /api/custom-problems`, client filter all/easy/medium/hard/extreme + cards/table views; create/edit form `showCreateProblem` → `POST/PUT /api/custom-problems`; delete; "solve" → `openSolveCustom(id)` reuses the solve overlay with custom-problem testcases), **Contests** (`GET /api/contests/mine`, create form → `POST /api/contests/create` with client-generated `NX-XXXXXX` code, password ≥4, problem picker from own custom problems; detail overlay `GET /api/contests/:id`, delete), **Join Contest** (`POST /api/contests/join` with code+password). |
@@ -462,9 +409,7 @@ Two-step: login (`POST /api/user/login`) or register flow — username availabil
 
 | Page | Served at | Auth gate | Purpose / main endpoints |
 |---|---|---|---|
-| `studio.html` (2,892 ln) | `GET /studio` | Client-side login gate: prompts **studio password** → stored in `localStorage['nx_tk']` → sent as `x-studio-token` header on all `/api/studio/*` fetches (server also accepts admin session). Wrong password shows "Invalid password". | Teacher/admin CMS: courses→chapters→lessons tree CRUD, lesson media upload (`POST /api/studio/upload`), link platform/custom problems to lessons, publish toggles, reorder, notes, doubts inbox, tutorials & AI-problems management, forge content overrides, custom problem editor, code runner (`POST /api/studio/run-code` via Piston), AI assist (`POST /api/studio/ai-assist`). Links out to `/explainlab` and `/live-class`. |
-| `explainlab.html` (310 ln shell + `js/explainlab/*`) | `GET /explainlab` | Session auth (`requireAuthenticatedUser` on writes; teacher_id = session username). No token gate. | Whiteboard explanation recorder/builder: sessions CRUD (`/api/explainlab/sessions...`), infinite whiteboard (`whiteboard-engine.js`) with event streaming (`POST .../events`, `/events/bulk`), code events, pages, markers/clips, handwritten notes (media via `POST /api/studio/upload`), typed notes & full explanation HTML, student doubts w/ coordinates + replies, AI summary/notes/quiz/flashcards, publish flow. |
-| `explainlab-viewer.html` | `GET /explainlab/view/:id` | Public read for published sessions (drafts hit the buggy `\|\|` 403 check). | Playback of a recorded explanation: replays events on timeline, student notes/bookmarks/doubts (`POST .../notes`, `.../bookmarks`, `.../doubts`), progress tracking (`POST .../progress`), clips/markers navigation. |
+| `studio.html` (2,892 ln) | `GET /studio` | Client-side login gate: prompts **studio password** → stored in `localStorage['nx_tk']` → sent as `x-studio-token` header on all `/api/studio/*` fetches (server also accepts admin session). Wrong password shows "Invalid password". | Teacher/admin CMS: courses→chapters→lessons tree CRUD, lesson media upload (`POST /api/studio/upload`), link platform/custom problems to lessons, publish toggles, reorder, notes, doubts inbox, tutorials & AI-problems management, forge content overrides, custom problem editor, code runner (`POST /api/studio/run-code` via Piston), AI assist (`POST /api/studio/ai-assist`). Links out to `/live-class`. |
 | `live-class.html` (1,440 ln) | static `/live-class.html` (studio links to `/live-class`) | Redirects to `/studio` on some failures; expects session role teacher/student (reads `data.isTeacher`). | Live classroom UI: participants panel, chat, raise hand, recording controls, WebRTC. **Non-functional**: emits `live:*` socket events the server never handles, and the REST endpoints it would need (`POST /classes`, `join`, `messages`) are broken (undefined functions → 500). Treat as not implemented for the rebuild. |
 | `forgebuilder.html` (1,662 ln) | static `/forgebuilder.html` | Server enforces admin session on `/api/forge/*` writes (401/403); page itself has no client gate. | Admin no-code page builder: pages/schema editor, versions & rollback, publish/unpublish, components, data models, forms, workflows, navigation, themes, settings, health check — all under `/api/forge/*` (builder side, §2.14). Note the broken PUT/DELETE page URLs. |
 
@@ -481,7 +426,6 @@ Two-step: login (`POST /api/user/login`) or register flow — username availabil
 **Broken / dead server code**
 - `live.js`: create/update/start/end/join/leave/messages/publish-recording all call undefined functions → 500. `live:*` socket events never registered. Live-class feature = dead.
 - `forge.js`: `PUT/DELETE /api/forge/pages/:id` are registered at literal path `/api/forge/api/forge/pages/:id` (router double-prefix bug).
-- `GET /explainlab/dashboard` serves `explainlab-dashboard.html`, which does not exist in `public/`.
 - Duplicate registrations: `GET /api/roadmap` (server.js ×2 — first wins); `GET /api/user/search` (auth.js wins over server.js copy; slight column-order difference).
 
 **Shape inconsistencies**
@@ -489,7 +433,7 @@ Two-step: login (`POST /api/user/login`) or register flow — username availabil
 - `player_titles` DB table is seeded with **legacy XP thresholds that differ from `RIFT_LEVELS`**; server computes levels from the constant, not the table. Treat RIFT_LEVELS (§2.5) as the source of truth.
 - Contest `GET /api/contests` (live scrape: `phase/startTime/durationSeconds`) vs custom contests (`status/start_time/duration_mins`) — same prefix, totally different schemas.
 - `/api/forge/*` is shared by the public learning roadmap (learning.js, mounted first) and the admin builder (forge.js).
-- Problem `tags`, custom-problem `samples`/`testcases`/`tags`, ai_problem `hints`/`resources`/`samples`, contest `problems` are **JSON strings** needing `JSON.parse` on the client; explainlab event `payload_json` is parsed to `payload` by the GET events endpoint only.
+- Problem `tags`, custom-problem `samples`/`testcases`/`tags`, contest `problems` are **JSON strings** needing `JSON.parse` on the client.
 
 **Semantics traps**
 - `GET /api/messages/:user1/:user2` **marks messages read** as a side effect.
@@ -515,4 +459,4 @@ Two-step: login (`POST /api/user/login`) or register flow — username availabil
 - Socket room naming: solve rooms `solve-${roomId}`; DM/personal rooms keyed by username.
 - Monaco: theme `vs-dark`, font `'JetBrains Mono','Fira Code',monospace` 14px, tabSize 4, inline suggestions enabled (AI completion), replay events are Monaco `onDidChangeModelContent` deltas.
 
-**Pagination summary**: `/api/problems` limit 50 (max 200) + offset; explainlab sessions limit 50 (20 w/ search); studio all-problems limit 60 (max 200); forge pages/live classes limit 50; messages fixed 200; feed fixed 50; leaderboard default 25 max 100; user search fixed 20.
+**Pagination summary**: `/api/problems` limit 50 (max 200) + offset; studio all-problems limit 60 (max 200); forge pages/live classes limit 50; messages fixed 200; feed fixed 50; leaderboard default 25 max 100; user search fixed 20.

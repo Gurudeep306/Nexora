@@ -40,7 +40,7 @@ async function main() {
     await page.waitForFunction(() => location.pathname === '/hub');
     await page.waitForSelector('main h1');
     await page.waitForNetworkIdle({ idleTime: 400, timeout: 20000 }).catch(() => {});
-    const routes = ['hub', 'problems', 'contests', 'workshop', 'nexus', 'analytics', 'achievements', 'ailab', 'learn', 'social', 'submissions', 'bookmarks', 'profile', 'settings'];
+    const routes = ['hub', 'problems', 'contests', 'workshop', 'nexus', 'analytics', 'achievements', 'learn', 'social', 'submissions', 'bookmarks', 'profile', 'settings'];
     for (const width of [1440, 768, 375]) {
       await page.setViewport({ width, height: 1000 });
       for (const route of routes) {

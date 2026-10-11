@@ -1,0 +1,252 @@
+// Judging must not be forgeable: verdicts that award progress are computed
+// against testcases the server stores, never ones the submission brings along;
+// XP is earned once per problem; Workshop answer keys stay with their author;
+// private contests and linked Codeforces handles belong to one account.
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const { spawn } = require('node:child_process');
+const fs = require('node:fs');
+const os = require('node:os');
+const path = require('node:path');
+
+const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'nexora-integrity-'));
+const DB = path.join(tmp, 'test.db');
+let proc, base;
+let serverLog = '';
+
+async function waitFor(url) {
+  for (let i = 0; i < 160; i++) {
+    try { if ((await fetch(url)).ok) return; } catch {}
+    if (proc && proc.exitCode !== null) throw new Error(`server exited early (${proc.exitCode}): ${serverLog}`);
+    await new Promise((r) => setTimeout(r, 250));
+  }
+  throw new Error(`server not ready within 40s: ${serverLog}`);
+}
+const call = async (method, p, cookie, body) => {
+  const r = await fetch(`${base}${p}`, {
+    method,
+    headers: { 'Content-Type': 'application/json', ...(cookie ? { Cookie: cookie } : {}) },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  return { status: r.status, body: await r.json().catch(() => ({})) };
+};
+async function signup(name) {
+  const r = await fetch(`${base}/api/user/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username: name, email: `${name}@t.io`, password: 'secret123' }),
+  });
+  assert.equal(r.status, 200, `register ${name}`);
+  return r.headers.get('set-cookie').split(';')[0];
+}
+function withDb(fn) {
+  const { DatabaseSync } = require('node:sqlite');
+  const db = new DatabaseSync(DB);
+  try { return fn(db); } finally { db.close(); }
+}
+
+const DOUBLE = "const n=+require('fs').readFileSync(0,'utf8');console.log(n*2)";
+const stamp = Date.now().toString(36);
+const A = `al${stamp}`, B = `bo${stamp}`;
+let alice, bob;
+let bare, stored, sampled; // problem ids
+
+test.before(async () => {
+  const port = 25000 + Math.floor(Math.random() * 1000);
+  base = `http://127.0.0.1:${port}`;
+  proc = spawn(process.execPath, ['src/server.js'], {
+    cwd: path.join(__dirname, '..'),
+    env: {
+      ...process.env,
+      PORT: String(port),
+      NODE_ENV: 'test',
+      JUDGE_MODE: 'local',
+      DB_PATH: DB,
+      DISABLE_PUPPETEER: '1',
+      DISABLE_SCRAPER: '1',
+    },
+    stdio: ['ignore', 'pipe', 'pipe'],
+  });
+  proc.stdout.on('data', (d) => { serverLog += d; });
+  proc.stderr.on('data', (d) => { serverLog += d; });
+  await waitFor(`${base}/api/health`);
+  withDb((db) => {
+    const add = (pid, rating) => {
+      db.prepare("INSERT INTO problems(platform, problem_id, title, url, rating, tags) VALUES('codeforces',?,?,'https://x',?,'[]')")
+        .run(pid, pid, rating);
+      return Number(db.prepare('SELECT id FROM problems WHERE problem_id=?').get(pid).id);
+    };
+    bare = add('9001A', 800);
+    stored = add('9001B', 1500);
+    sampled = add('9001C', 900);
+    db.prepare("INSERT INTO problem_statements(problem_rowid, samples, scraped_at) VALUES(?,?,datetime('now'))")
+      .run(sampled, JSON.stringify([{ input: '4\n', output: '8\n' }]));
+  });
+  alice = await signup(A);
+  bob = await signup(B);
+});
+test.after(async () => {
+  if (!proc) return;
+  const done = new Promise((r) => proc.once('exit', r));
+  proc.kill('SIGKILL');
+  await done;
+});
+
+test('an empty testcase set is never Accepted', () => {
+  const { overallVerdict, NO_TESTS } = require('../src/judge');
+  assert.equal(overallVerdict([]), NO_TESTS);
+  assert.notEqual(overallVerdict([]), 'AC');
+});
+
+test('output comparison keeps leading whitespace significant on both sides', () => {
+  const { compareOutput } = require('../src/judge');
+  assert.ok(compareOutput('  5\n', '  5'));
+  assert.ok(!compareOutput('  5', '5'), 'leading spaces are part of the answer');
+  assert.ok(compareOutput('1 \n2\n', '1\n2'));
+});
+
+test('a problem with no stored testcases records nothing, whatever the client sends', async () => {
+  const forged = await call('POST', '/api/judge', alice, {
+    problem_id: bare, language: 'javascript', code: 'console.log(1)',
+    testcases: [{ input: '', expected_output: '1' }],
+  });
+  assert.equal(forged.status, 200);
+  assert.notEqual(forged.body.verdict, 'AC', 'client testcases must not be judged for a platform problem');
+  assert.equal(forged.body.recorded, false);
+
+  const empty = await call('POST', '/api/judge', alice, {
+    problem_id: bare, language: 'javascript', code: 'console.log(1)', testcases: [],
+  });
+  assert.notEqual(empty.body.verdict, 'AC');
+
+  const p = await call('GET', `/api/problems/${bare}`, alice);
+  assert.equal(p.body.problem.solve_status, 'unsolved');
+  assert.equal(p.body.submissions.length, 0);
+  assert.equal((await call('GET', '/api/stats', alice)).body.solved, 0);
+});
+
+test('stored testcases override a forged list sent with the submission', async () => {
+  await call('POST', '/api/testcases', alice, { problem_rowid: stored, label: 'T', input: '21', expected_output: '42' });
+  const r = await call('POST', '/api/judge', alice, {
+    problem_id: stored, language: 'javascript', code: 'console.log(5)',
+    testcases: [{ input: '', expected_output: '5' }],
+  });
+  assert.equal(r.body.verdict, 'WA');
+  assert.equal(r.body.results.length, 1);
+  assert.equal(r.body.results[0].input, '21');
+  const p = await call('GET', `/api/problems/${stored}`, alice);
+  assert.equal(p.body.problem.solve_status, 'attempted');
+});
+
+test("the statement's samples are always judged", async () => {
+  // Bob has no testcases of his own; the scraped sample still applies.
+  const wrong = await call('POST', '/api/judge', bob, {
+    problem_id: sampled, language: 'javascript', code: 'console.log(0)', testcases: [],
+  });
+  assert.equal(wrong.body.verdict, 'WA');
+  assert.equal(wrong.body.recorded, true);
+  const right = await call('POST', '/api/judge', bob, {
+    problem_id: sampled, language: 'javascript', code: DOUBLE, testcases: [],
+  });
+  assert.equal(right.body.verdict, 'AC', JSON.stringify(right.body).slice(0, 300));
+});
+
+test('re-solving an accepted problem earns no more XP', async () => {
+  const solve = () => call('POST', '/api/judge', alice, { problem_id: stored, language: 'javascript', code: DOUBLE });
+  assert.equal((await solve()).body.verdict, 'AC');
+  const first = (await call('GET', '/api/stats', alice)).body;
+  assert.equal((await solve()).body.verdict, 'AC');
+  assert.equal((await solve()).body.verdict, 'AC');
+  const after = (await call('GET', '/api/stats', alice)).body;
+  assert.equal(after.totalXp, first.totalXp, 'progress XP unchanged');
+  assert.equal(after.solved, 1);
+  const day = withDb((db) =>
+    db.prepare('SELECT SUM(problems_solved) s, SUM(xp_earned) x FROM daily_activity WHERE username=?').get(A));
+  assert.equal(Number(day.s), 1, 'daily solved count counts the problem once');
+  assert.equal(Number(day.x), 40, 'daily XP counts the 1500-rated problem once');
+});
+
+test('testcase count and input size are capped', async () => {
+  const many = Array.from({ length: 101 }, (_, i) => ({ input: String(i), expected_output: String(i) }));
+  assert.equal((await call('POST', '/api/judge', alice, { language: 'javascript', code: 'x', testcases: many })).status, 400);
+  const big = 'x'.repeat(600 * 1024);
+  const huge = [{ input: big, expected_output: '' }, { input: big, expected_output: '' }];
+  assert.equal((await call('POST', '/api/judge', alice, { language: 'javascript', code: 'x', testcases: huge })).status, 400);
+  assert.equal((await call('POST', '/api/run', alice, { language: 'javascript', code: 'x', input: 'y'.repeat(1100 * 1024) })).status, 400);
+  // Custom input runs still work.
+  const ok = await call('POST', '/api/run', alice, { language: 'javascript', code: DOUBLE, input: '7' });
+  assert.equal((ok.body.output || '').trim(), '14');
+});
+
+test('a Workshop problem is owned by its author and its hidden tests stay hidden', async () => {
+  const made = await call('POST', '/api/custom-problems', alice, {
+    title: 'Doubler', statement: 'double it',
+    samples: [{ input: '1', output: '2' }],
+    testcases: [{ input: '500', expected_output: '1000' }],
+  });
+  assert.equal(made.status, 200);
+  const id = made.body.id;
+
+  const mine = await call('GET', `/api/custom-problems/${id}`, alice);
+  assert.equal(mine.body.problem.creator, A);
+  assert.match(mine.body.problem.testcases, /1000/);
+
+  const theirs = await call('GET', `/api/custom-problems/${id}`, bob);
+  assert.equal(theirs.body.problem.testcases, '[]');
+  assert.equal(theirs.body.problem.hidden_count, 1);
+  const list = await call('GET', '/api/custom-problems', bob);
+  const row = list.body.problems.find((p) => p.id === id);
+  assert.ok(row && !/1000/.test(row.testcases), 'the list must not leak hidden tests either');
+
+  assert.equal((await call('PUT', `/api/custom-problems/${id}`, bob, { title: 'pwned' })).status, 403);
+  assert.equal((await call('DELETE', `/api/custom-problems/${id}`, bob)).status, 403);
+
+  // Bob is still judged against the hidden case, but never sees it.
+  const wrong = await call('POST', '/api/judge', bob, {
+    custom_problem_id: id, language: 'javascript', code: "console.log(2)",
+  });
+  assert.equal(wrong.body.verdict, 'WA');
+  const hidden = wrong.body.results.find((r) => r.hidden);
+  assert.ok(hidden, 'hidden case was judged');
+  assert.equal(hidden.input, '');
+  assert.equal(hidden.expected, '');
+  const right = await call('POST', '/api/judge', bob, { custom_problem_id: id, language: 'javascript', code: DOUBLE });
+  assert.equal(right.body.verdict, 'AC');
+});
+
+test('a legacy Workshop problem with no author is editable by admins only', async () => {
+  const id = withDb((db) => {
+    db.prepare("INSERT INTO custom_problems(creator, title, created_at) VALUES('', 'Legacy', datetime('now'))").run();
+    return Number(db.prepare("SELECT id FROM custom_problems WHERE title='Legacy'").get().id);
+  });
+  assert.equal((await call('PUT', `/api/custom-problems/${id}`, bob, { title: 'mine now' })).status, 403);
+  assert.equal((await call('DELETE', `/api/custom-problems/${id}`, bob)).status, 403);
+});
+
+test('a private contest cannot be opened by naming its creator in the query', async () => {
+  const made = await call('POST', '/api/contests/create', alice, {
+    title: 'Private Cup', type: 'speed', password: 'joinme', duration_mins: 60,
+    start_time: new Date(Date.now() + 3600e3).toISOString(), problems: '[]',
+  });
+  assert.equal(made.status, 200, made.body.error);
+  const id = made.body.contest_id;
+  assert.equal((await call('GET', `/api/contests/${id}?username=${A}`, bob)).status, 403);
+  assert.equal((await call('GET', `/api/contests/${id}?username=${A}`, null)).status, 403);
+  const own = await call('GET', `/api/contests/${id}`, alice);
+  assert.equal(own.status, 200);
+  assert.equal(own.body.isOwner, true);
+});
+
+test('a Codeforces handle links to one account only', async () => {
+  const handle = `cf${stamp}`;
+  assert.equal((await call('POST', '/api/settings', alice, { cf_handle: handle })).status, 200);
+  assert.equal((await call('POST', '/api/settings', bob, { cf_handle: handle.toUpperCase() })).status, 409);
+  assert.equal((await call('POST', '/api/settings', bob, { cf_handle: 'bad handle!' })).status, 400);
+});
+
+test('problem list limits are clamped', async () => {
+  const r = await call('GET', '/api/problems?limit=-1', alice);
+  assert.equal(r.status, 200);
+  assert.equal(r.body.limit, 1);
+  assert.ok(r.body.problems.length <= 1);
+});

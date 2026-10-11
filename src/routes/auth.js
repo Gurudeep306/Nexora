@@ -1,7 +1,20 @@
 const express = require("express");
+const rateLimit = require("express-rate-limit");
 const { errMessage } = require("../http-error");
 const { persistUpload } = require("../upload-store");
-const { sanitizeSessionUser } = require("../middleware/auth");
+const { regenerateSession, sanitizeSessionUser } = require("../middleware/auth");
+
+// Columns that must never leave the server, whoever is asking.
+const SECRET_USER_FIELDS = ["password_hash", "provider_id"];
+
+/** A users row safe to return to the client. Email is only shown to its owner. */
+function publicUserRow(user, { self = false } = {}) {
+  if (!user) return null;
+  const out = { ...user };
+  for (const f of SECRET_USER_FIELDS) delete out[f];
+  if (!self) delete out.email;
+  return out;
+}
 
 function createAuthRouter(deps) {
   const {
@@ -25,7 +38,36 @@ function createAuthRouter(deps) {
   } = deps;
 
   const router = express.Router();
-  const ADMIN_USERS = ["gurudeep", "gurudeeppaidipati"];
+
+  // Brute-force protection. These are separate from the shared authLimiter so
+  // the debounced username-availability check can't use up a user's budget.
+  // Login only counts failed attempts, so normal sign-ins are never blocked.
+  const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 10,
+    skipSuccessfulRequests: true,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { ok: false, error: "Too many sign-in attempts — try again in a few minutes." },
+  });
+  const registerLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 20,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { ok: false, error: "Too many sign-up attempts — try again later." },
+  });
+
+  // Usernames are unique case-insensitively ("GuruDeep" may not shadow
+  // "gurudeep"). The PRIMARY KEY is case-sensitive, so check explicitly.
+  const findUsernameNoCase = (name) =>
+    get("SELECT username FROM users WHERE username = ? COLLATE NOCASE", [name]);
+
+  // Hash compared against when the username doesn't exist, so an unknown user
+  // and a wrong password take about the same time.
+  let dummyHashPromise = null;
+  const dummyHash = () => (dummyHashPromise ||= hashPassword("nexora-dummy-password"));
+  const LOGIN_FAILED = "Incorrect username or password";
 
   router.get("/api/auth/status", (req, res) => {
     const sessionUser = getSessionUser(req);
@@ -75,16 +117,14 @@ function createAuthRouter(deps) {
             error: "Username can only contain letters, numbers, underscores",
           });
       }
-      const exists = await get("SELECT username FROM users WHERE username=?", [
-        username,
-      ]);
+      const exists = await findUsernameNoCase(username);
       res.json({ ok: true, available: !exists });
     } catch (e) {
       res.status(500).json({ ok: false, error: errMessage(e) });
     }
   });
 
-  router.post("/api/user/register", async (req, res) => {
+  router.post("/api/user/register", registerLimiter, async (req, res) => {
     try {
       const {
         username,
@@ -117,13 +157,10 @@ function createAuthRouter(deps) {
           });
       }
 
-      const isAdmin = ADMIN_USERS.includes(clean.toLowerCase());
-      const role = isAdmin ? "admin" : "member";
-      const xpOverride = isAdmin ? 500000 : 0;
-      const solvedOverride = isAdmin ? 5000 : 0;
-      const existing = await get("SELECT * FROM users WHERE username=?", [
-        clean,
-      ]);
+      // New accounts are always members. Admin comes only from the stored
+      // role (granted with /api/admin/set-role), never from the chosen name.
+      const role = "member";
+      const existing = await findUsernameNoCase(clean);
 
       // Registering never touches an existing account (this used to overwrite
       // it and sign the caller in as that user — an account takeover).
@@ -162,8 +199,8 @@ function createAuthRouter(deps) {
           bio || "",
           "online",
           role,
-          xpOverride,
-          solvedOverride,
+          0,
+          0,
           oauth ? oauth.provider : "manual",
           oauth ? String(oauth.providerId) : null,
           email || oauth?.email || null,
@@ -175,6 +212,8 @@ function createAuthRouter(deps) {
 
       const user = await get("SELECT * FROM users WHERE username=?", [clean]);
       clearSessionUser(req);
+      // New session id on sign-in (prevents session fixation).
+      await regenerateSession(req);
       persistSessionUser(req, user);
       res.json({ ok: true, user: sanitizeSessionUser(user), created: true });
     } catch (e) {
@@ -182,18 +221,22 @@ function createAuthRouter(deps) {
     }
   });
 
-  router.post("/api/user/login", async (req, res) => {
+  router.post("/api/user/login", loginLimiter, async (req, res) => {
     try {
       const { username, password } = req.body;
-      if (!username || !password) {
+      if (!username || !password || typeof username !== "string" || typeof password !== "string") {
         return res
           .status(400)
           .json({ ok: false, error: "Username and password required" });
       }
       const clean = username.replace(/[^a-zA-Z0-9_]/g, "");
       const user = await get("SELECT * FROM users WHERE username=?", [clean]);
-      if (!user)
-        return res.status(404).json({ ok: false, error: "User not found" });
+      // Same answer (and roughly the same time) for an unknown user and a
+      // wrong password, so the form can't be used to probe for accounts.
+      if (!user) {
+        await verifyPassword(password, await dummyHash()).catch(() => false);
+        return res.status(401).json({ ok: false, error: LOGIN_FAILED });
+      }
 
       // Accounts created through GitHub/Google have no password: never let
       // anyone in to them with an arbitrary password.
@@ -205,10 +248,10 @@ function createAuthRouter(deps) {
       }
       const valid = await verifyPassword(password, user.password_hash);
       if (!valid)
-        return res
-          .status(401)
-          .json({ ok: false, error: "Incorrect password" });
+        return res.status(401).json({ ok: false, error: LOGIN_FAILED });
 
+      // New session id on sign-in (prevents session fixation).
+      await regenerateSession(req);
       persistSessionUser(req, user);
       res.json({ ok: true, user: sanitizeSessionUser(user) });
     } catch (e) {
@@ -287,11 +330,9 @@ function createAuthRouter(deps) {
               .status(400)
               .json({ ok: false, error: "Invalid new username" });
           }
-          const taken = await get(
-            "SELECT username FROM users WHERE username=?",
-            [cleanNew],
-          );
-          if (taken)
+          const taken = await findUsernameNoCase(cleanNew);
+          // A case-only rename of your own account ("bob" -> "Bob") is fine.
+          if (taken && taken.username !== currentUsername)
             return res
               .status(400)
               .json({ ok: false, error: "Username already taken" });
@@ -323,7 +364,7 @@ function createAuthRouter(deps) {
           for (const [table, col] of [
             ["progress", "username"], ["submissions", "username"], ["daily_activity", "username"],
             ["decomposition_notes", "username"], ["skill_progress", "username"], ["forge_progress", "username"],
-            ["settings", "username"], ["tutorial_progress", "username"], ["ai_progress", "username"],
+            ["settings", "username"], ["tutorial_progress", "username"],
             ["ai_battles", "username"], ["code_replays", "username"], ["user_achievements", "username"],
             ["user_daily_challenges", "username"], ["bookmarks", "username"],
             ["custom_problems", "creator"], ["custom_contests", "creator"], ["solve_rooms", "creator"],
@@ -361,10 +402,13 @@ function createAuthRouter(deps) {
         const updated = await get("SELECT * FROM users WHERE username=?", [
           finalUsername,
         ]);
-        persistSessionUser(req, updated);
+        // Only switch the session when you edited your own account — an admin
+        // editing someone else must stay signed in as themselves.
+        const editingSelf = req.sessionUser?.username === currentUsername;
+        if (editingSelf) persistSessionUser(req, updated);
         res.json({
           ok: true,
-          user: updated,
+          user: publicUserRow(updated, { self: editingSelf }),
           usernameChanged: finalUsername !== currentUsername,
         });
       } catch (e) {
@@ -423,7 +467,7 @@ function createAuthRouter(deps) {
         const updated = await get("SELECT * FROM users WHERE username=?", [
           username,
         ]);
-        persistSessionUser(req, updated);
+        if (req.sessionUser?.username === username) persistSessionUser(req, updated);
         res.json({ ok: true, avatar_url: avatarUrl });
       } catch (e) {
         res.status(500).json({ ok: false, error: errMessage(e) });

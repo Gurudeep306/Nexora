@@ -37,7 +37,6 @@ class NeoSidebar {
   _detectMode() {
     const path = window.location.pathname;
     if (path.includes("studio")) return "creator";
-    if (path.includes("explainlab")) return "creator";
     if (path.includes("live-class")) return "creator";
     if (path.includes("forgebuilder")) return "admin";
     return "student";
@@ -50,7 +49,6 @@ class NeoSidebar {
     }
     const path = window.location.pathname;
     if (path.includes("studio")) return "studio";
-    if (path.includes("explainlab")) return "explainlab";
     if (path.includes("live-class")) return "live-class";
     if (path.includes("forgebuilder")) return "forgebuilder";
     return "hub";

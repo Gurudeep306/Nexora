@@ -83,6 +83,28 @@ function sortPaperQuestions(questions) {
   });
 }
 
+/* Lookups for the AI agent's tools (src/ai/tools.js). */
+function findGateQuestion(id) {
+  const q = load().byId.get(String(id));
+  return q ? strip(q) : null;
+}
+
+function searchGateQuestions({ q = "", subject = "", year = "", limit = 10 } = {}) {
+  const words = terms(String(q));
+  const subj = String(subject || "").toLowerCase();
+  const yr = Number(year) || 0;
+  const max = Math.min(Math.max(Number(limit) || 10, 1), 20);
+  const out = [];
+  for (const x of load().questions) {
+    if (subj && String(x.subject || "").toLowerCase() !== subj) continue;
+    if (yr && x.year !== yr) continue;
+    if (words.length && !words.every((w) => x._hay.includes(w))) continue;
+    out.push(x);
+    if (out.length >= max) break;
+  }
+  return out.map(strip);
+}
+
 function createGateRouter() {
   const router = express.Router();
 
@@ -571,4 +593,4 @@ function createGateRouter() {
   return router;
 }
 
-module.exports = { createGateRouter };
+module.exports = { createGateRouter, findGateQuestion, searchGateQuestions };

@@ -12,6 +12,7 @@ import {
 import { api } from '@/lib/api'
 import { useApi } from '@/hooks/useApi'
 import { useAuth } from '@/context/AuthContext'
+import { useAgentPageContext } from '@/context/AgentContext'
 import {
   DIFFICULTY_BANDS,
   type AiFindResponse,
@@ -97,7 +98,31 @@ export default function ProblemsPage() {
         timeoutMs: 15000,
       }),
     [platform, band.min, band.max, tag, status, qParam, sort, order, offset],
+    { cacheKey: `problems:${JSON.stringify([platform, band.min, band.max, tag, status, qParam, sort, order, offset])}` },
   )
+
+  /* Tell the floating assistant what's listed, so it can recommend from it. */
+  const filtersText = [
+    qParam && `search "${qParam}"`,
+    platform !== 'all' && `platform ${platform}`,
+    difficulty !== 'all' && band.label,
+    status !== 'all' && `status ${status}`,
+    tag && `tag ${tag}`,
+    `sorted by ${sort} ${order}`,
+  ]
+    .filter(Boolean)
+    .join(', ')
+  const listed = problemsApi.data?.problems ?? []
+  useAgentPageContext({
+    label: tag ? `Problems · ${tag}` : 'Problems',
+    filters: filtersText,
+    visibleText: listed.length
+      ? `${problemsApi.data?.total ?? listed.length} problems match. Showing:\n${listed
+          .slice(0, 40)
+          .map((p) => `#${p.id} ${p.title} [${p.platform}] rating ${p.rating || '?'} — ${p.solve_status}`)
+          .join('\n')}`
+      : undefined,
+  })
 
   const bookmarksApi = useApi<BookmarksResponse>(
     () => api.get<BookmarksResponse>('/api/bookmarks', { query: { username } }),
@@ -105,7 +130,7 @@ export default function ProblemsPage() {
     { skip: !username },
   )
 
-  const tagsApi = useApi<TagsResponse>(() => api.get<TagsResponse>('/api/tags'), [])
+  const tagsApi = useApi<TagsResponse>(() => api.get<TagsResponse>('/api/tags'), [], { cacheKey: 'tags' })
 
   const bookmarkedIds = useMemo(
     () => new Set(bookmarksApi.data?.problemIds ?? []),

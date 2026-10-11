@@ -220,7 +220,7 @@ async function runWandbox(code, input, lang) {
  */
 function classifyWandbox(r, timeMs) {
   const compilerErr = (r.compiler_error || '').trim();
-  const stdout = (r.program_output || '').trim();
+  const stdout = (r.program_output || '').trimEnd();
   const stderr = (r.program_error || '').trim();
   const programMsg = (r.program_message || '').trim();
   const status = parseInt(r.status, 10) || 0;
@@ -280,7 +280,7 @@ function classifyKotlin(r, timeMs) {
     };
   }
   const text = r.text || '';
-  const stdout = text.replace(/<errStream>[\s\S]*?<\/errStream>/g, '').replace(/<\/?outStream>/g, '').trim();
+  const stdout = text.replace(/<errStream>[\s\S]*?<\/errStream>/g, '').replace(/<\/?outStream>/g, '').trimEnd();
   const stderr = (text.match(/<errStream>([\s\S]*?)<\/errStream>/)?.[1] || '').trim();
   if (r.exception) {
     const ex = r.exception.fullName || r.exception.message || 'Runtime exception';
@@ -298,7 +298,7 @@ function classifyGodbolt(r, timeMs) {
       .replace(/^Build failed\n?/, '').trim();
     return { stdout: '', stderr: msg, exitCode: 1, timeMs, verdict: 'CE', engine: 'godbolt' };
   }
-  const stdout = join(r.stdout).trim();
+  const stdout = join(r.stdout).trimEnd();
   const stderr = strip(join(r.stderr)).trim();
   if (r.timedOut) return { stdout, stderr, exitCode: -1, timeMs, verdict: 'TLE', engine: 'godbolt' };
   if (r.code !== 0) return { stdout, stderr, exitCode: r.code, timeMs, verdict: 'RE', engine: 'godbolt' };
@@ -394,6 +394,35 @@ function clearCache() { cache.clear(); inflight.clear(); }
 
 const RETRY_DELAYS = [400, 1200];
 
+/**
+ * Process-wide cap on remote executions. judge.js bounds the fan-out of one
+ * submission, but many users (or one user with many tabs) submitting at once
+ * would otherwise open an unbounded number of sandbox requests. Excess work
+ * waits in a bounded queue; past that the run is refused as a transient
+ * failure (exitCode -1, so it is never cached).
+ */
+const MAX_REMOTE_CONCURRENT = Number(process.env.REMOTE_MAX_CONCURRENT) || 16;
+const MAX_REMOTE_QUEUED = Number(process.env.REMOTE_MAX_QUEUED) || 200;
+let remoteActive = 0;
+const remoteWaiters = [];
+
+async function acquireSlot() {
+  if (remoteActive < MAX_REMOTE_CONCURRENT) { remoteActive++; return true; }
+  if (remoteWaiters.length >= MAX_REMOTE_QUEUED) return false;
+  await new Promise((resolve) => remoteWaiters.push(resolve));
+  return true; // the releasing run handed its slot straight to us
+}
+
+function releaseSlot() {
+  const next = remoteWaiters.shift();
+  if (next) next();
+  else remoteActive--;
+}
+
+function remoteLoad() {
+  return { active: remoteActive, queued: remoteWaiters.length, max: MAX_REMOTE_CONCURRENT };
+}
+
 async function dispatch(code, input, lang, engine) {
   if (engine === 'wandbox') return runWandbox(code, input, lang);
   if (engine === 'godbolt') return runGodbolt(code, input, lang);
@@ -425,14 +454,24 @@ async function remoteRun(code, input, lang, opts = {}) {
   }
 
   const work = (async () => {
-    let result;
-    for (let attempt = 0; ; attempt++) {
-      result = await dispatch(code, input, lang, engine);
-      if (!result._transient || attempt >= RETRY_DELAYS.length) break;
-      await sleep(RETRY_DELAYS[attempt]);
+    if (!(await acquireSlot())) {
+      return {
+        stdout: '', stderr: 'The judge is busy right now — try again in a moment.',
+        exitCode: -1, timeMs: 0, verdict: 'RE', engine,
+      };
     }
-    delete result._transient;
-    return result;
+    try {
+      let result;
+      for (let attempt = 0; ; attempt++) {
+        result = await dispatch(code, input, lang, engine);
+        if (!result._transient || attempt >= RETRY_DELAYS.length) break;
+        await sleep(RETRY_DELAYS[attempt]);
+      }
+      delete result._transient;
+      return result;
+    } finally {
+      releaseSlot();
+    }
   })();
 
   inflight.set(key, work);
@@ -456,6 +495,8 @@ module.exports = {
   hasRemote,
   engineFor,
   clearCache,
+  remoteLoad,
+  MAX_REMOTE_CONCURRENT,
   injectKotlinStdin,
   WANDBOX_MAP,
   GODBOLT_MAP,

@@ -18,6 +18,8 @@ import {
 import { cn } from '@/lib/utils'
 import { Markdown } from '@/learn/md'
 import { api } from '@/lib/api'
+import { agentTask } from '@/lib/agent'
+import { useAgentPageContext } from '@/context/AgentContext'
 import { GateCalculator } from './GateCalculator'
 import { GateAiReport, type ExamEvaluation, type AiDiagnostic } from './GateAiReport'
 import { ReconstructedDiagram } from './ReconstructedDiagram'
@@ -122,18 +124,14 @@ export function GateCbtExam({
     }
   }, [paperId])
 
-  // Timer countdown
+  // Timer countdown. The updater is kept pure (it only decrements); the
+  // time-out submit is triggered by a separate effect below so it always
+  // uses the latest responses and fires exactly once (StrictMode-safe).
+  const timeUp = timeRemaining <= 0
   useEffect(() => {
-    if (loading || evalResult) return
+    if (loading || evalResult || timeUp) return
     const timer = setInterval(() => {
-      setTimeRemaining((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer)
-          handleSubmitExam()
-          return 0
-        }
-        return prev - 1
-      })
+      setTimeRemaining((prev) => Math.max(0, prev - 1))
 
       // Track time spent on current question
       if (currentQIdRef.current) {
@@ -142,13 +140,28 @@ export function GateCbtExam({
       }
     }, 1000)
     return () => clearInterval(timer)
-  }, [loading, evalResult])
+  }, [loading, evalResult, timeUp])
 
   const questions = data?.questions || []
   const currentQuestion = questions[currentIndex]
   if (currentQuestion) {
     currentQIdRef.current = currentQuestion.id
   }
+
+  // The floating assistant: concept help only while the paper is running
+  // (the server enforces this too); full explanations once it's submitted.
+  useAgentPageContext(
+    evalResult
+      ? { examReview: true, title: `${data?.paper.exam ?? 'GATE'} ${data?.paper.year ?? ''} mock — results` }
+      : {
+          examActive: true,
+          title: data ? `${data.paper.exam} ${data.paper.year} mock` : 'GATE mock',
+          gateQuestionId: currentQuestion?.id,
+          gateQuestionText: currentQuestion
+            ? [`Q${currentQuestion.number} (${currentQuestion.type})`, currentQuestion.text, ...currentQuestion.options.map((o) => `(${o.l}) ${o.t}`)].join('\n').slice(0, 3000)
+            : undefined,
+        },
+  )
 
   // Format seconds into HH:MM:SS
   const formatTime = (secs: number) => {
@@ -253,6 +266,26 @@ export function GateCbtExam({
           evalResult: evalRes,
         })
         setAiAnalysis(diagRes.analysis)
+        // Optional AI debrief on top of the rule-based analysis (silently skipped without AI).
+        const a = diagRes.analysis
+        agentTask<string>(
+          'gate_narrative',
+          {
+            analysis: {
+              score: `${evalRes.totalScore}/${evalRes.maxMarks}`,
+              accuracy: evalRes.accuracy,
+              negativeMarks: evalRes.negativeMarks,
+              attempted: evalRes.attemptedCount,
+              profile: a.speedAccuracyProfile,
+              strengths: a.strengths,
+              weaknesses: a.vulnerabilities,
+              sections: evalRes.sectionStats,
+            },
+          },
+          { timeoutMs: 45000 },
+        )
+          .then((narrative) => narrative && setAiAnalysis((prev) => (prev ? { ...prev, narrative } : prev)))
+          .catch(() => undefined)
       } catch {
         // Fallback without AI diagnostic if endpoint fails
       }
@@ -262,6 +295,22 @@ export function GateCbtExam({
       setIsSubmitting(false)
     }
   }
+
+  // Always point at the latest handler so the auto-submit sees current
+  // responses/timeSpent rather than a stale first-render closure.
+  const submitRef = useRef(handleSubmitExam)
+  useEffect(() => {
+    submitRef.current = handleSubmitExam
+  })
+
+  // Auto-submit once when the clock hits zero.
+  const autoSubmittedRef = useRef(false)
+  useEffect(() => {
+    if (!timeUp || loading || evalResult || isSubmitting) return
+    if (autoSubmittedRef.current) return
+    autoSubmittedRef.current = true
+    void submitRef.current()
+  }, [timeUp, loading, evalResult, isSubmitting])
 
   // Count palette states
   const counts = {
@@ -287,6 +336,7 @@ export function GateCbtExam({
     setAiAnalysis(null)
     setResponses({})
     setTimeRemaining(180 * 60)
+    autoSubmittedRef.current = false
     setTimeSpent({})
     setCurrentIndex(0)
     const initialStatus: Record<string, QuestionStatus> = {}

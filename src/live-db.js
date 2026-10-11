@@ -25,7 +25,6 @@ async function initLiveDb() {
     recording_url TEXT,
     audio_url TEXT,
     screen_recording_url TEXT,
-    explain_session_id INTEGER,
     settings_json TEXT DEFAULT '{}',
     is_public INTEGER DEFAULT 0,
     max_participants INTEGER DEFAULT 100,
@@ -113,6 +112,16 @@ async function initLiveDb() {
 }
 
 // Helper functions
+
+// Bound a user-supplied page size / offset so a query can't ask for everything.
+function clampInt(value, def, max) {
+  const n = parseInt(value, 10);
+  return Math.min(Math.max(Number.isFinite(n) ? n : def, 0), max);
+}
+
+// SQL snippet: seconds since joined_at, computed in the database so the UTC
+// CURRENT_TIMESTAMP value is never re-parsed as local time in JS.
+const ELAPSED_SQL = "MAX(0, CAST(strftime('%s', 'now') AS INTEGER) - CAST(strftime('%s', joined_at) AS INTEGER))";
 async function createLiveClass(data) {
   const {
     teacher_id, teacher_name, title, description,
@@ -170,15 +179,17 @@ async function getLiveClasses(filters = {}) {
 
   const whereClause = where.length > 0 ? 'WHERE ' + where.join(' AND ') : '';
 
-  const total = await get(`SELECT COUNT(*) as count FROM live_classes ${whereClause}`);
+  const total = await get(`SELECT COUNT(*) as count FROM live_classes ${whereClause}`, params);
   const classes = await all(`
     SELECT * FROM live_classes ${whereClause} 
     ORDER BY created_at DESC LIMIT ? OFFSET ?
-  `, [...params, limit, offset]);
+  `, [...params, clampInt(limit, 50, 200), clampInt(offset, 0, 1e6)]);
 
   return { classes, total: total.count };
 }
 
+// Throws an error with status 409 when the class is already at max_participants
+// (the teacher can always join their own class).
 async function joinLiveClass(classId, userId, userName, role = 'student') {
   // Check if already joined
   const existing = await get(
@@ -186,9 +197,27 @@ async function joinLiveClass(classId, userId, userName, role = 'student') {
     [classId, userId]
   );
 
+  // Already in the class: nothing to do (resetting joined_at would lose time).
+  if (existing && existing.left_at == null) return existing;
+
+  if (role !== 'teacher') {
+    const cls = await get('SELECT max_participants FROM live_classes WHERE id = ?', [classId]);
+    const active = await get(
+      'SELECT COUNT(*) as c FROM live_class_participants WHERE live_class_id = ? AND left_at IS NULL',
+      [classId]
+    );
+    if (cls && cls.max_participants > 0 && Number(active.c) >= cls.max_participants) {
+      const err = new Error('Class is full');
+      err.status = 409;
+      throw err;
+    }
+  }
+
   if (existing) {
+    // Rejoin: start a new attendance interval; attendance_seconds keeps the
+    // time from earlier visits and leaveLiveClass adds this one to it.
     await run('UPDATE live_class_participants SET joined_at = CURRENT_TIMESTAMP, left_at = NULL WHERE id = ?', [existing.id]);
-    return existing;
+    return get('SELECT * FROM live_class_participants WHERE id = ?', [existing.id]);
   }
 
   const result = await run(`
@@ -206,13 +235,23 @@ async function leaveLiveClass(classId, userId) {
   );
 
   if (participant) {
-    const attendanceSeconds = Math.floor((Date.now() - new Date(participant.joined_at).getTime()) / 1000);
     await run(`
       UPDATE live_class_participants 
-      SET left_at = CURRENT_TIMESTAMP, attendance_seconds = ? 
+      SET left_at = CURRENT_TIMESTAMP,
+          attendance_seconds = COALESCE(attendance_seconds, 0) + ${ELAPSED_SQL}
       WHERE id = ?
-    `, [attendanceSeconds, participant.id]);
+    `, [participant.id]);
   }
+}
+
+// Close every open attendance interval in a class (used when the class ends).
+async function closeLiveClassAttendance(classId) {
+  await run(`
+    UPDATE live_class_participants 
+    SET left_at = CURRENT_TIMESTAMP,
+        attendance_seconds = COALESCE(attendance_seconds, 0) + ${ELAPSED_SQL}
+    WHERE live_class_id = ? AND left_at IS NULL
+  `, [classId]);
 }
 
 async function addLiveClassMessage(classId, userId, userName, message, messageType = 'chat') {
@@ -240,7 +279,9 @@ module.exports = {
   getLiveClasses,
   joinLiveClass,
   leaveLiveClass,
+  closeLiveClassAttendance,
   addLiveClassMessage,
+  clampInt,
   addLiveClassEvent,
   run,
   get,

@@ -99,20 +99,10 @@ export interface JudgeResponse {
   compileError: string | null
   results: JudgeCaseResult[]
   engine?: string
-}
-
-/* POST /api/ai-fix */
-export interface AiFixResponse {
-  ok: boolean
-  code?: string
-  error?: string
-}
-
-/* POST /api/ai-chat */
-export interface AiChatResponse {
-  ok: boolean
-  reply?: string
-  error?: string
+  /** false when the verdict did not count toward progress (e.g. no stored tests) */
+  recorded?: boolean
+  /** Explanation when nothing could be judged */
+  message?: string
 }
 
 export const XP_BY_RATING = (rating: number): number => {
