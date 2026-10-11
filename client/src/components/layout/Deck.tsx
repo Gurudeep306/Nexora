@@ -10,6 +10,7 @@ import {
   type MotionValue,
 } from 'motion/react'
 import { MoreHorizontal, SlidersHorizontal } from 'lucide-react'
+import { prefetchHandlers } from '@/routes'
 import { cn } from '@/lib/utils'
 import { openCommandPalette } from './CommandPalette'
 import { DockEditor } from './DockEditor'
@@ -159,6 +160,7 @@ function DockIcon({
       aria-label={item.label}
       aria-current={active ? 'page' : undefined}
       className={common}
+      {...prefetchHandlers(item.to!)}
       onClick={(e) => {
         // Settings?tab=… is a query route; NavLink handles the rest.
         if (item.to!.includes('?')) {
@@ -368,7 +370,7 @@ function MoreTile({ item, mono, onPick }: { item: DockItem; mono: boolean; onPic
       </a>
     )
   return (
-    <NavLink to={item.to!} className={cls} onClick={onPick}>
+    <NavLink to={item.to!} className={cls} onClick={onPick} {...prefetchHandlers(item.to!)}>
       {inner}
     </NavLink>
   )
