@@ -831,8 +831,12 @@ async function finishOAuth(req, res, next, provider) {
       "SELECT * FROM users WHERE auth_provider=? AND provider_id=?",
       [provider, String(o.providerId)],
     );
+    // Fresh session id once the provider has vouched for this person, so a
+    // session id planted beforehand never becomes signed in (fixation).
+    await new Promise((resolve, reject) =>
+      req.session.regenerate((err) => (err ? reject(err) : resolve())),
+    );
     if (linked) {
-      delete req.session.oauthUser;
       persistSessionUser(req, linked);
       return req.session.save(() => res.redirect(`/?auth=${provider}&linked=1`));
     }
@@ -5126,11 +5130,21 @@ app.get("/api/workshop/stats", async (req, res) => {
 
 /* ========== CUSTOM CONTESTS & QUIZZES ========== */
 
-function hashPass(pass) {
+// Contest passwords use the same salted scrypt as account passwords
+// ("salt:key"). Older contests stored a static-salt SHA-256; those still
+// verify, compared in constant time.
+function legacyContestHash(pass) {
   return crypto
     .createHash("sha256")
     .update(pass + "nexora_salt")
     .digest("hex");
+}
+async function verifyContestPassword(pass, stored) {
+  if (typeof stored !== "string" || !stored) return false;
+  if (stored.includes(":")) return verifyPassword(pass, stored).catch(() => false);
+  const a = Buffer.from(legacyContestHash(pass), "hex");
+  const b = Buffer.from(stored, "hex");
+  return a.length === b.length && crypto.timingSafeEqual(a, b);
 }
 
 function genContestCode() {
@@ -5187,7 +5201,7 @@ app.post("/api/contests/create", async (req, res) => {
         description || "",
         type || "speed",
         code,
-        hashPass(password),
+        await hashPassword(String(password)),
         org_tag || "",
         start_time,
         duration_mins || 60,
@@ -5232,7 +5246,7 @@ app.post("/api/contests/join", async (req, res) => {
     );
     if (!contest)
       return res.status(404).json({ ok: false, error: "Contest not found" });
-    if (contest.password_hash !== hashPass(password))
+    if (!(await verifyContestPassword(String(password), contest.password_hash)))
       return res.status(401).json({ ok: false, error: "Wrong password" });
     const count = await get(
       "SELECT COUNT(*) as c FROM contest_participants WHERE contest_id=?",

@@ -59,10 +59,11 @@ function createLearningRouter(deps) {
 
   router.post('/api/ai-chat', aiLimiter, async (req, res) => {
     try {
-      const { statement, question, history, animate, username: reqUser } = req.body;
+      const { statement, question, history, animate } = req.body;
       if (!question || !question.trim()) return res.status(400).json({ ok: false, error: 'Question is required' });
 
-      const activeUser = me() || reqUser || 'guest';
+      // Never trust a username from the body — it would write into someone else's history.
+      const activeUser = me() || 'guest';
       const isAnimate = Boolean(animate) || /animate|visualiz|simulation|step through|show animation|animation/i.test(question);
 
       let systemPrompt = '';
@@ -248,7 +249,9 @@ ${(statement || 'No problem statement available').substring(0, 4000)}
   // Multi-user isolated chat history retrieval
   router.get('/api/ai-chat/history', async (req, res) => {
     try {
-      const activeUser = me() || req.query.username || 'guest';
+      // Only ever your own history (login is also enforced in authz).
+      const activeUser = me();
+      if (!activeUser) return res.status(401).json({ ok: false, error: 'Please sign in first' });
       const rows = await all(
         'SELECT id, role, content, visualization, created_at FROM ai_user_chats WHERE username = ? ORDER BY id ASC LIMIT 100',
         [activeUser]
@@ -275,7 +278,9 @@ ${(statement || 'No problem statement available').substring(0, 4000)}
   // Clear chat history for specific user
   router.delete('/api/ai-chat/history', async (req, res) => {
     try {
-      const activeUser = me() || req.query.username || req.body?.username || 'guest';
+      // Only ever your own history (login is also enforced in authz).
+      const activeUser = me();
+      if (!activeUser) return res.status(401).json({ ok: false, error: 'Please sign in first' });
       await run('DELETE FROM ai_user_chats WHERE username = ?', [activeUser]);
       res.json({ ok: true, message: `Chat history cleared for ${activeUser}` });
     } catch (e) {
