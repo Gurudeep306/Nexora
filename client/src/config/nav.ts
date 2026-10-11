@@ -6,7 +6,6 @@ import {
   Network,
   BarChart3,
   Medal,
-  Sparkles,
   GraduationCap,
   Users,
   History,
@@ -50,7 +49,6 @@ export const NAV_SECTIONS: NavSection[] = [
       { to: '/nexus', label: 'Nexus', icon: Network },
       { to: '/analytics', label: 'Analytics', icon: BarChart3 },
       { to: '/achievements', label: 'Achievements', icon: Medal },
-      { to: '/ailab', label: 'AI Lab', icon: Sparkles },
       { to: '/learn', label: 'Learn', icon: GraduationCap },
     ],
   },
@@ -103,6 +101,5 @@ export const GO_SHORTCUTS: Record<string, string> = {
   s: '/social',
   b: '/bookmarks',
   u: '/submissions',
-  i: '/ailab',
   ',': '/settings',
 }

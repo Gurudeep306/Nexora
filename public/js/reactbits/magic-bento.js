@@ -22,7 +22,7 @@
 
   // Which existing grids/cards become bento cards (the "slides").
   const CARD_SEL = [
-    ".qa-card", ".momentum-card", ".ailab-card", ".learn-card",
+    ".qa-card", ".momentum-card", ".learn-card",
     ".learn-subject-card", ".forge-path-card", ".contest-card",
     ".dash-analytics-card", ".analytics-card", ".analytics-stat",
     ".quick-action-card", ".studio-quick-card", ".tool-card",

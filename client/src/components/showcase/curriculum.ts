@@ -10,8 +10,8 @@ import {
 
 /**
  * What Nexora teaches, grouped the way a CS degree is. Mirrors the lesson
- * categories in src/tutorial-data.js, the DSA course syllabus, the AI Lab
- * domains and the Forge career roadmaps on the server — keep in step when
+ * categories in src/tutorial-data.js, the DSA course syllabus and the Forge
+ * career roadmaps on the server — keep in step when
  * those grow.
  */
 
@@ -95,7 +95,6 @@ export const FACTS = {
   subjects: '35+',
   lessons: '140+',
   animations: '30+',
-  aiProblems: '48',
   paths: '8',
   languages: '30+',
 }

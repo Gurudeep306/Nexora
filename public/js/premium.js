@@ -11,7 +11,7 @@
   /* Cards that should get the spotlight + lift treatment. Broad on purpose so
      the effect reaches every surface without per-page wiring. */
   const CARD_SEL = [
-    ".qa-card", ".ailab-card", ".learn-card", ".learn-subject-card",
+    ".qa-card", ".learn-card", ".learn-subject-card",
     ".forge-path-card", ".contest-card", ".friend-card", ".achievement-card",
     ".daily-card", ".momentum-card", ".ob-card", ".lm-card",
     ".level-problem-card", ".dash-analytics-card", ".badge-showcase-card",
@@ -191,7 +191,7 @@
 
   const NUM_SEL =
     ".analytics-stat-value, .stat-value, .ob-card-num, .fp-pstat-num, " +
-    ".ailab-stat-num, .hud-stat-value, .studio-stat-value, .hub-pstat-val, " +
+    ".hud-stat-value, .studio-stat-value, .hub-pstat-val, " +
     ".px-count";
 
   function setupCountUp(root) {
