@@ -1,4 +1,5 @@
 import { NavLink, useLocation } from 'react-router-dom'
+import { prefetchHandlers } from '@/routes'
 import { motion } from 'motion/react'
 import { Search } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -41,6 +42,7 @@ export function MobileTabBar() {
             <NavLink
               key={t.id}
               to={t.to!}
+              {...prefetchHandlers(t.to!)}
               className={({ isActive }) =>
                 cn(
                   'relative flex flex-col items-center justify-center gap-0.5 text-[10px] font-medium transition-colors',

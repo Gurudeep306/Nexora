@@ -30,6 +30,7 @@ export default function AchievementsPage() {
   const { data, loading, error, refetch } = useApi(
     () => api.get<StatsResponse>('/api/stats', { query: username ? { username } : undefined }),
     [username],
+    { cacheKey: `stats:${username}` },
   )
 
   const achievements = data?.achievements ?? []
