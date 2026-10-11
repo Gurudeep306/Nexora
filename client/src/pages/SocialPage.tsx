@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Users, MessagesSquare, DoorOpen, Trophy, PlugZap, Rss } from 'lucide-react'
 import { Card, EmptyState, PageHeader, Tabs } from '@/components/ui'
@@ -28,16 +27,7 @@ export default function SocialPage() {
   const tab = TAB_IDS.has(requested) ? requested : 'friends'
   const me = user?.username ?? ''
 
-  // Register presence on every (re)connect — per API catalog socket contract.
-  useEffect(() => {
-    if (!socket || !me) return
-    const register = () => socket.emit('register-user', { username: me })
-    if (socket.connected) register()
-    socket.on('connect', register)
-    return () => {
-      socket.off('connect', register)
-    }
-  }, [socket, me])
+  // Presence is registered server-side from the session on every (re)connect.
 
   function selectTab(id: string) {
     const next = new URLSearchParams(params)
