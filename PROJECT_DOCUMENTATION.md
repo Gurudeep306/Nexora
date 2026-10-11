@@ -103,7 +103,7 @@
 - **Coach / Code Completion / AI Fix:** live code insight, ghost text (fast model), minimal syntax fixes
 - **Also AI-backed:** translation, problem finder, ExplainLab, Studio drafts, GATE debrief, algorithm animations
 - **AI Battle:** 1v1 time-based racing against a simulated opponent (not an LLM)
-- **Powered by:** Groq only — `GROQ_MODEL` (default `openai/gpt-oss-120b`), `GROQ_FAST_MODEL` (`llama-3.1-8b-instant`), `GROQ_FALLBACK_MODEL` (`llama-3.3-70b-versatile`)
+- **Powered by:** Groq only — `GROQ_MODEL` (default `openai/gpt-oss-120b`), `GROQ_FAST_MODEL` (`openai/gpt-oss-20b`), `GROQ_FALLBACK_MODEL` (`openai/gpt-oss-20b`)
 - **Limits:** per-user rate limits, daily token budget (`AI_DAILY_TOKENS`), LRU cache for completions
 
 ### 10. **Advanced Editor & IDE**

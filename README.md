@@ -133,8 +133,8 @@ Create a `.env` file in the root directory:
 PORT=3000
 NODE_ENV=development
 GROQ_API_KEY=your_groq_api_key_here   # optional: AI features are off without it
-# GROQ_MODEL=openai/gpt-oss-120b  GROQ_FAST_MODEL=llama-3.1-8b-instant
-# GROQ_FALLBACK_MODEL=llama-3.3-70b-versatile  AI_DAILY_TOKENS=200000
+# GROQ_MODEL=openai/gpt-oss-120b  GROQ_FAST_MODEL=openai/gpt-oss-20b
+# GROQ_FALLBACK_MODEL=openai/gpt-oss-20b  AI_DAILY_TOKENS=200000
 GITHUB_CLIENT_ID=your_github_client_id
 GITHUB_CLIENT_SECRET=your_github_client_secret
 GOOGLE_CLIENT_ID=your_google_client_id
