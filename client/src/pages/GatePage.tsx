@@ -11,6 +11,7 @@ import {
 import { EmptyState, ErrorState, LoadingBlock } from '@/components/ui'
 import { api } from '@/lib/api'
 import { useApi } from '@/hooks/useApi'
+import { useAgentPageContext } from '@/context/AgentContext'
 import { GateFilterStudio, type ViewMode } from '@/gate/GateFilterStudio'
 import { GateFocusDeck } from '@/gate/GateFocusDeck'
 import { GateSplitStudio } from '@/gate/GateSplitStudio'
@@ -85,6 +86,13 @@ export default function GatePage() {
   const [type, toggleType] = useListParam('type')
   const [marks, toggleMarks] = useListParam('marks')
   const [section] = useListParam('section')
+
+  useAgentPageContext({
+    filters:
+      [q && `search "${q}"`, exam.length && `exam ${exam.join('/')}`, year.length && `year ${year.join(', ')}`, subject.length && `subject ${subject.join(', ')}`, topic.length && `topic ${topic.join(', ')}`, type.length && `type ${type.join(', ')}`, marks.length && `marks ${marks.join(', ')}`]
+        .filter(Boolean)
+        .join('; ') || undefined,
+  })
 
   // Debounced search sync
   useEffect(() => {

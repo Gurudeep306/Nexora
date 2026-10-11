@@ -24,6 +24,8 @@ export interface AgentMessage {
   /** Stopped by the user before the reply finished. */
   stopped?: boolean
   createdAt?: number
+  /** The page the student was on when they sent this (user messages). */
+  pageLabel?: string
 }
 
 export type AgentStatus = 'idle' | 'streaming' | 'error' | 'unavailable'
@@ -31,6 +33,8 @@ export type AgentStatus = 'idle' | 'streaming' | 'error' | 'unavailable'
 export interface SendOptions {
   page?: AgentPage
   animate?: boolean
+  /** Context-pill label of the page this was asked from (for thread dividers). */
+  pageLabel?: string
 }
 
 const CONV_KEY = 'nexora:agent:conversation'
@@ -91,7 +95,7 @@ export function useAgent() {
       if (!message || abortRef.current) return
       lastSendRef.current = { text: message, opts }
       const now = Date.now()
-      const userMsg: AgentMessage = { id: uid(), role: 'user', content: message, createdAt: now }
+      const userMsg: AgentMessage = { id: uid(), role: 'user', content: message, createdAt: now, pageLabel: opts.pageLabel }
       const botId = uid()
       setMessages((list) => [...list, userMsg, { id: botId, role: 'assistant', content: '', streaming: true, tools: [], actions: [], createdAt: now }])
       setStatus('streaming')

@@ -17,7 +17,6 @@ const LABELS: Record<string, string> = {
   '/social': 'Social',
   '/bookmarks': 'Bookmarks',
   '/submissions': 'Submissions',
-  '/ailab': 'AI Lab',
   '/settings': 'Settings',
 }
 

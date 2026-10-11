@@ -13,7 +13,6 @@
 // ─────────────────────────────────────────────────────────────────────────────
 const path = require("path");
 const tutorialData = require("./tutorial-data");
-const aiProblemsData = require("./ai-problems-data");
 const forgePaths = require("./dev-roadmap-data");
 
 const IS_TEST = process.env.NODE_ENV === "test";
@@ -814,52 +813,6 @@ async function initDb() {
     "CREATE INDEX IF NOT EXISTS idx_submissions_problem_verdict ON submissions(problem_rowid, verdict)",
   );
 
-  // ===== AI LAB TABLES =====
-  await run(`CREATE TABLE IF NOT EXISTS ai_problems (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    category TEXT NOT NULL,
-    title TEXT NOT NULL,
-    description TEXT NOT NULL DEFAULT '',
-    difficulty TEXT DEFAULT 'beginner',
-    tags TEXT DEFAULT '[]',
-    starter_code TEXT DEFAULT '',
-    solution_approach TEXT DEFAULT '',
-    hints TEXT DEFAULT '[]',
-    resources TEXT DEFAULT '[]',
-    input_format TEXT DEFAULT '',
-    output_format TEXT DEFAULT '',
-    constraints TEXT DEFAULT '',
-    samples TEXT DEFAULT '[]',
-    created_at TEXT NOT NULL DEFAULT (datetime('now'))
-  )`);
-
-  // Migration: add new columns if table exists but lacks them
-  try {
-    await run(
-      'ALTER TABLE ai_problems ADD COLUMN input_format TEXT DEFAULT ""',
-    );
-  } catch (e) {}
-  try {
-    await run(
-      'ALTER TABLE ai_problems ADD COLUMN output_format TEXT DEFAULT ""',
-    );
-  } catch (e) {}
-  try {
-    await run('ALTER TABLE ai_problems ADD COLUMN constraints TEXT DEFAULT ""');
-  } catch (e) {}
-  try {
-    await run('ALTER TABLE ai_problems ADD COLUMN samples TEXT DEFAULT "[]"');
-  } catch (e) {}
-
-  await run(`CREATE TABLE IF NOT EXISTS ai_progress (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    problem_id INTEGER NOT NULL,
-    status TEXT DEFAULT 'unsolved',
-    notes TEXT DEFAULT '',
-    completed_at TEXT,
-    FOREIGN KEY (problem_id) REFERENCES ai_problems(id)
-  )`);
-
   // ===== TUTORIAL SYSTEM TABLES =====
   await run(`CREATE TABLE IF NOT EXISTS tutorials (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -884,9 +837,6 @@ async function initDb() {
     FOREIGN KEY (tutorial_id) REFERENCES tutorials(id)
   )`);
 
-  await run(
-    "CREATE INDEX IF NOT EXISTS idx_ai_problems_category ON ai_problems(category)",
-  );
   await run(
     "CREATE INDEX IF NOT EXISTS idx_tutorials_category ON tutorials(category)",
   );
@@ -936,23 +886,9 @@ async function initDb() {
     "CREATE INDEX IF NOT EXISTS idx_contest_parts ON contest_participants(contest_id)",
   );
 
-  // ===== SEED AI PROBLEMS / TUTORIALS =====
+  // ===== SEED TUTORIALS =====
   // Seeding is helpful for local dev, but can make automated tests time out.
   if (!IS_TEST) {
-    const aiCount = await get("SELECT COUNT(*) as c FROM ai_problems");
-    if (!aiCount || aiCount.c === 0) {
-      await runMany(
-        `INSERT INTO ai_problems(category,title,description,difficulty,tags,starter_code,solution_approach,hints,resources,input_format,output_format,constraints,samples) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-        aiProblemsData.map(
-          ([cat, title, desc, diff, tags, code, approach, hints, resources, inputFmt, outputFmt, constraints, samples]) => [
-            cat, title, desc, diff, tags, code, approach, hints, resources,
-            inputFmt || "", outputFmt || "", constraints || "", samples || "[]",
-          ],
-        ),
-        50,
-      );
-    }
-
     const tutCount = await get("SELECT COUNT(*) as c FROM tutorials");
     if (!tutCount || tutCount.c === 0) {
       await runMany(
@@ -1166,7 +1102,7 @@ async function migratePerUser() {
   // `testcases` was shared by everyone: one user's custom case showed up in
   // every other user's deck, and PUT/DELETE by id let anyone edit or delete
   // someone else's. Each row now belongs to the account that created it.
-  for (const t of ["submissions", "tutorial_progress", "ai_progress", "ai_battles", "code_replays", "testcases"]) {
+  for (const t of ["submissions", "tutorial_progress", "ai_battles", "code_replays", "testcases"]) {
     note(await addUsernameColumn(t), t);
   }
 
@@ -1203,7 +1139,7 @@ async function migratePerUser() {
   for (const [t, c] of [
     ["progress", "username, status"], ["submissions", "username, problem_rowid"],
     ["daily_activity", "username, date"], ["tutorial_progress", "username, tutorial_id"],
-    ["ai_progress", "username, problem_id"], ["ai_battles", "username"],
+    ["ai_battles", "username"],
     ["testcases", "username, problem_rowid"],
   ]) {
     await run(`CREATE INDEX IF NOT EXISTS idx_${t}_user ON ${t}(${c})`).catch(() => {});

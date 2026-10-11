@@ -14,6 +14,7 @@ import {
 import { api } from '@/lib/api'
 import { useApi } from '@/hooks/useApi'
 import { useAuth } from '@/context/AuthContext'
+import { useAgentPageContext } from '@/context/AgentContext'
 import { formatNumber } from '@/lib/utils'
 import { ProfileHero } from '@/components/account/ProfileHero'
 import { ActivityFeed } from '@/components/account/ActivityFeed'
@@ -42,6 +43,7 @@ export default function ProfilePage() {
   const username = param ?? me
   /* /api/stats and /api/settings are global to this install, so they only describe "me" */
   const isSelf = username === me
+  useAgentPageContext({ label: isSelf ? 'Your profile' : `Profile · ${username}` })
 
   const profileApi = useApi<ProfileResponse>(
     () =>

@@ -364,7 +364,7 @@ function createAuthRouter(deps) {
           for (const [table, col] of [
             ["progress", "username"], ["submissions", "username"], ["daily_activity", "username"],
             ["decomposition_notes", "username"], ["skill_progress", "username"], ["forge_progress", "username"],
-            ["settings", "username"], ["tutorial_progress", "username"], ["ai_progress", "username"],
+            ["settings", "username"], ["tutorial_progress", "username"],
             ["ai_battles", "username"], ["code_replays", "username"], ["user_achievements", "username"],
             ["user_daily_challenges", "username"], ["bookmarks", "username"],
             ["custom_problems", "creator"], ["custom_contests", "creator"], ["solve_rooms", "creator"],

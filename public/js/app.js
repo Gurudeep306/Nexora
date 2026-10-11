@@ -685,15 +685,6 @@ const App = {
         // Skills is a tab within the hub; render hub and activate nexus tab
         this.renderNexus(content);
         break;
-      case "ailab":
-        if (subId) {
-          this._openAiProblemPage(content, parseInt(subId));
-        } else {
-          this._ailabView = "grid";
-          this._ailabProblem = null;
-          this.renderAILab(content);
-        }
-        break;
       case "learn":
         if (subId) {
           const subId2 = parts[2] || null;
@@ -4068,586 +4059,6 @@ const App = {
     }
 
     el.innerHTML = html;
-  },
-
-  /* ===================================================
-     AI LAB
-     =================================================== */
-  _ailabCategory: "all",
-  _ailabView: "grid", // 'grid' or 'solve'
-  _ailabProblem: null,
-  _ailabEditor: null,
-  _ailabLang: "python",
-
-  async renderAILab(el) {
-    const cat = this._ailabCategory;
-    const catLabels = {
-      all: "All Domains",
-      ml: "Machine Learning",
-      dl: "Deep Learning",
-      nlp: "NLP",
-      cv: "Computer Vision",
-      genai: "Generative AI",
-      rl: "Reinforcement Learning",
-    };
-    const catColors = {
-      ml: "#22c55e",
-      dl: "#3b82f6",
-      nlp: "#059669",
-      cv: "#f59e0b",
-      genai: "#d4a017",
-      rl: "#14b8a6",
-    };
-    const catIcons = {
-      ml: '<i class="icon-neural"></i>',
-      dl: '<i class="icon-bolt"></i>',
-      nlp: '<i class="icon-chat"></i>',
-      cv: '<i class="icon-eye"></i>',
-      genai: '<i class="icon-spark"></i>',
-      rl: '<i class="icon-gamepad"></i>',
-    };
-
-    el.innerHTML = `
-      <div class="page-header">
-        <h1><i class="icon-neural" style="font-size:28px"></i> <span class="glitch" data-text="AI Lab">AI Lab</span></h1>
-        <p>python3 neural_net.py --mode=challenge --eval=true</p>
-      </div>
-      <div id="nfStats" class="nf-stats-bar"></div>
-      <div class="nf-categories">
-        ${Object.entries(catLabels)
-          .map(
-            ([k, v]) =>
-              `<button class="nf-cat-btn ${k === cat ? "active" : ""}" onclick="App._ailabCategory='${k}';App.renderAILab(document.getElementById('pageContent'))">${k !== "all" ? catIcons[k] + " " : '<i class="icon-fire"></i> '}${v}</button>`,
-          )
-          .join("")}
-      </div>
-      <div id="ailabGrid" class="ailab-grid"><div class="loader"><div class="loader-ring"></div><div class="loader-dots"><span></span><span></span><span></span></div></div></div>`;
-
-    // Stats bar
-    const stats = await API.getAiStats();
-    if (stats.ok) {
-      const pct =
-        stats.total > 0 ? Math.round((stats.solved / stats.total) * 100) : 0;
-      document.getElementById("nfStats").innerHTML = `
-        <div class="nf-stat"><span class="nf-stat-num">${stats.total}</span><span class="nf-stat-label">Problems</span></div>
-        <div class="nf-stat"><span class="nf-stat-num green">${stats.solved}</span><span class="nf-stat-label">Solved</span></div>
-        <div class="nf-stat"><span class="nf-stat-num brand">${stats.inProgress}</span><span class="nf-stat-label">In Progress</span></div>
-        <div class="nf-stat-ring">
-          <svg viewBox="0 0 36 36" width="52" height="52">
-            <circle cx="18" cy="18" r="15.9" fill="none" stroke="var(--surface-2)" stroke-width="3"/>
-            <circle cx="18" cy="18" r="15.9" fill="none" stroke="var(--brand)" stroke-width="3" stroke-linecap="round"
-              stroke-dasharray="${pct} ${100 - pct}" stroke-dashoffset="25" style="transition:stroke-dasharray .6s"/>
-            <text x="18" y="20.5" text-anchor="middle" fill="var(--text-bright)" font-size="8" font-weight="700" font-family="var(--font-game)">${pct}%</text>
-          </svg>
-        </div>`;
-    }
-
-    const data = await API.getAiProblems(cat === "all" ? "" : cat);
-    if (!data.ok) return;
-    const grid = document.getElementById("ailabGrid");
-    if (!data.problems.length) {
-      grid.innerHTML =
-        '<div class="empty-state"><h3>// 0 matching problems</h3></div>';
-      return;
-    }
-    const _aiVisualMap = {
-      ml: "neural",
-      dl: "neural",
-      nlp: "spark",
-      cv: "search",
-      genai: "spark",
-      rl: "nodes",
-    };
-    grid.innerHTML = data.problems
-      .map((p, i) => {
-        const status = p.progress ? p.progress.status : "unsolved";
-        const statusIcon =
-          status === "solved"
-            ? "check"
-            : status === "in-progress"
-              ? "clock"
-              : "lock";
-        const tags = JSON.parse(p.tags || "[]");
-        const samples = JSON.parse(p.samples || "[]");
-        const hasSamples = samples.length > 0;
-        const diffClass =
-          p.difficulty === "beginner"
-            ? "green"
-            : p.difficulty === "intermediate"
-              ? "amber"
-              : "red";
-        const vis = _aiVisualMap[p.category] || "grid";
-        return `
-        <div class="ailab-card ${status}" onclick="App.openAiProblem(${p.id})" style="animation-delay:${i * 0.06}s">
-          <div class="ailab-card-visual lv-${vis}">
-            <div class="learn-card-icon-wrap">
-              <i class="${(catIcons[p.category] || '<i class="icon-neural"></i>').replace(/<\/?i[^>]*>/g, "")} learn-card-icon" style="color:${catColors[p.category] || "var(--brand)"}"></i>
-              ${status === "solved" ? '<div class="learn-card-check"><i class="icon-check"></i></div>' : ""}
-            </div>
-          </div>
-          <div class="ailab-card-body">
-            <div class="ailab-card-header">
-              <span class="ailab-card-cat" style="color:${catColors[p.category]}">${catIcons[p.category] || ""} ${catLabels[p.category] || p.category}</span>
-              <span class="ailab-card-status ${status}"><i class="icon-${statusIcon}"></i></span>
-            </div>
-            <h3 class="ailab-card-title">${this._esc(p.title)}</h3>
-            <p class="ailab-card-desc">${this._esc(p.description).substring(0, 120)}...</p>
-            <div class="ailab-card-footer">
-              <span class="ailab-diff ${diffClass}">${p.difficulty}</span>
-              <div class="ailab-card-tags">
-                ${hasSamples ? '<span class="ailab-tag" style="color:#22c55e;border:1px solid rgba(34,197,94,0.3)"><i class="icon-bolt"></i> Testable</span>' : ""}
-                ${tags
-                  .slice(0, 2)
-                  .map((t) => `<span class="ailab-tag">${this._esc(t)}</span>`)
-                  .join("")}
-              </div>
-            </div>
-          </div>
-        </div>`;
-      })
-      .join("");
-  },
-
-  async openAiProblem(id) {
-    location.hash = "#/ailab/" + id;
-  },
-
-  async _openAiProblemPage(el, id) {
-    const data = await API.getAiProblem(id);
-    if (!data.ok) {
-      location.hash = "#/ailab";
-      return;
-    }
-    this._ailabProblem = data.problem;
-    this._ailabView = "solve";
-    this._renderAiSolve(el);
-  },
-
-  async _renderAiSolve(el) {
-    const p = this._ailabProblem;
-    const hints = JSON.parse(p.hints || "[]");
-    const resources = JSON.parse(p.resources || "[]");
-    const samples = JSON.parse(p.samples || "[]");
-    const status = p.progress ? p.progress.status : "unsolved";
-    const catLabels = {
-      ml: "Machine Learning",
-      dl: "Deep Learning",
-      nlp: "NLP",
-      cv: "Computer Vision",
-      genai: "Generative AI",
-      rl: "Reinforcement Learning",
-    };
-    const catColors = {
-      ml: "#22c55e",
-      dl: "#3b82f6",
-      nlp: "#059669",
-      cv: "#f59e0b",
-      genai: "#d4a017",
-      rl: "#14b8a6",
-    };
-    const catIcons = {
-      ml: '<i class="icon-neural"></i>',
-      dl: '<i class="icon-bolt"></i>',
-      nlp: '<i class="icon-chat"></i>',
-      cv: '<i class="icon-eye"></i>',
-      genai: '<i class="icon-spark"></i>',
-      rl: '<i class="icon-gamepad"></i>',
-    };
-    const diffClass =
-      p.difficulty === "beginner"
-        ? "green"
-        : p.difficulty === "intermediate"
-          ? "amber"
-          : "red";
-
-    // Show the full-screen AI Lab solve overlay
-    const overlay = document.getElementById("ailabSolveOverlay");
-    overlay.classList.remove("hidden");
-
-    // HUD title
-    document.getElementById("ailabHudTitle").innerHTML =
-      `<span style="font-weight:700;color:var(--text-bright);font-size:13px;font-family:var(--mono)">${this._esc(p.title)}</span>`;
-
-    // Status badge
-    const statusEl = document.getElementById("ailabSolveStatus");
-    statusEl.className = `nf-solve-status ${status}`;
-    statusEl.innerHTML =
-      status === "solved"
-        ? '<i class="icon-circle-check"></i> Solved'
-        : status === "in-progress"
-          ? '<i class="icon-sync"></i> In Progress'
-          : '<i class="icon-square"></i> Unsolved';
-
-    // Problem panel badges
-    document.getElementById("ailabProblemBadges").innerHTML =
-      `<span style="font-size:12px;font-weight:700;color:${catColors[p.category] || "var(--brand)"}">${catIcons[p.category] || ""} ${catLabels[p.category] || p.category}</span>
-       <span class="ailab-diff ${diffClass}" style="margin-left:8px">${p.difficulty}</span>`;
-
-    // Problem statement content
-    document.getElementById("ailabProblemContent").innerHTML = `
-      <div class="nf-statement-section">
-        <h3><i class="icon-book"></i> Problem Statement</h3>
-        <p>${this._esc(p.description)}</p>
-      </div>
-      ${p.input_format ? `<div class="nf-statement-section"><h3><i class="icon-download"></i> Input Format</h3><pre class="nf-format-block">${this._esc(p.input_format)}</pre></div>` : ""}
-      ${p.output_format ? `<div class="nf-statement-section"><h3><i class="icon-send"></i> Output Format</h3><pre class="nf-format-block">${this._esc(p.output_format)}</pre></div>` : ""}
-      ${p.constraints ? `<div class="nf-statement-section"><h3><i class="icon-shield"></i> Constraints</h3><pre class="nf-format-block">${this._esc(p.constraints)}</pre></div>` : ""}
-      ${
-        samples.length
-          ? `
-        <div class="nf-statement-section">
-          <h3><i class="icon-test"></i> Examples</h3>
-          ${samples
-            .map(
-              (s, i) => `
-            <div class="nf-sample">
-              <div class="nf-sample-header">Example ${i + 1}</div>
-              <div class="nf-sample-io">
-                <div class="nf-sample-panel">
-                  <div class="nf-sample-label">Input</div>
-                  <pre class="nf-sample-pre">${this._esc(s.input)}</pre>
-                  <button class="nf-copy-btn" onclick="navigator.clipboard.writeText(${JSON.stringify(s.input).replace(/'/g, "\\'")});App.toast('Copied!','success')" title="Copy"><i class="icon-copy"></i></button>
-                </div>
-                <div class="nf-sample-panel">
-                  <div class="nf-sample-label">Output</div>
-                  <pre class="nf-sample-pre">${this._esc(s.output)}</pre>
-                </div>
-              </div>
-            </div>`,
-            )
-            .join("")}
-        </div>`
-          : ""
-      }
-      ${
-        p.solution_approach
-          ? `
-        <div class="nf-statement-section">
-          <h3><i class="icon-lightbulb"></i> Approach</h3>
-          <div class="nf-approach-toggle" onclick="this.classList.toggle('revealed')">
-            <div class="nf-approach-label"><i class="icon-lock"></i> Click to reveal approach</div>
-            <p class="nf-approach-text">${this._esc(p.solution_approach)}</p>
-          </div>
-        </div>`
-          : ""
-      }
-      ${
-        hints.length
-          ? `
-        <div class="nf-statement-section">
-          <h3><i class="icon-target"></i> Hints</h3>
-          <div class="ailab-hints">
-            ${hints
-              .map(
-                (h, i) => `
-              <div class="ailab-hint" onclick="this.classList.toggle('revealed')">
-                <div class="ailab-hint-label"><i class="icon-lock"></i> Hint ${i + 1} <span class="ailab-hint-click">(click to reveal)</span></div>
-                <div class="ailab-hint-text">${this._esc(h)}</div>
-              </div>`,
-              )
-              .join("")}
-          </div>
-        </div>`
-          : ""
-      }
-      ${
-        resources.length
-          ? `
-        <div class="nf-statement-section">
-          <h3><i class="icon-external"></i> Resources</h3>
-          <ul class="nf-resources">${resources.map((r) => `<li><a href="${this._esc(r)}" target="_blank" rel="noopener"><i class="icon-link"></i> ${this._esc(r)}</a></li>`).join("")}</ul>
-        </div>`
-          : ""
-      }`;
-
-    // Populate I/O panel
-    const inputEl = document.getElementById("nfCustomInput");
-    if (inputEl) inputEl.value = samples.length ? samples[0].input : "";
-
-    const samplesEl = document.getElementById("nfSampleResults");
-    if (samplesEl) {
-      samplesEl.innerHTML =
-        samples
-          .map(
-            (s, i) => `
-        <div class="nf-sample-result" id="nfSampleResult${i}">
-          <div class="nf-sr-header"><span>Sample ${i + 1}</span><span class="nf-sr-status"><i class="icon-square"></i> Not tested</span></div>
-          <div class="nf-sr-row"><span class="nf-sr-label">Input:</span><pre>${this._esc(s.input)}</pre></div>
-          <div class="nf-sr-row"><span class="nf-sr-label">Expected:</span><pre>${this._esc(s.output)}</pre></div>
-          <div class="nf-sr-row nf-sr-actual hidden"><span class="nf-sr-label">Got:</span><pre class="nf-sr-got"></pre></div>
-        </div>`,
-          )
-          .join("") +
-        (samples.length
-          ? `<button class="btn btn-run btn-sm" onclick="App._runAiSamples()" style="margin-top:8px"><i class="icon-run"></i> Run All Samples</button>`
-          : '<div class="output-placeholder"><p>No sample test cases for this problem</p></div>');
-    }
-
-    // Reset I/O tabs to input
-    document
-      .querySelectorAll(".nf-bottom-tab")
-      .forEach((b) => b.classList.remove("active"));
-    document
-      .querySelector('.nf-bottom-tab[data-nftab="input"]')
-      ?.classList.add("active");
-    document
-      .querySelectorAll(".nf-tab-panel")
-      .forEach((tp) => tp.classList.add("hidden"));
-    document.getElementById("nfTabInput")?.classList.remove("hidden");
-
-    // Reset output panel
-    const outEl = document.getElementById("nfOutputContent");
-    if (outEl)
-      outEl.innerHTML = `<div class="output-placeholder"><i class="icon-terminal" style="font-size:24px;opacity:0.3"></i><p>Run your code to see output</p></div>`;
-
-    // Init Monaco editor
-    this._initAiEditor(p);
-
-    // Init floating panels (drag + resize)
-    this._initAilabPanels();
-
-    // Start timer
-    this._startAilabTimer();
-  },
-
-  _initAilabPanels() {
-    const left = document.getElementById("ailabSolveLeft");
-    const bottom = document.getElementById("ailabBottomPanel");
-    if (left && !left._ailabDragInit) {
-      left._ailabDragInit = true;
-      this._makeDraggable(left, left.querySelector(".solve-topbar"));
-      this._attachResizeEdges(left);
-    }
-    if (bottom && !bottom._ailabDragInit) {
-      bottom._ailabDragInit = true;
-      this._makeDraggable(bottom, bottom.querySelector(".bottom-panel-header"));
-      this._attachResizeEdges(bottom);
-    }
-  },
-
-  _ailabTimer: null,
-  _ailabTimerSec: 0,
-
-  _startAilabTimer() {
-    clearInterval(this._ailabTimer);
-    this._ailabTimerSec = 0;
-    const el = document.getElementById("ailabTimerDisplay");
-    if (el) el.textContent = "00:00";
-    this._ailabTimer = setInterval(() => {
-      this._ailabTimerSec++;
-      const m = Math.floor(this._ailabTimerSec / 60)
-        .toString()
-        .padStart(2, "0");
-      const s = (this._ailabTimerSec % 60).toString().padStart(2, "0");
-      const el2 = document.getElementById("ailabTimerDisplay");
-      if (el2) el2.textContent = `${m}:${s}`;
-    }, 1000);
-  },
-
-  _closeAilabSolve() {
-    clearInterval(this._ailabTimer);
-    const overlay = document.getElementById("ailabSolveOverlay");
-    if (overlay) overlay.classList.add("hidden");
-    if (this._ailabEditor) {
-      this._ailabEditor.dispose();
-      this._ailabEditor = null;
-    }
-    // Reset drag-init flags so panels re-init on next open
-    const left = document.getElementById("ailabSolveLeft");
-    const bottom = document.getElementById("ailabBottomPanel");
-    if (left) {
-      left._ailabDragInit = false;
-      left.style.left = "";
-      left.style.top = "";
-      left.style.width = "";
-      left.style.height = "";
-    }
-    if (bottom) {
-      bottom._ailabDragInit = false;
-      bottom.style.left = "";
-      bottom.style.top = "";
-      bottom.style.right = "";
-      bottom.style.bottom = "";
-      bottom.style.width = "";
-      bottom.style.height = "";
-    }
-    location.hash = "#/ailab";
-  },
-
-  _toggleAilabProblemPanel() {
-    const panel = document.getElementById("ailabSolveLeft");
-    if (panel) panel.classList.toggle("float-hidden");
-  },
-
-  _toggleAilabBottomPanel() {
-    const panel = document.getElementById("ailabBottomPanel");
-    if (panel) panel.classList.toggle("float-hidden");
-  },
-
-  _initAiEditor(problem) {
-    const container = document.getElementById("ailabMonacoEditor");
-    if (!container) return;
-    const code = (problem.starter_code || "").replace(/\\n/g, "\n");
-    if (typeof monaco !== "undefined") {
-      if (this._ailabEditor) {
-        this._ailabEditor.dispose();
-        this._ailabEditor = null;
-      }
-      this._ailabEditor = monaco.editor.create(container, {
-        value: code,
-        language: "python",
-        theme: "vs-dark",
-        fontSize: 14,
-        fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
-        minimap: { enabled: false },
-        scrollBeyondLastLine: false,
-        padding: { top: 12 },
-        automaticLayout: true,
-        lineNumbers: "on",
-        renderWhitespace: "none",
-        tabSize: 4,
-      });
-      this._ailabEditor.addCommand(
-        monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter,
-        () => this._runAiCode(),
-      );
-    } else {
-      container.innerHTML = `<textarea id="ailabCodeFallback" class="nf-io-textarea" style="height:100%;font-family:monospace;font-size:14px">${this._esc(code)}</textarea>`;
-    }
-  },
-
-  _getAiCode() {
-    if (this._ailabEditor) return this._ailabEditor.getValue();
-    const fb = document.getElementById("ailabCodeFallback");
-    return fb ? fb.value : "";
-  },
-
-  _resetAiCode() {
-    if (!this._ailabProblem) return;
-    const code = (this._ailabProblem.starter_code || "").replace(/\\n/g, "\n");
-    if (this._ailabEditor) this._ailabEditor.setValue(code);
-    else {
-      const fb = document.getElementById("ailabCodeFallback");
-      if (fb) fb.value = code;
-    }
-    this.toast("[reset] code reverted to template", "info");
-  },
-
-  _switchNfBottomTab(tab, btn) {
-    document
-      .querySelectorAll(".nf-bottom-tab")
-      .forEach((b) => b.classList.remove("active"));
-    btn.classList.add("active");
-    document
-      .querySelectorAll(".nf-tab-panel")
-      .forEach((p) => p.classList.add("hidden"));
-    const panel = document.getElementById(
-      "nfTab" + tab.charAt(0).toUpperCase() + tab.slice(1),
-    );
-    if (panel) panel.classList.remove("hidden");
-  },
-
-  async _runAiCode() {
-    const code = this._getAiCode();
-    const input = document.getElementById("nfCustomInput")?.value || "";
-    // Switch to output tab
-    document
-      .querySelectorAll(".nf-bottom-tab")
-      .forEach((b) => b.classList.remove("active"));
-    document.querySelector('[data-nftab="output"]')?.classList.add("active");
-    document
-      .querySelectorAll(".nf-tab-panel")
-      .forEach((p) => p.classList.add("hidden"));
-    document.getElementById("nfTabOutput")?.classList.remove("hidden");
-    const outputEl = document.getElementById("nfOutputContent");
-    if (outputEl)
-      outputEl.innerHTML =
-        '<div class="loader"><div class="loader-ring"></div><div class="loader-dots"><span></span><span></span><span></span></div></div>';
-    try {
-      const res = await API.run(code, input, "python");
-      if (outputEl) {
-        if (res.error) {
-          outputEl.innerHTML = `<pre class="nf-output-error">${this._esc(res.error)}</pre>`;
-        } else {
-          outputEl.innerHTML = `<pre class="nf-output-success">${this._esc(res.output || "(no output)")}</pre>
-            ${res.exec_time ? `<div class="nf-output-meta">⏱ ${res.exec_time}ms</div>` : ""}`;
-        }
-      }
-    } catch (e) {
-      if (outputEl)
-        outputEl.innerHTML = `<pre class="nf-output-error">Error: ${this._esc(e.message)}</pre>`;
-    }
-  },
-
-  async _runAiSamples() {
-    const code = this._getAiCode();
-    const samples = JSON.parse(this._ailabProblem?.samples || "[]");
-    if (!samples.length) return;
-    // Switch to samples tab
-    document
-      .querySelectorAll(".nf-bottom-tab")
-      .forEach((b) => b.classList.remove("active"));
-    document.querySelector('[data-nftab="samples"]')?.classList.add("active");
-    document
-      .querySelectorAll(".nf-tab-panel")
-      .forEach((p) => p.classList.add("hidden"));
-    document.getElementById("nfTabSamples")?.classList.remove("hidden");
-
-    let allPassed = true;
-    for (let i = 0; i < samples.length; i++) {
-      const el = document.getElementById(`nfSampleResult${i}`);
-      if (!el) continue;
-      const statusEl = el.querySelector(".nf-sr-status");
-      const actualRow = el.querySelector(".nf-sr-actual");
-      const gotPre = el.querySelector(".nf-sr-got");
-      if (statusEl)
-        statusEl.innerHTML = '<i class="icon-hourglass"></i> Running...';
-      try {
-        const res = await API.run(code, samples[i].input, "python");
-        if (actualRow) actualRow.classList.remove("hidden");
-        const got = (res.output || "").trim();
-        const expected = samples[i].output.trim();
-        if (gotPre) gotPre.textContent = got;
-        const pass = got === expected;
-        if (!pass) allPassed = false;
-        if (statusEl) {
-          statusEl.innerHTML = pass
-            ? '<i class="icon-circle-check"></i> Passed'
-            : '<i class="icon-circle-x"></i> Failed';
-          statusEl.className = "nf-sr-status " + (pass ? "pass" : "fail");
-        }
-        if (res.error && statusEl) {
-          statusEl.innerHTML = '<i class="icon-circle-x"></i> Error';
-          statusEl.className = "nf-sr-status fail";
-          if (gotPre) gotPre.textContent = res.error;
-        }
-      } catch (e) {
-        if (statusEl) {
-          statusEl.innerHTML = '<i class="icon-circle-x"></i> Error';
-          statusEl.className = "nf-sr-status fail";
-        }
-        if (gotPre) gotPre.textContent = e.message;
-        allPassed = false;
-      }
-    }
-    if (allPassed && samples.length > 0) {
-      this.toast("[test] all samples passed ✔", "success");
-    }
-  },
-
-  async _saveAiProgress(id, status) {
-    await API.updateAiProgress(id, { status, notes: "" });
-    this.toast(
-      status === "solved"
-        ? "[AC] problem conquered!"
-        : "[save] progress stored",
-      "success",
-    );
-    if (status === "solved") {
-      this._ailabView = "grid";
-      this._ailabProblem = null;
-      this._closeAilabSolve();
-    }
   },
 
   /* ===================================================
@@ -12731,7 +12142,6 @@ const App = {
         "dashboard",
         "problems",
         "nexus",
-        "ailab",
         "learn",
         "forge",
         "workshop",
@@ -12780,14 +12190,6 @@ const App = {
           ?.classList.contains("hidden")
       ) {
         this.closeSettings();
-        return;
-      }
-      if (
-        !document
-          .getElementById("ailabSolveOverlay")
-          .classList.contains("hidden")
-      ) {
-        this._closeAilabSolve();
         return;
       }
       if (!document.getElementById("solveOverlay").classList.contains("hidden"))
@@ -18978,17 +18380,8 @@ contract Solution {
       },
       {
         type: "nav",
-        label: "AI Lab",
-        desc: "python3 neural.py  [⌘4]",
-        icon: "icon-neural",
-        action: () => {
-          location.hash = "#/ailab";
-        },
-      },
-      {
-        type: "nav",
         label: "Learn",
-        desc: "import knowledge  [⌘5]",
+        desc: "import knowledge  [⌘4]",
         icon: "icon-learn",
         action: () => {
           location.hash = "#/learn";
@@ -18997,7 +18390,7 @@ contract Solution {
       {
         type: "nav",
         label: "The Forge",
-        desc: "make build  [⌘6]",
+        desc: "make build  [⌘5]",
         icon: "icon-hammer",
         action: () => {
           location.hash = "#/forge";
@@ -19006,7 +18399,7 @@ contract Solution {
       {
         type: "nav",
         label: "Workshop",
-        desc: "vim sandbox.cpp  [⌘7]",
+        desc: "vim sandbox.cpp  [⌘6]",
         icon: "icon-code",
         action: () => {
           location.hash = "#/workshop";
@@ -19024,7 +18417,7 @@ contract Solution {
       {
         type: "nav",
         label: "Squad / Social",
-        desc: "ssh party@nexus  [⌘8]",
+        desc: "ssh party@nexus  [⌘7]",
         icon: "icon-friends",
         action: () => {
           location.hash = "#/social";
@@ -19271,11 +18664,10 @@ contract Solution {
           { keys: `${mod} + 1`, desc: "Dashboard" },
           { keys: `${mod} + 2`, desc: "Problems" },
           { keys: `${mod} + 3`, desc: "Progress (Nexus)" },
-          { keys: `${mod} + 4`, desc: "AI Lab" },
-          { keys: `${mod} + 5`, desc: "Learn" },
-          { keys: `${mod} + 6`, desc: "Forge (Learning Paths)" },
-          { keys: `${mod} + 7`, desc: "Workshop" },
-          { keys: `${mod} + 8`, desc: "Social / Squad" },
+          { keys: `${mod} + 4`, desc: "Learn" },
+          { keys: `${mod} + 5`, desc: "Forge (Learning Paths)" },
+          { keys: `${mod} + 6`, desc: "Workshop" },
+          { keys: `${mod} + 7`, desc: "Social / Squad" },
         ],
       },
     ];

@@ -1,8 +1,8 @@
-import { useRef, type RefObject } from 'react'
+import { Fragment, useRef, type RefObject } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'motion/react'
 import { ArrowDown, ArrowRight, Check, CircleSlash, Loader2, RotateCcw, Sparkles, Wrench } from 'lucide-react'
-import { CyberMatrixPlayer, type VisualizationSpec } from '@/components/ailab/CyberMatrixPlayer'
+import { CyberMatrixPlayer, type VisualizationSpec } from '@/components/ai/CyberMatrixPlayer'
 import { AiMarkdown } from '@/components/ai/AiMarkdown'
 import { AiNotice } from '@/components/ai/AiNotice'
 import { CopyButton } from '@/components/ai/CopyButton'
@@ -43,6 +43,7 @@ export function AgentThread({
   onNavigate,
   onRetry,
   scrollRef,
+  currentLabel,
 }: {
   messages: AgentMessage[]
   compact?: boolean
@@ -50,6 +51,8 @@ export function AgentThread({
   /** Ask the last question again; shown on the latest reply. */
   onRetry?: () => void
   scrollRef?: RefObject<HTMLElement | null>
+  /** The page the student is on now; a divider marks moves between pages. */
+  currentLabel?: string
 }) {
   const navigate = useNavigate()
   const last = messages.at(-1)
@@ -57,14 +60,26 @@ export function AgentThread({
   const ownRef = useRef<HTMLElement | null>(null)
   const { atBottom, scrollToBottom } = useStickToBottom(scrollRef ?? ownRef, `${messages.length}:${last?.content.length}:${last?.tools?.length}:${last?.actions?.length}:${!!last?.error}`)
 
+  // "Now on: …" dividers wherever the student asked from a different page.
+  const dividerAt = new Map<string, string>()
+  let prevLabel: string | undefined
+  for (const m of messages) {
+    if (m.role !== 'user' || !m.pageLabel) continue
+    if (prevLabel && m.pageLabel !== prevLabel) dividerAt.set(m.id, m.pageLabel)
+    prevLabel = m.pageLabel
+  }
+  const trailing = !streaming && currentLabel && prevLabel && currentLabel !== prevLabel ? currentLabel : null
+
   return (
     <div className={cn('flex flex-col', compact ? 'gap-5' : 'gap-6')}>
       {messages.map((m, idx) => {
         const isLast = idx === messages.length - 1
         if (m.role === 'user') {
+          const divider = dividerAt.get(m.id)
           return (
+            <Fragment key={m.id}>
+            {divider && <PageDivider label={divider} />}
             <motion.div
-              key={m.id}
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.18 }}
@@ -75,6 +90,7 @@ export function AgentThread({
               </div>
               {m.createdAt && <span className="mt-1 mr-1 text-[10px] text-foreground-faint tabular-nums">{time(m.createdAt)}</span>}
             </motion.div>
+            </Fragment>
           )
         }
 
@@ -173,11 +189,22 @@ export function AgentThread({
           </motion.div>
         )
       })}
+      {trailing && <PageDivider label={trailing} />}
       {!atBottom && streaming && (
         <button type="button" className="ai-jump" onClick={scrollToBottom}>
           <ArrowDown aria-hidden="true" /> Jump to latest
         </button>
       )}
+    </div>
+  )
+}
+
+function PageDivider({ label }: { label: string }) {
+  return (
+    <div className="ai-page-divider" role="separator" aria-label={`Now on: ${label}`}>
+      <span>
+        Now on: <strong>{label}</strong>
+      </span>
     </div>
   )
 }

@@ -76,13 +76,6 @@ const ORBITDOCK_CONFIG = {
       route: "/forgebuilder",
       modes: ["admin"],
     },
-    {
-      id: "ai",
-      label: "AI",
-      icon: "cpu",
-      route: "#/ailab",
-      modes: ["student", "creator"],
-    },
   ],
 
   /* --------------------------------------------------------------------------
@@ -216,13 +209,6 @@ const ORBITDOCK_CONFIG = {
               badge: null,
             },
             {
-              id: "ailab",
-              label: "AI Lab",
-              icon: "cpu",
-              route: "#/ailab",
-              badge: null,
-            },
-            {
               id: "forge",
               label: "Forge Roadmap",
               icon: "layers",
@@ -284,7 +270,7 @@ const ORBITDOCK_CONFIG = {
         },
       ],
 
-      pinnedTools: ["problems", "continue", "ailab"],
+      pinnedTools: ["problems", "continue"],
 
       statusCard: {
         title: "Mission Status",
@@ -702,22 +688,6 @@ const ORBITDOCK_CONFIG = {
       },
     ],
 
-    ailab: [
-      {
-        id: "practice",
-        label: "AI Practice",
-        icon: "cpu",
-        action: "aiPractice",
-      },
-      {
-        id: "ml",
-        label: "Machine Learning",
-        icon: "layers",
-        action: "filterML",
-      },
-      { id: "dl", label: "Deep Learning", icon: "layers", action: "filterDL" },
-    ],
-
     social: [
       {
         id: "friends",
@@ -821,7 +791,6 @@ const ORBITDOCK_CONFIG = {
       },
       { id: "doubt", label: "Ask Doubt", icon: "help", action: "askDoubt" },
       { id: "join", label: "Join Live", icon: "video", action: "joinLive" },
-      { id: "ai", label: "AI Tutor", icon: "cpu", action: "openAI" },
     ],
 
     creator: [
@@ -912,7 +881,7 @@ const ORBITDOCK_ICONS = {
   /** Wrench tool — Build / Admin */
   tool: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>',
 
-  /** CPU chip with pin lines — AI Lab */
+  /** CPU chip with pin lines */
   cpu: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>',
 
   /* ── § 2.2  Workspace Navigation ───────────────────────────────────────── */
@@ -1245,14 +1214,6 @@ const SIDEBAR_CONFIG = {
       id: "tools",
       title: "Tools",
       items: [
-        {
-          id: "ai-lab",
-          label: "AI Lab",
-          route: "/ailab",
-          icon: "cpu",
-          badge: null,
-          roles: ["admin", "teacher", "student"],
-        },
         {
           id: "forgebuilder",
           label: "ForgeBuilder",

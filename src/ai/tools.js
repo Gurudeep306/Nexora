@@ -25,7 +25,6 @@ const ROUTES = [
   /^\/nexus$/,
   /^\/analytics$/,
   /^\/achievements$/,
-  /^\/ailab$/,
   /^\/learn$/,
   /^\/learn\/system-design\/[a-z0-9-]{1,60}(\/\d{1,3})?$/,
   /^\/learn\/dsa\/[a-z0-9-]{1,60}\/practice$/,
@@ -118,7 +117,8 @@ const HANDLERS = {
   get_gate_question: (a, ctx) => {
     const q = findGateQuestion(a.id);
     if (!q) return { error: "No GATE question with that id" };
-    const inExam = /^\/gate\/cbt\/.+/.test(String(ctx.page?.path || ""));
+    // Any mock-paper page, or a page flagged as an active exam: never the answer.
+    const inExam = ctx.page?.examActive === true || /^\/gate\/cbt\/.+/.test(String(ctx.page?.path || ""));
     const { solution, answer, answerSource, reviewNote, needsReview, ...rest } = q;
     if (a.includeSolution && !inExam) return { ...rest, answer, solution: String(solution || "").slice(0, 2500) };
     return { ...rest, note: inExam ? "Solution hidden during a mock exam." : "Solution withheld; ask for it explicitly to review." };
