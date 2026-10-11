@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { AlertTriangle, Bot, Brain, CheckCircle2, Eye, FlaskConical, Info, Lightbulb, Loader2, MessageCircleQuestion, Plus, Radio, RefreshCw, Send, ShieldAlert, Sparkles } from 'lucide-react'
 import { Button, Tooltip } from '@/components/ui'
-import { MarkdownLite } from '@/components/ailab/MarkdownLite'
+import { AiMarkdown } from '@/components/ai/AiMarkdown'
+import { AiNotice } from '@/components/ai/AiNotice'
+import { aiErrorKind, aiErrorText, type AiErrorKind } from '@/lib/agent'
 import { cn } from '@/lib/utils'
 import type { CoachApi, CoachTest } from './coach'
 import type { JudgeResponse } from './types'
@@ -26,7 +28,7 @@ export function CoachPanel({
   judgeResult: JudgeResponse | null
   onAddTest: (tc: { label: string; input: string; expected_output: string }) => Promise<boolean>
 }) {
-  const { insight, loading, error, analyse, live, setLive, analysedAt } = coach
+  const { insight, loading, error, errorKind, analyse, live, setLive, analysedAt } = coach
   const [hint, setHint] = useState(false)
   const [tests, setTests] = useState<CoachTest[] | null>(null)
   const [testsBusy, setTestsBusy] = useState(false)
@@ -36,7 +38,7 @@ export function CoachPanel({
   const [question, setQuestion] = useState('')
   const [answer, setAnswer] = useState<string | null>(null)
   const [asking, setAsking] = useState(false)
-  const [err, setErr] = useState<string | null>(null)
+  const [err, setErr] = useState<{ kind: AiErrorKind; text: string } | null>(null)
 
   const failed = judgeResult && judgeResult.verdict !== 'AC' ? judgeResult : null
   const firstFail = failed?.results.find((r) => !r.passed)
@@ -46,7 +48,7 @@ export function CoachPanel({
     try {
       await fn()
     } catch (e) {
-      setErr(e instanceof Error ? e.message : 'AI request failed')
+      setErr({ kind: aiErrorKind(e), text: aiErrorText(e) })
     }
   }
 
@@ -75,7 +77,7 @@ export function CoachPanel({
         </Button>
       </div>
 
-      {error && !insight && <p className="rounded-md border border-destructive/30 bg-destructive/10 px-2.5 py-1.5 text-xs text-state-error">{error}</p>}
+      {error && !insight && <AiNotice kind={errorKind} detail={error} compact onRetry={errorKind === 'unavailable' ? undefined : () => void analyse(true)} />}
       {!insight && !loading && !error && (
         <div className="rounded-lg border border-dashed border-white/10 px-3 py-5 text-center text-xs text-foreground-faint">
           <Brain className="mx-auto mb-2 size-5 text-primary-bright" />
@@ -91,7 +93,7 @@ export function CoachPanel({
 
       {insight && (
         <div className={cn('space-y-3 transition-opacity', loading && 'opacity-60')}>
-          <p className="text-foreground">{insight.summary}</p>
+          <AiMarkdown text={insight.summary} size="compact" className="text-foreground" />
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
             <Stat label="Approach" value={insight.approach || '—'} />
             <Stat label="Time" value={insight.time || '—'} mono />
@@ -124,10 +126,10 @@ export function CoachPanel({
                     ) : (
                       <Info className="mt-0.5 size-3.5 shrink-0 text-info" />
                     )}
-                    <span className="text-foreground-dim">
-                      {i.line ? <span className="mr-1 font-mono text-foreground-faint">L{i.line}</span> : null}
-                      {i.message}
-                    </span>
+                    <div className="flex min-w-0 flex-1 items-baseline gap-1.5">
+                      {i.line ? <span className="shrink-0 font-mono text-[11px] text-foreground-faint">L{i.line}</span> : null}
+                      <AiMarkdown text={i.message} size="compact" className="min-w-0 flex-1" />
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -137,18 +139,14 @@ export function CoachPanel({
 
           {insight.edgeCases.length > 0 && (
             <Section icon={<FlaskConical className="size-3.5 text-cyan" />} title="Edge cases to think about">
-              <ul className="list-disc space-y-0.5 pl-5 text-xs text-foreground-dim">
-                {insight.edgeCases.map((e, k) => (
-                  <li key={k}>{e}</li>
-                ))}
-              </ul>
+              <AiMarkdown text={insight.edgeCases.map((e) => `- ${e.replace(/\n+/g, ' ')}`).join('\n')} size="compact" />
             </Section>
           )}
 
           {insight.nextStep && (
             <Section icon={<Lightbulb className="size-3.5 text-gold" />} title="Next step">
               {hint ? (
-                <p className="text-xs text-foreground-dim">{insight.nextStep}</p>
+                <AiMarkdown text={insight.nextStep} size="compact" />
               ) : (
                 <button onClick={() => setHint(true)} className="flex cursor-pointer items-center gap-1.5 text-xs text-primary-bright hover:underline">
                   <Eye className="size-3.5" /> Reveal a hint (try yourself first!)
@@ -163,9 +161,7 @@ export function CoachPanel({
       {failed && (
         <Section icon={<Sparkles className="size-3.5 text-accent" />} title={`Why ${failed.verdict}?`}>
           {explanation ? (
-            <div className="text-xs text-foreground-dim">
-              <MarkdownLite text={explanation} />
-            </div>
+            <AiMarkdown text={explanation} size="compact" />
           ) : (
             <Button
               size="sm"
@@ -267,13 +263,13 @@ export function CoachPanel({
           </Button>
         </form>
         {answer && (
-          <div className="mt-2 rounded-md border border-hairline/[0.06] bg-bg-field p-2 text-xs text-foreground-dim">
-            <MarkdownLite text={answer} />
+          <div className="mt-2 rounded-lg border border-border bg-bg-field px-3 py-2.5">
+            <AiMarkdown text={answer} size="compact" />
           </div>
         )}
       </Section>
 
-      {err && <p className="text-xs text-state-error">{err}</p>}
+      {err && <AiNotice kind={err.kind} detail={err.text} compact />}
       <p className="text-[10px] text-foreground-faint">AI can be wrong — treat it as a second opinion. It never writes the solution for you.</p>
     </div>
   )

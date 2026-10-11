@@ -1,9 +1,13 @@
-import { useEffect, useRef } from 'react'
+import { useRef, type RefObject } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'motion/react'
-import { ArrowRight, Bot, Check, Loader2, TriangleAlert, User, Wrench } from 'lucide-react'
-import { MarkdownLite } from '@/components/ailab/MarkdownLite'
+import { ArrowDown, ArrowRight, Check, CircleSlash, Loader2, RotateCcw, Sparkles, Wrench } from 'lucide-react'
 import { CyberMatrixPlayer, type VisualizationSpec } from '@/components/ailab/CyberMatrixPlayer'
+import { AiMarkdown } from '@/components/ai/AiMarkdown'
+import { AiNotice } from '@/components/ai/AiNotice'
+import { CopyButton } from '@/components/ai/CopyButton'
+import { TypingIndicator } from '@/components/ai/TypingIndicator'
+import { useStickToBottom } from '@/components/ai/useStickToBottom'
 import type { AgentMessage } from '@/hooks/useAgent'
 import { cn } from '@/lib/utils'
 
@@ -24,126 +28,161 @@ function isSpec(v: unknown): v is VisualizationSpec {
   return !!v && typeof v === 'object' && Array.isArray((v as { frames?: unknown }).frames) && (v as { frames: unknown[] }).frames.length > 0
 }
 
+function time(t?: number) {
+  return t ? new Date(t).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : ''
+}
+
 /**
- * Renders an agent conversation. Model text goes through MarkdownLite, which
- * builds React text nodes only — no HTML from the model ever reaches the DOM.
+ * Renders an agent conversation. Model text goes through <AiMarkdown>, which
+ * never renders raw HTML. Pass the scroll container as `scrollRef` to keep the
+ * view pinned to the newest token (until the reader scrolls up).
  */
-export function AgentThread({ messages, compact = false, onNavigate }: { messages: AgentMessage[]; compact?: boolean; onNavigate?: () => void }) {
+export function AgentThread({
+  messages,
+  compact = false,
+  onNavigate,
+  onRetry,
+  scrollRef,
+}: {
+  messages: AgentMessage[]
+  compact?: boolean
+  onNavigate?: () => void
+  /** Ask the last question again; shown on the latest reply. */
+  onRetry?: () => void
+  scrollRef?: RefObject<HTMLElement | null>
+}) {
   const navigate = useNavigate()
-  const endRef = useRef<HTMLDivElement>(null)
   const last = messages.at(-1)
-  useEffect(() => {
-    endRef.current?.scrollIntoView({ block: 'end', behavior: 'smooth' })
-  }, [messages.length, last?.content, last?.tools?.length])
+  const streaming = !!last?.streaming
+  const ownRef = useRef<HTMLElement | null>(null)
+  const { atBottom, scrollToBottom } = useStickToBottom(scrollRef ?? ownRef, `${messages.length}:${last?.content.length}:${last?.tools?.length}:${last?.actions?.length}:${!!last?.error}`)
 
   return (
-    <div className="space-y-4">
-      {messages.map((m) => (
-        <motion.div
-          key={m.id}
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.2 }}
-          className={cn('flex items-start gap-2', m.role === 'user' ? 'justify-end' : 'justify-start')}
-        >
-          {m.role === 'assistant' && (
-            <span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full border border-cyan/40 bg-surface-2 text-cyan">
-              <Bot className="size-3.5" aria-hidden="true" />
-            </span>
-          )}
-          <div
-            className={cn(
-              'min-w-0 rounded-xl px-3.5 py-2.5 text-sm leading-relaxed',
-              compact ? 'max-w-[88%]' : 'max-w-[94%] md:max-w-[85%]',
-              m.role === 'user'
-                ? 'rounded-br-sm bg-gradient-to-br from-primary to-primary/70 text-on-primary'
-                : cn('rounded-bl-sm border bg-surface-2 text-foreground-dim', m.error ? 'border-red-500/40' : 'border-cyan/25'),
-            )}
+    <div className={cn('flex flex-col', compact ? 'gap-5' : 'gap-6')}>
+      {messages.map((m, idx) => {
+        const isLast = idx === messages.length - 1
+        if (m.role === 'user') {
+          return (
+            <motion.div
+              key={m.id}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.18 }}
+              className="ai-msg flex flex-col items-end"
+            >
+              <div className={cn('ai-msg-user min-w-0 rounded-2xl rounded-br-md px-3.5 py-2', compact ? 'max-w-[88%]' : 'max-w-[85%] md:max-w-[75%]')}>
+                <AiMarkdown text={m.content} size={compact ? 'compact' : 'chat'} />
+              </div>
+              {m.createdAt && <span className="mt-1 mr-1 text-[10px] text-foreground-faint tabular-nums">{time(m.createdAt)}</span>}
+            </motion.div>
+          )
+        }
+
+        const hasBody = !!m.content
+        const runningTool = m.tools?.find((t) => t.status === 'running')
+        return (
+          <motion.div
+            key={m.id}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.18 }}
+            className={cn('ai-msg flex min-w-0 items-start gap-2.5', isLast && 'ai-msg-last')}
           >
-            {m.role === 'assistant' && !!m.tools?.length && (
-              <div className="mb-2 flex flex-wrap gap-1.5" aria-label="Tools used">
-                {m.tools.map((t, i) => (
-                  <span
-                    key={`${t.name}-${i}`}
-                    className={cn(
-                      'inline-flex items-center gap-1 rounded-full border px-2 py-0.5 font-mono text-[10px]',
-                      t.status === 'running'
-                        ? 'border-cyan/40 text-cyan'
-                        : t.ok === false
-                          ? 'border-amber-500/40 text-amber-300'
-                          : 'border-emerald-500/40 text-emerald-300',
-                    )}
-                  >
-                    {t.status === 'running' ? <Loader2 className="size-3 animate-spin" /> : t.ok === false ? <Wrench className="size-3" /> : <Check className="size-3" />}
-                    {TOOL_LABELS[t.name] ?? t.name}
-                  </span>
-                ))}
-              </div>
-            )}
-            {isSpec(m.visualization) && (
-              <div className="mb-3">
-                <CyberMatrixPlayer visualization={m.visualization} />
-              </div>
-            )}
-            {m.role === 'assistant' ? (
-              m.content ? (
-                <div className={cn(m.error && 'flex items-start gap-1.5 text-red-300')}>
-                  {m.error && <TriangleAlert className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />}
-                  <div className="min-w-0">
-                    <MarkdownLite text={m.content} />
-                  </div>
-                </div>
-              ) : m.streaming ? (
-                <span className="flex items-center gap-1.5 py-1" aria-label="Thinking">
-                  {[0, 1, 2].map((d) => (
-                    <motion.span
-                      key={d}
-                      className="size-1.5 rounded-full bg-cyan"
-                      animate={{ opacity: [0.3, 1, 0.3], y: [0, -3, 0] }}
-                      transition={{ duration: 1, repeat: Infinity, delay: d * 0.15 }}
-                    />
-                  ))}
-                </span>
-              ) : null
-            ) : (
-              <p className="whitespace-pre-wrap">{m.content}</p>
-            )}
-            {m.streaming && m.content && <span className="ml-0.5 inline-block size-1.5 animate-pulse rounded-full bg-cyan align-middle" />}
-            {m.role === 'assistant' && !!m.actions?.length && (
-              <div className="mt-2 flex flex-wrap gap-1.5">
-                {m.actions.map((a) => (
-                  <button
-                    key={a.path}
-                    onClick={() => {
-                      navigate(a.path)
-                      onNavigate?.()
-                    }}
-                    className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-cyan/40 bg-cyan/10 px-2.5 py-1 text-xs text-cyan transition-colors hover:bg-cyan/20"
-                  >
-                    {a.label} <ArrowRight className="size-3" aria-hidden="true" />
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-          {m.role === 'user' && (
-            <span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary to-accent text-on-primary">
-              <User className="size-3.5" aria-hidden="true" />
+            <span
+              className={cn(
+                'mt-0.5 flex shrink-0 items-center justify-center rounded-lg border border-primary/30 bg-primary/10 text-primary-bright',
+                compact ? 'size-6' : 'size-7',
+              )}
+              aria-hidden="true"
+            >
+              <Sparkles className={compact ? 'size-3' : 'size-3.5'} />
             </span>
-          )}
-        </motion.div>
-      ))}
-      <div ref={endRef} />
+            <div className="min-w-0 flex-1">
+              <div className="mb-1 flex items-center gap-2 text-[11px]">
+                <span className="font-semibold text-foreground">Nexora AI</span>
+                {m.createdAt && <span className="text-foreground-faint tabular-nums">{time(m.createdAt)}</span>}
+              </div>
+
+              {!!m.tools?.length && (
+                <div className="mb-2 flex flex-wrap gap-1.5" aria-label="Tools used">
+                  {m.tools.map((t, i) => (
+                    <span
+                      key={`${t.name}-${i}`}
+                      className={cn('ai-chip', t.status === 'running' ? 'ai-chip-running' : t.ok === false && 'ai-chip-failed')}
+                    >
+                      {t.status === 'running' ? <Loader2 className="animate-spin" /> : t.ok === false ? <Wrench /> : <Check />}
+                      {TOOL_LABELS[t.name] ?? t.name.replace(/_/g, ' ')}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {isSpec(m.visualization) && (
+                <div className="mb-3">
+                  <CyberMatrixPlayer visualization={m.visualization} />
+                </div>
+              )}
+
+              {hasBody && <AiMarkdown text={m.content} streaming={m.streaming} size={compact ? 'compact' : 'chat'} />}
+              {!hasBody && m.streaming && <TypingIndicator label={runningTool ? 'Working' : 'Thinking'} />}
+              {m.stopped && (
+                <p className="mt-1.5 flex items-center gap-1 text-[11px] text-foreground-faint">
+                  <CircleSlash className="size-3" aria-hidden="true" /> Stopped{hasBody ? ' — reply may be incomplete' : ''}
+                </p>
+              )}
+              {m.error && (
+                <AiNotice
+                  kind={m.errorKind}
+                  detail={m.errorText ?? (hasBody ? null : m.content)}
+                  onRetry={isLast ? onRetry : undefined}
+                  compact={compact}
+                  className={hasBody ? 'mt-3' : undefined}
+                />
+              )}
+
+              {!!m.actions?.length && (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {m.actions.map((a) => (
+                    <button
+                      key={a.path}
+                      type="button"
+                      onClick={() => {
+                        navigate(a.path)
+                        onNavigate?.()
+                      }}
+                      className="ai-action"
+                    >
+                      {a.label} <ArrowRight aria-hidden="true" />
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {!m.streaming && hasBody && (
+                <div className="ai-msg-actions mt-1.5 -ml-1.5 flex items-center gap-0.5">
+                  <CopyButton text={m.content} label="Copy reply" />
+                  {isLast && onRetry && !m.error && (
+                    <button type="button" onClick={onRetry} className="ai-copy" aria-label="Regenerate reply" title="Regenerate">
+                      <RotateCcw aria-hidden="true" />
+                      <span>Retry</span>
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )
+      })}
+      {!atBottom && streaming && (
+        <button type="button" className="ai-jump" onClick={scrollToBottom}>
+          <ArrowDown aria-hidden="true" /> Jump to latest
+        </button>
+      )}
     </div>
   )
 }
 
 /** Shown when the server has no GROQ_API_KEY. */
 export function AiUnavailableNotice({ className }: { className?: string }) {
-  return (
-    <div className={cn('flex items-start gap-2 rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-xs text-amber-200', className)} role="status">
-      <TriangleAlert className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
-      <span>AI features aren't set up on this server yet. Everything else on Nexora works as usual.</span>
-    </div>
-  )
+  return <AiNotice kind="unavailable" className={className} />
 }

@@ -15,7 +15,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Markdown } from '@/learn/md'
-import { MarkdownLite } from '@/components/ailab/MarkdownLite'
+import { AiMarkdown } from '@/components/ai/AiMarkdown'
 import { GateVisualizer } from './GateVisualizer'
 import type { GateQuestion } from './types'
 
@@ -226,8 +226,9 @@ export function GateAiReport({
               {aiAnalysis.executiveSummary}
             </p>
             {aiAnalysis.narrative && (
-              <div className="mt-3 border-t border-border pt-3 text-[13px] leading-relaxed text-text-secondary">
-                <MarkdownLite text={aiAnalysis.narrative} />
+              <div className="mt-3 border-t border-border pt-3">
+                <p className="mb-1.5 flex items-center gap-1.5 text-[11px] font-bold tracking-wider text-accent-brand uppercase">AI debrief</p>
+                <AiMarkdown text={aiAnalysis.narrative} />
               </div>
             )}
           </div>
