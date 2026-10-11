@@ -8,6 +8,9 @@ const { errMessage } = require("../http-error");
 const { run, get, all } = require('../db');
 const { initLiveDb } = require('../live-db');
 
+/** Integer query param clamped to [min, max]; SQLite reads LIMIT -1 as "no limit". */
+const clampInt = (v, dflt, min, max) => Math.min(Math.max(Math.trunc(+v) || dflt, min), max);
+
 function createLiveRouter(deps = {}) {
   const router = express.Router();
 
@@ -46,7 +49,7 @@ function createLiveRouter(deps = {}) {
       const whereClause = where.join(' AND ');
       const classes = await all(
         `SELECT * FROM live_classes WHERE ${whereClause} ORDER BY created_at DESC LIMIT ? OFFSET ?`,
-        [...params, +limit, +offset]
+        [...params, clampInt(limit, 50, 1, 200), clampInt(offset, 0, 0, 1e9)]
       );
 
       const total = await get(`SELECT COUNT(*) as count FROM live_classes WHERE ${whereClause}`, params);
@@ -278,7 +281,7 @@ function createLiveRouter(deps = {}) {
       const { limit = 100, offset = 0 } = req.query;
       const messages = await all(
         'SELECT * FROM live_class_messages WHERE live_class_id = ? ORDER BY created_at ASC LIMIT ? OFFSET ?',
-        [req.params.id, +limit, +offset]
+        [req.params.id, clampInt(limit, 100, 1, 500), clampInt(offset, 0, 0, 1e9)]
       );
       res.json({ ok: true, messages });
     } catch (e) {
