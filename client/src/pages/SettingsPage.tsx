@@ -71,6 +71,7 @@ export default function SettingsPage() {
   return (
     <div className="space-y-5">
       <PageHeader
+        icon="settings"
         title="Settings"
         subtitle="Tune your identity, the look of the app, platform links, editor behaviour and account safety."
       />

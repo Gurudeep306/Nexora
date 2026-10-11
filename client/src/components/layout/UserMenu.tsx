@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Keyboard, LogOut, Palette, Settings, Sparkles, User as UserIcon } from 'lucide-react'
 import { Avatar, Menu, MenuContent, MenuItem, MenuLabel, MenuSeparator, MenuTrigger, RankGlyph } from '@/components/ui'
 import { useAuth } from '@/context/AuthContext'
 import { openShortcuts } from './ShortcutsDialog'
+import { Icon } from '@/components/icon/Icon'
 
 /** Account dropdown — used by the sidebar footer and the mobile topbar. */
 export function UserMenu({ children, side = 'top', align = 'start' }: { children: ReactNode; side?: 'top' | 'bottom'; align?: 'start' | 'end' }) {
@@ -33,25 +33,25 @@ export function UserMenu({ children, side = 'top', align = 'start' }: { children
         </div>
         <MenuSeparator />
         <MenuLabel>Account</MenuLabel>
-        <MenuItem icon={<UserIcon />} onSelect={() => navigate('/profile')}>
+        <MenuItem icon={<Icon name="profile" />} onSelect={() => navigate('/profile')}>
           Profile
         </MenuItem>
-        <MenuItem icon={<Palette />} onSelect={() => navigate('/settings')}>
+        <MenuItem icon={<Icon name="palette" />} onSelect={() => navigate('/settings')}>
           Avatar studio
         </MenuItem>
-        <MenuItem icon={<Settings />} shortcut="G ," onSelect={() => navigate('/settings')}>
+        <MenuItem icon={<Icon name="settings" />} shortcut="G ," onSelect={() => navigate('/settings')}>
           Settings
         </MenuItem>
         <MenuSeparator />
-        <MenuItem icon={<Keyboard />} shortcut="?" onSelect={openShortcuts}>
+        <MenuItem icon={<Icon name="keyboard" />} shortcut="?" onSelect={openShortcuts}>
           Keyboard shortcuts
         </MenuItem>
-        <MenuItem icon={<Sparkles />} onSelect={() => navigate('/achievements')}>
+        <MenuItem icon={<Icon name="achievements" />} onSelect={() => navigate('/achievements')}>
           Achievements
         </MenuItem>
         <MenuSeparator />
         <MenuItem
-          icon={<LogOut />}
+          icon={<Icon name="logout" />}
           danger
           onSelect={async () => {
             await logout()

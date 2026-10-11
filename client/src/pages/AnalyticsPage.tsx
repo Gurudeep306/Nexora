@@ -1,4 +1,4 @@
-import { Activity, BarChart3, Flame, Percent, RefreshCw, Sparkles, Target, Zap } from 'lucide-react'
+import { RefreshCw } from 'lucide-react'
 import {
   Button,
   ErrorState,
@@ -25,6 +25,7 @@ import { BestsPanel, NextLevelCard } from '@/components/analytics/BestsPanel'
 import { TagRadar } from '@/components/analytics/SkillCharts'
 import { FirstSolvesTimeline } from '@/components/analytics/InsightLists'
 import type { PerformanceResponse, WeaknessResponse } from '@/components/analytics/types'
+import { Icon } from '@/components/icon/Icon'
 
 export default function AnalyticsPage() {
   const c = useChartColors()
@@ -41,7 +42,7 @@ export default function AnalyticsPage() {
   if (loading && !data) {
     return (
       <div>
-        <PageHeader title="Analytics" subtitle="Performance telemetry from the rift" />
+        <PageHeader icon="analytics" title="Analytics" subtitle="Performance telemetry from the rift" />
         <LoadingBlock rows={8} />
       </div>
     )
@@ -49,7 +50,7 @@ export default function AnalyticsPage() {
   if (error || !data) {
     return (
       <div>
-        <PageHeader title="Analytics" subtitle="Performance telemetry from the rift" />
+        <PageHeader icon="analytics" title="Analytics" subtitle="Performance telemetry from the rift" />
         <ErrorState message={error ?? 'Failed to load analytics'} onRetry={refetch} />
       </div>
     )
@@ -61,6 +62,7 @@ export default function AnalyticsPage() {
   return (
     <div>
       <PageHeader
+        icon="analytics"
         title="Analytics"
         subtitle="Solve telemetry, weakness intel, and personal records — the observatory has full sight on your grind."
         actions={
@@ -79,27 +81,27 @@ export default function AnalyticsPage() {
 
       {/* headline stats */}
       <div className="mb-4 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
-        <StatCard label="Solved" value={formatNumber(perf.solved)} icon={<Target />} sub={`${formatNumber(perf.total)} in library`} />
-        <StatCard label="Total XP" value={formatNumber(perf.totalXp)} icon={<Zap />} accent="gold" sub={`LVL ${perf.level.level} ${perf.level.name}`} />
-        <StatCard label="Accuracy" value={`${perf.accuracy}%`} icon={<Percent />} accent="success" sub={`${formatNumber(perf.submissions)} submissions`} />
+        <StatCard label="Solved" value={formatNumber(perf.solved)} icon="target" sub={`${formatNumber(perf.total)} in library`} />
+        <StatCard label="Total XP" value={formatNumber(perf.totalXp)} icon="bolt" accent="gold" sub={`LVL ${perf.level.level} ${perf.level.name}`} />
+        <StatCard label="Accuracy" value={`${perf.accuracy}%`} icon="crosshair" accent="success" sub={`${formatNumber(perf.submissions)} submissions`} />
         <StatCard
           label="Streak"
           value={`${perf.streak.current}d`}
-          icon={<Flame />}
+          icon="flame"
           accent="warning"
           sub={`best ${perf.streak.best}d`}
         />
         <StatCard
           label="Consistency"
           value={`${Math.min(100, Math.round(perf.consistencyScore))}%`}
-          icon={<Activity />}
+          icon="activity"
           accent="cyan"
           sub="last 30 days"
         />
         <StatCard
           label="Daily Pace"
           value={formatNumber(Math.round(perf.avgDailyXp))}
-          icon={<BarChart3 />}
+          icon="analytics"
           accent="accent"
           sub={`XP/day · ${perf.avgDailySolves.toFixed(1)} solves/day`}
         />
@@ -167,7 +169,7 @@ export default function AnalyticsPage() {
               })()}
             </div>
             <div className="flex items-center gap-2 border-t border-border px-5 py-3 text-xs text-foreground-dim">
-              <Sparkles className="size-3.5 text-gold" aria-hidden="true" />
+              <Icon name="sparkles" className="size-3.5 text-gold" aria-hidden="true" />
               {perf.todayStats.solved === 0 && perf.todayStats.attempted === 0
                 ? 'Nothing logged today yet — one solve keeps the streak alive.'
                 : `${perf.streak.lastWeek.reduce((s, d) => s + d.solved, 0)} solves in the last 7 days`}

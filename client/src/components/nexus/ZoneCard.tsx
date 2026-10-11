@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { motion } from 'motion/react'
-import { Check, ChevronDown, GitBranch, Lock, Route } from 'lucide-react'
+import { ChevronDown, Lock } from 'lucide-react'
 import { Badge } from '@/components/ui'
 import { cn, formatNumber } from '@/lib/utils'
+import { Icon, IconBadge, IconFrame } from '@/components/icon/Icon'
 import { SkillNodeCard } from './SkillNodeCard'
 import { ProblemRow } from './ProblemRow'
 import type { NexusNode, NexusZone, RoadmapLevel } from './types'
@@ -89,23 +90,17 @@ export function ZoneCard({
         aria-expanded={open}
         className="flex w-full cursor-pointer items-center gap-3 px-4 py-3.5 text-left transition-colors duration-200 hover:bg-surface-2/60"
       >
-        <span
-          data-icon-pod
-          className={cn(
-            'icon-pod flex size-11 shrink-0 items-center justify-center border',
-            state === 'completed' ? 'border-success/50 text-success' : state === 'locked' ? 'border-border text-foreground-faint' : 'border-primary/50',
-          )}
-          style={state !== 'locked' && state !== 'completed' ? { borderColor: zone.color, color: zone.color } : undefined}
-          aria-hidden="true"
-        >
-          {zone.completed ? (
-            <Check className="size-5" />
-          ) : state === 'locked' ? (
-            <Lock className="size-4" />
-          ) : (
-            <span className="font-display text-sm tabular-nums">{zone.level}</span>
-          )}
-        </span>
+        {zone.completed ? (
+          <IconBadge name="check" tone="success" boxClassName="size-11" />
+        ) : state === 'locked' ? (
+          <IconBadge name="lock" tone="neutral" boxClassName="size-11" />
+        ) : (
+          <IconFrame color={zone.color} boxClassName="size-11">
+            <span className="font-display text-sm tabular-nums" aria-hidden="true">
+              {zone.level}
+            </span>
+          </IconFrame>
+        )}
         <span className="min-w-0 flex-1">
           <span className="flex flex-wrap items-center gap-2">
             <span className="font-display text-sm tracking-wide text-foreground">
@@ -160,7 +155,7 @@ export function ZoneCard({
           {zoneNodes.length > 0 && (
             <div>
               <p className="mb-2 flex items-center gap-1.5 text-[11px] font-semibold tracking-wider text-foreground-faint uppercase">
-                <GitBranch className="size-3.5" aria-hidden="true" /> Skill nodes
+                <Icon name="git-branch" className="size-3.5" aria-hidden="true" /> Skill nodes
               </p>
               <div className="grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-3">
                 {zoneNodes.map((n, i) => (
@@ -173,7 +168,7 @@ export function ZoneCard({
           {roadmapLevel && roadmapLevel.topics.length > 0 && (
             <div>
               <p className="mb-2 flex items-center gap-1.5 text-[11px] font-semibold tracking-wider text-foreground-faint uppercase">
-                <Route className="size-3.5" aria-hidden="true" /> Weekly practice
+                <Icon name="route" className="size-3.5" aria-hidden="true" /> Weekly practice
               </p>
               <div className="space-y-2">
                 {roadmapLevel.topics.map((topic, i) => (

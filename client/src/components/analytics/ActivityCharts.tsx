@@ -10,18 +10,18 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import { CalendarRange, Clock } from 'lucide-react'
 import { EmptyState } from '@/components/ui'
 import { ChartCard, ChartTooltip } from './ChartCard'
 import { AXIS_TICK } from './types'
 import type { HourDistRow, WeeklyProgressRow } from './types'
+import { Icon } from '@/components/icon/Icon'
 
 export function WeeklyChart({ data }: { data: WeeklyProgressRow[] }) {
   const weeks = data.slice(-10)
   const hasData = weeks.some((w) => w.solved > 0 || w.xp > 0)
   return (
     <ChartCard
-      icon={<CalendarRange className="size-4 text-cyan" aria-hidden="true" />}
+      icon={<Icon name="calendar" className="size-4 text-cyan" aria-hidden="true" />}
       title="Weekly output"
       subtitle="Solves (bars) and XP (line) per ISO week"
       label="Bar and line chart of solves and XP per week"
@@ -57,7 +57,7 @@ export function WeeklyChart({ data }: { data: WeeklyProgressRow[] }) {
           </ResponsiveContainer>
         </div>
       ) : (
-        <EmptyState icon={<CalendarRange />} title="No weekly data yet" description="Your first solve starts the log." className="py-8" />
+        <EmptyState icon="calendar" title="No weekly data yet" description="Your first solve starts the log." className="py-8" />
       )}
     </ChartCard>
   )
@@ -68,7 +68,7 @@ export function HourDistChart({ data }: { data: HourDistRow[] }) {
   const rows = data.map((d) => ({ ...d, label: `${String(d.hour).padStart(2, '0')}:00` }))
   return (
     <ChartCard
-      icon={<Clock className="size-4 text-warning" aria-hidden="true" />}
+      icon={<Icon name="clock" className="size-4 text-warning" aria-hidden="true" />}
       title="Grind hours"
       subtitle="Submissions by hour of day — when the rift sees you most"
       label="Area chart of submissions and accepted solutions per hour of day"
@@ -109,7 +109,7 @@ export function HourDistChart({ data }: { data: HourDistRow[] }) {
           </ResponsiveContainer>
         </div>
       ) : (
-        <EmptyState icon={<Clock />} title="No submissions yet" description="Hours light up after your first judged run." className="py-8" />
+        <EmptyState icon="clock" title="No submissions yet" description="Hours light up after your first judged run." className="py-8" />
       )}
     </ChartCard>
   )

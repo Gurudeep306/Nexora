@@ -1,16 +1,16 @@
 import { Link } from 'react-router-dom'
-import { History, Inbox } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, EmptyState } from '@/components/ui'
 import { PlatformBadge, VerdictBadge } from '@/components/shared/PlatformBadge'
 import { timeAgo } from '@/lib/utils'
 import type { RecentSubmission } from './types'
+import { Icon } from '@/components/icon/Icon'
 
 export function RecentSubmissions({ submissions }: { submissions: RecentSubmission[] }) {
   return (
     <Card className="h-full">
       <CardHeader className="flex-row items-center justify-between">
         <CardTitle className="flex items-center gap-2">
-          <History className="size-4 text-primary-bright" aria-hidden="true" /> Recent submissions
+          <Icon name="submissions" className="size-4 text-primary-bright" aria-hidden="true" /> Recent submissions
         </CardTitle>
         <Link
           to="/submissions"
@@ -23,7 +23,7 @@ export function RecentSubmissions({ submissions }: { submissions: RecentSubmissi
         {submissions.length === 0 ? (
           <EmptyState
             className="py-6"
-            icon={<Inbox />}
+            icon="inbox"
             title="No submissions yet"
             description="Solve a problem and your runs will show up here."
             action={

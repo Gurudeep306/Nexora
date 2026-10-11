@@ -1,11 +1,6 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import {
-  Activity,
-  Medal,
-  RefreshCw,
-  Trophy,
-} from 'lucide-react'
+import { RefreshCw } from 'lucide-react'
 import {
   Button,
   Card,
@@ -27,6 +22,7 @@ import { ActivityChart } from '@/components/hub/ActivityChart'
 import { DailyChallenges } from '@/components/hub/DailyChallenges'
 import { RecentSubmissions } from '@/components/hub/RecentSubmissions'
 import type { PerformanceResponse, StatsResponse } from '@/components/hub/types'
+import { Icon } from '@/components/icon/Icon'
 
 function HubSkeleton() {
   return (
@@ -81,7 +77,7 @@ export default function HubPage() {
   if (statsApi.error && !stats) {
     return (
       <div>
-        <PageHeader title="Home" subtitle="Your mission control" />
+        <PageHeader icon="home" title="Home" subtitle="Your mission control" />
         <ErrorState message={statsApi.error} onRetry={statsApi.refetch} />
       </div>
     )
@@ -132,7 +128,7 @@ export default function HubPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Activity className="size-4 text-cyan" aria-hidden="true" /> Recent activity
+                  <Icon name="activity" className="size-4 text-cyan" aria-hidden="true" /> Recent activity
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -165,7 +161,7 @@ export default function HubPage() {
               </div>
               {perf?.nextLevel && (
                 <p className="mb-0 border-t border-border pt-3 text-[13px] text-text-muted">
-                  <Trophy className="mr-1.5 inline size-3.5 text-gold" aria-hidden="true" />
+                  <Icon name="trophy" className="mr-1.5 inline size-3.5 text-gold" aria-hidden="true" />
                   Next level <span className="font-semibold text-text-primary">{perf.nextLevel.name}</span>:{' '}
                   {formatNumber(perf.nextLevel.xpNeeded)} XP and {perf.nextLevel.probsNeeded} solves
                   {perf.nextLevel.daysEstimate != null && perf.avgDailyXp > 0 && (
@@ -181,7 +177,7 @@ export default function HubPage() {
               <div>
                 <p className="mb-0 text-[15px] font-semibold text-text-primary">Ready for today?</p>
                 <p className="mt-1 mb-0 text-[13px] text-text-muted">
-                  <Medal className="mr-1 inline size-3.5 text-gold" aria-hidden="true" />
+                  <Icon name="medal" className="mr-1 inline size-3.5 text-gold" aria-hidden="true" />
                   {stats.todayStats.solved > 0
                     ? `${stats.todayStats.solved} solved today. Keep the streak going.`
                     : 'Nothing solved yet today.'}

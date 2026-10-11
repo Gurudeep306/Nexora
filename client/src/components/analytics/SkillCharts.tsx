@@ -12,17 +12,18 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import { Code2, Radar as RadarIcon } from 'lucide-react'
+import { Radar as RadarIcon } from 'lucide-react'
 import { EmptyState } from '@/components/ui'
 import { ChartCard, ChartTooltip } from './ChartCard'
 import { AXIS_TICK } from './types'
 import type { LangUsageRow, TagAnalysisRow } from './types'
+import { Icon } from '@/components/icon/Icon'
 
 export function LanguageChart({ data }: { data: LangUsageRow[] }) {
   const rows = data.filter((d) => d.count > 0)
   return (
     <ChartCard
-      icon={<Code2 className="size-4 text-cyan" aria-hidden="true" />}
+      icon={<Icon name="code" className="size-4 text-cyan" aria-hidden="true" />}
       title="Language arsenal"
       subtitle="Submissions vs accepted per language"
       label="Bar chart of submissions and accepted counts per language"
@@ -41,7 +42,7 @@ export function LanguageChart({ data }: { data: LangUsageRow[] }) {
           </ResponsiveContainer>
         </div>
       ) : (
-        <EmptyState icon={<Code2 />} title="No language data" description="Run or submit code to log your first language." className="py-8" />
+        <EmptyState icon="code" title="No language data" description="Run or submit code to log your first language." className="py-8" />
       )}
     </ChartCard>
   )
