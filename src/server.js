@@ -740,24 +740,25 @@ if (!sessionSecret || sessionSecret.length < 32) {
   }
 }
 
-app.use(
-  session({
-    secret: sessionSecret || "nexora-dev-fallback-secret-do-not-use-in-prod",
-    // Sessions are stored in the database so logins survive restarts/redeploys.
-    store: new DbSessionStore(),
-    resave: false,
-    saveUninitialized: false,
-    name: "nx.sid",
-    cookie: {
-      secure: IS_PROD, // HTTPS only in production
-      httpOnly: true, // Not accessible via JS
-      // "lax" (not "strict") so the session cookie is sent when GitHub/Google
-      // redirect back to /auth/*/callback — strict drops it on that hop.
-      sameSite: "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    },
-  }),
-);
+// Kept in a variable so socket.io can reuse it (see io.engine.use below) and
+// identify sockets by the same signed-in session as HTTP requests.
+const sessionMiddleware = session({
+  secret: sessionSecret || "nexora-dev-fallback-secret-do-not-use-in-prod",
+  // Sessions are stored in the database so logins survive restarts/redeploys.
+  store: new DbSessionStore(),
+  resave: false,
+  saveUninitialized: false,
+  name: "nx.sid",
+  cookie: {
+    secure: IS_PROD, // HTTPS only in production
+    httpOnly: true, // Not accessible via JS
+    // "lax" (not "strict") so the session cookie is sent when GitHub/Google
+    // redirect back to /auth/*/callback — strict drops it on that hop.
+    sameSite: "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+  },
+});
+app.use(sessionMiddleware);
 app.use(passport.initialize());
 app.use(passport.session());
 // Remember who is making each request (per-user progress queries read it).
@@ -4890,6 +4891,22 @@ app.delete("/api/friends/:id", async (req, res) => {
 });
 
 /* ========== SOCIAL: MESSAGES ========== */
+/** Store a DM and return the stored row (selected by its own id — selecting
+ *  "the newest message" could return a concurrent insert meant for someone
+ *  else). Returns null when the recipient does not exist. */
+async function insertDirectMessage(from, to, content) {
+  const recipient = await get("SELECT username FROM users WHERE username=?", [
+    to,
+  ]);
+  if (!recipient) return null;
+  const sanitized = String(content).trim().substring(0, 2000);
+  const { lastID } = await run(
+    "INSERT INTO messages(from_user,to_user,content,created_at) VALUES(?,?,?,?)",
+    [from, to, sanitized, new Date().toISOString()],
+  );
+  return get("SELECT * FROM messages WHERE id=?", [lastID]);
+}
+
 app.get("/api/messages/unread/:username", async (req, res) => {
   try {
     const counts = await all(
@@ -4928,12 +4945,10 @@ app.post("/api/messages", async (req, res) => {
     const { from, to, content } = req.body;
     if (!from || !to || !content?.trim())
       return res.status(400).json({ ok: false, error: "Missing fields" });
-    const sanitized = content.trim().substring(0, 2000);
-    await run(
-      "INSERT INTO messages(from_user,to_user,content,created_at) VALUES(?,?,?,?)",
-      [from, to, sanitized, new Date().toISOString()],
-    );
-    const msg = await get("SELECT * FROM messages ORDER BY id DESC LIMIT 1");
+    // `from` is pinned to the signed-in user by authz (src/middleware/authz.js).
+    const msg = await insertDirectMessage(from, to, content);
+    if (!msg)
+      return res.status(404).json({ ok: false, error: "User not found" });
     res.json({ ok: true, message: msg });
   } catch (e) {
     res.status(500).json({ ok: false, error: errMessage(e) });
@@ -5325,10 +5340,29 @@ app.delete("/api/contests/:id", async (req, res) => {
 // In-memory reactions store (persists until server restart; lightweight for small squads)
 const msgReactions = {}; // { msgId: { emoji: Set<username> } }
 
-app.post("/api/messages/:id/react", (req, res) => {
+/** True when `username` sent or received DM `id`. */
+async function isMessageParticipant(id, username) {
+  if (!username) return false;
+  const m = await get("SELECT from_user, to_user FROM messages WHERE id=?", [
+    id,
+  ]);
+  return !!m && (m.from_user === username || m.to_user === username);
+}
+
+app.post("/api/messages/:id/react", async (req, res) => {
+  // authz requires a session and pins `username` to it.
   const { username, emoji } = req.body;
-  const id = req.params.id;
-  if (!username || !emoji) return res.status(400).json({ ok: false });
+  const id = String(Number(req.params.id));
+  if (!username || typeof emoji !== "string" || !emoji || emoji.length > 16)
+    return res.status(400).json({ ok: false });
+  try {
+    if (!(await isMessageParticipant(id, username)))
+      return res
+        .status(403)
+        .json({ ok: false, error: "You can only react to your own conversations" });
+  } catch (e) {
+    return res.status(500).json({ ok: false, error: errMessage(e) });
+  }
   if (!msgReactions[id]) msgReactions[id] = {};
   if (!msgReactions[id][emoji]) msgReactions[id][emoji] = new Set();
   if (msgReactions[id][emoji].has(username)) {
@@ -5344,9 +5378,15 @@ app.post("/api/messages/:id/react", (req, res) => {
   res.json({ ok: true, reactions });
 });
 
-app.get("/api/messages/:id/reactions", (req, res) => {
+app.get("/api/messages/:id/reactions", async (req, res) => {
   const reactions = {};
-  const r = msgReactions[req.params.id] || {};
+  const id = String(Number(req.params.id));
+  let allowed = false;
+  try {
+    allowed = await isMessageParticipant(id, getSessionUser(req)?.username);
+  } catch {}
+  // Non-participants see no reactions (same shape, nothing leaked).
+  const r = (allowed && msgReactions[id]) || {};
   for (const [e, users] of Object.entries(r)) {
     if (users.size > 0) reactions[e] = [...users];
   }
@@ -5483,41 +5523,110 @@ const onlineUsers = {};
 // username -> Set of socketIds
 const userSockets = {};
 
+/* ── Socket authentication ──
+ * Every socket is tied to the signed-in express session; the username used for
+ * DMs, presence, rooms and signaling comes from that session, never from the
+ * event payload (clients used to send `username` / `from` and the server
+ * believed them, so anyone could act as anyone).
+ *
+ * The session middleware only runs on the handshake request — later polling
+ * requests / the websocket upgrade carry the engine.io `sid` instead. */
+io.engine.use((req, res, next) => {
+  if (req._query?.sid === undefined) return sessionMiddleware(req, res, next);
+  next();
+});
+
+function isAllowedSocketOrigin(req) {
+  const origin = req.headers.origin;
+  // Browsers always send Origin on websocket/XHR; non-browser clients have no
+  // ambient cookies to abuse. In dev the Vite proxy forwards from localhost.
+  if (!IS_PROD || !origin) return true;
+  if (allowedOrigins.includes(origin)) return true;
+  try {
+    return new URL(origin).host === req.headers.host;
+  } catch {
+    return false;
+  }
+}
+
+io.use((socket, next) => {
+  if (!isAllowedSocketOrigin(socket.request))
+    return next(new Error("Origin not allowed"));
+  const user = getSessionUser(socket.request);
+  if (!user?.username) return next(new Error("Authentication required"));
+  socket.data.username = user.username;
+  next();
+});
+
+/** Payloads come straight from the client — never destructure null. */
+const payloadOf = (p) => (p && typeof p === "object" ? p : {});
+const isId = (v) => typeof v === "string" && v.length > 0 && v.length <= 64;
+
+function emitToUser(username, event, payload) {
+  const sids = userSockets[username];
+  if (!sids) return;
+  for (const sid of sids) io.to(sid).emit(event, payload);
+}
+
+async function areFriends(a, b) {
+  const row = await get(
+    "SELECT id FROM friendships WHERE ((from_user=? AND to_user=?) OR (from_user=? AND to_user=?)) AND status='accepted'",
+    [a, b, b, a],
+  );
+  return !!row;
+}
+
+/** The socket joined this solve room via join-solve-room. */
+const inSolveRoom = (socket, roomId) =>
+  isId(roomId) && socket.rooms.has(`solve-${roomId}`);
+
+/** WebRTC signaling may only reach a socket sharing a solve room with us. */
+function sharesSolveRoom(socket, targetId) {
+  if (!isId(targetId) || targetId === socket.id) return false;
+  const target = io.sockets.sockets.get(targetId);
+  if (!target) return false;
+  for (const room of socket.rooms) {
+    if (room.startsWith("solve-") && target.rooms.has(room)) return true;
+  }
+  return false;
+}
+
 io.on("connection", (socket) => {
+  // Set by the io.use() auth middleware from the session — the only identity
+  // any handler below trusts.
+  const me = socket.data.username;
+
   /* ===== User registration & presence ===== */
-  socket.on("register-user", async ({ username }) => {
-    if (!username) return;
-    onlineUsers[socket.id] = { username, socketId: socket.id };
-    if (!userSockets[username]) userSockets[username] = new Set();
-    userSockets[username].add(socket.id);
+  const registerPresence = async () => {
+    if (onlineUsers[socket.id]) return;
+    onlineUsers[socket.id] = { username: me, socketId: socket.id };
+    if (!userSockets[me]) userSockets[me] = new Set();
+    userSockets[me].add(socket.id);
     // Update DB status
     try {
       await run(
         "UPDATE users SET status='online', last_seen=? WHERE username=?",
-        [new Date().toISOString(), username],
+        [new Date().toISOString(), me],
       );
     } catch {}
     // Broadcast online status to friends
-    socket.broadcast.emit("user-online", { username });
+    socket.broadcast.emit("user-online", { username: me });
+  };
+  registerPresence();
+  // Kept for older clients; any `username` in the payload is ignored.
+  socket.on("register-user", () => {
+    registerPresence();
   });
 
   /* ===== Direct Messaging ===== */
-  socket.on("direct-message", async ({ from, to, content }) => {
-    if (!from || !to || !content?.trim()) return;
-    const sanitized = content.trim().substring(0, 2000);
+  socket.on("direct-message", async (p) => {
+    const { to, content } = payloadOf(p);
+    if (!isId(to) || typeof content !== "string" || !content.trim()) return;
     try {
-      await run(
-        "INSERT INTO messages(from_user,to_user,content,created_at) VALUES(?,?,?,?)",
-        [from, to, sanitized, new Date().toISOString()],
-      );
-      const msg = await get("SELECT * FROM messages ORDER BY id DESC LIMIT 1");
+      const msg = await insertDirectMessage(me, to, content);
+      if (!msg) return socket.emit("social-error", { error: "User not found" });
       // Send to recipient's sockets
-      const recipientSockets = userSockets[to];
-      if (recipientSockets) {
-        for (const sid of recipientSockets) {
-          io.to(sid).emit("new-message", { message: msg });
-        }
-      }
+      emitToUser(to, "new-message", { message: msg });
       // Confirm to sender
       socket.emit("message-sent", { message: msg });
     } catch (e) {
@@ -5526,13 +5635,35 @@ io.on("connection", (socket) => {
   });
 
   /* ===== Solve Room Events ===== */
-  socket.on("join-solve-room", ({ roomId, username }) => {
+  // Joining awaits a DB lookup; a leave sent meanwhile (fast unmount) bumps the
+  // generation so the stale join does not complete afterwards.
+  const joinGen = new Map();
+  const bumpJoinGen = (roomId) => {
+    const gen = (joinGen.get(roomId) || 0) + 1;
+    joinGen.set(roomId, gen);
+    return gen;
+  };
+  socket.on("join-solve-room", async (p) => {
+    const { roomId } = payloadOf(p);
+    if (!isId(roomId)) return;
+    const gen = bumpJoinGen(roomId);
+    let room;
+    try {
+      room = await get("SELECT id, status FROM solve_rooms WHERE id=?", [
+        roomId,
+      ]);
+    } catch {
+      return;
+    }
+    if (joinGen.get(roomId) !== gen || !socket.connected) return;
+    if (!room || room.status !== "open") {
+      socket.emit("social-error", { error: "Room not found" });
+      return;
+    }
     if (!solveRoomMembers[roomId]) solveRoomMembers[roomId] = [];
-    const existing = solveRoomMembers[roomId].find(
-      (m) => m.username === username,
-    );
+    const existing = solveRoomMembers[roomId].find((m) => m.username === me);
     if (!existing) {
-      solveRoomMembers[roomId].push({ username, socketId: socket.id });
+      solveRoomMembers[roomId].push({ username: me, socketId: socket.id });
     } else {
       existing.socketId = socket.id;
     }
@@ -5543,10 +5674,14 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on("leave-solve-room", ({ roomId, username }) => {
+  socket.on("leave-solve-room", (p) => {
+    const { roomId } = payloadOf(p);
+    if (!isId(roomId)) return;
+    bumpJoinGen(roomId);
+    if (!inSolveRoom(socket, roomId)) return;
     if (solveRoomMembers[roomId]) {
       solveRoomMembers[roomId] = solveRoomMembers[roomId].filter(
-        (m) => m.username !== username,
+        (m) => m.username !== me,
       );
       if (solveRoomMembers[roomId].length === 0)
         delete solveRoomMembers[roomId];
@@ -5558,145 +5693,167 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on("room-chat", async ({ roomId, username, content }) => {
-    if (!roomId || !username || !content?.trim()) return;
+  socket.on("room-chat", async (p) => {
+    const { roomId, content } = payloadOf(p);
+    if (!inSolveRoom(socket, roomId)) return;
+    if (typeof content !== "string" || !content.trim()) return;
     const sanitized = content.trim().substring(0, 2000);
     try {
       await run(
         "INSERT INTO room_messages(room_id,username,content,created_at) VALUES(?,?,?,?)",
-        [roomId, username, sanitized, new Date().toISOString()],
+        [roomId, me, sanitized, new Date().toISOString()],
       );
       const user = await get(
         "SELECT display_name, avatar FROM users WHERE username=?",
-        [username],
+        [me],
       );
       io.to(`solve-${roomId}`).emit("room-chat-message", {
         roomId,
-        username,
+        username: me,
         content: sanitized,
-        display_name: user?.display_name || username,
+        display_name: user?.display_name || me,
         avatar: user?.avatar || "coder",
         created_at: new Date().toISOString(),
       });
     } catch {}
   });
 
-  socket.on("room-code-change", ({ roomId, code, username }) => {
-    socket.to(`solve-${roomId}`).emit("room-code-update", { code, username });
+  socket.on("room-code-change", (p) => {
+    const { roomId, code } = payloadOf(p);
+    if (!inSolveRoom(socket, roomId) || typeof code !== "string") return;
+    socket
+      .to(`solve-${roomId}`)
+      .emit("room-code-update", { code: code.slice(0, 200000), username: me });
   });
 
   /* ===== WebRTC Voice Signaling ===== */
-  socket.on("voice-join", ({ roomId, username }) => {
+  socket.on("voice-join", (p) => {
+    const { roomId } = payloadOf(p);
+    if (!inSolveRoom(socket, roomId)) return;
     socket
       .to(`solve-${roomId}`)
-      .emit("voice-user-joined", { username, socketId: socket.id });
+      .emit("voice-user-joined", { username: me, socketId: socket.id });
   });
 
-  socket.on("voice-leave", ({ roomId, username }) => {
-    socket.to(`solve-${roomId}`).emit("voice-user-left", { username });
+  socket.on("voice-leave", (p) => {
+    const { roomId } = payloadOf(p);
+    if (!inSolveRoom(socket, roomId)) return;
+    socket.to(`solve-${roomId}`).emit("voice-user-left", { username: me });
   });
 
-  socket.on("voice-offer", ({ to, offer, from }) => {
+  socket.on("voice-offer", (p) => {
+    const { to, offer } = payloadOf(p);
+    if (!sharesSolveRoom(socket, to)) return;
     io.to(to).emit("voice-offer", {
       from: socket.id,
       offer,
-      fromUsername: from,
+      fromUsername: me,
     });
   });
 
-  socket.on("voice-answer", ({ to, answer }) => {
+  socket.on("voice-answer", (p) => {
+    const { to, answer } = payloadOf(p);
+    if (!sharesSolveRoom(socket, to)) return;
     io.to(to).emit("voice-answer", { from: socket.id, answer });
   });
 
-  socket.on("voice-ice-candidate", ({ to, candidate }) => {
+  socket.on("voice-ice-candidate", (p) => {
+    const { to, candidate } = payloadOf(p);
+    if (!sharesSolveRoom(socket, to)) return;
     io.to(to).emit("voice-ice-candidate", { from: socket.id, candidate });
   });
 
   /* ===== Typing Indicators ===== */
-  socket.on("typing-start", ({ from, to }) => {
-    const recipientSockets = userSockets[to];
-    if (recipientSockets) {
-      for (const sid of recipientSockets) {
-        io.to(sid).emit("user-typing", { from });
-      }
-    }
+  socket.on("typing-start", (p) => {
+    const { to } = payloadOf(p);
+    if (!isId(to) || to === me) return;
+    emitToUser(to, "user-typing", { from: me });
   });
 
-  socket.on("typing-stop", ({ from, to }) => {
-    const recipientSockets = userSockets[to];
-    if (recipientSockets) {
-      for (const sid of recipientSockets) {
-        io.to(sid).emit("user-stopped-typing", { from });
-      }
-    }
+  socket.on("typing-stop", (p) => {
+    const { to } = payloadOf(p);
+    if (!isId(to) || to === me) return;
+    emitToUser(to, "user-stopped-typing", { from: me });
   });
 
   /* ===== Message read receipt ===== */
-  socket.on("mark-messages-read", async ({ from, to }) => {
+  // The reader is always the session user: marks `from`'s messages to me read.
+  socket.on("mark-messages-read", async (p) => {
+    const { from } = payloadOf(p);
+    if (!isId(from)) return;
     try {
       await run(
         "UPDATE messages SET read=1 WHERE from_user=? AND to_user=? AND read=0",
-        [from, to],
+        [from, me],
       );
-      const senderSockets = userSockets[from];
-      if (senderSockets) {
-        for (const sid of senderSockets) {
-          io.to(sid).emit("messages-read", { by: to });
-        }
-      }
+      emitToUser(from, "messages-read", { by: me });
     } catch {}
   });
 
   /* ===== Room voice speaking indicator ===== */
-  socket.on("voice-speaking", ({ roomId, username, speaking }) => {
+  socket.on("voice-speaking", (p) => {
+    const { roomId, speaking } = payloadOf(p);
+    if (!inSolveRoom(socket, roomId)) return;
     socket
       .to(`solve-${roomId}`)
-      .emit("voice-speaking-update", { username, speaking });
+      .emit("voice-speaking-update", { username: me, speaking: !!speaking });
   });
 
   /* ===== Friend challenge ===== */
-  socket.on("challenge-friend", ({ from, to, problemId, problemTitle }) => {
-    const recipientSockets = userSockets[to];
-    if (recipientSockets) {
-      for (const sid of recipientSockets) {
-        io.to(sid).emit("challenge-received", {
-          from,
-          problemId,
-          problemTitle,
-        });
-      }
+  socket.on("challenge-friend", async (p) => {
+    const { to, problemId, problemTitle } = payloadOf(p);
+    if (!isId(to)) return;
+    try {
+      if (!(await areFriends(me, to))) return;
+    } catch {
+      return;
     }
+    emitToUser(to, "challenge-received", {
+      from: me,
+      problemId,
+      problemTitle:
+        typeof problemTitle === "string" ? problemTitle.slice(0, 200) : "",
+    });
   });
 
   /* ===== Friend request notifications ===== */
-  socket.on("notify-friend-request", ({ to, from }) => {
-    const recipientSockets = userSockets[to];
-    if (recipientSockets) {
-      for (const sid of recipientSockets) {
-        io.to(sid).emit("friend-request-received", { from });
-      }
+  // Only relayed when the REST request actually created a friendship row.
+  socket.on("notify-friend-request", async (p) => {
+    const { to } = payloadOf(p);
+    if (!isId(to)) return;
+    try {
+      const f = await get(
+        "SELECT id FROM friendships WHERE (from_user=? AND to_user=?) OR (from_user=? AND to_user=? AND status='accepted')",
+        [me, to, to, me],
+      );
+      if (!f) return;
+    } catch {
+      return;
     }
+    emitToUser(to, "friend-request-received", { from: me });
   });
 
   /* ===== Legacy collab rooms ===== */
-  socket.on("create-room", (data) => {
+  socket.on("create-room", (p) => {
+    const data = payloadOf(p);
     const roomId = Math.random().toString(36).slice(2, 8).toUpperCase();
     rooms[roomId] = {
       host: socket.id,
       problem: data.problemId,
-      code: data.code || "",
+      code: typeof data.code === "string" ? data.code : "",
       users: [socket.id],
     };
     socket.join(roomId);
     socket.emit("room-created", { roomId });
   });
-  socket.on("join-room", ({ roomId }) => {
-    const room = rooms[roomId];
+  socket.on("join-room", (p) => {
+    const { roomId } = payloadOf(p);
+    const room = isId(roomId) && Object.hasOwn(rooms, roomId) && rooms[roomId];
     if (!room) {
       socket.emit("room-error", { error: "Room not found" });
       return;
     }
-    room.users.push(socket.id);
+    if (!room.users.includes(socket.id)) room.users.push(socket.id);
     socket.join(roomId);
     socket.emit("room-joined", {
       roomId,
@@ -5705,11 +5862,16 @@ io.on("connection", (socket) => {
     });
     io.to(roomId).emit("user-count", { count: room.users.length });
   });
-  socket.on("code-change", ({ roomId, code }) => {
-    if (rooms[roomId]) rooms[roomId].code = code;
+  socket.on("code-change", (p) => {
+    const { roomId, code } = payloadOf(p);
+    if (!isId(roomId) || !socket.rooms.has(roomId) || !rooms[roomId]) return;
+    if (typeof code !== "string") return;
+    rooms[roomId].code = code;
     socket.to(roomId).emit("code-update", { code });
   });
-  socket.on("cursor-move", ({ roomId, position }) => {
+  socket.on("cursor-move", (p) => {
+    const { roomId, position } = payloadOf(p);
+    if (!isId(roomId) || !socket.rooms.has(roomId) || !rooms[roomId]) return;
     socket.to(roomId).emit("cursor-update", { userId: socket.id, position });
   });
 

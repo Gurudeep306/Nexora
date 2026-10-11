@@ -87,7 +87,7 @@ export function MessagesTab({ me, socket }: Props) {
         setMessages(d.messages ?? [])
         unreadApi.refetch()
         // Push read receipts to the author in realtime (REST GET only updates the DB).
-        socket?.emit('mark-messages-read', { from: other, to: me })
+        socket?.emit('mark-messages-read', { from: other })
         // Reactions live in server memory — fetch for the most recent messages.
         const recent = (d.messages ?? []).slice(-30)
         const entries = await Promise.all(
@@ -128,7 +128,7 @@ export function MessagesTab({ me, socket }: Props) {
 
   const stopTyping = useCallback(() => {
     if (typingActive.current && peerRef.current) {
-      socket?.emit('typing-stop', { from: me, to: peerRef.current })
+      socket?.emit('typing-stop', { to: peerRef.current })
     }
     typingActive.current = false
     if (typingTimer.current) clearTimeout(typingTimer.current)
@@ -145,8 +145,8 @@ export function MessagesTab({ me, socket }: Props) {
           prev && !prev.some((m) => m.id === message.id) ? [...prev, message] : prev,
         )
         // Reading the thread: mark read so the sender gets a receipt.
-        // Server semantics: {from: author of messages being read, to: the reader}.
-        socket.emit('mark-messages-read', { from: message.from_user, to: me })
+        // Server semantics: {from: author of messages being read}; the reader is the session user.
+        socket.emit('mark-messages-read', { from: message.from_user })
       } else {
         unreadApi.refetch()
       }
@@ -200,10 +200,10 @@ export function MessagesTab({ me, socket }: Props) {
     try {
       if (socket?.connected) {
         // Server persists + relays; confirmation arrives via `message-sent`.
-        socket.emit('direct-message', { from: me, to: peer, content })
+        // The sender is the session user — the server ignores any `from`.
+        socket.emit('direct-message', { to: peer, content })
       } else {
         const d = await api.post<{ message: Message }>('/api/messages', {
-          from: me,
           to: peer,
           content,
         })
@@ -224,7 +224,7 @@ export function MessagesTab({ me, socket }: Props) {
     if (!peer) return
     if (!typingActive.current) {
       typingActive.current = true
-      socket?.emit('typing-start', { from: me, to: peer })
+      socket?.emit('typing-start', { to: peer })
     }
     if (typingTimer.current) clearTimeout(typingTimer.current)
     typingTimer.current = setTimeout(stopTyping, TYPING_IDLE_MS)
