@@ -21,7 +21,8 @@ const GitHubStrategy = require("passport-github2").Strategy;
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const { Server: SocketServer } = require("socket.io");
 const { run, get, all, initDb, dbInfo, migratePerUser } = require("./db");
-const { requestContext, me, meSql, runAs } = require("./context");
+const { getCatalog, topicPool } = require("./problem-catalog");
+const { requestContext, me, meSql, runAs, queryCount } = require("./context");
 const { DbSessionStore } = require("./session-store");
 const { restoreUploads } = require("./upload-store");
 const { authz } = require("./middleware/authz");
@@ -764,6 +765,17 @@ app.use(passport.initialize());
 app.use(passport.session());
 // Remember who is making each request (per-user progress queries read it).
 app.use(requestContext(getSessionUser));
+// DB_QUERY_STATS=1 logs DB round trips + wall time per API request (perf tooling).
+if (process.env.DB_QUERY_STATS === "1") {
+  app.use("/api", (req, res, next) => {
+    const t0 = process.hrtime.bigint();
+    res.on("finish", () => {
+      const ms = Number(process.hrtime.bigint() - t0) / 1e6;
+      console.log(`[dbq] ${req.method} ${req.originalUrl.split("?")[0]} q=${queryCount()} ${ms.toFixed(1)}ms`);
+    });
+    next();
+  });
+}
 // Enforce who-can-do-what on every /api route (see src/middleware/authz.js).
 app.use(authz());
 
@@ -1100,8 +1112,10 @@ app.get("/api/problems", async (req, res) => {
       FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id AND pr.username=${meSql()}
       WHERE ${where.join(" AND ")} ORDER BY ${sortCol === "p.rating" ? "(p.rating = 0), " : ""}${sortCol} ${sortDir} LIMIT ? OFFSET ?`;
 
-    const { total } = await get(countSql, params);
-    const problems = await all(dataSql, [...params, lim, off]);
+    const [{ total }, problems] = await Promise.all([
+      get(countSql, params),
+      all(dataSql, [...params, lim, off]),
+    ]);
     res.json({ ok: true, total, problems, limit: lim, offset: off });
   } catch (e) {
     res.status(500).json({ ok: false, error: errMessage(e) });
@@ -1924,49 +1938,18 @@ app.get("/api/admin/judge-selftest", requireAdmin, async (req, res) => {
 app.get("/api/stats", async (req, res) => {
   try {
     const result = await cachedResponse("stats", 3000, async () => {
-      // Batch core counts into a single query
-      const counts = await get(`SELECT
-      (SELECT COUNT(*) FROM problems) as total,
-      (SELECT COUNT(*) FROM progress WHERE username=${meSql()} AND status='solved') as solved,
-      (SELECT COUNT(*) FROM progress WHERE username=${meSql()} AND status='attempted') as attempted,
-      (SELECT COALESCE(SUM(xp_earned),0) FROM progress WHERE username=${meSql()}) as totalXp,
-      (SELECT COUNT(*) FROM submissions WHERE username=${meSql()}) as submissions,
-      (SELECT COUNT(*) FROM submissions WHERE username=${meSql()} AND verdict='AC') as acCount`);
-      let {
-        total,
-        solved,
-        attempted,
-        totalXp,
-        submissions: submissionCount,
-        acCount,
-      } = counts;
-      const accuracy =
-        submissionCount > 0 ? Math.round((acCount / submissionCount) * 100) : 0;
-
-      // Apply admin overrides for the signed-in user
+      // Every read below is independent, so they are all started at once
+      // (one round trip of latency instead of four sequential stages).
       const username = me();
-      if (username) {
-        const user = await get(
-          "SELECT xp_override, solved_override, role FROM users WHERE username=?",
-          [username],
-        );
-        if (user) {
-          totalXp += user.xp_override || 0;
-          solved += user.solved_override || 0;
-        }
-      }
-
-      // Parallel independent queries
-      const [
-        ratingDist,
-        platformDist,
-        streak,
-        heatmap,
-        recent,
-        achievements,
-        verdicts,
-        dailyChallenges,
-      ] = await Promise.all([
+      const today = new Date().toISOString().slice(0, 10);
+      const userP = username
+        ? get("SELECT xp_override, solved_override, role FROM users WHERE username=?", [username])
+        : Promise.resolve(null);
+      const todayP = get(
+        `SELECT COALESCE(problems_solved,0) as solved, COALESCE(problems_attempted,0) as attempted, COALESCE(xp_earned,0) as xp FROM daily_activity WHERE username=? AND date=?`,
+        [username, today],
+      );
+      const restP = Promise.all([
         all(`SELECT
         CASE
           WHEN p.rating < 1000 THEN 'Newbie'
@@ -1994,6 +1977,45 @@ app.get("/api/stats", async (req, res) => {
         ),
         getDailyChallenges(),
       ]);
+      // Avoid unhandled rejections if an earlier await throws first.
+      for (const pr of [userP, todayP, restP]) pr.catch(() => {});
+
+      // Batch core counts into a single query
+      const counts = await get(`SELECT
+      (SELECT COUNT(*) FROM problems) as total,
+      (SELECT COUNT(*) FROM progress WHERE username=${meSql()} AND status='solved') as solved,
+      (SELECT COUNT(*) FROM progress WHERE username=${meSql()} AND status='attempted') as attempted,
+      (SELECT COALESCE(SUM(xp_earned),0) FROM progress WHERE username=${meSql()}) as totalXp,
+      (SELECT COUNT(*) FROM submissions WHERE username=${meSql()}) as submissions,
+      (SELECT COUNT(*) FROM submissions WHERE username=${meSql()} AND verdict='AC') as acCount`);
+      let {
+        total,
+        solved,
+        attempted,
+        totalXp,
+        submissions: submissionCount,
+        acCount,
+      } = counts;
+      const accuracy =
+        submissionCount > 0 ? Math.round((acCount / submissionCount) * 100) : 0;
+
+      // Apply admin overrides for the signed-in user
+      const user = await userP;
+      if (user) {
+        totalXp += user.xp_override || 0;
+        solved += user.solved_override || 0;
+      }
+
+      const [
+        ratingDist,
+        platformDist,
+        streak,
+        heatmap,
+        recent,
+        achievements,
+        verdicts,
+        dailyChallenges,
+      ] = await restP;
 
       // Level & Title (unified Rift Levels)
       const level = calcLevel(totalXp, solved);
@@ -2010,11 +2032,7 @@ app.get("/api/stats", async (req, res) => {
       }));
 
       // Today's stats
-      const today = new Date().toISOString().slice(0, 10);
-      const todayStats = (await get(
-        `SELECT COALESCE(problems_solved,0) as solved, COALESCE(problems_attempted,0) as attempted, COALESCE(xp_earned,0) as xp FROM daily_activity WHERE username=? AND date=?`,
-        [me(), today],
-      )) || { solved: 0, attempted: 0, xp: 0 };
+      const todayStats = (await todayP) || { solved: 0, attempted: 0, xp: 0 };
 
       return {
         ok: true,
@@ -2440,6 +2458,25 @@ async function myOverrides() {
   return { xp: row?.xp_override || 0, solved: row?.solved_override || 0 };
 }
 
+/** The signed-in user's XP / solved totals, with admin overrides applied —
+ *  both reads run in parallel (one round trip). raw* exclude the overrides. */
+async function myTotals() {
+  const [row, ov] = await Promise.all([
+    get(
+      `SELECT COALESCE(SUM(xp_earned),0) as xp, COUNT(CASE WHEN status='solved' THEN 1 END) as solved FROM progress WHERE username=${meSql()}`,
+    ),
+    myOverrides(),
+  ]);
+  const rawXp = row?.xp || 0;
+  const rawSolved = row?.solved || 0;
+  return { rawXp, rawSolved, xp: rawXp + ov.xp, solved: rawSolved + ov.solved };
+}
+
+/** Tags of every problem the signed-in user has solved (one row per problem). */
+function solvedTagsSql() {
+  return `SELECT DISTINCT p.id, COALESCE(p.tags, '') as tags FROM progress pr JOIN problems p ON pr.problem_rowid=p.id AND pr.username=${meSql()} WHERE pr.status='solved'`;
+}
+
 function calcLevel(xp, solvedCount = 0) {
   let lvl = 1;
   for (let i = 1; i < RIFT_LEVELS.length; i++) {
@@ -2484,23 +2521,30 @@ function _buildLastWeek(sevenDayRows) {
 }
 
 async function calcStreak(username = me()) {
-  // Current streak: only need recent consecutive days, not entire table
-  const today = new Date().toISOString().slice(0, 10);
-  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
-
-  // Last 7 days for the streak calendar widget
-  const sevenDayRows = await all(
-    "SELECT date, problems_solved FROM daily_activity WHERE username=? AND date >= date('now','-6 days') ORDER BY date ASC",
-    [username],
-  );
+  // Last 7 days for the streak calendar widget, and the active days of the
+  // last 400 (more than enough for any reasonable streak) — fetched together.
+  const [sevenDayRows, rows] = await Promise.all([
+    all(
+      "SELECT date, problems_solved FROM daily_activity WHERE username=? AND date >= date('now','-6 days') ORDER BY date ASC",
+      [username],
+    ),
+    all(
+      "SELECT date FROM daily_activity WHERE username=? AND problems_solved > 0 AND date >= date('now','-400 days') ORDER BY date DESC",
+      [username],
+    ),
+  ]);
   const lastWeek = _buildLastWeek(sevenDayRows);
+  return { ...streakFromDates(rows), lastWeek };
+}
 
-  // Fetch only last 400 days (more than enough for any reasonable streak)
-  const rows = await all(
-    "SELECT date FROM daily_activity WHERE username=? AND problems_solved > 0 AND date >= date('now','-400 days') ORDER BY date DESC",
-    [username],
-  );
-  if (!rows.length) return { current: 0, best: 0, lastWeek };
+/**
+ * Current and best streak from active-day rows ({ date: 'YYYY-MM-DD' }),
+ * newest first. Current only counts if the newest day is today or yesterday.
+ */
+function streakFromDates(rows, now = Date.now()) {
+  const today = new Date(now).toISOString().slice(0, 10);
+  const yesterday = new Date(now - 86400000).toISOString().slice(0, 10);
+  if (!rows.length) return { current: 0, best: 0 };
 
   let current = 0;
   let prev = null;
@@ -2532,7 +2576,31 @@ async function calcStreak(username = me()) {
   }
   if (streak > best) best = streak;
 
-  return { current, best, lastWeek };
+  return { current, best };
+}
+
+/** Streaks for many users from ONE query (instead of two per user). */
+async function streaksFor(usernames) {
+  const out = new Map(usernames.map((u) => [u, { current: 0, best: 0 }]));
+  if (!usernames.length) return out;
+  const byUser = new Map();
+  // Chunked to stay well under SQLite's bound-parameter limit.
+  for (let i = 0; i < usernames.length; i += 400) {
+    const chunk = usernames.slice(i, i + 400);
+    const rows = await all(
+      `SELECT username, date FROM daily_activity
+       WHERE username IN (${chunk.map(() => "?").join(",")})
+         AND problems_solved > 0 AND date >= date('now','-400 days')
+       ORDER BY username, date DESC`,
+      chunk,
+    );
+    for (const r of rows) {
+      if (!byUser.has(r.username)) byUser.set(r.username, []);
+      byUser.get(r.username).push(r);
+    }
+  }
+  for (const [u, rows] of byUser) out.set(u, streakFromDates(rows));
+  return out;
 }
 
 async function checkAchievements(problemId, verdict, { backfill = false } = {}) {
@@ -2887,7 +2955,9 @@ app.get("/api/code-replay/:submissionId", async (req, res) => {
 app.get("/api/performance", async (req, res) => {
   try {
     const result = await cachedResponse("performance", 3000, async () => {
-      /* ── Batch core counts into single query ── */
+      /* ── Batch core counts into single query (overrides fetched alongside) ── */
+      const ovP = myOverrides();
+      ovP.catch(() => {});
       const counts = await get(`SELECT
       (SELECT COUNT(*) FROM problems) as total,
       (SELECT COUNT(*) FROM progress WHERE username=${meSql()} AND status='solved') as solved,
@@ -2897,7 +2967,7 @@ app.get("/api/performance", async (req, res) => {
       (SELECT COUNT(*) FROM submissions WHERE username=${meSql()} AND verdict='AC') as acCount`);
       const { total, attempted, submissions, acCount } = counts;
       // Include admin bonuses so every page shows the same level as the Hub.
-      const ov = await myOverrides();
+      const ov = await ovP;
       const totalXp = counts.totalXp + ov.xp;
       const solved = counts.solved + ov.solved;
       const accuracy =
@@ -3063,21 +3133,26 @@ app.get("/api/performance", async (req, res) => {
       /* ── Recommended practice (weak areas) ── */
       const weakTags = tagAnalysis.filter((a) => a.solveRate < 70).slice(0, 5);
       const recommendations = [];
-      for (const wt of weakTags) {
-        const probs = await all(
-          `SELECT p.id, p.title, p.problem_id, p.platform, p.rating, COALESCE(pr.status,'unsolved') as solve_status
+      const weakTagProblems = await Promise.all(
+        weakTags.map((wt) =>
+          all(
+            `SELECT p.id, p.title, p.problem_id, p.platform, p.rating, COALESCE(pr.status,'unsolved') as solve_status
         FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id AND pr.username=${meSql()}
         WHERE p.tags LIKE ? AND (pr.status IS NULL OR pr.status!='solved') AND p.rating>0
         ORDER BY p.rating ASC LIMIT 5`,
-          [`%${wt.tag}%`],
-        );
+            [`%${wt.tag}%`],
+          ),
+        ),
+      );
+      weakTags.forEach((wt, i) => {
+        const probs = weakTagProblems[i];
         if (probs.length)
           recommendations.push({
             tag: wt.tag,
             solveRate: wt.solveRate,
             problems: probs,
           });
-      }
+      });
 
       /* ── Milestones & forecasting ── */
       const nextLevel = RIFT_LEVELS[level.level] || null;
@@ -3862,20 +3937,13 @@ const ZONE_NAMES = [
 /* unified /api/nexus — replaces both /api/roadmap and /api/skill-tree */
 app.get("/api/nexus", async (req, res) => {
   try {
-    let totalXp = (
-      await get(`SELECT COALESCE(SUM(xp_earned),0) as s FROM progress WHERE username=${meSql()}`)
-    ).s;
-    let totalSolved = (
-      await get(`SELECT COUNT(*) as c FROM progress WHERE username=${meSql()} AND status='solved'`)
-    ).c;
-    const rawTotalSolved = totalSolved;
-    { const ov = await myOverrides(); totalXp += ov.xp; totalSolved += ov.solved; }
-    const playerLevel = calcLevel(totalXp, totalSolved);
-
-    // Fetch all distinct solved problems and their tags in ONE query instead of 40+ round trips
-    const solvedProblems = await all(
-      `SELECT DISTINCT p.id, COALESCE(p.tags, '') as tags FROM progress pr JOIN problems p ON pr.problem_rowid=p.id AND pr.username=${meSql()} WHERE pr.status='solved'`
-    );
+    // Totals, overrides and solved tags are independent: one parallel round trip.
+    const [totals, solvedProblems] = await Promise.all([
+      myTotals(),
+      all(solvedTagsSql()),
+    ]);
+    const rawTotalSolved = totals.rawSolved;
+    const playerLevel = calcLevel(totals.xp, totals.solved);
     const solvedTagList = (solvedProblems || []).map((p) => (p.tags || "").toLowerCase());
 
     // Build skill nodes with progress
@@ -4658,109 +4726,111 @@ function seededShuffle(arr, seed) {
 
 app.get("/api/level-roadmap", async (req, res) => {
   try {
-    let totalXp = (
-      await get(`SELECT COALESCE(SUM(xp_earned),0) as s FROM progress WHERE username=${meSql()}`)
-    ).s;
-    let totalSolved = (
-      await get(`SELECT COUNT(*) as c FROM progress WHERE username=${meSql()} AND status='solved'`)
-    ).c;
-    { const ov = await myOverrides(); totalXp += ov.xp; totalSolved += ov.solved; }
-    const playerLevel = calcLevel(totalXp, totalSolved);
-    const weekSeed = Math.floor(Date.now() / (7 * 24 * 60 * 60 * 1000));
-
-    const levels = await Promise.all(
-      LEVEL_TOPICS.map(async (lt) => {
-        const rl = RIFT_LEVELS[lt.level - 1];
-
-        // For ∞ Overflow (level 11), lower the floor to 2200 and remove the ceiling
-        // so practice problems actually appear in the DB (very few problems rated 2800+ exist)
-        const queryMinR = lt.level === 11 ? 2200 : rl.minR;
-        const queryMaxR = lt.level === 11 ? 99999 : rl.maxR;
-
-        // Each topic runs its own tag/rating query concurrently
-        const topicsResult = await Promise.all(
-          lt.topics.map(async (topic) => {
-            const tagCond = topic.tags.map(() => "p.tags LIKE ?").join(" OR ");
-            const tagParams = topic.tags.map((t) => `%${t}%`);
-            const pool = await all(
-              `
-            SELECT p.id, p.problem_id, p.title, p.rating, p.platform, p.tags, p.url,
-              COALESCE(pr.status,'unsolved') as solve_status,
-              COALESCE(pr.attempts,0) as attempts
-            FROM problems p
-            LEFT JOIN progress pr ON pr.problem_rowid = p.id AND pr.username=${meSql()}
-            WHERE (${tagCond})
-              AND p.rating >= ? AND p.rating <= ?
-              AND p.rating > 0
-            ORDER BY p.rating DESC
-          `,
-              [...tagParams, queryMinR, queryMaxR],
-            );
-
-            const shuffled = seededShuffle(
-              pool,
-              weekSeed + lt.level * 100 + topic.tags.length,
-            );
-            const unsolved = shuffled.filter((p) => p.solve_status !== "solved");
-            const solved = shuffled.filter((p) => p.solve_status === "solved");
-            const selected = [
-              ...unsolved.slice(0, topic.count),
-              ...solved.slice(0, Math.max(0, topic.count - unsolved.length)),
-            ].slice(0, topic.count);
-            selected.sort((a, b) => a.rating - b.rating);
-
-            return {
-              name: topic.name,
-              desc: topic.desc,
-              tags: topic.tags,
-              problems: selected,
-              totalPool: pool.length,
-              solvedInPool: pool.filter((p) => p.solve_status === "solved").length,
-            };
-          }),
-        );
-
-        const allProbs = topicsResult.flatMap((t) => t.problems);
-        const solvedCount = allProbs.filter(
-          (p) => p.solve_status === "solved",
-        ).length;
-
-        return {
-          level: lt.level,
-          name: rl.name,
-          color: rl.color,
-          glow: rl.glow,
-          minR: rl.minR,
-          maxR: rl.maxR,
-          xpRequired: rl.xp,
-          probsRequired: rl.minProblems,
-          unlocked: true, // all levels are always browsable
-          current: playerLevel.level === lt.level,
-          topics: topicsResult,
-          totalProblems: allProbs.length,
-          solvedCount,
-          progress: allProbs.length
-            ? Math.round((solvedCount / allProbs.length) * 100)
-            : 0,
-        };
-      }),
-    );
-
-    res.json({ ok: true, levels, player: playerLevel, weekSeed });
+    // Three independent reads in one parallel round trip; the topic pools are
+    // filtered from the in-memory problem catalog instead of ~100 LIKE scans.
+    const [totals, progressRows, catalog] = await Promise.all([
+      myTotals(),
+      all("SELECT problem_rowid, status, attempts FROM progress WHERE username=?", [me()]),
+      getCatalog(),
+    ]);
+    res.json(buildLevelRoadmap(catalog, progressRows, calcLevel(totals.xp, totals.solved)));
   } catch (e) {
     res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
 
+/**
+ * The weekly practice pool for every level (pure: catalog + the user's
+ * progress rows in, response body out). Same selection as the old per-topic
+ * SQL: pool = problems with any topic tag in the level's rating band, ordered
+ * by rating DESC, seeded-shuffled by week, unsolved first.
+ */
+function buildLevelRoadmap(catalog, progressRows, playerLevel, now = Date.now()) {
+  const weekSeed = Math.floor(now / (7 * 24 * 60 * 60 * 1000));
+  const progress = new Map();
+  for (const pr of progressRows || []) progress.set(pr.problem_rowid, pr);
+  const statusOf = (row) => {
+    const pr = progress.get(row.id);
+    return (pr && pr.status) || "unsolved";
+  };
+  const shape = (row) => {
+    const pr = progress.get(row.id);
+    return {
+      id: row.id,
+      problem_id: row.problem_id,
+      title: row.title,
+      rating: row.rating,
+      platform: row.platform,
+      tags: row.tags,
+      url: row.url,
+      solve_status: (pr && pr.status) || "unsolved",
+      attempts: (pr && pr.attempts) || 0,
+    };
+  };
+
+  const levels = LEVEL_TOPICS.map((lt) => {
+    const rl = RIFT_LEVELS[lt.level - 1];
+
+    // For ∞ Overflow (level 11), lower the floor to 2200 and remove the ceiling
+    // so practice problems actually appear in the DB (very few problems rated 2800+ exist)
+    const queryMinR = lt.level === 11 ? 2200 : rl.minR;
+    const queryMaxR = lt.level === 11 ? 99999 : rl.maxR;
+
+    const topicsResult = lt.topics.map((topic) => {
+      const pool = topicPool(catalog, topic.tags, queryMinR, queryMaxR).map((i) => catalog.rows[i]);
+      const shuffled = seededShuffle(pool, weekSeed + lt.level * 100 + topic.tags.length);
+      const unsolved = shuffled.filter((p) => statusOf(p) !== "solved");
+      const solved = shuffled.filter((p) => statusOf(p) === "solved");
+      const selected = [
+        ...unsolved.slice(0, topic.count),
+        ...solved.slice(0, Math.max(0, topic.count - unsolved.length)),
+      ]
+        .slice(0, topic.count)
+        .map(shape);
+      selected.sort((a, b) => a.rating - b.rating);
+
+      return {
+        name: topic.name,
+        desc: topic.desc,
+        tags: topic.tags,
+        problems: selected,
+        totalPool: pool.length,
+        solvedInPool: solved.length,
+      };
+    });
+
+    const allProbs = topicsResult.flatMap((t) => t.problems);
+    const solvedCount = allProbs.filter((p) => p.solve_status === "solved").length;
+
+    return {
+      level: lt.level,
+      name: rl.name,
+      color: rl.color,
+      glow: rl.glow,
+      minR: rl.minR,
+      maxR: rl.maxR,
+      xpRequired: rl.xp,
+      probsRequired: rl.minProblems,
+      unlocked: true, // all levels are always browsable
+      current: playerLevel.level === lt.level,
+      topics: topicsResult,
+      totalProblems: allProbs.length,
+      solvedCount,
+      progress: allProbs.length ? Math.round((solvedCount / allProbs.length) * 100) : 0,
+    };
+  });
+
+  return { ok: true, levels, player: playerLevel, weekSeed };
+}
+
 /* Keep /api/roadmap and /api/skill-tree as aliases for backward compat */
 app.get("/api/skill-tree", async (req, res) => {
   try {
-    const rawTotalSolved = (
-      await get(`SELECT COUNT(*) as c FROM progress WHERE username=${meSql()} AND status='solved'`)
-    )?.c || 0;
-    const solvedProblems = await all(
-      `SELECT DISTINCT p.id, COALESCE(p.tags, '') as tags FROM progress pr JOIN problems p ON pr.problem_rowid=p.id AND pr.username=${meSql()} WHERE pr.status='solved'`
-    );
+    const [solvedRow, solvedProblems] = await Promise.all([
+      get(`SELECT COUNT(*) as c FROM progress WHERE username=${meSql()} AND status='solved'`),
+      all(solvedTagsSql()),
+    ]);
+    const rawTotalSolved = solvedRow?.c || 0;
     const solvedTagList = (solvedProblems || []).map((p) => (p.tags || "").toLowerCase());
 
     const nodes = [];
@@ -4815,8 +4885,9 @@ app.get("/api/skill-tree/:nodeId/problems", async (req, res) => {
     const tagCond = skill.tags.map(() => "p.tags LIKE ?").join(" OR ");
     const tagParams = skill.tags.map((t) => `%${t}%`);
 
-    const problems = await all(
-      `
+    const [problems, totalRow] = await Promise.all([
+      all(
+        `
       SELECT p.id, p.problem_id, p.title, p.rating, p.platform, p.tags,
         COALESCE(pr.status,'unsolved') as solve_status,
         pr.solved_at
@@ -4829,19 +4900,18 @@ app.get("/api/skill-tree/:nodeId/problems", async (req, res) => {
         p.rating ASC
       LIMIT 50
     `,
-      [...tagParams, minDiff, maxDiff],
-    );
+        [...tagParams, minDiff, maxDiff],
+      ),
+      get(
+        `SELECT COUNT(*) as c FROM problems p WHERE (${tagCond}) AND p.rating >= ? AND p.rating <= ?`,
+        [...tagParams, minDiff, maxDiff],
+      ),
+    ]);
 
     const solvedCount = problems.filter(
       (p) => p.solve_status === "solved",
     ).length;
-    const totalAvailable =
-      (
-        await get(
-          `SELECT COUNT(*) as c FROM problems p WHERE (${tagCond}) AND p.rating >= ? AND p.rating <= ?`,
-          [...tagParams, minDiff, maxDiff],
-        )
-      )?.c || 0;
+    const totalAvailable = totalRow?.c || 0;
 
     res.json({
       ok: true,
@@ -5261,9 +5331,10 @@ app.get("/api/leaderboard", async (req, res) => {
       [type === "streak" ? 500 : limit],
     );
     if (type === "streak") {
-      // Streaks are computed per user from their daily activity.
+      // Streaks are computed from daily activity — for every candidate in one query.
+      const streaks = await streaksFor(rows.filter((r) => r.active_days > 0).map((r) => r.username));
       for (const r of rows) {
-        const s = r.active_days > 0 ? await calcStreak(r.username) : { best: 0, current: 0 };
+        const s = r.active_days > 0 ? streaks.get(r.username) : { best: 0, current: 0 };
         r.best_streak = s.best;
         r.current_streak = s.current;
       }
@@ -5608,6 +5679,24 @@ app.use(
 );
 
 // Nexora Learn: course coding problems + per-user progress
+// Bundled, read-only content (GATE bank, Learn problem set) is the same for
+// everyone and changes only on deploy: let the browser reuse it for a minute,
+// then revalidate cheaply with the ETag Express already sends (304).
+app.get(
+  [
+    "/api/gate/meta",
+    "/api/gate/questions",
+    "/api/gate/questions/:id",
+    "/api/gate/paper/:paperId",
+    "/api/learn/problems",
+    "/api/learn/problems/:slug",
+  ],
+  (req, res, next) => {
+    res.set("Cache-Control", "private, max-age=60");
+    next();
+  },
+);
+
 app.use(createLearnRouter({ get, all, run }));
 
 // GATE CSE / IT / DA past-year question bank
@@ -6098,6 +6187,10 @@ io.on("connection", (socket) => {
     console.log(
       `   OAuth    : GitHub=${!!process.env.GITHUB_CLIENT_ID} Google=${!!process.env.GOOGLE_CLIENT_ID}\n`,
     );
+    // Warm the in-memory problem catalog so the first Nexus visit doesn't pay for it.
+    if (process.env.NODE_ENV !== "test") {
+      getCatalog().catch((e) => console.warn("[catalog] warm-up failed:", e.message));
+    }
   });
 
   /* ── Graceful shutdown ── */
