@@ -454,6 +454,9 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
         '/api/judge',
         {
           problem_id: custom ? undefined : Number(id),
+          // Workshop problems are judged against their stored tests (hidden
+          // ones included) server-side; our list only adds extra cases.
+          custom_problem_id: custom && !learn ? Number(id) : undefined,
           code,
           language,
           testcases: testcases.map((t) => ({
@@ -478,7 +481,7 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
           problemApi.refetch()
         }
       } else {
-        toast.error(`Verdict: ${res.verdict}`, 'Check the testcase results below.')
+        toast.error(`Verdict: ${res.verdict}`, res.message ?? 'Check the testcase results below.')
       }
     } catch (err) {
       toast.error('Submit failed', err instanceof Error ? err.message : undefined)

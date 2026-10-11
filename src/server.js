@@ -1090,8 +1090,9 @@ app.get("/api/problems", async (req, res) => {
       { rating: "p.rating", title: "p.title", id: "p.problem_id" }[sort] ||
       "p.rating";
     const sortDir = order === "desc" ? "DESC" : "ASC";
-    const lim = Math.min(+(limit || 50), 200);
-    const off = +(offset || 0);
+    // Clamp both: LIMIT -1 means "no limit" to SQLite, and NaN binds as NULL.
+    const lim = Math.min(Math.max(Math.trunc(+limit) || 50, 1), 200);
+    const off = Math.max(Math.trunc(+offset) || 0, 0);
 
     const countSql = `SELECT COUNT(*) as total FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id AND pr.username=${meSql()} WHERE ${where.join(" AND ")}`;
     const dataSql = `SELECT p.*, COALESCE(pr.status,'unsolved') as solve_status, pr.attempts, pr.xp_earned, pr.solved_at
@@ -1665,14 +1666,128 @@ app.delete("/api/testcases/:id", async (req, res) => {
 });
 
 /* ========== JUDGE ========== */
+/* Every testcase is a full execution (often a remote compile), so one request
+   may carry only so many of them, and only so much stdin in total. */
+const MAX_JUDGE_TESTCASES = 100;
+const MAX_JUDGE_INPUT_BYTES = 1024 * 1024;
+
+const parseJsonList = (v) => {
+  try {
+    const x = typeof v === "string" ? JSON.parse(v || "[]") : v;
+    return Array.isArray(x) ? x : [];
+  } catch {
+    return [];
+  }
+};
+
+/** One testcase in the shape judge() expects; `extra` overrides fields. */
+const toCase = (tc, extra = {}) => ({
+  id: tc?.id ?? undefined,
+  label: tc?.label ? String(tc.label).slice(0, 60) : undefined,
+  input: String(tc?.input ?? ""),
+  expected_output: String(tc?.expected_output ?? tc?.output ?? ""),
+  ...extra,
+});
+const isBlankCase = (c) => !c.input.trim() && !c.expected_output.trim();
+
+function testcaseCapError(cases) {
+  if (cases.length > MAX_JUDGE_TESTCASES)
+    return `Too many testcases (max ${MAX_JUDGE_TESTCASES} per submission)`;
+  const bytes = cases.reduce((n, c) => n + Buffer.byteLength(c.input), 0);
+  if (bytes > MAX_JUDGE_INPUT_BYTES) return "Testcase input is too large (max 1 MB in total)";
+  return null;
+}
+
+/**
+ * What a platform problem is judged against — loaded here, never taken from
+ * the request (a client-supplied list let anyone "solve" anything by sending
+ * an empty or self-matching set). The statement's scraped samples always
+ * count; the caller's own stored cases are added on top.
+ */
+async function problemTestcases(problemId) {
+  const own = await all(
+    "SELECT id, label, input, expected_output FROM testcases WHERE problem_rowid=? AND username=? ORDER BY id",
+    [problemId, me()],
+  );
+  const cases = own.map((t) => toCase(t)).filter((c) => !isBlankCase(c));
+  const seen = new Set(cases.map((c) => tcKey(c.input, c.expected_output)));
+  const stmt = await get("SELECT samples FROM problem_statements WHERE problem_rowid=?", [problemId]);
+  parseJsonList(stmt?.samples).forEach((s, i) => {
+    const c = toCase(s, { id: undefined, label: `Sample ${i + 1}` });
+    const k = tcKey(c.input, c.expected_output);
+    if (isBlankCase(c) || seen.has(k)) return;
+    seen.add(k);
+    cases.push(c);
+  });
+  return cases;
+}
+
+/** Only a Workshop problem's author (or an admin) may see its hidden tests. */
+function canSeeHiddenTests(req, problem) {
+  const u = me();
+  if (u && problem.creator && problem.creator === u) return true;
+  return getSessionUser(req)?.role === "admin";
+}
+
+/** A Workshop problem's samples (visible) and testcases (hidden). */
+function customProblemTestcases(problem) {
+  const samples = parseJsonList(problem.samples)
+    .map((s, i) => toCase(s, { id: undefined, label: `Sample ${i + 1}` }))
+    .filter((c) => !isBlankCase(c));
+  const hidden = parseJsonList(problem.testcases)
+    .map((t, i) => toCase(t, { id: undefined, label: `Hidden ${i + 1}`, hidden: true }))
+    .filter((c) => !isBlankCase(c));
+  return [...samples, ...hidden];
+}
+
 app.post("/api/judge", judgeLimiter, async (req, res) => {
   try {
-    const { problem_id, code, testcases, language } = req.body;
+    const { problem_id, custom_problem_id, code, testcases, language } = req.body || {};
     const lang = LANG_CONFIG[language] ? language : "cpp";
-    const result = await judge(code, testcases || [], lang);
+    if (testcases != null && (!Array.isArray(testcases) || testcases.length > MAX_JUDGE_TESTCASES)) {
+      return res.status(400).json({ ok: false, error: `testcases must be a list of at most ${MAX_JUDGE_TESTCASES}` });
+    }
+    const clientCases = (testcases || []).map((t) => toCase(t));
+
+    let cases;
+    let recordFor = null; // platform problem whose progress this verdict may update
+    let redactHidden = false;
+    if (problem_id) {
+      const prob = await get("SELECT id FROM problems WHERE id=?", [problem_id]);
+      if (!prob) return res.status(404).json({ ok: false, error: "Problem not found" });
+      cases = await problemTestcases(prob.id);
+      // With nothing stored there is nothing to check, so nothing to record.
+      if (cases.length) recordFor = prob.id;
+    } else if (custom_problem_id) {
+      const p = await get("SELECT creator, samples, testcases FROM custom_problems WHERE id=?", [custom_problem_id]);
+      if (!p) return res.status(404).json({ ok: false, error: "Problem not found" });
+      redactHidden = !canSeeHiddenTests(req, p);
+      // Stored cases always run; the solver's own extra cases ride along.
+      cases = customProblemTestcases(p);
+      const seen = new Set(cases.map((c) => tcKey(c.input, c.expected_output)));
+      for (const c of clientCases) {
+        const k = tcKey(c.input, c.expected_output);
+        if (!seen.has(k)) { seen.add(k); cases.push(c); }
+      }
+    } else {
+      // Practice runs with no stored problem (Learn, scratch): nothing is recorded.
+      cases = clientCases;
+    }
+    const capError = testcaseCapError(cases);
+    if (capError) return res.status(400).json({ ok: false, error: capError });
+
+    const result = await judge(code, cases, lang);
+    if (redactHidden) {
+      result.results = result.results.map((r, i) =>
+        cases[i]?.hidden
+          ? { ...r, input: "", expected: "", actual: "", stderr: r.passed ? "" : "Hidden testcase", hidden: true }
+          : r,
+      );
+    }
 
     // Record submission
-    if (problem_id) {
+    if (recordFor) {
+      const problem_id = recordFor;
       await run(
         `INSERT INTO submissions(username,problem_rowid,code,language,verdict,exec_time_ms,submitted_at,test_results) VALUES(?,?,?,?,?,?,?,?)`,
         [
@@ -1689,11 +1804,14 @@ app.post("/api/judge", judgeLimiter, async (req, res) => {
         ],
       );
 
-      // Update progress
+      // Update progress. XP and the solved count are earned once per problem:
+      // re-submitting an accepted solution must not farm either.
       const existing = await get(
         "SELECT * FROM progress WHERE username=? AND problem_rowid=?",
         [me(), problem_id],
       );
+      const firstSolve = result.verdict === "AC" && existing?.status !== "solved";
+      const gainedXp = firstSolve ? await calcXp(problem_id) : 0;
       if (!existing) {
         await run(
           `INSERT INTO progress(username,problem_rowid,status,attempts,solved_at,xp_earned) VALUES(?,?,?,?,?,?)`,
@@ -1703,7 +1821,7 @@ app.post("/api/judge", judgeLimiter, async (req, res) => {
             result.verdict === "AC" ? "solved" : "attempted",
             1,
             result.verdict === "AC" ? new Date().toISOString() : null,
-            result.verdict === "AC" ? await calcXp(problem_id) : 0,
+            gainedXp,
           ],
         );
       } else {
@@ -1713,10 +1831,7 @@ app.post("/api/judge", judgeLimiter, async (req, res) => {
             : existing.status === "solved"
               ? "solved"
               : "attempted";
-        const xp =
-          result.verdict === "AC" && existing.status !== "solved"
-            ? await calcXp(problem_id)
-            : existing.xp_earned;
+        const xp = firstSolve ? gainedXp : existing.xp_earned;
         await run(
           `UPDATE progress SET status=?, attempts=attempts+1, solved_at=COALESCE(solved_at,?), xp_earned=? WHERE username=? AND problem_rowid=?`,
           [
@@ -1740,10 +1855,10 @@ app.post("/api/judge", judgeLimiter, async (req, res) => {
         [
           me(),
           today,
-          result.verdict === "AC" ? 1 : 0,
-          result.verdict === "AC" ? await calcXp(problem_id) : 0,
-          result.verdict === "AC" ? 1 : 0,
-          result.verdict === "AC" ? await calcXp(problem_id) : 0,
+          firstSolve ? 1 : 0,
+          gainedXp,
+          firstSolve ? 1 : 0,
+          gainedXp,
         ],
       );
 
@@ -1752,7 +1867,14 @@ app.post("/api/judge", judgeLimiter, async (req, res) => {
       invalidateCache();
     }
 
-    res.json({ ok: true, ...result });
+    res.json({
+      ok: true,
+      ...result,
+      recorded: !!recordFor,
+      ...(problem_id && !recordFor
+        ? { message: "This problem has no testcases yet — import the samples or add one, then submit." }
+        : {}),
+    });
   } catch (e) {
     res.status(500).json({ ok: false, error: errMessage(e) });
   }
@@ -1760,9 +1882,12 @@ app.post("/api/judge", judgeLimiter, async (req, res) => {
 
 app.post("/api/run", judgeLimiter, async (req, res) => {
   try {
-    const { code, input, language } = req.body;
+    const { code, input, language } = req.body || {};
     const lang = LANG_CONFIG[language] ? language : "cpp";
-    const result = await quickRun(code, input || "", lang);
+    const stdin = input == null ? "" : String(input);
+    if (Buffer.byteLength(stdin) > MAX_JUDGE_INPUT_BYTES)
+      return res.status(400).json({ ok: false, error: "Input is too large (max 1 MB)" });
+    const result = await quickRun(code, stdin, lang);
     res.json(result);
   } catch (e) {
     res.status(500).json({ ok: false, error: errMessage(e) });
@@ -2032,6 +2157,14 @@ app.post("/api/settings", async (req, res) => {
     // Personal settings only (handles, layout…); keys/values are size-capped.
     for (const [key, value] of Object.entries(req.body || {}).slice(0, 50)) {
       if (!/^[a-z0-9_]{1,64}$/i.test(key) || key.startsWith("stmt_") || key === "last_sync") continue;
+      // A Codeforces handle imports that account's solves (/api/sync-solved),
+      // so one handle can be linked to only one Nexora account.
+      if (key === "cf_handle" && String(value).trim()) {
+        if (!CF_HANDLE_RE.test(String(value).trim()))
+          return res.status(400).json({ ok: false, error: "That is not a valid Codeforces handle" });
+        if (await cfHandleOwnedByOther(String(value).trim()))
+          return res.status(409).json({ ok: false, error: "That Codeforces handle is already linked to another account" });
+      }
       await run("INSERT OR REPLACE INTO settings(username,key,value) VALUES(?,?,?)", [
         me(),
         key,
@@ -2063,13 +2196,32 @@ app.post("/api/reset-progress", async (req, res) => {
 });
 
 /* ========== SYNC SOLVED ========== */
+const CF_HANDLE_RE = /^[A-Za-z0-9_.-]{3,24}$/;
+/** True when another account already has this Codeforces handle linked. */
+async function cfHandleOwnedByOther(handle) {
+  const row = await get(
+    "SELECT username FROM settings WHERE key='cf_handle' AND username<>'' AND username<>? AND LOWER(TRIM(value))=LOWER(?) LIMIT 1",
+    [me(), String(handle).trim()],
+  );
+  return !!row;
+}
+
 app.post("/api/sync-solved", async (req, res) => {
   try {
+    // Only ever the handle linked to the signed-in account — anything in the
+    // request (body/query) is ignored.
     const cfHandle = (
       await get("SELECT value FROM settings WHERE username=? AND key='cf_handle'", [me()])
-    )?.value;
+    )?.value?.trim();
     if (!cfHandle)
       return res.json({ ok: true, synced: 0, message: "No CF handle set" });
+    if (!CF_HANDLE_RE.test(cfHandle))
+      return res.status(400).json({ ok: false, error: "Your saved Codeforces handle is not valid" });
+    if (await cfHandleOwnedByOther(cfHandle))
+      return res.status(409).json({
+        ok: false,
+        error: "That Codeforces handle is linked to more than one account — sync is disabled for it",
+      });
 
     const solvedIds = await fetchCodeforcesSolved(cfHandle);
     let synced = 0;
@@ -3072,12 +3224,23 @@ app.get("/api/weakness-analysis", async (req, res) => {
 });
 
 /* ========== CUSTOM PROBLEMS (WORKSHOP) ========== */
+/* Hidden testcases are the answer key: only the author (or an admin) gets them.
+   Everyone else sees the samples and a count; /api/judge runs the hidden ones
+   server-side via custom_problem_id. */
+function withoutHiddenTests(req, problem) {
+  if (canSeeHiddenTests(req, problem)) return problem;
+  return {
+    ...problem,
+    testcases: "[]",
+    hidden_count: parseJsonList(problem.testcases).length,
+  };
+}
 app.get("/api/custom-problems", async (req, res) => {
   try {
     const problems = await all(
       "SELECT * FROM custom_problems ORDER BY created_at DESC",
     );
-    res.json({ ok: true, problems });
+    res.json({ ok: true, problems: problems.map((p) => withoutHiddenTests(req, p)) });
   } catch (e) {
     res.status(500).json({ ok: false, error: errMessage(e) });
   }
@@ -3089,7 +3252,7 @@ app.get("/api/custom-problems/:id", async (req, res) => {
     ]);
     if (!problem)
       return res.status(404).json({ ok: false, error: "Not found" });
-    res.json({ ok: true, problem });
+    res.json({ ok: true, problem: withoutHiddenTests(req, problem) });
   } catch (e) {
     res.status(500).json({ ok: false, error: errMessage(e) });
   }
@@ -3110,10 +3273,15 @@ app.post("/api/custom-problems", async (req, res) => {
     } = req.body;
     if (!title || typeof title !== "string")
       return res.status(400).json({ ok: false, error: "Title required" });
+    // The author is the signed-in account (authz also pins body.creator) —
+    // never left blank, which would let anyone edit or delete the problem.
+    const creator = me();
+    if (!creator) return res.status(401).json({ ok: false, error: "Please sign in first" });
     const r = await run(
-      `INSERT INTO custom_problems(title,statement,input_spec,output_spec,difficulty,tags,samples,testcases,time_limit,memory_limit,created_at)
-      VALUES(?,?,?,?,?,?,?,?,?,?,?)`,
+      `INSERT INTO custom_problems(creator,title,statement,input_spec,output_spec,difficulty,tags,samples,testcases,time_limit,memory_limit,created_at)
+      VALUES(?,?,?,?,?,?,?,?,?,?,?,?)`,
       [
+        creator,
         title,
         statement || "",
         input_spec || "",
@@ -5331,13 +5499,15 @@ app.post("/api/contests/join", async (req, res) => {
 // Get single contest details (public fields only if participant)
 app.get("/api/contests/:id", async (req, res) => {
   try {
-    const { username } = req.query;
+    // Ownership/enrolment is decided by the session, never by ?username=,
+    // which let anyone read a private contest by naming its creator.
+    const username = me();
     const contest = await get("SELECT * FROM custom_contests WHERE id=?", [
       req.params.id,
     ]);
     if (!contest)
       return res.status(404).json({ ok: false, error: "Not found" });
-    const isOwner = contest.creator === username;
+    const isOwner = !!username && contest.creator === username;
     const isParticipant = username
       ? !!(await get(
           "SELECT id FROM contest_participants WHERE contest_id=? AND username=?",

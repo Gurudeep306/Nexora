@@ -62,7 +62,8 @@ const RULES = [
     adminBypass: true,
     owner: async (req, me) => {
       const p = await get("SELECT creator FROM custom_problems WHERE id=?", [req.params0[1]]);
-      return !p || !p.creator || p.creator === me;
+      // Legacy rows with no recorded author belong to nobody: admin only.
+      return !p || (!!p.creator && p.creator === me);
     },
   }],
 
