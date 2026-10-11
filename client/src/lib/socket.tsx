@@ -11,11 +11,11 @@ export function SocketProvider({ children, enabled = true }: { children: React.R
 
   useEffect(() => {
     if (!enabled || !username) return
+    // Same-origin (Vite proxies /socket.io in dev) so the session cookie rides
+    // along on the handshake; the server derives who we are from it and
+    // registers presence on connect — no username is sent.
     const connection = io({ transports: ['websocket', 'polling'], withCredentials: true })
-    connection.on('connect', () => {
-      connection.emit('register-user', { username })
-      setSocket(connection)
-    })
+    connection.on('connect', () => setSocket(connection))
     connection.on('disconnect', () => setSocket(null))
     return () => {
       connection.disconnect()
