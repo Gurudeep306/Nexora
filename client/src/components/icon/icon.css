@@ -1,0 +1,264 @@
+/*
+  Icon system styles: glyph polish + the <IconBadge> container.
+
+  Container (data-icon-container: none | soft | solid | outline | gradient) and
+  shape (data-icon-shape: circle | squircle | rounded | square) come from the
+  nearest element carrying the attribute: <html> for the app, a preview card
+  for the Theme Centre, or the badge itself (IconBadge container/shape props).
+  "Nearest wins" is done with a specificity ladder:
+    .icon-badge                                   0,1,0  default (soft, squircle)
+    [attr=x] .icon-badge                          0,2,0  any ancestor (<html>)
+    [attr] [attr=x] .icon-badge                   0,3,0  a scope inside it
+    .icon-badge.icon-badge.icon-badge[attr=x]     0,4,0  the badge itself
+  Every rule only sets custom properties; one rule paints them.
+
+  Colours come from the semantic theme tokens only (--color-*), so badges
+  follow every theme in light and dark.
+*/
+
+/* Same order Tailwind declares — keeps utilities (size-12 …) above these rules
+   whichever stylesheet happens to load first. */
+@layer theme, base, components, utilities;
+
+@layer components {
+  /* ── glyphs ───────────────────────────────────────────────────────── */
+
+  .nx-icon {
+    /* Scaling (optical normalisation) stays inside the box: no layout shift. */
+    transform-origin: center;
+    overflow: visible;
+  }
+
+  /* Phosphor duotone: the secondary layer ships at 20% opacity, which vanishes
+     on dark surfaces — tint it per colour scheme instead. */
+  .nx-icon[data-glyph='phosphor:duotone'] [opacity='0.2'] {
+    opacity: 1;
+    fill: color-mix(in oklab, currentColor var(--icon-duotone-mix, 24%), transparent);
+  }
+
+  :root[data-theme='dark'] {
+    --icon-duotone-mix: 32%;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) {
+      --icon-duotone-mix: 32%;
+    }
+  }
+
+  /* ── badge: tones ─────────────────────────────────────────────────── */
+
+  .icon-badge {
+    --ib-c: var(--color-accent-brand);
+    --ib-on: var(--color-on-accent-brand);
+    --ib-size: 2.5rem;
+    --ib-glyph: 54%;
+
+    /* default container: soft */
+    --ib-bg: color-mix(in oklab, var(--ib-c) 14%, transparent);
+    --ib-fg: var(--ib-c);
+    --ib-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ib-c) 22%, transparent);
+    --ib-sheen: 0;
+
+    /* default shape: squircle */
+    --ib-squircle-r: 30%;
+    --ib-radius: var(--ib-squircle-r);
+  }
+
+  .icon-badge[data-tone='neutral'] {
+    --ib-c: var(--color-text-secondary);
+    --ib-on: var(--color-bg-app);
+  }
+  .icon-badge[data-tone='success'] {
+    --ib-c: var(--color-state-success);
+    --ib-on: var(--color-bg-app);
+  }
+  .icon-badge[data-tone='warning'] {
+    --ib-c: var(--color-state-warning);
+    --ib-on: var(--color-bg-app);
+  }
+  .icon-badge[data-tone='danger'] {
+    --ib-c: var(--color-state-error);
+    --ib-on: var(--color-bg-app);
+  }
+  .icon-badge[data-tone='info'] {
+    --ib-c: var(--color-state-info);
+    --ib-on: var(--color-bg-app);
+  }
+  .icon-badge[data-tone='gold'] {
+    --ib-c: var(--color-state-gold);
+    --ib-on: var(--color-bg-app);
+  }
+  .icon-badge[data-tone='streak'] {
+    --ib-c: var(--color-streak, var(--color-state-warning));
+    --ib-on: var(--color-bg-app);
+  }
+
+  /* ── badge: sizes ─────────────────────────────────────────────────── */
+
+  .icon-badge--xs {
+    --ib-size: 1.5rem;
+    --ib-glyph: 62%;
+  }
+  .icon-badge--sm {
+    --ib-size: 2rem;
+    --ib-glyph: 58%;
+  }
+  .icon-badge--md {
+    --ib-size: 2.5rem;
+  }
+  .icon-badge--lg {
+    --ib-size: 3rem;
+  }
+  .icon-badge--xl {
+    --ib-size: 3.5rem;
+    --ib-glyph: 50%;
+  }
+
+  /* ── badge: containers ────────────────────────────────────────────── */
+
+  [data-icon-container='none'] .icon-badge,
+  [data-icon-container] [data-icon-container='none'] .icon-badge,
+  .icon-badge.icon-badge.icon-badge[data-icon-container='none'] {
+    --ib-bg: transparent;
+    --ib-fg: var(--ib-c);
+    --ib-shadow: none;
+    --ib-sheen: 0;
+    --ib-glyph: 74%;
+  }
+
+  [data-icon-container='soft'] .icon-badge,
+  [data-icon-container] [data-icon-container='soft'] .icon-badge,
+  .icon-badge.icon-badge.icon-badge[data-icon-container='soft'] {
+    --ib-bg: color-mix(in oklab, var(--ib-c) 14%, transparent);
+    --ib-fg: var(--ib-c);
+    --ib-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ib-c) 22%, transparent);
+    --ib-sheen: 0;
+  }
+
+  [data-icon-container='solid'] .icon-badge,
+  [data-icon-container] [data-icon-container='solid'] .icon-badge,
+  .icon-badge.icon-badge.icon-badge[data-icon-container='solid'] {
+    --ib-bg: var(--ib-c);
+    --ib-fg: var(--ib-on);
+    --ib-shadow:
+      0 1px 2px color-mix(in oklab, var(--ib-c) 30%, transparent),
+      0 6px 14px -6px color-mix(in oklab, var(--ib-c) 65%, transparent);
+    --ib-sheen: 0.7;
+  }
+
+  [data-icon-container='outline'] .icon-badge,
+  [data-icon-container] [data-icon-container='outline'] .icon-badge,
+  .icon-badge.icon-badge.icon-badge[data-icon-container='outline'] {
+    --ib-bg: color-mix(in oklab, var(--ib-c) 5%, transparent);
+    --ib-fg: var(--ib-c);
+    --ib-shadow: inset 0 0 0 1.5px color-mix(in oklab, var(--ib-c) 58%, transparent);
+    --ib-sheen: 0;
+  }
+
+  [data-icon-container='gradient'] .icon-badge,
+  [data-icon-container] [data-icon-container='gradient'] .icon-badge,
+  .icon-badge.icon-badge.icon-badge[data-icon-container='gradient'] {
+    --ib-bg: linear-gradient(
+      140deg,
+      var(--ib-c),
+      color-mix(in oklab, var(--ib-c) 55%, var(--color-accent-brand-hover))
+    );
+    --ib-fg: var(--ib-on);
+    --ib-shadow:
+      0 1px 2px color-mix(in oklab, var(--ib-c) 30%, transparent),
+      0 8px 18px -8px color-mix(in oklab, var(--ib-c) 75%, transparent);
+    --ib-sheen: 1;
+  }
+
+  /* Where relative colours exist, make the gradient a real hue sweep. */
+  @supports (color: oklch(from red l c h)) {
+    [data-icon-container='gradient'] .icon-badge,
+    [data-icon-container] [data-icon-container='gradient'] .icon-badge,
+    .icon-badge.icon-badge.icon-badge[data-icon-container='gradient'] {
+      --ib-bg: linear-gradient(
+        140deg,
+        oklch(from var(--ib-c) calc(l + 0.06) c calc(h - 28)),
+        oklch(from var(--ib-c) calc(l - 0.04) calc(c * 1.08) calc(h + 32))
+      );
+    }
+  }
+
+  /* ── badge: shapes ────────────────────────────────────────────────── */
+
+  [data-icon-shape='circle'] .icon-badge,
+  [data-icon-shape] [data-icon-shape='circle'] .icon-badge,
+  .icon-badge.icon-badge.icon-badge[data-icon-shape='circle'] {
+    --ib-radius: 9999px;
+    --ib-corner: round;
+  }
+
+  [data-icon-shape='squircle'] .icon-badge,
+  [data-icon-shape] [data-icon-shape='squircle'] .icon-badge,
+  .icon-badge.icon-badge.icon-badge[data-icon-shape='squircle'] {
+    --ib-radius: var(--ib-squircle-r);
+    --ib-corner: squircle;
+  }
+
+  [data-icon-shape='rounded'] .icon-badge,
+  [data-icon-shape] [data-icon-shape='rounded'] .icon-badge,
+  .icon-badge.icon-badge.icon-badge[data-icon-shape='rounded'] {
+    --ib-radius: 22%;
+    --ib-corner: round;
+  }
+
+  [data-icon-shape='square'] .icon-badge,
+  [data-icon-shape] [data-icon-shape='square'] .icon-badge,
+  .icon-badge.icon-badge.icon-badge[data-icon-shape='square'] {
+    --ib-radius: 10%;
+    --ib-corner: round;
+  }
+
+  /* ── badge: paint ─────────────────────────────────────────────────── */
+
+  .icon-badge {
+    position: relative;
+    isolation: isolate;
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    inline-size: var(--ib-size);
+    block-size: var(--ib-size);
+    border-radius: var(--ib-radius);
+    background: var(--ib-bg);
+    color: var(--ib-fg);
+    box-shadow: var(--ib-shadow);
+    transition:
+      background 0.2s ease,
+      color 0.2s ease,
+      box-shadow 0.2s ease,
+      border-radius 0.2s ease;
+  }
+
+  /* True superellipse corners where supported (else the 30% radius). */
+  @supports (corner-shape: squircle) {
+    .icon-badge {
+      --ib-squircle-r: 50%;
+      corner-shape: var(--ib-corner, squircle);
+    }
+  }
+
+  /* Soft top-light on filled containers. */
+  .icon-badge::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: var(--ib-sheen);
+    background: linear-gradient(180deg, oklch(from var(--ib-c) 0.98 0.02 h / 0.3), transparent 55%);
+    box-shadow: inset 0 1px 0 oklch(from var(--ib-c) 0.98 0.03 h / 0.35);
+  }
+
+  :where(.icon-badge) > :where(.icon-badge__glyph) {
+    inline-size: var(--ib-glyph);
+    block-size: var(--ib-glyph);
+  }
+}
