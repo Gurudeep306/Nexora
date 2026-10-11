@@ -375,6 +375,11 @@
 }
 .ai-page-divider strong { color: var(--color-text-secondary); font-weight: 600; }
 
+/* The assistant floats over page content, so it stays opaque even when a
+   glass/wallpaper theme makes --color-bg-surface translucent (index.css
+   `[data-wall]`). --oklch-bg-1 is the theme's solid surface colour. */
+.ai-fab, .ai-window, .ai-select-ask { --color-bg-surface: var(--oklch-bg-1); }
+
 .ai-fab {
   position: fixed;
   z-index: 990;
@@ -421,9 +426,7 @@
   min-width: 0;
   overflow: hidden;
   border: 1px solid var(--color-border);
-  background: color-mix(in oklab, var(--color-bg-surface) 96%, transparent);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  background: var(--color-bg-surface);
   box-shadow: 0 24px 60px -16px rgb(0 0 0 / 0.45), var(--elev-2);
 }
 .ai-window[data-layout="float"] { border-radius: 18px; }
