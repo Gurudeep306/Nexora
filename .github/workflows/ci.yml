@@ -30,6 +30,8 @@ jobs:
           node-version-file: .node-version
           cache: npm
       - run: npm ci --no-audit --no-fund
+      - name: Dependency audit (critical only)
+        run: npm audit --omit=dev --audit-level=critical
       - name: Syntax check
         run: for f in src/*.js src/routes/*.js src/middleware/*.js scripts/*.js; do node --check "$f"; done
       - name: Tests (incl. cloud-database end-to-end)

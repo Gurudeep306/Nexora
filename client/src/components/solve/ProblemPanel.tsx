@@ -36,7 +36,7 @@ function SpecSection({ title, html }: { title: string; html: string }) {
       <h3 className="font-display text-xs tracking-wider text-primary-bright uppercase">{title}</h3>
       <div
         className="statement-html mt-2 text-sm leading-relaxed text-foreground-dim"
-        dangerouslySetInnerHTML={{ __html: prepareMathHtml(sanitizeHtml(html)) }}
+        dangerouslySetInnerHTML={{ __html: sanitizeHtml(prepareMathHtml(html)) }}
       />
     </section>
   )
@@ -131,21 +131,21 @@ export function ProblemPanel({
                 {!custom && (
                   <TranslateBar
                     html={[statement.statement, statement.inputSpec, statement.outputSpec, statement.note].filter(Boolean).join('')}
-                    onResult={(r) => setTranslated(r ? { lang: r.lang, html: sanitizeHtml(r.html) } : null)}
+                    onResult={(r) => setTranslated(r ? { lang: r.lang, html: r.html } : null)}
                   />
                 )}
                 {translated ? (
                   <div
                     ref={statementRef}
                     className="statement-html text-sm leading-relaxed text-foreground-dim [&_img]:max-w-full [&_pre]:overflow-x-auto [&_table]:w-full"
-                    dangerouslySetInnerHTML={{ __html: prepareMathHtml(translated.html) }}
+                    dangerouslySetInnerHTML={{ __html: sanitizeHtml(prepareMathHtml(translated.html)) }}
                   />
                 ) : (
                   <>
                     <div
                       ref={statementRef}
                       className="statement-html text-sm leading-relaxed text-foreground-dim [&_img]:max-w-full [&_pre]:overflow-x-auto [&_table]:w-full"
-                      dangerouslySetInnerHTML={{ __html: prepareMathHtml(sanitizeHtml(statement.statement)) }}
+                      dangerouslySetInnerHTML={{ __html: sanitizeHtml(prepareMathHtml(statement.statement)) }}
                     />
                     <SpecSection title="Input" html={statement.inputSpec} />
                     <SpecSection title="Output" html={statement.outputSpec} />

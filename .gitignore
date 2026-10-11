@@ -56,3 +56,6 @@ venv/
 
 .aider*
 .licenses/
+
+# Local AI-tool config (may hold API keys)
+opencode.json
