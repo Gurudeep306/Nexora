@@ -6,7 +6,36 @@
 const express = require('express');
 const { errMessage } = require("../http-error");
 const { run, get, all } = require('../db');
-const { initLiveDb } = require('../live-db');
+const crypto = require('crypto');
+const {
+  createLiveClass,
+  updateLiveClass,
+  joinLiveClass,
+  leaveLiveClass,
+  closeLiveClassAttendance,
+  addLiveClassMessage,
+  clampInt,
+} = require('../live-db');
+
+const isAdmin = (user) => user?.role === 'admin';
+const notFound = (res) => res.status(404).json({ ok: false, error: 'Class not found' });
+const forbidden = (res) => res.status(403).json({ ok: false, error: 'Not authorized' });
+
+// The class's own teacher or an admin may manage it.
+const canManageClass = (cls, user) => cls.teacher_id === user.username || isAdmin(user);
+
+// Public classes are open to everyone signed in; private ones only to their
+// teacher, admins, and users with a (pending or accepted) invite.
+const INVITE_MATCH = `invite_status IN ('pending', 'accepted') AND (user_id = ? OR (email IS NOT NULL AND email = ?))`;
+
+async function canAccessClass(cls, user) {
+  if (cls.is_public || canManageClass(cls, user)) return true;
+  const invite = await get(
+    `SELECT 1 FROM live_class_invites WHERE live_class_id = ? AND ${INVITE_MATCH}`,
+    [cls.id, user.username, user.email || null]
+  );
+  return !!invite;
+}
 
 function createLiveRouter(deps = {}) {
   const router = express.Router();
@@ -25,10 +54,22 @@ function createLiveRouter(deps = {}) {
     next();
   };
 
+  // Loads :id and checks the caller may see it (or manage it). On failure the
+  // 404/403 is sent here and null is returned.
+  async function loadClass(req, res, { manage = false } = {}) {
+    const cls = await get('SELECT * FROM live_classes WHERE id = ?', [req.params.id]);
+    if (!cls) { notFound(res); return null; }
+    const user = req.session.user;
+    const ok = manage ? canManageClass(cls, user) : await canAccessClass(cls, user);
+    if (!ok) { forbidden(res); return null; }
+    return cls;
+  }
+
   // ========== LIVE CLASSES LIST ==========
   router.get('/classes', isAuthenticated, async (req, res) => {
     try {
-      const { status, limit = 50, offset = 0 } = req.query;
+      const { status } = req.query;
+      const user = req.session.user;
       let where = ['1=1'];
       let params = [];
 
@@ -37,16 +78,16 @@ function createLiveRouter(deps = {}) {
         params.push(status);
       }
 
-      // Only show public classes or classes user is invited to (for students)
-      if (req.session.user.role === 'student') {
-        where.push('(is_public = 1 OR EXISTS(SELECT 1 FROM live_class_invites WHERE live_class_id = live_classes.id AND user_id = ? AND invite_status = ?))');
-        params.push(req.session.user.username, 'accepted');
+      // Non-admins see public classes, their own, and ones they're invited to
+      if (!isAdmin(user)) {
+        where.push(`(is_public = 1 OR teacher_id = ? OR EXISTS(SELECT 1 FROM live_class_invites WHERE live_class_id = live_classes.id AND ${INVITE_MATCH}))`);
+        params.push(user.username, user.username, user.email || null);
       }
 
       const whereClause = where.join(' AND ');
       const classes = await all(
         `SELECT * FROM live_classes WHERE ${whereClause} ORDER BY created_at DESC LIMIT ? OFFSET ?`,
-        [...params, +limit, +offset]
+        [...params, clampInt(req.query.limit, 50, 200), clampInt(req.query.offset, 0, 1e6)]
       );
 
       const total = await get(`SELECT COUNT(*) as count FROM live_classes WHERE ${whereClause}`, params);
@@ -66,17 +107,8 @@ function createLiveRouter(deps = {}) {
   // ========== GET SINGLE CLASS ==========
   router.get('/classes/:id', isAuthenticated, async (req, res) => {
     try {
-      const cls = await get('SELECT * FROM live_classes WHERE id = ?', [req.params.id]);
-      if (!cls) return res.status(404).json({ ok: false, error: 'Class not found' });
-
-      // Check access
-      if (!cls.is_public && req.session.user.role === 'student') {
-        const invite = await get('SELECT * FROM live_class_invites WHERE live_class_id = ? AND user_id = ? AND invite_status = ?',
-          [cls.id, req.session.user.username, 'accepted']);
-        if (!invite && cls.teacher_id !== req.session.user.username) {
-          return res.status(403).json({ ok: false, error: 'Not authorized' });
-        }
-      }
+      const cls = await loadClass(req, res);
+      if (!cls) return;
 
       const participants = await all(
         'SELECT * FROM live_class_participants WHERE live_class_id = ? AND left_at IS NULL ORDER BY joined_at DESC',
@@ -93,7 +125,7 @@ function createLiveRouter(deps = {}) {
         class: cls,
         participants,
         recordings,
-        isTeacher: req.session.user.username === cls.teacher_id || req.session.user.role === 'admin',
+        isTeacher: canManageClass(cls, req.session.user),
         isParticipant: participants.some(p => p.user_id === req.session.user.username),
       });
     } catch (e) {
@@ -131,11 +163,8 @@ function createLiveRouter(deps = {}) {
   // ========== UPDATE CLASS ==========
   router.put('/classes/:id', isTeacher, async (req, res) => {
     try {
-      const cls = await get('SELECT * FROM live_classes WHERE id = ?', [req.params.id]);
-      if (!cls) return res.status(404).json({ ok: false, error: 'Class not found' });
-      if (cls.teacher_id !== req.session.user.username && req.session.user.role !== 'admin') {
-        return res.status(403).json({ ok: false, error: 'Not authorized' });
-      }
+      const cls = await loadClass(req, res, { manage: true });
+      if (!cls) return;
 
       const { title, description, is_public, settings } = req.body;
       await updateLiveClass(req.params.id, {
@@ -154,11 +183,8 @@ function createLiveRouter(deps = {}) {
   // ========== DELETE CLASS ==========
   router.delete('/classes/:id', isTeacher, async (req, res) => {
     try {
-      const cls = await get('SELECT * FROM live_classes WHERE id = ?', [req.params.id]);
-      if (!cls) return res.status(404).json({ ok: false, error: 'Class not found' });
-      if (cls.teacher_id !== req.session.user.username && req.session.user.role !== 'admin') {
-        return res.status(403).json({ ok: false, error: 'Not authorized' });
-      }
+      const cls = await loadClass(req, res, { manage: true });
+      if (!cls) return;
 
       await run('DELETE FROM live_classes WHERE id = ?', [req.params.id]);
       res.json({ ok: true });
@@ -170,11 +196,8 @@ function createLiveRouter(deps = {}) {
   // ========== START CLASS ==========
   router.post('/classes/:id/start', isTeacher, async (req, res) => {
     try {
-      const cls = await get('SELECT * FROM live_classes WHERE id = ?', [req.params.id]);
-      if (!cls) return res.status(404).json({ ok: false, error: 'Class not found' });
-      if (cls.teacher_id !== req.session.user.username && req.session.user.role !== 'admin') {
-        return res.status(403).json({ ok: false, error: 'Not authorized' });
-      }
+      const cls = await loadClass(req, res, { manage: true });
+      if (!cls) return;
 
       await updateLiveClass(req.params.id, {
         status: 'live',
@@ -190,28 +213,16 @@ function createLiveRouter(deps = {}) {
   // ========== END CLASS ==========
   router.post('/classes/:id/end', isTeacher, async (req, res) => {
     try {
-      const cls = await get('SELECT * FROM live_classes WHERE id = ?', [req.params.id]);
-      if (!cls) return res.status(404).json({ ok: false, error: 'Class not found' });
-      if (cls.teacher_id !== req.session.user.username && req.session.user.role !== 'admin') {
-        return res.status(403).json({ ok: false, error: 'Not authorized' });
-      }
+      const cls = await loadClass(req, res, { manage: true });
+      if (!cls) return;
 
       await updateLiveClass(req.params.id, {
         status: 'ended',
         ended_at: new Date().toISOString(),
       });
 
-      // Calculate attendance for all participants
-      await run(`
-        UPDATE live_class_participants 
-        SET left_at = COALESCE(left_at, CURRENT_TIMESTAMP),
-            attendance_seconds = CASE 
-              WHEN left_at IS NULL THEN 
-                (strftime('%s', 'now') - strftime('%s', joined_at))
-              ELSE attendance_seconds 
-            END
-        WHERE live_class_id = ? AND left_at IS NULL
-      `, [req.params.id]);
+      // Close every open attendance interval (adds to earlier visits)
+      await closeLiveClassAttendance(req.params.id);
 
       res.json({ ok: true });
     } catch (e) {
@@ -222,18 +233,9 @@ function createLiveRouter(deps = {}) {
   // ========== JOIN CLASS ==========
   router.post('/classes/:id/join', isAuthenticated, async (req, res) => {
     try {
-      const cls = await get('SELECT * FROM live_classes WHERE id = ?', [req.params.id]);
-      if (!cls) return res.status(404).json({ ok: false, error: 'Class not found' });
+      const cls = await loadClass(req, res);
+      if (!cls) return;
       if (cls.status !== 'live') return res.status(400).json({ ok: false, error: 'Class is not live' });
-
-      // Check access
-      if (!cls.is_public && req.session.user.role === 'student') {
-        const invite = await get('SELECT * FROM live_class_invites WHERE live_class_id = ? AND user_id = ? AND invite_status = ?',
-          [cls.id, req.session.user.username, 'accepted']);
-        if (!invite && cls.teacher_id !== req.session.user.username) {
-          return res.status(403).json({ ok: false, error: 'Not authorized' });
-        }
-      }
 
       const role = cls.teacher_id === req.session.user.username ? 'teacher' : 'student';
       const participant = await joinLiveClass(req.params.id, req.session.user.username,
@@ -241,7 +243,7 @@ function createLiveRouter(deps = {}) {
 
       res.json({ ok: true, participant });
     } catch (e) {
-      res.status(500).json({ ok: false, error: errMessage(e) });
+      res.status(e.status || 500).json({ ok: false, error: errMessage(e) });
     }
   });
 
@@ -258,8 +260,7 @@ function createLiveRouter(deps = {}) {
   // ========== GET PARTICIPANTS ==========
   router.get('/classes/:id/participants', isAuthenticated, async (req, res) => {
     try {
-      const cls = await get('SELECT * FROM live_classes WHERE id = ?', [req.params.id]);
-      if (!cls) return res.status(404).json({ ok: false, error: 'Class not found' });
+      if (!(await loadClass(req, res))) return;
 
       const participants = await all(
         'SELECT * FROM live_class_participants WHERE live_class_id = ? ORDER BY role DESC, joined_at ASC',
@@ -275,10 +276,10 @@ function createLiveRouter(deps = {}) {
   // ========== MESSAGES ==========
   router.get('/classes/:id/messages', isAuthenticated, async (req, res) => {
     try {
-      const { limit = 100, offset = 0 } = req.query;
+      if (!(await loadClass(req, res))) return;
       const messages = await all(
         'SELECT * FROM live_class_messages WHERE live_class_id = ? ORDER BY created_at ASC LIMIT ? OFFSET ?',
-        [req.params.id, +limit, +offset]
+        [req.params.id, clampInt(req.query.limit, 100, 500), clampInt(req.query.offset, 0, 1e6)]
       );
       res.json({ ok: true, messages });
     } catch (e) {
@@ -289,10 +290,10 @@ function createLiveRouter(deps = {}) {
   router.post('/classes/:id/messages', isAuthenticated, async (req, res) => {
     try {
       const { message, message_type } = req.body;
-      if (!message) return res.status(400).json({ ok: false, error: 'Message is required' });
+      if (!message || typeof message !== 'string') return res.status(400).json({ ok: false, error: 'Message is required' });
 
-      const cls = await get('SELECT * FROM live_classes WHERE id = ?', [req.params.id]);
-      if (!cls) return res.status(404).json({ ok: false, error: 'Class not found' });
+      const cls = await loadClass(req, res);
+      if (!cls) return;
       if (cls.status !== 'live') return res.status(400).json({ ok: false, error: 'Class is not live' });
 
       const msg = await addLiveClassMessage(
@@ -300,7 +301,7 @@ function createLiveRouter(deps = {}) {
         req.session.user.username,
         req.session.user.display_name || req.session.user.username,
         message.substring(0, 2000),
-        message_type || 'chat'
+        String(message_type || 'chat').slice(0, 32)
       );
 
       res.json({ ok: true, message: msg });
@@ -312,6 +313,7 @@ function createLiveRouter(deps = {}) {
   // ========== RECORDINGS ==========
   router.get('/classes/:id/recordings', isAuthenticated, async (req, res) => {
     try {
+      if (!(await loadClass(req, res))) return;
       const recordings = await all(
         'SELECT * FROM live_class_recordings WHERE live_class_id = ? ORDER BY created_at DESC',
         [req.params.id]
@@ -325,8 +327,7 @@ function createLiveRouter(deps = {}) {
   router.post('/classes/:id/recordings', isTeacher, async (req, res) => {
     try {
       const { recording_type, file_url, duration_ms, metadata } = req.body;
-      const cls = await get('SELECT * FROM live_classes WHERE id = ?', [req.params.id]);
-      if (!cls) return res.status(404).json({ ok: false, error: 'Class not found' });
+      if (!(await loadClass(req, res, { manage: true }))) return;
 
       const result = await run(
         'INSERT INTO live_class_recordings (live_class_id, recording_type, file_url, duration_ms, status, metadata_json) VALUES (?, ?, ?, ?, ?, ?)',
@@ -342,8 +343,8 @@ function createLiveRouter(deps = {}) {
   router.post('/classes/:id/publish-recording', isTeacher, async (req, res) => {
     try {
       const { recording_id, explain_session_id } = req.body;
-      const cls = await get('SELECT * FROM live_classes WHERE id = ?', [req.params.id]);
-      if (!cls) return res.status(404).json({ ok: false, error: 'Class not found' });
+      const cls = await loadClass(req, res, { manage: true });
+      if (!cls) return;
 
       const recording = await get('SELECT * FROM live_class_recordings WHERE id = ? AND live_class_id = ?',
         [recording_id, req.params.id]);
@@ -366,10 +367,11 @@ function createLiveRouter(deps = {}) {
     try {
       const { user_id, email } = req.body;
       if (!user_id && !email) return res.status(400).json({ ok: false, error: 'User ID or email required' });
+      if (!(await loadClass(req, res, { manage: true }))) return;
 
       const result = await run(
         'INSERT INTO live_class_invites (live_class_id, user_id, email, invite_status, invite_token) VALUES (?, ?, ?, ?, ?)',
-        [req.params.id, user_id || null, email || null, 'pending', Math.random().toString(36).slice(2, 12)]
+        [req.params.id, user_id || null, email || null, 'pending', crypto.randomBytes(12).toString('hex')]
       );
 
       res.json({ ok: true, id: result.lastID });
@@ -381,6 +383,7 @@ function createLiveRouter(deps = {}) {
   // ========== ATTENDANCE ==========
   router.get('/classes/:id/attendance', isTeacher, async (req, res) => {
     try {
+      if (!(await loadClass(req, res, { manage: true }))) return;
       const attendance = await all(
         `SELECT p.user_id, p.user_name, p.role, p.joined_at, p.left_at, p.attendance_seconds,
           p.mic_enabled, p.camera_enabled, p.hand_raised
