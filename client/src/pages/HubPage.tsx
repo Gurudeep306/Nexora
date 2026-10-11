@@ -53,15 +53,18 @@ export default function HubPage() {
   const statsApi = useApi<StatsResponse>(
     () => api.get<StatsResponse>('/api/stats', { query: { username: username || undefined } }),
     [username],
+    { cacheKey: `stats:${username}` },
   )
   const perfApi = useApi<PerformanceResponse>(
     () => api.get<PerformanceResponse>('/api/performance'),
     [],
+    { cacheKey: 'performance' },
   )
 
   const settingsApi = useApi<{ settings: Record<string, string> }>(
     () => api.get<{ settings: Record<string, string> }>('/api/settings'),
     [],
+    { cacheKey: 'settings' },
   )
   const dailyGoal = Math.min(Math.max(Number(settingsApi.data?.settings?.daily_goal) || 3, 1), 50)
 

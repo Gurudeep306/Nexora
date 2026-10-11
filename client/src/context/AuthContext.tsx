@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react'
 import { api } from '@/lib/api'
+import { setApiCacheScope } from '@/hooks/useApi'
 
 export interface User {
   id?: number
@@ -71,6 +72,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [oauthPending, setOauthPending] = useState<OAuthPending | null>(null)
   const [loading, setLoading] = useState(true)
   const [revision, setRevision] = useState(0)
+  // Cached page data belongs to one account: drop it the moment the user
+  // changes (set during render so no child ever reads another user's cache).
+  if (!loading) setApiCacheScope(user?.username ?? null)
 
   const refresh = useCallback(async () => {
     try {
