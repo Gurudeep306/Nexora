@@ -1,26 +1,10 @@
-import {
-  House,
-  Swords,
-  Trophy,
-  Hammer,
-  Network,
-  BarChart3,
-  Medal,
-  GraduationCap,
-  Users,
-  History,
-  Bookmark,
-  User,
-  Settings,
-  Clapperboard,
-  Blocks,
-  type LucideIcon,
-} from 'lucide-react'
+import type { IconName } from '@/components/icon/names'
 
 export interface NavItem {
   to: string
   label: string
-  icon: LucideIcon
+  /** Semantic icon — render with <Icon name={item.icon} />. */
+  icon: IconName
   end?: boolean
   /** Served by Express as a separate page (not a client route) — full page load */
   external?: boolean
@@ -37,30 +21,30 @@ export const NAV_SECTIONS: NavSection[] = [
   {
     title: 'Play',
     items: [
-      { to: '/hub', label: 'Home', icon: House },
-      { to: '/problems', label: 'Problems', icon: Swords },
-      { to: '/contests', label: 'Contests', icon: Trophy },
-      { to: '/workshop', label: 'Workshop', icon: Hammer },
+      { to: '/hub', label: 'Home', icon: 'home' },
+      { to: '/problems', label: 'Problems', icon: 'problems' },
+      { to: '/contests', label: 'Contests', icon: 'contests' },
+      { to: '/workshop', label: 'Workshop', icon: 'workshop' },
     ],
   },
   {
     title: 'Grow',
     items: [
-      { to: '/nexus', label: 'Nexus', icon: Network },
-      { to: '/analytics', label: 'Analytics', icon: BarChart3 },
-      { to: '/achievements', label: 'Achievements', icon: Medal },
-      { to: '/learn', label: 'Learn', icon: GraduationCap },
+      { to: '/nexus', label: 'Nexus', icon: 'nexus' },
+      { to: '/analytics', label: 'Analytics', icon: 'analytics' },
+      { to: '/achievements', label: 'Achievements', icon: 'achievements' },
+      { to: '/learn', label: 'Learn', icon: 'learn' },
     ],
   },
   {
     title: 'Connect',
-    items: [{ to: '/social', label: 'Social', icon: Users }],
+    items: [{ to: '/social', label: 'Social', icon: 'social' }],
   },
   {
     title: 'Library',
     items: [
-      { to: '/submissions', label: 'Submissions', icon: History },
-      { to: '/bookmarks', label: 'Bookmarks', icon: Bookmark },
+      { to: '/submissions', label: 'Submissions', icon: 'submissions' },
+      { to: '/bookmarks', label: 'Bookmarks', icon: 'bookmarks' },
     ],
   },
 ]
@@ -69,14 +53,14 @@ export const NAV_SECTIONS: NavSection[] = [
 export const CREATE_SECTION: NavSection = {
   title: 'Create',
   items: [
-    { to: '/studio', label: 'Creator Studio', icon: Clapperboard, external: true, adminOnly: true },
-    { to: '/forgebuilder', label: 'ForgeBuilder', icon: Blocks, external: true, adminOnly: true },
+    { to: '/studio', label: 'Creator Studio', icon: 'studio', external: true, adminOnly: true },
+    { to: '/forgebuilder', label: 'ForgeBuilder', icon: 'builder', external: true, adminOnly: true },
   ],
 }
 
 export const ACCOUNT_ITEMS: NavItem[] = [
-  { to: '/profile', label: 'Profile', icon: User },
-  { to: '/settings', label: 'Settings', icon: Settings },
+  { to: '/profile', label: 'Profile', icon: 'profile' },
+  { to: '/settings', label: 'Settings', icon: 'settings' },
 ]
 
 /** Section + label for the current path — used by the topbar breadcrumbs. */

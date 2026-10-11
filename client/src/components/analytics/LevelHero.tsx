@@ -1,8 +1,8 @@
 import { motion } from 'motion/react'
-import { CheckCircle2, Clock, Flame, Zap } from 'lucide-react'
 import { Card, CardContent, Progress } from '@/components/ui'
 import { cn, formatNumber } from '@/lib/utils'
 import type { FullPerformanceResponse } from './types'
+import { Icon } from '@/components/icon/Icon'
 
 /** Hero panel: current rift level, dual gates (XP + solves) toward the next level, pace metrics. */
 export function LevelHero({ perf }: { perf: FullPerformanceResponse }) {
@@ -28,7 +28,7 @@ export function LevelHero({ perf }: { perf: FullPerformanceResponse }) {
               <p className="text-[10px] font-semibold tracking-wider text-foreground-faint uppercase">Current rift</p>
               <p className="font-display text-xl tracking-wide text-foreground">{lvl.name}</p>
               <p className="mt-0.5 font-mono text-xs text-foreground-dim tabular-nums">
-                <Zap className="mr-1 inline size-3 text-primary-bright" aria-hidden="true" />
+                <Icon name="bolt" className="mr-1 inline size-3 text-primary-bright" aria-hidden="true" />
                 {formatNumber(perf.totalXp)} XP total
               </p>
             </div>
@@ -42,7 +42,7 @@ export function LevelHero({ perf }: { perf: FullPerformanceResponse }) {
                   Next rift: <span className="font-display tracking-wider text-primary-bright">{next.name}</span>
                   {next.daysEstimate != null && (
                     <span className="ml-2 inline-flex items-center gap-1 font-mono text-[11px] text-foreground-faint">
-                      <Clock className="size-3" aria-hidden="true" /> ~{next.daysEstimate}d at current pace
+                      <Icon name="clock" className="size-3" aria-hidden="true" /> ~{next.daysEstimate}d at current pace
                     </span>
                   )}
                 </p>
@@ -74,7 +74,7 @@ export function LevelHero({ perf }: { perf: FullPerformanceResponse }) {
               </>
             ) : (
               <p className="flex items-center gap-2 font-display text-sm tracking-wider text-gold">
-                <CheckCircle2 className="size-4" aria-hidden="true" /> MAX LEVEL REACHED — the rift bows to you
+                <Icon name="check-circle" className="size-4" aria-hidden="true" /> MAX LEVEL REACHED — the rift bows to you
               </p>
             )}
           </div>
@@ -91,7 +91,7 @@ export function LevelHero({ perf }: { perf: FullPerformanceResponse }) {
             </div>
             <div className="rounded-lg border border-border bg-surface-2 px-3 py-2 text-center lg:text-right">
               <p className="flex items-center justify-center gap-1 text-[10px] font-semibold tracking-wider text-foreground-faint uppercase lg:justify-end">
-                <Flame className="size-3 text-streak" aria-hidden="true" /> Streak
+                <Icon name="flame" className="size-3 text-streak" aria-hidden="true" /> Streak
               </p>
               <p className="font-display text-lg text-warning tabular-nums">
                 {perf.streak.current}

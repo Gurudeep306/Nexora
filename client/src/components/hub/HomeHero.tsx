@@ -1,20 +1,11 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'motion/react'
-import {
-  ArrowRight,
-  Crown,
-  Flame,
-  GraduationCap,
-  Sparkles,
-  Swords,
-  Target,
-  Zap,
-  type LucideIcon,
-} from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { AnimatedNumber, Avatar, Badge, XpBar } from '@/components/ui'
 import { cn, formatNumber } from '@/lib/utils'
 import type { StatsResponse } from './types'
+import { Icon, IconBadge, type IconName } from '@/components/icon/Icon'
 
 /** Circular progress toward today's solve goal. */
 function GoalRing({ done, goal }: { done: number; goal: number }) {
@@ -52,24 +43,19 @@ function GoalRing({ done, goal }: { done: number; goal: number }) {
 
 /** One stat, styled like the feature tiles on the Learn page. */
 function StatTile({
-  icon: Icon,
+  icon,
   label,
   value,
   sub,
 }: {
-  icon: LucideIcon
+  icon: IconName
   label: string
   value: ReactNode
   sub?: ReactNode
 }) {
   return (
     <div className="card-neon flex items-center gap-3 p-3.5 transition-all duration-200">
-      <span
-        data-icon-pod
-        className="icon-pod hidden size-10 shrink-0 items-center justify-center sm:flex"
-      >
-        <Icon className="size-5" aria-hidden="true" />
-      </span>
+      <IconBadge name={icon} boxClassName="hidden sm:inline-flex" />
       <div className="min-w-0 flex-1">
         <p className="mb-0 text-[12px] font-medium text-text-muted">{label}</p>
         <p className="mb-0 truncate text-[20px] leading-tight font-bold text-text-primary tabular-nums">{value}</p>
@@ -130,14 +116,14 @@ export function HomeHero({
             </div>
             <div className="mt-4 flex flex-wrap items-center gap-2">
               <Badge variant="primary">
-                <Zap aria-hidden="true" /> Level {level.level} · {level.name}
+                <Icon name="bolt" aria-hidden="true" /> Level {level.level} · {level.name}
               </Badge>
               <Badge variant="gold">
-                <Sparkles aria-hidden="true" /> {title.current.title}
+                <Icon name="sparkles" aria-hidden="true" /> {title.current.title}
               </Badge>
               {current > 0 && (
                 <Badge variant="warning">
-                  <Flame aria-hidden="true" /> {current}-day streak
+                  <Icon name="flame" aria-hidden="true" /> {current}-day streak
                 </Badge>
               )}
             </div>
@@ -161,12 +147,12 @@ export function HomeHero({
             <GoalRing done={todayStats.solved} goal={dailyGoal} />
             <div className="flex flex-wrap items-center gap-2.5">
               <Link to="/problems" className="btn-primary group inline-flex items-center gap-2 !no-underline">
-                <Swords className="size-4" aria-hidden="true" />
+                <Icon name="problems" className="size-4" aria-hidden="true" />
                 Solve problems
                 <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
               </Link>
               <Link to="/learn" className="btn-secondary inline-flex items-center gap-2 !no-underline">
-                <GraduationCap className="size-4" aria-hidden="true" />
+                <Icon name="learn" className="size-4" aria-hidden="true" />
                 Continue learning
               </Link>
             </div>
@@ -175,25 +161,25 @@ export function HomeHero({
 
         <div className="mt-7 grid grid-cols-2 gap-3 lg:grid-cols-4">
           <StatTile
-            icon={Zap}
+            icon="bolt"
             label="Total XP"
             value={<AnimatedNumber value={stats.totalXp} />}
             sub={`${formatNumber(level.xpInLevel)} / ${formatNumber(level.xpForNext)} this level`}
           />
           <StatTile
-            icon={Flame}
+            icon="flame"
             label="Streak"
             value={<><AnimatedNumber value={current} /> {current === 1 ? 'day' : 'days'}</>}
             sub={`Best: ${stats.streak.best} ${stats.streak.best === 1 ? 'day' : 'days'}`}
           />
           <StatTile
-            icon={Target}
+            icon="target"
             label="Solved"
             value={<AnimatedNumber value={stats.solved} />}
             sub={`${stats.accuracy}% accuracy`}
           />
           <StatTile
-            icon={Crown}
+            icon="crown"
             label="Rank"
             value={title.current.title}
             sub={title.next ? `${formatNumber(title.xpToNext)} XP to ${title.next.title}` : 'Highest rank'}
