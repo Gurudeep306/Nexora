@@ -10,6 +10,8 @@ const path = require('path');
 const fs = require('fs');
 const rateLimit = require('express-rate-limit');
 const eldb = require('../explainlab-db');
+const { runTask } = require('../ai/agent');
+const { sendError } = require('./agent');
 
 const EDIT = { edit: true };
 const VIEW = { edit: false };
@@ -17,7 +19,7 @@ const forbid = (res) => res.status(403).json({ ok: false, error: 'Unauthorized' 
 const clampInt = (v, def, max) => Math.min(Math.max(parseInt(v) || def, 0), max);
 
 function createExplainLabRouter(deps) {
-  const { get, all, run, fetch, fs, getSessionUser, requireAuthenticatedUser, _groqChat } = deps;
+  const { get, all, run, fetch, fs, getSessionUser, requireAuthenticatedUser } = deps;
   const router = express.Router();
 
   // Upload configuration for ExplainLab media
@@ -863,204 +865,48 @@ function createExplainLabRouter(deps) {
   });
 
   // ==================== AI Assistant APIs ====================
+  // All five go through the Groq agent (src/ai/agent.js runTask). Responses keep
+  // their original shapes; AI errors map to 503 (not configured), 429 (busy /
+  // daily budget) etc. via sendError.
 
-  router.post('/api/explainlab/sessions/:id/ai/summary', requireAuthenticatedUser, async (req, res) => {
-    try {
-      const session = await loadSession(req, res, req.params.id, VIEW);
-      if (!session) return;
+  const AI_ENDPOINTS = [
+    // [path, mode, output_type, response key, stored-content key]
+    ['summary', 'el_summary', 'summary', 'summary', 'summary'],
+    ['notes', 'el_notes', 'notes', 'notes_html', 'notes_html'],
+    ['full-explanation', 'el_full', 'full_explanation', 'explanation_html', 'explanation_html'],
+    ['quiz', 'el_quiz', 'quiz', 'quiz', 'questions'],
+    ['flashcards', 'el_flashcards', 'flashcards', 'flashcards', 'cards'],
+  ];
 
-      const apiKey = process.env.GROQ_API_KEY || 'kronos-sovereign';
-
-      // Get events for context
-      const events = await eldb.getEventsBySession(req.params.id);
-      const markers = await eldb.getMarkersBySession(req.params.id);
-
-      const prompt = `Create a concise summary of this teaching session. Title: "${session.title}". 
-      Description: ${session.description || 'No description'}. 
-      Key moments: ${markers.map(m => `${m.title} at ${m.timestamp_ms}ms`).join(', ')}.
-      Return a short paragraph summary (3-5 sentences).`;
-
-      const result = await _groqChat(apiKey, [
-        { role: 'system', content: 'You are an educational content summarizer. Create clear, helpful summaries of teaching sessions.' },
-        { role: 'user', content: prompt }
-      ], { maxTokens: 500, temperature: 0.3 });
-
-      if (!result.ok) return res.json({ ok: false, error: result.error });
-
-      // Save AI output
-      await eldb.saveAIOutput({
-        session_id: req.params.id,
-        output_type: 'summary',
-        content_json: JSON.stringify({ summary: result.content }),
-        created_by: req.sessionUser.username
-      });
-
-      res.json({ ok: true, summary: result.content });
-    } catch (e) {
-      res.status(500).json({ ok: false, error: errMessage(e) });
-    }
-  });
-
-  router.post('/api/explainlab/sessions/:id/ai/notes', requireAuthenticatedUser, async (req, res) => {
-    try {
-      const session = await loadSession(req, res, req.params.id, VIEW);
-      if (!session) return;
-
-      const apiKey = process.env.GROQ_API_KEY || 'kronos-sovereign';
-
-      const prompt = `Based on this teaching session titled "${session.title}", generate structured typed notes in HTML format.
-      Include: key concepts, important formulas, examples, and common mistakes.
-      Use proper HTML tags (<h2>, <h3>, <p>, <ul>, <li>, <code>, <strong>).
-      Description: ${session.description || 'No description'}.`;
-
-      const result = await _groqChat(apiKey, [
-        { role: 'system', content: 'You are an expert educational note-taker. Create well-structured HTML notes from teaching content.' },
-        { role: 'user', content: prompt }
-      ], { maxTokens: 3000, temperature: 0.2 });
-
-      if (!result.ok) return res.json({ ok: false, error: result.error });
-
-      await eldb.saveAIOutput({
-        session_id: req.params.id,
-        output_type: 'notes',
-        content_json: JSON.stringify({ notes_html: result.content }),
-        created_by: req.sessionUser.username
-      });
-
-      res.json({ ok: true, notes_html: result.content });
-    } catch (e) {
-      res.status(500).json({ ok: false, error: errMessage(e) });
-    }
-  });
-
-  router.post('/api/explainlab/sessions/:id/ai/full-explanation', requireAuthenticatedUser, async (req, res) => {
-    try {
-      const session = await loadSession(req, res, req.params.id, VIEW);
-      if (!session) return;
-
-      const apiKey = process.env.GROQ_API_KEY || 'kronos-sovereign';
-
-      const prompt = `Create a comprehensive full explanation for this teaching session titled "${session.title}".
-      
-      Structure the explanation with these sections:
-      1. Introduction - What is this topic?
-      2. Prerequisites - What should students know before?
-      3. Main Concept - Detailed explanation
-      4. Step-by-step breakdown
-      5. Examples and applications
-      6. Common mistakes to avoid
-      7. Summary and key takeaways
-      8. Practice suggestions
-
-      Use proper HTML formatting with headings, paragraphs, lists, and code blocks where appropriate.
-      Description: ${session.description || 'No description'}.`;
-
-      const result = await _groqChat(apiKey, [
-        { role: 'system', content: 'You are an expert educator. Create comprehensive, well-structured explanations for students.' },
-        { role: 'user', content: prompt }
-      ], { maxTokens: 4000, temperature: 0.2 });
-
-      if (!result.ok) return res.json({ ok: false, error: result.error });
-
-      await eldb.saveAIOutput({
-        session_id: req.params.id,
-        output_type: 'full_explanation',
-        content_json: JSON.stringify({ explanation_html: result.content }),
-        created_by: req.sessionUser.username
-      });
-
-      res.json({ ok: true, explanation_html: result.content });
-    } catch (e) {
-      res.status(500).json({ ok: false, error: errMessage(e) });
-    }
-  });
-
-  router.post('/api/explainlab/sessions/:id/ai/quiz', requireAuthenticatedUser, async (req, res) => {
-    try {
-      const session = await loadSession(req, res, req.params.id, VIEW);
-      if (!session) return;
-
-      const apiKey = process.env.GROQ_API_KEY || 'kronos-sovereign';
-
-      const prompt = `Generate 5 multiple-choice quiz questions based on this teaching session titled "${session.title}".
-      Return ONLY a valid JSON array in this format:
-      [
-        {
-          "question": "Question text?",
-          "options": ["Option A", "Option B", "Option C", "Option D"],
-          "correctIndex": 0,
-          "explanation": "Why this answer is correct"
-        }
-      ]
-      Description: ${session.description || 'No description'}.`;
-
-      const result = await _groqChat(apiKey, [
-        { role: 'system', content: 'You are an expert quiz creator. Generate valid JSON quiz questions.' },
-        { role: 'user', content: prompt }
-      ], { maxTokens: 2000, temperature: 0.3 });
-
-      if (!result.ok) return res.json({ ok: false, error: result.error });
-
-      let quiz;
+  for (const [route, mode, outputType, responseKey, storedKey] of AI_ENDPOINTS) {
+    router.post(`/api/explainlab/sessions/:id/ai/${route}`, requireAuthenticatedUser, async (req, res) => {
       try {
-        quiz = JSON.parse(result.content);
-      } catch {
-        return res.json({ ok: false, error: 'Failed to parse quiz JSON' });
+        const session = await loadSession(req, res, req.params.id, VIEW);
+        if (!session) return;
+        const markers = mode === 'el_summary' ? await eldb.getMarkersBySession(req.params.id) : [];
+        const result = await runTask(
+          mode,
+          {
+            title: session.title,
+            description: session.description,
+            markers: markers.map((m) => `${m.title} at ${m.timestamp_ms}ms`).join(', '),
+          },
+          { user: req.sessionUser },
+        );
+
+        await eldb.saveAIOutput({
+          session_id: req.params.id,
+          output_type: outputType,
+          content_json: JSON.stringify({ [storedKey]: result }),
+          created_by: req.sessionUser.username,
+        });
+
+        res.json({ ok: true, [responseKey]: result });
+      } catch (e) {
+        sendError(res, e, `explainlab.ai.${route}`);
       }
-
-      await eldb.saveAIOutput({
-        session_id: req.params.id,
-        output_type: 'quiz',
-        content_json: JSON.stringify({ questions: quiz }),
-        created_by: req.sessionUser.username
-      });
-
-      res.json({ ok: true, quiz });
-    } catch (e) {
-      res.status(500).json({ ok: false, error: errMessage(e) });
-    }
-  });
-
-  router.post('/api/explainlab/sessions/:id/ai/flashcards', requireAuthenticatedUser, async (req, res) => {
-    try {
-      const session = await loadSession(req, res, req.params.id, VIEW);
-      if (!session) return;
-
-      const apiKey = process.env.GROQ_API_KEY || 'kronos-sovereign';
-
-      const prompt = `Generate 10 flashcards for quick revision based on this teaching session titled "${session.title}".
-      Return ONLY a valid JSON array in this format:
-      [
-        {"front": "Term or question", "back": "Definition or answer"}
-      ]
-      Description: ${session.description || 'No description'}.`;
-
-      const result = await _groqChat(apiKey, [
-        { role: 'system', content: 'You are an expert at creating flashcards for students. Generate valid JSON.' },
-        { role: 'user', content: prompt }
-      ], { maxTokens: 2000, temperature: 0.3 });
-
-      if (!result.ok) return res.json({ ok: false, error: result.error });
-
-      let flashcards;
-      try {
-        flashcards = JSON.parse(result.content);
-      } catch {
-        return res.json({ ok: false, error: 'Failed to parse flashcards JSON' });
-      }
-
-      await eldb.saveAIOutput({
-        session_id: req.params.id,
-        output_type: 'flashcards',
-        content_json: JSON.stringify({ cards: flashcards }),
-        created_by: req.sessionUser.username
-      });
-
-      res.json({ ok: true, flashcards });
-    } catch (e) {
-      res.status(500).json({ ok: false, error: errMessage(e) });
-    }
-  });
+    });
+  }
 
   // ==================== Teacher Dashboard APIs ====================
 

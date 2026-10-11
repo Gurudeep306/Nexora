@@ -163,4 +163,4 @@ function createLearnRouter({ get, all, run }) {
   return router;
 }
 
-module.exports = { createLearnRouter };
+module.exports = { createLearnRouter, findProblem };
