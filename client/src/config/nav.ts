@@ -14,7 +14,6 @@ import {
   User,
   Settings,
   Clapperboard,
-  PenTool,
   Blocks,
   type LucideIcon,
 } from 'lucide-react'
@@ -73,7 +72,6 @@ export const CREATE_SECTION: NavSection = {
   title: 'Create',
   items: [
     { to: '/studio', label: 'Creator Studio', icon: Clapperboard, external: true, adminOnly: true },
-    { to: '/explainlab', label: 'ExplainLab', icon: PenTool, external: true },
     { to: '/forgebuilder', label: 'ForgeBuilder', icon: Blocks, external: true, adminOnly: true },
   ],
 }

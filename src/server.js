@@ -39,12 +39,10 @@ const { createLearningRouter } = require("./routes/learning");
 const { createLearnRouter } = require("./routes/learn");
 const { createGateRouter } = require("./routes/gate");
 const { createStudioRouter } = require("./routes/studio");
-const { createExplainLabRouter } = require("./routes/explainlab");
 const { createAgentRouter } = require("./routes/agent");
 const { weaknessAnalysis } = require("./ai/data");
 const { createForgeRouter } = require("./routes/forge");
 const { createLiveRouter } = require("./routes/live");
-const { initExplainLabDb } = require("./explainlab-db");
 const { initForgeDb } = require("./forge-db");
 const { initLiveDb } = require("./live-db");
 const {
@@ -937,7 +935,7 @@ app.use(
     etag: true,
     lastModified: true,
     // Resolve extensionless paths to their .html file so the sidebar links
-    // /forgebuilder, /live-class, /explainlab serve the real pages instead
+    // /forgebuilder, /live-class serve the real pages instead
     // of falling through to the SPA catch-all (which served index.html).
     extensions: ["html"],
     setHeaders(res, filePath) {
@@ -5570,11 +5568,6 @@ app.use(
   }),
 );
 
-// Initialize ExplainLab database
-const _explainInit = initExplainLabDb().catch((e) =>
-  console.error("[ExplainLab] DB init error:", e.message),
-);
-
 // Initialize ForgeBuilder database
 const _forgeInit = initForgeDb().catch((e) =>
   console.error("[ForgeBuilder] DB init error:", e.message),
@@ -5583,19 +5576,6 @@ const _forgeInit = initForgeDb().catch((e) =>
 // Initialize LiveClass database
 const _liveInit = initLiveDb().catch((e) =>
   console.error("[LiveClass] DB init error:", e.message),
-);
-
-app.use(
-  createExplainLabRouter({
-    all,
-    fetch,
-    fs,
-    get,
-    getSessionUser,
-    path,
-    requireAuthenticatedUser,
-    run,
-  }),
 );
 
 app.use(
@@ -6038,7 +6018,7 @@ io.on("connection", (socket) => {
 
 (async () => {
   await initDb();
-  await Promise.all([_explainInit, _forgeInit, _liveInit]);
+  await Promise.all([_forgeInit, _liveInit]);
   // Give every account its own progress/XP/settings (one-time, idempotent).
   await migratePerUser();
   // Award achievements already earned by existing progress (once per user).

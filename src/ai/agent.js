@@ -3,7 +3,7 @@
 
    runChat()  — streaming tutor/assistant chat with tools, per-user history.
    runTask()  — one-shot, non-streaming task (modes.js): completion, fix,
-                coach, translate, ExplainLab, studio, GATE narrative, …
+                coach, translate, studio, GATE narrative, …
 
    Both enforce: GROQ_API_KEY configured (else 503), and the per-user daily
    token budget (AI_DAILY_TOKENS, else 429). The user is always the session

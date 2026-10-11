@@ -18,7 +18,6 @@ import {
   FlaskConical,
   GraduationCap,
   Network,
-  PenTool,
   Sparkles,
   Swords,
   Trophy,
@@ -413,7 +412,7 @@ export default function LandingPage() {
               </div>
             </div>
           </Spotlight>
-          <Spotlight className="p-6 md:col-span-2">
+          <Spotlight className="p-6 md:col-span-3">
             <FeatureHead icon={<FlaskConical />} title="AI Lab" text={`${FACTS.aiProblems} hands-on problems across ML, deep learning, NLP, vision, generative AI and RL. Implement the maths yourself in Python.`} />
             <div className="mt-4 flex flex-wrap gap-1.5">
               {['ML', 'DL', 'NLP', 'CV', 'GenAI', 'RL'].map((d) => (
@@ -421,11 +420,7 @@ export default function LandingPage() {
               ))}
             </div>
           </Spotlight>
-          <Spotlight className="p-6 md:col-span-2">
-            <FeatureHead icon={<PenTool />} title="ExplainLab" text="Recorded whiteboard explanations with synced code, notes and questions. Watch, pause, ask." />
-            <Whiteboard />
-          </Spotlight>
-          <Spotlight className="p-6 md:col-span-2">
+          <Spotlight className="p-6 md:col-span-3">
             <FeatureHead icon={<Network />} title="The Nexus skill map" text="Skill nodes across zones. Master one to unlock the next." />
             <MiniGraph />
           </Spotlight>
@@ -684,25 +679,6 @@ function MiniGraph() {
           strokeWidth="1"
         />
       ))}
-    </svg>
-  )
-}
-
-function Whiteboard() {
-  return (
-    <svg viewBox="0 0 200 70" className="mt-4 h-20 w-full" aria-hidden="true">
-      <path
-        d="M10 55 C 30 10, 50 10, 70 40 S 110 70, 130 30 S 170 5, 190 25"
-        fill="none"
-        className="wb-stroke stroke-cyan motion-safe:animate-[draw_4s_ease-in-out_infinite]"
-        strokeWidth="2.2"
-        strokeLinecap="round"
-        strokeDasharray="300"
-        strokeDashoffset="300"
-      />
-      <circle cx="70" cy="40" r="4" className="fill-accent" />
-      <circle cx="130" cy="30" r="4" className="fill-primary-bright" />
-      <style>{`@keyframes draw{0%{stroke-dashoffset:300}55%,100%{stroke-dashoffset:0}}@media (prefers-reduced-motion: reduce){.wb-stroke{stroke-dashoffset:0}}`}</style>
     </svg>
   )
 }

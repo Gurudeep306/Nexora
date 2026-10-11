@@ -1,4 +1,4 @@
-// Persists user uploads (avatars, Studio/ExplainLab media) in the database.
+// Persists user uploads (avatars, Studio media) in the database.
 //
 // Free hosts give you a throwaway disk: everything under public/uploads is
 // deleted on every restart or redeploy. Each uploaded file is therefore also

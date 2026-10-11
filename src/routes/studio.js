@@ -78,7 +78,6 @@ function createStudioRouter(deps) {
         lessons,
         publishedLessons,
         tutorials,
-        explanations,
         liveClasses,
         recordings,
         doubts,
@@ -91,12 +90,11 @@ function createStudioRouter(deps) {
         count('SELECT COUNT(*) n FROM cms_lessons'),
         count('SELECT COUNT(*) n FROM cms_lessons WHERE published=1'),
         count('SELECT COUNT(*) n FROM tutorials'),
-        count('SELECT COUNT(*) n FROM explain_sessions'),
         count('SELECT COUNT(*) n FROM live_classes'),
         count('SELECT COUNT(*) n FROM live_class_recordings'),
-        count('SELECT COUNT(*) n FROM explain_doubts'),
-        count("SELECT COUNT(*) n FROM explain_doubts WHERE status='pending' OR status='open' OR status IS NULL"),
-        count('SELECT COUNT(*) n FROM explain_notes'),
+        count('SELECT COUNT(*) n FROM studio_doubts'),
+        count("SELECT COUNT(*) n FROM studio_doubts WHERE status='pending'"),
+        count('SELECT COUNT(*) n FROM studio_notes'),
       ]);
 
       // Per-course lesson distribution (top 8 by lesson count)
@@ -120,7 +118,6 @@ function createStudioRouter(deps) {
       const contentMix = [
         { label: 'Lessons', value: lessons, color: '#818cf8' },
         { label: 'Tutorials', value: tutorials, color: '#22d3ee' },
-        { label: 'Explanations', value: explanations, color: '#a78bfa' },
         { label: 'Recordings', value: recordings, color: '#34d399' },
         { label: 'Notes', value: notes, color: '#fbbf24' },
       ];
@@ -135,7 +132,6 @@ function createStudioRouter(deps) {
             lessons,
             publishedLessons,
             tutorials,
-            explanations,
             liveClasses,
             recordings,
             doubts,

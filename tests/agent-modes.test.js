@@ -31,8 +31,6 @@ test('JSON modes tolerate wrapped output and reject garbage', () => {
   assert.equal(insight.issues.length, 8);
   assert.deepEqual(insight.edgeCases, []);
   assert.throws(() => MODES.coach_insight.post('I cannot do that'), (e) => e.status === 502);
-  assert.equal(MODES.el_quiz.post('{"questions":[{"question":"q"}]}').length, 1);
-  assert.equal(MODES.el_flashcards.post('[{"front":"a","back":"b"}]').length, 1);
 });
 
 test('untrusted text is fenced in a data block it cannot escape', () => {
