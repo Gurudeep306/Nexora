@@ -139,7 +139,7 @@ const PAGE_LIMITS = {
   gateQuestionId: 60,
   gateQuestionText: 3000,
   learnTopic: 120,
-  verdict: 300,
+  verdict: 1500,
   filters: 600,
 };
 

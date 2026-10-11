@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useAgentPageContext } from '@/context/AgentContext'
 import {
   ArrowLeft,
   ArrowRight,
@@ -122,6 +123,10 @@ export default function SystemDossierPage() {
   }, [activeChapterIndex, systemId])
 
   const currentChapter = dossier.chapters[activeChapterIndex] || dossier.chapters[0]
+  useAgentPageContext({
+    title: `${dossier.system.name} · Ch ${activeChapterIndex + 1}`,
+    learnTopic: `System design: ${dossier.system.name} — chapter ${activeChapterIndex + 1}: ${currentChapter?.title ?? ''}`,
+  })
 
   const handleSelectChapter = (index: number) => {
     setActiveChapterIndex(index)

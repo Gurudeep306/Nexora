@@ -55,14 +55,28 @@ export async function agentTask<T>(mode: string, input: Record<string, unknown> 
 
 /* ── streaming chat ── */
 
+/** What the current page tells the assistant (server caps every field). */
 export interface AgentPage {
   path?: string
   problemId?: string | number
   title?: string
+  /** Short name for the context pill, e.g. "Two Sum" or "Graphs · BFS". */
+  label?: string
   code?: string
   language?: string
   selection?: string
+  /** Last run/judge result, with the first failing case. */
+  verdict?: string
+  /** Active list filters, as one readable line. */
+  filters?: string
   gateQuestionId?: string
+  gateQuestionText?: string
+  /** The student has checked / revealed the answer to the GATE question on screen. */
+  gateAnswered?: boolean
+  /** A timed exam is running: the assistant must not give answers. */
+  examActive?: boolean
+  /** A mock paper has been submitted and is being reviewed. */
+  examReview?: boolean
   learnTopic?: string
   visibleText?: string
 }
