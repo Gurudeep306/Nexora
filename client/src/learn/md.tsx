@@ -16,7 +16,7 @@ function math(src: string, display: boolean) {
   try {
     return katex.renderToString(src, { displayMode: display, throwOnError: false, strict: false })
   } catch {
-    return src
+    return src.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
   }
 }
 
