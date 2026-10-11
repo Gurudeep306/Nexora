@@ -65,7 +65,7 @@ test('only statements that modify the problems table count as writes', () => {
     'REPLACE INTO problems VALUES(1)',
   ]) assert.ok(PROBLEM_WRITE.test(sql), sql);
   for (const sql of [
-    'INSERT INTO ai_problems(a) VALUES(1)',
+    'INSERT INTO gate_problems(a) VALUES(1)',
     'INSERT INTO custom_problems(a) VALUES(1)',
     'UPDATE daily_activity SET problems_solved=1',
     'SELECT * FROM problems',

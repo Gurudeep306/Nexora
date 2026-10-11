@@ -208,14 +208,10 @@ Two different things share the prefix:
 | `POST /api/ai-complete` | `{prefix, suffix, language}` | `{ok, text}` (Gemini 2.0 Flash Lite primary, Groq fallback; 90 s in-memory cache max 300). **On error returns HTTP 200 `{ok:false, text:''}`** |
 | `POST /api/ai-fix` | `{code, language, error}` | `{ok, code}` or `{ok:false,error}` (`NO_FIX` → `'AI could not safely fix this code'`) |
 
-### 2.12 AI Lab problems & Tutorials (learning.js)
+### 2.12 Tutorials (learning.js)
 
 | Endpoint | Response |
 |---|---|
-| `GET /api/ai-problems?category` (def `all`) | `{ok, problems[{id,category(ml|dl|nlp|cv|genai|rl),title,description,difficulty(beginner|intermediate|advanced),tags(JSON str),starter_code,solution_approach,hints(JSON str),resources(JSON str),input_format,output_format,constraints,samples(JSON str),created_at,status,progress}]}` |
-| `GET /api/ai-problems/:id` | `{ok, problem(+progress|null)}` |
-| `POST /api/ai-problems/:id/progress` | body `{status:'solved'|'in-progress'|'unsolved', notes}` → `{ok}` |
-| `GET /api/ai-stats` | `{ok, total, solved, inProgress, byCategory[{category,total,solved}]}` |
 | `GET /api/tutorials?category` | `{ok, tutorials[{id,category,topic,title,description,content,difficulty,order_index,estimated_time,prerequisites,code_examples,completed(0|1)}]}` |
 | `GET /api/tutorials/:id` | `{ok, tutorial}` |
 | `POST /api/tutorials/:id/complete` | `{ok}` |
@@ -282,8 +278,6 @@ Two different things share the prefix:
 | `POST /api/studio/doubts` / `PUT /:id {answer,status}` / `DELETE /:id` | – | `{ok}` |
 | `GET /api/studio/tutorials` | – | `{ok, grouped(by category), total}` |
 | `GET/PUT/POST/DELETE /api/studio/tutorials/:id` | – | `{ok,...}` |
-| `GET /api/studio/ai-problems-list` | – | `{ok, grouped, total}` |
-| `GET/PUT/DELETE /api/studio/ai-problems/:id`, `POST /api/studio/ai-problems-new` | – | `{ok,...}` |
 | `GET /api/studio/forge` | – | `{ok, paths(topics incl has_override)}` |
 | `GET /api/studio/forge/:topicId` | – | `{ok, override|null, static|null}` |
 | `PUT /api/studio/forge/:topicId` | `{path_id,title,description,content_html,difficulty,time_estimate}` | `{ok}` |
@@ -386,7 +380,6 @@ localStorage keys (only two): `cp_arena_username`, `nexora_sidebar_collapsed`. S
 | `#/bookmarks` | `renderBookmarks` | Saved-problems table; `GET /api/bookmarks?username`. |
 | `#/contests` | `renderContests` | Live/upcoming CF+CC contests, tabs all/live/queue/past filtering `phase`; `GET /api/contests`. Cards link out to platform URL. |
 | `#/nexus`, `#/skills`, `#/submissions`, `#/achievements` | `renderNexus` | "Nexora Progression". Tabs `/zones` + `/perf`. Zones: `GET /api/nexus` + `GET /api/level-roadmap` merged per level — zone accordion (locked banner shows XP/problem requirements), skill nodes, weekly practice problems per topic; week-refresh countdown from `weekSeed`. Node click → side panel with prereqs, resources, `GET /api/skill-tree/:nodeId/problems` (first 12). `/perf` tab → `GET /api/performance` analytics. |
-| `#/ailab`, `#/ailab/:id` | `renderAILab` / `_openAiProblemPage` | AI/ML practice problems (categories all/ml/dl/nlp/cv/genai/rl). `GET /api/ai-stats`, `GET /api/ai-problems?category`. `:id` opens **full-screen AI-lab solve overlay** (separate Monaco instance, Python-only): problem panel (description, hints, resources, samples), bottom panel tabs `stdin/stdout/test/`; Run → `POST /api/run` with custom input, then per-sample runs; "solved!" → `POST /api/ai-problems/:id/progress {status:'solved'}`. |
 | `#/learn`, `#/learn/:subject`, `#/learn/:subject/:id`, `#/learn/:id` | `renderLearn` / `renderLearnTopics` / `_openTutorialPage` | Subject grid grouped: DSA / AI-ML / GATE / Languages / System Design / More (client-side `_learnSubjects` catalog). Topics: `GET /api/tutorials?all` filtered by subject category/topic. Tutorial page: rendered `content`, code examples, practice problems via `GET /api/tutorial-problems/:topic`, mark complete `POST /api/tutorials/:id/complete`. Stats bar `GET /api/tutorial-stats`. |
 | `#/forge`, `#/forge/:id` | `renderForge` / `_openForgePath` | Dev roadmap paths (cards with progress ring): `GET /api/forge/paths` + `GET /api/forge/stats`. Path detail: milestones → topics with status `<select>` → `POST /api/forge/topic/:id/status`. (This is learning.js forge, NOT the admin builder.) |
 | `#/workshop` | `renderWorkshop` | Tabs: **Problems** (stats bar `GET /api/workshop/stats`; list `GET /api/custom-problems`, client filter all/easy/medium/hard/extreme + cards/table views; create/edit form `showCreateProblem` → `POST/PUT /api/custom-problems`; delete; "solve" → `openSolveCustom(id)` reuses the solve overlay with custom-problem testcases), **Contests** (`GET /api/contests/mine`, create form → `POST /api/contests/create` with client-generated `NX-XXXXXX` code, password ≥4, problem picker from own custom problems; detail overlay `GET /api/contests/:id`, delete), **Join Contest** (`POST /api/contests/join` with code+password). |
@@ -440,7 +433,7 @@ Two-step: login (`POST /api/user/login`) or register flow — username availabil
 - `player_titles` DB table is seeded with **legacy XP thresholds that differ from `RIFT_LEVELS`**; server computes levels from the constant, not the table. Treat RIFT_LEVELS (§2.5) as the source of truth.
 - Contest `GET /api/contests` (live scrape: `phase/startTime/durationSeconds`) vs custom contests (`status/start_time/duration_mins`) — same prefix, totally different schemas.
 - `/api/forge/*` is shared by the public learning roadmap (learning.js, mounted first) and the admin builder (forge.js).
-- Problem `tags`, custom-problem `samples`/`testcases`/`tags`, ai_problem `hints`/`resources`/`samples`, contest `problems` are **JSON strings** needing `JSON.parse` on the client.
+- Problem `tags`, custom-problem `samples`/`testcases`/`tags`, contest `problems` are **JSON strings** needing `JSON.parse` on the client.
 
 **Semantics traps**
 - `GET /api/messages/:user1/:user2` **marks messages read** as a side effect.
