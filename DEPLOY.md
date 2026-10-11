@@ -69,7 +69,7 @@ It prints each table with ✓ and finishes with `✓ Copied … rows to Turso`. 
    | Key | Value |
    |---|---|
    | `TURSO_DATABASE_URL` / `TURSO_AUTH_TOKEN` | from step 2 (staging gets the staging DB) |
-   | `GROQ_API_KEY`, `GEMINI_API_KEY`, `STUDIO_PASSWORD` | same as local |
+   | `GROQ_API_KEY`, `STUDIO_PASSWORD` | same as local (`GROQ_API_KEY` is optional: AI is off without it) |
    | `GITHUB_CLIENT_ID/SECRET`, `GOOGLE_CLIENT_ID/SECRET` | see step 4 (leave empty for now if you like) |
 
    `SESSION_SECRET` is generated automatically. `NODE_ENV`, `JUDGE_MODE=remote` and `DISABLE_PUPPETEER` are preset.

@@ -92,11 +92,11 @@ export function unescapeCode(raw: string | null | undefined): string {
   return (raw ?? '').replace(/\\n/g, '\n')
 }
 
-/** Friendly message for AI endpoints; 429 = aiLimiter (20 req/min). */
+/** Friendly message for AI endpoints (503 = no GROQ_API_KEY on the server, 429 = rate limit / daily budget). */
 export function aiErrorMessage(err: unknown): { title: string; hint?: string } {
   const status = (err as { status?: number })?.status
   const msg = (err as Error)?.message ?? 'AI request failed'
-  if (status === 429) return { title: 'AI rate limit reached', hint: 'The tutor allows 20 requests/min — wait a few seconds and retry.' }
-  if (status === 500 && /GROQ|GEMINI/i.test(msg)) return { title: 'AI provider not configured', hint: msg }
+  if (status === 503) return { title: 'AI is not available', hint: 'AI features are not set up on this server yet.' }
+  if (status === 429) return { title: 'AI limit reached', hint: msg }
   return { title: 'AI request failed', hint: msg }
 }

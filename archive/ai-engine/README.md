@@ -1,5 +1,11 @@
 # Nexora-Core Grand AI System (32B CS Canon + GATE CSE + Animation Synthesizer)
 
+> **Archived.** The site no longer runs a local model. Every AI feature now goes
+> through the Groq-powered agent in `src/ai/` (see the main README). These
+> training and dataset scripts are kept for reference only; the model server
+> (`serve_api.py`, `start_kronos.sh`) was removed. Paths below are relative to
+> the old `ai-engine/` location.
+
 Nexora-Core Grand is the dedicated, high-reasoning Computer Science AI engine for **Nexora**. It is architected for:
 
 1. **Complete Computer Science Canon**:

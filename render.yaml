@@ -60,8 +60,15 @@ services:
         sync: false
       - key: GROQ_API_KEY
         sync: false
-      - key: GEMINI_API_KEY
-        sync: false
+      # Groq models + per-user daily AI token budget (see .env.example).
+      - key: GROQ_MODEL
+        value: openai/gpt-oss-120b
+      - key: GROQ_FAST_MODEL
+        value: openai/gpt-oss-20b
+      - key: GROQ_FALLBACK_MODEL
+        value: openai/gpt-oss-20b
+      - key: AI_DAILY_TOKENS
+        value: "200000"
       - key: STUDIO_PASSWORD
         sync: false
 
@@ -102,7 +109,14 @@ services:
         sync: false
       - key: GROQ_API_KEY
         sync: false
-      - key: GEMINI_API_KEY
-        sync: false
+      # Groq models + per-user daily AI token budget (see .env.example).
+      - key: GROQ_MODEL
+        value: openai/gpt-oss-120b
+      - key: GROQ_FAST_MODEL
+        value: openai/gpt-oss-20b
+      - key: GROQ_FALLBACK_MODEL
+        value: openai/gpt-oss-20b
+      - key: AI_DAILY_TOKENS
+        value: "200000"
       - key: STUDIO_PASSWORD
         sync: false

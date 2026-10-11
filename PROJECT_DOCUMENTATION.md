@@ -8,7 +8,7 @@
 **Language:** Node.js Backend, Vanilla JavaScript Frontend  
 **Database:** SQLite  
 **Real-time Communication:** Socket.io  
-**AI Integration:** Groq API (LLaMA models)
+**AI Integration:** Groq only — one server-side agent (`src/ai/`, `/api/agent/*`)
 
 ---
 
@@ -98,12 +98,13 @@
   - Cloud Architecture
 
 ### 9. **AI Integration Features**
-- **AI Chat:** Context-aware tutoring without code answers (rule-enforced)
-- **Code Completion:** Inline ghost-text suggestions
-- **Error Detection:** Automatic syntax error repair
-- **AI Battle:** 1v1 time-based racing against AI
-- **Powered by:** Groq API with LLaMA-3.3-70B model
-- **AI Caching:** Cache management with TTL for cost optimization
+- **Nexora AI assistant:** global slide-over (⌘J) with page context, tools and streaming answers; the AI Lab chat shares its thread
+- **Tutor pedagogy:** graded hints on unsolved problems; full solutions only after solving
+- **Coach / Code Completion / AI Fix:** live code insight, ghost text (fast model), minimal syntax fixes
+- **Also AI-backed:** translation, problem finder, ExplainLab, Studio drafts, GATE debrief, algorithm animations
+- **AI Battle:** 1v1 time-based racing against a simulated opponent (not an LLM)
+- **Powered by:** Groq only — `GROQ_MODEL` (default `openai/gpt-oss-120b`), `GROQ_FAST_MODEL` (`openai/gpt-oss-20b`), `GROQ_FALLBACK_MODEL` (`openai/gpt-oss-20b`)
+- **Limits:** per-user rate limits, daily token budget (`AI_DAILY_TOKENS`), LRU cache for completions
 
 ### 10. **Advanced Editor & IDE**
 - **Monaco Editor:** Professional code editor with full syntax highlighting
@@ -353,7 +354,7 @@ GET  /api/problems/:id/submissions       # Get submission history
 
 ### Learning (`/api/learn`)
 ```
-POST /api/ai-chat                        # AI tutoring chat
+POST /api/agent/chat                      # AI assistant (SSE stream; see AI Integration)
 GET  /api/tutorials                      # List tutorials
 GET  /api/tutorials/:id                  # Get tutorial content
 GET  /api/ai-problems                    # List AI/ML problems
@@ -437,20 +438,28 @@ socket.on('chat-message', callback)          # Receive chat
 ```
 
 ### 3. AI Integration
-```javascript
-// Groq API Integration:
-- Model: llama-3.3-70b-versatile
-- Rate limiting: 60 requests/minute per user
-- Cache: LRU cache with 2-hour TTL (max 1000 entries)
-- System prompt: Enforces no code solution rule
-- Context window: Last 10 messages in conversation
-- Fallback: Graceful degradation if API unavailable
+One agent, Groq only (OpenAI-compatible API called with `fetch`, no SDK):
 
-// Cost Optimization:
-- Cached responses avoid re-computation
-- Prompt injection prevention
-- Token count monitoring
+```text
+src/ai/groq.js       client: chat + SSE streaming, 3 retries on 429/5xx (retry-after,
+                     backoff + jitter), one fallback-model attempt, circuit breaker,
+                     60 s chat / 8 s completion timeouts, reasoning_effort for gpt-oss only
+src/ai/prompts.js    "Nexora tutor" persona + pedagogy; untrusted text only inside
+                     <data source="..."> blocks the model must never obey
+src/ai/modes.js      one-shot tasks (complete, fix, tutor, translate, detect_lang,
+                     coach_*, find_problems_*, animate, el_*, studio_author, gate_narrative)
+src/ai/tools.js      search_problems, get_problem, get_user_stats, get_weak_tags,
+                     recommend_problems, get_submissions, get_gate_question, search_gate,
+                     get_learn_content, suggest_navigation — run as the session user
+src/ai/agent.js      runChat (last 20 turns, ≤5 tool rounds, ≤3 parallel tools) and runTask
+src/routes/agent.js  /api/agent/chat (SSE), /task, /conversations, /status
 ```
+
+- Login required everywhere; the user is always the session user (`runAs`/`me()`), never a request field.
+- Limits: 30 chats/min and 120 completions/min per user; `AI_DAILY_TOKENS` per user per day (`ai_usage` table) → `429`.
+- No `GROQ_API_KEY` → `503 {ok:false, error:'AI is not configured'}`; the UI shows a notice and the rest of the site works.
+- Chat history: `ai_user_chats` rows grouped by `conversation_id`.
+- The client renders model text with `MarkdownLite` (text nodes only); model HTML (translations) goes through DOMPurify `sanitizeHtml`.
 
 ### 4. Real-time Features (Socket.io)
 ```javascript
@@ -646,7 +655,7 @@ App = {
 
 ## 🔗 External Integrations
 
-- **Groq API:** AI chat & code completion
+- **Groq API:** the only AI provider (assistant, tutor, coach, completion, fix, translation, ExplainLab, Studio)
 - **GitHub OAuth:** User authentication
 - **Google OAuth:** User authentication
 - **Wandbox:** Remote code execution fallback

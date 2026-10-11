@@ -1,12 +1,15 @@
 /* ========== AI-assisted translation + coding coach ==========
    - Language detection (script analysis → Google → LLM) with confidence
    - Translation that protects math/code, with Google or context-aware AI
-   - Coach endpoints: live insight on the user's code, tricky test ideas,
-     failure explanations — hints only, never full solutions. */
+   - Semantic problem finder (intent → SQL pool → AI re-rank)
+   All model calls go through the Groq agent (src/ai/agent.js runTask); the
+   coding coach itself lives in src/ai/modes.js (coach_* via /api/agent/task). */
 const express = require("express");
 const crypto = require("crypto");
-const { meSql } = require("./context");
-const { kronosChat } = require("./kronos-engine");
+const { me, meSql } = require("./context");
+const { runTask } = require("./ai/agent");
+const { isConfigured } = require("./ai/groq");
+const { sendError } = require("./routes/agent");
 
 const LANGUAGES = [
   // Indian languages
@@ -145,87 +148,6 @@ async function myMemory(chunk, tl, sl) {
   return out.join("");
 }
 
-/* LLM: Kronos sovereign AI engine first, zero external API required. */
-async function llm(messages, { json = false, maxTokens = 1200, temperature = 0.2, reasoning = "low" } = {}) {
-  try {
-    const kRes = await kronosChat(null, messages, { maxTokens, temperature, json });
-    if (kRes && kRes.ok && kRes.content) {
-      return kRes.content;
-    }
-  } catch {
-    /* fallback to secondary */
-  }
-
-  const groqKey = process.env.GROQ_API_KEY;
-  const model = process.env.GROQ_MODEL || "openai/gpt-oss-120b";
-  if (groqKey) {
-    for (let attempt = 0; attempt < 2; attempt++) {
-      const r = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${groqKey}` },
-        body: JSON.stringify({
-          model,
-          messages,
-          max_tokens: maxTokens,
-          temperature,
-          ...(json ? { response_format: { type: "json_object" } } : {}),
-          ...(/gpt-oss/.test(model) ? { reasoning_effort: reasoning } : {}),
-        }),
-        signal: AbortSignal.timeout(45000),
-      }).catch((e) => ({ ok: false, status: 0, text: async () => e.message }));
-      if (r.status === 429 && attempt === 0) {
-        await sleep(2000);
-        continue;
-      }
-      if (r.ok) {
-        const d = await r.json();
-        const content = d.choices?.[0]?.message?.content || "";
-        if (content.trim()) return content;
-      }
-      break;
-    }
-  }
-  const geminiKey = process.env.GEMINI_API_KEY;
-  if (geminiKey) {
-    const prompt = messages.map((m) => `${m.role.toUpperCase()}:\n${m.content}`).join("\n\n");
-    const r = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiKey}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { temperature, maxOutputTokens: maxTokens, ...(json ? { responseMimeType: "application/json" } : {}) },
-        }),
-        signal: AbortSignal.timeout(45000),
-      },
-    ).catch(() => null);
-    if (r?.ok) {
-      const d = await r.json();
-      const t = d.candidates?.[0]?.content?.parts?.map((p) => p.text).join("") || "";
-      if (t.trim()) return t;
-    }
-  }
-  throw new Error("AI is not available right now (no API key or provider error)");
-}
-
-function parseJson(text) {
-  const s = String(text || "");
-  try {
-    return JSON.parse(s);
-  } catch {
-    const m = s.match(/\{[\s\S]*\}/);
-    if (m) {
-      try {
-        return JSON.parse(m[0]);
-      } catch {
-        /* fallthrough */
-      }
-    }
-  }
-  return null;
-}
-
 /* ── Detection ── */
 async function detectLanguage(html) {
   const text = plainText(html).slice(0, 1500);
@@ -243,22 +165,14 @@ async function detectLanguage(html) {
   } catch {
     /* try AI */
   }
-  try {
-    const out = await llm(
-      [
-        {
-          role: "system",
-          content:
-            'Identify the natural language of the text. Reply with JSON only: {"code": "<BCP-47 / Google Translate code, e.g. en, ru, hi, te, zh-CN>", "confidence": 0..1}',
-        },
-        { role: "user", content: text.slice(0, 800) },
-      ],
-      { json: true, maxTokens: 60, temperature: 0 },
-    );
-    const j = parseJson(out);
-    if (j?.code) return { ...langInfo(j.code), code: j.code, confidence: Number(j.confidence) || 0.7, method: "ai" };
-  } catch {
-    /* fallthrough */
+  // AI is optional here: without a key (or over budget) we fall back to the script guess.
+  if (isConfigured() && me()) {
+    try {
+      const j = await runTask("detect_lang", { text }, { user: { username: me() } });
+      if (j?.code) return { ...langInfo(j.code), code: j.code, confidence: j.confidence, method: "ai" };
+    } catch {
+      /* fallthrough */
+    }
   }
   const code = guess?.code || "en";
   return { ...langInfo(code), code, confidence: guess ? 0.5 : 0.2, method: "script" };
@@ -306,23 +220,7 @@ async function translateWithAi(html, target, source) {
   const parts = chunkHtml(html, 3500);
   const out = [];
   for (const part of parts) {
-    const res = await llm(
-      [
-        {
-          role: "system",
-          content: `You translate competitive-programming problem statements from ${s.name || "the source language"} into ${t.name} (${t.native}).
-Rules:
-- Output ONLY the translated HTML fragment — no commentary, no code fences.
-- Keep every HTML tag and attribute exactly as given; translate only human-readable text.
-- Tokens like ⟦7⟧ are placeholders for formulas/code: copy them unchanged and keep them in the right place.
-- Never change numbers, variable names, identifiers, sample data or units.
-- Use natural, clear, technical ${t.name}. ${t.group === "indian" ? `Keep widely used CS terms (array, string, integer, test case, query, modulo, subsequence, graph, tree) in English in Latin script where a ${t.name}-speaking programmer would.` : ""}`,
-        },
-        { role: "user", content: part },
-      ],
-      { maxTokens: 4000, temperature: 0.1 },
-    );
-    out.push(res.replace(/^```(?:html)?\s*|```\s*$/g, ""));
+    out.push(await runTask("translate", { text: part, target: t, source: s }, { user: { username: me() } }));
   }
   return out.join("");
 }
@@ -367,7 +265,7 @@ function createAiAssistRouter({ get, all, run, aiLimiter }) {
       }
       res.json({ ok: true, detected });
     } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
+      sendError(res, e, "translate.detect");
     }
   });
 
@@ -417,64 +315,9 @@ function createAiAssistRouter({ get, all, run, aiLimiter }) {
       res.json({ ok: true, translated, detected, engine: used });
     } catch (e) {
       console.error("Translation error:", e.message);
-      res.status(500).json({ ok: false, error: e.message });
+      sendError(res, e, "translate");
     }
   });
-
-  /* ── AI problem finder: natural language → database filters ── */
-  const searchCache = new Map();
-  router.post("/api/ai/problem-search", aiLimiter, async (req, res) => {
-    try {
-      const query = String(req.body?.query || "").trim().slice(0, 400);
-      if (!query) return res.status(400).json({ ok: false, error: "Describe what you want to practice first" });
-      const platforms = Array.isArray(req.body?.platforms) ? req.body.platforms.map(String) : [];
-      const tags = Array.isArray(req.body?.tags) ? req.body.tags.map(String) : [];
-      const bands = Array.isArray(req.body?.bands) ? req.body.bands.map(String) : [];
-
-      const cacheKey = `${query}::${platforms.join(",")}::${bands.join(",")}`;
-      const hit = searchCache.get(cacheKey);
-      if (hit) return res.json({ ok: true, ...hit, cached: true });
-
-      const out = await llm(
-        [
-          {
-            role: "system",
-            content: `You are the search brain of a competitive-programming problem database. Convert the user's natural-language request into query filters.
-Reply with JSON ONLY, exactly these keys:
-{"platform": one of [${platforms.join(", ")}] or "all",
- "difficulty": one of [${bands.join(", ")}] or "all",
- "tags": up to 3 most relevant items chosen from [${tags.slice(0, 120).join(", ")}] (use [] if none fit),
- "search": 1-3 lowercase keywords likely to appear in problem titles, or "",
- "status": one of ["all","unsolved","attempted","solved"],
- "sort": one of ["rating","title","id"],
- "summary": one friendly sentence (max 18 words) restating what the user will get}
-Pick the single closest platform/difficulty; never invent tags outside the list.`,
-          },
-          { role: "user", content: query },
-        ],
-        { json: true, maxTokens: 300, temperature: 0.1 },
-      );
-      const j = parseJson(out);
-      if (!j) return res.status(502).json({ ok: false, error: "AI returned an unreadable answer — try rephrasing" });
-
-      const filters = {
-        platform: platforms.includes(j.platform) ? j.platform : "all",
-        difficulty: bands.includes(j.difficulty) ? j.difficulty : "all",
-        tags: (Array.isArray(j.tags) ? j.tags : []).filter((t) => tags.includes(t)).slice(0, 3),
-        search: typeof j.search === "string" ? j.search.slice(0, 60) : "",
-        status: ["all", "unsolved", "attempted", "solved"].includes(j.status) ? j.status : "all",
-        sort: ["rating", "title", "id"].includes(j.sort) ? j.sort : "rating",
-        summary: typeof j.summary === "string" ? j.summary.slice(0, 140) : "Here is what I found for you",
-      };
-      const payload = { filters };
-      searchCache.set(cacheKey, payload);
-      if (searchCache.size > 300) searchCache.delete(searchCache.keys().next().value);
-      res.json({ ok: true, ...payload });
-    } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
-    }
-  });
-
   /* ── Semantic problem finder ──
      Understand the request → pull a relevance-scored candidate pool from SQL →
      let the LLM re-rank the ACTUAL problems by topic fit (not title-word overlap)
@@ -497,26 +340,8 @@ Pick the single closest platform/difficulty; never invent tags outside the list.
       if (cached) return res.json({ ok: true, ...cached, cached: true });
 
       /* 1) Understand the request → structured intent */
-      const intentOut = await llm(
-        [
-          {
-            role: "system",
-            content: `You are the semantic search brain of a competitive-programming database (Codeforces, CodeChef, AtCoder, LeetCode, SPOJ, Project Euler). Problem titles are often cryptic, so TAGS and DIFFICULTY carry more signal than title words.
-Read the request and reply with JSON ONLY:
-{"tags": up to 4 objects [{"tag": <EXACTLY one of the allowed tags>, "weight": 1-3, 3 = the core topic}] most relevant first ([] if none fit),
- "keywords": 2-5 lowercase concrete words likely to appear literally in a problem TITLE for this topic (include singular AND plural forms and obvious synonyms, e.g. for digit problems: "digit","digits","number","sum"). Use [] only for purely abstract requests with no concrete noun,
- "minRating": integer|null, "maxRating": integer|null,
- "platform": one of [${platforms.join(", ")}] or "all",
- "status": one of ["all","unsolved","attempted","solved"],
- "understanding": one short sentence (max 16 words) describing what you searched for}
-Difficulty guide: easy≈[null,1200], medium≈[1200,1600], hard≈[1600,1900], elite≈[1900,null], "around X"≈[X-200,X+200]; leave null when open-ended.
-"not solved yet"/"unattempted" → status "unsolved". Allowed tags: [${vocab.join(", ")}]. NEVER invent a tag outside this list; if the request is vague still choose the closest tags.`,
-          },
-          { role: "user", content: query },
-        ],
-        { json: true, maxTokens: 420, temperature: 0.1, reasoning: "medium" },
-      );
-      const intent = parseJson(intentOut) || {};
+      const user = { username: me() };
+      const intent = (await runTask("find_problems_intent", { query, platforms, vocab }, { user })) || {};
 
       const tags = (Array.isArray(intent.tags) ? intent.tags : [])
         .filter((t) => t && vocab.includes(t.tag))
@@ -608,17 +433,7 @@ Difficulty guide: easy≈[null,1200], medium≈[1200,1600], hard≈[1600,1900], 
         .join("\n");
       let results = null;
       try {
-        const rankOut = await llm(
-          [
-            {
-              role: "system",
-              content: `You rank competitive-programming problems by how well each matches a practice request. Judge the real topic (infer from title + tags), NOT literal word overlap — a cryptic title with the right tags is a good match. Reply JSON ONLY: {"results":[{"i": <index from the list>, "reason": "<=10 words on why it fits>"}]} — best matches first, at most ${want}, OMIT anything that clearly does not fit.`,
-            },
-            { role: "user", content: `Request: "${query}"\n\nNumbered problems:\n${listing}` },
-          ],
-          { json: true, maxTokens: 1200, temperature: 0.1, reasoning: "low" },
-        );
-        const ranked = parseJson(rankOut);
+        const ranked = await runTask("find_problems_rank", { query, listing, want }, { user });
         if (ranked && Array.isArray(ranked.results)) {
           const seen = new Set();
           results = [];
@@ -656,169 +471,9 @@ Difficulty guide: easy≈[null,1200], medium≈[1200,1600], hard≈[1600,1900], 
       res.json({ ok: true, ...payload });
     } catch (e) {
       console.error("find-problems error:", e.message);
-      res.status(500).json({ ok: false, error: e.message });
+      sendError(res, e, "find-problems");
     }
   });
-
-  /* ── Coding coach ── */
-  const COACH_RULES = `You are "Nexora Coach", a world-class competitive-programming mentor sitting beside a student in an online judge. You have the problem statement and the student's current code.
-
-How you talk:
-- Plain, warm, precise sentences. No filler ("great question", "I hope this helps"), no hedging stacks, no emojis.
-- Correct grammar and spelling. Short sentences. One idea per sentence.
-- Use clean GitHub markdown: **bold** for key terms, \`code\` for identifiers/values, - bullets for lists, and reference code as line L12.
-- Be specific to THIS code and THIS problem. Quote the exact variable, line, or test value. Never give generic advice the student could get anywhere.
-
-Hard rules:
-- NEVER write the full solution and never a code block longer than one short line. Guide, don't hand over.
-- If you are not sure of something (an expected output, a complexity), say so plainly instead of inventing it.
-- Stay on the student's language and the actual problem; do not drift into unrelated theory.`;
-
-  router.post("/api/ai/coach", aiLimiter, async (req, res) => {
-    try {
-      const { mode = "insight", code = "", language = "cpp", title = "", statement = "", verdict, failing, uiLang } = req.body || {};
-      const src = String(code).slice(0, 12000);
-      const stmt = String(statement).slice(0, 5000);
-      const reply = uiLang && uiLang !== "en" ? ` Write all human-readable strings in ${langInfo(uiLang).name}.` : "";
-
-      if (mode === "insight") {
-        const out = await llm(
-          [
-            { role: "system", content: COACH_RULES + reply },
-            {
-              role: "user",
-              content: `Problem: ${title}\n---\n${stmt}\n---\nStudent's ${language} code (line numbers added):\n${src
-                .split("\n")
-                .map((l, i) => `${i + 1}| ${l}`)
-                .join("\n")}\n\nRead the code carefully and analyse what the student is actually doing. Reply JSON only:
-{"summary": "one crisp sentence: what this code currently does or tries to do (name the real approach, not vague wording)",
- "approach": "short standard name of the technique (e.g. two pointers, prefix sums, BFS on a grid, DP over subsets) or 'unclear'",
- "time": "tight Big-O time of the code AS WRITTEN, e.g. O(n log n)",
- "space": "tight Big-O extra memory, e.g. O(n)",
- "fits": true|false|null  (would it pass typical limits, ~1e8 ops/sec, for this problem's constraints? null if constraints unknown),
- "progress": 0-100 (how complete and correct the solution looks),
- "issues": [{"line": <int line number>, "severity": "error"|"warning"|"info", "message": "one specific, actionable sentence about a real bug or risk in THIS code (overflow, off-by-one, wrong edge case, TLE, uninitialised, I/O format). Only include issues you can point to a line for."}],
- "edgeCases": ["a concrete input case this code likely mishandles, described in a few words"],
- "nextStep": "one concrete hint for the single most important thing to do next (no full code)"}
-Keep every string short and human. Do not pad lists — an empty list is better than a weak entry.`,
-            },
-          ],
-          { json: true, maxTokens: 1000, temperature: 0.2, reasoning: "medium" },
-        );
-        const j = parseJson(out);
-        if (!j) return res.status(502).json({ ok: false, error: "AI returned an unreadable answer" });
-        j.issues = Array.isArray(j.issues) ? j.issues.slice(0, 8) : [];
-        j.edgeCases = Array.isArray(j.edgeCases) ? j.edgeCases.slice(0, 6) : [];
-        return res.json({ ok: true, insight: j });
-      }
-
-      if (mode === "tests") {
-        const out = await llm(
-          [
-            { role: "system", content: COACH_RULES },
-            {
-              role: "user",
-              content: `Problem: ${title}\n---\n${stmt}\n---\nDesign 4 small, tricky test cases that STRESS THIS PROBLEM's logic. Follow the exact input format and every stated constraint (T test cases, ranges, array sizes) precisely — an input that violates the format is useless.
-
-Cover different edge shapes: minimum size, all-equal values, maximum/near-limit values, and any special structure the statement hints at.
-
-For each case, compute the expected output yourself by carefully hand-tracing the problem rules. Only fill "expected" when you are confident it is exactly right; otherwise use an empty string so the student can run and inspect it. Never guess an expected value.
-
-Reply JSON only:
-{"tests": [{"label": "2-3 word name of what it checks", "input": "exact stdin, with real newlines", "expected": "exact stdout, or empty string if unsure", "why": "one short sentence: what this case is designed to catch"}]}`,
-            },
-          ],
-          { json: true, maxTokens: 1600, temperature: 0.2, reasoning: "high" },
-        );
-        const j = parseJson(out);
-        const tests = Array.isArray(j?.tests) ? j.tests.slice(0, 6) : [];
-        return res.json({
-          ok: true,
-          tests: tests
-            .filter((t) => typeof t?.input === "string" && t.input.length < 5000)
-            .map((t) => ({ label: String(t.label || "AI test").slice(0, 40), input: t.input, expected: String(t.expected ?? ""), why: String(t.why || "") })),
-        });
-      }
-
-      if (mode === "explain") {
-        const out = await llm(
-          [
-            { role: "system", content: COACH_RULES + reply },
-            {
-              role: "user",
-              content: `Problem: ${title}\n---\n${stmt.slice(0, 3000)}\n---\nCode (${language}):\n${src}\n\nVerdict: ${verdict || "unknown"}\n${
-                failing ? `Failing case:\nINPUT:\n${String(failing.input || "").slice(0, 1500)}\nEXPECTED:\n${String(failing.expected || "").slice(0, 800)}\nGOT:\n${String(failing.actual || "").slice(0, 800)}\nSTDERR:\n${String(failing.stderr || "").slice(0, 800)}` : ""
-              }\n\nExplain this verdict so the student understands and can fix it themselves. Use exactly this markdown structure, keeping each part tight:
-
-**What happened** — one sentence on what the verdict means for this submission.
-**Where** — 1-3 bullets pointing at the specific line(s) (L##) and the exact value/variable that goes wrong; trace the failing input concretely if one is given.
-**Why** — one or two sentences on the root cause (logic gap, wrong edge case, overflow, complexity, I/O format).
-**Try this** — one concrete hint for the fix. Do NOT give the corrected code.
-
-If the verdict is a compile error, focus on the exact syntax/type problem and the line. Be accurate; if the failing output is not shown, reason from the code.`,
-            },
-          ],
-          { maxTokens: 800, temperature: 0.2, reasoning: "medium" },
-        );
-        return res.json({ ok: true, explanation: out.trim() });
-      }
-
-      if (mode === "ask") {
-        const q = String(req.body.question || "").slice(0, 1500);
-        const out = await llm(
-          [
-            { role: "system", content: COACH_RULES + reply + " Answer the question directly first, then add only the detail that helps. Format in clean markdown (bullets, `code`, **bold**). Keep it focused — typically under 150 words." },
-            { role: "user", content: `Problem: ${title}\n---\n${stmt.slice(0, 3500)}\n---\nCurrent ${language} code:\n${src}\n\nQuestion: ${q}` },
-          ],
-          { maxTokens: 800, temperature: 0.4, reasoning: "medium" },
-        );
-        return res.json({ ok: true, answer: out.trim() });
-      }
-
-      res.status(400).json({ ok: false, error: "Unknown coach mode" });
-    } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
-    }
-  });
-
-  /* ── AI Animation Generator: Algorithmic frames for Nexora VizPlayer ── */
-  router.post("/api/ai/animate", aiLimiter, async (req, res) => {
-    try {
-      const topic = String(req.body?.topic || "two pointers").slice(0, 150);
-      const input = Array.isArray(req.body?.input) ? req.body.input.slice(0, 12) : null;
-
-      const out = await llm(
-        [
-          {
-            role: "system",
-            content: `You are the animation synthesizer for Nexora. Output JSON ONLY matching this format:
-{"title": "${topic}",
- "type": "nexora_visualization",
- "data_structure": "array",
- "frames": [
-   {"step": 1, "explanation": "string description", "state": {"kind": "array", "id": "arr", "cells": [{"id": "c0", "v": 1}], "pointers": {"left": 0}, "roles": {0: "active"}}}
- ]}
-Keep frames concise (between 4 and 8 steps). Roles can be: active, compare, swap, done, found.`,
-          },
-          {
-            role: "user",
-            content: `Generate visual frames for ${topic}${input ? ` with input array [${input.join(", ")}]` : ""}`,
-          },
-        ],
-        { json: true, maxTokens: 1200, temperature: 0.1 },
-      );
-
-      const parsed = parseJson(out);
-      if (!parsed || !Array.isArray(parsed.frames)) {
-        return res.status(502).json({ ok: false, error: "Could not generate animation frames" });
-      }
-
-      res.json({ ok: true, visualization: parsed });
-    } catch (e) {
-      res.status(500).json({ ok: false, error: e.message });
-    }
-  });
-
   return router;
 }
 

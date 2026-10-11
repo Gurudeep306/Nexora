@@ -123,11 +123,11 @@ test('editing your own profile never returns the password hash', async () => {
 });
 
 test('AI chat history is private and needs a login', async () => {
-  assert.equal((await call('GET', `/api/ai-chat/history?username=${VICTIM}`)).status, 401);
-  assert.equal((await call('DELETE', `/api/ai-chat/history?username=${VICTIM}`)).status, 401);
-  const mine = await call('GET', `/api/ai-chat/history?username=${VICTIM}`, admin.cookie);
+  assert.equal((await call('GET', `/api/agent/conversations?username=${VICTIM}`)).status, 401);
+  assert.equal((await call('DELETE', `/api/agent/conversations/x?username=${VICTIM}`)).status, 401);
+  const mine = await call('GET', `/api/agent/conversations?username=${VICTIM}`, admin.cookie);
   assert.equal(mine.status, 200);
-  assert.equal(mine.body.username, ADMIN, 'a ?username= override is ignored');
+  assert.deepEqual(mine.body.conversations, [], 'a ?username= override is ignored');
 });
 
 test('signing in issues a new session id (no session fixation)', async () => {
