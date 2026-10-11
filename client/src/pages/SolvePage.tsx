@@ -43,7 +43,7 @@ import { VerdictBadge } from '@/components/shared/PlatformBadge'
 import { VerdictBanner } from '@/components/solve/VerdictBanner'
 import { agentTask, aiErrorText, plainAiText } from '@/lib/agent'
 import { useAgentContext, useAgentPageContext } from '@/context/AgentContext'
-import { sanitizeHtml } from '@/components/ailab/sanitize'
+import { sanitizeHtml } from '@/lib/sanitize'
 import type { ReplayEvent } from '@/components/submissions/replay'
 import {
   loadStoredCode,

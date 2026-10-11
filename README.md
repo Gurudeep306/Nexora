@@ -59,7 +59,6 @@ Support for 30+ programming languages with verdicts: AC, WA, TLE, RE, CE, MLE
 ### 📚 **Learning Resources**
 - **Tutorials** - Categorized lessons with progress tracking
 - **Learn System** - 30+ topics with curated problem paths
-- **AI Lab** - Domain-specific problems (ML, DL, NLP, CV, GenAI, RL)
 - **Forge Roadmap** - Software development career paths with milestones
 
 ### 🤖 **AI Integration**
@@ -67,7 +66,7 @@ One server-side AI agent (`src/ai/`), powered only by **Groq**, behind every AI 
 - **Nexora AI assistant** - a slide-over on every page (⌘J / Ctrl+J) that sees the page you're on, streams answers, can look up your stats, weak topics, problems, submissions, GATE questions and course content, and suggest pages to open
 - **Tutor pedagogy** - graded hints (nudge → approach → pseudocode) on problems you haven't solved; full solutions only once you have
 - **Coach, code completion, AI fix** - live code insight, tricky tests and verdict explanations; inline ghost text; minimal syntax fixes
-- **Translation, AI problem finder, Studio drafts, GATE debrief** and the AI Lab's 3D algorithm animator
+- **Translation, AI problem finder, Studio drafts, GATE debrief** and the assistant's 3D algorithm animator
 - Needs `GROQ_API_KEY`; without it AI endpoints answer `503` and the rest of the site works. Per-user rate limits and a daily token budget (`AI_DAILY_TOKENS`) apply.
 - **AI Battle** - 1v1 time-based racing against a simulated opponent
 
@@ -292,7 +291,7 @@ nexora/
 5. **Progress:** Advance through Rift levels
 6. **Learn:** Use AI chat for hints and guidance
 7. **Collaborate:** Join solve rooms and compete with friends
-8. **Specialize:** Master specific domains via AI Lab
+8. **Specialize:** Go deeper with subject courses in Learn
 
 ## 🤝 Contributing
 

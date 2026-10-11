@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Brain, Clock, Cpu, FileDown, GitCommitHorizontal, Lightbulb, Loader2, ScrollText } from 'lucide-react'
 import { Badge, DifficultyBadge, LoadingBlock, Tabs } from '@/components/ui'
-import { sanitizeHtml } from '@/components/ailab/sanitize'
+import { sanitizeHtml } from '@/lib/sanitize'
 import { prepareMathHtml, renderMathIn } from '@/lib/math'
 import { useStatementMedia } from './StatementMedia'
 import { TranslateBar } from './TranslateBar'

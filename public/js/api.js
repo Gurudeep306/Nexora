@@ -166,12 +166,6 @@ const API = {
   reactToMessage(msgId, username, emoji) { return this._fetch(`/api/messages/${msgId}/react`, { method: 'POST', body: JSON.stringify({ username, emoji }) }); },
   getMessageReactions(msgId) { return this._fetch(`/api/messages/${msgId}/reactions`); },
 
-  // AI Lab
-  getAiProblems(category) { return this._fetch(`/api/ai-problems?category=${encodeURIComponent(category || 'all')}`); },
-  getAiProblem(id) { return this._fetch(`/api/ai-problems/${id}`); },
-  updateAiProgress(id, data) { return this._fetch(`/api/ai-problems/${id}/progress`, { method: 'POST', body: JSON.stringify(data) }); },
-  getAiStats() { return this._fetch('/api/ai-stats'); },
-
   // Tutorials
   getTutorials(category) { return this._fetch(`/api/tutorials?category=${encodeURIComponent(category || 'all')}`); },
   getTutorial(id) { return this._fetch(`/api/tutorials/${id}`); },
