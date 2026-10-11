@@ -35,9 +35,10 @@ export default function AnalyticsPage() {
         api.get<WeaknessResponse>('/api/weakness-analysis').catch(() => null),
       ]).then(([perf, weakness]) => ({ perf, weakness })),
     [],
+    { cacheKey: 'analytics' },
   )
 
-  if (loading) {
+  if (loading && !data) {
     return (
       <div>
         <PageHeader title="Analytics" subtitle="Performance telemetry from the rift" />

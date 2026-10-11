@@ -104,7 +104,7 @@ export default function GatePage() {
     return () => clearTimeout(t)
   }, [searchInput, q, setParams])
 
-  const meta = useApi<GateMeta>(() => api.get<GateMeta>('/api/gate/meta'), [])
+  const meta = useApi<GateMeta>(() => api.get<GateMeta>('/api/gate/meta'), [], { cacheKey: 'gate:meta' })
 
   const query = {
     q,
@@ -125,6 +125,7 @@ export default function GatePage() {
   const list = useApi<GateList>(
     () => api.get<GateList>('/api/gate/questions', { query }),
     [q, exam.join(), paper.join(), year.join(), subject.join(), topic.join(), type.join(), marks.join(), section.join(), hasFigure, sort, page],
+    { cacheKey: `gate:list:${JSON.stringify(query)}` },
   )
 
   const setPage = (p: number) => {

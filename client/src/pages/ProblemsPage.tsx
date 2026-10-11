@@ -97,6 +97,7 @@ export default function ProblemsPage() {
         timeoutMs: 15000,
       }),
     [platform, band.min, band.max, tag, status, qParam, sort, order, offset],
+    { cacheKey: `problems:${JSON.stringify([platform, band.min, band.max, tag, status, qParam, sort, order, offset])}` },
   )
 
   const bookmarksApi = useApi<BookmarksResponse>(
@@ -105,7 +106,7 @@ export default function ProblemsPage() {
     { skip: !username },
   )
 
-  const tagsApi = useApi<TagsResponse>(() => api.get<TagsResponse>('/api/tags'), [])
+  const tagsApi = useApi<TagsResponse>(() => api.get<TagsResponse>('/api/tags'), [], { cacheKey: 'tags' })
 
   const bookmarkedIds = useMemo(
     () => new Set(bookmarksApi.data?.problemIds ?? []),
