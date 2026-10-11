@@ -26,6 +26,16 @@ function persistSessionUser(req, user) {
   return safeUser;
 }
 
+// Issue a fresh session id when someone signs in, so an id planted before
+// login (session fixation) never becomes an authenticated session. Data in the
+// old session is dropped; callers re-store what they need afterwards.
+function regenerateSession(req) {
+  return new Promise((resolve, reject) => {
+    if (typeof req.session?.regenerate !== 'function') return resolve();
+    req.session.regenerate((err) => (err ? reject(err) : resolve()));
+  });
+}
+
 function clearSessionUser(req) {
   if (!req.session) return;
   delete req.session.user;
@@ -82,6 +92,7 @@ module.exports = {
   createStudioAuth,
   getSessionUser,
   persistSessionUser,
+  regenerateSession,
   requireAdmin,
   requireAuthenticatedUser,
   requireSelfOrAdmin,
