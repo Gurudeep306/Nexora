@@ -5,6 +5,16 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const { spawn } = require('node:child_process');
 const path = require('node:path');
+const fs = require('node:fs');
+const os = require('node:os');
+
+const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'nexora-live-'));
+const DB = path.join(tmp, 'test.db');
+function sql(stmt, ...args) {
+  const { DatabaseSync } = require('node:sqlite');
+  const db = new DatabaseSync(DB);
+  try { return db.prepare(stmt).run(...args); } finally { db.close(); }
+}
 
 let proc;
 let base;
@@ -58,6 +68,7 @@ test.before(async () => {
       ...process.env,
       PORT: String(port),
       NODE_ENV: 'test',
+      DB_PATH: DB,
       DISABLE_PUPPETEER: '1',
       DISABLE_SCRAPER: '1',
     },
@@ -67,15 +78,11 @@ test.before(async () => {
   proc.stderr.on('data', (d) => { serverLog += d; });
   await waitFor(`${base}/api/health`);
 
-  // The in-memory test DB is fresh, so the built-in admin name is free.
-  const admin = await signup('gurudeep');
   await signup(T1);
   await signup(T2);
   stranger = await signup(S);
-  for (const t of [T1, T2]) {
-    const r = await call('POST', '/api/admin/set-role', admin, { targetUser: t, role: 'teacher' });
-    assert.equal(r.status, 200);
-  }
+  // Roles are granted only through the stored role, never by username.
+  for (const t of [T1, T2]) sql("UPDATE users SET role='teacher' WHERE username=?", t);
   // Sign in again so the session carries the new role.
   teacher1 = await login(T1);
   teacher2 = await login(T2);
@@ -85,6 +92,7 @@ test.after(async () => {
   const done = new Promise((r) => proc.once('exit', r));
   proc.kill('SIGKILL');
   await done;
+  fs.rmSync(tmp, { recursive: true, force: true });
 });
 
 async function liveClass(cookie, body) {
