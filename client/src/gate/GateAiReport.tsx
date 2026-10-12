@@ -1,23 +1,11 @@
-import { useState } from 'react'
-import {
-  Trophy,
-  Target,
-  Brain,
-  AlertTriangle,
-  CheckCircle2,
-  XCircle,
-  RotateCcw,
-  Sparkles,
-  ChevronDown,
-  ChevronUp,
-  BookOpen,
-  TrendingUp,
-} from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
+import { BookOpen, CheckCircle2, ChevronDown, Minus, RotateCcw, Sparkles, XCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { Markdown } from '@/learn/md'
+import { api } from '@/lib/api'
 import { AiMarkdown } from '@/components/ai/AiMarkdown'
-import { GateVisualizer } from './GateVisualizer'
-import type { GateQuestion } from './types'
+import { LoadingBlock } from '@/components/ui'
+import { QuestionView } from './QuestionView'
+import type { GateDetail, GateQuestion } from './types'
 
 export interface ExamEvaluation {
   paperId: string
@@ -46,8 +34,8 @@ export interface ExamEvaluation {
     topic: string
     type: string
     marks: number
-    userAnswer: any
-    officialAnswer: any
+    userAnswer: unknown
+    officialAnswer: unknown
     isAttempted: boolean
     isCorrect: boolean
     marksAwarded: number
@@ -67,6 +55,15 @@ export interface AiDiagnostic {
   narrative?: string
 }
 
+type Filter = 'all' | 'incorrect' | 'unattempted' | 'correct'
+
+const fmt = (v: unknown) => (v == null || v === '' ? '—' : Array.isArray(v) ? v.join(', ') : String(v))
+const mmss = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
+
+/**
+ * The mock's score report and review. Answers and solutions are loaded per
+ * question when a row is opened (the paper itself was served without them).
+ */
 export function GateAiReport({
   evalResult,
   aiAnalysis,
@@ -80,423 +77,206 @@ export function GateAiReport({
   onRetake: () => void
   onBackToBank: () => void
 }) {
-  const [filterMode, setFilterMode] = useState<'all' | 'incorrect' | 'unattempted' | 'correct'>('all')
-  const [expandedId, setExpandedId] = useState<string | null>(null)
+  const [filter, setFilter] = useState<Filter>('all')
+  const [openId, setOpenId] = useState<string | null>(null)
+  const details = evalResult.evaluationDetails
+  const indexOf = useMemo(() => new Map(details.map((d, i) => [d.id, i + 1])), [details])
 
-  const filteredDetails = evalResult.evaluationDetails.filter((d) => {
-    if (filterMode === 'incorrect') return d.isAttempted && !d.isCorrect
-    if (filterMode === 'unattempted') return !d.isAttempted
-    if (filterMode === 'correct') return d.isCorrect
-    return true
-  })
+  const shown = details.filter((d) =>
+    filter === 'incorrect' ? d.isAttempted && !d.isCorrect : filter === 'unattempted' ? !d.isAttempted : filter === 'correct' ? d.isCorrect : true,
+  )
+  const pct = evalResult.maxMarks ? Math.max(0, Math.min(100, (evalResult.totalScore / evalResult.maxMarks) * 100)) : 0
+
+  const stat = (label: string, value: React.ReactNode, sub?: React.ReactNode) => (
+    <div className="card !p-4">
+      <div className="text-[11.5px] font-medium tracking-wide text-text-muted uppercase">{label}</div>
+      <div className="mt-1 font-mono text-2xl font-semibold text-text-primary tabular-nums">{value}</div>
+      {sub && <div className="mt-1 text-[12px] text-text-muted">{sub}</div>}
+    </div>
+  )
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6 py-6 font-sans text-text-primary">
-      {/* ── Top Header & Actions ── */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-4">
+    <div className="mx-auto max-w-5xl space-y-6 pb-28">
+      <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <span className="rounded-lg bg-accent-brand/15 px-2.5 py-1 text-[11px] font-bold text-accent-brand uppercase tracking-wider">
-            Official GATE CBT Performance Report
-          </span>
-          <h1 className="mt-1.5 text-2xl font-black tracking-tight text-text-primary sm:text-3xl">
-            {evalResult.paperTitle}
-          </h1>
-          <p className="mt-1 text-[13px] text-text-muted">
-            Evaluation computed in compliance with official GATE negative marking & section guidelines.
-          </p>
+          <p className="text-[12px] font-medium tracking-wide text-text-muted uppercase">Mock result</p>
+          <h1 className="font-display text-2xl font-semibold tracking-tight text-text-primary sm:text-[28px]">{evalResult.paperTitle}</h1>
         </div>
-
-        <div className="flex flex-wrap items-center gap-2">
-          <button
-            type="button"
-            onClick={onRetake}
-            className="btn-secondary inline-flex items-center gap-2 !px-3.5 !py-2 !text-[13px] font-bold"
-          >
-            <RotateCcw className="size-4" /> Retake Exam
+        <div className="flex flex-wrap gap-2">
+          <button type="button" onClick={onRetake} className="btn-secondary inline-flex items-center gap-1.5 !px-3.5 !py-2 !text-[13px]">
+            <RotateCcw className="size-4" /> Retake
           </button>
-          <button
-            type="button"
-            onClick={onBackToBank}
-            className="btn-primary inline-flex items-center gap-2 !px-4 !py-2 !text-[13px] font-bold"
-          >
-            <BookOpen className="size-4" /> Browse Question Bank
+          <button type="button" onClick={onBackToBank} className="btn-primary inline-flex items-center gap-1.5 !px-3.5 !py-2 !text-[13px]">
+            <BookOpen className="size-4" /> All papers
           </button>
         </div>
-      </div>
+      </header>
 
-      {/* ── Grand Scorecard Grid ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Main Score & AIR */}
-        <div className="card relative overflow-hidden border-accent-brand/40 bg-gradient-to-br from-accent-brand/15 to-transparent p-5">
-          <div className="flex items-center justify-between">
-            <span className="text-[12px] font-bold uppercase tracking-wider text-text-muted">Total Score</span>
-            <Trophy className="size-5 text-accent-brand" />
-          </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-4xl font-black text-text-primary font-mono">{evalResult.totalScore}</span>
+      {/* Score */}
+      <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="card !p-4 sm:col-span-2 lg:col-span-1">
+          <div className="text-[11.5px] font-medium tracking-wide text-text-muted uppercase">Score</div>
+          <div className="mt-1 flex items-baseline gap-1.5">
+            <span className="font-mono text-3xl font-semibold text-text-primary tabular-nums">{evalResult.totalScore}</span>
             <span className="text-[14px] text-text-muted">/ {evalResult.maxMarks}</span>
           </div>
-          <div className="mt-3 flex items-center gap-2 pt-2 border-t border-border/50 text-[11.5px]">
-            <span className="font-bold text-accent-brand">Predicted AIR:</span>
-            <span className="font-mono font-semibold text-text-primary">{evalResult.predictedAir}</span>
+          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-bg-surface-3">
+            <div className="h-full rounded-full bg-accent-brand" style={{ width: `${pct}%` }} />
+          </div>
+          <div className="mt-2 text-[12px] text-text-muted" title="A rough band from past cut-offs, not an official prediction">
+            Rough rank band: <span className="text-text-secondary">{evalResult.predictedAir}</span>
           </div>
         </div>
+        {stat('Accuracy', `${evalResult.accuracy}%`, `${evalResult.correctCount} correct · ${evalResult.incorrectCount} wrong`)}
+        {stat('Attempted', `${evalResult.attemptedCount}/${details.length}`, `GA ${evalResult.sectionStats.ga.score}/${evalResult.sectionStats.ga.max} · Technical ${evalResult.sectionStats.subject.score}/${evalResult.sectionStats.subject.max}`)}
+        {stat('Negative marks', evalResult.negativeMarks ? `−${evalResult.negativeMarks}` : '0', aiAnalysis?.negativeRisk)}
+      </section>
 
-        {/* Percentile & Accuracy */}
-        <div className="card p-5">
-          <div className="flex items-center justify-between">
-            <span className="text-[12px] font-bold uppercase tracking-wider text-text-muted">Accuracy & Rank</span>
-            <Target className="size-5 text-emerald-500" />
-          </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-4xl font-black text-emerald-500 font-mono">{evalResult.accuracy}%</span>
-            <span className="text-[13px] text-text-muted font-mono">{evalResult.percentile}th %ile</span>
-          </div>
-          <div className="mt-3 flex items-center justify-between pt-2 border-t border-border/50 text-[11.5px] text-text-muted">
-            <span>{evalResult.correctCount} Correct</span>
-            <span className="text-red-400">{evalResult.incorrectCount} Incorrect</span>
-          </div>
-        </div>
-
-        {/* Sectional Breakdown */}
-        <div className="card p-5">
-          <div className="flex items-center justify-between">
-            <span className="text-[12px] font-bold uppercase tracking-wider text-text-muted">Sections</span>
-            <TrendingUp className="size-5 text-blue-400" />
-          </div>
-          <div className="mt-2 space-y-1.5 font-mono text-[13px]">
-            <div className="flex justify-between items-center">
-              <span className="text-text-muted font-sans text-[12px]">General Aptitude:</span>
-              <span className="font-bold text-text-primary">{evalResult.sectionStats.ga.score} / {evalResult.sectionStats.ga.max}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-text-muted font-sans text-[12px]">Core Subject:</span>
-              <span className="font-bold text-text-primary">{evalResult.sectionStats.subject.score} / {evalResult.sectionStats.subject.max}</span>
-            </div>
-          </div>
-          <div className="mt-3 pt-2 border-t border-border/50 text-[11.5px] text-text-muted">
-            {evalResult.attemptedCount} of {evalResult.evaluationDetails.length} Questions Attempted
-          </div>
-        </div>
-
-        {/* Penalty & Risk */}
-        <div className="card p-5">
-          <div className="flex items-center justify-between">
-            <span className="text-[12px] font-bold uppercase tracking-wider text-text-muted">Negative Penalty</span>
-            <AlertTriangle className="size-5 text-amber-500" />
-          </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-4xl font-black text-amber-500 font-mono">-{evalResult.negativeMarks}</span>
-            <span className="text-[12px] text-text-muted">marks lost</span>
-          </div>
-          <div className="mt-3 pt-2 border-t border-border/50 text-[11.5px] text-text-muted truncate">
-            {aiAnalysis?.negativeRisk ?? 'Evaluation verified'}
-          </div>
-        </div>
-      </div>
-
-      {/* ── AI Cognitive Diagnostic Report ── */}
+      {/* Diagnostic */}
       {aiAnalysis && (
-        <div className="card border-accent-brand/30 bg-bg-surface-2/30 p-5 sm:p-6 space-y-4">
-          <div className="flex items-center gap-2.5">
-            <div className="rounded-xl bg-accent-brand/20 p-2 text-accent-brand">
-              <Brain className="size-5" />
-            </div>
-            <div>
-              <h2 className="text-[16px] font-bold text-text-primary flex items-center gap-2">
-                Nexora AI Attempt Diagnostic Engine
-                <Sparkles className="size-4 text-accent-brand" />
-              </h2>
-              <p className="text-[12px] text-text-muted">
-                Cognitive pattern assessment based on question timings, error modalities, and topic mastery.
-              </p>
-            </div>
+        <section className="card space-y-4 !p-5">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h2 className="flex items-center gap-2 text-[15px] font-semibold text-text-primary">
+              <Sparkles className="size-4 text-accent-brand" /> What to work on
+            </h2>
+            <span className="rounded-full border border-border bg-bg-surface-2 px-2.5 py-0.5 text-[12px] text-text-secondary">{aiAnalysis.speedAccuracyProfile}</span>
           </div>
-
-          <div className="rounded-xl border border-border bg-bg-surface p-4">
-            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-2.5">
-              <span className="text-[12px] font-bold uppercase tracking-wider text-text-muted">
-                Test-Taker Persona:
-              </span>
-              <span className="rounded-lg bg-accent-brand/15 px-2.5 py-0.5 text-[12px] font-bold text-accent-brand">
-                {aiAnalysis.speedAccuracyProfile}
-              </span>
+          <p className="text-[13.5px] leading-relaxed text-text-secondary">{aiAnalysis.executiveSummary}</p>
+          {aiAnalysis.narrative && (
+            <div className="border-t border-border pt-3">
+              <AiMarkdown text={aiAnalysis.narrative} />
             </div>
-            <p className="mt-2.5 text-[13.5px] text-text-secondary leading-relaxed">
-              {aiAnalysis.executiveSummary}
-            </p>
-            {aiAnalysis.narrative && (
-              <div className="mt-3 border-t border-border pt-3">
-                <p className="mb-1.5 flex items-center gap-1.5 text-[11px] font-bold tracking-wider text-accent-brand uppercase">AI debrief</p>
-                <AiMarkdown text={aiAnalysis.narrative} />
-              </div>
-            )}
-          </div>
-
-          {/* Actionable 3-Point Improvement Roadmap */}
-          <div className="space-y-2">
-            <span className="text-[12px] font-bold uppercase tracking-wider text-text-muted">
-              Personalized +15 Mark Elevation Roadmap:
-            </span>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              {aiAnalysis.recommendations.map((rec, i) => (
-                <div key={i} className="rounded-xl border border-border bg-bg-surface p-3.5 space-y-1.5">
-                  <div className="flex items-center gap-1.5 text-accent-brand font-bold text-[12px]">
-                    <span className="flex size-5 items-center justify-center rounded-full bg-accent-brand/15 text-[11px]">
-                      {i + 1}
-                    </span>
-                    Action Item {i + 1}
-                  </div>
-                  <p className="text-[12.5px] text-text-secondary leading-snug">{rec}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+          )}
+          <ol className="grid gap-2 md:grid-cols-3">
+            {aiAnalysis.recommendations.map((r, i) => (
+              <li key={i} className="rounded-xl border border-border bg-bg-surface-2 p-3 text-[13px] leading-snug text-text-secondary">
+                <span className="mb-1 block font-mono text-[11px] text-text-muted">{i + 1}</span>
+                {r}
+              </li>
+            ))}
+          </ol>
+        </section>
       )}
 
-      {/* ── Subject Breakdown Heatmap ── */}
-      <div className="card p-5 space-y-3">
-        <h3 className="text-[14px] font-bold uppercase tracking-wider text-text-muted">
-          Subject Mastery & Accuracy Matrix
-        </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {Object.entries(evalResult.subjectStats).map(([subj, data]) => {
-            const isStrong = data.accuracy >= 70 && data.score >= data.max * 0.5
-            const isWeak = data.accuracy < 40 || data.score <= data.max * 0.25
-            return (
-              <div key={subj} className="rounded-xl border border-border bg-bg-surface-2/40 p-3.5 space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="font-bold uppercase text-[12.5px] text-text-primary tracking-wide">
-                    {subj}
+      {/* Subjects */}
+      <section className="card !p-0">
+        <h2 className="border-b border-border px-5 py-3 text-[15px] font-semibold text-text-primary">By subject</h2>
+        <div className="divide-y divide-border">
+          {Object.entries(evalResult.subjectStats)
+            .sort((a, b) => b[1].max - a[1].max)
+            .map(([subj, d]) => {
+              const share = d.max ? Math.max(0, d.score / d.max) : 0
+              const tone = share >= 0.6 ? 'bg-state-success' : share >= 0.3 ? 'bg-state-warning' : 'bg-state-error'
+              return (
+                <div key={subj} className="grid grid-cols-[5rem_1fr_auto] items-center gap-3 px-5 py-2.5 text-[13px] sm:grid-cols-[8rem_1fr_9rem]">
+                  <span className="truncate font-medium text-text-primary uppercase">{subj}</span>
+                  <span className="h-1.5 overflow-hidden rounded-full bg-bg-surface-3">
+                    <span className={cn('block h-full rounded-full', tone)} style={{ width: `${Math.min(100, share * 100)}%` }} />
                   </span>
+                  <span className="text-right font-mono text-[12px] text-text-muted tabular-nums">
+                    {d.score}/{d.max} · {d.accuracy}%
+                  </span>
+                </div>
+              )
+            })}
+        </div>
+      </section>
+
+      {/* Review */}
+      <section className="space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-[17px] font-semibold text-text-primary">Review answers</h2>
+          <div className="flex rounded-xl border border-border bg-bg-surface p-0.5 text-[12.5px]" role="tablist">
+            {(
+              [
+                ['all', `All ${details.length}`],
+                ['incorrect', `Wrong ${evalResult.incorrectCount}`],
+                ['unattempted', `Skipped ${evalResult.unattemptedCount}`],
+                ['correct', `Correct ${evalResult.correctCount}`],
+              ] as Array<[Filter, string]>
+            ).map(([id, label]) => (
+              <button
+                key={id}
+                type="button"
+                role="tab"
+                aria-selected={filter === id}
+                onClick={() => setFilter(id)}
+                className={cn('rounded-[10px] px-2.5 py-1.5', filter === id ? 'bg-bg-surface-3 font-semibold text-text-primary' : 'text-text-muted hover:text-text-primary')}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <ol className="card divide-y divide-border overflow-hidden !p-0">
+          {shown.length === 0 && <li className="px-5 py-8 text-center text-[13px] text-text-muted">Nothing here.</li>}
+          {shown.map((d) => {
+            const q = questionsMap.get(d.id)
+            const open = openId === d.id
+            return (
+              <li key={d.id}>
+                <button
+                  type="button"
+                  data-review-row
+                  onClick={() => setOpenId(open ? null : d.id)}
+                  aria-expanded={open}
+                  className="flex w-full items-center gap-3 px-4 py-2.5 text-left hover:bg-bg-surface-2 sm:px-5"
+                >
+                  {d.isCorrect ? (
+                    <CheckCircle2 className="size-4.5 shrink-0 text-state-success" aria-label="Correct" />
+                  ) : d.isAttempted ? (
+                    <XCircle className="size-4.5 shrink-0 text-state-error" aria-label="Wrong" />
+                  ) : (
+                    <Minus className="size-4.5 shrink-0 text-text-muted" aria-label="Skipped" />
+                  )}
+                  <span className="w-10 shrink-0 font-mono text-[13px] font-semibold text-text-primary">Q{indexOf.get(d.id)}</span>
+                  <span className="hidden w-24 shrink-0 truncate text-[12px] text-text-muted uppercase sm:block">
+                    {d.type} · {d.subject}
+                  </span>
+                  <span className="min-w-0 flex-1 truncate font-mono text-[12.5px] text-text-secondary">
+                    You {fmt(d.userAnswer)} · Key {fmt(d.officialAnswer)}
+                  </span>
+                  <span className="hidden font-mono text-[11.5px] text-text-muted sm:inline">{mmss(d.timeSpentSeconds)}</span>
                   <span
                     className={cn(
-                      'rounded px-2 py-0.5 text-[11px] font-bold',
-                      isStrong
-                        ? 'bg-emerald-500/15 text-emerald-400'
-                        : isWeak
-                          ? 'bg-red-500/15 text-red-400'
-                          : 'bg-amber-500/15 text-amber-400',
+                      'w-12 shrink-0 text-right font-mono text-[12.5px] font-semibold',
+                      d.marksAwarded > 0 ? 'text-state-success' : d.marksAwarded < 0 ? 'text-state-error' : 'text-text-muted',
                     )}
                   >
-                    {isStrong ? 'Stronghold' : isWeak ? 'Needs Work' : 'Borderline'}
+                    {d.marksAwarded > 0 ? `+${d.marksAwarded}` : d.marksAwarded}
                   </span>
-                </div>
-                <div className="flex justify-between items-baseline font-mono text-[12px]">
-                  <span className="text-text-muted">Score: {data.score} / {data.max}</span>
-                  <span className="font-bold text-text-primary">{data.accuracy}% Acc</span>
-                </div>
-                {/* Visual Progress Bar */}
-                <div className="h-2 w-full rounded-full bg-bg-surface overflow-hidden">
-                  <div
-                    style={{ width: `${Math.min(100, Math.max(0, (data.score / (data.max || 1)) * 100))}%` }}
-                    className={cn(
-                      'h-full rounded-full transition-all',
-                      isStrong ? 'bg-emerald-500' : isWeak ? 'bg-red-500' : 'bg-amber-500',
-                    )}
-                  />
-                </div>
-              </div>
+                  <ChevronDown className={cn('size-4 shrink-0 text-text-muted transition-transform', open && 'rotate-180')} />
+                </button>
+                {open && q && <ReviewQuestion q={q} pick={d.userAnswer} position={`Question ${indexOf.get(d.id)}`} />}
+              </li>
             )
           })}
-        </div>
-      </div>
+        </ol>
+      </section>
+    </div>
+  )
+}
 
-      {/* ── Question-by-Question Review Section ── */}
-      <div className="space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
-          <div>
-            <h3 className="text-lg font-bold text-text-primary">Detailed Question Solutions & Derivations</h3>
-            <p className="text-[12.5px] text-text-muted">
-              Inspect your answers against official keys with step-by-step master derivations and animated models.
-            </p>
-          </div>
+/** One question after the exam: the full record (key + solution) is fetched now. */
+function ReviewQuestion({ q, pick, position }: { q: GateQuestion; pick: unknown; position: string }) {
+  const [full, setFull] = useState<GateQuestion | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  useEffect(() => {
+    let live = true
+    api
+      .get<GateDetail>(`/api/gate/questions/${encodeURIComponent(q.id)}`)
+      .then((r) => live && setFull(r.question))
+      .catch((e) => live && setError(e instanceof Error ? e.message : 'Could not load the question'))
+    return () => {
+      live = false
+    }
+  }, [q.id])
 
-          <div className="flex flex-wrap items-center gap-1.5 rounded-xl bg-bg-surface-2 p-1 border border-border text-[12px] font-semibold">
-            <button
-              type="button"
-              onClick={() => setFilterMode('all')}
-              className={cn('rounded-lg px-2.5 py-1 transition-colors', filterMode === 'all' && 'bg-bg-surface text-accent-brand shadow-sm')}
-            >
-              All ({evalResult.evaluationDetails.length})
-            </button>
-            <button
-              type="button"
-              onClick={() => setFilterMode('incorrect')}
-              className={cn('rounded-lg px-2.5 py-1 text-red-400 transition-colors', filterMode === 'incorrect' && 'bg-bg-surface font-bold shadow-sm')}
-            >
-              Incorrect ({evalResult.incorrectCount})
-            </button>
-            <button
-              type="button"
-              onClick={() => setFilterMode('unattempted')}
-              className={cn('rounded-lg px-2.5 py-1 text-text-muted transition-colors', filterMode === 'unattempted' && 'bg-bg-surface text-text-primary shadow-sm')}
-            >
-              Skipped ({evalResult.unattemptedCount})
-            </button>
-            <button
-              type="button"
-              onClick={() => setFilterMode('correct')}
-              className={cn('rounded-lg px-2.5 py-1 text-emerald-400 transition-colors', filterMode === 'correct' && 'bg-bg-surface font-bold shadow-sm')}
-            >
-              Correct ({evalResult.correctCount})
-            </button>
-          </div>
-        </div>
-
-        {/* Questions List */}
-        <div className="space-y-3">
-          {filteredDetails.map((d) => {
-            const q = questionsMap.get(d.id)
-            if (!q) return null
-            const isExpanded = expandedId === d.id
-
-            return (
-              <div
-                key={d.id}
-                className={cn(
-                  'rounded-xl border transition-all overflow-hidden bg-bg-surface',
-                  d.isCorrect
-                    ? 'border-emerald-500/30'
-                    : d.isAttempted
-                      ? 'border-red-500/30'
-                      : 'border-border',
-                )}
-              >
-                {/* Header Row */}
-                <div
-                  onClick={() => setExpandedId(isExpanded ? null : d.id)}
-                  className="flex flex-wrap items-center justify-between gap-3 p-4 cursor-pointer hover:bg-bg-surface-2/40 transition-colors"
-                >
-                  <div className="flex items-center gap-2.5">
-                    {d.isCorrect ? (
-                      <CheckCircle2 className="size-5 text-emerald-500 shrink-0" />
-                    ) : d.isAttempted ? (
-                      <XCircle className="size-5 text-red-500 shrink-0" />
-                    ) : (
-                      <div className="size-5 rounded-full border border-border bg-bg-surface-2 flex items-center justify-center text-[10px] text-text-muted">
-                        —
-                      </div>
-                    )}
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-[14px] text-text-primary">
-                          {q.section === 'ga' ? 'GA ' : ''}Q{q.number}
-                        </span>
-                        <span className="rounded bg-bg-surface-2 px-1.5 py-0.5 text-[11px] font-mono text-text-muted">
-                          {q.type} · {q.marks}M
-                        </span>
-                        <span className="rounded bg-accent-brand/10 px-1.5 py-0.5 text-[11px] font-semibold text-accent-brand uppercase">
-                          {q.subject}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3 text-[12.5px] font-mono">
-                    <span className="text-text-muted">
-                      Your: <strong className={d.isCorrect ? 'text-emerald-400' : 'text-red-400'}>{String(d.userAnswer ?? 'None')}</strong>
-                    </span>
-                    <span className="text-text-muted">
-                      Key: <strong className="text-text-primary">{String(d.officialAnswer)}</strong>
-                    </span>
-                    <span
-                      className={cn(
-                        'rounded-lg px-2 py-0.5 font-bold',
-                        d.marksAwarded > 0
-                          ? 'bg-emerald-500/15 text-emerald-400'
-                          : d.marksAwarded < 0
-                            ? 'bg-red-500/15 text-red-400'
-                            : 'bg-bg-surface-2 text-text-muted',
-                      )}
-                    >
-                      {d.marksAwarded > 0 ? `+${d.marksAwarded}` : d.marksAwarded} M
-                    </span>
-                    {isExpanded ? <ChevronUp className="size-4 text-text-muted" /> : <ChevronDown className="size-4 text-text-muted" />}
-                  </div>
-                </div>
-
-                {/* Expanded Question Statement & Deep Solution */}
-                {isExpanded && (
-                  <div className="border-t border-border p-4 sm:p-5 space-y-4 bg-bg-surface-2/20">
-                    <div>
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-text-muted">Problem Statement:</span>
-                      <Markdown md={q.text} className="mt-1 !text-[14px]" />
-                    </div>
-
-                    {q.figures.map((f) => {
-                      const svgPath = f.svg || f.f.replace(/\.(png|jpg|jpeg)$/i, '.svg')
-                      return (
-                        <figure key={f.f} className="my-3 max-w-lg">
-                          <div className="overflow-hidden rounded-xl border border-border/80 bg-[#0b1329] p-3 shadow-md inline-block max-w-full">
-                            <img
-                              src={`/gate-fig/${svgPath}`}
-                              alt={f.alt || 'GATE Schematic'}
-                              className="max-h-72 w-auto rounded object-contain"
-                              loading="lazy"
-                            />
-                          </div>
-                          {f.alt && <figcaption className="mt-1 text-[11.5px] text-text-muted">{f.alt}</figcaption>}
-                        </figure>
-                      )
-                    })}
-
-                    {q.options.length > 0 && (
-                      <div className="space-y-1.5 pt-2 border-t border-border/50">
-                        <span className="text-[11px] font-bold uppercase tracking-wider text-text-muted">Options:</span>
-                        <div className="grid gap-1">
-                          {q.options.map((opt) => {
-                            const isOfficial = opt.l === q.answer || (Array.isArray(q.answer) && q.answer.includes(opt.l))
-                            const isUserChoice = opt.l === d.userAnswer || (Array.isArray(d.userAnswer) && d.userAnswer.includes(opt.l))
-                            return (
-                              <div
-                                key={opt.l}
-                                className={cn(
-                                  'flex items-center gap-2 rounded-lg p-2 text-[13px] border',
-                                  isOfficial
-                                    ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300'
-                                    : isUserChoice
-                                      ? 'bg-red-500/15 border-red-500/40 text-red-300'
-                                      : 'bg-bg-surface border-border text-text-secondary',
-                                )}
-                              >
-                                <span className="font-bold font-mono">({opt.l})</span>
-                                <div className="flex-1 min-w-0">
-                                  <Markdown md={opt.t} className="[&_p]:!m-0" />
-                                </div>
-                                {isOfficial && <span className="text-[11px] font-bold uppercase shrink-0">Official Key</span>}
-                                {isUserChoice && !isOfficial && <span className="text-[11px] font-bold text-red-400 shrink-0">Your Pick</span>}
-                              </div>
-                            )
-                          })}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Step-by-Step Master Solution */}
-                    <div className="rounded-xl border border-border bg-bg-surface p-4 space-y-3">
-                      <div className="flex items-center gap-2 border-b border-border pb-2">
-                        <BookOpen className="size-4 text-accent-brand" />
-                        <h4 className="text-[13px] font-bold text-text-primary">Master Step-by-Step Solution</h4>
-                      </div>
-
-                      {q.solution ? (
-                        <Markdown md={q.solution} className="!text-[13.5px] leading-relaxed" />
-                      ) : (
-                        <p className="text-[13px] text-text-muted">Comprehensive derivation logged in official GATE repository.</p>
-                      )}
-
-                      {/* Interactive Engineering Visualizer if applicable */}
-                      <GateVisualizer subject={q.subject} topic={q.topic} />
-                    </div>
-                  </div>
-                )}
-              </div>
-            )
-          })}
-        </div>
-      </div>
+  const initialPick = Array.isArray(pick) ? pick.map(String) : pick == null ? '' : String(pick)
+  return (
+    <div className="border-t border-border bg-bg-surface-2/50 p-3 sm:p-4">
+      {error ? <p className="text-[13px] text-state-error">{error}</p> : !full ? <LoadingBlock rows={3} /> : <QuestionView q={full} initialPick={initialPick} position={position} />}
     </div>
   )
 }

@@ -1,36 +1,46 @@
-import { useState, useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import {
-  Clock,
-  Calculator as CalcIcon,
-  FileText,
-  HelpCircle,
   AlertCircle,
   Bookmark,
+  Calculator as CalcIcon,
   ChevronLeft,
   ChevronRight,
-  Send,
-  X,
-  User,
+  Clock,
+  FileText,
+  HelpCircle,
+  LayoutGrid,
+  LogOut,
   Maximize,
   Minimize,
-  ZoomIn,
+  Send,
+  User,
+  X,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Markdown } from '@/learn/md'
 import { api } from '@/lib/api'
 import { agentTask } from '@/lib/agent'
 import { useAgentPageContext } from '@/context/AgentContext'
+import { useAuth } from '@/context/AuthContext'
+import { ConfirmDialog, Modal } from '@/components/ui'
 import { GateCalculator } from './GateCalculator'
 import { GateAiReport, type ExamEvaluation, type AiDiagnostic } from './GateAiReport'
 import { ReconstructedDiagram } from './ReconstructedDiagram'
-import type { GateQuestion, GatePaper } from './types'
+import { paperLabel, type GateQuestion, type GatePaper } from './types'
 
-export type QuestionStatus =
-  | 'not-visited'
-  | 'not-answered'
-  | 'answered'
-  | 'marked-for-review'
-  | 'answered-marked';
+/*
+ * A GATE mock in the shape of the real TCS iON CBT console: instructions
+ * first, then a question pane with a section bar, a question palette with
+ * the five official statuses, Save & Next / Mark for Review & Next / Clear
+ * Response, an on-screen calculator and a countdown that submits at zero.
+ *
+ * As in the real exam a response counts only once it is saved (Save & Next
+ * or Mark for Review & Next); moving away without saving discards the
+ * change. The server sends the paper without answers or solutions — those
+ * arrive with the evaluation after submission.
+ */
+
+export type QuestionStatus = 'not-visited' | 'not-answered' | 'answered' | 'marked-for-review' | 'answered-marked'
 
 export interface CbtPaperData {
   paper: GatePaper
@@ -41,77 +51,145 @@ export interface CbtPaperData {
   questions: GateQuestion[]
 }
 
-export function GateCbtExam({
-  paperId,
-  onExit,
-}: {
-  paperId: string
-  onExit: () => void
-}) {
+type Resp = string | string[]
+
+interface Saved {
+  v: 1
+  responses: Record<string, Resp>
+  statusMap: Record<string, QuestionStatus>
+  timeRemaining: number
+  timeSpent: Record<string, number>
+  currentIndex: number
+}
+
+const storeKey = (paperId: string) => `nexora:gate-cbt:${paperId}`
+function loadSaved(paperId: string): Saved | null {
+  try {
+    const s = JSON.parse(localStorage.getItem(storeKey(paperId)) ?? 'null')
+    return s && s.v === 1 && s.timeRemaining > 0 ? (s as Saved) : null
+  } catch {
+    return null
+  }
+}
+function clearSaved(paperId: string) {
+  try {
+    localStorage.removeItem(storeKey(paperId))
+  } catch {
+    /* ignore */
+  }
+}
+
+const hasValue = (v: unknown) => v !== undefined && v !== null && v !== '' && !(Array.isArray(v) && v.length === 0)
+
+const formatTime = (secs: number) => {
+  const h = Math.floor(secs / 3600)
+  const m = Math.floor((secs % 3600) / 60)
+  const s = secs % 60
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+}
+
+/** Options as answered in the console (old True/False items have none). */
+function cbtOptions(q: GateQuestion) {
+  if (q.options.length) return q.options
+  if (q.type === 'TF')
+    return [
+      { l: 'True', t: 'True' },
+      { l: 'False', t: 'False' },
+    ]
+  return []
+}
+
+/* ── Palette status chip (shape + colour, like TCS iON) ─────────────────── */
+
+const SHAPE: Record<QuestionStatus, string> = {
+  // answered: pentagon pointing down; not answered: pointing up (TCS shapes)
+  answered: '[clip-path:polygon(0_0,100%_0,100%_68%,50%_100%,0_68%)]',
+  'not-answered': '[clip-path:polygon(50%_0,100%_32%,100%_100%,0_100%,0_32%)]',
+  'marked-for-review': 'rounded-full',
+  'answered-marked': 'rounded-full',
+  'not-visited': 'rounded-md',
+}
+const FILL: Record<QuestionStatus, string> = {
+  answered: 'bg-state-success text-bg-app',
+  'not-answered': 'bg-state-error text-bg-app',
+  'marked-for-review': 'bg-state-info text-bg-app',
+  'answered-marked': 'bg-state-info text-bg-app',
+  'not-visited': 'bg-bg-surface-3 text-text-secondary border border-border',
+}
+const STATUS_LABEL: Record<QuestionStatus, string> = {
+  answered: 'Answered',
+  'not-answered': 'Not answered',
+  'not-visited': 'Not visited',
+  'marked-for-review': 'Marked for review',
+  'answered-marked': 'Answered & marked for review',
+}
+
+function StatusChip({ status, children, className }: { status: QuestionStatus; children: React.ReactNode; className?: string }) {
+  return (
+    <span className={cn('relative inline-flex items-center justify-center font-mono text-[12px] font-semibold tabular-nums', SHAPE[status], FILL[status], className)}>
+      {children}
+      {status === 'answered-marked' && <span className="absolute right-0 bottom-0 size-2 rounded-full bg-state-success ring-2 ring-bg-surface" aria-hidden="true" />}
+    </span>
+  )
+}
+
+/* ── The console ─────────────────────────────────────────────────────────── */
+
+export function GateCbtExam({ paperId, onExit }: { paperId: string; onExit: () => void }) {
+  const { user } = useAuth()
   const [data, setData] = useState<CbtPaperData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  // Exam state
+  const [phase, setPhase] = useState<'instructions' | 'exam'>('instructions')
+  const [agreed, setAgreed] = useState(false)
+  const [resume, setResume] = useState<Saved | null>(() => loadSaved(paperId))
+
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [activeSectionId, setActiveSectionId] = useState<string>('ga')
-  const [responses, setResponses] = useState<Record<string, any>>({})
+  const [responses, setResponses] = useState<Record<string, Resp>>({})
+  const [draft, setDraft] = useState<Resp | undefined>(undefined)
   const [statusMap, setStatusMap] = useState<Record<string, QuestionStatus>>({})
-  const [timeRemaining, setTimeRemaining] = useState(180 * 60) // 180 mins
+  const [timeRemaining, setTimeRemaining] = useState(180 * 60)
   const [timeSpent, setTimeSpent] = useState<Record<string, number>>({})
 
-  // Modals & Panels
   const [showCalc, setShowCalc] = useState(false)
-  const [showQuestionPaper, setShowQuestionPaper] = useState(false)
+  const [showPaper, setShowPaper] = useState(false)
   const [showInstructions, setShowInstructions] = useState(false)
-  const [showSubmitModal, setShowSubmitModal] = useState(false)
+  const [showSubmit, setShowSubmit] = useState(false)
+  const [showExit, setShowExit] = useState(false)
+  const [paletteOpen, setPaletteOpen] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
   const [isFullscreen, setIsFullscreen] = useState(false)
-  const [zoomFigure, setZoomFigure] = useState<string | null>(null)
 
-  // Sync fullscreen state with browser
-  useEffect(() => {
-    const handleFsChange = () => {
-      setIsFullscreen(!!document.fullscreenElement)
-    }
-    document.addEventListener('fullscreenchange', handleFsChange)
-    return () => document.removeEventListener('fullscreenchange', handleFsChange)
-  }, [])
-
-  const toggleFullscreen = async () => {
-    try {
-      if (!document.fullscreenElement) {
-        await document.documentElement.requestFullscreen()
-      } else {
-        await document.exitFullscreen()
-      }
-    } catch (e) {
-      console.warn('Fullscreen request failed:', e)
-    }
-  }
-
-  // Post-submission Evaluation
   const [evalResult, setEvalResult] = useState<ExamEvaluation | null>(null)
   const [aiAnalysis, setAiAnalysis] = useState<AiDiagnostic | null>(null)
 
-  // Track time spent per question
   const currentQIdRef = useRef<string | null>(null)
+  const scrollRef = useRef<HTMLDivElement>(null)
 
-  // Fetch paper data
+  useEffect(() => {
+    const onFs = () => setIsFullscreen(!!document.fullscreenElement)
+    document.addEventListener('fullscreenchange', onFs)
+    return () => document.removeEventListener('fullscreenchange', onFs)
+  }, [])
+  const toggleFullscreen = async () => {
+    try {
+      if (!document.fullscreenElement) await document.documentElement.requestFullscreen()
+      else await document.exitFullscreen()
+    } catch {
+      /* not allowed here */
+    }
+  }
+
   useEffect(() => {
     let unmounted = false
-    setLoading(true)
     api
       .get<CbtPaperData>(`/api/gate/paper/${paperId}`)
       .then((res) => {
         if (unmounted) return
         setData(res)
-        // Initialize status: Q0 is 'not-answered', all others are 'not-visited'
-        const initialStatus: Record<string, QuestionStatus> = {}
-        res.questions.forEach((q, idx) => {
-          initialStatus[q.id] = idx === 0 ? 'not-answered' : 'not-visited'
-        })
-        setStatusMap(initialStatus)
+        setTimeRemaining((res.durationMinutes || 180) * 60)
         setLoading(false)
       })
       .catch((err) => {
@@ -124,149 +202,152 @@ export function GateCbtExam({
     }
   }, [paperId])
 
-  // Timer countdown. The updater is kept pure (it only decrements); the
-  // time-out submit is triggered by a separate effect below so it always
-  // uses the latest responses and fires exactly once (StrictMode-safe).
-  const timeUp = timeRemaining <= 0
-  useEffect(() => {
-    if (loading || evalResult || timeUp) return
-    const timer = setInterval(() => {
-      setTimeRemaining((prev) => Math.max(0, prev - 1))
-
-      // Track time spent on current question
-      if (currentQIdRef.current) {
-        const qId = currentQIdRef.current
-        setTimeSpent((ts) => ({ ...ts, [qId]: (ts[qId] || 0) + 1 }))
-      }
-    }, 1000)
-    return () => clearInterval(timer)
-  }, [loading, evalResult, timeUp])
-
-  const questions = data?.questions || []
+  const questions = useMemo(() => data?.questions ?? [], [data])
   const currentQuestion = questions[currentIndex]
-  if (currentQuestion) {
-    currentQIdRef.current = currentQuestion.id
+  useEffect(() => {
+    currentQIdRef.current = currentQuestion?.id ?? null
+  }, [currentQuestion])
+  const running = phase === 'exam' && !evalResult
+
+  const begin = (from: Saved | null) => {
+    const initial: Record<string, QuestionStatus> = {}
+    questions.forEach((q, idx) => (initial[q.id] = idx === 0 ? 'not-answered' : 'not-visited'))
+    if (from) {
+      setResponses(from.responses)
+      setStatusMap({ ...initial, ...from.statusMap })
+      setTimeRemaining(from.timeRemaining)
+      setTimeSpent(from.timeSpent)
+      setCurrentIndex(Math.min(from.currentIndex, questions.length - 1))
+      setDraft(from.responses[questions[Math.min(from.currentIndex, questions.length - 1)]?.id])
+    } else {
+      setResponses({})
+      setStatusMap(initial)
+      setTimeSpent({})
+      setCurrentIndex(0)
+      setDraft(undefined)
+      setTimeRemaining((data?.durationMinutes || 180) * 60)
+    }
+    setPhase('exam')
   }
 
-  // The floating assistant: concept help only while the paper is running
-  // (the server enforces this too); full explanations once it's submitted.
+  // Timer (pure updater; auto-submit is a separate effect).
+  const timeUp = timeRemaining <= 0
+  useEffect(() => {
+    if (!running || timeUp) return
+    const t = setInterval(() => {
+      setTimeRemaining((p) => Math.max(0, p - 1))
+      const id = currentQIdRef.current
+      if (id) setTimeSpent((ts) => ({ ...ts, [id]: (ts[id] || 0) + 1 }))
+    }, 1000)
+    return () => clearInterval(t)
+  }, [running, timeUp])
+
+  // Keep the attempt across an accidental reload (saved every few seconds).
+  useEffect(() => {
+    if (!running) return
+    const t = setTimeout(() => {
+      try {
+        const s: Saved = { v: 1, responses, statusMap, timeRemaining, timeSpent, currentIndex }
+        localStorage.setItem(storeKey(paperId), JSON.stringify(s))
+      } catch {
+        /* ignore */
+      }
+    }, 1500)
+    return () => clearTimeout(t)
+  }, [running, responses, statusMap, timeRemaining, timeSpent, currentIndex, paperId])
+
+  // Warn before closing the tab mid-exam.
+  useEffect(() => {
+    if (!running) return
+    const onBefore = (e: BeforeUnloadEvent) => {
+      e.preventDefault()
+    }
+    window.addEventListener('beforeunload', onBefore)
+    return () => window.removeEventListener('beforeunload', onBefore)
+  }, [running])
+
   useAgentPageContext(
     evalResult
       ? { examReview: true, title: `${data?.paper.exam ?? 'GATE'} ${data?.paper.year ?? ''} mock — results` }
       : {
           examActive: true,
           title: data ? `${data.paper.exam} ${data.paper.year} mock` : 'GATE mock',
-          gateQuestionId: currentQuestion?.id,
-          gateQuestionText: currentQuestion
-            ? [`Q${currentQuestion.number} (${currentQuestion.type})`, currentQuestion.text, ...currentQuestion.options.map((o) => `(${o.l}) ${o.t}`)].join('\n').slice(0, 3000)
-            : undefined,
+          gateQuestionId: running ? currentQuestion?.id : undefined,
+          gateQuestionText:
+            running && currentQuestion
+              ? [`Q${currentIndex + 1} (${currentQuestion.type})`, currentQuestion.text, ...currentQuestion.options.map((o) => `(${o.l}) ${o.t}`)].join('\n').slice(0, 3000)
+              : undefined,
         },
   )
 
-  // Format seconds into HH:MM:SS
-  const formatTime = (secs: number) => {
-    const h = Math.floor(secs / 3600)
-    const m = Math.floor((secs % 3600) / 60)
-    const s = secs % 60
-    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`
-  }
+  /* ── Navigation & responses ── */
 
-  // Handle jumping to question index
   const jumpToQuestion = (index: number) => {
     if (index < 0 || index >= questions.length) return
-    const targetQ = questions[index]
+    const target = questions[index]
     setCurrentIndex(index)
-    if (targetQ.section === 'ga') setActiveSectionId('ga')
-    else setActiveSectionId('subject')
-
-    // Mark as not-answered if it was not-visited
-    setStatusMap((prev) => {
-      if (prev[targetQ.id] === 'not-visited') {
-        return { ...prev, [targetQ.id]: 'not-answered' }
-      }
-      return prev
-    })
+    setDraft(responses[target.id]) // unsaved changes are discarded, as in TCS iON
+    setStatusMap((prev) => (prev[target.id] === 'not-visited' || !prev[target.id] ? { ...prev, [target.id]: 'not-answered' } : prev))
+    setPaletteOpen(false)
+    scrollRef.current?.scrollTo({ top: 0 })
   }
 
-  // Save response & advance
-  const handleSaveAndNext = () => {
+  const commit = (mark: boolean) => {
     if (!currentQuestion) return
-    const curVal = responses[currentQuestion.id]
-    const hasAnswer = curVal !== undefined && curVal !== null && curVal !== '' && !(Array.isArray(curVal) && curVal.length === 0)
-
-    setStatusMap((prev) => ({
-      ...prev,
-      [currentQuestion.id]: hasAnswer ? 'answered' : 'not-answered',
-    }))
-
-    if (currentIndex < questions.length - 1) {
-      jumpToQuestion(currentIndex + 1)
-    }
-  }
-
-  // Mark for review & advance
-  const handleMarkForReviewAndNext = () => {
-    if (!currentQuestion) return
-    const curVal = responses[currentQuestion.id]
-    const hasAnswer = curVal !== undefined && curVal !== null && curVal !== '' && !(Array.isArray(curVal) && curVal.length === 0)
-
-    setStatusMap((prev) => ({
-      ...prev,
-      [currentQuestion.id]: hasAnswer ? 'answered-marked' : 'marked-for-review',
-    }))
-
-    if (currentIndex < questions.length - 1) {
-      jumpToQuestion(currentIndex + 1)
-    }
-  }
-
-  // Clear current question response
-  const handleClearResponse = () => {
-    if (!currentQuestion) return
+    const id = currentQuestion.id
+    const has = hasValue(draft)
     setResponses((prev) => {
       const next = { ...prev }
-      delete next[currentQuestion.id]
+      if (has) next[id] = draft as Resp
+      else delete next[id]
       return next
     })
-    setStatusMap((prev) => ({
-      ...prev,
-      [currentQuestion.id]: 'not-answered',
-    }))
-  }
-
-  // Handle option selection
-  const handleSelectOption = (optLabel: string) => {
-    if (!currentQuestion) return
-    if (currentQuestion.type === 'MSQ') {
-      const currentList: string[] = Array.isArray(responses[currentQuestion.id]) ? responses[currentQuestion.id] : []
-      const nextList = currentList.includes(optLabel)
-        ? currentList.filter((x) => x !== optLabel)
-        : [...currentList, optLabel]
-      setResponses((prev) => ({ ...prev, [currentQuestion.id]: nextList }))
-    } else {
-      setResponses((prev) => ({ ...prev, [currentQuestion.id]: optLabel }))
+    setStatusMap((prev) => ({ ...prev, [id]: mark ? (has ? 'answered-marked' : 'marked-for-review') : has ? 'answered' : 'not-answered' }))
+    // jumpToQuestion reads `responses` — pass the committed value forward.
+    if (currentIndex < questions.length - 1) {
+      const target = questions[currentIndex + 1]
+      setCurrentIndex(currentIndex + 1)
+      setDraft(responses[target.id])
+      setStatusMap((prev) => (prev[target.id] === 'not-visited' || !prev[target.id] ? { ...prev, [target.id]: 'not-answered' } : prev))
+      scrollRef.current?.scrollTo({ top: 0 })
     }
   }
 
-  // Submit and evaluate exam
-  const handleSubmitExam = async () => {
-    setShowSubmitModal(false)
-    setIsSubmitting(true)
-    try {
-      const evalRes = await api.post<ExamEvaluation>('/api/gate/evaluate', {
-        paperId,
-        responses,
-        timeSpent,
-      })
-      setEvalResult(evalRes)
+  const clearResponse = () => {
+    if (!currentQuestion) return
+    const id = currentQuestion.id
+    setDraft(undefined)
+    setResponses((prev) => {
+      const next = { ...prev }
+      delete next[id]
+      return next
+    })
+    setStatusMap((prev) => ({ ...prev, [id]: 'not-answered' }))
+  }
 
-      // Get AI Attempt Diagnostic
+  const selectOption = (l: string) => {
+    if (!currentQuestion) return
+    if (currentQuestion.type === 'MSQ') {
+      const cur = Array.isArray(draft) ? draft : []
+      setDraft(cur.includes(l) ? cur.filter((x) => x !== l) : [...cur, l])
+    } else setDraft(l)
+  }
+
+  /* ── Submit ── */
+
+  const handleSubmitExam = async () => {
+    setShowSubmit(false)
+    setIsSubmitting(true)
+    setSubmitError(null)
+    try {
+      const evalRes = await api.post<ExamEvaluation>('/api/gate/evaluate', { paperId, responses, timeSpent })
+      setEvalResult(evalRes)
+      clearSaved(paperId)
+      setResume(null)
+      if (document.fullscreenElement) void document.exitFullscreen().catch(() => undefined)
       try {
-        const diagRes = await api.post<{ ok: true; analysis: AiDiagnostic }>('/api/gate/ai-analysis', {
-          evalResult: evalRes,
-        })
+        const diagRes = await api.post<{ ok: true; analysis: AiDiagnostic }>('/api/gate/ai-analysis', { evalResult: evalRes })
         setAiAnalysis(diagRes.analysis)
-        // Optional AI debrief on top of the rule-based analysis (silently skipped without AI).
         const a = diagRes.analysis
         agentTask<string>(
           'gate_narrative',
@@ -287,410 +368,354 @@ export function GateCbtExam({
           .then((narrative) => narrative && setAiAnalysis((prev) => (prev ? { ...prev, narrative } : prev)))
           .catch(() => undefined)
       } catch {
-        // Fallback without AI diagnostic if endpoint fails
+        /* the score report works without the diagnostic */
       }
-    } catch (err: any) {
-      alert(`Submission error: ${err.message || 'Could not evaluate paper.'}`)
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : 'Could not evaluate the paper.')
     } finally {
       setIsSubmitting(false)
     }
   }
 
-  // Always point at the latest handler so the auto-submit sees current
-  // responses/timeSpent rather than a stale first-render closure.
   const submitRef = useRef(handleSubmitExam)
   useEffect(() => {
     submitRef.current = handleSubmitExam
   })
-
-  // Auto-submit once when the clock hits zero.
   const autoSubmittedRef = useRef(false)
   useEffect(() => {
-    if (!timeUp || loading || evalResult || isSubmitting) return
-    if (autoSubmittedRef.current) return
+    if (!timeUp || !running || isSubmitting || autoSubmittedRef.current) return
     autoSubmittedRef.current = true
     void submitRef.current()
-  }, [timeUp, loading, evalResult, isSubmitting])
+  }, [timeUp, running, isSubmitting])
 
-  // Count palette states
-  const counts = {
-    answered: 0,
-    notAnswered: 0,
-    notVisited: 0,
-    markedForReview: 0,
-    answeredMarked: 0,
-  }
-
-  questions.forEach((q) => {
-    const s = statusMap[q.id] || 'not-visited'
-    if (s === 'answered') counts.answered++
-    else if (s === 'not-answered') counts.notAnswered++
-    else if (s === 'not-visited') counts.notVisited++
-    else if (s === 'marked-for-review') counts.markedForReview++
-    else if (s === 'answered-marked') counts.answeredMarked++
-  })
-
-  // Retake exam reset
   const handleRetake = () => {
     setEvalResult(null)
     setAiAnalysis(null)
-    setResponses({})
-    setTimeRemaining(180 * 60)
     autoSubmittedRef.current = false
-    setTimeSpent({})
-    setCurrentIndex(0)
-    const initialStatus: Record<string, QuestionStatus> = {}
-    questions.forEach((q, idx) => {
-      initialStatus[q.id] = idx === 0 ? 'not-answered' : 'not-visited'
-    })
-    setStatusMap(initialStatus)
+    setAgreed(false)
+    setPhase('instructions')
   }
+
+  /* ── Counts ── */
+  const countsFor = (qs: GateQuestion[]) => {
+    const c: Record<QuestionStatus, number> = { answered: 0, 'not-answered': 0, 'not-visited': 0, 'marked-for-review': 0, 'answered-marked': 0 }
+    qs.forEach((q) => c[statusMap[q.id] || 'not-visited']++)
+    return c
+  }
+  const counts = countsFor(questions)
+  const sectionQs = (id: string) => questions.filter((q) => (id === 'ga' ? q.section === 'ga' : q.section !== 'ga'))
+  const activeSectionId = currentQuestion?.section === 'ga' ? 'ga' : 'subject'
+
+  /* ── Render ── */
 
   if (loading) {
     return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center space-y-3 font-sans">
-        <div className="size-9 animate-spin rounded-full border-3 border-accent-brand border-t-transparent" />
-        <p className="text-[14px] font-semibold text-text-muted">Loading Official GATE Examination Environment...</p>
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-3">
+        <div className="size-8 animate-spin rounded-full border-2 border-accent-brand border-t-transparent" />
+        <p className="text-[14px] text-text-muted">Loading the paper…</p>
       </div>
     )
   }
 
   if (error || !data) {
     return (
-      <div className="mx-auto max-w-xl p-8 text-center font-sans">
-        <AlertCircle className="mx-auto size-10 text-state-error" />
-        <h3 className="mt-3 text-lg font-bold text-text-primary">Failed to Initialize Exam</h3>
+      <div className="mx-auto max-w-md p-8 text-center">
+        <AlertCircle className="mx-auto size-9 text-state-error" />
+        <h3 className="mt-3 text-lg font-semibold text-text-primary">Couldn’t start the mock</h3>
         <p className="mt-1 text-sm text-text-muted">{error}</p>
-        <button type="button" onClick={onExit} className="btn-primary mt-4">
-          Return to Question Bank
+        <button type="button" onClick={onExit} className="btn-secondary mt-4">
+          Back to papers
         </button>
       </div>
     )
   }
 
-  // Post-Exam Report Mode
   if (evalResult) {
-    const questionsMap = new Map<string, GateQuestion>()
-    questions.forEach((q) => questionsMap.set(q.id, q))
+    const questionsMap = new Map(questions.map((q) => [q.id, q]))
+    return <GateAiReport evalResult={evalResult} aiAnalysis={aiAnalysis} questionsMap={questionsMap} onRetake={handleRetake} onBackToBank={onExit} />
+  }
 
+  const title = paperLabel(data.paper)
+  const candidate = (user && (typeof user.display_name === 'string' ? user.display_name : user.username)) || 'Candidate'
+
+  if (phase === 'instructions') {
     return (
-      <GateAiReport
-        evalResult={evalResult}
-        aiAnalysis={aiAnalysis}
-        questionsMap={questionsMap}
-        onRetake={handleRetake}
-        onBackToBank={onExit}
-      />
+      <div className="fixed inset-0 z-[100] flex flex-col bg-bg-app text-text-primary">
+        <header className="flex h-14 shrink-0 items-center gap-3 border-b border-border bg-bg-surface px-4 sm:px-6">
+          <button type="button" onClick={onExit} className="rounded-lg p-1.5 text-text-muted hover:bg-bg-surface-2 hover:text-text-primary" aria-label="Back to papers">
+            <ChevronLeft className="size-5" />
+          </button>
+          <h1 className="min-w-0 truncate text-[15px] font-semibold">{title}</h1>
+          <span className="ml-auto inline-flex items-center gap-2 text-[13px] text-text-secondary">
+            <span className="flex size-7 items-center justify-center rounded-full bg-bg-surface-3">
+              <User className="size-4" />
+            </span>
+            <span className="hidden sm:inline">{candidate}</span>
+          </span>
+        </header>
+        <div className="flex-1 overflow-y-auto">
+          <div className="mx-auto max-w-3xl space-y-5 px-4 py-6 sm:px-6">
+            <div>
+              <h2 className="font-display text-xl font-semibold">General instructions</h2>
+              <p className="mt-1 text-[13.5px] text-text-muted">Please read the instructions carefully.</p>
+            </div>
+            <div className="grid grid-cols-3 gap-3 text-center">
+              {[
+                ['Duration', `${data.durationMinutes} min`],
+                ['Questions', String(data.totalQuestions)],
+                ['Marks', String(data.totalMarks)],
+              ].map(([k, v]) => (
+                <div key={k} className="card !p-3">
+                  <div className="text-[11.5px] tracking-wide text-text-muted uppercase">{k}</div>
+                  <div className="mt-0.5 font-mono text-lg font-semibold">{v}</div>
+                </div>
+              ))}
+            </div>
+            <InstructionsBody data={data} />
+            <label className="flex items-start gap-2.5 rounded-xl border border-border bg-bg-surface p-3 text-[13.5px]">
+              <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} className="mt-0.5 size-4 accent-[var(--color-accent-brand)]" />
+              <span>I have read and understood the instructions. I agree that the answer key and solutions are shown only after I submit.</span>
+            </label>
+            <div className="flex flex-wrap items-center justify-end gap-2 pb-10">
+              {resume && (
+                <button type="button" disabled={!agreed} onClick={() => begin(resume)} className="btn-secondary !px-4 !py-2 disabled:opacity-50">
+                  Resume attempt ({formatTime(resume.timeRemaining)} left)
+                </button>
+              )}
+              <button
+                type="button"
+                disabled={!agreed}
+                onClick={() => {
+                  clearSaved(paperId)
+                  setResume(null)
+                  begin(null)
+                }}
+                className="btn-primary !px-5 !py-2 disabled:opacity-50"
+              >
+                {resume ? 'Start over' : 'I am ready to begin'}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     )
   }
 
-  const currentVal = currentQuestion ? responses[currentQuestion.id] : undefined
-  const isTimerUrgent = timeRemaining < 10 * 60 // under 10 mins
+  const opts = currentQuestion ? cbtOptions(currentQuestion) : []
+  const isUrgent = timeRemaining < 10 * 60
+  const qNo = currentIndex + 1
+  const secLabel = (id: string) => (id === 'ga' ? 'General Aptitude' : data.sections.find((s) => s.id === id)?.title ?? 'Technical')
 
-  return (
-    <div className="fixed inset-0 z-[100] flex flex-col bg-[#0f131a] text-gray-200 select-none font-sans overflow-hidden">
-      {/* ── Top TCS iON Header Bar ── */}
-      <header className="flex h-14 shrink-0 items-center justify-between border-b border-white/10 bg-[#161b24] px-3 sm:px-6">
-        <div className="flex items-center gap-2 sm:gap-3">
-          <button
-            type="button"
-            onClick={onExit}
-            className="flex items-center gap-1 rounded-lg border border-white/15 bg-white/5 px-2.5 py-1.5 text-[12px] font-semibold text-gray-200 hover:bg-white/15 hover:text-white transition-all cursor-pointer shadow-sm"
-            title="Exit Exam and return to Question Paper List"
-          >
-            <ChevronLeft className="size-4 text-accent-brand" />
-            <span className="hidden xs:inline">Paper List</span>
-          </button>
-
-          <span className="hidden sm:inline rounded bg-accent-brand/20 px-2 py-0.5 text-[11px] font-mono font-bold tracking-wider text-accent-brand uppercase">
-            TCS iON CBT SIMULATOR
-          </span>
-          <h2 className="hidden text-[14px] font-bold text-white md:inline truncate max-w-xs lg:max-w-md">
-            {data.paper.exam} {data.paper.year} {data.paper.set ? `Set ${data.paper.set}` : ''}
-          </h2>
-        </div>
-
-        {/* Utilities: Calculator, Question Paper, Instructions, Fullscreen, Timer */}
-        <div className="flex items-center gap-1.5 sm:gap-3">
-          <button
-            type="button"
-            onClick={toggleFullscreen}
-            className="flex items-center gap-1.5 rounded-lg border border-white/15 bg-white/5 px-2.5 py-1.5 text-[12px] font-semibold text-gray-200 hover:bg-white/10 cursor-pointer transition-colors"
-            title={isFullscreen ? 'Exit Fullscreen Mode (Esc)' : 'Enter Fullscreen Exam Mode'}
-          >
-            {isFullscreen ? <Minimize className="size-4 text-accent-brand" /> : <Maximize className="size-4 text-accent-brand" />}
-            <span className="hidden lg:inline">{isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setShowCalc(true)}
-            className="flex items-center gap-1.5 rounded-lg border border-white/15 bg-white/5 px-2.5 py-1.5 text-[12px] font-semibold text-gray-200 hover:bg-white/10 cursor-pointer transition-colors"
-            title="Open GATE Virtual Scientific Calculator"
-          >
-            <CalcIcon className="size-4 text-emerald-400" />
-            <span className="hidden sm:inline">Calculator</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setShowQuestionPaper(true)}
-            className="flex items-center gap-1.5 rounded-lg border border-white/15 bg-white/5 px-2.5 py-1.5 text-[12px] font-semibold text-gray-200 hover:bg-white/10 cursor-pointer transition-colors"
-            title="View Complete Question Paper"
-          >
-            <FileText className="size-4 text-blue-400" />
-            <span className="hidden sm:inline">Question Paper</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setShowInstructions(true)}
-            className="flex items-center gap-1.5 rounded-lg border border-white/15 bg-white/5 px-2.5 py-1.5 text-[12px] font-semibold text-gray-200 hover:bg-white/10 cursor-pointer transition-colors"
-            title="Exam Guidelines & Instructions"
-          >
-            <HelpCircle className="size-4 text-amber-400" />
-            <span className="hidden sm:inline">Instructions</span>
-          </button>
-
-          {/* Countdown Clock */}
-          <div
-            className={cn(
-              'flex items-center gap-2 rounded-xl border px-2.5 sm:px-3 py-1 font-mono text-[13px] sm:text-[14px] font-bold shadow-sm',
-              isTimerUrgent
-                ? 'border-red-500/50 bg-red-500/15 text-red-400 animate-pulse'
-                : 'border-white/15 bg-[#0f131a] text-emerald-400',
-            )}
-          >
-            <Clock className="size-4 shrink-0" />
-            <span>{formatTime(timeRemaining)}</span>
+  const palette = (
+    <div className="flex h-full flex-col">
+      <div className="flex items-center gap-2 border-b border-border px-3 py-2.5">
+        <span className="flex size-8 items-center justify-center rounded-full bg-bg-surface-3 text-text-secondary">
+          <User className="size-4" />
+        </span>
+        <span className="min-w-0 truncate text-[13px] font-medium">{candidate}</span>
+        <button type="button" onClick={() => setPaletteOpen(false)} className="ml-auto rounded-lg p-1 text-text-muted hover:text-text-primary lg:hidden" aria-label="Close palette">
+          <X className="size-5" />
+        </button>
+      </div>
+      <div className="grid grid-cols-2 gap-x-2 gap-y-2 border-b border-border p-3 text-[11.5px] text-text-secondary">
+        {(['answered', 'not-answered', 'not-visited', 'marked-for-review', 'answered-marked'] as QuestionStatus[]).map((s) => (
+          <div key={s} className={cn('flex items-center gap-2', s === 'answered-marked' && 'col-span-2')}>
+            <StatusChip status={s} className="h-6 w-7 shrink-0 text-[11px]">
+              {counts[s]}
+            </StatusChip>
+            <span>{STATUS_LABEL[s]}</span>
           </div>
-
-          <button
-            type="button"
-            onClick={onExit}
-            className="rounded p-1 text-gray-400 hover:bg-white/10 hover:text-white cursor-pointer"
-            title="Exit Exam to Paper List"
-          >
-            <X className="size-5" />
-          </button>
-        </div>
-      </header>
-
-      {/* ── Subheader Candidate Info & Section Switcher ── */}
-      <div className="flex h-11 shrink-0 items-center justify-between border-b border-white/10 bg-[#12161f] px-3 sm:px-6">
-        {/* Sections Tabs */}
-        <div className="flex items-center gap-2">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400 hidden sm:inline">Sections:</span>
-          {data.sections.map((sec) => {
-            const isActive = activeSectionId === sec.id
-            const secQuestions = questions.filter((q) => (sec.id === 'ga' ? q.section === 'ga' : q.section !== 'ga'))
-            const secAnswered = secQuestions.filter(
-              (q) => statusMap[q.id] === 'answered' || statusMap[q.id] === 'answered-marked',
-            ).length
-
+        ))}
+        <p className="col-span-2 text-[11px] text-text-muted">Answered &amp; marked for review questions are evaluated.</p>
+      </div>
+      <div className="flex-1 overflow-y-auto p-3">
+        <div className="mb-2 text-[12px] font-semibold text-text-primary">{secLabel(activeSectionId)}</div>
+        <div className="grid grid-cols-5 gap-2">
+          {questions.map((q, idx) => {
+            if ((q.section === 'ga' ? 'ga' : 'subject') !== activeSectionId) return null
+            const s = statusMap[q.id] || 'not-visited'
+            const cur = idx === currentIndex
             return (
-              <button
-                key={sec.id}
-                type="button"
-                onClick={() => {
-                  setActiveSectionId(sec.id)
-                  const firstSecQIdx = questions.findIndex((q) =>
-                    sec.id === 'ga' ? q.section === 'ga' : q.section !== 'ga',
-                  )
-                  if (firstSecQIdx !== -1) jumpToQuestion(firstSecQIdx)
-                }}
-                className={cn(
-                  'flex items-center gap-2 rounded-lg px-3 py-1 text-[12.5px] font-bold transition-all cursor-pointer border',
-                  isActive
-                    ? 'border-accent-brand bg-accent-brand/20 text-accent-brand shadow-sm'
-                    : 'border-transparent text-gray-400 hover:bg-white/5 hover:text-gray-200',
-                )}
-              >
-                <span>{sec.title}</span>
-                <span className="rounded bg-white/10 px-1.5 py-0.2 font-mono text-[11px] text-gray-300">
-                  {secAnswered}/{sec.count}
-                </span>
+              <button key={q.id} type="button" onClick={() => jumpToQuestion(idx)} aria-label={`Question ${idx + 1}: ${STATUS_LABEL[s]}`} aria-current={cur ? 'true' : undefined} className="relative flex flex-col items-center">
+                <StatusChip status={s} className="h-9 w-full">
+                  {idx + 1}
+                </StatusChip>
+                <span className={cn('mt-0.5 h-0.5 w-5 rounded-full', cur ? 'bg-accent-brand' : 'bg-transparent')} />
               </button>
             )
           })}
         </div>
-
-        {/* Candidate Badge */}
-        <div className="flex items-center gap-2 text-[12px] text-gray-300 font-medium">
-          <div className="flex size-7 items-center justify-center rounded-full bg-white/10 text-gray-300">
-            <User className="size-4" />
-          </div>
-          <span className="hidden sm:inline">Gurudeep (Candidate)</span>
-        </div>
       </div>
+      <div className="border-t border-border p-3 lg:pr-16">
+        <button type="button" onClick={() => setShowSubmit(true)} className="btn-primary inline-flex w-full items-center justify-center gap-2 !py-2.5">
+          <Send className="size-4" /> Submit
+        </button>
+      </div>
+    </div>
+  )
 
-      {/* ── Main Exam Body: Question Canvas & Right Palette ── */}
-      <div className="flex flex-1 min-h-0 overflow-hidden">
-        {/* Left: Question Area */}
-        <main className="flex-1 flex flex-col min-w-0 bg-[#0f131a] overflow-hidden">
+  const toolBtn = 'inline-flex h-9 items-center gap-1.5 rounded-lg border border-border bg-bg-surface px-2.5 text-[12.5px] text-text-secondary hover:bg-bg-surface-2 hover:text-text-primary'
+
+  return (
+    <div className="fixed inset-0 z-[100] flex flex-col bg-bg-app text-text-primary">
+      {/* Header */}
+      <header className="flex h-14 shrink-0 items-center gap-2 border-b border-border bg-bg-surface px-2 sm:px-4">
+        <button type="button" onClick={() => setShowExit(true)} className="rounded-lg p-1.5 text-text-muted hover:bg-bg-surface-2 hover:text-text-primary" aria-label="Leave the mock" title="Leave">
+          <LogOut className="size-4.5 -scale-x-100" />
+        </button>
+        <h1 className="hidden min-w-0 truncate text-[14px] font-semibold md:block">{title}</h1>
+        <div className="ml-auto flex items-center gap-1.5">
+          <button type="button" onClick={() => setShowCalc((s) => !s)} className={toolBtn} aria-pressed={showCalc} title="Calculator">
+            <CalcIcon className="size-4" />
+            <span className="hidden sm:inline">Calculator</span>
+          </button>
+          <button type="button" onClick={() => setShowPaper(true)} className={toolBtn} title="Question paper">
+            <FileText className="size-4" />
+            <span className="hidden sm:inline">Question paper</span>
+          </button>
+          <button type="button" onClick={() => setShowInstructions(true)} className={toolBtn} title="Instructions">
+            <HelpCircle className="size-4" />
+            <span className="hidden xl:inline">Instructions</span>
+          </button>
+          <button type="button" onClick={toggleFullscreen} className={cn(toolBtn, 'hidden sm:inline-flex')} title={isFullscreen ? 'Exit full screen' : 'Full screen'}>
+            {isFullscreen ? <Minimize className="size-4" /> : <Maximize className="size-4" />}
+          </button>
+          <div
+            className={cn(
+              'inline-flex h-9 items-center gap-1.5 rounded-lg border px-2.5 font-mono text-[13.5px] font-semibold tabular-nums',
+              isUrgent ? 'border-state-error/60 bg-state-error/10 text-state-error' : 'border-border bg-bg-surface-2 text-text-primary',
+            )}
+            role="timer"
+            aria-label={`Time left ${formatTime(timeRemaining)}`}
+          >
+            <Clock className="size-4" />
+            <span className="hidden text-[11.5px] font-normal text-text-muted sm:inline">Time left</span>
+            {formatTime(timeRemaining)}
+          </div>
+          <button type="button" onClick={() => setPaletteOpen(true)} className={cn(toolBtn, 'lg:hidden')} aria-label="Question palette">
+            <LayoutGrid className="size-4" />
+          </button>
+        </div>
+      </header>
+
+      {/* Sections */}
+      <nav className="flex h-11 shrink-0 items-center gap-1 overflow-x-auto border-b border-border bg-bg-surface px-2 sm:px-4" aria-label="Sections">
+        {data.sections.map((sec) => {
+          const qs = sectionQs(sec.id)
+          const done = qs.filter((q) => ['answered', 'answered-marked'].includes(statusMap[q.id])).length
+          const active = activeSectionId === sec.id
+          return (
+            <button
+              key={sec.id}
+              type="button"
+              onClick={() => {
+                const first = questions.findIndex((q) => (sec.id === 'ga' ? q.section === 'ga' : q.section !== 'ga'))
+                if (first !== -1) jumpToQuestion(first)
+              }}
+              aria-current={active ? 'true' : undefined}
+              className={cn(
+                'inline-flex h-8 shrink-0 items-center gap-2 rounded-lg px-3 text-[13px] transition-colors',
+                active ? 'bg-accent-brand/12 font-semibold text-accent-brand' : 'text-text-secondary hover:bg-bg-surface-2 hover:text-text-primary',
+              )}
+            >
+              {sec.id === 'ga' ? 'General Aptitude' : sec.title}
+              <span className="font-mono text-[11.5px] text-text-muted">
+                {done}/{sec.count}
+              </span>
+            </button>
+          )
+        })}
+      </nav>
+
+      <div className="flex min-h-0 flex-1">
+        {/* Question pane */}
+        <main className="flex min-w-0 flex-1 flex-col">
           {currentQuestion && (
             <>
-              {/* Question Banner */}
-              <div className="flex items-center justify-between border-b border-white/10 bg-[#161b24] px-4 py-2 text-[12px]">
-                <div className="flex items-center gap-2">
-                  <span className="font-bold text-white text-[13px]">
-                    {currentQuestion.section === 'ga' ? 'General Aptitude ' : 'Core Subject '}Q{currentQuestion.number}
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-4 py-2 sm:px-6">
+                <span className="text-[14px] font-semibold">Question {qNo}</span>
+                <span className="flex items-center gap-3 text-[12px] text-text-muted">
+                  <span>{currentQuestion.type === 'MSQ' ? 'Multiple select' : currentQuestion.type === 'NAT' ? 'Numerical answer' : currentQuestion.type === 'MCQ' ? 'Multiple choice' : currentQuestion.type}</span>
+                  <span>
+                    Marks <span className="font-mono text-state-success">+{currentQuestion.marks ?? 1}</span>{' '}
+                    <span className="font-mono text-state-error">{currentQuestion.type === 'MCQ' ? `−${((currentQuestion.marks ?? 1) / 3).toFixed(2)}` : '−0'}</span>
                   </span>
-                  <span className="rounded bg-white/10 px-2 py-0.5 font-mono text-gray-300">
-                    Type: {currentQuestion.type}
-                  </span>
-                </div>
-                <div className="flex items-center gap-3 font-mono text-gray-300">
-                  <span className="text-emerald-400">+{currentQuestion.marks} Mark{currentQuestion.marks === 1 ? '' : 's'}</span>
-                  <span className="text-red-400">
-                    {currentQuestion.type === 'MCQ' ? `-${(currentQuestion.marks! / 3).toFixed(2)} Mark` : '0 Negative'}
-                  </span>
-                </div>
+                </span>
               </div>
 
-              {/* Question Statement & Interactive Answer Controls */}
-              <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5 text-[14.5px] leading-relaxed">
-                <Markdown md={currentQuestion.text} className="text-gray-200 leading-relaxed font-sans" />
-
-                {/* Reconstructed Diagrams or Official Figures */}
-                {currentQuestion.figures && currentQuestion.figures.length > 0 && (
-                  <ReconstructedDiagram
-                    questionId={currentQuestion.id}
-                    figures={currentQuestion.figures}
-                    subject={currentQuestion.subject}
-                    topic={currentQuestion.topic}
-                  />
-                )}
-
-                {/* Response Input Selection */}
-                {currentQuestion.type === 'NAT' ? (
-                  /* Numerical Answer Type Input */
-                  <div className="mt-4 rounded-xl border border-white/10 bg-[#161b24] p-4 max-w-md space-y-3">
-                    <label className="text-[12px] font-bold uppercase tracking-wider text-gray-400">
-                      Virtual Numerical Input (NAT):
-                    </label>
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="text"
-                        value={currentVal ?? ''}
-                        onChange={(e) => {
-                          const v = e.target.value.replace(/[^0-9.-]/g, '')
-                          setResponses((prev) => ({ ...prev, [currentQuestion.id]: v }))
-                        }}
-                        placeholder="Enter numerical answer"
-                        className="w-full rounded-lg border border-white/15 bg-[#0f131a] px-3 py-2 font-mono text-[16px] text-white outline-none focus:border-accent-brand"
-                      />
-                    </div>
-
-                    {/* Virtual Keypad for NAT */}
-                    <div className="grid grid-cols-4 gap-1.5 pt-2 border-t border-white/10 font-mono font-bold text-[13px]">
-                      {['7', '8', '9', '⌫', '4', '5', '6', 'C', '1', '2', '3', '-', '0', '.'].map((key) => (
-                        <button
-                          key={key}
-                          type="button"
-                          onClick={() => {
-                            if (key === '⌫') {
-                              const s = String(currentVal ?? '')
-                              setResponses((prev) => ({ ...prev, [currentQuestion.id]: s.slice(0, -1) }))
-                            } else if (key === 'C') {
-                              setResponses((prev) => ({ ...prev, [currentQuestion.id]: '' }))
-                            } else {
-                              const s = String(currentVal ?? '')
-                              setResponses((prev) => ({ ...prev, [currentQuestion.id]: s + key }))
-                            }
-                          }}
-                          className={cn(
-                            'rounded-lg py-2 border transition-colors',
-                            key === 'C' || key === '⌫'
-                              ? 'bg-red-500/20 border-red-500/30 text-red-300 hover:bg-red-500/30'
-                              : 'bg-white/5 border-white/10 text-white hover:bg-white/10',
-                          )}
-                        >
-                          {key}
-                        </button>
-                      ))}
-                    </div>
+              <div ref={scrollRef} className="flex-1 overflow-y-auto">
+                <div className="mx-auto max-w-3xl space-y-5 px-4 py-5 sm:px-6">
+                  <div className="text-[15px] leading-relaxed">
+                    <Markdown md={currentQuestion.text} />
                   </div>
-                ) : (
-                  /* MCQ or MSQ Options */
-                  <div className="mt-4 space-y-2 max-w-2xl">
-                    {currentQuestion.options.map((opt) => {
-                      const isSelected =
-                        currentQuestion.type === 'MSQ'
-                          ? Array.isArray(currentVal) && currentVal.includes(opt.l)
-                          : currentVal === opt.l
+                  {currentQuestion.figures?.length > 0 && <ReconstructedDiagram figures={currentQuestion.figures} />}
 
-                      return (
-                        <button
-                          key={opt.l}
-                          type="button"
-                          onClick={() => handleSelectOption(opt.l)}
-                          className={cn(
-                            'flex w-full items-start gap-3 rounded-xl border p-3 text-left transition-all cursor-pointer',
-                            isSelected
-                              ? 'border-accent-brand bg-accent-brand/20 text-white shadow-sm'
-                              : 'border-white/10 bg-[#161b24] text-gray-300 hover:border-white/20 hover:bg-[#1a202c]',
-                          )}
-                        >
-                          <span
+                  {currentQuestion.type === 'NAT' ? (
+                    <NatPad value={typeof draft === 'string' ? draft : ''} onChange={(v) => setDraft(v)} />
+                  ) : opts.length > 0 ? (
+                    <div className="space-y-2" role={currentQuestion.type === 'MSQ' ? 'group' : 'radiogroup'} aria-label="Options">
+                      {opts.map((o) => {
+                        const sel = currentQuestion.type === 'MSQ' ? Array.isArray(draft) && draft.includes(o.l) : draft === o.l
+                        return (
+                          <button
+                            key={o.l}
+                            type="button"
+                            data-opt={o.l}
+                            role={currentQuestion.type === 'MSQ' ? 'checkbox' : 'radio'}
+                            aria-checked={sel}
+                            onClick={() => selectOption(o.l)}
                             className={cn(
-                              'flex size-6 shrink-0 items-center justify-center font-mono text-[12px] font-bold',
-                              currentQuestion.type === 'MSQ' ? 'rounded-md' : 'rounded-full',
-                              isSelected ? 'bg-accent-brand text-on-accent-brand' : 'border border-white/20 text-gray-400',
+                              'flex w-full items-start gap-3 rounded-xl border px-3 py-2.5 text-left transition-colors',
+                              sel ? 'border-accent-brand bg-accent-brand/10' : 'border-border bg-bg-surface hover:bg-bg-surface-2',
                             )}
                           >
-                            {opt.l}
-                          </span>
-                          <span className="min-w-0 flex-1 font-sans text-[14px]">
-                            <Markdown md={opt.t} className="[&_p]:!m-0" />
-                          </span>
-                        </button>
-                      )
-                    })}
-                  </div>
-                )}
+                            <span
+                              className={cn(
+                                'mt-px flex size-5 shrink-0 items-center justify-center border-2',
+                                currentQuestion.type === 'MSQ' ? 'rounded' : 'rounded-full',
+                                sel ? 'border-accent-brand bg-accent-brand' : 'border-border-strong',
+                              )}
+                              aria-hidden="true"
+                            >
+                              {sel && <span className={cn('bg-on-accent-brand', currentQuestion.type === 'MSQ' ? 'size-2 rounded-[2px]' : 'size-2 rounded-full')} />}
+                            </span>
+                            <span className="w-5 shrink-0 font-mono text-[13px] font-semibold text-text-secondary">{o.l.length === 1 ? `${o.l}.` : ''}</span>
+                            <span className="min-w-0 flex-1 text-[14.5px]">
+                              <Markdown md={o.t} className="[&_p]:!m-0" />
+                            </span>
+                          </button>
+                        )
+                      })}
+                    </div>
+                  ) : (
+                    <label className="block max-w-xl space-y-1.5">
+                      <span className="text-[12px] text-text-muted">Your answer (compared loosely with the key)</span>
+                      <textarea
+                        value={typeof draft === 'string' ? draft : ''}
+                        onChange={(e) => setDraft(e.target.value)}
+                        rows={3}
+                        className="w-full rounded-xl border border-border-input bg-bg-field px-3 py-2 text-[14px] text-text-primary outline-none focus:border-accent-brand"
+                      />
+                    </label>
+                  )}
+                </div>
               </div>
 
-              {/* Bottom Action Controls Bar */}
-              <footer className="flex h-14 shrink-0 items-center justify-between border-t border-white/10 bg-[#161b24] px-4 sm:px-6">
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={handleMarkForReviewAndNext}
-                    className="flex items-center gap-1.5 rounded-lg border border-purple-500/40 bg-purple-500/15 px-3 py-1.5 text-[12.5px] font-bold text-purple-300 hover:bg-purple-500/25"
-                  >
-                    <Bookmark className="size-3.5" />
-                    <span className="hidden sm:inline">Mark for Review & Next</span>
-                    <span className="sm:hidden">Review</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={handleClearResponse}
-                    className="rounded-lg border border-white/15 bg-white/5 px-3 py-1.5 text-[12.5px] font-bold text-gray-300 hover:bg-white/10"
-                  >
-                    Clear Response
-                  </button>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => jumpToQuestion(currentIndex - 1)}
-                    disabled={currentIndex === 0}
-                    className="rounded-lg border border-white/15 bg-white/5 p-1.5 text-gray-300 hover:bg-white/10 disabled:opacity-30"
-                    title="Previous Question"
-                  >
+              <footer className="flex shrink-0 flex-wrap items-center gap-2 border-t border-border bg-bg-surface px-3 py-2 sm:px-6">
+                <button type="button" onClick={() => commit(true)} className="btn-secondary inline-flex items-center gap-1.5 !px-3 !py-2 !text-[13px]">
+                  <Bookmark className="size-3.5" />
+                  <span className="sm:hidden">Review</span>
+                  <span className="hidden sm:inline">Mark for review &amp; next</span>
+                </button>
+                <button type="button" onClick={clearResponse} className="btn-secondary !px-3 !py-2 !text-[13px]">
+                  Clear <span className="hidden sm:inline">response</span>
+                </button>
+                <div className="ml-auto flex items-center gap-2">
+                  <button type="button" onClick={() => jumpToQuestion(currentIndex - 1)} disabled={currentIndex === 0} className="btn-secondary !px-2.5 !py-2 disabled:opacity-40" aria-label="Previous question">
                     <ChevronLeft className="size-4" />
                   </button>
-
-                  <button
-                    type="button"
-                    onClick={handleSaveAndNext}
-                    className="btn-primary flex items-center gap-1.5 !px-4 !py-1.5 !text-[13px] font-bold"
-                  >
-                    <span>Save & Next</span>
-                    <ChevronRight className="size-4" />
+                  <button type="button" onClick={() => commit(false)} className="btn-primary inline-flex items-center gap-1 !px-4 !py-2 !text-[13px]">
+                    Save &amp; next <ChevronRight className="size-4" />
                   </button>
                 </div>
               </footer>
@@ -698,309 +723,223 @@ export function GateCbtExam({
           )}
         </main>
 
-        {/* Right: TCS iON Question Palette */}
-        <aside className="w-72 sm:w-80 shrink-0 flex flex-col border-l border-white/10 bg-[#12161f] overflow-hidden">
-          {/* Legend Counts */}
-          <div className="border-b border-white/10 p-3 space-y-1.5 text-[11px] font-medium text-gray-300">
-            <div className="grid grid-cols-2 gap-1.5">
-              <div className="flex items-center gap-2">
-                <span className="flex size-5 items-center justify-center rounded-sm bg-emerald-600 font-bold text-white text-[10px]">
-                  {counts.answered}
-                </span>
-                <span>Answered</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="flex size-5 items-center justify-center rounded-sm bg-red-600 font-bold text-white text-[10px]">
-                  {counts.notAnswered}
-                </span>
-                <span>Not Answered</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="flex size-5 items-center justify-center rounded-sm bg-purple-600 font-bold text-white text-[10px]">
-                  {counts.markedForReview}
-                </span>
-                <span>Marked Review</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="flex size-5 items-center justify-center rounded-sm bg-purple-600 font-bold text-white text-[10px] relative">
-                  {counts.answeredMarked}
-                  <span className="absolute -bottom-0.5 -right-0.5 size-1.5 rounded-full bg-emerald-400" />
-                </span>
-                <span>Ans & Marked*</span>
-              </div>
-              <div className="flex items-center gap-2 col-span-2">
-                <span className="flex size-5 items-center justify-center rounded-sm border border-white/20 bg-white/5 font-bold text-gray-400 text-[10px]">
-                  {counts.notVisited}
-                </span>
-                <span>Not Visited</span>
-              </div>
-            </div>
-            <p className="text-[10px] text-gray-400 pt-1 italic">
-              *Ans & Marked will be considered for evaluation in GATE.
-            </p>
-          </div>
-
-          {/* Palette Questions Grid */}
-          <div className="flex-1 overflow-y-auto p-3">
-            <div className="mb-2 text-[11px] font-bold uppercase tracking-wider text-gray-400">
-              Question Palette:
-            </div>
-            <div className="grid grid-cols-5 gap-1.5">
-              {questions.map((q, idx) => {
-                const s = statusMap[q.id] || 'not-visited'
-                const isCurrent = idx === currentIndex
-
-                let badgeClass = 'bg-white/5 text-gray-300 border border-white/15'
-                if (s === 'answered') badgeClass = 'bg-emerald-600 text-white font-bold border-emerald-500'
-                else if (s === 'not-answered') badgeClass = 'bg-red-600 text-white font-bold border-red-500'
-                else if (s === 'marked-for-review') badgeClass = 'bg-purple-600 text-white font-bold border-purple-500'
-                else if (s === 'answered-marked') badgeClass = 'bg-purple-600 text-white font-bold border-emerald-400 ring-1 ring-emerald-400'
-
-                return (
-                  <button
-                    key={q.id}
-                    type="button"
-                    onClick={() => jumpToQuestion(idx)}
-                    className={cn(
-                      'relative flex h-8 items-center justify-center rounded-lg font-mono text-[12px] transition-all cursor-pointer',
-                      badgeClass,
-                      isCurrent && 'ring-2 ring-white ring-offset-1 ring-offset-[#12161f]',
-                    )}
-                  >
-                    {idx + 1}
-                    {s === 'answered-marked' && (
-                      <span className="absolute -bottom-0.5 -right-0.5 size-2 rounded-full bg-emerald-400" />
-                    )}
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-
-          {/* Submit Button */}
-          <div className="border-t border-white/10 p-3 bg-[#161b24]">
-            <button
-              type="button"
-              onClick={() => setShowSubmitModal(true)}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 py-2.5 text-[13px] font-bold text-white shadow-lg shadow-emerald-900/30 hover:bg-emerald-500 transition-colors cursor-pointer"
-            >
-              <Send className="size-4" /> Submit Examination
-            </button>
-          </div>
-        </aside>
+        {/* Palette: side column on wide screens, drawer on small ones */}
+        <aside className="hidden w-72 shrink-0 border-l border-border bg-bg-surface lg:block xl:w-80">{palette}</aside>
       </div>
 
-      {/* ── Virtual Calculator Modal ── */}
+      {paletteOpen && (
+        <div className="fixed inset-0 z-[120] lg:hidden" role="dialog" aria-modal="true" aria-label="Question palette">
+          <button type="button" className="absolute inset-0 bg-bg-app/60 backdrop-blur-[2px]" onClick={() => setPaletteOpen(false)} aria-label="Close palette" />
+          <div className="absolute inset-y-0 right-0 w-[min(88vw,340px)] border-l border-border bg-bg-surface shadow-2xl">{palette}</div>
+        </div>
+      )}
+
       <GateCalculator isOpen={showCalc} onClose={() => setShowCalc(false)} />
 
-      {/* ── Question Paper Full View Modal ── */}
-      {showQuestionPaper && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm">
-          <div className="flex h-[85vh] w-full max-w-4xl flex-col rounded-2xl border border-white/15 bg-[#161b24] shadow-2xl overflow-hidden">
-            <div className="flex items-center justify-between border-b border-white/10 px-5 py-3">
-              <h3 className="text-[15px] font-bold text-white">Full Question Paper View</h3>
-              <button
-                type="button"
-                id="close-question-paper"
-                onClick={() => setShowQuestionPaper(false)}
-                className="rounded p-1 text-gray-400 hover:text-white cursor-pointer"
-              >
-                <X className="size-5" />
-              </button>
-            </div>
-            <div className="flex-1 overflow-y-auto p-5 space-y-6">
-              {questions.map((q, i) => (
-                <div key={q.id} className="rounded-xl border border-white/10 bg-[#0f131a] p-4 space-y-3">
-                  <div className="flex items-center justify-between font-mono text-[12px] text-gray-400">
-                    <span className="font-bold text-white">Q{i + 1} ({q.section.toUpperCase()})</span>
-                    <span>{q.type} · {q.marks} Marks</span>
-                  </div>
-                  <Markdown md={q.text} className="text-gray-200 text-[14px]" />
-
-                  {/* Render Diagrams if present */}
-                  {q.figures && q.figures.length > 0 && (
-                    <div className="my-3 flex flex-wrap gap-3">
-                      {q.figures.map((f) => {
-                        const svgPath = f.svg || f.f.replace(/\.(png|jpg|jpeg)$/i, '.svg')
-                        const imgSrc = `/gate-fig/${svgPath}`
-                        return (
-                          <figure key={f.f} className="max-w-md">
-                            <div
-                              onClick={() => setZoomFigure(imgSrc)}
-                              className="group relative cursor-zoom-in rounded-xl border border-white/20 bg-[#0b1329] p-3 shadow-md inline-block max-w-full transition-transform hover:scale-[1.01]"
-                              title="Click to view full enlarged diagram"
-                            >
-                              <img
-                                src={imgSrc}
-                                alt={f.alt || `Q${i + 1} Schematic`}
-                                className="max-h-60 w-auto rounded object-contain"
-                                loading="lazy"
-                              />
-                              <div className="absolute top-2 right-2 rounded-lg bg-black/75 p-1.5 text-white opacity-0 transition-opacity group-hover:opacity-100 flex items-center gap-1 text-[11px] font-mono">
-                                <ZoomIn className="size-3.5" />
-                                <span>HD Zoom</span>
-                              </div>
-                            </div>
-                            {f.alt && <figcaption className="mt-1 text-[11.5px] text-gray-400">{f.alt}</figcaption>}
-                          </figure>
-                        )
-                      })}
-                    </div>
-                  )}
-
-                  {/* Render Options with full markdown & image support */}
-                  {q.options && q.options.length > 0 && (
-                    <div className="space-y-1.5 pt-1">
-                      {q.options.map((opt) => (
-                        <div key={opt.l} className="flex items-start gap-2.5 text-[13.5px] text-gray-300">
-                          <span className="font-bold font-mono text-accent-brand shrink-0">({opt.l})</span>
-                          <div className="flex-1 min-w-0">
-                            <Markdown md={opt.t} className="[&_p]:!m-0 text-gray-300" />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ── Instructions Modal ── */}
-      {showInstructions && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm">
-          <div className="flex h-[80vh] w-full max-w-2xl flex-col rounded-2xl border border-white/15 bg-[#161b24] shadow-2xl overflow-hidden">
-            <div className="flex items-center justify-between border-b border-white/10 px-5 py-3">
-              <h3 className="text-[15px] font-bold text-white">Official Examination Guidelines</h3>
-              <button
-                type="button"
-                onClick={() => setShowInstructions(false)}
-                className="rounded p-1 text-gray-400 hover:text-white"
-              >
-                <X className="size-5" />
-              </button>
-            </div>
-            <div className="flex-1 overflow-y-auto p-5 space-y-4 text-[13.5px] leading-relaxed text-gray-300">
-              <h4 className="font-bold text-white">Structure of Examination</h4>
-              <p>1. The examination is 180 minutes in duration and contains 65 questions carrying a maximum of 100 marks.</p>
-              <p>2. Section 1 contains 10 General Aptitude questions (Q1–Q5 carry 1 mark each, Q6–Q10 carry 2 marks each).</p>
-              <p>3. Section 2 contains 55 technical questions (25 carry 1 mark each, 30 carry 2 marks each).</p>
-
-              <h4 className="font-bold text-white pt-2 border-t border-white/10">Marking Scheme & Negative Penalties</h4>
-              <ul className="list-disc pl-5 space-y-1">
-                <li><strong>MCQ (Multiple Choice Questions):</strong> For 1-mark questions, 1/3 mark will be deducted for a wrong answer. For 2-mark questions, 2/3 mark will be deducted.</li>
-                <li><strong>MSQ (Multiple Select Questions):</strong> There is NO negative marking and NO partial credit. Marks are awarded only when all correct choices and no wrong choices are selected.</li>
-                <li><strong>NAT (Numerical Answer Type):</strong> There is NO negative marking for numerical questions.</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ── Submit Confirmation Modal ── */}
-      {showSubmitModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-2xl border border-white/15 bg-[#161b24] p-5 shadow-2xl space-y-4">
-            <h3 className="text-[16px] font-bold text-white">Final Exam Submission Summary</h3>
-
-            {/* Summary Tally */}
-            <div className="rounded-xl border border-white/10 bg-[#0f131a] p-3 text-[13px] space-y-2">
-              <div className="flex justify-between items-center text-emerald-400">
-                <span>Answered (for evaluation):</span>
-                <span className="font-bold font-mono text-[14px]">{counts.answered + counts.answeredMarked}</span>
+      <Modal open={showPaper} onClose={() => setShowPaper(false)} title="Question paper" description={title} size="xl">
+        <div className="space-y-6">
+          {questions.map((q, i) => (
+            <section key={q.id} className="space-y-2 border-b border-border pb-5 last:border-0">
+              <div className="flex items-center justify-between text-[12.5px]">
+                <button type="button" className="font-semibold text-accent-brand hover:underline" onClick={() => {
+                    setShowPaper(false)
+                    jumpToQuestion(i)
+                  }}>
+                  Question {i + 1}
+                </button>
+                <span className="text-text-muted">
+                  {q.section === 'ga' ? 'General Aptitude' : 'Technical'} · {q.type} · {q.marks ?? 1} mark{q.marks === 1 ? '' : 's'}
+                </span>
               </div>
-              <div className="flex justify-between items-center text-red-400">
-                <span>Not Answered:</span>
-                <span className="font-bold font-mono">{counts.notAnswered}</span>
-              </div>
-              <div className="flex justify-between items-center text-purple-400">
-                <span>Marked for Review:</span>
-                <span className="font-bold font-mono">{counts.markedForReview}</span>
-              </div>
-              <div className="flex justify-between items-center text-gray-400">
-                <span>Not Visited:</span>
-                <span className="font-bold font-mono">{counts.notVisited}</span>
-              </div>
-            </div>
-
-            <p className="text-[12.5px] text-gray-300">
-              Are you sure you want to end your examination? You will receive an instant official score breakdown along with complete AI attempt analysis.
-            </p>
-
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-white/10">
-              <button
-                type="button"
-                onClick={() => setShowSubmitModal(false)}
-                className="rounded-lg border border-white/15 bg-white/5 px-4 py-2 text-[12.5px] font-bold text-gray-300 hover:bg-white/10"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleSubmitExam}
-                disabled={isSubmitting}
-                className="rounded-lg bg-emerald-600 px-5 py-2 text-[12.5px] font-bold text-white hover:bg-emerald-500 shadow-md transition-all cursor-pointer"
-              >
-                {isSubmitting ? 'Evaluating...' : 'Yes, Submit Exam'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ── High-Resolution Diagram Zoom Lightbox Modal ── */}
-      {zoomFigure && (
-        <div
-          className="fixed inset-0 z-[250] flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-fade-in"
-          onClick={() => setZoomFigure(null)}
-        >
-          <div
-            className={cn(
-              'relative max-w-4xl max-h-[92vh] overflow-auto rounded-2xl p-4 sm:p-6 shadow-2xl border transition-all',
-              zoomFigure.endsWith('.svg')
-                ? 'bg-[#0b1329] border-white/20 text-white'
-                : 'bg-white border-gray-200 text-gray-900',
-            )}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div
-              className={cn(
-                'flex items-center justify-between pb-3 mb-3 border-b',
-                zoomFigure.endsWith('.svg') ? 'border-white/10' : 'border-gray-200',
+              <Markdown md={q.text} className="text-[14px]" />
+              {q.figures?.length > 0 && <ReconstructedDiagram figures={q.figures} compact className="my-2" />}
+              {cbtOptions(q).length > 0 && (
+                <ol className="space-y-1">
+                  {cbtOptions(q).map((o) => (
+                    <li key={o.l} className="flex gap-2 text-[13.5px] text-text-secondary">
+                      <span className="shrink-0 font-mono font-semibold">({o.l})</span>
+                      <Markdown md={o.t} className="min-w-0 flex-1 [&_p]:!m-0" />
+                    </li>
+                  ))}
+                </ol>
               )}
-            >
-              <span
-                className={cn(
-                  'text-[13px] font-bold',
-                  zoomFigure.endsWith('.svg') ? 'text-white' : 'text-gray-800',
-                )}
-              >
-                ⚡ GATE Diagram Viewer · High-Definition Vector
-              </span>
-              <button
-                type="button"
-                onClick={() => setZoomFigure(null)}
-                className={cn(
-                  'rounded-lg p-1.5 transition-colors cursor-pointer',
-                  zoomFigure.endsWith('.svg')
-                    ? 'bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900',
-                )}
-                title="Close diagram"
-              >
-                <X className="size-5" />
-              </button>
-            </div>
-            <img
-              src={zoomFigure}
-              alt="Enlarged GATE Schematic"
-              className="max-h-[75vh] w-auto mx-auto object-contain rounded"
-            />
+            </section>
+          ))}
+        </div>
+      </Modal>
+
+      <Modal open={showInstructions} onClose={() => setShowInstructions(false)} title="Instructions" size="lg">
+        <InstructionsBody data={data} />
+      </Modal>
+
+      <Modal open={showSubmit} onClose={() => setShowSubmit(false)} title="Submit the exam?" description="Once submitted you can’t change your responses." size="md">
+        <div className="space-y-4">
+          <div className="overflow-x-auto">
+            <table className="w-full text-[13px]">
+              <thead>
+                <tr className="text-left text-[11.5px] text-text-muted">
+                  <th className="py-1.5 pr-2 font-medium">Section</th>
+                  <th className="px-1 py-1.5 text-center font-medium">Answered</th>
+                  <th className="px-1 py-1.5 text-center font-medium">Not answered</th>
+                  <th className="px-1 py-1.5 text-center font-medium">Review</th>
+                  <th className="px-1 py-1.5 text-center font-medium">Not visited</th>
+                </tr>
+              </thead>
+              <tbody className="font-mono">
+                {data.sections.map((sec) => {
+                  const c = countsFor(sectionQs(sec.id))
+                  return (
+                    <tr key={sec.id} className="border-t border-border">
+                      <td className="py-2 pr-2 font-sans">{sec.id === 'ga' ? 'General Aptitude' : sec.title}</td>
+                      <td className="text-center text-state-success">{c.answered + c['answered-marked']}</td>
+                      <td className="text-center text-state-error">{c['not-answered']}</td>
+                      <td className="text-center text-state-info">{c['marked-for-review'] + c['answered-marked']}</td>
+                      <td className="text-center text-text-muted">{c['not-visited']}</td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+          {hasValue(draft) && currentQuestion && !hasValue(responses[currentQuestion.id]) && (
+            <p className="rounded-lg border border-state-warning/40 bg-state-warning/10 px-3 py-2 text-[12.5px] text-text-primary">The response on question {qNo} isn’t saved yet and won’t be evaluated.</p>
+          )}
+          <div className="flex justify-end gap-2">
+            <button type="button" onClick={() => setShowSubmit(false)} className="btn-secondary !px-4 !py-2 !text-[13px]">
+              Keep working
+            </button>
+            <button type="button" onClick={handleSubmitExam} disabled={isSubmitting} className="btn-primary !px-4 !py-2 !text-[13px]">
+              {isSubmitting ? 'Evaluating…' : 'Yes, submit'}
+            </button>
           </div>
         </div>
+      </Modal>
+
+      <ConfirmDialog
+        open={showExit}
+        onClose={() => setShowExit(false)}
+        onConfirm={() => {
+          setShowExit(false)
+          onExit()
+        }}
+        title="Leave the mock?"
+        message="Your attempt is kept on this device — you can resume it from the paper list."
+        confirmLabel="Leave"
+      />
+
+      {(isSubmitting || submitError) && (
+        <div className="fixed inset-x-0 bottom-4 z-[130] mx-auto w-fit max-w-[92vw] rounded-xl border border-border bg-bg-surface px-4 py-2.5 text-[13px] shadow-xl" role="status">
+          {isSubmitting ? (
+            'Evaluating your responses…'
+          ) : (
+            <span className="flex items-center gap-3">
+              <span className="text-state-error">{submitError}</span>
+              <button type="button" className="font-semibold text-accent-brand" onClick={handleSubmitExam}>
+                Retry
+              </button>
+            </span>
+          )}
+        </div>
       )}
+    </div>
+  )
+}
+
+/* ── Pieces ─────────────────────────────────────────────────────────────── */
+
+function InstructionsBody({ data }: { data: CbtPaperData }) {
+  return (
+    <div className="space-y-4 text-[13.5px] leading-relaxed text-text-secondary">
+      <section>
+        <h3 className="mb-1.5 text-[14px] font-semibold text-text-primary">The paper</h3>
+        <ul className="list-disc space-y-1 pl-5">
+          <li>
+            {data.durationMinutes} minutes, {data.totalQuestions} questions, {data.totalMarks} marks. The clock at the top right counts down; the exam is submitted automatically at zero.
+          </li>
+          {data.sections.map((s) => (
+            <li key={s.id}>
+              {s.id === 'ga' ? 'General Aptitude' : s.title}: {s.count} questions, {s.marks} marks.
+            </li>
+          ))}
+        </ul>
+      </section>
+      <section>
+        <h3 className="mb-1.5 text-[14px] font-semibold text-text-primary">Answering</h3>
+        <ul className="list-disc space-y-1 pl-5">
+          <li>
+            <strong className="text-text-primary">Save &amp; next</strong> saves the response and opens the next question. A response that isn’t saved is discarded when you move to another question.
+          </li>
+          <li>
+            <strong className="text-text-primary">Mark for review &amp; next</strong> saves the response and flags the question. Answered questions that are marked for review are evaluated.
+          </li>
+          <li>
+            <strong className="text-text-primary">Clear response</strong> removes the saved answer. Numerical answers are typed with the on-screen keypad or the keyboard.
+          </li>
+        </ul>
+      </section>
+      <section>
+        <h3 className="mb-1.5 text-[14px] font-semibold text-text-primary">Question palette</h3>
+        <div className="grid gap-2 sm:grid-cols-2">
+          {(['not-visited', 'not-answered', 'answered', 'marked-for-review', 'answered-marked'] as QuestionStatus[]).map((s, i) => (
+            <div key={s} className="flex items-center gap-2">
+              <StatusChip status={s} className="h-7 w-8 shrink-0">
+                {i + 1}
+              </StatusChip>
+              <span>{STATUS_LABEL[s]}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+      <section>
+        <h3 className="mb-1.5 text-[14px] font-semibold text-text-primary">Marking</h3>
+        <ul className="list-disc space-y-1 pl-5">
+          <li>MCQ: a wrong answer costs 1/3 of the question’s marks (−0.33 for 1 mark, −0.67 for 2 marks).</li>
+          <li>MSQ: all correct options and no wrong ones for credit; no partial or negative marks.</li>
+          <li>NAT: no negative marks; answers within the key’s range are correct.</li>
+        </ul>
+      </section>
+    </div>
+  )
+}
+
+function NatPad({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const press = (k: string) => {
+    if (k === '⌫') onChange(value.slice(0, -1))
+    else if (k === 'Clear') onChange('')
+    else if (k === '-' ) onChange(value.startsWith('-') ? value.slice(1) : `-${value}`)
+    else if (k === '.' && value.includes('.')) return
+    else onChange(value + k)
+  }
+  return (
+    <div className="max-w-xs space-y-2">
+      <label className="block text-[12px] text-text-muted" htmlFor="nat-input">
+        Your answer
+      </label>
+      <input
+        id="nat-input"
+        value={value}
+        inputMode="decimal"
+        autoComplete="off"
+        onChange={(e) => onChange(e.target.value.replace(/[^0-9.-]/g, ''))}
+        className="w-full rounded-xl border border-border-input bg-bg-field px-3 py-2 font-mono text-[16px] text-text-primary outline-none focus:border-accent-brand"
+      />
+      <div className="grid grid-cols-4 gap-1.5 font-mono text-[14px]">
+        {['7', '8', '9', '⌫', '4', '5', '6', '-', '1', '2', '3', 'Clear', '0', '.'].map((k) => (
+          <button
+            key={k}
+            type="button"
+            onClick={() => press(k)}
+            aria-label={k === '⌫' ? 'Backspace' : k === '-' ? 'Toggle sign' : k}
+            className={cn(
+              'h-10 rounded-lg border border-border transition-colors',
+              k === 'Clear' ? 'col-span-1 text-[12px] text-text-secondary hover:bg-bg-surface-3' : 'bg-bg-surface hover:bg-bg-surface-2',
+              k === '0' && 'col-span-2',
+            )}
+          >
+            {k}
+          </button>
+        ))}
+      </div>
     </div>
   )
 }
