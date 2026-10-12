@@ -1,20 +1,23 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-// Self-hosted fonts (no Google Fonts request; works offline and under strict CSP)
+// Self-hosted default typefaces (no third-party font requests). Any other
+// font the user picks is loaded on demand — see theme/fontLoaders.ts.
 import '@fontsource-variable/geist'
-import '@fontsource-variable/space-grotesk'
-import '@fontsource/russo-one/400.css'
-import '@fontsource/jetbrains-mono/400.css'
-import '@fontsource/jetbrains-mono/500.css'
-import '@fontsource/jetbrains-mono/600.css'
-import '@fontsource/jetbrains-mono/700.css'
+import '@fontsource-variable/jetbrains-mono'
 import './index.css'
+import 'virtual:nexora-theme.css'
+import { loadCodeFont, loadUiFont } from './theme/fontLoaders'
 import App from './App'
 import { AuthProvider } from './context/AuthContext'
 import { ToastProvider } from './components/ui'
 import { SocketProvider } from './lib/socket'
 import { ThemeProvider } from './context/ThemeContext'
 import { initFaviconFx } from './lib/faviconFx'
+
+// The first-paint script has already put the chosen fonts on <html>; start
+// fetching them now, before React renders, so the swap is as early as it can be.
+void loadUiFont(document.documentElement.dataset.font ?? '')
+void loadCodeFont(document.documentElement.dataset.codeFont ?? '')
 
 initFaviconFx()
 

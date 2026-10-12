@@ -4,207 +4,147 @@
 @import './components/ai/ai.css';
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   NEXORA — "Aurora", a macOS appearance system
+   NEXORA — the theme layer
    ═══════════════════════════════════════════════════════════════════════════
 
-   This keeps the semantic layer exactly as it was (--color-bg-app,
-   --color-text-primary, --color-accent-brand …), so every component carries
-   over untouched. What changed is what those names resolve to, and why:
+   Three tiers, from raw to role:
 
-     • The raw palette is now calibrated rather than approximated. Several of
-       the old OKLCH values did not match the hex they were annotated with —
-       the accent sat about six points of lightness below indigo-500 — which is
-       what made the surfaces read muddy instead of deep.
-     • Elevation is visible. The old shadows were 3–8% black, and on a near-
-       black background that is nothing at all, so no surface ever looked
-       lifted. macOS gets depth from a real drop shadow plus a one-pixel
-       specular highlight along the top edge.
-     • Translucency behaves like NSVisualEffectView: a heavier blur with a
-       saturation boost, so colour behind a pane bleeds through instead of
-       turning grey.
-     • There is a light appearance. It follows the system by default; the
-       control in the top bar writes data-theme on <html> to override.
+     1. Palette tokens (--oklch-bg-0 … --syn-comment) — generated from
+        src/theme/palettes.ts by vite.config.ts into virtual:nexora-theme.css
+        as [data-palette="id"][data-mode="dark|light"] rules, plus accent
+        overrides ([data-accent]) and the font families ([data-font],
+        [data-code-font]).
+     2. Mode tokens (shadows, specular edge, field wells) — [data-mode] below.
+     3. Semantic roles (--color-bg-app, --color-text-primary,
+        --color-accent-brand … and the legacy aliases) — mapped once in the
+        [data-palette] block below and exposed to Tailwind through @theme.
 
-   Raw values live on :root so that swapping appearance swaps them in one
-   place; the semantic --color-* roles alias them inside @theme. */
+   The roles are re-declared on every [data-palette] element, not only on
+   :root: a custom property is resolved where it is declared, so redefining
+   the raw palette on an element alone would change nothing for its subtree.
+   This is what lets the Theme Centre render any theme, in any mode, inside a
+   preview box — and it means <html> is just the outermost preview.
 
-/* ── Dark appearance ─────────────────────────────────────────────────────── */
+   ThemeProvider (and, before the first paint, the script in index.html)
+   writes the user's look onto <html>:
+     data-palette  data-mode  data-accent  data-font  data-code-font
+     data-text-size  data-card-style  data-radius
+     data-icon-set  data-icon-style  data-icon-container  data-icon-shape */
+
+/* Tailwind's dark: variant follows the resolved mode, not the OS. */
+@custom-variant dark (&:where([data-mode='dark'], [data-mode='dark'] *));
+
+/* ── Mode tokens ─────────────────────────────────────────────────────────── */
 :root,
-:root[data-theme='dark'] {
+[data-mode='dark'] {
   color-scheme: dark;
-
-  /* Backgrounds — a neutral ink with a trace of blue, like a macOS window. */
-  --oklch-bg-0: oklch(0.180 0.004 265);   /* app background      */
-  --oklch-bg-1: oklch(0.219 0.005 265);   /* surface             */
-  --oklch-bg-2: oklch(0.252 0.006 265);   /* elevated surface    */
-  --oklch-bg-3: oklch(0.288 0.007 265);   /* higher elevation    */
-  --oklch-bg-4: oklch(0.340 0.008 265);   /* hairlines / borders */
-
-  /* Foreground — macOS label colours: primary, secondary, tertiary. */
-  --oklch-fg-0: oklch(0.967 0.002 265);
-  --oklch-fg-1: oklch(0.745 0.008 265);
-  --oklch-fg-2: oklch(0.575 0.010 265);
-  --oklch-fg-3: oklch(0.180 0.004 265);   /* text on a light fill */
-
-  /* One accent carries meaning. macOS system blue, with the violet kept as
-     the secondary so the brand gradient still reads as Nexora. */
-  --oklch-accent-0: var(--acc-d0, oklch(0.646 0.184 256));  /* system blue  */
-  --oklch-accent-1: var(--acc-d1, oklch(0.606 0.214 292));  /* violet       */
-  --on-accent: var(--acc-d-on, oklch(1 0 0));
-  --accent-bright: color-mix(in oklab, var(--oklch-accent-0) 62%, oklch(0.97 0.01 265));
-
-  --oklch-cyan:    oklch(0.792 0.126 213);
-  --oklch-emerald: oklch(0.762 0.192 148);
-  --oklch-amber:   oklch(0.842 0.155 86);
-  --oklch-red:     oklch(0.657 0.211 25);
-  --oklch-gold:    oklch(0.851 0.152 88);
-
-  /* Materials — the translucent fills, and the light that catches their edge. */
-  --material: oklch(0.252 0.006 265 / 0.72);
-  --material-thin: oklch(0.288 0.007 265 / 0.55);
-  --material-thick: oklch(0.219 0.005 265 / 0.88);
-  --specular: oklch(1 0 0 / 0.07);
-  --hairline: oklch(1 0 0 / 0.09);
-  /* What a bare white overlay means here (see --color-hairline below). */
+  --specular: oklch(1 0 0 / 0.06);
   --overlay-ink: oklch(1 0 0);
-  /* Text fields: a recessed well on ink, a plain white card on paper. */
-  --field: oklch(0.162 0.004 265);
-  --field-shadow: oklch(0 0 0 / 0.32);
-  --rank-ink: oklch(0.16 0.02 272);
-
-  --elev-1: 0 1px 2px oklch(0 0 0 / 0.36), 0 4px 12px -4px oklch(0 0 0 / 0.5);
-  --elev-2: 0 2px 6px oklch(0 0 0 / 0.4), 0 16px 40px -12px oklch(0 0 0 / 0.66);
-  --elev-3: 0 8px 20px oklch(0 0 0 / 0.46), 0 32px 72px -20px oklch(0 0 0 / 0.74);
+  --field: color-mix(in oklab, var(--oklch-bg-0) 82%, oklch(0 0 0));
+  --field-shadow: oklch(0 0 0 / 0.3);
+  --rank-ink: color-mix(in oklab, var(--oklch-bg-0) 80%, oklch(0 0 0));
+  --shadow-ink: oklch(0 0 0);
+  --elev-1: 0 1px 2px oklch(0 0 0 / 0.34), 0 4px 12px -4px oklch(0 0 0 / 0.44);
+  --elev-2: 0 2px 6px oklch(0 0 0 / 0.38), 0 16px 40px -12px oklch(0 0 0 / 0.6);
+  --elev-3: 0 8px 20px oklch(0 0 0 / 0.44), 0 32px 72px -20px oklch(0 0 0 / 0.7);
 }
 
-/* ── Light appearance ────────────────────────────────────────────────────── */
-:root[data-theme='light'] {
+[data-mode='light'] {
   color-scheme: light;
-
-  --oklch-bg-0: oklch(0.967 0.002 265);   /* desktop grey        */
-  --oklch-bg-1: oklch(1 0 0);             /* window white        */
-  --oklch-bg-2: oklch(0.978 0.002 265);
-  --oklch-bg-3: oklch(0.946 0.003 265);
-  --oklch-bg-4: oklch(0.888 0.004 265);   /* hairlines           */
-
-  --oklch-fg-0: oklch(0.216 0.005 265);
-  --oklch-fg-1: oklch(0.452 0.008 265);
-  --oklch-fg-2: oklch(0.606 0.010 265);
-  --oklch-fg-3: oklch(1 0 0);             /* text on a dark fill */
-
-  /* The same hues, darkened until they hold contrast against white. */
-  --oklch-accent-0: var(--acc-l0, oklch(0.546 0.206 256));
-  --oklch-accent-1: var(--acc-l1, oklch(0.506 0.232 292));
-  --on-accent: var(--acc-l-on, oklch(1 0 0));
-  --accent-bright: color-mix(in oklab, var(--oklch-accent-0) 88%, oklch(0.2 0.02 265));
-
-  --oklch-cyan:    oklch(0.532 0.108 213);
-  --oklch-emerald: oklch(0.522 0.132 148);
-  --oklch-amber:   oklch(0.552 0.128 70);
-  --oklch-red:     oklch(0.536 0.212 25);
-  --oklch-gold:    oklch(0.552 0.118 80);
-
-  --material: oklch(1 0 0 / 0.74);
-  --material-thin: oklch(1 0 0 / 0.55);
-  --material-thick: oklch(1 0 0 / 0.9);
-  --specular: oklch(1 0 0 / 0.9);
-  --hairline: oklch(0 0 0 / 0.08);
-  --overlay-ink: oklch(0.18 0.01 265);
-  --field: oklch(1 0 0);
-  --field-shadow: oklch(0 0 0 / 0.07);
-  --rank-ink: oklch(0.975 0.008 265);
-
+  --specular: oklch(1 0 0 / 0.75);
+  --overlay-ink: var(--oklch-fg-0);
+  --field: var(--oklch-bg-1);
+  --field-shadow: oklch(0 0 0 / 0.06);
+  --rank-ink: var(--oklch-bg-1);
+  --shadow-ink: color-mix(in oklab, var(--oklch-fg-0) 70%, oklch(0 0 0));
   --elev-1: 0 1px 2px oklch(0 0 0 / 0.06), 0 3px 8px -2px oklch(0 0 0 / 0.08);
   --elev-2: 0 2px 6px oklch(0 0 0 / 0.07), 0 12px 32px -10px oklch(0 0 0 / 0.14);
   --elev-3: 0 8px 20px oklch(0 0 0 / 0.1), 0 28px 64px -18px oklch(0 0 0 / 0.2);
 }
 
-/* Follow the system until the user chooses. */
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme='dark']) {
-    color-scheme: light;
+/* ── Semantic roles ──────────────────────────────────────────────────────────
+   Unlayered, so it wins over the @theme defaults below wherever a palette is
+   set; the @theme block mirrors it only so Tailwind knows the names. */
+:root,
+[data-palette] {
+  /* Derived palette tokens */
+  --oklch-fg-3: var(--oklch-bg-1);
+  --accent-bright: color-mix(in oklab, var(--oklch-accent-0) 72%, var(--oklch-fg-0));
+  --oklch-emerald: var(--oklch-success);
+  --oklch-amber: var(--oklch-warning);
+  --oklch-red: var(--oklch-danger);
+  --oklch-cyan: var(--oklch-info);
+  --oklch-gold: var(--oklch-warning);
+  --hairline: color-mix(in oklab, var(--oklch-border) 80%, transparent);
 
-    --oklch-bg-0: oklch(0.967 0.002 265);
-    --oklch-bg-1: oklch(1 0 0);
-    --oklch-bg-2: oklch(0.978 0.002 265);
-    --oklch-bg-3: oklch(0.946 0.003 265);
-    --oklch-bg-4: oklch(0.888 0.004 265);
-
-    --oklch-fg-0: oklch(0.216 0.005 265);
-    --oklch-fg-1: oklch(0.452 0.008 265);
-    --oklch-fg-2: oklch(0.606 0.010 265);
-    --oklch-fg-3: oklch(1 0 0);
-
-    --oklch-accent-0: var(--acc-l0, oklch(0.546 0.206 256));
-    --oklch-accent-1: var(--acc-l1, oklch(0.506 0.232 292));
-    --on-accent: var(--acc-l-on, oklch(1 0 0));
-    --accent-bright: color-mix(in oklab, var(--oklch-accent-0) 88%, oklch(0.2 0.02 265));
-
-    --oklch-cyan:    oklch(0.532 0.108 213);
-    --oklch-emerald: oklch(0.522 0.132 148);
-    --oklch-amber:   oklch(0.552 0.128 70);
-    --oklch-red:     oklch(0.536 0.212 25);
-    --oklch-gold:    oklch(0.552 0.118 80);
-
-    --material: oklch(1 0 0 / 0.74);
-    --material-thin: oklch(1 0 0 / 0.55);
-    --material-thick: oklch(1 0 0 / 0.9);
-    --specular: oklch(1 0 0 / 0.9);
-    --hairline: oklch(0 0 0 / 0.08);
-    --overlay-ink: oklch(0.18 0.01 265);
-    --field: oklch(1 0 0);
-    --field-shadow: oklch(0 0 0 / 0.07);
-    --rank-ink: oklch(0.975 0.008 265);
-  --rank-ink: oklch(0.975 0.008 265);
-
-    --elev-1: 0 1px 2px oklch(0 0 0 / 0.06), 0 3px 8px -2px oklch(0 0 0 / 0.08);
-    --elev-2: 0 2px 6px oklch(0 0 0 / 0.07), 0 12px 32px -10px oklch(0 0 0 / 0.14);
-    --elev-3: 0 8px 20px oklch(0 0 0 / 0.1), 0 28px 64px -18px oklch(0 0 0 / 0.2);
-  }
-}
-
-@theme {
-  /* ── SEMANTIC ROLES (unchanged names — components need no edits) ── */
   --color-bg-app: var(--oklch-bg-0);
   --color-bg-surface: var(--oklch-bg-1);
   --color-bg-surface-2: var(--oklch-bg-2);
   --color-bg-surface-3: var(--oklch-bg-3);
   --color-bg-surface-4: var(--oklch-bg-4);
-
   --color-text-primary: var(--oklch-fg-0);
   --color-text-secondary: var(--oklch-fg-1);
   --color-text-muted: var(--oklch-fg-2);
   --color-text-invert: var(--oklch-fg-3);
-
-  --color-border: var(--oklch-bg-4);
-  --color-border-strong: color-mix(in oklab, var(--oklch-bg-4) 70%, var(--oklch-fg-2));
-  --color-border-hover: color-mix(in oklab, var(--oklch-bg-4) 50%, var(--oklch-fg-2));
-  --color-border-input: var(--oklch-bg-4);
-
+  --color-border: var(--oklch-border);
+  --color-border-strong: color-mix(in oklab, var(--oklch-border) 45%, var(--oklch-fg-2));
+  --color-border-hover: color-mix(in oklab, var(--oklch-border) 60%, var(--oklch-fg-2));
+  --color-border-input: var(--color-border-strong);
   --color-accent-brand: var(--oklch-accent-0);
   --color-accent-brand-hover: var(--oklch-accent-1);
   --color-on-accent-brand: var(--on-accent);
-
-  --color-state-success: var(--oklch-emerald);
-  --color-state-warning: var(--oklch-amber);
-  --color-state-error: var(--oklch-red);
-  --color-state-info: var(--oklch-cyan);
-  --color-state-gold: var(--oklch-gold);
-
-  /* Liquid-glass surfaces, now backed by real material tokens. */
-  --color-bg-glass: var(--material);
-  --color-bg-glass-hover: var(--material-thin);
+  --color-state-success: var(--oklch-success);
+  --color-state-warning: var(--oklch-warning);
+  --color-state-error: var(--oklch-danger);
+  --color-state-info: var(--oklch-info);
+  --color-state-gold: var(--oklch-warning);
+  --color-bg-glass: color-mix(in oklab, var(--oklch-bg-2) 88%, transparent);
+  --color-bg-glass-hover: color-mix(in oklab, var(--oklch-bg-3) 80%, transparent);
   --color-border-glass: var(--hairline);
   --color-bg-field: var(--field);
-
-  /* Components paint subtle overlays as `bg-white/[0.04]` and hairlines as
-     `border-white/[0.06]`. The two want opposite treatment on a light page: a
-     background overlay still lifts a surface (so it stays white), while a
-     white hairline on a white card is invisible. Hairlines get their own
-     token that flips; every alpha in the markup keeps working. */
   --color-hairline: var(--overlay-ink);
+  --color-selection: color-mix(in oklab, var(--oklch-accent-0) 20%, var(--oklch-bg-1));
+  --color-focus: var(--oklch-accent-0);
+  --color-code-bg: var(--oklch-bg-2);
+  --color-syntax-keyword: var(--syn-keyword);
+  --color-syntax-string: var(--syn-string);
+  --color-syntax-number: var(--syn-number);
+  --color-syntax-function: var(--syn-function);
+  --color-syntax-type: var(--syn-type);
+  --color-syntax-comment: var(--syn-comment);
 
-  /* Elevation — visible at last. */
+  /* Legacy vocabulary (see the @theme note) */
+  --color-background: var(--oklch-bg-0);
+  --color-surface: var(--oklch-bg-1);
+  --color-surface-2: var(--oklch-bg-2);
+  --color-surface-3: var(--oklch-bg-3);
+  --color-muted: var(--oklch-bg-3);
+  --color-border-glow: color-mix(in oklab, var(--oklch-accent-0) 45%, var(--oklch-border));
+  --color-foreground: var(--oklch-fg-0);
+  --color-foreground-dim: var(--oklch-fg-1);
+  --color-foreground-faint: var(--oklch-fg-2);
+  --color-foreground-muted: var(--oklch-fg-2);
+  --color-popover-foreground: var(--oklch-fg-0);
+  --color-primary: var(--oklch-accent-0);
+  --color-primary-light: var(--accent-bright);
+  --color-primary-bright: var(--accent-bright);
+  --color-on-primary: var(--on-accent);
+  --color-secondary: var(--oklch-accent-1);
+  --color-accent: var(--oklch-success);
+  --color-on-accent: var(--oklch-bg-0);
+  --color-cyan: var(--oklch-info);
+  --color-success: var(--oklch-success);
+  --color-warning: var(--oklch-warning);
+  --color-error: var(--oklch-danger);
+  --color-destructive: var(--oklch-danger);
+  --color-info: var(--oklch-info);
+  --color-gold: var(--oklch-warning);
+  --color-xp: var(--oklch-accent-1);
+  --color-primary-dark: color-mix(in oklab, var(--oklch-accent-0) 78%, var(--shadow-ink));
+  --color-accent-dark: color-mix(in oklab, var(--oklch-success) 78%, var(--shadow-ink));
+  --color-warning-dark: color-mix(in oklab, var(--oklch-warning) 80%, var(--shadow-ink));
+  --color-ring: var(--oklch-accent-0);
+
   --shadow-sm: var(--elev-1);
   --shadow: var(--elev-1);
   --shadow-md: var(--elev-2);
@@ -213,13 +153,94 @@
   --shadow-2xl: var(--elev-3);
   --shadow-inner: inset 0 1px 2px var(--field-shadow);
   --shadow-input-focus: 0 0 0 4px color-mix(in oklab, var(--oklch-accent-0) 28%, transparent);
+  --shadow-card: inset 0 1px 0 0 var(--specular), var(--elev-1);
+  --shadow-pop: inset 0 1px 0 0 var(--specular), var(--elev-3);
+}
+
+/* A previewed theme paints its own page colour and text. */
+[data-palette] {
+  color: var(--color-text-primary);
+}
+
+/* ── Radius ──────────────────────────────────────────────────────────────── */
+[data-radius='sharp'] {
+  --radius-control: 0.25rem;
+  --radius-card: 0.375rem;
+  --radius-sheet: 0.5rem;
+}
+[data-radius='round'] {
+  --radius-control: 0.875rem;
+  --radius-card: 1.375rem;
+  --radius-sheet: 1.75rem;
+}
+
+/* ── Text size: one root scale, so rem-based spacing grows with it ────── */
+html[data-text-size='small'] { font-size: 93.75%; }
+html[data-text-size='large'] { font-size: 106.25%; }
+html[data-text-size='xl'] { font-size: 112.5%; }
+
+/* ── Typefaces ───────────────────────────────────────────────────────────── */
+[data-font] {
+  font-family: var(--font-body);
+}
+[data-code-font] {
+  --code-ligatures: normal;
+}
+
+@theme {
+  /* Semantic roles — Tailwind utilities are generated from these names.
+     The live values come from the [data-palette] block above. */
+  --color-bg-app: var(--oklch-bg-0);
+  --color-bg-surface: var(--oklch-bg-1);
+  --color-bg-surface-2: var(--oklch-bg-2);
+  --color-bg-surface-3: var(--oklch-bg-3);
+  --color-bg-surface-4: var(--oklch-bg-4);
+  --color-text-primary: var(--oklch-fg-0);
+  --color-text-secondary: var(--oklch-fg-1);
+  --color-text-muted: var(--oklch-fg-2);
+  --color-text-invert: var(--oklch-fg-3);
+  --color-border: var(--oklch-border);
+  --color-border-strong: var(--oklch-border);
+  --color-border-hover: var(--oklch-border);
+  --color-border-input: var(--oklch-border);
+  --color-accent-brand: var(--oklch-accent-0);
+  --color-accent-brand-hover: var(--oklch-accent-1);
+  --color-on-accent-brand: var(--on-accent);
+  --color-state-success: var(--oklch-success);
+  --color-state-warning: var(--oklch-warning);
+  --color-state-error: var(--oklch-danger);
+  --color-state-info: var(--oklch-info);
+  --color-state-gold: var(--oklch-warning);
+  --color-bg-glass: var(--oklch-bg-2);
+  --color-bg-glass-hover: var(--oklch-bg-3);
+  --color-border-glass: var(--oklch-border);
+  --color-bg-field: var(--oklch-bg-1);
+  --color-hairline: var(--oklch-fg-0);
+  --color-selection: var(--oklch-bg-3);
+  --color-focus: var(--oklch-accent-0);
+  --color-code-bg: var(--oklch-bg-2);
+  --color-syntax-keyword: var(--syn-keyword);
+  --color-syntax-string: var(--syn-string);
+  --color-syntax-number: var(--syn-number);
+  --color-syntax-function: var(--syn-function);
+  --color-syntax-type: var(--syn-type);
+  --color-syntax-comment: var(--syn-comment);
+
+  --shadow-sm: var(--elev-1);
+  --shadow: var(--elev-1);
+  --shadow-md: var(--elev-2);
+  --shadow-lg: var(--elev-2);
+  --shadow-xl: var(--elev-3);
+  --shadow-2xl: var(--elev-3);
+  --shadow-inner: inset 0 1px 2px var(--field-shadow);
+  --shadow-input-focus: 0 0 0 4px var(--oklch-bg-3);
 
   --ring-color: var(--oklch-accent-0);
   --ring-offset-color: var(--oklch-bg-0);
   --ring-offset-width: 1px;
   --ring-width: 2px;
 
-  /* Corner radii on the macOS scale: controls ~10, cards ~14, sheets ~20. */
+  /* Corner radii — [data-radius] rescales these. */
   --radius-control: 0.625rem;
   --radius-card: 0.875rem;
   --radius-sheet: 1.25rem;
@@ -237,57 +258,50 @@
   --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
   --ease-out: cubic-bezier(0, 0, 0.2, 1);
   --ease-in: cubic-bezier(0.4, 0, 1, 1);
-  /* macOS settles things firmly rather than bouncing. The old 1.56 overshoot
-     is what made the interface feel springy instead of smooth. */
   --ease-smooth: cubic-bezier(0.32, 0.72, 0, 1);
   --ease-spring: cubic-bezier(0.34, 1.26, 0.52, 1);
   --ease-spring-bounce: cubic-bezier(0.34, 1.45, 0.58, 1);
 
-  /* ── Typography ── */
-  /* The system stack first, so on a Mac this is literally SF Pro and the app
-     reads as native; Inter is the fallback everywhere else. */
-  --font-display: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter Variable', 'Inter', sans-serif;
-  --font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter Variable', 'Inter', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: 'SF Mono', 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, Menlo, Monaco, monospace;
-  --font-brand: -apple-system, BlinkMacSystemFont, 'Inter Variable', 'Inter', sans-serif;
+  /* ── Typography ── [data-font] / [data-code-font] (generated) override
+     these; the stacks here are the defaults, Geist and JetBrains Mono. */
+  --font-display: 'Geist Variable', 'Geist Fallback', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-body: 'Geist Variable', 'Geist Fallback', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono Variable', 'JetBrains Mono Fallback', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --font-brand: var(--font-display);
 
   /* ── Legacy names ──
      Most components were written against an older vocabulary — text-foreground,
      bg-surface, text-primary-bright, border-border-glow … (about two thousand
-     class uses). Those tokens stopped existing when the palette was rewritten,
-     so none of those classes produced any CSS: secondary text lost its tone,
-     status colours vanished, and many panels had no fill. Aliasing the old
-     names onto the semantic roles brings all of it back, and it follows the
-     appearance, the accent and the wallpaper for free. */
+     class uses). They alias the semantic roles, so they follow the theme. */
   --color-background: var(--oklch-bg-0);
-  --color-surface: var(--color-bg-surface);
-  --color-surface-2: var(--color-bg-surface-2);
-  --color-surface-3: var(--color-bg-surface-3);
-  --color-muted: var(--color-bg-surface-3);
-  --color-border-glow: color-mix(in oklab, var(--oklch-accent-0) 45%, var(--oklch-bg-4));
+  --color-surface: var(--oklch-bg-1);
+  --color-surface-2: var(--oklch-bg-2);
+  --color-surface-3: var(--oklch-bg-3);
+  --color-muted: var(--oklch-bg-3);
+  --color-border-glow: var(--oklch-accent-0);
   --color-foreground: var(--oklch-fg-0);
   --color-foreground-dim: var(--oklch-fg-1);
   --color-foreground-faint: var(--oklch-fg-2);
   --color-foreground-muted: var(--oklch-fg-2);
   --color-popover-foreground: var(--oklch-fg-0);
   --color-primary: var(--oklch-accent-0);
-  --color-primary-light: var(--accent-bright);
-  --color-primary-bright: var(--accent-bright);
+  --color-primary-light: var(--oklch-accent-0);
+  --color-primary-bright: var(--oklch-accent-0);
   --color-on-primary: var(--on-accent);
   --color-secondary: var(--oklch-accent-1);
-  --color-accent: var(--oklch-emerald);
-  --color-on-accent: oklch(0.18 0.02 150);
-  --color-cyan: var(--oklch-cyan);
-  --color-success: var(--oklch-emerald);
-  --color-warning: var(--oklch-amber);
-  --color-error: var(--oklch-red);
-  --color-destructive: var(--oklch-red);
-  --color-info: var(--oklch-cyan);
-  --color-gold: var(--oklch-gold);
+  --color-accent: var(--oklch-success);
+  --color-on-accent: var(--oklch-bg-0);
+  --color-cyan: var(--oklch-info);
+  --color-success: var(--oklch-success);
+  --color-warning: var(--oklch-warning);
+  --color-error: var(--oklch-danger);
+  --color-destructive: var(--oklch-danger);
+  --color-info: var(--oklch-info);
+  --color-gold: var(--oklch-warning);
   --color-xp: var(--oklch-accent-1);
-  --color-primary-dark: color-mix(in oklab, var(--oklch-accent-0) 78%, oklch(0.25 0.05 265));
-  --color-accent-dark: color-mix(in oklab, var(--oklch-emerald) 78%, oklch(0.25 0.05 160));
-  --color-warning-dark: color-mix(in oklab, var(--oklch-amber) 80%, oklch(0.4 0.12 40));
+  --color-primary-dark: var(--oklch-accent-0);
+  --color-accent-dark: var(--oklch-success);
+  --color-warning-dark: var(--oklch-warning);
   --color-streak: oklch(0.72 0.18 50);
   --color-ring: var(--oklch-accent-0);
 
@@ -329,74 +343,6 @@
   --animate-slide-in-up: slide-in-up 180ms var(--ease-smooth);
   --animate-fade-in: fade-in 160ms var(--ease-smooth);
   --animate-scale-in: scale-in 140ms var(--ease-smooth);
-}
-
-/* A panel that is dark by design — a marketing hero behind an aurora reads as
-   a lit surface, not as a page that forgot to switch. The --color-* roles are
-   declared on :root, so CSS resolves them there and descendants inherit an
-   already-computed value; redefining the raw palette alone would change
-   nothing. Re-declaring the roles here moves the substitution into this
-   subtree, which is what actually flips the panel. */
-.appearance-dark {
-  color-scheme: dark;
-
-  --oklch-bg-0: oklch(0.180 0.004 265);
-  --oklch-bg-1: oklch(0.219 0.005 265);
-  --oklch-bg-2: oklch(0.252 0.006 265);
-  --oklch-bg-3: oklch(0.288 0.007 265);
-  --oklch-bg-4: oklch(0.340 0.008 265);
-  --oklch-fg-0: oklch(0.967 0.002 265);
-  --oklch-fg-1: oklch(0.745 0.008 265);
-  --oklch-fg-2: oklch(0.575 0.010 265);
-  --oklch-fg-3: oklch(0.180 0.004 265);
-  --oklch-accent-0: var(--acc-d0, oklch(0.646 0.184 256));
-  --oklch-accent-1: var(--acc-d1, oklch(0.606 0.214 292));
-  --on-accent: var(--acc-d-on, oklch(1 0 0));
-  --accent-bright: color-mix(in oklab, var(--oklch-accent-0) 62%, oklch(0.97 0.01 265));
-  --material: oklch(0.252 0.006 265 / 0.72);
-  --material-thin: oklch(0.288 0.007 265 / 0.55);
-  --material-thick: oklch(0.219 0.005 265 / 0.88);
-  --specular: oklch(1 0 0 / 0.07);
-  --hairline: oklch(1 0 0 / 0.09);
-  --overlay-ink: oklch(1 0 0);
-  --field: oklch(0.162 0.004 265);
-  --field-shadow: oklch(0 0 0 / 0.32);
-  --rank-ink: oklch(0.16 0.02 272);
-  --elev-1: 0 1px 2px oklch(0 0 0 / 0.36), 0 4px 12px -4px oklch(0 0 0 / 0.5);
-  --elev-2: 0 2px 6px oklch(0 0 0 / 0.4), 0 16px 40px -12px oklch(0 0 0 / 0.66);
-  --elev-3: 0 8px 20px oklch(0 0 0 / 0.46), 0 32px 72px -20px oklch(0 0 0 / 0.74);
-
-  --color-bg-app: var(--oklch-bg-0);
-  --color-bg-surface: var(--oklch-bg-1);
-  --color-bg-surface-2: var(--oklch-bg-2);
-  --color-bg-surface-3: var(--oklch-bg-3);
-  --color-bg-surface-4: var(--oklch-bg-4);
-  --color-text-primary: var(--oklch-fg-0);
-  --color-text-secondary: var(--oklch-fg-1);
-  --color-text-muted: var(--oklch-fg-2);
-  --color-text-invert: var(--oklch-fg-3);
-  --color-border: var(--oklch-bg-4);
-  --color-border-strong: color-mix(in oklab, var(--oklch-bg-4) 70%, var(--oklch-fg-2));
-  --color-border-input: var(--oklch-bg-4);
-  --color-accent-brand: var(--oklch-accent-0);
-  --color-accent-brand-hover: var(--oklch-accent-1);
-  --color-on-accent-brand: var(--on-accent);
-  --color-bg-glass: var(--material);
-  --color-border-glass: var(--hairline);
-  --color-bg-field: var(--field);
-  --color-hairline: var(--overlay-ink);
-  --color-on-accent-brand: var(--on-accent);
-  --color-background: var(--oklch-bg-0);
-  --color-surface: var(--oklch-bg-1);
-  --color-surface-2: var(--oklch-bg-2);
-  --color-surface-3: var(--oklch-bg-3);
-  --color-muted: var(--oklch-bg-3);
-  --color-foreground: var(--oklch-fg-0);
-  --color-foreground-dim: var(--oklch-fg-1);
-  --color-foreground-faint: var(--oklch-fg-2);
-  --color-primary: var(--oklch-accent-0);
-  --color-primary-bright: var(--accent-bright);
-  --color-border-glow: color-mix(in oklab, var(--oklch-accent-0) 45%, var(--oklch-bg-4));
 }
 
 @keyframes pulse-subtle {
@@ -441,60 +387,51 @@
 
 /* ── Utility Classes ── */
 
-/* Every translucent surface reads its fill and its blur from variables. With
-   no wallpaper the fallbacks are the plain Aurora materials; with one, the
-   Look layer at the end of this file swaps in wallpaper-tinted glass, and
-   the Solid glass style (macOS "Reduce transparency") turns blur off. */
-
-/* Liquid-glass effect for premium overlays */
+/* Translucent chrome — sticky bars, the Dock, floating panels — a near-
+   opaque tint of the raised surface with a light blur, so content scrolling
+   beneath stays legible. */
 @utility glass {
-  background-color: var(--material);
-  -webkit-backdrop-filter: var(--glass-filter, blur(30px) saturate(180%));
-  backdrop-filter: var(--glass-filter, blur(30px) saturate(180%));
-  border: 1px solid var(--glass-edge, var(--hairline));
+  background-color: color-mix(in oklab, var(--color-bg-surface-2) 86%, transparent);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid var(--hairline);
 }
 
 /* A lighter pane for things that sit close to the page. */
 @utility glass-thin {
-  background-color: var(--material-thin);
-  -webkit-backdrop-filter: var(--glass-filter, blur(20px) saturate(170%));
-  backdrop-filter: var(--glass-filter, blur(20px) saturate(170%));
-  border: 1px solid var(--glass-edge, var(--hairline));
+  background-color: color-mix(in oklab, var(--color-bg-surface) 80%, transparent);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  backdrop-filter: blur(14px) saturate(140%);
+  border: 1px solid var(--hairline);
 }
 
-/* Menus, popovers, docks and sheets float above everything, so they take
-   the thickest material and the deepest shadow. */
+/* Menus, docks and sheets float above everything: opaque enough to read,
+   with the deepest shadow. */
 @utility glass-thick {
-  background-color: var(--material-thick);
-  -webkit-backdrop-filter: var(--glass-filter-strong, blur(40px) saturate(190%));
-  backdrop-filter: var(--glass-filter-strong, blur(40px) saturate(190%));
-  border: 1px solid var(--glass-edge, var(--hairline));
+  background-color: color-mix(in oklab, var(--color-bg-surface-2) 94%, transparent);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  backdrop-filter: blur(24px) saturate(150%);
+  border: 1px solid var(--hairline);
   box-shadow: inset 0 1px 0 0 var(--specular), var(--elev-3);
 }
 
-/* A toolbar strip, as at the top of a macOS window. */
+/* A toolbar strip, as at the top of a window. */
 @utility titlebar {
-  background-color: var(--material-bar, var(--material-thick));
-  -webkit-backdrop-filter: var(--glass-filter-strong, blur(36px) saturate(180%));
-  backdrop-filter: var(--glass-filter-strong, blur(36px) saturate(180%));
-  border-bottom: 1px solid var(--glass-edge, var(--hairline));
+  background-color: color-mix(in oklab, var(--color-bg-app) 84%, transparent);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
+  border-bottom: 1px solid var(--hairline);
 }
 
-/* The card every panel sits on. Over a wallpaper it is a pane of glass:
-   blurred desktop behind, a lit top edge, a soft sheen falling off down the
-   face, and a shadow that lifts it off the desktop. A card inside another
-   card (or inside any glass) sets --card-fill/--card-filter so it becomes a
-   quiet inset fill instead of stacking a second blur. */
+/* The card every panel sits on. Its look comes from the --card-* tokens of
+   the active [data-card-style] (see CARDS below). */
 @utility card {
-  background-color: var(--card-fill, var(--color-bg-surface));
-  background-image:
-    radial-gradient(420px circle at var(--mx, -999px) var(--my, -999px), var(--spot-color, transparent), transparent 65%),
-    var(--card-sheen, none);
-  -webkit-backdrop-filter: var(--card-filter, var(--glass-filter, none));
-  backdrop-filter: var(--card-filter, var(--glass-filter, none));
-  border: 1px solid var(--card-edge, var(--color-border));
+  background-color: var(--card-bg, var(--color-bg-surface));
+  background-image: var(--card-images, none);
+  background-clip: var(--card-clip, border-box);
+  border: 1px solid var(--card-border, var(--color-border));
   border-radius: var(--radius-card);
-  box-shadow: inset 0 1px 0 0 var(--specular), var(--card-shadow, var(--elev-1));
+  box-shadow: var(--card-shadow, var(--elev-1));
   transition:
     border-color var(--duration-200) var(--ease-smooth),
     box-shadow var(--duration-200) var(--ease-smooth),
@@ -505,15 +442,12 @@
 /* The older name for the same surface; forty panels still use it. */
 @utility card-neon {
   position: relative;
-  background-color: var(--card-fill, var(--color-bg-surface));
-  background-image:
-    radial-gradient(420px circle at var(--mx, -999px) var(--my, -999px), var(--spot-color, transparent), transparent 65%),
-    var(--card-sheen, none);
-  -webkit-backdrop-filter: var(--card-filter, var(--glass-filter, none));
-  backdrop-filter: var(--card-filter, var(--glass-filter, none));
-  border: 1px solid var(--card-edge, var(--color-border));
+  background-color: var(--card-bg, var(--color-bg-surface));
+  background-image: var(--card-images, none);
+  background-clip: var(--card-clip, border-box);
+  border: 1px solid var(--card-border, var(--color-border));
   border-radius: var(--radius-card);
-  box-shadow: inset 0 1px 0 0 var(--specular), var(--card-shadow, var(--elev-1));
+  box-shadow: var(--card-shadow, var(--elev-1));
   transition:
     border-color var(--duration-200) var(--ease-smooth),
     box-shadow var(--duration-200) var(--ease-smooth),
@@ -591,14 +525,6 @@ input[type='search']::-webkit-search-results-decoration {
   text-wrap: pretty;
 }
 
-/* Subtle texture overlay for depth (apply to a fixed overlay, never to body) */
-@utility texture-noise {
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  background-size: cover;
-  pointer-events: none;
-  opacity: 0.035;
-}
-
 /* ── Base Styles ── */
 @layer base {
   * {
@@ -622,25 +548,6 @@ input[type='search']::-webkit-search-results-decoration {
     transition: background-color 220ms var(--ease-smooth), color 220ms var(--ease-smooth);
   }
 
-  /* A trace of grain over the whole app. It sits above everything, so it must
-     never intercept a click, and it has to be lighter on paper than on ink. */
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-    pointer-events: none;
-    @apply texture-noise;
-  }
-
-  :root[data-theme='light'] body::after {
-    opacity: 0.018;
-  }
-  @media (prefers-color-scheme: light) {
-    :root:not([data-theme='dark']) body::after {
-      opacity: 0.018;
-    }
-  }
 
   /* macOS overlay scrollbars: thin, dim, and only obvious on hover. */
   ::-webkit-scrollbar {
@@ -668,7 +575,8 @@ input[type='search']::-webkit-search-results-decoration {
   }
 
   ::selection {
-    @apply bg-accent-brand/20 text-accent-brand;
+    background-color: var(--color-selection);
+    color: var(--color-text-primary);
   }
 
   /* The macOS focus ring: a soft accent halo, not a hard offset outline. */
@@ -680,9 +588,17 @@ input[type='search']::-webkit-search-results-decoration {
     border-radius: var(--radius-control);
   }
 
+  /* Headings take the display face and its tracking from the chosen font
+     ([data-font] sets --font-display / --heading-tracking). */
   h1, h2, h3, h4, h5, h6 {
-    @apply font-display tracking-tight;
+    font-family: var(--font-display);
+    letter-spacing: var(--heading-tracking, -0.02em);
     line-height: 1.2;
+  }
+
+  code, kbd, samp, pre {
+    font-family: var(--font-mono);
+    font-variant-ligatures: var(--code-ligatures, normal);
   }
 
   h1 { @apply text-4xl sm:text-5xl lg:text-6xl; }
@@ -951,39 +867,24 @@ input[type='search']::-webkit-search-results-decoration {
   }
 }
 
-/* ── Syntax Highlighting for Code Blocks ── */
+/* ── Syntax Highlighting for Code Blocks ──
+   Colours come from the theme's syntax tokens (palettes.ts → --syn-*). */
 .hljs {
-  @apply bg-bg-surface-3 rounded-md p-4 overflow-auto;
-  @apply font-mono text-sm;
+  background-color: var(--color-code-bg);
+  color: var(--color-text-primary);
+  border-radius: var(--radius-control);
+  padding: 1rem;
+  overflow: auto;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
 }
-
-.hljs-comment {
-  @apply text-text-muted italic;
-}
-
-.hljs-string {
-  @apply text-state-success;
-}
-
-.hljs-keyword {
-  @apply text-accent-brand font-semibold;
-}
-
-.hljs-variable {
-  @apply text-text-primary;
-}
-
-.hljs-number {
-  @apply text-state-gold;
-}
-
-.hljs-regexp {
-  @apply text-state-warning;
-}
-
-.hljs-class {
-  @apply text-accent-brand font-semibold;
-}
+.hljs-comment, .hljs-quote { color: var(--color-syntax-comment); font-style: italic; }
+.hljs-string, .hljs-regexp { color: var(--color-syntax-string); }
+.hljs-keyword, .hljs-built_in, .hljs-selector-tag { color: var(--color-syntax-keyword); }
+.hljs-number, .hljs-literal { color: var(--color-syntax-number); }
+.hljs-title, .hljs-function { color: var(--color-syntax-function); }
+.hljs-type, .hljs-class { color: var(--color-syntax-type); }
+.hljs-variable { color: var(--color-text-primary); }
 
 /* ── Focus Enhancement Utilities ── */
 .reduce-motion\:animate-none {
@@ -1053,16 +954,18 @@ input[type='search']::-webkit-search-results-decoration {
 
 /* ── High Contrast Support ── */
 @media (prefers-contrast: more) {
-  /* Flatten glass to solid tokens for high contrast */
-  .glass {
-    @apply bg-bg-surface-3/90 backdrop-blur-none border border-border/70;
+  /* Solid chrome, stronger borders and secondary text at full strength —
+     on top of whichever theme is chosen (the Accessible themes go further). */
+  .glass, .glass-thin, .glass-thick, .titlebar {
+    background-color: var(--color-bg-surface-2);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
   }
 
-  /* Strengthen borders and text */
-  :root {
-    --color-border: color-mix(in oklab, var(--oklch-bg-4) 80%, var(--oklch-bg-2));
-    --color-text-primary: oklch(0.880 0.006 250.20);
-    --color-text-secondary: oklch(0.620 0.012 255.65);
+  :root,
+  [data-palette] {
+    --color-border: color-mix(in oklab, var(--oklch-border) 45%, var(--oklch-fg-2));
+    --color-text-secondary: var(--oklch-fg-0);
   }
 }
 
@@ -1073,965 +976,147 @@ input[type='search']::-webkit-search-results-decoration {
   --cursor-y: 50%;
 }
 /* ── Elevated popover surface (menus, popovers, floating windows) ──
-   Must stay effectively opaque: these float above page content, so any real
-   transparency lets the text underneath bleed through the menu. Over a
-   wallpaper it is the densest glass (~90%) with a strong blur, which reads
-   as frosted without ever letting text show through. */
+   Opaque by design: these float above page content, so nothing underneath
+   may show through. */
 .pop-surface {
-  border-radius: 0.875rem;
-  border: 1px solid var(--glass-edge, color-mix(in oklab, var(--oklch-fg-0) 10%, transparent));
-  background-color: var(--material-pop, color-mix(in oklab, var(--oklch-bg-2) 97%, transparent));
-  -webkit-backdrop-filter: var(--glass-filter-strong, blur(24px) saturate(140%));
-  backdrop-filter: var(--glass-filter-strong, blur(24px) saturate(140%));
-  box-shadow:
-    inset 0 1px 0 var(--specular),
-    var(--pop-shadow, 0 2px 6px rgb(0 0 0 / 0.45), 0 24px 60px -16px rgb(0 0 0 / 0.75));
+  border-radius: var(--radius-card);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-bg-surface-2);
+  box-shadow: inset 0 1px 0 var(--specular), var(--elev-3);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   THE LOOK — wallpaper, glass and accent
+   CARDS — one surface vocabulary, eight styles
    ═══════════════════════════════════════════════════════════════════════════
 
-   ThemeProvider (and, for the first paint, the script in index.html) writes
-   the user's look onto <html>:
-
-     class="dark"               resolved appearance
-     data-accent="purple"       resolved accent (Multicolour is resolved to
-                                the wallpaper's own colour before it lands)
-     data-glass="frosted"       frosted · clear · solid
-     data-wall="photo"          original · photo · none
-     data-wall-tone="light"     the tone of whatever is behind the glass
-     --wall-tint / --wall-color the wallpaper's dominant colours
-
-   Everything below keys off those. */
-
-/* ── Accent colours ────────────────────────────────────────────────────────
-   Each accent has a dark-appearance and a light-appearance pair (the light
-   one darkened until it holds contrast on white), plus the colour of text
-   drawn on it: bright accents such as yellow and green take dark text, the
-   way macOS does. The palette blocks above read these through --acc-*. */
-:root[data-accent='purple'] {
-  --acc-d0: oklch(0.672 0.200 305); --acc-d1: oklch(0.650 0.210 332); --acc-d-on: oklch(1 0 0);
-  --acc-l0: oklch(0.530 0.220 303); --acc-l1: oklch(0.520 0.220 328); --acc-l-on: oklch(1 0 0);
-}
-:root[data-accent='pink'] {
-  --acc-d0: oklch(0.668 0.215 8);   --acc-d1: oklch(0.650 0.210 340); --acc-d-on: oklch(1 0 0);
-  --acc-l0: oklch(0.565 0.210 8);   --acc-l1: oklch(0.530 0.210 340); --acc-l-on: oklch(1 0 0);
-}
-:root[data-accent='red'] {
-  --acc-d0: oklch(0.662 0.210 27);  --acc-d1: oklch(0.640 0.210 12);  --acc-d-on: oklch(1 0 0);
-  --acc-l0: oklch(0.552 0.210 27);  --acc-l1: oklch(0.520 0.210 15);  --acc-l-on: oklch(1 0 0);
-}
-:root[data-accent='orange'] {
-  --acc-d0: oklch(0.785 0.165 62);  --acc-d1: oklch(0.725 0.180 45);  --acc-d-on: oklch(0.21 0.04 55);
-  --acc-l0: oklch(0.600 0.180 48);  --acc-l1: oklch(0.570 0.190 38);  --acc-l-on: oklch(1 0 0);
-}
-:root[data-accent='yellow'] {
-  --acc-d0: oklch(0.870 0.170 92);  --acc-d1: oklch(0.820 0.170 78);  --acc-d-on: oklch(0.22 0.04 85);
-  --acc-l0: oklch(0.660 0.150 78);  --acc-l1: oklch(0.620 0.150 65);  --acc-l-on: oklch(0.20 0.04 80);
-}
-:root[data-accent='green'] {
-  --acc-d0: oklch(0.770 0.190 148); --acc-d1: oklch(0.730 0.150 170); --acc-d-on: oklch(0.20 0.04 150);
-  --acc-l0: oklch(0.550 0.150 148); --acc-l1: oklch(0.520 0.120 172); --acc-l-on: oklch(1 0 0);
-}
-:root[data-accent='graphite'] {
-  --acc-d0: oklch(0.760 0.012 265); --acc-d1: oklch(0.680 0.012 265); --acc-d-on: oklch(0.18 0.004 265);
-  --acc-l0: oklch(0.460 0.010 265); --acc-l1: oklch(0.400 0.010 265); --acc-l-on: oklch(1 0 0);
-}
-:root[data-accent='cyan'] {
-  --acc-d0: oklch(0.792 0.140 213); --acc-d1: oklch(0.720 0.160 225); --acc-d-on: oklch(0.18 0.04 213);
-  --acc-l0: oklch(0.532 0.140 213); --acc-l1: oklch(0.480 0.150 225); --acc-l-on: oklch(1 0 0);
-}
-:root[data-accent='ice'] {
-  --acc-d0: oklch(0.820 0.120 230); --acc-d1: oklch(0.750 0.140 240); --acc-d-on: oklch(0.18 0.04 230);
-  --acc-l0: oklch(0.560 0.130 230); --acc-l1: oklch(0.500 0.140 240); --acc-l-on: oklch(1 0 0);
-}
-:root[data-accent='plasma'] {
-  --acc-d0: oklch(0.700 0.230 325); --acc-d1: oklch(0.660 0.220 300); --acc-d-on: oklch(1 0 0);
-  --acc-l0: oklch(0.540 0.220 325); --acc-l1: oklch(0.500 0.210 300); --acc-l-on: oklch(1 0 0);
-}
-/* (Blue is the palette's own default, so it needs no block.) */
-
-/* ── Deep Card Theming Engine ────────────────────────────────────────── */
-
-/* 1. Neon Cyberpunk Card */
-html[data-card-style='neon'] {
-  --color-border: color-mix(in oklch, var(--color-accent-brand) 45%, transparent);
-  --color-border-hover: color-mix(in oklch, var(--color-accent-brand) 75%, white);
-  --card-fill: color-mix(in oklch, var(--color-accent-brand) 4%, oklch(0.10 0.02 260));
-  --card-edge: color-mix(in oklch, var(--color-accent-brand) 45%, transparent);
-  --card-shadow: 0 0 20px -3px color-mix(in oklch, var(--color-accent-brand) 28%, transparent), 0 14px 34px -10px oklch(0 0 0 / 0.8), inset 0 0 12px -4px color-mix(in oklch, var(--color-accent-brand) 15%, transparent);
-  --card-sheen: radial-gradient(circle at 100% 0%, color-mix(in oklch, var(--color-accent-brand) 12%, transparent) 0%, transparent 60%);
-}
-html[data-card-style='neon'] .card,
-html[data-card-style='neon'] .card-neon {
-  border-color: color-mix(in oklch, var(--color-accent-brand) 45%, transparent);
-  box-shadow: 0 0 20px -3px color-mix(in oklch, var(--color-accent-brand) 25%, transparent), 0 14px 34px -10px oklch(0 0 0 / 0.8), inset 0 0 14px -6px color-mix(in oklch, var(--color-accent-brand) 15%, transparent);
-}
-html[data-card-style='neon'] .card:hover,
-html[data-card-style='neon'] .card-neon:hover,
-html[data-card-style='neon'] .card-interactive:hover {
-  border-color: color-mix(in oklch, var(--color-accent-brand) 80%, white);
-  box-shadow: 0 0 32px 0px color-mix(in oklch, var(--color-accent-brand) 55%, transparent), inset 0 0 18px -2px color-mix(in oklch, var(--color-accent-brand) 30%, transparent), 0 20px 40px -12px oklch(0 0 0 / 0.9);
+   .card / .card-neon (and <Card>) read everything from --card-*; each
+   [data-card-style] sets them. Like the palette, the style can be scoped to
+   any element, which is how the Theme Centre previews all eight at once.
+   Values are color-mix()es of the semantic roles, so every style works on
+   every theme, light or dark. */
+[data-card-style] {
+  --card-bg: var(--color-bg-surface);
+  --card-images: none; --card-clip: border-box;
+  --card-border: color-mix(in oklab, var(--color-border) 85%, transparent);
+  --card-shadow: inset 0 1px 0 0 var(--specular), var(--elev-1);
+  --card-hover-border: var(--color-border-strong);
+  --card-hover-shadow: inset 0 1px 0 0 var(--specular), var(--elev-2);
 }
 
-/* 2. Holographic 3D Card */
-html[data-card-style='holo'] {
-  --card-fill: color-mix(in oklch, var(--color-bg-surface) 92%, var(--color-accent-brand));
-  --card-edge: color-mix(in oklch, var(--color-accent-brand) 35%, oklch(1 0 0 / 0.22));
+/* Soft — the default — is the base above. */
+
+/* Elevated — a raised sheet with a deep, layered shadow and no hard edge. */
+[data-card-style='elevated'] {
+  --card-bg: var(--color-bg-surface);
+  --card-border: color-mix(in oklab, var(--color-border) 45%, transparent);
+  --card-shadow: inset 0 1px 0 0 var(--specular), var(--elev-2);
+  --card-hover-shadow: inset 0 1px 0 0 var(--specular), var(--elev-3);
+}
+
+/* Outline — no fill, just a clear border. */
+[data-card-style='outline'] {
+  --card-bg: transparent;
+  --card-border: var(--color-border-strong);
+  --card-shadow: none;
+  --card-hover-border: color-mix(in oklab, var(--color-accent-brand) 55%, var(--color-border-strong));
+  --card-hover-shadow: none;
+}
+
+/* Flat — a solid tint, no border, no shadow. */
+[data-card-style='flat'] {
+  --card-bg: var(--color-bg-surface-2);
+  --card-border: transparent;
+  --card-shadow: none;
+  --card-hover-border: transparent;
+  --card-hover-shadow: none;
+}
+[data-card-style='flat'] .card-interactive:hover,
+[data-card-style='flat'] .card-interactive:focus-visible {
+  background-color: var(--color-bg-surface-3);
+}
+
+/* Accent edge — a bar of the accent on the leading edge. */
+[data-card-style='accent'] {
+  --card-shadow: inset 3px 0 0 0 var(--color-accent-brand), var(--elev-1);
+  --card-hover-border: color-mix(in oklab, var(--color-accent-brand) 40%, var(--color-border));
+  --card-hover-shadow: inset 3px 0 0 0 var(--color-accent-brand), var(--elev-2);
+}
+
+/* Gradient border — accent to secondary, drawn on the border box. */
+[data-card-style='gradient'] {
+  --card-border: transparent;
+  --card-images:
+    linear-gradient(var(--color-bg-surface), var(--color-bg-surface)),
+    linear-gradient(
+      135deg,
+      var(--color-accent-brand),
+      color-mix(in oklab, var(--color-accent-brand-hover) 55%, var(--color-border)) 50%,
+      var(--color-border)
+    );
+  --card-clip: padding-box, border-box;
+  --card-shadow: var(--elev-1);
+  --card-hover-border: transparent;
+  --card-hover-shadow: 0 10px 30px -14px color-mix(in oklab, var(--color-accent-brand) 55%, transparent), var(--elev-1);
+}
+
+/* Inset — pressed into the page. */
+[data-card-style='inset'] {
+  --card-bg: color-mix(in oklab, var(--color-bg-app) 70%, var(--color-bg-field));
+  --card-border: color-mix(in oklab, var(--color-border) 70%, transparent);
+  --card-shadow: inset 0 1px 3px var(--field-shadow), inset 0 0 0 1px color-mix(in oklab, var(--shadow-ink) 4%, transparent);
+  --card-hover-shadow: inset 0 1px 3px var(--field-shadow);
+}
+
+/* Glow — an accent halo. */
+[data-card-style='glow'] {
+  --card-border: color-mix(in oklab, var(--color-accent-brand) 38%, var(--color-border));
   --card-shadow:
-    inset 0 1.5px 0 0 oklch(1 0 0 / 0.35),
-    0 22px 55px -14px oklch(0 0 0 / 0.85),
-    0 0 26px -6px color-mix(in oklch, var(--color-accent-brand) 28%, transparent);
-  --card-sheen:
-    radial-gradient(130% 120% at 0% 0%, color-mix(in oklch, var(--color-accent-brand) 16%, transparent) 0%, transparent 60%),
-    linear-gradient(135deg, oklch(1 0 0 / 0.14) 0%, transparent 50%, color-mix(in oklch, var(--oklch-accent-1, var(--color-accent-brand)) 14%, transparent) 100%);
-}
-html[data-card-style='holo'] .card,
-html[data-card-style='holo'] .card-neon {
-  border-color: color-mix(in oklch, var(--color-accent-brand) 35%, oklch(1 0 0 / 0.22));
-  box-shadow:
-    inset 0 1.5px 0 0 oklch(1 0 0 / 0.35),
-    0 22px 55px -14px oklch(0 0 0 / 0.85),
-    0 0 26px -6px color-mix(in oklch, var(--color-accent-brand) 28%, transparent);
-}
-html[data-card-style='holo'] .card:hover,
-html[data-card-style='holo'] .card-neon:hover,
-html[data-card-style='holo'] .card-interactive:hover {
-  border-color: color-mix(in oklch, var(--color-accent-brand) 65%, oklch(1 0 0 / 0.45));
-  box-shadow:
-    inset 0 2px 0 0 oklch(1 0 0 / 0.55),
-    0 28px 65px -16px oklch(0 0 0 / 0.9),
-    0 0 36px -4px color-mix(in oklch, var(--color-accent-brand) 45%, transparent);
+    inset 0 1px 0 0 var(--specular),
+    0 0 0 1px color-mix(in oklab, var(--color-accent-brand) 10%, transparent),
+    0 10px 32px -12px color-mix(in oklab, var(--color-accent-brand) 45%, transparent);
+  --card-hover-border: color-mix(in oklab, var(--color-accent-brand) 60%, var(--color-border));
+  --card-hover-shadow:
+    inset 0 1px 0 0 var(--specular),
+    0 0 0 1px color-mix(in oklab, var(--color-accent-brand) 18%, transparent),
+    0 14px 40px -12px color-mix(in oklab, var(--color-accent-brand) 60%, transparent);
 }
 
-/* 3. Gradient Flow Card */
-html[data-card-style='gradient'] {
-  --card-fill: color-mix(in oklch, var(--color-accent-brand) 8%, var(--color-bg-surface));
-  --card-edge: color-mix(in oklch, var(--color-accent-brand) 40%, transparent);
-  --card-shadow: 0 12px 32px -8px color-mix(in oklch, var(--color-accent-brand) 25%, transparent), 0 4px 16px -2px oklch(0 0 0 / 0.5);
-  --card-sheen: linear-gradient(135deg, color-mix(in oklch, var(--color-accent-brand) 14%, transparent) 0%, color-mix(in oklch, var(--oklch-accent-1, var(--color-accent-brand)) 10%, transparent) 100%);
-}
-html[data-card-style='gradient'] .card,
-html[data-card-style='gradient'] .card-neon {
-  border-color: color-mix(in oklch, var(--color-accent-brand) 40%, transparent);
-  box-shadow: 0 12px 32px -8px color-mix(in oklch, var(--color-accent-brand) 25%, transparent), 0 4px 16px -2px oklch(0 0 0 / 0.5);
-}
-html[data-card-style='gradient'] .card:hover,
-html[data-card-style='gradient'] .card-neon:hover,
-html[data-card-style='gradient'] .card-interactive:hover {
-  border-color: color-mix(in oklch, var(--color-accent-brand) 75%, transparent);
-  box-shadow: 0 18px 42px -10px color-mix(in oklch, var(--color-accent-brand) 40%, transparent), 0 6px 20px -2px oklch(0 0 0 / 0.6);
+/* A card inside a card is a quiet inset fill, never a second elevated sheet. */
+:is(.card, .card-neon) :is(.card, .card-neon) {
+  --card-bg: var(--color-bg-surface-2);
+  --card-images: none; --card-clip: border-box;
+  --card-border: color-mix(in oklab, var(--color-border) 70%, transparent);
+  --card-shadow: none;
+  --card-hover-shadow: none;
 }
 
-/* 4. Minimalist Card */
-html[data-card-style='minimal'] {
-  --gblur: 0px;
-  --glass-filter: none;
-  --glass-filter-strong: none;
-  --card-fill: var(--color-bg-surface);
-  --card-sheen: none;
-  --card-edge: oklch(1 0 0 / 0.1);
-  --card-shadow: 0 1px 3px oklch(0 0 0 / 0.3);
-}
-html[data-card-style='minimal'] .card,
-html[data-card-style='minimal'] .card-neon {
-  background-color: var(--color-bg-surface) !important;
-  background-image: none !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  border: 1px solid oklch(1 0 0 / 0.1) !important;
-  box-shadow: 0 1px 3px oklch(0 0 0 / 0.3) !important;
-}
-html[data-card-style='minimal'] .card:hover,
-html[data-card-style='minimal'] .card-neon:hover,
-html[data-card-style='minimal'] .card-interactive:hover {
-  border-color: oklch(1 0 0 / 0.22) !important;
-  box-shadow: 0 4px 12px oklch(0 0 0 / 0.4) !important;
+/* Interactive cards answer the pointer in their style's own way. */
+.card-interactive:hover,
+:is(a, button).card:hover,
+:is(a, button).card-neon:hover {
+  border-color: var(--card-hover-border);
+  box-shadow: var(--card-hover-shadow);
 }
 
-/* 5. Smoked Crystal Glass Card */
-html[data-card-style='glass'] {
-  --card-fill: color-mix(in oklab, var(--material-thick, var(--color-bg-surface)) 86%, transparent);
-  --card-edge: oklch(1 0 0 / 0.15);
-  --card-shadow: inset 0 1px 0 0 oklch(1 0 0 / 0.28), 0 18px 44px -14px oklch(0 0 0 / 0.7);
-  --card-sheen: radial-gradient(120% 80% at 15% 0%, oklch(1 0 0 / 0.12), transparent 50%);
-}
-html[data-card-style='glass'] .card,
-html[data-card-style='glass'] .card-neon {
-  backdrop-filter: blur(28px) saturate(180%);
-  -webkit-backdrop-filter: blur(28px) saturate(180%);
-  border: 1px solid oklch(1 0 0 / 0.15);
-  box-shadow: inset 0 1px 0 0 oklch(1 0 0 / 0.28), 0 18px 44px -14px oklch(0 0 0 / 0.7);
-}
-
-/* ── Global Icon Theming Engine ────────────────────────────────────────── */
-
+/* ── Icon pods ───────────────────────────────────────────────────────────────
+   The containers themselves (.icon-badge) belong to the icon system
+   (components/icon/icon.css). This keeps older .icon-pod tiles in step with
+   the chosen shape until they migrate. */
 .icon-pod,
 [data-icon-pod] {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   position: relative;
+  border-radius: 28%;
   transition:
     transform var(--duration-200) var(--ease-smooth),
     box-shadow var(--duration-200) var(--ease-smooth),
-    background var(--duration-300) var(--ease-smooth),
-    border-color var(--duration-200) var(--ease-smooth),
-    border-radius var(--duration-200) var(--ease-smooth),
-    filter var(--duration-200) var(--ease-smooth);
-}
-
-/* Icon Shapes across the whole application */
-html[data-icon-shape='squircle'] .icon-pod,
-html[data-icon-shape='squircle'] [data-icon-pod],
-html[data-icon-shape='squircle'] .dock-tile {
-  border-radius: 28% !important;
-}
-html[data-icon-shape='circle'] .icon-pod,
-html[data-icon-shape='circle'] [data-icon-pod],
-html[data-icon-shape='circle'] .dock-tile {
-  border-radius: 9999px !important;
-}
-html[data-icon-shape='hexagon'] .icon-pod,
-html[data-icon-shape='hexagon'] [data-icon-pod],
-html[data-icon-shape='hexagon'] .dock-tile {
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%) !important;
-  border-radius: 0 !important;
-}
-html[data-icon-shape='diamond'] .icon-pod,
-html[data-icon-shape='diamond'] [data-icon-pod],
-html[data-icon-shape='diamond'] .dock-tile {
-  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%) !important;
-  border-radius: 0 !important;
-}
-html[data-icon-shape='shield'] .icon-pod,
-html[data-icon-shape='shield'] [data-icon-pod],
-html[data-icon-shape='shield'] .dock-tile {
-  clip-path: polygon(50% 0%, 100% 15%, 100% 70%, 50% 100%, 0% 70%, 0% 15%) !important;
-  border-radius: 0 !important;
-}
-html[data-icon-shape='pill'] .icon-pod,
-html[data-icon-shape='pill'] [data-icon-pod],
-html[data-icon-shape='pill'] .dock-tile {
-  border-radius: 9999px !important;
-  aspect-ratio: 1.25 / 1 !important;
-}
-html[data-icon-shape='free'] .icon-pod,
-html[data-icon-shape='free'] [data-icon-pod],
-html[data-icon-shape='free'] .dock-tile {
-  border-radius: 0 !important;
-  background: transparent !important;
-  border-color: transparent !important;
-  box-shadow: none !important;
-}
-
-/* Icon Packs across the whole application */
-
-/* 1. Neon Cyberpunk Icon Pack */
-html[data-icon-pack='neon'] .icon-pod,
-html[data-icon-pack='neon'] [data-icon-pod] {
-  background: radial-gradient(circle at 50% 50%, color-mix(in oklch, var(--color-accent-brand) 30%, oklch(0.12 0.03 260)), oklch(0.08 0.02 260)) !important;
-  border: 1.5px solid color-mix(in oklch, var(--color-accent-brand) 75%, white) !important;
-  box-shadow: 0 0 16px color-mix(in oklch, var(--color-accent-brand) 45%, transparent), inset 0 0 8px color-mix(in oklch, var(--color-accent-brand) 25%, transparent) !important;
-  color: color-mix(in oklch, var(--color-accent-brand) 85%, white) !important;
-}
-html[data-icon-pack='neon'] .icon-pod svg.lucide,
-html[data-icon-pack='neon'] [data-icon-pod] svg.lucide {
-  filter: drop-shadow(0 0 6px currentColor);
-}
-
-/* 2. Anime Pastel Aura Icon Pack */
-html[data-icon-pack='anime'] .icon-pod,
-html[data-icon-pack='anime'] [data-icon-pod] {
-  background: linear-gradient(135deg, color-mix(in oklch, var(--color-accent-brand) 50%, #f472b6), color-mix(in oklch, var(--color-accent-brand) 75%, #818cf8)) !important;
-  border: 1.5px solid oklch(1 0 0 / 0.5) !important;
-  box-shadow: 0 0 20px -2px color-mix(in oklch, var(--color-accent-brand) 65%, #f472b6), inset 0 1.5px 2px oklch(1 0 0 / 0.8) !important;
-  color: #ffffff !important;
-}
-html[data-icon-pack='anime'] .icon-pod svg.lucide,
-html[data-icon-pack='anime'] [data-icon-pod] svg.lucide {
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
-}
-
-/* 3. Chromatic Glitch Icon Pack */
-html[data-icon-pack='glitch'] .icon-pod,
-html[data-icon-pack='glitch'] [data-icon-pod] {
-  background: #090a0f !important;
-  border: 1.5px solid #06b6d4 !important;
-  box-shadow: -2px 0 0 #f43f5e, 2px 0 0 #06b6d4, 0 0 14px color-mix(in oklch, var(--color-accent-brand) 40%, transparent) !important;
-  color: #22d3ee !important;
-}
-html[data-icon-pack='glitch'] .icon-pod svg.lucide,
-html[data-icon-pack='glitch'] [data-icon-pod] svg.lucide {
-  filter: drop-shadow(-1px 0 0 #f43f5e) drop-shadow(1px 0 0 #06b6d4);
-}
-
-/* 4. Crystal Prism Glass Icon Pack */
-html[data-icon-pack='crystal'] .icon-pod,
-html[data-icon-pack='crystal'] [data-icon-pod] {
-  background: linear-gradient(135deg, oklch(1 0 0 / 0.22), oklch(1 0 0 / 0.05)) !important;
-  backdrop-filter: blur(16px) saturate(180%) !important;
-  border: 1.5px solid oklch(1 0 0 / 0.45) !important;
-  box-shadow: inset 0 2px 3px oklch(1 0 0 / 0.6), 0 8px 24px -4px color-mix(in oklch, var(--color-accent-brand) 35%, transparent) !important;
-  color: oklch(1 0 0) !important;
-}
-html[data-icon-pack='crystal'] .icon-pod svg.lucide,
-html[data-icon-pack='crystal'] [data-icon-pod] svg.lucide {
-  filter: drop-shadow(0 2px 8px color-mix(in oklch, var(--color-accent-brand) 80%, white));
-}
-
-/* 5. 8-Bit Retro Arcade Box Icon Pack */
-html[data-icon-pack='retro'] .icon-pod,
-html[data-icon-pack='retro'] [data-icon-pod] {
-  background: #111827 !important;
-  border: 2px solid var(--color-accent-brand) !important;
-  box-shadow: 3px 3px 0 0 var(--color-accent-brand), inset 0 0 0 1px #000 !important;
-  color: var(--color-accent-brand) !important;
-}
-html[data-icon-pack='retro'] .icon-pod svg.lucide,
-html[data-icon-pack='retro'] [data-icon-pod] svg.lucide {
-  stroke-width: 2.75px !important;
-}
-
-/* 6. Matrix Phosphor Emerald Icon Pack */
-html[data-icon-pack='emerald'] .icon-pod,
-html[data-icon-pack='emerald'] [data-icon-pod] {
-  background: radial-gradient(circle at 50% 50%, #052e16, #021208) !important;
-  border: 1.5px solid #22c55e !important;
-  box-shadow: 0 0 14px #22c55e66, inset 0 0 8px #22c55e33 !important;
-  color: #4ade80 !important;
-}
-html[data-icon-pack='emerald'] .icon-pod svg.lucide,
-html[data-icon-pack='emerald'] [data-icon-pod] svg.lucide {
-  filter: drop-shadow(0 0 5px #22c55e);
-}
-
-/* 7. Clay 3D Icon Pack */
-html[data-icon-pack='clay'] .icon-pod,
-html[data-icon-pack='clay'] [data-icon-pod] {
-  background: linear-gradient(180deg, color-mix(in oklch, var(--color-accent-brand) 45%, var(--color-bg-surface-2)), color-mix(in oklch, var(--color-accent-brand) 20%, var(--color-bg-surface-2))) !important;
-  border: 1px solid oklch(1 0 0 / 0.18) !important;
-  box-shadow: inset 0 2.5px 3px oklch(1 0 0 / 0.45), inset 0 -3px 4px oklch(0 0 0 / 0.45), 0 8px 16px -4px oklch(0 0 0 / 0.5) !important;
-  color: oklch(1 0 0) !important;
-}
-html[data-icon-pack='clay'] .icon-pod svg.lucide,
-html[data-icon-pack='clay'] [data-icon-pod] svg.lucide {
-  filter: drop-shadow(0 1.5px 2px oklch(0 0 0 / 0.45));
-}
-
-/* 8. Duotone Icon Pack */
-html[data-icon-pack='duotone'] .icon-pod,
-html[data-icon-pack='duotone'] [data-icon-pod] {
-  background: linear-gradient(135deg, color-mix(in oklch, var(--color-accent-brand) 30%, transparent), color-mix(in oklch, var(--color-accent-brand) 8%, transparent)) !important;
-  border: 1px solid color-mix(in oklch, var(--color-accent-brand) 45%, transparent) !important;
-  box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.2), 0 4px 12px -2px oklch(0 0 0 / 0.3) !important;
-  color: var(--color-accent-brand) !important;
-}
-
-/* 9. Minimal Icon Pack */
-html[data-icon-pack='minimal'] .icon-pod,
-html[data-icon-pack='minimal'] [data-icon-pod] {
-  background: oklch(1 0 0 / 0.05) !important;
-  border: 1px solid oklch(1 0 0 / 0.12) !important;
-  box-shadow: none !important;
-  color: var(--color-text-primary) !important;
-}
-html[data-icon-pack='minimal'] .icon-pod svg.lucide,
-html[data-icon-pack='minimal'] [data-icon-pod] svg.lucide {
-  filter: none;
-}
-
-/* 10. Vibrant Gradient Icon Pack */
-html[data-icon-pack='vibrant'] .icon-pod,
-html[data-icon-pack='vibrant'] [data-icon-pod] {
-  background: linear-gradient(145deg, color-mix(in oklch, var(--color-accent-brand) 85%, white), var(--color-accent-brand)) !important;
-  border: 1px solid oklch(1 0 0 / 0.3) !important;
-  box-shadow: 0 4px 14px -3px color-mix(in oklch, var(--color-accent-brand) 55%, transparent), inset 0 1px 0 oklch(1 0 0 / 0.4) !important;
-  color: oklch(1 0 0) !important;
-}
-html[data-icon-pack='vibrant'] .icon-pod svg.lucide,
-html[data-icon-pack='vibrant'] [data-icon-pod] svg.lucide {
-  filter: drop-shadow(0 1px 2px oklch(0 0 0 / 0.25));
-}
-/* ═══════════════════════════════════════════════════════════════════════════
-   TYPOGRAPHY ENGINE — 10 Unique Curated Fonts, Scale & Luminescence
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-/* ── Typography Size Scale ───────────────────────────────────────────────── */
-:root,
-html {
-  --font-scale: 1.05;
-}
-html[data-font-size='normal'] {
-  --font-scale: 1.02;
-}
-html[data-font-size='comfortable'] {
-  --font-scale: 1.12;
-}
-html[data-font-size='large'] {
-  --font-scale: 1.22;
-}
-html[data-font-size='huge'] {
-  --font-scale: 1.35;
-}
-
-body {
-  font-size: calc(1rem * var(--font-scale, 1.05));
-  line-height: 1.55;
-}
-
-/* ── Typography Color Luminescence ───────────────────────────────────────── */
-html[data-font-color='white'] {
-  --color-text-primary: #ffffff !important;
-  --color-text-secondary: #f1f5f9 !important;
-}
-html[data-font-color='cyan'] {
-  --color-text-primary: #a5f3fc !important;
-  --color-text-secondary: #67e8f9 !important;
-  --color-text-muted: #38bdf8 !important;
-}
-html[data-font-color='amber'] {
-  --color-text-primary: #fef08a !important;
-  --color-text-secondary: #fde047 !important;
-  --color-text-muted: #eab308 !important;
-}
-html[data-font-color='emerald'] {
-  --color-text-primary: #bbf7d0 !important;
-  --color-text-secondary: #86efac !important;
-  --color-text-muted: #4ade80 !important;
-}
-html[data-font-color='rose'] {
-  --color-text-primary: #fbcfe8 !important;
-  --color-text-secondary: #f472b6 !important;
-  --color-text-muted: #ec4899 !important;
-}
-html[data-font-color='violet'] {
-  --color-text-primary: #e9d5ff !important;
-  --color-text-secondary: #c084fc !important;
-  --color-text-muted: #a855f7 !important;
-}
-html[data-font-color='ice'] {
-  --color-text-primary: #f0f9ff !important;
-  --color-text-secondary: #bae6fd !important;
-  --color-text-muted: #7dd3fc !important;
-}
-html[data-font-color='gold'] {
-  --color-text-primary: #fef9c3 !important;
-  --color-text-secondary: #fde68a !important;
-  --color-text-muted: #f59e0b !important;
-}
-
-/* Light appearance text contrast calibration */
-html[data-theme='light'][data-font-color='white'] {
-  --color-text-primary: #09090b !important;
-  --color-text-secondary: #27272a !important;
-}
-html[data-theme='light'][data-font-color='cyan'] {
-  --color-text-primary: #0369a1 !important;
-  --color-text-secondary: #0284c7 !important;
-  --color-text-muted: #0ea5e9 !important;
-}
-html[data-theme='light'][data-font-color='amber'] {
-  --color-text-primary: #854d0e !important;
-  --color-text-secondary: #a16207 !important;
-  --color-text-muted: #ca8a04 !important;
-}
-html[data-theme='light'][data-font-color='emerald'] {
-  --color-text-primary: #14532d !important;
-  --color-text-secondary: #15803d !important;
-  --color-text-muted: #16a34a !important;
-}
-html[data-theme='light'][data-font-color='rose'] {
-  --color-text-primary: #831843 !important;
-  --color-text-secondary: #9d174d !important;
-  --color-text-muted: #be185d !important;
-}
-html[data-theme='light'][data-font-color='violet'] {
-  --color-text-primary: #581c87 !important;
-  --color-text-secondary: #6b21a8 !important;
-  --color-text-muted: #7e22ce !important;
-}
-html[data-theme='light'][data-font-color='ice'] {
-  --color-text-primary: #075985 !important;
-  --color-text-secondary: #0369a1 !important;
-  --color-text-muted: #0284c7 !important;
-}
-html[data-theme='light'][data-font-color='gold'] {
-  --color-text-primary: #78350f !important;
-  --color-text-secondary: #92400e !important;
-  --color-text-muted: #b45309 !important;
-}
-
-/* ── 1. Syne Avant-Garde ─────────────────────────────────────────────────── */
-html[data-font-style='syne'],
-html[data-font-style='handwriting-architect'] {
-  --font-display: 'Syne', sans-serif;
-  --font-body: 'Syne', sans-serif;
-  --font-brand: 'Syne', sans-serif;
-}
-html[data-font-style='syne'] body,
-html[data-font-style='handwriting-architect'] body {
-  font-family: 'Syne', sans-serif;
-  font-size: calc(1.08rem * var(--font-scale, 1.05));
-  letter-spacing: -0.01em;
-}
-html[data-font-style='syne'] h1,
-html[data-font-style='syne'] h2,
-html[data-font-style='syne'] h3,
-html[data-font-style='syne'] h4,
-html[data-font-style='syne'] h5,
-html[data-font-style='syne'] h6,
-html[data-font-style='syne'] .font-display,
-html[data-font-style='syne'] .font-brand,
-html[data-font-style='handwriting-architect'] h1,
-html[data-font-style='handwriting-architect'] h2,
-html[data-font-style='handwriting-architect'] h3,
-html[data-font-style='handwriting-architect'] .font-display,
-html[data-font-style='handwriting-architect'] .font-brand {
-  font-family: 'Syne', sans-serif !important;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-}
-
-/* ── 2. Space Grotesk (Aerospace Tech) ───────────────────────────────────── */
-html[data-font-style='space-grotesk'],
-html[data-font-style='modern'] {
-  --font-display: 'Space Grotesk Variable', 'Space Grotesk', sans-serif;
-  --font-body: 'Space Grotesk Variable', 'Space Grotesk', sans-serif;
-  --font-brand: 'Space Grotesk Variable', 'Space Grotesk', sans-serif;
-}
-html[data-font-style='space-grotesk'] body,
-html[data-font-style='modern'] body {
-  font-family: 'Space Grotesk Variable', 'Space Grotesk', sans-serif;
-  font-size: calc(1.06rem * var(--font-scale, 1.05));
-  letter-spacing: -0.01em;
-}
-html[data-font-style='space-grotesk'] h1,
-html[data-font-style='space-grotesk'] h2,
-html[data-font-style='space-grotesk'] h3,
-html[data-font-style='space-grotesk'] h4,
-html[data-font-style='space-grotesk'] .font-display,
-html[data-font-style='space-grotesk'] .font-brand,
-html[data-font-style='modern'] h1,
-html[data-font-style='modern'] h2,
-html[data-font-style='modern'] h3,
-html[data-font-style='modern'] .font-display,
-html[data-font-style='modern'] .font-brand {
-  font-family: 'Space Grotesk Variable', 'Space Grotesk', sans-serif !important;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-}
-
-/* ── 3. Orbitron Cyber HUD ───────────────────────────────────────────────── */
-html[data-font-style='orbitron'] {
-  --font-display: 'Orbitron', sans-serif;
-  --font-body: 'Space Grotesk Variable', 'Orbitron', sans-serif;
-  --font-brand: 'Orbitron', sans-serif;
-}
-html[data-font-style='orbitron'] body {
-  font-family: 'Space Grotesk Variable', 'Orbitron', sans-serif;
-  font-size: calc(1.06rem * var(--font-scale, 1.05));
-}
-html[data-font-style='orbitron'] h1,
-html[data-font-style='orbitron'] h2,
-html[data-font-style='orbitron'] h3,
-html[data-font-style='orbitron'] h4,
-html[data-font-style='orbitron'] .font-display,
-html[data-font-style='orbitron'] .font-brand {
-  font-family: 'Orbitron', sans-serif !important;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-}
-
-/* ── 4. Bricolage Grotesque (Modern Editorial) ───────────────────────────── */
-html[data-font-style='bricolage'],
-html[data-font-style='handwriting-indie'] {
-  --font-display: 'Bricolage Grotesque', sans-serif;
-  --font-body: 'Bricolage Grotesque', sans-serif;
-  --font-brand: 'Bricolage Grotesque', sans-serif;
-}
-html[data-font-style='bricolage'] body,
-html[data-font-style='handwriting-indie'] body {
-  font-family: 'Bricolage Grotesque', sans-serif;
-  font-size: calc(1.08rem * var(--font-scale, 1.05));
-  letter-spacing: -0.015em;
-}
-html[data-font-style='bricolage'] h1,
-html[data-font-style='bricolage'] h2,
-html[data-font-style='bricolage'] h3,
-html[data-font-style='bricolage'] .font-display,
-html[data-font-style='bricolage'] .font-brand,
-html[data-font-style='handwriting-indie'] h1,
-html[data-font-style='handwriting-indie'] h2,
-html[data-font-style='handwriting-indie'] h3,
-html[data-font-style='handwriting-indie'] .font-display,
-html[data-font-style='handwriting-indie'] .font-brand {
-  font-family: 'Bricolage Grotesque', sans-serif !important;
-  font-weight: 800;
-  letter-spacing: -0.025em;
-}
-
-/* ── 5. Unbounded Cosmic ─────────────────────────────────────────────────── */
-html[data-font-style='unbounded'] {
-  --font-display: 'Unbounded', sans-serif;
-  --font-body: 'Space Grotesk Variable', 'Unbounded', sans-serif;
-  --font-brand: 'Unbounded', sans-serif;
-}
-html[data-font-style='unbounded'] body {
-  font-family: 'Space Grotesk Variable', 'Unbounded', sans-serif;
-  font-size: calc(1.06rem * var(--font-scale, 1.05));
-}
-html[data-font-style='unbounded'] h1,
-html[data-font-style='unbounded'] h2,
-html[data-font-style='unbounded'] h3,
-html[data-font-style='unbounded'] h4,
-html[data-font-style='unbounded'] .font-display,
-html[data-font-style='unbounded'] .font-brand {
-  font-family: 'Unbounded', sans-serif !important;
-  font-weight: 800;
-  letter-spacing: -0.01em;
-}
-
-/* ── 6. Caveat Studio Ghibli (Calligraphy Script) ─────────────────────────── */
-html[data-font-style='handwriting'],
-html[data-font-style='handwriting-caveat'] {
-  --font-display: 'Caveat', cursive;
-  --font-body: 'Caveat', cursive;
-  --font-brand: 'Caveat', cursive;
-}
-html[data-font-style='handwriting'] body,
-html[data-font-style='handwriting-caveat'] body {
-  font-family: 'Caveat', cursive;
-  font-size: calc(1.28rem * var(--font-scale, 1.05)) !important;
-  letter-spacing: 0.02em;
-  line-height: 1.5;
-}
-html[data-font-style='handwriting'] h1,
-html[data-font-style='handwriting'] h2,
-html[data-font-style='handwriting'] h3,
-html[data-font-style='handwriting'] h4,
-html[data-font-style='handwriting'] .font-display,
-html[data-font-style='handwriting'] .font-brand,
-html[data-font-style='handwriting-caveat'] h1,
-html[data-font-style='handwriting-caveat'] h2,
-html[data-font-style='handwriting-caveat'] h3,
-html[data-font-style='handwriting-caveat'] .font-display,
-html[data-font-style='handwriting-caveat'] .font-brand {
-  font-family: 'Caveat', cursive !important;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-}
-
-/* ── 7. Kalam Felt Marker ────────────────────────────────────────────────── */
-html[data-font-style='handwriting-kalam'] {
-  --font-display: 'Kalam', cursive;
-  --font-body: 'Kalam', cursive;
-  --font-brand: 'Kalam', cursive;
-}
-html[data-font-style='handwriting-kalam'] body {
-  font-family: 'Kalam', cursive;
-  font-size: calc(1.16rem * var(--font-scale, 1.05)) !important;
-  line-height: 1.55;
-}
-html[data-font-style='handwriting-kalam'] h1,
-html[data-font-style='handwriting-kalam'] h2,
-html[data-font-style='handwriting-kalam'] h3,
-html[data-font-style='handwriting-kalam'] h4,
-html[data-font-style='handwriting-kalam'] .font-display,
-html[data-font-style='handwriting-kalam'] .font-brand {
-  font-family: 'Kalam', cursive !important;
-  font-weight: 700;
-}
-
-/* ── 8. JetBrains Cyber Mono (Developer Terminal) ────────────────────────── */
-html[data-font-style='cyber'] {
-  --font-display: 'JetBrains Mono Variable', 'JetBrains Mono', monospace;
-  --font-body: 'JetBrains Mono Variable', 'JetBrains Mono', monospace;
-  --font-brand: 'JetBrains Mono Variable', 'JetBrains Mono', monospace;
-}
-html[data-font-style='cyber'] body,
-html[data-font-style='cyber'] h1,
-html[data-font-style='cyber'] h2,
-html[data-font-style='cyber'] h3,
-html[data-font-style='cyber'] h4,
-html[data-font-style='cyber'] .font-display,
-html[data-font-style='cyber'] .font-brand {
-  font-family: 'JetBrains Mono Variable', 'JetBrains Mono', monospace !important;
-  font-size: calc(1.06rem * var(--font-scale, 1.05));
-  letter-spacing: -0.015em;
-}
-
-/* ── 9. Cinzel Royal Inscription (Mythic Neoclassical Serif) ──────────────── */
-html[data-font-style='cinzel'],
-html[data-font-style='serif'] {
-  --font-display: 'Cinzel', Georgia, serif;
-  --font-body: 'Space Grotesk Variable', Georgia, serif;
-  --font-brand: 'Cinzel', Georgia, serif;
-}
-html[data-font-style='cinzel'] body,
-html[data-font-style='serif'] body {
-  font-family: 'Space Grotesk Variable', Georgia, serif;
-  font-size: calc(1.06rem * var(--font-scale, 1.05));
-}
-html[data-font-style='cinzel'] h1,
-html[data-font-style='cinzel'] h2,
-html[data-font-style='cinzel'] h3,
-html[data-font-style='cinzel'] h4,
-html[data-font-style='cinzel'] .font-display,
-html[data-font-style='cinzel'] .font-brand,
-html[data-font-style='serif'] h1,
-html[data-font-style='serif'] h2,
-html[data-font-style='serif'] h3,
-html[data-font-style='serif'] .font-display,
-html[data-font-style='serif'] .font-brand {
-  font-family: 'Cinzel', Georgia, serif !important;
-  font-weight: 700;
-  letter-spacing: 0.035em;
-}
-
-/* ── 10. Russo One Arcade (Heavy Game Title) ─────────────────────────────── */
-html[data-font-style='retro'] {
-  --font-display: 'Russo One', sans-serif;
-  --font-body: 'Space Grotesk Variable', sans-serif;
-  --font-brand: 'Russo One', sans-serif;
-}
-html[data-font-style='retro'] body {
-  font-family: 'Space Grotesk Variable', sans-serif;
-  font-size: calc(1.06rem * var(--font-scale, 1.05));
-}
-html[data-font-style='retro'] h1,
-html[data-font-style='retro'] h2,
-html[data-font-style='retro'] h3,
-html[data-font-style='retro'] .font-display,
-html[data-font-style='retro'] .font-brand {
-  font-family: 'Russo One', sans-serif !important;
-  letter-spacing: 0.02em;
-  line-height: 1.35;
-}
-
-
-/* ── Glass over a wallpaper ────────────────────────────────────────────────
-   What separates real glass from a "paper" panel is what it does to the
-   colour behind it. A light, milky film over a vivid wallpaper greys it
-   out — that is what makes a translucent card read as tracing paper. So:
-
-     1. Dark glass is *smoked*, not frosted grey: a deep, cool ink that
-        darkens what is behind it while a strong saturation boost keeps its
-        colour glowing through. Light glass is crystal — bright, but thin.
-     2. There is no grain over glass. Texture is what makes a surface read
-        as a material like paper; glass is smooth.
-     3. Fills inside a pane are recessed or barely lifted — never another
-        milky layer — so nothing inside a card looks like a sheet on a sheet.
-     4. The edge is lit: a bright rim along the top, a faint one on the left,
-        a dark lip along the bottom, and a soft glow from the top-left corner
-        across the face. Under the pointer, a spot of light follows the
-        cursor across the pane (--mx/--my, set by LookSurface).
-     5. Desktop tinting: the ink takes a little of the wallpaper's colour. */
-html:is([data-wall='original'], [data-wall='photo']) {
-  --glass-ink: color-mix(in oklab, var(--glass-base) var(--ink-mix, 82%), var(--wall-tint, var(--glass-base)));
-  --material: color-mix(in oklab, var(--glass-ink) var(--ga), transparent);
-  --material-thin: color-mix(in oklab, var(--glass-ink) var(--ga-thin), transparent);
-  --material-thick: color-mix(in oklab, var(--glass-ink) var(--ga-thick), transparent);
-  --material-bar: color-mix(in oklab, var(--glass-ink) var(--ga-bar), transparent);
-  --material-pop: color-mix(in oklab, var(--glass-ink) var(--ga-pop), transparent);
-  --glass-filter: blur(var(--gblur)) saturate(var(--gsat)) brightness(var(--gbright, 1));
-  --glass-filter-strong: blur(calc(var(--gblur) * 1.45)) saturate(var(--gsat)) brightness(var(--gbright, 1));
-
-  --color-bg-surface: var(--material);
-  --color-bg-surface-2: var(--fill-2);
-  --color-bg-surface-3: var(--fill-3);
-  --color-bg-surface-4: var(--fill-4);
-  --color-border: var(--edge);
-  --color-border-input: var(--edge-strong);
-  --color-border-strong: var(--edge-strong);
-  --color-border-hover: var(--edge-strong);
-  --color-bg-field: var(--well);
-  --field: var(--well);
-
-  /* The older vocabulary, which most panels still use: bg-surface is a
-     panel *inside* a pane, bg-background a recessed well (code, inputs). */
-  --color-surface: var(--inset);
-  --color-surface-2: var(--fill-2);
-  --color-surface-3: var(--fill-3);
-  --color-muted: var(--fill-3);
-  --color-background: var(--well);
-
-  /* Frosted is the default. */
-  --ga: 50%; --ga-thin: 36%; --ga-thick: 72%; --ga-bar: 58%; --ga-pop: 90%;
-  --gblur: 30px; --gsat: 200%;
-}
-
-html.dark:is([data-wall='original'], [data-wall='photo']) {
-  --glass-base: oklch(0.135 0.018 272);
-  --ink-mix: 80%;
-  --gbright: 0.92;
-  --fill-2: oklch(1 0 0 / 0.045);
-  --fill-3: oklch(1 0 0 / 0.085);
-  --fill-4: oklch(1 0 0 / 0.13);
-  --inset: oklch(0.1 0.015 272 / 0.42);
-  --well: oklch(0.07 0.012 272 / 0.5);
-  --edge: oklch(1 0 0 / 0.085);
-  --edge-strong: oklch(1 0 0 / 0.15);
-  --glass-edge: oklch(1 0 0 / 0.1);
-  --card-edge: oklch(1 0 0 / 0.09);
-  --specular: oklch(1 0 0 / 0.16);
-  --spot-color: oklch(1 0 0 / 0.065);
-  --card-sheen:
-    radial-gradient(120% 90% at 0% 0%, oklch(1 0 0 / 0.07), oklch(1 0 0 / 0) 55%),
-    linear-gradient(180deg, oklch(1 0 0 / 0.02), oklch(0 0 0 / 0.08));
-  --card-shadow:
-    inset 1px 0 0 oklch(1 0 0 / 0.035),
-    inset 0 -1px 0 oklch(0 0 0 / 0.28),
-    0 1px 1px oklch(0 0 0 / 0.28),
-    0 12px 32px -12px oklch(0 0 0 / 0.62);
-  --pop-shadow:
-    inset 0 -1px 0 oklch(0 0 0 / 0.3),
-    0 2px 8px oklch(0 0 0 / 0.32),
-    0 30px 72px -18px oklch(0 0 0 / 0.72);
-}
-
-html:not(.dark):is([data-wall='original'], [data-wall='photo']) {
-  --glass-base: oklch(0.99 0.004 265);
-  --ink-mix: 88%;
-  --gbright: 1.06;
-  --fill-2: oklch(1 0 0 / 0.5);
-  --fill-3: oklch(1 0 0 / 0.78);
-  --fill-4: oklch(0.2 0.02 265 / 0.06);
-  --inset: oklch(1 0 0 / 0.46);
-  --well: oklch(1 0 0 / 0.62);
-  --edge: oklch(0.25 0.03 265 / 0.085);
-  --edge-strong: oklch(0.25 0.03 265 / 0.15);
-  --glass-edge: oklch(1 0 0 / 0.65);
-  --card-edge: oklch(1 0 0 / 0.7);
-  --specular: oklch(1 0 0 / 1);
-  --spot-color: oklch(1 0 0 / 0.4);
-  --card-sheen:
-    radial-gradient(120% 90% at 0% 0%, oklch(1 0 0 / 0.45), oklch(1 0 0 / 0) 55%);
-  --card-shadow:
-    0 0 0 0.5px oklch(0.25 0.04 265 / 0.08),
-    0 1px 2px oklch(0.25 0.04 265 / 0.06),
-    0 14px 34px -14px oklch(0.25 0.06 265 / 0.26);
-  --pop-shadow:
-    0 0 0 0.5px oklch(0.25 0.04 265 / 0.1),
-    0 2px 8px oklch(0.25 0.04 265 / 0.08),
-    0 28px 64px -18px oklch(0.25 0.06 265 / 0.32);
-  --ga: 48%; --ga-thin: 34%; --ga-thick: 72%; --ga-bar: 56%; --ga-pop: 90%;
-}
-
-/* No grain over glass — texture is what makes a translucent pane look like
-   paper. (The wallpapers carry their own fine grain, under the blur.) */
-html:is([data-wall='original'], [data-wall='photo']) body::after {
-  display: none;
-}
-
-/* Clear: less frosting, more wallpaper — Liquid Glass's "Clear" mode. */
-html.dark[data-glass='clear']:is([data-wall='original'], [data-wall='photo']) {
-  --ga: 26%; --ga-thin: 16%; --ga-thick: 54%; --ga-bar: 34%; --ga-pop: 82%;
-  --gblur: 12px; --gsat: 170%;
-}
-html:not(.dark)[data-glass='clear']:is([data-wall='original'], [data-wall='photo']) {
-  --ga: 28%; --ga-thin: 18%; --ga-thick: 56%; --ga-bar: 36%; --ga-pop: 84%;
-  --gblur: 12px; --gsat: 170%;
-}
-
-/* A dark window over a bright photo (or a light one over a dark photo)
-   cannot lean on the wallpaper for contrast, so the glass thickens. */
-html.dark[data-wall-tone='light'][data-glass='frosted']:is([data-wall='photo']),
-html:not(.dark)[data-wall-tone='dark'][data-glass='frosted']:is([data-wall='photo']) {
-  --ga: 78%; --ga-thin: 66%; --ga-thick: 88%; --ga-bar: 82%; --ga-pop: 93%;
-}
-html.dark[data-wall-tone='light'][data-glass='clear']:is([data-wall='photo']),
-html:not(.dark)[data-wall-tone='dark'][data-glass='clear']:is([data-wall='photo']) {
-  --ga: 64%; --ga-thin: 52%; --ga-thick: 80%; --ga-bar: 70%; --ga-pop: 90%;
-}
-
-/* Solid — "Reduce transparency": tinted but opaque, and no blur at all. */
-html[data-glass='solid']:is([data-wall='original'], [data-wall='photo']) {
-  --ga: 100%; --ga-thin: 100%; --ga-thick: 100%; --ga-bar: 100%; --ga-pop: 100%;
-  --glass-filter: none;
-  --glass-filter-strong: none;
-  --card-sheen: none;
-  --spot-color: transparent;
-}
-@media (prefers-reduced-transparency: reduce) {
-  html:is([data-wall='original'], [data-wall='photo']) {
-    --ga: 100%; --ga-thin: 100%; --ga-thick: 100%; --ga-bar: 100%; --ga-pop: 100%;
-    --glass-filter: none;
-    --glass-filter-strong: none;
-  }
-}
-
-/* Glass inside glass stays one layer of blur: nested panes become an inset
-   fill. (The blur would sample only the parent pane anyway, so this costs
-   nothing visually and saves a lot of compositing.) */
-:is(.card, .card-neon, .glass, .glass-thick, .pop-surface, .titlebar) :is(.card, .card-neon) {
-  --card-fill: var(--color-bg-surface-2);
-  --card-filter: none;
-  --card-sheen: none;
-  --card-shadow: 0 0 0 0 transparent;
-}
-
-/* The desktop itself. */
-html:is([data-wall='original'], [data-wall='photo']) body {
-  background-color: var(--wall-color, var(--color-bg-app));
-}
-
-/* The wallpaper layer (components/fx/Wallpaper.tsx). A scrim keeps text
-   that sits straight on the desktop — page titles, section labels —
-   readable: light for originals (they were drawn for it), heavier over
-   photos, heaviest when the photo's tone fights the appearance. */
-.wallpaper {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  overflow: hidden;
-  background-color: var(--wall-color, var(--color-bg-app));
-  transition: background-color 400ms var(--ease-smooth);
-}
-.wallpaper-layer {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0;
-  transition: opacity 700ms var(--ease-smooth);
-}
-.wallpaper-layer[data-ready='true'] {
-  opacity: 1;
-}
-.wallpaper-scrim {
-  position: absolute;
-  inset: 0;
-  background: var(--wall-scrim, none);
-  transition: background 400ms var(--ease-smooth);
-}
-html.dark[data-wall='original'] {
-  --wall-scrim: linear-gradient(180deg, oklch(0 0 0 / 0.18), oklch(0 0 0 / 0.04) 26%, oklch(0 0 0 / 0.14));
-}
-html:not(.dark)[data-wall='original'] {
-  --wall-scrim: linear-gradient(180deg, oklch(1 0 0 / 0.22), oklch(1 0 0 / 0) 30%);
-}
-html.dark[data-wall='photo'] {
-  --wall-scrim: linear-gradient(180deg, oklch(0 0 0 / 0.46), oklch(0 0 0 / 0.2) 30%, oklch(0 0 0 / 0.34));
-}
-html.dark[data-wall='photo'][data-wall-tone='light'] {
-  --wall-scrim: linear-gradient(180deg, oklch(0.12 0.01 265 / 0.66), oklch(0.12 0.01 265 / 0.44) 34%, oklch(0.12 0.01 265 / 0.56));
-}
-html:not(.dark)[data-wall='photo'] {
-  --wall-scrim: linear-gradient(180deg, oklch(1 0 0 / 0.42), oklch(1 0 0 / 0.1) 32%, oklch(1 0 0 / 0.08));
-}
-html:not(.dark)[data-wall='photo'][data-wall-tone='dark'] {
-  --wall-scrim: linear-gradient(180deg, oklch(0.97 0.005 265 / 0.62), oklch(0.97 0.005 265 / 0.38) 34%, oklch(0.97 0.005 265 / 0.46));
-}
-
-/* Text set straight on the desktop gets the faint shadow macOS gives
-   desktop icon labels, so it never depends on the wallpaper for contrast. */
-html.dark:is([data-wall='original'], [data-wall='photo']) #main-content h1 {
-  text-shadow: 0 1px 12px oklch(0 0 0 / 0.35);
-}
+    border-radius var(--duration-200) var(--ease-smooth);
+}
+[data-icon-shape='circle'] :is(.icon-pod, [data-icon-pod], .dock-tile) { border-radius: 9999px; }
+[data-icon-shape='rounded'] :is(.icon-pod, [data-icon-pod], .dock-tile) { border-radius: 22%; }
+[data-icon-shape='square'] :is(.icon-pod, [data-icon-pod], .dock-tile) { border-radius: 12%; }
 
 /* ── The Rift Tree (components/nexus/SkillGraph.tsx) ─────────────────────── */
 .nx-band-line { stroke: var(--color-border); }

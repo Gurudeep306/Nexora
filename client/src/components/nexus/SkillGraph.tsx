@@ -144,7 +144,7 @@ function NodeOrb({
 
         {node.completed && (
           <span
-            className="absolute -top-0.5 -right-0.5 flex size-[18px] items-center justify-center rounded-full text-white shadow-md ring-2 ring-[var(--wall-color,var(--color-bg-app))]"
+            className="absolute -top-0.5 -right-0.5 flex size-[18px] items-center justify-center rounded-full text-white shadow-md ring-2 ring-bg-app"
             style={{ backgroundColor: color }}
             aria-hidden="true"
           >
