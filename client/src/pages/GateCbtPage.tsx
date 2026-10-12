@@ -1,218 +1,129 @@
-import { useState, useMemo } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
-import {
-  Play,
-  ArrowLeft,
-  Search,
-  Trophy,
-  Cpu,
-  Brain,
-} from 'lucide-react'
+import { useMemo, useState } from 'react'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { ArrowLeft, Clock, Play, Search } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useApi } from '@/hooks/useApi'
 import { api } from '@/lib/api'
-import { LoadingBlock } from '@/components/ui'
+import { EmptyState, ErrorState, LoadingBlock } from '@/components/ui'
 import { GateCbtExam } from '@/gate/GateCbtExam'
-import type { GateMeta } from '@/gate/types'
+import type { GateMeta, GatePaper } from '@/gate/types'
+
+const EXAMS = ['ALL', 'CSE', 'IT', 'DA'] as const
+
+function savedAttempt(id: string): number | null {
+  try {
+    const s = JSON.parse(localStorage.getItem(`nexora:gate-cbt:${id}`) ?? 'null')
+    return s && s.timeRemaining > 0 ? Number(s.timeRemaining) : null
+  } catch {
+    return null
+  }
+}
 
 export default function GateCbtPage() {
   const { paperId } = useParams<{ paperId?: string }>()
   const navigate = useNavigate()
-  const [selectedPaper, setSelectedPaper] = useState<string | null>(paperId || null)
   const [search, setSearch] = useState('')
-  const [examFilter, setExamFilter] = useState<'ALL' | 'CSE' | 'DA' | 'IT'>('ALL')
+  const [exam, setExam] = useState<(typeof EXAMS)[number]>('ALL')
+  const meta = useApi<GateMeta>(() => api.get<GateMeta>('/api/gate/meta'), [], { cacheKey: 'gate:meta' })
 
-  const meta = useApi<GateMeta>(() => api.get<GateMeta>('/api/gate/meta'), [])
-
-  const papers = meta.data?.papers || []
-
-  const filteredPapers = useMemo(() => {
-    return papers.filter((p) => {
-      if (examFilter !== 'ALL' && p.exam !== examFilter) return false
-      if (search) {
-        const text = `${p.exam} ${p.year} set ${p.set || ''} ${p.notes}`.toLowerCase()
-        if (!text.includes(search.toLowerCase())) return false
-      }
-      return true
+  const byYear = useMemo(() => {
+    const q = search.trim().toLowerCase()
+    const list = (meta.data?.papers ?? []).filter((p) => {
+      if (exam !== 'ALL' && p.exam !== exam) return false
+      return !q || `${p.exam} ${p.year} set ${p.set ?? ''}`.toLowerCase().includes(q)
     })
-  }, [papers, examFilter, search])
+    const groups = new Map<number, GatePaper[]>()
+    for (const p of [...list].sort((a, b) => b.year - a.year || a.exam.localeCompare(b.exam) || (a.set ?? 0) - (b.set ?? 0))) {
+      groups.set(p.year, [...(groups.get(p.year) ?? []), p])
+    }
+    return [...groups.entries()]
+  }, [meta.data, exam, search])
 
-  // If a paper is chosen, render the CBT simulation
-  if (selectedPaper) {
-    return (
-      <GateCbtExam
-        paperId={selectedPaper}
-        onExit={() => {
-          setSelectedPaper(null)
-          navigate('/gate/cbt')
-        }}
-      />
-    )
+  if (paperId) {
+    return <GateCbtExam key={paperId} paperId={paperId} onExit={() => navigate('/gate/cbt')} />
   }
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6 py-6 font-sans text-text-primary">
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-4">
-        <div>
-          <button
-            type="button"
-            onClick={() => navigate('/gate')}
-            className="mb-2 inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-text-muted hover:text-accent-brand transition-colors"
-          >
-            <ArrowLeft className="size-4" /> Back to Practice Question Bank
-          </button>
-          <div className="flex items-center gap-2">
-            <span className="rounded-lg bg-state-success/15 px-2.5 py-0.5 text-[11px] font-bold text-state-success uppercase tracking-wider">
-              Real CBT Simulation
-            </span>
-            <span className="rounded-lg bg-accent-brand/15 px-2.5 py-0.5 text-[11px] font-bold text-accent-brand uppercase tracking-wider">
-              TCS iON Environment
-            </span>
-          </div>
-          <h1 className="mt-1.5 text-2xl font-black tracking-tight text-text-primary sm:text-3xl">
-            Official GATE Computer Based Test (CBT) Simulator
-          </h1>
-          <p className="mt-1 text-[13.5px] text-text-muted max-w-2xl">
-            Attempt official GATE past-year question papers in real exam conditions with strict 3-hour timing, official TCS iON 5-state question palette, built-in scientific calculator, and instant AI diagnostic attempt analysis.
-          </p>
+    <div className="mx-auto max-w-5xl space-y-5 pb-28">
+      <header className="space-y-1">
+        <Link to="/gate" className="inline-flex items-center gap-1 text-[12.5px] text-text-muted hover:text-text-primary">
+          <ArrowLeft className="size-3.5" /> Question bank
+        </Link>
+        <h1 className="font-display text-2xl font-semibold tracking-tight text-text-primary sm:text-[28px]">GATE mock tests</h1>
+        <p className="max-w-2xl text-[13.5px] text-text-muted">
+          Sit a past paper as a timed computer-based test: the exam console’s question palette, mark for review, on-screen calculator and official negative marking. Answers and solutions open after you submit.
+        </p>
+      </header>
+
+      <div className="flex flex-wrap items-center gap-2">
+        <label className="flex h-10 min-w-0 flex-1 basis-56 items-center gap-2 rounded-xl border border-border-input bg-bg-field px-3 focus-within:border-accent-brand">
+          <Search className="size-4 text-text-muted" />
+          <span className="sr-only">Find a paper</span>
+          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Find a paper — e.g. 2019, DA" className="min-w-0 flex-1 bg-transparent text-[14px] text-text-primary outline-none placeholder:text-text-muted" />
+        </label>
+        <div className="flex h-10 items-center rounded-xl border border-border bg-bg-surface p-0.5" role="radiogroup" aria-label="Exam">
+          {EXAMS.map((e) => (
+            <button
+              key={e}
+              type="button"
+              role="radio"
+              aria-checked={exam === e}
+              onClick={() => setExam(e)}
+              className={cn('h-full rounded-[10px] px-3 text-[13px]', exam === e ? 'bg-bg-surface-3 font-semibold text-text-primary' : 'text-text-muted hover:text-text-primary')}
+            >
+              {e === 'ALL' ? 'All' : e}
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* ── Key Highlights Banner ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <div className="card p-4 flex items-start gap-3 bg-gradient-to-br from-emerald-500/10 to-transparent border-state-success/30">
-          <Trophy className="size-5 text-state-success shrink-0 mt-0.5" />
-          <div>
-            <h4 className="font-bold text-[13px] text-text-primary">Authentic Marking Scheme</h4>
-            <p className="text-[12px] text-text-muted mt-0.5">
-              Exact negative marking rules (+1, -0.33 for 1M; +2, -0.66 for 2M; 0 negative for NAT & MSQ).
-            </p>
-          </div>
-        </div>
-
-        <div className="card p-4 flex items-start gap-3 bg-gradient-to-br from-blue-500/10 to-transparent border-blue-500/30">
-          <Cpu className="size-5 text-blue-400 shrink-0 mt-0.5" />
-          <div>
-            <h4 className="font-bold text-[13px] text-text-primary">Official Virtual Calculator</h4>
-            <p className="text-[12px] text-text-muted mt-0.5">
-              Full on-screen TCS iON scientific calculator with Rad/Deg modes, trig, log, and memory operations.
-            </p>
-          </div>
-        </div>
-
-        <div className="card p-4 flex items-start gap-3 bg-gradient-to-br from-accent-brand/10 to-transparent border-accent-brand/30">
-          <Brain className="size-5 text-accent-brand shrink-0 mt-0.5" />
-          <div>
-            <h4 className="font-bold text-[13px] text-text-primary">Nexora AI Diagnostics</h4>
-            <p className="text-[12px] text-text-muted mt-0.5">
-              Detailed post-exam scorecard, Predicted All India Rank, speed-accuracy matrix, and topic revision plan.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* ── Paper Selector Toolbar ── */}
-      <div className="card p-4 space-y-3">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          {/* Search Box */}
-          <div className="flex min-w-[240px] flex-1 items-center gap-2 rounded-xl bg-bg-surface-2 px-3 py-2 border border-border">
-            <Search className="size-4 text-text-muted shrink-0" />
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search by year or paper notes (e.g. 2024, DA, IIT Roorkee)..."
-              className="w-full bg-transparent text-[13px] text-text-primary outline-none placeholder:text-text-muted"
-            />
-          </div>
-
-          {/* Exam Filters */}
-          <div className="flex items-center gap-1.5 rounded-xl bg-bg-surface-2 p-1 border border-border text-[12px] font-bold">
-            <button
-              type="button"
-              onClick={() => setExamFilter('ALL')}
-              className={cn('rounded-lg px-3 py-1.5 transition-colors cursor-pointer', examFilter === 'ALL' && 'bg-bg-surface text-accent-brand shadow-sm')}
-            >
-              All Papers ({papers.length})
-            </button>
-            <button
-              type="button"
-              onClick={() => setExamFilter('CSE')}
-              className={cn('rounded-lg px-3 py-1.5 transition-colors cursor-pointer', examFilter === 'CSE' && 'bg-bg-surface text-accent-brand shadow-sm')}
-            >
-              Computer Science (CSE)
-            </button>
-            <button
-              type="button"
-              onClick={() => setExamFilter('DA')}
-              className={cn('rounded-lg px-3 py-1.5 transition-colors cursor-pointer', examFilter === 'DA' && 'bg-bg-surface text-accent-brand shadow-sm')}
-            >
-              Data Science & AI (DA)
-            </button>
-            <button
-              type="button"
-              onClick={() => setExamFilter('IT')}
-              className={cn('rounded-lg px-3 py-1.5 transition-colors cursor-pointer', examFilter === 'IT' && 'bg-bg-surface text-accent-brand shadow-sm')}
-            >
-              Information Technology (IT)
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* ── Papers Grid ── */}
-      {meta.loading ? (
+      {meta.loading && !meta.data ? (
         <LoadingBlock rows={6} />
+      ) : meta.error ? (
+        <ErrorState message={meta.error} onRetry={meta.refetch} />
+      ) : byYear.length === 0 ? (
+        <div className="card">
+          <EmptyState icon="search" title="No papers match" description="Try another year or exam." />
+        </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
-          {filteredPapers.map((p) => {
-            const isRecent = p.year >= 2024
-            return (
-              <div
-                key={p.id}
-                className={cn(
-                  'card relative flex flex-col justify-between p-4 transition-all hover:border-accent-brand/50 hover:shadow-lg',
-                  isRecent && 'border-accent-brand/40 bg-gradient-to-br from-accent-brand/5 to-transparent',
-                )}
-              >
-                <div>
-                  <div className="flex items-center justify-between">
-                    <span className="rounded bg-accent-brand/15 px-2 py-0.5 text-[11px] font-mono font-bold text-accent-brand uppercase">
-                      {p.exam} {p.year}
-                    </span>
-                    <span className="font-mono text-[12px] text-text-muted font-bold">
-                      {p.count} Questions · 100M
-                    </span>
-                  </div>
-
-                  <h3 className="mt-2 text-[15px] font-bold text-text-primary">
-                    GATE {p.exam} {p.year} {p.set ? `Set ${p.set}` : ''}
-                  </h3>
-                  <p className="mt-1 text-[12px] text-text-muted line-clamp-2">
-                    {p.notes || `Official examination paper for GATE ${p.exam} ${p.year}.`}
-                  </p>
-                </div>
-
-                <div className="mt-4 pt-3 border-t border-border flex items-center justify-between">
-                  <div className="flex items-center gap-1.5 text-[11.5px] text-text-muted font-mono">
-                    <span>180 Mins</span>
-                    <span>·</span>
-                    <span>65 Qs</span>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSelectedPaper(p.id)
-                      navigate(`/gate/cbt/${p.id}`)
-                    }}
-                    className="btn-primary inline-flex items-center gap-1.5 !px-3 !py-1.5 !text-[12px] font-bold shadow-md cursor-pointer"
-                  >
-                    <Play className="size-3.5" /> Start Exam
-                  </button>
-                </div>
+        <div className="space-y-5">
+          {byYear.map(([year, papers]) => (
+            <section key={year} aria-labelledby={`y${year}`}>
+              <h2 id={`y${year}`} className="mb-2 px-1 font-mono text-[13px] font-semibold text-text-muted">
+                {year}
+              </h2>
+              <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                {papers.map((p) => {
+                  const left = savedAttempt(p.id)
+                  return (
+                    <Link
+                      key={p.id}
+                      to={`/gate/cbt/${p.id}`}
+                      className="card card-interactive group flex items-center gap-3 !p-3.5"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <div className="text-[14.5px] font-semibold text-text-primary">
+                          GATE {p.exam} {p.year}
+                          {p.set ? ` · Set ${p.set}` : ''}
+                        </div>
+                        <div className="mt-0.5 flex items-center gap-2 text-[12px] text-text-muted">
+                          <span>{p.count} questions</span>
+                          <span aria-hidden="true">·</span>
+                          <span className="inline-flex items-center gap-1">
+                            <Clock className="size-3" /> 3 h
+                          </span>
+                          {left !== null && <span className="text-state-warning">· In progress</span>}
+                        </div>
+                      </div>
+                      <span className="flex size-8 shrink-0 items-center justify-center rounded-full border border-border text-text-secondary transition-colors group-hover:border-accent-brand group-hover:text-accent-brand">
+                        <Play className="size-3.5" />
+                      </span>
+                    </Link>
+                  )
+                })}
               </div>
-            )
-          })}
+            </section>
+          ))}
         </div>
       )}
     </div>
