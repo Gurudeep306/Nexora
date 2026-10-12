@@ -1,0 +1,707 @@
+{
+  "paper": "cse-2026-1",
+  "fixes": [
+    {
+      "id": "cse-2026-1-cs-17",
+      "field": "text",
+      "before": "Consider the following C statements: char *str1 = \"Hello; /* Statement S1 */ char *str2 = \"Hello;\"; /* Statement S2 */ int *str3 = \"Hello\"; /* Statement S3 */ Which of the following options is/are correct?",
+      "after": "Consider the following C statements:\n\n```c\nchar *str1 = \"Hello;    /* Statement S1 */\nchar *str2 = \"Hello;\";  /* Statement S2 */\nint *str3 = \"Hello\";    /* Statement S3 */\n```\n\nWhich of the following options is/are correct?",
+      "reason": "The three statements were flattened onto one line; restored as a C code block (tokens unchanged).",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2026-1-cs-17",
+      "field": "answer",
+      "before": "A; B; C",
+      "after": "C",
+      "reason": "Official GATE 2026 CS1 answer key (IIT Guwahati) lists Q.27 — this record — as C. The stored key \"A; B; C\" is a placeholder: this paper's stored keys cycle A, B, C, D… for MCQs and every NAT key is 1, independent of the questions. S1 has an unterminated string literal (lexical error), S2 is valid, S3 assigns char* to int* (type/semantic error), so only C holds.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-17",
+      "field": "subject",
+      "before": "pds",
+      "after": "cd",
+      "reason": "Classifying lexical / syntactic / semantic errors is compiler design (phases of a compiler), not C programming.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2026-1-cs-17",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "lexical",
+      "reason": "The question is about which compiler phase detects each error; lexical analysis is the key concept.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2026-1-cs-17",
+      "field": "tags",
+      "before": [
+        "pds",
+        "c-pointers",
+        "string-literals"
+      ],
+      "after": [
+        "cd",
+        "lexical-analysis",
+        "compiler-phases",
+        "semantic-analysis"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2026-1-cs-18",
+      "field": "answer",
+      "before": "A; C; D",
+      "after": "C",
+      "reason": "Official GATE 2026 CS1 answer key (IIT Guwahati) lists Q.28 — this record — as C. The stored key \"A; C; D\" is a placeholder: this paper's stored keys cycle A, B, C, D… for MCQs and every NAT key is 1, independent of the questions.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-18",
+      "field": "subject",
+      "before": "os",
+      "after": "cd",
+      "reason": "LL(1) parsing is compiler design; the record was filed under OS/processes.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2026-1-cs-18",
+      "field": "topic",
+      "before": "processes",
+      "after": "parsing",
+      "reason": "LL(1) vs SLR parsing.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2026-1-cs-18",
+      "field": "tags",
+      "before": [
+        "os",
+        "threads",
+        "concurrency"
+      ],
+      "after": [
+        "cd",
+        "ll1-parsing",
+        "left-recursion",
+        "left-factoring"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2026-1-cs-19",
+      "field": "answer",
+      "before": "A; B; D",
+      "after": "A, C",
+      "reason": "Official GATE 2026 CS1 answer key (IIT Guwahati) lists Q.29 — this record — as A;C. The stored key \"A; B; D\" is a placeholder: this paper's stored keys cycle A, B, C, D… for MCQs and every NAT key is 1, independent of the questions.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-19",
+      "field": "tags",
+      "before": [
+        "os",
+        "deadlocks",
+        "concurrency"
+      ],
+      "after": [
+        "os",
+        "deadlocks",
+        "bankers-algorithm",
+        "resource-allocation-graph"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "cse-2026-1-cs-20",
+      "field": "text",
+      "before": "Let 𝑃, 𝑄, 𝑅 and 𝑆 be the attributes of a relation in a relational schema. Let 𝑋 ⟶ 𝑌 indicate functional dependency in the context of a relational database , where 𝑋, 𝑌 ⊆ {𝑃, 𝑄, 𝑅, 𝑆}. Which of the following options is/are always true?",
+      "after": "Let $P, Q, R$ and $S$ be the attributes of a relation in a relational schema. Let $X \\longrightarrow Y$ indicate functional dependency in the context of a relational database, where $X, Y \\subseteq \\{P, Q, R, S\\}$.\n\nWhich of the following options is/are always true?",
+      "reason": "Unicode math italics converted to KaTeX; stray space before the comma removed.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "cse-2026-1-cs-20",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "If ( {𝑃, 𝑄} ⟶ {𝑅} and {𝑃} ⟶ {𝑅} ), then {𝑄} ⟶ {𝑅}"
+        },
+        {
+          "l": "B",
+          "t": "If {𝑃, 𝑄} ⟶ {𝑅}, then ( {𝑃} ⟶ {𝑅} or {𝑄} ⟶ {𝑅} )"
+        },
+        {
+          "l": "C",
+          "t": "If ( {𝑃} ⟶ {𝑅} and {𝑄} ⟶ {𝑆} ), then {𝑃, 𝑄} ⟶ {𝑅, 𝑆}"
+        },
+        {
+          "l": "D",
+          "t": "If {𝑃} ⟶ {𝑅}, then {𝑃, 𝑄} ⟶ {𝑅}"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "If ( $\\{P, Q\\} \\longrightarrow \\{R\\}$ and $\\{P\\} \\longrightarrow \\{R\\}$ ), then $\\{Q\\} \\longrightarrow \\{R\\}$"
+        },
+        {
+          "l": "B",
+          "t": "If $\\{P, Q\\} \\longrightarrow \\{R\\}$, then ( $\\{P\\} \\longrightarrow \\{R\\}$ or $\\{Q\\} \\longrightarrow \\{R\\}$ )"
+        },
+        {
+          "l": "C",
+          "t": "If ( $\\{P\\} \\longrightarrow \\{R\\}$ and $\\{Q\\} \\longrightarrow \\{S\\}$ ), then $\\{P, Q\\} \\longrightarrow \\{R, S\\}$"
+        },
+        {
+          "l": "D",
+          "t": "If $\\{P\\} \\longrightarrow \\{R\\}$, then $\\{P, Q\\} \\longrightarrow \\{R\\}$"
+        }
+      ],
+      "reason": "Unicode math italics converted to KaTeX (content and order unchanged).",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "cse-2026-1-cs-20",
+      "field": "answer",
+      "before": "A; B",
+      "after": "C, D",
+      "reason": "Official GATE 2026 CS1 answer key (IIT Guwahati) lists Q.30 — this record — as C;D. The stored key \"A; B\" is a placeholder: this paper's stored keys cycle A, B, C, D… for MCQs and every NAT key is 1, independent of the questions.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-20",
+      "field": "tags",
+      "before": [
+        "db",
+        "functional-dependencies",
+        "closures"
+      ],
+      "after": [
+        "db",
+        "functional-dependencies",
+        "armstrongs-axioms"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "cse-2026-1-cs-21",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "It is always possible to obtain a dependency -preserving 3NF decomposition of a relation"
+        },
+        {
+          "l": "B",
+          "t": "It is always possible to obtain a dependency -preserving 1NF decomposition of a relation"
+        },
+        {
+          "l": "C",
+          "t": "It is not always possible to obtain a dependency -preserving BCNF decomposition of a relation"
+        },
+        {
+          "l": "D",
+          "t": "It is not always possible to obtain a dependency-preserving 2NF decomposition of a relation"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "It is always possible to obtain a dependency-preserving 3NF decomposition of a relation"
+        },
+        {
+          "l": "B",
+          "t": "It is always possible to obtain a dependency-preserving 1NF decomposition of a relation"
+        },
+        {
+          "l": "C",
+          "t": "It is not always possible to obtain a dependency-preserving BCNF decomposition of a relation"
+        },
+        {
+          "l": "D",
+          "t": "It is not always possible to obtain a dependency-preserving 2NF decomposition of a relation"
+        }
+      ],
+      "reason": "Removed the stray space in \"dependency -preserving\" (transcription artifact).",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "cse-2026-1-cs-21",
+      "field": "answer",
+      "before": "B; C",
+      "after": "A, B, C",
+      "reason": "Official GATE 2026 CS1 answer key (IIT Guwahati) lists Q.31 — this record — as A;B;C. The stored key \"B; C\" is a placeholder: this paper's stored keys cycle A, B, C, D… for MCQs and every NAT key is 1, independent of the questions.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-21",
+      "field": "tags",
+      "before": [
+        "db",
+        "bcnf",
+        "3nf",
+        "decomposition"
+      ],
+      "after": [
+        "db",
+        "normalization",
+        "dependency-preservation",
+        "bcnf",
+        "3nf"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "cse-2026-1-cs-22",
+      "field": "text",
+      "before": "Consider the function 𝑓: ℝ → ℝ defined as follows: 𝑓(𝑥) = {𝑐1𝑒 𝑥 − 𝑐2 loge (1 𝑥) , if 𝑥 > 0 3 otherwise where 𝑐1 , 𝑐2 ∈ ℝ. If 𝑓 is continuous at 𝑥 = 0, then 𝑐1 + 𝑐2 = _________. (answer in integer)",
+      "after": "Consider the function $f: \\mathbb{R} \\to \\mathbb{R}$ defined as follows:\n\n$$f(x) = \\begin{cases} c_1 e^{x} - c_2 \\log_e\\left(\\dfrac{1}{x}\\right), & \\text{if } x > 0 \\\\ 3 & \\text{otherwise} \\end{cases}$$\n\nwhere $c_1, c_2 \\in \\mathbb{R}$.\n\nIf $f$ is continuous at $x = 0$, then $c_1 + c_2 =$ _________. (answer in integer)",
+      "reason": "The piecewise definition was garbled by extraction (\"loge (1 𝑥)\"); rewritten in KaTeX exactly as printed: c1·e^x − c2·logₑ(1/x) for x > 0, 3 otherwise.",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "cse-2026-1-cs-22",
+      "field": "answer",
+      "before": 1,
+      "after": "3 to 3",
+      "reason": "Official GATE 2026 CS1 answer key (IIT Guwahati) lists Q.32 — this record — as 3. The stored key 1 is a placeholder: this paper's stored keys cycle A, B, C, D… for MCQs and every NAT key is 1, independent of the questions.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-22",
+      "field": "topic",
+      "before": "calculus",
+      "after": "limits",
+      "reason": "Continuity is calc/limits (\"calculus\" is not a topic id).",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "cse-2026-1-cs-22",
+      "field": "tags",
+      "before": [
+        "calc",
+        "continuity",
+        "differentiability"
+      ],
+      "after": [
+        "calc",
+        "continuity",
+        "limits"
+      ],
+      "reason": "Tags follow the question (no differentiability involved).",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "cse-2026-1-cs-23",
+      "field": "answer",
+      "before": 1,
+      "after": "11 to 11",
+      "reason": "Official GATE 2026 CS1 answer key (IIT Guwahati) lists Q.33 — this record — as 11. The stored key 1 is a placeholder: this paper's stored keys cycle A, B, C, D… for MCQs and every NAT key is 1, independent of the questions.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-23",
+      "field": "tags",
+      "before": [
+        "pds",
+        "binary-trees",
+        "tree-height"
+      ],
+      "after": [
+        "pds",
+        "binary-trees",
+        "full-binary-tree",
+        "tree-height"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "cse-2026-1-cs-24",
+      "field": "text",
+      "before": "Consider the following program in C: #include <stdio.h> void func(int i, int j) { if(i < j) { int i = 0; while (i < 10) { j += 2; i++; } } printf(\"%d\", i); } int main() { int i = 9, j = 10; func(i, j); return 0; } The output of the program is _________. (answer in integer) Note: Assume that the program compiles and runs successfully.",
+      "after": "Consider the following program in C:\n\n```c\n#include <stdio.h>\n\nvoid func(int i, int j) {\n  if(i < j) {\n    int i = 0;\n    while (i < 10) {\n      j += 2;\n      i++;\n    }\n  }\n  printf(\"%d\", i);\n}\nint main() {\n  int i = 9, j = 10;\n  func(i, j);\n  return 0;\n}\n```\n\nThe output of the program is _________. (answer in integer)\n\nNote: Assume that the program compiles and runs successfully.",
+      "reason": "The program was transcribed onto one line; restored as a C code block (tokens unchanged).",
+      "source": "pdf p.24"
+    },
+    {
+      "id": "cse-2026-1-cs-24",
+      "field": "answer",
+      "before": 1,
+      "after": "9 to 9",
+      "reason": "Official GATE 2026 CS1 answer key (IIT Guwahati) lists Q.34 — this record — as 9. The stored key 1 is a placeholder: this paper's stored keys cycle A, B, C, D… for MCQs and every NAT key is 1, independent of the questions.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-24",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "c",
+      "reason": "Topic id \"c-prog\" does not exist; block scope / shadowing is pds/c.",
+      "source": "pdf p.24"
+    },
+    {
+      "id": "cse-2026-1-cs-24",
+      "field": "tags",
+      "before": [
+        "pds",
+        "c-recursion",
+        "functions"
+      ],
+      "after": [
+        "pds",
+        "c-scope",
+        "variable-shadowing"
+      ],
+      "reason": "The question is about block scope, not recursion.",
+      "source": "pdf p.24"
+    },
+    {
+      "id": "cse-2026-1-cs-25",
+      "field": "text",
+      "before": "Consider a system consisting of 𝑘 instances of a resource 𝑅, being shared by 5 processes. Assume that each process requires a maximum of two instances of resource 𝑅 and a process can request or release only one instance at a time. Further, a process can request the second instance of the resource only after acquiring the first instance. The minimum value of 𝑘 for the system to be deadlock-free is ________. (answer in integer)",
+      "after": "Consider a system consisting of $k$ instances of a resource $R$, being shared by 5 processes. Assume that each process requires a maximum of two instances of resource $R$ and a process can request or release only one instance at a time. Further, a process can request the second instance of the resource only after acquiring the first instance.\n\nThe minimum value of $k$ for the system to be deadlock-free is ________. (answer in integer)",
+      "reason": "Unicode math italics converted to KaTeX.",
+      "source": "pdf p.24"
+    },
+    {
+      "id": "cse-2026-1-cs-25",
+      "field": "answer",
+      "before": 1,
+      "after": "6 to 6",
+      "reason": "Official GATE 2026 CS1 answer key (IIT Guwahati) lists Q.35 — this record — as 6. The stored key 1 is a placeholder: this paper's stored keys cycle A, B, C, D… for MCQs and every NAT key is 1, independent of the questions.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-25",
+      "field": "tags",
+      "before": [
+        "os",
+        "bankers-algorithm",
+        "resource-allocation"
+      ],
+      "after": [
+        "os",
+        "deadlocks",
+        "resource-allocation",
+        "deadlock-freedom"
+      ],
+      "reason": "Not a Banker's-algorithm question; tags corrected.",
+      "source": "pdf p.24"
+    },
+    {
+      "id": "cse-2026-1-cs-26",
+      "field": "text",
+      "before": "Consider the real valued variables X, Y and Z represented using the IEEE 754 single- precision floating-point format. The binary representations of X and Y in hexadecimal notation are as follows: X: 35C00000 Y: 34A00000 Let 𝑍 = 𝑋 + 𝑌. Which one of the following is the binary representation of 𝑍, in hexadecimal notation?",
+      "after": "Consider the real valued variables X, Y and Z represented using the IEEE 754 single-precision floating-point format. The binary representations of X and Y in hexadecimal notation are as follows:\n\nX: `35C00000`        Y: `34A00000`\n\nLet $Z = X + Y$.\n\nWhich one of the following is the binary representation of $Z$, in hexadecimal notation?",
+      "reason": "Removed the line-break artifact in \"single- precision\"; math in KaTeX; layout as printed.",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "cse-2026-1-cs-26",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "35E80000"
+        },
+        {
+          "l": "B",
+          "t": "35EC0000"
+        },
+        {
+          "l": "C",
+          "t": "35C80000"
+        },
+        {
+          "l": "D",
+          "t": "35CC0000"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "35C80000"
+        },
+        {
+          "l": "B",
+          "t": "35CC0000"
+        },
+        {
+          "l": "C",
+          "t": "35E80000"
+        },
+        {
+          "l": "D",
+          "t": "35EC0000"
+        }
+      ],
+      "reason": "Options were stored in a rotated order (35E80000, 35EC0000, 35C80000, 35CC0000); restored to the paper's order A–D, which is the order the official key C refers to (C = 35E80000 = 1.8125 × 2^-20).",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "cse-2026-1-cs-26",
+      "field": "subject",
+      "before": "coa",
+      "after": "dl",
+      "reason": "IEEE 754 representation is filed under Digital Logic / floating in this bank (\"data-types\" is not a topic id).",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "cse-2026-1-cs-26",
+      "field": "topic",
+      "before": "data-types",
+      "after": "floating",
+      "reason": "IEEE 754 floating-point addition.",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "cse-2026-1-cs-26",
+      "field": "tags",
+      "before": [
+        "coa",
+        "ieee-754",
+        "floating-point"
+      ],
+      "after": [
+        "dl",
+        "ieee-754",
+        "floating-point-addition"
+      ],
+      "reason": "Tags follow the corrected subject.",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "cse-2026-1-cs-27",
+      "field": "text",
+      "before": "Consider a 2 -bit saturating up/down counter that performs the saturating up count when the input P is 0, and the saturating down count when P is 1. The Next State table of the counter is as shown. The counter is built as a synchronous sequential circuit using D flip-flops. Input Current State Next State 𝑃 𝑄1 𝑄0 𝑄1 + 𝑄0 + 0 0 0 0 1 0 0 1 1 0 0 1 0 1 1 0 1 1 1 1 1 0 0 0 0 1 0 1 0 0 1 1 0 0 1 1 1 1 1 0 Which one of the following options corresponds to the expressions for the inputs of the D flip-flops, 𝐷1 and 𝐷0?",
+      "after": "Consider a 2-bit saturating up/down counter that performs the saturating up count when the input $P$ is 0, and the saturating down count when $P$ is 1. The Next State table of the counter is as shown. The counter is built as a synchronous sequential circuit using D flip-flops.\n\n| Input $P$ | Current $Q_1$ | Current $Q_0$ | Next $Q_1^+$ | Next $Q_0^+$ |\n|---|---|---|---|---|\n| 0 | 0 | 0 | 0 | 1 |\n| 0 | 0 | 1 | 1 | 0 |\n| 0 | 1 | 0 | 1 | 1 |\n| 0 | 1 | 1 | 1 | 1 |\n| 1 | 0 | 0 | 0 | 0 |\n| 1 | 0 | 1 | 0 | 0 |\n| 1 | 1 | 0 | 0 | 1 |\n| 1 | 1 | 1 | 1 | 0 |\n\nWhich one of the following options corresponds to the expressions for the inputs of the D flip-flops, $D_1$ and $D_0$?",
+      "reason": "The next-state table was flattened into the sentence; restored as a markdown table (values checked against the paper). Unicode math converted to KaTeX.",
+      "source": "pdf p.26"
+    },
+    {
+      "id": "cse-2026-1-cs-27",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝐷1 = 𝑃̅ 𝑄1 + 𝑃̅𝑄0 + 𝑄1𝑄0 𝐷0 = 𝑃̅ 𝑄0̅̅̅ + 𝑃 ̅ 𝑄1 + 𝑄1 𝑄0̅̅̅"
+        },
+        {
+          "l": "B",
+          "t": "𝐷1 = 𝑃̅ 𝑄1̅̅̅ + 𝑃 ̅ 𝑄0 + 𝑄1 𝑄0 𝐷0 = 𝑃̅ 𝑄0 + 𝑃̅ 𝑄1 + 𝑄1 𝑄0̅̅̅"
+        },
+        {
+          "l": "C",
+          "t": "𝐷1 = 𝑃 𝑄1̅̅̅ + 𝑃̅ 𝑄0 + 𝑄1 𝑄0 𝐷0 = 𝑃 𝑄0̅̅̅ + 𝑃̅ 𝑄1 + 𝑄1 𝑄0̅̅̅"
+        },
+        {
+          "l": "D",
+          "t": "𝐷1 = 𝑃 𝑄1 + 𝑃̅𝑄0 + 𝑄1𝑄0 𝐷0 = 𝑃 𝑄0 + 𝑃̅ 𝑄1 + 𝑄1 𝑄0̅̅̅"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$D_1 = P\\,Q_1 + \\bar{P}\\,Q_0 + Q_1 Q_0$ $\\quad D_0 = P\\,Q_0 + \\bar{P}\\,Q_1 + Q_1\\overline{Q_0}$"
+        },
+        {
+          "l": "B",
+          "t": "$D_1 = \\bar{P}\\,Q_1 + \\bar{P}\\,Q_0 + Q_1 Q_0$ $\\quad D_0 = \\bar{P}\\,\\overline{Q_0} + \\bar{P}\\,Q_1 + Q_1\\overline{Q_0}$"
+        },
+        {
+          "l": "C",
+          "t": "$D_1 = \\bar{P}\\,\\overline{Q_1} + \\bar{P}\\,Q_0 + Q_1 Q_0$ $\\quad D_0 = \\bar{P}\\,Q_0 + \\bar{P}\\,Q_1 + Q_1\\overline{Q_0}$"
+        },
+        {
+          "l": "D",
+          "t": "$D_1 = P\\,\\overline{Q_1} + \\bar{P}\\,Q_0 + Q_1 Q_0$ $\\quad D_0 = P\\,\\overline{Q_0} + \\bar{P}\\,Q_1 + Q_1\\overline{Q_0}$"
+        }
+      ],
+      "reason": "Options were stored rotated (the paper's B, C, D, A as A, B, C, D) with garbled overbars; restored to the paper's order and rewritten in KaTeX with the overbars exactly as printed.",
+      "source": "pdf p.26"
+    },
+    {
+      "id": "cse-2026-1-cs-27",
+      "field": "answer",
+      "before": "D",
+      "after": "B",
+      "reason": "Official GATE 2026 CS1 answer key (IIT Guwahati) lists Q.37 — this record — as B. The stored key \"D\" is a placeholder: this paper's stored keys cycle A, B, C, D… for MCQs and every NAT key is 1, independent of the questions. Deriving D1 = Q1+ and D0 = Q0+ from the table gives option B.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-27",
+      "field": "tags",
+      "before": [
+        "dl",
+        "counters",
+        "finite-state-machines"
+      ],
+      "after": [
+        "dl",
+        "counters",
+        "d-flip-flop",
+        "excitation-table"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.26"
+    },
+    {
+      "id": "cse-2026-1-cs-28",
+      "field": "text",
+      "before": "The size of the physical address space of a processor is 232 bytes. The capacity of a cache memory unit is 223 bytes. The cache block size is 1 28 byte s. The cache memory unit can be built as a direct mapped cache or as a 𝐾-way set-associative cache, where 𝐾 = 2𝐿 and 𝐿 ∈ {1, 2, 3}. Let the length of the TAG field be 𝑀 bits for the direct mapped cache, and 𝑁 bits for the set-associative cache. Which one of the following options is true?",
+      "after": "The size of the physical address space of a processor is $2^{32}$ bytes. The capacity of a cache memory unit is $2^{23}$ bytes. The cache block size is 128 bytes. The cache memory unit can be built as a direct mapped cache or as a $K$-way set-associative cache, where $K = 2^L$ and $L \\in \\{1, 2, 3\\}$. Let the length of the TAG field be $M$ bits for the direct mapped cache, and $N$ bits for the set-associative cache.\n\nWhich one of the following options is true?",
+      "reason": "Exponents were lost in extraction (\"232\", \"223\", \"1 28 byte s\", \"2𝐿\"); restored as $2^{32}$, $2^{23}$, 128 bytes, $K = 2^L$.",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "cse-2026-1-cs-28",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝑁 = 𝑀 + 𝐿"
+        },
+        {
+          "l": "B",
+          "t": "𝑁 = 𝑀 − 𝐿"
+        },
+        {
+          "l": "C",
+          "t": "𝑁 = 𝑀 + 𝐾"
+        },
+        {
+          "l": "D",
+          "t": "𝑁 = 𝑀 − 𝐾"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$N = M + L$"
+        },
+        {
+          "l": "B",
+          "t": "$N = M - L$"
+        },
+        {
+          "l": "C",
+          "t": "$N = M + K$"
+        },
+        {
+          "l": "D",
+          "t": "$N = M - K$"
+        }
+      ],
+      "reason": "Unicode math converted to KaTeX (order unchanged).",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "cse-2026-1-cs-28",
+      "field": "topic",
+      "before": "cache-memory",
+      "after": "cache",
+      "reason": "Topic id \"cache-memory\" does not exist; the id is \"cache\".",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "cse-2026-1-cs-28",
+      "field": "tags",
+      "before": [
+        "coa",
+        "cache-memory",
+        "address-mapping"
+      ],
+      "after": [
+        "coa",
+        "cache-memory",
+        "set-associative",
+        "tag-bits"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "cse-2026-1-cs-29",
+      "field": "text",
+      "before": "Consider the following code snippet in C language that computes the number of nodes in a non-empty singly linked list pointed to by the pointer variable head. struct node{ int elt; struct node *next; }; int getListSize (struct node *head) { if( E1 ) return 1; return E2; } Which one of the following options gives the correct replacements for the expressions E1 and E2?",
+      "after": "Consider the following code snippet in C language that computes the number of nodes in a non-empty singly linked list pointed to by the pointer variable `head`.\n\n```c\nstruct node{\n  int elt;\n  struct node *next;\n};\nint getListSize (struct node *head)\n{\n  if( E1 ) return 1;\n  return E2;\n}\n```\n\nWhich one of the following options gives the correct replacements for the expressions E1 and E2?",
+      "reason": "The code was transcribed onto one line; restored as a C code block (tokens unchanged).",
+      "source": "pdf p.28"
+    },
+    {
+      "id": "cse-2026-1-cs-29",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "E1: head->next == NULL E2: 1 + getListSize(head)"
+        },
+        {
+          "l": "B",
+          "t": "E1: head == NULL E2: 1 + getListSize(head)"
+        },
+        {
+          "l": "C",
+          "t": "E1: head->next == NULL E2: 1 + getListSize(head->next)"
+        },
+        {
+          "l": "D",
+          "t": "E1: head == NULL E2: 1 + getListSize(head->next)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "E1: `head == NULL`; E2: `1 + getListSize(head)`"
+        },
+        {
+          "l": "B",
+          "t": "E1: `head->next == NULL`; E2: `1 + getListSize(head->next)`"
+        },
+        {
+          "l": "C",
+          "t": "E1: `head == NULL`; E2: `1 + getListSize(head->next)`"
+        },
+        {
+          "l": "D",
+          "t": "E1: `head->next == NULL`; E2: `1 + getListSize(head)`"
+        }
+      ],
+      "reason": "Options were stored in a different order (the paper's D, A, B, C as A, B, C, D); restored to the paper's order, which the official key B refers to.",
+      "source": "pdf p.28"
+    },
+    {
+      "id": "cse-2026-1-cs-29",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "linked-lists",
+      "reason": "Topic id \"c-prog\" does not exist; this is a recursive linked-list length.",
+      "source": "pdf p.28"
+    },
+    {
+      "id": "cse-2026-1-cs-29",
+      "field": "tags",
+      "before": [
+        "pds",
+        "c-pointers",
+        "linked-lists"
+      ],
+      "after": [
+        "pds",
+        "linked-lists",
+        "recursion"
+      ],
+      "reason": "Tags follow the topic.",
+      "source": "pdf p.28"
+    }
+  ]
+}
