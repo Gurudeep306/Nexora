@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { Suspense, lazy, useState } from 'react'
 import {
   Trophy,
   Target,
@@ -16,8 +16,9 @@ import {
 import { cn } from '@/lib/utils'
 import { Markdown } from '@/learn/md'
 import { AiMarkdown } from '@/components/ai/AiMarkdown'
-import { GateVisualizer } from './GateVisualizer'
 import type { GateQuestion } from './types'
+
+const GateSolution = lazy(() => import('./solution/GateSolution'))
 
 export interface ExamEvaluation {
   paperId: string
@@ -447,7 +448,8 @@ export function GateAiReport({
                         <span className="text-[11px] font-bold uppercase tracking-wider text-text-muted">Options:</span>
                         <div className="grid gap-1">
                           {q.options.map((opt) => {
-                            const isOfficial = opt.l === q.answer || (Array.isArray(q.answer) && q.answer.includes(opt.l))
+                            const key = d.officialAnswer as GateQuestion['answer']
+                            const isOfficial = opt.l === key || (Array.isArray(key) && key.includes(opt.l)) || (typeof key === 'string' && key.split(/[\s,;]+/).includes(opt.l))
                             const isUserChoice = opt.l === d.userAnswer || (Array.isArray(d.userAnswer) && d.userAnswer.includes(opt.l))
                             return (
                               <div
@@ -474,22 +476,10 @@ export function GateAiReport({
                       </div>
                     )}
 
-                    {/* Step-by-Step Master Solution */}
-                    <div className="rounded-xl border border-border bg-bg-surface p-4 space-y-3">
-                      <div className="flex items-center gap-2 border-b border-border pb-2">
-                        <BookOpen className="size-4 text-accent-brand" />
-                        <h4 className="text-[13px] font-bold text-text-primary">Master Step-by-Step Solution</h4>
-                      </div>
-
-                      {q.solution ? (
-                        <Markdown md={q.solution} className="!text-[13.5px] leading-relaxed" />
-                      ) : (
-                        <p className="text-[13px] text-text-muted">Comprehensive derivation logged in official GATE repository.</p>
-                      )}
-
-                      {/* Interactive Engineering Visualizer if applicable */}
-                      <GateVisualizer subject={q.subject} topic={q.topic} />
-                    </div>
+                    {/* Worked solution — fetched on demand, after submission only */}
+                    <Suspense fallback={<div className="h-32 animate-pulse rounded-xl bg-bg-surface-2" />}>
+                      <GateSolution q={{ ...q, answer: d.officialAnswer as GateQuestion['answer'] }} />
+                    </Suspense>
                   </div>
                 )}
               </div>
