@@ -1,0 +1,1693 @@
+{
+  "paper": "cse-2026-1",
+  "version": 2,
+  "solutions": {
+    "cse-2026-1-cs-17": {
+      "approach": "Ask, for each statement, **which compiler phase is the first to fail**: the lexer fails when it cannot form a token, the parser when the tokens do not fit the grammar, the semantic analyser when a well-formed construct breaks a type rule. Then test each option against the three verdicts.",
+      "concepts": [
+        "Phases of a compiler",
+        "Lexical errors (unterminated literal)",
+        "Semantic analysis / type checking"
+      ],
+      "given": "| Stmt | Code |\n|---|---|\n| S1 | `char *str1 = \"Hello;    /* Statement S1 */` |\n| S2 | `char *str2 = \"Hello;\";` |\n| S3 | `int *str3 = \"Hello\";` |",
+      "steps": [
+        {
+          "title": "S1: the string literal never closes",
+          "body": "After `=` the lexer sees `\"` and starts scanning a **string-literal token**. It reads `Hello;    /* Statement S1 */` and reaches the end of the line without a closing `\"`. A C string literal cannot contain a raw newline, so no valid token can be formed — this is a **lexical error** (gcc: *missing terminating \" character*). Note that the `/* … */` is *inside* the would-be string, so it is not a comment at all.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "error"
+              }
+            ],
+            "reveal": 4
+          }
+        },
+        {
+          "title": "S2: perfectly valid",
+          "body": "`\"Hello;\"` is a closed string literal whose characters are `H e l l o ;`. The declaration is `char * id = string-literal ;` — correct tokens, correct grammar, and a string literal (type `char[7]`, decaying to `char *`) matches `char *`. **No error** in any phase.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "error"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              }
+            ],
+            "reveal": 8
+          }
+        },
+        {
+          "title": "S3: well-formed but ill-typed",
+          "body": "Tokens: `int` `*` `str3` `=` `\"Hello\"` `;` — all legal, so no lexical error. The shape `type * id = expr ;` is a valid declaration, so no syntax error. But the initializer has type `char *` while the variable is `int *`: initializing a pointer with an incompatible pointer type violates a **type rule**, which is detected by type checking — a **semantic error**.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "error"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "tone": "warning"
+              }
+            ],
+            "reveal": 12
+          }
+        },
+        {
+          "title": "Check the options",
+          "body": "Verdicts: S1 → lexical, S2 → none, S3 → semantic.\n\n- (A) claims S1 and S2 are *syntactic* — S2 has no error. ✗\n- (B) claims S2 has an error and S3 is syntactic. ✗\n- (C) S1 lexical **and** S3 semantic. ✓\n- (D) S1 *syntactic* — wrong phase. ✗\n\nOnly **(C)** is correct."
+        }
+      ],
+      "answer": {
+        "value": "Only **(C)**: S1 has a lexical error and S3 has a semantic error",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "S2 `\"Hello;\"` is a legal string literal — no error at all; and S1 fails in the lexer, not the parser."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "S2 is error-free, and S3 is syntactically a valid declaration; its problem is the type mismatch."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "S1: unterminated string literal → no token can be formed (lexical). S3: `char *` assigned to `int *` → type check fails (semantic)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Half right: S3 is semantic, but S1 is caught by the lexer (the parser never gets a complete token stream), so it is not classed as syntactic."
+        }
+      ],
+      "shortcut": "Unterminated literal / illegal character ⇒ lexical; misplaced or missing tokens ⇒ syntax; type mismatch / undeclared name ⇒ semantic. S1 lexical, S2 fine, S3 semantic ⇒ (C).",
+      "pitfalls": [
+        "Reading `/* Statement S1 */` in S1 as a comment — it is swallowed by the open string literal.",
+        "Thinking `\"Hello;\"` in S2 is odd because of the `;` inside — characters inside quotes are just data.",
+        "Calling S3 a syntax error: the grammar is satisfied; only the types disagree."
+      ],
+      "verification": "Compiling the three lines with gcc gives: S1 *error: missing terminating \" character* (from the preprocessor/lexer), S2 nothing, S3 *initialization of int * from incompatible pointer type char ** (type checking) — exactly lexical / none / semantic.",
+      "animation": {
+        "kind": "table",
+        "title": "Which phase rejects each statement?",
+        "cols": [
+          "Lexical",
+          "Syntax",
+          "Semantic",
+          "Verdict"
+        ],
+        "rowLabels": [
+          "S1",
+          "S2",
+          "S3"
+        ],
+        "corner": "Stmt",
+        "rows": [
+          [
+            "✗ unterminated \"",
+            "—",
+            "—",
+            "lexical error"
+          ],
+          [
+            "✓",
+            "✓",
+            "✓",
+            "no error"
+          ],
+          [
+            "✓",
+            "✓",
+            "✗ char* → int*",
+            "semantic error"
+          ]
+        ],
+        "reveal": 0
+      }
+    },
+    "cse-2026-1-cs-18": {
+      "approach": "Use the defining property of LL(1): with **one** lookahead token the parser must pick a unique production, i.e. the FIRST (and FOLLOW) sets of the alternatives of every non-terminal are disjoint. Each statement is then a one-line consequence of that property.",
+      "concepts": [
+        "LL(1) predictive parsing",
+        "Left recursion",
+        "Left factoring",
+        "LL(1) vs SLR(1)"
+      ],
+      "steps": [
+        {
+          "title": "LL(1) means no backtracking",
+          "body": "An LL(1) table has at most one entry per (non-terminal, lookahead) pair, so the parser always knows which production to expand — it is a **predictive** parser. Backtracking is what *non*-predictive recursive-descent parsers do. Statement (A) is **false**."
+        },
+        {
+          "title": "Left recursion makes a grammar non-LL(1)",
+          "body": "For $A \\to A\\alpha \\mid \\beta$, every string derived from $\\beta$ also starts the alternative $A\\alpha$, so $\\text{FIRST}(\\beta) \\subseteq \\text{FIRST}(A\\alpha)$ and the two alternatives collide in the table (and a top-down parser would loop on $A \\to A\\alpha$). An LL(1) grammar must be **free of** left recursion, so (B) is **false** — it states the opposite."
+        },
+        {
+          "title": "Common prefixes make a grammar non-LL(1)",
+          "body": "For $A \\to \\alpha\\beta_1 \\mid \\alpha\\beta_2$ with $\\alpha$ deriving a non-empty string, both alternatives begin with $\\text{FIRST}(\\alpha)$, so one lookahead token cannot choose. Hence an LL(1) grammar must be **left-factored** (no two alternatives share a common prefix). (C) is **true**."
+        },
+        {
+          "title": "LL(1) is not more powerful than SLR",
+          "body": "The expression grammar $E \\to E + T \\mid T,\\ T \\to \\textbf{id}$ is SLR(1) (bottom-up parsers handle left recursion) but not LL(1) (it is left-recursive). So LL(1) parsers cannot handle everything SLR parsers can; (D) is **false**. (The two classes are in fact incomparable; both are contained in LR(1).)"
+        }
+      ],
+      "answer": {
+        "value": "Only **(C)**: an LL(1) grammar must be left-factored",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "LL(1) is a predictive parser: one lookahead token selects the production, so it never backtracks."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Reversed: left recursion causes a FIRST/FIRST conflict (and infinite descent), so an LL(1) grammar must be *non*-left-recursive."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Alternatives with a common prefix share FIRST symbols, which is a conflict in the LL(1) table; left factoring removes it."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Left-recursive grammars such as $E \\to E+T \\mid T$ are SLR(1) but not LL(1), so LL(1) is not more powerful."
+        }
+      ],
+      "shortcut": "LL(1) ⇒ no backtracking, no left recursion, no common prefixes, and it is weaker than (not stronger than) the LR family on grammars like $E \\to E+T$. Only (C) survives.",
+      "pitfalls": [
+        "Confusing \"must be left-recursive\" with \"must not be left-recursive\" — read (B) carefully.",
+        "Assuming top-down parsers always backtrack: only general recursive descent does; LL(1) is deterministic.",
+        "Believing LL(1) ⊂ SLR(1): some LL(1) grammars are not SLR(1), but that does not make LL(1) *more* powerful — the classes are incomparable."
+      ],
+      "verification": "Build the LL(1) table for $S \\to aB \\mid aC$: both alternatives go in cell $[S, a]$ (conflict); after left factoring $S \\to aS',\\ S' \\to B \\mid C$ the conflict is gone — confirming (C). The same table for $E \\to E+T \\mid T$ puts both alternatives in $[E, \\textbf{id}]$ — confirming (B) is false."
+    },
+    "cse-2026-1-cs-19": {
+      "approach": "The question asks for the **FALSE** statements, so judge each one against the textbook definitions (prevention vs avoidance, request vs assignment edges, safe state) and select the ones that fail.",
+      "concepts": [
+        "Deadlock prevention vs avoidance",
+        "Banker's algorithm",
+        "Resource-allocation graph",
+        "Safe state"
+      ],
+      "steps": [
+        {
+          "title": "(A) Banker's algorithm avoids, it does not prevent",
+          "body": "**Prevention** makes one of the four Coffman conditions impossible by design. **Avoidance** lets all four conditions be possible but grants a request only if the resulting state is **safe**. The Banker's algorithm is the classic avoidance algorithm, so (A) is **FALSE**."
+        },
+        {
+          "title": "(B) Denying hold-and-wait is prevention",
+          "body": "A deadlock needs mutual exclusion, hold-and-wait, no preemption and circular wait **simultaneously**. If a process must request all its resources at once (or release what it holds before requesting more), hold-and-wait can never occur, so no deadlock can form. (B) is **true**."
+        },
+        {
+          "title": "(C) Edge directions in the RAG",
+          "body": "In a resource-allocation graph, a **request edge** goes $P_i \\to R_j$ (process is waiting for the resource) and an **assignment edge** goes $R_j \\to P_i$ (an instance has been allocated to the process). (C) describes the request edge, so it is **FALSE**.",
+          "scene": {
+            "edgeTones": {
+              "P1>R1": "warning",
+              "R1>P2": "success"
+            },
+            "caption": "Request edge P1 → R1 (waiting); assignment edge R1 → P2 (allocated)."
+          }
+        },
+        {
+          "title": "(D) Safe state",
+          "body": "A state is safe if there is a **safe sequence** $\\langle P_1, \\dots, P_n \\rangle$ in which each $P_i$'s remaining need can be met by the currently free resources plus those released by $P_1 \\dots P_{i-1}$. Running the processes in that order lets every process finish, so a safe state cannot lead to deadlock (given the declared maximum needs). (D) is **true**."
+        },
+        {
+          "title": "Collect the false statements",
+          "body": "False: **(A)** and **(C)**. True: (B) and (D)."
+        }
+      ],
+      "answer": {
+        "value": "The FALSE statements are **(A)** and **(C)**",
+        "choice": [
+          "A",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "FALSE statement — the Banker's algorithm is deadlock **avoidance** (it keeps the system in safe states), not prevention."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "True statement — negating hold-and-wait removes one necessary condition, which is exactly deadlock prevention."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "FALSE statement — process → resource is a **request** edge; an assignment edge points resource → process."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "True statement — a safe state has a safe sequence through which all processes can complete without deadlock."
+        }
+      ],
+      "shortcut": "Banker's = avoidance (A false); assignment edge = R → P (C false). B and D are textbook definitions.",
+      "pitfalls": [
+        "Selecting the true statements — the question asks for the FALSE ones.",
+        "Mixing up prevention (break a Coffman condition) with avoidance (check safety before granting).",
+        "Swapping request and assignment edge directions."
+      ],
+      "verification": "Silberschatz, ch. \"Deadlocks\": prevention = ensure one of the four conditions cannot hold; avoidance = Banker's algorithm with safe states; \"request edge $P_i \\to R_j$, assignment edge $R_j \\to P_i$\". These confirm A and C are the false ones.",
+      "animation": {
+        "kind": "graph",
+        "directed": true,
+        "title": "Resource-allocation graph edges",
+        "nodes": [
+          {
+            "id": "P1",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "R1",
+            "label": "R1 ▢",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "id": "P2",
+            "x": 4,
+            "y": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "P1",
+            "to": "R1",
+            "w": "request"
+          },
+          {
+            "from": "R1",
+            "to": "P2",
+            "w": "assignment"
+          }
+        ],
+        "caption": "Circles are processes, R1 is a resource type."
+      }
+    },
+    "cse-2026-1-cs-20": {
+      "approach": "Statements that follow from **Armstrong's axioms** are always true; for the others, a **two- or three-tuple counterexample relation** is the fastest proof that they can fail.",
+      "concepts": [
+        "Armstrong's axioms",
+        "Augmentation / union / transitivity",
+        "Counterexample relations"
+      ],
+      "steps": [
+        {
+          "title": "(A) fails: P alone may decide R",
+          "body": "Take the instance with tuples $(P,Q,R,S) = (0,0,0,0)$ and $(1,0,1,0)$. The $P$ values differ, so $P \\to R$ and $PQ \\to R$ hold vacuously, but both tuples have $Q = 0$ with different $R$ (0 vs 1), so $Q \\to R$ **fails**. (A) is not always true.",
+          "scene": {
+            "reveal": 8,
+            "hl": [
+              {
+                "r": 0,
+                "c": 1,
+                "tone": "error"
+              },
+              {
+                "r": 1,
+                "c": 1,
+                "tone": "error"
+              },
+              {
+                "r": 0,
+                "c": 2,
+                "tone": "error"
+              },
+              {
+                "r": 1,
+                "c": 2,
+                "tone": "error"
+              }
+            ]
+          }
+        },
+        {
+          "title": "(B) fails: a composite determinant need not split",
+          "body": "Add a third tuple: $(0,0,0,0)$, $(1,0,1,0)$, $(0,1,1,0)$. All three $(P,Q)$ pairs $00, 10, 01$ are distinct, so $PQ \\to R$ holds. But $P = 0$ appears with $R = 0$ and $R = 1$ (tuples 1, 3), so $P \\to R$ fails; and $Q = 0$ appears with $R = 0$ and $R = 1$ (tuples 1, 2), so $Q \\to R$ fails. (B) is not always true.",
+          "scene": {
+            "reveal": 12,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "warning"
+              },
+              {
+                "r": 1,
+                "tone": "warning"
+              },
+              {
+                "r": 2,
+                "tone": "warning"
+              }
+            ]
+          }
+        },
+        {
+          "title": "(C) holds: augmentation + transitivity + union",
+          "body": "From $P \\to R$: $PQ \\to P$ (reflexivity) and $P \\to R$ give $PQ \\to R$ (transitivity). From $Q \\to S$: $PQ \\to Q$ and $Q \\to S$ give $PQ \\to S$. Union: $PQ \\to RS$. Always true.",
+          "scene": {
+            "hl": []
+          }
+        },
+        {
+          "title": "(D) holds: augmentation",
+          "body": "Augment $P \\to R$ with $Q$: $PQ \\to RQ$, and decomposition gives $PQ \\to R$. Directly: two tuples that agree on $\\{P, Q\\}$ agree on $P$, hence on $R$. Always true."
+        }
+      ],
+      "answer": {
+        "value": "**(C)** and **(D)** are always true",
+        "choice": [
+          "C",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Counterexample $(0,0,0,0), (1,0,1,0)$: $P \\to R$ and $PQ \\to R$ hold but $Q \\to R$ fails. Knowing $PQ \\to R$ and $P \\to R$ says nothing about $Q$ alone."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "The reverse of augmentation is not valid: with $(0,0,0,0), (1,0,1,0), (0,1,1,0)$, $PQ \\to R$ holds yet neither $P \\to R$ nor $Q \\to R$ does."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$PQ \\to R$ (from $P \\to R$) and $PQ \\to S$ (from $Q \\to S$), then union gives $PQ \\to RS$."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Augmentation: adding attributes to the left side of a valid FD keeps it valid, so $PQ \\to R$."
+        }
+      ],
+      "shortcut": "Adding attributes on the **left** never breaks an FD (C, D true); removing attributes from the left can (A, B false).",
+      "pitfalls": [
+        "Treating $PQ \\to R$ like a logical OR and splitting it into $P \\to R$ or $Q \\to R$.",
+        "Using the decomposition rule on the left side — decomposition only splits the **right** side."
+      ],
+      "verification": "Closure check: with $F = \\{P \\to R, Q \\to S\\}$, $\\{P,Q\\}^+ = \\{P,Q,R,S\\} \\supseteq \\{R,S\\}$ (C ✓); with $F = \\{P \\to R\\}$, $\\{P,Q\\}^+ \\ni R$ (D ✓); with $F = \\{PQ \\to R\\}$, $\\{P\\}^+ = \\{P\\}$ and $\\{Q\\}^+ = \\{Q\\}$ (B ✗); with $F = \\{P \\to R, PQ \\to R\\}$, $\\{Q\\}^+ = \\{Q\\}$ (A ✗).",
+      "animation": {
+        "kind": "table",
+        "title": "Counterexample instance",
+        "cols": [
+          "P",
+          "Q",
+          "R",
+          "S"
+        ],
+        "rowLabels": [
+          "t1",
+          "t2",
+          "t3"
+        ],
+        "rows": [
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            1,
+            1,
+            0
+          ]
+        ],
+        "reveal": 8,
+        "mono": true,
+        "caption": "t1, t2 refute (A); t1, t2, t3 refute (B)."
+      }
+    },
+    "cse-2026-1-cs-21": {
+      "approach": "Recall the two guarantees: the **3NF synthesis algorithm** always gives a lossless, dependency-preserving decomposition; **BCNF** is always lossless but not always dependency-preserving. The 1NF and 2NF claims then follow from the hierarchy BCNF ⊂ 3NF ⊂ 2NF ⊂ 1NF.",
+      "concepts": [
+        "3NF synthesis",
+        "BCNF decomposition",
+        "Dependency preservation",
+        "Normal-form hierarchy"
+      ],
+      "steps": [
+        {
+          "title": "(A) 3NF: always possible",
+          "body": "The 3NF synthesis algorithm takes a minimal cover $F_c$ and creates one relation $XA$ for every FD $X \\to A$ in $F_c$ (plus a key relation if needed). Every FD of $F_c$ lies inside some relation, so the decomposition is dependency-preserving (and lossless). (A) is **true**."
+        },
+        {
+          "title": "(B) 1NF: always possible",
+          "body": "1NF only needs atomic attribute values. The trivial decomposition $\\{R\\}$ (with atomic domains), or the 3NF decomposition from (A) — which is also in 1NF — preserves all dependencies. (B) is **true**."
+        },
+        {
+          "title": "(C) BCNF: not always",
+          "body": "Classic example: $R(A, B, C)$ with $F = \\{AB \\to C,\\ C \\to B\\}$. Keys: $AB$ and $AC$. $C \\to B$ violates BCNF ($C$ is not a superkey), so $R$ must be split; any BCNF decomposition puts $B$ and $C$ together without $A$ (e.g. $\\{CB\\},\\{CA\\}$), and then no relation contains all of $A, B, C$, so $AB \\to C$ cannot be checked locally — it is lost. (C) is **true**.",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "(D) 2NF: always possible",
+          "body": "Every 3NF relation is also in 2NF. Since a dependency-preserving 3NF decomposition always exists (A), it is also a dependency-preserving 2NF decomposition. So it **is** always possible; (D) is **false**."
+        }
+      ],
+      "answer": {
+        "value": "**(A)**, **(B)** and **(C)** are true",
+        "choice": [
+          "A",
+          "B",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "3NF synthesis from a minimal cover is always lossless and dependency-preserving."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "1NF is the weakest form; the original relation (or the 3NF decomposition) already preserves every FD."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$R(A,B,C)$ with $AB \\to C$, $C \\to B$: every BCNF decomposition loses $AB \\to C$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "3NF ⊂ 2NF, so the always-available dependency-preserving 3NF decomposition is also a 2NF one."
+        }
+      ],
+      "shortcut": "Only BCNF can force losing an FD. So every \"always possible\" claim for 1NF/2NF/3NF is true and every \"not always possible\" claim for them is false; for BCNF it is the reverse.",
+      "pitfalls": [
+        "Reading (C) and (D) as positive claims — both are phrased \"*not* always possible\".",
+        "Thinking a stronger form (2NF) is easier than 3NF to preserve — it is weaker, so any 3NF solution works."
+      ],
+      "verification": "Check the BCNF counterexample: $\\{C\\}^+ = \\{C, B\\}$ (not a key) so BCNF splits to $\\{CB\\}, \\{CA\\}$; the projected FDs are $C \\to B$ only, and $\\{A,B\\}^+$ under them is $\\{A, B\\}$, which lacks $C$ — $AB \\to C$ is indeed lost.",
+      "animation": {
+        "kind": "table",
+        "title": "Can we always get a dependency-preserving decomposition?",
+        "cols": [
+          "Dependency-preserving always possible?",
+          "Why"
+        ],
+        "rowLabels": [
+          "1NF",
+          "2NF",
+          "3NF",
+          "BCNF"
+        ],
+        "rows": [
+          [
+            "Yes",
+            "weakest form"
+          ],
+          [
+            "Yes",
+            "3NF ⊂ 2NF"
+          ],
+          [
+            "Yes",
+            "synthesis algorithm"
+          ],
+          [
+            "No",
+            "AB→C, C→B"
+          ]
+        ],
+        "hl": [
+          {
+            "r": 3,
+            "tone": "error"
+          }
+        ]
+      }
+    },
+    "cse-2026-1-cs-22": {
+      "approach": "Continuity at $0$ needs $\\lim_{x \\to 0^+} f(x) = f(0) = 3$. Since $\\log_e(1/x) \\to +\\infty$, the only way the right-hand limit is finite is $c_2 = 0$, which then forces $c_1 = 3$.",
+      "concepts": [
+        "Continuity at a point",
+        "One-sided limits",
+        "$\\ln(1/x) \\to \\infty$ as $x \\to 0^+$"
+      ],
+      "given": "$f(x) = c_1 e^{x} - c_2 \\log_e(1/x)$ for $x > 0$, and $f(x) = 3$ for $x \\le 0$.",
+      "steps": [
+        {
+          "title": "Left side and value at 0",
+          "body": "For $x \\le 0$, $f(x) = 3$, so $f(0) = 3$ and $\\lim_{x \\to 0^-} f(x) = 3$. Continuity needs $\\lim_{x \\to 0^+} f(x) = 3$ as well.",
+          "scene": {
+            "reveal": 1
+          }
+        },
+        {
+          "title": "Behaviour of each term as $x \\to 0^+$",
+          "body": "$c_1 e^{x} \\to c_1 e^{0} = c_1$. And $\\log_e(1/x) = -\\log_e x \\to +\\infty$ because $\\log_e x \\to -\\infty$. So\n\n$$-c_2 \\log_e(1/x) \\to \\begin{cases} -\\infty & c_2 > 0 \\\\ +\\infty & c_2 < 0 \\\\ 0 & c_2 = 0 \\end{cases}$$",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "Force a finite limit equal to 3",
+          "body": "A finite right-hand limit requires $c_2 = 0$. Then $\\lim_{x \\to 0^+} f(x) = c_1 = 3$. Hence\n\n$$c_1 + c_2 = 3 + 0 = 3.$$",
+          "scene": {
+            "reveal": 5
+          }
+        }
+      ],
+      "answer": {
+        "value": "$c_1 + c_2 =$ **3**",
+        "number": 3,
+        "matchesKey": true
+      },
+      "shortcut": "$\\ln(1/x)$ blows up at $0^+$, so its coefficient must vanish: $c_2 = 0$; then $c_1 \\cdot e^0 = 3$. Sum $= 3$.",
+      "pitfalls": [
+        "Treating $\\log_e(1/x)$ as tending to $0$ (that is $\\log_e(1+x)$) and concluding $c_2$ is free.",
+        "Matching only the left limit and forgetting the right-hand limit must also equal $f(0)$."
+      ],
+      "verification": "With $c_1 = 3, c_2 = 0$: $f(x) = 3e^x$ for $x > 0$, and $3e^{x} \\to 3 = f(0)$ — continuous. Any $c_2 \\ne 0$ makes $f(0.0001) = 3e^{0.0001} - c_2 \\cdot 9.21$, which drifts further from 3 as $x$ shrinks.",
+      "animation": {
+        "kind": "equation",
+        "title": "Right-hand limit at 0",
+        "lines": [
+          {
+            "tex": "f(0) = \\lim_{x\\to 0^-} f(x) = 3",
+            "note": "constant branch"
+          },
+          {
+            "tex": "c_1 e^{x} \\to c_1",
+            "note": "as x → 0⁺"
+          },
+          {
+            "tex": "\\log_e(1/x) \\to +\\infty",
+            "note": "unbounded",
+            "tone": "error"
+          },
+          {
+            "tex": "\\Rightarrow\\ c_2 = 0",
+            "tone": "warning"
+          },
+          {
+            "tex": "c_1 = 3,\\quad c_1 + c_2 = 3",
+            "tone": "success"
+          }
+        ],
+        "reveal": 1
+      }
+    },
+    "cse-2026-1-cs-23": {
+      "approach": "In a full binary tree every internal node has exactly 2 children, so $n = 2i + 1$. Each edge on the longest root-to-leaf path comes from a distinct internal node, so the height is at most $i$, and a \"caterpillar\" (each internal node has one leaf child) achieves it.",
+      "concepts": [
+        "Full binary tree: $n = 2i + 1$",
+        "Height bound",
+        "Caterpillar (skewed) tree"
+      ],
+      "steps": [
+        {
+          "title": "Count internal nodes",
+          "body": "In a full binary tree, $L = i + 1$ (leaves = internal + 1), so $n = i + L = 2i + 1$. With $n = 23$:\n\n$$i = \\frac{23 - 1}{2} = \\frac{22}{2} = 11,\\qquad L = 12.$$"
+        },
+        {
+          "title": "Upper bound on the height",
+          "body": "Along a longest path of $h$ edges, the $h$ nodes above the final leaf are internal and distinct, so $h \\le i = 11$. Equivalently, each of those $h$ internal nodes also has a second child off the path, so $n \\ge h + 1 + h = 2h + 1$, i.e. $h \\le \\frac{23-1}{2} = 11$."
+        },
+        {
+          "title": "The bound is reached",
+          "body": "Build a caterpillar: internal nodes $1, 2, \\dots, 11$ in a chain, each with one leaf child and the next internal node as the other child; node 11 has two leaf children. Nodes $= 11 + 12 = 23$, every internal node has 2 children, and the deepest leaf is at depth **11**.",
+          "scene": {
+            "caption": "11 internal nodes in a chain + 12 leaves = 23 nodes; height 11."
+          }
+        }
+      ],
+      "answer": {
+        "value": "Maximum height = **11**",
+        "number": 11,
+        "matchesKey": true
+      },
+      "shortcut": "Max height of a full binary tree with $n$ nodes $= \\frac{n-1}{2} = \\frac{22}{2} = 11$.",
+      "pitfalls": [
+        "Using $n - 1 = 22$ — that is the max height of an arbitrary binary tree; a full tree needs a sibling at every level.",
+        "Confusing \"full\" with \"complete\" and answering $\\lfloor \\log_2 23 \\rfloor = 4$ (that is the minimum height).",
+        "Counting nodes instead of edges on the path (giving 12)."
+      ],
+      "verification": "Small cases: $n = 3 \\Rightarrow h = 1$, $n = 5 \\Rightarrow h = 2$, $n = 7 \\Rightarrow h = 3$ for caterpillars — always $\\frac{n-1}{2}$; for $n = 23$ this is $11$.",
+      "animation": {
+        "kind": "tree",
+        "title": "Caterpillar full binary tree (23 nodes)",
+        "root": {
+          "id": "I1",
+          "label": 1,
+          "children": [
+            {
+              "id": "L1",
+              "label": "•"
+            },
+            {
+              "id": "I2",
+              "label": 2,
+              "children": [
+                {
+                  "id": "L2",
+                  "label": "•"
+                },
+                {
+                  "id": "I3",
+                  "label": 3,
+                  "children": [
+                    {
+                      "id": "L3",
+                      "label": "•"
+                    },
+                    {
+                      "id": "I4",
+                      "label": 4,
+                      "children": [
+                        {
+                          "id": "L4",
+                          "label": "•"
+                        },
+                        {
+                          "id": "I5",
+                          "label": 5,
+                          "children": [
+                            {
+                              "id": "L5",
+                              "label": "•"
+                            },
+                            {
+                              "id": "I6",
+                              "label": 6,
+                              "children": [
+                                {
+                                  "id": "L6",
+                                  "label": "•"
+                                },
+                                {
+                                  "id": "I7",
+                                  "label": 7,
+                                  "children": [
+                                    {
+                                      "id": "L7",
+                                      "label": "•"
+                                    },
+                                    {
+                                      "id": "I8",
+                                      "label": 8,
+                                      "children": [
+                                        {
+                                          "id": "L8",
+                                          "label": "•"
+                                        },
+                                        {
+                                          "id": "I9",
+                                          "label": 9,
+                                          "children": [
+                                            {
+                                              "id": "L9",
+                                              "label": "•"
+                                            },
+                                            {
+                                              "id": "I10",
+                                              "label": 10,
+                                              "children": [
+                                                {
+                                                  "id": "L10",
+                                                  "label": "•"
+                                                },
+                                                {
+                                                  "id": "I11",
+                                                  "label": 11,
+                                                  "children": [
+                                                    {
+                                                      "id": "L11",
+                                                      "label": "•"
+                                                    },
+                                                    {
+                                                      "id": "L12",
+                                                      "label": "•"
+                                                    }
+                                                  ],
+                                                  "tone": "accent"
+                                                }
+                                              ],
+                                              "tone": "accent"
+                                            }
+                                          ],
+                                          "tone": "accent"
+                                        }
+                                      ],
+                                      "tone": "accent"
+                                    }
+                                  ],
+                                  "tone": "accent"
+                                }
+                              ],
+                              "tone": "accent"
+                            }
+                          ],
+                          "tone": "accent"
+                        }
+                      ],
+                      "tone": "accent"
+                    }
+                  ],
+                  "tone": "accent"
+                }
+              ],
+              "tone": "accent"
+            }
+          ],
+          "tone": "accent"
+        },
+        "caption": "Numbered nodes are internal; • are leaves."
+      }
+    },
+    "cse-2026-1-cs-24": {
+      "approach": "Track **which `i`** each line refers to. The `int i = 0;` inside the `if` block shadows the parameter only until that block's closing brace; `printf` is outside it, so it prints the untouched parameter.",
+      "concepts": [
+        "Block scope",
+        "Variable shadowing",
+        "Pass by value"
+      ],
+      "steps": [
+        {
+          "title": "Call func(9, 10)",
+          "body": "`main` passes copies: parameter `i = 9`, `j = 10`.",
+          "scene": {
+            "line": 15,
+            "callStack": [
+              {
+                "name": "main",
+                "vars": {
+                  "i": 9,
+                  "j": 10
+                }
+              },
+              {
+                "name": "func",
+                "vars": {
+                  "i": 9,
+                  "j": 10
+                }
+              }
+            ]
+          }
+        },
+        {
+          "title": "Condition is true; a new i is born",
+          "body": "$9 < 10$ is true, so control enters the block. `int i = 0;` declares a **new** variable `i` local to the block; the parameter `i` (still 9) is hidden, not modified.",
+          "scene": {
+            "line": 5,
+            "callStack": [
+              {
+                "name": "main",
+                "vars": {
+                  "i": 9,
+                  "j": 10
+                }
+              },
+              {
+                "name": "func",
+                "vars": {
+                  "i (param)": 9,
+                  "j": 10,
+                  "i (block)": 0
+                }
+              }
+            ]
+          }
+        },
+        {
+          "title": "The loop changes only the inner i and j",
+          "body": "The loop runs for inner $i = 0, 1, \\dots, 9$ — 10 iterations — so $j = 10 + 10 \\times 2 = 30$ and the inner $i$ ends at 10.",
+          "scene": {
+            "line": 8,
+            "callStack": [
+              {
+                "name": "main",
+                "vars": {
+                  "i": 9,
+                  "j": 10
+                }
+              },
+              {
+                "name": "func",
+                "vars": {
+                  "i (param)": 9,
+                  "j": 30,
+                  "i (block)": 10
+                }
+              }
+            ]
+          }
+        },
+        {
+          "title": "Block ends; printf sees the parameter",
+          "body": "At the closing `}` of the `if` block the inner `i` goes out of scope. `printf(\"%d\", i)` therefore refers to the parameter, which is still **9**.",
+          "scene": {
+            "line": 11,
+            "callStack": [
+              {
+                "name": "main",
+                "vars": {
+                  "i": 9,
+                  "j": 10
+                }
+              },
+              {
+                "name": "func",
+                "vars": {
+                  "i (param)": 9,
+                  "j": 30
+                }
+              }
+            ],
+            "output": "9"
+          }
+        }
+      ],
+      "answer": {
+        "value": "The program prints **9**",
+        "number": 9,
+        "matchesKey": true
+      },
+      "shortcut": "The inner `i` dies at the `}` before `printf`; the parameter `i` was never assigned — print 9.",
+      "pitfalls": [
+        "Printing 10 by assuming the inner `i` is the same variable as the parameter.",
+        "Worrying about `j` — it changes (to 30) but is never printed, and the change is local to `func` anyway."
+      ],
+      "verification": "Rename the inner variable to `k` (an equivalent program): `func` never writes to its parameter `i`, so `printf` outputs 9.",
+      "animation": {
+        "kind": "code",
+        "lang": "c",
+        "title": "Trace of func(9, 10)",
+        "code": "#include <stdio.h>\n\nvoid func(int i, int j) {\n  if(i < j) {\n    int i = 0;\n    while (i < 10) {\n      j += 2;\n      i++;\n    }\n  }\n  printf(\"%d\", i);\n}\nint main() {\n  int i = 9, j = 10;\n  func(i, j);\n  return 0;\n}",
+        "line": 14,
+        "callStack": [
+          {
+            "name": "main",
+            "vars": {
+              "i": 9,
+              "j": 10
+            }
+          }
+        ],
+        "output": ""
+      }
+    },
+    "cse-2026-1-cs-25": {
+      "approach": "Find the **worst case**: every process holds one instance and waits for its second. That needs $5 \\times (2-1) = 5$ instances; one more instance guarantees someone can finish, so $k_{\\min} = 5 + 1 = 6$.",
+      "concepts": [
+        "Deadlock with single resource type",
+        "Pigeonhole argument",
+        "$k \\ge n(m-1) + 1$"
+      ],
+      "given": "$n = 5$ processes, each needs at most $m = 2$ instances, acquired one at a time.",
+      "steps": [
+        {
+          "title": "k = 5 can deadlock",
+          "body": "Each of $P_1 \\dots P_5$ requests and gets its first instance: all $5$ instances are allocated, none is free. Every process now requests its second instance and waits — no one can proceed or release. **Deadlock**, so $k = 5$ is not enough (and any $k \\le 5$ deadlocks the same way).",
+          "scene": {
+            "reveal": 6,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "error"
+              }
+            ],
+            "caption": "k = 5: nothing free, all five wait — deadlock."
+          }
+        },
+        {
+          "title": "k = 6 is always safe",
+          "body": "Suppose all processes are blocked. A blocked process holds exactly $1$ instance (it is waiting for its 2nd; a process holding 2 is not waiting and will finish). So at most $5 \\times 1 = 5$ instances are held, leaving at least $6 - 5 = 1$ free — but then some waiting request can be granted, a contradiction. Hence some process always gets its 2nd instance, completes, and releases 2 instances.",
+          "scene": {
+            "reveal": 18,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "muted"
+              },
+              {
+                "r": 2,
+                "c": 0,
+                "tone": "success"
+              }
+            ],
+            "caption": "k = 6: the spare instance lets P1 finish and release 2."
+          }
+        },
+        {
+          "title": "Minimum k",
+          "body": "$$k_{\\min} = n(m - 1) + 1 = 5 \\times (2 - 1) + 1 = 6.$$"
+        }
+      ],
+      "answer": {
+        "value": "Minimum $k =$ **6**",
+        "number": 6,
+        "matchesKey": true
+      },
+      "shortcut": "$k = \\sum (\\text{max}_i - 1) + 1 = 5 \\times 1 + 1 = 6$.",
+      "pitfalls": [
+        "Answering $10$ ($= 5 \\times 2$): that lets everyone hold the maximum at once, which is more than needed.",
+        "Answering $5$: with 5 instances every process can hold one and wait forever."
+      ],
+      "verification": "For $k = 6$, after the worst case (5 held, 1 free) the free instance goes to some $P_i$, which then holds 2, finishes and frees 2; the others follow one by one. For $k = 5$ the all-hold-one state is reachable and stuck. So 6 is both sufficient and necessary.",
+      "animation": {
+        "kind": "table",
+        "title": "Instances held in the worst case",
+        "cols": [
+          "P1",
+          "P2",
+          "P3",
+          "P4",
+          "P5",
+          "free"
+        ],
+        "rowLabels": [
+          "k = 5",
+          "k = 6",
+          "k = 6, next"
+        ],
+        "rows": [
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            2,
+            1,
+            1,
+            1,
+            1,
+            0
+          ]
+        ],
+        "reveal": 0,
+        "caption": "Each process holds one instance and waits for a second."
+      }
+    },
+    "cse-2026-1-cs-26": {
+      "approach": "Decode both numbers into (sign, exponent, 1.fraction), align the smaller one to the larger exponent, add the significands, normalise, and re-encode. Here the sum is exact, so there is no rounding to worry about.",
+      "concepts": [
+        "IEEE 754 single precision",
+        "Biased exponent (bias 127)",
+        "Hidden leading 1",
+        "Significand alignment"
+      ],
+      "given": "X = `35C00000`, Y = `34A00000` (hex), Z = X + Y.",
+      "steps": [
+        {
+          "title": "Decode X",
+          "body": "`35C00000` $= 0011\\,0101\\,1100\\,0000 \\dots$ → sign $0$, exponent $0110\\,1011_2 = 107$, fraction $1000\\dots$\n\n$$X = 1.1_2 \\times 2^{107-127} = 1.5 \\times 2^{-20}.$$",
+          "scene": {
+            "rows": [
+              {
+                "label": "X",
+                "fields": [
+                  {
+                    "bits": "0",
+                    "label": "s"
+                  },
+                  {
+                    "bits": "01101011",
+                    "label": "exp 107",
+                    "tone": "cat1"
+                  },
+                  {
+                    "bits": "10000000000000000000000",
+                    "label": "fraction .1",
+                    "tone": "cat2"
+                  }
+                ],
+                "value": "35C00000"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Decode Y",
+          "body": "`34A00000` $= 0011\\,0100\\,1010\\,0000 \\dots$ → sign $0$, exponent $0110\\,1001_2 = 105$, fraction $0100\\dots$\n\n$$Y = 1.01_2 \\times 2^{105-127} = 1.25 \\times 2^{-22}.$$",
+          "scene": {
+            "rows": [
+              {
+                "label": "X",
+                "fields": [
+                  {
+                    "bits": "0",
+                    "label": "s"
+                  },
+                  {
+                    "bits": "01101011",
+                    "label": "exp 107",
+                    "tone": "cat1"
+                  },
+                  {
+                    "bits": "10000000000000000000000",
+                    "label": "fraction .1",
+                    "tone": "cat2"
+                  }
+                ],
+                "value": "35C00000"
+              },
+              {
+                "label": "Y",
+                "fields": [
+                  {
+                    "bits": "0",
+                    "label": "s"
+                  },
+                  {
+                    "bits": "01101001",
+                    "label": "exp 105",
+                    "tone": "cat1"
+                  },
+                  {
+                    "bits": "01000000000000000000000",
+                    "label": "fraction .01",
+                    "tone": "cat2"
+                  }
+                ],
+                "value": "34A00000"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Align and add",
+          "body": "Exponents differ by $107 - 105 = 2$, so shift Y's significand (with its hidden 1) right by 2: $1.01_2 \\times 2^{-22} = 0.0101_2 \\times 2^{-20}$.\n\n$$\\begin{aligned} &\\ \\ 1.1000_2 \\\\ +\\ &\\ \\ 0.0101_2 \\\\ =\\ &\\ \\ 1.1101_2 \\end{aligned} \\qquad Z = 1.1101_2 \\times 2^{-20} = 1.8125 \\times 2^{-20}.$$\n\nCheck in decimal: $1.5 + 1.25/4 = 1.5 + 0.3125 = 1.8125$. Already normalised (one digit before the point)."
+        },
+        {
+          "title": "Encode Z",
+          "body": "Sign $0$, exponent $-20 + 127 = 107 = 0110\\,1011_2$, fraction $1101\\,0000\\dots$\n\n$0\\,|\\,01101011\\,|\\,11010000\\dots = 0011\\,0101\\,1110\\,1000\\,0000\\dots = $ **`35E80000`** — option (C).",
+          "scene": {
+            "rows": [
+              {
+                "label": "X",
+                "fields": [
+                  {
+                    "bits": "0",
+                    "label": "s"
+                  },
+                  {
+                    "bits": "01101011",
+                    "label": "exp 107",
+                    "tone": "cat1"
+                  },
+                  {
+                    "bits": "10000000000000000000000",
+                    "label": "fraction .1",
+                    "tone": "cat2"
+                  }
+                ],
+                "value": "35C00000"
+              },
+              {
+                "label": "Y",
+                "fields": [
+                  {
+                    "bits": "0",
+                    "label": "s"
+                  },
+                  {
+                    "bits": "01101001",
+                    "label": "exp 105",
+                    "tone": "cat1"
+                  },
+                  {
+                    "bits": "01000000000000000000000",
+                    "label": "fraction .01",
+                    "tone": "cat2"
+                  }
+                ],
+                "value": "34A00000"
+              },
+              {
+                "label": "Z",
+                "fields": [
+                  {
+                    "bits": "0",
+                    "label": "s"
+                  },
+                  {
+                    "bits": "01101011",
+                    "label": "exp 107",
+                    "tone": "success"
+                  },
+                  {
+                    "bits": "11010000000000000000000",
+                    "label": "fraction .1101",
+                    "tone": "success"
+                  }
+                ],
+                "value": "35E80000"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "Z = **35E80000** — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "`35C80000` $= 1.1001_2 \\times 2^{-20} = 1.5625 \\times 2^{-20}$: what you get by adding only Y's fraction $.01_2$ shifted by 2 and **forgetting its hidden 1**."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "`35CC0000` $= 1.10011_2 \\times 2^{-20} = 1.59375 \\times 2^{-20} \\ne 1.8125 \\times 2^{-20}$ (mis-aligned addition)."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$1.1_2 \\times 2^{-20} + 1.01_2 \\times 2^{-22} = 1.1101_2 \\times 2^{-20}$ → `0 01101011 1101000…` = `35E80000`."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "`35EC0000` $= 1.11011_2 \\times 2^{-20} = 1.84375 \\times 2^{-20}$, which exceeds the exact sum by $0.03125 \\times 2^{-20}$."
+        }
+      ],
+      "shortcut": "Same sign, exponent gap 2: $X + Y = 2^{-20}(1.5 + 1.25/4) = 1.8125 \\times 2^{-20}$. Exponent field unchanged (`35`/`6B…`), fraction $.1101$ → third hex digit becomes `E`, fourth `8`: `35E80000`.",
+      "pitfalls": [
+        "Dropping the hidden 1 of Y when shifting (gives option A).",
+        "Shifting by the wrong amount — the shift equals the exponent difference, $107 - 105 = 2$.",
+        "Forgetting that the exponent field starts after the sign bit, so hex digits do not align with fields."
+      ],
+      "verification": "Decode `35E80000`: exponent bits $01101011 = 107$, fraction $.1101 = 0.8125$ → $1.8125 \\times 2^{-20}$, which equals $1.5 \\times 2^{-20} + 1.25 \\times 2^{-22}$ exactly.",
+      "animation": {
+        "kind": "bits",
+        "title": "IEEE 754 fields: sign | exponent | fraction",
+        "rows": [
+          {
+            "label": "X",
+            "fields": [
+              {
+                "bits": "0",
+                "label": "s"
+              },
+              {
+                "bits": "01101011",
+                "label": "exp 107",
+                "tone": "cat1"
+              },
+              {
+                "bits": "10000000000000000000000",
+                "label": "fraction .1",
+                "tone": "cat2"
+              }
+            ],
+            "value": "35C00000"
+          }
+        ]
+      }
+    },
+    "cse-2026-1-cs-27": {
+      "approach": "For a D flip-flop $D = Q^+$, so $D_1$ and $D_0$ are just the $Q_1^+$ and $Q_0^+$ columns read as functions of $(P, Q_1, Q_0)$. Minimise each with a 3-variable K-map, then match the options.",
+      "concepts": [
+        "D flip-flop excitation: $D = Q^+$",
+        "3-variable K-map",
+        "Saturating counter"
+      ],
+      "given": "Minterm index $= 4P + 2Q_1 + Q_0$. From the table: $Q_1^+ = 1$ at $m_1, m_2, m_3, m_7$; $Q_0^+ = 1$ at $m_0, m_2, m_3, m_6$.",
+      "steps": [
+        {
+          "title": "Read off the D inputs",
+          "body": "Since $D = Q^+$:\n\n$$D_1 = \\Sigma m(1, 2, 3, 7), \\qquad D_0 = \\Sigma m(0, 2, 3, 6).$$\n\n(e.g. row $P Q_1 Q_0 = 001 \\to Q_1^+Q_0^+ = 10$: $m_1$ is in $D_1$ only.)"
+        },
+        {
+          "title": "Minimise $D_1$",
+          "body": "Groups of two: $\\{m_1, m_3\\}$ ($P=0, Q_0=1$) $\\to \\bar{P}Q_0$; $\\{m_2, m_3\\}$ ($P=0, Q_1=1$) $\\to \\bar{P}Q_1$; $\\{m_3, m_7\\}$ ($Q_1=Q_0=1$) $\\to Q_1Q_0$. All three are needed ($m_1$, $m_2$, $m_7$ each lie in only one group):\n\n$$D_1 = \\bar{P}Q_1 + \\bar{P}Q_0 + Q_1Q_0.$$",
+          "scene": {
+            "panels": [
+              {
+                "groups": [
+                  {
+                    "cells": [
+                      1,
+                      3
+                    ],
+                    "label": "P̄Q0",
+                    "tone": "cat1"
+                  },
+                  {
+                    "cells": [
+                      2,
+                      3
+                    ],
+                    "label": "P̄Q1",
+                    "tone": "cat2"
+                  },
+                  {
+                    "cells": [
+                      3,
+                      7
+                    ],
+                    "label": "Q1Q0",
+                    "tone": "cat3"
+                  }
+                ]
+              },
+              null
+            ]
+          }
+        },
+        {
+          "title": "Minimise $D_0$",
+          "body": "Groups: $\\{m_0, m_2\\}$ ($P=0, Q_0=0$, wrap-around) $\\to \\bar{P}\\,\\overline{Q_0}$; $\\{m_2, m_3\\} \\to \\bar{P}Q_1$; $\\{m_2, m_6\\}$ ($Q_1=1, Q_0=0$) $\\to Q_1\\overline{Q_0}$. $m_0$, $m_3$, $m_6$ each need their own group:\n\n$$D_0 = \\bar{P}\\,\\overline{Q_0} + \\bar{P}Q_1 + Q_1\\overline{Q_0}.$$",
+          "scene": {
+            "panels": [
+              null,
+              {
+                "groups": [
+                  {
+                    "cells": [
+                      0,
+                      2
+                    ],
+                    "label": "P̄Q̄0",
+                    "tone": "cat1"
+                  },
+                  {
+                    "cells": [
+                      2,
+                      3
+                    ],
+                    "label": "P̄Q1",
+                    "tone": "cat2"
+                  },
+                  {
+                    "cells": [
+                      2,
+                      6
+                    ],
+                    "label": "Q1Q̄0",
+                    "tone": "cat3"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "title": "Match the options",
+          "body": "Option (B) is exactly $D_1 = \\bar{P}Q_1 + \\bar{P}Q_0 + Q_1Q_0$, $D_0 = \\bar{P}\\,\\overline{Q_0} + \\bar{P}Q_1 + Q_1\\overline{Q_0}$."
+        }
+      ],
+      "answer": {
+        "value": "**(B)**: $D_1 = \\bar{P}Q_1 + \\bar{P}Q_0 + Q_1Q_0$, $D_0 = \\bar{P}\\,\\overline{Q_0} + \\bar{P}Q_1 + Q_1\\overline{Q_0}$",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "At $PQ_1Q_0 = 110$ (count down from 2 to 1): $D_1 = PQ_1 = 1$, but $Q_1^+ = 0$. Its $D_0$ term $PQ_0$ also wrongly gives 1 at $101$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Matches both minimised K-maps: $D_1 = \\Sigma m(1,2,3,7)$, $D_0 = \\Sigma m(0,2,3,6)$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "At $000$: $D_1 = \\bar{P}\\,\\overline{Q_1} = 1$, but $Q_1^+ = 0$ (0 counts up to 1, not 2). Its $D_0$ has $\\bar{P}Q_0$, which gives 1 at $001$ where $Q_0^+ = 0$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "At $100$ (saturated at 0, counting down): $D_1 = P\\,\\overline{Q_1} = 1$, but $Q_1^+ = 0$; and $D_0 = P\\,\\overline{Q_0} = 1$ where $Q_0^+ = 0$."
+        }
+      ],
+      "shortcut": "Test one row: $P Q_1 Q_0 = 000 \\to 01$ needs $D_1 = 0$, $D_0 = 1$. (A): $D_0 = 0$ ✗; (C): $D_1 = 1$ ✗; (D): $D_0 = P\\overline{Q_0} = 0$ ✗; (B): $D_1 = 0$, $D_0 = \\bar{P}\\,\\overline{Q_0} = 1$ ✓.",
+      "pitfalls": [
+        "Using the JK or T excitation logic instead of $D = Q^+$.",
+        "Missing the wrap-around pair $m_0, m_2$ in the $D_0$ map."
+      ],
+      "verification": "Evaluate (B) on all 8 rows: $D_1$ = 0,1,1,1,0,0,0,1 and $D_0$ = 1,0,1,1,0,0,1,0 for rows $000 \\dots 111$ — identical to the $Q_1^+$ and $Q_0^+$ columns.",
+      "animation": {
+        "kind": "panels",
+        "title": "K-maps of the next-state functions (rows P, columns Q1Q0)",
+        "panels": [
+          {
+            "kind": "kmap",
+            "title": "D1 = Q1⁺",
+            "variables": [
+              "P",
+              "Q1",
+              "Q0"
+            ],
+            "ones": [
+              1,
+              2,
+              3,
+              7
+            ]
+          },
+          {
+            "kind": "kmap",
+            "title": "D0 = Q0⁺",
+            "variables": [
+              "P",
+              "Q1",
+              "Q0"
+            ],
+            "ones": [
+              0,
+              2,
+              3,
+              6
+            ]
+          }
+        ]
+      }
+    },
+    "cse-2026-1-cs-28": {
+      "approach": "Split the 32-bit address into TAG | INDEX | OFFSET for both organisations. Making the cache $2^L$-way divides the number of sets by $2^L$, removing $L$ index bits, which move into the tag.",
+      "concepts": [
+        "Address split: tag / index / offset",
+        "Direct-mapped vs set-associative",
+        "Tag bits = address − index − offset"
+      ],
+      "given": "Address $= 32$ bits; cache $= 2^{23}$ B; block $= 128 = 2^7$ B; $K = 2^L$, $L \\in \\{1,2,3\\}$.",
+      "steps": [
+        {
+          "title": "Common quantities",
+          "body": "Offset bits $= \\log_2 128 = 7$. Number of lines $= \\frac{2^{23}}{2^{7}} = 2^{16}$."
+        },
+        {
+          "title": "Direct mapped: M",
+          "body": "One line per set ⇒ $2^{16}$ sets ⇒ index $= 16$ bits.\n\n$$M = 32 - 16 - 7 = 9.$$",
+          "scene": {
+            "rows": [
+              {
+                "label": "direct",
+                "fields": [
+                  {
+                    "bits": "000000000",
+                    "label": "TAG M = 9",
+                    "tone": "accent"
+                  },
+                  {
+                    "bits": "0000000000000000",
+                    "label": "index 16",
+                    "tone": "cat1"
+                  },
+                  {
+                    "bits": "0000000",
+                    "label": "offset 7",
+                    "tone": "cat2"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "title": "$2^L$-way set associative: N",
+          "body": "Sets $= \\frac{2^{16}}{2^{L}} = 2^{16-L}$ ⇒ index $= 16 - L$ bits.\n\n$$N = 32 - (16 - L) - 7 = 9 + L = M + L.$$\n\nFor $L = 1, 2, 3$: $N = 10, 11, 12$.",
+          "scene": {
+            "rows": [
+              {
+                "label": "direct",
+                "fields": [
+                  {
+                    "bits": "000000000",
+                    "label": "TAG M = 9",
+                    "tone": "accent"
+                  },
+                  {
+                    "bits": "0000000000000000",
+                    "label": "index 16",
+                    "tone": "cat1"
+                  },
+                  {
+                    "bits": "0000000",
+                    "label": "offset 7",
+                    "tone": "cat2"
+                  }
+                ]
+              },
+              {
+                "label": "8-way (L=3)",
+                "fields": [
+                  {
+                    "bits": "000000000",
+                    "label": "M",
+                    "tone": "accent"
+                  },
+                  {
+                    "bits": "000",
+                    "label": "+L",
+                    "tone": "success"
+                  },
+                  {
+                    "bits": "0000000000000",
+                    "label": "index 16 − L",
+                    "tone": "cat1"
+                  },
+                  {
+                    "bits": "0000000",
+                    "label": "offset 7",
+                    "tone": "cat2"
+                  }
+                ]
+              }
+            ],
+            "caption": "L index bits become tag bits: N = M + L."
+          }
+        }
+      ],
+      "answer": {
+        "value": "$N = M + L$ — option **(A)**",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Associativity $2^L$ removes $L$ index bits, which join the tag: $N = 9 + L = M + L$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Sign error: more ways ⇒ fewer sets ⇒ **longer** tag, not shorter."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Adds the number of ways $K = 2^L$ instead of its logarithm; e.g. $L = 3$ gives $N = 12$, not $9 + 8 = 17$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Both the sign and the quantity are wrong ($K$ instead of $L$)."
+        }
+      ],
+      "shortcut": "Doubling associativity moves one bit from index to tag; $2^L$-way moves $L$ bits ⇒ $N = M + L$, independent of the sizes.",
+      "pitfalls": [
+        "Confusing $K$ (number of ways) with $L = \\log_2 K$ (bits moved).",
+        "Thinking the tag shrinks with associativity — it grows because the index shrinks."
+      ],
+      "verification": "Tag = address bits − $\\log_2(\\text{cache size} / K)$: direct $32 - 23 = 9$; 8-way ($L=3$) $32 - \\log_2(2^{23}/2^3) = 32 - 20 = 12 = 9 + 3$ ✓.",
+      "animation": {
+        "kind": "bits",
+        "title": "32-bit physical address split",
+        "rows": [
+          {
+            "label": "direct",
+            "fields": [
+              {
+                "bits": "000000000",
+                "label": "TAG M = 9",
+                "tone": "accent"
+              },
+              {
+                "bits": "0000000000000000",
+                "label": "index 16",
+                "tone": "cat1"
+              },
+              {
+                "bits": "0000000",
+                "label": "offset 7",
+                "tone": "cat2"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "cse-2026-1-cs-29": {
+      "approach": "For a **non-empty** list the natural base case is the last node (`head->next == NULL`, size 1), and the recursive case counts the current node and recurses on the rest (`head->next`). Check each option on a short list.",
+      "concepts": [
+        "Recursion on linked lists",
+        "Base case design",
+        "Termination"
+      ],
+      "given": "Example list for the trace: `head → 10 → 20 → 30 → NULL` (3 nodes).",
+      "steps": [
+        {
+          "title": "Choose the base case",
+          "body": "The function returns **1** when E1 is true, so E1 must describe a sub-list of exactly one node: `head->next == NULL`. With `head == NULL` the function would return 1 for an *empty* sub-list, counting a node that does not exist (and the list is non-empty, so `head` itself is never NULL initially)."
+        },
+        {
+          "title": "Choose the recursive case",
+          "body": "size(list) $= 1 +$ size(list without its first node), so E2 $=$ `1 + getListSize(head->next)`. Recursing on `head` itself never shrinks the problem — infinite recursion."
+        },
+        {
+          "title": "Trace option (B) on 3 nodes",
+          "body": "getListSize(10): next ≠ NULL → $1 +$ getListSize(20); next ≠ NULL → $1 +$ getListSize(30); next == NULL → return 1. Unwinding: $1 + (1 + 1) = 3$ ✓.",
+          "scene": {
+            "line": 3,
+            "callStack": [
+              {
+                "name": "size(10)"
+              },
+              {
+                "name": "size(20)"
+              },
+              {
+                "name": "size(30)",
+                "vars": {
+                  "next": "NULL",
+                  "ret": 1
+                }
+              }
+            ]
+          }
+        },
+        {
+          "title": "Why (C) is off by one",
+          "body": "(C) uses `head == NULL` with E2 $=$ `1 + getListSize(head->next)`: size(10) $= 1 + 1 + 1 +$ size(NULL) $= 3 + 1 = 4$ — it also counts the NULL terminator. (A) and (D) recurse on `head` forever (stack overflow).",
+          "scene": {
+            "line": 4,
+            "callStack": [
+              {
+                "name": "size(10)",
+                "vars": {
+                  "ret": 3
+                }
+              }
+            ],
+            "output": "3"
+          }
+        }
+      ],
+      "answer": {
+        "value": "E1: `head->next == NULL`, E2: `1 + getListSize(head->next)` — option **(B)**",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "E2 recurses on the same `head`, so the call never makes progress — infinite recursion (and `head == NULL` is never true here)."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Last node returns 1; each other node adds 1 and recurses on the rest. Returns exactly the number of nodes."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Terminates, but the base case fires on the NULL after the last node and returns 1, so every list is counted as $n + 1$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Correct base case, but for a list of 2+ nodes E2 calls itself with the same `head` forever."
+        }
+      ],
+      "shortcut": "E2 must recurse on `head->next` (kills A, D); base case returns 1, so it must be a one-node list, not NULL (kills C).",
+      "pitfalls": [
+        "Picking the textbook `head == NULL` base case without noticing it returns 1 instead of 0.",
+        "Missing that recursing on `head` never terminates."
+      ],
+      "verification": "One-node list: (B) returns 1 immediately ✓; (C) returns $1 + \\text{size(NULL)} = 2$ ✗. Two-node list: (B) $= 1 + 1 = 2$ ✓.",
+      "animation": {
+        "kind": "code",
+        "lang": "c",
+        "title": "Option (B) on 10 → 20 → 30",
+        "code": "int getListSize(struct node *head)\n{\n  if (head->next == NULL) return 1;\n  return 1 + getListSize(head->next);\n}",
+        "line": 1,
+        "callStack": [
+          {
+            "name": "size(10)"
+          }
+        ],
+        "output": ""
+      }
+    }
+  }
+}
