@@ -18,9 +18,13 @@ export interface GateOption {
 }
 
 export interface GateFigure {
+  /** The figure cropped from the official paper (PNG) — always present. */
   f: string
   alt: string
+  /** A checked vector redraw; preferred over the PNG when present. */
   svg?: string
+  /** An unverified template redraw (scripts/generate_all_gate_svgs.py). */
+  draft?: string
 }
 
 export interface GateQuestion {
@@ -106,4 +110,20 @@ export interface GateDetail {
 /** Paper label used everywhere: "GATE CSE 2014 Set 1". */
 export function paperLabel(p: { exam: string; year: number; set: number | null }) {
   return `GATE ${p.exam} ${p.year}${p.set ? ` Set ${p.set}` : ''}`
+}
+
+/** Short type badge text: "MCQ", "NAT", ... */
+export const TYPE_SHORT: Record<QType, string> = {
+  MCQ: 'MCQ',
+  MSQ: 'MSQ',
+  NAT: 'NAT',
+  FILL: 'Fill',
+  MATCH: 'Match',
+  DESC: 'Descriptive',
+  TF: 'True/False',
+}
+
+/** "GA Q3" / "Q41" */
+export function qLabel(q: { section: string; number: string }) {
+  return `${q.section === 'ga' ? 'GA ' : ''}Q${q.number}`
 }
