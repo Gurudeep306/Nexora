@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 150" font-family="Arial, Helvetica, sans-serif" fill="none" stroke="currentColor" stroke-width="1.6">
+<line x1="40" y1="25" x2="40" y2="125"/>
+<ellipse cx="40" cy="25" rx="5" ry="7" fill="currentColor" stroke="none"/>
+<text x="54" y="30" fill="currentColor" stroke="none" font-size="14">Year</text>
+<ellipse cx="40" cy="75" rx="5" ry="7" fill="currentColor" stroke="none"/>
+<text x="54" y="80" fill="currentColor" stroke="none" font-size="14">Month</text>
+<ellipse cx="40" cy="125" rx="5" ry="7" fill="currentColor" stroke="none"/>
+<text x="54" y="130" fill="currentColor" stroke="none" font-size="14">Day</text>
+<line x1="200" y1="25" x2="200" y2="125"/>
+<ellipse cx="200" cy="25" rx="5" ry="7" fill="currentColor" stroke="none"/>
+<text x="214" y="30" fill="currentColor" stroke="none" font-size="14">Country</text>
+<ellipse cx="200" cy="75" rx="5" ry="7" fill="currentColor" stroke="none"/>
+<text x="214" y="80" fill="currentColor" stroke="none" font-size="14">State</text>
+<ellipse cx="200" cy="125" rx="5" ry="7" fill="currentColor" stroke="none"/>
+<text x="214" y="130" fill="currentColor" stroke="none" font-size="14">City</text>
+<line x1="360" y1="25" x2="360" y2="125"/>
+<ellipse cx="360" cy="25" rx="5" ry="7" fill="currentColor" stroke="none"/>
+<text x="374" y="30" fill="currentColor" stroke="none" font-size="14">Item Category</text>
+<ellipse cx="360" cy="75" rx="5" ry="7" fill="currentColor" stroke="none"/>
+<text x="374" y="80" fill="currentColor" stroke="none" font-size="14">Item Type</text>
+<ellipse cx="360" cy="125" rx="5" ry="7" fill="currentColor" stroke="none"/>
+<text x="374" y="130" fill="currentColor" stroke="none" font-size="14">Item</text>
+</svg>
