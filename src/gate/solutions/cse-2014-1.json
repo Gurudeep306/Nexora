@@ -1,0 +1,212 @@
+{
+  "paper": "cse-2014-1",
+  "version": 2,
+  "solutions": {
+    "cse-2014-1-cs-16": {
+      "approach": "Run the NFA by **subset simulation**: keep the set of states the machine could be in, and for each input symbol replace it by the union of all moves from every state in the set. The set after the last symbol is the answer.",
+      "concepts": [
+        "NFA",
+        "Subset simulation",
+        "Extended transition function"
+      ],
+      "given": "From the figure: start $q_0$; $q_0 \\xrightarrow{0,1} q_0$ (self-loop), $q_0 \\xrightarrow{1} q_1$, $q_1 \\xrightarrow{0,1} q_2$, $q_2 \\xrightarrow{1} q_2$ (self-loop), $q_2 \\xrightarrow{0,1} q_3$; $q_3$ is accepting and has no outgoing moves. Input: $0011$.",
+      "steps": [
+        {
+          "title": "Start in the set $\\{q_0\\}$",
+          "body": "Before reading anything the NFA is only in its start state: $S_0 = \\{q_0\\}$. There are no $\\varepsilon$-moves, so no closure is needed.",
+          "scene": {
+            "current": [
+              "q0"
+            ],
+            "tape": {
+              "cells": [
+                "0",
+                "0",
+                "1",
+                "1"
+              ],
+              "head": 0
+            }
+          }
+        },
+        {
+          "title": "Read the first 0",
+          "body": "$\\delta(q_0, 0) = \\{q_0\\}$ (only the self-loop is labelled 0).\n\n$S_1 = \\{q_0\\}$",
+          "scene": {
+            "current": [
+              "q0"
+            ],
+            "tape": {
+              "cells": [
+                "0",
+                "0",
+                "1",
+                "1"
+              ],
+              "head": 1
+            },
+            "edgeTones": {
+              "q0>q0": "accent"
+            }
+          }
+        },
+        {
+          "title": "Read the second 0",
+          "body": "Same move again: $S_2 = \\delta(q_0, 0) = \\{q_0\\}$.",
+          "scene": {
+            "current": [
+              "q0"
+            ],
+            "tape": {
+              "cells": [
+                "0",
+                "0",
+                "1",
+                "1"
+              ],
+              "head": 2
+            },
+            "edgeTones": {
+              "q0>q0": "accent"
+            }
+          }
+        },
+        {
+          "title": "Read the first 1 — the set branches",
+          "body": "$\\delta(q_0, 1) = \\{q_0, q_1\\}$: the self-loop keeps $q_0$, the edge to $q_1$ adds $q_1$.\n\n$S_3 = \\{q_0, q_1\\}$",
+          "scene": {
+            "current": [
+              "q0",
+              "q1"
+            ],
+            "tape": {
+              "cells": [
+                "0",
+                "0",
+                "1",
+                "1"
+              ],
+              "head": 3
+            },
+            "edgeTones": {
+              "q0>q0": "accent",
+              "q0>q1": "accent"
+            }
+          }
+        },
+        {
+          "title": "Read the last 1 from every state in the set",
+          "body": "$$S_4 = \\delta(q_0,1) \\cup \\delta(q_1,1) = \\{q_0,q_1\\} \\cup \\{q_2\\} = \\{q_0,q_1,q_2\\}$$\n\n$q_3$ is **not** reachable: it needs one more symbol after reaching $q_2$, and $q_2$ was only entered on the last symbol. So the answer is option (A).",
+          "scene": {
+            "current": [
+              "q0",
+              "q1",
+              "q2"
+            ],
+            "tape": {
+              "cells": [
+                "0",
+                "0",
+                "1",
+                "1"
+              ],
+              "head": 4
+            },
+            "edgeTones": {
+              "q0>q0": "accent",
+              "q0>q1": "accent",
+              "q1>q2": "accent"
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "$\\{q_0, q_1, q_2\\}$ — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Exactly the set reached after $0011$: $q_0$ (self-loop), $q_1$ (from $q_0$ on the last 1) and $q_2$ (from $q_1$ on the last 1)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$\\{q_0,q_1\\}$ is the set after $001$ — it stops one symbol early."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Reaching $q_3$ needs a 1 followed by at least two more symbols ($q_0 \\xrightarrow{1} q_1 \\to q_2 \\to q_3$); in $0011$ the first 1 is followed by only one symbol."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$q_0$ always stays reachable through its 0,1 self-loop, so the set can never be just $\\{q_3\\}$."
+        }
+      ],
+      "shortcut": "$q_0$ is always present (self-loop on 0 and 1). $q_1$ needs the last symbol to be 1; $q_2$ needs a 1, then any one symbol, then only 1s; $q_3$ needs a 1 followed by at least **two** more symbols. In $0011$ the first 1 is the third symbol, so $q_3$ is out and the set is $\\{q_0,q_1,q_2\\}$.",
+      "pitfalls": [
+        "Following just one path (like a DFA) — an NFA is in **all** branches at once.",
+        "Forgetting the self-loop on $q_0$, which keeps $q_0$ in every set."
+      ],
+      "verification": "Brute force all paths of length 4 from $q_0$: the ones that survive end in $q_0$ (0→0→0→0 loops), $q_1$ (loops, then 1) or $q_2$ (loops, 1, then 1). No path reaches $q_3$.",
+      "animation": {
+        "kind": "automaton",
+        "title": "NFA — active states light up",
+        "layout": "row",
+        "states": [
+          {
+            "id": "q0",
+            "label": "q₀",
+            "start": true
+          },
+          {
+            "id": "q1",
+            "label": "q₁"
+          },
+          {
+            "id": "q2",
+            "label": "q₂"
+          },
+          {
+            "id": "q3",
+            "label": "q₃",
+            "accept": true
+          }
+        ],
+        "edges": [
+          {
+            "from": "q0",
+            "to": "q0",
+            "label": "0,1"
+          },
+          {
+            "from": "q0",
+            "to": "q1",
+            "label": "1"
+          },
+          {
+            "from": "q1",
+            "to": "q2",
+            "label": "0,1"
+          },
+          {
+            "from": "q2",
+            "to": "q2",
+            "label": "1"
+          },
+          {
+            "from": "q2",
+            "to": "q3",
+            "label": "0,1"
+          }
+        ]
+      }
+    }
+  }
+}

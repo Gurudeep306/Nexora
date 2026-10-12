@@ -1,0 +1,66 @@
+/*
+  Solution handwriting — the prose of GATE worked solutions.
+
+  <html data-solution-font="…"> (look.solutionFont) sets, via the generated
+  theme CSS (src/theme/themeCss.ts):
+    --font-solution       family stack (with a metric-matched fallback)
+    --solution-scale      size multiplier — hand faces run small or loose
+    --solution-leading    unitless line-height
+    --solution-tracking   letter-spacing
+    --solution-weight     body weight
+    --solution-variation  design axes (Shantell's INFM)
+  Each .sol-hand block carries its authored size in --sol-size.
+
+  Only prose takes the hand: KaTeX, inline code and code blocks are reset
+  below, and the answer, canvas and controls never get .sol-hand at all.
+*/
+.md.sol-hand {
+  font-family: var(--font-solution, var(--font-body));
+  font-size: calc(var(--sol-size, 14px) * var(--solution-scale, 1));
+  line-height: var(--solution-leading, 1.75);
+  letter-spacing: var(--solution-tracking, normal);
+  font-weight: var(--solution-weight, 400);
+  font-variation-settings: var(--solution-variation, normal);
+  font-kerning: normal;
+  /* Hand faces have lining digits that read best evenly spaced in sums. */
+  font-variant-numeric: lining-nums;
+}
+
+.md.sol-hand.sol-title {
+  line-height: 1.4;
+  font-weight: calc(var(--solution-weight, 400) + 180);
+}
+
+.sol-hand strong {
+  font-weight: calc(var(--solution-weight, 400) + 200);
+}
+
+.sol-hand table {
+  font-size: 0.95em;
+}
+
+/* Architects Daughter is a single hairline weight; a touch of stroke keeps
+   it from going faint, most of all light-on-dark. */
+[data-solution-font='architects'] .md.sol-hand {
+  -webkit-text-stroke: 0.2px currentColor;
+}
+[data-mode='dark'][data-solution-font='architects'] .md.sol-hand {
+  -webkit-text-stroke-width: 0.3px;
+}
+
+/* Maths and code keep their own faces, sizes and spacing. */
+.sol-hand :is(code, .md-pre, .md-math, .md-display) {
+  font-variation-settings: normal;
+  letter-spacing: normal;
+  -webkit-text-stroke: 0;
+}
+.sol-hand code {
+  font-size: calc(0.86em / var(--solution-scale, 1));
+  font-weight: 400;
+}
+.sol-hand .md-math .katex {
+  font-size: calc(1.04em / var(--solution-scale, 1));
+}
+.sol-hand .md-display .katex {
+  font-size: calc(1.21em / var(--solution-scale, 1));
+}

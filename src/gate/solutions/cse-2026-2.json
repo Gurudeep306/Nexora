@@ -1,0 +1,92 @@
+{
+  "paper": "cse-2026-2",
+  "version": 2,
+  "solutions": {
+    "cse-2026-2-ga-3": {
+      "approach": "The four days are independent trials with $P(\\text{cloudy}) = \\frac12$, so the number of cloudy days is binomial: $P(k) = \\binom{4}{k}\\left(\\frac12\\right)^4$. Exactly three cloudy days means $k = 3$.",
+      "concepts": ["Binomial distribution", "Independent events", "Combinations"],
+      "steps": [
+        {
+          "title": "Model the four days",
+          "body": "Each day is cloudy with probability $p = 0.5$ and sunny with $1-p = 0.5$, independently. Every particular pattern of 4 days (e.g. C C C S) therefore has probability $\\left(\\frac12\\right)^4 = \\frac{1}{16}$."
+        },
+        {
+          "title": "Count the favourable patterns",
+          "body": "Three cloudy and one sunny day: only the position of the sunny day varies, so there are $\\binom{4}{3} = 4$ patterns — SCCC, CSCC, CCSC, CCCS."
+        },
+        {
+          "title": "Multiply",
+          "body": "$$P(3 \\text{ cloudy}) = \\binom{4}{3}\\left(\\frac12\\right)^3\\left(\\frac12\\right)^1 = \\frac{4}{16} = \\frac14$$"
+        }
+      ],
+      "answer": { "value": "$\\frac14$ — option (B)", "choice": ["B"], "matchesKey": true },
+      "optionAnalysis": [
+        { "option": "A", "correct": false, "reason": "$\\frac38 = \\frac{6}{16}$ is the probability of exactly **two** cloudy days ($\\binom42 = 6$ patterns)." },
+        { "option": "B", "correct": true, "reason": "$\\binom43 \\cdot \\frac1{16} = \\frac4{16} = \\frac14$." },
+        { "option": "C", "correct": false, "reason": "$\\frac34$ is $1 - \\frac14$, the probability of **not** getting exactly three cloudy days." },
+        { "option": "D", "correct": false, "reason": "$\\frac23$ cannot arise: with $p = \\frac12$ every answer is a multiple of $\\frac1{16}$." }
+      ],
+      "shortcut": "With $p = \\frac12$ all $2^4 = 16$ patterns are equally likely; just count the patterns with one S: 4 of 16.",
+      "pitfalls": ["Forgetting the factor $\\binom43 = 4$ and answering $\\frac1{16}$ for a single ordering."],
+      "verification": "The binomial probabilities $\\frac{1,4,6,4,1}{16}$ for $k = 0..4$ sum to 1, and $k = 3$ gives $\\frac{4}{16}$.",
+      "animation": {
+        "kind": "bars",
+        "title": "Number of cloudy days in 4 (each bar ×1/16)",
+        "bars": [
+          { "label": "0", "value": 1, "display": "1/16" },
+          { "label": "1", "value": 4, "display": "4/16" },
+          { "label": "2", "value": 6, "display": "6/16" },
+          { "label": "3", "value": 4, "display": "4/16", "tone": "success" },
+          { "label": "4", "value": 1, "display": "1/16" }
+        ],
+        "caption": "Exactly 3 cloudy days: $\\binom43 / 16 = 1/4$"
+      }
+    },
+    "cse-2026-2-cs-50": {
+      "approach": "Trace the program line by line, keeping a table of the variables and of what `ptr` points to. Every write through `*ptr` changes the variable `ptr` currently points at.",
+      "concepts": ["Pointers", "Dereferencing", "Program tracing"],
+      "steps": [
+        {
+          "title": "Initialise the variables",
+          "body": "Line 3 sets $a = 5$, $b = 11$, $c = 20$. `ptr` is not yet pointing anywhere.",
+          "scene": { "line": 3, "vars": { "ptr": "?", "a": 5, "b": 11, "c": 20 } }
+        },
+        {
+          "title": "Write c into a through ptr",
+          "body": "Line 4: `ptr = &a`, so `*ptr` **is** `a`.\n\nLine 5: `*ptr = c` stores $20$ into `a`: now $a = 20$.",
+          "scene": { "line": 5, "hl": [4], "vars": { "ptr": "&a", "a": 20, "b": 11, "c": 20 } }
+        },
+        {
+          "title": "Re-point ptr and copy b into a",
+          "body": "Line 6: `ptr = &c`, so `*ptr` is now `c`.\n\nLine 7: `a = *(&b)` — `&b` is b's address and `*` undoes it, so this is just `a = b`: $a = 11$.",
+          "scene": { "line": 7, "hl": [6], "vars": { "ptr": "&c", "a": 11, "b": 11, "c": 20 } }
+        },
+        {
+          "title": "Compute c and print it",
+          "body": "Line 8: `c = *ptr - a` reads `*ptr` (which is `c` = 20) **before** assigning: $c = 20 - 11 = 9$.\n\nLine 9 prints **9**.",
+          "scene": { "line": 9, "hl": [8], "vars": { "ptr": "&c", "a": 11, "b": 11, "c": 9 }, "output": "9" }
+        }
+      ],
+      "answer": {
+        "value": "The program prints **9**",
+        "number": 9,
+        "matchesKey": false,
+        "keyNote": "The bank's stored key for this question is **1**, but tracing the program unambiguously gives 9 (the GATE 2026 NAT keys in this paper look shifted/corrupted). The question is flagged for review until the official key is re-checked."
+      },
+      "shortcut": "Ignore the pointer noise: `*ptr = c` makes $a = 20$, `a = *(&b)` makes $a = 11$, and `*ptr` at the end is `c` itself, so $c = 20 - 11$.",
+      "pitfalls": [
+        "Thinking `*ptr = c` changes `c` — it changes whatever `ptr` points to (here `a`).",
+        "Using the old $a = 20$ in the last line; `a` was overwritten with 11 on line 7."
+      ],
+      "verification": "Rewrite without pointers: `a = c; a = b; c = c - a;` → $a = 20$, $a = 11$, $c = 20 - 11 = 9$.",
+      "animation": {
+        "kind": "code",
+        "title": "Trace",
+        "lang": "c",
+        "code": "int main(){\n    int *ptr, a, b, c;\n    a = 5; b = 11; c = 20;\n    ptr = &a;\n    *ptr = c;\n    ptr = &c;\n    a = *(&b);\n    c = *ptr - a;\n    printf(\"%d\", c);\n    return(0);\n}",
+        "line": 2,
+        "output": ""
+      }
+    }
+  }
+}

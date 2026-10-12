@@ -62,6 +62,7 @@ export function GateCalculator({
         .replace(/−/g, '-')
         .replace(/π/g, `${Math.PI}`)
         .replace(/\be\b/g, `${Math.E}`)
+        .replace(/\^/g, '**')
 
       // Handle simple math evaluation safely
       // eslint-disable-next-line no-new-func
@@ -182,13 +183,19 @@ export function GateCalculator({
   useEffect(() => {
     if (!isOpen) return
     const onKey = (e: KeyboardEvent) => {
+      const t = e.target as HTMLElement | null
+      if (t && t.closest('input, textarea, [contenteditable="true"]')) return
       if (e.key >= '0' && e.key <= '9') handleInput(e.key)
       else if (e.key === '.') handleInput('.')
       else if (e.key === '+') handleInput('+')
       else if (e.key === '-') handleInput('-')
       else if (e.key === '*') handleInput('×')
       else if (e.key === '/') handleInput('÷')
-      else if (e.key === 'Enter') handleEqual()
+      else if (e.key === '(' || e.key === ')') handleInput(e.key)
+      else if (e.key === 'Enter' || e.key === '=') {
+        e.preventDefault()
+        handleEqual()
+      }
       else if (e.key === 'Backspace') handleBackspace()
       else if (e.key === 'Escape') onClose()
     }
@@ -198,161 +205,127 @@ export function GateCalculator({
 
   if (!isOpen) return null
 
+  const key = 'h-8 rounded-md border text-[12.5px] transition-colors active:translate-y-px'
+  const fn = cn(key, 'border-border bg-bg-surface-2 text-text-secondary hover:bg-bg-surface-3 hover:text-text-primary')
+  const op = cn(key, 'border-border bg-bg-surface-3 font-semibold text-text-primary hover:border-border-hover')
+  const num = cn(key, 'border-border bg-bg-surface font-mono text-[14px] font-semibold text-text-primary hover:bg-bg-surface-2')
+  const danger = cn(key, 'border-state-error/40 bg-state-error/10 font-semibold text-state-error hover:bg-state-error/15')
+  const eq = cn(key, 'border-accent-brand bg-accent-brand font-semibold text-on-accent-brand hover:bg-accent-brand-hover')
+
+  const F = (label: string, name: string) => (
+    <button type="button" onClick={() => applyFunc(name)} className={fn}>
+      {label}
+    </button>
+  )
+  const I = (label: string, value: string, cls = num) => (
+    <button type="button" onClick={() => handleInput(value)} className={cls}>
+      {label}
+    </button>
+  )
+
   return (
     <div
       role="dialog"
       aria-labelledby="calc-title"
       className={cn(
-        'fixed z-50 rounded-2xl border border-border bg-[#181d28] text-white shadow-2xl backdrop-blur-xl transition-all duration-200 select-none font-sans',
-        isMinimized
-          ? 'bottom-6 right-6 w-72 p-3'
-          : 'bottom-4 right-4 sm:bottom-8 sm:right-8 w-[380px] max-w-[95vw] p-3.5',
+        'pop-surface fixed z-[110] rounded-2xl border border-border shadow-2xl select-none',
+        isMinimized ? 'bottom-4 left-4 w-64 p-2.5' : 'bottom-2 left-2 w-[360px] max-w-[calc(100vw-1rem)] p-3 sm:bottom-6 sm:left-6',
       )}
     >
-      {/* Header Bar */}
-      <div className="flex items-center justify-between border-b border-white/10 pb-2">
+      <div className="flex items-center justify-between border-b border-border pb-2">
         <div className="flex items-center gap-2">
-          <div className="rounded-md bg-accent-brand/20 p-1 text-accent-brand">
-            <CalcIcon className="size-4" />
-          </div>
-          <span id="calc-title" className="text-[12.5px] font-bold tracking-wide uppercase text-gray-200">
-            TCS iON Scientific Calculator
+          <CalcIcon className="size-4 text-text-muted" />
+          <span id="calc-title" className="text-[12.5px] font-semibold text-text-primary">
+            Scientific calculator
           </span>
-          {memory !== null && (
-            <span className="rounded bg-emerald-500/20 px-1 py-0.5 text-[10px] font-bold text-emerald-400">M</span>
-          )}
+          {memory !== null && <span className="rounded bg-bg-surface-3 px-1 text-[10px] font-bold text-text-secondary">M</span>}
         </div>
-
-        <div className="flex items-center gap-1 text-gray-400">
-          <button
-            type="button"
-            onClick={() => setIsMinimized((m) => !m)}
-            className="rounded p-1 hover:bg-white/10 hover:text-white"
-            title="Minimize"
-          >
+        <div className="flex items-center gap-0.5 text-text-muted">
+          <button type="button" onClick={() => setIsMinimized((m) => !m)} className="rounded p-1 hover:bg-bg-surface-2 hover:text-text-primary" aria-label={isMinimized ? 'Expand calculator' : 'Minimise calculator'}>
             <Minus className="size-3.5" />
           </button>
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded p-1 hover:bg-red-500/20 hover:text-red-400"
-            title="Close"
-          >
+          <button type="button" onClick={onClose} className="rounded p-1 hover:bg-bg-surface-2 hover:text-text-primary" aria-label="Close calculator">
             <X className="size-3.5" />
           </button>
         </div>
       </div>
 
-      {/* Calculator Body (Visible when not minimized) */}
       {!isMinimized && (
         <div className="mt-2 space-y-2">
-          {/* LCD Display */}
-          <div className="rounded-xl border border-white/10 bg-[#0f131a] p-2.5 text-right font-mono">
-            <div className="h-4 text-[11px] text-gray-400 truncate">{expr}</div>
-            <div className="text-[22px] font-bold text-white tracking-wide truncate">{display}</div>
+          <div className="rounded-lg border border-border bg-bg-field px-2.5 py-2 text-right font-mono" aria-live="polite">
+            <div className="h-4 truncate text-[11px] text-text-muted">{expr}</div>
+            <div className="truncate text-[22px] font-semibold text-text-primary">{display}</div>
           </div>
 
-          {/* Rad / Deg Mode & Memory Controls */}
-          <div className="grid grid-cols-6 gap-1 text-[11px] font-semibold">
-            <button
-              type="button"
-              onClick={() => setIsRad((r) => !r)}
-              className={cn(
-                'col-span-2 rounded-lg py-1 border transition-colors',
-                isRad
-                  ? 'bg-blue-600/30 border-blue-500 text-blue-300'
-                  : 'bg-emerald-600/30 border-emerald-500 text-emerald-300',
-              )}
-            >
-              {isRad ? 'RADIAN (Rad)' : 'DEGREE (Deg)'}
+          <div className="grid grid-cols-6 gap-1">
+            <button type="button" onClick={() => setIsRad((r) => !r)} className={cn(fn, 'col-span-2 font-semibold')} aria-label={`Angle mode: ${isRad ? 'radians' : 'degrees'}`}>
+              {isRad ? 'Rad' : 'Deg'}
             </button>
-            <button
-              type="button"
-              onClick={() => handleMemory('MC')}
-              className="rounded-lg bg-white/5 py-1 text-gray-300 hover:bg-white/10"
-            >
-              MC
-            </button>
-            <button
-              type="button"
-              onClick={() => handleMemory('MR')}
-              className="rounded-lg bg-white/5 py-1 text-gray-300 hover:bg-white/10"
-            >
-              MR
-            </button>
-            <button
-              type="button"
-              onClick={() => handleMemory('MS')}
-              className="rounded-lg bg-white/5 py-1 text-gray-300 hover:bg-white/10"
-            >
-              MS
-            </button>
-            <button
-              type="button"
-              onClick={() => handleMemory('M+')}
-              className="rounded-lg bg-white/5 py-1 text-gray-300 hover:bg-white/10"
-            >
-              M+
-            </button>
+            {(['MC', 'MR', 'MS', 'M+'] as const).map((m) => (
+              <button key={m} type="button" onClick={() => handleMemory(m)} className={fn}>
+                {m}
+              </button>
+            ))}
           </div>
 
-          {/* Scientific Operations Grid */}
-          <div className="grid grid-cols-5 gap-1 text-[11.5px] font-medium text-gray-300">
-            <button type="button" onClick={() => applyFunc('sin')} className="btn-calc-fn">sin</button>
-            <button type="button" onClick={() => applyFunc('cos')} className="btn-calc-fn">cos</button>
-            <button type="button" onClick={() => applyFunc('tan')} className="btn-calc-fn">tan</button>
-            <button type="button" onClick={() => applyFunc('ln')} className="btn-calc-fn">ln</button>
-            <button type="button" onClick={() => applyFunc('log10')} className="btn-calc-fn">log₁₀</button>
-
-            <button type="button" onClick={() => applyFunc('asin')} className="btn-calc-fn">sin⁻¹</button>
-            <button type="button" onClick={() => applyFunc('acos')} className="btn-calc-fn">cos⁻¹</button>
-            <button type="button" onClick={() => applyFunc('atan')} className="btn-calc-fn">tan⁻¹</button>
-            <button type="button" onClick={() => applyFunc('exp')} className="btn-calc-fn">eˣ</button>
-            <button type="button" onClick={() => applyFunc('10x')} className="btn-calc-fn">10ˣ</button>
-
-            <button type="button" onClick={() => applyFunc('sinh')} className="btn-calc-fn">sinh</button>
-            <button type="button" onClick={() => applyFunc('cosh')} className="btn-calc-fn">cosh</button>
-            <button type="button" onClick={() => applyFunc('tanh')} className="btn-calc-fn">tanh</button>
-            <button type="button" onClick={() => applyFunc('sqrt')} className="btn-calc-fn">√x</button>
-            <button type="button" onClick={() => applyFunc('cbrt')} className="btn-calc-fn">³√x</button>
-
-            <button type="button" onClick={() => applyFunc('sqr')} className="btn-calc-fn">x²</button>
-            <button type="button" onClick={() => applyFunc('cube')} className="btn-calc-fn">x³</button>
-            <button type="button" onClick={() => handleInput('^')} className="btn-calc-fn">xʸ</button>
-            <button type="button" onClick={() => applyFunc('inv')} className="btn-calc-fn">1/x</button>
-            <button type="button" onClick={() => applyFunc('fact')} className="btn-calc-fn">n!</button>
+          <div className="grid grid-cols-5 gap-1">
+            {F('sin', 'sin')}
+            {F('cos', 'cos')}
+            {F('tan', 'tan')}
+            {F('ln', 'ln')}
+            {F('log', 'log10')}
+            {F('sin⁻¹', 'asin')}
+            {F('cos⁻¹', 'acos')}
+            {F('tan⁻¹', 'atan')}
+            {F('eˣ', 'exp')}
+            {F('10ˣ', '10x')}
+            {F('sinh', 'sinh')}
+            {F('cosh', 'cosh')}
+            {F('tanh', 'tanh')}
+            {F('√x', 'sqrt')}
+            {F('∛x', 'cbrt')}
+            {F('x²', 'sqr')}
+            {F('x³', 'cube')}
+            {I('xʸ', '^', fn)}
+            {F('1/x', 'inv')}
+            {F('n!', 'fact')}
           </div>
 
-          {/* Standard Keypad & Operators */}
-          <div className="grid grid-cols-5 gap-1 pt-1 border-t border-white/10 text-[13px] font-bold">
-            <button type="button" onClick={() => handleInput('(')} className="btn-calc-op">(</button>
-            <button type="button" onClick={() => handleInput(')')} className="btn-calc-op">)</button>
-            <button type="button" onClick={() => handleInput('%')} className="btn-calc-op">mod</button>
-            <button type="button" onClick={handleClear} className="btn-calc-danger">C</button>
-            <button type="button" onClick={handleBackspace} className="btn-calc-danger">⌫</button>
-
-            <button type="button" onClick={() => handleInput('7')} className="btn-calc-num">7</button>
-            <button type="button" onClick={() => handleInput('8')} className="btn-calc-num">8</button>
-            <button type="button" onClick={() => handleInput('9')} className="btn-calc-num">9</button>
-            <button type="button" onClick={() => handleInput('÷')} className="btn-calc-op">÷</button>
-            <button type="button" onClick={() => handleInput(String(Math.PI))} className="btn-calc-fn">π</button>
-
-            <button type="button" onClick={() => handleInput('4')} className="btn-calc-num">4</button>
-            <button type="button" onClick={() => handleInput('5')} className="btn-calc-num">5</button>
-            <button type="button" onClick={() => handleInput('6')} className="btn-calc-num">6</button>
-            <button type="button" onClick={() => handleInput('×')} className="btn-calc-op">×</button>
-            <button type="button" onClick={() => handleInput(String(Math.E))} className="btn-calc-fn">e</button>
-
-            <button type="button" onClick={() => handleInput('1')} className="btn-calc-num">1</button>
-            <button type="button" onClick={() => handleInput('2')} className="btn-calc-num">2</button>
-            <button type="button" onClick={() => handleInput('3')} className="btn-calc-num">3</button>
-            <button type="button" onClick={() => handleInput('-')} className="btn-calc-op">−</button>
-            <button type="button" onClick={handleNegate} className="btn-calc-op">±</button>
-
-            <button type="button" onClick={() => handleInput('0')} className="btn-calc-num col-span-2">0</button>
-            <button type="button" onClick={() => handleInput('.')} className="btn-calc-num">.</button>
-            <button type="button" onClick={() => handleInput('+')} className="btn-calc-op">+</button>
-            <button type="button" onClick={handleEqual} className="btn-calc-eq">=</button>
+          <div className="grid grid-cols-5 gap-1 border-t border-border pt-2">
+            {I('(', '(', op)}
+            {I(')', ')', op)}
+            {I('mod', '%', op)}
+            <button type="button" onClick={handleClear} className={danger}>
+              C
+            </button>
+            <button type="button" onClick={handleBackspace} className={danger} aria-label="Backspace">
+              ⌫
+            </button>
+            {I('7', '7')}
+            {I('8', '8')}
+            {I('9', '9')}
+            {I('÷', '÷', op)}
+            {I('π', String(Math.PI), fn)}
+            {I('4', '4')}
+            {I('5', '5')}
+            {I('6', '6')}
+            {I('×', '×', op)}
+            {I('e', String(Math.E), fn)}
+            {I('1', '1')}
+            {I('2', '2')}
+            {I('3', '3')}
+            {I('−', '-', op)}
+            <button type="button" onClick={handleNegate} className={op} aria-label="Change sign">
+              ±
+            </button>
+            <button type="button" onClick={() => handleInput('0')} className={cn(num, 'col-span-2')}>
+              0
+            </button>
+            {I('.', '.')}
+            {I('+', '+', op)}
+            <button type="button" onClick={handleEqual} className={eq}>
+              =
+            </button>
           </div>
         </div>
       )}

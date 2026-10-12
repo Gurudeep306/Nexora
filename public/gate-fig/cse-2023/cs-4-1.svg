@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="14 38 372 266" role="img" aria-label="DFA with states s, p, q, r; start s, final p" fill="none" stroke="currentColor" stroke-width="1.6" font-family="Arial, Helvetica, sans-serif" font-size="16">
+  <title>DFA A: start s, final p</title>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0.8 L10,5 L0,9.2 z" fill="currentColor" stroke="none"/>
+    </marker>
+  </defs>
+  <!-- start arrow -->
+  <line x1="30" y1="110" x2="61" y2="110" marker-end="url(#ah)"/>
+  <!-- states -->
+  <circle cx="80" cy="110" r="18"/>
+  <circle cx="200" cy="110" r="18"/>
+  <circle cx="200" cy="110" r="13.5"/>
+  <circle cx="320" cy="110" r="18"/>
+  <circle cx="200" cy="230" r="18"/>
+  <g fill="currentColor" stroke="none" font-style="italic" text-anchor="middle">
+    <text x="80" y="116">s</text>
+    <text x="200" y="115">p</text>
+    <text x="320" y="115">q</text>
+    <text x="200" y="235">r</text>
+  </g>
+  <!-- s -1-> p -->
+  <line x1="98" y1="110" x2="181" y2="110" marker-end="url(#ah)"/>
+  <!-- p self-loop on 0 -->
+  <path d="M191,94.5 C176,56 224,56 209,94.5" marker-end="url(#ah)"/>
+  <!-- p -1-> q (upper arc) -->
+  <path d="M215,100 Q260,72 305,100" marker-end="url(#ah)"/>
+  <!-- q -1-> p (lower arc) -->
+  <path d="M305,120 Q260,148 215,120" marker-end="url(#ah)"/>
+  <!-- s -0-> r -->
+  <path d="M84,128 C92,200 140,230 181,230" marker-end="url(#ah)"/>
+  <!-- q -0-> r -->
+  <path d="M316,128 C308,200 260,230 219,230" marker-end="url(#ah)"/>
+  <!-- r self-loop on 0,1 (below) -->
+  <path d="M191,245.5 C176,284 224,284 209,245.5" marker-end="url(#ah)"/>
+  <g fill="currentColor" stroke="none" text-anchor="middle">
+    <text x="140" y="102">1</text>
+    <text x="200" y="56">0</text>
+    <text x="260" y="76">1</text>
+    <text x="260" y="156">1</text>
+    <text x="104" y="206">0</text>
+    <text x="296" y="206">0</text>
+    <text x="200" y="296">0,1</text>
+  </g>
+</svg>

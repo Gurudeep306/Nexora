@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 280" font-family="Arial, Helvetica, sans-serif" fill="none" stroke="currentColor" stroke-width="1.4">
+  <title>T flip-flop, D flip-flop and T flip-flop sharing clock CLKIN, with Q3 inverted and fed back to the first T input</title>
+  <!-- flip-flop boxes -->
+  <rect x="130" y="60" width="100" height="150"/>
+  <rect x="290" y="60" width="100" height="150"/>
+  <rect x="440" y="60" width="100" height="150"/>
+  <!-- clock triangles -->
+  <path d="M 130 166 L 140 174 L 130 182"/>
+  <path d="M 290 166 L 300 174 L 290 182"/>
+  <path d="M 440 166 L 450 174 L 440 182"/>
+  <g fill="currentColor" stroke="none" font-size="17">
+    <text x="138" y="92">T</text>
+    <text x="298" y="92">D</text>
+    <text x="448" y="92">T</text>
+    <text x="222" y="122" text-anchor="end">Q</text>
+    <text x="382" y="122" text-anchor="end">Q</text>
+    <text x="532" y="122" text-anchor="end">Q</text>
+    <text x="144" y="180">CLK</text>
+    <text x="304" y="180">CLK</text>
+    <text x="454" y="180">CLK</text>
+    <text x="236" y="140">Q1</text>
+    <text x="396" y="140">Q2</text>
+    <text x="546" y="140">Q3</text>
+    <text x="20" y="160">CLKIN</text>
+  </g>
+  <!-- data path -->
+  <path d="M 230 116 H 258 V 86 H 290"/>
+  <path d="M 390 116 H 415 V 86 H 440"/>
+  <path d="M 540 116 H 590"/>
+  <!-- inverter -->
+  <path d="M 590 104 L 614 116 L 590 128 Z"/>
+  <circle cx="618" cy="116" r="4"/>
+  <!-- feedback: NOT Q3 to T of first flip-flop -->
+  <path d="M 622 116 H 636 V 26 H 110 V 86 H 130"/>
+  <!-- clock distribution -->
+  <path d="M 20 174 H 130"/>
+  <path d="M 116 174 V 250 H 420 V 174 H 440"/>
+  <path d="M 270 250 V 174 H 290"/>
+  <circle cx="116" cy="174" r="3" fill="currentColor" stroke="none"/>
+  <circle cx="270" cy="250" r="3" fill="currentColor" stroke="none"/>
+</svg>

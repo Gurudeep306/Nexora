@@ -1,0 +1,63 @@
+{
+  "paper": "cse-2018",
+  "version": 2,
+  "solutions": {
+    "cse-2018-cs-49": {
+      "approach": "Plot the function on a 4-variable K-map, list **all** prime implicants (largest groups of 1s and don't-cares), then find the minterms that are covered by exactly one prime implicant — those prime implicants are essential. Don't-cares help form groups but never need covering.",
+      "concepts": ["Karnaugh map", "Prime implicant", "Essential prime implicant", "Don't-care conditions"],
+      "given": "$F(P,Q,R,S) = \\sum m(0,2,5,7,9,11) + d(3,8,10,12,14)$.",
+      "steps": [
+        {
+          "title": "Plot the 1s and don't-cares",
+          "body": "Rows are $PQ$ and columns $RS$, both in Gray-code order $00, 01, 11, 10$ (so the outer rows and columns are adjacent). Each cell's small number is its minterm index $8P+4Q+2R+S$.",
+          "scene": { "groups": [] }
+        },
+        {
+          "title": "Find every prime implicant",
+          "body": "Grow each group as large as possible using 1s and X's:\n\n| Prime implicant | Cells |\n|---|---|\n| $\\bar Q \\bar S$ | 0, 2, 8, 10 (four corners) |\n| $P \\bar Q$ | 8, 9, 10, 11 |\n| $\\bar Q R$ | 2, 3, 10, 11 |\n| $P \\bar S$ | 8, 10, 12, 14 |\n| $\\bar P Q S$ | 5, 7 |\n| $\\bar P R S$ | 3, 7 |\n\nNone can grow further (e.g. $\\bar P Q S$ would need 1 or 13, which are 0s).",
+          "scene": {
+            "groups": [
+              { "cells": [0, 2, 8, 10], "label": "Q′S′" },
+              { "cells": [8, 9, 10, 11], "label": "PQ′" },
+              { "cells": [2, 3, 10, 11], "label": "Q′R" },
+              { "cells": [8, 10, 12, 14], "label": "PS′" },
+              { "cells": [5, 7], "label": "P′QS" },
+              { "cells": [3, 7], "label": "P′RS" }
+            ]
+          }
+        },
+        {
+          "title": "Find minterms covered by only one prime implicant",
+          "body": "Check each **minterm** (not don't-care):\n\n- $m_0$: only $\\bar Q \\bar S$ → essential\n- $m_2$: $\\bar Q \\bar S$, $\\bar Q R$\n- $m_5$: only $\\bar P Q S$ → essential\n- $m_7$: $\\bar P Q S$, $\\bar P R S$\n- $m_9$: only $P \\bar Q$ → essential\n- $m_{11}$: $P \\bar Q$, $\\bar Q R$",
+          "scene": { "hl": [{ "cell": 0, "tone": "error" }, { "cell": 5, "tone": "error" }, { "cell": 9, "tone": "error" }] }
+        },
+        {
+          "title": "Count the essential prime implicants",
+          "body": "The essential prime implicants are $\\bar Q \\bar S$, $\\bar P Q S$ and $P \\bar Q$ — **3** of them. Together they already cover every minterm (0, 2 | 5, 7 | 9, 11), so the minimal SOP is $F = \\bar Q \\bar S + \\bar P Q S + P \\bar Q$.",
+          "scene": {
+            "groups": [
+              { "cells": [0, 2, 8, 10], "label": "Q′S′", "tone": "success" },
+              { "cells": [5, 7], "label": "P′QS", "tone": "success" },
+              { "cells": [8, 9, 10, 11], "label": "PQ′", "tone": "success" }
+            ],
+            "vars": { "essential PIs": 3 }
+          }
+        }
+      ],
+      "answer": { "value": "**3** essential prime implicants ($\\bar Q \\bar S$, $\\bar P Q S$, $P \\bar Q$)", "number": 3, "matchesKey": true },
+      "shortcut": "Look only at the 1-cells with few neighbours: $m_0$, $m_5$ and $m_9$ each sit in exactly one maximal group, so each forces its own essential PI. $m_2$, $m_7$, $m_{11}$ have two choices each.",
+      "pitfalls": [
+        "Counting $P\\bar S$ or $\\bar Q R$ as essential because they cover don't-cares — a PI is essential only if it is the sole cover of a **minterm**.",
+        "Missing the four-corner group $\\bar Q \\bar S$ by not treating the map as wrapping around."
+      ],
+      "verification": "Algebraic check of each essential PI: $\\bar Q\\bar S$ is the only PI with $Q=0, S=0$ containing $m_0 = 0000$; $\\bar P Q S$ is the only PI with $P=0, Q=1, S=1$ ($m_5 = 0101$ has neighbours 1, 4, 7, 13 — only 7 is non-zero); $m_9 = 1001$ has neighbours 1, 8, 11, 13 — only the group $8,9,10,11$ contains it.",
+      "animation": {
+        "kind": "kmap",
+        "title": "F(P,Q,R,S)",
+        "variables": ["P", "Q", "R", "S"],
+        "ones": [0, 2, 5, 7, 9, 11],
+        "dcs": [3, 8, 10, 12, 14]
+      }
+    }
+  }
+}

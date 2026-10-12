@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1420 540" role="img" aria-label="Star P becomes Q after Operation 1, and Q becomes R after Operation 2" font-family="Arial, Helvetica, sans-serif">
+  <g fill="none" stroke="currentColor" stroke-width="7" stroke-linejoin="miter" stroke-miterlimit="10">
+    <polygon points="160,105 193,205 365,120 215,270 260,373 162,307 30,377 110,270 50,217 125,203"/>
+    <polygon points="860,240 760,273 845,445 695,295 592,340 658,242 588,110 695,190 748,130 762,205"/>
+    <polygon points="1380,250 1280,217 1365,45 1215,195 1112,150 1178,248 1108,380 1215,300 1268,360 1282,285"/>
+  </g>
+  <g stroke="currentColor" stroke-width="5" fill="none">
+    <line x1="390" y1="260" x2="547" y2="260"/>
+    <line x1="885" y1="250" x2="1042" y2="250"/>
+  </g>
+  <g fill="currentColor" stroke="none">
+    <polygon points="565,260 537,247 537,273"/>
+    <polygon points="1060,250 1032,237 1032,263"/>
+  </g>
+  <g fill="currentColor" font-size="44" font-style="italic" text-anchor="middle">
+    <text x="478" y="215">Operation 1</text>
+    <text x="968" y="205">Operation 2</text>
+  </g>
+  <g fill="currentColor" font-size="56" font-weight="700" text-anchor="middle">
+    <text x="165" y="510">P</text>
+    <text x="720" y="510">Q</text>
+    <text x="1240" y="510">R</text>
+  </g>
+</svg>

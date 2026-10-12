@@ -1,768 +1,384 @@
-import { useState, useMemo } from 'react'
-import {
-  Search,
-  SlidersHorizontal,
-  RotateCcw,
-  Layers,
-  Calendar,
-  Sparkles,
-  ChevronDown,
-  ChevronUp,
-  Cpu,
-  Brain,
-  Terminal,
-  Sigma,
-  Binary,
-  LayoutGrid,
-  Columns2,
-  Square,
-  X,
-  ArrowUpDown,
-  Filter,
-  Image as ImageIcon,
-} from 'lucide-react'
+import { useMemo, useState } from 'react'
+import { ArrowUpDown, Bookmark, ChevronDown, FileText, Image as ImageIcon, LayoutList, Layers, Search, SlidersHorizontal, Square, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { GateCustomSelect, type SelectOption } from './GateCustomSelect'
-import { type GateMeta, type GateList, TYPE_LABEL, type QType } from './types'
+import { TYPE_LABEL, paperLabel, type GateList, type GateMeta, type QType } from './types'
 
-export type ViewMode = 'focus' | 'split' | 'grid'
+export type ViewMode = 'practice' | 'list'
 
-interface GateFilterStudioProps {
-  searchInput: string
-  setSearchInput: (v: string) => void
-  sort: string
-  setSort: (v: string) => void
-  viewMode: ViewMode
-  setViewMode: (m: ViewMode) => void
+/** Filter state, as kept in the URL (lists are comma-joined there). */
+export interface GateFilters {
+  q: string
   exam: string[]
-  toggleExam: (e: string) => void
-  setExam: (e: string[]) => void
+  paper: string[]
   year: string[]
-  toggleYear: (y: string) => void
-  setYear: (y: string[]) => void
   subject: string[]
-  toggleSubject: (s: string) => void
-  setSubject?: (s: string[]) => void
   topic: string[]
-  toggleTopic: (t: string) => void
   type: string[]
-  toggleType: (t: string) => void
   marks: string[]
-  toggleMarks: (m: string) => void
+  section: string[]
   hasFigure: string
-  setFigureFilter: (f: string) => void
-  clearAll: () => void
-  meta?: GateMeta | null
-  list?: GateList | null
-  total?: number
+  saved: boolean
+  sort: string
 }
 
-const DOMAIN_GROUPS = [
-  {
-    id: 'math',
-    title: 'Math & Foundations',
-    icon: Sigma,
-    subjects: [
-      { id: 'dm', label: 'Discrete Math' },
-      { id: 'la', label: 'Linear Algebra' },
-      { id: 'calc', label: 'Calculus' },
-      { id: 'prob', label: 'Probability & Stats' },
-    ],
-  },
-  {
-    id: 'algo',
-    title: 'Algorithms & Coding',
-    icon: Terminal,
-    subjects: [
-      { id: 'algo', label: 'Algorithms' },
-      { id: 'pds', label: 'Data Structures' },
-      { id: 'pdsa', label: 'DS & Algorithms' },
-    ],
-  },
-  {
-    id: 'systems',
-    title: 'Computer Systems',
-    icon: Cpu,
-    subjects: [
-      { id: 'os', label: 'Operating Systems' },
-      { id: 'cn', label: 'Computer Networks' },
-      { id: 'db', label: 'Database Systems' },
-      { id: 'coa', label: 'Computer Architecture' },
-      { id: 'dl', label: 'Digital Logic' },
-    ],
-  },
-  {
-    id: 'ai',
-    title: 'AI, ML & Data Science',
-    icon: Brain,
-    subjects: [
-      { id: 'ml', label: 'Machine Learning' },
-      { id: 'ai', label: 'Artificial Intelligence' },
-      { id: 'dbw', label: 'Data Warehousing' },
-    ],
-  },
-  {
-    id: 'theory',
-    title: 'Theory & Compilers',
-    icon: Binary,
-    subjects: [
-      { id: 'toc', label: 'Theory of Computation' },
-      { id: 'cd', label: 'Compiler Design' },
-    ],
-  },
-  {
-    id: 'aptitude',
-    title: 'General Aptitude',
-    icon: Sparkles,
-    subjects: [{ id: 'ga', label: 'General Aptitude' }],
-  },
+const SORT_OPTIONS: SelectOption[] = [
+  { value: 'year-desc', label: 'Newest first' },
+  { value: 'year-asc', label: 'Oldest first' },
+  { value: 'marks-desc', label: '2-mark first' },
+  { value: 'marks-asc', label: '1-mark first' },
+  { value: 'subject-asc', label: 'Subject A–Z' },
 ]
 
-const SORT_OPTIONS: SelectOption[] = [
-  { value: 'year-desc', label: 'Newest First (2026 → 1991)', badge: 'Latest' },
-  { value: 'year-asc', label: 'Oldest First (1991 → 2026)' },
-  { value: 'marks-desc', label: 'Highest Weight (2M → 1M)', badge: '2 Marks' },
-  { value: 'marks-asc', label: 'Lowest Weight (1M → 2M)' },
-  { value: 'subject-asc', label: 'Subject (A to Z)' },
+const EXAMS = [
+  { id: '', label: 'All' },
+  { id: 'CSE', label: 'CSE' },
+  { id: 'IT', label: 'IT' },
+  { id: 'DA', label: 'DA' },
 ]
+
+const ERAS: Array<[string, number, number]> = [
+  ['2024–26', 2024, 2026],
+  ['2018–23', 2018, 2023],
+  ['2010–17', 2010, 2017],
+  ['1991–2009', 1991, 2009],
+]
+
+const TYPES: QType[] = ['MCQ', 'MSQ', 'NAT', 'MATCH', 'FILL', 'TF', 'DESC']
+
+function Pill({ on, onClick, children, title }: { on: boolean; onClick: () => void; children: React.ReactNode; title?: string }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={on}
+      title={title}
+      className={cn(
+        'inline-flex h-8 items-center gap-1.5 rounded-lg border px-2.5 text-[12.5px] transition-colors',
+        on ? 'border-accent-brand bg-accent-brand/10 font-semibold text-accent-brand' : 'border-border bg-bg-surface text-text-secondary hover:border-border-hover hover:text-text-primary',
+      )}
+    >
+      {children}
+    </button>
+  )
+}
 
 export function GateFilterStudio({
+  f,
   searchInput,
   setSearchInput,
-  sort,
-  setSort,
+  setList,
+  toggle,
+  setParam,
+  patch,
   viewMode,
   setViewMode,
-  exam,
-  toggleExam,
-  setExam,
-  year,
-  toggleYear,
-  setYear,
-  subject,
-  toggleSubject,
-  topic,
-  toggleTopic,
-  type,
-  toggleType,
-  marks,
-  toggleMarks,
-  hasFigure,
-  setFigureFilter,
   clearAll,
   meta,
   list,
-}: GateFilterStudioProps) {
-  const [drawerOpen, setDrawerOpen] = useState(false)
-  const [activeTab, setActiveTab] = useState<'subject' | 'year' | 'specs'>('subject')
+  savedCount,
+}: {
+  f: GateFilters
+  searchInput: string
+  setSearchInput: (v: string) => void
+  setList: (key: keyof GateFilters, vals: string[]) => void
+  toggle: (key: keyof GateFilters, v: string) => void
+  setParam: (key: string, v: string | null) => void
+  patch: (p: Record<string, string | null>) => void
+  viewMode: ViewMode
+  setViewMode: (m: ViewMode) => void
+  clearAll: () => void
+  meta?: GateMeta | null
+  list?: GateList | null
+  savedCount: number
+}) {
+  const [more, setMore] = useState(false)
+  const facets = list?.facets
 
-  // Collect all available years
-  const allYears = useMemo(() => {
-    const set = new Set((meta?.papers ?? []).map((p) => p.year))
-    return [...set].sort((a, b) => b - a)
-  }, [meta])
+  /* Paper navigation: grouped by year, newest first, narrowed by exam. */
+  const paperOptions = useMemo<SelectOption[]>(() => {
+    const papers = (meta?.papers ?? []).filter((p) => !f.exam.length || f.exam.includes(p.exam))
+    const sorted = [...papers].sort((a, b) => b.year - a.year || a.exam.localeCompare(b.exam) || (a.set ?? 0) - (b.set ?? 0))
+    return [
+      { value: '', label: 'All papers' },
+      ...sorted.map((p) => ({ value: p.id, label: paperLabel(p).replace('GATE ', ''), group: String(p.year), badge: String(p.count) })),
+    ]
+  }, [meta, f.exam])
 
-  // Collect topics for active subjects
-  const activeSubjectTopics = useMemo(() => {
-    if (subject.length === 0 || !meta?.subjects) return []
-    const combined: { key: string; label: string; subjId: string }[] = []
-
-    for (const subjId of subject) {
-      const cseObj = meta.subjects.CSE?.[subjId]
-      const daObj = meta.subjects.DA?.[subjId]
-      const topicMap = { ...(cseObj?.topics || {}), ...(daObj?.topics || {}) }
-      for (const [tKey, tName] of Object.entries(topicMap)) {
-        combined.push({ key: `${subjId}/${tKey}`, label: tName, subjId })
-      }
+  /* Subjects: core CS, then DA-only, then retired syllabus. */
+  const subjectOptions = useMemo<SelectOption[]>(() => {
+    const cse = meta?.subjects?.CSE ?? {}
+    const da = meta?.subjects?.DA ?? {}
+    const out: SelectOption[] = [{ value: '', label: 'All subjects' }]
+    const count = (id: string) => {
+      const n = facets?.subject?.[id]
+      return n != null ? String(n) : undefined
     }
-    return combined
-  }, [subject, meta])
+    for (const [id, s] of Object.entries(cse)) {
+      if (id === 'legacy' || id === 'pdsa') continue
+      out.push({ value: id, label: s.name, group: id === 'ga' ? 'Aptitude' : 'Computer science', badge: count(id) })
+    }
+    for (const [id, s] of Object.entries(da)) {
+      if (cse[id] && id !== 'pdsa') continue
+      out.push({ value: id, label: s.name, group: 'Data science & AI', badge: count(id) })
+    }
+    if (cse.legacy) out.push({ value: 'legacy', label: cse.legacy.name, group: 'Other', badge: count('legacy') })
+    // Sort groups so "Aptitude" comes first.
+    const order = ['', 'Aptitude', 'Computer science', 'Data science & AI', 'Other']
+    return out.sort((a, b) => order.indexOf(a.group ?? '') - order.indexOf(b.group ?? ''))
+  }, [meta, facets])
 
-  const selectEra = (startYear: number, endYear: number) => {
-    const eraYears = allYears
-      .filter((y) => y >= startYear && y <= endYear)
-      .map(String)
-    const isSelected =
-      eraYears.length > 0 &&
-      eraYears.length === year.length &&
-      eraYears.every((y) => year.includes(y))
-    if (isSelected) setYear([])
-    else setYear(eraYears)
+  const topicOptions = useMemo(() => {
+    if (f.subject.length !== 1 || !meta) return []
+    const s = f.subject[0]
+    const topics = { ...(meta.subjects.CSE?.[s]?.topics ?? {}), ...(meta.subjects.DA?.[s]?.topics ?? {}) }
+    return Object.entries(topics).map(([k, label]) => ({ key: `${s}/${k}`, label, n: facets?.topic?.[`${s}/${k}`] ?? 0 }))
+  }, [f.subject, meta, facets])
+
+  const years = useMemo(() => [...new Set((meta?.papers ?? []).map((p) => p.year))].sort((a, b) => b - a), [meta])
+
+  const selectEra = (a: number, b: number) => {
+    const ys = years.filter((y) => y >= a && y <= b).map(String)
+    const same = ys.length === f.year.length && ys.every((y) => f.year.includes(y))
+    setList('year', same ? [] : ys)
   }
 
-  const activeCount =
-    exam.length +
-    year.length +
-    subject.length +
-    topic.length +
-    type.length +
-    marks.length +
-    (hasFigure ? 1 : 0) +
-    (searchInput ? 1 : 0)
+  const moreCount = f.year.length + f.topic.length + f.type.length + f.marks.length + f.section.length + (f.hasFigure ? 1 : 0)
+
+  /* Active filter chips. */
+  const chips: Array<{ key: string; label: string; clear: () => void }> = []
+  const subjName = (id: string) => subjectOptions.find((o) => o.value === id)?.label ?? id.toUpperCase()
+  if (f.saved) chips.push({ key: 'saved', label: 'Bookmarked', clear: () => setParam('saved', null) })
+  f.exam.forEach((e) => chips.push({ key: `e${e}`, label: `GATE ${e}`, clear: () => toggle('exam', e) }))
+  f.paper.forEach((p) => chips.push({ key: `p${p}`, label: paperOptions.find((o) => o.value === p)?.label ?? p, clear: () => toggle('paper', p) }))
+  f.subject.forEach((s) => chips.push({ key: `s${s}`, label: subjName(s), clear: () => toggle('subject', s) }))
+  f.topic.forEach((t) => chips.push({ key: `t${t}`, label: topicOptions.find((o) => o.key === t)?.label ?? t.split('/').pop()!, clear: () => toggle('topic', t) }))
+  if (f.year.length > 3) chips.push({ key: 'years', label: `${Math.min(...f.year.map(Number))}–${Math.max(...f.year.map(Number))} (${f.year.length} years)`, clear: () => setList('year', []) })
+  else f.year.forEach((y) => chips.push({ key: `y${y}`, label: y, clear: () => toggle('year', y) }))
+  f.type.forEach((t) => chips.push({ key: `ty${t}`, label: t, clear: () => toggle('type', t) }))
+  f.marks.forEach((m) => chips.push({ key: `m${m}`, label: `${m} mark`, clear: () => toggle('marks', m) }))
+  f.section.forEach((s) => chips.push({ key: `sec${s}`, label: s === 'ga' ? 'Aptitude section' : 'Core section', clear: () => toggle('section', s) }))
+  if (f.hasFigure) chips.push({ key: 'fig', label: f.hasFigure === 'yes' ? 'With figures' : 'Without figures', clear: () => setParam('hasFigure', null) })
+  if (f.q) chips.push({ key: 'q', label: `“${f.q}”`, clear: () => setSearchInput('') })
 
   return (
-    <div className="relative overflow-hidden rounded-3xl border border-border/80 bg-bg-surface-2/40 p-4 sm:p-5 shadow-xl backdrop-blur-xl transition-all space-y-4">
-      {/* ── Level 1: Primary Command Bar ── */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        {/* Search Input Box */}
-        <div className="group relative flex min-w-[260px] flex-1 items-center gap-2.5 rounded-2xl border border-border/90 bg-bg-surface/80 px-3.5 py-2 shadow-inner backdrop-blur-md transition-all focus-within:border-accent-brand focus-within:ring-2 focus-within:ring-accent-brand/20">
-          <Search className="size-4 text-text-muted transition-colors group-focus-within:text-accent-brand shrink-0" />
+    <section className="card space-y-3 !p-3 sm:!p-4" aria-label="Find questions">
+      {/* Row 1: search + view */}
+      <div className="flex items-center gap-2">
+        <label className="flex h-10 min-w-0 flex-1 items-center gap-2 rounded-xl border border-border-input bg-bg-field px-3 focus-within:border-accent-brand focus-within:ring-2 focus-within:ring-accent-brand/20">
+          <Search className="size-4 shrink-0 text-text-muted" />
+          <span className="sr-only">Search questions</span>
           <input
+            type="search"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            placeholder='Search 4,100+ questions (e.g. "DFA", "QuickSort", "Eigenvalues", "Paging")'
-            className="w-full bg-transparent text-[13.5px] text-text-primary outline-none placeholder:text-text-muted"
+            placeholder={`Search ${meta ? meta.total.toLocaleString() : ''} questions — e.g. "deadlock", paging, B+ tree`}
+            className="min-w-0 flex-1 bg-transparent text-[14px] text-text-primary outline-none placeholder:text-text-muted [&::-webkit-search-cancel-button]:hidden"
             spellCheck={false}
           />
           {searchInput && (
-            <button
-              type="button"
-              onClick={() => setSearchInput('')}
-              className="text-text-muted hover:text-text-primary cursor-pointer transition-colors"
-            >
+            <button type="button" onClick={() => setSearchInput('')} className="text-text-muted hover:text-text-primary" aria-label="Clear search">
               <X className="size-4" />
             </button>
           )}
+        </label>
+        <div className="flex h-10 shrink-0 items-center rounded-xl border border-border bg-bg-surface p-0.5" role="tablist" aria-label="View">
+          {(
+            [
+              ['practice', 'Practice', Square],
+              ['list', 'List', LayoutList],
+            ] as const
+          ).map(([id, label, I]) => (
+            <button
+              key={id}
+              type="button"
+              role="tab"
+              aria-selected={viewMode === id}
+              onClick={() => setViewMode(id)}
+              className={cn(
+                'inline-flex h-full items-center gap-1.5 rounded-[10px] px-2.5 text-[13px] transition-colors sm:px-3',
+                viewMode === id ? 'bg-bg-surface-3 font-semibold text-text-primary' : 'text-text-muted hover:text-text-primary',
+              )}
+              title={label}
+            >
+              <I className="size-3.5" />
+              <span className="hidden sm:inline">{label}</span>
+            </button>
+          ))}
         </div>
+      </div>
 
-        {/* View Mode Switcher (Deck / Split / Grid) */}
-        <div className="flex items-center gap-1 rounded-2xl border border-border/80 bg-bg-surface/80 p-1 shadow-sm">
-          <button
-            type="button"
-            onClick={() => setViewMode('focus')}
-            title="Focus Deck Mode (1 Question at a time with Question Strip)"
-            className={cn(
-              'flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-[12px] font-bold transition-all cursor-pointer',
-              viewMode === 'focus'
-                ? 'bg-accent-brand text-on-accent-brand shadow-sm'
-                : 'text-text-muted hover:text-text-primary',
-            )}
-          >
-            <Square className="size-3.5" />
-            <span className="hidden md:inline">Focus Deck</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setViewMode('split')}
-            title="Split Workspace Mode (Question Queue on left, Active studio on right)"
-            className={cn(
-              'flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-[12px] font-bold transition-all cursor-pointer',
-              viewMode === 'split'
-                ? 'bg-accent-brand text-on-accent-brand shadow-sm'
-                : 'text-text-muted hover:text-text-primary',
-            )}
-          >
-            <Columns2 className="size-3.5" />
-            <span className="hidden md:inline">Split Studio</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setViewMode('grid')}
-            title="Bento Grid Mode (Compact Modular Cards)"
-            className={cn(
-              'flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-[12px] font-bold transition-all cursor-pointer',
-              viewMode === 'grid'
-                ? 'bg-accent-brand text-on-accent-brand shadow-sm'
-                : 'text-text-muted hover:text-text-primary',
-            )}
-          >
-            <LayoutGrid className="size-3.5" />
-            <span className="hidden md:inline">Bento Grid</span>
-          </button>
+      {/* Row 2: primary navigation — exam, paper, subject, sort */}
+      <div className="flex flex-wrap items-center gap-2">
+        <div className="flex h-9 items-center rounded-xl border border-border bg-bg-surface p-0.5" role="radiogroup" aria-label="Exam">
+          {EXAMS.map((e) => {
+            const on = e.id ? f.exam.length === 1 && f.exam[0] === e.id : f.exam.length === 0
+            return (
+              <button
+                key={e.id || 'all'}
+                type="button"
+                role="radio"
+                aria-checked={on}
+                onClick={() => patch({ exam: e.id || null, paper: null })}
+                className={cn('h-full rounded-[10px] px-2.5 text-[12.5px] transition-colors', on ? 'bg-bg-surface-3 font-semibold text-text-primary' : 'text-text-muted hover:text-text-primary')}
+              >
+                {e.label}
+              </button>
+            )
+          })}
         </div>
-
-        {/* Custom Sort Dropdown */}
         <GateCustomSelect
-          value={sort}
-          onChange={setSort}
-          options={SORT_OPTIONS}
-          label="Sort"
-          icon={<ArrowUpDown className="size-3.5" />}
-          align="right"
+          className="min-w-0 flex-1 basis-40 sm:max-w-56"
+          value={f.paper.length === 1 ? f.paper[0] : ''}
+          onChange={(v) => setList('paper', v ? [v] : [])}
+          options={paperOptions}
+          icon={<FileText className="size-3.5" />}
+          placeholder="All papers"
+          searchable
         />
-
-        {/* Filter Drawer Toggle */}
+        <GateCustomSelect
+          className="min-w-0 flex-1 basis-40 sm:max-w-60"
+          value={f.subject.length === 1 ? f.subject[0] : ''}
+          onChange={(v) => patch({ subject: v || null, topic: null })}
+          options={subjectOptions}
+          icon={<Layers className="size-3.5" />}
+          placeholder="All subjects"
+          searchable
+        />
+        <GateCustomSelect className="min-w-0 basis-36 sm:w-40" value={f.sort} onChange={(v) => setParam('sort', v === 'year-desc' ? null : v)} options={SORT_OPTIONS} icon={<ArrowUpDown className="size-3.5" />} align="right" />
         <button
           type="button"
-          onClick={() => setDrawerOpen((prev) => !prev)}
+          onClick={() => setMore((m) => !m)}
+          aria-expanded={more}
           className={cn(
-            'flex items-center gap-2 rounded-2xl border px-3.5 py-2 text-[13px] font-bold transition-all cursor-pointer shadow-sm',
-            drawerOpen || activeCount > 0
-              ? 'border-accent-brand bg-accent-brand/15 text-accent-brand'
-              : 'border-border/80 bg-bg-surface/80 text-text-primary hover:border-accent-brand/50',
+            'inline-flex h-9 items-center gap-1.5 rounded-xl border px-3 text-[13px] transition-colors',
+            more || moreCount ? 'border-accent-brand/60 text-accent-brand' : 'border-border text-text-secondary hover:text-text-primary',
           )}
         >
-          <SlidersHorizontal className="size-4" />
-          <span>Filters</span>
-          {activeCount > 0 && (
-            <span className="flex size-5 items-center justify-center rounded-full bg-accent-brand text-[10.5px] font-mono text-on-accent-brand">
-              {activeCount}
-            </span>
-          )}
-          {drawerOpen ? <ChevronUp className="size-3.5" /> : <ChevronDown className="size-3.5" />}
+          <SlidersHorizontal className="size-3.5" />
+          More
+          {moreCount > 0 && <span className="rounded-full bg-accent-brand px-1.5 font-mono text-[10.5px] text-on-accent-brand">{moreCount}</span>}
+          <ChevronDown className={cn('size-3.5 transition-transform', more && 'rotate-180')} />
         </button>
-
-        {activeCount > 0 && (
-          <button
-            type="button"
-            onClick={clearAll}
-            className="flex items-center gap-1 text-[12px] font-semibold text-text-muted hover:text-red-400 cursor-pointer transition-colors"
-          >
-            <RotateCcw className="size-3.5" />
-            <span>Reset</span>
-          </button>
-        )}
+        <Pill on={f.saved} onClick={() => setParam('saved', f.saved ? null : '1')} title="Only bookmarked questions">
+          <Bookmark className={cn('size-3.5', f.saved && 'fill-current')} />
+          <span>Saved{savedCount ? ` (${savedCount})` : ''}</span>
+        </Pill>
       </div>
 
-      {/* ── Level 2: Quick Exam Stream Switcher ── */}
-      <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border/60 pt-3">
-        <div className="flex items-center gap-1.5">
-          <span className="text-[11px] font-bold tracking-wider text-text-muted uppercase mr-1">
-            Stream:
-          </span>
-          <button
-            type="button"
-            onClick={() => setExam([])}
-            className={cn(
-              'rounded-xl px-3 py-1 text-[12px] font-bold transition-all cursor-pointer border',
-              exam.length === 0
-                ? 'border-accent-brand bg-accent-brand text-on-accent-brand shadow-sm'
-                : 'border-border/70 bg-bg-surface text-text-muted hover:text-text-primary',
-            )}
-          >
-            ⚡ All Exams
-          </button>
+      {/* More filters */}
+      {more && (
+        <div className="grid gap-4 border-t border-border pt-3 md:grid-cols-2">
+          <fieldset className="space-y-2">
+            <legend className="mb-1.5 text-[11.5px] font-semibold tracking-wide text-text-muted uppercase">Year</legend>
+            <div className="flex flex-wrap gap-1.5">
+              {ERAS.map(([label, a, b]) => {
+                const ys = years.filter((y) => y >= a && y <= b).map(String)
+                const on = ys.length > 0 && ys.length === f.year.length && ys.every((y) => f.year.includes(y))
+                return (
+                  <Pill key={label} on={on} onClick={() => selectEra(a, b)}>
+                    {label}
+                  </Pill>
+                )
+              })}
+            </div>
+            <div className="flex max-h-28 flex-wrap gap-1 overflow-y-auto">
+              {years.map((y) => {
+                const on = f.year.includes(String(y))
+                return (
+                  <button
+                    key={y}
+                    type="button"
+                    aria-pressed={on}
+                    onClick={() => toggle('year', String(y))}
+                    className={cn('h-7 rounded-md px-1.5 font-mono text-[12px] transition-colors', on ? 'bg-accent-brand text-on-accent-brand' : 'text-text-secondary hover:bg-bg-surface-2 hover:text-text-primary')}
+                  >
+                    {y}
+                  </button>
+                )
+              })}
+            </div>
+          </fieldset>
 
-          <button
-            type="button"
-            onClick={() => setExam(['CSE'])}
-            className={cn(
-              'rounded-xl px-3 py-1 text-[12px] font-bold transition-all cursor-pointer border',
-              exam.length === 1 && exam[0] === 'CSE'
-                ? 'border-blue-500 bg-blue-600 text-white shadow-sm'
-                : 'border-border/70 bg-bg-surface text-text-muted hover:text-text-primary',
-            )}
-          >
-            💻 GATE CSE
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setExam(['DA'])}
-            className={cn(
-              'rounded-xl px-3 py-1 text-[12px] font-bold transition-all cursor-pointer border',
-              exam.length === 1 && exam[0] === 'DA'
-                ? 'border-purple-500 bg-purple-600 text-white shadow-sm'
-                : 'border-border/70 bg-bg-surface text-text-muted hover:text-text-primary',
-            )}
-          >
-            🤖 GATE DA (Data Science & AI)
-          </button>
-        </div>
-
-        {/* Quick Marks & Diagram Fast Filters */}
-        <div className="flex items-center gap-1.5">
-          <button
-            type="button"
-            onClick={() => toggleMarks('2')}
-            className={cn(
-              'rounded-xl px-2.5 py-1 text-[11.5px] font-semibold border transition-all cursor-pointer',
-              marks.includes('2')
-                ? 'border-accent-brand bg-accent-brand/20 text-accent-brand'
-                : 'border-border/60 bg-bg-surface/60 text-text-muted hover:text-text-primary',
-            )}
-          >
-            🎯 2-Mark High Scorers
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setFigureFilter(hasFigure === 'yes' ? '' : 'yes')}
-            className={cn(
-              'rounded-xl px-2.5 py-1 text-[11.5px] font-semibold border transition-all cursor-pointer flex items-center gap-1',
-              hasFigure === 'yes'
-                ? 'border-accent-brand bg-accent-brand/20 text-accent-brand'
-                : 'border-border/60 bg-bg-surface/60 text-text-muted hover:text-text-primary',
-            )}
-          >
-            <ImageIcon className="size-3" />
-            <span>With Diagrams</span>
-          </button>
-        </div>
-      </div>
-
-      {/* ── Level 3: Expandable Deep Filter Console ── */}
-      {drawerOpen && (
-        <div className="animate-in fade-in-0 duration-200 border-t border-border/80 pt-4 space-y-4">
-          {/* Sub-tab selection */}
-          <div className="flex items-center gap-2 border-b border-border/60 pb-2.5 text-[12.5px] font-bold">
-            <button
-              type="button"
-              onClick={() => setActiveTab('subject')}
-              className={cn(
-                'flex items-center gap-1.5 rounded-xl px-3 py-1.5 transition-all cursor-pointer',
-                activeTab === 'subject'
-                  ? 'bg-accent-brand text-on-accent-brand shadow-sm'
-                  : 'text-text-muted hover:text-text-primary',
-              )}
-            >
-              <Layers className="size-3.5" />
-              <span>Subjects & Topics</span>
-              {subject.length > 0 && (
-                <span className="rounded-full bg-white/20 px-1.5 text-[10px]">{subject.length}</span>
-              )}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveTab('year')}
-              className={cn(
-                'flex items-center gap-1.5 rounded-xl px-3 py-1.5 transition-all cursor-pointer',
-                activeTab === 'year'
-                  ? 'bg-accent-brand text-on-accent-brand shadow-sm'
-                  : 'text-text-muted hover:text-text-primary',
-              )}
-            >
-              <Calendar className="size-3.5" />
-              <span>Year & Eras</span>
-              {year.length > 0 && (
-                <span className="rounded-full bg-white/20 px-1.5 text-[10px]">{year.length}</span>
-              )}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveTab('specs')}
-              className={cn(
-                'flex items-center gap-1.5 rounded-xl px-3 py-1.5 transition-all cursor-pointer',
-                activeTab === 'specs'
-                  ? 'bg-accent-brand text-on-accent-brand shadow-sm'
-                  : 'text-text-muted hover:text-text-primary',
-              )}
-            >
-              <Filter className="size-3.5" />
-              <span>Question Specs</span>
-              {type.length + marks.length > 0 && (
-                <span className="rounded-full bg-white/20 px-1.5 text-[10px]">
-                  {type.length + marks.length}
-                </span>
-              )}
-            </button>
+          <div className="space-y-3">
+            <fieldset>
+              <legend className="mb-1.5 text-[11.5px] font-semibold tracking-wide text-text-muted uppercase">Type</legend>
+              <div className="flex flex-wrap gap-1.5">
+                {TYPES.map((t) => (
+                  <Pill key={t} on={f.type.includes(t)} onClick={() => toggle('type', t)} title={TYPE_LABEL[t]}>
+                    {t}
+                    {facets?.type?.[t] != null && <span className="font-mono text-[11px] opacity-70">{facets.type[t]}</span>}
+                  </Pill>
+                ))}
+              </div>
+            </fieldset>
+            <div className="flex flex-wrap gap-4">
+              <fieldset>
+                <legend className="mb-1.5 text-[11.5px] font-semibold tracking-wide text-text-muted uppercase">Marks</legend>
+                <div className="flex gap-1.5">
+                  {['1', '2'].map((m) => (
+                    <Pill key={m} on={f.marks.includes(m)} onClick={() => toggle('marks', m)}>
+                      {m} mark
+                    </Pill>
+                  ))}
+                </div>
+              </fieldset>
+              <fieldset>
+                <legend className="mb-1.5 text-[11.5px] font-semibold tracking-wide text-text-muted uppercase">Section</legend>
+                <div className="flex gap-1.5">
+                  <Pill on={f.section.includes('ga')} onClick={() => toggle('section', 'ga')}>
+                    Aptitude
+                  </Pill>
+                  <Pill on={f.section.includes('core')} onClick={() => toggle('section', 'core')}>
+                    Core
+                  </Pill>
+                </div>
+              </fieldset>
+              <fieldset>
+                <legend className="mb-1.5 text-[11.5px] font-semibold tracking-wide text-text-muted uppercase">Figures</legend>
+                <Pill on={f.hasFigure === 'yes'} onClick={() => setParam('hasFigure', f.hasFigure === 'yes' ? null : 'yes')}>
+                  <ImageIcon className="size-3.5" /> With figures
+                </Pill>
+              </fieldset>
+            </div>
           </div>
 
-          {/* TAB 1: SUBJECT & TOPICS */}
-          {activeTab === 'subject' && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                {DOMAIN_GROUPS.map((group) => {
-                  const Icon = group.icon
-                  return (
-                    <div
-                      key={group.id}
-                      className="rounded-2xl border border-border/80 bg-bg-surface/70 p-3.5 shadow-sm space-y-2.5"
-                    >
-                      <div className="flex items-center gap-2 text-text-primary font-bold text-[12.5px]">
-                        <span className="flex size-6 items-center justify-center rounded-lg bg-accent-brand/15 text-accent-brand">
-                          <Icon className="size-3.5" />
-                        </span>
-                        <span>{group.title}</span>
-                      </div>
-
-                      <div className="flex flex-wrap gap-1.5">
-                        {group.subjects.map((s) => {
-                          const isSelected = subject.includes(s.id)
-                          const count =
-                            (list?.facets?.subject?.[s.id] ??
-                              meta?.counts?.bySubject?.[`CSE:${s.id}`] ??
-                              meta?.counts?.bySubject?.[`DA:${s.id}`]) ||
-                            0
-
-                          return (
-                            <button
-                              key={s.id}
-                              type="button"
-                              onClick={() => toggleSubject(s.id)}
-                              className={cn(
-                                'flex items-center gap-1.5 rounded-xl px-2.5 py-1 text-[11.5px] font-semibold border transition-all cursor-pointer',
-                                isSelected
-                                  ? 'border-accent-brand bg-accent-brand text-on-accent-brand shadow-xs'
-                                  : 'border-border/70 bg-bg-surface-2/60 text-text-secondary hover:border-accent-brand/50 hover:text-text-primary',
-                              )}
-                            >
-                              <span>{s.label}</span>
-                              {count > 0 && (
-                                <span
-                                  className={cn(
-                                    'rounded-md px-1 text-[10px] font-mono',
-                                    isSelected ? 'bg-white/20 text-white' : 'text-text-muted',
-                                  )}
-                                >
-                                  {count}
-                                </span>
-                              )}
-                            </button>
-                          )
-                        })}
-                      </div>
-                    </div>
-                  )
-                })}
+          {topicOptions.length > 0 && (
+            <fieldset className="md:col-span-2">
+              <legend className="mb-1.5 text-[11.5px] font-semibold tracking-wide text-text-muted uppercase">Topic</legend>
+              <div className="flex flex-wrap gap-1.5">
+                {topicOptions.map((t) => (
+                  <Pill key={t.key} on={f.topic.includes(t.key)} onClick={() => toggle('topic', t.key)}>
+                    {t.label}
+                    {t.n > 0 && <span className="font-mono text-[11px] opacity-70">{t.n}</span>}
+                  </Pill>
+                ))}
               </div>
-
-              {/* Inline Topic Cloud if subjects selected */}
-              {activeSubjectTopics.length > 0 && (
-                <div className="rounded-2xl border border-accent-brand/30 bg-accent-brand/5 p-4 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[12px] font-bold text-accent-brand uppercase tracking-wider">
-                      Target Subtopics for Selected Subjects:
-                    </span>
-                    {topic.length > 0 && (
-                      <button
-                        type="button"
-                        onClick={() => topic.forEach((t) => toggleTopic(t))}
-                        className="text-[11px] text-text-muted hover:text-red-400"
-                      >
-                        Clear Topics ({topic.length})
-                      </button>
-                    )}
-                  </div>
-
-                  <div className="flex flex-wrap gap-1.5 max-h-48 overflow-y-auto pr-1">
-                    {activeSubjectTopics.map((t) => {
-                      const isSelected = topic.includes(t.key)
-                      return (
-                        <button
-                          key={t.key}
-                          type="button"
-                          onClick={() => toggleTopic(t.key)}
-                          className={cn(
-                            'rounded-xl px-2.5 py-1 text-[11px] font-medium border transition-all cursor-pointer',
-                            isSelected
-                              ? 'border-accent-brand bg-accent-brand text-on-accent-brand shadow-xs'
-                              : 'border-border/80 bg-bg-surface text-text-secondary hover:text-text-primary',
-                          )}
-                        >
-                          {t.label}
-                        </button>
-                      )
-                    })}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* TAB 2: YEAR & ERAS */}
-          {activeTab === 'year' && (
-            <div className="space-y-3">
-              {/* Quick Eras */}
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-text-muted mr-1">
-                  Eras:
-                </span>
-                <button
-                  type="button"
-                  onClick={() => selectEra(2024, 2026)}
-                  className="rounded-xl border border-border/80 bg-bg-surface px-3 py-1 text-[11.5px] font-bold text-text-primary hover:border-accent-brand cursor-pointer"
-                >
-                  ⚡ 2024–2026 Latest Era
-                </button>
-                <button
-                  type="button"
-                  onClick={() => selectEra(2018, 2023)}
-                  className="rounded-xl border border-border/80 bg-bg-surface px-3 py-1 text-[11.5px] font-bold text-text-primary hover:border-accent-brand cursor-pointer"
-                >
-                  ⭐ 2018–2023 Modern
-                </button>
-                <button
-                  type="button"
-                  onClick={() => selectEra(2010, 2017)}
-                  className="rounded-xl border border-border/80 bg-bg-surface px-3 py-1 text-[11.5px] font-bold text-text-primary hover:border-accent-brand cursor-pointer"
-                >
-                  🏛️ 2010–2017 Classic
-                </button>
-                <button
-                  type="button"
-                  onClick={() => selectEra(1991, 2009)}
-                  className="rounded-xl border border-border/80 bg-bg-surface px-3 py-1 text-[11.5px] font-bold text-text-primary hover:border-accent-brand cursor-pointer"
-                >
-                  📜 1991–2009 Archive
-                </button>
-              </div>
-
-              {/* All Years Pills */}
-              <div className="flex flex-wrap gap-1.5 max-h-44 overflow-y-auto pr-1">
-                {allYears.map((y) => {
-                  const str = String(y)
-                  const isSelected = year.includes(str)
-                  return (
-                    <button
-                      key={y}
-                      type="button"
-                      onClick={() => toggleYear(str)}
-                      className={cn(
-                        'rounded-xl px-2.5 py-1 font-mono text-[11.5px] font-semibold border transition-all cursor-pointer',
-                        isSelected
-                          ? 'border-accent-brand bg-accent-brand text-on-accent-brand shadow-xs'
-                          : 'border-border/70 bg-bg-surface text-text-muted hover:text-text-primary',
-                      )}
-                    >
-                      {y}
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* TAB 3: QUESTION SPECS */}
-          {activeTab === 'specs' && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-text-muted">
-                  Question Format / Type
-                </span>
-                <div className="flex flex-wrap gap-1.5">
-                  {(['MCQ', 'MSQ', 'NAT', 'FILL', 'MATCH'] as QType[]).map((t) => {
-                    const isSelected = type.includes(t)
-                    return (
-                      <button
-                        key={t}
-                        type="button"
-                        onClick={() => toggleType(t)}
-                        className={cn(
-                          'rounded-xl px-3 py-1.5 text-[12px] font-bold border transition-all cursor-pointer',
-                          isSelected
-                            ? 'border-accent-brand bg-accent-brand text-on-accent-brand shadow-xs'
-                            : 'border-border/70 bg-bg-surface text-text-muted hover:text-text-primary',
-                        )}
-                      >
-                        {TYPE_LABEL[t] || t} ({t})
-                      </button>
-                    )
-                  })}
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-text-muted">
-                  Marks Weightage
-                </span>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    { id: '1', label: '1 Mark Fundamental' },
-                    { id: '2', label: '2 Marks Deep Thinking' },
-                  ].map((m) => {
-                    const isSelected = marks.includes(m.id)
-                    return (
-                      <button
-                        key={m.id}
-                        type="button"
-                        onClick={() => toggleMarks(m.id)}
-                        className={cn(
-                          'rounded-xl px-3 py-1.5 text-[12px] font-bold border transition-all cursor-pointer',
-                          isSelected
-                            ? 'border-accent-brand bg-accent-brand text-on-accent-brand shadow-xs'
-                            : 'border-border/70 bg-bg-surface text-text-muted hover:text-text-primary',
-                        )}
-                      >
-                        {m.label}
-                      </button>
-                    )
-                  })}
-                </div>
-              </div>
-            </div>
+            </fieldset>
           )}
         </div>
       )}
 
-      {/* ── Active Filters HUD Row ── */}
-      {activeCount > 0 && (
-        <div className="flex flex-wrap items-center gap-1.5 border-t border-border/60 pt-2.5 text-[11.5px]">
-          <span className="font-bold text-text-muted uppercase tracking-wider mr-1">Active:</span>
-
-          {exam.map((e) => (
-            <span
-              key={e}
-              onClick={() => toggleExam(e)}
-              className="inline-flex items-center gap-1 rounded-lg bg-accent-brand/15 px-2 py-0.5 font-semibold text-accent-brand cursor-pointer hover:bg-accent-brand/25"
+      {/* Active filters */}
+      {chips.length > 0 && (
+        <div className="flex flex-wrap items-center gap-1.5 border-t border-border pt-3">
+          {chips.map((c) => (
+            <button
+              key={c.key}
+              type="button"
+              onClick={c.clear}
+              className="inline-flex h-7 max-w-full items-center gap-1 rounded-full border border-border bg-bg-surface-2 pr-2 pl-2.5 text-[12px] text-text-secondary hover:border-border-hover hover:text-text-primary"
+              aria-label={`Remove filter ${c.label}`}
             >
-              Exam: {e} <X className="size-3" />
-            </span>
+              <span className="truncate">{c.label}</span>
+              <X className="size-3 shrink-0" />
+            </button>
           ))}
-
-          {subject.map((s) => (
-            <span
-              key={s}
-              onClick={() => toggleSubject(s)}
-              className="inline-flex items-center gap-1 rounded-lg bg-accent-brand/15 px-2 py-0.5 font-semibold text-accent-brand cursor-pointer hover:bg-accent-brand/25"
-            >
-              Subj: {s.toUpperCase()} <X className="size-3" />
-            </span>
-          ))}
-
-          {year.length > 0 && year.length <= 4 && (
-            year.map((y) => (
-              <span
-                key={y}
-                onClick={() => toggleYear(y)}
-                className="inline-flex items-center gap-1 rounded-lg bg-accent-brand/15 px-2 py-0.5 font-semibold text-accent-brand cursor-pointer hover:bg-accent-brand/25"
-              >
-                {y} <X className="size-3" />
-              </span>
-            ))
-          )}
-
-          {year.length > 4 && (
-            <span
-              onClick={() => setYear([])}
-              className="inline-flex items-center gap-1 rounded-lg bg-accent-brand/15 px-2 py-0.5 font-semibold text-accent-brand cursor-pointer hover:bg-accent-brand/25"
-            >
-              {year.length} Years Selected <X className="size-3" />
-            </span>
-          )}
-
-          {type.map((t) => (
-            <span
-              key={t}
-              onClick={() => toggleType(t)}
-              className="inline-flex items-center gap-1 rounded-lg bg-accent-brand/15 px-2 py-0.5 font-semibold text-accent-brand cursor-pointer hover:bg-accent-brand/25"
-            >
-              {t} <X className="size-3" />
-            </span>
-          ))}
-
-          {marks.map((m) => (
-            <span
-              key={m}
-              onClick={() => toggleMarks(m)}
-              className="inline-flex items-center gap-1 rounded-lg bg-accent-brand/15 px-2 py-0.5 font-semibold text-accent-brand cursor-pointer hover:bg-accent-brand/25"
-            >
-              {m}M <X className="size-3" />
-            </span>
-          ))}
-
-          {hasFigure && (
-            <span
-              onClick={() => setFigureFilter('')}
-              className="inline-flex items-center gap-1 rounded-lg bg-accent-brand/15 px-2 py-0.5 font-semibold text-accent-brand cursor-pointer hover:bg-accent-brand/25"
-            >
-              With Diagrams <X className="size-3" />
-            </span>
-          )}
-
-          <button
-            type="button"
-            onClick={clearAll}
-            className="ml-auto text-[11px] font-bold text-text-muted hover:text-red-400 cursor-pointer"
-          >
-            Clear All
+          <button type="button" onClick={clearAll} className="ml-1 text-[12px] font-medium text-text-muted underline-offset-2 hover:text-text-primary hover:underline">
+            Clear all
           </button>
         </div>
       )}
-    </div>
+    </section>
   )
 }

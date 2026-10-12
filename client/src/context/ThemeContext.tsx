@@ -107,6 +107,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     void loadCodeFont(look.codeFont)
   }, [look.codeFont])
+  // Solutions are a small corner of the app — fetch their face only once a
+  // solution actually mounts (gate/solution/GateSolution.tsx), not on every page.
 
   const setAppearance = useCallback((a: Appearance) => {
     setAppearanceState(a)
