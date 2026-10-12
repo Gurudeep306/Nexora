@@ -1,13 +1,14 @@
-import { useState } from 'react'
+import { Suspense, lazy, useState } from 'react'
 import {
   Eye,
   EyeOff,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Markdown } from '@/learn/md'
-import { HandwrittenSolution } from './HandwrittenSolution'
 import { ReconstructedDiagram } from './ReconstructedDiagram'
 import { type GateQuestion, TYPE_LABEL, paperLabel } from './types'
+
+const GateSolution = lazy(() => import('./solution/GateSolution'))
 
 interface GateBentoGridProps {
   questions: GateQuestion[]
@@ -18,7 +19,6 @@ interface GateBentoGridProps {
 export function GateBentoGrid({
   questions,
   subjectName,
-  topicName,
 }: GateBentoGridProps) {
   const [expandedId, setExpandedId] = useState<string | null>(null)
 
@@ -100,7 +100,7 @@ export function GateBentoGrid({
                 className="flex items-center gap-1.5 rounded-xl border border-border/80 bg-bg-surface-2 px-3 py-1.5 text-[12px] font-semibold text-text-primary hover:border-accent-brand transition-colors cursor-pointer"
               >
                 {isExpanded ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}
-                <span>{isExpanded ? 'Collapse' : '✍️ View Handwritten Solution'}</span>
+                <span>{isExpanded ? 'Collapse' : 'View solution'}</span>
               </button>
 
               <span className="text-[11px] font-mono text-text-muted">
@@ -108,14 +108,12 @@ export function GateBentoGrid({
               </span>
             </div>
 
-            {/* Handwritten Solution Expanded */}
+            {/* Worked solution */}
             {isExpanded && (
               <div className="mt-4 pt-4 border-t border-border">
-                <HandwrittenSolution
-                  q={q}
-                  subjectName={subjectName(q.subject)}
-                  topicName={topicName(q.subject, q.topic)}
-                />
+                <Suspense fallback={<div className="h-32 animate-pulse rounded-xl bg-bg-surface-2" />}>
+                  <GateSolution q={q} />
+                </Suspense>
               </div>
             )}
           </article>
