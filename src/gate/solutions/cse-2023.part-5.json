@@ -1,0 +1,2483 @@
+{
+  "paper": "cse-2023",
+  "version": 2,
+  "solutions": {
+    "cse-2023-cs-43": {
+      "approach": "Write the 4 equally likely outcomes, list each event as a set of outcomes, and test independence with the definition $P(X\\cap Y)=P(X)\\,P(Y)$. With only 4 outcomes, counting is faster and safer than intuition.",
+      "concepts": [
+        "Independent events",
+        "Conditional probability",
+        "Equally likely sample space"
+      ],
+      "given": "Two fair coins. $A$ = HEAD on both throws, $B$ = HEAD on the 1st throw, $C$ = HEAD on the 2nd throw.",
+      "steps": [
+        {
+          "title": "Sample space and the three events",
+          "body": "$\\Omega=\\{HH, HT, TH, TT\\}$, each with probability $\\tfrac14$.\n\n| Event | Outcomes | Probability |\n|---|---|---|\n| $A$ | $\\{HH\\}$ | $\\tfrac14$ |\n| $B$ | $\\{HH, HT\\}$ | $\\tfrac24=\\tfrac12$ |\n| $C$ | $\\{HH, TH\\}$ | $\\tfrac24=\\tfrac12$ |",
+          "scene": {
+            "reveal": 20,
+            "hl": []
+          }
+        },
+        {
+          "title": "A and B: not independent",
+          "body": "$A\\cap B=\\{HH\\}$, so $P(A\\cap B)=\\tfrac14$.\n\nBut $P(A)\\,P(B)=\\tfrac14\\times\\tfrac12=\\tfrac18$.\n\nSince $\\tfrac14\\neq\\tfrac18$, $A$ and $B$ are **dependent** — knowing $B$ happened doubles the chance of $A$ ($P(A\\mid B)=\\tfrac{1/4}{1/2}=\\tfrac12$). By the same symmetry $A\\cap C=\\{HH\\}$ and $P(A)P(C)=\\tfrac18\\neq\\tfrac14$, so $A$ and $C$ are dependent too.",
+          "scene": {
+            "hl": [
+              {
+                "c": 0,
+                "tone": "warning"
+              },
+              {
+                "c": 1,
+                "tone": "warning"
+              },
+              {
+                "r": 0,
+                "c": 3,
+                "tone": "error"
+              }
+            ],
+            "vars": {
+              "P(A∩B)": "1/4",
+              "P(A)P(B)": "1/8"
+            }
+          }
+        },
+        {
+          "title": "B and C: independent",
+          "body": "$B\\cap C=\\{HH\\}$, so $P(B\\cap C)=\\tfrac14$, and $P(B)\\,P(C)=\\tfrac12\\times\\tfrac12=\\tfrac14$.\n\nEqual, so $B$ and $C$ **are independent** (the two tosses do not influence each other).",
+          "scene": {
+            "hl": [
+              {
+                "c": 1,
+                "tone": "info"
+              },
+              {
+                "c": 2,
+                "tone": "info"
+              },
+              {
+                "r": 0,
+                "c": 4,
+                "tone": "success"
+              }
+            ],
+            "vars": {
+              "P(B∩C)": "1/4",
+              "P(B)P(C)": "1/4"
+            }
+          }
+        },
+        {
+          "title": "Conditional probability P(B | C)",
+          "body": "$$P(B\\mid C)=\\frac{P(B\\cap C)}{P(C)}=\\frac{1/4}{1/2}=\\frac12=P(B).$$\n\nSo statement (D) is true — it is just a restatement of the independence of $B$ and $C$ (valid because $P(C)>0$).",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "c": 4,
+                "tone": "success"
+              }
+            ],
+            "vars": {
+              "P(B|C)": "1/2",
+              "P(B)": "1/2"
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "**(C) and (D)** — $B$ and $C$ are independent and $P(B\\mid C)=P(B)=\\tfrac12$",
+        "choice": [
+          "C",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$P(A\\cap B)=\\tfrac14$ but $P(A)P(B)=\\tfrac18$. $A\\subset B$, so $B$ occurring makes $A$ more likely — the classic dependent pair."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Same as (A) by symmetry: $A\\subset C$, $P(A\\cap C)=\\tfrac14\\neq\\tfrac18$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$P(B\\cap C)=P(HH)=\\tfrac14=\\tfrac12\\cdot\\tfrac12=P(B)P(C)$."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "$P(B\\mid C)=\\tfrac{1/4}{1/2}=\\tfrac12=P(B)$; equivalent to (C) since $P(C)\\neq0$."
+        }
+      ],
+      "shortcut": "Events about **different** fair tosses ($B$, $C$) are independent, so (C) and (D) hold together. An event that contains another non-trivial event ($A\\subset B$ with $0<P(A)<P(B)<1$) is never independent of it, because $P(A\\cap B)=P(A)\\neq P(A)P(B)$.",
+      "pitfalls": [
+        "Confusing *independent* with *mutually exclusive*: $B$ and $C$ overlap (both contain $HH$) yet are independent.",
+        "Picking only (C): (D) is the same fact written as a conditional probability, so the two always stand or fall together here."
+      ],
+      "verification": "Check (C) via complements: $P(\\bar B\\cap\\bar C)=P(TT)=\\tfrac14=\\tfrac12\\cdot\\tfrac12=P(\\bar B)P(\\bar C)$, consistent with independence. For (A): $P(A\\mid B)=\\tfrac12\\neq P(A)=\\tfrac14$.",
+      "animation": {
+        "kind": "table",
+        "title": "Two fair coins: which outcomes are in each event",
+        "cols": [
+          "A",
+          "B",
+          "C",
+          "A∩B",
+          "B∩C"
+        ],
+        "rowLabels": [
+          "HH",
+          "HT",
+          "TH",
+          "TT"
+        ],
+        "corner": "outcome",
+        "rows": [
+          [
+            "✓",
+            "✓",
+            "✓",
+            "✓",
+            "✓"
+          ],
+          [
+            "",
+            "✓",
+            "",
+            "",
+            ""
+          ],
+          [
+            "",
+            "",
+            "✓",
+            "",
+            ""
+          ],
+          [
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        ],
+        "reveal": 0,
+        "mono": true,
+        "caption": "Each outcome has probability 1/4"
+      }
+    },
+    "cse-2023-cs-44": {
+      "approach": "Count the executions exactly as a sum: Function_1 does $n + \\lfloor n/2\\rfloor + \\lfloor n/4\\rfloor + \\dots$ (a geometric series, between $n$ and $2n$), Function_2 does exactly $100n$. Both are linear, so compare growth rates directly.",
+      "concepts": [
+        "Asymptotic notation (Θ, o, ω, O)",
+        "Geometric series",
+        "Loop counting"
+      ],
+      "steps": [
+        {
+          "title": "Count f₂(n)",
+          "body": "The single loop runs for $i=1$ to $100n$, so $f_2(n)=100n$, i.e. $f_2(n)\\in\\Theta(n)$.",
+          "scene": {
+            "vars": {
+              "f₂(16)": 1600
+            }
+          }
+        },
+        {
+          "title": "Count f₁(n): one pass per halving",
+          "body": "Each pass of the while loop runs the for loop $n$ times for the **current** $n$, then halves $n$. The loop stops when $n\\le1$, so\n\n$$f_1(n)=n+\\left\\lfloor\\tfrac n2\\right\\rfloor+\\left\\lfloor\\tfrac n4\\right\\rfloor+\\dots\\quad(\\text{terms}>1).$$\n\nFor $n=16$: $16+8+4+2=30$ (the next value is $1$, which fails $n>1$).",
+          "scene": {
+            "vars": {
+              "passes": 4
+            }
+          }
+        },
+        {
+          "title": "Bound f₁(n) between n and 2n",
+          "body": "Lower bound (for $n\\ge2$): the first pass alone gives $f_1(n)\\ge n$.\n\nUpper bound: $f_1(n)\\le n\\left(1+\\tfrac12+\\tfrac14+\\dots\\right)<n\\cdot\\frac{1}{1-\\tfrac12}=2n$.\n\nSo $n\\le f_1(n)<2n$, i.e. $f_1(n)\\in\\Theta(n)$ — in particular $f_1(n)\\in O(n)$.",
+          "scene": {
+            "vars": {
+              "f₁(16)": 30,
+              "2n": 32
+            }
+          }
+        },
+        {
+          "title": "Compare f₁ with f₂",
+          "body": "$$\\frac{n}{100n}\\le\\frac{f_1(n)}{f_2(n)}<\\frac{2n}{100n}\\;\\Longrightarrow\\;\\frac{1}{100}\\le\\frac{f_1(n)}{f_2(n)}<\\frac{1}{50}.$$\n\nThe ratio stays between two positive constants, so $f_1(n)\\in\\Theta(f_2(n))$. It does **not** tend to $0$ (rules out $o$) and does **not** tend to $\\infty$ (rules out $\\omega$).",
+          "scene": {
+            "vars": {
+              "f₁/f₂ (n=16)": "30/1600"
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "**(A) and (D)** — $f_1(n)\\in\\Theta(f_2(n))$ and $f_1(n)\\in O(n)$",
+        "choice": [
+          "A",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$f_1(n)=\\Theta(n)$ and $f_2(n)=100n=\\Theta(n)$; the ratio lies in $[\\tfrac1{100},\\tfrac1{50})$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$o$ needs $f_1/f_2\\to0$. The ratio never drops below $\\tfrac1{100}$ — the constant 100 does not change the growth rate."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$\\omega$ needs $f_1/f_2\\to\\infty$. Those who treat the nested loops as $n\\log n$ (n work for each of $\\log n$ passes) pick this, but each pass does only half the previous work."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "$f_1(n)<2n$, so $f_1(n)\\in O(n)$."
+        }
+      ],
+      "shortcut": "\"Halve the work each round\" ⇒ total $\\le 2\\times$ the first round. So Function_1 is linear; Function_2 is linear; constants never matter in $\\Theta$.",
+      "pitfalls": [
+        "Multiplying loop bounds blindly: $n$ iterations $\\times\\ \\log n$ passes $= n\\log n$ is only an upper bound, not tight.",
+        "Thinking the factor 100 makes $f_1\\in o(f_2)$ — constant factors are absorbed by $\\Theta$."
+      ],
+      "verification": "$n=1024$: $f_1=1024+512+\\dots+2=2046<2048=2n$, and $f_2=102400$; ratio $\\approx0.02$, between $\\tfrac1{100}$ and $\\tfrac1{50}$ as predicted.",
+      "animation": {
+        "kind": "bars",
+        "title": "Function_1 for n = 16: increments per while-pass",
+        "bars": [
+          {
+            "label": "n=16",
+            "value": 16,
+            "tone": "accent"
+          },
+          {
+            "label": "n=8",
+            "value": 8,
+            "tone": "accent"
+          },
+          {
+            "label": "n=4",
+            "value": 4,
+            "tone": "accent"
+          },
+          {
+            "label": "n=2",
+            "value": 2,
+            "tone": "accent"
+          },
+          {
+            "label": "total",
+            "value": 30,
+            "display": "30 < 2n = 32",
+            "tone": "success"
+          }
+        ],
+        "caption": "Each pass does half the previous work: $16+8+4+2=30$"
+      }
+    },
+    "cse-2023-cs-45": {
+      "approach": "Prove the two general facts directly from the rule (a vertex never takes a neighbour's colour; at most $\\Delta$ colours are blocked), then kill the other two statements with one small counterexample: a 4-vertex path coloured in a bad order.",
+      "concepts": [
+        "Greedy (first-fit) colouring",
+        "Maximum degree Δ(G)",
+        "Chromatic number",
+        "Counterexample"
+      ],
+      "steps": [
+        {
+          "title": "Statement A: the colouring is always proper",
+          "body": "When $v_i$ is coloured, it takes a colour $j$ that **no already-coloured neighbour** has. Take any edge $v_av_b$ with $a<b$: $v_a$ is coloured first, so when $v_b$ is coloured, colour$(v_a)$ is forbidden for it. Hence the two ends of every edge differ — the colouring is proper."
+        },
+        {
+          "title": "Statement B: at most Δ(G) + 1 colours",
+          "body": "$v_i$ has at most $\\Delta(G)$ neighbours, so at most $\\Delta(G)$ distinct colours are blocked. Among the $\\Delta(G)+1$ colours $\\{1,\\dots,\\Delta(G)+1\\}$ at least one is free, so the minimum free colour is $\\le\\Delta(G)+1$. This holds for every vertex, so the whole colouring uses at most $\\Delta(G)+1$ colours."
+        },
+        {
+          "title": "Counterexample: path coloured in a bad order",
+          "body": "Take the path $v_1 - v_3 - v_4 - v_2$ (edges $v_1v_3$, $v_3v_4$, $v_4v_2$), so $\\Delta=2$. Greedy colours in index order:\n\n- $v_1$: no coloured neighbour → colour **1**.\n- $v_2$: its only neighbour $v_4$ is uncoloured → colour **1**.",
+          "scene": {
+            "subs": {
+              "v1": "1",
+              "v2": "1"
+            },
+            "tones": {
+              "v1": "cat1",
+              "v2": "cat1"
+            }
+          }
+        },
+        {
+          "title": "Greedy is forced to a third colour",
+          "body": "- $v_3$: neighbours $v_1$ (1) and $v_4$ (uncoloured) → smallest free colour **2**.\n- $v_4$: neighbours $v_3$ (2) and $v_2$ (1) → colours 1 and 2 are blocked → colour **3**.\n\nGreedy used $3$ colours.",
+          "scene": {
+            "subs": {
+              "v1": "1",
+              "v2": "1",
+              "v3": "2",
+              "v4": "3"
+            },
+            "tones": {
+              "v1": "cat1",
+              "v2": "cat1",
+              "v3": "cat2",
+              "v4": "cat3"
+            },
+            "edgeTones": {
+              "v3>v4": "warning",
+              "v4>v2": "warning"
+            }
+          }
+        },
+        {
+          "title": "Statements C and D fail",
+          "body": "- **C** is false: $3>\\Delta=2$ colours were used. (Any complete graph $K_n$ also shows it: greedy needs $n=\\Delta+1$ colours.)\n- **D** is false: a path is bipartite, so its chromatic number is $2$ (colour $v_1,v_4$ with 1 and $v_3,v_2$ with 2), yet greedy used $3$.\n\nSo only **A** and **B** are always true.",
+          "scene": {
+            "edgeTones": {},
+            "caption": "Greedy used 3 colours; χ(path) = 2 and Δ = 2"
+          }
+        }
+      ],
+      "answer": {
+        "value": "**(A) and (B)** — always a proper colouring, with at most $\\Delta(G)+1$ colours",
+        "choice": [
+          "A",
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Every vertex avoids the colours of its already-coloured neighbours, so no edge gets equal colours at its ends."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "At most $\\Delta$ colours are blocked for any vertex, so a colour $\\le\\Delta+1$ is always free."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$K_{\\Delta+1}$ (or the badly ordered path, $\\Delta=2$, 3 colours) needs $\\Delta+1$ colours. $\\Delta$ colours suffice only in special cases (Brooks' theorem), not for greedy in general."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Greedy depends on the vertex order; on the path $v_1v_3v_4v_2$ it uses 3 colours while $\\chi=2$. Computing $\\chi$ is NP-hard, so no simple greedy rule can guarantee it."
+        }
+      ],
+      "shortcut": "Remember: greedy colouring is always **proper** and uses $\\le\\Delta+1$ colours; it is **not** optimal (order-dependent) and can **not** promise $\\le\\Delta$ ($K_n$ needs $n=\\Delta+1$).",
+      "pitfalls": [
+        "Believing greedy is optimal: it is optimal for *some* order, but the question fixes the order $v_1,\\dots,v_n$ arbitrarily.",
+        "Mixing up Brooks' theorem ($\\chi\\le\\Delta$ except complete graphs and odd cycles) with what greedy achieves."
+      ],
+      "verification": "$K_3$: $\\Delta=2$, greedy colours 1, 2, 3 → 3 colours $=\\Delta+1$, consistent with B and contradicting C; the path example contradicts D while still obeying A and B.",
+      "animation": {
+        "kind": "graph",
+        "title": "Greedy order v1, v2, v3, v4 on the path v1 – v3 – v4 – v2",
+        "nodes": [
+          {
+            "id": "v1",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "v3",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "id": "v4",
+            "x": 4,
+            "y": 0
+          },
+          {
+            "id": "v2",
+            "x": 6,
+            "y": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "v1",
+            "to": "v3"
+          },
+          {
+            "from": "v3",
+            "to": "v4"
+          },
+          {
+            "from": "v4",
+            "to": "v2"
+          }
+        ],
+        "caption": "Badge = colour assigned by the greedy rule"
+      }
+    },
+    "cse-2023-cs-46": {
+      "approach": "Look at the start vertex's neighbourhood: $\\emptyset$ is a proper subset of every non-empty set, so it is adjacent to **all** other 7 vertices. BFS therefore discovers everything in its first round, in any order — count the permutations.",
+      "concepts": [
+        "Breadth-first search",
+        "BFS visiting order",
+        "Power set",
+        "Permutations"
+      ],
+      "given": "$V=2^U$ with $U=\\{1,2,3\\}$ (8 vertices); $A\\sim B \\iff A\\subsetneq B$ or $B\\subsetneq A$. Count the BFS orders from $\\emptyset$.",
+      "steps": [
+        {
+          "title": "The graph: comparable subsets are adjacent",
+          "body": "There are $2^3=8$ vertices. Two different subsets are adjacent exactly when one strictly contains the other. In total there are $3^3-2^3=27-8=19$ such pairs (dashed edges are the 12 that do not involve $\\emptyset$)."
+        },
+        {
+          "title": "Neighbours of ∅: everything else",
+          "body": "$\\emptyset\\subsetneq X$ for every non-empty $X$, so $\\emptyset$ is adjacent to all $8-1=7$ other vertices: $\\{1\\},\\{2\\},\\{3\\},\\{1,2\\},\\{1,3\\},\\{2,3\\},\\{1,2,3\\}$.",
+          "scene": {
+            "tones": {
+              "E": "accent"
+            },
+            "edgeTones": {
+              "E>1": "warning",
+              "E>2": "warning",
+              "E>3": "warning",
+              "E>12": "warning",
+              "E>13": "warning",
+              "E>23": "warning",
+              "E>U": "warning"
+            }
+          }
+        },
+        {
+          "title": "BFS from ∅ visits all 7 in one round",
+          "body": "BFS visits $\\emptyset$, then dequeues it and visits all its unvisited neighbours. The adjacency order is not fixed, so **any** of the $7!$ orders of these neighbours is a valid BFS order. After this round every vertex is visited, so the rest of the search adds nothing and cannot change the order.\n\nOne example (badge = visit position): $\\emptyset,\\{2,3\\},\\{1\\},\\{1,2,3\\},\\{3\\},\\{1,2\\},\\{2\\},\\{1,3\\}$.",
+          "scene": {
+            "tones": {
+              "1": "warning",
+              "2": "warning",
+              "3": "warning",
+              "12": "warning",
+              "13": "warning",
+              "23": "warning",
+              "E": "success",
+              "U": "warning"
+            },
+            "subs": {
+              "1": "3",
+              "2": "7",
+              "3": "5",
+              "12": "6",
+              "13": "8",
+              "23": "2",
+              "E": "1",
+              "U": "4"
+            }
+          }
+        },
+        {
+          "title": "Count the orderings",
+          "body": "The first vertex is fixed ($\\emptyset$); the other 7 may come in any order:\n\n$$\\lvert\\mathcal{B}(\\emptyset)\\rvert = 7! = 7\\times6\\times5\\times4\\times3\\times2\\times1 = 5040.$$",
+          "scene": {
+            "vars": {
+              "|B(∅)|": "7! = 5040"
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "$\\lvert\\mathcal{B}(\\emptyset)\\rvert = 7! =$ **5040**",
+        "number": 5040,
+        "matchesKey": true
+      },
+      "shortcut": "If the BFS source is adjacent to every other vertex of an $n$-vertex graph, the number of BFS orders is $(n-1)!$. Here $n=8$: $7!=5040$.",
+      "pitfalls": [
+        "Treating the graph as the Hasse diagram (only \"cover\" edges such as $\\emptyset$–$\\{1\\}$, a 3-cube): BFS would then go level by level and the count would be far smaller. The edge rule here is *any* proper containment, so $\\emptyset$–$\\{1,2,3\\}$ is an edge too.",
+        "Counting only the orders of the singletons, or forgetting that $\\{1,2,3\\}$ is also adjacent to $\\emptyset$."
+      ],
+      "verification": "Contrast with a start vertex like $\\{1\\}$: its neighbours are $\\emptyset,\\{1,2\\},\\{1,3\\},\\{1,2,3\\}$ only, so the count there would be different and smaller — the special thing about $\\emptyset$ is degree $7=n-1$.",
+      "animation": {
+        "kind": "graph",
+        "title": "G on 2^{1,2,3} (edge = proper containment)",
+        "nodes": [
+          {
+            "id": "E",
+            "label": "∅",
+            "x": 0,
+            "y": 5
+          },
+          {
+            "id": "1",
+            "label": "{1}",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "id": "2",
+            "label": "{2}",
+            "x": 2,
+            "y": 2
+          },
+          {
+            "id": "3",
+            "label": "{3}",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "id": "12",
+            "label": "{1,2}",
+            "x": 4,
+            "y": 0
+          },
+          {
+            "id": "13",
+            "label": "{1,3}",
+            "x": 4,
+            "y": 2
+          },
+          {
+            "id": "23",
+            "label": "{2,3}",
+            "x": 4,
+            "y": 4
+          },
+          {
+            "id": "U",
+            "label": "{1,2,3}",
+            "x": 6,
+            "y": -1
+          }
+        ],
+        "edges": [
+          {
+            "from": "E",
+            "to": "1"
+          },
+          {
+            "from": "E",
+            "to": "2"
+          },
+          {
+            "from": "E",
+            "to": "3"
+          },
+          {
+            "from": "E",
+            "to": "12"
+          },
+          {
+            "from": "E",
+            "to": "13"
+          },
+          {
+            "from": "E",
+            "to": "23"
+          },
+          {
+            "from": "E",
+            "to": "U"
+          },
+          {
+            "from": "1",
+            "to": "12",
+            "dashed": true
+          },
+          {
+            "from": "1",
+            "to": "13",
+            "dashed": true
+          },
+          {
+            "from": "2",
+            "to": "12",
+            "dashed": true
+          },
+          {
+            "from": "2",
+            "to": "23",
+            "dashed": true
+          },
+          {
+            "from": "3",
+            "to": "13",
+            "dashed": true
+          },
+          {
+            "from": "3",
+            "to": "23",
+            "dashed": true
+          },
+          {
+            "from": "1",
+            "to": "U",
+            "dashed": true
+          },
+          {
+            "from": "2",
+            "to": "U",
+            "dashed": true
+          },
+          {
+            "from": "3",
+            "to": "U",
+            "dashed": true
+          },
+          {
+            "from": "12",
+            "to": "U",
+            "dashed": true
+          },
+          {
+            "from": "13",
+            "to": "U",
+            "dashed": true
+          },
+          {
+            "from": "23",
+            "to": "U",
+            "dashed": true
+          }
+        ],
+        "layout": "manual",
+        "caption": "Solid edges: the 7 edges at ∅. Dashed: the other 12."
+      }
+    },
+    "cse-2023-cs-47": {
+      "approach": "Map rows to pages (4 rows per page → 32 pages), notice the inner loop walks **down a column**, touching all 32 pages once per column. With only 30 frames, LRU on a cyclic scan of 32 pages evicts each page just before it is needed again, so every page faults in every column.",
+      "concepts": [
+        "Row-major layout",
+        "Demand paging",
+        "LRU replacement",
+        "Cyclic access pattern"
+      ],
+      "given": "int D[128][128] (row-major), 512 elements per frame, 30 frames, LRU; loop order: outer $i$ (column), inner $j$ (row), access $D[j][i]$.",
+      "steps": [
+        {
+          "title": "Which page holds D[j][i]?",
+          "body": "One row has $128$ elements, a page holds $512=4\\times128$ elements, so **one page = 4 consecutive rows**. The array has $\\frac{128\\times128}{512}=\\frac{16384}{512}=32$ pages, and $D[j][i]$ is in page $P_{\\lfloor j/4\\rfloor}$ (independent of $i$).",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "c": 0,
+                "tone": "accent"
+              },
+              {
+                "r": 3,
+                "c": 7,
+                "tone": "accent"
+              }
+            ],
+            "caption": "$D[j][i]$ lies in page $P_{\\lfloor j/4\\rfloor}$: P0 = rows 0–3, …, P31 = rows 124–127"
+          }
+        },
+        {
+          "title": "Column i = 0: 32 faults",
+          "body": "For fixed $i$, $j=0\\dots127$ touches $P_0,P_0,P_0,P_0,P_1,\\dots,P_{31}$: each page 4 times in a row. The first touch faults, the next 3 hit (the page was just used).\n\n$P_0\\dots P_{29}$ fill the 30 frames (30 faults). $P_{30}$ evicts the LRU page $P_0$ and $P_{31}$ evicts $P_1$: **32 faults**. Resident now: $P_2\\dots P_{31}$.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "c": 0,
+                "tone": "muted"
+              },
+              {
+                "r": 0,
+                "c": 1,
+                "tone": "muted"
+              },
+              {
+                "r": 0,
+                "c": 2,
+                "tone": "success"
+              },
+              {
+                "r": 0,
+                "c": 3,
+                "tone": "success"
+              },
+              {
+                "r": 0,
+                "c": 4,
+                "tone": "success"
+              },
+              {
+                "r": 0,
+                "c": 5,
+                "tone": "success"
+              },
+              {
+                "r": 0,
+                "c": 6,
+                "tone": "success"
+              },
+              {
+                "r": 0,
+                "c": 7,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "tone": "success"
+              },
+              {
+                "r": 3,
+                "tone": "success"
+              }
+            ],
+            "caption": "After column 0: P2 … P31 resident (30 frames), P0 and P1 evicted",
+            "vars": {
+              "column": 0,
+              "faults": 32
+            }
+          }
+        },
+        {
+          "title": "Column i = 1: every page is missing again",
+          "body": "The scan restarts at $P_0$ — not resident → fault, evicting the LRU page $P_2$. Then $P_1$ faults and evicts $P_3$; $P_2$ faults and evicts $P_4$; … each page is evicted two steps before it is needed. So column 1 again costs **32 faults**, and after $P_{31}$ the frames again hold $P_2\\dots P_{31}$.\n\nThis repeats identically for every column.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "c": 0,
+                "tone": "error"
+              },
+              {
+                "r": 0,
+                "c": 1,
+                "tone": "error"
+              },
+              {
+                "r": 0,
+                "c": 2,
+                "tone": "muted"
+              },
+              {
+                "r": 0,
+                "c": 3,
+                "tone": "muted"
+              },
+              {
+                "r": 0,
+                "c": 4,
+                "tone": "success"
+              },
+              {
+                "r": 0,
+                "c": 5,
+                "tone": "success"
+              },
+              {
+                "r": 0,
+                "c": 6,
+                "tone": "success"
+              },
+              {
+                "r": 0,
+                "c": 7,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "tone": "success"
+              },
+              {
+                "r": 3,
+                "tone": "success"
+              }
+            ],
+            "caption": "Column 1, after $j=0\\dots7$: P0, P1 re-faulted and evicted P2, P3",
+            "vars": {
+              "column": 1,
+              "faults": 34
+            }
+          }
+        },
+        {
+          "title": "Total over 128 columns",
+          "body": "$$\\text{faults}=128\\ \\text{columns}\\times32\\ \\text{faults per column}=4096.$$",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "error"
+              },
+              {
+                "r": 1,
+                "tone": "error"
+              },
+              {
+                "r": 2,
+                "tone": "error"
+              },
+              {
+                "r": 3,
+                "tone": "error"
+              }
+            ],
+            "caption": "Every column faults on all 32 pages",
+            "vars": {
+              "column": 127,
+              "faults": 4096
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "$128\\times32=$ **4096** page faults",
+        "number": 4096,
+        "matchesKey": true
+      },
+      "shortcut": "Pages touched per column $=32>30$ frames, and the scan is cyclic, so LRU thrashes: faults $=$ (columns) $\\times$ (pages per column) $=128\\times32$.",
+      "pitfalls": [
+        "Counting 128 faults per column (one per element): the 4 rows of a page are consecutive in $j$, so only the first of them faults.",
+        "Answering 32 (as if the array fit in memory): it needs 32 frames but only 30 are allocated.",
+        "Thinking only 2 pages per column fault after the first column — with LRU and a cyclic scan longer than the frame count, *every* reference to a new page misses."
+      ],
+      "verification": "Row-wise order ($D[i][j]$) would fault only $32$ times (each page loaded once). Column-wise with $\\ge32$ frames would also give $32$. With $30<32$ frames LRU's worst case for cyclic scans appears: $32\\times128=4096$.",
+      "animation": {
+        "kind": "table",
+        "title": "The 32 pages of D (page Pk = rows 4k … 4k+3)",
+        "cols": [
+          "+0",
+          "+1",
+          "+2",
+          "+3",
+          "+4",
+          "+5",
+          "+6",
+          "+7"
+        ],
+        "rowLabels": [
+          "P0–P7",
+          "P8–P15",
+          "P16–P23",
+          "P24–P31"
+        ],
+        "corner": "pages",
+        "rows": [
+          [
+            "P0",
+            "P1",
+            "P2",
+            "P3",
+            "P4",
+            "P5",
+            "P6",
+            "P7"
+          ],
+          [
+            "P8",
+            "P9",
+            "P10",
+            "P11",
+            "P12",
+            "P13",
+            "P14",
+            "P15"
+          ],
+          [
+            "P16",
+            "P17",
+            "P18",
+            "P19",
+            "P20",
+            "P21",
+            "P22",
+            "P23"
+          ],
+          [
+            "P24",
+            "P25",
+            "P26",
+            "P27",
+            "P28",
+            "P29",
+            "P30",
+            "P31"
+          ]
+        ],
+        "mono": true,
+        "caption": "Green = resident; grey = just evicted; red = faulted this column"
+      }
+    },
+    "cse-2023-cs-48": {
+      "approach": "Each page-table page is one 4 KB page, so it holds $4096/8=512=2^9$ entries and translates 9 bits of the virtual page number. Divide the VPN bits by 9.",
+      "concepts": [
+        "Multi-level paging",
+        "Page-table entries per page",
+        "Virtual address split"
+      ],
+      "given": "VA = 57 bits, page = 4 KB = $2^{12}$ B, PTE = 8 B at every level, each page-table node fits in one page.",
+      "steps": [
+        {
+          "title": "Offset and VPN bits",
+          "body": "Page size $4\\text{ KB}=2^{12}$ B → page offset $=12$ bits.\n\nVPN bits $=57-12=45$.",
+          "scene": {
+            "rows": [
+              {
+                "label": "VA (57 bits)",
+                "fields": [
+                  {
+                    "bits": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                    "label": "VPN = 45 bits",
+                    "tone": "accent"
+                  },
+                  {
+                    "bits": "xxxxxxxxxxxx",
+                    "label": "offset 12",
+                    "tone": "muted"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "title": "Bits resolved per level",
+          "body": "A page-table page is one page of $2^{12}$ B and an entry is $8=2^3$ B, so it holds $\\frac{2^{12}}{2^3}=2^9=512$ entries — indexed by **9 bits**.",
+          "scene": {
+            "rows": [
+              {
+                "label": "VA (57 bits)",
+                "fields": [
+                  {
+                    "bits": "xxxxxxxxx",
+                    "label": "L1 (9)",
+                    "tone": "info"
+                  },
+                  {
+                    "bits": "xxxxxxxxx",
+                    "label": "L2 (9)",
+                    "tone": "info"
+                  },
+                  {
+                    "bits": "xxxxxxxxx",
+                    "label": "L3 (9)",
+                    "tone": "info"
+                  },
+                  {
+                    "bits": "xxxxxxxxx",
+                    "label": "L4 (9)",
+                    "tone": "info"
+                  },
+                  {
+                    "bits": "xxxxxxxxx",
+                    "label": "L5 (9)",
+                    "tone": "info"
+                  },
+                  {
+                    "bits": "xxxxxxxxxxxx",
+                    "label": "offset 12",
+                    "tone": "muted"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "title": "Number of levels",
+          "body": "$$L=\\left\\lceil\\frac{45}{9}\\right\\rceil=5.$$\n\n$45=5\\times9$ exactly, so every level (including the top) is a full 512-entry page.",
+          "scene": {
+            "rows": [
+              {
+                "label": "VA (57 bits)",
+                "fields": [
+                  {
+                    "bits": "xxxxxxxxx",
+                    "label": "L1 (9)",
+                    "tone": "success"
+                  },
+                  {
+                    "bits": "xxxxxxxxx",
+                    "label": "L2 (9)",
+                    "tone": "success"
+                  },
+                  {
+                    "bits": "xxxxxxxxx",
+                    "label": "L3 (9)",
+                    "tone": "success"
+                  },
+                  {
+                    "bits": "xxxxxxxxx",
+                    "label": "L4 (9)",
+                    "tone": "success"
+                  },
+                  {
+                    "bits": "xxxxxxxxx",
+                    "label": "L5 (9)",
+                    "tone": "success"
+                  },
+                  {
+                    "bits": "xxxxxxxxxxxx",
+                    "label": "offset 12",
+                    "tone": "muted"
+                  }
+                ]
+              }
+            ],
+            "vars": {
+              "L": 5
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "$L=45/9=$ **5** levels",
+        "number": 5,
+        "matchesKey": true
+      },
+      "shortcut": "Bits per level $=\\log_2(\\text{page}/\\text{PTE})=12-3=9$; $L=\\lceil(57-12)/9\\rceil=5$. (This is exactly Intel's 5-level paging for 57-bit addresses.)",
+      "pitfalls": [
+        "Forgetting to remove the 12 offset bits: $\\lceil57/9\\rceil=7$ is wrong.",
+        "Using $4096/4$ entries (4-byte PTE) instead of $4096/8$: the PTE is 8 bytes here."
+      ],
+      "verification": "Reverse check: $5$ levels $\\times\\ 9$ bits $+\\ 12$ offset bits $=45+12=57$ bits. With 4 levels only $4\\times9+12=48$ bits could be translated — the familiar x86-64 4-level case.",
+      "animation": {
+        "kind": "bits",
+        "title": "57-bit virtual address",
+        "rows": [
+          {
+            "label": "VA (57 bits)",
+            "fields": [
+              {
+                "bits": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                "label": "57 bits"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "cse-2023-cs-49": {
+      "approach": "Simulate both structures operation by operation, tracking stack top and queue front. \"Repeat operation VII three times\" means VII runs three **more** times, moving the queue's remaining elements onto the stack.",
+      "concepts": [
+        "Stack (LIFO)",
+        "Queue (FIFO)",
+        "Operation trace"
+      ],
+      "given": "$a=(1,5,7,8,9,2)$; $S$ and $Q$ start empty.",
+      "steps": [
+        {
+          "title": "I, II: load both structures",
+          "body": "$S$ (bottom → top) $=[1,5,7,8,9,2]$, top $=2$.\n\n$Q$ (front → rear) $=[1,5,7,8,9,2]$, front $=1$."
+        },
+        {
+          "title": "III, IV: pop and dequeue",
+          "body": "III: pop $S$ → removes $2$; $S=[1,5,7,8,9]$.\n\nIV: dequeue $Q$ → removes $1$; $Q=[5,7,8,9,2]$.",
+          "scene": {
+            "panels": [
+              {
+                "kind": "stack",
+                "label": "S (top →)",
+                "items": [
+                  1,
+                  5,
+                  7,
+                  8,
+                  9
+                ],
+                "popped": 2
+              },
+              {
+                "kind": "queue",
+                "label": "Q (front → rear)",
+                "items": [
+                  5,
+                  7,
+                  8,
+                  9,
+                  2
+                ],
+                "dequeued": 1
+              }
+            ]
+          }
+        },
+        {
+          "title": "V, VI: pop and dequeue again",
+          "body": "V: pop → removes $9$; $S=[1,5,7,8]$.\n\nVI: dequeue → removes $5$; $Q=[7,8,9,2]$.",
+          "scene": {
+            "panels": [
+              {
+                "kind": "stack",
+                "label": "S (top →)",
+                "items": [
+                  1,
+                  5,
+                  7,
+                  8
+                ],
+                "popped": 9
+              },
+              {
+                "kind": "queue",
+                "label": "Q (front → rear)",
+                "items": [
+                  7,
+                  8,
+                  9,
+                  2
+                ],
+                "dequeued": 5
+              }
+            ]
+          }
+        },
+        {
+          "title": "VII: move the front of Q onto S",
+          "body": "Dequeue $7$ and push it: $S=[1,5,7,8,7]$, $Q=[8,9,2]$.",
+          "scene": {
+            "panels": [
+              {
+                "kind": "stack",
+                "label": "S (top →)",
+                "items": [
+                  1,
+                  5,
+                  7,
+                  8,
+                  7
+                ],
+                "hl": [
+                  {
+                    "at": 4,
+                    "tone": "warning"
+                  }
+                ]
+              },
+              {
+                "kind": "queue",
+                "label": "Q (front → rear)",
+                "items": [
+                  8,
+                  9,
+                  2
+                ],
+                "dequeued": 7
+              }
+            ]
+          }
+        },
+        {
+          "title": "VIII: repeat VII three times",
+          "body": "Move $8$, then $9$, then $2$:\n\n$S=[1,5,7,8,7,8,9,2]$ (top $=2$), $Q=[\\,]$ — exactly the 3 remaining elements, so the queue is empty but no dequeue fails.",
+          "scene": {
+            "panels": [
+              {
+                "kind": "stack",
+                "label": "S (top →)",
+                "items": [
+                  1,
+                  5,
+                  7,
+                  8,
+                  7,
+                  8,
+                  9,
+                  2
+                ],
+                "hl": [
+                  {
+                    "at": 5,
+                    "tone": "warning"
+                  },
+                  {
+                    "at": 6,
+                    "tone": "warning"
+                  },
+                  {
+                    "at": 7,
+                    "tone": "warning"
+                  }
+                ]
+              },
+              {
+                "kind": "queue",
+                "label": "Q (front → rear)",
+                "items": [],
+                "dequeued": 2
+              }
+            ]
+          }
+        },
+        {
+          "title": "IX, X: two pops",
+          "body": "IX: pop → removes $2$. X: pop → removes $9$.\n\n$S=[1,5,7,8,7,8]$, so the **top is 8**.",
+          "scene": {
+            "panels": [
+              {
+                "kind": "stack",
+                "label": "S (top →)",
+                "items": [
+                  1,
+                  5,
+                  7,
+                  8,
+                  7,
+                  8
+                ],
+                "popped": 9,
+                "hl": [
+                  {
+                    "at": 5,
+                    "tone": "success"
+                  }
+                ]
+              },
+              {
+                "kind": "queue",
+                "label": "Q (front → rear)",
+                "items": []
+              }
+            ],
+            "vars": {
+              "top": 8
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "Top of $S$ $=$ **8**",
+        "number": 8,
+        "matchesKey": true
+      },
+      "shortcut": "After VI, $Q=[7,8,9,2]$ and $S=[1,5,7,8]$. VII+VIII push all four in queue order, so $S=[1,5,7,8,\\,7,8,9,2]$; two pops remove $2,9$ → top $=8$.",
+      "pitfalls": [
+        "Running VII only three times in total (VII + 2 repeats): $S=[\\dots,7,8,9]$, two pops leave top $=7$. \"Repeat VII three times\" adds three executions after VII.",
+        "Popping from the wrong end: the stack removes the most recent push ($2$, then $9$), the queue removes the oldest ($1$, then $5$)."
+      ],
+      "verification": "Element count: $S$ has $6-2+4-2=6$ elements and $Q$ has $6-2-4=0$ — consistent with the final $S=[1,5,7,8,7,8]$.",
+      "animation": {
+        "kind": "panels",
+        "title": "Stack S and queue Q after operations I and II",
+        "panels": [
+          {
+            "kind": "stack",
+            "label": "S (top →)",
+            "items": [
+              1,
+              5,
+              7,
+              8,
+              9,
+              2
+            ]
+          },
+          {
+            "kind": "queue",
+            "label": "Q (front → rear)",
+            "items": [
+              1,
+              5,
+              7,
+              8,
+              9,
+              2
+            ]
+          }
+        ]
+      }
+    },
+    "cse-2023-cs-50": {
+      "approach": "Build the parse tree of $10\\#011$ and evaluate the synthesized attributes bottom-up. Recognise the meaning: $I$ reads the bits before # as a binary integer, $F$ reads the bits after # as a binary fraction, so the result is $10.011_2$.",
+      "concepts": [
+        "Syntax-directed translation",
+        "Synthesized attributes",
+        "Annotated parse tree",
+        "Binary fractions"
+      ],
+      "given": "Input $10\\#011$; $I\\to I_1B$ (left-recursive), $F\\to BF_1$ (right-recursive).",
+      "steps": [
+        {
+          "title": "Parse tree of 10#011",
+          "body": "$N\\to I\\,\\#\\,F$.\n\n- $I$ derives \"10\": $I\\to I_1B$, with $I_1\\to B\\to\\mathbf 1$ and $B\\to\\mathbf 0$.\n- $F$ derives \"011\": $F\\to B\\,F_1$ with $B\\to\\mathbf 0$; $F_1\\to B\\,F_2$ with $B\\to\\mathbf 1$; $F_2\\to B\\to\\mathbf 1$."
+        },
+        {
+          "title": "Integer part: I.val = 2",
+          "body": "Leaves: $B.val$ = token value.\n\n$I_1.val=B.val=1$.\n\n$I.val=2\\cdot I_1.val+B.val=2\\cdot1+0=2$ (binary $10_2=2$).",
+          "scene": {
+            "root": {
+              "id": "N",
+              "label": "N",
+              "children": [
+                {
+                  "id": "I0",
+                  "label": "I",
+                  "children": [
+                    {
+                      "id": "I1",
+                      "label": "I",
+                      "children": [
+                        {
+                          "id": "B1",
+                          "label": "B",
+                          "children": [
+                            {
+                              "id": "t1",
+                              "label": "1"
+                            }
+                          ],
+                          "sub": "1"
+                        }
+                      ],
+                      "sub": "1",
+                      "tone": "warning"
+                    },
+                    {
+                      "id": "B2",
+                      "label": "B",
+                      "children": [
+                        {
+                          "id": "t2",
+                          "label": "0"
+                        }
+                      ],
+                      "sub": "0"
+                    }
+                  ],
+                  "sub": "2",
+                  "tone": "success"
+                },
+                {
+                  "id": "h",
+                  "label": "#"
+                },
+                {
+                  "id": "F0",
+                  "label": "F",
+                  "children": [
+                    {
+                      "id": "B3",
+                      "label": "B",
+                      "children": [
+                        {
+                          "id": "t3",
+                          "label": "0"
+                        }
+                      ],
+                      "sub": "0"
+                    },
+                    {
+                      "id": "F1",
+                      "label": "F",
+                      "children": [
+                        {
+                          "id": "B4",
+                          "label": "B",
+                          "children": [
+                            {
+                              "id": "t4",
+                              "label": "1"
+                            }
+                          ],
+                          "sub": "1"
+                        },
+                        {
+                          "id": "F2",
+                          "label": "F",
+                          "children": [
+                            {
+                              "id": "B5",
+                              "label": "B",
+                              "children": [
+                                {
+                                  "id": "t5",
+                                  "label": "1"
+                                }
+                              ],
+                              "sub": "1"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Fraction part, innermost F first",
+          "body": "$F_2\\to B$: $F_2.val=\\tfrac12\\cdot1=0.5$.\n\n$F_1\\to B\\,F_2$: $F_1.val=\\tfrac12(1+0.5)=\\tfrac12(1.5)=0.75$.\n\n$F\\to B\\,F_1$: $F.val=\\tfrac12(0+0.75)=0.375$ (binary $0.011_2=\\tfrac14+\\tfrac18$).",
+          "scene": {
+            "root": {
+              "id": "N",
+              "label": "N",
+              "children": [
+                {
+                  "id": "I0",
+                  "label": "I",
+                  "children": [
+                    {
+                      "id": "I1",
+                      "label": "I",
+                      "children": [
+                        {
+                          "id": "B1",
+                          "label": "B",
+                          "children": [
+                            {
+                              "id": "t1",
+                              "label": "1"
+                            }
+                          ],
+                          "sub": "1"
+                        }
+                      ],
+                      "sub": "1"
+                    },
+                    {
+                      "id": "B2",
+                      "label": "B",
+                      "children": [
+                        {
+                          "id": "t2",
+                          "label": "0"
+                        }
+                      ],
+                      "sub": "0"
+                    }
+                  ],
+                  "sub": "2",
+                  "tone": "success"
+                },
+                {
+                  "id": "h",
+                  "label": "#"
+                },
+                {
+                  "id": "F0",
+                  "label": "F",
+                  "children": [
+                    {
+                      "id": "B3",
+                      "label": "B",
+                      "children": [
+                        {
+                          "id": "t3",
+                          "label": "0"
+                        }
+                      ],
+                      "sub": "0"
+                    },
+                    {
+                      "id": "F1",
+                      "label": "F",
+                      "children": [
+                        {
+                          "id": "B4",
+                          "label": "B",
+                          "children": [
+                            {
+                              "id": "t4",
+                              "label": "1"
+                            }
+                          ],
+                          "sub": "1"
+                        },
+                        {
+                          "id": "F2",
+                          "label": "F",
+                          "children": [
+                            {
+                              "id": "B5",
+                              "label": "B",
+                              "children": [
+                                {
+                                  "id": "t5",
+                                  "label": "1"
+                                }
+                              ],
+                              "sub": "1"
+                            }
+                          ],
+                          "sub": "0.5",
+                          "tone": "warning"
+                        }
+                      ],
+                      "sub": "0.75",
+                      "tone": "warning"
+                    }
+                  ],
+                  "sub": "0.375",
+                  "tone": "success"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Root value",
+          "body": "$$N.val=I.val+F.val=2+0.375=2.375.$$",
+          "scene": {
+            "root": {
+              "id": "N",
+              "label": "N",
+              "children": [
+                {
+                  "id": "I0",
+                  "label": "I",
+                  "children": [
+                    {
+                      "id": "I1",
+                      "label": "I",
+                      "children": [
+                        {
+                          "id": "B1",
+                          "label": "B",
+                          "children": [
+                            {
+                              "id": "t1",
+                              "label": "1"
+                            }
+                          ],
+                          "sub": "1"
+                        }
+                      ],
+                      "sub": "1"
+                    },
+                    {
+                      "id": "B2",
+                      "label": "B",
+                      "children": [
+                        {
+                          "id": "t2",
+                          "label": "0"
+                        }
+                      ],
+                      "sub": "0"
+                    }
+                  ],
+                  "sub": "2"
+                },
+                {
+                  "id": "h",
+                  "label": "#"
+                },
+                {
+                  "id": "F0",
+                  "label": "F",
+                  "children": [
+                    {
+                      "id": "B3",
+                      "label": "B",
+                      "children": [
+                        {
+                          "id": "t3",
+                          "label": "0"
+                        }
+                      ],
+                      "sub": "0"
+                    },
+                    {
+                      "id": "F1",
+                      "label": "F",
+                      "children": [
+                        {
+                          "id": "B4",
+                          "label": "B",
+                          "children": [
+                            {
+                              "id": "t4",
+                              "label": "1"
+                            }
+                          ],
+                          "sub": "1"
+                        },
+                        {
+                          "id": "F2",
+                          "label": "F",
+                          "children": [
+                            {
+                              "id": "B5",
+                              "label": "B",
+                              "children": [
+                                {
+                                  "id": "t5",
+                                  "label": "1"
+                                }
+                              ],
+                              "sub": "1"
+                            }
+                          ],
+                          "sub": "0.5"
+                        }
+                      ],
+                      "sub": "0.75"
+                    }
+                  ],
+                  "sub": "0.375"
+                }
+              ],
+              "sub": "2.375",
+              "tone": "success"
+            },
+            "vars": {
+              "N.val": 2.375
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "$N.val=2+0.375=$ **2.375**",
+        "number": 2.375,
+        "matchesKey": true
+      },
+      "shortcut": "The scheme converts a binary number \"integer#fraction\" to decimal: $10.011_2=2+\\tfrac14+\\tfrac18=2.375$.",
+      "pitfalls": [
+        "Evaluating $F$ left-to-right like $I$: $F$ is right-recursive, so the innermost (rightmost) bit is halved most — each step is $\\tfrac12(\\text{bit}+\\text{rest})$.",
+        "Forgetting the $\\tfrac12$ in $F\\to B$, which would give $F=0.75$ and $N=2.75$."
+      ],
+      "verification": "Unrolling $F$: $\\tfrac12\\big(0+\\tfrac12(1+\\tfrac12\\cdot1)\\big)=\\tfrac{0}{2}+\\tfrac14+\\tfrac18=0.375$, i.e. the binary fraction $.011$. Total $2.375$.",
+      "animation": {
+        "kind": "tree",
+        "title": "Annotated parse tree for 10#011 (badge = val)",
+        "root": {
+          "id": "N",
+          "label": "N",
+          "children": [
+            {
+              "id": "I0",
+              "label": "I",
+              "children": [
+                {
+                  "id": "I1",
+                  "label": "I",
+                  "children": [
+                    {
+                      "id": "B1",
+                      "label": "B",
+                      "children": [
+                        {
+                          "id": "t1",
+                          "label": "1"
+                        }
+                      ],
+                      "sub": "1"
+                    }
+                  ]
+                },
+                {
+                  "id": "B2",
+                  "label": "B",
+                  "children": [
+                    {
+                      "id": "t2",
+                      "label": "0"
+                    }
+                  ],
+                  "sub": "0"
+                }
+              ]
+            },
+            {
+              "id": "h",
+              "label": "#"
+            },
+            {
+              "id": "F0",
+              "label": "F",
+              "children": [
+                {
+                  "id": "B3",
+                  "label": "B",
+                  "children": [
+                    {
+                      "id": "t3",
+                      "label": "0"
+                    }
+                  ],
+                  "sub": "0"
+                },
+                {
+                  "id": "F1",
+                  "label": "F",
+                  "children": [
+                    {
+                      "id": "B4",
+                      "label": "B",
+                      "children": [
+                        {
+                          "id": "t4",
+                          "label": "1"
+                        }
+                      ],
+                      "sub": "1"
+                    },
+                    {
+                      "id": "F2",
+                      "label": "F",
+                      "children": [
+                        {
+                          "id": "B5",
+                          "label": "B",
+                          "children": [
+                            {
+                              "id": "t5",
+                              "label": "1"
+                            }
+                          ],
+                          "sub": "1"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "cse-2023-cs-51": {
+      "approach": "A WHERE clause with AND keeps a row only if **both** conditions are true. Test each of the 5 rows; watch the strict inequality $> 65$.",
+      "concepts": [
+        "SQL SELECT … WHERE",
+        "Conjunction (AND)",
+        "Strict comparison"
+      ],
+      "steps": [
+        {
+          "title": "Condition 1: gender = 'F'",
+          "body": "Rows with gender F: rollNum 2 (Aliya, 70), 3 (Aliya, 80), 5 (Swati, 65). Rows 1 and 4 (M) are rejected.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "muted"
+              },
+              {
+                "r": 3,
+                "tone": "muted"
+              },
+              {
+                "r": 1,
+                "c": 2,
+                "tone": "info"
+              },
+              {
+                "r": 2,
+                "c": 2,
+                "tone": "info"
+              },
+              {
+                "r": 4,
+                "c": 2,
+                "tone": "info"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Condition 2: marks > 65 (strict)",
+          "body": "Among the F rows: $70>65$ ✓, $80>65$ ✓, $65>65$ ✗ (equal is not greater). Swati's row is rejected.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "muted"
+              },
+              {
+                "r": 3,
+                "tone": "muted"
+              },
+              {
+                "r": 4,
+                "tone": "error"
+              },
+              {
+                "r": 1,
+                "c": 3,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "c": 3,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Count the result",
+          "body": "Rows 2 and 3 satisfy both conditions. They have the same name, but they are different tuples (different rollNum) and there is no DISTINCT anyway, so both are returned: **2 rows**.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "muted"
+              },
+              {
+                "r": 3,
+                "tone": "muted"
+              },
+              {
+                "r": 4,
+                "tone": "muted"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "tone": "success"
+              }
+            ],
+            "vars": {
+              "rows returned": 2
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "**2** rows (rollNum 2 and 3)",
+        "number": 2,
+        "matchesKey": true
+      },
+      "shortcut": "Scan for F rows with marks strictly above 65: 70 and 80 → 2.",
+      "pitfalls": [
+        "Reading $>$ as $\\ge$ and including Swati (65): gives 3.",
+        "Treating the two \"Aliya\" rows as duplicates: SELECT * returns both (and they differ in rollNum and marks)."
+      ],
+      "verification": "Complement check: the 3 rejected rows are 1 (M), 4 (M), 5 (65 not $>65$); $5-3=2$.",
+      "animation": {
+        "kind": "table",
+        "title": "Student",
+        "cols": [
+          "rollNum",
+          "name",
+          "gender",
+          "marks"
+        ],
+        "rows": [
+          [
+            1,
+            "Naman",
+            "M",
+            62
+          ],
+          [
+            2,
+            "Aliya",
+            "F",
+            70
+          ],
+          [
+            3,
+            "Aliya",
+            "F",
+            80
+          ],
+          [
+            4,
+            "James",
+            "M",
+            82
+          ],
+          [
+            5,
+            "Swati",
+            "F",
+            65
+          ]
+        ],
+        "caption": "WHERE gender = 'F' AND marks > 65"
+      }
+    },
+    "cse-2023-cs-52": {
+      "approach": "A primary index is sparse: one entry (block-anchor key + block pointer) per **data block**. Compute data blocks, index entries per block, index blocks, then the binary-search cost $\\lceil\\log_2 b\\rceil$ on the index — that alone identifies the data block.",
+      "concepts": [
+        "Primary (sparse) index",
+        "Blocking factor (unspanned)",
+        "Binary search on index blocks"
+      ],
+      "given": "| Item | Value |\n|---|---|\n| records | 25,000 × 100 B |\n| key | 15 B |\n| block | 1024 B |\n| block pointer | 5 B |",
+      "steps": [
+        {
+          "title": "Data file: blocking factor and blocks",
+          "body": "Records are not split across blocks, so\n\n$$\\text{bfr}=\\left\\lfloor\\frac{1024}{100}\\right\\rfloor=10\\ \\text{records/block},\\qquad \\frac{25000}{10}=2500\\ \\text{data blocks}.$$",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Index entry size and index blocking factor",
+          "body": "Entry $=$ key $+$ pointer $=15+5=20$ B.\n\n$$\\text{bfr}_i=\\left\\lfloor\\frac{1024}{20}\\right\\rfloor=\\lfloor51.2\\rfloor=51\\ \\text{entries/block}.$$",
+          "scene": {
+            "reveal": 4
+          }
+        },
+        {
+          "title": "Number of index blocks",
+          "body": "One entry per data block (block anchor) → $2500$ entries.\n\n$$b=\\left\\lceil\\frac{2500}{51}\\right\\rceil=\\lceil49.02\\rceil=50\\ \\text{index blocks}\\quad(51\\times49=2499<2500).$$",
+          "scene": {
+            "reveal": 5
+          }
+        },
+        {
+          "title": "Binary search on the index",
+          "body": "$$\\lceil\\log_2 50\\rceil=6\\qquad(2^5=32<50\\le64=2^6).$$\n\nThe question asks for the accesses needed to **identify** the data block, so the final read of the data block itself is not added: **6**.",
+          "scene": {
+            "reveal": 6,
+            "vars": {
+              "accesses": 6
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "$\\lceil\\log_2 50\\rceil=$ **6** block accesses",
+        "number": 6,
+        "matchesKey": true
+      },
+      "shortcut": "$2500$ data blocks $/\\ 51$ entries per index block $\\approx50$ index blocks → $\\lceil\\log_2 50\\rceil=6$.",
+      "pitfalls": [
+        "Indexing every record (dense): $\\lceil25000/51\\rceil=491$ blocks → 9. A primary index on an ordered file has one entry per block.",
+        "Adding 1 for reading the data block: that gives 7, but the question stops at *identifying* the block.",
+        "Using $1024/20=51.2$ without flooring, or $1000/20=50$ with a decimal KB."
+      ],
+      "verification": "Sanity: 50 index blocks hold up to $50\\times51=2550\\ge2500$ entries, and 49 blocks hold only $2499$; binary search over 50 items needs 6 probes ($\\lceil\\log_2 50\\rceil$) since 5 probes cover only 32.",
+      "animation": {
+        "kind": "equation",
+        "title": "Primary index cost",
+        "lines": [
+          {
+            "tex": "\\text{bfr}=\\lfloor 1024/100\\rfloor = 10",
+            "note": "records per data block"
+          },
+          {
+            "tex": "25000/10 = 2500",
+            "note": "data blocks = index entries"
+          },
+          {
+            "tex": "15+5 = 20\\ \\text{B}",
+            "note": "index entry"
+          },
+          {
+            "tex": "\\lfloor 1024/20\\rfloor = 51",
+            "note": "entries per index block"
+          },
+          {
+            "tex": "\\lceil 2500/51\\rceil = 50",
+            "note": "index blocks"
+          },
+          {
+            "tex": "\\lceil \\log_2 50\\rceil = 6",
+            "note": "binary search",
+            "tone": "success"
+          }
+        ],
+        "reveal": 0
+      }
+    },
+    "cse-2023-cs-53": {
+      "approach": "Remember only what matters for the future: the number of 1s at the end of the input read so far (0, 1 or 2), plus a trap state once 111 has appeared. Then prove the 4 states are pairwise distinguishable.",
+      "concepts": [
+        "DFA design",
+        "Dead (trap) state",
+        "Myhill–Nerode / distinguishable states"
+      ],
+      "steps": [
+        {
+          "title": "What the DFA must remember",
+          "body": "- $q_0$: the input so far ends in 0 (or is empty) — 0 trailing 1s.\n- $q_1$: ends in exactly one 1.\n- $q_2$: ends in exactly two 1s.\n- dead: \"111\" has already occurred (the string can never be accepted again).\n\n$q_0,q_1,q_2$ are accepting; dead is not."
+        },
+        {
+          "title": "Transitions",
+          "body": "A 0 resets the run of 1s: $q_0,q_1,q_2\\xrightarrow{0}q_0$.\n\nA 1 extends it: $q_0\\xrightarrow{1}q_1\\xrightarrow{1}q_2\\xrightarrow{1}\\text{dead}$, and dead loops on 0 and 1."
+        },
+        {
+          "title": "Run on 110111: a 0 resets the count",
+          "body": "$q_0\\xrightarrow{1}q_1\\xrightarrow{1}q_2\\xrightarrow{0}q_0$ — after \"110\" we are back to 0 trailing 1s.",
+          "scene": {
+            "tape": {
+              "cells": [
+                "1",
+                "1",
+                "0",
+                "1",
+                "1",
+                "1"
+              ],
+              "head": 3
+            },
+            "current": [
+              "q0"
+            ],
+            "edgeTones": {
+              "q2>q0": "warning"
+            }
+          }
+        },
+        {
+          "title": "Three consecutive 1s reach the dead state",
+          "body": "$q_0\\xrightarrow{1}q_1\\xrightarrow{1}q_2\\xrightarrow{1}\\text{dead}$: \"110111\" contains 111 and is rejected — correct.",
+          "scene": {
+            "tape": {
+              "cells": [
+                "1",
+                "1",
+                "0",
+                "1",
+                "1",
+                "1"
+              ],
+              "head": 6
+            },
+            "current": [
+              "q3"
+            ],
+            "edgeTones": {
+              "q2>q3": "error"
+            }
+          }
+        },
+        {
+          "title": "No two states can be merged",
+          "body": "Give a string that one state accepts and the other rejects:\n\n| Pair | Distinguishing string |\n|---|---|\n| any accepting state vs dead | $\\varepsilon$ |\n| $q_0$ vs $q_1$ | $11$ ($q_0\\to q_2$ ✓, $q_1\\to$ dead ✗) |\n| $q_0$ vs $q_2$ | $1$ |\n| $q_1$ vs $q_2$ | $1$ |\n\nAll 4 states are pairwise distinguishable, so the minimal (complete) DFA has **4** states.",
+          "scene": {
+            "edgeTones": {},
+            "current": [],
+            "vars": {
+              "states": 4
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "**4** states ($q_0,q_1,q_2$ accepting + 1 dead state)",
+        "number": 4,
+        "matchesKey": true
+      },
+      "shortcut": "\"No $k$ consecutive 1s\" needs $k$ accepting states (trailing-ones count $0\\dots k-1$) plus one dead state: $k+1=4$ for $k=3$.",
+      "pitfalls": [
+        "Answering 3 by dropping the dead state — a DFA's transition function must be total, so the trap state counts.",
+        "Building a \"contains 111\" DFA and forgetting to complement the accepting states."
+      ],
+      "verification": "Myhill–Nerode classes: $\\varepsilon$, $1$, $11$, $111$ have pairwise distinct futures (as in the table), so at least 4 states are needed; the DFA above has exactly 4.",
+      "animation": {
+        "kind": "automaton",
+        "title": "Minimal DFA: no three consecutive 1s",
+        "layout": "row",
+        "states": [
+          {
+            "id": "q0",
+            "label": "q0",
+            "start": true,
+            "accept": true
+          },
+          {
+            "id": "q1",
+            "label": "q1",
+            "accept": true
+          },
+          {
+            "id": "q2",
+            "label": "q2",
+            "accept": true
+          },
+          {
+            "id": "q3",
+            "label": "dead"
+          }
+        ],
+        "edges": [
+          {
+            "from": "q0",
+            "to": "q0",
+            "label": "0"
+          },
+          {
+            "from": "q0",
+            "to": "q1",
+            "label": "1"
+          },
+          {
+            "from": "q1",
+            "to": "q0",
+            "label": "0"
+          },
+          {
+            "from": "q1",
+            "to": "q2",
+            "label": "1"
+          },
+          {
+            "from": "q2",
+            "to": "q0",
+            "label": "0"
+          },
+          {
+            "from": "q2",
+            "to": "q3",
+            "label": "1"
+          },
+          {
+            "from": "q3",
+            "to": "q3",
+            "label": "0,1"
+          }
+        ],
+        "current": [
+          "q0"
+        ],
+        "tape": {
+          "cells": [
+            "1",
+            "1",
+            "0",
+            "1",
+            "1",
+            "1"
+          ],
+          "head": 0
+        }
+      }
+    },
+    "cse-2023-cs-54": {
+      "approach": "Index bits + offset bits $=\\log_2(\\text{sets}\\times\\text{block size})=\\log_2(\\text{cache size}/\\text{associativity})$, so the block size (not given) cancels: tag $=32-\\log_2(64\\text{ KB}/8)$.",
+      "concepts": [
+        "Set-associative cache",
+        "Address split: TAG | INDEX | OFFSET"
+      ],
+      "given": "8-way, 64 KB $=2^{16}$ B, 32-bit address; block size $B$ not given.",
+      "steps": [
+        {
+          "title": "Relate sets and block size",
+          "body": "$$\\text{sets}\\times\\text{ways}\\times B=\\text{cache size}\\;\\Rightarrow\\;\\text{sets}\\times B=\\frac{2^{16}}{2^3}=2^{13}.$$"
+        },
+        {
+          "title": "INDEX + OFFSET bits are fixed",
+          "body": "$\\text{INDEX}+\\text{OFFSET}=\\log_2(\\text{sets})+\\log_2 B=\\log_2(\\text{sets}\\times B)=\\log_2 2^{13}=13$ bits — whatever $B$ is.",
+          "scene": {
+            "rows": [
+              {
+                "label": "address",
+                "fields": [
+                  {
+                    "bits": "xxxxxxxxxxxxxxxxxxx",
+                    "label": "TAG",
+                    "tone": "accent"
+                  },
+                  {
+                    "bits": "xxxxxxxxxxxxx",
+                    "label": "INDEX + OFFSET = 13",
+                    "tone": "info"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "title": "TAG bits",
+          "body": "$$\\text{TAG}=32-13=19\\ \\text{bits}.$$\n\nExample with $B=64$ B: offset $6$, lines $=2^{16}/2^6=1024$, sets $=1024/8=128$ → index $7$; tag $=32-7-6=19$. ✓",
+          "scene": {
+            "rows": [
+              {
+                "label": "address",
+                "fields": [
+                  {
+                    "bits": "xxxxxxxxxxxxxxxxxxx",
+                    "label": "TAG = 19",
+                    "tone": "success"
+                  },
+                  {
+                    "bits": "xxxxxxxxxxxxx",
+                    "label": "INDEX + OFFSET = 13",
+                    "tone": "info"
+                  }
+                ]
+              },
+              {
+                "label": "e.g. B = 64 B",
+                "fields": [
+                  {
+                    "bits": "xxxxxxxxxxxxxxxxxxx",
+                    "label": "TAG 19",
+                    "tone": "success"
+                  },
+                  {
+                    "bits": "xxxxxxx",
+                    "label": "INDEX 7",
+                    "tone": "warning"
+                  },
+                  {
+                    "bits": "xxxxxx",
+                    "label": "OFFSET 6",
+                    "tone": "muted"
+                  }
+                ]
+              }
+            ],
+            "vars": {
+              "TAG": 19
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "TAG $=32-13=$ **19** bits",
+        "number": 19,
+        "matchesKey": true
+      },
+      "shortcut": "TAG $=$ address bits $-\\log_2(\\text{cache size}/\\text{ways})=32-\\log_2(2^{16}/2^3)=32-13=19$.",
+      "pitfalls": [
+        "Thinking the block size is needed — it only shifts bits between INDEX and OFFSET.",
+        "Using $\\log_2(64\\text{ KB})=16$ (direct-mapped thinking) → tag 16. Associativity 8 removes 3 index bits and adds them to the tag."
+      ],
+      "verification": "Try $B=32$ B: offset 5, sets $=2^{16}/(32\\times8)=256$ → index 8; tag $=32-8-5=19$ again.",
+      "animation": {
+        "kind": "bits",
+        "title": "32-bit address",
+        "rows": [
+          {
+            "label": "address",
+            "fields": [
+              {
+                "bits": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                "label": "32 bits"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "cse-2023-cs-55": {
+      "approach": "AND the destination with every mask, keep the entries whose result equals the subnet number, and forward on the **longest** matching prefix. Only the octet where the mask is partial needs binary work.",
+      "concepts": [
+        "Longest prefix match",
+        "Subnet masks / CIDR",
+        "Bitwise AND"
+      ],
+      "given": "Destination $200.150.68.118$.",
+      "steps": [
+        {
+          "title": "Rule: longest matching prefix wins",
+          "body": "Several entries (and always the default) can match; the router chooses the matching entry with the most 1-bits in its mask. Masks: $255.255.0.0=/16$, $255.255.224.0=/19$, $255.255.255.0=/24$, $255.255.255.224=/27$."
+        },
+        {
+          "title": "/16 and /19 entries",
+          "body": "/16: $200.150.68.118 \\text{ AND } 255.255.0.0=200.150.0.0$ → **match** (interface 1).\n\n/19: only the 3rd octet is partial: $68=01000100_2$, $224=11100000_2$, so $68\\text{ AND }224=01000000_2=64$ → $200.150.64.0$ → **match** (interface 2). (The /19 block is $200.150.64.0$–$200.150.95.255$.)",
+          "scene": {
+            "rows": [
+              [
+                "200.150.0.0/16",
+                "200.150.0.0",
+                "yes",
+                1
+              ],
+              [
+                "200.150.64.0/19",
+                "200.150.64.0",
+                "yes",
+                2
+              ],
+              [
+                "200.150.68.0/24",
+                "?",
+                "?",
+                3
+              ],
+              [
+                "200.150.68.64/27",
+                "?",
+                "?",
+                4
+              ],
+              [
+                "default /0",
+                "0.0.0.0",
+                "yes",
+                0
+              ]
+            ],
+            "hl": [
+              {
+                "r": 0,
+                "c": 2,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "c": 2,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "/24 and /27 entries",
+          "body": "/24: $200.150.68.118\\text{ AND }255.255.255.0=200.150.68.0$ → **match** (interface 3).\n\n/27: the 4th octet is partial: $118=01110110_2$, $224=11100000_2$, so $118\\text{ AND }224=01100000_2=96$ → $200.150.68.96\\neq200.150.68.64$ → **no match**. (The /27 block $.64$ covers only $.64$–$.95$.)",
+          "scene": {
+            "rows": [
+              [
+                "200.150.0.0/16",
+                "200.150.0.0",
+                "yes",
+                1
+              ],
+              [
+                "200.150.64.0/19",
+                "200.150.64.0",
+                "yes",
+                2
+              ],
+              [
+                "200.150.68.0/24",
+                "200.150.68.0",
+                "yes",
+                3
+              ],
+              [
+                "200.150.68.64/27",
+                "200.150.68.96",
+                "no",
+                4
+              ],
+              [
+                "default /0",
+                "0.0.0.0",
+                "yes",
+                0
+              ]
+            ],
+            "hl": [
+              {
+                "r": 0,
+                "c": 2,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "c": 2,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "c": 2,
+                "tone": "success"
+              },
+              {
+                "r": 3,
+                "tone": "error"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Pick the longest match",
+          "body": "Matching prefixes: /16 (1), /19 (2), /24 (3), default /0 (0). The longest is **/24**, so the packet leaves on **interface 3**.",
+          "scene": {
+            "hl": [
+              {
+                "r": 3,
+                "tone": "error"
+              },
+              {
+                "r": 0,
+                "tone": "muted"
+              },
+              {
+                "r": 1,
+                "tone": "muted"
+              },
+              {
+                "r": 4,
+                "tone": "muted"
+              },
+              {
+                "r": 2,
+                "tone": "success"
+              }
+            ],
+            "vars": {
+              "interface": 3
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "Longest match /24 → interface **3**",
+        "number": 3,
+        "matchesKey": true
+      },
+      "shortcut": "Check the most specific entry first: .64/27 covers .64–.95, and 118 is outside; next is 200.150.68.0/24, which contains .118 → interface 3.",
+      "pitfalls": [
+        "Choosing interface 4 because 200.150.68.64 \"looks closest\" — a /27 covers only 32 addresses (.64–.95).",
+        "Taking the first matching row (interface 1) instead of the longest prefix."
+      ],
+      "verification": "Range check: /24 entry covers $200.150.68.0$–$.255$ ∋ $.118$; /27 entry covers $.64$–$.95$ ∌ $.118$. So among matches the /24 is the most specific.",
+      "animation": {
+        "kind": "table",
+        "title": "Forwarding table vs 200.150.68.118",
+        "cols": [
+          "prefix",
+          "dest AND mask",
+          "match?",
+          "iface"
+        ],
+        "rows": [
+          [
+            "200.150.0.0/16",
+            "?",
+            "?",
+            1
+          ],
+          [
+            "200.150.64.0/19",
+            "?",
+            "?",
+            2
+          ],
+          [
+            "200.150.68.0/24",
+            "?",
+            "?",
+            3
+          ],
+          [
+            "200.150.68.64/27",
+            "?",
+            "?",
+            4
+          ],
+          [
+            "default /0",
+            "0.0.0.0",
+            "yes",
+            0
+          ]
+        ],
+        "mono": true
+      }
+    }
+  }
+}
