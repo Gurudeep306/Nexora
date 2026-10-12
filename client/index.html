@@ -5,64 +5,51 @@
     <link rel="icon" type="image/svg+xml" href="/nexora.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#1c1d22" />
+    <meta name="theme-color" content="#0f1013" />
     <meta name="description" content="Nexora — learn computer science end to end: animated courses, practice on a real judge, an AI tutor and career roadmaps." />
     <title>Nexora — Learn computer science, step by step</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Caveat:wght@600;700&family=Cinzel:wght@600;700;800;900&family=Kalam:wght@600;700&family=Orbitron:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800&family=Syne:wght@600;700;800&family=Unbounded:wght@600;700;800;900&display=swap" rel="stylesheet" />
     <script>
-      /* Resolve the whole look before the first paint, so the page never
-         flashes the wrong appearance, accent or desktop colour while React
-         boots. Mirrors src/context/ThemeContext.tsx; the wallpaper table is
-         injected from src/theme/catalog.ts by vite.config.ts. */
+      /* Apply the whole look before the first paint, so the page never
+         flashes the wrong theme, mode, accent, font or card style while React
+         boots. The validator and its tables are injected by vite.config.ts
+         from src/theme/look.ts — the same code ThemeProvider runs — so the
+         two can never disagree. */
       (function () {
         var d = document.documentElement;
+        var T = /*__LOOK_TABLES__*/{};
+        var P = /*__PALETTE_MODES__*/{};
+        var sanitize = /*__SANITIZE_LOOK__*/null;
+        var raw = null;
+        var appearance = 'system';
         try {
-          var stored = localStorage.getItem('nexora:appearance');
-          if (stored === 'light' || stored === 'dark') d.setAttribute('data-theme', stored);
-          var dark = stored === 'light' || stored === 'dark'
-            ? stored === 'dark'
-            : matchMedia('(prefers-color-scheme: dark)').matches;
-          d.classList.toggle('dark', dark);
+          raw = JSON.parse(localStorage.getItem('nexora:look') || 'null');
+          var a = localStorage.getItem('nexora:appearance');
+          if (a === 'light' || a === 'dark') appearance = a;
+        } catch (e) { /* storage blocked or unreadable — defaults apply */ }
+        var look = T.defaults;
+        try { if (sanitize) look = sanitize(raw, T); } catch (e) {}
+        var system = 'dark';
+        try { if (matchMedia('(prefers-color-scheme: light)').matches) system = 'light'; } catch (e) {}
+        var want = appearance === 'system' ? system : appearance;
+        var modes = P[look.theme] || [1, 1];
+        var mode = modes[want === 'dark' ? 0 : 1] ? want : modes[0] ? 'dark' : 'light';
 
-          var W = /*__WALLPAPERS__*/{};
-          var look = {};
-          try { look = JSON.parse(localStorage.getItem('nexora:look') || '{}') || {}; } catch (e) {}
-          var id = W[look.wallpaper] ? look.wallpaper : 'aurora';
-          var w = W[id] || ['n', 'blue'];
-          var tone = dark ? 'dark' : 'light', wallTone = tone, color = '', tint = '';
-          if (w[0] === 'o') { color = dark ? w[2] : w[3]; tint = dark ? w[4] : w[5]; }
-          else if (w[0] === 'p') { wallTone = w[2]; color = w[3]; tint = w[4]; }
-          var accents = ' blue purple pink red orange yellow green graphite cyan ice plasma ';
-          var accent = look.accent && accents.indexOf(' ' + look.accent + ' ') >= 0 ? look.accent : w[1];
-          d.setAttribute('data-accent', accent);
-          d.setAttribute('data-glass', /^(frosted|clear|solid)$/.test(look.glass) ? look.glass : 'frosted');
-          d.setAttribute('data-card-style', look.cardStyle || 'glass');
-          d.setAttribute('data-icon-pack', look.iconPack || 'vibrant');
-          d.setAttribute('data-icon-shape', look.iconShape || 'squircle');
-          d.setAttribute('data-font-style', look.fontStyle || 'space-grotesk');
-          d.setAttribute('data-font-size', look.fontSize || 'comfortable');
-          d.setAttribute('data-font-color', look.fontColor || 'default');
-          d.setAttribute('data-wall', w[0] === 'o' ? 'original' : w[0] === 'p' ? 'photo' : 'none');
-          d.setAttribute('data-wall-tone', wallTone);
-
-          if (color) {
-            d.style.setProperty('--wall-color', color);
-            d.style.setProperty('--wall-tint', tint);
-          }
-          if (w[0] === 'o') {
-            /* Start fetching the desktop now rather than after the bundle. */
-            var l = document.createElement('link');
-            l.rel = 'preload';
-            l.as = 'image';
-            l.setAttribute('imagesrcset', '/wallpapers/' + id + '-' + tone + '-1280.webp 1280w, /wallpapers/' + id + '-' + tone + '.webp 2560w');
-            l.setAttribute('imagesizes', '100vw');
-            document.head.appendChild(l);
-          }
-          var m = document.querySelector('meta[name="theme-color"]');
-          if (m) m.setAttribute('content', dark ? '#1c1d22' : '#f2f2f5');
-        } catch (e) { /* storage blocked — the CSS media query still applies */ }
+        d.setAttribute('data-palette', look.theme);
+        d.setAttribute('data-mode', mode);
+        d.classList.toggle('dark', mode === 'dark');
+        if (look.accent && look.accent !== 'theme') d.setAttribute('data-accent', look.accent);
+        d.setAttribute('data-font', look.font);
+        d.setAttribute('data-code-font', look.codeFont);
+        d.setAttribute('data-text-size', look.textSize);
+        d.setAttribute('data-card-style', look.cardStyle);
+        d.setAttribute('data-radius', look.radius);
+        d.setAttribute('data-icon-set', look.iconSet);
+        d.setAttribute('data-icon-style', look.iconStyle);
+        d.setAttribute('data-icon-container', look.iconContainer);
+        d.setAttribute('data-icon-shape', look.iconShape);
+        var color = modes[mode === 'dark' ? 0 : 1];
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta && typeof color === 'string') meta.setAttribute('content', color);
       })();
     </script>
   </head>

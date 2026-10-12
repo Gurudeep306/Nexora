@@ -375,9 +375,9 @@
 }
 .ai-page-divider strong { color: var(--color-text-secondary); font-weight: 600; }
 
-/* The assistant floats over page content, so it stays opaque even when a
-   glass/wallpaper theme makes --color-bg-surface translucent (index.css
-   `[data-wall]`). --oklch-bg-1 is the theme's solid surface colour. */
+/* The assistant floats over page content, so it must stay opaque.
+   --oklch-bg-1 is the active palette's solid surface colour (palettes.ts),
+   pinned here so no card style or translucent token can leak through. */
 .ai-fab, .ai-window, .ai-select-ask { --color-bg-surface: var(--oklch-bg-1); }
 
 .ai-fab {

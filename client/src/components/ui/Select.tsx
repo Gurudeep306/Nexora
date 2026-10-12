@@ -151,7 +151,7 @@ export function Select({
                   disabled={item.disabled}
                   className={cn(
                     'relative flex cursor-pointer items-center rounded-md py-2 pl-2.5 pr-8 text-[13px] outline-none select-none',
-                    'text-foreground/70 data-[highlighted]:bg-foreground/10 data-[highlighted]:text-foreground',
+                    'text-text-secondary data-[highlighted]:bg-foreground/10 data-[highlighted]:text-foreground',
                     'data-[state=checked]:font-medium data-[state=checked]:text-primary-bright',
                     'data-[disabled]:pointer-events-none data-[disabled]:opacity-40',
                   )}

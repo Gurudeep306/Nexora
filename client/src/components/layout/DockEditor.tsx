@@ -2,27 +2,19 @@ import { Minus, Plus, RotateCcw } from 'lucide-react'
 import { motion, Reorder, useReducedMotion } from 'motion/react'
 import { Button, Modal } from '@/components/ui'
 import { cn } from '@/lib/utils'
+import { DockBadge } from './DockBadge'
 import {
   DEFAULT_DOCK,
   DOCK_BY_ID,
   DOCK_ITEMS,
   MAX_PINNED,
   setDock,
-  tileStyle,
   useDock,
   type DockItem,
 } from './dockStore'
 
 function Tile({ item, mono, size = 44 }: { item: DockItem; mono: boolean; size?: number }) {
-  const Icon = item.icon
-  return (
-    <span
-      className={cn('flex items-center justify-center rounded-[28%]', mono ? 'bg-bg-surface-3 ring-1 ring-border' : 'dock-tile')}
-      style={{ width: size, height: size, ...(mono ? {} : tileStyle(item)) }}
-    >
-      <Icon className={cn('size-[46%]', mono ? 'text-text-primary' : 'text-white')} aria-hidden="true" />
-    </span>
-  )
+  return <DockBadge item={item} mono={mono} className={size >= 44 ? 'size-11' : 'size-9'} />
 }
 
 function Toggle({ on, onChange, label }: { on: boolean; onChange: (v: boolean) => void; label: string }) {

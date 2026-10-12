@@ -343,12 +343,12 @@ export default function SystemDossierPage() {
               )}
 
               {meta?.architecturePattern && (
-                <span className="rounded-full bg-amber-500/10 px-3 py-1 text-[11px] font-mono font-bold text-amber-400 ring-1 ring-amber-500/30">
+                <span className="rounded-full bg-state-warning/10 px-3 py-1 text-[11px] font-mono font-bold text-state-warning ring-1 ring-state-warning/30">
                   {meta.architecturePattern}
                 </span>
               )}
 
-              <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-[11px] font-mono font-bold text-emerald-400 ring-1 ring-emerald-500/30 flex items-center gap-1.5">
+              <span className="rounded-full bg-state-success/10 px-3 py-1 text-[11px] font-mono font-bold text-state-success ring-1 ring-state-success/30 flex items-center gap-1.5">
                 <Zap className="size-3" /> {dossier.system.throughput}
               </span>
               <span className="rounded-full bg-sky-500/10 px-3 py-1 text-[11px] font-mono font-bold text-sky-400 ring-1 ring-sky-500/30 flex items-center gap-1.5">
@@ -391,13 +391,13 @@ export default function SystemDossierPage() {
               <div className="flex items-center gap-3">
                 <div className="text-right">
                   <span className="text-[10px] uppercase font-mono text-text-muted block">Masterclass Progress</span>
-                  <span className="text-xs font-mono font-bold text-emerald-400">
+                  <span className="text-xs font-mono font-bold text-state-success">
                     {(completedChapters[systemId] || []).length} of 10 Chapters ({Math.round(((completedChapters[systemId]?.length || 0) / 10) * 100)}%)
                   </span>
                 </div>
                 <div className="w-24 h-2 bg-bg-surface-3 rounded-full overflow-hidden ring-1 ring-border">
                   <div
-                    className="h-full bg-emerald-400 rounded-full transition-all duration-300"
+                    className="h-full bg-state-success rounded-full transition-all duration-300"
                     style={{ width: `${((completedChapters[systemId]?.length || 0) / 10) * 100}%` }}
                   />
                 </div>
@@ -460,7 +460,7 @@ export default function SystemDossierPage() {
               >
                 {/* Completed checkmark badge */}
                 {isDone && (
-                  <span className="absolute -top-1.5 -right-1.5 bg-emerald-500 text-bg-base rounded-full p-0.5 shadow-sm">
+                  <span className="absolute -top-1.5 -right-1.5 bg-state-success text-bg-base rounded-full p-0.5 shadow-sm">
                     <CheckCircle2 className="size-3 text-bg-base fill-current" />
                   </span>
                 )}
@@ -554,7 +554,7 @@ export default function SystemDossierPage() {
                   >
                     <div className="mt-0.5 shrink-0">
                       {isDone ? (
-                        <CheckCircle2 className="size-4 text-emerald-400" />
+                        <CheckCircle2 className="size-4 text-state-success" />
                       ) : (
                         <div
                           className="size-4 rounded-full border flex items-center justify-center text-[10px] font-mono"
@@ -612,7 +612,7 @@ export default function SystemDossierPage() {
                 onClick={() => toggleChapterComplete(currentChapter.chapterNumber)}
                 className={`flex items-center gap-2 rounded-lg px-3.5 py-2 text-xs font-bold transition shadow-sm ${
                   isCurrentChapterComplete
-                    ? 'bg-emerald-500/20 text-emerald-400 ring-1 ring-emerald-500/50'
+                    ? 'bg-state-success/20 text-state-success ring-1 ring-state-success/50'
                     : 'bg-bg-surface-3 text-text-muted hover:text-text-primary ring-1 ring-border'
                 }`}
               >
@@ -732,7 +732,7 @@ export default function SystemDossierPage() {
                 </div>
                 <div className="rounded-xl bg-bg-surface-1 p-3 ring-1 ring-border text-center">
                   <span className="text-[11px] text-text-muted block">5-Year Disk Footprint</span>
-                  <span className="text-base sm:text-lg font-mono font-extrabold text-emerald-400">
+                  <span className="text-base sm:text-lg font-mono font-extrabold text-state-success">
                     {calcResults.fiveYearStorageTb} TB
                   </span>
                 </div>
@@ -757,12 +757,12 @@ export default function SystemDossierPage() {
             <div className="rounded-2xl bg-bg-surface-2 p-5 sm:p-6 ring-1 ring-border shadow-2xl space-y-4">
               <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/60 pb-3">
                 <div className="flex items-center gap-2">
-                  <div className="size-2.5 rounded-full bg-emerald-400 animate-ping" />
+                  <div className="size-2.5 rounded-full bg-state-success animate-ping" />
                   <h3 className="text-sm font-bold text-text-primary flex items-center gap-2">
                     <Network className="size-4" style={{ color: domainTheme.color }} /> Live Architectural Topology & Distributed Wire Flow Simulator
                   </h3>
                 </div>
-                <span className="text-[11px] font-mono px-2 py-0.5 rounded border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 font-bold">
+                <span className="text-[11px] font-mono px-2 py-0.5 rounded border border-state-success/30 bg-state-success/10 text-state-success font-bold">
                   {(dossier.system.services || []).length} Microservices • {(dossier.system.animationSteps || []).length} Wire Flow Steps
                 </span>
               </div>
@@ -810,9 +810,9 @@ export default function SystemDossierPage() {
             <div className="rounded-2xl border border-border bg-bg-surface-2 p-5 sm:p-6 shadow-2xl space-y-4">
               <div className="flex items-center justify-between border-b border-border/60 pb-3">
                 <h3 className="text-sm font-bold text-text-primary flex items-center gap-2">
-                  <Sparkles className="size-4 text-amber-400" /> Distributed Consensus & Replication Simulator
+                  <Sparkles className="size-4 text-state-warning" /> Distributed Consensus & Replication Simulator
                 </h3>
-                <span className="text-[11px] font-mono text-amber-400 font-semibold">
+                <span className="text-[11px] font-mono text-state-warning font-semibold">
                   Raft / Paxos / 2PC Interactive
                 </span>
               </div>
@@ -843,7 +843,7 @@ export default function SystemDossierPage() {
                   </button>
                   <button
                     onClick={() => triggerChaosScenario('surge_traffic')}
-                    className="rounded-lg bg-amber-500/15 p-2.5 text-amber-400 ring-1 ring-amber-500/40 hover:bg-amber-500/25 transition text-left"
+                    className="rounded-lg bg-state-warning/15 p-2.5 text-state-warning ring-1 ring-state-warning/40 hover:bg-state-warning/25 transition text-left"
                   >
                     🌊 10x Flash Surge
                   </button>
@@ -868,9 +868,9 @@ export default function SystemDossierPage() {
                     <span
                       className={`font-mono font-bold px-2 py-0.5 rounded text-[11px] ${
                         chaosState.breakerStatus === 'CLOSED'
-                          ? 'bg-emerald-500/20 text-emerald-400'
+                          ? 'bg-state-success/20 text-state-success'
                           : chaosState.breakerStatus === 'HALF_OPEN'
-                          ? 'bg-amber-500/20 text-amber-400'
+                          ? 'bg-state-warning/20 text-state-warning'
                           : 'bg-rose-500/20 text-rose-400 animate-pulse'
                       }`}
                     >
@@ -1014,7 +1014,7 @@ export default function SystemDossierPage() {
                       >
                         {copiedCodeKey === `sec-${secIdx}` ? (
                           <>
-                            <Check className="size-3 text-emerald-400" /> Copied
+                            <Check className="size-3 text-state-success" /> Copied
                           </>
                         ) : (
                           <>
@@ -1062,7 +1062,7 @@ export default function SystemDossierPage() {
               onClick={() => toggleChapterComplete(currentChapter.chapterNumber)}
               className={`w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition shadow-sm ${
                 isCurrentChapterComplete
-                  ? 'bg-emerald-500/20 text-emerald-400 ring-1 ring-emerald-500/50'
+                  ? 'bg-state-success/20 text-state-success ring-1 ring-state-success/50'
                   : 'bg-bg-surface-3 text-text-secondary hover:text-text-primary ring-1 ring-border'
               }`}
             >
@@ -1085,7 +1085,7 @@ export default function SystemDossierPage() {
             ) : (
               <Link
                 to="/learn?tab=sysdesign"
-                className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-emerald-500 px-5 py-2.5 text-xs font-bold text-bg-base hover:bg-emerald-600 transition shadow-lg"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-state-success px-5 py-2.5 text-xs font-bold text-bg-base hover:bg-emerald-600 transition shadow-lg"
               >
                 <span>Complete Masterclass Dossier</span>
                 <CheckCircle2 className="size-3.5" />

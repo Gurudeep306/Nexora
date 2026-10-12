@@ -120,7 +120,7 @@ export function AiProblemFinder({
         {/* example chips */}
         {!busy && (
           <div className="flex flex-col gap-2">
-            <span className="text-[10px] font-semibold tracking-[0.1em] text-foreground-faint/70 uppercase">
+            <span className="text-[10px] font-semibold tracking-[0.1em] text-text-muted uppercase">
               Try one
             </span>
             <div className="flex flex-wrap gap-1.5">

@@ -38,7 +38,7 @@ const FALLBACK: ChartColors = {
 export function useChartColors(): ChartColors {
   const [colors, setColors] = useState<ChartColors>(FALLBACK);
   useEffect(() => {
-    // Re-read whenever the look changes (appearance, accent, wallpaper), so
+    // Re-read whenever the look changes (theme, mode, accent), so
     // charts recolour live instead of keeping the colours they mounted with.
     const read = () => {
       const s = getComputedStyle(document.documentElement);
@@ -67,11 +67,9 @@ export function useChartColors(): ChartColors {
       attributes: true,
       attributeFilter: [
         "class",
-        "data-theme",
+        "data-palette",
+        "data-mode",
         "data-accent",
-        "data-wall",
-        "data-wall-tone",
-        "data-glass",
         "style",
       ],
     });

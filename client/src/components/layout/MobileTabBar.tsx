@@ -1,8 +1,9 @@
 import { NavLink, useLocation } from 'react-router-dom'
 import { prefetchHandlers } from '@/routes'
 import { motion } from 'motion/react'
-import { Search } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Icon } from '@/components/icon/Icon'
+import { dockIconName } from './dockIcons'
 import { openCommandPalette } from './CommandPalette'
 import { DOCK_BY_ID, isDockFocusRoute, useDock, type DockItem } from './dockStore'
 
@@ -31,11 +32,11 @@ export function MobileTabBar() {
             <button
               key="search"
               onClick={openCommandPalette}
-              className="flex cursor-pointer flex-col items-center justify-center gap-0.5 text-text-primary/60 hover:!scale-100"
+              className="flex cursor-pointer flex-col items-center justify-center gap-0.5 text-text-secondary hover:!scale-100"
               aria-label="Search"
             >
               <span className="flex size-9 items-center justify-center rounded-xl bg-gradient-to-b from-accent-brand-hover to-accent-brand text-on-accent-brand shadow-[0_6px_20px_-6px_color-mix(in_oklab,var(--color-accent-brand)_80%,transparent)]">
-                <Search className="size-[18px]" />
+                <Icon name="search" className="size-[18px]" />
               </span>
             </button>
           ) : (
@@ -46,7 +47,7 @@ export function MobileTabBar() {
               className={({ isActive }) =>
                 cn(
                   'relative flex flex-col items-center justify-center gap-0.5 text-[10px] font-medium transition-colors',
-                  isActive ? 'text-text-primary' : 'text-text-primary/60',
+                  isActive ? 'text-text-primary' : 'text-text-secondary',
                 )
               }
             >
@@ -58,7 +59,7 @@ export function MobileTabBar() {
                       className="absolute top-0 h-0.5 w-8 rounded-b-full bg-accent-brand shadow-[0_0_10px_var(--color-accent-brand)]"
                     />
                   )}
-                  <t.icon className={cn('size-[19px]', isActive && 'text-accent-brand')} />
+                  <Icon name={dockIconName(t.id)} className={cn('size-[19px]', isActive && 'text-accent-brand')} />
                   {t.label}
                 </>
               )}

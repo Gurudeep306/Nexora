@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom'
-import { ArrowUpRight, Crown, Flame, Medal, Rocket } from 'lucide-react'
+import { ArrowUpRight } from 'lucide-react'
 import { Badge, Card, CardContent, CardHeader, CardTitle, EmptyState } from '@/components/ui'
 import { PlatformBadge } from '@/components/shared/PlatformBadge'
 import { formatDate, formatNumber } from '@/lib/utils'
 import type { PerformanceResponse } from './types'
+import { Icon } from '@/components/icon/Icon'
 
 export function NextLevelCard({ perf }: { perf: PerformanceResponse }) {
   const nl = perf.nextLevel
@@ -11,14 +12,14 @@ export function NextLevelCard({ perf }: { perf: PerformanceResponse }) {
     <Card glow>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Rocket className="size-4 text-cyan" aria-hidden="true" />
+          <Icon name="rocket" className="size-4 text-cyan" aria-hidden="true" />
           Next Rift
         </CardTitle>
       </CardHeader>
       <CardContent>
         {nl ? (
           <div className="space-y-2">
-            <p className="font-display text-lg tracking-wide" style={{ color: nl.color }}>
+            <p className="font-display text-lg tracking-wide" style={{ color: `color-mix(in oklab, ${nl.color} 60%, var(--color-text-primary))` }}>
               LVL {nl.level} · {nl.name}
             </p>
             <ul className="space-y-1 text-xs text-foreground-dim">
@@ -91,7 +92,7 @@ export function BestsPanel({ perf }: { perf: PerformanceResponse }) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Crown className="size-4 text-gold" aria-hidden="true" />
+            <Icon name="crown" className="size-4 text-gold" aria-hidden="true" />
             Hardest Kills
           </CardTitle>
           <p className="text-xs text-foreground-faint">Highest-rated problems you have solved</p>
@@ -112,7 +113,7 @@ export function BestsPanel({ perf }: { perf: PerformanceResponse }) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Flame className="size-4 text-streak" aria-hidden="true" />
+            <Icon name="flame" className="size-4 text-streak" aria-hidden="true" />
             Longest Sieges
           </CardTitle>
           <p className="text-xs text-foreground-faint">Problems that took the most attempts</p>
@@ -133,7 +134,7 @@ export function BestsPanel({ perf }: { perf: PerformanceResponse }) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Medal className="size-4 text-cyan" aria-hidden="true" />
+            <Icon name="medal" className="size-4 text-cyan" aria-hidden="true" />
             First Conquests
           </CardTitle>
           <p className="text-xs text-foreground-faint">Your first solve in each rating bracket</p>

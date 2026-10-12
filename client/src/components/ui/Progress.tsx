@@ -40,12 +40,12 @@ export function XpBar({ xp, nextLevelXp, level, levelName }: { xp: number; nextL
         <span className="flex items-center gap-1">
           {level != null && (
             <>
-              <span className="text-xs font-mono text-foreground/60">LVL {level} · </span>
+              <span className="text-xs font-mono text-text-secondary">LVL {level} · </span>
             </>
           )}
           <span className="text-foreground">{levelName ?? 'Rift Walker'}</span>
         </span>
-        <span className="font-mono text-foreground/60 tabular-nums">
+        <span className="font-mono text-text-secondary tabular-nums">
           {xp.toLocaleString()} / {nextLevelXp.toLocaleString()} XP
         </span>
       </div>

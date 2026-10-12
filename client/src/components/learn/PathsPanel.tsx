@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'motion/react'
-import { Compass, Flag, Map, Play } from 'lucide-react'
+import { Map } from 'lucide-react'
 import { Card, CardContent, EmptyState, ErrorState, LoadingBlock, Progress, StatCard } from '@/components/ui'
 import { useApi } from '@/hooks/useApi'
 import { api } from '@/lib/api'
@@ -34,9 +34,9 @@ export function PathsPanel() {
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <StatCard icon={<Compass />} label="Roadmap topics" value={stats.data?.total ?? '—'} accent="primary" />
-        <StatCard icon={<Flag />} label="Completed" value={stats.data?.completed ?? '—'} accent="success" />
-        <StatCard icon={<Play />} label="In progress" value={stats.data?.inProgress ?? '—'} accent="cyan" />
+        <StatCard icon="compass" label="Roadmap topics" value={stats.data?.total ?? '—'} accent="primary" />
+        <StatCard icon="flag" label="Completed" value={stats.data?.completed ?? '—'} accent="success" />
+        <StatCard icon="play" label="In progress" value={stats.data?.inProgress ?? '—'} accent="cyan" />
       </div>
 
       {paths.loading ? (
@@ -44,7 +44,7 @@ export function PathsPanel() {
       ) : paths.error ? (
         <ErrorState message={paths.error} onRetry={paths.refetch} />
       ) : !paths.data?.length ? (
-        <EmptyState icon={<Map />} title="No forge paths" description="Roadmap paths are seeded server-side." />
+        <EmptyState icon="map" title="No forge paths" description="Roadmap paths are seeded server-side." />
       ) : (
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
           {paths.data.map((p, i) => {

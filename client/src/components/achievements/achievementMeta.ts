@@ -1,25 +1,4 @@
-import {
-  Award,
-  Bot,
-  Calendar,
-  Cat,
-  Crown,
-  Flag,
-  Flame,
-  Gem,
-  Globe,
-  Medal,
-  Moon,
-  Shield,
-  Sunrise,
-  Swords,
-  Tags,
-  Target,
-  Trophy,
-  Zap,
-  Dumbbell,
-  type LucideIcon,
-} from 'lucide-react'
+import type { IconName } from '@/components/icon/names'
 
 export interface AchievementRow {
   id: string
@@ -33,32 +12,33 @@ export interface AchievementRow {
   unlocked_at: string | null
 }
 
-export const ACHIEVEMENT_ICONS: Record<string, LucideIcon> = {
-  sword: Swords,
-  fire: Flame,
-  shield: Shield,
-  dragon: Bot,
-  muscle: Dumbbell,
-  target: Target,
-  trophy: Trophy,
-  crown: Crown,
-  medal_green: Medal,
-  medal_blue: Medal,
-  medal_purple: Medal,
-  medal_red: Medal,
-  globe: Globe,
-  lightning: Zap,
-  diamond: Gem,
-  moon: Moon,
-  sunrise: Sunrise,
-  flag: Flag,
-  tags: Tags,
-  calendar: Calendar,
-  cat: Cat,
+export const ACHIEVEMENT_ICONS: Record<string, IconName> = {
+  sword: 'problems',
+  fire: 'flame',
+  shield: 'shield',
+  dragon: 'flame',
+  muscle: 'practice',
+  target: 'target',
+  trophy: 'trophy',
+  crown: 'crown',
+  medal_green: 'medal',
+  medal_blue: 'medal',
+  medal_purple: 'medal',
+  medal_red: 'medal',
+  globe: 'globe',
+  lightning: 'bolt',
+  diamond: 'gem',
+  moon: 'moon',
+  sunrise: 'sunrise',
+  flag: 'flag',
+  tags: 'tag',
+  calendar: 'calendar',
+  cat: 'sparkles',
 }
 
-export function achievementIcon(key: string): LucideIcon {
-  return ACHIEVEMENT_ICONS[key] ?? Award
+/** Semantic icon for an achievement's legacy icon key. */
+export function achievementIcon(key: string): IconName {
+  return ACHIEVEMENT_ICONS[key] ?? 'award'
 }
 
 export interface Rarity {

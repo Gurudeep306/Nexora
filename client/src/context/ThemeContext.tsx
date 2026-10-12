@@ -1,81 +1,41 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import {
-  DEFAULT_WALLPAPER,
-  findWallpaper,
-  getCustomWallpapers,
-  removeCustomWallpaper,
-  resolveAccent,
-  saveCustomWallpaper,
-  wallpaperTone,
-  type AccentId,
-  type CardStyle,
-  type CustomWallpaper,
-  type FontColor,
-  type FontSize,
-  type FontStyle,
-  type GlassStyle,
-  type IconPack,
-  type IconShape,
-  type Tone,
-  type Wallpaper,
-} from '@/theme/catalog'
+import { DEFAULT_LOOK, lookAttributes, sanitizeLook, type Look } from '@/theme/look'
+import { PALETTE_BY_ID, DEFAULT_PALETTE, resolveMode, type Palette, type ThemeMode } from '@/theme/palettes'
+import { oklchToHex } from '@/theme/color'
+import { loadCodeFont, loadUiFont } from '@/theme/fontLoaders'
 
 export type Appearance = 'light' | 'dark' | 'system'
-
-export interface Look {
-  wallpaper: string
-  accent: AccentId
-  glass: GlassStyle
-  cardStyle: CardStyle
-  iconPack: IconPack
-  iconShape: IconShape
-  fontStyle: FontStyle
-  fontSize: FontSize
-  fontColor: FontColor
-}
+export type { Look }
 
 const APPEARANCE_KEY = 'nexora:appearance'
 export const LOOK_KEY = 'nexora:look'
-
-const DEFAULT_LOOK: Look = {
-  wallpaper: DEFAULT_WALLPAPER,
-  accent: 'multicolor',
-  glass: 'frosted',
-  cardStyle: 'glass',
-  iconPack: 'vibrant',
-  iconShape: 'squircle',
-  fontStyle: 'space-grotesk',
-  fontSize: 'comfortable',
-  fontColor: 'default',
-}
+const RECENT_KEY = 'nexora:recent-themes'
+const MAX_RECENT = 6
 
 interface ThemeValue {
+  /** The user's preference. */
   appearance: Appearance
-  resolved: Tone
   setAppearance: (a: Appearance) => void
+  /** Light → dark → system. */
   cycle: () => void
-
+  /** The mode actually rendered (a single-mode theme overrides the preference). */
+  mode: ThemeMode
+  /** Alias of `mode`, kept for older call sites. */
+  resolved: ThemeMode
+  /** True when the current theme offers only one mode. */
+  modeLocked: boolean
+  /** The mode the user wants (preference resolved against the OS). */
+  preferredMode: ThemeMode
   look: Look
-  wallpaper: Wallpaper
-  /** Tone of whatever is actually behind the glass. */
-  wallTone: Tone
-  resolvedAccent: Exclude<AccentId, 'multicolor'>
-  setWallpaper: (id: string) => void
-  setAccent: (a: AccentId) => void
-  setGlass: (g: GlassStyle) => void
-  setCardStyle: (cs: CardStyle) => void
-  setIconPack: (ip: IconPack) => void
-  setIconShape: (is: IconShape) => void
-  setFontStyle: (fs: FontStyle) => void
-  setFontSize: (fs: FontSize) => void
-  setFontColor: (fc: FontColor) => void
-  customWallpapers: CustomWallpaper[]
-  addCustomWallpaper: (wp: CustomWallpaper) => void
-  deleteCustomWallpaper: (id: string) => void
-  /** Replace the whole look at once (used when an account's saved look loads). */
+  palette: Palette
+  /** Change part of the look; the result is validated. */
+  setLook: (patch: Partial<Look>) => void
+  /** Replace the whole look at once (an account's saved look). */
   applyLook: (l: Partial<Look>) => void
+  resetLook: () => void
+  /** Most recently applied themes, newest first. */
+  recentThemes: string[]
 }
-
 
 const ThemeContext = createContext<ThemeValue | null>(null)
 
@@ -89,86 +49,6 @@ function readAppearance(): Appearance {
   return 'system'
 }
 
-export function sanitizeLook(raw: unknown): Look {
-  const r = (raw && typeof raw === 'object' ? raw : {}) as Partial<Look>
-  const accents: AccentId[] = [
-    'multicolor',
-    'blue',
-    'cyan',
-    'ice',
-    'purple',
-    'plasma',
-    'pink',
-    'red',
-    'orange',
-    'yellow',
-    'green',
-    'graphite',
-  ]
-  const cardStyles: CardStyle[] = ['glass', 'neon', 'minimal', 'holo', 'gradient']
-  const iconPacks: IconPack[] = [
-    'vibrant',
-    'neon',
-    'anime',
-    'glitch',
-    'crystal',
-    'retro',
-    'emerald',
-    'duotone',
-    'clay',
-    'minimal',
-  ]
-  const iconShapes: IconShape[] = ['squircle', 'circle', 'diamond', 'shield', 'hexagon', 'pill', 'free']
-  const fontStyles: FontStyle[] = [
-    'syne',
-    'space-grotesk',
-    'orbitron',
-    'bricolage',
-    'unbounded',
-    'handwriting-caveat',
-    'handwriting-kalam',
-    'cyber',
-    'cinzel',
-    'retro',
-    'modern',
-    'handwriting',
-    'handwriting-architect',
-    'handwriting-indie',
-    'serif',
-  ]
-  const fontSizes: FontSize[] = ['normal', 'comfortable', 'large', 'huge']
-  const fontColors: FontColor[] = [
-    'default',
-    'white',
-    'cyan',
-    'amber',
-    'emerald',
-    'rose',
-    'violet',
-    'ice',
-    'gold',
-  ]
-
-  let fs = (r.fontStyle && fontStyles.includes(r.fontStyle as FontStyle) ? r.fontStyle : DEFAULT_LOOK.fontStyle) as FontStyle
-  // Normalize legacy aliases
-  if (fs === 'modern') fs = 'space-grotesk'
-  else if (fs === 'handwriting' || fs === 'handwriting-indie') fs = 'handwriting-caveat'
-  else if (fs === 'handwriting-architect') fs = 'syne'
-  else if (fs === 'serif') fs = 'cinzel'
-
-  return {
-    wallpaper: findWallpaper(r.wallpaper).id,
-    accent: accents.includes(r.accent as AccentId) ? (r.accent as AccentId) : DEFAULT_LOOK.accent,
-    glass: r.glass === 'clear' || r.glass === 'solid' || r.glass === 'frosted' ? r.glass : DEFAULT_LOOK.glass,
-    cardStyle: cardStyles.includes(r.cardStyle as CardStyle) ? (r.cardStyle as CardStyle) : DEFAULT_LOOK.cardStyle,
-    iconPack: iconPacks.includes(r.iconPack as IconPack) ? (r.iconPack as IconPack) : DEFAULT_LOOK.iconPack,
-    iconShape: iconShapes.includes(r.iconShape as IconShape) ? (r.iconShape as IconShape) : DEFAULT_LOOK.iconShape,
-    fontStyle: fs,
-    fontSize: fontSizes.includes(r.fontSize as FontSize) ? (r.fontSize as FontSize) : DEFAULT_LOOK.fontSize,
-    fontColor: fontColors.includes(r.fontColor as FontColor) ? (r.fontColor as FontColor) : DEFAULT_LOOK.fontColor,
-  }
-}
-
 function readLook(): Look {
   try {
     const raw = localStorage.getItem(LOOK_KEY)
@@ -178,90 +58,55 @@ function readLook(): Look {
   }
 }
 
-function systemPrefersDark(): boolean {
-  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? true
+function readRecent(): string[] {
+  try {
+    const v = JSON.parse(localStorage.getItem(RECENT_KEY) ?? '[]')
+    return Array.isArray(v) ? v.filter((id): id is string => typeof id === 'string' && PALETTE_BY_ID.has(id)).slice(0, MAX_RECENT) : []
+  } catch {
+    return []
+  }
+}
+
+function systemMode(): ThemeMode {
+  return window.matchMedia?.('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [appearance, setAppearanceState] = useState<Appearance>(readAppearance)
-  const [systemDark, setSystemDark] = useState(systemPrefersDark)
-  const [look, setLook] = useState<Look>(readLook)
-  const [customList, setCustomList] = useState<CustomWallpaper[]>(getCustomWallpapers)
+  const [system, setSystem] = useState<ThemeMode>(systemMode)
+  const [look, setLookState] = useState<Look>(readLook)
+  const [recentThemes, setRecent] = useState<string[]>(readRecent)
 
   useEffect(() => {
-    const mq = window.matchMedia?.('(prefers-color-scheme: dark)')
+    const mq = window.matchMedia?.('(prefers-color-scheme: light)')
     if (!mq) return
-    const onChange = (e: MediaQueryListEvent) => setSystemDark(e.matches)
+    const onChange = (e: MediaQueryListEvent) => setSystem(e.matches ? 'light' : 'dark')
     mq.addEventListener('change', onChange)
     return () => mq.removeEventListener('change', onChange)
   }, [])
 
-  const resolved: Tone = appearance === 'system' ? (systemDark ? 'dark' : 'light') : appearance
-  const wallpaper = useMemo(() => findWallpaper(look.wallpaper), [look.wallpaper])
-  const wallTone = wallpaperTone(wallpaper, resolved)
-  const resolvedAccent = resolveAccent(look.accent, wallpaper)
+  const palette = PALETTE_BY_ID.get(look.theme) ?? PALETTE_BY_ID.get(DEFAULT_PALETTE)!
+  const preferredMode: ThemeMode = appearance === 'system' ? system : appearance
+  const mode = resolveMode(palette, preferredMode)
+  const modeLocked = !(palette.dark && palette.light)
 
   useEffect(() => {
     const root = document.documentElement
-    if (appearance === 'system') root.removeAttribute('data-theme')
-    else root.setAttribute('data-theme', appearance)
-    root.classList.toggle('dark', resolved === 'dark')
-    root.dataset.accent = resolvedAccent
-    root.dataset.glass = look.glass
-    root.dataset.cardStyle = look.cardStyle
-    root.dataset.iconPack = look.iconPack
-    root.dataset.iconShape = look.iconShape
-    root.dataset.fontStyle = look.fontStyle
-    root.dataset.fontSize = look.fontSize
-    root.dataset.fontColor = look.fontColor
-    root.dataset.wall = wallpaper.kind
-    root.dataset.wallTone = wallTone
-
-
-    const tint =
-      wallpaper.kind === 'original'
-        ? wallpaper.tint[resolved]
-        : wallpaper.kind === 'photo' || wallpaper.kind === 'custom'
-          ? wallpaper.tint
-          : ''
-    const color =
-      wallpaper.kind === 'original'
-        ? wallpaper.color[resolved]
-        : wallpaper.kind === 'photo' || wallpaper.kind === 'custom'
-          ? wallpaper.color
-          : ''
-
-    if (tint) root.style.setProperty('--wall-tint', tint)
-    else root.style.removeProperty('--wall-tint')
-    if (color) root.style.setProperty('--wall-color', color)
-    else root.style.removeProperty('--wall-color')
-
-    document
-      .querySelector('meta[name="theme-color"]')
-      ?.setAttribute('content', resolved === 'dark' ? '#1c1d22' : '#f2f2f5')
-  }, [
-    appearance,
-    resolved,
-    resolvedAccent,
-    look.glass,
-    look.cardStyle,
-    look.iconPack,
-    look.iconShape,
-    look.fontStyle,
-    look.fontSize,
-    look.fontColor,
-    wallpaper,
-    wallTone,
-  ])
-
-
-  const persist = (next: Look) => {
-    try {
-      localStorage.setItem(LOOK_KEY, JSON.stringify(next))
-    } catch {
-      /* the in-memory look still applies for this session */
+    for (const [k, v] of Object.entries(lookAttributes(look, mode))) {
+      if (v === undefined) root.removeAttribute(k)
+      else root.setAttribute(k, v)
     }
-  }
+    root.classList.toggle('dark', mode === 'dark')
+    const bg = palette[mode]?.bg[0]
+    if (bg) document.querySelector('meta[name="theme-color"]')?.setAttribute('content', oklchToHex(bg))
+  }, [look, mode, palette])
+
+  useEffect(() => {
+    void loadUiFont(look.font)
+  }, [look.font])
+  useEffect(() => {
+    void loadCodeFont(look.codeFont)
+  }, [look.codeFont])
 
   const setAppearance = useCallback((a: Appearance) => {
     setAppearanceState(a)
@@ -277,73 +122,49 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     setAppearance(appearance === 'light' ? 'dark' : appearance === 'dark' ? 'system' : 'light')
   }, [appearance, setAppearance])
 
-  const update = useCallback((patch: Partial<Look>) => {
-    setLook((prev) => {
+  const setLook = useCallback((patch: Partial<Look>) => {
+    setLookState((prev) => {
       const next = sanitizeLook({ ...prev, ...patch })
-      persist(next)
+      try {
+        localStorage.setItem(LOOK_KEY, JSON.stringify(next))
+      } catch {
+        /* the in-memory look still applies for this session */
+      }
       return next
     })
+    if (patch.theme) {
+      const id = patch.theme
+      setRecent((prev) => {
+        const next = [id, ...prev.filter((x) => x !== id)].slice(0, MAX_RECENT)
+        try {
+          localStorage.setItem(RECENT_KEY, JSON.stringify(next))
+        } catch {
+          /* ignore */
+        }
+        return next
+      })
+    }
   }, [])
 
-  const addCustomWallpaper = useCallback(
-    (wp: CustomWallpaper) => {
-      saveCustomWallpaper(wp)
-      setCustomList(getCustomWallpapers())
-      update({ wallpaper: wp.id })
-    },
-    [update],
-  )
-
-  const deleteCustomWallpaper = useCallback(
-    (id: string) => {
-      removeCustomWallpaper(id)
-      setCustomList(getCustomWallpapers())
-      if (look.wallpaper === id) {
-        update({ wallpaper: DEFAULT_WALLPAPER })
-      }
-    },
-    [look.wallpaper, update],
-  )
+  const resetLook = useCallback(() => setLook(DEFAULT_LOOK), [setLook])
 
   const value = useMemo<ThemeValue>(
     () => ({
       appearance,
-      resolved,
       setAppearance,
       cycle,
+      mode,
+      resolved: mode,
+      modeLocked,
+      preferredMode,
       look,
-      wallpaper,
-      wallTone,
-      resolvedAccent,
-      setWallpaper: (id) => update({ wallpaper: id }),
-      setAccent: (accent) => update({ accent }),
-      setGlass: (glass) => update({ glass }),
-      setCardStyle: (cardStyle) => update({ cardStyle }),
-      setIconPack: (iconPack) => update({ iconPack }),
-      setIconShape: (iconShape) => update({ iconShape }),
-      setFontStyle: (fontStyle) => update({ fontStyle }),
-      setFontSize: (fontSize) => update({ fontSize }),
-      setFontColor: (fontColor) => update({ fontColor }),
-      customWallpapers: customList,
-
-      addCustomWallpaper,
-      deleteCustomWallpaper,
-      applyLook: (l) => update(l),
+      palette,
+      setLook,
+      applyLook: setLook,
+      resetLook,
+      recentThemes,
     }),
-    [
-      appearance,
-      resolved,
-      setAppearance,
-      cycle,
-      look,
-      wallpaper,
-      wallTone,
-      resolvedAccent,
-      customList,
-      addCustomWallpaper,
-      deleteCustomWallpaper,
-      update,
-    ],
+    [appearance, setAppearance, cycle, mode, modeLocked, preferredMode, look, palette, setLook, resetLook, recentThemes],
   )
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
 }
