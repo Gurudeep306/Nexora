@@ -114,7 +114,15 @@ function FigureFrame({
   // Scans are small (median ~570 px): show them a little larger than 1:1 so
   // labels are legible, but never so large they blur, and cap tall figures.
   const maxH = compact ? 260 : 420
-  const width = size ? Math.round(Math.min(size.w * (f.svg ? 1.4 : 1.25), (maxH * size.w) / size.h, 760)) : undefined
+  // Redrawn SVGs carry only a viewBox, so the browser reports a default
+  // 300×150 natural size; lay them out by width instead and let the viewBox
+  // set the height.
+  const isVector = /\.svg(\?|$)/i.test(src)
+  const width = isVector
+    ? '100%'
+    : size
+      ? Math.round(Math.min(size.w * 1.25, (maxH * size.w) / size.h, 760))
+      : undefined
 
   return (
     <figure className="gate-fig m-0" data-ink={isDraft ? 'original' : ink}>
@@ -137,7 +145,7 @@ function FigureFrame({
               onLoad={(e) => setSize({ w: e.currentTarget.naturalWidth || 400, h: e.currentTarget.naturalHeight || 300 })}
               onError={() => setFailed(true)}
               className={cn('gate-fig-art rounded-md', !size && 'min-h-24')}
-              style={{ width, maxHeight: maxH }}
+              style={{ width, maxWidth: isVector ? (compact ? 440 : 640) : undefined, maxHeight: maxH }}
             />
           )}
         </button>

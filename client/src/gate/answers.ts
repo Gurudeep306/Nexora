@@ -6,6 +6,21 @@ import type { GateQuestion } from './types'
 
 export type Pick = string | string[] | undefined
 
+/**
+ * Official keys sometimes accept more than one answer ("A;C;D or C;D",
+ * "2 to 2 OR 4 to 4"); a response is correct if it matches any alternative.
+ */
+function keyAlternatives(a: GateQuestion['answer']): GateQuestion['answer'][] {
+  return typeof a === 'string' ? a.split(/\s+or\s+/i).map((x) => x.trim()).filter(Boolean) : [a]
+}
+
+/** A NAT range key — "lo:hi" or "lo to hi" — as [lo, hi], else null. */
+function natRange(a: GateQuestion['answer']): [number, number] | null {
+  if (typeof a !== 'string') return null
+  const m = a.match(/^\s*(-?[\d.]+)\s*(?::|to)\s*(-?[\d.]+)\s*$/i)
+  return m ? [Number(m[1]), Number(m[2])] : null
+}
+
 function answerList(a: GateQuestion['answer']): string[] {
   if (Array.isArray(a)) return a.map(String)
   if (typeof a === 'string') return a.split(/[,;\s]+/).filter(Boolean)
@@ -29,8 +44,11 @@ export function tfOptions(q: GateQuestion) {
 export function isKeyOption(q: GateQuestion, label: string) {
   if (q.answer == null) return false
   if (q.type === 'TF' && q.options.length === 0) return String(q.answer).trim().toLowerCase().startsWith(label.toLowerCase())
-  if (q.type === 'MSQ' || Array.isArray(q.answer)) return answerList(q.answer).includes(label)
-  return String(q.answer).trim().toUpperCase() === label.toUpperCase()
+  return keyAlternatives(q.answer).some((key) =>
+    q.type === 'MSQ' || Array.isArray(key)
+      ? answerList(key).includes(label)
+      : String(key).trim().toUpperCase() === label.toUpperCase(),
+  )
 }
 
 /** Self-check types: the student compares with the key themselves. */
@@ -42,21 +60,22 @@ export function checkIsCorrect(q: GateQuestion, pick: Pick): boolean {
   if (pick === undefined || pick === null || pick === '' || (Array.isArray(pick) && pick.length === 0)) return false
   if (q.type === 'MSQ') {
     const u = (Array.isArray(pick) ? [...pick] : [pick]).sort()
-    const t = answerList(q.answer).sort()
-    return u.length === t.length && u.every((v, i) => v === t[i])
+    return keyAlternatives(q.answer).some((key) => {
+      const t = answerList(key).sort()
+      return u.length === t.length && u.every((v, i) => v === t[i])
+    })
   }
   if (q.type === 'NAT') {
     const num = Number(pick)
     if (Number.isNaN(num)) return false
-    if (typeof q.answer === 'number') return Math.abs(num - q.answer) <= 0.05
-    if (typeof q.answer === 'string' && q.answer.includes(':')) {
-      const [lo, hi] = q.answer.split(':').map(Number)
-      return num >= lo - 0.01 && num <= hi + 0.01
-    }
-    return Math.abs(num - Number(q.answer)) <= 0.05
+    return keyAlternatives(q.answer).some((key) => {
+      const range = natRange(key)
+      if (range) return num >= range[0] - 0.01 && num <= range[1] + 0.01
+      return Math.abs(num - Number(key)) <= 0.05
+    })
   }
   if (q.type === 'TF' && q.options.length === 0) return isKeyOption(q, String(pick))
-  return String(pick).trim().toUpperCase() === String(q.answer).trim().toUpperCase()
+  return keyAlternatives(q.answer).some((key) => String(pick).trim().toUpperCase() === String(key).trim().toUpperCase())
 }
 
 /** The key as a person reads it: "B", "A, C", "2.5 to 2.6". */
@@ -64,7 +83,14 @@ export function formatKey(q: GateQuestion) {
   const a = q.answer
   if (a == null || a === '') return 'Not available'
   if (Array.isArray(a)) return a.join(', ')
-  if (q.type === 'NAT' && typeof a === 'string' && a.includes(':')) return a.replace(':', ' to ')
+  if (typeof a === 'string') {
+    return keyAlternatives(a)
+      .map((k) => {
+        const r = q.type === 'NAT' ? natRange(k) : null
+        return r ? (r[0] === r[1] ? String(r[0]) : `${r[0]} to ${r[1]}`) : String(k)
+      })
+      .join(' or ')
+  }
   return String(a)
 }
 

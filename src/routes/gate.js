@@ -173,6 +173,22 @@ function searchGateQuestions({ q = "", subject = "", year = "", limit = 10 } = {
   return out.map(strip);
 }
 
+/*
+  Official keys sometimes accept more than one answer ("A;C;D or C;D",
+  "2 to 2 OR 4 to 4"). A response is correct if it matches any alternative.
+*/
+function keyAlternatives(answer) {
+  if (typeof answer !== "string") return [answer];
+  return answer.split(/\s+or\s+/i).map((a) => a.trim()).filter(Boolean);
+}
+
+/** A NAT range key — "lo:hi" or "lo to hi" — as [lo, hi], else null. */
+function natRange(key) {
+  if (typeof key !== "string") return null;
+  const m = key.match(/^\s*(-?[\d.]+)\s*(?::|to)\s*(-?[\d.]+)\s*$/i);
+  return m ? [Number(m[1]), Number(m[2])] : null;
+}
+
 function createGateRouter() {
   const router = express.Router();
 
@@ -456,11 +472,13 @@ function createGateRouter() {
         if (q.type === "MSQ") {
           let uArr = Array.isArray(userAns) ? userAns : [userAns];
           uArr = uArr.map((x) => String(x).trim().toUpperCase()).sort();
-          let tArr = [];
-          if (Array.isArray(q.answer)) tArr = q.answer.map((x) => String(x).trim().toUpperCase());
-          else if (typeof q.answer === "string") tArr = q.answer.split(/[,;\s]+/).map((x) => x.trim().toUpperCase()).filter(Boolean);
-          tArr.sort();
-          isCorrect = uArr.length === tArr.length && uArr.every((v, i) => v === tArr[i]);
+          isCorrect = keyAlternatives(q.answer).some((key) => {
+            let tArr = [];
+            if (Array.isArray(key)) tArr = key.map((x) => String(x).trim().toUpperCase());
+            else if (typeof key === "string") tArr = key.split(/[,;\s]+/).map((x) => x.trim().toUpperCase()).filter(Boolean);
+            tArr.sort();
+            return uArr.length === tArr.length && uArr.every((v, i) => v === tArr[i]);
+          });
           if (isCorrect) {
             marksAwarded = qMarks;
           } else {
@@ -470,14 +488,11 @@ function createGateRouter() {
         } else if (q.type === "NAT") {
           const userNum = Number(userAns);
           if (!isNaN(userNum)) {
-            if (typeof q.answer === "number") {
-              isCorrect = Math.abs(userNum - q.answer) <= 0.05;
-            } else if (typeof q.answer === "string" && q.answer.includes(":")) {
-              const [lo, hi] = q.answer.split(":").map(Number);
-              isCorrect = userNum >= lo - 0.01 && userNum <= hi + 0.01;
-            } else {
-              isCorrect = Math.abs(userNum - Number(q.answer)) <= 0.05;
-            }
+            isCorrect = keyAlternatives(q.answer).some((key) => {
+              const range = natRange(key);
+              if (range) return userNum >= range[0] - 0.01 && userNum <= range[1] + 0.01;
+              return Math.abs(userNum - Number(key)) <= 0.05;
+            });
           }
           if (isCorrect) {
             marksAwarded = qMarks;
@@ -487,7 +502,7 @@ function createGateRouter() {
           }
         } else if (q.type === "MCQ" || (q.options && q.options.length > 0)) {
           // Standard MCQ
-          isCorrect = String(userAns).trim().toUpperCase() === String(q.answer).trim().toUpperCase();
+          isCorrect = keyAlternatives(q.answer).some((key) => String(userAns).trim().toUpperCase() === String(key).trim().toUpperCase());
           if (isCorrect) {
             marksAwarded = qMarks;
           } else {
