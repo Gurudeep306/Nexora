@@ -1,0 +1,47 @@
+{
+  "paper": "cse-2025-2",
+  "fixes": [
+    {
+      "id": "cse-2025-2-cs-16",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "22"
+        },
+        {
+          "l": "B",
+          "t": "15"
+        },
+        {
+          "l": "C",
+          "t": "37"
+        },
+        {
+          "l": "D",
+          "t": "19 Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "22"
+        },
+        {
+          "l": "B",
+          "t": "15"
+        },
+        {
+          "l": "C",
+          "t": "37"
+        },
+        {
+          "l": "D",
+          "t": "19"
+        }
+      ],
+      "reason": "Page header \"Computer Science and Information Technology (CS2)\" was transcribed into option D.",
+      "source": "transcription artifact (running page header of the CS2 master paper)"
+    }
+  ]
+}
