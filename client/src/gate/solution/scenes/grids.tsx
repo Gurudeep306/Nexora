@@ -156,7 +156,7 @@ export function PipelineScene({ f }: { f: PipelineFrame }) {
   const last = Math.max(...f.rows.map((r) => r.start + r.cells.length - 1))
   const stageTone = new Map<string, Tone>()
   for (const r of f.rows) for (const s of r.cells) if (!isStall(s) && !stageTone.has(s)) stageTone.set(s, STAGE_TONES[stageTone.size % STAGE_TONES.length])
-  const cw = Math.max(40, ...[...stageTone.keys()].map((s) => textW(s, 8, 14)))
+  const cw = Math.max(32, ...[...stageTone.keys()].map((s) => textW(s, 7.6, 10, 30)))
   const ch = 32
   const labelW = textW('x'.repeat(Math.max(...f.rows.map((r) => r.label.length))), 7.6, 16, 36)
   const upto = f.upto ?? Infinity
@@ -182,7 +182,7 @@ export function PipelineScene({ f }: { f: PipelineFrame }) {
                 const idx = cyc - row.start
                 const s = idx >= 0 && idx < row.cells.length ? row.cells[idx] : null
                 const hl = markTone(f.hl, r, cyc)
-                if (s === null || cyc > upto) return <div key={k} className="sc-gcell" style={{ background: 'transparent', borderColor: 'transparent' }} data-tone={hl} data-hl={hl ? '' : undefined} />
+                if (s === null || cyc > upto) return <div key={k} className="sc-gcell" style={{ background: 'transparent', borderColor: 'transparent' }} />
                 const stall = isStall(s)
                 return (
                   <motion.div
@@ -195,7 +195,7 @@ export function PipelineScene({ f }: { f: PipelineFrame }) {
                     data-hl={hl ? '' : undefined}
                     data-stall={stall ? 'true' : undefined}
                   >
-                    {stall ? 'stall' : s}
+                    {stall ? '' : s}
                   </motion.div>
                 )
               })}
@@ -440,54 +440,49 @@ export function KmapScene({ f }: { f: KmapFrame }) {
 /* ── Bits ────────────────────────────────────────────────────────────────── */
 
 export function BitsScene({ f }: { f: BitsFrame }) {
-  const labelW = Math.max(0, ...f.rows.map((r) => textW(r.label ?? '', 7.4, 14, 0)))
+  // Rows wrap at field / byte boundaries instead of scrolling, so long
+  // addresses stay fully visible in the narrow canvas column and on phones.
   return (
-    <Scroll>
-      <div className="flex flex-col gap-3">
-        {f.rows.map((row, ri) => {
-          let bit = 0
-          return (
-            <div key={ri} className="flex items-start gap-2">
-              {labelW > 0 && (
-                <div className="sc-label pt-1.5 text-right" style={{ width: labelW }}>
-                  {row.label}
-                </div>
-              )}
-              <div className="flex items-start">
-                {row.fields.map((fl, fi) => {
-                  const start = bit
-                  bit += fl.bits.length
-                  return (
-                    <div key={fi} className="flex flex-col items-center" data-tone={fl.tone ?? 'default'}>
-                      <div className="flex">
-                        {[...fl.bits].map((b, k) => {
-                          const g = f.group && (start + k + 1) % f.group === 0 && start + k + 1 < row.fields.reduce((a, x) => a + x.bits.length, 0)
-                          return (
-                            <div
-                              key={k}
-                              className="sc-gcell h-7 w-[1.35rem] rounded-[5px] px-0 text-[0.82rem]"
-                              data-tone={fl.tone ?? 'default'}
-                              style={{ marginRight: g ? 10 : 2 }}
-                            >
-                              <Pop value={b} />
-                            </div>
-                          )
-                        })}
-                      </div>
-                      {fl.label && (
-                        <div className="mt-1 w-full border-t-2 pt-0.5 text-center text-[11px] font-semibold" style={{ borderColor: 'var(--t)', color: 'var(--color-text-secondary)' }}>
-                          {fl.label}
-                        </div>
-                      )}
-                    </div>
-                  )
-                })}
+    <div className="flex flex-col gap-3">
+      {f.rows.map((row, ri) => {
+        let bit = 0
+        const total = row.fields.reduce((a, x) => a + x.bits.length, 0)
+        return (
+          <div key={ri} className="flex flex-col gap-1">
+            {(row.label || row.value) && (
+              <div className="flex items-baseline justify-between gap-2">
+                <span className="sc-label">{row.label}</span>
+                {row.value && <span className="sc-label sc-mono text-[var(--color-text-primary)]">{row.value}</span>}
               </div>
-              {row.value && <div className="sc-label sc-mono whitespace-nowrap pl-2 pt-1.5 text-[var(--color-text-primary)]">{row.value}</div>}
+            )}
+            <div className="flex flex-wrap items-start gap-y-1.5">
+              {row.fields.map((fl, fi) => {
+                const start = bit
+                bit += fl.bits.length
+                return (
+                  <div key={fi} className="flex max-w-full flex-col items-stretch" data-tone={fl.tone ?? 'default'}>
+                    <div className="flex flex-wrap gap-y-1">
+                      {[...fl.bits].map((b, k) => {
+                        const g = f.group && (start + k + 1) % f.group === 0 && start + k + 1 < total
+                        return (
+                          <div key={k} className="sc-gcell h-6 w-[1.05rem] rounded-[4px] px-0 text-[0.76rem]" data-tone={fl.tone ?? 'default'} style={{ marginRight: g ? 7 : 1.5 }}>
+                            <Pop value={b} />
+                          </div>
+                        )
+                      })}
+                    </div>
+                    {fl.label && (
+                      <div className="mr-1.5 mt-1 border-t-2 pt-0.5 text-center text-[11px] font-semibold" style={{ borderColor: 'var(--t)', color: 'var(--color-text-secondary)' }}>
+                        {fl.label}
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
             </div>
-          )
-        })}
-      </div>
-    </Scroll>
+          </div>
+        )
+      })}
+    </div>
   )
 }

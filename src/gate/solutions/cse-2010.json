@@ -48,7 +48,7 @@
       "verification": "The diagram has PO occupied in exactly one instruction per cycle from 4 to 14 (MUL 4–6, DIV 7–12, ADD 13, SUB 14) and every dependent PO starts one cycle after its producer's last PO cycle.",
       "animation": {
         "kind": "pipeline",
-        "title": "Space–time diagram (\"stall\" = waiting)",
+        "title": "Space–time diagram (hatched = stall)",
         "rows": [
           { "label": "I0 MUL", "start": 1, "cells": ["IF", "ID", "OF", "PO", "PO", "PO", "WO"] },
           { "label": "I1 DIV", "start": 2, "cells": ["IF", "ID", "OF", "-", "-", "PO", "PO", "PO", "PO", "PO", "PO", "WO"] },
