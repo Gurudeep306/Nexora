@@ -219,7 +219,7 @@ export function QuestionView({
                     className={cn(
                       'flex size-7 shrink-0 items-center justify-center rounded-xl font-mono text-[13px] font-bold transition-all',
                       !showSolution && !isPicked && 'bg-bg-surface-2 text-text-muted group-hover:text-text-primary',
-                      !showSolution && isPicked && 'bg-accent-brand text-white shadow-sm',
+                      !showSolution && isPicked && 'bg-accent-brand text-on-accent-brand shadow-sm',
                       isOfficialAns && 'bg-emerald-600 text-white shadow-sm',
                       isWrongPick && 'bg-red-500 text-white shadow-sm',
                     )}

@@ -19,7 +19,7 @@ export function NextLevelCard({ perf }: { perf: PerformanceResponse }) {
       <CardContent>
         {nl ? (
           <div className="space-y-2">
-            <p className="font-display text-lg tracking-wide" style={{ color: nl.color }}>
+            <p className="font-display text-lg tracking-wide" style={{ color: `color-mix(in oklab, ${nl.color} 60%, var(--color-text-primary))` }}>
               LVL {nl.level} · {nl.name}
             </p>
             <ul className="space-y-1 text-xs text-foreground-dim">

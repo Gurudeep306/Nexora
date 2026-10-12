@@ -65,7 +65,7 @@ export function AchievementCard({ achievement, index }: { achievement: Achieveme
               <span className="font-mono tabular-nums">{pct}%</span>
             </div>
             <Progress value={pct} className="h-1.5" />
-            <p className="text-right font-mono text-[10px] text-gold/80 tabular-nums">
+            <p className="text-right font-mono text-[10px] text-gold tabular-nums">
               reward +{achievement.xp_reward} XP
             </p>
           </div>

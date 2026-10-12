@@ -112,7 +112,7 @@ export function GateCustomSelect({
                 className={cn(
                   'flex w-full items-center justify-between gap-2.5 rounded-xl px-3 py-2 text-left text-[12.5px] font-medium transition-all duration-150 cursor-pointer',
                   isSelected
-                    ? 'bg-accent-brand text-white font-semibold shadow-sm'
+                    ? 'bg-accent-brand text-on-accent-brand font-semibold shadow-sm'
                     : 'text-text-primary hover:bg-bg-surface-2 hover:text-accent-brand',
                 )}
               >

@@ -291,7 +291,7 @@ export function CommandPalette() {
             </div>
             <div ref={listRef} id="palette-list" role="listbox" className="max-h-[55vh] overflow-y-auto p-2">
               {items.length === 0 && (
-                <p className="px-3 py-8 text-center text-sm text-text-primary/60">
+                <p className="px-3 py-8 text-center text-sm text-text-secondary">
                   {searching ? 'Searching the rift…' : 'Nothing matches that. Try a problem name or page.'}
                 </p>
               )}
@@ -302,7 +302,7 @@ export function CommandPalette() {
                 return (
                   <div key={item.id}>
                     {header && (
-                      <p className="px-3 pt-3 pb-1.5 text-[10.5px] font-semibold tracking-[0.12em] text-text-primary/60 uppercase">
+                      <p className="px-3 pt-3 pb-1.5 text-[10.5px] font-semibold tracking-[0.12em] text-text-secondary uppercase">
                         {header}
                         {header === 'Problems' && searching && <span className="ml-2 normal-case">searching…</span>}
                       </p>
@@ -316,7 +316,7 @@ export function CommandPalette() {
                       onClick={() => void item.run()}
                       className={cn(
                         'relative flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-colors',
-                        i === active ? 'bg-bg-app/5 text-text-primary' : 'text-text-primary/60',
+                        i === active ? 'bg-bg-app/5 text-text-primary' : 'text-text-secondary',
                       )}
                     >
                       {i === active && (
@@ -329,7 +329,7 @@ export function CommandPalette() {
                       <span
                         className={cn(
                           'flex size-7 shrink-0 items-center justify-center rounded-md border',
-                          i === active ? 'border-accent-brand/40 bg-accent-brand/15 text-accent-brand' : 'border-border/10 bg-bg-app/5 text-text-primary/60',
+                          i === active ? 'border-accent-brand/40 bg-accent-brand/15 text-accent-brand' : 'border-border/10 bg-bg-app/5 text-text-secondary',
                         )}
                       >
                         <Icon className="size-3.5" />
@@ -338,7 +338,7 @@ export function CommandPalette() {
                       {item.problem ? (
                         <PlatformBadge platform={item.problem.platform} />
                       ) : (
-                        item.hint && <span className="font-mono text-[11px] text-text-primary/60">{item.hint}</span>
+                        item.hint && <span className="font-mono text-[11px] text-text-secondary">{item.hint}</span>
                       )}
                       {i === active && <ArrowRight className="size-3.5 text-accent-brand" aria-hidden="true" />}
                     </button>
@@ -346,7 +346,7 @@ export function CommandPalette() {
                 )
               })}
             </div>
-            <div className="flex items-center gap-4 border-t border-border/10 bg-bg-app/20 px-4 py-2.5 text-[11px] text-text-primary/60">
+            <div className="flex items-center gap-4 border-t border-border/10 bg-bg-app/20 px-4 py-2.5 text-[11px] text-text-secondary">
               <span className="flex items-center gap-1.5">
                 <Kbd>↑</Kbd>
                 <Kbd>↓</Kbd> navigate

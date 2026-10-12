@@ -53,8 +53,8 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             toast:
               'pop-surface !rounded-[var(--radius-card)] !text-text-primary !font-body !bg-bg-surface-2 !border-border !shadow-[inset_0_1px_0_var(--specular),var(--elev-3)]',
             title: '!text-sm !font-medium',
-            description: '!text-xs !text-text-primary/60',
-            closeButton: '!bg-bg-surface-3 !border-border !text-text-primary/60 hover:text-text-primary',
+            description: '!text-xs !text-text-secondary',
+            closeButton: '!bg-bg-surface-3 !border-border !text-text-secondary hover:text-text-primary',
             actionButton: '!bg-accent-brand/10 hover:bg-accent-brand/20',
           },
         }}

@@ -1029,7 +1029,7 @@ export function CodeEditor({
           <span
             className={cn(
               'flex items-center gap-1',
-              saveState === 'saving' ? 'text-warning' : 'text-emerald-400',
+              saveState === 'saving' ? 'text-warning' : 'text-state-success',
             )}
           >
             {saveState === 'saved' ? (

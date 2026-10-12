@@ -62,7 +62,7 @@ export default function GateCbtPage() {
             <ArrowLeft className="size-4" /> Back to Practice Question Bank
           </button>
           <div className="flex items-center gap-2">
-            <span className="rounded-lg bg-emerald-500/15 px-2.5 py-0.5 text-[11px] font-bold text-emerald-400 uppercase tracking-wider">
+            <span className="rounded-lg bg-state-success/15 px-2.5 py-0.5 text-[11px] font-bold text-state-success uppercase tracking-wider">
               Real CBT Simulation
             </span>
             <span className="rounded-lg bg-accent-brand/15 px-2.5 py-0.5 text-[11px] font-bold text-accent-brand uppercase tracking-wider">
@@ -80,8 +80,8 @@ export default function GateCbtPage() {
 
       {/* ── Key Highlights Banner ── */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <div className="card p-4 flex items-start gap-3 bg-gradient-to-br from-emerald-500/10 to-transparent border-emerald-500/30">
-          <Trophy className="size-5 text-emerald-400 shrink-0 mt-0.5" />
+        <div className="card p-4 flex items-start gap-3 bg-gradient-to-br from-emerald-500/10 to-transparent border-state-success/30">
+          <Trophy className="size-5 text-state-success shrink-0 mt-0.5" />
           <div>
             <h4 className="font-bold text-[13px] text-text-primary">Authentic Marking Scheme</h4>
             <p className="text-[12px] text-text-muted mt-0.5">

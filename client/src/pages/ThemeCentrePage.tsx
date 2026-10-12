@@ -131,7 +131,7 @@ export default function ThemeCentrePage() {
         </div>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_400px] xl:grid-cols-[minmax(0,1fr)_440px]">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_400px] xl:grid-cols-[minmax(0,1fr)_440px]">
         {/* Preview — sticky beside the content on desktop, a toggle on smaller screens */}
         <aside
           id={`${uid}-preview`}

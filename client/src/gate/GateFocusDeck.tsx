@@ -64,7 +64,7 @@ export function GateFocusDeck({
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border/80 bg-bg-surface-2/60 p-3 sm:px-5 backdrop-blur-md shadow-sm">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1.5 font-mono text-[13px] font-bold text-text-primary">
-            <span className="flex size-7 items-center justify-center rounded-lg bg-accent-brand text-white shadow-xs">
+            <span className="flex size-7 items-center justify-center rounded-lg bg-accent-brand text-on-accent-brand shadow-xs">
               {currentIndex + 1}
             </span>
             <span className="text-text-muted">/ {questions.length}</span>
@@ -93,7 +93,7 @@ export function GateFocusDeck({
                 className={cn(
                   'flex size-8 shrink-0 items-center justify-center rounded-xl font-mono text-[12px] font-bold transition-all cursor-pointer border',
                   isCurrent
-                    ? 'border-accent-brand bg-accent-brand text-white shadow-sm ring-2 ring-accent-brand/20 scale-105'
+                    ? 'border-accent-brand bg-accent-brand text-on-accent-brand shadow-sm ring-2 ring-accent-brand/20 scale-105'
                     : 'border-border/60 bg-bg-surface/80 text-text-muted hover:border-accent-brand/40 hover:text-text-primary',
                 )}
                 title={`Jump to Q${idx + 1}: ${q.number}`}
