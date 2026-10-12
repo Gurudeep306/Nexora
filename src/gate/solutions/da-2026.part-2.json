@@ -1,0 +1,1569 @@
+{
+  "paper": "da-2026",
+  "version": 2,
+  "solutions": {
+    "da-2026-da-4": {
+      "approach": "Translate each statement and test it against the two standard first-order-logic patterns: a universal claim about a kind of object pairs $\\forall$ with $\\Rightarrow$, an existential one pairs $\\exists$ with $\\land$. The only statement that pairs $\\forall$ with $\\land$ is the false one.",
+      "concepts": [
+        "First-order logic translation",
+        "∀ pairs with ⇒",
+        "Quantifier duality ∀x P ≡ ¬∃x ¬P"
+      ],
+      "steps": [
+        {
+          "title": "(A) Classmate is a symmetric relation",
+          "body": "If $x$ is a classmate of $y$, then $y$ is a classmate of $x$ — being classmates is mutual. So $\\forall x\\,\\forall y\\; \\mathit{Classmate}(x,y) \\Rightarrow \\mathit{Classmate}(y,x)$ is a **true** statement about the intended predicate."
+        },
+        {
+          "title": "(B) is quantifier duality",
+          "body": "Push the negation through the quantifier:\n\n$$\\neg\\exists x\\,\\neg L(x) \\equiv \\forall x\\,\\neg\\neg L(x) \\equiv \\forall x\\,L(x),$$\n\nwhere $L(x) = \\mathit{Likes}(x,\\mathit{Icecream})$. The sentence is therefore $\\forall x\\,L(x) \\Rightarrow \\forall x\\,L(x)$ — a tautology, so **true**."
+        },
+        {
+          "title": "(C) uses ∧ under ∀ — wrong",
+          "body": "$\\forall x\\; \\mathit{IsKing}(x) \\land \\mathit{IsPerson}(x)$ says *every object in the domain is a king **and** a person*. In the three-object world on the right, “each king is a person” is true (the only king, Arthur, is a person), but the $\\land$-sentence fails at Bob and at the crown because $\\mathit{IsKing}$ is false there. Same world, different truth values ⇒ **not equivalent**, so (C) is the statement that is NOT true.\n\nThe correct translation is $\\forall x\\; \\mathit{IsKing}(x) \\Rightarrow \\mathit{IsPerson}(x)$ (column $K \\Rightarrow P$: true on every row).",
+          "scene": {
+            "hl": [
+              {
+                "c": 3,
+                "tone": "success"
+              },
+              {
+                "c": 4,
+                "tone": "error"
+              }
+            ],
+            "caption": "$K \\Rightarrow P$ is true for every object; $K \\land P$ fails on the non-kings"
+          }
+        },
+        {
+          "title": "(D) is the textbook pattern",
+          "body": "“All humans are mortal” restricts the claim to humans: for every $x$, **if** $x$ is human **then** $x$ is mortal — $\\forall x\\; \\mathit{IsHuman}(x) \\Rightarrow \\mathit{IsMortal}(x)$. Non-humans make the implication vacuously true, exactly as intended. **True.**",
+          "scene": {
+            "hl": []
+          }
+        }
+      ],
+      "answer": {
+        "value": "Statement **(C)** is NOT true — “Each king is a person” is $\\forall x\\; \\mathit{IsKing}(x) \\Rightarrow \\mathit{IsPerson}(x)$, not $\\land$",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "True: the classmate relation is symmetric, so the implication holds for all $x, y$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "True: $\\neg\\exists x\\,\\neg L(x) \\equiv \\forall x\\,L(x)$, so the sentence is $\\forall x\\,L(x) \\Rightarrow \\forall x\\,L(x)$, a tautology."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "NOT true: $\\forall x\\,(K(x) \\land P(x))$ claims everything is a king; the right form is $\\forall x\\,(K(x) \\Rightarrow P(x))$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "True: the standard translation of “all A are B” is $\\forall x\\,(A(x) \\Rightarrow B(x))$."
+        }
+      ],
+      "shortcut": "Rule of thumb: “all/each A is B” → $\\forall x\\,(A \\Rightarrow B)$; “some A is B” → $\\exists x\\,(A \\land B)$. Spot the option that breaks the pairing.",
+      "pitfalls": [
+        "Writing $\\forall x\\,(A(x) \\land B(x))$ for “all A are B” — it asserts that everything is an A.",
+        "The mirror mistake: $\\exists x\\,(A(x) \\Rightarrow B(x))$ for “some A is B” is true whenever some object is not an A.",
+        "In (B), reading the scope of the first $\\forall$ as covering the whole implication; the intended (and standard textbook) reading is $(\\forall x\\,L) \\Rightarrow (\\neg\\exists x\\,\\neg L)$."
+      ],
+      "verification": "Counter-model for (C): domain {Arthur, Bob, crown} with only Arthur a king and Arthur, Bob persons. “Each king is a person” is true, $\\forall x\\,(K \\land P)$ is false — so the claimed equivalence fails. No such counter-model exists for A, B or D.",
+      "animation": {
+        "kind": "table",
+        "title": "Each king is a person — tested in a 3-object world",
+        "cols": [
+          "object",
+          "IsKing",
+          "IsPerson",
+          "K ⇒ P",
+          "K ∧ P"
+        ],
+        "rows": [
+          [
+            "Arthur (king)",
+            "T",
+            "T",
+            "T",
+            "T"
+          ],
+          [
+            "Bob (peasant)",
+            "F",
+            "T",
+            "T",
+            "F"
+          ],
+          [
+            "crown",
+            "F",
+            "F",
+            "T",
+            "F"
+          ]
+        ],
+        "caption": "A small world where “each king is a person” is true"
+      }
+    },
+    "da-2026-da-5": {
+      "approach": "With a random input, the first element's rank is uniform over $1..n$, so the expected cost is the average, over every possible split $k : n-k-1$, of the two recursive costs, plus the linear partition cost. That average is exactly option (D).",
+      "concepts": [
+        "Randomised (average-case) quicksort",
+        "Law of total expectation",
+        "Recurrence relations"
+      ],
+      "steps": [
+        {
+          "title": "The pivot's rank is uniform",
+          "body": "The $n$ distinct keys are in random order, so the first element is equally likely to be the 1st, 2nd, …, $n$-th smallest. If it is the $(k+1)$-th smallest ($k = 0, 1, \\ldots, n-1$), partitioning leaves $k$ elements on its left and $n-k-1$ on its right — each split with probability $\\frac{1}{n}$.",
+          "scene": {
+            "reveal": 1
+          }
+        },
+        {
+          "title": "Cost for a fixed split",
+          "body": "Partitioning keeps each side in random order, so each side is again a random instance of its size. Given the split $k$, the expected cost is\n\n$$T(k) + T(n-k-1) + cn,$$\n\nwhere $cn$ is the linear partition time.",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Average over all splits",
+          "body": "By the law of total expectation,\n\n$$T(n) = \\sum_{k=0}^{n-1} \\frac{1}{n}\\big[T(k) + T(n-k-1)\\big] + O(n) = \\frac{1}{n}\\sum_{k=0}^{n-1}\\big[T(k) + T(n-k-1)\\big] + O(n),$$\n\nwhich is option **(D)**.",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "What it solves to",
+          "body": "Both halves of the sum run over the same values, so $T(n) = \\frac{2}{n}\\sum_{k=0}^{n-1} T(k) + O(n)$, whose solution is $T(n) \\approx 2n\\ln n = O(n \\log n)$ — the familiar average case of quicksort.",
+          "scene": {
+            "reveal": 4
+          }
+        }
+      ],
+      "answer": {
+        "value": "$T(n) = \\frac{1}{n}\\sum_{k=0}^{n-1}[T(k) + T(n-k-1)] + O(n)$ — option **(D)**",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "A maximally unbalanced split every time — the worst case (e.g. already-sorted input with a first-element pivot), not the expectation."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Assumes every pivot splits exactly 1 : 3. That is one particular split (used in intuition for “good” pivots), not the average over all splits."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Assumes the pivot is always the median — the best case, not the expected case."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Each split $k$ has probability $\\frac{1}{n}$; averaging $T(k) + T(n-k-1)$ over them plus the $O(n)$ partition gives this recurrence."
+        }
+      ],
+      "shortcut": "“Expected time” with a uniformly random pivot rank always produces an average over all split positions — the only option with a $\\frac{1}{n}\\sum$ is the answer.",
+      "pitfalls": [
+        "Picking (C) because the answer $O(n\\log n)$ is the same — the question asks for the recurrence, not its order.",
+        "Confusing the expected-case recurrence with the worst case (A)."
+      ],
+      "verification": "Check $n = 2$: the pivot is the smaller or the larger key with probability $\\frac12$ each, giving splits $0:1$ and $1:0$. The formula gives $\\frac12[(T(0)+T(1)) + (T(1)+T(0))] + 2c = T(0) + T(1) + 2c$ — exactly the cost of either split.",
+      "animation": {
+        "kind": "equation",
+        "title": "Expected-time recurrence of quicksort",
+        "lines": [
+          {
+            "tex": "P(\\text{pivot rank} = k+1) = \\tfrac{1}{n},\\quad k = 0,\\ldots,n-1",
+            "note": "random input"
+          },
+          {
+            "tex": "E[\\text{cost} \\mid k] = T(k) + T(n-k-1) + cn",
+            "note": "two random subproblems"
+          },
+          {
+            "tex": "T(n) = \\tfrac{1}{n}\\sum_{k=0}^{n-1}\\big[T(k)+T(n-k-1)\\big] + O(n)",
+            "note": "total expectation",
+            "tone": "success"
+          },
+          {
+            "tex": "= \\tfrac{2}{n}\\sum_{k=0}^{n-1}T(k) + O(n) \\;\\Rightarrow\\; T(n) = O(n\\log n)",
+            "note": "solution"
+          }
+        ],
+        "reveal": 4
+      }
+    },
+    "da-2026-da-6": {
+      "approach": "Python evaluates a default argument **once**, when `def` executes, and every call that omits the argument shares that one list object. Trace the shared list and the explicitly passed fresh list separately.",
+      "concepts": [
+        "Mutable default arguments",
+        "Object identity vs value",
+        "Code tracing"
+      ],
+      "steps": [
+        {
+          "title": "The default list is created once",
+          "body": "Executing the `def` statement evaluates `[]` a single time and stores that list object in the function (`append_to_lst.__defaults__`). Call it $D$; now $D = $ `[]`.",
+          "scene": {
+            "line": 1,
+            "vars": {
+              "D": "[]"
+            },
+            "output": ""
+          }
+        },
+        {
+          "title": "append_to_lst(1) mutates D",
+          "body": "`lst` is omitted, so `lst` is $D$. `lst.append(1)` makes $D = $ `[1]`; the function returns $D$ and `print` shows `[1]`.",
+          "scene": {
+            "line": 4,
+            "vars": {
+              "D": "[1]",
+              "lst": "D"
+            },
+            "output": "[1]"
+          }
+        },
+        {
+          "title": "append_to_lst(2) reuses the same D",
+          "body": "`lst` is omitted again, so `lst` is the **same** object $D$, which already holds `[1]`. After `append(2)`, $D = $ `[1, 2]`; printed: `[1, 2]`.",
+          "scene": {
+            "line": 5,
+            "vars": {
+              "D": "[1, 2]",
+              "lst": "D"
+            },
+            "output": "[1]\n[1, 2]"
+          }
+        },
+        {
+          "title": "append_to_lst(3, []) gets a fresh list",
+          "body": "Here a new empty list is passed explicitly, so `lst` is that new list, not $D$. After `append(3)` it is `[3]`, which is printed. $D$ is untouched and stays `[1, 2]`.",
+          "scene": {
+            "line": 6,
+            "vars": {
+              "D": "[1, 2]",
+              "lst": "[3] (new)"
+            },
+            "output": "[1]\n[1, 2]\n[3]"
+          }
+        }
+      ],
+      "answer": {
+        "value": "Output `[1]`, `[1, 2]`, `[3]` on three lines — option **(B)**",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Assumes a new empty list is made on every call. That is how `lst=None` + `if lst is None: lst = []` behaves, not `lst=[]`."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Calls 1 and 2 share the single default list (`[1]` then `[1, 2]`); call 3 uses its own fresh list (`[3]`)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Gets both effects backwards: it treats the first two calls as independent and the explicitly passed `[]` as if it were the shared default."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Assumes the explicit `[]` argument is ignored and the default was somehow reset to `[1]`; neither happens."
+        }
+      ],
+      "shortcut": "Mutable default = one shared object across calls that omit the argument; an explicitly passed argument always wins.",
+      "pitfalls": [
+        "Thinking `lst=[]` creates a new list per call (true in many other languages, false in Python).",
+        "Thinking the third call also touches the default list — the passed `[]` replaces it for that call only."
+      ],
+      "verification": "Adding a fourth call `print(append_to_lst(4))` would print `[1, 2, 4]`, confirming that the default list survived call 3 unchanged.",
+      "animation": {
+        "kind": "code",
+        "lang": "python",
+        "title": "Tracing the shared default list",
+        "code": "def append_to_lst(val, lst=[]):\n    lst.append(val)\n    return lst\nprint(append_to_lst(1))\nprint(append_to_lst(2))\nprint(append_to_lst(3, []))",
+        "line": 1,
+        "vars": {},
+        "output": ""
+      }
+    },
+    "da-2026-da-7": {
+      "approach": "An attribute that never appears on the right-hand side of any FD must be in every key. Here that attribute is $D$, so test $D$ together with each other attribute by computing closures, and then argue that no other minimal superkey exists.",
+      "concepts": [
+        "Attribute closure",
+        "Candidate key (minimal superkey)",
+        "Never-on-RHS attributes"
+      ],
+      "given": "$R(A,B,C,D,E)$, $F = \\{A \\to BC,\\ CD \\to E,\\ E \\to A\\}$",
+      "steps": [
+        {
+          "title": "D must be in every key",
+          "body": "The right-hand sides are $BC$, $E$ and $A$; $D$ never appears on any of them. Nothing can derive $D$, so every candidate key contains $D$. $D^+ = \\{D\\}$, so $D$ alone is not a key.",
+          "scene": {
+            "reveal": 4,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "A or E alone cannot be keys",
+          "body": "$A^+$: $A \\to BC$ gives $ABC$; no FD fires further, so $A^+ = ABC$.\n\n$E^+$: $E \\to A$ gives $EA$, then $A \\to BC$ gives $ABCE$. Both miss $D$, which rules out options (C) and (D).",
+          "scene": {
+            "reveal": 12,
+            "hl": [
+              {
+                "r": 1,
+                "tone": "error"
+              },
+              {
+                "r": 2,
+                "tone": "error"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Closures of AD, ED and CD",
+          "body": "- $AD$: $A \\to BC$ gives $ABCD$; $CD \\to E$ gives $ABCDE$. ✔\n- $ED$: $E \\to A$ gives $ADE$; $A \\to BC$ gives $ABCDE$. ✔\n- $CD$: $CD \\to E$ gives $CDE$; $E \\to A$ gives $ACDE$; $A \\to BC$ gives $ABCDE$. ✔\n\nEach is a superkey, and each is minimal because neither single attribute is a key (step 1–2: $D^+$, $A^+$, $E^+$ fail, and $C^+ = C$).",
+          "scene": {
+            "reveal": 24,
+            "hl": [
+              {
+                "r": 3,
+                "tone": "success"
+              },
+              {
+                "r": 4,
+                "tone": "success"
+              },
+              {
+                "r": 5,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "No other candidate key",
+          "body": "Every key contains $D$. The only pair left is $BD$, and $BD^+ = BD$ (no FD has $B$ or $BD$ alone on its left side), so $BD$ is not a key. Any larger set containing $D$ and any of $A$, $C$, $E$ already contains $AD$, $CD$ or $ED$, so it is not minimal. Hence the candidate keys are exactly $AD$, $ED$, $CD$.",
+          "scene": {
+            "reveal": 28,
+            "hl": [
+              {
+                "r": 3,
+                "tone": "success"
+              },
+              {
+                "r": 4,
+                "tone": "success"
+              },
+              {
+                "r": 5,
+                "tone": "success"
+              },
+              {
+                "r": 6,
+                "tone": "error"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "Candidate keys are exactly $AD$, $ED$, $CD$ — option **(A)**",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$AD^+ = ED^+ = CD^+ = ABCDE$, each minimal, and every key must contain $D$ — no others exist."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Misses $CD$: $CD \\to E \\to A \\to BC$ reaches all attributes."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$A^+ = ABC$ and $E^+ = ABCE$ — neither contains $D$, so neither is a key."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$A$ is not a key ($A^+ = ABC$), and it omits $ED$."
+        }
+      ],
+      "shortcut": "$D$ never appears on a right side ⇒ every key is $D$ plus something. The FDs form a cycle $A \\to C$ (via $A \\to BC$), $CD \\to E$, $E \\to A$, so with $D$ present any one of $A$, $C$, $E$ generates the other two (and $B$): three keys $AD$, $CD$, $ED$.",
+      "pitfalls": [
+        "Forgetting that an attribute on no right-hand side must be in every key (leads to “A and E are keys”).",
+        "Stopping after finding $AD$ — the cycle $A \\to C$, $CD \\to E$, $E \\to A$ means $C$ and $E$ can stand in for $A$."
+      ],
+      "verification": "Count check: the only 2-attribute sets containing $D$ are $AD, BD, CD, ED$; exactly three of them close to $ABCDE$, matching option (A).",
+      "animation": {
+        "kind": "table",
+        "title": "Attribute closures under F = {A→BC, CD→E, E→A}",
+        "cols": [
+          "set X",
+          "X⁺",
+          "superkey?",
+          "candidate key?"
+        ],
+        "rows": [
+          [
+            "D",
+            "D",
+            "no",
+            "—"
+          ],
+          [
+            "A",
+            "ABC",
+            "no",
+            "—"
+          ],
+          [
+            "E",
+            "ABCE",
+            "no",
+            "—"
+          ],
+          [
+            "AD",
+            "ABCDE",
+            "yes",
+            "yes"
+          ],
+          [
+            "ED",
+            "ABCDE",
+            "yes",
+            "yes"
+          ],
+          [
+            "CD",
+            "ABCDE",
+            "yes",
+            "yes"
+          ],
+          [
+            "BD",
+            "BD",
+            "no",
+            "—"
+          ]
+        ],
+        "reveal": 0
+      }
+    },
+    "da-2026-da-8": {
+      "approach": "Compare the two cubes dimension by dimension: only Location changes, from Country to State. State lies below Country in the location hierarchy, so moving to it adds detail — that is drill-down.",
+      "concepts": [
+        "OLAP data cube",
+        "Concept hierarchy (State → Country)",
+        "Drill-down vs roll-up, slice, dice"
+      ],
+      "steps": [
+        {
+          "title": "Find what changes",
+          "body": "*Product Type* and *Month* stay the same; the location dimension changes from *Country* to *State*. So the operation acts on one dimension's **level of detail**, not on which cells are selected.",
+          "scene": {
+            "hl": [
+              {
+                "c": 2,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "State is finer than Country",
+          "body": "In the location hierarchy State → Country, each country is made of many states. Showing *Sales Quantity* per state therefore splits every country cell into its state cells — moving **down** the hierarchy to more detailed data. That is **drill-down**.",
+          "scene": {
+            "hl": [
+              {
+                "c": 2,
+                "tone": "success"
+              }
+            ],
+            "caption": "Country → State: down the hierarchy = drill-down"
+          }
+        },
+        {
+          "title": "Why not the others",
+          "body": "- **Roll-up** goes the other way (State → Country, aggregating).\n- **Slicing** fixes one dimension to a single value (e.g. Month = Jan), giving a 2-D sub-cube.\n- **Dicing** selects value ranges on two or more dimensions, giving a smaller sub-cube at the *same* granularity.\n\nNeither slice nor dice can produce state-level numbers from a country-level cube."
+        }
+      ],
+      "answer": {
+        "value": "**Drill-down** — option **(D)**",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "A slice fixes one dimension to a single value; it removes a dimension rather than refining Country into State."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "A dice picks a sub-cube by ranges on several dimensions; the granularity (Country) stays the same."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Roll-up climbs the hierarchy (State → Country), aggregating — the opposite direction."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Country → State moves to a finer level of the location hierarchy: drill-down."
+        }
+      ],
+      "shortcut": "Coarse → fine = drill-down; fine → coarse = roll-up; selecting values = slice/dice.",
+      "pitfalls": [
+        "Choosing dicing because the result “looks like a sub-cube” — dicing never changes the level of detail."
+      ],
+      "verification": "Reverse check: going back from the State view to the Country view sums the states of each country — that is roll-up, so the forward move is its inverse, drill-down.",
+      "animation": {
+        "kind": "table",
+        "title": "The cube before and after",
+        "cols": [
+          "dimension 1",
+          "dimension 2",
+          "location level"
+        ],
+        "rowLabels": [
+          "shown now",
+          "wanted"
+        ],
+        "corner": "cube",
+        "rows": [
+          [
+            "Product Type",
+            "Month",
+            "Country"
+          ],
+          [
+            "Product Type",
+            "Month",
+            "State"
+          ]
+        ]
+      }
+    },
+    "da-2026-da-9": {
+      "approach": "Use the complement: the product is odd exactly when every chosen element is odd. Count non-empty subsets of the 1013 odd numbers and subtract from all non-empty subsets.",
+      "concepts": [
+        "Counting subsets ($2^n$)",
+        "Complementary counting",
+        "Uniform probability"
+      ],
+      "steps": [
+        {
+          "title": "Sample space",
+          "body": "$S$ has $2026$ elements, so it has $2^{2026}$ subsets; excluding the empty set, $M$ is chosen uniformly from $2^{2026} - 1$ subsets.",
+          "scene": {
+            "reveal": 1
+          }
+        },
+        {
+          "title": "When is the product odd?",
+          "body": "A product is odd iff every factor is odd. $S$ contains $\\frac{2026}{2} = 1013$ odd numbers ($1, 3, \\ldots, 2025$). Non-empty subsets made only of odd numbers: $2^{1013} - 1$.",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "Even-product subsets by complement",
+          "body": "$$(2^{2026} - 1) - (2^{1013} - 1) = 2^{2026} - 2^{1013} = 2^{1013}(2^{1013} - 1).$$",
+          "scene": {
+            "reveal": 5
+          }
+        },
+        {
+          "title": "Probability",
+          "body": "$$P(\\text{product even}) = \\frac{2^{1013}(2^{1013} - 1)}{2^{2026} - 1},$$\n\nwhich is option **(C)**.",
+          "scene": {
+            "reveal": 6
+          }
+        }
+      ],
+      "answer": {
+        "value": "$\\dfrac{2^{1013}(2^{1013}-1)}{2^{2026}-1}$ — option **(C)**",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Right numerator but the denominator $2^{2026}$ counts the empty set, which is excluded ($M$ is non-empty)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$2^{1013}/2^{2026}$ is roughly the chance of picking a subset of only odd numbers (including empty) — closer to the complement, and with the wrong denominator."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Even-product subsets $2^{2026} - 2^{1013} = 2^{1013}(2^{1013}-1)$ over $2^{2026}-1$ non-empty subsets."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "That is the probability of one particular subset (e.g. $M = S$), not of an event."
+        }
+      ],
+      "shortcut": "Even product ⇔ at least one even element. “Contains an even number” = all subsets minus subsets of the odds: $2^{2026} - 2^{1013}$ (the empty set is in neither count after subtraction), over $2^{2026} - 1$.",
+      "pitfalls": [
+        "Using $2^{2026}$ as the denominator and forgetting that $M$ is non-empty (gives option A).",
+        "Subtracting $2^{1013}$ instead of $2^{1013} - 1$ in the sample space bookkeeping."
+      ],
+      "verification": "Small case $S = \\{1, 2\\}$ (one odd number): non-empty subsets $\\{1\\}, \\{2\\}, \\{1,2\\}$; even products: $\\{2\\}, \\{1,2\\}$, so $P = \\frac23$. The formula with 1 odd and 2 elements gives $\\frac{2^1(2^1-1)}{2^2-1} = \\frac{2}{3}$. ✔",
+      "animation": {
+        "kind": "equation",
+        "title": "Complementary counting",
+        "lines": [
+          {
+            "tex": "\\#\\{M \\neq \\varnothing\\} = 2^{2026} - 1",
+            "note": "sample space"
+          },
+          {
+            "tex": "\\#\\{\\text{odd numbers in } S\\} = 1013"
+          },
+          {
+            "tex": "\\#\\{M \\neq \\varnothing,\\ \\text{all odd}\\} = 2^{1013} - 1",
+            "note": "product odd"
+          },
+          {
+            "tex": "\\#\\{\\text{product even}\\} = (2^{2026}-1) - (2^{1013}-1)"
+          },
+          {
+            "tex": "= 2^{2026} - 2^{1013} = 2^{1013}(2^{1013}-1)"
+          },
+          {
+            "tex": "P = \\dfrac{2^{1013}(2^{1013}-1)}{2^{2026}-1}",
+            "tone": "success"
+          }
+        ],
+        "reveal": 6
+      }
+    },
+    "da-2026-da-10": {
+      "approach": "Treat the program as picking uniformly among all non-negative integer solutions, count them by stars and bars, and count the all-positive ones by first giving each variable 1.",
+      "concepts": [
+        "Stars and bars",
+        "Substitution $m_i = n_i - 1$",
+        "Uniform (classical) probability"
+      ],
+      "steps": [
+        {
+          "title": "All non-negative solutions",
+          "body": "Stars and bars: distributing $20$ identical units into $4$ variables means arranging $20$ stars and $3$ bars, so the number of solutions is\n\n$$\\binom{20 + 4 - 1}{4 - 1} = \\binom{23}{3} = 1771.$$",
+          "scene": {
+            "reveal": 1
+          }
+        },
+        {
+          "title": "All-positive solutions",
+          "body": "Put $m_i = n_i - 1 \\ge 0$. Then $m_1 + m_2 + m_3 + m_4 = 20 - 4 = 16$, with\n\n$$\\binom{16 + 3}{3} = \\binom{19}{3} = 969$$\n\nsolutions.",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "Probability",
+          "body": "Each solution is equally likely, so\n\n$$P = \\frac{\\binom{19}{3}}{\\binom{23}{3}} = \\frac{969}{1771} \\approx 0.547,$$\n\noption **(A)**.",
+          "scene": {
+            "reveal": 4
+          }
+        }
+      ],
+      "answer": {
+        "value": "$\\binom{19}{3}\\big/\\binom{23}{3}$ — option **(A)**",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Positive solutions $\\binom{19}{3}$ over all non-negative solutions $\\binom{23}{3}$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Uses $\\binom{n+k}{k}$ with $k = 4$ — the wrong stars-and-bars formula (bars are $k - 1 = 3$)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$\\binom{20}{3}$ forgets to subtract the 4 units given to the variables; the positive count is $\\binom{19}{3}$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Wrong lower index (4 instead of 3) in both binomials."
+        }
+      ],
+      "shortcut": "Positive solutions of $x_1 + \\cdots + x_k = n$: $\\binom{n-1}{k-1}$; non-negative: $\\binom{n+k-1}{k-1}$. With $n = 20$, $k = 4$: $\\binom{19}{3} / \\binom{23}{3}$.",
+      "pitfalls": [
+        "Using $k$ instead of $k - 1$ as the lower index.",
+        "Assuming each $n_i$ is independently uniform — the randomness is over solutions, which is why the classical ratio applies."
+      ],
+      "verification": "Gap method for the positive count: line up 20 stars; choosing 3 of the 19 inner gaps for bars gives $\\binom{19}{3} = \\frac{19 \\cdot 18 \\cdot 17}{6} = 969$, same as the substitution count. And $\\binom{23}{3} = \\frac{23 \\cdot 22 \\cdot 21}{6} = 1771$.",
+      "animation": {
+        "kind": "equation",
+        "title": "Stars and bars",
+        "lines": [
+          {
+            "tex": "n_1+n_2+n_3+n_4 = 20,\\ n_i \\ge 0:\\ \\binom{23}{3} = 1771",
+            "note": "sample space"
+          },
+          {
+            "tex": "m_i = n_i - 1 \\ge 0 \\Rightarrow m_1+m_2+m_3+m_4 = 16",
+            "note": "force positivity"
+          },
+          {
+            "tex": "\\binom{19}{3} = 969",
+            "note": "favourable"
+          },
+          {
+            "tex": "P = \\binom{19}{3}\\Big/\\binom{23}{3} = \\tfrac{969}{1771} \\approx 0.547",
+            "tone": "success"
+          }
+        ],
+        "reveal": 4
+      }
+    },
+    "da-2026-da-11": {
+      "approach": "$M$ is the rotation by $\\theta = \\frac{2\\pi}{5}$, so $M^k$ rotates by $k\\theta$ and $M^5$ is a full turn, $I_2$. Reduce the exponent modulo 5.",
+      "concepts": [
+        "Rotation matrices",
+        "$R(\\alpha)R(\\beta) = R(\\alpha + \\beta)$",
+        "Periodicity / modular exponent"
+      ],
+      "steps": [
+        {
+          "title": "Powers add angles",
+          "body": "Writing $R(\\alpha)$ for the rotation by $\\alpha$, the angle-addition formulas give $R(\\alpha)R(\\beta) = R(\\alpha+\\beta)$, so $M^k = R(k\\theta)$.",
+          "scene": {
+            "reveal": 1
+          }
+        },
+        {
+          "title": "Five steps make a full turn",
+          "body": "$M^5 = R(5 \\cdot \\frac{2\\pi}{5}) = R(2\\pi) = \\begin{pmatrix} 1 & 0 \\\\ 0 & 1 \\end{pmatrix} = I_2$.",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Reduce 2026 modulo 5",
+          "body": "$2026 = 5 \\times 405 + 1$, so\n\n$$M^{2026} = (M^5)^{405} M = I_2^{405} M = M,$$\n\noption **(B)**.",
+          "scene": {
+            "reveal": 4
+          }
+        }
+      ],
+      "answer": {
+        "value": "$M^{2026} = M$ — option **(B)**",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$M^2$ would need $2026 \\equiv 2 \\pmod 5$; actually $2026 \\equiv 1$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$2026 \\equiv 1 \\pmod 5$ and $M^5 = I_2$, so $M^{2026} = M$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$M^{-1} = M^4$ would need $2026 \\equiv 4 \\pmod 5$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$I_2$ would need $5 \\mid 2026$; $2025$ is the multiple of 5, not $2026$."
+        }
+      ],
+      "shortcut": "Rotation by $\\frac{2\\pi}{5}$ has order 5; $2026 \\bmod 5 = 1$ ⇒ answer $M$.",
+      "pitfalls": [
+        "Reducing modulo 4 or 2 out of habit (as for $i^n$).",
+        "Taking $2026 \\bmod 5 = 0$ by confusing it with 2025."
+      ],
+      "verification": "Angle check: $2026 \\cdot \\frac{2\\pi}{5} = 810.4\\pi = 405 \\cdot 2\\pi + \\frac{2\\pi}{5}$, i.e. 405 full turns plus $\\theta$ — the same rotation as $M$.",
+      "animation": {
+        "kind": "equation",
+        "title": "Rotation by 2π/5 has period 5",
+        "lines": [
+          {
+            "tex": "M^k = R(k\\theta),\\quad \\theta = \\tfrac{2\\pi}{5}",
+            "note": "angles add"
+          },
+          {
+            "tex": "M^5 = R(2\\pi) = I_2",
+            "note": "full turn"
+          },
+          {
+            "tex": "2026 = 5 \\times 405 + 1"
+          },
+          {
+            "tex": "M^{2026} = (M^5)^{405}\\,M = M",
+            "tone": "success"
+          }
+        ],
+        "reveal": 4
+      }
+    },
+    "da-2026-da-12": {
+      "approach": "$S_1$ is the solid ball of radius 4 centred at the origin; a 2-dimensional subspace is a plane through the origin, i.e. through the ball's centre. The cut is a great disc of radius 4.",
+      "concepts": [
+        "Euclidean norm $x^Tx = \\lVert x\\rVert^2$",
+        "Subspaces pass through the origin",
+        "Area of a disc"
+      ],
+      "steps": [
+        {
+          "title": "S1 is a ball of radius 4",
+          "body": "$x^Tx = x_1^2 + x_2^2 + x_3^2 = \\lVert x\\rVert^2$, so $S_1 = \\{x : \\lVert x\\rVert \\le 4\\}$ — the solid ball of radius $\\sqrt{16} = 4$ centred at $0$."
+        },
+        {
+          "title": "S2 is a plane through the centre",
+          "body": "A 2-dimensional subspace of $\\mathbb{R}^3$ is a plane that **contains the origin** (every subspace contains $0$). Intersecting the ball with a plane through its centre gives a disc with the **full** radius: $S_1 \\cap S_2 = \\{x \\in S_2 : \\lVert x\\rVert \\le 4\\}$, radius $4$."
+        },
+        {
+          "title": "Area",
+          "body": "$$\\text{Area} = \\pi r^2 = \\pi \\cdot 4^2 = 16\\pi,$$\n\nthe same for every 2-D subspace. Option **(A)**."
+        }
+      ],
+      "answer": {
+        "value": "$16\\pi$ — option **(A)**",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Plane through the centre cuts a disc of radius 4: $\\pi \\cdot 16 = 16\\pi$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$4\\pi$ uses radius 2 (or $\\pi r$ with $r = 4$) — e.g. mistaking $\\sqrt{16}$ for the area scale."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$4\\pi^2$ has no geometric origin here; area of a disc carries a single factor $\\pi$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$16\\pi^2$ squares $\\pi$ wrongly; correct is $\\pi r^2 = 16\\pi$."
+        }
+      ],
+      "shortcut": "Ball radius $\\sqrt{16} = 4$; any subspace passes through the centre ⇒ great disc ⇒ $16\\pi$.",
+      "pitfalls": [
+        "Forgetting that a subspace must pass through the origin — an arbitrary (affine) plane would cut a smaller disc and the area would not be determined.",
+        "Using $16$ as the radius instead of $r^2$."
+      ],
+      "verification": "Take $S_2 = \\{x_3 = 0\\}$: the intersection is $x_1^2 + x_2^2 \\le 16$, a disc of radius 4 with area $16\\pi$. Rotations map any 2-D subspace to this one and preserve area."
+    },
+    "da-2026-da-13": {
+      "approach": "Match each task to the one algorithm that genuinely performs it, then keep only the options whose four pairs are all valid. Clustering is the decisive pair: only K-Medoid can cluster.",
+      "concepts": [
+        "K-Medoid clustering",
+        "Naive Bayes classifier",
+        "MCMC sampling",
+        "LDA as supervised feature extraction"
+      ],
+      "steps": [
+        {
+          "title": "Clustering ↔ K-Medoid",
+          "body": "Clustering is unsupervised grouping. **K-Medoid** (PAM) partitions points into $k$ clusters around representative data points. Naive Bayes and LDA both need class labels, and MCMC is a sampler — so **T1:A2**.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Classification ↔ Naive Bayes",
+          "body": "**Naive Bayes** is a probabilistic classifier: $\\hat y = \\arg\\max_c P(c)\\prod_i P(x_i \\mid c)$ — **T2:A4**. (LDA can also classify, but it is needed below for T4, and no option pairs T2:A3 with a valid T1.)",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Sampling ↔ MCMC",
+          "body": "**Markov Chain Monte Carlo** draws samples from a target distribution by running a Markov chain whose stationary distribution is that target — **T3:A1** (every option agrees).",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Feature extraction ↔ LDA",
+          "body": "**Linear Discriminant Analysis** projects data onto at most $C - 1$ directions that maximise between-class over within-class scatter — new, lower-dimensional features — **T4:A3**.\n\nFull matching: T1:A2, T2:A4, T3:A1, T4:A3 = option **(B)**.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "tone": "success"
+              },
+              {
+                "r": 3,
+                "tone": "success"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "T1:A2, T2:A4, T3:A1, T4:A3 — option **(B)** only",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "T1:A4 — Naive Bayes is a supervised classifier and cannot cluster; T4:A2 — K-Medoid groups points, it does not extract features."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Every pair is a genuine use: K-Medoid clusters, Naive Bayes classifies, MCMC samples, LDA extracts discriminant features."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "T1:A3 — LDA needs class labels, so it is not a clustering method; T4:A2 is also wrong."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "T1:A4 (Naive Bayes cannot cluster) and T2:A2 (K-Medoid is unsupervised, not a classifier)."
+        }
+      ],
+      "shortcut": "Only one algorithm in the list is unsupervised clustering (K-Medoid), and only option (B) has T1:A2.",
+      "pitfalls": [
+        "Choosing (A) because LDA is also a classifier — the option still fails at T1 and T4.",
+        "Thinking LDA here means Latent Dirichlet Allocation; it is Linear Discriminant Analysis."
+      ],
+      "verification": "Elimination check: T1:A2 appears only in option (B); every other option assigns clustering to a supervised method, so (B) is the unique correct matching.",
+      "animation": {
+        "kind": "table",
+        "title": "Task ↔ algorithm",
+        "cols": [
+          "Task",
+          "Algorithm",
+          "why"
+        ],
+        "rows": [
+          [
+            "T1 Clustering",
+            "A2 K-Medoid",
+            "partitions around medoids, no labels"
+          ],
+          [
+            "T2 Classification",
+            "A4 Naive Bayes",
+            "argmax P(c)·ΠP(xᵢ|c)"
+          ],
+          [
+            "T3 Sampling",
+            "A1 MCMC",
+            "chain with target as stationary dist."
+          ],
+          [
+            "T4 Feature Extraction",
+            "A3 LDA",
+            "projects to ≤ C−1 discriminant axes"
+          ]
+        ]
+      }
+    },
+    "da-2026-da-14": {
+      "approach": "Entailment means no model makes $X$ true and $Y$ false. Strike that single row from the truth table and read off which statements hold in all remaining rows.",
+      "concepts": [
+        "Logical entailment $X \\models Y$",
+        "Deduction theorem",
+        "Unsatisfiability"
+      ],
+      "steps": [
+        {
+          "title": "What entailment forbids",
+          "body": "$X \\models Y$: in every model where $X$ is TRUE, $Y$ is TRUE. So the combination $X = T,\\ Y = F$ never occurs — the only row excluded from the truth table.",
+          "scene": {
+            "hl": [
+              {
+                "r": 1,
+                "tone": "error"
+              }
+            ],
+            "caption": "row X = T, Y = F is impossible when X entails Y"
+          }
+        },
+        {
+          "title": "(A) and (C): the implication always holds",
+          "body": "$X \\Rightarrow Y$ is false only in the row $X = T,\\ Y = F$. With that row gone it is TRUE in every model, i.e. **valid** (deduction theorem). “If $X$ then $Y$” is the same implication in words. Both correct.",
+          "scene": {
+            "hl": [
+              {
+                "r": 1,
+                "tone": "error"
+              },
+              {
+                "c": 2,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "(B): X ∧ ¬Y can never be true",
+          "body": "$X \\land \\neg Y$ is TRUE only in the forbidden row, so it is FALSE in every possible model (unsatisfiable) — this is the refutation form of entailment used in resolution. Correct.",
+          "scene": {
+            "hl": [
+              {
+                "r": 1,
+                "tone": "error"
+              },
+              {
+                "c": 3,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "(D): the converse is not guaranteed",
+          "body": "The row $X = F,\\ Y = T$ is still allowed, and there $Y \\Rightarrow X$ is FALSE. Example: $X = P \\land Q$ entails $Y = P$, but $P$ does not entail $P \\land Q$. Not correct.",
+          "scene": {
+            "hl": [
+              {
+                "r": 1,
+                "tone": "error"
+              },
+              {
+                "r": 2,
+                "c": 4,
+                "tone": "error"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "**(A), (B), (C)**",
+        "choice": [
+          "A",
+          "B",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$X \\models Y$ iff $X \\Rightarrow Y$ is valid (true in all models)."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$X \\land \\neg Y$ would need a model with $X$ true and $Y$ false, which entailment rules out."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "“If $X$ then $Y$” is the implication $X \\Rightarrow Y$ stated in words."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The converse: a model with $X$ false and $Y$ true is allowed (e.g. $X = P \\land Q$, $Y = P$)."
+        }
+      ],
+      "shortcut": "$X \\models Y \\iff \\models (X \\Rightarrow Y) \\iff X \\land \\neg Y$ unsatisfiable. Everything except the converse.",
+      "pitfalls": [
+        "Treating entailment as equivalence and ticking (D)."
+      ],
+      "verification": "Concrete check with $X = P \\land Q$, $Y = P$: $X \\Rightarrow Y$ is a tautology (A, C), $P \\land Q \\land \\neg P$ is unsatisfiable (B), and $P \\Rightarrow P \\land Q$ fails at $P = T, Q = F$ (D false).",
+      "animation": {
+        "kind": "table",
+        "title": "Truth table — X entails Y",
+        "cols": [
+          "X",
+          "Y",
+          "X ⇒ Y",
+          "X ∧ ¬Y",
+          "Y ⇒ X"
+        ],
+        "rows": [
+          [
+            "T",
+            "T",
+            "T",
+            "F",
+            "T"
+          ],
+          [
+            "T",
+            "F",
+            "F",
+            "T",
+            "T"
+          ],
+          [
+            "F",
+            "T",
+            "T",
+            "F",
+            "F"
+          ],
+          [
+            "F",
+            "F",
+            "T",
+            "F",
+            "T"
+          ]
+        ]
+      }
+    },
+    "da-2026-da-15": {
+      "approach": "Rebuild the tree: the first pre-order symbol is the root, and its position in the in-order sequence splits the remaining nodes into left and right subtrees. Recurse, then read the post-order off the tree.",
+      "concepts": [
+        "Pre-order + in-order ⇒ unique binary tree",
+        "Recursive reconstruction",
+        "Post-order traversal"
+      ],
+      "given": "| traversal | sequence |\n|---|---|\n| pre-order | P Q S E R F G |\n| in-order | S Q E P F R G |",
+      "steps": [
+        {
+          "title": "Root is P",
+          "body": "Pre-order visits the root first, so the root is **P**. In the in-order sequence `S Q E | P | F R G`, the nodes left of P (S, Q, E) form the left subtree and those right of P (F, R, G) form the right subtree.",
+          "scene": {
+            "root": {
+              "label": "P",
+              "tone": "accent",
+              "children": [
+                {
+                  "id": "L",
+                  "label": "{S,Q,E}",
+                  "tone": "muted"
+                },
+                {
+                  "id": "Rt",
+                  "label": "{F,R,G}",
+                  "tone": "muted"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Left subtree: Q with children S and E",
+          "body": "Left part in pre-order: `Q S E` ⇒ its root is **Q**. In-order `S | Q | E` ⇒ S is Q's left child and E is Q's right child. So **Q has two children**.",
+          "scene": {
+            "root": {
+              "label": "P",
+              "children": [
+                {
+                  "label": "Q",
+                  "tone": "accent",
+                  "children": [
+                    {
+                      "label": "S"
+                    },
+                    {
+                      "label": "E"
+                    }
+                  ]
+                },
+                {
+                  "id": "Rt",
+                  "label": "{F,R,G}",
+                  "tone": "muted"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Right subtree: R with children F and G",
+          "body": "Right part in pre-order: `R F G` ⇒ its root is **R**. In-order `F | R | G` ⇒ F is R's left child and **G is R's right child**.",
+          "scene": {
+            "root": {
+              "label": "P",
+              "children": [
+                {
+                  "label": "Q",
+                  "children": [
+                    {
+                      "label": "S"
+                    },
+                    {
+                      "label": "E"
+                    }
+                  ]
+                },
+                {
+                  "label": "R",
+                  "tone": "accent",
+                  "children": [
+                    {
+                      "label": "F"
+                    },
+                    {
+                      "label": "G"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Post-order and the options",
+          "body": "Post-order = left, right, root: left subtree gives `S E Q`, right subtree gives `F G R`, then `P`:\n\n**S E Q F G R P**.\n\n(A) P is the root ✔ · (B) post-order matches ✔ · (C) Q has two children ✘ · (D) G is in R's **right** subtree ✘.",
+          "scene": {
+            "root": {
+              "label": "P",
+              "tone": "success",
+              "children": [
+                {
+                  "label": "Q",
+                  "tone": "success",
+                  "children": [
+                    {
+                      "label": "S",
+                      "tone": "success"
+                    },
+                    {
+                      "label": "E",
+                      "tone": "success"
+                    }
+                  ]
+                },
+                {
+                  "label": "R",
+                  "tone": "success",
+                  "children": [
+                    {
+                      "label": "F",
+                      "tone": "success"
+                    },
+                    {
+                      "label": "G",
+                      "tone": "success"
+                    }
+                  ]
+                }
+              ]
+            },
+            "caption": "post-order: S E Q F G R P"
+          }
+        }
+      ],
+      "answer": {
+        "value": "**(A), (B)** — tree P(Q(S, E), R(F, G)), post-order S E Q F G R P",
+        "choice": [
+          "A",
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "P is the first node of the pre-order, hence the root."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Post-order of P(Q(S,E), R(F,G)) is S E Q F G R P."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "In-order `S Q E` puts S left and E right of Q — two children."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "In-order `F R G` puts G after R, i.e. in R's right subtree; F is the left child."
+        }
+      ],
+      "shortcut": "Both subtrees have 3 nodes with the middle one as root in pre-order position 1 — the tree is complete: P / Q R / S E F G.",
+      "pitfalls": [
+        "Reading the left/right split from the pre-order instead of the in-order sequence.",
+        "Mixing up post-order (L, R, root) with reverse pre-order."
+      ],
+      "verification": "Recompute traversals from the built tree: pre-order P Q S E R F G and in-order S Q E P F R G both match the question, so the tree (and its post-order) is correct.",
+      "animation": {
+        "kind": "tree",
+        "title": "Rebuilding T from pre-order + in-order",
+        "root": {
+          "label": "P",
+          "children": [
+            {
+              "label": "Q",
+              "children": [
+                {
+                  "label": "S"
+                },
+                {
+                  "label": "E"
+                }
+              ]
+            },
+            {
+              "label": "R",
+              "children": [
+                {
+                  "label": "F"
+                },
+                {
+                  "label": "G"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "da-2026-da-16": {
+      "approach": "The constraint says every `E` value in `s` must match some `A` value in `r`. Ask of each operation whether it can leave an `s` tuple pointing at a missing `r` tuple: only removing referenced values or adding referencing values can.",
+      "concepts": [
+        "Foreign key / referential integrity",
+        "Referenced vs referencing relation",
+        "Insert/delete anomalies"
+      ],
+      "steps": [
+        {
+          "title": "What can break the constraint",
+          "body": "`s` (with `E`) is the **referencing** relation and `r` (with primary key `A`) is the **referenced** one. The constraint is violated exactly when some tuple of `s` has an `E` value that is not an `A` value in `r` (a dangling reference).",
+          "scene": {
+            "reveal": 0
+          }
+        },
+        {
+          "title": "Insert into r: never",
+          "body": "Adding tuples to `r` only adds `A` values. Every `E` value that matched before still matches. (A duplicate `A` would violate the *primary-key* constraint, not the foreign key.) **Never violates.**",
+          "scene": {
+            "reveal": 3,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Delete from s: never",
+          "body": "Removing tuples from `s` removes references; the remaining `s` tuples still point at existing `r` tuples. **Never violates.**",
+          "scene": {
+            "reveal": 6,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Delete from r / insert into s: can violate",
+          "body": "- Deleting the `r` tuple with $A = a$ while some `s` tuple has $E = a$ leaves that reference dangling (the DBMS must reject it, cascade, or set NULL).\n- Inserting an `s` tuple whose `E` value does not exist in `r` is an immediate violation.\n\nSo these two **can** violate the constraint. Answer: **(A), (B)**.",
+          "scene": {
+            "reveal": 12,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "tone": "error"
+              },
+              {
+                "r": 3,
+                "tone": "error"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "**(A), (B)** — inserting into `r` and deleting from `s`",
+        "choice": [
+          "A",
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "New `A` values in the referenced relation cannot break any existing reference."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Removing referencing tuples removes references; the rest still match."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Deleting an `r` tuple that is still referenced by some `s.E` leaves a dangling reference."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Inserting an `s` tuple with an `E` value absent from `r.A` violates the constraint."
+        }
+      ],
+      "shortcut": "Safe: insert into the referenced table, delete from the referencing table. Risky: the other two (plus updates of either key).",
+      "pitfalls": [
+        "Confusing which relation holds the foreign key — `S.E` references `R.A`, not the other way round.",
+        "Counting a primary-key violation on insert into `r` as a foreign-key violation."
+      ],
+      "verification": "Example: $r = \\{(1, x), (2, y)\\}$, $s = \\{(1, p)\\}$. Insert $(3, z)$ into `r` or delete $(1, p)$ from `s` — still consistent. Delete $(1, x)$ from `r` — $(1, p)$ dangles. Insert $(5, q)$ into `s` — 5 is not in `r`.",
+      "animation": {
+        "kind": "table",
+        "title": "Can the operation leave a dangling S.E → R.A reference?",
+        "cols": [
+          "operation",
+          "effect on references",
+          "verdict"
+        ],
+        "rows": [
+          [
+            "insert into r",
+            "only adds A values",
+            "never violates"
+          ],
+          [
+            "delete from s",
+            "only removes references",
+            "never violates"
+          ],
+          [
+            "delete from r",
+            "may remove a referenced A",
+            "can violate"
+          ],
+          [
+            "insert into s",
+            "E may not exist in r",
+            "can violate"
+          ]
+        ],
+        "reveal": 0
+      }
+    }
+  }
+}
