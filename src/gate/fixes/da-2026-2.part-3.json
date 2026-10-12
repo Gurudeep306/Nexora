@@ -1,0 +1,353 @@
+{
+  "paper": "da-2026-2",
+  "fixes": [
+    {
+      "id": "da-2026-2-da-17",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "The da-2026-2 paper does not exist (DA 2026 had one session); record is synthetic.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-17",
+      "field": "reviewNote",
+      "before": null,
+      "after": "NOT A REAL GATE QUESTION. GATE 2026 held DA in a single session: the official DA key (https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf) lists only session 8, and the cited source https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA-Set2.pdf returns 404 (the real paper is QPs/DA.pdf = da-2026). This record was synthesised by scripts/add_gate_2026_papers.py; its \"official\" key and \"official-pdf\" text source are not genuine. The whole da-2026-2 paper should be removed or relabelled as practice material. Duplicate: the same stem and options also appear as da-2026-2-da-25, da-2026-2-da-33, da-2026-2-da-41, da-2026-2-da-49 (the generator cycled an 8-stem pool to reach 65 questions).",
+      "reason": "Explain why the record is flagged.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-18",
+      "field": "answer",
+      "before": "B",
+      "after": "A",
+      "reason": "Stored key B (30 × 30) is a cyclic placeholder; with $W=32$, $K=5$, $P=0$, $S=1$: $(32-5+0)/1+1 = 28$, i.e. 28 × 28 = option A (the generator's own key).",
+      "source": "scripts/add_gate_2026_papers.py (author-intended key) + independent solution"
+    },
+    {
+      "id": "da-2026-2-da-18",
+      "field": "topic",
+      "before": "neural-nets",
+      "after": "neural",
+      "reason": "Topic id \"neural-nets\" does not exist under ml in the DA subject list; the matching id is \"neural\".",
+      "source": "src/gate/questions.json subjects.ml"
+    },
+    {
+      "id": "da-2026-2-da-18",
+      "field": "tags",
+      "before": [
+        "ml",
+        "neural-nets"
+      ],
+      "after": [
+        "ml",
+        "neural",
+        "cnn"
+      ],
+      "reason": "Align tags with the corrected topic id.",
+      "source": "src/gate/questions.json subjects.ml"
+    },
+    {
+      "id": "da-2026-2-da-18",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "The da-2026-2 paper does not exist (DA 2026 had one session); record is synthetic.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-18",
+      "field": "reviewNote",
+      "before": null,
+      "after": "NOT A REAL GATE QUESTION. GATE 2026 held DA in a single session: the official DA key (https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf) lists only session 8, and the cited source https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA-Set2.pdf returns 404 (the real paper is QPs/DA.pdf = da-2026). This record was synthesised by scripts/add_gate_2026_papers.py; its \"official\" key and \"official-pdf\" text source are not genuine. The whole da-2026-2 paper should be removed or relabelled as practice material. Duplicate: the same stem and options also appear as da-2026-2-da-10, da-2026-2-da-26, da-2026-2-da-34, da-2026-2-da-42, da-2026-2-da-50 (the generator cycled an 8-stem pool to reach 65 questions). Its placeholder key B pointed at a wrong option; replaced by the content-correct A.",
+      "reason": "Explain why the record is flagged.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-19",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "The da-2026-2 paper does not exist (DA 2026 had one session); record is synthetic.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-19",
+      "field": "reviewNote",
+      "before": null,
+      "after": "NOT A REAL GATE QUESTION. GATE 2026 held DA in a single session: the official DA key (https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf) lists only session 8, and the cited source https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA-Set2.pdf returns 404 (the real paper is QPs/DA.pdf = da-2026). This record was synthesised by scripts/add_gate_2026_papers.py; its \"official\" key and \"official-pdf\" text source are not genuine. The whole da-2026-2 paper should be removed or relabelled as practice material. Duplicate: the same stem and options also appear as da-2026-2-da-11, da-2026-2-da-27, da-2026-2-da-35, da-2026-2-da-43, da-2026-2-da-51 (the generator cycled an 8-stem pool to reach 65 questions).",
+      "reason": "Explain why the record is flagged.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-20",
+      "field": "answer",
+      "before": "D",
+      "after": "A",
+      "reason": "Stored key D (41) is a cyclic placeholder; $\\operatorname{Var}(3X+5) = 3^2\\operatorname{Var}(X) = 9 \\times 4 = 36$ = option A (the generator's own key).",
+      "source": "scripts/add_gate_2026_papers.py (author-intended key) + independent solution"
+    },
+    {
+      "id": "da-2026-2-da-20",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "The da-2026-2 paper does not exist (DA 2026 had one session); record is synthetic.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-20",
+      "field": "reviewNote",
+      "before": null,
+      "after": "NOT A REAL GATE QUESTION. GATE 2026 held DA in a single session: the official DA key (https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf) lists only session 8, and the cited source https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA-Set2.pdf returns 404 (the real paper is QPs/DA.pdf = da-2026). This record was synthesised by scripts/add_gate_2026_papers.py; its \"official\" key and \"official-pdf\" text source are not genuine. The whole da-2026-2 paper should be removed or relabelled as practice material. Duplicate: the same stem and options also appear as da-2026-2-da-12, da-2026-2-da-28, da-2026-2-da-36, da-2026-2-da-44, da-2026-2-da-52 (the generator cycled an 8-stem pool to reach 65 questions). Its placeholder key D pointed at a wrong option; replaced by the content-correct A.",
+      "reason": "Explain why the record is flagged.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-21",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "The da-2026-2 paper does not exist (DA 2026 had one session); record is synthetic.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-21",
+      "field": "reviewNote",
+      "before": null,
+      "after": "NOT A REAL GATE QUESTION. GATE 2026 held DA in a single session: the official DA key (https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf) lists only session 8, and the cited source https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA-Set2.pdf returns 404 (the real paper is QPs/DA.pdf = da-2026). This record was synthesised by scripts/add_gate_2026_papers.py; its \"official\" key and \"official-pdf\" text source are not genuine. The whole da-2026-2 paper should be removed or relabelled as practice material. Duplicate: the same stem and options also appear as da-2026-2-da-13, da-2026-2-da-29, da-2026-2-da-37, da-2026-2-da-45, da-2026-2-da-53 (the generator cycled an 8-stem pool to reach 65 questions).",
+      "reason": "Explain why the record is flagged.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-22",
+      "field": "answer",
+      "before": "B",
+      "after": "A",
+      "reason": "Stored key B (GROUP BY ROLLUP) is a cyclic placeholder; rolling-window moving averages are computed with window functions, OVER (PARTITION BY ... ORDER BY ...) = option A (the generator's own key). ROLLUP produces hierarchical subtotals, not windows.",
+      "source": "scripts/add_gate_2026_papers.py (author-intended key) + independent solution"
+    },
+    {
+      "id": "da-2026-2-da-22",
+      "field": "topic",
+      "before": "sql",
+      "after": "warehousing",
+      "reason": "Topic id \"sql\" does not exist under dbw in the DA subject list; the matching id is \"warehousing\".",
+      "source": "src/gate/questions.json subjects.dbw"
+    },
+    {
+      "id": "da-2026-2-da-22",
+      "field": "tags",
+      "before": [
+        "dbw",
+        "sql"
+      ],
+      "after": [
+        "dbw",
+        "warehousing",
+        "window-functions"
+      ],
+      "reason": "Align tags with the corrected topic id.",
+      "source": "src/gate/questions.json subjects.dbw"
+    },
+    {
+      "id": "da-2026-2-da-22",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "The da-2026-2 paper does not exist (DA 2026 had one session); record is synthetic.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-22",
+      "field": "reviewNote",
+      "before": null,
+      "after": "NOT A REAL GATE QUESTION. GATE 2026 held DA in a single session: the official DA key (https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf) lists only session 8, and the cited source https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA-Set2.pdf returns 404 (the real paper is QPs/DA.pdf = da-2026). This record was synthesised by scripts/add_gate_2026_papers.py; its \"official\" key and \"official-pdf\" text source are not genuine. The whole da-2026-2 paper should be removed or relabelled as practice material. Duplicate: the same stem and options also appear as da-2026-2-da-14, da-2026-2-da-30, da-2026-2-da-38, da-2026-2-da-46, da-2026-2-da-54 (the generator cycled an 8-stem pool to reach 65 questions). Its placeholder key B pointed at a wrong option; replaced by the content-correct A.",
+      "reason": "Explain why the record is flagged.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-23",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "The da-2026-2 paper does not exist (DA 2026 had one session); record is synthetic.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-23",
+      "field": "reviewNote",
+      "before": null,
+      "after": "NOT A REAL GATE QUESTION. GATE 2026 held DA in a single session: the official DA key (https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf) lists only session 8, and the cited source https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA-Set2.pdf returns 404 (the real paper is QPs/DA.pdf = da-2026). This record was synthesised by scripts/add_gate_2026_papers.py; its \"official\" key and \"official-pdf\" text source are not genuine. The whole da-2026-2 paper should be removed or relabelled as practice material. Duplicate: the same stem and options also appear as da-2026-2-da-15, da-2026-2-da-31, da-2026-2-da-39, da-2026-2-da-47, da-2026-2-da-55 (the generator cycled an 8-stem pool to reach 65 questions).",
+      "reason": "Explain why the record is flagged.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-24",
+      "field": "answer",
+      "before": "D",
+      "after": "A",
+      "reason": "Stored key D ($\\Theta(n^2)$) is a cyclic placeholder and impossible (a tree on n nodes has height < n). Worst-case AVL height is about $1.44\\log_2 n$ (Fibonacci-tree bound) = option A (the generator's own key).",
+      "source": "scripts/add_gate_2026_papers.py (author-intended key) + independent solution"
+    },
+    {
+      "id": "da-2026-2-da-24",
+      "field": "topic",
+      "before": "dsa",
+      "after": "ds",
+      "reason": "Topic id \"dsa\" does not exist under pdsa in the DA subject list; the matching id is \"ds\".",
+      "source": "src/gate/questions.json subjects.pdsa"
+    },
+    {
+      "id": "da-2026-2-da-24",
+      "field": "tags",
+      "before": [
+        "pdsa",
+        "dsa"
+      ],
+      "after": [
+        "pdsa",
+        "ds",
+        "avl-tree"
+      ],
+      "reason": "Align tags with the corrected topic id.",
+      "source": "src/gate/questions.json subjects.pdsa"
+    },
+    {
+      "id": "da-2026-2-da-24",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "The da-2026-2 paper does not exist (DA 2026 had one session); record is synthetic.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-24",
+      "field": "reviewNote",
+      "before": null,
+      "after": "NOT A REAL GATE QUESTION. GATE 2026 held DA in a single session: the official DA key (https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf) lists only session 8, and the cited source https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA-Set2.pdf returns 404 (the real paper is QPs/DA.pdf = da-2026). This record was synthesised by scripts/add_gate_2026_papers.py; its \"official\" key and \"official-pdf\" text source are not genuine. The whole da-2026-2 paper should be removed or relabelled as practice material. Duplicate: the same stem and options also appear as da-2026-2-da-16, da-2026-2-da-32, da-2026-2-da-40, da-2026-2-da-48 (the generator cycled an 8-stem pool to reach 65 questions). Its placeholder key D pointed at a wrong option; replaced by the content-correct A.",
+      "reason": "Explain why the record is flagged.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-25",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "The da-2026-2 paper does not exist (DA 2026 had one session); record is synthetic.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-25",
+      "field": "reviewNote",
+      "before": null,
+      "after": "NOT A REAL GATE QUESTION. GATE 2026 held DA in a single session: the official DA key (https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf) lists only session 8, and the cited source https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA-Set2.pdf returns 404 (the real paper is QPs/DA.pdf = da-2026). This record was synthesised by scripts/add_gate_2026_papers.py; its \"official\" key and \"official-pdf\" text source are not genuine. The whole da-2026-2 paper should be removed or relabelled as practice material. Duplicate: the same stem and options also appear as da-2026-2-da-17, da-2026-2-da-33, da-2026-2-da-41, da-2026-2-da-49 (the generator cycled an 8-stem pool to reach 65 questions).",
+      "reason": "Explain why the record is flagged.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-26",
+      "field": "answer",
+      "before": "B",
+      "after": "A",
+      "reason": "Stored key B (30 × 30) is a cyclic placeholder; $(32-5+0)/1+1 = 28$, i.e. 28 × 28 = option A (the generator's own key).",
+      "source": "scripts/add_gate_2026_papers.py (author-intended key) + independent solution"
+    },
+    {
+      "id": "da-2026-2-da-26",
+      "field": "topic",
+      "before": "neural-nets",
+      "after": "neural",
+      "reason": "Topic id \"neural-nets\" does not exist under ml in the DA subject list; the matching id is \"neural\".",
+      "source": "src/gate/questions.json subjects.ml"
+    },
+    {
+      "id": "da-2026-2-da-26",
+      "field": "tags",
+      "before": [
+        "ml",
+        "neural-nets"
+      ],
+      "after": [
+        "ml",
+        "neural",
+        "cnn"
+      ],
+      "reason": "Align tags with the corrected topic id.",
+      "source": "src/gate/questions.json subjects.ml"
+    },
+    {
+      "id": "da-2026-2-da-26",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "The da-2026-2 paper does not exist (DA 2026 had one session); record is synthetic.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-26",
+      "field": "reviewNote",
+      "before": null,
+      "after": "NOT A REAL GATE QUESTION. GATE 2026 held DA in a single session: the official DA key (https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf) lists only session 8, and the cited source https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA-Set2.pdf returns 404 (the real paper is QPs/DA.pdf = da-2026). This record was synthesised by scripts/add_gate_2026_papers.py; its \"official\" key and \"official-pdf\" text source are not genuine. The whole da-2026-2 paper should be removed or relabelled as practice material. Duplicate: the same stem and options also appear as da-2026-2-da-10, da-2026-2-da-18, da-2026-2-da-34, da-2026-2-da-42, da-2026-2-da-50 (the generator cycled an 8-stem pool to reach 65 questions). Its placeholder key B pointed at a wrong option; replaced by the content-correct A.",
+      "reason": "Explain why the record is flagged.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-27",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "The da-2026-2 paper does not exist (DA 2026 had one session); record is synthetic.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-27",
+      "field": "reviewNote",
+      "before": null,
+      "after": "NOT A REAL GATE QUESTION. GATE 2026 held DA in a single session: the official DA key (https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf) lists only session 8, and the cited source https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA-Set2.pdf returns 404 (the real paper is QPs/DA.pdf = da-2026). This record was synthesised by scripts/add_gate_2026_papers.py; its \"official\" key and \"official-pdf\" text source are not genuine. The whole da-2026-2 paper should be removed or relabelled as practice material. Duplicate: the same stem and options also appear as da-2026-2-da-11, da-2026-2-da-19, da-2026-2-da-35, da-2026-2-da-43, da-2026-2-da-51 (the generator cycled an 8-stem pool to reach 65 questions).",
+      "reason": "Explain why the record is flagged.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-28",
+      "field": "answer",
+      "before": "D",
+      "after": "A",
+      "reason": "Stored key D (41) is a cyclic placeholder; $\\operatorname{Var}(3X+5) = 9 \\times 4 = 36$ = option A (the generator's own key).",
+      "source": "scripts/add_gate_2026_papers.py (author-intended key) + independent solution"
+    },
+    {
+      "id": "da-2026-2-da-28",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "The da-2026-2 paper does not exist (DA 2026 had one session); record is synthetic.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-28",
+      "field": "reviewNote",
+      "before": null,
+      "after": "NOT A REAL GATE QUESTION. GATE 2026 held DA in a single session: the official DA key (https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf) lists only session 8, and the cited source https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA-Set2.pdf returns 404 (the real paper is QPs/DA.pdf = da-2026). This record was synthesised by scripts/add_gate_2026_papers.py; its \"official\" key and \"official-pdf\" text source are not genuine. The whole da-2026-2 paper should be removed or relabelled as practice material. Duplicate: the same stem and options also appear as da-2026-2-da-12, da-2026-2-da-20, da-2026-2-da-36, da-2026-2-da-44, da-2026-2-da-52 (the generator cycled an 8-stem pool to reach 65 questions). Its placeholder key D pointed at a wrong option; replaced by the content-correct A.",
+      "reason": "Explain why the record is flagged.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-29",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "The da-2026-2 paper does not exist (DA 2026 had one session); record is synthetic.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-29",
+      "field": "reviewNote",
+      "before": null,
+      "after": "NOT A REAL GATE QUESTION. GATE 2026 held DA in a single session: the official DA key (https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf) lists only session 8, and the cited source https://gate2026.iitg.ac.in/doc/download/2026/QPs/DA-Set2.pdf returns 404 (the real paper is QPs/DA.pdf = da-2026). This record was synthesised by scripts/add_gate_2026_papers.py; its \"official\" key and \"official-pdf\" text source are not genuine. The whole da-2026-2 paper should be removed or relabelled as practice material. Duplicate: the same stem and options also appear as da-2026-2-da-13, da-2026-2-da-21, da-2026-2-da-37, da-2026-2-da-45, da-2026-2-da-53 (the generator cycled an 8-stem pool to reach 65 questions).",
+      "reason": "Explain why the record is flagged.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    }
+  ]
+}
