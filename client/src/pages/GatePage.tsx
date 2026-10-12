@@ -1,381 +1,262 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { Play, RotateCcw, ChevronLeft, ChevronRight } from 'lucide-react'
-import { Icon, IconBadge } from '@/components/icon/Icon'
+import { ChevronLeft, ChevronRight, Timer } from 'lucide-react'
+import { IconBadge } from '@/components/icon/Icon'
 import { EmptyState, ErrorState, LoadingBlock } from '@/components/ui'
 import { api } from '@/lib/api'
 import { useApi } from '@/hooks/useApi'
 import { useAgentPageContext } from '@/context/AgentContext'
-import { GateFilterStudio, type ViewMode } from '@/gate/GateFilterStudio'
+import { GateFilterStudio, type GateFilters, type ViewMode } from '@/gate/GateFilterStudio'
 import { GateFocusDeck } from '@/gate/GateFocusDeck'
-import { GateSplitStudio } from '@/gate/GateSplitStudio'
 import { GateBentoGrid } from '@/gate/GateBentoGrid'
+import { useGateProgress } from '@/gate/progress'
 import { type GateList, type GateMeta } from '@/gate/types'
 
 const PAGE_SIZE = 25
+const LIST_KEYS = ['exam', 'paper', 'year', 'subject', 'topic', 'type', 'marks', 'section'] as const
 
-/** Multi-select pill groups keep their value in the URL as a comma list. */
-function useListParam(key: string) {
-  const [params, setParams] = useSearchParams()
-  const value = useMemo(
-    () => (params.get(key) ?? '').split(',').map((s) => s.trim()).filter(Boolean),
-    [params, key],
-  )
-  const toggle = useCallback(
-    (v: string) => {
-      setParams(
-        (prev) => {
-          const next = new URLSearchParams(prev)
-          const cur = (next.get(key) ?? '').split(',').filter(Boolean)
-          const after = cur.includes(v) ? cur.filter((x) => x !== v) : [...cur, v]
-          if (after.length) next.set(key, after.join(','))
-          else next.delete(key)
-          next.delete('page')
-          return next
-        },
-        { replace: true },
-      )
-    },
-    [key, setParams],
-  )
-  const setDirect = useCallback(
-    (vals: string[]) => {
-      setParams(
-        (prev) => {
-          const next = new URLSearchParams(prev)
-          if (vals.length) next.set(key, vals.join(','))
-          else next.delete(key)
-          next.delete('page')
-          return next
-        },
-        { replace: true },
-      )
-    },
-    [key, setParams],
-  )
-  return [value, toggle, setDirect] as const
-}
+const splitList = (v: string | null) => (v ?? '').split(',').map((s) => s.trim()).filter(Boolean)
 
 export default function GatePage() {
   const [params, setParams] = useSearchParams()
-  const q = params.get('q') ?? ''
-  const sort = params.get('sort') ?? 'year-desc'
-  const hasFigure = params.get('hasFigure') ?? ''
+  const progress = useGateProgress()
 
-  // View Mode: default to 'focus' (Focus Deck) so user never sees endless big lists!
-  const [viewMode, setViewMode] = useState<ViewMode>('focus')
+  /* ── URL state ── */
+  const f: GateFilters = {
+    q: params.get('q') ?? '',
+    exam: splitList(params.get('exam')),
+    paper: splitList(params.get('paper')),
+    year: splitList(params.get('year')),
+    subject: splitList(params.get('subject')),
+    topic: splitList(params.get('topic')),
+    type: splitList(params.get('type')),
+    marks: splitList(params.get('marks')),
+    section: splitList(params.get('section')),
+    hasFigure: params.get('hasFigure') ?? '',
+    saved: params.get('saved') === '1',
+    sort: params.get('sort') ?? 'year-desc',
+  }
+  const viewMode: ViewMode = params.get('view') === 'list' ? 'list' : 'practice'
+  const page = Math.max(1, Number(params.get('page') ?? 1) || 1)
+  const index = Math.max(0, Number(params.get('i') ?? 0) || 0)
 
-  const [search, setSearch] = useState({ input: q, from: q })
-  if (search.from !== q) setSearch({ input: q, from: q })
+  /** Apply several URL changes at once; any filter change resets paging. */
+  const patch = useCallback(
+    (p: Record<string, string | null>, opts: { keepPage?: boolean; push?: boolean } = {}) => {
+      setParams(
+        (prev) => {
+          const next = new URLSearchParams(prev)
+          for (const [k, v] of Object.entries(p)) {
+            if (v === null || v === '') next.delete(k)
+            else next.set(k, v)
+          }
+          if (!opts.keepPage) {
+            next.delete('page')
+            next.delete('i')
+          }
+          return next
+        },
+        { replace: !opts.push },
+      )
+    },
+    [setParams],
+  )
+  const setList = (key: keyof GateFilters, vals: string[]) => patch({ [key]: vals.length ? vals.join(',') : null })
+  const toggle = (key: keyof GateFilters, v: string) => {
+    const cur = f[key] as string[]
+    setList(key, cur.includes(v) ? cur.filter((x) => x !== v) : [...cur, v])
+  }
+  const setParam = (key: string, v: string | null) => patch({ [key]: v })
+
+  /* Debounced search box ↔ ?q= */
+  const [search, setSearch] = useState({ input: f.q, from: f.q })
+  if (search.from !== f.q) setSearch({ input: f.q, from: f.q })
   const searchInput = search.input
-  const setSearchInput = (v: string) => setSearch({ input: v, from: q })
-
-  const page = Math.max(1, Number(params.get('page') ?? 1))
-
-  const [exam, toggleExam, setExam] = useListParam('exam')
-  const [paper] = useListParam('paper')
-  const [year, toggleYear, setYear] = useListParam('year')
-  const [subject, toggleSubject, setSubject] = useListParam('subject')
-  const [topic, toggleTopic] = useListParam('topic')
-  const [type, toggleType] = useListParam('type')
-  const [marks, toggleMarks] = useListParam('marks')
-  const [section] = useListParam('section')
+  const setSearchInput = (v: string) => setSearch({ input: v, from: f.q })
+  useEffect(() => {
+    if (searchInput === f.q) return
+    const t = setTimeout(() => patch({ q: searchInput || null }), 280)
+    return () => clearTimeout(t)
+  }, [searchInput, f.q, patch])
 
   useAgentPageContext({
     filters:
-      [q && `search "${q}"`, exam.length && `exam ${exam.join('/')}`, year.length && `year ${year.join(', ')}`, subject.length && `subject ${subject.join(', ')}`, topic.length && `topic ${topic.join(', ')}`, type.length && `type ${type.join(', ')}`, marks.length && `marks ${marks.join(', ')}`]
+      [f.q && `search "${f.q}"`, f.exam.length && `exam ${f.exam.join('/')}`, f.paper.length && `paper ${f.paper.join(', ')}`, f.year.length && `year ${f.year.join(', ')}`, f.subject.length && `subject ${f.subject.join(', ')}`, f.topic.length && `topic ${f.topic.join(', ')}`, f.type.length && `type ${f.type.join(', ')}`, f.marks.length && `marks ${f.marks.join(', ')}`]
         .filter(Boolean)
         .join('; ') || undefined,
   })
 
-  // Debounced search sync
-  useEffect(() => {
-    if (searchInput === q) return
-    const t = setTimeout(() => {
-      setParams(
-        (prev) => {
-          const next = new URLSearchParams(prev)
-          if (searchInput) next.set('q', searchInput)
-          else next.delete('q')
-          next.delete('page')
-          return next
-        },
-        { replace: true },
-      )
-    }, 280)
-    return () => clearTimeout(t)
-  }, [searchInput, q, setParams])
-
   const meta = useApi<GateMeta>(() => api.get<GateMeta>('/api/gate/meta'), [], { cacheKey: 'gate:meta' })
 
-  const query = {
-    q,
-    exam: exam.join(','),
-    paper: paper.join(','),
-    year: year.join(','),
-    subject: subject.join(','),
-    topic: topic.join(','),
-    type: type.join(','),
-    marks: marks.join(','),
-    section: section.join(','),
-    hasFigure,
-    sort,
-    limit: PAGE_SIZE,
-    offset: (page - 1) * PAGE_SIZE,
-  }
-
-  const list = useApi<GateList>(
-    () => api.get<GateList>('/api/gate/questions', { query }),
-    [q, exam.join(), paper.join(), year.join(), subject.join(), topic.join(), type.join(), marks.join(), section.join(), hasFigure, sort, page],
-    { cacheKey: `gate:list:${JSON.stringify(query)}` },
+  const savedIds = useMemo(
+    () =>
+      Object.entries(progress)
+        .filter(([, p]) => p.bookmarked)
+        .map(([id]) => id)
+        .sort(),
+    [progress],
   )
+  const idsParam = f.saved ? savedIds.join(',') || '-' : ''
 
-  const setPage = (p: number) => {
-    setParams(
-      (prev) => {
-        const next = new URLSearchParams(prev)
-        if (p > 1) next.set('page', String(p))
-        else next.delete('page')
-        return next
-      },
-      { replace: false },
-    )
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+  // A single paper reads best in paper order.
+  const sort = f.paper.length === 1 && !params.get('sort') ? 'year-asc' : f.sort
+  const query: Record<string, string | number> = { q: f.q, hasFigure: f.hasFigure, sort, limit: PAGE_SIZE, offset: (page - 1) * PAGE_SIZE }
+  for (const k of LIST_KEYS) query[k] = (f[k] as string[]).join(',')
+  if (idsParam) query.ids = idsParam
+  const queryKey = JSON.stringify(query)
+
+  const list = useApi<GateList>(() => api.get<GateList>('/api/gate/questions', { query }), [queryKey], { cacheKey: `gate:list:${queryKey}` })
+
+  const total = list.data?.total ?? 0
+  const pages = Math.max(1, Math.ceil(total / PAGE_SIZE))
+  const questions = list.data?.questions ?? []
+
+  const setPage = (p: number, at?: 'first' | 'last') => {
+    patch({ page: p > 1 ? String(p) : null, i: at === 'last' ? String(PAGE_SIZE - 1) : null }, { keepPage: true, push: true })
+    if (viewMode === 'list') window.scrollTo({ top: 0, behavior: 'smooth' })
   }
-
-  const setSortOrder = (newSort: string) => {
-    setParams(
-      (prev) => {
-        const next = new URLSearchParams(prev)
-        next.set('sort', newSort)
-        next.delete('page')
-        return next
-      },
-      { replace: true },
-    )
-  }
-
-  const setFigureFilter = (fig: string) => {
-    setParams(
-      (prev) => {
-        const next = new URLSearchParams(prev)
-        if (fig) next.set('hasFigure', fig)
-        else next.delete('hasFigure')
-        next.delete('page')
-        return next
-      },
-      { replace: true },
-    )
-  }
-
+  const setIndex = (i: number) => patch({ i: i > 0 ? String(i) : null }, { keepPage: true })
+  const setViewMode = (m: ViewMode) => patch({ view: m === 'list' ? 'list' : null }, { keepPage: true })
   const clearAll = () => {
     setSearchInput('')
-    setParams(new URLSearchParams(), { replace: true })
+    setParams(viewMode === 'list' ? new URLSearchParams({ view: 'list' }) : new URLSearchParams(), { replace: true })
   }
 
-  // Combined subject dictionary
+  /* Subject / topic display names (CSE names win; DA fills the gaps). */
   const allSubjectMap = useMemo(() => {
-    const map = new Map<string, { id: string; label: string; topics: Record<string, string> }>()
-    if (!meta.data?.subjects) return map
-
-    for (const [id, s] of Object.entries(meta.data.subjects.CSE || {})) {
-      map.set(id, { id, label: s.name, topics: s.topics })
-    }
-    for (const [id, s] of Object.entries(meta.data.subjects.DA || {})) {
-      if (map.has(id)) {
-        const existing = map.get(id)!
-        map.set(id, {
-          id,
-          label: existing.label,
-          topics: { ...existing.topics, ...s.topics },
-        })
-      } else {
-        map.set(id, { id, label: s.name, topics: s.topics })
+    const map = new Map<string, { label: string; topics: Record<string, string> }>()
+    for (const stream of ['CSE', 'DA'] as const) {
+      for (const [id, s] of Object.entries(meta.data?.subjects?.[stream] ?? {})) {
+        const prev = map.get(id)
+        map.set(id, { label: prev?.label ?? s.name, topics: { ...s.topics, ...(prev?.topics ?? {}) } })
       }
     }
     return map
   }, [meta.data])
+  const subjectName = useCallback((s: string) => allSubjectMap.get(s)?.label ?? s.toUpperCase(), [allSubjectMap])
+  const topicName = useCallback((s: string, t: string) => allSubjectMap.get(s)?.topics[t], [allSubjectMap])
 
-  const subjectName = (s: string) => allSubjectMap.get(s)?.label ?? s.toUpperCase()
-  const topicName = (s: string, t: string) => allSubjectMap.get(s)?.topics[t]
-
-  const total = list.data?.total ?? 0
-  const pages = Math.max(1, Math.ceil(total / PAGE_SIZE))
+  const attempted = Object.values(progress).filter((p) => p.outcome === 'correct' || p.outcome === 'wrong').length
+  const solved = Object.values(progress).filter((p) => p.outcome === 'correct').length
+  const paperTitle = f.paper.length === 1 ? meta.data?.papers.find((p) => p.id === f.paper[0]) : undefined
 
   return (
-    <div className="space-y-6 pb-12 animate-in fade-in-0 duration-200">
-      {/* ── Studio Header ── */}
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="flex min-w-0 items-start gap-4">
-          <IconBadge name="gate" box="lg" boxClassName="mt-1 hidden sm:inline-flex" />
+    <div className="mx-auto max-w-6xl space-y-5 pb-28">
+      {/* ── Header ── */}
+      <header className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
+        <div className="flex min-w-0 items-center gap-3">
+          <IconBadge name="gate" box="lg" boxClassName="hidden sm:inline-flex" />
           <div className="min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="flex items-center gap-1.5 rounded-lg bg-accent-brand/15 px-2.5 py-0.5 text-[11px] font-bold text-accent-brand uppercase tracking-wider">
-              <Icon name="sparkles" className="size-3" /> Question Bank & Practice Tests
-            </span>
-            <span className="rounded-lg bg-state-success/15 px-2.5 py-0.5 text-[11px] font-mono font-bold text-state-success">
-              1991–2026 PYQs & Mock Tests
-            </span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-text-primary tracking-tight">
-            GATE Question Bank
-          </h1>
-          <p className="text-[13.5px] text-text-muted max-w-2xl mt-1">
-            Official GATE PYQs and curated practice mock tests with verified step-by-step mathematical solutions, 30-second Topper's shortcuts, interactive animated visualizers, and HD vector schematics.
-          </p>
+            <h1 className="font-display text-2xl font-semibold tracking-tight text-text-primary sm:text-[28px]">GATE question bank</h1>
+            <p className="mt-0.5 text-[13.5px] text-text-muted">
+              {meta.data ? `${meta.data.total.toLocaleString()} past-year questions from ${meta.data.papers.length} papers, 1991–2026` : 'Past-year questions, 1991–2026'}
+              {attempted > 0 && (
+                <>
+                  {' '}
+                  · <span className="text-text-secondary">{solved} solved</span> of {attempted} attempted
+                </>
+              )}
+            </p>
           </div>
         </div>
-
-        {/* Real CBT Exam Mode Button */}
-        <Link
-          to="/gate/cbt"
-          className="btn-primary inline-flex items-center gap-2 !px-5 !py-2.5 !text-[13.5px] font-bold shadow-lg shadow-accent-brand/25 transition-all hover:scale-105 cursor-pointer"
-        >
-          <Play className="size-4" /> Launch CBT Simulator Mode
+        <Link to="/gate/cbt" className="btn-secondary inline-flex items-center gap-2 !px-4 !py-2 !text-[13.5px]">
+          <Timer className="size-4" /> Mock test
         </Link>
-      </div>
+      </header>
 
-      {/* ── Brand New Filter Studio Console ── */}
       <GateFilterStudio
+        f={f}
         searchInput={searchInput}
         setSearchInput={setSearchInput}
-        sort={sort}
-        setSort={setSortOrder}
+        setList={setList}
+        toggle={toggle}
+        setParam={setParam}
+        patch={(p) => patch(p)}
         viewMode={viewMode}
         setViewMode={setViewMode}
-        exam={exam}
-        toggleExam={toggleExam}
-        setExam={setExam}
-        year={year}
-        toggleYear={toggleYear}
-        setYear={setYear}
-        subject={subject}
-        toggleSubject={toggleSubject}
-        setSubject={setSubject}
-        topic={topic}
-        toggleTopic={toggleTopic}
-        type={type}
-        toggleType={toggleType}
-        marks={marks}
-        toggleMarks={toggleMarks}
-        hasFigure={hasFigure}
-        setFigureFilter={setFigureFilter}
         clearAll={clearAll}
         meta={meta.data}
         list={list.data}
-        total={total}
+        savedCount={savedIds.length}
       />
 
-      {/* ── Main Question Workspace ── */}
-      {meta.error && <ErrorState message={meta.error} />}
-      {list.loading && !list.data ? (
-        <LoadingBlock rows={6} />
-      ) : list.error ? (
-        <ErrorState message={list.error} />
-      ) : total === 0 ? (
-        <div className="card p-10 text-center space-y-4 rounded-3xl border border-border/80">
-          <EmptyState
-            icon={<Icon name="search" className="size-9 text-text-muted" />}
-            title="No questions match your current filters"
-            description="Try selecting a different subject, expanding your year range, or clearing the search query."
-          />
-          <div className="flex justify-center pt-2">
-            <button
-              type="button"
-              onClick={clearAll}
-              className="btn-primary inline-flex items-center gap-2 !py-2.5 !px-5 text-[13px] font-bold shadow-md cursor-pointer"
-            >
-              <RotateCcw className="size-4" /> Reset All Filters
-            </button>
-          </div>
-        </div>
-      ) : (
-        <div className="space-y-6">
-          {/* View Mode 1: Focus Deck (1 Question at a Time, Zero Big Lists) */}
-          {viewMode === 'focus' && (
-            <GateFocusDeck
-              questions={list.data!.questions}
-              subjectName={subjectName}
-              topicName={topicName}
-              page={page}
-              total={total}
-              pageSize={PAGE_SIZE}
-              onPageChange={setPage}
-            />
-          )}
-
-          {/* View Mode 2: Split Studio (IDE Question Queue + Active Canvas) */}
-          {viewMode === 'split' && (
-            <GateSplitStudio
-              questions={list.data!.questions}
-              subjectName={subjectName}
-              topicName={topicName}
-              page={page}
-              total={total}
-              pageSize={PAGE_SIZE}
-              onPageChange={setPage}
-            />
-          )}
-
-          {/* View Mode 3: Bento Grid Cards */}
-          {viewMode === 'grid' && (
-            <GateBentoGrid
-              questions={list.data!.questions}
-              subjectName={subjectName}
-              topicName={topicName}
-            />
-          )}
-
-          {/* Pagination Controls */}
-          {pages > 1 && (
-            <nav className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border/70 bg-bg-surface-2/40 px-5 py-3 backdrop-blur-md">
-              <span className="text-[12.5px] text-text-muted">
-                Showing{' '}
-                <strong className="text-text-primary">
-                  {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, total)}
-                </strong>{' '}
-                of <strong className="text-text-primary">{total.toLocaleString()}</strong> questions
-              </span>
-
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  disabled={page <= 1}
-                  onClick={() => setPage(page - 1)}
-                  className="flex items-center gap-1 rounded-xl border border-border/80 bg-bg-surface px-3 py-1.5 text-[12px] font-bold text-text-primary hover:border-accent-brand disabled:opacity-40 transition-all cursor-pointer shadow-xs"
-                >
-                  <ChevronLeft className="size-4" />
-                  <span>Previous</span>
-                </button>
-
-                <div className="flex items-center gap-1 font-mono text-[12px] text-text-muted px-2">
-                  <span className="font-bold text-accent-brand">{page}</span>
-                  <span>/</span>
-                  <span>{pages}</span>
-                </div>
-
-                <button
-                  type="button"
-                  disabled={page >= pages}
-                  onClick={() => setPage(page + 1)}
-                  className="flex items-center gap-1 rounded-xl border border-border/80 bg-bg-surface px-3 py-1.5 text-[12px] font-bold text-text-primary hover:border-accent-brand disabled:opacity-40 transition-all cursor-pointer shadow-xs"
-                >
-                  <span>Next</span>
-                  <ChevronRight className="size-4" />
-                </button>
-              </div>
-            </nav>
+      {/* ── Results summary ── */}
+      {list.data && total > 0 && (
+        <div className="flex flex-wrap items-baseline justify-between gap-2 px-1 text-[13px] text-text-muted">
+          <span>
+            {paperTitle ? (
+              <>
+                <strong className="font-semibold text-text-primary">GATE {paperTitle.exam} {paperTitle.year}{paperTitle.set ? ` Set ${paperTitle.set}` : ''}</strong> · {total} questions
+              </>
+            ) : (
+              <>
+                <strong className="font-semibold text-text-primary">{total.toLocaleString()}</strong> question{total === 1 ? '' : 's'}
+              </>
+            )}
+          </span>
+          {paperTitle && (
+            <Link to={`/gate/cbt/${paperTitle.id}`} className="text-[12.5px] font-medium text-accent-brand hover:underline">
+              Take this paper as a timed mock →
+            </Link>
           )}
         </div>
       )}
 
-      {/* Database Verification Stamp */}
-      {meta.data && (
-        <div className="text-center pt-4">
-          <p className="text-[12px] text-text-muted font-medium">
-            Nexora Verified GATE Corpus · {meta.data.total.toLocaleString()} past-year questions
-            across {meta.data.papers.length} official papers (1991–2026).
-          </p>
+      {/* ── Workspace ── */}
+      {meta.error && <ErrorState message={meta.error} onRetry={meta.refetch} />}
+      {list.loading && !list.data ? (
+        <LoadingBlock rows={6} />
+      ) : list.error ? (
+        <ErrorState message={list.error} onRetry={list.refetch} />
+      ) : total === 0 ? (
+        <div className="card">
+          <EmptyState
+            icon="search"
+            title={f.saved ? 'No bookmarked questions here' : 'No questions match these filters'}
+            description={f.saved ? 'Bookmark a question (B) while practising and it will show up here.' : 'Try a different subject or year range, or clear the search.'}
+            action={
+              <button type="button" onClick={clearAll} className="btn-secondary !px-4 !py-2 !text-[13px]">
+                Clear filters
+              </button>
+            }
+          />
+        </div>
+      ) : viewMode === 'practice' ? (
+        <GateFocusDeck
+          questions={questions}
+          subjectName={subjectName}
+          topicName={topicName}
+          index={index}
+          onIndex={setIndex}
+          page={page}
+          total={total}
+          pageSize={PAGE_SIZE}
+          onPageChange={setPage}
+          loading={list.loading}
+        />
+      ) : (
+        <div className="space-y-4">
+          <GateBentoGrid
+            questions={questions}
+            subjectName={subjectName}
+            topicName={topicName}
+            offset={(page - 1) * PAGE_SIZE}
+            loading={list.loading}
+            onOpen={(i) => patch({ view: null, i: i > 0 ? String(i) : null }, { keepPage: true, push: true })}
+          />
+          {pages > 1 && (
+            <nav className="flex items-center justify-between gap-3" aria-label="Pages">
+              <button type="button" disabled={page <= 1} onClick={() => setPage(page - 1)} className="btn-secondary inline-flex items-center gap-1 !px-3 !py-1.5 !text-[13px] disabled:opacity-40">
+                <ChevronLeft className="size-4" /> Previous
+              </button>
+              <span className="font-mono text-[12.5px] text-text-muted">
+                Page {page} of {pages}
+              </span>
+              <button type="button" disabled={page >= pages} onClick={() => setPage(page + 1)} className="btn-secondary inline-flex items-center gap-1 !px-3 !py-1.5 !text-[13px] disabled:opacity-40">
+                Next <ChevronRight className="size-4" />
+              </button>
+            </nav>
+          )}
         </div>
       )}
     </div>
