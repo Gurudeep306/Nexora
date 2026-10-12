@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 136" role="img" aria-label="Option (D) NFA" fill="none" stroke="currentColor" stroke-width="1.6" font-family="Arial, Helvetica, sans-serif" font-size="15">
+  <title>Option (D) NFA</title>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0.8 L10,5 L0,9.2 z" fill="currentColor" stroke="none"/>
+    </marker>
+  </defs>
+  <text x="14" y="22" fill="currentColor" stroke="none" text-anchor="start">(D)</text>
+  <line x1="28" y1="100" x2="53" y2="100" marker-end="url(#ah)"/>
+  <circle cx="70" cy="100" r="16"/>
+  <circle cx="170" cy="100" r="16"/>
+  <circle cx="170" cy="100" r="11.5"/>
+  <circle cx="270" cy="100" r="16"/>
+  <circle cx="370" cy="100" r="16"/>
+  <line x1="86" y1="100" x2="153" y2="100" marker-end="url(#ah)"/>
+  <text x="120" y="90" fill="currentColor" stroke="none" text-anchor="middle" font-weight="700">letter</text>
+  <line x1="186" y1="100" x2="253" y2="100" marker-end="url(#ah)"/>
+  <text x="220" y="90" fill="currentColor" stroke="none" text-anchor="middle" font-weight="700">letter</text>
+  <line x1="286" y1="100" x2="353" y2="100" marker-end="url(#ah)"/>
+  <text x="320" y="90" fill="currentColor" stroke="none" text-anchor="middle" font-weight="700">digit</text>
+  <path d="M364.5,85 C345,25 195,25 175.5,84" marker-end="url(#ah)"/>
+  <text x="270" y="30" fill="currentColor" stroke="none" text-anchor="middle" font-style="italic">ε</text>
+</svg>
