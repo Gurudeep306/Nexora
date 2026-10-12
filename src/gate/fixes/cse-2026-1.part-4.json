@@ -1,0 +1,894 @@
+{
+  "paper": "cse-2026-1",
+  "fixes": [
+    {
+      "id": "cse-2026-1-cs-30",
+      "field": "text",
+      "before": "Let 𝑃 be the set of all integers from 1 to 15. Consider any order of insertion of the elements of 𝑃 into a binary search tree that creates a complete binary tree. Which one of the following elements can NEVER be the third element that is inserted?",
+      "after": "Let $P$ be the set of all integers from 1 to 15. Consider any order of insertion of the elements of $P$ into a binary search tree that creates a complete binary tree.\n\nWhich one of the following elements can NEVER be the third element that is inserted?",
+      "reason": "Unicode maths italics replaced with KaTeX; hard line wraps removed.",
+      "source": "pdf p.29"
+    },
+    {
+      "id": "cse-2026-1-cs-30",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "10"
+        },
+        {
+          "l": "B",
+          "t": "5"
+        },
+        {
+          "l": "C",
+          "t": "4"
+        },
+        {
+          "l": "D",
+          "t": "2"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "4"
+        },
+        {
+          "l": "B",
+          "t": "2"
+        },
+        {
+          "l": "C",
+          "t": "10"
+        },
+        {
+          "l": "D",
+          "t": "5"
+        }
+      ],
+      "reason": "The bank had the options in a shuffled order; restored to the order printed in the paper (the official key refers to that order).",
+      "source": "pdf p.29"
+    },
+    {
+      "id": "cse-2026-1-cs-30",
+      "field": "answer",
+      "before": "C",
+      "after": "D",
+      "reason": "Official GATE 2026 CS1 answer key gives Q.40 = D (paper option order). The stored key C pointed at 4, which can be third (insert 8, 12, 4); 5 is the only element that can never be third. Re-derived independently in the v2 solution.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-30",
+      "field": "topic",
+      "before": "trees",
+      "after": "bst",
+      "reason": "Binary search tree insertion order: topic bst (pds/trees is generic trees).",
+      "source": "pdf p.29"
+    },
+    {
+      "id": "cse-2026-1-cs-31",
+      "field": "text",
+      "before": "Let 𝐺(𝑉, 𝐸) be an undirected, edge-weighted graph with integer weights. The weight of a path is the sum of the weights of the edges in that path. The length of a path is the number of edges in that path. Let 𝑠 ∈ 𝑉 be a vertex in 𝐺. For every 𝑢 ∈ 𝑉 and for every 𝑘 ≥ 0, let 𝑑𝑘(𝑢) denote the weight of a shortest path (in terms of weight) from 𝑠 to 𝑢 of length at most 𝑘. If there is no path from 𝑠 to 𝑢 of length at most 𝑘, then 𝑑𝑘(𝑢) = ∞. Consider the statements: S1: For every 𝑘 ≥ 0 and 𝑢 ∈ 𝑉, 𝑑𝑘+1(𝑢) ≤ 𝑑𝑘(𝑢). S2: For every (𝑢, 𝑣) ∈ 𝐸, if (𝑢, 𝑣) is part of a shortest path (in terms of weight) from 𝑠 to 𝑣, then for every 𝑘 ≥ 0, 𝑑𝑘(𝑢) ≤ 𝑑𝑘(𝑣). Which one of the following options is correct?",
+      "after": "Let $G(V, E)$ be an undirected, edge-weighted graph with integer weights. The weight of a path is the sum of the weights of the edges in that path. The length of a path is the number of edges in that path.\n\nLet $s \\in V$ be a vertex in $G$. For every $u \\in V$ and for every $k \\ge 0$, let $d_k(u)$ denote the weight of a shortest path (in terms of weight) from $s$ to $u$ of length at most $k$. If there is no path from $s$ to $u$ of length at most $k$, then $d_k(u) = \\infty$.\n\nConsider the statements:\n\n**S1:** For every $k \\ge 0$ and $u \\in V$, $d_{k+1}(u) \\le d_k(u)$.\n\n**S2:** For every $(u, v) \\in E$, if $(u, v)$ is part of a shortest path (in terms of weight) from $s$ to $v$, then for every $k \\ge 0$, $d_k(u) \\le d_k(v)$.\n\nWhich one of the following options is correct?",
+      "reason": "Unicode maths italics replaced with KaTeX; hard line wraps removed. Broken subscripts (𝑑𝑘+1) rebuilt.",
+      "source": "pdf p.30"
+    },
+    {
+      "id": "cse-2026-1-cs-31",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Only S2 is true"
+        },
+        {
+          "l": "B",
+          "t": "Both S1 and S2 are true"
+        },
+        {
+          "l": "C",
+          "t": "Neither S1 nor S2 is true"
+        },
+        {
+          "l": "D",
+          "t": "Only S1 is true"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Only S1 is true"
+        },
+        {
+          "l": "B",
+          "t": "Only S2 is true"
+        },
+        {
+          "l": "C",
+          "t": "Both S1 and S2 are true"
+        },
+        {
+          "l": "D",
+          "t": "Neither S1 nor S2 is true"
+        }
+      ],
+      "reason": "The bank had the options in a shuffled order; restored to the order printed in the paper (the official key refers to that order).",
+      "source": "pdf p.30"
+    },
+    {
+      "id": "cse-2026-1-cs-31",
+      "field": "answer",
+      "before": "D",
+      "after": "A",
+      "reason": "Official GATE 2026 CS1 answer key gives Q.41 = A (paper option order). The stored D pointed at the same statement (\"Only S1\") in the shuffled order. Re-derived independently in the v2 solution.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-31",
+      "field": "topic",
+      "before": "graphs",
+      "after": "shortest-paths",
+      "reason": "algo/graphs is not a topic id; this is a shortest-path question.",
+      "source": "pdf p.30"
+    },
+    {
+      "id": "cse-2026-1-cs-32",
+      "field": "text",
+      "before": "Consider the control flow graph shown in the figure. Which one of the following options correctly lists the set of redundant expressions (common subexpressions) in the basic blocks B4 and B5? Note: All the variables are integers.",
+      "after": "Consider the control flow graph shown in the figure.\n\nWhich one of the following options correctly lists the set of redundant expressions (common subexpressions) in the basic blocks B4 and B5?\n\n*Note:* All the variables are integers.",
+      "reason": "Paragraph breaks as in the paper.",
+      "source": "pdf p.31"
+    },
+    {
+      "id": "cse-2026-1-cs-32",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "B4: { 𝑏 + 𝑖 } B5: { 𝑐 + 𝑚 }"
+        },
+        {
+          "l": "B",
+          "t": "B4: { 𝑔 ∗ 𝑘 } B5: { 𝑐 + 𝑚 }"
+        },
+        {
+          "l": "C",
+          "t": "B4: { 𝑔 ∗ 𝑘, 𝑏 + 𝑖 } B5: { }"
+        },
+        {
+          "l": "D",
+          "t": "B4: { 𝑔 ∗ 𝑘 } B5: { }"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "B4: $\\{\\, b + i \\,\\}$, B5: $\\{\\, c + m \\,\\}$"
+        },
+        {
+          "l": "B",
+          "t": "B4: $\\{\\, g * k \\,\\}$, B5: $\\{\\, c + m \\,\\}$"
+        },
+        {
+          "l": "C",
+          "t": "B4: $\\{\\, g * k,\\ b + i \\,\\}$, B5: $\\{\\,\\}$"
+        },
+        {
+          "l": "D",
+          "t": "B4: $\\{\\, g * k \\,\\}$, B5: $\\{\\,\\}$"
+        }
+      ],
+      "reason": "Unicode maths italics replaced with KaTeX; hard line wraps removed.",
+      "source": "pdf p.31"
+    },
+    {
+      "id": "cse-2026-1-cs-32",
+      "field": "answer",
+      "before": "A",
+      "after": "D",
+      "reason": "Official GATE 2026 CS1 answer key gives Q.42 = D (paper option order). The stored key A is wrong: b is redefined in B3 (so b+i is not available at B4) and c+m is not computed on the B2 path. Re-derived independently in the v2 solution.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-32",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2026-1/cs-32-1.svg",
+          "svg": "cse-2026-1/cs-32-1.svg",
+          "alt": "Control flow graph. ENTRY arrow into B1: a = b + i. B1 branches to B2 (a = g * k; f = d - f; a = c * 4) and to B3 (t = g * k; b = c + m). Both B2 and B3 flow into B4 (x = g * k; y = b + i). B4 flows into B5 (z = c + m), which flows to EXIT."
+        }
+      ],
+      "reason": "The question depends on its control flow graph, which the bank was missing. Redrawn as an SVG from the paper.",
+      "source": "pdf p.31"
+    },
+    {
+      "id": "cse-2026-1-cs-32",
+      "field": "topic",
+      "before": "codegen",
+      "after": "optimization",
+      "reason": "cd/codegen is not a topic id; common-subexpression elimination is code optimisation / data-flow analysis.",
+      "source": "pdf p.31"
+    },
+    {
+      "id": "cse-2026-1-cs-32",
+      "field": "tags",
+      "before": [
+        "cd",
+        "control-flow",
+        "basic-blocks"
+      ],
+      "after": [
+        "cd",
+        "common-subexpression",
+        "available-expressions",
+        "control-flow-graph"
+      ],
+      "reason": "Tags describe the actual concept (available expressions / CSE).",
+      "source": "pdf p.31"
+    },
+    {
+      "id": "cse-2026-1-cs-33",
+      "field": "text",
+      "before": "Consider a relational database schema with two relations 𝑅(𝑃, 𝑄) and 𝑆(𝑋, 𝑌). Let 𝐸 = {⟨𝑢⟩ ∣ ∃𝑣 ∃𝑤 ⟨𝑢, 𝑣⟩ ∈ 𝑅 ∧ ⟨𝑣, 𝑤⟩ ∈ 𝑆} be a tuple relational calculus expression. Which one of the following relational algebraic expressions is equivalent to 𝐸 ?",
+      "after": "Consider a relational database schema with two relations $R(P, Q)$ and $S(X, Y)$.\n\nLet $E = \\{\\langle u \\rangle \\mid \\exists v\\, \\exists w\\; \\langle u, v \\rangle \\in R \\wedge \\langle v, w \\rangle \\in S\\}$ be a tuple relational calculus expression.\n\nWhich one of the following relational algebraic expressions is equivalent to $E$?",
+      "reason": "Unicode maths italics replaced with KaTeX; hard line wraps removed.",
+      "source": "pdf p.32"
+    },
+    {
+      "id": "cse-2026-1-cs-33",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝛱𝑃(𝑆 ⋈𝑆.𝑌=𝑅.𝑄 𝑅)"
+        },
+        {
+          "l": "B",
+          "t": "𝛱𝑃(𝑅 ⋈𝑅.𝑃=𝑆.𝑋 𝑆)"
+        },
+        {
+          "l": "C",
+          "t": "𝛱𝑃(𝑆 ⋈𝑆.𝑋=𝑅.𝑄 𝑅)"
+        },
+        {
+          "l": "D",
+          "t": "𝛱𝑃(𝑅 ⋈𝑅.𝑃=𝑆.𝑌 𝑆)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\Pi_P(R \\bowtie_{R.P = S.X} S)$"
+        },
+        {
+          "l": "B",
+          "t": "$\\Pi_P(S \\bowtie_{S.X = R.Q} R)$"
+        },
+        {
+          "l": "C",
+          "t": "$\\Pi_P(R \\bowtie_{R.P = S.Y} S)$"
+        },
+        {
+          "l": "D",
+          "t": "$\\Pi_P(S \\bowtie_{S.Y = R.Q} R)$"
+        }
+      ],
+      "reason": "The bank had the options in a shuffled order; restored to the order printed in the paper (the official key refers to that order). The stored key B now points at the correct expression.",
+      "source": "pdf p.32"
+    },
+    {
+      "id": "cse-2026-1-cs-33",
+      "field": "topic",
+      "before": "relational-algebra",
+      "after": "ra",
+      "reason": "db/relational-algebra is not a topic id; ra covers relational algebra and tuple calculus.",
+      "source": "pdf p.32"
+    },
+    {
+      "id": "cse-2026-1-cs-33",
+      "field": "tags",
+      "before": [
+        "db",
+        "relational-algebra",
+        "sql"
+      ],
+      "after": [
+        "db",
+        "relational-algebra",
+        "tuple-relational-calculus"
+      ],
+      "reason": "Question is TRC to relational algebra, not SQL.",
+      "source": "pdf p.32"
+    },
+    {
+      "id": "cse-2026-1-cs-34",
+      "field": "text",
+      "before": "A TCP sender successfully establishes a connection with a TCP receiver and starts the transmission of segments. The TCP congestion control mechanism’s slow-start threshold is set to 10000 segments. Assume that the round -trip time is fixed at 1 millisecond. Assume that the sender always has data to send, the segments are numbered from 1, and no segment is lost. Let 𝑡 denote the time (in milliseconds) at which the transmission of segment number 2000 starts. Which one of the following options is correct?",
+      "after": "A TCP sender successfully establishes a connection with a TCP receiver and starts the transmission of segments. The TCP congestion control mechanism's slow-start threshold is set to 10000 segments. Assume that the round-trip time is fixed at 1 millisecond. Assume that the sender always has data to send, the segments are numbered from 1, and no segment is lost. Let $t$ denote the time (in milliseconds) at which the transmission of segment number 2000 starts.\n\nWhich one of the following options is correct?",
+      "reason": "Stray spaces (\"round -trip\") and line wraps removed; KaTeX for t.",
+      "source": "pdf p.33"
+    },
+    {
+      "id": "cse-2026-1-cs-34",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "11 ≤ 𝑡 < 12"
+        },
+        {
+          "l": "B",
+          "t": "12 ≤ 𝑡 < 13"
+        },
+        {
+          "l": "C",
+          "t": "9 ≤ 𝑡 < 10"
+        },
+        {
+          "l": "D",
+          "t": "10 ≤ 𝑡 < 11"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$9 \\le t < 10$"
+        },
+        {
+          "l": "B",
+          "t": "$10 \\le t < 11$"
+        },
+        {
+          "l": "C",
+          "t": "$11 \\le t < 12$"
+        },
+        {
+          "l": "D",
+          "t": "$12 \\le t < 13$"
+        }
+      ],
+      "reason": "The bank had the options in a shuffled order; restored to the order printed in the paper (the official key refers to that order).",
+      "source": "pdf p.33"
+    },
+    {
+      "id": "cse-2026-1-cs-34",
+      "field": "answer",
+      "before": "C",
+      "after": "B",
+      "reason": "Official GATE 2026 CS1 answer key gives Q.44 = B (paper option order). The stored C pointed at 9 <= t < 10, but segment 2000 lies in the 11th window (segments 1024-2047, sent at t = 10). Re-derived independently in the v2 solution.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-35",
+      "field": "text",
+      "before": "Consider the implementation of sliding window protocol over a lossless link, with a window size of 𝑊 frames, where each frame is of size 1000 bits (including header). The bandwidth of the link is 100 kbps (1k = 103) and the one-way propagation delay is 100 milliseconds. Assume that processing times at the sender and receiver are zero and the transmission time of acknowledgements is also zero. Which one of the following options gives the minimum size of 𝑊 (in number of frames) required to achieve 100% link utilization?",
+      "after": "Consider the implementation of sliding window protocol over a lossless link, with a window size of $W$ frames, where each frame is of size 1000 bits (including header). The bandwidth of the link is 100 kbps ($1\\text{k} = 10^3$) and the one-way propagation delay is 100 milliseconds. Assume that processing times at the sender and receiver are zero and the transmission time of acknowledgements is also zero. Which one of the following options gives the minimum size of $W$ (in number of frames) required to achieve 100% link utilization?",
+      "reason": "\"1k = 103\" was a lost superscript (10^3); KaTeX for W.",
+      "source": "pdf p.34"
+    },
+    {
+      "id": "cse-2026-1-cs-35",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "21"
+        },
+        {
+          "l": "B",
+          "t": "20"
+        },
+        {
+          "l": "C",
+          "t": "11"
+        },
+        {
+          "l": "D",
+          "t": "10"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "10"
+        },
+        {
+          "l": "B",
+          "t": "21"
+        },
+        {
+          "l": "C",
+          "t": "20"
+        },
+        {
+          "l": "D",
+          "t": "11"
+        }
+      ],
+      "reason": "The bank had the options in a shuffled order; restored to the order printed in the paper (the official key refers to that order).",
+      "source": "pdf p.34"
+    },
+    {
+      "id": "cse-2026-1-cs-35",
+      "field": "answer",
+      "before": "D",
+      "after": "B",
+      "reason": "Official GATE 2026 CS1 answer key gives Q.45 = B (paper option order). The stored D pointed at 10; the correct window is 1 + 2a = 21. Re-derived independently in the v2 solution.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-35",
+      "field": "topic",
+      "before": "data-link",
+      "after": "datalink",
+      "reason": "cn/data-link is not a topic id; sliding window belongs to cn/datalink.",
+      "source": "pdf p.34"
+    },
+    {
+      "id": "cse-2026-1-cs-36",
+      "field": "text",
+      "before": "Let 𝑓: ℝ → ℝ be defined as follows: 𝑓(𝑥) = ( |𝑥| 2 − 𝑥) (𝑥 − |𝑥| 2 ) Which of the following statements is/are true?",
+      "after": "Let $f: \\mathbb{R} \\to \\mathbb{R}$ be defined as follows:\n\n$$f(x) = \\left(\\frac{|x|}{2} - x\\right)\\left(x - \\frac{|x|}{2}\\right)$$\n\nWhich of the following statements is/are true?",
+      "reason": "Fractions |x|/2 were flattened by extraction (\"|𝑥| 2\"); rebuilt in KaTeX.",
+      "source": "pdf p.35"
+    },
+    {
+      "id": "cse-2026-1-cs-36",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝑓 has a local maximum"
+        },
+        {
+          "l": "B",
+          "t": "𝑓 has a local minimum"
+        },
+        {
+          "l": "C",
+          "t": "𝑓′ is continuous over ℝ"
+        },
+        {
+          "l": "D",
+          "t": "𝑓′ is not differentiable over ℝ"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$f$ has a local maximum"
+        },
+        {
+          "l": "B",
+          "t": "$f$ has a local minimum"
+        },
+        {
+          "l": "C",
+          "t": "$f'$ is continuous over $\\mathbb{R}$"
+        },
+        {
+          "l": "D",
+          "t": "$f'$ is not differentiable over $\\mathbb{R}$"
+        }
+      ],
+      "reason": "Unicode maths italics replaced with KaTeX; hard line wraps removed.",
+      "source": "pdf p.35"
+    },
+    {
+      "id": "cse-2026-1-cs-36",
+      "field": "topic",
+      "before": "calculus",
+      "after": "maxmin",
+      "reason": "calc/calculus is not a topic id; the question is about extrema and differentiability (maxima and minima).",
+      "source": "pdf p.35"
+    },
+    {
+      "id": "cse-2026-1-cs-37",
+      "field": "text",
+      "before": "Let 𝐺(𝑉, 𝐸) be a simple, undirected graph. A vertex cover of 𝐺 is a subset 𝑉′ ⊆ 𝑉 such that for every (𝑢, 𝑣) ∈ 𝐸, 𝑢 ∈ 𝑉′or 𝑣 ∈ 𝑉′. Let the size of the smallest vertex cover in 𝐺 be 𝑘. Let 𝑆 be any vertex cover of size 𝑘. For a vertex 𝑣 ∈ 𝑉, which of the following constraints will always ensure that 𝑣 ∈ 𝑆 ?",
+      "after": "Let $G(V, E)$ be a simple, undirected graph. A vertex cover of $G$ is a subset $V' \\subseteq V$ such that for every $(u, v) \\in E$, $u \\in V'$ or $v \\in V'$. Let the size of the smallest vertex cover in $G$ be $k$. Let $S$ be any vertex cover of size $k$.\n\nFor a vertex $v \\in V$, which of the following constraints will always ensure that $v \\in S$?",
+      "reason": "Unicode maths italics replaced with KaTeX; hard line wraps removed.",
+      "source": "pdf p.35"
+    },
+    {
+      "id": "cse-2026-1-cs-37",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "The vertex 𝑣 is a part of a clique of size 𝑘"
+        },
+        {
+          "l": "B",
+          "t": "The degree of 𝑣 is at least 𝑘 + 1"
+        },
+        {
+          "l": "C",
+          "t": "The vertex 𝑣 is on a path of length 𝑘 + 1"
+        },
+        {
+          "l": "D",
+          "t": "The vertex 𝑣 is on a cycle of length 𝑘 + 1"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "The degree of $v$ is at least $k + 1$"
+        },
+        {
+          "l": "B",
+          "t": "The vertex $v$ is on a path of length $k + 1$"
+        },
+        {
+          "l": "C",
+          "t": "The vertex $v$ is on a cycle of length $k + 1$"
+        },
+        {
+          "l": "D",
+          "t": "The vertex $v$ is a part of a clique of size $k$"
+        }
+      ],
+      "reason": "The bank had the options in a shuffled order; restored to the order printed in the paper (the official key refers to that order).",
+      "source": "pdf p.35"
+    },
+    {
+      "id": "cse-2026-1-cs-37",
+      "field": "answer",
+      "before": "B",
+      "after": "A",
+      "reason": "Official GATE 2026 CS1 answer key gives Q.47 = A (paper option order). The stored B pointed at the same statement (degree >= k+1) in the shuffled order. Re-derived independently in the v2 solution.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-37",
+      "field": "topic",
+      "before": "graph-theory",
+      "after": "graphs",
+      "reason": "dm/graph-theory is not a topic id; graph theory is dm/graphs.",
+      "source": "pdf p.35"
+    },
+    {
+      "id": "cse-2026-1-cs-38",
+      "field": "text",
+      "before": "Consider a Boolean function F with the following minterm expression: 𝐹(𝑃, 𝑄, 𝑅, 𝑆) = ∑ 𝑚 (1, 2, 3, 4, 5, 7, 10, 12, 13, 14) Which of the following options is/are the minimal sum-of-products expression(s) of F ?",
+      "after": "Consider a Boolean function $F$ with the following minterm expression:\n\n$$F(P, Q, R, S) = \\sum m(1, 2, 3, 4, 5, 7, 10, 12, 13, 14)$$\n\nWhich of the following options is/are the minimal sum-of-products expression(s) of $F$?",
+      "reason": "Unicode maths italics replaced with KaTeX; hard line wraps removed.",
+      "source": "pdf p.36"
+    },
+    {
+      "id": "cse-2026-1-cs-38",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝑃̅𝑆 + 𝑄𝑅̅ + 𝑃̅𝑄̅𝑅 + 𝑄̅𝑅𝑆̅"
+        },
+        {
+          "l": "B",
+          "t": "𝑃̅𝑆 + 𝑄𝑅̅ + 𝑃̅𝑄̅𝑅 + 𝑃𝑅𝑆̅"
+        },
+        {
+          "l": "C",
+          "t": "𝑃̅𝑆 + 𝑄𝑅̅ + 𝑃𝑄𝑆̅ + 𝑃𝑅𝑆̅"
+        },
+        {
+          "l": "D",
+          "t": "𝑃̅𝑆 + 𝑄𝑅̅ + 𝑃𝑄𝑆̅ + 𝑄̅𝑅𝑆̅"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\bar{P}S + Q\\bar{R} + \\bar{P}\\bar{Q}R + \\bar{Q}R\\bar{S}$"
+        },
+        {
+          "l": "B",
+          "t": "$\\bar{P}S + Q\\bar{R} + \\bar{P}\\bar{Q}R + PR\\bar{S}$"
+        },
+        {
+          "l": "C",
+          "t": "$\\bar{P}S + Q\\bar{R} + PQ\\bar{S} + PR\\bar{S}$"
+        },
+        {
+          "l": "D",
+          "t": "$\\bar{P}S + Q\\bar{R} + PQ\\bar{S} + \\bar{Q}R\\bar{S}$"
+        }
+      ],
+      "reason": "Combining overbars (𝑃̅) replaced with KaTeX \\bar.",
+      "source": "pdf p.36"
+    },
+    {
+      "id": "cse-2026-1-cs-38",
+      "field": "answer",
+      "before": "A; B",
+      "after": "B; D",
+      "reason": "Official GATE 2026 CS1 answer key gives Q.48 = B;D (paper option order). The stored A;B is wrong: option A leaves m14 uncovered. Re-derived independently in the v2 solution.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-38",
+      "field": "topic",
+      "before": "combinational",
+      "after": "minimization",
+      "reason": "K-map minimisation belongs to dl/minimization, not combinational circuits.",
+      "source": "pdf p.36"
+    },
+    {
+      "id": "cse-2026-1-cs-39",
+      "field": "text",
+      "before": "Let 𝐺(𝑉, 𝐸) be a simple, undirected, edge-weighted graph with unique edge weights. Which of the following statements about the minimum spanning trees (MST) of 𝐺 is/are true?",
+      "after": "Let $G(V, E)$ be a simple, undirected, edge-weighted graph with unique edge weights. Which of the following statements about the minimum spanning trees (MST) of $G$ is/are true?",
+      "reason": "Unicode maths italics replaced with KaTeX; hard line wraps removed.",
+      "source": "pdf p.37"
+    },
+    {
+      "id": "cse-2026-1-cs-39",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "In every cycle 𝐶 of 𝐺, the edge with the largest weight in 𝐶 is not in any MST"
+        },
+        {
+          "l": "B",
+          "t": "In every cycle 𝐶 of 𝐺, the edge with the smallest weight in 𝐶 is in every MST"
+        },
+        {
+          "l": "C",
+          "t": "For every vertex 𝑣 ∈ 𝑉, the edge with the largest weight incident on 𝑣 is not in any MST"
+        },
+        {
+          "l": "D",
+          "t": "For every vertex 𝑣 ∈ 𝑉, the edge with the smallest weight incident on 𝑣 is in every MST"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "In every cycle $C$ of $G$, the edge with the largest weight in $C$ is not in any MST"
+        },
+        {
+          "l": "B",
+          "t": "In every cycle $C$ of $G$, the edge with the smallest weight in $C$ is in every MST"
+        },
+        {
+          "l": "C",
+          "t": "For every vertex $v \\in V$, the edge with the largest weight incident on $v$ is not in any MST"
+        },
+        {
+          "l": "D",
+          "t": "For every vertex $v \\in V$, the edge with the smallest weight incident on $v$ is in every MST"
+        }
+      ],
+      "reason": "Unicode maths italics replaced with KaTeX; hard line wraps removed.",
+      "source": "pdf p.37"
+    },
+    {
+      "id": "cse-2026-1-cs-39",
+      "field": "answer",
+      "before": "B; C",
+      "after": "A; D",
+      "reason": "Official GATE 2026 CS1 answer key gives Q.49 = A;D (paper option order). The stored B;C is wrong (cycle property and cut property give A and D). Re-derived independently in the v2 solution.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-39",
+      "field": "topic",
+      "before": "graphs",
+      "after": "mst",
+      "reason": "algo/graphs is not a topic id; this is an MST question.",
+      "source": "pdf p.37"
+    },
+    {
+      "id": "cse-2026-1-cs-40",
+      "field": "text",
+      "before": "Consider the following pseudocode for depth -first search (DFS) algorithm which takes a directed graph 𝐺(𝑉, 𝐸) as input, where 𝑑[𝑣] and 𝑓[𝑣] are the discovery time and finishing time, respectively, of the vertex 𝑣 ∈ 𝑉. 𝐷𝐹𝑆(𝐺): 𝑢𝑛𝑚𝑎𝑟𝑘 𝑎𝑙𝑙 𝑣 ∈ 𝑉 𝑡 ← 0 𝑓𝑜𝑟 𝑒𝑎𝑐ℎ 𝑣 ∈ 𝑉 𝑖𝑓 𝑣 𝑖𝑠 𝑢𝑛𝑚𝑎𝑟𝑘𝑒𝑑 𝑡 ← 𝐸𝑥𝑝𝑙𝑜𝑟𝑒(𝐺, 𝑣, 𝑡) 𝑒𝑛𝑑 𝑖𝑓 𝑒𝑛𝑑 𝑓𝑜𝑟 𝐸𝑥𝑝𝑙𝑜𝑟𝑒(𝐺, 𝑣, 𝑡): 𝑚𝑎𝑟𝑘 𝑣 𝑡 ← 𝑡 + 1 𝑑[𝑣] ← 𝑡 𝑓𝑜𝑟 𝑒𝑎𝑐ℎ (𝑣, 𝑤) ∈ 𝐸 𝑖𝑓 𝑤 𝑖𝑠 𝑢𝑛𝑚𝑎𝑟𝑘𝑒𝑑 𝑡 ← 𝐸𝑥𝑝𝑙𝑜𝑟𝑒(𝐺, 𝑤, 𝑡) 𝑒𝑛𝑑 𝑖𝑓 𝑒𝑛𝑑 𝑓𝑜𝑟 𝑡 ← 𝑡 + 1 𝑓[𝑣] ← 𝑡 𝑟𝑒𝑡𝑢𝑟𝑛 𝑡 Suppose that the input directed graph 𝐺(𝑉, 𝐸) is a directed acyclic graph (DAG). For an edge (𝑢, 𝑣) ∈ 𝐸, which of the following options will NEVER be correct?",
+      "after": "Consider the following pseudocode for depth-first search (DFS) algorithm which takes a directed graph $G(V, E)$ as input, where $d[v]$ and $f[v]$ are the discovery time and finishing time, respectively, of the vertex $v \\in V$.\n\n```text\nDFS(G):\n   unmark all v ∈ V\n   t ← 0\n   for each v ∈ V\n        if v is unmarked\n              t ← Explore(G, v, t)\n        end if\n   end for\n\nExplore(G, v, t):\n     mark v\n     t ← t + 1\n     d[v] ← t\n     for each (v, w) ∈ E\n            if w is unmarked\n                   t ← Explore(G, w, t)\n            end if\n     end for\n     t ← t + 1\n     f[v] ← t\n     return t\n```\n\nSuppose that the input directed graph $G(V, E)$ is a directed acyclic graph (DAG). For an edge $(u, v) \\in E$, which of the following options will NEVER be correct?",
+      "reason": "The pseudocode had been flattened into one line of Unicode italics; restored as an indented code block.",
+      "source": "pdf p.38"
+    },
+    {
+      "id": "cse-2026-1-cs-40",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝑑[𝑢] < 𝑑[𝑣] < 𝑓[𝑣] < 𝑓[𝑢]"
+        },
+        {
+          "l": "B",
+          "t": "𝑑[𝑣] < 𝑑[𝑢] < 𝑓[𝑢] < 𝑓[𝑣]"
+        },
+        {
+          "l": "C",
+          "t": "𝑑[𝑣] < 𝑓[𝑣] < 𝑑[𝑢] < 𝑓[𝑢]"
+        },
+        {
+          "l": "D",
+          "t": "𝑑[𝑢] < 𝑑[𝑣] < 𝑓[𝑢] < 𝑓[𝑣]"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$d[u] < d[v] < f[v] < f[u]$"
+        },
+        {
+          "l": "B",
+          "t": "$d[v] < d[u] < f[u] < f[v]$"
+        },
+        {
+          "l": "C",
+          "t": "$d[v] < f[v] < d[u] < f[u]$"
+        },
+        {
+          "l": "D",
+          "t": "$d[u] < d[v] < f[u] < f[v]$"
+        }
+      ],
+      "reason": "Unicode maths italics replaced with KaTeX; hard line wraps removed.",
+      "source": "pdf p.38"
+    },
+    {
+      "id": "cse-2026-1-cs-40",
+      "field": "type",
+      "before": "MCQ",
+      "after": "MSQ",
+      "reason": "Official key lists Q.50 as MSQ (key B;D).",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-40",
+      "field": "answer",
+      "before": "A",
+      "after": "B; D",
+      "reason": "Official GATE 2026 CS1 answer key gives Q.50 = B;D (paper option order). The stored single answer A is wrong: A is a tree/forward edge and does occur. Re-derived independently in the v2 solution.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-40",
+      "field": "topic",
+      "before": "graphs",
+      "after": "graph-traversal",
+      "reason": "algo/graphs is not a topic id; DFS is graph-traversal.",
+      "source": "pdf p.38"
+    },
+    {
+      "id": "cse-2026-1-cs-41",
+      "field": "text",
+      "before": "Let 𝐿1 and 𝐿2 be two languages over a finite alphabet, such that 𝐿1 ∩ 𝐿2 and 𝐿2 are regular languages. Which of the following statements is/are always true?",
+      "after": "Let $L_1$ and $L_2$ be two languages over a finite alphabet, such that $L_1 \\cap L_2$ and $L_2$ are regular languages.\n\nWhich of the following statements is/are always true?",
+      "reason": "Unicode maths italics replaced with KaTeX; hard line wraps removed.",
+      "source": "pdf p.39"
+    },
+    {
+      "id": "cse-2026-1-cs-41",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝐿1 is regular"
+        },
+        {
+          "l": "B",
+          "t": "𝐿1 ∪ 𝐿2 is regular"
+        },
+        {
+          "l": "C",
+          "t": "𝐿2 is context-free"
+        },
+        {
+          "l": "D",
+          "t": "𝐿1 is context-free"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$L_1$ is regular"
+        },
+        {
+          "l": "B",
+          "t": "$L_1 \\cup L_2$ is regular"
+        },
+        {
+          "l": "C",
+          "t": "$L_2$ is context-free"
+        },
+        {
+          "l": "D",
+          "t": "$L_1$ is context-free"
+        }
+      ],
+      "reason": "Unicode maths italics replaced with KaTeX; hard line wraps removed.",
+      "source": "pdf p.39"
+    },
+    {
+      "id": "cse-2026-1-cs-41",
+      "field": "answer",
+      "before": "B; D",
+      "after": "C",
+      "reason": "Official GATE 2026 CS1 answer key gives Q.51 = C (paper option order). The stored B;D is wrong: with L2 = empty set, L1 is unrestricted. Re-derived independently in the v2 solution.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-41",
+      "field": "topic",
+      "before": "regular",
+      "after": "pumping",
+      "reason": "Closure properties are filed under toc/pumping (\"Pumping lemma and closure properties\").",
+      "source": "pdf p.39"
+    },
+    {
+      "id": "cse-2026-1-cs-42",
+      "field": "text",
+      "before": "Consider the following context-free grammar 𝐺. 𝑆 → 𝑎𝑏𝑎𝐴𝐵𝐴𝑏𝑏𝑎 𝐴 → 𝑎𝑎𝐵𝐵𝐴𝑏 | 𝑏𝐵𝑎𝑏𝑎𝑎 𝐵 → 𝑎𝐵𝑏 | 𝑎𝑏 In the above grammar, 𝑆 is the start symbol, 𝑎 and 𝑏 are terminal symbols, and 𝐴 and 𝐵 are non-terminal symbols. Let 𝐿(𝐺) be the language generated by the grammar 𝐺. For a string 𝑠 ∈ 𝐿(𝐺), let 𝑛1(𝑠) be the number of 𝑎’s in 𝑠 and 𝑛2(𝑠) be the number of 𝑏’s in 𝑠. Which of the following statements is/are true?",
+      "after": "Consider the following context-free grammar $G$.\n\n$$\\begin{aligned} S &\\to abaABAbba \\\\ A &\\to aaBBAb \\mid bBabaa \\\\ B &\\to aBb \\mid ab \\end{aligned}$$\n\nIn the above grammar, $S$ is the start symbol, $a$ and $b$ are terminal symbols, and $A$ and $B$ are non-terminal symbols.\n\nLet $L(G)$ be the language generated by the grammar $G$. For a string $s \\in L(G)$, let $n_1(s)$ be the number of $a$'s in $s$ and $n_2(s)$ be the number of $b$'s in $s$.\n\nWhich of the following statements is/are true?",
+      "reason": "Unicode maths italics replaced with KaTeX; hard line wraps removed.",
+      "source": "pdf p.40"
+    },
+    {
+      "id": "cse-2026-1-cs-42",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "There is a string 𝑠 ∈ 𝐿(𝐺) such that 𝑛1(𝑠) < 𝑛2(𝑠)"
+        },
+        {
+          "l": "B",
+          "t": "For every string 𝑠 ∈ 𝐿(𝐺), 𝑛1(𝑠) ≥ 𝑛2(𝑠)"
+        },
+        {
+          "l": "C",
+          "t": "There is a string 𝑠 ∈ 𝐿(𝐺) such that 𝑛1(𝑠) > 2𝑛2(𝑠)"
+        },
+        {
+          "l": "D",
+          "t": "For every string 𝑠 ∈ 𝐿(𝐺), 𝑛1(𝑠) ≤ 2𝑛2(𝑠)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "There is a string $s \\in L(G)$ such that $n_1(s) < n_2(s)$"
+        },
+        {
+          "l": "B",
+          "t": "For every string $s \\in L(G)$, $n_1(s) \\ge n_2(s)$"
+        },
+        {
+          "l": "C",
+          "t": "There is a string $s \\in L(G)$ such that $n_1(s) > 2n_2(s)$"
+        },
+        {
+          "l": "D",
+          "t": "For every string $s \\in L(G)$, $n_1(s) \\le 2n_2(s)$"
+        }
+      ],
+      "reason": "Unicode maths italics replaced with KaTeX; hard line wraps removed.",
+      "source": "pdf p.40"
+    },
+    {
+      "id": "cse-2026-1-cs-42",
+      "field": "answer",
+      "before": "A; B; C",
+      "after": "B; D",
+      "reason": "Official GATE 2026 CS1 answer key gives Q.52 = B;D (paper option order). The stored A;B;C is self-contradictory (A and B cannot both hold). Re-derived independently in the v2 solution.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-42",
+      "field": "topic",
+      "before": "cfl",
+      "after": "cfg",
+      "reason": "toc/cfl is not a topic id; grammars are toc/cfg.",
+      "source": "pdf p.40"
+    }
+  ]
+}
