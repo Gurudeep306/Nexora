@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 312" font-family="Arial, Helvetica, sans-serif" fill="none" stroke="currentColor" stroke-width="1.4">
+  <title>PDA P with states s, p, q</title>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,1 L10,5 L0,9 z" fill="currentColor" stroke="none"/>
+    </marker>
+  </defs>
+  <!-- states -->
+  <circle cx="110" cy="120" r="16"/>
+  <circle cx="310" cy="120" r="16"/>
+  <circle cx="210" cy="220" r="16"/>
+  <g fill="currentColor" stroke="none" font-size="17" font-style="italic" text-anchor="middle" dominant-baseline="central">
+    <text x="110" y="120">s</text>
+    <text x="310" y="120">p</text>
+    <text x="210" y="220">q</text>
+  </g>
+  <!-- start arrow -->
+  <line x1="56" y1="120" x2="94" y2="120" marker-end="url(#ah)"/>
+  <!-- s self-loop -->
+  <path d="M 101 107 C 84 68, 136 68, 119 107" marker-end="url(#ah)"/>
+  <!-- p self-loop -->
+  <path d="M 301 107 C 284 68, 336 68, 319 107" marker-end="url(#ah)"/>
+  <!-- s -> p -->
+  <line x1="126" y1="120" x2="294" y2="120" marker-end="url(#ah)"/>
+  <!-- s -> q -->
+  <line x1="121.3" y1="131.3" x2="198.7" y2="208.7" marker-end="url(#ah)"/>
+  <!-- p -> q -->
+  <line x1="298.7" y1="131.3" x2="221.3" y2="208.7" marker-end="url(#ah)"/>
+  <!-- q self-loop -->
+  <path d="M 201 233 C 184 272, 236 272, 219 233" marker-end="url(#ah)"/>
+  <!-- labels -->
+  <g fill="currentColor" stroke="none" font-size="15" font-style="italic" text-anchor="middle">
+    <text x="110" y="40">a/⊥/A⊥</text>
+    <text x="110" y="60">a/A/AA</text>
+    <text x="310" y="60">b/A/ϵ</text>
+    <text x="210" y="110">b/A/ϵ</text>
+    <text x="146" y="182" text-anchor="end">ϵ/A/ϵ</text>
+    <text x="274" y="182" text-anchor="start">ϵ/A/ϵ</text>
+    <text x="210" y="287">ϵ/A/ϵ</text>
+    <text x="210" y="306">ϵ/⊥/ϵ</text>
+  </g>
+</svg>
