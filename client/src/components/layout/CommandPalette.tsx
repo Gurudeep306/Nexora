@@ -12,10 +12,14 @@ import { ACCOUNT_ITEMS, CREATE_SECTION, NAV_SECTIONS } from '@/config/nav'
 import { useAuth } from '@/context/AuthContext'
 import { PlatformBadge } from '@/components/shared/PlatformBadge'
 import type { Problem, ProblemsResponse } from '@/components/problems/types'
+// Theme entries (Theme Centre)
+import { Moon, Palette, Sun } from 'lucide-react'
+import { useTheme } from '@/context/ThemeContext'
+import { PALETTES } from '@/theme/palettes'
 
 type Item = {
   id: string
-  group: 'Go to' | 'Problems' | 'Actions'
+  group: 'Go to' | 'Problems' | 'Themes' | 'Actions'
   label: string
   hint?: string
   icon: React.ComponentType<{ className?: string }>
@@ -40,6 +44,7 @@ export function CommandPalette() {
   const listRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
   const { user, logout } = useAuth()
+  const { mode, setAppearance, setLook } = useTheme()
 
   const close = useCallback(() => {
     setOpen(false)
@@ -136,6 +141,18 @@ export function CommandPalette() {
           }
         },
       },
+      {
+        id: 'act:mode',
+        group: 'Actions',
+        label: mode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode',
+        hint: 'Toggle light/dark',
+        icon: mode === 'dark' ? Sun : Moon,
+        run: () => {
+          close()
+          setAppearance(mode === 'dark' ? 'light' : 'dark')
+        },
+      },
+      { id: 'act:themes', group: 'Actions', label: 'Switch theme…', hint: 'Theme Centre', icon: Palette, run: () => go('/theme') },
       { id: 'act:profile', group: 'Actions', label: 'View my profile', icon: UserRound, run: () => go('/profile') },
       { id: 'act:avatar', group: 'Actions', label: 'Change my avatar', icon: Settings, run: () => go('/settings') },
       {
@@ -191,8 +208,25 @@ export function CommandPalette() {
         run: () => go(`/problems?q=${encodeURIComponent(query.trim())}`),
       })
     }
-    return [...pages.filter(match), ...problemItems, ...actions.filter(match)]
-  }, [query, results, user?.role, go, close, logout, navigate])
+    // Typing a theme's name offers to apply it directly.
+    const themeItems: Item[] =
+      q.length >= 2
+        ? PALETTES.filter((p) => p.name.toLowerCase().includes(q))
+            .slice(0, 5)
+            .map((p) => ({
+              id: `theme:${p.id}`,
+              group: 'Themes',
+              label: `Use theme: ${p.name}`,
+              hint: p.dark && p.light ? 'Light & dark' : p.dark ? 'Dark' : 'Light',
+              icon: Palette,
+              run: () => {
+                close()
+                setLook({ theme: p.id })
+              },
+            }))
+        : []
+    return [...pages.filter(match), ...problemItems, ...themeItems, ...actions.filter(match)]
+  }, [query, results, user?.role, go, close, logout, navigate, mode, setAppearance, setLook])
 
   useEffect(() => setActive(0), [query, results.length])
 

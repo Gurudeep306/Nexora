@@ -1,8 +1,9 @@
-import { useMemo } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useMemo, useState } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
 import { motion } from 'motion/react'
-import { Link2, Palette, SlidersHorizontal, TriangleAlert, UserRound } from 'lucide-react'
-import { ErrorState, LoadingBlock, PageHeader, Tabs } from '@/components/ui'
+import { Link2, PanelBottom, SlidersHorizontal, TriangleAlert, UserRound } from 'lucide-react'
+import { Button, Card, CardContent, ErrorState, LoadingBlock, PageHeader, Tabs, buttonVariants } from '@/components/ui'
+import { DockEditor } from '@/components/layout/DockEditor'
 import { api } from '@/lib/api'
 import { useApi } from '@/hooks/useApi'
 import { useAuth } from '@/context/AuthContext'
@@ -12,12 +13,32 @@ import { PasswordForm } from '@/components/account/PasswordForm'
 import { HandlesForm } from '@/components/account/HandlesForm'
 import { PreferencesForm } from '@/components/account/PreferencesForm'
 import { DangerZone } from '@/components/account/DangerZone'
-import { LookPanel } from '@/components/look/LookPanel'
 import type { LanguageOption, ProfileUser, SettingsResponse } from '@/components/account/types'
+
+/** Dock arrangement — a layout preference, so it lives with Preferences. */
+function DockSettings() {
+  const [open, setOpen] = useState(false)
+  return (
+    <Card>
+      <CardContent className="flex flex-wrap items-center justify-between gap-4 px-5 py-4">
+        <div>
+          <p className="mb-0 text-sm font-semibold text-text-primary">Dock</p>
+          <p className="mb-0 text-[12.5px] text-text-muted">
+            Choose and order the icons in the Dock and the phone tab bar. You can also right-click the Dock.
+          </p>
+        </div>
+        <Button variant="secondary" size="sm" onClick={() => setOpen(true)}>
+          <PanelBottom aria-hidden="true" />
+          Customize Dock…
+        </Button>
+        <DockEditor open={open} onClose={() => setOpen(false)} />
+      </CardContent>
+    </Card>
+  )
+}
 
 const TABS = [
   { id: 'account', label: 'Account', icon: <UserRound className="size-3.5" aria-hidden="true" /> },
-  { id: 'look', label: 'Appearance', icon: <Palette className="size-3.5" aria-hidden="true" /> },
   { id: 'platform', label: 'Platforms', icon: <Link2 className="size-3.5" aria-hidden="true" /> },
   {
     id: 'prefs',
@@ -33,7 +54,7 @@ const TABS = [
 
 export default function SettingsPage() {
   const { user } = useAuth()
-  // The tab lives in the URL (?tab=look), so the top-bar Look popover can
+  // The tab lives in the URL (?tab=prefs), so other pages can
   // deep-link here and the tab survives a reload.
   const [params, setParams] = useSearchParams()
   const linked = params.get('tab')
@@ -72,14 +93,12 @@ export default function SettingsPage() {
     <div className="space-y-5">
       <PageHeader
         title="Settings"
-        subtitle="Tune your identity, the look of the app, platform links, editor behaviour and account safety."
+        subtitle="Tune your identity, platform links, editor behaviour, the Dock and account safety."
       />
 
       <Tabs items={TABS} active={tab} onChange={setTab} variant="pills" />
 
-      {tab === 'look' ? (
-        <LookPanel />
-      ) : settingsApi.error ? (
+      {settingsApi.error ? (
         <div className="card-neon">
           <ErrorState message={settingsApi.error} onRetry={settingsApi.refetch} />
         </div>
@@ -107,7 +126,23 @@ export default function SettingsPage() {
               onSaved={settingsApi.refetch}
             />
           )}
-          {tab === 'prefs' && <PreferencesForm settings={settings} onSaved={settingsApi.refetch} />}
+          {tab === 'prefs' && (
+            <>
+              <PreferencesForm settings={settings} onSaved={settingsApi.refetch} />
+              <DockSettings />
+              <Card>
+                <CardContent className="flex flex-wrap items-center justify-between gap-4 px-5 py-4">
+                  <div>
+                    <p className="mb-0 text-sm font-semibold text-text-primary">Theme, fonts, icons and cards</p>
+                    <p className="mb-0 text-[12.5px] text-text-muted">All appearance options live in the Theme Centre.</p>
+                  </div>
+                  <Link to="/theme" className={buttonVariants({ variant: 'secondary', size: 'sm' })}>
+                    Open Theme Centre
+                  </Link>
+                </CardContent>
+              </Card>
+            </>
+          )}
           {tab === 'danger' && <DangerZone settings={settings} />}
         </motion.div>
       )}

@@ -12,6 +12,7 @@ import {
   Bookmark,
   User,
   Settings,
+  Palette,
   Clapperboard,
   Blocks,
   type LucideIcon,
@@ -76,6 +77,7 @@ export const CREATE_SECTION: NavSection = {
 
 export const ACCOUNT_ITEMS: NavItem[] = [
   { to: '/profile', label: 'Profile', icon: User },
+  { to: '/theme', label: 'Theme Centre', icon: Palette },
   { to: '/settings', label: 'Settings', icon: Settings },
 ]
 
