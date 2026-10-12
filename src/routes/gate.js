@@ -10,9 +10,16 @@ const path = require("path");
  * This router serves the bank: a filtered, searchable list and one question
  * at a time. Everything is held in memory — the file is a few megabytes and
  * never changes at run time.
+ *
+ * Worked solutions are NOT part of the list / detail / paper payloads. They
+ * live in per-paper files src/gate/solutions/<paperId>.json (format v2, see
+ * docs/gate/SOLUTION_AUTHORING.md) and are served one at a time by
+ * GET /api/gate/questions/:id/solution, falling back to the legacy markdown
+ * string in questions.json until a paper has been migrated.
  */
 
 const FILE = path.join(__dirname, "..", "gate", "questions.json");
+const SOL_DIR = path.join(__dirname, "..", "gate", "solutions");
 
 let bank = null;
 let lastMtime = 0;
@@ -34,7 +41,6 @@ function load() {
       q.text,
       q.id,
       q.number,
-      q.solution,
       ...(q.options || []).map((o) => o.t),
       ...(q.tags || []),
       ...(q.figures || []).map((f) => f.alt),
@@ -59,9 +65,67 @@ function terms(q) {
   return out.slice(0, 8);
 }
 
+/** Public shape of a question: no search haystack, no legacy solution blob. */
 function strip(q) {
-  const { _hay, ...rest } = q;
+  const { _hay, solution, ...rest } = q;
   return rest;
+}
+
+/** CBT mock exam: nothing that gives the answer away before submission. */
+function stripForExam(q) {
+  const { _hay, solution, answer, answerSource, confidence, reviewNote, needsReview, ...rest } = q;
+  return rest;
+}
+
+/* Per-paper v2 solution files, loaded on first use and reloaded on change. */
+const solutionFiles = new Map();
+function loadSolutions(paperId) {
+  if (!/^[a-z]+-\d{4}(-\d)?$/.test(String(paperId || ""))) return null;
+  const file = path.join(SOL_DIR, `${paperId}.json`);
+  let mtime = 0;
+  try {
+    mtime = fs.statSync(file).mtimeMs;
+  } catch (_) {
+    solutionFiles.delete(paperId);
+    return null;
+  }
+  const hit = solutionFiles.get(paperId);
+  if (hit && hit.mtime === mtime) return hit.solutions;
+  try {
+    const data = JSON.parse(fs.readFileSync(file, "utf8"));
+    const solutions = data && data.version === 2 && data.solutions ? data.solutions : {};
+    solutionFiles.set(paperId, { mtime, solutions });
+    return solutions;
+  } catch (err) {
+    console.error(`[gate] cannot read ${file}: ${err.message}`);
+    return null;
+  }
+}
+
+/** { format: 'v2', solution } | { format: 'legacy', legacy } | { format: 'none' } — null for an unknown id. */
+function getGateSolution(id) {
+  const q = load().byId.get(String(id));
+  if (!q) return null;
+  const v2 = loadSolutions(q.paper);
+  if (v2 && v2[q.id]) return { format: "v2", solution: v2[q.id] };
+  if (q.solution && String(q.solution).trim()) return { format: "legacy", legacy: String(q.solution) };
+  return { format: "none" };
+}
+
+/** Plain-text rendering of a solution (for the AI assistant). */
+function solutionText(entry) {
+  if (!entry) return "";
+  if (entry.format === "legacy") return entry.legacy;
+  if (entry.format !== "v2") return "";
+  const s = entry.solution;
+  const parts = [`Approach: ${s.approach}`];
+  if (s.given) parts.push(`Given: ${s.given}`);
+  s.steps.forEach((st, i) => parts.push(`Step ${i + 1} — ${st.title}\n${st.body}`));
+  parts.push(`Answer: ${s.answer.value}${s.answer.matchesKey ? "" : ` (note: ${s.answer.keyNote || "differs from the stored key"})`}`);
+  for (const o of s.optionAnalysis || []) parts.push(`(${o.option}) ${o.correct ? "correct" : "wrong"}: ${o.reason}`);
+  if (s.shortcut) parts.push(`Shortcut: ${s.shortcut}`);
+  for (const p of s.pitfalls || []) parts.push(`Pitfall: ${p}`);
+  return parts.join("\n\n");
 }
 
 const asList = (v) =>
@@ -86,7 +150,8 @@ function sortPaperQuestions(questions) {
 /* Lookups for the AI agent's tools (src/ai/tools.js). */
 function findGateQuestion(id) {
   const q = load().byId.get(String(id));
-  return q ? strip(q) : null;
+  if (!q) return null;
+  return { ...strip(q), solution: solutionText(getGateSolution(q.id)) };
 }
 
 function searchGateQuestions({ q = "", subject = "", year = "", limit = 10 } = {}) {
@@ -282,7 +347,15 @@ function createGateRouter() {
     });
   });
 
-  /* Full paper for CBT Examination Mode */
+  /* The worked solution for one question (v2 when the paper is migrated). */
+  router.get("/api/gate/questions/:id/solution", (req, res) => {
+    const entry = getGateSolution(req.params.id);
+    if (!entry) return res.status(404).json({ ok: false, error: "Unknown question" });
+    res.json({ ok: true, id: req.params.id, ...entry });
+  });
+
+  /* Full paper for CBT Examination Mode — answers and solutions are withheld
+     until /api/gate/evaluate returns them after submission. */
   router.get("/api/gate/paper/:paperId", (req, res) => {
     const b = load();
     const paper = b.papers.find((p) => p.id === req.params.paperId);
@@ -317,7 +390,7 @@ function createGateRouter() {
       totalQuestions: questions.length,
       totalMarks,
       durationMinutes: 180,
-      questions: questions.map(strip),
+      questions: questions.map(stripForExam),
     });
   });
 
@@ -593,4 +666,4 @@ function createGateRouter() {
   return router;
 }
 
-module.exports = { createGateRouter, findGateQuestion, searchGateQuestions };
+module.exports = { createGateRouter, findGateQuestion, searchGateQuestions, getGateSolution, solutionText };
