@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 440" font-family="Arial, Helvetica, sans-serif" role="img" aria-label="Four candidate activation trees labelled A to D">
+  <title>Option trees (A)–(D) for the activation tree of main</title>
+  <g stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+    <line x1="300" y1="10" x2="300" y2="430" stroke-opacity="0.35" />
+    <line x1="10" y1="220" x2="590" y2="220" stroke-opacity="0.35" />
+    <line x1="150" y1="53" x2="80" y2="77" />
+    <line x1="150" y1="53" x2="150" y2="77" />
+    <line x1="150" y1="103" x2="115" y2="127" />
+    <line x1="150" y1="103" x2="185" y2="127" />
+    <line x1="185" y1="153" x2="150" y2="177" />
+    <line x1="185" y1="153" x2="220" y2="177" />
+    <line x1="150" y1="53" x2="220" y2="77" />
+    <line x1="450" y1="53" x2="380" y2="77" />
+    <line x1="450" y1="53" x2="450" y2="77" />
+    <line x1="450" y1="103" x2="415" y2="127" />
+    <line x1="450" y1="103" x2="485" y2="127" />
+    <line x1="450" y1="53" x2="520" y2="77" />
+    <line x1="150" y1="273" x2="150" y2="297" />
+    <line x1="150" y1="323" x2="150" y2="347" />
+    <line x1="150" y1="373" x2="115" y2="397" />
+    <line x1="150" y1="373" x2="185" y2="397" />
+    <line x1="450" y1="273" x2="380" y2="297" />
+    <line x1="450" y1="273" x2="450" y2="297" />
+    <line x1="450" y1="323" x2="390" y2="347" />
+    <line x1="450" y1="323" x2="450" y2="347" />
+    <line x1="450" y1="323" x2="510" y2="347" />
+    <line x1="450" y1="273" x2="520" y2="297" />
+  </g>
+  <g fill="currentColor" font-size="19" text-anchor="middle">
+    <text x="150" y="46">main</text>
+    <text x="80" y="96">f1</text>
+    <text x="150" y="96">f2</text>
+    <text x="115" y="146">f3</text>
+    <text x="185" y="146">f2</text>
+    <text x="150" y="196">f3</text>
+    <text x="220" y="196">f1</text>
+    <text x="220" y="96">f3</text>
+    <text x="450" y="46">main</text>
+    <text x="380" y="96">f1</text>
+    <text x="450" y="96">f2</text>
+    <text x="415" y="146">f3</text>
+    <text x="485" y="146">f1</text>
+    <text x="520" y="96">f3</text>
+    <text x="150" y="266">main</text>
+    <text x="150" y="316">f1</text>
+    <text x="150" y="366">f2</text>
+    <text x="115" y="416">f3</text>
+    <text x="185" y="416">f1</text>
+    <text x="450" y="266">main</text>
+    <text x="380" y="316">f1</text>
+    <text x="450" y="316">f2</text>
+    <text x="390" y="366">f3</text>
+    <text x="450" y="366">f2</text>
+    <text x="510" y="366">f1</text>
+    <text x="520" y="316">f3</text>
+  </g>
+  <g fill="currentColor" font-size="17" font-weight="700" text-anchor="start">
+    <text x="18" y="28">(A)</text>
+    <text x="318" y="28">(B)</text>
+    <text x="18" y="248">(C)</text>
+    <text x="318" y="248">(D)</text>
+  </g>
+</svg>
