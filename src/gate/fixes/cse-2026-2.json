@@ -24,6 +24,3388 @@
       "after": "Stored key is 1, but tracing the program gives 9 (a = 20, then a = 11, c = 20 − 11). Verify against the official GATE 2026 CS2 key.",
       "reason": "Explains the needsReview flag.",
       "source": "trace in src/gate/solutions/cse-2026-2.json"
+    },
+    {
+      "id": "cse-2026-2-ga-1",
+      "field": "text",
+      "before": "Expedite, Hasten, Hurry, __________ Fill the blank by choosing a word with a meaning similar to that of the words given above.",
+      "after": "Expedite, Hasten, Hurry, __________\n\nFill the blank by choosing a word with a meaning similar to that of the words given above.",
+      "reason": "Restored the line break between the word list and the instruction.",
+      "source": "pdf p.1"
+    },
+    {
+      "id": "cse-2026-2-ga-1",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Retard"
+        },
+        {
+          "l": "B",
+          "t": "Provide"
+        },
+        {
+          "l": "C",
+          "t": "Disable"
+        },
+        {
+          "l": "D",
+          "t": "Accelerate"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Accelerate"
+        },
+        {
+          "l": "B",
+          "t": "Retard"
+        },
+        {
+          "l": "C",
+          "t": "Provide"
+        },
+        {
+          "l": "D",
+          "t": "Disable"
+        }
+      ],
+      "reason": "Options were stored in a rotated order; restored to the order of the master question paper (option texts unchanged).",
+      "source": "pdf p.1"
+    },
+    {
+      "id": "cse-2026-2-ga-1",
+      "field": "answer",
+      "before": "D",
+      "after": "A",
+      "reason": "Follows the option reorder: the stored key D pointed at the option that is (A) in the paper's order, so the same answer is now letter A. Official key: A (Accelerate).",
+      "source": "pdf p.1; https://www.trygateai.com/pyq/general-aptitude/verbal-aptitude/gate-cse-2026-set-2-q1"
+    },
+    {
+      "id": "cse-2026-2-ga-1",
+      "field": "tags",
+      "before": [
+        "verbal-aptitude"
+      ],
+      "after": [
+        "verbal-aptitude",
+        "synonyms"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.1"
+    },
+    {
+      "id": "cse-2026-2-ga-2",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2026-2/ga-2-1.svg",
+          "svg": "cse-2026-2/ga-2-1.svg",
+          "alt": "Panel I: a 6 by 6 square PQRS (S top-left, R top-right, P bottom-left, Q bottom-right) of which the black part is shown. Counting rows from the top and columns from the left (1 to 6), the white cells are: row 2 columns 2, 5, 6; row 3 columns 2, 3, 4, 5; row 4 column 4; row 5 columns 2, 3, 4; every other cell is black. Panel II: four black shapes on a 5-wide by 4-high grid. All four have top row cells 1, 4, 5 and second row cells 1 to 4. (i): third row cell 3, bottom row cells 1 to 4. (ii): third row cell 3, bottom row cells 2 to 4. (iii): third row cell 3, bottom row cells 1 to 3. (iv): third row cells 3 and 4, bottom row cells 2 and 3."
+        }
+      ],
+      "reason": "The question depends on the Panel I / Panel II figure, which was missing; redrawn from the paper.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2026-2-ga-2",
+      "field": "answer",
+      "before": "A",
+      "after": "C",
+      "reason": "Stored key A = (i) is wrong: the white region of Panel I is exactly shape (iii) (bottom bar 3 cells wide, starting under the left post); (i) has a 4-cell bottom bar. The official GATE 2026 CS2 key is C.",
+      "source": "pdf p.2; https://www.trygateai.com/pyq/general-aptitude/spatial-aptitude/gate-cse-2026-set-2-q2"
+    },
+    {
+      "id": "cse-2026-2-ga-2",
+      "field": "topic",
+      "before": "quant",
+      "after": "spatial",
+      "reason": "Figure-completion puzzle: spatial aptitude, not quant.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2026-2-ga-2",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "spatial-aptitude",
+        "figure-completion"
+      ],
+      "reason": "Tags match the corrected topic.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2026-2-ga-3",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "3/8"
+        },
+        {
+          "l": "B",
+          "t": "1/4"
+        },
+        {
+          "l": "C",
+          "t": "3/4"
+        },
+        {
+          "l": "D",
+          "t": "2/3"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "1/4"
+        },
+        {
+          "l": "B",
+          "t": "3/4"
+        },
+        {
+          "l": "C",
+          "t": "2/3"
+        },
+        {
+          "l": "D",
+          "t": "3/8"
+        }
+      ],
+      "reason": "Options were stored in a rotated order; restored to the order of the master question paper (option texts unchanged).",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2026-2-ga-3",
+      "field": "answer",
+      "before": "B",
+      "after": "A",
+      "reason": "Follows the option reorder: the stored key B pointed at the option that is (A) in the paper's order, so the same answer is now letter A. Official key: A (1/4).",
+      "source": "pdf p.3; https://www.trygateai.com/pyq/general-aptitude/quantitative-aptitude/gate-cse-2026-set-2-q3"
+    },
+    {
+      "id": "cse-2026-2-ga-3",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "quantitative-aptitude",
+        "probability",
+        "binomial"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2026-2-ga-4",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "10"
+        },
+        {
+          "l": "B",
+          "t": "20"
+        },
+        {
+          "l": "C",
+          "t": "0"
+        },
+        {
+          "l": "D",
+          "t": "5"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "0"
+        },
+        {
+          "l": "B",
+          "t": "5"
+        },
+        {
+          "l": "C",
+          "t": "10"
+        },
+        {
+          "l": "D",
+          "t": "20"
+        }
+      ],
+      "reason": "Options were stored in a rotated order; restored to the order of the master question paper (option texts unchanged).",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2026-2-ga-4",
+      "field": "answer",
+      "before": "C",
+      "after": "A",
+      "reason": "Follows the option reorder: the stored key C pointed at the option that is (A) in the paper's order, so the same answer is now letter A. Official key: A (0).",
+      "source": "pdf p.4; https://www.trygateai.com/pyq/general-aptitude/quantitative-aptitude/gate-cse-2026-set-2-q4"
+    },
+    {
+      "id": "cse-2026-2-ga-4",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "quantitative-aptitude",
+        "profit-and-loss"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2026-2-ga-5",
+      "field": "text",
+      "before": "‘When it is raining, peacocks dance.’ Based only on this sentence, which one of the following options is necessarily true?",
+      "after": "‘When it is raining, peacocks dance.’\n\nBased only on this sentence, which one of the following options is necessarily true?",
+      "reason": "Restored the line break after the quoted sentence.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2026-2-ga-5",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "When peacocks dance, it is raining."
+        },
+        {
+          "l": "B",
+          "t": "When peacocks are not dancing, it is not raining."
+        },
+        {
+          "l": "C",
+          "t": "When it is not raining, peacocks do not dance."
+        },
+        {
+          "l": "D",
+          "t": "Peacocks dance only when it is raining."
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Peacocks dance only when it is raining."
+        },
+        {
+          "l": "B",
+          "t": "When peacocks dance, it is raining."
+        },
+        {
+          "l": "C",
+          "t": "When peacocks are not dancing, it is not raining."
+        },
+        {
+          "l": "D",
+          "t": "When it is not raining, peacocks do not dance."
+        }
+      ],
+      "reason": "Options were stored in a rotated order; restored to the order of the master question paper (option texts unchanged).",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2026-2-ga-5",
+      "field": "answer",
+      "before": "D",
+      "after": "C",
+      "reason": "Stored key D pointed at \"Peacocks dance only when it is raining\" (the converse, not implied). \"Raining → dance\" implies only its contrapositive \"not dancing → not raining\", which is (C) in the paper; the official GATE 2026 CS2 key is C.",
+      "source": "pdf p.4; https://www.trygateai.com/pyq/general-aptitude/verbal-aptitude/gate-cse-2026-set-2-q5"
+    },
+    {
+      "id": "cse-2026-2-ga-5",
+      "field": "topic",
+      "before": "verbal",
+      "after": "analytical",
+      "reason": "Conditional-statement deduction is logical (analytical) reasoning.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2026-2-ga-5",
+      "field": "tags",
+      "before": [
+        "verbal-aptitude"
+      ],
+      "after": [
+        "analytical-reasoning",
+        "conditional-statements",
+        "contrapositive"
+      ],
+      "reason": "Tags match the corrected topic.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2026-2-ga-6",
+      "field": "text",
+      "before": "Water : P :: Food : Q Choose the P and Q combination from the options below to form a meaningful analogy.",
+      "after": "Water : P :: Food : Q\n\nChoose the P and Q combination from the options below to form a meaningful analogy.",
+      "reason": "Restored the line break after the analogy.",
+      "source": "pdf p.5"
+    },
+    {
+      "id": "cse-2026-2-ga-6",
+      "field": "tags",
+      "before": [
+        "verbal-aptitude"
+      ],
+      "after": [
+        "verbal-aptitude",
+        "analogy"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.5"
+    },
+    {
+      "id": "cse-2026-2-ga-7",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2026-2/ga-7-1.svg",
+          "svg": "cse-2026-2/ga-7-1.svg",
+          "alt": "Panel I: a 3 by 3 arrangement of square tiles, each holding a 3 by 3 array of dots that are filled (black) or hollow. Row 1: 8 filled dots (all but the top-left), 1 filled dot (bottom-right), 6 filled dots (the right two columns). Row 2: 3 filled (right column), 5 filled (right column plus the lower two dots of the middle column), then a missing tile. Row 3: 4 filled (right column plus the bottom dot of the middle column), 9 filled (all), then a missing tile. The two missing tiles are a dashed box with a question mark. Panel II: four tile pairs (top tile over bottom tile). (i): 7 filled (right two columns plus bottom-left) over 2 filled (lower two dots of the right column). (ii): 6 filled over 2 filled. (iii): 7 filled over 3 filled (right column). (iv): 6 filled over 4 filled (right column plus bottom-middle)."
+        }
+      ],
+      "reason": "The question depends on the Panel I / Panel II figure, which was missing; redrawn from the paper.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2026-2-ga-7",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "(iv)"
+        },
+        {
+          "l": "B",
+          "t": "(i)"
+        },
+        {
+          "l": "C",
+          "t": "(ii)"
+        },
+        {
+          "l": "D",
+          "t": "(iii)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "(i)"
+        },
+        {
+          "l": "B",
+          "t": "(ii)"
+        },
+        {
+          "l": "C",
+          "t": "(iii)"
+        },
+        {
+          "l": "D",
+          "t": "(iv)"
+        }
+      ],
+      "reason": "Options were stored in a rotated order; restored to the order of the master question paper (option texts unchanged).",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2026-2-ga-7",
+      "field": "answer",
+      "before": "B",
+      "after": "A",
+      "reason": "Follows the option reorder: the stored key B pointed at the option that is (A) in the paper's order, so the same answer is now letter A. Official key: A ((i)).",
+      "source": "pdf p.6; https://www.trygateai.com/pyq/general-aptitude/spatial-aptitude/gate-cse-2026-set-2-q7"
+    },
+    {
+      "id": "cse-2026-2-ga-7",
+      "field": "topic",
+      "before": "quant",
+      "after": "spatial",
+      "reason": "Pattern-completion puzzle: spatial aptitude.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2026-2-ga-7",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "spatial-aptitude",
+        "pattern-completion",
+        "magic-square"
+      ],
+      "reason": "Tags match the corrected topic.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2026-2-ga-8",
+      "field": "text",
+      "before": "Figures (i) and (ii) represent intercity highway systems. The black dots represent cities and the line segments between them represent intercity highways. A salesperson needs to make a trip. She needs to start from a city, visit each of the remaining cities exactly once, and finally return to the same city from which she started. Which one of the following options is then true?",
+      "after": "Figures (i) and (ii) represent intercity highway systems. The black dots represent cities and the line segments between them represent intercity highways.\n\nA salesperson needs to make a trip. She needs to start from a city, visit each of the remaining cities exactly once, and finally return to the same city from which she started.\n\nWhich one of the following options is then true?",
+      "reason": "Restored the paragraph breaks.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2026-2-ga-8",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2026-2/ga-8-1.svg",
+          "svg": "cse-2026-2/ga-8-1.svg",
+          "alt": "Figure (i): 16 cities in a 4 by 4 square grid; each city is joined by a highway to its horizontal and vertical neighbours (24 highways). Figure (ii): five cities — top-left A, top-right B, an inner city C to the lower right of A, a left city D below A, and a bottom city E. Highways: A–B, A–C, A–D, C–E, D–E and B–E (A and E have three highways each; B, C, D have two)."
+        }
+      ],
+      "reason": "The question depends on figures (i) and (ii), which were missing; redrawn from the paper.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2026-2-ga-8",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Such a trip is possible for both (i) and (ii)."
+        },
+        {
+          "l": "B",
+          "t": "Such a trip is possible neither for (i) nor for (ii)."
+        },
+        {
+          "l": "C",
+          "t": "Such a trip is possible for (i), but not for (ii)."
+        },
+        {
+          "l": "D",
+          "t": "Such a trip is possible for (ii), but not for (i)."
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Such a trip is possible for (i), but not for (ii)."
+        },
+        {
+          "l": "B",
+          "t": "Such a trip is possible for (ii), but not for (i)."
+        },
+        {
+          "l": "C",
+          "t": "Such a trip is possible for both (i) and (ii)."
+        },
+        {
+          "l": "D",
+          "t": "Such a trip is possible neither for (i) nor for (ii)."
+        }
+      ],
+      "reason": "Options were stored in a rotated order; restored to the order of the master question paper (option texts unchanged).",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2026-2-ga-8",
+      "field": "answer",
+      "before": "C",
+      "after": "A",
+      "reason": "Follows the option reorder: the stored key C pointed at the option that is (A) in the paper's order, so the same answer is now letter A. Verified: the 4×4 grid has a Hamiltonian cycle; figure (ii) has none (A would need three cycle edges).",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2026-2-ga-8",
+      "field": "topic",
+      "before": "quant",
+      "after": "analytical",
+      "reason": "Hamiltonian-cycle reasoning on a figure: analytical reasoning.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2026-2-ga-8",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "analytical-reasoning",
+        "graphs",
+        "hamiltonian-cycle"
+      ],
+      "reason": "Tags match the corrected topic.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2026-2-ga-9",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2026-2/ga-9-1.svg",
+          "svg": "cse-2026-2/ga-9-1.svg",
+          "alt": "Panel I: an empty 4 by 4 grid; the numbers above the columns are 2, 2, 2, 2 and the numbers left of the rows (top to bottom) are 3, 1, 2, 2. Panel II: four shaded grids, rows listed top to bottom with 1 = shaded. (i): 1011, 0101, 0010, 1100. (ii): 1011, 0100, 0011, 1100. (iii): 1011, 0110, 0010, 1100. (iv): 1011, 0100, 0010, 1101."
+        }
+      ],
+      "reason": "The question depends on the Panel I / Panel II figure, which was missing; redrawn from the paper.",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2026-2-ga-9",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "(ii)"
+        },
+        {
+          "l": "B",
+          "t": "(iii)"
+        },
+        {
+          "l": "C",
+          "t": "(iv)"
+        },
+        {
+          "l": "D",
+          "t": "(i)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "(i)"
+        },
+        {
+          "l": "B",
+          "t": "(ii)"
+        },
+        {
+          "l": "C",
+          "t": "(iii)"
+        },
+        {
+          "l": "D",
+          "t": "(iv)"
+        }
+      ],
+      "reason": "Options were stored in a rotated order; restored to the order of the master question paper (option texts unchanged).",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2026-2-ga-9",
+      "field": "answer",
+      "before": "D",
+      "after": "B",
+      "reason": "Stored key D pointed at (i), whose row 2 has 2 shaded cells (needs 1) and row 3 has 1 (needs 2). Only (ii) meets every row total (3, 1, 2, 2) and column total (2, 2, 2, 2); official GATE 2026 CS2 key is B.",
+      "source": "pdf p.8; https://www.trygateai.com/pyq/general-aptitude/analytical-aptitude/gate-cse-2026-set-2-q9"
+    },
+    {
+      "id": "cse-2026-2-ga-9",
+      "field": "topic",
+      "before": "quant",
+      "after": "analytical",
+      "reason": "Grid-shading logic puzzle: analytical reasoning.",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2026-2-ga-9",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "analytical-reasoning",
+        "grid-puzzle"
+      ],
+      "reason": "Tags match the corrected topic.",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2026-2-ga-10",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "3 36"
+        },
+        {
+          "l": "B",
+          "t": "13 36"
+        },
+        {
+          "l": "C",
+          "t": "15 36"
+        },
+        {
+          "l": "D",
+          "t": "19 36"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\frac{3}{36}$"
+        },
+        {
+          "l": "B",
+          "t": "$\\frac{13}{36}$"
+        },
+        {
+          "l": "C",
+          "t": "$\\frac{15}{36}$"
+        },
+        {
+          "l": "D",
+          "t": "$\\frac{19}{36}$"
+        }
+      ],
+      "reason": "Fractions had been flattened to \"3 36\" etc.; written as fractions.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "cse-2026-2-ga-10",
+      "field": "answer",
+      "before": "A",
+      "after": "C",
+      "reason": "Stored key A (3/36) is wrong: the prime sums 2, 3, 5, 7, 11 occur in 1 + 2 + 4 + 6 + 2 = 15 of the 36 ordered outcomes, so P = 15/36 = option C; the official GATE 2026 CS2 key is C.",
+      "source": "pdf p.9; https://www.trygateai.com/pyq/general-aptitude/quantitative-aptitude/gate-cse-2026-set-2-q10"
+    },
+    {
+      "id": "cse-2026-2-ga-10",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "quantitative-aptitude",
+        "probability",
+        "dice"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "cse-2026-2-cs-1",
+      "field": "text",
+      "before": "For two different persons 𝑥 and 𝑦, the predicate 𝑀(𝑥, 𝑦) denotes that x knows y. Consider the following statement. There is a person who does not know anyone else, but that person is known by everyone else. Which one of the following expressions represents the above statement?",
+      "after": "For two different persons $x$ and $y$, the predicate $M(x, y)$ denotes that $x$ knows $y$.\n\nConsider the following statement.\n\n*There is a person who does not know anyone else, but that person is known by everyone else.*\n\nWhich one of the following expressions represents the above statement?",
+      "reason": "Unicode maths italics replaced by KaTeX; paragraph breaks restored.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2026-2-cs-1",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "(∀𝑦)(∀𝑥) ((𝑥 ≠ 𝑦) → (𝑀(𝑥, 𝑦) ∧ ¬𝑀(𝑦, 𝑥)))"
+        },
+        {
+          "l": "B",
+          "t": "(∃𝑦)(∀𝑥) ((𝑥 ≠ 𝑦) → (𝑀(𝑥, 𝑦) ∧ ¬𝑀(𝑦, 𝑥)))"
+        },
+        {
+          "l": "C",
+          "t": "(∀𝑦)(∃𝑥) ((𝑥 ≠ 𝑦) → (𝑀(𝑥, 𝑦) ∧ ¬𝑀(𝑦, 𝑥)))"
+        },
+        {
+          "l": "D",
+          "t": "(∃𝑦)(∃𝑥) ((𝑥 ≠ 𝑦) → (𝑀(𝑥, 𝑦) ∧ ¬𝑀(𝑦, 𝑥)))"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$(\\exists y)(\\forall x)\\,((x \\neq y) \\rightarrow (M(x, y) \\land \\neg M(y, x)))$"
+        },
+        {
+          "l": "B",
+          "t": "$(\\forall y)(\\exists x)\\,((x \\neq y) \\rightarrow (M(x, y) \\land \\neg M(y, x)))$"
+        },
+        {
+          "l": "C",
+          "t": "$(\\exists y)(\\exists x)\\,((x \\neq y) \\rightarrow (M(x, y) \\land \\neg M(y, x)))$"
+        },
+        {
+          "l": "D",
+          "t": "$(\\forall y)(\\forall x)\\,((x \\neq y) \\rightarrow (M(x, y) \\land \\neg M(y, x)))$"
+        }
+      ],
+      "reason": "Options were stored in a rotated order; restored to the order of the master question paper (option texts unchanged). Unicode maths italics replaced by KaTeX.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2026-2-cs-1",
+      "field": "answer",
+      "before": "B",
+      "after": "A",
+      "reason": "Follows the option reorder: the stored key B pointed at the option that is (A) in the paper's order, so the same answer is now letter A. Official key: A.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2026-2-cs-1",
+      "field": "tags",
+      "before": [
+        "dm",
+        "predicate-logic",
+        "first-order-logic"
+      ],
+      "after": [
+        "dm",
+        "predicate-logic",
+        "first-order-logic",
+        "quantifiers"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2026-2-cs-2",
+      "field": "text",
+      "before": "The set T represents various tr aversals over binary tree. The s et S represents the order of visiting nodes during a traversal. T S I: Inorder L: left subtree, node, right subtree II: Preorder M: node, left subtree, right subtree III: Postorder N: left subtree, right subtree, node Which one of the following is the correct match from T to S ?",
+      "after": "The set T represents various traversals over binary tree. The set S represents the order of visiting nodes during a traversal.\n\n| T | S |\n|---|---|\n| I: Inorder | L: left subtree, node, right subtree |\n| II: Preorder | M: node, left subtree, right subtree |\n| III: Postorder | N: left subtree, right subtree, node |\n\nWhich one of the following is the correct match from T to S ?",
+      "reason": "Matching lists restored as a table; split words (\"tr aversals\", \"s et\") repaired.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2026-2-cs-2",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "I – N, II – M, III – L"
+        },
+        {
+          "l": "B",
+          "t": "I – L, II – N, III – M"
+        },
+        {
+          "l": "C",
+          "t": "I – L, II – M, III – N"
+        },
+        {
+          "l": "D",
+          "t": "I – M, II – L, III – N"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "I – L, II – M, III – N"
+        },
+        {
+          "l": "B",
+          "t": "I – M, II – L, III – N"
+        },
+        {
+          "l": "C",
+          "t": "I – N, II – M, III – L"
+        },
+        {
+          "l": "D",
+          "t": "I – L, II – N, III – M"
+        }
+      ],
+      "reason": "Options were stored in a rotated order; restored to the order of the master question paper (option texts unchanged).",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2026-2-cs-2",
+      "field": "answer",
+      "before": "C",
+      "after": "A",
+      "reason": "Follows the option reorder: the stored key C pointed at the option that is (A) in the paper's order, so the same answer is now letter A. Official key: A.",
+      "source": "pdf p.11; https://www.trygateai.com/pyq/programming-and-data-structures/trees/gate-cse-2026-set-2-q12"
+    },
+    {
+      "id": "cse-2026-2-cs-3",
+      "field": "text",
+      "before": "Which one of the following statements is equivalent to the following assertion? Turing machine 𝑀 decides the language 𝐿 ⊆ {0,1}∗",
+      "after": "Which one of the following statements is equivalent to the following assertion?\n\nTuring machine $M$ decides the language $L \\subseteq \\{0,1\\}^*$",
+      "reason": "Unicode maths italics replaced by KaTeX; line break restored.",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "cse-2026-2-cs-3",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Turing machine 𝑀 accepts all input strings in 𝐿"
+        },
+        {
+          "l": "B",
+          "t": "Turing machine 𝑀 rejects all input strings in {0,1}∗ − 𝐿"
+        },
+        {
+          "l": "C",
+          "t": "Turing machine 𝑀 accepts all input strings in 𝐿 and rejects all input strings in {0,1}∗ − 𝐿"
+        },
+        {
+          "l": "D",
+          "t": "Turing machine 𝑀 halts on all input strings in {0,1}∗"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Turing machine $M$ halts on all input strings in $\\{0,1\\}^*$"
+        },
+        {
+          "l": "B",
+          "t": "Turing machine $M$ accepts all input strings in $L$"
+        },
+        {
+          "l": "C",
+          "t": "Turing machine $M$ rejects all input strings in $\\{0,1\\}^* - L$"
+        },
+        {
+          "l": "D",
+          "t": "Turing machine $M$ accepts all input strings in $L$ and rejects all input strings in $\\{0,1\\}^* - L$"
+        }
+      ],
+      "reason": "Options were stored in a rotated order; restored to the order of the master question paper (option texts unchanged). Unicode maths italics replaced by KaTeX. The stored key letter D now points at the option that is (D) in the paper (\"accepts all strings in L and rejects all strings in {0,1}* − L\"), the official answer; previously D held the paper's option (A).",
+      "source": "pdf p.12; https://gateoverflow.in/523143/gate-cse-2026-set-2-question-3"
+    },
+    {
+      "id": "cse-2026-2-cs-4",
+      "field": "text",
+      "before": "The probability density function 𝑓(𝑥) of a random variable 𝑋 which takes real values is 𝑓(𝑥) = 1 3√2𝜋 exp (− 𝑥2 18), 𝑥 ∈ (−∞, +∞) Which one of the following statements is correct about the random variable 𝑋 ?",
+      "after": "The probability density function $f(x)$ of a random variable $X$ which takes real values is\n\n$$f(x) = \\frac{1}{3\\sqrt{2\\pi}}\\,\\exp\\left(-\\frac{x^2}{18}\\right), \\qquad x \\in (-\\infty, +\\infty)$$\n\nWhich one of the following statements is correct about the random variable $X$?",
+      "reason": "Unicode maths italics and a flattened fraction replaced by KaTeX; the formula reads 1/(3√(2π))·exp(−x²/18).",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "cse-2026-2-cs-4",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝑋 is an exponential random variable"
+        },
+        {
+          "l": "B",
+          "t": "𝑋 is a normal random variable"
+        },
+        {
+          "l": "C",
+          "t": "𝑋 is a Poisson random variable"
+        },
+        {
+          "l": "D",
+          "t": "𝑋 is a uniform random variable"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$X$ is an exponential random variable"
+        },
+        {
+          "l": "B",
+          "t": "$X$ is a normal random variable"
+        },
+        {
+          "l": "C",
+          "t": "$X$ is a Poisson random variable"
+        },
+        {
+          "l": "D",
+          "t": "$X$ is a uniform random variable"
+        }
+      ],
+      "reason": "Unicode maths italics replaced by KaTeX (order already matches the paper).",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "cse-2026-2-cs-4",
+      "field": "answer",
+      "before": "A",
+      "after": "B",
+      "reason": "The stored \"official\" keys of this paper run in a fixed cycle (cs-1..cs-15 = B, C, D, A, B, C, D, A, B, C, D, A, B, C, D), i.e. they are placeholders, not the GATE key, and several records had their options rotated to fit that cycle. Solved independently: the pdf is the N(0, 3²) density (1/(σ√(2π))·e^{−x²/(2σ²)} with σ = 3), so X is normal — option (B).",
+      "source": "pdf p.12 + solution"
+    },
+    {
+      "id": "cse-2026-2-cs-4",
+      "field": "topic",
+      "before": "random-variables",
+      "after": "rv",
+      "reason": "Topic id \"random-variables\" does not exist; the CSE topic for distributions is prob/rv.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-5",
+      "field": "text",
+      "before": "In the context of DBMS, consider the two sets T and S given below. T S I: Logical schema L: Views II: Physical schema M: File organization and indexes III: External schema N: Relations Which one of the following is the correct match from T to S ?",
+      "after": "In the context of DBMS, consider the two sets **T** and **S** given below.\n\n| T | S |\n|---|---|\n| I: Logical schema | L: Views |\n| II: Physical schema | M: File organization and indexes |\n| III: External schema | N: Relations |\n\nWhich one of the following is the correct match from **T** to **S**?",
+      "reason": "The T/S table was flattened into the sentence; restored as a markdown table.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "cse-2026-2-cs-5",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "I – N, II – L, III – M"
+        },
+        {
+          "l": "B",
+          "t": "I – L, II – M, III – N"
+        },
+        {
+          "l": "C",
+          "t": "I – M, II – L, III – N"
+        },
+        {
+          "l": "D",
+          "t": "I – N, II – M, III – L"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "I – L, II – M, III – N"
+        },
+        {
+          "l": "B",
+          "t": "I – M, II – L, III – N"
+        },
+        {
+          "l": "C",
+          "t": "I – N, II – M, III – L"
+        },
+        {
+          "l": "D",
+          "t": "I – N, II – L, III – M"
+        }
+      ],
+      "reason": "Options restored to the order printed in the paper (the record had them rotated).",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "cse-2026-2-cs-5",
+      "field": "answer",
+      "before": "B",
+      "after": "C",
+      "reason": "The stored \"official\" keys of this paper run in a fixed cycle (cs-1..cs-15 = B, C, D, A, B, C, D, A, B, C, D, A, B, C, D), i.e. they are placeholders, not the GATE key, and several records had their options rotated to fit that cycle. Solved independently: logical schema ↔ relations, physical schema ↔ file organization and indexes, external schema ↔ views, i.e. I–N, II–M, III–L = option (C) in the paper's order.",
+      "source": "pdf p.13 + solution"
+    },
+    {
+      "id": "cse-2026-2-cs-5",
+      "field": "topic",
+      "before": "architecture",
+      "after": "er",
+      "reason": "Topic id \"architecture\" does not exist; data models / schema levels are filed under db/er.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-6",
+      "field": "text",
+      "before": "Which one of the following options is not a property of Boolean Algebra? Note: + is OR operation, . is AND operation, and ′ is NOT operation",
+      "after": "Which one of the following options is not a property of Boolean Algebra?\n\nNote: $+$ is OR operation, $.$ is AND operation, and $'$ is NOT operation",
+      "reason": "Unicode symbols replaced by KaTeX; note put on its own line.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2026-2-cs-6",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝑎 + 𝑎′ = 1"
+        },
+        {
+          "l": "B",
+          "t": "𝑎 . 𝑏 = 𝑏 . 𝑎"
+        },
+        {
+          "l": "C",
+          "t": "𝑎 + 𝑏 = 𝑏 + 𝑎"
+        },
+        {
+          "l": "D",
+          "t": "𝑎 . 𝑎′ = 1"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$a + b = b + a$"
+        },
+        {
+          "l": "B",
+          "t": "$a \\,.\\, a' = 1$"
+        },
+        {
+          "l": "C",
+          "t": "$a + a' = 1$"
+        },
+        {
+          "l": "D",
+          "t": "$a \\,.\\, b = b \\,.\\, a$"
+        }
+      ],
+      "reason": "Options restored to the order printed in the paper (the record had them rotated) and Unicode maths replaced by KaTeX.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2026-2-cs-6",
+      "field": "answer",
+      "before": "C",
+      "after": "B",
+      "reason": "The stored \"official\" keys of this paper run in a fixed cycle (cs-1..cs-15 = B, C, D, A, B, C, D, A, B, C, D, A, B, C, D), i.e. they are placeholders, not the GATE key, and several records had their options rotated to fit that cycle. Solved independently: the complement law is a·a' = 0, so a·a' = 1 is not a property — option (B) in the paper's order.",
+      "source": "pdf p.14 + solution"
+    },
+    {
+      "id": "cse-2026-2-cs-6",
+      "field": "subject",
+      "before": "dm",
+      "after": "dl",
+      "reason": "Boolean-algebra laws belong to Digital Logic (dl/boolean) in this bank.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-6",
+      "field": "topic",
+      "before": "boolean-algebra",
+      "after": "boolean",
+      "reason": "Topic id \"boolean-algebra\" does not exist; dl/boolean is the Boolean algebra topic.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-6",
+      "field": "tags",
+      "before": [
+        "dm",
+        "boolean-algebra",
+        "distributive-laws"
+      ],
+      "after": [
+        "dl",
+        "boolean-algebra",
+        "complement-law"
+      ],
+      "reason": "Tags described a distributive-law question and the wrong subject.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2026-2-cs-7",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "An array of integers declared inside a function"
+        },
+        {
+          "l": "B",
+          "t": "A dynamically allocated array of integers created using malloc() function call"
+        },
+        {
+          "l": "C",
+          "t": "Return address of a function"
+        },
+        {
+          "l": "D",
+          "t": "A static variable declared inside a function"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "A static variable declared inside a function"
+        },
+        {
+          "l": "B",
+          "t": "An array of integers declared inside a function"
+        },
+        {
+          "l": "C",
+          "t": "A dynamically allocated array of integers created using malloc() function call"
+        },
+        {
+          "l": "D",
+          "t": "Return address of a function"
+        }
+      ],
+      "reason": "Options restored to the order printed in the paper (the record had them rotated).",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2026-2-cs-7",
+      "field": "answer",
+      "before": "D",
+      "after": "C",
+      "reason": "The stored \"official\" keys of this paper run in a fixed cycle (cs-1..cs-15 = B, C, D, A, B, C, D, A, B, C, D, A, B, C, D), i.e. they are placeholders, not the GATE key, and several records had their options rotated to fit that cycle. Solved independently: only malloc() memory lives on the heap (static → data segment, local array and return address → stack) — option (C) in the paper's order.",
+      "source": "pdf p.14 + solution"
+    },
+    {
+      "id": "cse-2026-2-cs-7",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "c",
+      "reason": "Topic id \"c-prog\" does not exist; pds/c is Programming in C.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-8",
+      "field": "text",
+      "before": "Consider the following two statements about interrupt handling mechanisms in a CPU. S1: In non-vectored interrupt mechanism, it usually takes more time to start the Interrupt Service Routine ( ISR) when compared to that in a vectored interrupt mechanism. S2: In daisy -chain interrupt mechanism, the CPU polls all the input devices individually to determine the source of the interrupt. Which one of the following options is correct with respect to S1 and S2 ?",
+      "after": "Consider the following two statements about interrupt handling mechanisms in a CPU.\n\nS1: In non-vectored interrupt mechanism, it usually takes more time to start the Interrupt Service Routine (ISR) when compared to that in a vectored interrupt mechanism.\n\nS2: In daisy-chain interrupt mechanism, the CPU polls all the input devices individually to determine the source of the interrupt.\n\nWhich one of the following options is correct with respect to S1 and S2?",
+      "reason": "Statements S1/S2 put on their own lines; stray spaces (\"( ISR)\", \"daisy -chain\") removed.",
+      "source": "pdf p.15"
+    },
+    {
+      "id": "cse-2026-2-cs-8",
+      "field": "answer",
+      "before": "A",
+      "after": "C",
+      "reason": "The stored \"official\" keys of this paper run in a fixed cycle (cs-1..cs-15 = B, C, D, A, B, C, D, A, B, C, D, A, B, C, D), i.e. they are placeholders, not the GATE key, and several records had their options rotated to fit that cycle. Solved independently: S1 is true (the CPU must first identify the source), S2 is false (a daisy chain identifies the source in hardware by passing the acknowledge along the chain; no software polling) — option (C).",
+      "source": "pdf p.15 + solution"
+    },
+    {
+      "id": "cse-2026-2-cs-8",
+      "field": "topic",
+      "before": "isa",
+      "after": "io",
+      "reason": "Interrupt mechanisms are filed under coa/io, not coa/isa.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-9",
+      "field": "text",
+      "before": "Consider the following three ANSI-C programs, P1, P2, and P3. P1 P2 P3 #include <stdio.h> int a=5; int main(){ int a=7; return(0); } #include <stdio.h> int main(){ int a=5; int a=7; return(0); } #include <stdio.h> int main(){ int a=5; float a=7; return(0); } Which one of the following statements is true?",
+      "after": "Consider the following three ANSI-C programs, P1, P2, and P3.\n\n**P1**\n\n```c\n#include <stdio.h>\nint a=5;\nint main(){\n  int a=7;\n  return(0);\n}\n```\n\n**P2**\n\n```c\n#include <stdio.h>\nint main(){\n  int a=5;\n  int a=7;\n  return(0);\n}\n```\n\n**P3**\n\n```c\n#include <stdio.h>\nint main(){\n  int a=5;\n  float a=7;\n  return(0);\n}\n```\n\nWhich one of the following statements is true?",
+      "reason": "The three side-by-side programs were flattened into one line; restored as three C code blocks (tokens unchanged).",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "cse-2026-2-cs-9",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "All three programs P1, P2, and P3 will compile without any error"
+        },
+        {
+          "l": "B",
+          "t": "Only P1 will compile without any error"
+        },
+        {
+          "l": "C",
+          "t": "Only P2 will compile without any error"
+        },
+        {
+          "l": "D",
+          "t": "Only P3 will compile without any error"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Only P1 will compile without any error"
+        },
+        {
+          "l": "B",
+          "t": "Only P2 will compile without any error"
+        },
+        {
+          "l": "C",
+          "t": "Only P3 will compile without any error"
+        },
+        {
+          "l": "D",
+          "t": "All three programs P1, P2, and P3 will compile without any error"
+        }
+      ],
+      "reason": "Options restored to the order printed in the paper (the record had them rotated).",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "cse-2026-2-cs-9",
+      "field": "answer",
+      "before": "B",
+      "after": "A",
+      "reason": "The stored \"official\" keys of this paper run in a fixed cycle (cs-1..cs-15 = B, C, D, A, B, C, D, A, B, C, D, A, B, C, D), i.e. they are placeholders, not the GATE key, and several records had their options rotated to fit that cycle. Solved independently: P1 only shadows a global (legal); P2 redefines a in the same block and P3 redeclares it with a conflicting type (both errors) — option (A) in the paper's order.",
+      "source": "pdf p.16 + solution"
+    },
+    {
+      "id": "cse-2026-2-cs-9",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "c",
+      "reason": "Topic id \"c-prog\" does not exist; pds/c is Programming in C.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-9",
+      "field": "tags",
+      "before": [
+        "pds",
+        "c-pointers",
+        "macros"
+      ],
+      "after": [
+        "pds",
+        "c-scope",
+        "redeclaration"
+      ],
+      "reason": "Tags (\"c-pointers\", \"macros\") did not describe this scope/redeclaration question.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "cse-2026-2-cs-10",
+      "field": "text",
+      "before": "Consider concurrent execution of two transaction s 𝑇1 and 𝑇2 in a DBMS, both of which access a data object 𝐴. For these two transactions to not conflict on 𝐴, which one of the following statements must be true?",
+      "after": "Consider concurrent execution of two transactions $T1$ and $T2$ in a DBMS, both of which access a data object $A$. For these two transactions to not conflict on $A$, which one of the following statements must be true?",
+      "reason": "Split word \"transaction s\" joined; Unicode maths replaced by KaTeX.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2026-2-cs-10",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝑇1 writes 𝐴 and 𝑇2 reads 𝐴"
+        },
+        {
+          "l": "B",
+          "t": "Both 𝑇1 and 𝑇2 write 𝐴"
+        },
+        {
+          "l": "C",
+          "t": "Both 𝑇1 and 𝑇2 only read 𝐴"
+        },
+        {
+          "l": "D",
+          "t": "𝑇1 reads 𝐴 and 𝑇2 writes 𝐴"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Both $T1$ and $T2$ only read $A$"
+        },
+        {
+          "l": "B",
+          "t": "$T1$ reads $A$ and $T2$ writes $A$"
+        },
+        {
+          "l": "C",
+          "t": "$T1$ writes $A$ and $T2$ reads $A$"
+        },
+        {
+          "l": "D",
+          "t": "Both $T1$ and $T2$ write $A$"
+        }
+      ],
+      "reason": "Options restored to the order printed in the paper (the record had them rotated) and Unicode maths replaced by KaTeX.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2026-2-cs-10",
+      "field": "answer",
+      "before": "C",
+      "after": "A",
+      "reason": "The stored \"official\" keys of this paper run in a fixed cycle (cs-1..cs-15 = B, C, D, A, B, C, D, A, B, C, D, A, B, C, D), i.e. they are placeholders, not the GATE key, and several records had their options rotated to fit that cycle. Solved independently: two operations conflict iff they are from different transactions, on the same item, and at least one is a write; so no conflict ⇔ both only read — option (A) in the paper's order.",
+      "source": "pdf p.17 + solution"
+    },
+    {
+      "id": "cse-2026-2-cs-11",
+      "field": "text",
+      "before": "Consider a file of size 4 million bytes being transferred between two hosts connected via a path consisting of three consecutive link s of bandwidth 2 Mbps, 500 kbps, and 1 Mbps, respectively. All processing delays and propagation delays are negligible. Assume that there is no other background traffic over the path and no other additional overhead to transfer the file. Which one of the following is the total time (in seconds) to transfer the file? Note: 1M=106, 1k=103",
+      "after": "Consider a file of size 4 million bytes being transferred between two hosts connected via a path consisting of three consecutive links of bandwidth 2 Mbps, 500 kbps, and 1 Mbps, respectively. All processing delays and propagation delays are negligible. Assume that there is no other background traffic over the path and no other additional overhead to transfer the file.\n\nWhich one of the following is the total time (in seconds) to transfer the file?\n\nNote: $1\\text{M} = 10^6$, $1\\text{k} = 10^3$",
+      "reason": "Split word \"link s\" joined and the lost superscripts in the note (10^6, 10^3) restored.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2026-2-cs-11",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "64"
+        },
+        {
+          "l": "B",
+          "t": "8"
+        },
+        {
+          "l": "C",
+          "t": "16"
+        },
+        {
+          "l": "D",
+          "t": "731"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "731"
+        },
+        {
+          "l": "B",
+          "t": "64"
+        },
+        {
+          "l": "C",
+          "t": "8"
+        },
+        {
+          "l": "D",
+          "t": "16"
+        }
+      ],
+      "reason": "Options restored to the order printed in the paper (the record had them rotated).",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2026-2-cs-11",
+      "field": "answer",
+      "before": "D",
+      "after": "B",
+      "reason": "The stored \"official\" keys of this paper run in a fixed cycle (cs-1..cs-15 = B, C, D, A, B, C, D, A, B, C, D, A, B, C, D), i.e. they are placeholders, not the GATE key, and several records had their options rotated to fit that cycle. Solved independently: the file is 32×10⁶ bits; the throughput of the path is its bottleneck link (500 kbps), so it takes 32×10⁶ / 5×10⁵ = 64 s — option (B) in the paper's order.",
+      "source": "pdf p.17 + solution"
+    },
+    {
+      "id": "cse-2026-2-cs-11",
+      "field": "topic",
+      "before": "network",
+      "after": "layering",
+      "reason": "Topic id \"network\" does not exist; throughput/switching basics are filed under cn/layering.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-11",
+      "field": "tags",
+      "before": [
+        "cn",
+        "delays",
+        "transmission-propagation"
+      ],
+      "after": [
+        "cn",
+        "throughput",
+        "bottleneck-link"
+      ],
+      "reason": "Tags mentioned propagation delay, which is zero here; the question is about bottleneck throughput.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2026-2-cs-12",
+      "field": "answer",
+      "before": "A",
+      "after": "C",
+      "reason": "The stored \"official\" keys of this paper run in a fixed cycle (cs-1..cs-15 = B, C, D, A, B, C, D, A, B, C, D, A, B, C, D), i.e. they are placeholders, not the GATE key, and several records had their options rotated to fit that cycle. Solved independently: a DHCP client has no IP address and does not know the server, so DHCPDISCOVER (and often the server replies) are sent to the broadcast address — option (C).",
+      "source": "pdf p.18 + solution"
+    },
+    {
+      "id": "cse-2026-2-cs-12",
+      "field": "topic",
+      "before": "network",
+      "after": "support",
+      "reason": "Topic id \"network\" does not exist; DHCP is filed under cn/support (ARP, DHCP, ICMP, NAT).",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-12",
+      "field": "tags",
+      "before": [
+        "cn",
+        "protocols",
+        "arp",
+        "broadcast"
+      ],
+      "after": [
+        "cn",
+        "dhcp",
+        "broadcast"
+      ],
+      "reason": "Tag \"arp\" is not part of this question (DHCP is).",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2026-2-cs-13",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Priority Scheduling"
+        },
+        {
+          "l": "B",
+          "t": "Shortest Remaining Time First (SRTF) Scheduling"
+        },
+        {
+          "l": "C",
+          "t": "First Come First Serve (FCFS) Scheduling"
+        },
+        {
+          "l": "D",
+          "t": "Round Robin Scheduling"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Shortest Remaining Time First (SRTF) Scheduling"
+        },
+        {
+          "l": "B",
+          "t": "First Come First Serve (FCFS) Scheduling"
+        },
+        {
+          "l": "C",
+          "t": "Round Robin Scheduling"
+        },
+        {
+          "l": "D",
+          "t": "Priority Scheduling"
+        }
+      ],
+      "reason": "Options restored to the order printed in the paper (the record had them rotated). With the paper's order the stored key B (FCFS) is correct.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2026-2-cs-13",
+      "field": "topic",
+      "before": "cpu-scheduling",
+      "after": "scheduling",
+      "reason": "Topic id \"cpu-scheduling\" does not exist; os/scheduling is the CPU scheduling topic.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-14",
+      "field": "text",
+      "before": "Consider the following functions, where 𝑛 is a positive integer. 𝑛1/3 , log(𝑛) , log(𝑛!), 2log(𝑛) Which one of the following options lists the functions in increasing order of asymptotic growth rate? Note: Assume the base of log to be 2.",
+      "after": "Consider the following functions, where $n$ is a positive integer.\n\n$$n^{1/3}, \\quad \\log(n), \\quad \\log(n!), \\quad 2^{\\log(n)}$$\n\nWhich one of the following options lists the functions in increasing order of asymptotic growth rate?\n\nNote: Assume the base of log to be 2.",
+      "reason": "Lost superscripts restored: the paper prints n^{1/3} and 2^{log(n)} (an exponent), not \"n1/3\" and \"2log(n)\".",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2026-2-cs-14",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "log(𝑛) , 𝑛1/3, log(𝑛!) , 2log(𝑛)"
+        },
+        {
+          "l": "B",
+          "t": "2log(𝑛) , 𝑛1/3, log(𝑛) , log(𝑛!)"
+        },
+        {
+          "l": "C",
+          "t": "log(𝑛) , 𝑛1/3, 2log(𝑛) , log(𝑛!)"
+        },
+        {
+          "l": "D",
+          "t": "𝑛1/3, log(𝑛) , log(𝑛!) , 2log(𝑛)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\log(n),\\ n^{1/3},\\ 2^{\\log(n)},\\ \\log(n!)$"
+        },
+        {
+          "l": "B",
+          "t": "$n^{1/3},\\ \\log(n),\\ \\log(n!),\\ 2^{\\log(n)}$"
+        },
+        {
+          "l": "C",
+          "t": "$\\log(n),\\ n^{1/3},\\ \\log(n!),\\ 2^{\\log(n)}$"
+        },
+        {
+          "l": "D",
+          "t": "$2^{\\log(n)},\\ n^{1/3},\\ \\log(n),\\ \\log(n!)$"
+        }
+      ],
+      "reason": "Options restored to the order printed in the paper (the record had them rotated); lost superscripts restored in KaTeX.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2026-2-cs-14",
+      "field": "answer",
+      "before": "C",
+      "after": "A",
+      "reason": "The stored \"official\" keys of this paper run in a fixed cycle (cs-1..cs-15 = B, C, D, A, B, C, D, A, B, C, D, A, B, C, D), i.e. they are placeholders, not the GATE key, and several records had their options rotated to fit that cycle. Solved independently: log n ≺ n^{1/3} ≺ 2^{log n} = n ≺ log(n!) = Θ(n log n) — option (A) in the paper's order.",
+      "source": "pdf p.19 + solution"
+    },
+    {
+      "id": "cse-2026-2-cs-14",
+      "field": "topic",
+      "before": "asymptotics",
+      "after": "complexity",
+      "reason": "Topic id \"asymptotics\" does not exist; algo/complexity covers asymptotic analysis.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-15",
+      "field": "text",
+      "before": "Which of the following can be recurrence relation(s) corresponding to an algorithm with time complexity Θ(𝑛)?",
+      "after": "Which of the following can be recurrence relation(s) corresponding to an algorithm with time complexity $\\Theta(n)$?",
+      "reason": "Unicode maths replaced by KaTeX.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2026-2-cs-15",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝑇(𝑛) = 2𝑇 (𝑛 2) + 1, 𝑇(1) = 1"
+        },
+        {
+          "l": "B",
+          "t": "𝑇(𝑛) = 2𝑇 (𝑛 2) + 𝑛, 𝑇(1) = 1"
+        },
+        {
+          "l": "C",
+          "t": "𝑇(𝑛) = 𝑇(𝑛 − 1) + 𝑛, 𝑇(1) = 1"
+        },
+        {
+          "l": "D",
+          "t": "𝑇(𝑛) = 𝑇(𝑛 − 1) + 1, 𝑇(1) = 1"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$T(n) = T(n-1) + 1, \\quad T(1) = 1$"
+        },
+        {
+          "l": "B",
+          "t": "$T(n) = 2T\\left(\\frac{n}{2}\\right) + 1, \\quad T(1) = 1$"
+        },
+        {
+          "l": "C",
+          "t": "$T(n) = 2T\\left(\\frac{n}{2}\\right) + n, \\quad T(1) = 1$"
+        },
+        {
+          "l": "D",
+          "t": "$T(n) = T(n-1) + n, \\quad T(1) = 1$"
+        }
+      ],
+      "reason": "Options restored to the order printed in the paper (the record had them rotated); the fraction n/2, flattened to \"(n 2)\", restored in KaTeX.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2026-2-cs-15",
+      "field": "type",
+      "before": "MCQ",
+      "after": "MSQ",
+      "reason": "The stem asks \"Which of the following can be recurrence relation(s)\" (not \"Which one\"), and two options are Θ(n), so this is a multiple-select question.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2026-2-cs-15",
+      "field": "answer",
+      "before": "D",
+      "after": "A; B",
+      "reason": "The stored \"official\" keys of this paper run in a fixed cycle (cs-1..cs-15 = B, C, D, A, B, C, D, A, B, C, D, A, B, C, D), i.e. they are placeholders, not the GATE key, and several records had their options rotated to fit that cycle. Solved independently: T(n)=T(n−1)+1 gives n and T(n)=2T(n/2)+1 gives 2n−1 (both Θ(n)); 2T(n/2)+n is Θ(n log n) and T(n−1)+n is Θ(n²) — options (A) and (B) in the paper's order.",
+      "source": "pdf p.20 + solution"
+    },
+    {
+      "id": "cse-2026-2-cs-15",
+      "field": "topic",
+      "before": "asymptotics",
+      "after": "complexity",
+      "reason": "Topic id \"asymptotics\" does not exist; algo/complexity covers recurrences.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-15",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "The MSQ type is inferred from the wording; confirm against the official key.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2026-2-cs-15",
+      "field": "reviewNote",
+      "before": null,
+      "after": "Record was typed MCQ with a placeholder key; the paper's wording (\"recurrence relation(s)\") and the maths make it an MSQ with answer A; B (paper order). Confirm the type and key against the official GATE 2026 CS2 key.",
+      "reason": "Explains the needsReview flag.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2026-2-cs-16",
+      "field": "text",
+      "before": "Let 𝑅 be a binary relation on the set {1, 2, … , 10}, where (𝑥, 𝑦) ∈ 𝑅 if the product of 𝑥 and 𝑦 is square of an integer. Which of the following properties is/are satisfied by 𝑅?",
+      "after": "Let $R$ be a binary relation on the set $\\{1, 2, \\ldots, 10\\}$, where $(x, y) \\in R$ if the product of $x$ and $y$ is square of an integer. Which of the following properties is/are satisfied by $R$?",
+      "reason": "Unicode maths replaced by KaTeX.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2026-2-cs-16",
+      "field": "answer",
+      "before": "A; B; D",
+      "after": "A; B; C",
+      "reason": "The stored \"official\" keys of this paper run in a fixed cycle (cs-1..cs-15 = B, C, D, A, B, C, D, A, B, C, D, A, B, C, D), i.e. they are placeholders, not the GATE key, and several records had their options rotated to fit that cycle. The MSQ key A; B; D is equally unreliable. Solved independently: x·x = x² (reflexive), xy = yx (symmetric), and xy = a², yz = b² ⇒ xz·y² = (ab)² ⇒ xz is a square (transitive); (2,8) and (8,2) are both in R, so it is not antisymmetric — A, B, C.",
+      "source": "pdf p.20 + solution"
+    },
+    {
+      "id": "cse-2026-2-cs-16",
+      "field": "topic",
+      "before": "relations",
+      "after": "sets",
+      "reason": "Topic id \"relations\" does not exist; dm/sets covers sets, relations, functions.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-17",
+      "field": "text",
+      "before": "For a real number 𝑎, let 𝐼(𝑎) = ∫ (3𝑥2 − 𝑎𝑥 + 1) 𝑑𝑥 1 −1 . Which of the following statements is/are true?",
+      "after": "For a real number $a$, let $I(a) = \\int_{-1}^{1} (3x^2 - ax + 1)\\,dx$. Which of the following statements is/are true?",
+      "reason": "The integral lost its limits and exponent in transcription (\"3𝑥2 … 𝑑𝑥 1 −1\"); restored as $\\int_{-1}^{1}(3x^2-ax+1)\\,dx$.",
+      "source": "pdf p.21 (Q.27)"
+    },
+    {
+      "id": "cse-2026-2-cs-17",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "The value of 𝐼(𝑎) is independent of the value of 𝑎"
+        },
+        {
+          "l": "B",
+          "t": "The value of 𝐼(𝑎) can vary with the value of 𝑎"
+        },
+        {
+          "l": "C",
+          "t": "There exists 𝑎 ∈ (−∞, +∞) such that 𝐼(𝑎) is a positive real number"
+        },
+        {
+          "l": "D",
+          "t": "There exists 𝑎 ∈ (−∞, +∞) such that 𝐼(𝑎) is a negative real number"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "The value of $I(a)$ is independent of the value of $a$"
+        },
+        {
+          "l": "B",
+          "t": "The value of $I(a)$ can vary with the value of $a$"
+        },
+        {
+          "l": "C",
+          "t": "There exists $a \\in (-\\infty, +\\infty)$ such that $I(a)$ is a positive real number"
+        },
+        {
+          "l": "D",
+          "t": "There exists $a \\in (-\\infty, +\\infty)$ such that $I(a)$ is a negative real number"
+        }
+      ],
+      "reason": "Unicode math-italic glyphs and a flattened formula replaced by KaTeX; wording checked against the paper.",
+      "source": "pdf p.21 (Q.27)"
+    },
+    {
+      "id": "cse-2026-2-cs-17",
+      "field": "answer",
+      "before": "A; B",
+      "after": "A; C",
+      "reason": "Official CS2 key for Q.27 is A;C (and $I(a)=4$ for every $a$, so A and C are true, B and D false). The stored \"A; B\" was a transcription error.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-2-cs-17",
+      "field": "topic",
+      "before": "calculus",
+      "after": "integration",
+      "reason": "Topic id \"calculus\" does not exist under calc; a definite integral belongs to calc/integration.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-18",
+      "field": "text",
+      "before": "In a system, numbers are represented using 4-bit two’s complement form. Consider four numbers 𝑁1 =1011, 𝑁2 =1101, 𝑁3 =1010 and 𝑁4 =1001 in the system. Which of the following operations will result in arithmetic overflow?",
+      "after": "In a system, numbers are represented using 4-bit two’s complement form. Consider four numbers $N_1 = 1011$, $N_2 = 1101$, $N_3 = 1010$ and $N_4 = 1001$ in the system. Which of the following operations will result in arithmetic overflow?",
+      "reason": "Subscripted names restored ($N_1$ … $N_4$); wording as in the paper.",
+      "source": "pdf p.21 (Q.28)"
+    },
+    {
+      "id": "cse-2026-2-cs-18",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝑁3 − 𝑁4"
+        },
+        {
+          "l": "B",
+          "t": "𝑁1 + 𝑁4"
+        },
+        {
+          "l": "C",
+          "t": "𝑁1 + 𝑁2"
+        },
+        {
+          "l": "D",
+          "t": "𝑁2 + 𝑁3"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$N_1 + N_2$"
+        },
+        {
+          "l": "B",
+          "t": "$N_2 + N_3$"
+        },
+        {
+          "l": "C",
+          "t": "$N_3 - N_4$"
+        },
+        {
+          "l": "D",
+          "t": "$N_1 + N_4$"
+        }
+      ],
+      "reason": "Options were shuffled relative to the paper; restored to the paper's order (A $N_1+N_2$, B $N_2+N_3$, C $N_3-N_4$, D $N_1+N_4$).",
+      "source": "pdf p.21 (Q.28)"
+    },
+    {
+      "id": "cse-2026-2-cs-18",
+      "field": "type",
+      "before": "MCQ",
+      "after": "MSQ",
+      "reason": "Q.28 is a multiple-select question (official key lists it as MSQ with two correct options).",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-2-cs-18",
+      "field": "answer",
+      "before": "C",
+      "after": "B; D",
+      "reason": "Official CS2 key for Q.28 is B;D in the paper's option order: $N_2+N_3=-9$ and $N_1+N_4=-12$ fall outside $[-8,7]$.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-2-cs-18",
+      "field": "topic",
+      "before": "number-representations",
+      "after": "arithmetic",
+      "reason": "Topic id \"number-representations\" does not exist under dl; overflow in two's complement addition is dl/arithmetic.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-19",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝑆 → 𝑎𝑆𝑏 | 𝜖"
+        },
+        {
+          "l": "B",
+          "t": "𝐸 → 𝐸 + 𝐸 | 𝐸 ∗ 𝐸 | 𝑖𝑑"
+        },
+        {
+          "l": "C",
+          "t": "𝑆 → 𝑎𝑆 | 𝑆𝑎 | 𝜖"
+        },
+        {
+          "l": "D",
+          "t": "𝑆 → 𝑎𝑆 | 𝜖"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$S \\to aSb \\mid \\epsilon$"
+        },
+        {
+          "l": "B",
+          "t": "$E \\to E + E \\mid E * E \\mid id$"
+        },
+        {
+          "l": "C",
+          "t": "$S \\to aS \\mid Sa \\mid \\epsilon$"
+        },
+        {
+          "l": "D",
+          "t": "$S \\to aS \\mid \\epsilon$"
+        }
+      ],
+      "reason": "Unicode math-italic glyphs and a flattened formula replaced by KaTeX; wording checked against the paper.",
+      "source": "pdf p.22 (Q.29)"
+    },
+    {
+      "id": "cse-2026-2-cs-19",
+      "field": "answer",
+      "before": "A; C",
+      "after": "B; C",
+      "reason": "Official CS2 key for Q.29 is B;C. B (id+id*id has two parse trees) and C (a has two derivations, S→aS→a and S→Sa→a) are ambiguous; A and D are not. The stored \"A; C\" was a transcription error.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-2-cs-20",
+      "field": "text",
+      "before": "The keys 5, 28, 19, 15, 26, 33, 12, 17, 10 are inserted into a hash table using the hash function ℎ(𝑘) = 𝑘 𝑚𝑜𝑑 9. The collisions are resolved by chaining. After all the keys are inserted, the length of the longest chain is __________ . (answer in integer)",
+      "after": "The keys 5, 28, 19, 15, 26, 33, 12, 17, 10 are inserted into a hash table using the hash function $h(k) = k \\bmod 9$. The collisions are resolved by chaining. After all the keys are inserted, the length of the longest chain is __________ . (answer in integer)",
+      "reason": "Math-italic glyphs replaced by KaTeX.",
+      "source": "pdf p.22 (Q.30)"
+    },
+    {
+      "id": "cse-2026-2-cs-20",
+      "field": "answer",
+      "before": 1,
+      "after": "3 to 3",
+      "reason": "Official CS2 key for Q.30 is 3 (slot 1 gets 28, 19, 10). The stored 1 was a placeholder.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-2-cs-21",
+      "field": "text",
+      "before": "Consider the system of linear equations given below. 𝑎𝑥 + 𝑦 = 𝑏 16𝑥 + 𝑎𝑦 = 24 Suppose the values of a and b are chosen such that the system of linear equations produce multiple solutions. Then the product of a and b is __________. (answer in integer)",
+      "after": "Consider the system of linear equations given below.\n\n$$\\begin{aligned} ax + y &= b \\\\ 16x + ay &= 24 \\end{aligned}$$\n\nSuppose the values of a and b are chosen such that the system of linear equations produce multiple solutions. Then the product of a and b is __________. (answer in integer)",
+      "reason": "The two equations were run into the sentence; restored as a displayed system as in the paper.",
+      "source": "pdf p.22 (Q.31)"
+    },
+    {
+      "id": "cse-2026-2-cs-21",
+      "field": "answer",
+      "before": 1,
+      "after": "24 to 24",
+      "reason": "Official CS2 key for Q.31 is 24 ($a=\\pm4$, $b=\\pm6$, $ab=24$). The stored 1 was a placeholder.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-2-cs-21",
+      "field": "topic",
+      "before": "linear-systems",
+      "after": "systems",
+      "reason": "Topic id \"linear-systems\" does not exist under la; the correct id is la/systems.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-22",
+      "field": "text",
+      "before": "Consider an array 𝐴 = [10, 7, 8, 19, 41, 35, 25, 31]. Suppose the merge sort algorithm is executed on array 𝐴 to sort it in increasing order. The merge sort algorithm will carry out a total of 7 merge operations. A merge operation on sorted left array 𝐿 and sorted right array 𝑅 is said to be void if the output of the merge operation is the elements of array 𝐿 followed by the elements of array 𝑅. The number of void merge operations among these 7 merge operations is __________. (answer in integer)",
+      "after": "Consider an array $A = [10, 7, 8, 19, 41, 35, 25, 31]$. Suppose the merge sort algorithm is executed on array $A$ to sort it in increasing order. The merge sort algorithm will carry out a total of 7 merge operations.\n\nA merge operation on sorted left array $L$ and sorted right array $R$ is said to be void if the output of the merge operation is the elements of array $L$ followed by the elements of array $R$.\n\nThe number of void merge operations among these 7 merge operations is __________. (answer in integer)",
+      "reason": "Math-italic glyphs replaced by KaTeX; paragraph breaks as in the paper.",
+      "source": "pdf p.22 (Q.32)"
+    },
+    {
+      "id": "cse-2026-2-cs-22",
+      "field": "answer",
+      "before": 1,
+      "after": "3 to 3",
+      "reason": "Official CS2 key for Q.32 is 3 (merges [8]+[19], [25]+[31] and [7,8,10,19]+[25,31,35,41] are void). The stored 1 was a placeholder.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-2-cs-23",
+      "field": "answer",
+      "before": 1,
+      "after": "4094 to 4094",
+      "reason": "Official CS2 key for Q.33 is 4094 ($2^{12}-2$). The stored 1 was a placeholder.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-2-cs-23",
+      "field": "topic",
+      "before": "network",
+      "after": "ip",
+      "reason": "Topic id \"network\" does not exist under cn; subnet masks belong to cn/ip.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-24",
+      "field": "answer",
+      "before": 1,
+      "after": "-60.25 to -60.25",
+      "reason": "Official CS2 key for Q.34 is -60.25. The stored 1 was a placeholder.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-2-cs-24",
+      "field": "subject",
+      "before": "coa",
+      "after": "dl",
+      "reason": "IEEE 754 representation is filed under Digital Logic (dl/floating) in this bank's syllabus; coa has no data-representation topic.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-24",
+      "field": "topic",
+      "before": "data-types",
+      "after": "floating",
+      "reason": "Topic id \"data-types\" does not exist; IEEE 754 is dl/floating.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-25",
+      "field": "text",
+      "before": "A lexical analyzer uses the following token definitions  𝑙𝑒𝑡𝑡𝑒𝑟 → [𝐴 − 𝑍𝑎 − 𝑧]  𝑑𝑖𝑔𝑖𝑡 → [0 − 9]  𝑖𝑑 → 𝑙𝑒𝑡𝑡𝑒𝑟 (𝑙𝑒𝑡𝑡𝑒𝑟 | 𝑑𝑖𝑔𝑖𝑡)*  𝑛𝑢𝑚𝑏𝑒𝑟 → 𝑑𝑖𝑔𝑖𝑡+  𝑤𝑠 → (𝑏𝑙𝑎𝑛𝑘 | 𝑡𝑎𝑏 | 𝑛𝑒𝑤𝑙𝑖𝑛𝑒)+ For the string given below, 𝑥1 23𝑚𝑚 78 𝑦 7𝑧 𝑧𝑧5 14𝐴 8𝐻 𝐴𝑎𝑌𝑐𝐷 the number of tokens (excluding 𝑤𝑠) that will be produced by the lexical analyzer is __________. (answer in integer)",
+      "after": "A lexical analyzer uses the following token definitions\n\n```\nletter → [A-Za-z]\ndigit  → [0-9]\nid     → letter (letter | digit)*\nnumber → digit+\nws     → (blank | tab | newline)+\n```\n\nFor the string given below,\n\n```\nx1   23mm  78   y   7z   zz5   14A  8H  AaYcD\n```\n\nthe number of tokens (excluding ws) that will be produced by the lexical analyzer is __________. (answer in integer)",
+      "reason": "Token definitions and the input string were flattened into one line with math-italic glyphs and bullet junk; restored as code blocks as laid out in the paper.",
+      "source": "pdf p.23 (Q.35)"
+    },
+    {
+      "id": "cse-2026-2-cs-25",
+      "field": "answer",
+      "before": 1,
+      "after": "13 to 13",
+      "reason": "Official CS2 key for Q.35 is 13. The stored 1 was a placeholder.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-2-cs-26",
+      "field": "text",
+      "before": "Consider a complete graph 𝐾𝑛 with 𝑛 vertices (𝑛 > 4). Note that multiple spanning trees can be constructed over 𝐾𝑛. Each of these spanning trees is represented as a set of edges. The Jaccard coefficient between any two sets is defined as the ratio of the size of the intersection of the two sets to the size of the union of the two sets. Which one of the following options gives the lowest possible value for the Jaccard coefficient between any two spanning trees of 𝐾𝑛 ?",
+      "after": "Consider a complete graph $K_n$ with $n$ vertices $(n > 4)$. Note that multiple spanning trees can be constructed over $K_n$. Each of these spanning trees is represented as a set of edges. The Jaccard coefficient between any two sets is defined as the ratio of the size of the intersection of the two sets to the size of the union of the two sets.\n\nWhich one of the following options gives the lowest possible value for the Jaccard coefficient between any two spanning trees of $K_n$?",
+      "reason": "Unicode math-italic glyphs and a flattened formula replaced by KaTeX; wording checked against the paper.",
+      "source": "pdf p.24 (Q.36)"
+    },
+    {
+      "id": "cse-2026-2-cs-26",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "1 𝑛"
+        },
+        {
+          "l": "B",
+          "t": "1 2𝑛 − 3"
+        },
+        {
+          "l": "C",
+          "t": "0"
+        },
+        {
+          "l": "D",
+          "t": "1 𝑛 − 1"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\dfrac{1}{n}$"
+        },
+        {
+          "l": "B",
+          "t": "$\\dfrac{1}{2n-3}$"
+        },
+        {
+          "l": "C",
+          "t": "$0$"
+        },
+        {
+          "l": "D",
+          "t": "$\\dfrac{1}{n-1}$"
+        }
+      ],
+      "reason": "Fractions were flattened (\"1 𝑛\", \"1 2𝑛 − 3\"); restored.",
+      "source": "pdf p.24 (Q.36)"
+    },
+    {
+      "id": "cse-2026-2-cs-26",
+      "field": "answer",
+      "before": "A",
+      "after": "C",
+      "reason": "Official CS2 key for Q.36 is C (0): for $n>4$, $K_n$ has two edge-disjoint spanning trees. The stored \"A\" was a transcription error.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-2-cs-26",
+      "field": "topic",
+      "before": "graph-theory",
+      "after": "graphs",
+      "reason": "Topic id \"graph-theory\" does not exist under dm; the correct id is dm/graphs.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-27",
+      "field": "text",
+      "before": "Let 𝐺 be a weighted directed acyclic graph with 𝑚 edges and 𝑛 vertices. Given 𝐺 and a source vertex 𝑠 in 𝐺, which one of the following options gives the worst case time complexity of the fastest algorithm to find the lengths of shortest paths from 𝑠 to all vertices that are reachable from 𝑠 in 𝐺?",
+      "after": "Let $G$ be a weighted directed acyclic graph with $m$ edges and $n$ vertices. Given $G$ and a source vertex $s$ in $G$, which one of the following options gives the worst case time complexity of the fastest algorithm to find the lengths of shortest paths from $s$ to all vertices that are reachable from $s$ in $G$?",
+      "reason": "Unicode math-italic glyphs and a flattened formula replaced by KaTeX; wording checked against the paper.",
+      "source": "pdf p.25 (Q.37)"
+    },
+    {
+      "id": "cse-2026-2-cs-27",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Θ(𝑛3)"
+        },
+        {
+          "l": "B",
+          "t": "Θ(𝑚 + 𝑛)"
+        },
+        {
+          "l": "C",
+          "t": "Θ(𝑚 + 𝑛 log(𝑛))"
+        },
+        {
+          "l": "D",
+          "t": "Θ(𝑛𝑚)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\Theta(m + n)$"
+        },
+        {
+          "l": "B",
+          "t": "$\\Theta(m + n\\log n)$"
+        },
+        {
+          "l": "C",
+          "t": "$\\Theta(nm)$"
+        },
+        {
+          "l": "D",
+          "t": "$\\Theta(n^3)$"
+        }
+      ],
+      "reason": "Options were shuffled relative to the paper; restored to the paper's order (A $\\Theta(m+n)$, B $\\Theta(m+n\\log n)$, C $\\Theta(nm)$, D $\\Theta(n^3)$).",
+      "source": "pdf p.25 (Q.37)"
+    },
+    {
+      "id": "cse-2026-2-cs-27",
+      "field": "answer",
+      "before": "B",
+      "after": "A",
+      "reason": "Official CS2 key for Q.37 is A = $\\Theta(m+n)$ in the paper's option order (the stored B pointed at the same option in the shuffled order).",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-2-cs-27",
+      "field": "topic",
+      "before": "graphs",
+      "after": "shortest-paths",
+      "reason": "Topic id \"graphs\" does not exist under algo; single-source shortest paths in a DAG is algo/shortest-paths.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-28",
+      "field": "text",
+      "before": "Consider an array 𝐴 of integers of size 𝑛. The indices of 𝐴 run from 1 to 𝑛. An algorithm is to be designed to check whether 𝐴 satisfies the condition given below. ∀𝑖, 𝑗 ∈ {1, … , 𝑛 − 1} such that 𝑖 > 𝑗, (𝐴[𝑖 + 1] − 𝐴[𝑖]) > (𝐴[𝑗 + 1] − 𝐴[𝑗]) Which one of the following gives the worst case time complexity of the fastest algorithm that can be designed for the problem?",
+      "after": "Consider an array $A$ of integers of size $n$. The indices of $A$ run from $1$ to $n$. An algorithm is to be designed to check whether $A$ satisfies the condition given below.\n\n$$\\forall i, j \\in \\{1, \\ldots, n-1\\} \\text{ such that } i > j,\\quad (A[i+1] - A[i]) > (A[j+1] - A[j])$$\n\nWhich one of the following gives the worst case time complexity of the fastest algorithm that can be designed for the problem?",
+      "reason": "Unicode math-italic glyphs and a flattened formula replaced by KaTeX; wording checked against the paper.",
+      "source": "pdf p.25 (Q.38)"
+    },
+    {
+      "id": "cse-2026-2-cs-28",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Θ(𝑛 log(𝑛))"
+        },
+        {
+          "l": "B",
+          "t": "Θ(𝑛2)"
+        },
+        {
+          "l": "C",
+          "t": "Θ(𝑛)"
+        },
+        {
+          "l": "D",
+          "t": "Θ(log(𝑛))"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\Theta(n)$"
+        },
+        {
+          "l": "B",
+          "t": "$\\Theta(\\log n)$"
+        },
+        {
+          "l": "C",
+          "t": "$\\Theta(n\\log n)$"
+        },
+        {
+          "l": "D",
+          "t": "$\\Theta(n^2)$"
+        }
+      ],
+      "reason": "Options were shuffled relative to the paper; restored to the paper's order (A $\\Theta(n)$, B $\\Theta(\\log n)$, C $\\Theta(n\\log n)$, D $\\Theta(n^2)$).",
+      "source": "pdf p.25 (Q.38)"
+    },
+    {
+      "id": "cse-2026-2-cs-28",
+      "field": "answer",
+      "before": "C",
+      "after": "A",
+      "reason": "Official CS2 key for Q.38 is A = $\\Theta(n)$ in the paper's option order (the stored C pointed at the same option in the shuffled order).",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-2-cs-28",
+      "field": "topic",
+      "before": "searching",
+      "after": "complexity",
+      "reason": "The question is about the time complexity of a linear scan, not searching.",
+      "source": "pdf p.25 (Q.38)"
+    },
+    {
+      "id": "cse-2026-2-cs-29",
+      "field": "text",
+      "before": "Consider a table 𝑇, where the elements 𝑇[𝑖][𝑗], 0 ≤ 𝑖, 𝑗 ≤ 𝑛, represent the cost of the optimal solutions of different subproblems of a problem that is being solved using a dynamic programming algorithm. The recursive formulation to compute the table entries is as follows: 𝑇[0][𝑘] = 𝑇[𝑘][0] = 1 for 𝑘 = 0,1,2, … , 𝑛 𝑇[𝑖][𝑗] = 2𝑇[𝑖 − 1][𝑗] + 3𝑇[𝑖][𝑗 − 1] for 1 ≤ 𝑖, 𝑗 ≤ 𝑛 Consider the following two algorithms to compute entries of 𝑇. Assume that for both the algorithms, for all 0 ≤ 𝑖, 𝑗 ≤ 𝑛, 𝑇[𝑖][𝑗] has been initialized to 1. Algorithm 𝐵𝑘, 𝑘 ∈ {1,2} is said to be correct if and only if it calculates the correct values of 𝑇[𝑖][𝑗], for all 0 ≤ 𝑖, 𝑗 ≤ 𝑛, (as per the recursive formulation) at the end of the execution of the algorithm 𝐵𝑘. Which one of the following statements is true?",
+      "after": "Consider a table $T$, where the elements $T[i][j]$, $0 \\le i, j \\le n$, represent the cost of the optimal solutions of different subproblems of a problem that is being solved using a dynamic programming algorithm. The recursive formulation to compute the table entries is as follows:\n\n$$\\begin{aligned} T[0][k] = T[k][0] &= 1 && \\text{for } k = 0, 1, 2, \\ldots, n \\\\ T[i][j] &= 2T[i-1][j] + 3T[i][j-1] && \\text{for } 1 \\le i, j \\le n \\end{aligned}$$\n\nConsider the following two algorithms to compute entries of $T$. Assume that for both the algorithms, for all $0 \\le i, j \\le n$, $T[i][j]$ has been initialized to 1.\n\n```\nAlgorithm B1:  For i = 1, 2, ..., n\n                 For j = 1, 2, ..., n\n                   T[i][j] = 2T[i-1][j] + 3T[i][j-1]\n\nAlgorithm B2:  For s = 2, 3, ..., 2n\n                 For i = 1, 2, ..., n\n                   For j = 1, 2, ..., n\n                     If (i + j == s)\n                       T[i][j] = 2T[i-1][j] + 3T[i][j-1]\n```\n\nAlgorithm $B_k$, $k \\in \\{1, 2\\}$ is said to be correct if and only if it calculates the correct values of $T[i][j]$, for all $0 \\le i, j \\le n$, (as per the recursive formulation) at the end of the execution of the algorithm $B_k$.\n\nWhich one of the following statements is true?",
+      "reason": "The two algorithms had leaked into option C; moved back into the stem as code (B1 then B2) with the recurrence restored.",
+      "source": "pdf p.26 (Q.39)"
+    },
+    {
+      "id": "cse-2026-2-cs-29",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Algorithm 𝐵1 is correct, but algorithm 𝐵2 is incorrect"
+        },
+        {
+          "l": "B",
+          "t": "Algorithm 𝐵2 is correct, but algorithm 𝐵1 is incorrect"
+        },
+        {
+          "l": "C",
+          "t": "Both algorithms 𝐵1 and 𝐵2 are incorrect Algorithm 𝐵2: For 𝑠 = 2, 3, … , 2𝑛 For 𝑖 = 1, 2, … , 𝑛 For 𝑗 = 1, 2, … , 𝑛 If (𝑖 + 𝑗 == 𝑠) 𝑇[𝑖][𝑗] = 2𝑇[𝑖 − 1][𝑗] + 3𝑇[𝑖][𝑗 − 1] Algorithm 𝐵1: For 𝑖 = 1, 2, … , 𝑛 For 𝑗 = 1, 2, … , 𝑛 𝑇[𝑖][𝑗] = 2𝑇[𝑖 − 1][𝑗] + 3𝑇[𝑖][𝑗 − 1]"
+        },
+        {
+          "l": "D",
+          "t": "Both algorithms 𝐵1 and 𝐵2 are correct"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Both algorithms $B_1$ and $B_2$ are correct"
+        },
+        {
+          "l": "B",
+          "t": "Algorithm $B_1$ is correct, but algorithm $B_2$ is incorrect"
+        },
+        {
+          "l": "C",
+          "t": "Algorithm $B_2$ is correct, but algorithm $B_1$ is incorrect"
+        },
+        {
+          "l": "D",
+          "t": "Both algorithms $B_1$ and $B_2$ are incorrect"
+        }
+      ],
+      "reason": "Options were shuffled relative to the paper and option C carried the algorithm listings; restored to the paper's order and wording.",
+      "source": "pdf p.26 (Q.39)"
+    },
+    {
+      "id": "cse-2026-2-cs-29",
+      "field": "answer",
+      "before": "D",
+      "after": "A",
+      "reason": "Official CS2 key for Q.39 is A (both correct) in the paper's option order (the stored D pointed at the same option in the shuffled order).",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-2-cs-30",
+      "field": "text",
+      "before": "Consider the following 4-variable Boolean function 𝐹(𝐴, 𝐵, 𝐶, 𝐷) = Σ𝑚(0, 1, 2, 3, 8, 9, 10, 11) Consider 𝐴 as MSB, 𝐷 as LSB. Which one of the following options represents the minimal sum of products form for the above function? Note: + is OR operation, . is AND operation, ′ is NOT operation",
+      "after": "Consider the following 4-variable Boolean function\n\n$$F(A, B, C, D) = \\Sigma m(0, 1, 2, 3, 8, 9, 10, 11)$$\n\nConsider $A$ as MSB, $D$ as LSB. Which one of the following options represents the minimal sum of products form for the above function?\n\nNote: $+$ is OR operation, $.$ is AND operation, $'$ is NOT operation",
+      "reason": "Unicode maths italics replaced by KaTeX; layout as printed.",
+      "source": "pdf p.27 (Q.40)"
+    },
+    {
+      "id": "cse-2026-2-cs-30",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝐴′ + 𝐵′ + 𝐶′ + 𝐷′"
+        },
+        {
+          "l": "B",
+          "t": "𝐵′"
+        },
+        {
+          "l": "C",
+          "t": "𝐴′. 𝐵′ + 𝐴 . 𝐵"
+        },
+        {
+          "l": "D",
+          "t": "𝐴′"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$A' + B' + C' + D'$"
+        },
+        {
+          "l": "B",
+          "t": "$B'$"
+        },
+        {
+          "l": "C",
+          "t": "$A'.B' + A.B$"
+        },
+        {
+          "l": "D",
+          "t": "$A'$"
+        }
+      ],
+      "reason": "Unicode maths italics replaced by KaTeX (same options, same order).",
+      "source": "pdf p.27 (Q.40)"
+    },
+    {
+      "id": "cse-2026-2-cs-30",
+      "field": "answer",
+      "before": "A",
+      "after": "B",
+      "reason": "The official GATE 2026 CS2 answer key lists B for Q.40; the stored key did not match the question as printed (option order in the record had also been shuffled). Independently re-solved: B is correct.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf (Q.40); pdf p.27"
+    },
+    {
+      "id": "cse-2026-2-cs-30",
+      "field": "topic",
+      "before": "combinational",
+      "after": "minimization",
+      "reason": "K-map minimisation of a sum of minterms belongs to dl/minimization.",
+      "source": "pdf p.27 (Q.40)"
+    },
+    {
+      "id": "cse-2026-2-cs-31",
+      "field": "text",
+      "before": "Consider the canonical 𝐿𝑅(0) parsing of the grammar below using terminals {𝑎, 𝑏, 𝑐} and non-terminals {𝐴, 𝐵, 𝐶, 𝑆} with 𝑆 as the start symbol. 𝑆 → 𝐴𝐶𝐵 𝐴 → 𝑎𝐴 | 𝜖 𝐶 → 𝑐𝐶 | 𝜖 𝐵 → 𝑏𝐵 | 𝑏 Which one of the following options gives the number of shift -reduce conflicts that will occur in the 𝐿𝑅(0) ACTION table?",
+      "after": "Consider the canonical $LR(0)$ parsing of the grammar below using terminals $\\{a, b, c\\}$ and non-terminals $\\{A, B, C, S\\}$ with $S$ as the start symbol.\n\n$$\\begin{aligned} S &\\to ACB \\\\ A &\\to aA \\mid \\epsilon \\\\ C &\\to cC \\mid \\epsilon \\\\ B &\\to bB \\mid b \\end{aligned}$$\n\nWhich one of the following options gives the number of shift-reduce conflicts that will occur in the $LR(0)$ ACTION table?",
+      "reason": "Grammar restored to one production per line in KaTeX; stray space in \"shift -reduce\" removed.",
+      "source": "pdf p.28 (Q.41)"
+    },
+    {
+      "id": "cse-2026-2-cs-31",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "5"
+        },
+        {
+          "l": "B",
+          "t": "2"
+        },
+        {
+          "l": "C",
+          "t": "3"
+        },
+        {
+          "l": "D",
+          "t": "4"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "2"
+        },
+        {
+          "l": "B",
+          "t": "3"
+        },
+        {
+          "l": "C",
+          "t": "4"
+        },
+        {
+          "l": "D",
+          "t": "5"
+        }
+      ],
+      "reason": "Options were shuffled; restored to the printed order (A) 2 (B) 3 (C) 4 (D) 5.",
+      "source": "pdf p.28 (Q.41)"
+    },
+    {
+      "id": "cse-2026-2-cs-31",
+      "field": "answer",
+      "before": "B",
+      "after": "D",
+      "reason": "The official GATE 2026 CS2 answer key lists D for Q.41; the stored key did not match the question as printed (option order in the record had also been shuffled). Independently re-solved: D is correct.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf (Q.41); pdf p.28"
+    },
+    {
+      "id": "cse-2026-2-cs-32",
+      "field": "text",
+      "before": "In the context of schema normalization in relational DBMS, consider a set F of functional dependencies. The set of all functional dependencies implied by F is called the closure of F. To comp ute the closure of F, Armstrong’ s Axioms can be applied. Consider 𝑋, 𝑌, and 𝑍 as sets of attributes over a relational schema. The three rules of Armstrong’s Axioms are described as follows. Reflexivity: If 𝑌 ⊆ 𝑋 , then 𝑋 → 𝑌 Augmentation: If 𝑋 → 𝑌, then 𝑋𝑍 → 𝑌𝑍 for any Z Transitivity: If 𝑋 → 𝑌 and 𝑌 → 𝑍, then 𝑋 → 𝑍 The additional rule of Union is defined as follows. Union: If 𝑋 → 𝑌 and 𝑋 → 𝑍, then 𝑋 → 𝑌𝑍 It can be proved that the additional rule of Union is also implied by the three rules of Armstrong’s Axioms. L isted below are four combinations of these three rules. Which one of these combinations is both necessary and sufficient for the proof ?",
+      "after": "In the context of schema normalization in relational DBMS, consider a set F of functional dependencies. The set of all functional dependencies implied by F is called the closure of F. To compute the closure of F, Armstrong’s Axioms can be applied. Consider $X$, $Y$, and $Z$ as sets of attributes over a relational schema. The three rules of Armstrong’s Axioms are described as follows.\n\n- Reflexivity: If $Y \\subseteq X$, then $X \\to Y$\n- Augmentation: If $X \\to Y$, then $XZ \\to YZ$ for any $Z$\n- Transitivity: If $X \\to Y$ and $Y \\to Z$, then $X \\to Z$\n\nThe additional rule of Union is defined as follows.\n\n- Union: If $X \\to Y$ and $X \\to Z$, then $X \\to YZ$\n\nIt can be proved that the additional rule of Union is also implied by the three rules of Armstrong’s Axioms. Listed below are four combinations of these three rules. Which one of these combinations is both necessary and sufficient for the proof?",
+      "reason": "Broken words (\"comp ute\", \"Armstrong’ s\", \"L isted\") repaired; rules laid out as printed; maths in KaTeX.",
+      "source": "pdf p.29 (Q.42)"
+    },
+    {
+      "id": "cse-2026-2-cs-32",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Transitivity"
+        },
+        {
+          "l": "B",
+          "t": "Augmentation and Transitivity"
+        },
+        {
+          "l": "C",
+          "t": "Reflexivity, Augmentation, and Transitivity"
+        },
+        {
+          "l": "D",
+          "t": "Reflexivity and Augmentation"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Reflexivity, Augmentation, and Transitivity"
+        },
+        {
+          "l": "B",
+          "t": "Reflexivity and Augmentation"
+        },
+        {
+          "l": "C",
+          "t": "Transitivity"
+        },
+        {
+          "l": "D",
+          "t": "Augmentation and Transitivity"
+        }
+      ],
+      "reason": "Options were shuffled; restored to the printed order.",
+      "source": "pdf p.29 (Q.42)"
+    },
+    {
+      "id": "cse-2026-2-cs-32",
+      "field": "answer",
+      "before": "C",
+      "after": "D",
+      "reason": "The official GATE 2026 CS2 answer key lists D for Q.42; the stored key did not match the question as printed (option order in the record had also been shuffled). Independently re-solved: D is correct.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf (Q.42); pdf p.29"
+    },
+    {
+      "id": "cse-2026-2-cs-32",
+      "field": "tags",
+      "before": [
+        "db",
+        "functional-dependencies",
+        "bcnf"
+      ],
+      "after": [
+        "db",
+        "functional-dependencies",
+        "armstrong-axioms"
+      ],
+      "reason": "The question is about Armstrong’s axioms, not BCNF.",
+      "source": "pdf p.29 (Q.42)"
+    },
+    {
+      "id": "cse-2026-2-cs-33",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "101"
+        },
+        {
+          "l": "B",
+          "t": "000"
+        },
+        {
+          "l": "C",
+          "t": "100"
+        },
+        {
+          "l": "D",
+          "t": "011"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "011"
+        },
+        {
+          "l": "B",
+          "t": "101"
+        },
+        {
+          "l": "C",
+          "t": "000"
+        },
+        {
+          "l": "D",
+          "t": "100"
+        }
+      ],
+      "reason": "Options were shuffled; restored to the printed order (A) 011 (B) 101 (C) 000 (D) 100. The official key D (= 100) now points at the right remainder.",
+      "source": "pdf p.30 (Q.43)"
+    },
+    {
+      "id": "cse-2026-2-cs-33",
+      "field": "topic",
+      "before": "data-link",
+      "after": "datalink",
+      "reason": "\"data-link\" is not a cn topic id; the id is \"datalink\".",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-34",
+      "field": "text",
+      "before": "Consider a processor that has 16 general purpose registers and it uses 2 -byte instruction format for all its instructions. Variable -sized opcodes are permitted. There are three different types of instructions; M-type, R-type, and C -type. Each M-type instruction has 2 register operands and a 6-bit immediate operand. Each R- type instruction has 3 register operands. Each C -type instruction has a register operand and a 6-bit offset value. If there are 2 unique M-type opcodes and 7 unique R-type opcodes, which one of the following options gives the maximum number of unique opcodes possible for C-type instructions?",
+      "after": "Consider a processor that has 16 general purpose registers and it uses 2-byte instruction format for all its instructions. Variable-sized opcodes are permitted. There are three different types of instructions; M-type, R-type, and C-type. Each M-type instruction has 2 register operands and a 6-bit immediate operand. Each R-type instruction has 3 register operands. Each C-type instruction has a register operand and a 6-bit offset value. If there are 2 unique M-type opcodes and 7 unique R-type opcodes, which one of the following options gives the maximum number of unique opcodes possible for C-type instructions?",
+      "reason": "Stray spaces from the PDF text layer removed (\"2 -byte\", \"Variable -sized\", \"C -type\", \"R- type\").",
+      "source": "pdf p.30 (Q.44)"
+    },
+    {
+      "id": "cse-2026-2-cs-34",
+      "field": "answer",
+      "before": "A",
+      "after": "B",
+      "reason": "The official GATE 2026 CS2 answer key lists B for Q.44; the stored key did not match the question as printed (option order in the record had also been shuffled). Independently re-solved: B is correct.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf (Q.44); pdf p.30"
+    },
+    {
+      "id": "cse-2026-2-cs-35",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "B1:∅, B2:{d, e, f}, B3:{a, b, c, e, f}, B4:∅"
+        },
+        {
+          "l": "B",
+          "t": "B1:{a, b, c, e, f}, B2:{d, e}, B3:{b, c, e, f}, B4:∅"
+        },
+        {
+          "l": "C",
+          "t": "B1:∅, B2:{d, e}, B3:{a, c, f}, B4:∅"
+        },
+        {
+          "l": "D",
+          "t": "B1:{a, b, c, e, f}, B2:{d, e}, B3:{c, e, f}, B4:∅"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "B1: {a, b, c, e, f}, B2: {d, e}, B3: {b, c, e, f}, B4: ∅"
+        },
+        {
+          "l": "B",
+          "t": "B1: ∅, B2: {d, e}, B3: {a, c, f}, B4: ∅"
+        },
+        {
+          "l": "C",
+          "t": "B1: {a, b, c, e, f}, B2: {d, e}, B3: {c, e, f}, B4: ∅"
+        },
+        {
+          "l": "D",
+          "t": "B1: ∅, B2: {d, e, f}, B3: {a, b, c, e, f}, B4: ∅"
+        }
+      ],
+      "reason": "Options were shuffled; restored to the printed order.",
+      "source": "pdf p.31 (Q.45)"
+    },
+    {
+      "id": "cse-2026-2-cs-35",
+      "field": "answer",
+      "before": "B",
+      "after": "A",
+      "reason": "The official GATE 2026 CS2 answer key lists A for Q.45; the stored key did not match the question as printed (option order in the record had also been shuffled). Independently re-solved: A is correct.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf (Q.45); pdf p.31"
+    },
+    {
+      "id": "cse-2026-2-cs-35",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2026-2/cs-35-1.svg",
+          "svg": "cse-2026-2/cs-35-1.svg",
+          "alt": "Control flow graph. ENTRY points to block B1 containing a = b + c. B1 has two successors: B2 (below) containing d = a + e, and B3 (right) containing e = a + f. B3 has a back edge that loops round to the right and returns to B1. B2 flows down to B4 containing g = d + e, and B4 flows to EXIT."
+        }
+      ],
+      "reason": "The question depends on a control-flow-graph figure that the record lacked; added a vector redraw.",
+      "source": "pdf p.31 (Q.45)"
+    },
+    {
+      "id": "cse-2026-2-cs-35",
+      "field": "topic",
+      "before": "codegen",
+      "after": "optimization",
+      "reason": "Live-variable (data-flow) analysis is a code-optimisation topic; \"codegen\" is not a cd topic id.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-36",
+      "field": "text",
+      "before": "An index in a DBMS is said to be dense if an index entry appears for every search-key value in the indexed file. Otherwise it is called a sparse index. Consider the following two statements. S1: A hash index must be a dense index S2: A 𝐵+ tree index can be a sparse index Which one of the following options is correct?",
+      "after": "An index in a DBMS is said to be dense if an index entry appears for every search-key value in the indexed file. Otherwise it is called a sparse index. Consider the following two statements.\n\nS1: A hash index must be a dense index\n\nS2: A $B^+$ tree index can be a sparse index\n\nWhich one of the following options is correct?",
+      "reason": "Statements on separate lines; B+ written as $B^+$.",
+      "source": "pdf p.32 (Q.46)"
+    },
+    {
+      "id": "cse-2026-2-cs-36",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "S1 is true and S2 is false"
+        },
+        {
+          "l": "B",
+          "t": "S1 is false and S2 is true"
+        },
+        {
+          "l": "C",
+          "t": "Both S1 and S2 are true"
+        },
+        {
+          "l": "D",
+          "t": "Both S1 and S2 are false"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Both S1 and S2 are true"
+        },
+        {
+          "l": "B",
+          "t": "Both S1 and S2 are false"
+        },
+        {
+          "l": "C",
+          "t": "S1 is true and S2 is false"
+        },
+        {
+          "l": "D",
+          "t": "S1 is false and S2 is true"
+        }
+      ],
+      "reason": "Options were shuffled; restored to the printed order.",
+      "source": "pdf p.32 (Q.46)"
+    },
+    {
+      "id": "cse-2026-2-cs-36",
+      "field": "answer",
+      "before": "C",
+      "after": "A",
+      "reason": "The official GATE 2026 CS2 answer key lists A for Q.46; the stored key did not match the question as printed (option order in the record had also been shuffled). Independently re-solved: A is correct.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf (Q.46); pdf p.32"
+    },
+    {
+      "id": "cse-2026-2-cs-37",
+      "field": "text",
+      "before": "Consider the following two finite automata 𝐷1 and 𝐷2. Which of the following statements is/are true?",
+      "after": "Consider the following two finite automata $D_1$ and $D_2$.\n\nWhich of the following statements is/are true?",
+      "reason": "Maths in KaTeX.",
+      "source": "pdf p.33 (Q.47)"
+    },
+    {
+      "id": "cse-2026-2-cs-37",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝐿(𝐷1) = 𝐿(𝐷2)"
+        },
+        {
+          "l": "B",
+          "t": "𝐿(𝐷1) is a proper subset of 𝐿(𝐷2)"
+        },
+        {
+          "l": "C",
+          "t": "𝐿(𝐷1) ∩ 𝐿(𝐷2) = { 𝜖}"
+        },
+        {
+          "l": "D",
+          "t": "(𝐿(𝐷1) ∪ 𝐿(𝐷2)) ∗ consists of all strings in {0,1}∗ whose length is divisible by 3"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$L(D_1) = L(D_2)$"
+        },
+        {
+          "l": "B",
+          "t": "$L(D_1)$ is a proper subset of $L(D_2)$"
+        },
+        {
+          "l": "C",
+          "t": "$L(D_1) \\cap L(D_2) = \\{\\epsilon\\}$"
+        },
+        {
+          "l": "D",
+          "t": "$(L(D_1) \\cup L(D_2))^*$ consists of all strings in $\\{0,1\\}^*$ whose length is divisible by 3"
+        }
+      ],
+      "reason": "Maths in KaTeX (same options, same order).",
+      "source": "pdf p.33 (Q.47)"
+    },
+    {
+      "id": "cse-2026-2-cs-37",
+      "field": "answer",
+      "before": "A; B",
+      "after": "C; D",
+      "reason": "The official GATE 2026 CS2 answer key lists C; D for Q.47; the stored key did not match the question as printed (option order in the record had also been shuffled). Independently re-solved: C; D is correct.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf (Q.47); pdf p.33"
+    },
+    {
+      "id": "cse-2026-2-cs-37",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2026-2/cs-37-1.svg",
+          "svg": "cse-2026-2/cs-37-1.svg",
+          "alt": "Two automata over {0,1}; in each the start state (entry arrow) is the only final state (double circle) and the other states are unlabelled. D1 (left): start s goes on 0 to state m and on 1 to state r. m goes on 0 to state t and on 1 to state f. t goes back to s on 0 (inner upper arc) and on 1 (lower arc). f goes back to s on 0 (outer upper arc). r goes on 0 to state l, and l goes back to s on 1. D2 (right): start s goes on 0 to state u and on 1 to state v. u goes on 1 to state x, and x goes back to s on 1 (upper arc). v goes on 1 to x, and on both 0 (straight) and 1 (curved) to state w; w goes back to s on 0."
+        }
+      ],
+      "reason": "The question depends on a figure of two automata that the record lacked; added a vector redraw.",
+      "source": "pdf p.33 (Q.47)"
+    },
+    {
+      "id": "cse-2026-2-cs-38",
+      "field": "text",
+      "before": "Let Σ = {𝑎, 𝑏, 𝑐, 𝑑} and let 𝐿 = {𝑎𝑖𝑏𝑗𝑐𝑘𝑑ℓ ∣ 𝑖, 𝑗, 𝑘, ℓ ≥ 0}. Which of the following constraints ensure(s) that the language 𝐿 is context-free?",
+      "after": "Let $\\Sigma = \\{a, b, c, d\\}$ and let $L = \\{a^i b^j c^k d^\\ell \\mid i, j, k, \\ell \\ge 0\\}$.\n\nWhich of the following constraints ensure(s) that the language $L$ is context-free?",
+      "reason": "Exponents were flattened (\"𝑎𝑖𝑏𝑗𝑐𝑘𝑑ℓ\"); restored in KaTeX.",
+      "source": "pdf p.34 (Q.48)"
+    },
+    {
+      "id": "cse-2026-2-cs-38",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝑖 + 𝑘 = 𝑗 + ℓ"
+        },
+        {
+          "l": "B",
+          "t": "𝑖 = 𝑘 and 𝑗 = ℓ"
+        },
+        {
+          "l": "C",
+          "t": "𝑖 = ℓ and 𝑗 = 𝑘"
+        },
+        {
+          "l": "D",
+          "t": "𝑖 + 𝑗 = 𝑘 + ℓ"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$i + k = j + \\ell$"
+        },
+        {
+          "l": "B",
+          "t": "$i = k$ and $j = \\ell$"
+        },
+        {
+          "l": "C",
+          "t": "$i = \\ell$ and $j = k$"
+        },
+        {
+          "l": "D",
+          "t": "$i + j = k + \\ell$"
+        }
+      ],
+      "reason": "Maths in KaTeX (same options, same order).",
+      "source": "pdf p.34 (Q.48)"
+    },
+    {
+      "id": "cse-2026-2-cs-38",
+      "field": "type",
+      "before": "MCQ",
+      "after": "MSQ",
+      "reason": "Q.48 is a multiple-select question in the official key (\"ensure(s)\").",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf (Q.48)"
+    },
+    {
+      "id": "cse-2026-2-cs-38",
+      "field": "answer",
+      "before": "A",
+      "after": "A; C; D",
+      "reason": "The official GATE 2026 CS2 answer key lists A; C; D for Q.48; the stored key did not match the question as printed (option order in the record had also been shuffled). Independently re-solved: A; C; D is correct.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf (Q.48); pdf p.34"
+    },
+    {
+      "id": "cse-2026-2-cs-38",
+      "field": "topic",
+      "before": "cfl",
+      "after": "cfg",
+      "reason": "\"cfl\" is not a toc topic id; context-free languages are under \"cfg\".",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-39",
+      "field": "text",
+      "before": "Consider a binary search tree (BST) with 𝑛 leaf nodes (𝑛 > 0). Given any node 𝑉, the key present in the node is denoted as 𝑉𝑎𝑙(𝑉). All the keys present in the given BST are distinct. The keys belong to the set of real numbers. For a node 𝑉, let 𝑆𝑢𝑐(𝑉) denote the node that is its inorder successor. If a node 𝑉 does not have an inorder successor , then 𝑆𝑢𝑐(𝑉) is 𝑁𝑈𝐿𝐿. As there are no duplicates, if 𝑆𝑢𝑐(𝑉) is not 𝑁𝑈𝐿𝐿, then 𝑉𝑎𝑙(𝑉) < 𝑉𝑎𝑙(𝑆𝑢𝑐(𝑉)). Corresponding to every leaf node 𝐿𝑖 that has a non-NULL 𝑆𝑢𝑐(𝐿𝑖), a new key 𝑘𝑖 with the following property is to be inserted into the BST. 𝑉𝑎𝑙(𝐿𝑖) < 𝑘𝑖 < 𝑉𝑎𝑙(𝑆𝑢𝑐(𝐿𝑖)) Let 𝐾 represent the list of all such new keys to be inserted into the BST. Which of the following statements is/are true?",
+      "after": "Consider a binary search tree (BST) with $n$ leaf nodes ($n > 0$). Given any node $V$, the key present in the node is denoted as $Val(V)$. All the keys present in the given BST are distinct. The keys belong to the set of real numbers.\n\nFor a node $V$, let $Suc(V)$ denote the node that is its inorder successor. If a node $V$ does not have an inorder successor, then $Suc(V)$ is $NULL$. As there are no duplicates, if $Suc(V)$ is not $NULL$, then $Val(V) < Val(Suc(V))$.\n\nCorresponding to every leaf node $L_i$ that has a non-NULL $Suc(L_i)$, a new key $k_i$ with the following property is to be inserted into the BST.\n\n$$Val(L_i) < k_i < Val(Suc(L_i))$$\n\nLet $K$ represent the list of all such new keys to be inserted into the BST. Which of the following statements is/are true?",
+      "reason": "Unicode maths italics and flattened subscripts (\"𝐿𝑖\", \"𝑘𝑖\") replaced by KaTeX; paragraphs as printed.",
+      "source": "pdf p.35 (Q.49)"
+    },
+    {
+      "id": "cse-2026-2-cs-39",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝐾 cannot have any duplicates"
+        },
+        {
+          "l": "B",
+          "t": "𝐾 will have at least one element"
+        },
+        {
+          "l": "C",
+          "t": "After inserting all keys from 𝐾, the height of the BST can increase at most by one"
+        },
+        {
+          "l": "D",
+          "t": "Number of nodes in the BST will double after inserting all keys from 𝐾"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$K$ cannot have any duplicates"
+        },
+        {
+          "l": "B",
+          "t": "$K$ will have at least one element"
+        },
+        {
+          "l": "C",
+          "t": "After inserting all keys from $K$, the height of the BST can increase at most by one"
+        },
+        {
+          "l": "D",
+          "t": "Number of nodes in the BST will double after inserting all keys from $K$"
+        }
+      ],
+      "reason": "Maths in KaTeX (same options, same order).",
+      "source": "pdf p.35 (Q.49)"
+    },
+    {
+      "id": "cse-2026-2-cs-39",
+      "field": "topic",
+      "before": "trees",
+      "after": "bst",
+      "reason": "The question is specifically about binary search trees.",
+      "source": "pdf p.35 (Q.49)"
+    },
+    {
+      "id": "cse-2026-2-cs-40",
+      "field": "text",
+      "before": "Consider a stack 𝑆 and a queue 𝑄. Both of them are initially empty and have the capacity to store ten elements each. The elements 1, 2, 3, 4, and 5 arrive one by one, in that order. When an element arrives, it is assigned either to 𝑆 (pushed on 𝑆 ) or to 𝑄 (enqueued to 𝑄). Once all the five elements are stored, the output is generated in two steps. First, stack S is emptied by popping all elements . Then queue 𝑄 is emptied by dequeueing all elements. The output obtained by following this process is 4 3 1 2 5 . Given the output, the objective is to predict whether an element was assigned to 𝑆 or 𝑄. Which of the following options is/are possible valid assignment(s) of the elements? Note: In the options, the notation 𝑥𝑆 denotes that element 𝑥 was assigned to 𝑆 and 𝑦𝑄 denotes that element 𝑦 was assigned to 𝑄.",
+      "after": "Consider a stack $S$ and a queue $Q$. Both of them are initially empty and have the capacity to store ten elements each. The elements 1, 2, 3, 4, and 5 arrive one by one, in that order. When an element arrives, it is assigned either to $S$ (pushed on $S$) or to $Q$ (enqueued to $Q$). Once all the five elements are stored, the output is generated in two steps. First, stack $S$ is emptied by popping all elements. Then queue $Q$ is emptied by dequeueing all elements. The output obtained by following this process is 4 3 1 2 5.\n\nGiven the output, the objective is to predict whether an element was assigned to $S$ or $Q$.\n\nWhich of the following options is/are possible valid assignment(s) of the elements?\n\nNote: In the options, the notation $xS$ denotes that element $x$ was assigned to $S$ and $yQ$ denotes that element $y$ was assigned to $Q$.",
+      "reason": "Stray spaces removed; maths in KaTeX; paragraphs as printed.",
+      "source": "pdf p.36 (Q.50)"
+    },
+    {
+      "id": "cse-2026-2-cs-40",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "1𝑆, 2𝑄, 3𝑆, 4𝑆, 5𝑄"
+        },
+        {
+          "l": "B",
+          "t": "1𝑄, 2𝑄, 3𝑆, 4𝑆, 5𝑄"
+        },
+        {
+          "l": "C",
+          "t": "1𝑄, 2𝑄, 3𝑄, 4𝑆, 5𝑆"
+        },
+        {
+          "l": "D",
+          "t": "1𝑆, 2𝑆, 3𝑆, 4𝑄, 5𝑄"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "1S, 2Q, 3S, 4S, 5Q"
+        },
+        {
+          "l": "B",
+          "t": "1Q, 2Q, 3S, 4S, 5Q"
+        },
+        {
+          "l": "C",
+          "t": "1Q, 2Q, 3Q, 4S, 5S"
+        },
+        {
+          "l": "D",
+          "t": "1S, 2S, 3S, 4Q, 5Q"
+        }
+      ],
+      "reason": "Maths-italic letters replaced by plain text (same options, same order).",
+      "source": "pdf p.36 (Q.50)"
+    },
+    {
+      "id": "cse-2026-2-cs-40",
+      "field": "answer",
+      "before": "B; D",
+      "after": "A; B",
+      "reason": "The official GATE 2026 CS2 answer key lists A; B for Q.50; the stored key did not match the question as printed (option order in the record had also been shuffled). Independently re-solved: A; B is correct.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf (Q.50); pdf p.36"
+    },
+    {
+      "id": "cse-2026-2-cs-41",
+      "field": "text",
+      "before": "Consider three processes P1, P2, and P3 running identical code, as shown in the pseudocode below. A and B are two binary semaphores initialized to 1 and 0, respectively. X is a shared variable initialized to 0. Each line in the pseudocode is executed atomically. Pseudocode of P1, P2, and P3 Wait(A); Print(*); X = X+1; If (X == 2) { Print($); Signal(B); } Signal(A); Wait(B); Print(#); Signal(B); Assume that any of the three processes can start to execute first and c ontext switching can happen between these processes at any arb itrary time and in any arbitrary order. Which of the following patterns is/are possible to be generated as an outcome of the execution of these three processes?",
+      "after": "Consider three processes P1, P2, and P3 running identical code, as shown in the pseudocode below. A and B are two binary semaphores initialized to 1 and 0, respectively. X is a shared variable initialized to 0. Each line in the pseudocode is executed atomically.\n\nPseudocode of P1, P2, and P3\n\n```\nWait(A);\nPrint(*);\nX = X+1;\nIf (X == 2)\n   {\n      Print($);\n      Signal(B);\n   }\nSignal(A);\nWait(B);\nPrint(#);\nSignal(B);\n```\n\nAssume that any of the three processes can start to execute first and context switching can happen between these processes at any arbitrary time and in any arbitrary order.\n\nWhich of the following patterns is/are possible to be generated as an outcome of the execution of these three processes?",
+      "reason": "Pseudocode had been flattened onto one line; restored as a code block. Broken words (\"c ontext\", \"arb itrary\") repaired.",
+      "source": "pdf p.37 (Q.51)"
+    },
+    {
+      "id": "cse-2026-2-cs-41",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "**$*###"
+        },
+        {
+          "l": "B",
+          "t": "**$#*##"
+        },
+        {
+          "l": "C",
+          "t": "**$##*#"
+        },
+        {
+          "l": "D",
+          "t": "***$###"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "`**$*###`"
+        },
+        {
+          "l": "B",
+          "t": "`**$#*##`"
+        },
+        {
+          "l": "C",
+          "t": "`**$##*#`"
+        },
+        {
+          "l": "D",
+          "t": "`***$###`"
+        }
+      ],
+      "reason": "The patterns contain * and $, which markdown/KaTeX would swallow; shown as code (same patterns, same order).",
+      "source": "pdf p.37 (Q.51)"
+    },
+    {
+      "id": "cse-2026-2-cs-42",
+      "field": "text",
+      "before": "Consider a system with a processor and a 4 KB direct mapped cache with block size of 16 bytes. The system has a 16 MB physical memory. Four words P, Q, R, and S are accessed by the processor in the same order 10 times. That is, there are a total of 40 memory references in the sequence P, Q, R, S, P, Q, R, S,… Assume that the cache memory is initially empty. The physical addresses of the words are given below (1 word =1 byte). P: 0x845B32, Q: 0x845B26, R: 0x845B36, S: 0x846B32 Which of the following statements is/are true? Note: 1K=210 and 1M=220",
+      "after": "Consider a system with a processor and a 4 KB direct mapped cache with block size of 16 bytes. The system has a 16 MB physical memory. Four words P, Q, R, and S are accessed by the processor in the same order 10 times. That is, there are a total of 40 memory references in the sequence P, Q, R, S, P, Q, R, S, …\n\nAssume that the cache memory is initially empty. The physical addresses of the words are given below (1 word = 1 byte).\n\nP: 0x845B32, Q: 0x845B26, R: 0x845B36, S: 0x846B32\n\nWhich of the following statements is/are true?\n\nNote: $1\\text{K} = 2^{10}$ and $1\\text{M} = 2^{20}$",
+      "reason": "Powers were flattened (\"1K=210 and 1M=220\"); restored as $2^{10}$, $2^{20}$.",
+      "source": "pdf p.38 (Q.52)"
+    },
+    {
+      "id": "cse-2026-2-cs-42",
+      "field": "answer",
+      "before": "A; C; D",
+      "after": "A; B",
+      "reason": "The official GATE 2026 CS2 answer key lists A; B for Q.52; the stored key did not match the question as printed (option order in the record had also been shuffled). Independently re-solved: A; B is correct.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf (Q.52); pdf p.38"
+    },
+    {
+      "id": "cse-2026-2-cs-42",
+      "field": "topic",
+      "before": "cache-memory",
+      "after": "cache",
+      "reason": "\"cache-memory\" is not a coa topic id; the id is \"cache\".",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-43",
+      "field": "answer",
+      "before": 1,
+      "after": "16417 to 16417",
+      "reason": "Stored key was a placeholder 1; the official key for Q.53 is \"16417 to 16417\" (also re-derived independently in the solution).",
+      "source": "Official GATE 2026 CS-2 answer key (gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf)"
+    },
+    {
+      "id": "cse-2026-2-cs-44",
+      "field": "answer",
+      "before": 1,
+      "after": "1536 to 1536",
+      "reason": "Stored key was a placeholder 1; the official key for Q.54 is \"1536 to 1536\" (also re-derived independently in the solution).",
+      "source": "Official GATE 2026 CS-2 answer key (gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf)"
+    },
+    {
+      "id": "cse-2026-2-cs-45",
+      "field": "answer",
+      "before": 1,
+      "after": "3 to 3",
+      "reason": "Stored key was a placeholder 1; the official key for Q.55 is \"3 to 3\" (also re-derived independently in the solution).",
+      "source": "Official GATE 2026 CS-2 answer key (gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf)"
+    },
+    {
+      "id": "cse-2026-2-cs-46",
+      "field": "answer",
+      "before": 1,
+      "after": "128 to 128",
+      "reason": "Stored key was a placeholder 1; the official key for Q.56 is \"128 to 128\" (also re-derived independently in the solution).",
+      "source": "Official GATE 2026 CS-2 answer key (gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf)"
+    },
+    {
+      "id": "cse-2026-2-cs-47",
+      "field": "answer",
+      "before": 1,
+      "after": "2.30 to 2.40",
+      "reason": "Stored key was a placeholder 1; the official key for Q.57 is \"2.30 to 2.40\" (also re-derived independently in the solution).",
+      "source": "Official GATE 2026 CS-2 answer key (gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf)"
+    },
+    {
+      "id": "cse-2026-2-cs-48",
+      "field": "answer",
+      "before": 1,
+      "after": "4 to 4",
+      "reason": "Stored key was a placeholder 1; the official key for Q.58 is \"4 to 4\" (also re-derived independently in the solution).",
+      "source": "Official GATE 2026 CS-2 answer key (gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf)"
+    },
+    {
+      "id": "cse-2026-2-cs-49",
+      "field": "answer",
+      "before": 1,
+      "after": "6 to 6",
+      "reason": "Stored key was a placeholder 1; the official key for Q.59 is \"6 to 6\" (also re-derived independently in the solution).",
+      "source": "Official GATE 2026 CS-2 answer key (gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf)"
+    },
+    {
+      "id": "cse-2026-2-cs-50",
+      "field": "answer",
+      "before": 1,
+      "after": "9 to 9",
+      "reason": "Stored key was a placeholder 1; the official key for Q.60 is \"9 to 9\" (also re-derived independently in the solution).",
+      "source": "Official GATE 2026 CS-2 answer key (gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf)"
+    },
+    {
+      "id": "cse-2026-2-cs-51",
+      "field": "answer",
+      "before": 1,
+      "after": "1 to 1",
+      "reason": "Stored key was a placeholder 1; the official key for Q.61 is \"1 to 1\" (also re-derived independently in the solution).",
+      "source": "Official GATE 2026 CS-2 answer key (gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf)"
+    },
+    {
+      "id": "cse-2026-2-cs-52",
+      "field": "answer",
+      "before": 1,
+      "after": "48 to 48",
+      "reason": "Stored key was a placeholder 1; the official key for Q.62 is \"48 to 48\" (also re-derived independently in the solution).",
+      "source": "Official GATE 2026 CS-2 answer key (gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf)"
+    },
+    {
+      "id": "cse-2026-2-cs-53",
+      "field": "answer",
+      "before": 1,
+      "after": "0.5 to 0.5",
+      "reason": "Stored key was a placeholder 1; the official key for Q.63 is \"0.5 to 0.5\" (also re-derived independently in the solution).",
+      "source": "Official GATE 2026 CS-2 answer key (gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf)"
+    },
+    {
+      "id": "cse-2026-2-cs-54",
+      "field": "answer",
+      "before": 1,
+      "after": "40 to 40",
+      "reason": "Stored key was a placeholder 1; the official key for Q.64 is \"40 to 40\" (also re-derived independently in the solution).",
+      "source": "Official GATE 2026 CS-2 answer key (gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf)"
+    },
+    {
+      "id": "cse-2026-2-cs-55",
+      "field": "answer",
+      "before": 1,
+      "after": "30 to 30",
+      "reason": "Stored key was a placeholder 1; the official key for Q.65 is \"30 to 30\" (also re-derived independently in the solution).",
+      "source": "Official GATE 2026 CS-2 answer key (gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf)"
+    },
+    {
+      "id": "cse-2026-2-cs-43",
+      "field": "text",
+      "before": "To keep track of free blocks in a file system, one of the two approaches is generally used – using bitmaps (bit vectors) or using linked lists. Consider that the linked list approach is used to keep track of free blocks in a file system. Assume that the disk size is 16 GB, block size is 2 KB, and block numbers used are 32-bit long. A single pointer of size 4 bytes is used in each block of the list to point to the next block of the list. The number of blocks required to ho ld the free disk block numbers is ____________. (answer in integer) Note: 1K=210 and 1G=230",
+      "after": "To keep track of free blocks in a file system, one of the two approaches is generally used – using bitmaps (bit vectors) or using linked lists. Consider that the linked list approach is used to keep track of free blocks in a file system. Assume that the disk size is 16 GB, block size is 2 KB, and block numbers used are 32-bit long. A single pointer of size 4 bytes is used in each block of the list to point to the next block of the list. The number of blocks required to hold the free disk block numbers is ____________. (answer in integer)\n\nNote: $1\\text{K} = 2^{10}$ and $1\\text{G} = 2^{30}$",
+      "reason": "Removed the PDF line-break split (\"ho ld\") and restored the note's exponents (1K=2^10, 1G=2^30 had lost their superscripts).",
+      "source": "pdf p.38"
+    },
+    {
+      "id": "cse-2026-2-cs-44",
+      "field": "text",
+      "before": "A system has a Translation Lookaside Buffer (TLB) that has a reach of 1 MB. TLB reach is defined as the total amount of physical memory that can be accessed through the TLB entries. The paging system uses pages of size 4 KB. The virtual address space is 64 GB and physical address space is 1 GB. If each TLB entry stores a 4-bit process id, page number, frame number, and a 2 -bit control field, then the size of the TLB (in bytes) is ___________. (answer in integer) Note: 1K=210, 1M=220, 1G=230",
+      "after": "A system has a Translation Lookaside Buffer (TLB) that has a reach of 1 MB. TLB reach is defined as the total amount of physical memory that can be accessed through the TLB entries. The paging system uses pages of size 4 KB. The virtual address space is 64 GB and physical address space is 1 GB. If each TLB entry stores a 4-bit process id, page number, frame number, and a 2-bit control field, then the size of the TLB (in bytes) is ___________. (answer in integer)\n\nNote: $1\\text{K} = 2^{10}$, $1\\text{M} = 2^{20}$, $1\\text{G} = 2^{30}$",
+      "reason": "Removed stray space in \"2 -bit\" and restored the note's exponents.",
+      "source": "pdf p.39"
+    },
+    {
+      "id": "cse-2026-2-cs-45",
+      "field": "text",
+      "before": "Consider contiguous allocation of physical memory to processes using variable partitioning scheme. Suppose there are 8 holes in the memory of sizes 20 KB, 4 KB, 25 KB, 18 KB, 7 KB, 9 KB, 15 KB, and 12 KB. Assume that no two holes are adjacent. Two processes P1 of size 16 KB and P2 of size 9 KB arrive in that order, and they are allocated memory using the best -fit technique. After allocating space to P1 and P2, the number of holes of size less than 8 KB is ____________. (answer in integer) Note: 1K=210",
+      "after": "Consider contiguous allocation of physical memory to processes using variable partitioning scheme. Suppose there are 8 holes in the memory of sizes 20 KB, 4 KB, 25 KB, 18 KB, 7 KB, 9 KB, 15 KB, and 12 KB. Assume that no two holes are adjacent. Two processes P1 of size 16 KB and P2 of size 9 KB arrive in that order, and they are allocated memory using the best-fit technique. After allocating space to P1 and P2, the number of holes of size less than 8 KB is ____________. (answer in integer)\n\nNote: $1\\text{K} = 2^{10}$",
+      "reason": "Removed stray space in \"best -fit\" and restored the note's exponent.",
+      "source": "pdf p.39"
+    },
+    {
+      "id": "cse-2026-2-cs-46",
+      "field": "text",
+      "before": "Consider a system with 1 MB physical memory and a word len gth of 1 byte. The system uses a direct mapped cache, with block numbers starting from 0. The word with physical address 0xA2C28 is mapped to the cache block number 176 10. The maximum possible size of the cache (in KB) for this configuration is ___________. (answer in integer) Note: 1K=210 and 1M=220",
+      "after": "Consider a system with 1 MB physical memory and a word length of 1 byte. The system uses a direct mapped cache, with block numbers starting from 0. The word with physical address 0xA2C28 is mapped to the cache block number $176_{10}$. The maximum possible size of the cache (in KB) for this configuration is ___________. (answer in integer)\n\nNote: $1\\text{K} = 2^{10}$ and $1\\text{M} = 2^{20}$",
+      "reason": "Fixed \"len gth\", restored the subscript in 176₁₀ (was \"176 10\") and the note's exponents.",
+      "source": "pdf p.39"
+    },
+    {
+      "id": "cse-2026-2-cs-47",
+      "field": "text",
+      "before": "A non-pipelined instruction execution unit that operates at 1.6 GHz clock takes an average of 5 clock cycles to complete the execution of an instruction. To improve the performance, the system was pipelined with a goal of achieving an average throughput of one instruction per clock cycle. However, it could operate only at 1.2 GHz due to pipeline overheads. While executing a program in the pipelined design, 30% of instructions encountered a stall of 2 cycles due to pipeline hazards. The speed-up obtained by the pipelined design over the non-pipelined one for this program is ___________. (rounded off to two decimal places) Note: 1G=109",
+      "after": "A non-pipelined instruction execution unit that operates at 1.6 GHz clock takes an average of 5 clock cycles to complete the execution of an instruction. To improve the performance, the system was pipelined with a goal of achieving an average throughput of one instruction per clock cycle. However, it could operate only at 1.2 GHz due to pipeline overheads. While executing a program in the pipelined design, 30% of instructions encountered a stall of 2 cycles due to pipeline hazards. The speed-up obtained by the pipelined design over the non-pipelined one for this program is ___________. (rounded off to two decimal places)\n\nNote: $1\\text{G} = 10^{9}$",
+      "reason": "Restored the exponent in the note (1G = 10^9, was \"109\").",
+      "source": "pdf p.39"
+    },
+    {
+      "id": "cse-2026-2-cs-48",
+      "field": "text",
+      "before": "Consider a new TCP connection between a sender and a receiver. The receiver advertised window is constant at 48 KB, the maximum segment size (MSS) is 2 KB, and the slow start threshold for TCP congestion control is 16 KB. Assume that there are no timeouts or duplicate acknowledgements. The number of rounds of transmission required for the congestion control algorithm of the TCP connection to reach the congestion avoidance phase is ___________. (answer in integer) Note: 1K=210",
+      "after": "Consider a new TCP connection between a sender and a receiver. The receiver advertised window is constant at 48 KB, the maximum segment size (MSS) is 2 KB, and the slow start threshold for TCP congestion control is 16 KB. Assume that there are no timeouts or duplicate acknowledgements. The number of rounds of transmission required for the congestion control algorithm of the TCP connection to reach the congestion avoidance phase is ___________. (answer in integer)\n\nNote: $1\\text{K} = 2^{10}$",
+      "reason": "Restored the exponent in the note (1K = 2^10, was \"210\").",
+      "source": "pdf p.40"
+    },
+    {
+      "id": "cse-2026-2-cs-49",
+      "field": "text",
+      "before": "Consider the digital circuit shown below with two input l ines A and B, two select lines S0 and S1, and an output line Y. The blocks Q and M represent active high 2:4 decoder and 4 -to-1 multiplexer, respectively. Out of 16 possible input combinations, the number of combinations that produce Y=1 is ____________. (answer in integer) Note: One input combination is an instance of [A B S1 S0].",
+      "after": "Consider the digital circuit shown below with two input lines A and B, two select lines S0 and S1, and an output line Y. The blocks Q and M represent active high 2:4 decoder and 4-to-1 multiplexer, respectively. Out of 16 possible input combinations, the number of combinations that produce Y=1 is ____________. (answer in integer)\n\nNote: One input combination is an instance of [A B S1 S0].",
+      "reason": "Fixed \"l ines\" and \"4 -to-1\"; separated the note.",
+      "source": "pdf p.40"
+    },
+    {
+      "id": "cse-2026-2-cs-51",
+      "field": "text",
+      "before": "Consider the following ANSI-C function. int func(int start, int end){ int length=end+1-start; if((length<1)||(start<0)||(end<0)){ return(0); } if(length%3==0){ return(func(start+1, end)); } else if(length%3==1){ return(1+func(start, end-1)); } else { return(func(start+2, end)); } } The maximum possible value that can be returned from this function is ____________. (answer in integer) Note: Ignore syntax errors (if any) in the function.",
+      "after": "Consider the following ANSI-C function.\n\n```c\nint func(int start, int end){\n  int length=end+1-start;\n  if((length<1)||(start<0)||(end<0)){ return(0); }\n  if(length%3==0){\n    return(func(start+1, end));\n  } else if(length%3==1){\n    return(1+func(start, end-1));\n  } else {\n    return(func(start+2, end));\n  }\n}\n```\n\nThe maximum possible value that can be returned from this function is ____________. (answer in integer)\n\nNote: Ignore syntax errors (if any) in the function.",
+      "reason": "The function was flattened onto one line; restored it as a C code block exactly as printed.",
+      "source": "pdf p.41"
+    },
+    {
+      "id": "cse-2026-2-cs-53",
+      "field": "text",
+      "before": "Suppose an unbiased coin is tossed 6 times. Each coin toss is independent of all previous coin tosses. Let 𝐸1 be the event that among the second, fourth, and sixth coin tosses, there are at least two heads. Let 𝐸2 be the event that among the first, second, third, and fifth coin tosses, there are equal number of heads and tails. The conditional probability P(𝐸1| 𝐸2) is equal to ____________. (rounded off to one decimal place)",
+      "after": "Suppose an unbiased coin is tossed 6 times. Each coin toss is independent of all previous coin tosses. Let $E_1$ be the event that among the second, fourth, and sixth coin tosses, there are at least two heads. Let $E_2$ be the event that among the first, second, third, and fifth coin tosses, there are equal number of heads and tails. The conditional probability $P(E_1 \\mid E_2)$ is equal to ____________. (rounded off to one decimal place)",
+      "reason": "Unicode math italics replaced by KaTeX ($E_1$, $E_2$, $P(E_1 \\mid E_2)$).",
+      "source": "pdf p.41"
+    },
+    {
+      "id": "cse-2026-2-cs-54",
+      "field": "text",
+      "before": "Consider a function 𝑓: (0,1) → {0, 1} defined as follows. For a real number 𝑟 ∈ (0,1) , 𝑓(𝑟) = 1 if the second digit after the decimal point in 𝑟 is one of the four digits 2, 3, 6 and 7. Otherwise, 𝑓(𝑟) is equal to 0. The number of points in (0,1) at which 𝑓 is discontinuous is ___________. (answer in integer)",
+      "after": "Consider a function $f: (0,1) \\to \\{0, 1\\}$ defined as follows.\n\nFor a real number $r \\in (0,1)$, $f(r) = 1$ if the second digit after the decimal point in $r$ is one of the four digits 2, 3, 6 and 7. Otherwise, $f(r)$ is equal to 0.\n\nThe number of points in $(0,1)$ at which $f$ is discontinuous is ___________. (answer in integer)",
+      "reason": "Unicode math italics replaced by KaTeX; paragraphs as printed.",
+      "source": "pdf p.41"
+    },
+    {
+      "id": "cse-2026-2-cs-55",
+      "field": "text",
+      "before": "It is necessary to design a link -layer protocol between two hosts that are directly connected over a lossless link of length 3000 kilometers. Assume that the link bandwidth is 108 bits per second and that the propagation delay in the link is 5 nanoseconds per meter. Every transmitted data byte is assigned a unique sequence number. Let 𝑁 be the minimum number of bits needed for the sequence number field in the protocol header such that i. the sequence numbers do not wrap around before 60 seconds, and ii. the maximum utilization of the link is achieved. The value of 𝑁 is ______. (answer in integer)",
+      "after": "It is necessary to design a link-layer protocol between two hosts that are directly connected over a lossless link of length 3000 kilometers. Assume that the link bandwidth is $10^8$ bits per second and that the propagation delay in the link is 5 nanoseconds per meter. Every transmitted data byte is assigned a unique sequence number.\n\nLet $N$ be the minimum number of bits needed for the sequence number field in the protocol header such that\n\n1. the sequence numbers do not wrap around before 60 seconds, and\n2. the maximum utilization of the link is achieved.\n\nThe value of $N$ is ______. (answer in integer)",
+      "reason": "Fixed \"link -layer\", restored the bandwidth exponent (10^8, was \"108\") and the two listed conditions; Unicode N replaced by $N$.",
+      "source": "pdf p.42"
+    },
+    {
+      "id": "cse-2026-2-cs-43",
+      "field": "topic",
+      "before": "file-systems",
+      "after": "files",
+      "reason": "Topic id \"file-systems\" does not exist in the os subject; \"files\" is the matching id in questions.json subjects.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-44",
+      "field": "topic",
+      "before": "memory",
+      "after": "virtual-memory",
+      "reason": "Topic id \"memory\" does not exist in the os subject; \"virtual-memory\" is the matching id in questions.json subjects.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-45",
+      "field": "topic",
+      "before": "memory",
+      "after": "memory-mgmt",
+      "reason": "Topic id \"memory\" does not exist in the os subject; \"memory-mgmt\" is the matching id in questions.json subjects.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-46",
+      "field": "subject",
+      "before": "os",
+      "after": "coa",
+      "reason": "The question is about a direct-mapped cache (computer organisation), not OS memory management.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2026-2-cs-46",
+      "field": "topic",
+      "before": "memory",
+      "after": "cache",
+      "reason": "Topic id \"memory\" does not exist in the coa subject; \"cache\" is the matching id in questions.json subjects.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-47",
+      "field": "topic",
+      "before": "pipelining",
+      "after": "pipeline",
+      "reason": "Topic id \"pipelining\" does not exist in the coa subject; \"pipeline\" is the matching id in questions.json subjects.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-50",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "c",
+      "reason": "Topic id \"c-prog\" does not exist in the pds subject; \"c\" is the matching id in questions.json subjects.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-51",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "recursion",
+      "reason": "Topic id \"c-prog\" does not exist in the pds subject; \"recursion\" is the matching id in questions.json subjects.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-53",
+      "field": "topic",
+      "before": "probability",
+      "after": "basic",
+      "reason": "Topic id \"probability\" does not exist in the prob subject; \"basic\" is the matching id in questions.json subjects.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-54",
+      "field": "subject",
+      "before": "dm",
+      "after": "calc",
+      "reason": "The question is about continuity of a real function (calculus), not set theory.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2026-2-cs-54",
+      "field": "topic",
+      "before": "set-theory",
+      "after": "limits",
+      "reason": "Topic id \"set-theory\" does not exist in the calc subject; \"limits\" is the matching id in questions.json subjects.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-55",
+      "field": "topic",
+      "before": "data-link",
+      "after": "datalink",
+      "reason": "Topic id \"data-link\" does not exist in the cn subject; \"datalink\" is the matching id in questions.json subjects.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-43",
+      "field": "tags",
+      "before": [
+        "os",
+        "file-systems",
+        "free-space-bitmap"
+      ],
+      "after": [
+        "os",
+        "file-systems",
+        "free-space-management",
+        "linked-list"
+      ],
+      "reason": "Tags described a different question (e.g. bitmap, paging/EAT, flow control, countability); replaced with tags for what is actually asked.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2026-2-cs-46",
+      "field": "tags",
+      "before": [
+        "os",
+        "paging",
+        "effective-access-time"
+      ],
+      "after": [
+        "coa",
+        "cache",
+        "direct-mapped",
+        "address-mapping"
+      ],
+      "reason": "Tags described a different question (e.g. bitmap, paging/EAT, flow control, countability); replaced with tags for what is actually asked.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2026-2-cs-47",
+      "field": "tags",
+      "before": [
+        "coa",
+        "clock-rate",
+        "speedup"
+      ],
+      "after": [
+        "coa",
+        "pipelining",
+        "speedup",
+        "stalls"
+      ],
+      "reason": "Tags described a different question (e.g. bitmap, paging/EAT, flow control, countability); replaced with tags for what is actually asked.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2026-2-cs-48",
+      "field": "tags",
+      "before": [
+        "cn",
+        "tcp-flow-control",
+        "window-size"
+      ],
+      "after": [
+        "cn",
+        "tcp",
+        "congestion-control",
+        "slow-start"
+      ],
+      "reason": "Tags described a different question (e.g. bitmap, paging/EAT, flow control, countability); replaced with tags for what is actually asked.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2026-2-cs-49",
+      "field": "tags",
+      "before": [
+        "dl",
+        "multiplexers",
+        "logic-circuits"
+      ],
+      "after": [
+        "dl",
+        "decoder",
+        "multiplexer"
+      ],
+      "reason": "Tags described a different question (e.g. bitmap, paging/EAT, flow control, countability); replaced with tags for what is actually asked.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2026-2-cs-51",
+      "field": "tags",
+      "before": [
+        "pds",
+        "c-prog",
+        "subarrays"
+      ],
+      "after": [
+        "pds",
+        "recursion",
+        "c-prog"
+      ],
+      "reason": "Tags described a different question (e.g. bitmap, paging/EAT, flow control, countability); replaced with tags for what is actually asked.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2026-2-cs-53",
+      "field": "tags",
+      "before": [
+        "prob",
+        "binomial-distribution",
+        "coin-tosses"
+      ],
+      "after": [
+        "prob",
+        "conditional-probability",
+        "coin-tosses"
+      ],
+      "reason": "Tags described a different question (e.g. bitmap, paging/EAT, flow control, countability); replaced with tags for what is actually asked.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2026-2-cs-54",
+      "field": "tags",
+      "before": [
+        "dm",
+        "countability",
+        "uncountable-sets"
+      ],
+      "after": [
+        "calc",
+        "continuity",
+        "discontinuity"
+      ],
+      "reason": "Tags described a different question (e.g. bitmap, paging/EAT, flow control, countability); replaced with tags for what is actually asked.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2026-2-cs-55",
+      "field": "tags",
+      "before": [
+        "cn",
+        "framing",
+        "link-layer-protocols"
+      ],
+      "after": [
+        "cn",
+        "sliding-window",
+        "sequence-numbers",
+        "bandwidth-delay-product"
+      ],
+      "reason": "Tags described a different question (e.g. bitmap, paging/EAT, flow control, countability); replaced with tags for what is actually asked.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2026-2-cs-49",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2026-2/cs-49-1.svg",
+          "svg": "cse-2026-2/cs-49-1.svg",
+          "alt": "Inputs A (top) and B (bottom) enter the 2:4 decoder block Q, whose outputs are D0, D1, D2, D3 (top to bottom). Multiplexer block M has data inputs 0, 1, 2, 3 and select lines S1 and S0 entering from the top; its output is Y. Wiring: D0 goes to M input 0; the constant 0 goes to M input 1; the constant 1 goes to M input 2; D3 goes to M input 3. Decoder outputs D1 and D2 are not connected."
+        }
+      ],
+      "reason": "The question says \"the digital circuit shown below\" but the record had no figure; redrawn from the paper.",
+      "source": "pdf p.40"
     }
   ]
 }
