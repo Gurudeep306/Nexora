@@ -101,7 +101,7 @@ export default function ThemeCentrePage() {
                   onClick={() => setSection(s.id)}
                   onKeyDown={(e) => onTabKey(e, i)}
                   className={cn(
-                    'tc-focus relative h-11 shrink-0 cursor-pointer px-3.5 text-[13.5px] font-medium transition-colors hover:!scale-100',
+                    'tc-focus relative h-11 shrink-0 cursor-pointer px-2.5 text-[13.5px] sm:px-3.5 font-medium transition-colors hover:!scale-100',
                     on ? 'text-text-primary' : 'text-text-muted hover:text-text-primary',
                   )}
                 >
@@ -122,10 +122,11 @@ export default function ThemeCentrePage() {
             onClick={() => setShowPreview((v) => !v)}
             aria-expanded={showPreview}
             aria-controls={`${uid}-preview`}
-            className="tc-focus flex h-8 shrink-0 cursor-pointer items-center gap-1.5 rounded-[var(--radius-control)] border border-border px-2.5 text-[12.5px] font-medium text-text-secondary hover:!scale-100 hover:text-text-primary lg:hidden"
+            aria-label={showPreview ? 'Hide live preview' : 'Show live preview'}
+            className="tc-focus flex h-8 shrink-0 cursor-pointer items-center gap-1.5 rounded-[var(--radius-control)] border border-border px-2 text-[12.5px] font-medium text-text-secondary hover:!scale-100 hover:text-text-primary sm:px-2.5 lg:hidden"
           >
             {showPreview ? <EyeOff className="size-3.5" aria-hidden="true" /> : <Eye className="size-3.5" aria-hidden="true" />}
-            Preview
+            <span className="hidden sm:inline">Preview</span>
           </button>
         </div>
       </div>
