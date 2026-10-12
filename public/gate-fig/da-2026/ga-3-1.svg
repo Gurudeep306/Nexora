@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 440 420" font-family="Arial, Helvetica, sans-serif" fill="currentColor">
+  <defs>
+    <!-- the white silhouette of figure P, in 100x100 tile units -->
+    <g id="fig" fill="#000">
+      <circle cx="41" cy="33.5" r="19.6"/>
+      <polygon points="50,27.9 89,40 50,42.9"/>
+      <polygon points="12.2,70.8 34.2,92.8 67.25,59.75 45.2,37.8"/>
+    </g>
+    <mask id="mP" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100">
+      <rect width="100" height="100" fill="#fff"/>
+      <use xlink:href="#fig" href="#fig"/>
+    </mask>
+    <clipPath id="cQ"><polygon points="0,0 51.2,0 79.3,100 0,100"/></clipPath>
+    <mask id="mQ" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100">
+      <rect width="100" height="100" fill="#fff"/>
+      <g clip-path="url(#cQ)"><use xlink:href="#fig" href="#fig"/></g>
+    </mask>
+    <clipPath id="cR"><rect width="100" height="67.5"/></clipPath>
+    <mask id="mR" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100">
+      <rect width="100" height="100" fill="#fff"/>
+      <g clip-path="url(#cR)"><use xlink:href="#fig" href="#fig"/></g>
+    </mask>
+    <mask id="mS" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100">
+      <rect width="100" height="100" fill="#fff"/>
+      <use xlink:href="#fig" href="#fig"/>
+      <polygon points="0,0 51,0 51,17 41.5,34 0,14.8" fill="#fff"/>
+    </mask>
+    <clipPath id="qL"><polygon points="0,0 50,50 0,100"/></clipPath>
+    <clipPath id="qT"><polygon points="0,0 100,0 50,50"/></clipPath>
+    <clipPath id="qR"><polygon points="100,0 100,100 50,50"/></clipPath>
+    <clipPath id="qB"><polygon points="0,100 50,50 100,100"/></clipPath>
+  </defs>
+
+  <!-- the four puzzle pieces -->
+  <g fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-width="1">
+    <rect x="10" y="10" width="100" height="100"/>
+    <rect x="110" y="10" width="100" height="100"/>
+    <rect x="210" y="10" width="100" height="100"/>
+    <rect x="330" y="10" width="100" height="100"/>
+  </g>
+  <g transform="translate(10,10)"><g clip-path="url(#qL)"><rect width="100" height="100" mask="url(#mP)"/></g></g>
+  <g transform="translate(110,10)"><g clip-path="url(#qT)"><rect width="100" height="100" mask="url(#mP)"/></g></g>
+  <g transform="translate(210,10)"><g clip-path="url(#qR)"><rect width="100" height="100" mask="url(#mP)"/></g></g>
+  <g transform="translate(330,10)"><g clip-path="url(#qB)"><rect width="100" height="100" mask="url(#mP)"/></g></g>
+
+  <!-- candidate figures -->
+  <g transform="translate(60,135)"><rect width="100" height="100" mask="url(#mP)"/></g>
+  <g transform="translate(280,135)"><rect width="100" height="100" mask="url(#mQ)"/></g>
+  <g transform="translate(60,280)"><rect width="100" height="100" mask="url(#mR)"/></g>
+  <g transform="translate(280,280)"><rect width="100" height="100" mask="url(#mS)"/></g>
+  <g font-size="15" text-anchor="middle">
+    <text x="110" y="256">P</text>
+    <text x="330" y="256">Q</text>
+    <text x="110" y="401">R</text>
+    <text x="330" y="401">S</text>
+  </g>
+</svg>
