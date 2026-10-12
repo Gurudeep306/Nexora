@@ -1,0 +1,1815 @@
+{
+  "paper": "cse-2023",
+  "version": 2,
+  "solutions": {
+    "cse-2023-cs-4": {
+      "approach": "Spot the dead state $r$ first, then read the language off the diagram: the input must start with $1$ (to reach $p$), and afterwards the only ways to leave $p$ and come back to it are the loop $0$ and the round trip $p \\xrightarrow{1} q \\xrightarrow{1} p$. So $L(\\mathcal{A}) = 1(0+11)^*$; a single probe string such as $10$ then rules out the near-miss options.",
+      "concepts": [
+        "DFA to regular expression",
+        "Dead (trap) state",
+        "State elimination"
+      ],
+      "given": "| state | on $0$ | on $1$ | role |\n|---|---|---|---|\n| $s$ | $r$ | $p$ | start |\n| $p$ | $p$ | $q$ | only final |\n| $q$ | $r$ | $p$ | |\n| $r$ | $r$ | $r$ | |",
+      "steps": [
+        {
+          "title": "$r$ is a dead state",
+          "body": "$r$ is not final and both of its transitions ($0$ and $1$) go back to $r$. Once a run enters $r$ it can never reach $p$, so every string that ever enters $r$ is **rejected**. The edges into $r$ are $s \\xrightarrow{0} r$ and $q \\xrightarrow{0} r$, so we can ignore them and work only with $s$, $p$, $q$.",
+          "scene": {
+            "edgeTones": {
+              "s>r": "error",
+              "q>r": "error",
+              "r>r": "error"
+            },
+            "caption": "Edges into the trap state $r$ (red) can never lead to acceptance."
+          }
+        },
+        {
+          "title": "Every accepted string starts with 1",
+          "body": "From the start state $s$: on $0$ we fall into the dead state $r$, on $1$ we move to the final state $p$. So an accepted string must begin with $1$, and after that first $1$ we are in $p$. On the probe string $10110$: reading $1$ takes $s \\to p$.",
+          "scene": {
+            "current": [
+              "p"
+            ],
+            "tape": {
+              "cells": [
+                "1",
+                "0",
+                "1",
+                "1",
+                "0"
+              ],
+              "head": 1
+            },
+            "edgeTones": {
+              "s>r": "error",
+              "q>r": "error",
+              "r>r": "error",
+              "s>p": "success"
+            },
+            "caption": "After the leading $1$ the run is in $p$."
+          }
+        },
+        {
+          "title": "Every way to leave $p$ and return to $p$",
+          "body": "From $p$:\n\n- on $0$: $p \\to p$ (self-loop) — a round trip labelled $0$;\n- on $1$: $p \\to q$; from $q$, a $1$ returns to $p$ (round trip $11$), while a $0$ goes to the dead state $r$.\n\nSo the only round trips $p \\leadsto p$ are $0$ and $11$, in any order and any number of times: $(0+11)^*$. Eliminating $q$ formally gives the same thing: the new loop on $p$ is $0 + 1\\cdot 1 = 0+11$ (the path through $q \\to r$ is dropped because $r$ is dead). On $10110$: after $1\\,0$ we are back in $p$; the next $1$ takes us to $q$, which **must** be followed by another $1$.",
+          "scene": {
+            "current": [
+              "q"
+            ],
+            "tape": {
+              "cells": [
+                "1",
+                "0",
+                "1",
+                "1",
+                "0"
+              ],
+              "head": 3
+            },
+            "edgeTones": {
+              "s>r": "error",
+              "q>r": "error",
+              "r>r": "error",
+              "s>p": "success",
+              "p>p": "warning",
+              "p>q": "warning",
+              "q>p": "warning"
+            },
+            "caption": "Round trips from $p$: the loop $0$ and the cycle $p \\to q \\to p$ on $11$."
+          }
+        },
+        {
+          "title": "The language is $1(0+11)^*$",
+          "body": "Since $p$ is the only final state, a string is accepted exactly when it is $1$ followed by any sequence of the blocks $0$ and $11$:\n\n$$L(\\mathcal{A}) = 1\\,(0 + 11)^*.$$\n\nFinishing the probe: $10110 = 1 \\cdot 0 \\cdot 11 \\cdot 0$, and the run is $s \\xrightarrow{1} p \\xrightarrow{0} p \\xrightarrow{1} q \\xrightarrow{1} p \\xrightarrow{0} p$ — it ends in $p$, **accepted**. This is option (C).",
+          "scene": {
+            "current": [
+              "p"
+            ],
+            "tape": {
+              "cells": [
+                "1",
+                "0",
+                "1",
+                "1",
+                "0"
+              ],
+              "head": 5
+            },
+            "edgeTones": {
+              "s>r": "error",
+              "q>r": "error",
+              "r>r": "error",
+              "s>p": "success",
+              "p>p": "success",
+              "p>q": "success",
+              "q>p": "success"
+            },
+            "caption": "$10110 = 1\\cdot0\\cdot11\\cdot0$ ends in the final state $p$: accepted."
+          }
+        },
+        {
+          "title": "Rule out the other options with the string 10",
+          "body": "$10$ is accepted by $\\mathcal{A}$ ($s \\xrightarrow{1} p \\xrightarrow{0} p$).\n\n- (A) $1(0^*11)^*$: after the leading $1$ the rest must be blocks that each **end in** $11$; the rest here is $0$, which is not such a block — $10 \\notin$ (A).\n- (D) $1(110^*)^*$: after the leading $1$ every block **starts with** $11$; the rest $0$ does not — $10 \\notin$ (D).\n- (B) $0(0+1)^*$: every string starts with $0$, which sends $\\mathcal{A}$ to the dead state — (B) shares no string with $L(\\mathcal{A})$ at all.\n\nOnly (C) contains $10$, and (C) is exactly the language derived above."
+        }
+      ],
+      "answer": {
+        "value": "$L(\\mathcal{A}) = 1(0+11)^*$ — option **(C)**",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Too small: it forces every group of $0$s to be followed by $11$, so strings ending in $0$ such as $10$ (accepted by $\\mathcal{A}$) are missing. Comes from treating the $0$-loop as if it could only be used just before the $11$ cycle."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Every string in it starts with $0$, but $s \\xrightarrow{0} r$ is the dead state, so $\\mathcal{A}$ rejects all of them — it even rejects $0$ itself."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "A leading $1$ ($s \\to p$) followed by any mix of the two round trips at $p$: the self-loop $0$ and the cycle $p \\to q \\to p$ on $11$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Too small: after the first $1$ every block must begin with $11$, so $10$ and $100$ (both accepted by $\\mathcal{A}$) are missing. It is a subset of $1(0+11)^*$, not equal to it."
+        }
+      ],
+      "shortcut": "Ignore the dead state $r$, note the entry symbol $1$ into $p$, and list the loops at $p$: $0$ and $11$. Answer $1(0+11)^*$. If unsure, test $10$: only (C) contains it.",
+      "pitfalls": [
+        "Forgetting that $q \\xrightarrow{0} r$ is fatal and writing something like $1(0+1)^*$ — after a single $1$ from $p$, the next symbol **must** be $1$.",
+        "Picking (A) or (D) because they contain $0$ and $11$ — they fix the order of $0$s relative to $11$, while the DFA lets them interleave freely.",
+        "Treating $r$ as a normal state and trying to include its self-loop in the expression; a non-final trap state contributes nothing."
+      ],
+      "verification": "Enumerate all strings of length $\\le 3$ accepted by $\\mathcal{A}$ by running the DFA: $1, 10, 100, 111$ ($101$ ends in $q$, $110$ dies in $r$). The strings of $1(0+11)^*$ with length $\\le 3$ are exactly $1, 10, 100, 111$ — identical lists.",
+      "animation": {
+        "kind": "automaton",
+        "title": "DFA A on the probe string 10110",
+        "layout": "manual",
+        "states": [
+          {
+            "id": "s",
+            "x": 0,
+            "y": 0,
+            "start": true
+          },
+          {
+            "id": "p",
+            "x": 1,
+            "y": 0,
+            "accept": true
+          },
+          {
+            "id": "q",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "id": "r",
+            "x": 1,
+            "y": 1
+          }
+        ],
+        "edges": [
+          {
+            "from": "s",
+            "to": "p",
+            "label": "1"
+          },
+          {
+            "from": "s",
+            "to": "r",
+            "label": "0"
+          },
+          {
+            "from": "p",
+            "to": "p",
+            "label": "0"
+          },
+          {
+            "from": "p",
+            "to": "q",
+            "label": "1"
+          },
+          {
+            "from": "q",
+            "to": "p",
+            "label": "1"
+          },
+          {
+            "from": "q",
+            "to": "r",
+            "label": "0"
+          },
+          {
+            "from": "r",
+            "to": "r",
+            "label": "0,1"
+          }
+        ],
+        "current": [
+          "s"
+        ],
+        "tape": {
+          "cells": [
+            "1",
+            "0",
+            "1",
+            "1",
+            "0"
+          ],
+          "head": 0
+        }
+      }
+    },
+    "cse-2023-cs-5": {
+      "approach": "Don't solve the recurrence from scratch: any correct closed form must reproduce $L_1 = 1$ and $L_2 = 3$. Using $\\varphi + \\psi = 1$ and $\\varphi\\psi = -1$ for $\\varphi, \\psi = \\frac{1 \\pm \\sqrt5}{2}$, the $n = 1$ check alone eliminates B, C and D; then confirm A satisfies the recurrence.",
+      "concepts": [
+        "Linear recurrences",
+        "Characteristic equation",
+        "Golden ratio identities"
+      ],
+      "given": "$L_n = L_{n-1} + L_{n-2}$ for $n \\ge 3$, $L_1 = 1$, $L_2 = 3$, so the sequence is $1, 3, 4, 7, 11, \\dots$ Let $\\varphi = \\frac{1+\\sqrt5}{2}$, $\\psi = \\frac{1-\\sqrt5}{2}$.",
+      "steps": [
+        {
+          "title": "The two roots and their identities",
+          "body": "The characteristic equation of $L_n = L_{n-1} + L_{n-2}$ is $x^2 = x + 1$, whose roots are $\\varphi = \\frac{1+\\sqrt5}{2}$ and $\\psi = \\frac{1-\\sqrt5}{2}$. By Vieta:\n\n$$\\varphi + \\psi = \\frac{(1+\\sqrt5) + (1-\\sqrt5)}{2} = \\frac{2}{2} = 1, \\qquad \\varphi\\psi = \\frac{(1+\\sqrt5)(1-\\sqrt5)}{4} = \\frac{1-5}{4} = -1.$$"
+        },
+        {
+          "title": "Test every option at $n = 1$ (must equal 1)",
+          "body": "- (A) $\\varphi + \\psi = 1$ ✓\n- (D) $\\varphi - \\psi = \\frac{2\\sqrt5}{2} = \\sqrt5 \\approx 2.236$ ✗\n- (C) $\\varphi + \\frac{1-\\sqrt5}{3} = \\frac{3+3\\sqrt5 + 2 - 2\\sqrt5}{6} = \\frac{5+\\sqrt5}{6} \\approx 1.206$ ✗\n- (B) $\\varphi - \\frac{1-\\sqrt5}{3} = \\frac{3+3\\sqrt5 - 2 + 2\\sqrt5}{6} = \\frac{1+5\\sqrt5}{6} \\approx 2.030$ ✗\n\nOnly A survives.",
+          "scene": {
+            "reveal": 6,
+            "hl": [
+              {
+                "r": 0,
+                "c": 2,
+                "tone": "success"
+              },
+              {
+                "r": 0,
+                "c": 3,
+                "tone": "error"
+              },
+              {
+                "r": 0,
+                "c": 4,
+                "tone": "error"
+              },
+              {
+                "r": 0,
+                "c": 5,
+                "tone": "error"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Check A at $n = 2$ (must equal 3)",
+          "body": "$$\\varphi^2 + \\psi^2 = (\\varphi + \\psi)^2 - 2\\varphi\\psi = 1^2 - 2(-1) = 1 + 2 = 3 \\;✓$$",
+          "scene": {
+            "reveal": 12,
+            "hl": [
+              {
+                "r": 1,
+                "c": 2,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "A satisfies the recurrence for every $n \\ge 3$",
+          "body": "Multiply $\\varphi^2 = \\varphi + 1$ by $\\varphi^{n-2}$: $\\varphi^n = \\varphi^{n-1} + \\varphi^{n-2}$, and likewise $\\psi^n = \\psi^{n-1} + \\psi^{n-2}$. Adding,\n\n$$\\underbrace{\\varphi^n + \\psi^n}_{A_n} = \\underbrace{(\\varphi^{n-1} + \\psi^{n-1})}_{A_{n-1}} + \\underbrace{(\\varphi^{n-2} + \\psi^{n-2})}_{A_{n-2}}.$$\n\n$A_n$ obeys the same recurrence and the same two starting values as $L_n$, so by induction $A_n = L_n$ for all $n$: e.g. $A_3 = 3 + 1 = 4$, $A_4 = 4 + 3 = 7$.",
+          "scene": {
+            "reveal": 24,
+            "hl": [
+              {
+                "c": 2,
+                "tone": "success"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "$L_n = \\left(\\frac{1+\\sqrt5}{2}\\right)^n + \\left(\\frac{1-\\sqrt5}{2}\\right)^n$ — option **(A)**",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$\\varphi^n + \\psi^n$ gives $1, 3, 4, 7, \\dots$ — correct initial values and the same recurrence."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "The second base $\\frac{1-\\sqrt5}{3}$ is not a root of $x^2 = x+1$, and at $n = 1$ the value is $\\frac{1+5\\sqrt5}{6} \\approx 2.03 \\ne 1$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Wrong second base again: at $n = 1$ the value is $\\frac{5+\\sqrt5}{6} \\approx 1.21 \\ne 1$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$\\varphi^n - \\psi^n = \\sqrt5\\,F_n$ (scaled Fibonacci): at $n = 1$ it is $\\sqrt5 \\ne 1$. The Fibonacci form needs a $\\frac{1}{\\sqrt5}$ factor and is still not Lucas."
+        }
+      ],
+      "shortcut": "Plug in $n = 1$: only A gives $\\varphi + \\psi = 1$. Ten seconds, no algebra beyond $\\varphi + \\psi = 1$.",
+      "pitfalls": [
+        "Confusing Lucas with Fibonacci: Binet's Fibonacci formula is $\\frac{\\varphi^n - \\psi^n}{\\sqrt5}$ (a minus sign and a $\\sqrt5$), Lucas is $\\varphi^n + \\psi^n$.",
+        "Checking only that the bases satisfy the recurrence and forgetting the initial values — B and C fail even that."
+      ],
+      "verification": "Numerically $\\varphi^4 + \\psi^4 = 6.854 + 0.146 = 7.000 = L_4$, and the table shows A matching $L_n$ for $n = 1..4$ while B, C, D drift.",
+      "animation": {
+        "kind": "table",
+        "title": "Evaluate each option for small n",
+        "cols": [
+          "n",
+          "L_n",
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "rows": [
+          [
+            "1",
+            "1",
+            "1",
+            "2.030",
+            "1.206",
+            "2.236"
+          ],
+          [
+            "2",
+            "3",
+            "3",
+            "2.448",
+            "2.788",
+            "2.236"
+          ],
+          [
+            "3",
+            "4",
+            "4",
+            "4.306",
+            "4.166",
+            "4.472"
+          ],
+          [
+            "4",
+            "7",
+            "7",
+            "6.825",
+            "6.883",
+            "6.708"
+          ]
+        ],
+        "reveal": 2,
+        "mono": true
+      }
+    },
+    "cse-2023-cs-6": {
+      "approach": "Recall the two size measures of a relation: degree (arity) counts columns = attributes of the schema; cardinality counts rows = tuples in the current instance.",
+      "concepts": [
+        "Relational model",
+        "Degree (arity)",
+        "Cardinality"
+      ],
+      "steps": [
+        {
+          "title": "Definitions",
+          "body": "For a relation schema $R(A_1, A_2, \\dots, A_n)$:\n\n- **degree / arity** $= n$, the number of attributes (columns) — fixed by the schema;\n- **cardinality** $=$ the number of tuples (rows) in the current instance — changes with every insert/delete."
+        },
+        {
+          "title": "Example",
+          "body": "$\\text{Student}(\\text{roll}, \\text{name}, \\text{dept})$ holding 120 students has degree $3$ (three attributes) and cardinality $120$ (tuples). Inserting a student changes the cardinality to $121$; the degree stays $3$."
+        },
+        {
+          "title": "Match with the options",
+          "body": "Option A is word-for-word the definition of degree. B is cardinality; C (\"entries\") is neither standard term; D undercounts when two attributes share a domain."
+        }
+      ],
+      "answer": {
+        "value": "Degree = **number of attributes of its relation schema** — option **(A)**",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Degree (arity) is exactly the number of attributes in the schema."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Number of tuples is the cardinality, not the degree."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "\"Entries\" (cells) would be degree $\\times$ cardinality — not a standard measure and not the degree."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Several attributes can share one domain (e.g. two INTEGER columns), so the number of distinct domains can be smaller than the degree."
+        }
+      ],
+      "shortcut": "Degree ↔ columns, cardinality ↔ rows.",
+      "pitfalls": [
+        "Swapping degree and cardinality.",
+        "Thinking domains, not attributes, define arity — two attributes may share the same domain."
+      ],
+      "verification": "A relation is a subset of $D_1 \\times D_2 \\times \\dots \\times D_n$ — an $n$-ary relation, one component per attribute, so the arity is the attribute count $n$."
+    },
+    "cse-2023-cs-7": {
+      "approach": "Write the stop-and-wait efficiency $U = \\frac{1}{1+2a}$ with $a = \\frac{T_p}{T_t} = \\frac{d/v}{L/R} = \\frac{dR}{vL}$. Utilization falls as $a$ grows, and $a$ grows with both link length $d$ and rate $R$.",
+      "concepts": [
+        "Stop-and-Wait ARQ",
+        "Transmission delay",
+        "Propagation delay",
+        "Link utilization"
+      ],
+      "given": "Frame size $L$ bits, rate $R$ bit/s, link length $d$, signal speed $v$. Only one frame is outstanding at a time.",
+      "steps": [
+        {
+          "title": "One stop-and-wait cycle",
+          "body": "The sender transmits a frame for $T_t = \\frac{L}{R}$, the last bit needs $T_p = \\frac{d}{v}$ to arrive, and the (tiny) ACK needs another $T_p$ to come back. The link is busy only during $T_t$:\n\n$$U = \\frac{T_t}{T_t + 2T_p} = \\frac{1}{1 + 2a}, \\qquad a = \\frac{T_p}{T_t} = \\frac{d/v}{L/R} = \\frac{d\\,R}{v\\,L}.$$",
+          "scene": {
+            "reveal": 0
+          }
+        },
+        {
+          "title": "How $d$ and $R$ move $a$",
+          "body": "$a \\propto d \\cdot R$ (for fixed $L$ and $v$):\n\n- longer link ⇒ larger $T_p$ ⇒ larger $a$;\n- higher rate ⇒ smaller $T_t$ ⇒ larger $a$.\n\n$U = \\frac{1}{1+2a}$ decreases as $a$ increases, so the **lowest** utilization needs the **largest** $a$: long link **and** high rate."
+        },
+        {
+          "title": "Put numbers on the four scenarios",
+          "body": "Illustration with $L = 1000$ bits, $v = 2\\times10^8$ m/s, short $= 20$ km, long $= 2000$ km, low $= 1$ Mbps, high $= 100$ Mbps:\n\n- $T_p$: $\\frac{20\\,000}{2\\times10^8} = 0.1$ ms or $\\frac{2\\times10^6}{2\\times10^8} = 10$ ms\n- $T_t$: $\\frac{1000}{10^6} = 1$ ms or $\\frac{1000}{10^8} = 0.01$ ms\n\n| case | $a$ | $U = \\frac{1}{1+2a}$ |\n|---|---|---|\n| A long, low | $10/1 = 10$ | $1/21 \\approx 4.8\\%$ |\n| B long, high | $10/0.01 = 1000$ | $1/2001 \\approx 0.05\\%$ |\n| C short, low | $0.1/1 = 0.1$ | $1/1.2 \\approx 83\\%$ |\n| D short, high | $0.1/0.01 = 10$ | $1/21 \\approx 4.8\\%$ |\n\nB is the lowest by far.",
+          "scene": {
+            "reveal": 20,
+            "hl": [
+              {
+                "r": 1,
+                "tone": "error"
+              },
+              {
+                "r": 2,
+                "tone": "success"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "Longer link length and higher transmission rate — option **(B)**",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Long link raises $T_p$, but the low rate also raises $T_t$, so $a$ is only moderate — not the worst case."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Both factors increase $a = \\frac{dR}{vL}$: the sender finishes a frame almost instantly and then idles for a long $2T_p$. Lowest $U$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Smallest $a$ (short $T_p$, long $T_t$) — this is the **best** utilization."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The two effects again pull in opposite directions; same moderate $a$ as A in the illustration."
+        }
+      ],
+      "shortcut": "$U$ falls with the bandwidth–delay product $R \\times T_p$ relative to the frame size: maximise both $R$ and $d$.",
+      "pitfalls": [
+        "Thinking a higher rate always helps: it shrinks $T_t$ but not $T_p$, so the sender waits idle for a larger fraction of each cycle.",
+        "Picking A because \"slow and long\" sounds worst — the slow rate actually keeps the link busy longer per frame."
+      ],
+      "verification": "Limit check: as $R \\to \\infty$ with $d > 0$, $T_t \\to 0$ and $U = \\frac{T_t}{T_t + 2T_p} \\to 0$; as $d \\to 0$, $U \\to 1$. Consistent with B being the minimum.",
+      "animation": {
+        "kind": "table",
+        "title": "Stop-and-wait utilization (illustrative numbers)",
+        "caption": "$a = T_p / T_t$, $U = 1/(1+2a)$",
+        "cols": [
+          "case",
+          "Tp (ms)",
+          "Tt (ms)",
+          "a",
+          "U"
+        ],
+        "rows": [
+          [
+            "A long, low R",
+            "10",
+            "1",
+            "10",
+            "4.8%"
+          ],
+          [
+            "B long, high R",
+            "10",
+            "0.01",
+            "1000",
+            "0.05%"
+          ],
+          [
+            "C short, low R",
+            "0.1",
+            "1",
+            "0.1",
+            "83%"
+          ],
+          [
+            "D short, high R",
+            "0.1",
+            "0.01",
+            "10",
+            "4.8%"
+          ]
+        ],
+        "reveal": 0
+      }
+    },
+    "cse-2023-cs-8": {
+      "approach": "Compare rows before computing anything: $B$ is $A$ with rows 1 and 3 swapped, so $\\det B = -\\det A$. One quick row-reduction shows $\\det A = -160 \\ne 0$, which rules out the other options.",
+      "concepts": [
+        "Determinant under a row swap",
+        "Row operations",
+        "Multiplicativity of det"
+      ],
+      "steps": [
+        {
+          "title": "Compare the rows of $A$ and $B$",
+          "body": "- $B$ row 1 $= (3,4,1,2) =$ $A$ row 3\n- $B$ row 2 $= (4,1,2,3) =$ $A$ row 2\n- $B$ row 3 $= (1,2,3,4) =$ $A$ row 1\n- $B$ row 4 $= (2,3,4,1) =$ $A$ row 4\n\nSo $B = A$ with $R_1 \\leftrightarrow R_3$. One row swap flips the sign: $\\det B = -\\det A$.",
+          "scene": {
+            "terms": [
+              {
+                "name": "A",
+                "rows": [
+                  [
+                    1,
+                    2,
+                    3,
+                    4
+                  ],
+                  [
+                    4,
+                    1,
+                    2,
+                    3
+                  ],
+                  [
+                    3,
+                    4,
+                    1,
+                    2
+                  ],
+                  [
+                    2,
+                    3,
+                    4,
+                    1
+                  ]
+                ],
+                "hl": [
+                  {
+                    "r": 0,
+                    "tone": "accent"
+                  },
+                  {
+                    "r": 2,
+                    "tone": "warning"
+                  }
+                ]
+              },
+              "⇄",
+              {
+                "name": "B",
+                "rows": [
+                  [
+                    3,
+                    4,
+                    1,
+                    2
+                  ],
+                  [
+                    4,
+                    1,
+                    2,
+                    3
+                  ],
+                  [
+                    1,
+                    2,
+                    3,
+                    4
+                  ],
+                  [
+                    2,
+                    3,
+                    4,
+                    1
+                  ]
+                ],
+                "hl": [
+                  {
+                    "r": 0,
+                    "tone": "warning"
+                  },
+                  {
+                    "r": 2,
+                    "tone": "accent"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "title": "Is $\\det A = 0$? Add all rows into row 1",
+          "body": "$R_1 \\leftarrow R_1 + R_2 + R_3 + R_4$ (determinant unchanged) gives $(10, 10, 10, 10)$; take out the factor $10$:\n\n$$\\det A = 10 \\begin{vmatrix} 1 & 1 & 1 & 1 \\\\ 4 & 1 & 2 & 3 \\\\ 3 & 4 & 1 & 2 \\\\ 2 & 3 & 4 & 1 \\end{vmatrix}.$$\n\nNow $C_2 - C_1$, $C_3 - C_1$, $C_4 - C_1$ (unchanged determinant) and expand along row 1 $(1,0,0,0)$:\n\n$$\\det A = 10 \\begin{vmatrix} -3 & -2 & -1 \\\\ 1 & -2 & -1 \\\\ 1 & 2 & -1 \\end{vmatrix}.$$",
+          "scene": {
+            "kind": "equation",
+            "title": "det A by row/column operations",
+            "lines": [
+              {
+                "tex": "R_1 \\leftarrow R_1+R_2+R_3+R_4 = (10,10,10,10)",
+                "note": "row sum"
+              },
+              {
+                "tex": "\\det A = 10\\begin{vmatrix}-3&-2&-1\\\\1&-2&-1\\\\1&2&-1\\end{vmatrix}",
+                "note": "C_j - C_1, \\text{ expand row } 1"
+              },
+              {
+                "tex": "= 10\\,[-3(2+2) + 2(-1+1) - 1(2+2)]",
+                "note": "cofactors"
+              },
+              {
+                "tex": "= 10(-12 + 0 - 4) = -160",
+                "tone": "success"
+              },
+              {
+                "tex": "\\det B = -\\det A = 160",
+                "tone": "success"
+              }
+            ],
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Evaluate the $3 \\times 3$ determinant",
+          "body": "Expanding along the first row:\n\n$$-3\\big[(-2)(-1) - (-1)(2)\\big] - (-2)\\big[(1)(-1) - (-1)(1)\\big] + (-1)\\big[(1)(2) - (-2)(1)\\big]$$\n$$= -3(2 + 2) + 2(-1 + 1) - (2 + 2) = -12 + 0 - 4 = -16.$$\n\nHence $\\det A = 10 \\times (-16) = -160$ and $\\det B = +160$.",
+          "scene": {
+            "reveal": 5
+          }
+        },
+        {
+          "title": "Check every option",
+          "body": "- (A) $-160 = 160$? ✗\n- (B) $\\det B = 160 = -(-160) = -\\det A$ ✓\n- (C) $\\det A = -160 \\ne 0$ ✗\n- (D) $\\det(AB) = \\det A \\cdot \\det B = (-160)(160) = -25600$, but $\\det A + \\det B = 0$ ✗"
+        }
+      ],
+      "answer": {
+        "value": "$\\det(B) = -\\det(A)$ (here $\\det A = -160$, $\\det B = 160$) — option **(B)**",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Would need $\\det A = 0$; but $\\det A = -160$, and a row swap flips the sign, so $\\det A \\ne \\det B$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$B$ is $A$ with rows 1 and 3 interchanged — one transposition multiplies the determinant by $-1$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$\\det A = 10 \\times (-16) = -160 \\ne 0$ (the rows are independent; the matrix is circulant with eigenvalues $10, -2, -2 \\pm 2i$)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Determinants multiply, they do not add: $\\det(AB) = \\det A\\det B = -25600 \\ne 0 = \\det A + \\det B$."
+        }
+      ],
+      "shortcut": "Spot the row swap → B immediately. To dismiss C quickly: $A$ is circulant, its eigenvalues are $1 + 2\\omega + 3\\omega^2 + 4\\omega^3$ for $\\omega \\in \\{1, -1, i, -i\\}$, i.e. $10, -2, -2-2i, -2+2i$; their product $10 \\cdot (-2) \\cdot 8 = -160 \\ne 0$.",
+      "pitfalls": [
+        "Assuming a reordering of rows never changes the determinant — every single swap flips the sign.",
+        "Using $\\det(AB) = \\det A + \\det B$; the true rule is $\\det(AB) = \\det A \\cdot \\det B$."
+      ],
+      "verification": "Eigenvalue check of the circulant: $10 \\times (-2) \\times \\lvert -2-2i \\rvert^2 = 10 \\times (-2) \\times 8 = -160$, the same as the row-reduction.",
+      "animation": {
+        "kind": "matrix",
+        "title": "Rows of A and B",
+        "terms": [
+          {
+            "name": "A",
+            "rows": [
+              [
+                1,
+                2,
+                3,
+                4
+              ],
+              [
+                4,
+                1,
+                2,
+                3
+              ],
+              [
+                3,
+                4,
+                1,
+                2
+              ],
+              [
+                2,
+                3,
+                4,
+                1
+              ]
+            ]
+          },
+          "⇄",
+          {
+            "name": "B",
+            "rows": [
+              [
+                3,
+                4,
+                1,
+                2
+              ],
+              [
+                4,
+                1,
+                2,
+                3
+              ],
+              [
+                1,
+                2,
+                3,
+                4
+              ],
+              [
+                2,
+                3,
+                4,
+                1
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    "cse-2023-cs-9": {
+      "approach": "Fix what **id** must accept and reject — it needs a leading letter, then any mix of letters and digits — and test each NFA with three probe strings: $\\epsilon$ or \"1\" (must reject), \"ab\" and \"a1b\" (must accept). Only (C) passes; it is exactly the Thompson construction of letter (letter | digit)*.",
+      "concepts": [
+        "Regular definitions (lexical tokens)",
+        "ε-NFA",
+        "Thompson construction",
+        "ε-closure"
+      ],
+      "given": "**id** $=$ letter (letter $\\mid$ digit)$^*$. Probe strings: \"1\" (reject), \"ab\", \"a1b\" (accept).",
+      "steps": [
+        {
+          "title": "What the language looks like",
+          "body": "$L(\\textbf{id})$ = strings whose **first** symbol is a letter, followed by **any** sequence of letters and digits in any order. So \"a\", \"ab\", \"a1\", \"a1b\" ∈ L, while $\\epsilon$, \"1\", \"1a\" ∉ L. A good NFA must (i) force one letter first and (ii) allow free interleaving afterwards."
+        },
+        {
+          "title": "(A) accepts strings that start with a digit",
+          "body": "The $\\epsilon$-edge start → final means the start state's $\\epsilon$-closure already contains the final state. So $\\epsilon$ is accepted, and \"1\" is accepted via the digit self-loop. Both are invalid identifiers ⇒ (A) is wrong.",
+          "scene": {
+            "kind": "automaton",
+            "title": "Option (A) on input 1",
+            "layout": "manual",
+            "states": [
+              {
+                "id": "s",
+                "x": 0,
+                "y": 0,
+                "start": true
+              },
+              {
+                "id": "F",
+                "x": 2,
+                "y": 0,
+                "accept": true,
+                "tone": "error"
+              }
+            ],
+            "edges": [
+              {
+                "from": "s",
+                "to": "F",
+                "label": "letter, ε"
+              },
+              {
+                "from": "F",
+                "to": "F",
+                "label": "letter, digit"
+              }
+            ],
+            "tape": {
+              "cells": [
+                "1"
+              ],
+              "head": 1
+            },
+            "current": [
+              "F"
+            ],
+            "edgeTones": {
+              "F>F": "error"
+            },
+            "caption": "\"1\" is accepted — invalid identifier"
+          }
+        },
+        {
+          "title": "(B) cannot mix letters and digits",
+          "body": "After the first letter the NFA must commit, by an $\\epsilon$-move, to the letters-only loop **or** the digits-only loop. On \"a1b\": after \"a1\" only the digit branch survives, and it has no letter edge, so \"b\" kills the run. \"a1b\" is a valid identifier ⇒ (B) is wrong.",
+          "scene": {
+            "kind": "automaton",
+            "title": "Option (B) on input a1b",
+            "layout": "manual",
+            "states": [
+              {
+                "id": "s",
+                "x": 0,
+                "y": 1,
+                "start": true
+              },
+              {
+                "id": "F",
+                "x": 1,
+                "y": 1,
+                "accept": true
+              },
+              {
+                "id": "L",
+                "x": 2,
+                "y": 0,
+                "accept": true
+              },
+              {
+                "id": "D",
+                "x": 2,
+                "y": 2,
+                "accept": true,
+                "tone": "error"
+              }
+            ],
+            "edges": [
+              {
+                "from": "s",
+                "to": "F",
+                "label": "letter"
+              },
+              {
+                "from": "F",
+                "to": "L",
+                "label": "ε"
+              },
+              {
+                "from": "F",
+                "to": "D",
+                "label": "ε"
+              },
+              {
+                "from": "L",
+                "to": "L",
+                "label": "letter"
+              },
+              {
+                "from": "D",
+                "to": "D",
+                "label": "digit"
+              }
+            ],
+            "tape": {
+              "cells": [
+                "a",
+                "1",
+                "b"
+              ],
+              "head": 2
+            },
+            "current": [
+              "D"
+            ],
+            "caption": "after a1 only D is alive; D has no letter edge → b rejects"
+          }
+        },
+        {
+          "title": "(D) forces strict letter–digit pairs",
+          "body": "After the first letter the only cycle is final → letter → digit → $\\epsilon$ → final, so the accepted language is letter (letter digit)$^*$. \"ab\" ends in the non-final middle state, and \"a1\" dies immediately (no digit edge out of the final state). Both are valid identifiers ⇒ (D) is wrong.",
+          "scene": {
+            "kind": "automaton",
+            "title": "Option (D) on input ab",
+            "layout": "manual",
+            "states": [
+              {
+                "id": "s",
+                "x": 0,
+                "y": 0,
+                "start": true
+              },
+              {
+                "id": "F",
+                "x": 1,
+                "y": 0,
+                "accept": true
+              },
+              {
+                "id": "x",
+                "x": 2,
+                "y": 0,
+                "tone": "error"
+              },
+              {
+                "id": "y",
+                "x": 3,
+                "y": 0
+              }
+            ],
+            "edges": [
+              {
+                "from": "s",
+                "to": "F",
+                "label": "letter"
+              },
+              {
+                "from": "F",
+                "to": "x",
+                "label": "letter"
+              },
+              {
+                "from": "x",
+                "to": "y",
+                "label": "digit"
+              },
+              {
+                "from": "y",
+                "to": "F",
+                "label": "ε"
+              }
+            ],
+            "tape": {
+              "cells": [
+                "a",
+                "b"
+              ],
+              "head": 2
+            },
+            "current": [
+              "x"
+            ],
+            "caption": "\"ab\" ends in non-final x → rejected"
+          }
+        },
+        {
+          "title": "(C) is Thompson’s construction — read \"a\"",
+          "body": "(C) is letter followed by the standard $\\epsilon$-NFA for (letter $\\mid$ digit)$^*$ wrapped around the final state $F$: $F \\xrightarrow{\\epsilon}$ (letter branch $p \\to q$ or digit branch $u \\to w$) $\\xrightarrow{\\epsilon} e \\xrightarrow{\\epsilon} F$.\n\nRun on \"a1b\" (states named $s, F, p, q, u, w, e$ as in the frame). Start: $\\{s\\}$. Read **a** (letter): $s \\to F$, and $\\epsilon\\text{-closure}(F) = \\{F, p, u\\}$.",
+          "scene": {
+            "kind": "automaton",
+            "title": "Option (C) on input a1b",
+            "layout": "manual",
+            "states": [
+              {
+                "id": "s",
+                "x": 0,
+                "y": 1,
+                "start": true
+              },
+              {
+                "id": "F",
+                "x": 1,
+                "y": 1,
+                "accept": true
+              },
+              {
+                "id": "p",
+                "x": 2,
+                "y": 0
+              },
+              {
+                "id": "q",
+                "x": 3,
+                "y": 0
+              },
+              {
+                "id": "u",
+                "x": 2,
+                "y": 2
+              },
+              {
+                "id": "w",
+                "x": 3,
+                "y": 2
+              },
+              {
+                "id": "e",
+                "x": 4,
+                "y": 1
+              }
+            ],
+            "edges": [
+              {
+                "from": "s",
+                "to": "F",
+                "label": "letter"
+              },
+              {
+                "from": "F",
+                "to": "p",
+                "label": "ε"
+              },
+              {
+                "from": "p",
+                "to": "q",
+                "label": "letter"
+              },
+              {
+                "from": "F",
+                "to": "u",
+                "label": "ε"
+              },
+              {
+                "from": "u",
+                "to": "w",
+                "label": "digit"
+              },
+              {
+                "from": "q",
+                "to": "e",
+                "label": "ε"
+              },
+              {
+                "from": "w",
+                "to": "e",
+                "label": "ε"
+              },
+              {
+                "from": "e",
+                "to": "F",
+                "label": "ε"
+              }
+            ],
+            "tape": {
+              "cells": [
+                "a",
+                "1",
+                "b"
+              ],
+              "head": 1
+            },
+            "current": [
+              "F",
+              "p",
+              "u"
+            ],
+            "caption": "after a: {F, p, u} — F is final",
+            "edgeTones": {
+              "s>F": "accent",
+              "F>p": "info",
+              "F>u": "info"
+            }
+          }
+        },
+        {
+          "title": "Read \"1\" (digit)",
+          "body": "Only $u$ has a digit edge: $u \\to w$. $\\epsilon\\text{-closure}(w) = \\{w, e, F, p, u\\}$ (via $w \\to e \\to F \\to p, u$). The set contains $F$, so \"a1\" is accepted too.",
+          "scene": {
+            "current": [
+              "w",
+              "e",
+              "F",
+              "p",
+              "u"
+            ],
+            "tape": {
+              "cells": [
+                "a",
+                "1",
+                "b"
+              ],
+              "head": 2
+            },
+            "edgeTones": {
+              "u>w": "accent",
+              "w>e": "info",
+              "e>F": "info",
+              "F>p": "info",
+              "F>u": "info"
+            },
+            "caption": "after a1: {w, e, F, p, u}"
+          }
+        },
+        {
+          "title": "Read \"b\" (letter) → accept",
+          "body": "Only $p$ has a letter edge: $p \\to q$; $\\epsilon\\text{-closure}(q) = \\{q, e, F, p, u\\}$, which contains the final state $F$ ⇒ \"a1b\" is **accepted**. In general the loop through $e$ lets letters and digits interleave freely, the first symbol must be a letter (only edge out of $s$), and $\\epsilon$ is rejected ($s$ is not final). So $L(C) = $ letter (letter $\\mid$ digit)$^*$.",
+          "scene": {
+            "current": [
+              "q",
+              "e",
+              "F",
+              "p",
+              "u"
+            ],
+            "tape": {
+              "cells": [
+                "a",
+                "1",
+                "b"
+              ],
+              "head": 3
+            },
+            "edgeTones": {
+              "p>q": "accent",
+              "q>e": "info",
+              "e>F": "success"
+            },
+            "caption": "after a1b: F reached → accept"
+          }
+        }
+      ],
+      "answer": {
+        "value": "The ε-NFA of **option (C)**",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The $\\epsilon$-edge from the start state straight to the final state accepts $\\epsilon$ and digit-first strings such as \"1\"."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Accepts letter letter$^*$ $\\cup$ letter digit$^*$ only — rejects mixed identifiers like \"a1b\"."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Thompson construction of letter (letter $\\mid$ digit)$^*$: exactly the valid identifiers."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Accepts letter (letter digit)$^*$ only — rejects \"ab\" and \"a1\"."
+        }
+      ],
+      "shortcut": "Probe with \"1\" and \"a1b\": \"1\" kills (A); \"a1b\" kills (B) and (D). Only (C) is left.",
+      "pitfalls": [
+        "Reading (B) as (letter $\\mid$ digit)$^*$: two separate loops give letter$^*$ $\\cup$ digit$^*$, not their interleaving.",
+        "Forgetting that an $\\epsilon$-edge into a final state makes the source's $\\epsilon$-closure accepting — that is why (A) accepts $\\epsilon$."
+      ],
+      "verification": "Regex view: (A) = (letter $\\mid$ $\\epsilon$)(letter $\\mid$ digit)$^*$, (B) = letter (letter$^*$ $\\mid$ digit$^*$), (C) = letter (letter $\\mid$ digit)$^*$, (D) = letter (letter digit)$^*$ — only (C) equals the definition of **id**.",
+      "animation": {
+        "kind": "automaton",
+        "title": "Option (C) on input a1b",
+        "layout": "manual",
+        "states": [
+          {
+            "id": "s",
+            "x": 0,
+            "y": 1,
+            "start": true
+          },
+          {
+            "id": "F",
+            "x": 1,
+            "y": 1,
+            "accept": true
+          },
+          {
+            "id": "p",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "id": "q",
+            "x": 3,
+            "y": 0
+          },
+          {
+            "id": "u",
+            "x": 2,
+            "y": 2
+          },
+          {
+            "id": "w",
+            "x": 3,
+            "y": 2
+          },
+          {
+            "id": "e",
+            "x": 4,
+            "y": 1
+          }
+        ],
+        "edges": [
+          {
+            "from": "s",
+            "to": "F",
+            "label": "letter"
+          },
+          {
+            "from": "F",
+            "to": "p",
+            "label": "ε"
+          },
+          {
+            "from": "p",
+            "to": "q",
+            "label": "letter"
+          },
+          {
+            "from": "F",
+            "to": "u",
+            "label": "ε"
+          },
+          {
+            "from": "u",
+            "to": "w",
+            "label": "digit"
+          },
+          {
+            "from": "q",
+            "to": "e",
+            "label": "ε"
+          },
+          {
+            "from": "w",
+            "to": "e",
+            "label": "ε"
+          },
+          {
+            "from": "e",
+            "to": "F",
+            "label": "ε"
+          }
+        ],
+        "tape": {
+          "cells": [
+            "a",
+            "1",
+            "b"
+          ],
+          "head": 0
+        },
+        "current": [
+          "s"
+        ],
+        "caption": "start: {s}"
+      }
+    },
+    "cse-2023-cs-10": {
+      "approach": "Any fixed, publicly known hash function can be defeated: by pigeonhole the adversary can pick all keys from one slot. The only defence is to choose the hash function at random at run time from a universal family, which bounds expected collisions for every key set.",
+      "concepts": [
+        "Universal hashing",
+        "Pigeonhole principle",
+        "Adversarial inputs"
+      ],
+      "given": "$k$ keys chosen by a malicious adversary, $m$ slots, $k > m$; goal: minimise collisions against the worst-case key set.",
+      "steps": [
+        {
+          "title": "Every fixed hash function has a bad key set",
+          "body": "Let $h : U \\to \\{0, \\dots, m-1\\}$ be any fixed function and $\\lvert U \\rvert \\ge k\\,m$. By pigeonhole some slot $j$ receives at least $\\lceil \\lvert U \\rvert / m \\rceil \\ge k$ keys of $U$. Knowing $h$, the adversary submits $k$ keys from $h^{-1}(j)$: all $k$ collide, every search costs $\\Theta(k)$.\n\nThis applies to division ($k \\bmod m$), multiplication ($\\lfloor m(kA - \\lfloor kA \\rfloor)\\rfloor$) and any fixed rule that switches between them."
+        },
+        {
+          "title": "Universal hashing removes the adversary’s knowledge",
+          "body": "A family $H$ is **universal** if for any two distinct keys $x \\ne y$, $\\Pr_{h \\in H}[h(x) = h(y)] \\le \\frac1m$. Example: $h_{a,b}(x) = ((ax + b) \\bmod p) \\bmod m$ with prime $p$ larger than every key, $a \\in \\{1, \\dots, p-1\\}$, $b \\in \\{0, \\dots, p-1\\}$ chosen at random **after** the keys are fixed (or secretly)."
+        },
+        {
+          "title": "Guarantee for every key set",
+          "body": "For any key $x$ among the $k$ keys, the expected number of other keys in its slot is\n\n$$\\sum_{y \\ne x} \\Pr[h(y) = h(x)] \\le \\frac{k-1}{m},$$\n\nso the expected chain length is at most $1 + \\frac{k-1}{m} = O(1 + \\alpha)$, $\\alpha = \\frac km$, **whatever** keys the adversary chose. That is the best possible protection — option C."
+        }
+      ],
+      "answer": {
+        "value": "**Universal hashing** — option **(C)**",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Deterministic: the adversary submits keys that are all congruent mod $m$ (e.g. multiples of $m$), so every key lands in one slot."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Still a single fixed function; the adversary can compute $h$ for every candidate and keep only keys that map to the same slot."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Random choice from a universal family gives $\\Pr[\\text{collision}] \\le \\frac1m$ for every pair, so the expected cost is $O(1 + k/m)$ for any input."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$k$ is the number of keys, which says nothing about the hash function; the rule is still deterministic and therefore exploitable."
+        }
+      ],
+      "shortcut": "Adversary + \"best strategy\" ⇒ randomise the hash function: universal hashing.",
+      "pitfalls": [
+        "Believing a \"carefully chosen\" constant A or a prime modulus protects against an adversary — they only help with naturally occurring patterns, not malicious ones.",
+        "Expecting universal hashing to avoid collisions altogether: with $k > m$ collisions are unavoidable; it only keeps the expected number small."
+      ],
+      "verification": "Sanity bound: with $k > m$ some collisions are forced even for a perfect random function (pigeonhole), and universal hashing matches that random-function behaviour, $\\mathbb{E}[\\text{chain}] \\le 1 + \\frac{k-1}{m}$."
+    },
+    "cse-2023-cs-11": {
+      "approach": "Write the MUX equation $Q = \\bar S\\, I_0 + S\\, I_1$ and substitute the feedback $I_0 = Q$: $Q^+ = \\bar S\\,Q + S\\,D$. That is \"follow $D$ while $S = 1$, hold while $S = 0$\" — a level-sensitive D latch with enable $S$.",
+      "concepts": [
+        "2:1 multiplexer",
+        "Feedback / storage",
+        "D latch vs D flip-flop"
+      ],
+      "given": "2-input MUX: data input 0 is driven by its own output $Q$; data input 1 (call it $D$) and select $S$ are external.",
+      "steps": [
+        {
+          "title": "MUX equation with feedback",
+          "body": "A 2:1 MUX outputs $Q = \\bar S\\, I_0 + S\\, I_1$. Here $I_0 = Q$ (fed back) and $I_1 = D$, so the next output is\n\n$$Q^+ = \\bar S\\, Q + S\\, D.$$",
+          "scene": {
+            "reveal": 0
+          }
+        },
+        {
+          "title": "$S = 1$: the output follows $D$",
+          "body": "$Q^+ = 0 \\cdot Q + 1 \\cdot D = D$. While $S$ stays 1, every change of $D$ passes straight to $Q$ — the circuit is **transparent**.",
+          "scene": {
+            "reveal": 30,
+            "hl": [
+              {
+                "r": 4,
+                "tone": "accent"
+              },
+              {
+                "r": 5,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "$S = 0$: the output holds",
+          "body": "$Q^+ = 1 \\cdot Q + 0 \\cdot D = Q$. Input 0 just recirculates the present value, so $Q$ keeps its last value whatever $D$ does — the circuit **stores** one bit.",
+          "scene": {
+            "reveal": 30,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "info"
+              },
+              {
+                "r": 1,
+                "tone": "info"
+              },
+              {
+                "r": 2,
+                "tone": "info"
+              },
+              {
+                "r": 3,
+                "tone": "info"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Latch, not flip-flop",
+          "body": "Transparent on a **level** ($S = 1$) and holding on the other level is the definition of a **D latch** with enable $S$ ($Q^+ = \\bar E Q + E D$). A D flip-flop samples $D$ only at a clock **edge**; that needs two such latches in master–slave form, so one MUX with feedback is a latch. It has a memory, so it is not a combinational half-adder or demultiplexer.",
+          "scene": {
+            "hl": []
+          }
+        }
+      ],
+      "answer": {
+        "value": "**D latch** (enable $= S$, data $=$ input 1) — option **(B)**",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "A flip-flop is edge-triggered; this circuit passes $D$ for the **whole** time $S = 1$ (level-sensitive). Two of these latches in series (master–slave) would make a D flip-flop."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$Q^+ = \\bar S Q + S D$ is exactly the characteristic equation of a gated D latch with enable $S$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "A half-adder is combinational with two outputs (sum $= A \\oplus B$, carry $= AB$); this circuit has one output and memory."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "A demultiplexer routes one input to one of several outputs; here there is a single output fed back as an input."
+        }
+      ],
+      "shortcut": "MUX + output fed back to the \"0\" input = \"hold when select is 0, load when select is 1\" = gated D latch.",
+      "pitfalls": [
+        "Calling it a D flip-flop — nothing here detects a clock edge.",
+        "Treating it as combinational because a MUX is combinational; the feedback loop creates state."
+      ],
+      "verification": "Truth table of $Q^+ = \\bar S Q + S D$ (rows of the frame): $S = 0$ rows copy $Q$, $S = 1$ rows copy $D$ — identical to the gated D latch table.",
+      "animation": {
+        "kind": "table",
+        "title": "Characteristic table: Q⁺ = S̄·Q + S·D",
+        "cols": [
+          "S",
+          "D (input 1)",
+          "Q",
+          "Q⁺",
+          "behaviour"
+        ],
+        "rows": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "hold"
+          ],
+          [
+            "0",
+            "0",
+            "1",
+            "1",
+            "hold"
+          ],
+          [
+            "0",
+            "1",
+            "0",
+            "0",
+            "hold"
+          ],
+          [
+            "0",
+            "1",
+            "1",
+            "1",
+            "hold"
+          ],
+          [
+            "1",
+            "0",
+            "x",
+            "0",
+            "Q = D"
+          ],
+          [
+            "1",
+            "1",
+            "x",
+            "1",
+            "Q = D"
+          ]
+        ],
+        "reveal": 0,
+        "mono": true
+      }
+    },
+    "cse-2023-cs-12": {
+      "approach": "Split the CPU state into what each thread owns and what the whole process shares. Threads of one process share the address space (so the page table and its base register stay put) but each has its own execution context: PC, stack pointer and registers.",
+      "concepts": [
+        "Threads vs processes",
+        "Thread control block",
+        "Context switch"
+      ],
+      "steps": [
+        {
+          "title": "What threads of one process share",
+          "body": "All threads of a process share code, global data, heap, open files and the **address space** — hence the same page table. The page table base register (PTBR) therefore holds the same value for T1 and T2 and need not be saved or reloaded (that is why thread switches are cheaper than process switches: no TLB flush, no PTBR reload)."
+        },
+        {
+          "title": "What each thread owns",
+          "body": "Each thread is an independent flow of control, stored in its thread control block:\n\n- **program counter** — where T1 resumes;\n- **stack pointer** — each thread has its own stack (local variables, return addresses);\n- **general-purpose registers** (and flags) — T1's intermediate values.\n\nT2 will overwrite all of these, so T1's values must be saved: B, C, D."
+        },
+        {
+          "title": "Contrast with a process switch",
+          "body": "| item | thread switch (same process) | process switch |\n|---|---|---|\n| PC, SP, registers | save / restore | save / restore |\n| PTBR (page table) | unchanged | save / reload |\n| TLB | kept | flushed (or ASID change) |\n\nThe extra rows on the right are exactly what makes a thread switch cheaper — and why option A is not needed here."
+        }
+      ],
+      "answer": {
+        "value": "Stack pointer, program counter and general-purpose registers — options **(B), (C), (D)**",
+        "choice": [
+          "B",
+          "C",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "T1 and T2 share one address space and one page table; the PTBR value does not change, so nothing has to be saved for it."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Each thread has a private stack, so its stack pointer is per-thread context."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "The PC records where T1 must resume; T2 will load its own PC."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Registers hold T1’s in-flight computation and will be overwritten by T2."
+        }
+      ],
+      "shortcut": "Thread = PC + SP + registers (+ stack); process = address space + resources. A same-process thread switch saves only the thread part.",
+      "pitfalls": [
+        "Treating a thread switch like a process switch and including the PTBR.",
+        "Forgetting the stack pointer — threads share the heap but not their stacks."
+      ],
+      "verification": "Contrast with a switch between threads of different processes: there the address space changes, so the PTBR (and usually the TLB) must change too — which is exactly what makes A unnecessary here."
+    },
+    "cse-2023-cs-13": {
+      "approach": "Ask for each event whether it necessarily raises a trap/exception/interrupt — only those switch the CPU into kernel mode. Ordinary calls run entirely in user mode; library calls such as malloc only sometimes invoke a system call.",
+      "concepts": [
+        "User vs kernel mode",
+        "Traps and exceptions",
+        "System calls"
+      ],
+      "steps": [
+        {
+          "title": "How the CPU enters kernel mode",
+          "body": "The mode bit changes from user to kernel only on a trap (software interrupt, e.g. the `syscall` instruction), an exception (page fault, divide by zero, …) or a hardware interrupt. Any event that is guaranteed to raise one of these guarantees the transition."
+        },
+        {
+          "title": "Function call and malloc",
+          "body": "- A **function call** is a `call` instruction that jumps within the program's own code — user mode throughout.\n- **malloc** is a C library routine running in user mode. It usually carves memory out of the heap it already owns; only when the heap must grow does it call `brk`/`sbrk` or `mmap`. So a kernel entry is possible but **not guaranteed**."
+        },
+        {
+          "title": "Page fault and system call",
+          "body": "- A **page fault** is an exception raised by the MMU; the CPU always transfers control to the kernel's page-fault handler.\n- A **system call** is by definition a trap into the kernel to request a privileged service.\n\nBoth always cause the switch: C and D."
+        }
+      ],
+      "answer": {
+        "value": "Page fault and system call — options **(C), (D)**",
+        "choice": [
+          "C",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "An ordinary function call stays in user mode."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "malloc only sometimes calls brk/sbrk/mmap; most calls are satisfied from the existing heap in user mode, so the switch is not guaranteed."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "A page fault is an exception, always handled by the kernel."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "A system call is a deliberate trap into kernel mode."
+        }
+      ],
+      "shortcut": "Look for the word \"guarantee\": only traps/exceptions qualify — page fault and system call.",
+      "pitfalls": [
+        "Marking malloc because it \"allocates memory\" — allocation is done in user space unless the heap must grow.",
+        "Assuming page faults are handled by hardware alone; the MMU only raises the exception, the OS handles it."
+      ],
+      "verification": "Counter-check B: two consecutive `malloc(16)` calls typically return blocks from the same already-mapped heap page — tracing the program with `strace` shows no system call for the second one, so malloc alone does not guarantee a mode switch."
+    },
+    "cse-2023-cs-14": {
+      "approach": "Go class by class: regular (product automaton), recursive (run both deciders), RE (run both recognisers) are closed under intersection; CFLs are not — the standard counterexample intersects two CFLs to get aⁿbⁿcⁿ.",
+      "concepts": [
+        "Closure properties",
+        "Product construction",
+        "Decidable and recognisable languages"
+      ],
+      "steps": [
+        {
+          "title": "Regular: product DFA",
+          "body": "For DFAs $M_1, M_2$ build $M$ with states $Q_1 \\times Q_2$, $\\delta((p, q), a) = (\\delta_1(p, a), \\delta_2(q, a))$ and accepting set $F_1 \\times F_2$. $M$ accepts exactly $L_1 \\cap L_2$, so (A) is correct."
+        },
+        {
+          "title": "Context-free: not closed",
+          "body": "$L_1 = \\{a^n b^n c^m \\mid n, m \\ge 0\\}$ and $L_2 = \\{a^m b^n c^n \\mid n, m \\ge 0\\}$ are both CFLs, but\n\n$$L_1 \\cap L_2 = \\{a^n b^n c^n \\mid n \\ge 0\\},$$\n\nwhich is not context-free (pumping lemma). So (B) is false in general."
+        },
+        {
+          "title": "Recursive and recursively enumerable",
+          "body": "- **Recursive:** deciders $M_1, M_2$ always halt; run $M_1$ then $M_2$ on $w$, accept iff both accept. This always halts ⇒ $L_1 \\cap L_2$ is recursive. (C) correct.\n- **RE:** recognisers may loop on non-members. Run $M_1$ on $w$; if it accepts, run $M_2$; accept if it accepts. If $w \\in L_1 \\cap L_2$ both accept, otherwise the machine rejects or loops — exactly a recogniser for $L_1 \\cap L_2$. (D) correct."
+        }
+      ],
+      "answer": {
+        "value": "Statements **(A), (C), (D)** are correct",
+        "choice": [
+          "A",
+          "C",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Product construction of two DFAs recognises the intersection."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "False: $\\{a^nb^nc^m\\} \\cap \\{a^mb^nc^n\\} = \\{a^nb^nc^n\\}$ is not context-free."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Run both deciders one after the other; both halt, so the combination is a decider."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Run both recognisers sequentially (or in parallel); accept iff both accept — a recogniser for the intersection."
+        }
+      ],
+      "shortcut": "Of REG, CFL, REC, RE only CFL is not closed under intersection (it is closed under intersection with a regular language, though).",
+      "pitfalls": [
+        "Mixing up \"CFL ∩ regular is CFL\" (true) with \"CFL ∩ CFL is CFL\" (false).",
+        "Thinking RE fails because the machines may loop — sequential simulation is fine for intersection (it is complement that fails for RE)."
+      ],
+      "verification": "Cross-check with complement: REC is closed under complement and union, hence under intersection via De Morgan; RE is not closed under complement, so its closure under $\\cap$ must come from the direct construction above, which needs no complement."
+    },
+    "cse-2023-cs-15": {
+      "approach": "Recall the three defining facts of OSPF: link-state protocol (every router floods LSAs and runs Dijkstra), interior gateway protocol (inside one autonomous system), and hierarchical (areas around a backbone area 0). Then mark the statements that contradict them.",
+      "concepts": [
+        "Link-state routing",
+        "OSPF",
+        "Intra- vs inter-domain routing"
+      ],
+      "steps": [
+        {
+          "title": "Algorithm: Dijkstra, not Bellman–Ford",
+          "body": "OSPF is a link-state protocol: each router learns the whole topology from flooded link-state advertisements and computes a shortest-path tree with **Dijkstra** (B is correct). Bellman–Ford is the basis of distance-vector protocols such as RIP, so A is **incorrect**."
+        },
+        {
+          "title": "Scope: intra-domain",
+          "body": "OSPF is an Interior Gateway Protocol, used **within** one autonomous system. Routing **between** autonomous systems (inter-domain) is done by BGP, a path-vector protocol. So C is **incorrect**."
+        },
+        {
+          "title": "Hierarchy: areas",
+          "body": "A large OSPF domain is split into areas connected through backbone area 0; area border routers summarise routes between areas. That is hierarchical routing, so D is correct."
+        }
+      ],
+      "answer": {
+        "value": "The INCORRECT statements are **(A)** and **(C)**",
+        "choice": [
+          "A",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Incorrect statement (so it is selected): OSPF runs Dijkstra; Bellman–Ford is used by distance-vector protocols like RIP."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Correct statement about OSPF (so not selected): link-state + Dijkstra least-cost paths."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Incorrect statement (so it is selected): OSPF is intra-domain (IGP); BGP is the inter-domain protocol."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Correct statement (so not selected): OSPF supports a two-level hierarchy of areas around backbone area 0."
+        }
+      ],
+      "shortcut": "OSPF = link-state = Dijkstra = IGP with areas. RIP = distance vector = Bellman–Ford. BGP = inter-domain.",
+      "pitfalls": [
+        "Answering with the CORRECT statements — the question asks for the INCORRECT ones.",
+        "Thinking hierarchical routing belongs only to BGP; OSPF areas are the textbook example."
+      ],
+      "verification": "RFC 2328 describes OSPF as a link-state IGP that runs the Dijkstra SPF algorithm and supports areas — consistent with B and D being true and A, C false."
+    },
+    "cse-2023-cs-16": {
+      "approach": "An option implies the conjecture if, assuming it, you can produce a witness $y$ for every $x$ with $P(x)$. B and C hand you such a witness; A and D speak about only one $x$, and a single counter-model kills both.",
+      "concepts": [
+        "First-order logic",
+        "Quantifier order",
+        "Logical implication"
+      ],
+      "given": "Conjecture $G$: $\\forall x\\,\\big(P(x) \\Rightarrow \\exists y\\, Q(x, y)\\big)$ over the integers (non-empty domain).",
+      "steps": [
+        {
+          "title": "B implies G",
+          "body": "Assume $\\forall x \\forall y\\, Q(x, y)$. Take any $x$ with $P(x)$; choose $y = 0$ (the domain is non-empty). Then $Q(x, 0)$ holds, so $\\exists y\\, Q(x, y)$. Hence $G$."
+        },
+        {
+          "title": "C implies G",
+          "body": "Assume $\\exists y\\, \\forall x\\, (P(x) \\Rightarrow Q(x, y))$ and fix such a $y_0$. For any $x$ with $P(x)$ we get $Q(x, y_0)$, so $\\exists y\\, Q(x, y)$ with witness $y_0$. Hence $G$. (C is the stronger \"one $y$ for all $x$\" form — $\\exists y \\forall x$ implies $\\forall x \\exists y$.)"
+        },
+        {
+          "title": "A and D do not: one counter-model",
+          "body": "Let $P(x)$ be true for every integer and $Q(x, y) \\equiv (x = 0)$.\n\n| formula | value | reason |\n|---|---|---|\n| A: $\\exists x\\,(P(x) \\wedge \\forall y\\, Q(x,y))$ | true | $x = 0$ |\n| D: $\\exists x\\,(P(x) \\wedge \\exists y\\, Q(x,y))$ | true | $x = 0$ |\n| $G$ | **false** | $x = 1$: $P(1)$ but no $y$ has $Q(1, y)$ |\n\nA and D are true while $G$ is false, so neither implies $G$."
+        }
+      ],
+      "answer": {
+        "value": "Options **(B)** and **(C)** imply the conjecture",
+        "choice": [
+          "B",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Only guarantees one good $x$; other $x$ with $P(x)$ may have no witness (counter-model: $Q(x,y) \\equiv x = 0$)."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$Q$ holds for all pairs, so any $y$ is a witness for every $x$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "A single $y_0$ that works for every $x$ satisfying $P$ certainly gives each such $x$ a witness ($\\exists y \\forall x \\Rightarrow \\forall x \\exists y$)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "This is just one instance of the conjecture holding; it says nothing about other $x$ (same counter-model as A)."
+        }
+      ],
+      "shortcut": "\"Implies a $\\forall x$ statement\" needs a $\\forall x$ (or $\\exists y \\forall x$) in the premise: B and C have it, A and D start with $\\exists x$.",
+      "pitfalls": [
+        "Reading A as \"for all $x$\" because of the inner $\\forall y$ — the outer quantifier is $\\exists x$.",
+        "Forgetting that $\\exists y \\forall x$ implies $\\forall x \\exists y$ (the converse is what fails)."
+      ],
+      "verification": "Check the converse direction is not needed: we only need premise ⇒ $G$. In the counter-model, B is false ($Q(1, 0)$ fails) and C is false (no $y$ makes $Q(1, y)$ true), consistent with both still implying $G$ (an implication with a false premise is vacuously fine)."
+    }
+  }
+}
