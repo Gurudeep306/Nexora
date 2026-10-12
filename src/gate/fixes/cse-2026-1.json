@@ -1,0 +1,3907 @@
+{
+  "paper": "cse-2026-1",
+  "fixes": [
+    {
+      "id": "cse-2026-1-ga-1",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "antagonist"
+        },
+        {
+          "l": "B",
+          "t": "arsonist"
+        },
+        {
+          "l": "C",
+          "t": "anarchist"
+        },
+        {
+          "l": "D",
+          "t": "agnostic"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "agnostic"
+        },
+        {
+          "l": "B",
+          "t": "antagonist"
+        },
+        {
+          "l": "C",
+          "t": "arsonist"
+        },
+        {
+          "l": "D",
+          "t": "anarchist"
+        }
+      ],
+      "reason": "Options restored to the order printed in the official paper (the bank had them rotated).",
+      "source": "pdf p.1"
+    },
+    {
+      "id": "cse-2026-1-ga-1",
+      "field": "answer",
+      "before": "A",
+      "after": "B",
+      "reason": "The stored letter keys of this paper's Q1-Q13 run A, A, B, C, D, A, B, C, D, A, B, C, D -- a mechanical cycle, not the official key -- and the options were stored in a rotated order. In the paper's order 'antagonist' (the antonym of protagonist) is option B.",
+      "source": "pdf p.1"
+    },
+    {
+      "id": "cse-2026-1-ga-1",
+      "field": "tags",
+      "before": [
+        "verbal-aptitude"
+      ],
+      "after": [
+        "verbal-aptitude",
+        "antonyms",
+        "vocabulary"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.1"
+    },
+    {
+      "id": "cse-2026-1-ga-2",
+      "field": "text",
+      "before": "The figure shows two 4-tile patterns. Either one or both of the patterns can be used any number of times and in any orientation to construct a new pattern. Which one of the options below cannot be constructed by using only these two 4-tile patterns assuming there are no overlaps among them?",
+      "after": "The figure shows two 4-tile patterns: a $2 \\times 2$ square and a $1 \\times 4$ bar.\n\nEither one or both of the patterns can be used any number of times and in any orientation to construct a new pattern. Which one of the options below **cannot** be constructed by using only these two 4-tile patterns assuming there are no overlaps among them?",
+      "reason": "Named the two patterns shown in the figure and restored the bold 'cannot'.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2026-1-ga-2",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "(B)"
+        },
+        {
+          "l": "C",
+          "t": "(D)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Figure (A): a $2 \\times 4$ block of tiles"
+        },
+        {
+          "l": "B",
+          "t": "Figure (B): a $3 \\times 4$ block of tiles"
+        },
+        {
+          "l": "C",
+          "t": "Figure (C): a $3 \\times 5$ block of tiles"
+        },
+        {
+          "l": "D",
+          "t": "Figure (D): a $4 \\times 5$ block of tiles"
+        }
+      ],
+      "reason": "The options are pictures; the bank had only two placeholder options '(B)' and '(D)'. All four restored (drawn in the figure).",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2026-1-ga-2",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2026-1/ga-2-1.svg",
+          "svg": "cse-2026-1/ga-2-1.svg",
+          "alt": "Top: the two 4-tile patterns, a 2 by 2 square of tiles and a straight 1 by 4 bar of tiles. Bottom: the four option figures, solid rectangles of square tiles: (A) 2 rows by 4 columns (8 tiles), (B) 3 rows by 4 columns (12 tiles), (C) 3 rows by 5 columns (15 tiles), (D) 4 rows by 5 columns (20 tiles)."
+        }
+      ],
+      "reason": "The question depends on its figure, which the bank was missing. Redrawn from the paper.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2026-1-ga-2",
+      "field": "answer",
+      "before": "A",
+      "after": "C",
+      "reason": "The stored letter keys of this paper's Q1-Q13 run A, A, B, C, D, A, B, C, D, A, B, C, D -- a mechanical cycle, not the official key -- and the options were stored in a rotated order. The 3 x 5 block (C) has 15 tiles, not a multiple of 4, so it cannot be tiled by 4-tile pieces; A, B and D can.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2026-1-ga-2",
+      "field": "topic",
+      "before": "quant",
+      "after": "spatial",
+      "reason": "Tiling with figures is spatial aptitude.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2026-1-ga-2",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "spatial-aptitude",
+        "tiling",
+        "divisibility"
+      ],
+      "reason": "Topic-specific tags.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2026-1-ga-3",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "32"
+        },
+        {
+          "l": "B",
+          "t": "127"
+        },
+        {
+          "l": "C",
+          "t": "64"
+        },
+        {
+          "l": "D",
+          "t": "63"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "127"
+        },
+        {
+          "l": "B",
+          "t": "64"
+        },
+        {
+          "l": "C",
+          "t": "63"
+        },
+        {
+          "l": "D",
+          "t": "32"
+        }
+      ],
+      "reason": "Options restored to the order printed in the official paper (the bank had them rotated).",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2026-1-ga-3",
+      "field": "answer",
+      "before": "B",
+      "after": "C",
+      "reason": "The stored letter keys of this paper's Q1-Q13 run A, A, B, C, D, A, B, C, D, A, B, C, D -- a mechanical cycle, not the official key -- and the options were stored in a rotated order. Every game eliminates exactly one player and 63 of the 64 must be eliminated, so 63 games -- option C in the paper's order. The stored key pointed at 127.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2026-1-ga-3",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "quantitative-aptitude",
+        "knockout-tournament",
+        "counting"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2026-1-ga-4",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "20"
+        },
+        {
+          "l": "B",
+          "t": "25"
+        },
+        {
+          "l": "C",
+          "t": "10"
+        },
+        {
+          "l": "D",
+          "t": "15"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "10"
+        },
+        {
+          "l": "B",
+          "t": "15"
+        },
+        {
+          "l": "C",
+          "t": "20"
+        },
+        {
+          "l": "D",
+          "t": "25"
+        }
+      ],
+      "reason": "Options restored to the order printed in the official paper (the bank had them rotated).",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2026-1-ga-4",
+      "field": "answer",
+      "before": "C",
+      "after": "D",
+      "reason": "The stored letter keys of this paper's Q1-Q13 run A, A, B, C, D, A, B, C, D, A, B, C, D -- a mechanical cycle, not the official key -- and the options were stored in a rotated order. Electives are maximised with the total at 70 and specialization at its minimum 10: 70 - 15 - 20 - 10 = 25 (option D). The stored key pointed at 10.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2026-1-ga-4",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "quantitative-aptitude",
+        "linear-constraints",
+        "maximisation"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2026-1-ga-5",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "When the teacher is in the room, all students are silent."
+        },
+        {
+          "l": "B",
+          "t": "If all students are standing, then the teacher is in the room."
+        },
+        {
+          "l": "C",
+          "t": "When the teacher is in the room, all students are standing."
+        },
+        {
+          "l": "D",
+          "t": "If any student is not standing silently, then the teacher is not in the room."
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "If any student is not standing silently, then the teacher is not in the room."
+        },
+        {
+          "l": "B",
+          "t": "When the teacher is in the room, all students are silent."
+        },
+        {
+          "l": "C",
+          "t": "If all students are standing, then the teacher is in the room."
+        },
+        {
+          "l": "D",
+          "t": "When the teacher is in the room, all students are standing."
+        }
+      ],
+      "reason": "Options restored to the order printed in the official paper (the bank had them rotated).",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2026-1-ga-5",
+      "field": "answer",
+      "before": "D",
+      "after": "C",
+      "reason": "The stored letter keys of this paper's Q1-Q13 run A, A, B, C, D, A, B, C, D, A, B, C, D -- a mechanical cycle, not the official key -- and the options were stored in a rotated order. Option C is the converse of the given implication and does not follow; A is the contrapositive and B, D are weakenings of the consequent, all necessarily true. The stored key pointed at the contrapositive.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2026-1-ga-5",
+      "field": "topic",
+      "before": "quant",
+      "after": "analytical",
+      "reason": "Implication / contrapositive reasoning is analytical reasoning.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2026-1-ga-5",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "analytical-reasoning",
+        "logical-implication",
+        "contrapositive"
+      ],
+      "reason": "Topic-specific tags.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2026-1-ga-6",
+      "field": "text",
+      "before": "Combinatorics deals with problems involving counting. For example, “How many distinct arrangements of N distinct objects in M spaces on a circle are possible?” is a typical problem in combinatorics. This kind of counting is sometimes used in the modeling of several physical phenomena. Often, in such models, the different combinatorial possibilities are assigned probability values. Assigning probabilities enables the computation of the average values of physical quantities. Consider the following statements: P: Combinatorics is always invoked in the modeling of physical phenomena. Q: Modeling some physical phenomena involves assigning probabilities to combinatorial possibilities in order to compute average values of physical quantities. Based on the passage above, what can be inferred about statements P and Q?",
+      "after": "Combinatorics deals with problems involving counting. For example, “How many distinct arrangements of N distinct objects in M spaces on a circle are possible?” is a typical problem in combinatorics. This kind of counting is sometimes used in the modeling of several physical phenomena. Often, in such models, the different combinatorial possibilities are assigned probability values. Assigning probabilities enables the computation of the average values of physical quantities.\n\nConsider the following statements:\n\n- **P**: Combinatorics is always invoked in the modeling of physical phenomena.\n- **Q**: Modeling some physical phenomena involves assigning probabilities to combinatorial possibilities in order to compute average values of physical quantities.\n\nBased on the passage above, what can be inferred about statements P and Q?",
+      "reason": "Restored the paragraph breaks and put P and Q on their own lines.",
+      "source": "pdf p.5"
+    },
+    {
+      "id": "cse-2026-1-ga-6",
+      "field": "answer",
+      "before": "A",
+      "after": "B",
+      "reason": "The stored letter keys of this paper's Q1-Q13 run A, A, B, C, D, A, B, C, D, A, B, C, D -- a mechanical cycle, not the official key -- and the options were stored in a rotated order. The passage says the counting is 'sometimes' used, so P ('always') is false, while Q restates the last two sentences, so Q is true: option B. The stored key A ('both false') contradicts the passage.",
+      "source": "pdf p.5"
+    },
+    {
+      "id": "cse-2026-1-ga-6",
+      "field": "tags",
+      "before": [
+        "verbal-aptitude"
+      ],
+      "after": [
+        "verbal-aptitude",
+        "reading-comprehension",
+        "inference"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.5"
+    },
+    {
+      "id": "cse-2026-1-ga-7",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "(iv)"
+        },
+        {
+          "l": "B",
+          "t": "(i)"
+        },
+        {
+          "l": "C",
+          "t": "(ii)"
+        },
+        {
+          "l": "D",
+          "t": "(iii)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "(i)"
+        },
+        {
+          "l": "B",
+          "t": "(ii)"
+        },
+        {
+          "l": "C",
+          "t": "(iii)"
+        },
+        {
+          "l": "D",
+          "t": "(iv)"
+        }
+      ],
+      "reason": "Options restored to the order printed in the official paper (the bank had them rotated).",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2026-1-ga-7",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2026-1/ga-7-1.svg",
+          "svg": "cse-2026-1/ga-7-1.svg",
+          "alt": "Panel I (left) shows two orthographic views on a 3 by 3 grid. Front view: the left column is 3 cubes tall, the middle and right columns 2 tall; face boundaries form an L-shaped face (left column rows 1-2 plus middle column row 1), a separate top-left square, a 2-wide rectangle across the middle and right columns at height 2, and a separate bottom-right square. Top view: the left column's back two cells form one face and its front cell another; the right two columns' back row is one face; the middle row of the right two columns together with the front cell of the middle column form an L-shaped face; the front-right cell is empty. Panel II (right) shows four 3D stacks of unit cubes, (i) to (iv), drawn in oblique view with the front face toward the lower left and the top view looking down. Column heights (back row / middle row / front row, left to right): (i) 3 2 2 / 3 1 1 / 2 1 1; (ii) 3 2 2 / 3 2 1 / 2 1 0; (iii) 3 3 2 / 3 1 1 / 2 1 0; (iv) 3 2 2 / 3 1 1 / 2 1 0."
+        }
+      ],
+      "reason": "The question depends on its figure, which the bank was missing. Redrawn from the paper (each structure as a stack of unit cubes with the same column heights as the printed drawing).",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2026-1-ga-7",
+      "field": "answer",
+      "before": "B",
+      "after": "D",
+      "reason": "The stored letter keys of this paper's Q1-Q13 run A, A, B, C, D, A, B, C, D, A, B, C, D -- a mechanical cycle, not the official key -- and the options were stored in a rotated order. Only structure (iv) reproduces both views: (i) has a cube at the front-right that the top view lacks, (ii) has a height-2 cube in the middle of the middle row, and (iii) has a 3-tall back-middle column that would make the front view's middle column 3 tall. (iv) is option D.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2026-1-ga-7",
+      "field": "topic",
+      "before": "quant",
+      "after": "spatial",
+      "reason": "Orthographic views of 3D structures are spatial aptitude.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2026-1-ga-7",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "spatial-aptitude",
+        "orthographic-views",
+        "3d-visualisation"
+      ],
+      "reason": "Topic-specific tags.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2026-1-ga-8",
+      "field": "text",
+      "before": "For positive real numbers 𝑆 and 𝐾, the function 𝐻𝐾(𝑆) is defined as: 𝐻𝐾(𝑆) = max(𝑆 − 𝐾, 0). The max function is defined as: max(𝑎, 𝑏) = {𝑎, when 𝑎 > 𝑏 𝑏, when 𝑎 ≤ 𝑏 The graph below shows the plot of a function 𝑁(𝑆) versus 𝑆. 𝑁(𝑆) can be expressed as _____.",
+      "after": "For positive real numbers $S$ and $K$, the function $H_K(S)$ is defined as: $H_K(S) = \\max(S - K, 0)$. The max function is defined as:\n\n$$\\max(a, b) = \\begin{cases} a, & \\text{when } a > b \\\\ b, & \\text{when } a \\le b \\end{cases}$$\n\nThe graph below shows the plot of a function $N(S)$ versus $S$.\n\n$N(S)$ can be expressed as _____.",
+      "reason": "Unicode maths italics and the flattened case definition rewritten in KaTeX.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2026-1-ga-8",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "−𝐻10(𝑆) + 𝐻20(𝑆)"
+        },
+        {
+          "l": "B",
+          "t": "𝐻15(𝑆) − 𝐻20(𝑆)"
+        },
+        {
+          "l": "C",
+          "t": "𝐻10(𝑆) − 𝐻20(𝑆)"
+        },
+        {
+          "l": "D",
+          "t": "𝐻10(𝑆) − 2𝐻20(𝑆)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$H_{10}(S) - H_{20}(S)$"
+        },
+        {
+          "l": "B",
+          "t": "$H_{10}(S) - 2H_{20}(S)$"
+        },
+        {
+          "l": "C",
+          "t": "$-H_{10}(S) + H_{20}(S)$"
+        },
+        {
+          "l": "D",
+          "t": "$H_{15}(S) - H_{20}(S)$"
+        }
+      ],
+      "reason": "Options restored to the order printed in the official paper (the bank had them rotated). Also rewritten in KaTeX with proper subscripts.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2026-1-ga-8",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2026-1/ga-8-1.svg",
+          "svg": "cse-2026-1/ga-8-1.svg",
+          "alt": "Line graph of N(S) against S, with S from 0 to 30 (gridlines at 10, 20, 30) and N(S) from 0 to 12 (gridlines every 2). N(S) is 0 from S = 0 to S = 10, rises in a straight line from (10, 0) to (20, 10), and stays flat at 10 from S = 20 to S = 30."
+        }
+      ],
+      "reason": "The question depends on its graph, which the bank was missing. Redrawn from the paper.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2026-1-ga-8",
+      "field": "answer",
+      "before": "C",
+      "after": "A",
+      "reason": "The stored letter keys of this paper's Q1-Q13 run A, A, B, C, D, A, B, C, D, A, B, C, D -- a mechanical cycle, not the official key -- and the options were stored in a rotated order. In the paper's order H10(S) - H20(S) (0, then slope 1 from 10 to 20, then flat at 10) is option A.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2026-1-ga-8",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "quantitative-aptitude",
+        "functions",
+        "piecewise-linear"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2026-1-ga-9",
+      "field": "text",
+      "before": "In the 2020 summer Olympics’ Javelin throw finals, Neeraj Chopra exhibited a spectacular performance to win the gold medal. The silver medal was won by Jakub Vadlejch and the bronze medal was won by Vitezlav Vesely. There were six rounds of throws with each athlete having one throw per round. The best of all the throws of each athlete is considered for the medal. Following were the observations about the throws: i. The first and second rounds were dominated by Neeraj Chopra with a gold medal performance in his second throw, while the other two athletes did not have any medal winning throws in these rounds. ii. The throws in the last round by both Jakub Vadlejch and Vitezlav Vesely were fouls and were not considered for scoring. iii. After four rounds, Vitezlav Vesely was in the second position and could not improve upon his best throw in the succeeding rounds. iv. In the fourth round, the throw by Jakub Vadlejch was the best in that round. In which round did Vitezlav Vesely have his best throw?",
+      "after": "In the 2020 summer Olympics’ Javelin throw finals, Neeraj Chopra exhibited a spectacular performance to win the gold medal. The silver medal was won by Jakub Vadlejch and the bronze medal was won by Vitezlav Vesely. There were six rounds of throws with each athlete having one throw per round. The best of all the throws of each athlete is considered for the medal. Following were the observations about the throws:\n\n1. The first and second rounds were dominated by Neeraj Chopra with a gold medal performance in his second throw, while the other two athletes did not have any medal winning throws in these rounds.\n2. The throws in the last round by both Jakub Vadlejch and Vitezlav Vesely were fouls and were not considered for scoring.\n3. After four rounds, Vitezlav Vesely was in the second position and could not improve upon his best throw in the succeeding rounds.\n4. In the fourth round, the throw by Jakub Vadlejch was the best in that round.\n\nIn which round did Vitezlav Vesely have his best throw?",
+      "reason": "Observations i-iv put on separate lines (numbered list; the paper numbers them i, ii, iii, iv).",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2026-1-ga-9",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Fourth"
+        },
+        {
+          "l": "B",
+          "t": "Fifth"
+        },
+        {
+          "l": "C",
+          "t": "Sixth"
+        },
+        {
+          "l": "D",
+          "t": "Third"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Third"
+        },
+        {
+          "l": "B",
+          "t": "Fourth"
+        },
+        {
+          "l": "C",
+          "t": "Fifth"
+        },
+        {
+          "l": "D",
+          "t": "Sixth"
+        }
+      ],
+      "reason": "Options restored to the order printed in the official paper (the bank had them rotated).",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2026-1-ga-9",
+      "field": "answer",
+      "before": "D",
+      "after": "A",
+      "reason": "The stored letter keys of this paper's Q1-Q13 run A, A, B, C, D, A, B, C, D, A, B, C, D -- a mechanical cycle, not the official key -- and the options were stored in a rotated order. In the paper's order 'Third' is option A.",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2026-1-ga-9",
+      "field": "topic",
+      "before": "quant",
+      "after": "analytical",
+      "reason": "Deduction from clues is analytical reasoning.",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2026-1-ga-9",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "analytical-reasoning",
+        "deduction",
+        "ordering"
+      ],
+      "reason": "Topic-specific tags.",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2026-1-ga-10",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "1 6"
+        },
+        {
+          "l": "B",
+          "t": "5 18"
+        },
+        {
+          "l": "C",
+          "t": "7 18"
+        },
+        {
+          "l": "D",
+          "t": "5 6"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\frac{1}{6}$"
+        },
+        {
+          "l": "B",
+          "t": "$\\frac{5}{18}$"
+        },
+        {
+          "l": "C",
+          "t": "$\\frac{7}{18}$"
+        },
+        {
+          "l": "D",
+          "t": "$\\frac{5}{6}$"
+        }
+      ],
+      "reason": "Fractions had lost their bars ('1 6', '5 18', ...); rewritten in KaTeX.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "cse-2026-1-ga-10",
+      "field": "answer",
+      "before": "A",
+      "after": "C",
+      "reason": "The stored letter keys of this paper's Q1-Q13 run A, A, B, C, D, A, B, C, D, A, B, C, D -- a mechanical cycle, not the official key -- and the options were stored in a rotated order. Favourable ordered pairs: 6 + 3 + 2 + 1 + 1 + 1 = 14 of 36, so 7/18 (option C). The stored key pointed at 1/6.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "cse-2026-1-ga-10",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "quantitative-aptitude",
+        "probability",
+        "divisibility"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "cse-2026-1-cs-1",
+      "field": "text",
+      "before": "An urn contains one red ball and one blue ball. At each step, a ball is picked uniformly at random from the urn , and this ball together with another ball of the same color is put back in the urn. The probability that there are equal number of red and blue balls after two steps is",
+      "after": "An urn contains one red ball and one blue ball. At each step, a ball is picked uniformly at random from the urn, and this ball together with another ball of the same color is put back in the urn. The probability that there are equal number of red and blue balls after two steps is",
+      "reason": "Stray space before the comma removed.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2026-1-cs-1",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "2/3"
+        },
+        {
+          "l": "B",
+          "t": "1/4"
+        },
+        {
+          "l": "C",
+          "t": "1/3"
+        },
+        {
+          "l": "D",
+          "t": "1/2"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$1/4$"
+        },
+        {
+          "l": "B",
+          "t": "$1/3$"
+        },
+        {
+          "l": "C",
+          "t": "$1/2$"
+        },
+        {
+          "l": "D",
+          "t": "$2/3$"
+        }
+      ],
+      "reason": "Options restored to the order printed in the official paper (the bank had them rotated).",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2026-1-cs-1",
+      "field": "topic",
+      "before": "probability",
+      "after": "basic",
+      "reason": "Topic id 'probability' does not exist; conditional / sequential probability is 'basic'.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-1-cs-1",
+      "field": "tags",
+      "before": [
+        "prob",
+        "probability",
+        "urn-models"
+      ],
+      "after": [
+        "prob",
+        "conditional-probability",
+        "polya-urn"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2026-1-cs-2",
+      "field": "text",
+      "before": "Consider 4 × 4 matrices with their elements from {𝟎, 𝟏}. The number of such matrices with even number of 𝟏s in every row and every column is",
+      "after": "Consider $4 \\times 4$ matrices with their elements from $\\{0, 1\\}$. The number of such matrices with even number of $1$s in every row and every column is",
+      "reason": "Unicode bold digits rewritten in KaTeX.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2026-1-cs-2",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "1023"
+        },
+        {
+          "l": "B",
+          "t": "255"
+        },
+        {
+          "l": "C",
+          "t": "512"
+        },
+        {
+          "l": "D",
+          "t": "1025"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "512"
+        },
+        {
+          "l": "B",
+          "t": "1025"
+        },
+        {
+          "l": "C",
+          "t": "1023"
+        },
+        {
+          "l": "D",
+          "t": "255"
+        }
+      ],
+      "reason": "Options restored to the order printed in the official paper (the bank had them rotated).",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2026-1-cs-2",
+      "field": "answer",
+      "before": "C",
+      "after": "A",
+      "reason": "The stored letter keys of this paper's Q1-Q13 run A, A, B, C, D, A, B, C, D, A, B, C, D -- a mechanical cycle, not the official key -- and the options were stored in a rotated order. In the paper's order 512 = 2^9 is option A.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2026-1-cs-2",
+      "field": "subject",
+      "before": "la",
+      "after": "dm",
+      "reason": "A counting (parity) problem: discrete mathematics / combinatorics rather than linear algebra.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2026-1-cs-2",
+      "field": "topic",
+      "before": "matrices",
+      "after": "combinatorics",
+      "reason": "Counting problem.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2026-1-cs-2",
+      "field": "tags",
+      "before": [
+        "la",
+        "matrices",
+        "rank"
+      ],
+      "after": [
+        "dm",
+        "combinatorics",
+        "parity",
+        "binary-matrices"
+      ],
+      "reason": "Tags matched the content (no rank involved).",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2026-1-cs-3",
+      "field": "text",
+      "before": "For 𝑛 > 1, the maximum multiplicity of any eigenvalue of an 𝑛 × 𝑛 matrix with elements from ℝ is",
+      "after": "For $n > 1$, the maximum multiplicity of any eigenvalue of an $n \\times n$ matrix with elements from $\\mathbb{R}$ is",
+      "reason": "Unicode maths italics rewritten in KaTeX.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2026-1-cs-3",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝑛 − 1"
+        },
+        {
+          "l": "B",
+          "t": "1"
+        },
+        {
+          "l": "C",
+          "t": "𝑛 + 1"
+        },
+        {
+          "l": "D",
+          "t": "𝑛"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$n$"
+        },
+        {
+          "l": "B",
+          "t": "$n - 1$"
+        },
+        {
+          "l": "C",
+          "t": "$1$"
+        },
+        {
+          "l": "D",
+          "t": "$n + 1$"
+        }
+      ],
+      "reason": "Options restored to the order printed in the official paper (the bank had them rotated). Also rewritten in KaTeX.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2026-1-cs-3",
+      "field": "answer",
+      "before": "D",
+      "after": "A",
+      "reason": "The stored letter keys of this paper's Q1-Q13 run A, A, B, C, D, A, B, C, D, A, B, C, D -- a mechanical cycle, not the official key -- and the options were stored in a rotated order. In the paper's order n is option A.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2026-1-cs-3",
+      "field": "topic",
+      "before": "eigenvalues",
+      "after": "eigen",
+      "reason": "Topic id 'eigenvalues' does not exist; the eigenvalue topic is 'eigen'.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-1-cs-3",
+      "field": "tags",
+      "before": [
+        "la",
+        "eigenvalues",
+        "multiplicity"
+      ],
+      "after": [
+        "la",
+        "eigenvalues",
+        "multiplicity",
+        "characteristic-polynomial"
+      ],
+      "reason": "Added characteristic-polynomial.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2026-1-cs-4",
+      "field": "text",
+      "before": "Match each addressing mode in List I with a data element or an element of a data structure (in a high-level language) in List II: List I List II P. Immediate 1. Element of an array Q. Indirect 2. Pointer R. Base with index 3. Element of a record S. Base with offset/displacement 4. Constant",
+      "after": "Match each addressing mode in **List I** with a data element or an element of a data structure (in a high-level language) in **List II**:\n\n| List I | List II |\n|---|---|\n| P. Immediate | 1. Element of an array |\n| Q. Indirect | 2. Pointer |\n| R. Base with index | 3. Element of a record |\n| S. Base with offset/displacement | 4. Constant |",
+      "reason": "The two lists were flattened into one line; restored as the table printed in the paper.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2026-1-cs-4",
+      "field": "answer",
+      "before": "A",
+      "after": "B",
+      "reason": "Stored key does not belong to this question as printed in the paper. The official GATE 2026 CS1 key gives B for Q.14, which independent solving confirms (see the v2 solution).",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-5",
+      "field": "text",
+      "before": "Consider a processor P whose in struction set architecture is the load -store architecture. The instruction format is such that the first operand of any instruction is the destination operand. Which one of the following sequences of instructions corresponds to the high-level language statement Z = X + Y ? Note: X, Y, and Z are memory operands. R0, R1, and R2 are registers.",
+      "after": "Consider a processor P whose instruction set architecture is the load-store architecture. The instruction format is such that the first operand of any instruction is the destination operand.\n\nWhich one of the following sequences of instructions corresponds to the high-level language statement `Z = X + Y`?\n\nNote: X, Y, and Z are memory operands. R0, R1, and R2 are registers.",
+      "reason": "Extraction artifacts (\"in struction\", \"load -store\") removed; paragraph breaks restored.",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "cse-2026-1-cs-5",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "LOAD R0, X LOAD R1, Y ADD R2, R0, R1 STORE Z, R2"
+        },
+        {
+          "l": "B",
+          "t": "ADD Z, X, Y"
+        },
+        {
+          "l": "C",
+          "t": "LOAD R0, X ADD Z, R0, Y"
+        },
+        {
+          "l": "D",
+          "t": "ADD R0, X, Y STORE Z, R0"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "```\nADD Z, X, Y\n```"
+        },
+        {
+          "l": "B",
+          "t": "```\nLOAD R0, X\nADD Z, R0, Y\n```"
+        },
+        {
+          "l": "C",
+          "t": "```\nADD R0, X, Y\nSTORE Z, R0\n```"
+        },
+        {
+          "l": "D",
+          "t": "```\nLOAD R0, X\nLOAD R1, Y\nADD R2, R0, R1\nSTORE Z, R2\n```"
+        }
+      ],
+      "reason": "Options were stored in a scrambled order; restored to the order printed in the paper (Q.15), which the official key's letters refer to. Instruction sequences laid out one instruction per line.",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "cse-2026-1-cs-5",
+      "field": "answer",
+      "before": "B",
+      "after": "D",
+      "reason": "Stored key does not belong to this question as printed in the paper. The official GATE 2026 CS1 key gives D for Q.15, which independent solving confirms (see the v2 solution).",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-5",
+      "field": "topic",
+      "before": "pipelining",
+      "after": "isa",
+      "reason": "Load-store ISA / instruction sequences are \"Machine instructions and addressing modes\"; \"pipelining\" is not a topic id of coa.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-1-cs-6",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Write-after-read"
+        },
+        {
+          "l": "B",
+          "t": "Write-after-write"
+        },
+        {
+          "l": "C",
+          "t": "Read-after-read"
+        },
+        {
+          "l": "D",
+          "t": "Read-after-write"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Read-after-read"
+        },
+        {
+          "l": "B",
+          "t": "Read-after-write"
+        },
+        {
+          "l": "C",
+          "t": "Write-after-read"
+        },
+        {
+          "l": "D",
+          "t": "Write-after-write"
+        }
+      ],
+      "reason": "Options were stored in a scrambled order; restored to the order printed in the paper (Q.16), which the official key's letters refer to.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "cse-2026-1-cs-6",
+      "field": "answer",
+      "before": "C",
+      "after": "B",
+      "reason": "Stored key does not belong to this question as printed in the paper. The official GATE 2026 CS1 key gives B for Q.16, which independent solving confirms (see the v2 solution).",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-6",
+      "field": "topic",
+      "before": "pipelining",
+      "after": "pipeline",
+      "reason": "\"pipelining\" is not a coa topic id; pipeline hazards belong to coa/pipeline.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-1-cs-7",
+      "field": "text",
+      "before": "Consider the following recurrence relations: For all 𝑛 > 1, 𝑇1(𝑛) = 4𝑇1 (𝑛 2) + 𝑇2(𝑛) 𝑇2(𝑛) = 5𝑇2 (𝑛 4) + Θ(log2 𝑛) Assume that for all 𝑛 ≤ 1, 𝑇1(𝑛) = 1 and 𝑇2(𝑛) = 1. Which one of the following options is correct?",
+      "after": "Consider the following recurrence relations:\n\nFor all $n > 1$,\n\n$$T_1(n) = 4T_1\\left(\\frac{n}{2}\\right) + T_2(n)$$\n\n$$T_2(n) = 5T_2\\left(\\frac{n}{4}\\right) + \\Theta(\\log_2 n)$$\n\nAssume that for all $n \\le 1$, $T_1(n) = 1$ and $T_2(n) = 1$.\n\nWhich one of the following options is correct?",
+      "reason": "Unicode maths italics with lost fractions (4T1 (n 2)) rewritten in KaTeX as printed.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2026-1-cs-7",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝑇1(𝑛) = Θ(𝑛2 log2 𝑛)"
+        },
+        {
+          "l": "B",
+          "t": "𝑇1(𝑛) = Θ(𝑛log4 5)"
+        },
+        {
+          "l": "C",
+          "t": "𝑇1(𝑛) = Θ(𝑛log4 5 log2 𝑛)"
+        },
+        {
+          "l": "D",
+          "t": "𝑇1(𝑛) = Θ(𝑛2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$T_1(n) = \\Theta(n^2)$"
+        },
+        {
+          "l": "B",
+          "t": "$T_1(n) = \\Theta(n^2 \\log_2 n)$"
+        },
+        {
+          "l": "C",
+          "t": "$T_1(n) = \\Theta(n^{\\log_4 5})$"
+        },
+        {
+          "l": "D",
+          "t": "$T_1(n) = \\Theta(n^{\\log_4 5} \\log_2 n)$"
+        }
+      ],
+      "reason": "Options were stored in a scrambled order; restored to the order printed in the paper (Q.17), which the official key's letters refer to. Rewritten in KaTeX.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2026-1-cs-7",
+      "field": "answer",
+      "before": "D",
+      "after": "A",
+      "reason": "Stored key does not belong to this question as printed in the paper. The official GATE 2026 CS1 key gives A for Q.17, which independent solving confirms (see the v2 solution).",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-7",
+      "field": "topic",
+      "before": "asymptotics",
+      "after": "complexity",
+      "reason": "\"asymptotics\" is not an algo topic id; recurrence solving belongs to algo/complexity.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-1-cs-8",
+      "field": "text",
+      "before": "With respect to a TCP connection between a client and a server , which one of the following statements is true?",
+      "after": "With respect to a TCP connection between a client and a server, which one of the following statements is true?",
+      "reason": "Stray space before the comma removed.",
+      "source": "pdf p.15"
+    },
+    {
+      "id": "cse-2026-1-cs-8",
+      "field": "answer",
+      "before": "A",
+      "after": "D",
+      "reason": "Stored key does not belong to this question as printed in the paper. The official GATE 2026 CS1 key gives D for Q.18, which independent solving confirms (see the v2 solution).",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-9",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "HTTP 1.1 facilitates downloading multiple objects of the same webpage over the same TCP connection, if the objects are stored in the same server"
+        },
+        {
+          "l": "B",
+          "t": "HTTP 1.1 facilitates downloading multiple objects of the same webpage over the same TCP connection, even if they are stored in different servers"
+        },
+        {
+          "l": "C",
+          "t": "HTTP 1.1 facilitates sending a request for downloading one object without waiting for a previously requested object to be downloaded completely"
+        },
+        {
+          "l": "D",
+          "t": "HTTP 1.1 facilitates downl oading multiple webpages on the same server to be downloaded over a single TCP connection"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "HTTP 1.1 facilitates downloading multiple objects of the same webpage over the same TCP connection, if the objects are stored in the same server"
+        },
+        {
+          "l": "B",
+          "t": "HTTP 1.1 facilitates downloading multiple objects of the same webpage over the same TCP connection, even if they are stored in different servers"
+        },
+        {
+          "l": "C",
+          "t": "HTTP 1.1 facilitates sending a request for downloading one object without waiting for a previously requested object to be downloaded completely"
+        },
+        {
+          "l": "D",
+          "t": "HTTP 1.1 facilitates downloading multiple webpages on the same server to be downloaded over a single TCP connection"
+        }
+      ],
+      "reason": "Extraction artifact \"downl oading\" in option D fixed (wording otherwise as printed).",
+      "source": "pdf p.15"
+    },
+    {
+      "id": "cse-2026-1-cs-9",
+      "field": "answer",
+      "before": "B; D",
+      "after": "A; C; D",
+      "reason": "Stored key does not belong to this question as printed in the paper. The official GATE 2026 CS1 key gives A; C; D for Q.19, which independent solving confirms (see the v2 solution).",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-9",
+      "field": "topic",
+      "before": "app",
+      "after": "application",
+      "reason": "\"app\" is not a cn topic id; HTTP belongs to cn/application.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-1-cs-9",
+      "field": "tags",
+      "before": [
+        "cn",
+        "http",
+        "dns",
+        "web"
+      ],
+      "after": [
+        "cn",
+        "http",
+        "persistent-connections",
+        "pipelining"
+      ],
+      "reason": "The question has nothing to do with DNS; tags describe HTTP 1.1 persistence/pipelining.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2026-1-cs-10",
+      "field": "text",
+      "before": "Let 𝑛 > 1. Consider an 𝑛 × 𝑛 matrix 𝑀 with its elements from ℝ. Let the vector (0, 1, 0, 0, … , 0) ∈ ℝ𝑛 be in the null space of 𝑀. Which of the following options is/are always correct?",
+      "after": "Let $n > 1$. Consider an $n \\times n$ matrix $M$ with its elements from $\\mathbb{R}$. Let the vector $(0, 1, 0, 0, \\dots, 0) \\in \\mathbb{R}^n$ be in the null space of $M$.\n\nWhich of the following options is/are always correct?",
+      "reason": "Unicode maths italics rewritten in KaTeX.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "cse-2026-1-cs-10",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Determinant of 𝑀 is 1"
+        },
+        {
+          "l": "B",
+          "t": "Determinant of 𝑀 is 0"
+        },
+        {
+          "l": "C",
+          "t": "Rank of 𝑀 is 1"
+        },
+        {
+          "l": "D",
+          "t": "There are at least two non-zero vectors in the null space of 𝑀"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Determinant of $M$ is 1"
+        },
+        {
+          "l": "B",
+          "t": "Determinant of $M$ is 0"
+        },
+        {
+          "l": "C",
+          "t": "Rank of $M$ is 1"
+        },
+        {
+          "l": "D",
+          "t": "There are at least two non-zero vectors in the null space of $M$"
+        }
+      ],
+      "reason": "Unicode maths italics rewritten in KaTeX (order unchanged).",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "cse-2026-1-cs-10",
+      "field": "answer",
+      "before": "A; B; C",
+      "after": "B; D",
+      "reason": "Stored key does not belong to this question as printed in the paper. The official GATE 2026 CS1 key gives B; D for Q.20, which independent solving confirms (see the v2 solution).",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-10",
+      "field": "topic",
+      "before": "eigenvalues",
+      "after": "matrices",
+      "reason": "\"eigenvalues\" is not an la topic id; null space / rank / determinant belong to la/matrices.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-1-cs-10",
+      "field": "tags",
+      "before": [
+        "la",
+        "eigenvectors",
+        "linear-algebra"
+      ],
+      "after": [
+        "la",
+        "null-space",
+        "rank",
+        "determinant"
+      ],
+      "reason": "Tags now describe the question (no eigenvectors involved).",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2026-1-cs-11",
+      "field": "text",
+      "before": "Consider the following Boolean expression of a function F : 𝐹(𝑃, 𝑄) = (𝑃̅ + 𝑄) ⊕ (𝑃̅𝑄) Which of the following expressions is/are equivalent to F ?",
+      "after": "Consider the following Boolean expression of a function $F$:\n\n$$F(P, Q) = (\\bar{P} + Q) \\oplus (\\bar{P}Q)$$\n\nWhich of the following expressions is/are equivalent to $F$?",
+      "reason": "Unicode combining overlines rewritten in KaTeX.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "cse-2026-1-cs-11",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝑃 ⊕ 𝑄̅̅̅̅̅̅̅̅"
+        },
+        {
+          "l": "B",
+          "t": "𝑃 ⊕ 𝑄"
+        },
+        {
+          "l": "C",
+          "t": "𝑃̅ ⊕ 𝑄"
+        },
+        {
+          "l": "D",
+          "t": "𝑃̅ ⊕ 𝑄̅"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\overline{P \\oplus Q}$"
+        },
+        {
+          "l": "B",
+          "t": "$P \\oplus Q$"
+        },
+        {
+          "l": "C",
+          "t": "$\\bar{P} \\oplus Q$"
+        },
+        {
+          "l": "D",
+          "t": "$\\bar{P} \\oplus \\bar{Q}$"
+        }
+      ],
+      "reason": "Unicode combining overlines rewritten in KaTeX; in (A) the bar covers the whole of P ⊕ Q as printed.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "cse-2026-1-cs-11",
+      "field": "answer",
+      "before": "A; C; D",
+      "after": "A; C",
+      "reason": "Stored key does not belong to this question as printed in the paper. The official GATE 2026 CS1 key gives A; C for Q.21, which independent solving confirms (see the v2 solution).",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-11",
+      "field": "topic",
+      "before": "combinational",
+      "after": "boolean",
+      "reason": "Simplifying a two-variable Boolean expression is dl/boolean, not combinational circuits.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-1-cs-11",
+      "field": "tags",
+      "before": [
+        "dl",
+        "boolean-logic",
+        "xor-gates"
+      ],
+      "after": [
+        "dl",
+        "boolean-algebra",
+        "xor"
+      ],
+      "reason": "Tags now describe the question.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2026-1-cs-12",
+      "field": "type",
+      "before": "MCQ",
+      "after": "MSQ",
+      "reason": "Official key lists Q.22 as MSQ (\"result(s)\"), with two correct options.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-12",
+      "field": "text",
+      "before": "Consider the 8-bit signed integers 𝑋, 𝑌 and 𝑍 represented using the sign-magnitude form. The binary representations of 𝑋 and 𝑌 are as follows: 𝑋: 10110100 𝑌: 01001100 Which of the following operations to compute 𝑍 result(s) in an arithmetic overflow?",
+      "after": "Consider the 8-bit signed integers $X$, $Y$ and $Z$ represented using the sign-magnitude form. The binary representations of $X$ and $Y$ are as follows:\n\n$X$: `10110100`       $Y$: `01001100`\n\nWhich of the following operations to compute $Z$ result(s) in an arithmetic overflow?",
+      "reason": "Unicode maths italics rewritten in KaTeX; bit patterns as code.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2026-1-cs-12",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝑍 = 𝑋 + 𝑌"
+        },
+        {
+          "l": "B",
+          "t": "𝑍 = 𝑋 − 𝑌"
+        },
+        {
+          "l": "C",
+          "t": "𝑍 = −𝑋 + 𝑌"
+        },
+        {
+          "l": "D",
+          "t": "𝑍 = −𝑋 − 𝑌"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$Z = X + Y$"
+        },
+        {
+          "l": "B",
+          "t": "$Z = X - Y$"
+        },
+        {
+          "l": "C",
+          "t": "$Z = -X + Y$"
+        },
+        {
+          "l": "D",
+          "t": "$Z = -X - Y$"
+        }
+      ],
+      "reason": "Unicode maths italics rewritten in KaTeX (order unchanged).",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2026-1-cs-12",
+      "field": "answer",
+      "before": "A",
+      "after": "B; C",
+      "reason": "Stored key does not belong to this question as printed in the paper. The official GATE 2026 CS1 key gives B; C for Q.22, which independent solving confirms (see the v2 solution).",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-12",
+      "field": "topic",
+      "before": "number-representations",
+      "after": "arithmetic",
+      "reason": "\"number-representations\" is not a dl topic id; overflow in signed arithmetic is dl/arithmetic.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-1-cs-12",
+      "field": "tags",
+      "before": [
+        "dl",
+        "sign-magnitude",
+        "fixed-point"
+      ],
+      "after": [
+        "dl",
+        "sign-magnitude",
+        "overflow"
+      ],
+      "reason": "Tags now describe the question.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2026-1-cs-13",
+      "field": "type",
+      "before": "MCQ",
+      "after": "MSQ",
+      "reason": "Official key lists Q.23 as MSQ (\"do/does\"), with two correct options.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-13",
+      "field": "text",
+      "before": "Let 𝑛 be an odd number greater than 100. Consider a binary minheap with 𝑛 elements stored in an array 𝑃 whose index starts from 1. Which of the following indices of 𝑃 do/does NOT correspond to any leaf node of the minheap?",
+      "after": "Let $n$ be an odd number greater than 100. Consider a binary minheap with $n$ elements stored in an array $P$ whose index starts from 1.\n\nWhich of the following indices of $P$ do/does NOT correspond to any leaf node of the minheap?",
+      "reason": "Unicode maths italics rewritten in KaTeX.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2026-1-cs-13",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝑛"
+        },
+        {
+          "l": "B",
+          "t": "𝑛 + 1 2"
+        },
+        {
+          "l": "C",
+          "t": "𝑛 − 1 2"
+        },
+        {
+          "l": "D",
+          "t": "𝑛 − 3 2"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\dfrac{n+1}{2}$"
+        },
+        {
+          "l": "B",
+          "t": "$\\dfrac{n-1}{2}$"
+        },
+        {
+          "l": "C",
+          "t": "$\\dfrac{n-3}{2}$"
+        },
+        {
+          "l": "D",
+          "t": "$n$"
+        }
+      ],
+      "reason": "Options were stored in a scrambled order; restored to the order printed in the paper (Q.23), which the official key's letters refer to. Fractions restored in KaTeX.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2026-1-cs-13",
+      "field": "answer",
+      "before": "B",
+      "after": "B; C",
+      "reason": "Stored key does not belong to this question as printed in the paper. The official GATE 2026 CS1 key gives B; C for Q.23, which independent solving confirms (see the v2 solution).",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-13",
+      "field": "subject",
+      "before": "algo",
+      "after": "pds",
+      "reason": "Binary heaps are a data-structures topic (pds/heaps); \"algo\" has no heaps topic.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-1-cs-14",
+      "field": "text",
+      "before": "Consider a hash table 𝑃[0, 1, … , 10] that is initially empty. The hash table is maintained using open addressing with linear probing . The hash function used is ℎ(𝑥) = (𝑥 + 7) mod 11. Consider the following sequence of insertions performed on 𝑃: 1, 13, 22, 15, 11, 24 Which of the following positions in the hash table is/are empty after these insertions are performed?",
+      "after": "Consider a hash table $P[0, 1, \\dots, 10]$ that is initially empty. The hash table is maintained using open addressing with linear probing. The hash function used is $h(x) = (x + 7) \\bmod 11$.\n\nConsider the following sequence of insertions performed on $P$:\n\n1, 13, 22, 15, 11, 24\n\nWhich of the following positions in the hash table is/are empty after these insertions are performed?",
+      "reason": "Unicode maths italics rewritten in KaTeX.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2026-1-cs-14",
+      "field": "answer",
+      "before": "B; C",
+      "after": "C",
+      "reason": "Stored key does not belong to this question as printed in the paper. The official GATE 2026 CS1 key gives C for Q.24, which independent solving confirms (see the v2 solution).",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-15",
+      "field": "text",
+      "before": "Consider the following grammar where 𝑆 is the start symbol, and 𝑎 and 𝑏 are terminal symbols. 𝑆 → 𝑎𝑆𝑏𝑆 ∣ 𝑏𝑆 ∣ ϵ Which of the following statements is/are true?",
+      "after": "Consider the following grammar where $S$ is the start symbol, and $a$ and $b$ are terminal symbols.\n\n$$S \\rightarrow aSbS \\mid bS \\mid \\epsilon$$\n\nWhich of the following statements is/are true?",
+      "reason": "Unicode maths italics rewritten in KaTeX.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2026-1-cs-15",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "The grammar is ambiguous"
+        },
+        {
+          "l": "B",
+          "t": "The string 𝑎𝑏𝑏 has two distinct derivations in this grammar"
+        },
+        {
+          "l": "C",
+          "t": "The string 𝑎𝑏𝑎𝑏 has only one rightmost derivation"
+        },
+        {
+          "l": "D",
+          "t": "The language generated by the grammar is undecidable"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "The grammar is ambiguous"
+        },
+        {
+          "l": "B",
+          "t": "The string $abb$ has two distinct derivations in this grammar"
+        },
+        {
+          "l": "C",
+          "t": "The string $abab$ has only one rightmost derivation"
+        },
+        {
+          "l": "D",
+          "t": "The language generated by the grammar is undecidable"
+        }
+      ],
+      "reason": "Unicode maths italics rewritten in KaTeX (order unchanged).",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2026-1-cs-15",
+      "field": "answer",
+      "before": "A; C",
+      "after": "A; B; C",
+      "reason": "Stored key does not belong to this question as printed in the paper. The official GATE 2026 CS1 key gives A; B; C for Q.25, which independent solving confirms (see the v2 solution).",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-16",
+      "field": "type",
+      "before": "MCQ",
+      "after": "MSQ",
+      "reason": "Official key lists Q.26 as MSQ, with two correct options.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-16",
+      "field": "text",
+      "before": "Let M be a nondeterministic finite automaton (NFA) with 6 states over a finite alphabet. Which of the following options CANNOT be the number of states in the minimal deterministic finite automaton (DFA) that is equivalent to 𝑀 ?",
+      "after": "Let $M$ be a nondeterministic finite automaton (NFA) with 6 states over a finite alphabet.\n\nWhich of the following options CANNOT be the number of states in the minimal deterministic finite automaton (DFA) that is equivalent to $M$?",
+      "reason": "Unicode maths italics rewritten in KaTeX; spacing fixed.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2026-1-cs-16",
+      "field": "answer",
+      "before": "A",
+      "after": "B; D",
+      "reason": "Stored key does not belong to this question as printed in the paper. The official GATE 2026 CS1 key gives B; D for Q.26, which independent solving confirms (see the v2 solution).",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-17",
+      "field": "text",
+      "before": "Consider the following C statements: char *str1 = \"Hello; /* Statement S1 */ char *str2 = \"Hello;\"; /* Statement S2 */ int *str3 = \"Hello\"; /* Statement S3 */ Which of the following options is/are correct?",
+      "after": "Consider the following C statements:\n\n```c\nchar *str1 = \"Hello;    /* Statement S1 */\nchar *str2 = \"Hello;\";  /* Statement S2 */\nint *str3 = \"Hello\";    /* Statement S3 */\n```\n\nWhich of the following options is/are correct?",
+      "reason": "The three statements were flattened onto one line; restored as a C code block (tokens unchanged).",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2026-1-cs-17",
+      "field": "answer",
+      "before": "A; B; C",
+      "after": "C",
+      "reason": "Official GATE 2026 CS1 answer key (IIT Guwahati) lists Q.27 — this record — as C. The stored key \"A; B; C\" is a placeholder: this paper's stored keys cycle A, B, C, D… for MCQs and every NAT key is 1, independent of the questions. S1 has an unterminated string literal (lexical error), S2 is valid, S3 assigns char* to int* (type/semantic error), so only C holds.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-17",
+      "field": "subject",
+      "before": "pds",
+      "after": "cd",
+      "reason": "Classifying lexical / syntactic / semantic errors is compiler design (phases of a compiler), not C programming.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2026-1-cs-17",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "lexical",
+      "reason": "The question is about which compiler phase detects each error; lexical analysis is the key concept.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2026-1-cs-17",
+      "field": "tags",
+      "before": [
+        "pds",
+        "c-pointers",
+        "string-literals"
+      ],
+      "after": [
+        "cd",
+        "lexical-analysis",
+        "compiler-phases",
+        "semantic-analysis"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2026-1-cs-18",
+      "field": "answer",
+      "before": "A; C; D",
+      "after": "C",
+      "reason": "Official GATE 2026 CS1 answer key (IIT Guwahati) lists Q.28 — this record — as C. The stored key \"A; C; D\" is a placeholder: this paper's stored keys cycle A, B, C, D… for MCQs and every NAT key is 1, independent of the questions.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-18",
+      "field": "subject",
+      "before": "os",
+      "after": "cd",
+      "reason": "LL(1) parsing is compiler design; the record was filed under OS/processes.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2026-1-cs-18",
+      "field": "topic",
+      "before": "processes",
+      "after": "parsing",
+      "reason": "LL(1) vs SLR parsing.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2026-1-cs-18",
+      "field": "tags",
+      "before": [
+        "os",
+        "threads",
+        "concurrency"
+      ],
+      "after": [
+        "cd",
+        "ll1-parsing",
+        "left-recursion",
+        "left-factoring"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2026-1-cs-19",
+      "field": "answer",
+      "before": "A; B; D",
+      "after": "A, C",
+      "reason": "Official GATE 2026 CS1 answer key (IIT Guwahati) lists Q.29 — this record — as A;C. The stored key \"A; B; D\" is a placeholder: this paper's stored keys cycle A, B, C, D… for MCQs and every NAT key is 1, independent of the questions.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-19",
+      "field": "tags",
+      "before": [
+        "os",
+        "deadlocks",
+        "concurrency"
+      ],
+      "after": [
+        "os",
+        "deadlocks",
+        "bankers-algorithm",
+        "resource-allocation-graph"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "cse-2026-1-cs-20",
+      "field": "text",
+      "before": "Let 𝑃, 𝑄, 𝑅 and 𝑆 be the attributes of a relation in a relational schema. Let 𝑋 ⟶ 𝑌 indicate functional dependency in the context of a relational database , where 𝑋, 𝑌 ⊆ {𝑃, 𝑄, 𝑅, 𝑆}. Which of the following options is/are always true?",
+      "after": "Let $P, Q, R$ and $S$ be the attributes of a relation in a relational schema. Let $X \\longrightarrow Y$ indicate functional dependency in the context of a relational database, where $X, Y \\subseteq \\{P, Q, R, S\\}$.\n\nWhich of the following options is/are always true?",
+      "reason": "Unicode math italics converted to KaTeX; stray space before the comma removed.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "cse-2026-1-cs-20",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "If ( {𝑃, 𝑄} ⟶ {𝑅} and {𝑃} ⟶ {𝑅} ), then {𝑄} ⟶ {𝑅}"
+        },
+        {
+          "l": "B",
+          "t": "If {𝑃, 𝑄} ⟶ {𝑅}, then ( {𝑃} ⟶ {𝑅} or {𝑄} ⟶ {𝑅} )"
+        },
+        {
+          "l": "C",
+          "t": "If ( {𝑃} ⟶ {𝑅} and {𝑄} ⟶ {𝑆} ), then {𝑃, 𝑄} ⟶ {𝑅, 𝑆}"
+        },
+        {
+          "l": "D",
+          "t": "If {𝑃} ⟶ {𝑅}, then {𝑃, 𝑄} ⟶ {𝑅}"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "If ( $\\{P, Q\\} \\longrightarrow \\{R\\}$ and $\\{P\\} \\longrightarrow \\{R\\}$ ), then $\\{Q\\} \\longrightarrow \\{R\\}$"
+        },
+        {
+          "l": "B",
+          "t": "If $\\{P, Q\\} \\longrightarrow \\{R\\}$, then ( $\\{P\\} \\longrightarrow \\{R\\}$ or $\\{Q\\} \\longrightarrow \\{R\\}$ )"
+        },
+        {
+          "l": "C",
+          "t": "If ( $\\{P\\} \\longrightarrow \\{R\\}$ and $\\{Q\\} \\longrightarrow \\{S\\}$ ), then $\\{P, Q\\} \\longrightarrow \\{R, S\\}$"
+        },
+        {
+          "l": "D",
+          "t": "If $\\{P\\} \\longrightarrow \\{R\\}$, then $\\{P, Q\\} \\longrightarrow \\{R\\}$"
+        }
+      ],
+      "reason": "Unicode math italics converted to KaTeX (content and order unchanged).",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "cse-2026-1-cs-20",
+      "field": "answer",
+      "before": "A; B",
+      "after": "C, D",
+      "reason": "Official GATE 2026 CS1 answer key (IIT Guwahati) lists Q.30 — this record — as C;D. The stored key \"A; B\" is a placeholder: this paper's stored keys cycle A, B, C, D… for MCQs and every NAT key is 1, independent of the questions.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-20",
+      "field": "tags",
+      "before": [
+        "db",
+        "functional-dependencies",
+        "closures"
+      ],
+      "after": [
+        "db",
+        "functional-dependencies",
+        "armstrongs-axioms"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "cse-2026-1-cs-21",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "It is always possible to obtain a dependency -preserving 3NF decomposition of a relation"
+        },
+        {
+          "l": "B",
+          "t": "It is always possible to obtain a dependency -preserving 1NF decomposition of a relation"
+        },
+        {
+          "l": "C",
+          "t": "It is not always possible to obtain a dependency -preserving BCNF decomposition of a relation"
+        },
+        {
+          "l": "D",
+          "t": "It is not always possible to obtain a dependency-preserving 2NF decomposition of a relation"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "It is always possible to obtain a dependency-preserving 3NF decomposition of a relation"
+        },
+        {
+          "l": "B",
+          "t": "It is always possible to obtain a dependency-preserving 1NF decomposition of a relation"
+        },
+        {
+          "l": "C",
+          "t": "It is not always possible to obtain a dependency-preserving BCNF decomposition of a relation"
+        },
+        {
+          "l": "D",
+          "t": "It is not always possible to obtain a dependency-preserving 2NF decomposition of a relation"
+        }
+      ],
+      "reason": "Removed the stray space in \"dependency -preserving\" (transcription artifact).",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "cse-2026-1-cs-21",
+      "field": "answer",
+      "before": "B; C",
+      "after": "A, B, C",
+      "reason": "Official GATE 2026 CS1 answer key (IIT Guwahati) lists Q.31 — this record — as A;B;C. The stored key \"B; C\" is a placeholder: this paper's stored keys cycle A, B, C, D… for MCQs and every NAT key is 1, independent of the questions.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-21",
+      "field": "tags",
+      "before": [
+        "db",
+        "bcnf",
+        "3nf",
+        "decomposition"
+      ],
+      "after": [
+        "db",
+        "normalization",
+        "dependency-preservation",
+        "bcnf",
+        "3nf"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "cse-2026-1-cs-22",
+      "field": "text",
+      "before": "Consider the function 𝑓: ℝ → ℝ defined as follows: 𝑓(𝑥) = {𝑐1𝑒 𝑥 − 𝑐2 loge (1 𝑥) , if 𝑥 > 0 3 otherwise where 𝑐1 , 𝑐2 ∈ ℝ. If 𝑓 is continuous at 𝑥 = 0, then 𝑐1 + 𝑐2 = _________. (answer in integer)",
+      "after": "Consider the function $f: \\mathbb{R} \\to \\mathbb{R}$ defined as follows:\n\n$$f(x) = \\begin{cases} c_1 e^{x} - c_2 \\log_e\\left(\\dfrac{1}{x}\\right), & \\text{if } x > 0 \\\\ 3 & \\text{otherwise} \\end{cases}$$\n\nwhere $c_1, c_2 \\in \\mathbb{R}$.\n\nIf $f$ is continuous at $x = 0$, then $c_1 + c_2 =$ _________. (answer in integer)",
+      "reason": "The piecewise definition was garbled by extraction (\"loge (1 𝑥)\"); rewritten in KaTeX exactly as printed: c1·e^x − c2·logₑ(1/x) for x > 0, 3 otherwise.",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "cse-2026-1-cs-22",
+      "field": "answer",
+      "before": 1,
+      "after": "3 to 3",
+      "reason": "Official GATE 2026 CS1 answer key (IIT Guwahati) lists Q.32 — this record — as 3. The stored key 1 is a placeholder: this paper's stored keys cycle A, B, C, D… for MCQs and every NAT key is 1, independent of the questions.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-22",
+      "field": "topic",
+      "before": "calculus",
+      "after": "limits",
+      "reason": "Continuity is calc/limits (\"calculus\" is not a topic id).",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "cse-2026-1-cs-22",
+      "field": "tags",
+      "before": [
+        "calc",
+        "continuity",
+        "differentiability"
+      ],
+      "after": [
+        "calc",
+        "continuity",
+        "limits"
+      ],
+      "reason": "Tags follow the question (no differentiability involved).",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "cse-2026-1-cs-23",
+      "field": "answer",
+      "before": 1,
+      "after": "11 to 11",
+      "reason": "Official GATE 2026 CS1 answer key (IIT Guwahati) lists Q.33 — this record — as 11. The stored key 1 is a placeholder: this paper's stored keys cycle A, B, C, D… for MCQs and every NAT key is 1, independent of the questions.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-23",
+      "field": "tags",
+      "before": [
+        "pds",
+        "binary-trees",
+        "tree-height"
+      ],
+      "after": [
+        "pds",
+        "binary-trees",
+        "full-binary-tree",
+        "tree-height"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "cse-2026-1-cs-24",
+      "field": "text",
+      "before": "Consider the following program in C: #include <stdio.h> void func(int i, int j) { if(i < j) { int i = 0; while (i < 10) { j += 2; i++; } } printf(\"%d\", i); } int main() { int i = 9, j = 10; func(i, j); return 0; } The output of the program is _________. (answer in integer) Note: Assume that the program compiles and runs successfully.",
+      "after": "Consider the following program in C:\n\n```c\n#include <stdio.h>\n\nvoid func(int i, int j) {\n  if(i < j) {\n    int i = 0;\n    while (i < 10) {\n      j += 2;\n      i++;\n    }\n  }\n  printf(\"%d\", i);\n}\nint main() {\n  int i = 9, j = 10;\n  func(i, j);\n  return 0;\n}\n```\n\nThe output of the program is _________. (answer in integer)\n\nNote: Assume that the program compiles and runs successfully.",
+      "reason": "The program was transcribed onto one line; restored as a C code block (tokens unchanged).",
+      "source": "pdf p.24"
+    },
+    {
+      "id": "cse-2026-1-cs-24",
+      "field": "answer",
+      "before": 1,
+      "after": "9 to 9",
+      "reason": "Official GATE 2026 CS1 answer key (IIT Guwahati) lists Q.34 — this record — as 9. The stored key 1 is a placeholder: this paper's stored keys cycle A, B, C, D… for MCQs and every NAT key is 1, independent of the questions.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-24",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "c",
+      "reason": "Topic id \"c-prog\" does not exist; block scope / shadowing is pds/c.",
+      "source": "pdf p.24"
+    },
+    {
+      "id": "cse-2026-1-cs-24",
+      "field": "tags",
+      "before": [
+        "pds",
+        "c-recursion",
+        "functions"
+      ],
+      "after": [
+        "pds",
+        "c-scope",
+        "variable-shadowing"
+      ],
+      "reason": "The question is about block scope, not recursion.",
+      "source": "pdf p.24"
+    },
+    {
+      "id": "cse-2026-1-cs-25",
+      "field": "text",
+      "before": "Consider a system consisting of 𝑘 instances of a resource 𝑅, being shared by 5 processes. Assume that each process requires a maximum of two instances of resource 𝑅 and a process can request or release only one instance at a time. Further, a process can request the second instance of the resource only after acquiring the first instance. The minimum value of 𝑘 for the system to be deadlock-free is ________. (answer in integer)",
+      "after": "Consider a system consisting of $k$ instances of a resource $R$, being shared by 5 processes. Assume that each process requires a maximum of two instances of resource $R$ and a process can request or release only one instance at a time. Further, a process can request the second instance of the resource only after acquiring the first instance.\n\nThe minimum value of $k$ for the system to be deadlock-free is ________. (answer in integer)",
+      "reason": "Unicode math italics converted to KaTeX.",
+      "source": "pdf p.24"
+    },
+    {
+      "id": "cse-2026-1-cs-25",
+      "field": "answer",
+      "before": 1,
+      "after": "6 to 6",
+      "reason": "Official GATE 2026 CS1 answer key (IIT Guwahati) lists Q.35 — this record — as 6. The stored key 1 is a placeholder: this paper's stored keys cycle A, B, C, D… for MCQs and every NAT key is 1, independent of the questions.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-25",
+      "field": "tags",
+      "before": [
+        "os",
+        "bankers-algorithm",
+        "resource-allocation"
+      ],
+      "after": [
+        "os",
+        "deadlocks",
+        "resource-allocation",
+        "deadlock-freedom"
+      ],
+      "reason": "Not a Banker's-algorithm question; tags corrected.",
+      "source": "pdf p.24"
+    },
+    {
+      "id": "cse-2026-1-cs-26",
+      "field": "text",
+      "before": "Consider the real valued variables X, Y and Z represented using the IEEE 754 single- precision floating-point format. The binary representations of X and Y in hexadecimal notation are as follows: X: 35C00000 Y: 34A00000 Let 𝑍 = 𝑋 + 𝑌. Which one of the following is the binary representation of 𝑍, in hexadecimal notation?",
+      "after": "Consider the real valued variables X, Y and Z represented using the IEEE 754 single-precision floating-point format. The binary representations of X and Y in hexadecimal notation are as follows:\n\nX: `35C00000`        Y: `34A00000`\n\nLet $Z = X + Y$.\n\nWhich one of the following is the binary representation of $Z$, in hexadecimal notation?",
+      "reason": "Removed the line-break artifact in \"single- precision\"; math in KaTeX; layout as printed.",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "cse-2026-1-cs-26",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "35E80000"
+        },
+        {
+          "l": "B",
+          "t": "35EC0000"
+        },
+        {
+          "l": "C",
+          "t": "35C80000"
+        },
+        {
+          "l": "D",
+          "t": "35CC0000"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "35C80000"
+        },
+        {
+          "l": "B",
+          "t": "35CC0000"
+        },
+        {
+          "l": "C",
+          "t": "35E80000"
+        },
+        {
+          "l": "D",
+          "t": "35EC0000"
+        }
+      ],
+      "reason": "Options were stored in a rotated order (35E80000, 35EC0000, 35C80000, 35CC0000); restored to the paper's order A–D, which is the order the official key C refers to (C = 35E80000 = 1.8125 × 2^-20).",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "cse-2026-1-cs-26",
+      "field": "subject",
+      "before": "coa",
+      "after": "dl",
+      "reason": "IEEE 754 representation is filed under Digital Logic / floating in this bank (\"data-types\" is not a topic id).",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "cse-2026-1-cs-26",
+      "field": "topic",
+      "before": "data-types",
+      "after": "floating",
+      "reason": "IEEE 754 floating-point addition.",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "cse-2026-1-cs-26",
+      "field": "tags",
+      "before": [
+        "coa",
+        "ieee-754",
+        "floating-point"
+      ],
+      "after": [
+        "dl",
+        "ieee-754",
+        "floating-point-addition"
+      ],
+      "reason": "Tags follow the corrected subject.",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "cse-2026-1-cs-27",
+      "field": "text",
+      "before": "Consider a 2 -bit saturating up/down counter that performs the saturating up count when the input P is 0, and the saturating down count when P is 1. The Next State table of the counter is as shown. The counter is built as a synchronous sequential circuit using D flip-flops. Input Current State Next State 𝑃 𝑄1 𝑄0 𝑄1 + 𝑄0 + 0 0 0 0 1 0 0 1 1 0 0 1 0 1 1 0 1 1 1 1 1 0 0 0 0 1 0 1 0 0 1 1 0 0 1 1 1 1 1 0 Which one of the following options corresponds to the expressions for the inputs of the D flip-flops, 𝐷1 and 𝐷0?",
+      "after": "Consider a 2-bit saturating up/down counter that performs the saturating up count when the input $P$ is 0, and the saturating down count when $P$ is 1. The Next State table of the counter is as shown. The counter is built as a synchronous sequential circuit using D flip-flops.\n\n| Input $P$ | Current $Q_1$ | Current $Q_0$ | Next $Q_1^+$ | Next $Q_0^+$ |\n|---|---|---|---|---|\n| 0 | 0 | 0 | 0 | 1 |\n| 0 | 0 | 1 | 1 | 0 |\n| 0 | 1 | 0 | 1 | 1 |\n| 0 | 1 | 1 | 1 | 1 |\n| 1 | 0 | 0 | 0 | 0 |\n| 1 | 0 | 1 | 0 | 0 |\n| 1 | 1 | 0 | 0 | 1 |\n| 1 | 1 | 1 | 1 | 0 |\n\nWhich one of the following options corresponds to the expressions for the inputs of the D flip-flops, $D_1$ and $D_0$?",
+      "reason": "The next-state table was flattened into the sentence; restored as a markdown table (values checked against the paper). Unicode math converted to KaTeX.",
+      "source": "pdf p.26"
+    },
+    {
+      "id": "cse-2026-1-cs-27",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝐷1 = 𝑃̅ 𝑄1 + 𝑃̅𝑄0 + 𝑄1𝑄0 𝐷0 = 𝑃̅ 𝑄0̅̅̅ + 𝑃 ̅ 𝑄1 + 𝑄1 𝑄0̅̅̅"
+        },
+        {
+          "l": "B",
+          "t": "𝐷1 = 𝑃̅ 𝑄1̅̅̅ + 𝑃 ̅ 𝑄0 + 𝑄1 𝑄0 𝐷0 = 𝑃̅ 𝑄0 + 𝑃̅ 𝑄1 + 𝑄1 𝑄0̅̅̅"
+        },
+        {
+          "l": "C",
+          "t": "𝐷1 = 𝑃 𝑄1̅̅̅ + 𝑃̅ 𝑄0 + 𝑄1 𝑄0 𝐷0 = 𝑃 𝑄0̅̅̅ + 𝑃̅ 𝑄1 + 𝑄1 𝑄0̅̅̅"
+        },
+        {
+          "l": "D",
+          "t": "𝐷1 = 𝑃 𝑄1 + 𝑃̅𝑄0 + 𝑄1𝑄0 𝐷0 = 𝑃 𝑄0 + 𝑃̅ 𝑄1 + 𝑄1 𝑄0̅̅̅"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$D_1 = P\\,Q_1 + \\bar{P}\\,Q_0 + Q_1 Q_0$ $\\quad D_0 = P\\,Q_0 + \\bar{P}\\,Q_1 + Q_1\\overline{Q_0}$"
+        },
+        {
+          "l": "B",
+          "t": "$D_1 = \\bar{P}\\,Q_1 + \\bar{P}\\,Q_0 + Q_1 Q_0$ $\\quad D_0 = \\bar{P}\\,\\overline{Q_0} + \\bar{P}\\,Q_1 + Q_1\\overline{Q_0}$"
+        },
+        {
+          "l": "C",
+          "t": "$D_1 = \\bar{P}\\,\\overline{Q_1} + \\bar{P}\\,Q_0 + Q_1 Q_0$ $\\quad D_0 = \\bar{P}\\,Q_0 + \\bar{P}\\,Q_1 + Q_1\\overline{Q_0}$"
+        },
+        {
+          "l": "D",
+          "t": "$D_1 = P\\,\\overline{Q_1} + \\bar{P}\\,Q_0 + Q_1 Q_0$ $\\quad D_0 = P\\,\\overline{Q_0} + \\bar{P}\\,Q_1 + Q_1\\overline{Q_0}$"
+        }
+      ],
+      "reason": "Options were stored rotated (the paper's B, C, D, A as A, B, C, D) with garbled overbars; restored to the paper's order and rewritten in KaTeX with the overbars exactly as printed.",
+      "source": "pdf p.26"
+    },
+    {
+      "id": "cse-2026-1-cs-27",
+      "field": "answer",
+      "before": "D",
+      "after": "B",
+      "reason": "Official GATE 2026 CS1 answer key (IIT Guwahati) lists Q.37 — this record — as B. The stored key \"D\" is a placeholder: this paper's stored keys cycle A, B, C, D… for MCQs and every NAT key is 1, independent of the questions. Deriving D1 = Q1+ and D0 = Q0+ from the table gives option B.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-27",
+      "field": "tags",
+      "before": [
+        "dl",
+        "counters",
+        "finite-state-machines"
+      ],
+      "after": [
+        "dl",
+        "counters",
+        "d-flip-flop",
+        "excitation-table"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.26"
+    },
+    {
+      "id": "cse-2026-1-cs-28",
+      "field": "text",
+      "before": "The size of the physical address space of a processor is 232 bytes. The capacity of a cache memory unit is 223 bytes. The cache block size is 1 28 byte s. The cache memory unit can be built as a direct mapped cache or as a 𝐾-way set-associative cache, where 𝐾 = 2𝐿 and 𝐿 ∈ {1, 2, 3}. Let the length of the TAG field be 𝑀 bits for the direct mapped cache, and 𝑁 bits for the set-associative cache. Which one of the following options is true?",
+      "after": "The size of the physical address space of a processor is $2^{32}$ bytes. The capacity of a cache memory unit is $2^{23}$ bytes. The cache block size is 128 bytes. The cache memory unit can be built as a direct mapped cache or as a $K$-way set-associative cache, where $K = 2^L$ and $L \\in \\{1, 2, 3\\}$. Let the length of the TAG field be $M$ bits for the direct mapped cache, and $N$ bits for the set-associative cache.\n\nWhich one of the following options is true?",
+      "reason": "Exponents were lost in extraction (\"232\", \"223\", \"1 28 byte s\", \"2𝐿\"); restored as $2^{32}$, $2^{23}$, 128 bytes, $K = 2^L$.",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "cse-2026-1-cs-28",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝑁 = 𝑀 + 𝐿"
+        },
+        {
+          "l": "B",
+          "t": "𝑁 = 𝑀 − 𝐿"
+        },
+        {
+          "l": "C",
+          "t": "𝑁 = 𝑀 + 𝐾"
+        },
+        {
+          "l": "D",
+          "t": "𝑁 = 𝑀 − 𝐾"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$N = M + L$"
+        },
+        {
+          "l": "B",
+          "t": "$N = M - L$"
+        },
+        {
+          "l": "C",
+          "t": "$N = M + K$"
+        },
+        {
+          "l": "D",
+          "t": "$N = M - K$"
+        }
+      ],
+      "reason": "Unicode math converted to KaTeX (order unchanged).",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "cse-2026-1-cs-28",
+      "field": "topic",
+      "before": "cache-memory",
+      "after": "cache",
+      "reason": "Topic id \"cache-memory\" does not exist; the id is \"cache\".",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "cse-2026-1-cs-28",
+      "field": "tags",
+      "before": [
+        "coa",
+        "cache-memory",
+        "address-mapping"
+      ],
+      "after": [
+        "coa",
+        "cache-memory",
+        "set-associative",
+        "tag-bits"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "cse-2026-1-cs-29",
+      "field": "text",
+      "before": "Consider the following code snippet in C language that computes the number of nodes in a non-empty singly linked list pointed to by the pointer variable head. struct node{ int elt; struct node *next; }; int getListSize (struct node *head) { if( E1 ) return 1; return E2; } Which one of the following options gives the correct replacements for the expressions E1 and E2?",
+      "after": "Consider the following code snippet in C language that computes the number of nodes in a non-empty singly linked list pointed to by the pointer variable `head`.\n\n```c\nstruct node{\n  int elt;\n  struct node *next;\n};\nint getListSize (struct node *head)\n{\n  if( E1 ) return 1;\n  return E2;\n}\n```\n\nWhich one of the following options gives the correct replacements for the expressions E1 and E2?",
+      "reason": "The code was transcribed onto one line; restored as a C code block (tokens unchanged).",
+      "source": "pdf p.28"
+    },
+    {
+      "id": "cse-2026-1-cs-29",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "E1: head->next == NULL E2: 1 + getListSize(head)"
+        },
+        {
+          "l": "B",
+          "t": "E1: head == NULL E2: 1 + getListSize(head)"
+        },
+        {
+          "l": "C",
+          "t": "E1: head->next == NULL E2: 1 + getListSize(head->next)"
+        },
+        {
+          "l": "D",
+          "t": "E1: head == NULL E2: 1 + getListSize(head->next)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "E1: `head == NULL`; E2: `1 + getListSize(head)`"
+        },
+        {
+          "l": "B",
+          "t": "E1: `head->next == NULL`; E2: `1 + getListSize(head->next)`"
+        },
+        {
+          "l": "C",
+          "t": "E1: `head == NULL`; E2: `1 + getListSize(head->next)`"
+        },
+        {
+          "l": "D",
+          "t": "E1: `head->next == NULL`; E2: `1 + getListSize(head)`"
+        }
+      ],
+      "reason": "Options were stored in a different order (the paper's D, A, B, C as A, B, C, D); restored to the paper's order, which the official key B refers to.",
+      "source": "pdf p.28"
+    },
+    {
+      "id": "cse-2026-1-cs-29",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "linked-lists",
+      "reason": "Topic id \"c-prog\" does not exist; this is a recursive linked-list length.",
+      "source": "pdf p.28"
+    },
+    {
+      "id": "cse-2026-1-cs-29",
+      "field": "tags",
+      "before": [
+        "pds",
+        "c-pointers",
+        "linked-lists"
+      ],
+      "after": [
+        "pds",
+        "linked-lists",
+        "recursion"
+      ],
+      "reason": "Tags follow the topic.",
+      "source": "pdf p.28"
+    },
+    {
+      "id": "cse-2026-1-cs-30",
+      "field": "text",
+      "before": "Let 𝑃 be the set of all integers from 1 to 15. Consider any order of insertion of the elements of 𝑃 into a binary search tree that creates a complete binary tree. Which one of the following elements can NEVER be the third element that is inserted?",
+      "after": "Let $P$ be the set of all integers from 1 to 15. Consider any order of insertion of the elements of $P$ into a binary search tree that creates a complete binary tree.\n\nWhich one of the following elements can NEVER be the third element that is inserted?",
+      "reason": "Unicode maths italics replaced with KaTeX; hard line wraps removed.",
+      "source": "pdf p.29"
+    },
+    {
+      "id": "cse-2026-1-cs-30",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "10"
+        },
+        {
+          "l": "B",
+          "t": "5"
+        },
+        {
+          "l": "C",
+          "t": "4"
+        },
+        {
+          "l": "D",
+          "t": "2"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "4"
+        },
+        {
+          "l": "B",
+          "t": "2"
+        },
+        {
+          "l": "C",
+          "t": "10"
+        },
+        {
+          "l": "D",
+          "t": "5"
+        }
+      ],
+      "reason": "The bank had the options in a shuffled order; restored to the order printed in the paper (the official key refers to that order).",
+      "source": "pdf p.29"
+    },
+    {
+      "id": "cse-2026-1-cs-30",
+      "field": "answer",
+      "before": "C",
+      "after": "D",
+      "reason": "Official GATE 2026 CS1 answer key gives Q.40 = D (paper option order). The stored key C pointed at 4, which can be third (insert 8, 12, 4); 5 is the only element that can never be third. Re-derived independently in the v2 solution.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-30",
+      "field": "topic",
+      "before": "trees",
+      "after": "bst",
+      "reason": "Binary search tree insertion order: topic bst (pds/trees is generic trees).",
+      "source": "pdf p.29"
+    },
+    {
+      "id": "cse-2026-1-cs-31",
+      "field": "text",
+      "before": "Let 𝐺(𝑉, 𝐸) be an undirected, edge-weighted graph with integer weights. The weight of a path is the sum of the weights of the edges in that path. The length of a path is the number of edges in that path. Let 𝑠 ∈ 𝑉 be a vertex in 𝐺. For every 𝑢 ∈ 𝑉 and for every 𝑘 ≥ 0, let 𝑑𝑘(𝑢) denote the weight of a shortest path (in terms of weight) from 𝑠 to 𝑢 of length at most 𝑘. If there is no path from 𝑠 to 𝑢 of length at most 𝑘, then 𝑑𝑘(𝑢) = ∞. Consider the statements: S1: For every 𝑘 ≥ 0 and 𝑢 ∈ 𝑉, 𝑑𝑘+1(𝑢) ≤ 𝑑𝑘(𝑢). S2: For every (𝑢, 𝑣) ∈ 𝐸, if (𝑢, 𝑣) is part of a shortest path (in terms of weight) from 𝑠 to 𝑣, then for every 𝑘 ≥ 0, 𝑑𝑘(𝑢) ≤ 𝑑𝑘(𝑣). Which one of the following options is correct?",
+      "after": "Let $G(V, E)$ be an undirected, edge-weighted graph with integer weights. The weight of a path is the sum of the weights of the edges in that path. The length of a path is the number of edges in that path.\n\nLet $s \\in V$ be a vertex in $G$. For every $u \\in V$ and for every $k \\ge 0$, let $d_k(u)$ denote the weight of a shortest path (in terms of weight) from $s$ to $u$ of length at most $k$. If there is no path from $s$ to $u$ of length at most $k$, then $d_k(u) = \\infty$.\n\nConsider the statements:\n\n**S1:** For every $k \\ge 0$ and $u \\in V$, $d_{k+1}(u) \\le d_k(u)$.\n\n**S2:** For every $(u, v) \\in E$, if $(u, v)$ is part of a shortest path (in terms of weight) from $s$ to $v$, then for every $k \\ge 0$, $d_k(u) \\le d_k(v)$.\n\nWhich one of the following options is correct?",
+      "reason": "Unicode maths italics replaced with KaTeX; hard line wraps removed. Broken subscripts (𝑑𝑘+1) rebuilt.",
+      "source": "pdf p.30"
+    },
+    {
+      "id": "cse-2026-1-cs-31",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Only S2 is true"
+        },
+        {
+          "l": "B",
+          "t": "Both S1 and S2 are true"
+        },
+        {
+          "l": "C",
+          "t": "Neither S1 nor S2 is true"
+        },
+        {
+          "l": "D",
+          "t": "Only S1 is true"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Only S1 is true"
+        },
+        {
+          "l": "B",
+          "t": "Only S2 is true"
+        },
+        {
+          "l": "C",
+          "t": "Both S1 and S2 are true"
+        },
+        {
+          "l": "D",
+          "t": "Neither S1 nor S2 is true"
+        }
+      ],
+      "reason": "The bank had the options in a shuffled order; restored to the order printed in the paper (the official key refers to that order).",
+      "source": "pdf p.30"
+    },
+    {
+      "id": "cse-2026-1-cs-31",
+      "field": "answer",
+      "before": "D",
+      "after": "A",
+      "reason": "Official GATE 2026 CS1 answer key gives Q.41 = A (paper option order). The stored D pointed at the same statement (\"Only S1\") in the shuffled order. Re-derived independently in the v2 solution.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-31",
+      "field": "topic",
+      "before": "graphs",
+      "after": "shortest-paths",
+      "reason": "algo/graphs is not a topic id; this is a shortest-path question.",
+      "source": "pdf p.30"
+    },
+    {
+      "id": "cse-2026-1-cs-32",
+      "field": "text",
+      "before": "Consider the control flow graph shown in the figure. Which one of the following options correctly lists the set of redundant expressions (common subexpressions) in the basic blocks B4 and B5? Note: All the variables are integers.",
+      "after": "Consider the control flow graph shown in the figure.\n\nWhich one of the following options correctly lists the set of redundant expressions (common subexpressions) in the basic blocks B4 and B5?\n\n*Note:* All the variables are integers.",
+      "reason": "Paragraph breaks as in the paper.",
+      "source": "pdf p.31"
+    },
+    {
+      "id": "cse-2026-1-cs-32",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "B4: { 𝑏 + 𝑖 } B5: { 𝑐 + 𝑚 }"
+        },
+        {
+          "l": "B",
+          "t": "B4: { 𝑔 ∗ 𝑘 } B5: { 𝑐 + 𝑚 }"
+        },
+        {
+          "l": "C",
+          "t": "B4: { 𝑔 ∗ 𝑘, 𝑏 + 𝑖 } B5: { }"
+        },
+        {
+          "l": "D",
+          "t": "B4: { 𝑔 ∗ 𝑘 } B5: { }"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "B4: $\\{\\, b + i \\,\\}$, B5: $\\{\\, c + m \\,\\}$"
+        },
+        {
+          "l": "B",
+          "t": "B4: $\\{\\, g * k \\,\\}$, B5: $\\{\\, c + m \\,\\}$"
+        },
+        {
+          "l": "C",
+          "t": "B4: $\\{\\, g * k,\\ b + i \\,\\}$, B5: $\\{\\,\\}$"
+        },
+        {
+          "l": "D",
+          "t": "B4: $\\{\\, g * k \\,\\}$, B5: $\\{\\,\\}$"
+        }
+      ],
+      "reason": "Unicode maths italics replaced with KaTeX; hard line wraps removed.",
+      "source": "pdf p.31"
+    },
+    {
+      "id": "cse-2026-1-cs-32",
+      "field": "answer",
+      "before": "A",
+      "after": "D",
+      "reason": "Official GATE 2026 CS1 answer key gives Q.42 = D (paper option order). The stored key A is wrong: b is redefined in B3 (so b+i is not available at B4) and c+m is not computed on the B2 path. Re-derived independently in the v2 solution.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-32",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2026-1/cs-32-1.svg",
+          "svg": "cse-2026-1/cs-32-1.svg",
+          "alt": "Control flow graph. ENTRY arrow into B1: a = b + i. B1 branches to B2 (a = g * k; f = d - f; a = c * 4) and to B3 (t = g * k; b = c + m). Both B2 and B3 flow into B4 (x = g * k; y = b + i). B4 flows into B5 (z = c + m), which flows to EXIT."
+        }
+      ],
+      "reason": "The question depends on its control flow graph, which the bank was missing. Redrawn as an SVG from the paper.",
+      "source": "pdf p.31"
+    },
+    {
+      "id": "cse-2026-1-cs-32",
+      "field": "topic",
+      "before": "codegen",
+      "after": "optimization",
+      "reason": "cd/codegen is not a topic id; common-subexpression elimination is code optimisation / data-flow analysis.",
+      "source": "pdf p.31"
+    },
+    {
+      "id": "cse-2026-1-cs-32",
+      "field": "tags",
+      "before": [
+        "cd",
+        "control-flow",
+        "basic-blocks"
+      ],
+      "after": [
+        "cd",
+        "common-subexpression",
+        "available-expressions",
+        "control-flow-graph"
+      ],
+      "reason": "Tags describe the actual concept (available expressions / CSE).",
+      "source": "pdf p.31"
+    },
+    {
+      "id": "cse-2026-1-cs-33",
+      "field": "text",
+      "before": "Consider a relational database schema with two relations 𝑅(𝑃, 𝑄) and 𝑆(𝑋, 𝑌). Let 𝐸 = {⟨𝑢⟩ ∣ ∃𝑣 ∃𝑤 ⟨𝑢, 𝑣⟩ ∈ 𝑅 ∧ ⟨𝑣, 𝑤⟩ ∈ 𝑆} be a tuple relational calculus expression. Which one of the following relational algebraic expressions is equivalent to 𝐸 ?",
+      "after": "Consider a relational database schema with two relations $R(P, Q)$ and $S(X, Y)$.\n\nLet $E = \\{\\langle u \\rangle \\mid \\exists v\\, \\exists w\\; \\langle u, v \\rangle \\in R \\wedge \\langle v, w \\rangle \\in S\\}$ be a tuple relational calculus expression.\n\nWhich one of the following relational algebraic expressions is equivalent to $E$?",
+      "reason": "Unicode maths italics replaced with KaTeX; hard line wraps removed.",
+      "source": "pdf p.32"
+    },
+    {
+      "id": "cse-2026-1-cs-33",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝛱𝑃(𝑆 ⋈𝑆.𝑌=𝑅.𝑄 𝑅)"
+        },
+        {
+          "l": "B",
+          "t": "𝛱𝑃(𝑅 ⋈𝑅.𝑃=𝑆.𝑋 𝑆)"
+        },
+        {
+          "l": "C",
+          "t": "𝛱𝑃(𝑆 ⋈𝑆.𝑋=𝑅.𝑄 𝑅)"
+        },
+        {
+          "l": "D",
+          "t": "𝛱𝑃(𝑅 ⋈𝑅.𝑃=𝑆.𝑌 𝑆)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\Pi_P(R \\bowtie_{R.P = S.X} S)$"
+        },
+        {
+          "l": "B",
+          "t": "$\\Pi_P(S \\bowtie_{S.X = R.Q} R)$"
+        },
+        {
+          "l": "C",
+          "t": "$\\Pi_P(R \\bowtie_{R.P = S.Y} S)$"
+        },
+        {
+          "l": "D",
+          "t": "$\\Pi_P(S \\bowtie_{S.Y = R.Q} R)$"
+        }
+      ],
+      "reason": "The bank had the options in a shuffled order; restored to the order printed in the paper (the official key refers to that order). The stored key B now points at the correct expression.",
+      "source": "pdf p.32"
+    },
+    {
+      "id": "cse-2026-1-cs-33",
+      "field": "topic",
+      "before": "relational-algebra",
+      "after": "ra",
+      "reason": "db/relational-algebra is not a topic id; ra covers relational algebra and tuple calculus.",
+      "source": "pdf p.32"
+    },
+    {
+      "id": "cse-2026-1-cs-33",
+      "field": "tags",
+      "before": [
+        "db",
+        "relational-algebra",
+        "sql"
+      ],
+      "after": [
+        "db",
+        "relational-algebra",
+        "tuple-relational-calculus"
+      ],
+      "reason": "Question is TRC to relational algebra, not SQL.",
+      "source": "pdf p.32"
+    },
+    {
+      "id": "cse-2026-1-cs-34",
+      "field": "text",
+      "before": "A TCP sender successfully establishes a connection with a TCP receiver and starts the transmission of segments. The TCP congestion control mechanism’s slow-start threshold is set to 10000 segments. Assume that the round -trip time is fixed at 1 millisecond. Assume that the sender always has data to send, the segments are numbered from 1, and no segment is lost. Let 𝑡 denote the time (in milliseconds) at which the transmission of segment number 2000 starts. Which one of the following options is correct?",
+      "after": "A TCP sender successfully establishes a connection with a TCP receiver and starts the transmission of segments. The TCP congestion control mechanism's slow-start threshold is set to 10000 segments. Assume that the round-trip time is fixed at 1 millisecond. Assume that the sender always has data to send, the segments are numbered from 1, and no segment is lost. Let $t$ denote the time (in milliseconds) at which the transmission of segment number 2000 starts.\n\nWhich one of the following options is correct?",
+      "reason": "Stray spaces (\"round -trip\") and line wraps removed; KaTeX for t.",
+      "source": "pdf p.33"
+    },
+    {
+      "id": "cse-2026-1-cs-34",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "11 ≤ 𝑡 < 12"
+        },
+        {
+          "l": "B",
+          "t": "12 ≤ 𝑡 < 13"
+        },
+        {
+          "l": "C",
+          "t": "9 ≤ 𝑡 < 10"
+        },
+        {
+          "l": "D",
+          "t": "10 ≤ 𝑡 < 11"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$9 \\le t < 10$"
+        },
+        {
+          "l": "B",
+          "t": "$10 \\le t < 11$"
+        },
+        {
+          "l": "C",
+          "t": "$11 \\le t < 12$"
+        },
+        {
+          "l": "D",
+          "t": "$12 \\le t < 13$"
+        }
+      ],
+      "reason": "The bank had the options in a shuffled order; restored to the order printed in the paper (the official key refers to that order).",
+      "source": "pdf p.33"
+    },
+    {
+      "id": "cse-2026-1-cs-34",
+      "field": "answer",
+      "before": "C",
+      "after": "B",
+      "reason": "Official GATE 2026 CS1 answer key gives Q.44 = B (paper option order). The stored C pointed at 9 <= t < 10, but segment 2000 lies in the 11th window (segments 1024-2047, sent at t = 10). Re-derived independently in the v2 solution.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-35",
+      "field": "text",
+      "before": "Consider the implementation of sliding window protocol over a lossless link, with a window size of 𝑊 frames, where each frame is of size 1000 bits (including header). The bandwidth of the link is 100 kbps (1k = 103) and the one-way propagation delay is 100 milliseconds. Assume that processing times at the sender and receiver are zero and the transmission time of acknowledgements is also zero. Which one of the following options gives the minimum size of 𝑊 (in number of frames) required to achieve 100% link utilization?",
+      "after": "Consider the implementation of sliding window protocol over a lossless link, with a window size of $W$ frames, where each frame is of size 1000 bits (including header). The bandwidth of the link is 100 kbps ($1\\text{k} = 10^3$) and the one-way propagation delay is 100 milliseconds. Assume that processing times at the sender and receiver are zero and the transmission time of acknowledgements is also zero. Which one of the following options gives the minimum size of $W$ (in number of frames) required to achieve 100% link utilization?",
+      "reason": "\"1k = 103\" was a lost superscript (10^3); KaTeX for W.",
+      "source": "pdf p.34"
+    },
+    {
+      "id": "cse-2026-1-cs-35",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "21"
+        },
+        {
+          "l": "B",
+          "t": "20"
+        },
+        {
+          "l": "C",
+          "t": "11"
+        },
+        {
+          "l": "D",
+          "t": "10"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "10"
+        },
+        {
+          "l": "B",
+          "t": "21"
+        },
+        {
+          "l": "C",
+          "t": "20"
+        },
+        {
+          "l": "D",
+          "t": "11"
+        }
+      ],
+      "reason": "The bank had the options in a shuffled order; restored to the order printed in the paper (the official key refers to that order).",
+      "source": "pdf p.34"
+    },
+    {
+      "id": "cse-2026-1-cs-35",
+      "field": "answer",
+      "before": "D",
+      "after": "B",
+      "reason": "Official GATE 2026 CS1 answer key gives Q.45 = B (paper option order). The stored D pointed at 10; the correct window is 1 + 2a = 21. Re-derived independently in the v2 solution.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-35",
+      "field": "topic",
+      "before": "data-link",
+      "after": "datalink",
+      "reason": "cn/data-link is not a topic id; sliding window belongs to cn/datalink.",
+      "source": "pdf p.34"
+    },
+    {
+      "id": "cse-2026-1-cs-36",
+      "field": "text",
+      "before": "Let 𝑓: ℝ → ℝ be defined as follows: 𝑓(𝑥) = ( |𝑥| 2 − 𝑥) (𝑥 − |𝑥| 2 ) Which of the following statements is/are true?",
+      "after": "Let $f: \\mathbb{R} \\to \\mathbb{R}$ be defined as follows:\n\n$$f(x) = \\left(\\frac{|x|}{2} - x\\right)\\left(x - \\frac{|x|}{2}\\right)$$\n\nWhich of the following statements is/are true?",
+      "reason": "Fractions |x|/2 were flattened by extraction (\"|𝑥| 2\"); rebuilt in KaTeX.",
+      "source": "pdf p.35"
+    },
+    {
+      "id": "cse-2026-1-cs-36",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝑓 has a local maximum"
+        },
+        {
+          "l": "B",
+          "t": "𝑓 has a local minimum"
+        },
+        {
+          "l": "C",
+          "t": "𝑓′ is continuous over ℝ"
+        },
+        {
+          "l": "D",
+          "t": "𝑓′ is not differentiable over ℝ"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$f$ has a local maximum"
+        },
+        {
+          "l": "B",
+          "t": "$f$ has a local minimum"
+        },
+        {
+          "l": "C",
+          "t": "$f'$ is continuous over $\\mathbb{R}$"
+        },
+        {
+          "l": "D",
+          "t": "$f'$ is not differentiable over $\\mathbb{R}$"
+        }
+      ],
+      "reason": "Unicode maths italics replaced with KaTeX; hard line wraps removed.",
+      "source": "pdf p.35"
+    },
+    {
+      "id": "cse-2026-1-cs-36",
+      "field": "topic",
+      "before": "calculus",
+      "after": "maxmin",
+      "reason": "calc/calculus is not a topic id; the question is about extrema and differentiability (maxima and minima).",
+      "source": "pdf p.35"
+    },
+    {
+      "id": "cse-2026-1-cs-37",
+      "field": "text",
+      "before": "Let 𝐺(𝑉, 𝐸) be a simple, undirected graph. A vertex cover of 𝐺 is a subset 𝑉′ ⊆ 𝑉 such that for every (𝑢, 𝑣) ∈ 𝐸, 𝑢 ∈ 𝑉′or 𝑣 ∈ 𝑉′. Let the size of the smallest vertex cover in 𝐺 be 𝑘. Let 𝑆 be any vertex cover of size 𝑘. For a vertex 𝑣 ∈ 𝑉, which of the following constraints will always ensure that 𝑣 ∈ 𝑆 ?",
+      "after": "Let $G(V, E)$ be a simple, undirected graph. A vertex cover of $G$ is a subset $V' \\subseteq V$ such that for every $(u, v) \\in E$, $u \\in V'$ or $v \\in V'$. Let the size of the smallest vertex cover in $G$ be $k$. Let $S$ be any vertex cover of size $k$.\n\nFor a vertex $v \\in V$, which of the following constraints will always ensure that $v \\in S$?",
+      "reason": "Unicode maths italics replaced with KaTeX; hard line wraps removed.",
+      "source": "pdf p.35"
+    },
+    {
+      "id": "cse-2026-1-cs-37",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "The vertex 𝑣 is a part of a clique of size 𝑘"
+        },
+        {
+          "l": "B",
+          "t": "The degree of 𝑣 is at least 𝑘 + 1"
+        },
+        {
+          "l": "C",
+          "t": "The vertex 𝑣 is on a path of length 𝑘 + 1"
+        },
+        {
+          "l": "D",
+          "t": "The vertex 𝑣 is on a cycle of length 𝑘 + 1"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "The degree of $v$ is at least $k + 1$"
+        },
+        {
+          "l": "B",
+          "t": "The vertex $v$ is on a path of length $k + 1$"
+        },
+        {
+          "l": "C",
+          "t": "The vertex $v$ is on a cycle of length $k + 1$"
+        },
+        {
+          "l": "D",
+          "t": "The vertex $v$ is a part of a clique of size $k$"
+        }
+      ],
+      "reason": "The bank had the options in a shuffled order; restored to the order printed in the paper (the official key refers to that order).",
+      "source": "pdf p.35"
+    },
+    {
+      "id": "cse-2026-1-cs-37",
+      "field": "answer",
+      "before": "B",
+      "after": "A",
+      "reason": "Official GATE 2026 CS1 answer key gives Q.47 = A (paper option order). The stored B pointed at the same statement (degree >= k+1) in the shuffled order. Re-derived independently in the v2 solution.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-37",
+      "field": "topic",
+      "before": "graph-theory",
+      "after": "graphs",
+      "reason": "dm/graph-theory is not a topic id; graph theory is dm/graphs.",
+      "source": "pdf p.35"
+    },
+    {
+      "id": "cse-2026-1-cs-38",
+      "field": "text",
+      "before": "Consider a Boolean function F with the following minterm expression: 𝐹(𝑃, 𝑄, 𝑅, 𝑆) = ∑ 𝑚 (1, 2, 3, 4, 5, 7, 10, 12, 13, 14) Which of the following options is/are the minimal sum-of-products expression(s) of F ?",
+      "after": "Consider a Boolean function $F$ with the following minterm expression:\n\n$$F(P, Q, R, S) = \\sum m(1, 2, 3, 4, 5, 7, 10, 12, 13, 14)$$\n\nWhich of the following options is/are the minimal sum-of-products expression(s) of $F$?",
+      "reason": "Unicode maths italics replaced with KaTeX; hard line wraps removed.",
+      "source": "pdf p.36"
+    },
+    {
+      "id": "cse-2026-1-cs-38",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝑃̅𝑆 + 𝑄𝑅̅ + 𝑃̅𝑄̅𝑅 + 𝑄̅𝑅𝑆̅"
+        },
+        {
+          "l": "B",
+          "t": "𝑃̅𝑆 + 𝑄𝑅̅ + 𝑃̅𝑄̅𝑅 + 𝑃𝑅𝑆̅"
+        },
+        {
+          "l": "C",
+          "t": "𝑃̅𝑆 + 𝑄𝑅̅ + 𝑃𝑄𝑆̅ + 𝑃𝑅𝑆̅"
+        },
+        {
+          "l": "D",
+          "t": "𝑃̅𝑆 + 𝑄𝑅̅ + 𝑃𝑄𝑆̅ + 𝑄̅𝑅𝑆̅"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\bar{P}S + Q\\bar{R} + \\bar{P}\\bar{Q}R + \\bar{Q}R\\bar{S}$"
+        },
+        {
+          "l": "B",
+          "t": "$\\bar{P}S + Q\\bar{R} + \\bar{P}\\bar{Q}R + PR\\bar{S}$"
+        },
+        {
+          "l": "C",
+          "t": "$\\bar{P}S + Q\\bar{R} + PQ\\bar{S} + PR\\bar{S}$"
+        },
+        {
+          "l": "D",
+          "t": "$\\bar{P}S + Q\\bar{R} + PQ\\bar{S} + \\bar{Q}R\\bar{S}$"
+        }
+      ],
+      "reason": "Combining overbars (𝑃̅) replaced with KaTeX \\bar.",
+      "source": "pdf p.36"
+    },
+    {
+      "id": "cse-2026-1-cs-38",
+      "field": "answer",
+      "before": "A; B",
+      "after": "B; D",
+      "reason": "Official GATE 2026 CS1 answer key gives Q.48 = B;D (paper option order). The stored A;B is wrong: option A leaves m14 uncovered. Re-derived independently in the v2 solution.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-38",
+      "field": "topic",
+      "before": "combinational",
+      "after": "minimization",
+      "reason": "K-map minimisation belongs to dl/minimization, not combinational circuits.",
+      "source": "pdf p.36"
+    },
+    {
+      "id": "cse-2026-1-cs-39",
+      "field": "text",
+      "before": "Let 𝐺(𝑉, 𝐸) be a simple, undirected, edge-weighted graph with unique edge weights. Which of the following statements about the minimum spanning trees (MST) of 𝐺 is/are true?",
+      "after": "Let $G(V, E)$ be a simple, undirected, edge-weighted graph with unique edge weights. Which of the following statements about the minimum spanning trees (MST) of $G$ is/are true?",
+      "reason": "Unicode maths italics replaced with KaTeX; hard line wraps removed.",
+      "source": "pdf p.37"
+    },
+    {
+      "id": "cse-2026-1-cs-39",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "In every cycle 𝐶 of 𝐺, the edge with the largest weight in 𝐶 is not in any MST"
+        },
+        {
+          "l": "B",
+          "t": "In every cycle 𝐶 of 𝐺, the edge with the smallest weight in 𝐶 is in every MST"
+        },
+        {
+          "l": "C",
+          "t": "For every vertex 𝑣 ∈ 𝑉, the edge with the largest weight incident on 𝑣 is not in any MST"
+        },
+        {
+          "l": "D",
+          "t": "For every vertex 𝑣 ∈ 𝑉, the edge with the smallest weight incident on 𝑣 is in every MST"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "In every cycle $C$ of $G$, the edge with the largest weight in $C$ is not in any MST"
+        },
+        {
+          "l": "B",
+          "t": "In every cycle $C$ of $G$, the edge with the smallest weight in $C$ is in every MST"
+        },
+        {
+          "l": "C",
+          "t": "For every vertex $v \\in V$, the edge with the largest weight incident on $v$ is not in any MST"
+        },
+        {
+          "l": "D",
+          "t": "For every vertex $v \\in V$, the edge with the smallest weight incident on $v$ is in every MST"
+        }
+      ],
+      "reason": "Unicode maths italics replaced with KaTeX; hard line wraps removed.",
+      "source": "pdf p.37"
+    },
+    {
+      "id": "cse-2026-1-cs-39",
+      "field": "answer",
+      "before": "B; C",
+      "after": "A; D",
+      "reason": "Official GATE 2026 CS1 answer key gives Q.49 = A;D (paper option order). The stored B;C is wrong (cycle property and cut property give A and D). Re-derived independently in the v2 solution.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-39",
+      "field": "topic",
+      "before": "graphs",
+      "after": "mst",
+      "reason": "algo/graphs is not a topic id; this is an MST question.",
+      "source": "pdf p.37"
+    },
+    {
+      "id": "cse-2026-1-cs-40",
+      "field": "text",
+      "before": "Consider the following pseudocode for depth -first search (DFS) algorithm which takes a directed graph 𝐺(𝑉, 𝐸) as input, where 𝑑[𝑣] and 𝑓[𝑣] are the discovery time and finishing time, respectively, of the vertex 𝑣 ∈ 𝑉. 𝐷𝐹𝑆(𝐺): 𝑢𝑛𝑚𝑎𝑟𝑘 𝑎𝑙𝑙 𝑣 ∈ 𝑉 𝑡 ← 0 𝑓𝑜𝑟 𝑒𝑎𝑐ℎ 𝑣 ∈ 𝑉 𝑖𝑓 𝑣 𝑖𝑠 𝑢𝑛𝑚𝑎𝑟𝑘𝑒𝑑 𝑡 ← 𝐸𝑥𝑝𝑙𝑜𝑟𝑒(𝐺, 𝑣, 𝑡) 𝑒𝑛𝑑 𝑖𝑓 𝑒𝑛𝑑 𝑓𝑜𝑟 𝐸𝑥𝑝𝑙𝑜𝑟𝑒(𝐺, 𝑣, 𝑡): 𝑚𝑎𝑟𝑘 𝑣 𝑡 ← 𝑡 + 1 𝑑[𝑣] ← 𝑡 𝑓𝑜𝑟 𝑒𝑎𝑐ℎ (𝑣, 𝑤) ∈ 𝐸 𝑖𝑓 𝑤 𝑖𝑠 𝑢𝑛𝑚𝑎𝑟𝑘𝑒𝑑 𝑡 ← 𝐸𝑥𝑝𝑙𝑜𝑟𝑒(𝐺, 𝑤, 𝑡) 𝑒𝑛𝑑 𝑖𝑓 𝑒𝑛𝑑 𝑓𝑜𝑟 𝑡 ← 𝑡 + 1 𝑓[𝑣] ← 𝑡 𝑟𝑒𝑡𝑢𝑟𝑛 𝑡 Suppose that the input directed graph 𝐺(𝑉, 𝐸) is a directed acyclic graph (DAG). For an edge (𝑢, 𝑣) ∈ 𝐸, which of the following options will NEVER be correct?",
+      "after": "Consider the following pseudocode for depth-first search (DFS) algorithm which takes a directed graph $G(V, E)$ as input, where $d[v]$ and $f[v]$ are the discovery time and finishing time, respectively, of the vertex $v \\in V$.\n\n```text\nDFS(G):\n   unmark all v ∈ V\n   t ← 0\n   for each v ∈ V\n        if v is unmarked\n              t ← Explore(G, v, t)\n        end if\n   end for\n\nExplore(G, v, t):\n     mark v\n     t ← t + 1\n     d[v] ← t\n     for each (v, w) ∈ E\n            if w is unmarked\n                   t ← Explore(G, w, t)\n            end if\n     end for\n     t ← t + 1\n     f[v] ← t\n     return t\n```\n\nSuppose that the input directed graph $G(V, E)$ is a directed acyclic graph (DAG). For an edge $(u, v) \\in E$, which of the following options will NEVER be correct?",
+      "reason": "The pseudocode had been flattened into one line of Unicode italics; restored as an indented code block.",
+      "source": "pdf p.38"
+    },
+    {
+      "id": "cse-2026-1-cs-40",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝑑[𝑢] < 𝑑[𝑣] < 𝑓[𝑣] < 𝑓[𝑢]"
+        },
+        {
+          "l": "B",
+          "t": "𝑑[𝑣] < 𝑑[𝑢] < 𝑓[𝑢] < 𝑓[𝑣]"
+        },
+        {
+          "l": "C",
+          "t": "𝑑[𝑣] < 𝑓[𝑣] < 𝑑[𝑢] < 𝑓[𝑢]"
+        },
+        {
+          "l": "D",
+          "t": "𝑑[𝑢] < 𝑑[𝑣] < 𝑓[𝑢] < 𝑓[𝑣]"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$d[u] < d[v] < f[v] < f[u]$"
+        },
+        {
+          "l": "B",
+          "t": "$d[v] < d[u] < f[u] < f[v]$"
+        },
+        {
+          "l": "C",
+          "t": "$d[v] < f[v] < d[u] < f[u]$"
+        },
+        {
+          "l": "D",
+          "t": "$d[u] < d[v] < f[u] < f[v]$"
+        }
+      ],
+      "reason": "Unicode maths italics replaced with KaTeX; hard line wraps removed.",
+      "source": "pdf p.38"
+    },
+    {
+      "id": "cse-2026-1-cs-40",
+      "field": "type",
+      "before": "MCQ",
+      "after": "MSQ",
+      "reason": "Official key lists Q.50 as MSQ (key B;D).",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-40",
+      "field": "answer",
+      "before": "A",
+      "after": "B; D",
+      "reason": "Official GATE 2026 CS1 answer key gives Q.50 = B;D (paper option order). The stored single answer A is wrong: A is a tree/forward edge and does occur. Re-derived independently in the v2 solution.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-40",
+      "field": "topic",
+      "before": "graphs",
+      "after": "graph-traversal",
+      "reason": "algo/graphs is not a topic id; DFS is graph-traversal.",
+      "source": "pdf p.38"
+    },
+    {
+      "id": "cse-2026-1-cs-41",
+      "field": "text",
+      "before": "Let 𝐿1 and 𝐿2 be two languages over a finite alphabet, such that 𝐿1 ∩ 𝐿2 and 𝐿2 are regular languages. Which of the following statements is/are always true?",
+      "after": "Let $L_1$ and $L_2$ be two languages over a finite alphabet, such that $L_1 \\cap L_2$ and $L_2$ are regular languages.\n\nWhich of the following statements is/are always true?",
+      "reason": "Unicode maths italics replaced with KaTeX; hard line wraps removed.",
+      "source": "pdf p.39"
+    },
+    {
+      "id": "cse-2026-1-cs-41",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝐿1 is regular"
+        },
+        {
+          "l": "B",
+          "t": "𝐿1 ∪ 𝐿2 is regular"
+        },
+        {
+          "l": "C",
+          "t": "𝐿2 is context-free"
+        },
+        {
+          "l": "D",
+          "t": "𝐿1 is context-free"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$L_1$ is regular"
+        },
+        {
+          "l": "B",
+          "t": "$L_1 \\cup L_2$ is regular"
+        },
+        {
+          "l": "C",
+          "t": "$L_2$ is context-free"
+        },
+        {
+          "l": "D",
+          "t": "$L_1$ is context-free"
+        }
+      ],
+      "reason": "Unicode maths italics replaced with KaTeX; hard line wraps removed.",
+      "source": "pdf p.39"
+    },
+    {
+      "id": "cse-2026-1-cs-41",
+      "field": "answer",
+      "before": "B; D",
+      "after": "C",
+      "reason": "Official GATE 2026 CS1 answer key gives Q.51 = C (paper option order). The stored B;D is wrong: with L2 = empty set, L1 is unrestricted. Re-derived independently in the v2 solution.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-41",
+      "field": "topic",
+      "before": "regular",
+      "after": "pumping",
+      "reason": "Closure properties are filed under toc/pumping (\"Pumping lemma and closure properties\").",
+      "source": "pdf p.39"
+    },
+    {
+      "id": "cse-2026-1-cs-42",
+      "field": "text",
+      "before": "Consider the following context-free grammar 𝐺. 𝑆 → 𝑎𝑏𝑎𝐴𝐵𝐴𝑏𝑏𝑎 𝐴 → 𝑎𝑎𝐵𝐵𝐴𝑏 | 𝑏𝐵𝑎𝑏𝑎𝑎 𝐵 → 𝑎𝐵𝑏 | 𝑎𝑏 In the above grammar, 𝑆 is the start symbol, 𝑎 and 𝑏 are terminal symbols, and 𝐴 and 𝐵 are non-terminal symbols. Let 𝐿(𝐺) be the language generated by the grammar 𝐺. For a string 𝑠 ∈ 𝐿(𝐺), let 𝑛1(𝑠) be the number of 𝑎’s in 𝑠 and 𝑛2(𝑠) be the number of 𝑏’s in 𝑠. Which of the following statements is/are true?",
+      "after": "Consider the following context-free grammar $G$.\n\n$$\\begin{aligned} S &\\to abaABAbba \\\\ A &\\to aaBBAb \\mid bBabaa \\\\ B &\\to aBb \\mid ab \\end{aligned}$$\n\nIn the above grammar, $S$ is the start symbol, $a$ and $b$ are terminal symbols, and $A$ and $B$ are non-terminal symbols.\n\nLet $L(G)$ be the language generated by the grammar $G$. For a string $s \\in L(G)$, let $n_1(s)$ be the number of $a$'s in $s$ and $n_2(s)$ be the number of $b$'s in $s$.\n\nWhich of the following statements is/are true?",
+      "reason": "Unicode maths italics replaced with KaTeX; hard line wraps removed.",
+      "source": "pdf p.40"
+    },
+    {
+      "id": "cse-2026-1-cs-42",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "There is a string 𝑠 ∈ 𝐿(𝐺) such that 𝑛1(𝑠) < 𝑛2(𝑠)"
+        },
+        {
+          "l": "B",
+          "t": "For every string 𝑠 ∈ 𝐿(𝐺), 𝑛1(𝑠) ≥ 𝑛2(𝑠)"
+        },
+        {
+          "l": "C",
+          "t": "There is a string 𝑠 ∈ 𝐿(𝐺) such that 𝑛1(𝑠) > 2𝑛2(𝑠)"
+        },
+        {
+          "l": "D",
+          "t": "For every string 𝑠 ∈ 𝐿(𝐺), 𝑛1(𝑠) ≤ 2𝑛2(𝑠)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "There is a string $s \\in L(G)$ such that $n_1(s) < n_2(s)$"
+        },
+        {
+          "l": "B",
+          "t": "For every string $s \\in L(G)$, $n_1(s) \\ge n_2(s)$"
+        },
+        {
+          "l": "C",
+          "t": "There is a string $s \\in L(G)$ such that $n_1(s) > 2n_2(s)$"
+        },
+        {
+          "l": "D",
+          "t": "For every string $s \\in L(G)$, $n_1(s) \\le 2n_2(s)$"
+        }
+      ],
+      "reason": "Unicode maths italics replaced with KaTeX; hard line wraps removed.",
+      "source": "pdf p.40"
+    },
+    {
+      "id": "cse-2026-1-cs-42",
+      "field": "answer",
+      "before": "A; B; C",
+      "after": "B; D",
+      "reason": "Official GATE 2026 CS1 answer key gives Q.52 = B;D (paper option order). The stored A;B;C is self-contradictory (A and B cannot both hold). Re-derived independently in the v2 solution.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-42",
+      "field": "topic",
+      "before": "cfl",
+      "after": "cfg",
+      "reason": "toc/cfl is not a topic id; grammars are toc/cfg.",
+      "source": "pdf p.40"
+    },
+    {
+      "id": "cse-2026-1-cs-43",
+      "field": "text",
+      "before": "Consider the following two s yntax-directed definitions SDD1 and SDD2 for type declarations. 𝐷 is the start symbol, and 𝑖𝑛𝑡, 𝑓𝑙𝑜𝑎𝑡 and 𝑖𝑑 are the three terminals. The non-terminal 𝑉1 is the same as 𝑉 and the non-terminal 𝐷1 is the same as 𝐷. Here, the subscript is used to differentiate the grammar symbols on the two sides of a production. The function 𝑝𝑢𝑡 updates the symbol table with the type information for an identifier. Let P and Q be the languages specified by grammars G1 and G2, respectively. Which of the following statements is/are true? SDD1 Grammar (G1) Semantic Rules 𝐷 → 𝑇 𝑉 𝐷. 𝑡𝑦𝑝𝑒 = 𝑇. 𝑡𝑦𝑝𝑒 𝑉. 𝑡𝑦𝑝𝑒 = 𝑇. 𝑡𝑦𝑝𝑒 𝑇 → 𝑖𝑛𝑡 𝑇. 𝑡𝑦𝑝𝑒 = 𝑖𝑛𝑡 𝑇 → 𝑓𝑙𝑜𝑎𝑡 𝑇. 𝑡𝑦𝑝𝑒 = 𝑓𝑙𝑜𝑎𝑡 𝑉 → 𝑉1 𝑖𝑑 𝑉1. 𝑡𝑦𝑝𝑒 = 𝑉. 𝑡𝑦𝑝𝑒 𝑝𝑢𝑡(𝑖𝑑. 𝑒𝑛𝑡𝑟𝑦, 𝑉. 𝑡𝑦𝑝𝑒) 𝑉 → 𝑖𝑑 𝑝𝑢𝑡(𝑖𝑑. 𝑒𝑛𝑡𝑟𝑦, 𝑉. 𝑡𝑦𝑝𝑒) SDD2 Grammar (G2) Semantic Rules 𝐷 → 𝐷1 𝑖𝑑 𝐷. 𝑡𝑦𝑝𝑒 = 𝐷1. 𝑡𝑦𝑝𝑒 𝑝𝑢𝑡(𝑖𝑑. 𝑒𝑛𝑡𝑟𝑦, 𝐷1. 𝑡𝑦𝑝𝑒) 𝐷 → 𝑇 𝑖𝑑 𝐷. 𝑡𝑦𝑝𝑒 = 𝑇. 𝑡𝑦𝑝𝑒 𝑝𝑢𝑡(𝑖𝑑. 𝑒𝑛𝑡𝑟𝑦, 𝑇. 𝑡𝑦𝑝𝑒) 𝑇 → 𝑖𝑛𝑡 𝑇. 𝑡𝑦𝑝𝑒 = 𝑖𝑛𝑡 𝑇 → 𝑓𝑙𝑜𝑎𝑡 𝑇. 𝑡𝑦𝑝𝑒 = 𝑓𝑙𝑜𝑎𝑡",
+      "after": "Consider the following two syntax-directed definitions SDD1 and SDD2 for type declarations.\n\n**SDD1**\n\n| Grammar (G1) | Semantic Rules |\n|---|---|\n| $D \\to T\\ V$ | $D.\\mathit{type} = T.\\mathit{type}$; $\\ V.\\mathit{type} = T.\\mathit{type}$ |\n| $T \\to \\mathit{int}$ | $T.\\mathit{type} = \\mathit{int}$ |\n| $T \\to \\mathit{float}$ | $T.\\mathit{type} = \\mathit{float}$ |\n| $V \\to V_1\\ \\mathit{id}$ | $V_1.\\mathit{type} = V.\\mathit{type}$; $\\ \\mathit{put}(\\mathit{id}.\\mathit{entry}, V.\\mathit{type})$ |\n| $V \\to \\mathit{id}$ | $\\mathit{put}(\\mathit{id}.\\mathit{entry}, V.\\mathit{type})$ |\n\n**SDD2**\n\n| Grammar (G2) | Semantic Rules |\n|---|---|\n| $D \\to D_1\\ \\mathit{id}$ | $D.\\mathit{type} = D_1.\\mathit{type}$; $\\ \\mathit{put}(\\mathit{id}.\\mathit{entry}, D_1.\\mathit{type})$ |\n| $D \\to T\\ \\mathit{id}$ | $D.\\mathit{type} = T.\\mathit{type}$; $\\ \\mathit{put}(\\mathit{id}.\\mathit{entry}, T.\\mathit{type})$ |\n| $T \\to \\mathit{int}$ | $T.\\mathit{type} = \\mathit{int}$ |\n| $T \\to \\mathit{float}$ | $T.\\mathit{type} = \\mathit{float}$ |\n\n$D$ is the start symbol, and $\\mathit{int}$, $\\mathit{float}$ and $\\mathit{id}$ are the three terminals. The non-terminal $V_1$ is the same as $V$ and the non-terminal $D_1$ is the same as $D$. Here, the subscript is used to differentiate the grammar symbols on the two sides of a production. The function $\\mathit{put}$ updates the symbol table with the type information for an identifier.\n\nLet P and Q be the languages specified by grammars G1 and G2, respectively.\n\nWhich of the following statements is/are true?",
+      "reason": "The two SDD tables were flattened into the question text; rebuilt as markdown tables in KaTeX, with the prose moved after the tables as in the paper.",
+      "source": "pdf p.41"
+    },
+    {
+      "id": "cse-2026-1-cs-43",
+      "field": "answer",
+      "before": "A; C; D",
+      "after": "A, B, D",
+      "reason": "Official GATE 2026 CS1 answer key gives Q.53 = A, B, D (paper option order). The stored key was a placeholder/shuffled value; re-derived independently in the v2 solution.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-43",
+      "field": "topic",
+      "before": "sdd",
+      "after": "sdt",
+      "reason": "cd/sdd is not a topic id; syntax-directed definitions belong to cd/sdt.",
+      "source": "pdf p.41"
+    },
+    {
+      "id": "cse-2026-1-cs-43",
+      "field": "tags",
+      "before": [
+        "cd",
+        "syntax-directed-definitions",
+        "type-checking"
+      ],
+      "after": [
+        "cd",
+        "syntax-directed-definitions",
+        "s-attributed",
+        "l-attributed",
+        "symbol-table"
+      ],
+      "reason": "Tags describe the actual content (S-/L-attributed SDDs).",
+      "source": "pdf p.41"
+    },
+    {
+      "id": "cse-2026-1-cs-44",
+      "field": "text",
+      "before": "Consider a system that has a cache memory unit and a memo ry management unit (MMU). The address input to the cache memory is a physical address. The MMU has a translation lookaside buffer (TLB). Assume that when a page is evicted from the main memory, the corresponding blocks in the cache are marked as invalid. For a given memory reference, which of the following sequences of events can NEVER happen?",
+      "after": "Consider a system that has a cache memory unit and a memory management unit (MMU). The address input to the cache memory is a physical address. The MMU has a translation lookaside buffer (TLB). Assume that when a page is evicted from the main memory, the corresponding blocks in the cache are marked as invalid.\n\nFor a given memory reference, which of the following sequences of events can NEVER happen?",
+      "reason": "Unicode maths italics replaced with KaTeX; broken words and hard line wraps repaired; paragraph breaks as in the paper.",
+      "source": "pdf p.42"
+    },
+    {
+      "id": "cse-2026-1-cs-44",
+      "field": "type",
+      "before": "MCQ",
+      "after": "MSQ",
+      "reason": "Official key lists Q.54 as MSQ with two correct options (B;C).",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-44",
+      "field": "answer",
+      "before": "A",
+      "after": "B, C",
+      "reason": "Official GATE 2026 CS1 answer key gives Q.54 = B, C (paper option order). The stored key was a placeholder/shuffled value; re-derived independently in the v2 solution.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-44",
+      "field": "topic",
+      "before": "memory",
+      "after": "virtual-memory",
+      "reason": "os/memory is not a topic id; TLB + page table + physically addressed cache is virtual memory.",
+      "source": "pdf p.42"
+    },
+    {
+      "id": "cse-2026-1-cs-44",
+      "field": "tags",
+      "before": [
+        "os",
+        "mmu",
+        "cache",
+        "paging"
+      ],
+      "after": [
+        "os",
+        "tlb",
+        "page-fault",
+        "physical-cache",
+        "virtual-memory"
+      ],
+      "reason": "Tags describe the actual content.",
+      "source": "pdf p.42"
+    },
+    {
+      "id": "cse-2026-1-cs-45",
+      "field": "text",
+      "before": "An undirected, unweighted , simple graph 𝐺(𝑉, 𝐸) is said to be 2 -colorable if there exists a function 𝑐: 𝑉 → {0, 1} such that for every (𝑢, 𝑣) ∈ 𝐸, 𝑐(𝑢) ≠ 𝑐(𝑣). Which of the following statements about 2-colorable graphs is/are true?",
+      "after": "An undirected, unweighted, simple graph $G(V, E)$ is said to be 2-colorable if there exists a function $c: V \\to \\{0, 1\\}$ such that for every $(u, v) \\in E$, $c(u) \\neq c(v)$.\n\nWhich of the following statements about 2-colorable graphs is/are true?",
+      "reason": "Unicode maths italics replaced with KaTeX; broken words and hard line wraps repaired; paragraph breaks as in the paper.",
+      "source": "pdf p.43"
+    },
+    {
+      "id": "cse-2026-1-cs-45",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "If 𝐺 is 2-colorable, then 𝐺 may contain cycles of odd length"
+        },
+        {
+          "l": "B",
+          "t": "If 𝐺 is 2-colorable, then 𝐺 may contain cycles of even length"
+        },
+        {
+          "l": "C",
+          "t": "An optimal algorithm for testing whether 𝐺 is 2-colorable runs in time Θ(|𝑉| + |𝐸|), if 𝐺 is represented as an adjacency list"
+        },
+        {
+          "l": "D",
+          "t": "An optimal algorithm for testing whether 𝐺 is 2-colorable runs in time Θ(|𝐸| log|𝑉|), if 𝐺 is represented as an adjacency list"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "If $G$ is 2-colorable, then $G$ may contain cycles of odd length"
+        },
+        {
+          "l": "B",
+          "t": "If $G$ is 2-colorable, then $G$ may contain cycles of even length"
+        },
+        {
+          "l": "C",
+          "t": "An optimal algorithm for testing whether $G$ is 2-colorable runs in time $\\Theta(|V| + |E|)$, if $G$ is represented as an adjacency list"
+        },
+        {
+          "l": "D",
+          "t": "An optimal algorithm for testing whether $G$ is 2-colorable runs in time $\\Theta(|E| \\log |V|)$, if $G$ is represented as an adjacency list"
+        }
+      ],
+      "reason": "Unicode maths italics replaced with KaTeX; stray spaces removed.",
+      "source": "pdf p.43"
+    },
+    {
+      "id": "cse-2026-1-cs-45",
+      "field": "answer",
+      "before": "A; B",
+      "after": "B, C",
+      "reason": "Official GATE 2026 CS1 answer key gives Q.55 = B, C (paper option order). The stored key was a placeholder/shuffled value; re-derived independently in the v2 solution.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-45",
+      "field": "topic",
+      "before": "graph-theory",
+      "after": "graphs",
+      "reason": "dm/graph-theory is not a topic id; colouring is dm/graphs.",
+      "source": "pdf p.43"
+    },
+    {
+      "id": "cse-2026-1-cs-45",
+      "field": "tags",
+      "before": [
+        "dm",
+        "graph-coloring",
+        "bipartite-graphs"
+      ],
+      "after": [
+        "dm",
+        "graph-coloring",
+        "bipartite-graphs",
+        "bfs"
+      ],
+      "reason": "Tags describe the actual content.",
+      "source": "pdf p.43"
+    },
+    {
+      "id": "cse-2026-1-cs-46",
+      "field": "text",
+      "before": "An ISP having an address block 202.16.0.0/15 assigns a block of 6000 IP addresses to a client, using the classless internet domain routing (CIDR) super -netting approach. Which of the following address blocks can be assigned by the ISP?",
+      "after": "An ISP having an address block 202.16.0.0/15 assigns a block of 6000 IP addresses to a client, using the classless internet domain routing (CIDR) super-netting approach.\n\nWhich of the following address blocks can be assigned by the ISP?",
+      "reason": "Unicode maths italics replaced with KaTeX; broken words and hard line wraps repaired; paragraph breaks as in the paper.",
+      "source": "pdf p.43"
+    },
+    {
+      "id": "cse-2026-1-cs-46",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "202.16.32.0/19"
+        },
+        {
+          "l": "B",
+          "t": "202.17.24.0/19"
+        },
+        {
+          "l": "C",
+          "t": "202.16.0.0/19"
+        },
+        {
+          "l": "D",
+          "t": "202.17.64.0/19"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "202.16.0.0/19"
+        },
+        {
+          "l": "B",
+          "t": "202.17.64.0/19"
+        },
+        {
+          "l": "C",
+          "t": "202.16.32.0/19"
+        },
+        {
+          "l": "D",
+          "t": "202.17.24.0/19"
+        }
+      ],
+      "reason": "The bank had the options in a shuffled order; restored to the order printed in the paper (the official key refers to that order).",
+      "source": "pdf p.43"
+    },
+    {
+      "id": "cse-2026-1-cs-46",
+      "field": "type",
+      "before": "MCQ",
+      "after": "MSQ",
+      "reason": "Official key lists Q.56 as MSQ with three correct options (A;B;C).",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-46",
+      "field": "answer",
+      "before": "C",
+      "after": "A, B, C",
+      "reason": "Official GATE 2026 CS1 answer key gives Q.56 = A, B, C (paper option order). The stored key was a placeholder/shuffled value; re-derived independently in the v2 solution.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-46",
+      "field": "topic",
+      "before": "network",
+      "after": "ip",
+      "reason": "cn/network is not a topic id; CIDR addressing is cn/ip.",
+      "source": "pdf p.43"
+    },
+    {
+      "id": "cse-2026-1-cs-46",
+      "field": "tags",
+      "before": [
+        "cn",
+        "cidr",
+        "ip-addressing"
+      ],
+      "after": [
+        "cn",
+        "cidr",
+        "subnetting",
+        "ip-addressing"
+      ],
+      "reason": "Tags describe the actual content.",
+      "source": "pdf p.43"
+    },
+    {
+      "id": "cse-2026-1-cs-47",
+      "field": "text",
+      "before": "Let 𝐺 be an undirected graph, which is a path on 8 vertices. The number of matchings in 𝐺 is ______. (answer in integer)",
+      "after": "Let $G$ be an undirected graph, which is a path on 8 vertices. The number of matchings in $G$ is ______. (answer in integer)",
+      "reason": "Unicode maths italics replaced with KaTeX; broken words and hard line wraps repaired; paragraph breaks as in the paper.",
+      "source": "pdf p.44"
+    },
+    {
+      "id": "cse-2026-1-cs-47",
+      "field": "answer",
+      "before": 1,
+      "after": "34 to 34",
+      "reason": "Official GATE 2026 CS1 answer key gives Q.57 = 34. The stored 1 was a placeholder; re-derived (Fibonacci recurrence and direct count by matching size).",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-47",
+      "field": "topic",
+      "before": "graph-theory",
+      "after": "graphs",
+      "reason": "dm/graph-theory is not a topic id; matchings are dm/graphs.",
+      "source": "pdf p.44"
+    },
+    {
+      "id": "cse-2026-1-cs-47",
+      "field": "tags",
+      "before": [
+        "dm",
+        "matchings",
+        "paths"
+      ],
+      "after": [
+        "dm",
+        "matchings",
+        "paths",
+        "fibonacci"
+      ],
+      "reason": "Tags describe the actual content.",
+      "source": "pdf p.44"
+    },
+    {
+      "id": "cse-2026-1-cs-48",
+      "field": "text",
+      "before": "Let 𝑋 be a random variable which takes values in the set {1, 2, 3, 4, 5, 6, 7, 8}. Further, Pr(𝑋 = 1) = Pr(𝑋 = 2) = Pr(𝑋 = 5) = Pr(𝑋 = 7) = 1 6 and Pr(𝑋 = 3) = Pr(𝑋 = 4) = Pr(𝑋 = 6) = Pr(𝑋 = 8) = 1 12 . The expected value of 𝑋, denoted by 𝐸[𝑋], is equal to ___________. (rounded off to two decimal places)",
+      "after": "Let $X$ be a random variable which takes values in the set $\\{1, 2, 3, 4, 5, 6, 7, 8\\}$. Further, $\\Pr(X = 1) = \\Pr(X = 2) = \\Pr(X = 5) = \\Pr(X = 7) = \\frac{1}{6}$ and $\\Pr(X = 3) = \\Pr(X = 4) = \\Pr(X = 6) = \\Pr(X = 8) = \\frac{1}{12}$.\n\nThe expected value of $X$, denoted by $E[X]$, is equal to ___________. (rounded off to two decimal places)",
+      "reason": "Fractions 1/6 and 1/12 had been split into \"1 6\" / \"1 12\"; rebuilt in KaTeX.",
+      "source": "pdf p.44"
+    },
+    {
+      "id": "cse-2026-1-cs-48",
+      "field": "answer",
+      "before": 1,
+      "after": "4.24 to 4.26",
+      "reason": "Official GATE 2026 CS1 answer key gives Q.58 = 4.24 to 4.26. The stored 1 was a placeholder; re-derived: E[X] = 4.25.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-48",
+      "field": "topic",
+      "before": "random-variables",
+      "after": "rv",
+      "reason": "prob/random-variables is not a topic id; discrete random variables are prob/rv.",
+      "source": "pdf p.44"
+    },
+    {
+      "id": "cse-2026-1-cs-49",
+      "field": "text",
+      "before": "Consider a hard disk with a rotational speed of 15000 rpm. The time to move the read/write head from a track to its adjacent track is 1 millisecond. Initially, the head is on track 0. The number of sectors per track is 400. The secto r size is 1024 bytes. It is necessary to transfer data from 10 randomly located sectors in each of the following tracks in the order: 5, 12 and 7. The total time for the data transfer (in milliseconds) from the hard disk is _________. (rounded off to one decimal place)",
+      "after": "Consider a hard disk with a rotational speed of 15000 rpm. The time to move the read/write head from a track to its adjacent track is 1 millisecond. Initially, the head is on track 0. The number of sectors per track is 400. The sector size is 1024 bytes. It is necessary to transfer data from 10 randomly located sectors in each of the following tracks in the order: 5, 12 and 7.\n\nThe total time for the data transfer (in milliseconds) from the hard disk is _________. (rounded off to one decimal place)",
+      "reason": "Unicode maths italics replaced with KaTeX; broken words and hard line wraps repaired; paragraph breaks as in the paper.",
+      "source": "pdf p.44"
+    },
+    {
+      "id": "cse-2026-1-cs-49",
+      "field": "answer",
+      "before": 1,
+      "after": "77.3 to 77.3",
+      "reason": "Official GATE 2026 CS1 answer key gives Q.59 = 77.3. The stored 1 was a placeholder; re-derived: 17 ms seek + 30 × (2 + 0.01) ms = 77.3 ms.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-49",
+      "field": "subject",
+      "before": "os",
+      "after": "coa",
+      "reason": "Disk access time (seek + rotational latency + transfer) is secondary storage, coa/memory in this bank; os has no disk topic id.",
+      "source": "pdf p.44"
+    },
+    {
+      "id": "cse-2026-1-cs-49",
+      "field": "topic",
+      "before": "disk-scheduling",
+      "after": "memory",
+      "reason": "os/disk-scheduling is not a topic id; secondary-storage timing is coa/memory.",
+      "source": "pdf p.44"
+    },
+    {
+      "id": "cse-2026-1-cs-49",
+      "field": "tags",
+      "before": [
+        "os",
+        "disk-latency",
+        "rpm"
+      ],
+      "after": [
+        "coa",
+        "disk-access-time",
+        "seek-time",
+        "rotational-latency"
+      ],
+      "reason": "Tags describe the actual content.",
+      "source": "pdf p.44"
+    },
+    {
+      "id": "cse-2026-1-cs-50",
+      "field": "text",
+      "before": "The EX stage of a pipelined processor performs the memory read operations for LOAD instructions, and the operations for the arithmetic and logic instructions. Let 𝑡𝐸𝑋 denote the time taken by the EX stage to perform the operation for an instruction. For each instruction type, the values of 𝑡𝐸𝑋 and M (the number of instructions of that type in a sequence of 100 instructions for a program P), are given in the table below. The duration of the pipeline clock cycle is 1 nanosecond. Assume that the latch time for the interstage buffers in the pipeline is negligible. When program P is executed, the number of clock cycles for which the pipeline is stalled due to structural hazards in the EX stage is ______. (answer in integer) Instruction 𝑡𝐸𝑋 in nanoseconds 𝑀 LOAD 1.8 15 IMUL 1.5 10 IDIV 2.5 5 FADD 1.7 10 FSUB 1.7 5 FMUL 2.8 15 FDIV 3.2 5 All other instructions Less than 1.0 35",
+      "after": "The EX stage of a pipelined processor performs the memory read operations for LOAD instructions, and the operations for the arithmetic and logic instructions. Let $t_{EX}$ denote the time taken by the EX stage to perform the operation for an instruction. For each instruction type, the values of $t_{EX}$ and $M$ (the number of instructions of that type in a sequence of 100 instructions for a program P), are given in the table below.\n\nThe duration of the pipeline clock cycle is 1 nanosecond. Assume that the latch time for the interstage buffers in the pipeline is negligible.\n\n| Instruction | $t_{EX}$ in nanoseconds | $M$ |\n|---|---|---|\n| LOAD | 1.8 | 15 |\n| IMUL | 1.5 | 10 |\n| IDIV | 2.5 | 5 |\n| FADD | 1.7 | 10 |\n| FSUB | 1.7 | 5 |\n| FMUL | 2.8 | 15 |\n| FDIV | 3.2 | 5 |\n| All other instructions | Less than 1.0 | 35 |\n\nWhen program P is executed, the number of clock cycles for which the pipeline is stalled due to structural hazards in the EX stage is ______. (answer in integer)",
+      "reason": "The table had been flattened after the question sentence; rebuilt as a markdown table in its place, KaTeX for t_EX and M.",
+      "source": "pdf p.44"
+    },
+    {
+      "id": "cse-2026-1-cs-50",
+      "field": "answer",
+      "before": 1,
+      "after": "95 to 95",
+      "reason": "Official GATE 2026 CS1 answer key gives Q.60 = 95. The stored 1 was a placeholder; re-derived: sum of (ceil(t_EX) - 1) x M = 95.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-50",
+      "field": "topic",
+      "before": "pipelining",
+      "after": "pipeline",
+      "reason": "coa/pipelining is not a topic id; it is coa/pipeline.",
+      "source": "pdf p.44"
+    },
+    {
+      "id": "cse-2026-1-cs-50",
+      "field": "tags",
+      "before": [
+        "coa",
+        "pipelining",
+        "stages"
+      ],
+      "after": [
+        "coa",
+        "pipelining",
+        "structural-hazard",
+        "stalls"
+      ],
+      "reason": "Tags describe the actual content.",
+      "source": "pdf p.44"
+    },
+    {
+      "id": "cse-2026-1-cs-51",
+      "field": "text",
+      "before": "Consider the recursive functions represented by the following code segment: int bar(int n){ if (n == 1) return 0; else return 1 + bar(n/2); } int foo(int n){ if (n == 1) return 1; else return 1 + foo(bar(n)); } The smallest positive integer n for which foo(n) returns 5 is ______. (answer in integer) Note: Ignore syntax errors (if any) in the function.",
+      "after": "Consider the recursive functions represented by the following code segment:\n\n```c\nint bar(int n){\n     if (n == 1) return 0;\n     else return 1 + bar(n/2);\n}\nint foo(int n){\n     if (n == 1) return 1;\n     else return 1 + foo(bar(n));\n}\n```\n\nThe smallest positive integer n for which foo(n) returns 5 is ______. (answer in integer)\n\n*Note:* Ignore syntax errors (if any) in the function.",
+      "reason": "Code had been flattened onto one line; restored as a C code block (tokens unchanged).",
+      "source": "pdf p.45"
+    },
+    {
+      "id": "cse-2026-1-cs-51",
+      "field": "answer",
+      "before": 1,
+      "after": "65536 to 65536",
+      "reason": "Official GATE 2026 CS1 answer key gives Q.61 = 65536. The stored 1 was a placeholder; re-derived: foo(n) = 5 first at n = 2^16.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-51",
+      "field": "subject",
+      "before": "algo",
+      "after": "pds",
+      "reason": "Tracing recursive C functions is pds/recursion, not asymptotic analysis.",
+      "source": "pdf p.45"
+    },
+    {
+      "id": "cse-2026-1-cs-51",
+      "field": "topic",
+      "before": "asymptotics",
+      "after": "recursion",
+      "reason": "algo/asymptotics is not a topic id; the question traces recursion.",
+      "source": "pdf p.45"
+    },
+    {
+      "id": "cse-2026-1-cs-51",
+      "field": "tags",
+      "before": [
+        "algo",
+        "recurrence-complexity",
+        "recursion"
+      ],
+      "after": [
+        "pds",
+        "recursion",
+        "logarithm",
+        "code-tracing"
+      ],
+      "reason": "Tags describe the actual content.",
+      "source": "pdf p.45"
+    },
+    {
+      "id": "cse-2026-1-cs-52",
+      "field": "text",
+      "before": "The following sequence corresponds to the preorder traversal of a binary search tree 𝑇: 50, 25, 13, 40, 30, 47, 75, 60, 70, 80, 77 The position of the element 60 in the postorder traversal of 𝑇 is ______. (answer in integer) Note: The position begins with 1.",
+      "after": "The following sequence corresponds to the preorder traversal of a binary search tree $T$:\n\n50, 25, 13, 40, 30, 47, 75, 60, 70, 80, 77\n\nThe position of the element 60 in the postorder traversal of $T$ is ______. (answer in integer)\n\n*Note:* The position begins with 1.",
+      "reason": "Unicode maths italics replaced with KaTeX; broken words and hard line wraps repaired; paragraph breaks as in the paper.",
+      "source": "pdf p.45"
+    },
+    {
+      "id": "cse-2026-1-cs-52",
+      "field": "answer",
+      "before": 1,
+      "after": "7 to 7",
+      "reason": "Official GATE 2026 CS1 answer key gives Q.62 = 7. The stored 1 was a placeholder; re-derived from the reconstructed BST.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-52",
+      "field": "topic",
+      "before": "trees",
+      "after": "bst",
+      "reason": "The question is about a binary search tree: pds/bst.",
+      "source": "pdf p.45"
+    },
+    {
+      "id": "cse-2026-1-cs-52",
+      "field": "tags",
+      "before": [
+        "pds",
+        "bst",
+        "preorder-traversal"
+      ],
+      "after": [
+        "pds",
+        "bst",
+        "preorder",
+        "postorder"
+      ],
+      "reason": "Tags describe the actual content.",
+      "source": "pdf p.45"
+    },
+    {
+      "id": "cse-2026-1-cs-53",
+      "field": "text",
+      "before": "Consider the following program snippet. Assume that the program compiles and runs successfully. Further, assume that the fork() system call is always successful in creating a process. int main () { int i; for (i = 0; i < 3; i++){ if (fork() == 0){ continue; } break; } printf(\"Hello!\"); return 0; } The total number of times that the printf statement gets executed is ________. (answer in integer)",
+      "after": "Consider the following program snippet. Assume that the program compiles and runs successfully. Further, assume that the fork() system call is always successful in creating a process.\n\n```c\nint main () {\n   int i;\n   for (i = 0; i < 3; i++){\n      if (fork() == 0){\n        continue;\n      }\n      break;\n   }\n   printf(\"Hello!\");\n   return 0;\n}\n```\n\nThe total number of times that the printf statement gets executed is ________. (answer in integer)",
+      "reason": "Code had been flattened onto one line; restored as a C code block (tokens unchanged).",
+      "source": "pdf p.46"
+    },
+    {
+      "id": "cse-2026-1-cs-53",
+      "field": "answer",
+      "before": 1,
+      "after": "4 to 4",
+      "reason": "Official GATE 2026 CS1 answer key gives Q.63 = 4. The stored 1 was a placeholder; re-derived: a chain of 4 processes, each printing once.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-53",
+      "field": "subject",
+      "before": "pds",
+      "after": "os",
+      "reason": "fork() process creation is an OS (processes) question, not C pointers.",
+      "source": "pdf p.46"
+    },
+    {
+      "id": "cse-2026-1-cs-53",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "processes",
+      "reason": "fork() semantics: os/processes.",
+      "source": "pdf p.46"
+    },
+    {
+      "id": "cse-2026-1-cs-53",
+      "field": "tags",
+      "before": [
+        "pds",
+        "c-pointers",
+        "arrays"
+      ],
+      "after": [
+        "os",
+        "fork",
+        "process-creation"
+      ],
+      "reason": "Tags describe the actual content.",
+      "source": "pdf p.46"
+    },
+    {
+      "id": "cse-2026-1-cs-54",
+      "field": "text",
+      "before": "Consider a CPU that has to execute two types of processes. The first type, Actuators",
+      "after": "Consider a CPU that has to execute two types of processes. The first type, Actuators (A), requires a CPU burst of 6 seconds. The second type, Controllers (C), requires a CPU burst of 8 seconds. A new process of type A arrives at time $t = 10, 20, 30, 40$, and $50$ (in seconds). Similarly, a new process of type C arrives at time $t = 11, 22, 33, 44$, and $55$ (in seconds). The CPU scheduling policy is First Come First Serve (FCFS). The first process of type A starts running at $t = 10$ seconds.\n\nThe average waiting time (in seconds) for the 10 processes is ___________. (rounded off to one decimal place)",
+      "reason": "The parser split the question at \"(A)\" and \"(C)\" and turned the rest of the text into fake options; full text restored.",
+      "source": "pdf p.46"
+    },
+    {
+      "id": "cse-2026-1-cs-54",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": ", requires a CPU burst of 6 seconds. The second type, Controllers"
+        },
+        {
+          "l": "C",
+          "t": ", requires a CPU burst of 8 seconds. A new process of type A arrives at time 𝑡 = 10, 20, 30, 40, and 50 (in seconds). Similarly, a new process of type C arrives at time 𝑡 = 11, 22, 33, 44, and 55 (in seconds). The CPU scheduling policy is First Come First Serve (FCFS). The first process of type A starts running at 𝑡 = 10 seconds. The average waiting time (in seconds) for the 10 processes is ___________. (rounded off to one decimal place)"
+        }
+      ],
+      "after": [],
+      "reason": "NAT question: the two \"options\" were fragments of the question text.",
+      "source": "pdf p.46"
+    },
+    {
+      "id": "cse-2026-1-cs-54",
+      "field": "type",
+      "before": "MCQ",
+      "after": "NAT",
+      "reason": "Q.64 is a numerical-answer question (official key: NAT 9.5 to 9.5).",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-54",
+      "field": "answer",
+      "before": "A",
+      "after": "9.5 to 9.5",
+      "reason": "Official GATE 2026 CS1 answer key gives Q.64 = 9.5. The stored \"A\" came from the mis-parsed options; re-derived: total waiting 95 s / 10 = 9.5 s.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    },
+    {
+      "id": "cse-2026-1-cs-54",
+      "field": "topic",
+      "before": "cpu-scheduling",
+      "after": "scheduling",
+      "reason": "os/cpu-scheduling is not a topic id; it is os/scheduling.",
+      "source": "pdf p.46"
+    },
+    {
+      "id": "cse-2026-1-cs-54",
+      "field": "tags",
+      "before": [
+        "os",
+        "priority-scheduling",
+        "real-time"
+      ],
+      "after": [
+        "os",
+        "fcfs",
+        "waiting-time",
+        "cpu-scheduling"
+      ],
+      "reason": "Tags describe the actual content (FCFS, not priority/real-time).",
+      "source": "pdf p.46"
+    },
+    {
+      "id": "cse-2026-1-cs-55",
+      "field": "text",
+      "before": "Consider a relational database schema with a relation 𝑅(𝐴, 𝐵, 𝐶, 𝐷). If {𝐴, 𝐵} and {𝐴, 𝐶} are the only two candidate keys of the relation 𝑅, then the number of superkeys of relation 𝑅 is ______. (answer in integer)",
+      "after": "Consider a relational database schema with a relation $R(A, B, C, D)$. If $\\{A, B\\}$ and $\\{A, C\\}$ are the only two candidate keys of the relation $R$, then the number of superkeys of relation $R$ is ______. (answer in integer)",
+      "reason": "Unicode maths italics replaced with KaTeX; broken words and hard line wraps repaired; paragraph breaks as in the paper.",
+      "source": "pdf p.46"
+    },
+    {
+      "id": "cse-2026-1-cs-55",
+      "field": "answer",
+      "before": 1,
+      "after": "6 to 6",
+      "reason": "Official GATE 2026 CS1 answer key gives Q.65 = 6. The stored 1 was a placeholder; re-derived by counting supersets of AB or AC.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/CS1_Keys.pdf"
+    }
+  ]
+}
