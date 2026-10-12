@@ -426,11 +426,16 @@ export function validateSolution(id, sol, q, report) {
   if (q.type === 'NAT' && typeof a.number !== 'number') err('answer.number: required for NAT questions (the value you computed)')
   for (const l of a.choice || []) if (!letters.includes(l)) err(`answer.choice: option ${l} does not exist (options: ${letters.join(', ') || 'none'})`)
   let agrees = null
+  // Official keys may accept alternatives ("A;C;D or C;D"); agreeing with any one counts.
+  const alternatives = typeof q.answer === 'string' ? q.answer.split(/\s+or\s+/i).map((x) => x.trim()).filter(Boolean) : [q.answer]
   if (a.choice && letters.length) {
-    const key = engine.keyLetters(q.answer)
-    agrees = key.length > 0 && JSON.stringify([...a.choice].sort()) === JSON.stringify(key)
+    const mine = JSON.stringify([...a.choice].sort())
+    agrees = alternatives.some((alt) => {
+      const key = engine.keyLetters(alt)
+      return key.length > 0 && mine === JSON.stringify(key)
+    })
   } else if (typeof a.number === 'number') {
-    agrees = engine.numberMatchesKey(a.number, q.answer)
+    agrees = alternatives.some((alt) => engine.numberMatchesKey(a.number, typeof alt === 'string' ? alt.replace(/\s+to\s+/i, ':') : alt))
   }
   if (q.answer == null && a.matchesKey) err('answer.matchesKey: the question has no stored key, so this must be false (explain in keyNote)')
   if (agrees === false && a.matchesKey)
