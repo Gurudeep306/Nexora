@@ -71,7 +71,7 @@
         "value": "The program prints **9**",
         "number": 9,
         "matchesKey": false,
-        "keyNote": "The bank's stored key for this question is **1**, but tracing the program unambiguously gives 9 (the GATE 2026 NAT keys in this paper look shifted/corrupted). The question is flagged for review in `src/gate/fixes/cse-2026-2.json` until the official key is checked."
+        "keyNote": "The bank's stored key for this question is **1**, but tracing the program unambiguously gives 9 (the GATE 2026 NAT keys in this paper look shifted/corrupted). The question is flagged for review until the official key is re-checked."
       },
       "shortcut": "Ignore the pointer noise: `*ptr = c` makes $a = 20$, `a = *(&b)` makes $a = 11$, and `*ptr` at the end is `c` itself, so $c = 20 - 11$.",
       "pitfalls": [

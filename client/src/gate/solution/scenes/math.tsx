@@ -35,7 +35,7 @@ export function EquationScene({ f }: { f: EquationFrame }) {
             exit={{ opacity: 0 }}
             transition={EASE}
             data-tone={l.tone ?? (i === lines.length - 1 && (f.reveal ?? 0) > 0 ? 'accent' : 'default')}
-            className="grid grid-cols-[1fr_auto] items-center gap-3 rounded-xl border-l-[3px] px-3 py-1"
+            className="grid grid-cols-[1fr_auto] items-center gap-3 rounded-r-xl rounded-l-[3px] border-l-[3px] px-3 py-1"
             style={{ borderColor: 'var(--t)', background: l.tone && l.tone !== 'default' ? 'var(--sc-fill)' : undefined }}
           >
             <EqLine src={l.tex} />

@@ -17,7 +17,8 @@ export function GanttScene({ f }: { f: GanttFrame }) {
   const times = [...bars.flatMap((b) => [b.start, b.end]), ...(f.marks ?? []).map((m) => m.t), ...(f.cursor != null ? [f.cursor] : [])]
   const t0 = Math.min(0, ...times)
   const t1 = Math.max(...times, t0 + 1)
-  const px = Math.min(64, Math.max(16, 600 / (t1 - t0)))
+  // ~440 units wide: the canvas column is narrow, so keep labels near 1:1 scale.
+  const px = Math.min(56, Math.max(9, 440 / (t1 - t0)))
   const labelW = f.lanes.some((l) => l.label) ? Math.max(52, ...f.lanes.map((l) => (l.label ?? '').length * 7.5 + 16)) : 6
   const laneH = 40
   const lanesH = f.lanes.length * (laneH + 8)
@@ -25,17 +26,21 @@ export function GanttScene({ f }: { f: GanttFrame }) {
   const X = (t: number) => labelW + (t - t0) * px
   const tones = labelTones(bars.map((b) => b.label))
   const ticks = [...new Set(bars.flatMap((b) => [b.start, Math.min(b.end, upto)]).filter((t) => t <= upto && t >= t0))].sort((a, b) => a - b)
-  // stagger marks that share an instant
-  const markRow = new Map<number, number>()
-  const marks = (f.marks ?? []).map((m) => {
-    const k = markRow.get(m.t) ?? 0
-    markRow.set(m.t, k + 1)
-    return { ...m, row: k }
-  })
+  // stagger marks whose labels would collide (greedy rows)
+  const rowEnds: number[] = []
+  const marks = [...(f.marks ?? [])]
+    .sort((a, b) => a.t - b.t)
+    .map((m) => {
+      const x = X(m.t)
+      let k = rowEnds.findIndex((end) => end < x - 4)
+      if (k < 0) k = rowEnds.length
+      rowEnds[k] = x + 10 + m.label.length * 7
+      return { ...m, row: k }
+    })
   const markRows = Math.max(0, ...marks.map((m) => m.row + 1))
   const axisY = lanesH + 4
   const H = axisY + 22 + markRows * 18 + (markRows ? 8 : 0)
-  const W = X(t1) + 18
+  const W = X(t1) + (f.unit ? 34 : 18)
   return (
     <Svg width={W} height={H} label="Gantt chart" minScale={0.7}>
       {f.lanes.map((lane, li) => {
@@ -92,7 +97,7 @@ export function GanttScene({ f }: { f: GanttFrame }) {
         </motion.g>
       ))}
       {f.unit && (
-        <text x={X(t1) + 4} y={axisY + 15} className="sc-svg-small sc-svg-muted">
+        <text x={X(t1) + 14} y={axisY + 15} className="sc-svg-small sc-svg-muted">
           {f.unit}
         </text>
       )}
