@@ -1,0 +1,81 @@
+/*
+  Builds the generated theme stylesheet (virtual:nexora-theme.css) from the
+  palette and font data. Called by vite.config.ts at dev/build time.
+
+    [data-palette="x"][data-mode="dark|light"]  raw palette tokens
+    [data-accent="y"][data-mode="dark|light"]   accent overrides
+    @font-face "<Font> Fallback"                metric-matched local fallbacks
+    [data-font="z"] / [data-code-font="w"]       family stacks
+
+  The selectors work on any element, so previews can scope a theme.
+*/
+import { ACCENTS, DEFAULT_PALETTE, PALETTES, type ModeTokens } from './palettes.ts'
+import { CODE_FONTS, UI_FONTS, codeFontStack, uiFontStacks, type FallbackMetrics } from './fonts.ts'
+
+const ok = (s: string) => `oklch(${s})`
+
+function modeVars(t: ModeTokens): string {
+  const v: [string, string][] = [
+    ['--oklch-bg-0', t.bg[0]],
+    ['--oklch-bg-1', t.bg[1]],
+    ['--oklch-bg-2', t.bg[2]],
+    ['--oklch-bg-3', t.bg[3]],
+    ['--oklch-bg-4', t.bg[4]],
+    ['--oklch-fg-0', t.fg[0]],
+    ['--oklch-fg-1', t.fg[1]],
+    ['--oklch-fg-2', t.fg[2]],
+    ['--oklch-border', t.border],
+    ['--oklch-accent-0', t.accent],
+    ['--oklch-accent-1', t.accent2],
+    ['--on-accent', t.onAccent],
+    ['--oklch-success', t.success],
+    ['--oklch-warning', t.warning],
+    ['--oklch-danger', t.danger],
+    ['--oklch-info', t.info],
+    ['--syn-keyword', t.syntax.keyword],
+    ['--syn-string', t.syntax.string],
+    ['--syn-number', t.syntax.number],
+    ['--syn-function', t.syntax.function],
+    ['--syn-type', t.syntax.type],
+    ['--syn-comment', t.syntax.comment],
+  ]
+  return v.map(([k, val]) => `${k}:${ok(val)}`).join(';')
+}
+
+function fallbackFace(name: string, m: FallbackMetrics): string {
+  return `@font-face{font-family:'${name}';src:local('${m.local}');size-adjust:${m.size}%;ascent-override:${m.ascent}%;descent-override:${m.descent}%;line-gap-override:${m.lineGap}%}`
+}
+
+export function buildThemeCss(): string {
+  const out: string[] = ['/* Generated from src/theme/palettes.ts and fonts.ts by vite.config.ts — do not edit. */']
+
+  for (const p of PALETTES) {
+    for (const mode of ['dark', 'light'] as const) {
+      const t = p[mode]
+      if (!t) continue
+      // The default theme's dark mode doubles as the no-JS fallback on :root.
+      const sel = `[data-palette="${p.id}"][data-mode="${mode}"]`
+      out.push(`${p.id === DEFAULT_PALETTE && mode === 'dark' ? `:root,${sel}` : sel}{${modeVars(t)}}`)
+    }
+  }
+
+  for (const a of ACCENTS) {
+    for (const mode of ['dark', 'light'] as const) {
+      const t = a[mode]
+      out.push(`[data-accent="${a.id}"][data-mode="${mode}"]{--oklch-accent-0:${ok(t.accent)};--oklch-accent-1:${ok(t.accent2)};--on-accent:${ok(t.onAccent)}}`)
+    }
+  }
+
+  for (const f of UI_FONTS) {
+    out.push(fallbackFace(`${f.label} Fallback`, f.fallback))
+    if (f.display) out.push(fallbackFace(`${f.label} Display Fallback`, f.display.fallback))
+    const s = uiFontStacks(f)
+    const tracking = f.headingTracking ? `;--heading-tracking:${f.headingTracking}` : ''
+    out.push(`[data-font="${f.id}"]{--font-body:${s.body};--font-display:${s.display}${tracking}}`)
+  }
+  for (const f of CODE_FONTS) {
+    out.push(fallbackFace(`${f.label} Fallback`, f.fallback))
+    out.push(`[data-code-font="${f.id}"]{--font-mono:${codeFontStack(f)};--code-ligatures:${f.ligatures ? 'normal' : 'none'}}`)
+  }
+  return out.join('\n') + '\n'
+}
