@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import { Link } from 'react-router-dom'
-import { UserPlus, UserCheck, UserX, Users, Mail, Clock } from 'lucide-react'
+import { UserPlus, UserCheck, UserX, Clock } from 'lucide-react'
 import type { Socket } from 'socket.io-client'
 import {
   Avatar,
@@ -171,7 +171,7 @@ export function FriendsTab({ me, socket }: Props) {
               <ErrorState message={friendsApi.error} onRetry={friendsApi.refetch} />
             ) : friends.length === 0 ? (
               <EmptyState
-                icon={<Users />}
+                icon="users"
                 title="No allies yet"
                 description="Search for a coder on the right and send a friend request."
               />
@@ -311,7 +311,7 @@ export function FriendsTab({ me, socket }: Props) {
             ) : incoming.length === 0 ? (
               <EmptyState
                 className="py-8"
-                icon={<Mail />}
+                icon="mail"
                 title="No pending requests"
                 description="Incoming friend requests will appear here."
               />

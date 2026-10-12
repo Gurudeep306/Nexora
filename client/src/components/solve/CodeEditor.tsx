@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useTheme } from '@/context/ThemeContext'
+import { APP_EDITOR_THEME, useMonacoAppTheme } from '@/theme/useMonacoAppTheme'
 import '@/lib/monaco'
 import Editor, { type BeforeMount, type OnMount } from '@monaco-editor/react'
 import type { editor as MonacoNs } from 'monaco-editor'
@@ -390,22 +390,17 @@ export function CodeEditor({
   const { data } = useApi(() => api.get<{ settings: Record<string, string> }>('/api/settings'), [])
   const settings = data?.settings ?? {}
 
-  /* The editor follows the app's appearance until the reader picks a theme of
-     their own from the dropdown. A dark editor on a light page is the one
-     thing that gives away a theme that was bolted on rather than designed. */
-  const { resolved: appAppearance } = useTheme()
+  /* The editor follows the app's theme (palette, mode, accent and code font,
+     from the Theme Centre) until the reader picks an editor theme of their own
+     from the dropdown. */
+  const appTheme = useMonacoAppTheme()
   const editorThemePinned = () => {
     try { return localStorage.getItem('nexora:editor-theme-pinned') === '1' } catch { return false }
   }
-  const themeForAppearance = (a: 'light' | 'dark') => (a === 'light' ? 'light' : 'nexora-dark')
-  const [theme, setTheme] = useState(() =>
-    editorThemePinned()
-      ? (localStorage.getItem('nexora:editor-theme') ?? 'nexora-dark')
-      : themeForAppearance(appAppearance),
-  )
-  useEffect(() => {
-    if (!editorThemePinned()) setTheme(themeForAppearance(appAppearance))
-  }, [appAppearance])
+  const [theme, setTheme] = useState(() => {
+    const stored = editorThemePinned() ? localStorage.getItem('nexora:editor-theme') : null
+    return stored && THEMES[stored] ? stored : APP_EDITOR_THEME
+  })
   const [vim, setVim] = useState(() => localStorage.getItem('nexora:editor-vim') === 'on')
   const [zen, setZen] = useState(false)
   const [helpOpen, setHelpOpen] = useState(false)
@@ -469,7 +464,11 @@ export function CodeEditor({
 
   useEffect(() => {
     if (monacoRef.current) monacoRef.current.editor.setTheme(theme)
-  }, [theme])
+  }, [theme, appTheme.version])
+
+  useEffect(() => {
+    editorRef.current?.updateOptions({ fontFamily: appTheme.fontFamily, fontLigatures: appTheme.ligatures })
+  }, [appTheme.fontFamily, appTheme.ligatures])
 
   /* Session timer + autosave pulse + code stats */
   useEffect(() => {
@@ -699,8 +698,8 @@ export function CodeEditor({
       },
     })
     editor.updateOptions({
-      fontFamily: "'JetBrains Mono','Fira Code',monospace",
-      fontLigatures: true,
+      fontFamily: appTheme.fontFamily,
+      fontLigatures: appTheme.ligatures,
       scrollBeyondLastLine: false,
       smoothScrolling: true,
       cursorBlinking: 'smooth',
@@ -773,12 +772,14 @@ export function CodeEditor({
         <select
           value={theme}
           onChange={(e) => {
-            try { localStorage.setItem('nexora:editor-theme-pinned', '1') } catch { /* storage off */ }
+            const pinned = e.target.value !== APP_EDITOR_THEME
+            try { localStorage.setItem('nexora:editor-theme-pinned', pinned ? '1' : '0') } catch { /* storage off */ }
             setTheme(e.target.value)
           }}
           aria-label="Editor theme"
           className="h-7 cursor-pointer rounded-md border border-border bg-background px-1.5 text-[11px] text-foreground-dim outline-none hover:text-foreground"
         >
+          <option value={APP_EDITOR_THEME}>Match app theme</option>
           {Object.entries(THEMES).map(([id, t]) => (
             <option key={id} value={id}>
               {t.label}
@@ -967,6 +968,7 @@ export function CodeEditor({
         <Editor
           height="100%"
           beforeMount={((monaco) => {
+            appTheme.beforeMount()
             for (const [id, t] of Object.entries(THEMES)) {
               monaco.editor.defineTheme(id, { base: t.base, inherit: true, rules: t.rules, colors: t.colors })
             }
@@ -1027,7 +1029,7 @@ export function CodeEditor({
           <span
             className={cn(
               'flex items-center gap-1',
-              saveState === 'saving' ? 'text-warning' : 'text-emerald-400',
+              saveState === 'saving' ? 'text-warning' : 'text-state-success',
             )}
           >
             {saveState === 'saved' ? (
@@ -1038,7 +1040,7 @@ export function CodeEditor({
             {saveState}
           </span>
         )}
-        <span className="ml-auto hidden md:inline">{THEMES[theme]?.label ?? theme}</span>
+        <span className="ml-auto hidden md:inline">{THEMES[theme]?.label ?? 'App theme'}</span>
       </div>
     </div>
   )

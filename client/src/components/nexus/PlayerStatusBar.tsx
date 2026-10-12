@@ -1,7 +1,7 @@
-import { CalendarClock, Flame, Layers, Target, Zap } from 'lucide-react'
 import { Card, CardContent, StatCard, XpBar } from '@/components/ui'
 import { formatNumber } from '@/lib/utils'
 import type { LevelRoadmapResponse, NexusResponse, NexusStatsResponse } from './types'
+import { Icon } from '@/components/icon/Icon'
 
 /** Weekly seeded roadmap refresh countdown (weekSeed = floor(now / 7d)). */
 export function weekRefreshLabel(weekSeed: number | undefined): string {
@@ -29,7 +29,7 @@ export function PlayerStatusBar({
     <div className="space-y-3">
       <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
         <StatCard
-          icon={<Layers />}
+          icon="layers"
           label="Rift Level"
           value={`${p.level}`}
           sub={
@@ -40,7 +40,7 @@ export function PlayerStatusBar({
           accent="primary"
         />
         <StatCard
-          icon={<Zap />}
+          icon="bolt"
           label="Total XP"
           value={formatNumber(p.xp)}
           sub={
@@ -52,7 +52,7 @@ export function PlayerStatusBar({
           accent="cyan"
         />
         <StatCard
-          icon={<Target />}
+          icon="target"
           label="Solves gate"
           value={`${p.probsInLevel}`}
           sub={
@@ -64,7 +64,7 @@ export function PlayerStatusBar({
           accent="success"
         />
         <StatCard
-          icon={<Flame />}
+          icon="flame"
           label="Streak"
           value={`${stats?.streak.current ?? 0}d`}
           sub={
@@ -83,7 +83,7 @@ export function PlayerStatusBar({
           </div>
           {roadmap && (
             <p className="flex shrink-0 items-center gap-1.5 rounded-lg border border-border bg-surface-2 px-3 py-1.5 font-mono text-[11px] text-foreground-dim">
-              <CalendarClock className="size-3.5 text-cyan" aria-hidden="true" />
+              <Icon name="calendar" className="size-3.5 text-cyan" aria-hidden="true" />
               {weekRefreshLabel(roadmap.weekSeed)}
             </p>
           )}

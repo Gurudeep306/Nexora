@@ -636,7 +636,7 @@ export function GateCbtExam({
                             className={cn(
                               'flex size-6 shrink-0 items-center justify-center font-mono text-[12px] font-bold',
                               currentQuestion.type === 'MSQ' ? 'rounded-md' : 'rounded-full',
-                              isSelected ? 'bg-accent-brand text-white' : 'border border-white/20 text-gray-400',
+                              isSelected ? 'bg-accent-brand text-on-accent-brand' : 'border border-white/20 text-gray-400',
                             )}
                           >
                             {opt.l}

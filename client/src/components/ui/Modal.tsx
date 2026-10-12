@@ -63,12 +63,12 @@ export function Modal({
                           {title}
                         </Dialog.Title>
                         {description && (
-                          <Dialog.Description className="mt-1 text-[13px] text-text-primary/60">{description}</Dialog.Description>
+                          <Dialog.Description className="mt-1 text-[13px] text-text-secondary">{description}</Dialog.Description>
                         )}
                       </div>
                       <Dialog.Close
                         aria-label="Close dialog"
-                        className="-mr-1.5 cursor-pointer rounded-md p-1.5 text-text-primary/60 transition-colors hover:bg-border/20 hover:text-text-primary"
+                        className="-mr-1.5 cursor-pointer rounded-md p-1.5 text-text-secondary transition-colors hover:bg-border/20 hover:text-text-primary"
                       >
                         <X className="size-4" />
                       </Dialog.Close>
@@ -110,7 +110,7 @@ export function ConfirmDialog({
   return (
     <Modal open={open} onClose={onClose} title={title} size="sm">
       <div className="space-y-5">
-        <div className="text-sm text-text-primary/60">{message}</div>
+        <div className="text-sm text-text-secondary">{message}</div>
         <div className="flex justify-end gap-2">
           <Button variant="outline" onClick={onClose}>
             Cancel

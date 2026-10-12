@@ -9,10 +9,11 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import { CircleCheck, Gauge, Layers } from 'lucide-react'
+import { Gauge } from 'lucide-react'
 import { EmptyState } from '@/components/ui'
 import { ChartCard, ChartTooltip } from './ChartCard'
 import { AXIS_TICK, PLATFORM_COLORS, TIER_COLORS, VERDICT_COLORS, CHART_PALETTE } from './types'
+import { Icon } from '@/components/icon/Icon'
 
 function DonutCenter({ value, label }: { value: string; label: string }) {
   return (
@@ -33,7 +34,7 @@ export function VerdictDonut({
   const data = verdicts.filter((v) => v.count > 0)
   return (
     <ChartCard
-      icon={<CircleCheck className="size-4 text-success" aria-hidden="true" />}
+      icon={<Icon name="check-circle" className="size-4 text-success" aria-hidden="true" />}
       title="Verdict breakdown"
       label="Donut chart of submission verdicts"
     >
@@ -77,7 +78,7 @@ export function VerdictDonut({
           </ul>
         </div>
       ) : (
-        <EmptyState icon={<CircleCheck />} title="No verdicts yet" description="Submit code to populate this ring." className="py-8" />
+        <EmptyState icon="check-circle" title="No verdicts yet" description="Submit code to populate this ring." className="py-8" />
       )}
     </ChartCard>
   )
@@ -126,7 +127,7 @@ export function PlatformDonut({ data }: { data: { platform: string; count: numbe
   const total = rows.reduce((s, d) => s + d.count, 0)
   return (
     <ChartCard
-      icon={<Layers className="size-4 text-primary-bright" aria-hidden="true" />}
+      icon={<Icon name="layers" className="size-4 text-primary-bright" aria-hidden="true" />}
       title="Platform breakdown"
       label="Donut chart of solved problems per platform"
     >
@@ -170,7 +171,7 @@ export function PlatformDonut({ data }: { data: { platform: string; count: numbe
           </ul>
         </div>
       ) : (
-        <EmptyState icon={<Layers />} title="No platform data" description="Solves get attributed here per source platform." className="py-8" />
+        <EmptyState icon="layers" title="No platform data" description="Solves get attributed here per source platform." className="py-8" />
       )}
     </ChartCard>
   )

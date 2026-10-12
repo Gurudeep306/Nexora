@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { ChevronRight, Flame, Keyboard, Search, Sparkles, Swords, Zap } from 'lucide-react'
+import { ChevronRight } from 'lucide-react'
+import { Icon } from '@/components/icon/Icon'
+import { iconComponent } from '@/components/icon/iconComponent'
 import { useAuth } from '@/context/AuthContext'
 import { AnimatedNumber, Avatar, BackButton, Kbd, RotatingText, SearchCombobox, Tooltip, type ComboboxItem } from '@/components/ui'
 import { ACCOUNT_ITEMS, CREATE_SECTION, NAV_SECTIONS, navMeta } from '@/config/nav'
@@ -59,14 +61,14 @@ export function Topbar() {
         group: 'Go to',
         label: n.label,
         hint: n.to,
-        icon: n.icon,
+        icon: iconComponent(n.icon),
         onSelect: () => (n.external ? (window.location.href = n.to) : navigate(n.to)),
       }))
     const problems: ComboboxItem[] = results.map((p) => ({
       id: `problem:${p.id}`,
       group: 'Problems',
       label: p.title,
-      icon: Swords,
+      icon: iconComponent('problems'),
       trailing: <PlatformBadge platform={p.platform} />,
       onSelect: () => navigate(`/solve/${p.id}`),
     }))
@@ -77,7 +79,7 @@ export function Topbar() {
               id: 'all',
               group: 'Problems',
               label: `Search all problems for “${query.trim()}”`,
-              icon: Search,
+              icon: iconComponent('search'),
               onSelect: () => navigate(`/problems?q=${encodeURIComponent(query.trim())}`),
             },
           ]
@@ -132,8 +134,8 @@ export function Topbar() {
       <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-1.5 text-[13px]">
         {meta.section && (
           <>
-            <span className="hidden text-text-primary/40 sm:inline">{meta.section}</span>
-            <ChevronRight className="hidden size-3.5 text-text-primary/40/60 sm:inline" aria-hidden="true" />
+            <span className="hidden text-text-muted sm:inline">{meta.section}</span>
+            <ChevronRight className="hidden size-3.5 text-text-muted sm:inline" aria-hidden="true" />
           </>
         )}
         <span className="truncate font-medium text-text-primary" aria-current="page">
@@ -158,7 +160,7 @@ export function Topbar() {
             onClick={openCommandPalette}
             className="flex w-full cursor-pointer items-center gap-2 rounded-lg px-2.5 py-2 text-[12px] text-foreground-faint transition-colors hover:bg-foreground/5 hover:text-foreground"
           >
-            <Keyboard className="size-3.5" aria-hidden="true" />
+            <Icon name="keyboard" className="size-3.5" />
             <span className="flex-1 text-left">Open the full command palette</span>
             <span className="flex gap-0.5">
               <Kbd>{IS_MAC ? '⌘' : 'Ctrl'}</Kbd>
@@ -172,14 +174,14 @@ export function Topbar() {
         <button
           onClick={openCommandPalette}
           aria-label="Search"
-          className="flex size-9 cursor-pointer items-center justify-center rounded-lg text-text-primary/60 transition-colors hover:bg-accent-brand/5 md:hidden"
+          className="flex size-9 cursor-pointer items-center justify-center rounded-lg text-text-secondary transition-colors hover:bg-accent-brand/5 md:hidden"
         >
-          <Search className="size-[17px]" />
+          <Icon name="search" className="size-[17px]" />
         </button>
         {user?.streak != null && user.streak > 0 && (
           <Tooltip label={`${user.streak}-day streak — keep it alive`} side="bottom">
             <span className="flex h-8 items-center gap-1 rounded-lg border border-state-gold/20 bg-state-gold/5 px-2 text-xs font-semibold text-state-gold tabular-nums">
-              <Flame className="size-3.5" />
+              <Icon name="flame" className="size-3.5" />
               {user.streak}
             </span>
           </Tooltip>
@@ -190,7 +192,7 @@ export function Topbar() {
               to="/analytics"
               className="hidden h-8 items-center gap-1 rounded-lg border border-accent-brand/20 bg-accent-brand/5 px-2 text-xs font-semibold text-accent-brand tabular-nums transition-colors hover:border-accent-brand/30 sm:flex"
             >
-              <Zap className="size-3.5" />
+              <Icon name="bolt" className="size-3.5" />
               <AnimatedNumber value={user.xp} />
             </Link>
           </Tooltip>
@@ -199,9 +201,9 @@ export function Topbar() {
           <button
             onClick={() => openAssistantEvent()}
             aria-label="Open AI assistant"
-            className="flex size-9 cursor-pointer items-center justify-center rounded-lg text-text-primary/60 transition-colors hover:bg-accent-brand/5 hover:text-accent-brand"
+            className="flex size-9 cursor-pointer items-center justify-center rounded-lg text-text-secondary transition-colors hover:bg-accent-brand/5 hover:text-accent-brand"
           >
-            <Sparkles className="size-[17px]" />
+            <Icon name="sparkles" className="size-[17px]" />
           </button>
         </Tooltip>
         <LookPopover />

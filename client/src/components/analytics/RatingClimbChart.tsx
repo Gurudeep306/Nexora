@@ -9,11 +9,11 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import { TrendingUp } from 'lucide-react'
 import { EmptyState } from '@/components/ui'
 import { ChartCard, ChartTooltip } from './ChartCard'
 import { AXIS_TICK } from './types'
 import type { RatingClimbPoint } from './types'
+import { Icon } from '@/components/icon/Icon'
 
 export function RatingClimbChart({ data }: { data: RatingClimbPoint[] }) {
   const points = useMemo(() => {
@@ -29,7 +29,7 @@ export function RatingClimbChart({ data }: { data: RatingClimbPoint[] }) {
   return (
     <ChartCard
       className="lg:col-span-2"
-      icon={<TrendingUp className="size-4 text-accent" aria-hidden="true" />}
+      icon={<Icon name="trending-up" className="size-4 text-accent" aria-hidden="true" />}
       title="Rating climb"
       subtitle={
         points.length >= 2
@@ -86,7 +86,7 @@ export function RatingClimbChart({ data }: { data: RatingClimbPoint[] }) {
         </div>
       ) : (
         <EmptyState
-          icon={<TrendingUp />}
+          icon="trending-up"
           title="Not enough data"
           description="Solve at least two problems to see your rating climb."
           className="py-8"

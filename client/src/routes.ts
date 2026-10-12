@@ -33,6 +33,7 @@ export const pageLoaders = {
   BookmarksPage: () => import('@/pages/BookmarksPage'),
   ProfilePage: () => import('@/pages/ProfilePage'),
   SettingsPage: () => import('@/pages/SettingsPage'),
+  ThemeCentrePage: () => import('@/pages/ThemeCentrePage'),
   NotFoundPage: () => import('@/pages/NotFoundPage'),
 } satisfies Record<string, Loader>
 
@@ -53,6 +54,7 @@ const BY_SEGMENT: Record<string, Loader[]> = {
   bookmarks: [pageLoaders.BookmarksPage],
   profile: [pageLoaders.ProfilePage],
   settings: [pageLoaders.SettingsPage],
+  theme: [pageLoaders.ThemeCentrePage],
   auth: [pageLoaders.AuthPage],
 }
 

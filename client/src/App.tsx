@@ -26,6 +26,7 @@ const SubmissionsPage = lazy(pageLoaders.SubmissionsPage)
 const BookmarksPage = lazy(pageLoaders.BookmarksPage)
 const ProfilePage = lazy(pageLoaders.ProfilePage)
 const SettingsPage = lazy(pageLoaders.SettingsPage)
+const ThemeCentrePage = lazy(pageLoaders.ThemeCentrePage)
 const NotFoundPage = lazy(pageLoaders.NotFoundPage)
 const VizLab = import.meta.env.DEV ? lazy(() => import('@/learn/ui/VizLab')) : null
 
@@ -42,6 +43,13 @@ function PageLoader() {
 function IdlePrefetch({ children }: { children: React.ReactNode }) {
   useEffect(() => idlePrefetchCommonRoutes(), [])
   return <>{children}</>
+}
+
+/** The Appearance tab moved to the Theme Centre; keep old links working. */
+function SettingsRoute() {
+  const { search } = useLocation()
+  if (new URLSearchParams(search).get('tab') === 'look') return <Navigate to="/theme" replace />
+  return <SettingsPage />
 }
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
@@ -86,7 +94,8 @@ export default function App() {
             <Route path="/bookmarks" element={<BookmarksPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/profile/:username" element={<ProfilePage />} />
-            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/settings" element={<SettingsRoute />} />
+            <Route path="/theme" element={<ThemeCentrePage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Route>
         </Routes>

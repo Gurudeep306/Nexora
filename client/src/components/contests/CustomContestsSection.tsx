@@ -155,7 +155,7 @@ export function CustomContestsSection({ me }: { me: string }) {
       ) : ordered.length === 0 ? (
         <Card>
           <EmptyState
-            icon={<Trophy />}
+            icon="trophy"
             title="No custom contests yet"
             description="You haven't joined or hosted any Nexora contests. Join one with its NX-XXXXXX code, or build one in the Workshop."
             action={

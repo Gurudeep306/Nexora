@@ -1,9 +1,10 @@
 import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'motion/react'
-import { ArrowUpRight, type LucideIcon } from 'lucide-react'
+import { Icon } from '@/components/icon/Icon'
 import { cn } from '@/lib/utils'
-import { DOCK_ITEMS, tileStyle, type DockItem } from '@/components/layout/dockStore'
+import { DockBadge } from '@/components/layout/DockBadge'
+import { DOCK_ITEMS, type DockItem } from '@/components/layout/dockStore'
 import { openCommandPalette } from '@/components/layout/CommandPalette'
 
 /** One-line pitch per destination, shown under its name on the home grid. */
@@ -53,49 +54,14 @@ const ITEM_CATEGORY: Record<string, CategoryId> = {
   search: 'core',
 }
 
-import { useTheme } from '@/context/ThemeContext'
-
-/** The icon tile, tinted by the destination's hue like its Dock icon. */
-function Tile({ item, icon: Icon }: { item: DockItem; icon: LucideIcon }) {
-  const { look } = useTheme()
-  const shapeClass =
-    look.iconShape === 'circle'
-      ? 'rounded-full'
-      : look.iconShape === 'hexagon'
-        ? 'rounded-none'
-        : look.iconShape === 'free'
-          ? 'rounded-none'
-          : 'rounded-xl'
-
-  return (
-    <span
-      data-icon-pod
-      className={cn('icon-pod flex size-9 shrink-0 items-center justify-center sm:size-10 transition-all duration-200', shapeClass)}
-      style={tileStyle(item, look.iconPack, look.iconShape)}
-      aria-hidden="true"
-    >
-      <Icon
-        className={cn(
-          'size-4.5 sm:size-5',
-          look.iconPack === 'minimal'
-            ? 'text-text-primary'
-            : look.iconPack === 'neon'
-              ? 'text-white drop-shadow-[0_0_8px_currentColor]'
-              : 'text-white',
-        )}
-        strokeWidth={look.iconPack === 'minimal' ? 1.8 : 2.1}
-      />
-    </span>
-  )
-}
-
 const shell =
   'card card-interactive group flex h-full w-full cursor-pointer items-center gap-2.5 p-3 text-left sm:items-start sm:gap-3 sm:p-4 !no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-brand'
 
 function TileBody({ item }: { item: DockItem }) {
   return (
     <>
-      <Tile item={item} icon={item.icon} />
+      {/* The icon tile, tinted by the destination's hue like its Dock icon. */}
+      <DockBadge item={item} className="size-9 transition-transform duration-200 group-hover:scale-[1.06] sm:size-11" />
       <div className="min-w-0 flex-1">
         <p className="mb-0 flex items-center gap-2 text-[13.5px] leading-tight font-semibold text-text-primary sm:mb-0.5 sm:text-[15px]">
           {item.label}
@@ -105,9 +71,9 @@ function TileBody({ item }: { item: DockItem }) {
         </p>
         <p className="mb-0 hidden text-[12.5px] leading-snug text-text-muted sm:line-clamp-2">{PITCH[item.id] ?? ''}</p>
       </div>
-      <ArrowUpRight
+      <Icon
+        name="external"
         className="hidden size-4 shrink-0 text-text-muted opacity-0 sm:block transition-opacity duration-200 group-hover:opacity-100"
-        aria-hidden="true"
       />
     </>
   )

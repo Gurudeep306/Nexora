@@ -55,7 +55,7 @@ export function ReconstructedDiagram({
                 className={cn(
                   'rounded-md px-2 py-0.5 transition-all cursor-pointer',
                   activeTab === 'vector'
-                    ? 'bg-accent-brand text-white shadow-xs'
+                    ? 'bg-accent-brand text-on-accent-brand shadow-xs'
                     : 'text-text-muted hover:text-text-primary',
                 )}
               >
@@ -67,7 +67,7 @@ export function ReconstructedDiagram({
                 className={cn(
                   'rounded-md px-2 py-0.5 transition-all cursor-pointer',
                   activeTab === 'scan'
-                    ? 'bg-accent-brand text-white shadow-xs'
+                    ? 'bg-accent-brand text-on-accent-brand shadow-xs'
                     : 'text-text-muted hover:text-text-primary',
                 )}
               >
