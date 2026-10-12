@@ -1,0 +1,1155 @@
+{
+  "paper": "cse-2026-2",
+  "version": 2,
+  "solutions": {
+    "cse-2026-2-cs-43": {
+      "approach": "Count the block numbers to be stored (one per disk block, i.e. the whole disk free) and divide by how many block numbers fit in one list block after reserving the 4-byte next pointer; round **up**.",
+      "concepts": [
+        "Free-space management (linked list of blocks)",
+        "Block numbers per block",
+        "Ceiling division"
+      ],
+      "given": "| Quantity | Value |\n|---|---|\n| Disk | $16\\text{ GB} = 2^{34}$ B |\n| Block | $2\\text{ KB} = 2^{11}$ B |\n| Block number / pointer | 32 bits = 4 B |",
+      "steps": [
+        {
+          "title": "Number of disk blocks",
+          "body": "Every block number on the disk may have to be recorded (the worst case — the whole disk free):\n\n$$\\frac{2^{34}}{2^{11}} = 2^{23} = 8\\,388\\,608 \\text{ block numbers}$$",
+          "scene": {
+            "reveal": 1
+          }
+        },
+        {
+          "title": "Block numbers per list block",
+          "body": "A 2 KB block holds $\\frac{2^{11}}{4} = 2^{9} = 512$ four-byte entries. One entry is the pointer to the next block of the list, so each list block stores\n\n$$512 - 1 = 511 \\text{ free block numbers}$$",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Blocks needed (round up)",
+          "body": "$$\\left\\lceil \\frac{8\\,388\\,608}{511} \\right\\rceil$$\n\n$511 \\times 16\\,416 = 8\\,388\\,576$, which leaves $8\\,388\\,608 - 8\\,388\\,576 = 32$ block numbers, so one more block is needed:\n\n$$16\\,416 + 1 = 16\\,417$$",
+          "scene": {
+            "reveal": 4
+          }
+        }
+      ],
+      "answer": {
+        "value": "$\\lceil 2^{23}/511 \\rceil =$ **16417** blocks",
+        "number": 16417,
+        "matchesKey": true
+      },
+      "shortcut": "$2^{23}/511 = 2^{23}/(2^9 - 1) \\approx 2^{14}(1 + 2^{-9}) = 16384 + 32 = 16416$ plus a little → $16417$.",
+      "pitfalls": [
+        "Forgetting the next-pointer: $2^{23}/512 = 16384$.",
+        "Rounding down to 16416 — the last 32 block numbers still need a block.",
+        "Using the bitmap approach ($2^{23}$ bits $= 2^{20}$ B $= 512$ blocks) — the question fixes the linked-list approach."
+      ],
+      "verification": "$16417 \\times 511 = 8\\,389\\,087 \\ge 8\\,388\\,608$ while $16416 \\times 511 = 8\\,388\\,576 < 8\\,388\\,608$, so 16417 is the least that suffices.",
+      "animation": {
+        "kind": "equation",
+        "title": "Free-list blocks",
+        "lines": [
+          {
+            "tex": "\\text{block numbers} = 2^{34}/2^{11} = 2^{23} = 8388608"
+          },
+          {
+            "tex": "\\text{entries/block} = 2^{11}/4 = 512 \\Rightarrow 511 \\text{ numbers} + 1 \\text{ pointer}"
+          },
+          {
+            "tex": "511 \\times 16416 = 8388576 \\;(\\text{32 left over})"
+          },
+          {
+            "tex": "\\lceil 8388608/511 \\rceil = 16417",
+            "tone": "success"
+          }
+        ],
+        "reveal": 0
+      }
+    },
+    "cse-2026-2-cs-44": {
+      "approach": "TLB reach ÷ page size gives the number of entries; each entry is PID + virtual page number + frame number + control bits. Multiply.",
+      "concepts": [
+        "TLB reach",
+        "Virtual page number",
+        "Physical frame number"
+      ],
+      "given": "| Quantity | Value |\n|---|---|\n| TLB reach | $1\\text{ MB} = 2^{20}$ B |\n| Page | $4\\text{ KB} = 2^{12}$ B |\n| VA space | $64\\text{ GB} = 2^{36}$ B |\n| PA space | $1\\text{ GB} = 2^{30}$ B |\n| Extra fields | PID 4 bits, control 2 bits |",
+      "steps": [
+        {
+          "title": "Number of TLB entries",
+          "body": "Each entry maps one page, so\n\n$$\\text{entries} = \\frac{\\text{reach}}{\\text{page size}} = \\frac{2^{20}}{2^{12}} = 2^{8} = 256$$",
+          "scene": {
+            "vars": {
+              "entries": 256
+            }
+          }
+        },
+        {
+          "title": "Page and frame number widths",
+          "body": "Offset = $\\log_2 2^{12} = 12$ bits.\n\n- Page number: $36 - 12 = 24$ bits (VA is $2^{36}$).\n- Frame number: $30 - 12 = 18$ bits (PA is $2^{30}$).",
+          "scene": {
+            "rows": [
+              {
+                "label": "entry",
+                "fields": [
+                  {
+                    "bits": "xxxx",
+                    "label": "PID 4"
+                  },
+                  {
+                    "bits": "xxxxxxxxxxxxxxxxxxxxxxxx",
+                    "label": "page no. 24",
+                    "tone": "accent"
+                  },
+                  {
+                    "bits": "xxxxxxxxxxxxxxxxxx",
+                    "label": "frame no. 18",
+                    "tone": "cat1"
+                  },
+                  {
+                    "bits": "xx",
+                    "label": "ctrl 2"
+                  }
+                ],
+                "value": "48 bits"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Entry size and TLB size",
+          "body": "$$4 + 24 + 18 + 2 = 48 \\text{ bits} = 6 \\text{ bytes}$$\n\n$$\\text{TLB size} = 256 \\times 6 = 1536 \\text{ bytes}$$",
+          "scene": {
+            "vars": {
+              "entries": 256,
+              "bytes/entry": 6,
+              "TLB (B)": 1536
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "$256 \\times 6 =$ **1536 bytes**",
+        "number": 1536,
+        "matchesKey": true
+      },
+      "shortcut": "$2^{8}$ entries $\\times (4 + 24 + 18 + 2)/8$ B $= 256 \\times 6 = 1536$.",
+      "pitfalls": [
+        "Using the virtual address space for the number of entries — the entry count comes from the reach.",
+        "Using full addresses (36 or 30 bits) instead of page/frame numbers (offset bits are not stored).",
+        "Leaving the answer in bits ($256 \\times 48 = 12288$)."
+      ],
+      "verification": "Reach check: $256$ entries $\\times 4$ KB $= 1024$ KB $= 1$ MB ✓. Bit total: $256 \\times 48 = 12288$ bits $= 1536$ B ✓.",
+      "animation": {
+        "kind": "bits",
+        "title": "One TLB entry",
+        "rows": [
+          {
+            "label": "entry",
+            "fields": [
+              {
+                "bits": "xxxx",
+                "label": "PID 4"
+              },
+              {
+                "bits": "xxxxxxxxxxxxxxxxxxxxxxxx",
+                "label": "page no. ?"
+              },
+              {
+                "bits": "xxxxxxxxxxxxxxxxxx",
+                "label": "frame no. ?"
+              },
+              {
+                "bits": "xx",
+                "label": "ctrl 2"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "cse-2026-2-cs-45": {
+      "approach": "Simulate best fit: each process takes the **smallest hole that is large enough**; the leftover of that hole stays as a smaller hole (an exact fit leaves no hole). Then count holes below 8 KB.",
+      "concepts": [
+        "Variable partitioning",
+        "Best-fit allocation",
+        "External fragmentation"
+      ],
+      "given": "Holes (KB): $20, 4, 25, 18, 7, 9, 15, 12$ (none adjacent, so no coalescing). P1 = 16 KB, then P2 = 9 KB.",
+      "steps": [
+        {
+          "title": "P1 (16 KB) takes the 18 KB hole",
+          "body": "Holes $\\ge 16$: $20, 25, 18$. The smallest is $18$.\n\nLeftover: $18 - 16 = 2$ KB hole.",
+          "scene": {
+            "cells": [
+              20,
+              4,
+              25,
+              {
+                "v": "18→2",
+                "tone": "warning"
+              },
+              7,
+              9,
+              15,
+              12
+            ],
+            "hl": [
+              {
+                "at": [
+                  0,
+                  2
+                ],
+                "tone": "muted"
+              }
+            ],
+            "caption": "Candidates ≥ 16: 20, 25, 18 → best = 18"
+          }
+        },
+        {
+          "title": "P2 (9 KB) takes the 9 KB hole",
+          "body": "Current holes: $20, 4, 25, 2, 7, 9, 15, 12$. Holes $\\ge 9$: $20, 25, 9, 15, 12$. The smallest is $9$ — an exact fit.\n\nLeftover: $9 - 9 = 0$, so that hole disappears.",
+          "scene": {
+            "cells": [
+              20,
+              4,
+              25,
+              2,
+              7,
+              {
+                "v": "9→0",
+                "tone": "muted"
+              },
+              15,
+              12
+            ],
+            "hl": [],
+            "caption": "Candidates ≥ 9: 20, 25, 9, 15, 12 → best = 9 (exact)"
+          }
+        },
+        {
+          "title": "Count holes smaller than 8 KB",
+          "body": "Remaining holes: $20, 4, 25, 2, 7, 15, 12$.\n\nBelow 8 KB: $4, 2, 7$ → **3** holes.",
+          "scene": {
+            "cells": [
+              20,
+              {
+                "v": 4,
+                "tone": "success"
+              },
+              25,
+              {
+                "v": 2,
+                "tone": "success"
+              },
+              {
+                "v": 7,
+                "tone": "success"
+              },
+              {
+                "v": "—",
+                "tone": "muted"
+              },
+              15,
+              12
+            ],
+            "caption": "< 8 KB: 4, 2, 7 → 3 holes",
+            "vars": {
+              "holes < 8 KB": 3
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "Holes $4, 2, 7$ KB → **3**",
+        "number": 3,
+        "matchesKey": true
+      },
+      "shortcut": "Before: only 4 and 7 are below 8 KB. P1 creates a 2 KB sliver (18 − 16); P2 fits exactly (no sliver). $2 + 1 = 3$.",
+      "pitfalls": [
+        "Counting the 0 KB remainder of the 9 KB hole as a hole (gives 4).",
+        "Using first fit (P1 → 20, leaving 4; P2 → 25 or the 9 depending on order) — that changes the count.",
+        "Allocating P2 before P1 — they arrive in the order P1, P2."
+      ],
+      "verification": "Total free memory check: $110 - 16 - 9 = 85$ KB, and $20 + 4 + 25 + 2 + 7 + 15 + 12 = 85$ ✓.",
+      "animation": {
+        "kind": "array",
+        "title": "Holes (KB), best fit",
+        "label": "holes",
+        "cells": [
+          20,
+          4,
+          25,
+          18,
+          7,
+          9,
+          15,
+          12
+        ],
+        "caption": "Initial holes"
+      }
+    },
+    "cse-2026-2-cs-46": {
+      "approach": "In a direct-mapped cache the block number is the **index** field of the address. Find where the bit pattern of 176 sits in the address (that fixes the offset width), then widen the index upward over zero bits as far as possible: cache size $= 2^{\\text{index}+\\text{offset}}$.",
+      "concepts": [
+        "Direct mapping",
+        "Tag / index / offset split",
+        "Cache size = blocks × block size"
+      ],
+      "given": "Physical address: 20 bits ($1\\text{ MB} = 2^{20}$, byte-addressable). Address $\\text{0xA2C28}$ maps to cache block $176$.",
+      "steps": [
+        {
+          "title": "Write the address and 176 in binary",
+          "body": "$\\text{0xA2C28} = 1010\\;0010\\;1100\\;0010\\;1000$ (bits 19…0).\n\n$176 = 128 + 32 + 16 = 10110000_2$ (8 bits).\n\nWith block size $2^b$ and $2^n$ cache blocks, block number $= \\lfloor A / 2^b \\rfloor \\bmod 2^n$ = bits $b+n-1 \\ldots b$ of the address. So the index field must read $0\\ldots0\\,10110000$.",
+          "scene": {
+            "rows": [
+              {
+                "label": "addr",
+                "fields": [
+                  {
+                    "bits": "10100010110000101000"
+                  }
+                ],
+                "value": "0xA2C28"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Locate 10110000 → offset is 6 bits",
+          "body": "The pattern $10110000$ appears only once in the address: bits $13 \\ldots 6$ ($1,0,1,1,0,0,0,0$). Hence the offset is bits $5\\ldots0$: $b = 6$, block size $2^6 = 64$ B.\n\n(No other alignment works: the only `1011` in the address is at bits 13…10.)",
+          "scene": {
+            "rows": [
+              {
+                "label": "addr",
+                "fields": [
+                  {
+                    "bits": "101000"
+                  },
+                  {
+                    "bits": "10110000",
+                    "label": "176",
+                    "tone": "accent"
+                  },
+                  {
+                    "bits": "101000",
+                    "label": "offset (6)",
+                    "tone": "cat1"
+                  }
+                ],
+                "value": "0xA2C28"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Widen the index as far as possible",
+          "body": "Extra index bits above bit 13 are allowed only while they are $0$ (otherwise the block number would exceed 176). Bits 14, 15, 16 are $0$; bit 17 is $1$.\n\nSo the index can be at most bits $16\\ldots6$: $n = 11$ bits ($00010110000_2 = 176$ ✓), tag = bits 19…17.",
+          "scene": {
+            "rows": [
+              {
+                "label": "addr",
+                "fields": [
+                  {
+                    "bits": "101",
+                    "label": "tag (3)"
+                  },
+                  {
+                    "bits": "00010110000",
+                    "label": "index (11) = 176",
+                    "tone": "success"
+                  },
+                  {
+                    "bits": "101000",
+                    "label": "offset (6)",
+                    "tone": "cat1"
+                  }
+                ],
+                "value": "0xA2C28"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Maximum cache size",
+          "body": "$$2^{n} \\times 2^{b} = 2^{11} \\times 2^{6} = 2^{17} \\text{ B} = 128 \\text{ KB}$$",
+          "scene": {
+            "vars": {
+              "block (B)": 64,
+              "blocks": 2048,
+              "cache (KB)": 128
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "$2^{11} \\times 64$ B $=$ **128 KB**",
+        "number": 128,
+        "matchesKey": true
+      },
+      "shortcut": "Spot `1011 0000` in `0xA2C28` = `1010 0010 1100 0010 1000`: it sits right above the low 6 bits; leading zeros above it run up to bit 16 → $11 + 6 = 17$ bits → $2^{17}$ B $= 128$ KB.",
+      "pitfalls": [
+        "Assuming the index is exactly 8 bits (gives $2^{14}$ B = 16 KB) — leading zero bits can also belong to the index.",
+        "Extending the index over bit 17 (a 1) — the block number would become $2048 + 176$.",
+        "Treating 176 as hexadecimal; it is $176_{10}$."
+      ],
+      "verification": "With 64-B blocks and 2048 lines: $\\lfloor 666664 / 64 \\rfloor = 10416$ and $10416 \\bmod 2048 = 10416 - 5 \\times 2048 = 176$ ✓ ($\\text{0xA2C28} = 666664$). With 4096 lines: $10416 \\bmod 4096 = 2224 \\ne 176$ ✗.",
+      "animation": {
+        "kind": "bits",
+        "title": "Address 0xA2C28 (20 bits)",
+        "group": 4,
+        "rows": [
+          {
+            "label": "addr",
+            "fields": [
+              {
+                "bits": "10100010110000101000"
+              }
+            ],
+            "value": "0xA2C28"
+          }
+        ]
+      }
+    },
+    "cse-2026-2-cs-47": {
+      "approach": "Compare average time per instruction: non-pipelined $= \\text{CPI} \\times T_{clk} = 5/1.6$ ns; pipelined $= (1 + \\text{stall cycles per instruction}) / 1.2$ ns. Speed-up is their ratio.",
+      "concepts": [
+        "Pipeline CPI with stalls",
+        "Execution time = CPI × clock period",
+        "Speed-up"
+      ],
+      "given": "| Design | Clock | CPI |\n|---|---|---|\n| Non-pipelined | 1.6 GHz | 5 |\n| Pipelined | 1.2 GHz | $1 + 0.3 \\times 2$ |",
+      "steps": [
+        {
+          "title": "Non-pipelined time per instruction",
+          "body": "$$T_{np} = \\frac{5}{1.6 \\times 10^{9}} \\text{ s} = 3.125 \\text{ ns}$$",
+          "scene": {
+            "reveal": 1
+          }
+        },
+        {
+          "title": "Pipelined CPI and time per instruction",
+          "body": "Ideal CPI is 1; 30% of instructions add 2 stall cycles:\n\n$$\\text{CPI}_p = 1 + 0.3 \\times 2 = 1.6$$\n\n$$T_p = \\frac{1.6}{1.2 \\times 10^{9}} \\text{ s} = 1.3\\overline{3} \\text{ ns}$$",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "Speed-up",
+          "body": "$$S = \\frac{T_{np}}{T_p} = \\frac{5/1.6}{1.6/1.2} = \\frac{5 \\times 1.2}{1.6 \\times 1.6} = \\frac{6}{2.56} = 2.34375 \\approx 2.34$$",
+          "scene": {
+            "reveal": 4
+          }
+        }
+      ],
+      "answer": {
+        "value": "$6/2.56 = 2.34375 \\approx$ **2.34**",
+        "number": 2.34,
+        "matchesKey": true
+      },
+      "shortcut": "$S = \\dfrac{5 \\times 1.2}{1.6 \\times 1.6} = \\dfrac{6}{2.56} \\approx 2.34$.",
+      "pitfalls": [
+        "Ignoring the clock change: $5/1.6 = 3.125$ (CPI ratio only).",
+        "Ignoring the stalls: $3.125/(1/1.2) = 3.75$."
+      ],
+      "verification": "For $10^9$ instructions: non-pipelined $5 \\times 10^9$ cycles at 1.6 GHz $= 3.125$ s; pipelined $1.6 \\times 10^9$ cycles at 1.2 GHz $= 1.333$ s; $3.125 / 1.333 = 2.34$ ✓.",
+      "animation": {
+        "kind": "equation",
+        "title": "Time per instruction",
+        "lines": [
+          {
+            "tex": "T_{np} = 5 \\times \\tfrac{1}{1.6}\\,\\text{ns} = 3.125\\,\\text{ns}"
+          },
+          {
+            "tex": "\\text{CPI}_p = 1 + 0.3 \\times 2 = 1.6"
+          },
+          {
+            "tex": "T_{p} = 1.6 \\times \\tfrac{1}{1.2}\\,\\text{ns} = 1.333\\,\\text{ns}"
+          },
+          {
+            "tex": "S = 3.125 / 1.333 = 2.34",
+            "tone": "success"
+          }
+        ],
+        "reveal": 0
+      }
+    },
+    "cse-2026-2-cs-48": {
+      "approach": "Slow start begins at cwnd = 1 MSS and doubles every round (RTT) until cwnd reaches ssthresh; count the transmission rounds until cwnd = ssthresh. The 48 KB receiver window never limits.",
+      "concepts": [
+        "TCP slow start",
+        "Slow-start threshold",
+        "Congestion avoidance"
+      ],
+      "given": "MSS = 2 KB, ssthresh = 16 KB = 8 MSS, rwnd = 48 KB (constant), no timeouts / duplicate ACKs.",
+      "steps": [
+        {
+          "title": "Express everything in MSS",
+          "body": "Initial cwnd $= 1$ MSS $= 2$ KB; $\\text{ssthresh} = 16/2 = 8$ MSS; rwnd $= 48/2 = 24$ MSS, which is larger than anything slow start reaches here, so it plays no role.",
+          "scene": {
+            "caption": "cwnd starts at 1 MSS = 2 KB"
+          }
+        },
+        {
+          "title": "Double each round",
+          "body": "| Round | cwnd (MSS) | cwnd (KB) |\n|---|---|---|\n| 1 | 1 | 2 |\n| 2 | 2 | 4 |\n| 3 | 4 | 8 |\n| 4 | 8 | 16 |\n\nEach ACKed segment adds 1 MSS, so cwnd doubles per round.",
+          "scene": {
+            "caption": "Slow start: 2 → 4 → 8 → 16 KB"
+          }
+        },
+        {
+          "title": "Round 4 reaches ssthresh",
+          "body": "In round 4 cwnd $= 8$ MSS $= 16$ KB $=$ ssthresh, so TCP leaves slow start and enters **congestion avoidance** (growth becomes +1 MSS per RTT: 18 KB in round 5).\n\nRounds required: $1, 2, 4, 8$ MSS → **4**.",
+          "scene": {
+            "caption": "Round 5 grows linearly (+1 MSS) — congestion avoidance"
+          }
+        }
+      ],
+      "answer": {
+        "value": "cwnd $2 \\to 4 \\to 8 \\to 16$ KB → **4 rounds**",
+        "number": 4,
+        "matchesKey": true
+      },
+      "shortcut": "Rounds $= \\log_2(\\text{ssthresh}/\\text{MSS}) + 1 = \\log_2 8 + 1 = 4$.",
+      "pitfalls": [
+        "Starting cwnd at 2 KB but counting doublings only ($\\log_2 8 = 3$) — the first round (cwnd = 1 MSS) is also a round of transmission.",
+        "Using the receiver window 48 KB as the threshold.",
+        "Working in KB without converting via MSS and starting cwnd at 1 KB."
+      ],
+      "verification": "Segments sent per round: $1 + 2 + 4 + 8 = 15$; the window used in round 4 is $8 \\times 2 = 16$ KB = ssthresh, and from round 5 the window grows linearly.",
+      "animation": {
+        "kind": "bars",
+        "title": "cwnd per round (KB), ssthresh = 16 KB",
+        "unit": "KB",
+        "bars": [
+          {
+            "label": "R1",
+            "value": 2,
+            "tone": "info"
+          },
+          {
+            "label": "R2",
+            "value": 4,
+            "tone": "info"
+          },
+          {
+            "label": "R3",
+            "value": 8,
+            "tone": "info"
+          },
+          {
+            "label": "R4",
+            "value": 16,
+            "display": "16 = ssthresh",
+            "tone": "success"
+          },
+          {
+            "label": "R5",
+            "value": 18,
+            "display": "18 (CA)",
+            "tone": "muted"
+          }
+        ]
+      }
+    },
+    "cse-2026-2-cs-49": {
+      "approach": "Write the MUX output as a sum over the four select values: $Y = \\bar S_1 \\bar S_0 D_0 + \\bar S_1 S_0 \\cdot 0 + S_1 \\bar S_0 \\cdot 1 + S_1 S_0 D_3$, then count, for each select value, how many $(A, B)$ pairs make the chosen input 1.",
+      "concepts": [
+        "2:4 decoder (minterm generator)",
+        "4-to-1 multiplexer",
+        "Counting input combinations"
+      ],
+      "given": "Decoder Q: $D_0 = \\bar A \\bar B$, $D_1 = \\bar A B$, $D_2 = A \\bar B$, $D_3 = AB$ (active high). MUX M inputs: $I_0 = D_0$, $I_1 = 0$, $I_2 = 1$, $I_3 = D_3$; selects $S_1 S_0$.",
+      "steps": [
+        {
+          "title": "S1S0 = 00 → Y = D0",
+          "body": "$Y = D_0 = \\bar A \\bar B$, which is 1 only for $AB = 00$ → **1** combination.",
+          "scene": {
+            "reveal": 4,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "S1S0 = 01 → Y = 0",
+          "body": "Input 1 is tied to 0, so no $(A,B)$ gives $Y = 1$ → **0** combinations.",
+          "scene": {
+            "reveal": 8,
+            "hl": [
+              {
+                "r": 1,
+                "tone": "error"
+              }
+            ]
+          }
+        },
+        {
+          "title": "S1S0 = 10 → Y = 1",
+          "body": "Input 2 is tied to 1, so all four $(A,B)$ pairs give $Y = 1$ → **4** combinations.",
+          "scene": {
+            "reveal": 12,
+            "hl": [
+              {
+                "r": 2,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "S1S0 = 11 → Y = D3",
+          "body": "$Y = D_3 = AB$, which is 1 only for $AB = 11$ → **1** combination.\n\nTotal: $1 + 0 + 4 + 1 = 6$.",
+          "scene": {
+            "reveal": 16,
+            "hl": [
+              {
+                "r": 3,
+                "tone": "accent"
+              }
+            ],
+            "vars": {
+              "Y = 1 count": 6
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "$1 + 0 + 4 + 1 =$ **6** combinations",
+        "number": 6,
+        "matchesKey": true
+      },
+      "shortcut": "Each MUX input contributes (number of 1s in its function of $A, B$): a minterm gives 1, constant 0 gives 0, constant 1 gives 4 → $1 + 0 + 4 + 1 = 6$.",
+      "pitfalls": [
+        "Thinking the answer depends on whether A or B is the decoder MSB — $D_0$ (00) and $D_3$ (11) are the same either way.",
+        "Counting only select values (gives 3 of 4 select codes) instead of full $[A\\,B\\,S_1\\,S_0]$ combinations.",
+        "Treating the decoder as active low (would swap the roles: $D_0$ true for 3 pairs)."
+      ],
+      "verification": "$Y = S_1\\bar S_0 + \\bar S_1 \\bar S_0 \\bar A \\bar B + S_1 S_0 AB$: the three terms are disjoint with $4 + 1 + 1 = 6$ minterms out of 16.",
+      "animation": {
+        "kind": "table",
+        "title": "Y = 1 combinations by select value",
+        "cols": [
+          "S1 S0",
+          "M passes",
+          "Y as f(A,B)",
+          "# (A,B) with Y=1"
+        ],
+        "rows": [
+          [
+            "00",
+            "D0",
+            "A′B′",
+            1
+          ],
+          [
+            "01",
+            "0",
+            "0",
+            0
+          ],
+          [
+            "10",
+            "1",
+            "1",
+            4
+          ],
+          [
+            "11",
+            "D3",
+            "AB",
+            1
+          ]
+        ],
+        "reveal": 0
+      }
+    },
+    "cse-2026-2-cs-50": {
+      "approach": "Trace the program line by line, keeping a table of the variables and of what `ptr` points to. Every write through `*ptr` changes the variable `ptr` currently points at.",
+      "concepts": [
+        "Pointers",
+        "Dereferencing",
+        "Program tracing"
+      ],
+      "steps": [
+        {
+          "title": "Initialise the variables",
+          "body": "Line 3 sets $a = 5$, $b = 11$, $c = 20$. `ptr` is not yet pointing anywhere.",
+          "scene": {
+            "line": 3,
+            "vars": {
+              "ptr": "?",
+              "a": 5,
+              "b": 11,
+              "c": 20
+            }
+          }
+        },
+        {
+          "title": "Write c into a through ptr",
+          "body": "Line 4: `ptr = &a`, so `*ptr` **is** `a`.\n\nLine 5: `*ptr = c` stores $20$ into `a`: now $a = 20$.",
+          "scene": {
+            "line": 5,
+            "hl": [
+              4
+            ],
+            "vars": {
+              "ptr": "&a",
+              "a": 20,
+              "b": 11,
+              "c": 20
+            }
+          }
+        },
+        {
+          "title": "Re-point ptr and copy b into a",
+          "body": "Line 6: `ptr = &c`, so `*ptr` is now `c`.\n\nLine 7: `a = *(&b)` — `&b` is b's address and `*` undoes it, so this is just `a = b`: $a = 11$.",
+          "scene": {
+            "line": 7,
+            "hl": [
+              6
+            ],
+            "vars": {
+              "ptr": "&c",
+              "a": 11,
+              "b": 11,
+              "c": 20
+            }
+          }
+        },
+        {
+          "title": "Compute c and print it",
+          "body": "Line 8: `c = *ptr - a` reads `*ptr` (which is `c` = 20) **before** assigning: $c = 20 - 11 = 9$.\n\nLine 9 prints **9**.",
+          "scene": {
+            "line": 9,
+            "hl": [
+              8
+            ],
+            "vars": {
+              "ptr": "&c",
+              "a": 11,
+              "b": 11,
+              "c": 9
+            },
+            "output": "9"
+          }
+        }
+      ],
+      "answer": {
+        "value": "The program prints **9**",
+        "number": 9,
+        "matchesKey": true
+      },
+      "shortcut": "Ignore the pointer noise: `*ptr = c` makes $a = 20$, `a = *(&b)` makes $a = 11$, and `*ptr` at the end is `c` itself, so $c = 20 - 11$.",
+      "pitfalls": [
+        "Thinking `*ptr = c` changes `c` — it changes whatever `ptr` points to (here `a`).",
+        "Using the old $a = 20$ in the last line; `a` was overwritten with 11 on line 7."
+      ],
+      "verification": "Rewrite without pointers: `a = c; a = b; c = c - a;` → $a = 20$, $a = 11$, $c = 20 - 11 = 9$.",
+      "animation": {
+        "kind": "code",
+        "title": "Trace",
+        "lang": "c",
+        "code": "int main(){\n    int *ptr, a, b, c;\n    a = 5; b = 11; c = 20;\n    ptr = &a;\n    *ptr = c;\n    ptr = &c;\n    a = *(&b);\n    c = *ptr - a;\n    printf(\"%d\", c);\n    return(0);\n}",
+        "line": 2,
+        "output": ""
+      }
+    },
+    "cse-2026-2-cs-51": {
+      "approach": "Track only $\\ell = \\text{length} \\bmod 3$. The `+1` is added only when $\\ell \\equiv 1$, and after that step the length can never be $\\equiv 1$ again — so at most one `+1` is ever added.",
+      "concepts": [
+        "Recursion tracing",
+        "Invariant on length mod 3",
+        "Base cases"
+      ],
+      "steps": [
+        {
+          "title": "What each branch does to the length",
+          "body": "With $L = \\text{end} + 1 - \\text{start}$:\n\n- $L \\equiv 0$: `func(start+1, end)` → $L - 1 \\equiv 2$, adds nothing.\n- $L \\equiv 2$: `func(start+2, end)` → $L - 2 \\equiv 0$, adds nothing.\n- $L \\equiv 1$: `1 + func(start, end-1)` → $L - 1 \\equiv 0$, adds **1**.\n\nRecursion stops (returns 0) when $L < 1$ or an index is negative.",
+          "scene": {
+            "current": [
+              "r1"
+            ],
+            "caption": "Only the L≡1 branch adds 1"
+          }
+        },
+        {
+          "title": "Residues 0 and 2 form a closed loop",
+          "body": "From $\\equiv 0$ we go to $\\equiv 2$ and from $\\equiv 2$ back to $\\equiv 0$; the length shrinks each time until $L < 1$, returning $0$. Neither branch ever produces a length $\\equiv 1$, so once in $\\{0, 2\\}$ nothing more is added.",
+          "scene": {
+            "current": [
+              "r0",
+              "r2"
+            ],
+            "caption": "0 ↔ 2 loop adds nothing",
+            "edgeTones": {
+              "r0>r2": "info",
+              "r2>r0": "info"
+            }
+          }
+        },
+        {
+          "title": "At most one +1",
+          "body": "Starting with $L \\equiv 1$ gives exactly one `1+` and then enters the $\\{0,2\\}$ loop; starting with $L \\equiv 0$ or $2$ (or invalid arguments) gives $0$. Hence the return value is always $0$ or $1$.\n\nExample: `func(0,3)`: $L = 4 \\equiv 1$ → `1 + func(0,2)`; $L = 3$ → `func(1,2)`; $L = 2$ → `func(3,2)`; $L = 0$ → $0$. Result $1$.\n\nMaximum = **1** (e.g. `func(0,0)` $= 1 + $ `func(0,-1)` $= 1$).",
+          "scene": {
+            "current": [
+              "r1",
+              "r0",
+              "r2",
+              "end"
+            ],
+            "caption": "At most one +1 on any path → max = 1",
+            "edgeTones": {
+              "r1>r0": "success",
+              "r0>r2": "info",
+              "r2>r0": "info",
+              "r0>end": "muted",
+              "r2>end": "muted"
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "The function returns only 0 or 1; maximum **1**",
+        "number": 1,
+        "matchesKey": true
+      },
+      "shortcut": "The only branch that adds 1 turns $L \\equiv 1$ into $L \\equiv 0$, and the other two branches swap $0 \\leftrightarrow 2$ forever — so the `+1` can fire at most once.",
+      "pitfalls": [
+        "Assuming the count grows with the length (e.g. $\\lceil L/3 \\rceil$) without checking which residue each call lands on.",
+        "Misreading `func(start+2, end)` as reducing the length by 1."
+      ],
+      "verification": "Brute force over small arguments: `func(0,e)` for $e = 0,1,2,\\ldots,8$ gives $1,0,0,1,0,0,1,0,0$ — never above 1.",
+      "animation": {
+        "kind": "automaton",
+        "title": "length mod 3 under each call",
+        "states": [
+          {
+            "id": "r1",
+            "label": "L≡1",
+            "x": 0,
+            "y": 0,
+            "start": true
+          },
+          {
+            "id": "r0",
+            "label": "L≡0",
+            "x": 3,
+            "y": 0
+          },
+          {
+            "id": "r2",
+            "label": "L≡2",
+            "x": 6,
+            "y": 0
+          },
+          {
+            "id": "end",
+            "label": "L<1 → 0",
+            "x": 4.5,
+            "y": 2.2,
+            "accept": true
+          }
+        ],
+        "edges": [
+          {
+            "from": "r1",
+            "to": "r0",
+            "label": "+1, end−1"
+          },
+          {
+            "from": "r0",
+            "to": "r2",
+            "label": "start+1"
+          },
+          {
+            "from": "r2",
+            "to": "r0",
+            "label": "start+2"
+          },
+          {
+            "from": "r0",
+            "to": "end",
+            "label": "L<1"
+          },
+          {
+            "from": "r2",
+            "to": "end",
+            "label": "L<1"
+          }
+        ]
+      }
+    },
+    "cse-2026-2-cs-52": {
+      "approach": "Scaling an $n \\times n$ matrix by $k$ scales every one of its $n$ rows by $k$, so $\\det(kA) = k^{n}\\det A$.",
+      "concepts": [
+        "Determinant is multilinear in rows",
+        "$\\det(kA) = k^n \\det A$"
+      ],
+      "steps": [
+        {
+          "title": "Scaling one row",
+          "body": "The determinant is linear in each row: multiplying a single row by $k$ multiplies the determinant by $k$."
+        },
+        {
+          "title": "All 4 rows are scaled",
+          "body": "$2A$ multiplies each of the 4 rows of $A$ by 2, so a factor 2 comes out four times:\n\n$$\\det(2A) = 2 \\cdot 2 \\cdot 2 \\cdot 2 \\, \\det A = 2^{4} \\det A$$"
+        },
+        {
+          "title": "Substitute",
+          "body": "$$\\det(2A) = 16 \\times 3 = 48$$"
+        }
+      ],
+      "answer": {
+        "value": "$2^4 \\times 3 =$ **48**",
+        "number": 48,
+        "matchesKey": true
+      },
+      "shortcut": "$\\det(kA_{n\\times n}) = k^n \\det A = 2^4 \\cdot 3 = 48$.",
+      "pitfalls": [
+        "Writing $\\det(2A) = 2\\det A = 6$ (only one row scaled).",
+        "Using $k^2$ (thinking of a $2 \\times 2$ case) → 12."
+      ],
+      "verification": "Take $A = \\operatorname{diag}(3,1,1,1)$: $\\det A = 3$, $2A = \\operatorname{diag}(6,2,2,2)$, $\\det(2A) = 6 \\cdot 2 \\cdot 2 \\cdot 2 = 48$ ✓."
+    },
+    "cse-2026-2-cs-53": {
+      "approach": "The two events share only toss 2. Condition on toss 2: given $E_2$, toss 2 is H with probability $\\tfrac12$, and tosses 4 and 6 are untouched by $E_2$. Then use total probability.",
+      "concepts": [
+        "Conditional probability",
+        "Independence of disjoint tosses",
+        "Total probability"
+      ],
+      "given": "$E_1$: at least 2 heads among tosses $\\{2, 4, 6\\}$. $E_2$: exactly 2 heads among tosses $\\{1, 2, 3, 5\\}$.",
+      "steps": [
+        {
+          "title": "P(toss 2 = H | E2)",
+          "body": "Under $E_2$ the $\\binom{4}{2} = 6$ placements of the two heads among tosses 1, 2, 3, 5 are equally likely. Toss 2 is a head in $\\binom{3}{1} = 3$ of them:\n\n$$P(T_2 = H \\mid E_2) = \\frac{3}{6} = \\frac12, \\quad P(T_2 = T \\mid E_2) = \\frac12$$"
+        },
+        {
+          "title": "Tosses 4 and 6 are independent of E2",
+          "body": "$E_2$ involves only tosses 1, 2, 3, 5, so tosses 4 and 6 stay fair and independent.\n\n- If $T_2 = H$: need $\\ge 1$ head in $\\{4, 6\\}$: $1 - \\tfrac14 = \\tfrac34$.\n- If $T_2 = T$: need both 4 and 6 heads: $\\tfrac14$."
+        },
+        {
+          "title": "Combine",
+          "body": "$$P(E_1 \\mid E_2) = \\frac12 \\cdot \\frac34 + \\frac12 \\cdot \\frac14 = \\frac38 + \\frac18 = \\frac12 = 0.5$$"
+        }
+      ],
+      "answer": {
+        "value": "$P(E_1 \\mid E_2) = \\tfrac12 =$ **0.5**",
+        "number": 0.5,
+        "matchesKey": true
+      },
+      "shortcut": "By symmetry (H ↔ T), given $E_2$ toss 2 is still a fair coin, and the three tosses 2, 4, 6 are then i.i.d. fair, so $P(\\ge 2 \\text{ heads of } 3) = \\tfrac12$.",
+      "pitfalls": [
+        "Treating $E_1$ and $E_2$ as independent without checking — here the answer happens to equal $P(E_1) = \\tfrac12$, but only because $P(T_2 = H \\mid E_2) = \\tfrac12$.",
+        "Counting \"at least two heads\" as exactly two ($\\tfrac38$)."
+      ],
+      "verification": "Direct count over all $2^6 = 64$ outcomes: $P(E_1 \\cap E_2)$: with $T_2 = H$ (3 ways for tosses 1,3,5) × 3 good (4,6) patterns $= 9$; with $T_2 = T$ (3 ways) × 1 pattern $= 3$; total $12$ out of $2^6 = 64$. $P(E_2) = 6 \\times 4 / 64 = 24/64$ (6 placements × 4 patterns of tosses 4, 6). Ratio $\\tfrac{12}{24} = \\tfrac12$ ✓.",
+      "animation": {
+        "kind": "tree",
+        "title": "Condition on toss 2 (given E₂)",
+        "root": {
+          "id": "g",
+          "label": "E₂ holds",
+          "children": [
+            {
+              "id": "h",
+              "label": "T2 = H",
+              "edge": "1/2",
+              "children": [
+                {
+                  "id": "h1",
+                  "label": "≥1 H in {4,6}",
+                  "edge": "3/4",
+                  "tone": "success"
+                }
+              ]
+            },
+            {
+              "id": "t",
+              "label": "T2 = T",
+              "edge": "1/2",
+              "children": [
+                {
+                  "id": "t1",
+                  "label": "H, H in {4,6}",
+                  "edge": "1/4",
+                  "tone": "success"
+                }
+              ]
+            }
+          ]
+        },
+        "caption": "$\\tfrac12 \\cdot \\tfrac34 + \\tfrac12 \\cdot \\tfrac14 = \\tfrac12$"
+      }
+    },
+    "cse-2026-2-cs-54": {
+      "approach": "$f$ is constant on each interval $[\\tfrac{k}{100}, \\tfrac{k+1}{100})$ (fixed second digit), so it can only jump at the points $\\tfrac{k}{100}$; count the boundaries where the value actually changes.",
+      "concepts": [
+        "Step functions",
+        "Jump discontinuity",
+        "Decimal digits"
+      ],
+      "steps": [
+        {
+          "title": "f is a step function",
+          "body": "On $[0.ab, 0.ab + 0.01)$ the second digit is $b$, so $f$ is constant there:\n\n| $b$ | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |\n|---|---|---|---|---|---|---|---|---|---|---|\n| $f$ | 0 | 0 | 1 | 1 | 0 | 0 | 1 | 1 | 0 | 0 |\n\nInside each step $f$ is continuous; only the boundaries $\\tfrac{k}{100}$ are candidates.",
+          "scene": {
+            "caption": "Within one tenth: f = 1 on [0.02, 0.04) and [0.06, 0.08)"
+          }
+        },
+        {
+          "title": "Jumps inside one tenth",
+          "body": "Reading the row of values, $f$ changes at $b: 1 \\to 2$, $3 \\to 4$, $5 \\to 6$, $7 \\to 8$ — the points $0.a2,\\ 0.a4,\\ 0.a6,\\ 0.a8$. At the boundary to the next tenth ($b: 9 \\to 0$) both sides are 0, so no jump.\n\n4 discontinuities per tenth. (At each such point the left and right limits differ, so $f$ is discontinuous whatever value it takes there.)",
+          "scene": {
+            "points": [
+              {
+                "x": 0.02,
+                "label": "0.02",
+                "tone": "error"
+              },
+              {
+                "x": 0.04,
+                "label": "0.04",
+                "tone": "error"
+              },
+              {
+                "x": 0.06,
+                "label": "0.06",
+                "tone": "error"
+              },
+              {
+                "x": 0.08,
+                "label": "0.08",
+                "tone": "error"
+              }
+            ],
+            "caption": "4 jumps in [0, 0.1)"
+          }
+        },
+        {
+          "title": "Ten tenths",
+          "body": "The first digit $a$ runs over $0, 1, \\ldots, 9$, all giving points inside $(0,1)$ (smallest $0.02$, largest $0.98$):\n\n$$4 \\times 10 = 40$$",
+          "scene": {
+            "vars": {
+              "per tenth": 4,
+              "tenths": 10,
+              "total": 40
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "$4 \\times 10 =$ **40** points",
+        "number": 40,
+        "matchesKey": true
+      },
+      "shortcut": "Pattern of $f$ over $b = 0..9$ is `0011001100`: 4 changes inside, none at the wrap (0 → 0); × 10 tenths = 40.",
+      "pitfalls": [
+        "Counting every $\\tfrac{k}{100}$ (99 points) — $f$ only jumps where its value changes.",
+        "Counting the wrap $0.a9 \\to 0.(a{+}1)0$ as a jump — both sides give 0.",
+        "Counting 8 per tenth (both ends of each 1-block plus the 0.1 boundaries)."
+      ],
+      "verification": "Explicit list for the first tenth: $0.02$ (0→1), $0.04$ (1→0), $0.06$ (0→1), $0.08$ (1→0); repeating in every tenth gives $0.02, 0.04, \\ldots, 0.98$ excluding multiples of $0.1$: these are the 40 even hundredths not divisible by 10 ($49 - 9 = 40$ ✓).",
+      "animation": {
+        "kind": "numberline",
+        "title": "f on one tenth [0, 0.1)",
+        "min": 0,
+        "max": 0.1,
+        "step": 0.01,
+        "intervals": [
+          {
+            "from": 0.02,
+            "to": 0.04,
+            "label": "f = 1",
+            "open": [
+              false,
+              true
+            ],
+            "tone": "success"
+          },
+          {
+            "from": 0.06,
+            "to": 0.08,
+            "label": "f = 1",
+            "open": [
+              false,
+              true
+            ],
+            "tone": "success"
+          }
+        ]
+      }
+    },
+    "cse-2026-2-cs-55": {
+      "approach": "Two lower bounds on the sequence space: (i) bytes sent in 60 s at full rate must not exceed $2^N$; (ii) the window must cover the bandwidth–delay product for full utilisation. $N$ is the larger requirement.",
+      "concepts": [
+        "Sequence-number wrap-around",
+        "Bandwidth–delay product",
+        "Byte-numbered sliding window"
+      ],
+      "given": "Link 3000 km, $5$ ns/m, bandwidth $10^8$ b/s, lossless; one sequence number per byte.",
+      "steps": [
+        {
+          "title": "Propagation delay and RTT",
+          "body": "$$T_p = 3 \\times 10^{6} \\text{ m} \\times 5 \\times 10^{-9} \\text{ s/m} = 15 \\text{ ms}, \\quad \\text{RTT} = 30 \\text{ ms}$$"
+        },
+        {
+          "title": "Condition (i): no wrap within 60 s",
+          "body": "Bytes sent in 60 s:\n\n$$\\frac{10^{8} \\times 60}{8} = 7.5 \\times 10^{8} \\text{ bytes}$$\n\n$2^{29} = 536\\,870\\,912 < 7.5 \\times 10^{8} \\le 2^{30} = 1\\,073\\,741\\,824$, so $N \\ge 30$.",
+          "scene": {
+            "caption": "Condition (i) needs 30 bits"
+          }
+        },
+        {
+          "title": "Condition (ii): full utilisation",
+          "body": "The sender must keep a full RTT of data outstanding:\n\n$$10^{8} \\times 0.03 / 8 = 375\\,000 \\text{ bytes}$$\n\n$2^{18} = 262\\,144 < 375\\,000 \\le 2^{19} = 524\\,288$ → 19 bits (20 if the window may use only half the space). Either way this is weaker than (i).",
+          "scene": {
+            "caption": "Condition (ii) needs only 19 bits"
+          }
+        },
+        {
+          "title": "Take the larger requirement",
+          "body": "$$N = \\max(30, 19) = 30$$",
+          "scene": {
+            "caption": "Wrap-around dominates: N = 30"
+          }
+        }
+      ],
+      "answer": {
+        "value": "$2^{30} \\ge 7.5 \\times 10^{8}$ bytes → $N =$ **30**",
+        "number": 30,
+        "matchesKey": true
+      },
+      "shortcut": "$7.5 \\times 10^8 \\approx 0.7 \\times 2^{30}$ → 30 bits; the BDP ($\\approx 3.75 \\times 10^5$ B $< 2^{19}$) needs far fewer.",
+      "pitfalls": [
+        "Forgetting that sequence numbers count **bytes**, not bits ($6 \\times 10^9$ bits would give 33).",
+        "Using one-way delay or ignoring the 60-s condition (gives 18–19).",
+        "Computing $T_p$ with 3000 m instead of $3 \\times 10^6$ m."
+      ],
+      "verification": "With $N = 29$ the space ($5.37 \\times 10^8$ B) is exhausted after $5.37 \\times 10^8 \\times 8 / 10^8 \\approx 43$ s $< 60$ s ✗; with $N = 30$ it lasts $\\approx 86$ s ✓.",
+      "animation": {
+        "kind": "bars",
+        "title": "Bits needed by each condition",
+        "unit": "bits",
+        "bars": [
+          {
+            "label": "(i) no wrap in 60 s",
+            "value": 30,
+            "display": "30 (7.5×10⁸ B)",
+            "tone": "success"
+          },
+          {
+            "label": "(ii) fill the pipe",
+            "value": 19,
+            "display": "19 (3.75×10⁵ B)",
+            "tone": "info"
+          }
+        ]
+      }
+    }
+  }
+}

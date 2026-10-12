@@ -1,0 +1,456 @@
+{
+  "paper": "cse-2026-2",
+  "fixes": [
+    {
+      "id": "cse-2026-2-cs-43",
+      "field": "answer",
+      "before": 1,
+      "after": "16417 to 16417",
+      "reason": "Stored key was a placeholder 1; the official key for Q.53 is \"16417 to 16417\" (also re-derived independently in the solution).",
+      "source": "Official GATE 2026 CS-2 answer key (gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf)"
+    },
+    {
+      "id": "cse-2026-2-cs-44",
+      "field": "answer",
+      "before": 1,
+      "after": "1536 to 1536",
+      "reason": "Stored key was a placeholder 1; the official key for Q.54 is \"1536 to 1536\" (also re-derived independently in the solution).",
+      "source": "Official GATE 2026 CS-2 answer key (gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf)"
+    },
+    {
+      "id": "cse-2026-2-cs-45",
+      "field": "answer",
+      "before": 1,
+      "after": "3 to 3",
+      "reason": "Stored key was a placeholder 1; the official key for Q.55 is \"3 to 3\" (also re-derived independently in the solution).",
+      "source": "Official GATE 2026 CS-2 answer key (gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf)"
+    },
+    {
+      "id": "cse-2026-2-cs-46",
+      "field": "answer",
+      "before": 1,
+      "after": "128 to 128",
+      "reason": "Stored key was a placeholder 1; the official key for Q.56 is \"128 to 128\" (also re-derived independently in the solution).",
+      "source": "Official GATE 2026 CS-2 answer key (gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf)"
+    },
+    {
+      "id": "cse-2026-2-cs-47",
+      "field": "answer",
+      "before": 1,
+      "after": "2.30 to 2.40",
+      "reason": "Stored key was a placeholder 1; the official key for Q.57 is \"2.30 to 2.40\" (also re-derived independently in the solution).",
+      "source": "Official GATE 2026 CS-2 answer key (gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf)"
+    },
+    {
+      "id": "cse-2026-2-cs-48",
+      "field": "answer",
+      "before": 1,
+      "after": "4 to 4",
+      "reason": "Stored key was a placeholder 1; the official key for Q.58 is \"4 to 4\" (also re-derived independently in the solution).",
+      "source": "Official GATE 2026 CS-2 answer key (gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf)"
+    },
+    {
+      "id": "cse-2026-2-cs-49",
+      "field": "answer",
+      "before": 1,
+      "after": "6 to 6",
+      "reason": "Stored key was a placeholder 1; the official key for Q.59 is \"6 to 6\" (also re-derived independently in the solution).",
+      "source": "Official GATE 2026 CS-2 answer key (gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf)"
+    },
+    {
+      "id": "cse-2026-2-cs-50",
+      "field": "answer",
+      "before": 1,
+      "after": "9 to 9",
+      "reason": "Stored key was a placeholder 1; the official key for Q.60 is \"9 to 9\" (also re-derived independently in the solution).",
+      "source": "Official GATE 2026 CS-2 answer key (gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf)"
+    },
+    {
+      "id": "cse-2026-2-cs-51",
+      "field": "answer",
+      "before": 1,
+      "after": "1 to 1",
+      "reason": "Stored key was a placeholder 1; the official key for Q.61 is \"1 to 1\" (also re-derived independently in the solution).",
+      "source": "Official GATE 2026 CS-2 answer key (gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf)"
+    },
+    {
+      "id": "cse-2026-2-cs-52",
+      "field": "answer",
+      "before": 1,
+      "after": "48 to 48",
+      "reason": "Stored key was a placeholder 1; the official key for Q.62 is \"48 to 48\" (also re-derived independently in the solution).",
+      "source": "Official GATE 2026 CS-2 answer key (gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf)"
+    },
+    {
+      "id": "cse-2026-2-cs-53",
+      "field": "answer",
+      "before": 1,
+      "after": "0.5 to 0.5",
+      "reason": "Stored key was a placeholder 1; the official key for Q.63 is \"0.5 to 0.5\" (also re-derived independently in the solution).",
+      "source": "Official GATE 2026 CS-2 answer key (gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf)"
+    },
+    {
+      "id": "cse-2026-2-cs-54",
+      "field": "answer",
+      "before": 1,
+      "after": "40 to 40",
+      "reason": "Stored key was a placeholder 1; the official key for Q.64 is \"40 to 40\" (also re-derived independently in the solution).",
+      "source": "Official GATE 2026 CS-2 answer key (gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf)"
+    },
+    {
+      "id": "cse-2026-2-cs-55",
+      "field": "answer",
+      "before": 1,
+      "after": "30 to 30",
+      "reason": "Stored key was a placeholder 1; the official key for Q.65 is \"30 to 30\" (also re-derived independently in the solution).",
+      "source": "Official GATE 2026 CS-2 answer key (gate2026.iitg.ac.in/doc/download/2026/Keys/CS2_Keys.pdf)"
+    },
+    {
+      "id": "cse-2026-2-cs-43",
+      "field": "text",
+      "before": "To keep track of free blocks in a file system, one of the two approaches is generally used – using bitmaps (bit vectors) or using linked lists. Consider that the linked list approach is used to keep track of free blocks in a file system. Assume that the disk size is 16 GB, block size is 2 KB, and block numbers used are 32-bit long. A single pointer of size 4 bytes is used in each block of the list to point to the next block of the list. The number of blocks required to ho ld the free disk block numbers is ____________. (answer in integer) Note: 1K=210 and 1G=230",
+      "after": "To keep track of free blocks in a file system, one of the two approaches is generally used – using bitmaps (bit vectors) or using linked lists. Consider that the linked list approach is used to keep track of free blocks in a file system. Assume that the disk size is 16 GB, block size is 2 KB, and block numbers used are 32-bit long. A single pointer of size 4 bytes is used in each block of the list to point to the next block of the list. The number of blocks required to hold the free disk block numbers is ____________. (answer in integer)\n\nNote: $1\\text{K} = 2^{10}$ and $1\\text{G} = 2^{30}$",
+      "reason": "Removed the PDF line-break split (\"ho ld\") and restored the note's exponents (1K=2^10, 1G=2^30 had lost their superscripts).",
+      "source": "pdf p.38"
+    },
+    {
+      "id": "cse-2026-2-cs-44",
+      "field": "text",
+      "before": "A system has a Translation Lookaside Buffer (TLB) that has a reach of 1 MB. TLB reach is defined as the total amount of physical memory that can be accessed through the TLB entries. The paging system uses pages of size 4 KB. The virtual address space is 64 GB and physical address space is 1 GB. If each TLB entry stores a 4-bit process id, page number, frame number, and a 2 -bit control field, then the size of the TLB (in bytes) is ___________. (answer in integer) Note: 1K=210, 1M=220, 1G=230",
+      "after": "A system has a Translation Lookaside Buffer (TLB) that has a reach of 1 MB. TLB reach is defined as the total amount of physical memory that can be accessed through the TLB entries. The paging system uses pages of size 4 KB. The virtual address space is 64 GB and physical address space is 1 GB. If each TLB entry stores a 4-bit process id, page number, frame number, and a 2-bit control field, then the size of the TLB (in bytes) is ___________. (answer in integer)\n\nNote: $1\\text{K} = 2^{10}$, $1\\text{M} = 2^{20}$, $1\\text{G} = 2^{30}$",
+      "reason": "Removed stray space in \"2 -bit\" and restored the note's exponents.",
+      "source": "pdf p.39"
+    },
+    {
+      "id": "cse-2026-2-cs-45",
+      "field": "text",
+      "before": "Consider contiguous allocation of physical memory to processes using variable partitioning scheme. Suppose there are 8 holes in the memory of sizes 20 KB, 4 KB, 25 KB, 18 KB, 7 KB, 9 KB, 15 KB, and 12 KB. Assume that no two holes are adjacent. Two processes P1 of size 16 KB and P2 of size 9 KB arrive in that order, and they are allocated memory using the best -fit technique. After allocating space to P1 and P2, the number of holes of size less than 8 KB is ____________. (answer in integer) Note: 1K=210",
+      "after": "Consider contiguous allocation of physical memory to processes using variable partitioning scheme. Suppose there are 8 holes in the memory of sizes 20 KB, 4 KB, 25 KB, 18 KB, 7 KB, 9 KB, 15 KB, and 12 KB. Assume that no two holes are adjacent. Two processes P1 of size 16 KB and P2 of size 9 KB arrive in that order, and they are allocated memory using the best-fit technique. After allocating space to P1 and P2, the number of holes of size less than 8 KB is ____________. (answer in integer)\n\nNote: $1\\text{K} = 2^{10}$",
+      "reason": "Removed stray space in \"best -fit\" and restored the note's exponent.",
+      "source": "pdf p.39"
+    },
+    {
+      "id": "cse-2026-2-cs-46",
+      "field": "text",
+      "before": "Consider a system with 1 MB physical memory and a word len gth of 1 byte. The system uses a direct mapped cache, with block numbers starting from 0. The word with physical address 0xA2C28 is mapped to the cache block number 176 10. The maximum possible size of the cache (in KB) for this configuration is ___________. (answer in integer) Note: 1K=210 and 1M=220",
+      "after": "Consider a system with 1 MB physical memory and a word length of 1 byte. The system uses a direct mapped cache, with block numbers starting from 0. The word with physical address 0xA2C28 is mapped to the cache block number $176_{10}$. The maximum possible size of the cache (in KB) for this configuration is ___________. (answer in integer)\n\nNote: $1\\text{K} = 2^{10}$ and $1\\text{M} = 2^{20}$",
+      "reason": "Fixed \"len gth\", restored the subscript in 176₁₀ (was \"176 10\") and the note's exponents.",
+      "source": "pdf p.39"
+    },
+    {
+      "id": "cse-2026-2-cs-47",
+      "field": "text",
+      "before": "A non-pipelined instruction execution unit that operates at 1.6 GHz clock takes an average of 5 clock cycles to complete the execution of an instruction. To improve the performance, the system was pipelined with a goal of achieving an average throughput of one instruction per clock cycle. However, it could operate only at 1.2 GHz due to pipeline overheads. While executing a program in the pipelined design, 30% of instructions encountered a stall of 2 cycles due to pipeline hazards. The speed-up obtained by the pipelined design over the non-pipelined one for this program is ___________. (rounded off to two decimal places) Note: 1G=109",
+      "after": "A non-pipelined instruction execution unit that operates at 1.6 GHz clock takes an average of 5 clock cycles to complete the execution of an instruction. To improve the performance, the system was pipelined with a goal of achieving an average throughput of one instruction per clock cycle. However, it could operate only at 1.2 GHz due to pipeline overheads. While executing a program in the pipelined design, 30% of instructions encountered a stall of 2 cycles due to pipeline hazards. The speed-up obtained by the pipelined design over the non-pipelined one for this program is ___________. (rounded off to two decimal places)\n\nNote: $1\\text{G} = 10^{9}$",
+      "reason": "Restored the exponent in the note (1G = 10^9, was \"109\").",
+      "source": "pdf p.39"
+    },
+    {
+      "id": "cse-2026-2-cs-48",
+      "field": "text",
+      "before": "Consider a new TCP connection between a sender and a receiver. The receiver advertised window is constant at 48 KB, the maximum segment size (MSS) is 2 KB, and the slow start threshold for TCP congestion control is 16 KB. Assume that there are no timeouts or duplicate acknowledgements. The number of rounds of transmission required for the congestion control algorithm of the TCP connection to reach the congestion avoidance phase is ___________. (answer in integer) Note: 1K=210",
+      "after": "Consider a new TCP connection between a sender and a receiver. The receiver advertised window is constant at 48 KB, the maximum segment size (MSS) is 2 KB, and the slow start threshold for TCP congestion control is 16 KB. Assume that there are no timeouts or duplicate acknowledgements. The number of rounds of transmission required for the congestion control algorithm of the TCP connection to reach the congestion avoidance phase is ___________. (answer in integer)\n\nNote: $1\\text{K} = 2^{10}$",
+      "reason": "Restored the exponent in the note (1K = 2^10, was \"210\").",
+      "source": "pdf p.40"
+    },
+    {
+      "id": "cse-2026-2-cs-49",
+      "field": "text",
+      "before": "Consider the digital circuit shown below with two input l ines A and B, two select lines S0 and S1, and an output line Y. The blocks Q and M represent active high 2:4 decoder and 4 -to-1 multiplexer, respectively. Out of 16 possible input combinations, the number of combinations that produce Y=1 is ____________. (answer in integer) Note: One input combination is an instance of [A B S1 S0].",
+      "after": "Consider the digital circuit shown below with two input lines A and B, two select lines S0 and S1, and an output line Y. The blocks Q and M represent active high 2:4 decoder and 4-to-1 multiplexer, respectively. Out of 16 possible input combinations, the number of combinations that produce Y=1 is ____________. (answer in integer)\n\nNote: One input combination is an instance of [A B S1 S0].",
+      "reason": "Fixed \"l ines\" and \"4 -to-1\"; separated the note.",
+      "source": "pdf p.40"
+    },
+    {
+      "id": "cse-2026-2-cs-51",
+      "field": "text",
+      "before": "Consider the following ANSI-C function. int func(int start, int end){ int length=end+1-start; if((length<1)||(start<0)||(end<0)){ return(0); } if(length%3==0){ return(func(start+1, end)); } else if(length%3==1){ return(1+func(start, end-1)); } else { return(func(start+2, end)); } } The maximum possible value that can be returned from this function is ____________. (answer in integer) Note: Ignore syntax errors (if any) in the function.",
+      "after": "Consider the following ANSI-C function.\n\n```c\nint func(int start, int end){\n  int length=end+1-start;\n  if((length<1)||(start<0)||(end<0)){ return(0); }\n  if(length%3==0){\n    return(func(start+1, end));\n  } else if(length%3==1){\n    return(1+func(start, end-1));\n  } else {\n    return(func(start+2, end));\n  }\n}\n```\n\nThe maximum possible value that can be returned from this function is ____________. (answer in integer)\n\nNote: Ignore syntax errors (if any) in the function.",
+      "reason": "The function was flattened onto one line; restored it as a C code block exactly as printed.",
+      "source": "pdf p.41"
+    },
+    {
+      "id": "cse-2026-2-cs-53",
+      "field": "text",
+      "before": "Suppose an unbiased coin is tossed 6 times. Each coin toss is independent of all previous coin tosses. Let 𝐸1 be the event that among the second, fourth, and sixth coin tosses, there are at least two heads. Let 𝐸2 be the event that among the first, second, third, and fifth coin tosses, there are equal number of heads and tails. The conditional probability P(𝐸1| 𝐸2) is equal to ____________. (rounded off to one decimal place)",
+      "after": "Suppose an unbiased coin is tossed 6 times. Each coin toss is independent of all previous coin tosses. Let $E_1$ be the event that among the second, fourth, and sixth coin tosses, there are at least two heads. Let $E_2$ be the event that among the first, second, third, and fifth coin tosses, there are equal number of heads and tails. The conditional probability $P(E_1 \\mid E_2)$ is equal to ____________. (rounded off to one decimal place)",
+      "reason": "Unicode math italics replaced by KaTeX ($E_1$, $E_2$, $P(E_1 \\mid E_2)$).",
+      "source": "pdf p.41"
+    },
+    {
+      "id": "cse-2026-2-cs-54",
+      "field": "text",
+      "before": "Consider a function 𝑓: (0,1) → {0, 1} defined as follows. For a real number 𝑟 ∈ (0,1) , 𝑓(𝑟) = 1 if the second digit after the decimal point in 𝑟 is one of the four digits 2, 3, 6 and 7. Otherwise, 𝑓(𝑟) is equal to 0. The number of points in (0,1) at which 𝑓 is discontinuous is ___________. (answer in integer)",
+      "after": "Consider a function $f: (0,1) \\to \\{0, 1\\}$ defined as follows.\n\nFor a real number $r \\in (0,1)$, $f(r) = 1$ if the second digit after the decimal point in $r$ is one of the four digits 2, 3, 6 and 7. Otherwise, $f(r)$ is equal to 0.\n\nThe number of points in $(0,1)$ at which $f$ is discontinuous is ___________. (answer in integer)",
+      "reason": "Unicode math italics replaced by KaTeX; paragraphs as printed.",
+      "source": "pdf p.41"
+    },
+    {
+      "id": "cse-2026-2-cs-55",
+      "field": "text",
+      "before": "It is necessary to design a link -layer protocol between two hosts that are directly connected over a lossless link of length 3000 kilometers. Assume that the link bandwidth is 108 bits per second and that the propagation delay in the link is 5 nanoseconds per meter. Every transmitted data byte is assigned a unique sequence number. Let 𝑁 be the minimum number of bits needed for the sequence number field in the protocol header such that i. the sequence numbers do not wrap around before 60 seconds, and ii. the maximum utilization of the link is achieved. The value of 𝑁 is ______. (answer in integer)",
+      "after": "It is necessary to design a link-layer protocol between two hosts that are directly connected over a lossless link of length 3000 kilometers. Assume that the link bandwidth is $10^8$ bits per second and that the propagation delay in the link is 5 nanoseconds per meter. Every transmitted data byte is assigned a unique sequence number.\n\nLet $N$ be the minimum number of bits needed for the sequence number field in the protocol header such that\n\n1. the sequence numbers do not wrap around before 60 seconds, and\n2. the maximum utilization of the link is achieved.\n\nThe value of $N$ is ______. (answer in integer)",
+      "reason": "Fixed \"link -layer\", restored the bandwidth exponent (10^8, was \"108\") and the two listed conditions; Unicode N replaced by $N$.",
+      "source": "pdf p.42"
+    },
+    {
+      "id": "cse-2026-2-cs-43",
+      "field": "topic",
+      "before": "file-systems",
+      "after": "files",
+      "reason": "Topic id \"file-systems\" does not exist in the os subject; \"files\" is the matching id in questions.json subjects.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-44",
+      "field": "topic",
+      "before": "memory",
+      "after": "virtual-memory",
+      "reason": "Topic id \"memory\" does not exist in the os subject; \"virtual-memory\" is the matching id in questions.json subjects.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-45",
+      "field": "topic",
+      "before": "memory",
+      "after": "memory-mgmt",
+      "reason": "Topic id \"memory\" does not exist in the os subject; \"memory-mgmt\" is the matching id in questions.json subjects.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-46",
+      "field": "subject",
+      "before": "os",
+      "after": "coa",
+      "reason": "The question is about a direct-mapped cache (computer organisation), not OS memory management.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2026-2-cs-46",
+      "field": "topic",
+      "before": "memory",
+      "after": "cache",
+      "reason": "Topic id \"memory\" does not exist in the coa subject; \"cache\" is the matching id in questions.json subjects.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-47",
+      "field": "topic",
+      "before": "pipelining",
+      "after": "pipeline",
+      "reason": "Topic id \"pipelining\" does not exist in the coa subject; \"pipeline\" is the matching id in questions.json subjects.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-50",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "c",
+      "reason": "Topic id \"c-prog\" does not exist in the pds subject; \"c\" is the matching id in questions.json subjects.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-51",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "recursion",
+      "reason": "Topic id \"c-prog\" does not exist in the pds subject; \"recursion\" is the matching id in questions.json subjects.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-53",
+      "field": "topic",
+      "before": "probability",
+      "after": "basic",
+      "reason": "Topic id \"probability\" does not exist in the prob subject; \"basic\" is the matching id in questions.json subjects.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-54",
+      "field": "subject",
+      "before": "dm",
+      "after": "calc",
+      "reason": "The question is about continuity of a real function (calculus), not set theory.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2026-2-cs-54",
+      "field": "topic",
+      "before": "set-theory",
+      "after": "limits",
+      "reason": "Topic id \"set-theory\" does not exist in the calc subject; \"limits\" is the matching id in questions.json subjects.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-55",
+      "field": "topic",
+      "before": "data-link",
+      "after": "datalink",
+      "reason": "Topic id \"data-link\" does not exist in the cn subject; \"datalink\" is the matching id in questions.json subjects.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-2-cs-43",
+      "field": "tags",
+      "before": [
+        "os",
+        "file-systems",
+        "free-space-bitmap"
+      ],
+      "after": [
+        "os",
+        "file-systems",
+        "free-space-management",
+        "linked-list"
+      ],
+      "reason": "Tags described a different question (e.g. bitmap, paging/EAT, flow control, countability); replaced with tags for what is actually asked.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2026-2-cs-46",
+      "field": "tags",
+      "before": [
+        "os",
+        "paging",
+        "effective-access-time"
+      ],
+      "after": [
+        "coa",
+        "cache",
+        "direct-mapped",
+        "address-mapping"
+      ],
+      "reason": "Tags described a different question (e.g. bitmap, paging/EAT, flow control, countability); replaced with tags for what is actually asked.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2026-2-cs-47",
+      "field": "tags",
+      "before": [
+        "coa",
+        "clock-rate",
+        "speedup"
+      ],
+      "after": [
+        "coa",
+        "pipelining",
+        "speedup",
+        "stalls"
+      ],
+      "reason": "Tags described a different question (e.g. bitmap, paging/EAT, flow control, countability); replaced with tags for what is actually asked.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2026-2-cs-48",
+      "field": "tags",
+      "before": [
+        "cn",
+        "tcp-flow-control",
+        "window-size"
+      ],
+      "after": [
+        "cn",
+        "tcp",
+        "congestion-control",
+        "slow-start"
+      ],
+      "reason": "Tags described a different question (e.g. bitmap, paging/EAT, flow control, countability); replaced with tags for what is actually asked.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2026-2-cs-49",
+      "field": "tags",
+      "before": [
+        "dl",
+        "multiplexers",
+        "logic-circuits"
+      ],
+      "after": [
+        "dl",
+        "decoder",
+        "multiplexer"
+      ],
+      "reason": "Tags described a different question (e.g. bitmap, paging/EAT, flow control, countability); replaced with tags for what is actually asked.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2026-2-cs-51",
+      "field": "tags",
+      "before": [
+        "pds",
+        "c-prog",
+        "subarrays"
+      ],
+      "after": [
+        "pds",
+        "recursion",
+        "c-prog"
+      ],
+      "reason": "Tags described a different question (e.g. bitmap, paging/EAT, flow control, countability); replaced with tags for what is actually asked.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2026-2-cs-53",
+      "field": "tags",
+      "before": [
+        "prob",
+        "binomial-distribution",
+        "coin-tosses"
+      ],
+      "after": [
+        "prob",
+        "conditional-probability",
+        "coin-tosses"
+      ],
+      "reason": "Tags described a different question (e.g. bitmap, paging/EAT, flow control, countability); replaced with tags for what is actually asked.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2026-2-cs-54",
+      "field": "tags",
+      "before": [
+        "dm",
+        "countability",
+        "uncountable-sets"
+      ],
+      "after": [
+        "calc",
+        "continuity",
+        "discontinuity"
+      ],
+      "reason": "Tags described a different question (e.g. bitmap, paging/EAT, flow control, countability); replaced with tags for what is actually asked.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2026-2-cs-55",
+      "field": "tags",
+      "before": [
+        "cn",
+        "framing",
+        "link-layer-protocols"
+      ],
+      "after": [
+        "cn",
+        "sliding-window",
+        "sequence-numbers",
+        "bandwidth-delay-product"
+      ],
+      "reason": "Tags described a different question (e.g. bitmap, paging/EAT, flow control, countability); replaced with tags for what is actually asked.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2026-2-cs-49",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2026-2/cs-49-1.svg",
+          "svg": "cse-2026-2/cs-49-1.svg",
+          "alt": "Inputs A (top) and B (bottom) enter the 2:4 decoder block Q, whose outputs are D0, D1, D2, D3 (top to bottom). Multiplexer block M has data inputs 0, 1, 2, 3 and select lines S1 and S0 entering from the top; its output is Y. Wiring: D0 goes to M input 0; the constant 0 goes to M input 1; the constant 1 goes to M input 2; D3 goes to M input 3. Decoder outputs D1 and D2 are not connected."
+        }
+      ],
+      "reason": "The question says \"the digital circuit shown below\" but the record had no figure; redrawn from the paper.",
+      "source": "pdf p.40"
+    }
+  ]
+}
