@@ -1,0 +1,29 @@
+{
+  "paper": "cse-2025-1",
+  "fixes": [
+    {
+      "id": "cse-2025-1-cs-22",
+      "field": "text",
+      "before": "A box contains 5 coins: 4 regular coins and 1  fake coin. When a regular coin is\ntossed, the probability 𝑃(ℎ𝑒𝑎𝑑) = 0.5 and for a fake coin, 𝑃(ℎ𝑒𝑎𝑑) = 1. You pick\na coin at random and toss it twice, and get two heads. The probability that the coin\nyou have chosen is the fake coin is _______. (rounded off to two decimal places)\nComputer Science and Information Technology (CS1)",
+      "after": "A box contains 5 coins: 4 regular coins and 1 fake coin. When a regular coin is tossed, the probability $P(\\text{head}) = 0.5$ and for a fake coin, $P(\\text{head}) = 1$. You pick a coin at random and toss it twice, and get two heads. The probability that the coin you have chosen is the fake coin is _______. (rounded off to two decimal places)",
+      "reason": "Removed the leaked page header \"Computer Science and Information Technology (CS1)\" and PDF line breaks; maths italics (Unicode 𝑃, ℎ𝑒𝑎𝑑) rewritten as KaTeX.",
+      "source": "transcription artifact (running page header of the CS1 master paper)"
+    },
+    {
+      "id": "cse-2025-1-cs-22",
+      "field": "subject",
+      "before": "ga",
+      "after": "prob",
+      "reason": "Question 22 of the CS section is an Engineering Mathematics probability question, not General Aptitude.",
+      "source": "question content (CS section Q22)"
+    },
+    {
+      "id": "cse-2025-1-cs-22",
+      "field": "topic",
+      "before": "quant",
+      "after": "bayes",
+      "reason": "Bayes' theorem question (same topic id as cse-2025-1-cs-28).",
+      "source": "question content"
+    }
+  ]
+}
