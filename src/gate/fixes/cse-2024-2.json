@@ -1,0 +1,47 @@
+{
+  "paper": "cse-2024-2",
+  "fixes": [
+    {
+      "id": "cse-2024-2-cs-28",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "10.12.2.0/23"
+        },
+        {
+          "l": "B",
+          "t": "10.12.2.0/24"
+        },
+        {
+          "l": "C",
+          "t": "10.12.0.0/22"
+        },
+        {
+          "l": "D",
+          "t": "10.12.2.0/22 Computer Science and Information Technology Set 2 (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "10.12.2.0/23"
+        },
+        {
+          "l": "B",
+          "t": "10.12.2.0/24"
+        },
+        {
+          "l": "C",
+          "t": "10.12.0.0/22"
+        },
+        {
+          "l": "D",
+          "t": "10.12.2.0/22"
+        }
+      ],
+      "reason": "Page header \"Computer Science and Information Technology Set 2 (CS2)\" was transcribed into option D.",
+      "source": "transcription artifact (running page header of the CS2 paper)"
+    }
+  ]
+}

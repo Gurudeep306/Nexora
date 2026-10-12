@@ -86,11 +86,23 @@ test('sanitizeLook: defaults, validation and v2 round-trip', async () => {
   assert.deepEqual(sanitizeLook({ theme: 'no-such-theme', font: 42, radius: '<script>' }), DEFAULT_LOOK);
 
   const v2 = {
-    v: 2, theme: 'nord', accent: 'teal', font: 'manrope', codeFont: 'fira', textSize: 'large',
+    v: 2, theme: 'nord', accent: 'teal', font: 'manrope', codeFont: 'fira', solutionFont: 'mali', textSize: 'large',
     cardStyle: 'gradient', radius: 'sharp', iconSet: 'remix', iconStyle: 'fill', iconContainer: 'outline', iconShape: 'circle',
   };
   assert.deepEqual(sanitizeLook(v2), v2);
   assert.deepEqual(sanitizeLook(sanitizeLook(v2)), v2, 'idempotent');
+
+  // Every offered solution font round-trips; a missing or unknown one is the default.
+  const { SOLUTION_FONTS, DEFAULT_SOLUTION_FONT } = await theme('fonts.ts');
+  assert.equal(DEFAULT_LOOK.solutionFont, 'shantell');
+  assert.equal(DEFAULT_SOLUTION_FONT, 'shantell');
+  assert.deepEqual(SOLUTION_FONTS.map((f) => f.id), ['shantell', 'patrick', 'architects', 'mali', 'off']);
+  for (const f of SOLUTION_FONTS) assert.equal(sanitizeLook({ ...v2, solutionFont: f.id }).solutionFont, f.id);
+  const { solutionFont: _omit, ...older } = v2;
+  assert.equal(sanitizeLook(older).solutionFont, 'shantell', 'looks saved before the field existed get the default');
+  for (const bad of ['caveat', 'Shantell', '', 7, null, '<script>']) {
+    assert.equal(sanitizeLook({ ...v2, solutionFont: bad }).solutionFont, 'shantell');
+  }
 
   // A style that doesn't exist in the chosen set falls back to the set's default.
   assert.equal(sanitizeLook({ ...v2, iconSet: 'remix', iconStyle: 'duotone' }).iconStyle, 'line');
@@ -111,6 +123,7 @@ test('sanitizeLook: migrates a v1 (wallpaper era) look', async () => {
   assert.equal(out.iconShape, 'rounded');
   assert.equal(out.font, 'nunito');
   assert.equal(out.textSize, 'xl');
+  assert.equal(out.solutionFont, 'shantell');
   for (const gone of ['wallpaper', 'glass', 'iconPack', 'fontStyle', 'fontSize', 'fontColor']) {
     assert.ok(!(gone in out), `${gone} should not survive migration`);
   }
@@ -131,6 +144,27 @@ test('the validator survives serialisation into the first-paint script', async (
     { wallpaper: 'deep-space', accent: 'ice', fontStyle: 'cinzel' },
     { theme: 'dracula', accent: 'theme', iconSet: 'phosphor', iconStyle: 'fill' },
     { theme: 'gruvbox', iconSet: 'lucide', iconStyle: 'fill' },
+    { theme: 'nord', solutionFont: 'architects' },
+    { solutionFont: 'off' },
+    { solutionFont: 'comic-sans' },
   ];
   for (const s of samples) assert.deepEqual(fn(s, T), sanitizeLookWith(s, LOOK_TABLES));
+  assert.deepEqual(T.solutionFonts, ['shantell', 'patrick', 'architects', 'mali', 'off']);
+  assert.equal(fn({ solutionFont: 'architects' }, T).solutionFont, 'architects');
+  assert.equal(fn({ solutionFont: 'comic-sans' }, T).solutionFont, 'shantell');
+});
+
+test('the first-paint script sets data-solution-font, and the theme CSS defines every solution font', async () => {
+  const fs = require('node:fs');
+  const html = fs.readFileSync(path.join(__dirname, '..', 'client', 'index.html'), 'utf8');
+  assert.match(html, /d\.setAttribute\('data-solution-font', look\.solutionFont\)/);
+  const { lookAttributes, DEFAULT_LOOK } = await theme('look.ts');
+  assert.equal(lookAttributes(DEFAULT_LOOK, 'dark')['data-solution-font'], 'shantell');
+  const { buildThemeCss } = await theme('themeCss.ts');
+  const { SOLUTION_FONTS } = await theme('fonts.ts');
+  const css = buildThemeCss();
+  for (const f of SOLUTION_FONTS) {
+    assert.match(css, new RegExp(`\\[data-solution-font="${f.id}"\\]\\{--font-solution:`), `no CSS for ${f.id}`);
+  }
+  assert.match(css, /\[data-solution-font="off"\]\{--font-solution:var\(--font-body\)/);
 });

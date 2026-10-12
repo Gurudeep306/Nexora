@@ -1,0 +1,110 @@
+{
+  "paper": "cse-2025-1",
+  "version": 2,
+  "solutions": {
+    "cse-2025-1-cs-22": {
+      "approach": "This is Bayes' theorem: draw the two-stage probability tree (which coin, then two tosses), multiply along branches to get the joint probability of each way to see HH, and divide the fake-coin branch by the total.",
+      "concepts": ["Bayes' theorem", "Total probability", "Probability tree"],
+      "given": "5 coins: 4 regular ($P(H) = 0.5$), 1 fake ($P(H) = 1$). One coin is picked uniformly at random and tossed twice; the result is HH. Find $P(\\text{fake} \\mid HH)$.",
+      "steps": [
+        {
+          "title": "Priors: which coin was picked",
+          "body": "Picking uniformly from 5 coins: $P(F) = \\frac15$ (fake), $P(R) = \\frac45$ (regular).",
+          "scene": { "panels": [null, { "reveal": 1 }] }
+        },
+        {
+          "title": "Likelihood of two heads for each coin",
+          "body": "Tosses are independent given the coin:\n\n- fake: $P(HH \\mid F) = 1 \\times 1 = 1$\n- regular: $P(HH \\mid R) = \\frac12 \\times \\frac12 = \\frac14$",
+          "scene": {
+            "panels": [
+              {
+                "root": {
+                  "id": "pick",
+                  "label": "pick",
+                  "children": [
+                    { "id": "F", "label": "fake", "edge": "1/5", "children": [{ "id": "FHH", "label": "HH", "edge": "1", "tone": "accent" }] },
+                    { "id": "R", "label": "regular", "edge": "4/5", "children": [{ "id": "RHH", "label": "HH", "edge": "1/4", "tone": "accent" }] }
+                  ]
+                }
+              },
+              { "reveal": 2 }
+            ]
+          }
+        },
+        {
+          "title": "Total probability of HH",
+          "body": "Multiply along each branch and add:\n\n$$P(HH) = \\tfrac15 \\cdot 1 + \\tfrac45 \\cdot \\tfrac14 = \\tfrac15 + \\tfrac15 = \\tfrac25$$",
+          "scene": {
+            "panels": [
+              {
+                "root": {
+                  "id": "pick",
+                  "label": "pick",
+                  "children": [
+                    { "id": "F", "label": "fake", "edge": "1/5", "children": [{ "id": "FHH", "label": "HH", "edge": "1", "tone": "warning", "sub": "1/5" }] },
+                    { "id": "R", "label": "regular", "edge": "4/5", "children": [{ "id": "RHH", "label": "HH", "edge": "1/4", "tone": "warning", "sub": "1/5" }] }
+                  ]
+                }
+              },
+              { "reveal": 3 }
+            ]
+          }
+        },
+        {
+          "title": "Apply Bayes' theorem",
+          "body": "$$P(F \\mid HH) = \\frac{P(F)\\,P(HH \\mid F)}{P(HH)} = \\frac{1/5}{2/5} = \\frac12 = 0.50$$\n\nBoth branches contribute the same $\\frac15$, so given HH the two explanations are equally likely.",
+          "scene": {
+            "panels": [
+              {
+                "root": {
+                  "id": "pick",
+                  "label": "pick",
+                  "children": [
+                    { "id": "F", "label": "fake", "edge": "1/5", "tone": "success", "children": [{ "id": "FHH", "label": "HH", "edge": "1", "tone": "success", "sub": "1/5" }] },
+                    { "id": "R", "label": "regular", "edge": "4/5", "tone": "muted", "children": [{ "id": "RHH", "label": "HH", "edge": "1/4", "tone": "muted", "sub": "1/5" }] }
+                  ]
+                }
+              },
+              { "reveal": 4 }
+            ]
+          }
+        }
+      ],
+      "answer": { "value": "$P(\\text{fake} \\mid HH) = \\frac12 =$ **0.50**", "number": 0.5, "matchesKey": true },
+      "shortcut": "Think in equally likely cases: each coin has 4 equally likely toss-pairs (20 cases in all). A regular coin shows HH in 1 of its 4; the fake coin shows HH in all 4. So HH happens in $4 \\times 1 + 4 = 8$ cases, 4 of them fake: $4/8 = 0.5$.",
+      "pitfalls": [
+        "Answering the prior $1/5 = 0.2$ — the two heads are evidence that must update it.",
+        "Using $P(HH \\mid R) = \\frac12$ (one toss) instead of $\\frac14$ (two tosses)."
+      ],
+      "verification": "Complement check: $P(R \\mid HH) = \\frac{(4/5)(1/4)}{2/5} = \\frac12$, and $\\frac12 + \\frac12 = 1$ ✓.",
+      "animation": {
+        "kind": "panels",
+        "panels": [
+          {
+            "kind": "tree",
+            "title": "Probability tree",
+            "root": {
+              "id": "pick",
+              "label": "pick",
+              "children": [
+                { "id": "F", "label": "fake", "edge": "1/5" },
+                { "id": "R", "label": "regular", "edge": "4/5" }
+              ]
+            }
+          },
+          {
+            "kind": "equation",
+            "title": "Bayes",
+            "lines": [
+              { "tex": "P(F)=\\tfrac15,\\quad P(R)=\\tfrac45", "note": "priors" },
+              { "tex": "P(HH\\mid F)=1,\\quad P(HH\\mid R)=\\left(\\tfrac12\\right)^2=\\tfrac14", "note": "likelihoods" },
+              { "tex": "P(HH)=\\tfrac15\\cdot1+\\tfrac45\\cdot\\tfrac14=\\tfrac25", "note": "total probability" },
+              { "tex": "P(F\\mid HH)=\\dfrac{1/5}{2/5}=\\tfrac12=0.5", "tone": "success" }
+            ],
+            "reveal": 1
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "paper": "cse-2024-2",
+  "version": 2,
+  "solutions": {
+    "cse-2024-2-cs-28": {
+      "approach": "A CIDR block $a.b.c.d/n$ contains exactly $2^{32-n}$ addresses, from the network address (host bits all 0) to the broadcast address (host bits all 1). So count the addresses in the range to get $n$, then check that the first address is aligned to that block size.",
+      "concepts": ["CIDR", "Subnet mask", "Address block alignment"],
+      "given": "Range $10.12.2.0$ to $10.12.3.255$ (inclusive).",
+      "steps": [
+        {
+          "title": "Count the addresses",
+          "body": "The first two octets are fixed. The third goes from 2 to 3 and the fourth covers $0$–$255$ each time:\n\n$$2 \\times 256 = 512 = 2^9 \\text{ addresses}$$\n\nSo the block needs **9 host bits** and the prefix length is $32 - 9 = 23$.",
+          "scene": { "vars": { "addresses": "2 × 256 = 512 = 2⁹", "host bits": 9, "prefix": "/23" } }
+        },
+        {
+          "title": "Compare the endpoints in binary",
+          "body": "The first 23 bits of the two endpoints are identical, and the last 9 bits go from all 0s to all 1s. That is exactly the shape of one CIDR block: network address $\\to$ broadcast address.",
+          "scene": {
+            "rows": [
+              { "label": "first", "fields": [{ "bits": "00001010000011000000001", "label": "common prefix (23 bits)", "tone": "accent" }, { "bits": "000000000", "label": "host = 0…0", "tone": "success" }], "value": "10.12.2.0" },
+              { "label": "last", "fields": [{ "bits": "00001010000011000000001", "label": "common prefix (23 bits)", "tone": "accent" }, { "bits": "111111111", "label": "host = 1…1", "tone": "warning" }], "value": "10.12.3.255" }
+            ]
+          }
+        },
+        {
+          "title": "Check alignment and pick the option",
+          "body": "A /23 block starts at a multiple of 512, i.e. an **even** third octet. $10.12.2.0$ has third octet 2, so it is a valid /23 network address and $10.12.2.0/23$ covers exactly $10.12.2.0$–$10.12.3.255$, with mask $255.255.254.0$.",
+          "scene": {
+            "rows": [
+              { "label": "first", "fields": [{ "bits": "00001010000011000000001", "label": "network (23 bits)", "tone": "accent" }, { "bits": "000000000", "label": "host", "tone": "success" }], "value": "10.12.2.0" },
+              { "label": "last", "fields": [{ "bits": "00001010000011000000001", "label": "network (23 bits)", "tone": "accent" }, { "bits": "111111111", "label": "host", "tone": "warning" }], "value": "10.12.3.255" },
+              { "label": "/23 mask", "fields": [{ "bits": "11111111111111111111111", "tone": "info" }, { "bits": "000000000" }], "value": "255.255.254.0" }
+            ]
+          }
+        }
+      ],
+      "answer": { "value": "**10.12.2.0/23** — option (A)", "choice": ["A"], "matchesKey": true },
+      "optionAnalysis": [
+        { "option": "A", "correct": true, "reason": "$2^{9} = 512$ addresses starting at an aligned network address: $10.12.2.0$–$10.12.3.255$ exactly." },
+        { "option": "B", "correct": false, "reason": "/24 holds only 256 addresses: $10.12.2.0$–$10.12.2.255$, missing all of $10.12.3.x$." },
+        { "option": "C", "correct": false, "reason": "$10.12.0.0/22$ spans $10.12.0.0$–$10.12.3.255$ (1024 addresses) — it also includes $10.12.0.x$ and $10.12.1.x$." },
+        { "option": "D", "correct": false, "reason": "A /22 block must start at a third octet that is a multiple of 4; masking $10.12.2.0$ with /22 gives $10.12.0.0$, the same oversized block as (C)." }
+      ],
+      "shortcut": "Block size $= 512 = 2^9 \\Rightarrow /23$, and $2$ is a multiple of $512/256 = 2$ in the third octet, so the block starts exactly at $10.12.2.0$.",
+      "pitfalls": [
+        "Choosing /22 because the range touches two /24s — two /24s make a /23, four make a /22.",
+        "Ignoring alignment: a prefix like $10.12.1.0/23$ would not even be a valid network address."
+      ],
+      "verification": "Broadcast of $10.12.2.0/23$: set the 9 host bits to 1 → third octet $00000011 = 3$, fourth $11111111 = 255$ → $10.12.3.255$ ✓.",
+      "animation": {
+        "kind": "bits",
+        "title": "Endpoints in binary (32 bits)",
+        "group": 8,
+        "rows": [
+          { "label": "first", "fields": [{ "bits": "00001010000011000000001000000000" }], "value": "10.12.2.0" },
+          { "label": "last", "fields": [{ "bits": "00001010000011000000001111111111" }], "value": "10.12.3.255" }
+        ]
+      }
+    }
+  }
+}

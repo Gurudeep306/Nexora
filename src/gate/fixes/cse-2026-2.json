@@ -1,0 +1,29 @@
+{
+  "paper": "cse-2026-2",
+  "fixes": [
+    {
+      "id": "cse-2026-2-cs-50",
+      "field": "text",
+      "before": "Consider the following ANSI-C program. #include <stdio.h> int main(){ int *ptr, a, b, c; a=5; b=11; c=20; ptr=&a; *ptr=c; ptr=&c; a=*(&b); c=*ptr-a; printf(\"%d\",c); return(0); } The output of this program is ____________. (answer in integer) Note: Assume that the program compiles and runs successfully.",
+      "after": "Consider the following ANSI-C program.\n\n```c\n#include <stdio.h>\nint main(){\n    int *ptr, a, b, c;\n    a=5; b=11; c=20;\n    ptr=&a;\n    *ptr=c;\n    ptr=&c;\n    a=*(&b);\n    c=*ptr-a;\n    printf(\"%d\",c);\n    return(0);\n}\n```\n\nThe output of this program is ____________. (answer in integer)\n\nNote: Assume that the program compiles and runs successfully.",
+      "reason": "The program was transcribed onto a single line; restored as a C code block (tokens unchanged).",
+      "source": "question content (code layout only)"
+    },
+    {
+      "id": "cse-2026-2-cs-50",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Stored key 1 contradicts the program, which prints 9.",
+      "source": "trace in src/gate/solutions/cse-2026-2.json"
+    },
+    {
+      "id": "cse-2026-2-cs-50",
+      "field": "reviewNote",
+      "before": null,
+      "after": "Stored key is 1, but tracing the program gives 9 (a = 20, then a = 11, c = 20 − 11). Verify against the official GATE 2026 CS2 key.",
+      "reason": "Explains the needsReview flag.",
+      "source": "trace in src/gate/solutions/cse-2026-2.json"
+    }
+  ]
+}

@@ -1,171 +1,194 @@
-import { useState, useEffect } from 'react'
-import {
-  ChevronLeft,
-  ChevronRight,
-} from 'lucide-react'
+import { useEffect, useRef } from 'react'
+import { ChevronLeft, ChevronRight, Image as ImageIcon, Bookmark } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { QuestionView } from './QuestionView'
-import { type GateQuestion } from './types'
+import { Kbd } from '@/components/ui'
+import { OutcomeDot, QuestionView } from './QuestionView'
+import { useGateProgress } from './progress'
+import { snippet } from './answers'
+import { TYPE_SHORT, paperLabel, qLabel, type GateQuestion } from './types'
 
-interface GateFocusDeckProps {
+interface Props {
   questions: GateQuestion[]
   subjectName: (s: string) => string
   topicName: (s: string, t: string) => string | undefined
+  /** Index of the open question within this page. */
+  index: number
+  onIndex: (i: number) => void
   page: number
   total: number
   pageSize: number
-  onPageChange: (p: number) => void
+  /** Move to another page; `at` = 'first' | 'last' question on it. */
+  onPageChange: (p: number, at?: 'first' | 'last') => void
+  loading?: boolean
 }
 
-export function GateFocusDeck({
-  questions,
-  subjectName,
-  topicName,
-  page,
-  total,
-  pageSize,
-  onPageChange,
-}: GateFocusDeckProps) {
-  const [currentIndex, setCurrentIndex] = useState(0)
+/**
+ * Practice: one question at a time. A queue of the current page sits beside
+ * the card on wide screens (above it as a strip on phones); ← / → move
+ * through the whole result set, crossing page boundaries.
+ */
+export function GateFocusDeck({ questions, subjectName, topicName, index, onIndex, page, total, pageSize, onPageChange, loading }: Props) {
+  const progress = useGateProgress()
+  const i = Math.min(Math.max(0, index), Math.max(0, questions.length - 1))
+  const q = questions[i]
+  const globalIndex = (page - 1) * pageSize + i + 1
+  const hasPrev = globalIndex > 1
+  const hasNext = globalIndex < total
+  const cardTop = useRef<HTMLDivElement>(null)
+  const stripRef = useRef<HTMLDivElement>(null)
 
-  // Clamp current index when questions change
-  useEffect(() => {
-    if (currentIndex >= questions.length) {
-      setCurrentIndex(Math.max(0, questions.length - 1))
-    }
-  }, [questions.length, currentIndex])
+  const go = (delta: 1 | -1) => {
+    const n = i + delta
+    if (n >= 0 && n < questions.length) onIndex(n)
+    else if (delta > 0 && hasNext) onPageChange(page + 1, 'first')
+    else if (delta < 0 && hasPrev) onPageChange(page - 1, 'last')
+  }
 
-  // Keyboard navigation [ArrowLeft] and [ArrowRight]
+  // ← / → (and J / K) step through questions.
   useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return
+      const t = e.target as HTMLElement | null
+      if (t && (t.closest('input, textarea, select, [contenteditable="true"]') || t.closest('[role="dialog"]'))) return
       if (e.key === 'ArrowRight' || e.key === 'j') {
-        if (currentIndex < questions.length - 1) {
-          setCurrentIndex((i) => i + 1)
-        }
+        e.preventDefault()
+        go(1)
       } else if (e.key === 'ArrowLeft' || e.key === 'k') {
-        if (currentIndex > 0) {
-          setCurrentIndex((i) => i - 1)
-        }
+        e.preventDefault()
+        go(-1)
       }
     }
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [currentIndex, questions.length])
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  })
 
-  if (questions.length === 0) return null
+  // Keep the current chip in view in the phone strip, and the card's top
+  // visible after moving on.
+  useEffect(() => {
+    const chip = stripRef.current?.querySelector<HTMLElement>(`[data-i="${i}"]`)
+    chip?.scrollIntoView({ block: 'nearest', inline: 'center' })
+    const top = cardTop.current?.getBoundingClientRect().top ?? 0
+    if (top < 0) cardTop.current?.scrollIntoView({ block: 'start', behavior: 'smooth' })
+  }, [i, q?.id])
 
-  const activeQuestion = questions[currentIndex] || questions[0]
-  const globalIndex = (page - 1) * pageSize + currentIndex + 1
+  if (!q) return null
+
+  const nav = (
+    <div className="flex items-center gap-2">
+      <button type="button" onClick={() => go(-1)} disabled={!hasPrev} className="btn-secondary inline-flex items-center gap-1 !px-3 !py-1.5 !text-[13px] disabled:opacity-40" aria-label="Previous question">
+        <ChevronLeft className="size-4" />
+        <span className="hidden sm:inline">Previous</span>
+      </button>
+      <span className="min-w-0 flex-1 text-center font-mono text-[12.5px] tabular-nums text-text-muted">
+        {globalIndex.toLocaleString()} / {total.toLocaleString()}
+      </span>
+      <button type="button" onClick={() => go(1)} disabled={!hasNext} className="btn-primary inline-flex items-center gap-1 !px-3 !py-1.5 !text-[13px] disabled:opacity-40" aria-label="Next question">
+        <span className="hidden sm:inline">Next</span>
+        <ChevronRight className="size-4" />
+      </button>
+    </div>
+  )
 
   return (
-    <div className="space-y-4 animate-in fade-in-0 duration-200">
-      {/* ── Top Focus Studio Strip Navigator ── */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border/80 bg-bg-surface-2/60 p-3 sm:px-5 backdrop-blur-md shadow-sm">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5 font-mono text-[13px] font-bold text-text-primary">
-            <span className="flex size-7 items-center justify-center rounded-lg bg-accent-brand text-on-accent-brand shadow-xs">
-              {currentIndex + 1}
-            </span>
-            <span className="text-text-muted">/ {questions.length}</span>
-            <span className="text-[11.5px] text-text-muted font-normal hidden sm:inline">
-              (Global #{globalIndex} of {total})
-            </span>
-          </div>
-
-          <div className="hidden lg:flex items-center gap-1 border-l border-border/60 pl-3">
-            <span className="text-[11px] text-text-muted">Use</span>
-            <kbd className="rounded bg-bg-surface px-1.5 py-0.5 text-[10px] font-mono border border-border">←</kbd>
-            <kbd className="rounded bg-bg-surface px-1.5 py-0.5 text-[10px] font-mono border border-border">→</kbd>
-            <span className="text-[11px] text-text-muted">keys to navigate</span>
-          </div>
+    <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,280px)_minmax(0,1fr)]">
+      {/* Queue (wide screens) */}
+      <aside className="card sticky top-20 hidden max-h-[calc(100vh-7rem)] flex-col overflow-hidden !p-0 lg:flex" aria-label="Questions on this page">
+        <div className="flex items-baseline justify-between border-b border-border px-4 py-2.5">
+          <span className="text-[12.5px] font-semibold text-text-primary">This page</span>
+          <span className="font-mono text-[11.5px] text-text-muted">
+            {((page - 1) * pageSize + 1).toLocaleString()}–{Math.min(page * pageSize, total).toLocaleString()}
+          </span>
         </div>
+        <ol className={cn('flex-1 overflow-y-auto p-1.5', loading && 'opacity-60')}>
+          {questions.map((x, k) => {
+            const p = progress[x.id]
+            const active = k === i
+            return (
+              <li key={x.id}>
+                <button
+                  type="button"
+                  onClick={() => onIndex(k)}
+                  aria-current={active ? 'true' : undefined}
+                  className={cn(
+                    'flex w-full flex-col gap-0.5 rounded-lg px-2.5 py-2 text-left transition-colors',
+                    active ? 'bg-accent-brand/10 ring-1 ring-accent-brand/40' : 'hover:bg-bg-surface-2',
+                  )}
+                >
+                  <span className="flex items-center gap-1.5 text-[12px]">
+                    <span className={cn('font-mono font-semibold', active ? 'text-accent-brand' : 'text-text-primary')}>{qLabel(x)}</span>
+                    <span className="truncate text-text-muted">
+                      {x.exam} {x.year}
+                      {x.set ? `·${x.set}` : ''}
+                    </span>
+                    <span className="ml-auto flex shrink-0 items-center gap-1.5">
+                      {x.figures?.length > 0 && <ImageIcon className="size-3 text-text-muted" aria-label="Has figure" />}
+                      {p?.bookmarked && <Bookmark className="size-3 fill-current text-state-warning" aria-label="Bookmarked" />}
+                      <OutcomeDot outcome={p?.outcome} />
+                    </span>
+                  </span>
+                  <span className="line-clamp-2 text-[12px] leading-snug text-text-secondary">{snippet(x.text, 110)}</span>
+                </button>
+              </li>
+            )
+          })}
+        </ol>
+        <div className="flex items-center justify-between border-t border-border px-2 py-1.5 text-[12px]">
+          <button type="button" disabled={page <= 1} onClick={() => onPageChange(page - 1)} className="rounded-md px-2 py-1 text-text-secondary hover:bg-bg-surface-2 hover:text-text-primary disabled:opacity-40">
+            ← Previous page
+          </button>
+          <button type="button" disabled={page * pageSize >= total} onClick={() => onPageChange(page + 1)} className="rounded-md px-2 py-1 text-text-secondary hover:bg-bg-surface-2 hover:text-text-primary disabled:opacity-40">
+            Next page →
+          </button>
+        </div>
+      </aside>
 
-        {/* Scrollable Question Number Chips Strip */}
-        <div className="flex items-center gap-1 overflow-x-auto max-w-full sm:max-w-md py-1 scrollbar-none">
-          {questions.map((q, idx) => {
-            const isCurrent = idx === currentIndex
+      <div className="min-w-0 space-y-3" ref={cardTop}>
+        {/* Strip (phones and tablets) */}
+        <div ref={stripRef} className="-mx-1 flex gap-1 overflow-x-auto px-1 pb-1 lg:hidden" aria-label="Questions on this page">
+          {questions.map((x, k) => {
+            const o = progress[x.id]?.outcome
             return (
               <button
-                key={q.id}
+                key={x.id}
                 type="button"
-                onClick={() => setCurrentIndex(idx)}
+                data-i={k}
+                onClick={() => onIndex(k)}
+                aria-current={k === i ? 'true' : undefined}
+                aria-label={`Question ${(page - 1) * pageSize + k + 1}`}
                 className={cn(
-                  'flex size-8 shrink-0 items-center justify-center rounded-xl font-mono text-[12px] font-bold transition-all cursor-pointer border',
-                  isCurrent
-                    ? 'border-accent-brand bg-accent-brand text-on-accent-brand shadow-sm ring-2 ring-accent-brand/20 scale-105'
-                    : 'border-border/60 bg-bg-surface/80 text-text-muted hover:border-accent-brand/40 hover:text-text-primary',
+                  'relative flex h-8 min-w-8 shrink-0 items-center justify-center rounded-lg border px-1.5 font-mono text-[12px] transition-colors',
+                  k === i ? 'border-accent-brand bg-accent-brand text-on-accent-brand' : 'border-border bg-bg-surface text-text-secondary',
                 )}
-                title={`Jump to Q${idx + 1}: ${q.number}`}
               >
-                {idx + 1}
+                {(page - 1) * pageSize + k + 1}
+                {o && k !== i && <OutcomeDot outcome={o} className="absolute -top-0.5 -right-0.5 ring-2 ring-bg-app" />}
               </button>
             )
           })}
         </div>
 
-        {/* Prev / Next Buttons */}
-        <div className="flex items-center gap-1.5">
-          <button
-            type="button"
-            disabled={currentIndex === 0}
-            onClick={() => setCurrentIndex((i) => Math.max(0, i - 1))}
-            className="flex items-center gap-1 rounded-xl border border-border/80 bg-bg-surface px-3 py-1.5 text-[12px] font-bold text-text-primary hover:border-accent-brand disabled:opacity-40 transition-all cursor-pointer shadow-xs"
-          >
-            <ChevronLeft className="size-4" />
-            <span className="hidden sm:inline">Prev</span>
-          </button>
+        {nav}
 
-          <button
-            type="button"
-            disabled={currentIndex === questions.length - 1}
-            onClick={() => setCurrentIndex((i) => Math.min(questions.length - 1, i + 1))}
-            className="flex items-center gap-1 rounded-xl border border-border/80 bg-bg-surface px-3 py-1.5 text-[12px] font-bold text-text-primary hover:border-accent-brand disabled:opacity-40 transition-all cursor-pointer shadow-xs"
-          >
-            <span className="hidden sm:inline">Next</span>
-            <ChevronRight className="size-4" />
-          </button>
+        <div className={cn('transition-opacity', loading && 'opacity-60')}>
+          <QuestionView
+            key={q.id}
+            q={q}
+            subjectName={subjectName(q.subject)}
+            topicName={topicName(q.subject, q.topic)}
+            reportToAssistant
+            keyboard
+          />
         </div>
-      </div>
 
-      {/* ── Active Question Canvas ── */}
-      <div className="min-h-[420px]">
-        <QuestionView
-          key={activeQuestion.id}
-          q={activeQuestion}
-          subjectName={subjectName(activeQuestion.subject)}
-          topicName={topicName(activeQuestion.subject, activeQuestion.topic)}
-          reportToAssistant
-        />
-      </div>
+        {nav}
 
-      {/* ── Bottom Deck Footer with Jump Control ── */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border/60 pt-3 text-[12.5px] text-text-muted">
-        <span>
-          Viewing Question <strong className="text-text-primary">{currentIndex + 1}</strong> of{' '}
-          <strong className="text-text-primary">{questions.length}</strong> in current set
+        <p className="hidden items-center justify-center gap-1.5 text-[12px] text-text-muted md:flex">
+          <Kbd>←</Kbd>
+          <Kbd>→</Kbd> move · <Kbd>1</Kbd>–<Kbd>4</Kbd> pick · <Kbd>Enter</Kbd> check · <Kbd>S</Kbd> solution · <Kbd>B</Kbd> bookmark
+        </p>
+        <span className="sr-only" aria-live="polite">
+          {qLabel(q)}, {paperLabel(q)}, {TYPE_SHORT[q.type]}
         </span>
-
-        <div className="flex items-center gap-2">
-          {page > 1 && (
-            <button
-              type="button"
-              onClick={() => onPageChange(page - 1)}
-              className="text-accent-brand hover:underline font-semibold"
-            >
-              ← Load Previous Set
-            </button>
-          )}
-          {page * pageSize < total && (
-            <button
-              type="button"
-              onClick={() => onPageChange(page + 1)}
-              className="text-accent-brand hover:underline font-semibold"
-            >
-              Load Next Set →
-            </button>
-          )}
-        </div>
       </div>
     </div>
   )

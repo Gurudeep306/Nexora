@@ -1,0 +1,88 @@
+{
+  "paper": "cse-2025-2",
+  "version": 2,
+  "solutions": {
+    "cse-2025-2-cs-16": {
+      "approach": "Simulate SRTF event by event: re-decide only when a process **arrives** or **finishes**, always running the ready process with the least remaining time. Then use $TAT = CT - AT$ for each process and average.",
+      "concepts": ["SRTF (preemptive SJF)", "Gantt chart", "Turnaround time"],
+      "given": "| Process | Arrival (ms) | Burst (ms) |\n|---|---|---|\n| P1 | 0 | 10 |\n| P2 | 1 | 13 |\n| P3 | 2 | 6 |\n| P4 | 8 | 9 |\n\nNo context-switch overhead.",
+      "steps": [
+        {
+          "title": "Start at t = 0 with the only arrival",
+          "body": "At $t=0$ only P1 is in the ready queue, so P1 starts. With SRTF the scheduler re-checks the choice only at the next **arrival** or **completion**.",
+          "scene": { "upto": 0, "cursor": 0, "vars": { "t": 0, "running": "P1", "ready (remaining)": "—" } }
+        },
+        {
+          "title": "t = 1: P2 arrives but cannot preempt",
+          "body": "P1 has run 1 ms, so its remaining time is $10-1=9$. P2 needs $13$. Since $13 > 9$, P1 keeps the CPU.",
+          "scene": { "upto": 1, "cursor": 1, "vars": { "t": 1, "running": "P1 (9 left)", "ready (remaining)": "P2 (13)" } }
+        },
+        {
+          "title": "t = 2: P3 arrives and preempts P1",
+          "body": "P1's remaining time is now $10-2=8$; P3 needs $6$. Since $6 < 8$, **P3 preempts P1**. Nobody else arrives before $t=8$, and P3 runs its full $6$ ms: it finishes at $2+6=8$.",
+          "scene": { "upto": 8, "cursor": 8, "vars": { "t": 8, "running": "P3 → done", "ready (remaining)": "P1 (8), P2 (13)" } }
+        },
+        {
+          "title": "t = 8: P4 arrives; choose the shortest remaining",
+          "body": "Ready at $t=8$: P1 ($8$ left), P2 ($13$), P4 ($9$). The minimum is **P1 with 8**, so P1 runs $8 \\to 16$ and completes. No arrivals remain, so there are no more preemptions.",
+          "scene": { "upto": 16, "cursor": 16, "vars": { "t": 16, "running": "P1 → done", "ready (remaining)": "P2 (13), P4 (9)" } }
+        },
+        {
+          "title": "Finish the remaining jobs shortest-first",
+          "body": "P4 ($9$) runs $16 \\to 25$, then P2 ($13$) runs $25 \\to 38$.\n\nSchedule: P1 $[0,2)$, P3 $[2,8)$, P1 $[8,16)$, P4 $[16,25)$, P2 $[25,38)$.",
+          "scene": { "upto": 38, "cursor": 38, "vars": { "t": 38, "running": "—", "ready (remaining)": "—" } }
+        },
+        {
+          "title": "Turnaround times and their average",
+          "body": "$TAT = CT - AT$:\n\n| Process | CT | AT | TAT |\n|---|---|---|---|\n| P1 | 16 | 0 | 16 |\n| P2 | 38 | 1 | 37 |\n| P3 | 8 | 2 | 6 |\n| P4 | 25 | 8 | 17 |\n\n$$\\overline{TAT} = \\frac{16+37+6+17}{4} = \\frac{76}{4} = 19 \\text{ ms}$$",
+          "scene": {
+            "kind": "table",
+            "title": "Turnaround = completion − arrival",
+            "cols": ["AT", "BT", "CT", "TAT"],
+            "rowLabels": ["P1", "P2", "P3", "P4"],
+            "rows": [[0, 10, 16, 16], [1, 13, 38, 37], [2, 6, 8, 6], [8, 9, 25, 17]],
+            "hl": [{ "c": 3, "tone": "success" }],
+            "vars": { "sum": 76, "average": "76 / 4 = 19 ms" }
+          }
+        }
+      ],
+      "answer": { "value": "**19 ms** — option (D)", "choice": ["D"], "matchesKey": true },
+      "optionAnalysis": [
+        { "option": "A", "correct": false, "reason": "22 would need a total turnaround of 88 ms; the SRTF schedule gives 76 ms." },
+        { "option": "B", "correct": false, "reason": "15 would need a total of 60 ms — P2 alone waits until 25 and turns around in 37 ms, so this is impossible." },
+        { "option": "C", "correct": false, "reason": "37 ms is P2's own turnaround time ($38-1$), not the average over four processes." },
+        { "option": "D", "correct": true, "reason": "$(16+37+6+17)/4 = 19$ ms." }
+      ],
+      "shortcut": "The CPU is never idle and there is no overhead, so the last completion is $\\sum BT = 38$. Only the order matters: after $t=8$ nothing arrives, so the remaining jobs simply run shortest-first (P1 8, P4 9, P2 13).",
+      "pitfalls": [
+        "Preempting P1 at $t=1$: compare P2's burst with P1's **remaining** time (9), not its original burst.",
+        "Using waiting time instead of turnaround time ($\\overline{WT} = 19 - 38/4 = 9.5$ ms).",
+        "Forgetting to subtract the arrival time (P4 completes at 25 but arrived at 8)."
+      ],
+      "verification": "Check: $\\sum CT - \\sum AT = (16+38+8+25) - (0+1+2+8) = 87 - 11 = 76$, and the last completion $38$ equals the total burst $10+13+6+9$.",
+      "animation": {
+        "kind": "gantt",
+        "title": "SRTF schedule",
+        "unit": "ms",
+        "lanes": [
+          {
+            "label": "CPU",
+            "bars": [
+              { "start": 0, "end": 2, "label": "P1" },
+              { "start": 2, "end": 8, "label": "P3" },
+              { "start": 8, "end": 16, "label": "P1" },
+              { "start": 16, "end": 25, "label": "P4" },
+              { "start": 25, "end": 38, "label": "P2" }
+            ]
+          }
+        ],
+        "marks": [
+          { "t": 0, "label": "P1↓" },
+          { "t": 1, "label": "P2↓" },
+          { "t": 2, "label": "P3↓" },
+          { "t": 8, "label": "P4↓" }
+        ]
+      }
+    }
+  }
+}

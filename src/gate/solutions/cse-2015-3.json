@@ -1,0 +1,106 @@
+{
+  "paper": "cse-2015-3",
+  "version": 2,
+  "solutions": {
+    "cse-2015-3-cs-13": {
+      "approach": "Insert the keys one at a time: each new key walks down from the root, going left when smaller and right when larger, and becomes a leaf where the walk falls off the tree. Then read off the deepest level.",
+      "concepts": ["Binary search tree", "BST insertion", "Tree levels"],
+      "given": "Insert, in order: $71, 65, 84, 69, 67, 83$ into an empty BST.",
+      "steps": [
+        {
+          "title": "Insert 71 — it becomes the root",
+          "body": "The tree is empty, so 71 is the root (level 0).",
+          "scene": { "root": { "label": 71, "tone": "accent", "sub": "L0" } }
+        },
+        {
+          "title": "Insert 65 and 84",
+          "body": "$65 < 71$ → left child of 71.\n\n$84 > 71$ → right child of 71. Both are on level 1.",
+          "scene": {
+            "root": {
+              "label": 71,
+              "children": [
+                { "label": 65, "tone": "accent", "sub": "L1" },
+                { "label": 84, "tone": "accent", "sub": "L1" }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Insert 69",
+          "body": "$69 < 71$ → go left to 65; $69 > 65$ → right child of 65 (level 2).",
+          "scene": {
+            "root": {
+              "label": 71,
+              "tone": "info",
+              "children": [
+                { "label": 65, "tone": "info", "children": [null, { "label": 69, "tone": "accent", "sub": "L2" }] },
+                { "label": 84 }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Insert 67",
+          "body": "$67 < 71$ → left to 65; $67 > 65$ → right to 69; $67 < 69$ → **left child of 69** (level 3).",
+          "scene": {
+            "root": {
+              "label": 71,
+              "tone": "info",
+              "children": [
+                {
+                  "label": 65,
+                  "tone": "info",
+                  "children": [null, { "label": 69, "tone": "info", "children": [{ "label": 67, "tone": "accent", "sub": "L3" }, null] }]
+                },
+                { "label": 84 }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Insert 83",
+          "body": "$83 > 71$ → right to 84; $83 < 84$ → left child of 84 (level 2).",
+          "scene": {
+            "root": {
+              "label": 71,
+              "tone": "info",
+              "children": [
+                { "label": 65, "children": [null, { "label": 69, "children": [{ "label": 67 }, null] }] },
+                { "label": 84, "tone": "info", "children": [{ "label": 83, "tone": "accent", "sub": "L2" }, null] }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Read the levels",
+          "body": "Level 0: 71 · Level 1: 65, 84 · Level 2: 69, 83 · Level 3: **67**.\n\nThe only node on the lowest level is 67, option (B).",
+          "scene": {
+            "root": {
+              "label": 71,
+              "sub": "L0",
+              "children": [
+                { "label": 65, "sub": "L1", "children": [null, { "label": 69, "sub": "L2", "children": [{ "label": 67, "tone": "success", "sub": "L3 (lowest)" }, null] }] },
+                { "label": 84, "sub": "L1", "children": [{ "label": 83, "sub": "L2" }, null] }
+              ]
+            }
+          }
+        }
+      ],
+      "answer": { "value": "**67** — option (B)", "choice": ["B"], "matchesKey": true },
+      "optionAnalysis": [
+        { "option": "A", "correct": false, "reason": "65 is a child of the root (level 1)." },
+        { "option": "B", "correct": true, "reason": "67 follows 71 → 65 → 69 and lands on level 3, the deepest." },
+        { "option": "C", "correct": false, "reason": "69 is on level 2; 67 hangs below it." },
+        { "option": "D", "correct": false, "reason": "83 is on level 2, as the left child of 84." }
+      ],
+      "shortcut": "Only keys between 65 and 71 travel past level 2: 69 and then 67, which must go below 69. So 67 is deepest.",
+      "pitfalls": ["Assuming the last key inserted (83) is the deepest — depth depends on the comparison path, not on insertion order."],
+      "verification": "An in-order traversal of the final tree gives $65, 67, 69, 71, 83, 84$ — sorted, so the tree is a valid BST.",
+      "animation": {
+        "kind": "tree",
+        "title": "BST after each insertion",
+        "root": null
+      }
+    }
+  }
+}

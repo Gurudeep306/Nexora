@@ -48,6 +48,21 @@ export const CODE_FONT_LOADERS: Record<string, Loader> = {
     ]),
 }
 
+/* Solution handwriting (GATE worked solutions). Shantell ships per-axis
+   files; 'infm' carries wght + INFM, the two axes we use. */
+export const SOLUTION_FONT_LOADERS: Record<string, Loader> = {
+  shantell: () => import('@fontsource-variable/shantell-sans/infm.css'),
+  patrick: () => import('@fontsource/patrick-hand/400.css'),
+  architects: () => import('@fontsource/architects-daughter/400.css'),
+  mali: () =>
+    Promise.all([
+      import('@fontsource/mali/400.css'),
+      import('@fontsource/mali/500.css'),
+      import('@fontsource/mali/600.css'),
+      import('@fontsource/mali/700.css'),
+    ]),
+}
+
 const started = new Map<string, Promise<unknown>>()
 
 function load(key: string, loader: Loader | undefined): Promise<unknown> {
@@ -62,3 +77,4 @@ function load(key: string, loader: Loader | undefined): Promise<unknown> {
 
 export const loadUiFont = (id: string) => load(`ui:${id}`, UI_FONT_LOADERS[id])
 export const loadCodeFont = (id: string) => load(`code:${id}`, CODE_FONT_LOADERS[id])
+export const loadSolutionFont = (id: string) => load(`solution:${id}`, SOLUTION_FONT_LOADERS[id])

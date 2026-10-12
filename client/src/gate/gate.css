@@ -1,0 +1,45 @@
+/*
+  GATE figures. The official figures are scans: black ink on white paper.
+  "Adaptive ink" lets the paper disappear into the theme surface so the
+  figure reads like the rest of the page in every palette:
+    light modes: multiply — white paper vanishes, ink stays dark;
+    dark modes:  invert + screen — the paper turns black and vanishes, the
+                 ink turns light. hue-rotate keeps any coloured marks' hue.
+  "Original" shows the scan untouched (its own white paper).
+*/
+.gate-fig-art {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.gate-fig[data-ink='adaptive'] .gate-fig-art {
+  mix-blend-mode: multiply;
+  filter: contrast(1.08);
+}
+
+[data-mode='dark'] .gate-fig[data-ink='adaptive'] .gate-fig-art {
+  mix-blend-mode: screen;
+  filter: invert(1) hue-rotate(180deg) contrast(1.12) brightness(1.04);
+}
+
+/* The figure surface: one step off the card so the figure has a frame. */
+.gate-fig-surface {
+  isolation: isolate;
+  background: var(--color-bg-surface-2);
+}
+
+.gate-fig[data-ink='original'] .gate-fig-surface {
+  background: transparent;
+}
+
+/* Lightbox canvas: no browser panning/zooming, we do it ourselves. */
+.gate-lightbox-stage {
+  touch-action: none;
+  cursor: grab;
+}
+.gate-lightbox-stage:active {
+  cursor: grabbing;
+}

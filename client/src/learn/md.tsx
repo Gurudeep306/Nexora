@@ -22,7 +22,10 @@ function math(src: string, display: boolean) {
 
 export function Inline({ text }: { text: string }) {
   const nodes: ReactNode[] = []
-  const re = /(\$[^$\n]+\$)|(`[^`]+`)|(\*\*[^*]+\*\*)|(\*[^*\s][^*]*\*)|(!\[[^\]]*\]\([^)]+\))|(\[[^\]]+\]\([^)]+\))/g
+  // The last two alternatives are the only HTML the (transcribed) GATE
+  // papers use for emphasis: <u>underline</u> and <br>. Both become React
+  // elements; nothing is injected.
+  const re = /(\$[^$\n]+\$)|(`[^`]+`)|(\*\*[^*]+\*\*)|(\*[^*\s][^*]*\*)|(!\[[^\]]*\]\([^)]+\))|(\[[^\]]+\]\([^)]+\))|(<u>[^<]+<\/u>)|(<br\s*\/?>)/g
   let last = 0
   let m: RegExpExecArray | null
   let k = 0
@@ -41,7 +44,7 @@ export function Inline({ text }: { text: string }) {
           src={src}
           alt={alt || 'Figure'}
           loading="lazy"
-          className="inline-block max-h-56 max-w-full rounded-xl border border-white/20 bg-[#0b1329] p-2 shadow-sm my-1.5 align-middle object-contain"
+          className="inline-block max-h-56 max-w-full rounded-xl border border-border bg-bg-surface-2 p-2 shadow-sm my-1.5 align-middle object-contain"
         />,
       )
     } else if (m[6]) {
@@ -52,7 +55,13 @@ export function Inline({ text }: { text: string }) {
           {label}
         </a>,
       )
-    }
+    } else if (m[7]) {
+      nodes.push(
+        <u key={k++}>
+          <Inline text={tok.slice(3, -4)} />
+        </u>,
+      )
+    } else if (m[8]) nodes.push(<br key={k++} />)
     last = m.index + tok.length
   }
   if (last < text.length) nodes.push(text.slice(last))

@@ -5667,6 +5667,7 @@ app.get(
     "/api/gate/meta",
     "/api/gate/questions",
     "/api/gate/questions/:id",
+    "/api/gate/questions/:id/solution",
     "/api/gate/paper/:paperId",
     "/api/learn/problems",
     "/api/learn/problems/:slug",
