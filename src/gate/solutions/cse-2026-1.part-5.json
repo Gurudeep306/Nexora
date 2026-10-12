@@ -1,0 +1,2056 @@
+{
+  "paper": "cse-2026-1",
+  "version": 2,
+  "solutions": {
+    "cse-2026-1-cs-43": {
+      "approach": "Derive both languages (both are \"a type followed by one or more ids\"), then classify every attribute: synthesized if it is computed at the LHS from children, inherited if it is computed for a body symbol from the parent or siblings. Finally compare the put calls on a sample declaration.",
+      "concepts": [
+        "Synthesized vs inherited attributes",
+        "S-attributed SDD",
+        "L-attributed SDD",
+        "Left recursion and language equality"
+      ],
+      "given": "Declaration $\\mathit{int}\\ \\mathit{id}_1\\ \\mathit{id}_2$ is used as the running example. Both $D.\\mathit{type}$ and $T.\\mathit{type}$ appear in both SDDs; only SDD1 has $V.\\mathit{type}$.",
+      "steps": [
+        {
+          "title": "Languages P and Q",
+          "body": "**G1:** $T \\to \\mathit{int} \\mid \\mathit{float}$ and $V \\to V\\,\\mathit{id} \\mid \\mathit{id}$ gives $V \\Rightarrow^* \\mathit{id}^+$, so $D \\to T\\,V$ gives\n$$P = (\\mathit{int} \\mid \\mathit{float})\\ \\mathit{id}^+.$$\n**G2:** $D \\to T\\,\\mathit{id}$ is the base and $D \\to D\\,\\mathit{id}$ appends one more id, so $D \\Rightarrow^* T\\,\\mathit{id}\\,\\mathit{id}^*$:\n$$Q = (\\mathit{int} \\mid \\mathit{float})\\ \\mathit{id}^+.$$\n$P = Q$, so **(A) is true**.",
+          "scene": {
+            "caption": "Same string int id₁ id₂ — two different parse trees."
+          }
+        },
+        {
+          "title": "SDD2: every attribute is synthesized",
+          "body": "In SDD2 the only attributes are $D.\\mathit{type}$ and $T.\\mathit{type}$.\n- $D.\\mathit{type} = D_1.\\mathit{type}$ and $D.\\mathit{type} = T.\\mathit{type}$: the LHS $D$ gets its value from a **child** — synthesized.\n- $T.\\mathit{type} = \\mathit{int}/\\mathit{float}$: computed at the LHS from the token — synthesized.\n- $\\mathit{put}(\\mathit{id}.\\mathit{entry}, D_1.\\mathit{type})$ / $\\mathit{put}(\\ldots, T.\\mathit{type})$ only *read* children's attributes (side effect, defines no attribute).\n\nAll attributes synthesized ⇒ SDD2 is S-attributed. **(B) is true.**",
+          "scene": {
+            "panels": [
+              null,
+              {
+                "root": {
+                  "label": "D",
+                  "sub": "type=int ↑",
+                  "tone": "warning",
+                  "children": [
+                    {
+                      "id": "D1",
+                      "label": "D₁",
+                      "sub": "type=int ↑",
+                      "tone": "warning",
+                      "children": [
+                        {
+                          "label": "T",
+                          "sub": "type=int ↑",
+                          "tone": "warning",
+                          "children": [
+                            {
+                              "label": "int"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "b1",
+                          "label": "id₁",
+                          "tone": "default"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "b2",
+                      "label": "id₂",
+                      "tone": "default"
+                    }
+                  ]
+                },
+                "caption": "SDD2: values flow only upward (↑)."
+              }
+            ]
+          }
+        },
+        {
+          "title": "SDD1: inherited and synthesized attributes",
+          "body": "- $V.\\mathit{type} = T.\\mathit{type}$ (in $D \\to T\\,V$): $V$ is a body symbol taking its value from its **left sibling** $T$ — inherited.\n- $V_1.\\mathit{type} = V.\\mathit{type}$: body symbol from its **parent** — inherited.\n- But $D.\\mathit{type} = T.\\mathit{type}$ and $T.\\mathit{type} = \\mathit{int}$ are **synthesized**.\n\nEvery inherited attribute depends only on the parent or on siblings to its left, so SDD1 **is L-attributed** — but it does **not** contain only inherited attributes. **(C) is false.**",
+          "scene": {
+            "panels": [
+              {
+                "root": {
+                  "label": "D",
+                  "sub": "type=int",
+                  "tone": "warning",
+                  "children": [
+                    {
+                      "label": "T",
+                      "sub": "type=int ↑",
+                      "tone": "warning",
+                      "children": [
+                        {
+                          "label": "int"
+                        }
+                      ]
+                    },
+                    {
+                      "label": "V",
+                      "sub": "type=int ↓",
+                      "tone": "accent",
+                      "children": [
+                        {
+                          "id": "V1",
+                          "label": "V₁",
+                          "sub": "type=int ↓",
+                          "tone": "accent",
+                          "children": [
+                            {
+                              "id": "a1",
+                              "label": "id₁",
+                              "tone": "default"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "a2",
+                          "label": "id₂",
+                          "tone": "default"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "caption": "SDD1: V.type, V₁.type inherited (↓); D.type, T.type synthesized."
+              },
+              null
+            ]
+          }
+        },
+        {
+          "title": "Symbol-table entries",
+          "body": "For $\\mathit{int}\\ \\mathit{id}_1\\ \\mathit{id}_2$:\n- **SDD1:** $V.\\mathit{type} = \\mathit{int}$ is passed down the $V$-chain; $V \\to V_1\\,\\mathit{id}$ does $\\mathit{put}(\\mathit{id}_2, \\mathit{int})$ and $V \\to \\mathit{id}$ does $\\mathit{put}(\\mathit{id}_1, \\mathit{int})$.\n- **SDD2:** $D_1 \\to T\\,\\mathit{id}$ does $\\mathit{put}(\\mathit{id}_1, \\mathit{int})$; $D \\to D_1\\,\\mathit{id}$ does $\\mathit{put}(\\mathit{id}_2, D_1.\\mathit{type}) = \\mathit{put}(\\mathit{id}_2, \\mathit{int})$.\n\nIn general both give every id in the list the declared type, so the same entries $\\{(\\mathit{id}_i, \\text{type})\\}$ are added. **(D) is true.**",
+          "scene": {
+            "panels": [
+              {
+                "root": {
+                  "label": "D",
+                  "sub": "type=int",
+                  "tone": "warning",
+                  "children": [
+                    {
+                      "label": "T",
+                      "sub": "type=int ↑",
+                      "tone": "warning",
+                      "children": [
+                        {
+                          "label": "int"
+                        }
+                      ]
+                    },
+                    {
+                      "label": "V",
+                      "sub": "type=int ↓",
+                      "tone": "accent",
+                      "children": [
+                        {
+                          "id": "V1",
+                          "label": "V₁",
+                          "sub": "type=int ↓",
+                          "tone": "accent",
+                          "children": [
+                            {
+                              "id": "a1",
+                              "label": "id₁",
+                              "tone": "success"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "a2",
+                          "label": "id₂",
+                          "tone": "success"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              },
+              {
+                "root": {
+                  "label": "D",
+                  "sub": "type=int ↑",
+                  "tone": "warning",
+                  "children": [
+                    {
+                      "id": "D1",
+                      "label": "D₁",
+                      "sub": "type=int ↑",
+                      "tone": "warning",
+                      "children": [
+                        {
+                          "label": "T",
+                          "sub": "type=int ↑",
+                          "tone": "warning",
+                          "children": [
+                            {
+                              "label": "int"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "b1",
+                          "label": "id₁",
+                          "tone": "success"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "b2",
+                      "label": "id₂",
+                      "tone": "success"
+                    }
+                  ]
+                }
+              }
+            ],
+            "caption": "Both: put(id₁, int), put(id₂, int)."
+          }
+        }
+      ],
+      "answer": {
+        "value": "**(A)**, **(B)** and **(D)** are true",
+        "choice": [
+          "A",
+          "B",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Both grammars generate $(\\mathit{int} \\mid \\mathit{float})\\,\\mathit{id}^+$; G2 just folds the id-list into $D$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$D.\\mathit{type}$ and $T.\\mathit{type}$ are both computed at the head from children; $\\mathit{put}$ is a side effect, not an attribute."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "SDD1 is L-attributed, but $D.\\mathit{type}$ and $T.\\mathit{type}$ are synthesized, so \"only inherited attributes\" is false."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Both SDDs call $\\mathit{put}$ once per id with the declared type, e.g. $(\\mathit{id}_1,\\mathit{int}), (\\mathit{id}_2,\\mathit{int})$."
+        }
+      ],
+      "shortcut": "An attribute of the production head is synthesized; an attribute of a body symbol is inherited. SDD1 has heads D and T computing values, so it cannot be \"only inherited\"; SDD2 never sets a body attribute, so it is S-attributed.",
+      "pitfalls": [
+        "Accepting (C) because SDD1 is the textbook L-attributed type-declaration example — the clause \"only inherited\" makes it false.",
+        "Thinking the put side effect makes SDD2 non-S-attributed: side effects that read synthesized attributes of children are allowed.",
+        "Calling the languages different because G1 is left recursive in V and G2 left recursive in D — both still yield type id⁺."
+      ],
+      "verification": "Shortest strings: G1 gives int id (D→T V, V→id); G2 gives int id (D→T id). Adding one id: G1 via V→V₁ id, G2 via D→D₁ id — a bijection between derivations, so P = Q; and the put calls traced above coincide.",
+      "animation": {
+        "kind": "panels",
+        "title": "Annotated parse trees for int id₁ id₂",
+        "panels": [
+          {
+            "kind": "tree",
+            "title": "SDD1 (G1)",
+            "root": {
+              "label": "D",
+              "sub": "type=int",
+              "tone": "default",
+              "children": [
+                {
+                  "label": "T",
+                  "sub": "type=int ↑",
+                  "tone": "default",
+                  "children": [
+                    {
+                      "label": "int"
+                    }
+                  ]
+                },
+                {
+                  "label": "V",
+                  "sub": "type=int ↓",
+                  "tone": "default",
+                  "children": [
+                    {
+                      "id": "V1",
+                      "label": "V₁",
+                      "sub": "type=int ↓",
+                      "tone": "default",
+                      "children": [
+                        {
+                          "id": "a1",
+                          "label": "id₁",
+                          "tone": "default"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "a2",
+                      "label": "id₂",
+                      "tone": "default"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "kind": "tree",
+            "title": "SDD2 (G2)",
+            "root": {
+              "label": "D",
+              "sub": "type=int ↑",
+              "tone": "default",
+              "children": [
+                {
+                  "id": "D1",
+                  "label": "D₁",
+                  "sub": "type=int ↑",
+                  "tone": "default",
+                  "children": [
+                    {
+                      "label": "T",
+                      "sub": "type=int ↑",
+                      "tone": "default",
+                      "children": [
+                        {
+                          "label": "int"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "b1",
+                      "label": "id₁",
+                      "tone": "default"
+                    }
+                  ]
+                },
+                {
+                  "id": "b2",
+                  "label": "id₂",
+                  "tone": "default"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "cse-2026-1-cs-44": {
+      "approach": "Follow the order of events for one reference: TLB → (on a miss) page table → physical address → cache. A sequence is impossible if it skips a mandatory step or if a page fault leaves no valid cache blocks for the page.",
+      "concepts": [
+        "TLB",
+        "Page table / page fault",
+        "Physically addressed cache",
+        "Cache invalidation on eviction"
+      ],
+      "steps": [
+        {
+          "title": "Order of events for one reference",
+          "body": "The cache takes a **physical** address, so translation happens first:\n1. Look up the TLB. On a **hit** the frame number is obtained and the page table is **not** consulted.\n2. On a TLB **miss**, walk the page table. A page-table **miss** (invalid entry) is a page fault: the page is not in main memory.\n3. With the physical address, look up the cache.",
+          "scene": {
+            "reveal": 0
+          }
+        },
+        {
+          "title": "(A) TLB miss, page-table hit, cache hit — possible",
+          "body": "The page is resident but its translation was evicted from the (small) TLB. The page walk succeeds, and the block may well still be cached. Ordinary event.",
+          "scene": {
+            "rows": [
+              [
+                "miss",
+                "hit",
+                "hit",
+                "possible"
+              ],
+              [
+                "hit",
+                "miss",
+                "hit",
+                "?"
+              ],
+              [
+                "miss",
+                "miss",
+                "hit",
+                "?"
+              ],
+              [
+                "miss",
+                "miss",
+                "miss",
+                "?"
+              ]
+            ],
+            "reveal": 16,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "(B) TLB hit, page-table miss — never",
+          "body": "A TLB hit already supplies the translation, so the page table is not looked up at all; besides, the TLB only holds entries of resident pages (an entry is invalidated when its page is evicted). A \"page-table miss\" after a TLB hit cannot occur.",
+          "scene": {
+            "rows": [
+              [
+                "miss",
+                "hit",
+                "hit",
+                "possible"
+              ],
+              [
+                "hit",
+                "miss",
+                "hit",
+                "NEVER"
+              ],
+              [
+                "miss",
+                "miss",
+                "hit",
+                "?"
+              ],
+              [
+                "miss",
+                "miss",
+                "miss",
+                "?"
+              ]
+            ],
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "tone": "error"
+              }
+            ]
+          }
+        },
+        {
+          "title": "(C) page-table miss, then cache hit — never",
+          "body": "A page-table miss means the page is not in main memory. When it was evicted, all its cache blocks were marked **invalid** (given), and a never-loaded page has no blocks in the cache either. After the page fault brings it into a frame, its data is fetched from memory — the cache cannot hit. So \"page-table miss, cache hit\" is impossible.",
+          "scene": {
+            "rows": [
+              [
+                "miss",
+                "hit",
+                "hit",
+                "possible"
+              ],
+              [
+                "hit",
+                "miss",
+                "hit",
+                "NEVER"
+              ],
+              [
+                "miss",
+                "miss",
+                "hit",
+                "NEVER"
+              ],
+              [
+                "miss",
+                "miss",
+                "miss",
+                "?"
+              ]
+            ],
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "tone": "error"
+              },
+              {
+                "r": 2,
+                "tone": "error"
+              }
+            ]
+          }
+        },
+        {
+          "title": "(D) TLB miss, page-table miss, cache miss — possible",
+          "body": "This is the normal page-fault path: no translation in TLB, page not resident, page brought in, and the first access to it misses in the cache.",
+          "scene": {
+            "rows": [
+              [
+                "miss",
+                "hit",
+                "hit",
+                "possible"
+              ],
+              [
+                "hit",
+                "miss",
+                "hit",
+                "NEVER"
+              ],
+              [
+                "miss",
+                "miss",
+                "hit",
+                "NEVER"
+              ],
+              [
+                "miss",
+                "miss",
+                "miss",
+                "possible"
+              ]
+            ],
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "tone": "error"
+              },
+              {
+                "r": 2,
+                "tone": "error"
+              },
+              {
+                "r": 3,
+                "tone": "success"
+              }
+            ],
+            "caption": "B and C can never happen."
+          }
+        }
+      ],
+      "answer": {
+        "value": "**(B)** and **(C)** can never happen",
+        "choice": [
+          "B",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Possible: translation fell out of the TLB but the page and its cached block are still present."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "A TLB hit skips the page table, and TLB entries exist only for resident pages — no page-table miss can follow."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "A page-table miss means the page is not resident; its cache blocks were invalidated on eviction, so the access cannot hit."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Possible: the ordinary page-fault sequence ending in a cold cache miss."
+        }
+      ],
+      "shortcut": "TLB hit ⇒ page table not involved. Page table miss ⇒ page not resident ⇒ (with invalidation on eviction) cache miss. Any option violating either is impossible.",
+      "pitfalls": [
+        "Treating it as single-answer and picking only (B): (C) is impossible too because of the stated invalidation rule.",
+        "Rejecting (A): TLB misses on resident, cached pages are common since the TLB is far smaller than the page table."
+      ],
+      "verification": "Each impossible sequence contradicts an explicit invariant (TLB ⊆ resident pages; cache blocks of non-resident pages are invalid), while (A) and (D) each have a concrete scenario.",
+      "animation": {
+        "kind": "table",
+        "title": "Which sequences can occur?",
+        "cols": [
+          "TLB",
+          "Page table",
+          "Cache",
+          "Verdict"
+        ],
+        "rowLabels": [
+          "(A)",
+          "(B)",
+          "(C)",
+          "(D)"
+        ],
+        "rows": [
+          [
+            "miss",
+            "hit",
+            "hit",
+            "?"
+          ],
+          [
+            "hit",
+            "miss",
+            "hit",
+            "?"
+          ],
+          [
+            "miss",
+            "miss",
+            "hit",
+            "?"
+          ],
+          [
+            "miss",
+            "miss",
+            "miss",
+            "?"
+          ]
+        ],
+        "reveal": 0
+      }
+    },
+    "cse-2026-1-cs-45": {
+      "approach": "Use the characterisation \"2-colorable ⇔ bipartite ⇔ no odd cycle\". Testing is a BFS/DFS that colours alternate levels, which is linear in the adjacency-list size and cannot be beaten since every edge must be checked.",
+      "concepts": [
+        "Bipartite graphs",
+        "Odd-cycle characterisation",
+        "BFS 2-colouring",
+        "Lower bound Ω(|V|+|E|)"
+      ],
+      "steps": [
+        {
+          "title": "Odd cycles are impossible",
+          "body": "Walk around a cycle $v_1 v_2 \\dots v_k v_1$ in a properly 2-coloured graph: colours must alternate $0,1,0,1,\\dots$, so $v_i$ has colour $(i-1) \\bmod 2$. The closing edge $v_k v_1$ needs $c(v_k) \\neq c(v_1) = 0$, i.e. $k-1$ odd, i.e. $k$ **even**. So a 2-colorable graph has **no** odd cycle: **(A) is false**.",
+          "scene": {
+            "panels": [
+              null,
+              {
+                "tones": {
+                  "x": "cat1",
+                  "y": "cat2",
+                  "z": "error"
+                },
+                "edgeTones": {
+                  "z>x": "error",
+                  "y>z": "error"
+                },
+                "caption": "z cannot get either colour."
+              }
+            ]
+          }
+        },
+        {
+          "title": "Even cycles are fine",
+          "body": "$C_4 = a\\,b\\,c\\,d$: colour $a, c \\mapsto 0$ and $b, d \\mapsto 1$; every edge joins different colours. So a 2-colorable graph **may** contain even cycles: **(B) is true**.",
+          "scene": {
+            "panels": [
+              {
+                "tones": {
+                  "a": "cat1",
+                  "b": "cat2",
+                  "c": "cat1",
+                  "d": "cat2"
+                },
+                "caption": "a, c → 0;  b, d → 1"
+              },
+              null
+            ]
+          }
+        },
+        {
+          "title": "Optimal test is Θ(|V| + |E|)",
+          "body": "Algorithm: for each uncoloured vertex start a BFS, give it colour 0 and every newly discovered neighbour the opposite colour of its parent; if an edge joins two vertices of the same colour, report \"not 2-colorable\".\n- Each vertex is enqueued once and each adjacency list scanned once: $O(|V| + |E|)$.\n- Any correct algorithm must look at every vertex and edge (one unseen edge could close an odd cycle): $\\Omega(|V| + |E|)$.\n\nSo the optimal time is $\\Theta(|V| + |E|)$: **(C) is true** and **(D)** — $\\Theta(|E|\\log|V|)$ — is **false** (not optimal)."
+        }
+      ],
+      "answer": {
+        "value": "**(B)** and **(C)** are true",
+        "choice": [
+          "B",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Colours alternate around a cycle, so the cycle length must be even; an odd cycle forces two adjacent vertices to share a colour."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Even cycles 2-colour by alternation (e.g. C₄), so they may be present."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "BFS/DFS colouring runs in O(|V|+|E|) and every vertex/edge must be inspected, so Θ(|V|+|E|) is optimal."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Θ(|E| log |V|) is the cost of heap-based algorithms (Dijkstra/Prim); 2-colouring needs no priority queue and is linear."
+        }
+      ],
+      "shortcut": "2-colorable = bipartite = no odd cycle; bipartiteness test = one BFS = linear time.",
+      "pitfalls": [
+        "Reading (A)/(B) as \"must contain\": they say \"may contain\", so only possibility matters.",
+        "Picking (D) because it resembles graph-algorithm complexities like Prim or Dijkstra."
+      ],
+      "verification": "K₃ (odd) cannot be 2-coloured; C₄ (even) can; BFS on an adjacency list touches each list once — consistent with B and C only.",
+      "animation": {
+        "kind": "panels",
+        "title": "2-colouring: even vs odd cycle",
+        "panels": [
+          {
+            "kind": "graph",
+            "title": "Even cycle C₄",
+            "nodes": [
+              {
+                "id": "a",
+                "x": 0,
+                "y": 0
+              },
+              {
+                "id": "b",
+                "x": 2,
+                "y": 0
+              },
+              {
+                "id": "c",
+                "x": 2,
+                "y": 2
+              },
+              {
+                "id": "d",
+                "x": 0,
+                "y": 2
+              }
+            ],
+            "edges": [
+              {
+                "from": "a",
+                "to": "b"
+              },
+              {
+                "from": "b",
+                "to": "c"
+              },
+              {
+                "from": "c",
+                "to": "d"
+              },
+              {
+                "from": "d",
+                "to": "a"
+              }
+            ]
+          },
+          {
+            "kind": "graph",
+            "title": "Odd cycle C₃",
+            "nodes": [
+              {
+                "id": "x",
+                "x": 0,
+                "y": 2
+              },
+              {
+                "id": "y",
+                "x": 2,
+                "y": 2
+              },
+              {
+                "id": "z",
+                "x": 1,
+                "y": 0
+              }
+            ],
+            "edges": [
+              {
+                "from": "x",
+                "to": "y"
+              },
+              {
+                "from": "y",
+                "to": "z"
+              },
+              {
+                "from": "z",
+                "to": "x"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "cse-2026-1-cs-46": {
+      "approach": "Size the block first (6000 needs 2¹³ = 8192 addresses, a /19), then check each option for the two CIDR conditions: it lies inside 202.16.0.0/15 and its network address is aligned, i.e. the 13 host bits are all 0 (third octet a multiple of 32).",
+      "concepts": [
+        "CIDR prefix length",
+        "Block alignment",
+        "Address range of a /15"
+      ],
+      "given": "| Item | Value |\n|---|---|\n| ISP block | 202.16.0.0/15 |\n| Addresses needed | 6000 |\n| Options | all /19 |",
+      "steps": [
+        {
+          "title": "Block size: /19",
+          "body": "The smallest power of two $\\ge 6000$ is $2^{13} = 8192$ ($2^{12} = 4096 < 6000$). So the client gets $13$ host bits: prefix $32 - 13 = $ **/19**, matching all options."
+        },
+        {
+          "title": "Range of the ISP block",
+          "body": "/15 fixes the first 15 bits. $202.16 = 11001010.0001000\\underline{0}$, and the 16th bit is free, so the ISP owns\n$$202.16.0.0 \\;\\text{–}\\; 202.17.255.255.$$\nAll four options start with 202.16 or 202.17, so all are inside the block.",
+          "scene": {
+            "rows": [
+              {
+                "label": "ISP",
+                "fields": [
+                  {
+                    "bits": "110010100001000",
+                    "label": "ISP /15",
+                    "tone": "info"
+                  },
+                  {
+                    "bits": "0000",
+                    "label": "next 4"
+                  },
+                  {
+                    "bits": "0000000000000",
+                    "label": "host 13",
+                    "tone": "muted"
+                  }
+                ],
+                "value": "202.16.0.0/15"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Alignment: host bits must be zero",
+          "body": "A /19 network address has its last $13$ bits $= 0$: the last 5 bits of the third octet and the whole fourth octet. So the third octet must be a multiple of $2^5 = 32$:\n- (A) $0 = 32 \\times 0$ ✓  (block 202.16.0.0 – 202.16.31.255)\n- (B) $64 = 32 \\times 2$ ✓ (202.17.64.0 – 202.17.95.255)\n- (C) $32 = 32 \\times 1$ ✓ (202.16.32.0 – 202.16.63.255)\n- (D) $24 = 00011000_2$, not a multiple of 32 ✗ — its host part is non-zero, so it is not a valid /19 network address.",
+          "scene": {
+            "rows": [
+              {
+                "label": "ISP",
+                "fields": [
+                  {
+                    "bits": "110010100001000",
+                    "label": "ISP /15",
+                    "tone": "info"
+                  },
+                  {
+                    "bits": "0000",
+                    "label": "next 4"
+                  },
+                  {
+                    "bits": "0000000000000",
+                    "label": "host 13",
+                    "tone": "muted"
+                  }
+                ],
+                "value": "202.16.0.0/15"
+              },
+              {
+                "label": "(A)",
+                "fields": [
+                  {
+                    "bits": "110010100001000",
+                    "label": "ISP /15",
+                    "tone": "info"
+                  },
+                  {
+                    "bits": "0000",
+                    "label": "next 4"
+                  },
+                  {
+                    "bits": "0000000000000",
+                    "label": "host 13",
+                    "tone": "success"
+                  }
+                ],
+                "value": "202.16.0.0/19 ✓"
+              },
+              {
+                "label": "(B)",
+                "fields": [
+                  {
+                    "bits": "110010100001000",
+                    "label": "ISP /15",
+                    "tone": "info"
+                  },
+                  {
+                    "bits": "1010",
+                    "label": "next 4"
+                  },
+                  {
+                    "bits": "0000000000000",
+                    "label": "host 13",
+                    "tone": "success"
+                  }
+                ],
+                "value": "202.17.64.0/19 ✓"
+              },
+              {
+                "label": "(C)",
+                "fields": [
+                  {
+                    "bits": "110010100001000",
+                    "label": "ISP /15",
+                    "tone": "info"
+                  },
+                  {
+                    "bits": "0001",
+                    "label": "next 4"
+                  },
+                  {
+                    "bits": "0000000000000",
+                    "label": "host 13",
+                    "tone": "success"
+                  }
+                ],
+                "value": "202.16.32.0/19 ✓"
+              },
+              {
+                "label": "(D)",
+                "fields": [
+                  {
+                    "bits": "110010100001000",
+                    "label": "ISP /15",
+                    "tone": "info"
+                  },
+                  {
+                    "bits": "1000",
+                    "label": "next 4"
+                  },
+                  {
+                    "bits": "1100000000000",
+                    "label": "host 13",
+                    "tone": "error"
+                  }
+                ],
+                "value": "202.17.24.0/19 ✗"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "**(A)**, **(B)** and **(C)** can be assigned",
+        "choice": [
+          "A",
+          "B",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Third octet 0 is a multiple of 32 and 202.16.x lies in the /15."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Third octet 64 = 2 × 32; 202.17.x is the upper half of the /15."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Third octet 32 = 1 × 32 — aligned, inside 202.16.x."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "24 is not a multiple of 32, so 202.17.24.0 has non-zero host bits and is not a /19 boundary."
+        }
+      ],
+      "shortcut": "/19 ⇒ third-octet step 2^(24−19) = 32. Options with third octet ∈ {0, 32, 64, 96, …} in 202.16/202.17 are valid.",
+      "pitfalls": [
+        "Using a /20 (4096 addresses) — too small for 6000.",
+        "Forgetting that a /15 spans two second-octet values (16 and 17), and rejecting (B).",
+        "Treating the question as single-answer; three blocks are valid."
+      ],
+      "verification": "202.17.24.0/19 would really mean the block 202.17.0.0 – 202.17.31.255 (24 AND 224 = 0), so 202.17.24.0 is not its network address; the other three equal their own network address.",
+      "animation": {
+        "kind": "bits",
+        "title": "Prefix / host split (32 bits)",
+        "group": 8,
+        "rows": [
+          {
+            "label": "ISP",
+            "fields": [
+              {
+                "bits": "110010100001000",
+                "label": "ISP /15",
+                "tone": "info"
+              },
+              {
+                "bits": "0000",
+                "label": "next 4"
+              },
+              {
+                "bits": "0000000000000",
+                "label": "host 13",
+                "tone": "muted"
+              }
+            ],
+            "value": "202.16.0.0/15"
+          }
+        ]
+      }
+    },
+    "cse-2026-1-cs-47": {
+      "approach": "Let m(n) be the number of matchings (including the empty one) of the path on n vertices. Condition on the last vertex: either it is unmatched or it is matched to its only neighbour. This gives the Fibonacci recurrence, so the count is a short table.",
+      "concepts": [
+        "Matching",
+        "Recurrence by last vertex",
+        "Fibonacci numbers"
+      ],
+      "given": "Path $P_8: v_1 - v_2 - \\dots - v_8$ (7 edges). A matching is a set of pairwise disjoint edges; the empty set counts.",
+      "steps": [
+        {
+          "title": "Recurrence on the last vertex",
+          "body": "For the path $v_1 \\dots v_n$:\n- $v_n$ unmatched: any matching of $v_1 \\dots v_{n-1}$ — $m(n-1)$ ways;\n- $v_n$ matched with $v_{n-1}$ (edge $v_{n-1}v_n$): any matching of $v_1 \\dots v_{n-2}$ — $m(n-2)$ ways.\n$$m(n) = m(n-1) + m(n-2).$$"
+        },
+        {
+          "title": "Base cases",
+          "body": "$m(1) = 1$ (only $\\emptyset$); $m(2) = 2$ ($\\emptyset$ and $\\{v_1v_2\\}$).",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Fill the table up to n = 8",
+          "body": "$m(3) = 2 + 1 = 3$, $m(4) = 3 + 2 = 5$, $m(5) = 5 + 3 = 8$, $m(6) = 8 + 5 = 13$, $m(7) = 13 + 8 = 21$, $m(8) = 21 + 13 = 34$.",
+          "scene": {
+            "reveal": 8,
+            "hl": [
+              {
+                "r": 0,
+                "c": 7,
+                "tone": "success"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "Number of matchings $=$ **34**",
+        "number": 34,
+        "matchesKey": true
+      },
+      "shortcut": "Matchings of a path on n vertices = Fibonacci F(n+1) with F(1)=F(2)=1: F(9) = 34.",
+      "pitfalls": [
+        "Forgetting the empty matching (gives 33).",
+        "Counting only maximum or perfect matchings (P₈ has exactly 1 perfect matching).",
+        "Using 8 edges instead of 7 (a path on 8 vertices has 7 edges)."
+      ],
+      "verification": "Count by size $k$: choosing $k$ pairwise non-adjacent edges among 7 edges in a row gives $\\binom{8-k}{k}$. So $\\binom{8}{0} + \\binom{7}{1} + \\binom{6}{2} + \\binom{5}{3} + \\binom{4}{4} = 1 + 7 + 15 + 10 + 1 = 34$ ✓.",
+      "animation": {
+        "kind": "table",
+        "title": "m(n) = m(n−1) + m(n−2)",
+        "cols": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8"
+        ],
+        "rowLabels": [
+          "m(n)"
+        ],
+        "corner": "n",
+        "rows": [
+          [
+            1,
+            2,
+            3,
+            5,
+            8,
+            13,
+            21,
+            34
+          ]
+        ],
+        "reveal": 0
+      }
+    },
+    "cse-2026-1-cs-48": {
+      "approach": "Group the values by their common probability and use E[X] = Σ x·Pr(X=x): one sum for the 1/6 group and one for the 1/12 group.",
+      "concepts": [
+        "Expectation of a discrete random variable",
+        "Probability mass function"
+      ],
+      "steps": [
+        {
+          "title": "Check the distribution",
+          "body": "$4 \\times \\frac{1}{6} + 4 \\times \\frac{1}{12} = \\frac{4}{6} + \\frac{4}{12} = \\frac{2}{3} + \\frac{1}{3} = 1$ ✓ — a valid PMF."
+        },
+        {
+          "title": "Sum each probability group",
+          "body": "Values with probability $\\frac16$: $1 + 2 + 5 + 7 = 15$, contributing $\\frac{15}{6} = 2.5$.\n\nValues with probability $\\frac1{12}$: $3 + 4 + 6 + 8 = 21$, contributing $\\frac{21}{12} = 1.75$.",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Add",
+          "body": "$$E[X] = \\frac{15}{6} + \\frac{21}{12} = \\frac{30}{12} + \\frac{21}{12} = \\frac{51}{12} = 4.25.$$",
+          "scene": {
+            "reveal": 3
+          }
+        }
+      ],
+      "answer": {
+        "value": "$E[X] = \\frac{51}{12} =$ **4.25**",
+        "number": 4.25,
+        "matchesKey": true
+      },
+      "shortcut": "Mixed-denominator trick: $E[X] = \\frac{2 \\times 15 + 21}{12} = \\frac{51}{12}$.",
+      "pitfalls": [
+        "Taking the plain average of 1…8 (4.5), ignoring the unequal probabilities.",
+        "Swapping the groups (giving 15/12 + 21/6 = 4.75)."
+      ],
+      "verification": "Sanity check: the heavier values (1, 2, 5, 7) have mean $3.75$, the lighter ones (3, 4, 6, 8) mean $5.25$; weights $\\frac23$ and $\\frac13$ give $\\frac23(3.75) + \\frac13(5.25) = 2.5 + 1.75 = 4.25$ ✓.",
+      "animation": {
+        "kind": "equation",
+        "title": "E[X] by probability groups",
+        "lines": [
+          {
+            "tex": "\\tfrac16(1+2+5+7)=\\tfrac{15}{6}=2.5",
+            "note": "probability 1/6 group"
+          },
+          {
+            "tex": "\\tfrac1{12}(3+4+6+8)=\\tfrac{21}{12}=1.75",
+            "note": "probability 1/12 group"
+          },
+          {
+            "tex": "E[X]=2.5+1.75=4.25",
+            "tone": "success"
+          }
+        ],
+        "reveal": 0
+      }
+    },
+    "cse-2026-1-cs-49": {
+      "approach": "Total = seek time (head moves 0→5→12→7 at 1 ms per track) + for each of the 30 random sectors an average rotational latency of half a rotation plus one sector transfer time.",
+      "concepts": [
+        "Seek time",
+        "Average rotational latency",
+        "Sector transfer time"
+      ],
+      "given": "| Item | Value |\n|---|---|\n| Speed | 15000 rpm |\n| Track-to-track move | 1 ms |\n| Sectors/track | 400 |\n| Requests | 10 random sectors on each of tracks 5, 12, 7 (in order) |\n| Start | track 0 |",
+      "steps": [
+        {
+          "title": "Rotation, latency and transfer per sector",
+          "body": "One rotation: $\\frac{60\\,000\\ \\text{ms}}{15000} = 4$ ms.\n- Average rotational latency (sector at a random position) $= \\frac{4}{2} = 2$ ms.\n- Transfer one sector $= \\frac{4}{400} = 0.01$ ms.\n\nPer random sector: $2 + 0.01 = 2.01$ ms; per track (10 sectors): $10 \\times 2.01 = 20.1$ ms."
+        },
+        {
+          "title": "Seek to track 5 and read",
+          "body": "Seek $|5 - 0| = 5$ tracks $= 5$ ms, then $20.1$ ms of reads: done at $5 + 20.1 = 25.1$ ms.",
+          "scene": {
+            "upto": 25.1,
+            "cursor": 25.1
+          }
+        },
+        {
+          "title": "Seek to track 12 and read",
+          "body": "Seek $|12 - 5| = 7$ ms, reads $20.1$ ms: $25.1 + 7 + 20.1 = 52.2$ ms.",
+          "scene": {
+            "upto": 52.2,
+            "cursor": 52.2
+          }
+        },
+        {
+          "title": "Seek to track 7 and read",
+          "body": "Seek $|7 - 12| = 5$ ms, reads $20.1$ ms: $52.2 + 5 + 20.1 = 77.3$ ms.\n\nTotal $= \\underbrace{(5 + 7 + 5)}_{17\\ \\text{seek}} + \\underbrace{30 \\times 2.01}_{60.3} = 77.3$ ms.",
+          "scene": {
+            "upto": 77.3,
+            "cursor": 77.3
+          }
+        }
+      ],
+      "answer": {
+        "value": "Total time $=$ **77.3 ms**",
+        "number": 77.3,
+        "matchesKey": true
+      },
+      "shortcut": "$T = \\text{(total tracks moved)} \\times 1 + N\\left(\\frac{T_{rot}}{2} + \\frac{T_{rot}}{400}\\right) = 17 + 30(2.01) = 77.3$ ms.",
+      "pitfalls": [
+        "Paying the rotational latency once per track instead of once per sector — the sectors are randomly located, so each needs its own average wait.",
+        "Using the full rotation (4 ms) instead of the average half-rotation as latency.",
+        "Computing the seek as 0→12 only, or as |5−0|+|12−0|+|7−0|."
+      ],
+      "verification": "Units check: 4 ms per rotation × 1/400 = 0.01 ms per sector. The 1024-byte sector size is not needed — the transfer time follows from rotation time / sectors per track.",
+      "animation": {
+        "kind": "gantt",
+        "title": "Disk head timeline",
+        "unit": "ms",
+        "lanes": [
+          {
+            "label": "Head",
+            "bars": [
+              {
+                "start": 0,
+                "end": 5,
+                "label": "seek 5",
+                "tone": "muted"
+              },
+              {
+                "start": 5,
+                "end": 25.1,
+                "label": "T5 ×10"
+              },
+              {
+                "start": 25.1,
+                "end": 32.1,
+                "label": "seek 7",
+                "tone": "muted"
+              },
+              {
+                "start": 32.1,
+                "end": 52.2,
+                "label": "T12 ×10"
+              },
+              {
+                "start": 52.2,
+                "end": 57.2,
+                "label": "seek 5",
+                "tone": "muted"
+              },
+              {
+                "start": 57.2,
+                "end": 77.3,
+                "label": "T7 ×10"
+              }
+            ]
+          }
+        ],
+        "upto": 0,
+        "cursor": 0
+      }
+    },
+    "cse-2026-1-cs-50": {
+      "approach": "With a 1 ns clock, an instruction whose EX work takes t ns occupies the EX stage for ⌈t⌉ cycles; the following instruction must wait ⌈t⌉ − 1 extra cycles (structural hazard on the single EX unit). Sum (⌈t⌉ − 1) × M over all instruction types.",
+      "concepts": [
+        "Structural hazard",
+        "Multi-cycle EX stage",
+        "Stall cycles"
+      ],
+      "steps": [
+        {
+          "title": "Cycles in EX and stalls per instruction",
+          "body": "EX occupancy $= \\lceil t_{EX} / 1\\,\\text{ns} \\rceil$ cycles. One of those cycles is the normal pipeline slot, so each instruction causes $\\lceil t_{EX} \\rceil - 1$ stall cycles for the instruction behind it:\n- $1.5, 1.7, 1.8 \\to 2$ cycles $\\to 1$ stall;\n- $2.5, 2.8 \\to 3$ cycles $\\to 2$ stalls;\n- $3.2 \\to 4$ cycles $\\to 3$ stalls;\n- $< 1.0 \\to 1$ cycle $\\to 0$ stalls.",
+          "scene": {
+            "hl": [
+              {
+                "c": 3,
+                "tone": "accent"
+              },
+              {
+                "c": 4,
+                "tone": "warning"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Multiply by the counts M",
+          "body": "LOAD $1 \\times 15 = 15$, IMUL $1 \\times 10 = 10$, IDIV $2 \\times 5 = 10$, FADD $1 \\times 10 = 10$, FSUB $1 \\times 5 = 5$, FMUL $2 \\times 15 = 30$, FDIV $3 \\times 5 = 15$, others $0 \\times 35 = 0$.",
+          "scene": {
+            "hl": [
+              {
+                "c": 5,
+                "tone": "warning"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Total stall cycles",
+          "body": "$$15 + 10 + 10 + 10 + 5 + 30 + 15 + 0 = 95.$$",
+          "scene": {
+            "hl": [
+              {
+                "c": 5,
+                "tone": "success"
+              }
+            ],
+            "caption": "Total = 95 stall cycles"
+          }
+        }
+      ],
+      "answer": {
+        "value": "Stall cycles $=$ **95**",
+        "number": 95,
+        "matchesKey": true
+      },
+      "shortcut": "Group by stalls per instruction: 1 stall — LOAD, IMUL, FADD, FSUB (15+10+10+5 = 40 instr); 2 stalls — IDIV, FMUL (5+15 = 20); 3 stalls — FDIV (5). Total 40×1 + 20×2 + 5×3 = 40 + 40 + 15 = 95.",
+      "pitfalls": [
+        "Rounding 2.5 or 1.5 to the nearest integer instead of up — a 2.5 ns operation needs 3 full cycles.",
+        "Counting ⌈t⌉ instead of ⌈t⌉ − 1 cycles for each multi-cycle instruction (gives 95 + 65 = 160).",
+        "Using t − 1 without the ceiling (e.g. 0.8 cycle for LOAD): a stall lasts whole clock cycles."
+      ],
+      "verification": "Cycle count check: the EX stage is busy for $\\sum \\lceil t_{EX} \\rceil M = 2(15) + 2(10) + 3(5) + 2(10) + 2(5) + 3(15) + 4(5) + 1(35) = 30+20+15+20+10+45+20+35 = 195$ cycles for $100$ instructions, i.e. $195 - 100 = 95$ cycles beyond one per instruction ✓. Instruction total $15+10+5+10+5+15+5+35 = 100$ ✓.",
+      "animation": {
+        "kind": "table",
+        "title": "Stalls from the EX stage (clock = 1 ns)",
+        "cols": [
+          "Instr",
+          "t_EX (ns)",
+          "M",
+          "EX cycles",
+          "stalls each",
+          "stalls × M"
+        ],
+        "rows": [
+          [
+            "LOAD",
+            1.8,
+            15,
+            2,
+            1,
+            15
+          ],
+          [
+            "IMUL",
+            1.5,
+            10,
+            2,
+            1,
+            10
+          ],
+          [
+            "IDIV",
+            2.5,
+            5,
+            3,
+            2,
+            10
+          ],
+          [
+            "FADD",
+            1.7,
+            10,
+            2,
+            1,
+            10
+          ],
+          [
+            "FSUB",
+            1.7,
+            5,
+            2,
+            1,
+            5
+          ],
+          [
+            "FMUL",
+            2.8,
+            15,
+            3,
+            2,
+            30
+          ],
+          [
+            "FDIV",
+            3.2,
+            5,
+            4,
+            3,
+            15
+          ],
+          [
+            "other",
+            "<1.0",
+            35,
+            1,
+            0,
+            0
+          ]
+        ]
+      }
+    },
+    "cse-2026-1-cs-51": {
+      "approach": "Recognise bar(n) = ⌊log₂ n⌋, then work backwards: the set of n with foo(n) = k is the preimage under ⌊log₂⌋ of the set with foo = k − 1. Track only the smallest member at each level.",
+      "concepts": [
+        "Recursion tracing",
+        "Floor of log₂",
+        "Working backwards (preimage)"
+      ],
+      "steps": [
+        {
+          "title": "bar(n) = ⌊log₂ n⌋",
+          "body": "bar halves $n$ (integer division) and adds 1 until $n = 1$: the number of halvings is $\\lfloor \\log_2 n \\rfloor$. E.g. bar(1) = 0, bar(2) = bar(3) = 1, bar(4…7) = 2, bar(16) = 4.\n\nSo for $n \\ge 2$: $\\text{foo}(n) = 1 + \\text{foo}(\\lfloor \\log_2 n \\rfloor)$, and foo(1) = 1.",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "Small levels",
+          "body": "- foo$(n) = 1 \\iff n = 1$.\n- foo$(n) = 2 \\iff \\lfloor \\log_2 n \\rfloor = 1 \\iff n \\in [2, 3]$.\n- foo$(n) = 3 \\iff \\lfloor \\log_2 n \\rfloor \\in [2, 3] \\iff n \\in [4, 15]$.",
+          "scene": {
+            "reveal": 9
+          }
+        },
+        {
+          "title": "foo(n) = 4 and foo(n) = 5",
+          "body": "- foo$(n) = 4 \\iff \\lfloor \\log_2 n \\rfloor \\in [4, 15] \\iff n \\in [2^4, 2^{16} - 1] = [16, 65535]$.\n- foo$(n) = 5 \\iff \\lfloor \\log_2 n \\rfloor \\in [16, 65535] \\iff n \\ge 2^{16}$.\n\nSmallest: $n = 2^{16} = 65536$.",
+          "scene": {
+            "reveal": 15,
+            "hl": [
+              {
+                "r": 4,
+                "tone": "success"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "Smallest $n =$ **65536** $= 2^{16}$",
+        "number": 65536,
+        "matchesKey": true
+      },
+      "shortcut": "Smallest n for level k+1 is 2^(smallest n for level k): 1 → 2 → 2² = 4 → 2⁴ = 16 → 2¹⁶ = 65536.",
+      "pitfalls": [
+        "Stopping at 16 (that gives foo = 4).",
+        "Thinking bar(n) = log₂ n only for powers of two — for other n it is the floor, which is why the levels are intervals."
+      ],
+      "verification": "Forward trace: foo(65536) = 1 + foo(16) = 2 + foo(4) = 3 + foo(2) = 4 + foo(1) = 5 ✓. And foo(65535) = 1 + foo(15) = 2 + foo(3) = 3 + foo(1) = 4, so no smaller n works.",
+      "animation": {
+        "kind": "table",
+        "title": "Levels of foo",
+        "cols": [
+          "foo(n)",
+          "n range",
+          "smallest n"
+        ],
+        "rows": [
+          [
+            1,
+            "1",
+            1
+          ],
+          [
+            2,
+            "2 – 3",
+            2
+          ],
+          [
+            3,
+            "4 – 15",
+            4
+          ],
+          [
+            4,
+            "16 – 65535",
+            16
+          ],
+          [
+            5,
+            "≥ 65536",
+            65536
+          ]
+        ],
+        "reveal": 0
+      }
+    },
+    "cse-2026-1-cs-52": {
+      "approach": "Rebuild the BST from the preorder: the first key is the root, the following smaller keys form the left subtree and the larger ones the right subtree. Then read the postorder (left, right, root) and locate 60.",
+      "concepts": [
+        "BST from preorder",
+        "Postorder traversal"
+      ],
+      "steps": [
+        {
+          "title": "Split at the root 50",
+          "body": "Root $50$. Keys $< 50$: $25, 13, 40, 30, 47$ (left subtree, preorder). Keys $> 50$: $75, 60, 70, 80, 77$ (right subtree)."
+        },
+        {
+          "title": "Left subtree",
+          "body": "Root $25$; smaller: $13$ (leaf); larger: $40, 30, 47$ → $40$ with left child $30$ and right child $47$."
+        },
+        {
+          "title": "Right subtree",
+          "body": "Root $75$; smaller: $60, 70$ → $60$ with right child $70$; larger: $80, 77$ → $80$ with left child $77$.",
+          "scene": {
+            "root": {
+              "label": 50,
+              "children": [
+                {
+                  "label": 25,
+                  "children": [
+                    {
+                      "label": 13
+                    },
+                    {
+                      "label": 40,
+                      "children": [
+                        {
+                          "label": 30
+                        },
+                        {
+                          "label": 47
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "label": 75,
+                  "children": [
+                    {
+                      "label": 60,
+                      "children": [
+                        null,
+                        {
+                          "label": 70
+                        }
+                      ]
+                    },
+                    {
+                      "label": 80,
+                      "children": [
+                        {
+                          "label": 77
+                        },
+                        null
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "caption": "Reconstructed BST"
+          }
+        },
+        {
+          "title": "Postorder",
+          "body": "Left subtree of 50: $13,\\ 30, 47, 40,\\ 25$ (5 keys). Right subtree: $70, 60,\\ 77, 80,\\ 75$. Then $50$.\n$$13, 30, 47, 40, 25, 70, \\mathbf{60}, 77, 80, 75, 50$$\n$60$ is at position $5 + 2 = $ **7**.",
+          "scene": {
+            "root": {
+              "label": 50,
+              "sub": "#11",
+              "children": [
+                {
+                  "label": 25,
+                  "sub": "#5",
+                  "children": [
+                    {
+                      "label": 13,
+                      "sub": "#1"
+                    },
+                    {
+                      "label": 40,
+                      "sub": "#4",
+                      "children": [
+                        {
+                          "label": 30,
+                          "sub": "#2"
+                        },
+                        {
+                          "label": 47,
+                          "sub": "#3"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "label": 75,
+                  "sub": "#10",
+                  "children": [
+                    {
+                      "label": 60,
+                      "sub": "#7",
+                      "tone": "success",
+                      "children": [
+                        null,
+                        {
+                          "label": 70,
+                          "sub": "#6"
+                        }
+                      ]
+                    },
+                    {
+                      "label": 80,
+                      "sub": "#9",
+                      "children": [
+                        {
+                          "label": 77,
+                          "sub": "#8"
+                        },
+                        null
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "caption": "Badges: postorder positions"
+          }
+        }
+      ],
+      "answer": {
+        "value": "Position of 60 in postorder $=$ **7**",
+        "number": 7,
+        "matchesKey": true
+      },
+      "shortcut": "Position of a node in postorder = (size of everything visited before it) + size of its own subtree. Before 60: the whole left subtree of 50 (5 keys); 60’s subtree {60, 70} has 2 keys ⇒ 5 + 2 = 7.",
+      "pitfalls": [
+        "Making 70 the left child of 60 (70 > 60, so it is the right child) — the position stays 7 here, but other answers depend on it.",
+        "Counting from 0 (the note says positions begin at 1)."
+      ],
+      "verification": "Inorder of the rebuilt tree is 13, 25, 30, 40, 47, 50, 60, 70, 75, 77, 80 — sorted, so the tree is a valid BST matching the preorder.",
+      "animation": {
+        "kind": "tree",
+        "title": "BST from preorder",
+        "root": {
+          "label": 50
+        }
+      }
+    },
+    "cse-2026-1-cs-53": {
+      "approach": "Trace who breaks and who continues: after each fork the parent (fork returns > 0) breaks out and prints, while only the child continues the loop. So exactly one new process is created per iteration — a chain, not a tree.",
+      "concepts": [
+        "fork() return values",
+        "break / continue in a loop",
+        "Process chain"
+      ],
+      "steps": [
+        {
+          "title": "i = 0",
+          "body": "P0 calls fork(): child P1 gets $0$ → `continue` (goes to $i = 1$). P0 gets the child's pid ($\\ne 0$) → `break` → prints **once**.",
+          "scene": {
+            "root": {
+              "label": "P0",
+              "sub": "forks @ i=0, break, print",
+              "tone": "success",
+              "children": [
+                {
+                  "label": "P1",
+                  "sub": "forks @ i=1, break, print",
+                  "children": [
+                    {
+                      "label": "P2",
+                      "sub": "forks @ i=2, break, print",
+                      "children": [
+                        {
+                          "label": "P3",
+                          "sub": "i=3: loop ends, print",
+                          "edge": "fork i=2"
+                        }
+                      ],
+                      "edge": "fork i=1"
+                    }
+                  ],
+                  "edge": "fork i=0"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "i = 1 and i = 2",
+          "body": "P1 at $i = 1$ forks P2; P1 breaks and prints, P2 continues to $i = 2$. P2 forks P3; P2 breaks and prints, P3 continues.",
+          "scene": {
+            "root": {
+              "label": "P0",
+              "sub": "forks @ i=0, break, print",
+              "tone": "success",
+              "children": [
+                {
+                  "label": "P1",
+                  "sub": "forks @ i=1, break, print",
+                  "tone": "success",
+                  "children": [
+                    {
+                      "label": "P2",
+                      "sub": "forks @ i=2, break, print",
+                      "tone": "success",
+                      "children": [
+                        {
+                          "label": "P3",
+                          "sub": "i=3: loop ends, print",
+                          "edge": "fork i=2"
+                        }
+                      ],
+                      "edge": "fork i=1"
+                    }
+                  ],
+                  "edge": "fork i=0"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "i = 3: loop ends",
+          "body": "P3 increments $i$ to $3$, the condition $i < 3$ fails, the loop ends and P3 prints.\n\nProcesses: P0, P1, P2, P3 — each prints exactly once: $1 + 1 + 1 + 1 = 4$.",
+          "scene": {
+            "root": {
+              "label": "P0",
+              "sub": "forks @ i=0, break, print",
+              "tone": "success",
+              "children": [
+                {
+                  "label": "P1",
+                  "sub": "forks @ i=1, break, print",
+                  "tone": "success",
+                  "children": [
+                    {
+                      "label": "P2",
+                      "sub": "forks @ i=2, break, print",
+                      "tone": "success",
+                      "children": [
+                        {
+                          "label": "P3",
+                          "sub": "i=3: loop ends, print",
+                          "tone": "success",
+                          "edge": "fork i=2"
+                        }
+                      ],
+                      "edge": "fork i=1"
+                    }
+                  ],
+                  "edge": "fork i=0"
+                }
+              ]
+            },
+            "caption": "4 processes ⇒ \"Hello!\" printed 4 times"
+          }
+        }
+      ],
+      "answer": {
+        "value": "`printf` executes **4** times",
+        "number": 4,
+        "matchesKey": true
+      },
+      "shortcut": "Only the child survives each iteration, so n iterations create n processes plus the original: 3 + 1 = 4 prints.",
+      "pitfalls": [
+        "Using the fork-tree formula 2³ = 8 — that applies only when both parent and child keep looping.",
+        "Forgetting the last child (P3), which leaves the loop normally and also prints."
+      ],
+      "verification": "Generalise: with the loop bound n, the processes form a chain P0 → P1 → … → Pn, so n + 1 prints; n = 3 ⇒ 4.",
+      "animation": {
+        "kind": "tree",
+        "title": "Process chain",
+        "root": {
+          "label": "P0",
+          "sub": "forks @ i=0, break, print",
+          "children": [
+            {
+              "label": "P1",
+              "sub": "forks @ i=1, break, print",
+              "children": [
+                {
+                  "label": "P2",
+                  "sub": "forks @ i=2, break, print",
+                  "children": [
+                    {
+                      "label": "P3",
+                      "sub": "i=3: loop ends, print",
+                      "edge": "fork i=2"
+                    }
+                  ],
+                  "edge": "fork i=1"
+                }
+              ],
+              "edge": "fork i=0"
+            }
+          ]
+        }
+      }
+    },
+    "cse-2026-1-cs-54": {
+      "approach": "Under FCFS, process order = arrival order (10, 11, 20, 22, 30, 33, 40, 44, 50, 55). The CPU is never idle after t = 10 (each finish time exceeds the next arrival), so start = previous finish and waiting = start − arrival.",
+      "concepts": [
+        "FCFS scheduling",
+        "Waiting time = start − arrival (non-preemptive)",
+        "Gantt chart"
+      ],
+      "given": "| Type | Burst | Arrivals |\n|---|---|---|\n| A | 6 s | 10, 20, 30, 40, 50 |\n| C | 8 s | 11, 22, 33, 44, 55 |",
+      "steps": [
+        {
+          "title": "First four processes",
+          "body": "- A1: arrives 10, runs $10$–$16$, wait $0$.\n- C1: arrives 11, runs $16$–$24$, wait $16 - 11 = 5$.\n- A2: arrives 20, runs $24$–$30$, wait $24 - 20 = 4$.\n- C2: arrives 22, runs $30$–$38$, wait $30 - 22 = 8$.",
+          "scene": {
+            "upto": 38,
+            "cursor": 38
+          }
+        },
+        {
+          "title": "Next four",
+          "body": "- A3: arrives 30, runs $38$–$44$, wait $8$.\n- C3: arrives 33, runs $44$–$52$, wait $11$.\n- A4: arrives 40, runs $52$–$58$, wait $12$.\n- C4: arrives 44, runs $58$–$66$, wait $14$.",
+          "scene": {
+            "upto": 66,
+            "cursor": 66
+          }
+        },
+        {
+          "title": "Last two and the average",
+          "body": "- A5: arrives 50, runs $66$–$72$, wait $16$.\n- C5: arrives 55, runs $72$–$80$, wait $17$.\n\nTotal waiting $= 0 + 5 + 4 + 8 + 8 + 11 + 12 + 14 + 16 + 17 = 95$ s.\n$$\\text{Average} = \\frac{95}{10} = 9.5\\ \\text{s}.$$",
+          "scene": {
+            "upto": 80,
+            "cursor": 80
+          }
+        }
+      ],
+      "answer": {
+        "value": "Average waiting time $=$ **9.5 s**",
+        "number": 9.5,
+        "matchesKey": true
+      },
+      "shortcut": "No idle time after $t = 10$, so total waiting $= \\sum(\\text{start}) - \\sum(\\text{arrival})$. Starts: $10,16,24,30,38,44,52,58,66,72$ sum to $410$; arrivals sum to $150 + 165 = 315$; $410 - 315 = 95$ → $9.5$.",
+      "pitfalls": [
+        "Running all A processes before the C processes — FCFS orders by arrival time, so they interleave.",
+        "Computing turnaround time (completion − arrival) instead of waiting time (gives (95 + 70)/10 = 16.5)."
+      ],
+      "verification": "Total burst $= 5 \\times 6 + 5 \\times 8 = 70$ s; CPU runs continuously from 10 to $10 + 70 = 80$ ✓, matching the Gantt chart end. Average turnaround $16.5 - $ average burst $7 = 9.5$ ✓.",
+      "animation": {
+        "kind": "gantt",
+        "title": "FCFS schedule",
+        "unit": "s",
+        "lanes": [
+          {
+            "label": "CPU",
+            "bars": [
+              {
+                "start": 10,
+                "end": 16,
+                "label": "A1",
+                "tone": "cat1"
+              },
+              {
+                "start": 16,
+                "end": 24,
+                "label": "C1",
+                "tone": "cat2"
+              },
+              {
+                "start": 24,
+                "end": 30,
+                "label": "A2",
+                "tone": "cat1"
+              },
+              {
+                "start": 30,
+                "end": 38,
+                "label": "C2",
+                "tone": "cat2"
+              },
+              {
+                "start": 38,
+                "end": 44,
+                "label": "A3",
+                "tone": "cat1"
+              },
+              {
+                "start": 44,
+                "end": 52,
+                "label": "C3",
+                "tone": "cat2"
+              },
+              {
+                "start": 52,
+                "end": 58,
+                "label": "A4",
+                "tone": "cat1"
+              },
+              {
+                "start": 58,
+                "end": 66,
+                "label": "C4",
+                "tone": "cat2"
+              },
+              {
+                "start": 66,
+                "end": 72,
+                "label": "A5",
+                "tone": "cat1"
+              },
+              {
+                "start": 72,
+                "end": 80,
+                "label": "C5",
+                "tone": "cat2"
+              }
+            ]
+          }
+        ],
+        "marks": [
+          {
+            "t": 10,
+            "label": "A1↓"
+          },
+          {
+            "t": 11,
+            "label": "C1↓"
+          },
+          {
+            "t": 20,
+            "label": "A2↓"
+          },
+          {
+            "t": 22,
+            "label": "C2↓"
+          },
+          {
+            "t": 30,
+            "label": "A3↓"
+          },
+          {
+            "t": 33,
+            "label": "C3↓"
+          },
+          {
+            "t": 40,
+            "label": "A4↓"
+          },
+          {
+            "t": 44,
+            "label": "C4↓"
+          },
+          {
+            "t": 50,
+            "label": "A5↓"
+          },
+          {
+            "t": 55,
+            "label": "C5↓"
+          }
+        ],
+        "upto": 10,
+        "cursor": 10
+      }
+    },
+    "cse-2026-1-cs-55": {
+      "approach": "A superkey is any superset of a candidate key. Count supersets of {A,B} or {A,C} over R(A,B,C,D) by inclusion–exclusion (or directly: must contain A, and at least one of B, C).",
+      "concepts": [
+        "Superkey",
+        "Candidate key",
+        "Inclusion–exclusion"
+      ],
+      "steps": [
+        {
+          "title": "What counts as a superkey",
+          "body": "A set of attributes is a superkey iff it contains at least one candidate key. With candidate keys $\\{A,B\\}$ and $\\{A,C\\}$ only, a set $X \\subseteq \\{A,B,C,D\\}$ is a superkey iff $X \\supseteq \\{A,B\\}$ or $X \\supseteq \\{A,C\\}$. (No other set can be a superkey: it would contain a minimal superkey, i.e. a third candidate key.)",
+          "scene": {
+            "reveal": 16
+          }
+        },
+        {
+          "title": "Supersets of each key",
+          "body": "Supersets of $\\{A, B\\}$: the other attributes $C, D$ are free: $2^2 = 4$.\nSupersets of $\\{A, C\\}$: $B, D$ free: $2^2 = 4$.\nSupersets of both, i.e. of $\\{A, B, C\\}$: $D$ free: $2^1 = 2$."
+        },
+        {
+          "title": "Inclusion–exclusion",
+          "body": "$$\\#\\text{superkeys} = 4 + 4 - 2 = 6.$$\nThey are $AB, AC, ABC, ABD, ACD, ABCD$.",
+          "scene": {
+            "reveal": 16,
+            "hl": [
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "tone": "success"
+              },
+              {
+                "r": 4,
+                "tone": "success"
+              },
+              {
+                "r": 5,
+                "tone": "success"
+              },
+              {
+                "r": 6,
+                "tone": "success"
+              },
+              {
+                "r": 7,
+                "tone": "success"
+              },
+              {
+                "r": 0,
+                "tone": "muted"
+              },
+              {
+                "r": 3,
+                "tone": "muted"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "Number of superkeys $=$ **6**",
+        "number": 6,
+        "matchesKey": true
+      },
+      "shortcut": "Every superkey contains $A$ (both keys do): $2^3 = 8$ sets containing $A$, minus those with neither $B$ nor $C$ ($A$, $AD$): $8 - 2 = 6$.",
+      "pitfalls": [
+        "Adding 4 + 4 = 8 and double-counting ABC and ABCD.",
+        "Forgetting that the candidate keys themselves are superkeys."
+      ],
+      "verification": "Direct listing of all 8 attribute sets containing A (table) marks exactly 6 as containing B or C.",
+      "animation": {
+        "kind": "table",
+        "title": "Attribute sets containing A",
+        "cols": [
+          "set",
+          "contains AB or AC?"
+        ],
+        "rows": [
+          [
+            "A",
+            "no"
+          ],
+          [
+            "AB",
+            "superkey"
+          ],
+          [
+            "AC",
+            "superkey"
+          ],
+          [
+            "AD",
+            "no"
+          ],
+          [
+            "ABC",
+            "superkey"
+          ],
+          [
+            "ABD",
+            "superkey"
+          ],
+          [
+            "ACD",
+            "superkey"
+          ],
+          [
+            "ABCD",
+            "superkey"
+          ]
+        ],
+        "reveal": 0
+      }
+    }
+  }
+}
