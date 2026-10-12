@@ -46,7 +46,7 @@ export function Notifications() {
       <PopoverTrigger asChild>
         <button
           aria-label={total ? `Notifications (${total} unread)` : 'Notifications'}
-          className="relative flex size-9 cursor-pointer items-center justify-center rounded-lg text-text-primary/60 transition-colors hover:bg-bg-app/5 hover:text-text-primary data-[state=open]:bg-bg-app/8 data-[state=open]:text-text-primary"
+          className="relative flex size-9 cursor-pointer items-center justify-center rounded-lg text-text-secondary transition-colors hover:bg-bg-app/5 hover:text-text-primary data-[state=open]:bg-bg-app/8 data-[state=open]:text-text-primary"
         >
           <Bell className="size-[17px]" />
           <AnimatePresence>
@@ -82,7 +82,7 @@ export function Notifications() {
                 <CheckCheck className="size-5" />
               </span>
               <p className="text-sm font-medium text-text-primary">You're all caught up</p>
-              <p className="text-xs text-text-primary/60">No unread messages or friend requests.</p>
+              <p className="text-xs text-text-secondary">No unread messages or friend requests.</p>
             </div>
           ) : (
             <>
@@ -96,7 +96,7 @@ export function Notifications() {
                   <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-cyan/10 text-cyan">
                     <UserPlus className="size-4" />
                   </span>
-                  <span className="min-w-0 text-text-primary/60">
+                  <span className="min-w-0 text-text-secondary">
                     <strong className="font-semibold text-text-primary">{r.display_name || r.username}</strong> wants to join your squad.
                   </span>
                 </Link>
@@ -111,7 +111,7 @@ export function Notifications() {
                   <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-accent-brand/15 text-accent-brand">
                     <MessageSquare className="size-4" />
                   </span>
-                  <span className="min-w-0 text-text-primary/60">
+                  <span className="min-w-0 text-text-secondary">
                     <strong className="font-semibold text-text-primary">{m.from_user}</strong> sent {m.count} {m.count === 1 ? 'message' : 'messages'}
                   </span>
                 </Link>

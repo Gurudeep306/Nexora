@@ -26,7 +26,7 @@ export function LangBadge({ id, className }: { id: string; className?: string })
   return (
     <span
       className={cn('inline-flex h-5 min-w-6 items-center justify-center rounded px-1 font-mono text-[10px] font-bold', className)}
-      style={{ color: b.c, background: `${b.c}1f`, boxShadow: `inset 0 0 0 1px ${b.c}33` }}
+      style={{ color: `color-mix(in oklab, ${b.c} 62%, var(--color-text-primary))`, background: `${b.c}1f`, boxShadow: `inset 0 0 0 1px ${b.c}33` }}
     >
       {b.t}
     </span>

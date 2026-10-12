@@ -1,19 +1,7 @@
 import { useState } from 'react'
 import { motion } from 'motion/react'
 import { Link } from 'react-router-dom'
-import {
-  Hammer,
-  Plus,
-  Pencil,
-  Trash2,
-  Copy,
-  Trophy,
-  Users,
-  Clock,
-  CalendarClock,
-  Swords,
-  Play,
-} from 'lucide-react'
+import { Hammer, Plus, Pencil, Trash2, Copy, Trophy, Users, Clock, CalendarClock, Play } from 'lucide-react'
 import {
   Badge,
   Button,
@@ -121,6 +109,7 @@ export default function WorkshopPage() {
   return (
     <div>
       <PageHeader
+        icon="workshop"
         title="Workshop"
         subtitle="Forge custom problems and host password-gated contests for the community."
         actions={
@@ -138,10 +127,10 @@ export default function WorkshopPage() {
 
       {/* ── Stats ── */}
       <div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <StatCard icon={<Hammer />} label="Custom problems" value={statsApi.data?.totalCustom ?? allProblems.length} accent="primary" />
-        <StatCard icon={<Trophy />} label="My contests" value={statsApi.data?.totalContests ?? myContests.length} accent="gold" />
+        <StatCard icon="workshop" label="Custom problems" value={statsApi.data?.totalCustom ?? allProblems.length} accent="primary" />
+        <StatCard icon="trophy" label="My contests" value={statsApi.data?.totalContests ?? myContests.length} accent="gold" />
         <StatCard
-          icon={<Swords />}
+          icon="problems"
           label="Selected for contests"
           value={myContests.reduce((s, c) => s + contestProblemIds(c).length, 0)}
           accent="cyan"
@@ -169,7 +158,7 @@ export default function WorkshopPage() {
         ) : allProblems.length === 0 ? (
           <Card>
             <EmptyState
-              icon={<Hammer />}
+              icon="workshop"
               title="The forge is cold"
               description="No custom problems exist yet. Create the first one — statement, samples and judge testcases."
               action={
@@ -248,7 +237,7 @@ export default function WorkshopPage() {
       ) : myContests.length === 0 ? (
         <Card>
           <EmptyState
-            icon={<Trophy />}
+            icon="trophy"
             title="No contests hosted"
             description="Pick your custom problems, set a password and start time — players join with the NX-code on the Contests page."
             action={

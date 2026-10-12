@@ -9,9 +9,10 @@ import {
   YAxis,
 } from 'recharts'
 import { Link } from 'react-router-dom'
-import { Activity, ArrowRight, Moon } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui'
 import type { StreakInfo, WeeklyProgressPoint } from './types'
+import { Icon } from '@/components/icon/Icon'
 
 const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
@@ -53,7 +54,7 @@ export function ActivityChart({
     <Card className="h-full">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Activity className="size-4 text-cyan" aria-hidden="true" /> Recent activity
+          <Icon name="activity" className="size-4 text-cyan" aria-hidden="true" /> Recent activity
           {!quietWeek && (
             <span className="ml-auto font-mono text-[11px] font-normal text-foreground-faint tabular-nums">
               {weekTotal} solved this week
@@ -65,7 +66,7 @@ export function ActivityChart({
         <div className="relative h-40" role="img" aria-label="Problems solved in the last 7 days">
           {quietWeek && (
             <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 rounded-lg bg-surface/70 text-center backdrop-blur-[2px]">
-              <Moon className="size-5 text-foreground-faint" aria-hidden="true" />
+              <Icon name="moon" className="size-5 text-foreground-faint" aria-hidden="true" />
               <p className="text-xs text-foreground-dim">Quiet week so far — the rift is waiting.</p>
               <Link
                 to="/problems"

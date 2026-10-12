@@ -1,7 +1,8 @@
-import { createElement, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { Check, Lock } from 'lucide-react'
 import { RankGlyph } from '@/components/ui'
 import { cn } from '@/lib/utils'
+import { Icon } from '@/components/icon/Icon'
 import { nodeIcon } from './icons'
 import type { NexusNode, NexusZone } from './types'
 
@@ -139,12 +140,12 @@ function NodeOrb({
         </svg>
 
         <span className="nx-orb-core relative flex size-[42px] items-center justify-center rounded-full">
-          {createElement(nodeIcon(node.icon), { className: 'size-[19px]', 'aria-hidden': true })}
+          <Icon name={nodeIcon(node.icon)} className="size-[19px]" />
         </span>
 
         {node.completed && (
           <span
-            className="absolute -top-0.5 -right-0.5 flex size-[18px] items-center justify-center rounded-full text-white shadow-md ring-2 ring-[var(--wall-color,var(--color-bg-app))]"
+            className="absolute -top-0.5 -right-0.5 flex size-[18px] items-center justify-center rounded-full text-white shadow-md ring-2 ring-bg-app"
             style={{ backgroundColor: color }}
             aria-hidden="true"
           >

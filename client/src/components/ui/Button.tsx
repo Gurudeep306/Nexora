@@ -14,7 +14,7 @@ const buttonVariants = cva(
           'border border-border bg-bg-surface-2 text-text-primary shadow-[inset_0_1px_0_oklch(98%_0%_0%/0.04)] hover:border-border-strong hover:bg-bg-surface-3',
         outline:
           'border border-accent-brand/20 bg-transparent text-accent-brand hover:bg-accent-brand/10 hover:border-accent-brand/30',
-        ghost: 'text-text-primary/70 hover:bg-accent-brand/5 hover:text-accent-brand',
+        ghost: 'text-text-secondary hover:bg-accent-brand/5 hover:text-accent-brand',
         subtle:
           'border border-border bg-bg-surface-2 text-text-primary shadow-[inset_0_1px_0_oklch(98%_0%_0%/0.04)] hover:border-border-strong hover:bg-bg-surface-3',
         destructive: 'bg-state-error text-on-accent-brand shadow-[inset_0_1px_0_oklch(98%_0%_0%/0.2)] hover:bg-state-error/90',

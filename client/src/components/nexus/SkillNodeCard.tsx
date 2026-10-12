@@ -1,8 +1,8 @@
 import { motion } from 'motion/react'
-import { Check, Lock } from 'lucide-react'
 import { Badge, Progress } from '@/components/ui'
 import { cn } from '@/lib/utils'
-import { NodeIcon } from './NodeIcon'
+import { IconBadge } from '@/components/icon/Icon'
+import { nodeIcon } from './icons'
 import type { NexusNode } from './types'
 
 export function SkillNodeCard({
@@ -33,17 +33,13 @@ export function SkillNodeCard({
         state === 'completed' && 'border-success/40',
       )}
     >
-      <span
-        data-icon-pod
-        className={cn(
-          'icon-pod flex size-10 shrink-0 items-center justify-center border transition-colors',
-          state === 'completed' ? 'border-success/50 text-success' : state === 'locked' ? 'border-border text-foreground-faint' : 'text-primary-bright',
-        )}
-        style={state === 'unlocked' || state === 'in-progress' ? { borderColor: zoneColor } : undefined}
-        aria-hidden="true"
-      >
-        {state === 'completed' ? <Check className="size-5" /> : state === 'locked' ? <Lock className="size-4" /> : <NodeIcon icon={node.icon} className="size-5" />}
-      </span>
+      {state === 'completed' ? (
+        <IconBadge name="check" tone="success" />
+      ) : state === 'locked' ? (
+        <IconBadge name="lock" tone="neutral" />
+      ) : (
+        <IconBadge name={nodeIcon(node.icon)} color={zoneColor} />
+      )}
       <span className="min-w-0 flex-1">
         <span className="flex flex-wrap items-center gap-1.5">
           <span className="truncate text-xs font-semibold text-foreground">{node.name}</span>

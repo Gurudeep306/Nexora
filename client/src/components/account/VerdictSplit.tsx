@@ -23,7 +23,7 @@ export function VerdictSplit({ verdicts }: { verdicts: { verdict: string; count:
       </CardHeader>
       <CardContent>
         {rows.length === 0 ? (
-          <EmptyState className="py-6" icon={<BarChart3 />} title="No judged runs yet" />
+          <EmptyState className="py-6" icon="analytics" title="No judged runs yet" />
         ) : (
           <ul className="space-y-3">
             {rows.map((v) => (

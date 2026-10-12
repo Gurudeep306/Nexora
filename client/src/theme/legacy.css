@@ -9,7 +9,7 @@
    handles were invisible, glows and skeletons were missing. They are
    restored here, reading colour from the current semantic tokens (the old
    names are aliased onto them in index.css), so they follow the appearance,
-   the accent and the wallpaper like everything else. */
+   the theme and the accent like everything else. */
 
 @utility glow-text {
   text-shadow: 0 0 20px color-mix(in srgb, var(--color-primary) 35%, transparent);

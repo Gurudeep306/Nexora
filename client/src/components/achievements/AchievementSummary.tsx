@@ -1,5 +1,4 @@
 import { motion } from 'motion/react'
-import { Award, Lock, TrendingUp, Zap } from 'lucide-react'
 import { Card, CardContent, Progress, StatCard } from '@/components/ui'
 import { formatNumber } from '@/lib/utils'
 import { AchievementIcon } from './AchievementIcon'
@@ -26,16 +25,16 @@ export function AchievementSummary({ achievements }: { achievements: Achievement
         transition={{ duration: 0.25 }}
       >
         <StatCard
-          icon={<Award />}
+          icon="award"
           label="Unlocked"
           value={`${unlocked.length}/${achievements.length}`}
           sub={<>{pct}% of the vault</>}
           accent="gold"
         />
-        <StatCard icon={<Zap />} label="XP earned" value={formatNumber(earnedXp)} sub="from achievements" accent="primary" />
-        <StatCard icon={<Lock />} label="XP remaining" value={formatNumber(remainingXp)} sub={`${locked.length} locked`} accent="accent" />
+        <StatCard icon="bolt" label="XP earned" value={formatNumber(earnedXp)} sub="from achievements" accent="primary" />
+        <StatCard icon="lock" label="XP remaining" value={formatNumber(remainingXp)} sub={`${locked.length} locked`} accent="accent" />
         <StatCard
-          icon={<TrendingUp />}
+          icon="trending-up"
           label="Collection"
           value={
             <>

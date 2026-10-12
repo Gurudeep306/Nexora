@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Award, Lock, Medal, RefreshCw } from 'lucide-react'
+import { RefreshCw } from 'lucide-react'
 import {
   Button,
   EmptyState,
@@ -55,6 +55,7 @@ export default function AchievementsPage() {
   return (
     <div>
       <PageHeader
+        icon="achievements"
         title="Achievements"
         subtitle="Trophies from the rift — earned glow, locked stay in the shadows until you unlock them."
         actions={
@@ -66,13 +67,13 @@ export default function AchievementsPage() {
       />
 
       <div className="mb-4 grid grid-cols-2 gap-3 xl:grid-cols-4">
-        <StatCard label="Unlocked" value={earned.length} icon={<Medal />} accent="success" sub={`of ${achievements.length} · ${completion}%`} />
-        <StatCard label="Trophy XP" value={earnedXp.toLocaleString()} icon={<Award />} accent="accent" sub="earned from achievements" />
-        <StatCard label="In Progress" value={inProgress} icon={<Lock />} accent="warning" sub="partially complete" />
+        <StatCard label="Unlocked" value={earned.length} icon="medal" accent="success" sub={`of ${achievements.length} · ${completion}%`} />
+        <StatCard label="Trophy XP" value={earnedXp.toLocaleString()} icon="award" accent="accent" sub="earned from achievements" />
+        <StatCard label="In Progress" value={inProgress} icon="lock" accent="warning" sub="partially complete" />
         <StatCard
           label="Categories"
           value={categories.length - 1}
-          icon={<Award />}
+          icon="award"
           accent="secondary"
           sub="milestones, streaks, rating…"
         />
@@ -108,7 +109,7 @@ export default function AchievementsPage() {
 
           {filtered.length === 0 ? (
             <EmptyState
-              icon={<Award />}
+              icon="award"
               title="No achievements here"
               description="Try a different filter — or go solve something to forge new trophies."
             />

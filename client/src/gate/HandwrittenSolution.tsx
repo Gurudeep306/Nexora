@@ -178,7 +178,7 @@ export function HandwrittenSolution({
             className={cn(
               'flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[11.5px] font-semibold transition-all cursor-pointer',
               viewMode === 'handwritten'
-                ? 'bg-accent-brand text-white shadow-sm'
+                ? 'bg-accent-brand text-on-accent-brand shadow-sm'
                 : 'text-text-muted hover:text-text-primary',
             )}
           >
@@ -191,7 +191,7 @@ export function HandwrittenSolution({
             className={cn(
               'flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[11.5px] font-semibold transition-all cursor-pointer',
               viewMode === 'typed'
-                ? 'bg-accent-brand text-white shadow-sm'
+                ? 'bg-accent-brand text-on-accent-brand shadow-sm'
                 : 'text-text-muted hover:text-text-primary',
             )}
           >

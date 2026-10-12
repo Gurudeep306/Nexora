@@ -1,35 +1,16 @@
-import { useSyncExternalStore, type CSSProperties } from 'react'
-import {
-  Activity,
-  Bookmark,
-  BrainCircuit,
-  Code2,
-  GraduationCap,
-  House,
-  ListChecks,
-  Medal,
-  Network,
-  Palette,
-  Search,
-  Settings,
-  Swords,
-  Trophy,
-  UserRound,
-  UsersRound,
-  type LucideIcon,
-} from 'lucide-react'
-import type { IconPack, IconShape } from '@/theme/catalog'
+import { useSyncExternalStore } from 'react'
 
 /**
  * Everything that can live in the Dock, and the user's arrangement of it.
  *
- * Each destination has its own calibrated icon tile colour (a hue),
- * so the Dock and launchpad read at a glance with high visual prestige.
+ * Each destination has its own calibrated tile colour (a hue), so the Dock
+ * and launchpad read at a glance. The glyph is semantic (dockIcons.ts) and
+ * drawn in the user's icon set; the tile is an <IconBadge> (DockBadge.tsx),
+ * so it follows the chosen icon container and shape.
  */
 export interface DockItem {
   id: string
   label: string
-  icon: LucideIcon
   /** OKLCH hue of the icon tile. */
   hue: number
   /** Chroma of the tile; low for utility items such as Settings. */
@@ -41,22 +22,22 @@ export interface DockItem {
 }
 
 export const DOCK_ITEMS: DockItem[] = [
-  { id: 'hub', label: 'Home', icon: House, hue: 255, to: '/hub' },
-  { id: 'problems', label: 'Problems', icon: Swords, hue: 25, to: '/problems' },
-  { id: 'contests', label: 'Contests', icon: Trophy, hue: 78, to: '/contests' },
-  { id: 'nexus', label: 'Nexus', icon: Network, hue: 295, to: '/nexus' },
-  { id: 'learn', label: 'Learn', icon: GraduationCap, hue: 150, to: '/learn' },
-  { id: 'gate', label: 'GATE', icon: BrainCircuit, hue: 175, to: '/gate' },
-  { id: 'analytics', label: 'Analytics', icon: Activity, hue: 210, to: '/analytics' },
-  { id: 'social', label: 'Social', icon: UsersRound, hue: 185, to: '/social' },
-  { id: 'workshop', label: 'Workshop', icon: Code2, hue: 50, to: '/workshop' },
-  { id: 'achievements', label: 'Achievements', icon: Medal, hue: 95, to: '/achievements' },
-  { id: 'submissions', label: 'Submissions', icon: ListChecks, hue: 270, to: '/submissions' },
-  { id: 'bookmarks', label: 'Bookmarks', icon: Bookmark, hue: 12, to: '/bookmarks' },
-  { id: 'profile', label: 'Profile', icon: UserRound, hue: 235, to: '/profile' },
-  { id: 'look', label: 'Appearance', icon: Palette, hue: 310, to: '/settings?tab=look' },
-  { id: 'settings', label: 'Settings', icon: Settings, hue: 260, chroma: 0.02, to: '/settings' },
-  { id: 'search', label: 'Search', icon: Search, hue: 260, chroma: 0.02, action: 'search' },
+  { id: 'hub', label: 'Home', hue: 255, to: '/hub' },
+  { id: 'problems', label: 'Problems', hue: 25, to: '/problems' },
+  { id: 'contests', label: 'Contests', hue: 78, to: '/contests' },
+  { id: 'nexus', label: 'Nexus', hue: 295, to: '/nexus' },
+  { id: 'learn', label: 'Learn', hue: 150, to: '/learn' },
+  { id: 'gate', label: 'GATE', hue: 175, to: '/gate' },
+  { id: 'analytics', label: 'Analytics', hue: 210, to: '/analytics' },
+  { id: 'social', label: 'Social', hue: 185, to: '/social' },
+  { id: 'workshop', label: 'Workshop', hue: 50, to: '/workshop' },
+  { id: 'achievements', label: 'Achievements', hue: 95, to: '/achievements' },
+  { id: 'submissions', label: 'Submissions', hue: 270, to: '/submissions' },
+  { id: 'bookmarks', label: 'Bookmarks', hue: 12, to: '/bookmarks' },
+  { id: 'profile', label: 'Profile', hue: 235, to: '/profile' },
+  { id: 'look', label: 'Theme Centre', hue: 310, to: '/theme' },
+  { id: 'settings', label: 'Settings', hue: 260, chroma: 0.02, to: '/settings' },
+  { id: 'search', label: 'Search', hue: 260, chroma: 0.02, action: 'search' },
 ]
 
 export const DOCK_BY_ID = new Map(DOCK_ITEMS.map((i) => [i.id, i]))
@@ -138,46 +119,13 @@ export function useDock(): DockPrefs {
   )
 }
 
-/** The icon tile background for an item, adapted to chosen pack and shape. */
-export function tileStyle(
-  item: DockItem,
-  pack: IconPack = 'vibrant',
-  shape: IconShape = 'squircle',
-): CSSProperties {
-  const c = item.chroma ?? 0.17
-  const style: CSSProperties = {}
-
-  // Shape application
-  if (shape === 'circle') style.borderRadius = '50%'
-  else if (shape === 'hexagon') style.clipPath = 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)'
-  else if (shape === 'free') {
-    style.background = 'transparent'
-    style.boxShadow = 'none'
-    return style
-  } else {
-    style.borderRadius = '28%'
-  }
-
-  // Pack aesthetics
-  if (pack === 'neon') {
-    style.background = `radial-gradient(circle at 50% 50%, oklch(0.20 0.05 ${item.hue}), oklch(0.12 0.03 ${item.hue}))`
-    style.border = `1px solid oklch(0.72 0.22 ${item.hue})`
-    style.boxShadow = `0 0 16px oklch(0.72 0.22 ${item.hue} / 0.45)`
-  } else if (pack === 'minimal') {
-    style.background = 'oklch(1 0 0 / 0.06)'
-    style.border = '1px solid oklch(1 0 0 / 0.1)'
-    style.backdropFilter = 'blur(10px)'
-  } else if (pack === 'duotone') {
-    style.background = `linear-gradient(135deg, oklch(0.35 0.12 ${item.hue} / 0.7), oklch(0.18 0.08 ${item.hue} / 0.9))`
-    style.border = `1px solid oklch(0.6 0.15 ${item.hue} / 0.35)`
-  } else if (pack === 'clay') {
-    style.background = `linear-gradient(180deg, oklch(0.70 ${c} ${item.hue}), oklch(0.52 ${c + 0.03} ${item.hue + 8}))`
-    style.boxShadow = `inset 0 2px 3px oklch(1 0 0 / 0.45), inset 0 -3px 4px oklch(0 0 0 / 0.35), 0 8px 16px -4px oklch(0 0 0 / 0.4)`
-  } else {
-    // Vibrant default
-    style.background = `linear-gradient(180deg, oklch(0.74 ${c} ${item.hue}), oklch(0.56 ${c + 0.03} ${item.hue + 8}))`
-    style.boxShadow = `inset 0 1px 0 oklch(1 0 0 / 0.3), 0 4px 12px -2px oklch(0 0 0 / 0.25)`
-  }
-
-  return style
+/**
+ * The tile colour for an item, in OKLCH. Its lightness comes from --dock-l
+ * (index.css, .dock-badge), tuned per light/dark mode so the glyph stays
+ * legible on soft and bare containers as well as on solid ones.
+ */
+export function tileColor(item: DockItem): string {
+  // Yellows turn muddy at the shared lightness; lift them a little.
+  const l = item.hue >= 60 && item.hue <= 110 ? 'calc(var(--dock-l) + 0.05)' : 'var(--dock-l)'
+  return `oklch(${l} ${item.chroma ?? 0.16} ${item.hue})`
 }

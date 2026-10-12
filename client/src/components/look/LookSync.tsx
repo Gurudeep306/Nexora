@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { api } from '@/lib/api'
 import { useAuth } from '@/context/AuthContext'
-import { sanitizeLook, useTheme, type Appearance } from '@/context/ThemeContext'
+import { useTheme, type Appearance } from '@/context/ThemeContext'
+import { sanitizeLook } from '@/theme/look'
 
 const KEY = 'ui_look'
 
@@ -10,7 +11,7 @@ const KEY = 'ui_look'
  *
  * On sign-in it loads the saved look (per user — /api/settings is scoped to
  * the session) and applies it; after that, any change is written back,
- * debounced so dragging through wallpapers does not spam the server. If the
+ * debounced so browsing themes does not spam the server. If the
  * account has no saved look yet, whatever this browser shows becomes it.
  * Renders nothing.
  */

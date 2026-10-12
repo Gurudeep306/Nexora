@@ -258,7 +258,7 @@ export function CyberMatrixPlayer({ visualization }: Props) {
               Frame {currentStep + 1} of {total}
             </span>
           </div>
-          <p className="min-h-10 text-xs leading-relaxed text-foreground-bright">{activeFrame.explanation}</p>
+          <p className="min-h-10 text-xs leading-relaxed text-text-primary">{activeFrame.explanation}</p>
         </div>
 
         {pseudo_lines && pseudo_lines.length > 0 && (

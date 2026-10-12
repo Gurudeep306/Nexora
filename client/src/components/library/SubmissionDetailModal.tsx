@@ -7,6 +7,7 @@ import { PlatformBadge, VerdictBadge } from '@/components/shared/PlatformBadge'
 import { useApi } from '@/hooks/useApi'
 import { api } from '@/lib/api'
 import { formatDate } from '@/lib/utils'
+import { useMonacoAppTheme } from '@/theme/useMonacoAppTheme'
 import { monacoLanguage, reconstructCode, type ActivitySubmission, type CodeReplayResponse } from './types'
 
 export function SubmissionDetailModal({
@@ -16,6 +17,7 @@ export function SubmissionDetailModal({
   submission: ActivitySubmission | null
   onClose: () => void
 }) {
+  const appTheme = useMonacoAppTheme()
   const replayApi = useApi<CodeReplayResponse>(
     () => api.get<CodeReplayResponse>(`/api/code-replay/${submission?.id ?? 0}`),
     [submission?.id],
@@ -97,13 +99,15 @@ export function SubmissionDetailModal({
                 height="22rem"
                 language={monacoLanguage(submission.language)}
                 value={code}
-                theme="vs-dark"
+                theme={appTheme.theme}
+                beforeMount={appTheme.beforeMount}
                 options={{
                   readOnly: true,
                   domReadOnly: true,
                   minimap: { enabled: false },
                   fontSize: 13,
-                  fontFamily: "'JetBrains Mono','Fira Code',monospace",
+                  fontFamily: appTheme.fontFamily,
+                  fontLigatures: appTheme.ligatures,
                   scrollBeyondLastLine: false,
                   renderLineHighlight: 'none',
                 }}

@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom'
-import { ArrowUpRight, Crosshair, Lightbulb } from 'lucide-react'
+import { ArrowUpRight } from 'lucide-react'
 import { Badge, Card, CardContent, CardHeader, CardTitle, EmptyState, Progress } from '@/components/ui'
 import { PlatformBadge } from '@/components/shared/PlatformBadge'
 import { cn } from '@/lib/utils'
 import type { WeaknessResponse } from './types'
+import { Icon } from '@/components/icon/Icon'
 
 const STRENGTH_META: Record<string, { variant: 'success' | 'warning' | 'danger'; bar: string; label: string }> = {
   strong: { variant: 'success', bar: 'bg-success', label: 'strong' },
@@ -19,7 +20,7 @@ export function WeaknessPanel({ data }: { data: WeaknessResponse }) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Crosshair className="size-4 text-accent" aria-hidden="true" />
+            <Icon name="crosshair" className="size-4 text-accent" aria-hidden="true" />
             Tag Strength Matrix
           </CardTitle>
           <p className="text-xs text-foreground-faint">Solve rate per tag — weakest first</p>
@@ -56,7 +57,7 @@ export function WeaknessPanel({ data }: { data: WeaknessResponse }) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Lightbulb className="size-4 text-gold" aria-hidden="true" />
+            <Icon name="lightbulb" className="size-4 text-gold" aria-hidden="true" />
             Training Recommendations
           </CardTitle>
           <p className="text-xs text-foreground-faint">Curated problems targeting your weakest tags</p>

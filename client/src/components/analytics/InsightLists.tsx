@@ -1,10 +1,11 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-import { Crosshair, Flame, History, Skull, Sparkles, Table2 } from 'lucide-react'
+import { Skull, Table2 } from 'lucide-react'
 import { Badge, Card, CardContent, CardHeader, CardTitle, EmptyState, Table, TBody, TD, TH, THead, TR } from '@/components/ui'
 import { cn, formatDate, formatNumber } from '@/lib/utils'
 import { ratingTextClass } from '@/components/nexus/icons'
 import type { FirstSolve, InsightProblem, Recommendation, SolveSpeedRow } from './types'
+import { Icon } from '@/components/icon/Icon'
 
 export function SolveSpeedTable({ data }: { data: SolveSpeedRow[] }) {
   return (
@@ -96,7 +97,7 @@ export function HardestSolved({ problems }: { problems: InsightProblem[] }) {
 }
 
 export function MostAttempted({ problems }: { problems: InsightProblem[] }) {
-  return <ProblemMiniList title="Most attempted" icon={<Flame className="size-4 text-warning" aria-hidden="true" />} problems={problems} showAttempts />
+  return <ProblemMiniList title="Most attempted" icon={<Icon name="flame" className="size-4 text-warning" aria-hidden="true" />} problems={problems} showAttempts />
 }
 
 export function RecommendationsPanel({ recommendations }: { recommendations: Recommendation[] }) {
@@ -104,7 +105,7 @@ export function RecommendationsPanel({ recommendations }: { recommendations: Rec
     <Card className="h-full">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Sparkles className="size-4 text-cyan" aria-hidden="true" /> Training recommendations
+          <Icon name="sparkles" className="size-4 text-cyan" aria-hidden="true" /> Training recommendations
         </CardTitle>
         <p className="text-[11px] text-foreground-faint">Weak tags first — the rift suggests these drills</p>
       </CardHeader>
@@ -134,7 +135,7 @@ export function RecommendationsPanel({ recommendations }: { recommendations: Rec
             </div>
           ))
         ) : (
-          <EmptyState icon={<Sparkles />} title="No recommendations" description="Solve across a few tags and the coach kicks in." className="py-6" />
+          <EmptyState icon="sparkles" title="No recommendations" description="Solve across a few tags and the coach kicks in." className="py-6" />
         )}
       </CardContent>
     </Card>
@@ -146,7 +147,7 @@ export function FirstSolvesTimeline({ firstSolves }: { firstSolves: FirstSolve[]
     <Card className="h-full">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <History className="size-4 text-success" aria-hidden="true" /> First blood per bracket
+          <Icon name="submissions" className="size-4 text-success" aria-hidden="true" /> First blood per bracket
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -158,7 +159,7 @@ export function FirstSolvesTimeline({ firstSolves }: { firstSolves: FirstSolve[]
                   className="absolute -left-[21.5px] top-1 flex size-3 items-center justify-center rounded-full border border-primary-bright bg-background"
                   aria-hidden="true"
                 >
-                  <Crosshair className="size-2 text-primary-bright" />
+                  <Icon name="crosshair" className="size-2 text-primary-bright" />
                 </span>
                 <p className="font-mono text-[11px] font-bold text-foreground">
                   {f.bracket}
@@ -169,7 +170,7 @@ export function FirstSolvesTimeline({ firstSolves }: { firstSolves: FirstSolve[]
             ))}
           </ol>
         ) : (
-          <EmptyState icon={<History />} title="No first solves logged" description="Each new rating bracket you crack gets memorialized here." className="py-6" />
+          <EmptyState icon="submissions" title="No first solves logged" description="Each new rating bracket you crack gets memorialized here." className="py-6" />
         )}
       </CardContent>
     </Card>

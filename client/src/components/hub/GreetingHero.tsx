@@ -1,9 +1,9 @@
 import { motion } from 'motion/react'
-import { Flame, Sparkles, Target, Zap } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Avatar, Badge, Card, RankGlyph, XpBar } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import type { StatsResponse } from './types'
+import { Icon } from '@/components/icon/Icon'
 
 /** Circular progress toward today's solve goal. */
 function GoalRing({ done, goal }: { done: number; goal: number }) {
@@ -82,14 +82,14 @@ export function GreetingHero({
               <h2 className="mt-0.5 truncate font-display text-xl tracking-wide text-foreground md:text-2xl">{displayName}</h2>
               <div className="mt-2 flex flex-wrap items-center gap-1.5">
                 <Badge variant="primary">
-                  <Zap aria-hidden="true" /> LVL {level.level} · {level.name}
+                  <Icon name="bolt" aria-hidden="true" /> LVL {level.level} · {level.name}
                 </Badge>
                 <Badge variant="gold">
-                  <Sparkles aria-hidden="true" /> {title.current.title}
+                  <Icon name="sparkles" aria-hidden="true" /> {title.current.title}
                 </Badge>
                 {current > 0 && (
                   <Badge variant="warning">
-                    <Flame aria-hidden="true" /> {current}-day streak
+                    <Icon name="flame" aria-hidden="true" /> {current}-day streak
                   </Badge>
                 )}
               </div>
@@ -121,7 +121,7 @@ export function GreetingHero({
                 )}
               </p>
               <p className="flex items-center gap-1.5 text-xs text-foreground-faint">
-                <Target className="size-3.5 text-primary-bright" aria-hidden="true" />
+                <Icon name="target" className="size-3.5 text-primary-bright" aria-hidden="true" />
                 <span className="font-mono text-primary-bright tabular-nums">{todayStats.xp}</span> XP ·{' '}
                 <span className="font-mono text-foreground-dim tabular-nums">{todayStats.attempted}</span> attempts today
               </p>

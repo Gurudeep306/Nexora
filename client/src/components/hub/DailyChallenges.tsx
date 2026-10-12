@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'motion/react'
-import { CheckCircle2, Crosshair, ExternalLink, Swords } from 'lucide-react'
+import { ExternalLink } from 'lucide-react'
 import { Badge, Card, CardContent, CardHeader, CardTitle, EmptyState } from '@/components/ui'
 import { PlatformBadge } from '@/components/shared/PlatformBadge'
 import { cn } from '@/lib/utils'
 import type { DailyChallenge } from './types'
+import { Icon } from '@/components/icon/Icon'
 
 const DIFF_META: Record<string, { variant: 'success' | 'warning' | 'danger'; label: string }> = {
   easy: { variant: 'success', label: 'Easy' },
@@ -17,7 +18,7 @@ export function DailyChallenges({ challenges }: { challenges: DailyChallenge[] }
     <Card className="h-full">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Crosshair className="size-4 text-accent" aria-hidden="true" /> Daily challenges
+          <Icon name="crosshair" className="size-4 text-accent" aria-hidden="true" /> Daily challenges
           <span className="ml-auto text-[10px] font-normal tracking-normal text-foreground-faint normal-case">
             resets daily · bonus XP
           </span>
@@ -27,7 +28,7 @@ export function DailyChallenges({ challenges }: { challenges: DailyChallenge[] }
         {challenges.length === 0 ? (
           <EmptyState
             className="py-6"
-            icon={<Swords />}
+            icon="problems"
             title="No challenges today"
             description="Sync more problems to generate daily challenges."
           />
@@ -52,7 +53,7 @@ export function DailyChallenges({ challenges }: { challenges: DailyChallenge[] }
                     )}
                   >
                     {done ? (
-                      <CheckCircle2 className="size-5 shrink-0 text-success" aria-label="Completed" />
+                      <Icon name="check-circle" className="size-5 shrink-0 text-success" aria-label="Completed" />
                     ) : (
                       <span className="flex size-5 shrink-0 items-center justify-center rounded-full border border-border-glow text-[10px] font-bold text-primary-bright">
                         {c.difficulty[0]?.toUpperCase()}

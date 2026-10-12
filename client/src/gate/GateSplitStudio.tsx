@@ -65,7 +65,7 @@ export function GateSplitStudio({
                     <span
                       className={cn(
                         'flex size-5 items-center justify-center rounded-md font-mono text-[10.5px]',
-                        isSelected ? 'bg-accent-brand text-white' : 'bg-bg-surface-2 text-text-muted',
+                        isSelected ? 'bg-accent-brand text-on-accent-brand' : 'bg-bg-surface-2 text-text-muted',
                       )}
                     >
                       {idx + 1}

@@ -1,12 +1,12 @@
 import { useMemo, useState } from 'react'
 import { motion } from 'motion/react'
-import { BookOpen, CheckCircle2, GraduationCap } from 'lucide-react'
 import { Badge, Button, Card, CardContent, EmptyState, ErrorState, LoadingBlock, Progress, Select, StatCard } from '@/components/ui'
 import { useApi } from '@/hooks/useApi'
 import { api } from '@/lib/api'
 import { TutorialReader } from './TutorialReader'
 import { CATEGORY_GROUPS, categoryLabel, type Tutorial, type TutorialStats } from './types'
 import { cn } from '@/lib/utils'
+import { Icon } from '@/components/icon/Icon'
 
 export function TutorialsPanel() {
   const [category, setCategory] = useState('cp')
@@ -58,8 +58,8 @@ export function TutorialsPanel() {
     <div className="space-y-4">
       {/* Stats strip */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <StatCard icon={<GraduationCap />} label="Chapters" value={stats.data?.total ?? '—'} accent="primary" />
-        <StatCard icon={<CheckCircle2 />} label="Completed" value={stats.data?.completed ?? '—'} accent="success" />
+        <StatCard icon="learn" label="Chapters" value={stats.data?.total ?? '—'} accent="primary" />
+        <StatCard icon="check-circle" label="Completed" value={stats.data?.completed ?? '—'} accent="success" />
         <Card className="p-4">
           <p className="text-[11px] font-semibold tracking-wider text-foreground-faint uppercase">Track progress</p>
           <p className="mt-1 font-display text-2xl text-cyan tabular-nums">
@@ -121,7 +121,7 @@ export function TutorialsPanel() {
                                   : 'border border-transparent text-foreground-dim hover:bg-surface-2 hover:text-foreground',
                               )}
                             >
-                              <BookOpen className="size-3.5 shrink-0" aria-hidden="true" />
+                              <Icon name="book" className="size-3.5 shrink-0" aria-hidden="true" />
                               <span className="min-w-0 flex-1 truncate">{c.label}</span>
                               <span className="shrink-0 font-mono text-[10px] text-foreground-faint tabular-nums">
                                 {done}/{list.length}
@@ -149,7 +149,7 @@ export function TutorialsPanel() {
                               : 'border border-transparent text-foreground-dim hover:bg-surface-2 hover:text-foreground',
                           )}
                         >
-                          <BookOpen className="size-3.5 shrink-0" aria-hidden="true" />
+                          <Icon name="book" className="size-3.5 shrink-0" aria-hidden="true" />
                           <span className="min-w-0 flex-1 truncate">{categoryLabel(c)}</span>
                         </button>
                       </li>
@@ -163,7 +163,7 @@ export function TutorialsPanel() {
           {/* Chapter list */}
           <div>
             {current.length === 0 ? (
-              <EmptyState icon={<BookOpen />} title="No chapters here yet" description="Pick another category from the rail." />
+              <EmptyState icon="book" title="No chapters here yet" description="Pick another category from the rail." />
             ) : (
               <div className="grid grid-cols-1 gap-2.5 md:grid-cols-2">
                 {current.map((t, i) => (
@@ -197,7 +197,7 @@ export function TutorialsPanel() {
                                 : 'border-border bg-surface-2 text-primary-bright',
                             )}
                           >
-                            {t.completed ? <CheckCircle2 className="size-4" aria-label="Completed" /> : t.order_index + 1}
+                            {t.completed ? <Icon name="check-circle" className="size-4" aria-label="Completed" /> : t.order_index + 1}
                           </span>
                           <div className="min-w-0 flex-1">
                             <h3 className="font-display text-[13px] tracking-wide text-foreground">{t.title}</h3>
