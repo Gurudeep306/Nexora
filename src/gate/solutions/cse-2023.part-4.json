@@ -1,0 +1,2524 @@
+{
+  "paper": "cse-2023",
+  "version": 2,
+  "solutions": {
+    "cse-2023-cs-30": {
+      "approach": "Read the PDA as a counter: $s$ pushes one $A$ per $a$, $p$ pops one $A$ per $b$, and $q$ only empties the stack. Leaving for $q$ needs an $A$ still on top, which pins the counts down to $m \\ge 1$ and $n < m$.",
+      "concepts": [
+        "Pushdown automaton",
+        "Acceptance by empty stack",
+        "Counting with a stack"
+      ],
+      "given": "| From | To | Transitions |\n|---|---|---|\n| $s$ | $s$ | $a/\\bot/A\\bot$, $a/A/AA$ |\n| $s$ | $p$ | $b/A/\\epsilon$ |\n| $p$ | $p$ | $b/A/\\epsilon$ |\n| $s$ | $q$ | $\\epsilon/A/\\epsilon$ |\n| $p$ | $q$ | $\\epsilon/A/\\epsilon$ |\n| $q$ | $q$ | $\\epsilon/A/\\epsilon$, $\\epsilon/\\bot/\\epsilon$ |\n\nStart in $s$ with stack $\\bot$; accept by empty stack.",
+      "steps": [
+        {
+          "title": "What each state does",
+          "body": "- In $s$, every $a$ pushes one $A$ ($a/\\bot/A\\bot$ and $a/A/AA$ keep what was on top and add an $A$).\n- The first $b$ moves $s \\to p$ and pops one $A$; in $p$ each further $b$ pops one $A$.\n- $s \\to q$ and $p \\to q$ read nothing but **need $A$ on top** and pop it.\n- Only $q$ can pop $\\bot$, and nothing leaves $q$ or reads input there.\n\nSo the stack can become empty only in $q$, after all input is read, and the input must look like $a^m b^n$ ($a$'s in $s$, then $b$'s in $p$).",
+          "scene": {
+            "current": [
+              "s"
+            ],
+            "stack": [
+              "⊥"
+            ],
+            "tape": {
+              "cells": [
+                "a",
+                "a",
+                "b"
+              ],
+              "head": 0
+            },
+            "edgeTones": {},
+            "caption": "Trace of $aab$: start in $s$ with $\\bot$."
+          }
+        },
+        {
+          "title": "At least one a is needed",
+          "body": "Every move out of $s$ needs $A$ on top, and $A$ is pushed only by reading $a$. With no $a$ the PDA sits in $s$ with $\\bot$ and is stuck, so $\\epsilon$ and $b^n$ are rejected: $m \\ge 1$.\n\nAfter reading $a^m$ the stack is $\\bot A^m$ (here $m = 2$: $\\bot A A$).",
+          "scene": {
+            "current": [
+              "s"
+            ],
+            "stack": [
+              "⊥",
+              "A",
+              "A"
+            ],
+            "tape": {
+              "cells": [
+                "a",
+                "a",
+                "b"
+              ],
+              "head": 2
+            },
+            "edgeTones": {
+              "s>s": "accent"
+            },
+            "caption": "$aa$ read: two $A$'s pushed."
+          }
+        },
+        {
+          "title": "Each b cancels one A, and one A must survive",
+          "body": "Each $b$ pops one $A$, so after $n$ $b$'s the stack is $\\bot A^{m-n}$ (this needs $n \\le m$).\n\nTo reach $q$ the PDA pops **one more** $A$ with $\\epsilon/A/\\epsilon$ (from $p$, or from $s$ when $n = 0$). That needs $m - n \\ge 1$, i.e. $n < m$.\n\nIf $n = m$, the PDA is in $p$ with $\\bot$ on top and $p$ has no move on $\\bot$: stuck, rejected.",
+          "scene": {
+            "current": [
+              "p"
+            ],
+            "stack": [
+              "⊥",
+              "A"
+            ],
+            "tape": {
+              "cells": [
+                "a",
+                "a",
+                "b"
+              ],
+              "head": 3
+            },
+            "edgeTones": {
+              "s>p": "accent"
+            },
+            "caption": "$b$ read: one $A$ popped, one left ($n = 1 < m = 2$)."
+          }
+        },
+        {
+          "title": "q empties the stack",
+          "body": "In $q$, $\\epsilon/A/\\epsilon$ pops the remaining $m - n - 1$ $A$'s and $\\epsilon/\\bot/\\epsilon$ pops $\\bot$. Input consumed and stack empty, so the string is accepted.\n\nTrace of $aab$ (stack written bottom → top): $(s, aab, \\bot) \\vdash (s, ab, \\bot A) \\vdash (s, b, \\bot AA) \\vdash (p, \\epsilon, \\bot A) \\vdash (q, \\epsilon, \\bot) \\vdash (q, \\epsilon, \\text{empty})$.",
+          "scene": {
+            "current": [
+              "q"
+            ],
+            "stack": [],
+            "edgeTones": {
+              "p>q": "success",
+              "q>q": "success"
+            },
+            "caption": "$aab$ accepted: stack empty."
+          }
+        },
+        {
+          "title": "Collect the conditions",
+          "body": "Accepted exactly when the input is $a^m b^n$ with $m \\ge 1$ and $n < m$:\n\n$$L(P) = \\{a^m b^n \\mid 1 \\le m \\text{ and } n < m\\}$$\n\nwhich is option (A). For contrast, $ab$ ($n = m$) is rejected: after the $b$ the PDA is in $p$ with $\\bot$ on top and has no move.",
+          "scene": {
+            "current": [
+              "p"
+            ],
+            "stack": [
+              "⊥"
+            ],
+            "tape": {
+              "cells": [
+                "a",
+                "b"
+              ],
+              "head": 2
+            },
+            "edgeTones": {
+              "s>p": "error"
+            },
+            "caption": "$ab$: stuck in $p$ with $\\bot$ on top, so rejected."
+          }
+        }
+      ],
+      "answer": {
+        "value": "$\\{a^m b^n \\mid 1 \\le m \\text{ and } n < m\\}$ — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$m \\ge 1$ is needed to leave $s$, and one $A$ must remain after the $b$'s for the $\\epsilon/A/\\epsilon$ move into $q$, so $n < m$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Contains $ab$ ($n = m$) and $\\epsilon$; both get stuck with $\\bot$ on top outside $q$. This is the classic $a^n b^n$-style count, off by one."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$a^*b^*$ contains $b$, $abb$ and $\\epsilon$, none of which is accepted; the PDA does compare the counts."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Contains $\\epsilon$ and $b^n$ (rejected) and misses accepted strings with both letters such as $aab$."
+        }
+      ],
+      "shortcut": "Test $\\epsilon$: the PDA starts in $s$ with $\\bot$ and has no $\\epsilon$-move on $\\bot$ there, so $\\epsilon$ is rejected. Options B, C and D all contain $\\epsilon$ ($m = n = 0$), so only A survives.",
+      "pitfalls": [
+        "Assuming acceptance by final state: there are no final states; the stack must be emptied, and only $q$ can pop $\\bot$.",
+        "Treating it like the textbook $a^n b^n$ PDA: here the move into $q$ itself consumes an $A$, so one extra $a$ is required.",
+        "Forgetting the direct $s \\to q$ edge, which accepts $a^m$ with $n = 0$ (e.g. $a$)."
+      ],
+      "verification": "$a$ ($m = 1, n = 0$): push $A$, $\\epsilon/A/\\epsilon$ to $q$, pop $\\bot$: accepted, and indeed $0 < 1$. $ab$ ($m = n = 1$): rejected, and $1 < 1$ is false. Both agree with option A.",
+      "animation": {
+        "kind": "automaton",
+        "title": "PDA P",
+        "layout": "manual",
+        "states": [
+          {
+            "id": "s",
+            "x": 0,
+            "y": 0,
+            "start": true
+          },
+          {
+            "id": "p",
+            "x": 4,
+            "y": 0
+          },
+          {
+            "id": "q",
+            "x": 2,
+            "y": 2
+          }
+        ],
+        "edges": [
+          {
+            "from": "s",
+            "to": "s",
+            "label": "a/⊥/A⊥, a/A/AA"
+          },
+          {
+            "from": "s",
+            "to": "p",
+            "label": "b/A/ε"
+          },
+          {
+            "from": "p",
+            "to": "p",
+            "label": "b/A/ε"
+          },
+          {
+            "from": "s",
+            "to": "q",
+            "label": "ε/A/ε"
+          },
+          {
+            "from": "p",
+            "to": "q",
+            "label": "ε/A/ε"
+          },
+          {
+            "from": "q",
+            "to": "q",
+            "label": "ε/A/ε, ε/⊥/ε"
+          }
+        ],
+        "current": [
+          "s"
+        ],
+        "stack": [
+          "⊥"
+        ],
+        "tape": {
+          "cells": [
+            "a",
+            "a",
+            "b"
+          ],
+          "head": 0
+        }
+      }
+    },
+    "cse-2023-cs-31": {
+      "approach": "Translate one loop iteration into bytes: multiplying by 8 is a left shift by 3, each `int` is 4 bytes so both array pointers advance by 4, and the loop must jump back to the exit test at `L01`.",
+      "concepts": [
+        "Multiply by $2^k$ as a shift",
+        "Byte addressing and element size",
+        "Loop code generation"
+      ],
+      "given": "`int` is 32 bits; memory is byte-addressable. `r1` = `i`, `r2` = 10, `r3` → `a[i]`, `r4` → `b[i]`. Find `U1` (shift amount), `U2`/`U3` (pointer increments), `U4` (jump target).",
+      "steps": [
+        {
+          "title": "U1: multiply by 8 with a shift",
+          "body": "`L02` loads `b[i]` into `r5`; `L03` must produce `b[i] * 8`. Since $8 = 2^3$,\n\n$$x \\times 8 = x \\times 2^3 = x \\ll 3,$$\n\nso **U1 = 3**. A shift by 8 would multiply by $2^8 = 256$.",
+          "scene": {
+            "line": 3,
+            "hl": [
+              2,
+              3
+            ],
+            "code": "L01: jeq r1, r2, end\nL02: lw  r5, 0(r4)\nL03: shl r5, r5, 3\nL04: sw  r5, 0(r3)\nL05: add r3, r3, U2\nL06: add r4, r4, U3\nL07: add r1, r1, 1\nL08: jmp U4\nL09: end",
+            "vars": {
+              "r1 (i)": 0,
+              "r5": "b[0] << 3 = 8·b[0]"
+            }
+          }
+        },
+        {
+          "title": "U2 and U3: advance by one int = 4 bytes",
+          "body": "`a[i]` lives at $\\text{base}_a + 4i$ because each `int` is $32/8 = 4$ bytes and addresses count bytes. After storing `a[i]`, `r3` must point to `a[i+1]` $= \\text{base}_a + 4(i+1)$, i.e. `r3 + 4`. The same holds for `r4` and `b`.\n\nSo **U2 = 4** and **U3 = 4**. Adding 1 would point into the middle of the same `int`.",
+          "scene": {
+            "line": 6,
+            "hl": [
+              5,
+              6
+            ],
+            "code": "L01: jeq r1, r2, end\nL02: lw  r5, 0(r4)\nL03: shl r5, r5, 3\nL04: sw  r5, 0(r3)\nL05: add r3, r3, 4\nL06: add r4, r4, 4\nL07: add r1, r1, 1\nL08: jmp U4\nL09: end",
+            "vars": {
+              "r1 (i)": 0,
+              "r3": "&a[0] + 4 = &a[1]",
+              "r4": "&b[0] + 4 = &b[1]"
+            }
+          }
+        },
+        {
+          "title": "U4: jump back to the test",
+          "body": "The C loop checks `i < 10` before **every** iteration. Here the check is `L01` (`jeq r1, r2, end` exits when `r1 = 10`). After `L07` increments `r1`, control must return to `L01`, so **U4 = L01**.\n\nJumping to `L02` would skip the test: the loop would never stop and would write past `a[9]`.",
+          "scene": {
+            "line": 8,
+            "hl": [
+              1,
+              7,
+              8
+            ],
+            "code": "L01: jeq r1, r2, end\nL02: lw  r5, 0(r4)\nL03: shl r5, r5, 3\nL04: sw  r5, 0(r3)\nL05: add r3, r3, 4\nL06: add r4, r4, 4\nL07: add r1, r1, 1\nL08: jmp L01\nL09: end",
+            "vars": {
+              "r1 (i)": 1,
+              "r3": "&a[1]",
+              "r4": "&b[1]"
+            }
+          }
+        },
+        {
+          "title": "Check the whole loop",
+          "body": "With $(U1, U2, U3, U4) = (3, 4, 4, L01)$, iteration $i$ stores $8 \\cdot b[i]$ into `a[i]` and moves both pointers 4 bytes. After 10 iterations `r1` $= 10 =$ `r2`, so `L01` exits, and `r3` $= \\text{base}_a + 10 \\times 4 = \\text{base}_a + 40$, just past the 40-byte array. This is option (B).",
+          "scene": {
+            "line": 1,
+            "hl": [
+              1,
+              9
+            ],
+            "vars": {
+              "r1 (i)": 10,
+              "r3": "&a[0] + 40",
+              "r4": "&b[0] + 40",
+              "exit": "r1 = r2 → end"
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "$(U1, U2, U3, U4) = (3, 4, 4, L01)$ — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Shift by 8 multiplies by 256; `r4 + 1` misaligns `b`; jumping to `L02` skips the exit test."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$\\ll 3$ is $\\times 8$, both pointers advance by `sizeof(int)` = 4 bytes, and control returns to the loop test `L01`."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Shift by 8 ($\\times 256$), 1-byte pointer steps and a jump that skips the test: three errors."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Shift and jump are right, but stepping by 1 byte treats `int` as 1 byte; addresses are byte addresses and `int` is 4 bytes."
+        }
+      ],
+      "shortcut": "$U1 = \\log_2 8 = 3$ removes A and C; $U2 = \\texttt{sizeof(int)} = 4$ removes D.",
+      "pitfalls": [
+        "Writing the multiplier (8) instead of the shift count (3).",
+        "Incrementing a pointer by 1 element instead of by its size in bytes on a byte-addressable machine.",
+        "Looping back to the body (`L02`) instead of the condition (`L01`)."
+      ],
+      "verification": "End state check: 10 iterations × 4 bytes = 40 bytes = size of `a[10]`, and the exit happens exactly when `r1` reaches `r2 = 10`, matching `for (i=0; i<10; i++)`.",
+      "animation": {
+        "kind": "code",
+        "title": "Loop body with the unknown operands",
+        "lang": "pseudo",
+        "code": "L01: jeq r1, r2, end\nL02: lw  r5, 0(r4)\nL03: shl r5, r5, U1\nL04: sw  r5, 0(r3)\nL05: add r3, r3, U2\nL06: add r4, r4, U3\nL07: add r1, r1, 1\nL08: jmp U4\nL09: end",
+        "line": 1,
+        "vars": {
+          "r1 (i)": 0,
+          "r2": 10,
+          "r3": "&a[0]",
+          "r4": "&b[0]"
+        }
+      }
+    },
+    "cse-2023-cs-32": {
+      "approach": "Set the 10 Addr bits to 0 (start of a block); only the decoder inputs IA4 and IA3 remain, with place values $2^4 = 16$ and $2^3 = 8$. Read off the address that makes each decoder output active.",
+      "concepts": [
+        "Memory interfacing",
+        "Address decoding",
+        "Low-order interleaving"
+      ],
+      "given": "12-bit address IA11–IA0. Addr port (10 bits): IA11–IA5, IA2–IA0. Decoder: IA4 → A1, IA3 → A0; outputs Q0, Q1, Q2, Q3 → CS of X1, X2, X3, X4 (active high).",
+      "steps": [
+        {
+          "title": "Separate block-select bits from byte bits",
+          "body": "The decoder sees $(A1, A0) = (IA4, IA3)$ and raises $Q_k$ for $k = 2 \\cdot IA4 + IA3$. So block X$_{k+1}$ is selected when $(IA4, IA3)$ is the binary of $k$.\n\nThe other ten lines go to Addr. **Addr = 0** means all of IA11–IA5 and IA2–IA0 are 0.",
+          "scene": {
+            "rows": [
+              {
+                "label": "address",
+                "fields": [
+                  {
+                    "bits": "xxxxxxx",
+                    "label": "IA11–IA5 → Addr"
+                  },
+                  {
+                    "bits": "xx",
+                    "label": "IA4 IA3 → decoder",
+                    "tone": "accent"
+                  },
+                  {
+                    "bits": "xxx",
+                    "label": "IA2–IA0 → Addr"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "title": "Starting address of each block",
+          "body": "With every Addr bit 0, the address is $16 \\cdot IA4 + 8 \\cdot IA3$:\n\n| Block | Output | IA4 IA3 | Address |\n|---|---|---|---|\n| X1 | Q0 | 00 | $0$ |\n| X2 | Q1 | 01 | $8$ |\n| X3 | Q2 | 10 | $16$ |\n| X4 | Q3 | 11 | $16 + 8 = 24$ |",
+          "scene": {
+            "rows": [
+              {
+                "label": "X1",
+                "fields": [
+                  {
+                    "bits": "0000000"
+                  },
+                  {
+                    "bits": "00",
+                    "tone": "accent"
+                  },
+                  {
+                    "bits": "000"
+                  }
+                ],
+                "value": "0"
+              },
+              {
+                "label": "X2",
+                "fields": [
+                  {
+                    "bits": "0000000"
+                  },
+                  {
+                    "bits": "01",
+                    "tone": "accent"
+                  },
+                  {
+                    "bits": "000"
+                  }
+                ],
+                "value": "8"
+              },
+              {
+                "label": "X3",
+                "fields": [
+                  {
+                    "bits": "0000000"
+                  },
+                  {
+                    "bits": "10",
+                    "tone": "accent"
+                  },
+                  {
+                    "bits": "000"
+                  }
+                ],
+                "value": "16"
+              },
+              {
+                "label": "X4",
+                "fields": [
+                  {
+                    "bits": "0000000"
+                  },
+                  {
+                    "bits": "11",
+                    "tone": "success"
+                  },
+                  {
+                    "bits": "000"
+                  }
+                ],
+                "value": "24"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Conclusion",
+          "body": "The starting locations are $(0, 8, 16, 24)$, option (C).\n\nBecause the select bits sit in the middle of the address, the blocks are interleaved in 8-byte chunks: 0–7 in X1, 8–15 in X2, 16–23 in X3, 24–31 in X4, then 32–39 in X1 again (IA5 = 1 is Addr = 8)."
+        }
+      ],
+      "answer": {
+        "value": "$(0, 8, 16, 24)$ — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$(0, 1, 2, 3)$ would need the decoder on IA1 IA0 (place values 2 and 1)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$(0, 1024, 2048, 3072)$ is the usual high-order decoding with IA11 IA10 on the decoder; here those lines go to Addr."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "IA4 and IA3 have place values 16 and 8, so the blocks start at $0, 8, 16, 24$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Exactly one CS is high for each address, so two blocks can never start at the same address."
+        }
+      ],
+      "shortcut": "Block $k$ ($k = 0..3$) starts at $k \\times 2^3 = 8k$ because IA3 is the decoder's LSB.",
+      "pitfalls": [
+        "Assuming the 1 KB blocks are contiguous (high-order decoding) without reading which lines feed the decoder.",
+        "Swapping A1 and A0: IA4 is the MSB input, so X3 (Q2) starts at 16, not 8."
+      ],
+      "verification": "Address 8 = 0000 0000 1000: IA3 = 1, IA4 = 0, so Q1 selects X2, and every Addr bit is 0, so it is X2's first byte. Address 7 is X1's Addr 7, so X1's first chunk ends just before 8.",
+      "animation": {
+        "kind": "bits",
+        "title": "IA11 … IA0 at Addr = 0",
+        "rows": [
+          {
+            "label": "X1",
+            "fields": [
+              {
+                "bits": "0000000"
+              },
+              {
+                "bits": "00",
+                "tone": "accent"
+              },
+              {
+                "bits": "000"
+              }
+            ],
+            "value": "0"
+          },
+          {
+            "label": "X2",
+            "fields": [
+              {
+                "bits": "0000000"
+              },
+              {
+                "bits": "01",
+                "tone": "accent"
+              },
+              {
+                "bits": "000"
+              }
+            ],
+            "value": "8"
+          },
+          {
+            "label": "X3",
+            "fields": [
+              {
+                "bits": "0000000"
+              },
+              {
+                "bits": "10",
+                "tone": "accent"
+              },
+              {
+                "bits": "000"
+              }
+            ],
+            "value": "16"
+          },
+          {
+            "label": "X4",
+            "fields": [
+              {
+                "bits": "0000000"
+              },
+              {
+                "bits": "11",
+                "tone": "accent"
+              },
+              {
+                "bits": "000"
+              }
+            ],
+            "value": "24"
+          }
+        ]
+      }
+    },
+    "cse-2023-cs-33": {
+      "approach": "Read each flip-flop's input from the figure, write next-state equations, and step from $(0,1,1)$ until a state repeats. The states on that cycle are the only ones that can ever appear.",
+      "concepts": [
+        "T flip-flop: $Q^+ = Q \\oplus T$",
+        "D flip-flop: $Q^+ = D$",
+        "Synchronous state sequence"
+      ],
+      "given": "All three flip-flops share CLKIN. Inputs: $T_1 = \\overline{Q_3}$, $D_2 = Q_1$, $T_3 = Q_2$. Start $(Q_1, Q_2, Q_3) = (0, 1, 1)$.",
+      "steps": [
+        {
+          "title": "Next-state equations",
+          "body": "$$Q_1^+ = Q_1 \\oplus \\overline{Q_3}, \\qquad Q_2^+ = Q_1, \\qquad Q_3^+ = Q_3 \\oplus Q_2$$\n\nAll flip-flops are clocked together, so every right-hand side uses the values **before** the clock edge.",
+          "scene": {
+            "reveal": 6,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Clocks 1 to 3",
+          "body": "- $(0,1,1)$: $Q_1^+ = 0 \\oplus \\overline{1} = 0 \\oplus 0 = 0$, $Q_2^+ = 0$, $Q_3^+ = 1 \\oplus 1 = 0$ → $(0,0,0)$\n- $(0,0,0)$: $Q_1^+ = 0 \\oplus 1 = 1$, $Q_2^+ = 0$, $Q_3^+ = 0 \\oplus 0 = 0$ → $(1,0,0)$\n- $(1,0,0)$: $Q_1^+ = 1 \\oplus 1 = 0$, $Q_2^+ = 1$, $Q_3^+ = 0 \\oplus 0 = 0$ → $(0,1,0)$",
+          "scene": {
+            "reveal": 24,
+            "hl": [
+              {
+                "r": 3,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Clocks 4 to 7: back to the start",
+          "body": "- $(0,1,0)$: $Q_1^+ = 0 \\oplus 1 = 1$, $Q_2^+ = 0$, $Q_3^+ = 0 \\oplus 1 = 1$ → $(1,0,1)$\n- $(1,0,1)$: $Q_1^+ = 1 \\oplus 0 = 1$, $Q_2^+ = 1$, $Q_3^+ = 1 \\oplus 0 = 1$ → $(1,1,1)$\n- $(1,1,1)$: $Q_1^+ = 1 \\oplus 0 = 1$, $Q_2^+ = 1$, $Q_3^+ = 1 \\oplus 1 = 0$ → $(1,1,0)$\n- $(1,1,0)$: $Q_1^+ = 1 \\oplus 1 = 0$, $Q_2^+ = 1$, $Q_3^+ = 0 \\oplus 1 = 1$ → $(0,1,1)$, the start.\n\nThe circuit cycles through 7 states.",
+          "scene": {
+            "reveal": 48,
+            "hl": [
+              {
+                "r": 7,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Find the state that never appears",
+          "body": "Visited: $011, 000, 100, 010, 101, 111, 110$: seven of the eight 3-bit values. The missing one is $(0, 0, 1)$.\n\nOptions B $(1,0,0)$, C $(1,0,1)$ and D $(1,1,1)$ occur after clocks 2, 4 and 5. **Option (A)** can never be obtained.",
+          "scene": {
+            "hl": [
+              {
+                "r": 2,
+                "tone": "info"
+              },
+              {
+                "r": 4,
+                "tone": "info"
+              },
+              {
+                "r": 5,
+                "tone": "info"
+              }
+            ],
+            "caption": "$(0,0,1)$ is the only value missing from the cycle."
+          }
+        }
+      ],
+      "answer": {
+        "value": "$(Q_1, Q_2, Q_3) = (0, 0, 1)$ never occurs — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$001$ is not on the 7-state cycle starting at $011$; it is a separate fixed point ($001 \\to 001$)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$(1,0,0)$ is reached after the 2nd clock."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$(1,0,1)$ is reached after the 4th clock."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$(1,1,1)$ is reached after the 5th clock."
+        }
+      ],
+      "shortcut": "Apply the equations to $001$: $Q_1^+ = 0 \\oplus 0 = 0$, $Q_2^+ = 0$, $Q_3^+ = 1 \\oplus 0 = 1$, so $001 \\to 001$. Its only predecessor is itself, so starting from $011$ the circuit can never enter it.",
+      "pitfalls": [
+        "Missing the inverter: $T_1 = \\overline{Q_3}$, not $Q_3$.",
+        "Updating the flip-flops one after another (using the new $Q_1$ to compute $Q_2^+$); they are clocked together.",
+        "Treating the D flip-flop like a T flip-flop: $Q_2^+ = Q_1$, not $Q_2 \\oplus Q_1$."
+      ],
+      "verification": "The 8 states split into the 7-cycle $011 \\to 000 \\to 100 \\to 010 \\to 101 \\to 111 \\to 110 \\to 011$ plus the self-loop $001$. Each of the 8 states has exactly one successor, which accounts for all of them.",
+      "animation": {
+        "kind": "table",
+        "title": "State after each clock",
+        "cols": [
+          "Q1",
+          "Q2",
+          "Q3",
+          "T1 = ¬Q3",
+          "D2 = Q1",
+          "T3 = Q2"
+        ],
+        "rowLabels": [
+          "start",
+          "clk 1",
+          "clk 2",
+          "clk 3",
+          "clk 4",
+          "clk 5",
+          "clk 6",
+          "clk 7"
+        ],
+        "rows": [
+          [
+            0,
+            1,
+            1,
+            0,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            0,
+            1,
+            1,
+            0
+          ],
+          [
+            0,
+            1,
+            0,
+            1,
+            0,
+            1
+          ],
+          [
+            1,
+            0,
+            1,
+            0,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            1,
+            0,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            0,
+            1,
+            1,
+            1
+          ],
+          [
+            0,
+            1,
+            1,
+            0,
+            0,
+            1
+          ]
+        ],
+        "mono": true
+      }
+    },
+    "cse-2023-cs-34": {
+      "approach": "Simplify $f$, then read the MUX tree as a truth table: M3 picks M1 when $B = 0$ and M2 when $B = 1$, and inside M1/M2 the input with index $2A + C$ is routed out. So each $X_i$ is just $f$ at the matching $(A, B, C)$.",
+      "concepts": [
+        "Multiplexer as a function generator",
+        "Absorption law",
+        "Shannon expansion on B"
+      ],
+      "given": "M1: inputs X0–X3, $S_1 = A$, $S_0 = C$. M2: inputs X4–X7, $S_1 = A$, $S_0 = C$. M3: input 0 = M1, input 1 = M2, $S = B$. Target: $f = \\overline{A} + \\overline{A}\\,\\overline{C} + A\\overline{B}C$.",
+      "steps": [
+        {
+          "title": "Simplify the function",
+          "body": "Absorption: $\\overline{A} + \\overline{A}\\,\\overline{C} = \\overline{A}$. Then $\\overline{A} + A\\,Y = \\overline{A} + Y$ with $Y = \\overline{B}C$:\n\n$$f = \\overline{A} + A\\overline{B}C = \\overline{A} + \\overline{B}C$$",
+          "scene": {
+            "panels": [
+              {
+                "groups": [
+                  {
+                    "cells": [
+                      0,
+                      1,
+                      2,
+                      3
+                    ],
+                    "label": "A′"
+                  },
+                  {
+                    "cells": [
+                      1,
+                      5
+                    ],
+                    "label": "B′C",
+                    "tone": "cat2"
+                  }
+                ]
+              },
+              null
+            ]
+          }
+        },
+        {
+          "title": "How the inputs are routed",
+          "body": "M3 has $S = B$: output $=$ M1 when $B = 0$, M2 when $B = 1$. In M1 and M2, $S_1 S_0 = A\\,C$ selects input number $2A + C$. Hence\n\n$$X_{2A+C} = f(A, 0, C), \\qquad X_{4 + 2A + C} = f(A, 1, C).$$"
+        },
+        {
+          "title": "B = 0: inputs of M1",
+          "body": "With $B = 0$: $f = \\overline{A} + C$.\n\n- $X_0$ ($A=0, C=0$): $1 + 0 = 1$\n- $X_1$ ($A=0, C=1$): $1$\n- $X_2$ ($A=1, C=0$): $0 + 0 = 0$\n- $X_3$ ($A=1, C=1$): $0 + 1 = 1$",
+          "scene": {
+            "panels": [
+              null,
+              {
+                "hl": [
+                  {
+                    "c": 3,
+                    "tone": "accent"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "title": "B = 1: inputs of M2",
+          "body": "With $B = 1$: $\\overline{B}C = 0$, so $f = \\overline{A}$.\n\n- $X_4 = 1$, $X_5 = 1$ ($A = 0$)\n- $X_6 = 0$, $X_7 = 0$ ($A = 1$)",
+          "scene": {
+            "panels": [
+              null,
+              {
+                "hl": [
+                  {
+                    "c": 4,
+                    "tone": "accent"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "title": "Assemble the input vector",
+          "body": "$$(X_0, \\dots, X_7) = (1, 1, 0, 1, 1, 1, 0, 0)$$\n\nwhich is option (C).",
+          "scene": {
+            "panels": [
+              null,
+              {
+                "hl": [
+                  {
+                    "c": 3,
+                    "tone": "success"
+                  },
+                  {
+                    "c": 4,
+                    "tone": "success"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "$(1, 1, 0, 1, 1, 1, 0, 0)$ — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$X_3 = 0$ drops the term $A\\overline{B}C$ ($A=1, B=0, C=1$ gives $f = 1$), and $X_6 = 1$ is wrong ($A=1, B=1, C=0$ gives $f = 0$)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$X_3 = 0$ drops $A\\overline{B}C$, and $X_7 = 1$ is wrong: $A=B=C=1$ gives $f = 0$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Matches $f(A,0,C) = \\overline{A} + C$ on M1 and $f(A,1,C) = \\overline{A}$ on M2."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$X_0 = 0$ already fails: with $A = B = C = 0$ the term $\\overline{A}$ makes $f = 1$. (D) also sets $X_6 = X_7 = 1$, although $f = 0$ whenever $A = B = 1$."
+        }
+      ],
+      "shortcut": "$f = 1$ whenever $A = 0$, so $X_0 = X_1 = X_4 = X_5 = 1$ (removes D). With $A = 1$, $f = \\overline{B}C$ is 1 only for $B = 0, C = 1$, so among $X_2, X_3, X_6, X_7$ only $X_3 = 1$. Only C has that.",
+      "pitfalls": [
+        "Swapping the select lines: $A$ drives $S_1$ (the MSB), so the index is $2A + C$, not $2C + A$.",
+        "Swapping M3's inputs: M1 feeds input 0 (taken when $B = 0$)."
+      ],
+      "verification": "Spot checks through the circuit: $A=1, B=0, C=1$: M3 takes M1, index 3, $X_3 = 1$, and $f = 0 + 0 + 1 = 1$. $A=1, B=1, C=1$: M3 takes M2, index 3, $X_7 = 0$, and $f = 0 + 0 + 0 = 0$.",
+      "animation": {
+        "kind": "panels",
+        "title": "f on the K-map and the MUX inputs",
+        "panels": [
+          {
+            "kind": "kmap",
+            "variables": [
+              "A",
+              "B",
+              "C"
+            ],
+            "ones": [
+              0,
+              1,
+              2,
+              3,
+              5
+            ]
+          },
+          {
+            "kind": "table",
+            "cols": [
+              "A (S1)",
+              "C (S0)",
+              "input",
+              "M1: B = 0",
+              "M2: B = 1"
+            ],
+            "rows": [
+              [
+                0,
+                0,
+                0,
+                "X0 = 1",
+                "X4 = 1"
+              ],
+              [
+                0,
+                1,
+                1,
+                "X1 = 1",
+                "X5 = 1"
+              ],
+              [
+                1,
+                0,
+                2,
+                "X2 = 0",
+                "X6 = 0"
+              ],
+              [
+                1,
+                1,
+                3,
+                "X3 = 1",
+                "X7 = 0"
+              ]
+            ],
+            "mono": true
+          }
+        ]
+      }
+    },
+    "cse-2023-cs-35": {
+      "approach": "Decode P first: it is exactly $-16 = -2^4$. Multiplying by a power of two flips the sign and adds 4 to Q's biased exponent; Q's 23-bit fraction is copied unchanged.",
+      "concepts": [
+        "IEEE-754 single precision",
+        "Biased exponent (bias 127)",
+        "Multiplying by a power of two"
+      ],
+      "steps": [
+        {
+          "title": "Decode P = 0xC1800000",
+          "body": "$\\texttt{C1800000} = 1100\\,0001\\,1000\\,0000 \\ldots 0$.\n\nSign $= 1$; exponent $= 1000\\,0011_2 = 131$; fraction $= 0$.\n\n$$P = -1.0 \\times 2^{131 - 127} = -2^4 = -16$$",
+          "scene": {
+            "rows": [
+              {
+                "label": "P",
+                "fields": [
+                  {
+                    "bits": "1",
+                    "label": "sign",
+                    "tone": "error"
+                  },
+                  {
+                    "bits": "10000011",
+                    "label": "exp 131",
+                    "tone": "accent"
+                  },
+                  {
+                    "bits": "00000000000000000000000",
+                    "label": "fraction 0"
+                  }
+                ],
+                "value": "−16"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Decode Q = 0x3F5C2EF4",
+          "body": "$\\texttt{3F5C2EF4} = 0011\\,1111\\,0101\\,1100\\,0010\\,1110\\,1111\\,0100$.\n\nSign $= 0$; exponent $= 0111\\,1110_2 = 126$; fraction $= 101\\,1100\\,0010\\,1110\\,1111\\,0100$ (that is $\\texttt{5C2EF4}$).\n\n$$Q = +1.f \\times 2^{126 - 127} = 1.f \\times 2^{-1} \\approx 0.8601$$",
+          "scene": {
+            "rows": [
+              {
+                "label": "P",
+                "fields": [
+                  {
+                    "bits": "1",
+                    "label": "sign",
+                    "tone": "error"
+                  },
+                  {
+                    "bits": "10000011",
+                    "label": "exp 131",
+                    "tone": "accent"
+                  },
+                  {
+                    "bits": "00000000000000000000000",
+                    "label": "fraction 0"
+                  }
+                ],
+                "value": "−16"
+              },
+              {
+                "label": "Q",
+                "fields": [
+                  {
+                    "bits": "0",
+                    "label": "sign"
+                  },
+                  {
+                    "bits": "01111110",
+                    "label": "exp 126",
+                    "tone": "accent"
+                  },
+                  {
+                    "bits": "10111000010111011110100",
+                    "label": "fraction",
+                    "tone": "info"
+                  }
+                ],
+                "value": "≈ 0.8601"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Multiply sign, exponent and significand",
+          "body": "- Sign: $1 \\oplus 0 = 1$ (negative).\n- Significand: $1.0 \\times 1.f = 1.f$, already normalised, so the fraction is unchanged.\n- Exponent: $2^4 \\times 2^{-1} = 2^3$; biased $= 126 + 4 = 130 = 1000\\,0010_2$.\n\n$$P \\times Q = -1.f \\times 2^{3} \\approx -13.76$$",
+          "scene": {
+            "rows": [
+              {
+                "label": "P",
+                "fields": [
+                  {
+                    "bits": "1",
+                    "label": "sign",
+                    "tone": "error"
+                  },
+                  {
+                    "bits": "10000011",
+                    "label": "exp 131",
+                    "tone": "accent"
+                  },
+                  {
+                    "bits": "00000000000000000000000",
+                    "label": "fraction 0"
+                  }
+                ],
+                "value": "−16"
+              },
+              {
+                "label": "Q",
+                "fields": [
+                  {
+                    "bits": "0",
+                    "label": "sign"
+                  },
+                  {
+                    "bits": "01111110",
+                    "label": "exp 126",
+                    "tone": "accent"
+                  },
+                  {
+                    "bits": "10111000010111011110100",
+                    "label": "fraction",
+                    "tone": "info"
+                  }
+                ],
+                "value": "≈ 0.8601"
+              },
+              {
+                "label": "P×Q",
+                "fields": [
+                  {
+                    "bits": "1",
+                    "label": "sign",
+                    "tone": "success"
+                  },
+                  {
+                    "bits": "10000010",
+                    "label": "exp 130",
+                    "tone": "success"
+                  },
+                  {
+                    "bits": "10111000010111011110100",
+                    "label": "fraction (same)",
+                    "tone": "info"
+                  }
+                ],
+                "value": "0xC15C2EF4"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Pack the result",
+          "body": "$1 \\mid 1000\\,0010 \\mid 101\\,1100\\,0010\\,1110\\,1111\\,0100$, regrouped in nibbles:\n\n$$1100\\,0001\\,0101\\,1100\\,0010\\,1110\\,1111\\,0100 = \\texttt{0xC15C2EF4}$$\n\nwhich is option (C)."
+        }
+      ],
+      "answer": {
+        "value": "`0xC15C2EF4` — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "`0x404C2EF4` is positive (sign 0), has exponent 128 and a changed fraction ($100\\,1100\\ldots$). The product of a negative and a positive number is negative."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "`0x405C2EF4` keeps the fraction but is positive with exponent 128, i.e. $+4Q$: wrong sign and wrong power of two."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Sign 1, exponent $126 + 4 = 130$, fraction of Q unchanged."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "`0xC14C2EF4` has the right sign and exponent but the fraction starts $100\\,1100$ instead of $101\\,1100$; multiplying by $2^4$ never changes the fraction."
+        }
+      ],
+      "shortcut": "$\\times(-16)$ means: add 4 to the exponent field, i.e. add $4 \\times 2^{23} = \\texttt{0x02000000}$, then set the sign bit: $\\texttt{0x3F5C2EF4} + \\texttt{0x02000000} = \\texttt{0x415C2EF4}$, and with the sign bit set, $\\texttt{0xC15C2EF4}$.",
+      "pitfalls": [
+        "Adding the biased exponents ($131 + 126$) without subtracting the bias once.",
+        "Forgetting the sign: only options C and D are negative.",
+        "Reading the exponent from the first two hex digits: the exponent field straddles the nibble boundary (bits 30–23)."
+      ],
+      "verification": "Decimal check: $1.f = 1 + \\texttt{5C2EF4}/2^{23} = 1 + 6041332/8388608 \\approx 1.7202$, so $Q \\approx 0.8601$ and $P \\times Q \\approx -13.76$. Decoding C: $-1.7202 \\times 2^{130-127} = -1.7202 \\times 8 \\approx -13.76$.",
+      "animation": {
+        "kind": "bits",
+        "title": "IEEE-754 single precision fields",
+        "rows": [
+          {
+            "label": "P",
+            "fields": [
+              {
+                "bits": "1",
+                "label": "sign",
+                "tone": "error"
+              },
+              {
+                "bits": "10000011",
+                "label": "exp 131",
+                "tone": "accent"
+              },
+              {
+                "bits": "00000000000000000000000",
+                "label": "fraction 0"
+              }
+            ],
+            "value": "−16"
+          },
+          {
+            "label": "Q",
+            "fields": [
+              {
+                "bits": "0",
+                "label": "sign"
+              },
+              {
+                "bits": "01111110",
+                "label": "exp 126",
+                "tone": "accent"
+              },
+              {
+                "bits": "10111000010111011110100",
+                "label": "fraction",
+                "tone": "info"
+              }
+            ],
+            "value": "≈ 0.8601"
+          },
+          {
+            "label": "P×Q",
+            "fields": [
+              {
+                "bits": "1",
+                "label": "sign",
+                "tone": "success"
+              },
+              {
+                "bits": "10000010",
+                "label": "exp 130",
+                "tone": "success"
+              },
+              {
+                "bits": "10111000010111011110100",
+                "label": "fraction (same)",
+                "tone": "info"
+              }
+            ],
+            "value": "0xC15C2EF4"
+          }
+        ]
+      }
+    },
+    "cse-2023-cs-36": {
+      "approach": "A max-heap is a complete binary tree of height $\\lfloor \\log_2 n \\rfloor$. EXTRACT-MAX sifts the moved last element down one root-to-leaf path and INSERT bubbles the new key up one leaf-to-root path, with $O(1)$ work per level.",
+      "concepts": [
+        "Binary max-heap",
+        "Sift-down (heapify)",
+        "Sift-up",
+        "Height of a complete binary tree"
+      ],
+      "steps": [
+        {
+          "title": "Height of an n-element heap",
+          "body": "A heap is a complete binary tree, so levels $0..h-1$ are full: $2^h \\le n < 2^{h+1}$, which gives $h = \\lfloor \\log_2 n \\rfloor$. Each operation below moves an element along one path, so it does at most $h$ swaps.\n\nExample heap: $[50, 30, 40, 10, 20, 35, 25]$, $n = 7$, $h = \\lfloor \\log_2 7 \\rfloor = 2$.",
+          "scene": {
+            "caption": "$n = 7$, height $2$"
+          }
+        },
+        {
+          "title": "EXTRACT-MAX: sift-down, O(log n)",
+          "body": "Reading the maximum (the root) is $O(1)$, but it must also be **deleted**: move the last element to the root, shrink the heap, and sift down. At each level compare with both children and swap with the larger one. That is at most $h$ swaps.\n\nIn the example: remove 50, move 25 to the root; $25 < 40$ swap; $25 < 35$ swap. That is 2 swaps $= h$, the worst case.",
+          "scene": {
+            "root": {
+              "label": 40,
+              "children": [
+                {
+                  "label": 30,
+                  "children": [
+                    {
+                      "label": 10
+                    },
+                    {
+                      "label": 20
+                    }
+                  ]
+                },
+                {
+                  "label": 35,
+                  "tone": "warning",
+                  "children": [
+                    {
+                      "label": 25,
+                      "tone": "accent"
+                    },
+                    null
+                  ]
+                }
+              ]
+            },
+            "caption": "After EXTRACT-MAX: 25 sank 2 levels",
+            "vars": {
+              "extracted": 50,
+              "swaps": 2
+            }
+          }
+        },
+        {
+          "title": "INSERT: sift-up, O(log n)",
+          "body": "Put the key in the next free leaf and swap it with its parent while it is larger. That is at most $h$ swaps; the worst case is a key larger than everything, which rises to the root.\n\nIn the example: insert 45 as the right child of 35; $45 > 35$ swap; $45 > 40$ swap. Two swaps $= h$.",
+          "scene": {
+            "root": {
+              "label": 45,
+              "tone": "accent",
+              "children": [
+                {
+                  "label": 30,
+                  "children": [
+                    {
+                      "label": 10
+                    },
+                    {
+                      "label": 20
+                    }
+                  ]
+                },
+                {
+                  "label": 40,
+                  "tone": "warning",
+                  "children": [
+                    {
+                      "label": 25
+                    },
+                    {
+                      "label": 35,
+                      "tone": "warning"
+                    }
+                  ]
+                }
+              ]
+            },
+            "caption": "After INSERT(45): 45 rose 2 levels",
+            "vars": {
+              "inserted": 45,
+              "swaps": 2
+            }
+          }
+        },
+        {
+          "title": "Conclusion",
+          "body": "Both operations are $O(\\log n)$ in the worst case, option (B)."
+        }
+      ],
+      "answer": {
+        "value": "Both run in $O(\\log n)$ — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Neither is $O(1)$ in the worst case: both may move an element through all $\\lfloor \\log_2 n \\rfloor$ levels."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Each operation walks one root-leaf path of a tree of height $\\lfloor \\log_2 n \\rfloor$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "EXTRACT-MAX must restore the heap ($O(\\log n)$), and INSERT never needs $O(n)$: it only compares along one path."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Confuses EXTRACT-MAX with FIND-MAX (peek), which is $O(1)$; deleting the root needs a sift-down."
+        }
+      ],
+      "shortcut": "Only FIND-MAX is $O(1)$ in a binary heap; every operation that changes the heap (insert, delete, extract, increase-key) is $O(\\log n)$.",
+      "pitfalls": [
+        "Confusing *extract* (read and delete) with *peek*.",
+        "Quoting $O(n)$ for insert: $O(n)$ is BUILD-HEAP or searching for an arbitrary key, not insertion.",
+        "Using the average case (insert of a random key is $O(1)$ expected); the question asks for the worst case."
+      ],
+      "verification": "In the 7-element example both operations took exactly $2 = \\lfloor \\log_2 7 \\rfloor$ swaps, and each swap moves the element one level, so no operation can exceed the height.",
+      "animation": {
+        "kind": "tree",
+        "title": "Max-heap [50, 30, 40, 10, 20, 35, 25]",
+        "root": {
+          "label": 50,
+          "tone": "success",
+          "children": [
+            {
+              "label": 30,
+              "children": [
+                {
+                  "label": 10
+                },
+                {
+                  "label": 20
+                }
+              ]
+            },
+            {
+              "label": 40,
+              "children": [
+                {
+                  "label": 35
+                },
+                {
+                  "label": 25
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "cse-2023-cs-37": {
+      "approach": "`foo` returns the sum of a subtree and prints it **after** both recursive calls, so it prints subtree sums in post-order. List the nodes in post-order and write each subtree sum.",
+      "concepts": [
+        "Post-order traversal",
+        "Recursion on binary trees",
+        "Subtree sums"
+      ],
+      "given": "Tree: 10 → left 5 (children 3, 8), right 11 (left NULL, right 13).",
+      "steps": [
+        {
+          "title": "What foo prints, and when",
+          "body": "`foo(NULL)` $= 0$, and otherwise `retval = val + foo(left) + foo(right)`, which is the sum of the subtree. The `printf` runs after both recursive calls, so the order is **left, right, node** (post-order).\n\nPost-order of the tree: $3, 8, 5, 13, 11, 10$.",
+          "scene": {
+            "caption": "Print order = post-order"
+          }
+        },
+        {
+          "title": "Left subtree of 10",
+          "body": "- `foo(3)` $= 3 + 0 + 0 = 3$, prints **3**\n- `foo(8)` $= 8 + 0 + 0 = 8$, prints **8**\n- `foo(5)` $= 5 + 3 + 8 = 16$, prints **16**",
+          "scene": {
+            "root": {
+              "label": 10,
+              "children": [
+                {
+                  "label": 5,
+                  "tone": "success",
+                  "sub": "16",
+                  "children": [
+                    {
+                      "label": 3,
+                      "tone": "success",
+                      "sub": "3"
+                    },
+                    {
+                      "label": 8,
+                      "tone": "success",
+                      "sub": "8"
+                    }
+                  ]
+                },
+                {
+                  "label": 11,
+                  "children": [
+                    null,
+                    {
+                      "label": 13
+                    }
+                  ]
+                }
+              ]
+            },
+            "vars": {
+              "printed": "3 8 16"
+            }
+          }
+        },
+        {
+          "title": "Right subtree of 10",
+          "body": "`foo(11)` first calls `foo(NULL)` $= 0$ (prints nothing), then\n\n- `foo(13)` $= 13$, prints **13**\n- `foo(11)` $= 11 + 0 + 13 = 24$, prints **24**",
+          "scene": {
+            "root": {
+              "label": 10,
+              "children": [
+                {
+                  "label": 5,
+                  "tone": "success",
+                  "sub": "16",
+                  "children": [
+                    {
+                      "label": 3,
+                      "tone": "success",
+                      "sub": "3"
+                    },
+                    {
+                      "label": 8,
+                      "tone": "success",
+                      "sub": "8"
+                    }
+                  ]
+                },
+                {
+                  "label": 11,
+                  "tone": "success",
+                  "sub": "24",
+                  "children": [
+                    null,
+                    {
+                      "label": 13,
+                      "tone": "success",
+                      "sub": "13"
+                    }
+                  ]
+                }
+              ]
+            },
+            "vars": {
+              "printed": "3 8 16 13 24"
+            }
+          }
+        },
+        {
+          "title": "Root",
+          "body": "`foo(10)` $= 10 + 16 + 24 = 50$, prints **50**.\n\nOutput: `3 8 16 13 24 50`, option (C).",
+          "scene": {
+            "root": {
+              "label": 10,
+              "tone": "accent",
+              "sub": "50",
+              "children": [
+                {
+                  "label": 5,
+                  "tone": "success",
+                  "sub": "16",
+                  "children": [
+                    {
+                      "label": 3,
+                      "tone": "success",
+                      "sub": "3"
+                    },
+                    {
+                      "label": 8,
+                      "tone": "success",
+                      "sub": "8"
+                    }
+                  ]
+                },
+                {
+                  "label": 11,
+                  "tone": "success",
+                  "sub": "24",
+                  "children": [
+                    null,
+                    {
+                      "label": 13,
+                      "tone": "success",
+                      "sub": "13"
+                    }
+                  ]
+                }
+              ]
+            },
+            "vars": {
+              "printed": "3 8 16 13 24 50"
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "`3 8 16 13 24 50` — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Plain post-order of the node **values**; `foo` prints subtree sums, not `p->val`."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "In-order of the values (sorted, since the tree is a BST); neither the order nor the values match."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Subtree sums in post-order: $3, 8, 16, 13, 24, 50$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The right sums but in in-order (3, 16, 8, 50, 24, 13); the print happens after both calls, not between them."
+        }
+      ],
+      "shortcut": "The last number printed is the root's subtree sum, i.e. the sum of all nodes: $10 + 5 + 11 + 3 + 8 + 13 = 50$. Only C ends in 50, since D prints 50 in the middle.",
+      "pitfalls": [
+        "Printing `p->val` instead of `retval`.",
+        "Placing the print between the calls (in-order) or before them (pre-order)."
+      ],
+      "verification": "Every leaf prints its own value (3, 8, 13), each internal node prints its value plus its children's sums ($5+3+8=16$, $11+0+13=24$), and the root prints the grand total 50.",
+      "animation": {
+        "kind": "tree",
+        "title": "foo = subtree sum, printed in post-order",
+        "root": {
+          "label": 10,
+          "children": [
+            {
+              "label": 5,
+              "children": [
+                {
+                  "label": 3
+                },
+                {
+                  "label": 8
+                }
+              ]
+            },
+            {
+              "label": 11,
+              "children": [
+                null,
+                {
+                  "label": 13
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "cse-2023-cs-38": {
+      "approach": "Build a separating permutation in independent stages and multiply (product rule): choose the $2k$ positions holding $A \\cup B$, arrange the other $n - 2k$ elements, decide which set comes first, and order each set inside its block.",
+      "concepts": [
+        "Product rule",
+        "Permutations with constraints",
+        "Combinations"
+      ],
+      "steps": [
+        {
+          "title": "Positions of A ∪ B",
+          "body": "Choose which $2k$ of the $n$ positions hold the elements of $A \\cup B$: $\\binom{n}{2k}$ ways. In a separating permutation the first $k$ of these positions hold one set and the last $k$ hold the other.",
+          "scene": {
+            "reveal": 1
+          }
+        },
+        {
+          "title": "The other n − 2k elements",
+          "body": "The remaining $n - 2k$ elements fill the remaining positions in any order: $(n - 2k)!$ ways.",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Which set goes first",
+          "body": "Either all of $A$ precedes all of $B$, or all of $B$ precedes all of $A$: 2 ways. Since $k \\ge 1$, both cannot hold at once, so the two cases do not overlap.",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "Order inside each block",
+          "body": "The $k$ elements of $A$ can be ordered in $k!$ ways within their block, and likewise $k!$ for $B$: $(k!)^2$.",
+          "scene": {
+            "reveal": 4
+          }
+        },
+        {
+          "title": "Multiply",
+          "body": "$$\\binom{n}{2k}\\,(n-2k)! \\times 2 \\times (k!)^2 = 2\\binom{n}{2k}(n-2k)!\\,(k!)^2$$\n\nwhich is option (D).",
+          "scene": {
+            "reveal": 5
+          }
+        }
+      ],
+      "answer": {
+        "value": "$2\\binom{n}{2k}(n-2k)!\\,(k!)^2$ — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$n!$ counts every permutation; for $k \\ge 2$ many do not separate, e.g. $a_1 b_1 a_2 b_2 \\ldots$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Places the other elements but forgets the internal orders $(k!)^2$ of $A$ and $B$ and the factor 2."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Counts only the case \"$A$ before $B$\"; the factor 2 for \"$B$ before $A$\" is missing."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Positions $\\binom{n}{2k}$, others $(n-2k)!$, which set first $2$, internal orders $(k!)^2$."
+        }
+      ],
+      "shortcut": "Symmetry: the relative order of the $2k$ elements of $A \\cup B$ is uniform over $(2k)!$ orders, of which $2(k!)^2$ separate. Count $= n! \\cdot \\frac{2(k!)^2}{(2k)!} = 2\\binom{n}{2k}(n-2k)!\\,(k!)^2$, since $\\frac{n!}{(2k)!} = \\binom{n}{2k}(n-2k)!$.",
+      "pitfalls": [
+        "Reading \"one of the following is true\" as only the first bullet (losing the factor 2).",
+        "Forgetting that the elements inside $A$ (and inside $B$) can be permuted."
+      ],
+      "verification": "Small case $n = 4$, $k = 2$, $A = \\{1,2\\}$, $B = \\{3,4\\}$: separating permutations are $12\\,34$, $21\\,34$, $12\\,43$, $21\\,43$ and the 4 with $B$ first, giving 8. Formula: $2 \\cdot \\binom{4}{4} \\cdot 0! \\cdot (2!)^2 = 2 \\cdot 1 \\cdot 1 \\cdot 4 = 8$.",
+      "animation": {
+        "kind": "equation",
+        "title": "Counting separating permutations",
+        "lines": [
+          {
+            "tex": "\\binom{n}{2k}",
+            "note": "positions for A ∪ B"
+          },
+          {
+            "tex": "\\times\\,(n-2k)!",
+            "note": "arrange everything else"
+          },
+          {
+            "tex": "\\times\\,2",
+            "note": "A first or B first"
+          },
+          {
+            "tex": "\\times\\,k!\\,k!",
+            "note": "order inside A and inside B"
+          },
+          {
+            "tex": "= 2\\binom{n}{2k}(n-2k)!\\,(k!)^2",
+            "tone": "success"
+          }
+        ],
+        "reveal": 0
+      }
+    },
+    "cse-2023-cs-39": {
+      "approach": "Check each property straight from the definition of $\\sim$: equal classes force equal $f$-values (well-defined), $f$ onto gives $F$ onto, and equal $F$-values force equal classes (one-to-one).",
+      "concepts": [
+        "Equivalence classes",
+        "Well-defined function",
+        "Injective / surjective / bijective"
+      ],
+      "steps": [
+        {
+          "title": "F is well-defined",
+          "body": "A class can be named by any of its members, so $F$ must not depend on the representative. If $[x] = [y]$ then $x \\sim y$, i.e. $f(x) = f(y)$, so $F([x]) = f(x) = f(y) = F([y])$. Hence $F$ is well-defined and **(A) is false**.",
+          "scene": {
+            "edgeTones": {
+              "1>c1": "accent",
+              "2>c1": "accent",
+              "c1>p": "accent"
+            },
+            "caption": "Example: 1 and 2 share the image p, so they form one class."
+          }
+        },
+        {
+          "title": "F is onto",
+          "body": "Take any $b \\in B$. Since $f$ is onto, some $a \\in A$ has $f(a) = b$, and then $F([a]) = f(a) = b$. So **(B) is true**.",
+          "scene": {
+            "edgeTones": {
+              "c1>p": "success",
+              "c3>q": "success",
+              "c4>r": "success"
+            },
+            "caption": "Every element of B is hit."
+          }
+        },
+        {
+          "title": "F is one-to-one",
+          "body": "Suppose $F([x]) = F([y])$. Then $f(x) = f(y)$, which by definition means $x \\sim y$, so $[x] = [y]$. So **(C) is true**, even though $f$ itself need not be one-to-one.",
+          "scene": {
+            "tones": {
+              "c1": "success",
+              "c3": "success",
+              "c4": "success"
+            },
+            "caption": "Distinct classes have distinct images."
+          }
+        },
+        {
+          "title": "Bijective",
+          "body": "One-to-one and onto, so $F$ is a bijection $\\mathcal{E} \\to B$: **(D) is true**. Answer: **B, C, D**."
+        }
+      ],
+      "answer": {
+        "value": "**B, C, D**",
+        "choice": [
+          "B",
+          "C",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$F$ is well-defined: members of one class have the same $f$-value by the very definition of $\\sim$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Every $b \\in B$ equals $f(a)$ for some $a$, hence equals $F([a])$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$F([x]) = F([y]) \\Rightarrow f(x) = f(y) \\Rightarrow x \\sim y \\Rightarrow [x] = [y]$."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Onto (B) and one-to-one (C) together make $F$ a bijection."
+        }
+      ],
+      "shortcut": "Grouping $A$ into the fibres $f^{-1}(b)$ of a surjection gives exactly one class per $b \\in B$, so $\\lvert \\mathcal{E} \\rvert = \\lvert B \\rvert$ and $F$ matches them one to one.",
+      "pitfalls": [
+        "Thinking $F$ inherits the non-injectivity of $f$: collapsing each fibre to one class removes it.",
+        "Ticking A because $F$ is defined via a representative; it is well-defined precisely because $\\sim$ is defined by $f$."
+      ],
+      "verification": "Example $f$: $1, 2 \\mapsto p$, $3 \\mapsto q$, $4, 5 \\mapsto r$. Classes $\\{1,2\\}, \\{3\\}, \\{4,5\\}$ map to $p, q, r$: three classes, three images, each hit once.",
+      "animation": {
+        "kind": "graph",
+        "title": "Example: A → classes → B",
+        "directed": true,
+        "layout": "manual",
+        "nodes": [
+          {
+            "id": "1",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "2",
+            "x": 0,
+            "y": 1
+          },
+          {
+            "id": "3",
+            "x": 0,
+            "y": 2
+          },
+          {
+            "id": "4",
+            "x": 0,
+            "y": 3
+          },
+          {
+            "id": "5",
+            "x": 0,
+            "y": 4
+          },
+          {
+            "id": "c1",
+            "label": "{1,2}",
+            "x": 3,
+            "y": 0.5
+          },
+          {
+            "id": "c3",
+            "label": "{3}",
+            "x": 3,
+            "y": 2
+          },
+          {
+            "id": "c4",
+            "label": "{4,5}",
+            "x": 3,
+            "y": 3.5
+          },
+          {
+            "id": "p",
+            "x": 6,
+            "y": 0.5
+          },
+          {
+            "id": "q",
+            "x": 6,
+            "y": 2
+          },
+          {
+            "id": "r",
+            "x": 6,
+            "y": 3.5
+          }
+        ],
+        "edges": [
+          {
+            "from": "1",
+            "to": "c1",
+            "dashed": true
+          },
+          {
+            "from": "2",
+            "to": "c1",
+            "dashed": true
+          },
+          {
+            "from": "3",
+            "to": "c3",
+            "dashed": true
+          },
+          {
+            "from": "4",
+            "to": "c4",
+            "dashed": true
+          },
+          {
+            "from": "5",
+            "to": "c4",
+            "dashed": true
+          },
+          {
+            "from": "c1",
+            "to": "p"
+          },
+          {
+            "from": "c3",
+            "to": "q"
+          },
+          {
+            "from": "c4",
+            "to": "r"
+          }
+        ],
+        "caption": "Example: elements of A (left), classes in ℰ (middle), B (right)."
+      }
+    },
+    "cse-2023-cs-40": {
+      "approach": "A byte-stream protocol numbers bytes, and a sequence number must not be reused while an old segment carrying it can still be alive, i.e. within one maximum segment lifetime. So $2^{n}$ must be at least the number of bytes that can be sent in one MSL.",
+      "concepts": [
+        "Sequence number wrap-around",
+        "Maximum segment lifetime",
+        "Byte-numbered streams"
+      ],
+      "given": "Bandwidth $100$ Mbps, RTT $150$ ms, MSL $= 2$ min $= 120$ s. Sequence numbers count bytes.",
+      "steps": [
+        {
+          "title": "Bytes that can be sent in one MSL",
+          "body": "$$100 \\text{ Mbps} = \\frac{100 \\times 10^6}{8} = 1.25 \\times 10^7 \\text{ bytes/s}$$\n\n$$1.25 \\times 10^7 \\times 120 = 1.5 \\times 10^9 \\text{ bytes}$$\n\nAll of these need distinct sequence numbers.",
+          "scene": {
+            "bars": [
+              {
+                "label": "bytes in 1 MSL",
+                "value": 1.5,
+                "display": "1.5×10⁹",
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Smallest field length",
+          "body": "Need $2^n \\ge 1.5 \\times 10^9$:\n\n- $2^{30} = 1\\,073\\,741\\,824 \\approx 1.07 \\times 10^9 < 1.5 \\times 10^9$, too small\n- $2^{31} = 2\\,147\\,483\\,648 \\approx 2.15 \\times 10^9 \\ge 1.5 \\times 10^9$, enough\n\nSo $n \\ge 31$ bits.",
+          "scene": {
+            "bars": [
+              {
+                "label": "bytes in 1 MSL",
+                "value": 1.5,
+                "display": "1.5×10⁹",
+                "tone": "accent"
+              },
+              {
+                "label": "2^30",
+                "value": 1.074,
+                "display": "1.07×10⁹",
+                "tone": "error"
+              },
+              {
+                "label": "2^31",
+                "value": 2.147,
+                "display": "2.15×10⁹",
+                "tone": "warning"
+              },
+              {
+                "label": "2^32",
+                "value": 4.295,
+                "display": "4.29×10⁹",
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Check each option by wrap-around time",
+          "body": "Wrap time $= 2^n / (1.25 \\times 10^7)$ s, which must be at least $120$ s:\n\n| Bits | $2^n$ | Wrap time | Valid? |\n|---|---|---|---|\n| 30 | $1\\,073\\,741\\,824$ | $\\approx 85.9$ s | no |\n| 32 | $4\\,294\\,967\\,296$ | $\\approx 343.6$ s | yes |\n| 34 | $17\\,179\\,869\\,184$ | $\\approx 1374.4$ s | yes |\n| 36 | $68\\,719\\,476\\,736$ | $\\approx 5497.6$ s | yes |\n\nThe RTT (150 ms) does not matter here; it sizes the window (bandwidth × RTT), not the sequence space. Answer: **B, C, D**."
+        }
+      ],
+      "answer": {
+        "value": "**B, C, D** (any length $\\ge 31$ bits)",
+        "choice": [
+          "B",
+          "C",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$2^{30}$ bytes are sent in about 85.9 s < 120 s MSL, so numbers would wrap while old duplicates may still be alive."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$2^{32}$ bytes take about 343.6 s ≥ 120 s to wrap."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$2^{34}$ bytes take about 1374 s to wrap, comfortably above the MSL."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "$2^{36}$ bytes take about 5498 s to wrap; longer fields are always safe."
+        }
+      ],
+      "shortcut": "$\\log_2(1.5 \\times 10^9) = \\log_2 1.5 + 9\\log_2 10 \\approx 0.585 + 29.9 = 30.48$, so at least 31 bits; every option from 32 bits up works.",
+      "pitfalls": [
+        "Counting bits instead of bytes ($10^8 \\times 120 = 1.2 \\times 10^{10}$ would demand 34 bits and wrongly reject 32).",
+        "Using the RTT in place of the MSL: wrap-around safety is about how long old segments survive, not the RTT.",
+        "Counting segments instead of bytes: in a byte stream every byte gets a number."
+      ],
+      "verification": "Real TCP uses 32-bit byte sequence numbers; at 100 Mbps that is safe for about 343 s, more than the 120 s MSL, consistent with 32 bits being valid and 30 bits not.",
+      "animation": {
+        "kind": "bars",
+        "title": "Sequence space vs bytes sent in one MSL",
+        "unit": "×10⁹ bytes",
+        "bars": [
+          {
+            "label": "bytes in 1 MSL",
+            "value": 1.5,
+            "display": "1.5×10⁹",
+            "tone": "accent"
+          },
+          {
+            "label": "2^30",
+            "value": 1.074,
+            "display": "1.07×10⁹",
+            "tone": "error"
+          },
+          {
+            "label": "2^31",
+            "value": 2.147,
+            "display": "2.15×10⁹",
+            "tone": "warning"
+          },
+          {
+            "label": "2^32",
+            "value": 4.295,
+            "display": "4.29×10⁹",
+            "tone": "success"
+          }
+        ],
+        "caption": "$2^{34}$ and $2^{36}$ are larger still."
+      }
+    },
+    "cse-2023-cs-41": {
+      "approach": "Check the group axioms for symmetric difference: closure, associativity (Δ is XOR of membership), identity $\\emptyset$, and inverses, where $A \\Delta A = \\emptyset$ makes every set its own inverse.",
+      "concepts": [
+        "Group axioms",
+        "Symmetric difference",
+        "Identity and inverse elements"
+      ],
+      "steps": [
+        {
+          "title": "Closure and associativity",
+          "body": "$A \\Delta B \\subseteq X$, so it is again in $2^X$ (closure).\n\nAn element $x$ is in $A \\Delta B$ iff it lies in **exactly one** of $A, B$, i.e. its membership bits XOR to 1. XOR is associative, so $(A \\Delta B) \\Delta C$ and $A \\Delta (B \\Delta C)$ are both the set of elements lying in an odd number of $A, B, C$. So $\\Delta$ is associative."
+        },
+        {
+          "title": "Identity: the empty set",
+          "body": "$$A \\Delta \\emptyset = (A - \\emptyset) \\cup (\\emptyset - A) = A \\cup \\emptyset = A$$\n\nand $\\emptyset \\Delta A = A$ likewise, so $e = \\emptyset$.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "info"
+              },
+              {
+                "c": 0,
+                "tone": "info"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Inverse: every set is its own",
+          "body": "$$A \\Delta A = (A - A) \\cup (A - A) = \\emptyset = e$$\n\nso $A^{-1} = A$: **(D) is true**. The complement does not work: $A \\Delta \\overline{A} = A \\cup \\overline{A} = X \\neq \\emptyset$ whenever $X$ is nonempty, so **(C) is false**.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "c": 0,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "c": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "c": 2,
+                "tone": "success"
+              },
+              {
+                "r": 3,
+                "c": 3,
+                "tone": "success"
+              }
+            ],
+            "caption": "Diagonal is all ∅: each set is its own inverse."
+          }
+        },
+        {
+          "title": "Conclusion",
+          "body": "Closure, associativity, identity and inverses all hold, so $H$ is a group (indeed abelian, since $\\Delta$ is symmetric): **(A) is true**, which makes **(B) false**. Answer: **A, D**."
+        }
+      ],
+      "answer": {
+        "value": "**A, D**",
+        "choice": [
+          "A",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$\\Delta$ is closed and associative, $\\emptyset$ is the identity, and every element has an inverse."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Its first half is true, but $H$ *is* a group, so the statement is false."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$A \\Delta \\overline{A} = X$, not the identity $\\emptyset$ (for nonempty $X$). The complement would be the inverse only if $X$ were the identity."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "$A \\Delta A = \\emptyset$, the identity."
+        }
+      ],
+      "shortcut": "Identify each subset with its characteristic bit-vector: $\\Delta$ becomes bitwise XOR on $\\{0,1\\}^{\\lvert X \\rvert}$, a group in which $0$ is the identity and every vector is its own inverse.",
+      "pitfalls": [
+        "Taking $X$ as the identity (that is the identity for $\\cap$, not $\\Delta$), which leads to option C.",
+        "Doubting associativity because $\\Delta$ is defined with set differences; the XOR view settles it."
+      ],
+      "verification": "For $X = \\{1, 2\\}$ the Cayley table of $\\{\\emptyset, \\{1\\}, \\{2\\}, \\{1,2\\}\\}$ is a Latin square with $\\emptyset$ on the diagonal: the Klein four-group.",
+      "animation": {
+        "kind": "table",
+        "title": "Cayley table of Δ for X = {1, 2}",
+        "corner": "Δ",
+        "cols": [
+          "∅",
+          "{1}",
+          "{2}",
+          "{1,2}"
+        ],
+        "rowLabels": [
+          "∅",
+          "{1}",
+          "{2}",
+          "{1,2}"
+        ],
+        "rows": [
+          [
+            "∅",
+            "{1}",
+            "{2}",
+            "{1,2}"
+          ],
+          [
+            "{1}",
+            "∅",
+            "{1,2}",
+            "{2}"
+          ],
+          [
+            "{2}",
+            "{1,2}",
+            "∅",
+            "{1}"
+          ],
+          [
+            "{1,2}",
+            "{2}",
+            "{1}",
+            "∅"
+          ]
+        ]
+      }
+    },
+    "cse-2023-cs-42": {
+      "approach": "Add three delays: iterative DNS (one RTT per tier: root, TLD, authoritative), then the TCP handshake plus the HTML request, then the 10 objects. Non-persistent connections cost 2 RTT per batch of 5 objects; one persistent pipelined connection fetches all 10 in 1 RTT.",
+      "concepts": [
+        "Iterative DNS resolution",
+        "Non-persistent vs persistent HTTP",
+        "Pipelining",
+        "RTT accounting"
+      ],
+      "given": "DNS: 3 tiers, iterative, nothing cached, RTT to each server. Web server RTT also 1 RTT. HTML + 10 small objects (transmission time negligible).",
+      "steps": [
+        {
+          "title": "DNS: 3 RTT",
+          "body": "The local DNS server is on the local host and works iteratively: query root (1 RTT) → referral to the TLD server (1 RTT) → referral to the authoritative server (1 RTT), which returns the IP address. Total **3 RTT**.",
+          "scene": {
+            "upto": 2.5
+          }
+        },
+        {
+          "title": "Base HTML file: 2 RTT",
+          "body": "TCP handshake: SYN → SYN-ACK takes **1 RTT**; the final ACK carries the HTTP GET, and the HTML comes back after **1 RTT**. Elapsed so far: $3 + 2 = 5$ RTT.",
+          "scene": {
+            "upto": 4.5
+          }
+        },
+        {
+          "title": "Non-persistent HTTP, 5 parallel connections",
+          "body": "Every object needs its own TCP connection: handshake (1 RTT) + request/response (1 RTT) $= 2$ RTT per batch. With 5 in parallel, the 10 objects need $10 / 5 = 2$ batches, so $2 \\times 2 = 4$ RTT.\n\n$$3 + 2 + 4 = 9 \\text{ RTT}$$\n\nSo **(C) is correct** and (A) is not.",
+          "scene": {
+            "upto": 8.5,
+            "caption": "Non-persistent: done at 9 RTT."
+          }
+        },
+        {
+          "title": "Persistent HTTP with pipelining",
+          "body": "The connection used for the HTML stays open. The browser sends all 10 GETs back-to-back and the 10 small objects return within **1 RTT**:\n\n$$3 + 2 + 1 = 6 \\text{ RTT}$$\n\nSo **(D) is correct** and (B) is not. Answer: **C, D**.",
+          "scene": {
+            "kind": "sequence",
+            "title": "Persistent HTTP with pipelining",
+            "unit": "RTT",
+            "actors": [
+              "Host",
+              "Root",
+              "TLD",
+              "Auth",
+              "Web"
+            ],
+            "messages": [
+              {
+                "from": "Host",
+                "to": "Root",
+                "t0": 0,
+                "t1": 0.5,
+                "label": "query",
+                "tone": "info"
+              },
+              {
+                "from": "Root",
+                "to": "Host",
+                "t0": 0.5,
+                "t1": 1,
+                "label": "TLD ref",
+                "tone": "info"
+              },
+              {
+                "from": "Host",
+                "to": "TLD",
+                "t0": 1,
+                "t1": 1.5,
+                "label": "query",
+                "tone": "info"
+              },
+              {
+                "from": "TLD",
+                "to": "Host",
+                "t0": 1.5,
+                "t1": 2,
+                "label": "auth ref",
+                "tone": "info"
+              },
+              {
+                "from": "Host",
+                "to": "Auth",
+                "t0": 2,
+                "t1": 2.5,
+                "label": "query",
+                "tone": "info"
+              },
+              {
+                "from": "Auth",
+                "to": "Host",
+                "t0": 2.5,
+                "t1": 3,
+                "label": "IP",
+                "tone": "info"
+              },
+              {
+                "from": "Host",
+                "to": "Web",
+                "t0": 3,
+                "t1": 3.5,
+                "label": "SYN"
+              },
+              {
+                "from": "Web",
+                "to": "Host",
+                "t0": 3.5,
+                "t1": 4,
+                "label": "SYN-ACK"
+              },
+              {
+                "from": "Host",
+                "to": "Web",
+                "t0": 4,
+                "t1": 4.5,
+                "label": "ACK + GET html"
+              },
+              {
+                "from": "Web",
+                "to": "Host",
+                "t0": 4.5,
+                "t1": 5,
+                "label": "HTML"
+              },
+              {
+                "from": "Host",
+                "to": "Web",
+                "t0": 5,
+                "t1": 5.5,
+                "label": "10 GETs (pipelined)",
+                "tone": "accent"
+              },
+              {
+                "from": "Web",
+                "to": "Host",
+                "t0": 5.5,
+                "t1": 6,
+                "label": "10 objects",
+                "tone": "success"
+              }
+            ],
+            "caption": "Persistent + pipelining: done at 6 RTT."
+          }
+        }
+      ],
+      "answer": {
+        "value": "**C, D** (9 RTT non-persistent with 5 parallel connections; 6 RTT persistent with pipelining)",
+        "choice": [
+          "C",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "7 RTT counts only 1 RTT per object batch, forgetting that non-persistent HTTP opens a new TCP connection (one more RTT) for every object."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "5 RTT is the time to get just the HTML (3 DNS + 2); the pipelined objects still need 1 more RTT."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$3$ (DNS) $+ 2$ (HTML) $+ 2 \\times 2$ (two batches of 5 non-persistent fetches) $= 9$ RTT."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "$3$ (DNS) $+ 2$ (HTML) $+ 1$ (all 10 objects pipelined) $= 6$ RTT."
+        }
+      ],
+      "shortcut": "Common part = 3 (DNS) + 2 (HTML) = 5 RTT. Then add $2\\lceil 10/5 \\rceil = 4$ for non-persistent parallel, or $1$ for persistent pipelined.",
+      "pitfalls": [
+        "Counting DNS as 1 RTT: an iterative lookup over 3 tiers with empty caches needs 3 round trips.",
+        "Forgetting the TCP handshake before the first GET.",
+        "Reusing connections in the non-persistent case: each object needs a fresh handshake."
+      ],
+      "verification": "The two answers differ by exactly the object phase: non-persistent spends $4$ RTT (2 batches × 2) where pipelined spends $1$, and $9 - 6 = 4 - 1 = 3$.",
+      "animation": {
+        "kind": "sequence",
+        "title": "Non-persistent HTTP, 5 parallel connections",
+        "unit": "RTT",
+        "actors": [
+          "Host",
+          "Root",
+          "TLD",
+          "Auth",
+          "Web"
+        ],
+        "messages": [
+          {
+            "from": "Host",
+            "to": "Root",
+            "t0": 0,
+            "t1": 0.5,
+            "label": "query",
+            "tone": "info"
+          },
+          {
+            "from": "Root",
+            "to": "Host",
+            "t0": 0.5,
+            "t1": 1,
+            "label": "TLD ref",
+            "tone": "info"
+          },
+          {
+            "from": "Host",
+            "to": "TLD",
+            "t0": 1,
+            "t1": 1.5,
+            "label": "query",
+            "tone": "info"
+          },
+          {
+            "from": "TLD",
+            "to": "Host",
+            "t0": 1.5,
+            "t1": 2,
+            "label": "auth ref",
+            "tone": "info"
+          },
+          {
+            "from": "Host",
+            "to": "Auth",
+            "t0": 2,
+            "t1": 2.5,
+            "label": "query",
+            "tone": "info"
+          },
+          {
+            "from": "Auth",
+            "to": "Host",
+            "t0": 2.5,
+            "t1": 3,
+            "label": "IP",
+            "tone": "info"
+          },
+          {
+            "from": "Host",
+            "to": "Web",
+            "t0": 3,
+            "t1": 3.5,
+            "label": "SYN"
+          },
+          {
+            "from": "Web",
+            "to": "Host",
+            "t0": 3.5,
+            "t1": 4,
+            "label": "SYN-ACK"
+          },
+          {
+            "from": "Host",
+            "to": "Web",
+            "t0": 4,
+            "t1": 4.5,
+            "label": "ACK + GET html"
+          },
+          {
+            "from": "Web",
+            "to": "Host",
+            "t0": 4.5,
+            "t1": 5,
+            "label": "HTML"
+          },
+          {
+            "from": "Host",
+            "to": "Web",
+            "t0": 5,
+            "t1": 5.5,
+            "label": "5× SYN",
+            "tone": "accent"
+          },
+          {
+            "from": "Web",
+            "to": "Host",
+            "t0": 5.5,
+            "t1": 6,
+            "label": "5× SYN-ACK",
+            "tone": "accent"
+          },
+          {
+            "from": "Host",
+            "to": "Web",
+            "t0": 6,
+            "t1": 6.5,
+            "label": "GET obj 1–5",
+            "tone": "accent"
+          },
+          {
+            "from": "Web",
+            "to": "Host",
+            "t0": 6.5,
+            "t1": 7,
+            "label": "obj 1–5",
+            "tone": "success"
+          },
+          {
+            "from": "Host",
+            "to": "Web",
+            "t0": 7,
+            "t1": 7.5,
+            "label": "5× SYN",
+            "tone": "accent"
+          },
+          {
+            "from": "Web",
+            "to": "Host",
+            "t0": 7.5,
+            "t1": 8,
+            "label": "5× SYN-ACK",
+            "tone": "accent"
+          },
+          {
+            "from": "Host",
+            "to": "Web",
+            "t0": 8,
+            "t1": 8.5,
+            "label": "GET obj 6–10",
+            "tone": "accent"
+          },
+          {
+            "from": "Web",
+            "to": "Host",
+            "t0": 8.5,
+            "t1": 9,
+            "label": "obj 6–10",
+            "tone": "success"
+          }
+        ]
+      }
+    }
+  }
+}
