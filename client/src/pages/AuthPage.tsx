@@ -22,7 +22,6 @@ import { LogoMark, Wordmark } from '@/components/brand/Logo'
 import { takeOAuthResult, useAuth } from '@/context/AuthContext'
 import { api, ApiError } from '@/lib/api'
 import { cn } from '@/lib/utils'
-import { Wallpaper } from '@/components/fx/Wallpaper'
 
 type Mode = 'login' | 'register'
 
@@ -256,10 +255,6 @@ export default function AuthPage() {
 
   return (
     <div className="relative grid min-h-dvh lg:grid-cols-[1.1fr_1fr]">
-      {/* The desktop, as on the macOS login screen: the chosen wallpaper
-          behind a frosted sidebar and a glass sign-in card. */}
-      <Wallpaper />
-
       {/* Showcase (desktop) */}
       <aside
         className="glass-thin relative z-10 hidden min-w-0 !border-y-0 !border-l-0 lg:block"
