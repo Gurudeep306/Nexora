@@ -1,0 +1,949 @@
+{
+  "paper": "cse-2026-1",
+  "fixes": [
+    {
+      "id": "cse-2026-1-ga-1",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "antagonist"
+        },
+        {
+          "l": "B",
+          "t": "arsonist"
+        },
+        {
+          "l": "C",
+          "t": "anarchist"
+        },
+        {
+          "l": "D",
+          "t": "agnostic"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "agnostic"
+        },
+        {
+          "l": "B",
+          "t": "antagonist"
+        },
+        {
+          "l": "C",
+          "t": "arsonist"
+        },
+        {
+          "l": "D",
+          "t": "anarchist"
+        }
+      ],
+      "reason": "Options restored to the order printed in the official paper (the bank had them rotated).",
+      "source": "pdf p.1"
+    },
+    {
+      "id": "cse-2026-1-ga-1",
+      "field": "answer",
+      "before": "A",
+      "after": "B",
+      "reason": "The stored letter keys of this paper's Q1-Q13 run A, A, B, C, D, A, B, C, D, A, B, C, D -- a mechanical cycle, not the official key -- and the options were stored in a rotated order. In the paper's order 'antagonist' (the antonym of protagonist) is option B.",
+      "source": "pdf p.1"
+    },
+    {
+      "id": "cse-2026-1-ga-1",
+      "field": "tags",
+      "before": [
+        "verbal-aptitude"
+      ],
+      "after": [
+        "verbal-aptitude",
+        "antonyms",
+        "vocabulary"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.1"
+    },
+    {
+      "id": "cse-2026-1-ga-2",
+      "field": "text",
+      "before": "The figure shows two 4-tile patterns. Either one or both of the patterns can be used any number of times and in any orientation to construct a new pattern. Which one of the options below cannot be constructed by using only these two 4-tile patterns assuming there are no overlaps among them?",
+      "after": "The figure shows two 4-tile patterns: a $2 \\times 2$ square and a $1 \\times 4$ bar.\n\nEither one or both of the patterns can be used any number of times and in any orientation to construct a new pattern. Which one of the options below **cannot** be constructed by using only these two 4-tile patterns assuming there are no overlaps among them?",
+      "reason": "Named the two patterns shown in the figure and restored the bold 'cannot'.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2026-1-ga-2",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "(B)"
+        },
+        {
+          "l": "C",
+          "t": "(D)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Figure (A): a $2 \\times 4$ block of tiles"
+        },
+        {
+          "l": "B",
+          "t": "Figure (B): a $3 \\times 4$ block of tiles"
+        },
+        {
+          "l": "C",
+          "t": "Figure (C): a $3 \\times 5$ block of tiles"
+        },
+        {
+          "l": "D",
+          "t": "Figure (D): a $4 \\times 5$ block of tiles"
+        }
+      ],
+      "reason": "The options are pictures; the bank had only two placeholder options '(B)' and '(D)'. All four restored (drawn in the figure).",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2026-1-ga-2",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2026-1/ga-2-1.svg",
+          "svg": "cse-2026-1/ga-2-1.svg",
+          "alt": "Top: the two 4-tile patterns, a 2 by 2 square of tiles and a straight 1 by 4 bar of tiles. Bottom: the four option figures, solid rectangles of square tiles: (A) 2 rows by 4 columns (8 tiles), (B) 3 rows by 4 columns (12 tiles), (C) 3 rows by 5 columns (15 tiles), (D) 4 rows by 5 columns (20 tiles)."
+        }
+      ],
+      "reason": "The question depends on its figure, which the bank was missing. Redrawn from the paper.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2026-1-ga-2",
+      "field": "answer",
+      "before": "A",
+      "after": "C",
+      "reason": "The stored letter keys of this paper's Q1-Q13 run A, A, B, C, D, A, B, C, D, A, B, C, D -- a mechanical cycle, not the official key -- and the options were stored in a rotated order. The 3 x 5 block (C) has 15 tiles, not a multiple of 4, so it cannot be tiled by 4-tile pieces; A, B and D can.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2026-1-ga-2",
+      "field": "topic",
+      "before": "quant",
+      "after": "spatial",
+      "reason": "Tiling with figures is spatial aptitude.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2026-1-ga-2",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "spatial-aptitude",
+        "tiling",
+        "divisibility"
+      ],
+      "reason": "Topic-specific tags.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2026-1-ga-3",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "32"
+        },
+        {
+          "l": "B",
+          "t": "127"
+        },
+        {
+          "l": "C",
+          "t": "64"
+        },
+        {
+          "l": "D",
+          "t": "63"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "127"
+        },
+        {
+          "l": "B",
+          "t": "64"
+        },
+        {
+          "l": "C",
+          "t": "63"
+        },
+        {
+          "l": "D",
+          "t": "32"
+        }
+      ],
+      "reason": "Options restored to the order printed in the official paper (the bank had them rotated).",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2026-1-ga-3",
+      "field": "answer",
+      "before": "B",
+      "after": "C",
+      "reason": "The stored letter keys of this paper's Q1-Q13 run A, A, B, C, D, A, B, C, D, A, B, C, D -- a mechanical cycle, not the official key -- and the options were stored in a rotated order. Every game eliminates exactly one player and 63 of the 64 must be eliminated, so 63 games -- option C in the paper's order. The stored key pointed at 127.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2026-1-ga-3",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "quantitative-aptitude",
+        "knockout-tournament",
+        "counting"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2026-1-ga-4",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "20"
+        },
+        {
+          "l": "B",
+          "t": "25"
+        },
+        {
+          "l": "C",
+          "t": "10"
+        },
+        {
+          "l": "D",
+          "t": "15"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "10"
+        },
+        {
+          "l": "B",
+          "t": "15"
+        },
+        {
+          "l": "C",
+          "t": "20"
+        },
+        {
+          "l": "D",
+          "t": "25"
+        }
+      ],
+      "reason": "Options restored to the order printed in the official paper (the bank had them rotated).",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2026-1-ga-4",
+      "field": "answer",
+      "before": "C",
+      "after": "D",
+      "reason": "The stored letter keys of this paper's Q1-Q13 run A, A, B, C, D, A, B, C, D, A, B, C, D -- a mechanical cycle, not the official key -- and the options were stored in a rotated order. Electives are maximised with the total at 70 and specialization at its minimum 10: 70 - 15 - 20 - 10 = 25 (option D). The stored key pointed at 10.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2026-1-ga-4",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "quantitative-aptitude",
+        "linear-constraints",
+        "maximisation"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2026-1-ga-5",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "When the teacher is in the room, all students are silent."
+        },
+        {
+          "l": "B",
+          "t": "If all students are standing, then the teacher is in the room."
+        },
+        {
+          "l": "C",
+          "t": "When the teacher is in the room, all students are standing."
+        },
+        {
+          "l": "D",
+          "t": "If any student is not standing silently, then the teacher is not in the room."
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "If any student is not standing silently, then the teacher is not in the room."
+        },
+        {
+          "l": "B",
+          "t": "When the teacher is in the room, all students are silent."
+        },
+        {
+          "l": "C",
+          "t": "If all students are standing, then the teacher is in the room."
+        },
+        {
+          "l": "D",
+          "t": "When the teacher is in the room, all students are standing."
+        }
+      ],
+      "reason": "Options restored to the order printed in the official paper (the bank had them rotated).",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2026-1-ga-5",
+      "field": "answer",
+      "before": "D",
+      "after": "C",
+      "reason": "The stored letter keys of this paper's Q1-Q13 run A, A, B, C, D, A, B, C, D, A, B, C, D -- a mechanical cycle, not the official key -- and the options were stored in a rotated order. Option C is the converse of the given implication and does not follow; A is the contrapositive and B, D are weakenings of the consequent, all necessarily true. The stored key pointed at the contrapositive.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2026-1-ga-5",
+      "field": "topic",
+      "before": "quant",
+      "after": "analytical",
+      "reason": "Implication / contrapositive reasoning is analytical reasoning.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2026-1-ga-5",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "analytical-reasoning",
+        "logical-implication",
+        "contrapositive"
+      ],
+      "reason": "Topic-specific tags.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2026-1-ga-6",
+      "field": "text",
+      "before": "Combinatorics deals with problems involving counting. For example, “How many distinct arrangements of N distinct objects in M spaces on a circle are possible?” is a typical problem in combinatorics. This kind of counting is sometimes used in the modeling of several physical phenomena. Often, in such models, the different combinatorial possibilities are assigned probability values. Assigning probabilities enables the computation of the average values of physical quantities. Consider the following statements: P: Combinatorics is always invoked in the modeling of physical phenomena. Q: Modeling some physical phenomena involves assigning probabilities to combinatorial possibilities in order to compute average values of physical quantities. Based on the passage above, what can be inferred about statements P and Q?",
+      "after": "Combinatorics deals with problems involving counting. For example, “How many distinct arrangements of N distinct objects in M spaces on a circle are possible?” is a typical problem in combinatorics. This kind of counting is sometimes used in the modeling of several physical phenomena. Often, in such models, the different combinatorial possibilities are assigned probability values. Assigning probabilities enables the computation of the average values of physical quantities.\n\nConsider the following statements:\n\n- **P**: Combinatorics is always invoked in the modeling of physical phenomena.\n- **Q**: Modeling some physical phenomena involves assigning probabilities to combinatorial possibilities in order to compute average values of physical quantities.\n\nBased on the passage above, what can be inferred about statements P and Q?",
+      "reason": "Restored the paragraph breaks and put P and Q on their own lines.",
+      "source": "pdf p.5"
+    },
+    {
+      "id": "cse-2026-1-ga-6",
+      "field": "answer",
+      "before": "A",
+      "after": "B",
+      "reason": "The stored letter keys of this paper's Q1-Q13 run A, A, B, C, D, A, B, C, D, A, B, C, D -- a mechanical cycle, not the official key -- and the options were stored in a rotated order. The passage says the counting is 'sometimes' used, so P ('always') is false, while Q restates the last two sentences, so Q is true: option B. The stored key A ('both false') contradicts the passage.",
+      "source": "pdf p.5"
+    },
+    {
+      "id": "cse-2026-1-ga-6",
+      "field": "tags",
+      "before": [
+        "verbal-aptitude"
+      ],
+      "after": [
+        "verbal-aptitude",
+        "reading-comprehension",
+        "inference"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.5"
+    },
+    {
+      "id": "cse-2026-1-ga-7",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "(iv)"
+        },
+        {
+          "l": "B",
+          "t": "(i)"
+        },
+        {
+          "l": "C",
+          "t": "(ii)"
+        },
+        {
+          "l": "D",
+          "t": "(iii)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "(i)"
+        },
+        {
+          "l": "B",
+          "t": "(ii)"
+        },
+        {
+          "l": "C",
+          "t": "(iii)"
+        },
+        {
+          "l": "D",
+          "t": "(iv)"
+        }
+      ],
+      "reason": "Options restored to the order printed in the official paper (the bank had them rotated).",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2026-1-ga-7",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2026-1/ga-7-1.svg",
+          "svg": "cse-2026-1/ga-7-1.svg",
+          "alt": "Panel I (left) shows two orthographic views on a 3 by 3 grid. Front view: the left column is 3 cubes tall, the middle and right columns 2 tall; face boundaries form an L-shaped face (left column rows 1-2 plus middle column row 1), a separate top-left square, a 2-wide rectangle across the middle and right columns at height 2, and a separate bottom-right square. Top view: the left column's back two cells form one face and its front cell another; the right two columns' back row is one face; the middle row of the right two columns together with the front cell of the middle column form an L-shaped face; the front-right cell is empty. Panel II (right) shows four 3D stacks of unit cubes, (i) to (iv), drawn in oblique view with the front face toward the lower left and the top view looking down. Column heights (back row / middle row / front row, left to right): (i) 3 2 2 / 3 1 1 / 2 1 1; (ii) 3 2 2 / 3 2 1 / 2 1 0; (iii) 3 3 2 / 3 1 1 / 2 1 0; (iv) 3 2 2 / 3 1 1 / 2 1 0."
+        }
+      ],
+      "reason": "The question depends on its figure, which the bank was missing. Redrawn from the paper (each structure as a stack of unit cubes with the same column heights as the printed drawing).",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2026-1-ga-7",
+      "field": "answer",
+      "before": "B",
+      "after": "D",
+      "reason": "The stored letter keys of this paper's Q1-Q13 run A, A, B, C, D, A, B, C, D, A, B, C, D -- a mechanical cycle, not the official key -- and the options were stored in a rotated order. Only structure (iv) reproduces both views: (i) has a cube at the front-right that the top view lacks, (ii) has a height-2 cube in the middle of the middle row, and (iii) has a 3-tall back-middle column that would make the front view's middle column 3 tall. (iv) is option D.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2026-1-ga-7",
+      "field": "topic",
+      "before": "quant",
+      "after": "spatial",
+      "reason": "Orthographic views of 3D structures are spatial aptitude.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2026-1-ga-7",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "spatial-aptitude",
+        "orthographic-views",
+        "3d-visualisation"
+      ],
+      "reason": "Topic-specific tags.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2026-1-ga-8",
+      "field": "text",
+      "before": "For positive real numbers 𝑆 and 𝐾, the function 𝐻𝐾(𝑆) is defined as: 𝐻𝐾(𝑆) = max(𝑆 − 𝐾, 0). The max function is defined as: max(𝑎, 𝑏) = {𝑎, when 𝑎 > 𝑏 𝑏, when 𝑎 ≤ 𝑏 The graph below shows the plot of a function 𝑁(𝑆) versus 𝑆. 𝑁(𝑆) can be expressed as _____.",
+      "after": "For positive real numbers $S$ and $K$, the function $H_K(S)$ is defined as: $H_K(S) = \\max(S - K, 0)$. The max function is defined as:\n\n$$\\max(a, b) = \\begin{cases} a, & \\text{when } a > b \\\\ b, & \\text{when } a \\le b \\end{cases}$$\n\nThe graph below shows the plot of a function $N(S)$ versus $S$.\n\n$N(S)$ can be expressed as _____.",
+      "reason": "Unicode maths italics and the flattened case definition rewritten in KaTeX.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2026-1-ga-8",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "−𝐻10(𝑆) + 𝐻20(𝑆)"
+        },
+        {
+          "l": "B",
+          "t": "𝐻15(𝑆) − 𝐻20(𝑆)"
+        },
+        {
+          "l": "C",
+          "t": "𝐻10(𝑆) − 𝐻20(𝑆)"
+        },
+        {
+          "l": "D",
+          "t": "𝐻10(𝑆) − 2𝐻20(𝑆)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$H_{10}(S) - H_{20}(S)$"
+        },
+        {
+          "l": "B",
+          "t": "$H_{10}(S) - 2H_{20}(S)$"
+        },
+        {
+          "l": "C",
+          "t": "$-H_{10}(S) + H_{20}(S)$"
+        },
+        {
+          "l": "D",
+          "t": "$H_{15}(S) - H_{20}(S)$"
+        }
+      ],
+      "reason": "Options restored to the order printed in the official paper (the bank had them rotated). Also rewritten in KaTeX with proper subscripts.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2026-1-ga-8",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2026-1/ga-8-1.svg",
+          "svg": "cse-2026-1/ga-8-1.svg",
+          "alt": "Line graph of N(S) against S, with S from 0 to 30 (gridlines at 10, 20, 30) and N(S) from 0 to 12 (gridlines every 2). N(S) is 0 from S = 0 to S = 10, rises in a straight line from (10, 0) to (20, 10), and stays flat at 10 from S = 20 to S = 30."
+        }
+      ],
+      "reason": "The question depends on its graph, which the bank was missing. Redrawn from the paper.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2026-1-ga-8",
+      "field": "answer",
+      "before": "C",
+      "after": "A",
+      "reason": "The stored letter keys of this paper's Q1-Q13 run A, A, B, C, D, A, B, C, D, A, B, C, D -- a mechanical cycle, not the official key -- and the options were stored in a rotated order. In the paper's order H10(S) - H20(S) (0, then slope 1 from 10 to 20, then flat at 10) is option A.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2026-1-ga-8",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "quantitative-aptitude",
+        "functions",
+        "piecewise-linear"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2026-1-ga-9",
+      "field": "text",
+      "before": "In the 2020 summer Olympics’ Javelin throw finals, Neeraj Chopra exhibited a spectacular performance to win the gold medal. The silver medal was won by Jakub Vadlejch and the bronze medal was won by Vitezlav Vesely. There were six rounds of throws with each athlete having one throw per round. The best of all the throws of each athlete is considered for the medal. Following were the observations about the throws: i. The first and second rounds were dominated by Neeraj Chopra with a gold medal performance in his second throw, while the other two athletes did not have any medal winning throws in these rounds. ii. The throws in the last round by both Jakub Vadlejch and Vitezlav Vesely were fouls and were not considered for scoring. iii. After four rounds, Vitezlav Vesely was in the second position and could not improve upon his best throw in the succeeding rounds. iv. In the fourth round, the throw by Jakub Vadlejch was the best in that round. In which round did Vitezlav Vesely have his best throw?",
+      "after": "In the 2020 summer Olympics’ Javelin throw finals, Neeraj Chopra exhibited a spectacular performance to win the gold medal. The silver medal was won by Jakub Vadlejch and the bronze medal was won by Vitezlav Vesely. There were six rounds of throws with each athlete having one throw per round. The best of all the throws of each athlete is considered for the medal. Following were the observations about the throws:\n\n1. The first and second rounds were dominated by Neeraj Chopra with a gold medal performance in his second throw, while the other two athletes did not have any medal winning throws in these rounds.\n2. The throws in the last round by both Jakub Vadlejch and Vitezlav Vesely were fouls and were not considered for scoring.\n3. After four rounds, Vitezlav Vesely was in the second position and could not improve upon his best throw in the succeeding rounds.\n4. In the fourth round, the throw by Jakub Vadlejch was the best in that round.\n\nIn which round did Vitezlav Vesely have his best throw?",
+      "reason": "Observations i-iv put on separate lines (numbered list; the paper numbers them i, ii, iii, iv).",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2026-1-ga-9",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Fourth"
+        },
+        {
+          "l": "B",
+          "t": "Fifth"
+        },
+        {
+          "l": "C",
+          "t": "Sixth"
+        },
+        {
+          "l": "D",
+          "t": "Third"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Third"
+        },
+        {
+          "l": "B",
+          "t": "Fourth"
+        },
+        {
+          "l": "C",
+          "t": "Fifth"
+        },
+        {
+          "l": "D",
+          "t": "Sixth"
+        }
+      ],
+      "reason": "Options restored to the order printed in the official paper (the bank had them rotated).",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2026-1-ga-9",
+      "field": "answer",
+      "before": "D",
+      "after": "A",
+      "reason": "The stored letter keys of this paper's Q1-Q13 run A, A, B, C, D, A, B, C, D, A, B, C, D -- a mechanical cycle, not the official key -- and the options were stored in a rotated order. In the paper's order 'Third' is option A.",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2026-1-ga-9",
+      "field": "topic",
+      "before": "quant",
+      "after": "analytical",
+      "reason": "Deduction from clues is analytical reasoning.",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2026-1-ga-9",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "analytical-reasoning",
+        "deduction",
+        "ordering"
+      ],
+      "reason": "Topic-specific tags.",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2026-1-ga-10",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "1 6"
+        },
+        {
+          "l": "B",
+          "t": "5 18"
+        },
+        {
+          "l": "C",
+          "t": "7 18"
+        },
+        {
+          "l": "D",
+          "t": "5 6"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\frac{1}{6}$"
+        },
+        {
+          "l": "B",
+          "t": "$\\frac{5}{18}$"
+        },
+        {
+          "l": "C",
+          "t": "$\\frac{7}{18}$"
+        },
+        {
+          "l": "D",
+          "t": "$\\frac{5}{6}$"
+        }
+      ],
+      "reason": "Fractions had lost their bars ('1 6', '5 18', ...); rewritten in KaTeX.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "cse-2026-1-ga-10",
+      "field": "answer",
+      "before": "A",
+      "after": "C",
+      "reason": "The stored letter keys of this paper's Q1-Q13 run A, A, B, C, D, A, B, C, D, A, B, C, D -- a mechanical cycle, not the official key -- and the options were stored in a rotated order. Favourable ordered pairs: 6 + 3 + 2 + 1 + 1 + 1 = 14 of 36, so 7/18 (option C). The stored key pointed at 1/6.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "cse-2026-1-ga-10",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "quantitative-aptitude",
+        "probability",
+        "divisibility"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "cse-2026-1-cs-1",
+      "field": "text",
+      "before": "An urn contains one red ball and one blue ball. At each step, a ball is picked uniformly at random from the urn , and this ball together with another ball of the same color is put back in the urn. The probability that there are equal number of red and blue balls after two steps is",
+      "after": "An urn contains one red ball and one blue ball. At each step, a ball is picked uniformly at random from the urn, and this ball together with another ball of the same color is put back in the urn. The probability that there are equal number of red and blue balls after two steps is",
+      "reason": "Stray space before the comma removed.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2026-1-cs-1",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "2/3"
+        },
+        {
+          "l": "B",
+          "t": "1/4"
+        },
+        {
+          "l": "C",
+          "t": "1/3"
+        },
+        {
+          "l": "D",
+          "t": "1/2"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$1/4$"
+        },
+        {
+          "l": "B",
+          "t": "$1/3$"
+        },
+        {
+          "l": "C",
+          "t": "$1/2$"
+        },
+        {
+          "l": "D",
+          "t": "$2/3$"
+        }
+      ],
+      "reason": "Options restored to the order printed in the official paper (the bank had them rotated).",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2026-1-cs-1",
+      "field": "topic",
+      "before": "probability",
+      "after": "basic",
+      "reason": "Topic id 'probability' does not exist; conditional / sequential probability is 'basic'.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-1-cs-1",
+      "field": "tags",
+      "before": [
+        "prob",
+        "probability",
+        "urn-models"
+      ],
+      "after": [
+        "prob",
+        "conditional-probability",
+        "polya-urn"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2026-1-cs-2",
+      "field": "text",
+      "before": "Consider 4 × 4 matrices with their elements from {𝟎, 𝟏}. The number of such matrices with even number of 𝟏s in every row and every column is",
+      "after": "Consider $4 \\times 4$ matrices with their elements from $\\{0, 1\\}$. The number of such matrices with even number of $1$s in every row and every column is",
+      "reason": "Unicode bold digits rewritten in KaTeX.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2026-1-cs-2",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "1023"
+        },
+        {
+          "l": "B",
+          "t": "255"
+        },
+        {
+          "l": "C",
+          "t": "512"
+        },
+        {
+          "l": "D",
+          "t": "1025"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "512"
+        },
+        {
+          "l": "B",
+          "t": "1025"
+        },
+        {
+          "l": "C",
+          "t": "1023"
+        },
+        {
+          "l": "D",
+          "t": "255"
+        }
+      ],
+      "reason": "Options restored to the order printed in the official paper (the bank had them rotated).",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2026-1-cs-2",
+      "field": "answer",
+      "before": "C",
+      "after": "A",
+      "reason": "The stored letter keys of this paper's Q1-Q13 run A, A, B, C, D, A, B, C, D, A, B, C, D -- a mechanical cycle, not the official key -- and the options were stored in a rotated order. In the paper's order 512 = 2^9 is option A.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2026-1-cs-2",
+      "field": "subject",
+      "before": "la",
+      "after": "dm",
+      "reason": "A counting (parity) problem: discrete mathematics / combinatorics rather than linear algebra.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2026-1-cs-2",
+      "field": "topic",
+      "before": "matrices",
+      "after": "combinatorics",
+      "reason": "Counting problem.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2026-1-cs-2",
+      "field": "tags",
+      "before": [
+        "la",
+        "matrices",
+        "rank"
+      ],
+      "after": [
+        "dm",
+        "combinatorics",
+        "parity",
+        "binary-matrices"
+      ],
+      "reason": "Tags matched the content (no rank involved).",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2026-1-cs-3",
+      "field": "text",
+      "before": "For 𝑛 > 1, the maximum multiplicity of any eigenvalue of an 𝑛 × 𝑛 matrix with elements from ℝ is",
+      "after": "For $n > 1$, the maximum multiplicity of any eigenvalue of an $n \\times n$ matrix with elements from $\\mathbb{R}$ is",
+      "reason": "Unicode maths italics rewritten in KaTeX.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2026-1-cs-3",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝑛 − 1"
+        },
+        {
+          "l": "B",
+          "t": "1"
+        },
+        {
+          "l": "C",
+          "t": "𝑛 + 1"
+        },
+        {
+          "l": "D",
+          "t": "𝑛"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$n$"
+        },
+        {
+          "l": "B",
+          "t": "$n - 1$"
+        },
+        {
+          "l": "C",
+          "t": "$1$"
+        },
+        {
+          "l": "D",
+          "t": "$n + 1$"
+        }
+      ],
+      "reason": "Options restored to the order printed in the official paper (the bank had them rotated). Also rewritten in KaTeX.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2026-1-cs-3",
+      "field": "answer",
+      "before": "D",
+      "after": "A",
+      "reason": "The stored letter keys of this paper's Q1-Q13 run A, A, B, C, D, A, B, C, D, A, B, C, D -- a mechanical cycle, not the official key -- and the options were stored in a rotated order. In the paper's order n is option A.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2026-1-cs-3",
+      "field": "topic",
+      "before": "eigenvalues",
+      "after": "eigen",
+      "reason": "Topic id 'eigenvalues' does not exist; the eigenvalue topic is 'eigen'.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "cse-2026-1-cs-3",
+      "field": "tags",
+      "before": [
+        "la",
+        "eigenvalues",
+        "multiplicity"
+      ],
+      "after": [
+        "la",
+        "eigenvalues",
+        "multiplicity",
+        "characteristic-polynomial"
+      ],
+      "reason": "Added characteristic-polynomial.",
+      "source": "pdf p.11"
+    }
+  ]
+}
