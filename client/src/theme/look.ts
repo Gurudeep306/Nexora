@@ -13,7 +13,7 @@
 */
 import { ICON_CONTAINERS, ICON_SETS, ICON_SHAPES, DEFAULT_ICON_CONTAINER, DEFAULT_ICON_SET, DEFAULT_ICON_SHAPE } from './iconCatalog.ts'
 import { ACCENTS, DEFAULT_PALETTE, PALETTES } from './palettes.ts'
-import { CODE_FONTS, DEFAULT_CODE_FONT, DEFAULT_FONT, DEFAULT_TEXT_SIZE, TEXT_SIZES, UI_FONTS } from './fonts.ts'
+import { CODE_FONTS, DEFAULT_CODE_FONT, DEFAULT_FONT, DEFAULT_SOLUTION_FONT, DEFAULT_TEXT_SIZE, SOLUTION_FONTS, TEXT_SIZES, UI_FONTS } from './fonts.ts'
 import { CARD_STYLES, DEFAULT_CARD_STYLE, DEFAULT_RADIUS, RADII } from './cards.ts'
 
 export interface Look {
@@ -24,6 +24,8 @@ export interface Look {
   accent: string
   font: string
   codeFont: string
+  /** Handwriting face for GATE worked solutions ('off' = the UI font). */
+  solutionFont: string
   textSize: string
   cardStyle: string
   radius: string
@@ -38,6 +40,7 @@ export interface LookTables {
   accents: string[]
   fonts: string[]
   codeFonts: string[]
+  solutionFonts: string[]
   textSizes: string[]
   cardStyles: string[]
   radii: string[]
@@ -57,6 +60,7 @@ export const DEFAULT_LOOK: Look = {
   accent: 'theme',
   font: DEFAULT_FONT,
   codeFont: DEFAULT_CODE_FONT,
+  solutionFont: DEFAULT_SOLUTION_FONT,
   textSize: DEFAULT_TEXT_SIZE,
   cardStyle: DEFAULT_CARD_STYLE,
   radius: DEFAULT_RADIUS,
@@ -71,6 +75,7 @@ export const LOOK_TABLES: LookTables = {
   accents: ['theme', ...ACCENTS.map((a) => a.id)],
   fonts: UI_FONTS.map((f) => f.id),
   codeFonts: CODE_FONTS.map((f) => f.id),
+  solutionFonts: SOLUTION_FONTS.map((f) => f.id),
   textSizes: TEXT_SIZES.map((s) => s.id),
   cardStyles: CARD_STYLES.map((c) => c.id),
   radii: RADII.map((r) => r.id),
@@ -139,6 +144,7 @@ export function sanitizeLookWith(raw: unknown, T: LookTables): Look {
     accent: v2(r.accent, T.accents) || v1(r.accent, L.accent, T.accents) || D.accent,
     font: v2(r.font, T.fonts) || v1(r.fontStyle, L.fontStyle, T.fonts) || D.font,
     codeFont: v2(r.codeFont, T.codeFonts) || D.codeFont,
+    solutionFont: v2(r.solutionFont, T.solutionFonts) || D.solutionFont,
     textSize: v2(r.textSize, T.textSizes) || v1(r.fontSize, L.fontSize, T.textSizes) || D.textSize,
     cardStyle: v2(r.cardStyle, T.cardStyles) || v1(r.cardStyle, L.cardStyle, T.cardStyles) || D.cardStyle,
     radius: v2(r.radius, T.radii) || D.radius,
@@ -169,6 +175,7 @@ export function lookAttributes(look: Look, mode: 'light' | 'dark'): Record<strin
     'data-accent': look.accent === 'theme' ? undefined : look.accent,
     'data-font': look.font,
     'data-code-font': look.codeFont,
+    'data-solution-font': look.solutionFont,
     'data-text-size': look.textSize,
     'data-card-style': look.cardStyle,
     'data-radius': look.radius,

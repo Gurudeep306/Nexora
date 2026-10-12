@@ -6,11 +6,12 @@
     [data-accent="y"][data-mode="dark|light"]   accent overrides
     @font-face "<Font> Fallback"                metric-matched local fallbacks
     [data-font="z"] / [data-code-font="w"]       family stacks
+    [data-solution-font="s"]                    --font-solution + --solution-* tuning
 
   The selectors work on any element, so previews can scope a theme.
 */
 import { ACCENTS, DEFAULT_PALETTE, PALETTES, type ModeTokens } from './palettes.ts'
-import { CODE_FONTS, UI_FONTS, codeFontStack, uiFontStacks, type FallbackMetrics } from './fonts.ts'
+import { CODE_FONTS, SOLUTION_FONTS, UI_FONTS, codeFontStack, solutionFontStack, uiFontStacks, type FallbackMetrics } from './fonts.ts'
 
 const ok = (s: string) => `oklch(${s})`
 
@@ -76,6 +77,18 @@ export function buildThemeCss(): string {
   for (const f of CODE_FONTS) {
     out.push(fallbackFace(`${f.label} Fallback`, f.fallback))
     out.push(`[data-code-font="${f.id}"]{--font-mono:${codeFontStack(f)};--code-ligatures:${f.ligatures ? 'normal' : 'none'}}`)
+  }
+  for (const f of SOLUTION_FONTS) {
+    if (f.fallback) out.push(fallbackFace(`${f.label} Fallback`, f.fallback))
+    const vars = [
+      `--font-solution:${solutionFontStack(f)}`,
+      `--solution-scale:${f.scale}`,
+      `--solution-leading:${f.leading}`,
+      `--solution-tracking:${f.tracking}`,
+      `--solution-weight:${f.weight}`,
+      `--solution-variation:${f.variation ?? 'normal'}`,
+    ]
+    out.push(`[data-solution-font="${f.id}"]{${vars.join(';')}}`)
   }
   return out.join('\n') + '\n'
 }

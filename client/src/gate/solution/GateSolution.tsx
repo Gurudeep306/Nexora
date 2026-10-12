@@ -8,6 +8,9 @@ import type { Frame, Solution } from './types'
 import { isAnimated, stepFrames } from './engine'
 import { SceneCanvas } from './scenes/SceneCanvas'
 import { useGateSolution, type GateSolutionState } from './useGateSolution'
+import { useTheme } from '@/context/ThemeContext'
+import { loadSolutionFont } from '@/theme/fontLoaders'
+import './solution-font.css'
 
 /*
   The worked-solution panel for one GATE question.
@@ -22,6 +25,11 @@ const SPEEDS = [0.75, 1, 1.5, 2]
 
 export function GateSolution({ q, state }: { q: GateQuestion; state?: GateSolutionState }) {
   const own = useGateSolution(q.id, !state)
+  // The handwriting face is fetched only once a solution is on screen.
+  const { look } = useTheme()
+  useEffect(() => {
+    void loadSolutionFont(look.solutionFont)
+  }, [look.solutionFont])
   const s = state ?? own
   if (s.loading && !s.data) return <SolutionSkeleton />
   if (s.error && !s.data)
@@ -63,6 +71,18 @@ function Eyebrow({ icon, children, tone = 'text-text-muted' }: { icon?: IconName
   )
 }
 
+/*
+  Solution prose, set in the reader's chosen handwriting face
+  (look.solutionFont → --font-solution; see solution-font.css). `size` is the
+  authored size; the face's own scale is applied on top. Maths and code
+  inside keep their fonts.
+*/
+const PROSE_SIZE = { 13: '[--sol-size:13px]', 14: '[--sol-size:14px]', 14.5: '[--sol-size:14.5px]' } as const
+
+function Prose({ md, size = 14, title, className }: { md: string; size?: keyof typeof PROSE_SIZE; title?: boolean; className?: string }) {
+  return <Markdown md={md} className={cn('sol-hand', title && 'sol-title', PROSE_SIZE[size], className)} />
+}
+
 function SolutionSkeleton() {
   return (
     <Panel>
@@ -79,7 +99,7 @@ function LegacySolution({ text }: { text: string }) {
   return (
     <Panel>
       <Eyebrow icon="book">Worked solution</Eyebrow>
-      <Markdown md={text} className="!text-[14.5px] [&_p]:!leading-relaxed" />
+      <Prose md={text} size={14.5} />
       <p className="mt-4 border-t border-border pt-3 text-[12px] text-text-muted">An animated, step-by-step walkthrough for this question is on its way.</p>
     </Panel>
   )
@@ -98,7 +118,7 @@ function SolutionV2({ q, sol }: { q: GateQuestion; sol: Solution }) {
         <Eyebrow icon="target" tone="text-accent-brand">
           Approach
         </Eyebrow>
-        <Markdown md={sol.approach} className="!text-[14.5px] !text-text-primary" />
+        <Prose md={sol.approach} size={14.5} className="!text-text-primary" />
         <div className="mt-3 flex flex-wrap gap-1.5">
           {sol.concepts.map((c) => (
             <span key={c} className="rounded-full border border-border bg-bg-surface-2 px-2.5 py-0.5 text-[11.5px] font-semibold text-text-secondary">
@@ -109,7 +129,7 @@ function SolutionV2({ q, sol }: { q: GateQuestion; sol: Solution }) {
         {sol.given && (
           <div className="mt-4 rounded-xl border border-border/70 bg-bg-surface-2/60 p-3">
             <Eyebrow icon="list">Given</Eyebrow>
-            <Markdown md={sol.given} className="!text-[14px]" />
+            <Prose md={sol.given} />
           </div>
         )}
       </Panel>
@@ -281,7 +301,7 @@ function Walkthrough({ sol, frames }: { sol: Solution; frames: (Frame | null)[] 
               <AnimatePresence mode="wait" initial={false}>
                 <motion.div key={active} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="rounded-xl border border-accent-brand/40 bg-accent-brand/5 p-3">
                   <StepHeader i={active} title={step.title} active />
-                  <Markdown md={step.body} className="mt-2 !text-[14px]" />
+                  <Prose md={step.body} className="mt-2" />
                 </motion.div>
               </AnimatePresence>
             </div>
@@ -313,7 +333,7 @@ function Walkthrough({ sol, frames }: { sol: Solution; frames: (Frame | null)[] 
               >
                 <StepHeader i={i} title={s.title} active={i === active} done={i < active} />
                 <div className="hidden @3xl:block">
-                  <Markdown md={s.body} className="mt-2 !text-[14px]" />
+                  <Prose md={s.body} className="mt-2" />
                 </div>
               </div>
             </li>
@@ -336,7 +356,7 @@ function StepHeader({ i, title, active, done }: { i: number; title: string; acti
         {i + 1}
       </span>
       <span className={cn('text-[14px] font-semibold leading-snug', active ? 'text-text-primary' : 'text-text-secondary')}>
-        <Markdown md={title} className="!text-[14px] [&_p]:!m-0 !text-inherit" />
+        <Prose md={title} title className="[&_p]:!m-0 !text-inherit" />
       </span>
     </div>
   )
@@ -421,9 +441,9 @@ function StaticSteps({ sol, frame }: { sol: Solution; frame: Frame | null }) {
               {i + 1}
             </span>
             <div className="text-[14px] font-semibold text-text-primary">
-              <Markdown md={s.title} className="!text-[14px] [&_p]:!m-0 !text-inherit" />
+              <Prose md={s.title} title className="[&_p]:!m-0 !text-inherit" />
             </div>
-            <Markdown md={s.body} className="mt-1.5 !text-[14px]" />
+            <Prose md={s.body} className="mt-1.5" />
           </li>
         ))}
       </ol>
@@ -462,7 +482,7 @@ function OptionAnalysis({ q, sol }: { q: GateQuestion; sol: Solution }) {
                 {text.get(o.option) && <Markdown md={text.get(o.option)!} className="!text-[13.5px] !text-text-primary [&_p]:!m-0" />}
                 <div className={cn('mt-1 flex items-start gap-1.5 text-[13px]', o.correct ? 'text-state-success' : 'text-text-secondary')}>
                   <Icon name={o.correct ? 'check' : 'x'} size={14} className="mt-0.5 shrink-0" />
-                  <Markdown md={o.reason} className="!text-[13px] !text-inherit [&_p]:!m-0" />
+                  <Prose md={o.reason} size={13} className="!text-inherit [&_p]:!m-0" />
                 </div>
               </div>
             </div>
@@ -482,7 +502,7 @@ function Extras({ sol }: { sol: Solution }) {
           <Eyebrow icon="bolt" tone="text-accent-brand">
             Exam shortcut
           </Eyebrow>
-          <Markdown md={sol.shortcut} className="!text-[14px]" />
+          <Prose md={sol.shortcut} />
         </Panel>
       )}
       {sol.verification && (
@@ -490,7 +510,7 @@ function Extras({ sol }: { sol: Solution }) {
           <Eyebrow icon="check-circle" tone="text-state-success">
             How we checked it
           </Eyebrow>
-          <Markdown md={sol.verification} className="!text-[14px]" />
+          <Prose md={sol.verification} />
         </Panel>
       )}
       {sol.pitfalls && sol.pitfalls.length > 0 && (
@@ -502,7 +522,7 @@ function Extras({ sol }: { sol: Solution }) {
             {sol.pitfalls.map((p, i) => (
               <li key={i} className="flex items-start gap-2 text-[14px] text-text-secondary">
                 <span className="mt-2 size-1.5 shrink-0 rounded-full bg-state-warning" />
-                <Markdown md={p} className="!text-[14px] [&_p]:!m-0" />
+                <Prose md={p} className="[&_p]:!m-0" />
               </li>
             ))}
           </ul>
