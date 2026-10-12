@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 470" role="img" aria-label="Panel I: square PQRS with one black part; Panel II: four candidate shapes (i) to (iv)" font-family="Arial, Helvetica, sans-serif">
+  <text x="170" y="40" font-size="24" fill="currentColor" stroke="none" text-anchor="middle">Panel I</text>
+  <text x="640" y="40" font-size="24" fill="currentColor" stroke="none" text-anchor="middle">Panel II</text>
+  <g fill="currentColor" stroke="currentColor" stroke-width="0.6">
+    <rect x="50" y="120" width="40" height="40"/><rect x="90" y="120" width="40" height="40"/><rect x="130" y="120" width="40" height="40"/><rect x="170" y="120" width="40" height="40"/><rect x="210" y="120" width="40" height="40"/><rect x="250" y="120" width="40" height="40"/>
+    <rect x="50" y="160" width="40" height="40"/><rect x="130" y="160" width="40" height="40"/><rect x="170" y="160" width="40" height="40"/>
+    <rect x="50" y="200" width="40" height="40"/><rect x="250" y="200" width="40" height="40"/>
+    <rect x="50" y="240" width="40" height="40"/><rect x="90" y="240" width="40" height="40"/><rect x="130" y="240" width="40" height="40"/><rect x="210" y="240" width="40" height="40"/><rect x="250" y="240" width="40" height="40"/>
+    <rect x="50" y="280" width="40" height="40"/><rect x="210" y="280" width="40" height="40"/><rect x="250" y="280" width="40" height="40"/>
+    <rect x="50" y="320" width="40" height="40"/><rect x="90" y="320" width="40" height="40"/><rect x="130" y="320" width="40" height="40"/><rect x="170" y="320" width="40" height="40"/><rect x="210" y="320" width="40" height="40"/><rect x="250" y="320" width="40" height="40"/>
+  </g>
+  <text x="38" y="110" font-size="24" fill="currentColor" stroke="none" text-anchor="middle">S</text>
+  <text x="302" y="110" font-size="24" fill="currentColor" stroke="none" text-anchor="middle">R</text>
+  <text x="38" y="390" font-size="24" fill="currentColor" stroke="none" text-anchor="middle">P</text>
+  <text x="302" y="390" font-size="24" fill="currentColor" stroke="none" text-anchor="middle">Q</text>
+  <line x1="350" y1="30" x2="350" y2="455" stroke="currentColor" stroke-width="3"/>
+  <line x1="625" y1="60" x2="625" y2="455" stroke="currentColor" stroke-width="2" stroke-dasharray="3 5"/>
+  <line x1="370" y1="255" x2="850" y2="255" stroke="currentColor" stroke-width="2" stroke-dasharray="3 5"/>
+  <g fill="currentColor" stroke="currentColor" stroke-width="0.6">
+    <rect x="415" y="75" width="30" height="30"/><rect x="505" y="75" width="30" height="30"/><rect x="535" y="75" width="30" height="30"/>
+    <rect x="415" y="105" width="30" height="30"/><rect x="445" y="105" width="30" height="30"/><rect x="475" y="105" width="30" height="30"/><rect x="505" y="105" width="30" height="30"/>
+    <rect x="475" y="135" width="30" height="30"/>
+    <rect x="415" y="165" width="30" height="30"/><rect x="445" y="165" width="30" height="30"/><rect x="475" y="165" width="30" height="30"/><rect x="505" y="165" width="30" height="30"/>
+  </g>
+  <text x="490" y="227" font-size="22" fill="currentColor" stroke="none" text-anchor="middle">(i)</text>
+  <g fill="currentColor" stroke="currentColor" stroke-width="0.6">
+    <rect x="680" y="75" width="30" height="30"/><rect x="770" y="75" width="30" height="30"/><rect x="800" y="75" width="30" height="30"/>
+    <rect x="680" y="105" width="30" height="30"/><rect x="710" y="105" width="30" height="30"/><rect x="740" y="105" width="30" height="30"/><rect x="770" y="105" width="30" height="30"/>
+    <rect x="740" y="135" width="30" height="30"/>
+    <rect x="710" y="165" width="30" height="30"/><rect x="740" y="165" width="30" height="30"/><rect x="770" y="165" width="30" height="30"/>
+  </g>
+  <text x="755" y="227" font-size="22" fill="currentColor" stroke="none" text-anchor="middle">(ii)</text>
+  <g fill="currentColor" stroke="currentColor" stroke-width="0.6">
+    <rect x="415" y="285" width="30" height="30"/><rect x="505" y="285" width="30" height="30"/><rect x="535" y="285" width="30" height="30"/>
+    <rect x="415" y="315" width="30" height="30"/><rect x="445" y="315" width="30" height="30"/><rect x="475" y="315" width="30" height="30"/><rect x="505" y="315" width="30" height="30"/>
+    <rect x="475" y="345" width="30" height="30"/>
+    <rect x="415" y="375" width="30" height="30"/><rect x="445" y="375" width="30" height="30"/><rect x="475" y="375" width="30" height="30"/>
+  </g>
+  <text x="490" y="437" font-size="22" fill="currentColor" stroke="none" text-anchor="middle">(iii)</text>
+  <g fill="currentColor" stroke="currentColor" stroke-width="0.6">
+    <rect x="680" y="285" width="30" height="30"/><rect x="770" y="285" width="30" height="30"/><rect x="800" y="285" width="30" height="30"/>
+    <rect x="680" y="315" width="30" height="30"/><rect x="710" y="315" width="30" height="30"/><rect x="740" y="315" width="30" height="30"/><rect x="770" y="315" width="30" height="30"/>
+    <rect x="740" y="345" width="30" height="30"/><rect x="770" y="345" width="30" height="30"/>
+    <rect x="710" y="375" width="30" height="30"/><rect x="740" y="375" width="30" height="30"/>
+  </g>
+  <text x="755" y="437" font-size="22" fill="currentColor" stroke="none" text-anchor="middle">(iv)</text>
+</svg>
