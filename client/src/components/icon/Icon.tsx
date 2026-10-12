@@ -110,6 +110,8 @@ interface BadgeFrameOptions {
   tone?: IconTone
   /** Any CSS colour (e.g. a Nexus zone colour) — overrides `tone`. */
   color?: string
+  /** Glyph colour on solid/gradient containers when `color` is set (default: the tone's). */
+  onColor?: string
   /** Force a container/shape (previews); normally inherited from <html> or an ancestor. */
   container?: IconContainerId
   shape?: IconShapeId
@@ -121,14 +123,15 @@ export interface IconFrameProps extends BadgeFrameOptions {
 }
 
 /** The badge container on its own — for content that is not an icon (a level number, an avatar). */
-export function IconFrame({ boxClassName, className, box = 'md', tone = 'accent', color, container, shape, children }: IconFrameProps) {
+export function IconFrame({ boxClassName, className, box = 'md', tone = 'accent', color, onColor, container, shape, children }: IconFrameProps) {
+  const vars = color || onColor ? ({ '--ib-c': color, '--ib-on': onColor } as CSSProperties) : undefined
   return (
     <span
       className={cn('icon-badge', `icon-badge--${box}`, boxClassName, className)}
       data-tone={tone}
       data-icon-container={container}
       data-icon-shape={shape}
-      style={color ? ({ '--ib-c': color } as CSSProperties) : undefined}
+      style={vars}
     >
       {children}
     </span>
@@ -137,9 +140,9 @@ export function IconFrame({ boxClassName, className, box = 'md', tone = 'accent'
 
 export interface IconBadgeProps extends IconProps, BadgeFrameOptions {}
 
-export function IconBadge({ boxClassName, box, tone, color, container, shape, ...icon }: IconBadgeProps) {
+export function IconBadge({ boxClassName, box, tone, color, onColor, container, shape, ...icon }: IconBadgeProps) {
   return (
-    <IconFrame boxClassName={boxClassName} box={box} tone={tone} color={color} container={container} shape={shape}>
+    <IconFrame boxClassName={boxClassName} box={box} tone={tone} color={color} onColor={onColor} container={container} shape={shape}>
       <Icon {...icon} className={cn('icon-badge__glyph', icon.className)} />
     </IconFrame>
   )

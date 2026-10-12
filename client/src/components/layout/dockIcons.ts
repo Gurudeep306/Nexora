@@ -1,9 +1,9 @@
 import type { IconName } from '@/components/icon/names'
 
 /*
-  Semantic icon for each Dock item id (dockStore.ts still carries Lucide
-  components for the Dock/Deck/LaunchGrid; surfaces that render the themed
-  icon set look the id up here and fall back to item.icon when unknown).
+  Semantic icon for each Dock item id. Every surface that draws a Dock
+  destination (Dock, More menu, Dock editor, launch grid, phone tab bar)
+  renders it with <Icon>/<IconBadge>, so it follows the chosen icon set.
 */
 export const DOCK_ICONS: Record<string, IconName> = {
   hub: 'home',
@@ -24,6 +24,6 @@ export const DOCK_ICONS: Record<string, IconName> = {
   search: 'search',
 }
 
-export function dockIconName(id: string): IconName | undefined {
-  return DOCK_ICONS[id]
+export function dockIconName(id: string): IconName {
+  return DOCK_ICONS[id] ?? 'grid'
 }
