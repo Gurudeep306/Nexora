@@ -1,0 +1,879 @@
+{
+  "paper": "cse-2025-1",
+  "fixes": [
+    {
+      "id": "cse-2025-1-cs-30",
+      "field": "text",
+      "before": "A packet with the destination IP address 145.36.109.70 arrives at a router wh ose\nrouting table is shown. Which interface will the packet be forwarded to?",
+      "after": "A packet with the destination IP address 145.36.109.70 arrives at a router whose routing table is shown. Which interface will the packet be forwarded to?\n\n| Subnet Address | Subnet Mask (in CIDR notation) | Interface |\n|---|---|---|\n| 145.36.0.0 | /16 | E1 |\n| 145.36.128.0 | /17 | E2 |\n| 145.36.64.0 | /18 | E3 |\n| 145.36.255.0 | /24 | E4 |\n| Default | -- | E5 |",
+      "reason": "The routing table the question depends on was missing; added it as a markdown table from the paper. Also fixed the broken word \"wh ose\".",
+      "source": "pdf p.40 (Q.40)"
+    },
+    {
+      "id": "cse-2025-1-cs-30",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "E3"
+        },
+        {
+          "l": "B",
+          "t": "E1"
+        },
+        {
+          "l": "C",
+          "t": "E2"
+        },
+        {
+          "l": "D",
+          "t": "E5 Computer Science and Information Technology (CS1)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "E3"
+        },
+        {
+          "l": "B",
+          "t": "E1"
+        },
+        {
+          "l": "C",
+          "t": "E2"
+        },
+        {
+          "l": "D",
+          "t": "E5"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology (CS1)\" was pasted into option D.",
+      "source": "pdf p.40 (Q.40)"
+    },
+    {
+      "id": "cse-2025-1-cs-30",
+      "field": "tags",
+      "before": [
+        "network"
+      ],
+      "after": [
+        "cidr",
+        "longest-prefix-match",
+        "routing-table"
+      ],
+      "reason": "Tags for Q.40.",
+      "source": "pdf p.40 (Q.40)"
+    },
+    {
+      "id": "cse-2025-1-cs-31",
+      "field": "text",
+      "before": "Let 𝐴 be a 2 × 2 matrix as given.\n𝐴 = [ 1    1\n1 −1 ]\nWhat are the eigenvalues of the matrix 𝐴13 ?",
+      "after": "Let $A$ be a $2 \\times 2$ matrix as given.\n\n$$A = \\begin{bmatrix} 1 & 1 \\\\ 1 & -1 \\end{bmatrix}$$\n\nWhat are the eigenvalues of the matrix $A^{13}$?",
+      "reason": "Matrix lost its layout and the exponent in A^13 was flattened to \"A13\"; re-typed in KaTeX from the paper.",
+      "source": "pdf p.41 (Q.41)"
+    },
+    {
+      "id": "cse-2025-1-cs-31",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "1, −1"
+        },
+        {
+          "l": "B",
+          "t": "2√2, −2√2"
+        },
+        {
+          "l": "C",
+          "t": "4√2, −4√2"
+        },
+        {
+          "l": "D",
+          "t": "64√2, −64√2 Computer Science and Information Technology (CS1)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$1, -1$"
+        },
+        {
+          "l": "B",
+          "t": "$2\\sqrt{2}, -2\\sqrt{2}$"
+        },
+        {
+          "l": "C",
+          "t": "$4\\sqrt{2}, -4\\sqrt{2}$"
+        },
+        {
+          "l": "D",
+          "t": "$64\\sqrt{2}, -64\\sqrt{2}$"
+        }
+      ],
+      "reason": "Options re-typed from the paper: running page header removed from option D, Unicode maths italics replaced by KaTeX.",
+      "source": "pdf p.41 (Q.41)"
+    },
+    {
+      "id": "cse-2025-1-cs-31",
+      "field": "tags",
+      "before": [
+        "isa"
+      ],
+      "after": [
+        "eigenvalues",
+        "matrix-power"
+      ],
+      "reason": "Tags for Q.41.",
+      "source": "pdf p.41 (Q.41)"
+    },
+    {
+      "id": "cse-2025-1-cs-32",
+      "field": "text",
+      "before": "Consider the following four variable Boolean function in sum-of-product form\n𝐹(𝑏3, 𝑏2, 𝑏1, 𝑏0) = ∑(0, 2, 4, 8, 10, 11, 12).\nwhere the value of the function is computed by considering 𝑏3𝑏2𝑏1𝑏0 as a 4 -bit\nbinary number, where 𝑏3 denotes the most significant bit and 𝑏0 denotes the least\nsignificant bit. Note that there are no don’t care terms. Which ONE of the following\noptions is the CORRECT minimized Boolean expression for 𝐹?",
+      "after": "Consider the following four variable Boolean function in sum-of-product form\n\n$$F(b_3, b_2, b_1, b_0) = \\sum (0, 2, 4, 8, 10, 11, 12).$$\n\nwhere the value of the function is computed by considering $b_3 b_2 b_1 b_0$ as a 4-bit binary number, where $b_3$ denotes the most significant bit and $b_0$ denotes the least significant bit. Note that there are no don’t care terms. Which ONE of the following options is the CORRECT minimized Boolean expression for $F$?",
+      "reason": "Text re-typed from the paper: Unicode maths italics replaced by KaTeX, broken words and page-header junk removed.",
+      "source": "pdf p.42 (Q.42)"
+    },
+    {
+      "id": "cse-2025-1-cs-32",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝑏̅1𝑏̅0 + 𝑏̅2𝑏̅0 + 𝑏1 𝑏̅2𝑏3"
+        },
+        {
+          "l": "B",
+          "t": "𝑏̅1 𝑏̅0 + 𝑏̅2 𝑏̅0"
+        },
+        {
+          "l": "C",
+          "t": "𝑏̅2𝑏̅0 + 𝑏1𝑏2𝑏3"
+        },
+        {
+          "l": "D",
+          "t": "𝑏̅0𝑏̅2 + 𝑏̅3 Computer Science and Information Technology (CS1)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\bar{b}_1 \\bar{b}_0 + \\bar{b}_2 \\bar{b}_0 + b_1 \\bar{b}_2 b_3$"
+        },
+        {
+          "l": "B",
+          "t": "$\\bar{b}_1 \\bar{b}_0 + \\bar{b}_2 \\bar{b}_0$"
+        },
+        {
+          "l": "C",
+          "t": "$\\bar{b}_2 \\bar{b}_0 + b_1 b_2 b_3$"
+        },
+        {
+          "l": "D",
+          "t": "$\\bar{b}_0 \\bar{b}_2 + \\bar{b}_3$"
+        }
+      ],
+      "reason": "Options re-typed from the paper: running page header removed from option D, Unicode maths italics replaced by KaTeX.",
+      "source": "pdf p.42 (Q.42)"
+    },
+    {
+      "id": "cse-2025-1-cs-32",
+      "field": "subject",
+      "before": "coa",
+      "after": "dl",
+      "reason": "K-map minimisation of a 4-variable SOP function is Digital Logic (minimization), not COA/ISA.",
+      "source": "pdf p.42 (Q.42)"
+    },
+    {
+      "id": "cse-2025-1-cs-32",
+      "field": "topic",
+      "before": "isa",
+      "after": "minimization",
+      "reason": "K-map minimisation of a 4-variable SOP function is Digital Logic (minimization), not COA/ISA.",
+      "source": "pdf p.42 (Q.42)"
+    },
+    {
+      "id": "cse-2025-1-cs-32",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "k-map",
+        "sop",
+        "minimization"
+      ],
+      "reason": "Tags for Q.42.",
+      "source": "pdf p.42 (Q.42)"
+    },
+    {
+      "id": "cse-2025-1-cs-33",
+      "field": "text",
+      "before": "Let 𝐺(𝑉, 𝐸) be an undirected and unweighted graph with 100 vertices. Let 𝑑(𝑢, 𝑣)\ndenote the number of edges in a shortest path between vertices 𝑢 and 𝑣 in 𝑉. Let the\nmaximum value of 𝑑(𝑢, 𝑣), 𝑢, 𝑣 ∈ 𝑉 such that 𝑢 ≠ 𝑣, be 30. Let 𝑇 be any breadth-\nfirst-search tree of 𝐺. Which ONE of the given options is CORRECT for every such\ngraph 𝐺?",
+      "after": "Let $G(V, E)$ be an undirected and unweighted graph with 100 vertices. Let $d(u, v)$ denote the number of edges in a shortest path between vertices $u$ and $v$ in $V$. Let the maximum value of $d(u, v)$, $u, v \\in V$ such that $u \\neq v$, be 30. Let $T$ be any breadth-first-search tree of $G$. Which ONE of the given options is CORRECT for every such graph $G$?",
+      "reason": "Text re-typed from the paper: Unicode maths italics replaced by KaTeX, broken words and page-header junk removed.",
+      "source": "pdf p.43 (Q.43)"
+    },
+    {
+      "id": "cse-2025-1-cs-33",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "The height of 𝑇 is exactly 15."
+        },
+        {
+          "l": "B",
+          "t": "The height of 𝑇 is exactly 30."
+        },
+        {
+          "l": "C",
+          "t": "The height of 𝑇 is at least 15."
+        },
+        {
+          "l": "D",
+          "t": "The height of 𝑇 is at least 30. Computer Science and Information Technology (CS1)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "The height of $T$ is exactly 15."
+        },
+        {
+          "l": "B",
+          "t": "The height of $T$ is exactly 30."
+        },
+        {
+          "l": "C",
+          "t": "The height of $T$ is at least 15."
+        },
+        {
+          "l": "D",
+          "t": "The height of $T$ is at least 30."
+        }
+      ],
+      "reason": "Options re-typed from the paper: running page header removed from option D, Unicode maths italics replaced by KaTeX.",
+      "source": "pdf p.43 (Q.43)"
+    },
+    {
+      "id": "cse-2025-1-cs-33",
+      "field": "subject",
+      "before": "calc",
+      "after": "algo",
+      "reason": "BFS-tree height vs graph diameter is Algorithms (graph traversal), not Calculus.",
+      "source": "pdf p.43 (Q.43)"
+    },
+    {
+      "id": "cse-2025-1-cs-33",
+      "field": "topic",
+      "before": "maxmin",
+      "after": "graph-traversal",
+      "reason": "BFS-tree height vs graph diameter is Algorithms (graph traversal), not Calculus.",
+      "source": "pdf p.43 (Q.43)"
+    },
+    {
+      "id": "cse-2025-1-cs-33",
+      "field": "tags",
+      "before": [
+        "graphs"
+      ],
+      "after": [
+        "bfs",
+        "diameter",
+        "eccentricity"
+      ],
+      "reason": "Tags for Q.43.",
+      "source": "pdf p.43 (Q.43)"
+    },
+    {
+      "id": "cse-2025-1-cs-34",
+      "field": "text",
+      "before": "Consider the following two languages over the alphabet {𝑎, 𝑏}:\n𝐿1  =  { 𝛼𝛽𝛼 | 𝛼 ∈ {𝑎, 𝑏}+ AND 𝛽 ∈ {𝑎, 𝑏}+ }\n𝐿2  =  { 𝛼𝛽𝛼 | 𝛼 ∈ {𝑎}+ AND 𝛽 ∈ {𝑎, 𝑏}+ }\nWhich ONE of the following statements is CORRECT?",
+      "after": "Consider the following two languages over the alphabet $\\{a, b\\}$:\n\n$$L_1 = \\{\\, \\alpha\\beta\\alpha \\mid \\alpha \\in \\{a, b\\}^+ \\text{ AND } \\beta \\in \\{a, b\\}^+ \\,\\}$$\n\n$$L_2 = \\{\\, \\alpha\\beta\\alpha \\mid \\alpha \\in \\{a\\}^+ \\text{ AND } \\beta \\in \\{a, b\\}^+ \\,\\}$$\n\nWhich ONE of the following statements is CORRECT?",
+      "reason": "Text re-typed from the paper: Unicode maths italics replaced by KaTeX, broken words and page-header junk removed.",
+      "source": "pdf p.44 (Q.44)"
+    },
+    {
+      "id": "cse-2025-1-cs-34",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Both 𝐿1 and 𝐿2 are regular languages."
+        },
+        {
+          "l": "B",
+          "t": "𝐿1 is a regular language but 𝐿2 is not a regular language."
+        },
+        {
+          "l": "C",
+          "t": "𝐿1 is not a regular language but 𝐿2 is a regular language."
+        },
+        {
+          "l": "D",
+          "t": "Neither 𝐿1 nor 𝐿2 is a regular language. Computer Science and Information Technology (CS1)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Both $L_1$ and $L_2$ are regular languages."
+        },
+        {
+          "l": "B",
+          "t": "$L_1$ is a regular language but $L_2$ is not a regular language."
+        },
+        {
+          "l": "C",
+          "t": "$L_1$ is not a regular language but $L_2$ is a regular language."
+        },
+        {
+          "l": "D",
+          "t": "Neither $L_1$ nor $L_2$ is a regular language."
+        }
+      ],
+      "reason": "Options re-typed from the paper: running page header removed from option D, Unicode maths italics replaced by KaTeX.",
+      "source": "pdf p.44 (Q.44)"
+    },
+    {
+      "id": "cse-2025-1-cs-34",
+      "field": "subject",
+      "before": "pds",
+      "after": "toc",
+      "reason": "Regularity of languages is Theory of Computation (regular), not PDS/C programming.",
+      "source": "pdf p.44 (Q.44)"
+    },
+    {
+      "id": "cse-2025-1-cs-34",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "regular",
+      "reason": "Regularity of languages is Theory of Computation (regular), not PDS/C programming.",
+      "source": "pdf p.44 (Q.44)"
+    },
+    {
+      "id": "cse-2025-1-cs-34",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "regular-languages",
+        "myhill-nerode",
+        "non-regularity"
+      ],
+      "reason": "Tags for Q.44.",
+      "source": "pdf p.44 (Q.44)"
+    },
+    {
+      "id": "cse-2025-1-cs-35",
+      "field": "text",
+      "before": "Consider the following two languages over the alphabet {𝑎, 𝑏, 𝑐}, where 𝑚 and 𝑛\nare natural numbers.\n𝐿1 =  {𝑎𝑚𝑏𝑚𝑐𝑚+𝑛 | 𝑚, 𝑛 ≥ 1}\n𝐿2 = {𝑎𝑚𝑏𝑛𝑐𝑚+𝑛 | 𝑚, 𝑛 ≥ 1}\nWhich ONE of the following statements is CORRECT?",
+      "after": "Consider the following two languages over the alphabet $\\{a, b, c\\}$, where $m$ and $n$ are natural numbers.\n\n$$L_1 = \\{a^m b^m c^{m+n} \\mid m, n \\geq 1\\}$$\n\n$$L_2 = \\{a^m b^n c^{m+n} \\mid m, n \\geq 1\\}$$\n\nWhich ONE of the following statements is CORRECT?",
+      "reason": "Exponents were flattened (\"𝑎𝑚𝑏𝑚𝑐𝑚+𝑛\"); re-typed in KaTeX from the paper.",
+      "source": "pdf p.45 (Q.45)"
+    },
+    {
+      "id": "cse-2025-1-cs-35",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Both 𝐿1 and 𝐿2 are context-free languages."
+        },
+        {
+          "l": "B",
+          "t": "𝐿1 is a context-free language but 𝐿2 is not a context-free language."
+        },
+        {
+          "l": "C",
+          "t": "𝐿1 is not a context-free language but 𝐿2 is a context-free language."
+        },
+        {
+          "l": "D",
+          "t": "Neither 𝐿1 nor 𝐿2 are context-free languages. Computer Science and Information Technology (CS1)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Both $L_1$ and $L_2$ are context-free languages."
+        },
+        {
+          "l": "B",
+          "t": "$L_1$ is a context-free language but $L_2$ is not a context-free language."
+        },
+        {
+          "l": "C",
+          "t": "$L_1$ is not a context-free language but $L_2$ is a context-free language."
+        },
+        {
+          "l": "D",
+          "t": "Neither $L_1$ nor $L_2$ are context-free languages."
+        }
+      ],
+      "reason": "Options re-typed from the paper: running page header removed from option D, Unicode maths italics replaced by KaTeX.",
+      "source": "pdf p.45 (Q.45)"
+    },
+    {
+      "id": "cse-2025-1-cs-35",
+      "field": "subject",
+      "before": "db",
+      "after": "toc",
+      "reason": "Context-freeness of languages is Theory of Computation (CFG/CFL), not Databases/SQL.",
+      "source": "pdf p.45 (Q.45)"
+    },
+    {
+      "id": "cse-2025-1-cs-35",
+      "field": "topic",
+      "before": "sql",
+      "after": "cfg",
+      "reason": "Context-freeness of languages is Theory of Computation (CFG/CFL), not Databases/SQL.",
+      "source": "pdf p.45 (Q.45)"
+    },
+    {
+      "id": "cse-2025-1-cs-35",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "context-free-languages",
+        "pumping-lemma",
+        "cfg"
+      ],
+      "reason": "Tags for Q.45.",
+      "source": "pdf p.45 (Q.45)"
+    },
+    {
+      "id": "cse-2025-1-cs-36",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "For a production 𝐴 → 𝜖, 𝜖 will be added to 𝐹𝑖𝑟𝑠𝑡(𝐴)."
+        },
+        {
+          "l": "B",
+          "t": "If there is any input right end marker, it will be added to 𝐹𝑖𝑟𝑠𝑡(𝑆), where 𝑆 is the start symbol."
+        },
+        {
+          "l": "C",
+          "t": "For a production 𝐴 → 𝜖, 𝜖 will be added to 𝐹𝑜𝑙𝑙𝑜𝑤(𝐴)."
+        },
+        {
+          "l": "D",
+          "t": "If there is any input right end marker, it will be added to 𝐹𝑜𝑙𝑙𝑜𝑤(𝑆), where 𝑆 is the start symbol. Computer Science and Information Technology (CS1)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "For a production $A \\to \\epsilon$, $\\epsilon$ will be added to $\\mathit{First}(A)$."
+        },
+        {
+          "l": "B",
+          "t": "If there is any input right end marker, it will be added to $\\mathit{First}(S)$, where $S$ is the start symbol."
+        },
+        {
+          "l": "C",
+          "t": "For a production $A \\to \\epsilon$, $\\epsilon$ will be added to $\\mathit{Follow}(A)$."
+        },
+        {
+          "l": "D",
+          "t": "If there is any input right end marker, it will be added to $\\mathit{Follow}(S)$, where $S$ is the start symbol."
+        }
+      ],
+      "reason": "Options re-typed from the paper: running page header removed from option D, Unicode maths italics replaced by KaTeX.",
+      "source": "pdf p.46 (Q.46)"
+    },
+    {
+      "id": "cse-2025-1-cs-36",
+      "field": "tags",
+      "before": [
+        "parsing"
+      ],
+      "after": [
+        "first-follow",
+        "ll1",
+        "top-down-parsing"
+      ],
+      "reason": "Tags for Q.46.",
+      "source": "pdf p.46 (Q.46)"
+    },
+    {
+      "id": "cse-2025-1-cs-37",
+      "field": "text",
+      "before": "Consider a relational schema 𝑡𝑒𝑎𝑚(𝑛𝑎𝑚𝑒, 𝑐𝑖𝑡𝑦, 𝑜𝑤𝑛𝑒𝑟), with functional\ndependencies {𝑛𝑎𝑚𝑒 → 𝑐𝑖𝑡𝑦, 𝑛𝑎𝑚𝑒 → 𝑜𝑤𝑛𝑒𝑟}.\nThe relation 𝑡𝑒𝑎𝑚 is decomposed into two relations, 𝑡1(𝑛𝑎𝑚𝑒, 𝑐𝑖𝑡𝑦) and\n𝑡2(𝑛𝑎𝑚𝑒, 𝑜𝑤𝑛𝑒𝑟). Which of the following statement(s) is/are TRUE?",
+      "after": "Consider a relational schema $\\mathit{team}(\\mathit{name}, \\mathit{city}, \\mathit{owner})$, with functional dependencies $\\{\\mathit{name} \\to \\mathit{city},\\ \\mathit{name} \\to \\mathit{owner}\\}$.\n\nThe relation $\\mathit{team}$ is decomposed into two relations, $t_1(\\mathit{name}, \\mathit{city})$ and $t_2(\\mathit{name}, \\mathit{owner})$. Which of the following statement(s) is/are TRUE?",
+      "reason": "Text re-typed from the paper: Unicode maths italics replaced by KaTeX, broken words and page-header junk removed.",
+      "source": "pdf p.47 (Q.47)"
+    },
+    {
+      "id": "cse-2025-1-cs-37",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "The relation 𝑡𝑒𝑎𝑚 is NOT in BCNF."
+        },
+        {
+          "l": "B",
+          "t": "The relations 𝑡1 and 𝑡2 are in BCNF."
+        },
+        {
+          "l": "C",
+          "t": "The decomposition constitutes a lossless join."
+        },
+        {
+          "l": "D",
+          "t": "The relation 𝑡𝑒𝑎𝑚 is NOT in 3NF. Computer Science and Information Technology (CS1)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "The relation $\\mathit{team}$ is NOT in BCNF."
+        },
+        {
+          "l": "B",
+          "t": "The relations $t_1$ and $t_2$ are in BCNF."
+        },
+        {
+          "l": "C",
+          "t": "The decomposition constitutes a lossless join."
+        },
+        {
+          "l": "D",
+          "t": "The relation $\\mathit{team}$ is NOT in 3NF."
+        }
+      ],
+      "reason": "Options re-typed from the paper: running page header removed from option D, Unicode maths italics replaced by KaTeX.",
+      "source": "pdf p.47 (Q.47)"
+    },
+    {
+      "id": "cse-2025-1-cs-37",
+      "field": "subject",
+      "before": "dm",
+      "after": "db",
+      "reason": "BCNF/3NF and lossless decomposition are Databases (normalization), not Discrete Maths/sets.",
+      "source": "pdf p.47 (Q.47)"
+    },
+    {
+      "id": "cse-2025-1-cs-37",
+      "field": "topic",
+      "before": "sets",
+      "after": "normalization",
+      "reason": "BCNF/3NF and lossless decomposition are Databases (normalization), not Discrete Maths/sets.",
+      "source": "pdf p.47 (Q.47)"
+    },
+    {
+      "id": "cse-2025-1-cs-37",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "bcnf",
+        "3nf",
+        "lossless-join",
+        "functional-dependencies"
+      ],
+      "reason": "Tags for Q.47.",
+      "source": "pdf p.47 (Q.47)"
+    },
+    {
+      "id": "cse-2025-1-cs-38",
+      "field": "text",
+      "before": "Which of the following predicate logic formulae/formula is/are CORRECT\nrepresentation(s) of the statement: “Everyone has exactly one mother”?\nThe meanings of the predicates used are:\n• 𝑚𝑜𝑡ℎ𝑒𝑟(𝑦, 𝑥): 𝑦 is the mother of 𝑥\n• 𝑛𝑜𝑡𝑒𝑞(𝑥, 𝑦): 𝑥 and 𝑦 are not equal",
+      "after": "Which of the following predicate logic formulae/formula is/are CORRECT representation(s) of the statement: “Everyone has exactly one mother”?\n\nThe meanings of the predicates used are:\n\n- $\\mathit{mother}(y, x)$: $y$ is the mother of $x$\n- $\\mathit{noteq}(x, y)$: $x$ and $y$ are not equal",
+      "reason": "Text re-typed from the paper: Unicode maths italics replaced by KaTeX, broken words and page-header junk removed.",
+      "source": "pdf p.48 (Q.48)"
+    },
+    {
+      "id": "cse-2025-1-cs-38",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "∀𝑥∃𝑦∃𝑧(𝑚𝑜𝑡ℎ𝑒𝑟(𝑦, 𝑥) ∧ ¬𝑚𝑜𝑡ℎ𝑒𝑟(𝑧, 𝑥))"
+        },
+        {
+          "l": "B",
+          "t": "∀𝑥∃𝑦[𝑚𝑜𝑡ℎ𝑒𝑟(𝑦, 𝑥) ∧ ∀𝑧(𝑛𝑜𝑡𝑒𝑞(𝑧, 𝑦) → ¬𝑚𝑜𝑡ℎ𝑒𝑟(𝑧, 𝑥))]"
+        },
+        {
+          "l": "C",
+          "t": "∀𝑥∀𝑦[𝑚𝑜𝑡ℎ𝑒𝑟(𝑦, 𝑥) → ∃𝑧(𝑚𝑜𝑡ℎ𝑒𝑟(𝑧, 𝑥) ∧ ¬𝑛𝑜𝑡𝑒𝑞(𝑧, 𝑦))]"
+        },
+        {
+          "l": "D",
+          "t": "∀𝑥∃𝑦[𝑚𝑜𝑡ℎ𝑒𝑟(𝑦, 𝑥) ∧ ¬∃𝑧(𝑛𝑜𝑡𝑒𝑞(𝑧, 𝑦) ∧ 𝑚𝑜𝑡ℎ𝑒𝑟(𝑧, 𝑥))] Computer Science and Information Technology (CS1)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\forall x \\exists y \\exists z\\,(\\mathit{mother}(y, x) \\wedge \\neg \\mathit{mother}(z, x))$"
+        },
+        {
+          "l": "B",
+          "t": "$\\forall x \\exists y\\,[\\mathit{mother}(y, x) \\wedge \\forall z\\,(\\mathit{noteq}(z, y) \\to \\neg \\mathit{mother}(z, x))]$"
+        },
+        {
+          "l": "C",
+          "t": "$\\forall x \\forall y\\,[\\mathit{mother}(y, x) \\to \\exists z\\,(\\mathit{mother}(z, x) \\wedge \\neg \\mathit{noteq}(z, y))]$"
+        },
+        {
+          "l": "D",
+          "t": "$\\forall x \\exists y\\,[\\mathit{mother}(y, x) \\wedge \\neg \\exists z\\,(\\mathit{noteq}(z, y) \\wedge \\mathit{mother}(z, x))]$"
+        }
+      ],
+      "reason": "Options re-typed from the paper: running page header removed from option D, Unicode maths italics replaced by KaTeX.",
+      "source": "pdf p.48 (Q.48)"
+    },
+    {
+      "id": "cse-2025-1-cs-38",
+      "field": "tags",
+      "before": [
+        "logic"
+      ],
+      "after": [
+        "first-order-logic",
+        "quantifiers",
+        "uniqueness"
+      ],
+      "reason": "Tags for Q.48.",
+      "source": "pdf p.48 (Q.48)"
+    },
+    {
+      "id": "cse-2025-1-cs-39",
+      "field": "text",
+      "before": "𝐴 = {0, 1, 2, 3, … } is the set of non-negative integers. Let Ϝ be the set of functions\nfrom 𝐴 to itself. For any two functions, 𝑓1, 𝑓2 ∈ Ϝ, we define\n(𝑓1⨀𝑓2)(𝑛) = 𝑓1(𝑛) + 𝑓2(𝑛)\nfor every number 𝑛 in 𝐴. Which of the following is/are CORRECT about the\nmathematical structure (Ϝ, ⨀)?",
+      "after": "$A = \\{0, 1, 2, 3, \\ldots\\}$ is the set of non-negative integers. Let $\\mathcal{F}$ be the set of functions from $A$ to itself. For any two functions, $f_1, f_2 \\in \\mathcal{F}$, we define\n\n$$(f_1 \\odot f_2)(n) = f_1(n) + f_2(n)$$\n\nfor every number $n$ in $A$. Which of the following is/are CORRECT about the mathematical structure $(\\mathcal{F}, \\odot)$?",
+      "reason": "Text re-typed from the paper: Unicode maths italics replaced by KaTeX, broken words and page-header junk removed.",
+      "source": "pdf p.49 (Q.49)"
+    },
+    {
+      "id": "cse-2025-1-cs-39",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "(Ϝ, ⨀) is an Abelian group."
+        },
+        {
+          "l": "B",
+          "t": "(Ϝ, ⨀) is an Abelian monoid."
+        },
+        {
+          "l": "C",
+          "t": "(Ϝ, ⨀) is a non-Abelian group."
+        },
+        {
+          "l": "D",
+          "t": "(Ϝ, ⨀) is a non-Abelian monoid. Computer Science and Information Technology (CS1)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$(\\mathcal{F}, \\odot)$ is an Abelian group."
+        },
+        {
+          "l": "B",
+          "t": "$(\\mathcal{F}, \\odot)$ is an Abelian monoid."
+        },
+        {
+          "l": "C",
+          "t": "$(\\mathcal{F}, \\odot)$ is a non-Abelian group."
+        },
+        {
+          "l": "D",
+          "t": "$(\\mathcal{F}, \\odot)$ is a non-Abelian monoid."
+        }
+      ],
+      "reason": "Options re-typed from the paper: running page header removed from option D, Unicode maths italics replaced by KaTeX.",
+      "source": "pdf p.49 (Q.49)"
+    },
+    {
+      "id": "cse-2025-1-cs-39",
+      "field": "subject",
+      "before": "pds",
+      "after": "dm",
+      "reason": "Groups/monoids are Discrete Maths (groups), not PDS/C programming.",
+      "source": "pdf p.49 (Q.49)"
+    },
+    {
+      "id": "cse-2025-1-cs-39",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "groups",
+      "reason": "Groups/monoids are Discrete Maths (groups), not PDS/C programming.",
+      "source": "pdf p.49 (Q.49)"
+    },
+    {
+      "id": "cse-2025-1-cs-39",
+      "field": "tags",
+      "before": [
+        "c-prog"
+      ],
+      "after": [
+        "monoid",
+        "group",
+        "abelian"
+      ],
+      "reason": "Tags for Q.49.",
+      "source": "pdf p.49 (Q.49)"
+    },
+    {
+      "id": "cse-2025-1-cs-40",
+      "field": "text",
+      "before": "Consider the following deterministic finite automaton (DFA) defined over the\nalphabet, Σ = {𝑎, 𝑏}. Identify which of the following language(s) is/are accepted by\nthe given DFA.",
+      "after": "Consider the following deterministic finite automaton (DFA) defined over the alphabet, $\\Sigma = \\{a, b\\}$. Identify which of the following language(s) is/are accepted by the given DFA.",
+      "reason": "Text re-typed from the paper: Unicode maths italics replaced by KaTeX, broken words and page-header junk removed.",
+      "source": "pdf p.50 (Q.50)"
+    },
+    {
+      "id": "cse-2025-1-cs-40",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "The set of all strings containing an even number of 𝑏’s."
+        },
+        {
+          "l": "B",
+          "t": "The set of all strings containing the pattern 𝑏𝑎𝑏."
+        },
+        {
+          "l": "C",
+          "t": "The set of all strings ending with the pattern 𝑏𝑎𝑏."
+        },
+        {
+          "l": "D",
+          "t": "The set of all strings not containing the pattern 𝑎𝑏𝑎. Computer Science and Information Technology (CS1)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "The set of all strings containing an even number of $b$’s."
+        },
+        {
+          "l": "B",
+          "t": "The set of all strings containing the pattern $bab$."
+        },
+        {
+          "l": "C",
+          "t": "The set of all strings ending with the pattern $bab$."
+        },
+        {
+          "l": "D",
+          "t": "The set of all strings not containing the pattern $aba$."
+        }
+      ],
+      "reason": "Options re-typed from the paper: running page header removed from option D, Unicode maths italics replaced by KaTeX.",
+      "source": "pdf p.50 (Q.50)"
+    },
+    {
+      "id": "cse-2025-1-cs-40",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2025-1/cs-40-1.svg",
+          "svg": "cse-2025-1/cs-40-1.svg",
+          "alt": "DFA with four unnamed states drawn in a row (call them q0, q1, q2, q3 from left to right). An unlabelled arrow marks q0 as the start state; q3 is a double circle (the only final state). Transitions: q0 has a self-loop on a and goes to q1 on b; q1 has a self-loop on b and goes to q2 on a; q2 goes to q3 on b and back to q0 on a (lower arc); q3 goes back to q2 on a (upper arc) and back to q1 on b (lower arc)."
+        }
+      ],
+      "reason": "The question depends on its DFA diagram, which the bank was missing. Redrawn as an SVG from the paper.",
+      "source": "pdf p.50 (Q.50)"
+    },
+    {
+      "id": "cse-2025-1-cs-40",
+      "field": "tags",
+      "before": [
+        "regular"
+      ],
+      "after": [
+        "dfa",
+        "pattern-matching",
+        "suffix"
+      ],
+      "reason": "Tags for Q.50.",
+      "source": "pdf p.50 (Q.50)"
+    },
+    {
+      "id": "cse-2025-1-cs-41",
+      "field": "text",
+      "before": "A disk of size 512M bytes is divided into blocks of 64K bytes. A file is stored in\nthe disk using linked allocation. In linked allocation, each data block reserves 4\nbytes to store the pointer to the next data block. The link part of the last data block\ncontains a NULL pointer (also of 4 bytes). Suppose a file of 1M bytes needs to be\nstored in the disk. Assume, 1K = 210 and 1M = 220. The amount of space in bytes\nthat will be wasted due to internal fragmentation is ______. (Answer in integer)\nComputer Science and Information Technology (CS1)",
+      "after": "A disk of size 512M bytes is divided into blocks of 64K bytes. A file is stored in the disk using linked allocation. In linked allocation, each data block reserves 4 bytes to store the pointer to the next data block. The link part of the last data block contains a NULL pointer (also of 4 bytes). Suppose a file of 1M bytes needs to be stored in the disk. Assume, $1\\text{K} = 2^{10}$ and $1\\text{M} = 2^{20}$. The amount of space in bytes that will be wasted due to internal fragmentation is ______. (Answer in integer)",
+      "reason": "Exponents were flattened (\"1K = 210\", \"1M = 220\") and the page header was pasted at the end; re-typed from the paper.",
+      "source": "pdf p.51 (Q.51)"
+    },
+    {
+      "id": "cse-2025-1-cs-41",
+      "field": "subject",
+      "before": "pds",
+      "after": "os",
+      "reason": "Linked file allocation and internal fragmentation are Operating Systems (file systems), not PDS/C programming.",
+      "source": "pdf p.51 (Q.51)"
+    },
+    {
+      "id": "cse-2025-1-cs-41",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "files",
+      "reason": "Linked file allocation and internal fragmentation are Operating Systems (file systems), not PDS/C programming.",
+      "source": "pdf p.51 (Q.51)"
+    },
+    {
+      "id": "cse-2025-1-cs-41",
+      "field": "tags",
+      "before": [
+        "c-prog"
+      ],
+      "after": [
+        "linked-allocation",
+        "internal-fragmentation",
+        "disk-blocks"
+      ],
+      "reason": "Tags for Q.51.",
+      "source": "pdf p.51 (Q.51)"
+    },
+    {
+      "id": "cse-2025-1-cs-42",
+      "field": "text",
+      "before": "Refer to the given 3-address code sequence. This code sequence is s plit into basic\nblocks. The number of basic blocks is ________. (Answer in integer)\n1001: i = 1\n1002: j = 1\n1003: t1 = 10*i\n1004: t2 = t1+j\n1005: t3 = 8*t2\n1006: t4 = t3-88\n1007: a[t4] = 0.0\n1008: j = j+1\n1009: if j <= 10 goto 1003\n1010: i = i+1\n1011: if i <= 10 goto 1002\n1012: i = 1\n1013: t5 = i-1\n1014: t6 = 88*t5\n1015: a[t6] = 1.0\n1016: i = i+1\n1017: if i <= 10 goto 1013\nComputer Science and Information Technology (CS1)",
+      "after": "Refer to the given 3-address code sequence. This code sequence is split into basic blocks. The number of basic blocks is ________. (Answer in integer)\n\n```\n1001: i = 1\n1002: j = 1\n1003: t1 = 10*i\n1004: t2 = t1+j\n1005: t3 = 8*t2\n1006: t4 = t3-88\n1007: a[t4] = 0.0\n1008: j = j+1\n1009: if j <= 10 goto 1003\n1010: i = i+1\n1011: if i <= 10 goto 1002\n1012: i = 1\n1013: t5 = i-1\n1014: t6 = 88*t5\n1015: a[t6] = 1.0\n1016: i = i+1\n1017: if i <= 10 goto 1013\n```",
+      "reason": "Code listing put in a code block, broken word \"s plit\" fixed and the page header removed; checked against the paper.",
+      "source": "pdf p.52 (Q.52)"
+    },
+    {
+      "id": "cse-2025-1-cs-42",
+      "field": "topic",
+      "before": "codegen",
+      "after": "optimization",
+      "reason": "Basic blocks / flow graphs belong to code optimization; \"codegen\" is not a topic id of subject cd.",
+      "source": "pdf p.52 (Q.52)"
+    },
+    {
+      "id": "cse-2025-1-cs-42",
+      "field": "tags",
+      "before": [
+        "codegen"
+      ],
+      "after": [
+        "basic-blocks",
+        "leaders",
+        "three-address-code"
+      ],
+      "reason": "Tags for Q.52.",
+      "source": "pdf p.52 (Q.52)"
+    }
+  ]
+}
