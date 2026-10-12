@@ -15,8 +15,6 @@ import { cn } from '@/lib/utils'
 import { openCommandPalette } from './CommandPalette'
 import { DockEditor } from './DockEditor'
 import { DOCK_BY_ID, DOCK_ITEMS, isDockFocusRoute, tileStyle, useDock, type DockItem } from './dockStore'
-import { useTheme } from '@/context/ThemeContext'
-import type { IconPack, IconShape } from '@/theme/catalog'
 
 /** Resting icon size, the size under the pointer, and how far the swell reaches. */
 const BASE = 46
@@ -46,16 +44,12 @@ function DockIcon({
   magnify,
   mono,
   active,
-  pack,
-  shape,
 }: {
   item: DockItem
   mouseX: MotionValue<number>
   magnify: boolean
   mono: boolean
   active: boolean
-  pack?: IconPack
-  shape?: IconShape
 }) {
   const ref = useRef<HTMLDivElement>(null)
   const reduce = useReducedMotion()
@@ -85,12 +79,12 @@ function DockIcon({
       <span
         className={cn(
           'absolute inset-0 transition-[filter,background-color] duration-200',
-          shape === 'circle' ? 'rounded-full' : shape === 'free' ? 'rounded-none' : 'rounded-[28%]',
+          'rounded-[28%]',
           mono
             ? cn('bg-transparent group-hover:bg-bg-surface-3', active && 'bg-bg-surface-3')
             : 'dock-tile group-hover:brightness-110',
         )}
-        style={mono ? undefined : tileStyle(item, pack, shape)}
+        style={mono ? undefined : tileStyle(item)}
         aria-hidden="true"
       />
       <motion.span style={{ width: glyph, height: glyph }} className="relative flex">
@@ -101,13 +95,9 @@ function DockIcon({
               ? active
                 ? 'text-accent-brand'
                 : 'text-text-secondary group-hover:text-text-primary'
-              : pack === 'minimal'
-                ? 'text-text-primary'
-                : pack === 'neon'
-                  ? 'text-white drop-shadow-[0_0_8px_currentColor]'
-                  : 'text-white drop-shadow-[0_1px_1px_rgb(0_0_0/0.25)]',
+              : 'text-white drop-shadow-[0_1px_1px_rgb(0_0_0/0.25)]',
           )}
-          strokeWidth={mono || pack === 'minimal' ? 1.8 : 2.1}
+          strokeWidth={mono ? 1.8 : 2.1}
           aria-hidden="true"
         />
       </motion.span>
@@ -183,7 +173,6 @@ function DockIcon({
  */
 export function Deck() {
   const dock = useDock()
-  const { look } = useTheme()
   const mouseX = useMotionValue(Infinity)
   const [moreOpen, setMoreOpen] = useState(false)
   const [editing, setEditing] = useState(false)
@@ -271,8 +260,6 @@ export function Deck() {
               magnify={dock.magnify}
               mono={mono}
               active={isActive(item, pathname)}
-              pack={look.iconPack}
-              shape={look.iconShape}
             />
           ))}
 
