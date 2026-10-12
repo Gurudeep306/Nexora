@@ -1,0 +1,859 @@
+{
+  "paper": "cse-2026-2",
+  "fixes": [
+    {
+      "id": "cse-2026-2-ga-1",
+      "field": "text",
+      "before": "Expedite, Hasten, Hurry, __________ Fill the blank by choosing a word with a meaning similar to that of the words given above.",
+      "after": "Expedite, Hasten, Hurry, __________\n\nFill the blank by choosing a word with a meaning similar to that of the words given above.",
+      "reason": "Restored the line break between the word list and the instruction.",
+      "source": "pdf p.1"
+    },
+    {
+      "id": "cse-2026-2-ga-1",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Retard"
+        },
+        {
+          "l": "B",
+          "t": "Provide"
+        },
+        {
+          "l": "C",
+          "t": "Disable"
+        },
+        {
+          "l": "D",
+          "t": "Accelerate"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Accelerate"
+        },
+        {
+          "l": "B",
+          "t": "Retard"
+        },
+        {
+          "l": "C",
+          "t": "Provide"
+        },
+        {
+          "l": "D",
+          "t": "Disable"
+        }
+      ],
+      "reason": "Options were stored in a rotated order; restored to the order of the master question paper (option texts unchanged).",
+      "source": "pdf p.1"
+    },
+    {
+      "id": "cse-2026-2-ga-1",
+      "field": "answer",
+      "before": "D",
+      "after": "A",
+      "reason": "Follows the option reorder: the stored key D pointed at the option that is (A) in the paper's order, so the same answer is now letter A. Official key: A (Accelerate).",
+      "source": "pdf p.1; https://www.trygateai.com/pyq/general-aptitude/verbal-aptitude/gate-cse-2026-set-2-q1"
+    },
+    {
+      "id": "cse-2026-2-ga-1",
+      "field": "tags",
+      "before": [
+        "verbal-aptitude"
+      ],
+      "after": [
+        "verbal-aptitude",
+        "synonyms"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.1"
+    },
+    {
+      "id": "cse-2026-2-ga-2",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2026-2/ga-2-1.svg",
+          "svg": "cse-2026-2/ga-2-1.svg",
+          "alt": "Panel I: a 6 by 6 square PQRS (S top-left, R top-right, P bottom-left, Q bottom-right) of which the black part is shown. Counting rows from the top and columns from the left (1 to 6), the white cells are: row 2 columns 2, 5, 6; row 3 columns 2, 3, 4, 5; row 4 column 4; row 5 columns 2, 3, 4; every other cell is black. Panel II: four black shapes on a 5-wide by 4-high grid. All four have top row cells 1, 4, 5 and second row cells 1 to 4. (i): third row cell 3, bottom row cells 1 to 4. (ii): third row cell 3, bottom row cells 2 to 4. (iii): third row cell 3, bottom row cells 1 to 3. (iv): third row cells 3 and 4, bottom row cells 2 and 3."
+        }
+      ],
+      "reason": "The question depends on the Panel I / Panel II figure, which was missing; redrawn from the paper.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2026-2-ga-2",
+      "field": "answer",
+      "before": "A",
+      "after": "C",
+      "reason": "Stored key A = (i) is wrong: the white region of Panel I is exactly shape (iii) (bottom bar 3 cells wide, starting under the left post); (i) has a 4-cell bottom bar. The official GATE 2026 CS2 key is C.",
+      "source": "pdf p.2; https://www.trygateai.com/pyq/general-aptitude/spatial-aptitude/gate-cse-2026-set-2-q2"
+    },
+    {
+      "id": "cse-2026-2-ga-2",
+      "field": "topic",
+      "before": "quant",
+      "after": "spatial",
+      "reason": "Figure-completion puzzle: spatial aptitude, not quant.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2026-2-ga-2",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "spatial-aptitude",
+        "figure-completion"
+      ],
+      "reason": "Tags match the corrected topic.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2026-2-ga-3",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "3/8"
+        },
+        {
+          "l": "B",
+          "t": "1/4"
+        },
+        {
+          "l": "C",
+          "t": "3/4"
+        },
+        {
+          "l": "D",
+          "t": "2/3"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "1/4"
+        },
+        {
+          "l": "B",
+          "t": "3/4"
+        },
+        {
+          "l": "C",
+          "t": "2/3"
+        },
+        {
+          "l": "D",
+          "t": "3/8"
+        }
+      ],
+      "reason": "Options were stored in a rotated order; restored to the order of the master question paper (option texts unchanged).",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2026-2-ga-3",
+      "field": "answer",
+      "before": "B",
+      "after": "A",
+      "reason": "Follows the option reorder: the stored key B pointed at the option that is (A) in the paper's order, so the same answer is now letter A. Official key: A (1/4).",
+      "source": "pdf p.3; https://www.trygateai.com/pyq/general-aptitude/quantitative-aptitude/gate-cse-2026-set-2-q3"
+    },
+    {
+      "id": "cse-2026-2-ga-3",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "quantitative-aptitude",
+        "probability",
+        "binomial"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2026-2-ga-4",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "10"
+        },
+        {
+          "l": "B",
+          "t": "20"
+        },
+        {
+          "l": "C",
+          "t": "0"
+        },
+        {
+          "l": "D",
+          "t": "5"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "0"
+        },
+        {
+          "l": "B",
+          "t": "5"
+        },
+        {
+          "l": "C",
+          "t": "10"
+        },
+        {
+          "l": "D",
+          "t": "20"
+        }
+      ],
+      "reason": "Options were stored in a rotated order; restored to the order of the master question paper (option texts unchanged).",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2026-2-ga-4",
+      "field": "answer",
+      "before": "C",
+      "after": "A",
+      "reason": "Follows the option reorder: the stored key C pointed at the option that is (A) in the paper's order, so the same answer is now letter A. Official key: A (0).",
+      "source": "pdf p.4; https://www.trygateai.com/pyq/general-aptitude/quantitative-aptitude/gate-cse-2026-set-2-q4"
+    },
+    {
+      "id": "cse-2026-2-ga-4",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "quantitative-aptitude",
+        "profit-and-loss"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2026-2-ga-5",
+      "field": "text",
+      "before": "‘When it is raining, peacocks dance.’ Based only on this sentence, which one of the following options is necessarily true?",
+      "after": "‘When it is raining, peacocks dance.’\n\nBased only on this sentence, which one of the following options is necessarily true?",
+      "reason": "Restored the line break after the quoted sentence.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2026-2-ga-5",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "When peacocks dance, it is raining."
+        },
+        {
+          "l": "B",
+          "t": "When peacocks are not dancing, it is not raining."
+        },
+        {
+          "l": "C",
+          "t": "When it is not raining, peacocks do not dance."
+        },
+        {
+          "l": "D",
+          "t": "Peacocks dance only when it is raining."
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Peacocks dance only when it is raining."
+        },
+        {
+          "l": "B",
+          "t": "When peacocks dance, it is raining."
+        },
+        {
+          "l": "C",
+          "t": "When peacocks are not dancing, it is not raining."
+        },
+        {
+          "l": "D",
+          "t": "When it is not raining, peacocks do not dance."
+        }
+      ],
+      "reason": "Options were stored in a rotated order; restored to the order of the master question paper (option texts unchanged).",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2026-2-ga-5",
+      "field": "answer",
+      "before": "D",
+      "after": "C",
+      "reason": "Stored key D pointed at \"Peacocks dance only when it is raining\" (the converse, not implied). \"Raining → dance\" implies only its contrapositive \"not dancing → not raining\", which is (C) in the paper; the official GATE 2026 CS2 key is C.",
+      "source": "pdf p.4; https://www.trygateai.com/pyq/general-aptitude/verbal-aptitude/gate-cse-2026-set-2-q5"
+    },
+    {
+      "id": "cse-2026-2-ga-5",
+      "field": "topic",
+      "before": "verbal",
+      "after": "analytical",
+      "reason": "Conditional-statement deduction is logical (analytical) reasoning.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2026-2-ga-5",
+      "field": "tags",
+      "before": [
+        "verbal-aptitude"
+      ],
+      "after": [
+        "analytical-reasoning",
+        "conditional-statements",
+        "contrapositive"
+      ],
+      "reason": "Tags match the corrected topic.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2026-2-ga-6",
+      "field": "text",
+      "before": "Water : P :: Food : Q Choose the P and Q combination from the options below to form a meaningful analogy.",
+      "after": "Water : P :: Food : Q\n\nChoose the P and Q combination from the options below to form a meaningful analogy.",
+      "reason": "Restored the line break after the analogy.",
+      "source": "pdf p.5"
+    },
+    {
+      "id": "cse-2026-2-ga-6",
+      "field": "tags",
+      "before": [
+        "verbal-aptitude"
+      ],
+      "after": [
+        "verbal-aptitude",
+        "analogy"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.5"
+    },
+    {
+      "id": "cse-2026-2-ga-7",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2026-2/ga-7-1.svg",
+          "svg": "cse-2026-2/ga-7-1.svg",
+          "alt": "Panel I: a 3 by 3 arrangement of square tiles, each holding a 3 by 3 array of dots that are filled (black) or hollow. Row 1: 8 filled dots (all but the top-left), 1 filled dot (bottom-right), 6 filled dots (the right two columns). Row 2: 3 filled (right column), 5 filled (right column plus the lower two dots of the middle column), then a missing tile. Row 3: 4 filled (right column plus the bottom dot of the middle column), 9 filled (all), then a missing tile. The two missing tiles are a dashed box with a question mark. Panel II: four tile pairs (top tile over bottom tile). (i): 7 filled (right two columns plus bottom-left) over 2 filled (lower two dots of the right column). (ii): 6 filled over 2 filled. (iii): 7 filled over 3 filled (right column). (iv): 6 filled over 4 filled (right column plus bottom-middle)."
+        }
+      ],
+      "reason": "The question depends on the Panel I / Panel II figure, which was missing; redrawn from the paper.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2026-2-ga-7",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "(iv)"
+        },
+        {
+          "l": "B",
+          "t": "(i)"
+        },
+        {
+          "l": "C",
+          "t": "(ii)"
+        },
+        {
+          "l": "D",
+          "t": "(iii)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "(i)"
+        },
+        {
+          "l": "B",
+          "t": "(ii)"
+        },
+        {
+          "l": "C",
+          "t": "(iii)"
+        },
+        {
+          "l": "D",
+          "t": "(iv)"
+        }
+      ],
+      "reason": "Options were stored in a rotated order; restored to the order of the master question paper (option texts unchanged).",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2026-2-ga-7",
+      "field": "answer",
+      "before": "B",
+      "after": "A",
+      "reason": "Follows the option reorder: the stored key B pointed at the option that is (A) in the paper's order, so the same answer is now letter A. Official key: A ((i)).",
+      "source": "pdf p.6; https://www.trygateai.com/pyq/general-aptitude/spatial-aptitude/gate-cse-2026-set-2-q7"
+    },
+    {
+      "id": "cse-2026-2-ga-7",
+      "field": "topic",
+      "before": "quant",
+      "after": "spatial",
+      "reason": "Pattern-completion puzzle: spatial aptitude.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2026-2-ga-7",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "spatial-aptitude",
+        "pattern-completion",
+        "magic-square"
+      ],
+      "reason": "Tags match the corrected topic.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2026-2-ga-8",
+      "field": "text",
+      "before": "Figures (i) and (ii) represent intercity highway systems. The black dots represent cities and the line segments between them represent intercity highways. A salesperson needs to make a trip. She needs to start from a city, visit each of the remaining cities exactly once, and finally return to the same city from which she started. Which one of the following options is then true?",
+      "after": "Figures (i) and (ii) represent intercity highway systems. The black dots represent cities and the line segments between them represent intercity highways.\n\nA salesperson needs to make a trip. She needs to start from a city, visit each of the remaining cities exactly once, and finally return to the same city from which she started.\n\nWhich one of the following options is then true?",
+      "reason": "Restored the paragraph breaks.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2026-2-ga-8",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2026-2/ga-8-1.svg",
+          "svg": "cse-2026-2/ga-8-1.svg",
+          "alt": "Figure (i): 16 cities in a 4 by 4 square grid; each city is joined by a highway to its horizontal and vertical neighbours (24 highways). Figure (ii): five cities — top-left A, top-right B, an inner city C to the lower right of A, a left city D below A, and a bottom city E. Highways: A–B, A–C, A–D, C–E, D–E and B–E (A and E have three highways each; B, C, D have two)."
+        }
+      ],
+      "reason": "The question depends on figures (i) and (ii), which were missing; redrawn from the paper.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2026-2-ga-8",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Such a trip is possible for both (i) and (ii)."
+        },
+        {
+          "l": "B",
+          "t": "Such a trip is possible neither for (i) nor for (ii)."
+        },
+        {
+          "l": "C",
+          "t": "Such a trip is possible for (i), but not for (ii)."
+        },
+        {
+          "l": "D",
+          "t": "Such a trip is possible for (ii), but not for (i)."
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Such a trip is possible for (i), but not for (ii)."
+        },
+        {
+          "l": "B",
+          "t": "Such a trip is possible for (ii), but not for (i)."
+        },
+        {
+          "l": "C",
+          "t": "Such a trip is possible for both (i) and (ii)."
+        },
+        {
+          "l": "D",
+          "t": "Such a trip is possible neither for (i) nor for (ii)."
+        }
+      ],
+      "reason": "Options were stored in a rotated order; restored to the order of the master question paper (option texts unchanged).",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2026-2-ga-8",
+      "field": "answer",
+      "before": "C",
+      "after": "A",
+      "reason": "Follows the option reorder: the stored key C pointed at the option that is (A) in the paper's order, so the same answer is now letter A. Verified: the 4×4 grid has a Hamiltonian cycle; figure (ii) has none (A would need three cycle edges).",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2026-2-ga-8",
+      "field": "topic",
+      "before": "quant",
+      "after": "analytical",
+      "reason": "Hamiltonian-cycle reasoning on a figure: analytical reasoning.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2026-2-ga-8",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "analytical-reasoning",
+        "graphs",
+        "hamiltonian-cycle"
+      ],
+      "reason": "Tags match the corrected topic.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2026-2-ga-9",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2026-2/ga-9-1.svg",
+          "svg": "cse-2026-2/ga-9-1.svg",
+          "alt": "Panel I: an empty 4 by 4 grid; the numbers above the columns are 2, 2, 2, 2 and the numbers left of the rows (top to bottom) are 3, 1, 2, 2. Panel II: four shaded grids, rows listed top to bottom with 1 = shaded. (i): 1011, 0101, 0010, 1100. (ii): 1011, 0100, 0011, 1100. (iii): 1011, 0110, 0010, 1100. (iv): 1011, 0100, 0010, 1101."
+        }
+      ],
+      "reason": "The question depends on the Panel I / Panel II figure, which was missing; redrawn from the paper.",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2026-2-ga-9",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "(ii)"
+        },
+        {
+          "l": "B",
+          "t": "(iii)"
+        },
+        {
+          "l": "C",
+          "t": "(iv)"
+        },
+        {
+          "l": "D",
+          "t": "(i)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "(i)"
+        },
+        {
+          "l": "B",
+          "t": "(ii)"
+        },
+        {
+          "l": "C",
+          "t": "(iii)"
+        },
+        {
+          "l": "D",
+          "t": "(iv)"
+        }
+      ],
+      "reason": "Options were stored in a rotated order; restored to the order of the master question paper (option texts unchanged).",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2026-2-ga-9",
+      "field": "answer",
+      "before": "D",
+      "after": "B",
+      "reason": "Stored key D pointed at (i), whose row 2 has 2 shaded cells (needs 1) and row 3 has 1 (needs 2). Only (ii) meets every row total (3, 1, 2, 2) and column total (2, 2, 2, 2); official GATE 2026 CS2 key is B.",
+      "source": "pdf p.8; https://www.trygateai.com/pyq/general-aptitude/analytical-aptitude/gate-cse-2026-set-2-q9"
+    },
+    {
+      "id": "cse-2026-2-ga-9",
+      "field": "topic",
+      "before": "quant",
+      "after": "analytical",
+      "reason": "Grid-shading logic puzzle: analytical reasoning.",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2026-2-ga-9",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "analytical-reasoning",
+        "grid-puzzle"
+      ],
+      "reason": "Tags match the corrected topic.",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2026-2-ga-10",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "3 36"
+        },
+        {
+          "l": "B",
+          "t": "13 36"
+        },
+        {
+          "l": "C",
+          "t": "15 36"
+        },
+        {
+          "l": "D",
+          "t": "19 36"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\frac{3}{36}$"
+        },
+        {
+          "l": "B",
+          "t": "$\\frac{13}{36}$"
+        },
+        {
+          "l": "C",
+          "t": "$\\frac{15}{36}$"
+        },
+        {
+          "l": "D",
+          "t": "$\\frac{19}{36}$"
+        }
+      ],
+      "reason": "Fractions had been flattened to \"3 36\" etc.; written as fractions.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "cse-2026-2-ga-10",
+      "field": "answer",
+      "before": "A",
+      "after": "C",
+      "reason": "Stored key A (3/36) is wrong: the prime sums 2, 3, 5, 7, 11 occur in 1 + 2 + 4 + 6 + 2 = 15 of the 36 ordered outcomes, so P = 15/36 = option C; the official GATE 2026 CS2 key is C.",
+      "source": "pdf p.9; https://www.trygateai.com/pyq/general-aptitude/quantitative-aptitude/gate-cse-2026-set-2-q10"
+    },
+    {
+      "id": "cse-2026-2-ga-10",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "quantitative-aptitude",
+        "probability",
+        "dice"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "cse-2026-2-cs-1",
+      "field": "text",
+      "before": "For two different persons 𝑥 and 𝑦, the predicate 𝑀(𝑥, 𝑦) denotes that x knows y. Consider the following statement. There is a person who does not know anyone else, but that person is known by everyone else. Which one of the following expressions represents the above statement?",
+      "after": "For two different persons $x$ and $y$, the predicate $M(x, y)$ denotes that $x$ knows $y$.\n\nConsider the following statement.\n\n*There is a person who does not know anyone else, but that person is known by everyone else.*\n\nWhich one of the following expressions represents the above statement?",
+      "reason": "Unicode maths italics replaced by KaTeX; paragraph breaks restored.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2026-2-cs-1",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "(∀𝑦)(∀𝑥) ((𝑥 ≠ 𝑦) → (𝑀(𝑥, 𝑦) ∧ ¬𝑀(𝑦, 𝑥)))"
+        },
+        {
+          "l": "B",
+          "t": "(∃𝑦)(∀𝑥) ((𝑥 ≠ 𝑦) → (𝑀(𝑥, 𝑦) ∧ ¬𝑀(𝑦, 𝑥)))"
+        },
+        {
+          "l": "C",
+          "t": "(∀𝑦)(∃𝑥) ((𝑥 ≠ 𝑦) → (𝑀(𝑥, 𝑦) ∧ ¬𝑀(𝑦, 𝑥)))"
+        },
+        {
+          "l": "D",
+          "t": "(∃𝑦)(∃𝑥) ((𝑥 ≠ 𝑦) → (𝑀(𝑥, 𝑦) ∧ ¬𝑀(𝑦, 𝑥)))"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$(\\exists y)(\\forall x)\\,((x \\neq y) \\rightarrow (M(x, y) \\land \\neg M(y, x)))$"
+        },
+        {
+          "l": "B",
+          "t": "$(\\forall y)(\\exists x)\\,((x \\neq y) \\rightarrow (M(x, y) \\land \\neg M(y, x)))$"
+        },
+        {
+          "l": "C",
+          "t": "$(\\exists y)(\\exists x)\\,((x \\neq y) \\rightarrow (M(x, y) \\land \\neg M(y, x)))$"
+        },
+        {
+          "l": "D",
+          "t": "$(\\forall y)(\\forall x)\\,((x \\neq y) \\rightarrow (M(x, y) \\land \\neg M(y, x)))$"
+        }
+      ],
+      "reason": "Options were stored in a rotated order; restored to the order of the master question paper (option texts unchanged). Unicode maths italics replaced by KaTeX.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2026-2-cs-1",
+      "field": "answer",
+      "before": "B",
+      "after": "A",
+      "reason": "Follows the option reorder: the stored key B pointed at the option that is (A) in the paper's order, so the same answer is now letter A. Official key: A.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2026-2-cs-1",
+      "field": "tags",
+      "before": [
+        "dm",
+        "predicate-logic",
+        "first-order-logic"
+      ],
+      "after": [
+        "dm",
+        "predicate-logic",
+        "first-order-logic",
+        "quantifiers"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2026-2-cs-2",
+      "field": "text",
+      "before": "The set T represents various tr aversals over binary tree. The s et S represents the order of visiting nodes during a traversal. T S I: Inorder L: left subtree, node, right subtree II: Preorder M: node, left subtree, right subtree III: Postorder N: left subtree, right subtree, node Which one of the following is the correct match from T to S ?",
+      "after": "The set T represents various traversals over binary tree. The set S represents the order of visiting nodes during a traversal.\n\n| T | S |\n|---|---|\n| I: Inorder | L: left subtree, node, right subtree |\n| II: Preorder | M: node, left subtree, right subtree |\n| III: Postorder | N: left subtree, right subtree, node |\n\nWhich one of the following is the correct match from T to S ?",
+      "reason": "Matching lists restored as a table; split words (\"tr aversals\", \"s et\") repaired.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2026-2-cs-2",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "I – N, II – M, III – L"
+        },
+        {
+          "l": "B",
+          "t": "I – L, II – N, III – M"
+        },
+        {
+          "l": "C",
+          "t": "I – L, II – M, III – N"
+        },
+        {
+          "l": "D",
+          "t": "I – M, II – L, III – N"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "I – L, II – M, III – N"
+        },
+        {
+          "l": "B",
+          "t": "I – M, II – L, III – N"
+        },
+        {
+          "l": "C",
+          "t": "I – N, II – M, III – L"
+        },
+        {
+          "l": "D",
+          "t": "I – L, II – N, III – M"
+        }
+      ],
+      "reason": "Options were stored in a rotated order; restored to the order of the master question paper (option texts unchanged).",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2026-2-cs-2",
+      "field": "answer",
+      "before": "C",
+      "after": "A",
+      "reason": "Follows the option reorder: the stored key C pointed at the option that is (A) in the paper's order, so the same answer is now letter A. Official key: A.",
+      "source": "pdf p.11; https://www.trygateai.com/pyq/programming-and-data-structures/trees/gate-cse-2026-set-2-q12"
+    },
+    {
+      "id": "cse-2026-2-cs-3",
+      "field": "text",
+      "before": "Which one of the following statements is equivalent to the following assertion? Turing machine 𝑀 decides the language 𝐿 ⊆ {0,1}∗",
+      "after": "Which one of the following statements is equivalent to the following assertion?\n\nTuring machine $M$ decides the language $L \\subseteq \\{0,1\\}^*$",
+      "reason": "Unicode maths italics replaced by KaTeX; line break restored.",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "cse-2026-2-cs-3",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Turing machine 𝑀 accepts all input strings in 𝐿"
+        },
+        {
+          "l": "B",
+          "t": "Turing machine 𝑀 rejects all input strings in {0,1}∗ − 𝐿"
+        },
+        {
+          "l": "C",
+          "t": "Turing machine 𝑀 accepts all input strings in 𝐿 and rejects all input strings in {0,1}∗ − 𝐿"
+        },
+        {
+          "l": "D",
+          "t": "Turing machine 𝑀 halts on all input strings in {0,1}∗"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Turing machine $M$ halts on all input strings in $\\{0,1\\}^*$"
+        },
+        {
+          "l": "B",
+          "t": "Turing machine $M$ accepts all input strings in $L$"
+        },
+        {
+          "l": "C",
+          "t": "Turing machine $M$ rejects all input strings in $\\{0,1\\}^* - L$"
+        },
+        {
+          "l": "D",
+          "t": "Turing machine $M$ accepts all input strings in $L$ and rejects all input strings in $\\{0,1\\}^* - L$"
+        }
+      ],
+      "reason": "Options were stored in a rotated order; restored to the order of the master question paper (option texts unchanged). Unicode maths italics replaced by KaTeX. The stored key letter D now points at the option that is (D) in the paper (\"accepts all strings in L and rejects all strings in {0,1}* − L\"), the official answer; previously D held the paper's option (A).",
+      "source": "pdf p.12; https://gateoverflow.in/523143/gate-cse-2026-set-2-question-3"
+    }
+  ]
+}
