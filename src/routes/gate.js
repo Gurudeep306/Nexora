@@ -1,6 +1,7 @@
 const express = require("express");
 const fs = require("fs");
 const path = require("path");
+const { annotateFigure } = require("../gate/figures");
 
 /*
  * GATE CSE / IT / DA past-year questions.
@@ -29,6 +30,8 @@ function load() {
   const rawQuestions = Array.isArray(raw) ? raw : (raw.questions || []);
   const questions = rawQuestions.map((q) => ({
     ...q,
+    // Official figure first; draft SVG redraws are flagged (src/gate/figures.js).
+    figures: (q.figures || []).map(annotateFigure),
     // One lower-cased haystack per question so search is a single scan.
     _hay: [
       q.text,
@@ -62,6 +65,18 @@ function terms(q) {
 function strip(q) {
   const { _hay, ...rest } = q;
   return rest;
+}
+
+/*
+ * A question as the CBT mock serves it while the paper is running: nothing
+ * that gives the answer away. The key comes back from /api/gate/evaluate
+ * after submission, and the review screen loads each question in full.
+ */
+const EXAM_HIDDEN = ["answer", "answerSource", "confidence", "solution", "reviewNote", "needsReview", "tags"];
+function forExam(q) {
+  const out = strip(q);
+  for (const k of EXAM_HIDDEN) delete out[k];
+  return out;
 }
 
 const asList = (v) =>
@@ -170,6 +185,7 @@ function createGateRouter() {
       marks = "",
       answered = "",
       hasFigure = "",
+      ids = "",
       sort = "year-desc",
     } = req.query;
 
@@ -182,8 +198,11 @@ function createGateRouter() {
     const sections = asList(section);
     const marksF = asList(marks).map(Number);
     const words = terms(String(q));
+    // An explicit id list (e.g. the student's bookmarks), capped.
+    const idSet = ids ? new Set(asList(ids).slice(0, 500)) : null;
 
     let rows = b.questions.filter((x) => {
+      if (idSet && !idSet.has(x.id)) return false;
       if (exams.length && !exams.includes(x.exam)) return false;
       if (years.length && !years.includes(x.year)) return false;
       if (minYear && x.year < Number(minYear)) return false;
@@ -317,7 +336,7 @@ function createGateRouter() {
       totalQuestions: questions.length,
       totalMarks,
       durationMinutes: 180,
-      questions: questions.map(strip),
+      questions: questions.map(forExam),
     });
   });
 
@@ -405,15 +424,23 @@ function createGateRouter() {
             // NAT has zero negative marking
             marksAwarded = 0;
           }
-        } else {
+        } else if (q.type === "MCQ" || (q.options && q.options.length > 0)) {
           // Standard MCQ
           isCorrect = String(userAns).trim().toUpperCase() === String(q.answer).trim().toUpperCase();
           if (isCorrect) {
             marksAwarded = qMarks;
           } else {
-            // 1-mark: -1/3, 2-mark: -2/3
-            marksAwarded = -(qMarks / 3);
+            // 1-mark: -1/3, 2-mark: -2/3 (only MCQs carry negative marks)
+            marksAwarded = q.type === "MCQ" ? -(qMarks / 3) : 0;
           }
+        } else {
+          // Old-pattern True/False, fill-in and descriptive answers: a loose
+          // text match, never negative.
+          const norm = (s) => String(s == null ? "" : s).toLowerCase().replace(/[^a-z0-9.]+/g, "");
+          const u = norm(userAns);
+          const key = norm(q.answer);
+          isCorrect = q.type === "TF" ? !!u && key.startsWith(u) : !!u && u === key;
+          marksAwarded = isCorrect ? qMarks : 0;
         }
 
         if (isCorrect) {
