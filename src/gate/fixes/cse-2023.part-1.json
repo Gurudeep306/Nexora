@@ -1,0 +1,788 @@
+{
+  "paper": "cse-2023",
+  "fixes": [
+    {
+      "id": "cse-2023-ga-1",
+      "field": "topic",
+      "before": "quant",
+      "after": "verbal",
+      "reason": "Fill-in-the-blank word choice (adverb) is verbal ability, not quantitative aptitude.",
+      "source": "pdf p.1"
+    },
+    {
+      "id": "cse-2023-ga-1",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "verbal-aptitude",
+        "grammar",
+        "word-choice"
+      ],
+      "reason": "Tags follow the corrected topic.",
+      "source": "pdf p.1"
+    },
+    {
+      "id": "cse-2023-ga-2",
+      "field": "text",
+      "before": "Kind : _______ : : Often : Frequently\n(By word meaning)",
+      "after": "Kind : _______ : : Often : Frequently\n\n(By word meaning)",
+      "reason": "Paragraph break so \"(By word meaning)\" renders on its own line as in the paper.",
+      "source": "pdf p.1"
+    },
+    {
+      "id": "cse-2023-ga-2",
+      "field": "tags",
+      "before": [
+        "verbal-aptitude"
+      ],
+      "after": [
+        "verbal-aptitude",
+        "analogy",
+        "synonyms"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.1"
+    },
+    {
+      "id": "cse-2023-ga-2",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "The official key is \"MTA\" (marks to all) — no single option letter can be validated; the solution argues the best choice but cannot match a letter key.",
+      "source": "official answer key (MTA)"
+    },
+    {
+      "id": "cse-2023-ga-2",
+      "field": "reviewNote",
+      "before": null,
+      "after": "Official key: marks to all (MTA). \"Kind\" can be read as a noun (= Type, B) or an adjective (= Kindly, D), so the question was ambiguous; the solution explains both readings and prefers B.",
+      "reason": "Reviewer note for the MTA key.",
+      "source": "official answer key (MTA)"
+    },
+    {
+      "id": "cse-2023-ga-3",
+      "field": "text",
+      "before": "A series of natural numbers 𝐹1, 𝐹2, 𝐹3, 𝐹4, 𝐹5, 𝐹6, 𝐹7, … obeys 𝐹𝑛+1 = 𝐹𝑛 + 𝐹𝑛−1\nfor all integers 𝑛 ≥ 2 .\nIf 𝐹6 = 37, and 𝐹7 = 60, then what is 𝐹1 ?",
+      "after": "A series of natural numbers $F_1, F_2, F_3, F_4, F_5, F_6, F_7, \\ldots$ obeys $F_{n+1} = F_n + F_{n-1}$ for all integers $n \\ge 2$.\n\nIf $F_6 = 37$, and $F_7 = 60$, then what is $F_1$?",
+      "reason": "Unicode maths italics and broken subscripts (F𝑛+1) replaced with KaTeX.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2023-ga-3",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "4"
+        },
+        {
+          "l": "B",
+          "t": "5"
+        },
+        {
+          "l": "C",
+          "t": "8"
+        },
+        {
+          "l": "D",
+          "t": "9 Computer Science and Information Technology (CS)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "4"
+        },
+        {
+          "l": "B",
+          "t": "5"
+        },
+        {
+          "l": "C",
+          "t": "8"
+        },
+        {
+          "l": "D",
+          "t": "9"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology (CS)\" was pasted into option D.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2023-ga-3",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "quantitative-aptitude",
+        "sequences",
+        "recurrence"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2023-ga-4",
+      "field": "text",
+      "before": "A survey for a certain year found that 90% of pregnant women received medical\ncare at least once before giving birth. Of these women, 60% received medical care\nfrom doctors, while 40% received medical care from other healthcare providers.\nGiven this information, which one of the following statements can be inferred with\ncertainty?",
+      "after": "A survey for a certain year found that 90% of pregnant women received medical care at least once before giving birth. Of these women, 60% received medical care from doctors, while 40% received medical care from other healthcare providers.\n\nGiven this information, which one of the following statements can be inferred with *certainty*?",
+      "reason": "Hard line wraps removed; \"certainty\" is italic in the paper.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2023-ga-4",
+      "field": "topic",
+      "before": "quant",
+      "after": "analytical",
+      "reason": "A \"which can be inferred with certainty\" question is analytical reasoning (with a percentage step).",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2023-ga-4",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "analytical-reasoning",
+        "inference",
+        "percentages"
+      ],
+      "reason": "Tags follow the corrected topic.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2023-ga-5",
+      "field": "text",
+      "before": "Looking at the surface of a smooth 3 -dimensional object from the outside, which\none of the following options is TRUE?",
+      "after": "Looking at the surface of a smooth 3-dimensional object from the outside, which one of the following options is TRUE?",
+      "reason": "Stray space in \"3 -dimensional\" and hard line wrap removed.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2023-ga-5",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "The surface of the object must be concave everywhere."
+        },
+        {
+          "l": "B",
+          "t": "The surface of the object must be convex everywhere."
+        },
+        {
+          "l": "C",
+          "t": "The surface of the object may be concave in some places and convex in other places."
+        },
+        {
+          "l": "D",
+          "t": "The object can have edges, but no corners. Computer Science and Information Technology (CS)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "The surface of the object must be concave everywhere."
+        },
+        {
+          "l": "B",
+          "t": "The surface of the object must be convex everywhere."
+        },
+        {
+          "l": "C",
+          "t": "The surface of the object may be concave in some places and convex in other places."
+        },
+        {
+          "l": "D",
+          "t": "The object can have edges, but no corners."
+        }
+      ],
+      "reason": "Running page header pasted into option D.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2023-ga-5",
+      "field": "topic",
+      "before": "quant",
+      "after": "spatial",
+      "reason": "Reasoning about the shape of a 3-D surface is spatial aptitude.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2023-ga-5",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "spatial-aptitude",
+        "3d-geometry",
+        "convexity"
+      ],
+      "reason": "Tags follow the corrected topic.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2023-ga-6",
+      "field": "text",
+      "before": "The country of Zombieland is in distress since more than 75% of its working\npopulation is suffering from serious health issues. Studies conducted by competent\nhealth experts concluded that a complete lack of physical exercise among its\nworking population was one of the leading causes of their health issues. As one of\nthe measures to address the problem, the Government of Zombieland has decided\nto provide monetary incentives to those who ride bicycles to work.\nBased only on the information provided  above, which one of the following\nstatements can be logically inferred with certainty?",
+      "after": "The country of Zombieland is in distress since more than 75% of its working population is suffering from serious health issues. Studies conducted by competent health experts concluded that a complete lack of physical exercise among its working population was one of the leading causes of their health issues. As one of the measures to address the problem, the Government of Zombieland has decided to provide monetary incentives to those who ride bicycles to work.\n\nBased only on the information provided above, which one of the following statements can be logically inferred with *certainty*?",
+      "reason": "Hard line wraps and a double space removed; \"certainty\" is italic in the paper.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2023-ga-6",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "All the working population of Zombieland will henceforth ride bicycles to work."
+        },
+        {
+          "l": "B",
+          "t": "Riding bicycles will ensure that all of the working population of Zombieland is free of health issues."
+        },
+        {
+          "l": "C",
+          "t": "The health experts suggested to the Government of Zombieland to declare riding bicycles as mandatory."
+        },
+        {
+          "l": "D",
+          "t": "The Government of Zombieland believes that riding bicycl es is a form of physical exercise. Computer Science and Information Technology (CS)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "All the working population of Zombieland will henceforth ride bicycles to work."
+        },
+        {
+          "l": "B",
+          "t": "Riding bicycles will ensure that all of the working population of Zombieland is free of health issues."
+        },
+        {
+          "l": "C",
+          "t": "The health experts suggested to the Government of Zombieland to declare riding bicycles as mandatory."
+        },
+        {
+          "l": "D",
+          "t": "The Government of Zombieland believes that riding bicycles is a form of physical exercise."
+        }
+      ],
+      "reason": "Option D: split word \"bicycl es\" and a pasted running page header.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2023-ga-6",
+      "field": "topic",
+      "before": "quant",
+      "after": "analytical",
+      "reason": "Logical inference from a passage is analytical reasoning, not quantitative aptitude.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2023-ga-6",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "analytical-reasoning",
+        "inference"
+      ],
+      "reason": "Tags follow the corrected topic.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2023-ga-7",
+      "field": "text",
+      "before": "Consider two functions of time (𝑡),\n𝑓(𝑡)  = 0.01 𝑡2\n𝑔(𝑡) = 4 𝑡\nwhere 0 < 𝑡 < ∞.\nNow consider the following two statements:\n(i) For some 𝑡 > 0,  𝑔(𝑡) > 𝑓(𝑡).\n(ii) There exists a 𝑇, such that 𝑓(𝑡) > 𝑔(𝑡) for all 𝑡 > 𝑇.\nWhich one of the following options is TRUE?",
+      "after": "Consider two functions of time ($t$),\n\n$$f(t) = 0.01\\,t^2$$\n\n$$g(t) = 4\\,t$$\n\nwhere $0 < t < \\infty$.\n\nNow consider the following two statements:\n\n(i) For some $t > 0$, $g(t) > f(t)$.\n\n(ii) There exists a $T$, such that $f(t) > g(t)$ for all $t > T$.\n\nWhich one of the following options is TRUE?",
+      "reason": "Unicode maths italics and a lost exponent (\"0.01 𝑡2\" is $0.01t^2$) replaced with KaTeX; statements on separate lines.",
+      "source": "pdf p.5"
+    },
+    {
+      "id": "cse-2023-ga-7",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "only (i) is correct"
+        },
+        {
+          "l": "B",
+          "t": "only (ii) is correct"
+        },
+        {
+          "l": "C",
+          "t": "both (i) and (ii) are correct"
+        },
+        {
+          "l": "D",
+          "t": "neither (i) nor (ii) is correct Computer Science and Information Technology (CS)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "only (i) is correct"
+        },
+        {
+          "l": "B",
+          "t": "only (ii) is correct"
+        },
+        {
+          "l": "C",
+          "t": "both (i) and (ii) are correct"
+        },
+        {
+          "l": "D",
+          "t": "neither (i) nor (ii) is correct"
+        }
+      ],
+      "reason": "Running page header pasted into option D.",
+      "source": "pdf p.5"
+    },
+    {
+      "id": "cse-2023-ga-7",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "quantitative-aptitude",
+        "functions",
+        "growth-rates"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.5"
+    },
+    {
+      "id": "cse-2023-ga-8",
+      "field": "text",
+      "before": "Which one of the following sentence sequences creates a coherent narrative?\n(i) Once on the terrace, on her way to her small room in the corner, she\nnotices the man right away.\n(ii) She begins to pant by the time she has climbed all the stairs.\n(iii) Mina has bought vegetables and rice at the market, so her bags are\nheavy.\n(iv) He was leaning against the parapet, watching the traffic below.",
+      "after": "Which one of the following sentence sequences creates a coherent narrative?\n\n(i) Once on the terrace, on her way to her small room in the corner, she notices the man right away.\n\n(ii) She begins to pant by the time she has climbed all the stairs.\n\n(iii) Mina has bought vegetables and rice at the market, so her bags are heavy.\n\n(iv) He was leaning against the parapet, watching the traffic below.",
+      "reason": "The four sentences were hard-wrapped and rendered as one run-on paragraph; each now starts its own line as in the paper.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2023-ga-8",
+      "field": "tags",
+      "before": [
+        "verbal-aptitude"
+      ],
+      "after": [
+        "verbal-aptitude",
+        "sentence-ordering"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2023-ga-9",
+      "field": "text",
+      "before": "( )fx\nand\n( )gy are functions of x and y, respectively, and\n( ) ( )f x g y= for all real\nvalues of  𝑥 and 𝑦.  Which one of the following options is necessarily TRUE for all\nx and y?",
+      "after": "$f(x)$ and $g(y)$ are functions of $x$ and $y$, respectively, and $f(x) = g(y)$ for all real values of $x$ and $y$. Which one of the following options is *necessarily* TRUE for all $x$ and $y$?",
+      "reason": "PDF-extraction garbage (\"( )fx\", \"( ) ( )f x g y=\") rebuilt from the paper.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2023-ga-9",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "( ) 0fx = and ( ) 0gy ="
+        },
+        {
+          "l": "B",
+          "t": "( ) ( ) constant f x g y=="
+        },
+        {
+          "l": "C",
+          "t": "( ) constantfx  and ( ) constantgy "
+        },
+        {
+          "l": "D",
+          "t": "( ) ( ) ( ) ( )= f x g y f x g y+− Computer Science and Information Technology (CS)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$f(x) = 0$ and $g(y) = 0$"
+        },
+        {
+          "l": "B",
+          "t": "$f(x) = g(y) = \\text{constant}$"
+        },
+        {
+          "l": "C",
+          "t": "$f(x) \\neq \\text{constant}$ and $g(y) \\neq \\text{constant}$"
+        },
+        {
+          "l": "D",
+          "t": "$f(x) + g(y) = f(x) - g(y)$"
+        }
+      ],
+      "reason": "All four options were garbled by PDF extraction (lost symbols, page header in D); rebuilt from the paper.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2023-ga-9",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "quantitative-aptitude",
+        "functions"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2023-ga-10",
+      "field": "text",
+      "before": "Which one of the options best describes the transformation of the 2-dimensional\nfigure P to Q, and then to R, as shown?",
+      "after": "Which one of the options best describes the transformation of the 2-dimensional figure **P** to **Q**, and then to **R**, as shown?",
+      "reason": "Hard line wrap removed; P, Q, R are bold in the paper.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2023-ga-10",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Operation 1: A clockwise rotation by 90º about an axis perpendicular to the plane of the figure Operation 2: A reflection along a horizontal line"
+        },
+        {
+          "l": "B",
+          "t": "Operation 1: A counter clockwise rotation by 90º about an axis perpendicular to the plane of the figure Operation 2: A reflection along a horizontal line"
+        },
+        {
+          "l": "C",
+          "t": "Operation 1: A clockwise rotation by 90º about an axis perpendicular to the plane of the figure Operation 2: A reflection along a vertical line"
+        },
+        {
+          "l": "D",
+          "t": "Operation 1: A counter clockwise rotation by 180º about an axis perpendicular to the plane of the figure Operation 2: A reflection along a vertical line GATE 2023 Computer Science and Information Technology (CS) Consider the following statements regarding the front-end and back-end of a compiler. S1: The front-end includes phases that are independent of the target hardware. S2: The back-end includes phases that are speciﬁc to the target hardware. S3: The back-end includes phases that are speciﬁc to the programming language used in the source code. Identify the CORRECT option. (A) Only S1 is TRUE."
+        },
+        {
+          "l": "B",
+          "t": "Only S1 and S2 are TRUE."
+        },
+        {
+          "l": "C",
+          "t": "S1, S2,a n dS3 are all TRUE."
+        },
+        {
+          "l": "D",
+          "t": "Only S1 and S3 are TRUE. CS Page 1 of 83"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "*Operation 1*: A clockwise rotation by 90° about an axis perpendicular to the plane of the figure; *Operation 2*: A reflection along a horizontal line"
+        },
+        {
+          "l": "B",
+          "t": "*Operation 1*: A counter clockwise rotation by 90° about an axis perpendicular to the plane of the figure; *Operation 2*: A reflection along a horizontal line"
+        },
+        {
+          "l": "C",
+          "t": "*Operation 1*: A clockwise rotation by 90° about an axis perpendicular to the plane of the figure; *Operation 2*: A reflection along a vertical line"
+        },
+        {
+          "l": "D",
+          "t": "*Operation 1*: A counter clockwise rotation by 180° about an axis perpendicular to the plane of the figure; *Operation 2*: A reflection along a vertical line"
+        }
+      ],
+      "reason": "Option D had the page header and the whole of the next question (Q.11, compiler front-end/back-end) pasted into it; the two operations are now separated.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2023-ga-10",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2023/ga-10-1.svg",
+          "svg": "cse-2023/ga-10-1.svg",
+          "alt": "Three five-pointed stars in a row, each with one arm much longer than the other four. Star P (left): the long arm points to the upper right. An arrow labelled \"Operation 1\" leads to star Q (middle): the same star turned so its long arm points to the lower right (P rotated 90° clockwise). An arrow labelled \"Operation 2\" leads to star R (right): Q flipped top-to-bottom, so the long arm points to the upper right again while the other arms are mirrored."
+        }
+      ],
+      "reason": "The question depends on its figure, which the bank was missing. Redrawn as an SVG from the paper (Q and R derived from P by the exact rotation/reflection, which matches the printed figure).",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2023-ga-10",
+      "field": "topic",
+      "before": "quant",
+      "after": "spatial",
+      "reason": "Rotation/reflection of a figure is spatial aptitude.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2023-ga-10",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "spatial-aptitude",
+        "rotation",
+        "reflection"
+      ],
+      "reason": "Tags follow the corrected topic.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2023-cs-1",
+      "field": "text",
+      "before": "GATE 2023 Computer Science and Information Technology (CS)\nWhich one of the following sequences when stored in an array at locations\nA[1],...,A [10] forms a max-heap?",
+      "after": "Consider the following statements regarding the front-end and back-end of a compiler.\n\n**S1**: The front-end includes phases that are independent of the target hardware.\n\n**S2**: The back-end includes phases that are specific to the target hardware.\n\n**S3**: The back-end includes phases that are specific to the programming language used in the source code.\n\nIdentify the CORRECT option.",
+      "reason": "The bank's CS section is shifted by one question: this record carried the text of the NEXT question in the paper, while its answer key and number belong to this question. Q.11 (compiler front-end/back-end) had been glued into ga-10 option D; this record held Q.12 (max-heap). Text restored to Q.11, which matches the stored key B.",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2023-cs-1",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "23, 17, 10, 6, 13, 14, 1, 5, 7, 12"
+        },
+        {
+          "l": "B",
+          "t": "23, 17, 14, 7, 13, 10, 1, 5, 6, 12"
+        },
+        {
+          "l": "C",
+          "t": "23, 17, 14, 6, 13, 10, 1, 5, 7, 15"
+        },
+        {
+          "l": "D",
+          "t": "23, 14, 17, 1, 10, 13, 16, 12, 7, 5 CS Page 2 of 83"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Only **S1** is TRUE."
+        },
+        {
+          "l": "B",
+          "t": "Only **S1** and **S2** are TRUE."
+        },
+        {
+          "l": "C",
+          "t": "**S1**, **S2**, and **S3** are all TRUE."
+        },
+        {
+          "l": "D",
+          "t": "Only **S1** and **S3** are TRUE."
+        }
+      ],
+      "reason": "The bank's CS section is shifted by one question: this record carried the text of the NEXT question in the paper, while its answer key and number belong to this question. Options restored to Q.11.",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2023-cs-1",
+      "field": "subject",
+      "before": "ga",
+      "after": "cd",
+      "reason": "Q.11 is about compiler phases (Compiler Design), not General Aptitude.",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2023-cs-1",
+      "field": "topic",
+      "before": "quant",
+      "after": "icg",
+      "reason": "The front-end/back-end split is made at the intermediate representation; closest available Compiler Design topic.",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2023-cs-1",
+      "field": "tags",
+      "before": [
+        "trees"
+      ],
+      "after": [
+        "compiler-phases",
+        "front-end",
+        "back-end"
+      ],
+      "reason": "Tags described the shifted (heap) text; now describe Q.11.",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2023-cs-2",
+      "field": "text",
+      "before": "GATE 2023 Computer Science and Information Technology (CS)\nLet SLLdel be a function that deletes a node in a singly-linked list given a pointer\nto the node and a pointer to the head of the list. Similarly, letDLLdel be another\nfunction that deletes a node in a doubly-linked list given a pointer to the node and\na pointer to the head of the list.\nLet n denote the number of nodes in each of the linked lists. Which one of the\nfollowing choices is TRUE about the worst-case time complexity ofSLLdel and\nDLLdel?",
+      "after": "Which one of the following sequences when stored in an array at locations $A[1], \\ldots, A[10]$ forms a max-heap?",
+      "reason": "The bank's CS section is shifted by one question: this record carried the text of the NEXT question in the paper, while its answer key and number belong to this question. This record held Q.13 (SLLdel/DLLdel); text restored to Q.12 (max-heap), which matches the stored key B.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "cse-2023-cs-2",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "SLLdel is O(1) and DLLdel is O(n)"
+        },
+        {
+          "l": "B",
+          "t": "Both SLLdel and DLLdel are O(log(n))"
+        },
+        {
+          "l": "C",
+          "t": "Both SLLdel and DLLdel are O(1)"
+        },
+        {
+          "l": "D",
+          "t": "SLLdel is O(n)a n dDLLdel is O(1) CS Page 3 of 83"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "23, 17, 10, 6, 13, 14, 1, 5, 7, 12"
+        },
+        {
+          "l": "B",
+          "t": "23, 17, 14, 7, 13, 10, 1, 5, 6, 12"
+        },
+        {
+          "l": "C",
+          "t": "23, 17, 14, 6, 13, 10, 1, 5, 7, 15"
+        },
+        {
+          "l": "D",
+          "t": "23, 14, 17, 1, 10, 13, 16, 12, 7, 5"
+        }
+      ],
+      "reason": "The bank's CS section is shifted by one question: this record carried the text of the NEXT question in the paper, while its answer key and number belong to this question. Options restored to Q.12.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "cse-2023-cs-2",
+      "field": "subject",
+      "before": "ga",
+      "after": "pds",
+      "reason": "Q.12 (max-heap array check) is Programming & Data Structures.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "cse-2023-cs-2",
+      "field": "topic",
+      "before": "quant",
+      "after": "heaps",
+      "reason": "Binary heaps.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "cse-2023-cs-2",
+      "field": "tags",
+      "before": [
+        "asymptotics"
+      ],
+      "after": [
+        "max-heap",
+        "heap-property",
+        "array-representation"
+      ],
+      "reason": "Tags now describe Q.12.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "cse-2023-cs-3",
+      "field": "text",
+      "before": "GATE 2023 Computer Science and Information Technology (CS)\nConsider the Deterministic Finite-state Automaton (DFA)A shown below. The\nDFA runs on the alphabet{0,1}, and has the set of states{s,p,q,r },w i t hs being\nthe start state andp being the only ﬁnal state.\n1\n00\n0\n0,1\n1\n1\nspq\nr\nWhich one of the following regular expressions correctly describes the language\naccepted byA?",
+      "after": "Let `SLLdel` be a function that deletes a node in a singly-linked list given a pointer to the node and a pointer to the head of the list. Similarly, let `DLLdel` be another function that deletes a node in a doubly-linked list given a pointer to the node and a pointer to the head of the list.\n\nLet $n$ denote the number of nodes in each of the linked lists. Which one of the following choices is TRUE about the worst-case time complexity of `SLLdel` and `DLLdel`?",
+      "reason": "The bank's CS section is shifted by one question: this record carried the text of the NEXT question in the paper, while its answer key and number belong to this question. This record held Q.14 (DFA); text restored to Q.13 (SLLdel/DLLdel), which matches the stored key D.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2023-cs-3",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "1(0∗11)∗"
+        },
+        {
+          "l": "B",
+          "t": "0(0+1) ∗"
+        },
+        {
+          "l": "C",
+          "t": "1(0+11) ∗"
+        },
+        {
+          "l": "D",
+          "t": "1(110∗)∗ CS Page 4 of 83"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "`SLLdel` is $O(1)$ and `DLLdel` is $O(n)$"
+        },
+        {
+          "l": "B",
+          "t": "Both `SLLdel` and `DLLdel` are $O(\\log(n))$"
+        },
+        {
+          "l": "C",
+          "t": "Both `SLLdel` and `DLLdel` are $O(1)$"
+        },
+        {
+          "l": "D",
+          "t": "`SLLdel` is $O(n)$ and `DLLdel` is $O(1)$"
+        }
+      ],
+      "reason": "The bank's CS section is shifted by one question: this record carried the text of the NEXT question in the paper, while its answer key and number belong to this question. Options restored to Q.13.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2023-cs-3",
+      "field": "subject",
+      "before": "ga",
+      "after": "pds",
+      "reason": "Q.13 (linked-list deletion) is Programming & Data Structures.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2023-cs-3",
+      "field": "topic",
+      "before": "quant",
+      "after": "linked-lists",
+      "reason": "Linked lists.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2023-cs-3",
+      "field": "tags",
+      "before": [
+        "regular"
+      ],
+      "after": [
+        "singly-linked-list",
+        "doubly-linked-list",
+        "time-complexity"
+      ],
+      "reason": "Tags now describe Q.13.",
+      "source": "pdf p.10"
+    }
+  ]
+}
