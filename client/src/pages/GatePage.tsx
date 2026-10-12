@@ -213,7 +213,7 @@ export default function GatePage() {
             <span className="flex items-center gap-1.5 rounded-lg bg-accent-brand/15 px-2.5 py-0.5 text-[11px] font-bold text-accent-brand uppercase tracking-wider">
               <Icon name="sparkles" className="size-3" /> Question Bank & Practice Tests
             </span>
-            <span className="rounded-lg bg-emerald-500/15 px-2.5 py-0.5 text-[11px] font-mono font-bold text-emerald-400">
+            <span className="rounded-lg bg-state-success/15 px-2.5 py-0.5 text-[11px] font-mono font-bold text-state-success">
               1991–2026 PYQs & Mock Tests
             </span>
           </div>

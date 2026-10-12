@@ -37,11 +37,11 @@ export function StatCard({
     <Card className={cn('p-4', className)}>
       <div className="relative flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <p className="text-xs font-medium text-text-primary/60 uppercase tracking-wider">{label}</p>
+          <p className="text-xs font-medium text-text-secondary uppercase tracking-wider">{label}</p>
           <p className="mt-1.5 truncate font-display text-2xl sm:text-3xl leading-none font-semibold tracking-tight text-text-primary tabular-nums">
             {typeof value === 'number' ? <AnimatedNumber value={value} /> : value}
           </p>
-          {sub && <div className="mt-2 text-xs text-text-primary/60">{sub}</div>}
+          {sub && <div className="mt-2 text-xs text-text-secondary">{sub}</div>}
         </div>
         {typeof icon === 'string' ? (
           <IconBadge name={icon} tone={tone} />

@@ -72,7 +72,7 @@ export function Avatar({
         <span
           className={cn(
             'absolute -bottom-1 -right-0 h-2.5 w-2.5 rounded-full border-2 border-bg-app/50',
-            online ? 'bg-state-success' : 'bg-text-text-primary/60',
+            online ? 'bg-state-success' : 'bg-text-muted',
           )}
           aria-label={online ? 'online' : 'offline'}
         />

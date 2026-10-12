@@ -134,8 +134,8 @@ export function Topbar() {
       <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-1.5 text-[13px]">
         {meta.section && (
           <>
-            <span className="hidden text-text-primary/40 sm:inline">{meta.section}</span>
-            <ChevronRight className="hidden size-3.5 text-text-primary/40/60 sm:inline" aria-hidden="true" />
+            <span className="hidden text-text-muted sm:inline">{meta.section}</span>
+            <ChevronRight className="hidden size-3.5 text-text-muted sm:inline" aria-hidden="true" />
           </>
         )}
         <span className="truncate font-medium text-text-primary" aria-current="page">
@@ -174,7 +174,7 @@ export function Topbar() {
         <button
           onClick={openCommandPalette}
           aria-label="Search"
-          className="flex size-9 cursor-pointer items-center justify-center rounded-lg text-text-primary/60 transition-colors hover:bg-accent-brand/5 md:hidden"
+          className="flex size-9 cursor-pointer items-center justify-center rounded-lg text-text-secondary transition-colors hover:bg-accent-brand/5 md:hidden"
         >
           <Icon name="search" className="size-[17px]" />
         </button>
@@ -201,7 +201,7 @@ export function Topbar() {
           <button
             onClick={() => openAssistantEvent()}
             aria-label="Open AI assistant"
-            className="flex size-9 cursor-pointer items-center justify-center rounded-lg text-text-primary/60 transition-colors hover:bg-accent-brand/5 hover:text-accent-brand"
+            className="flex size-9 cursor-pointer items-center justify-center rounded-lg text-text-secondary transition-colors hover:bg-accent-brand/5 hover:text-accent-brand"
           >
             <Icon name="sparkles" className="size-[17px]" />
           </button>

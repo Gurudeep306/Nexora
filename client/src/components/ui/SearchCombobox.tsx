@@ -237,7 +237,7 @@ export const SearchCombobox = forwardRef<HTMLInputElement, SearchComboboxProps>(
                       onClick={() => choose(item)}
                       className={cn(
                         'relative flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[13px] transition-colors',
-                        isActive ? 'bg-foreground/8 text-foreground' : 'text-foreground/70',
+                        isActive ? 'bg-foreground/8 text-foreground' : 'text-text-secondary',
                       )}
                     >
                       {isActive && (

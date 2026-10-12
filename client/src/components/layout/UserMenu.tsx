@@ -27,7 +27,7 @@ export function UserMenu({ children, side = 'top', align = 'start' }: { children
             <p className="truncate text-sm font-semibold text-text-primary">
               {typeof user.display_name === 'string' && user.display_name ? user.display_name : user.username}
             </p>
-            <p className="truncate text-xs text-text-primary/60">@{user.username}</p>
+            <p className="truncate text-xs text-text-secondary">@{user.username}</p>
           </div>
           <RankGlyph level={level} size={30} animated={false} />
         </div>

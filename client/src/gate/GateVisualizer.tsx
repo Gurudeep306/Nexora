@@ -245,7 +245,7 @@ export function DfaVisualizer({
             <span
               className={cn(
                 'rounded px-1.5 py-0.5 font-bold',
-                i === history.length - 1 ? 'bg-accent-brand text-white' : 'bg-bg-surface border border-border text-text-secondary',
+                i === history.length - 1 ? 'bg-accent-brand text-on-accent-brand' : 'bg-bg-surface border border-border text-text-secondary',
               )}
             >
               {h.state}
@@ -799,7 +799,7 @@ export function PageReplacementVisualizer() {
             className={cn(
               'flex size-7 items-center justify-center rounded-lg font-mono text-[12px] font-bold transition-all',
               i === stepIdx
-                ? 'bg-accent-brand text-white shadow-md scale-110 ring-2 ring-accent-brand/40'
+                ? 'bg-accent-brand text-on-accent-brand shadow-md scale-110 ring-2 ring-accent-brand/40'
                 : i < stepIdx
                 ? 'bg-bg-surface text-text-secondary border border-border'
                 : 'bg-bg-surface-2/50 text-text-muted',
@@ -987,7 +987,7 @@ export function KMapVisualizer() {
                 onClick={() => toggleCell(i)}
                 className={cn(
                   'size-9 rounded-lg font-bold text-[14px] transition-all cursor-pointer',
-                  cells[i] === 1 ? 'bg-accent-brand text-white shadow-sm' : 'bg-bg-surface-2 text-text-muted hover:bg-bg-surface-2/80',
+                  cells[i] === 1 ? 'bg-accent-brand text-on-accent-brand shadow-sm' : 'bg-bg-surface-2 text-text-muted hover:bg-bg-surface-2/80',
                 )}
               >
                 {cells[i]}
@@ -1003,7 +1003,7 @@ export function KMapVisualizer() {
                 onClick={() => toggleCell(i)}
                 className={cn(
                   'size-9 rounded-lg font-bold text-[14px] transition-all cursor-pointer',
-                  cells[i] === 1 ? 'bg-accent-brand text-white shadow-sm' : 'bg-bg-surface-2 text-text-muted hover:bg-bg-surface-2/80',
+                  cells[i] === 1 ? 'bg-accent-brand text-on-accent-brand shadow-sm' : 'bg-bg-surface-2 text-text-muted hover:bg-bg-surface-2/80',
                 )}
               >
                 {cells[i]}
@@ -1019,7 +1019,7 @@ export function KMapVisualizer() {
                 onClick={() => toggleCell(i)}
                 className={cn(
                   'size-9 rounded-lg font-bold text-[14px] transition-all cursor-pointer',
-                  cells[i] === 1 ? 'bg-accent-brand text-white shadow-sm' : 'bg-bg-surface-2 text-text-muted hover:bg-bg-surface-2/80',
+                  cells[i] === 1 ? 'bg-accent-brand text-on-accent-brand shadow-sm' : 'bg-bg-surface-2 text-text-muted hover:bg-bg-surface-2/80',
                 )}
               >
                 {cells[i]}
@@ -1035,7 +1035,7 @@ export function KMapVisualizer() {
                 onClick={() => toggleCell(i)}
                 className={cn(
                   'size-9 rounded-lg font-bold text-[14px] transition-all cursor-pointer',
-                  cells[i] === 1 ? 'bg-accent-brand text-white shadow-sm' : 'bg-bg-surface-2 text-text-muted hover:bg-bg-surface-2/80',
+                  cells[i] === 1 ? 'bg-accent-brand text-on-accent-brand shadow-sm' : 'bg-bg-surface-2 text-text-muted hover:bg-bg-surface-2/80',
                 )}
               >
                 {cells[i]}
