@@ -1024,7 +1024,7 @@ input[type='search']::-webkit-search-results-decoration {
 
 /* Flat — a solid tint, no border, no shadow. */
 [data-card-style='flat'] {
-  --card-bg: var(--color-bg-surface-2);
+  --card-bg: color-mix(in oklab, var(--color-bg-surface-2) 45%, var(--color-bg-surface-3));
   --card-border: transparent;
   --card-shadow: none;
   --card-hover-border: transparent;
@@ -1032,7 +1032,7 @@ input[type='search']::-webkit-search-results-decoration {
 }
 [data-card-style='flat'] .card-interactive:hover,
 [data-card-style='flat'] .card-interactive:focus-visible {
-  background-color: var(--color-bg-surface-3);
+  background-color: color-mix(in oklab, var(--color-bg-surface-3) 60%, var(--color-bg-surface-4));
 }
 
 /* Accent edge — a bar of the accent on the leading edge. */
