@@ -1,0 +1,1911 @@
+{
+  "paper": "cse-2023",
+  "version": 2,
+  "solutions": {
+    "cse-2023-cs-17": {
+      "approach": "For each policy ask one question: is a waiting process's delay **bounded**, no matter which processes keep arriving? FIFO and Round Robin bound it; Priority and SJF let an endless stream of 'better' arrivals overtake a waiting process, so they can starve it.",
+      "concepts": [
+        "Starvation (indefinite blocking)",
+        "FCFS / FIFO",
+        "Round Robin",
+        "Priority scheduling",
+        "Shortest Job First",
+        "Aging"
+      ],
+      "steps": [
+        {
+          "title": "FIFO: nobody can overtake you",
+          "body": "A new process joins the **tail** of the ready queue, so every later arrival waits behind it. Its waiting time is at most the sum of the CPU bursts of the processes already ahead of it — a finite number. Hence FIFO **cannot** starve a process (assuming every job eventually terminates).",
+          "scene": {
+            "reveal": 3,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Round Robin: at most $(n-1)$ quanta per round",
+          "body": "With $n$ processes in the ready queue and time quantum $q$, a process gets the CPU again after at most $(n-1)\\,q$ time units. New arrivals also join the tail, so they cannot jump ahead. The wait is bounded, so Round Robin does **not** starve.",
+          "scene": {
+            "reveal": 6,
+            "hl": [
+              {
+                "r": 1,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Priority: higher-priority arrivals can overtake forever",
+          "body": "The scheduler always picks the highest-priority ready process. If higher-priority processes keep arriving, a low-priority process is passed over at every decision point and may **never** run. Priority scheduling can starve (the standard fix is *aging*).",
+          "scene": {
+            "reveal": 9,
+            "hl": [
+              {
+                "r": 2,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "SJF: shorter jobs can overtake a long job forever",
+          "body": "SJF is priority scheduling with priority $=$ (predicted) burst length. A long job waits as long as shorter jobs keep arriving, so SJF (and its preemptive form SRTF) **can** starve long jobs.",
+          "scene": {
+            "reveal": 12,
+            "hl": [
+              {
+                "r": 3,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "See it happen under SJF",
+          "body": "Let a long job $L$ (burst 8) and a short job $S_1$ (burst 2) arrive at $t=0$, and a new 2-unit job arrive at $t = 1, 3, 5, 7, \\dots$. At every scheduling point ($t = 2, 4, 6, 8, \\dots$) a 2-unit job is ready, and $2 < 8$, so SJF never picks $L$: its wait grows without bound. Under FIFO, $L$ would run right after $S_1$.",
+          "scene": {
+            "kind": "gantt",
+            "title": "SJF with a stream of short jobs",
+            "unit": "t",
+            "lanes": [
+              {
+                "label": "CPU",
+                "bars": [
+                  {
+                    "start": 0,
+                    "end": 2,
+                    "label": "S1"
+                  },
+                  {
+                    "start": 2,
+                    "end": 4,
+                    "label": "S2"
+                  },
+                  {
+                    "start": 4,
+                    "end": 6,
+                    "label": "S3"
+                  },
+                  {
+                    "start": 6,
+                    "end": 8,
+                    "label": "S4"
+                  },
+                  {
+                    "start": 8,
+                    "end": 10,
+                    "label": "S5"
+                  }
+                ]
+              },
+              {
+                "label": "L (burst 8)",
+                "bars": [
+                  {
+                    "start": 0,
+                    "end": 10,
+                    "label": "waiting…",
+                    "tone": "error"
+                  }
+                ]
+              }
+            ],
+            "marks": [
+              {
+                "t": 0,
+                "label": "L, S1 arrive"
+              },
+              {
+                "t": 1,
+                "label": "S2"
+              },
+              {
+                "t": 3,
+                "label": "S3"
+              },
+              {
+                "t": 5,
+                "label": "S4"
+              },
+              {
+                "t": 7,
+                "label": "S5"
+              }
+            ],
+            "caption": "Every decision point has a job shorter than $L$ ready, so $L$ never runs."
+          }
+        }
+      ],
+      "answer": {
+        "value": "**(C) Priority Scheduling** and **(D) Shortest Job First** (the official key also accepted A, C, D)",
+        "choice": [
+          "C",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "FIFO serves strictly in arrival order; no later process can overtake, so the wait is bounded by the bursts ahead. (Only a job that never terminates could block the rest, which is why IIT Kanpur also accepted A, C, D.)"
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Round Robin bounds every wait by $(n-1)q$ per round, and newcomers join the tail — no starvation."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "A continuous supply of higher-priority processes can postpone a low-priority one forever."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "SJF is priority scheduling by burst length: a stream of short jobs can postpone a long job forever."
+        }
+      ],
+      "shortcut": "Starvation needs **overtaking**: a policy that lets a newcomer jump ahead of a waiting process (Priority, SJF, SRTF) can starve; pure arrival-order policies (FIFO, Round Robin) cannot.",
+      "pitfalls": [
+        "Confusing a long wait (the convoy effect in FIFO) with starvation — FIFO waits can be long but are always finite.",
+        "Thinking Round Robin starves long jobs: they just need more rounds, each bounded by $(n-1)q$.",
+        "Forgetting that SJF is a special case of priority scheduling (priority = burst length)."
+      ],
+      "verification": "*Aging* (raising the priority of a process the longer it waits) is the textbook cure prescribed exactly for Priority and SJF scheduling and never needed for FIFO or Round Robin — consistent with C, D.",
+      "animation": {
+        "kind": "table",
+        "title": "Is the waiting time bounded?",
+        "cols": [
+          "Policy",
+          "Worst-case wait",
+          "Starvation?"
+        ],
+        "rows": [
+          [
+            "FIFO",
+            "sum of bursts already ahead",
+            {
+              "v": "No",
+              "tone": "success"
+            }
+          ],
+          [
+            "Round Robin",
+            "(n − 1) · q per round",
+            {
+              "v": "No",
+              "tone": "success"
+            }
+          ],
+          [
+            "Priority",
+            "none: higher-priority arrivals overtake",
+            {
+              "v": "Yes",
+              "tone": "error"
+            }
+          ],
+          [
+            "SJF",
+            "none: shorter arrivals overtake",
+            {
+              "v": "Yes",
+              "tone": "error"
+            }
+          ]
+        ],
+        "reveal": 0
+      }
+    },
+    "cse-2023-cs-18": {
+      "approach": "Find the critical points from $f'(x)=0$ and classify each with the second derivative. A cubic whose derivative has two distinct real roots always has exactly one local maximum and one local minimum.",
+      "concepts": [
+        "Critical points",
+        "Second-derivative test",
+        "Shape of a cubic"
+      ],
+      "steps": [
+        {
+          "title": "Differentiate and factor $f'(x)$",
+          "body": "$$f'(x) = 3x^2 + 30x - 33 = 3(x^2 + 10x - 11) = 3(x+11)(x-1)$$\n\nCheck the factors: $(x+11)(x-1) = x^2 - x + 11x - 11 = x^2 + 10x - 11$. Critical points: $x = -11$ and $x = 1$."
+        },
+        {
+          "title": "Classify with $f''(x) = 6x + 30$",
+          "body": "- $f''(-11) = 6(-11) + 30 = -66 + 30 = -36 < 0$ ⇒ **local maximum** at $x = -11$.\n- $f''(1) = 6(1) + 30 = 36 > 0$ ⇒ **local minimum** at $x = 1$."
+        },
+        {
+          "title": "Values at the extrema (sanity check)",
+          "body": "$f(-11) = (-11)^3 + 15(121) - 33(-11) - 36 = -1331 + 1815 + 363 - 36 = 811$\n\n$f(1) = 1 + 15 - 33 - 36 = -53$\n\nThe maximum value (811) lies above the minimum value (−53), as it must for a rising–falling–rising cubic."
+        },
+        {
+          "title": "Read the statements",
+          "body": "$f$ **has** a local maximum (B true, A false) and **has** a local minimum (D true, C false)."
+        }
+      ],
+      "answer": {
+        "value": "**(B)** and **(D)**: local maximum at $x=-11$, local minimum at $x=1$",
+        "choice": [
+          "B",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$f''(-11) = -36 < 0$, so $x=-11$ is a local maximum."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Local maximum at $x=-11$ with $f(-11) = 811$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$f''(1) = 36 > 0$, so $x = 1$ is a local minimum."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Local minimum at $x=1$ with $f(1) = -53$."
+        }
+      ],
+      "shortcut": "For $ax^3+bx^2+cx+d$, $f'$ has two distinct real roots iff $b^2 - 3ac > 0$. Here $15^2 - 3(1)(-33) = 225 + 99 = 324 > 0$, so the cubic has one local max **and** one local min: B and D immediately.",
+      "pitfalls": [
+        "Confusing local with global: a cubic has no global maximum or minimum (it tends to $\\pm\\infty$), but it can still have local extrema.",
+        "Sign slip while factoring: $x^2+10x-11 = (x+11)(x-1)$, not $(x-11)(x+1)$."
+      ],
+      "verification": "Sign of $f'$: positive for $x < -11$ (e.g. $f'(-12) = 3(-1)(-13) = 39$), negative between (e.g. $f'(0) = -33$), positive for $x > 1$ (e.g. $f'(2) = 3(13)(1) = 39$). Rising–falling–rising confirms a maximum at $-11$ and a minimum at $1$.",
+      "animation": {
+        "kind": "numberline",
+        "title": "Sign of $f'(x) = 3(x+11)(x-1)$",
+        "min": -16,
+        "max": 6,
+        "step": 2,
+        "points": [
+          {
+            "x": -11,
+            "label": "local max, f = 811",
+            "tone": "success"
+          },
+          {
+            "x": 1,
+            "label": "local min, f = −53",
+            "tone": "success"
+          }
+        ],
+        "intervals": [
+          {
+            "from": -16,
+            "to": -11,
+            "label": "f′ > 0 (rising)",
+            "tone": "info"
+          },
+          {
+            "from": -11,
+            "to": 1,
+            "label": "f′ < 0 (falling)",
+            "tone": "error"
+          },
+          {
+            "from": 1,
+            "to": 6,
+            "label": "f′ > 0 (rising)",
+            "tone": "info"
+          }
+        ]
+      }
+    },
+    "cse-2023-cs-19": {
+      "approach": "Use the ratio limit $\\lim_{n\\to\\infty} f(n)/g(n)$. A limit of $0$ means $f \\in o(g)$, which implies $f \\in O(g)$ and rules out $\\Omega(g)$ and hence $\\Theta(g)$.",
+      "concepts": [
+        "Big-O, Big-Omega, Theta",
+        "Little-o",
+        "Limit test for growth rates"
+      ],
+      "steps": [
+        {
+          "title": "Compute the ratio limit",
+          "body": "$$\\lim_{n\\to\\infty}\\frac{f(n)}{g(n)} = \\lim_{n\\to\\infty}\\frac{n}{n^2} = \\lim_{n\\to\\infty}\\frac{1}{n} = 0$$"
+        },
+        {
+          "title": "Limit 0 gives little-o, hence big-O",
+          "body": "**Little-o:** for every $c > 0$, $n \\le c\\,n^2 \\iff n \\ge 1/c$, so the inequality holds for all large $n$ ⇒ $f \\in o(g)$.\n\n**Big-O:** take $c = 1$, $n_0 = 1$: $n \\le n^2$ for all $n \\ge 1$ ⇒ $f \\in O(g)$."
+        },
+        {
+          "title": "Limit 0 rules out Omega and Theta",
+          "body": "$f \\in \\Omega(g)$ would need a constant $c > 0$ with $n \\ge c\\,n^2$, i.e. $n \\le 1/c$, for **all** large $n$ — impossible. Since $\\Theta(g) = O(g) \\cap \\Omega(g)$, $f \\notin \\Theta(g)$ as well."
+        }
+      ],
+      "answer": {
+        "value": "**(A)** $f \\in O(g)$ and **(C)** $f \\in o(g)$",
+        "choice": [
+          "A",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$n \\le 1\\cdot n^2$ for all $n \\ge 1$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$n \\ge c\\,n^2$ fails as soon as $n > 1/c$; $n$ grows strictly slower than $n^2$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$n/n^2 = 1/n \\to 0$, the defining property of little-o."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$\\Theta$ needs both $O$ and $\\Omega$; $\\Omega$ fails."
+        }
+      ],
+      "shortcut": "Limit table for $L = \\lim f/g$: $L = 0 \\Rightarrow o$ (and $O$); $0 < L < \\infty \\Rightarrow \\Theta$; $L = \\infty \\Rightarrow \\omega$ (and $\\Omega$). Here $L = 0$ ⇒ A and C.",
+      "pitfalls": [
+        "Treating $o$ and $O$ as exclusive — every function in $o(g)$ is also in $O(g)$, so both A and C must be marked.",
+        "Reading $f \\in O(g)$ as \"f grows like g\" — $O$ is only an upper bound; $\\Theta$ is the tight bound."
+      ],
+      "verification": "Spot check: at $n = 10^3$, $f/g = 10^{-3}$; at $n = 10^6$, $10^{-6}$ — the ratio keeps shrinking towards 0 (consistent with $o$) and is never bounded below by a positive constant (so not $\\Omega$)."
+    },
+    "cse-2023-cs-20": {
+      "approach": "The sum of the eigenvalues of any square matrix equals its **trace**. In an adjacency matrix the diagonal is non-zero only at self-loops, so just count the loops — no characteristic polynomial needed.",
+      "concepts": [
+        "Trace = sum of eigenvalues",
+        "Adjacency matrix",
+        "Self-loops on the diagonal"
+      ],
+      "given": "Edges (from the figure): $1\\text{–}2$, $2\\text{–}3$, $2\\text{–}4$, $3\\text{–}5$, $4\\text{–}5$, and **self-loops** at vertices $3$ and $4$.",
+      "steps": [
+        {
+          "title": "Write the adjacency matrix",
+          "body": "Row/column order $1,2,3,4,5$; $a_{ij} = 1$ when $i$ and $j$ are joined, and $a_{ii} = 1$ for a self-loop at $i$:\n\n$$A = \\begin{bmatrix} 0&1&0&0&0\\\\ 1&0&1&1&0\\\\ 0&1&1&0&1\\\\ 0&1&0&1&1\\\\ 0&0&1&1&0 \\end{bmatrix}$$"
+        },
+        {
+          "title": "Sum of eigenvalues = trace",
+          "body": "$\\det(\\lambda I - A) = \\prod_{i=1}^{5}(\\lambda - \\lambda_i)$. Comparing the $\\lambda^4$ coefficients: the product gives $-(\\lambda_1+\\dots+\\lambda_5)$, the determinant gives $-(a_{11}+a_{22}+\\dots+a_{55}) = -\\operatorname{tr}(A)$. Hence $\\sum \\lambda_i = \\operatorname{tr}(A)$."
+        },
+        {
+          "title": "Trace = number of self-loops",
+          "body": "Diagonal entries: $a_{11}=0,\\ a_{22}=0,\\ a_{33}=1,\\ a_{44}=1,\\ a_{55}=0$.\n\n$$\\lambda_1+\\lambda_2+\\lambda_3+\\lambda_4+\\lambda_5 = 0+0+1+1+0 = 2$$",
+          "scene": {
+            "panels": [
+              {
+                "tones": {
+                  "3": "success",
+                  "4": "success"
+                }
+              },
+              {
+                "terms": [
+                  {
+                    "name": "A",
+                    "rows": [
+                      [
+                        0,
+                        1,
+                        0,
+                        0,
+                        0
+                      ],
+                      [
+                        1,
+                        0,
+                        1,
+                        1,
+                        0
+                      ],
+                      [
+                        0,
+                        1,
+                        1,
+                        0,
+                        1
+                      ],
+                      [
+                        0,
+                        1,
+                        0,
+                        1,
+                        1
+                      ],
+                      [
+                        0,
+                        0,
+                        1,
+                        1,
+                        0
+                      ]
+                    ],
+                    "hl": [
+                      {
+                        "r": 2,
+                        "c": 2,
+                        "tone": "success"
+                      },
+                      {
+                        "r": 3,
+                        "c": 3,
+                        "tone": "success"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "caption": "Only the loops at 3 and 4 reach the diagonal: trace = 2."
+          }
+        },
+        {
+          "title": "A note on the convention",
+          "body": "Some texts (algebraic graph theory) count a self-loop as $2$ on the diagonal so that row sums equal degrees; then the trace is $2+2 = 4$. The official key accepted **2 or 4**; with the usual convention $a_{ii} = 1$ the answer is $2$."
+        }
+      ],
+      "answer": {
+        "value": "$\\sum \\lambda_i = \\operatorname{tr}(A) =$ **2** (4 was also accepted for the loop-counts-twice convention)",
+        "number": 2,
+        "matchesKey": true
+      },
+      "shortcut": "Sum of eigenvalues = trace = number of self-loops (with $a_{ii}=1$). Two loops ⇒ $2$.",
+      "pitfalls": [
+        "Trying to find the five eigenvalues — unnecessary and error-prone.",
+        "Answering 0 by assuming a simple graph: the loops at 3 and 4 put 1s on the diagonal.",
+        "Adding up degrees or edges instead of diagonal entries."
+      ],
+      "verification": "$A$ is real symmetric, so $A = PDP^{-1}$ with $D$ the diagonal matrix of eigenvalues, and $\\operatorname{tr}(A) = \\operatorname{tr}(PDP^{-1}) = \\operatorname{tr}(D) = \\sum\\lambda_i$. Reading the diagonal $0,0,1,1,0$ again gives $2$.",
+      "animation": {
+        "kind": "panels",
+        "title": "Graph and its adjacency matrix",
+        "panels": [
+          {
+            "kind": "graph",
+            "layout": "manual",
+            "nodes": [
+              {
+                "id": "3",
+                "x": 2,
+                "y": 0
+              },
+              {
+                "id": "5",
+                "x": 0,
+                "y": 2
+              },
+              {
+                "id": "2",
+                "x": 4,
+                "y": 2
+              },
+              {
+                "id": "1",
+                "x": 6,
+                "y": 2
+              },
+              {
+                "id": "4",
+                "x": 2,
+                "y": 4
+              }
+            ],
+            "edges": [
+              {
+                "from": "3",
+                "to": "5"
+              },
+              {
+                "from": "3",
+                "to": "2"
+              },
+              {
+                "from": "5",
+                "to": "4"
+              },
+              {
+                "from": "4",
+                "to": "2"
+              },
+              {
+                "from": "2",
+                "to": "1"
+              }
+            ],
+            "subs": {
+              "3": "loop",
+              "4": "loop"
+            }
+          },
+          {
+            "kind": "matrix",
+            "terms": [
+              {
+                "name": "A",
+                "rows": [
+                  [
+                    0,
+                    1,
+                    0,
+                    0,
+                    0
+                  ],
+                  [
+                    1,
+                    0,
+                    1,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    1,
+                    0,
+                    1
+                  ],
+                  [
+                    0,
+                    1,
+                    0,
+                    1,
+                    1
+                  ],
+                  [
+                    0,
+                    0,
+                    1,
+                    1,
+                    0
+                  ]
+                ]
+              }
+            ]
+          }
+        ],
+        "caption": "Rows and columns in the order 1, 2, 3, 4, 5."
+      }
+    },
+    "cse-2023-cs-21": {
+      "approach": "Integrate from the inside out — or simply use symmetry: on an interval symmetric about 0, an odd function integrates to 0. $z^3$ is odd in $z$ on $[-1,1]$ and $4x^2y$ is odd in $y$ on $[-2,2]$, so both parts vanish.",
+      "concepts": [
+        "Iterated (triple) integral",
+        "Odd function over a symmetric interval"
+      ],
+      "steps": [
+        {
+          "title": "Set up",
+          "body": "The region is the box $[-3,3] \\times [-2,2] \\times [-1,1]$ and the order is $dz$, then $dy$, then $dx$.",
+          "scene": {
+            "reveal": 1
+          }
+        },
+        {
+          "title": "Inner integral in $z$",
+          "body": "$$\\int_{-1}^{1}(4x^2y - z^3)\\,dz = \\Big[4x^2yz - \\tfrac{z^4}{4}\\Big]_{-1}^{1} = \\big(4x^2y - \\tfrac14\\big) - \\big(-4x^2y - \\tfrac14\\big) = 8x^2y$$\n\nThe $z^3$ part cancels because $z^4/4$ takes the same value at $\\pm1$.",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "Middle integral in $y$",
+          "body": "$$\\int_{-2}^{2} 8x^2y\\,dy = 8x^2\\Big[\\tfrac{y^2}{2}\\Big]_{-2}^{2} = 8x^2\\Big(\\tfrac{4}{2} - \\tfrac{4}{2}\\Big) = 8x^2 \\cdot 0 = 0$$",
+          "scene": {
+            "reveal": 4
+          }
+        },
+        {
+          "title": "Outer integral in $x$",
+          "body": "$$\\int_{-3}^{3} 0\\,dx = 0$$\n\nRounded to the nearest integer, the value is **0**.",
+          "scene": {
+            "reveal": 5
+          }
+        }
+      ],
+      "answer": {
+        "value": "The integral equals **0**",
+        "number": 0,
+        "matchesKey": true
+      },
+      "shortcut": "Odd-function test: replacing $y \\to -y$ flips the sign of $4x^2y$ and $z \\to -z$ flips $z^3$, while the box is symmetric in $y$ and $z$. Both pieces integrate to 0 — answer 0 in one line.",
+      "pitfalls": [
+        "Integrating $x^2$ first ($\\int_{-3}^{3}x^2dx = 18$) and forgetting that the $y$-integral still makes that term 0.",
+        "Doubling an odd integrand: $\\int_{-a}^{a} h = 2\\int_0^a h$ holds only for **even** $h$; for odd $h$ it is 0."
+      ],
+      "verification": "Separately: $\\iiint z^3\\,dV = (\\int_{-3}^{3}dx)(\\int_{-2}^{2}dy)(\\int_{-1}^{1}z^3dz) = 6\\cdot4\\cdot0 = 0$ and $\\iiint 4x^2y\\,dV = 4\\cdot18\\cdot(\\int_{-2}^{2}y\\,dy)\\cdot2 = 4\\cdot18\\cdot0\\cdot2 = 0$. Total $0$.",
+      "animation": {
+        "kind": "equation",
+        "title": "Inside-out evaluation",
+        "reveal": 0,
+        "lines": [
+          {
+            "tex": "I=\\int_{-3}^{3}\\int_{-2}^{2}\\int_{-1}^{1}\\left(4x^2y-z^3\\right)dz\\,dy\\,dx",
+            "note": "given"
+          },
+          {
+            "tex": "\\int_{-1}^{1}\\left(4x^2y-z^3\\right)dz=\\Big[4x^2yz-\\tfrac{z^4}{4}\\Big]_{-1}^{1}",
+            "note": "inner, in $z$"
+          },
+          {
+            "tex": "=\\big(4x^2y-\\tfrac14\\big)-\\big(-4x^2y-\\tfrac14\\big)=8x^2y",
+            "note": "the $z^3$ part cancels"
+          },
+          {
+            "tex": "\\int_{-2}^{2}8x^2y\\,dy=8x^2\\Big[\\tfrac{y^2}{2}\\Big]_{-2}^{2}=0",
+            "note": "odd in $y$"
+          },
+          {
+            "tex": "I=\\int_{-3}^{3}0\\,dx=0",
+            "tone": "success"
+          }
+        ]
+      }
+    },
+    "cse-2023-cs-22": {
+      "approach": "Go through decimal: expand $132_4$ by place values, then convert to radix 5 by repeated division by 5, reading the remainders from last to first.",
+      "concepts": [
+        "Positional number systems",
+        "Base conversion by repeated division"
+      ],
+      "steps": [
+        {
+          "title": "Radix 4 to decimal",
+          "body": "$$132_4 = 1\\times4^2 + 3\\times4^1 + 2\\times4^0 = 16 + 12 + 2 = 30_{10}$$",
+          "scene": {
+            "caption": "$132_4 = 30_{10}$; now divide by 5 repeatedly."
+          }
+        },
+        {
+          "title": "Divide by 5 repeatedly",
+          "body": "- $30 \\div 5 = 6$, remainder $0$\n- $6 \\div 5 = 1$, remainder $1$\n- $1 \\div 5 = 0$, remainder $1$ (stop at quotient 0)",
+          "scene": {
+            "reveal": 9
+          }
+        },
+        {
+          "title": "Read the remainders bottom-up",
+          "body": "Last remainder first: $1, 1, 0$ ⇒ $30_{10} = 110_5$.",
+          "scene": {
+            "hl": [
+              {
+                "c": 2,
+                "tone": "success"
+              }
+            ],
+            "caption": "Remainders read bottom-up: $110_5$."
+          }
+        }
+      ],
+      "answer": {
+        "value": "$132_4 = 30_{10} =$ **110** in radix 5",
+        "number": 110,
+        "matchesKey": true
+      },
+      "shortcut": "Peel off powers of 5 directly: $30 = 1\\cdot25 + 1\\cdot5 + 0\\cdot1$ ⇒ digits $1,1,0$.",
+      "pitfalls": [
+        "Reading the remainders top-down (gives 011).",
+        "Copying the digits across (132) as if radix 4 and radix 5 numerals meant the same value."
+      ],
+      "verification": "$110_5 = 1\\cdot25 + 1\\cdot5 + 0 = 30$, and $132_4 = 30$. ✓",
+      "animation": {
+        "kind": "table",
+        "title": "Repeated division by 5",
+        "cols": [
+          "n",
+          "n div 5",
+          "n mod 5"
+        ],
+        "rows": [
+          [
+            30,
+            6,
+            0
+          ],
+          [
+            6,
+            1,
+            1
+          ],
+          [
+            1,
+            0,
+            1
+          ]
+        ],
+        "reveal": 0,
+        "mono": true
+      }
+    },
+    "cse-2023-cs-23": {
+      "approach": "All stages move on one clock, so the clock period is the **slowest** stage delay. With no hazards, $n$ instructions on a $k$-stage pipeline finish in $(k + n - 1)$ cycles.",
+      "concepts": [
+        "Pipeline clock = slowest stage",
+        "Fill + drain: $k+n-1$ cycles"
+      ],
+      "given": "Stage delays $10, 20, 14$ ns; $k = 3$ stages; $n = 100$ instructions; no other delay, no hazards.",
+      "steps": [
+        {
+          "title": "Clock period = slowest stage",
+          "body": "Every stage must finish within one cycle, so $\\tau = \\max(10, 20, 14) = 20$ ns (no latch delay is given). The 10 ns and 14 ns stages simply idle for part of each cycle.",
+          "scene": {
+            "upto": 3,
+            "caption": "I1 needs $k = 3$ cycles to pass all stages."
+          }
+        },
+        {
+          "title": "Count the cycles",
+          "body": "The first instruction needs $k = 3$ cycles. After that one instruction completes every cycle, so the remaining $99$ need $99$ more:\n\n$$k + n - 1 = 3 + 100 - 1 = 102 \\text{ cycles}$$\n\n(The canvas shows the first 4 instructions: $3 + 4 - 1 = 6$ cycles.)",
+          "scene": {
+            "upto": 6,
+            "caption": "4 instructions → 6 cycles; 100 instructions → 102 cycles."
+          }
+        },
+        {
+          "title": "Total time",
+          "body": "$$T = 102 \\times 20 \\text{ ns} = 2040 \\text{ ns}$$",
+          "scene": {
+            "vars": {
+              "cycles": 102,
+              "τ (ns)": 20,
+              "T (ns)": 2040
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "$(3 + 100 - 1) \\times 20 = $ **2040 ns**",
+        "number": 2040,
+        "matchesKey": true
+      },
+      "shortcut": "$T = (k + n - 1)\\cdot\\max(\\text{stage delays}) = 102 \\times 20 = 2040$ ns.",
+      "pitfalls": [
+        "Using the sum of stage delays (44 ns) per instruction — that is the non-pipelined time, $100 \\times 44 = 4400$ ns.",
+        "Using the average stage delay ($44/3$ ns) as the clock period.",
+        "Forgetting the pipeline fill: $100 \\times 20 = 2000$ ns misses the $k - 1 = 2$ extra cycles."
+      ],
+      "verification": "Instruction I100 enters stage 1 in cycle 100 and leaves stage 3 at the end of cycle 102; $102 \\times 20 = 2040$ ns.",
+      "animation": {
+        "kind": "pipeline",
+        "title": "3-stage pipeline, 20 ns clock (first 4 of 100 instructions)",
+        "rows": [
+          {
+            "label": "I1",
+            "start": 1,
+            "cells": [
+              "S1",
+              "S2",
+              "S3"
+            ]
+          },
+          {
+            "label": "I2",
+            "start": 2,
+            "cells": [
+              "S1",
+              "S2",
+              "S3"
+            ]
+          },
+          {
+            "label": "I3",
+            "start": 3,
+            "cells": [
+              "S1",
+              "S2",
+              "S3"
+            ]
+          },
+          {
+            "label": "I4",
+            "start": 4,
+            "cells": [
+              "S1",
+              "S2",
+              "S3"
+            ]
+          }
+        ],
+        "upto": 0
+      }
+    },
+    "cse-2023-cs-24": {
+      "approach": "Measure everything over one second. Polling pays for **every** poll (100 per second) plus one keystroke; interrupts pay only once per keystroke. Then divide.",
+      "concepts": [
+        "Programmed I/O (polling)",
+        "Interrupt-driven I/O",
+        "CPU overhead fraction"
+      ],
+      "given": "1 keystroke/s; poll every 10 ms at 100 μs per poll; +200 μs to process a detected key; interrupt + processing = 1 ms.",
+      "steps": [
+        {
+          "title": "Polls per second",
+          "body": "$$\\frac{1\\ \\text{s}}{10\\ \\text{ms}} = \\frac{1000\\ \\text{ms}}{10\\ \\text{ms}} = 100 \\text{ polls}$$"
+        },
+        {
+          "title": "Polling cost: $T_1$",
+          "body": "Polling: $100 \\times 100\\ \\mu\\text{s} = 10{,}000\\ \\mu\\text{s} = 10$ ms.\n\nKeystroke processing: $1 \\times 200\\ \\mu\\text{s} = 0.2$ ms.\n\n$$T_1 = \\frac{10 + 0.2}{1000} = \\frac{10.2}{1000} = 0.0102$$"
+        },
+        {
+          "title": "Interrupt cost: $T_2$",
+          "body": "One interrupt per keystroke, 1 ms each:\n\n$$T_2 = \\frac{1 \\times 1}{1000} = 0.001$$"
+        },
+        {
+          "title": "The ratio",
+          "body": "$$\\frac{T_1}{T_2} = \\frac{0.0102}{0.001} = 10.2$$"
+        }
+      ],
+      "answer": {
+        "value": "$T_1/T_2 = 10.2/1 =$ **10.2**",
+        "number": 10.2,
+        "matchesKey": true
+      },
+      "shortcut": "Work in ms per second: polling $= 100 \\times 0.1 + 0.2 = 10.2$ ms, interrupts $= 1$ ms ⇒ ratio $10.2$.",
+      "pitfalls": [
+        "Counting only the one successful poll — the system polls 100 times a second whether or not a key was pressed.",
+        "Adding the 200 μs to every poll instead of once per keystroke (gives $100 \\times 300\\ \\mu$s $= 30$ ms and a ratio of 30).",
+        "Unit slips: $100\\ \\mu\\text{s} = 0.1$ ms, not 0.01 ms."
+      ],
+      "verification": "In seconds: $T_1 = 100 \\times 10^{-4} + 2 \\times 10^{-4} = 0.0102$, $T_2 = 10^{-3}$; ratio $= 10.2$.",
+      "animation": {
+        "kind": "bars",
+        "title": "CPU time spent per second",
+        "unit": "ms",
+        "bars": [
+          {
+            "label": "100 polls × 0.1 ms",
+            "value": 10,
+            "display": "10 ms",
+            "tone": "warning"
+          },
+          {
+            "label": "key processing",
+            "value": 0.2,
+            "display": "0.2 ms",
+            "tone": "warning"
+          },
+          {
+            "label": "T₁ total (polling)",
+            "value": 10.2,
+            "display": "10.2 ms",
+            "tone": "error"
+          },
+          {
+            "label": "T₂ (interrupt)",
+            "value": 1,
+            "display": "1 ms",
+            "tone": "success"
+          }
+        ],
+        "caption": "$T_1/T_2 = 10.2/1 = 10.2$"
+      }
+    },
+    "cse-2023-cs-25": {
+      "approach": "A `static` local variable is initialised **once** and keeps its value between calls, so `funcp()` returns 2 the first time and 3 the second. `main`'s own `x` is a different variable.",
+      "concepts": [
+        "static storage duration",
+        "Variable scope (local vs static)"
+      ],
+      "steps": [
+        {
+          "title": "First call: x = funcp()",
+          "body": "The static `x` starts at 1 (initialised once, before the first call). `x++` makes it 2 and `funcp` returns 2, so `main`'s local `x = 2`.",
+          "scene": {
+            "line": 11,
+            "vars": {
+              "funcp: static x": 2
+            },
+            "callStack": [
+              {
+                "name": "main",
+                "vars": {
+                  "x": 2,
+                  "y": "?"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "title": "Second call: y = funcp() + x",
+          "body": "The static `x` still holds 2; `x++` makes it 3 and `funcp` returns 3. `main`'s `x` is untouched (still 2), so\n\n$$y = 3 + 2 = 5$$",
+          "scene": {
+            "line": 12,
+            "vars": {
+              "funcp: static x": 3
+            },
+            "callStack": [
+              {
+                "name": "main",
+                "vars": {
+                  "x": 2,
+                  "y": 5
+                }
+              }
+            ]
+          }
+        },
+        {
+          "title": "Print x + y",
+          "body": "$$x + y = 2 + 5 = 7$$\n\nThe program prints **7**.",
+          "scene": {
+            "line": 13,
+            "output": "7"
+          }
+        }
+      ],
+      "answer": {
+        "value": "The program prints **7**",
+        "number": 7,
+        "matchesKey": true
+      },
+      "shortcut": "Static counter returns 2, then 3: $x = 2$, $y = 3 + 2 = 5$, output $2 + 5 = 7$.",
+      "pitfalls": [
+        "Re-running `static int x = 1;` on every call (as for an automatic variable): both calls would return 2, giving $2 + (2+2) = 6$.",
+        "Mixing up `main`'s local `x` with `funcp`'s static `x` — they are different objects.",
+        "Worrying about the evaluation order in `funcp()+x`: `funcp` does not modify `main`'s `x`, so either order gives 5."
+      ],
+      "verification": "The static `x` takes the values $1 \\to 2 \\to 3$ over exactly two calls; `main` sees returns 2 and 3, and $2 + (3 + 2) = 7$.",
+      "animation": {
+        "kind": "code",
+        "lang": "c",
+        "title": "Trace of main",
+        "code": "#include<stdio.h>\n\nint funcp(){\n    static int x = 1;\n    x++;\n    return x;\n}\n\nint main(){\n    int x,y;\n    x = funcp();\n    y = funcp()+x;\n    printf(\"%d\\n\", (x+y));\n    return 0;\n}",
+        "line": 4,
+        "vars": {
+          "funcp: static x": 1
+        },
+        "callStack": [
+          {
+            "name": "main",
+            "vars": {
+              "x": "?",
+              "y": "?"
+            }
+          }
+        ],
+        "output": ""
+      }
+    },
+    "cse-2023-cs-26": {
+      "approach": "An activation tree has one node per **call** (activation); a node's children are the calls it makes, left to right in execution order. Trace main → f2(2) → f2(1) and add each call as it happens.",
+      "concepts": [
+        "Activation tree",
+        "Activation records",
+        "Recursion trace"
+      ],
+      "steps": [
+        {
+          "title": "main makes three calls in order",
+          "body": "`main` calls `f1()`, then `f2(2)`, then `f3()`, so the root has children f1, f2, f3 (left to right). `f1` and `f3` only return a constant — they are leaves.",
+          "scene": {
+            "root": {
+              "id": "main",
+              "label": "main",
+              "children": [
+                {
+                  "id": "f1",
+                  "label": "f1",
+                  "tone": "muted"
+                },
+                {
+                  "id": "f2",
+                  "label": "f2",
+                  "sub": "X=2",
+                  "tone": "accent"
+                },
+                {
+                  "id": "f3",
+                  "label": "f3",
+                  "tone": "muted"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "f2(2): calls f3, then recurses",
+          "body": "`f2(2)` first calls `f3()`. Since $X = 2 \\ne 1$ it evaluates `X*f2(X-1)`, i.e. calls `f2(1)`. So f2(2) has two children: f3, f2.",
+          "scene": {
+            "root": {
+              "id": "main",
+              "label": "main",
+              "children": [
+                {
+                  "id": "f1",
+                  "label": "f1",
+                  "tone": "muted"
+                },
+                {
+                  "id": "f2",
+                  "label": "f2",
+                  "sub": "X=2",
+                  "children": [
+                    {
+                      "id": "f3b",
+                      "label": "f3",
+                      "tone": "muted"
+                    },
+                    {
+                      "id": "f2b",
+                      "label": "f2",
+                      "sub": "X=1",
+                      "tone": "accent"
+                    }
+                  ]
+                },
+                {
+                  "id": "f3",
+                  "label": "f3",
+                  "tone": "muted"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "f2(1): calls f3, then f1",
+          "body": "`f2(1)` again first calls `f3()`; now $X = 1$, so it returns `f1()` — a call to f1. No further recursion. Children of f2(1): f3, f1.",
+          "scene": {
+            "root": {
+              "id": "main",
+              "label": "main",
+              "children": [
+                {
+                  "id": "f1",
+                  "label": "f1",
+                  "tone": "muted"
+                },
+                {
+                  "id": "f2",
+                  "label": "f2",
+                  "sub": "X=2",
+                  "children": [
+                    {
+                      "id": "f3b",
+                      "label": "f3",
+                      "tone": "muted"
+                    },
+                    {
+                      "id": "f2b",
+                      "label": "f2",
+                      "sub": "X=1",
+                      "children": [
+                        {
+                          "id": "f3c",
+                          "label": "f3",
+                          "tone": "muted"
+                        },
+                        {
+                          "id": "f1b",
+                          "label": "f1",
+                          "tone": "muted"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "f3",
+                  "label": "f3",
+                  "tone": "muted"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Match with the options",
+          "body": "Final tree: main( f1, f2( f3, f2( f3, f1 ) ), f3 ) — exactly option **(A)**. It has $8$ nodes: 1 main, 2 f1, 2 f2, 3 f3.",
+          "scene": {
+            "root": {
+              "id": "main",
+              "label": "main",
+              "tone": "success",
+              "children": [
+                {
+                  "id": "f1",
+                  "label": "f1",
+                  "tone": "success"
+                },
+                {
+                  "id": "f2",
+                  "label": "f2",
+                  "sub": "X=2",
+                  "tone": "success",
+                  "children": [
+                    {
+                      "id": "f3b",
+                      "label": "f3",
+                      "tone": "success"
+                    },
+                    {
+                      "id": "f2b",
+                      "label": "f2",
+                      "sub": "X=1",
+                      "tone": "success",
+                      "children": [
+                        {
+                          "id": "f3c",
+                          "label": "f3",
+                          "tone": "success"
+                        },
+                        {
+                          "id": "f1b",
+                          "label": "f1",
+                          "tone": "success"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "f3",
+                  "label": "f3",
+                  "tone": "success"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "Tree **(A)**: main( f1, f2( f3, f2( f3, f1 ) ), f3 )",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Every activation appears once, as a child of its caller, in call order: 8 nodes."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Drops the recursive activation f2(1): it shows f2(2) calling f1 directly, but f2(2) calls f3 and then f2(1)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Nests f2 under f1 and loses main's other calls — f1 makes no calls; f1, f2 and f3 are all children of main."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Flattens the recursion: the second f3 and the f1 are called by f2(1), not by f2(2), which has only two children."
+        }
+      ],
+      "shortcut": "Count activations: main 1, f1 2 (from main and from f2(1)), f2 2, f3 3 ⇒ 8 nodes. Only tree (A) has 8 nodes — (B) has 6, (C) 5, (D) 7.",
+      "pitfalls": [
+        "Forgetting that f2 calls f3 first on **every** activation, including the recursive one.",
+        "Merging repeated calls into one node — an activation tree has a separate node per call (f3 appears 3 times).",
+        "Confusing the activation tree with a call graph (one node per *function*)."
+      ],
+      "verification": "Execution order of calls (a preorder walk of the tree): main, f1, f2(2), f3, f2(1), f3, f1, f3 — 8 activations, matching the preorder of tree (A).",
+      "animation": {
+        "kind": "tree",
+        "title": "Activation tree of main",
+        "root": {
+          "id": "main",
+          "label": "main"
+        }
+      }
+    },
+    "cse-2023-cs-27": {
+      "approach": "Liveness is a **backward** data-flow problem: $IN[B] = use[B] \\cup (OUT[B] - def[B])$ and $OUT[B] = \\bigcup_{S \\in succ(B)} IN[S]$. Compute use/def once, then iterate (in reverse order) until no set changes.",
+      "concepts": [
+        "Live-variable analysis",
+        "Backward data-flow equations",
+        "use / def sets",
+        "Fixed-point iteration"
+      ],
+      "given": "| Block | Code | Successors |\n|---|---|---|\n| B1 | `i = m-1; j = n; a = 10` | B2 |\n| B2 | `i = i+1; j = j-1` | B3, B4 |\n| B3 | `a = 20` | B4 |\n| B4 | `i = a+1` | B2, EXIT |",
+      "steps": [
+        {
+          "title": "use and def of each block",
+          "body": "$use[B]$ = variables read before being written in $B$; $def[B]$ = variables written in $B$.\n\n- B1: reads $m, n$; writes $i, j, a$.\n- B2: `i = i+1` reads $i$ before writing it, likewise $j$ ⇒ $use = def = \\{i, j\\}$.\n- B3: writes $a$; reads nothing.\n- B4: reads $a$, writes $i$.",
+          "scene": {
+            "panels": [
+              null,
+              {
+                "rows": [
+                  [
+                    "m, n",
+                    "i, j, a",
+                    "",
+                    ""
+                  ],
+                  [
+                    "i, j",
+                    "i, j",
+                    "",
+                    ""
+                  ],
+                  [
+                    "∅",
+                    "a",
+                    "",
+                    ""
+                  ],
+                  [
+                    "a",
+                    "i",
+                    "",
+                    ""
+                  ]
+                ],
+                "hl": [
+                  {
+                    "c": 0,
+                    "tone": "info"
+                  },
+                  {
+                    "c": 1,
+                    "tone": "info"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "title": "Pass 1 (B4, B3, B2, B1), all sets initially empty",
+          "body": "- $OUT[B4] = IN[B2] \\cup IN[EXIT] = \\varnothing$, $IN[B4] = \\{a\\} \\cup \\varnothing = \\{a\\}$\n- $OUT[B3] = IN[B4] = \\{a\\}$, $IN[B3] = \\{a\\} - \\{a\\} = \\varnothing$\n- $OUT[B2] = IN[B3] \\cup IN[B4] = \\{a\\}$, $IN[B2] = \\{i,j\\} \\cup \\{a\\} = \\{a,i,j\\}$\n- $OUT[B1] = IN[B2] = \\{a,i,j\\}$, $IN[B1] = \\{m,n\\}$",
+          "scene": {
+            "panels": [
+              {
+                "subs": {
+                  "B1": "a,i,j",
+                  "B2": "a",
+                  "B3": "a",
+                  "B4": "∅"
+                }
+              },
+              {
+                "rows": [
+                  [
+                    "m, n",
+                    "i, j, a",
+                    "m, n",
+                    "a, i, j"
+                  ],
+                  [
+                    "i, j",
+                    "i, j",
+                    "a, i, j",
+                    "a"
+                  ],
+                  [
+                    "∅",
+                    "a",
+                    "∅",
+                    "a"
+                  ],
+                  [
+                    "a",
+                    "i",
+                    "a",
+                    "∅"
+                  ]
+                ],
+                "hl": [
+                  {
+                    "c": 3,
+                    "tone": "warning"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "title": "Pass 2: the back edge B4 → B2 carries i and j",
+          "body": "- $OUT[B4] = IN[B2] = \\{a,i,j\\}$, $IN[B4] = \\{a\\} \\cup (\\{a,i,j\\} - \\{i\\}) = \\{a,j\\}$\n- $OUT[B3] = IN[B4] = \\{a,j\\}$, $IN[B3] = \\{a,j\\} - \\{a\\} = \\{j\\}$\n- $OUT[B2] = \\{j\\} \\cup \\{a,j\\} = \\{a,j\\}$, $IN[B2] = \\{i,j\\} \\cup \\{a\\} = \\{a,i,j\\}$ (unchanged)\n- $OUT[B1] = \\{a,i,j\\}$ (unchanged)",
+          "scene": {
+            "panels": [
+              {
+                "subs": {
+                  "B1": "a,i,j",
+                  "B2": "a,j",
+                  "B3": "a,j",
+                  "B4": "a,i,j"
+                },
+                "edgeTones": {
+                  "B4>B2": "warning"
+                }
+              },
+              {
+                "rows": [
+                  [
+                    "m, n",
+                    "i, j, a",
+                    "m, n",
+                    "a, i, j"
+                  ],
+                  [
+                    "i, j",
+                    "i, j",
+                    "a, i, j",
+                    "a, j"
+                  ],
+                  [
+                    "∅",
+                    "a",
+                    "j",
+                    "a, j"
+                  ],
+                  [
+                    "a",
+                    "i",
+                    "a, j",
+                    "a, i, j"
+                  ]
+                ],
+                "hl": [
+                  {
+                    "r": 1,
+                    "c": 3,
+                    "tone": "warning"
+                  },
+                  {
+                    "r": 2,
+                    "c": 3,
+                    "tone": "warning"
+                  },
+                  {
+                    "r": 3,
+                    "c": 3,
+                    "tone": "warning"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "title": "Pass 3: nothing changes — fixed point",
+          "body": "Recomputing with the pass-2 sets reproduces every set, so the analysis has converged:\n\n| Block | OUT (live at exit) |\n|---|---|\n| B1 | $\\{a, i, j\\}$ |\n| B2 | $\\{a, j\\}$ |\n| B3 | $\\{a, j\\}$ |\n| B4 | $\\{a, i, j\\}$ |\n\nThis is option **(D)**.",
+          "scene": {
+            "panels": [
+              {
+                "tones": {
+                  "B1": "success",
+                  "B2": "success",
+                  "B3": "success",
+                  "B4": "success"
+                }
+              },
+              {
+                "hl": [
+                  {
+                    "c": 3,
+                    "tone": "success"
+                  }
+                ]
+              }
+            ],
+            "caption": "OUT column = live variables at block exits."
+          }
+        }
+      ],
+      "answer": {
+        "value": "**(D)** B1: {a, i, j}, B2: {a, j}, B3: {a, j}, B4: {a, i, j}",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Keeps only $a$: misses that $j$ is read in B2 on every trip round the loop and that $i, j$ flow back to B2 along B4 → B2 (and B1 is not empty)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Misses $a$ at the exit of B1 (read in B4 via B1→B2→B4) and $j$ at the exits of B2, B3, B4."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Puts $i$ live at the exit of B2 and B3, but every path from there meets `i = a + 1` in B4, which overwrites $i$ before any read; it also misses $i, j$ at the exit of B4."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Matches the fixed point of the backward equations."
+        }
+      ],
+      "shortcut": "Test $i$ alone: from the exit of B2 every path reaches `i = a + 1` before any read of $i$ ⇒ $i \\notin OUT[B2]$, which kills (C). (A) and (B) both omit $j$ at the exit of B2, although B2 → B4 → B2 reads $j$. Only (D) survives.",
+      "pitfalls": [
+        "Ignoring the back edge B4 → B2: it is what makes $i$ and $j$ live at the exit of B4.",
+        "Taking $use[B2] = \\varnothing$ because B2 assigns $i$ and $j$ — the right-hand sides read them first.",
+        "Declaring $a$ dead after B2 because B3 redefines it — one path that reads it (B2 → B4) is enough for liveness."
+      ],
+      "verification": "Path check per variable (live = some path reaches a read before a write): at B4's exit, B4→B2 reads $i, j$ and B4→B2→B4 reads $a$ ⇒ $\\{a,i,j\\}$; at B3's exit, B4 reads $a$ and B4→B2 reads $j$ while B4 rewrites $i$ ⇒ $\\{a,j\\}$; same for B2; at B1's exit, B2 reads $i, j$ and B2→B4 reads $a$ ⇒ $\\{a,i,j\\}$.",
+      "animation": {
+        "kind": "panels",
+        "title": "Live-variable analysis",
+        "panels": [
+          {
+            "kind": "graph",
+            "directed": true,
+            "layout": "manual",
+            "nodes": [
+              {
+                "id": "ENTRY",
+                "x": 1,
+                "y": 0
+              },
+              {
+                "id": "B1",
+                "x": 1,
+                "y": 1
+              },
+              {
+                "id": "B2",
+                "x": 1,
+                "y": 2
+              },
+              {
+                "id": "B3",
+                "x": 0,
+                "y": 3
+              },
+              {
+                "id": "B4",
+                "x": 1,
+                "y": 4
+              },
+              {
+                "id": "EXIT",
+                "x": 1,
+                "y": 5
+              }
+            ],
+            "edges": [
+              {
+                "from": "ENTRY",
+                "to": "B1"
+              },
+              {
+                "from": "B1",
+                "to": "B2"
+              },
+              {
+                "from": "B2",
+                "to": "B3"
+              },
+              {
+                "from": "B2",
+                "to": "B4"
+              },
+              {
+                "from": "B3",
+                "to": "B4"
+              },
+              {
+                "from": "B4",
+                "to": "B2",
+                "dashed": true
+              },
+              {
+                "from": "B4",
+                "to": "EXIT"
+              }
+            ]
+          },
+          {
+            "kind": "table",
+            "rowLabels": [
+              "B1",
+              "B2",
+              "B3",
+              "B4"
+            ],
+            "cols": [
+              "use",
+              "def",
+              "IN",
+              "OUT"
+            ],
+            "corner": "block",
+            "rows": [
+              [
+                "m, n",
+                "i, j, a",
+                "",
+                ""
+              ],
+              [
+                "i, j",
+                "i, j",
+                "",
+                ""
+              ],
+              [
+                "∅",
+                "a",
+                "",
+                ""
+              ],
+              [
+                "a",
+                "i",
+                "",
+                ""
+              ]
+            ],
+            "mono": true
+          }
+        ],
+        "caption": "Badges on the CFG show OUT[B] (live at exit)."
+      }
+    },
+    "cse-2023-cs-28": {
+      "approach": "With a binary semaphore the updates are serialised, so V1 is always $10 + 5 - 3 = 12$. A counting semaphore of 2 lets two threads race on X; to minimise X, let one `decr` read X early, let all five `incr`s finish, then overwrite them with its stale value.",
+      "concepts": [
+        "Binary vs counting semaphore",
+        "Critical section",
+        "Race condition (lost update)"
+      ],
+      "steps": [
+        {
+          "title": "I-1: mutual exclusion ⇒ exact result",
+          "body": "A binary semaphore initialised to 1 admits one thread at a time, so each read-modify-write of X completes without interference. Whatever the order:\n\n$$V_1 = 10 + 5 - 3 = 12$$\n\nThe minimum (and only) value of V1 is 12.",
+          "scene": {
+            "cursor": 8,
+            "upto": 8
+          }
+        },
+        {
+          "title": "I-2: two threads inside together",
+          "body": "A counting semaphore initialised to 2 lets **two** threads into the critical section at once. `X = X + 1` is really *load X → add → store X*, so one thread can store a stale value over the other's update (a lost update).",
+          "scene": {
+            "kind": "gantt",
+            "title": "I-2 (s = 2): one bad schedule",
+            "unit": "t",
+            "lanes": [
+              {
+                "label": "slot 1",
+                "bars": [
+                  {
+                    "start": 0,
+                    "end": 6,
+                    "label": "D1"
+                  },
+                  {
+                    "start": 6,
+                    "end": 7,
+                    "label": "D2"
+                  },
+                  {
+                    "start": 7,
+                    "end": 8,
+                    "label": "D3"
+                  }
+                ]
+              },
+              {
+                "label": "slot 2",
+                "bars": [
+                  {
+                    "start": 0,
+                    "end": 1,
+                    "label": "I1"
+                  },
+                  {
+                    "start": 1,
+                    "end": 2,
+                    "label": "I2"
+                  },
+                  {
+                    "start": 2,
+                    "end": 3,
+                    "label": "I3"
+                  },
+                  {
+                    "start": 3,
+                    "end": 4,
+                    "label": "I4"
+                  },
+                  {
+                    "start": 4,
+                    "end": 5,
+                    "label": "I5"
+                  }
+                ]
+              }
+            ],
+            "marks": [
+              {
+                "t": 0,
+                "label": "D1 loads 10"
+              },
+              {
+                "t": 5,
+                "label": "X = 15"
+              },
+              {
+                "t": 6,
+                "label": "D1 stores 9",
+                "tone": "error"
+              },
+              {
+                "t": 8,
+                "label": "X = 7",
+                "tone": "success"
+              }
+            ],
+            "upto": 0,
+            "cursor": 0
+          }
+        },
+        {
+          "title": "A schedule that loses all five increments",
+          "body": "1. D1 enters (slot 1), loads $X = 10$ into a register and is preempted.\n2. In slot 2, I1 … I5 run one after another: $X = 11, 12, 13, 14, 15$.\n3. D1 resumes and stores $10 - 1 = 9$: all five increments are lost.\n4. D2 and D3 then run normally: $X = 8$, then $X = 7$.\n\nSo $V_2 = 7$ is reachable.",
+          "scene": {
+            "upto": 8,
+            "cursor": 8
+          }
+        },
+        {
+          "title": "No schedule goes below 7",
+          "body": "Every store writes (a value previously stored, or the initial 10) $\\pm 1$. Follow the chain of stores that produced the final value back to the initial 10: each link is $+1$ or $-1$, and only the 3 `decr` threads contribute $-1$. Hence\n\n$$V_2 \\ge 10 - 3 = 7.$$"
+        },
+        {
+          "title": "Combine",
+          "body": "Minimum $V_1 = 12$, minimum $V_2 = 7$ ⇒ $(12, 7)$, option **(C)**."
+        }
+      ],
+      "answer": {
+        "value": "$(V_1, V_2) = (12, 7)$ — option **(C)**",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "With a binary semaphore no update is ever lost, so V1 is always 12; 15 would need all three decrements to vanish."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "V1 = 7 needs lost increments, which mutual exclusion (binary semaphore) makes impossible."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "V1 is fixed at 12; the schedule above reaches V2 = 7, and 7 is a lower bound."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "V2 = 8 is reachable but not minimal — one stale decrement can wipe out all five increments, giving 7."
+        }
+      ],
+      "shortcut": "Binary semaphore ⇒ correct answer $12$. Counting semaphore 2 ⇒ worst case: all increments lost, all decrements kept ⇒ $10 - 3 = 7$.",
+      "pitfalls": [
+        "Assuming every semaphore guarantees mutual exclusion — a counting semaphore initialised to 2 admits two threads at once.",
+        "Thinking one decrement can cancel only one increment: a single stale store can overwrite all five.",
+        "Answering 5 ($10 - 5$): increments can be lost, but there are only 3 decrements to apply."
+      ],
+      "verification": "Schedule check: $10 \\xrightarrow{I1..I5} 15 \\xrightarrow{D1\\ \\text{stale}} 9 \\xrightarrow{D2} 8 \\xrightarrow{D3} 7$, matching the chain lower bound $10 - 3 = 7$.",
+      "animation": {
+        "kind": "gantt",
+        "title": "I-1 (binary, s = 1): fully serialised",
+        "unit": "t",
+        "lanes": [
+          {
+            "label": "critical section",
+            "bars": [
+              {
+                "start": 0,
+                "end": 1,
+                "label": "I1"
+              },
+              {
+                "start": 1,
+                "end": 2,
+                "label": "I2"
+              },
+              {
+                "start": 2,
+                "end": 3,
+                "label": "I3"
+              },
+              {
+                "start": 3,
+                "end": 4,
+                "label": "I4"
+              },
+              {
+                "start": 4,
+                "end": 5,
+                "label": "I5"
+              },
+              {
+                "start": 5,
+                "end": 6,
+                "label": "D1"
+              },
+              {
+                "start": 6,
+                "end": 7,
+                "label": "D2"
+              },
+              {
+                "start": 7,
+                "end": 8,
+                "label": "D3"
+              }
+            ]
+          }
+        ],
+        "marks": [
+          {
+            "t": 5,
+            "label": "X = 15"
+          },
+          {
+            "t": 8,
+            "label": "X = 12",
+            "tone": "success"
+          }
+        ],
+        "upto": 0,
+        "cursor": 0
+      }
+    },
+    "cse-2023-cs-29": {
+      "approach": "Find $L(X)$ first — X only adds $a$'s on the left and $b$'s on the right of one base symbol — then see that the $a^n \\ldots b^n$ wrapping produced by S is absorbed by the stars of $L(X)$.",
+      "concepts": [
+        "Context-free grammar",
+        "Regular expressions",
+        "Regular vs non-regular languages"
+      ],
+      "steps": [
+        {
+          "title": "Language of X",
+          "body": "Each use of $X \\to aX$ adds an $a$ on the left and $X \\to Xb$ adds a $b$ on the right; the derivation ends with $X \\to a$ or $X \\to b$. So\n\n$$X \\Rightarrow^* a^p\\,X\\,b^q \\Rightarrow a^p\\,c\\,b^q,\\quad c \\in \\{a, b\\},\\ p, q \\ge 0$$\n\nwhich gives $L(X) = a^*(a+b)b^*$."
+        },
+        {
+          "title": "Language of S",
+          "body": "$S \\Rightarrow^* a^n S b^n \\Rightarrow a^n X b^n$, so\n\n$$L(G) = \\bigcup_{n \\ge 0} a^n \\, a^*(a+b)b^* \\, b^n.$$\n\nSince $a^n a^* \\subseteq a^*$ and $b^* b^n \\subseteq b^*$, every term is inside $a^*(a+b)b^*$, and $n = 0$ gives all of it. Hence $L(G) = a^*(a+b)b^*$. The derivation tree of $aaab$ (canvas) shows the outer $a\\ldots b$ pair from S and $aa$ from X."
+        },
+        {
+          "title": "What the language looks like",
+          "body": "$a^*(a+b)b^* = \\{a^i b^j : i + j \\ge 1\\}$: every **non-empty** string in which no $a$ comes after a $b$. It is given by a regular expression, so it is regular ⇒ (D) is false."
+        },
+        {
+          "title": "Test the other options with short strings",
+          "body": "- $\\varepsilon \\in (a+b)^*$, but every derivation of G ends with a terminal from $X \\to a \\mid b$, so $\\varepsilon \\notin L(G)$ ⇒ (A) false (also $ba$).\n- $ba \\in a^*b^*(a+b)$ (zero $a$'s, one $b$, then $a$), but $ba \\notin L(G)$ ⇒ (C) false.\n- (B) is exactly the language derived above ⇒ **(B)**."
+        }
+      ],
+      "answer": {
+        "value": "**(B)** $L(G) = a^*(a+b)b^*$",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$(a+b)^*$ contains $\\varepsilon$ and $ba$; G generates neither."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$L(X) = a^*(a+b)b^*$ and the S-layer $a^n \\ldots b^n$ is absorbed by the stars."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$a^*b^*(a+b)$ contains $ba$, but G never puts an $a$ after a $b$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$S \\to aSb$ looks like $a^nb^n$, but X freely adds extra $a$'s and $b$'s, so the counts need not match; the language $a^*(a+b)b^*$ is regular."
+        }
+      ],
+      "shortcut": "G can output $ab$, $aab$, $abb$, … with any counts, but never $ba$ and never $\\varepsilon$. Only (B) excludes exactly those.",
+      "pitfalls": [
+        "Seeing $S \\to aSb$ and concluding \"not regular\" — a grammar with a non-regular-looking rule can still generate a regular language.",
+        "Forgetting that X always ends in a terminal, so $\\varepsilon \\notin L(G)$.",
+        "Treating $a^*(a+b)b^*$ and $a^*b^*(a+b)$ as equal — they differ on $ba$."
+      ],
+      "verification": "All strings of length ≤ 3 that G derives: $a, b, aa, ab, bb, aaa, aab, abb, bbb$ — exactly the strings of length ≤ 3 matched by $a^*(a+b)b^*$; none of $ba, aba, bab, bba, baa$ appears.",
+      "animation": {
+        "kind": "tree",
+        "title": "Derivation tree of aaab",
+        "caption": "$S \\Rightarrow aSb \\Rightarrow aXb \\Rightarrow aaXb \\Rightarrow aaab$",
+        "root": {
+          "id": "S1",
+          "label": "S",
+          "children": [
+            {
+              "id": "a1",
+              "label": "a",
+              "tone": "accent"
+            },
+            {
+              "id": "S2",
+              "label": "S",
+              "children": [
+                {
+                  "id": "X1",
+                  "label": "X",
+                  "tone": "info",
+                  "children": [
+                    {
+                      "id": "a2",
+                      "label": "a",
+                      "tone": "info"
+                    },
+                    {
+                      "id": "X2",
+                      "label": "X",
+                      "tone": "info",
+                      "children": [
+                        {
+                          "id": "a3",
+                          "label": "a",
+                          "tone": "info"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "b1",
+              "label": "b",
+              "tone": "accent"
+            }
+          ]
+        }
+      }
+    }
+  }
+}
