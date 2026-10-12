@@ -1,0 +1,858 @@
+{
+  "paper": "da-2026",
+  "fixes": [
+    {
+      "id": "da-2026-da-30",
+      "field": "text",
+      "before": "Consider a directed graph G = (V, E), where V is the finite set of vertices and E is the set of directed edges between the vertices. G may contain cycles but there is no self-loop. Further, G may not be strongly connected. Let G^R be the graph obtained by reversing the directions of all the edges in G without changing the set of vertices. Assume that Breadth First Search (BFS) or Depth First Search (DFS) from any given vertex v of a graph visits only the reachable vertices from v in that graph. Which of the following statements must always be true, regardless of the structure of G?",
+      "after": "Consider a directed graph $G = (V, E)$, where $V$ is the finite set of vertices and $E$ is the set of directed edges between the vertices. $G$ may contain cycles but there is no self-loop. Further, $G$ may not be strongly connected.\n\nLet $G^R$ be the graph obtained by reversing the directions of all the edges in $G$ without changing the set of vertices.\n\nAssume that Breadth First Search (BFS) or Depth First Search (DFS) from any given vertex $v$ of a graph visits only the reachable vertices from $v$ in that graph.\n\nWhich of the following statements must always be true, regardless of the structure of $G$?",
+      "reason": "Re-typed with KaTeX math (variables, subscripts, symbols) and the paragraph breaks of the paper; wording unchanged.",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "da-2026-da-30",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "If u is a reachable vertex in the BFS of G^R from v, then u is also a reachable vertex in the DFS of G from v."
+        },
+        {
+          "l": "B",
+          "t": "In G^R, the BFS traversal from v will visit exactly the same set of vertices as the DFS from v in G."
+        },
+        {
+          "l": "C",
+          "t": "The order of vertices visited in the BFS of G^R from v is the reverse of the order of vertices visited in the DFS of G from v."
+        },
+        {
+          "l": "D",
+          "t": "If u is a reachable vertex in the DFS of G from v, then v is also a reachable vertex in the BFS of G^R from u."
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "If $u$ is a reachable vertex in the BFS of $G^R$ from $v$, then $u$ is also a reachable vertex in the DFS of $G$ from $v$."
+        },
+        {
+          "l": "B",
+          "t": "In $G^R$, the BFS traversal from $v$ will visit exactly the same set of vertices as the DFS from $v$ in $G$."
+        },
+        {
+          "l": "C",
+          "t": "The order of vertices visited in the BFS of $G^R$ from $v$ is the reverse of the order of vertices visited in the DFS of $G$ from $v$."
+        },
+        {
+          "l": "D",
+          "t": "If $u$ is a reachable vertex in the DFS of $G$ from $v$, then $v$ is also a reachable vertex in the BFS of $G^R$ from $u$."
+        }
+      ],
+      "reason": "Re-typed with KaTeX math (variables, subscripts, symbols) and the paragraph breaks of the paper; wording unchanged.",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "da-2026-da-30",
+      "field": "topic",
+      "before": "trees-and-graphs",
+      "after": "algorithms",
+      "reason": "Topic re-filed under the DA syllabus topic ids defined in questions.json \"subjects\".",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "da-2026-da-30",
+      "field": "tags",
+      "before": [
+        "pdsa",
+        "trees-and-graphs"
+      ],
+      "after": [
+        "pdsa",
+        "algorithms",
+        "graph-traversal",
+        "bfs",
+        "dfs",
+        "reachability"
+      ],
+      "reason": "Tags follow the corrected topic, plus concept tags.",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "da-2026-da-31",
+      "field": "text",
+      "before": "Consider a B+ Tree where the maximum number of key values in each leaf node is 2 and the maximum number of pointers in each non-leaf node is 3. Let the content of the B+ Tree be as shown in the figure. Which of the following options denotes the key value(s) stored in the root node after inserting a key value 3 in the given B+ Tree? [Figure: initial B+ Tree — not captured in text extraction]",
+      "after": "Consider a B+ Tree where the maximum number of key values in each leaf node is 2 and the maximum number of pointers in each non-leaf node is 3. Let the content of the B+ Tree be as shown in the figure.\n\nWhich of the following options denotes the key value(s) stored in the root node after inserting a key value 3 in the given B+ Tree?",
+      "reason": "Removed the \"[Figure: … not captured in text extraction]\" placeholder; the figure is now attached as an SVG redraw.",
+      "source": "pdf p.26"
+    },
+    {
+      "id": "da-2026-da-31",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "da-2026/da-31-1.svg",
+          "svg": "da-2026/da-31-1.svg",
+          "alt": "B+ tree of order 3. The root node holds the keys 5 and 8 and has three child pointers: the left pointer goes to leaf [1, 5], the middle pointer to leaf [7, 8], and the right pointer to leaf [9, 12]. Every leaf key has a dashed pointer down to its data record, and the leaves are chained left to right by sibling pointers: [1, 5] → [7, 8] → [9, 12] → NULL."
+        }
+      ],
+      "reason": "The question depends on its figure, which the bank was missing. Redrawn as an SVG from the paper (root 5 | 8; leaves 1,5 → 7,8 → 9,12 → NULL).",
+      "source": "pdf p.26"
+    },
+    {
+      "id": "da-2026-da-31",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "The missing figure is now attached and the official key (A) was verified by solving.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-da-31",
+      "field": "topic",
+      "before": "relational-model",
+      "after": "relational",
+      "reason": "Topic re-filed under the DA syllabus topic ids defined in questions.json \"subjects\".",
+      "source": "pdf p.26"
+    },
+    {
+      "id": "da-2026-da-31",
+      "field": "tags",
+      "before": [
+        "dbw",
+        "relational-model"
+      ],
+      "after": [
+        "dbw",
+        "relational",
+        "b-plus-tree",
+        "indexing"
+      ],
+      "reason": "Tags follow the corrected topic, plus concept tags.",
+      "source": "pdf p.26"
+    },
+    {
+      "id": "da-2026-da-32",
+      "field": "text",
+      "before": "Consider the given relations X, Y and Z. The relation X has three columns P, Q and R. The relation Y has three columns P, Q and S. The relation Z has two columns P and T.\nX(P,Q,R): (P1,Q1,R1), (P2,Q2,R2), (P3,Q3,R2)\nY(P,Q,S): (P1,Q1,2), (P1,Q2,5), (P2,Q1,6), (P3,Q3,1)\nZ(P,T): (P1,T1), (P3,T2), (P4,T3), (P4,NULL)\nConsider the relational algebra expression ∏_{PRS}[ (σ_{(Q=Q3 ∨ R=R2)}[X ⋈ Y]) ⋈ (σ_{(S>1)}[Y ⋈ Z]) ] where ⋈ denotes natural join operation. Which of the following options is the correct output for the given expression?",
+      "after": "Consider the given relations $X$, $Y$ and $Z$. The relation $X$ has three columns $P$, $Q$ and $R$. The relation $Y$ has three columns $P$, $Q$ and $S$. The relation $Z$ has two columns $P$ and $T$.\n\n**X**\n\n| P | Q | R |\n|---|---|---|\n| P1 | Q1 | R1 |\n| P2 | Q2 | R2 |\n| P3 | Q3 | R2 |\n\n**Y**\n\n| P | Q | S |\n|---|---|---|\n| P1 | Q1 | 2 |\n| P1 | Q2 | 5 |\n| P2 | Q1 | 6 |\n| P3 | Q3 | 1 |\n\n**Z**\n\n| P | T |\n|---|---|\n| P1 | T1 |\n| P3 | T2 |\n| P4 | T3 |\n| P4 | NULL |\n\nConsider the relational algebra expression\n\n$$\\Pi_{PRS}\\left[\\left(\\sigma_{(Q = Q3\\ \\lor\\ R = R2)}[X \\bowtie Y]\\right) \\bowtie \\left(\\sigma_{(S > 1)}[Y \\bowtie Z]\\right)\\right]$$\n\nwhere $\\bowtie$ denotes natural join operation.\n\nWhich of the following options is the correct output for the given expression?",
+      "reason": "The three relations were flattened into tuple lists; restored as tables as printed, and the expression re-typed in KaTeX.",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "da-2026-da-32",
+      "field": "topic",
+      "before": "relational-model",
+      "after": "relational",
+      "reason": "Topic re-filed under the DA syllabus topic ids defined in questions.json \"subjects\".",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "da-2026-da-32",
+      "field": "tags",
+      "before": [
+        "dbw",
+        "relational-model"
+      ],
+      "after": [
+        "dbw",
+        "relational",
+        "relational-algebra",
+        "natural-join",
+        "selection"
+      ],
+      "reason": "Tags follow the corrected topic, plus concept tags.",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "da-2026-da-33",
+      "field": "text",
+      "before": "Consider the concept hierarchies as shown in the figure. Which of the following options denotes the total number of possible data cuboids from these concept hierarchies? [Figure: concept hierarchies — not captured in text extraction]",
+      "after": "Consider the concept hierarchies as shown in the figure.\n\nWhich of the following options denotes the total number of possible data cuboids from these concept hierarchies?",
+      "reason": "Removed the \"[Figure: … not captured in text extraction]\" placeholder; the figure is now attached as an SVG redraw.",
+      "source": "pdf p.28"
+    },
+    {
+      "id": "da-2026-da-33",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "4^3"
+        },
+        {
+          "l": "B",
+          "t": "2^3"
+        },
+        {
+          "l": "C",
+          "t": "3!"
+        },
+        {
+          "l": "D",
+          "t": "4!"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$4^3$"
+        },
+        {
+          "l": "B",
+          "t": "$2^3$"
+        },
+        {
+          "l": "C",
+          "t": "$2!$"
+        },
+        {
+          "l": "D",
+          "t": "$4!$"
+        }
+      ],
+      "reason": "Option (C) is \"2!\" in the paper, not \"3!\"; exponents typed in KaTeX.",
+      "source": "pdf p.28"
+    },
+    {
+      "id": "da-2026-da-33",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "da-2026/da-33-1.svg",
+          "svg": "da-2026/da-33-1.svg",
+          "alt": "Three concept hierarchies drawn as vertical chains of three dots each, highest level at the top: Year – Month – Day; Country – State – City; Item Category – Item Type – Item."
+        }
+      ],
+      "reason": "The question depends on its figure, which the bank was missing. Redrawn as an SVG from the paper.",
+      "source": "pdf p.28"
+    },
+    {
+      "id": "da-2026-da-33",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "The missing figure is attached, option (C) corrected, and the official key (A) verified by solving.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-da-33",
+      "field": "topic",
+      "before": "data-warehousing-and-olap",
+      "after": "warehousing",
+      "reason": "Topic re-filed under the DA syllabus topic ids defined in questions.json \"subjects\".",
+      "source": "pdf p.28"
+    },
+    {
+      "id": "da-2026-da-33",
+      "field": "tags",
+      "before": [
+        "dbw",
+        "data-warehousing-and-olap"
+      ],
+      "after": [
+        "dbw",
+        "warehousing",
+        "data-cube",
+        "concept-hierarchy",
+        "cuboids"
+      ],
+      "reason": "Tags follow the corrected topic, plus concept tags.",
+      "source": "pdf p.28"
+    },
+    {
+      "id": "da-2026-da-34",
+      "field": "text",
+      "before": "Let X and Y be two independent random variables. X follows Bernoulli(p = 0.3) distribution and Y follows Normal(μ = 0, σ^2 = 100) distribution. Which of the following options is the variance of (2X - 1)Y?",
+      "after": "Let $X$ and $Y$ be two independent random variables. $X$ follows $Bernoulli(p = 0.3)$ distribution and $Y$ follows $Normal(\\mu = 0, \\sigma^2 = 100)$ distribution.\n\nWhich of the following options is the variance of $(2X - 1)Y$?",
+      "reason": "Re-typed with KaTeX math (variables, subscripts, symbols) and the paragraph breaks of the paper; wording unchanged.",
+      "source": "pdf p.29"
+    },
+    {
+      "id": "da-2026-da-34",
+      "field": "topic",
+      "before": "probability-and-statistics",
+      "after": "rv",
+      "reason": "Topic re-filed under the DA syllabus topic ids defined in questions.json \"subjects\".",
+      "source": "pdf p.29"
+    },
+    {
+      "id": "da-2026-da-34",
+      "field": "tags",
+      "before": [
+        "prob",
+        "probability-and-statistics"
+      ],
+      "after": [
+        "prob",
+        "rv",
+        "variance",
+        "independence",
+        "bernoulli",
+        "normal-distribution"
+      ],
+      "reason": "Tags follow the corrected topic, plus concept tags.",
+      "source": "pdf p.29"
+    },
+    {
+      "id": "da-2026-da-35",
+      "field": "text",
+      "before": "Let L = lim_{n→∞} Σ_{k=0}^{n} (e^(-n) n^k)/k!. Which of the following is the value of L?",
+      "after": "Let\n\n$$L = \\lim_{n \\to \\infty} \\sum_{k=0}^{n} \\frac{e^{-n}\\, n^k}{k!}$$\n\nWhich of the following is the value of $L$?",
+      "reason": "Re-typed with KaTeX math (variables, subscripts, symbols) and the paragraph breaks of the paper; wording unchanged.",
+      "source": "pdf p.29"
+    },
+    {
+      "id": "da-2026-da-35",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "0.5"
+        },
+        {
+          "l": "B",
+          "t": "1.0"
+        },
+        {
+          "l": "C",
+          "t": "0"
+        },
+        {
+          "l": "D",
+          "t": "e^(-1)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "0.5"
+        },
+        {
+          "l": "B",
+          "t": "1.0"
+        },
+        {
+          "l": "C",
+          "t": "0"
+        },
+        {
+          "l": "D",
+          "t": "$e^{-1}$"
+        }
+      ],
+      "reason": "Re-typed with KaTeX math (variables, subscripts, symbols) and the paragraph breaks of the paper; wording unchanged.",
+      "source": "pdf p.29"
+    },
+    {
+      "id": "da-2026-da-35",
+      "field": "topic",
+      "before": "probability-and-statistics",
+      "after": "rv",
+      "reason": "Topic re-filed under the DA syllabus topic ids defined in questions.json \"subjects\".",
+      "source": "pdf p.29"
+    },
+    {
+      "id": "da-2026-da-35",
+      "field": "tags",
+      "before": [
+        "prob",
+        "probability-and-statistics"
+      ],
+      "after": [
+        "prob",
+        "rv",
+        "poisson",
+        "central-limit-theorem",
+        "limits"
+      ],
+      "reason": "Tags follow the corrected topic, plus concept tags.",
+      "source": "pdf p.29"
+    },
+    {
+      "id": "da-2026-da-36",
+      "field": "text",
+      "before": "Let γ1, γ2, γ3 be the eigenvalues of the matrix [[1, 0, 0], [0, cos t, sin t], [0, -sin t, cos t]], where t ∈ [-π, π] is in radians. Which one of the following options lists all the possible values of t satisfying γ1 + γ2 + γ3 = 1 + √2?",
+      "after": "Let $\\gamma_1, \\gamma_2, \\gamma_3$ be the eigenvalues of the matrix $\\begin{bmatrix} 1 & 0 & 0 \\\\ 0 & \\cos t & \\sin t \\\\ 0 & -\\sin t & \\cos t \\end{bmatrix}$, where $t \\in [-\\pi, \\pi]$ is in radians.\n\nWhich one of the following options lists all the possible values of $t$ satisfying $\\gamma_1 + \\gamma_2 + \\gamma_3 = 1 + \\sqrt{2}$?",
+      "reason": "Re-typed with KaTeX math (variables, subscripts, symbols) and the paragraph breaks of the paper; wording unchanged.",
+      "source": "pdf p.30"
+    },
+    {
+      "id": "da-2026-da-36",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "{π/3, -π/4}"
+        },
+        {
+          "l": "B",
+          "t": "{π/4, -π/3}"
+        },
+        {
+          "l": "C",
+          "t": "{π/4, -π/4}"
+        },
+        {
+          "l": "D",
+          "t": "{π/3, -π/3}"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\left\\{\\frac{\\pi}{3}, -\\frac{\\pi}{4}\\right\\}$"
+        },
+        {
+          "l": "B",
+          "t": "$\\left\\{\\frac{\\pi}{4}, -\\frac{\\pi}{3}\\right\\}$"
+        },
+        {
+          "l": "C",
+          "t": "$\\left\\{\\frac{\\pi}{4}, -\\frac{\\pi}{4}\\right\\}$"
+        },
+        {
+          "l": "D",
+          "t": "$\\left\\{\\frac{\\pi}{3}, -\\frac{\\pi}{3}\\right\\}$"
+        }
+      ],
+      "reason": "Re-typed with KaTeX math (variables, subscripts, symbols) and the paragraph breaks of the paper; wording unchanged.",
+      "source": "pdf p.30"
+    },
+    {
+      "id": "da-2026-da-36",
+      "field": "topic",
+      "before": "linear-algebra",
+      "after": "eigen",
+      "reason": "Topic re-filed under the DA syllabus topic ids defined in questions.json \"subjects\".",
+      "source": "pdf p.30"
+    },
+    {
+      "id": "da-2026-da-36",
+      "field": "tags",
+      "before": [
+        "la",
+        "linear-algebra"
+      ],
+      "after": [
+        "la",
+        "eigen",
+        "trace",
+        "rotation-matrix"
+      ],
+      "reason": "Tags follow the corrected topic, plus concept tags.",
+      "source": "pdf p.30"
+    },
+    {
+      "id": "da-2026-da-37",
+      "field": "text",
+      "before": "Consider that 20 stories of Author X and 10 stories of Author Y were kept together without mentioning the names of the authors. A classifier was then asked to predict the author (X or Y) of each of these stories. Let, out of X’s stories, 6 were classified as that of Y. On the other hand, out of Y’s stories, 2 were classified as that of X. Considering X and Y as two classes, which of the following statements is/are true?",
+      "after": "Consider that 20 stories of Author X and 10 stories of Author Y were kept together without mentioning the names of the authors. A classifier was then asked to predict the author (X or Y) of each of these stories. Let, out of X’s stories, 6 were classified as that of Y. On the other hand, out of Y’s stories, 2 were classified as that of X.\n\nConsidering X and Y as two classes, which of the following statements is/are true?",
+      "reason": "Restored the paragraph break of the paper; wording unchanged.",
+      "source": "pdf p.31"
+    },
+    {
+      "id": "da-2026-da-37",
+      "field": "topic",
+      "before": "model-evaluation",
+      "after": "evaluation",
+      "reason": "Topic re-filed under the DA syllabus topic ids defined in questions.json \"subjects\".",
+      "source": "pdf p.31"
+    },
+    {
+      "id": "da-2026-da-37",
+      "field": "tags",
+      "before": [
+        "ml",
+        "model-evaluation"
+      ],
+      "after": [
+        "ml",
+        "evaluation",
+        "confusion-matrix",
+        "precision",
+        "recall",
+        "accuracy"
+      ],
+      "reason": "Tags follow the corrected topic, plus concept tags.",
+      "source": "pdf p.31"
+    },
+    {
+      "id": "da-2026-da-38",
+      "field": "text",
+      "before": "Let P(x) be a predicate. Which of the following statements is/are NOT valid in first-order logic?",
+      "after": "Let $P(x)$ be a predicate.\n\nWhich of the following statements is/are NOT valid in first-order logic?",
+      "reason": "Re-typed with KaTeX math (variables, subscripts, symbols) and the paragraph breaks of the paper; wording unchanged.",
+      "source": "pdf p.31"
+    },
+    {
+      "id": "da-2026-da-38",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "∀x P(x) ⇒ ∃x P(x)"
+        },
+        {
+          "l": "B",
+          "t": "∃x P(x) ⇒ ∀x P(x)"
+        },
+        {
+          "l": "C",
+          "t": "∃x P(x) ⇔ ∀x P(x)"
+        },
+        {
+          "l": "D",
+          "t": "∀x P(x) ⇒ ∃x ¬P(x)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\forall x\\, P(x) \\Rightarrow \\exists x\\, P(x)$"
+        },
+        {
+          "l": "B",
+          "t": "$\\exists x\\, P(x) \\Rightarrow \\forall x\\, P(x)$"
+        },
+        {
+          "l": "C",
+          "t": "$\\exists x\\, P(x) \\Leftrightarrow \\forall x\\, P(x)$"
+        },
+        {
+          "l": "D",
+          "t": "$\\forall x\\, P(x) \\Rightarrow \\exists x\\, \\neg P(x)$"
+        }
+      ],
+      "reason": "Re-typed with KaTeX math (variables, subscripts, symbols) and the paragraph breaks of the paper; wording unchanged.",
+      "source": "pdf p.31"
+    },
+    {
+      "id": "da-2026-da-38",
+      "field": "topic",
+      "before": "knowledge-representation",
+      "after": "logic",
+      "reason": "Topic re-filed under the DA syllabus topic ids defined in questions.json \"subjects\".",
+      "source": "pdf p.31"
+    },
+    {
+      "id": "da-2026-da-38",
+      "field": "tags",
+      "before": [
+        "ai",
+        "knowledge-representation"
+      ],
+      "after": [
+        "ai",
+        "logic",
+        "first-order-logic",
+        "quantifiers",
+        "validity"
+      ],
+      "reason": "Tags follow the corrected topic, plus concept tags.",
+      "source": "pdf p.31"
+    },
+    {
+      "id": "da-2026-da-39",
+      "field": "text",
+      "before": "Consider the problem of sorting the given array in ascending order: P = [1, 2, 3, 5, 4]. Consider two sorting algorithms Bubble Sort (BS) and Insertion Sort (IS). Let N1 be the total number of comparisons done by BS on the elements of P and N2 be the total number of comparisons done by IS on the elements of P. Which of the following options is/are correct?",
+      "after": "Consider the problem of sorting the given array in ascending order:\n\n$$P = [1, 2, 3, 5, 4]$$\n\nConsider two sorting algorithms Bubble Sort (BS) and Insertion Sort (IS).\n\nLet $N_1$ be the total number of comparisons done by BS on the elements of $P$ and $N_2$ be the total number of comparisons done by IS on the elements of $P$.\n\nWhich of the following options is/are correct?",
+      "reason": "Re-typed with KaTeX math (variables, subscripts, symbols) and the paragraph breaks of the paper; wording unchanged.",
+      "source": "pdf p.32"
+    },
+    {
+      "id": "da-2026-da-39",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "N1 = 10, N2 = 4"
+        },
+        {
+          "l": "B",
+          "t": "N1 > N2"
+        },
+        {
+          "l": "C",
+          "t": "IS on P will perform only one swap"
+        },
+        {
+          "l": "D",
+          "t": "Both BS and IS on P will make at least one unnecessary comparison (i.e., comparing elements that are already in correct order)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$N_1 = 10$, $N_2 = 4$"
+        },
+        {
+          "l": "B",
+          "t": "$N_1 > N_2$"
+        },
+        {
+          "l": "C",
+          "t": "IS on $P$ will perform only one swap"
+        },
+        {
+          "l": "D",
+          "t": "Both BS and IS on $P$ will make at least one unnecessary comparison (i.e., comparing elements that are already in correct order)"
+        }
+      ],
+      "reason": "Re-typed with KaTeX math (variables, subscripts, symbols) and the paragraph breaks of the paper; wording unchanged.",
+      "source": "pdf p.32"
+    },
+    {
+      "id": "da-2026-da-39",
+      "field": "topic",
+      "before": "searching-and-sorting",
+      "after": "algorithms",
+      "reason": "Topic re-filed under the DA syllabus topic ids defined in questions.json \"subjects\".",
+      "source": "pdf p.32"
+    },
+    {
+      "id": "da-2026-da-39",
+      "field": "tags",
+      "before": [
+        "pdsa",
+        "searching-and-sorting"
+      ],
+      "after": [
+        "pdsa",
+        "algorithms",
+        "bubble-sort",
+        "insertion-sort",
+        "comparisons"
+      ],
+      "reason": "Tags follow the corrected topic, plus concept tags.",
+      "source": "pdf p.32"
+    },
+    {
+      "id": "da-2026-da-40",
+      "field": "text",
+      "before": "Consider the given Python program.\ndef outer():\n    x = []\n    def inner(val):\n        x.append(val)\n        return x\n    return inner\nf1 = outer()\nf2 = outer()\nprint(f1(10)) # Line P\nprint(f1(20)) # Line Q\nprint(f2(30)) # Line R\nprint(f1(40)) # Line S\nWhich of the following options is/are correct?",
+      "after": "Consider the given Python program.\n\n```python\ndef outer():\n    x = []\n    def inner(val):\n        x.append(val)\n        return x\n    return inner\nf1 = outer()\nf2 = outer()\nprint(f1(10))   # Line P\nprint(f1(20))   # Line Q\nprint(f2(30))   # Line R\nprint(f1(40))   # Line S\n```\n\nWhich of the following options is/are correct?",
+      "reason": "Program put in a fenced code block so its indentation (which defines the nested function) is preserved.",
+      "source": "pdf p.33"
+    },
+    {
+      "id": "da-2026-da-40",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "f1 and f2 share the same list x"
+        },
+        {
+          "l": "B",
+          "t": "Output of Line Q is [10, 20]"
+        },
+        {
+          "l": "C",
+          "t": "Output of Line R is [10, 20, 30]"
+        },
+        {
+          "l": "D",
+          "t": "Output of Line S is [10, 20, 40]"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "`f1` and `f2` share the same list `x`"
+        },
+        {
+          "l": "B",
+          "t": "Output of Line Q is `[10, 20]`"
+        },
+        {
+          "l": "C",
+          "t": "Output of Line R is `[10, 20, 30]`"
+        },
+        {
+          "l": "D",
+          "t": "Output of Line S is `[10, 20, 40]`"
+        }
+      ],
+      "reason": "Code identifiers and printed lists set in code font; wording unchanged.",
+      "source": "pdf p.33"
+    },
+    {
+      "id": "da-2026-da-40",
+      "field": "topic",
+      "before": "python-and-c-programming",
+      "after": "python",
+      "reason": "Topic re-filed under the DA syllabus topic ids defined in questions.json \"subjects\".",
+      "source": "pdf p.33"
+    },
+    {
+      "id": "da-2026-da-40",
+      "field": "tags",
+      "before": [
+        "pdsa",
+        "python-and-c-programming"
+      ],
+      "after": [
+        "pdsa",
+        "python",
+        "closures",
+        "scope",
+        "mutability"
+      ],
+      "reason": "Tags follow the corrected topic, plus concept tags.",
+      "source": "pdf p.33"
+    },
+    {
+      "id": "da-2026-da-41",
+      "field": "text",
+      "before": "Consider a table Employee(EmpID, TeamID), where the column EmpID (ID of an employee) is the primary key. The column TeamID denotes the team ID of the team of which the employee is a member. TeamID is a NOT NULL column. We want to display the size of the team (denoted as TeamSize) in which each employee is a member by using SQL.\nEmployee(EmpID, TeamID): (1,8),(2,8),(3,8),(4,7),(5,7),(6,9). Desired Output(EmpID, TeamSize): (1,3),(2,3),(3,3),(4,2),(5,2),(6,1).\nWhich of the following is/are correct?",
+      "after": "Consider a table Employee(EmpID, TeamID), where the column EmpID (ID of an employee) is the primary key. The column TeamID denotes the team ID of the team of which the employee is a member. TeamID is a NOT NULL column.\n\nWe want to display the size of the team (denoted as TeamSize) in which each employee is a member by using SQL. As an example, the desired output for the given Employee table is also shown in tabular form.\n\nWhich of the following is/are correct?\n\n**Employee**\n\n| EmpID | TeamID |\n|---|---|\n| 1 | 8 |\n| 2 | 8 |\n| 3 | 8 |\n| 4 | 7 |\n| 5 | 7 |\n| 6 | 9 |\n\n**Output**\n\n| EmpID | TeamSize |\n|---|---|\n| 1 | 3 |\n| 2 | 3 |\n| 3 | 3 |\n| 4 | 2 |\n| 5 | 2 |\n| 6 | 1 |",
+      "reason": "Restored the sentence \"As an example, …\" and the two tables as printed (they had been flattened into tuple lists).",
+      "source": "pdf p.34"
+    },
+    {
+      "id": "da-2026-da-41",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "SELECT E.EmpID, B.TeamSize FROM Employee AS E, (SELECT TeamID, COUNT(TeamID) AS TeamSize FROM Employee GROUP BY TeamID) AS B WHERE E.TeamID = B.TeamID"
+        },
+        {
+          "l": "B",
+          "t": "SELECT A.EmpID, COUNT(B.TeamID) AS TeamSize FROM Employee AS A, Employee AS B WHERE A.TeamID = B.TeamID AND A.EmpID = B.EmpID GROUP BY A.EmpID"
+        },
+        {
+          "l": "C",
+          "t": "SELECT B.EmpID, B.TeamSize FROM (SELECT EmpID, COUNT(TeamID) AS TeamSize FROM Employee GROUP BY EmpID) AS B"
+        },
+        {
+          "l": "D",
+          "t": "SELECT A.EmpID, B.TeamSize FROM Employee AS A, (SELECT COUNT(TeamID) AS TeamSize FROM Employee GROUP BY TeamID) AS B WHERE A.TeamID = B.TeamID"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "```sql\nSELECT E.EmpID, B.TeamSize\nFROM Employee AS E, (SELECT TeamID, COUNT(TeamID) AS\nTeamSize FROM Employee GROUP BY TeamID) AS B\nWHERE E.TeamID = B.TeamID\n```"
+        },
+        {
+          "l": "B",
+          "t": "```sql\nSELECT A.EmpID, COUNT(B.TeamID) AS TeamSize\nFROM Employee AS A, Employee AS B\nWHERE A.TeamID = B.TeamID AND A.EmpID = B.EmpID\nGROUP BY A.EmpID\n```"
+        },
+        {
+          "l": "C",
+          "t": "```sql\nSELECT B.EmpID, B.TeamSize\nFROM (SELECT EmpID, COUNT(TeamID) AS TeamSize\nFROM Employee GROUP BY EmpID) AS B\n```"
+        },
+        {
+          "l": "D",
+          "t": "```sql\nSELECT A.EmpID, B.TeamSize\nFROM Employee AS A, (SELECT COUNT(TeamID) AS TeamSize FROM\nEmployee GROUP BY TeamID) AS B\nWHERE A.TeamID = B.TeamID\n```"
+        }
+      ],
+      "reason": "Queries set as code blocks with the line breaks of the paper; text unchanged.",
+      "source": "pdf p.34"
+    },
+    {
+      "id": "da-2026-da-41",
+      "field": "topic",
+      "before": "sql",
+      "after": "relational",
+      "reason": "Topic re-filed under the DA syllabus topic ids defined in questions.json \"subjects\".",
+      "source": "pdf p.34"
+    },
+    {
+      "id": "da-2026-da-41",
+      "field": "tags",
+      "before": [
+        "dbw",
+        "sql"
+      ],
+      "after": [
+        "dbw",
+        "relational",
+        "sql",
+        "group-by",
+        "subquery",
+        "self-join"
+      ],
+      "reason": "Tags follow the corrected topic, plus concept tags.",
+      "source": "pdf p.34"
+    },
+    {
+      "id": "da-2026-da-42",
+      "field": "text",
+      "before": "Let M = (I_n - (1/n) 11^T) be a matrix, where 1 = (1,1,1,…,1)^T ∈ ℝ^n and I_n is the identity matrix of order n. Which of the following options is/are correct?",
+      "after": "Let $M = \\left(I_n - \\frac{1}{n}\\mathbf{1}\\mathbf{1}^T\\right)$ be a matrix, where $\\mathbf{1} = (1, 1, 1, \\dots, 1)^T \\in \\mathbb{R}^n$ and $I_n$ is the identity matrix of order $n$.\n\nWhich of the following options is/are correct?",
+      "reason": "Re-typed with KaTeX math (variables, subscripts, symbols) and the paragraph breaks of the paper; wording unchanged.",
+      "source": "pdf p.35"
+    },
+    {
+      "id": "da-2026-da-42",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "M^T = M"
+        },
+        {
+          "l": "B",
+          "t": "M^2 = I_n"
+        },
+        {
+          "l": "C",
+          "t": "Trace(M) = n"
+        },
+        {
+          "l": "D",
+          "t": "M is a projection matrix"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$M^T = M$"
+        },
+        {
+          "l": "B",
+          "t": "$M^2 = I_n$"
+        },
+        {
+          "l": "C",
+          "t": "$Trace(M) = n$"
+        },
+        {
+          "l": "D",
+          "t": "$M$ is a projection matrix"
+        }
+      ],
+      "reason": "Re-typed with KaTeX math (variables, subscripts, symbols) and the paragraph breaks of the paper; wording unchanged.",
+      "source": "pdf p.35"
+    },
+    {
+      "id": "da-2026-da-42",
+      "field": "topic",
+      "before": "linear-algebra",
+      "after": "matrices",
+      "reason": "Topic re-filed under the DA syllabus topic ids defined in questions.json \"subjects\".",
+      "source": "pdf p.35"
+    },
+    {
+      "id": "da-2026-da-42",
+      "field": "tags",
+      "before": [
+        "la",
+        "linear-algebra"
+      ],
+      "after": [
+        "la",
+        "matrices",
+        "projection-matrix",
+        "centering-matrix",
+        "idempotent"
+      ],
+      "reason": "Tags follow the corrected topic, plus concept tags.",
+      "source": "pdf p.35"
+    }
+  ]
+}
