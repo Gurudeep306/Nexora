@@ -1,0 +1,887 @@
+{
+  "paper": "da-2026",
+  "fixes": [
+    {
+      "id": "da-2026-da-4",
+      "field": "text",
+      "before": "Which of the following statements is NOT true? (The names of the predicates are intuitive.)",
+      "after": "Which of the following statements is **NOT** true?\n\n(The names of the predicates are intuitive.)",
+      "reason": "Formatted to match the paper (Q.14): KaTeX maths, code/markdown formatting, paragraph breaks as printed.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "da-2026-da-4",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "∀x ∀y Classmate(x, y) ⇒ Classmate(y, x)"
+        },
+        {
+          "l": "B",
+          "t": "∀x Likes(x, Icecream) ⇒ ¬∃x ¬Likes(x, Icecream)"
+        },
+        {
+          "l": "C",
+          "t": "“Each king is a person” is equivalent to ∀x IsKing(x) ⋀ IsPerson(x)"
+        },
+        {
+          "l": "D",
+          "t": "“All humans are mortal” is equivalent to ∀x IsHuman(x) ⇒ IsMortal(x)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\forall x\\, \\forall y\\; \\mathit{Classmate}(x, y) \\Rightarrow \\mathit{Classmate}(y, x)$"
+        },
+        {
+          "l": "B",
+          "t": "$\\forall x\\; \\mathit{Likes}(x, \\mathit{Icecream}) \\Rightarrow \\neg \\exists x\\; \\neg \\mathit{Likes}(x, \\mathit{Icecream})$"
+        },
+        {
+          "l": "C",
+          "t": "“*Each king is a person*” is equivalent to $\\forall x\\; \\mathit{IsKing}(x) \\land \\mathit{IsPerson}(x)$"
+        },
+        {
+          "l": "D",
+          "t": "“*All humans are mortal*” is equivalent to $\\forall x\\; \\mathit{IsHuman}(x) \\Rightarrow \\mathit{IsMortal}(x)$"
+        }
+      ],
+      "reason": "Options re-typeset from the paper (Q.14) with KaTeX/code formatting; content and order unchanged.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "da-2026-da-4",
+      "field": "topic",
+      "before": "knowledge-representation",
+      "after": "logic",
+      "reason": "\"knowledge-representation\" is not a DA topic id; \"logic\" is the matching id in subjects.DA.ai.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "da-2026-da-4",
+      "field": "tags",
+      "before": [
+        "ai",
+        "knowledge-representation"
+      ],
+      "after": [
+        "ai",
+        "logic",
+        "first-order-logic",
+        "quantifiers"
+      ],
+      "reason": "Tags follow the corrected topic, plus specific concept tags.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "da-2026-da-5",
+      "field": "text",
+      "before": "Consider that the quick sort algorithm is used to sort an array of n distinct randomly ordered elements. In every call, the pivot is chosen as the first element of the current subarray. Let T(n) denote the expected time to sort the array. Assume that the time to partition is linear in the size of the current subarray. Which of the following recurrence relations correctly represents T(n) in this scenario?",
+      "after": "Consider that the quick sort algorithm is used to sort an array of $n$ distinct randomly ordered elements. In every call, the pivot is chosen as the first element of the current subarray.\n\nLet $T(n)$ denote the expected time to sort the array. Assume that the time to partition is linear in the size of the current subarray.\n\nWhich of the following recurrence relations correctly represents $T(n)$ in this scenario?",
+      "reason": "Formatted to match the paper (Q.15): KaTeX maths, code/markdown formatting, paragraph breaks as printed.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "da-2026-da-5",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "T(n) = T(1) + T(n - 1) + O(n)"
+        },
+        {
+          "l": "B",
+          "t": "T(n) = T(n/4) + T(3n/4) + O(n)"
+        },
+        {
+          "l": "C",
+          "t": "T(n) = 2T(n/2) + O(n)"
+        },
+        {
+          "l": "D",
+          "t": "T(n) = (1/n) Σ_{k=0}^{n-1} [T(k) + T(n - k - 1)] + O(n)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$T(n) = T(1) + T(n - 1) + O(n)$"
+        },
+        {
+          "l": "B",
+          "t": "$T(n) = T\\left(\\frac{n}{4}\\right) + T\\left(\\frac{3n}{4}\\right) + O(n)$"
+        },
+        {
+          "l": "C",
+          "t": "$T(n) = 2T\\left(\\frac{n}{2}\\right) + O(n)$"
+        },
+        {
+          "l": "D",
+          "t": "$T(n) = \\frac{1}{n} \\sum_{k=0}^{n-1} \\left[T(k) + T(n - k - 1)\\right] + O(n)$"
+        }
+      ],
+      "reason": "Options re-typeset from the paper (Q.15) with KaTeX/code formatting; content and order unchanged.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "da-2026-da-5",
+      "field": "topic",
+      "before": "complexity",
+      "after": "algorithms",
+      "reason": "\"complexity\" is not a DA topic id; \"algorithms\" is the matching id in subjects.DA.pdsa.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "da-2026-da-5",
+      "field": "tags",
+      "before": [
+        "pdsa",
+        "complexity"
+      ],
+      "after": [
+        "pdsa",
+        "algorithms",
+        "quicksort",
+        "recurrences",
+        "average-case"
+      ],
+      "reason": "Tags follow the corrected topic, plus specific concept tags.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "da-2026-da-6",
+      "field": "text",
+      "before": "Consider the given Python program.\ndef append_to_lst(val, lst=[]):\n    lst.append(val)\n    return lst\nprint(append_to_lst(1))\nprint(append_to_lst(2))\nprint(append_to_lst(3, []))\nWhich of the following is the correct output of this program?",
+      "after": "Consider the given Python program.\n\n```python\ndef append_to_lst(val, lst=[]):\n    lst.append(val)\n    return lst\nprint(append_to_lst(1))\nprint(append_to_lst(2))\nprint(append_to_lst(3, []))\n```\n\nWhich of the following is the correct output of this program?",
+      "reason": "Formatted to match the paper (Q.16): KaTeX maths, code/markdown formatting, paragraph breaks as printed.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "da-2026-da-6",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "[1] / [2] / [3]"
+        },
+        {
+          "l": "B",
+          "t": "[1] / [1, 2] / [3]"
+        },
+        {
+          "l": "C",
+          "t": "[1] / [2] / [1, 2, 3]"
+        },
+        {
+          "l": "D",
+          "t": "[1] / [1, 2] / [1, 3]"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "`[1]` / `[2]` / `[3]`"
+        },
+        {
+          "l": "B",
+          "t": "`[1]` / `[1, 2]` / `[3]`"
+        },
+        {
+          "l": "C",
+          "t": "`[1]` / `[2]` / `[1, 2, 3]`"
+        },
+        {
+          "l": "D",
+          "t": "`[1]` / `[1, 2]` / `[1, 3]`"
+        }
+      ],
+      "reason": "Options re-typeset from the paper (Q.16) with KaTeX/code formatting; content and order unchanged.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "da-2026-da-6",
+      "field": "topic",
+      "before": "python-and-c-programming",
+      "after": "python",
+      "reason": "\"python-and-c-programming\" is not a DA topic id; \"python\" is the matching id in subjects.DA.pdsa.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "da-2026-da-6",
+      "field": "tags",
+      "before": [
+        "pdsa",
+        "python-and-c-programming"
+      ],
+      "after": [
+        "pdsa",
+        "python",
+        "default-arguments",
+        "mutability"
+      ],
+      "reason": "Tags follow the corrected topic, plus specific concept tags.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "da-2026-da-7",
+      "field": "text",
+      "before": "Let R(A,B,C,D,E) be a relational schema with functional dependency set F = {A → BC, CD → E, E → A}. Which of the following statements is correct?",
+      "after": "Let $R(A,B,C,D,E)$ be a relational schema with functional dependency set $F = \\{A \\to BC,\\ CD \\to E,\\ E \\to A\\}$.\n\nWhich of the following statements is correct?",
+      "reason": "Formatted to match the paper (Q.17): KaTeX maths, code/markdown formatting, paragraph breaks as printed.",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "da-2026-da-7",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "AD, ED and CD are the only candidate keys of R."
+        },
+        {
+          "l": "B",
+          "t": "AD and ED are the only candidate keys of R."
+        },
+        {
+          "l": "C",
+          "t": "A, E and CD are the only candidate keys of R."
+        },
+        {
+          "l": "D",
+          "t": "A and CD are the only candidate keys of R."
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$AD$, $ED$ and $CD$ are the only candidate keys of $R$."
+        },
+        {
+          "l": "B",
+          "t": "$AD$ and $ED$ are the only candidate keys of $R$."
+        },
+        {
+          "l": "C",
+          "t": "$A$, $E$ and $CD$ are the only candidate keys of $R$."
+        },
+        {
+          "l": "D",
+          "t": "$A$ and $CD$ are the only candidate keys of $R$."
+        }
+      ],
+      "reason": "Options re-typeset from the paper (Q.17) with KaTeX/code formatting; content and order unchanged.",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "da-2026-da-7",
+      "field": "topic",
+      "before": "normalisation",
+      "after": "relational",
+      "reason": "\"normalisation\" is not a DA topic id; \"relational\" is the matching id in subjects.DA.dbw.",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "da-2026-da-7",
+      "field": "tags",
+      "before": [
+        "dbw",
+        "normalisation"
+      ],
+      "after": [
+        "dbw",
+        "relational",
+        "functional-dependencies",
+        "candidate-keys"
+      ],
+      "reason": "Tags follow the corrected topic, plus specific concept tags.",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "da-2026-da-8",
+      "field": "text",
+      "before": "Consider that the visualization of a 3-dimensional data cube is showing Sales Quantity for each combination of the attributes Product Type, Month and Country. From this, if we want to further visualize the Sales Quantity for each combination of Product Type, Month and State, which of the following OLAP operations should be performed?",
+      "after": "Consider that the visualization of a 3-dimensional data cube is showing *Sales Quantity* for each combination of the attributes *Product Type*, *Month* and *Country*.\n\nFrom this, if we want to further visualize the *Sales Quantity* for each combination of *Product Type*, *Month* and *State*, which of the following OLAP operations should be performed?",
+      "reason": "Formatted to match the paper (Q.18): KaTeX maths, code/markdown formatting, paragraph breaks as printed.",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "da-2026-da-8",
+      "field": "topic",
+      "before": "data-warehousing-and-olap",
+      "after": "warehousing",
+      "reason": "\"data-warehousing-and-olap\" is not a DA topic id; \"warehousing\" is the matching id in subjects.DA.dbw.",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "da-2026-da-8",
+      "field": "tags",
+      "before": [
+        "dbw",
+        "data-warehousing-and-olap"
+      ],
+      "after": [
+        "dbw",
+        "warehousing",
+        "olap",
+        "data-cube"
+      ],
+      "reason": "Tags follow the corrected topic, plus specific concept tags.",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "da-2026-da-9",
+      "field": "text",
+      "before": "Let M be a randomly chosen non-empty subset of S = {1, 2, 3, …, 2026}. Which of the following is the probability that the product of all the elements of M is even?",
+      "after": "Let $M$ be a randomly chosen non-empty subset of $S = \\{1, 2, 3, \\ldots, 2026\\}$.\n\nWhich of the following is the probability that the product of all the elements of $M$ is even?",
+      "reason": "Formatted to match the paper (Q.19): KaTeX maths, code/markdown formatting, paragraph breaks as printed.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "da-2026-da-9",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "2^1013(2^1013 - 1)/2^2026"
+        },
+        {
+          "l": "B",
+          "t": "2^1013/2^2026"
+        },
+        {
+          "l": "C",
+          "t": "2^1013(2^1013 - 1)/(2^2026 - 1)"
+        },
+        {
+          "l": "D",
+          "t": "1/(2^2026 - 1)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$2^{1013}(2^{1013} - 1)/2^{2026}$"
+        },
+        {
+          "l": "B",
+          "t": "$2^{1013}/2^{2026}$"
+        },
+        {
+          "l": "C",
+          "t": "$2^{1013}(2^{1013} - 1)/(2^{2026} - 1)$"
+        },
+        {
+          "l": "D",
+          "t": "$1/(2^{2026} - 1)$"
+        }
+      ],
+      "reason": "Options re-typeset from the paper (Q.19) with KaTeX/code formatting; content and order unchanged.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "da-2026-da-9",
+      "field": "topic",
+      "before": "probability-and-statistics",
+      "after": "basic",
+      "reason": "\"probability-and-statistics\" is not a DA topic id; \"basic\" is the matching id in subjects.DA.prob.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "da-2026-da-9",
+      "field": "tags",
+      "before": [
+        "prob",
+        "probability-and-statistics"
+      ],
+      "after": [
+        "prob",
+        "basic",
+        "counting",
+        "subsets",
+        "complement"
+      ],
+      "reason": "Tags follow the corrected topic, plus specific concept tags.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "da-2026-da-10",
+      "field": "text",
+      "before": "Suppose that a computer program provides a non-negative and integer-valued random solution to the equation n1 + n2 + n3 + n4 = 20. Which of the following is the probability that all of n1, n2, n3, n4 in the provided solution are positive?",
+      "after": "Suppose that a computer program provides a non-negative and integer-valued random solution to the equation $n_1 + n_2 + n_3 + n_4 = 20$.\n\nWhich of the following is the probability that all of $n_1, n_2, n_3, n_4$ in the provided solution are positive?",
+      "reason": "Formatted to match the paper (Q.20): KaTeX maths, code/markdown formatting, paragraph breaks as printed.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "da-2026-da-10",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "C(19,3)/C(23,3)"
+        },
+        {
+          "l": "B",
+          "t": "C(20,4)/C(24,4)"
+        },
+        {
+          "l": "C",
+          "t": "C(20,3)/C(23,3)"
+        },
+        {
+          "l": "D",
+          "t": "C(19,4)/C(24,4)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\binom{19}{3} \\big/ \\binom{23}{3}$"
+        },
+        {
+          "l": "B",
+          "t": "$\\binom{20}{4} \\big/ \\binom{24}{4}$"
+        },
+        {
+          "l": "C",
+          "t": "$\\binom{20}{3} \\big/ \\binom{23}{3}$"
+        },
+        {
+          "l": "D",
+          "t": "$\\binom{19}{4} \\big/ \\binom{24}{4}$"
+        }
+      ],
+      "reason": "Options re-typeset from the paper (Q.20) with KaTeX/code formatting; content and order unchanged.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "da-2026-da-10",
+      "field": "topic",
+      "before": "probability-and-statistics",
+      "after": "basic",
+      "reason": "\"probability-and-statistics\" is not a DA topic id; \"basic\" is the matching id in subjects.DA.prob.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "da-2026-da-10",
+      "field": "tags",
+      "before": [
+        "prob",
+        "probability-and-statistics"
+      ],
+      "after": [
+        "prob",
+        "basic",
+        "counting",
+        "stars-and-bars"
+      ],
+      "reason": "Tags follow the corrected topic, plus specific concept tags.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "da-2026-da-11",
+      "field": "text",
+      "before": "Let M = [[cosθ, -sinθ], [sinθ, cosθ]] be a 2 × 2 matrix, where θ = 2π/5, and I2 = [[1,0],[0,1]]. Which of the following options is equal to M^2026?",
+      "after": "Let $M = \\begin{pmatrix} \\cos\\theta & -\\sin\\theta \\\\ \\sin\\theta & \\cos\\theta \\end{pmatrix}$ be a $2 \\times 2$ matrix, where $\\theta = \\frac{2\\pi}{5}$, and $I_2 = \\begin{pmatrix} 1 & 0 \\\\ 0 & 1 \\end{pmatrix}$.\n\nWhich of the following options is equal to $M^{2026}$?",
+      "reason": "Formatted to match the paper (Q.21): KaTeX maths, code/markdown formatting, paragraph breaks as printed.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "da-2026-da-11",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "M^2"
+        },
+        {
+          "l": "B",
+          "t": "M"
+        },
+        {
+          "l": "C",
+          "t": "M^(-1)"
+        },
+        {
+          "l": "D",
+          "t": "I2"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$M^2$"
+        },
+        {
+          "l": "B",
+          "t": "$M$"
+        },
+        {
+          "l": "C",
+          "t": "$M^{-1}$"
+        },
+        {
+          "l": "D",
+          "t": "$I_2$"
+        }
+      ],
+      "reason": "Options re-typeset from the paper (Q.21) with KaTeX/code formatting; content and order unchanged.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "da-2026-da-11",
+      "field": "topic",
+      "before": "linear-algebra",
+      "after": "matrices",
+      "reason": "\"linear-algebra\" is not a DA topic id; \"matrices\" is the matching id in subjects.DA.la.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "da-2026-da-11",
+      "field": "tags",
+      "before": [
+        "la",
+        "linear-algebra"
+      ],
+      "after": [
+        "la",
+        "matrices",
+        "rotation-matrix",
+        "matrix-powers"
+      ],
+      "reason": "Tags follow the corrected topic, plus specific concept tags.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "da-2026-da-12",
+      "field": "text",
+      "before": "Consider a set S1 = {x = (x1, x2, x3)^T ∈ ℝ^3 | x^T x ≤ 16}. Let S2 be another set which is a subspace of ℝ^3 with dimension two. Which of the following gives the area of S1 ∩ S2?",
+      "after": "Consider a set $S_1 = \\{x = (x_1, x_2, x_3)^T \\in \\mathbb{R}^3 \\mid x^T x \\le 16\\}$. Let $S_2$ be another set which is a subspace of $\\mathbb{R}^3$ with dimension two.\n\nWhich of the following gives the area of $S_1 \\cap S_2$?",
+      "reason": "Formatted to match the paper (Q.22): KaTeX maths, code/markdown formatting, paragraph breaks as printed.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "da-2026-da-12",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "16π"
+        },
+        {
+          "l": "B",
+          "t": "4π"
+        },
+        {
+          "l": "C",
+          "t": "4π^2"
+        },
+        {
+          "l": "D",
+          "t": "16π^2"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$16\\pi$"
+        },
+        {
+          "l": "B",
+          "t": "$4\\pi$"
+        },
+        {
+          "l": "C",
+          "t": "$4\\pi^2$"
+        },
+        {
+          "l": "D",
+          "t": "$16\\pi^2$"
+        }
+      ],
+      "reason": "Options re-typeset from the paper (Q.22) with KaTeX/code formatting; content and order unchanged.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "da-2026-da-12",
+      "field": "topic",
+      "before": "linear-algebra",
+      "after": "spaces",
+      "reason": "\"linear-algebra\" is not a DA topic id; \"spaces\" is the matching id in subjects.DA.la.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "da-2026-da-12",
+      "field": "tags",
+      "before": [
+        "la",
+        "linear-algebra"
+      ],
+      "after": [
+        "la",
+        "spaces",
+        "subspaces",
+        "geometry"
+      ],
+      "reason": "Tags follow the corrected topic, plus specific concept tags.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "da-2026-da-13",
+      "field": "text",
+      "before": "In the following table, the Task column lists a few tasks related to machine learning. The Algorithm column lists a few algorithms. Each entry “t” from the Task column is to be matched with an appropriate entry “a” from the Algorithm column such that the task “t” can be solved using the algorithm “a”. Denote such a match as t:a.\nTask: T1 – Clustering; T2 – Classification; T3 – Sampling; T4 – Feature Extraction\nAlgorithm: A1 – Markov Chain Monte Carlo; A2 – K-Medoid; A3 – Linear Discriminant Analysis; A4 – Naive Bayes\nWhich of the following options is/are the correct matching(s)?",
+      "after": "In the following table, the `Task` column lists a few tasks related to machine learning. The `Algorithm` column lists a few algorithms.\n\nEach entry “`t`” from the `Task` column is to be matched with an appropriate entry “`a`” from the `Algorithm` column such that the task “`t`” can be solved using the algorithm “`a`”. Denote such a match as `t:a`\n\n| Task | Algorithm |\n|---|---|\n| T1 – Clustering | A1 – Markov Chain Monte Carlo |\n| T2 – Classification | A2 – K-Medoid |\n| T3 – Sampling | A3 – Linear Discriminant Analysis |\n| T4 – Feature Extraction | A4 – Naive Bayes |\n\nWhich of the following options is/are the correct matching(s)?",
+      "reason": "Formatted to match the paper (Q.23): KaTeX maths, code/markdown formatting, paragraph breaks as printed.",
+      "source": "pdf p.15"
+    },
+    {
+      "id": "da-2026-da-13",
+      "field": "topic",
+      "before": "classification",
+      "after": "unsupervised",
+      "reason": "\"classification\" is not a DA topic id; \"unsupervised\" is the matching id in subjects.DA.ml.",
+      "source": "pdf p.15"
+    },
+    {
+      "id": "da-2026-da-13",
+      "field": "tags",
+      "before": [
+        "ml",
+        "classification"
+      ],
+      "after": [
+        "ml",
+        "unsupervised",
+        "supervised",
+        "clustering",
+        "lda",
+        "mcmc"
+      ],
+      "reason": "Tags follow the corrected topic, plus specific concept tags.",
+      "source": "pdf p.15"
+    },
+    {
+      "id": "da-2026-da-14",
+      "field": "text",
+      "before": "Sentence X is said to entail Sentence Y if whenever X is TRUE, Y also must hold TRUE. Which of the following statements is/are correct if X entails Y?",
+      "after": "Sentence $X$ is said to entail Sentence $Y$ if whenever $X$ is $\\mathit{TRUE}$, $Y$ also must hold $\\mathit{TRUE}$.\n\nWhich of the following statements is/are correct if $X$ entails $Y$?",
+      "reason": "Formatted to match the paper (Q.24): KaTeX maths, code/markdown formatting, paragraph breaks as printed.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "da-2026-da-14",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "X ⇒ Y"
+        },
+        {
+          "l": "B",
+          "t": "X ⋀ ¬Y is FALSE"
+        },
+        {
+          "l": "C",
+          "t": "if X then Y"
+        },
+        {
+          "l": "D",
+          "t": "if Y then X"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$X \\Rightarrow Y$"
+        },
+        {
+          "l": "B",
+          "t": "$X \\land \\neg Y$ is $\\mathit{FALSE}$"
+        },
+        {
+          "l": "C",
+          "t": "if $X$ then $Y$"
+        },
+        {
+          "l": "D",
+          "t": "if $Y$ then $X$"
+        }
+      ],
+      "reason": "Options re-typeset from the paper (Q.24) with KaTeX/code formatting; content and order unchanged.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "da-2026-da-14",
+      "field": "topic",
+      "before": "logic-and-reasoning",
+      "after": "logic",
+      "reason": "\"logic-and-reasoning\" is not a DA topic id; \"logic\" is the matching id in subjects.DA.ai.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "da-2026-da-14",
+      "field": "tags",
+      "before": [
+        "ai",
+        "logic-and-reasoning"
+      ],
+      "after": [
+        "ai",
+        "logic",
+        "entailment",
+        "propositional-logic"
+      ],
+      "reason": "Tags follow the corrected topic, plus specific concept tags.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "da-2026-da-15",
+      "field": "text",
+      "before": "You are given the following Pre-order and In-order traversals of a Binary Tree T with nodes E, F, G, P, Q, R, S.\nPre-order: P Q S E R F G\nIn-order: S Q E P F R G\nWhich of the following statements is/are true about the Binary Tree T?",
+      "after": "You are given the following Pre-order and In-order traversals of a Binary Tree T with nodes E, F, G, P, Q, R, S.\n\nPre-order: `P Q S E R F G`\n\nIn-order: `S Q E P F R G`\n\nWhich of the following statements is/are true about the Binary Tree T?",
+      "reason": "Formatted to match the paper (Q.25): KaTeX maths, code/markdown formatting, paragraph breaks as printed.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "da-2026-da-15",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Node P is the root of T"
+        },
+        {
+          "l": "B",
+          "t": "The Post-order traversal of T is: S E Q F G R P"
+        },
+        {
+          "l": "C",
+          "t": "Node Q has only one child"
+        },
+        {
+          "l": "D",
+          "t": "The left subtree of node R contains the node G"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Node `P` is the root of T"
+        },
+        {
+          "l": "B",
+          "t": "The Post-order traversal of T is: `S E Q F G R P`"
+        },
+        {
+          "l": "C",
+          "t": "Node `Q` has only one child"
+        },
+        {
+          "l": "D",
+          "t": "The left subtree of node `R` contains the node `G`"
+        }
+      ],
+      "reason": "Options re-typeset from the paper (Q.25) with KaTeX/code formatting; content and order unchanged.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "da-2026-da-15",
+      "field": "topic",
+      "before": "trees",
+      "after": "ds",
+      "reason": "\"trees\" is not a DA topic id; \"ds\" is the matching id in subjects.DA.pdsa.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "da-2026-da-15",
+      "field": "tags",
+      "before": [
+        "pdsa",
+        "trees"
+      ],
+      "after": [
+        "pdsa",
+        "ds",
+        "binary-tree",
+        "tree-traversal"
+      ],
+      "reason": "Tags follow the corrected topic, plus specific concept tags.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "da-2026-da-16",
+      "field": "text",
+      "before": "Consider two relations r and s defined on the relational schemas R(A,B) and S(E,C), respectively. A is the primary key of R and E is a foreign key of S referencing A in R. Which of the following operations will NEVER violate the foreign key constraint?",
+      "after": "Consider two relations `r` and `s` defined on the relational schemas `R(A,B)` and `S(E,C)`, respectively. `A` is the primary key of `R` and `E` is a foreign key of `S` referencing `A` in `R`.\n\nWhich of the following operations will **NEVER** violate the foreign key constraint?",
+      "reason": "Formatted to match the paper (Q.26): KaTeX maths, code/markdown formatting, paragraph breaks as printed.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "da-2026-da-16",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Inserting records into relation r"
+        },
+        {
+          "l": "B",
+          "t": "Deleting records from relation s"
+        },
+        {
+          "l": "C",
+          "t": "Deleting records from relation r"
+        },
+        {
+          "l": "D",
+          "t": "Inserting records into relation s"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Inserting records into relation `r`"
+        },
+        {
+          "l": "B",
+          "t": "Deleting records from relation `s`"
+        },
+        {
+          "l": "C",
+          "t": "Deleting records from relation `r`"
+        },
+        {
+          "l": "D",
+          "t": "Inserting records into relation `s`"
+        }
+      ],
+      "reason": "Options re-typeset from the paper (Q.26) with KaTeX/code formatting; content and order unchanged.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "da-2026-da-16",
+      "field": "topic",
+      "before": "relational-model",
+      "after": "relational",
+      "reason": "\"relational-model\" is not a DA topic id; \"relational\" is the matching id in subjects.DA.dbw.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "da-2026-da-16",
+      "field": "tags",
+      "before": [
+        "dbw",
+        "relational-model"
+      ],
+      "after": [
+        "dbw",
+        "relational",
+        "foreign-key",
+        "referential-integrity"
+      ],
+      "reason": "Tags follow the corrected topic, plus specific concept tags.",
+      "source": "pdf p.18"
+    }
+  ]
+}
