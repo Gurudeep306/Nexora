@@ -134,3 +134,53 @@ export function uiFontStacks(f: UiFont): { body: string; display: string } {
 export function codeFontStack(f: CodeFont): string {
   return `'${f.family}', '${f.label} Fallback', ${monoTail}`
 }
+
+/*
+  Solution handwriting — the face GATE worked solutions are set in (prose
+  only: maths, code, the animation canvas, controls and the answer keep their
+  own fonts). All are print-style hands, never cursive. Hand fonts run small
+  or loose next to a UI grotesk, so each carries its own size scale, leading
+  and tracking, exposed as --solution-* custom properties (themeCss.ts) and
+  applied by gate/solution/solution-font.css.
+*/
+export interface SolutionFont {
+  id: string
+  label: string
+  /** CSS family name declared by the fontsource package ('' = the UI font). */
+  family: string
+  note: string
+  /** Multiplies the solution's authored text sizes. */
+  scale: number
+  /** Unitless line-height for paragraphs. */
+  leading: number
+  tracking: string
+  /** Body weight (variable faces can sit between stops). */
+  weight: number
+  /** font-variation-settings — design axes only; weight goes through font-weight. */
+  variation?: string
+  fallback?: FallbackMetrics
+}
+
+export const SOLUTION_FONTS: SolutionFont[] = [
+  { id: 'shantell', label: 'Shantell Sans', family: 'Shantell Sans Variable', scale: 1.06, leading: 1.7, tracking: '0.006em', weight: 430,
+    variation: "'INFM' 50", fallback: A(110.8, 92.1, 28.9),
+    note: 'Marker-drawn print with a variable informality axis, set halfway: hand-made detail that still reads like print.' },
+  { id: 'patrick', label: 'Patrick Hand', family: 'Patrick Hand', scale: 1.2, leading: 1.58, tracking: '0.012em', weight: 400,
+    fallback: A(80.1, 130.2, 39),
+    note: 'Neat, upright print from a real hand — compact and very clear.' },
+  { id: 'architects', label: 'Architects Daughter', family: 'Architects Daughter', scale: 1.04, leading: 1.76, tracking: '0.01em', weight: 400,
+    fallback: A(107, 92.1, 37.7),
+    note: 'A draftsman’s lettering — like neat notes on a whiteboard.' },
+  { id: 'mali', label: 'Mali', family: 'Mali', scale: 1.0, leading: 1.72, tracking: '0.004em', weight: 400,
+    fallback: A(110.6, 95, 22.6),
+    note: 'Friendly, rounded schoolbook hand with real weights for emphasis.' },
+  { id: 'off', label: 'Off', family: '', scale: 1, leading: 1.75, tracking: 'normal', weight: 400,
+    note: 'Solutions use the interface font.' },
+]
+
+export const DEFAULT_SOLUTION_FONT = 'shantell'
+
+/** CSS font-family stack for a solution font ('off' → the UI font). */
+export function solutionFontStack(f: SolutionFont): string {
+  return f.family ? `'${f.family}', '${f.label} Fallback', var(--font-body)` : 'var(--font-body)'
+}

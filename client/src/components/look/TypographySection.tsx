@@ -1,8 +1,8 @@
 import { useEffect } from 'react'
 import { Check } from 'lucide-react'
 import { useTheme } from '@/context/ThemeContext'
-import { CODE_FONTS, TEXT_SIZES, UI_FONTS } from '@/theme/fonts'
-import { CODE_FONT_LOADERS, UI_FONT_LOADERS, loadCodeFont, loadUiFont } from '@/theme/fontLoaders'
+import { CODE_FONTS, SOLUTION_FONTS, TEXT_SIZES, UI_FONTS } from '@/theme/fonts'
+import { CODE_FONT_LOADERS, SOLUTION_FONT_LOADERS, UI_FONT_LOADERS, loadCodeFont, loadSolutionFont, loadUiFont } from '@/theme/fontLoaders'
 import { cn } from '@/lib/utils'
 import { RadioGroup, Segmented } from './controls'
 import { Section } from './Section'
@@ -38,6 +38,7 @@ export function TypographySection() {
   useEffect(() => {
     Object.keys(UI_FONT_LOADERS).forEach((id) => void loadUiFont(id))
     Object.keys(CODE_FONT_LOADERS).forEach((id) => void loadCodeFont(id))
+    Object.keys(SOLUTION_FONT_LOADERS).forEach((id) => void loadSolutionFont(id))
   }, [])
 
   return (
@@ -103,6 +104,39 @@ export function TypographySection() {
                 <span className="text-[var(--color-syntax-function)]">fn</span>(x) =&gt; x * <span className="text-[var(--color-syntax-number)]">0x1F</span>
                 {'\n}'}
               </code>
+            </span>
+          )}
+        />
+      </Section>
+
+      <Section title="Solution handwriting" hint="GATE worked solutions read like notes from a tutor. Maths, code and the animations keep their usual fonts.">
+        <RadioGroup
+          label="Solution handwriting"
+          items={SOLUTION_FONTS}
+          value={look.solutionFont}
+          onChange={(id) => setLook({ solutionFont: id })}
+          className="grid grid-cols-1 gap-3 sm:grid-cols-2 2xl:grid-cols-3"
+          itemLabel={(f) => (f.id === 'off' ? 'Off — use the interface font' : f.label)}
+          itemClassName="rounded-[var(--radius-card)]"
+          renderItem={(f, checked) => (
+            <span data-solution-font={f.id} className={cardClass(checked)}>
+              {checked && <Tick />}
+              <span className="block pr-7 text-[14px] font-semibold text-text-primary">{f.id === 'off' ? 'Off' : f.label}</span>
+              <span className="block text-[11.5px] leading-snug text-text-muted">{f.note}</span>
+              <span
+                className="mt-3 block rounded-[var(--radius-control)] border border-border/70 bg-bg-surface-2/60 px-3 py-2.5 text-text-primary"
+                style={{
+                  fontFamily: 'var(--font-solution)',
+                  fontSize: 'calc(14px * var(--solution-scale, 1))',
+                  lineHeight: 'var(--solution-leading)',
+                  letterSpacing: 'var(--solution-tracking)',
+                  fontWeight: 'var(--solution-weight)',
+                  fontVariationSettings: 'var(--solution-variation)',
+                }}
+              >
+                <span style={{ fontWeight: 'calc(var(--solution-weight) + 180)' }}>Step 2 — relax the edges out of S:</span>{' '}
+                d(A) = 0 + 4 = 4, so A is now final.
+              </span>
             </span>
           )}
         />
