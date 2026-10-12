@@ -1,5 +1,5 @@
 import { useSearchParams } from 'react-router-dom'
-import { Users, MessagesSquare, DoorOpen, Trophy, PlugZap, Rss } from 'lucide-react'
+import { DoorOpen, PlugZap, Rss } from 'lucide-react'
 import { Card, EmptyState, PageHeader, Tabs } from '@/components/ui'
 import { useAuth } from '@/context/AuthContext'
 import { useSocket } from '@/lib/socket'
@@ -8,13 +8,14 @@ import { MessagesTab } from '@/components/social/MessagesTab'
 import { RoomsTab } from '@/components/social/RoomsTab'
 import { LeaderboardTab } from '@/components/social/LeaderboardTab'
 import { FeedTab } from '@/components/social/FeedTab'
+import { Icon } from '@/components/icon/Icon'
 
 const TABS = [
-  { id: 'friends', label: 'Friends', icon: <Users className="size-3.5" /> },
-  { id: 'messages', label: 'Messages', icon: <MessagesSquare className="size-3.5" /> },
+  { id: 'friends', label: 'Friends', icon: <Icon name="users" className="size-3.5" /> },
+  { id: 'messages', label: 'Messages', icon: <Icon name="messages" className="size-3.5" /> },
   { id: 'rooms', label: 'Solve Rooms', icon: <DoorOpen className="size-3.5" /> },
   { id: 'feed', label: 'Feed', icon: <Rss className="size-3.5" /> },
-  { id: 'leaderboard', label: 'Leaderboard', icon: <Trophy className="size-3.5" /> },
+  { id: 'leaderboard', label: 'Leaderboard', icon: <Icon name="trophy" className="size-3.5" /> },
 ]
 
 const TAB_IDS = new Set(TABS.map((t) => t.id))
@@ -38,10 +39,10 @@ export default function SocialPage() {
   if (!me) {
     return (
       <div>
-        <PageHeader title="Social Guild" subtitle="Friends, messages, solve rooms & rankings" />
+        <PageHeader icon="social" title="Social Guild" subtitle="Friends, messages, solve rooms & rankings" />
         <Card>
           <EmptyState
-            icon={<Users />}
+            icon="users"
             title="Identity required"
             description="Sign in to enter the social rift — friends, DMs and co-op rooms are keyed to your username."
           />
@@ -53,6 +54,7 @@ export default function SocialPage() {
   return (
     <div>
       <PageHeader
+        icon="social"
         title="Social Guild"
         subtitle="Your squad, your DMs, your co-op solve rooms — all wired to the realtime rift."
         actions={

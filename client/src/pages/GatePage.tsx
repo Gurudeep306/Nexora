@@ -1,13 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import {
-  Play,
-  RotateCcw,
-  SearchX,
-  Sparkles,
-  ChevronLeft,
-  ChevronRight,
-} from 'lucide-react'
+import { Play, RotateCcw, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Icon, IconBadge } from '@/components/icon/Icon'
 import { EmptyState, ErrorState, LoadingBlock } from '@/components/ui'
 import { api } from '@/lib/api'
 import { useApi } from '@/hooks/useApi'
@@ -212,10 +206,12 @@ export default function GatePage() {
     <div className="space-y-6 pb-12 animate-in fade-in-0 duration-200">
       {/* ── Studio Header ── */}
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <div>
+        <div className="flex min-w-0 items-start gap-4">
+          <IconBadge name="gate" box="lg" boxClassName="mt-1 hidden sm:inline-flex" />
+          <div className="min-w-0">
           <div className="flex items-center gap-2 mb-1">
             <span className="flex items-center gap-1.5 rounded-lg bg-accent-brand/15 px-2.5 py-0.5 text-[11px] font-bold text-accent-brand uppercase tracking-wider">
-              <Sparkles className="size-3" /> Question Bank & Practice Tests
+              <Icon name="sparkles" className="size-3" /> Question Bank & Practice Tests
             </span>
             <span className="rounded-lg bg-emerald-500/15 px-2.5 py-0.5 text-[11px] font-mono font-bold text-emerald-400">
               1991–2026 PYQs & Mock Tests
@@ -227,6 +223,7 @@ export default function GatePage() {
           <p className="text-[13.5px] text-text-muted max-w-2xl mt-1">
             Official GATE PYQs and curated practice mock tests with verified step-by-step mathematical solutions, 30-second Topper's shortcuts, interactive animated visualizers, and HD vector schematics.
           </p>
+          </div>
         </div>
 
         {/* Real CBT Exam Mode Button */}
@@ -278,7 +275,7 @@ export default function GatePage() {
       ) : total === 0 ? (
         <div className="card p-10 text-center space-y-4 rounded-3xl border border-border/80">
           <EmptyState
-            icon={<SearchX className="size-9 text-text-muted" />}
+            icon={<Icon name="search" className="size-9 text-text-muted" />}
             title="No questions match your current filters"
             description="Try selecting a different subject, expanding your year range, or clearing the search query."
           />

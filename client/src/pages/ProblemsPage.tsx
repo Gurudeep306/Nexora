@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Dices, SearchX } from 'lucide-react'
+import { Dices } from 'lucide-react'
 import {
   Button,
   EmptyState,
@@ -225,6 +225,7 @@ export default function ProblemsPage() {
   return (
     <div>
       <PageHeader
+        icon="problems"
         title="Problem Arena"
         subtitle="Filter, bookmark and dive into problems across six competitive platforms."
         actions={
@@ -262,7 +263,7 @@ export default function ProblemsPage() {
             ) : problems.length === 0 ? (
               <div className="card-neon">
                 <EmptyState
-                  icon={<SearchX />}
+                  icon="search"
                   title="No problems match"
                   description={
                     qParam

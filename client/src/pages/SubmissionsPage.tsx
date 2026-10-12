@@ -1,6 +1,6 @@
 import { Fragment, useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
-import { ChevronDown, ChevronLeft, ChevronRight, History, RefreshCw, Search } from 'lucide-react'
+import { ChevronDown, ChevronLeft, ChevronRight, RefreshCw, Search } from 'lucide-react'
 import {
   Button,
   EmptyState,
@@ -64,6 +64,7 @@ export default function SubmissionsPage() {
   return (
     <div>
       <PageHeader
+        icon="submissions"
         title="Submissions"
         subtitle="Every verdict the judge ever handed you — filter, inspect, and relive the runtime."
         actions={
@@ -75,13 +76,13 @@ export default function SubmissionsPage() {
       />
 
       <div className="mb-4 grid grid-cols-2 gap-3 xl:grid-cols-4">
-        <StatCard label="Total Runs" value={rows.length} icon={<History />} sub="archived submissions" />
-        <StatCard label="Accepted" value={acCount} icon={<History />} accent="success" sub="clean kills" />
-        <StatCard label="Accuracy" value={`${accuracy}%`} icon={<History />} accent="cyan" sub="AC / total" />
+        <StatCard label="Total Runs" value={rows.length} icon="submissions" sub="archived submissions" />
+        <StatCard label="Accepted" value={acCount} icon="check-circle" accent="success" sub="clean kills" />
+        <StatCard label="Accuracy" value={`${accuracy}%`} icon="crosshair" accent="cyan" sub="AC / total" />
         <StatCard
           label="Last Verdict"
           value={rows[0]?.verdict ?? '—'}
-          icon={<History />}
+          icon="activity"
           accent="warning"
           sub={rows[0] ? timeAgo(parseSubmittedAt(rows[0].submitted_at)) : 'no activity'}
         />
@@ -93,7 +94,7 @@ export default function SubmissionsPage() {
         <ErrorState message={error} onRetry={refetch} />
       ) : rows.length === 0 ? (
         <EmptyState
-          icon={<History />}
+          icon="submissions"
           title="No submissions yet"
           description="Once you submit code from the solve IDE, the full verdict history shows up here."
         />

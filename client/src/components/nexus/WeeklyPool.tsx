@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
-import { CalendarClock, ChevronDown, Play } from 'lucide-react'
+import { ChevronDown } from 'lucide-react'
 import { Badge, Card, CardContent, EmptyState } from '@/components/ui'
 import { PlatformBadge } from '@/components/shared/PlatformBadge'
 import { cn } from '@/lib/utils'
 import type { RoadmapLevel } from './types'
+import { Icon } from '@/components/icon/Icon'
 
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000
 
@@ -30,7 +31,7 @@ export function WeeklyPool({
     return (
       <Card>
         <EmptyState
-          icon={<CalendarClock />}
+          icon="calendar"
           title="No weekly pool for this zone"
           description="Practice pools appear for zones with curated topics."
         />
@@ -51,7 +52,7 @@ export function WeeklyPool({
             </p>
           </div>
           <Badge variant="cyan">
-            <CalendarClock className="size-3" aria-hidden="true" />
+            <Icon name="calendar" className="size-3" aria-hidden="true" />
             {weekRefreshLabel(weekSeed)}
           </Badge>
         </div>
@@ -93,10 +94,9 @@ export function WeeklyPool({
                           to={`/solve/${p.id}`}
                           className="group flex cursor-pointer items-center gap-2 px-3 py-2 transition-colors duration-150 hover:bg-surface-2"
                         >
-                          <Play
+                          <Icon name="play"
                             className="size-3 shrink-0 text-primary-bright opacity-0 transition-opacity group-hover:opacity-100"
-                            aria-hidden="true"
-                          />
+                            aria-hidden="true" />
                           <span
                             className={cn(
                               'min-w-0 flex-1 truncate text-xs',

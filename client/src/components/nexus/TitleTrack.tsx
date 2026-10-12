@@ -1,8 +1,8 @@
 import { motion } from 'motion/react'
-import { Check, Crown, Lock } from 'lucide-react'
 import { Badge, Card, CardContent, CardHeader, CardTitle, EmptyState, Progress } from '@/components/ui'
 import { cn, formatNumber } from '@/lib/utils'
 import type { NexusStatsResponse } from './types'
+import { Icon } from '@/components/icon/Icon'
 
 /**
  * Rank progression track over the player-title ladder.
@@ -13,7 +13,7 @@ export function TitleTrack({ stats }: { stats: NexusStatsResponse | null }) {
     return (
       <Card>
         <CardContent className="py-10">
-          <EmptyState icon={<Crown />} title="No rank data" description="Sign in to see your rank progression." />
+          <EmptyState icon="crown" title="No rank data" description="Sign in to see your rank progression." />
         </CardContent>
       </Card>
     )
@@ -28,7 +28,7 @@ export function TitleTrack({ stats }: { stats: NexusStatsResponse | null }) {
       <Card glow>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Crown className="size-4 text-gold" aria-hidden="true" /> Current rank
+            <Icon name="crown" className="size-4 text-gold" aria-hidden="true" /> Current rank
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -102,7 +102,7 @@ export function TitleTrack({ stats }: { stats: NexusStatsResponse | null }) {
                   style={!isCurrent && reached ? { borderColor: t.color, color: t.color } : undefined}
                   aria-hidden="true"
                 >
-                  {isCurrent ? <Crown className="size-5" /> : reached ? <Check className="size-4" /> : <Lock className="size-4" />}
+                  {isCurrent ? <Icon name="crown" className="size-5" /> : reached ? <Icon name="check" className="size-4" /> : <Icon name="lock" className="size-4" />}
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="flex items-center gap-2">

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Radio, CalendarClock, History, LayoutGrid, RefreshCw, Trophy } from 'lucide-react'
+import { LayoutGrid, RefreshCw } from 'lucide-react'
 import {
   Button,
   Card,
@@ -16,6 +16,7 @@ import { PlatformContestCard } from '@/components/contests/PlatformContestCard'
 import { contestBucket } from '@/components/contests/contestUtils'
 import { CustomContestsSection } from '@/components/contests/CustomContestsSection'
 import type { PlatformContest } from '@/components/contests/types'
+import { Icon } from '@/components/icon/Icon'
 
 type Bucket = 'all' | 'live' | 'upcoming' | 'past'
 
@@ -43,6 +44,7 @@ export default function ContestsPage() {
   return (
     <div>
       <PageHeader
+        icon="contests"
         title="Contest Arena"
         subtitle="Live Codeforces & CodeChef feeds plus password-gated Nexora custom contests."
         actions={
@@ -57,9 +59,9 @@ export default function ContestsPage() {
         className="mb-5"
         items={[
           { id: 'all', label: 'All', icon: <LayoutGrid className="size-3.5" />, badge: counts.all },
-          { id: 'live', label: 'Live', icon: <Radio className="size-3.5" />, badge: counts.live },
-          { id: 'upcoming', label: 'Upcoming', icon: <CalendarClock className="size-3.5" />, badge: counts.upcoming },
-          { id: 'past', label: 'Past', icon: <History className="size-3.5" />, badge: counts.past },
+          { id: 'live', label: 'Live', icon: <Icon name="live" className="size-3.5" />, badge: counts.live },
+          { id: 'upcoming', label: 'Upcoming', icon: <Icon name="calendar" className="size-3.5" />, badge: counts.upcoming },
+          { id: 'past', label: 'Past', icon: <Icon name="submissions" className="size-3.5" />, badge: counts.past },
         ]}
         active={bucket}
         onChange={(id) => setBucket(id as Bucket)}
@@ -77,7 +79,7 @@ export default function ContestsPage() {
       ) : visible.length === 0 ? (
         <Card>
           <EmptyState
-            icon={<Trophy />}
+            icon="trophy"
             title={bucket === 'all' ? 'No contests found' : `No ${bucket} contests`}
             description="Check back soon — or host your own contest below."
           />
@@ -96,7 +98,7 @@ export default function ContestsPage() {
         <section className="mt-8">
           <Card>
             <EmptyState
-              icon={<Trophy />}
+              icon="trophy"
               title="Custom contests need an identity"
               description="Sign in to join Nexora-hosted contests with a code and password."
             />

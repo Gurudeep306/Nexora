@@ -2,7 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
-import { ArrowRight, CornerDownLeft, Dices, Keyboard, LogOut, Search, Settings, Sparkles, Swords, UserRound } from 'lucide-react'
+import { ArrowRight, CornerDownLeft, Search } from 'lucide-react'
+import { iconComponent } from '@/components/icon/iconComponent'
 import { Kbd } from '@/components/ui'
 import { openShortcuts } from './ShortcutsDialog'
 import { openAssistantEvent } from '@/context/AgentContext'
@@ -13,7 +14,6 @@ import { useAuth } from '@/context/AuthContext'
 import { PlatformBadge } from '@/components/shared/PlatformBadge'
 import type { Problem, ProblemsResponse } from '@/components/problems/types'
 // Theme entries (Theme Centre)
-import { Moon, Palette, Sun } from 'lucide-react'
 import { useTheme } from '@/context/ThemeContext'
 import { PALETTES } from '@/theme/palettes'
 
@@ -120,7 +120,7 @@ export function CommandPalette() {
       group: 'Go to',
       label: n.label,
       hint: n.to,
-      icon: n.icon,
+      icon: iconComponent(n.icon),
       run: () => go(n.to, n.external),
     }))
     const actions: Item[] = [
@@ -128,7 +128,7 @@ export function CommandPalette() {
         id: 'act:random',
         group: 'Actions',
         label: 'Surprise me — random problem',
-        icon: Dices,
+        icon: iconComponent('random'),
         run: async () => {
           close()
           try {
@@ -146,21 +146,21 @@ export function CommandPalette() {
         group: 'Actions',
         label: mode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode',
         hint: 'Toggle light/dark',
-        icon: mode === 'dark' ? Sun : Moon,
+        icon: iconComponent(mode === 'dark' ? 'sun' : 'moon'),
         run: () => {
           close()
           setAppearance(mode === 'dark' ? 'light' : 'dark')
         },
       },
-      { id: 'act:themes', group: 'Actions', label: 'Switch theme…', hint: 'Theme Centre', icon: Palette, run: () => go('/theme') },
-      { id: 'act:profile', group: 'Actions', label: 'View my profile', icon: UserRound, run: () => go('/profile') },
-      { id: 'act:avatar', group: 'Actions', label: 'Change my avatar', icon: Settings, run: () => go('/settings') },
+      { id: 'act:themes', group: 'Actions', label: 'Switch theme…', hint: 'Theme Centre', icon: iconComponent('palette'), run: () => go('/theme') },
+      { id: 'act:profile', group: 'Actions', label: 'View my profile', icon: iconComponent('profile'), run: () => go('/profile') },
+      { id: 'act:avatar', group: 'Actions', label: 'Change my avatar', icon: iconComponent('settings'), run: () => go('/settings') },
       {
         id: 'act:keys',
         group: 'Actions',
         label: 'Keyboard shortcuts',
         hint: '?',
-        icon: Keyboard,
+        icon: iconComponent('keyboard'),
         run: () => {
           close()
           openShortcuts()
@@ -171,7 +171,7 @@ export function CommandPalette() {
         group: 'Actions',
         label: q.length >= 2 ? `Ask Nexora AI: “${query.trim()}”` : 'Ask Nexora AI',
         hint: '⌘J',
-        icon: Sparkles,
+        icon: iconComponent('sparkles'),
         run: () => {
           close()
           openAssistantEvent(q.length >= 2 ? query.trim() : undefined)
@@ -181,7 +181,7 @@ export function CommandPalette() {
         id: 'act:logout',
         group: 'Actions',
         label: 'Log out',
-        icon: LogOut,
+        icon: iconComponent('logout'),
         run: async () => {
           close()
           await logout()
@@ -195,7 +195,7 @@ export function CommandPalette() {
       group: 'Problems',
       label: p.title,
       hint: `${p.problem_id}${p.rating ? ` · ${p.rating}` : ''}`,
-      icon: Swords,
+      icon: iconComponent('problems'),
       problem: p,
       run: () => go(`/solve/${p.id}`),
     }))
@@ -204,7 +204,7 @@ export function CommandPalette() {
         id: 'act:search-all',
         group: 'Problems',
         label: `Search all problems for “${query.trim()}”`,
-        icon: Search,
+        icon: iconComponent('search'),
         run: () => go(`/problems?q=${encodeURIComponent(query.trim())}`),
       })
     }
@@ -218,7 +218,7 @@ export function CommandPalette() {
               group: 'Themes',
               label: `Use theme: ${p.name}`,
               hint: p.dark && p.light ? 'Light & dark' : p.dark ? 'Dark' : 'Light',
-              icon: Palette,
+              icon: iconComponent('palette'),
               run: () => {
                 close()
                 setLook({ theme: p.id })

@@ -1,6 +1,7 @@
-import type { ReactNode } from 'react'
+import type { ReactElement, ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 import { Skeleton } from './Progress'
+import { IconBadge, type IconName } from '@/components/icon/Icon'
 
 export function EmptyState({
   icon,
@@ -9,7 +10,8 @@ export function EmptyState({
   action,
   className,
 }: {
-  icon?: ReactNode
+  /** A semantic icon name (preferred) or an element. */
+  icon?: IconName | ReactElement
   title: string
   description?: string
   action?: ReactNode
@@ -17,7 +19,12 @@ export function EmptyState({
 }) {
   return (
     <div className={cn('flex flex-col items-center justify-center gap-3 px-6 py-14 text-center', className)}>
-      {icon && (
+      {typeof icon === 'string' ? (
+        <span className="relative inline-flex">
+          <span aria-hidden="true" className="absolute -inset-4 -z-10 rounded-full bg-accent-brand/10 blur-2xl" />
+          <IconBadge name={icon} box="xl" />
+        </span>
+      ) : icon && (
         <div className="relative flex size-14 items-center justify-center rounded-2xl border border-border/20 bg-gradient-to-b from-surface-3 to-surface text-primary [&_svg]:size-6">
           <span aria-hidden="true" className="absolute -inset-4 -z-10 rounded-full bg-primary/10 blur-2xl" />
           {icon}
