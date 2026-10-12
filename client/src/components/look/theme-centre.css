@@ -1,0 +1,39 @@
+/* Theme Centre — the few things utilities don't express well. */
+
+/* A crisp, always-visible keyboard focus ring that never fights a
+   component's own box-shadow (selection rings, card shadows). */
+.tc-focus:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+/* Sections settle in rather than cut. */
+.tc-panel {
+  animation: tc-enter 260ms var(--ease-smooth) both;
+}
+@keyframes tc-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+/* The preview crossfades between themes instead of snapping. */
+.tc-preview,
+.tc-preview * {
+  transition:
+    background-color 240ms var(--ease-smooth),
+    border-color 240ms var(--ease-smooth),
+    color 240ms var(--ease-smooth);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tc-panel {
+    animation: none;
+  }
+  .tc-preview,
+  .tc-preview * {
+    transition: none;
+  }
+}
