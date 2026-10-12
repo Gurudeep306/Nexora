@@ -1,0 +1,163 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" role="img" aria-label="Panel I: 3 by 3 arrangement of dot tiles with two missing tiles; Panel II: four candidate tile pairs (i) to (iv)" font-family="Arial, Helvetica, sans-serif">
+  <text x="170" y="40" font-size="24" fill="currentColor" stroke="none" text-anchor="middle">Panel I</text>
+  <text x="640" y="40" font-size="24" fill="currentColor" stroke="none" text-anchor="middle">Panel II</text>
+  <rect x="26" y="130" width="96" height="96" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="48" cy="152" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="74" cy="152" r="8" fill="currentColor"/>
+  <circle cx="100" cy="152" r="8" fill="currentColor"/>
+  <circle cx="48" cy="178" r="8" fill="currentColor"/>
+  <circle cx="74" cy="178" r="8" fill="currentColor"/>
+  <circle cx="100" cy="178" r="8" fill="currentColor"/>
+  <circle cx="48" cy="204" r="8" fill="currentColor"/>
+  <circle cx="74" cy="204" r="8" fill="currentColor"/>
+  <circle cx="100" cy="204" r="8" fill="currentColor"/>
+  <rect x="122" y="130" width="96" height="96" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="144" cy="152" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="170" cy="152" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="196" cy="152" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="144" cy="178" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="170" cy="178" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="196" cy="178" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="144" cy="204" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="170" cy="204" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="196" cy="204" r="8" fill="currentColor"/>
+  <rect x="218" y="130" width="96" height="96" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="240" cy="152" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="266" cy="152" r="8" fill="currentColor"/>
+  <circle cx="292" cy="152" r="8" fill="currentColor"/>
+  <circle cx="240" cy="178" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="266" cy="178" r="8" fill="currentColor"/>
+  <circle cx="292" cy="178" r="8" fill="currentColor"/>
+  <circle cx="240" cy="204" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="266" cy="204" r="8" fill="currentColor"/>
+  <circle cx="292" cy="204" r="8" fill="currentColor"/>
+  <rect x="26" y="226" width="96" height="96" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="48" cy="248" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="74" cy="248" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="100" cy="248" r="8" fill="currentColor"/>
+  <circle cx="48" cy="274" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="74" cy="274" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="100" cy="274" r="8" fill="currentColor"/>
+  <circle cx="48" cy="300" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="74" cy="300" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="100" cy="300" r="8" fill="currentColor"/>
+  <rect x="122" y="226" width="96" height="96" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="144" cy="248" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="170" cy="248" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="196" cy="248" r="8" fill="currentColor"/>
+  <circle cx="144" cy="274" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="170" cy="274" r="8" fill="currentColor"/>
+  <circle cx="196" cy="274" r="8" fill="currentColor"/>
+  <circle cx="144" cy="300" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="170" cy="300" r="8" fill="currentColor"/>
+  <circle cx="196" cy="300" r="8" fill="currentColor"/>
+  <rect x="26" y="322" width="96" height="96" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="48" cy="344" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="74" cy="344" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="100" cy="344" r="8" fill="currentColor"/>
+  <circle cx="48" cy="370" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="74" cy="370" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="100" cy="370" r="8" fill="currentColor"/>
+  <circle cx="48" cy="396" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="74" cy="396" r="8" fill="currentColor"/>
+  <circle cx="100" cy="396" r="8" fill="currentColor"/>
+  <rect x="122" y="322" width="96" height="96" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="144" cy="344" r="8" fill="currentColor"/>
+  <circle cx="170" cy="344" r="8" fill="currentColor"/>
+  <circle cx="196" cy="344" r="8" fill="currentColor"/>
+  <circle cx="144" cy="370" r="8" fill="currentColor"/>
+  <circle cx="170" cy="370" r="8" fill="currentColor"/>
+  <circle cx="196" cy="370" r="8" fill="currentColor"/>
+  <circle cx="144" cy="396" r="8" fill="currentColor"/>
+  <circle cx="170" cy="396" r="8" fill="currentColor"/>
+  <circle cx="196" cy="396" r="8" fill="currentColor"/>
+  <rect x="218" y="226" width="96" height="192" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="7 5"/>
+  <text x="266" y="334" font-size="34" fill="currentColor" stroke="none" text-anchor="middle">?</text>
+  <line x1="350" y1="30" x2="350" y2="545" stroke="currentColor" stroke-width="3"/>
+  <line x1="625" y1="60" x2="625" y2="545" stroke="currentColor" stroke-width="2" stroke-dasharray="6 5"/>
+  <line x1="370" y1="300" x2="890" y2="300" stroke="currentColor" stroke-width="2" stroke-dasharray="6 5"/>
+  <rect x="440" y="55" width="96" height="96" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="462" cy="77" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="488" cy="77" r="8" fill="currentColor"/>
+  <circle cx="514" cy="77" r="8" fill="currentColor"/>
+  <circle cx="462" cy="103" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="488" cy="103" r="8" fill="currentColor"/>
+  <circle cx="514" cy="103" r="8" fill="currentColor"/>
+  <circle cx="462" cy="129" r="8" fill="currentColor"/>
+  <circle cx="488" cy="129" r="8" fill="currentColor"/>
+  <circle cx="514" cy="129" r="8" fill="currentColor"/>
+  <rect x="440" y="151" width="96" height="96" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="462" cy="173" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="488" cy="173" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="514" cy="173" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="462" cy="199" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="488" cy="199" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="514" cy="199" r="8" fill="currentColor"/>
+  <circle cx="462" cy="225" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="488" cy="225" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="514" cy="225" r="8" fill="currentColor"/>
+  <text x="488" y="279" font-size="22" fill="currentColor" stroke="none" text-anchor="middle">(i)</text>
+  <rect x="710" y="55" width="96" height="96" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="732" cy="77" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="758" cy="77" r="8" fill="currentColor"/>
+  <circle cx="784" cy="77" r="8" fill="currentColor"/>
+  <circle cx="732" cy="103" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="758" cy="103" r="8" fill="currentColor"/>
+  <circle cx="784" cy="103" r="8" fill="currentColor"/>
+  <circle cx="732" cy="129" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="758" cy="129" r="8" fill="currentColor"/>
+  <circle cx="784" cy="129" r="8" fill="currentColor"/>
+  <rect x="710" y="151" width="96" height="96" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="732" cy="173" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="758" cy="173" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="784" cy="173" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="732" cy="199" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="758" cy="199" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="784" cy="199" r="8" fill="currentColor"/>
+  <circle cx="732" cy="225" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="758" cy="225" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="784" cy="225" r="8" fill="currentColor"/>
+  <text x="758" y="279" font-size="22" fill="currentColor" stroke="none" text-anchor="middle">(ii)</text>
+  <rect x="440" y="310" width="96" height="96" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="462" cy="332" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="488" cy="332" r="8" fill="currentColor"/>
+  <circle cx="514" cy="332" r="8" fill="currentColor"/>
+  <circle cx="462" cy="358" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="488" cy="358" r="8" fill="currentColor"/>
+  <circle cx="514" cy="358" r="8" fill="currentColor"/>
+  <circle cx="462" cy="384" r="8" fill="currentColor"/>
+  <circle cx="488" cy="384" r="8" fill="currentColor"/>
+  <circle cx="514" cy="384" r="8" fill="currentColor"/>
+  <rect x="440" y="406" width="96" height="96" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="462" cy="428" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="488" cy="428" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="514" cy="428" r="8" fill="currentColor"/>
+  <circle cx="462" cy="454" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="488" cy="454" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="514" cy="454" r="8" fill="currentColor"/>
+  <circle cx="462" cy="480" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="488" cy="480" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="514" cy="480" r="8" fill="currentColor"/>
+  <text x="488" y="534" font-size="22" fill="currentColor" stroke="none" text-anchor="middle">(iii)</text>
+  <rect x="710" y="310" width="96" height="96" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="732" cy="332" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="758" cy="332" r="8" fill="currentColor"/>
+  <circle cx="784" cy="332" r="8" fill="currentColor"/>
+  <circle cx="732" cy="358" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="758" cy="358" r="8" fill="currentColor"/>
+  <circle cx="784" cy="358" r="8" fill="currentColor"/>
+  <circle cx="732" cy="384" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="758" cy="384" r="8" fill="currentColor"/>
+  <circle cx="784" cy="384" r="8" fill="currentColor"/>
+  <rect x="710" y="406" width="96" height="96" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="732" cy="428" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="758" cy="428" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="784" cy="428" r="8" fill="currentColor"/>
+  <circle cx="732" cy="454" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="758" cy="454" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="784" cy="454" r="8" fill="currentColor"/>
+  <circle cx="732" cy="480" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+  <circle cx="758" cy="480" r="8" fill="currentColor"/>
+  <circle cx="784" cy="480" r="8" fill="currentColor"/>
+  <text x="758" y="534" font-size="22" fill="currentColor" stroke="none" text-anchor="middle">(iv)</text>
+</svg>
