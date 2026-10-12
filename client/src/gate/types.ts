@@ -44,10 +44,12 @@ export interface GateQuestion {
   subject: string
   topic: string
   tags: string[]
+  /** Withheld (undefined) in CBT paper payloads until submission. */
   answer: string | number | string[] | null
   answerSource: 'official' | 'solved' | null
   confidence: 'high' | 'medium' | 'low' | null
-  solution: string
+  /** Not sent by the API: fetch /api/gate/questions/:id/solution (see src/gate/solution). */
+  solution?: never
   textSource: 'pdf' | 'web'
   sourceUrl: string | null
   needsReview: boolean

@@ -1,0 +1,62 @@
+{
+  "paper": "cse-2010",
+  "version": 2,
+  "solutions": {
+    "cse-2010-cs-33": {
+      "approach": "Draw the space–time diagram cycle by cycle. Two things delay instructions: the **single PO unit** (a structural hazard — MUL and DIV occupy it for 3 and 6 cycles) and **RAW dependences**, which operand forwarding resolves by feeding a result straight into the next PO cycle. Instructions stay in order: one waiting in a stage blocks those behind it.",
+      "concepts": ["Instruction pipeline", "Structural hazard", "RAW hazard", "Operand forwarding"],
+      "given": "Stages IF, ID, OF, PO, WO — 1 cycle each, except PO: ADD/SUB 1, MUL 3, DIV 6.\n\n- $I_0$: MUL $R_2 \\leftarrow R_0 \\times R_1$\n- $I_1$: DIV $R_5 \\leftarrow R_3 / R_4$\n- $I_2$: ADD $R_2 \\leftarrow R_5 + R_2$ (needs $R_5$ from $I_1$, $R_2$ from $I_0$)\n- $I_3$: SUB $R_5 \\leftarrow R_2 - R_6$ (needs $R_2$ from $I_2$)",
+      "steps": [
+        {
+          "title": "I0 (MUL) flows through, holding PO for 3 cycles",
+          "body": "IF 1, ID 2, OF 3, PO 4–6, WO 7. Nothing is ahead of it, so it never waits.",
+          "scene": { "upto": 7, "hl": [{ "r": 0, "tone": "accent" }] }
+        },
+        {
+          "title": "I1 (DIV) waits for the PO unit",
+          "body": "IF 2, ID 3, OF 4 — but PO is busy with MUL until the end of cycle 6. I1 stalls in OF during cycles 5–6, executes PO in **7–12** (6 cycles) and writes back in **13**.",
+          "scene": { "upto": 13, "hl": [{ "r": 1, "tone": "accent" }] }
+        },
+        {
+          "title": "I2 (ADD) waits for $R_5$, forwarded at the end of cycle 12",
+          "body": "IF 3, ID 4; OF is occupied by I1 until cycle 6, so I2 enters OF in 7. Its operand $R_5$ is produced by DIV at the end of cycle 12 and **forwarded**, so I2's PO is cycle **13** and WO is **14**. ($R_2$ from MUL was ready long before.)",
+          "scene": { "upto": 14, "hl": [{ "r": 2, "tone": "accent" }], "forwards": [{ "from": [1, 12], "to": [2, 13] }] }
+        },
+        {
+          "title": "I3 (SUB) gets $R_2$ forwarded from I2",
+          "body": "I3 is fetched in 4 but must queue behind I2: ID in 7, OF in 13 (after I2 leaves OF). $R_2$ comes out of I2's PO at the end of cycle 13 and is forwarded, so I3's PO is **14** and WO is **15**.",
+          "scene": { "upto": 15, "hl": [{ "r": 3, "tone": "accent" }], "forwards": [{ "from": [1, 12], "to": [2, 13] }, { "from": [2, 13], "to": [3, 14] }] }
+        },
+        {
+          "title": "Count the cycles",
+          "body": "The last instruction completes WO in cycle 15, so the sequence takes **15 clock cycles**.\n\nCheck via the bottleneck: the PO unit is busy $3 + 6 + 1 + 1 = 11$ cycles back-to-back from cycle 4 (cycles 4–14), plus one WO cycle after it: $3 + 11 + 1 = 15$.",
+          "scene": { "upto": 15, "hl": [{ "c": 15, "tone": "success" }] }
+        }
+      ],
+      "answer": { "value": "**15** clock cycles — option (B)", "choice": ["B"], "matchesKey": true },
+      "optionAnalysis": [
+        { "option": "A", "correct": false, "reason": "13 is when DIV writes back; ADD and SUB still need their PO and WO cycles after it." },
+        { "option": "B", "correct": true, "reason": "PO is busy 4–14 without gaps thanks to forwarding; the final WO is in cycle 15." },
+        { "option": "C", "correct": false, "reason": "17 is what you get **without** forwarding if a dependent instruction can fetch operands in the same cycle as the producer's write-back (OF of I2 in 13, OF of I3 in 15)." },
+        { "option": "D", "correct": false, "reason": "19 is the no-forwarding count when operands can be fetched only in the cycle **after** write-back." }
+      ],
+      "shortcut": "With forwarding and in-order issue, the single PO unit is the bottleneck: first PO starts in cycle 4 (after IF, ID, OF), then PO runs $3+6+1+1 = 11$ cycles back to back, then one WO: $3 + 11 + 1 = 15$.",
+      "pitfalls": [
+        "Letting DIV start PO in cycle 5 — the PO unit is still busy with MUL until cycle 6.",
+        "Waiting for WO before using a result: forwarding feeds it directly into the next PO cycle."
+      ],
+      "verification": "The diagram has PO occupied in exactly one instruction per cycle from 4 to 14 (MUL 4–6, DIV 7–12, ADD 13, SUB 14) and every dependent PO starts one cycle after its producer's last PO cycle.",
+      "animation": {
+        "kind": "pipeline",
+        "title": "Space–time diagram (hatched = stall)",
+        "rows": [
+          { "label": "I0 MUL", "start": 1, "cells": ["IF", "ID", "OF", "PO", "PO", "PO", "WO"] },
+          { "label": "I1 DIV", "start": 2, "cells": ["IF", "ID", "OF", "-", "-", "PO", "PO", "PO", "PO", "PO", "PO", "WO"] },
+          { "label": "I2 ADD", "start": 3, "cells": ["IF", "ID", "-", "-", "OF", "-", "-", "-", "-", "-", "PO", "WO"] },
+          { "label": "I3 SUB", "start": 4, "cells": ["IF", "-", "-", "ID", "-", "-", "-", "-", "-", "OF", "PO", "WO"] }
+        ],
+        "upto": 3
+      }
+    }
+  }
+}

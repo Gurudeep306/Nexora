@@ -148109,7 +148109,7 @@
         },
         {
           "l": "D",
-          "t": "10.12.2.0/22 Computer Science and Information Technology Set 2 (CS2)"
+          "t": "10.12.2.0/22"
         }
       ],
       "figures": [],
@@ -153088,12 +153088,12 @@
       "number": "22",
       "marks": 1,
       "type": "NAT",
-      "text": "A box contains 5 coins: 4 regular coins and 1  fake coin. When a regular coin is\ntossed, the probability 𝑃(ℎ𝑒𝑎𝑑) = 0.5 and for a fake coin, 𝑃(ℎ𝑒𝑎𝑑) = 1. You pick\na coin at random and toss it twice, and get two heads. The probability that the coin\nyou have chosen is the fake coin is _______. (rounded off to two decimal places)\nComputer Science and Information Technology (CS1)",
+      "text": "A box contains 5 coins: 4 regular coins and 1 fake coin. When a regular coin is tossed, the probability $P(\\text{head}) = 0.5$ and for a fake coin, $P(\\text{head}) = 1$. You pick a coin at random and toss it twice, and get two heads. The probability that the coin you have chosen is the fake coin is _______. (rounded off to two decimal places)",
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "prob",
+      "topic": "bayes",
       "tags": [
         "computer-science"
       ],
@@ -155428,7 +155428,7 @@
         },
         {
           "l": "D",
-          "t": "19 Computer Science and Information Technology (CS2)"
+          "t": "19"
         }
       ],
       "figures": [],
@@ -167775,7 +167775,7 @@
       "number": "50",
       "marks": 2,
       "type": "NAT",
-      "text": "Consider the following ANSI-C program. #include <stdio.h> int main(){ int *ptr, a, b, c; a=5; b=11; c=20; ptr=&a; *ptr=c; ptr=&c; a=*(&b); c=*ptr-a; printf(\"%d\",c); return(0); } The output of this program is ____________. (answer in integer) Note: Assume that the program compiles and runs successfully.",
+      "text": "Consider the following ANSI-C program.\n\n```c\n#include <stdio.h>\nint main(){\n    int *ptr, a, b, c;\n    a=5; b=11; c=20;\n    ptr=&a;\n    *ptr=c;\n    ptr=&c;\n    a=*(&b);\n    c=*ptr-a;\n    printf(\"%d\",c);\n    return(0);\n}\n```\n\nThe output of this program is ____________. (answer in integer)\n\nNote: Assume that the program compiles and runs successfully.",
       "options": [],
       "figures": [],
       "group": null,
@@ -167792,8 +167792,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **PDS** (C Prog) from **CSE 2026 Q50** (2 Marks).\n- **Evaluation Objective:** Exact numerical/algebraic computation required within acceptable examination tolerance.\n- **Identified Problem Quantities:** 5, 11, 20, 0\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Data Structures & Algorithmic Laws:**\n- Tree Traversals & Invariants: Inorder traversal of a Binary Search Tree (BST) produces strictly ascending keys. Height of full binary tree with $L$ leaves is $\\lceil \\log_2 L \\rceil$.\n- Asymptotic Bounds & Master Theorem: For $T(n) = a T(n/b) + \\Theta(n^k \\log^p n)$, critical threshold is $\\log_b a$ compared against $k$.\n- Minimum Spanning Tree: An MST on $|V|$ vertices contains exactly $|V| - 1$ edges with minimum total weight; if edge weights are distinct, MST is strictly unique.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  ### Numerical Derivation.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  - Setting up governing equations for the system..\n- **Step 3.3 (Intermediate Reduction):**\n  - Solving under the given parameter values yields the integer answer **1**..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`1`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **1**\n- The computed numerical result `1` matches the official GATE key exactly within acceptable tolerance.\n\n⚡ **Topper's Shortcut:** Substitute boundary test inputs ($n=1, 2$ or extreme bounds) to eliminate incorrect multiple-choice options immediately.",
       "textSource": "official-pdf",
       "sourceUrl": "https://gate2026.ac.in/",
-      "needsReview": false,
-      "reviewNote": null
+      "needsReview": true,
+      "reviewNote": "Stored key is 1, but tracing the program gives 9 (a = 20, then a = 11, c = 20 − 11). Verify against the official GATE 2026 CS2 key."
     },
     {
       "id": "cse-2026-2-cs-51",

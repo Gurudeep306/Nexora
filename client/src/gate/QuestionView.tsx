@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { Suspense, lazy, useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import {
   AlertTriangle,
@@ -13,12 +13,13 @@ import {
 import { cn } from '@/lib/utils'
 import { useAgentPageContext } from '@/context/AgentContext'
 import { Markdown } from '@/learn/md'
-import { GateVisualizer } from './GateVisualizer'
-import { HandwrittenSolution } from './HandwrittenSolution'
 import { ReconstructedDiagram } from './ReconstructedDiagram'
 import { TYPE_LABEL, TYPE_SHORT, paperLabel, qLabel, type GateQuestion } from './types'
 import { toggleBookmark, updateProgress, useQuestionProgress, type Outcome } from './progress'
 import { checkIsCorrect, formatKey, isKeyOption, isSelfCheck, tfOptions, type Pick } from './answers'
+import { solutionToText, useGateSolution } from './solution/useGateSolution'
+
+const GateSolution = lazy(() => import('./solution/GateSolution'))
 
 /* ── Small pieces ───────────────────────────────────────────────────────── */
 
@@ -101,6 +102,8 @@ export function QuestionView({
   const hasPick = userPick !== undefined && userPick !== '' && !(Array.isArray(userPick) && userPick.length === 0)
 
   const answered = hasChecked || showSolution
+  // Fetched only once the solution is revealed (never ships with the list).
+  const solution = useGateSolution(q.id, showSolution)
   useAgentPageContext(
     reportToAssistant
       ? {
@@ -117,7 +120,9 @@ export function QuestionView({
             .join('\n')
             .slice(0, 3000),
           // Only what the student has already revealed on screen.
-          visibleText: answered ? `Answer shown on screen: ${JSON.stringify(q.answer)}\nSolution shown:\n${q.solution ?? ''}`.slice(0, 6000) : undefined,
+          visibleText: answered
+            ? `Answer shown on screen: ${JSON.stringify(q.answer)}${showSolution ? `\nSolution shown:\n${solutionToText(solution.data)}` : ''}`.slice(0, 6000)
+            : undefined,
         }
       : null,
   )
@@ -187,7 +192,7 @@ export function QuestionView({
   const negative = q.type === 'MCQ' && q.marks ? `−${(q.marks / 3).toFixed(2)}` : '0'
 
   return (
-    <article id={q.id} className="card relative overflow-hidden !p-0">
+    <article id={q.id} className="card relative overflow-clip !p-0">
       {/* ── Card header ── */}
       <header className="flex flex-col gap-1.5 border-b border-border px-4 py-3 sm:px-6">
         <div className="flex items-center gap-2">
@@ -399,28 +404,22 @@ export function QuestionView({
           </div>
         )}
 
-        {/* ── Deep Handwritten Master Solution View ── */}
+        {/* ── Worked solution (src/gate/solution) ── */}
         <AnimatePresence initial={false}>
           {showSolution && (
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="overflow-hidden"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 8 }}
+              transition={{ duration: 0.2 }}
             >
-              {/* Interactive Dynamic Visualizer if applicable (immediate animated visual solution) */}
-              <GateVisualizer q={q} subject={q.subject} topic={q.topic} />
-
-              {/* Handwritten Solution Notebook */}
-              <HandwrittenSolution
-                q={q}
-                subjectName={subjectName}
-                topicName={topicName}
-              />
+              <Suspense fallback={<div className="mt-4 h-40 animate-pulse rounded-2xl bg-bg-surface-2" />}>
+                <GateSolution q={q} state={solution} />
+              </Suspense>
 
               {q.reviewNote && (
-                <div className="mt-3 flex items-start gap-2 rounded-xl bg-amber-500/10 p-3 text-[12px] text-amber-300 border border-amber-500/20">
-                  <AlertTriangle className="size-4 shrink-0 mt-0.5 text-amber-400" />
+                <div className="mt-3 flex items-start gap-2 rounded-xl border border-state-warning/30 bg-state-warning/10 p-3 text-[12.5px] text-text-secondary">
+                  <AlertTriangle className="mt-0.5 size-4 shrink-0 text-state-warning" />
                   <span>{q.reviewNote}</span>
                 </div>
               )}
