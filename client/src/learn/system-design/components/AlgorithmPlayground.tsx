@@ -438,7 +438,7 @@ export const AlgorithmPlayground: React.FC<Props> = ({ systemId }) => {
                 type="number"
                 value={urlId}
                 onChange={(e) => setUrlId(e.target.value)}
-                className="w-full rounded-xl bg-bg-surface-1 px-3 py-2 font-mono text-[13px] text-text-primary ring-1 ring-border focus:ring-amber-400 focus:outline-none"
+                className="w-full rounded-xl bg-bg-surface px-3 py-2 font-mono text-[13px] text-text-primary ring-1 ring-border focus:ring-amber-400 focus:outline-none"
               />
             </div>
 
@@ -472,7 +472,7 @@ export const AlgorithmPlayground: React.FC<Props> = ({ systemId }) => {
             Live Token Bucket Algorithm: Capacity = 10, Refill Rate = 2 tokens/sec. Click the burst button to simulate sudden API traffic spikes and watch HTTP 429 throttling kick in.
           </p>
 
-          <div className="rounded-xl bg-bg-surface-1 p-4 ring-1 ring-border space-y-3">
+          <div className="rounded-xl bg-bg-surface p-4 ring-1 ring-border space-y-3">
             <div className="flex items-center justify-between">
               <span className="font-mono text-[11px] font-bold uppercase text-text-muted">
                 Available Tokens ({tokens.toFixed(1)} / {bucketCap})
@@ -492,7 +492,7 @@ export const AlgorithmPlayground: React.FC<Props> = ({ systemId }) => {
             <div className="flex flex-wrap gap-2 pt-2">
               <button
                 onClick={() => handleSendRateRequest(1)}
-                className="flex items-center gap-1.5 rounded-lg bg-accent-brand px-3 py-1.5 font-mono text-[11px] font-bold text-bg-base hover:opacity-90 transition"
+                className="flex items-center gap-1.5 rounded-lg bg-accent-brand px-3 py-1.5 font-mono text-[11px] font-bold text-on-accent-brand hover:opacity-90 transition"
               >
                 <Zap className="size-3.5 fill-current" /> Fire 1 Request
               </button>
@@ -542,7 +542,7 @@ export const AlgorithmPlayground: React.FC<Props> = ({ systemId }) => {
                 max="1023"
                 value={workerId}
                 onChange={(e) => setWorkerId(parseInt(e.target.value) || 0)}
-                className="w-20 rounded bg-bg-surface-1 px-2 py-1 font-mono text-[12px] ring-1 ring-border"
+                className="w-20 rounded bg-bg-surface px-2 py-1 font-mono text-[12px] ring-1 ring-border"
               />
             </div>
 
@@ -557,7 +557,7 @@ export const AlgorithmPlayground: React.FC<Props> = ({ systemId }) => {
           {generatedSnowflakes.length > 0 && (
             <div className="space-y-2">
               {generatedSnowflakes.map((item, idx) => (
-                <div key={idx} className="rounded-xl bg-bg-surface-1 p-3 ring-1 ring-border font-mono text-[12px] flex flex-wrap items-center justify-between gap-2">
+                <div key={idx} className="rounded-xl bg-bg-surface p-3 ring-1 ring-border font-mono text-[12px] flex flex-wrap items-center justify-between gap-2">
                   <span className="text-amber-400 font-bold">{item.id}</span>
                   <div className="flex items-center gap-3 text-text-muted text-[11px]">
                     <span>Time: {item.timeStr.slice(11, 23)}</span>
@@ -585,7 +585,7 @@ export const AlgorithmPlayground: React.FC<Props> = ({ systemId }) => {
                 type="text"
                 value={hashKey}
                 onChange={(e) => setHashKey(e.target.value)}
-                className="w-full rounded-xl bg-bg-surface-1 px-3 py-2 font-mono text-[13px] text-text-primary ring-1 ring-border"
+                className="w-full rounded-xl bg-bg-surface px-3 py-2 font-mono text-[13px] text-text-primary ring-1 ring-border"
               />
               <div className="flex gap-2">
                 <button
@@ -605,7 +605,7 @@ export const AlgorithmPlayground: React.FC<Props> = ({ systemId }) => {
               </div>
             </div>
 
-            <div className="rounded-xl bg-bg-surface-1 p-4 ring-1 ring-border flex flex-col justify-center">
+            <div className="rounded-xl bg-bg-surface p-4 ring-1 ring-border flex flex-col justify-center">
               <span className="text-[11px] font-mono text-text-muted uppercase">Assigned Ring Node:</span>
               <p className="text-2xl font-bold font-mono text-emerald-400 mt-1">{assignedNode}</p>
               <span className="text-[11px] text-text-muted mt-1">
@@ -625,7 +625,7 @@ export const AlgorithmPlayground: React.FC<Props> = ({ systemId }) => {
 
           <div className="grid gap-4 md:grid-cols-2">
             {/* Input Form */}
-            <div className="rounded-xl bg-bg-surface-1 p-4 ring-1 ring-border space-y-3">
+            <div className="rounded-xl bg-bg-surface p-4 ring-1 ring-border space-y-3">
               <div className="flex gap-2">
                 <button
                   onClick={() => setOrderSide('BUY')}
@@ -724,7 +724,7 @@ export const AlgorithmPlayground: React.FC<Props> = ({ systemId }) => {
           </p>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <div className="rounded-xl bg-bg-surface-1 p-4 ring-1 ring-border space-y-3">
+            <div className="rounded-xl bg-bg-surface p-4 ring-1 ring-border space-y-3">
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="text-[10px] font-mono text-text-muted block">Cache Key:</label>
@@ -749,7 +749,7 @@ export const AlgorithmPlayground: React.FC<Props> = ({ systemId }) => {
               <div className="flex gap-2">
                 <button
                   onClick={handleLruPut}
-                  className="flex-1 rounded-lg bg-accent-brand py-1.5 font-mono text-[11px] font-bold text-bg-base hover:opacity-90 transition"
+                  className="flex-1 rounded-lg bg-accent-brand py-1.5 font-mono text-[11px] font-bold text-on-accent-brand hover:opacity-90 transition"
                 >
                   PUT (Insert / Update)
                 </button>
@@ -767,7 +767,7 @@ export const AlgorithmPlayground: React.FC<Props> = ({ systemId }) => {
             </div>
 
             {/* Visual Doubly-Linked List */}
-            <div className="rounded-xl bg-bg-surface-1 p-4 ring-1 ring-border space-y-2">
+            <div className="rounded-xl bg-bg-surface p-4 ring-1 ring-border space-y-2">
               <span className="font-mono text-[11px] font-bold uppercase text-text-muted block">
                 Doubly-Linked List Order [Head (MRU) → Tail (LRU)]:
               </span>
@@ -801,7 +801,7 @@ export const AlgorithmPlayground: React.FC<Props> = ({ systemId }) => {
             Content-Defined Chunking (FastCDC) Simulator: See how cloud deduplication avoids uploading unchanged blocks when a user edits a file.
           </p>
 
-          <div className="rounded-xl bg-bg-surface-1 p-4 ring-1 ring-border space-y-3">
+          <div className="rounded-xl bg-bg-surface p-4 ring-1 ring-border space-y-3">
             <div className="flex items-center justify-between">
               <span className="font-mono text-[12px] font-bold text-text-primary">
                 Quarterly_Report_2026.pptx (Version {driveDocVersion})
@@ -856,13 +856,13 @@ export const AlgorithmPlayground: React.FC<Props> = ({ systemId }) => {
                 value={bm25Query}
                 onChange={(e) => setBm25Query(e.target.value)}
                 placeholder="Search corpus (e.g. consensus, sharding, distributed)..."
-                className="w-full rounded-xl bg-bg-surface-1 px-3 py-2 font-mono text-[13px] text-text-primary ring-1 ring-border focus:ring-accent-brand focus:outline-none"
+                className="w-full rounded-xl bg-bg-surface px-3 py-2 font-mono text-[13px] text-text-primary ring-1 ring-border focus:ring-accent-brand focus:outline-none"
               />
             </div>
 
             <div className="space-y-2 pt-2">
               {rankedResults.map((res, idx) => (
-                <div key={res.id} className="rounded-xl bg-bg-surface-1 p-3 ring-1 ring-border flex items-center justify-between gap-4">
+                <div key={res.id} className="rounded-xl bg-bg-surface p-3 ring-1 ring-border flex items-center justify-between gap-4">
                   <div>
                     <span className="text-[10px] font-mono text-amber-400 font-bold uppercase">
                       Rank #{idx + 1} · Doc #{res.id}
@@ -889,7 +889,7 @@ export const AlgorithmPlayground: React.FC<Props> = ({ systemId }) => {
             Probabilistic Bloom Filter Simulator: Fast URL deduplication in RAM. 16-bit array with 3 hash functions. A "0" guarantees the URL was NEVER crawled!
           </p>
 
-          <div className="rounded-xl bg-bg-surface-1 p-4 ring-1 ring-border space-y-3">
+          <div className="rounded-xl bg-bg-surface p-4 ring-1 ring-border space-y-3">
             {/* 16-Bit Array Visualizer */}
             <div>
               <span className="text-[10px] font-mono text-text-muted uppercase block mb-1">
@@ -920,7 +920,7 @@ export const AlgorithmPlayground: React.FC<Props> = ({ systemId }) => {
                 />
                 <button
                   onClick={handleBloomAdd}
-                  className="rounded bg-accent-brand px-2.5 py-1 font-mono text-[11px] font-bold text-bg-base"
+                  className="rounded bg-accent-brand px-2.5 py-1 font-mono text-[11px] font-bold text-on-accent-brand"
                 >
                   Add URL
                 </button>
@@ -958,7 +958,7 @@ export const AlgorithmPlayground: React.FC<Props> = ({ systemId }) => {
             Real-Time CRDT Fractional Indexing: Characters receive fractional positions ($0.1, 0.2, ...$) so concurrent typing inserts without character shifting or server locks!
           </p>
 
-          <div className="rounded-xl bg-bg-surface-1 p-4 ring-1 ring-border space-y-3">
+          <div className="rounded-xl bg-bg-surface p-4 ring-1 ring-border space-y-3">
             <div className="flex flex-wrap items-center gap-1.5 p-3 rounded-xl bg-black/60 ring-1 ring-border">
               {crdtChars.map((ch, idx) => (
                 <div
@@ -995,7 +995,7 @@ export const AlgorithmPlayground: React.FC<Props> = ({ systemId }) => {
               </select>
               <button
                 onClick={handleCrdtInsert}
-                className="rounded-lg bg-accent-brand px-3 py-1 font-mono text-[11px] font-bold text-bg-base"
+                className="rounded-lg bg-accent-brand px-3 py-1 font-mono text-[11px] font-bold text-on-accent-brand"
               >
                 Insert Concurrently
               </button>
@@ -1032,7 +1032,7 @@ export const AlgorithmPlayground: React.FC<Props> = ({ systemId }) => {
             ))}
           </div>
 
-          <div className="flex flex-wrap items-center justify-between gap-2 p-3 rounded-xl bg-bg-surface-1 ring-1 ring-border font-mono text-[11px]">
+          <div className="flex flex-wrap items-center justify-between gap-2 p-3 rounded-xl bg-bg-surface ring-1 ring-border font-mono text-[11px]">
             <span className="text-text-primary">{redlockStatus}</span>
             <div className="flex items-center gap-2">
               <span className="text-text-muted">Storage Fencing Token:</span>
@@ -1067,17 +1067,17 @@ export const AlgorithmPlayground: React.FC<Props> = ({ systemId }) => {
           </p>
 
           <div className="grid gap-4 md:grid-cols-3">
-            <div className="rounded-xl bg-bg-surface-1 p-3 ring-1 ring-border space-y-1">
+            <div className="rounded-xl bg-bg-surface p-3 ring-1 ring-border space-y-1">
               <span className="text-[11px] font-mono text-text-muted block">Replicas (N)</span>
               <p className="text-xl font-bold text-text-primary">3</p>
               <span className="text-[10px] text-text-muted">Distributed storage copies</span>
             </div>
-            <div className="rounded-xl bg-bg-surface-1 p-3 ring-1 ring-border space-y-1">
+            <div className="rounded-xl bg-bg-surface p-3 ring-1 ring-border space-y-1">
               <span className="text-[11px] font-mono text-text-muted block">Write Quorum (W)</span>
               <p className="text-xl font-bold text-amber-400">2</p>
               <span className="text-[10px] text-text-muted">Acks needed to confirm write</span>
             </div>
-            <div className="rounded-xl bg-bg-surface-1 p-3 ring-1 ring-border space-y-1">
+            <div className="rounded-xl bg-bg-surface p-3 ring-1 ring-border space-y-1">
               <span className="text-[11px] font-mono text-text-muted block">Read Quorum (R)</span>
               <p className="text-xl font-bold text-emerald-400">2</p>
               <span className="text-[10px] text-text-muted">Acks needed to return read</span>

@@ -1,6 +1,7 @@
 import { createContext, useContext, useMemo, type ReactNode } from 'react'
 import { Toaster, toast as sonner } from 'sonner'
 import { AlertTriangle, CheckCircle2, Info, XCircle } from 'lucide-react'
+import { useTheme } from '@/context/ThemeContext'
 
 type ToastKind = 'success' | 'error' | 'warning' | 'info'
 
@@ -16,6 +17,7 @@ const ToastContext = createContext<ToastApi | null>(null)
 
 /** Modern toast notifications using the new design system. */
 export function ToastProvider({ children }: { children: ReactNode }) {
+  const { mode } = useTheme()
   const api = useMemo<ToastApi>(() => {
     const toast = (kind: ToastKind, title: string, description?: string) => sonner[kind](title, { description })
     return {
@@ -31,7 +33,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     <ToastContext.Provider value={api}>
       {children}
       <Toaster
-        theme="dark"
+        theme={mode}
         position="bottom-right"
         gap={4}
         visibleToasts={3}
@@ -47,12 +49,12 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         toastOptions={{
           classNames: {
             // Sonner paints its own background with a more specific selector,
-            // so the glass has to be forced.
+            // so the surface has to be forced.
             toast:
-              'pop-surface !rounded-xl !text-text-primary !font-body ![background-color:var(--material-pop,var(--color-bg-surface-3))] !border-[var(--glass-edge,var(--color-border))] ![backdrop-filter:var(--glass-filter-strong,blur(24px))] !shadow-[inset_0_1px_0_var(--specular),var(--pop-shadow,var(--elev-3))]',
+              'pop-surface !rounded-[var(--radius-card)] !text-text-primary !font-body !bg-bg-surface-2 !border-border !shadow-[inset_0_1px_0_var(--specular),var(--elev-3)]',
             title: '!text-sm !font-medium',
-            description: '!text-xs !text-text-primary/60',
-            closeButton: '![background-color:var(--material-pop,var(--color-bg-surface-2))] !border-border !text-text-primary/60 hover:text-text-primary',
+            description: '!text-xs !text-text-secondary',
+            closeButton: '!bg-bg-surface-3 !border-border !text-text-secondary hover:text-text-primary',
             actionButton: '!bg-accent-brand/10 hover:bg-accent-brand/20',
           },
         }}

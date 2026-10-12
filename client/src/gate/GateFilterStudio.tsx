@@ -234,7 +234,7 @@ export function GateFilterStudio({
             className={cn(
               'flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-[12px] font-bold transition-all cursor-pointer',
               viewMode === 'focus'
-                ? 'bg-accent-brand text-white shadow-sm'
+                ? 'bg-accent-brand text-on-accent-brand shadow-sm'
                 : 'text-text-muted hover:text-text-primary',
             )}
           >
@@ -249,7 +249,7 @@ export function GateFilterStudio({
             className={cn(
               'flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-[12px] font-bold transition-all cursor-pointer',
               viewMode === 'split'
-                ? 'bg-accent-brand text-white shadow-sm'
+                ? 'bg-accent-brand text-on-accent-brand shadow-sm'
                 : 'text-text-muted hover:text-text-primary',
             )}
           >
@@ -264,7 +264,7 @@ export function GateFilterStudio({
             className={cn(
               'flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-[12px] font-bold transition-all cursor-pointer',
               viewMode === 'grid'
-                ? 'bg-accent-brand text-white shadow-sm'
+                ? 'bg-accent-brand text-on-accent-brand shadow-sm'
                 : 'text-text-muted hover:text-text-primary',
             )}
           >
@@ -297,7 +297,7 @@ export function GateFilterStudio({
           <SlidersHorizontal className="size-4" />
           <span>Filters</span>
           {activeCount > 0 && (
-            <span className="flex size-5 items-center justify-center rounded-full bg-accent-brand text-[10.5px] font-mono text-white">
+            <span className="flex size-5 items-center justify-center rounded-full bg-accent-brand text-[10.5px] font-mono text-on-accent-brand">
               {activeCount}
             </span>
           )}
@@ -328,7 +328,7 @@ export function GateFilterStudio({
             className={cn(
               'rounded-xl px-3 py-1 text-[12px] font-bold transition-all cursor-pointer border',
               exam.length === 0
-                ? 'border-accent-brand bg-accent-brand text-white shadow-sm'
+                ? 'border-accent-brand bg-accent-brand text-on-accent-brand shadow-sm'
                 : 'border-border/70 bg-bg-surface text-text-muted hover:text-text-primary',
             )}
           >
@@ -404,7 +404,7 @@ export function GateFilterStudio({
               className={cn(
                 'flex items-center gap-1.5 rounded-xl px-3 py-1.5 transition-all cursor-pointer',
                 activeTab === 'subject'
-                  ? 'bg-accent-brand text-white shadow-sm'
+                  ? 'bg-accent-brand text-on-accent-brand shadow-sm'
                   : 'text-text-muted hover:text-text-primary',
               )}
             >
@@ -421,7 +421,7 @@ export function GateFilterStudio({
               className={cn(
                 'flex items-center gap-1.5 rounded-xl px-3 py-1.5 transition-all cursor-pointer',
                 activeTab === 'year'
-                  ? 'bg-accent-brand text-white shadow-sm'
+                  ? 'bg-accent-brand text-on-accent-brand shadow-sm'
                   : 'text-text-muted hover:text-text-primary',
               )}
             >
@@ -438,7 +438,7 @@ export function GateFilterStudio({
               className={cn(
                 'flex items-center gap-1.5 rounded-xl px-3 py-1.5 transition-all cursor-pointer',
                 activeTab === 'specs'
-                  ? 'bg-accent-brand text-white shadow-sm'
+                  ? 'bg-accent-brand text-on-accent-brand shadow-sm'
                   : 'text-text-muted hover:text-text-primary',
               )}
             >
@@ -487,7 +487,7 @@ export function GateFilterStudio({
                               className={cn(
                                 'flex items-center gap-1.5 rounded-xl px-2.5 py-1 text-[11.5px] font-semibold border transition-all cursor-pointer',
                                 isSelected
-                                  ? 'border-accent-brand bg-accent-brand text-white shadow-xs'
+                                  ? 'border-accent-brand bg-accent-brand text-on-accent-brand shadow-xs'
                                   : 'border-border/70 bg-bg-surface-2/60 text-text-secondary hover:border-accent-brand/50 hover:text-text-primary',
                               )}
                             >
@@ -540,7 +540,7 @@ export function GateFilterStudio({
                           className={cn(
                             'rounded-xl px-2.5 py-1 text-[11px] font-medium border transition-all cursor-pointer',
                             isSelected
-                              ? 'border-accent-brand bg-accent-brand text-white shadow-xs'
+                              ? 'border-accent-brand bg-accent-brand text-on-accent-brand shadow-xs'
                               : 'border-border/80 bg-bg-surface text-text-secondary hover:text-text-primary',
                           )}
                         >
@@ -605,7 +605,7 @@ export function GateFilterStudio({
                       className={cn(
                         'rounded-xl px-2.5 py-1 font-mono text-[11.5px] font-semibold border transition-all cursor-pointer',
                         isSelected
-                          ? 'border-accent-brand bg-accent-brand text-white shadow-xs'
+                          ? 'border-accent-brand bg-accent-brand text-on-accent-brand shadow-xs'
                           : 'border-border/70 bg-bg-surface text-text-muted hover:text-text-primary',
                       )}
                     >
@@ -635,7 +635,7 @@ export function GateFilterStudio({
                         className={cn(
                           'rounded-xl px-3 py-1.5 text-[12px] font-bold border transition-all cursor-pointer',
                           isSelected
-                            ? 'border-accent-brand bg-accent-brand text-white shadow-xs'
+                            ? 'border-accent-brand bg-accent-brand text-on-accent-brand shadow-xs'
                             : 'border-border/70 bg-bg-surface text-text-muted hover:text-text-primary',
                         )}
                       >
@@ -664,7 +664,7 @@ export function GateFilterStudio({
                         className={cn(
                           'rounded-xl px-3 py-1.5 text-[12px] font-bold border transition-all cursor-pointer',
                           isSelected
-                            ? 'border-accent-brand bg-accent-brand text-white shadow-xs'
+                            ? 'border-accent-brand bg-accent-brand text-on-accent-brand shadow-xs'
                             : 'border-border/70 bg-bg-surface text-text-muted hover:text-text-primary',
                         )}
                       >

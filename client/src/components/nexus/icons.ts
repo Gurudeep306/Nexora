@@ -1,62 +1,37 @@
-import {
-  Activity,
-  BookOpen,
-  Brain,
-  Building2,
-  ChartColumn,
-  CircleDot,
-  Coins,
-  Crown,
-  Dice5,
-  Droplets,
-  Gamepad2,
-  GitBranch,
-  Hash,
-  Leaf,
-  Link2,
-  Network,
-  Puzzle,
-  Route,
-  Search,
-  Shapes,
-  TreePine,
-  TrendingUp,
-  Type,
-  Zap,
-  type LucideIcon,
-} from 'lucide-react'
+import type { IconName } from '@/components/icon/names'
 
-/* Server sends legacy HTML icon strings like `<i class="icon-book"></i>` — map them to lucide. */
-const NODE_ICONS: Record<string, LucideIcon> = {
-  'icon-abc': Type,
-  'icon-bolt': Zap,
-  'icon-book': BookOpen,
-  'icon-brain': Brain,
-  'icon-building': Building2,
-  'icon-chart': ChartColumn,
-  'icon-coins': Coins,
-  'icon-crown': Crown,
-  'icon-dice': Dice5,
-  'icon-gamepad': Gamepad2,
-  'icon-geometry': Shapes,
-  'icon-graph': Network,
-  'icon-hash': Hash,
-  'icon-leaf': Leaf,
-  'icon-link': Link2,
-  'icon-path': Route,
-  'icon-pine': TreePine,
-  'icon-puzzle': Puzzle,
-  'icon-search': Search,
-  'icon-tree': GitBranch,
-  'icon-trending': TrendingUp,
-  'icon-water': Droplets,
-  'icon-wave-line': Activity,
+/* Server sends legacy HTML icon strings like `<i class="icon-book"></i>` — map them to semantic icons. */
+const NODE_ICONS: Record<string, IconName> = {
+  'icon-abc': 'type',
+  'icon-bolt': 'bolt',
+  'icon-book': 'book',
+  'icon-brain': 'brain',
+  'icon-building': 'building',
+  'icon-chart': 'analytics',
+  'icon-coins': 'coins',
+  'icon-crown': 'crown',
+  'icon-dice': 'random',
+  'icon-gamepad': 'gamepad',
+  'icon-geometry': 'shapes',
+  'icon-graph': 'graph',
+  'icon-hash': 'hash',
+  'icon-leaf': 'leaf',
+  'icon-link': 'link',
+  'icon-path': 'route',
+  'icon-pine': 'pine',
+  'icon-puzzle': 'puzzle',
+  'icon-search': 'search',
+  'icon-tree': 'tree',
+  'icon-trending': 'trending-up',
+  'icon-water': 'droplet',
+  'icon-wave-line': 'activity',
 }
 
-export function nodeIcon(iconHtml: string | undefined): LucideIcon {
-  if (!iconHtml) return CircleDot
+/** Semantic icon for a skill node's legacy icon string — render with <Icon name={…} />. */
+export function nodeIcon(iconHtml: string | undefined): IconName {
+  if (!iconHtml) return 'target'
   const match = /icon-[\w-]+/.exec(iconHtml)
-  return (match && NODE_ICONS[match[0]]) || CircleDot
+  return (match && NODE_ICONS[match[0]]) || 'target'
 }
 
 /* Rating tier → token color classes (never raw hex in markup). */

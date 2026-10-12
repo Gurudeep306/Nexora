@@ -1,4 +1,4 @@
-import { Activity, Trophy } from 'lucide-react'
+import { Activity } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, EmptyState } from '@/components/ui'
 import { timeAgo } from '@/lib/utils'
 import type { ActivityFeedRow } from './types'
@@ -24,7 +24,7 @@ export function ActivityFeed({ activity }: { activity: ActivityFeedRow[] }) {
         {activity.length === 0 ? (
           <EmptyState
             className="py-6"
-            icon={<Trophy />}
+            icon="trophy"
             title="No activity yet"
             description="Solve problems and unlock achievements to fill your feed."
           />

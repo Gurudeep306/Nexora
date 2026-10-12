@@ -22,7 +22,6 @@ import {
   Trophy,
   Users,
 } from 'lucide-react'
-import { Wallpaper } from '@/components/fx/Wallpaper'
 import { LogoMark, Wordmark } from '@/components/brand/Logo'
 import { AlgoTheater } from '@/components/showcase/AlgoTheater'
 import { SubjectTicker } from '@/components/auth/AuthShowcase'
@@ -131,7 +130,6 @@ export default function LandingPage() {
 
   return (
     <div ref={root} className="relative min-h-dvh overflow-x-clip text-foreground">
-      <Wallpaper />
 
       {/* ── Nav ── */}
       <header className="fixed inset-x-0 top-0 z-50">

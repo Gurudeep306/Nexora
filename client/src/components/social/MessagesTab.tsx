@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { motion } from 'motion/react'
-import { Send, SmilePlus, ArrowLeft, MessagesSquare } from 'lucide-react'
+import { Send, SmilePlus, ArrowLeft } from 'lucide-react'
 import type { Socket } from 'socket.io-client'
 import {
   Avatar,
@@ -264,7 +264,7 @@ export function MessagesTab({ me, socket }: Props) {
           ) : friends.length === 0 ? (
             <EmptyState
               className="py-10"
-              icon={<MessagesSquare />}
+              icon="messages"
               title="No friends yet"
               description="Add friends to start chatting."
             />
@@ -316,7 +316,7 @@ export function MessagesTab({ me, socket }: Props) {
         {!peer ? (
           <div className="flex flex-1 items-center justify-center">
             <EmptyState
-              icon={<MessagesSquare />}
+              icon="messages"
               title="Select a conversation"
               description="Pick a friend on the left to open the encrypted-ish rift channel."
             />

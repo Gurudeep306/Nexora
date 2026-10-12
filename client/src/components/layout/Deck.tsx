@@ -9,14 +9,14 @@ import {
   useTransform,
   type MotionValue,
 } from 'motion/react'
-import { MoreHorizontal, SlidersHorizontal } from 'lucide-react'
+import { MoreHorizontal } from 'lucide-react'
+import { Icon } from '@/components/icon/Icon'
 import { prefetchHandlers } from '@/routes'
 import { cn } from '@/lib/utils'
 import { openCommandPalette } from './CommandPalette'
+import { DockBadge } from './DockBadge'
 import { DockEditor } from './DockEditor'
-import { DOCK_BY_ID, DOCK_ITEMS, isDockFocusRoute, tileStyle, useDock, type DockItem } from './dockStore'
-import { useTheme } from '@/context/ThemeContext'
-import type { IconPack, IconShape } from '@/theme/catalog'
+import { DOCK_BY_ID, DOCK_ITEMS, isDockFocusRoute, useDock, type DockItem } from './dockStore'
 
 /** Resting icon size, the size under the pointer, and how far the swell reaches. */
 const BASE = 46
@@ -46,16 +46,12 @@ function DockIcon({
   magnify,
   mono,
   active,
-  pack,
-  shape,
 }: {
   item: DockItem
   mouseX: MotionValue<number>
   magnify: boolean
   mono: boolean
   active: boolean
-  pack?: IconPack
-  shape?: IconShape
 }) {
   const ref = useRef<HTMLDivElement>(null)
   const reduce = useReducedMotion()
@@ -68,8 +64,6 @@ function DockIcon({
   })
   const target = useTransform(distance, [-REACH, 0, REACH], [BASE, magnify && !reduce ? PEAK : BASE, BASE])
   const size = useSpring(target, { mass: 0.12, stiffness: 190, damping: 16 })
-  const glyph = useTransform(size, (s) => s * 0.46)
-  const Icon = item.icon
 
   const launch = () => {
     if (!reduce) void bounce.start({ y: [0, -16, 0, -5, 0], transition: { duration: 0.55, ease: 'easeOut' } })
@@ -82,35 +76,26 @@ function DockIcon({
       style={{ width: size, height: size }}
       className="relative flex items-center justify-center"
     >
-      <span
-        className={cn(
-          'absolute inset-0 transition-[filter,background-color] duration-200',
-          shape === 'circle' ? 'rounded-full' : shape === 'free' ? 'rounded-none' : 'rounded-[28%]',
-          mono
-            ? cn('bg-transparent group-hover:bg-bg-surface-3', active && 'bg-bg-surface-3')
-            : 'dock-tile group-hover:brightness-110',
-        )}
-        style={mono ? undefined : tileStyle(item, pack, shape)}
-        aria-hidden="true"
-      />
-      <motion.span style={{ width: glyph, height: glyph }} className="relative flex">
-        <Icon
+      {/* The glyph's tile is an IconBadge sized by the spring (its glyph is a
+          percentage of the box), so it swells with the magnification and
+          follows the chosen icon set, container and shape. Mono Docks show
+          bare glyphs over a hover plate. */}
+      {mono && (
+        <span
           className={cn(
-            'size-full',
-            mono
-              ? active
-                ? 'text-accent-brand'
-                : 'text-text-secondary group-hover:text-text-primary'
-              : pack === 'minimal'
-                ? 'text-text-primary'
-                : pack === 'neon'
-                  ? 'text-white drop-shadow-[0_0_8px_currentColor]'
-                  : 'text-white drop-shadow-[0_1px_1px_rgb(0_0_0/0.25)]',
+            'dock-plate absolute inset-0 transition-colors duration-200 group-hover:bg-bg-surface-3',
+            active && 'bg-bg-surface-3',
           )}
-          strokeWidth={mono || pack === 'minimal' ? 1.8 : 2.1}
           aria-hidden="true"
         />
-      </motion.span>
+      )}
+      <DockBadge
+        item={item}
+        mono={mono}
+        active={active}
+        container={mono ? 'none' : undefined}
+        className="dock-tile absolute inset-0 size-full transition-[filter] duration-200 group-hover:brightness-110"
+      />
 
       {/* name, floating above like the macOS Dock label */}
       <span className="dock-label pop-surface pointer-events-none absolute bottom-full left-1/2 mb-3 -translate-x-1/2 !rounded-lg px-2.5 py-1 text-[12px] font-medium whitespace-nowrap text-text-primary">
@@ -130,7 +115,9 @@ function DockIcon({
     />
   )
 
-  const common = 'group relative flex cursor-pointer items-end outline-none hover:!scale-100 focus-visible:[&>div]:ring-2 focus-visible:[&>div]:ring-accent-brand focus-visible:[&>div]:rounded-[28%]'
+  // The focus ring is an outline on the tile, so it follows the icon shape.
+  const common =
+    'group relative flex cursor-pointer items-end outline-none hover:!scale-100 focus-visible:[&_.dock-tile]:outline-2 focus-visible:[&_.dock-tile]:outline-offset-2 focus-visible:[&_.dock-tile]:outline-accent-brand'
 
   if (item.action === 'search') {
     return (
@@ -183,7 +170,6 @@ function DockIcon({
  */
 export function Deck() {
   const dock = useDock()
-  const { look } = useTheme()
   const mouseX = useMotionValue(Infinity)
   const [moreOpen, setMoreOpen] = useState(false)
   const [editing, setEditing] = useState(false)
@@ -271,8 +257,6 @@ export function Deck() {
               magnify={dock.magnify}
               mono={mono}
               active={isActive(item, pathname)}
-              pack={look.iconPack}
-              shape={look.iconShape}
             />
           ))}
 
@@ -323,7 +307,7 @@ export function Deck() {
                     }}
                     className="mt-1.5 flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border-t border-border px-2 pt-2.5 pb-1.5 text-[12.5px] font-medium text-text-secondary transition-colors hover:!scale-100 hover:text-text-primary"
                   >
-                    <SlidersHorizontal className="size-3.5" aria-hidden="true" />
+                    <Icon name="sliders" className="size-3.5" />
                     Customize Dock…
                   </button>
                 </motion.div>
@@ -339,15 +323,9 @@ export function Deck() {
 }
 
 function MoreTile({ item, mono, onPick }: { item: DockItem; mono: boolean; onPick: () => void }) {
-  const Icon = item.icon
   const inner = (
     <>
-      <span
-        className={cn('flex size-10 items-center justify-center rounded-[28%]', mono ? 'bg-bg-surface-3' : 'dock-tile')}
-        style={mono ? undefined : tileStyle(item)}
-      >
-        <Icon className={cn('size-[19px]', mono ? 'text-text-primary' : 'text-white')} aria-hidden="true" />
-      </span>
+      <DockBadge item={item} mono={mono} box="md" />
       <span className="w-full truncate text-center text-[11px] text-text-secondary group-hover:text-text-primary">
         {item.label}
       </span>

@@ -1,17 +1,17 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { PageHeader, Tabs } from '@/components/ui'
-import { BookOpen, GraduationCap, Map, Server } from 'lucide-react'
 import { CourseOverview } from '@/learn/ui/CourseOverview'
 import { TutorialsPanel } from '@/components/learn/TutorialsPanel'
 import { PathsPanel } from '@/components/learn/PathsPanel'
 import { SystemDesignStudio } from '@/learn/system-design/components/SystemDesignStudio'
+import { Icon } from '@/components/icon/Icon'
 
 const TABS = [
-  { id: 'dsa', label: 'DSA Course', icon: <GraduationCap className="size-4" /> },
-  { id: 'sysdesign', label: 'System Design Studio', icon: <Server className="size-4" /> },
-  { id: 'tutorials', label: 'Tutorials', icon: <BookOpen className="size-4" /> },
-  { id: 'paths', label: 'Forge Paths', icon: <Map className="size-4" /> },
+  { id: 'dsa', label: 'DSA Course', icon: <Icon name="learn" className="size-4" /> },
+  { id: 'sysdesign', label: 'System Design Studio', icon: <Icon name="system-design" className="size-4" /> },
+  { id: 'tutorials', label: 'Tutorials', icon: <Icon name="book" className="size-4" /> },
+  { id: 'paths', label: 'Forge Paths', icon: <Icon name="map" className="size-4" /> },
 ]
 
 export default function LearnPage() {
@@ -34,6 +34,7 @@ export default function LearnPage() {
   return (
     <div>
       <PageHeader
+        icon="learn"
         title="Learn"
         subtitle="Master Data Structures, interactive System Design visualizations, deep-dive tutorials, and Forge journey paths."
       />

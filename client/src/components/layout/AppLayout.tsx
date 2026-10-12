@@ -8,7 +8,6 @@ import { ShortcutsDialog } from './ShortcutsDialog'
 import { MobileTabBar } from './MobileTabBar'
 import { Deck } from './Deck'
 import { RouteProgress } from './RouteProgress'
-import { Wallpaper } from '../fx/Wallpaper'
 import { LookSync } from '../look/LookSync'
 import { DockSync } from './DockSync'
 import { AgentPanel } from './AgentPanel'
@@ -34,7 +33,6 @@ export function AppLayout() {
       >
         Skip to content
       </a>
-      <Wallpaper />
       <LookSync />
       <DockSync />
 

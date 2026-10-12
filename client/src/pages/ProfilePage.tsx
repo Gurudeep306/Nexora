@@ -1,5 +1,4 @@
 import { useParams } from 'react-router-dom'
-import { Crown, Flame, Target, Zap } from 'lucide-react'
 import { motion } from 'motion/react'
 import {
   ErrorState,
@@ -63,7 +62,7 @@ export default function ProfilePage() {
   if (profileApi.loading && !profileApi.data) {
     return (
       <div>
-        <PageHeader title="Player Profile" subtitle={isSelf ? 'Your rank, records and recent conquests' : `@${username}'s rank and records`} />
+        <PageHeader icon="profile" title="Player Profile" subtitle={isSelf ? 'Your rank, records and recent conquests' : `@${username}'s rank and records`} />
         <ProfileSkeleton />
       </div>
     )
@@ -72,7 +71,7 @@ export default function ProfilePage() {
   if (profileApi.error && !profileApi.data) {
     return (
       <div>
-        <PageHeader title="Player Profile" subtitle={isSelf ? 'Your rank, records and recent conquests' : `@${username}'s rank and records`} />
+        <PageHeader icon="profile" title="Player Profile" subtitle={isSelf ? 'Your rank, records and recent conquests' : `@${username}'s rank and records`} />
         <ErrorState message={profileApi.error} onRetry={profileApi.refetch} />
       </div>
     )
@@ -90,6 +89,7 @@ export default function ProfilePage() {
   return (
     <div className="space-y-6">
       <PageHeader
+        icon="profile"
         title="Player Profile"
         subtitle={isSelf ? 'Your rank, records and recent conquests across the rift.' : `@${username} — rank, records and recent conquests.`}
         actions={
@@ -119,7 +119,7 @@ export default function ProfilePage() {
         transition={{ duration: 0.25, delay: 0.05 }}
       >
         <StatCard
-          icon={<Zap />}
+          icon="bolt"
           label="Total XP"
           value={formatNumber(totalXp)}
           sub={
@@ -130,7 +130,7 @@ export default function ProfilePage() {
           accent="primary"
         />
         <StatCard
-          icon={<Target />}
+          icon="target"
           label="Solved"
           value={formatNumber(solved)}
           sub={
@@ -145,7 +145,7 @@ export default function ProfilePage() {
           accent="success"
         />
         <StatCard
-          icon={<Flame />}
+          icon="flame"
           label="Streak"
           value={`${streak.current}d`}
           sub={
@@ -156,7 +156,7 @@ export default function ProfilePage() {
           accent="warning"
         />
         <StatCard
-          icon={<Crown />}
+          icon="crown"
           label="Rank"
           value={
             <span className="text-base leading-8">{stats?.title?.current?.title ?? level.name ?? 'Rift Walker'}</span>

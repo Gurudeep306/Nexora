@@ -1,6 +1,6 @@
-import { createElement } from 'react'
 import { motion, useReducedMotion } from 'motion/react'
-import { Check, Lock } from 'lucide-react'
+import { Check } from 'lucide-react'
+import { IconBadge } from '@/components/icon/Icon'
 import { Badge, Card, Progress } from '@/components/ui'
 import { cn, formatDate } from '@/lib/utils'
 import { achievementIcon, rarityOf, type AchievementRow } from './achievementMeta'
@@ -28,25 +28,11 @@ export function AchievementCard({ achievement, index }: { achievement: Achieveme
         }
       >
         <div className="flex items-start gap-3">
-          <span
-            className={cn(
-              'flex size-12 shrink-0 items-center justify-center rounded-xl border-2',
-              earned ? '' : 'border-border bg-surface-2 text-foreground-faint',
-            )}
-            style={
-              earned
-                ? {
-                    borderColor: rarity.color,
-                    color: rarity.color,
-                    backgroundColor: `color-mix(in srgb, ${rarity.color} 12%, var(--color-surface))`,
-                    boxShadow: `0 0 12px color-mix(in srgb, ${rarity.color} 40%, transparent)`,
-                  }
-                : undefined
-            }
-            aria-hidden="true"
-          >
-            {earned ? createElement(achievementIcon(achievement.icon), { className: 'size-6' }) : <Lock className="size-5" />}
-          </span>
+          {earned ? (
+            <IconBadge name={achievementIcon(achievement.icon)} color={rarity.color} box="lg" />
+          ) : (
+            <IconBadge name="lock" tone="neutral" box="lg" />
+          )}
           <div className="min-w-0 flex-1">
             <div className="flex items-start justify-between gap-2">
               <h3 className={cn('font-display text-sm tracking-wide', earned ? 'text-foreground' : 'text-foreground-dim')}>
@@ -79,7 +65,7 @@ export function AchievementCard({ achievement, index }: { achievement: Achieveme
               <span className="font-mono tabular-nums">{pct}%</span>
             </div>
             <Progress value={pct} className="h-1.5" />
-            <p className="text-right font-mono text-[10px] text-gold/80 tabular-nums">
+            <p className="text-right font-mono text-[10px] text-gold tabular-nums">
               reward +{achievement.xp_reward} XP
             </p>
           </div>
