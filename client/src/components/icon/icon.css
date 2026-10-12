@@ -36,14 +36,12 @@
     fill: color-mix(in oklab, currentColor var(--icon-duotone-mix, 24%), transparent);
   }
 
-  :root[data-theme='dark'] {
+  /* data-mode is written by the theme layer on <html> (and on preview scopes). */
+  [data-mode='dark'] {
     --icon-duotone-mix: 32%;
   }
-
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme='light']) {
-      --icon-duotone-mix: 32%;
-    }
+  [data-mode='light'] {
+    --icon-duotone-mix: 24%;
   }
 
   /* ── badge: tones ─────────────────────────────────────────────────── */
