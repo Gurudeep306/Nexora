@@ -87,7 +87,7 @@ test('sanitizeLook: defaults, validation and v2 round-trip', async () => {
 
   const v2 = {
     v: 2, theme: 'nord', accent: 'teal', font: 'manrope', codeFont: 'fira', textSize: 'large',
-    cardStyle: 'gradient', radius: 'sharp', iconSet: 'tabler', iconStyle: 'filled', iconContainer: 'outline', iconShape: 'circle',
+    cardStyle: 'gradient', radius: 'sharp', iconSet: 'remix', iconStyle: 'fill', iconContainer: 'outline', iconShape: 'circle',
   };
   assert.deepEqual(sanitizeLook(v2), v2);
   assert.deepEqual(sanitizeLook(sanitizeLook(v2)), v2, 'idempotent');
