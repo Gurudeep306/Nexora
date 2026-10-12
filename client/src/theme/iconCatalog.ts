@@ -57,7 +57,6 @@ export const ICON_SETS: IconSetInfo[] = [
     description: 'Crisp outlines, solid fills',
     styles: [
       { id: 'outline', label: 'Outline' },
-      { id: 'filled', label: 'Filled' },
     ],
     defaultStyle: 'outline',
   },
@@ -87,7 +86,6 @@ export const ICON_SETS: IconSetInfo[] = [
     description: 'Light, editorial line icons',
     styles: [
       { id: 'regular', label: 'Regular' },
-      { id: 'solid', label: 'Solid' },
     ],
     defaultStyle: 'regular',
   },

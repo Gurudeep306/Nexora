@@ -2,7 +2,7 @@
   <Icon> — renders a semantic icon in the user's chosen icon set and style.
 
     <Icon name="home" />                               follows <html data-icon-set/-style>
-    <Icon name="home" set="tabler" style="filled" />   explicit (previews)
+    <Icon name="home" set="heroicons" style="solid" />  explicit (previews)
     <Icon name="trophy" label="Contest winner" />      meaningful icon (role="img")
     <IconBadge name="trophy" tone="warning" />         icon in the themed container
                                                        (data-icon-container/-shape)
@@ -20,7 +20,7 @@ import {
   type IconSetId,
   type IconShapeId,
 } from '@/theme/iconCatalog'
-import { LUCIDE_PACK, loadIconPack, useIconChoice, useIconPack } from './iconStore'
+import { LUCIDE_PACK, loadIconPack, packKey, useIconChoice, useIconPack } from './iconStore'
 import type { IconName } from './names'
 import type { Glyph } from './packs/types'
 import './icon.css'
@@ -69,11 +69,12 @@ export function Icon({ name, set, style, size, className, label, title, 'aria-la
   const info = findIconSet(set ?? choice.set)
   // An explicit set without a style uses that set's default (unless it is the user's set).
   const styleId = resolveIconStyle(info, style ?? (info.id === choice.set ? choice.style : undefined))
-  const pack = useIconPack(info.id)
+  const key = packKey(info.id, styleId)
+  const pack = useIconPack(key)
 
   useEffect(() => {
-    if (!pack) void loadIconPack(info.id)
-  }, [pack, info.id])
+    if (!pack) void loadIconPack(key)
+  }, [pack, key])
 
   const active = pack ?? LUCIDE_PACK
   const activeStyle = pack ? styleId : lucideStyleFor(styleId)

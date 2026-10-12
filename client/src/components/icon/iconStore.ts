@@ -12,6 +12,8 @@
 import { useSyncExternalStore } from 'react'
 import { findIconSet, resolveIconStyle, type IconSetId } from '@/theme/iconCatalog'
 import lucide from './packs/lucide'
+import type { IconName } from './names'
+import { phosphorPack } from './packs/phosphor/pack'
 import type { IconPack } from './packs/types'
 
 /* ── choice ──────────────────────────────────────────────────────────── */
@@ -35,7 +37,7 @@ if (typeof MutationObserver !== 'undefined' && typeof document !== 'undefined') 
     const next = readChoice()
     if (next.set === choice.set && next.style === choice.style) return
     choice = next
-    void loadIconPack(next.set)
+    void loadIconPack(packKey(next.set, next.style))
     for (const l of choiceListeners) l()
   }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-icon-set', 'data-icon-style'] })
 }
@@ -56,44 +58,58 @@ export function useIconChoice(): IconChoice {
 
 /* ── packs ───────────────────────────────────────────────────────────── */
 
-type LazySetId = Exclude<IconSetId, 'lucide'>
+/*
+  Packs are cached by key: the set id, except Phosphor, which is split per
+  weight (`phosphor:duotone` …) so users only download the weight they use.
+*/
+export function packKey(set: IconSetId, style: string): string {
+  return set === 'phosphor' ? `phosphor:${style}` : set
+}
 
-/* One dynamic import per set → one chunk per set. */
-const LOADERS: Record<LazySetId, () => Promise<{ default: IconPack }>> = {
-  phosphor: () => import('./packs/phosphor'),
+const phosphor = (load: () => Promise<{ default: Record<IconName, string> }>, weight: string) => () =>
+  load().then((m) => ({ default: phosphorPack(weight, m.default) }))
+
+/* One dynamic import per key → one chunk per set (per weight for Phosphor). */
+const LOADERS: Record<string, () => Promise<{ default: IconPack }>> = {
+  'phosphor:thin': phosphor(() => import('./packs/phosphor/thin'), 'thin'),
+  'phosphor:light': phosphor(() => import('./packs/phosphor/light'), 'light'),
+  'phosphor:regular': phosphor(() => import('./packs/phosphor/regular'), 'regular'),
+  'phosphor:bold': phosphor(() => import('./packs/phosphor/bold'), 'bold'),
+  'phosphor:fill': phosphor(() => import('./packs/phosphor/fill'), 'fill'),
+  'phosphor:duotone': phosphor(() => import('./packs/phosphor/duotone'), 'duotone'),
   tabler: () => import('./packs/tabler'),
   remix: () => import('./packs/remix'),
   heroicons: () => import('./packs/heroicons'),
   iconoir: () => import('./packs/iconoir'),
 }
 
-const packs = new Map<IconSetId, IconPack>([['lucide', lucide]])
-const pending = new Map<IconSetId, Promise<IconPack | undefined>>()
+const packs = new Map<string, IconPack>([['lucide', lucide]])
+const pending = new Map<string, Promise<IconPack | undefined>>()
 const packListeners = new Set<() => void>()
 
 export const LUCIDE_PACK = lucide
 
-/** Fetch a set's pack (no-op when cached or in flight). */
-export function loadIconPack(id: IconSetId): Promise<IconPack | undefined> {
-  const have = packs.get(id)
+/** Fetch a pack by key (no-op when cached or in flight). */
+export function loadIconPack(key: string): Promise<IconPack | undefined> {
+  const have = packs.get(key)
   if (have) return Promise.resolve(have)
-  const inflight = pending.get(id)
+  const inflight = pending.get(key)
   if (inflight) return inflight
-  const loader = LOADERS[id as LazySetId]
+  const loader = LOADERS[key]
   if (!loader) return Promise.resolve(undefined)
   const p = loader()
     .then((m) => {
-      packs.set(id, m.default)
+      packs.set(key, m.default)
       for (const l of packListeners) l()
       return m.default
     })
     .catch((err: unknown) => {
       // Keep showing the Lucide fallback; a later render may retry.
-      pending.delete(id)
-      console.warn(`[icons] could not load the ${id} icon set`, err)
+      pending.delete(key)
+      console.warn(`[icons] could not load the ${key} icons`, err)
       return undefined
     })
-  pending.set(id, p)
+  pending.set(key, p)
   return p
 }
 
@@ -104,11 +120,11 @@ function subscribePacks(cb: () => void) {
   }
 }
 
-/** The pack for a set once it has loaded (undefined while loading). */
-export function useIconPack(id: IconSetId): IconPack | undefined {
-  const get = () => packs.get(id)
+/** The pack for a key once it has loaded (undefined while loading). */
+export function useIconPack(key: string): IconPack | undefined {
+  const get = () => packs.get(key)
   return useSyncExternalStore(subscribePacks, get, get)
 }
 
-/* Prefetch the user's set at startup so it is usually ready before first use. */
-void loadIconPack(choice.set)
+/* Prefetch the user's set/weight at startup so it is usually ready before first use. */
+void loadIconPack(packKey(choice.set, choice.style))
