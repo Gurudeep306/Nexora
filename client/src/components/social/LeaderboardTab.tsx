@@ -87,7 +87,7 @@ export function LeaderboardTab({ me }: { me: string }) {
         <ErrorState message={lb.error} onRetry={lb.refetch} />
       ) : rows.length === 0 ? (
         <Card>
-          <EmptyState icon={<Trophy />} title="No ranked players yet" />
+          <EmptyState icon="trophy" title="No ranked players yet" />
         </Card>
       ) : (
         <>

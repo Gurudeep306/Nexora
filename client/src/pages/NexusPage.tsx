@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Flame, Lock, Map, RefreshCw, Sparkles, Trophy } from 'lucide-react'
+import { RefreshCw } from 'lucide-react'
 import {
   Badge,
   Button,
@@ -24,6 +24,7 @@ import { WeeklyPool } from '@/components/nexus/WeeklyPool'
 import { TitleTrack } from '@/components/nexus/TitleTrack'
 import type { NexusStatsResponse } from '@/components/nexus/types'
 import { fetchNexus, fetchRoadmap, NEXUS_KEY, ROADMAP_KEY } from '@/components/nexus/data'
+import { Icon } from '@/components/icon/Icon'
 
 export default function NexusPage() {
   const [selectedId, setSelectedId] = useState<string | null>(null)
@@ -69,7 +70,7 @@ export default function NexusPage() {
   if (loading && !nexus) {
     return (
       <div>
-        <PageHeader title="The Nexus" subtitle="Your competitive programming skill tree" />
+        <PageHeader icon="nexus" title="The Nexus" subtitle="Your competitive programming skill tree" />
         <LoadingBlock rows={8} />
       </div>
     )
@@ -78,7 +79,7 @@ export default function NexusPage() {
   if (error || !nexus) {
     return (
       <div>
-        <PageHeader title="The Nexus" subtitle="Your competitive programming skill tree" />
+        <PageHeader icon="nexus" title="The Nexus" subtitle="Your competitive programming skill tree" />
         <ErrorState message={error ?? 'Failed to load the nexus'} onRetry={refetch} />
       </div>
     )
@@ -101,6 +102,7 @@ export default function NexusPage() {
   return (
     <div>
       <PageHeader
+        icon="nexus"
         title="The Nexus"
         subtitle="Climb the rift — master skill nodes, unlock zones, and grind the weekly problem pool."
         actions={
@@ -160,7 +162,7 @@ export default function NexusPage() {
             </div>
             <div className="text-center">
               <p className="flex items-center justify-center gap-1 font-display text-2xl text-warning tabular-nums">
-                <Flame className="size-4 text-streak" aria-hidden="true" />
+                <Icon name="flame" className="size-4 text-streak" aria-hidden="true" />
                 {statsApi.data?.streak.current ?? '—'}
               </p>
               <p className="text-[10px] tracking-wider text-foreground-faint uppercase">
@@ -169,7 +171,7 @@ export default function NexusPage() {
             </div>
             <div className="hidden text-center sm:block">
               <p className="flex items-center justify-center gap-1 font-display text-sm text-gold">
-                <Trophy className="size-4" aria-hidden="true" />
+                <Icon name="trophy" className="size-4" aria-hidden="true" />
                 {statsApi.data?.title.current.title ?? '—'}
               </p>
               <p className="text-[10px] tracking-wider text-foreground-faint uppercase">Rank</p>
@@ -186,11 +188,11 @@ export default function NexusPage() {
         variant="pills"
         className="mb-4"
         items={[
-          { id: 'map', label: '/zones', icon: <Map className="size-3.5" aria-hidden="true" /> },
+          { id: 'map', label: '/zones', icon: <Icon name="map" className="size-3.5" aria-hidden="true" /> },
           {
             id: 'ranks',
             label: '/ranks',
-            icon: <Trophy className="size-3.5" aria-hidden="true" />,
+            icon: <Icon name="trophy" className="size-3.5" aria-hidden="true" />,
             badge: statsApi.data ? statsApi.data.allTitles.length : undefined,
           },
         ]}
@@ -223,7 +225,7 @@ export default function NexusPage() {
                 : 'border-border bg-surface text-foreground-dim hover:border-primary/60 hover:text-foreground',
             )}
           >
-            {z.locked && <Lock className="size-3 text-foreground-faint" aria-hidden="true" />}
+            {z.locked && <Icon name="lock" className="size-3 text-foreground-faint" aria-hidden="true" />}
             <span className="size-1.5 rounded-full" style={{ backgroundColor: z.color }} aria-hidden="true" />
             {z.name}
             <span className="font-mono text-[10px] text-foreground-faint tabular-nums">{z.zoneProgress}%</span>
@@ -265,20 +267,20 @@ export default function NexusPage() {
             <Card className="sticky top-4">
               <CardContent>
                 <EmptyState
-                  icon={<Map />}
+                  icon="map"
                   title="Select a skill node"
                   description="Click any node in the rift map to inspect prerequisites, resources, and recommended problems."
                   className="py-8"
                 />
                 <div className="mt-2 space-y-2 border-t border-border pt-3">
                   <p className="flex items-center gap-1.5 text-[11px] font-semibold tracking-wider text-foreground-faint uppercase">
-                    <Sparkles className="size-3" aria-hidden="true" /> Legend
+                    <Icon name="sparkles" className="size-3" aria-hidden="true" /> Legend
                   </p>
                   <div className="flex flex-wrap gap-1.5">
                     <Badge variant="success">mastered</Badge>
                     <Badge variant="primary">unlocked</Badge>
                     <Badge variant="default">
-                      <Lock className="size-3" aria-hidden="true" /> locked
+                      <Icon name="lock" className="size-3" aria-hidden="true" /> locked
                     </Badge>
                   </div>
                   <p className="text-[11px] text-foreground-faint">

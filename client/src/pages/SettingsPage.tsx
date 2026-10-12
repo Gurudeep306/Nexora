@@ -92,6 +92,7 @@ export default function SettingsPage() {
   return (
     <div className="space-y-5">
       <PageHeader
+        icon="settings"
         title="Settings"
         subtitle="Tune your identity, platform links, editor behaviour, the Dock and account safety."
       />

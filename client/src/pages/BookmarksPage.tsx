@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'motion/react'
-import { BookmarkX, Star, Swords } from 'lucide-react'
+import { Star, Swords } from 'lucide-react'
 import {
   Button,
   Card,
@@ -118,6 +118,7 @@ export default function BookmarksPage() {
   return (
     <div className="space-y-4">
       <PageHeader
+        icon="bookmarks"
         title="Bookmark Vault"
         subtitle="Problems you saved for later — filter, jump back in, or clear the clutter."
         actions={
@@ -193,7 +194,7 @@ export default function BookmarksPage() {
       ) : problems.length === 0 ? (
         <div className="card-neon">
           <EmptyState
-            icon={<Star />}
+            icon="star"
             title="Your vault is empty"
             description="Star problems in the arena to stash them here for your next session."
             action={
@@ -208,7 +209,7 @@ export default function BookmarksPage() {
       ) : filtered.length === 0 ? (
         <div className="card-neon">
           <EmptyState
-            icon={<BookmarkX />}
+            icon="bookmark"
             title="No bookmarks match"
             description="Try clearing the search or widening your filters."
           />
