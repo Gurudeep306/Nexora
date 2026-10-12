@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 670 192" role="img" aria-label="B+ tree: root 6, 12, 19 with four leaves 1 4 3, 7 9 10, 13 15 17, 20 21 22">
+  <title>B+ tree with root (6, 12, 19) and four full leaves</title>
+  <g fill="none" stroke="currentColor" stroke-width="1.5">
+    <line x1="269" y1="50" x2="36" y2="150"/>
+    <line x1="313" y1="50" x2="206" y2="150"/>
+    <line x1="357" y1="50" x2="376" y2="150"/>
+    <line x1="401" y1="50" x2="546" y2="150"/>
+  </g>
+  <g fill="none" stroke="currentColor" stroke-width="1.5" font-family="Arial, Helvetica, sans-serif" font-size="17" text-anchor="middle">
+    <rect x="265" y="20" width="8" height="30"/><rect x="273" y="20" width="36" height="30"/><text x="291" y="41" fill="currentColor" stroke="none">6</text><rect x="309" y="20" width="8" height="30"/><rect x="317" y="20" width="36" height="30"/><text x="335" y="41" fill="currentColor" stroke="none">12</text><rect x="353" y="20" width="8" height="30"/><rect x="361" y="20" width="36" height="30"/><text x="379" y="41" fill="currentColor" stroke="none">19</text><rect x="397" y="20" width="8" height="30"/>
+    <rect x="10" y="150" width="8" height="30"/><rect x="18" y="150" width="36" height="30"/><text x="36" y="171" fill="currentColor" stroke="none">1</text><rect x="54" y="150" width="8" height="30"/><rect x="62" y="150" width="36" height="30"/><text x="80" y="171" fill="currentColor" stroke="none">4</text><rect x="98" y="150" width="8" height="30"/><rect x="106" y="150" width="36" height="30"/><text x="124" y="171" fill="currentColor" stroke="none">3</text><rect x="142" y="150" width="8" height="30"/>
+    <rect x="180" y="150" width="8" height="30"/><rect x="188" y="150" width="36" height="30"/><text x="206" y="171" fill="currentColor" stroke="none">7</text><rect x="224" y="150" width="8" height="30"/><rect x="232" y="150" width="36" height="30"/><text x="250" y="171" fill="currentColor" stroke="none">9</text><rect x="268" y="150" width="8" height="30"/><rect x="276" y="150" width="36" height="30"/><text x="294" y="171" fill="currentColor" stroke="none">10</text><rect x="312" y="150" width="8" height="30"/>
+    <rect x="350" y="150" width="8" height="30"/><rect x="358" y="150" width="36" height="30"/><text x="376" y="171" fill="currentColor" stroke="none">13</text><rect x="394" y="150" width="8" height="30"/><rect x="402" y="150" width="36" height="30"/><text x="420" y="171" fill="currentColor" stroke="none">15</text><rect x="438" y="150" width="8" height="30"/><rect x="446" y="150" width="36" height="30"/><text x="464" y="171" fill="currentColor" stroke="none">17</text><rect x="482" y="150" width="8" height="30"/>
+    <rect x="520" y="150" width="8" height="30"/><rect x="528" y="150" width="36" height="30"/><text x="546" y="171" fill="currentColor" stroke="none">20</text><rect x="564" y="150" width="8" height="30"/><rect x="572" y="150" width="36" height="30"/><text x="590" y="171" fill="currentColor" stroke="none">21</text><rect x="608" y="150" width="8" height="30"/><rect x="616" y="150" width="36" height="30"/><text x="634" y="171" fill="currentColor" stroke="none">22</text><rect x="652" y="150" width="8" height="30"/>
+  </g>
+</svg>
