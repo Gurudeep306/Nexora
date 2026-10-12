@@ -1,6 +1,7 @@
 const express = require("express");
 const fs = require("fs");
 const path = require("path");
+const { annotateFigure } = require("../gate/figures");
 
 /*
  * GATE CSE / IT / DA past-year questions.
@@ -10,9 +11,16 @@ const path = require("path");
  * This router serves the bank: a filtered, searchable list and one question
  * at a time. Everything is held in memory — the file is a few megabytes and
  * never changes at run time.
+ *
+ * Worked solutions are NOT part of the list / detail / paper payloads. They
+ * live in per-paper files src/gate/solutions/<paperId>.json (format v2, see
+ * docs/gate/SOLUTION_AUTHORING.md) and are served one at a time by
+ * GET /api/gate/questions/:id/solution, falling back to the legacy markdown
+ * string in questions.json until a paper has been migrated.
  */
 
 const FILE = path.join(__dirname, "..", "gate", "questions.json");
+const SOL_DIR = path.join(__dirname, "..", "gate", "solutions");
 
 let bank = null;
 let lastMtime = 0;
@@ -29,12 +37,13 @@ function load() {
   const rawQuestions = Array.isArray(raw) ? raw : (raw.questions || []);
   const questions = rawQuestions.map((q) => ({
     ...q,
+    // Official figure first; draft SVG redraws are flagged (src/gate/figures.js).
+    figures: (q.figures || []).map(annotateFigure),
     // One lower-cased haystack per question so search is a single scan.
     _hay: [
       q.text,
       q.id,
       q.number,
-      q.solution,
       ...(q.options || []).map((o) => o.t),
       ...(q.tags || []),
       ...(q.figures || []).map((f) => f.alt),
@@ -59,9 +68,67 @@ function terms(q) {
   return out.slice(0, 8);
 }
 
+/** Public shape of a question: no search haystack, no legacy solution blob. */
 function strip(q) {
-  const { _hay, ...rest } = q;
+  const { _hay, solution, ...rest } = q;
   return rest;
+}
+
+/** CBT mock exam: nothing that gives the answer away before submission. */
+function stripForExam(q) {
+  const { _hay, solution, answer, answerSource, confidence, reviewNote, needsReview, tags, ...rest } = q;
+  return rest;
+}
+
+/* Per-paper v2 solution files, loaded on first use and reloaded on change. */
+const solutionFiles = new Map();
+function loadSolutions(paperId) {
+  if (!/^[a-z]+-\d{4}(-\d)?$/.test(String(paperId || ""))) return null;
+  const file = path.join(SOL_DIR, `${paperId}.json`);
+  let mtime = 0;
+  try {
+    mtime = fs.statSync(file).mtimeMs;
+  } catch (_) {
+    solutionFiles.delete(paperId);
+    return null;
+  }
+  const hit = solutionFiles.get(paperId);
+  if (hit && hit.mtime === mtime) return hit.solutions;
+  try {
+    const data = JSON.parse(fs.readFileSync(file, "utf8"));
+    const solutions = data && data.version === 2 && data.solutions ? data.solutions : {};
+    solutionFiles.set(paperId, { mtime, solutions });
+    return solutions;
+  } catch (err) {
+    console.error(`[gate] cannot read ${file}: ${err.message}`);
+    return null;
+  }
+}
+
+/** { format: 'v2', solution } | { format: 'legacy', legacy } | { format: 'none' } — null for an unknown id. */
+function getGateSolution(id) {
+  const q = load().byId.get(String(id));
+  if (!q) return null;
+  const v2 = loadSolutions(q.paper);
+  if (v2 && v2[q.id]) return { format: "v2", solution: v2[q.id] };
+  if (q.solution && String(q.solution).trim()) return { format: "legacy", legacy: String(q.solution) };
+  return { format: "none" };
+}
+
+/** Plain-text rendering of a solution (for the AI assistant). */
+function solutionText(entry) {
+  if (!entry) return "";
+  if (entry.format === "legacy") return entry.legacy;
+  if (entry.format !== "v2") return "";
+  const s = entry.solution;
+  const parts = [`Approach: ${s.approach}`];
+  if (s.given) parts.push(`Given: ${s.given}`);
+  s.steps.forEach((st, i) => parts.push(`Step ${i + 1} — ${st.title}\n${st.body}`));
+  parts.push(`Answer: ${s.answer.value}${s.answer.matchesKey ? "" : ` (note: ${s.answer.keyNote || "differs from the stored key"})`}`);
+  for (const o of s.optionAnalysis || []) parts.push(`(${o.option}) ${o.correct ? "correct" : "wrong"}: ${o.reason}`);
+  if (s.shortcut) parts.push(`Shortcut: ${s.shortcut}`);
+  for (const p of s.pitfalls || []) parts.push(`Pitfall: ${p}`);
+  return parts.join("\n\n");
 }
 
 const asList = (v) =>
@@ -86,7 +153,8 @@ function sortPaperQuestions(questions) {
 /* Lookups for the AI agent's tools (src/ai/tools.js). */
 function findGateQuestion(id) {
   const q = load().byId.get(String(id));
-  return q ? strip(q) : null;
+  if (!q) return null;
+  return { ...strip(q), solution: solutionText(getGateSolution(q.id)) };
 }
 
 function searchGateQuestions({ q = "", subject = "", year = "", limit = 10 } = {}) {
@@ -103,6 +171,22 @@ function searchGateQuestions({ q = "", subject = "", year = "", limit = 10 } = {
     if (out.length >= max) break;
   }
   return out.map(strip);
+}
+
+/*
+  Official keys sometimes accept more than one answer ("A;C;D or C;D",
+  "2 to 2 OR 4 to 4"). A response is correct if it matches any alternative.
+*/
+function keyAlternatives(answer) {
+  if (typeof answer !== "string") return [answer];
+  return answer.split(/\s+or\s+/i).map((a) => a.trim()).filter(Boolean);
+}
+
+/** A NAT range key — "lo:hi" or "lo to hi" — as [lo, hi], else null. */
+function natRange(key) {
+  if (typeof key !== "string") return null;
+  const m = key.match(/^\s*(-?[\d.]+)\s*(?::|to)\s*(-?[\d.]+)\s*$/i);
+  return m ? [Number(m[1]), Number(m[2])] : null;
 }
 
 function createGateRouter() {
@@ -170,6 +254,7 @@ function createGateRouter() {
       marks = "",
       answered = "",
       hasFigure = "",
+      ids = "",
       sort = "year-desc",
     } = req.query;
 
@@ -182,8 +267,11 @@ function createGateRouter() {
     const sections = asList(section);
     const marksF = asList(marks).map(Number);
     const words = terms(String(q));
+    // An explicit id list (e.g. the student's bookmarks), capped.
+    const idSet = ids ? new Set(asList(ids).slice(0, 500)) : null;
 
     let rows = b.questions.filter((x) => {
+      if (idSet && !idSet.has(x.id)) return false;
       if (exams.length && !exams.includes(x.exam)) return false;
       if (years.length && !years.includes(x.year)) return false;
       if (minYear && x.year < Number(minYear)) return false;
@@ -282,7 +370,15 @@ function createGateRouter() {
     });
   });
 
-  /* Full paper for CBT Examination Mode */
+  /* The worked solution for one question (v2 when the paper is migrated). */
+  router.get("/api/gate/questions/:id/solution", (req, res) => {
+    const entry = getGateSolution(req.params.id);
+    if (!entry) return res.status(404).json({ ok: false, error: "Unknown question" });
+    res.json({ ok: true, id: req.params.id, ...entry });
+  });
+
+  /* Full paper for CBT Examination Mode — answers and solutions are withheld
+     until /api/gate/evaluate returns them after submission. */
   router.get("/api/gate/paper/:paperId", (req, res) => {
     const b = load();
     const paper = b.papers.find((p) => p.id === req.params.paperId);
@@ -317,7 +413,7 @@ function createGateRouter() {
       totalQuestions: questions.length,
       totalMarks,
       durationMinutes: 180,
-      questions: questions.map(strip),
+      questions: questions.map(stripForExam),
     });
   });
 
@@ -376,11 +472,13 @@ function createGateRouter() {
         if (q.type === "MSQ") {
           let uArr = Array.isArray(userAns) ? userAns : [userAns];
           uArr = uArr.map((x) => String(x).trim().toUpperCase()).sort();
-          let tArr = [];
-          if (Array.isArray(q.answer)) tArr = q.answer.map((x) => String(x).trim().toUpperCase());
-          else if (typeof q.answer === "string") tArr = q.answer.split(/[,;\s]+/).map((x) => x.trim().toUpperCase()).filter(Boolean);
-          tArr.sort();
-          isCorrect = uArr.length === tArr.length && uArr.every((v, i) => v === tArr[i]);
+          isCorrect = keyAlternatives(q.answer).some((key) => {
+            let tArr = [];
+            if (Array.isArray(key)) tArr = key.map((x) => String(x).trim().toUpperCase());
+            else if (typeof key === "string") tArr = key.split(/[,;\s]+/).map((x) => x.trim().toUpperCase()).filter(Boolean);
+            tArr.sort();
+            return uArr.length === tArr.length && uArr.every((v, i) => v === tArr[i]);
+          });
           if (isCorrect) {
             marksAwarded = qMarks;
           } else {
@@ -390,14 +488,11 @@ function createGateRouter() {
         } else if (q.type === "NAT") {
           const userNum = Number(userAns);
           if (!isNaN(userNum)) {
-            if (typeof q.answer === "number") {
-              isCorrect = Math.abs(userNum - q.answer) <= 0.05;
-            } else if (typeof q.answer === "string" && q.answer.includes(":")) {
-              const [lo, hi] = q.answer.split(":").map(Number);
-              isCorrect = userNum >= lo - 0.01 && userNum <= hi + 0.01;
-            } else {
-              isCorrect = Math.abs(userNum - Number(q.answer)) <= 0.05;
-            }
+            isCorrect = keyAlternatives(q.answer).some((key) => {
+              const range = natRange(key);
+              if (range) return userNum >= range[0] - 0.01 && userNum <= range[1] + 0.01;
+              return Math.abs(userNum - Number(key)) <= 0.05;
+            });
           }
           if (isCorrect) {
             marksAwarded = qMarks;
@@ -405,15 +500,23 @@ function createGateRouter() {
             // NAT has zero negative marking
             marksAwarded = 0;
           }
-        } else {
+        } else if (q.type === "MCQ" || (q.options && q.options.length > 0)) {
           // Standard MCQ
-          isCorrect = String(userAns).trim().toUpperCase() === String(q.answer).trim().toUpperCase();
+          isCorrect = keyAlternatives(q.answer).some((key) => String(userAns).trim().toUpperCase() === String(key).trim().toUpperCase());
           if (isCorrect) {
             marksAwarded = qMarks;
           } else {
-            // 1-mark: -1/3, 2-mark: -2/3
-            marksAwarded = -(qMarks / 3);
+            // 1-mark: -1/3, 2-mark: -2/3 (only MCQs carry negative marks)
+            marksAwarded = q.type === "MCQ" ? -(qMarks / 3) : 0;
           }
+        } else {
+          // Old-pattern True/False, fill-in and descriptive answers: a loose
+          // text match, never negative.
+          const norm = (s) => String(s == null ? "" : s).toLowerCase().replace(/[^a-z0-9.]+/g, "");
+          const u = norm(userAns);
+          const key = norm(q.answer);
+          isCorrect = q.type === "TF" ? !!u && key.startsWith(u) : !!u && u === key;
+          marksAwarded = isCorrect ? qMarks : 0;
         }
 
         if (isCorrect) {
@@ -593,4 +696,4 @@ function createGateRouter() {
   return router;
 }
 
-module.exports = { createGateRouter, findGateQuestion, searchGateQuestions };
+module.exports = { createGateRouter, findGateQuestion, searchGateQuestions, getGateSolution, solutionText };

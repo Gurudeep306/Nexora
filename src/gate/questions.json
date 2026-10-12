@@ -141179,9 +141179,11 @@
       "figures": [],
       "group": null,
       "subject": "ga",
-      "topic": "quant",
+      "topic": "verbal",
       "tags": [
-        "quantitative-aptitude"
+        "verbal-aptitude",
+        "grammar",
+        "word-choice"
       ],
       "answer": "B",
       "answerSource": "official",
@@ -141202,7 +141204,7 @@
       "number": "2",
       "marks": 1,
       "type": "MCQ",
-      "text": "Kind : _______ : : Often : Frequently\n(By word meaning)",
+      "text": "Kind : _______ : : Often : Frequently\n\n(By word meaning)",
       "options": [
         {
           "l": "A",
@@ -141226,7 +141228,9 @@
       "subject": "ga",
       "topic": "verbal",
       "tags": [
-        "verbal-aptitude"
+        "verbal-aptitude",
+        "analogy",
+        "synonyms"
       ],
       "answer": "MTA",
       "answerSource": "official",
@@ -141234,8 +141238,8 @@
       "solution": "**Step 1: Problem Formulation & Exam Context**\nTargeting **GA** (Verbal) from **CSE-2023 Q2** (1 Mark) (MCQ).\n- Evaluation Target: Official verified examination outcome **MTA**.\n\n**Step 2: Governing Principles & Formal Rules**\n- Fundamental problem constraints and analytical invariants derived directly from first principles.\n\n**Step 3: Step-by-Step Analytical Derivation & Calculation**\n- Applying the governing laws and boundary conditions from the problem statement.\n- Evaluating the functional transformation leads deterministically to the confirmed outcome:\n\n$$\\mathbf{MTA}$$\n\n**Step 4: Conclusion & Verification**\n- **Official Verified Key:** **MTA**\n- Completely verified against standard computer science literature and official GATE authority key archives.\n\n⚡ **Topper's Shortcut:** Identify governing structural invariants (e.g., symmetry, closure, master theorem cases, or truth-table Karnaugh maps) directly to eliminate distractors in < 45 seconds.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": false,
-      "reviewNote": null
+      "needsReview": true,
+      "reviewNote": "Official key: marks to all (MTA). \"Kind\" can be read as a noun (= Type, B) or an adjective (= Kindly, D), so the question was ambiguous; the solution explains both readings and prefers B."
     },
     {
       "id": "cse-2023-ga-3",
@@ -141247,7 +141251,7 @@
       "number": "3",
       "marks": 1,
       "type": "MCQ",
-      "text": "A series of natural numbers 𝐹1, 𝐹2, 𝐹3, 𝐹4, 𝐹5, 𝐹6, 𝐹7, … obeys 𝐹𝑛+1 = 𝐹𝑛 + 𝐹𝑛−1\nfor all integers 𝑛 ≥ 2 .\nIf 𝐹6 = 37, and 𝐹7 = 60, then what is 𝐹1 ?",
+      "text": "A series of natural numbers $F_1, F_2, F_3, F_4, F_5, F_6, F_7, \\ldots$ obeys $F_{n+1} = F_n + F_{n-1}$ for all integers $n \\ge 2$.\n\nIf $F_6 = 37$, and $F_7 = 60$, then what is $F_1$?",
       "options": [
         {
           "l": "A",
@@ -141263,7 +141267,7 @@
         },
         {
           "l": "D",
-          "t": "9 Computer Science and Information Technology (CS)"
+          "t": "9"
         }
       ],
       "figures": [],
@@ -141271,7 +141275,9 @@
       "subject": "ga",
       "topic": "quant",
       "tags": [
-        "quantitative-aptitude"
+        "quantitative-aptitude",
+        "sequences",
+        "recurrence"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -141292,7 +141298,7 @@
       "number": "4",
       "marks": 1,
       "type": "MCQ",
-      "text": "A survey for a certain year found that 90% of pregnant women received medical\ncare at least once before giving birth. Of these women, 60% received medical care\nfrom doctors, while 40% received medical care from other healthcare providers.\nGiven this information, which one of the following statements can be inferred with\ncertainty?",
+      "text": "A survey for a certain year found that 90% of pregnant women received medical care at least once before giving birth. Of these women, 60% received medical care from doctors, while 40% received medical care from other healthcare providers.\n\nGiven this information, which one of the following statements can be inferred with *certainty*?",
       "options": [
         {
           "l": "A",
@@ -141314,9 +141320,11 @@
       "figures": [],
       "group": null,
       "subject": "ga",
-      "topic": "quant",
+      "topic": "analytical",
       "tags": [
-        "quantitative-aptitude"
+        "analytical-reasoning",
+        "inference",
+        "percentages"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -141337,7 +141345,7 @@
       "number": "5",
       "marks": 1,
       "type": "MCQ",
-      "text": "Looking at the surface of a smooth 3 -dimensional object from the outside, which\none of the following options is TRUE?",
+      "text": "Looking at the surface of a smooth 3-dimensional object from the outside, which one of the following options is TRUE?",
       "options": [
         {
           "l": "A",
@@ -141353,15 +141361,17 @@
         },
         {
           "l": "D",
-          "t": "The object can have edges, but no corners. Computer Science and Information Technology (CS)"
+          "t": "The object can have edges, but no corners."
         }
       ],
       "figures": [],
       "group": null,
       "subject": "ga",
-      "topic": "quant",
+      "topic": "spatial",
       "tags": [
-        "quantitative-aptitude"
+        "spatial-aptitude",
+        "3d-geometry",
+        "convexity"
       ],
       "answer": "C",
       "answerSource": "official",
@@ -141382,7 +141392,7 @@
       "number": "6",
       "marks": 2,
       "type": "MCQ",
-      "text": "The country of Zombieland is in distress since more than 75% of its working\npopulation is suffering from serious health issues. Studies conducted by competent\nhealth experts concluded that a complete lack of physical exercise among its\nworking population was one of the leading causes of their health issues. As one of\nthe measures to address the problem, the Government of Zombieland has decided\nto provide monetary incentives to those who ride bicycles to work.\nBased only on the information provided  above, which one of the following\nstatements can be logically inferred with certainty?",
+      "text": "The country of Zombieland is in distress since more than 75% of its working population is suffering from serious health issues. Studies conducted by competent health experts concluded that a complete lack of physical exercise among its working population was one of the leading causes of their health issues. As one of the measures to address the problem, the Government of Zombieland has decided to provide monetary incentives to those who ride bicycles to work.\n\nBased only on the information provided above, which one of the following statements can be logically inferred with *certainty*?",
       "options": [
         {
           "l": "A",
@@ -141398,15 +141408,16 @@
         },
         {
           "l": "D",
-          "t": "The Government of Zombieland believes that riding bicycl es is a form of physical exercise. Computer Science and Information Technology (CS)"
+          "t": "The Government of Zombieland believes that riding bicycles is a form of physical exercise."
         }
       ],
       "figures": [],
       "group": null,
       "subject": "ga",
-      "topic": "quant",
+      "topic": "analytical",
       "tags": [
-        "quantitative-aptitude"
+        "analytical-reasoning",
+        "inference"
       ],
       "answer": "D",
       "answerSource": "official",
@@ -141427,7 +141438,7 @@
       "number": "7",
       "marks": 2,
       "type": "MCQ",
-      "text": "Consider two functions of time (𝑡),\n𝑓(𝑡)  = 0.01 𝑡2\n𝑔(𝑡) = 4 𝑡\nwhere 0 < 𝑡 < ∞.\nNow consider the following two statements:\n(i) For some 𝑡 > 0,  𝑔(𝑡) > 𝑓(𝑡).\n(ii) There exists a 𝑇, such that 𝑓(𝑡) > 𝑔(𝑡) for all 𝑡 > 𝑇.\nWhich one of the following options is TRUE?",
+      "text": "Consider two functions of time ($t$),\n\n$$f(t) = 0.01\\,t^2$$\n\n$$g(t) = 4\\,t$$\n\nwhere $0 < t < \\infty$.\n\nNow consider the following two statements:\n\n(i) For some $t > 0$, $g(t) > f(t)$.\n\n(ii) There exists a $T$, such that $f(t) > g(t)$ for all $t > T$.\n\nWhich one of the following options is TRUE?",
       "options": [
         {
           "l": "A",
@@ -141443,7 +141454,7 @@
         },
         {
           "l": "D",
-          "t": "neither (i) nor (ii) is correct Computer Science and Information Technology (CS)"
+          "t": "neither (i) nor (ii) is correct"
         }
       ],
       "figures": [],
@@ -141451,7 +141462,9 @@
       "subject": "ga",
       "topic": "quant",
       "tags": [
-        "quantitative-aptitude"
+        "quantitative-aptitude",
+        "functions",
+        "growth-rates"
       ],
       "answer": "C",
       "answerSource": "official",
@@ -141472,7 +141485,7 @@
       "number": "8",
       "marks": 2,
       "type": "MCQ",
-      "text": "Which one of the following sentence sequences creates a coherent narrative?\n(i) Once on the terrace, on her way to her small room in the corner, she\nnotices the man right away.\n(ii) She begins to pant by the time she has climbed all the stairs.\n(iii) Mina has bought vegetables and rice at the market, so her bags are\nheavy.\n(iv) He was leaning against the parapet, watching the traffic below.",
+      "text": "Which one of the following sentence sequences creates a coherent narrative?\n\n(i) Once on the terrace, on her way to her small room in the corner, she notices the man right away.\n\n(ii) She begins to pant by the time she has climbed all the stairs.\n\n(iii) Mina has bought vegetables and rice at the market, so her bags are heavy.\n\n(iv) He was leaning against the parapet, watching the traffic below.",
       "options": [
         {
           "l": "A",
@@ -141496,7 +141509,8 @@
       "subject": "ga",
       "topic": "verbal",
       "tags": [
-        "verbal-aptitude"
+        "verbal-aptitude",
+        "sentence-ordering"
       ],
       "answer": "D",
       "answerSource": "official",
@@ -141517,23 +141531,23 @@
       "number": "9",
       "marks": 2,
       "type": "MCQ",
-      "text": "( )fx\nand\n( )gy are functions of x and y, respectively, and\n( ) ( )f x g y= for all real\nvalues of  𝑥 and 𝑦.  Which one of the following options is necessarily TRUE for all\nx and y?",
+      "text": "$f(x)$ and $g(y)$ are functions of $x$ and $y$, respectively, and $f(x) = g(y)$ for all real values of $x$ and $y$. Which one of the following options is *necessarily* TRUE for all $x$ and $y$?",
       "options": [
         {
           "l": "A",
-          "t": "( ) 0fx = and ( ) 0gy ="
+          "t": "$f(x) = 0$ and $g(y) = 0$"
         },
         {
           "l": "B",
-          "t": "( ) ( ) constant f x g y=="
+          "t": "$f(x) = g(y) = \\text{constant}$"
         },
         {
           "l": "C",
-          "t": "( ) constantfx  and ( ) constantgy "
+          "t": "$f(x) \\neq \\text{constant}$ and $g(y) \\neq \\text{constant}$"
         },
         {
           "l": "D",
-          "t": "( ) ( ) ( ) ( )= f x g y f x g y+− Computer Science and Information Technology (CS)"
+          "t": "$f(x) + g(y) = f(x) - g(y)$"
         }
       ],
       "figures": [],
@@ -141541,7 +141555,8 @@
       "subject": "ga",
       "topic": "quant",
       "tags": [
-        "quantitative-aptitude"
+        "quantitative-aptitude",
+        "functions"
       ],
       "answer": "B",
       "answerSource": "official",
@@ -141562,43 +141577,39 @@
       "number": "10",
       "marks": 2,
       "type": "MCQ",
-      "text": "Which one of the options best describes the transformation of the 2-dimensional\nfigure P to Q, and then to R, as shown?",
+      "text": "Which one of the options best describes the transformation of the 2-dimensional figure **P** to **Q**, and then to **R**, as shown?",
       "options": [
         {
           "l": "A",
-          "t": "Operation 1: A clockwise rotation by 90º about an axis perpendicular to the plane of the figure Operation 2: A reflection along a horizontal line"
+          "t": "*Operation 1*: A clockwise rotation by 90° about an axis perpendicular to the plane of the figure; *Operation 2*: A reflection along a horizontal line"
         },
         {
           "l": "B",
-          "t": "Operation 1: A counter clockwise rotation by 90º about an axis perpendicular to the plane of the figure Operation 2: A reflection along a horizontal line"
+          "t": "*Operation 1*: A counter clockwise rotation by 90° about an axis perpendicular to the plane of the figure; *Operation 2*: A reflection along a horizontal line"
         },
         {
           "l": "C",
-          "t": "Operation 1: A clockwise rotation by 90º about an axis perpendicular to the plane of the figure Operation 2: A reflection along a vertical line"
+          "t": "*Operation 1*: A clockwise rotation by 90° about an axis perpendicular to the plane of the figure; *Operation 2*: A reflection along a vertical line"
         },
         {
           "l": "D",
-          "t": "Operation 1: A counter clockwise rotation by 180º about an axis perpendicular to the plane of the figure Operation 2: A reflection along a vertical line GATE 2023 Computer Science and Information Technology (CS) Consider the following statements regarding the front-end and back-end of a compiler. S1: The front-end includes phases that are independent of the target hardware. S2: The back-end includes phases that are speciﬁc to the target hardware. S3: The back-end includes phases that are speciﬁc to the programming language used in the source code. Identify the CORRECT option. (A) Only S1 is TRUE."
-        },
-        {
-          "l": "B",
-          "t": "Only S1 and S2 are TRUE."
-        },
-        {
-          "l": "C",
-          "t": "S1, S2,a n dS3 are all TRUE."
-        },
-        {
-          "l": "D",
-          "t": "Only S1 and S3 are TRUE. CS Page 1 of 83"
+          "t": "*Operation 1*: A counter clockwise rotation by 180° about an axis perpendicular to the plane of the figure; *Operation 2*: A reflection along a vertical line"
         }
       ],
-      "figures": [],
+      "figures": [
+        {
+          "f": "cse-2023/ga-10-1.svg",
+          "svg": "cse-2023/ga-10-1.svg",
+          "alt": "Three five-pointed stars in a row, each with one arm much longer than the other four. Star P (left): the long arm points to the upper right. An arrow labelled \"Operation 1\" leads to star Q (middle): the same star turned so its long arm points to the lower right (P rotated 90° clockwise). An arrow labelled \"Operation 2\" leads to star R (right): Q flipped top-to-bottom, so the long arm points to the upper right again while the other arms are mirrored."
+        }
+      ],
       "group": null,
       "subject": "ga",
-      "topic": "quant",
+      "topic": "spatial",
       "tags": [
-        "quantitative-aptitude"
+        "spatial-aptitude",
+        "rotation",
+        "reflection"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -141619,31 +141630,33 @@
       "number": "1",
       "marks": 1,
       "type": "MCQ",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nWhich one of the following sequences when stored in an array at locations\nA[1],...,A [10] forms a max-heap?",
+      "text": "Consider the following statements regarding the front-end and back-end of a compiler.\n\n**S1**: The front-end includes phases that are independent of the target hardware.\n\n**S2**: The back-end includes phases that are specific to the target hardware.\n\n**S3**: The back-end includes phases that are specific to the programming language used in the source code.\n\nIdentify the CORRECT option.",
       "options": [
         {
           "l": "A",
-          "t": "23, 17, 10, 6, 13, 14, 1, 5, 7, 12"
+          "t": "Only **S1** is TRUE."
         },
         {
           "l": "B",
-          "t": "23, 17, 14, 7, 13, 10, 1, 5, 6, 12"
+          "t": "Only **S1** and **S2** are TRUE."
         },
         {
           "l": "C",
-          "t": "23, 17, 14, 6, 13, 10, 1, 5, 7, 15"
+          "t": "**S1**, **S2**, and **S3** are all TRUE."
         },
         {
           "l": "D",
-          "t": "23, 14, 17, 1, 10, 13, 16, 12, 7, 5 CS Page 2 of 83"
+          "t": "Only **S1** and **S3** are TRUE."
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "cd",
+      "topic": "icg",
       "tags": [
-        "trees"
+        "compiler-phases",
+        "front-end",
+        "back-end"
       ],
       "answer": "B",
       "answerSource": "official",
@@ -141664,31 +141677,33 @@
       "number": "2",
       "marks": 1,
       "type": "MCQ",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nLet SLLdel be a function that deletes a node in a singly-linked list given a pointer\nto the node and a pointer to the head of the list. Similarly, letDLLdel be another\nfunction that deletes a node in a doubly-linked list given a pointer to the node and\na pointer to the head of the list.\nLet n denote the number of nodes in each of the linked lists. Which one of the\nfollowing choices is TRUE about the worst-case time complexity ofSLLdel and\nDLLdel?",
+      "text": "Which one of the following sequences when stored in an array at locations $A[1], \\ldots, A[10]$ forms a max-heap?",
       "options": [
         {
           "l": "A",
-          "t": "SLLdel is O(1) and DLLdel is O(n)"
+          "t": "23, 17, 10, 6, 13, 14, 1, 5, 7, 12"
         },
         {
           "l": "B",
-          "t": "Both SLLdel and DLLdel are O(log(n))"
+          "t": "23, 17, 14, 7, 13, 10, 1, 5, 6, 12"
         },
         {
           "l": "C",
-          "t": "Both SLLdel and DLLdel are O(1)"
+          "t": "23, 17, 14, 6, 13, 10, 1, 5, 7, 15"
         },
         {
           "l": "D",
-          "t": "SLLdel is O(n)a n dDLLdel is O(1) CS Page 3 of 83"
+          "t": "23, 14, 17, 1, 10, 13, 16, 12, 7, 5"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "pds",
+      "topic": "heaps",
       "tags": [
-        "asymptotics"
+        "max-heap",
+        "heap-property",
+        "array-representation"
       ],
       "answer": "B",
       "answerSource": "official",
@@ -141709,31 +141724,33 @@
       "number": "3",
       "marks": 1,
       "type": "MCQ",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nConsider the Deterministic Finite-state Automaton (DFA)A shown below. The\nDFA runs on the alphabet{0,1}, and has the set of states{s,p,q,r },w i t hs being\nthe start state andp being the only ﬁnal state.\n1\n00\n0\n0,1\n1\n1\nspq\nr\nWhich one of the following regular expressions correctly describes the language\naccepted byA?",
+      "text": "Let `SLLdel` be a function that deletes a node in a singly-linked list given a pointer to the node and a pointer to the head of the list. Similarly, let `DLLdel` be another function that deletes a node in a doubly-linked list given a pointer to the node and a pointer to the head of the list.\n\nLet $n$ denote the number of nodes in each of the linked lists. Which one of the following choices is TRUE about the worst-case time complexity of `SLLdel` and `DLLdel`?",
       "options": [
         {
           "l": "A",
-          "t": "1(0∗11)∗"
+          "t": "`SLLdel` is $O(1)$ and `DLLdel` is $O(n)$"
         },
         {
           "l": "B",
-          "t": "0(0+1) ∗"
+          "t": "Both `SLLdel` and `DLLdel` are $O(\\log(n))$"
         },
         {
           "l": "C",
-          "t": "1(0+11) ∗"
+          "t": "Both `SLLdel` and `DLLdel` are $O(1)$"
         },
         {
           "l": "D",
-          "t": "1(110∗)∗ CS Page 4 of 83"
+          "t": "`SLLdel` is $O(n)$ and `DLLdel` is $O(1)$"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "pds",
+      "topic": "linked-lists",
       "tags": [
-        "regular"
+        "singly-linked-list",
+        "doubly-linked-list",
+        "time-complexity"
       ],
       "answer": "D",
       "answerSource": "official",
@@ -141754,31 +141771,39 @@
       "number": "4",
       "marks": 1,
       "type": "MCQ",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nThe Lucas sequenceLn is deﬁned by the recurrence relation:\nLn = Ln−1 +Ln−2, for n ≥ 3,\nwith L1 =1a n dL2 =3 .\nWhich one of the options given is TRUE?",
+      "text": "Consider the Deterministic Finite-state Automaton (DFA) $\\mathcal{A}$ shown below. The DFA runs on the alphabet $\\{0, 1\\}$, and has the set of states $\\{s, p, q, r\\}$, with $s$ being the start state and $p$ being the only final state.\n\nWhich one of the following regular expressions correctly describes the language accepted by $\\mathcal{A}$?",
       "options": [
         {
           "l": "A",
-          "t": "Ln = ( 1+ √ 5 2 ) n + ( 1− √ 5 2 ) n"
+          "t": "$1(0^*11)^*$"
         },
         {
           "l": "B",
-          "t": "Ln = ( 1+ √ 5 2 ) n − ( 1− √ 5 3 ) n"
+          "t": "$0(0+1)^*$"
         },
         {
           "l": "C",
-          "t": "Ln = ( 1+ √ 5 2 ) n + ( 1− √ 5 3 ) n"
+          "t": "$1(0+11)^*$"
         },
         {
           "l": "D",
-          "t": "Ln = ( 1+ √ 5 2 ) n − ( 1− √ 5 2 ) n CS Page 5 of 83"
+          "t": "$1(110^*)^*$"
         }
       ],
-      "figures": [],
+      "figures": [
+        {
+          "f": "cse-2023/cs-4-1.svg",
+          "svg": "cse-2023/cs-4-1.svg",
+          "alt": "DFA A with four states s, p, q, r. An unlabelled arrow marks s as the start state; p is drawn as a double circle (the only final state). Transitions: s on 1 goes to p; s on 0 goes to r; p has a self-loop on 0; p on 1 goes to q; q on 1 goes back to p; q on 0 goes to r; r has a self-loop on 0,1 (dead state)."
+        }
+      ],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "toc",
+      "topic": "regular",
       "tags": [
-        "asymptotics"
+        "dfa",
+        "regular-expression",
+        "state-elimination"
       ],
       "answer": "C",
       "answerSource": "official",
@@ -141799,31 +141824,33 @@
       "number": "5",
       "marks": 1,
       "type": "MCQ",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nWhich one of the options given below refers to the degree (or arity) of a relation in\nrelational database systems?",
+      "text": "The Lucas sequence $L_n$ is defined by the recurrence relation:\n\n$$L_n = L_{n-1} + L_{n-2}, \\quad \\text{for } n \\geq 3,$$\n\nwith $L_1 = 1$ and $L_2 = 3$.\n\nWhich one of the options given is TRUE?",
       "options": [
         {
           "l": "A",
-          "t": "Number of attributes of its relation schema."
+          "t": "$L_n = \\left(\\frac{1+\\sqrt{5}}{2}\\right)^n + \\left(\\frac{1-\\sqrt{5}}{2}\\right)^n$"
         },
         {
           "l": "B",
-          "t": "Number of tuples stored in the relation."
+          "t": "$L_n = \\left(\\frac{1+\\sqrt{5}}{2}\\right)^n - \\left(\\frac{1-\\sqrt{5}}{3}\\right)^n$"
         },
         {
           "l": "C",
-          "t": "Number of entries in the relation."
+          "t": "$L_n = \\left(\\frac{1+\\sqrt{5}}{2}\\right)^n + \\left(\\frac{1-\\sqrt{5}}{3}\\right)^n$"
         },
         {
           "l": "D",
-          "t": "Number of distinct domains of its relation schema. CS Page 6 of 83"
+          "t": "$L_n = \\left(\\frac{1+\\sqrt{5}}{2}\\right)^n - \\left(\\frac{1-\\sqrt{5}}{2}\\right)^n$"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "dm",
+      "topic": "recurrences",
       "tags": [
-        "computer-science"
+        "recurrence",
+        "lucas-numbers",
+        "characteristic-equation"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -141844,31 +141871,33 @@
       "number": "6",
       "marks": 1,
       "type": "MCQ",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nSuppose two hosts are connected by a point-to-point link and they are conﬁgured\nto use Stop-and-Wait protocol for reliable data transfer. Identify in which one of\nthe following scenarios, the utilization of the link is the lowest.",
+      "text": "Which one of the options given below refers to the degree (or arity) of a relation in relational database systems?",
       "options": [
         {
           "l": "A",
-          "t": "Longer link length and lower transmission rate"
+          "t": "Number of attributes of its relation schema."
         },
         {
           "l": "B",
-          "t": "Longer link length and higher transmission rate"
+          "t": "Number of tuples stored in the relation."
         },
         {
           "l": "C",
-          "t": "Shorter link length and lower transmission rate"
+          "t": "Number of entries in the relation."
         },
         {
           "l": "D",
-          "t": "Shorter link length and higher transmission rate CS Page 7 of 83"
+          "t": "Number of distinct domains of its relation schema."
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "db",
+      "topic": "ra",
       "tags": [
-        "data-link"
+        "relational-model",
+        "degree",
+        "arity"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -141889,31 +141918,33 @@
       "number": "7",
       "marks": 1,
       "type": "MCQ",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nLet\nA =\n⎡\n⎢⎢⎣\n1234\n4123\n3412\n2341\n⎤\n⎥⎥⎦\nand\nB =\n⎡\n⎢⎢⎣\n3412\n4123\n1234\n2341\n⎤\n⎥⎥⎦.\nLet det(A)a n d det(B) denote the determinants of the matrices A and B,\nrespectively.\nWhich one of the options given below is TRUE?",
+      "text": "Suppose two hosts are connected by a point-to-point link and they are configured to use `Stop-and-Wait` protocol for reliable data transfer. Identify in which one of the following scenarios, the utilization of the link is the lowest.",
       "options": [
         {
           "l": "A",
-          "t": "det(A)= det(B)"
+          "t": "Longer link length and lower transmission rate"
         },
         {
           "l": "B",
-          "t": "det(B)= −det(A)"
+          "t": "Longer link length and higher transmission rate"
         },
         {
           "l": "C",
-          "t": "det(A)=0"
+          "t": "Shorter link length and lower transmission rate"
         },
         {
           "l": "D",
-          "t": "det(AB)= det(A)+ det(B) CS Page 8 of 83"
+          "t": "Shorter link length and higher transmission rate"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "cn",
+      "topic": "datalink",
       "tags": [
-        "turing"
+        "stop-and-wait",
+        "link-utilization",
+        "propagation-delay"
       ],
       "answer": "B",
       "answerSource": "official",
@@ -141934,31 +141965,33 @@
       "number": "8",
       "marks": 1,
       "type": "MCQ",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nConsider the following deﬁnition of a lexical tokenid for an identiﬁer in a program-\nming language, using extended regular expressions:\nletter → [A-Za-z]\ndigit → [0-9]\nid → letter (letter | digit)∗\nWhich one of the following Non-deterministic Finite-state Automata with ϵ-\ntransitions accepts the set of valid identiﬁers? (A double-circle denotes a ﬁnal\nstate)",
+      "text": "Let\n\n$$A = \\begin{bmatrix} 1 & 2 & 3 & 4 \\\\ 4 & 1 & 2 & 3 \\\\ 3 & 4 & 1 & 2 \\\\ 2 & 3 & 4 & 1 \\end{bmatrix}$$\n\nand\n\n$$B = \\begin{bmatrix} 3 & 4 & 1 & 2 \\\\ 4 & 1 & 2 & 3 \\\\ 1 & 2 & 3 & 4 \\\\ 2 & 3 & 4 & 1 \\end{bmatrix}.$$\n\nLet $\\det(A)$ and $\\det(B)$ denote the determinants of the matrices $A$ and $B$, respectively.\n\nWhich one of the options given below is TRUE?",
       "options": [
         {
           "l": "A",
-          "t": "letter letter digit ϵ"
+          "t": "$\\det(A) = \\det(B)$"
         },
         {
           "l": "B",
-          "t": "letter letter digit ϵ ϵ"
+          "t": "$\\det(B) = -\\det(A)$"
         },
         {
           "l": "C",
-          "t": "letter letter digit ϵ ϵ ϵ ϵ ϵ"
+          "t": "$\\det(A) = 0$"
         },
         {
           "l": "D",
-          "t": "letter letter digit ϵ CS Page 9 of 83"
+          "t": "$\\det(AB) = \\det(A) + \\det(B)$"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "la",
+      "topic": "matrices",
       "tags": [
-        "regular"
+        "determinant",
+        "row-swap",
+        "circulant-matrix"
       ],
       "answer": "B",
       "answerSource": "official",
@@ -141979,31 +142012,55 @@
       "number": "9",
       "marks": 1,
       "type": "MCQ",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nCS Page 10 of 83\nGATE 2023 Computer Science and Information Technology (CS)\nAn algorithm has to store several keys generated by an adversary in a hash\ntable. The adversary is malicious who tries to maximize the number of collisions.\nLet k bethenumberofkeys, mbe the number of slots in the hash table, andk>m .\nWhich one of the following is the best hashing strategy to counteract the adversary?",
+      "text": "Consider the following definition of a lexical token **id** for an identifier in a programming language, using extended regular expressions:\n\n$$\\begin{aligned} \\textbf{letter} &\\rightarrow \\texttt{[A-Za-z]} \\\\ \\textbf{digit} &\\rightarrow \\texttt{[0-9]} \\\\ \\textbf{id} &\\rightarrow \\textbf{letter}\\ (\\textbf{letter} \\mid \\textbf{digit})^* \\end{aligned}$$\n\nWhich one of the following Non-deterministic Finite-state Automata with $\\epsilon$-transitions accepts the set of valid identifiers? (A double-circle denotes a final state)",
       "options": [
         {
           "l": "A",
-          "t": "Division method, i.e., use the hash functionh(k)= k mod m."
+          "t": "The $\\epsilon$-NFA in figure **(A)**"
         },
         {
           "l": "B",
-          "t": "Multiplication method, i.e., use the hash functionh(k)= ⌊m(kA −⌊kA⌋)⌋,w h e r e A is a carefully chosen constant."
+          "t": "The $\\epsilon$-NFA in figure **(B)**"
         },
         {
           "l": "C",
-          "t": "Universal hashing method."
+          "t": "The $\\epsilon$-NFA in figure **(C)**"
         },
         {
           "l": "D",
-          "t": "Ifk isaprimenumber, useDivisionmethod. Otherwise, useMultiplicationmethod. CS Page 11 of 83"
+          "t": "The $\\epsilon$-NFA in figure **(D)**"
         }
       ],
-      "figures": [],
+      "figures": [
+        {
+          "f": "cse-2023/cs-9-1.svg",
+          "svg": "cse-2023/cs-9-1.svg",
+          "alt": "Option (A): start state with an edge labelled letter to a final (double-circle) state, and a second, curved ε-edge from the start state directly to the same final state; the final state has a self-loop labelled letter, digit."
+        },
+        {
+          "f": "cse-2023/cs-9-2.svg",
+          "svg": "cse-2023/cs-9-2.svg",
+          "alt": "Option (B): start state --letter--> final state F1. From F1 two ε-edges: one up to final state F2, which has a self-loop on letter, and one down to final state F3, which has a self-loop on digit."
+        },
+        {
+          "f": "cse-2023/cs-9-3.svg",
+          "svg": "cse-2023/cs-9-3.svg",
+          "alt": "Option (C): start state --letter--> final state F. From F an ε-edge to an upper branch state --letter--> next state --ε--> a joining state on the right; and an ε-edge to a lower branch state --digit--> next state --ε--> the same joining state. A long ε-arc goes from the joining state back to F. Only F is final."
+        },
+        {
+          "f": "cse-2023/cs-9-4.svg",
+          "svg": "cse-2023/cs-9-4.svg",
+          "alt": "Option (D): start state --letter--> final state F --letter--> state x --digit--> state y, and an ε-arc from y back to F. Only F is final."
+        }
+      ],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "cd",
+      "topic": "lexical",
       "tags": [
-        "sequential"
+        "lexical-analysis",
+        "nfa",
+        "regular-expression",
+        "epsilon-nfa"
       ],
       "answer": "C",
       "answerSource": "official",
@@ -142024,31 +142081,33 @@
       "number": "10",
       "marks": 1,
       "type": "MCQ",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nThe output of a 2-input multiplexer is connected back to one of its inputs as shown\nin the ﬁgure.\n0\n1\nS\nQ\nMultiplexer\nMatch the functional equivalence of this circuit to one of the following options.",
+      "text": "An algorithm has to store several keys generated by an adversary in a hash table. The adversary is malicious who tries to maximize the number of collisions. Let $k$ be the number of keys, $m$ be the number of slots in the hash table, and $k > m$.\n\nWhich one of the following is the best hashing strategy to counteract the adversary?",
       "options": [
         {
           "l": "A",
-          "t": "D Flip-ﬂop"
+          "t": "Division method, i.e., use the hash function $h(k) = k \\bmod m$."
         },
         {
           "l": "B",
-          "t": "DL a t c h"
+          "t": "Multiplication method, i.e., use the hash function $h(k) = \\lfloor m(kA - \\lfloor kA \\rfloor) \\rfloor$, where $A$ is a carefully chosen constant."
         },
         {
           "l": "C",
-          "t": "Half-adder"
+          "t": "Universal hashing method."
         },
         {
           "l": "D",
-          "t": "Demultiplexer CS Page 12 of 83"
+          "t": "If $k$ is a prime number, use Division method. Otherwise, use Multiplication method."
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "algo",
+      "topic": "hashing",
       "tags": [
-        "combinational"
+        "universal-hashing",
+        "hash-functions",
+        "collisions"
       ],
       "answer": "C",
       "answerSource": "official",
@@ -142069,31 +142128,40 @@
       "number": "11",
       "marks": 1,
       "type": "MCQ",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nWhich one or more of the following need to be saved on a context switch from one\nthread (T1) of a process to another thread (T2) of the same process?",
+      "text": "The output of a 2-input multiplexer is connected back to one of its inputs as shown in the figure.\n\nMatch the functional equivalence of this circuit to one of the following options.",
       "options": [
         {
           "l": "A",
-          "t": "Page table base register"
+          "t": "D Flip-flop"
         },
         {
           "l": "B",
-          "t": "Stack pointer"
+          "t": "D Latch"
         },
         {
           "l": "C",
-          "t": "Program counter"
+          "t": "Half-adder"
         },
         {
           "l": "D",
-          "t": "General purpose registers CS Page 13 of 83"
+          "t": "Demultiplexer"
         }
       ],
-      "figures": [],
+      "figures": [
+        {
+          "f": "cse-2023/cs-11-1.svg",
+          "svg": "cse-2023/cs-11-1.svg",
+          "alt": "A 2-input multiplexer box labelled Multiplexer with data inputs 0 (upper left) and 1 (lower left), select input S (bottom) and output Q (right). Output Q goes to an external terminal and is also wired back, over the top of the box, into data input 0. Input 1 and select S come from external terminals."
+        }
+      ],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "dl",
+      "topic": "sequential",
       "tags": [
-        "sql"
+        "multiplexer",
+        "latch",
+        "d-latch",
+        "feedback"
       ],
       "answer": "B",
       "answerSource": "official",
@@ -142113,32 +142181,33 @@
       "section": "cs",
       "number": "12",
       "marks": 1,
-      "type": "MCQ",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nWhich one or more of the following options guarantee that a computer system will\ntransition from user mode to kernel mode?",
+      "type": "MSQ",
+      "text": "Which one or more of the following need to be saved on a context switch from one thread (T1) of a process to another thread (T2) of the same process?",
       "options": [
         {
           "l": "A",
-          "t": "Function Call"
+          "t": "Page table base register"
         },
         {
           "l": "B",
-          "t": "malloc Call"
+          "t": "Stack pointer"
         },
         {
           "l": "C",
-          "t": "Page Fault"
+          "t": "Program counter"
         },
         {
           "l": "D",
-          "t": "System Call CS Page 14 of 83"
+          "t": "General purpose registers"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "os",
+      "topic": "processes",
       "tags": [
-        "sql"
+        "threads",
+        "context-switch"
       ],
       "answer": "B, C, D",
       "answerSource": "official",
@@ -142159,31 +142228,34 @@
       "number": "13",
       "marks": 1,
       "type": "MSQ",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nWhich of the following statements is/are CORRECT?",
+      "text": "Which one or more of the following options guarantee that a computer system will transition from user mode to kernel mode?",
       "options": [
         {
           "l": "A",
-          "t": "The intersection of two regular languages is regular."
+          "t": "Function Call"
         },
         {
           "l": "B",
-          "t": "The intersection of two context-free languages is context-free."
+          "t": "`malloc` Call"
         },
         {
           "l": "C",
-          "t": "The intersection of two recursive languages is recursive."
+          "t": "Page Fault"
         },
         {
           "l": "D",
-          "t": "The intersection of two recursively enumerable languages is recursively enumerable. CS Page 15 of 83"
+          "t": "System Call"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "os",
+      "topic": "processes",
       "tags": [
-        "computer-science"
+        "user-mode",
+        "kernel-mode",
+        "system-call",
+        "page-fault"
       ],
       "answer": "C, D",
       "answerSource": "official",
@@ -142204,31 +142276,35 @@
       "number": "14",
       "marks": 1,
       "type": "MSQ",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nWhich of the following statements is/are INCORRECT about\nthe OSPF (Open Shortest Path First) routing protocol used in the Internet?",
+      "text": "Which of the following statements is/are CORRECT?",
       "options": [
         {
           "l": "A",
-          "t": "OSPF implements Bellman-Ford algorithm to ﬁnd shortest paths."
+          "t": "The intersection of two regular languages is regular."
         },
         {
           "l": "B",
-          "t": "OSPF uses Dijkstra’s shortest path algorithm to implement least-cost path routing."
+          "t": "The intersection of two context-free languages is context-free."
         },
         {
           "l": "C",
-          "t": "OSPF is used as an inter-domain routing protocol."
+          "t": "The intersection of two recursive languages is recursive."
         },
         {
           "l": "D",
-          "t": "OSPF implements hierarchical routing. CS Page 16 of 83"
+          "t": "The intersection of two recursively enumerable languages is recursively enumerable."
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "algo",
-      "topic": "graphs",
+      "subject": "toc",
+      "topic": "pumping",
       "tags": [
-        "graphs"
+        "closure-properties",
+        "intersection",
+        "cfl",
+        "recursive",
+        "recursively-enumerable"
       ],
       "answer": "A, C, D",
       "answerSource": "official",
@@ -142248,32 +142324,34 @@
       "section": "cs",
       "number": "15",
       "marks": 1,
-      "type": "MCQ",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nGeetha has a conjecture about integers, which is of the form\n∀x\n(\nP(x)= ⇒∃ yQ(x,y)\n)\n,\nwhere P is a statement about integers, andQ is a statement about pairs of integers.\nWhich of the following (one or more) option(s) wouldimply Geetha’s conjecture?",
+      "type": "MSQ",
+      "text": "Which of the following statements is/are INCORRECT about the `OSPF (Open Shortest Path First)` routing protocol used in the Internet?",
       "options": [
         {
           "l": "A",
-          "t": "∃x ( P(x)∧∀yQ(x,y) )"
+          "t": "`OSPF` implements Bellman-Ford algorithm to find shortest paths."
         },
         {
           "l": "B",
-          "t": "∀x∀yQ(x,y)"
+          "t": "`OSPF` uses Dijkstra’s shortest path algorithm to implement least-cost path routing."
         },
         {
           "l": "C",
-          "t": "∃y∀x ( P(x)= ⇒ Q(x,y) )"
+          "t": "`OSPF` is used as an inter-domain routing protocol."
         },
         {
           "l": "D",
-          "t": "∃x ( P(x)∧∃yQ(x,y) ) CS Page 17 of 83"
+          "t": "`OSPF` implements hierarchical routing."
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "cn",
+      "topic": "routing",
       "tags": [
-        "sql"
+        "ospf",
+        "link-state",
+        "routing"
       ],
       "answer": "A, C",
       "answerSource": "official",
@@ -142293,32 +142371,34 @@
       "section": "cs",
       "number": "16",
       "marks": 1,
-      "type": "MCQ",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nWhich one or more of the following CPU scheduling algorithms can potentially\ncause starvation?",
+      "type": "MSQ",
+      "text": "Geetha has a conjecture about integers, which is of the form\n\n$$\\forall x \\Big( P(x) \\implies \\exists y\\, Q(x, y) \\Big),$$\n\nwhere $P$ is a statement about integers, and $Q$ is a statement about pairs of integers. Which of the following (one or more) option(s) would *imply* Geetha’s conjecture?",
       "options": [
         {
           "l": "A",
-          "t": "First-in First-Out"
+          "t": "$\\exists x \\Big( P(x) \\wedge \\forall y\\, Q(x, y) \\Big)$"
         },
         {
           "l": "B",
-          "t": "Round Robin"
+          "t": "$\\forall x\\, \\forall y\\, Q(x, y)$"
         },
         {
           "l": "C",
-          "t": "Priority Scheduling"
+          "t": "$\\exists y\\, \\forall x \\Big( P(x) \\implies Q(x, y) \\Big)$"
         },
         {
           "l": "D",
-          "t": "Shortest Job First CS Page 18 of 83"
+          "t": "$\\exists x \\Big( P(x) \\wedge \\exists y\\, Q(x, y) \\Big)$"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "dm",
+      "topic": "logic",
       "tags": [
-        "computer-science"
+        "first-order-logic",
+        "quantifiers",
+        "implication"
       ],
       "answer": "B, C",
       "answerSource": "official",
@@ -142339,31 +142419,32 @@
       "number": "17",
       "marks": 1,
       "type": "MSQ",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nLet\nf(x)= x3 +15x2 −33x−36\nbe a real-valued function.\nWhich of the following statements is/are TRUE?",
+      "text": "Which one or more of the following CPU scheduling algorithms can potentially cause starvation?",
       "options": [
         {
           "l": "A",
-          "t": "f(x) does not have a local maximum."
+          "t": "First-in First-Out"
         },
         {
           "l": "B",
-          "t": "f(x) has a local maximum."
+          "t": "Round Robin"
         },
         {
           "l": "C",
-          "t": "f(x) does not have a local minimum."
+          "t": "Priority Scheduling"
         },
         {
           "l": "D",
-          "t": "f(x) has a local minimum. CS Page 19 of 83"
+          "t": "Shortest Job First"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "coa",
-      "topic": "isa",
+      "subject": "os",
+      "topic": "scheduling",
       "tags": [
-        "isa"
+        "starvation",
+        "CPU scheduling"
       ],
       "answer": "A, C, D or C, D",
       "answerSource": "official",
@@ -142384,31 +142465,32 @@
       "number": "18",
       "marks": 1,
       "type": "MSQ",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nLet f and g be functions of natural numbers given byf(n)= n and g(n)= n2.\nWhich of the following statements is/are TRUE?",
+      "text": "Let\n\n$$f(x) = x^3 + 15x^2 - 33x - 36$$\n\nbe a real-valued function.\n\nWhich of the following statements is/are TRUE?",
       "options": [
         {
           "l": "A",
-          "t": "f ∈ O(g)"
+          "t": "$f(x)$ does not have a local maximum."
         },
         {
           "l": "B",
-          "t": "f ∈ Ω(g)"
+          "t": "$f(x)$ has a local maximum."
         },
         {
           "l": "C",
-          "t": "f ∈ o(g)"
+          "t": "$f(x)$ does not have a local minimum."
         },
         {
           "l": "D",
-          "t": "f ∈ Θ(g) CS Page 20 of 83"
+          "t": "$f(x)$ has a local minimum."
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "cn",
-      "topic": "network",
+      "subject": "calc",
+      "topic": "maxmin",
       "tags": [
-        "network"
+        "local extrema",
+        "second derivative test"
       ],
       "answer": "B, D",
       "answerSource": "official",
@@ -142428,15 +142510,32 @@
       "section": "cs",
       "number": "19",
       "marks": 1,
-      "type": "NAT",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nLet A be the adjacency matrix of the graph with vertices{1,2,3,4,5}.\n12\n4\n3\n5\nLet λ1, λ2, λ3, λ4,a n dλ5 b et h eﬁ v ee i g e n v a l u e so fA. Note that these eigenvalues\nneed not be distinct.\nThe value ofλ1 +λ2 +λ3 +λ4 +λ5 = .\nCS Page 21 of 83",
-      "options": [],
+      "type": "MSQ",
+      "text": "Let $f$ and $g$ be functions of natural numbers given by $f(n) = n$ and $g(n) = n^2$. Which of the following statements is/are TRUE?",
+      "options": [
+        {
+          "l": "A",
+          "t": "$f \\in O(g)$"
+        },
+        {
+          "l": "B",
+          "t": "$f \\in \\Omega(g)$"
+        },
+        {
+          "l": "C",
+          "t": "$f \\in o(g)$"
+        },
+        {
+          "l": "D",
+          "t": "$f \\in \\Theta(g)$"
+        }
+      ],
       "figures": [],
       "group": null,
-      "subject": "coa",
-      "topic": "isa",
+      "subject": "algo",
+      "topic": "complexity",
       "tags": [
-        "isa"
+        "asymptotic notation"
       ],
       "answer": "A, C",
       "answerSource": "official",
@@ -142457,14 +142556,21 @@
       "number": "20",
       "marks": 1,
       "type": "NAT",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nThe value of the deﬁnite integral\n∫ 3\n−3\n∫ 2\n−2\n∫ 1\n−1\n(\n4x2y −z3)\ndz dy dx\nis . (Rounded oﬀ to the nearest integer)\nCS Page 22 of 83",
+      "text": "Let $A$ be the adjacency matrix of the graph with vertices $\\{1, 2, 3, 4, 5\\}$ shown in the figure.\n\nLet $\\lambda_1, \\lambda_2, \\lambda_3, \\lambda_4$, and $\\lambda_5$ be the five eigenvalues of $A$. Note that these eigenvalues need not be distinct.\n\nThe value of $\\lambda_1 + \\lambda_2 + \\lambda_3 + \\lambda_4 + \\lambda_5 =$ ______.",
       "options": [],
-      "figures": [],
+      "figures": [
+        {
+          "f": "cse-2023/cs-20-1.svg",
+          "svg": "cse-2023/cs-20-1.svg",
+          "alt": "Undirected graph on vertices 1, 2, 3, 4, 5 drawn as a diamond with a tail. Vertex 3 is at the top, 5 on the left, 2 on the right and 4 at the bottom; edges 3–5, 3–2, 5–4 and 4–2 form the diamond, and edge 2–1 joins vertex 1 on the far right. Vertex 3 has a self-loop drawn above it and vertex 4 has a self-loop drawn below it."
+        }
+      ],
       "group": null,
-      "subject": "coa",
-      "topic": "isa",
+      "subject": "la",
+      "topic": "eigen",
       "tags": [
-        "isa"
+        "trace",
+        "adjacency matrix"
       ],
       "answer": "2 to 2 OR 4 to 4",
       "answerSource": "official",
@@ -142485,14 +142591,15 @@
       "number": "21",
       "marks": 1,
       "type": "NAT",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nA particular number is written as 132 in radix-4 representation. The same number\nin radix-5 representation is .\nCS Page 23 of 83",
+      "text": "The value of the definite integral\n\n$$\\int_{-3}^{3}\\int_{-2}^{2}\\int_{-1}^{1}\\left(4x^2y - z^3\\right)\\,dz\\,dy\\,dx$$\n\nis ______. (Rounded off to the nearest integer)",
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "calc",
+      "topic": "integration",
       "tags": [
-        "computer-science"
+        "multiple integral",
+        "odd function"
       ],
       "answer": "0 to 0",
       "answerSource": "official",
@@ -142513,14 +142620,14 @@
       "number": "22",
       "marks": 1,
       "type": "NAT",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nConsider a 3-stage pipelined processor having a delay of 10 ns (nanoseconds),\n20 ns, and 14 ns, for the ﬁrst, second, and the third stages, respectively. Assume\nthat there is no other delay and the processor does not suﬀer from any pipeline\nhazards. Also assume that one instruction is fetched every cycle.\nThe total execution time for executing 100 instructions on this processor is\nns.\nCS Page 24 of 83",
+      "text": "A particular number is written as 132 in radix-4 representation. The same number in radix-5 representation is ______.",
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "c-prog",
+      "subject": "dl",
+      "topic": "number",
       "tags": [
-        "c-prog"
+        "base conversion"
       ],
       "answer": "110 to 110",
       "answerSource": "official",
@@ -142541,14 +142648,15 @@
       "number": "23",
       "marks": 1,
       "type": "NAT",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nA keyboard connected to a computer is used at a rate of 1 keystroke per second.\nThe computer system polls the keyboard every 10 ms (milli seconds) to check for\na keystroke and consumes 100μs (micro seconds) for each poll. If it is determined\nafter polling that a key has been pressed, the system consumes an additional 200\nμs to process the keystroke. LetT1 denote the fraction of a second spent in polling\nand processing a keystroke.\nIn an alternative implementation, the system uses interrupts instead of polling.\nAn interrupt is raised for every keystroke. It takes a total of 1 ms for servicing an\ninterrupt and processing a keystroke. LetT2 denote the fraction of a second spent\nin servicing the interrupt and processing a keystroke.\nThe ratio T1\nT2\nis . (Rounded oﬀ to one decimal place)\nCS Page 25 of 83",
+      "text": "Consider a 3-stage pipelined processor having a delay of 10 ns (nanoseconds), 20 ns, and 14 ns, for the first, second, and the third stages, respectively. Assume that there is no other delay and the processor does not suffer from any pipeline hazards. Also assume that one instruction is fetched every cycle.\n\nThe total execution time for executing 100 instructions on this processor is ______ ns.",
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "coa",
+      "topic": "pipeline",
       "tags": [
-        "quant"
+        "pipeline",
+        "execution time"
       ],
       "answer": "2040 to 2040",
       "answerSource": "official",
@@ -142569,14 +142677,15 @@
       "number": "24",
       "marks": 1,
       "type": "NAT",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nThe integer value printed by the ANSI-C program given below is .\n#include<stdio.h>\nint funcp(){\nstatic int x = 1;\nx++;\nreturn x;\n}\nint main(){\nint x,y;\nx = funcp();\ny = funcp()+x;\nprintf(\"%d\\n\", (x+y));\nreturn 0;\n}\nCS Page 26 of 83",
+      "text": "A keyboard connected to a computer is used at a rate of 1 keystroke per second. The computer system polls the keyboard every 10 ms (milli seconds) to check for a keystroke and consumes 100 $\\mu$s (micro seconds) for each poll. If it is determined after polling that a key has been pressed, the system consumes an additional 200 $\\mu$s to process the keystroke. Let $T_1$ denote the fraction of a second spent in polling and processing a keystroke.\n\nIn an alternative implementation, the system uses interrupts instead of polling. An interrupt is raised for every keystroke. It takes a total of 1 ms for servicing an interrupt and processing a keystroke. Let $T_2$ denote the fraction of a second spent in servicing the interrupt and processing a keystroke.\n\nThe ratio $\\dfrac{T_1}{T_2}$ is ______. (Rounded off to one decimal place)",
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "c-prog",
+      "subject": "coa",
+      "topic": "io",
       "tags": [
-        "c-prog"
+        "polling",
+        "interrupts"
       ],
       "answer": "10.2 to 10.2",
       "answerSource": "official",
@@ -142596,32 +142705,15 @@
       "section": "cs",
       "number": "25",
       "marks": 1,
-      "type": "MCQ",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nCS Page 27 of 83\nGATE 2023 Computer Science and Information Technology (CS)\nConsider the following program:\nint main()\n{\nf1();\nf2(2);\nf3();\nreturn(0);\n}\nint f1()\n{\nreturn(1);\n}\nint f2(int X)\n{\nf3();\nif (X==1)\nreturn f1();\nelse\nreturn (X*f2(X-1));\n}\nint f3()\n{\nreturn(5);\n}\nWhich one of the following options represents the activation tree corresponding to\nthe main function?",
-      "options": [
-        {
-          "l": "A",
-          "t": "main f1 f2 f3 f3 f2 f3 f1"
-        },
-        {
-          "l": "B",
-          "t": "main f2 f3 f1 f1 f3"
-        },
-        {
-          "l": "C",
-          "t": "main f2 f1 f3 f1"
-        },
-        {
-          "l": "D",
-          "t": "main f1 f2 f3 f3 f2 f1 CS Page 28 of 83"
-        }
-      ],
+      "type": "NAT",
+      "text": "The integer value printed by the ANSI-C program given below is ______.\n\n```c\n#include<stdio.h>\n\nint funcp(){\n        static int x = 1;\n        x++;\n        return x;\n}\n\nint main(){\n        int x,y;\n        x = funcp();\n        y = funcp()+x;\n        printf(\"%d\\n\", (x+y));\n        return 0;\n}\n```",
+      "options": [],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "pds",
+      "topic": "c",
       "tags": [
-        "graph-theory"
+        "static variable"
       ],
       "answer": "7 to 7",
       "answerSource": "official",
@@ -142642,31 +142734,37 @@
       "number": "26",
       "marks": 2,
       "type": "MCQ",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nCS Page 29 of 83\nGATE 2023 Computer Science and Information Technology (CS)\nConsider the control ﬂow graph shown.\nj = n\na = 10\ni = i + 1\nj = j − 1\nB1\nB2\ni = a + 1\na = 20\nB3\nB4\nEXIT\nENTRY\ni = m − 1\nWhich one of the following choices correctly lists the set oflive variables at the exit\npoint of each basic block?",
+      "text": "Consider the following program:\n\n```c\nint main()\n{\n   f1();\n   f2(2);\n   f3();\n   return(0);\n}\n\nint f1()\n{\n  return(1);\n}\n\nint f2(int X)\n{\n   f3();\n   if (X==1)\n     return f1();\n   else\n     return (X*f2(X-1));\n}\n\nint f3()\n{\n  return(5);\n}\n```\n\nWhich one of the following options represents the activation tree corresponding to the main function?\n\n(The four candidate trees are drawn in the figure. In the options, a node's children are listed left to right inside parentheses.)",
       "options": [
         {
           "l": "A",
-          "t": "B1: {},B 2 :{a},B 3 :{a},B 4 :{a}"
+          "t": "main( f1, f2( f3, f2( f3, f1 ) ), f3 )"
         },
         {
           "l": "B",
-          "t": "B1: {i, j},B 2 :{a},B 3 :{a},B 4 :{i}"
+          "t": "main( f1, f2( f3, f1 ), f3 )"
         },
         {
           "l": "C",
-          "t": "B1: {a, i, j},B 2 :{a, i, j},B 3 :{a, i},B 4 :{a}"
+          "t": "main( f1( f2( f3, f1 ) ) )"
         },
         {
           "l": "D",
-          "t": "B1: {a, i, j},B 2 :{a, j},B 3 :{a, j},B 4 :{a, i, j} CS Page 30 of 83"
+          "t": "main( f1, f2( f3, f2, f1 ), f3 )"
         }
       ],
-      "figures": [],
+      "figures": [
+        {
+          "f": "cse-2023/cs-26-1.svg",
+          "svg": "cse-2023/cs-26-1.svg",
+          "alt": "Four candidate activation trees in a 2 by 2 grid. (A): main has children f1, f2, f3; that f2 has children f3 and f2; the inner f2 has children f3 and f1. (B): main has children f1, f2, f3; f2 has children f3 and f1. (C): a chain main, then f1, then f2; f2 has children f3 and f1. (D): main has children f1, f2, f3; f2 has three children f3, f2, f1."
+        }
+      ],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "cd",
+      "topic": "runtime",
       "tags": [
-        "codegen"
+        "activation tree"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -142687,31 +142785,38 @@
       "number": "27",
       "marks": 2,
       "type": "MCQ",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nCS Page 31 of 83\nGATE 2023 Computer Science and Information Technology (CS)\nConsider the two functionsincr and decr shown below.\nincr(){\nwait(s);\nX = X+1;\nsignal(s);\n}\ndecr(){\nwait(s);\nX = X-1;\nsignal(s);\n}\nThere are 5 threads each invokingincr once, and 3 threads each invokingdecr\nonce, on the same shared variableX. The initial value ofX is 10.\nSuppose there are two implementations of the semaphores, as follows:\nI-1: s is a binary semaphore initialized to 1.\nI-2: s is a counting semaphore initialized to 2.\nLet V1, V2 be the values of X at the end of execution of all the threads with\nimplementations I-1, I-2, respectively.\nWhich one of the following choices corresponds to the minimum possible values of\nV1, V2, respectively?",
+      "text": "Consider the control flow graph shown in the figure, with basic blocks\n\n- B1: `i = m - 1`, `j = n`, `a = 10`\n- B2: `i = i + 1`, `j = j - 1`\n- B3: `a = 20`\n- B4: `i = a + 1`\n\nand edges ENTRY → B1, B1 → B2, B2 → B3, B2 → B4, B3 → B4, B4 → B2 and B4 → EXIT.\n\nWhich one of the following choices correctly lists the set of *live* variables at the exit point of each basic block?",
       "options": [
         {
           "l": "A",
-          "t": "15, 7"
+          "t": "B1: {}, B2: {a}, B3: {a}, B4: {a}"
         },
         {
           "l": "B",
-          "t": "7, 7"
+          "t": "B1: {i, j}, B2: {a}, B3: {a}, B4: {i}"
         },
         {
           "l": "C",
-          "t": "12, 7"
+          "t": "B1: {a, i, j}, B2: {a, i, j}, B3: {a, i}, B4: {a}"
         },
         {
           "l": "D",
-          "t": "12, 8 CS Page 32 of 83"
+          "t": "B1: {a, i, j}, B2: {a, j}, B3: {a, j}, B4: {a, i, j}"
         }
       ],
-      "figures": [],
+      "figures": [
+        {
+          "f": "cse-2023/cs-27-1.svg",
+          "svg": "cse-2023/cs-27-1.svg",
+          "alt": "Control flow graph. ENTRY points to block B1 containing i = m - 1, j = n, a = 10. B1 points to B2 containing i = i + 1, j = j - 1. B2 has two successors: B3 (a = 20) on the left and B4 (i = a + 1) below. B3 points to B4. B4 points to EXIT and has a curved back edge to the top of B2."
+        }
+      ],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "cd",
+      "topic": "optimization",
       "tags": [
-        "sync"
+        "live variable analysis",
+        "data-flow analysis"
       ],
       "answer": "D",
       "answerSource": "official",
@@ -142732,31 +142837,32 @@
       "number": "28",
       "marks": 2,
       "type": "MCQ",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nConsider the context-free grammarG below\nS → aSb | X\nX → aX | Xb | a | b,\nwhere S and X are non-terminals, anda and b are terminal symbols. The starting\nnon-terminal isS.\nWhich one of the following statements is CORRECT?",
+      "text": "Consider the two functions `incr` and `decr` shown below.\n\n```c\nincr(){                decr(){\n wait(s);               wait(s);\n X = X+1;               X = X-1;\n signal(s);             signal(s);\n}                      }\n```\n\nThere are 5 threads each invoking `incr` once, and 3 threads each invoking `decr` once, on the same shared variable `X`. The initial value of `X` is 10.\n\nSuppose there are two implementations of the semaphore `s`, as follows:\n\n**I-1:** `s` is a binary semaphore initialized to 1.\n\n**I-2:** `s` is a counting semaphore initialized to 2.\n\nLet V1, V2 be the values of `X` at the end of execution of all the threads with implementations **I-1**, **I-2**, respectively.\n\nWhich one of the following choices corresponds to the minimum possible values of V1, V2, respectively?",
       "options": [
         {
           "l": "A",
-          "t": "The language generated byG is (a+b)∗"
+          "t": "15, 7"
         },
         {
           "l": "B",
-          "t": "The language generated byG is a∗(a+b)b∗"
+          "t": "7, 7"
         },
         {
           "l": "C",
-          "t": "The language generated byG is a∗b∗(a+b)"
+          "t": "12, 7"
         },
         {
           "l": "D",
-          "t": "The language generated byG is not a regular language CS Page 33 of 83"
+          "t": "12, 8"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "os",
+      "topic": "sync",
       "tags": [
-        "cfl"
+        "semaphore",
+        "race condition"
       ],
       "answer": "C",
       "answerSource": "official",
@@ -142777,31 +142883,32 @@
       "number": "29",
       "marks": 2,
       "type": "MCQ",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nConsider the pushdown automaton (PDA)P below, which runs on the input alpha-\nbet {a,b}, has stack alphabet{⊥,A}, and has three states{s,p,q },w i t hs being\nthe start state. A transition from stateu to state v, labelled c/X/γ,w h e r ec is\nan input symbol or ϵ, X is a stack symbol, andγ is a string of stack symbols,\nrepresents the fact that in stateu, the PDA can readc from the input, withX on\nthe top of its stack, popX from the stack, push in the stringγ on the stack, and\ngo to statev. In the initial conﬁguration, the stack has only the symbol⊥ in it.\nThe PDA accepts by empty stack.\ns\na/⊥/A⊥\na/A/AA\npb/A/ϵ\nb/A/ϵ\nq\nϵ/A/ϵ\nϵ/⊥/ϵ\nϵ/A/ϵ ϵ/A/ϵ\nWhich one of the following options correctly describes the language accepted byP?",
+      "text": "Consider the context-free grammar $G$ below\n\n$$\\begin{aligned} S &\\to aSb \\mid X \\\\ X &\\to aX \\mid Xb \\mid a \\mid b, \\end{aligned}$$\n\nwhere $S$ and $X$ are non-terminals, and $a$ and $b$ are terminal symbols. The starting non-terminal is $S$.\n\nWhich one of the following statements is CORRECT?",
       "options": [
         {
           "l": "A",
-          "t": "{ambn | 1 ≤ m and n<m }"
+          "t": "The language generated by $G$ is $(a+b)^*$"
         },
         {
           "l": "B",
-          "t": "{ambn | 0 ≤ n ≤ m}"
+          "t": "The language generated by $G$ is $a^*(a+b)b^*$"
         },
         {
           "l": "C",
-          "t": "{ambn | 0 ≤ m and 0 ≤ n}"
+          "t": "The language generated by $G$ is $a^*b^*(a+b)$"
         },
         {
           "l": "D",
-          "t": "{am | 0 ≤ m}∪{ bn | 0 ≤ n} CS Page 34 of 83"
+          "t": "The language generated by $G$ is not a regular language"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "toc",
+      "topic": "cfg",
       "tags": [
-        "quant"
+        "CFG",
+        "regular language"
       ],
       "answer": "B",
       "answerSource": "official",
@@ -142822,31 +142929,38 @@
       "number": "30",
       "marks": 2,
       "type": "MCQ",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nConsider the given C-code and its corresponding assembly code, with a few\noperands U1–U4 being unknown. Some useful information as well as the semantics\nof each unique assembly instruction is annotated as inline comments in the code.\nThe memory is byte-addressable.\n//C-code\nint a[10], b[10], i;\n// int is 32-bit\nfor (i=0; i<10;i++)\na[i] = b[i] * 8;\n;assembly-code (; indicates comments)\n;r1-r5 are 32-bit integer registers\n;initialize r1=0, r2=10\n;initialize r3, r4 with base address of a, b\nL01: jeq r1, r2, end ;if(r1==r2) goto end\nL02: lw r5, 0(r4) ;r5 <- Memory[r4+0]\nL03: shl r5, r5, U1 ;r5 <- r5 << U1\nL04: sw r5, 0(r3) ;Memory[r3+0] <- r5\nL05: add r3, r3, U2 ;r3 <- r3+U2\nL06: add r4, r4, U3\nL07: add r1, r1, 1\nL08: jmp U4 ;goto U4\nL09: end\nWhich one of the following options is a CORRECT replacement for operands in\nthe position (U1, U2, U3, U4) in the above assembly code?",
+      "text": "Consider the pushdown automaton (PDA) $P$ below, which runs on the input alphabet $\\{a, b\\}$, has stack alphabet $\\{\\bot, A\\}$, and has three states $\\{s, p, q\\}$, with $s$ being the start state. A transition from state $u$ to state $v$, labelled $c/X/\\gamma$, where $c$ is an input symbol or $\\epsilon$, $X$ is a stack symbol, and $\\gamma$ is a string of stack symbols, represents the fact that in state $u$, the PDA can read $c$ from the input, with $X$ on the top of its stack, pop $X$ from the stack, push in the string $\\gamma$ on the stack, and go to state $v$. In the initial configuration, the stack has only the symbol $\\bot$ in it. The PDA accepts by empty stack.\n\nWhich one of the following options correctly describes the language accepted by $P$?",
       "options": [
         {
           "l": "A",
-          "t": "(8, 4, 1,L02)"
+          "t": "$\\{a^m b^n \\mid 1 \\le m \\text{ and } n < m\\}$"
         },
         {
           "l": "B",
-          "t": "(3, 4, 4,L01)"
+          "t": "$\\{a^m b^n \\mid 0 \\le n \\le m\\}$"
         },
         {
           "l": "C",
-          "t": "(8, 1, 1,L02)"
+          "t": "$\\{a^m b^n \\mid 0 \\le m \\text{ and } 0 \\le n\\}$"
         },
         {
           "l": "D",
-          "t": "(3, 1, 1,L01) CS Page 35 of 83"
+          "t": "$\\{a^m \\mid 0 \\le m\\} \\cup \\{b^n \\mid 0 \\le n\\}$"
         }
       ],
-      "figures": [],
+      "figures": [
+        {
+          "f": "cse-2023/cs-30-1.svg",
+          "alt": "PDA with three states s (start, entry arrow), p and q. State s has a self-loop labelled a/⊥/A⊥ and a/A/AA. Edge s to p labelled b/A/ϵ. State p has a self-loop b/A/ϵ. Edge s to q labelled ϵ/A/ϵ. Edge p to q labelled ϵ/A/ϵ. State q has a self-loop labelled ϵ/A/ϵ and ϵ/⊥/ϵ. There are no final states (acceptance by empty stack).",
+          "svg": "cse-2023/cs-30-1.svg"
+        }
+      ],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "toc",
+      "topic": "cfg",
       "tags": [
-        "codegen"
+        "pda",
+        "context-free-languages"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -142867,31 +142981,32 @@
       "number": "31",
       "marks": 2,
       "type": "MCQ",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nA 4 kilobyte (KB) byte-addressable memory is realized using four 1 KB memory\nblocks. Two input address lines (IA4 and IA3) are connected to the chip select\n(CS) port of these memory blocks through a decoder as shown in the ﬁgure. The\nremaining ten input address lines from IA11–IA0 are connected to the address\nport of these blocks. The chip select (CS) is active high.\nX1 X2 X3 X4Decoder\n1KB memory 1KB memory 1KB memory 1KB memory\nQ0\nQ1\nQ2Q3\nA1A0\nCS CS CS CS\nIA11IA10IA9IA8\nIA7IA6IA5IA2IA1IA0\nIA4\nIA3\nAddr Addr Addr Addr\n10-bit\nMSB\nLS B\nThe input memory addresses (IA11–IA0), in decimal, for the starting locations\n(Addr=0) of each block (indicated as X1, X2, X3, X4 in the ﬁgure) are among the\noptions given below. Which one of the following options is CORRECT?",
+      "text": "Consider the given C-code and its corresponding assembly code, with a few operands `U1`–`U4` being unknown. Some useful information as well as the semantics of each unique assembly instruction is annotated as inline comments in the code. The memory is byte-addressable.\n\n```c\n//C-code\nint a[10], b[10], i;\n// int is 32-bit\nfor (i=0; i<10;i++)\n    a[i] = b[i] * 8;\n```\n\n```text\n;assembly-code (; indicates comments)\n;r1-r5 are 32-bit integer registers\n;initialize r1=0, r2=10\n;initialize r3, r4 with base address of a, b\n\nL01: jeq r1, r2, end  ;if(r1==r2) goto end\nL02: lw  r5, 0(r4)    ;r5 <- Memory[r4+0]\nL03: shl r5, r5, U1   ;r5 <- r5 << U1\nL04: sw  r5, 0(r3)    ;Memory[r3+0] <- r5\nL05: add r3, r3, U2   ;r3 <- r3+U2\nL06: add r4, r4, U3\nL07: add r1, r1, 1\nL08: jmp U4           ;goto U4\nL09: end\n```\n\nWhich one of the following options is a CORRECT replacement for operands in the position (`U1`, `U2`, `U3`, `U4`) in the above assembly code?",
       "options": [
         {
           "l": "A",
-          "t": "( 0 ,1 ,2 ,3 )"
+          "t": "(8, 4, 1, `L02`)"
         },
         {
           "l": "B",
-          "t": "(0, 1024, 2048, 3072)"
+          "t": "(3, 4, 4, `L01`)"
         },
         {
           "l": "C",
-          "t": "(0, 8, 16, 24)"
+          "t": "(8, 1, 1, `L02`)"
         },
         {
           "l": "D",
-          "t": "( 0 ,0 ,0 ,0 ) CS Page 36 of 83"
+          "t": "(3, 1, 1, `L01`)"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "coa",
+      "topic": "isa",
       "tags": [
-        "codegen"
+        "assembly",
+        "address-arithmetic"
       ],
       "answer": "B",
       "answerSource": "official",
@@ -142912,31 +143027,38 @@
       "number": "32",
       "marks": 2,
       "type": "MCQ",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nCS Page 37 of 83\nGATE 2023 Computer Science and Information Technology (CS)\nConsider a sequential digital circuit consisting of T ﬂip-ﬂops and D ﬂip-ﬂops as\nshown in the ﬁgure. CLKIN is the clock input to the circuit. At the beginning,\nQ1, Q2 and Q3 have values 0, 1 and 1, respectively.\nT\nQ\nCLK\nD\nQ\nCLK\nT\nQ\nCLKCLKIN Q1 Q2 Q3\nWhich one of the given values of (Q1, Q2, Q3) can NEVER be obtained with this\ndigital circuit?",
+      "text": "A 4 kilobyte (KB) byte-addressable memory is realized using four 1 KB memory blocks. Two input address lines (IA4 and IA3) are connected to the chip select (CS) port of these memory blocks through a decoder as shown in the figure. The remaining ten input address lines from IA11–IA0 are connected to the address port of these blocks. The chip select (CS) is active high.\n\nThe input memory addresses (IA11–IA0), in decimal, for the starting locations (Addr=0) of each block (indicated as X1, X2, X3, X4 in the figure) are among the options given below. Which one of the following options is CORRECT?",
       "options": [
         {
           "l": "A",
-          "t": "(0, 0, 1)"
+          "t": "(0, 1, 2, 3)"
         },
         {
           "l": "B",
-          "t": "(1, 0, 0)"
+          "t": "(0, 1024, 2048, 3072)"
         },
         {
           "l": "C",
-          "t": "(1, 0, 1)"
+          "t": "(0, 8, 16, 24)"
         },
         {
           "l": "D",
-          "t": "(1, 1, 1) CS Page 38 of 83"
+          "t": "(0, 0, 0, 0)"
         }
       ],
-      "figures": [],
+      "figures": [
+        {
+          "f": "cse-2023/cs-32-1.svg",
+          "alt": "Ten address lines IA11, IA10, IA9, IA8, IA7, IA6, IA5, IA2, IA1, IA0 (IA11 marked MSB, IA0 marked LSB) are bundled into a 10-bit bus that goes to the Addr port of each of four 1KB memory blocks, labelled X1, X2, X3, X4 from left to right. IA4 drives input A1 and IA3 drives input A0 of a 2-to-4 decoder; decoder output Q0 goes to the CS input of X1, Q1 to X2, Q2 to X3 and Q3 to X4.",
+          "svg": "cse-2023/cs-32-1.svg"
+        }
+      ],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "coa",
+      "topic": "memory",
       "tags": [
-        "quant"
+        "memory-interfacing",
+        "decoder"
       ],
       "answer": "C",
       "answerSource": "official",
@@ -142957,31 +143079,38 @@
       "number": "33",
       "marks": 2,
       "type": "MCQ",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nA Boolean digital circuit is composed using two 4-input multiplexers (M1 and M2)\nand one 2-input multiplexer (M3) as shown in the ﬁgure. X0–X7 are the inputs of\nthe multiplexers M1 and M2 and could be connected to either 0 or 1. The select\nlines of the multiplexers are connected to Boolean variables A, B and C as shown.\nX0\nX1\nX2\nX3\nA\nC\nX4\nX5\nX6\nX7\nA\nC\nB\n0\n1\n2\n3\n0\n1\n2\n3\nS1 S0\nS1 S0\nS\n0\n1\nMultiplexer\nMultiplexer\nMultiplexer\nQ\nQ\nQ\nM1\nM2\nM3\nWhich one of the following set of values of (X0, X1, X2, X3, X4, X5, X6, X7) will\nrealise the Boolean functionA+ A.C+A .B.C?",
+      "text": "Consider a sequential digital circuit consisting of T flip-flops and D flip-flops as shown in the figure. CLKIN is the clock input to the circuit. At the beginning, Q1, Q2 and Q3 have values 0, 1 and 1, respectively.\n\nWhich one of the given values of (Q1, Q2, Q3) can NEVER be obtained with this digital circuit?",
       "options": [
         {
           "l": "A",
-          "t": "( 1 ,1 ,0 ,0 ,1 ,1 ,1 ,0 )"
+          "t": "(0, 0, 1)"
         },
         {
           "l": "B",
-          "t": "( 1 ,1 ,0 ,0 ,1 ,1 ,0 ,1 )"
+          "t": "(1, 0, 0)"
         },
         {
           "l": "C",
-          "t": "( 1 ,1 ,0 ,1 ,1 ,1 ,0 ,0 )"
+          "t": "(1, 0, 1)"
         },
         {
           "l": "D",
-          "t": "( 0 ,0 ,1 ,1 ,0 ,1 ,1 ,1 ) CS Page 39 of 83"
+          "t": "(1, 1, 1)"
         }
       ],
-      "figures": [],
+      "figures": [
+        {
+          "f": "cse-2023/cs-33-1.svg",
+          "alt": "Three flip-flops in a row, all clocked by CLKIN: a T flip-flop with output Q1, a D flip-flop with output Q2, and a T flip-flop with output Q3. Q1 drives the D input of the second flip-flop, Q2 drives the T input of the third flip-flop, and Q3 passes through an inverter whose output is fed back to the T input of the first flip-flop.",
+          "svg": "cse-2023/cs-33-1.svg"
+        }
+      ],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "dl",
+      "topic": "sequential",
       "tags": [
-        "isa"
+        "flip-flops",
+        "state-machine"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -143002,31 +143131,37 @@
       "number": "34",
       "marks": 2,
       "type": "MCQ",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nCS Page 40 of 83\nGATE 2023 Computer Science and Information Technology (CS)\nConsider the IEEE-754 single precision ﬂoating point numbers\nP=0xC1800000 and Q=0x3F5C2EF4.\nWhich one of the following corresponds to the product of these numbers\n(i.e., P× Q), represented in the IEEE-754 single precision format?",
+      "text": "A Boolean digital circuit is composed using two 4-input multiplexers (M1 and M2) and one 2-input multiplexer (M3) as shown in the figure. X0–X7 are the inputs of the multiplexers M1 and M2 and could be connected to either 0 or 1. The select lines of the multiplexers are connected to Boolean variables A, B and C as shown.\n\nWhich one of the following set of values of (X0, X1, X2, X3, X4, X5, X6, X7) will realise the Boolean function $\\overline{A} + \\overline{A}.\\overline{C} + A.\\overline{B}.C$?",
       "options": [
         {
           "l": "A",
-          "t": "0x404C2EF4"
+          "t": "(1, 1, 0, 0, 1, 1, 1, 0)"
         },
         {
           "l": "B",
-          "t": "0x405C2EF4"
+          "t": "(1, 1, 0, 0, 1, 1, 0, 1)"
         },
         {
           "l": "C",
-          "t": "0xC15C2EF4"
+          "t": "(1, 1, 0, 1, 1, 1, 0, 0)"
         },
         {
           "l": "D",
-          "t": "0xC14C2EF4 CS Page 41 of 83"
+          "t": "(0, 0, 1, 1, 0, 1, 1, 1)"
         }
       ],
-      "figures": [],
+      "figures": [
+        {
+          "f": "cse-2023/cs-34-1.svg",
+          "alt": "Multiplexer M1 has data inputs 0, 1, 2, 3 connected to X0, X1, X2, X3 and select lines S1 = A, S0 = C. Multiplexer M2 has data inputs 0, 1, 2, 3 connected to X4, X5, X6, X7 and select lines S1 = A, S0 = C. The output Q of M1 goes to input 0 and the output Q of M2 goes to input 1 of the 2-input multiplexer M3, whose select line S is B; the output of M3 is the circuit output.",
+          "svg": "cse-2023/cs-34-1.svg"
+        }
+      ],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "dl",
+      "topic": "combinational",
       "tags": [
-        "computer-science"
+        "multiplexer"
       ],
       "answer": "C",
       "answerSource": "official",
@@ -143047,31 +143182,31 @@
       "number": "35",
       "marks": 2,
       "type": "MCQ",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nLet A be a priority queue for maintaining a set of elements. Suppose A is\nimplemented using a max-heap data structure. The operationExtract-Max(A)\nextracts and deletes the maximum element fromA. The operationInsert(A,key)\ninserts a new elementkey in A. The properties of a max-heap are preserved at the\nend of each of these operations.\nWhen Acontainsnelements, which one of the following statements about the worst\ncase running time of these two operations is TRUE?",
+      "text": "Consider the IEEE-754 single precision floating point numbers P=`0xC1800000` and Q=`0x3F5C2EF4`.\n\nWhich one of the following corresponds to the product of these numbers (i.e., P $\\times$ Q), represented in the IEEE-754 single precision format?",
       "options": [
         {
           "l": "A",
-          "t": "Both Extract-Max(A) and Insert(A,key) run inO(1)."
+          "t": "`0x404C2EF4`"
         },
         {
           "l": "B",
-          "t": "Both Extract-Max(A) and Insert(A,key) run inO(log(n))."
+          "t": "`0x405C2EF4`"
         },
         {
           "l": "C",
-          "t": "Extract-Max(A) runs inO(1) whereas Insert(A,key) runs inO(n)."
+          "t": "`0xC15C2EF4`"
         },
         {
           "l": "D",
-          "t": "Extract-Max(A) runs inO(1) whereas Insert(A,key) runs inO(log(n)). CS Page 42 of 83"
+          "t": "`0xC14C2EF4`"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "dl",
+      "topic": "floating",
       "tags": [
-        "quant"
+        "ieee-754"
       ],
       "answer": "C",
       "answerSource": "official",
@@ -143092,31 +143227,32 @@
       "number": "36",
       "marks": 2,
       "type": "MCQ",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nConsider the C functionfoo and the binary tree shown.\ntypedef struct node {\nint val;\nstruct node *left, *right;\n} node;\nint foo(node *p) {\nint retval;\nif (p == NULL)\nreturn 0;\nelse {\nretval = p->val + foo(p->left) + foo(p->right);\nprintf(\"%d \", retval);\nreturn retval;\n}\n}\n10\n5\n38\n11\n13\nWhen foo is called with a pointer to the root node of the given binary tree, what\nwill it print?",
+      "text": "Let $A$ be a priority queue for maintaining a set of elements. Suppose $A$ is implemented using a max-heap data structure. The operation EXTRACT-MAX($A$) extracts and deletes the maximum element from $A$. The operation INSERT($A$, *key*) inserts a new element *key* in $A$. The properties of a max-heap are preserved at the end of each of these operations.\n\nWhen $A$ contains $n$ elements, which one of the following statements about the worst case running time of these two operations is TRUE?",
       "options": [
         {
           "l": "A",
-          "t": "3851 31 11 0"
+          "t": "Both EXTRACT-MAX($A$) and INSERT($A$, *key*) run in $O(1)$."
         },
         {
           "l": "B",
-          "t": "3581 01 11 3"
+          "t": "Both EXTRACT-MAX($A$) and INSERT($A$, *key*) run in $O(\\log(n))$."
         },
         {
           "l": "C",
-          "t": "3 8 16 13 24 50"
+          "t": "EXTRACT-MAX($A$) runs in $O(1)$ whereas INSERT($A$, *key*) runs in $O(n)$."
         },
         {
           "l": "D",
-          "t": "3 16 8 50 24 13 CS Page 43 of 83"
+          "t": "EXTRACT-MAX($A$) runs in $O(1)$ whereas INSERT($A$, *key*) runs in $O(\\log(n))$."
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "pds",
+      "topic": "heaps",
       "tags": [
-        "asymptotics"
+        "heap",
+        "priority-queue"
       ],
       "answer": "B",
       "answerSource": "official",
@@ -143137,31 +143273,39 @@
       "number": "37",
       "marks": 2,
       "type": "MCQ",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nLet U = {1,2,...,n },w h e r en is a large positive integer greater than 1000. Let\nk be a positive integer less thann.L e tA,B be subsets ofU with |A| = |B| = k\nand A∩B = ∅. We say that a permutation ofU separates A from B if one of the\nfollowing is true.\n- All members ofA appear in the permutation before any of the members ofB.\n- All members ofB appear in the permutation before any of the members ofA.\nHow many permutations ofU separate A from B?",
+      "text": "Consider the C function `foo` and the binary tree shown.\n\n```c\ntypedef struct node {\n  int val;\n  struct node *left, *right;\n} node;\n\nint foo(node *p) {\n  int retval;\n  if (p == NULL)\n    return 0;\n  else {\n    retval = p->val + foo(p->left) + foo(p->right);\n    printf(\"%d \", retval);\n    return retval;\n  }\n}\n```\n\nWhen `foo` is called with a pointer to the root node of the given binary tree, what will it print?",
       "options": [
         {
           "l": "A",
-          "t": "n!"
+          "t": "3 8 5 13 11 10"
         },
         {
           "l": "B",
-          "t": "( n 2k ) (n−2k)!"
+          "t": "3 5 8 10 11 13"
         },
         {
           "l": "C",
-          "t": "( n 2k ) (n−2k)! (k!)2"
+          "t": "3 8 16 13 24 50"
         },
         {
           "l": "D",
-          "t": "2 ( n 2k ) (n−2k)! (k!)2 CS Page 44 of 83"
+          "t": "3 16 8 50 24 13"
         }
       ],
-      "figures": [],
+      "figures": [
+        {
+          "f": "cse-2023/cs-37-1.svg",
+          "alt": "Binary tree: root 10; left child 5 with left child 3 and right child 8; right child 11 with no left child and right child 13.",
+          "svg": "cse-2023/cs-37-1.svg"
+        }
+      ],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "pds",
+      "topic": "trees",
       "tags": [
-        "sql"
+        "binary-tree",
+        "recursion",
+        "postorder"
       ],
       "answer": "C",
       "answerSource": "official",
@@ -143181,32 +143325,33 @@
       "section": "cs",
       "number": "38",
       "marks": 2,
-      "type": "MSQ",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nLet f : A → B be an onto (or surjective) function, whereA and B are nonempty\nsets. Deﬁne an equivalence relation∼ on the setA as\na1 ∼ a2 if f(a1)= f(a2) ,\nwhere a1,a 2 ∈ A.L e tE = {[x]: x ∈ A} be the set of all the equivalence classes\nunder ∼. Deﬁne a new mappingF : E→ B as\nF([x]) =f(x), for all the equivalence classes [x]in E.\nWhich of the following statements is/are TRUE?",
+      "type": "MCQ",
+      "text": "Let $U = \\{1, 2, \\ldots, n\\}$, where $n$ is a large positive integer greater than 1000. Let $k$ be a positive integer less than $n$. Let $A, B$ be subsets of $U$ with $\\lvert A \\rvert = \\lvert B \\rvert = k$ and $A \\cap B = \\emptyset$. We say that a permutation of $U$ separates $A$ from $B$ if one of the following is true.\n\n- All members of $A$ appear in the permutation before any of the members of $B$.\n- All members of $B$ appear in the permutation before any of the members of $A$.\n\nHow many permutations of $U$ separate $A$ from $B$?",
       "options": [
         {
           "l": "A",
-          "t": "F is NOT well-deﬁned."
+          "t": "$n!$"
         },
         {
           "l": "B",
-          "t": "F is an onto (or surjective) function."
+          "t": "$\\binom{n}{2k}(n-2k)!$"
         },
         {
           "l": "C",
-          "t": "F is a one-to-one (or injective) function."
+          "t": "$\\binom{n}{2k}(n-2k)!\\,(k!)^2$"
         },
         {
           "l": "D",
-          "t": "F is a bijective function. CS Page 45 of 83"
+          "t": "$2\\binom{n}{2k}(n-2k)!\\,(k!)^2$"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "db",
-      "topic": "sql",
+      "subject": "dm",
+      "topic": "combinatorics",
       "tags": [
-        "sql"
+        "permutations",
+        "counting"
       ],
       "answer": "D",
       "answerSource": "official",
@@ -143227,31 +143372,32 @@
       "number": "39",
       "marks": 2,
       "type": "MSQ",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nSuppose you are asked to design a new reliable byte-stream transport protocol\nlike TCP. This protocol, namedmyTCP, runs over a 100 Mbps network with Round\nTrip Time of 150 milliseconds and the maximum segment lifetime of 2 minutes.\nWhich of the following is/are valid lengths of theSequence Number ﬁeld in the\nmyTCP header?",
+      "text": "Let $f : A \\to B$ be an onto (or surjective) function, where $A$ and $B$ are nonempty sets. Define an equivalence relation $\\sim$ on the set $A$ as\n\n$$a_1 \\sim a_2 \\text{ if } f(a_1) = f(a_2),$$\n\nwhere $a_1, a_2 \\in A$. Let $\\mathcal{E} = \\{[x] : x \\in A\\}$ be the set of all the equivalence classes under $\\sim$. Define a new mapping $F : \\mathcal{E} \\to B$ as\n\n$$F([x]) = f(x), \\quad \\text{for all the equivalence classes } [x] \\text{ in } \\mathcal{E}.$$\n\nWhich of the following statements is/are TRUE?",
       "options": [
         {
           "l": "A",
-          "t": "30 bits"
+          "t": "$F$ is NOT well-defined."
         },
         {
           "l": "B",
-          "t": "32 bits"
+          "t": "$F$ is an onto (or surjective) function."
         },
         {
           "l": "C",
-          "t": "34 bits"
+          "t": "$F$ is a one-to-one (or injective) function."
         },
         {
           "l": "D",
-          "t": "36 bits CS Page 46 of 83"
+          "t": "$F$ is a bijective function."
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "cn",
-      "topic": "network",
+      "subject": "dm",
+      "topic": "sets",
       "tags": [
-        "network"
+        "functions",
+        "equivalence-relations"
       ],
       "answer": "B, C, D",
       "answerSource": "official",
@@ -143272,31 +143418,33 @@
       "number": "40",
       "marks": 2,
       "type": "MSQ",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nLet X be a set and 2X denote the powerset ofX.\nDeﬁne a binary operation Δ on 2X as follows:\nAΔB =( A−B)∪(B −A) .\nLet H =( 2X,Δ). Which of the following statements aboutH is/are correct?",
+      "text": "Suppose you are asked to design a new reliable byte-stream transport protocol like TCP. This protocol, named `myTCP`, runs over a 100 Mbps network with Round Trip Time of 150 milliseconds and the maximum segment lifetime of 2 minutes.\n\nWhich of the following is/are valid lengths of the **Sequence Number** field in the `myTCP` header?",
       "options": [
         {
           "l": "A",
-          "t": "H is a group."
+          "t": "30 bits"
         },
         {
           "l": "B",
-          "t": "Every element inH has an inverse, butH is NOT a group."
+          "t": "32 bits"
         },
         {
           "l": "C",
-          "t": "For everyA ∈ 2X, the inverse ofA is the complement ofA."
+          "t": "34 bits"
         },
         {
           "l": "D",
-          "t": "For everyA ∈ 2X, the inverse ofA is A. CS Page 47 of 83"
+          "t": "36 bits"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "cn",
+      "topic": "transport",
       "tags": [
-        "quant"
+        "tcp",
+        "sequence-numbers",
+        "wraparound"
       ],
       "answer": "B, C, D",
       "answerSource": "official",
@@ -143317,31 +143465,32 @@
       "number": "41",
       "marks": 2,
       "type": "MSQ",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nSuppose in a web browser, you click on thewww.gate-2023.in URL. The browser\ncache is empty. The IP address for this URL is not cached in your local host, so\na DNS lookup is triggered (by the local DNS server deployed on your local host)\nover the 3-tier DNS hierarchy in an iterative mode. No resource records are cached\nanywhere across all DNS servers.\nLet RTT denote the round trip time between your local host and DNS servers\nin the DNS hierarchy. The round trip time between the local host and the web\nserver hosting www.gate-2023.in is also equal to RTT. The HTML ﬁle associated\nwith the URL is small enough to have negligible transmission time and negligible\nrendering time by your web browser, which references 10 equally small objects on\nthe same web server.\nWhich of the following statements is/are CORRECT about the minimum elapsed\ntime between clicking on the URL and your browser fully rendering it?",
+      "text": "Let $X$ be a set and $2^X$ denote the powerset of $X$.\nDefine a binary operation $\\Delta$ on $2^X$ as follows:\n\n$$A \\Delta B = (A - B) \\cup (B - A).$$\n\nLet $H = (2^X, \\Delta)$. Which of the following statements about $H$ is/are correct?",
       "options": [
         {
           "l": "A",
-          "t": "7 RTTs, in case of non-persistent HTTP with 5 parallel TCP connections."
+          "t": "$H$ is a group."
         },
         {
           "l": "B",
-          "t": "5 RTTs, in case of persistent HTTP with pipelining."
+          "t": "Every element in $H$ has an inverse, but $H$ is NOT a group."
         },
         {
           "l": "C",
-          "t": "9 RTTs, in case of non-persistent HTTP with 5 parallel TCP connections."
+          "t": "For every $A \\in 2^X$, the inverse of $A$ is the complement of $A$."
         },
         {
           "l": "D",
-          "t": "6 RTTs, in case of persistent HTTP with pipelining. CS Page 48 of 83"
+          "t": "For every $A \\in 2^X$, the inverse of $A$ is $A$."
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "db",
-      "topic": "sql",
+      "subject": "dm",
+      "topic": "groups",
       "tags": [
-        "sql"
+        "groups",
+        "symmetric-difference"
       ],
       "answer": "A, D",
       "answerSource": "official",
@@ -143362,35 +143511,33 @@
       "number": "42",
       "marks": 2,
       "type": "MSQ",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nConsider a random experiment where two fair coins are tossed. LetA be the event\nthat denotes HEAD on both the throws,B be the event that denotes HEAD on\nthe ﬁrst throw, andC be the event that denotes HEAD on the second throw.\nWhich of the following statements is/are TRUE?",
+      "text": "Suppose in a web browser, you click on the `www.gate-2023.in` URL. The browser cache is empty. The IP address for this URL is not cached in your local host, so a DNS lookup is triggered (by the local DNS server deployed on your local host) over the 3-tier DNS hierarchy in an iterative mode. No resource records are cached anywhere across all DNS servers.\n\nLet RTT denote the round trip time between your local host and DNS servers in the DNS hierarchy. The round trip time between the local host and the web server hosting `www.gate-2023.in` is also equal to RTT. The HTML file associated with the URL is small enough to have negligible transmission time and negligible rendering time by your web browser, which references 10 equally small objects on the same web server.\n\nWhich of the following statements is/are CORRECT about the minimum elapsed time between clicking on the URL and your browser fully rendering it?",
       "options": [
         {
           "l": "A",
-          "t": "A and B are independent."
+          "t": "7 RTTs, in case of non-persistent HTTP with 5 parallel TCP connections."
         },
         {
           "l": "B",
-          "t": "A and C are independent."
+          "t": "5 RTTs, in case of persistent HTTP with pipelining."
         },
         {
           "l": "C",
-          "t": "B and C are independent."
+          "t": "9 RTTs, in case of non-persistent HTTP with 5 parallel TCP connections."
         },
         {
           "l": "D",
-          "t": "Prob(B|C)=P r o b"
-        },
-        {
-          "l": "B",
-          "t": "CS Page 49 of 83"
+          "t": "6 RTTs, in case of persistent HTTP with pipelining."
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "db",
-      "topic": "sql",
+      "subject": "cn",
+      "topic": "application",
       "tags": [
-        "sql"
+        "dns",
+        "http",
+        "rtt"
       ],
       "answer": "C, D",
       "answerSource": "official",
@@ -143411,31 +143558,33 @@
       "number": "43",
       "marks": 2,
       "type": "MSQ",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nConsider functions Function 1 and Function 2 expressed in pseudocode as\nfollows:\nFunction 1\nwhile n> 1 do\nfor i =1 to n do\nx = x+1;\nend for\nn = ⌊n/2⌋;\nend while\nFunction 2\nfor i =1 to 100∗n do\nx = x+1;\nend for\nLet f1(n)a n df2(n) denote the number of times the statement “x = x +1 ”i s\nexecuted in Function 1 and Function 2, respectively.\nWhich of the following statements is/are TRUE?",
+      "text": "Consider a random experiment where two fair coins are tossed. Let $A$ be the event that denotes HEAD on both the throws, $B$ be the event that denotes HEAD on the first throw, and $C$ be the event that denotes HEAD on the second throw. Which of the following statements is/are TRUE?",
       "options": [
         {
           "l": "A",
-          "t": "f1(n) ∈ Θ(f2(n))"
+          "t": "$A$ and $B$ are independent."
         },
         {
           "l": "B",
-          "t": "f1(n) ∈ o(f2(n))"
+          "t": "$A$ and $C$ are independent."
         },
         {
           "l": "C",
-          "t": "f1(n) ∈ ω(f2(n))"
+          "t": "$B$ and $C$ are independent."
         },
         {
           "l": "D",
-          "t": "f1(n) ∈ O(n) CS Page 50 of 83"
+          "t": "$\\text{Prob}(B \\mid C) = \\text{Prob}(B)$"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "prob",
+      "topic": "basic",
       "tags": [
-        "computer-science"
+        "probability",
+        "independence",
+        "conditional-probability"
       ],
       "answer": "C, D",
       "answerSource": "official",
@@ -143456,31 +143605,33 @@
       "number": "44",
       "marks": 2,
       "type": "MSQ",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nLet G be a simple, ﬁnite, undirected graph with vertex set{v1,...,v n}.L e tΔ (G)\ndenotethemaximumdegreeof Gandlet N = {1,2,... }denotethesetofallpossible\ncolors. Color the vertices ofG using the following greedy strategy:\nfor i =1 ,...,n\ncolor(vi) ← min{j ∈ N : no neighbour of vi is coloredj}\nWhich of the following statements is/are TRUE?",
+      "text": "Consider functions **Function_1** and **Function_2** expressed in pseudocode as follows:\n\n**Function_1**\n\n```pseudo\nwhile n > 1 do\n    for i = 1 to n do\n        x = x + 1;\n    end for\n    n = ⌊n/2⌋;\nend while\n```\n\n**Function_2**\n\n```pseudo\nfor i = 1 to 100 * n do\n    x = x + 1;\nend for\n```\n\nLet $f_1(n)$ and $f_2(n)$ denote the number of times the statement “$x = x + 1$” is executed in **Function_1** and **Function_2**, respectively.\n\nWhich of the following statements is/are TRUE?",
       "options": [
         {
           "l": "A",
-          "t": "This procedure results in a proper vertex coloring ofG."
+          "t": "$f_1(n) \\in \\Theta(f_2(n))$"
         },
         {
           "l": "B",
-          "t": "The number of colors used is at most Δ(G)+1."
+          "t": "$f_1(n) \\in o(f_2(n))$"
         },
         {
           "l": "C",
-          "t": "The number of colors used is at most Δ(G)."
+          "t": "$f_1(n) \\in \\omega(f_2(n))$"
         },
         {
           "l": "D",
-          "t": "The number of colors used is equal to the chromatic number ofG. CS Page 51 of 83"
+          "t": "$f_1(n) \\in O(n)$"
         }
       ],
       "figures": [],
       "group": null,
       "subject": "algo",
-      "topic": "greedy",
+      "topic": "complexity",
       "tags": [
-        "greedy"
+        "asymptotics",
+        "time-complexity",
+        "loops"
       ],
       "answer": "A, D",
       "answerSource": "official",
@@ -143500,15 +143651,34 @@
       "section": "cs",
       "number": "45",
       "marks": 2,
-      "type": "NAT",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nLet U = {1,2,3}.L e t2U denote the powerset ofU. Consider an undirected graph\nG whose vertex set is 2U. For anyA,B ∈ 2U,( A,B)i sa ne d g ei nG if and only\nif (i)A ⁄= B, and (ii) eitherA ⊊B or B ⊊A. For any vertexA in G, the set of\nall possible orderings in which the vertices ofG can be visited in a Breadth First\nSearch (BFS) starting fromA is denoted byB(A).\nIf ∅ denotes the empty set, then the cardinality ofB(∅)i s .\nCS Page 52 of 83",
-      "options": [],
+      "type": "MSQ",
+      "text": "Let $G$ be a simple, finite, undirected graph with vertex set $\\{v_1, \\ldots, v_n\\}$. Let $\\Delta(G)$ denote the maximum degree of $G$ and let $\\mathbb{N} = \\{1, 2, \\ldots\\}$ denote the set of all possible colors. Color the vertices of $G$ using the following greedy strategy:\n\nfor $i = 1, \\ldots, n$\n\n$$\\text{color}(v_i) \\leftarrow \\min\\{\\, j \\in \\mathbb{N} : \\text{ no neighbour of } v_i \\text{ is colored } j \\,\\}$$\n\nWhich of the following statements is/are TRUE?",
+      "options": [
+        {
+          "l": "A",
+          "t": "This procedure results in a proper vertex coloring of $G$."
+        },
+        {
+          "l": "B",
+          "t": "The number of colors used is at most $\\Delta(G) + 1$."
+        },
+        {
+          "l": "C",
+          "t": "The number of colors used is at most $\\Delta(G)$."
+        },
+        {
+          "l": "D",
+          "t": "The number of colors used is equal to the chromatic number of $G$."
+        }
+      ],
       "figures": [],
       "group": null,
-      "subject": "algo",
+      "subject": "dm",
       "topic": "graphs",
       "tags": [
-        "graphs"
+        "graph-coloring",
+        "greedy",
+        "chromatic-number"
       ],
       "answer": "A, B",
       "answerSource": "official",
@@ -143529,14 +143699,16 @@
       "number": "46",
       "marks": 2,
       "type": "NAT",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nConsider the following two-dimensional arrayD in the C programming language,\nwhich is stored in row-major order:\nint D[ 128][128];\nDemand paging is used for allocating memory and each physical page frame holds\n512 elements of the array D. The Least Recently Used (LRU) page-replacement\npolicy is used by the operating system. A total of 30 physical page frames are\nallocated to a process which executes the following code snippet:\nfor (int i = 0; i < 128; i++)\nfor (int j = 0; j < 128; j++)\nD[j][i] *= 10;\nThe number of page faults generated during the execution of this code snippet is\n.\nCS Page 53 of 83",
+      "text": "Let $U = \\{1, 2, 3\\}$. Let $2^U$ denote the powerset of $U$. Consider an undirected graph $G$ whose vertex set is $2^U$. For any $A, B \\in 2^U$, $(A, B)$ is an edge in $G$ if and only if (i) $A \\neq B$, and (ii) either $A \\subsetneq B$ or $B \\subsetneq A$. For any vertex $A$ in $G$, the set of all possible orderings in which the vertices of $G$ can be visited in a Breadth First Search (BFS) starting from $A$ is denoted by $\\mathcal{B}(A)$.\n\nIf $\\emptyset$ denotes the empty set, then the cardinality of $\\mathcal{B}(\\emptyset)$ is ____________.",
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "c-prog",
+      "subject": "algo",
+      "topic": "graph-traversal",
       "tags": [
-        "c-prog"
+        "bfs",
+        "power-set",
+        "counting"
       ],
       "answer": "5040 to 5040",
       "answerSource": "official",
@@ -143557,14 +143729,16 @@
       "number": "47",
       "marks": 2,
       "type": "NAT",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nConsider a computer system with 57-bit virtual addressing using multi-level\ntree-structured page tables withL levels for virtual to physical address translation.\nThe page size is 4 KB (1 KB = 1024 B) and a page table entry at any of the levels\noccupies 8 bytes.\nThe value ofL is .\nCS Page 54 of 83",
+      "text": "Consider the following two-dimensional array `D` in the C programming language, which is stored in row-major order:\n\n```c\nint D[128][128];\n```\n\nDemand paging is used for allocating memory and each physical page frame holds 512 elements of the array `D`. The Least Recently Used (LRU) page-replacement policy is used by the operating system. A total of 30 physical page frames are allocated to a process which executes the following code snippet:\n\n```c\nfor (int i = 0; i < 128; i++)\n   for (int j = 0; j < 128; j++)\n         D[j][i] *= 10;\n```\n\nThe number of page faults generated during the execution of this code snippet is ____________.",
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "c-prog",
+      "subject": "os",
+      "topic": "virtual-memory",
       "tags": [
-        "c-prog"
+        "page-replacement",
+        "lru",
+        "row-major"
       ],
       "answer": "4096 to 4096",
       "answerSource": "official",
@@ -143585,14 +143759,16 @@
       "number": "48",
       "marks": 2,
       "type": "NAT",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nConsider a sequencea of elements a0 =1 , a1 =5 , a2 =7 , a3 =8 , a4 =9 ,a n d\na5 = 2. The following operations are performed on a stackS and a queueQ,b o t h\nof which are initially empty.\nI: push the elements ofa from a0 to a5 in that order intoS.\nII: enqueue the elements ofa from a0 to a5 in that order intoQ.\nIII: pop an element fromS.\nIV: dequeue an element fromQ.\nV: pop an element fromS.\nVI: dequeue an element fromQ.\nVII: dequeue an element fromQ and push the same element intoS.\nVIII: Repeat operation VII three times.\nIX: pop an element fromS.\nX: pop an element fromS.\nThe top element ofS after executing the above operations is .\nCS Page 55 of 83",
+      "text": "Consider a computer system with 57-bit virtual addressing using multi-level tree-structured page tables with `L` levels for virtual to physical address translation. The page size is 4 KB (1 KB = 1024 B) and a page table entry at any of the levels occupies 8 bytes.\n\nThe value of `L` is ____________.",
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "os",
+      "topic": "virtual-memory",
       "tags": [
-        "quant"
+        "multilevel-paging",
+        "page-table",
+        "paging"
       ],
       "answer": "5 to 5",
       "answerSource": "official",
@@ -143613,14 +143789,15 @@
       "number": "49",
       "marks": 2,
       "type": "NAT",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nConsider the syntax directed translation given by the following grammar and se-\nmanticrules. Here N,I,F andB arenon-terminals. N isthestartingnon-terminal,\nand #, 0 and 1 are lexical tokens corresponding to input letters “#”, “0” and “1”,\nrespectively. X.val denotes the synthesized attribute (a numeric value) associated\nwith a non-terminalX. I1 and F1 denote occurrences ofI and F on the right hand\nside of a production, respectively. For the tokens0 and 1, 0.val =0a n d1.val =1 .\nN → I#FN . val = I.val +F.val\nI → I1 BI . val =( 2I1.val)+ B.val\nI → BI . val = B.val\nF → BF 1 F.val = 1\n2(B.val +F1.val)\nF → BF . val = 1\n2B.val\nB → 0 B.val = 0.val\nB → 1 B.val = 1.val\nThe value computed by the translation scheme for the input string\n10#011\nis . (Rounded oﬀ to three decimal places)\nCS Page 56 of 83",
+      "text": "Consider a sequence $a$ of elements $a_0 = 1$, $a_1 = 5$, $a_2 = 7$, $a_3 = 8$, $a_4 = 9$, and $a_5 = 2$. The following operations are performed on a stack $S$ and a queue $Q$, both of which are initially empty.\n\n- I: `push` the elements of $a$ from $a_0$ to $a_5$ in that order into $S$.\n- II: `enqueue` the elements of $a$ from $a_0$ to $a_5$ in that order into $Q$.\n- III: `pop` an element from $S$.\n- IV: `dequeue` an element from $Q$.\n- V: `pop` an element from $S$.\n- VI: `dequeue` an element from $Q$.\n- VII: `dequeue` an element from $Q$ and `push` the same element into $S$.\n- VIII: Repeat operation VII three times.\n- IX: `pop` an element from $S$.\n- X: `pop` an element from $S$.\n\nThe `top` element of $S$ after executing the above operations is ____________.",
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "cd",
-      "topic": "parsing",
+      "subject": "pds",
+      "topic": "stacks-queues",
       "tags": [
-        "parsing"
+        "stack",
+        "queue"
       ],
       "answer": "8 to 8",
       "answerSource": "official",
@@ -143641,14 +143818,16 @@
       "number": "50",
       "marks": 2,
       "type": "NAT",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nConsider the following table namedStudent in a relational database. The primary\nkey of this table is rollNum.\nStudent\nrollNum name gender marks\n1 Naman M 62\n2 Aliya F 70\n3 Aliya F 80\n4 James M 82\n5 Swati F 65\nThe SQL query below is executed on this database.\nSELECT *\nFROM Student\nWHERE gender = ‘F’ AND\nmarks > 65;\nThe number of rows returned by the query is .\nCS Page 57 of 83",
+      "text": "Consider the syntax directed translation given by the following grammar and semantic rules. Here $N$, $I$, $F$ and $B$ are non-terminals. $N$ is the starting non-terminal, and #, **0** and **1** are lexical tokens corresponding to input letters “#”, “0” and “1”, respectively. $X.val$ denotes the synthesized attribute (a numeric value) associated with a non-terminal $X$. $I_1$ and $F_1$ denote occurrences of $I$ and $F$ on the right hand side of a production, respectively. For the tokens **0** and **1**, $\\mathbf{0}.val = 0$ and $\\mathbf{1}.val = 1$.\n\n| Production | Semantic rule |\n|---|---|\n| $N \\to I \\, \\# \\, F$ | $N.val = I.val + F.val$ |\n| $I \\to I_1 \\, B$ | $I.val = (2\\, I_1.val) + B.val$ |\n| $I \\to B$ | $I.val = B.val$ |\n| $F \\to B \\, F_1$ | $F.val = \\frac{1}{2}(B.val + F_1.val)$ |\n| $F \\to B$ | $F.val = \\frac{1}{2} B.val$ |\n| $B \\to \\mathbf{0}$ | $B.val = \\mathbf{0}.val$ |\n| $B \\to \\mathbf{1}$ | $B.val = \\mathbf{1}.val$ |\n\nThe value computed by the translation scheme for the input string\n\n$$10\\#011$$\n\nis ____________. (Rounded off to three decimal places)",
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "algo",
-      "topic": "graphs",
+      "subject": "cd",
+      "topic": "sdt",
       "tags": [
-        "graphs"
+        "syntax-directed-translation",
+        "synthesized-attributes",
+        "parse-tree"
       ],
       "answer": "2.374 to 2.376",
       "answerSource": "official",
@@ -143669,14 +143848,16 @@
       "number": "51",
       "marks": 2,
       "type": "NAT",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nConsider a database of ﬁxed-length records, stored as an ordered ﬁle. The database\nhas 25,000 records, with each record being 100 bytes, of which the primary key\noccupies 15 bytes. The data ﬁle is block-aligned in that each data record is fully\ncontained within a block. The database is indexed by a primary index ﬁle, which\nis also stored as a block-aligned ordered ﬁle. The ﬁgure below depicts this indexing\nscheme.\n(15 Bytes)\nPrimary Key Other Fields\n(85 Bytes)\nData File\nPrimary Key\nBlock Anchor\nPointer\nBlock\nIndex File\nSuppose the block size of the ﬁle system is 1024 bytes, and a pointer to a block\noccupies 5 bytes. The system uses binary search on the index ﬁle to search for a\nrecord with a given key. You may assume that a binary search on an index ﬁle of\nb blocks takes⌈log2 b⌉block accesses in the worst case.\nGiven a key, the number of block accesses required to identify the block in the data\nﬁle that may contain a record with the key, in the worst case, is .\nCS Page 58 of 83",
+      "text": "Consider the following table named `Student` in a relational database. The primary key of this table is rollNum.\n\n**Student**\n\n| rollNum | name | gender | marks |\n|---|---|---|---|\n| 1 | Naman | M | 62 |\n| 2 | Aliya | F | 70 |\n| 3 | Aliya | F | 80 |\n| 4 | James | M | 82 |\n| 5 | Swati | F | 65 |\n\nThe SQL query below is executed on this database.\n\n```sql\nSELECT *\nFROM Student\nWHERE gender = 'F' AND\n   marks > 65;\n```\n\nThe number of rows returned by the query is ____________.",
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "algo",
-      "topic": "graphs",
+      "subject": "db",
+      "topic": "sql",
       "tags": [
-        "graphs"
+        "sql",
+        "select",
+        "where-clause"
       ],
       "answer": "2 to 2",
       "answerSource": "official",
@@ -143697,14 +143878,22 @@
       "number": "52",
       "marks": 2,
       "type": "NAT",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nCS Page 59 of 83\nGATE 2023 Computer Science and Information Technology (CS)\nConsider the languageL over the alphabet{0,1}, given below:\nL = {w ∈{ 0,1}∗ | w does not contain three or more consecutive 1’s}.\nThe minimum number of states in a Deterministic Finite-State Automaton (DFA)\nfor L is .\nCS Page 60 of 83",
+      "text": "Consider a database of fixed-length records, stored as an ordered file. The database has 25,000 records, with each record being 100 bytes, of which the primary key occupies 15 bytes. The data file is block-aligned in that each data record is fully contained within a block. The database is indexed by a primary index file, which is also stored as a block-aligned ordered file. The figure below depicts this indexing scheme.\n\nSuppose the block size of the file system is 1024 bytes, and a pointer to a block occupies 5 bytes. The system uses binary search on the index file to search for a record with a given key. You may assume that a binary search on an index file of $b$ blocks takes $\\lceil \\log_2 b \\rceil$ block accesses in the worst case.\n\nGiven a key, the number of block accesses required to identify the block in the data file that may contain a record with the key, in the worst case, is ____________.",
       "options": [],
-      "figures": [],
+      "figures": [
+        {
+          "f": "cse-2023/cs-52-1.svg",
+          "svg": "cse-2023/cs-52-1.svg",
+          "alt": "Primary indexing scheme. Left: the Index File, drawn as blocks whose rows have two fields, \"Block Anchor Primary Key\" and \"Block Pointer\"; the first and the last index blocks are shown with dots between them. Right: the Data File, drawn as four blocks (dots between the second and third) whose records have two fields, \"Primary Key (15 Bytes)\" and \"Other Fields (85 Bytes)\". Each index row's block pointer has an arrow to the first record (the anchor) of one data block: the first two index rows point to the first two data blocks, and two rows of the last index block point to the last two data blocks."
+        }
+      ],
       "group": null,
-      "subject": "toc",
-      "topic": "regular",
+      "subject": "db",
+      "topic": "indexing",
       "tags": [
-        "regular"
+        "primary-index",
+        "blocking-factor",
+        "binary-search"
       ],
       "answer": "6 to 6",
       "answerSource": "official",
@@ -143725,14 +143914,15 @@
       "number": "53",
       "marks": 2,
       "type": "NAT",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nAn 8-way set associative cache of size 64 KB (1 KB = 1024 bytes) is used in a\nsystem with 32-bit address. The address is sub-divided into TAG, INDEX, and\nBLOCK OFFSET.\nThe number of bits in the TAG is .\nCS Page 61 of 83",
+      "text": "Consider the language $L$ over the alphabet $\\{0, 1\\}$, given below:\n\n$$L = \\{ w \\in \\{0,1\\}^* \\mid w \\text{ does not contain three or more consecutive 1's} \\}.$$\n\nThe minimum number of states in a Deterministic Finite-State Automaton (DFA) for $L$ is ____________.",
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "coa",
-      "topic": "cache",
+      "subject": "toc",
+      "topic": "regular",
       "tags": [
-        "cache"
+        "dfa",
+        "minimization"
       ],
       "answer": "4 to 4",
       "answerSource": "official",
@@ -143753,14 +143943,15 @@
       "number": "54",
       "marks": 2,
       "type": "NAT",
-      "text": "GATE 2023 Computer Science and Information Technology (CS)\nThe forwarding table of a router is shown below.\nSubnet Number Subnet Mask Interface ID\n200.150.0.0 255.255.0.0 1\n200.150.64.0 255.255.224.0 2\n200.150.68.0 255.255.255.0 3\n200.150.68.64 255.255.255.224 4\nDefault 0\nA packet addressed to a destination address 200.150.68.118 arrives at the router.\nIt will be forwarded to the interface with ID .\nCS Page 62 of 83",
+      "text": "An 8-way set associative cache of size 64 KB (1 KB = 1024 bytes) is used in a system with 32-bit address. The address is sub-divided into TAG, INDEX, and BLOCK OFFSET.\n\nThe number of bits in the TAG is ____________.",
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "cn",
-      "topic": "network",
+      "subject": "coa",
+      "topic": "cache",
       "tags": [
-        "network"
+        "set-associative",
+        "address-split"
       ],
       "answer": "19 to 19",
       "answerSource": "official",
@@ -143781,14 +143972,16 @@
       "number": "55",
       "marks": 2,
       "type": "NAT",
-      "text": "Official problem 55 from cse-2023. Refer to original paper diagrams.",
+      "text": "The forwarding table of a router is shown below.\n\n| Subnet Number | Subnet Mask | Interface ID |\n|---|---|---|\n| 200.150.0.0 | 255.255.0.0 | 1 |\n| 200.150.64.0 | 255.255.224.0 | 2 |\n| 200.150.68.0 | 255.255.255.0 | 3 |\n| 200.150.68.64 | 255.255.255.224 | 4 |\n| Default | | 0 |\n\nA packet addressed to a destination address 200.150.68.118 arrives at the router. It will be forwarded to the interface with ID ____________.",
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "db",
-      "topic": "sql",
+      "subject": "cn",
+      "topic": "ip",
       "tags": [
-        "sql"
+        "longest-prefix-match",
+        "subnetting",
+        "forwarding-table"
       ],
       "answer": "3 to 3",
       "answerSource": "official",
@@ -148109,7 +148302,7 @@
         },
         {
           "l": "D",
-          "t": "10.12.2.0/22 Computer Science and Information Technology Set 2 (CS2)"
+          "t": "10.12.2.0/22"
         }
       ],
       "figures": [],
@@ -153088,12 +153281,12 @@
       "number": "22",
       "marks": 1,
       "type": "NAT",
-      "text": "A box contains 5 coins: 4 regular coins and 1  fake coin. When a regular coin is\ntossed, the probability 𝑃(ℎ𝑒𝑎𝑑) = 0.5 and for a fake coin, 𝑃(ℎ𝑒𝑎𝑑) = 1. You pick\na coin at random and toss it twice, and get two heads. The probability that the coin\nyou have chosen is the fake coin is _______. (rounded off to two decimal places)\nComputer Science and Information Technology (CS1)",
+      "text": "A box contains 5 coins: 4 regular coins and 1 fake coin. When a regular coin is tossed, the probability $P(\\text{head}) = 0.5$ and for a fake coin, $P(\\text{head}) = 1$. You pick a coin at random and toss it twice, and get two heads. The probability that the coin you have chosen is the fake coin is _______. (rounded off to two decimal places)",
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "prob",
+      "topic": "bayes",
       "tags": [
         "computer-science"
       ],
@@ -155428,7 +155621,7 @@
         },
         {
           "l": "D",
-          "t": "19 Computer Science and Information Technology (CS2)"
+          "t": "19"
         }
       ],
       "figures": [],
@@ -167775,7 +167968,7 @@
       "number": "50",
       "marks": 2,
       "type": "NAT",
-      "text": "Consider the following ANSI-C program. #include <stdio.h> int main(){ int *ptr, a, b, c; a=5; b=11; c=20; ptr=&a; *ptr=c; ptr=&c; a=*(&b); c=*ptr-a; printf(\"%d\",c); return(0); } The output of this program is ____________. (answer in integer) Note: Assume that the program compiles and runs successfully.",
+      "text": "Consider the following ANSI-C program.\n\n```c\n#include <stdio.h>\nint main(){\n    int *ptr, a, b, c;\n    a=5; b=11; c=20;\n    ptr=&a;\n    *ptr=c;\n    ptr=&c;\n    a=*(&b);\n    c=*ptr-a;\n    printf(\"%d\",c);\n    return(0);\n}\n```\n\nThe output of this program is ____________. (answer in integer)\n\nNote: Assume that the program compiles and runs successfully.",
       "options": [],
       "figures": [],
       "group": null,
@@ -167792,8 +167985,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **PDS** (C Prog) from **CSE 2026 Q50** (2 Marks).\n- **Evaluation Objective:** Exact numerical/algebraic computation required within acceptable examination tolerance.\n- **Identified Problem Quantities:** 5, 11, 20, 0\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Data Structures & Algorithmic Laws:**\n- Tree Traversals & Invariants: Inorder traversal of a Binary Search Tree (BST) produces strictly ascending keys. Height of full binary tree with $L$ leaves is $\\lceil \\log_2 L \\rceil$.\n- Asymptotic Bounds & Master Theorem: For $T(n) = a T(n/b) + \\Theta(n^k \\log^p n)$, critical threshold is $\\log_b a$ compared against $k$.\n- Minimum Spanning Tree: An MST on $|V|$ vertices contains exactly $|V| - 1$ edges with minimum total weight; if edge weights are distinct, MST is strictly unique.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  ### Numerical Derivation.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  - Setting up governing equations for the system..\n- **Step 3.3 (Intermediate Reduction):**\n  - Solving under the given parameter values yields the integer answer **1**..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`1`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **1**\n- The computed numerical result `1` matches the official GATE key exactly within acceptable tolerance.\n\n⚡ **Topper's Shortcut:** Substitute boundary test inputs ($n=1, 2$ or extreme bounds) to eliminate incorrect multiple-choice options immediately.",
       "textSource": "official-pdf",
       "sourceUrl": "https://gate2026.ac.in/",
-      "needsReview": false,
-      "reviewNote": null
+      "needsReview": true,
+      "reviewNote": "Stored key is 1, but tracing the program gives 9 (a = 20, then a = 11, c = 20 − 11). Verify against the official GATE 2026 CS2 key."
     },
     {
       "id": "cse-2026-2-cs-51",

@@ -1,0 +1,139 @@
+/*
+  Scene primitives for GATE solutions. Every colour comes from a semantic
+  theme token, so scenes follow all palettes in light and dark mode.
+
+  A tone sets --t on an element; fills are --t tinted into the surface, so
+  text on them stays --color-text-primary (contrast is the theme's job).
+*/
+.sc { --t: var(--color-border-strong); --sc-fill: var(--color-bg-surface-2); }
+.sc [data-tone],
+.sc[data-tone] { --sc-fill: color-mix(in oklab, var(--t) 16%, var(--color-bg-surface)); }
+.sc [data-tone='default'] { --t: var(--color-border-strong); --sc-fill: var(--color-bg-surface-2); }
+.sc [data-tone='accent'] { --t: var(--color-accent-brand); }
+.sc [data-tone='success'] { --t: var(--color-state-success); }
+.sc [data-tone='error'] { --t: var(--color-state-error); }
+.sc [data-tone='warning'] { --t: var(--color-state-warning); }
+.sc [data-tone='info'] { --t: var(--color-state-info); }
+.sc [data-tone='muted'] { --t: var(--color-text-muted); --sc-fill: var(--color-bg-surface-3); }
+.sc [data-tone='cat1'] { --t: var(--color-syntax-keyword); }
+.sc [data-tone='cat2'] { --t: var(--color-syntax-type); }
+.sc [data-tone='cat3'] { --t: var(--color-syntax-string); }
+
+.sc { color: var(--color-text-primary); font-variant-numeric: tabular-nums; }
+.sc svg { overflow: visible; }
+.sc text { fill: var(--color-text-primary); font-family: var(--font-body, inherit); }
+.sc .sc-mono, .sc text.sc-mono { font-family: var(--font-mono); }
+
+/* Shared animated colour (positions animate with motion; colours with CSS). */
+.sc .sc-box,
+.sc .sc-node,
+.sc .sc-edge,
+.sc .sc-cell {
+  transition: background-color 380ms ease, border-color 380ms ease, color 380ms ease, fill 380ms ease, stroke 380ms ease, opacity 380ms ease, box-shadow 380ms ease;
+}
+
+/* HTML cell */
+.sc .sc-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.4rem;
+  height: 2.4rem;
+  padding: 0 0.45rem;
+  border-radius: 0.6rem;
+  border: 1.5px solid var(--t);
+  background: var(--sc-fill);
+  color: var(--color-text-primary);
+  font: 600 0.95rem/1 var(--font-mono);
+  position: relative;
+}
+.sc .sc-cell[data-tone='default'] { border-color: var(--color-border); }
+.sc .sc-cell[data-tone='muted'] { color: var(--color-text-muted); }
+.sc .sc-cell-sub { position: absolute; bottom: 2px; font: 500 0.6rem/1 var(--font-body, inherit); color: var(--color-text-muted); }
+.sc .sc-cell[data-empty='true'] { border-style: dashed; border-color: var(--color-border); background: transparent; color: var(--color-text-muted); }
+.sc .sc-idx { font: 500 0.68rem/1 var(--font-mono); color: var(--color-text-muted); text-align: center; }
+.sc .sc-label { font: 600 0.78rem/1.2 var(--font-body, inherit); color: var(--color-text-secondary); }
+.sc .sc-ptr { display: inline-flex; flex-direction: column; align-items: center; gap: 1px; font: 700 0.7rem/1 var(--font-mono); color: var(--t); }
+.sc .sc-ptr::before { content: '▲'; font-size: 0.6rem; }
+
+/* SVG */
+.sc .sc-node { fill: var(--sc-fill); stroke: var(--t); stroke-width: 2; }
+.sc [data-tone='default'] > .sc-node,
+.sc .sc-node[data-tone='default'] { stroke: var(--color-border-strong); }
+.sc .sc-edge { stroke: var(--t); stroke-width: 1.75; fill: none; }
+.sc .sc-edge[data-tone='default'] { stroke: var(--color-border-strong); }
+.sc .sc-edge[data-tone]:not([data-tone='default']):not([data-tone='muted']) { stroke-width: 3; }
+.sc .sc-edge[data-tone='muted'] { opacity: 0.45; }
+.sc .sc-arrowhead { fill: var(--t); stroke: none; transition: fill 380ms ease, opacity 380ms ease; }
+.sc .sc-arrowhead[data-tone='default'] { fill: var(--color-border-strong); }
+.sc .sc-arrowhead[data-tone='muted'] { opacity: 0.45; }
+.sc .sc-chip-bg { fill: var(--color-bg-surface); stroke: var(--color-border); stroke-width: 1; }
+.sc .sc-svg-label { font-size: 13px; font-weight: 600; }
+.sc .sc-svg-small { font-size: 11px; font-weight: 500; fill: var(--color-text-secondary); }
+.sc .sc-svg-muted { fill: var(--color-text-muted); }
+.sc .sc-axis { stroke: var(--color-border-strong); stroke-width: 1.25; }
+.sc .sc-grid { stroke: var(--color-border); stroke-width: 1; stroke-dasharray: 3 4; }
+.sc .sc-cursor { stroke: var(--color-accent-brand); stroke-width: 2; stroke-dasharray: 5 4; }
+
+/* Grids (table, pipeline, paging, kmap, cache) */
+.sc .sc-grid-table { display: grid; gap: 4px; align-items: stretch; }
+.sc .sc-th { display: flex; align-items: center; justify-content: center; padding: 0 0.4rem; font: 600 0.74rem/1.1 var(--font-body, inherit); color: var(--color-text-secondary); text-align: center; white-space: nowrap; }
+.sc .sc-th.sc-mono { font-family: var(--font-mono); }
+.sc .sc-gcell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border-radius: 0.45rem;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-surface-2);
+  font: 600 0.85rem/1.1 var(--font-mono);
+  color: var(--color-text-primary);
+  text-align: center;
+  white-space: nowrap;
+  padding: 0 0.3rem;
+  transition: background-color 380ms ease, border-color 380ms ease, box-shadow 380ms ease, opacity 380ms ease, color 380ms ease;
+}
+.sc .sc-gcell[data-tone]:not([data-tone='default']) { border-color: var(--t); background: var(--sc-fill); }
+.sc .sc-gcell[data-hl] { box-shadow: 0 0 0 2px var(--t) inset; }
+.sc .sc-gcell[data-hidden='true'] { background: transparent; border-style: dashed; color: transparent; }
+.sc .sc-gcell[data-stall='true'] {
+  background: repeating-linear-gradient(135deg, var(--color-bg-surface-3) 0 5px, transparent 5px 10px);
+  color: var(--color-text-muted);
+  font-size: 0.65rem;
+}
+.sc .sc-band { position: absolute; inset: -3px; border-radius: 0.55rem; border: 2px solid var(--t); pointer-events: none; }
+
+/* Chips & captions */
+.sc-vars { display: flex; flex-wrap: wrap; gap: 6px; }
+.sc-var {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-surface-2);
+  font: 600 0.78rem/1.4 var(--font-mono);
+  color: var(--color-text-primary);
+}
+.sc-var-k { color: var(--color-text-muted); font-weight: 500; }
+.sc-var[data-changed='true'] { border-color: var(--color-accent-brand); box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-accent-brand) 18%, transparent); }
+
+.sc-pulse { animation: sc-pulse 1.6s ease-in-out infinite; }
+@keyframes sc-pulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.85; }
+}
+
+/* Code */
+.sc .sc-code { font: 0.8rem/1.6 var(--font-mono); color: var(--color-text-secondary); }
+.sc .sc-code-line { position: relative; display: flex; gap: 12px; padding: 0 10px; white-space: pre; }
+.sc .sc-code-ln { width: 1.6rem; text-align: right; color: var(--color-text-muted); user-select: none; flex: none; }
+.sc .sc-code-cur { position: absolute; inset: 0; border-radius: 6px; background: color-mix(in oklab, var(--color-accent-brand) 16%, transparent); border-left: 3px solid var(--color-accent-brand); }
+.sc .sc-code-hl { position: absolute; inset: 0; border-radius: 6px; background: color-mix(in oklab, var(--color-state-warning) 12%, transparent); }
+
+@media (prefers-reduced-motion: reduce) {
+  .sc *, .sc-var { transition: none !important; animation: none !important; }
+}
