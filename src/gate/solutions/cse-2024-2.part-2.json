@@ -1,0 +1,1732 @@
+{
+  "paper": "cse-2024-2",
+  "version": 2,
+  "solutions": {
+    "cse-2024-2-cs-4": {
+      "approach": "Decode only the exponent field first: an all-ones exponent (255) is reserved for $\\pm\\infty$/NaN, so it is not a number at all. Among the normal numbers the one with the biggest biased exponent wins, since the significand $1.M$ is always in $[1, 2)$.",
+      "concepts": [
+        "IEEE 754 single precision",
+        "Biased exponent (bias 127)",
+        "Special values: ∞ and NaN"
+      ],
+      "given": "| | Sign | Exponent | Mantissa |\n|---|---|---|---|\n| (A) | 0 | 0111 1111 | all 1s |\n| (B) | 0 | 1111 1110 | all 1s |\n| (C) | 0 | 1111 1111 | all 1s |\n| (D) | 0 | 0111 1111 | all 0s |",
+      "steps": [
+        {
+          "title": "Value of a normal single-precision number",
+          "body": "For $1 \\le E \\le 254$ the value is\n\n$$(-1)^S \\times 1.M \\times 2^{E-127}.$$\n\n$E = 0$ is for zero/denormals and $E = 255$ (all ones) is reserved: $M = 0$ gives $\\pm\\infty$, $M \\neq 0$ gives **NaN**. All four options have $S = 0$ (positive).",
+          "scene": {
+            "caption": "All four options are positive (sign bit 0); compare the exponent fields."
+          }
+        },
+        {
+          "title": "Option (C) is NaN, not a number",
+          "body": "Exponent $1111\\,1111_2 = 255$ with a non-zero mantissa is **NaN** (Not a Number). It has no numeric value, so it cannot be the \"largest floating-point number\".",
+          "scene": {
+            "rows": [
+              {
+                "label": "(A)",
+                "fields": [
+                  {
+                    "bits": "0",
+                    "label": "S"
+                  },
+                  {
+                    "bits": "01111111",
+                    "label": "E = 127",
+                    "tone": "default"
+                  },
+                  {
+                    "bits": "11111111111111111111111",
+                    "label": "M ≠ 0"
+                  }
+                ],
+                "value": "≈ 2"
+              },
+              {
+                "label": "(B)",
+                "fields": [
+                  {
+                    "bits": "0",
+                    "label": "S"
+                  },
+                  {
+                    "bits": "11111110",
+                    "label": "E = 254",
+                    "tone": "default"
+                  },
+                  {
+                    "bits": "11111111111111111111111",
+                    "label": "M ≠ 0"
+                  }
+                ],
+                "value": "≈ 3.4×10³⁸"
+              },
+              {
+                "label": "(C)",
+                "fields": [
+                  {
+                    "bits": "0",
+                    "label": "S"
+                  },
+                  {
+                    "bits": "11111111",
+                    "label": "E = 255",
+                    "tone": "error"
+                  },
+                  {
+                    "bits": "11111111111111111111111",
+                    "label": "M ≠ 0"
+                  }
+                ],
+                "value": "NaN"
+              },
+              {
+                "label": "(D)",
+                "fields": [
+                  {
+                    "bits": "0",
+                    "label": "S"
+                  },
+                  {
+                    "bits": "01111111",
+                    "label": "E = 127",
+                    "tone": "default"
+                  },
+                  {
+                    "bits": "00000000000000000000000",
+                    "label": "M = 0"
+                  }
+                ],
+                "value": "1.0"
+              }
+            ],
+            "caption": "E = 255 with M ≠ 0 → NaN (red)."
+          }
+        },
+        {
+          "title": "Decode the three real numbers",
+          "body": "- (A): $E = 0111\\,1111_2 = 127$, $M$ all ones: $1.11\\ldots1_2 \\times 2^{127-127} = (2 - 2^{-23}) \\times 2^0 \\approx 2$.\n- (B): $E = 1111\\,1110_2 = 254$, $M$ all ones: $(2 - 2^{-23}) \\times 2^{254-127} = (2 - 2^{-23}) \\times 2^{127} \\approx 3.4 \\times 10^{38}$.\n- (D): $E = 127$, $M = 0$: $1.0 \\times 2^{0} = 1$.",
+          "scene": {
+            "rows": [
+              {
+                "label": "(A)",
+                "fields": [
+                  {
+                    "bits": "0",
+                    "label": "S"
+                  },
+                  {
+                    "bits": "01111111",
+                    "label": "E = 127",
+                    "tone": "warning"
+                  },
+                  {
+                    "bits": "11111111111111111111111",
+                    "label": "M ≠ 0"
+                  }
+                ],
+                "value": "≈ 2"
+              },
+              {
+                "label": "(B)",
+                "fields": [
+                  {
+                    "bits": "0",
+                    "label": "S"
+                  },
+                  {
+                    "bits": "11111110",
+                    "label": "E = 254",
+                    "tone": "warning"
+                  },
+                  {
+                    "bits": "11111111111111111111111",
+                    "label": "M ≠ 0"
+                  }
+                ],
+                "value": "≈ 3.4×10³⁸"
+              },
+              {
+                "label": "(C)",
+                "fields": [
+                  {
+                    "bits": "0",
+                    "label": "S"
+                  },
+                  {
+                    "bits": "11111111",
+                    "label": "E = 255",
+                    "tone": "error"
+                  },
+                  {
+                    "bits": "11111111111111111111111",
+                    "label": "M ≠ 0"
+                  }
+                ],
+                "value": "NaN"
+              },
+              {
+                "label": "(D)",
+                "fields": [
+                  {
+                    "bits": "0",
+                    "label": "S"
+                  },
+                  {
+                    "bits": "01111111",
+                    "label": "E = 127",
+                    "tone": "warning"
+                  },
+                  {
+                    "bits": "00000000000000000000000",
+                    "label": "M = 0"
+                  }
+                ],
+                "value": "1.0"
+              }
+            ],
+            "caption": "Biased exponents: 127, 254, 127."
+          }
+        },
+        {
+          "title": "The largest is (B)",
+          "body": "Since every significand lies in $[1, 2)$, the largest exponent wins: $2^{127}$ dwarfs $2^{0}$. (B) is in fact the **largest finite** single-precision number, $(2-2^{-23})\\times 2^{127} \\approx 3.4028 \\times 10^{38}$.",
+          "scene": {
+            "rows": [
+              {
+                "label": "(A)",
+                "fields": [
+                  {
+                    "bits": "0",
+                    "label": "S"
+                  },
+                  {
+                    "bits": "01111111",
+                    "label": "E = 127",
+                    "tone": "muted"
+                  },
+                  {
+                    "bits": "11111111111111111111111",
+                    "label": "M ≠ 0"
+                  }
+                ],
+                "value": "≈ 2"
+              },
+              {
+                "label": "(B)",
+                "fields": [
+                  {
+                    "bits": "0",
+                    "label": "S"
+                  },
+                  {
+                    "bits": "11111110",
+                    "label": "E = 254",
+                    "tone": "success"
+                  },
+                  {
+                    "bits": "11111111111111111111111",
+                    "label": "M ≠ 0"
+                  }
+                ],
+                "value": "≈ 3.4×10³⁸"
+              },
+              {
+                "label": "(C)",
+                "fields": [
+                  {
+                    "bits": "0",
+                    "label": "S"
+                  },
+                  {
+                    "bits": "11111111",
+                    "label": "E = 255",
+                    "tone": "error"
+                  },
+                  {
+                    "bits": "11111111111111111111111",
+                    "label": "M ≠ 0"
+                  }
+                ],
+                "value": "NaN"
+              },
+              {
+                "label": "(D)",
+                "fields": [
+                  {
+                    "bits": "0",
+                    "label": "S"
+                  },
+                  {
+                    "bits": "01111111",
+                    "label": "E = 127",
+                    "tone": "muted"
+                  },
+                  {
+                    "bits": "00000000000000000000000",
+                    "label": "M = 0"
+                  }
+                ],
+                "value": "1.0"
+              }
+            ],
+            "caption": "(B) = (2 − 2⁻²³) × 2¹²⁷ is the largest finite float."
+          }
+        }
+      ],
+      "answer": {
+        "value": "$(2-2^{-23}) \\times 2^{127} \\approx 3.4 \\times 10^{38}$ — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Biased exponent 127 → actual exponent 0; value $(2 - 2^{-23}) \\times 2^0 \\approx 2$. Tiny compared with (B)."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Exponent 254 is the largest allowed for a normal number and the mantissa is all ones: $(2-2^{-23})\\times 2^{127}$, the maximum finite float."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Exponent all ones (255) with non-zero mantissa encodes NaN — not a number, so it is not \"largest\". Choosing it means treating the bit pattern as an unsigned integer."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Exponent 127, mantissa 0 → exactly $1.0$."
+        }
+      ],
+      "shortcut": "Exponent 1111 1111 is never a finite number (∞/NaN); the largest finite float always has exponent 1111 1110 and mantissa all ones — that is option (B).",
+      "pitfalls": [
+        "Comparing bit patterns as integers and picking (C), forgetting that exponent 255 is reserved for ∞/NaN.",
+        "Forgetting the bias of 127 (0111 1111 means $2^0$, not $2^{127}$)."
+      ],
+      "verification": "Known constant: FLT_MAX $= 0\\;11111110\\;11\\ldots1 = 3.40282347 \\times 10^{38}$, exactly option (B).",
+      "animation": {
+        "kind": "bits",
+        "title": "The four bit patterns",
+        "rows": [
+          {
+            "label": "(A)",
+            "fields": [
+              {
+                "bits": "0",
+                "label": "S"
+              },
+              {
+                "bits": "01111111",
+                "label": "E = 127",
+                "tone": "default"
+              },
+              {
+                "bits": "11111111111111111111111",
+                "label": "M ≠ 0"
+              }
+            ],
+            "value": "≈ 2"
+          },
+          {
+            "label": "(B)",
+            "fields": [
+              {
+                "bits": "0",
+                "label": "S"
+              },
+              {
+                "bits": "11111110",
+                "label": "E = 254",
+                "tone": "default"
+              },
+              {
+                "bits": "11111111111111111111111",
+                "label": "M ≠ 0"
+              }
+            ],
+            "value": "≈ 3.4×10³⁸"
+          },
+          {
+            "label": "(C)",
+            "fields": [
+              {
+                "bits": "0",
+                "label": "S"
+              },
+              {
+                "bits": "11111111",
+                "label": "E = 255",
+                "tone": "default"
+              },
+              {
+                "bits": "11111111111111111111111",
+                "label": "M ≠ 0"
+              }
+            ],
+            "value": "NaN"
+          },
+          {
+            "label": "(D)",
+            "fields": [
+              {
+                "bits": "0",
+                "label": "S"
+              },
+              {
+                "bits": "01111111",
+                "label": "E = 127",
+                "tone": "default"
+              },
+              {
+                "bits": "00000000000000000000000",
+                "label": "M = 0"
+              }
+            ],
+            "value": "1.0"
+          }
+        ]
+      }
+    },
+    "cse-2024-2-cs-5": {
+      "approach": "Solve the linear homogeneous recurrence exactly with its characteristic equation, then fit the two initial values. The initial conditions kill the $3^n$ term completely, so the dominant root is a trap.",
+      "concepts": [
+        "Linear homogeneous recurrence",
+        "Characteristic equation",
+        "Initial conditions"
+      ],
+      "steps": [
+        {
+          "title": "Characteristic equation",
+          "body": "Try $T(n) = r^n$: $r^n = 5r^{n-1} - 6r^{n-2} \\Rightarrow r^2 - 5r + 6 = 0 \\Rightarrow (r-2)(r-3) = 0$, so $r = 2$ or $r = 3$.\n\nGeneral solution: $T(n) = a\\cdot 2^n + b\\cdot 3^n$.",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Fit the initial values",
+          "body": "- $n = 0$: $a + b = 1$.\n- $n = 1$: $2a + 3b = 2$.\n\nSubtract twice the first from the second: $(2a + 3b) - (2a + 2b) = 2 - 2 \\Rightarrow b = 0$, hence $a = 1$.\n\nSo $T(n) = 2^n$ **exactly**, i.e. $T(n) = \\Theta(2^n)$.",
+          "scene": {
+            "reveal": 5
+          }
+        },
+        {
+          "title": "Check against the recurrence",
+          "body": "Compute directly: $T(2) = 5\\cdot 2 - 6\\cdot 1 = 4$, $T(3) = 5\\cdot 4 - 6\\cdot 2 = 8$, $T(4) = 5\\cdot 8 - 6\\cdot 4 = 16$ — the powers of $2$, as predicted. In general $5\\cdot 2^{n-1} - 6\\cdot 2^{n-2} = 2^{n-2}(10 - 6) = 2^n$.",
+          "scene": {
+            "kind": "table",
+            "title": "T(n) computed from the recurrence",
+            "cols": [
+              "n",
+              "0",
+              "1",
+              "2",
+              "3",
+              "4",
+              "5"
+            ],
+            "rows": [
+              [
+                "T(n)",
+                1,
+                2,
+                4,
+                8,
+                16,
+                32
+              ],
+              [
+                "2ⁿ",
+                1,
+                2,
+                4,
+                8,
+                16,
+                32
+              ],
+              [
+                "3ⁿ",
+                1,
+                3,
+                9,
+                27,
+                81,
+                243
+              ]
+            ],
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              }
+            ],
+            "mono": true
+          }
+        }
+      ],
+      "answer": {
+        "value": "$T(n) = 2^n$, so $T(n) = \\Theta(2^n)$ — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "The exact solution is $T(n) = 2^n$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$n2^n$ would arise only from a repeated root 2, i.e. $(r-2)^2$; here the roots are distinct."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Taking the dominant root 3 blindly; the initial values give coefficient $b = 0$ for $3^n$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Would need a repeated root 3 and a non-zero coefficient — neither holds."
+        }
+      ],
+      "shortcut": "Notice $T(0)=1=2^0$ and $T(1)=2=2^1$, and $2^n$ satisfies the recurrence ($5\\cdot 2^{n-1} - 6 \\cdot 2^{n-2} = 2^n$); by uniqueness $T(n) = 2^n$.",
+      "pitfalls": [
+        "Answering $\\Theta(3^n)$ from the largest characteristic root without checking its coefficient.",
+        "Confusing distinct roots with a repeated root (which adds a factor $n$)."
+      ],
+      "verification": "Direct iteration gives $1, 2, 4, 8, 16, 32$ — exactly $2^n$.",
+      "animation": {
+        "kind": "equation",
+        "title": "Solving the recurrence",
+        "lines": [
+          {
+            "tex": "r^2 - 5r + 6 = 0 \\;\\Rightarrow\\; r \\in \\{2, 3\\}",
+            "note": "characteristic equation"
+          },
+          {
+            "tex": "T(n) = a\\,2^n + b\\,3^n",
+            "note": "general solution"
+          },
+          {
+            "tex": "T(0): a + b = 1,\\quad T(1): 2a + 3b = 2"
+          },
+          {
+            "tex": "b = 0,\\; a = 1",
+            "tone": "warning"
+          },
+          {
+            "tex": "T(n) = 2^n = \\Theta(2^n)",
+            "tone": "success"
+          }
+        ],
+        "reveal": 1
+      }
+    },
+    "cse-2024-2-cs-6": {
+      "approach": "Use the \"king's rule\" $\\int_0^2 f(x)\\,dx = \\int_0^2 f(2-x)\\,dx$ and add the two forms of the same integral: the given identity turns the sum into $\\int_0^2 1\\,dx$.",
+      "concepts": [
+        "Definite integral",
+        "Substitution x → a + b − x",
+        "Symmetry"
+      ],
+      "steps": [
+        {
+          "title": "Reflect the integral",
+          "body": "Let $I = \\int_0^2 f(x)\\,dx$. Substitute $u = 2 - x$ ($du = -dx$; $x = 0 \\to u = 2$, $x = 2 \\to u = 0$):\n\n$$I = \\int_2^0 f(2-u)(-du) = \\int_0^2 f(2-u)\\,du = \\int_0^2 f(2-x)\\,dx.$$",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Add the two forms",
+          "body": "The identity says $f(x) + f(2-x) = 1$ for all $x$. Adding:\n\n$$2I = \\int_0^2 \\big[f(x) + f(2-x)\\big]dx = \\int_0^2 1\\,dx = 2 \\;\\Rightarrow\\; I = 1.$$",
+          "scene": {
+            "reveal": 5
+          }
+        },
+        {
+          "title": "Sanity check with an example",
+          "body": "$f(x) = \\tfrac{x}{2}$ satisfies the condition: $1 - f(2-x) = 1 - \\tfrac{2-x}{2} = \\tfrac{x}{2}$. Then $\\int_0^2 \\tfrac{x}{2}\\,dx = \\tfrac{x^2}{4}\\Big|_0^2 = \\tfrac{4}{4} = 1$. ✓"
+        }
+      ],
+      "answer": {
+        "value": "$\\int_0^2 f(x)\\,dx = 1$ — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Would need $f(x) + f(2-x) = 0$, i.e. odd symmetry about $x = 1$; here the sum is 1."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$2I = \\int_0^2 1\\,dx = 2$, so $I = 1$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "This is $2I$ — forgetting to divide by 2 after adding the two forms."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Sign slip in the substitution (not swapping the limits back)."
+        }
+      ],
+      "shortcut": "Putting $x = 1$ gives $f(1) = \\tfrac12$, and $f$ is \"point-symmetric\" about $(1, \\tfrac12)$, so its average on $[0, 2]$ is $\\tfrac12$: $I = 2 \\times \\tfrac12 = 1$.",
+      "pitfalls": [
+        "Stopping at $2I = 2$ and choosing 2.",
+        "Trying to find $f$ explicitly — infinitely many functions satisfy the condition, but all give the same integral."
+      ],
+      "verification": "Example $f(x) = x/2$ (and also $f(x) = \\tfrac12 + \\sin(\\pi(x-1))$) both give $I = 1$.",
+      "animation": {
+        "kind": "equation",
+        "title": "King’s rule on [0, 2]",
+        "lines": [
+          {
+            "tex": "I = \\int_0^2 f(x)\\,dx"
+          },
+          {
+            "tex": "I = \\int_0^2 f(2-x)\\,dx",
+            "note": "u = 2 − x"
+          },
+          {
+            "tex": "2I = \\int_0^2 \\big[f(x)+f(2-x)\\big]\\,dx",
+            "note": "add"
+          },
+          {
+            "tex": "2I = \\int_0^2 1\\,dx = 2",
+            "note": "f(x) + f(2−x) = 1",
+            "tone": "warning"
+          },
+          {
+            "tex": "I = 1",
+            "tone": "success"
+          }
+        ],
+        "reveal": 1
+      }
+    },
+    "cse-2024-2-cs-7": {
+      "approach": "$A = A^{-1}$ means $A^2 = I$. Read $A^2$ combinatorially: $(A^2)_{ii}$ is the degree of vertex $i$ and $(A^2)_{ij}$ counts common neighbours. $A^2 = I$ forces every degree to be exactly 1 — a perfect matching.",
+      "concepts": [
+        "Adjacency matrix",
+        "Powers of A count walks",
+        "Perfect matching"
+      ],
+      "steps": [
+        {
+          "title": "Translate to $A^2 = I$",
+          "body": "$A$ is its own inverse $\\iff A\\cdot A = I$. Entry $(A^2)_{ij} = \\sum_k a_{ik}a_{kj}$ counts walks of length 2 from $i$ to $j$."
+        },
+        {
+          "title": "Diagonal: every degree is 1",
+          "body": "$(A^2)_{ii} = \\sum_k a_{ik}^2 = \\deg(i)$. $A^2 = I$ requires $\\deg(i) = 1$ for **every** vertex $i$.",
+          "scene": {
+            "terms": [
+              {
+                "name": "A",
+                "rows": [
+                  [
+                    0,
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    1,
+                    0,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    0,
+                    1
+                  ],
+                  [
+                    0,
+                    0,
+                    1,
+                    0
+                  ]
+                ]
+              },
+              "×",
+              {
+                "name": "A",
+                "rows": [
+                  [
+                    0,
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    1,
+                    0,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    0,
+                    1
+                  ],
+                  [
+                    0,
+                    0,
+                    1,
+                    0
+                  ]
+                ]
+              },
+              "=",
+              {
+                "name": "I",
+                "rows": [
+                  [
+                    1,
+                    0,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    1,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    1,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    0,
+                    1
+                  ]
+                ],
+                "hl": [
+                  {
+                    "r": 0,
+                    "c": 0
+                  },
+                  {
+                    "r": 1,
+                    "c": 1
+                  },
+                  {
+                    "r": 2,
+                    "c": 2
+                  },
+                  {
+                    "r": 3,
+                    "c": 3
+                  }
+                ]
+              }
+            ],
+            "caption": "Diagonal of A² = vertex degrees = 1."
+          }
+        },
+        {
+          "title": "Off-diagonal: no common neighbours",
+          "body": "For $i \\ne j$, $(A^2)_{ij}$ = number of common neighbours of $i$ and $j$, which must be 0. If every vertex has degree 1 this is automatic: a common neighbour $k$ of $i \\ne j$ would have degree $\\ge 2$. So $A^2 = I \\iff$ every vertex has degree exactly 1."
+        },
+        {
+          "title": "Degree-1 everywhere = perfect matching",
+          "body": "A graph in which every vertex has degree exactly 1 is a set of disjoint edges covering all vertices — a **perfect matching**. Example $G = 2K_2$ (edges $1\\text{–}2$, $3\\text{–}4$): $A^2 = I$ as shown. So such graphs exist, and every one of them is a perfect matching.",
+          "scene": {
+            "caption": "G = two disjoint edges {1,2}, {3,4}: A·A = I."
+          }
+        }
+      ],
+      "answer": {
+        "value": "$G$ is a perfect matching — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "In a cycle every vertex has degree 2, so $(A^2)_{ii} = 2 \\ne 1$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$A^2 = I$ forces every vertex to have degree 1, which is exactly a perfect matching."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$K_n$ has $(A^2)_{ii} = n-1$; only $K_2$ works, and e.g. $2K_2$ satisfies $A^2 = I$ without being complete, so it is not *always* true."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$K_2$ with $A = \\begin{pmatrix}0&1\\\\1&0\\end{pmatrix}$ satisfies $A^2 = I$."
+        }
+      ],
+      "shortcut": "Test the tiny case $K_2$: $A = \\begin{pmatrix}0&1\\\\1&0\\end{pmatrix}$ is a swap, its own inverse — and $K_2$ is a single matching edge. Then $2K_2$ kills \"complete graph\".",
+      "pitfalls": [
+        "Choosing \"complete graph\" because $K_2$ works — the question asks what is *always* true.",
+        "Choosing \"no such graph\" — the swap matrix of $K_2$ is its own inverse."
+      ],
+      "verification": "Equivalently $A$ is a symmetric permutation matrix with zero diagonal — a fixed-point-free involution, which pairs up the vertices.",
+      "animation": {
+        "kind": "matrix",
+        "title": "G = 2K₂ (edges 1–2 and 3–4)",
+        "terms": [
+          {
+            "name": "A",
+            "rows": [
+              [
+                0,
+                1,
+                0,
+                0
+              ],
+              [
+                1,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                1
+              ],
+              [
+                0,
+                0,
+                1,
+                0
+              ]
+            ]
+          },
+          "×",
+          {
+            "name": "A",
+            "rows": [
+              [
+                0,
+                1,
+                0,
+                0
+              ],
+              [
+                1,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                1
+              ],
+              [
+                0,
+                0,
+                1,
+                0
+              ]
+            ]
+          },
+          "=",
+          {
+            "name": "I",
+            "rows": [
+              [
+                1,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                1
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    "cse-2024-2-cs-8": {
+      "approach": "Classical probability: favourable ordered outcomes are the arrangements of $1,\\ldots,6$ over the six (distinguishable) dice, i.e. $6!$, out of $6^6$ equally likely outcomes.",
+      "concepts": [
+        "Classical probability",
+        "Permutations",
+        "Sample space of ordered outcomes"
+      ],
+      "steps": [
+        {
+          "title": "Count the sample space",
+          "body": "Each of the 6 dice shows one of 6 faces independently: $|S| = 6^6 = 46656$ equally likely ordered outcomes."
+        },
+        {
+          "title": "Count the favourable outcomes",
+          "body": "All numbers distinct means the six dice show $1, 2, \\ldots, 6$ in some order: die 1 has 6 choices, die 2 has 5, …, die 6 has 1, so $6! = 720$ outcomes.",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Divide and simplify",
+          "body": "$$P = \\frac{720}{46656}.$$ $720 = 2^4\\cdot 3^2 \\cdot 5$ and $46656 = 2^6 \\cdot 3^6$; the gcd is $2^4 \\cdot 3^2 = 144$. So $P = \\frac{720/144}{46656/144} = \\frac{5}{324} \\approx 0.0154$.",
+          "scene": {
+            "reveal": 4
+          }
+        }
+      ],
+      "answer": {
+        "value": "$\\dfrac{6!}{6^6} = \\dfrac{5}{324}$ — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$\\frac{1}{324} = \\frac{144}{46656}$ undercounts the favourable outcomes by a factor of 5; $6! = 720$, not 144."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$\\frac{6!}{6^6} = \\frac{720}{46656} = \\frac{5}{324}$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "No natural counting error gives 7/324; arithmetic slip."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "No natural counting error gives 11/324; arithmetic slip."
+        }
+      ],
+      "shortcut": "Sequentially: the first die can show anything; each later die must avoid the faces already used: $\\frac56\\cdot\\frac46\\cdot\\frac36\\cdot\\frac26\\cdot\\frac16 = \\frac{5!}{6^5} = \\frac{120}{7776} = \\frac{5}{324}$.",
+      "pitfalls": [
+        "Using unordered outcomes ($\\binom{11}{6} = 462$) as an equally likely sample space — they are not equally likely.",
+        "Forgetting the dice are distinguishable, i.e. using 1 favourable outcome instead of $6!$."
+      ],
+      "verification": "Cross-multiply: $5 \\times 46656 = 233280$ and $324 \\times 720 = 233280$, so $\\frac{720}{46656} = \\frac{5}{324}$ exactly; the sequential method gives the same value.",
+      "animation": {
+        "kind": "equation",
+        "title": "Six dice, all faces different",
+        "lines": [
+          {
+            "tex": "|S| = 6^6 = 46656",
+            "note": "ordered outcomes"
+          },
+          {
+            "tex": "|E| = 6! = 720",
+            "note": "all distinct"
+          },
+          {
+            "tex": "P = \\frac{720}{46656}"
+          },
+          {
+            "tex": "= \\frac{720 \\div 144}{46656 \\div 144} = \\frac{5}{324}",
+            "tone": "success"
+          }
+        ],
+        "reveal": 1
+      }
+    },
+    "cse-2024-2-cs-9": {
+      "approach": "Match the wording to ACID: \"effects of a committed transaction persist despite a crash\" is the definition of durability (achieved by write-ahead logging and redo during recovery).",
+      "concepts": [
+        "ACID properties",
+        "Durability",
+        "Write-ahead log / redo recovery"
+      ],
+      "steps": [
+        {
+          "title": "Key phrase",
+          "body": "The DBMS has **acknowledged the commit**, yet its changes may not all be on disk when the crash happens. Requiring that the committed effects still survive is exactly **durability** (the \"D\" of ACID)."
+        },
+        {
+          "title": "How the DBMS provides it",
+          "body": "Before acknowledging the commit, the DBMS forces the transaction's log records (including the commit record) to stable storage (WAL). After a crash, recovery **redoes** the logged updates of committed transactions that had not reached the data pages."
+        },
+        {
+          "title": "Why not the others",
+          "body": "- **Atomicity**: all-or-nothing — about *uncommitted* transactions being undone.\n- **Consistency**: a transaction takes the database from one valid state to another (integrity constraints).\n- **Isolation**: concurrent execution looks like some serial order."
+        }
+      ],
+      "answer": {
+        "value": "**Durability** — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Durability: once committed, effects persist across failures."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Atomicity is all-or-nothing execution; it concerns undoing partial (uncommitted) work, not persisting committed work."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Consistency is about preserving integrity constraints."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Isolation is about concurrent transactions not seeing each other's intermediate states."
+        }
+      ],
+      "shortcut": "\"Persist after commit despite crash\" → D of ACID.",
+      "pitfalls": [
+        "Confusing durability with atomicity — atomicity is about *partial* transactions, durability about *committed* ones."
+      ],
+      "verification": "Recovery manager roles: undo (for atomicity) vs redo (for durability); the scenario needs redo of committed work."
+    },
+    "cse-2024-2-cs-10": {
+      "approach": "A weak entity has no key of its own; it is identified only through its owner. So every weak entity must be related to an owner (total participation of the weak side), while an owner need not have any weak entities.",
+      "concepts": [
+        "Weak entity set",
+        "Identifying relationship",
+        "Total vs partial participation"
+      ],
+      "steps": [
+        {
+          "title": "Why the weak side is total",
+          "body": "A weak entity is identified by (owner's key + its own partial key/discriminator). Without an owner it cannot be identified at all, so **every** weak entity must participate in the identifying relationship: total participation (double line in the ER diagram)."
+        },
+        {
+          "title": "Why the owner side need not be total",
+          "body": "Example: owner *Employee*, weak entity *Dependent* via identifying relationship *Has*. An employee with no dependents is perfectly valid, so the owner's participation can be partial."
+        },
+        {
+          "title": "Check each option",
+          "body": "Weak side total, owner side not necessarily total: only (A) states exactly this. (B) and (C) wrongly force the owner side to be total, and (D) wrongly frees the weak side."
+        }
+      ],
+      "answer": {
+        "value": "Only the weak entity set must have total participation — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "A weak entity cannot exist (be identified) without its owner, so its participation is total."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "An owner can exist without any weak entities (an employee with no dependents)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Requires the owner side to be total, which is not mandatory."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The weak side must be total, so \"neither\" is false."
+        }
+      ],
+      "shortcut": "Weak = dependent: the dependent side is always total (double line); the owner side is whatever the business rule says.",
+      "pitfalls": [
+        "Mixing up which side the identifying relationship forces to be total."
+      ],
+      "verification": "Standard notation: double rectangle (weak entity) — double diamond (identifying relationship) connected by a **double line** only on the weak side."
+    },
+    "cse-2024-2-cs-11": {
+      "approach": "Map each phase to what it produces/does: lexer → tokens, parser → parse tree, intermediate code generator → an IR such as the abstract syntax tree, optimizer → transformations like constant folding. Two sure pairs (P–2, S–4) already leave only options (B) and (C).",
+      "concepts": [
+        "Phases of a compiler",
+        "Parse tree vs abstract syntax tree",
+        "Constant folding"
+      ],
+      "given": "| Phase | Output / job |\n|---|---|\n| P. Lexical analyzer | 2. Token |\n| Q. Syntax analyzer | 3. Parse tree |\n| R. Intermediate code generator | 1. Abstract syntax tree |\n| S. Code optimizer | 4. Constant folding |",
+      "steps": [
+        {
+          "title": "Sure pairs: P–2 and S–4",
+          "body": "The lexical analyzer groups characters into **tokens** (P–2). **Constant folding** (evaluating `3*4` to `12` at compile time) is a classic optimization (S–4). Only options (B) and (C) contain both.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 3,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Parse tree vs AST",
+          "body": "The syntax analyzer checks the token stream against the grammar and produces the **parse tree** (concrete derivation tree) — Q–3. The **abstract syntax tree** is a condensed tree used as an intermediate representation, associated with intermediate code generation — R–1.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "tone": "success"
+              },
+              {
+                "r": 3,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Pick the option",
+          "body": "P–2, Q–3, R–1, S–4 is option (B). Option (C) swaps the two trees."
+        }
+      ],
+      "answer": {
+        "value": "P – 2; Q – 3; R – 1; S – 4 — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "P – 4 is wrong: the lexer does not fold constants; it produces tokens."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Tokens, parse tree, AST, constant folding — each phase matched to its product."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Swaps Q and R: the syntax analyzer is matched with the parse tree, the AST with intermediate code generation."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "P – 4 and S – 1 are both wrong."
+        }
+      ],
+      "shortcut": "P–2 and S–4 are certain; only (B) and (C) remain, and \"Syntax analyzer → Parse tree\" picks (B).",
+      "pitfalls": [
+        "Treating parse tree and AST as interchangeable; the matching needs the parser ↔ parse tree pairing."
+      ],
+      "verification": "Pipeline order: characters → tokens → parse tree → AST/IR → optimized IR; the options in (B) follow this order.",
+      "animation": {
+        "kind": "table",
+        "title": "Phase → product",
+        "cols": [
+          "Set X (phase)",
+          "Set Y"
+        ],
+        "rows": [
+          [
+            "P. Lexical Analyzer",
+            "2. Token"
+          ],
+          [
+            "Q. Syntax Analyzer",
+            "3. Parse Tree"
+          ],
+          [
+            "R. Intermediate Code Generator",
+            "1. Abstract Syntax Tree"
+          ],
+          [
+            "S. Code Optimizer",
+            "4. Constant Folding"
+          ]
+        ]
+      }
+    },
+    "cse-2024-2-cs-12": {
+      "approach": "Read the language off the 2-state DFA: 0s never change the state and every 1 toggles it, so it accepts exactly the strings with an **odd number of 1s**. Eliminate the non-start loop structure to get $0^*1(0+10^*1)^*$, then kill each wrong option with one short counter-example.",
+      "concepts": [
+        "DFA to regular expression",
+        "State elimination",
+        "Parity of 1s"
+      ],
+      "given": "| state | on $0$ | on $1$ | role |\n|---|---|---|---|\n| $q_0$ | $q_0$ | $q_1$ | start |\n| $q_1$ | $q_1$ | $q_0$ | final |\n\n(States are unnamed in the paper; $q_0$ = left, $q_1$ = right.)",
+      "steps": [
+        {
+          "title": "What the DFA counts",
+          "body": "A $0$ keeps the state; a $1$ swaps $q_0 \\leftrightarrow q_1$. Starting in $q_0$, the run is in $q_1$ exactly when an **odd** number of 1s has been read. So $L = \\{w : n_1(w) \\text{ is odd}\\}$.",
+          "scene": {
+            "edgeTones": {
+              "q0>q0": "muted",
+              "q1>q1": "muted",
+              "q0>q1": "accent",
+              "q1>q0": "accent"
+            },
+            "caption": "0 loops keep the state; each 1 toggles it."
+          }
+        },
+        {
+          "title": "Build the regex",
+          "body": "From $q_0$: any number of 0s, then a $1$ to reach $q_1$: $0^*1$.\n\nWhile in $q_1$, a return trip to $q_1$ is either the loop $0$, or $1$ (to $q_0$), any $0$s there, and $1$ back: $10^*1$. Any sequence of such trips: $(0 + 10^*1)^*$.\n\n$$L = 0^*1\\,(0 + 10^*1)^* \\quad\\text{— option (A)}.$$",
+          "scene": {
+            "edgeTones": {
+              "q0>q0": "warning",
+              "q0>q1": "warning",
+              "q1>q1": "success",
+              "q1>q0": "success"
+            },
+            "caption": "0*1 reaches q₁; the trips q₁→q₁ are 0 and 10*1."
+          }
+        },
+        {
+          "title": "Trace a probe: 10101",
+          "body": "Run: $q_0 \\xrightarrow{1} q_1 \\xrightarrow{0} q_1 \\xrightarrow{1} q_0 \\xrightarrow{0} q_0 \\xrightarrow{1} q_1$ — accepted (three 1s). In (A): $0^* = \\varepsilon$, then $1$, then the trips $0$ and $101$: $1\\cdot 0 \\cdot 101 = 10101$. ✓",
+          "scene": {
+            "current": [
+              "q1"
+            ],
+            "tape": {
+              "cells": [
+                "1",
+                "0",
+                "1",
+                "0",
+                "1"
+              ],
+              "head": 5
+            },
+            "edgeTones": {
+              "q0>q0": "default",
+              "q0>q1": "default",
+              "q1>q1": "default",
+              "q1>q0": "default"
+            },
+            "caption": "10101 ends in the final state q₁."
+          }
+        },
+        {
+          "title": "Eliminate (B), (C), (D)",
+          "body": "- (B) $0^*(10^*11)^*0^*$ generates $\\varepsilon$ (zero 1s) — rejected by the DFA; and since each block $10^*11$ carries three 1s, it can never produce $1$.\n- (C) $0^*1(010^*1)^*0^*$: every repeated block starts with $0$, so $111 \\in L$ cannot be generated.\n- (D) $0(1+0^*10^*1)^*0^*$ forces a leading $0$, so $1 \\in L$ is missing (and it generates $0 \\notin L$).",
+          "scene": {
+            "current": [
+              "q0"
+            ],
+            "tape": {
+              "cells": [
+                "1",
+                "1",
+                "1"
+              ],
+              "head": 0
+            },
+            "caption": "Counter-examples: ε (B), 111 (C), 1 (D)."
+          }
+        }
+      ],
+      "answer": {
+        "value": "$0^*1(0 + 10^*1)^*$ — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Exactly the strings with an odd number of 1s: $0^*1$ reaches the final state, and $(0+10^*1)^*$ lists every return trip to it."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Matches $\\varepsilon$ and $0$, which have zero (even) 1s and are rejected by the DFA; it also cannot produce $1$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "After the first 1, each block is $010^*1$, which begins with 0, so strings like $111$ or $11001$ (odd 1s) are missed."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Every string starts with $0$, so $1$ is missing; also $0$ itself is generated but rejected."
+        }
+      ],
+      "shortcut": "Test $\\varepsilon$, $1$, $111$: the DFA gives reject, accept, accept. Only (A) agrees on all three — (B) accepts ε, (D) rejects 1, (C) rejects 111.",
+      "pitfalls": [
+        "Forgetting that the DFA is over $\\{0, 1\\}$ with 0-loops on **both** states, so 0s may appear anywhere.",
+        "Checking only strings that an option *generates* — also check strings in $L$ that it misses."
+      ],
+      "verification": "Every string generated by (A) has an odd number of 1s (one $1$ plus blocks with 0 or 2 ones), and every odd-1s string splits as $0^*1$ followed by blocks $0$ / $10^*1$ — the two inclusions match.",
+      "animation": {
+        "kind": "automaton",
+        "title": "DFA: odd number of 1s",
+        "states": [
+          {
+            "id": "q0",
+            "start": true,
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "q1",
+            "accept": true,
+            "x": 3,
+            "y": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "q0",
+            "to": "q0",
+            "label": "0"
+          },
+          {
+            "from": "q0",
+            "to": "q1",
+            "label": "1"
+          },
+          {
+            "from": "q1",
+            "to": "q1",
+            "label": "0"
+          },
+          {
+            "from": "q1",
+            "to": "q0",
+            "label": "1"
+          }
+        ],
+        "current": [
+          "q0"
+        ]
+      }
+    },
+    "cse-2024-2-cs-13": {
+      "approach": "IP addresses are end-to-end, MAC addresses are hop-by-hop between layer-3 devices. A switch is transparent (it never appears as a destination), so the frame leaving X is addressed to Y at the IP layer and to router R's interface at the MAC layer.",
+      "concepts": [
+        "End-to-end IP addressing",
+        "Next-hop MAC addressing (ARP)",
+        "Transparent layer-2 switches"
+      ],
+      "steps": [
+        {
+          "title": "Destination IP = Y",
+          "body": "The IP header carries the final destination for the whole journey (no NAT/proxy is mentioned). Routers forward on it without changing it, so it is **Y's IP address** — (B) true, (A) false."
+        },
+        {
+          "title": "Destination MAC = next-hop router R",
+          "body": "Y is on another network, so X sends the frame to its next hop, router R (X finds R's MAC via ARP for its gateway). The destination MAC is **R's interface MAC**, not Y's — (D) false.",
+          "scene": {
+            "upto": 1
+          }
+        },
+        {
+          "title": "The switch is not addressed",
+          "body": "Switch S just forwards frames by their destination MAC; hosts never address frames to a switch's MAC. So (C) is false. At R the frame is rebuilt with new MAC addresses for the next hop, while the IP destination stays Y.",
+          "scene": {
+            "upto": 2
+          }
+        }
+      ],
+      "answer": {
+        "value": "Only (B): destination IP is Y's address (and destination MAC is R's)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "R is only an intermediate hop; the IP destination remains Y end-to-end."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "The IP destination address is always the final host Y."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "A switch is transparent to hosts; frames are addressed to the next layer-3 hop (R), not to the switch."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Y is not on X's LAN; the first-hop frame carries R's MAC. Y's MAC appears only on the last hop."
+        }
+      ],
+      "shortcut": "\"IP: where the packet is going; MAC: which box takes it next (switches don't count).\"",
+      "pitfalls": [
+        "Thinking the first switch is the next hop at layer 2 (option C).",
+        "Swapping the roles: taking the router's IP and Y's MAC."
+      ],
+      "verification": "Last hop check: when R forwards to Y's network, the frame gets destination MAC = Y (or the next router) while the IP destination is still Y — consistent with IP end-to-end, MAC hop-by-hop.",
+      "animation": {
+        "kind": "sequence",
+        "title": "The packet X → Y",
+        "unit": "hop",
+        "actors": [
+          "X",
+          "S (switch)",
+          "R (router)",
+          "Y"
+        ],
+        "messages": [
+          {
+            "from": "X",
+            "to": "S (switch)",
+            "t0": 0,
+            "t1": 1,
+            "label": "IP→Y, MAC→R",
+            "tone": "accent"
+          },
+          {
+            "from": "S (switch)",
+            "to": "R (router)",
+            "t0": 1,
+            "t1": 2,
+            "label": "same frame (MAC→R)",
+            "tone": "info"
+          },
+          {
+            "from": "R (router)",
+            "to": "Y",
+            "t0": 2,
+            "t1": 3,
+            "label": "IP→Y, new MAC header",
+            "tone": "success"
+          }
+        ],
+        "upto": 0
+      }
+    },
+    "cse-2024-2-cs-14": {
+      "approach": "Separate hardware from software: the MMU is the hardware that walks the page table on every access — it translates and, when the entry is missing/invalid or the access violates its permission bits, raises a trap. Creating page tables is OS (software) work.",
+      "concepts": [
+        "Memory management unit",
+        "Address translation",
+        "Page fault and protection trap"
+      ],
+      "steps": [
+        {
+          "title": "What the MMU does on each access",
+          "body": "For each virtual address, the MMU (with the TLB) looks up the page-table entry, checks the valid bit and permission bits, and forms the physical address = frame number ‖ offset. So (B) is an MMU task."
+        },
+        {
+          "title": "Traps raised by the MMU",
+          "body": "- Entry not present/invalid → the MMU raises a **page-fault trap** to the OS — (C).\n- Write to a page whose PTE is read-only → the MMU raises a **protection fault** — (D).\n\nThe OS handler then decides what to do (load the page, copy-on-write, kill the process)."
+        },
+        {
+          "title": "Page-table allocation is the OS's job",
+          "body": "Creating a process and allocating/initialising its page table is done by the kernel in software (e.g. during `fork`/`exec`); the MMU only *uses* the table whose base the OS loads into the page-table base register. So (A) is not an MMU responsibility."
+        }
+      ],
+      "answer": {
+        "value": "(B), (C) and (D)",
+        "choice": [
+          "B",
+          "C",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Allocating a page table is an OS (software) task at process creation; the MMU only reads it via the page-table base register."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Virtual-to-physical translation via the page table (and TLB) is the MMU's core job."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "A missing/invalid mapping makes the MMU raise a page-fault trap."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "The MMU checks protection bits on each access and traps on a write to a read-only page."
+        }
+      ],
+      "shortcut": "MMU = hardware on the access path: translate + check + trap. Anything that allocates or decides is the OS.",
+      "pitfalls": [
+        "Thinking the MMU *handles* the page fault — it only raises the trap; the OS handles it.",
+        "Marking (A) because page tables are \"memory management\" — allocation is done by the kernel."
+      ],
+      "verification": "In x86/ARM, the OS writes CR3/TTBR with the page-table base and fills PTEs; the hardware walker translates and generates #PF / permission faults — matching B, C, D."
+    },
+    "cse-2024-2-cs-15": {
+      "approach": "For each event ask: can P keep running afterwards? If P must wait for disk I/O, it blocks — a switch is unavoidable. Interrupts that are not P's own wait (another process's disk interrupt, a timer tick) are serviced and may or may not cause rescheduling, so they do not *always* switch P out.",
+      "concepts": [
+        "Process state transitions",
+        "Blocking system calls",
+        "Page fault service",
+        "Interrupt handling vs preemption"
+      ],
+      "steps": [
+        {
+          "title": "(A) blocking disk read",
+          "body": "P asks for data that takes milliseconds to arrive; the call is **blocking**, so the OS moves P to the *blocked* state and dispatches another process. Always a switch — true."
+        },
+        {
+          "title": "(B) page fault on a swapped-out page",
+          "body": "The page must be read from swap space (a disk I/O). P cannot continue until it arrives, so the OS blocks P and schedules someone else. Always a switch — true."
+        },
+        {
+          "title": "(C) disk interrupt for another process",
+          "body": "The handler marks the *other* process ready and returns. P may simply resume (it is only preempted if the scheduler decides, e.g. the woken process has higher priority). Not **always** — false."
+        },
+        {
+          "title": "(D) timer interrupt",
+          "body": "The timer tick may occur before P's quantum expires, or P may be the only ready process; then the handler returns to P. Not **always** — false."
+        }
+      ],
+      "answer": {
+        "value": "(A) and (B)",
+        "choice": [
+          "A",
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "A blocking disk read puts P in the blocked state until the I/O completes — a context switch every time."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Servicing the fault needs a disk read from swap, so P blocks until the page is loaded."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "The interrupt only wakes the other process; P typically resumes unless the scheduler chooses to preempt it."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "A timer tick causes a switch only if the quantum has expired and another process is ready — not always."
+        }
+      ],
+      "shortcut": "Key word \"always\": only events that make P itself wait for I/O guarantee it leaves the CPU.",
+      "pitfalls": [
+        "Treating every interrupt as a context switch — an interrupt is handled in the context of the running process and usually returns to it.",
+        "Assuming every timer interrupt ends the time slice."
+      ],
+      "verification": "State diagram: running → blocked happens on I/O wait (A, B); running → ready happens on preemption, which is a scheduler decision, not guaranteed by C or D."
+    },
+    "cse-2024-2-cs-16": {
+      "approach": "A scan reads every record. Heap and sorted files store records densely in their data pages, so a scan reads each page once ($B$ I/Os). Retrieving all records through an unclustered index costs about one I/O **per record**, which is far more.",
+      "concepts": [
+        "File organizations",
+        "Scan cost",
+        "Clustered vs unclustered index"
+      ],
+      "given": "Cost model (Ramakrishnan–Gehrke): $B$ data pages, $R$ records per page, page I/O time $D$.",
+      "steps": [
+        {
+          "title": "Heap and sorted files",
+          "body": "Both keep records packed in $B$ pages. Scanning reads each page once: cost $B\\cdot D$ — the minimum possible. So (A) and (B) are I/O efficient.",
+          "scene": {
+            "bars": [
+              {
+                "label": "Heap",
+                "value": 100,
+                "display": "100",
+                "tone": "success"
+              },
+              {
+                "label": "Sorted",
+                "value": 100,
+                "display": "100",
+                "tone": "success"
+              },
+              {
+                "label": "Unclust. tree",
+                "value": 1015,
+                "display": "1015"
+              },
+              {
+                "label": "Unclust. hash",
+                "value": 1013,
+                "display": "≈1013"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Unclustered indexes",
+          "body": "The data entries of an unclustered index point to records scattered over the data pages, so fetching all records through the index costs roughly one page I/O per record: tree $\\approx B(R + 0.15)D$, hash $\\approx B(R + 0.125)D$. With $B = 100$ and $R = 10$: about $100 \\times 10.15 = 1015$ and $100 \\times 10.125 \\approx 1013$ I/Os versus $100$. Not efficient — (C) and (D) false.",
+          "scene": {
+            "bars": [
+              {
+                "label": "Heap",
+                "value": 100,
+                "display": "100",
+                "tone": "success"
+              },
+              {
+                "label": "Sorted",
+                "value": 100,
+                "display": "100",
+                "tone": "success"
+              },
+              {
+                "label": "Unclust. tree",
+                "value": 1015,
+                "display": "1015",
+                "tone": "error"
+              },
+              {
+                "label": "Unclust. hash",
+                "value": 1013,
+                "display": "≈1013",
+                "tone": "error"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Conclusion",
+          "body": "Only organizations whose data pages hold the records densely and can be read sequentially give the minimum $B$ page I/Os for a scan: **heap** and **sorted** files. Unclustered indexes cost about $R$ times more (here ~10×)."
+        }
+      ],
+      "answer": {
+        "value": "(A) Sorted and (B) Heap",
+        "choice": [
+          "A",
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "A sorted file is read page by page: $B$ I/Os."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "A heap file is read page by page: $B$ I/Os."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Records are reached through scattered pointers — about one I/O per record, $\\approx B\\cdot R$ I/Os."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Same problem as (C), and hash buckets are typically only ~80% full, adding more pages."
+        }
+      ],
+      "shortcut": "Scan efficiency = \"are the records stored densely and read in page order?\" Yes for heap/sorted; no for anything accessed via unclustered pointers.",
+      "pitfalls": [
+        "Assuming any index helps every operation — indexes help selections, not full scans."
+      ],
+      "verification": "Textbook cost table (scan column): heap $BD$, sorted $BD$, clustered $1.5BD$, unclustered tree $BD(R+0.15)$, unclustered hash $BD(R+0.125)$.",
+      "animation": {
+        "kind": "bars",
+        "title": "Scan cost in page I/Os (B = 100 pages, R = 10 records/page)",
+        "unit": "I/Os",
+        "bars": [
+          {
+            "label": "Heap",
+            "value": 100,
+            "display": "100"
+          },
+          {
+            "label": "Sorted",
+            "value": 100,
+            "display": "100"
+          },
+          {
+            "label": "Unclust. tree",
+            "value": 1015,
+            "display": "1015"
+          },
+          {
+            "label": "Unclust. hash",
+            "value": 1013,
+            "display": "≈1013"
+          }
+        ]
+      }
+    }
+  }
+}

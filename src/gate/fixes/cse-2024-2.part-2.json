@@ -1,0 +1,880 @@
+{
+  "paper": "cse-2024-2",
+  "fixes": [
+    {
+      "id": "cse-2024-2-cs-4",
+      "field": "text",
+      "before": "The format of a single -precision floating -point number as per the\nIEEE 754 standard is:\nSign\n(1bit)\nExponent\n(8 bits)\nMantissa\n(23 bits)\nChoose the largest floating-point number among the following options.",
+      "after": "The format of a single-precision floating-point number as per the IEEE 754 standard is:\n\n| Sign | Exponent | Mantissa |\n|:---:|:---:|:---:|\n| (1 bit) | (8 bits) | (23 bits) |\n\nChoose the largest floating-point number among the following options.",
+      "reason": "Format box restored as a table; stray spaces (\"single -precision\") and line breaks removed.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2024-2-cs-4",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Sign Exponent Mantissa 0 0111 1111 1111 1111 1111 1111 1111 111"
+        },
+        {
+          "l": "B",
+          "t": "Sign Exponent Mantissa 0 1111 1110 1111 1111 1111 1111 1111 111"
+        },
+        {
+          "l": "C",
+          "t": "Sign Exponent Mantissa 0 1111 1111 1111 1111 1111 1111 1111 111"
+        },
+        {
+          "l": "D",
+          "t": "Sign Exponent Mantissa 0 0111 1111 0000 0000 0000 0000 0000 000 Computer Science and Information Technology Set 2 (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Sign `0` · Exponent `0111 1111` · Mantissa `1111 1111 1111 1111 1111 111`"
+        },
+        {
+          "l": "B",
+          "t": "Sign `0` · Exponent `1111 1110` · Mantissa `1111 1111 1111 1111 1111 111`"
+        },
+        {
+          "l": "C",
+          "t": "Sign `0` · Exponent `1111 1111` · Mantissa `1111 1111 1111 1111 1111 111`"
+        },
+        {
+          "l": "D",
+          "t": "Sign `0` · Exponent `0111 1111` · Mantissa `0000 0000 0000 0000 0000 000`"
+        }
+      ],
+      "reason": "Removed the repeated \"Sign Exponent Mantissa\" column heading mashed into each option and the page header in option D; fields now labelled separately.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2024-2-cs-4",
+      "field": "topic",
+      "before": "number",
+      "after": "floating",
+      "reason": "IEEE 754 belongs to the floating-point topic.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2024-2-cs-4",
+      "field": "tags",
+      "before": [
+        "codegen"
+      ],
+      "after": [
+        "ieee-754",
+        "floating-point"
+      ],
+      "reason": "Tag \"codegen\" is unrelated.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2024-2-cs-5",
+      "field": "text",
+      "before": "Let 𝑇(𝑛) be the recurrence relation defined as follows:\n𝑇(0) = 1,\n𝑇(1) = 2, and\n𝑇(𝑛) = 5𝑇(𝑛 − 1) − 6𝑇(𝑛 − 2)    for 𝑛 ≥ 2\nWhich one of the following statements is TRUE?",
+      "after": "Let $T(n)$ be the recurrence relation defined as follows:\n\n$$T(0) = 1,\\qquad T(1) = 2,\\qquad T(n) = 5T(n-1) - 6T(n-2)\\quad \\text{for } n \\ge 2$$\n\nWhich one of the following statements is TRUE?",
+      "reason": "Unicode maths italics replaced by LaTeX.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2024-2-cs-5",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝑇(𝑛) = ⁡Θ(2𝑛)⁡"
+        },
+        {
+          "l": "B",
+          "t": "𝑇(𝑛) = ⁡Θ(𝑛2𝑛)"
+        },
+        {
+          "l": "C",
+          "t": "𝑇(𝑛) = ⁡Θ(3𝑛)"
+        },
+        {
+          "l": "D",
+          "t": "𝑇(𝑛) = ⁡Θ(𝑛3𝑛)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$T(n) = \\Theta(2^n)$"
+        },
+        {
+          "l": "B",
+          "t": "$T(n) = \\Theta(n2^n)$"
+        },
+        {
+          "l": "C",
+          "t": "$T(n) = \\Theta(3^n)$"
+        },
+        {
+          "l": "D",
+          "t": "$T(n) = \\Theta(n3^n)$"
+        }
+      ],
+      "reason": "Exponents were flattened into the base (\"Θ(2𝑛)\" for Θ(2ⁿ)) and stray U+2061 characters inserted; rewritten in LaTeX.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2024-2-cs-5",
+      "field": "topic",
+      "before": "combinatorics",
+      "after": "recurrences",
+      "reason": "A linear recurrence solved exactly belongs to Recurrence relations, not combinatorics.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2024-2-cs-5",
+      "field": "tags",
+      "before": [
+        "asymptotics"
+      ],
+      "after": [
+        "recurrence",
+        "characteristic-equation",
+        "asymptotics"
+      ],
+      "reason": "Tags matched to the content.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2024-2-cs-6",
+      "field": "text",
+      "before": "Let 𝑓(𝑥) be a continuous function from ℝ to ℝ such that\n𝑓(𝑥) = 1 − 𝑓(2 − 𝑥)\nWhich one of the following options is the CORRECT value of ∫ 𝑓(𝑥)𝑑𝑥\n2\n0  ?",
+      "after": "Let $f(x)$ be a continuous function from $\\mathbb{R}$ to $\\mathbb{R}$ such that\n\n$$f(x) = 1 - f(2 - x)$$\n\nWhich one of the following options is the CORRECT value of $\\displaystyle\\int_0^2 f(x)\\,dx$?",
+      "reason": "Unicode maths replaced by LaTeX; the integral limits 0 and 2 had been split onto separate lines.",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "cse-2024-2-cs-6",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "0"
+        },
+        {
+          "l": "B",
+          "t": "1"
+        },
+        {
+          "l": "C",
+          "t": "2"
+        },
+        {
+          "l": "D",
+          "t": "−1 Computer Science and Information Technology Set 2 (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "0"
+        },
+        {
+          "l": "B",
+          "t": "1"
+        },
+        {
+          "l": "C",
+          "t": "2"
+        },
+        {
+          "l": "D",
+          "t": "−1"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology Set 2 (CS2)\" removed from option D.",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "cse-2024-2-cs-6",
+      "field": "topic",
+      "before": "limits",
+      "after": "integration",
+      "reason": "Definite integral — Integration, not limits.",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "cse-2024-2-cs-6",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "definite-integral",
+        "symmetry",
+        "substitution"
+      ],
+      "reason": "Tag \"sql\" is unrelated.",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "cse-2024-2-cs-7",
+      "field": "text",
+      "before": "Let 𝐴 be the adjacency matrix of a simple undirected graph 𝐺.  Suppose 𝐴 is its own\ninverse. Which one of the following statements is always TRUE?",
+      "after": "Let $A$ be the adjacency matrix of a simple undirected graph $G$. Suppose $A$ is its own inverse. Which one of the following statements is always TRUE?",
+      "reason": "Unicode maths italics replaced by LaTeX; line breaks reflowed.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "cse-2024-2-cs-7",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝐺 is a cycle"
+        },
+        {
+          "l": "B",
+          "t": "𝐺 is a perfect matching"
+        },
+        {
+          "l": "C",
+          "t": "𝐺 is a complete graph"
+        },
+        {
+          "l": "D",
+          "t": "There is no such graph 𝐺"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$G$ is a cycle"
+        },
+        {
+          "l": "B",
+          "t": "$G$ is a perfect matching"
+        },
+        {
+          "l": "C",
+          "t": "$G$ is a complete graph"
+        },
+        {
+          "l": "D",
+          "t": "There is no such graph $G$"
+        }
+      ],
+      "reason": "Unicode maths italics replaced by LaTeX.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "cse-2024-2-cs-7",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "adjacency-matrix",
+        "graph-theory",
+        "matrix-inverse"
+      ],
+      "reason": "Tag \"computer-science\" is not informative.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "cse-2024-2-cs-8",
+      "field": "text",
+      "before": "When s ix unbiased dice are rolled simultaneously , the probability of getting all\ndistinct numbers (i.e., 1, 2, 3, 4, 5, and 6) is",
+      "after": "When six unbiased dice are rolled simultaneously, the probability of getting all distinct numbers (i.e., 1, 2, 3, 4, 5, and 6) is",
+      "reason": "Fixed \"s ix\" and \"simultaneously ,\" split-word artefacts; line breaks reflowed.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "cse-2024-2-cs-8",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "1 324"
+        },
+        {
+          "l": "B",
+          "t": "5 324"
+        },
+        {
+          "l": "C",
+          "t": "7 324"
+        },
+        {
+          "l": "D",
+          "t": "11 324 Computer Science and Information Technology Set 2 (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\dfrac{1}{324}$"
+        },
+        {
+          "l": "B",
+          "t": "$\\dfrac{5}{324}$"
+        },
+        {
+          "l": "C",
+          "t": "$\\dfrac{7}{324}$"
+        },
+        {
+          "l": "D",
+          "t": "$\\dfrac{11}{324}$"
+        }
+      ],
+      "reason": "Fractions had been flattened (\"1 324\"); page header removed from option D.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "cse-2024-2-cs-8",
+      "field": "subject",
+      "before": "ga",
+      "after": "prob",
+      "reason": "Probability is an engineering-maths question in the CS section, not General Aptitude.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "cse-2024-2-cs-8",
+      "field": "topic",
+      "before": "quant",
+      "after": "basic",
+      "reason": "Classical probability.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "cse-2024-2-cs-8",
+      "field": "tags",
+      "before": [
+        "quant"
+      ],
+      "after": [
+        "probability",
+        "permutations",
+        "dice"
+      ],
+      "reason": "Tags matched to the content.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "cse-2024-2-cs-9",
+      "field": "text",
+      "before": "Once the DBMS informs the user that a transaction has been successfully\ncompleted, its effect should persist even if the system crashes before all its changes\nare reflected on disk. This property is called",
+      "after": "Once the DBMS informs the user that a transaction has been successfully completed, its effect should persist even if the system crashes before all its changes are reflected on disk. This property is called",
+      "reason": "Line breaks reflowed.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2024-2-cs-9",
+      "field": "subject",
+      "before": "pds",
+      "after": "db",
+      "reason": "ACID properties are Databases, not Programming.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2024-2-cs-9",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "transactions",
+      "reason": "ACID properties of transactions.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2024-2-cs-9",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "acid",
+        "durability",
+        "recovery"
+      ],
+      "reason": "Tags matched to the content.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2024-2-cs-10",
+      "field": "text",
+      "before": "In the context of owner and weak entity sets in the ER (Entity-Relationship) data\nmodel, which one of the following statements is TRUE?",
+      "after": "In the context of owner and weak entity sets in the ER (Entity-Relationship) data model, which one of the following statements is TRUE?",
+      "reason": "Line breaks reflowed.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2024-2-cs-10",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "The weak entity set MUST have total participation in the identifying relationship"
+        },
+        {
+          "l": "B",
+          "t": "The owner entity set MUST have total participation in the identifying relationship"
+        },
+        {
+          "l": "C",
+          "t": "Both weak and owner entity sets MUST have total participation in the identifying relationship"
+        },
+        {
+          "l": "D",
+          "t": "Neither weak entity set nor owner entity set MUST have total participation in the identifying relationship Computer Science and Information Technology Set 2 (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "The weak entity set MUST have total participation in the identifying relationship"
+        },
+        {
+          "l": "B",
+          "t": "The owner entity set MUST have total participation in the identifying relationship"
+        },
+        {
+          "l": "C",
+          "t": "Both weak and owner entity sets MUST have total participation in the identifying relationship"
+        },
+        {
+          "l": "D",
+          "t": "Neither weak entity set nor owner entity set MUST have total participation in the identifying relationship"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology Set 2 (CS2)\" removed from option D.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2024-2-cs-10",
+      "field": "subject",
+      "before": "dm",
+      "after": "db",
+      "reason": "ER model is Databases, not Discrete Mathematics.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2024-2-cs-10",
+      "field": "topic",
+      "before": "sets",
+      "after": "er",
+      "reason": "ER model: weak entity sets.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2024-2-cs-10",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "er-model",
+        "weak-entity",
+        "participation"
+      ],
+      "reason": "Tags matched to the content.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2024-2-cs-11",
+      "field": "text",
+      "before": "Consider the following two sets:\nSet X                                                                Set Y\nP. Lexical Analyzer                                         1. Abstract Syntax Tree\nQ. Syntax Analyzer                                         2. Token\nR. Intermediate Code Generator                     3. Parse Tree\nS. Code Optimizer                                          4. Constant Folding\nWhich one of the following options is the CORRECT match from Set X to Set Y ?",
+      "after": "Consider the following two sets:\n\n| Set X | Set Y |\n|---|---|\n| P. Lexical Analyzer | 1. Abstract Syntax Tree |\n| Q. Syntax Analyzer | 2. Token |\n| R. Intermediate Code Generator | 3. Parse Tree |\n| S. Code Optimizer | 4. Constant Folding |\n\nWhich one of the following options is the CORRECT match from Set X to Set Y ?",
+      "reason": "The two sets had been flattened into space-padded lines; restored as a table.",
+      "source": "pdf p.15"
+    },
+    {
+      "id": "cse-2024-2-cs-11",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "P – 4; Q – 1; R – 3; S – 2"
+        },
+        {
+          "l": "B",
+          "t": "P – 2; Q – 3; R – 1; S – 4"
+        },
+        {
+          "l": "C",
+          "t": "P – 2; Q – 1; R – 3; S – 4"
+        },
+        {
+          "l": "D",
+          "t": "P – 4; Q – 3; R – 2; S – 1 Computer Science and Information Technology Set 2 (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "P – 4; Q – 1; R – 3; S – 2"
+        },
+        {
+          "l": "B",
+          "t": "P – 2; Q – 3; R – 1; S – 4"
+        },
+        {
+          "l": "C",
+          "t": "P – 2; Q – 1; R – 3; S – 4"
+        },
+        {
+          "l": "D",
+          "t": "P – 4; Q – 3; R – 2; S – 1"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology Set 2 (CS2)\" removed from option D.",
+      "source": "pdf p.15"
+    },
+    {
+      "id": "cse-2024-2-cs-11",
+      "field": "subject",
+      "before": "db",
+      "after": "cd",
+      "reason": "Compiler phases are Compiler Design, not Databases.",
+      "source": "pdf p.15"
+    },
+    {
+      "id": "cse-2024-2-cs-11",
+      "field": "topic",
+      "before": "sql",
+      "after": "icg",
+      "reason": "Phases and their outputs (the deciding pair is the intermediate representation).",
+      "source": "pdf p.15"
+    },
+    {
+      "id": "cse-2024-2-cs-11",
+      "field": "tags",
+      "before": [
+        "codegen"
+      ],
+      "after": [
+        "compiler-phases",
+        "tokens",
+        "parse-tree",
+        "constant-folding"
+      ],
+      "reason": "Tag \"codegen\" replaced by tags matching the content.",
+      "source": "pdf p.15"
+    },
+    {
+      "id": "cse-2024-2-cs-12",
+      "field": "text",
+      "before": "Which one of the following regular expressions is equivalent to the language\naccepted by the DFA given below?\n1\n1\n00",
+      "after": "Which one of the following regular expressions is equivalent to the language accepted by the DFA given below?",
+      "reason": "The DFA diagram had been reduced to stray edge labels (\"1 1 00\"); removed them and added the redrawn figure.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "cse-2024-2-cs-12",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "0∗1(0 + 10∗1)∗"
+        },
+        {
+          "l": "B",
+          "t": "0∗(10∗11)∗0∗"
+        },
+        {
+          "l": "C",
+          "t": "0∗1(010∗1)∗0∗"
+        },
+        {
+          "l": "D",
+          "t": "0(1 + 0∗10∗1)∗0∗ Computer Science and Information Technology Set 2 (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$0^*1(0 + 10^*1)^*$"
+        },
+        {
+          "l": "B",
+          "t": "$0^*(10^*11)^*0^*$"
+        },
+        {
+          "l": "C",
+          "t": "$0^*1(010^*1)^*0^*$"
+        },
+        {
+          "l": "D",
+          "t": "$0(1 + 0^*10^*1)^*0^*$"
+        }
+      ],
+      "reason": "Regular expressions rewritten in LaTeX; page header removed from option D.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "cse-2024-2-cs-12",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2024-2/cs-12-1.svg",
+          "svg": "cse-2024-2/cs-12-1.svg",
+          "alt": "A two-state DFA. The left state is the start state (incoming arrow) and is non-accepting; the right state is accepting (double circle). Each state has a self-loop on 0. An edge labelled 1 goes from the left state to the right state, and an edge labelled 1 goes from the right state back to the left state."
+        }
+      ],
+      "reason": "The question depends on the DFA diagram, which was missing; redrawn from the paper.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "cse-2024-2-cs-12",
+      "field": "tags",
+      "before": [
+        "regular"
+      ],
+      "after": [
+        "dfa",
+        "regular-expression",
+        "state-elimination"
+      ],
+      "reason": "Tags matched to the content.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "cse-2024-2-cs-13",
+      "field": "text",
+      "before": "Node X has a TCP connection open to node Y. The packets from X to Y go through\nan intermediate IP router R. Ethernet switch S is the first switch on the network path\nbetween X and R. Consider a packet sent from X to Y over this connection.\nWhich of the following statements is/are TRUE about the destination IP and MAC\naddresses on this packet at the time it leaves X?",
+      "after": "Node X has a TCP connection open to node Y. The packets from X to Y go through an intermediate IP router R. Ethernet switch S is the first switch on the network path between X and R. Consider a packet sent from X to Y over this connection.\n\nWhich of the following statements is/are TRUE about the destination IP and MAC addresses on this packet at the time it leaves X?",
+      "reason": "Line breaks reflowed.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2024-2-cs-13",
+      "field": "subject",
+      "before": "db",
+      "after": "cn",
+      "reason": "IP vs MAC addressing is Computer Networks, not Databases.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2024-2-cs-13",
+      "field": "topic",
+      "before": "sql",
+      "after": "ip",
+      "reason": "End-to-end IP addressing vs hop-by-hop MAC addressing.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2024-2-cs-13",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "ip-address",
+        "mac-address",
+        "switch",
+        "router"
+      ],
+      "reason": "Tag \"sql\" is unrelated.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2024-2-cs-14",
+      "field": "text",
+      "before": "Which of the following tasks is/are the responsibility/responsibilities of the memory\nmanagement unit (MMU) in a system with paging-based memory management?",
+      "after": "Which of the following tasks is/are the responsibility/responsibilities of the memory management unit (MMU) in a system with paging-based memory management?",
+      "reason": "Line breaks reflowed.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2024-2-cs-14",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Allocate a new page table for a newly created process"
+        },
+        {
+          "l": "B",
+          "t": "Translate a virtual address to a physical address using the page table"
+        },
+        {
+          "l": "C",
+          "t": "Raise a trap when a virtual address is not found in the page table"
+        },
+        {
+          "l": "D",
+          "t": "Raise a trap when a process tries to write to a page marked with read-only permission in the page table Computer Science and Information Technology Set 2 (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Allocate a new page table for a newly created process"
+        },
+        {
+          "l": "B",
+          "t": "Translate a virtual address to a physical address using the page table"
+        },
+        {
+          "l": "C",
+          "t": "Raise a trap when a virtual address is not found in the page table"
+        },
+        {
+          "l": "D",
+          "t": "Raise a trap when a process tries to write to a page marked with read-only permission in the page table"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology Set 2 (CS2)\" removed from option D.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2024-2-cs-14",
+      "field": "topic",
+      "before": "memory",
+      "after": "virtual-memory",
+      "reason": "Topic id \"memory\" does not exist for os; MMU and paging are Virtual memory.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2024-2-cs-14",
+      "field": "tags",
+      "before": [
+        "memory"
+      ],
+      "after": [
+        "mmu",
+        "paging",
+        "page-fault",
+        "protection"
+      ],
+      "reason": "Tags matched to the content.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2024-2-cs-15",
+      "field": "text",
+      "before": "Consider a process P running on a CPU. Which one or more of the following events\nwill always trigger a context switch by the OS that results in process P moving to a\nnon-running state (e.g., ready, blocked)?",
+      "after": "Consider a process P running on a CPU. Which one or more of the following events will always trigger a context switch by the OS that results in process P moving to a non-running state (e.g., ready, blocked)?",
+      "reason": "Line breaks reflowed.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2024-2-cs-15",
+      "field": "type",
+      "before": "MCQ",
+      "after": "MSQ",
+      "reason": "The question asks \"which one or more\" and the official key has two answers (A;B); it is an MSQ, not an MCQ.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2024-2-cs-15",
+      "field": "subject",
+      "before": "pds",
+      "after": "os",
+      "reason": "Process states and context switches are Operating Systems, not Programming.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2024-2-cs-15",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "processes",
+      "reason": "Process state transitions.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2024-2-cs-15",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "context-switch",
+        "process-states",
+        "interrupts",
+        "page-fault"
+      ],
+      "reason": "Tags matched to the content.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2024-2-cs-16",
+      "field": "text",
+      "before": "Which of the following file organizations is/are I/O efficient for the scan operation\nin DBMS?",
+      "after": "Which of the following file organizations is/are I/O efficient for the scan operation in DBMS?",
+      "reason": "Line break removed.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2024-2-cs-16",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Sorted"
+        },
+        {
+          "l": "B",
+          "t": "Heap"
+        },
+        {
+          "l": "C",
+          "t": "Unclustered tree index"
+        },
+        {
+          "l": "D",
+          "t": "Unclustered hash index Computer Science and Information Technology Set 2 (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Sorted"
+        },
+        {
+          "l": "B",
+          "t": "Heap"
+        },
+        {
+          "l": "C",
+          "t": "Unclustered tree index"
+        },
+        {
+          "l": "D",
+          "t": "Unclustered hash index"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology Set 2 (CS2)\" removed from option D.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2024-2-cs-16",
+      "field": "subject",
+      "before": "ga",
+      "after": "db",
+      "reason": "File organizations are Databases, not General Aptitude.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2024-2-cs-16",
+      "field": "topic",
+      "before": "quant",
+      "after": "indexing",
+      "reason": "File organizations and indexing.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2024-2-cs-16",
+      "field": "tags",
+      "before": [
+        "quant"
+      ],
+      "after": [
+        "file-organization",
+        "scan",
+        "unclustered-index"
+      ],
+      "reason": "Tags matched to the content.",
+      "source": "pdf p.18"
+    }
+  ]
+}
