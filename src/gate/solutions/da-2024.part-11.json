@@ -1,0 +1,1207 @@
+{
+  "paper": "da-2024",
+  "version": 2,
+  "solutions": {
+    "da-2024-da-30": {
+      "approach": "One comparison with the middle element either finds the key or discards the middle and one half; in the worst case we recurse on the larger remaining half, of size at most $\\lfloor n/2 \\rfloor$.",
+      "concepts": [
+        "Binary search",
+        "Worst-case recurrence"
+      ],
+      "steps": [
+        {
+          "title": "One probe, then one half",
+          "body": "Compare the key with $A[m]$, $m = \\lfloor (n-1)/2 \\rfloor$ (0-based). If it is not equal, the search continues **only** in the left part ($\\lfloor (n-1)/2 \\rfloor$ elements) or the right part ($\\lceil (n-1)/2 \\rceil = \\lfloor n/2 \\rfloor$ elements)."
+        },
+        {
+          "title": "Worst case",
+          "body": "The worst case takes the larger part, which has $\\lfloor n/2 \\rfloor$ elements, so\n$$F(n) = 1 + F(\\lfloor n/2 \\rfloor), \\qquad F(1) = 1.$$\nUnrolling: $F(n) = \\lfloor \\log_2 n \\rfloor + 1$."
+        },
+        {
+          "title": "Check with $n = 7$",
+          "body": "$F(7) = 1 + F(3) = 1 + 1 + F(1) = 3 = \\lfloor \\log_2 7 \\rfloor + 1$. Searching $[1..7]$ for $7$: probes $4, 6, 7$ — exactly 3 comparisons. ✔"
+        }
+      ],
+      "answer": {
+        "value": "$F(n) = F(\\lfloor n/2 \\rfloor) + 1$ — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "One comparison plus a recursive search in at most half of the array."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "That would search **both** halves (merge-sort–like recurrence, giving $\\Theta(n)$); binary search discards one half."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Drops the comparison made at the current level, so it would give $F(n) = F(1)$ for all $n$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "That is linear search: each comparison removes only one element, giving $F(n) = n$."
+        }
+      ],
+      "pitfalls": [
+        "Confusing the binary-search recurrence with the divide-and-conquer recurrence of merge sort (option B)."
+      ],
+      "verification": "Unrolled the recurrence to $\\lfloor\\log_2 n\\rfloor + 1$, the known worst case, and checked $n = 7$ by hand."
+    },
+    "da-2024-da-31": {
+      "approach": "Read the recursion as a two-pointer loop: swap the ends, move both pointers inward, stop when they meet or cross. That is the classic in-place reversal.",
+      "concepts": [
+        "Recursion",
+        "Two-pointer swap",
+        "In-place reversal"
+      ],
+      "steps": [
+        {
+          "title": "What one call does",
+          "body": "If $s_1 < s_2$: swap $D[s_1]$ and $D[s_2]$, then recurse on $(s_1+1,\\ s_2-1)$. Otherwise do nothing."
+        },
+        {
+          "title": "Unroll the calls",
+          "body": "The swapped pairs are $(s_1, s_2), (s_1+1, s_2-1), (s_1+2, s_2-2), \\dots$ until the indices meet (odd length: middle element untouched) or cross (even length). Every element at offset $k$ from $s_1$ is exchanged with the element at offset $k$ from $s_2$."
+        },
+        {
+          "title": "Example",
+          "body": "$D = [10, 20, 30, 40, 50]$, `fun(D, 0, 4)`:\n- swap 0,4 → $[50, 20, 30, 40, 10]$\n- swap 1,3 → $[50, 40, 30, 20, 10]$\n- $s_1 = s_2 = 2$ → stop.\n\nThe segment is reversed."
+        }
+      ],
+      "answer": {
+        "value": "It **reverses** $D[s_1..s_2]$ in place — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "No comparisons are made and nothing is returned; it only swaps."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "No comparisons, so it cannot sort; e.g. a sorted segment becomes descending."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Swapping symmetric pairs from the outside in reverses the segment."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The recursive call keeps swapping the inner pairs too, so the other elements do change (unless the segment has length ≤ 3)."
+        }
+      ],
+      "pitfalls": [
+        "Reading only the first swap and missing the recursive call (option D)."
+      ],
+      "verification": "Traced a 5-element example and checked that the result equals the reversed list."
+    },
+    "da-2024-da-32": {
+      "approach": "Run agglomerative clustering with the single-linkage rule $d(A,B) = \\min_{a\\in A, b\\in B} d(a,b)$: repeatedly merge the closest pair of clusters and update the distance table, then match the merge order to a dendrogram.",
+      "concepts": [
+        "Agglomerative hierarchical clustering",
+        "Single linkage",
+        "Dendrogram"
+      ],
+      "given": "Distances: $d_{12}=1,\\ d_{45}=1,\\ d_{34}=2,\\ d_{14}=d_{23}=d_{25}=3,\\ d_{13}=4,\\ d_{24}=d_{35}=5,\\ d_{15}=6$.",
+      "steps": [
+        {
+          "title": "Smallest distance: 1 (two ties)",
+          "body": "$d(x_1,x_2) = 1$ and $d(x_4,x_5) = 1$ are the minimum. Both merges happen at height 1 (in either order the result is the same): clusters $\\{x_1,x_2\\},\\ \\{x_3\\},\\ \\{x_4,x_5\\}$.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "c": 1,
+                "tone": "accent"
+              },
+              {
+                "r": 1,
+                "c": 0,
+                "tone": "accent"
+              },
+              {
+                "r": 3,
+                "c": 4,
+                "tone": "accent"
+              },
+              {
+                "r": 4,
+                "c": 3,
+                "tone": "accent"
+              }
+            ],
+            "caption": "Minimum entries: $d_{12} = d_{45} = 1$"
+          }
+        },
+        {
+          "title": "Update with single linkage",
+          "body": "- $d(\\{x_1,x_2\\}, x_3) = \\min(4, 3) = 3$\n- $d(x_3, \\{x_4,x_5\\}) = \\min(2, 5) = 2$\n- $d(\\{x_1,x_2\\}, \\{x_4,x_5\\}) = \\min(3, 6, 5, 3) = 3$\n\nMinimum is $2$: $x_3$ joins $\\{x_4, x_5\\}$ at height 2.",
+          "scene": {
+            "kind": "table",
+            "title": "After merging at height 1",
+            "cols": [
+              "{x₁,x₂}",
+              "x₃",
+              "{x₄,x₅}"
+            ],
+            "rowLabels": [
+              "{x₁,x₂}",
+              "x₃",
+              "{x₄,x₅}"
+            ],
+            "rows": [
+              [
+                0,
+                3,
+                3
+              ],
+              [
+                3,
+                0,
+                2
+              ],
+              [
+                3,
+                2,
+                0
+              ]
+            ],
+            "hl": [
+              {
+                "r": 1,
+                "c": 2,
+                "tone": "accent"
+              },
+              {
+                "r": 2,
+                "c": 1,
+                "tone": "accent"
+              }
+            ],
+            "caption": "Smallest entry is 2: merge $x_3$ with $\\{x_4,x_5\\}$"
+          }
+        },
+        {
+          "title": "Final merge",
+          "body": "$d(\\{x_1,x_2\\}, \\{x_3,x_4,x_5\\}) = \\min(3, 3) = 3$, so the last merge is at height 3.\n\nMerge order: $\\{x_1,x_2\\}$ & $\\{x_4,x_5\\}$ (1) → $x_3 + \\{x_4,x_5\\}$ (2) → all (3). This is dendrogram **(A)**.",
+          "scene": {
+            "kind": "table",
+            "title": "After merging at height 2",
+            "cols": [
+              "{x₁,x₂}",
+              "{x₃,x₄,x₅}"
+            ],
+            "rowLabels": [
+              "{x₁,x₂}",
+              "{x₃,x₄,x₅}"
+            ],
+            "rows": [
+              [
+                0,
+                3
+              ],
+              [
+                3,
+                0
+              ]
+            ],
+            "hl": [
+              {
+                "r": 0,
+                "c": 1,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "c": 0,
+                "tone": "success"
+              }
+            ],
+            "caption": "Last merge at height 3"
+          }
+        }
+      ],
+      "answer": {
+        "value": "Dendrogram **(A)**",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$\\{x_1,x_2\\}$ and $\\{x_4,x_5\\}$ at 1, $x_3$ joins $\\{x_4,x_5\\}$ at 2, everything at 3 — exactly the single-linkage merge order."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$x_3$ is at distance 3 from $\\{x_1,x_2\\}$ but only 2 from $\\{x_4,x_5\\}$, so it cannot join $\\{x_1,x_2\\}$ first."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Pairs $x_3$ with $x_4$ first ($d=2$) although $d(x_4,x_5) = 1$ is smaller."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Pairs $x_3$ with $x_4$ before $x_4$ with $x_5$ and leaves $x_5$ to the end, although $x_5$ is at distance 1 from $x_4$."
+        }
+      ],
+      "pitfalls": [
+        "Using the maximum (complete linkage) or average when updating cluster distances.",
+        "Taking a pair with the smallest raw distance to a point already absorbed in another cluster."
+      ],
+      "verification": "Kruskal check: single linkage = minimum spanning tree. MST edges in increasing order: $x_1x_2$ (1), $x_4x_5$ (1), $x_3x_4$ (2), then $x_1x_4$ or $x_2x_3$ or $x_2x_5$ (3) — same merge heights 1, 1, 2, 3.",
+      "animation": {
+        "kind": "table",
+        "title": "Pairwise distances",
+        "cols": [
+          "x₁",
+          "x₂",
+          "x₃",
+          "x₄",
+          "x₅"
+        ],
+        "rowLabels": [
+          "x₁",
+          "x₂",
+          "x₃",
+          "x₄",
+          "x₅"
+        ],
+        "rows": [
+          [
+            0,
+            1,
+            4,
+            3,
+            6
+          ],
+          [
+            1,
+            0,
+            3,
+            5,
+            3
+          ],
+          [
+            4,
+            3,
+            0,
+            2,
+            5
+          ],
+          [
+            3,
+            5,
+            2,
+            0,
+            1
+          ],
+          [
+            6,
+            3,
+            5,
+            1,
+            0
+          ]
+        ],
+        "caption": "Single linkage: merge the closest clusters"
+      }
+    },
+    "da-2024-da-33": {
+      "approach": "With positive inputs and positive weights every pre-activation is positive, so each ReLU is the identity and Figure 1 collapses to a single linear map; read off its coefficients.",
+      "concepts": [
+        "ReLU activation",
+        "Forward pass",
+        "Composition of linear layers"
+      ],
+      "given": "Layer 1 (weight 1): $h_1 \\leftarrow x_1, x_2$; $h_2 \\leftarrow x_1, x_3$; $h_3 \\leftarrow x_1, x_2, x_3$. Layer 2: every $h_i \\to g_1, g_2$ with weight 2. Output: $g_1, g_2 \\to y$ with weight 3.",
+      "steps": [
+        {
+          "title": "ReLU is the identity here",
+          "body": "All $x_i > 0$ and all weights are positive, so every weighted sum is positive and $ReLU(z) = z$ at every neuron."
+        },
+        {
+          "title": "First hidden layer",
+          "body": "$h_1 = x_1 + x_2,\\quad h_2 = x_1 + x_3,\\quad h_3 = x_1 + x_2 + x_3$\n$$h_1 + h_2 + h_3 = 3x_1 + 2x_2 + 2x_3.$$"
+        },
+        {
+          "title": "Second layer and output",
+          "body": "$g_1 = g_2 = 2(h_1 + h_2 + h_3) = 2(3x_1 + 2x_2 + 2x_3)$\n$$y = 3(g_1 + g_2) = 3 \\cdot 2 \\cdot 2\\,(3x_1 + 2x_2 + 2x_3) = 12(3x_1 + 2x_2 + 2x_3) = 36x_1 + 24x_2 + 24x_3.$$"
+        },
+        {
+          "title": "Match Figure 2",
+          "body": "Figure 2 gives $y = ReLU(p x_1 + q x_2 + r x_3)$, so $p = 36,\\ q = 24,\\ r = 24$."
+        }
+      ],
+      "answer": {
+        "value": "$p = 36,\\ q = 24,\\ r = 24$ — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$y = 36x_1 + 24x_2 + 24x_3$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Gives $x_3$ the largest weight, but $x_1$ is the input with three outgoing edges."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Halves the weight of $x_1$ and swaps in 36 for $x_2$; $x_2$ feeds only two first-layer neurons, so its weight is $2 \\times 12 = 24$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Assumes every input feeds all three first-layer neurons; $x_2$ and $x_3$ feed only two each."
+        }
+      ],
+      "shortcut": "Each path from $x_i$ to the output has weight $1 \\cdot 2 \\cdot 3 = 6$; count paths: $x_1$ has $3 \\times 2 = 6$ paths → $36$; $x_2$ and $x_3$ have $2 \\times 2 = 4$ paths → $24$.",
+      "pitfalls": [
+        "Assuming the first layer is fully connected (it is not: $x_2 \\not\\to h_2$, $x_3 \\not\\to h_1$)."
+      ],
+      "verification": "Path counting (shortcut) gives the same coefficients $36, 24, 24$."
+    },
+    "da-2024-da-34": {
+      "approach": "Simulate both searches on the actual state numbers. Because ties are broken by the smallest number and every child is larger than its parent, both strategies pick the same state each time.",
+      "concepts": [
+        "Breadth-first search",
+        "Depth-first search",
+        "State expansion"
+      ],
+      "steps": [
+        {
+          "title": "BFS",
+          "body": "Queue (FIFO), smallest number first:\n- expand 1 → add 2, 3\n- expand 2 → add 4 (3 already queued)\n- expand 3 → add 5\n- expand 4 → add 6\n- expand 5 → add 7\n- next is 6 = goal.\n\nExpanded: $1, 2, 3, 4, 5$ → **5 states**.",
+          "scene": {
+            "reveal": 12
+          }
+        },
+        {
+          "title": "DFS",
+          "body": "Stack (LIFO), children of the newest state taken smallest first:\n- expand 1 → 2, 3; take 2\n- expand 2 → 3, 4; take 3\n- expand 3 → 4, 5; take 4\n- expand 4 → 5, 6; take 5\n- expand 5 → 6, 7; take 6 = goal.\n\nExpanded: $1, 2, 3, 4, 5$ → **5 states**.",
+          "scene": {
+            "kind": "table",
+            "title": "DFS (smallest child first)",
+            "cols": [
+              "Expand",
+              "New children",
+              "Next chosen"
+            ],
+            "rows": [
+              [
+                1,
+                "2, 3",
+                2
+              ],
+              [
+                2,
+                "3, 4",
+                3
+              ],
+              [
+                3,
+                "4, 5",
+                4
+              ],
+              [
+                4,
+                "5, 6",
+                5
+              ],
+              [
+                5,
+                "6, 7",
+                "6 (goal)"
+              ]
+            ],
+            "mono": true,
+            "caption": "DFS expands 1, 2, 3, 4, 5"
+          }
+        },
+        {
+          "title": "Compare",
+          "body": "Both expand the same sequence $1, 2, 3, 4, 5$ before reaching 6. (If the goal test is done at generation instead, both stop after expanding $1,2,3,4$ — still equal.)"
+        }
+      ],
+      "answer": {
+        "value": "Both expand the **same** number of states (5) — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "BFS expands 5 states, not more than DFS."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "DFS also expands exactly 5 states."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Both expand states 1–5 in the same order."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "State 6 is reachable ($1\\to2\\to4\\to6$, etc.) and both searches reach it."
+        }
+      ],
+      "pitfalls": [
+        "Assuming DFS dives along $n+2$ (1, 3, 5, …) — the ascending-order rule makes it take $n+1$ first."
+      ],
+      "verification": "Both frontiers always have the smallest unexpanded number on top, so the two expansion orders coincide by construction.",
+      "animation": {
+        "kind": "table",
+        "title": "BFS (FIFO, ascending)",
+        "cols": [
+          "Expand",
+          "Queue after"
+        ],
+        "rows": [
+          [
+            1,
+            "2, 3"
+          ],
+          [
+            2,
+            "3, 4"
+          ],
+          [
+            3,
+            "4, 5"
+          ],
+          [
+            4,
+            "5, 6"
+          ],
+          [
+            5,
+            "6, 7"
+          ],
+          [
+            6,
+            "goal"
+          ]
+        ],
+        "reveal": 0,
+        "mono": true,
+        "caption": "BFS expands 1, 2, 3, 4, 5"
+      }
+    },
+    "da-2024-da-35": {
+      "approach": "Trace two passes of each algorithm on [4, 3, 2, 1, 5]. Selection sort fixes the two smallest elements, which is enough here because 3, 4, 5 are already in place once 1 and 2 are.",
+      "concepts": [
+        "Bubble sort",
+        "Insertion sort",
+        "Selection sort"
+      ],
+      "steps": [
+        {
+          "title": "Bubble sort",
+          "body": "Pass 1: $[4,3,2,1,5] \\to [3,4,2,1,5] \\to [3,2,4,1,5] \\to [3,2,1,4,5]$ (no swap $4,5$).\nPass 2: $[3,2,1,4,5] \\to [2,3,1,4,5] \\to [2,1,3,4,5]$.\nAfter 2 passes: $[2,1,3,4,5]$ — **not sorted**.",
+          "scene": {
+            "reveal": 15,
+            "hl": [
+              {
+                "r": 2,
+                "tone": "error"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Insertion sort",
+          "body": "Pass 1 inserts 3: $[3,4,2,1,5]$.\nPass 2 inserts 2: $[2,3,4,1,5]$ — **not sorted** (1 is still out of place).",
+          "scene": {
+            "reveal": 25,
+            "hl": [
+              {
+                "r": 2,
+                "tone": "error"
+              },
+              {
+                "r": 4,
+                "tone": "error"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Selection sort",
+          "body": "Pass 1: minimum of all is 1 → swap with index 0: $[1,3,2,4,5]$.\nPass 2: minimum of $[3,2,4,5]$ is 2 → swap with index 1: $[1,2,3,4,5]$ — **sorted**.",
+          "scene": {
+            "reveal": 35,
+            "hl": [
+              {
+                "r": 2,
+                "tone": "error"
+              },
+              {
+                "r": 4,
+                "tone": "error"
+              },
+              {
+                "r": 6,
+                "tone": "success"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "Only selection sort, **(iii)** — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Bubble sort leaves $[2,1,3,4,5]$ after two passes; it only fixes the two largest values per two passes."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Selection sort places 1 and 2 in two passes and the rest is already ordered."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Includes bubble sort, which is not sorted after two passes."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Includes insertion sort, which gives $[2,3,4,1,5]$ after two passes."
+        }
+      ],
+      "pitfalls": [
+        "Counting the first insertion-sort pass as inserting element 0 (nothing happens there)."
+      ],
+      "verification": "Bubble sort needs 3 passes here (1 travels left one position per pass from index 3) and insertion sort needs 3 passes (1 is reached only in pass 3); selection sort needs only the minima 1 and 2 placed.",
+      "animation": {
+        "kind": "table",
+        "title": "Array after each pass",
+        "cols": [
+          "0",
+          "1",
+          "2",
+          "3",
+          "4"
+        ],
+        "rowLabels": [
+          "start",
+          "Bubble p1",
+          "Bubble p2",
+          "Insertion p1",
+          "Insertion p2",
+          "Selection p1",
+          "Selection p2"
+        ],
+        "rows": [
+          [
+            4,
+            3,
+            2,
+            1,
+            5
+          ],
+          [
+            3,
+            2,
+            1,
+            4,
+            5
+          ],
+          [
+            2,
+            1,
+            3,
+            4,
+            5
+          ],
+          [
+            3,
+            4,
+            2,
+            1,
+            5
+          ],
+          [
+            2,
+            3,
+            4,
+            1,
+            5
+          ],
+          [
+            1,
+            3,
+            2,
+            4,
+            5
+          ],
+          [
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        ],
+        "reveal": 5,
+        "mono": true,
+        "caption": "Input [4, 3, 2, 1, 5]"
+      }
+    },
+    "da-2024-da-36": {
+      "approach": "An FD $\\alpha \\to \\beta$ is derivable iff $\\beta \\subseteq \\alpha^+$. Only two left-hand sides occur in the options, $VW$ and $WX$, so compute those two closures.",
+      "concepts": [
+        "Functional dependencies",
+        "Attribute closure",
+        "Armstrong's axioms"
+      ],
+      "steps": [
+        {
+          "title": "Closure of $VW$",
+          "body": "Start $\\{V, W\\}$.\n- $V \\to X$ adds $X$: $\\{V, W, X\\}$\n- $WX \\to Y$, $WX \\to Z$ add $Y, Z$: $\\{V, W, X, Y, Z\\}$\n- $U$ is on the right of no FD, so it never enters.\n\n$(VW)^+ = \\{V, W, X, Y, Z\\}$."
+        },
+        {
+          "title": "Closure of $WX$",
+          "body": "Start $\\{W, X\\}$; $WX \\to Y, Z$ gives $(WX)^+ = \\{W, X, Y, Z\\}$."
+        },
+        {
+          "title": "Check the options",
+          "body": "| FD | Test | Derivable? |\n|---|---|---|\n| $VW \\to YZ$ | $YZ \\subseteq (VW)^+$ | yes |\n| $WX \\to YZ$ | $YZ \\subseteq (WX)^+$ | yes (union rule) |\n| $VW \\to U$ | $U \\notin (VW)^+$ | no |\n| $VW \\to Y$ | $Y \\in (VW)^+$ | yes |"
+        }
+      ],
+      "answer": {
+        "value": "(A), (B) and (D)",
+        "choice": [
+          "A",
+          "B",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$(VW)^+ = \\{V,W,X,Y,Z\\} \\supseteq \\{Y,Z\\}$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Union of the given $WX \\to Y$ and $WX \\to Z$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "No FD has $U$ on its right side, so only $U$ itself can determine $U$."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "$Y \\in (VW)^+$ (via $V \\to X$, then $WX \\to Y$)."
+        }
+      ],
+      "pitfalls": [
+        "Reversing $U \\to V, U \\to W$ to conclude $VW \\to U$ — FDs are not symmetric."
+      ],
+      "verification": "$U$ never appears on a right-hand side, so $U$ is in every key and no FD without $U$ on the left can derive it; the others follow by pseudo-transitivity ($V \\to X$ with $WX \\to YZ$ gives $VW \\to YZ$)."
+    },
+    "da-2024-da-37": {
+      "approach": "A subset is a subspace iff it contains $\\mathbf{0}$ and is closed under addition and scalar multiplication. Spans and solution sets of homogeneous systems always are; sets with squared coefficients or a nonzero constant term fail.",
+      "concepts": [
+        "Vector subspace",
+        "Span",
+        "Null space"
+      ],
+      "steps": [
+        {
+          "title": "(A) a span",
+          "body": "It is $\\operatorname{span}\\{(1,1,0)^T, (1,0,0)^T\\}$ with arbitrary real $\\alpha, \\beta$ — every span is a subspace (here the plane $x_3 = 0$). ✔"
+        },
+        {
+          "title": "(B) squared coefficients",
+          "body": "$\\alpha^2, \\beta^2 \\ge 0$, so the set is the cone $\\{a(1,2,0)^T + b(1,0,1)^T : a, b \\ge 0\\}$. It contains $(1,2,0)^T$ but not $-(1,2,0)^T$ (that would need $a = -1 < 0$, since the two vectors are independent). Not closed under scalar multiplication. ✘"
+        },
+        {
+          "title": "(C) homogeneous system",
+          "body": "It is the null space of $\\begin{bmatrix} 5 & 0 & 2 \\\\ 4 & -2 & 3 \\end{bmatrix}$; null spaces are subspaces (a line through the origin here). ✔"
+        },
+        {
+          "title": "(D) non-homogeneous",
+          "body": "$\\mathbf{0}$ gives $5\\cdot0 + 2\\cdot0 + 4 = 4 \\ne 0$, so $\\mathbf{0}$ is not in the set. ✘"
+        }
+      ],
+      "answer": {
+        "value": "(A) and (C)",
+        "choice": [
+          "A",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Span of two vectors with unrestricted coefficients."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Coefficients $\\alpha^2, \\beta^2$ are non-negative, so negatives of members are missing."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Solution set of a homogeneous linear system (null space)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Affine plane not through the origin ($+4$ constant)."
+        }
+      ],
+      "pitfalls": [
+        "Treating (B) as a span because $\\alpha, \\beta$ range over $\\mathbb{R}$ — the squares do not."
+      ],
+      "verification": "Zero-vector test: A ($\\alpha=\\beta=0$), B ($\\alpha=\\beta=0$), C pass, D fails; B then fails closure under multiplication by $-1$."
+    },
+    "da-2024-da-38": {
+      "approach": "For a fixed $M$, every consistent system $M\\mathbf{x} = \\mathbf{b}$ has the same number of solutions: unique iff $\\operatorname{null}(M) = \\{\\mathbf 0\\}$ (rank = number of columns), infinite otherwise. Whether it is consistent depends on $\\mathbf b$ lying in the column space.",
+      "concepts": [
+        "Rank–nullity",
+        "Column space",
+        "Consistency of linear systems"
+      ],
+      "steps": [
+        {
+          "title": "Key fact",
+          "body": "If $M\\mathbf{x}_0 = \\mathbf{b}$, all solutions are $\\mathbf{x}_0 + \\operatorname{null}(M)$. So \"unique\" and \"infinite\" can never occur together for the same $M$; \"no solution\" vs \"some solution\" depends only on whether $\\mathbf{b} \\in \\operatorname{col}(M)$."
+        },
+        {
+          "title": "(A) and (C) are impossible",
+          "body": "(A) needs $\\operatorname{null}(M) = \\{\\mathbf 0\\}$ for $\\mathbf p$ and $\\ne \\{\\mathbf 0\\}$ for $\\mathbf q$ — contradiction.\n(C) $M$ is $2\\times3$: $\\operatorname{rank} \\le 2 < 3$, so $\\dim \\operatorname{null}(M) \\ge 1$ and a unique solution is impossible."
+        },
+        {
+          "title": "(B) example",
+          "body": "$M = \\begin{bmatrix} 1&0&0\\\\0&1&0\\\\0&0&0 \\end{bmatrix}$, $\\mathbf p = (0,0,1)^T$ (third equation $0 = 1$: no solution), $\\mathbf q = (0,0,0)^T$ (solutions $(0,0,t)^T$: infinitely many). ✔"
+        },
+        {
+          "title": "(D) example",
+          "body": "$M = \\begin{bmatrix} 1&0\\\\0&1\\\\0&0 \\end{bmatrix}$ (rank 2 = columns, null space $\\{\\mathbf 0\\}$), $\\mathbf p = (1,2,0)^T$ gives the unique $\\mathbf x = (1,2)^T$; $\\mathbf q = (0,0,1)^T \\notin \\operatorname{col}(M)$ gives no solution. ✔"
+        }
+      ],
+      "answer": {
+        "value": "(B) and (D)",
+        "choice": [
+          "B",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "A unique solution forces $\\operatorname{null}(M) = \\{\\mathbf 0\\}$, so no right-hand side can give infinitely many."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Singular $M$: $\\mathbf p$ outside the column space, $\\mathbf q$ inside."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "A wide $2 \\times 3$ matrix always has a non-trivial null space."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Tall full-column-rank $M$: unique for $\\mathbf p \\in \\operatorname{col}(M)$, none for $\\mathbf q \\notin \\operatorname{col}(M)$."
+        }
+      ],
+      "pitfalls": [
+        "Thinking a $3\\times2$ system \"has more equations than unknowns\" and so can never have a solution."
+      ],
+      "verification": "Explicit matrices for (B) and (D) check directly; (A) and (C) fail by the solution-set structure $\\mathbf x_0 + \\operatorname{null}(M)$."
+    },
+    "da-2024-da-39": {
+      "approach": "A projection onto $U$ fixes every vector of $U$ and is idempotent; its range is $U$, so rank–nullity gives the null-space dimension $3 - \\dim U$.",
+      "concepts": [
+        "Projection matrix",
+        "Idempotent matrix",
+        "Rank–nullity theorem"
+      ],
+      "steps": [
+        {
+          "title": "Idempotence",
+          "body": "$M\\mathbf v \\in U$ and $M$ fixes vectors of $U$, so $M(M\\mathbf v) = M\\mathbf v$ for all $\\mathbf v$: $M^2 = M$. Then $M^3 = M^2 \\cdot M = M \\cdot M = M^2 = M$. So (C) and (D) hold."
+        },
+        {
+          "title": "Null space dimension",
+          "body": "$\\operatorname{range}(M) = U$, so $\\operatorname{rank}(M) = \\dim U$ and\n$$\\dim \\operatorname{null}(M) = 3 - \\dim U.$$\n- $\\dim U = 1$: nullity $= 3 - 1 = 2$ → (A) false.\n- $\\dim U = 2$: nullity $= 3 - 2 = 1$ → (B) true."
+        },
+        {
+          "title": "Example",
+          "body": "Projection onto the $x_1x_2$-plane: $M = \\operatorname{diag}(1,1,0)$; null space is the $x_3$-axis (1-D), $M^2 = M^3 = M$. Onto the $x_1$-axis: $M = \\operatorname{diag}(1,0,0)$, null space is the $x_2x_3$-plane (2-D)."
+        }
+      ],
+      "answer": {
+        "value": "(B), (C) and (D)",
+        "choice": [
+          "B",
+          "C",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Nullity $= 3 - 1 = 2$, not 1."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Nullity $= 3 - 2 = 1$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Projecting twice is the same as projecting once."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "$M^3 = M \\cdot M^2 = M \\cdot M = M$."
+        }
+      ],
+      "pitfalls": [
+        "Equating the null-space dimension with $\\dim U$ instead of $3 - \\dim U$."
+      ],
+      "verification": "Checked with the diagonal projections $\\operatorname{diag}(1,0,0)$ and $\\operatorname{diag}(1,1,0)$."
+    },
+    "da-2024-da-40": {
+      "approach": "Find the critical points from $f'(x) = 0$ and classify each with the second-derivative test.",
+      "concepts": [
+        "Critical points",
+        "Second-derivative test"
+      ],
+      "steps": [
+        {
+          "title": "Critical points",
+          "body": "$f'(x) = x^3 - 2x^2 - 3x = x(x^2 - 2x - 3) = x(x - 3)(x + 1)$, so $x \\in \\{-1, 0, 3\\}$."
+        },
+        {
+          "title": "Second derivative",
+          "body": "$f''(x) = 3x^2 - 4x - 3$.\n- $f''(0) = -3 < 0$ → local **max** at $0$.\n- $f''(3) = 27 - 12 - 3 = 12 > 0$ → local **min** at $3$.\n- $f''(-1) = 3 + 4 - 3 = 4 > 0$ → local **min** at $-1$."
+        },
+        {
+          "title": "Read off the options",
+          "body": "Local minima at $x = -1$ and $x = 3$, local maximum at $x = 0$. So (A) and (B) are true; (C) calls a minimum a maximum and (D) calls the maximum a minimum."
+        }
+      ],
+      "answer": {
+        "value": "(A) and (B)",
+        "choice": [
+          "A",
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$f'(0) = 0$, $f''(0) = -3 < 0$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$f'(3) = 0$, $f''(3) = 12 > 0$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$f''(-1) = 4 > 0$: it is a local minimum."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$x = 0$ is a local maximum, not a minimum."
+        }
+      ],
+      "pitfalls": [
+        "Sign slip in $f''(-1) = 3(1) - 4(-1) - 3$."
+      ],
+      "verification": "Sign of $f' = x(x-3)(x+1)$: $-$ on $(-\\infty,-1)$, $+$ on $(-1,0)$, $-$ on $(0,3)$, $+$ on $(3,\\infty)$ — min at $-1$, max at $0$, min at $3$."
+    },
+    "da-2024-da-41": {
+      "approach": "An ordering is topological iff every edge goes from an earlier vertex to a later one. Check the six edges against each option; the only constraint the wrong options can break is that Q must come after both P and R.",
+      "concepts": [
+        "Topological sort",
+        "DAG"
+      ],
+      "given": "Edges: $P \\to Q$, $R \\to Q$, $Q \\to S$, $Q \\to V$, $S \\to U$, $V \\to T$.",
+      "steps": [
+        {
+          "title": "Constraints",
+          "body": "- $P$ and $R$ before $Q$ (both are sources).\n- $Q$ before $S$ and $V$.\n- $S$ before $U$; $V$ before $T$."
+        },
+        {
+          "title": "(A) and (C) fail",
+          "body": "Both start $P\\,Q\\,R$: $Q$ comes before $R$, violating $R \\to Q$.",
+          "scene": {
+            "edgeTones": {
+              "R>Q": "error"
+            },
+            "tones": {
+              "P": "success",
+              "Q": "error",
+              "R": "error"
+            },
+            "caption": "A, C: Q placed before R — edge R → Q goes backwards"
+          }
+        },
+        {
+          "title": "(B) passes",
+          "body": "$P\\,R\\,Q\\,V\\,S\\,U\\,T$: $P, R < Q$ ✔; $Q < V, S$ ✔; $S(5) < U(6)$ ✔; $V(4) < T(7)$ ✔.",
+          "scene": {
+            "edgeTones": {
+              "P>Q": "success",
+              "R>Q": "success",
+              "Q>S": "success",
+              "Q>V": "success",
+              "S>U": "success",
+              "V>T": "success"
+            },
+            "tones": {
+              "P": "success",
+              "R": "success",
+              "Q": "success",
+              "S": "success",
+              "V": "success",
+              "U": "success",
+              "T": "success"
+            },
+            "caption": "B: P R Q V S U T — every edge forward"
+          }
+        },
+        {
+          "title": "(D) passes",
+          "body": "$P\\,R\\,Q\\,S\\,V\\,T\\,U$: $P, R < Q$ ✔; $Q < S, V$ ✔; $S(4) < U(7)$ ✔; $V(5) < T(6)$ ✔.",
+          "scene": {
+            "caption": "D: P R Q S V T U — every edge forward"
+          }
+        }
+      ],
+      "answer": {
+        "value": "(B) and (D)",
+        "choice": [
+          "B",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$Q$ precedes $R$ although $R \\to Q$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "All six edges point forward."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$Q$ precedes $R$ although $R \\to Q$."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "All six edges point forward."
+        }
+      ],
+      "pitfalls": [
+        "Treating the orderings as BFS orders from $P$ and forgetting that $R$ is also a predecessor of $Q$."
+      ],
+      "verification": "Kahn's algorithm: sources $\\{P, R\\}$ must both be removed before $Q$ becomes available, so every valid ordering starts with $P, R$ in some order followed by $Q$ — true for B and D only.",
+      "animation": {
+        "kind": "graph",
+        "directed": true,
+        "title": "DAG",
+        "nodes": [
+          {
+            "id": "P",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "R",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "id": "Q",
+            "x": 1,
+            "y": 1
+          },
+          {
+            "id": "S",
+            "x": 0,
+            "y": 2
+          },
+          {
+            "id": "V",
+            "x": 2,
+            "y": 2
+          },
+          {
+            "id": "U",
+            "x": 0,
+            "y": 3
+          },
+          {
+            "id": "T",
+            "x": 2,
+            "y": 3
+          }
+        ],
+        "edges": [
+          {
+            "from": "P",
+            "to": "Q"
+          },
+          {
+            "from": "R",
+            "to": "Q"
+          },
+          {
+            "from": "Q",
+            "to": "S"
+          },
+          {
+            "from": "Q",
+            "to": "V"
+          },
+          {
+            "from": "S",
+            "to": "U"
+          },
+          {
+            "from": "V",
+            "to": "T"
+          }
+        ],
+        "caption": "Every edge must point forward in the ordering"
+      }
+    },
+    "da-2024-da-42": {
+      "approach": "Use the two extreme binary trees of height $H$ (height = edges on the longest root-to-leaf path): the path (chain) and the perfect tree. They give the tight bounds; a counter-example from the chain kills (D).",
+      "concepts": [
+        "Binary tree properties",
+        "Height bounds",
+        "Leaves vs internal nodes"
+      ],
+      "steps": [
+        {
+          "title": "(A) $L \\le I + 1$",
+          "body": "Let $n_0, n_1, n_2$ count nodes with 0, 1, 2 children. Edges: $N - 1 = n_1 + 2n_2$ and $N = n_0 + n_1 + n_2$ give $n_0 = n_2 + 1$. So $L = n_2 + 1 \\le (n_1 + n_2) + 1 = I + 1$. ✔ (Single node: $L = 1, I = 0$.)"
+        },
+        {
+          "title": "(B) bounds on $N$",
+          "body": "A height-$H$ tree has a root-to-leaf path with $H + 1$ nodes, so $N \\ge H + 1$. Level $k$ has at most $2^k$ nodes: $N \\le \\sum_{k=0}^{H} 2^k = 2^{H+1} - 1$. ✔"
+        },
+        {
+          "title": "(C) bounds on $I$",
+          "body": "The $H$ non-leaf nodes on the longest path are internal, so $I \\ge H$. Internal nodes lie on levels $0..H-1$: $I \\le \\sum_{k=0}^{H-1} 2^k = 2^H - 1$. ✔"
+        },
+        {
+          "title": "(D) fails",
+          "body": "Leaves lie on levels $\\le H$, so the right bound would be $L \\le 2^H$, not $2^{H-1}$; and the lower bound fails too: a chain of height $H = 3$ has $L = 1 < 3$. Also a perfect tree with $H = 1$ has $L = 2 > 2^{0} = 1$. ✘"
+        }
+      ],
+      "answer": {
+        "value": "(A), (B) and (C)",
+        "choice": [
+          "A",
+          "B",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$L = n_2 + 1 \\le I + 1$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Chain gives the lower bound, perfect tree the upper bound."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Chain has exactly $H$ internal nodes; perfect tree has $2^H - 1$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "A chain has one leaf, so $H \\le L$ fails for $H \\ge 2$; the upper bound should be $2^H$."
+        }
+      ],
+      "pitfalls": [
+        "Mixing up height measured in edges with height measured in levels (nodes)."
+      ],
+      "verification": "Checked all four statements on the chain of height 3 ($N=4, I=3, L=1$) and the perfect tree of height 2 ($N=7, I=3, L=4$): A, B, C hold in both; D fails on the chain and on the perfect tree of height 1."
+    }
+  }
+}
