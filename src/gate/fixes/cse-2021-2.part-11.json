@@ -1,0 +1,1127 @@
+{
+  "paper": "cse-2021-2",
+  "fixes": [
+    {
+      "id": "cse-2021-2-ga-1",
+      "field": "topic",
+      "before": "quant",
+      "after": "verbal",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.1"
+    },
+    {
+      "id": "cse-2021-2-ga-1",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "grammar",
+        "comparison",
+        "idioms"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.1"
+    },
+    {
+      "id": "cse-2021-2-ga-2",
+      "field": "text",
+      "before": "A transparent square sheet shown above is folded along the dotted line. The folded\nsheet will look like ________.",
+      "after": "A transparent square sheet shown above is folded along the dotted line. The folded sheet will look like ________.",
+      "reason": "Joined PDF line breaks.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2021-2-ga-2",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "(B)"
+        },
+        {
+          "l": "C",
+          "t": "(D)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "![](/gate-fig/cse-2021-2/ga-2-A.svg)"
+        },
+        {
+          "l": "B",
+          "t": "![](/gate-fig/cse-2021-2/ga-2-B.svg)"
+        },
+        {
+          "l": "C",
+          "t": "![](/gate-fig/cse-2021-2/ga-2-C.svg)"
+        },
+        {
+          "l": "D",
+          "t": "![](/gate-fig/cse-2021-2/ga-2-D.svg)"
+        }
+      ],
+      "reason": "Options are pictures; the record had only two broken text options. Redrawn all four as SVG from the paper.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2021-2-ga-2",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2021-2/ga-2-1.svg",
+          "svg": "cse-2021-2/ga-2-1.svg",
+          "alt": "A square sheet with a vertical dotted line through its middle. On the left half a curve rises from low on the left edge, getting steeper, to a peak on the dotted line; two short vertical ticks stand up from this curve. On the right half a curve falls from the peak, getting steeper, to the bottom-right corner; two short horizontal ticks point left from this curve."
+        }
+      ],
+      "reason": "The question depends on its figure, which the bank was missing. Redrawn as SVG from the paper.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2021-2-ga-2",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "paper-folding",
+        "mirror-image"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2021-2-ga-3",
+      "field": "text",
+      "before": "If  is the angle, in degrees, between the longest diagonal of the cube and any\none of the edges of the cube, then, cos  =",
+      "after": "If $\\theta$ is the angle, in degrees, between the longest diagonal of the cube and any one of the edges of the cube, then, $\\cos\\theta =$",
+      "reason": "Restored the lost θ symbols and wrote the maths in KaTeX.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2021-2-ga-3",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "1 2"
+        },
+        {
+          "l": "B",
+          "t": "1 √3"
+        },
+        {
+          "l": "C",
+          "t": "1 √2"
+        },
+        {
+          "l": "D",
+          "t": "√3 2"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\dfrac{1}{2}$"
+        },
+        {
+          "l": "B",
+          "t": "$\\dfrac{1}{\\sqrt{3}}$"
+        },
+        {
+          "l": "C",
+          "t": "$\\dfrac{1}{\\sqrt{2}}$"
+        },
+        {
+          "l": "D",
+          "t": "$\\dfrac{\\sqrt{3}}{2}$"
+        }
+      ],
+      "reason": "Fractions were flattened in extraction; rewritten in KaTeX.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2021-2-ga-3",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "geometry",
+        "cube",
+        "space-diagonal",
+        "direction-cosines"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2021-2-ga-4",
+      "field": "text",
+      "before": "If\n2213 222x x x   − − − = +       , then the value of\nx is:",
+      "after": "If $\\left(x - \\dfrac{1}{2}\\right)^2 - \\left(x - \\dfrac{3}{2}\\right)^2 = x + 2$, then the value of $x$ is:",
+      "reason": "Equation was garbled in extraction; rewritten in KaTeX from the paper.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2021-2-ga-4",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "algebra",
+        "difference-of-squares",
+        "linear-equations"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2021-2-ga-5",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Vegetables"
+        },
+        {
+          "l": "B",
+          "t": "Sharp"
+        },
+        {
+          "l": "C",
+          "t": "Cut"
+        },
+        {
+          "l": "D",
+          "t": "Blunt answer: – 2/3)."
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Vegetables"
+        },
+        {
+          "l": "B",
+          "t": "Sharp"
+        },
+        {
+          "l": "C",
+          "t": "Cut"
+        },
+        {
+          "l": "D",
+          "t": "Blunt"
+        }
+      ],
+      "reason": "Removed header junk (\"answer: – 2/3).\") from option D.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2021-2-ga-5",
+      "field": "text",
+      "before": "Pen : Write :: Knife : _________\nWhich one of the following options maintains a similar logical relation in the\nabove?",
+      "after": "Pen : Write :: Knife : _________\n\nWhich one of the following options maintains a similar logical relation in the above?",
+      "reason": "Joined PDF line breaks.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2021-2-ga-5",
+      "field": "topic",
+      "before": "quant",
+      "after": "verbal",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2021-2-ga-5",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "analogy",
+        "tool-function"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2021-2-ga-6",
+      "field": "text",
+      "before": "Listening to music during exercise improves exercise performance and reduces\ndiscomfort. Scientists researched whether listening to music while studying can\nhelp students learn better and the results were inconclusive. Students who needed\nexternal stimulation for studying fared worse while students who did not need\nany external stimulation benefited from music.\nWhich one of the following statements is the CORRECT inference of the above\npassage?",
+      "after": "Listening to music during exercise improves exercise performance and reduces discomfort. Scientists researched whether listening to music while studying can help students learn better and the results were inconclusive. Students who needed external stimulation for studying fared worse while students who did not need any external stimulation benefited from music.\n\nWhich one of the following statements is the CORRECT inference of the above passage?",
+      "reason": "Joined PDF line breaks.",
+      "source": "pdf p.5"
+    },
+    {
+      "id": "cse-2021-2-ga-6",
+      "field": "tags",
+      "before": [
+        "verbal-aptitude"
+      ],
+      "after": [
+        "reading-comprehension",
+        "inference"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.5"
+    },
+    {
+      "id": "cse-2021-2-ga-7",
+      "field": "text",
+      "before": "A jigsaw puzzle has 2 pieces. One of the pieces is shown above. Which one of\nthe given options for the missing piece when assembled will form a rectangle?\nThe piece can be moved, rotated or flipped to assemble with the above piece.",
+      "after": "A jigsaw puzzle has 2 pieces. One of the pieces is shown above. Which one of the given options for the missing piece when assembled will form a rectangle? The piece can be moved, rotated or flipped to assemble with the above piece.",
+      "reason": "Joined PDF line breaks.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2021-2-ga-7",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "(B)"
+        },
+        {
+          "l": "C",
+          "t": "(D)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "![](/gate-fig/cse-2021-2/ga-7-A.svg)"
+        },
+        {
+          "l": "B",
+          "t": "![](/gate-fig/cse-2021-2/ga-7-B.svg)"
+        },
+        {
+          "l": "C",
+          "t": "![](/gate-fig/cse-2021-2/ga-7-C.svg)"
+        },
+        {
+          "l": "D",
+          "t": "![](/gate-fig/cse-2021-2/ga-7-D.svg)"
+        }
+      ],
+      "reason": "Options are pictures; the record had only two broken text options. Redrawn all four as SVG from the paper.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2021-2-ga-7",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2021-2/ga-7-1.svg",
+          "svg": "cse-2021-2/ga-7-1.svg",
+          "alt": "A jigsaw piece: a tall rectangle whose right edge is straight and whose left edge is a jagged profile of rectangular teeth and slots of different depths, including one hook-shaped (undercut) slot near the middle."
+        }
+      ],
+      "reason": "The question depends on its figure, which the bank was missing. Redrawn as SVG from the paper.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2021-2-ga-7",
+      "field": "topic",
+      "before": "quant",
+      "after": "spatial",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2021-2-ga-7",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "jigsaw",
+        "shape-matching",
+        "rotation-reflection"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2021-2-ga-8",
+      "field": "text",
+      "before": "The number of students in three classes is in the ratio 3:13:6. If 18 students are\nadded to each class, the ratio changes to 15:35:21.\nThe total number of students in all the three classes in the beginning was:",
+      "after": "The number of students in three classes is in the ratio 3:13:6. If 18 students are added to each class, the ratio changes to 15:35:21.\n\nThe total number of students in all the three classes in the beginning was:",
+      "reason": "Joined PDF line breaks.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2021-2-ga-8",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "ratio-proportion",
+        "linear-equations"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2021-2-ga-9",
+      "field": "text",
+      "before": "The number of units of a product sold in three different years and the respective\nnet profits are presented in the figure above. The cost/unit in Year 3 was  ` 1, which\nwas half the cost/unit in Year 2.  The cost/unit in Year  3 was  one-third of the\ncost/unit in Year 1. Taxes were paid on the selling price at 10%, 13% and 15%\nrespectively for the three years. Net profit is calculated as the difference between\nthe selling price and the sum of cost and taxes paid in that year.\nThe ratio of the selling price in Year 2 to the selling price in Year 3 is ________.\nA) 4:3",
+      "after": "The number of units of a product sold in three different years and the respective net profits are presented in the figure above. The cost/unit in Year 3 was ₹ 1, which was half the cost/unit in Year 2. The cost/unit in Year 3 was one-third of the cost/unit in Year 1. Taxes were paid on the selling price at 10%, 13% and 15% respectively for the three years. Net profit is calculated as the difference between the selling price and the sum of cost and taxes paid in that year.\n\nThe ratio of the selling price in Year 2 to the selling price in Year 3 is ________.",
+      "reason": "Removed option A and chart residue from the text; restored the ₹ symbol.",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2021-2-ga-9",
+      "field": "options",
+      "before": [
+        {
+          "l": "B",
+          "t": "1:1"
+        },
+        {
+          "l": "C",
+          "t": "3:4"
+        },
+        {
+          "l": "D",
+          "t": "1:2 100 200 300 240 296 210 0 50 100 150 200 250 300 350 Year 1 Year 2 Year 3 Number of units Net Profit (INR) (`)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "4:3"
+        },
+        {
+          "l": "B",
+          "t": "1:1"
+        },
+        {
+          "l": "C",
+          "t": "3:4"
+        },
+        {
+          "l": "D",
+          "t": "1:2"
+        }
+      ],
+      "reason": "Options were shifted (A was inside the text, D had chart labels appended).",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2021-2-ga-9",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2021-2/ga-9-1.svg",
+          "svg": "cse-2021-2/ga-9-1.svg",
+          "alt": "Grouped bar chart, y-axis 0 to 350. For each year a hatched bar is the number of units and a solid bar the net profit in rupees. Year 1: 100 units, profit 240. Year 2: 200 units, profit 296. Year 3: 300 units, profit 210."
+        }
+      ],
+      "reason": "The question depends on its chart, which the bank was missing. Redrawn as SVG from the paper.",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2021-2-ga-9",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "data-interpretation",
+        "bar-chart",
+        "profit-loss",
+        "percentages"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2021-2-ga-10",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "T"
+        },
+        {
+          "l": "B",
+          "t": "R"
+        },
+        {
+          "l": "C",
+          "t": "S"
+        },
+        {
+          "l": "D",
+          "t": "P answer: – 1/3)."
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "T"
+        },
+        {
+          "l": "B",
+          "t": "R"
+        },
+        {
+          "l": "C",
+          "t": "S"
+        },
+        {
+          "l": "D",
+          "t": "P"
+        }
+      ],
+      "reason": "Removed header junk (\"answer: – 1/3).\") from option D.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "cse-2021-2-ga-10",
+      "field": "text",
+      "before": "Six students P, Q, R, S, T and U, with distinct heights, compare their heights\nand make the following observations.\nObservation I: S is taller than R.\nObservation II: Q is the shortest of all.\nObservation III: U is taller than only one student.\nObservation IV: T is taller than S but is not the tallest.\nThe number of students that are taller than R is the same as the number of\nstudents shorter than ______.",
+      "after": "Six students P, Q, R, S, T and U, with distinct heights, compare their heights and make the following observations.\n\n- Observation I: S is taller than R.\n- Observation II: Q is the shortest of all.\n- Observation III: U is taller than only one student.\n- Observation IV: T is taller than S but is not the tallest.\n\nThe number of students that are taller than R is the same as the number of students shorter than ______.",
+      "reason": "Joined PDF line breaks and listed the observations.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "cse-2021-2-ga-10",
+      "field": "topic",
+      "before": "quant",
+      "after": "analytical",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "cse-2021-2-ga-10",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "ordering",
+        "seating-ranking",
+        "logical-deduction"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "cse-2021-2-cs-1",
+      "field": "text",
+      "before": "Let G be a connected undirected weighted graph. Consider the following two state-\nments.\nS1: There exists a minimum weight edge in G which is present in every\nminimum spanning tree of G.\nS2: If every edge in G has distinct weight, then G has a unique minimum\nspanning tree.\nWhich one of the following options is correct?",
+      "after": "Let $G$ be a connected undirected weighted graph. Consider the following two statements.\n\n- $S_1$: There exists a minimum weight edge in $G$ which is present in every minimum spanning tree of $G$.\n- $S_2$: If every edge in $G$ has distinct weight, then $G$ has a unique minimum spanning tree.\n\nWhich one of the following options is correct?",
+      "reason": "Joined PDF line breaks; statements as a list with KaTeX names.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2021-2-cs-1",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Both S1 and S2 are true."
+        },
+        {
+          "l": "B",
+          "t": "S1 is true and S2 is false."
+        },
+        {
+          "l": "C",
+          "t": "S1 is false and S2 is true."
+        },
+        {
+          "l": "D",
+          "t": "Both S1 and S2 are false."
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Both $S_1$ and $S_2$ are true."
+        },
+        {
+          "l": "B",
+          "t": "$S_1$ is true and $S_2$ is false."
+        },
+        {
+          "l": "C",
+          "t": "$S_1$ is false and $S_2$ is true."
+        },
+        {
+          "l": "D",
+          "t": "Both $S_1$ and $S_2$ are false."
+        }
+      ],
+      "reason": "KaTeX statement names.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2021-2-cs-1",
+      "field": "subject",
+      "before": "pds",
+      "after": "algo",
+      "reason": "Subject corrected to match the question content.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2021-2-cs-1",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "mst",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2021-2-cs-1",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "minimum-spanning-tree",
+        "cut-property",
+        "mst-uniqueness"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2021-2-cs-2",
+      "field": "text",
+      "before": "Let I be a binary min-heap consisting of n elements implemented as an array. What\nis the worst case time complexity of an optimal algorithm to find the maximum\nelement in H?",
+      "after": "Let $H$ be a binary min-heap consisting of $n$ elements implemented as an array. What is the worst case time complexity of an optimal algorithm to find the maximum element in $H$?",
+      "reason": "Fixed OCR errors (heap named I/H inconsistently) and line breaks.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2021-2-cs-2",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "O(1)"
+        },
+        {
+          "l": "B",
+          "t": "O(logn)"
+        },
+        {
+          "l": "C",
+          "t": "O (n)"
+        },
+        {
+          "l": "D",
+          "t": "O(nIogn)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\Theta(1)$"
+        },
+        {
+          "l": "B",
+          "t": "$\\Theta(\\log n)$"
+        },
+        {
+          "l": "C",
+          "t": "$\\Theta(n)$"
+        },
+        {
+          "l": "D",
+          "t": "$\\Theta(n \\log n)$"
+        }
+      ],
+      "reason": "The paper uses Θ, not O; fixed OCR \"nIogn\".",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2021-2-cs-2",
+      "field": "subject",
+      "before": "db",
+      "after": "pds",
+      "reason": "Subject corrected to match the question content.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2021-2-cs-2",
+      "field": "topic",
+      "before": "sql",
+      "after": "heaps",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2021-2-cs-2",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "binary-heap",
+        "min-heap",
+        "find-max",
+        "time-complexity"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2021-2-cs-3",
+      "field": "text",
+      "before": "Consider the following ANSI C program:\nint main () {\nInteger x;\nreturn 0;\nWhich one of the following phases in a seven-phase C compiler will throw an error?",
+      "after": "Consider the following ANSI C program:\n\n```c\nint main() {\n    Integer x;\n    return 0;\n}\n```\n\nWhich one of the following phases in a seven-phase C compiler will throw an error?",
+      "reason": "Code put in a fenced block; restored the missing closing brace.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2021-2-cs-3",
+      "field": "subject",
+      "before": "pds",
+      "after": "cd",
+      "reason": "Subject corrected to match the question content.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2021-2-cs-3",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "sdt",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2021-2-cs-3",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "compiler-phases",
+        "semantic-analysis",
+        "symbol-table",
+        "undeclared-identifier"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2021-2-cs-4",
+      "field": "subject",
+      "before": "pds",
+      "after": "dl",
+      "reason": "Subject corrected to match the question content.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2021-2-cs-4",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "floating",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2021-2-cs-4",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "ieee-754",
+        "single-precision",
+        "normalized-numbers"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2021-2-cs-5",
+      "field": "subject",
+      "before": "pds",
+      "after": "dl",
+      "reason": "Subject corrected to match the question content.",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "cse-2021-2-cs-5",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "combinational",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "cse-2021-2-cs-5",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "multiplexer",
+        "mux-implementation",
+        "minterms"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "cse-2021-2-cs-6",
+      "field": "subject",
+      "before": "pds",
+      "after": "db",
+      "reason": "Subject corrected to match the question content.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "cse-2021-2-cs-6",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "er",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "cse-2021-2-cs-6",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "relational-model",
+        "foreign-key",
+        "referential-integrity"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "cse-2021-2-cs-7",
+      "field": "text",
+      "before": "Consider the three-way handshake mechanism followed during TCP connection es-\ntablishment between hosts P and Q. Let X and Y be two random 32-bit starting\nsequence numbers chosen by P and Q respectively. Suppose P sends a TCP connec-\ntion request message to Q with a TCP segment having SYN bit = 1, SEQ number\n= X, and ACK bit = 0. Suppose Q accepts the connection request. Which one of\nthe following choices represents the information present in the TCP segment header\nthat is sent by Q to P?",
+      "after": "Consider the three-way handshake mechanism followed during TCP connection establishment between hosts P and Q. Let X and Y be two random 32-bit starting sequence numbers chosen by P and Q respectively. Suppose P sends a TCP connection request message to Q with a TCP segment having SYN bit = 1, SEQ number = X, and ACK bit = 0. Suppose Q accepts the connection request. Which one of the following choices represents the information present in the TCP segment header that is sent by Q to P?",
+      "reason": "Joined hyphenated PDF line breaks.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "cse-2021-2-cs-7",
+      "field": "subject",
+      "before": "pds",
+      "after": "cn",
+      "reason": "Subject corrected to match the question content.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "cse-2021-2-cs-7",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "transport",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "cse-2021-2-cs-7",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "tcp",
+        "three-way-handshake",
+        "sequence-numbers",
+        "syn-ack"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "cse-2021-2-cs-8",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "$\\Theta(n)$"
+        },
+        {
+          "l": "B",
+          "t": "$\\Theta(\\log_2 n)$"
+        },
+        {
+          "l": "C",
+          "t": "$\\Theta(n \\log_2 n)$"
+        },
+        {
+          "l": "D",
+          "t": "$\\Theta(1)$"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\Theta(\\sqrt{n})$"
+        },
+        {
+          "l": "B",
+          "t": "$\\Theta(\\log_2 n)$"
+        },
+        {
+          "l": "C",
+          "t": "$\\Theta(n^2)$"
+        },
+        {
+          "l": "D",
+          "t": "$\\Theta(n)$"
+        }
+      ],
+      "reason": "Options A, C, D did not match the paper (√n, n², n).",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2021-2-cs-8",
+      "field": "subject",
+      "before": "pds",
+      "after": "algo",
+      "reason": "Subject corrected to match the question content.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2021-2-cs-8",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "searching",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2021-2-cs-8",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "binary-search",
+        "recursion",
+        "time-complexity"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2021-2-cs-9",
+      "field": "subject",
+      "before": "pds",
+      "after": "toc",
+      "reason": "Subject corrected to match the question content.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2021-2-cs-9",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "regular",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2021-2-cs-9",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "minimal-dfa",
+        "complement",
+        "closure-properties"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2021-2-cs-10",
+      "field": "text",
+      "before": "Consider the following ANSI C program.\n#include ‹stdio.h>\nint main (){\nint arr [4] [5] ;\nint i, j;\nfor (i=0; i<4; i++){\nfor (j=0; j<5; j++) l\narr[i][j] = 10*i + j;\nprintf (\"%d\", *(arr [1] + 9)) ;\nreturn 0;\nWhat is the output of the above program?",
+      "after": "Consider the following ANSI C program.\n\n```c\n#include <stdio.h>\nint main(){\n  int arr[4][5];\n  int i, j;\n  for (i=0; i<4; i++){\n    for (j=0; j<5; j++){\n      arr[i][j] = 10*i + j;\n    }\n  }\n  printf(\"%d\", *(arr[1] + 9));\n  return 0;\n}\n```\n\nWhat is the output of the above program?",
+      "reason": "Code put in a fenced block; fixed OCR errors and missing braces.",
+      "source": "pdf p.15"
+    },
+    {
+      "id": "cse-2021-2-cs-10",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "arrays",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.15"
+    },
+    {
+      "id": "cse-2021-2-cs-10",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "2d-arrays",
+        "row-major",
+        "pointer-arithmetic"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.15"
+    },
+    {
+      "id": "cse-2021-2-cs-11",
+      "field": "text",
+      "before": "Consider the following sets, where n ≥ 2:\nS1: Set of all n × n matrices with entries from the set {a, b, c}\nS2: Set of all functions from the set {0, 1,2,..., n° - 1} to the set {0,1,2}\nWhich of the following choice(s) is/are correct?",
+      "after": "Consider the following sets, where $n \\ge 2$:\n\n- $S_1$: Set of all $n \\times n$ matrices with entries from the set $\\{a, b, c\\}$\n- $S_2$: Set of all functions from the set $\\{0, 1, 2, \\ldots, n^2 - 1\\}$ to the set $\\{0, 1, 2\\}$\n\nWhich of the following choice(s) is/are correct?",
+      "reason": "Fixed OCR \"n°\" to $n^2$; KaTeX and list layout.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "cse-2021-2-cs-11",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "There does not exist a bijection from S1 to S2."
+        },
+        {
+          "l": "B",
+          "t": "There exists a surjection from S1 to S2."
+        },
+        {
+          "l": "C",
+          "t": "There exists a bijection from S1 to S2."
+        },
+        {
+          "l": "D",
+          "t": "There does not exist an injection from S1 to S2."
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "There does not exist a bijection from $S_1$ to $S_2$."
+        },
+        {
+          "l": "B",
+          "t": "There exists a surjection from $S_1$ to $S_2$."
+        },
+        {
+          "l": "C",
+          "t": "There exists a bijection from $S_1$ to $S_2$."
+        },
+        {
+          "l": "D",
+          "t": "There does not exist an injection from $S_1$ to $S_2$."
+        }
+      ],
+      "reason": "KaTeX set names.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "cse-2021-2-cs-11",
+      "field": "subject",
+      "before": "pds",
+      "after": "dm",
+      "reason": "Subject corrected to match the question content.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "cse-2021-2-cs-11",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "sets",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "cse-2021-2-cs-11",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "functions",
+        "bijection",
+        "cardinality",
+        "counting"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "cse-2021-2-cs-12",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "$L_1 \\cap \\overline{L_2}$"
+        },
+        {
+          "l": "B",
+          "t": "$\\overline{\\overline{L_1} \\cup \\overline{L_2}}$"
+        },
+        {
+          "l": "C",
+          "t": "$L_1 \\cup (L_2 \\cup \\overline{L_2})$"
+        },
+        {
+          "l": "D",
+          "t": "$(L_1 \\cap L_2) \\cup (\\overline{L_1} \\cap L_2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$L_1 \\cap \\overline{L_2}$"
+        },
+        {
+          "l": "B",
+          "t": "$\\overline{\\overline{L_1} \\cup \\overline{L_2}}$"
+        },
+        {
+          "l": "C",
+          "t": "$L_1 \\cup (L_2 \\cup \\overline{L_2})$"
+        },
+        {
+          "l": "D",
+          "t": "$(L_1 \\cap L_2) \\cup (\\overline{L_1} \\cap L_2)$"
+        }
+      ],
+      "reason": "Option D was missing its closing $.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "cse-2021-2-cs-12",
+      "field": "topic",
+      "before": "regular",
+      "after": "pumping",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "cse-2021-2-cs-12",
+      "field": "tags",
+      "before": [
+        "regular"
+      ],
+      "after": [
+        "closure-properties",
+        "context-free-languages",
+        "regular-languages"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.16"
+    }
+  ]
+}
