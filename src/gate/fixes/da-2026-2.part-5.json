@@ -1,0 +1,349 @@
+{
+  "paper": "da-2026-2",
+  "fixes": [
+    {
+      "id": "da-2026-2-da-43",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Paper provenance cannot be established (see reviewNote).",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-43",
+      "field": "reviewNote",
+      "before": null,
+      "after": "Provenance problem: GATE 2026 DA was held in a single session (official key DA_Keys.pdf lists every question as session 8 and matches paper da-2026); the claimed source QPs/DA-Set2.pdf returns 404, and the local PDF for this paper is the GATE 2000 CS paper. This \"set 2\" record is not from any official paper (its DA section repeats 8 template questions cyclically, Q10-Q55), so text cannot be verified and the stored \"official\" key is not official. Question content checked for internal correctness only. This record duplicates da-2026-2-da-51 (and other numbers of the same cycle).",
+      "reason": "Document why this record is flagged.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-44",
+      "field": "answer",
+      "before": "D",
+      "after": "A",
+      "reason": "Var(3X+5) = 9 Var(X) = 9 x 4 = 36 = option A; stored D (41) wrongly adds the shift. Stored key was a placeholder (keys cycle A,B,C,D across the paper), not an official key.",
+      "source": "independent solution; no official key exists for this paper (https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf covers the only DA 2026 session)"
+    },
+    {
+      "id": "da-2026-2-da-44",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Paper provenance cannot be established (see reviewNote).",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-44",
+      "field": "reviewNote",
+      "before": null,
+      "after": "Provenance problem: GATE 2026 DA was held in a single session (official key DA_Keys.pdf lists every question as session 8 and matches paper da-2026); the claimed source QPs/DA-Set2.pdf returns 404, and the local PDF for this paper is the GATE 2000 CS paper. This \"set 2\" record is not from any official paper (its DA section repeats 8 template questions cyclically, Q10-Q55), so text cannot be verified and the stored \"official\" key is not official. Question content checked for internal correctness only. This record duplicates da-2026-2-da-52 (and other numbers of the same cycle).",
+      "reason": "Document why this record is flagged.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-45",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Paper provenance cannot be established (see reviewNote).",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-45",
+      "field": "reviewNote",
+      "before": null,
+      "after": "Provenance problem: GATE 2026 DA was held in a single session (official key DA_Keys.pdf lists every question as session 8 and matches paper da-2026); the claimed source QPs/DA-Set2.pdf returns 404, and the local PDF for this paper is the GATE 2000 CS paper. This \"set 2\" record is not from any official paper (its DA section repeats 8 template questions cyclically, Q10-Q55), so text cannot be verified and the stored \"official\" key is not official. Question content checked for internal correctness only. This record duplicates da-2026-2-da-53 (and other numbers of the same cycle).",
+      "reason": "Document why this record is flagged.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-46",
+      "field": "answer",
+      "before": "B",
+      "after": "A",
+      "reason": "A moving average needs a window function: OVER (PARTITION BY ... ORDER BY ...) = option A; GROUP BY ROLLUP (stored B) computes subtotals. Stored key was a placeholder (keys cycle A,B,C,D), not an official key.",
+      "source": "independent solution; no official key exists for this paper (https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf covers the only DA 2026 session)"
+    },
+    {
+      "id": "da-2026-2-da-46",
+      "field": "topic",
+      "before": "sql",
+      "after": "warehousing",
+      "reason": "Topic id \"sql\" does not exist in subjects.DA.dbw; \"warehousing\" is the matching topic.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "da-2026-2-da-46",
+      "field": "tags",
+      "before": [
+        "dbw",
+        "sql"
+      ],
+      "after": [
+        "dbw",
+        "warehousing"
+      ],
+      "reason": "Tags follow the corrected topic id.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "da-2026-2-da-46",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Paper provenance cannot be established (see reviewNote).",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-46",
+      "field": "reviewNote",
+      "before": null,
+      "after": "Provenance problem: GATE 2026 DA was held in a single session (official key DA_Keys.pdf lists every question as session 8 and matches paper da-2026); the claimed source QPs/DA-Set2.pdf returns 404, and the local PDF for this paper is the GATE 2000 CS paper. This \"set 2\" record is not from any official paper (its DA section repeats 8 template questions cyclically, Q10-Q55), so text cannot be verified and the stored \"official\" key is not official. Question content checked for internal correctness only. This record duplicates da-2026-2-da-54 (and other numbers of the same cycle).",
+      "reason": "Document why this record is flagged.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-47",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Paper provenance cannot be established (see reviewNote).",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-47",
+      "field": "reviewNote",
+      "before": null,
+      "after": "Provenance problem: GATE 2026 DA was held in a single session (official key DA_Keys.pdf lists every question as session 8 and matches paper da-2026); the claimed source QPs/DA-Set2.pdf returns 404, and the local PDF for this paper is the GATE 2000 CS paper. This \"set 2\" record is not from any official paper (its DA section repeats 8 template questions cyclically, Q10-Q55), so text cannot be verified and the stored \"official\" key is not official. Question content checked for internal correctness only. This record duplicates da-2026-2-da-55 (and other numbers of the same cycle).",
+      "reason": "Document why this record is flagged.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-48",
+      "field": "answer",
+      "before": "D",
+      "after": "A",
+      "reason": "Worst-case AVL height is about 1.44 log2 n = option A; Theta(n^2) (stored D) is impossible for any n-node tree. Stored key was a placeholder (keys cycle A,B,C,D), not an official key.",
+      "source": "independent solution; no official key exists for this paper (https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf covers the only DA 2026 session)"
+    },
+    {
+      "id": "da-2026-2-da-48",
+      "field": "topic",
+      "before": "dsa",
+      "after": "ds",
+      "reason": "Topic id \"dsa\" does not exist in subjects.DA.pdsa; \"ds\" is the matching topic.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "da-2026-2-da-48",
+      "field": "tags",
+      "before": [
+        "pdsa",
+        "dsa"
+      ],
+      "after": [
+        "pdsa",
+        "ds"
+      ],
+      "reason": "Tags follow the corrected topic id.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "da-2026-2-da-48",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Paper provenance cannot be established (see reviewNote).",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-48",
+      "field": "reviewNote",
+      "before": null,
+      "after": "Provenance problem: GATE 2026 DA was held in a single session (official key DA_Keys.pdf lists every question as session 8 and matches paper da-2026); the claimed source QPs/DA-Set2.pdf returns 404, and the local PDF for this paper is the GATE 2000 CS paper. This \"set 2\" record is not from any official paper (its DA section repeats 8 template questions cyclically, Q10-Q55), so text cannot be verified and the stored \"official\" key is not official. Question content checked for internal correctness only.",
+      "reason": "Document why this record is flagged.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-49",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Paper provenance cannot be established (see reviewNote).",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-49",
+      "field": "reviewNote",
+      "before": null,
+      "after": "Provenance problem: GATE 2026 DA was held in a single session (official key DA_Keys.pdf lists every question as session 8 and matches paper da-2026); the claimed source QPs/DA-Set2.pdf returns 404, and the local PDF for this paper is the GATE 2000 CS paper. This \"set 2\" record is not from any official paper (its DA section repeats 8 template questions cyclically, Q10-Q55), so text cannot be verified and the stored \"official\" key is not official. Question content checked for internal correctness only.",
+      "reason": "Document why this record is flagged.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-50",
+      "field": "answer",
+      "before": "B",
+      "after": "A",
+      "reason": "(32 - 5)/1 + 1 = 28, so 28 x 28 = option A; stored B (30 x 30) is wrong. Stored key was a placeholder (keys cycle A,B,C,D), not an official key.",
+      "source": "independent solution; no official key exists for this paper (https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf covers the only DA 2026 session)"
+    },
+    {
+      "id": "da-2026-2-da-50",
+      "field": "topic",
+      "before": "neural-nets",
+      "after": "neural",
+      "reason": "Topic id \"neural-nets\" does not exist in subjects.DA.ml; \"neural\" is the matching topic.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "da-2026-2-da-50",
+      "field": "tags",
+      "before": [
+        "ml",
+        "neural-nets"
+      ],
+      "after": [
+        "ml",
+        "neural"
+      ],
+      "reason": "Tags follow the corrected topic id.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "da-2026-2-da-50",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Paper provenance cannot be established (see reviewNote).",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-50",
+      "field": "reviewNote",
+      "before": null,
+      "after": "Provenance problem: GATE 2026 DA was held in a single session (official key DA_Keys.pdf lists every question as session 8 and matches paper da-2026); the claimed source QPs/DA-Set2.pdf returns 404, and the local PDF for this paper is the GATE 2000 CS paper. This \"set 2\" record is not from any official paper (its DA section repeats 8 template questions cyclically, Q10-Q55), so text cannot be verified and the stored \"official\" key is not official. Question content checked for internal correctness only.",
+      "reason": "Document why this record is flagged.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-51",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Paper provenance cannot be established (see reviewNote).",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-51",
+      "field": "reviewNote",
+      "before": null,
+      "after": "Provenance problem: GATE 2026 DA was held in a single session (official key DA_Keys.pdf lists every question as session 8 and matches paper da-2026); the claimed source QPs/DA-Set2.pdf returns 404, and the local PDF for this paper is the GATE 2000 CS paper. This \"set 2\" record is not from any official paper (its DA section repeats 8 template questions cyclically, Q10-Q55), so text cannot be verified and the stored \"official\" key is not official. Question content checked for internal correctness only. This record duplicates da-2026-2-da-43 (and other numbers of the same cycle).",
+      "reason": "Document why this record is flagged.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-52",
+      "field": "answer",
+      "before": "D",
+      "after": "A",
+      "reason": "Var(3X+5) = 9 Var(X) = 9 x 4 = 36 = option A; stored D (41) wrongly adds the shift. Stored key was a placeholder (keys cycle A,B,C,D across the paper), not an official key.",
+      "source": "independent solution; no official key exists for this paper (https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf covers the only DA 2026 session)"
+    },
+    {
+      "id": "da-2026-2-da-52",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Paper provenance cannot be established (see reviewNote).",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-52",
+      "field": "reviewNote",
+      "before": null,
+      "after": "Provenance problem: GATE 2026 DA was held in a single session (official key DA_Keys.pdf lists every question as session 8 and matches paper da-2026); the claimed source QPs/DA-Set2.pdf returns 404, and the local PDF for this paper is the GATE 2000 CS paper. This \"set 2\" record is not from any official paper (its DA section repeats 8 template questions cyclically, Q10-Q55), so text cannot be verified and the stored \"official\" key is not official. Question content checked for internal correctness only. This record duplicates da-2026-2-da-44 (and other numbers of the same cycle).",
+      "reason": "Document why this record is flagged.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-53",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Paper provenance cannot be established (see reviewNote).",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-53",
+      "field": "reviewNote",
+      "before": null,
+      "after": "Provenance problem: GATE 2026 DA was held in a single session (official key DA_Keys.pdf lists every question as session 8 and matches paper da-2026); the claimed source QPs/DA-Set2.pdf returns 404, and the local PDF for this paper is the GATE 2000 CS paper. This \"set 2\" record is not from any official paper (its DA section repeats 8 template questions cyclically, Q10-Q55), so text cannot be verified and the stored \"official\" key is not official. Question content checked for internal correctness only. This record duplicates da-2026-2-da-45 (and other numbers of the same cycle).",
+      "reason": "Document why this record is flagged.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-54",
+      "field": "answer",
+      "before": "B",
+      "after": "A",
+      "reason": "A moving average needs a window function: OVER (PARTITION BY ... ORDER BY ...) = option A; GROUP BY ROLLUP (stored B) computes subtotals. Stored key was a placeholder (keys cycle A,B,C,D), not an official key.",
+      "source": "independent solution; no official key exists for this paper (https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf covers the only DA 2026 session)"
+    },
+    {
+      "id": "da-2026-2-da-54",
+      "field": "topic",
+      "before": "sql",
+      "after": "warehousing",
+      "reason": "Topic id \"sql\" does not exist in subjects.DA.dbw; \"warehousing\" is the matching topic.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "da-2026-2-da-54",
+      "field": "tags",
+      "before": [
+        "dbw",
+        "sql"
+      ],
+      "after": [
+        "dbw",
+        "warehousing"
+      ],
+      "reason": "Tags follow the corrected topic id.",
+      "source": "questions.json subjects"
+    },
+    {
+      "id": "da-2026-2-da-54",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Paper provenance cannot be established (see reviewNote).",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-54",
+      "field": "reviewNote",
+      "before": null,
+      "after": "Provenance problem: GATE 2026 DA was held in a single session (official key DA_Keys.pdf lists every question as session 8 and matches paper da-2026); the claimed source QPs/DA-Set2.pdf returns 404, and the local PDF for this paper is the GATE 2000 CS paper. This \"set 2\" record is not from any official paper (its DA section repeats 8 template questions cyclically, Q10-Q55), so text cannot be verified and the stored \"official\" key is not official. Question content checked for internal correctness only. This record duplicates da-2026-2-da-46 (and other numbers of the same cycle).",
+      "reason": "Document why this record is flagged.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-55",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Paper provenance cannot be established (see reviewNote).",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-2-da-55",
+      "field": "reviewNote",
+      "before": null,
+      "after": "Provenance problem: GATE 2026 DA was held in a single session (official key DA_Keys.pdf lists every question as session 8 and matches paper da-2026); the claimed source QPs/DA-Set2.pdf returns 404, and the local PDF for this paper is the GATE 2000 CS paper. This \"set 2\" record is not from any official paper (its DA section repeats 8 template questions cyclically, Q10-Q55), so text cannot be verified and the stored \"official\" key is not official. Question content checked for internal correctness only. This record duplicates da-2026-2-da-47 (and other numbers of the same cycle).",
+      "reason": "Document why this record is flagged.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    }
+  ]
+}
