@@ -2593,6 +2593,5485 @@
         ],
         "reveal": 0
       }
+    },
+    "da-2026-da-17": {
+      "approach": "Find the critical points from $f'(x)=3x(x-2)$, evaluate $f$ there and at the closed end $x=3$ (the end $x=-1$ is excluded), and factor out the obvious root $x=1$ to locate every root. One small value table settles all four options.",
+      "concepts": [
+        "First-derivative test",
+        "Global extrema on a half-open interval",
+        "Factor theorem",
+        "Monotonicity and roots"
+      ],
+      "given": "$f(x)=x^3-3x^2+2$ on $(-1,3]$ — the left end $-1$ is **open** (not in the domain), the right end $3$ is **closed**.",
+      "steps": [
+        {
+          "title": "Critical points",
+          "body": "$$f'(x)=3x^2-6x=3x(x-2)=0 \\;\\Rightarrow\\; x=0 \\text{ or } x=2,$$ both inside $(-1,3]$. With $f''(x)=6x-6$: $f''(0)=-6<0$ (local max) and $f''(2)=6>0$ (local min). Sign of $f'$: positive on $(-1,0)$, negative on $(0,2)$, positive on $(2,3]$.",
+          "scene": {
+            "hl": [
+              {
+                "r": 3,
+                "tone": "accent"
+              },
+              {
+                "r": 5,
+                "tone": "accent"
+              }
+            ],
+            "caption": "f′(x) = 3x(x − 2): critical points 0 and 2"
+          }
+        },
+        {
+          "title": "Values at the candidates",
+          "body": "- $f(0)=0-0+2=2$\n- $f(2)=8-12+2=-2$\n- $f(3)=27-27+2=2$ (closed end, so it counts)\n- $x\\to -1^+$: $f(x)\\to -1-3+2=-2$, but $x=-1$ is not in the domain, so the value $-2$ is **not attained** there.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "muted"
+              },
+              {
+                "r": 3,
+                "tone": "warning"
+              },
+              {
+                "r": 5,
+                "tone": "warning"
+              },
+              {
+                "r": 7,
+                "tone": "warning"
+              }
+            ],
+            "caption": "Candidates: x → −1⁺, 0, 2, 3"
+          }
+        },
+        {
+          "title": "Maximum and minimum",
+          "body": "**Maximum value** $=2$, reached at $x=0$ **and** at $x=3$ — so \"maximum at 0 only\" is false.\n\n**Minimum value** $=-2$. On $(-1,0]$, $f$ is strictly increasing from values above $-2$ (the limit $-2$ at $-1$ is never reached), so $f>-2$ there; on $[0,3]$ the only place $f=-2$ is $x=2$. Hence the minimum is attained **at 2 only** — (B) true.",
+          "scene": {
+            "hl": [
+              {
+                "r": 3,
+                "tone": "warning"
+              },
+              {
+                "r": 7,
+                "tone": "warning"
+              },
+              {
+                "r": 5,
+                "tone": "success"
+              }
+            ],
+            "caption": "max 2 at x = 0 and x = 3; min −2 only at x = 2"
+          }
+        },
+        {
+          "title": "Roots",
+          "body": "$f(1)=1-3+2=0$, so $x=1$ is a root — (D) true. Dividing by $(x-1)$:\n$$x^3-3x^2+2=(x-1)(x^2-2x-2),\\qquad x^2-2x-2=0 \\Rightarrow x=1\\pm\\sqrt3.$$\nRoots: $1-\\sqrt3\\approx-0.732$, $1$, $1+\\sqrt3\\approx2.732$. Only $-0.732$ lies in $[-0.9,0]$, so there is **exactly one** root there — (A) false.",
+          "scene": {
+            "hl": [
+              {
+                "r": 2,
+                "tone": "success"
+              },
+              {
+                "r": 4,
+                "tone": "success"
+              },
+              {
+                "r": 6,
+                "tone": "info"
+              }
+            ],
+            "caption": "Roots 1 − √3, 1, 1 + √3"
+          }
+        }
+      ],
+      "answer": {
+        "value": "**(B) and (D)** — the minimum is attained only at $x=2$, and $x=1$ is a root",
+        "choice": [
+          "B",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$f$ is strictly increasing on $[-0.9,0]$ ($f'>0$ for $x<0$) and goes from $f(-0.9)=-1.159$ to $f(0)=2$: exactly **one** root ($1-\\sqrt3\\approx-0.732$), not two."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "The minimum value $-2$ is attained only at $x=2$; near $x=-1$ the function approaches $-2$ but $-1$ is excluded from the domain."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "The maximum value $2$ is attained at $x=0$ and also at the closed end $x=3$ ($f(3)=2$), so \"only\" fails."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "$f(1)=1-3+2=0$."
+        }
+      ],
+      "shortcut": "Sum of coefficients $1-3+2=0$ instantly gives the root $x=1$. Then just compare $f(0)=2$, $f(2)=-2$, $f(3)=2$ and remember that the open end $-1$ cannot host an extremum.",
+      "pitfalls": [
+        "Ignoring the closed end $x=3$, where $f(3)=2$ ties the local maximum — this makes (C) look true.",
+        "Treating $f(-1)=-2$ as attained: $-1$ is excluded, so the minimum is still at 2 only.",
+        "Counting $1+\\sqrt3$ or $1$ as roots in $[-0.9,0]$."
+      ],
+      "verification": "Sign check for (A): $f(-0.9)=-0.729-2.43+2=-1.159<0$ and $f(0)=2>0$ with $f$ monotonic in between ⇒ one root. Product of roots $(1-\\sqrt3)(1)(1+\\sqrt3)=1-3=-2=-\\tfrac{2}{1}$ ✓ (matches $-d/a$).",
+      "animation": {
+        "kind": "table",
+        "title": "Key values of f(x) = x³ − 3x² + 2 on (−1, 3]",
+        "cols": [
+          "x",
+          "f(x)",
+          "note"
+        ],
+        "rows": [
+          [
+            "→ −1⁺",
+            "→ −2",
+            "open end: not attained"
+          ],
+          [
+            "−0.9",
+            "−1.159",
+            "f < 0"
+          ],
+          [
+            "1 − √3 ≈ −0.732",
+            "0",
+            "root"
+          ],
+          [
+            "0",
+            "2",
+            "local max"
+          ],
+          [
+            "1",
+            "0",
+            "root"
+          ],
+          [
+            "2",
+            "−2",
+            "local min"
+          ],
+          [
+            "1 + √3 ≈ 2.732",
+            "0",
+            "root"
+          ],
+          [
+            "3",
+            "2",
+            "closed end"
+          ]
+        ]
+      }
+    },
+    "da-2026-da-18": {
+      "approach": "Both distributions are symmetric about 0, so their CDFs agree at 0. The $t_1$ (Cauchy) density is lower at the centre and has heavier tails: it lies **below** the normal density on $(-c,c)$ and **above** it for $\\lvert y\\rvert>c$. That orders the tail areas, and symmetry gives the other side.",
+      "concepts": [
+        "Standard normal density",
+        "Student t₁ = Cauchy distribution",
+        "Symmetry of CDFs",
+        "Heavy tails"
+      ],
+      "given": "$g(z)=\\dfrac{1}{\\sqrt{2\\pi}}e^{-z^2/2}$ (standard normal), $h(y)=\\dfrac{1}{\\pi(1+y^2)}$ ($t_1$), $c>0$ with $g(c)=h(c)$.",
+      "steps": [
+        {
+          "title": "Peak heights: option (D)",
+          "body": "$g(0)=\\dfrac{1}{\\sqrt{2\\pi}}\\approx0.3989$ and $h(0)=\\dfrac{1}{\\pi}\\approx0.3183$. They differ, so (D) is false; the normal is taller at the centre.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "error"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Symmetry: option (A)",
+          "body": "Both densities are even functions, so half the mass lies on each side of 0: $G(0)=H(0)=\\tfrac12$. (A) is true.",
+          "scene": {
+            "hl": [
+              {
+                "r": 1,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Where the densities cross",
+          "body": "Ratio $\\dfrac{g(y)}{h(y)}=\\sqrt{\\tfrac{\\pi}{2}}\\,(1+y^2)\\,e^{-y^2/2}$. At $y=0$ it is $\\sqrt{\\pi/2}\\approx1.25>1$. With $u=y^2$, $\\dfrac{d}{du}\\big[(1+u)e^{-u/2}\\big]=\\tfrac12(1-u)e^{-u/2}$: the ratio rises until $u=1$ and then falls to $0$, so it crosses $1$ exactly once, at $c\\approx1.85$. Hence $g>h$ on $(-c,c)$ and $h>g$ for $\\lvert y\\rvert>c$ — the $t_1$ tails are heavier."
+        },
+        {
+          "title": "Left tail: option (C)",
+          "body": "$$G(-c)=\\int_{-\\infty}^{-c}g(t)\\,dt<\\int_{-\\infty}^{-c}h(t)\\,dt=H(-c),$$ because $h>g$ on the whole range $(-\\infty,-c)$. Numerically $G(-1.85)\\approx0.032$ while $H(-1.85)=\\tfrac12-\\tfrac{\\arctan 1.85}{\\pi}\\approx0.158$. (C) is true.",
+          "scene": {
+            "hl": [
+              {
+                "r": 2,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Right side: option (B)",
+          "body": "By symmetry $G(c)=1-G(-c)$ and $H(c)=1-H(-c)$. Since $G(-c)<H(-c)$,\n$$G(c)=1-G(-c)>1-H(-c)=H(c).$$ The inequality in (B) is reversed, so (B) is false.",
+          "scene": {
+            "hl": [
+              {
+                "r": 3,
+                "tone": "error"
+              }
+            ],
+            "caption": "Correct: (A) and (C)"
+          }
+        }
+      ],
+      "answer": {
+        "value": "**(A) and (C)**",
+        "choice": [
+          "A",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Both distributions are symmetric about 0, so each CDF equals $\\tfrac12$ at 0."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$G(c)=1-G(-c)>1-H(-c)=H(c)$: the normal has *more* mass below $c$ because it has less in the right tail."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "For $t<-c$ the Cauchy density exceeds the normal one, so the left-tail area $H(-c)$ is larger."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$g(0)=1/\\sqrt{2\\pi}\\approx0.399\\neq h(0)=1/\\pi\\approx0.318$."
+        }
+      ],
+      "shortcut": "Heavy tails ⇒ more probability beyond $\\pm c$: $H(-c)>G(-c)$ and, mirrored, $H(c)<G(c)$. Symmetry ⇒ $G(0)=H(0)=\\tfrac12$.",
+      "pitfalls": [
+        "Assuming the heavier-tailed distribution also has the larger CDF at $+c$ — on the right side the inequality flips.",
+        "Thinking two symmetric densities must have the same peak height."
+      ],
+      "verification": "Numerically $c\\approx1.85$: $g(1.85)\\approx0.0721$ and $h(1.85)=1/(\\pi\\cdot4.4225)\\approx0.0720$. Then $G(1.85)\\approx0.968>H(1.85)\\approx0.842$ ✓.",
+      "animation": {
+        "kind": "table",
+        "title": "Normal(0, 1) vs t₁ (Cauchy), c ≈ 1.85",
+        "cols": [
+          "Quantity",
+          "Normal: g, G",
+          "t₁: h, H",
+          "Relation"
+        ],
+        "rows": [
+          [
+            "density at 0",
+            "0.399",
+            "0.318",
+            "g(0) > h(0)"
+          ],
+          [
+            "CDF at 0",
+            "0.5",
+            "0.5",
+            "G(0) = H(0)"
+          ],
+          [
+            "CDF at −c",
+            "≈ 0.032",
+            "≈ 0.158",
+            "G(−c) < H(−c)"
+          ],
+          [
+            "CDF at +c",
+            "≈ 0.968",
+            "≈ 0.842",
+            "G(c) > H(c)"
+          ]
+        ]
+      }
+    },
+    "da-2026-da-19": {
+      "approach": "One SGD step is $w \\leftarrow w-\\eta\\,\\dfrac{\\partial f_w(x)}{\\partial w}$ evaluated on the current input. For $f_w(x)=wx$ the gradient with respect to $w$ is simply $x$, so the step is $\\eta x$.",
+      "concepts": [
+        "Stochastic gradient descent",
+        "Gradient with respect to the parameter",
+        "Learning rate"
+      ],
+      "given": "$f_w(x)=wx$, $\\eta=0.10$, $w_i=10.00$, input $x=10.00$ at iteration $i+1$.",
+      "steps": [
+        {
+          "title": "Gradient with respect to w",
+          "body": "$$\\frac{\\partial f_w(x)}{\\partial w}=\\frac{\\partial (wx)}{\\partial w}=x=10.00.$$",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "SGD update",
+          "body": "$$w_{i+1}=w_i-\\eta\\cdot\\frac{\\partial f_w(x)}{\\partial w}=10.00-0.10\\times10.00=10.00-1.00=9.00.$$",
+          "scene": {
+            "reveal": 4
+          }
+        },
+        {
+          "title": "Read off the answer",
+          "body": "The step moved $w$ by $-\\eta x=-1.00$, against the gradient, as descent requires. Rounded to two decimals, $w$ at the end of iteration $(i+1)$ is **9.00**, inside the official range $8.90$ to $9.10$.",
+          "scene": {
+            "caption": "w: 10.00 → 9.00"
+          }
+        }
+      ],
+      "answer": {
+        "value": "$w = $ **9.00**",
+        "number": 9,
+        "matchesKey": true
+      },
+      "shortcut": "Linear objective ⇒ constant gradient $x$: the new weight is $w-\\eta x=10-1=9$.",
+      "pitfalls": [
+        "Adding the step ($w+\\eta x=11$) — gradient *descent* moves against the gradient.",
+        "Differentiating with respect to $x$ instead of $w$: here it gives the same number only because $w=x=10$."
+      ],
+      "verification": "The objective decreases as required: before the step $f=10\\times10=100$, after it $f=9\\times10=90<100$.",
+      "animation": {
+        "kind": "equation",
+        "title": "One SGD step",
+        "lines": [
+          {
+            "tex": "\\nabla_w f_w(x)=\\frac{\\partial (wx)}{\\partial w}",
+            "note": "gradient w.r.t. the parameter"
+          },
+          {
+            "tex": "=x=10.00"
+          },
+          {
+            "tex": "w_{i+1}=w_i-\\eta\\,x=10.00-0.10\\times10.00",
+            "note": "SGD update"
+          },
+          {
+            "tex": "=9.00",
+            "tone": "success"
+          }
+        ],
+        "reveal": 1
+      }
+    },
+    "da-2026-da-20": {
+      "approach": "Minimax back-up from the leaves: each MIN node takes the minimum of its three terminal values, then MAX takes the maximum of those backed-up values. The best strategy is the edge leading to that maximum.",
+      "concepts": [
+        "Minimax",
+        "Adversarial search",
+        "Backed-up values"
+      ],
+      "given": "| MAX strategy | MIN strategy 1 | MIN strategy 2 | MIN strategy 3 |\n|---|---|---|---|\n| 1 | 8 | 6 | −1 |\n| 2 | 1 | 5 | 7 |\n| 3 | −4 | −3 | −12 |",
+      "steps": [
+        {
+          "title": "MIN node after MAX strategy 1",
+          "body": "MIN picks the smallest utility: $\\min(8,6,-1)=-1$. Even though $8$ is the best leaf in the whole tree, MIN will never let MAX reach it.",
+          "scene": {
+            "root": {
+              "id": "MAX",
+              "label": "MAX",
+              "children": [
+                {
+                  "id": "MIN1",
+                  "label": "MIN",
+                  "edge": "1",
+                  "sub": "−1",
+                  "tone": "accent",
+                  "children": [
+                    {
+                      "id": "L8",
+                      "label": 8,
+                      "edge": "1"
+                    },
+                    {
+                      "id": "L6",
+                      "label": 6,
+                      "edge": "2"
+                    },
+                    {
+                      "id": "L-1",
+                      "label": -1,
+                      "edge": "3",
+                      "tone": "warning"
+                    }
+                  ]
+                },
+                {
+                  "id": "MIN2",
+                  "label": "MIN",
+                  "edge": "2",
+                  "children": [
+                    {
+                      "id": "L1",
+                      "label": 1,
+                      "edge": "1"
+                    },
+                    {
+                      "id": "L5",
+                      "label": 5,
+                      "edge": "2"
+                    },
+                    {
+                      "id": "L7",
+                      "label": 7,
+                      "edge": "3"
+                    }
+                  ]
+                },
+                {
+                  "id": "MIN3",
+                  "label": "MIN",
+                  "edge": "3",
+                  "children": [
+                    {
+                      "id": "L-4",
+                      "label": -4,
+                      "edge": "1"
+                    },
+                    {
+                      "id": "L-3",
+                      "label": -3,
+                      "edge": "2"
+                    },
+                    {
+                      "id": "L-12",
+                      "label": -12,
+                      "edge": "3"
+                    }
+                  ]
+                }
+              ]
+            },
+            "caption": "MIN₁ = min(8, 6, −1) = −1"
+          }
+        },
+        {
+          "title": "MIN node after MAX strategy 2",
+          "body": "MIN compares its three replies and picks the smallest: $\\min(1,5,7)=1$ (its strategy 1). This is the best guaranteed value so far for MAX, since $1>-1$.",
+          "scene": {
+            "root": {
+              "id": "MAX",
+              "label": "MAX",
+              "children": [
+                {
+                  "id": "MIN1",
+                  "label": "MIN",
+                  "edge": "1",
+                  "sub": "−1",
+                  "tone": "info",
+                  "children": [
+                    {
+                      "id": "L8",
+                      "label": 8,
+                      "edge": "1"
+                    },
+                    {
+                      "id": "L6",
+                      "label": 6,
+                      "edge": "2"
+                    },
+                    {
+                      "id": "L-1",
+                      "label": -1,
+                      "edge": "3",
+                      "tone": "warning"
+                    }
+                  ]
+                },
+                {
+                  "id": "MIN2",
+                  "label": "MIN",
+                  "edge": "2",
+                  "sub": "1",
+                  "tone": "accent",
+                  "children": [
+                    {
+                      "id": "L1",
+                      "label": 1,
+                      "edge": "1",
+                      "tone": "warning"
+                    },
+                    {
+                      "id": "L5",
+                      "label": 5,
+                      "edge": "2"
+                    },
+                    {
+                      "id": "L7",
+                      "label": 7,
+                      "edge": "3"
+                    }
+                  ]
+                },
+                {
+                  "id": "MIN3",
+                  "label": "MIN",
+                  "edge": "3",
+                  "children": [
+                    {
+                      "id": "L-4",
+                      "label": -4,
+                      "edge": "1"
+                    },
+                    {
+                      "id": "L-3",
+                      "label": -3,
+                      "edge": "2"
+                    },
+                    {
+                      "id": "L-12",
+                      "label": -12,
+                      "edge": "3"
+                    }
+                  ]
+                }
+              ]
+            },
+            "caption": "MIN₂ = min(1, 5, 7) = 1"
+          }
+        },
+        {
+          "title": "MIN node after MAX strategy 3",
+          "body": "All three leaves are negative and MIN picks the smallest: $\\min(-4,-3,-12)=-12$ (its strategy 3).",
+          "scene": {
+            "root": {
+              "id": "MAX",
+              "label": "MAX",
+              "children": [
+                {
+                  "id": "MIN1",
+                  "label": "MIN",
+                  "edge": "1",
+                  "sub": "−1",
+                  "tone": "info",
+                  "children": [
+                    {
+                      "id": "L8",
+                      "label": 8,
+                      "edge": "1"
+                    },
+                    {
+                      "id": "L6",
+                      "label": 6,
+                      "edge": "2"
+                    },
+                    {
+                      "id": "L-1",
+                      "label": -1,
+                      "edge": "3",
+                      "tone": "warning"
+                    }
+                  ]
+                },
+                {
+                  "id": "MIN2",
+                  "label": "MIN",
+                  "edge": "2",
+                  "sub": "1",
+                  "tone": "info",
+                  "children": [
+                    {
+                      "id": "L1",
+                      "label": 1,
+                      "edge": "1",
+                      "tone": "warning"
+                    },
+                    {
+                      "id": "L5",
+                      "label": 5,
+                      "edge": "2"
+                    },
+                    {
+                      "id": "L7",
+                      "label": 7,
+                      "edge": "3"
+                    }
+                  ]
+                },
+                {
+                  "id": "MIN3",
+                  "label": "MIN",
+                  "edge": "3",
+                  "sub": "−12",
+                  "tone": "accent",
+                  "children": [
+                    {
+                      "id": "L-4",
+                      "label": -4,
+                      "edge": "1"
+                    },
+                    {
+                      "id": "L-3",
+                      "label": -3,
+                      "edge": "2"
+                    },
+                    {
+                      "id": "L-12",
+                      "label": -12,
+                      "edge": "3",
+                      "tone": "warning"
+                    }
+                  ]
+                }
+              ]
+            },
+            "caption": "MIN₃ = min(−4, −3, −12) = −12"
+          }
+        },
+        {
+          "title": "MAX chooses at the root",
+          "body": "$\\max(-1,\\,1,\\,-12)=1$, obtained through strategy **2**. With optimal play MAX moves along edge 2, MIN replies with its strategy 1, and the game value is $1$.",
+          "scene": {
+            "root": {
+              "id": "MAX",
+              "label": "MAX",
+              "sub": "1",
+              "tone": "success",
+              "children": [
+                {
+                  "id": "MIN1",
+                  "label": "MIN",
+                  "edge": "1",
+                  "sub": "−1",
+                  "tone": "muted",
+                  "children": [
+                    {
+                      "id": "L8",
+                      "label": 8,
+                      "edge": "1"
+                    },
+                    {
+                      "id": "L6",
+                      "label": 6,
+                      "edge": "2"
+                    },
+                    {
+                      "id": "L-1",
+                      "label": -1,
+                      "edge": "3",
+                      "tone": "warning"
+                    }
+                  ]
+                },
+                {
+                  "id": "MIN2",
+                  "label": "MIN",
+                  "edge": "2",
+                  "sub": "1",
+                  "tone": "success",
+                  "children": [
+                    {
+                      "id": "L1",
+                      "label": 1,
+                      "edge": "1",
+                      "tone": "warning"
+                    },
+                    {
+                      "id": "L5",
+                      "label": 5,
+                      "edge": "2"
+                    },
+                    {
+                      "id": "L7",
+                      "label": 7,
+                      "edge": "3"
+                    }
+                  ]
+                },
+                {
+                  "id": "MIN3",
+                  "label": "MIN",
+                  "edge": "3",
+                  "sub": "−12",
+                  "tone": "muted",
+                  "children": [
+                    {
+                      "id": "L-4",
+                      "label": -4,
+                      "edge": "1"
+                    },
+                    {
+                      "id": "L-3",
+                      "label": -3,
+                      "edge": "2"
+                    },
+                    {
+                      "id": "L-12",
+                      "label": -12,
+                      "edge": "3",
+                      "tone": "warning"
+                    }
+                  ]
+                }
+              ]
+            },
+            "caption": "MAX = max(−1, 1, −12) = 1 via strategy 2"
+          }
+        }
+      ],
+      "answer": {
+        "value": "MAX should play strategy **2** (game value 1)",
+        "number": 2,
+        "matchesKey": true
+      },
+      "shortcut": "Read off each MIN group's smallest leaf (−1, 1, −12) and pick the group with the largest of these: the middle one, strategy 2.",
+      "pitfalls": [
+        "Choosing strategy 1 because it contains the largest leaf (8) — MIN would answer with −1.",
+        "Answering the game value (1) instead of the strategy number (2); here they differ.",
+        "Taking the average of each group (expectimax) instead of the minimum."
+      ],
+      "verification": "Alpha–beta gives the same result: after the first subtree α = −1; the second subtree returns 1, so α = 1; in the third subtree the first leaf −4 ≤ α already prunes the rest, confirming MAX prefers strategy 2.",
+      "animation": {
+        "kind": "tree",
+        "title": "Minimax back-up",
+        "root": {
+          "id": "MAX",
+          "label": "MAX",
+          "children": [
+            {
+              "id": "MIN1",
+              "label": "MIN",
+              "edge": "1",
+              "children": [
+                {
+                  "id": "L8",
+                  "label": 8,
+                  "edge": "1"
+                },
+                {
+                  "id": "L6",
+                  "label": 6,
+                  "edge": "2"
+                },
+                {
+                  "id": "L-1",
+                  "label": -1,
+                  "edge": "3"
+                }
+              ]
+            },
+            {
+              "id": "MIN2",
+              "label": "MIN",
+              "edge": "2",
+              "children": [
+                {
+                  "id": "L1",
+                  "label": 1,
+                  "edge": "1"
+                },
+                {
+                  "id": "L5",
+                  "label": 5,
+                  "edge": "2"
+                },
+                {
+                  "id": "L7",
+                  "label": 7,
+                  "edge": "3"
+                }
+              ]
+            },
+            {
+              "id": "MIN3",
+              "label": "MIN",
+              "edge": "3",
+              "children": [
+                {
+                  "id": "L-4",
+                  "label": -4,
+                  "edge": "1"
+                },
+                {
+                  "id": "L-3",
+                  "label": -3,
+                  "edge": "2"
+                },
+                {
+                  "id": "L-12",
+                  "label": -12,
+                  "edge": "3"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "da-2026-da-21": {
+      "approach": "Each recursive step makes one 3-way comparison with the middle element and then continues on one side. In the worst case it always keeps the **larger** side, of size $\\lfloor m/2\\rfloor$ from a range of size $m$. Count the non-empty ranges until the range becomes empty: that count is $\\lfloor\\log_2 n\\rfloor+1$.",
+      "concepts": [
+        "Binary search",
+        "Unsuccessful search",
+        "Decision-tree height",
+        "⌊log₂ n⌋ + 1"
+      ],
+      "steps": [
+        {
+          "title": "What one step does",
+          "body": "For a range of $m$ elements, the middle element is compared with $y$ (one comparison). If $y$ is not equal, the remaining $m-1$ elements split into two sides of sizes $\\lceil (m-1)/2\\rceil$ and $\\lfloor (m-1)/2\\rfloor$. The larger is $\\lceil (m-1)/2\\rceil=\\lfloor m/2\\rfloor$, so the worst case continues with $\\lfloor m/2\\rfloor$ elements.",
+          "scene": {
+            "reveal": 6
+          }
+        },
+        {
+          "title": "Follow the worst-case sizes",
+          "body": "$$1000\\to500\\to250\\to125\\to62\\to31\\to15\\to7\\to3\\to1\\to0$$ Every non-empty range costs one comparison: the ranges of size $1000, 500, 250, 125, 62, 31, 15, 7, 3, 1$ give **10** comparisons. When the range is empty the search stops (\"not found\") without comparing.",
+          "scene": {
+            "reveal": 30,
+            "hl": [
+              {
+                "r": 9,
+                "tone": "success"
+              }
+            ],
+            "caption": "10 comparisons, then the range is empty"
+          }
+        },
+        {
+          "title": "Same result by the formula",
+          "body": "Maximum comparisons $=\\lfloor\\log_2 n\\rfloor+1=\\lceil\\log_2(n+1)\\rceil$. Since $2^9=512\\le1000<1024=2^{10}$, $\\lfloor\\log_2 1000\\rfloor=9$, giving $9+1=10$."
+        }
+      ],
+      "answer": {
+        "value": "**10** comparisons",
+        "number": 10,
+        "matchesKey": true
+      },
+      "shortcut": "$2^{9}\\le 1000<2^{10}$ ⇒ worst case $=10$ comparisons (successful or unsuccessful).",
+      "pitfalls": [
+        "Counting the final empty-range call as a comparison (answer 11).",
+        "Writing $\\log_2 1000\\approx9.97$ and truncating to 9.",
+        "Counting \"equal?\" and \"less than?\" as two separate comparisons — the question defines one 3-way comparison per step."
+      ],
+      "verification": "Small case: $n=3$ (with $2^1\\le3<2^2$) needs at most $\\lfloor\\log_2 3\\rfloor+1=2$ comparisons: compare the middle, then the single remaining element on the chosen side, then the range is empty ✓.",
+      "animation": {
+        "kind": "table",
+        "title": "Worst-case range sizes (n = 1000)",
+        "cols": [
+          "Comparison #",
+          "Range size m",
+          "Larger side ⌊m/2⌋"
+        ],
+        "rows": [
+          [
+            1,
+            1000,
+            500
+          ],
+          [
+            2,
+            500,
+            250
+          ],
+          [
+            3,
+            250,
+            125
+          ],
+          [
+            4,
+            125,
+            62
+          ],
+          [
+            5,
+            62,
+            31
+          ],
+          [
+            6,
+            31,
+            15
+          ],
+          [
+            7,
+            15,
+            7
+          ],
+          [
+            8,
+            7,
+            3
+          ],
+          [
+            9,
+            3,
+            1
+          ],
+          [
+            10,
+            1,
+            0
+          ]
+        ],
+        "reveal": 3
+      }
+    },
+    "da-2026-da-22": {
+      "approach": "In a B+ tree only the **leaves** store data-record pointers; a non-leaf node with $p$ node pointers stores $p-1$ search keys. So find the largest $p$ with $10p+11(p-1)\\le4096$.",
+      "concepts": [
+        "B+ tree internal node",
+        "Order of a B+ tree",
+        "Node capacity inequality"
+      ],
+      "given": "| Item | Size |\n|---|---|\n| Node (block) | 4096 B |\n| Node pointer | 10 B |\n| Search key | 11 B |\n| Data record pointer | 12 B (leaves only) |",
+      "steps": [
+        {
+          "title": "Layout of a non-leaf node",
+          "body": "A non-leaf node with $p$ node pointers interleaves them with $p-1$ keys: $P_1\\,K_1\\,P_2\\,K_2\\cdots K_{p-1}\\,P_p$. No data-record pointers appear in internal nodes of a B+ tree. Size: $$10p+11(p-1)\\le4096.$$",
+          "scene": {
+            "reveal": 1
+          }
+        },
+        {
+          "title": "Solve for p",
+          "body": "$$10p+11p-11\\le4096 \\;\\Rightarrow\\; 21p\\le4107 \\;\\Rightarrow\\; p\\le\\frac{4107}{21}=195.57\\ldots$$ so $p=195$.",
+          "scene": {
+            "reveal": 4
+          }
+        },
+        {
+          "title": "Check the boundary",
+          "body": "- $p=195$: $195\\times10+194\\times11=1950+2134=4084\\le4096$ ✓ (12 bytes spare)\n- $p=196$: $196\\times10+195\\times11=1960+2145=4105>4096$ ✗\n\nMaximum number of node pointers in a non-leaf node $=$ **195**.",
+          "scene": {
+            "reveal": 6
+          }
+        }
+      ],
+      "answer": {
+        "value": "**195** node pointers",
+        "number": 195,
+        "matchesKey": true
+      },
+      "shortcut": "$p=\\left\\lfloor\\dfrac{B+K}{P+K}\\right\\rfloor=\\left\\lfloor\\dfrac{4096+11}{10+11}\\right\\rfloor=\\lfloor195.57\\rfloor=195$.",
+      "pitfalls": [
+        "Including data-record pointers in internal nodes (B-tree formula): $10p+(11+12)(p-1)\\le4096$ gives $124$ — wrong for a B+ tree.",
+        "Using the leaf-node formula: $(11+12)k+10\\le4096$ gives $k=177$ keys per leaf, which answers a different question."
+      ],
+      "verification": "Boundary check above: 195 pointers fit (4084 B) and 196 do not (4105 B).",
+      "animation": {
+        "kind": "equation",
+        "title": "Non-leaf node capacity",
+        "lines": [
+          {
+            "tex": "10p+11(p-1)\\le4096",
+            "note": "p pointers, p − 1 keys"
+          },
+          {
+            "tex": "21p-11\\le4096"
+          },
+          {
+            "tex": "21p\\le4107"
+          },
+          {
+            "tex": "p\\le195.57\\;\\Rightarrow\\;p=195",
+            "tone": "success"
+          },
+          {
+            "tex": "195\\cdot10+194\\cdot11=4084\\le4096",
+            "note": "fits"
+          },
+          {
+            "tex": "196\\cdot10+195\\cdot11=4105>4096",
+            "note": "does not fit",
+            "tone": "error"
+          }
+        ],
+        "reveal": 1
+      }
+    },
+    "da-2026-da-23": {
+      "approach": "$f(f(n))=n$ means $f$ is an **involution**: in its cycle decomposition every cycle has length 1 or 2. Count the bijections by how many disjoint swaps (2-cycles) they contain.",
+      "concepts": [
+        "Permutations and cycle decomposition",
+        "Involutions",
+        "Counting pairings"
+      ],
+      "steps": [
+        {
+          "title": "Why only fixed points and swaps",
+          "body": "If $f$ had a cycle $a\\to b\\to c\\to\\cdots$ of length $\\ge3$, then $f(f(a))=c\\neq a$. With a 2-cycle $a\\leftrightarrow b$: $f(f(a))=f(b)=a$ ✓; with a fixed point $f(a)=a$ ✓. So $f$ is a product of disjoint transpositions."
+        },
+        {
+          "title": "Zero or one swap",
+          "body": "- No swap: the identity — $1$ map.\n- Exactly one swap: choose the pair, $\\binom42=6$ maps; the other two elements are fixed.",
+          "scene": {
+            "reveal": 21,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "info"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Two swaps",
+          "body": "Pair up all four elements: $\\dfrac{4!}{2^2\\cdot2!}=\\dfrac{24}{8}=3$ maps — $(1\\,2)(3\\,4)$, $(1\\,3)(2\\,4)$, $(1\\,4)(2\\,3)$.",
+          "scene": {
+            "reveal": 30,
+            "hl": []
+          }
+        },
+        {
+          "title": "Total",
+          "body": "Add the three disjoint cases (0, 1 or 2 swaps): $$1+6+3=10.$$",
+          "scene": {
+            "hl": [
+              {
+                "c": 2,
+                "tone": "success"
+              }
+            ],
+            "caption": "1 + 6 + 3 = 10 involutions"
+          }
+        }
+      ],
+      "answer": {
+        "value": "**10** such bijections",
+        "number": 10,
+        "matchesKey": true
+      },
+      "shortcut": "Involution numbers satisfy $a(n)=a(n-1)+(n-1)\\,a(n-2)$ with $a(1)=1, a(2)=2$: $a(3)=2+2\\cdot1=4$, $a(4)=4+3\\cdot2=10$.",
+      "pitfalls": [
+        "Forgetting the identity map (answer 9).",
+        "Counting the two-swap maps as $\\binom42\\binom22=6$ — each pairing is counted twice; divide by $2!$ to get 3.",
+        "Answering $4!=24$ (all bijections) — most of them are not their own inverse."
+      ],
+      "verification": "The recurrence in the shortcut is an independent count: element $n$ is either fixed ($a(n-1)$ ways) or swapped with one of the other $n-1$ elements ($a(n-2)$ ways each) — it also gives 10.",
+      "animation": {
+        "kind": "table",
+        "title": "All involutions of {1, 2, 3, 4} (cycle notation)",
+        "cols": [
+          "Type",
+          "Map",
+          "Count"
+        ],
+        "rows": [
+          [
+            "identity",
+            "e",
+            "1"
+          ],
+          [
+            "one swap",
+            "(1 2)",
+            "6"
+          ],
+          [
+            "one swap",
+            "(1 3)",
+            ""
+          ],
+          [
+            "one swap",
+            "(1 4)",
+            ""
+          ],
+          [
+            "one swap",
+            "(2 3)",
+            ""
+          ],
+          [
+            "one swap",
+            "(2 4)",
+            ""
+          ],
+          [
+            "one swap",
+            "(3 4)",
+            ""
+          ],
+          [
+            "two swaps",
+            "(1 2)(3 4)",
+            "3"
+          ],
+          [
+            "two swaps",
+            "(1 3)(2 4)",
+            ""
+          ],
+          [
+            "two swaps",
+            "(1 4)(2 3)",
+            ""
+          ]
+        ],
+        "reveal": 3
+      }
+    },
+    "da-2026-da-24": {
+      "approach": "The exponential distribution is **memoryless**: $P(X>s+t\\mid X>s)=P(X>t)$. With $s=t=5$ the answer is $P(X>5)=0.35$ directly — no need to find $\\lambda$.",
+      "concepts": [
+        "Exponential distribution",
+        "Memoryless property",
+        "Conditional probability"
+      ],
+      "steps": [
+        {
+          "title": "Write the conditional probability",
+          "body": "Since $\\{X>10\\}\\subseteq\\{X>5\\}$,\n$$P(X>10\\mid X>5)=\\frac{P(X>10\\cap X>5)}{P(X>5)}=\\frac{P(X>10)}{P(X>5)}.$$",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Use the survival function",
+          "body": "With mean $\\lambda$, $P(X>t)=e^{-t/\\lambda}$. So\n$$\\frac{e^{-10/\\lambda}}{e^{-5/\\lambda}}=e^{-5/\\lambda}=P(X>5)=0.35.$$\n(Equivalently $P(X>10)=\\big(e^{-5/\\lambda}\\big)^2=0.35^2=0.1225$ and $0.1225/0.35=0.35$.)",
+          "scene": {
+            "reveal": 5
+          }
+        },
+        {
+          "title": "Interpret: memorylessness",
+          "body": "The ratio did not depend on $\\lambda$ at all: in general $P(X>s+t\\mid X>s)=e^{-t/\\lambda}=P(X>t)$. With $s=5$, $t=5$ the answer is $P(X>5)=$ **0.35**.",
+          "scene": {
+            "caption": "P(X > 10 | X > 5) = P(X > 5) = 0.35"
+          }
+        }
+      ],
+      "answer": {
+        "value": "$P(X>10\\mid X>5)=$ **0.35**",
+        "number": 0.35,
+        "matchesKey": true
+      },
+      "shortcut": "Memorylessness: having survived 5 units, the chance of surviving 5 more equals the original chance of surviving 5, i.e. 0.35.",
+      "pitfalls": [
+        "Reporting $P(X>10)=0.1225$ instead of the conditional probability.",
+        "Worrying whether $\\lambda$ is the mean or the rate: the answer does not depend on the parameterisation."
+      ],
+      "verification": "Explicit $\\lambda$: $e^{-5/\\lambda}=0.35\\Rightarrow\\lambda=-5/\\ln0.35=5/1.0498\\approx4.763$. Then $P(X>10)=e^{-10/4.763}=e^{-2.0996}\\approx0.1225$ and $0.1225/0.35=0.35$ ✓.",
+      "animation": {
+        "kind": "equation",
+        "title": "Memoryless property",
+        "lines": [
+          {
+            "tex": "P(X>10\\mid X>5)=\\frac{P(X>10)}{P(X>5)}",
+            "note": "definition"
+          },
+          {
+            "tex": "=\\frac{e^{-10/\\lambda}}{e^{-5/\\lambda}}",
+            "note": "survival function"
+          },
+          {
+            "tex": "=e^{-5/\\lambda}"
+          },
+          {
+            "tex": "=P(X>5)"
+          },
+          {
+            "tex": "=0.35",
+            "tone": "success"
+          }
+        ],
+        "reveal": 1
+      }
+    },
+    "da-2026-da-25": {
+      "approach": "The term $2^{-i}3^{-j}$ factorises into a function of $i$ times a function of $j$, and all terms are positive, so the double series equals the **product of two geometric series**.",
+      "concepts": [
+        "Geometric series",
+        "Separable double sums",
+        "Index starting points"
+      ],
+      "steps": [
+        {
+          "title": "Separate the sums",
+          "body": "$$\\sum_{i=0}^{\\infty}\\sum_{j=1}^{\\infty}2^{-i}3^{-j}=\\Big(\\sum_{i=0}^{\\infty}2^{-i}\\Big)\\Big(\\sum_{j=1}^{\\infty}3^{-j}\\Big).$$",
+          "scene": {
+            "reveal": 1
+          }
+        },
+        {
+          "title": "Sum over i (starts at 0)",
+          "body": "$$\\sum_{i=0}^{\\infty}\\Big(\\tfrac12\\Big)^i=\\frac{1}{1-\\tfrac12}=2.$$",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Sum over j (starts at 1)",
+          "body": "$$\\sum_{j=1}^{\\infty}\\Big(\\tfrac13\\Big)^j=\\frac{\\tfrac13}{1-\\tfrac13}=\\frac{1/3}{2/3}=\\frac12.$$",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "Multiply",
+          "body": "$$2\\times\\frac12=1.$$",
+          "scene": {
+            "reveal": 4
+          }
+        }
+      ],
+      "answer": {
+        "value": "**1**",
+        "number": 1,
+        "matchesKey": true
+      },
+      "shortcut": "$\\sum_{i\\ge0}2^{-i}=2$ and $\\sum_{j\\ge1}3^{-j}=\\tfrac12$ ⇒ product $1$.",
+      "pitfalls": [
+        "Starting $j$ at 0: $\\sum_{j\\ge0}3^{-j}=\\tfrac32$ gives $3$.",
+        "Starting $i$ at 1: $\\sum_{i\\ge1}2^{-i}=1$ gives $\\tfrac12$."
+      ],
+      "verification": "Partial sum check: terms with $i\\le3$, $j\\le3$ give $(1+\\tfrac12+\\tfrac14+\\tfrac18)(\\tfrac13+\\tfrac19+\\tfrac1{27})=1.875\\times0.4815\\approx0.903$, approaching 1 from below ✓.",
+      "animation": {
+        "kind": "equation",
+        "title": "Product of two geometric series",
+        "lines": [
+          {
+            "tex": "\\sum_{i=0}^{\\infty}\\sum_{j=1}^{\\infty}2^{-i}3^{-j}=\\Big(\\sum_{i=0}^{\\infty}2^{-i}\\Big)\\Big(\\sum_{j=1}^{\\infty}3^{-j}\\Big)",
+            "note": "separable"
+          },
+          {
+            "tex": "\\sum_{i=0}^{\\infty}2^{-i}=\\frac{1}{1-1/2}=2"
+          },
+          {
+            "tex": "\\sum_{j=1}^{\\infty}3^{-j}=\\frac{1/3}{1-1/3}=\\frac12"
+          },
+          {
+            "tex": "2\\times\\frac12=1",
+            "tone": "success"
+          }
+        ],
+        "reveal": 1
+      }
+    },
+    "da-2026-da-26": {
+      "approach": "Agglomerative clustering starts with singletons and first merges the closest pair of points — whatever the linkage. So compute all six Manhattan (L1) distances and take the minimum.",
+      "concepts": [
+        "Hierarchical agglomerative clustering",
+        "Manhattan (L1) distance",
+        "Distance matrix"
+      ],
+      "given": "| Point | Coordinates |\n|---|---|\n| P1 | (2, 3, −1) |\n| P2 | (3, 1, 1) |\n| P3 | (5, −2, 3) |\n| P4 | (3, 3, 3) |",
+      "steps": [
+        {
+          "title": "Distances from P1",
+          "body": "$d(P_1,P_2)=\\lvert2-3\\rvert+\\lvert3-1\\rvert+\\lvert-1-1\\rvert=1+2+2=5$\n\n$d(P_1,P_3)=\\lvert2-5\\rvert+\\lvert3+2\\rvert+\\lvert-1-3\\rvert=3+5+4=12$\n\n$d(P_1,P_4)=\\lvert2-3\\rvert+\\lvert3-3\\rvert+\\lvert-1-3\\rvert=1+0+4=5$",
+          "scene": {
+            "reveal": 4,
+            "hl": [
+              {
+                "r": 0
+              }
+            ]
+          }
+        },
+        {
+          "title": "Remaining pairs",
+          "body": "$d(P_2,P_3)=\\lvert3-5\\rvert+\\lvert1+2\\rvert+\\lvert1-3\\rvert=2+3+2=7$\n\n$d(P_2,P_4)=\\lvert3-3\\rvert+\\lvert1-3\\rvert+\\lvert1-3\\rvert=0+2+2=4$\n\n$d(P_3,P_4)=\\lvert5-3\\rvert+\\lvert-2-3\\rvert+\\lvert3-3\\rvert=2+5+0=7$",
+          "scene": {
+            "reveal": 16
+          }
+        },
+        {
+          "title": "Merge the closest pair",
+          "body": "Smallest distance: $\\min\\{5,12,5,7,4,7\\}=4$ for $(P_2,P_4)$. They are merged first — option (D).",
+          "scene": {
+            "hl": [
+              {
+                "r": 1,
+                "c": 3,
+                "tone": "success"
+              },
+              {
+                "r": 3,
+                "c": 1,
+                "tone": "success"
+              }
+            ],
+            "caption": "min distance 4 → merge P2 and P4"
+          }
+        }
+      ],
+      "answer": {
+        "value": "**P2, P4** (distance 4) — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$d(P_1,P_2)=5>4$ (tied with $P_1,P_4$, but neither is the minimum)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$d(P_2,P_3)=7>4$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$d(P_3,P_4)=7>4$."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "$d(P_2,P_4)=0+2+2=4$, the smallest of the six distances."
+        }
+      ],
+      "shortcut": "P2 and P4 share x = 3 and differ by 2 in each of y and z (total 4); every other pair differs by at least 5.",
+      "pitfalls": [
+        "Using Euclidean distance out of habit — here it happens to pick the same pair, but in general L1 and L2 orderings can differ.",
+        "Forgetting absolute values on negative coordinate differences (e.g. $-1-1=-2$ must count as 2)."
+      ],
+      "verification": "Euclidean cross-check: $d_2(P_2,P_4)=\\sqrt{0+4+4}\\approx2.83$ is also the smallest ($d_2(P_1,P_2)=3$), consistent with merging P2 and P4.",
+      "animation": {
+        "kind": "table",
+        "title": "Manhattan distance matrix",
+        "cols": [
+          "P1",
+          "P2",
+          "P3",
+          "P4"
+        ],
+        "rowLabels": [
+          "P1",
+          "P2",
+          "P3",
+          "P4"
+        ],
+        "corner": "d₁",
+        "rows": [
+          [
+            0,
+            5,
+            12,
+            5
+          ],
+          [
+            5,
+            0,
+            7,
+            4
+          ],
+          [
+            12,
+            7,
+            0,
+            7
+          ],
+          [
+            5,
+            4,
+            7,
+            0
+          ]
+        ]
+      }
+    },
+    "da-2026-da-27": {
+      "approach": "Recall what Ridge is: least squares plus an $L_2$ penalty, $\\min_w \\sum_i (y_i-w^\\top x_i)^2+\\lambda\\lVert w\\rVert_2^2$. The penalty shrinks all weights toward zero, trading a little bias for lower variance. Check each statement against that.",
+      "concepts": [
+        "Ridge regression (L2 regularisation)",
+        "Bias–variance trade-off",
+        "Overfitting",
+        "Lasso vs Ridge"
+      ],
+      "steps": [
+        {
+          "title": "The Ridge objective",
+          "body": "$$J(w)=\\sum_{i}(y_i-w^\\top x_i)^2+\\lambda\\lVert w\\rVert_2^2,\\qquad \\lambda>0.$$ The penalty is the **squared $L_2$ norm**. It pulls every weight toward 0 (larger weights are punished more) but almost never makes a weight exactly 0."
+        },
+        {
+          "title": "What the penalty is for",
+          "body": "It fights **overfitting**: a model that fits the training data very well but generalises poorly to test data. Shrinking the weights makes the fitted function less sensitive to the particular training sample, which **reduces variance**. The price is that the estimates are pulled away from the least-squares solution, which **increases bias**. This is exactly statement (D)."
+        },
+        {
+          "title": "Reject the other statements",
+          "body": "- (A) describes the opposite situation (good on test, poor on training); regularisation guards against good-on-training, poor-on-test.\n- (B) $L_1$ is the Lasso penalty; Ridge uses $L_2$.\n- (C) Ridge shrinks magnitudes regardless of sign; it neither targets negative weights nor reduces the number of parameters."
+        }
+      ],
+      "answer": {
+        "value": "**(D)** — the regularizer may increase bias but reduces variance",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Reversed: regularisation guards against overfitting — doing well on the training data but poorly on the test data."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Ridge uses the (squared) $L_2$ norm; the $L_1$ norm is the Lasso penalty."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "The penalty depends on $w_j^2$, so the sign of a weight is irrelevant; Ridge shrinks all weights and does not reduce the parameter count."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Shrinkage introduces bias but lowers the variance of the predictions — the bias–variance trade-off that Ridge exploits."
+        }
+      ],
+      "shortcut": "Ridge = L2 = shrink, not select; regularisation = accept bias to cut variance. Only (D) fits.",
+      "pitfalls": [
+        "Mixing up Ridge ($L_2$) with Lasso ($L_1$).",
+        "Reading (A) quickly — it swaps \"training\" and \"test\"."
+      ],
+      "verification": "Closed form $\\hat w=(X^\\top X+\\lambda I)^{-1}X^\\top y$: as $\\lambda$ grows, $\\hat w\\to0$ (more bias, less variance); at $\\lambda=0$ it is ordinary least squares (unbiased, highest variance). This confirms (D)."
+    },
+    "da-2026-da-28": {
+      "approach": "Translate the sentence first: \"a creative person succeeds if disciplined and does not succeed otherwise\" says that **for a creative person**, success holds exactly when discipline holds: $C\\Rightarrow(S\\Leftrightarrow D)$. Then test each statement for equivalence with that, using simplification and an 8-row truth table.",
+      "concepts": [
+        "Propositional logic translation",
+        "Biconditional",
+        "Logical equivalence via truth table"
+      ],
+      "steps": [
+        {
+          "title": "Formalise the sentence",
+          "body": "For creative people: disciplined ⇒ succeed, and not disciplined ⇒ not succeed, i.e. $S\\Leftrightarrow D$. Nothing is said about non-creative people. So the intended meaning is $$K\\;=\\;C\\Rightarrow(S\\Leftrightarrow D),$$ which is exactly statement (ii).",
+          "scene": {
+            "hl": [
+              {
+                "c": 3,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Statement (i): $Cland SLeftrightarrow D$",
+          "body": "It also forces $D\\Rightarrow C\\land S$: every disciplined person must be creative and succeed. Rows $C=0, D=1$ satisfy $K$ (the sentence says nothing about non-creative people) but make (i) false. So (i) is **not** equivalent.",
+          "scene": {
+            "hl": [
+              {
+                "c": 3,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "c": 4,
+                "tone": "error"
+              },
+              {
+                "r": 3,
+                "c": 4,
+                "tone": "error"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Statement (iii) simplifies to $C$",
+          "body": "$$(D\\Rightarrow S)\\lor\\neg S=\\neg D\\lor S\\lor\\neg S=\\top,$$ so (iii) is $C\\Leftrightarrow\\top\\equiv C$ — \"everyone is creative\". It disagrees with $K$ whenever $C=0$, and is true in rows $C=1$ where $S\\neq D$ (where $K$ is false). Not equivalent.",
+          "scene": {
+            "hl": [
+              {
+                "c": 3,
+                "tone": "success"
+              },
+              {
+                "r": 0,
+                "c": 5,
+                "tone": "error"
+              },
+              {
+                "r": 1,
+                "c": 5,
+                "tone": "error"
+              },
+              {
+                "r": 2,
+                "c": 5,
+                "tone": "error"
+              },
+              {
+                "r": 3,
+                "c": 5,
+                "tone": "error"
+              },
+              {
+                "r": 5,
+                "c": 5,
+                "tone": "error"
+              },
+              {
+                "r": 6,
+                "c": 5,
+                "tone": "error"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Conclusion",
+          "body": "Only (ii) captures the sentence — option (B).",
+          "scene": {
+            "hl": [
+              {
+                "c": 3,
+                "tone": "success"
+              }
+            ],
+            "caption": "Only (ii) matches the intended meaning"
+          }
+        }
+      ],
+      "answer": {
+        "value": "**Only (ii) is TRUE** — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "(i) is too strong: it makes every disciplined person creative and successful, failing the rows $C=0, D=1$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "(ii) $C\\Rightarrow(S\\Leftrightarrow D)$ is the literal translation: for creative people, success exactly when disciplined."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "(iii) reduces to just $C$ because $(D\\Rightarrow S)\\lor\\neg S$ is a tautology."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "(iii) ≡ $C$ says nothing about success or discipline, and (ii) — which is correct — is excluded."
+        }
+      ],
+      "shortcut": "\"If creative, then (succeed iff disciplined)\" is (ii) verbatim. Spot that $(D\\Rightarrow S)\\lor\\neg S$ is a tautology to kill (iii) at once.",
+      "pitfalls": [
+        "Reading (i) as \"creative and disciplined ⇒ succeed\": the biconditional with $D$ also requires every disciplined person to be creative.",
+        "Not simplifying (iii) — it collapses to $C$."
+      ],
+      "verification": "The truth table (canvas) compares all 8 assignments: column (ii) equals the intended K in every row; (i) differs in 2 rows and (iii) in 6 rows.",
+      "animation": {
+        "kind": "table",
+        "title": "Truth table: intended K = C ⇒ (S ⇔ D)",
+        "cols": [
+          "C",
+          "D",
+          "S",
+          "K = (ii)",
+          "(i)",
+          "(iii)"
+        ],
+        "rows": [
+          [
+            0,
+            0,
+            0,
+            1,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1,
+            1,
+            1,
+            0
+          ],
+          [
+            0,
+            1,
+            0,
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            1,
+            1,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            0,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            0,
+            1,
+            0,
+            0,
+            1
+          ],
+          [
+            1,
+            1,
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        ],
+        "mono": true
+      }
+    },
+    "da-2026-da-29": {
+      "approach": "Let $C(n)$ be the number of activations made by mystery(n), including itself. A base call ($n\\le0$) is 1 activation; otherwise $C(n)=1+C(n-1)+C(n-2)$. Note that mystery(1) is **not** a base case — it calls mystery(0) and mystery(-1).",
+      "concepts": [
+        "Recursion tree",
+        "Counting function calls",
+        "Activation records on the call stack"
+      ],
+      "steps": [
+        {
+          "title": "Base cases",
+          "body": "Any call with $n\\le0$ returns 1 immediately: $C(0)=C(-1)=1$.",
+          "scene": {
+            "root": {
+              "id": "m4_0",
+              "label": "m(4)",
+              "children": [
+                {
+                  "id": "m3_1",
+                  "label": "m(3)",
+                  "children": [
+                    {
+                      "id": "m2_2",
+                      "label": "m(2)",
+                      "children": [
+                        {
+                          "id": "m1_3",
+                          "label": "m(1)",
+                          "children": [
+                            {
+                              "id": "m0_4",
+                              "label": "m(0)",
+                              "tone": "muted"
+                            },
+                            {
+                              "id": "m-1_5",
+                              "label": "m(-1)",
+                              "tone": "muted"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "m0_6",
+                          "label": "m(0)",
+                          "tone": "muted"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "m1_7",
+                      "label": "m(1)",
+                      "children": [
+                        {
+                          "id": "m0_8",
+                          "label": "m(0)",
+                          "tone": "muted"
+                        },
+                        {
+                          "id": "m-1_9",
+                          "label": "m(-1)",
+                          "tone": "muted"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "m2_10",
+                  "label": "m(2)",
+                  "children": [
+                    {
+                      "id": "m1_11",
+                      "label": "m(1)",
+                      "children": [
+                        {
+                          "id": "m0_12",
+                          "label": "m(0)",
+                          "tone": "muted"
+                        },
+                        {
+                          "id": "m-1_13",
+                          "label": "m(-1)",
+                          "tone": "muted"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "m0_14",
+                      "label": "m(0)",
+                      "tone": "muted"
+                    }
+                  ]
+                }
+              ]
+            },
+            "caption": "Leaves m(0), m(−1): 1 activation each"
+          }
+        },
+        {
+          "title": "n = 1 is recursive",
+          "body": "$1>0$, so mystery(1) calls mystery(0) and mystery(-1): $$C(1)=1+C(0)+C(-1)=1+1+1=3.$$",
+          "scene": {
+            "root": {
+              "id": "m4_0",
+              "label": "m(4)",
+              "children": [
+                {
+                  "id": "m3_1",
+                  "label": "m(3)",
+                  "children": [
+                    {
+                      "id": "m2_2",
+                      "label": "m(2)",
+                      "children": [
+                        {
+                          "id": "m1_3",
+                          "label": "m(1)",
+                          "children": [
+                            {
+                              "id": "m0_4",
+                              "label": "m(0)",
+                              "tone": "muted"
+                            },
+                            {
+                              "id": "m-1_5",
+                              "label": "m(-1)",
+                              "tone": "muted"
+                            }
+                          ],
+                          "sub": "3",
+                          "tone": "warning"
+                        },
+                        {
+                          "id": "m0_6",
+                          "label": "m(0)",
+                          "tone": "muted"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "m1_7",
+                      "label": "m(1)",
+                      "children": [
+                        {
+                          "id": "m0_8",
+                          "label": "m(0)",
+                          "tone": "muted"
+                        },
+                        {
+                          "id": "m-1_9",
+                          "label": "m(-1)",
+                          "tone": "muted"
+                        }
+                      ],
+                      "sub": "3",
+                      "tone": "warning"
+                    }
+                  ]
+                },
+                {
+                  "id": "m2_10",
+                  "label": "m(2)",
+                  "children": [
+                    {
+                      "id": "m1_11",
+                      "label": "m(1)",
+                      "children": [
+                        {
+                          "id": "m0_12",
+                          "label": "m(0)",
+                          "tone": "muted"
+                        },
+                        {
+                          "id": "m-1_13",
+                          "label": "m(-1)",
+                          "tone": "muted"
+                        }
+                      ],
+                      "sub": "3",
+                      "tone": "warning"
+                    },
+                    {
+                      "id": "m0_14",
+                      "label": "m(0)",
+                      "tone": "muted"
+                    }
+                  ]
+                }
+              ]
+            },
+            "caption": "C(1) = 3"
+          }
+        },
+        {
+          "title": "Build up to n = 3",
+          "body": "$$C(2)=1+C(1)+C(0)=1+3+1=5$$ $$C(3)=1+C(2)+C(1)=1+5+3=9$$",
+          "scene": {
+            "root": {
+              "id": "m4_0",
+              "label": "m(4)",
+              "children": [
+                {
+                  "id": "m3_1",
+                  "label": "m(3)",
+                  "children": [
+                    {
+                      "id": "m2_2",
+                      "label": "m(2)",
+                      "children": [
+                        {
+                          "id": "m1_3",
+                          "label": "m(1)",
+                          "children": [
+                            {
+                              "id": "m0_4",
+                              "label": "m(0)",
+                              "tone": "muted"
+                            },
+                            {
+                              "id": "m-1_5",
+                              "label": "m(-1)",
+                              "tone": "muted"
+                            }
+                          ],
+                          "sub": "3"
+                        },
+                        {
+                          "id": "m0_6",
+                          "label": "m(0)",
+                          "tone": "muted"
+                        }
+                      ],
+                      "sub": "5",
+                      "tone": "warning"
+                    },
+                    {
+                      "id": "m1_7",
+                      "label": "m(1)",
+                      "children": [
+                        {
+                          "id": "m0_8",
+                          "label": "m(0)",
+                          "tone": "muted"
+                        },
+                        {
+                          "id": "m-1_9",
+                          "label": "m(-1)",
+                          "tone": "muted"
+                        }
+                      ],
+                      "sub": "3"
+                    }
+                  ],
+                  "sub": "9",
+                  "tone": "warning"
+                },
+                {
+                  "id": "m2_10",
+                  "label": "m(2)",
+                  "children": [
+                    {
+                      "id": "m1_11",
+                      "label": "m(1)",
+                      "children": [
+                        {
+                          "id": "m0_12",
+                          "label": "m(0)",
+                          "tone": "muted"
+                        },
+                        {
+                          "id": "m-1_13",
+                          "label": "m(-1)",
+                          "tone": "muted"
+                        }
+                      ],
+                      "sub": "3"
+                    },
+                    {
+                      "id": "m0_14",
+                      "label": "m(0)",
+                      "tone": "muted"
+                    }
+                  ],
+                  "sub": "5",
+                  "tone": "warning"
+                }
+              ]
+            },
+            "caption": "C(2) = 5, C(3) = 9"
+          }
+        },
+        {
+          "title": "The initial call",
+          "body": "$$C(4)=1+C(3)+C(2)=1+9+5=15.$$ The recursion tree has **15** nodes, each pushed on the stack once — option (C).",
+          "scene": {
+            "root": {
+              "id": "m4_0",
+              "label": "m(4)",
+              "children": [
+                {
+                  "id": "m3_1",
+                  "label": "m(3)",
+                  "children": [
+                    {
+                      "id": "m2_2",
+                      "label": "m(2)",
+                      "children": [
+                        {
+                          "id": "m1_3",
+                          "label": "m(1)",
+                          "children": [
+                            {
+                              "id": "m0_4",
+                              "label": "m(0)",
+                              "tone": "muted"
+                            },
+                            {
+                              "id": "m-1_5",
+                              "label": "m(-1)",
+                              "tone": "muted"
+                            }
+                          ],
+                          "sub": "3"
+                        },
+                        {
+                          "id": "m0_6",
+                          "label": "m(0)",
+                          "tone": "muted"
+                        }
+                      ],
+                      "sub": "5"
+                    },
+                    {
+                      "id": "m1_7",
+                      "label": "m(1)",
+                      "children": [
+                        {
+                          "id": "m0_8",
+                          "label": "m(0)",
+                          "tone": "muted"
+                        },
+                        {
+                          "id": "m-1_9",
+                          "label": "m(-1)",
+                          "tone": "muted"
+                        }
+                      ],
+                      "sub": "3"
+                    }
+                  ],
+                  "sub": "9"
+                },
+                {
+                  "id": "m2_10",
+                  "label": "m(2)",
+                  "children": [
+                    {
+                      "id": "m1_11",
+                      "label": "m(1)",
+                      "children": [
+                        {
+                          "id": "m0_12",
+                          "label": "m(0)",
+                          "tone": "muted"
+                        },
+                        {
+                          "id": "m-1_13",
+                          "label": "m(-1)",
+                          "tone": "muted"
+                        }
+                      ],
+                      "sub": "3"
+                    },
+                    {
+                      "id": "m0_14",
+                      "label": "m(0)",
+                      "tone": "muted"
+                    }
+                  ],
+                  "sub": "5"
+                }
+              ],
+              "sub": "15",
+              "tone": "success"
+            },
+            "caption": "C(4) = 15 activations"
+          }
+        }
+      ],
+      "answer": {
+        "value": "**15** activations — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Counts each distinct argument 4, 3, 2, 1, 0 once, as memoisation would; without memoisation every call is a new activation (and m(−1) is called too)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Treats $n\\le1$ as the base case (Fibonacci-style): $C(1)=1$ gives $C(2)=3$, $C(3)=5$, $C(4)=9$. But mystery(1) recurses since $1>0$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$C(4)=1+C(3)+C(2)=1+9+5=15$ with $C(1)=3$, $C(0)=C(-1)=1$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Overcount: the recursion tree has exactly 15 nodes and each activation is pushed once (9 in the m(3) subtree + 5 in the m(2) subtree + the initial call); 17 is not reachable from the recurrence."
+        }
+      ],
+      "shortcut": "$C(n)+1$ obeys the Fibonacci rule: $C(n)+1=(C(n-1)+1)+(C(n-2)+1)$ with starting values $2, 2$. Sequence $2,2,4,6,10,16$ for $n=-1..4$, so $C(4)=16-1=15$.",
+      "pitfalls": [
+        "Assuming mystery(1) is a base case — the condition is n <= 0, so mystery(1) makes two more calls.",
+        "Counting only distinct arguments instead of every activation."
+      ],
+      "verification": "Count the tree directly: subtree of m(3) has 9 nodes, subtree of m(2) has 5, plus the root: 9 + 5 + 1 = 15. (The value returned, mystery(4) = 8, is irrelevant to the count.)",
+      "animation": {
+        "kind": "tree",
+        "title": "Recursion tree of mystery(4)",
+        "root": {
+          "id": "m4_0",
+          "label": "m(4)",
+          "children": [
+            {
+              "id": "m3_1",
+              "label": "m(3)",
+              "children": [
+                {
+                  "id": "m2_2",
+                  "label": "m(2)",
+                  "children": [
+                    {
+                      "id": "m1_3",
+                      "label": "m(1)",
+                      "children": [
+                        {
+                          "id": "m0_4",
+                          "label": "m(0)"
+                        },
+                        {
+                          "id": "m-1_5",
+                          "label": "m(-1)"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "m0_6",
+                      "label": "m(0)"
+                    }
+                  ]
+                },
+                {
+                  "id": "m1_7",
+                  "label": "m(1)",
+                  "children": [
+                    {
+                      "id": "m0_8",
+                      "label": "m(0)"
+                    },
+                    {
+                      "id": "m-1_9",
+                      "label": "m(-1)"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "m2_10",
+              "label": "m(2)",
+              "children": [
+                {
+                  "id": "m1_11",
+                  "label": "m(1)",
+                  "children": [
+                    {
+                      "id": "m0_12",
+                      "label": "m(0)"
+                    },
+                    {
+                      "id": "m-1_13",
+                      "label": "m(-1)"
+                    }
+                  ]
+                },
+                {
+                  "id": "m0_14",
+                  "label": "m(0)"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "da-2026-da-30": {
+      "approach": "Forget visit orders: BFS or DFS from $v$ visits exactly the set of vertices reachable from $v$. Reversing every edge reverses every path, so \"$u$ reachable from $v$ in $G$\" is the same fact as \"$v$ reachable from $u$ in $G^R$\". A three-vertex counterexample disposes of the other options.",
+      "concepts": [
+        "Graph reachability",
+        "BFS / DFS visit sets",
+        "Transpose (reverse) graph",
+        "Counterexample"
+      ],
+      "steps": [
+        {
+          "title": "Traversals only decide a set",
+          "body": "For any graph $H$ and start vertex $x$, both BFS and DFS from $x$ visit exactly\n$$\\text{Reach}_H(x) = \\{\\,y : \\text{there is a directed path } x \\leadsto y \\text{ in } H\\,\\}.$$\nBFS and DFS differ only in the **order** of visiting, never in the set. So every \"reachable vertex in the BFS/DFS of …\" in the options is a statement about these sets.",
+          "scene": {
+            "caption": "Example graph $G$ (left) and its reverse $G^R$ (right)"
+          }
+        },
+        {
+          "title": "Reversing edges reverses paths, so (D) holds",
+          "body": "If $v = x_0 \\to x_1 \\to \\dots \\to x_k = u$ is a path in $G$, then every edge $x_{i} \\to x_{i+1}$ appears in $G^R$ as $x_{i+1} \\to x_i$, so $u = x_k \\to x_{k-1} \\to \\dots \\to x_0 = v$ is a path in $G^R$ (and conversely). Hence\n$$u \\in \\text{Reach}_G(v) \\iff v \\in \\text{Reach}_{G^R}(u).$$\nOption (D) — \"$u$ found by DFS of $G$ from $v$ $\\Rightarrow$ $v$ found by BFS of $G^R$ from $u$\" — is exactly the left-to-right direction. It holds for **every** $G$.",
+          "scene": {
+            "caption": "Path $v \\to a$ in $G$ becomes $a \\to v$ in $G^R$",
+            "panels": [
+              {
+                "edgeTones": {
+                  "v>a": "success"
+                }
+              },
+              {
+                "edgeTones": {
+                  "a>v": "success"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "title": "Counterexample for (A) and (B)",
+          "body": "Take $V = \\{v, a, b\\}$ and $E = \\{v \\to a,\\ b \\to v\\}$. Then $G^R$ has edges $a \\to v$ and $v \\to b$.\n\n| traversal | vertices visited |\n|---|---|\n| DFS of $G$ from $v$ | $\\{v, a\\}$ |\n| BFS of $G^R$ from $v$ | $\\{v, b\\}$ |\n\n$b$ is reached in $G^R$ from $v$ but is **not** reachable from $v$ in $G$, so (A) fails. The two sets $\\{v,a\\} \\ne \\{v,b\\}$, so (B) fails. In general $\\text{Reach}_{G^R}(v)$ is the set of vertices that can reach $v$ in $G$ — a different set unless $v$'s component is strongly connected.",
+          "scene": {
+            "caption": "Visited from $v$: $\\{v, a\\}$ in $G$ but $\\{v, b\\}$ in $G^R$",
+            "panels": [
+              {
+                "tones": {
+                  "v": "accent",
+                  "a": "success",
+                  "b": "muted"
+                },
+                "edgeTones": {
+                  "v>a": "success"
+                }
+              },
+              {
+                "tones": {
+                  "v": "accent",
+                  "b": "warning",
+                  "a": "muted"
+                },
+                "edgeTones": {
+                  "v>b": "warning"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "title": "Why (C) fails",
+          "body": "Both traversals start at $v$, so $v$ is **first** in each order. In the reverse of the DFS order $v$ is **last**. If at least two vertices are visited these cannot agree. In the example: BFS of $G^R$ gives $v, b$ while the reversed DFS order of $G$ is $a, v$. So (C) is false."
+        }
+      ],
+      "answer": {
+        "value": "Only (D) always holds: $u \\in \\text{Reach}_G(v) \\Rightarrow v \\in \\text{Reach}_{G^R}(u)$ — option **(D)**",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "BFS of $G^R$ from $v$ finds the vertices that can **reach** $v$ in $G$, not those reachable **from** $v$. With $E = \\{v\\to a, b\\to v\\}$, $b$ is found in $G^R$ but not in $G$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Same counterexample: the visited sets are $\\{v, b\\}$ in $G^R$ and $\\{v, a\\}$ in $G$. They coincide only in special cases (e.g. strongly connected $G$), not always."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Both orders begin with $v$, while the reverse of the DFS order ends with $v$; they clash whenever two or more vertices are visited (example: $v, b$ vs $a, v$). Also the sets themselves may differ."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "A path $v \\leadsto u$ in $G$ reversed edge by edge is a path $u \\leadsto v$ in $G^R$, and BFS from $u$ in $G^R$ visits everything reachable — so $v$ is visited. True for every $G$."
+        }
+      ],
+      "shortcut": "$G^R$ answers \"who can reach me?\"; $G$ answers \"whom can I reach?\". The only statement that swaps **both** the graph and the roles of $u$ and $v$ is (D).",
+      "pitfalls": [
+        "Thinking BFS in $G^R$ \"undoes\" DFS in $G$ — reversal swaps source and target, it does not reproduce the same set from the same start.",
+        "Reading the traversal order into options about sets: BFS vs DFS never changes which vertices are visited."
+      ],
+      "verification": "Directly on the example: DFS of $G$ from $v$ reaches $a$; BFS of $G^R$ from $a$ follows $a \\to v$ and indeed visits $v$ — (D) holds there, while (A), (B), (C) all fail, as computed.",
+      "animation": {
+        "kind": "panels",
+        "panels": [
+          {
+            "kind": "graph",
+            "title": "G",
+            "directed": true,
+            "nodes": [
+              {
+                "id": "b",
+                "x": 0,
+                "y": 0
+              },
+              {
+                "id": "v",
+                "x": 2,
+                "y": 0
+              },
+              {
+                "id": "a",
+                "x": 4,
+                "y": 0
+              }
+            ],
+            "edges": [
+              {
+                "from": "v",
+                "to": "a"
+              },
+              {
+                "from": "b",
+                "to": "v"
+              }
+            ]
+          },
+          {
+            "kind": "graph",
+            "title": "G^R",
+            "directed": true,
+            "nodes": [
+              {
+                "id": "b",
+                "x": 0,
+                "y": 0
+              },
+              {
+                "id": "v",
+                "x": 2,
+                "y": 0
+              },
+              {
+                "id": "a",
+                "x": 4,
+                "y": 0
+              }
+            ],
+            "edges": [
+              {
+                "from": "a",
+                "to": "v"
+              },
+              {
+                "from": "v",
+                "to": "b"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "da-2026-da-31": {
+      "approach": "Insert 3 into the leaf it belongs to, split the overflowing leaf, copy the separator up, and if the root then has too many pointers, split it and push its middle key up into a new root.",
+      "concepts": [
+        "B+ tree insertion",
+        "Leaf split (copy up)",
+        "Internal node split (push up)"
+      ],
+      "given": "- Leaf: at most **2** keys. Non-leaf: at most **3** pointers, i.e. at most **2** keys.\n- Root $[5 \\mid 8]$; leaves $[1, 5] \\to [7, 8] \\to [9, 12] \\to \\text{NULL}$.\n- Search rule shown by the figure: keys $\\le 5$ go left, $5 < k \\le 8$ go to the middle, $k > 8$ go right (5 sits in the left leaf, 8 in the middle one).",
+      "steps": [
+        {
+          "title": "Find the leaf for 3",
+          "body": "At the root, $3 \\le 5$, so follow the leftmost pointer to leaf $[1, 5]$. Inserting in sorted order gives $[1, 3, 5]$ — **3 keys**, but a leaf holds at most 2. Overflow.",
+          "scene": {
+            "root": {
+              "label": [
+                5,
+                8
+              ],
+              "children": [
+                {
+                  "label": [
+                    1,
+                    3,
+                    5
+                  ],
+                  "tone": "error"
+                },
+                {
+                  "label": [
+                    7,
+                    8
+                  ]
+                },
+                {
+                  "label": [
+                    9,
+                    12
+                  ]
+                }
+              ]
+            },
+            "caption": "Leaf $[1,3,5]$ overflows (max 2 keys)"
+          }
+        },
+        {
+          "title": "Split the leaf and copy the separator up",
+          "body": "Split $[1, 3, 5]$ into $[1, 3]$ (left keeps $\\lceil 3/2 \\rceil = 2$ keys) and $[5]$, keep the leaf chain $[1,3] \\to [5] \\to [7,8] \\to [9,12]$, and **copy** the separator into the parent. With the \"$\\le$ goes left\" rule of this tree the separator is 3 (largest key of the left leaf).\n\nThe root becomes $[3 \\mid 5 \\mid 8]$ with **4 pointers** — more than the allowed 3. Overflow again.",
+          "scene": {
+            "root": {
+              "label": [
+                3,
+                5,
+                8
+              ],
+              "tone": "error",
+              "children": [
+                {
+                  "label": [
+                    1,
+                    3
+                  ],
+                  "tone": "warning"
+                },
+                {
+                  "label": [
+                    5
+                  ],
+                  "tone": "warning"
+                },
+                {
+                  "label": [
+                    7,
+                    8
+                  ]
+                },
+                {
+                  "label": [
+                    9,
+                    12
+                  ]
+                }
+              ]
+            },
+            "caption": "Root now has 3 keys / 4 pointers (max 3 pointers)"
+          }
+        },
+        {
+          "title": "Split the root and push the middle key up",
+          "body": "An internal split of keys $3, 5, 8$ keeps 3 in the left node, 8 in the right node, and **moves** the middle key 5 up (it is not kept below, unlike a leaf split). Since the root itself split, 5 forms a **new root** and the height grows by one:\n\n- root $[5]$\n- left child $[3]$ → leaves $[1, 3]$, $[5]$\n- right child $[8]$ → leaves $[7, 8]$, $[9, 12]$\n\nEvery node now satisfies the limits (each internal node has 2 pointers, each leaf $\\le 2$ keys).",
+          "scene": {
+            "root": {
+              "id": "root",
+              "label": [
+                5
+              ],
+              "tone": "success",
+              "children": [
+                {
+                  "id": "i3",
+                  "label": [
+                    3
+                  ],
+                  "children": [
+                    {
+                      "id": "l13",
+                      "label": [
+                        1,
+                        3
+                      ]
+                    },
+                    {
+                      "id": "l5",
+                      "label": [
+                        5
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "i8",
+                  "label": [
+                    8
+                  ],
+                  "children": [
+                    {
+                      "id": "l78",
+                      "label": [
+                        7,
+                        8
+                      ]
+                    },
+                    {
+                      "id": "l912",
+                      "label": [
+                        9,
+                        12
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "caption": "New root holds only **5**"
+          }
+        },
+        {
+          "title": "The result does not depend on the split convention",
+          "body": "Had the leaf been split as $[1] \\mid [3, 5]$ with separator 1, the root would hold $[1 \\mid 5 \\mid 8]$ — still 3 keys, and its middle key is still 5. Either way the new root contains only **5**."
+        }
+      ],
+      "answer": {
+        "value": "Root after inserting 3: **5** — option **(A)**",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "The leaf split sends a third key into the full root, the root splits, and its middle key 5 becomes the new root."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "8 is the **right** key of the overflowing root $[3, 5, 8]$; it stays in the right child. Only the middle key moves up."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Would mean the root kept two keys after the insert, but the root received a third key and had to split; 3 ends in an internal node one level down."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$[3, 5, 8]$ is the root **before** fixing the overflow: 3 keys need 4 pointers, but non-leaf nodes allow at most 3, so it must split."
+        }
+      ],
+      "shortcut": "Root full ($2$ keys) + its child leaf full $\\Rightarrow$ the insert cascades to a root split, and the new root is the median of $\\{\\text{new separator}, 5, 8\\}$; any separator $< 5$ makes it 5.",
+      "pitfalls": [
+        "Forgetting that 3 pointers per internal node means at most 2 keys, so a root with 3 keys is illegal.",
+        "Copying the middle key of an internal split into both children (only leaf splits copy; internal splits move the key up)."
+      ],
+      "verification": "Searching the final tree for each key $1, 3, 5, 7, 8, 9, 12$ with the \"$\\le$ left\" rule lands in the leaf that holds it (e.g. 5: $5 \\le 5$ → $[3]$, $5 > 3$ → leaf $[5]$), so the tree is a valid B+ tree containing all keys.",
+      "animation": {
+        "kind": "tree",
+        "title": "Inserting 3",
+        "caption": "Initial B+ tree",
+        "root": {
+          "label": [
+            5,
+            8
+          ],
+          "children": [
+            {
+              "label": [
+                1,
+                5
+              ]
+            },
+            {
+              "label": [
+                7,
+                8
+              ]
+            },
+            {
+              "label": [
+                9,
+                12
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "da-2026-da-32": {
+      "approach": "Evaluate the two operands of the outer join separately (inner joins, then selections), then join them on **all** their common attributes $P, Q, S$ before projecting.",
+      "concepts": [
+        "Natural join on common attributes",
+        "Selection",
+        "Projection"
+      ],
+      "steps": [
+        {
+          "title": "$X \\bowtie Y$ joins on $P$ and $Q$",
+          "body": "Common attributes of $X(P,Q,R)$ and $Y(P,Q,S)$: $P, Q$.\n\n- $(P1, Q1, R1)$ matches $(P1, Q1, 2)$ → $(P1, Q1, R1, 2)$\n- $(P2, Q2, R2)$: $Y$ has $(P2, Q1)$ and $(P1, Q2)$ but no $(P2, Q2)$ → no match\n- $(P3, Q3, R2)$ matches $(P3, Q3, 1)$ → $(P3, Q3, R2, 1)$"
+        },
+        {
+          "title": "Select $Q = Q3 \\lor R = R2$",
+          "body": "- $(P1, Q1, R1, 2)$: $Q1 \\ne Q3$ and $R1 \\ne R2$ → rejected.\n- $(P3, Q3, R2, 1)$: $Q = Q3$ → kept.\n\nLeft operand $L = \\{(P3, Q3, R2, 1)\\}$ over $(P, Q, R, S)$.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "error"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              }
+            ],
+            "caption": "Left operand: only $(P3,Q3,R2,1)$ survives"
+          }
+        },
+        {
+          "title": "$Y \\bowtie Z$ joins on $P$, then select $S > 1$",
+          "body": "Common attribute: $P$. $Z$ has $P1 \\to T1$, $P3 \\to T2$ and $P4$ (twice), but no $P2$.\n\n| $P$ | $Q$ | $S$ | $T$ | $S>1$? |\n|---|---|---|---|---|\n| P1 | Q1 | 2 | T1 | yes |\n| P1 | Q2 | 5 | T1 | yes |\n| P3 | Q3 | 1 | T2 | no |\n\n$(P2, Q1, 6)$ has no partner in $Z$; the $P4$ rows of $Z$ have no partner in $Y$. Right operand $R' = \\{(P1, Q1, 2, T1), (P1, Q2, 5, T1)\\}$.",
+          "scene": {
+            "kind": "table",
+            "title": "σ(S>1)[Y ⋈ Z]",
+            "cols": [
+              "P",
+              "Q",
+              "S",
+              "T"
+            ],
+            "rows": [
+              [
+                "P1",
+                "Q1",
+                2,
+                "T1"
+              ],
+              [
+                "P1",
+                "Q2",
+                5,
+                "T1"
+              ],
+              [
+                "P3",
+                "Q3",
+                1,
+                "T2"
+              ]
+            ],
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "tone": "error"
+              }
+            ],
+            "caption": "Right operand: the two P1 rows"
+          }
+        },
+        {
+          "title": "Join $L$ with $R'$ on $P, Q, S$ — nothing matches",
+          "body": "$L(P,Q,R,S)$ and $R'(P,Q,S,T)$ share $P, Q, S$. The only left tuple has $P = P3$, while both right tuples have $P = P1$. No pair agrees, so the join is empty, and $\\Pi_{PRS}$ of an empty relation is empty: **zero rows**.",
+          "scene": {
+            "kind": "table",
+            "title": "L ⋈ R′ (common P, Q, S)",
+            "cols": [
+              "side",
+              "P",
+              "Q",
+              "S"
+            ],
+            "rows": [
+              [
+                "L",
+                "P3",
+                "Q3",
+                1
+              ],
+              [
+                "R'",
+                "P1",
+                "Q1",
+                2
+              ],
+              [
+                "R'",
+                "P1",
+                "Q2",
+                5
+              ]
+            ],
+            "hl": [
+              {
+                "c": 1,
+                "tone": "error"
+              }
+            ],
+            "caption": "P3 never meets P1 → **0 rows**"
+          }
+        }
+      ],
+      "answer": {
+        "value": "The result is empty — **zero rows**, option **(D)**",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Needs the $P1$ tuple of $X \\bowtie Y$ on the left, but $(P1, Q1, R1, 2)$ fails the selection ($Q1 \\ne Q3$, $R1 \\ne R2$); also $(P1, R1, 5)$ would need $Q2$ to match $Q1$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Adds $(P2, R2, 6)$, but $P2$ appears neither in $X \\bowtie Y$ (no $(P2, Q2)$ in $Y$) nor in $Y \\bowtie Z$ (no $P2$ in $Z$)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "This is what you get if the selection on $X \\bowtie Y$ is skipped: $(P1, Q1, R1, 2)$ would then join $(P1, Q1, 2, T1)$. With the selection it is removed."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "The only surviving left tuple has $P3$, the only surviving right tuples have $P1$; the join on $P, Q, S$ is empty."
+        }
+      ],
+      "shortcut": "After the left selection only $P3$ is left; after the right selection only $P1$ is left. Different $P$ values ⇒ empty join, no further work needed.",
+      "pitfalls": [
+        "Joining the two operands only on $P$: the natural join uses **every** common attribute ($P$, $Q$, $S$).",
+        "Thinking the NULL in $Z$ matters — $Z$'s $P4$ rows have no partner in $Y$ anyway."
+      ],
+      "verification": "The $P$ column alone settles it: left side $\\{P3\\}$, right side $\\{P1\\}$, intersection empty, so no join of any kind on $P$ can produce a row.",
+      "animation": {
+        "kind": "table",
+        "title": "X ⋈ Y (common P, Q)",
+        "cols": [
+          "P",
+          "Q",
+          "R",
+          "S"
+        ],
+        "rows": [
+          [
+            "P1",
+            "Q1",
+            "R1",
+            2
+          ],
+          [
+            "P3",
+            "Q3",
+            "R2",
+            1
+          ]
+        ],
+        "caption": "Two tuples match on $(P, Q)$"
+      }
+    },
+    "da-2026-da-33": {
+      "approach": "A cuboid chooses, independently for each dimension, one level of its concept hierarchy or \"all\" (the dimension aggregated away). So the count is $\\prod_i (L_i + 1)$ with $L_i$ the number of levels of dimension $i$.",
+      "concepts": [
+        "Data cube / cuboids",
+        "Concept hierarchy",
+        "Multiplication principle"
+      ],
+      "given": "| Dimension | Levels (top → bottom) | $L_i$ |\n|---|---|---|\n| Time | Year, Month, Day | 3 |\n| Location | Country, State, City | 3 |\n| Item | Item Category, Item Type, Item | 3 |",
+      "steps": [
+        {
+          "title": "Choices per dimension",
+          "body": "For the Time dimension a cuboid can group by Year, Month or Day, or not use Time at all (the virtual top level \"all\"). That is $3 + 1 = 4$ choices. The same holds for Location and Item.",
+          "scene": {
+            "hl": [
+              {
+                "c": 3,
+                "tone": "warning"
+              }
+            ],
+            "caption": "\"all\" is the extra (virtual) level of every hierarchy"
+          }
+        },
+        {
+          "title": "Multiply the independent choices",
+          "body": "$$T = \\prod_{i=1}^{3} (L_i + 1) = (3+1)(3+1)(3+1) = 4^3 = 64.$$\nThe extreme cases are included: (Day, City, Item) is the base cuboid and (all, all, all) is the apex cuboid.",
+          "scene": {
+            "hl": [],
+            "vars": {
+              "T": "4 × 4 × 4 = 64"
+            },
+            "caption": "$4^3 = 64$ cuboids"
+          }
+        },
+        {
+          "title": "Compare with the options",
+          "body": "$4^3 = 64$ is option (A). The others are $2^3 = 8$ (the count for a cube **without** hierarchies, where each dimension is simply kept or dropped), $2! = 2$ and $4! = 24$ — none equals 64."
+        }
+      ],
+      "answer": {
+        "value": "$(3+1)^3 = 4^3 = 64$ cuboids — option **(A)**",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Each of the 3 dimensions offers 3 levels + \"all\" = 4 choices: $4^3 = 64$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$2^n = 8$ is the count when every dimension has a single level (include it or not); it ignores the hierarchies."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$2! = 2$ has no counting meaning here; cuboids are chosen per dimension, not by ordering anything."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$4! = 24$ counts orderings of 4 objects; the levels of different dimensions are combined, not permuted."
+        }
+      ],
+      "shortcut": "Cuboids with hierarchies $= \\prod (\\text{levels} + 1)$; three dimensions with three levels each give $4^3$.",
+      "pitfalls": [
+        "Forgetting the \"all\" level (that gives $3^3 = 27$, which is not even an option).",
+        "Using $2^n$, which is correct only when no dimension has a hierarchy."
+      ],
+      "verification": "Sanity check with one level per dimension: the formula gives $(1+1)^3 = 8 = 2^3$, the familiar number of cuboids of a 3-D cube without hierarchies.",
+      "animation": {
+        "kind": "table",
+        "title": "One choice per dimension",
+        "cols": [
+          "level 1",
+          "level 2",
+          "level 3",
+          "(none)"
+        ],
+        "rowLabels": [
+          "Time",
+          "Location",
+          "Item"
+        ],
+        "corner": "dimension",
+        "rows": [
+          [
+            "Year",
+            "Month",
+            "Day",
+            "all"
+          ],
+          [
+            "Country",
+            "State",
+            "City",
+            "all"
+          ],
+          [
+            "Item Category",
+            "Item Type",
+            "Item",
+            "all"
+          ]
+        ]
+      }
+    },
+    "da-2026-da-34": {
+      "approach": "Write $W = 2X - 1$. It only takes the values $\\pm 1$, so $W^2 = 1$ always; with independence, $\\operatorname{Var}(WY) = E[W^2]E[Y^2] - (E[W]E[Y])^2$ collapses to $E[Y^2]$.",
+      "concepts": [
+        "Variance of a product of independent RVs",
+        "Bernoulli distribution",
+        "$E[Y^2] = \\operatorname{Var}(Y) + (E[Y])^2$"
+      ],
+      "steps": [
+        {
+          "title": "$W = 2X - 1$ is a random sign",
+          "body": "$X \\in \\{0, 1\\}$ with $P(X = 1) = 0.3$, so $W = 2X - 1$ is $+1$ with probability $0.3$ and $-1$ with probability $0.7$.\n$$E[W] = 0.3(1) + 0.7(-1) = -0.4, \\qquad W^2 = 1 \\text{ always} \\Rightarrow E[W^2] = 1.$$\n$W$ is a function of $X$, so $W$ and $Y$ are independent.",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Mean of $WY$",
+          "body": "By independence, $E[WY] = E[W]\\,E[Y] = (-0.4)(0) = 0$.",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "Second moment and variance",
+          "body": "$E[(WY)^2] = E[W^2]\\,E[Y^2] = 1 \\cdot \\left(\\operatorname{Var}(Y) + (E[Y])^2\\right) = 1 \\cdot (100 + 0) = 100.$\n$$\\operatorname{Var}(WY) = E[(WY)^2] - (E[WY])^2 = 100 - 0^2 = 100.$$",
+          "scene": {
+            "reveal": 5
+          }
+        }
+      ],
+      "answer": {
+        "value": "$\\operatorname{Var}\\big((2X-1)Y\\big) = $ **100** — option **(A)**",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$W^2 = 1$ and $E[WY] = 0$ give $\\operatorname{Var}(WY) = E[Y^2] = 100$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Any value below 100 would need $(E[WY])^2 > 0$, but $E[WY] = E[W]E[Y] = 0$. 90 does not come from a valid computation."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$49 = 0.7^2 \\times 100$ comes from squaring a probability instead of the value $W = \\pm 1$; the variance is not reduced at all here."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$21 = \\operatorname{Var}(X)\\operatorname{Var}(Y) = 0.21 \\times 100$ — the variance of a product is not the product of variances (and the factor is $2X-1$, not $X$)."
+        }
+      ],
+      "shortcut": "Multiplying a zero-mean variable by an independent random sign does not change its distribution's spread: $(\\pm 1)\\cdot Y$ has the same variance as $Y$, i.e. 100.",
+      "pitfalls": [
+        "Computing $\\operatorname{Var}(2X-1)\\operatorname{Var}(Y) = 0.84 \\times 100 = 84$ — wrong formula for a product.",
+        "Forgetting that $E[Y] = 0$ makes the cross term vanish."
+      ],
+      "verification": "General formula: $\\operatorname{Var}(WY) = \\operatorname{Var}(W)\\operatorname{Var}(Y) + \\operatorname{Var}(W)(E Y)^2 + \\operatorname{Var}(Y)(E W)^2 = 0.84(100) + 0.84(0) + 100(0.16) = 84 + 16 = 100$, where $\\operatorname{Var}(W) = 4\\operatorname{Var}(X) = 4(0.21) = 0.84$.",
+      "animation": {
+        "kind": "equation",
+        "title": "Var of (2X − 1)Y",
+        "reveal": 0,
+        "lines": [
+          {
+            "tex": "E[W] = 0.3(1) + 0.7(-1) = -0.4",
+            "note": "W = 2X − 1 = ±1"
+          },
+          {
+            "tex": "E[W^2] = 1",
+            "note": "W² = 1 always"
+          },
+          {
+            "tex": "E[WY] = E[W]\\,E[Y] = (-0.4)(0) = 0",
+            "note": "independence"
+          },
+          {
+            "tex": "E[(WY)^2] = E[W^2]\\,E[Y^2] = 1 \\cdot (100 + 0^2) = 100"
+          },
+          {
+            "tex": "\\operatorname{Var}(WY) = 100 - 0^2 = 100",
+            "tone": "success"
+          }
+        ]
+      }
+    },
+    "da-2026-da-35": {
+      "approach": "Recognise the sum as a Poisson CDF: $\\sum_{k=0}^{n} e^{-n} n^k / k! = P(N_n \\le n)$ with $N_n \\sim \\text{Poisson}(n)$. Since $N_n$ is a sum of $n$ i.i.d. $\\text{Poisson}(1)$ variables, the CLT sends this probability to $\\Phi(0) = \\tfrac12$.",
+      "concepts": [
+        "Poisson distribution",
+        "Central limit theorem",
+        "Standard normal CDF"
+      ],
+      "steps": [
+        {
+          "title": "The sum is a Poisson probability",
+          "body": "If $N_n \\sim \\text{Poisson}(\\lambda = n)$ then $P(N_n = k) = \\dfrac{e^{-n} n^k}{k!}$. Summing $k = 0, \\dots, n$:\n$$\\sum_{k=0}^{n} \\frac{e^{-n} n^k}{k!} = P(N_n \\le n).$$",
+          "scene": {
+            "kind": "equation",
+            "title": "Evaluating L",
+            "reveal": 1,
+            "lines": [
+              {
+                "tex": "\\sum_{k=0}^{n} \\frac{e^{-n}n^k}{k!} = P(N_n \\le n)",
+                "note": "N_n ~ Poisson(n)"
+              },
+              {
+                "tex": "N_n = Y_1 + \\dots + Y_n,\\ Y_i \\sim \\text{Poisson}(1)",
+                "note": "mean 1, variance 1"
+              },
+              {
+                "tex": "P(N_n \\le n) = P\\!\\left(\\frac{N_n - n}{\\sqrt n} \\le 0\\right)"
+              },
+              {
+                "tex": "\\to \\Phi(0) = \\tfrac12",
+                "tone": "success",
+                "note": "CLT"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Write the Poisson as a sum of i.i.d. terms",
+          "body": "A sum of independent Poissons is Poisson with the rates added, so $N_n \\overset{d}{=} Y_1 + \\dots + Y_n$ with $Y_i \\sim \\text{Poisson}(1)$ i.i.d., each with mean $1$ and variance $1$. Hence $E[N_n] = n$ and $\\operatorname{Var}(N_n) = n$.",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Standardise and apply the CLT",
+          "body": "$$P(N_n \\le n) = P\\!\\left(\\frac{N_n - n}{\\sqrt{n}} \\le \\frac{n - n}{\\sqrt{n}}\\right) = P\\!\\left(Z_n \\le 0\\right),$$\nand by the central limit theorem $Z_n = \\frac{N_n - n}{\\sqrt n}$ converges in distribution to $N(0, 1)$. $\\Phi$ is continuous at $0$, so\n$$L = \\lim_{n\\to\\infty} P(Z_n \\le 0) = \\Phi(0) = \\tfrac12 = 0.5.$$",
+          "scene": {
+            "reveal": 4
+          }
+        },
+        {
+          "title": "Numerical check",
+          "body": "Exact values of the sum: $n=1$: $0.7358$; $n=10$: $0.5830$; $n=100$: $0.5266$; $n=1000$: $0.5084$; $n=10000$: $0.5027$ — decreasing towards $0.5$ (the excess shrinks like $\\frac{0.27}{\\sqrt n}$).",
+          "scene": {
+            "kind": "bars",
+            "title": "P(Poisson(n) ≤ n)",
+            "max": 1,
+            "caption": "Values approach **0.5**",
+            "bars": [
+              {
+                "label": "n=1",
+                "value": 0.7358,
+                "display": "0.736"
+              },
+              {
+                "label": "n=10",
+                "value": 0.583,
+                "display": "0.583"
+              },
+              {
+                "label": "n=100",
+                "value": 0.5266,
+                "display": "0.527"
+              },
+              {
+                "label": "n=1000",
+                "value": 0.5084,
+                "display": "0.508"
+              },
+              {
+                "label": "n=10⁴",
+                "value": 0.5027,
+                "display": "0.503",
+                "tone": "success"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "$L = \\Phi(0) = $ **0.5** — option **(A)**",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$P(\\text{Poisson}(n) \\le n) \\to \\Phi(0) = 0.5$ by the CLT; confirmed numerically."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$1$ is the value of the **full** series $\\sum_{k=0}^{\\infty} e^{-n}n^k/k!$; truncating at $k = n$ (the mean) keeps only about half the mass."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "The mass does not escape: it piles up symmetrically around the mean $n$ with spread $\\sqrt n$, so half of it stays at or below $n$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$e^{-1}$ is the single term $k = 0$ at $n = 1$; it is neither the sum nor its limit (the sum at $n=1$ is already $2e^{-1} \\approx 0.736$)."
+        }
+      ],
+      "shortcut": "\"Poisson CDF evaluated at its own mean\" → CLT → $\\frac12$. The same trick gives $\\lim e^{-n}\\sum_{k\\le n} n^k/k! = \\tfrac12$, a classic.",
+      "pitfalls": [
+        "Treating the sum as the full exponential series $e^{n}$ and getting $1$.",
+        "Applying the CLT to a single Poisson without noting it is a sum of $n$ i.i.d. $\\text{Poisson}(1)$ terms."
+      ],
+      "verification": "Exact partial sums computed for n = 1 to 10000 (step 4) decrease monotonically to 0.5."
+    },
+    "da-2026-da-36": {
+      "approach": "The sum of the eigenvalues equals the trace, so there is no need to find the eigenvalues: $1 + 2\\cos t = 1 + \\sqrt2$ gives $\\cos t = \\frac{\\sqrt2}{2}$.",
+      "concepts": [
+        "Trace = sum of eigenvalues",
+        "Rotation matrix",
+        "Solving $\\cos t = c$ on $[-\\pi, \\pi]$"
+      ],
+      "steps": [
+        {
+          "title": "Use the trace",
+          "body": "For any square matrix, $\\gamma_1 + \\gamma_2 + \\gamma_3 = \\operatorname{tr}(A) = 1 + \\cos t + \\cos t = 1 + 2\\cos t.$",
+          "scene": {
+            "reveal": 1
+          }
+        },
+        {
+          "title": "Solve $1 + 2\\cos t = 1 + \\sqrt2$",
+          "body": "$2\\cos t = \\sqrt2 \\Rightarrow \\cos t = \\dfrac{\\sqrt2}{2}$. On $[-\\pi, \\pi]$, cosine takes this value exactly at $t = \\dfrac{\\pi}{4}$ and $t = -\\dfrac{\\pi}{4}$ (cosine is even, and no other angle in $[-\\pi,\\pi]$ qualifies).",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "Cross-check with the actual eigenvalues",
+          "body": "The matrix is block-diagonal: $[1]$ and a $2\\times2$ rotation block with characteristic polynomial $\\lambda^2 - 2\\cos t\\,\\lambda + 1 = 0$, so $\\lambda = \\cos t \\pm i \\sin t = e^{\\pm i t}$. Then $\\gamma_1 + \\gamma_2 + \\gamma_3 = 1 + e^{it} + e^{-it} = 1 + 2\\cos t$, the same as the trace. At $t = \\pm\\frac{\\pi}{4}$: $1 + 2 \\cdot \\frac{\\sqrt2}{2} = 1 + \\sqrt2$. ✓",
+          "scene": {
+            "reveal": 4
+          }
+        }
+      ],
+      "answer": {
+        "value": "$t \\in \\left\\{\\frac{\\pi}{4}, -\\frac{\\pi}{4}\\right\\}$ — option **(C)**",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$t = \\frac{\\pi}{3}$ gives $1 + 2\\cdot\\frac12 = 2 \\ne 1 + \\sqrt2$; also the set is not symmetric, though $\\cos$ is even."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$t = -\\frac{\\pi}{3}$ gives sum $2$, not $1 + \\sqrt2$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$\\cos(\\pm\\frac{\\pi}{4}) = \\frac{\\sqrt2}{2}$, so the sum is $1 + \\sqrt2$ for both, and these are the only solutions in $[-\\pi, \\pi]$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$\\cos(\\pm\\frac{\\pi}{3}) = \\frac12$ gives sum $2$."
+        }
+      ],
+      "shortcut": "Sum of eigenvalues = trace $= 1 + 2\\cos t$. Since $\\cos$ is even the answer set must be symmetric, which leaves (C) or (D); $\\cos\\frac{\\pi}{4} = \\frac{\\sqrt2}{2}$ picks (C).",
+      "pitfalls": [
+        "Trying to add the complex eigenvalues $e^{\\pm it}$ and forgetting their imaginary parts cancel.",
+        "Missing the negative solution $-\\frac{\\pi}{4}$ in $[-\\pi, \\pi]$."
+      ],
+      "verification": "Back-substitution: $1 + 2\\cos(\\pm\\pi/4) = 1 + 2(0.7071) = 2.4142 = 1 + \\sqrt2$.",
+      "animation": {
+        "kind": "equation",
+        "title": "Sum of eigenvalues = trace",
+        "reveal": 0,
+        "lines": [
+          {
+            "tex": "\\gamma_1+\\gamma_2+\\gamma_3 = \\operatorname{tr}(A) = 1 + 2\\cos t",
+            "note": "trace"
+          },
+          {
+            "tex": "1 + 2\\cos t = 1 + \\sqrt2 \\Rightarrow \\cos t = \\tfrac{\\sqrt2}{2}"
+          },
+          {
+            "tex": "t \\in [-\\pi,\\pi] \\Rightarrow t = \\pm\\tfrac{\\pi}{4}",
+            "tone": "success"
+          },
+          {
+            "tex": "\\text{eigenvalues } 1,\\ e^{\\pm it}:\\ 1 + e^{it} + e^{-it} = 1 + 2\\cos t",
+            "note": "check"
+          }
+        ]
+      }
+    },
+    "da-2026-da-37": {
+      "approach": "Build the $2 \\times 2$ confusion matrix (actual vs predicted) from the counts, then read accuracy, per-class precision (column-wise) and per-class recall (row-wise).",
+      "concepts": [
+        "Confusion matrix",
+        "Accuracy",
+        "Precision",
+        "Recall"
+      ],
+      "steps": [
+        {
+          "title": "Confusion matrix",
+          "body": "X: 20 stories, 6 predicted Y → $20 - 6 = 14$ predicted X. Y: 10 stories, 2 predicted X → $10 - 2 = 8$ predicted Y.\n\n| actual \\ predicted | X | Y |\n|---|---|---|\n| X | 14 | 6 |\n| Y | 2 | 8 |"
+        },
+        {
+          "title": "Accuracy",
+          "body": "Correct predictions lie on the diagonal: $\\dfrac{14 + 8}{30} = \\dfrac{22}{30} = \\dfrac{11}{15} \\approx 0.733$. So (A) is true and (D) ($\\frac{14}{15} = \\frac{28}{30}$) is false.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "c": 0,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "c": 1,
+                "tone": "success"
+              }
+            ],
+            "caption": "Accuracy $= 22/30 = 11/15$"
+          }
+        },
+        {
+          "title": "Precision (down each predicted column)",
+          "body": "$\\text{Prec}(X) = \\dfrac{14}{14 + 2} = \\dfrac{14}{16} = 0.875$, $\\quad \\text{Prec}(Y) = \\dfrac{8}{8 + 6} = \\dfrac{8}{14} \\approx 0.571$.\n\n$0.875 > 0.571$, so (B) is true.",
+          "scene": {
+            "hl": [
+              {
+                "c": 0,
+                "tone": "info"
+              },
+              {
+                "c": 1,
+                "tone": "warning"
+              }
+            ],
+            "caption": "Precision: X $14/16$, Y $8/14$"
+          }
+        },
+        {
+          "title": "Recall (along each actual row)",
+          "body": "$\\text{Rec}(X) = \\dfrac{14}{14 + 6} = \\dfrac{14}{20} = 0.70$, $\\quad \\text{Rec}(Y) = \\dfrac{8}{8 + 2} = \\dfrac{8}{10} = 0.80$.\n\n$0.70 < 0.80$, so (C) is false.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "info"
+              },
+              {
+                "r": 1,
+                "tone": "warning"
+              }
+            ],
+            "caption": "Recall: X $14/20$, Y $8/10$"
+          }
+        }
+      ],
+      "answer": {
+        "value": "(A) accuracy $= \\frac{11}{15}$ and (B) $\\text{Prec}(X) = 0.875 > \\text{Prec}(Y) \\approx 0.571$ — options **(A), (B)**",
+        "choice": [
+          "A",
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$(14 + 8)/30 = 22/30 = 11/15$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$14/16 = 0.875$ versus $8/14 \\approx 0.571$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Reversed: recall of X is $14/20 = 0.7$, recall of Y is $8/10 = 0.8$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$14/15 = 28/30$ would allow only 2 errors; there are $6 + 2 = 8$."
+        }
+      ],
+      "shortcut": "Errors $= 6 + 2 = 8$ of 30 → accuracy $22/30$. X's column has only 2 intruders vs Y's 6 (precision X wins); X's row loses 6 of 20 vs Y's 2 of 10 (recall Y wins).",
+      "pitfalls": [
+        "Mixing up precision (divide by predicted count, a column) and recall (divide by actual count, a row).",
+        "Using 6 as the number of correctly classified X stories."
+      ],
+      "verification": "Totals check: row sums $20, 10$; column sums $16, 14$; grand total $30$. $F_1$ values ($0.778$ for X, $0.667$ for Y) are consistent with X having the higher precision.",
+      "animation": {
+        "kind": "table",
+        "title": "Confusion matrix",
+        "corner": "actual \\ pred",
+        "cols": [
+          "X",
+          "Y"
+        ],
+        "rowLabels": [
+          "X (20)",
+          "Y (10)"
+        ],
+        "rows": [
+          [
+            14,
+            6
+          ],
+          [
+            2,
+            8
+          ]
+        ]
+      }
+    },
+    "da-2026-da-38": {
+      "approach": "A formula is valid if it is true in **every** interpretation (first-order domains are non-empty). Prove (A) directly and kill the others with tiny counter-models: $\\{a, b\\}$ with $P(a)$ true, $P(b)$ false; and $\\{a\\}$ with $P(a)$ true.",
+      "concepts": [
+        "Validity in first-order logic",
+        "Quantifiers",
+        "Counter-model",
+        "Non-empty domain"
+      ],
+      "steps": [
+        {
+          "title": "(A) is valid",
+          "body": "Take any interpretation where $\\forall x\\, P(x)$ holds. The domain is non-empty, so pick an element $d$; $P(d)$ is true, hence $\\exists x\\, P(x)$ is true. The implication never fails, so (A) is valid and is **not** an answer.",
+          "scene": {
+            "hl": [
+              {
+                "c": 2,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "(B) and (C) fail in I₁",
+          "body": "$I_1$: domain $\\{a, b\\}$, $P(a) = T$, $P(b) = F$. Then $\\exists x\\,P(x) = T$ and $\\forall x\\,P(x) = F$.\n- (B): $T \\Rightarrow F$ is **false**.\n- (C): $T \\Leftrightarrow F$ is **false** (the biconditional contains (B) as one direction).\n\nSo (B) and (C) are not valid.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "c": 3,
+                "tone": "error"
+              },
+              {
+                "r": 0,
+                "c": 4,
+                "tone": "error"
+              }
+            ]
+          }
+        },
+        {
+          "title": "(D) fails in I₂",
+          "body": "$I_2$: domain $\\{a\\}$, $P(a) = T$. Then $\\forall x\\,P(x) = T$ but $\\exists x\\,\\neg P(x) = F$, so $T \\Rightarrow F$ is **false**. (D) is not valid — in fact whenever $\\forall x\\, P(x)$ is true, $\\exists x\\, \\neg P(x)$ is false, so (D) is equivalent to $\\neg\\forall x\\,P(x)$.",
+          "scene": {
+            "hl": [
+              {
+                "r": 1,
+                "c": 5,
+                "tone": "error"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "Not valid: (B), (C), (D) — options **(B), (C), (D)**",
+        "choice": [
+          "B",
+          "C",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Valid (so not selected): \"everything is $P$\" implies \"something is $P$\" because the domain is non-empty."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Not valid: in $I_1$ some element is $P$ but not all."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Not valid: a biconditional needs both directions; the direction $\\exists \\Rightarrow \\forall$ fails in $I_1$."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Not valid: in $I_2$ everything is $P$, so there is no element with $\\neg P$; the implication is false there."
+        }
+      ],
+      "shortcut": "Valid quantifier moves go from \"all\" to \"some\" for the **same** predicate. (B) and (C) go from some to all; (D) changes $P$ to $\\neg P$ — none of them is safe.",
+      "pitfalls": [
+        "Forgetting the question asks for NOT valid statements (selecting (A) instead of excluding it).",
+        "Thinking (A) needs an extra assumption — standard FOL semantics already require a non-empty domain."
+      ],
+      "verification": "The table shows every option's truth value in $I_1$ and $I_2$: (A) is true in both (and valid by the step-1 argument), while (B), (C), (D) are each false in at least one model.",
+      "animation": {
+        "kind": "table",
+        "title": "Two counter-models",
+        "cols": [
+          "∀x P(x)",
+          "∃x P(x)",
+          "(A)",
+          "(B)",
+          "(C)",
+          "(D)"
+        ],
+        "rowLabels": [
+          "I₁: P(a)=T, P(b)=F",
+          "I₂: P(a)=T"
+        ],
+        "rows": [
+          [
+            "F",
+            "T",
+            "T",
+            "F",
+            "F",
+            "T"
+          ],
+          [
+            "T",
+            "T",
+            "T",
+            "T",
+            "T",
+            "F"
+          ]
+        ]
+      }
+    },
+    "da-2026-da-39": {
+      "approach": "Count comparisons pass by pass. Bubble sort makes $4 + 3 + 2 + 1 = 10$ comparisons (7 with the early-exit flag); insertion sort makes one comparison per already-placed element plus one extra for the misplaced 4, i.e. $N_2 = 5$. Swaps in insertion sort equal the number of inversions (1).",
+      "concepts": [
+        "Bubble sort",
+        "Insertion sort",
+        "Comparison count",
+        "Inversions"
+      ],
+      "steps": [
+        {
+          "title": "Bubble sort: N₁",
+          "body": "Pass 1 compares $(1,2), (2,3), (3,5), (5,4)$: 4 comparisons, one swap $5 \\leftrightarrow 4$ → $[1,2,3,4,5]$. The classic algorithm then runs passes of $3, 2, 1$ comparisons:\n$$N_1 = 4 + 3 + 2 + 1 = \\frac{5 \\cdot 4}{2} = 10.$$\nWith the early-exit flag, pass 2 (3 comparisons, no swap) stops it: $N_1 = 4 + 3 = 7$. Either way $N_1 \\ge 7$.",
+          "scene": {
+            "hl": [
+              {
+                "at": 0,
+                "tone": "info"
+              },
+              {
+                "at": 1,
+                "tone": "info"
+              },
+              {
+                "at": 2,
+                "tone": "info"
+              },
+              {
+                "at": 3,
+                "tone": "warning"
+              },
+              {
+                "at": 4,
+                "tone": "warning"
+              }
+            ],
+            "caption": "BS pass 1: 4 comparisons, only $(5,4)$ swaps",
+            "vars": {
+              "N1": "4 + 3 + 2 + 1 = 10"
+            }
+          }
+        },
+        {
+          "title": "Insertion sort: N₂",
+          "body": "Insert each element into the sorted prefix, comparing right to left:\n\n| insert | compared with | comparisons |\n|---|---|---|\n| 2 | 1 (stop) | 1 |\n| 3 | 2 (stop) | 1 |\n| 5 | 3 (stop) | 1 |\n| 4 | 5 (shift), 3 (stop) | 2 |\n\n$N_2 = 1 + 1 + 1 + 2 = 5$, and the only move is 4 passing 5 — **one swap** (insertion sort's swaps = number of inversions = 1, the pair $(5,4)$).",
+          "scene": {
+            "cells": [
+              {
+                "v": 1,
+                "id": "n1"
+              },
+              {
+                "v": 2,
+                "id": "n2"
+              },
+              {
+                "v": 3,
+                "id": "n3"
+              },
+              {
+                "v": 5,
+                "id": "n5"
+              },
+              {
+                "v": 4,
+                "id": "n4"
+              }
+            ],
+            "pointers": [
+              {
+                "name": "key",
+                "at": 4,
+                "tone": "accent"
+              }
+            ],
+            "hl": [
+              {
+                "at": 3,
+                "tone": "warning"
+              },
+              {
+                "at": 2,
+                "tone": "info"
+              }
+            ],
+            "caption": "IS: key 4 is compared with 5 then 3",
+            "vars": {
+              "N1": "10",
+              "N2": "1 + 1 + 1 + 2 = 5"
+            }
+          }
+        },
+        {
+          "title": "Judge the options",
+          "body": "- (A) $N_2 = 4$ is wrong ($N_2 = 5$) → false.\n- (B) $N_1 = 10$ (or $7$) $> N_2 = 5$ → true.\n- (C) exactly one swap/shift ($5$ and $4$) → true.\n- (D) BS's first comparison $(1, 2)$ and IS's first comparison $2$ vs $1$ compare elements already in order → both make unnecessary comparisons → true.",
+          "scene": {
+            "cells": [
+              {
+                "v": 1,
+                "id": "n1"
+              },
+              {
+                "v": 2,
+                "id": "n2"
+              },
+              {
+                "v": 3,
+                "id": "n3"
+              },
+              {
+                "v": 4,
+                "id": "n4"
+              },
+              {
+                "v": 5,
+                "id": "n5"
+              }
+            ],
+            "pointers": [],
+            "hl": [
+              {
+                "at": 0,
+                "tone": "success"
+              },
+              {
+                "at": 1,
+                "tone": "success"
+              },
+              {
+                "at": 2,
+                "tone": "success"
+              },
+              {
+                "at": 3,
+                "tone": "success"
+              },
+              {
+                "at": 4,
+                "tone": "success"
+              }
+            ],
+            "caption": "Sorted after one swap"
+          }
+        }
+      ],
+      "answer": {
+        "value": "$N_1 = 10$ (7 with early exit), $N_2 = 5$ — options **(B), (C), (D)**",
+        "choice": [
+          "B",
+          "C",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$N_1 = 10$ is right for classic bubble sort, but $N_2 = 5$, not 4: inserting 4 needs two comparisons (with 5, then with 3 to stop)."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$10 > 5$ (and also $7 > 5$ with the early-exit version)."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "The array has exactly one inversion $(5, 4)$; insertion sort performs one swap/shift per inversion."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "BS compares $(1,2)$, $(2,3)$, $(3,5)$, and IS compares 2 with 1, 3 with 2, 5 with 3 — all already in order."
+        }
+      ],
+      "shortcut": "Insertion sort comparisons $= (n-1) + \\#\\text{inversions}$ (when no element reaches the front) $= 4 + 1 = 5$; bubble sort without a flag always makes $\\binom{n}{2} = 10$.",
+      "pitfalls": [
+        "Counting only the comparisons that cause a shift in insertion sort and forgetting the final \"stop\" comparison.",
+        "Assuming bubble sort stops after pass 1 — even the optimised version needs a full pass with no swap to detect sortedness."
+      ],
+      "verification": "Recount IS via the formula $\\sum_i (\\text{shifts}_i + 1) = (0+1) + (0+1) + (0+1) + (1+1) = 5$.",
+      "animation": {
+        "kind": "array",
+        "label": "P",
+        "title": "Bubble sort vs insertion sort on P",
+        "cells": [
+          {
+            "v": 1,
+            "id": "n1"
+          },
+          {
+            "v": 2,
+            "id": "n2"
+          },
+          {
+            "v": 3,
+            "id": "n3"
+          },
+          {
+            "v": 5,
+            "id": "n5"
+          },
+          {
+            "v": 4,
+            "id": "n4"
+          }
+        ]
+      }
+    },
+    "da-2026-da-40": {
+      "approach": "Each call of \\`outer()\\` runs \\`x = []\\` again, creating a **new** list that the returned \\`inner\\` closes over. So \\`f1\\` and \\`f2\\` have separate lists; trace each one.",
+      "concepts": [
+        "Closures",
+        "Enclosing scope",
+        "Mutable list objects"
+      ],
+      "steps": [
+        {
+          "title": "Two calls of outer() make two lists",
+          "body": "\\`f1 = outer()\\` creates list $x_1 = $ \\`[]\\` and returns an \\`inner\\` bound to $x_1$. \\`f2 = outer()\\` executes \\`x = []\\` afresh: list $x_2 = $ \\`[]\\`, a different object, bound to the new \\`inner\\`. So (A) is false.",
+          "scene": {
+            "line": 8,
+            "vars": {
+              "f1.x": "[]",
+              "f2.x": "[]"
+            }
+          }
+        },
+        {
+          "title": "Lines P and Q use f1",
+          "body": "\\`f1(10)\\` appends to $x_1$ → prints \\`[10]\\`. \\`f1(20)\\` appends to the same $x_1$ → prints \\`[10, 20]\\`. (B) is true.",
+          "scene": {
+            "line": 10,
+            "vars": {
+              "f1.x": "[10, 20]",
+              "f2.x": "[]"
+            },
+            "output": "[10]\n[10, 20]"
+          }
+        },
+        {
+          "title": "Line R uses f2",
+          "body": "\\`f2(30)\\` appends to $x_2$, which was empty → prints \\`[30]\\`, not \\`[10, 20, 30]\\`. (C) is false.",
+          "scene": {
+            "line": 11,
+            "vars": {
+              "f1.x": "[10, 20]",
+              "f2.x": "[30]"
+            },
+            "output": "[10]\n[10, 20]\n[30]"
+          }
+        },
+        {
+          "title": "Line S uses f1 again",
+          "body": "\\`f1(40)\\` appends to $x_1 = $ \\`[10, 20]\\` → prints \\`[10, 20, 40]\\` (the 30 went to $x_2$). (D) is true.",
+          "scene": {
+            "line": 12,
+            "vars": {
+              "f1.x": "[10, 20, 40]",
+              "f2.x": "[30]"
+            },
+            "output": "[10]\n[10, 20]\n[30]\n[10, 20, 40]"
+          }
+        }
+      ],
+      "answer": {
+        "value": "Output `[10]`, `[10, 20]`, `[30]`, `[10, 20, 40]` — options **(B), (D)**",
+        "choice": [
+          "B",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Each call of \\`outer()\\` executes \\`x = []\\` and creates a new list; \\`f1\\` and \\`f2\\` close over different objects."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Line Q is the second append to \\`f1\\`'s list: \\`[10, 20]\\`."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "\\`f2\\` has its own empty list, so Line R prints \\`[30]\\`; \\`[10, 20, 30]\\` assumes a shared list."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "\\`f1\\`'s list was \\`[10, 20]\\` and is untouched by \\`f2\\`, so after appending 40 it is \\`[10, 20, 40]\\`."
+        }
+      ],
+      "shortcut": "One \\`outer()\\` call = one list. \\`f1\\` sees 10, 20, 40; \\`f2\\` sees 30.",
+      "pitfalls": [
+        "Confusing this with a mutable default argument (`def f(x=[])`), which IS shared across calls — here the list is created inside the body on every call.",
+        "Thinking \\`x.append\\` needs \\`nonlocal x\\`: it mutates the list without rebinding the name, so no \\`nonlocal\\` is needed."
+      ],
+      "verification": "\\`f1.__closure__[0].cell_contents is f2.__closure__[0].cell_contents\\` would evaluate to \\`False\\`, confirming two distinct lists.",
+      "animation": {
+        "kind": "code",
+        "lang": "python",
+        "title": "Two closures, two lists",
+        "code": "def outer():\n    x = []\n    def inner(val):\n        x.append(val)\n        return x\n    return inner\nf1 = outer()\nf2 = outer()\nprint(f1(10))   # Line P\nprint(f1(20))   # Line Q\nprint(f2(30))   # Line R\nprint(f1(40))   # Line S",
+        "line": 7,
+        "vars": {
+          "f1.x": "[]"
+        },
+        "output": ""
+      }
+    },
+    "da-2026-da-41": {
+      "approach": "Run each query on the sample table. A correct query must count rows **per team** and then attach that count to every member of the team; check what each query groups by and joins on.",
+      "concepts": [
+        "GROUP BY and COUNT",
+        "Derived table in FROM",
+        "Join on a key",
+        "Self-join"
+      ],
+      "steps": [
+        {
+          "title": "(A): per-team counts joined back — correct",
+          "body": "The derived table \\`B\\` groups by \\`TeamID\\`: $(8, 3), (7, 2), (9, 1)$. Joining every employee \\`E\\` with \\`B\\` on \\`E.TeamID = B.TeamID\\` attaches the size of the employee's own team: $(1,3), (2,3), (3,3), (4,2), (5,2), (6,1)$ — exactly the desired output.",
+          "scene": {
+            "hl": [
+              {
+                "c": 1,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "(B): the extra condition makes every count 1",
+          "body": "\\`A.EmpID = B.EmpID\\` with \\`EmpID\\` the primary key pairs each row of \\`A\\` only with **itself**. Each group \\`GROUP BY A.EmpID\\` therefore has one row, and \\`COUNT(B.TeamID) = 1\\` for everybody. Wrong for employees 1–5. (Dropping \\`A.EmpID = B.EmpID\\` would make the self-join correct.)",
+          "scene": {
+            "hl": [
+              {
+                "c": 2,
+                "tone": "error"
+              }
+            ]
+          }
+        },
+        {
+          "title": "(C): grouping by the primary key counts 1 each",
+          "body": "\\`GROUP BY EmpID\\` puts every employee in a group of their own, so \\`COUNT(TeamID) = 1\\` for all six rows. Wrong.",
+          "scene": {
+            "hl": [
+              {
+                "c": 3,
+                "tone": "error"
+              }
+            ]
+          }
+        },
+        {
+          "title": "(D): the derived table has no TeamID column",
+          "body": "The subquery selects only \\`COUNT(TeamID) AS TeamSize\\`, so \\`B\\` has the single column \\`TeamSize\\`. The condition \\`A.TeamID = B.TeamID\\` refers to a column that does not exist → the query is rejected with an error. (Even if it ran, the counts would not be tied to their team.)",
+          "scene": {
+            "hl": [
+              {
+                "c": 4,
+                "tone": "error"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "Only query **(A)** produces the desired output",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Counts per \\`TeamID\\` in a derived table and joins them back on \\`TeamID\\`: gives $3,3,3,2,2,1$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "\\`A.EmpID = B.EmpID\\` restricts the self-join to each row with itself, so every \\`TeamSize\\` is 1."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Grouping by the primary key \\`EmpID\\` yields groups of size 1, so every \\`TeamSize\\` is 1."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "\\`B\\` exposes only \\`TeamSize\\`; \\`B.TeamID\\` is an invalid column reference, so the query fails."
+        }
+      ],
+      "shortcut": "Group by the column that defines the group (\\`TeamID\\`), then join back to employees on that column — only (A) does both.",
+      "pitfalls": [
+        "Assuming a derived table keeps columns it does not select (option D).",
+        "Adding a join condition on the primary key in a self-join, which collapses every group to a single row (option B)."
+      ],
+      "verification": "Sum of the output TeamSize values over distinct teams: $3 + 2 + 1 = 6$ employees, matching the table; queries (B) and (C) would give $1$ for every employee, contradicting the desired output already for employee 1.",
+      "animation": {
+        "kind": "table",
+        "title": "TeamSize produced by each query",
+        "cols": [
+          "EmpID",
+          "desired",
+          "(A)",
+          "(B)",
+          "(C)",
+          "(D)"
+        ],
+        "rows": [
+          [
+            1,
+            3,
+            3,
+            1,
+            1,
+            "error"
+          ],
+          [
+            2,
+            3,
+            3,
+            1,
+            1,
+            "error"
+          ],
+          [
+            3,
+            3,
+            3,
+            1,
+            1,
+            "error"
+          ],
+          [
+            4,
+            2,
+            2,
+            1,
+            1,
+            "error"
+          ],
+          [
+            5,
+            2,
+            2,
+            1,
+            1,
+            "error"
+          ],
+          [
+            6,
+            1,
+            1,
+            1,
+            1,
+            "error"
+          ]
+        ]
+      }
+    },
+    "da-2026-da-42": {
+      "approach": "Write $J = \\mathbf{1}\\mathbf{1}^T$ (the all-ones matrix) and use one fact: $\\mathbf{1}^T\\mathbf{1} = n$, so $J^2 = nJ$. Then symmetry, $M^2$ and the trace follow in one line each.",
+      "concepts": [
+        "Centering matrix",
+        "Symmetric idempotent = orthogonal projection",
+        "Trace"
+      ],
+      "steps": [
+        {
+          "title": "Symmetry",
+          "body": "$J^T = (\\mathbf{1}\\mathbf{1}^T)^T = \\mathbf{1}\\mathbf{1}^T = J$ and $I_n^T = I_n$, so $M^T = I_n - \\tfrac1n J = M$. (A) is true."
+        },
+        {
+          "title": "$M^2 = M$, not $I_n$",
+          "body": "$J^2 = \\mathbf{1}(\\mathbf{1}^T\\mathbf{1})\\mathbf{1}^T = nJ$. Hence\n$$M^2 = I_n - \\tfrac{2}{n}J + \\tfrac{1}{n^2}J^2 = I_n - \\tfrac{2}{n}J + \\tfrac{1}{n}J = I_n - \\tfrac1n J = M.$$\n$M^2 = I_n$ would force $M = I_n$, i.e. $J = 0$, which is false. (B) is false.",
+          "scene": {
+            "terms": [
+              {
+                "name": "M",
+                "rows": [
+                  [
+                    "2/3",
+                    "-1/3",
+                    "-1/3"
+                  ],
+                  [
+                    "-1/3",
+                    "2/3",
+                    "-1/3"
+                  ],
+                  [
+                    "-1/3",
+                    "-1/3",
+                    "2/3"
+                  ]
+                ]
+              },
+              "×",
+              {
+                "name": "M",
+                "rows": [
+                  [
+                    "2/3",
+                    "-1/3",
+                    "-1/3"
+                  ],
+                  [
+                    "-1/3",
+                    "2/3",
+                    "-1/3"
+                  ],
+                  [
+                    "-1/3",
+                    "-1/3",
+                    "2/3"
+                  ]
+                ]
+              },
+              "=",
+              {
+                "name": "M",
+                "rows": [
+                  [
+                    "2/3",
+                    "-1/3",
+                    "-1/3"
+                  ],
+                  [
+                    "-1/3",
+                    "2/3",
+                    "-1/3"
+                  ],
+                  [
+                    "-1/3",
+                    "-1/3",
+                    "2/3"
+                  ]
+                ]
+              }
+            ],
+            "caption": "n = 3: $M^2 = M$ (e.g. entry (1,1): $4/9 + 1/9 + 1/9 = 2/3$)"
+          }
+        },
+        {
+          "title": "Trace",
+          "body": "$\\operatorname{tr}(M) = \\operatorname{tr}(I_n) - \\tfrac1n \\operatorname{tr}(J) = n - \\tfrac1n \\cdot n = n - 1 \\ne n$. (C) is false.",
+          "scene": {
+            "terms": [
+              {
+                "name": "M",
+                "rows": [
+                  [
+                    "2/3",
+                    "-1/3",
+                    "-1/3"
+                  ],
+                  [
+                    "-1/3",
+                    "2/3",
+                    "-1/3"
+                  ],
+                  [
+                    "-1/3",
+                    "-1/3",
+                    "2/3"
+                  ]
+                ],
+                "hl": [
+                  {
+                    "r": 0,
+                    "c": 0,
+                    "tone": "warning"
+                  },
+                  {
+                    "r": 1,
+                    "c": 1,
+                    "tone": "warning"
+                  },
+                  {
+                    "r": 2,
+                    "c": 2,
+                    "tone": "warning"
+                  }
+                ]
+              }
+            ],
+            "caption": "n = 3: trace $= 3 \\cdot \\tfrac23 = 2 = n - 1$"
+          }
+        },
+        {
+          "title": "Projection",
+          "body": "$M$ is idempotent ($M^2 = M$), which is the definition of a projection matrix; being also symmetric, it is the **orthogonal** projection onto $\\mathbf{1}^\\perp$: $M\\mathbf{x} = \\mathbf{x} - \\bar{x}\\mathbf{1}$ subtracts the mean, and $M\\mathbf{1} = \\mathbf{1} - \\tfrac1n \\mathbf{1}\\cdot n = \\mathbf{0}$. (D) is true."
+        }
+      ],
+      "answer": {
+        "value": "$M^T = M$ and $M^2 = M$ (a projection); $\\operatorname{tr}(M) = n - 1$ — options **(A), (D)**",
+        "choice": [
+          "A",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$I_n$ and $\\mathbf{1}\\mathbf{1}^T$ are both symmetric, so their combination is."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$M^2 = M \\ne I_n$; $M$ is singular ($M\\mathbf{1} = \\mathbf{0}$), so it cannot square to the identity."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$\\operatorname{tr}(M) = n - 1$ (the rank of the projection onto the $(n-1)$-dimensional subspace $\\mathbf{1}^\\perp$)."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "$M^2 = M$ (and $M^T = M$): $M$ is the orthogonal projection onto $\\mathbf{1}^\\perp$, the \"centering\" operator."
+        }
+      ],
+      "shortcut": "Recognise the centering matrix: subtracting the mean twice is the same as once ($M^2 = M$), it is symmetric, and it kills the $\\mathbf{1}$ direction, so trace $= $ rank $= n-1$.",
+      "pitfalls": [
+        "Confusing idempotent ($M^2 = M$) with involutory ($M^2 = I$).",
+        "Using $\\operatorname{tr}(\\mathbf{1}\\mathbf{1}^T) = 1$ instead of $n$ — its diagonal has $n$ ones."
+      ],
+      "verification": "For $n = 3$ the matrix shown has diagonal $\\frac23$ and off-diagonal $-\\frac13$; squaring gives entry $(1,1) = \\frac49 + \\frac19 + \\frac19 = \\frac23$ and entry $(1,2) = -\\frac29 - \\frac29 + \\frac19 = -\\frac13$, so $M^2 = M$, and the trace is $2 = n - 1$.",
+      "animation": {
+        "kind": "matrix",
+        "title": "M for n = 3",
+        "terms": [
+          {
+            "name": "M",
+            "rows": [
+              [
+                "2/3",
+                "-1/3",
+                "-1/3"
+              ],
+              [
+                "-1/3",
+                "2/3",
+                "-1/3"
+              ],
+              [
+                "-1/3",
+                "-1/3",
+                "2/3"
+              ]
+            ]
+          }
+        ],
+        "caption": "$M = I_3 - \\tfrac13 \\mathbf{1}\\mathbf{1}^T$"
+      }
+    },
+    "da-2026-da-43": {
+      "approach": "Reduce every statement to the definition $\\chi^2_k = $ sum of squares of $k$ independent standard normals, plus two facts: $\\chi^2_2 = \\text{Exp}(\\text{mean } 2)$ and $\\sum (X_i-\\bar X)^2 \\sim \\chi^2_{n-1}$ for normal samples.",
+      "concepts": [
+        "Chi-square distribution",
+        "Distribution of the sample mean",
+        "Sample variance of a normal sample (Cochran)",
+        "Exponential = Gamma(1)"
+      ],
+      "steps": [
+        {
+          "title": "Option (A): sum of n squared standard normals",
+          "body": "By definition, if $Z_1,\\ldots,Z_k$ are i.i.d. $N(0,1)$ then $\\sum_{i=1}^k Z_i^2 \\sim \\chi^2_k$. Here $k = n$, so $\\sum_{i=1}^{n} X_i^2 \\sim \\chi^2_n$. **(A) correct.**",
+          "scene": {
+            "reveal": 3,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Option (B): deviations from the sample mean",
+          "body": "For an i.i.d. $N(\\mu,\\sigma^2)$ sample, $\\frac{(n-1)s^2}{\\sigma^2} = \\frac{\\sum (X_i-\\bar X)^2}{\\sigma^2} \\sim \\chi^2_{n-1}$ (and it is independent of $\\bar X$). With $\\sigma^2 = 1$: $\\sum_{i=1}^n (X_i - \\bar X)^2 \\sim \\chi^2_{n-1}$. One degree of freedom is lost because the $n$ deviations satisfy the linear constraint $\\sum (X_i - \\bar X) = 0$. **(B) correct.**",
+          "scene": {
+            "reveal": 6,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Option (C): two squared normals give an exponential",
+          "body": "$X_1^2 + X_n^2 \\sim \\chi^2_2$ (two independent standard normals). The $\\chi^2_k$ density is that of $\\text{Gamma}\\left(\\frac{k}{2}, \\text{scale } 2\\right)$; for $k=2$ it is $\\text{Gamma}(1, 2)$:\n$$f(y) = \\tfrac12 e^{-y/2},\\quad y > 0,$$\nwhich is the exponential density with mean $2$ (rate $\\tfrac12$). Also $E[\\chi^2_2] = 2$. **(C) correct.**",
+          "scene": {
+            "reveal": 9,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Option (D): the squared standardised mean",
+          "body": "$\\bar X \\sim N\\left(0, \\frac{1}{n}\\right)$ because $\\text{Var}(\\bar X) = \\frac{1}{n^2}\\cdot n\\cdot 1 = \\frac1n$. Hence $\\sqrt n\\,\\bar X \\sim N(0,1)$ — a **single** standard normal — and $(\\sqrt n\\,\\bar X)^2 \\sim \\chi^2_1$, not $\\chi^2_2$. **(D) incorrect.**",
+          "scene": {
+            "reveal": 12,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "tone": "success"
+              },
+              {
+                "r": 3,
+                "tone": "error"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "**(A), (B), (C)**",
+        "choice": [
+          "A",
+          "B",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Sum of squares of $n$ independent $N(0,1)$ variables is $\\chi^2_n$ by definition."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Standard result for normal samples: $\\sum (X_i-\\bar X)^2/\\sigma^2 \\sim \\chi^2_{n-1}$; the constraint $\\sum(X_i-\\bar X)=0$ removes one degree of freedom."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$\\chi^2_2$ has density $\\frac12 e^{-y/2}$, i.e. exponential with mean 2."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$\\sqrt n\\,\\bar X$ is one standard normal, so its square is $\\chi^2_1$; \"2 degrees of freedom\" is wrong."
+        }
+      ],
+      "shortcut": "Count independent standard normals being squared: $n$ in (A), $n-1$ effective in (B), $2$ in (C) ($\\chi^2_2 \\equiv$ Exp(mean 2)), and just $1$ in (D).",
+      "pitfalls": [
+        "Thinking $\\chi^2_2$ and the exponential are different families — $\\chi^2_2$ is exactly Exp with mean 2.",
+        "Forgetting the $\\sqrt n$ standardisation makes $\\sqrt n\\,\\bar X$ a single $N(0,1)$, giving 1 (not 2) degree of freedom.",
+        "Using $n$ instead of $n-1$ degrees of freedom in (B)."
+      ],
+      "verification": "Means check: $E[\\chi^2_k] = k$. (A) $E\\sum X_i^2 = n$ ✓; (B) $E\\sum(X_i-\\bar X)^2 = (n-1)\\sigma^2 = n-1$ ✓; (C) $E[X_1^2+X_n^2] = 2$ = mean of Exp(mean 2) ✓; (D) $E[n\\bar X^2] = n\\cdot\\frac1n = 1 \\ne 2$ ✗.",
+      "animation": {
+        "kind": "table",
+        "title": "Which chi-square is each statistic?",
+        "cols": [
+          "statistic",
+          "distribution",
+          "verdict"
+        ],
+        "rows": [
+          [
+            "ΣXᵢ²",
+            "χ²ₙ",
+            "A ✓"
+          ],
+          [
+            "Σ(Xᵢ − X̄)²",
+            "χ²ₙ₋₁",
+            "B ✓"
+          ],
+          [
+            "X₁² + Xₙ²",
+            "χ²₂ = Exp(mean 2)",
+            "C ✓"
+          ],
+          [
+            "(√n X̄)²",
+            "χ²₁",
+            "D ✗"
+          ]
+        ],
+        "reveal": 0
+      }
+    },
+    "da-2026-da-44": {
+      "approach": "Check each statement against the three defining properties of any CDF — non-decreasing, limits $0$ and $1$, right-continuous — plus the fact that a discrete variable puts positive mass $P(X=a) = F(a) - F(a^-)$ at its support points.",
+      "concepts": [
+        "Cumulative distribution function",
+        "Right-continuity",
+        "Jumps of a discrete CDF"
+      ],
+      "steps": [
+        {
+          "title": "(A) positive everywhere? No",
+          "body": "$F(x) = P(X \\le x) \\ge 0$, and $\\lim_{x\\to-\\infty} F(x) = 0$. For example, for $X \\sim \\text{Bernoulli}(0.5)$, $F(x) = 0$ for all $x < 0$. So $F$ is **non-negative**, not always positive. **(A) false.**",
+          "scene": {
+            "reveal": 3,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "error"
+              }
+            ]
+          }
+        },
+        {
+          "title": "(B) non-decreasing: yes",
+          "body": "If $x_1 < x_2$ then $\\{X \\le x_1\\} \\subseteq \\{X \\le x_2\\}$, so $F(x_1) \\le F(x_2)$. **(B) true.**",
+          "scene": {
+            "reveal": 6,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "error"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "(C) jump discontinuity: yes",
+          "body": "A discrete $X$ has some value $a$ with $P(X = a) > 0$. Then\n$$F(a) - \\lim_{x\\to a^-}F(x) = P(X = a) > 0,$$\nso $F$ jumps at $a$: the CDF is a step function. **(C) true.**",
+          "scene": {
+            "reveal": 9,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "error"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "(D) left-continuous? No — right-continuous",
+          "body": "Every CDF is **right**-continuous: $\\lim_{x\\to a^+}F(x) = F(a)$, because $\\{X\\le a+\\tfrac1k\\}\\downarrow\\{X\\le a\\}$. At a jump point the left limit is $F(a) - P(X=a) \\ne F(a)$, so $F$ is not left-continuous there. **(D) false.**",
+          "scene": {
+            "reveal": 12,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "error"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "tone": "success"
+              },
+              {
+                "r": 3,
+                "tone": "error"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "**(B), (C)**",
+        "choice": [
+          "B",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$F(x) = 0$ to the left of the smallest support point (e.g. $x<0$ for a Bernoulli), so it is non-negative, not positive."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$\\{X\\le x_1\\}\\subseteq\\{X\\le x_2\\}$ for $x_1<x_2$ — monotonicity of probability."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "At each mass point the jump size is $P(X=a) > 0$; a discrete CDF is a step function."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "CDFs are right-continuous; at a jump the left limit is $F(a)-P(X=a) \\ne F(a)$."
+        }
+      ],
+      "shortcut": "$F(x) = P(X \\le x)$ with \"$\\le$\" includes the point itself, so the value at a jump belongs to the right piece — right-continuous, not left.",
+      "pitfalls": [
+        "Confusing \"positive\" with \"non-negative\".",
+        "Mixing up left/right continuity; it would be left-continuous only under the alternative convention $F(x) = P(X < x)$, which GATE does not use."
+      ],
+      "verification": "Bernoulli(0.5): $F = 0$ on $(-\\infty,0)$, $0.5$ on $[0,1)$, $1$ on $[1,\\infty)$ — non-decreasing, zero on the left, jumps at 0 and 1, and the filled dots sit on the right pieces (right-continuous).",
+      "animation": {
+        "kind": "table",
+        "title": "CDF of a discrete random variable",
+        "cols": [
+          "statement",
+          "truth",
+          "verdict"
+        ],
+        "rows": [
+          [
+            "always positive",
+            "F = 0 left of the support",
+            "A ✗"
+          ],
+          [
+            "non-decreasing",
+            "X≤x₁ ⊆ X≤x₂",
+            "B ✓"
+          ],
+          [
+            "jump discontinuity",
+            "jump = P(X = a) > 0",
+            "C ✓"
+          ],
+          [
+            "left continuous",
+            "right-continuous instead",
+            "D ✗"
+          ]
+        ],
+        "reveal": 0
+      }
+    },
+    "da-2026-da-45": {
+      "approach": "Ridge regression adds $\\lambda\\lVert w\\rVert_2^2$ to the data loss. Compute the prediction, the MAE on this single instance, the squared-L2 penalty, and add.",
+      "concepts": [
+        "Ridge (L2) regularisation",
+        "Mean absolute error",
+        "Regularised loss = data loss + λ‖w‖²"
+      ],
+      "given": "| quantity | value |\n|---|---|\n| $w$ | $[-3, 4]^T$ |\n| $x$ | $[1, 2]^T$ |\n| $y_{true}$ | $x_1 + x_2$ |\n| $\\lambda$ | $0.20$ |",
+      "steps": [
+        {
+          "title": "Prediction and true value",
+          "body": "$y_{pred} = w^Tx = (-3)(1) + (4)(2) = -3 + 8 = 5$.\n\n$y_{true} = x_1 + x_2 = 1 + 2 = 3$.",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Data loss (MAE on one instance)",
+          "body": "$\\text{MAE} = \\lvert y_{pred} - y_{true}\\rvert = \\lvert 5 - 3\\rvert = 2$.",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "Ridge penalty",
+          "body": "Ridge uses the squared L2 norm: $\\lVert w\\rVert_2^2 = (-3)^2 + 4^2 = 9 + 16 = 25$, so the penalty is $\\lambda\\lVert w\\rVert_2^2 = 0.20 \\times 25 = 5$.",
+          "scene": {
+            "reveal": 4
+          }
+        },
+        {
+          "title": "Overall regularised loss",
+          "body": "$L = \\text{MAE} + \\lambda\\lVert w\\rVert_2^2 = 2 + 5 = 7.00$.",
+          "scene": {
+            "reveal": 5
+          }
+        }
+      ],
+      "answer": {
+        "value": "Regularised loss $= 2 + 5 =$ **7.00**",
+        "number": 7,
+        "matchesKey": true
+      },
+      "shortcut": "$\\lvert w^Tx - (x_1+x_2)\\rvert + \\lambda(w_1^2+w_2^2) = \\lvert 5-3\\rvert + 0.2(25) = 7$.",
+      "pitfalls": [
+        "Using $\\lVert w\\rVert_2 = 5$ instead of $\\lVert w\\rVert_2^2 = 25$ gives $3$ — ridge penalises the **squared** norm.",
+        "Using the L1 norm ($\\lvert -3\\rvert + 4 = 7$, lasso) gives $2 + 1.4 = 3.4$.",
+        "Squaring the error (MSE) instead of taking its absolute value gives $4 + 5 = 9$."
+      ],
+      "verification": "Units check: both terms are plain numbers on this instance; $2 \\le L$ and the penalty $5$ dominates because $\\lVert w\\rVert$ is large — consistent with $7$.",
+      "animation": {
+        "kind": "equation",
+        "title": "Ridge loss for this instance",
+        "lines": [
+          {
+            "tex": "y_{pred}=w^Tx=(-3)(1)+(4)(2)=5",
+            "note": "prediction"
+          },
+          {
+            "tex": "y_{true}=1+2=3",
+            "note": "target"
+          },
+          {
+            "tex": "\\text{MAE}=\\lvert 5-3\\rvert=2",
+            "note": "data loss"
+          },
+          {
+            "tex": "\\lambda\\lVert w\\rVert_2^2=0.2\\,(9+16)=5",
+            "note": "L2 penalty"
+          },
+          {
+            "tex": "L=2+5=7.00",
+            "tone": "success"
+          }
+        ],
+        "reveal": 0
+      }
+    },
+    "da-2026-da-46": {
+      "approach": "In a fully-connected network without biases, each pair of consecutive layers of sizes $a$ and $b$ contributes an $a\\times b$ weight matrix. Sum $a\\cdot b$ over consecutive layers.",
+      "concepts": [
+        "Fully-connected (dense) layer",
+        "Weight matrix size",
+        "Learnable parameters"
+      ],
+      "given": "Layers: input $30$ → hidden-1 $4$ → hidden-2 $3$ → output $1$; no biases.",
+      "steps": [
+        {
+          "title": "Input → hidden layer 1",
+          "body": "Every one of the $30$ inputs connects to each of the $4$ neurons: $30 \\times 4 = 120$ weights.",
+          "scene": {
+            "reveal": 4,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Hidden 1 → hidden 2 → output",
+          "body": "$4 \\times 3 = 12$ weights, then $3 \\times 1 = 3$ weights.",
+          "scene": {
+            "reveal": 12,
+            "hl": [
+              {
+                "r": 1,
+                "tone": "accent"
+              },
+              {
+                "r": 2,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Total",
+          "body": "$120 + 12 + 3 = 135$ learnable parameters (biases would have added $4 + 3 + 1 = 8$ more; they are excluded).",
+          "scene": {
+            "reveal": 16,
+            "hl": [
+              {
+                "r": 3,
+                "tone": "success"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "$120 + 12 + 3 =$ **135**",
+        "number": 135,
+        "matchesKey": true
+      },
+      "shortcut": "$\\sum_k n_k n_{k+1} = 30\\cdot4 + 4\\cdot3 + 3\\cdot1 = 135$.",
+      "pitfalls": [
+        "Adding biases (would give 143) although the question excludes them.",
+        "Counting neurons (38) instead of connections.",
+        "Treating the input layer as having learnable weights of its own."
+      ],
+      "verification": "Matrix shapes: $W_1 \\in \\mathbb{R}^{4\\times30}$ (120), $W_2 \\in \\mathbb{R}^{3\\times4}$ (12), $W_3 \\in \\mathbb{R}^{1\\times3}$ (3); total entries $= 135$.",
+      "animation": {
+        "kind": "table",
+        "title": "Weights between consecutive layers (no bias)",
+        "cols": [
+          "from",
+          "to",
+          "shape",
+          "weights"
+        ],
+        "rows": [
+          [
+            "input (30)",
+            "hidden-1 (4)",
+            "30 × 4",
+            120
+          ],
+          [
+            "hidden-1 (4)",
+            "hidden-2 (3)",
+            "4 × 3",
+            12
+          ],
+          [
+            "hidden-2 (3)",
+            "output (1)",
+            "3 × 1",
+            3
+          ],
+          [
+            "",
+            "",
+            "total",
+            135
+          ]
+        ],
+        "reveal": 0
+      }
+    },
+    "da-2026-da-47": {
+      "approach": "Bayes' theorem: $P(D\\mid +) = \\frac{P(+\\mid D)P(D)}{P(+\\mid D)P(D) + P(+\\mid D^c)P(D^c)}$. A two-level probability tree gives both terms at once.",
+      "concepts": [
+        "Bayes' theorem",
+        "Law of total probability",
+        "Sensitivity / false-positive rate"
+      ],
+      "given": "| quantity | value |\n|---|---|\n| $P(D)$ | $0.30$ |\n| $P(+\\mid D)$ | $0.80$ |\n| $P(+\\mid D^c)$ | $0.10$ |",
+      "steps": [
+        {
+          "title": "Joint probabilities of testing positive",
+          "body": "$P(D \\cap +) = 0.3 \\times 0.8 = 0.24$\n\n$P(D^c \\cap +) = 0.7 \\times 0.1 = 0.07$",
+          "scene": {
+            "caption": "Paths ending in a positive test"
+          }
+        },
+        {
+          "title": "Total probability of a positive test",
+          "body": "$P(+) = 0.24 + 0.07 = 0.31$."
+        },
+        {
+          "title": "Apply Bayes",
+          "body": "$$P(D\\mid +) = \\frac{0.24}{0.31} = \\frac{24}{31} \\approx 0.7742$$\nRounded to two decimals: **0.77**.",
+          "scene": {
+            "caption": "P(D | +) = 0.24 / 0.31 ≈ 0.77"
+          }
+        }
+      ],
+      "answer": {
+        "value": "$P(D\\mid +) = \\frac{24}{31} \\approx$ **0.77**",
+        "number": 0.77,
+        "matchesKey": true
+      },
+      "shortcut": "Think of 100 people: 30 diseased → 24 test positive; 70 healthy → 7 test positive. Of 31 positives, 24 are diseased: $24/31 \\approx 0.77$.",
+      "pitfalls": [
+        "Answering $P(+\\mid D) = 0.80$ (confusing the direction of conditioning).",
+        "Forgetting the false positives $0.7 \\times 0.1$ in the denominator."
+      ],
+      "verification": "Complement check: $P(D^c\\mid +) = 0.07/0.31 \\approx 0.2258$ and $0.7742 + 0.2258 = 1$.",
+      "animation": {
+        "kind": "tree",
+        "title": "Probability tree",
+        "caption": "Paths ending in a positive test",
+        "root": {
+          "id": "P",
+          "label": "person",
+          "children": [
+            {
+              "id": "D",
+              "label": "D",
+              "edge": "0.3",
+              "children": [
+                {
+                  "id": "Dp",
+                  "label": "+ : 0.24",
+                  "edge": "0.8",
+                  "tone": "success"
+                },
+                {
+                  "id": "Dn",
+                  "label": "− : 0.06",
+                  "edge": "0.2",
+                  "tone": "muted"
+                }
+              ]
+            },
+            {
+              "id": "H",
+              "label": "not D",
+              "edge": "0.7",
+              "children": [
+                {
+                  "id": "Hp",
+                  "label": "+ : 0.07",
+                  "edge": "0.1",
+                  "tone": "warning"
+                },
+                {
+                  "id": "Hn",
+                  "label": "− : 0.63",
+                  "edge": "0.9",
+                  "tone": "muted"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "da-2026-da-48": {
+      "approach": "One call of \\`fun\\` is exactly one bubble-sort pass that returns the number of adjacent swaps it made. Every swap of an adjacent out-of-order pair removes exactly one inversion, and 5 passes are enough to sort 5 elements, so the printed total equals the number of inversions of the initial list.",
+      "concepts": [
+        "Bubble-sort pass via tail recursion",
+        "Inversions of a permutation",
+        "Mutable list passed by reference"
+      ],
+      "steps": [
+        {
+          "title": "What one call of fun does",
+          "body": "\\`fun(L, i)\\` compares \\`L[i]\\` and \\`L[i+1]\\` for $i = 0, 1, \\ldots, \\text{len}(L)-2$, swaps them when \\`L[i] > L[i+1]\\` (the tuple assignment is a genuine swap), and adds 1 per swap. So \\`fun(data)\\` is one left-to-right bubble pass that returns its swap count. \\`data\\` is mutated in place, so the passes accumulate.",
+          "scene": {
+            "caption": "Initial list",
+            "vars": {
+              "pass": 0,
+              "count": 0
+            }
+          }
+        },
+        {
+          "title": "Pass 1: 4 swaps",
+          "body": "$[5,3,4,1,2]$: $5>3$ swap → $[3,5,4,1,2]$; $5>4$ swap → $[3,4,5,1,2]$; $5>1$ swap → $[3,4,1,5,2]$; $5>2$ swap → $[3,4,1,2,5]$. Returns $4$; count $= 4$.",
+          "scene": {
+            "cells": [
+              {
+                "v": 3,
+                "id": "n3"
+              },
+              {
+                "v": 4,
+                "id": "n4"
+              },
+              {
+                "v": 1,
+                "id": "n1"
+              },
+              {
+                "v": 2,
+                "id": "n2"
+              },
+              {
+                "v": 5,
+                "id": "n5",
+                "tone": "success"
+              }
+            ],
+            "caption": "After pass 1 (5 bubbled to the end)",
+            "vars": {
+              "pass": 1,
+              "swaps": 4,
+              "count": 4
+            }
+          }
+        },
+        {
+          "title": "Pass 2: 2 swaps",
+          "body": "$[3,4,1,2,5]$: $3<4$ no; $4>1$ swap → $[3,1,4,2,5]$; $4>2$ swap → $[3,1,2,4,5]$; $4<5$ no. Returns $2$; count $= 4+2 = 6$.",
+          "scene": {
+            "cells": [
+              {
+                "v": 3,
+                "id": "n3"
+              },
+              {
+                "v": 1,
+                "id": "n1"
+              },
+              {
+                "v": 2,
+                "id": "n2"
+              },
+              {
+                "v": 4,
+                "id": "n4",
+                "tone": "success"
+              },
+              {
+                "v": 5,
+                "id": "n5",
+                "tone": "success"
+              }
+            ],
+            "caption": "After pass 2",
+            "vars": {
+              "pass": 2,
+              "swaps": 2,
+              "count": 6
+            }
+          }
+        },
+        {
+          "title": "Pass 3: 2 swaps",
+          "body": "$[3,1,2,4,5]$: $3>1$ swap → $[1,3,2,4,5]$; $3>2$ swap → $[1,2,3,4,5]$; then $3<4$, $4<5$ no swaps. Returns $2$; count $= 6+2 = 8$.",
+          "scene": {
+            "cells": [
+              {
+                "v": 1,
+                "id": "n1",
+                "tone": "success"
+              },
+              {
+                "v": 2,
+                "id": "n2",
+                "tone": "success"
+              },
+              {
+                "v": 3,
+                "id": "n3",
+                "tone": "success"
+              },
+              {
+                "v": 4,
+                "id": "n4",
+                "tone": "success"
+              },
+              {
+                "v": 5,
+                "id": "n5",
+                "tone": "success"
+              }
+            ],
+            "caption": "After pass 3 — sorted",
+            "vars": {
+              "pass": 3,
+              "swaps": 2,
+              "count": 8
+            }
+          }
+        },
+        {
+          "title": "Passes 4 and 5: no swaps",
+          "body": "The list is sorted, so both remaining calls return $0$. Final count $= 4+2+2+0+0 = 8$; the program prints **8**.",
+          "scene": {
+            "caption": "Passes 4–5 return 0",
+            "vars": {
+              "pass": 5,
+              "swaps": 0,
+              "count": 8
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "The program prints **8**",
+        "number": 8,
+        "matchesKey": true
+      },
+      "shortcut": "Count inversions of $[5,3,4,1,2]$: $5$ beats $3,4,1,2$ (4); $3$ beats $1,2$ (2); $4$ beats $1,2$ (2); $1<2$ (0). Total $4+2+2 = 8$.",
+      "pitfalls": [
+        "Thinking each call restarts from the original list — \\`data\\` is mutated in place.",
+        "Counting comparisons (4 per pass, 20 total) instead of swaps.",
+        "Stopping after the first pass (answer 4)."
+      ],
+      "verification": "Inversion count (shortcut) and the explicit pass-by-pass trace both give $8$.",
+      "animation": {
+        "kind": "array",
+        "title": "data after each call of fun (one bubble pass)",
+        "label": "data",
+        "cells": [
+          {
+            "v": 5,
+            "id": "n5"
+          },
+          {
+            "v": 3,
+            "id": "n3"
+          },
+          {
+            "v": 4,
+            "id": "n4"
+          },
+          {
+            "v": 1,
+            "id": "n1"
+          },
+          {
+            "v": 2,
+            "id": "n2"
+          }
+        ],
+        "caption": "Initial list",
+        "vars": {
+          "pass": 0,
+          "count": 0
+        }
+      }
+    },
+    "da-2026-da-49": {
+      "approach": "Simplify the formula first: the clause $\\exists z \\in X\\,(t[P] = z[P])$ is always true (take $z = t$), so the query returns the tuples of $X$ whose $P$ value has at least one matching $Y$ tuple with $S > 1$ — a semi-join.",
+      "concepts": [
+        "Tuple relational calculus",
+        "Existential quantifier",
+        "Semi-join"
+      ],
+      "steps": [
+        {
+          "title": "The z-clause is a tautology",
+          "body": "Since $t \\in X$, choosing $z = t$ satisfies $t[P] = z[P]$. So the condition reduces to\n$$t \\in X \\land \\exists m \\in Y\\,(m[P] = t[P] \\land m[S] > 1).$$",
+          "scene": {
+            "reveal": 0
+          }
+        },
+        {
+          "title": "Check each tuple of X against Y",
+          "body": "- $t = (P1, Q1, R1)$: $Y$ has $(P1, 10)$ and $(P1, 15)$; $10 > 1$ ✓ → returned.\n- $t = (P2, Q2, R2)$: $Y$ has $(P2, 20)$; $20 > 1$ ✓ → returned.\n- $t = (P3, Q3, R2)$: the only match is $(P3, 1)$; $1 > 1$ is false ✗ → not returned.",
+          "scene": {
+            "reveal": 15,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "tone": "error"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Count",
+          "body": "The result is $\\{(P1,Q1,R1), (P2,Q2,R2)\\}$. Two $Y$ tuples match P1, but $t$ ranges over $X$, so P1 is returned once. Answer: **2** (the official key accepts the range 2 to 3)."
+        }
+      ],
+      "answer": {
+        "value": "The expression returns **2** tuples",
+        "number": 2,
+        "matchesKey": true
+      },
+      "shortcut": "It is $X \\ltimes \\sigma_{S>1}(Y)$: $\\sigma_{S>1}(Y)$ keeps P1, P1, P2; the $X$ tuples with P in $\\{P1, P2\\}$ number 2.",
+      "pitfalls": [
+        "Counting P1 twice because it matches two $Y$ tuples — the result is a set of $X$ tuples.",
+        "Treating $m[S] > 1$ as $\\ge 1$, which would wrongly include P3."
+      ],
+      "verification": "Equivalent SQL: \\`SELECT * FROM X WHERE EXISTS (SELECT * FROM Y WHERE Y.P = X.P AND Y.S > 1)\\` returns the P1 and P2 rows only.",
+      "animation": {
+        "kind": "table",
+        "title": "Tuples of X with a matching Y tuple having S > 1",
+        "cols": [
+          "P",
+          "Q",
+          "R",
+          "Y matches (S)",
+          "any S > 1?"
+        ],
+        "rows": [
+          [
+            "P1",
+            "Q1",
+            "R1",
+            "10, 15",
+            "yes"
+          ],
+          [
+            "P2",
+            "Q2",
+            "R2",
+            "20",
+            "yes"
+          ],
+          [
+            "P3",
+            "Q3",
+            "R2",
+            "1",
+            "no"
+          ]
+        ],
+        "reveal": 0
+      }
+    },
+    "da-2026-da-50": {
+      "approach": "The correlated subqueries count, for each row, how many balances are strictly larger and how many strictly smaller. Tabulate both counts per row and keep rows with (#larger) $\\ge$ (#smaller).",
+      "concepts": [
+        "Correlated subquery",
+        "COUNT(*) with strict inequalities",
+        "Ties in comparisons"
+      ],
+      "given": "Balances: A1 = 5000, A2 = 5000, A3 = 10000, A4 = 15000, A5 = 18000.",
+      "steps": [
+        {
+          "title": "Meaning of the two subqueries",
+          "body": "For the outer row $A$: the left subquery counts rows $B$ with $B.\\text{Balance} > A.\\text{Balance}$ (strictly larger); the right counts rows $C$ with $C.\\text{Balance} < A.\\text{Balance}$ (strictly smaller). Equal balances count in neither.",
+          "scene": {
+            "reveal": 0
+          }
+        },
+        {
+          "title": "A1 and A2 (5000)",
+          "body": "Larger: 10000, 15000, 18000 → $3$. Smaller: none → $0$ (the other 5000 is equal, not smaller). $3 \\ge 0$ ✓ for both A1 and A2.",
+          "scene": {
+            "reveal": 8,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "A3 (10000)",
+          "body": "Larger: 15000, 18000 → $2$. Smaller: 5000, 5000 → $2$. $2 \\ge 2$ ✓.",
+          "scene": {
+            "reveal": 12,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "A4 (15000) and A5 (18000)",
+          "body": "A4: larger $1$ (18000), smaller $3$ → $1 \\ge 3$ ✗. A5: larger $0$, smaller $4$ → ✗.\n\nRows returned: A1, A2, A3 → **3**.",
+          "scene": {
+            "reveal": 20,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "tone": "success"
+              },
+              {
+                "r": 3,
+                "tone": "error"
+              },
+              {
+                "r": 4,
+                "tone": "error"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "The query returns **3** rows (A1, A2, A3)",
+        "number": 3,
+        "matchesKey": true
+      },
+      "shortcut": "The condition \"#above $\\ge$ #below\" keeps the rows at or below the median balance (10000): A1, A2, A3.",
+      "pitfalls": [
+        "Counting the equal 5000 as \"smaller\" for A1/A2 — the comparisons are strict.",
+        "Using $>$ instead of $\\ge$ would drop A3 and give 2."
+      ],
+      "verification": "Each row's larger + smaller + equal (excluding itself) $= 4$: A1: $3+0+1$, A3: $2+2+0$, A4: $1+3+0$ ✓.",
+      "animation": {
+        "kind": "table",
+        "title": "Counts per outer row A",
+        "cols": [
+          "AccNo",
+          "Balance",
+          "# larger (B)",
+          "# smaller (C)"
+        ],
+        "rows": [
+          [
+            "A1",
+            5000,
+            3,
+            0
+          ],
+          [
+            "A2",
+            5000,
+            3,
+            0
+          ],
+          [
+            "A3",
+            10000,
+            2,
+            2
+          ],
+          [
+            "A4",
+            15000,
+            1,
+            3
+          ],
+          [
+            "A5",
+            18000,
+            0,
+            4
+          ]
+        ],
+        "reveal": 0
+      }
+    },
+    "da-2026-da-51": {
+      "approach": "Apply the standard ER-to-relational mapping: one relation per strong entity (without the multivalued attribute), one relation per multivalued attribute, and a separate relation for an M:N relationship — total participation does not allow merging an M:N relationship into either side.",
+      "concepts": [
+        "ER to relational mapping",
+        "Multivalued attribute",
+        "Many-to-many relationship",
+        "3NF"
+      ],
+      "steps": [
+        {
+          "title": "Entities",
+          "body": "$E1(\\underline{A11}, A12, A13)$ — key $A11$, in 3NF.\n\n$E2(\\underline{A21}, A23)$ — the multivalued $A22$ cannot be stored in a single column (1NF), so it is removed from $E2$.",
+          "scene": {
+            "reveal": 6,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Multivalued attribute A22",
+          "body": "$E2\\_A22(\\underline{A21, A22})$: one row per (entity, value) pair; the key is the whole schema, so it is in BCNF (hence 3NF).",
+          "scene": {
+            "reveal": 9,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "M:N relationship R12",
+          "body": "$R12(\\underline{A11, A21})$. It cannot be merged into $E1$ or $E2$: in a merged table the key would be $(A11, A21)$ while $A11 \\to A12, A13$ (or $A21 \\to A23$) is a **partial dependency**, violating 2NF/3NF and duplicating $E1$ data for every partner. Total participation only says each entity has at least one partner — it does not make the relationship functional.",
+          "scene": {
+            "reveal": 12,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "tone": "success"
+              },
+              {
+                "r": 3,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Count",
+          "body": "$E1$, $E2$, $E2\\_A22$, $R12$ → **4** relations."
+        }
+      ],
+      "answer": {
+        "value": "Minimum number of 3NF relations: **4**",
+        "number": 4,
+        "matchesKey": true
+      },
+      "shortcut": "Entities (2) + multivalued attributes (1) + M:N relationships (1) $= 4$; total participation matters only for 1:1 / 1:N merging.",
+      "pitfalls": [
+        "Merging the M:N relationship into an entity because participation is total — that creates partial dependencies.",
+        "Keeping $A22$ inside $E2$ (violates 1NF) and answering 3.",
+        "Merging $E1$, $E2$ and $R12$ into one table — key $(A11, A21)$ with partial dependencies."
+      ],
+      "verification": "Each relation's only non-trivial FDs have a superkey on the left: $A11 \\to A12A13$ in $E1$, $A21 \\to A23$ in $E2$; $E2\\_A22$ and $R12$ are all-key. All four are in BCNF, so 3NF holds; no fewer relations avoid a partial dependency.",
+      "animation": {
+        "kind": "table",
+        "title": "Relational schema (keys underlined in the text)",
+        "cols": [
+          "relation",
+          "attributes",
+          "key"
+        ],
+        "rows": [
+          [
+            "E1",
+            "A11, A12, A13",
+            "A11"
+          ],
+          [
+            "E2",
+            "A21, A23",
+            "A21"
+          ],
+          [
+            "E2_A22",
+            "A21, A22",
+            "(A21, A22)"
+          ],
+          [
+            "R12",
+            "A11, A21",
+            "(A11, A21)"
+          ]
+        ],
+        "reveal": 0
+      }
+    },
+    "da-2026-da-52": {
+      "approach": "Use the identity $\\sum_{i=1}^n\\sum_{j=1}^n (x_i - x_j)^2 = 2n\\sum_{i=1}^n (x_i - \\bar x)^2$, so the given double sum fixes the sum of squared deviations directly.",
+      "concepts": [
+        "Sum of squared deviations",
+        "Pairwise-difference form of variance",
+        "Expanding a double sum"
+      ],
+      "steps": [
+        {
+          "title": "Prove the identity",
+          "body": "Expand: $\\sum_i\\sum_j (x_i^2 + x_j^2 - 2x_ix_j) = n\\sum_i x_i^2 + n\\sum_j x_j^2 - 2\\left(\\sum_i x_i\\right)\\left(\\sum_j x_j\\right)$\n$$= 2n\\sum_i x_i^2 - 2(n\\bar x)^2 = 2n\\left(\\sum_i x_i^2 - n\\bar x^2\\right) = 2n\\sum_i (x_i - \\bar x)^2.$$",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Use the given value",
+          "body": "$\\frac{1}{2000}\\sum_i\\sum_j (x_i-x_j)^2 = 99 \\Rightarrow \\sum_i\\sum_j (x_i-x_j)^2 = 99 \\times 2000 = 198000$.",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "Sum of squared deviations",
+          "body": "$2n\\sum (x_i-\\bar x)^2 = 198000$ with $n = 100$: $\\sum (x_i-\\bar x)^2 = \\frac{198000}{200} = 990$.",
+          "scene": {
+            "reveal": 4
+          }
+        },
+        {
+          "title": "Required value",
+          "body": "$\\frac{1}{99}\\sum (x_i-\\bar x)^2 = \\frac{990}{99} = 10$. (This is the sample variance $s^2$ with divisor $n - 1 = 99$.)",
+          "scene": {
+            "reveal": 5
+          }
+        }
+      ],
+      "answer": {
+        "value": "$\\frac{1}{99}\\sum(x_i-\\bar x)^2 =$ **10**",
+        "number": 10,
+        "matchesKey": true
+      },
+      "shortcut": "$s^2 = \\frac{1}{2n(n-1)}\\sum_i\\sum_j(x_i-x_j)^2 = \\frac{198000}{2\\cdot100\\cdot99} = \\frac{198000}{19800} = 10$.",
+      "pitfalls": [
+        "Forgetting the factor 2 in $2n$ (each unordered pair is counted twice) gives 20.",
+        "Using $n^2$ instead of $2n$ in the identity."
+      ],
+      "verification": "Tiny check of the identity: $x = (0, 2)$, $n = 2$: $\\sum\\sum(x_i-x_j)^2 = 4+4 = 8$; $2n\\sum(x_i-\\bar x)^2 = 4(1+1) = 8$ ✓.",
+      "animation": {
+        "kind": "equation",
+        "title": "Pairwise differences → variance",
+        "lines": [
+          {
+            "tex": "\\sum_i\\sum_j (x_i-x_j)^2 = 2n\\sum_i x_i^2 - 2\\Big(\\sum_i x_i\\Big)^2",
+            "note": "expand"
+          },
+          {
+            "tex": "= 2n\\sum_i (x_i-\\bar x)^2",
+            "note": "identity"
+          },
+          {
+            "tex": "\\sum_i\\sum_j (x_i-x_j)^2 = 99\\times2000 = 198000",
+            "note": "given"
+          },
+          {
+            "tex": "\\sum_i (x_i-\\bar x)^2 = \\tfrac{198000}{200} = 990",
+            "note": "n = 100"
+          },
+          {
+            "tex": "\\tfrac{1}{99}\\cdot 990 = 10",
+            "tone": "success"
+          }
+        ],
+        "reveal": 0
+      }
+    },
+    "da-2026-da-53": {
+      "approach": "Compute the covariance through the tower property: $E[XY] = E[X\\,E[Y\\mid X]] = E[X^3] = 0$ by symmetry of $X$ about 0. Zero covariance (with positive variances) means zero correlation, even though $Y$ clearly depends on $X$.",
+      "concepts": [
+        "Law of iterated expectation",
+        "Covariance and correlation",
+        "Uncorrelated ≠ independent"
+      ],
+      "steps": [
+        {
+          "title": "Conditional mean of Y",
+          "body": "The mean of $Uniform(a, b)$ is $\\frac{a+b}{2}$, so $E[Y\\mid X=x] = \\frac{(x^2-0.1)+(x^2+0.1)}{2} = x^2$.",
+          "scene": {
+            "reveal": 1
+          }
+        },
+        {
+          "title": "E[X] and E[XY]",
+          "body": "$E[X] = 0$ (Uniform$(-1,1)$ is symmetric about 0).\n\n$E[XY] = E\\big[X\\,E[Y\\mid X]\\big] = E[X\\cdot X^2] = E[X^3] = \\int_{-1}^{1} \\tfrac12 x^3\\,dx = 0$ (odd integrand on a symmetric interval).",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "Covariance",
+          "body": "$\\text{Cov}(X,Y) = E[XY] - E[X]E[Y] = 0 - 0\\cdot E[Y] = 0$.",
+          "scene": {
+            "reveal": 4
+          }
+        },
+        {
+          "title": "Correlation",
+          "body": "Both variances are positive: $\\text{Var}(X) = \\frac{(1-(-1))^2}{12} = \\frac13$, and $\\text{Var}(Y) \\ge E[\\text{Var}(Y\\mid X)] = \\frac{0.2^2}{12} > 0$. Hence\n$$\\rho(X,Y) = \\frac{\\text{Cov}(X,Y)}{\\sqrt{\\text{Var}(X)\\text{Var}(Y)}} = 0.$$",
+          "scene": {
+            "reveal": 5
+          }
+        }
+      ],
+      "answer": {
+        "value": "$\\text{correlation}(X, Y) =$ **0**",
+        "number": 0,
+        "matchesKey": true
+      },
+      "shortcut": "$E[Y\\mid X] = X^2$ is an even function of a symmetric $X$, so $\\text{Cov}(X, X^2) = E[X^3] = 0$ — the dependence is purely non-linear.",
+      "pitfalls": [
+        "Concluding the correlation is non-zero because $Y$ depends on $X$ — correlation measures only linear association.",
+        "Forgetting to check that $\\text{Var}(Y) > 0$ (otherwise the correlation would be undefined)."
+      ],
+      "verification": "Symmetry: $(X, Y)$ and $(-X, Y)$ have the same joint distribution (the conditional law of $Y$ depends on $x^2$ only), so $\\text{Cov}(X,Y) = \\text{Cov}(-X,Y) = -\\text{Cov}(X,Y) \\Rightarrow 0$.",
+      "animation": {
+        "kind": "equation",
+        "title": "Covariance via the tower property",
+        "lines": [
+          {
+            "tex": "E[Y\\mid X=x]=\\tfrac{(x^2-0.1)+(x^2+0.1)}{2}=x^2"
+          },
+          {
+            "tex": "E[X]=0",
+            "note": "symmetric"
+          },
+          {
+            "tex": "E[XY]=E\\big[X\\,E[Y\\mid X]\\big]=E[X^3]=0",
+            "note": "odd moment"
+          },
+          {
+            "tex": "\\operatorname{Cov}(X,Y)=0-0=0"
+          },
+          {
+            "tex": "\\rho(X,Y)=0",
+            "tone": "success"
+          }
+        ],
+        "reveal": 0
+      }
+    },
+    "da-2026-da-54": {
+      "approach": "Row 2 and column 3 share exactly one entry, $a_{23}$. Condition on it: given $a_{23}$, the other 4 entries of the row and the other 4 of the column are disjoint independent sets, each with a Binomial$(4, \\tfrac12)$ sum.",
+      "concepts": [
+        "Conditioning on a shared variable",
+        "Binomial distribution",
+        "Independence of disjoint sets of entries"
+      ],
+      "steps": [
+        {
+          "title": "Structure",
+          "body": "Row 2 = $a_{23}$ + 4 other entries; column 3 = $a_{23}$ + 4 other entries; these 8 other entries are distinct, so the two partial sums $R', C' \\sim \\text{Bin}(4, \\tfrac12)$ are independent and independent of $a_{23}$. $P(\\text{Bin}(4,\\tfrac12) = k) = \\binom4k/16$.",
+          "scene": {
+            "reveal": 1
+          }
+        },
+        {
+          "title": "Case a₂₃ = 1",
+          "body": "Need $R' = 2$ and $C' = 2$: $P = \\frac12 \\cdot \\frac{\\binom42}{16}\\cdot\\frac{\\binom42}{16} = \\frac12\\cdot\\frac{6}{16}\\cdot\\frac{6}{16} = \\frac{36}{512}$.",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Case a₂₃ = 0",
+          "body": "Need $R' = 3$ and $C' = 3$: $P = \\frac12 \\cdot \\frac{\\binom43}{16}\\cdot\\frac{\\binom43}{16} = \\frac12\\cdot\\frac{4}{16}\\cdot\\frac{4}{16} = \\frac{16}{512}$.",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "Add the cases",
+          "body": "$P = \\frac{36 + 16}{512} = \\frac{52}{512} = \\frac{13}{128} \\approx 0.1016 \\approx$ **0.10**.",
+          "scene": {
+            "reveal": 4
+          }
+        }
+      ],
+      "answer": {
+        "value": "$\\frac{13}{128} \\approx$ **0.10**",
+        "number": 0.1,
+        "matchesKey": true
+      },
+      "shortcut": "Count the 9 relevant bits: $a_{23}=1$: $6\\cdot6 = 36$ patterns; $a_{23}=0$: $4\\cdot4 = 16$ patterns; total $52/2^9 = 52/512 \\approx 0.10$.",
+      "pitfalls": [
+        "Treating the row sum and column sum as independent: $\\left(\\binom53/32\\right)^2 = (10/32)^2 \\approx 0.098$ — close, but the reasoning is wrong (they share $a_{23}$).",
+        "Forgetting one of the two cases for the shared entry."
+      ],
+      "verification": "Brute force over the $2^9 = 512$ patterns of the 9 cells in row 2 ∪ column 3 gives exactly 52 favourable patterns, i.e. $0.1016$.",
+      "animation": {
+        "kind": "equation",
+        "title": "Condition on the shared cell a₂₃",
+        "lines": [
+          {
+            "tex": "\\text{row}_2=a_{23}+R',\\quad \\text{col}_3=a_{23}+C',\\quad R',C'\\sim\\text{Bin}(4,\\tfrac12)"
+          },
+          {
+            "tex": "a_{23}=1:\\ \\tfrac12\\cdot\\tfrac{6}{16}\\cdot\\tfrac{6}{16}=\\tfrac{36}{512}"
+          },
+          {
+            "tex": "a_{23}=0:\\ \\tfrac12\\cdot\\tfrac{4}{16}\\cdot\\tfrac{4}{16}=\\tfrac{16}{512}"
+          },
+          {
+            "tex": "P=\\tfrac{52}{512}=\\tfrac{13}{128}\\approx0.10",
+            "tone": "success"
+          }
+        ],
+        "reveal": 0
+      }
+    },
+    "da-2026-da-55": {
+      "approach": "$\\max_{\\lVert x\\rVert=1} x^TAx$ of a symmetric matrix is its largest eigenvalue (Rayleigh quotient). $A = I - \\frac1n\\mathbf{1}\\mathbf{1}^T$ is the orthogonal projection onto the complement of $\\mathbf{1}$, whose eigenvalues are $0$ and $1$.",
+      "concepts": [
+        "Rayleigh quotient",
+        "Centering matrix",
+        "Projection matrix eigenvalues"
+      ],
+      "steps": [
+        {
+          "title": "A is a symmetric projection",
+          "body": "$A^T = A$, and\n$$A^2 = I - \\tfrac2n\\mathbf{1}\\mathbf{1}^T + \\tfrac{1}{n^2}\\mathbf{1}(\\mathbf{1}^T\\mathbf{1})\\mathbf{1}^T = I - \\tfrac2n\\mathbf{1}\\mathbf{1}^T + \\tfrac{n}{n^2}\\mathbf{1}\\mathbf{1}^T = A,$$\nusing $\\mathbf{1}^T\\mathbf{1} = n$. An idempotent symmetric matrix has eigenvalues only $0$ or $1$.",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Find the eigenvalues explicitly",
+          "body": "$A\\mathbf{1} = \\mathbf{1} - \\tfrac1n\\mathbf{1}\\cdot n = \\mathbf 0$ → eigenvalue $0$ (once).\n\nFor any $v \\perp \\mathbf{1}$ ($\\mathbf{1}^Tv = 0$): $Av = v$ → eigenvalue $1$, multiplicity $n - 1$.",
+          "scene": {
+            "reveal": 4
+          }
+        },
+        {
+          "title": "Rayleigh quotient maximum",
+          "body": "For symmetric $A$, $\\max_{x^Tx=1} x^TAx = \\lambda_{\\max}(A) = 1$, attained by any unit vector with zero mean, e.g. $x = \\frac{1}{\\sqrt2}(1, -1, 0, \\ldots, 0)^T$: $x^TAx = x^Tx - \\frac1n(\\mathbf{1}^Tx)^2 = 1 - 0 = 1$.",
+          "scene": {
+            "reveal": 5
+          }
+        }
+      ],
+      "answer": {
+        "value": "$\\max_S x^TAx = \\lambda_{\\max}(A) =$ **1**",
+        "number": 1,
+        "matchesKey": true
+      },
+      "shortcut": "$x^TAx = x^Tx - \\frac1n(\\mathbf 1^Tx)^2 = 1 - \\frac1n\\big(\\sum x_i\\big)^2 \\le 1$, with equality when $\\sum x_i = 0$ (possible for $n \\ge 2$).",
+      "pitfalls": [
+        "Thinking the maximum depends on $n$ (e.g. $1 - \\frac1n$, which is the value at a standard basis vector, not the maximum).",
+        "Picking the eigenvalue $0$ (eigenvector $\\mathbf{1}$) — that is the minimum."
+      ],
+      "verification": "Two independent routes agree: the eigenvalue argument ($\\lambda_{\\max} = 1$) and the direct bound $x^TAx = 1 - \\frac1n(\\sum x_i)^2 \\le 1$ with equality at a zero-sum unit vector.",
+      "animation": {
+        "kind": "equation",
+        "title": "Rayleigh quotient of the centering matrix",
+        "lines": [
+          {
+            "tex": "A^T=A,\\quad A^2=A",
+            "note": "projection"
+          },
+          {
+            "tex": "\\lambda\\in\\{0,1\\}"
+          },
+          {
+            "tex": "A\\mathbf 1=\\mathbf 0\\ (\\lambda=0)"
+          },
+          {
+            "tex": "Av=v\\ \\text{for } v\\perp\\mathbf 1\\ (\\lambda=1,\\ n-1\\text{ times})"
+          },
+          {
+            "tex": "\\max_{x^Tx=1}x^TAx=\\lambda_{\\max}=1",
+            "tone": "success"
+          }
+        ],
+        "reveal": 0
+      }
     }
   }
 }

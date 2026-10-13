@@ -1221,6 +1221,1941 @@
       ],
       "reason": "Tags follow the corrected topic, plus specific concept tags.",
       "source": "pdf p.18"
+    },
+    {
+      "id": "da-2026-da-17",
+      "field": "text",
+      "before": "Let f(x) = x^3 - 3x^2 + 2 be a function defined on (-1, 3]. Which of the following statements is/are correct?",
+      "after": "Let $f(x) = x^3 - 3x^2 + 2$ be a function defined on $(-1, 3]$.\n\nWhich of the following statements is/are correct?",
+      "reason": "Plain-text maths replaced with KaTeX; paragraph break as in the paper.",
+      "source": "pdf p.18 (Q.27)"
+    },
+    {
+      "id": "da-2026-da-17",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "f(x) has exactly two roots in [-0.9, 0]."
+        },
+        {
+          "l": "B",
+          "t": "f(x) has a minimum at 2 only."
+        },
+        {
+          "l": "C",
+          "t": "f(x) has maximum at 0 only."
+        },
+        {
+          "l": "D",
+          "t": "f(x) has a root at 1."
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$f(x)$ has exactly two roots in $[-0.9, 0]$."
+        },
+        {
+          "l": "B",
+          "t": "$f(x)$ has a minimum at 2 only."
+        },
+        {
+          "l": "C",
+          "t": "$f(x)$ has maximum at 0 only."
+        },
+        {
+          "l": "D",
+          "t": "$f(x)$ has a root at 1."
+        }
+      ],
+      "reason": "Function notation in options typeset with KaTeX.",
+      "source": "pdf p.18 (Q.27)"
+    },
+    {
+      "id": "da-2026-da-17",
+      "field": "topic",
+      "before": "calculus-and-optimisation",
+      "after": "optimization",
+      "reason": "Topic \"calculus-and-optimisation\" does not exist in subjects.DA.calc; mapped to the matching DA topic id.",
+      "source": "questions.json subjects.DA"
+    },
+    {
+      "id": "da-2026-da-17",
+      "field": "tags",
+      "before": [
+        "calc",
+        "calculus-and-optimisation"
+      ],
+      "after": [
+        "calc",
+        "optimization"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "questions.json subjects.DA"
+    },
+    {
+      "id": "da-2026-da-18",
+      "field": "text",
+      "before": "Suppose a random variable Z follows Normal(μ = 0, σ^2 = 1) distribution with probability density function g(z) and cumulative distribution function G(z). Another random variable Y follows t1 distribution (Student’s t with 1 degree of freedom) with probability density function h(y) and cumulative distribution function H(y). Let c be the positive real number for which g(c) = h(c). Which of the following statements is/are correct?",
+      "after": "Suppose a random variable $Z$ follows $Normal(\\mu = 0, \\sigma^2 = 1)$ distribution with probability density function $g(z)$ and cumulative distribution function $G(z)$. Another random variable $Y$ follows $t_1$ distribution with probability density function $h(y)$ and cumulative distribution function $H(y)$. Let $c$ be the positive real number for which $g(c) = h(c)$.\n\nWhich of the following statements is/are correct?",
+      "reason": "KaTeX for the maths; removed the parenthetical \"(Student’s t with 1 degree of freedom)\", which is not in the paper (the paper writes only \"t_1 distribution\").",
+      "source": "pdf p.19 (Q.28)"
+    },
+    {
+      "id": "da-2026-da-18",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "G(0) = H(0)"
+        },
+        {
+          "l": "B",
+          "t": "G(c) < H(c)"
+        },
+        {
+          "l": "C",
+          "t": "G(-c) < H(-c)"
+        },
+        {
+          "l": "D",
+          "t": "g(0) = h(0)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$G(0) = H(0)$"
+        },
+        {
+          "l": "B",
+          "t": "$G(c) < H(c)$"
+        },
+        {
+          "l": "C",
+          "t": "$G(-c) < H(-c)$"
+        },
+        {
+          "l": "D",
+          "t": "$g(0) = h(0)$"
+        }
+      ],
+      "reason": "Options typeset with KaTeX.",
+      "source": "pdf p.19 (Q.28)"
+    },
+    {
+      "id": "da-2026-da-18",
+      "field": "topic",
+      "before": "probability-and-statistics",
+      "after": "rv",
+      "reason": "Topic \"probability-and-statistics\" does not exist in subjects.DA.prob; mapped to the matching DA topic id.",
+      "source": "questions.json subjects.DA"
+    },
+    {
+      "id": "da-2026-da-18",
+      "field": "tags",
+      "before": [
+        "prob",
+        "probability-and-statistics"
+      ],
+      "after": [
+        "prob",
+        "rv"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "questions.json subjects.DA"
+    },
+    {
+      "id": "da-2026-da-19",
+      "field": "text",
+      "before": "Consider that for a supervised learning task, the objective function being minimized is f_w(x) = wx, where x ∈ ℝ is the input and w ∈ ℝ is the parameter. Stochastic Gradient Descent with learning rate of 0.10 is used for parameter updates. Suppose that at the end of iteration i, the value of w becomes 10.00. Let x = 10.00 be the input for iteration (i + 1). The value of w at the end of iteration (i + 1) is __________ . (Rounded off to two decimal places)",
+      "after": "Consider that for a supervised learning task, the objective function being minimized is $f_w(x) = wx$, where $x \\in \\mathbb{R}$ is the input and $w \\in \\mathbb{R}$ is the parameter. Stochastic Gradient Descent with learning rate of 0.10 is used for parameter updates.\n\nSuppose that at the end of iteration $i$, the value of $w$ becomes 10.00.\n\nLet $x = 10.00$ be the input for iteration $(i + 1)$.\n\nThe value of $w$ at the end of iteration $(i + 1)$ is __________ . (Rounded off to **two** decimal places)",
+      "reason": "KaTeX for the maths; paragraph breaks as in the paper.",
+      "source": "pdf p.20 (Q.29)"
+    },
+    {
+      "id": "da-2026-da-19",
+      "field": "topic",
+      "before": "supervised-learning",
+      "after": "supervised",
+      "reason": "Topic \"supervised-learning\" does not exist in subjects.DA.ml; mapped to the matching DA topic id.",
+      "source": "questions.json subjects.DA"
+    },
+    {
+      "id": "da-2026-da-19",
+      "field": "tags",
+      "before": [
+        "ml",
+        "supervised-learning"
+      ],
+      "after": [
+        "ml",
+        "supervised"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "questions.json subjects.DA"
+    },
+    {
+      "id": "da-2026-da-19",
+      "field": "answer",
+      "before": {
+        "min": 8.9,
+        "max": 9.1
+      },
+      "after": "8.90 to 9.10",
+      "reason": "Same official range, rewritten in the bank's \"a to b\" key format (the {min,max} object is not understood by the graders/validator).",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf (Q.29: 8.90 to 9.10)"
+    },
+    {
+      "id": "da-2026-da-20",
+      "field": "text",
+      "before": "Consider the game tree for a two-player turn-taking minimax game as shown in the figure. The value of a terminal node represents the utility of the game state if the game ends there. The numbers written next to the edges denote the strategies. There are two players MAX and MIN. At any particular state of the game, MAX prefers to move to a state of maximum value. On the other hand, MIN prefers to move to a state of minimum value. Suppose MAX starts the game at the root and has three strategies: 1, 2 and 3. Next, MIN plays and also has three strategies: 1, 2 and 3. The game ends there. Both players always take optimal strategies throughout the game. At the root, the best strategy for MAX is ___________ . (Answer in integer) [Figure: game tree — not captured in text extraction]",
+      "after": "Consider the game tree for a two-player turn-taking minimax game as shown in the figure. The value of a terminal node represents the utility of the game state if the game ends there. The numbers written next to the edges denote the strategies.\n\nThere are two players MAX and MIN. At any particular state of the game, MAX prefers to move to a state of maximum value. On the other hand, MIN prefers to move to a state of minimum value.\n\nSuppose MAX starts the game at the root and has three strategies: 1, 2 and 3. Next, MIN plays and also has three strategies: 1, 2 and 3. The game ends there. Both players always take optimal strategies throughout the game.\n\nAt the root, the best strategy for MAX is ___________ . (Answer in **integer**)",
+      "reason": "Removed the \"[Figure … not captured]\" placeholder (the figure is now attached); paragraph breaks as in the paper.",
+      "source": "pdf p.20 (Q.30)"
+    },
+    {
+      "id": "da-2026-da-20",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "da-2026/da-20-1.svg",
+          "svg": "da-2026/da-20-1.svg",
+          "alt": "Two-ply game tree. The root is a MAX node (upward triangle) with three edges labelled 1, 2, 3 (left to right) leading to three MIN nodes (downward triangles). Each MIN node has three edges labelled 1, 2, 3 leading to terminal nodes. Terminal values, left to right: under MIN node 1: 8, 6, −1; under MIN node 2: 1, 5, 7; under MIN node 3: −4, −3, −12."
+        }
+      ],
+      "reason": "The question depends on its game-tree figure, which the bank was missing. Redrawn as an SVG from the paper.",
+      "source": "pdf p.20 (Q.30)"
+    },
+    {
+      "id": "da-2026-da-20",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Figure now attached and the official key (2) verified by minimax back-up: MIN values −1, 1, −12, so MAX picks strategy 2.",
+      "source": "pdf p.20 (Q.30)"
+    },
+    {
+      "id": "da-2026-da-21",
+      "field": "text",
+      "before": "Let A be a sorted array containing 1000 distinct integers. You perform a recursive binary search on A to find an element y. Suppose each comparison checks whether the middle element computed during the current recursive step is equal to, less than, or greater than y. The maximum number of comparisons that may have to be performed if y is not an element of A is _______ . (Answer in integer)",
+      "after": "Let `A` be a sorted array containing 1000 distinct integers. You perform a recursive binary search on `A` to find an element `y`. Suppose each comparison checks whether the middle element computed during the current recursive step is equal to, less than, or greater than `y`.\n\nThe maximum number of comparisons that may have to be performed if `y` is not an element of `A` is _______ . (Answer in **integer**)",
+      "reason": "Paragraph break as in the paper; identifiers A and y in code font as printed.",
+      "source": "pdf p.20 (Q.31)"
+    },
+    {
+      "id": "da-2026-da-21",
+      "field": "topic",
+      "before": "searching-and-sorting",
+      "after": "algorithms",
+      "reason": "Topic \"searching-and-sorting\" does not exist in subjects.DA.pdsa; mapped to the matching DA topic id.",
+      "source": "questions.json subjects.DA"
+    },
+    {
+      "id": "da-2026-da-21",
+      "field": "tags",
+      "before": [
+        "pdsa",
+        "searching-and-sorting"
+      ],
+      "after": [
+        "pdsa",
+        "algorithms"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "questions.json subjects.DA"
+    },
+    {
+      "id": "da-2026-da-22",
+      "field": "text",
+      "before": "In a relational database, a B+ Tree Index is to be constructed for a relation on a key field. In a B+ Tree, a Node Pointer points to a sub-tree and a Data Record Pointer points to a block of database records. Let, Node size = 4096 bytes, Node Pointer size = 10 bytes, Search Key Field size = 11 bytes and Data Record Pointer size = 12 bytes. The maximum number of Node Pointers that can be present in a non-leaf node of the B+ Tree is ________ . (Answer in integer)",
+      "after": "In a relational database, a B+ Tree Index is to be constructed for a relation on a key field. In a B+ Tree, a Node Pointer points to a sub-tree and a Data Record Pointer points to a block of database records.\n\nLet, Node size = 4096 bytes, Node Pointer size = 10 bytes, Search Key Field size = 11 bytes and Data Record Pointer size = 12 bytes.\n\nThe maximum number of Node Pointers that can be present in a non-leaf node of the B+ Tree is ________ . (Answer in **integer**)",
+      "reason": "Paragraph breaks as in the paper.",
+      "source": "pdf p.21 (Q.32)"
+    },
+    {
+      "id": "da-2026-da-22",
+      "field": "topic",
+      "before": "relational-model",
+      "after": "relational",
+      "reason": "Topic \"relational-model\" does not exist in subjects.DA.dbw; mapped to the matching DA topic id.",
+      "source": "questions.json subjects.DA"
+    },
+    {
+      "id": "da-2026-da-22",
+      "field": "tags",
+      "before": [
+        "dbw",
+        "relational-model"
+      ],
+      "after": [
+        "dbw",
+        "relational"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "questions.json subjects.DA"
+    },
+    {
+      "id": "da-2026-da-23",
+      "field": "text",
+      "before": "The number of bijections f(·) from the set S = {1, 2, 3, 4} to itself such that f(f(n)) = n, for all n ∈ S, is __________ . (Answer in integer)",
+      "after": "The number of bijections $f(\\cdot)$ from the set $S = \\{1, 2, 3, 4\\}$ to itself such that $f(f(n)) = n$, for all $n \\in S$, is __________ . (Answer in **integer**)",
+      "reason": "KaTeX for the maths.",
+      "source": "pdf p.21 (Q.33)"
+    },
+    {
+      "id": "da-2026-da-23",
+      "field": "topic",
+      "before": "probability-and-statistics",
+      "after": "basic",
+      "reason": "Topic \"probability-and-statistics\" does not exist in subjects.DA.prob; mapped to the matching DA topic id.",
+      "source": "questions.json subjects.DA"
+    },
+    {
+      "id": "da-2026-da-23",
+      "field": "tags",
+      "before": [
+        "prob",
+        "probability-and-statistics"
+      ],
+      "after": [
+        "prob",
+        "basic"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "questions.json subjects.DA"
+    },
+    {
+      "id": "da-2026-da-24",
+      "field": "text",
+      "before": "Let X be an exponentially distributed random variable with mean λ (> 0). If P(X > 5) = 0.35, then the conditional probability P(X > 10 | X > 5) is ___________ . (Rounded off to two decimal places)",
+      "after": "Let $X$ be an exponentially distributed random variable with mean $\\lambda\\,(> 0)$. If $P(X > 5) = 0.35$, then the conditional probability $P(X > 10 \\mid X > 5)$ is ___________ . (Rounded off to **two** decimal places)",
+      "reason": "KaTeX for the maths.",
+      "source": "pdf p.21 (Q.34)"
+    },
+    {
+      "id": "da-2026-da-24",
+      "field": "topic",
+      "before": "probability-and-statistics",
+      "after": "rv",
+      "reason": "Topic \"probability-and-statistics\" does not exist in subjects.DA.prob; mapped to the matching DA topic id.",
+      "source": "questions.json subjects.DA"
+    },
+    {
+      "id": "da-2026-da-24",
+      "field": "tags",
+      "before": [
+        "prob",
+        "probability-and-statistics"
+      ],
+      "after": [
+        "prob",
+        "rv"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "questions.json subjects.DA"
+    },
+    {
+      "id": "da-2026-da-24",
+      "field": "answer",
+      "before": {
+        "min": 0.34,
+        "max": 0.36
+      },
+      "after": "0.34 to 0.36",
+      "reason": "Same official range, rewritten in the bank's \"a to b\" key format (the {min,max} object is not understood by the graders/validator).",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf (Q.34: 0.34 to 0.36)"
+    },
+    {
+      "id": "da-2026-da-25",
+      "field": "text",
+      "before": "The value of Σ_{i=0}^{∞} Σ_{j=1}^{∞} 2^(-i) 3^(-j) is ______________ . (Answer in integer)",
+      "after": "The value of $\\sum_{i=0}^{\\infty} \\sum_{j=1}^{\\infty} 2^{-i}\\, 3^{-j}$ is ______________ . (Answer in **integer**)",
+      "reason": "Double series typeset with KaTeX (the plain-text form \"2^(-i) 3^(-j)\" was hard to read).",
+      "source": "pdf p.21 (Q.35)"
+    },
+    {
+      "id": "da-2026-da-25",
+      "field": "topic",
+      "before": "calculus-and-optimisation",
+      "after": "functions",
+      "reason": "Topic \"calculus-and-optimisation\" does not exist in subjects.DA.calc; mapped to the matching DA topic id.",
+      "source": "questions.json subjects.DA"
+    },
+    {
+      "id": "da-2026-da-25",
+      "field": "tags",
+      "before": [
+        "calc",
+        "calculus-and-optimisation"
+      ],
+      "after": [
+        "calc",
+        "functions"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "questions.json subjects.DA"
+    },
+    {
+      "id": "da-2026-da-26",
+      "field": "text",
+      "before": "Let four points in three-dimensional space be: P1: [2, 3, -1], P2: [3, 1, 1], P3: [5, -2, 3] and P4: [3, 3, 3]. Hierarchical Agglomerative Clustering is used to cluster the above points. If Manhattan Distance is used as the distance metric during clustering, which of the following options indicates the two points that will be merged first?",
+      "after": "Let four points in three-dimensional space be:\n\nP1: $[2, 3, -1]$, P2: $[3, 1, 1]$, P3: $[5, -2, 3]$ and P4: $[3, 3, 3]$.\n\nHierarchical Agglomerative Clustering is used to cluster the above points. If Manhattan Distance is used as the distance metric during clustering, which of the following options indicates the two points that will be merged first?",
+      "reason": "Point list on its own line as in the paper; coordinates typeset with KaTeX.",
+      "source": "pdf p.22 (Q.36)"
+    },
+    {
+      "id": "da-2026-da-26",
+      "field": "topic",
+      "before": "clustering",
+      "after": "unsupervised",
+      "reason": "Topic \"clustering\" does not exist in subjects.DA.ml; mapped to the matching DA topic id.",
+      "source": "questions.json subjects.DA"
+    },
+    {
+      "id": "da-2026-da-26",
+      "field": "tags",
+      "before": [
+        "ml",
+        "clustering"
+      ],
+      "after": [
+        "ml",
+        "unsupervised"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "questions.json subjects.DA"
+    },
+    {
+      "id": "da-2026-da-27",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "The regularizer in the objective function of Ridge Regression is used to guard against scenarios where the model works well for the test data, but poorly for the training data."
+        },
+        {
+          "l": "B",
+          "t": "The regularizer of Ridge Regression uses L1 norm."
+        },
+        {
+          "l": "C",
+          "t": "Ridge Regression aims to reduce the number of parameters that have negative values."
+        },
+        {
+          "l": "D",
+          "t": "The regularizer of Ridge Regression may increase the bias of the model, but it helps in reducing the variance in predictions."
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "The regularizer in the objective function of Ridge Regression is used to guard against scenarios where the model works well for the test data, but poorly for the training data."
+        },
+        {
+          "l": "B",
+          "t": "The regularizer of Ridge Regression uses $L_1$ norm."
+        },
+        {
+          "l": "C",
+          "t": "Ridge Regression aims to reduce the number of parameters that have negative values."
+        },
+        {
+          "l": "D",
+          "t": "The regularizer of Ridge Regression may increase the bias of the model, but it helps in reducing the variance in predictions."
+        }
+      ],
+      "reason": "L1 written with its subscript ($L_1$) as in the paper.",
+      "source": "pdf p.23 (Q.37)"
+    },
+    {
+      "id": "da-2026-da-27",
+      "field": "topic",
+      "before": "regression",
+      "after": "supervised",
+      "reason": "Topic \"regression\" does not exist in subjects.DA.ml; mapped to the matching DA topic id.",
+      "source": "questions.json subjects.DA"
+    },
+    {
+      "id": "da-2026-da-27",
+      "field": "tags",
+      "before": [
+        "ml",
+        "regression"
+      ],
+      "after": [
+        "ml",
+        "supervised"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "questions.json subjects.DA"
+    },
+    {
+      "id": "da-2026-da-28",
+      "field": "text",
+      "before": "Assume that a Creative (C) person will Succeed (S) if the person is also Disciplined (D), but will not succeed otherwise. Now, consider the following statements:\n(i) C ⋀ S ⇔ D\n(ii) C ⇒ (S ⇔ D)\n(iii) C ⇔ ((D ⇒ S) ∨ ¬S)\nWhich of the following options is correct?",
+      "after": "Assume that a Creative ($C$) person will Succeed ($S$) if the person is also Disciplined ($D$), but will not succeed otherwise. Now, consider the following statements:\n\n(i) $C \\land S \\Leftrightarrow D$\n\n(ii) $C \\Rightarrow (S \\Leftrightarrow D)$\n\n(iii) $C \\Leftrightarrow ((D \\Rightarrow S) \\lor \\neg S)$\n\nWhich of the following options is correct?",
+      "reason": "Statements typeset with KaTeX, one per line as in the paper.",
+      "source": "pdf p.23 (Q.38)"
+    },
+    {
+      "id": "da-2026-da-28",
+      "field": "topic",
+      "before": "logic-and-reasoning",
+      "after": "logic",
+      "reason": "Topic \"logic-and-reasoning\" does not exist in subjects.DA.ai; mapped to the matching DA topic id.",
+      "source": "questions.json subjects.DA"
+    },
+    {
+      "id": "da-2026-da-28",
+      "field": "tags",
+      "before": [
+        "ai",
+        "logic-and-reasoning"
+      ],
+      "after": [
+        "ai",
+        "logic"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "questions.json subjects.DA"
+    },
+    {
+      "id": "da-2026-da-29",
+      "field": "text",
+      "before": "A recursive function in Python is given.\ndef mystery(n):\n    if n <= 0:\n        return 1\n    else:\n        return mystery(n-1) + mystery(n-2)\nNow, consider the following function call: mystery(4). Assume that a typical runtime stack is used to manage function calls. Each function call is pushed onto the stack and removed only after it finishes execution. Which of the following options denotes the total number of function calls (i.e., the total number of stack activations), including the initial call, to compute mystery(4)?",
+      "after": "A recursive function in Python is given.\n\n```python\ndef mystery(n):\n    if n <= 0:\n        return 1\n    else:\n        return mystery(n-1) + mystery(n-2)\n```\n\nNow, consider the following function call:\n\n```python\nmystery(4)\n```\n\nAssume that a typical runtime stack is used to manage function calls. Each function call is pushed onto the stack and removed only after it finishes execution.\n\nWhich of the following options denotes the total number of function calls (i.e., the total number of stack activations), including the initial call, to compute `mystery(4)`?",
+      "reason": "Python code put in a fenced block with its indentation restored (the flattened one-line form lost the block structure).",
+      "source": "pdf p.24 (Q.39)"
+    },
+    {
+      "id": "da-2026-da-29",
+      "field": "topic",
+      "before": "python-and-c-programming",
+      "after": "python",
+      "reason": "Topic \"python-and-c-programming\" does not exist in subjects.DA.pdsa; mapped to the matching DA topic id.",
+      "source": "questions.json subjects.DA"
+    },
+    {
+      "id": "da-2026-da-29",
+      "field": "tags",
+      "before": [
+        "pdsa",
+        "python-and-c-programming"
+      ],
+      "after": [
+        "pdsa",
+        "python"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "questions.json subjects.DA"
+    },
+    {
+      "id": "da-2026-da-30",
+      "field": "text",
+      "before": "Consider a directed graph G = (V, E), where V is the finite set of vertices and E is the set of directed edges between the vertices. G may contain cycles but there is no self-loop. Further, G may not be strongly connected. Let G^R be the graph obtained by reversing the directions of all the edges in G without changing the set of vertices. Assume that Breadth First Search (BFS) or Depth First Search (DFS) from any given vertex v of a graph visits only the reachable vertices from v in that graph. Which of the following statements must always be true, regardless of the structure of G?",
+      "after": "Consider a directed graph $G = (V, E)$, where $V$ is the finite set of vertices and $E$ is the set of directed edges between the vertices. $G$ may contain cycles but there is no self-loop. Further, $G$ may not be strongly connected.\n\nLet $G^R$ be the graph obtained by reversing the directions of all the edges in $G$ without changing the set of vertices.\n\nAssume that Breadth First Search (BFS) or Depth First Search (DFS) from any given vertex $v$ of a graph visits only the reachable vertices from $v$ in that graph.\n\nWhich of the following statements must always be true, regardless of the structure of $G$?",
+      "reason": "Re-typed with KaTeX math (variables, subscripts, symbols) and the paragraph breaks of the paper; wording unchanged.",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "da-2026-da-30",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "If u is a reachable vertex in the BFS of G^R from v, then u is also a reachable vertex in the DFS of G from v."
+        },
+        {
+          "l": "B",
+          "t": "In G^R, the BFS traversal from v will visit exactly the same set of vertices as the DFS from v in G."
+        },
+        {
+          "l": "C",
+          "t": "The order of vertices visited in the BFS of G^R from v is the reverse of the order of vertices visited in the DFS of G from v."
+        },
+        {
+          "l": "D",
+          "t": "If u is a reachable vertex in the DFS of G from v, then v is also a reachable vertex in the BFS of G^R from u."
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "If $u$ is a reachable vertex in the BFS of $G^R$ from $v$, then $u$ is also a reachable vertex in the DFS of $G$ from $v$."
+        },
+        {
+          "l": "B",
+          "t": "In $G^R$, the BFS traversal from $v$ will visit exactly the same set of vertices as the DFS from $v$ in $G$."
+        },
+        {
+          "l": "C",
+          "t": "The order of vertices visited in the BFS of $G^R$ from $v$ is the reverse of the order of vertices visited in the DFS of $G$ from $v$."
+        },
+        {
+          "l": "D",
+          "t": "If $u$ is a reachable vertex in the DFS of $G$ from $v$, then $v$ is also a reachable vertex in the BFS of $G^R$ from $u$."
+        }
+      ],
+      "reason": "Re-typed with KaTeX math (variables, subscripts, symbols) and the paragraph breaks of the paper; wording unchanged.",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "da-2026-da-30",
+      "field": "topic",
+      "before": "trees-and-graphs",
+      "after": "algorithms",
+      "reason": "Topic re-filed under the DA syllabus topic ids defined in questions.json \"subjects\".",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "da-2026-da-30",
+      "field": "tags",
+      "before": [
+        "pdsa",
+        "trees-and-graphs"
+      ],
+      "after": [
+        "pdsa",
+        "algorithms",
+        "graph-traversal",
+        "bfs",
+        "dfs",
+        "reachability"
+      ],
+      "reason": "Tags follow the corrected topic, plus concept tags.",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "da-2026-da-31",
+      "field": "text",
+      "before": "Consider a B+ Tree where the maximum number of key values in each leaf node is 2 and the maximum number of pointers in each non-leaf node is 3. Let the content of the B+ Tree be as shown in the figure. Which of the following options denotes the key value(s) stored in the root node after inserting a key value 3 in the given B+ Tree? [Figure: initial B+ Tree — not captured in text extraction]",
+      "after": "Consider a B+ Tree where the maximum number of key values in each leaf node is 2 and the maximum number of pointers in each non-leaf node is 3. Let the content of the B+ Tree be as shown in the figure.\n\nWhich of the following options denotes the key value(s) stored in the root node after inserting a key value 3 in the given B+ Tree?",
+      "reason": "Removed the \"[Figure: … not captured in text extraction]\" placeholder; the figure is now attached as an SVG redraw.",
+      "source": "pdf p.26"
+    },
+    {
+      "id": "da-2026-da-31",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "da-2026/da-31-1.svg",
+          "svg": "da-2026/da-31-1.svg",
+          "alt": "B+ tree of order 3. The root node holds the keys 5 and 8 and has three child pointers: the left pointer goes to leaf [1, 5], the middle pointer to leaf [7, 8], and the right pointer to leaf [9, 12]. Every leaf key has a dashed pointer down to its data record, and the leaves are chained left to right by sibling pointers: [1, 5] → [7, 8] → [9, 12] → NULL."
+        }
+      ],
+      "reason": "The question depends on its figure, which the bank was missing. Redrawn as an SVG from the paper (root 5 | 8; leaves 1,5 → 7,8 → 9,12 → NULL).",
+      "source": "pdf p.26"
+    },
+    {
+      "id": "da-2026-da-31",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "The missing figure is now attached and the official key (A) was verified by solving.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-da-31",
+      "field": "topic",
+      "before": "relational-model",
+      "after": "relational",
+      "reason": "Topic re-filed under the DA syllabus topic ids defined in questions.json \"subjects\".",
+      "source": "pdf p.26"
+    },
+    {
+      "id": "da-2026-da-31",
+      "field": "tags",
+      "before": [
+        "dbw",
+        "relational-model"
+      ],
+      "after": [
+        "dbw",
+        "relational",
+        "b-plus-tree",
+        "indexing"
+      ],
+      "reason": "Tags follow the corrected topic, plus concept tags.",
+      "source": "pdf p.26"
+    },
+    {
+      "id": "da-2026-da-32",
+      "field": "text",
+      "before": "Consider the given relations X, Y and Z. The relation X has three columns P, Q and R. The relation Y has three columns P, Q and S. The relation Z has two columns P and T.\nX(P,Q,R): (P1,Q1,R1), (P2,Q2,R2), (P3,Q3,R2)\nY(P,Q,S): (P1,Q1,2), (P1,Q2,5), (P2,Q1,6), (P3,Q3,1)\nZ(P,T): (P1,T1), (P3,T2), (P4,T3), (P4,NULL)\nConsider the relational algebra expression ∏_{PRS}[ (σ_{(Q=Q3 ∨ R=R2)}[X ⋈ Y]) ⋈ (σ_{(S>1)}[Y ⋈ Z]) ] where ⋈ denotes natural join operation. Which of the following options is the correct output for the given expression?",
+      "after": "Consider the given relations $X$, $Y$ and $Z$. The relation $X$ has three columns $P$, $Q$ and $R$. The relation $Y$ has three columns $P$, $Q$ and $S$. The relation $Z$ has two columns $P$ and $T$.\n\n**X**\n\n| P | Q | R |\n|---|---|---|\n| P1 | Q1 | R1 |\n| P2 | Q2 | R2 |\n| P3 | Q3 | R2 |\n\n**Y**\n\n| P | Q | S |\n|---|---|---|\n| P1 | Q1 | 2 |\n| P1 | Q2 | 5 |\n| P2 | Q1 | 6 |\n| P3 | Q3 | 1 |\n\n**Z**\n\n| P | T |\n|---|---|\n| P1 | T1 |\n| P3 | T2 |\n| P4 | T3 |\n| P4 | NULL |\n\nConsider the relational algebra expression\n\n$$\\Pi_{PRS}\\left[\\left(\\sigma_{(Q = Q3\\ \\lor\\ R = R2)}[X \\bowtie Y]\\right) \\bowtie \\left(\\sigma_{(S > 1)}[Y \\bowtie Z]\\right)\\right]$$\n\nwhere $\\bowtie$ denotes natural join operation.\n\nWhich of the following options is the correct output for the given expression?",
+      "reason": "The three relations were flattened into tuple lists; restored as tables as printed, and the expression re-typed in KaTeX.",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "da-2026-da-32",
+      "field": "topic",
+      "before": "relational-model",
+      "after": "relational",
+      "reason": "Topic re-filed under the DA syllabus topic ids defined in questions.json \"subjects\".",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "da-2026-da-32",
+      "field": "tags",
+      "before": [
+        "dbw",
+        "relational-model"
+      ],
+      "after": [
+        "dbw",
+        "relational",
+        "relational-algebra",
+        "natural-join",
+        "selection"
+      ],
+      "reason": "Tags follow the corrected topic, plus concept tags.",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "da-2026-da-33",
+      "field": "text",
+      "before": "Consider the concept hierarchies as shown in the figure. Which of the following options denotes the total number of possible data cuboids from these concept hierarchies? [Figure: concept hierarchies — not captured in text extraction]",
+      "after": "Consider the concept hierarchies as shown in the figure.\n\nWhich of the following options denotes the total number of possible data cuboids from these concept hierarchies?",
+      "reason": "Removed the \"[Figure: … not captured in text extraction]\" placeholder; the figure is now attached as an SVG redraw.",
+      "source": "pdf p.28"
+    },
+    {
+      "id": "da-2026-da-33",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "4^3"
+        },
+        {
+          "l": "B",
+          "t": "2^3"
+        },
+        {
+          "l": "C",
+          "t": "3!"
+        },
+        {
+          "l": "D",
+          "t": "4!"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$4^3$"
+        },
+        {
+          "l": "B",
+          "t": "$2^3$"
+        },
+        {
+          "l": "C",
+          "t": "$2!$"
+        },
+        {
+          "l": "D",
+          "t": "$4!$"
+        }
+      ],
+      "reason": "Option (C) is \"2!\" in the paper, not \"3!\"; exponents typed in KaTeX.",
+      "source": "pdf p.28"
+    },
+    {
+      "id": "da-2026-da-33",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "da-2026/da-33-1.svg",
+          "svg": "da-2026/da-33-1.svg",
+          "alt": "Three concept hierarchies drawn as vertical chains of three dots each, highest level at the top: Year – Month – Day; Country – State – City; Item Category – Item Type – Item."
+        }
+      ],
+      "reason": "The question depends on its figure, which the bank was missing. Redrawn as an SVG from the paper.",
+      "source": "pdf p.28"
+    },
+    {
+      "id": "da-2026-da-33",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "The missing figure is attached, option (C) corrected, and the official key (A) verified by solving.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-da-33",
+      "field": "topic",
+      "before": "data-warehousing-and-olap",
+      "after": "warehousing",
+      "reason": "Topic re-filed under the DA syllabus topic ids defined in questions.json \"subjects\".",
+      "source": "pdf p.28"
+    },
+    {
+      "id": "da-2026-da-33",
+      "field": "tags",
+      "before": [
+        "dbw",
+        "data-warehousing-and-olap"
+      ],
+      "after": [
+        "dbw",
+        "warehousing",
+        "data-cube",
+        "concept-hierarchy",
+        "cuboids"
+      ],
+      "reason": "Tags follow the corrected topic, plus concept tags.",
+      "source": "pdf p.28"
+    },
+    {
+      "id": "da-2026-da-34",
+      "field": "text",
+      "before": "Let X and Y be two independent random variables. X follows Bernoulli(p = 0.3) distribution and Y follows Normal(μ = 0, σ^2 = 100) distribution. Which of the following options is the variance of (2X - 1)Y?",
+      "after": "Let $X$ and $Y$ be two independent random variables. $X$ follows $Bernoulli(p = 0.3)$ distribution and $Y$ follows $Normal(\\mu = 0, \\sigma^2 = 100)$ distribution.\n\nWhich of the following options is the variance of $(2X - 1)Y$?",
+      "reason": "Re-typed with KaTeX math (variables, subscripts, symbols) and the paragraph breaks of the paper; wording unchanged.",
+      "source": "pdf p.29"
+    },
+    {
+      "id": "da-2026-da-34",
+      "field": "topic",
+      "before": "probability-and-statistics",
+      "after": "rv",
+      "reason": "Topic re-filed under the DA syllabus topic ids defined in questions.json \"subjects\".",
+      "source": "pdf p.29"
+    },
+    {
+      "id": "da-2026-da-34",
+      "field": "tags",
+      "before": [
+        "prob",
+        "probability-and-statistics"
+      ],
+      "after": [
+        "prob",
+        "rv",
+        "variance",
+        "independence",
+        "bernoulli",
+        "normal-distribution"
+      ],
+      "reason": "Tags follow the corrected topic, plus concept tags.",
+      "source": "pdf p.29"
+    },
+    {
+      "id": "da-2026-da-35",
+      "field": "text",
+      "before": "Let L = lim_{n→∞} Σ_{k=0}^{n} (e^(-n) n^k)/k!. Which of the following is the value of L?",
+      "after": "Let\n\n$$L = \\lim_{n \\to \\infty} \\sum_{k=0}^{n} \\frac{e^{-n}\\, n^k}{k!}$$\n\nWhich of the following is the value of $L$?",
+      "reason": "Re-typed with KaTeX math (variables, subscripts, symbols) and the paragraph breaks of the paper; wording unchanged.",
+      "source": "pdf p.29"
+    },
+    {
+      "id": "da-2026-da-35",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "0.5"
+        },
+        {
+          "l": "B",
+          "t": "1.0"
+        },
+        {
+          "l": "C",
+          "t": "0"
+        },
+        {
+          "l": "D",
+          "t": "e^(-1)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "0.5"
+        },
+        {
+          "l": "B",
+          "t": "1.0"
+        },
+        {
+          "l": "C",
+          "t": "0"
+        },
+        {
+          "l": "D",
+          "t": "$e^{-1}$"
+        }
+      ],
+      "reason": "Re-typed with KaTeX math (variables, subscripts, symbols) and the paragraph breaks of the paper; wording unchanged.",
+      "source": "pdf p.29"
+    },
+    {
+      "id": "da-2026-da-35",
+      "field": "topic",
+      "before": "probability-and-statistics",
+      "after": "rv",
+      "reason": "Topic re-filed under the DA syllabus topic ids defined in questions.json \"subjects\".",
+      "source": "pdf p.29"
+    },
+    {
+      "id": "da-2026-da-35",
+      "field": "tags",
+      "before": [
+        "prob",
+        "probability-and-statistics"
+      ],
+      "after": [
+        "prob",
+        "rv",
+        "poisson",
+        "central-limit-theorem",
+        "limits"
+      ],
+      "reason": "Tags follow the corrected topic, plus concept tags.",
+      "source": "pdf p.29"
+    },
+    {
+      "id": "da-2026-da-36",
+      "field": "text",
+      "before": "Let γ1, γ2, γ3 be the eigenvalues of the matrix [[1, 0, 0], [0, cos t, sin t], [0, -sin t, cos t]], where t ∈ [-π, π] is in radians. Which one of the following options lists all the possible values of t satisfying γ1 + γ2 + γ3 = 1 + √2?",
+      "after": "Let $\\gamma_1, \\gamma_2, \\gamma_3$ be the eigenvalues of the matrix $\\begin{bmatrix} 1 & 0 & 0 \\\\ 0 & \\cos t & \\sin t \\\\ 0 & -\\sin t & \\cos t \\end{bmatrix}$, where $t \\in [-\\pi, \\pi]$ is in radians.\n\nWhich one of the following options lists all the possible values of $t$ satisfying $\\gamma_1 + \\gamma_2 + \\gamma_3 = 1 + \\sqrt{2}$?",
+      "reason": "Re-typed with KaTeX math (variables, subscripts, symbols) and the paragraph breaks of the paper; wording unchanged.",
+      "source": "pdf p.30"
+    },
+    {
+      "id": "da-2026-da-36",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "{π/3, -π/4}"
+        },
+        {
+          "l": "B",
+          "t": "{π/4, -π/3}"
+        },
+        {
+          "l": "C",
+          "t": "{π/4, -π/4}"
+        },
+        {
+          "l": "D",
+          "t": "{π/3, -π/3}"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\left\\{\\frac{\\pi}{3}, -\\frac{\\pi}{4}\\right\\}$"
+        },
+        {
+          "l": "B",
+          "t": "$\\left\\{\\frac{\\pi}{4}, -\\frac{\\pi}{3}\\right\\}$"
+        },
+        {
+          "l": "C",
+          "t": "$\\left\\{\\frac{\\pi}{4}, -\\frac{\\pi}{4}\\right\\}$"
+        },
+        {
+          "l": "D",
+          "t": "$\\left\\{\\frac{\\pi}{3}, -\\frac{\\pi}{3}\\right\\}$"
+        }
+      ],
+      "reason": "Re-typed with KaTeX math (variables, subscripts, symbols) and the paragraph breaks of the paper; wording unchanged.",
+      "source": "pdf p.30"
+    },
+    {
+      "id": "da-2026-da-36",
+      "field": "topic",
+      "before": "linear-algebra",
+      "after": "eigen",
+      "reason": "Topic re-filed under the DA syllabus topic ids defined in questions.json \"subjects\".",
+      "source": "pdf p.30"
+    },
+    {
+      "id": "da-2026-da-36",
+      "field": "tags",
+      "before": [
+        "la",
+        "linear-algebra"
+      ],
+      "after": [
+        "la",
+        "eigen",
+        "trace",
+        "rotation-matrix"
+      ],
+      "reason": "Tags follow the corrected topic, plus concept tags.",
+      "source": "pdf p.30"
+    },
+    {
+      "id": "da-2026-da-37",
+      "field": "text",
+      "before": "Consider that 20 stories of Author X and 10 stories of Author Y were kept together without mentioning the names of the authors. A classifier was then asked to predict the author (X or Y) of each of these stories. Let, out of X’s stories, 6 were classified as that of Y. On the other hand, out of Y’s stories, 2 were classified as that of X. Considering X and Y as two classes, which of the following statements is/are true?",
+      "after": "Consider that 20 stories of Author X and 10 stories of Author Y were kept together without mentioning the names of the authors. A classifier was then asked to predict the author (X or Y) of each of these stories. Let, out of X’s stories, 6 were classified as that of Y. On the other hand, out of Y’s stories, 2 were classified as that of X.\n\nConsidering X and Y as two classes, which of the following statements is/are true?",
+      "reason": "Restored the paragraph break of the paper; wording unchanged.",
+      "source": "pdf p.31"
+    },
+    {
+      "id": "da-2026-da-37",
+      "field": "topic",
+      "before": "model-evaluation",
+      "after": "evaluation",
+      "reason": "Topic re-filed under the DA syllabus topic ids defined in questions.json \"subjects\".",
+      "source": "pdf p.31"
+    },
+    {
+      "id": "da-2026-da-37",
+      "field": "tags",
+      "before": [
+        "ml",
+        "model-evaluation"
+      ],
+      "after": [
+        "ml",
+        "evaluation",
+        "confusion-matrix",
+        "precision",
+        "recall",
+        "accuracy"
+      ],
+      "reason": "Tags follow the corrected topic, plus concept tags.",
+      "source": "pdf p.31"
+    },
+    {
+      "id": "da-2026-da-38",
+      "field": "text",
+      "before": "Let P(x) be a predicate. Which of the following statements is/are NOT valid in first-order logic?",
+      "after": "Let $P(x)$ be a predicate.\n\nWhich of the following statements is/are NOT valid in first-order logic?",
+      "reason": "Re-typed with KaTeX math (variables, subscripts, symbols) and the paragraph breaks of the paper; wording unchanged.",
+      "source": "pdf p.31"
+    },
+    {
+      "id": "da-2026-da-38",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "∀x P(x) ⇒ ∃x P(x)"
+        },
+        {
+          "l": "B",
+          "t": "∃x P(x) ⇒ ∀x P(x)"
+        },
+        {
+          "l": "C",
+          "t": "∃x P(x) ⇔ ∀x P(x)"
+        },
+        {
+          "l": "D",
+          "t": "∀x P(x) ⇒ ∃x ¬P(x)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\forall x\\, P(x) \\Rightarrow \\exists x\\, P(x)$"
+        },
+        {
+          "l": "B",
+          "t": "$\\exists x\\, P(x) \\Rightarrow \\forall x\\, P(x)$"
+        },
+        {
+          "l": "C",
+          "t": "$\\exists x\\, P(x) \\Leftrightarrow \\forall x\\, P(x)$"
+        },
+        {
+          "l": "D",
+          "t": "$\\forall x\\, P(x) \\Rightarrow \\exists x\\, \\neg P(x)$"
+        }
+      ],
+      "reason": "Re-typed with KaTeX math (variables, subscripts, symbols) and the paragraph breaks of the paper; wording unchanged.",
+      "source": "pdf p.31"
+    },
+    {
+      "id": "da-2026-da-38",
+      "field": "topic",
+      "before": "knowledge-representation",
+      "after": "logic",
+      "reason": "Topic re-filed under the DA syllabus topic ids defined in questions.json \"subjects\".",
+      "source": "pdf p.31"
+    },
+    {
+      "id": "da-2026-da-38",
+      "field": "tags",
+      "before": [
+        "ai",
+        "knowledge-representation"
+      ],
+      "after": [
+        "ai",
+        "logic",
+        "first-order-logic",
+        "quantifiers",
+        "validity"
+      ],
+      "reason": "Tags follow the corrected topic, plus concept tags.",
+      "source": "pdf p.31"
+    },
+    {
+      "id": "da-2026-da-39",
+      "field": "text",
+      "before": "Consider the problem of sorting the given array in ascending order: P = [1, 2, 3, 5, 4]. Consider two sorting algorithms Bubble Sort (BS) and Insertion Sort (IS). Let N1 be the total number of comparisons done by BS on the elements of P and N2 be the total number of comparisons done by IS on the elements of P. Which of the following options is/are correct?",
+      "after": "Consider the problem of sorting the given array in ascending order:\n\n$$P = [1, 2, 3, 5, 4]$$\n\nConsider two sorting algorithms Bubble Sort (BS) and Insertion Sort (IS).\n\nLet $N_1$ be the total number of comparisons done by BS on the elements of $P$ and $N_2$ be the total number of comparisons done by IS on the elements of $P$.\n\nWhich of the following options is/are correct?",
+      "reason": "Re-typed with KaTeX math (variables, subscripts, symbols) and the paragraph breaks of the paper; wording unchanged.",
+      "source": "pdf p.32"
+    },
+    {
+      "id": "da-2026-da-39",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "N1 = 10, N2 = 4"
+        },
+        {
+          "l": "B",
+          "t": "N1 > N2"
+        },
+        {
+          "l": "C",
+          "t": "IS on P will perform only one swap"
+        },
+        {
+          "l": "D",
+          "t": "Both BS and IS on P will make at least one unnecessary comparison (i.e., comparing elements that are already in correct order)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$N_1 = 10$, $N_2 = 4$"
+        },
+        {
+          "l": "B",
+          "t": "$N_1 > N_2$"
+        },
+        {
+          "l": "C",
+          "t": "IS on $P$ will perform only one swap"
+        },
+        {
+          "l": "D",
+          "t": "Both BS and IS on $P$ will make at least one unnecessary comparison (i.e., comparing elements that are already in correct order)"
+        }
+      ],
+      "reason": "Re-typed with KaTeX math (variables, subscripts, symbols) and the paragraph breaks of the paper; wording unchanged.",
+      "source": "pdf p.32"
+    },
+    {
+      "id": "da-2026-da-39",
+      "field": "topic",
+      "before": "searching-and-sorting",
+      "after": "algorithms",
+      "reason": "Topic re-filed under the DA syllabus topic ids defined in questions.json \"subjects\".",
+      "source": "pdf p.32"
+    },
+    {
+      "id": "da-2026-da-39",
+      "field": "tags",
+      "before": [
+        "pdsa",
+        "searching-and-sorting"
+      ],
+      "after": [
+        "pdsa",
+        "algorithms",
+        "bubble-sort",
+        "insertion-sort",
+        "comparisons"
+      ],
+      "reason": "Tags follow the corrected topic, plus concept tags.",
+      "source": "pdf p.32"
+    },
+    {
+      "id": "da-2026-da-40",
+      "field": "text",
+      "before": "Consider the given Python program.\ndef outer():\n    x = []\n    def inner(val):\n        x.append(val)\n        return x\n    return inner\nf1 = outer()\nf2 = outer()\nprint(f1(10)) # Line P\nprint(f1(20)) # Line Q\nprint(f2(30)) # Line R\nprint(f1(40)) # Line S\nWhich of the following options is/are correct?",
+      "after": "Consider the given Python program.\n\n```python\ndef outer():\n    x = []\n    def inner(val):\n        x.append(val)\n        return x\n    return inner\nf1 = outer()\nf2 = outer()\nprint(f1(10))   # Line P\nprint(f1(20))   # Line Q\nprint(f2(30))   # Line R\nprint(f1(40))   # Line S\n```\n\nWhich of the following options is/are correct?",
+      "reason": "Program put in a fenced code block so its indentation (which defines the nested function) is preserved.",
+      "source": "pdf p.33"
+    },
+    {
+      "id": "da-2026-da-40",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "f1 and f2 share the same list x"
+        },
+        {
+          "l": "B",
+          "t": "Output of Line Q is [10, 20]"
+        },
+        {
+          "l": "C",
+          "t": "Output of Line R is [10, 20, 30]"
+        },
+        {
+          "l": "D",
+          "t": "Output of Line S is [10, 20, 40]"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "`f1` and `f2` share the same list `x`"
+        },
+        {
+          "l": "B",
+          "t": "Output of Line Q is `[10, 20]`"
+        },
+        {
+          "l": "C",
+          "t": "Output of Line R is `[10, 20, 30]`"
+        },
+        {
+          "l": "D",
+          "t": "Output of Line S is `[10, 20, 40]`"
+        }
+      ],
+      "reason": "Code identifiers and printed lists set in code font; wording unchanged.",
+      "source": "pdf p.33"
+    },
+    {
+      "id": "da-2026-da-40",
+      "field": "topic",
+      "before": "python-and-c-programming",
+      "after": "python",
+      "reason": "Topic re-filed under the DA syllabus topic ids defined in questions.json \"subjects\".",
+      "source": "pdf p.33"
+    },
+    {
+      "id": "da-2026-da-40",
+      "field": "tags",
+      "before": [
+        "pdsa",
+        "python-and-c-programming"
+      ],
+      "after": [
+        "pdsa",
+        "python",
+        "closures",
+        "scope",
+        "mutability"
+      ],
+      "reason": "Tags follow the corrected topic, plus concept tags.",
+      "source": "pdf p.33"
+    },
+    {
+      "id": "da-2026-da-41",
+      "field": "text",
+      "before": "Consider a table Employee(EmpID, TeamID), where the column EmpID (ID of an employee) is the primary key. The column TeamID denotes the team ID of the team of which the employee is a member. TeamID is a NOT NULL column. We want to display the size of the team (denoted as TeamSize) in which each employee is a member by using SQL.\nEmployee(EmpID, TeamID): (1,8),(2,8),(3,8),(4,7),(5,7),(6,9). Desired Output(EmpID, TeamSize): (1,3),(2,3),(3,3),(4,2),(5,2),(6,1).\nWhich of the following is/are correct?",
+      "after": "Consider a table Employee(EmpID, TeamID), where the column EmpID (ID of an employee) is the primary key. The column TeamID denotes the team ID of the team of which the employee is a member. TeamID is a NOT NULL column.\n\nWe want to display the size of the team (denoted as TeamSize) in which each employee is a member by using SQL. As an example, the desired output for the given Employee table is also shown in tabular form.\n\nWhich of the following is/are correct?\n\n**Employee**\n\n| EmpID | TeamID |\n|---|---|\n| 1 | 8 |\n| 2 | 8 |\n| 3 | 8 |\n| 4 | 7 |\n| 5 | 7 |\n| 6 | 9 |\n\n**Output**\n\n| EmpID | TeamSize |\n|---|---|\n| 1 | 3 |\n| 2 | 3 |\n| 3 | 3 |\n| 4 | 2 |\n| 5 | 2 |\n| 6 | 1 |",
+      "reason": "Restored the sentence \"As an example, …\" and the two tables as printed (they had been flattened into tuple lists).",
+      "source": "pdf p.34"
+    },
+    {
+      "id": "da-2026-da-41",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "SELECT E.EmpID, B.TeamSize FROM Employee AS E, (SELECT TeamID, COUNT(TeamID) AS TeamSize FROM Employee GROUP BY TeamID) AS B WHERE E.TeamID = B.TeamID"
+        },
+        {
+          "l": "B",
+          "t": "SELECT A.EmpID, COUNT(B.TeamID) AS TeamSize FROM Employee AS A, Employee AS B WHERE A.TeamID = B.TeamID AND A.EmpID = B.EmpID GROUP BY A.EmpID"
+        },
+        {
+          "l": "C",
+          "t": "SELECT B.EmpID, B.TeamSize FROM (SELECT EmpID, COUNT(TeamID) AS TeamSize FROM Employee GROUP BY EmpID) AS B"
+        },
+        {
+          "l": "D",
+          "t": "SELECT A.EmpID, B.TeamSize FROM Employee AS A, (SELECT COUNT(TeamID) AS TeamSize FROM Employee GROUP BY TeamID) AS B WHERE A.TeamID = B.TeamID"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "```sql\nSELECT E.EmpID, B.TeamSize\nFROM Employee AS E, (SELECT TeamID, COUNT(TeamID) AS\nTeamSize FROM Employee GROUP BY TeamID) AS B\nWHERE E.TeamID = B.TeamID\n```"
+        },
+        {
+          "l": "B",
+          "t": "```sql\nSELECT A.EmpID, COUNT(B.TeamID) AS TeamSize\nFROM Employee AS A, Employee AS B\nWHERE A.TeamID = B.TeamID AND A.EmpID = B.EmpID\nGROUP BY A.EmpID\n```"
+        },
+        {
+          "l": "C",
+          "t": "```sql\nSELECT B.EmpID, B.TeamSize\nFROM (SELECT EmpID, COUNT(TeamID) AS TeamSize\nFROM Employee GROUP BY EmpID) AS B\n```"
+        },
+        {
+          "l": "D",
+          "t": "```sql\nSELECT A.EmpID, B.TeamSize\nFROM Employee AS A, (SELECT COUNT(TeamID) AS TeamSize FROM\nEmployee GROUP BY TeamID) AS B\nWHERE A.TeamID = B.TeamID\n```"
+        }
+      ],
+      "reason": "Queries set as code blocks with the line breaks of the paper; text unchanged.",
+      "source": "pdf p.34"
+    },
+    {
+      "id": "da-2026-da-41",
+      "field": "topic",
+      "before": "sql",
+      "after": "relational",
+      "reason": "Topic re-filed under the DA syllabus topic ids defined in questions.json \"subjects\".",
+      "source": "pdf p.34"
+    },
+    {
+      "id": "da-2026-da-41",
+      "field": "tags",
+      "before": [
+        "dbw",
+        "sql"
+      ],
+      "after": [
+        "dbw",
+        "relational",
+        "sql",
+        "group-by",
+        "subquery",
+        "self-join"
+      ],
+      "reason": "Tags follow the corrected topic, plus concept tags.",
+      "source": "pdf p.34"
+    },
+    {
+      "id": "da-2026-da-42",
+      "field": "text",
+      "before": "Let M = (I_n - (1/n) 11^T) be a matrix, where 1 = (1,1,1,…,1)^T ∈ ℝ^n and I_n is the identity matrix of order n. Which of the following options is/are correct?",
+      "after": "Let $M = \\left(I_n - \\frac{1}{n}\\mathbf{1}\\mathbf{1}^T\\right)$ be a matrix, where $\\mathbf{1} = (1, 1, 1, \\dots, 1)^T \\in \\mathbb{R}^n$ and $I_n$ is the identity matrix of order $n$.\n\nWhich of the following options is/are correct?",
+      "reason": "Re-typed with KaTeX math (variables, subscripts, symbols) and the paragraph breaks of the paper; wording unchanged.",
+      "source": "pdf p.35"
+    },
+    {
+      "id": "da-2026-da-42",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "M^T = M"
+        },
+        {
+          "l": "B",
+          "t": "M^2 = I_n"
+        },
+        {
+          "l": "C",
+          "t": "Trace(M) = n"
+        },
+        {
+          "l": "D",
+          "t": "M is a projection matrix"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$M^T = M$"
+        },
+        {
+          "l": "B",
+          "t": "$M^2 = I_n$"
+        },
+        {
+          "l": "C",
+          "t": "$Trace(M) = n$"
+        },
+        {
+          "l": "D",
+          "t": "$M$ is a projection matrix"
+        }
+      ],
+      "reason": "Re-typed with KaTeX math (variables, subscripts, symbols) and the paragraph breaks of the paper; wording unchanged.",
+      "source": "pdf p.35"
+    },
+    {
+      "id": "da-2026-da-42",
+      "field": "topic",
+      "before": "linear-algebra",
+      "after": "matrices",
+      "reason": "Topic re-filed under the DA syllabus topic ids defined in questions.json \"subjects\".",
+      "source": "pdf p.35"
+    },
+    {
+      "id": "da-2026-da-42",
+      "field": "tags",
+      "before": [
+        "la",
+        "linear-algebra"
+      ],
+      "after": [
+        "la",
+        "matrices",
+        "projection-matrix",
+        "centering-matrix",
+        "idempotent"
+      ],
+      "reason": "Tags follow the corrected topic, plus concept tags.",
+      "source": "pdf p.35"
+    },
+    {
+      "id": "da-2026-da-43",
+      "field": "text",
+      "before": "Let X1, X2, …, Xn be n independent random variables. Each of the random variables follows Normal(μ = 0, σ^2 = 1) distribution. Define X̄ = (1/n) Σ_{i=1}^{n} Xi. Which of the following statements is/are correct?",
+      "after": "Let $X_1, X_2, \\ldots, X_n$ be $n$ independent random variables. Each of the random variables follows $Normal(\\mu = 0, \\sigma^2 = 1)$ distribution. Define $\\bar{X} = \\frac{1}{n}\\sum_{i=1}^{n} X_i$.\n\nWhich of the following statements is/are correct?",
+      "reason": "Formatted to match the paper (Q.53): KaTeX maths, code/markdown formatting, paragraph breaks as printed.",
+      "source": "pdf p.35"
+    },
+    {
+      "id": "da-2026-da-43",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Σ_{i=1}^{n} Xi^2 follows Chi-square distribution with n degrees of freedom."
+        },
+        {
+          "l": "B",
+          "t": "Σ_{i=1}^{n} (Xi - X̄)^2 follows Chi-square distribution with (n - 1) degrees of freedom."
+        },
+        {
+          "l": "C",
+          "t": "X1^2 + Xn^2 follows exponential distribution with mean 2."
+        },
+        {
+          "l": "D",
+          "t": "(√n X̄)^2 follows Chi-square distribution with 2 degrees of freedom."
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\sum_{i=1}^{n} X_i^2$ follows Chi-square distribution with $n$ degrees of freedom."
+        },
+        {
+          "l": "B",
+          "t": "$\\sum_{i=1}^{n} (X_i - \\bar{X})^2$ follows Chi-square distribution with $(n - 1)$ degrees of freedom."
+        },
+        {
+          "l": "C",
+          "t": "$X_1^2 + X_n^2$ follows exponential distribution with mean $2$."
+        },
+        {
+          "l": "D",
+          "t": "$\\left(\\sqrt{n}\\,\\bar{X}\\right)^2$ follows Chi-square distribution with $2$ degrees of freedom."
+        }
+      ],
+      "reason": "Options re-typeset from the paper (Q.53) with KaTeX; content and order unchanged.",
+      "source": "pdf p.35"
+    },
+    {
+      "id": "da-2026-da-43",
+      "field": "topic",
+      "before": "probability-and-statistics",
+      "after": "rv",
+      "reason": "\"probability-and-statistics\" is not a DA topic id; \"rv\" is the matching id in subjects.DA.prob.",
+      "source": "pdf p.35"
+    },
+    {
+      "id": "da-2026-da-43",
+      "field": "tags",
+      "before": [
+        "prob",
+        "probability-and-statistics"
+      ],
+      "after": [
+        "prob",
+        "rv",
+        "chi-square",
+        "normal-distribution",
+        "exponential-distribution"
+      ],
+      "reason": "Tags follow the corrected topic, plus specific concept tags.",
+      "source": "pdf p.35"
+    },
+    {
+      "id": "da-2026-da-44",
+      "field": "text",
+      "before": "Let X be a discrete valued random variable with cumulative distribution function F(x). Which of the following statements is/are correct?",
+      "after": "Let $X$ be a discrete valued random variable with cumulative distribution function $F(x)$.\n\nWhich of the following statements is/are correct?",
+      "reason": "Formatted to match the paper (Q.54): KaTeX maths, code/markdown formatting, paragraph breaks as printed.",
+      "source": "pdf p.36"
+    },
+    {
+      "id": "da-2026-da-44",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "F(x) is always a positive function."
+        },
+        {
+          "l": "B",
+          "t": "F(x) is a non-decreasing function."
+        },
+        {
+          "l": "C",
+          "t": "F(x) has jump discontinuity."
+        },
+        {
+          "l": "D",
+          "t": "F(x) is a left continuous function."
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$F(x)$ is always a positive function."
+        },
+        {
+          "l": "B",
+          "t": "$F(x)$ is a non-decreasing function."
+        },
+        {
+          "l": "C",
+          "t": "$F(x)$ has jump discontinuity."
+        },
+        {
+          "l": "D",
+          "t": "$F(x)$ is a left continuous function."
+        }
+      ],
+      "reason": "Options re-typeset from the paper (Q.54) with KaTeX; content and order unchanged.",
+      "source": "pdf p.36"
+    },
+    {
+      "id": "da-2026-da-44",
+      "field": "topic",
+      "before": "probability-and-statistics",
+      "after": "rv",
+      "reason": "\"probability-and-statistics\" is not a DA topic id; \"rv\" is the matching id in subjects.DA.prob.",
+      "source": "pdf p.36"
+    },
+    {
+      "id": "da-2026-da-44",
+      "field": "tags",
+      "before": [
+        "prob",
+        "probability-and-statistics"
+      ],
+      "after": [
+        "prob",
+        "rv",
+        "cdf",
+        "discrete-random-variable"
+      ],
+      "reason": "Tags follow the corrected topic, plus specific concept tags.",
+      "source": "pdf p.36"
+    },
+    {
+      "id": "da-2026-da-45",
+      "field": "text",
+      "before": "Consider that Linear Ridge Regression is being used to learn a prediction function y_pred = w^T x, where w, x ∈ ℝ^2 and Mean Absolute Error (MAE) is used to measure the prediction error. A weight of 0.20 is associated with the regularizer. At an intermediate step of the training process, assume that the parameter w = [-3.00, 4.00]^T. In the next step, for the input x = [1.00, 2.00]^T, the predicted value of y is noted. Let the relation between x = [x1, x2]^T and the true value of y be y_true = x1 + x2. The value of the overall regularized loss function for this instance is _______ . (Rounded off to two decimal places)",
+      "after": "Consider that Linear Ridge Regression is being used to learn a prediction function $y_{pred} = w^T x$, where $w, x \\in \\mathbb{R}^2$ and Mean Absolute Error (MAE) is used to measure the prediction error. A weight of $0.20$ is associated with the regularizer.\n\nAt an intermediate step of the training process, assume that the parameter $w = [-3.00, 4.00]^T$. In the next step, for the input $x = [1.00, 2.00]^T$, the predicted value of $y$ is noted. Let the relation between $x = [x_1, x_2]^T$ and the true value of $y$ be $y_{true} = x_1 + x_2$.\n\nThe value of the overall regularized loss function for this instance is _______ . (Rounded off to two decimal places)",
+      "reason": "Formatted to match the paper (Q.55): KaTeX maths, code/markdown formatting, paragraph breaks as printed.",
+      "source": "pdf p.36"
+    },
+    {
+      "id": "da-2026-da-45",
+      "field": "topic",
+      "before": "regression",
+      "after": "supervised",
+      "reason": "\"regression\" is not a DA topic id; \"supervised\" is the matching id in subjects.DA.ml.",
+      "source": "pdf p.36"
+    },
+    {
+      "id": "da-2026-da-45",
+      "field": "tags",
+      "before": [
+        "ml",
+        "regression"
+      ],
+      "after": [
+        "ml",
+        "supervised",
+        "ridge-regression",
+        "regularization",
+        "loss-function"
+      ],
+      "reason": "Tags follow the corrected topic, plus specific concept tags.",
+      "source": "pdf p.36"
+    },
+    {
+      "id": "da-2026-da-45",
+      "field": "answer",
+      "before": {
+        "min": 6.9,
+        "max": 7.1
+      },
+      "after": "6.90 to 7.10",
+      "reason": "Same official range, re-stored in the \"lo to hi\" string form the graders (answers.ts natRange, engine.keyRange) understand; the {min,max} object is not recognised, so every response would be graded wrong. Official key Q.55: 6.90 to 7.10.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-da-46",
+      "field": "text",
+      "before": "Consider a fully-connected feed-forward multi-layer perceptron. It has 30 neurons in the input layer, followed by two hidden layers and an output layer. The first hidden layer has 4 neurons and the second hidden layer has 3 neurons. The output layer has only one neuron. Assume that no bias parameters are used. The number of learnable parameters in the multi-layer perceptron is __________ . (Answer in integer)",
+      "after": "Consider a fully-connected feed-forward multi-layer perceptron. It has $30$ neurons in the input layer, followed by two hidden layers and an output layer. The first hidden layer has $4$ neurons and the second hidden layer has $3$ neurons. The output layer has only one neuron. Assume that no bias parameters are used.\n\nThe number of learnable parameters in the multi-layer perceptron is __________ . (Answer in integer)",
+      "reason": "Formatted to match the paper (Q.56): KaTeX maths, code/markdown formatting, paragraph breaks as printed.",
+      "source": "pdf p.37"
+    },
+    {
+      "id": "da-2026-da-46",
+      "field": "topic",
+      "before": "neural-networks",
+      "after": "neural",
+      "reason": "\"neural-networks\" is not a DA topic id; \"neural\" is the matching id in subjects.DA.ml.",
+      "source": "pdf p.37"
+    },
+    {
+      "id": "da-2026-da-46",
+      "field": "tags",
+      "before": [
+        "ml",
+        "neural-networks"
+      ],
+      "after": [
+        "ml",
+        "neural",
+        "mlp",
+        "parameter-count"
+      ],
+      "reason": "Tags follow the corrected topic, plus specific concept tags.",
+      "source": "pdf p.37"
+    },
+    {
+      "id": "da-2026-da-47",
+      "field": "text",
+      "before": "A clinic specializes in testing for a disease D. The result of the test can be either positive or negative. A study revealed that if a person suffers from the disease D, the test result in that clinic comes out positive 80% of the time, and negative 20% of the time. If a person is not suffering from the disease D, the test comes out positive 10% of the time and negative 90% of the time. It is also known that among the general population, the disease D occurs in 30% of the individuals. If a person tests positive for D in that clinic, the probability that he/she actually suffers from the disease D is __________ . (Rounded off to two decimal places)",
+      "after": "A clinic specializes in testing for a disease D. The result of the test can be either positive or negative.\n\nA study revealed that if a person suffers from the disease D, the test result in that clinic comes out positive 80% of the time, and negative 20% of the time. If a person is not suffering from the disease D, the test comes out positive 10% of the time and negative 90% of the time. It is also known that among the general population, the disease D occurs in 30% of the individuals.\n\nIf a person tests positive for D in that clinic, the probability that he/she actually suffers from the disease D is __________ . (Rounded off to two decimal places)",
+      "reason": "Formatted to match the paper (Q.57): KaTeX maths, code/markdown formatting, paragraph breaks as printed.",
+      "source": "pdf p.37"
+    },
+    {
+      "id": "da-2026-da-47",
+      "field": "topic",
+      "before": "probability-and-statistics",
+      "after": "basic",
+      "reason": "\"probability-and-statistics\" is not a DA topic id; \"basic\" is the matching id in subjects.DA.prob.",
+      "source": "pdf p.37"
+    },
+    {
+      "id": "da-2026-da-47",
+      "field": "tags",
+      "before": [
+        "prob",
+        "probability-and-statistics"
+      ],
+      "after": [
+        "prob",
+        "basic",
+        "bayes-theorem",
+        "conditional-probability",
+        "total-probability"
+      ],
+      "reason": "Tags follow the corrected topic, plus specific concept tags.",
+      "source": "pdf p.37"
+    },
+    {
+      "id": "da-2026-da-47",
+      "field": "answer",
+      "before": {
+        "min": 0.76,
+        "max": 0.78
+      },
+      "after": "0.76 to 0.78",
+      "reason": "Same official range, re-stored in the \"lo to hi\" string form the graders (answers.ts natRange, engine.keyRange) understand; the {min,max} object is not recognised, so every response would be graded wrong. Official key Q.57: 0.76 to 0.78.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-da-48",
+      "field": "text",
+      "before": "Consider the given Python program.\ndef fun(L, i=0):\n    if i >= len(L)-1:\n        return 0\n    if L[i] > L[i+1]:\n        L[i+1], L[i] = L[i], L[i+1]\n        return 1+fun(L, i+1)\n    else:\n        return fun(L, i+1)\ndata = [5, 3, 4, 1, 2]\ncount = 0\nfor _ in range(len(data)):\n    count += fun(data)\nprint(count)\nThe output of the program is __________ . (Answer in integer)",
+      "after": "Consider the given Python program.\n\n```python\ndef fun(L, i=0):\n    if i >= len(L)-1:\n        return 0\n    if L[i] > L[i+1]:\n        L[i+1], L[i] = L[i], L[i+1]\n        return 1+fun(L, i+1)\n    else:\n        return fun(L, i+1)\ndata = [5, 3, 4, 1, 2]\ncount = 0\nfor _ in range(len(data)):\n    count += fun(data)\nprint(count)\n```\n\nThe output of the program is __________ . (Answer in integer)",
+      "reason": "Formatted to match the paper (Q.58): KaTeX maths, code/markdown formatting, paragraph breaks as printed.",
+      "source": "pdf p.37"
+    },
+    {
+      "id": "da-2026-da-48",
+      "field": "topic",
+      "before": "python-and-c-programming",
+      "after": "python",
+      "reason": "\"python-and-c-programming\" is not a DA topic id; \"python\" is the matching id in subjects.DA.pdsa.",
+      "source": "pdf p.37"
+    },
+    {
+      "id": "da-2026-da-48",
+      "field": "tags",
+      "before": [
+        "pdsa",
+        "python-and-c-programming"
+      ],
+      "after": [
+        "pdsa",
+        "python",
+        "recursion",
+        "bubble-sort",
+        "inversions"
+      ],
+      "reason": "Tags follow the corrected topic, plus specific concept tags.",
+      "source": "pdf p.37"
+    },
+    {
+      "id": "da-2026-da-49",
+      "field": "text",
+      "before": "Let there be two relations X and Y as shown. X has three columns P, Q and R. Y has two columns P and S.\nX(P,Q,R): (P1,Q1,R1), (P2,Q2,R2), (P3,Q3,R2)\nY(P,S): (P1,10), (P1,15), (P2,20), (P3,1)\nConsider that the following tuple relational calculus expression is evaluated.\n{ t | t ∈ X ∧ ∃z ∈ X (t[P] = z[P]) ∧ ∃m ∈ Y (m[P] = t[P] ∧ m[S] > 1) }\nThe number of tuples that will be returned is __________ . (Answer in integer)",
+      "after": "Let there be two relations $X$ and $Y$ as shown. $X$ has three columns $P$, $Q$ and $R$. $Y$ has two columns $P$ and $S$.\n\n**X**\n\n| $P$ | $Q$ | $R$ |\n|---|---|---|\n| P1 | Q1 | R1 |\n| P2 | Q2 | R2 |\n| P3 | Q3 | R2 |\n\n**Y**\n\n| $P$ | $S$ |\n|---|---|\n| P1 | 10 |\n| P1 | 15 |\n| P2 | 20 |\n| P3 | 1 |\n\nConsider that the following tuple relational calculus expression is evaluated.\n\n$$\\{t \\mid t \\in X \\land \\exists z \\in X\\,(t[P] = z[P]) \\land \\exists m \\in Y\\,(m[P] = t[P] \\land m[S] > 1)\\}$$\n\nThe number of tuples that will be returned is __________ . (Answer in integer)",
+      "reason": "Formatted to match the paper (Q.59): KaTeX maths, code/markdown formatting, paragraph breaks as printed.",
+      "source": "pdf p.38"
+    },
+    {
+      "id": "da-2026-da-49",
+      "field": "topic",
+      "before": "relational-model",
+      "after": "relational",
+      "reason": "\"relational-model\" is not a DA topic id; \"relational\" is the matching id in subjects.DA.dbw.",
+      "source": "pdf p.38"
+    },
+    {
+      "id": "da-2026-da-49",
+      "field": "tags",
+      "before": [
+        "dbw",
+        "relational-model"
+      ],
+      "after": [
+        "dbw",
+        "relational",
+        "tuple-relational-calculus"
+      ],
+      "reason": "Tags follow the corrected topic, plus specific concept tags.",
+      "source": "pdf p.38"
+    },
+    {
+      "id": "da-2026-da-49",
+      "field": "answer",
+      "before": {
+        "min": 2,
+        "max": 3
+      },
+      "after": "2 to 3",
+      "reason": "Same official range, re-stored in the \"lo to hi\" string form the graders (answers.ts natRange, engine.keyRange) understand; the {min,max} object is not recognised, so every response would be graded wrong. Official key Q.59: 2 to 3.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-da-50",
+      "field": "text",
+      "before": "Let Account be a relation as shown.\nAccount(AccNo, Balance): (A1,5000), (A2,5000), (A3,10000), (A4,15000), (A5,18000)\nConsider the given SQL query.\nSELECT AccNo FROM Account AS A WHERE (SELECT COUNT(*) FROM Account AS B WHERE A.Balance < B.Balance) >= (SELECT COUNT(*) FROM Account AS C WHERE A.Balance > C.Balance)\nThe number of rows returned by the SQL query is __________ . (Answer in integer)",
+      "after": "Let `Account` be a relation as shown.\n\n**Account**\n\n| AccNo | Balance |\n|---|---|\n| A1 | 5000 |\n| A2 | 5000 |\n| A3 | 10000 |\n| A4 | 15000 |\n| A5 | 18000 |\n\nConsider the given SQL query.\n\n```sql\nSELECT AccNo FROM Account AS A\nWHERE (SELECT COUNT(*) FROM Account AS B\nWHERE A.Balance < B.Balance) >= (SELECT COUNT(*)\nFROM Account AS C WHERE A.Balance > C.Balance)\n```\n\nThe number of rows returned by the SQL query is __________ . (Answer in integer)",
+      "reason": "Formatted to match the paper (Q.60): KaTeX maths, code/markdown formatting, paragraph breaks as printed.",
+      "source": "pdf p.38"
+    },
+    {
+      "id": "da-2026-da-50",
+      "field": "topic",
+      "before": "sql",
+      "after": "relational",
+      "reason": "\"sql\" is not a DA topic id; \"relational\" is the matching id in subjects.DA.dbw.",
+      "source": "pdf p.38"
+    },
+    {
+      "id": "da-2026-da-50",
+      "field": "tags",
+      "before": [
+        "dbw",
+        "sql"
+      ],
+      "after": [
+        "dbw",
+        "relational",
+        "sql",
+        "correlated-subquery"
+      ],
+      "reason": "Tags follow the corrected topic, plus specific concept tags.",
+      "source": "pdf p.38"
+    },
+    {
+      "id": "da-2026-da-51",
+      "field": "text",
+      "before": "Consider an ER model with the entities E1(A11,A12,A13) and E2(A21,A22,A23), where A11, A12, A13 are the attributes of E1, and A21, A22, A23 are the attributes of E2. Let A22 be a multi-valued attribute. A11 and A21 are the primary keys of E1 and E2, respectively. Let R12 be a many-to-many relationship between E1 and E2. Participation of both E1 and E2 in R12 is total. The minimum number of relations required to convert the ER model into relational model (assuming there is no other functional dependency) where each relation is in third normal form (3NF) is __________ . (Answer in integer)",
+      "after": "Consider an ER model with the entities E1(A11,A12,A13) and E2(A21,A22,A23), where, A11, A12, A13 are the attributes of E1, and A21, A22, A23 are the attributes of E2. Let A22 be a multi-valued attribute. A11 and A21 are the primary keys of E1 and E2, respectively.\n\nLet R12 be a many-to-many relationship between E1 and E2. Participation of both E1 and E2 in R12 is total.\n\nThe minimum number of relations required to convert the ER model into relational model (assuming there is no other functional dependency) where each relation is in third normal form (3NF) is __________ . (Answer in integer)",
+      "reason": "Formatted to match the paper (Q.61): KaTeX maths, code/markdown formatting, paragraph breaks as printed.",
+      "source": "pdf p.39"
+    },
+    {
+      "id": "da-2026-da-51",
+      "field": "topic",
+      "before": "er-model",
+      "after": "relational",
+      "reason": "\"er-model\" is not a DA topic id; \"relational\" is the matching id in subjects.DA.dbw.",
+      "source": "pdf p.39"
+    },
+    {
+      "id": "da-2026-da-51",
+      "field": "tags",
+      "before": [
+        "dbw",
+        "er-model"
+      ],
+      "after": [
+        "dbw",
+        "relational",
+        "er-model",
+        "normalization",
+        "3nf",
+        "multivalued-attribute"
+      ],
+      "reason": "Tags follow the corrected topic, plus specific concept tags.",
+      "source": "pdf p.39"
+    },
+    {
+      "id": "da-2026-da-52",
+      "field": "text",
+      "before": "For a given data set {x1, x2, …, xn}, where n = 100, it is known that (1/2000) Σ_{i=1}^{n} Σ_{j=1}^{n} (xi - xj)^2 = 99. Let us denote x̄ = (1/n) Σ_{i=1}^{n} xi. The value of (1/99) Σ_{i=1}^{n} (xi - x̄)^2 is __________ . (Answer in integer)",
+      "after": "For a given data set $\\{x_1, x_2, \\ldots, x_n\\}$, where $n = 100$, it is known that\n\n$$\\frac{1}{2000}\\sum_{i=1}^{n}\\sum_{j=1}^{n}(x_i - x_j)^2 = 99$$\n\nLet us denote $\\bar{x} = \\frac{1}{n}\\sum_{i=1}^{n} x_i$\n\nThe value of $\\frac{1}{99}\\sum_{i=1}^{n}(x_i - \\bar{x})^2$ is __________ . (Answer in integer)",
+      "reason": "Formatted to match the paper (Q.62): KaTeX maths, code/markdown formatting, paragraph breaks as printed.",
+      "source": "pdf p.39"
+    },
+    {
+      "id": "da-2026-da-52",
+      "field": "topic",
+      "before": "probability-and-statistics",
+      "after": "stats",
+      "reason": "\"probability-and-statistics\" is not a DA topic id; \"stats\" is the matching id in subjects.DA.prob.",
+      "source": "pdf p.39"
+    },
+    {
+      "id": "da-2026-da-52",
+      "field": "tags",
+      "before": [
+        "prob",
+        "probability-and-statistics"
+      ],
+      "after": [
+        "prob",
+        "stats",
+        "variance",
+        "pairwise-differences"
+      ],
+      "reason": "Tags follow the corrected topic, plus specific concept tags.",
+      "source": "pdf p.39"
+    },
+    {
+      "id": "da-2026-da-53",
+      "field": "text",
+      "before": "Let X be a random variable that follows Uniform(-1,1) distribution. The conditional distribution of the random variable Y given X = x is the Uniform(x^2 - 0.1, x^2 + 0.1) distribution. The value of correlation(X, Y) is __________ . (Answer in integer)",
+      "after": "Let $X$ be a random variable that follows $Uniform(-1,1)$ distribution. The conditional distribution of the random variable $Y$ given $X = x$ is the $Uniform(x^2 - 0.1,\\ x^2 + 0.1)$ distribution.\n\nThe value of $correlation(X, Y)$ is __________ . (Answer in integer)",
+      "reason": "Formatted to match the paper (Q.63): KaTeX maths, code/markdown formatting, paragraph breaks as printed.",
+      "source": "pdf p.39"
+    },
+    {
+      "id": "da-2026-da-53",
+      "field": "topic",
+      "before": "probability-and-statistics",
+      "after": "stats",
+      "reason": "\"probability-and-statistics\" is not a DA topic id; \"stats\" is the matching id in subjects.DA.prob.",
+      "source": "pdf p.39"
+    },
+    {
+      "id": "da-2026-da-53",
+      "field": "tags",
+      "before": [
+        "prob",
+        "probability-and-statistics"
+      ],
+      "after": [
+        "prob",
+        "stats",
+        "correlation",
+        "conditional-expectation",
+        "uniform-distribution"
+      ],
+      "reason": "Tags follow the corrected topic, plus specific concept tags.",
+      "source": "pdf p.39"
+    },
+    {
+      "id": "da-2026-da-54",
+      "field": "text",
+      "before": "Let A_{5×5} be a matrix such that each of its elements follows Bernoulli(p = 0.50) distribution independently. The probability that the row-sum of the second row and the column-sum of the third column are both equal to 3 is ________ . (Rounded off to two decimal places)",
+      "after": "Let $A_{5\\times5}$ be a matrix such that each of its elements follows $Bernoulli(p = 0.50)$ distribution independently.\n\nThe probability that the row-sum of the second row and the column-sum of the third column are both equal to 3 is ________ . (Rounded off to two decimal places)",
+      "reason": "Formatted to match the paper (Q.64): KaTeX maths, code/markdown formatting, paragraph breaks as printed.",
+      "source": "pdf p.39"
+    },
+    {
+      "id": "da-2026-da-54",
+      "field": "topic",
+      "before": "probability-and-statistics",
+      "after": "rv",
+      "reason": "\"probability-and-statistics\" is not a DA topic id; \"rv\" is the matching id in subjects.DA.prob.",
+      "source": "pdf p.39"
+    },
+    {
+      "id": "da-2026-da-54",
+      "field": "tags",
+      "before": [
+        "prob",
+        "probability-and-statistics"
+      ],
+      "after": [
+        "prob",
+        "rv",
+        "binomial-distribution",
+        "bernoulli",
+        "conditioning"
+      ],
+      "reason": "Tags follow the corrected topic, plus specific concept tags.",
+      "source": "pdf p.39"
+    },
+    {
+      "id": "da-2026-da-54",
+      "field": "answer",
+      "before": {
+        "min": 0.08,
+        "max": 0.12
+      },
+      "after": "0.08 to 0.12",
+      "reason": "Same official range, re-stored in the \"lo to hi\" string form the graders (answers.ts natRange, engine.keyRange) understand; the {min,max} object is not recognised, so every response would be graded wrong. Official key Q.64: 0.08 to 0.12.",
+      "source": "https://gate2026.iitg.ac.in/doc/download/2026/Keys/DA_Keys.pdf"
+    },
+    {
+      "id": "da-2026-da-55",
+      "field": "text",
+      "before": "Let A = (I_n - (1/n) 11^T) be a matrix, where 1 = (1,1,1,…,1)^T ∈ ℝ^n and I_n is the identity matrix of order n. The value of max_S x^T A x, where S = {x ∈ ℝ^n | x^T x = 1}, is __________ . (Answer in integer)",
+      "after": "Let $A = \\left(I_n - \\frac{1}{n}\\mathbf{1}\\mathbf{1}^T\\right)$ be a matrix, where $\\mathbf{1} = (1,1,1,\\ldots,1)^T \\in \\mathbb{R}^n$ and $I_n$ is the identity matrix of order $n$.\n\nThe value of $\\max\\limits_{S} x^T A x$, where $S = \\{x \\in \\mathbb{R}^n \\mid x^T x = 1\\}$, is __________ . (Answer in integer)",
+      "reason": "Formatted to match the paper (Q.65): KaTeX maths, code/markdown formatting, paragraph breaks as printed.",
+      "source": "pdf p.39"
+    },
+    {
+      "id": "da-2026-da-55",
+      "field": "topic",
+      "before": "linear-algebra",
+      "after": "eigen",
+      "reason": "\"linear-algebra\" is not a DA topic id; \"eigen\" is the matching id in subjects.DA.la.",
+      "source": "pdf p.39"
+    },
+    {
+      "id": "da-2026-da-55",
+      "field": "tags",
+      "before": [
+        "la",
+        "linear-algebra"
+      ],
+      "after": [
+        "la",
+        "eigen",
+        "rayleigh-quotient",
+        "projection-matrix",
+        "centering-matrix"
+      ],
+      "reason": "Tags follow the corrected topic, plus specific concept tags.",
+      "source": "pdf p.39"
     }
   ]
 }
