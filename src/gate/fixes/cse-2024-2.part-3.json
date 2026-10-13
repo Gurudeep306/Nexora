@@ -1,0 +1,662 @@
+{
+  "paper": "cse-2024-2",
+  "fixes": [
+    {
+      "id": "cse-2024-2-cs-17",
+      "field": "text",
+      "before": "Which of the following statements about the T wo Phase Locking (2PL) protocol\nis/are TRUE?",
+      "after": "Which of the following statements about the Two Phase Locking (2PL) protocol is/are TRUE?",
+      "reason": "PDF-extraction split \"T wo\"; joined the wrapped line.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2024-2-cs-17",
+      "field": "tags",
+      "before": [
+        "transactions"
+      ],
+      "after": [
+        "transactions",
+        "two-phase-locking",
+        "concurrency-control"
+      ],
+      "reason": "Specific tags.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2024-2-cs-18",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "The fragmentation of an IP datagram is performed only at the source of the datagram"
+        },
+        {
+          "l": "B",
+          "t": "The fragmentation of an IP datagram is performed at any IP router which finds that the size of the datagram to be transmitted exceeds the MTU"
+        },
+        {
+          "l": "C",
+          "t": "The reassembly of fragments is performed only at the destination of the datagram"
+        },
+        {
+          "l": "D",
+          "t": "The reassembly of fragments is performed at all intermediate routers along the path from the source to the destination Computer Science and Information Technology Set 2 (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "The fragmentation of an IP datagram is performed only at the source of the datagram"
+        },
+        {
+          "l": "B",
+          "t": "The fragmentation of an IP datagram is performed at any IP router which finds that the size of the datagram to be transmitted exceeds the MTU"
+        },
+        {
+          "l": "C",
+          "t": "The reassembly of fragments is performed only at the destination of the datagram"
+        },
+        {
+          "l": "D",
+          "t": "The reassembly of fragments is performed at all intermediate routers along the path from the source to the destination"
+        }
+      ],
+      "reason": "Running page header pasted into option D.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2024-2-cs-18",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "ipv4",
+        "fragmentation"
+      ],
+      "reason": "Generic tag replaced by specific ones.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2024-2-cs-19",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "An attribute grammar is a syntax-directed definition (SDD) in which the functions in the semantic rules have no side effects"
+        },
+        {
+          "l": "B",
+          "t": "The attributes in a L -attributed definition cannot always be e valuated in a depth - first order"
+        },
+        {
+          "l": "C",
+          "t": "Synthesized attributes can be evaluated by a bottom-up parser as the input is parsed"
+        },
+        {
+          "l": "D",
+          "t": "All L -attributed definitions based on LR(1) grammar can be evaluated using a bottom-up parsing strategy"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "An attribute grammar is a syntax-directed definition (SDD) in which the functions in the semantic rules have no side effects"
+        },
+        {
+          "l": "B",
+          "t": "The attributes in a L-attributed definition cannot always be evaluated in a depth-first order"
+        },
+        {
+          "l": "C",
+          "t": "Synthesized attributes can be evaluated by a bottom-up parser as the input is parsed"
+        },
+        {
+          "l": "D",
+          "t": "All L-attributed definitions based on LR(1) grammar can be evaluated using a bottom-up parsing strategy"
+        }
+      ],
+      "reason": "Extraction spacing artifacts (\"L -attributed\", \"e valuated\", \"depth - first\") removed.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2024-2-cs-19",
+      "field": "subject",
+      "before": "pds",
+      "after": "cd",
+      "reason": "Q.29 is about syntax-directed definitions (Compiler Design), not C programming.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2024-2-cs-19",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "sdt",
+      "reason": "Syntax-directed translation (attribute grammars, L-attributed definitions).",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2024-2-cs-19",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "syntax-directed-translation",
+        "l-attributed",
+        "attribute-grammar"
+      ],
+      "reason": "Specific tags.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2024-2-cs-20",
+      "field": "text",
+      "before": "For a Boolean variable 𝑥, which of the following statements is/are FALSE?",
+      "after": "For a Boolean variable $x$, which of the following statements is/are FALSE?",
+      "reason": "Unicode math italics replaced by KaTeX.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2024-2-cs-20",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝑥. 1 = 𝑥"
+        },
+        {
+          "l": "B",
+          "t": "𝑥 + 1 = 𝑥"
+        },
+        {
+          "l": "C",
+          "t": "𝑥. 𝑥 = 0"
+        },
+        {
+          "l": "D",
+          "t": "𝑥 + 𝑥̅ = 1 Computer Science and Information Technology Set 2 (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$x \\cdot 1 = x$"
+        },
+        {
+          "l": "B",
+          "t": "$x + 1 = x$"
+        },
+        {
+          "l": "C",
+          "t": "$x \\cdot x = 0$"
+        },
+        {
+          "l": "D",
+          "t": "$x + \\bar{x} = 1$"
+        }
+      ],
+      "reason": "Unicode math to KaTeX; page header removed from option D. The PDF prints option C as x.x = 0 (no complement bar), consistent with the official key B;C.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2024-2-cs-20",
+      "field": "topic",
+      "before": "combinational",
+      "after": "boolean",
+      "reason": "Boolean algebra identities, not combinational circuits.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2024-2-cs-20",
+      "field": "tags",
+      "before": [
+        "combinational"
+      ],
+      "after": [
+        "boolean-algebra",
+        "identities"
+      ],
+      "reason": "Specific tags.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2024-2-cs-21",
+      "field": "text",
+      "before": "An instruction format has the following structure:\nInstruction Number: Opcode destination reg, source reg-1, source reg-2\nConsider the following sequence of instructions to be executed in a pipelined\nprocessor:\nI1: DIV R3, R1, R2\nI2: SUB R5, R3, R4\nI3: ADD R3, R5, R6\nI4: MUL R7, R3, R8\nWhich of the following statements is/are TRUE?",
+      "after": "An instruction format has the following structure:\n\n`Instruction Number: Opcode destination reg, source reg-1, source reg-2`\n\nConsider the following sequence of instructions to be executed in a pipelined processor:\n\n```\nI1: DIV R3, R1, R2\nI2: SUB R5, R3, R4\nI3: ADD R3, R5, R6\nI4: MUL R7, R3, R8\n```\n\nWhich of the following statements is/are TRUE?",
+      "reason": "Instruction listing formatted as a code block; wrapped lines joined.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2024-2-cs-21",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "There is a RAW dependency on R3 between I1 and I2"
+        },
+        {
+          "l": "B",
+          "t": "There is a WAR dependency on R3 between I1 and I3"
+        },
+        {
+          "l": "C",
+          "t": "There is a RAW dependency on R3 between I2 and I3"
+        },
+        {
+          "l": "D",
+          "t": "There is a WAW dependency on R3 between I3 and I4 Computer Science and Information Technology Set 2 (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "There is a RAW dependency on R3 between I1 and I2"
+        },
+        {
+          "l": "B",
+          "t": "There is a WAR dependency on R3 between I1 and I3"
+        },
+        {
+          "l": "C",
+          "t": "There is a RAW dependency on R3 between I2 and I3"
+        },
+        {
+          "l": "D",
+          "t": "There is a WAW dependency on R3 between I3 and I4"
+        }
+      ],
+      "reason": "Running page header pasted into option D.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2024-2-cs-21",
+      "field": "subject",
+      "before": "pds",
+      "after": "coa",
+      "reason": "Q.31 is about pipeline data hazards (COA), not C programming.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2024-2-cs-21",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "pipeline",
+      "reason": "Instruction pipelining and hazards.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2024-2-cs-21",
+      "field": "tags",
+      "before": [
+        "c-prog"
+      ],
+      "after": [
+        "pipeline",
+        "data-hazards",
+        "raw-war-waw"
+      ],
+      "reason": "Specific tags.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2024-2-cs-22",
+      "field": "text",
+      "before": "Which of the following fields of an IP header is/are always modified by any router\nbefore it forwards the IP packet?",
+      "after": "Which of the following fields of an IP header is/are always modified by any router before it forwards the IP packet?",
+      "reason": "Wrapped line joined.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "cse-2024-2-cs-22",
+      "field": "topic",
+      "before": "transport",
+      "after": "ip",
+      "reason": "IPv4 header fields belong to the network layer (IP), not transport.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "cse-2024-2-cs-22",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "ipv4-header",
+        "ttl",
+        "checksum"
+      ],
+      "reason": "Specific tags.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "cse-2024-2-cs-23",
+      "field": "text",
+      "before": "Consider the following C function definition.\nint fX(char *a){\nchar *b = a;\nwhile(*b)\nb++;\nreturn b - a;}\nWhich of the following statements is/are TRUE?",
+      "after": "Consider the following C function definition.\n\n```c\nint fX(char *a){\n    char *b = a;\n    while(*b)\n        b++;\n    return b - a;}\n```\n\nWhich of the following statements is/are TRUE?",
+      "reason": "Code formatted as a C block with its indentation.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "cse-2024-2-cs-23",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "The function call fX(”abcd”) will always return a value"
+        },
+        {
+          "l": "B",
+          "t": "Assuming a character array c is declared as char c[] = ”abcd” in main(), the function call fX(c)will always return a value"
+        },
+        {
+          "l": "C",
+          "t": "The code of the function will not compile"
+        },
+        {
+          "l": "D",
+          "t": "Assuming a character pointer c is declared as char *c = ”abcd” in main(), the function call fX(c)will always return a value Computer Science and Information Technology Set 2 (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "The function call `fX(\"abcd\")` will always return a value"
+        },
+        {
+          "l": "B",
+          "t": "Assuming a character array `c` is declared as `char c[] = \"abcd\"` in `main()`, the function call `fX(c)` will always return a value"
+        },
+        {
+          "l": "C",
+          "t": "The code of the function will not compile"
+        },
+        {
+          "l": "D",
+          "t": "Assuming a character pointer `c` is declared as `char *c = \"abcd\"` in `main()`, the function call `fX(c)` will always return a value"
+        }
+      ],
+      "reason": "Page header removed from option D; typographic quotes in code replaced by C quotes and code set in backticks.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "cse-2024-2-cs-23",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "c",
+      "reason": "Valid topic id for C programming is \"c\".",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "cse-2024-2-cs-23",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "pointers",
+        "strings",
+        "pointer-arithmetic"
+      ],
+      "reason": "Specific tags.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "cse-2024-2-cs-24",
+      "field": "text",
+      "before": "Let 𝑃 be the partial order defined on the set {1,2,3,4} as follows\n𝑃 = {(𝑥, 𝑥)⁡|⁡𝑥⁡ ∈ {1,2,3,4}} ∪ {(1,2), (3,2), (3,4)}\nThe number of total orders on {1,2,3,4} that contain 𝑃 is __________",
+      "after": "Let $P$ be the partial order defined on the set $\\{1,2,3,4\\}$ as follows\n\n$$P = \\{(x, x) \\mid x \\in \\{1,2,3,4\\}\\} \\cup \\{(1,2), (3,2), (3,4)\\}$$\n\nThe number of total orders on $\\{1,2,3,4\\}$ that contain $P$ is __________",
+      "reason": "Unicode math italics replaced by KaTeX.",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "cse-2024-2-cs-24",
+      "field": "topic",
+      "before": "relations",
+      "after": "posets",
+      "reason": "Linear extensions of a partial order.",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "cse-2024-2-cs-24",
+      "field": "tags",
+      "before": [
+        "relations"
+      ],
+      "after": [
+        "partial-order",
+        "total-order",
+        "linear-extension"
+      ],
+      "reason": "Specific tags.",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "cse-2024-2-cs-25",
+      "field": "text",
+      "before": "Let 𝐴⁡be an array containing integer values. The distance of 𝐴 is defined as the\nminimum number of elements in 𝐴 that must be replaced with another integer so\nthat the resulting array is sorted in non -decreasing order. The distance of the array\n[2, 5, 3, 1, 4, 2, 6] is ___________\nComputer Science and Information Technology Set 2 (CS2)",
+      "after": "Let $A$ be an array containing integer values. The distance of $A$ is defined as the minimum number of elements in $A$ that must be replaced with another integer so that the resulting array is sorted in non-decreasing order. The distance of the array $[2, 5, 3, 1, 4, 2, 6]$ is ___________",
+      "reason": "Running page header removed; \"non -decreasing\" artifact fixed; Unicode math to KaTeX.",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "cse-2024-2-cs-25",
+      "field": "subject",
+      "before": "ga",
+      "after": "algo",
+      "reason": "Algorithmic question (longest non-decreasing subsequence), not GA quant.",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "cse-2024-2-cs-25",
+      "field": "topic",
+      "before": "quant",
+      "after": "dp",
+      "reason": "Solved via the longest non-decreasing subsequence.",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "cse-2024-2-cs-25",
+      "field": "tags",
+      "before": [
+        "quant"
+      ],
+      "after": [
+        "longest-increasing-subsequence",
+        "arrays"
+      ],
+      "reason": "Specific tags.",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "cse-2024-2-cs-26",
+      "field": "text",
+      "before": "What is the output of the following C program?\n#include <stdio.h>\nint main() {\ndouble a[2]={20.0, 25.0}, *p, *q;\np = a;\nq = p + 1;\nprintf(”%d,%d”, (int)(q – p), (int)(*q – *p));\nreturn 0;}",
+      "after": "What is the output of the following C program?\n\n```c\n#include <stdio.h>\nint main() {\n    double a[2]={20.0, 25.0}, *p, *q;\n    p = a;\n    q = p + 1;\n    printf(\"%d,%d\", (int)(q - p), (int)(*q - *p));\n    return 0;}\n```",
+      "reason": "Code formatted as a C block; typographic quotes and en-dashes from the PDF replaced by C quotes and minus signs.",
+      "source": "pdf p.24"
+    },
+    {
+      "id": "cse-2024-2-cs-26",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "4,8"
+        },
+        {
+          "l": "B",
+          "t": "1,5"
+        },
+        {
+          "l": "C",
+          "t": "8,5"
+        },
+        {
+          "l": "D",
+          "t": "1,8 Computer Science and Information Technology Set 2 (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "4,8"
+        },
+        {
+          "l": "B",
+          "t": "1,5"
+        },
+        {
+          "l": "C",
+          "t": "8,5"
+        },
+        {
+          "l": "D",
+          "t": "1,8"
+        }
+      ],
+      "reason": "Running page header pasted into option D.",
+      "source": "pdf p.24"
+    },
+    {
+      "id": "cse-2024-2-cs-26",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "c",
+      "reason": "Valid topic id for C programming is \"c\".",
+      "source": "pdf p.24"
+    },
+    {
+      "id": "cse-2024-2-cs-26",
+      "field": "tags",
+      "before": [
+        "c-prog"
+      ],
+      "after": [
+        "pointer-arithmetic",
+        "type-cast"
+      ],
+      "reason": "Specific tags.",
+      "source": "pdf p.24"
+    },
+    {
+      "id": "cse-2024-2-cs-27",
+      "field": "text",
+      "before": "Consider a single processor system with four processes A, B, C, and D, represented\nas given below, where for each process  the first value is its arrival time, and the\nsecond value is its CPU burst time.\nA (0, 10), B (2, 6), C (4, 3), and D (6, 7).\nWhich one of the following options gives the average waiting times when\npreemptive Shortest Remaining Time First (SRTF) and Non -Preemptive Shortest\nJob First (NP-SJF) CPU scheduling algorithms are applied to the processes?",
+      "after": "Consider a single processor system with four processes A, B, C, and D, represented as given below, where for each process the first value is its arrival time, and the second value is its CPU burst time.\n\nA (0, 10), B (2, 6), C (4, 3), and D (6, 7).\n\nWhich one of the following options gives the average waiting times when preemptive Shortest Remaining Time First (SRTF) and Non-Preemptive Shortest Job First (NP-SJF) CPU scheduling algorithms are applied to the processes?",
+      "reason": "Spacing artifacts (\"Non -Preemptive\", double space) fixed; wrapped lines joined.",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "cse-2024-2-cs-27",
+      "field": "subject",
+      "before": "coa",
+      "after": "os",
+      "reason": "CPU scheduling is Operating Systems, not COA.",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "cse-2024-2-cs-27",
+      "field": "topic",
+      "before": "isa",
+      "after": "scheduling",
+      "reason": "CPU scheduling.",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "cse-2024-2-cs-27",
+      "field": "tags",
+      "before": [
+        "cpu-scheduling"
+      ],
+      "after": [
+        "cpu-scheduling",
+        "srtf",
+        "sjf"
+      ],
+      "reason": "Specific tags.",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "cse-2024-2-cs-29",
+      "field": "text",
+      "before": "You are given a set 𝑉 of distinct integers. A binary search tree 𝑇 is created by\ninserting all elements of 𝑉 one by one, starting with an empty tree. The tree 𝑇\nfollows the convention that, at each node, all values stored in the left subtree of the\nnode are smaller than the value stored at the node. You are not aware of the sequence\nin which these values were inserted into 𝑇, and you do not have access to 𝑇.\nWhich one of the following statements is TRUE?",
+      "after": "You are given a set $V$ of distinct integers. A binary search tree $T$ is created by inserting all elements of $V$ one by one, starting with an empty tree. The tree $T$ follows the convention that, at each node, all values stored in the left subtree of the node are smaller than the value stored at the node. You are not aware of the sequence in which these values were inserted into $T$, and you do not have access to $T$.\n\nWhich one of the following statements is TRUE?",
+      "reason": "Unicode math italics replaced by KaTeX; wrapped lines joined.",
+      "source": "pdf p.26"
+    },
+    {
+      "id": "cse-2024-2-cs-29",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Inorder traversal of 𝑇 can be determined from 𝑉"
+        },
+        {
+          "l": "B",
+          "t": "Root node of 𝑇 can be determined from 𝑉"
+        },
+        {
+          "l": "C",
+          "t": "Preorder traversal of 𝑇 can be determined from 𝑉"
+        },
+        {
+          "l": "D",
+          "t": "Postorder traversal of 𝑇 can be determined from 𝑉 Computer Science and Information Technology Set 2 (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Inorder traversal of $T$ can be determined from $V$"
+        },
+        {
+          "l": "B",
+          "t": "Root node of $T$ can be determined from $V$"
+        },
+        {
+          "l": "C",
+          "t": "Preorder traversal of $T$ can be determined from $V$"
+        },
+        {
+          "l": "D",
+          "t": "Postorder traversal of $T$ can be determined from $V$"
+        }
+      ],
+      "reason": "Unicode math to KaTeX; running page header removed from option D.",
+      "source": "pdf p.26"
+    },
+    {
+      "id": "cse-2024-2-cs-29",
+      "field": "subject",
+      "before": "coa",
+      "after": "pds",
+      "reason": "BST question belongs to Programming & Data Structures, not COA.",
+      "source": "pdf p.26"
+    },
+    {
+      "id": "cse-2024-2-cs-29",
+      "field": "topic",
+      "before": "isa",
+      "after": "bst",
+      "reason": "Binary search trees.",
+      "source": "pdf p.26"
+    },
+    {
+      "id": "cse-2024-2-cs-29",
+      "field": "tags",
+      "before": [
+        "trees"
+      ],
+      "after": [
+        "bst",
+        "tree-traversal"
+      ],
+      "reason": "Specific tags.",
+      "source": "pdf p.26"
+    }
+  ]
+}
