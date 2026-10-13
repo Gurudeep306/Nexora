@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 320" role="img" aria-label="Control flow graph with basic blocks B1 to B4" fill="none" stroke="currentColor" stroke-width="1.6" font-family="Arial, Helvetica, sans-serif" font-size="16">
+<title>Control flow graph with basic blocks B1 to B4</title>
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto" markerUnits="strokeWidth"><path d="M0,0.8 L10,5 L0,9.2 z" fill="currentColor" stroke="none"/></marker></defs>
+<text x="200" y="22" fill="currentColor" stroke="none" text-anchor="middle">ENTRY</text>
+<line x1="200" y1="28" x2="200" y2="59" marker-end="url(#ah)"/>
+<rect x="120" y="60" width="160" height="36"/>
+<text x="200" y="84" fill="currentColor" stroke="none" text-anchor="middle">a = b + c</text>
+<text x="112" y="52" fill="currentColor" stroke="none" font-size="14" text-anchor="middle">B1</text>
+<line x1="205" y1="96" x2="205" y2="139" marker-end="url(#ah)"/>
+<rect x="135" y="140" width="140" height="36"/>
+<text x="205" y="164" fill="currentColor" stroke="none" text-anchor="middle">d = a + e</text>
+<text x="150" y="132" fill="currentColor" stroke="none" font-size="14" text-anchor="middle">B2</text>
+<line x1="280" y1="96" x2="327" y2="139" marker-end="url(#ah)"/>
+<rect x="285" y="140" width="130" height="36"/>
+<text x="350" y="164" fill="currentColor" stroke="none" text-anchor="middle">e = a + f</text>
+<text x="402" y="132" fill="currentColor" stroke="none" font-size="14" text-anchor="middle">B3</text>
+<path d="M350,176 C360,215 430,205 440,160 C455,95 440,40 385,38 C335,36 300,55 282,72" marker-end="url(#ah)"/>
+<line x1="205" y1="176" x2="205" y2="219" marker-end="url(#ah)"/>
+<rect x="135" y="220" width="140" height="36"/>
+<text x="205" y="244" fill="currentColor" stroke="none" text-anchor="middle">g = d + e</text>
+<text x="150" y="212" fill="currentColor" stroke="none" font-size="14" text-anchor="middle">B4</text>
+<line x1="205" y1="256" x2="205" y2="289" marker-end="url(#ah)"/>
+<text x="205" y="310" fill="currentColor" stroke="none" text-anchor="middle">EXIT</text>
+</svg>

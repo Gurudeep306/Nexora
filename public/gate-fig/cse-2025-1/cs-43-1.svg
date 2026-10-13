@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 420" role="img" aria-label="Memory hierarchy: Processor, L1 cache, L2 cache, main memory" fill="none" stroke="currentColor" stroke-width="1.6" font-family="Arial, Helvetica, sans-serif" font-size="16">
+  <title>Two-level cache memory hierarchy</title>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0.8 L10,5 L0,9.2 z" fill="currentColor" stroke="none"/>
+    </marker>
+  </defs>
+  <rect x="190" y="10" width="100" height="52"/>
+  <rect x="135" y="100" width="210" height="72"/>
+  <rect x="20" y="210" width="440" height="88"/>
+  <rect x="20" y="336" width="440" height="76"/>
+  <line x1="240" y1="62" x2="240" y2="98" marker-end="url(#ah)"/>
+  <line x1="240" y1="172" x2="240" y2="208" marker-end="url(#ah)"/>
+  <line x1="240" y1="298" x2="240" y2="334" marker-end="url(#ah)"/>
+  <g fill="currentColor" stroke="none" text-anchor="middle">
+    <text x="240" y="42">Processor</text>
+    <text x="240" y="122">L1 cache</text>
+    <text x="240" y="144">Hit rate = 95%,</text>
+    <text x="240" y="164">Access time = 10 ns</text>
+    <text x="240" y="232">L2 cache</text>
+    <text x="240" y="253">Hit rate = 85%,</text>
+    <text x="240" y="274">Access time (including L1 cache miss penalty)</text>
+    <text x="240" y="292">= 20 ns</text>
+    <text x="240" y="358">Main Memory</text>
+    <text x="240" y="380">Access time (including L1 and L2 cache miss</text>
+    <text x="240" y="400">penalty) = 200 ns</text>
+  </g>
+</svg>
