@@ -1,0 +1,1231 @@
+{
+  "paper": "cse-2022",
+  "fixes": [
+    {
+      "id": "cse-2022-cs-35",
+      "field": "text",
+      "before": "Consider solving the following system of simultaneous equations using\nLU decomposition.\n1 2 3\n1 2 3\n1 2 3\n2 4\n3 7\n2 5 7\nx x x\nx x x\nx x x\n  \n  \n  \nwhere L  and U  are denoted as\n11\n21 22\n31 32 33\n0 0\n0\nL\nL L L\nL L L\n \n    \n,\n11 12 13\n22 23\n330 0\n0\nU U U\nU U\nU\nU\n \n \n  \n\n\nWhich one of the following is the correct combination of values for 32L ,  33,U and\n1 ?x",
+      "after": "Consider solving the following system of simultaneous equations using LU decomposition.\n\n$$\\begin{aligned} x_1 + x_2 - 2x_3 &= 4\\\\ x_1 + 3x_2 - x_3 &= 7\\\\ 2x_1 + x_2 - 5x_3 &= 7 \\end{aligned}$$\n\nwhere $L$ and $U$ are denoted as\n\n$$L = \\begin{pmatrix} L_{11} & 0 & 0\\\\ L_{21} & L_{22} & 0\\\\ L_{31} & L_{32} & L_{33} \\end{pmatrix}, \\quad U = \\begin{pmatrix} U_{11} & U_{12} & U_{13}\\\\ 0 & U_{22} & U_{23}\\\\ 0 & 0 & U_{33} \\end{pmatrix}$$\n\nWhich one of the following is the correct combination of values for $L_{32}$, $U_{33}$, and $x_1$?",
+      "reason": "Text re-transcribed from the PDF (paper Q.45), garbled symbols restored with KaTeX",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-35",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "32 33 1 12, , 1 2L U x  "
+        },
+        {
+          "l": "B",
+          "t": "32 33 12, 2, 1L U x  "
+        },
+        {
+          "l": "C",
+          "t": "32 33 1 1 , 2, 02L U x  "
+        },
+        {
+          "l": "D",
+          "t": "32 33 1 1 1, , 02 2L U x   GATE 2022 Computer Science and Information Technology (CS)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$L_{32} = 2,\\ U_{33} = -\\dfrac{1}{2},\\ x_1 = -1$"
+        },
+        {
+          "l": "B",
+          "t": "$L_{32} = 2,\\ U_{33} = 2,\\ x_1 = -1$"
+        },
+        {
+          "l": "C",
+          "t": "$L_{32} = -\\dfrac{1}{2},\\ U_{33} = 2,\\ x_1 = 0$"
+        },
+        {
+          "l": "D",
+          "t": "$L_{32} = -\\dfrac{1}{2},\\ U_{33} = -\\dfrac{1}{2},\\ x_1 = 0$"
+        }
+      ],
+      "reason": "Options re-transcribed from the PDF, garbled maths and footer junk removed",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf), p.30"
+    },
+    {
+      "id": "cse-2022-cs-35",
+      "field": "subject",
+      "before": "dm",
+      "after": "la",
+      "reason": "Subject matches the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-35",
+      "field": "topic",
+      "before": "combinatorics",
+      "after": "decomp",
+      "reason": "Topic matches the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-35",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "lu-decomposition",
+        "linear-systems"
+      ],
+      "reason": "Tags describe the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-36",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Given two Turing machines 1 2 and ,M M decide if 1 2( ) ( ).L M L M"
+        },
+        {
+          "l": "B",
+          "t": "Given a Turing machine ,M decide if ( )L M is regular."
+        },
+        {
+          "l": "C",
+          "t": "Given a Turing machine ,M decide if M accepts all strings."
+        },
+        {
+          "l": "D",
+          "t": "Given a Turing machine ,M decide if M takes more than 1073 steps on every string."
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Given two Turing machines $M_1$ and $M_2$, decide if $L(M_1) = L(M_2)$."
+        },
+        {
+          "l": "B",
+          "t": "Given a Turing machine $M$, decide if $L(M)$ is regular."
+        },
+        {
+          "l": "C",
+          "t": "Given a Turing machine $M$, decide if $M$ accepts all strings."
+        },
+        {
+          "l": "D",
+          "t": "Given a Turing machine $M$, decide if $M$ takes more than $1073$ steps on every string."
+        }
+      ],
+      "reason": "Options re-transcribed from the PDF, garbled maths and footer junk removed",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf), p.31"
+    },
+    {
+      "id": "cse-2022-cs-36",
+      "field": "tags",
+      "before": [
+        "turing"
+      ],
+      "after": [
+        "decidability",
+        "rice-theorem"
+      ],
+      "reason": "Tags describe the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-37",
+      "field": "text",
+      "before": "Consider the following languages:\n*\n1 { | { , } }n nL a wa w a b \n*\n2 { | , { , } , | |,| | 0}RL wxw w x a b w x  \nNote that Rw is the reversal of the string .w  Which of the following is/are TRUE?",
+      "after": "Consider the following languages:\n\n$$L_1 = \\{a^n w a^n \\mid w \\in \\{a, b\\}^*\\}$$\n$$L_2 = \\{w x w^R \\mid w, x \\in \\{a, b\\}^*,\\ |w|, |x| > 0\\}$$\n\nNote that $w^R$ is the reversal of the string $w$. Which of the following is/are TRUE?",
+      "reason": "Text re-transcribed from the PDF (paper Q.47), garbled symbols restored with KaTeX",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-37",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "1L and 2L are regular."
+        },
+        {
+          "l": "B",
+          "t": "1L and 2L are context-free."
+        },
+        {
+          "l": "C",
+          "t": "1L is regular and 2L is context-free."
+        },
+        {
+          "l": "D",
+          "t": "1L and 2L are context-free but not regular. GATE 2022 Computer Science and Information Technology (CS)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$L_1$ and $L_2$ are regular."
+        },
+        {
+          "l": "B",
+          "t": "$L_1$ and $L_2$ are context-free."
+        },
+        {
+          "l": "C",
+          "t": "$L_1$ is regular and $L_2$ is context-free."
+        },
+        {
+          "l": "D",
+          "t": "$L_1$ and $L_2$ are context-free but not regular."
+        }
+      ],
+      "reason": "Options re-transcribed from the PDF, garbled maths and footer junk removed",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf), p.31"
+    },
+    {
+      "id": "cse-2022-cs-37",
+      "field": "subject",
+      "before": "pds",
+      "after": "toc",
+      "reason": "Subject matches the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-37",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "regular",
+      "reason": "Topic matches the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-37",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "regular-languages",
+        "context-free-languages"
+      ],
+      "reason": "Tags describe the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-38",
+      "field": "text",
+      "before": "Consider the following languages:\n*\n1 { | { , } }L ww w a b \n2 { | , 0}n n mL a b c m n \n3 { | , 0}m n nL a b c m n \nWhich of the following statements is/are FALSE?",
+      "after": "Consider the following languages:\n\n$$L_1 = \\{ww \\mid w \\in \\{a, b\\}^*\\}$$\n$$L_2 = \\{a^n b^n c^m \\mid m, n \\ge 0\\}$$\n$$L_3 = \\{a^m b^n c^n \\mid m, n \\ge 0\\}$$\n\nWhich of the following statements is/are FALSE?",
+      "reason": "Text re-transcribed from the PDF (paper Q.48), garbled symbols restored with KaTeX",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-38",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "1L is not context-free but 2L and 3L are deterministic context-free."
+        },
+        {
+          "l": "B",
+          "t": "Neither 1L nor 2L is context-free."
+        },
+        {
+          "l": "C",
+          "t": "2L , 3L and 2 3L L all are context-free."
+        },
+        {
+          "l": "D",
+          "t": "Neither 1L nor its complement is context-free."
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$L_1$ is not context-free but $L_2$ and $L_3$ are deterministic context-free."
+        },
+        {
+          "l": "B",
+          "t": "Neither $L_1$ nor $L_2$ is context-free."
+        },
+        {
+          "l": "C",
+          "t": "$L_2$, $L_3$ and $L_2 \\cap L_3$ all are context-free."
+        },
+        {
+          "l": "D",
+          "t": "Neither $L_1$ nor its complement is context-free."
+        }
+      ],
+      "reason": "Options re-transcribed from the PDF, garbled maths and footer junk removed",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf), p.32"
+    },
+    {
+      "id": "cse-2022-cs-38",
+      "field": "subject",
+      "before": "pds",
+      "after": "toc",
+      "reason": "Subject matches the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-38",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "cfg",
+      "reason": "Topic matches the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-38",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "context-free-languages",
+        "closure-properties",
+        "dcfl"
+      ],
+      "reason": "Tags describe the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-39",
+      "field": "text",
+      "before": "Consider a simple undirected weighted graph ,G  all of whose edge weights are\ndistinct. Which of the following statements about the minimum  spanning trees of\nG  is/are TRUE?",
+      "after": "Consider a simple undirected weighted graph $G$, all of whose edge weights are distinct. Which of the following statements about the minimum spanning trees of $G$ is/are TRUE?",
+      "reason": "Text re-transcribed from the PDF (paper Q.49), garbled symbols restored with KaTeX",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-39",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "The edge with the second smallest weight is always part of any minimum spanning tree of G ."
+        },
+        {
+          "l": "B",
+          "t": "One or both of the edges with the third smallest and the fourth smallest weights are part of any minimum spanning tree of G ."
+        },
+        {
+          "l": "C",
+          "t": "Suppose S V be such that S  and S V . Consider the edge with the minimum weight such that one of its vertices is in S and the other in V \\ S . Such an edge will always be part of any minimum spanning tree of G ."
+        },
+        {
+          "l": "D",
+          "t": "G can have multiple minimum spanning trees. GATE 2022 Computer Science and Information Technology (CS)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "The edge with the second smallest weight is always part of any minimum spanning tree of $G$."
+        },
+        {
+          "l": "B",
+          "t": "One or both of the edges with the third smallest and the fourth smallest weights are part of any minimum spanning tree of $G$."
+        },
+        {
+          "l": "C",
+          "t": "Suppose $S \\subseteq V$ be such that $S \\ne \\phi$ and $S \\ne V$. Consider the edge with the minimum weight such that one of its vertices is in $S$ and the other in $V \\setminus S$. Such an edge will always be part of any minimum spanning tree of $G$."
+        },
+        {
+          "l": "D",
+          "t": "$G$ can have multiple minimum spanning trees."
+        }
+      ],
+      "reason": "Options re-transcribed from the PDF, garbled maths and footer junk removed",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf), p.32"
+    },
+    {
+      "id": "cse-2022-cs-39",
+      "field": "topic",
+      "before": "graphs",
+      "after": "mst",
+      "reason": "Topic matches the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-39",
+      "field": "tags",
+      "before": [
+        "graphs"
+      ],
+      "after": [
+        "mst",
+        "cut-property"
+      ],
+      "reason": "Tags describe the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-40",
+      "field": "text",
+      "before": "The following simple undirected graph is referred to as the Peterson graph.\nWhich of the following statements is/are TRUE?",
+      "after": "The following simple undirected graph is referred to as the Peterson graph.\n\nWhich of the following statements is/are TRUE?",
+      "reason": "Text re-transcribed from the PDF (paper Q.50), garbled symbols restored with KaTeX",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-40",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "The chromatic number of the graph is 3."
+        },
+        {
+          "l": "B",
+          "t": "The graph has a Hamiltonian path."
+        },
+        {
+          "l": "C",
+          "t": "The following graph is isomorphic to the Peterson graph."
+        },
+        {
+          "l": "D",
+          "t": "The size of the largest independent set of the given graph is 3. (A subset of vertices of a graph form an independent set if no two vertices of the subset are adjacent.) GATE 2022 Computer Science and Information Technology (CS)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "The chromatic number of the graph is 3."
+        },
+        {
+          "l": "B",
+          "t": "The graph has a Hamiltonian path."
+        },
+        {
+          "l": "C",
+          "t": "The following graph (second figure) is isomorphic to the Peterson graph."
+        },
+        {
+          "l": "D",
+          "t": "The size of the largest independent set of the given graph is 3. (A subset of vertices of a graph form an independent set if no two vertices of the subset are adjacent.)"
+        }
+      ],
+      "reason": "Options re-transcribed from the PDF, garbled maths and footer junk removed",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf), p.33"
+    },
+    {
+      "id": "cse-2022-cs-40",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2022/cs-40-1.svg",
+          "svg": "cse-2022/cs-40-1.svg",
+          "alt": "The Petersen graph: an outer pentagon of 5 vertices, each joined by a spoke to one of 5 inner vertices, and the inner vertices joined as a five-pointed star (each inner vertex adjacent to the two inner vertices two steps away). 10 vertices, 15 edges."
+        },
+        {
+          "f": "cse-2022/cs-40-2.svg",
+          "svg": "cse-2022/cs-40-2.svg",
+          "alt": "Graph for option (C): 9 vertices v0 (top) to v8 placed clockwise on a nonagon and joined in a 9-cycle, plus a centre vertex c. Extra edges: c-v0, c-v3, c-v6, v1-v5, v2-v7 (horizontal chord) and v8-v4. Every vertex has degree 3; 10 vertices, 15 edges."
+        }
+      ],
+      "reason": "Both figures (the graph and the option (C) graph) were missing; redrawn from the PDF",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf), p.33"
+    },
+    {
+      "id": "cse-2022-cs-40",
+      "field": "subject",
+      "before": "os",
+      "after": "dm",
+      "reason": "Subject matches the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-40",
+      "field": "topic",
+      "before": "sync",
+      "after": "graphs",
+      "reason": "Topic matches the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-40",
+      "field": "tags",
+      "before": [
+        "sync"
+      ],
+      "after": [
+        "graph-coloring",
+        "petersen-graph",
+        "graph-isomorphism",
+        "independent-set"
+      ],
+      "reason": "Tags describe the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-41",
+      "field": "text",
+      "before": "Consider the following recurrence:\n(1) 1 ;\n(2 ) 2 ( ) 1, for 1;\n(2 1) 2 ( ) 1, for 1.\nf\nf n f n n\nf n f n n\n\n  \n   \nThen, which of the following statements is/are TRUE?",
+      "after": "Consider the following recurrence:\n\n$$\\begin{aligned} f(1) &= 1;\\\\ f(2n) &= 2f(n) - 1, \\quad \\text{for } n \\ge 1;\\\\ f(2n+1) &= 2f(n) + 1, \\quad \\text{for } n \\ge 1. \\end{aligned}$$\n\nThen, which of the following statements is/are TRUE?",
+      "reason": "Text re-transcribed from the PDF (paper Q.51), garbled symbols restored with KaTeX",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-41",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "(2 1) 2 1n nf   "
+        },
+        {
+          "l": "B",
+          "t": "(2 ) 1nf "
+        },
+        {
+          "l": "C",
+          "t": "1(5 2 ) 2 1n nf   "
+        },
+        {
+          "l": "D",
+          "t": "(2 1) 2 1n nf   "
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$f(2^n - 1) = 2^n - 1$"
+        },
+        {
+          "l": "B",
+          "t": "$f(2^n) = 1$"
+        },
+        {
+          "l": "C",
+          "t": "$f(5 \\cdot 2^n) = 2^{n+1} + 1$"
+        },
+        {
+          "l": "D",
+          "t": "$f(2^n + 1) = 2^n + 1$"
+        }
+      ],
+      "reason": "Options re-transcribed from the PDF, garbled maths and footer junk removed",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf), p.34"
+    },
+    {
+      "id": "cse-2022-cs-41",
+      "field": "subject",
+      "before": "algo",
+      "after": "dm",
+      "reason": "Subject matches the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-41",
+      "field": "topic",
+      "before": "asymptotics",
+      "after": "recurrences",
+      "reason": "Topic matches the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-41",
+      "field": "tags",
+      "before": [
+        "asymptotics"
+      ],
+      "after": [
+        "recurrence",
+        "induction"
+      ],
+      "reason": "Tags describe the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-42",
+      "field": "text",
+      "before": "Which of the properties hold for the adjacency matrix A  of a simple undirected\nunweighted graph having n vertices?",
+      "after": "Which of the properties hold for the adjacency matrix $A$ of a simple undirected unweighted graph having $n$ vertices?",
+      "reason": "Text re-transcribed from the PDF (paper Q.52), garbled symbols restored with KaTeX",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-42",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "The diagonal entries of 2A are the degrees of the vertices of the graph."
+        },
+        {
+          "l": "B",
+          "t": "If the graph is connected, then none of the entries of 1n nA I  can be zero."
+        },
+        {
+          "l": "C",
+          "t": "If the sum of all the elements of A is at most 2( 1),n then the graph must be acyclic."
+        },
+        {
+          "l": "D",
+          "t": "If there is at least a 1 in each of A ’s rows and columns, then the graph must be connected. GATE 2022 Computer Science and Information Technology (CS)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "The diagonal entries of $A^2$ are the degrees of the vertices of the graph."
+        },
+        {
+          "l": "B",
+          "t": "If the graph is connected, then none of the entries of $A^{n-1} + I_n$ can be zero."
+        },
+        {
+          "l": "C",
+          "t": "If the sum of all the elements of $A$ is at most $2(n-1)$, then the graph must be acyclic."
+        },
+        {
+          "l": "D",
+          "t": "If there is at least a 1 in each of $A$’s rows and columns, then the graph must be connected."
+        }
+      ],
+      "reason": "Options re-transcribed from the PDF, garbled maths and footer junk removed",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf), p.34"
+    },
+    {
+      "id": "cse-2022-cs-42",
+      "field": "type",
+      "before": "MCQ",
+      "after": "MSQ",
+      "reason": "Q.52 is in the MSQ section (Q.46–Q.55) of the paper",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf), p.31"
+    },
+    {
+      "id": "cse-2022-cs-42",
+      "field": "subject",
+      "before": "la",
+      "after": "dm",
+      "reason": "Subject matches the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-42",
+      "field": "topic",
+      "before": "matrices",
+      "after": "graphs",
+      "reason": "Topic matches the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-42",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "adjacency-matrix",
+        "walks"
+      ],
+      "reason": "Tags describe the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-43",
+      "field": "text",
+      "before": "Which of the following is/are the eigenvector(s) for the matrix given below?\n9 6 2 4\n8 6 3 1\n20 15 8 5\n32 21 7 12\n    \n     \n \n \n ",
+      "after": "Which of the following is/are the eigenvector(s) for the matrix given below?\n\n$$\\begin{pmatrix} -9 & -6 & -2 & -4\\\\ -8 & -6 & -3 & -1\\\\ 20 & 15 & 8 & 5\\\\ 32 & 21 & 7 & 12 \\end{pmatrix}$$",
+      "reason": "Text re-transcribed from the PDF (paper Q.53), garbled symbols restored with KaTeX",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-43",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "1 1 0 1            "
+        },
+        {
+          "l": "B",
+          "t": "1 0 1 0            "
+        },
+        {
+          "l": "C",
+          "t": "1 0 2 2            "
+        },
+        {
+          "l": "D",
+          "t": "0 1 3 0             GATE 2022 Computer Science and Information Technology (CS)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\begin{pmatrix} -1\\\\ 1\\\\ 0\\\\ 1 \\end{pmatrix}$"
+        },
+        {
+          "l": "B",
+          "t": "$\\begin{pmatrix} 1\\\\ 0\\\\ -1\\\\ 0 \\end{pmatrix}$"
+        },
+        {
+          "l": "C",
+          "t": "$\\begin{pmatrix} -1\\\\ 0\\\\ 2\\\\ 2 \\end{pmatrix}$"
+        },
+        {
+          "l": "D",
+          "t": "$\\begin{pmatrix} 0\\\\ 1\\\\ -3\\\\ 0 \\end{pmatrix}$"
+        }
+      ],
+      "reason": "Options re-transcribed from the PDF, garbled maths and footer junk removed",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf), p.35"
+    },
+    {
+      "id": "cse-2022-cs-43",
+      "field": "topic",
+      "before": "matrices",
+      "after": "eigen",
+      "reason": "Topic matches the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-43",
+      "field": "tags",
+      "before": [
+        "matrices"
+      ],
+      "after": [
+        "eigenvectors"
+      ],
+      "reason": "Tags describe the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-44",
+      "field": "text",
+      "before": "Consider a system with 2 KB direct mapped data cache with a block size of 64 bytes.\nThe system has a physical address space of 64 KB and a word length of 16 bits.\nDuring the execution of a program, four data words P, Q, R, and S are accessed in\nthat order 10 times (i.e., PQRSPQRS…). Hence, there are 40 accesses to data cache\naltogether. Assume that the data cache is initially empty and no other data words are\naccessed by the program. The addresses of the first bytes of P, Q, R, and S are\n0xA248, 0xC28A, 0xCA8A, and 0xA262, respectively. For the execution of the\nabove program, which of the following statements is/are TRUE with respect to the\ndata cache?",
+      "after": "Consider a system with 2 KB direct mapped data cache with a block size of 64 bytes. The system has a physical address space of 64 KB and a word length of 16 bits. During the execution of a program, four data words P, Q, R, and S are accessed in that order 10 times (i.e., PQRSPQRS…). Hence, there are 40 accesses to data cache altogether. Assume that the data cache is initially empty and no other data words are accessed by the program. The addresses of the first bytes of P, Q, R, and S are 0xA248, 0xC28A, 0xCA8A, and 0xA262, respectively. For the execution of the above program, which of the following statements is/are TRUE with respect to the data cache?",
+      "reason": "Text re-transcribed from the PDF (paper Q.54), garbled symbols restored with KaTeX",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-44",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Every access to S is a hit."
+        },
+        {
+          "l": "B",
+          "t": "Once P is brought to the cache it is never evicted."
+        },
+        {
+          "l": "C",
+          "t": "At the end of the execution only R and S reside in the cache."
+        },
+        {
+          "l": "D",
+          "t": "Every access to R evicts Q from the cache. GATE 2022 Computer Science and Information Technology (CS)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Every access to S is a hit."
+        },
+        {
+          "l": "B",
+          "t": "Once P is brought to the cache it is never evicted."
+        },
+        {
+          "l": "C",
+          "t": "At the end of the execution only R and S reside in the cache."
+        },
+        {
+          "l": "D",
+          "t": "Every access to R evicts Q from the cache."
+        }
+      ],
+      "reason": "Options re-transcribed from the PDF, garbled maths and footer junk removed",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf), p.36"
+    },
+    {
+      "id": "cse-2022-cs-44",
+      "field": "subject",
+      "before": "ga",
+      "after": "coa",
+      "reason": "Subject matches the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-44",
+      "field": "topic",
+      "before": "verbal",
+      "after": "cache",
+      "reason": "Topic matches the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-44",
+      "field": "tags",
+      "before": [
+        "verbal"
+      ],
+      "after": [
+        "direct-mapped-cache",
+        "address-mapping",
+        "conflict-miss"
+      ],
+      "reason": "Tags describe the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-45",
+      "field": "text",
+      "before": "Consider routing table of an organization’s router shown below:\nSubnet Number Subnet Mask Next Hop\n12.20.164.0 255.255.252.0 R1\n12.20.170.0 255.255.254.0 R2\n12.20.168.0 255.255.254.0 Interface 0\n12.20.166.0 255.255.254.0 Interface 1\ndefault  R3\nWhich of the following prefix es in CIDR notation can be collectively used to\ncorrectly aggregate all of the subnets in the routing table?",
+      "after": "Consider routing table of an organization’s router shown below:\n\n| Subnet Number | Subnet Mask | Next Hop |\n|---|---|---|\n| 12.20.164.0 | 255.255.252.0 | R1 |\n| 12.20.170.0 | 255.255.254.0 | R2 |\n| 12.20.168.0 | 255.255.254.0 | Interface 0 |\n| 12.20.166.0 | 255.255.254.0 | Interface 1 |\n| default | | R3 |\n\nWhich of the following prefixes in CIDR notation can be collectively used to correctly aggregate all of the subnets in the routing table?",
+      "reason": "Text re-transcribed from the PDF (paper Q.55), garbled symbols restored with KaTeX",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-45",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "12.20.164.0/20"
+        },
+        {
+          "l": "B",
+          "t": "12.20.164.0/22"
+        },
+        {
+          "l": "C",
+          "t": "12.20.164.0/21"
+        },
+        {
+          "l": "D",
+          "t": "12.20.168.0/22 GATE 2022 Computer Science and Information Technology (CS)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "12.20.164.0/20"
+        },
+        {
+          "l": "B",
+          "t": "12.20.164.0/22"
+        },
+        {
+          "l": "C",
+          "t": "12.20.164.0/21"
+        },
+        {
+          "l": "D",
+          "t": "12.20.168.0/22"
+        }
+      ],
+      "reason": "Options re-transcribed from the PDF, garbled maths and footer junk removed",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf), p.37"
+    },
+    {
+      "id": "cse-2022-cs-45",
+      "field": "type",
+      "before": "MCQ",
+      "after": "MSQ",
+      "reason": "Q.55 is in the MSQ section (Q.46–Q.55) of the paper; the key has two options",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf), p.31"
+    },
+    {
+      "id": "cse-2022-cs-45",
+      "field": "tags",
+      "before": [
+        "network"
+      ],
+      "after": [
+        "cidr",
+        "supernetting",
+        "route-aggregation"
+      ],
+      "reason": "Tags describe the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-46",
+      "field": "text",
+      "before": "Consider the relational database with the following four schemas and their\nrespective instances.\nStudent(sNo, sName, dNo) Dept(dNo, dName)\nCourse(cNo, cName, dNo) Register(sNo, cNo)\nSQL Query:\nSELECT * FROM Student AS S WHERE NOT EXIST\n(SELECT cNo FROM Course WHERE dNo = “D01”\nEXCEPT\nSELECT cNo FROM Register WHERE sNo = S.sNo)\nThe number of rows returned by the above SQL query is___________.",
+      "after": "Consider the relational database with the following four schemas and their respective instances.\n\n`Student(sNo, sName, dNo)` `Dept(dNo, dName)`\n\n`Course(cNo, cName, dNo)` `Register(sNo, cNo)`\n\n**Student**\n\n| sNo | sName | dNo |\n|---|---|---|\n| S01 | James | D01 |\n| S02 | Rocky | D01 |\n| S03 | Jackson | D02 |\n| S04 | Jane | D01 |\n| S05 | Milli | D02 |\n\n**Dept**\n\n| dNo | dName |\n|---|---|\n| D01 | CSE |\n| D02 | EEE |\n\n**Course**\n\n| cNo | cName | dNo |\n|---|---|---|\n| C11 | DS | D01 |\n| C12 | OS | D01 |\n| C21 | DE | D02 |\n| C22 | PT | D02 |\n| C23 | CV | D03 |\n\n**Register**\n\n| sNo | cNo |\n|---|---|\n| S01 | C11 |\n| S01 | C12 |\n| S02 | C11 |\n| S03 | C21 |\n| S03 | C22 |\n| S03 | C23 |\n| S04 | C11 |\n| S04 | C12 |\n| S05 | C11 |\n| S05 | C21 |\n\nSQL Query:\n\n```sql\nSELECT * FROM Student AS S WHERE NOT EXIST\n (SELECT cNo FROM Course WHERE dNo = \"D01\"\n    EXCEPT\n  SELECT cNo FROM Register WHERE sNo = S.sNo)\n```\n\nThe number of rows returned by the above SQL query is ________.",
+      "reason": "Text re-transcribed from the PDF (paper Q.56), garbled symbols restored with KaTeX",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-46",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "sql",
+        "not-exists",
+        "relational-division"
+      ],
+      "reason": "Tags describe the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-47",
+      "field": "text",
+      "before": "Consider a network with three routers P, Q, R shown in the figure below. All the\nlinks have cost of unity.\nThe routers exchange distance vector routing information and have converged on\nthe routing tables, after which the link Q−R fails. Assume that P and Q send out\nrouting updates at random times, each at the same average rate. The probability of\na routing loop formation ( rounded off to one decimal place ) between P and Q,\nleading to count-to-infinity problem, is___________.\nP\nQ\nR\nGATE 2022 Computer Science and Information Technology (CS)",
+      "after": "Consider a network with three routers P, Q, R shown in the figure below. All the links have cost of unity.\n\nThe routers exchange distance vector routing information and have converged on the routing tables, after which the link Q−R fails. Assume that P and Q send out routing updates at random times, each at the same average rate. The probability of a routing loop formation (rounded off to one decimal place) between P and Q, leading to count-to-infinity problem, is ________.",
+      "reason": "Text re-transcribed from the PDF (paper Q.57), garbled symbols restored with KaTeX",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-47",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2022/cs-47-1.svg",
+          "svg": "cse-2022/cs-47-1.svg",
+          "alt": "Three routers in a line: P is linked to Q, and Q is linked to R. Each link has cost 1."
+        }
+      ],
+      "reason": "Figure was missing; redrawn from the PDF",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf), p.38"
+    },
+    {
+      "id": "cse-2022-cs-47",
+      "field": "subject",
+      "before": "ga",
+      "after": "cn",
+      "reason": "Subject matches the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-47",
+      "field": "topic",
+      "before": "quant",
+      "after": "routing",
+      "reason": "Topic matches the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-47",
+      "field": "tags",
+      "before": [
+        "quant"
+      ],
+      "after": [
+        "distance-vector",
+        "count-to-infinity"
+      ],
+      "reason": "Tags describe the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-48",
+      "field": "text",
+      "before": "Let ( , )G V E  be a directed graph, where { 1, 2,3, 4,5}V   is the set of vertices and\nE  is the set of directed edges, as defined by the following adjacency matrix .A\n𝐴[𝑖][𝑗] = ൜1,              1 ≤ 𝑗 ≤ 𝑖 ≤ 5\n0,                   𝑜𝑡ℎ𝑒𝑟𝑤𝑖𝑠𝑒\n𝐴[𝑖][𝑗] = 1 indicates a directed edge from node i  to node .j  A directed spanning\ntree of ,G  rooted at ,r V  is defined as a subgraph T  of G  such that the undirected\nversion of T  is a tree, and T  contains a directed path from r  to every other vertex\nin .V  The number of such directed spanning trees rooted at vertex 5\nis_____________.",
+      "after": "Let $G(V, E)$ be a directed graph, where $V = \\{1, 2, 3, 4, 5\\}$ is the set of vertices and $E$ is the set of directed edges, as defined by the following adjacency matrix $A$.\n\n$$A[i][j] = \\begin{cases} 1, & 1 \\le j \\le i \\le 5\\\\ 0, & \\text{otherwise} \\end{cases}$$\n\n$A[i][j] = 1$ indicates a directed edge from node $i$ to node $j$. A *directed spanning tree* of $G$, rooted at $r \\in V$, is defined as a subgraph $T$ of $G$ such that the undirected version of $T$ is a tree, and $T$ contains a directed path from $r$ to every other vertex in $V$. The number of such directed spanning trees rooted at vertex 5 is ________.",
+      "reason": "Text re-transcribed from the PDF (paper Q.58), garbled symbols restored with KaTeX",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-48",
+      "field": "subject",
+      "before": "algo",
+      "after": "dm",
+      "reason": "Subject matches the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-48",
+      "field": "tags",
+      "before": [
+        "graphs"
+      ],
+      "after": [
+        "spanning-tree",
+        "arborescence",
+        "counting"
+      ],
+      "reason": "Tags describe the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-49",
+      "field": "text",
+      "before": "Consider a 100 Mbps link between an earth station (sender) and a satellite (receiver)\nat an altitude of 2100 km. The signal propagates at a speed of 3x10 8 m/s. The time\ntaken (in milliseconds, rounded off to two decimal places ) for the receiver to\ncompletely receive a packet of 1000 bytes transmitted by the sender is_________.",
+      "after": "Consider a 100 Mbps link between an earth station (sender) and a satellite (receiver) at an altitude of 2100 km. The signal propagates at a speed of $3 \\times 10^8$ m/s. The time taken (in milliseconds, rounded off to two decimal places) for the receiver to completely receive a packet of 1000 bytes transmitted by the sender is ________.",
+      "reason": "Text re-transcribed from the PDF (paper Q.59), garbled symbols restored with KaTeX",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-49",
+      "field": "subject",
+      "before": "ga",
+      "after": "cn",
+      "reason": "Subject matches the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-49",
+      "field": "topic",
+      "before": "quant",
+      "after": "datalink",
+      "reason": "Topic matches the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-49",
+      "field": "tags",
+      "before": [
+        "quant"
+      ],
+      "after": [
+        "transmission-delay",
+        "propagation-delay"
+      ],
+      "reason": "Tags describe the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-50",
+      "field": "text",
+      "before": "Consider the data transfer using TCP over a 1 Gbps link. Assuming that the\nmaximum segment lifetime (MSL) is set to 60 seconds, the minimum number of\nbits required for the sequence number field of the TCP header, to prevent the\nsequence number space from wrapping around during the MSL  is____________.",
+      "after": "Consider the data transfer using TCP over a 1 Gbps link. Assuming that the maximum segment lifetime (MSL) is set to 60 seconds, the minimum number of bits required for the sequence number field of the TCP header, to prevent the sequence number space from wrapping around during the MSL is ________.",
+      "reason": "Text re-transcribed from the PDF (paper Q.60), garbled symbols restored with KaTeX",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-50",
+      "field": "subject",
+      "before": "db",
+      "after": "cn",
+      "reason": "Subject matches the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-50",
+      "field": "topic",
+      "before": "sql",
+      "after": "transport",
+      "reason": "Topic matches the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-50",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "tcp",
+        "sequence-number",
+        "wrap-around"
+      ],
+      "reason": "Tags describe the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-51",
+      "field": "text",
+      "before": "A processor X 1 operating at 2 GHz has a standard 5-stage RISC instruction pipeline\nhaving a base CPI (cycles per instruction) of one without any pipeline hazards.\nFor a given program P that has 30% branch instructions, control hazards incur 2\ncycles stall for every branch. A new version of the processor X 2 operating at same\nclock frequency  has an additional branch predictor unit (BPU) that completely\neliminates stalls for correctly predicted branches. There is neither any savings nor\nany additional stalls for wrong predictions. There are no structural hazards and data\nhazards for X 1 and X2. If the BPU has a prediction accuracy of 80%, the speed up\n(rounded off to two decimal places ) obtained by X 2 over X 1 in executing\nP is____________.\nGATE 2022 Computer Science and Information Technology (CS)",
+      "after": "A processor $X_1$ operating at 2 GHz has a standard 5-stage RISC instruction pipeline having a base CPI (cycles per instruction) of one without any pipeline hazards. For a given program P that has 30% branch instructions, control hazards incur 2 cycles stall for every branch. A new version of the processor $X_2$ operating at same clock frequency has an additional branch predictor unit (BPU) that completely eliminates stalls for correctly predicted branches. There is neither any savings nor any additional stalls for wrong predictions. There are no structural hazards and data hazards for $X_1$ and $X_2$. If the BPU has a prediction accuracy of 80%, the speed up (rounded off to two decimal places) obtained by $X_2$ over $X_1$ in executing P is ________.",
+      "reason": "Text re-transcribed from the PDF (paper Q.61), garbled symbols restored with KaTeX",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-51",
+      "field": "subject",
+      "before": "ga",
+      "after": "coa",
+      "reason": "Subject matches the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-51",
+      "field": "topic",
+      "before": "quant",
+      "after": "pipeline",
+      "reason": "Topic matches the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-51",
+      "field": "tags",
+      "before": [
+        "quant"
+      ],
+      "after": [
+        "branch-prediction",
+        "control-hazard",
+        "speedup"
+      ],
+      "reason": "Tags describe the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-52",
+      "field": "text",
+      "before": "Consider the queues 1Q  containing four elements and 2Q  containing none (shown\nas the Initial State in the figure). The only operations allowed on these two queues\nare Enqueue(Q,element) and Dequeue(Q). The minimum number of\nEnqueue operations on 1Q  required to place the elements of 1Q  in 2Q  in reverse\norder (shown as the Final State in the figure) without using any additional storage\nis___________.",
+      "after": "Consider the queues $Q_1$ containing four elements and $Q_2$ containing none (shown as the Initial State in the figure). The only operations allowed on these two queues are `Enqueue(Q,element)` and `Dequeue(Q)`. The minimum number of `Enqueue` operations on $Q_1$ required to place the elements of $Q_1$ in $Q_2$ in reverse order (shown as the Final State in the figure) without using any additional storage is ________.",
+      "reason": "Text re-transcribed from the PDF (paper Q.62), garbled symbols restored with KaTeX",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-52",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2022/cs-52-1.svg",
+          "svg": "cse-2022/cs-52-1.svg",
+          "alt": "Two panels. Initial State: Q1 holds 1, 2, 3, 4 from the head (left) to the rear; Q2 is empty. Final State: Q1 is empty; Q2 holds 4, 3, 2, 1 from the head (left) to the rear. Each queue has four cells and a Head arrow pointing to its leftmost cell."
+        }
+      ],
+      "reason": "Figure was missing; redrawn from the PDF",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf), p.40"
+    },
+    {
+      "id": "cse-2022-cs-52",
+      "field": "subject",
+      "before": "ga",
+      "after": "pds",
+      "reason": "Subject matches the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-52",
+      "field": "topic",
+      "before": "quant",
+      "after": "stacks-queues",
+      "reason": "Topic matches the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-52",
+      "field": "tags",
+      "before": [
+        "quant"
+      ],
+      "after": [
+        "queue",
+        "reversal"
+      ],
+      "reason": "Tags describe the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-53",
+      "field": "text",
+      "before": "Consider two files systems A  and B , that use contiguous allocation and linked\nallocation, respectively. A file of size 100 blocks is already stored in A and also in\nB. Now, consider inserting a new block in the middle of the file (between 50 th and\n51st block), whose data is already available in the memory. Assume that there are\nenough free blocks at the end of the file and that the file control blocks are already\nin memory. Let the number of disk accesses required to insert a block in the middle\nof the file in A  and  B  are  An  and ,Bn  respectively, then the value of\nA Bn n    is_________.",
+      "after": "Consider two files systems $A$ and $B$, that use contiguous allocation and linked allocation, respectively. A file of size 100 blocks is already stored in $A$ and also in $B$. Now, consider inserting a new block in the middle of the file (between 50th and 51st block), whose data is already available in the memory. Assume that there are enough free blocks at the end of the file and that the file control blocks are already in memory. Let the number of disk accesses required to insert a block in the middle of the file in $A$ and $B$ are $n_A$ and $n_B$, respectively, then the value of $n_A + n_B$ is ________.",
+      "reason": "Text re-transcribed from the PDF (paper Q.63), garbled symbols restored with KaTeX",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-53",
+      "field": "subject",
+      "before": "coa",
+      "after": "os",
+      "reason": "Subject matches the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-53",
+      "field": "topic",
+      "before": "isa",
+      "after": "files",
+      "reason": "Topic matches the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-53",
+      "field": "tags",
+      "before": [
+        "isa"
+      ],
+      "after": [
+        "file-allocation",
+        "contiguous-allocation",
+        "linked-allocation"
+      ],
+      "reason": "Tags describe the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-54",
+      "field": "text",
+      "before": "Consider a demand paging system with four page frames (initially empty) and LRU\npage replacement policy. For the following page reference string\n7, 2,7,3, 2,5,3, 4, 6,7,7,1,5, 6,1\nthe page fault rate, defined as the ratio of number of page faults to the number of\nmemory accesses (rounded off to one decimal place) is_________.\nGATE 2022 Computer Science and Information Technology (CS)",
+      "after": "Consider a demand paging system with four page frames (initially empty) and LRU page replacement policy. For the following page reference string\n\n$$7, 2, 7, 3, 2, 5, 3, 4, 6, 7, 7, 1, 5, 6, 1$$\n\nthe page fault rate, defined as the ratio of number of page faults to the number of memory accesses (rounded off to one decimal place) is ________.",
+      "reason": "Text re-transcribed from the PDF (paper Q.64), garbled symbols restored with KaTeX",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-54",
+      "field": "subject",
+      "before": "ga",
+      "after": "os",
+      "reason": "Subject matches the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-54",
+      "field": "topic",
+      "before": "quant",
+      "after": "virtual-memory",
+      "reason": "Topic matches the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-54",
+      "field": "tags",
+      "before": [
+        "quant"
+      ],
+      "after": [
+        "lru",
+        "page-replacement",
+        "page-fault"
+      ],
+      "reason": "Tags describe the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-55",
+      "field": "text",
+      "before": "Consider the following grammar along with translation rules.\n1 1• • • # { * } val val valS S T S S T \n• •{ }val valS T S T \n1 • 1• •% { } val val valT T R T T R  \n• •{ }val valT R T R \n• •{ }val valR id R id \nHere #  and %  are operators and id is a token that represents an integer and •valid\nrepresents the corresponding integer value. The set of non-terminals is { , , , }S T R P\nand a subscripted non-terminal indicates an instance of the non-terminal.\nUsing this translation scheme, the computed value of •valS  for root of the parse tree\nfor the expression 20 #10%5#8%2%2 is _____________.",
+      "after": "Consider the following grammar along with translation rules.\n\n| Production | Semantic rule |\n|---|---|\n| $S \\to S_1 \\,\\#\\, T$ | $\\{S.val = S_1.val * T.val\\}$ |\n| $S \\to T$ | $\\{S.val = T.val\\}$ |\n| $T \\to T_1 \\,\\%\\, R$ | $\\{T.val = T_1.val \\div R.val\\}$ |\n| $T \\to R$ | $\\{T.val = R.val\\}$ |\n| $R \\to id$ | $\\{R.val = id.val\\}$ |\n\nHere $\\#$ and $\\%$ are operators and $id$ is a token that represents an integer and $id.val$ represents the corresponding integer value. The set of non-terminals is $\\{S, T, R, P\\}$ and a subscripted non-terminal indicates an instance of the non-terminal.\n\nUsing this translation scheme, the computed value of $S.val$ for root of the parse tree for the expression $20 \\# 10 \\% 5 \\# 8 \\% 2 \\% 2$ is ________.",
+      "reason": "Text re-transcribed from the PDF (paper Q.65), garbled symbols restored with KaTeX",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-55",
+      "field": "topic",
+      "before": "parsing",
+      "after": "sdt",
+      "reason": "Topic matches the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    },
+    {
+      "id": "cse-2022-cs-55",
+      "field": "tags",
+      "before": [
+        "parsing"
+      ],
+      "after": [
+        "sdt",
+        "attribute-grammar",
+        "precedence",
+        "associativity"
+      ],
+      "reason": "Tags describe the question content",
+      "source": "GATE 2022 CS question paper (GATE-2022-part-1.pdf)"
+    }
+  ]
+}

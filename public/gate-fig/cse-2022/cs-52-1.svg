@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 200" fill="none" stroke="currentColor" stroke-width="1.6" font-family="Arial, Helvetica, sans-serif" font-size="14">
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="currentColor" stroke="none"/>
+    </marker>
+  </defs>
+  <rect x="10" y="10" width="240" height="180"/>
+  <g fill="currentColor" stroke="none">
+    <text x="140" y="32" text-anchor="middle">Initial State</text>
+    <text x="18" y="30">Head</text>
+    <text x="18" y="184">Head</text>
+    <text x="58" y="80" text-anchor="end">Q1</text>
+    <text x="58" y="140" text-anchor="end">Q2</text>
+    <text x="82" y="80" text-anchor="middle">1</text>
+    <text x="118" y="80" text-anchor="middle">2</text>
+    <text x="154" y="80" text-anchor="middle">3</text>
+    <text x="190" y="80" text-anchor="middle">4</text>
+  </g>
+  <rect x="64" y="60" width="36" height="30"/>
+  <rect x="100" y="60" width="36" height="30"/>
+  <rect x="136" y="60" width="36" height="30"/>
+  <rect x="172" y="60" width="36" height="30"/>
+  <rect x="64" y="120" width="36" height="30"/>
+  <rect x="100" y="120" width="36" height="30"/>
+  <rect x="136" y="120" width="36" height="30"/>
+  <rect x="172" y="120" width="36" height="30"/>
+  <line x1="26" y1="36" x2="62" y2="60" marker-end="url(#ah)"/>
+  <line x1="26" y1="170" x2="62" y2="152" marker-end="url(#ah)"/>
+  <rect x="270" y="10" width="240" height="180"/>
+  <g fill="currentColor" stroke="none">
+    <text x="400" y="32" text-anchor="middle">Final State</text>
+    <text x="278" y="30">Head</text>
+    <text x="278" y="184">Head</text>
+    <text x="318" y="80" text-anchor="end">Q1</text>
+    <text x="318" y="140" text-anchor="end">Q2</text>
+    <text x="342" y="140" text-anchor="middle">4</text>
+    <text x="378" y="140" text-anchor="middle">3</text>
+    <text x="414" y="140" text-anchor="middle">2</text>
+    <text x="450" y="140" text-anchor="middle">1</text>
+  </g>
+  <rect x="324" y="60" width="36" height="30"/>
+  <rect x="360" y="60" width="36" height="30"/>
+  <rect x="396" y="60" width="36" height="30"/>
+  <rect x="432" y="60" width="36" height="30"/>
+  <rect x="324" y="120" width="36" height="30"/>
+  <rect x="360" y="120" width="36" height="30"/>
+  <rect x="396" y="120" width="36" height="30"/>
+  <rect x="432" y="120" width="36" height="30"/>
+  <line x1="286" y1="36" x2="322" y2="60" marker-end="url(#ah)"/>
+  <line x1="286" y1="170" x2="322" y2="152" marker-end="url(#ah)"/>
+</svg>
