@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 380" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="currentColor">
+<rect x="20" y="18" width="120" height="120" fill="none" stroke="currentColor" stroke-width="2"/>
+<rect x="180" y="18" width="120" height="120" fill="none" stroke="currentColor" stroke-width="2"/>
+<line x1="180" y1="18" x2="300" y2="138" stroke="currentColor" stroke-width="1.2" stroke-dasharray="6 3 1.5 3"/>
+<path d="M 228 94 A 13 13 0 1 1 246 74" fill="none" stroke="currentColor" stroke-width="3"/>
+<polygon points="252,74 242,68 242,80"/>
+<polygon points="340,18 460,18 460,138" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+<line x1="460" y1="18" x2="400" y2="78" stroke="currentColor" stroke-width="1.2" stroke-dasharray="6 3 1.5 3"/>
+<path d="M 414 52 A 12 12 0 1 1 432 68" fill="none" stroke="currentColor" stroke-width="3"/>
+<polygon points="432,75 426,65 438,65"/>
+<polygon points="500,18 620,18 560,78" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+<polygon points="560,19 554,29 566,29"/>
+<polygon points="524,42 537,42 537,55"/>
+<rect x="576" y="42" width="13" height="5"/>
+<text x="80" y="164" text-anchor="middle">(I)</text>
+<text x="240" y="164" text-anchor="middle">(II)</text>
+<text x="400" y="164" text-anchor="middle">(III)</text>
+<text x="560" y="164" text-anchor="middle">(IV)</text>
+<rect x="20" y="214" width="120" height="120" fill="none" stroke="currentColor" stroke-width="2"/>
+<polygon points="80,215 74,225 86,225"/>
+<polygon points="80,333 74,323 86,323"/>
+<polygon points="21,274 31,268 31,280"/>
+<polygon points="139,274 129,268 129,280"/>
+<rect x="112" y="227" width="11" height="5"/>
+<rect x="122" y="230" width="5" height="11"/>
+<rect x="34" y="303" width="5" height="12"/>
+<rect x="37" y="313" width="12" height="5"/>
+<rect x="33" y="227" width="11" height="11"/>
+<rect x="115" y="308" width="11" height="11"/>
+<text x="80" y="360" text-anchor="middle">(A)</text>
+<rect x="180" y="214" width="120" height="120" fill="none" stroke="currentColor" stroke-width="2"/>
+<polygon points="240,215 234,225 246,225"/>
+<polygon points="240,333 234,323 246,323"/>
+<polygon points="181,274 191,268 191,280"/>
+<polygon points="299,274 289,268 289,280"/>
+<rect x="272" y="227" width="11" height="5"/>
+<rect x="282" y="230" width="5" height="11"/>
+<rect x="194" y="303" width="5" height="12"/>
+<rect x="197" y="313" width="12" height="5"/>
+<polygon points="199,225 206,232 199,239 192,232"/>
+<polygon points="280,308 287,315 280,322 273,315"/>
+<text x="240" y="360" text-anchor="middle">(B)</text>
+<rect x="340" y="214" width="120" height="120" fill="none" stroke="currentColor" stroke-width="2"/>
+<polygon points="394,215 406,215 400,225"/>
+<polygon points="394,333 406,333 400,323"/>
+<polygon points="341,274 351,268 351,280"/>
+<polygon points="459,274 449,268 449,280"/>
+<rect x="432" y="227" width="11" height="5"/>
+<rect x="442" y="230" width="5" height="11"/>
+<rect x="354" y="303" width="5" height="12"/>
+<rect x="357" y="313" width="12" height="5"/>
+<rect x="353" y="227" width="11" height="11"/>
+<rect x="435" y="308" width="11" height="11"/>
+<text x="400" y="360" text-anchor="middle">(C)</text>
+<rect x="500" y="214" width="120" height="120" fill="none" stroke="currentColor" stroke-width="2"/>
+<polygon points="560,215 554,225 566,225"/>
+<polygon points="560,333 554,323 566,323"/>
+<polygon points="501,274 511,268 511,280"/>
+<polygon points="619,274 609,268 609,280"/>
+<rect x="592" y="227" width="11" height="5"/>
+<rect x="602" y="230" width="5" height="11"/>
+<rect x="514" y="303" width="5" height="12"/>
+<rect x="517" y="313" width="12" height="5"/>
+<rect x="555" y="269" width="10" height="10"/>
+<text x="560" y="360" text-anchor="middle">(D)</text>
+</svg>

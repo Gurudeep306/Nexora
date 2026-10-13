@@ -42,6 +42,4033 @@
       ],
       "reason": "Page header \"Computer Science and Information Technology (CS2)\" was transcribed into option D.",
       "source": "transcription artifact (running page header of the CS2 master paper)"
+    },
+    {
+      "id": "cse-2025-2-ga-1",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "ambivalence"
+        },
+        {
+          "l": "B",
+          "t": "satisfaction"
+        },
+        {
+          "l": "C",
+          "t": "resolve"
+        },
+        {
+          "l": "D",
+          "t": "revolve Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "ambivalence"
+        },
+        {
+          "l": "B",
+          "t": "satisfaction"
+        },
+        {
+          "l": "C",
+          "t": "resolve"
+        },
+        {
+          "l": "D",
+          "t": "revolve"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology (CS2)\" removed from option D.",
+      "source": "pdf p.1"
+    },
+    {
+      "id": "cse-2025-2-ga-1",
+      "field": "tags",
+      "before": [
+        "verbal-aptitude"
+      ],
+      "after": [
+        "verbal-aptitude",
+        "vocabulary",
+        "sentence-completion"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.1"
+    },
+    {
+      "id": "cse-2025-2-ga-2",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Kennel"
+        },
+        {
+          "l": "B",
+          "t": "Hammock"
+        },
+        {
+          "l": "C",
+          "t": "Hive"
+        },
+        {
+          "l": "D",
+          "t": "Lair Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Kennel"
+        },
+        {
+          "l": "B",
+          "t": "Hammock"
+        },
+        {
+          "l": "C",
+          "t": "Hive"
+        },
+        {
+          "l": "D",
+          "t": "Lair"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology (CS2)\" removed from option D.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2025-2-ga-2",
+      "field": "tags",
+      "before": [
+        "verbal-aptitude"
+      ],
+      "after": [
+        "verbal-aptitude",
+        "analogy"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2025-2-ga-3",
+      "field": "text",
+      "before": "If 𝑃𝑒𝑥 = 𝑄𝑒−𝑥 for all real values of 𝑥, which one of the following statements is\ntrue?",
+      "after": "If $Pe^{x} = Qe^{-x}$ for all real values of $x$, which one of the following statements is true?",
+      "reason": "Unicode maths italics and a broken superscript replaced by KaTeX.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2025-2-ga-3",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝑃 = 𝑄 = 0"
+        },
+        {
+          "l": "B",
+          "t": "𝑃 = 𝑄 = 1"
+        },
+        {
+          "l": "C",
+          "t": "𝑃 = 1; 𝑄 = −1"
+        },
+        {
+          "l": "D",
+          "t": "𝑃 𝑄 = 0 Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$P = Q = 0$"
+        },
+        {
+          "l": "B",
+          "t": "$P = Q = 1$"
+        },
+        {
+          "l": "C",
+          "t": "$P = 1;\\ Q = -1$"
+        },
+        {
+          "l": "D",
+          "t": "$\\dfrac{P}{Q} = 0$"
+        }
+      ],
+      "reason": "Option D is the fraction P/Q = 0 in the paper (the transcription lost the fraction bar and pasted the page header); all options converted to KaTeX.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2025-2-ga-3",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "quantitative-aptitude",
+        "exponential-functions",
+        "identities"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2025-2-ga-4",
+      "field": "text",
+      "before": "The paper as shown in the figure is folded to make a cube  where each square\ncorresponds to a particular face of the cube . Which one of the following options\ncorrectly represents the cube?\nNote: The figures shown are representative.",
+      "after": "The paper as shown in the figure is folded to make a cube where each square corresponds to a particular face of the cube. Which one of the following options correctly represents the cube?\n\nNote: The figures shown are representative.",
+      "reason": "Stray spaces before punctuation removed.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2025-2-ga-4",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "(B)"
+        },
+        {
+          "l": "C",
+          "t": "(D) Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Cube (A): front face open triangle, top face black dot, right face blank"
+        },
+        {
+          "l": "B",
+          "t": "Cube (B): front face open triangle, right face black triangle"
+        },
+        {
+          "l": "C",
+          "t": "Cube (C): front face open triangle, top face blank, right face blank"
+        },
+        {
+          "l": "D",
+          "t": "Cube (D): front face open triangle, top face black triangle, right face black dot"
+        }
+      ],
+      "reason": "The options are pictures; the record held only two broken entries (\"(B)\" and \"(D)\" + page header). Restored four options (A)-(D) describing the drawn cubes, with the pictures in the figure.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2025-2-ga-4",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2025-2/ga-4-1.svg",
+          "svg": "cse-2025-2/ga-4-1.svg",
+          "alt": "Top: a cross-shaped cube net. A vertical column of three squares: the top square has a black dot, the middle square an open (white) triangle, the bottom square an open circle. The middle row extends the middle square with one blank square on its left and, on its right, a blank square followed by a square with a black triangle. Bottom: four option cubes, each showing the front, top and right faces. (A): front open triangle, top black dot, right blank. (B): front open triangle, top blank, right black triangle. (C): front open triangle, top blank, right blank. (D): front open triangle, top black triangle, right black dot."
+        }
+      ],
+      "reason": "The question depends on the net and the four option cubes, which were missing; redrawn from the paper.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2025-2-ga-4",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "spatial-aptitude",
+        "cube-folding",
+        "paper-folding"
+      ],
+      "reason": "Tags match the spatial topic.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2025-2-ga-5",
+      "field": "text",
+      "before": "Let 𝑝1 and 𝑝2 denote two arbitrary prime numbers. Which one of the following\nstatements is correct for all values of 𝑝1 and 𝑝2?",
+      "after": "Let $p_1$ and $p_2$ denote two arbitrary prime numbers. Which one of the following statements is correct for all values of $p_1$ and $p_2$?",
+      "reason": "Unicode maths italics replaced by KaTeX subscripts.",
+      "source": "pdf p.5"
+    },
+    {
+      "id": "cse-2025-2-ga-5",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝑝1 + 𝑝2 is not a prime number."
+        },
+        {
+          "l": "B",
+          "t": "𝑝1𝑝2 is not a prime number."
+        },
+        {
+          "l": "C",
+          "t": "𝑝1 + 𝑝2 + 1 is a prime number."
+        },
+        {
+          "l": "D",
+          "t": "𝑝1𝑝2 + 1 is a prime number. Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$p_1 + p_2$ is not a prime number."
+        },
+        {
+          "l": "B",
+          "t": "$p_1 p_2$ is not a prime number."
+        },
+        {
+          "l": "C",
+          "t": "$p_1 + p_2 + 1$ is a prime number."
+        },
+        {
+          "l": "D",
+          "t": "$p_1 p_2 + 1$ is a prime number."
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology (CS2)\" removed from option D; maths converted to KaTeX.",
+      "source": "pdf p.5"
+    },
+    {
+      "id": "cse-2025-2-ga-5",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "quantitative-aptitude",
+        "prime-numbers",
+        "number-theory"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.5"
+    },
+    {
+      "id": "cse-2025-2-ga-6",
+      "field": "text",
+      "before": "Based only on the conversation below, identify the logically correct inference:\n“Even if I had known that you were in the hospital, I would not have gone there to\nsee you”, Ramya told Josephine.",
+      "after": "Based only on the conversation below, identify the logically correct inference:\n\n“Even if I had known that you were in the hospital, I would not have gone there to see you”, Ramya told Josephine.",
+      "reason": "Line break from the PDF layout removed; paragraph break restored.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2025-2-ga-6",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Ramya knew that Josephine was in the hospital."
+        },
+        {
+          "l": "B",
+          "t": "Ramya did not know that Josephine was in the hospital."
+        },
+        {
+          "l": "C",
+          "t": "Ramya and Josephine were once close friends; but now, they are not."
+        },
+        {
+          "l": "D",
+          "t": "Josephine was in the hospital due to an injury to her leg. Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Ramya knew that Josephine was in the hospital."
+        },
+        {
+          "l": "B",
+          "t": "Ramya did not know that Josephine was in the hospital."
+        },
+        {
+          "l": "C",
+          "t": "Ramya and Josephine were once close friends; but now, they are not."
+        },
+        {
+          "l": "D",
+          "t": "Josephine was in the hospital due to an injury to her leg."
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology (CS2)\" removed from option D.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2025-2-ga-6",
+      "field": "topic",
+      "before": "quant",
+      "after": "verbal",
+      "reason": "Inference from a counterfactual sentence is verbal reasoning, not quantitative aptitude.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2025-2-ga-6",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "verbal-aptitude",
+        "logical-inference",
+        "counterfactual"
+      ],
+      "reason": "Tags match the corrected topic.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2025-2-ga-7",
+      "field": "text",
+      "before": "If IMAGE and FIELD are coded as FHBNJ and EMFJG respectively then, which\none among the given options is the most appropriate code for BEACH ?",
+      "after": "If IMAGE and FIELD are coded as FHBNJ and EMFJG respectively then, which one among the given options is the most appropriate code for BEACH?",
+      "reason": "Line break and stray space before \"?\" removed.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2025-2-ga-7",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "CEADP"
+        },
+        {
+          "l": "B",
+          "t": "IDBFC"
+        },
+        {
+          "l": "C",
+          "t": "JGIBC"
+        },
+        {
+          "l": "D",
+          "t": "IBCEC Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "CEADP"
+        },
+        {
+          "l": "B",
+          "t": "IDBFC"
+        },
+        {
+          "l": "C",
+          "t": "JGIBC"
+        },
+        {
+          "l": "D",
+          "t": "IBCEC"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology (CS2)\" removed from option D.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2025-2-ga-7",
+      "field": "topic",
+      "before": "quant",
+      "after": "analytical",
+      "reason": "Coding-decoding is analytical reasoning, not quantitative aptitude.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2025-2-ga-7",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "analytical-aptitude",
+        "coding-decoding"
+      ],
+      "reason": "Tags match the corrected topic.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2025-2-ga-8",
+      "field": "text",
+      "before": "Which one of the following options is correct for the given data in the table?\nIteration (i)      0      1    2    3\nInput (I)     20   −4   10   15\nOutput (X)     20    16    26     41\nOutput (Y)     20   −80  −800    −12000",
+      "after": "Which one of the following options is correct for the given data in the table?\n\n| Iteration ($i$) | 0 | 1 | 2 | 3 |\n|---|---|---|---|---|\n| Input ($I$) | 20 | −4 | 10 | 15 |\n| Output ($X$) | 20 | 16 | 26 | 41 |\n| Output ($Y$) | 20 | −80 | −800 | −12000 |",
+      "reason": "Space-aligned table converted to a markdown table.",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2025-2-ga-8",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝑋(𝑖) = 𝑋(𝑖 − 1) + 𝐼(𝑖); 𝑌(𝑖) = 𝑌(𝑖 − 1)𝐼(𝑖); 𝑖 > 0"
+        },
+        {
+          "l": "B",
+          "t": "𝑋(𝑖) = 𝑋(𝑖 − 1)𝐼(𝑖); 𝑌(𝑖) = 𝑌(𝑖 − 1) + 𝐼(𝑖); 𝑖 > 0"
+        },
+        {
+          "l": "C",
+          "t": "𝑋(𝑖) = 𝑋(𝑖 − 1)𝐼(𝑖); 𝑌(𝑖) = 𝑌(𝑖 − 1)𝐼(𝑖); 𝑖 > 0"
+        },
+        {
+          "l": "D",
+          "t": "𝑋(𝑖) = 𝑋(𝑖 − 1) + 𝐼(𝑖); 𝑌(𝑖) = 𝑌(𝑖 − 1)𝐼(𝑖 − 1); 𝑖 > 0 Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$X(i) = X(i-1) + I(i);\\quad Y(i) = Y(i-1)\\,I(i);\\quad i > 0$"
+        },
+        {
+          "l": "B",
+          "t": "$X(i) = X(i-1)\\,I(i);\\quad Y(i) = Y(i-1) + I(i);\\quad i > 0$"
+        },
+        {
+          "l": "C",
+          "t": "$X(i) = X(i-1)\\,I(i);\\quad Y(i) = Y(i-1)\\,I(i);\\quad i > 0$"
+        },
+        {
+          "l": "D",
+          "t": "$X(i) = X(i-1) + I(i);\\quad Y(i) = Y(i-1)\\,I(i-1);\\quad i > 0$"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology (CS2)\" removed from option D; Unicode maths italics converted to KaTeX.",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2025-2-ga-8",
+      "field": "topic",
+      "before": "quant",
+      "after": "analytical",
+      "reason": "Identifying a recurrence from a data table is analytical reasoning.",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2025-2-ga-8",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "analytical-aptitude",
+        "recurrence",
+        "pattern-recognition"
+      ],
+      "reason": "Tags match the corrected topic.",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2025-2-ga-9",
+      "field": "text",
+      "before": "In the given figure, PQRS is a square of side 2 cm and PLMN is a rectangle. The\ncorner L of the rectangle is on the side QR. Side MN of the rectangle passes through\nthe corner S of the square.\nWhat is the area (in cm2) of the rectangle PLMN?\nNote: The figure shown is representative.",
+      "after": "In the given figure, PQRS is a square of side 2 cm and PLMN is a rectangle. The corner L of the rectangle is on the side QR. Side MN of the rectangle passes through the corner S of the square.\n\nWhat is the area (in cm$^2$) of the rectangle PLMN?\n\nNote: The figure shown is representative.",
+      "reason": "Lost superscript in cm² restored; layout line breaks removed.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "cse-2025-2-ga-9",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "2√2"
+        },
+        {
+          "l": "B",
+          "t": "2"
+        },
+        {
+          "l": "C",
+          "t": "8"
+        },
+        {
+          "l": "D",
+          "t": "4 P Q R S L M N Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$2\\sqrt{2}$"
+        },
+        {
+          "l": "B",
+          "t": "$2$"
+        },
+        {
+          "l": "C",
+          "t": "$8$"
+        },
+        {
+          "l": "D",
+          "t": "$4$"
+        }
+      ],
+      "reason": "Figure labels and the page header were pasted into option D; options converted to KaTeX.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "cse-2025-2-ga-9",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2025-2/ga-9-1.svg",
+          "svg": "cse-2025-2/ga-9-1.svg",
+          "alt": "Square PQRS with P top-left, S top-right, R bottom-right and Q bottom-left. A tilted rectangle PLMN shares corner P with the square: side PL runs from P down to a point L on the bottom side QR (a little left of its middle); side LM runs up and to the right from L to M, which lies outside the square to the right; side MN passes through the square's corner S and continues up to N above the square; side NP closes the rectangle back to P."
+        }
+      ],
+      "reason": "The question depends on the figure, which was missing; redrawn from the paper.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "cse-2025-2-ga-9",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "quantitative-aptitude",
+        "geometry",
+        "area"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "cse-2025-2-ga-10",
+      "field": "text",
+      "before": "The diagram below shows a river system consisting of 7 segments, marked P, Q, R,\nS, T, U, and V. It splits the land into 5 zones, marked Z1, Z2, Z3, Z4, and Z5. We\nneed to connect these zones using the least number of bridges. Out of the following\noptions, which one is correct?\nNote: The figure shown is representative.",
+      "after": "The diagram below shows a river system consisting of 7 segments, marked P, Q, R, S, T, U, and V. It splits the land into 5 zones, marked Z1, Z2, Z3, Z4, and Z5. We need to connect these zones using the least number of bridges. Out of the following options, which one is correct?\n\nNote: The figure shown is representative.",
+      "reason": "Layout line breaks removed.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2025-2-ga-10",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Bridges on P, Q, and T"
+        },
+        {
+          "l": "B",
+          "t": "Bridges on P, Q, S, and T"
+        },
+        {
+          "l": "C",
+          "t": "Bridges on Q, R, T, and V"
+        },
+        {
+          "l": "D",
+          "t": "Bridges on P, Q, S, U, and V P Q R S T U V Z1 Z2 Z3 Z4 Z5 Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Bridges on P, Q, and T"
+        },
+        {
+          "l": "B",
+          "t": "Bridges on P, Q, S, and T"
+        },
+        {
+          "l": "C",
+          "t": "Bridges on Q, R, T, and V"
+        },
+        {
+          "l": "D",
+          "t": "Bridges on P, Q, S, U, and V"
+        }
+      ],
+      "reason": "Figure labels and the page header were pasted into option D.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2025-2-ga-10",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2025-2/ga-10-1.svg",
+          "svg": "cse-2025-2/ga-10-1.svg",
+          "alt": "A rectangular map crossed by a river drawn as thick lines with three junctions. Segment P enters from the left edge and ends at the left junction; from there R runs up to the top edge and Q runs right to the middle junction. From the middle junction S runs down to the bottom edge and T runs right to the right junction, from which V runs up-right and U runs down-right to the right edge. Zones: Z2 top-left (above P, left of R); Z3 top-middle (right of R, above Q, T and V); Z4 at the right between V and U; Z5 bottom-middle (right of S, below T and U); Z1 bottom-left (below P and Q, left of S). So P separates Z1|Z2, R separates Z2|Z3, Q separates Z1|Z3, S separates Z1|Z5, T separates Z3|Z5, V separates Z3|Z4 and U separates Z4|Z5."
+        }
+      ],
+      "reason": "The question depends on the river map, which was missing; redrawn from the paper.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2025-2-ga-10",
+      "field": "topic",
+      "before": "quant",
+      "after": "analytical",
+      "reason": "Connecting zones with the fewest bridges is a spanning-tree reasoning puzzle (analytical), not quantitative aptitude.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2025-2-ga-10",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "analytical-aptitude",
+        "graphs",
+        "spanning-tree"
+      ],
+      "reason": "Tags match the corrected topic.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2025-2-cs-1",
+      "field": "text",
+      "before": "If 𝐴 = (1 2\n2 −1), then which ONE of the following is 𝐴8 ?",
+      "after": "If $A = \\begin{pmatrix} 1 & 2 \\\\ 2 & -1 \\end{pmatrix}$, then which ONE of the following is $A^8$?",
+      "reason": "The 2x2 matrix and the exponent were flattened by the transcription; rewritten in KaTeX.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2025-2-cs-1",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "(25 0 0 25)"
+        },
+        {
+          "l": "B",
+          "t": "(125 0 0 125)"
+        },
+        {
+          "l": "C",
+          "t": "(625 0 0 625)"
+        },
+        {
+          "l": "D",
+          "t": "(3125 0 0 3125)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\begin{pmatrix} 25 & 0 \\\\ 0 & 25 \\end{pmatrix}$"
+        },
+        {
+          "l": "B",
+          "t": "$\\begin{pmatrix} 125 & 0 \\\\ 0 & 125 \\end{pmatrix}$"
+        },
+        {
+          "l": "C",
+          "t": "$\\begin{pmatrix} 625 & 0 \\\\ 0 & 625 \\end{pmatrix}$"
+        },
+        {
+          "l": "D",
+          "t": "$\\begin{pmatrix} 3125 & 0 \\\\ 0 & 3125 \\end{pmatrix}$"
+        }
+      ],
+      "reason": "Diagonal matrices were flattened to \"(n 0 0 n)\"; rewritten as KaTeX matrices.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2025-2-cs-1",
+      "field": "subject",
+      "before": "pds",
+      "after": "la",
+      "reason": "Matrix power: Linear Algebra, not Programming & Data Structures.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2025-2-cs-1",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "matrices",
+      "reason": "Matrix power: Linear Algebra, not C programming.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2025-2-cs-1",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "linear-algebra",
+        "matrix-power",
+        "cayley-hamilton"
+      ],
+      "reason": "Tags match the corrected subject.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2025-2-cs-2",
+      "field": "text",
+      "before": "The value of 𝑥 such that 𝑥 > 1, satisfying the equation ∫ 𝑡 ln 𝑡 𝑑𝑡 =\n1\n4\n𝑥\n1   is",
+      "after": "The value of $x$ such that $x > 1$, satisfying the equation $\\displaystyle\\int_1^x t \\ln t \\, dt = \\frac{1}{4}$ is",
+      "reason": "The integral with its limits and the fraction 1/4 were scattered over several lines; rewritten in KaTeX.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2025-2-cs-2",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "√𝑒"
+        },
+        {
+          "l": "B",
+          "t": "𝑒"
+        },
+        {
+          "l": "C",
+          "t": "𝑒2"
+        },
+        {
+          "l": "D",
+          "t": "𝑒 − 1 Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\sqrt{e}$"
+        },
+        {
+          "l": "B",
+          "t": "$e$"
+        },
+        {
+          "l": "C",
+          "t": "$e^2$"
+        },
+        {
+          "l": "D",
+          "t": "$e - 1$"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology (CS2)\" removed from option D; lost superscript in e² restored; KaTeX.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2025-2-cs-2",
+      "field": "subject",
+      "before": "coa",
+      "after": "calc",
+      "reason": "Definite integral: Calculus, not Computer Organization.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2025-2-cs-2",
+      "field": "topic",
+      "before": "isa",
+      "after": "integration",
+      "reason": "Definite integral: Calculus / integration.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2025-2-cs-2",
+      "field": "tags",
+      "before": [
+        "isa"
+      ],
+      "after": [
+        "calculus",
+        "integration-by-parts",
+        "definite-integral"
+      ],
+      "reason": "Tags match the corrected subject.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2025-2-cs-3",
+      "field": "text",
+      "before": "Consider a  binary tree  𝑇 in which  every node has either zero or two children.\nLet 𝑛 > 0 be the number of nodes in 𝑇.\nWhich ONE of the following is the number of nodes  in 𝑇 that have exactly two\nchildren?",
+      "after": "Consider a binary tree $T$ in which every node has either zero or two children. Let $n > 0$ be the number of nodes in $T$.\n\nWhich ONE of the following is the number of nodes in $T$ that have exactly two children?",
+      "reason": "Doubled spaces and Unicode maths italics cleaned up.",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "cse-2025-2-cs-3",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝑛 − 2 2"
+        },
+        {
+          "l": "B",
+          "t": "𝑛 − 1 2"
+        },
+        {
+          "l": "C",
+          "t": "𝑛 2"
+        },
+        {
+          "l": "D",
+          "t": "𝑛 + 1 2 Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\dfrac{n-2}{2}$"
+        },
+        {
+          "l": "B",
+          "t": "$\\dfrac{n-1}{2}$"
+        },
+        {
+          "l": "C",
+          "t": "$\\dfrac{n}{2}$"
+        },
+        {
+          "l": "D",
+          "t": "$\\dfrac{n+1}{2}$"
+        }
+      ],
+      "reason": "Fractions were flattened to \"n − 1 2\" and the page header was pasted into option D; rewritten as KaTeX fractions.",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "cse-2025-2-cs-3",
+      "field": "subject",
+      "before": "dl",
+      "after": "pds",
+      "reason": "Full binary tree counting: Programming & Data Structures (trees), not Digital Logic.",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "cse-2025-2-cs-3",
+      "field": "topic",
+      "before": "number",
+      "after": "trees",
+      "reason": "Full binary tree counting belongs to trees and binary trees.",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "cse-2025-2-cs-3",
+      "field": "tags",
+      "before": [
+        "graph-theory"
+      ],
+      "after": [
+        "data-structures",
+        "binary-trees",
+        "full-binary-tree"
+      ],
+      "reason": "Tags match the corrected subject.",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "cse-2025-2-cs-4",
+      "field": "text",
+      "before": "Let 𝐿, 𝑀, and 𝑁 be non-singular matrices of order 3 satisfying the equations\n𝐿2 = 𝐿−1 , 𝑀 = 𝐿8 and 𝑁 = 𝐿2.\nWhich ONE of the following is the value of the determinant of (𝑀 − 𝑁)?",
+      "after": "Let $L$, $M$, and $N$ be non-singular matrices of order 3 satisfying the equations\n\n$$L^2 = L^{-1}, \\quad M = L^8 \\quad \\text{and} \\quad N = L^2.$$\n\nWhich ONE of the following is the value of the determinant of $(M - N)$?",
+      "reason": "Unicode maths italics and lost superscripts (L2, L−1, L8) replaced with KaTeX.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "cse-2025-2-cs-4",
+      "field": "tags",
+      "before": [
+        "turing"
+      ],
+      "after": [
+        "determinant",
+        "matrix-powers",
+        "inverse"
+      ],
+      "reason": "Tags described the wrong subject (\"turing\").",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "cse-2025-2-cs-5",
+      "field": "text",
+      "before": "Let 𝑃(𝑥) be an arbitrary predicate over the domain of natural numbers.\nWhich ONE of the following statements is TRUE?",
+      "after": "Let $P(x)$ be an arbitrary predicate over the domain of natural numbers.\n\nWhich ONE of the following statements is TRUE?",
+      "reason": "Unicode maths italics replaced with KaTeX.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "cse-2025-2-cs-5",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "(𝑃(0) ∧ (∀𝑥 [𝑃(𝑥) ⇒ 𝑃(𝑥 + 1)])) ⇒ (∀𝑥 𝑃(𝑥))"
+        },
+        {
+          "l": "B",
+          "t": "(𝑃(0) ∧ (∀𝑥 [𝑃(𝑥) ⇒ 𝑃(𝑥 − 1)])) ⇒ (∀𝑥 𝑃(𝑥))"
+        },
+        {
+          "l": "C",
+          "t": "(𝑃(1000) ∧ (∀𝑥 [𝑃(𝑥) ⇒ 𝑃(𝑥 − 1)])) ⇒ (∀𝑥 𝑃(𝑥))"
+        },
+        {
+          "l": "D",
+          "t": "(𝑃(1000) ∧ (∀𝑥 [𝑃(𝑥) ⇒ 𝑃(𝑥 + 1)])) ⇒ (∀𝑥 𝑃(𝑥)) Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\big(P(0) \\land \\forall x\\,[P(x) \\Rightarrow P(x + 1)]\\big) \\Rightarrow \\forall x\\, P(x)$"
+        },
+        {
+          "l": "B",
+          "t": "$\\big(P(0) \\land \\forall x\\,[P(x) \\Rightarrow P(x - 1)]\\big) \\Rightarrow \\forall x\\, P(x)$"
+        },
+        {
+          "l": "C",
+          "t": "$\\big(P(1000) \\land \\forall x\\,[P(x) \\Rightarrow P(x - 1)]\\big) \\Rightarrow \\forall x\\, P(x)$"
+        },
+        {
+          "l": "D",
+          "t": "$\\big(P(1000) \\land \\forall x\\,[P(x) \\Rightarrow P(x + 1)]\\big) \\Rightarrow \\forall x\\, P(x)$"
+        }
+      ],
+      "reason": "Unicode maths italics replaced with KaTeX; running page header removed from option D.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "cse-2025-2-cs-5",
+      "field": "tags",
+      "before": [
+        "network"
+      ],
+      "after": [
+        "first-order-logic",
+        "mathematical-induction",
+        "quantifiers"
+      ],
+      "reason": "Tags described the wrong subject (\"network\").",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "cse-2025-2-cs-6",
+      "field": "text",
+      "before": "Consider the following statements:\n(i) Address Resolution Protocol ( ARP) provides a mapping from an IP\naddress to the corresponding hardware (link-layer) address.\n(ii) A single TCP segment from a sender S to a receiver R cannot carry both\ndata from S to R and acknowledgement for a segment from R to S.\nWhich ONE of the following is CORRECT?",
+      "after": "Consider the following statements:\n\n(i) Address Resolution Protocol (ARP) provides a mapping from an IP address to the corresponding hardware (link-layer) address.\n\n(ii) A single TCP segment from a sender S to a receiver R cannot carry both data from S to R and acknowledgement for a segment from R to S.\n\nWhich ONE of the following is CORRECT?",
+      "reason": "Statements put on their own paragraphs (they rendered run together); stray space in \"( ARP)\" removed.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2025-2-cs-6",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Both (i) and (ii) are TRUE"
+        },
+        {
+          "l": "B",
+          "t": "(i) is TRUE and (ii) is FALSE"
+        },
+        {
+          "l": "C",
+          "t": "(i) is FALSE and (ii) is TRUE"
+        },
+        {
+          "l": "D",
+          "t": "Both (i) and (ii) are FALSE Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Both (i) and (ii) are TRUE"
+        },
+        {
+          "l": "B",
+          "t": "(i) is TRUE and (ii) is FALSE"
+        },
+        {
+          "l": "C",
+          "t": "(i) is FALSE and (ii) is TRUE"
+        },
+        {
+          "l": "D",
+          "t": "Both (i) and (ii) are FALSE"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology (CS2)\" was transcribed into option D.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2025-2-cs-6",
+      "field": "subject",
+      "before": "db",
+      "after": "cn",
+      "reason": "ARP and TCP piggybacking are Computer Networks, not Databases.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2025-2-cs-6",
+      "field": "topic",
+      "before": "sql",
+      "after": "support",
+      "reason": "ARP is a network support protocol (statement ii is about TCP acknowledgements).",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2025-2-cs-6",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "arp",
+        "tcp",
+        "piggybacking"
+      ],
+      "reason": "Tags follow the corrected subject.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2025-2-cs-7",
+      "field": "text",
+      "before": "Consider the routing protocols given in List I and the names given in List II:\nList I List II\n(i) Distance vector routing (a) Bellman-Ford\n(ii) Link state routing (b) Dijkstra\nFor matching of items in List I with those in List II, which ONE of the following\noptions is CORRECT?",
+      "after": "Consider the routing protocols given in List I and the names given in List II:\n\n| List I | List II |\n|---|---|\n| (i) Distance vector routing | (a) Bellman-Ford |\n| (ii) Link state routing | (b) Dijkstra |\n\nFor matching of items in List I with those in List II, which ONE of the following options is CORRECT?",
+      "reason": "The two lists were flattened into running text; restored as a table.",
+      "source": "pdf p.15"
+    },
+    {
+      "id": "cse-2025-2-cs-7",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "(i) – (a) and (ii) – (b)"
+        },
+        {
+          "l": "B",
+          "t": "(i) – (a) and (ii) – (a)"
+        },
+        {
+          "l": "C",
+          "t": "(i) – (b) and (ii) – (a)"
+        },
+        {
+          "l": "D",
+          "t": "(i) – (b) and (ii) – (b) Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "(i) – (a) and (ii) – (b)"
+        },
+        {
+          "l": "B",
+          "t": "(i) – (a) and (ii) – (a)"
+        },
+        {
+          "l": "C",
+          "t": "(i) – (b) and (ii) – (a)"
+        },
+        {
+          "l": "D",
+          "t": "(i) – (b) and (ii) – (b)"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology (CS2)\" was transcribed into option D.",
+      "source": "pdf p.15"
+    },
+    {
+      "id": "cse-2025-2-cs-7",
+      "field": "subject",
+      "before": "ga",
+      "after": "cn",
+      "reason": "Routing protocols are Computer Networks, not General Aptitude.",
+      "source": "pdf p.15"
+    },
+    {
+      "id": "cse-2025-2-cs-7",
+      "field": "topic",
+      "before": "quant",
+      "after": "routing",
+      "reason": "Distance-vector vs link-state routing.",
+      "source": "pdf p.15"
+    },
+    {
+      "id": "cse-2025-2-cs-7",
+      "field": "tags",
+      "before": [
+        "quant"
+      ],
+      "after": [
+        "distance-vector",
+        "link-state",
+        "bellman-ford",
+        "dijkstra"
+      ],
+      "reason": "Tags follow the corrected subject.",
+      "source": "pdf p.15"
+    },
+    {
+      "id": "cse-2025-2-cs-8",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Internet Control Message Protocol (ICMP)"
+        },
+        {
+          "l": "B",
+          "t": "Internet Group Management Protocol (IGMP)"
+        },
+        {
+          "l": "C",
+          "t": "Open Shortest Path First (OSPF)"
+        },
+        {
+          "l": "D",
+          "t": "Routing Information Protocol (RIP) Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Internet Control Message Protocol (ICMP)"
+        },
+        {
+          "l": "B",
+          "t": "Internet Group Management Protocol (IGMP)"
+        },
+        {
+          "l": "C",
+          "t": "Open Shortest Path First (OSPF)"
+        },
+        {
+          "l": "D",
+          "t": "Routing Information Protocol (RIP)"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology (CS2)\" was transcribed into option D.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "cse-2025-2-cs-8",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "ipv4-header",
+        "protocol-field",
+        "encapsulation"
+      ],
+      "reason": "Generic tag \"computer-science\" replaced with specific tags.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "cse-2025-2-cs-9",
+      "field": "text",
+      "before": "Consider the following C program:\n#include <stdio.h>\nvoid stringcopy(char *, char *);\nint main(){\nchar a[30] = \"@#Hello World!\";\nstringcopy(a, a + 2);\nprintf(\"%s\\n\", a);\nreturn 0;\n}\nvoid stringcopy(char *s, char *t) {\nwhile(*t)\n*s++ = *t++;\n}\nWhich ONE of the following will be the output of the program?",
+      "after": "Consider the following C program:\n\n```c\n#include <stdio.h>\n\nvoid stringcopy(char *, char *);\n\nint main(){\n        char a[30] = \"@#Hello World!\";\n        stringcopy(a, a + 2);\n        printf(\"%s\\n\", a);\n        return 0;\n}\n\nvoid stringcopy(char *s, char *t) {\n        while(*t)\n               *s++ = *t++;\n}\n```\n\nWhich ONE of the following will be the output of the program?",
+      "reason": "Program lost its code formatting; restored as a fenced C block with the paper's indentation.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2025-2-cs-9",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "@#Hello World!"
+        },
+        {
+          "l": "B",
+          "t": "Hello World!"
+        },
+        {
+          "l": "C",
+          "t": "ello World!"
+        },
+        {
+          "l": "D",
+          "t": "Hello World!d! Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "@#Hello World!"
+        },
+        {
+          "l": "B",
+          "t": "Hello World!"
+        },
+        {
+          "l": "C",
+          "t": "ello World!"
+        },
+        {
+          "l": "D",
+          "t": "Hello World!d!"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology (CS2)\" was transcribed into option D.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2025-2-cs-9",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "c",
+      "reason": "Topic id \"c-prog\" does not exist; the C-programming topic is \"c\".",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2025-2-cs-9",
+      "field": "tags",
+      "before": [
+        "c-prog"
+      ],
+      "after": [
+        "pointers",
+        "strings",
+        "overlapping-copy"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2025-2-cs-10",
+      "field": "text",
+      "before": "Consider an unordered list of 𝑁 distinct integers.\nWhat is the minimum number of element comparisons required to find an integer\nin the list that is NOT the largest in the list?",
+      "after": "Consider an unordered list of $N$ distinct integers.\n\nWhat is the minimum number of element comparisons required to find an integer in the list that is NOT the largest in the list?",
+      "reason": "Unicode maths italics replaced with KaTeX.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2025-2-cs-10",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "1"
+        },
+        {
+          "l": "B",
+          "t": "𝑁 − 1"
+        },
+        {
+          "l": "C",
+          "t": "𝑁"
+        },
+        {
+          "l": "D",
+          "t": "2𝑁 − 1"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "1"
+        },
+        {
+          "l": "B",
+          "t": "$N - 1$"
+        },
+        {
+          "l": "C",
+          "t": "$N$"
+        },
+        {
+          "l": "D",
+          "t": "$2N - 1$"
+        }
+      ],
+      "reason": "Unicode maths italics replaced with KaTeX.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2025-2-cs-10",
+      "field": "subject",
+      "before": "calc",
+      "after": "algo",
+      "reason": "Counting comparisons is Algorithms, not Calculus.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2025-2-cs-10",
+      "field": "topic",
+      "before": "maxmin",
+      "after": "searching",
+      "reason": "Finding an element (not the maximum) by comparisons.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2025-2-cs-10",
+      "field": "tags",
+      "before": [
+        "combinational"
+      ],
+      "after": [
+        "comparisons",
+        "lower-bound",
+        "maximum"
+      ],
+      "reason": "Tags described the wrong subject (\"combinational\").",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2025-2-cs-11",
+      "field": "text",
+      "before": "Consider the following statements about the use of backpatching in a compiler for\nintermediate code generation:\n(I) Backpatching can be used to generate code for Boolean expression in\none pass.\n(II) Backpatching can be used to generate code for flow-of-control\nstatements in one pass.\nWhich ONE of the following options is CORRECT?",
+      "after": "Consider the following statements about the use of backpatching in a compiler for intermediate code generation:\n\n(I) Backpatching can be used to generate code for Boolean expression in one pass.\n\n(II) Backpatching can be used to generate code for flow-of-control statements in one pass.\n\nWhich ONE of the following options is CORRECT?",
+      "reason": "Statements put on their own paragraphs (they rendered run together).",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2025-2-cs-11",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Only (I) is correct."
+        },
+        {
+          "l": "B",
+          "t": "Only (II) is correct."
+        },
+        {
+          "l": "C",
+          "t": "Both (I) and (II) are correct."
+        },
+        {
+          "l": "D",
+          "t": "Neither (I) nor (II) is correct. Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Only (I) is correct."
+        },
+        {
+          "l": "B",
+          "t": "Only (II) is correct."
+        },
+        {
+          "l": "C",
+          "t": "Both (I) and (II) are correct."
+        },
+        {
+          "l": "D",
+          "t": "Neither (I) nor (II) is correct."
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology (CS2)\" was transcribed into option D.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2025-2-cs-11",
+      "field": "subject",
+      "before": "ga",
+      "after": "cd",
+      "reason": "Backpatching is Compiler Design, not General Aptitude.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2025-2-cs-11",
+      "field": "topic",
+      "before": "quant",
+      "after": "icg",
+      "reason": "Backpatching is an intermediate-code-generation technique.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2025-2-cs-11",
+      "field": "tags",
+      "before": [
+        "quant"
+      ],
+      "after": [
+        "backpatching",
+        "boolean-expressions",
+        "flow-of-control"
+      ],
+      "reason": "Tags follow the corrected subject.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2025-2-cs-12",
+      "field": "text",
+      "before": "Given the following syntax directed translation rules:\nRule 1: 𝑅 → 𝐴𝐵 {𝐵. 𝑖 = 𝑅. 𝑖 − 1; 𝐴. 𝑖 = 𝐵. 𝑖; 𝑅. 𝑖 = 𝐴. 𝑖 + 1; }\nRule 2: 𝑃 → 𝐶𝐷 {𝑃. 𝑖 = 𝐶. 𝑖 + 𝐷. 𝑖; 𝐷. 𝑖 = 𝐶. 𝑖 + 2; }\nRule 3: 𝑄 → 𝐸𝐹 {𝑄. 𝑖 = 𝐸. 𝑖 + 𝐹. 𝑖; }\nWhich ONE is the CORRECT option among the following?",
+      "after": "Given the following syntax directed translation rules:\n\n- Rule 1: $R \\to AB \\;\\{\\, B.i = R.i - 1;\\ A.i = B.i;\\ R.i = A.i + 1; \\,\\}$\n- Rule 2: $P \\to CD \\;\\{\\, P.i = C.i + D.i;\\ D.i = C.i + 2; \\,\\}$\n- Rule 3: $Q \\to EF \\;\\{\\, Q.i = E.i + F.i; \\,\\}$\n\nWhich ONE is the CORRECT option among the following?",
+      "reason": "Unicode maths italics and spaced-out attribute names (\"B. i\") replaced with KaTeX; rules listed one per line.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2025-2-cs-12",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Rule 1 is S-attributed and L-attributed; Rule 2 is S-attributed and not L-attributed; Rule 3 is neither S-attributed nor L-attributed"
+        },
+        {
+          "l": "B",
+          "t": "Rule 1 is neither S -attributed nor L -attributed; Rule 2 is S -attributed and L- attributed; Rule 3 is S-attributed and L-attributed"
+        },
+        {
+          "l": "C",
+          "t": "Rule 1 is neither S -attributed nor L -attributed; Rule 2 is not S -attributed and is L-attributed; Rule 3 is S-attributed and L-attributed"
+        },
+        {
+          "l": "D",
+          "t": "Rule 1 is S -attributed and not L -attributed; Rule 2 is not S -attributed and is L-attributed; Rule 3 is S-attributed and L-attributed Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Rule 1 is S-attributed and L-attributed; Rule 2 is S-attributed and not L-attributed; Rule 3 is neither S-attributed nor L-attributed"
+        },
+        {
+          "l": "B",
+          "t": "Rule 1 is neither S-attributed nor L-attributed; Rule 2 is S-attributed and L-attributed; Rule 3 is S-attributed and L-attributed"
+        },
+        {
+          "l": "C",
+          "t": "Rule 1 is neither S-attributed nor L-attributed; Rule 2 is not S-attributed and is L-attributed; Rule 3 is S-attributed and L-attributed"
+        },
+        {
+          "l": "D",
+          "t": "Rule 1 is S-attributed and not L-attributed; Rule 2 is not S-attributed and is L-attributed; Rule 3 is S-attributed and L-attributed"
+        }
+      ],
+      "reason": "Stray spaces (\"S -attributed\", \"L- attributed\") removed; running page header removed from option D.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2025-2-cs-12",
+      "field": "subject",
+      "before": "cn",
+      "after": "cd",
+      "reason": "S-/L-attributed definitions are Compiler Design, not Computer Networks.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2025-2-cs-12",
+      "field": "topic",
+      "before": "transport",
+      "after": "sdt",
+      "reason": "Syntax-directed translation.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2025-2-cs-12",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "s-attributed",
+        "l-attributed",
+        "inherited-attributes"
+      ],
+      "reason": "Tags follow the corrected subject.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2025-2-cs-13",
+      "field": "text",
+      "before": "Consider a network that uses Ethernet and IPv4. Assume that IPv4 headers do not\nuse any options field. Each Ethernet frame can carry a maximum of 1500 bytes in\nits data field . A UDP segment is transmitted. The payload (data) in the UDP\nsegment is 7488 bytes.\nWhich ONE of the following choices has the CORRECT total number of fragments\ntransmitted and the size of the last fragment including IPv4 header?",
+      "after": "Consider a network that uses Ethernet and IPv4. Assume that IPv4 headers do not use any options field. Each Ethernet frame can carry a maximum of 1500 bytes in its data field. A UDP segment is transmitted. The payload (data) in the UDP segment is 7488 bytes.\n\nWhich ONE of the following choices has the CORRECT total number of fragments transmitted and the size of the last fragment including IPv4 header?",
+      "reason": "Stray space before full stop removed; paragraphs re-joined as in the paper.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2025-2-cs-13",
+      "field": "subject",
+      "before": "calc",
+      "after": "cn",
+      "reason": "IP fragmentation is Computer Networks, not Calculus.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2025-2-cs-13",
+      "field": "topic",
+      "before": "maxmin",
+      "after": "ip",
+      "reason": "IPv4 fragmentation.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2025-2-cs-13",
+      "field": "tags",
+      "before": [
+        "memory"
+      ],
+      "after": [
+        "ip-fragmentation",
+        "mtu",
+        "udp"
+      ],
+      "reason": "Tags described the wrong subject (\"memory\").",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2025-2-cs-14",
+      "field": "text",
+      "before": "Which ONE of the following languages is accepted by a deterministic push down\nautomaton?",
+      "after": "Which ONE of the following languages is accepted by a deterministic pushdown automaton?",
+      "reason": "\"push down\" → \"pushdown\" as printed.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2025-2-cs-14",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Any regular language."
+        },
+        {
+          "l": "B",
+          "t": "Any context-free language."
+        },
+        {
+          "l": "C",
+          "t": "Any language accepted by a non-deterministic pushdown automaton."
+        },
+        {
+          "l": "D",
+          "t": "Any decidable language. Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Any regular language."
+        },
+        {
+          "l": "B",
+          "t": "Any context-free language."
+        },
+        {
+          "l": "C",
+          "t": "Any language accepted by a non-deterministic pushdown automaton."
+        },
+        {
+          "l": "D",
+          "t": "Any decidable language."
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology (CS2)\" was transcribed into option D.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2025-2-cs-14",
+      "field": "subject",
+      "before": "pds",
+      "after": "toc",
+      "reason": "Pushdown automata are Theory of Computation, not Programming.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2025-2-cs-14",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "cfg",
+      "reason": "DPDA / deterministic CFLs.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2025-2-cs-14",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "dpda",
+        "dcfl",
+        "chomsky-hierarchy"
+      ],
+      "reason": "Tags follow the corrected subject.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2025-2-cs-15",
+      "field": "text",
+      "before": "Let 𝐺1, 𝐺2 be Context Free Grammars (CFGs) and 𝑅 be a regular expression. For a\ngrammar 𝐺,  let 𝐿(𝐺) denote the language generated by 𝐺.\nWhich ONE among the following questions is decidable?",
+      "after": "Let $G_1$, $G_2$ be Context Free Grammars (CFGs) and $R$ be a regular expression. For a grammar $G$, let $L(G)$ denote the language generated by $G$.\n\nWhich ONE among the following questions is decidable?",
+      "reason": "Unicode maths italics replaced with KaTeX.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2025-2-cs-15",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Is 𝐿(𝐺1) = 𝐿(𝐺2)?"
+        },
+        {
+          "l": "B",
+          "t": "Is 𝐿(𝐺1) ∩ 𝐿(𝐺2) = ∅?"
+        },
+        {
+          "l": "C",
+          "t": "Is 𝐿(𝐺1) = 𝐿(𝑅)?"
+        },
+        {
+          "l": "D",
+          "t": "Is 𝐿(𝐺1) = ∅?"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Is $L(G_1) = L(G_2)$?"
+        },
+        {
+          "l": "B",
+          "t": "Is $L(G_1) \\cap L(G_2) = \\emptyset$?"
+        },
+        {
+          "l": "C",
+          "t": "Is $L(G_1) = L(R)$?"
+        },
+        {
+          "l": "D",
+          "t": "Is $L(G_1) = \\emptyset$?"
+        }
+      ],
+      "reason": "Unicode maths italics replaced with KaTeX.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2025-2-cs-15",
+      "field": "topic",
+      "before": "regular",
+      "after": "tm",
+      "reason": "Decidability questions belong to the decidability topic, not regular languages.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2025-2-cs-15",
+      "field": "tags",
+      "before": [
+        "regular"
+      ],
+      "after": [
+        "decidability",
+        "cfg-emptiness",
+        "cfg-equivalence"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2025-2-cs-16",
+      "field": "text",
+      "before": "Processes 𝑃1, 𝑃2, 𝑃3, 𝑃4 arrive in that order at times  0, 1, 2, and 8 milliseconds\nrespectively, and have execution times of 10, 13, 6, and 9 milliseconds respectively.\nShortest Remaining Time  First (SRTF) algorithm is used as the CPU  scheduling\npolicy. Ignore context switching times.\nWhich ONE of the following correctly gives the average turnaround time of the four\nprocesses in milliseconds?",
+      "after": "Processes $P_1, P_2, P_3, P_4$ arrive in that order at times 0, 1, 2, and 8 milliseconds respectively, and have execution times of 10, 13, 6, and 9 milliseconds respectively. Shortest Remaining Time First (SRTF) algorithm is used as the CPU scheduling policy. Ignore context switching times.\n\nWhich ONE of the following correctly gives the average turnaround time of the four processes in milliseconds?",
+      "reason": "Unicode maths italics replaced with KaTeX; double spaces removed.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2025-2-cs-16",
+      "field": "tags",
+      "before": [
+        "cpu-scheduling"
+      ],
+      "after": [
+        "cpu-scheduling",
+        "srtf",
+        "turnaround-time"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2025-2-cs-17",
+      "field": "text",
+      "before": "An audit of a banking transactions system has found that on an earlier occasion, two\njoint holders of account 𝐴 attempted simultaneous transfers of Rs. 10000 each from\naccount 𝐴 to account 𝐵.  Both transactions read the same value , Rs. 11000, as the\ninitial balance in 𝐴 and were allowed to go through. 𝐵 was credited Rs. 10000 twice.\n𝐴 was debited only once and ended up with a balance of Rs. 1000.\nWhich of the following properties is/are certain to have been violated by the\nsystem?",
+      "after": "An audit of a banking transactions system has found that on an earlier occasion, two joint holders of account $A$ attempted simultaneous transfers of Rs. 10000 each from account $A$ to account $B$. Both transactions read the same value, Rs. 11000, as the initial balance in $A$ and were allowed to go through. $B$ was credited Rs. 10000 twice. $A$ was debited only once and ended up with a balance of Rs. 1000.\n\nWhich of the following properties is/are certain to have been violated by the system?",
+      "reason": "Unicode maths italics replaced with KaTeX, hard line wraps and the stray space in \"value ,\" removed.",
+      "source": "pdf p.21 (Q.27)"
+    },
+    {
+      "id": "cse-2025-2-cs-17",
+      "field": "topic",
+      "before": "sql",
+      "after": "transactions",
+      "reason": "ACID properties / lost update belong to transactions and concurrency control, not SQL.",
+      "source": "pdf p.21 (Q.27)"
+    },
+    {
+      "id": "cse-2025-2-cs-17",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "transactions",
+        "acid",
+        "isolation",
+        "lost-update"
+      ],
+      "reason": "Tags follow the corrected topic.",
+      "source": "pdf p.21 (Q.27)"
+    },
+    {
+      "id": "cse-2025-2-cs-18",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "The size of the cache memory"
+        },
+        {
+          "l": "B",
+          "t": "The clock frequency of the processor"
+        },
+        {
+          "l": "C",
+          "t": "The number of cache memory levels"
+        },
+        {
+          "l": "D",
+          "t": "The total number of registers Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "The size of the cache memory"
+        },
+        {
+          "l": "B",
+          "t": "The clock frequency of the processor"
+        },
+        {
+          "l": "C",
+          "t": "The number of cache memory levels"
+        },
+        {
+          "l": "D",
+          "t": "The total number of registers"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology (CS2)\" was pasted into option D.",
+      "source": "pdf p.21 (Q.28)"
+    },
+    {
+      "id": "cse-2025-2-cs-18",
+      "field": "subject",
+      "before": "pds",
+      "after": "coa",
+      "reason": "Instruction Set Architecture is Computer Organization, not Programming & Data Structures.",
+      "source": "pdf p.21 (Q.28)"
+    },
+    {
+      "id": "cse-2025-2-cs-18",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "isa",
+      "reason": "ISA = machine instructions and the programmer-visible machine state.",
+      "source": "pdf p.21 (Q.28)"
+    },
+    {
+      "id": "cse-2025-2-cs-18",
+      "field": "tags",
+      "before": [
+        "c-prog"
+      ],
+      "after": [
+        "isa",
+        "architecture-vs-microarchitecture",
+        "registers"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.21 (Q.28)"
+    },
+    {
+      "id": "cse-2025-2-cs-19",
+      "field": "text",
+      "before": "Which of the following statements regarding Breadth First Search (BFS) and\nDepth First Search (DFS) on an undirected simple graph G is/are TRUE?",
+      "after": "Which of the following statements regarding Breadth First Search (BFS) and Depth First Search (DFS) on an undirected simple graph G is/are TRUE?",
+      "reason": "Hard line wrap removed.",
+      "source": "pdf p.22 (Q.29)"
+    },
+    {
+      "id": "cse-2025-2-cs-19",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "A DFS tree of 𝐺 is a Shortest Path tree of 𝐺."
+        },
+        {
+          "l": "B",
+          "t": "Every non-tree edge of G with respect to a DFS tree is a forward/back edge."
+        },
+        {
+          "l": "C",
+          "t": "If (𝑢, 𝑣) is a non-tree edge of G with respect to a BFS tree, then the distances from the source vertex 𝑠 to 𝑢 and 𝑣 in the BFS tree are within ±1 of each other."
+        },
+        {
+          "l": "D",
+          "t": "Both BFS and DFS can be used to find the connected components of G. Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "A DFS tree of $G$ is a Shortest Path tree of $G$."
+        },
+        {
+          "l": "B",
+          "t": "Every non-tree edge of G with respect to a DFS tree is a forward/back edge."
+        },
+        {
+          "l": "C",
+          "t": "If $(u, v)$ is a non-tree edge of G with respect to a BFS tree, then the distances from the source vertex $s$ to $u$ and $v$ in the BFS tree are within $\\pm 1$ of each other."
+        },
+        {
+          "l": "D",
+          "t": "Both BFS and DFS can be used to find the connected components of G."
+        }
+      ],
+      "reason": "Running page header pasted into option D removed; Unicode maths italics replaced with KaTeX.",
+      "source": "pdf p.22 (Q.29)"
+    },
+    {
+      "id": "cse-2025-2-cs-19",
+      "field": "topic",
+      "before": "graphs",
+      "after": "graph-traversal",
+      "reason": "\"graphs\" is not a topic id of Algorithms; BFS/DFS properties are graph traversal.",
+      "source": "pdf p.22 (Q.29)"
+    },
+    {
+      "id": "cse-2025-2-cs-19",
+      "field": "tags",
+      "before": [
+        "graphs"
+      ],
+      "after": [
+        "bfs",
+        "dfs",
+        "graph-traversal",
+        "non-tree-edges"
+      ],
+      "reason": "Tags follow the corrected topic.",
+      "source": "pdf p.22 (Q.29)"
+    },
+    {
+      "id": "cse-2025-2-cs-20",
+      "field": "text",
+      "before": "Consider the two lists List I and List II given below:\nFor matching of items in List I with those in List II, which of the following\noption(s) is/are CORRECT?\nList I List II\n(i) Context free languages (a) Closed under union\n(ii) Recursive languages (b) Not closed under complementation\n(iii) Regular languages (c) Closed under intersection",
+      "after": "Consider the two lists List I and List II given below:\n\n| List I | List II |\n|---|---|\n| (i) Context free languages | (a) Closed under union |\n| (ii) Recursive languages | (b) Not closed under complementation |\n| (iii) Regular languages | (c) Closed under intersection |\n\nFor matching of items in List I with those in List II, which of the following option(s) is/are CORRECT?",
+      "reason": "The two lists were flattened into plain lines and placed after the question sentence; restored as a table in the paper's order (lists first, then the question).",
+      "source": "pdf p.23 (Q.30)"
+    },
+    {
+      "id": "cse-2025-2-cs-20",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "(i) – (a), (ii) – (b), and (iii) – (c)"
+        },
+        {
+          "l": "B",
+          "t": "(i) – (b), (ii) – (a), and (iii) – (c)"
+        },
+        {
+          "l": "C",
+          "t": "(i) – (b), (ii) – (c), and (iii) – (a)"
+        },
+        {
+          "l": "D",
+          "t": "(i) – (a), (ii) – (c), and (iii) – (b) Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "(i) – (a), (ii) – (b), and (iii) – (c)"
+        },
+        {
+          "l": "B",
+          "t": "(i) – (b), (ii) – (a), and (iii) – (c)"
+        },
+        {
+          "l": "C",
+          "t": "(i) – (b), (ii) – (c), and (iii) – (a)"
+        },
+        {
+          "l": "D",
+          "t": "(i) – (a), (ii) – (c), and (iii) – (b)"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology (CS2)\" was pasted into option D.",
+      "source": "pdf p.23 (Q.30)"
+    },
+    {
+      "id": "cse-2025-2-cs-20",
+      "field": "topic",
+      "before": "regular",
+      "after": "pumping",
+      "reason": "The question is about closure properties of language classes (topic \"Pumping lemma and closure properties\"), not specifically regular languages.",
+      "source": "pdf p.23 (Q.30)"
+    },
+    {
+      "id": "cse-2025-2-cs-20",
+      "field": "tags",
+      "before": [
+        "regular"
+      ],
+      "after": [
+        "closure-properties",
+        "cfl",
+        "recursive-languages",
+        "regular-languages"
+      ],
+      "reason": "Tags follow the corrected topic.",
+      "source": "pdf p.23 (Q.30)"
+    },
+    {
+      "id": "cse-2025-2-cs-21",
+      "field": "text",
+      "before": "Consider the following logic circuit diagram.\nWhich is/are the CORRECT option(s) for the output function 𝐹?",
+      "after": "Consider the following logic circuit diagram.\n\nWhich is/are the CORRECT option(s) for the output function $F$?",
+      "reason": "Unicode maths italic F replaced with KaTeX; paragraph break where the circuit figure sits.",
+      "source": "pdf p.25 (Q.31)"
+    },
+    {
+      "id": "cse-2025-2-cs-21",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝑋 𝑌̅̅̅̅̅"
+        },
+        {
+          "l": "B",
+          "t": "𝑋̅ + 𝑌̅ + 𝑋𝑌̅"
+        },
+        {
+          "l": "C",
+          "t": "𝑋 𝑌̅̅̅̅̅ + 𝑋̅ + 𝑋𝑌̅"
+        },
+        {
+          "l": "D",
+          "t": "𝑋 + 𝑌̅"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\overline{X\\,Y}$"
+        },
+        {
+          "l": "B",
+          "t": "$\\bar{X} + \\bar{Y} + X\\bar{Y}$"
+        },
+        {
+          "l": "C",
+          "t": "$\\overline{X\\,Y} + \\bar{X} + X\\bar{Y}$"
+        },
+        {
+          "l": "D",
+          "t": "$X + \\bar{Y}$"
+        }
+      ],
+      "reason": "Overbars were lost/garbled by the transcription (combining overline characters); rewritten in KaTeX exactly as printed.",
+      "source": "pdf p.25 (Q.31)"
+    },
+    {
+      "id": "cse-2025-2-cs-21",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2025-2/cs-21-1.svg",
+          "svg": "cse-2025-2/cs-21-1.svg",
+          "alt": "Logic circuit with inputs Y (top line) and X (second line) entering from the left. A two-input NAND gate takes Y and X. X also branches down to a NOT gate (output X-bar) and further down to the upper input of a two-input AND gate. Y branches down to a NOT gate whose output Y-bar is the lower input of the AND gate. The NAND output, the X-bar output and the AND output feed a three-input OR gate whose output is F."
+        }
+      ],
+      "reason": "The question depends on its logic circuit, which the bank was missing. Redrawn as an SVG from the paper.",
+      "source": "pdf p.25 (Q.31)"
+    },
+    {
+      "id": "cse-2025-2-cs-21",
+      "field": "subject",
+      "before": "ga",
+      "after": "dl",
+      "reason": "Logic-circuit analysis is Digital Logic, not General Aptitude.",
+      "source": "pdf p.25 (Q.31)"
+    },
+    {
+      "id": "cse-2025-2-cs-21",
+      "field": "topic",
+      "before": "quant",
+      "after": "gates",
+      "reason": "Gate-level circuit analysis.",
+      "source": "pdf p.25 (Q.31)"
+    },
+    {
+      "id": "cse-2025-2-cs-21",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "logic-gates",
+        "boolean-algebra",
+        "nand"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.25 (Q.31)"
+    },
+    {
+      "id": "cse-2025-2-cs-22",
+      "field": "text",
+      "before": "The following two signed 2’s complement numbers (multiplicand M and\nmultiplier Q) are being multiplied using Booth’s algorithm:\nM: 1100 1101 1110 1101 and Q: 1010 0100 1010 1010\nThe total number of addition and subtraction operations to be performed is\n___________. (Answer in integer)\nComputer Science and Information Technology (CS2)",
+      "after": "The following two signed 2’s complement numbers (multiplicand M and multiplier Q) are being multiplied using Booth’s algorithm:\n\nM: 1100 1101 1110 1101 and Q: 1010 0100 1010 1010\n\nThe total number of addition and subtraction operations to be performed is ___________. (Answer in integer)",
+      "reason": "Running page header removed from the end of the text; hard line wraps removed.",
+      "source": "pdf p.25 (Q.32)"
+    },
+    {
+      "id": "cse-2025-2-cs-22",
+      "field": "subject",
+      "before": "ga",
+      "after": "dl",
+      "reason": "Booth's multiplication is computer arithmetic (Digital Logic), not General Aptitude.",
+      "source": "pdf p.25 (Q.32)"
+    },
+    {
+      "id": "cse-2025-2-cs-22",
+      "field": "topic",
+      "before": "quant",
+      "after": "arithmetic",
+      "reason": "Booth's algorithm is listed under computer arithmetic.",
+      "source": "pdf p.25 (Q.32)"
+    },
+    {
+      "id": "cse-2025-2-cs-22",
+      "field": "tags",
+      "before": [
+        "quant"
+      ],
+      "after": [
+        "booth-algorithm",
+        "twos-complement",
+        "multiplication"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.25 (Q.32)"
+    },
+    {
+      "id": "cse-2025-2-cs-23",
+      "field": "text",
+      "before": "int x=126,y=105;\ndo {\nif(x>y) x=x-y;\nelse y=y-x;\n} while(x!=y);\nprintf(\"%d\",x);\nThe output of the given C code segment is ________. (Answer in integer)",
+      "after": "```c\nint x=126,y=105;\ndo {\n    if(x>y) x=x-y;\n    else y=y-x;\n} while(x!=y);\n\nprintf(\"%d\",x);\n```\n\nThe output of the given C code segment is ________. (Answer in integer)",
+      "reason": "Code lost its formatting; restored as a fenced C block with the paper's indentation.",
+      "source": "pdf p.26 (Q.33)"
+    },
+    {
+      "id": "cse-2025-2-cs-23",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "c",
+      "reason": "\"c-prog\" is not a topic id; output-of-C-code questions use \"c\".",
+      "source": "pdf p.26 (Q.33)"
+    },
+    {
+      "id": "cse-2025-2-cs-23",
+      "field": "tags",
+      "before": [
+        "c-prog"
+      ],
+      "after": [
+        "c-programming",
+        "loops",
+        "gcd"
+      ],
+      "reason": "Tags follow the corrected topic.",
+      "source": "pdf p.26 (Q.33)"
+    },
+    {
+      "id": "cse-2025-2-cs-24",
+      "field": "text",
+      "before": "In a 4 -bit ripple counter, if the period of the waveform at the last flip -flop is 64\nmicroseconds, then the frequency of the ripple counter in kHz is ________. (Answer\nin integer)",
+      "after": "In a 4-bit ripple counter, if the period of the waveform at the last flip-flop is 64 microseconds, then the frequency of the ripple counter in kHz is ________. (Answer in integer)",
+      "reason": "Transcription spaces in \"4 -bit\" and \"flip -flop\" and hard line wraps removed.",
+      "source": "pdf p.26 (Q.34)"
+    },
+    {
+      "id": "cse-2025-2-cs-24",
+      "field": "subject",
+      "before": "cn",
+      "after": "dl",
+      "reason": "Ripple counters are Digital Logic (sequential circuits), not Computer Networks.",
+      "source": "pdf p.26 (Q.34)"
+    },
+    {
+      "id": "cse-2025-2-cs-24",
+      "field": "topic",
+      "before": "network",
+      "after": "sequential",
+      "reason": "Counters are sequential circuits.",
+      "source": "pdf p.26 (Q.34)"
+    },
+    {
+      "id": "cse-2025-2-cs-24",
+      "field": "tags",
+      "before": [
+        "network"
+      ],
+      "after": [
+        "ripple-counter",
+        "flip-flops",
+        "frequency-division"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.26 (Q.34)"
+    },
+    {
+      "id": "cse-2025-2-cs-25",
+      "field": "text",
+      "before": "Suppose the values 10, −4, 15, 30, 20, 5, 60, 19 are inserted in that order into an\ninitially empty binary search tree. Let 𝑇 be the resulting binary search tree.\nThe number of edges in the path from the node containing 19 to the root node of 𝑇\nis ___________. (Answer in integer)\nComputer Science and Information Technology (CS2)",
+      "after": "Suppose the values 10, −4, 15, 30, 20, 5, 60, 19 are inserted in that order into an initially empty binary search tree. Let $T$ be the resulting binary search tree.\n\nThe number of edges in the path from the node containing 19 to the root node of $T$ is ___________. (Answer in integer)",
+      "reason": "Running page header removed from the end of the text; Unicode maths italics replaced with KaTeX.",
+      "source": "pdf p.26 (Q.35)"
+    },
+    {
+      "id": "cse-2025-2-cs-25",
+      "field": "topic",
+      "before": "trees",
+      "after": "bst",
+      "reason": "Binary search tree insertion belongs to the \"bst\" topic.",
+      "source": "pdf p.26 (Q.35)"
+    },
+    {
+      "id": "cse-2025-2-cs-25",
+      "field": "tags",
+      "before": [
+        "trees"
+      ],
+      "after": [
+        "bst",
+        "bst-insertion",
+        "tree-depth"
+      ],
+      "reason": "Tags follow the corrected topic.",
+      "source": "pdf p.26 (Q.35)"
+    },
+    {
+      "id": "cse-2025-2-cs-26",
+      "field": "text",
+      "before": "Suppose we are transmitting frames between two nodes using Stop -and-Wait\nprotocol. The frame size is 3000 bits. The transmission rate of the channel is 2000\nbps (bits/second) and the propagation delay between the two nodes is 100\nmilliseconds. Assume that the processing times at the source and destination are\nnegligible. Also, assume that the size of the acknowledgement packet is negligible.\nWhich ONE of the following most accurately gives the channel utilization for the\nabove scenario in percentage?",
+      "after": "Suppose we are transmitting frames between two nodes using Stop-and-Wait protocol. The frame size is 3000 bits. The transmission rate of the channel is 2000 bps (bits/second) and the propagation delay between the two nodes is 100 milliseconds. Assume that the processing times at the source and destination are negligible. Also, assume that the size of the acknowledgement packet is negligible.\n\nWhich ONE of the following most accurately gives the channel utilization for the above scenario in percentage?",
+      "reason": "Transcription space in \"Stop -and-Wait\" and hard line wraps removed.",
+      "source": "pdf p.27 (Q.36)"
+    },
+    {
+      "id": "cse-2025-2-cs-26",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "88.23"
+        },
+        {
+          "l": "B",
+          "t": "93.75"
+        },
+        {
+          "l": "C",
+          "t": "85.44"
+        },
+        {
+          "l": "D",
+          "t": "66.67 Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "88.23"
+        },
+        {
+          "l": "B",
+          "t": "93.75"
+        },
+        {
+          "l": "C",
+          "t": "85.44"
+        },
+        {
+          "l": "D",
+          "t": "66.67"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology (CS2)\" was pasted into option D.",
+      "source": "pdf p.27 (Q.36)"
+    },
+    {
+      "id": "cse-2025-2-cs-26",
+      "field": "subject",
+      "before": "ga",
+      "after": "cn",
+      "reason": "Stop-and-Wait efficiency is Computer Networks (data link layer), not General Aptitude.",
+      "source": "pdf p.27 (Q.36)"
+    },
+    {
+      "id": "cse-2025-2-cs-26",
+      "field": "topic",
+      "before": "quant",
+      "after": "datalink",
+      "reason": "Flow control / stop-and-wait ARQ is a data-link topic.",
+      "source": "pdf p.27 (Q.36)"
+    },
+    {
+      "id": "cse-2025-2-cs-26",
+      "field": "tags",
+      "before": [
+        "quant"
+      ],
+      "after": [
+        "stop-and-wait",
+        "channel-utilization",
+        "flow-control"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.27 (Q.36)"
+    },
+    {
+      "id": "cse-2025-2-cs-27",
+      "field": "text",
+      "before": "Let 𝐺 be an edge-weighted undirected graph with positive edge weights. Suppose a\npositive constant 𝛼 is added to the weight of every edge.\nWhich ONE of the following statements is TRUE about the minimum spanning\ntrees (MSTs) and shortest paths (SPs) in 𝐺 before and after the edge weight update?",
+      "after": "Let $G$ be an edge-weighted undirected graph with positive edge weights. Suppose a positive constant $\\alpha$ is added to the weight of every edge.\n\nWhich ONE of the following statements is TRUE about the minimum spanning trees (MSTs) and shortest paths (SPs) in $G$ before and after the edge weight update?",
+      "reason": "Unicode maths italics replaced with KaTeX; hard line wraps removed.",
+      "source": "pdf p.28 (Q.37)"
+    },
+    {
+      "id": "cse-2025-2-cs-27",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Every MST remains an MST, and every SP remains an SP."
+        },
+        {
+          "l": "B",
+          "t": "MSTs need not remain MSTs, and every SP remains an SP."
+        },
+        {
+          "l": "C",
+          "t": "Every MST remains an MST, and SPs need not remain SPs."
+        },
+        {
+          "l": "D",
+          "t": "MSTs need not remain MSTs, and SPs need not remain SPs. Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Every MST remains an MST, and every SP remains an SP."
+        },
+        {
+          "l": "B",
+          "t": "MSTs need not remain MSTs, and every SP remains an SP."
+        },
+        {
+          "l": "C",
+          "t": "Every MST remains an MST, and SPs need not remain SPs."
+        },
+        {
+          "l": "D",
+          "t": "MSTs need not remain MSTs, and SPs need not remain SPs."
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology (CS2)\" was pasted into option D.",
+      "source": "pdf p.28 (Q.37)"
+    },
+    {
+      "id": "cse-2025-2-cs-27",
+      "field": "subject",
+      "before": "calc",
+      "after": "algo",
+      "reason": "MSTs and shortest paths are Algorithms, not Calculus.",
+      "source": "pdf p.28 (Q.37)"
+    },
+    {
+      "id": "cse-2025-2-cs-27",
+      "field": "topic",
+      "before": "maxmin",
+      "after": "mst",
+      "reason": "Minimum spanning trees (with a shortest-path contrast).",
+      "source": "pdf p.28 (Q.37)"
+    },
+    {
+      "id": "cse-2025-2-cs-27",
+      "field": "tags",
+      "before": [
+        "cfl"
+      ],
+      "after": [
+        "mst",
+        "shortest-paths",
+        "edge-weight-update"
+      ],
+      "reason": "Tags were \"cfl\" (unrelated); replaced with the real topics.",
+      "source": "pdf p.28 (Q.37)"
+    },
+    {
+      "id": "cse-2025-2-cs-28",
+      "field": "text",
+      "before": "A meld operation on two instances of a data structure combines them into one single\ninstance of the same data structure. Consider the following data structures:\nP: Unsorted doubly linked list with pointers to the head node and tail node\nof the list.\nQ: Min-heap implemented using an array.\nR: Binary Search Tree.\nWhich ONE of the following options gives t he worst-case time complexities for\nmeld operation on instances of size 𝑛 of these data structures?",
+      "after": "A meld operation on two instances of a data structure combines them into one single instance of the same data structure. Consider the following data structures:\n\n- P: Unsorted doubly linked list with pointers to the head node and tail node of the list.\n- Q: Min-heap implemented using an array.\n- R: Binary Search Tree.\n\nWhich ONE of the following options gives the worst-case time complexities for meld operation on instances of size $n$ of these data structures?",
+      "reason": "Broken word \"t he\" and hard wraps fixed; the three data structures restored as a list; Unicode maths italic n replaced with KaTeX.",
+      "source": "pdf p.29 (Q.38)"
+    },
+    {
+      "id": "cse-2025-2-cs-28",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "P: Θ(1), Q: Θ(𝑛), R: Θ(𝑛)"
+        },
+        {
+          "l": "B",
+          "t": "P: Θ(1), Q: Θ(𝑛 log 𝑛), R: Θ(𝑛)"
+        },
+        {
+          "l": "C",
+          "t": "P: Θ(𝑛), Q: Θ(𝑛 log 𝑛), R: Θ(𝑛2)"
+        },
+        {
+          "l": "D",
+          "t": "P: Θ(1), Q: Θ(𝑛), R: Θ(𝑛 log 𝑛) Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "P: $\\Theta(1)$, Q: $\\Theta(n)$, R: $\\Theta(n)$"
+        },
+        {
+          "l": "B",
+          "t": "P: $\\Theta(1)$, Q: $\\Theta(n \\log n)$, R: $\\Theta(n)$"
+        },
+        {
+          "l": "C",
+          "t": "P: $\\Theta(n)$, Q: $\\Theta(n \\log n)$, R: $\\Theta(n^2)$"
+        },
+        {
+          "l": "D",
+          "t": "P: $\\Theta(1)$, Q: $\\Theta(n)$, R: $\\Theta(n \\log n)$"
+        }
+      ],
+      "reason": "Running page header pasted into option D removed; the exponent in \"Θ(𝑛2)\" restored as $n^2$; maths in KaTeX.",
+      "source": "pdf p.29 (Q.38)"
+    },
+    {
+      "id": "cse-2025-2-cs-28",
+      "field": "subject",
+      "before": "ga",
+      "after": "pds",
+      "reason": "Data-structure operation costs are Programming & Data Structures, not General Aptitude.",
+      "source": "pdf p.29 (Q.38)"
+    },
+    {
+      "id": "cse-2025-2-cs-28",
+      "field": "topic",
+      "before": "quant",
+      "after": "heaps",
+      "reason": "Melding (heap merge via build-heap) is the core of the question; linked list and BST are compared alongside.",
+      "source": "pdf p.29 (Q.38)"
+    },
+    {
+      "id": "cse-2025-2-cs-28",
+      "field": "tags",
+      "before": [
+        "quant"
+      ],
+      "after": [
+        "meld",
+        "binary-heap",
+        "build-heap",
+        "bst",
+        "linked-list"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.29 (Q.38)"
+    },
+    {
+      "id": "cse-2025-2-cs-29",
+      "field": "text",
+      "before": "For a direct-mapped cache, 4 bits are used for the tag field and 12 bits are used to\nindex into a cache block. The size of each cache block is one byte. Assume that\nthere is no other information stored for each cache block.\nWhich ONE of the following is the CORRECT option for the sizes of the main\nmemory and the cache memory in this system (byte addressable), respectively?",
+      "after": "For a direct-mapped cache, 4 bits are used for the tag field and 12 bits are used to index into a cache block. The size of each cache block is one byte. Assume that there is no other information stored for each cache block.\n\nWhich ONE of the following is the CORRECT option for the sizes of the main memory and the cache memory in this system (byte addressable), respectively?",
+      "reason": "Hard line wraps removed.",
+      "source": "pdf p.29 (Q.39)"
+    },
+    {
+      "id": "cse-2025-2-cs-29",
+      "field": "tags",
+      "before": [
+        "codegen"
+      ],
+      "after": [
+        "cache",
+        "direct-mapped",
+        "address-split"
+      ],
+      "reason": "Tags were \"codegen\" (unrelated); replaced with cache tags.",
+      "source": "pdf p.29 (Q.39)"
+    },
+    {
+      "id": "cse-2025-2-cs-30",
+      "field": "text",
+      "before": "Given a Context-Free Grammar 𝐺 as follows:\n𝑆 → 𝐴𝑎 | 𝑏𝐴𝑐 | 𝑑𝑐 | 𝑏𝑑𝑎\n𝐴 → 𝑑\nWhich ONE of the following statements is TRUE?",
+      "after": "Given a Context-Free Grammar $G$ as follows:\n\n$$S \\to Aa \\mid bAc \\mid dc \\mid bda$$\n$$A \\to d$$\n\nWhich ONE of the following statements is TRUE?",
+      "reason": "Unicode maths italics replaced with KaTeX; hard line wraps removed.",
+      "source": "pdf p.30 (Q.40)"
+    },
+    {
+      "id": "cse-2025-2-cs-30",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝐺 is neither LALR(1) nor SLR(1)"
+        },
+        {
+          "l": "B",
+          "t": "𝐺 is CLR(1), not LALR(1)"
+        },
+        {
+          "l": "C",
+          "t": "𝐺 is LALR(1), not SLR(1)"
+        },
+        {
+          "l": "D",
+          "t": "𝐺 is LALR(1), also SLR(1) Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$G$ is neither LALR(1) nor SLR(1)"
+        },
+        {
+          "l": "B",
+          "t": "$G$ is CLR(1), not LALR(1)"
+        },
+        {
+          "l": "C",
+          "t": "$G$ is LALR(1), not SLR(1)"
+        },
+        {
+          "l": "D",
+          "t": "$G$ is LALR(1), also SLR(1)"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology (CS2)\" removed from option D; Unicode maths italics replaced with KaTeX.",
+      "source": "pdf p.30 (Q.40)"
+    },
+    {
+      "id": "cse-2025-2-cs-30",
+      "field": "subject",
+      "before": "toc",
+      "after": "cd",
+      "reason": "SLR/LALR/CLR parser classification is Compiler Design (parsing), not Theory of Computation.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2025-2-cs-30",
+      "field": "topic",
+      "before": "cfg",
+      "after": "parsing",
+      "reason": "Bottom-up parsing (SLR(1), LALR(1), CLR(1)).",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2025-2-cs-30",
+      "field": "tags",
+      "before": [
+        "cfl"
+      ],
+      "after": [
+        "lr-parsing",
+        "slr",
+        "lalr",
+        "clr"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2025-2-cs-31",
+      "field": "text",
+      "before": "An array 𝐴 of length 𝑛 with distinct elements is said to be bitonic if there is an index\n1 ≤ 𝑖 ≤ 𝑛 such that 𝐴[1. . 𝑖] is sorted in the non-decreasing order and 𝐴[𝑖 + 1 . . 𝑛]\nis sorted in the non-increasing order.\nWhich ONE of the following represents the best possible asymptotic bound for the\nworst-case number of comparisons by an algorithm that searches for an element in\na bitonic array 𝐴?",
+      "after": "An array $A$ of length $n$ with distinct elements is said to be bitonic if there is an index $1 \\le i \\le n$ such that $A[1..i]$ is sorted in the non-decreasing order and $A[i+1..n]$ is sorted in the non-increasing order.\n\nWhich ONE of the following represents the best possible asymptotic bound for the worst-case number of comparisons by an algorithm that searches for an element in a bitonic array $A$?",
+      "reason": "Unicode maths italics replaced with KaTeX; hard line wraps removed.",
+      "source": "pdf p.31 (Q.41)"
+    },
+    {
+      "id": "cse-2025-2-cs-31",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Θ(𝑛)"
+        },
+        {
+          "l": "B",
+          "t": "Θ(1)"
+        },
+        {
+          "l": "C",
+          "t": "Θ(log2 𝑛)"
+        },
+        {
+          "l": "D",
+          "t": "Θ(log 𝑛)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\Theta(n)$"
+        },
+        {
+          "l": "B",
+          "t": "$\\Theta(1)$"
+        },
+        {
+          "l": "C",
+          "t": "$\\Theta(\\log^2 n)$"
+        },
+        {
+          "l": "D",
+          "t": "$\\Theta(\\log n)$"
+        }
+      ],
+      "reason": "Option (C) is $\\Theta(\\log^2 n)$ in the paper (the superscript 2 had been flattened to \"log2 n\", which reads as $\\log_2 n$); Unicode italics replaced with KaTeX.",
+      "source": "pdf p.31 (Q.41)"
+    },
+    {
+      "id": "cse-2025-2-cs-31",
+      "field": "topic",
+      "before": "sorting",
+      "after": "searching",
+      "reason": "Searching in a bitonic array (binary search), not sorting.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2025-2-cs-31",
+      "field": "tags",
+      "before": [
+        "asymptotics"
+      ],
+      "after": [
+        "binary-search",
+        "bitonic-array",
+        "asymptotics"
+      ],
+      "reason": "Tags follow the question content.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2025-2-cs-32",
+      "field": "text",
+      "before": "Let  ℱ  be the set of all functions from {1, … , 𝑛} to {0,1}. Define\nthe binary relation ≼ on  ℱ  as follows:\n∀𝑓, 𝑔 ∈ ℱ,   𝑓 ≼ 𝑔 if and only if ∀𝑥 ∈ {1, … , 𝑛}, 𝑓(𝑥) ≤ 𝑔(𝑥),  where 0 ≤ 1.\nWhich of the following statement(s) is/are TRUE?",
+      "after": "Let $\\mathcal{F}$ be the set of all functions from $\\{1, \\dots, n\\}$ to $\\{0, 1\\}$. Define the binary relation $\\preccurlyeq$ on $\\mathcal{F}$ as follows:\n\n$$\\forall f, g \\in \\mathcal{F},\\quad f \\preccurlyeq g \\text{ if and only if } \\forall x \\in \\{1, \\dots, n\\},\\ f(x) \\le g(x), \\text{ where } 0 \\le 1.$$\n\nWhich of the following statement(s) is/are TRUE?",
+      "reason": "Unicode maths italics replaced with KaTeX; hard line wraps removed.",
+      "source": "pdf p.31 (Q.42)"
+    },
+    {
+      "id": "cse-2025-2-cs-32",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "≼ is a symmetric relation"
+        },
+        {
+          "l": "B",
+          "t": "(ℱ, ≼ ) is a partial order"
+        },
+        {
+          "l": "C",
+          "t": "(ℱ, ≼ ) is a lattice"
+        },
+        {
+          "l": "D",
+          "t": "≼ is an equivalence relation Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\preccurlyeq$ is a symmetric relation"
+        },
+        {
+          "l": "B",
+          "t": "$(\\mathcal{F}, \\preccurlyeq)$ is a partial order"
+        },
+        {
+          "l": "C",
+          "t": "$(\\mathcal{F}, \\preccurlyeq)$ is a lattice"
+        },
+        {
+          "l": "D",
+          "t": "$\\preccurlyeq$ is an equivalence relation"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology (CS2)\" removed from option D; Unicode maths italics replaced with KaTeX.",
+      "source": "pdf p.31 (Q.42)"
+    },
+    {
+      "id": "cse-2025-2-cs-32",
+      "field": "subject",
+      "before": "db",
+      "after": "dm",
+      "reason": "Relations, partial orders and lattices are Discrete Mathematics, not Databases/SQL.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2025-2-cs-32",
+      "field": "topic",
+      "before": "sql",
+      "after": "posets",
+      "reason": "The question is about partial orders and lattices.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2025-2-cs-32",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "partial-order",
+        "lattice",
+        "relations"
+      ],
+      "reason": "Tags were \"sql\" (unrelated).",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2025-2-cs-33",
+      "field": "text",
+      "before": "Given the following Karnaugh Map for a Boolean function 𝐹(𝑤, 𝑥, 𝑦, 𝑧):\nWhich one or more of the following Boolean expression(s) represent(s) 𝐹?",
+      "after": "Given the following Karnaugh Map for a Boolean function $F(w, x, y, z)$:\n\nWhich one or more of the following Boolean expression(s) represent(s) $F$?",
+      "reason": "Unicode maths italics replaced with KaTeX; hard line wraps removed.",
+      "source": "pdf p.32 (Q.43)"
+    },
+    {
+      "id": "cse-2025-2-cs-33",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝑤̅𝑥̅𝑦̅𝑧̅ + 𝑤𝑥̅𝑦̅𝑧̅ + 𝑤̅𝑥̅𝑦𝑧̅ + 𝑤𝑥̅𝑦𝑧̅ + 𝑥𝑧"
+        },
+        {
+          "l": "B",
+          "t": "𝑤̅𝑥̅𝑦̅𝑧̅ + 𝑤̅𝑥̅𝑦𝑧̅ + 𝑤𝑥̅𝑦𝑧 + 𝑥𝑧"
+        },
+        {
+          "l": "C",
+          "t": "𝑤̅𝑥̅𝑦̅𝑧̅ + 𝑤𝑥̅𝑦̅𝑧̅ + 𝑤𝑥̅𝑦̅𝑧 + 𝑥𝑧"
+        },
+        {
+          "l": "D",
+          "t": "𝑥̅𝑧̅ + 𝑥𝑧 Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\bar{w}\\bar{x}\\bar{y}\\bar{z} + w\\bar{x}\\bar{y}\\bar{z} + \\bar{w}\\bar{x}y\\bar{z} + w\\bar{x}y\\bar{z} + xz$"
+        },
+        {
+          "l": "B",
+          "t": "$\\bar{w}\\bar{x}\\bar{y}\\bar{z} + \\bar{w}\\bar{x}y\\bar{z} + w\\bar{x}yz + xz$"
+        },
+        {
+          "l": "C",
+          "t": "$\\bar{w}\\bar{x}\\bar{y}\\bar{z} + w\\bar{x}\\bar{y}\\bar{z} + w\\bar{x}\\bar{y}z + xz$"
+        },
+        {
+          "l": "D",
+          "t": "$\\bar{x}\\bar{z} + xz$"
+        }
+      ],
+      "reason": "Combining overbars had detached from their letters; page header removed from option D; rewritten in KaTeX exactly as printed.",
+      "source": "pdf p.32 (Q.43)"
+    },
+    {
+      "id": "cse-2025-2-cs-33",
+      "field": "type",
+      "before": "MCQ",
+      "after": "MSQ",
+      "reason": "The stem says \"Which one or more of the following …\", so this is a multiple-select question (MSQ), not MCQ; the official key is a set of options.",
+      "source": "pdf p.32 (Q.43)"
+    },
+    {
+      "id": "cse-2025-2-cs-33",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2025-2/cs-33-1.svg",
+          "svg": "cse-2025-2/cs-33-1.svg",
+          "alt": "Four-variable Karnaugh map for F(w, x, y, z): rows indexed by wx, columns by yz (diagonal corner label, conventional Gray order 00, 01, 11, 10). Row 1: 1 0 0 1. Row 2: 0 1 1 0. Row 3: 0 1 1 0. Row 4: 1 0 0 1."
+        }
+      ],
+      "reason": "The K-map the question depends on was missing; redrawn from the paper.",
+      "source": "pdf p.32 (Q.43)"
+    },
+    {
+      "id": "cse-2025-2-cs-33",
+      "field": "topic",
+      "before": "combinational",
+      "after": "minimization",
+      "reason": "K-map minimisation.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2025-2-cs-33",
+      "field": "tags",
+      "before": [
+        "combinational"
+      ],
+      "after": [
+        "k-map",
+        "boolean-algebra",
+        "minimization"
+      ],
+      "reason": "Tags follow the question content.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2025-2-cs-34",
+      "field": "text",
+      "before": "Consider a system of linear equations 𝑃𝑋 = 𝑄 where 𝑃 ∈ ℝ3×3 and Q ∈ ℝ3×1.\nSuppose 𝑃 has an LU decomposition, 𝑃 = 𝐿𝑈, where\n𝐿 = [\n1 0 0\n𝑙21 1 0\n𝑙31 𝑙32 1\n]  and  𝑈 = [\n𝑢11 𝑢12 𝑢13\n0 𝑢22 𝑢23\n0 0 𝑢33\n].\nWhich of the following statement(s) is/are TRUE?",
+      "after": "Consider a system of linear equations $PX = Q$ where $P \\in \\mathbb{R}^{3\\times 3}$ and $Q \\in \\mathbb{R}^{3\\times 1}$. Suppose $P$ has an LU decomposition, $P = LU$, where\n\n$$L = \\begin{bmatrix} 1 & 0 & 0 \\\\ l_{21} & 1 & 0 \\\\ l_{31} & l_{32} & 1 \\end{bmatrix} \\quad \\text{and} \\quad U = \\begin{bmatrix} u_{11} & u_{12} & u_{13} \\\\ 0 & u_{22} & u_{23} \\\\ 0 & 0 & u_{33} \\end{bmatrix}.$$\n\nWhich of the following statement(s) is/are TRUE?",
+      "reason": "Matrices had been flattened into lines of text; rewritten as KaTeX matrices.",
+      "source": "pdf p.33 (Q.44)"
+    },
+    {
+      "id": "cse-2025-2-cs-34",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "The system 𝑃𝑋 = 𝑄 can be solved by first solving 𝐿𝑌 = 𝑄 and then 𝑈𝑋 = 𝑌."
+        },
+        {
+          "l": "B",
+          "t": "If 𝑃 is invertible, then both 𝐿 and 𝑈 are invertible."
+        },
+        {
+          "l": "C",
+          "t": "If 𝑃 is singular, then at least one of the diagonal elements of 𝑈 is zero."
+        },
+        {
+          "l": "D",
+          "t": "If 𝑃 is symmetric, then both 𝐿 and 𝑈 are symmetric. Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "The system $PX = Q$ can be solved by first solving $LY = Q$ and then $UX = Y$."
+        },
+        {
+          "l": "B",
+          "t": "If $P$ is invertible, then both $L$ and $U$ are invertible."
+        },
+        {
+          "l": "C",
+          "t": "If $P$ is singular, then at least one of the diagonal elements of $U$ is zero."
+        },
+        {
+          "l": "D",
+          "t": "If $P$ is symmetric, then both $L$ and $U$ are symmetric."
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology (CS2)\" removed from option D; Unicode maths italics replaced with KaTeX.",
+      "source": "pdf p.33 (Q.44)"
+    },
+    {
+      "id": "cse-2025-2-cs-34",
+      "field": "subject",
+      "before": "db",
+      "after": "la",
+      "reason": "LU decomposition is Linear Algebra, not Databases/SQL.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2025-2-cs-34",
+      "field": "topic",
+      "before": "sql",
+      "after": "decomp",
+      "reason": "LU decomposition.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2025-2-cs-34",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "lu-decomposition",
+        "determinant",
+        "linear-algebra"
+      ],
+      "reason": "Tags were \"sql\" (unrelated).",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2025-2-cs-35",
+      "field": "text",
+      "before": "Consider a stack data structure into which we can PUSH and POP records. Assume\nthat each record pushed in the stack has a positive integer key and that all keys are\ndistinct.\nWe wish to augment the stack data structure with an 𝑂(1) time MIN operation that\nreturns a pointer to the record with smallest key present in the stack\n1) without deleting the corresponding record, and\n2) without increasing the complexities of the standard stack operations.\nWhich one or more of the following approach(es) can achieve it?",
+      "after": "Consider a stack data structure into which we can PUSH and POP records. Assume that each record pushed in the stack has a positive integer key and that all keys are distinct.\n\nWe wish to augment the stack data structure with an $O(1)$ time MIN operation that returns a pointer to the record with smallest key present in the stack\n\n1) without deleting the corresponding record, and\n2) without increasing the complexities of the standard stack operations.\n\nWhich one or more of the following approach(es) can achieve it?",
+      "reason": "Unicode maths italics replaced with KaTeX; hard line wraps removed.",
+      "source": "pdf p.34 (Q.45)"
+    },
+    {
+      "id": "cse-2025-2-cs-35",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Keep with every record in the stack , a pointer to the record with the smallest key below it."
+        },
+        {
+          "l": "B",
+          "t": "Keep a pointer to the record with the smallest key in the stack."
+        },
+        {
+          "l": "C",
+          "t": "Keep an auxiliary array in which the key values of the records in the stack are maintained in sorted order."
+        },
+        {
+          "l": "D",
+          "t": "Keep a Min-Heap in which the key values of the records in the stack are maintained. Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Keep with every record in the stack, a pointer to the record with the smallest key below it."
+        },
+        {
+          "l": "B",
+          "t": "Keep a pointer to the record with the smallest key in the stack."
+        },
+        {
+          "l": "C",
+          "t": "Keep an auxiliary array in which the key values of the records in the stack are maintained in sorted order."
+        },
+        {
+          "l": "D",
+          "t": "Keep a Min-Heap in which the key values of the records in the stack are maintained."
+        }
+      ],
+      "reason": "Stray space before a comma in option A and the running page header in option D removed.",
+      "source": "pdf p.34 (Q.45)"
+    },
+    {
+      "id": "cse-2025-2-cs-35",
+      "field": "type",
+      "before": "MCQ",
+      "after": "MSQ",
+      "reason": "The stem says \"Which one or more of the following …\", so this is a multiple-select question (MSQ), not MCQ; the official key is a set of options.",
+      "source": "pdf p.34 (Q.45)"
+    },
+    {
+      "id": "cse-2025-2-cs-35",
+      "field": "subject",
+      "before": "ga",
+      "after": "pds",
+      "reason": "Augmenting a stack is Programming & Data Structures, not General Aptitude.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2025-2-cs-35",
+      "field": "topic",
+      "before": "quant",
+      "after": "stacks-queues",
+      "reason": "Stack data structure.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2025-2-cs-35",
+      "field": "tags",
+      "before": [
+        "quant"
+      ],
+      "after": [
+        "stack",
+        "min-stack",
+        "data-structures"
+      ],
+      "reason": "Tags were \"quant\" (unrelated).",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2025-2-cs-36",
+      "field": "text",
+      "before": "Consider the following relational schema along with all the functional dependencies\nthat hold on them.\nR1(A, B, C, D, E): { 𝐷 → 𝐸, 𝐸𝐴 → 𝐵, 𝐸𝐵 → 𝐶}\nR2(A, B, C, D): { 𝐴 → 𝐷, 𝐴 → 𝐵, 𝐶 → 𝐴}\nWhich of the following statement(s) is/are TRUE?",
+      "after": "Consider the following relational schema along with all the functional dependencies that hold on them.\n\n- R1(A, B, C, D, E): $\\{D \\to E,\\ EA \\to B,\\ EB \\to C\\}$\n- R2(A, B, C, D): $\\{A \\to D,\\ A \\to B,\\ C \\to A\\}$\n\nWhich of the following statement(s) is/are TRUE?",
+      "reason": "Unicode maths italics replaced with KaTeX; hard line wraps removed.",
+      "source": "pdf p.35 (Q.46)"
+    },
+    {
+      "id": "cse-2025-2-cs-36",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "R1 is in 3NF"
+        },
+        {
+          "l": "B",
+          "t": "R2 is in 3NF"
+        },
+        {
+          "l": "C",
+          "t": "R1 is NOT in 3NF"
+        },
+        {
+          "l": "D",
+          "t": "R2 is NOT in 3NF Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "R1 is in 3NF"
+        },
+        {
+          "l": "B",
+          "t": "R2 is in 3NF"
+        },
+        {
+          "l": "C",
+          "t": "R1 is NOT in 3NF"
+        },
+        {
+          "l": "D",
+          "t": "R2 is NOT in 3NF"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology (CS2)\" removed from option D; Unicode maths italics replaced with KaTeX.",
+      "source": "pdf p.35 (Q.46)"
+    },
+    {
+      "id": "cse-2025-2-cs-36",
+      "field": "subject",
+      "before": "dm",
+      "after": "db",
+      "reason": "3NF / functional dependencies are Databases, not Discrete Mathematics.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2025-2-cs-36",
+      "field": "topic",
+      "before": "sets",
+      "after": "normalization",
+      "reason": "Normal forms.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2025-2-cs-36",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "3nf",
+        "functional-dependencies",
+        "candidate-key"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2025-2-cs-37",
+      "field": "text",
+      "before": "Consider a demand paging system with three frames, and the following page\nreference string: 1 2 3 4 5 4 1 6 4 5 1 3 2. The contents of the frames are as follows\ninitially and after each reference (from left to right):\ninitially after\n- 1* 2* 3* 4* 5* 4 1 6* 4 5 1* 3* 2*\n- 1 1 1 1 1 1 1 6 6 6 6 6 2\n- - 2 2 4 4 4 4 4 4 4 1 1 1\n- - - 3 3 5 5 5 5 5 5 5 3 3\nThe *-marked references cause page replacements.\nWhich one or more of the following could be the page replacement policy/policies\nin use?",
+      "after": "Consider a demand paging system with three frames, and the following page reference string: 1 2 3 4 5 4 1 6 4 5 1 3 2. The contents of the frames are as follows initially and after each reference (from left to right):\n\n| After reference | initially | 1* | 2* | 3* | 4* | 5* | 4 | 1 | 6* | 4 | 5 | 1* | 3* | 2* |\n|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|\n| Frame 1 | – | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 6 | 6 | 6 | 6 | 6 | 2 |\n| Frame 2 | – | – | 2 | 2 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 1 | 1 | 1 |\n| Frame 3 | – | – | – | 3 | 3 | 5 | 5 | 5 | 5 | 5 | 5 | 5 | 3 | 3 |\n\nThe *-marked references cause page replacements.\n\nWhich one or more of the following could be the page replacement policy/policies in use?",
+      "reason": "The frame-content table had been flattened into lines of text; restored as a markdown table (header: the reference just made, starred if it caused a replacement; rows: frames 1–3).",
+      "source": "pdf p.36 (Q.47)"
+    },
+    {
+      "id": "cse-2025-2-cs-37",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Least Recently Used page replacement policy"
+        },
+        {
+          "l": "B",
+          "t": "Least Frequently Used page replacement policy"
+        },
+        {
+          "l": "C",
+          "t": "Most Frequently Used page replacement policy"
+        },
+        {
+          "l": "D",
+          "t": "Optimal page replacement policy Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Least Recently Used page replacement policy"
+        },
+        {
+          "l": "B",
+          "t": "Least Frequently Used page replacement policy"
+        },
+        {
+          "l": "C",
+          "t": "Most Frequently Used page replacement policy"
+        },
+        {
+          "l": "D",
+          "t": "Optimal page replacement policy"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology (CS2)\" removed from option D; Unicode maths italics replaced with KaTeX.",
+      "source": "pdf p.36 (Q.47)"
+    },
+    {
+      "id": "cse-2025-2-cs-37",
+      "field": "type",
+      "before": "MCQ",
+      "after": "MSQ",
+      "reason": "The stem says \"Which one or more of the following …\", so this is a multiple-select question (MSQ), not MCQ; the official key is a set of options.",
+      "source": "pdf p.36 (Q.47)"
+    },
+    {
+      "id": "cse-2025-2-cs-37",
+      "field": "tags",
+      "before": [
+        "memory"
+      ],
+      "after": [
+        "page-replacement",
+        "optimal",
+        "lru",
+        "lfu"
+      ],
+      "reason": "Tags follow the question content.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2025-2-cs-38",
+      "field": "text",
+      "before": "𝑃 = {𝑃1, 𝑃2, 𝑃3, 𝑃4} consists of all active processes in an operating system.\n𝑅 = {𝑅1, 𝑅2, 𝑅3, 𝑅4} consists of single instances of distinct types of resources in the\nsystem.\nThe resource allocation graph has the following assignment and claim edges.\nAssignment edges: 𝑅1 → 𝑃1,  𝑅2 → 𝑃2,  𝑅3 → 𝑃3,  𝑅4 → 𝑃4 (the assignment edge\n𝑅1 → 𝑃1 means resource 𝑅1 is assigned to process 𝑃1 , and so on for others)\nClaim edges: 𝑃1 → 𝑅2, 𝑃2 → 𝑅3,  𝑃3 → 𝑅1,  𝑃2 → 𝑅4,  𝑃4 → 𝑅2 (the claim edge\n𝑃1  → 𝑅2   means process 𝑃1  is waiting for resource  𝑅2 , and so on for others)\nWhich of the following statement(s) is/are CORRECT?",
+      "after": "$P = \\{P_1, P_2, P_3, P_4\\}$ consists of all active processes in an operating system. $R = \\{R_1, R_2, R_3, R_4\\}$ consists of single instances of distinct types of resources in the system.\n\nThe resource allocation graph has the following assignment and claim edges.\n\nAssignment edges: $R_1 \\to P_1$, $R_2 \\to P_2$, $R_3 \\to P_3$, $R_4 \\to P_4$ (the assignment edge $R_1 \\to P_1$ means resource $R_1$ is assigned to process $P_1$, and so on for others)\n\nClaim edges: $P_1 \\to R_2$, $P_2 \\to R_3$, $P_3 \\to R_1$, $P_2 \\to R_4$, $P_4 \\to R_2$ (the claim edge $P_1 \\to R_2$ means process $P_1$ is waiting for resource $R_2$, and so on for others)\n\nWhich of the following statement(s) is/are CORRECT?",
+      "reason": "Unicode maths italics replaced with KaTeX; hard line wraps removed.",
+      "source": "pdf p.37 (Q.48)"
+    },
+    {
+      "id": "cse-2025-2-cs-38",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Aborting 𝑃1 makes the system deadlock free."
+        },
+        {
+          "l": "B",
+          "t": "Aborting 𝑃3 makes the system deadlock free."
+        },
+        {
+          "l": "C",
+          "t": "Aborting 𝑃2 makes the system deadlock free."
+        },
+        {
+          "l": "D",
+          "t": "Aborting 𝑃1 and 𝑃4 makes the system deadlock free. Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Aborting $P_1$ makes the system deadlock free."
+        },
+        {
+          "l": "B",
+          "t": "Aborting $P_3$ makes the system deadlock free."
+        },
+        {
+          "l": "C",
+          "t": "Aborting $P_2$ makes the system deadlock free."
+        },
+        {
+          "l": "D",
+          "t": "Aborting $P_1$ and $P_4$ makes the system deadlock free."
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology (CS2)\" removed from option D; Unicode maths italics replaced with KaTeX.",
+      "source": "pdf p.37 (Q.48)"
+    },
+    {
+      "id": "cse-2025-2-cs-38",
+      "field": "tags",
+      "before": [
+        "deadlock"
+      ],
+      "after": [
+        "resource-allocation-graph",
+        "wait-for-graph",
+        "deadlock-recovery"
+      ],
+      "reason": "Tags follow the question content.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2025-2-cs-39",
+      "field": "text",
+      "before": "Three floating point numbers 𝑋, 𝑌, and 𝑍 are stored in three registers R X, RY, and\nRZ, respectively in IEEE 754 single precision format as given below in\nhexadecimal:\nRX = 0xC1100000, RY = 0x40C00000, and RZ = 0x41400000\nWhich of the following option(s) is/are CORRECT?",
+      "after": "Three floating point numbers $X$, $Y$, and $Z$ are stored in three registers $R_X$, $R_Y$, and $R_Z$, respectively in IEEE 754 single precision format as given below in hexadecimal:\n\n$R_X$ = 0xC1100000, $R_Y$ = 0x40C00000, and $R_Z$ = 0x41400000\n\nWhich of the following option(s) is/are CORRECT?",
+      "reason": "Register subscripts restored (\"R X\" was a broken R_X); Unicode italics replaced with KaTeX.",
+      "source": "pdf p.38 (Q.49)"
+    },
+    {
+      "id": "cse-2025-2-cs-39",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "4(𝑋 + 𝑌) + 𝑍 = 0"
+        },
+        {
+          "l": "B",
+          "t": "2𝑌 – 𝑍 = 0"
+        },
+        {
+          "l": "C",
+          "t": "4𝑋 + 3𝑍 = 0"
+        },
+        {
+          "l": "D",
+          "t": "𝑋 + 𝑌 + 𝑍 = 0"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$4(X + Y) + Z = 0$"
+        },
+        {
+          "l": "B",
+          "t": "$2Y - Z = 0$"
+        },
+        {
+          "l": "C",
+          "t": "$4X + 3Z = 0$"
+        },
+        {
+          "l": "D",
+          "t": "$X + Y + Z = 0$"
+        }
+      ],
+      "reason": "Unicode maths italics replaced with KaTeX.",
+      "source": "pdf p.38 (Q.49)"
+    },
+    {
+      "id": "cse-2025-2-cs-39",
+      "field": "subject",
+      "before": "coa",
+      "after": "dl",
+      "reason": "IEEE 754 representation is filed under Digital Logic › floating point in this bank.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2025-2-cs-39",
+      "field": "topic",
+      "before": "isa",
+      "after": "floating",
+      "reason": "IEEE 754 single precision.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2025-2-cs-39",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "ieee-754",
+        "floating-point",
+        "single-precision"
+      ],
+      "reason": "Tags follow the question content.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2025-2-cs-40",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝐴̅ 𝐵 𝐶 + 𝐴 𝐵̅ 𝐶̅ + 𝐴̅ 𝐵̅ 𝐶̅ + 𝐴 𝐵̅ 𝐶 + 𝐴 𝐵 𝐶 = 𝐵 𝐶 + 𝐵̅ 𝐶̅ + 𝐴̅ 𝐵̅"
+        },
+        {
+          "l": "B",
+          "t": "𝐴 𝐵 + 𝐴̅ 𝐶 + 𝐵 𝐶 = 𝐴 𝐵 + 𝐴̅ 𝐶"
+        },
+        {
+          "l": "C",
+          "t": "(𝐴 + 𝐶) (𝐴̅ + 𝐵) = 𝐴 𝐵 + 𝐴̅ 𝐶"
+        },
+        {
+          "l": "D",
+          "t": "(𝐴 + 𝐵̅ + 𝐷̅) (𝐶 + 𝐷) (𝐴̅ + 𝐶 + 𝐷 ) (𝐴 + 𝐵 + 𝐷̅)̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅̅ = 𝐴̅ 𝐷 + 𝐶̅ 𝐷̅ Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\bar{A}BC + A\\bar{B}\\bar{C} + \\bar{A}\\bar{B}\\bar{C} + A\\bar{B}C + ABC = BC + \\bar{B}\\bar{C} + \\bar{A}\\bar{B}$"
+        },
+        {
+          "l": "B",
+          "t": "$AB + \\bar{A}C + BC = AB + \\bar{A}C$"
+        },
+        {
+          "l": "C",
+          "t": "$(A + C)(\\bar{A} + B) = AB + \\bar{A}C$"
+        },
+        {
+          "l": "D",
+          "t": "$\\overline{(A + \\bar{B} + \\bar{D})(C + D)(\\bar{A} + C + D)(A + B + \\bar{D})} = \\bar{A}D + \\bar{C}\\bar{D}$"
+        }
+      ],
+      "reason": "Option D had lost its long overbar (it covers the whole product of four sums) and carried the page header; all options rewritten in KaTeX exactly as printed.",
+      "source": "pdf p.38 (Q.50)"
+    },
+    {
+      "id": "cse-2025-2-cs-40",
+      "field": "topic",
+      "before": "combinational",
+      "after": "boolean",
+      "reason": "Boolean algebra identities.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2025-2-cs-40",
+      "field": "tags",
+      "before": [
+        "combinational"
+      ],
+      "after": [
+        "boolean-algebra",
+        "consensus-theorem",
+        "de-morgan"
+      ],
+      "reason": "Tags follow the question content.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2025-2-cs-41",
+      "field": "text",
+      "before": "Consider two grammars 𝐺1 and 𝐺2 with the production rules given below:\n𝐺1: 𝑆 → 𝑖𝑓  𝐸 𝑡ℎ𝑒𝑛  𝑆 | 𝑖𝑓 𝐸 𝑡ℎ𝑒𝑛 𝑆 𝑒𝑙𝑠𝑒 𝑆 | 𝑎\n𝐸 → 𝑏\n𝐺2: 𝑆 → 𝑖𝑓 𝐸 𝑡ℎ𝑒𝑛 𝑆 | 𝑀\n𝑀 → 𝑖𝑓 𝐸 𝑡ℎ𝑒𝑛 𝑀 𝑒𝑙𝑠𝑒 𝑆 | 𝑐\n𝐸 → 𝑏\nwhere 𝑖𝑓, 𝑡ℎ𝑒𝑛, 𝑒𝑙𝑠𝑒, 𝑎, 𝑏, 𝑐 are the terminals.\nWhich of the following option(s) is/are CORRECT?",
+      "after": "Consider two grammars $G_1$ and $G_2$ with the production rules given below:\n\n$G_1$: $S \\to \\textit{if}\\ E\\ \\textit{then}\\ S \\mid \\textit{if}\\ E\\ \\textit{then}\\ S\\ \\textit{else}\\ S \\mid a$, $\\quad E \\to b$\n\n$G_2$: $S \\to \\textit{if}\\ E\\ \\textit{then}\\ S \\mid M$, $\\quad M \\to \\textit{if}\\ E\\ \\textit{then}\\ M\\ \\textit{else}\\ S \\mid c$, $\\quad E \\to b$\n\nwhere $\\textit{if}, \\textit{then}, \\textit{else}, a, b, c$ are the terminals.\n\nWhich of the following option(s) is/are CORRECT?",
+      "reason": "Unicode maths italics replaced with KaTeX; hard line wraps removed.",
+      "source": "pdf p.39 (Q.51)"
+    },
+    {
+      "id": "cse-2025-2-cs-41",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝐺1 is not 𝐿𝐿(1) and 𝐺2 is 𝐿𝐿(1)."
+        },
+        {
+          "l": "B",
+          "t": "𝐺1 is 𝐿𝐿(1) and 𝐺2 is not 𝐿𝐿(1)."
+        },
+        {
+          "l": "C",
+          "t": "𝐺1 and 𝐺2 are not 𝐿𝐿(1)."
+        },
+        {
+          "l": "D",
+          "t": "𝐺1 and 𝐺2 are ambiguous. Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$G_1$ is not $LL(1)$ and $G_2$ is $LL(1)$."
+        },
+        {
+          "l": "B",
+          "t": "$G_1$ is $LL(1)$ and $G_2$ is not $LL(1)$."
+        },
+        {
+          "l": "C",
+          "t": "$G_1$ and $G_2$ are not $LL(1)$."
+        },
+        {
+          "l": "D",
+          "t": "$G_1$ and $G_2$ are ambiguous."
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology (CS2)\" removed from option D; Unicode maths italics replaced with KaTeX.",
+      "source": "pdf p.39 (Q.51)"
+    },
+    {
+      "id": "cse-2025-2-cs-41",
+      "field": "tags",
+      "before": [
+        "parsing"
+      ],
+      "after": [
+        "ll1",
+        "ambiguity",
+        "dangling-else"
+      ],
+      "reason": "Tags follow the question content.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2025-2-cs-42",
+      "field": "text",
+      "before": "Let Σ = {𝑎, 𝑏, 𝑐}.  For 𝑥 ∈ Σ∗, and 𝛼 ∈ Σ, let  #𝛼(𝑥) denote the number of\noccurrences of 𝛼 in 𝑥.\nWhich one or more of the following option(s) define(s) regular language(s)?",
+      "after": "Let $\\Sigma = \\{a, b, c\\}$. For $x \\in \\Sigma^*$, and $\\alpha \\in \\Sigma$, let $\\#_\\alpha(x)$ denote the number of occurrences of $\\alpha$ in $x$.\n\nWhich one or more of the following option(s) define(s) regular language(s)?",
+      "reason": "Unicode maths italics replaced with KaTeX; hard line wraps removed.",
+      "source": "pdf p.40 (Q.52)"
+    },
+    {
+      "id": "cse-2025-2-cs-42",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "{𝑎𝑚𝑏𝑛 | 𝑚, 𝑛 ≥ 0}"
+        },
+        {
+          "l": "B",
+          "t": "{𝑎, 𝑏}∗ ∩ {𝑎𝑚𝑏𝑛𝑐𝑚−𝑛 | 𝑚 ≥ 𝑛 ≥ 0}"
+        },
+        {
+          "l": "C",
+          "t": "{𝑤 | 𝑤 ∈ {𝑎, 𝑏}∗, #𝑎(𝑤) ≡ 2 (mod 7), and #𝑏(𝑤) ≡ 3 (mod 9)}"
+        },
+        {
+          "l": "D",
+          "t": "{𝑤 | 𝑤 ∈ {𝑎, 𝑏}∗, #𝑎(𝑤) ≡ 2 (mod 7), and #𝑎(𝑤) = #𝑏(𝑤)} Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\{a^m b^n \\mid m, n \\ge 0\\}$"
+        },
+        {
+          "l": "B",
+          "t": "$\\{a, b\\}^* \\cap \\{a^m b^n c^{m-n} \\mid m \\ge n \\ge 0\\}$"
+        },
+        {
+          "l": "C",
+          "t": "$\\{w \\mid w \\in \\{a, b\\}^*,\\ \\#_a(w) \\equiv 2 \\pmod 7, \\text{ and } \\#_b(w) \\equiv 3 \\pmod 9\\}$"
+        },
+        {
+          "l": "D",
+          "t": "$\\{w \\mid w \\in \\{a, b\\}^*,\\ \\#_a(w) \\equiv 2 \\pmod 7, \\text{ and } \\#_a(w) = \\#_b(w)\\}$"
+        }
+      ],
+      "reason": "Exponents/subscripts had been flattened (\"𝑎𝑚𝑏𝑛\" for $a^m b^n$); page header removed from option D.",
+      "source": "pdf p.40 (Q.52)"
+    },
+    {
+      "id": "cse-2025-2-cs-42",
+      "field": "type",
+      "before": "MCQ",
+      "after": "MSQ",
+      "reason": "The stem says \"Which one or more of the following …\", so this is a multiple-select question (MSQ), not MCQ; the official key is a set of options.",
+      "source": "pdf p.40 (Q.52)"
+    },
+    {
+      "id": "cse-2025-2-cs-42",
+      "field": "tags",
+      "before": [
+        "regular"
+      ],
+      "after": [
+        "regular-languages",
+        "non-regular",
+        "closure-properties"
+      ],
+      "reason": "Tags follow the question content.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2025-2-cs-43",
+      "field": "text",
+      "before": "Consider the database transactions T1 and T2, and data items X and Y. Which of\nthe schedule(s) is/are conflict serializable?",
+      "after": "Consider the database transactions T1 and T2, and data items X and Y. Which of the schedule(s) is/are conflict serializable?\n\n| Transaction T1 | Transaction T2 |\n|---|---|\n| R1(X) | W2(X) |\n| W1(Y) | W2(Y) |\n| R1(X) | COMMIT(T2) |\n| W1(X) | |\n| COMMIT(T1) | |",
+      "reason": "The two transaction boxes printed in the paper were missing from the text (their contents had leaked into option D); added as a table and the PDF line breaks joined.",
+      "source": "pdf p.41 (Q.53)"
+    },
+    {
+      "id": "cse-2025-2-cs-43",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "R1(X), W2(X), W1(Y), W2(Y), R1(X), W1(X), COMMIT(T2), COMMIT(T1)"
+        },
+        {
+          "l": "B",
+          "t": "W2(X), R1(X), W2(Y), W1(Y), R1(X), COMMIT(T2), W1(X), COMMIT(T1)"
+        },
+        {
+          "l": "C",
+          "t": "R1(X), W1(Y), W2(X), W2(Y), R1(X), W1(X), COMMIT(T1), COMMIT(T2)"
+        },
+        {
+          "l": "D",
+          "t": "W2(X), R1(X), W1(Y), W2(Y), R1(X), COMMIT(T2), W1(X), COMMIT(T1) Transaction T1 R1(X) W1(Y) R1(X) W1(X) COMMIT(T1) Transaction T2 W2(X) W2(Y) COMMIT(T2) Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "R1(X), W2(X), W1(Y), W2(Y), R1(X), W1(X), COMMIT(T2), COMMIT(T1)"
+        },
+        {
+          "l": "B",
+          "t": "W2(X), R1(X), W2(Y), W1(Y), R1(X), COMMIT(T2), W1(X), COMMIT(T1)"
+        },
+        {
+          "l": "C",
+          "t": "R1(X), W1(Y), W2(X), W2(Y), R1(X), W1(X), COMMIT(T1), COMMIT(T2)"
+        },
+        {
+          "l": "D",
+          "t": "W2(X), R1(X), W1(Y), W2(Y), R1(X), COMMIT(T2), W1(X), COMMIT(T1)"
+        }
+      ],
+      "reason": "Option D carried the leaked transaction boxes and the running page header; trimmed to the printed option.",
+      "source": "pdf p.41 (Q.53)"
+    },
+    {
+      "id": "cse-2025-2-cs-43",
+      "field": "tags",
+      "before": [
+        "transactions"
+      ],
+      "after": [
+        "transactions",
+        "conflict-serializability",
+        "precedence-graph"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.41 (Q.53)"
+    },
+    {
+      "id": "cse-2025-2-cs-44",
+      "field": "text",
+      "before": "Consider the following relational schema:\nStudents (rollno: integer, name: string, age: integer, cgpa: real)\nCourses (courseno: integer, cname: string, credits: integer)\nEnrolled (rollno: integer, courseno: integer, grade: string)\nWhich of the following options is/are correct SQL query/queries to retrieve  the\nnames of the students enrolled in course number (i.e., courseno) 1470?",
+      "after": "Consider the following relational schema:\n\nStudents (rollno: integer, name: string, age: integer, cgpa: real)\n\nCourses (courseno: integer, cname: string, credits: integer)\n\nEnrolled (rollno: integer, courseno: integer, grade: string)\n\nWhich of the following options is/are correct SQL query/queries to retrieve the names of the students enrolled in course number (i.e., courseno) 1470?",
+      "reason": "PDF line breaks joined; the three relation schemas put on separate lines as printed.",
+      "source": "pdf p.42 (Q.54)"
+    },
+    {
+      "id": "cse-2025-2-cs-44",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "SELECT S.name FROM Students S WHERE EXISTS (SELECT * FROM Enrolled E WHERE E.courseno = 1470 AND E.rollno = S.rollno);"
+        },
+        {
+          "l": "B",
+          "t": "SELECT S.name FROM Students S WHERE SIZEOF (SELECT * FROM Enrolled E WHERE E.courseno = 1470 AND E.rollno = S.rollno) > 0;"
+        },
+        {
+          "l": "C",
+          "t": "SELECT S.name FROM Students S WHERE 0 < (SELECT COUNT(*) FROM Enrolled E WHERE E.courseno = 1470 AND E.rollno = S.rollno);"
+        },
+        {
+          "l": "D",
+          "t": "SELECT S.name FROM Students S NATURAL JOIN Enrolled E WHERE E.courseno = 1470; Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "SELECT S.name FROM Students S WHERE EXISTS (SELECT * FROM Enrolled E WHERE E.courseno = 1470 AND E.rollno = S.rollno);"
+        },
+        {
+          "l": "B",
+          "t": "SELECT S.name FROM Students S WHERE SIZEOF (SELECT * FROM Enrolled E WHERE E.courseno = 1470 AND E.rollno = S.rollno) > 0;"
+        },
+        {
+          "l": "C",
+          "t": "SELECT S.name FROM Students S WHERE 0 < (SELECT COUNT(*) FROM Enrolled E WHERE E.courseno = 1470 AND E.rollno = S.rollno);"
+        },
+        {
+          "l": "D",
+          "t": "SELECT S.name FROM Students S NATURAL JOIN Enrolled E WHERE E.courseno = 1470;"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology (CS2)\" removed from option D.",
+      "source": "pdf p.42 (Q.54)"
+    },
+    {
+      "id": "cse-2025-2-cs-44",
+      "field": "subject",
+      "before": "dm",
+      "after": "db",
+      "reason": "Question was filed under the wrong subject.",
+      "source": "pdf p.42 (Q.54)"
+    },
+    {
+      "id": "cse-2025-2-cs-44",
+      "field": "topic",
+      "before": "sets",
+      "after": "sql",
+      "reason": "Topic corrected to an id that exists in questions.json subjects and matches the question.",
+      "source": "pdf p.42 (Q.54)"
+    },
+    {
+      "id": "cse-2025-2-cs-44",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "sql",
+        "nested-queries",
+        "exists",
+        "natural-join"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.42 (Q.54)"
+    },
+    {
+      "id": "cse-2025-2-cs-45",
+      "field": "text",
+      "before": "Given a computing system with two levels of cache (L1 and L2) and a main\nmemory. The first level (L1) cache access time is 1 nanosecond (ns) and the “hit\nrate” for L1 cache is 90% while the processor is accessing the data from L1 cache.\nWhereas, for the second level (L2) cache, the “hit rate” is 80% and the “miss\npenalty” for transferring data from L2 cache to L1 cache is 10 ns. The “miss\npenalty” for the data to be transferred from main memory to L2 cache is 100 ns.\nThen the average memory access time in this system  in nanoseconds  is\n___________ . (rounded off to one decimal place)",
+      "after": "Given a computing system with two levels of cache (L1 and L2) and a main memory. The first level (L1) cache access time is 1 nanosecond (ns) and the “hit rate” for L1 cache is 90% while the processor is accessing the data from L1 cache. Whereas, for the second level (L2) cache, the “hit rate” is 80% and the “miss penalty” for transferring data from L2 cache to L1 cache is 10 ns. The “miss penalty” for the data to be transferred from main memory to L2 cache is 100 ns.\n\nThen the average memory access time in this system in nanoseconds is ___________ . (rounded off to one decimal place)",
+      "reason": "PDF line breaks and doubled spaces cleaned up.",
+      "source": "pdf p.43 (Q.55)"
+    },
+    {
+      "id": "cse-2025-2-cs-45",
+      "field": "subject",
+      "before": "db",
+      "after": "coa",
+      "reason": "Question was filed under the wrong subject.",
+      "source": "pdf p.43 (Q.55)"
+    },
+    {
+      "id": "cse-2025-2-cs-45",
+      "field": "topic",
+      "before": "sql",
+      "after": "cache",
+      "reason": "Topic corrected to an id that exists in questions.json subjects and matches the question.",
+      "source": "pdf p.43 (Q.55)"
+    },
+    {
+      "id": "cse-2025-2-cs-45",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "cache",
+        "multilevel-cache",
+        "amat"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.43 (Q.55)"
+    },
+    {
+      "id": "cse-2025-2-cs-46",
+      "field": "text",
+      "before": "A 5 -stage instruction pipeline has stage delays of 180, 250, 150, 170, and 250,\nrespectively, in nanoseconds. The delay of an inter -stage latch is 10 nanoseconds.\nAssume that there are no pipeline stalls due to branches and other hazards. The time\ntaken to process 1000 instructions in microseconds is __________ . (rounded off to\ntwo decimal places)",
+      "after": "A 5-stage instruction pipeline has stage delays of 180, 250, 150, 170, and 250, respectively, in nanoseconds. The delay of an inter-stage latch is 10 nanoseconds. Assume that there are no pipeline stalls due to branches and other hazards. The time taken to process 1000 instructions in microseconds is __________ . (rounded off to two decimal places)",
+      "reason": "Extraction artifacts \"5 -stage\" / \"inter -stage\" fixed; line breaks joined.",
+      "source": "pdf p.43 (Q.56)"
+    },
+    {
+      "id": "cse-2025-2-cs-46",
+      "field": "subject",
+      "before": "pds",
+      "after": "coa",
+      "reason": "Question was filed under the wrong subject.",
+      "source": "pdf p.43 (Q.56)"
+    },
+    {
+      "id": "cse-2025-2-cs-46",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "pipeline",
+      "reason": "Topic corrected to an id that exists in questions.json subjects and matches the question.",
+      "source": "pdf p.43 (Q.56)"
+    },
+    {
+      "id": "cse-2025-2-cs-46",
+      "field": "tags",
+      "before": [
+        "c-prog"
+      ],
+      "after": [
+        "pipeline",
+        "clock-cycle",
+        "latch-delay"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.43 (Q.56)"
+    },
+    {
+      "id": "cse-2025-2-cs-47",
+      "field": "text",
+      "before": "In a B+- tree where each node can hold at most four key values, a root to leaf path\nconsists of the following nodes:\nA = (49, 77, 83, -), B = (7, 19, 33, 44), C = (20*, 22*, 25*, 26*)\nThe *-marked keys signify that these are data entries in a leaf.\nAssume that a pointer between keys 𝑘1 and 𝑘2 points to a subtree containing keys\nin [𝑘1, 𝑘2), and that when a leaf is created, the smallest key in it is copied up into\nits parent.\nA record with key value 23 is inserted into the B+- tree.\nThe smallest key value in the parent of the leaf that contains 25* is __________.\n(Answer in integer)\nComputer Science and Information Technology (CS2)",
+      "after": "In a B+- tree where each node can hold at most four key values, a root to leaf path consists of the following nodes:\n\n$A = (49, 77, 83, -)$, $B = (7, 19, 33, 44)$, $C = (20^*, 22^*, 25^*, 26^*)$\n\nThe $^*$-marked keys signify that these are data entries in a leaf.\n\nAssume that a pointer between keys $k_1$ and $k_2$ points to a subtree containing keys in $[k_1, k_2)$, and that when a leaf is created, the smallest key in it is copied up into its parent.\n\nA record with key value 23 is inserted into the B+- tree.\n\nThe smallest key value in the parent of the leaf that contains $25^*$ is __________. (Answer in integer)",
+      "reason": "Running page header \"Computer Science and Information Technology (CS2)\" removed; Unicode maths italics and the bare asterisks (which the markdown renderer turns into italics) rewritten as KaTeX.",
+      "source": "pdf p.43 (Q.57)"
+    },
+    {
+      "id": "cse-2025-2-cs-47",
+      "field": "subject",
+      "before": "pds",
+      "after": "db",
+      "reason": "Question was filed under the wrong subject.",
+      "source": "pdf p.43 (Q.57)"
+    },
+    {
+      "id": "cse-2025-2-cs-47",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "indexing",
+      "reason": "Topic corrected to an id that exists in questions.json subjects and matches the question.",
+      "source": "pdf p.43 (Q.57)"
+    },
+    {
+      "id": "cse-2025-2-cs-47",
+      "field": "tags",
+      "before": [
+        "c-prog"
+      ],
+      "after": [
+        "b-plus-tree",
+        "indexing",
+        "node-split"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.43 (Q.57)"
+    },
+    {
+      "id": "cse-2025-2-cs-48",
+      "field": "text",
+      "before": "A computer system supports a logical address space of 2 32 bytes. It uses two-level\nhierarchical paging with a page size of 4096 bytes. A logical address is divided into\na 𝑏-bit index to the outer page table, an offset within the page of the inner page\ntable, and an offset within the desired page. Each entry of the inner page table uses\neight bytes. All the pages in the system have the same size.\nThe value of 𝑏 is ___________ . (Answer in integer)",
+      "after": "A computer system supports a logical address space of $2^{32}$ bytes. It uses two-level hierarchical paging with a page size of 4096 bytes. A logical address is divided into a $b$-bit index to the outer page table, an offset within the page of the inner page table, and an offset within the desired page. Each entry of the inner page table uses eight bytes. All the pages in the system have the same size.\n\nThe value of $b$ is ___________ . (Answer in integer)",
+      "reason": "The exponent of $2^{32}$ had been flattened to \"2 32\"; Unicode maths italics replaced by KaTeX.",
+      "source": "pdf p.44 (Q.58)"
+    },
+    {
+      "id": "cse-2025-2-cs-48",
+      "field": "topic",
+      "before": "memory",
+      "after": "memory-mgmt",
+      "reason": "Topic corrected to an id that exists in questions.json subjects and matches the question.",
+      "source": "pdf p.44 (Q.58)"
+    },
+    {
+      "id": "cse-2025-2-cs-48",
+      "field": "tags",
+      "before": [
+        "memory"
+      ],
+      "after": [
+        "paging",
+        "multilevel-paging",
+        "page-table"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.44 (Q.58)"
+    },
+    {
+      "id": "cse-2025-2-cs-49",
+      "field": "text",
+      "before": "Consider the following algorithm someAlgo that takes an undirected graph 𝐺 as\ninput.\nsomeAlgo(𝐺)\n1. Let 𝑣 be any vertex in 𝐺. Run BFS on 𝐺 starting at\n𝑣. Let 𝑢 be a vertex in 𝐺 at maximum distance from\n𝑣 as given by the BFS.\n2. Run BFS on 𝐺 again with 𝑢 as the starting vertex.\nLet 𝑧 be the vertex at maximum distance from 𝑢 as\ngiven by the BFS.\n3. Output the distance between 𝑢 and 𝑧 in 𝐺.\nThe output of someAlgo(𝑇) for the tree shown in the given figure is\n___________. (Answer in integer)\nComputer Science and Information Technology (CS2)",
+      "after": "Consider the following algorithm `someAlgo` that takes an undirected graph $G$ as input.\n\n`someAlgo(G)`\n\n1. Let $v$ be any vertex in $G$. Run BFS on $G$ starting at $v$. Let $u$ be a vertex in $G$ at maximum distance from $v$ as given by the BFS.\n2. Run BFS on $G$ again with $u$ as the starting vertex. Let $z$ be the vertex at maximum distance from $u$ as given by the BFS.\n3. Output the distance between $u$ and $z$ in $G$.\n\nThe output of `someAlgo(T)` for the tree shown in the given figure is ___________. (Answer in integer)",
+      "reason": "Running page header \"Computer Science and Information Technology (CS2)\" removed; algorithm restored as a numbered list with KaTeX.",
+      "source": "pdf p.44 (Q.59)"
+    },
+    {
+      "id": "cse-2025-2-cs-49",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2025-2/cs-49-1.svg",
+          "svg": "cse-2025-2/cs-49-1.svg",
+          "alt": "Unlabelled tree T with 14 vertices (dots) and 13 edges. A central vertex X has 4 neighbours: a leaf above-left; a vertex above-right that has two leaves (one above, one to the right); a vertex below-left that has one leaf further below-left; and a vertex Y to the lower right. Y has two leaves below it and a neighbour Z to its right. Z has a leaf above it and a neighbour to its right, which in turn has one leaf further right. The longest path (from the leaves near X, through X, Y and Z, to the far-right leaf) has 6 edges."
+        }
+      ],
+      "reason": "The question depends on its figure (the tree T), which the bank was missing. Redrawn as an SVG from the paper with the same vertex positions and edges.",
+      "source": "pdf p.44 (Q.59)"
+    },
+    {
+      "id": "cse-2025-2-cs-49",
+      "field": "subject",
+      "before": "ga",
+      "after": "algo",
+      "reason": "Question was filed under the wrong subject.",
+      "source": "pdf p.44 (Q.59)"
+    },
+    {
+      "id": "cse-2025-2-cs-49",
+      "field": "topic",
+      "before": "quant",
+      "after": "graph-traversal",
+      "reason": "Topic corrected to an id that exists in questions.json subjects and matches the question.",
+      "source": "pdf p.44 (Q.59)"
+    },
+    {
+      "id": "cse-2025-2-cs-49",
+      "field": "tags",
+      "before": [
+        "quant"
+      ],
+      "after": [
+        "bfs",
+        "tree-diameter",
+        "graph-traversal"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.44 (Q.59)"
+    },
+    {
+      "id": "cse-2025-2-cs-50",
+      "field": "text",
+      "before": "Let Σ = {1,2,3,4}.  For 𝑥 ∈ Σ∗, let 𝑝𝑟𝑜𝑑(𝑥) be the product of symbols in\n𝑥 modulo 7. We take 𝑝𝑟𝑜𝑑(𝜖) = 1, where 𝜖 is the null string.\nFor example, 𝑝𝑟𝑜𝑑(124) = (1 × 2 × 4) mod 7 = 1.\nDefine   𝐿 = {𝑥 ∈ Σ∗ | 𝑝𝑟𝑜𝑑(𝑥) = 2}.\nThe number of states in a minimum state DFA for 𝐿 is ___________. (Answer in\ninteger)",
+      "after": "Let $\\Sigma = \\{1, 2, 3, 4\\}$. For $x \\in \\Sigma^*$, let $prod(x)$ be the product of symbols in $x$ modulo 7. We take $prod(\\epsilon) = 1$, where $\\epsilon$ is the null string.\n\nFor example, $prod(124) = (1 \\times 2 \\times 4) \\bmod 7 = 1$.\n\nDefine $L = \\{x \\in \\Sigma^* \\mid prod(x) = 2\\}$.\n\nThe number of states in a minimum state DFA for $L$ is ___________. (Answer in integer)",
+      "reason": "Unicode maths italics replaced by KaTeX; line breaks joined.",
+      "source": "pdf p.45 (Q.60)"
+    },
+    {
+      "id": "cse-2025-2-cs-50",
+      "field": "tags",
+      "before": [
+        "regular"
+      ],
+      "after": [
+        "regular",
+        "dfa-minimization",
+        "modular-arithmetic"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.45 (Q.60)"
+    },
+    {
+      "id": "cse-2025-2-cs-51",
+      "field": "text",
+      "before": "An application executes 6.4 × 108 number of instructions in 6.3 seconds. There are\nfour types of instructions, the details of which are given in the table. The duration\nof a clock cycle in nanoseconds is _________. (rounded off to one decimal place)\nInstruction type Clock cycles required per\ninstruction (CPI)\nNumber of instructions\nexecuted\nBranch 2 2.25 × 108\nLoad 5 1.20 × 108\nStore 4 1.65 × 108\nArithmetic 3 1.30 × 108\nComputer Science and Information Technology (CS2)",
+      "after": "An application executes $6.4 \\times 10^8$ number of instructions in 6.3 seconds. There are four types of instructions, the details of which are given in the table. The duration of a clock cycle in nanoseconds is _________. (rounded off to one decimal place)\n\n| Instruction type | Clock cycles required per instruction (CPI) | Number of instructions executed |\n|---|---|---|\n| Branch | 2 | $2.25 \\times 10^8$ |\n| Load | 5 | $1.20 \\times 10^8$ |\n| Store | 4 | $1.65 \\times 10^8$ |\n| Arithmetic | 3 | $1.30 \\times 10^8$ |",
+      "reason": "The exponents $10^8$ had been flattened to \"108\"; the table rebuilt as a markdown table; Running page header \"Computer Science and Information Technology (CS2)\" removed.",
+      "source": "pdf p.45 (Q.61)"
+    },
+    {
+      "id": "cse-2025-2-cs-51",
+      "field": "subject",
+      "before": "ga",
+      "after": "coa",
+      "reason": "Question was filed under the wrong subject.",
+      "source": "pdf p.45 (Q.61)"
+    },
+    {
+      "id": "cse-2025-2-cs-51",
+      "field": "topic",
+      "before": "quant",
+      "after": "perf",
+      "reason": "Topic corrected to an id that exists in questions.json subjects and matches the question.",
+      "source": "pdf p.45 (Q.61)"
+    },
+    {
+      "id": "cse-2025-2-cs-51",
+      "field": "tags",
+      "before": [
+        "quant"
+      ],
+      "after": [
+        "cpi",
+        "clock-cycle",
+        "performance"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.45 (Q.61)"
+    },
+    {
+      "id": "cse-2025-2-cs-52",
+      "field": "text",
+      "before": "Consider the following C program:\n#include <stdio.h>\nint main(){\nint a;\nint arr[5] = {30,50,10};\nint *ptr;\nptr = &arr[0] + 1;\na = *ptr;\n(*ptr)++;\nptr++;\nprintf(\"%d\", a + (*ptr) + arr[1]);\nreturn 0;\n}\nThe output of the above program is ___________. (Answer in integer)\nComputer Science and Information Technology (CS2)",
+      "after": "Consider the following C program:\n\n```c\n#include <stdio.h>\n\nint main(){\n\n        int a;\n\n        int arr[5] = {30,50,10};\n\n        int *ptr;\n\n        ptr = &arr[0] + 1;\n\n        a = *ptr;\n\n        (*ptr)++;\n\n        ptr++;\n\n        printf(\"%d\", a + (*ptr) + arr[1]);\n\n        return 0;\n\n}\n```\n\nThe output of the above program is ___________. (Answer in integer)",
+      "reason": "Program restored as a fenced C code block with its indentation; Running page header \"Computer Science and Information Technology (CS2)\" removed.",
+      "source": "pdf p.46 (Q.62)"
+    },
+    {
+      "id": "cse-2025-2-cs-52",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "c",
+      "reason": "Topic corrected to an id that exists in questions.json subjects and matches the question.",
+      "source": "pdf p.46 (Q.62)"
+    },
+    {
+      "id": "cse-2025-2-cs-52",
+      "field": "tags",
+      "before": [
+        "c-prog"
+      ],
+      "after": [
+        "c-programming",
+        "pointers",
+        "arrays"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.46 (Q.62)"
+    },
+    {
+      "id": "cse-2025-2-cs-53",
+      "field": "text",
+      "before": "Consider the following C program:\n#include <stdio.h>\nint g(int n) {\nreturn (n+10);\n}\nint f(int n) {\nreturn g(n*2);\n}\nint main() {\nint sum, n;\nsum=0;\nfor (n=1; n<3; n++)\nsum += g(f(n));\nprintf (\"%d\", sum);\nreturn 0;\n}\nThe output of the given C program is ________. (Answer in integer)",
+      "after": "Consider the following C program:\n\n```c\n#include <stdio.h>\n\nint g(int n) {\n    return (n+10);\n}\n\nint f(int n) {\n    return g(n*2);\n}\n\nint main() {\n    int sum, n;\n    sum=0;\n    for (n=1; n<3; n++)\n        sum += g(f(n));\n    printf (\"%d\", sum);\n    return 0;\n\n}\n```\n\nThe output of the given C program is ________. (Answer in integer)",
+      "reason": "Program restored as a fenced C code block with its indentation.",
+      "source": "pdf p.47 (Q.63)"
+    },
+    {
+      "id": "cse-2025-2-cs-53",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "c",
+      "reason": "Topic corrected to an id that exists in questions.json subjects and matches the question.",
+      "source": "pdf p.47 (Q.63)"
+    },
+    {
+      "id": "cse-2025-2-cs-53",
+      "field": "tags",
+      "before": [
+        "c-prog"
+      ],
+      "after": [
+        "c-programming",
+        "functions",
+        "loops"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.47 (Q.63)"
+    },
+    {
+      "id": "cse-2025-2-cs-54",
+      "field": "text",
+      "before": "A quadratic polynomial (𝑥 −  𝛼)(𝑥 − 𝛽) over complex numbers is said to be square\ninvariant if (𝑥 −  𝛼)(𝑥 − 𝛽) = (𝑥 − 𝛼2)(𝑥 − 𝛽2). Suppose from the set of all\nsquare invariant quadratic polynomials we choose one at random.\nThe probability that the roots of the chosen polynomial  are equal is __________.\n(rounded off to one decimal place)\nComputer Science and Information Technology (CS2)",
+      "after": "A quadratic polynomial $(x - \\alpha)(x - \\beta)$ over complex numbers is said to be square invariant if $(x - \\alpha)(x - \\beta) = (x - \\alpha^2)(x - \\beta^2)$. Suppose from the set of all square invariant quadratic polynomials we choose one at random.\n\nThe probability that the roots of the chosen polynomial are equal is __________. (rounded off to one decimal place)",
+      "reason": "The squares $\\alpha^2$, $\\beta^2$ had been flattened to \"𝛼2\", \"𝛽2\"; Unicode maths replaced by KaTeX; Running page header \"Computer Science and Information Technology (CS2)\" removed.",
+      "source": "pdf p.47 (Q.64)"
+    },
+    {
+      "id": "cse-2025-2-cs-54",
+      "field": "subject",
+      "before": "db",
+      "after": "prob",
+      "reason": "Question was filed under the wrong subject.",
+      "source": "pdf p.47 (Q.64)"
+    },
+    {
+      "id": "cse-2025-2-cs-54",
+      "field": "topic",
+      "before": "sql",
+      "after": "basic",
+      "reason": "Topic corrected to an id that exists in questions.json subjects and matches the question.",
+      "source": "pdf p.47 (Q.64)"
+    },
+    {
+      "id": "cse-2025-2-cs-54",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "probability",
+        "complex-roots",
+        "roots-of-unity"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.47 (Q.64)"
+    },
+    {
+      "id": "cse-2025-2-cs-55",
+      "field": "text",
+      "before": "The unit interval (0,1) is divided at a point chosen uniformly distributed over (0,1)\nin ℝ into two disjoint subintervals.\nThe expected length of the subinterval that contains 0.4 is ___________. (rounded\noff to two decimal places)",
+      "after": "The unit interval $(0,1)$ is divided at a point chosen uniformly distributed over $(0,1)$ in $\\mathbb{R}$ into two disjoint subintervals.\n\nThe expected length of the subinterval that contains 0.4 is ___________. (rounded off to two decimal places)",
+      "reason": "Maths set in KaTeX; line breaks joined.",
+      "source": "pdf p.48 (Q.65)"
+    },
+    {
+      "id": "cse-2025-2-cs-55",
+      "field": "subject",
+      "before": "db",
+      "after": "prob",
+      "reason": "Question was filed under the wrong subject.",
+      "source": "pdf p.48 (Q.65)"
+    },
+    {
+      "id": "cse-2025-2-cs-55",
+      "field": "topic",
+      "before": "sql",
+      "after": "rv",
+      "reason": "Topic corrected to an id that exists in questions.json subjects and matches the question.",
+      "source": "pdf p.48 (Q.65)"
+    },
+    {
+      "id": "cse-2025-2-cs-55",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "uniform-distribution",
+        "expectation",
+        "continuous-random-variable"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.48 (Q.65)"
     }
   ]
 }
