@@ -1,0 +1,662 @@
+{
+  "paper": "cse-2024-2",
+  "fixes": [
+    {
+      "id": "cse-2024-2-ga-1",
+      "field": "text",
+      "before": "If ‘→’ denotes increasing order of intensity, then the meaning of the words\n[walk → jog → sprint] is analogous to [bothered → ________ → daunted].\nWhich one of the given options is appropriate to fill the blank?",
+      "after": "If ‘→’ denotes increasing order of intensity, then the meaning of the words\n\n[walk → jog → sprint] is analogous to [bothered → ________ → daunted].\n\nWhich one of the given options is appropriate to fill the blank?",
+      "reason": "Reflowed the PDF line breaks into paragraphs.",
+      "source": "pdf p.1"
+    },
+    {
+      "id": "cse-2024-2-ga-2",
+      "field": "text",
+      "before": "Two wizards try to create a spell using all the four elements, water, air, fire, and\nearth. For this, they decide to mix all these elements in all possible orders. They\nalso decide to work independently. After trying all possible combination of\nelements, they conclude that the spell does not work.\nHow many attempts does each wizard make before coming to this conclusion,\nindependently?",
+      "after": "Two wizards try to create a spell using all the four elements, water, air, fire, and earth. For this, they decide to mix all these elements in all possible orders. They also decide to work independently. After trying all possible combination of elements, they conclude that the spell does not work.\n\nHow many attempts does each wizard make before coming to this conclusion, independently?",
+      "reason": "Reflowed the PDF line breaks into paragraphs.",
+      "source": "pdf p.1"
+    },
+    {
+      "id": "cse-2024-2-ga-2",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "24"
+        },
+        {
+          "l": "B",
+          "t": "48"
+        },
+        {
+          "l": "C",
+          "t": "16"
+        },
+        {
+          "l": "D",
+          "t": "12 Computer Science and Information Technology Set 2 (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "24"
+        },
+        {
+          "l": "B",
+          "t": "48"
+        },
+        {
+          "l": "C",
+          "t": "16"
+        },
+        {
+          "l": "D",
+          "t": "12"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology Set 2 (CS2)\" pasted into option D.",
+      "source": "pdf p.1"
+    },
+    {
+      "id": "cse-2024-2-ga-3",
+      "field": "text",
+      "before": "In an engineering college of 10,000 students, 1,500 like neither their core branches\nnor other branches. The number of students who like their core branches is 1/4 th of\nthe number of students who like other branches. The number of students who like\nboth their core and other branches is 500.\nThe number of students who like their core branches is",
+      "after": "In an engineering college of 10,000 students, 1,500 like neither their core branches nor other branches. The number of students who like their core branches is 1/4th of the number of students who like other branches. The number of students who like both their core and other branches is 500.\n\nThe number of students who like their core branches is",
+      "reason": "Reflowed the PDF line breaks into paragraphs; \"1/4 th\" was split by extraction.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2024-2-ga-4",
+      "field": "text",
+      "before": "For positive non-zero real variables 𝑥 and 𝑦, if\nln (𝑥 + 𝑦\n2 ) = 1\n2 [ln⁡(𝑥) + ln⁡(𝑦)]\nthen, the value of\n𝑥\n𝑦 +\n𝑦\n𝑥  is",
+      "after": "For positive non-zero real variables $x$ and $y$, if\n\n$$\\ln\\left(\\frac{x+y}{2}\\right) = \\frac{1}{2}\\left[\\ln(x) + \\ln(y)\\right]$$\n\nthen, the value of $\\dfrac{x}{y} + \\dfrac{y}{x}$ is",
+      "reason": "The fractions (x+y)/2, x/y and y/x were broken across lines by extraction; rewritten in LaTeX.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2024-2-ga-4",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "1"
+        },
+        {
+          "l": "B",
+          "t": "1/2"
+        },
+        {
+          "l": "C",
+          "t": "2"
+        },
+        {
+          "l": "D",
+          "t": "4 Computer Science and Information Technology Set 2 (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "1"
+        },
+        {
+          "l": "B",
+          "t": "1/2"
+        },
+        {
+          "l": "C",
+          "t": "2"
+        },
+        {
+          "l": "D",
+          "t": "4"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology Set 2 (CS2)\" pasted into option D.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2024-2-ga-5",
+      "field": "text",
+      "before": "In the sequence 6, 9, 14, x, 30, 41, a possible value of 𝑥 is",
+      "after": "In the sequence 6, 9, 14, $x$, 30, 41, a possible value of $x$ is",
+      "reason": "Unicode maths italic x replaced by LaTeX.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2024-2-ga-5",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "25"
+        },
+        {
+          "l": "B",
+          "t": "21"
+        },
+        {
+          "l": "C",
+          "t": "18"
+        },
+        {
+          "l": "D",
+          "t": "20 Computer Science and Information Technology Set 2 (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "25"
+        },
+        {
+          "l": "B",
+          "t": "21"
+        },
+        {
+          "l": "C",
+          "t": "18"
+        },
+        {
+          "l": "D",
+          "t": "20"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology Set 2 (CS2)\" pasted into option D.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2024-2-ga-6",
+      "field": "text",
+      "before": "Sequence the following sentences in a coherent passage.\nP: This fortuitous geological event generated a colossal amount of energy and\nheat that resulted in the rocks rising to an average height of 4 km across the\ncontact zone.\nQ: Thus, the geophysicists tend to think of the Himalayas as an active geological\nevent rather than as a static geological feature.\nR: The natural process of the cooling of this massive edifice absorbed large\nquantities of atmospheric carbon dioxide, altering the earth’s atmosphere and\nmaking it better suited for life.\nS: Many millennia ago, a breakaway chunk of bedrock from the Antarctic Plate\ncollided with the massive Eurasian Plate.",
+      "after": "Sequence the following sentences in a coherent passage.\n\n**P:** This fortuitous geological event generated a colossal amount of energy and heat that resulted in the rocks rising to an average height of 4 km across the contact zone.\n\n**Q:** Thus, the geophysicists tend to think of the Himalayas as an active geological event rather than as a static geological feature.\n\n**R:** The natural process of the cooling of this massive edifice absorbed large quantities of atmospheric carbon dioxide, altering the earth’s atmosphere and making it better suited for life.\n\n**S:** Many millennia ago, a breakaway chunk of bedrock from the Antarctic Plate collided with the massive Eurasian Plate.",
+      "reason": "Reflowed the PDF line breaks into paragraphs; each sentence is its own paragraph.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2024-2-ga-6",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "QPSR"
+        },
+        {
+          "l": "B",
+          "t": "QSPR"
+        },
+        {
+          "l": "C",
+          "t": "SPRQ"
+        },
+        {
+          "l": "D",
+          "t": "SRPQ Computer Science and Information Technology Set 2 (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "QPSR"
+        },
+        {
+          "l": "B",
+          "t": "QSPR"
+        },
+        {
+          "l": "C",
+          "t": "SPRQ"
+        },
+        {
+          "l": "D",
+          "t": "SRPQ"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology Set 2 (CS2)\" pasted into option D.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2024-2-ga-7",
+      "field": "text",
+      "before": "A person sold two different items at the same price. He made 10% profit in one\nitem, and 10% loss in the other item. In selling these two items, the person made a\ntotal of",
+      "after": "A person sold two different items at the same price. He made 10% profit in one item, and 10% loss in the other item. In selling these two items, the person made a total of",
+      "reason": "Reflowed the PDF line breaks into paragraphs.",
+      "source": "pdf p.5"
+    },
+    {
+      "id": "cse-2024-2-ga-7",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "1% profit"
+        },
+        {
+          "l": "B",
+          "t": "2% profit"
+        },
+        {
+          "l": "C",
+          "t": "1% loss"
+        },
+        {
+          "l": "D",
+          "t": "2% loss Computer Science and Information Technology Set 2 (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "1% profit"
+        },
+        {
+          "l": "B",
+          "t": "2% profit"
+        },
+        {
+          "l": "C",
+          "t": "1% loss"
+        },
+        {
+          "l": "D",
+          "t": "2% loss"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology Set 2 (CS2)\" pasted into option D.",
+      "source": "pdf p.5"
+    },
+    {
+      "id": "cse-2024-2-ga-8",
+      "field": "text",
+      "before": "The pie charts depict the shares of various power generation technologies in the\ntotal electricity generation of a country for the years 2007 and 2023.\nThe renewable sources of electricity generation consist of Hydro, Solar and Wind.\nAssuming that the total electricity generated remains the same from 2007 to 2023,\nwhat is the percentage increase in the share of the renewable sources of electricity\ngeneration over this period?",
+      "after": "The pie charts depict the shares of various power generation technologies in the total electricity generation of a country for the years 2007 and 2023.\n\nThe renewable sources of electricity generation consist of Hydro, Solar and Wind. Assuming that the total electricity generated remains the same from 2007 to 2023, what is the percentage increase in the share of the renewable sources of electricity generation over this period?",
+      "reason": "Reflowed the PDF line breaks into paragraphs.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2024-2-ga-8",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "25%"
+        },
+        {
+          "l": "B",
+          "t": "50%"
+        },
+        {
+          "l": "C",
+          "t": "77.5%"
+        },
+        {
+          "l": "D",
+          "t": "62.5% Coal 35% Gas 25% Wind 5% Hydro 30% Solar 5% Year 2007 Coal 20% Gas 15% Wind 10% Hydro 35% Solar 20% Year 2023 Computer Science and Information Technology Set 2 (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "25%"
+        },
+        {
+          "l": "B",
+          "t": "50%"
+        },
+        {
+          "l": "C",
+          "t": "77.5%"
+        },
+        {
+          "l": "D",
+          "t": "62.5%"
+        }
+      ],
+      "reason": "The pie-chart labels and the running page header were pasted into option D.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2024-2-ga-8",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2024-2/ga-8-1.svg",
+          "svg": "cse-2024-2/ga-8-1.svg",
+          "alt": "Two pie charts of the shares of electricity generation. Year 2007: Coal 35%, Gas 25%, Wind 5%, Hydro 30%, Solar 5%. Year 2023: Coal 20%, Gas 15%, Wind 10%, Hydro 35%, Solar 20%."
+        }
+      ],
+      "reason": "The question depends on the two pie charts, which were missing (their labels had leaked into option D); redrawn from the paper.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2024-2-ga-9",
+      "field": "text",
+      "before": "A cube is to be cut into 8 pieces of equal size and shape. Here, each cut should be\nstraight and it should not stop till it reaches the other end of the cube.\nThe minimum number of such cuts required is",
+      "after": "A cube is to be cut into 8 pieces of equal size and shape. Here, each cut should be straight and it should not stop till it reaches the other end of the cube.\n\nThe minimum number of such cuts required is",
+      "reason": "Reflowed the PDF line breaks into paragraphs.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2024-2-ga-9",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "3"
+        },
+        {
+          "l": "B",
+          "t": "4"
+        },
+        {
+          "l": "C",
+          "t": "7"
+        },
+        {
+          "l": "D",
+          "t": "8 Computer Science and Information Technology Set 2 (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "3"
+        },
+        {
+          "l": "B",
+          "t": "4"
+        },
+        {
+          "l": "C",
+          "t": "7"
+        },
+        {
+          "l": "D",
+          "t": "8"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology Set 2 (CS2)\" pasted into option D.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2024-2-ga-9",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "spatial-aptitude"
+      ],
+      "reason": "Spatial question tagged as quantitative.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2024-2-ga-10",
+      "field": "text",
+      "before": "In the 4 × 4 array shown below, each cell of the first three rows has either a\ncross (X) or a number.\nThe number in a cell represents the count of the immediate neighboring cells\n(left, right, top, bottom, diagonals) NOT having a cross (X). Given that the last row\nhas no crosses (X), the sum of the four numbers to be filled in the last row is",
+      "after": "In the 4 × 4 array shown below, each cell of the first three rows has either a cross (X) or a number.\n\nThe number in a cell represents the count of the immediate neighboring cells (left, right, top, bottom, diagonals) NOT having a cross (X). Given that the last row has no crosses (X), the sum of the four numbers to be filled in the last row is",
+      "reason": "Reflowed the PDF line breaks into paragraphs.",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2024-2-ga-10",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "11"
+        },
+        {
+          "l": "B",
+          "t": "10"
+        },
+        {
+          "l": "C",
+          "t": "12"
+        },
+        {
+          "l": "D",
+          "t": "9 Computer Science and Information Technology Set 2 (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "11"
+        },
+        {
+          "l": "B",
+          "t": "10"
+        },
+        {
+          "l": "C",
+          "t": "12"
+        },
+        {
+          "l": "D",
+          "t": "9"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology Set 2 (CS2)\" pasted into option D.",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2024-2-ga-10",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2024-2/ga-10-1.svg",
+          "svg": "cse-2024-2/ga-10-1.svg",
+          "alt": "A 4 by 4 grid. Row 1: 1, X, 4, 3. Row 2: X, 5, 5, 4. Row 3: 3, X, 6, X. Row 4: four empty cells."
+        }
+      ],
+      "reason": "The question depends on the 4 × 4 array, which was missing; redrawn from the paper.",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2024-2-ga-10",
+      "field": "topic",
+      "before": "quant",
+      "after": "analytical",
+      "reason": "A grid logic puzzle is analytical reasoning, not arithmetic.",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2024-2-ga-10",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "analytical-aptitude",
+        "grid-puzzle"
+      ],
+      "reason": "Tags matched to the puzzle content.",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2024-2-cs-1",
+      "field": "text",
+      "before": "Consider a computer with a 4 MHz processor. Its DMA controller can transfer\n8 bytes in 1 cycle from a device to main memory through cycle stealing at regular\nintervals. Which one of the following is the data transfer rate (in bits per second) of\nthe DMA controller if 1% of the processor cycles are used for DMA?",
+      "after": "Consider a computer with a 4 MHz processor. Its DMA controller can transfer 8 bytes in 1 cycle from a device to main memory through cycle stealing at regular intervals. Which one of the following is the data transfer rate (in bits per second) of the DMA controller if 1% of the processor cycles are used for DMA?",
+      "reason": "Reflowed the PDF line breaks into paragraphs.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "cse-2024-2-cs-1",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "dma",
+        "cycle-stealing"
+      ],
+      "reason": "Tag \"sql\" is unrelated; this is a DMA question.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "cse-2024-2-cs-2",
+      "field": "text",
+      "before": "Let 𝑝 and 𝑞⁡be the following propositions:\n𝑝: Fail grade can be given.\n𝑞: Student scores more than 50% marks.\nConsider the statement: “Fail grade cannot be given when student scores more than\n50% marks.”\nWhich one of the following is the CORRECT representation of the above statement\nin propositional logic?",
+      "after": "Let $p$ and $q$ be the following propositions:\n\n- $p$: Fail grade can be given.\n- $q$: Student scores more than 50% marks.\n\nConsider the statement: “Fail grade cannot be given when student scores more than 50% marks.”\n\nWhich one of the following is the CORRECT representation of the above statement in propositional logic?",
+      "reason": "Unicode maths italics and stray U+2061 characters replaced by LaTeX; reflowed the pdf line breaks into paragraphs.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "cse-2024-2-cs-2",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝑞 → ¬⁡𝑝"
+        },
+        {
+          "l": "B",
+          "t": "𝑞 → 𝑝"
+        },
+        {
+          "l": "C",
+          "t": "𝑝 → 𝑞"
+        },
+        {
+          "l": "D",
+          "t": "¬⁡𝑝 → 𝑞 Computer Science and Information Technology Set 2 (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$q \\to \\neg p$"
+        },
+        {
+          "l": "B",
+          "t": "$q \\to p$"
+        },
+        {
+          "l": "C",
+          "t": "$p \\to q$"
+        },
+        {
+          "l": "D",
+          "t": "$\\neg p \\to q$"
+        }
+      ],
+      "reason": "Options converted from Unicode maths italics (with stray U+2061) to LaTeX; Running page header \"Computer Science and Information Technology Set 2 (CS2)\" pasted into option D.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "cse-2024-2-cs-2",
+      "field": "subject",
+      "before": "ga",
+      "after": "dm",
+      "reason": "Propositional logic belongs to Discrete Mathematics, not General Aptitude.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "cse-2024-2-cs-2",
+      "field": "topic",
+      "before": "quant",
+      "after": "logic",
+      "reason": "Propositional logic.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "cse-2024-2-cs-2",
+      "field": "tags",
+      "before": [
+        "logic"
+      ],
+      "after": [
+        "propositional-logic",
+        "implication"
+      ],
+      "reason": "Tags matched to the content.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "cse-2024-2-cs-3",
+      "field": "text",
+      "before": "Consider the following C program. Assume parameters to a function are evaluated\nfrom right to left.\n#include <stdio.h>\nint g(int p) { printf(\"%d\", p); return p; }\nint h(int q) { printf(\"%d\", q); return q; }\nvoid f(int x, int y) {\ng(x);\nh(y);\n}\nint main() {\nf(g(10),h(20));\n}\nWhich one of the following options is the CORRECT output of the above\nC program?",
+      "after": "Consider the following C program. Assume parameters to a function are evaluated from right to left.\n\n```c\n#include <stdio.h>\n\nint g(int p) { printf(\"%d\", p); return p; }\nint h(int q) { printf(\"%d\", q); return q; }\n\nvoid f(int x, int y) {\n  g(x);\n  h(y);\n}\n\nint main() {\n  f(g(10),h(20));\n}\n```\n\nWhich one of the following options is the CORRECT output of the above C program?",
+      "reason": "The program lost its code formatting; restored as a fenced C block with the PDF indentation.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2024-2-cs-3",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "20101020"
+        },
+        {
+          "l": "B",
+          "t": "10202010"
+        },
+        {
+          "l": "C",
+          "t": "20102010"
+        },
+        {
+          "l": "D",
+          "t": "10201020 Computer Science and Information Technology Set 2 (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "20101020"
+        },
+        {
+          "l": "B",
+          "t": "10202010"
+        },
+        {
+          "l": "C",
+          "t": "20102010"
+        },
+        {
+          "l": "D",
+          "t": "10201020"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology Set 2 (CS2)\" pasted into option D.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2024-2-cs-3",
+      "field": "subject",
+      "before": "coa",
+      "after": "pds",
+      "reason": "A C output-tracing question belongs to Programming & Data Structures, not COA.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2024-2-cs-3",
+      "field": "topic",
+      "before": "isa",
+      "after": "c",
+      "reason": "C function calls and argument evaluation order.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2024-2-cs-3",
+      "field": "tags",
+      "before": [
+        "c-prog"
+      ],
+      "after": [
+        "c-prog",
+        "function-calls",
+        "order-of-evaluation"
+      ],
+      "reason": "Tags matched to the content.",
+      "source": "pdf p.10"
+    }
+  ]
+}
