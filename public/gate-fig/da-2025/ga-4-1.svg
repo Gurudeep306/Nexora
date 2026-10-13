@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 470 330" font-family="Arial, Helvetica, sans-serif">
+  <g fill="none" stroke="currentColor" stroke-width="2">
+    <rect x="25" y="87" width="282" height="193"/>
+    <polygon points="303,19 158,280 448,280" stroke-linejoin="miter"/>
+    <ellipse cx="276" cy="217" rx="120" ry="98"/>
+  </g>
+  <g fill="currentColor" font-size="19" text-anchor="middle">
+    <text x="303" y="74">2</text>
+    <text x="286" y="110">R</text>
+    <text x="182" y="202">4</text>
+    <text x="87" y="222">1</text>
+    <text x="243" y="227">P</text>
+    <text x="337" y="212">Q</text>
+    <text x="280" y="307">3</text>
+  </g>
+</svg>
