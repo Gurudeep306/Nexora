@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 320" role="img" aria-label="Pie chart: Macronutrient energy contribution. Carbohydrates 35%, Proteins 20%, Unsaturated fat 20%, Saturated fat 20%, Trans fat 5%" font-family="Arial, Helvetica, sans-serif">
+  <rect x="4" y="4" width="412" height="312" fill="none" stroke="currentColor" stroke-width="1.5"/>
+  <text x="210" y="30" fill="currentColor" font-size="17" text-anchor="middle">Macronutrient energy contribution</text>
+  <g stroke="currentColor" stroke-width="1.6" stroke-linejoin="round">
+    <path d="M210,180 L210,60 A120,120 0 0,1 307.1,250.5 Z" fill="currentColor" fill-opacity="0.03"/>
+    <path d="M210,180 L307.1,250.5 A120,120 0 0,1 172.9,294.1 Z" fill="currentColor" fill-opacity="0.1"/>
+    <path d="M210,180 L172.9,294.1 A120,120 0 0,1 90,180 Z" fill="currentColor" fill-opacity="0.17"/>
+    <path d="M210,180 L90,180 A120,120 0 0,1 172.9,65.9 Z" fill="currentColor" fill-opacity="0.24"/>
+    <path d="M210,180 L172.9,65.9 A120,120 0 0,1 210,60 Z" fill="currentColor" fill-opacity="0.32"/>
+  </g>
+  <g fill="currentColor" font-size="13" font-weight="700" text-anchor="middle">
+    <text x="272" y="148">Carbohydrates</text>
+    <text x="272" y="165">35%</text>
+    <text x="234" y="246">Proteins</text>
+    <text x="234" y="263">20%</text>
+    <text x="148" y="217">Unsaturated fat</text>
+    <text x="148" y="234">20%</text>
+    <text x="150" y="132">Saturated fat</text>
+    <text x="150" y="149">20%</text>
+  </g>
+  <line x1="196" y1="78" x2="140" y2="52" stroke="currentColor" stroke-width="1"/>
+  <g fill="currentColor" font-size="13" font-weight="700" text-anchor="end">
+    <text x="136" y="50">Trans fat</text>
+    <text x="136" y="66">5%</text>
+  </g>
+</svg>
