@@ -4365,6 +4365,3299 @@
         ],
         "caption": "Block = 1 byte ⇒ no offset bits."
       }
+    },
+    "cse-2025-2-cs-30": {
+      "approach": "Only two items can clash: the reduction $A \\to d\\cdot$ sits next to a shift in two different states. Compare SLR look-aheads (FOLLOW$(A)$) with LR(1) look-aheads in those two states, then check whether LALR merging changes anything.",
+      "concepts": [
+        "SLR(1) vs LR(1) look-aheads",
+        "FOLLOW sets",
+        "LALR state merging",
+        "Shift–reduce conflict"
+      ],
+      "given": "Augmented grammar: $S' \\to S$, $S \\to Aa \\mid bAc \\mid dc \\mid bda$, $A \\to d$.",
+      "steps": [
+        {
+          "title": "FOLLOW(A) for SLR",
+          "body": "$A$ appears in $S \\to A\\,a$ (followed by $a$) and $S \\to b\\,A\\,c$ (followed by $c$). So $\\text{FOLLOW}(A) = \\{a, c\\}$. An SLR parser reduces $A \\to d$ on **both** $a$ and $c$ in every state containing $A \\to d\\cdot$.",
+          "scene": {
+            "reveal": 0
+          }
+        },
+        {
+          "title": "State reached on d from the start",
+          "body": "From $I_0$ on $d$: $I_d = \\{\\, S \\to d\\cdot c,\\ \\ A \\to d\\cdot \\,\\}$.\n\n- SLR: shift on $c$ (from $S \\to d\\cdot c$) **and** reduce on $c \\in \\text{FOLLOW}(A)$ → **S/R conflict**.\n- LR(1): in $I_0$ the item $A \\to \\cdot d$ comes only from $S \\to \\cdot A a$, so its look-ahead is $\\{a\\}$. Reduce on $a$, shift on $c$ → no conflict.",
+          "scene": {
+            "reveal": 4,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "State reached on b then d",
+          "body": "From $I_0$ on $b$: $\\{S \\to b\\cdot Ac,\\ S \\to b\\cdot da,\\ A \\to \\cdot d\\}$; then on $d$: $I_{bd} = \\{\\, S \\to bd\\cdot a,\\ \\ A \\to d\\cdot \\,\\}$.\n\n- SLR: shift on $a$ and reduce on $a \\in \\text{FOLLOW}(A)$ → **S/R conflict**.\n- LR(1): here $A \\to \\cdot d$ came from $S \\to b\\cdot Ac$, so its look-ahead is $\\{c\\}$. Shift on $a$, reduce on $c$ → no conflict.",
+          "scene": {
+            "reveal": 8,
+            "hl": [
+              {
+                "r": 1,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "LALR merging changes nothing",
+          "body": "LALR merges only LR(1) states with the **same core**. The two states holding $A \\to d\\cdot$ have different cores ($\\{S \\to d\\cdot c, A \\to d\\cdot\\}$ vs $\\{S \\to bd\\cdot a, A \\to d\\cdot\\}$), and every other state has a unique core. So the LALR(1) table equals the CLR(1) table and is conflict-free.\n\nHence $G$ is **LALR(1) (and CLR(1)) but not SLR(1)**.",
+          "scene": {
+            "hl": [
+              {
+                "c": 2,
+                "tone": "error"
+              },
+              {
+                "c": 3,
+                "tone": "success"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "**$G$ is LALR(1), not SLR(1)** — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "LALR(1) succeeds: the only reduce states have distinct cores, so no merging and no conflict."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "There is nothing to separate CLR(1) from LALR(1) here — no two LR(1) states share a core, so the tables coincide."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "LR(1)/LALR(1) look-aheads ($\\{a\\}$ and $\\{c\\}$) avoid the clashes, but FOLLOW$(A)=\\{a,c\\}$ gives S/R conflicts in two SLR states."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "SLR(1) fails: with FOLLOW$(A)=\\{a,c\\}$, state $\\{S\\to d\\cdot c, A\\to d\\cdot\\}$ conflicts on $c$ (and $\\{S\\to bd\\cdot a, A\\to d\\cdot\\}$ on $a$)."
+        }
+      ],
+      "shortcut": "This is the textbook \"LALR but not SLR\" pattern: the same reduction $A\\to d$ is followed by $a$ in one context and $c$ in the other, and each context also has a shift on the *other* symbol. FOLLOW mixes the two contexts; LR(1) keeps them apart, and the cores differ so LALR does too.",
+      "pitfalls": [
+        "Assuming any grammar that is not SLR(1) must fail LALR(1) too.",
+        "Thinking LALR merging always introduces conflicts — it only merges states with identical cores.",
+        "Forgetting to check both states that contain $A \\to d\\cdot$."
+      ],
+      "verification": "Parse $da$: after $d$ with look-ahead $a$, LR(1) reduces $A\\to d$, then shifts $a$, reduces $S\\to Aa$ ✓. Parse $dc$: look-ahead $c$ → shift, reduce $S\\to dc$ ✓. The SLR parser cannot decide on $c$ in that same state.",
+      "animation": {
+        "kind": "table",
+        "title": "Where A → d· lives",
+        "cols": [
+          "items",
+          "look-ahead of A→d·",
+          "SLR action on clash symbol",
+          "LR(1)/LALR action"
+        ],
+        "rowLabels": [
+          "I(d)",
+          "I(bd)"
+        ],
+        "rows": [
+          [
+            "S→d·c, A→d·",
+            "LR(1): {a}",
+            "c: shift + reduce ✗",
+            "c: shift, a: reduce ✓"
+          ],
+          [
+            "S→bd·a, A→d·",
+            "LR(1): {c}",
+            "a: shift + reduce ✗",
+            "a: shift, c: reduce ✓"
+          ]
+        ],
+        "reveal": 0,
+        "caption": "FOLLOW(A) = {a, c}"
+      }
+    },
+    "cse-2025-2-cs-31": {
+      "approach": "Find the peak with a binary search on the slope ($A[m]$ vs $A[m+1]$), then binary-search the increasing part and the decreasing part. Three $O(\\log n)$ searches give $O(\\log n)$, and a sorted array (a special bitonic array) already forces $\\Omega(\\log n)$.",
+      "concepts": [
+        "Binary search",
+        "Bitonic array peak finding",
+        "Comparison lower bound"
+      ],
+      "steps": [
+        {
+          "title": "Find the peak in O(log n)",
+          "body": "Compare $A[m]$ with $A[m+1]$: if $A[m] < A[m+1]$ we are on the rising slope, so the peak is right of $m$; otherwise it is at $m$ or left of it. Each probe halves the range (distinct elements make the test unambiguous): $O(\\log n)$ comparisons.\n\nExample $A = [2,5,9,14,11,7,3]$: $m=3$: $14 > 11$ → go left; $m=1$: $5 < 9$ → go right; $m=2$: $9<14$ → peak at index 3.",
+          "scene": {
+            "pointers": [
+              {
+                "name": "peak",
+                "at": 3
+              }
+            ],
+            "hl": [
+              {
+                "at": 3,
+                "tone": "warning"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Two ordinary binary searches",
+          "body": "The prefix $A[1..i]$ is ascending and the suffix $A[i+1..n]$ is descending, so search each with binary search: $O(\\log n) + O(\\log n)$.\n\nExample, key $7$: not in $[2,5,9,14]$; in the descending part $[11,7,3]$ the middle element is $7$ → found.\n\nTotal: $3 \\cdot O(\\log n) = O(\\log n)$.",
+          "scene": {
+            "ranges": [
+              {
+                "from": 0,
+                "to": 3,
+                "label": "ascending"
+              },
+              {
+                "from": 4,
+                "to": 6,
+                "label": "descending"
+              }
+            ],
+            "pointers": [
+              {
+                "name": "mid",
+                "at": 5
+              }
+            ],
+            "hl": [
+              {
+                "at": 5,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Lower bound Ω(log n)",
+          "body": "A fully sorted array is bitonic (take $i = n$). Any comparison-based search in a sorted array of $n$ elements needs $\\Omega(\\log n)$ comparisons (a decision tree with $n+1$ outcomes has depth $\\ge \\log_2(n+1)$). Hence the best bound is $\\Theta(\\log n)$."
+        }
+      ],
+      "answer": {
+        "value": "$\\Theta(\\log n)$ — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Linear scan works but is not the best possible: the peak plus two binary searches use only $O(\\log n)$ comparisons."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Impossible: even a sorted array needs $\\Omega(\\log n)$ comparisons."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$\\Theta(\\log^2 n)$ is what a careless nested search would give; three sequential binary searches add up to $O(\\log n)$, not multiply."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Upper bound $O(\\log n)$ (peak + two binary searches) matches the $\\Omega(\\log n)$ lower bound from sorted arrays."
+        }
+      ],
+      "shortcut": "Sorted arrays are a special case → at least $\\log n$; peak finding + 2 binary searches → at most $3\\log n$. So $\\Theta(\\log n)$.",
+      "pitfalls": [
+        "Reading option (C) as $\\log_2 n$ — it is $\\log^2 n$.",
+        "Multiplying the costs of the peak search and the binary searches instead of adding them."
+      ],
+      "verification": "For $n = 2^{20}$: about 20 probes for the peak and at most 20 + 20 for the two halves — 60 comparisons, i.e. a constant times $\\log n$.",
+      "animation": {
+        "kind": "array",
+        "label": "A",
+        "title": "Bitonic search (example data)",
+        "cells": [
+          2,
+          5,
+          9,
+          14,
+          11,
+          7,
+          3
+        ],
+        "caption": "Example only: the question is general"
+      }
+    },
+    "cse-2025-2-cs-32": {
+      "approach": "Identify each $f$ with the bit-vector $(f(1),\\dots,f(n))$, i.e. a subset of $\\{1,\\dots,n\\}$. Then $f \\preccurlyeq g$ is exactly subset inclusion, so $(\\mathcal F,\\preccurlyeq)$ is the Boolean lattice $2^n$.",
+      "concepts": [
+        "Partial order",
+        "Lattice (meet/join)",
+        "Boolean lattice"
+      ],
+      "steps": [
+        {
+          "title": "Partial order",
+          "body": "- Reflexive: $f(x) \\le f(x)$ for all $x$.\n- Antisymmetric: $f \\preccurlyeq g$ and $g \\preccurlyeq f$ give $f(x)=g(x)$ for all $x$, so $f = g$.\n- Transitive: $f(x) \\le g(x) \\le h(x)$ gives $f(x) \\le h(x)$.\n\nSo (B) is true."
+        },
+        {
+          "title": "Lattice",
+          "body": "For any $f, g$: $(f \\wedge g)(x) = \\min(f(x), g(x))$ is the greatest lower bound and $(f \\vee g)(x) = \\max(f(x), g(x))$ is the least upper bound — both are again functions to $\\{0,1\\}$. Every pair has a meet and a join, so (C) is true (it is the Boolean lattice, isomorphic to $(2^{\\{1..n\\}}, \\subseteq)$).",
+          "scene": {
+            "tones": {
+              "10": "accent",
+              "11": "info",
+              "00": "info",
+              "01": "accent"
+            },
+            "caption": "n = 2: meet(01,10)=00, join(01,10)=11"
+          }
+        },
+        {
+          "title": "Not symmetric, so not an equivalence",
+          "body": "Take $f \\equiv 0$ and $g \\equiv 1$: $f \\preccurlyeq g$ but $g \\not\\preccurlyeq f$ (since $1 \\not\\le 0$). So $\\preccurlyeq$ is not symmetric (A false) and therefore not an equivalence relation (D false). (Here $n \\ge 1$, so such $f \\ne g$ exist.)",
+          "scene": {
+            "tones": {
+              "11": "error",
+              "00": "success"
+            },
+            "caption": "00 ≼ 11 but not 11 ≼ 00"
+          }
+        }
+      ],
+      "answer": {
+        "value": "**(B) and (C)**",
+        "choice": [
+          "B",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$0 \\preccurlyeq 1$ (constant functions) but not $1 \\preccurlyeq 0$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Pointwise $\\le$ inherits reflexivity, antisymmetry and transitivity from $\\le$ on $\\{0,1\\}$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Pointwise min and max are the meet and join; it is the Boolean lattice $2^n$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "An equivalence relation must be symmetric, which fails."
+        }
+      ],
+      "shortcut": "Functions $\\{1..n\\}\\to\\{0,1\\}$ = subsets of $\\{1..n\\}$, and $\\preccurlyeq$ = $\\subseteq$. Subset inclusion is the classic lattice and is never symmetric.",
+      "pitfalls": [
+        "Confusing antisymmetric with \"not symmetric\" — the relation is antisymmetric, which is exactly why it is a partial order.",
+        "Thinking a partial order that is not total cannot be a lattice."
+      ],
+      "verification": "Hasse diagram for $n=2$ (right): a diamond, the smallest non-chain lattice; $01$ and $10$ are incomparable yet have meet $00$ and join $11$.",
+      "animation": {
+        "kind": "graph",
+        "title": "Hasse diagram for n = 2",
+        "nodes": [
+          {
+            "id": "00",
+            "x": 1,
+            "y": 2
+          },
+          {
+            "id": "01",
+            "x": 0,
+            "y": 1
+          },
+          {
+            "id": "10",
+            "x": 2,
+            "y": 1
+          },
+          {
+            "id": "11",
+            "x": 1,
+            "y": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "00",
+            "to": "01"
+          },
+          {
+            "from": "00",
+            "to": "10"
+          },
+          {
+            "from": "01",
+            "to": "11"
+          },
+          {
+            "from": "10",
+            "to": "11"
+          }
+        ],
+        "caption": "f written as (f(1), f(2))"
+      }
+    },
+    "cse-2025-2-cs-33": {
+      "approach": "Read the map (rows $wx$, columns $yz$ in Gray order 00, 01, 11, 10): the four corners and the central $2\\times2$ block are 1. So $F = \\bar x\\bar z + xz$; then test each option by listing exactly which cells it covers.",
+      "concepts": [
+        "K-map reading",
+        "Corner (wrap-around) groups",
+        "Sum of products equivalence"
+      ],
+      "given": "$F = 1$ at minterms (index $8w+4x+2y+z$): $0, 2, 8, 10$ (corners) and $5, 7, 13, 15$ (centre).",
+      "steps": [
+        {
+          "title": "Read the minimal expression",
+          "body": "Corners: $x = 0, z = 0$ with $w, y$ free → $\\bar x \\bar z$ (minterms $0, 2, 8, 10$).\nCentre block: rows $wx = 01, 11$ and columns $yz = 01, 11$ → $x = 1, z = 1$ → $xz$ (minterms $5, 7, 13, 15$).\n\n$$F = \\bar x\\bar z + xz \\quad(= \\overline{x \\oplus z})$$\n\nSo (D) is correct.",
+          "scene": {
+            "groups": [
+              {
+                "cells": [
+                  0,
+                  2,
+                  8,
+                  10
+                ],
+                "label": "x̄z̄",
+                "tone": "cat1"
+              },
+              {
+                "cells": [
+                  5,
+                  7,
+                  13,
+                  15
+                ],
+                "label": "xz",
+                "tone": "cat2"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Option (A)",
+          "body": "$\\bar w\\bar x\\bar y\\bar z = m_0$, $w\\bar x\\bar y\\bar z = m_8$, $\\bar w\\bar x y\\bar z = m_2$, $w\\bar x y\\bar z = m_{10}$: exactly the four corners, i.e. $\\bar x\\bar z$ written as minterms. Plus $xz$. Equals $F$ ✓.",
+          "scene": {
+            "groups": [
+              {
+                "cells": [
+                  5,
+                  7,
+                  13,
+                  15
+                ],
+                "label": "xz",
+                "tone": "cat2"
+              }
+            ],
+            "hl": [
+              {
+                "cell": 0,
+                "tone": "success"
+              },
+              {
+                "cell": 8,
+                "tone": "success"
+              },
+              {
+                "cell": 2,
+                "tone": "success"
+              },
+              {
+                "cell": 10,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Option (B)",
+          "body": "Terms: $m_0$, $m_2$, $w\\bar x yz = m_{11}$, and $xz$. It misses $m_8$, $m_{10}$ (corners that are 1) and includes $m_{11}$ (row $wx=10$, column $yz=11$), which is **0** in the map ✗.",
+          "scene": {
+            "hl": [
+              {
+                "cell": 0,
+                "tone": "success"
+              },
+              {
+                "cell": 2,
+                "tone": "success"
+              },
+              {
+                "cell": 11,
+                "tone": "error"
+              },
+              {
+                "cell": 8,
+                "tone": "warning"
+              },
+              {
+                "cell": 10,
+                "tone": "warning"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Option (C)",
+          "body": "Terms: $m_0$, $m_8$, $w\\bar x\\bar y z = m_9$, and $xz$. It misses $m_2$, $m_{10}$ and includes $m_9$ (row $10$, column $01$), which is **0** ✗.",
+          "scene": {
+            "hl": [
+              {
+                "cell": 0,
+                "tone": "success"
+              },
+              {
+                "cell": 8,
+                "tone": "success"
+              },
+              {
+                "cell": 9,
+                "tone": "error"
+              },
+              {
+                "cell": 2,
+                "tone": "warning"
+              },
+              {
+                "cell": 10,
+                "tone": "warning"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "**(A) and (D)**",
+        "choice": [
+          "A",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Its four minterms are exactly the four corner 1s ($\\bar x\\bar z$, unminimised), plus $xz$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Contains $w\\bar x yz$ ($m_{11}$), a 0-cell, and misses the corners $m_8$, $m_{10}$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Contains $w\\bar x\\bar y z$ ($m_9$), a 0-cell, and misses $m_2$, $m_{10}$."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "The minimal SOP: corner quad $\\bar x\\bar z$ plus centre quad $xz$."
+        }
+      ],
+      "shortcut": "Every term with $\\bar x$ must also have $\\bar z$ (the 1s with $x=0$ are exactly the $z=0$ cells). (B) has $w\\bar x yz$ and (C) has $w\\bar x\\bar y z$, both with $\\bar x z$ → wrong.",
+      "pitfalls": [
+        "Missing the four-corner wrap-around group.",
+        "Accepting an expression because it \"contains $xz$\" without checking that its extra terms stay inside the 1s."
+      ],
+      "verification": "Count: $F$ has 8 ones. (A) covers 4 + 4 = 8 distinct cells, all 1s; (D) also 8. (B) and (C) each cover a 0-cell.",
+      "animation": {
+        "kind": "kmap",
+        "title": "K-map of F(w,x,y,z)",
+        "variables": [
+          "w",
+          "x",
+          "y",
+          "z"
+        ],
+        "ones": [
+          0,
+          2,
+          8,
+          10,
+          5,
+          7,
+          13,
+          15
+        ]
+      }
+    },
+    "cse-2025-2-cs-34": {
+      "approach": "Use $\\det P = \\det L \\cdot \\det U$ with $\\det L = 1$ (unit lower triangular) and $\\det U = u_{11}u_{22}u_{33}$; test (D) with a small symmetric counterexample.",
+      "concepts": [
+        "LU decomposition",
+        "Forward/back substitution",
+        "Determinant of a triangular matrix"
+      ],
+      "steps": [
+        {
+          "title": "(A) forward then back substitution",
+          "body": "$PX = Q \\iff L(UX) = Q$. Put $Y = UX$: solve $LY = Q$ by forward substitution, then $UX = Y$ by back substitution. This is exactly how LU is used ✓."
+        },
+        {
+          "title": "Determinants give (B) and (C)",
+          "body": "$\\det L = 1\\cdot1\\cdot1 = 1$ and $\\det U = u_{11}u_{22}u_{33}$, so\n\n$$\\det P = \\det L \\cdot \\det U = u_{11}u_{22}u_{33}.$$\n\n- (B): $P$ invertible ⇒ $\\det P \\ne 0$ ⇒ $\\det U \\ne 0$; and $L$ is always invertible ($\\det L = 1$) ✓.\n- (C): $P$ singular ⇒ $u_{11}u_{22}u_{33} = 0$ ⇒ some $u_{ii} = 0$ ✓.",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "(D) fails: counterexample",
+          "body": "$P = \\begin{bmatrix}1&2&0\\\\2&1&0\\\\0&0&1\\end{bmatrix}$ is symmetric. Elimination ($R_2 \\leftarrow R_2 - 2R_1$) gives\n\n$L = \\begin{bmatrix}1&0&0\\\\2&1&0\\\\0&0&1\\end{bmatrix}$, $U = \\begin{bmatrix}1&2&0\\\\0&-3&0\\\\0&0&1\\end{bmatrix}$.\n\nNeither is symmetric. In fact a triangular matrix is symmetric only if it is diagonal, and a unit lower-triangular diagonal matrix is $I$ — so (D) would force $P$ to be diagonal ✗."
+        }
+      ],
+      "answer": {
+        "value": "**(A), (B) and (C)**",
+        "choice": [
+          "A",
+          "B",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Standard use of LU: forward substitution for $LY=Q$, back substitution for $UX=Y$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$\\det L = 1$ always; $\\det U = \\det P \\ne 0$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$0 = \\det P = u_{11}u_{22}u_{33}$, so some diagonal entry of $U$ is 0."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "For symmetric $P$ one gets $P = LDL^T$ ($U = DL^T$), not symmetric $L, U$; the $3\\times3$ counterexample above shows it."
+        }
+      ],
+      "shortcut": "Remember $\\det P = \\prod u_{ii}$ (because $\\det L = 1$): that settles (B) and (C) at once. A symmetric triangular matrix must be diagonal, so (D) is absurd in general.",
+      "pitfalls": [
+        "Confusing symmetric $P = LDL^T$ (Cholesky-like) with \"L and U symmetric\".",
+        "Forgetting that $L$ has unit diagonal, hence is always invertible."
+      ],
+      "verification": "Counterexample check: $LU = \\begin{bmatrix}1&2&0\\\\2&4-3&0\\\\0&0&1\\end{bmatrix} = P$ ✓, and $\\det P = 1\\cdot(-3)\\cdot1 = -3 = 1 - 4$ ✓.",
+      "animation": {
+        "kind": "equation",
+        "title": "Determinant through LU",
+        "lines": [
+          {
+            "tex": "\\det P = \\det L\\cdot\\det U",
+            "note": "product rule"
+          },
+          {
+            "tex": "\\det L = 1",
+            "note": "unit lower triangular"
+          },
+          {
+            "tex": "\\det P = u_{11}\\,u_{22}\\,u_{33}",
+            "tone": "success"
+          }
+        ],
+        "reveal": 0
+      }
+    },
+    "cse-2025-2-cs-35": {
+      "approach": "Ask, for each scheme, what happens on PUSH and especially on POP of the current minimum. Only a per-record \"minimum so far\" pointer keeps MIN, PUSH and POP all $O(1)$.",
+      "concepts": [
+        "Augmented stack (min-stack)",
+        "Amortised vs worst-case cost",
+        "Heap / sorted-array insertion cost"
+      ],
+      "steps": [
+        {
+          "title": "(A) min pointer stored in every record",
+          "body": "On PUSH($r$): $r$.minptr $=$ the record with smaller key among $r$ and top.minptr (one comparison, $O(1)$). MIN returns top.minptr in $O(1)$. On POP the record below already stores the minimum of the remaining stack — nothing to recompute. All $O(1)$ ✓.\n\n(The question says \"smallest key below it\"; whether or not the record itself is included, MIN = min(top, top.ptr) is still one comparison.)",
+          "scene": {
+            "items": [
+              "7 ↓7",
+              "3 ↓3",
+              "9 ↓3",
+              "1 ↓1"
+            ],
+            "hl": [
+              {
+                "at": 3,
+                "tone": "success"
+              }
+            ],
+            "caption": "push 7, 3, 9, 1 — each record stores the min below/including it"
+          }
+        },
+        {
+          "title": "POP keeps MIN correct for (A), breaks (B)",
+          "body": "POP removes $1$; the new top $9$ stores $↓3$, so MIN $= 3$ instantly.\n\n(B) keeps a single global pointer. After popping the minimum record that pointer is useless, and finding the new minimum requires scanning the stack — $O(n)$, so POP (or MIN) becomes $O(n)$ ✗.",
+          "scene": {
+            "items": [
+              "7 ↓7",
+              "3 ↓3",
+              "9 ↓3"
+            ],
+            "popped": "1 ↓1",
+            "hl": [
+              {
+                "at": 1,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "(C) and (D) slow down PUSH/POP",
+          "body": "- (C) sorted auxiliary array: PUSH must insert the key in order — $O(n)$ shifts (and POP must delete an arbitrary key, $O(n)$) ✗.\n- (D) min-heap: MIN is $O(1)$, but PUSH becomes heap-insert $O(\\log n)$ and POP must delete an arbitrary key from the heap, $O(\\log n)$ — the standard $O(1)$ stack operations get slower ✗."
+        }
+      ],
+      "answer": {
+        "value": "Only approach **(A)**",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Each record carries the minimum of the stack beneath it; PUSH is one comparison, POP restores the old minimum automatically, MIN is $O(1)$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Works for PUSH, but after POPping the minimum the new minimum must be searched for in $O(n)$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Keeping a sorted array costs $O(n)$ per PUSH/POP (insertion/deletion with shifting)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Heap insert/delete cost $O(\\log n)$, so PUSH and POP are no longer $O(1)$."
+        }
+      ],
+      "shortcut": "A stack only ever removes the newest element, so \"the minimum at the time each record was pushed\" is all you need — store it with the record.",
+      "pitfalls": [
+        "Choosing (B) because it handles PUSH and MIN, forgetting POP of the minimum.",
+        "Accepting (D) because MIN is $O(1)$ — the condition is that PUSH/POP must stay $O(1)$ too."
+      ],
+      "verification": "Pop all four records one by one: the MIN values read from the new tops are $3, 3, 7$ and then empty — matching a brute-force scan of $\\{7,3,9\\}, \\{7,3\\}, \\{7\\}$.",
+      "animation": {
+        "kind": "stack",
+        "title": "Stack with per-record min pointer",
+        "label": "key ↓min",
+        "items": [
+          "7 ↓7",
+          "3 ↓3",
+          "9 ↓3",
+          "1 ↓1"
+        ]
+      }
+    },
+    "cse-2025-2-cs-36": {
+      "approach": "Find each relation's candidate keys (attributes never on a right-hand side must be in every key), then test every FD with the 3NF rule: LHS is a superkey, or every RHS attribute is prime.",
+      "concepts": [
+        "Attribute closure",
+        "Candidate key",
+        "3NF condition",
+        "Prime attribute"
+      ],
+      "steps": [
+        {
+          "title": "R1: key is AD",
+          "body": "Right-hand sides: $E, B, C$. So $A$ and $D$ are in every key.\n\n$\\{A,D\\}^+ = \\{A,D\\} \\xrightarrow{D\\to E} \\{A,D,E\\} \\xrightarrow{EA\\to B} \\{A,B,D,E\\} \\xrightarrow{EB\\to C} \\{A,B,C,D,E\\}$.\n\nOnly candidate key: $AD$. Prime attributes: $A, D$."
+        },
+        {
+          "title": "R1 violates 3NF",
+          "body": "$D \\to E$: $D^+ = \\{D, E\\}$, so $D$ is not a superkey, and $E$ is not prime ⇒ **violation** (a partial dependency on part of the key). R1 is NOT in 3NF (also $EA\\to B$ and $EB\\to C$ violate).",
+          "scene": {
+            "reveal": 9,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "error"
+              }
+            ]
+          }
+        },
+        {
+          "title": "R2: key is C",
+          "body": "Right-hand sides: $D, B, A$. So $C$ is in every key.\n\n$C^+ = \\{C\\} \\xrightarrow{C\\to A} \\{A,C\\} \\xrightarrow{A\\to D,\\ A\\to B} \\{A,B,C,D\\}$.\n\nOnly candidate key: $C$. Prime attribute: $C$ only.",
+          "scene": {
+            "reveal": 12
+          }
+        },
+        {
+          "title": "R2 violates 3NF",
+          "body": "$A \\to D$: $A^+ = \\{A, B, D\\}$ is not a superkey and $D$ is not prime ⇒ **violation** (transitive dependency $C \\to A \\to D$). Same for $A \\to B$. R2 is NOT in 3NF.",
+          "scene": {
+            "reveal": 18,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "error"
+              },
+              {
+                "r": 1,
+                "tone": "error"
+              },
+              {
+                "r": 2,
+                "tone": "error"
+              },
+              {
+                "r": 3,
+                "tone": "success"
+              },
+              {
+                "r": 4,
+                "tone": "error"
+              },
+              {
+                "r": 5,
+                "tone": "error"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "**(C) and (D)** — neither R1 nor R2 is in 3NF",
+        "choice": [
+          "C",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$D \\to E$ has a non-superkey LHS and a non-prime RHS (key is $AD$)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$A \\to D$ (and $A \\to B$) has a non-superkey LHS and a non-prime RHS (key is $C$)."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "R1 has the partial dependency $D \\to E$ on its key $AD$."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "R2 has the transitive dependency $C \\to A \\to D$."
+        }
+      ],
+      "shortcut": "Options (A)/(C) and (B)/(D) are complementary pairs, so exactly one of each pair is true. One violating FD per relation ($D\\to E$, $A\\to D$) decides both.",
+      "pitfalls": [
+        "Missing that $A$ must be part of R1's key (it never appears on a RHS).",
+        "Thinking $A$ is a key of R2 — $A^+$ lacks $C$."
+      ],
+      "verification": "Brute force: no proper subset of $AD$ determines $C$ ($A^+ = \\{A\\}$, $D^+ = \\{D,E\\}$), and only sets containing $C$ determine $C$ in R2, so the keys are right and the violations stand.",
+      "animation": {
+        "kind": "table",
+        "title": "3NF test, FD by FD",
+        "cols": [
+          "LHS superkey?",
+          "RHS prime?",
+          "3NF ok?"
+        ],
+        "rowLabels": [
+          "R1: D→E",
+          "R1: EA→B",
+          "R1: EB→C",
+          "R2: C→A",
+          "R2: A→D",
+          "R2: A→B"
+        ],
+        "rows": [
+          [
+            "no",
+            "no",
+            "✗"
+          ],
+          [
+            "no",
+            "no",
+            "✗"
+          ],
+          [
+            "no",
+            "no",
+            "✗"
+          ],
+          [
+            "yes",
+            "—",
+            "✓"
+          ],
+          [
+            "no",
+            "no",
+            "✗"
+          ],
+          [
+            "no",
+            "no",
+            "✗"
+          ]
+        ],
+        "reveal": 0
+      }
+    },
+    "cse-2025-2-cs-37": {
+      "approach": "Check each replacement (refs 4, 5, 6, 1, 3, 2) against each policy's rule. One contradiction kills a policy; OPT fits every replacement (with the remaining ties broken by load order).",
+      "concepts": [
+        "Optimal (Belady) replacement",
+        "LRU",
+        "LFU / MFU",
+        "Tie-breaking"
+      ],
+      "given": "Victims read from the table: ref 4 evicts **2**, ref 5 evicts **3**, ref 6 evicts **1**, ref 1 evicts **4**, ref 3 evicts **5**, ref 2 evicts **6**. Faults: 9 (3 cold + 6 replacements).",
+      "steps": [
+        {
+          "title": "LRU fails at the first replacement",
+          "body": "At ref 4 the frames hold $\\{1,2,3\\}$, last used at times 1, 2, 3. LRU evicts **1**, but the table evicts **2** ✗. (Run to the end, LRU gives 11 faults, not 9.)",
+          "scene": {
+            "upto": 4,
+            "policy": "LRU",
+            "expectFaults": 11,
+            "caption": "LRU evicts 1 here — the table evicts 2"
+          }
+        },
+        {
+          "title": "LFU fails at ref 6",
+          "body": "Before ref 6 the frames are $\\{1,4,5\\}$ with use counts $1{:}\\,2$ (refs 1, 7), $4{:}\\,2$ (refs 4, 6), $5{:}\\,1$. LFU must evict **5**, but the table evicts **1** ✗."
+        },
+        {
+          "title": "MFU fails too",
+          "body": "At ref 4 and at ref 5 every resident page has been used exactly once, so MFU has only ties — and the table evicts the *middle* page each time (2 out of 1,2,3; then 3 out of 1,4,3). A FIFO/LRU tie rule would evict 1, an MRU rule 3 and then 4: no fixed rule gives 2 and then 3. Moreover, if counts survive eviction, page 1 has 3 references at ref 3 and MFU would evict 1, not 5 ✗. Only case-by-case tie-breaking could mimic the table, which is not a policy."
+        },
+        {
+          "title": "OPT explains every replacement",
+          "body": "Next uses after each fault:\n\n| ref | frames | next use | victim |\n|---|---|---|---|\n| 4 | 1,2,3 | 1→7th, 2→13th, 3→12th | **2** ✓ |\n| 5 | 1,4,3 | 1→7th, 4→6th, 3→12th | **3** ✓ |\n| 6 | 1,4,5 | 4→9th, 5→10th, 1→11th | **1** ✓ |\n| 1 | 6,4,5 | none used again | **4** (tie) ✓ |\n| 3 | 6,1,5 | none used again | **5** (tie) ✓ |\n| 2 | 6,1,3 | none | **6** (tie) ✓ |\n\nEvery forced choice matches, and the ties are resolved by evicting the earliest-loaded page. 9 faults.",
+          "scene": {
+            "policy": "OPT",
+            "expectFaults": 9,
+            "upto": 13,
+            "caption": "OPT reproduces the table: 9 faults"
+          }
+        }
+      ],
+      "answer": {
+        "value": "Only **Optimal** — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "At ref 4 LRU would evict page 1 (least recently used), the table evicts 2."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "At ref 6 page 5 has the lowest count (1) but page 1 (count 2) is evicted."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "At refs 4 and 5 all counts are equal and the middle page is evicted (2, then 3) — no MFU tie rule does that; with persistent counts it would also evict page 1, not 5, at ref 3."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Each forced choice evicts the page used farthest in the future (2, 3, 1); the rest are ties among pages never used again."
+        }
+      ],
+      "shortcut": "The first replacement alone is decisive: at ref 4, page 2 is evicted although page 1 is the oldest and least recent — only \"farthest next use\" (2 at position 13) explains it.",
+      "pitfalls": [
+        "Treating the cold misses 1*, 2*, 3* as replacements.",
+        "Ignoring tie situations when ruling a policy in — OPT's later victims are ties and are all legal."
+      ],
+      "verification": "Simulating OPT (ties → earliest loaded) on the 13 references reproduces every column of the table and 9 faults; LRU gives 11.",
+      "animation": {
+        "kind": "paging",
+        "title": "Reference string, 3 frames",
+        "policy": "OPT",
+        "frames": 3,
+        "refs": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          4,
+          1,
+          6,
+          4,
+          5,
+          1,
+          3,
+          2
+        ],
+        "upto": 0,
+        "expectFaults": 9
+      }
+    },
+    "cse-2025-2-cs-38": {
+      "approach": "With single-instance resources, deadlock ⇔ a cycle in the wait-for graph. Collapse the RAG to a wait-for graph, list its cycles, and check which abort set hits every cycle.",
+      "concepts": [
+        "Resource allocation graph",
+        "Wait-for graph",
+        "Deadlock recovery by abort"
+      ],
+      "steps": [
+        {
+          "title": "Build the wait-for graph",
+          "body": "Pi waits for Rj held by Pk ⇒ $P_i \\to P_k$:\n\n- $P_1 \\to R_2$ (held by $P_2$): $P_1 \\to P_2$\n- $P_2 \\to R_3$ ($P_3$): $P_2 \\to P_3$; $P_2 \\to R_4$ ($P_4$): $P_2 \\to P_4$\n- $P_3 \\to R_1$ ($P_1$): $P_3 \\to P_1$\n- $P_4 \\to R_2$ ($P_2$): $P_4 \\to P_2$"
+        },
+        {
+          "title": "Two cycles",
+          "body": "Cycle 1: $P_1 \\to P_2 \\to P_3 \\to P_1$ (through $R_2, R_3, R_1$).\nCycle 2: $P_2 \\to P_4 \\to P_2$ (through $R_4, R_2$).\n\nThe system is deadlocked; an abort set works iff it contains a process of **both** cycles. $P_2$ is on both.",
+          "scene": {
+            "edgeTones": {
+              "P1>R2": "error",
+              "R2>P2": "error",
+              "P2>R3": "error",
+              "R3>P3": "error",
+              "P3>R1": "error",
+              "R1>P1": "error",
+              "P2>R4": "warning",
+              "R4>P4": "warning",
+              "P4>R2": "warning"
+            },
+            "caption": "red: P1→P2→P3→P1, amber: P2→P4→P2"
+          }
+        },
+        {
+          "title": "Abort P1 or P3: cycle 2 survives",
+          "body": "Removing $P_1$ (or $P_3$) breaks cycle 1 only; $P_2 \\to R_4 \\to P_4 \\to R_2 \\to P_2$ is still a cycle ⇒ still deadlocked. (A), (B) false.",
+          "scene": {
+            "tones": {
+              "R1": "cat1",
+              "R2": "cat1",
+              "R3": "cat1",
+              "R4": "cat1",
+              "P1": "muted"
+            },
+            "edgeTones": {
+              "P2>R4": "error",
+              "R4>P4": "error",
+              "P4>R2": "error",
+              "R2>P2": "error"
+            }
+          }
+        },
+        {
+          "title": "Abort P2, or P1 and P4: deadlock free",
+          "body": "- Abort $P_2$: $R_2$ is released and both cycles disappear (each passes through $P_2$) ✓.\n- Abort $P_1$ and $P_4$: cycle 1 loses $P_1$, cycle 2 loses $P_4$. Remaining waits $P_2 \\to P_3$ only; $P_3$ can get $R_1$ (freed by $P_1$), finish, release $R_3$, then $P_2$ gets $R_3, R_4$ ✓.",
+          "scene": {
+            "tones": {
+              "R1": "cat1",
+              "R2": "cat1",
+              "R3": "cat1",
+              "R4": "cat1",
+              "P2": "muted"
+            },
+            "edgeTones": {},
+            "caption": "abort P2: every cycle is broken"
+          }
+        }
+      ],
+      "answer": {
+        "value": "**(C) and (D)**",
+        "choice": [
+          "C",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Breaks $P_1\\to P_2\\to P_3\\to P_1$ but leaves $P_2 \\leftrightarrow P_4$ deadlocked."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Same as (A): cycle $P_2 \\to P_4 \\to P_2$ remains."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$P_2$ lies on both cycles; aborting it frees $R_2$ and removes every cycle."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "$P_1$ hits the first cycle and $P_4$ the second; what remains is acyclic."
+        }
+      ],
+      "shortcut": "Find the process common to all cycles ($P_2$) — any abort set must contain it or one member of each cycle; $\\{P_1, P_4\\}$ is such a hitting set.",
+      "pitfalls": [
+        "Missing the second (two-process) cycle $P_2 \\leftrightarrow P_4$ because $P_2$ has two outgoing claim edges.",
+        "Reading \"claim edge\" in the Banker's sense — here it is defined as an actual wait (request) edge."
+      ],
+      "verification": "After aborting $P_2$: waits are $P_1 \\to R_2$ (free), $P_3 \\to R_1$ (held by $P_1$), $P_4 \\to R_2$ (free): $P_1$ and $P_4$ can proceed, then $P_3$ — no cycle.",
+      "animation": {
+        "kind": "graph",
+        "directed": true,
+        "title": "Resource allocation graph",
+        "nodes": [
+          {
+            "id": "P1",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "R2",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "id": "P2",
+            "x": 4,
+            "y": 0
+          },
+          {
+            "id": "R4",
+            "x": 6,
+            "y": 0
+          },
+          {
+            "id": "P4",
+            "x": 6,
+            "y": -2
+          },
+          {
+            "id": "R1",
+            "x": 0,
+            "y": 2
+          },
+          {
+            "id": "P3",
+            "x": 2,
+            "y": 2
+          },
+          {
+            "id": "R3",
+            "x": 4,
+            "y": 2
+          }
+        ],
+        "edges": [
+          {
+            "from": "R1",
+            "to": "P1"
+          },
+          {
+            "from": "R2",
+            "to": "P2"
+          },
+          {
+            "from": "R3",
+            "to": "P3"
+          },
+          {
+            "from": "R4",
+            "to": "P4"
+          },
+          {
+            "from": "P1",
+            "to": "R2"
+          },
+          {
+            "from": "P2",
+            "to": "R3"
+          },
+          {
+            "from": "P3",
+            "to": "R1"
+          },
+          {
+            "from": "P2",
+            "to": "R4"
+          },
+          {
+            "from": "P4",
+            "to": "R2"
+          }
+        ],
+        "tones": {
+          "R1": "cat1",
+          "R2": "cat1",
+          "R3": "cat1",
+          "R4": "cat1"
+        },
+        "caption": "R → P: assigned, P → R: waiting"
+      }
+    },
+    "cse-2025-2-cs-39": {
+      "approach": "Decode the three words (sign | 8-bit exponent with bias 127 | fraction). The fractions have only one or three leading bits, so each value is a small integer; then evaluate the four equations.",
+      "concepts": [
+        "IEEE 754 single precision",
+        "Bias 127",
+        "Hidden leading 1"
+      ],
+      "steps": [
+        {
+          "title": "Decode RX = 0xC1100000",
+          "body": "Binary: `1 10000010 00100000…`. Sign $1$ (negative), exponent $10000010_2 = 130$, so $2^{130-127} = 2^3$. Significand $1.001_2 = 1.125$.\n\n$X = -1.125 \\times 8 = -9$."
+        },
+        {
+          "title": "Decode RY and RZ",
+          "body": "RY = 0x40C00000 = `0 10000001 1000…`: exponent $129 \\Rightarrow 2^2$, significand $1.1_2 = 1.5$, so $Y = 1.5 \\times 4 = 6$.\n\nRZ = 0x41400000 = `0 10000010 1000…`: exponent $130 \\Rightarrow 2^3$, significand $1.5$, so $Z = 1.5 \\times 8 = 12$."
+        },
+        {
+          "title": "Evaluate the options",
+          "body": "With $X = -9$, $Y = 6$, $Z = 12$:\n\n- (A) $4(X+Y)+Z = 4(-3) + 12 = 0$ ✓\n- (B) $2Y - Z = 12 - 12 = 0$ ✓\n- (C) $4X + 3Z = -36 + 36 = 0$ ✓\n- (D) $X + Y + Z = -9 + 6 + 12 = 9 \\ne 0$ ✗"
+        }
+      ],
+      "answer": {
+        "value": "$X=-9,\\ Y=6,\\ Z=12$ ⇒ **(A), (B) and (C)**",
+        "choice": [
+          "A",
+          "B",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$4(-9+6)+12 = -12+12 = 0$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$2\\cdot6 - 12 = 0$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$4(-9) + 3(12) = -36+36 = 0$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$-9+6+12 = 9$; it would be 0 only if the sign bit of RX were misread (e.g. $X=-18$) or the bias wrong."
+        }
+      ],
+      "shortcut": "Hex digit after the sign/exponent nibbles: 0x41 4… means exponent 130 and fraction .1 → $1.5\\times 8 = 12$; 0x40C… → $1.5\\times4 = 6$; 0xC11… → $-1.125\\times8 = -9$.",
+      "pitfalls": [
+        "Forgetting the hidden leading 1 (giving $X = -1$, $Y = 2$, $Z = 4$).",
+        "Using bias 128 instead of 127, which halves every value."
+      ],
+      "verification": "Re-encode $12 = 1.5\\times2^3$: sign 0, exponent $3+127=130=10000010_2$, fraction $1000…$ → `0100 0001 0100 0000 …` = 0x41400000 ✓.",
+      "animation": {
+        "kind": "bits",
+        "title": "Sign | exponent | fraction",
+        "rows": [
+          {
+            "label": "RX",
+            "fields": [
+              {
+                "bits": "1",
+                "label": "s",
+                "tone": "error"
+              },
+              {
+                "bits": "10000010",
+                "label": "exp 130",
+                "tone": "accent"
+              },
+              {
+                "bits": "00100000000000000000000",
+                "label": ".001 → 1.125"
+              }
+            ],
+            "value": "−9"
+          },
+          {
+            "label": "RY",
+            "fields": [
+              {
+                "bits": "0",
+                "label": "s"
+              },
+              {
+                "bits": "10000001",
+                "label": "exp 129",
+                "tone": "accent"
+              },
+              {
+                "bits": "10000000000000000000000",
+                "label": ".1 → 1.5"
+              }
+            ],
+            "value": "6"
+          },
+          {
+            "label": "RZ",
+            "fields": [
+              {
+                "bits": "0",
+                "label": "s"
+              },
+              {
+                "bits": "10000010",
+                "label": "exp 130",
+                "tone": "accent"
+              },
+              {
+                "bits": "10000000000000000000000",
+                "label": ".1 → 1.5"
+              }
+            ],
+            "value": "12"
+          }
+        ]
+      }
+    },
+    "cse-2025-2-cs-40": {
+      "approach": "Compare minterm sets for (A); use the consensus theorem for (B) and (C); push the complement through the product with De Morgan for (D).",
+      "concepts": [
+        "Minterm comparison",
+        "Consensus theorem",
+        "De Morgan's law",
+        "Absorption"
+      ],
+      "steps": [
+        {
+          "title": "(A): compare minterms",
+          "body": "LHS (order $ABC$): $\\bar ABC = m_3$, $A\\bar B\\bar C = m_4$, $\\bar A\\bar B\\bar C = m_0$, $A\\bar BC = m_5$, $ABC = m_7$ → $\\{0,3,4,5,7\\}$.\n\nRHS: $BC = \\{3,7\\}$, $\\bar B\\bar C = \\{0,4\\}$, $\\bar A\\bar B = \\{0,1\\}$ → $\\{0,1,3,4,7\\}$.\n\nThey differ at $m_1$ and $m_5$ (e.g. $A=1,B=0,C=1$: LHS $=1$, RHS $=0$) ✗.",
+          "scene": {
+            "reveal": 24
+          }
+        },
+        {
+          "title": "(B): consensus theorem",
+          "body": "$BC$ is the consensus of $AB$ and $\\bar AC$:\n\n$BC = BC(A + \\bar A) = ABC + \\bar ABC$, and $ABC$ is absorbed by $AB$, $\\bar ABC$ by $\\bar AC$. So $AB + \\bar AC + BC = AB + \\bar AC$ ✓."
+        },
+        {
+          "title": "(C): expand the product",
+          "body": "$(A+C)(\\bar A+B) = A\\bar A + AB + \\bar AC + BC = AB + \\bar AC + BC$ (since $A\\bar A = 0$) $= AB + \\bar AC$ by (B) ✓."
+        },
+        {
+          "title": "(D): De Morgan",
+          "body": "The complement of a product is the sum of the complemented factors:\n\n$\\overline{(A+\\bar B+\\bar D)} = \\bar A B D$, $\\overline{(C+D)} = \\bar C\\bar D$, $\\overline{(\\bar A+C+D)} = A\\bar C\\bar D$, $\\overline{(A+B+\\bar D)} = \\bar A\\bar B D$.\n\nSum: $\\bar ABD + \\bar A\\bar BD + \\bar C\\bar D + A\\bar C\\bar D = \\bar AD(B+\\bar B) + \\bar C\\bar D(1 + A) = \\bar AD + \\bar C\\bar D$ ✓.",
+          "scene": {
+            "kind": "kmap",
+            "title": "Option (D): Ā D + C̄ D̄",
+            "variables": [
+              "A",
+              "B",
+              "C",
+              "D"
+            ],
+            "ones": [
+              1,
+              3,
+              5,
+              7,
+              0,
+              4,
+              8,
+              12
+            ],
+            "groups": [
+              {
+                "cells": [
+                  1,
+                  3,
+                  5,
+                  7
+                ],
+                "label": "ĀD",
+                "tone": "cat1"
+              },
+              {
+                "cells": [
+                  0,
+                  4,
+                  8,
+                  12
+                ],
+                "label": "C̄D̄",
+                "tone": "cat2"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "**(B), (C) and (D)**",
+        "choice": [
+          "B",
+          "C",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "LHS has $m_5$ ($A\\bar BC$) but not $m_1$; RHS has $m_1$ ($\\bar A\\bar B$ with $C=1$) but not $m_5$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Consensus theorem: $BC$ is redundant."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Expanding gives $AB + \\bar AC + BC$, which reduces to $AB + \\bar AC$ by consensus."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "De Morgan turns the complemented product into $\\bar ABD + \\bar C\\bar D + A\\bar C\\bar D + \\bar A\\bar BD = \\bar AD + \\bar C\\bar D$."
+        }
+      ],
+      "shortcut": "(B) and (C) are the consensus theorem and its dual form; (A) fails on the single input $A=1, B=0, C=1$.",
+      "pitfalls": [
+        "Missing that the overbar in (D) spans the whole product (it is not four separate complemented sums).",
+        "Comparing (A) term-by-term instead of by minterm sets."
+      ],
+      "verification": "Spot-check (D) at $A=0,B=0,C=1,D=1$: factors $= (0+1+0)(1)(1)(0+0+0) = 0$, complement $= 1$; RHS $\\bar AD = 1$ ✓.",
+      "animation": {
+        "kind": "table",
+        "title": "Option (A): truth table",
+        "cols": [
+          "ABC",
+          "LHS",
+          "RHS"
+        ],
+        "rows": [
+          [
+            "000",
+            "1",
+            "1"
+          ],
+          [
+            "001",
+            "0",
+            "1"
+          ],
+          [
+            "010",
+            "0",
+            "0"
+          ],
+          [
+            "011",
+            "1",
+            "1"
+          ],
+          [
+            "100",
+            "1",
+            "1"
+          ],
+          [
+            "101",
+            "1",
+            "0"
+          ],
+          [
+            "110",
+            "0",
+            "0"
+          ],
+          [
+            "111",
+            "1",
+            "1"
+          ]
+        ],
+        "reveal": 0,
+        "hl": [
+          {
+            "r": 1,
+            "tone": "error"
+          },
+          {
+            "r": 5,
+            "tone": "error"
+          }
+        ],
+        "mono": true
+      }
+    },
+    "cse-2025-2-cs-41": {
+      "approach": "Show both grammars are ambiguous by exhibiting two parse trees for one string; an ambiguous grammar is never LL(1). (G1 is the classic dangling-else grammar; G2 only looks like the textbook fix.)",
+      "concepts": [
+        "Dangling else",
+        "Ambiguity",
+        "LL(1) condition (FIRST/FOLLOW)"
+      ],
+      "steps": [
+        {
+          "title": "G1 is ambiguous",
+          "body": "`if b then if b then a else a` has two trees: the `else` belongs to the inner `if` ($S \\to$ if $E$ then $S$ with inner $S \\to$ if $E$ then $S$ else $S$), or to the outer one ($S \\to$ if $E$ then $S$ else $S$ with inner $S \\to$ if $E$ then $S$). So G1 is ambiguous and not LL(1) (it also has two $S$-productions starting with `if`, a FIRST/FIRST clash)."
+        },
+        {
+          "title": "G2 is ambiguous too",
+          "body": "In G2 the else-part of $M$ is an $S$, which may be an unmatched `if`. Take\n\n`if b then if b then c else if b then c else c`.\n\n**Tree 1:** outer $S \\to$ if $E$ then $S$ (unmatched); inner $S \\Rightarrow M \\to$ if $E$ then $M$ else $S$ with $M\\Rightarrow c$ and the else-part $S \\Rightarrow M \\to$ if $E$ then $c$ else $c$. The 1st `else` goes to the 2nd `if`, the 2nd `else` to the 3rd `if`."
+        },
+        {
+          "title": "Second parse tree",
+          "body": "**Tree 2:** $S \\Rightarrow M \\to$ if $E$ then $M_1$ else $S$ with final $S \\Rightarrow c$, where $M_1 \\to$ if $E$ then $M$ else $S$ = `if b then c else if b then c` (the else-part $S \\to$ if $E$ then $S$ is unmatched, which $M$ allows). Now the 2nd `else` goes to the **1st** `if`.\n\nTwo distinct leftmost derivations ⇒ G2 is ambiguous."
+        },
+        {
+          "title": "Neither is LL(1)",
+          "body": "An ambiguous grammar is never LL(1). Directly for G2: $S \\to$ if $E$ then $S$ and $S \\to M$ with $\\text{FIRST}(M) = \\{\\text{if}, c\\}$ — both alternatives can start with `if`, so the LL(1) table cell $[S, \\text{if}]$ has two entries. Hence (C) and (D) are true; (A) and (B) false."
+        }
+      ],
+      "answer": {
+        "value": "**(C) and (D)**",
+        "choice": [
+          "C",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "G2 is not LL(1): $S \\to$ if… and $S \\to M$ both start with `if` (and G2 is ambiguous)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "G1 is the dangling-else grammar — ambiguous and with a FIRST/FIRST clash, so not LL(1)."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Both have FIRST/FIRST conflicts on `if` and both are ambiguous."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Two parse trees: `if b then if b then a else a` for G1, `if b then if b then c else if b then c else c` for G2."
+        }
+      ],
+      "shortcut": "Both grammars have two $S$-alternatives that can begin with `if`, so neither is LL(1) — that settles (A), (B), (C). For (D), remember that the correct matched/unmatched grammar needs the then-part *and* the else-part of a matched statement to be matched; G2 allows an unmatched else-part.",
+      "pitfalls": [
+        "Assuming G2 is the textbook unambiguous dangling-else fix — the else-branch of $M$ is $S$, not $M$.",
+        "Thinking left factoring G1 makes it unambiguous — it remains ambiguous."
+      ],
+      "verification": "Count the `else`s in the two G2 trees: tree 1 pairs (if₂, else₁), (if₃, else₂); tree 2 pairs (if₂, else₁), (if₁, else₂) — different structures for the same token string.",
+      "animation": {
+        "kind": "panels",
+        "dir": "col",
+        "title": "G2: two parse trees for if b then if b then c else if b then c else c",
+        "panels": [
+          {
+            "kind": "tree",
+            "title": "Tree 1",
+            "root": {
+              "id": "a",
+              "label": "S",
+              "children": [
+                {
+                  "id": "a1",
+                  "label": "if b then"
+                },
+                {
+                  "id": "a2",
+                  "label": "S⇒M",
+                  "children": [
+                    {
+                      "id": "a3",
+                      "label": "if b then"
+                    },
+                    {
+                      "id": "a4",
+                      "label": "M⇒c"
+                    },
+                    {
+                      "id": "a5",
+                      "label": "else"
+                    },
+                    {
+                      "id": "a6",
+                      "label": "S⇒M",
+                      "children": [
+                        {
+                          "id": "a7",
+                          "label": "if b then"
+                        },
+                        {
+                          "id": "a8",
+                          "label": "M⇒c"
+                        },
+                        {
+                          "id": "a9",
+                          "label": "else"
+                        },
+                        {
+                          "id": "a10",
+                          "label": "S⇒c"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "kind": "tree",
+            "title": "Tree 2",
+            "root": {
+              "id": "b",
+              "label": "S⇒M",
+              "children": [
+                {
+                  "id": "b1",
+                  "label": "if b then"
+                },
+                {
+                  "id": "b2",
+                  "label": "M",
+                  "children": [
+                    {
+                      "id": "b3",
+                      "label": "if b then"
+                    },
+                    {
+                      "id": "b4",
+                      "label": "M⇒c"
+                    },
+                    {
+                      "id": "b5",
+                      "label": "else"
+                    },
+                    {
+                      "id": "b6",
+                      "label": "S",
+                      "children": [
+                        {
+                          "id": "b7",
+                          "label": "if b then"
+                        },
+                        {
+                          "id": "b8",
+                          "label": "S⇒c"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "b9",
+                  "label": "else"
+                },
+                {
+                  "id": "b10",
+                  "label": "S⇒c"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "cse-2025-2-cs-42": {
+      "approach": "Simplify each set first. (A) is a regular expression, (C) is a product of two modular counters, while (B) and (D) reduce to an equal-count language $a^nb^n$ (possibly restricted), which needs unbounded memory.",
+      "concepts": [
+        "Regular expressions",
+        "Product (counter) DFA",
+        "Myhill–Nerode / pumping lemma",
+        "Closure under intersection"
+      ],
+      "steps": [
+        {
+          "title": "(A) and (C) are regular",
+          "body": "(A) $\\{a^mb^n\\} = a^*b^*$, a regular expression ✓.\n\n(C) Track $\\#_a \\bmod 7$ and $\\#_b \\bmod 9$: a product DFA with $7 \\times 9 = 63$ states, accepting the single state $(2, 3)$ ✓."
+        },
+        {
+          "title": "(B) collapses to aⁿbⁿ",
+          "body": "Words in $\\{a,b\\}^*$ contain no $c$, so we need $m - n = 0$. With $m \\ge n \\ge 0$ that leaves $\\{a^nb^n \\mid n \\ge 0\\}$, the standard non-regular language (pumping $a^pb^p$ inside the first $p$ symbols changes only the $a$-count) ✗."
+        },
+        {
+          "title": "(D) is not regular",
+          "body": "Suppose $L_D$ were regular. Then $L_D \\cap a^*b^* = \\{a^nb^n \\mid n \\equiv 2 \\pmod 7\\}$ would be regular. But the prefixes $a^{7i+2}$ ($i = 0,1,2,\\dots$) are pairwise distinguishable: $a^{7i+2}b^{7i+2}$ is in the language while $a^{7j+2}b^{7i+2}$ ($j \\ne i$) is not. Infinitely many Myhill–Nerode classes ⇒ not regular ✗."
+        }
+      ],
+      "answer": {
+        "value": "**(A) and (C)**",
+        "choice": [
+          "A",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "It is $a^*b^*$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Intersecting with $\\{a,b\\}^*$ forces $m = n$, giving $\\{a^nb^n\\}$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Two independent bounded counters: a 63-state product DFA."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The condition $\\#_a = \\#_b$ is unbounded; the mod-7 restriction does not make it finite-state."
+        }
+      ],
+      "shortcut": "Bounded counting (mod $k$) is regular; comparing two unbounded counts ($\\#_a = \\#_b$, $a^nb^n$) is not — even when intersected with a regular condition.",
+      "pitfalls": [
+        "Thinking the regular intersection in (B) or the mod condition in (D) \"tames\" the language.",
+        "Confusing (C) with (D): (C) never compares $a$ with $b$."
+      ],
+      "verification": "Sanity: (D) contains $a^2b^2$, $a^9b^9$, $a^{16}b^{16}, \\dots$ — a DFA would have to remember $\\#_a - \\#_b$ exactly, which is unbounded."
+    },
+    "cse-2025-2-cs-43": {
+      "approach": "Build the precedence graph of each schedule: an edge $T_i \\to T_j$ for every conflicting pair (same item, different transactions, at least one write) where $T_i$'s operation comes first. A schedule is conflict serializable iff the graph is acyclic. With only two transactions, it is enough to check whether edges point both ways.",
+      "concepts": [
+        "Conflict serializability",
+        "Precedence graph",
+        "Conflicting operations (RW, WR, WW)"
+      ],
+      "given": "| T1 | T2 |\n|---|---|\n| R1(X), W1(Y), R1(X), W1(X) | W2(X), W2(Y) |\n\nConflicting pairs (different transactions, same item, at least one write): every T1 operation on X with W2(X), and W1(Y) with W2(Y). COMMITs never conflict.",
+      "steps": [
+        {
+          "title": "(A): R1(X) before W2(X), but W2(X) before the second R1(X)",
+          "body": "(A) = R1(X), W2(X), W1(Y), W2(Y), R1(X), W1(X), …\n\n- first R1(X) then W2(X) (RW on X) ⇒ $T_1 \\to T_2$\n- W2(X) then the second R1(X) (WR on X) ⇒ $T_2 \\to T_1$\n\nEdges in both directions form a cycle $T_1 \\to T_2 \\to T_1$ ⇒ **not** conflict serializable.",
+          "scene": {
+            "edges": [
+              {
+                "from": "T1",
+                "to": "T2",
+                "w": "R1(X)<W2(X)",
+                "tone": "error"
+              },
+              {
+                "from": "T2",
+                "to": "T1",
+                "w": "W2(X)<R1(X)",
+                "tone": "error"
+              }
+            ],
+            "caption": "(A): cycle ⇒ not conflict serializable",
+            "tones": {
+              "T1": "error",
+              "T2": "error"
+            }
+          }
+        },
+        {
+          "title": "(B): every conflict has T2 first",
+          "body": "(B) = W2(X), R1(X), W2(Y), W1(Y), R1(X), COMMIT(T2), W1(X), COMMIT(T1)\n\n- W2(X) before both R1(X) and before W1(X) ⇒ $T_2 \\to T_1$\n- W2(Y) before W1(Y) ⇒ $T_2 \\to T_1$\n\nOnly the edge $T_2 \\to T_1$: acyclic ⇒ **conflict serializable**, equivalent to the serial order $T_2, T_1$.",
+          "scene": {
+            "edges": [
+              {
+                "from": "T2",
+                "to": "T1",
+                "w": "all conflicts",
+                "tone": "success"
+              }
+            ],
+            "caption": "(B): only T2 → T1 ⇒ equivalent to serial T2, T1",
+            "tones": {
+              "T1": "success",
+              "T2": "success"
+            }
+          }
+        },
+        {
+          "title": "(C): T1 first on Y, T2 first on the second read of X",
+          "body": "(C) = R1(X), W1(Y), W2(X), W2(Y), R1(X), W1(X), …\n\n- R1(X) before W2(X) ⇒ $T_1 \\to T_2$; W1(Y) before W2(Y) ⇒ $T_1 \\to T_2$\n- W2(X) before the second R1(X) and W1(X) ⇒ $T_2 \\to T_1$\n\nCycle ⇒ **not** conflict serializable.",
+          "scene": {
+            "edges": [
+              {
+                "from": "T1",
+                "to": "T2",
+                "w": "R1(X)<W2(X), W1(Y)<W2(Y)",
+                "tone": "error"
+              },
+              {
+                "from": "T2",
+                "to": "T1",
+                "w": "W2(X)<R1(X)",
+                "tone": "error"
+              }
+            ],
+            "caption": "(C): cycle ⇒ not conflict serializable",
+            "tones": {
+              "T1": "error",
+              "T2": "error"
+            }
+          }
+        },
+        {
+          "title": "(D): T2 first on X, T1 first on Y",
+          "body": "(D) = W2(X), R1(X), W1(Y), W2(Y), R1(X), COMMIT(T2), W1(X), …\n\n- W2(X) before R1(X) ⇒ $T_2 \\to T_1$\n- W1(Y) before W2(Y) ⇒ $T_1 \\to T_2$\n\nCycle ⇒ **not** conflict serializable. Only (B) survives.",
+          "scene": {
+            "edges": [
+              {
+                "from": "T2",
+                "to": "T1",
+                "w": "W2(X)<R1(X)",
+                "tone": "error"
+              },
+              {
+                "from": "T1",
+                "to": "T2",
+                "w": "W1(Y)<W2(Y)",
+                "tone": "error"
+              }
+            ],
+            "caption": "(D): cycle ⇒ not conflict serializable",
+            "tones": {
+              "T1": "error",
+              "T2": "error"
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "Only schedule **(B)** is conflict serializable (equivalent to serial $T_2, T_1$)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "R1(X) precedes W2(X) ($T_1 \\to T_2$) and W2(X) precedes the second R1(X) ($T_2 \\to T_1$): cycle."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "W2(X) and W2(Y) precede every conflicting T1 operation, so the only edge is $T_2 \\to T_1$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "T1 is first on Y and on the first read of X, but W2(X) precedes the second R1(X) and W1(X): cycle."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "T2 is first on X but W1(Y) precedes W2(Y): edges both ways. Note the COMMIT positions are irrelevant to conflict serializability."
+        }
+      ],
+      "shortcut": "With two transactions, look only at \"who touches each item first\". T2 must be first on both X and Y (it writes both), and T1 must not read or write X before W2(X). Only (B) starts with W2(X) and has W2(Y) before W1(Y).",
+      "pitfalls": [
+        "Treating the two R1(X) operations as non-conflicting with W2(X) — a read conflicts with a write by another transaction.",
+        "Letting COMMIT positions decide; conflict serializability ignores commits (they matter for recoverability, not for the precedence graph).",
+        "Forgetting the WW conflict W1(Y)/W2(Y)."
+      ],
+      "verification": "Swap non-conflicting adjacent operations in (B): W2(X), R1(X), W2(Y), W1(Y), … → move W2(Y) before R1(X) (different items, no conflict) to get W2(X), W2(Y), R1(X), W1(Y), R1(X), W1(X) = serial $T_2, T_1$ ✓.",
+      "animation": {
+        "kind": "graph",
+        "directed": true,
+        "title": "Precedence graph",
+        "nodes": [
+          {
+            "id": "T1",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "T2",
+            "x": 4,
+            "y": 0
+          }
+        ],
+        "edges": [],
+        "caption": "An edge Ti → Tj for each conflict where Ti acts first"
+      }
+    },
+    "cse-2025-2-cs-44": {
+      "approach": "Check each query against SQL semantics: a correlated subquery with EXISTS or COUNT(*) > 0 tests \"this student has an enrolment in 1470\", and a natural join on the only common column (rollno) pairs each student with their enrolments. SIZEOF is not an SQL function.",
+      "concepts": [
+        "Correlated subqueries",
+        "EXISTS",
+        "Scalar subquery with COUNT(*)",
+        "NATURAL JOIN"
+      ],
+      "given": "Common columns: Students ∩ Enrolled = {rollno}; Courses is not used. Goal: names of students $s$ with some row (s.rollno, 1470, ·) in Enrolled.",
+      "steps": [
+        {
+          "title": "(A) EXISTS with a correlated subquery",
+          "body": "For each student $S$, the inner query returns the enrolment rows of that student in course 1470. `EXISTS` is true exactly when that set is non-empty, so $S$.name is output iff $S$ is enrolled in 1470. **Correct.**"
+        },
+        {
+          "title": "(B) SIZEOF is not SQL",
+          "body": "SQL has no `SIZEOF` function (it is a C operator). The query is syntactically invalid and returns nothing, so it is **not** a correct query."
+        },
+        {
+          "title": "(C) COUNT(*) in a scalar subquery",
+          "body": "The subquery returns one number per student: how many enrolment rows it has in 1470. `0 < COUNT(*)` is the same condition as `EXISTS`, so (C) returns the same names. **Correct.**"
+        },
+        {
+          "title": "(D) NATURAL JOIN on rollno",
+          "body": "Students and Enrolled share only the column `rollno`, so `Students NATURAL JOIN Enrolled` pairs each student with each of their enrolments. Keeping rows with courseno $= 1470$ leaves exactly the enrolled students, and `S.name` projects their names. **Correct.** (A student enrolls in a course at most once, so no duplicate name per student; even with duplicates the set of names is right.)"
+        }
+      ],
+      "answer": {
+        "value": "Queries **(A), (C) and (D)**",
+        "choice": [
+          "A",
+          "C",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "EXISTS on the correlated subquery is true exactly for students with an enrolment in 1470."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "`SIZEOF` is not an SQL function, so the query is invalid."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "`0 < COUNT(*)` of the correlated subquery is equivalent to EXISTS."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "The natural join is on rollno (the only common column), and the WHERE keeps course 1470 enrolments."
+        }
+      ],
+      "shortcut": "EXISTS ≡ COUNT(*) > 0 for a correlated subquery; spot the non-SQL keyword (SIZEOF) and check the natural join's common columns.",
+      "pitfalls": [
+        "Thinking a NATURAL JOIN also matches on other columns — here rollno is the only shared name (Courses is not in the join).",
+        "Accepting SIZEOF because it \"looks right\" — it is not part of SQL.",
+        "Confusing a correlated subquery with an uncorrelated one (the `E.rollno = S.rollno` condition is what makes it per-student)."
+      ],
+      "verification": "Tiny instance: Students = {(1, Ann), (2, Bob)}, Enrolled = {(1, 1470), (2, 1500)}. (A), (C) and (D) all return {Ann}; (B) raises a syntax error ✓."
+    },
+    "cse-2025-2-cs-45": {
+      "approach": "Every access pays the L1 time; only L1 misses (10%) go to L2 and pay the L2→L1 penalty, and only those that also miss in L2 (20% of them) additionally pay the memory→L2 penalty. Nesting the penalties gives the AMAT in one line.",
+      "concepts": [
+        "Average memory access time (AMAT)",
+        "Multi-level cache",
+        "Miss penalty"
+      ],
+      "given": "| Level | Time | Hit rate |\n|---|---|---|\n| L1 | 1 ns | 90% |\n| L2 (penalty L2→L1) | 10 ns | 80% |\n| Main memory (penalty → L2) | 100 ns | — |",
+      "steps": [
+        {
+          "title": "Who pays what",
+          "body": "Hierarchical access: every access first looks in L1 (1 ns). Of all accesses, $10\\%$ miss L1 and are brought from L2 (10 ns). Of those, $20\\%$ also miss L2 and must first be brought from main memory to L2 (100 ns). So the memory penalty applies to $0.1 \\times 0.2 = 2\\%$ of all accesses."
+        },
+        {
+          "title": "Miss penalty of L1",
+          "body": "An L1 miss is served from L2: it costs 10 ns, plus, when L2 also misses (probability $0.2$), the 100 ns transfer from memory:\n\n$$\\text{Penalty}_{L1} = 10 + 0.2 \\times 100 = 10 + 20 = 30\\ \\text{ns}$$",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Average memory access time",
+          "body": "$$\\text{AMAT} = t_{L1} + m_{L1} \\times \\text{Penalty}_{L1} = 1 + 0.1 \\times 30 = 1 + 3 = 4\\ \\text{ns}$$\n\nRounded to one decimal place: **4.0 ns**.",
+          "scene": {
+            "reveal": 4
+          }
+        }
+      ],
+      "answer": {
+        "value": "AMAT $=$ **4.0 ns**",
+        "number": 4,
+        "matchesKey": true
+      },
+      "shortcut": "$\\text{AMAT} = 1 + 0.1\\,(10 + 0.2 \\times 100) = 4$ — write the penalties nested, innermost first.",
+      "pitfalls": [
+        "Using the global L2 miss rate as $0.2$ without multiplying by the L1 miss rate $0.1$ (the memory penalty applies to only $0.1 \\times 0.2 = 2\\%$ of accesses).",
+        "Weighting the L1 time by the hit rate only ($0.9 \\times 1$): the L1 lookup is paid on every access in the hierarchical model."
+      ],
+      "verification": "Expand by outcome: 90% hit in L1 cost 1 ns; 8% hit in L2 cost $1 + 10 = 11$ ns; 2% go to memory cost $1 + 10 + 100 = 111$ ns. $0.9 + 0.88 + 2.22 = 4.0$ ns ✓.",
+      "animation": {
+        "kind": "equation",
+        "title": "Nested miss penalties",
+        "lines": [
+          {
+            "tex": "\\text{Penalty}_{L1} = 10 + 0.2 \\times 100",
+            "note": "L2 hit 80%, else memory"
+          },
+          {
+            "tex": "= 30\\ \\text{ns}"
+          },
+          {
+            "tex": "\\text{AMAT} = 1 + 0.1 \\times 30",
+            "note": "L1 miss rate 10%"
+          },
+          {
+            "tex": "= 4.0\\ \\text{ns}",
+            "tone": "success"
+          }
+        ],
+        "reveal": 0
+      }
+    },
+    "cse-2025-2-cs-46": {
+      "approach": "In a synchronous pipeline every stage takes one clock, so the clock period is the slowest stage plus the latch delay. $n$ instructions on a $k$-stage pipeline finish in $(k + n - 1)$ cycles.",
+      "concepts": [
+        "Pipeline clock period",
+        "Inter-stage latch delay",
+        "Pipeline fill time"
+      ],
+      "given": "Stages: 180, 250, 150, 170, 250 ns; latch 10 ns; $k = 5$, $n = 1000$, no stalls.",
+      "steps": [
+        {
+          "title": "Clock period",
+          "body": "The clock must accommodate the slowest stage and the latch:\n\n$$t_p = \\max(180, 250, 150, 170, 250) + 10 = 250 + 10 = 260\\ \\text{ns}$$",
+          "scene": {
+            "caption": "Slowest stage 250 ns + latch 10 ns = 260 ns per cycle"
+          }
+        },
+        {
+          "title": "Cycles for 1000 instructions",
+          "body": "The first instruction needs $k = 5$ cycles; each of the remaining $999$ completes one cycle later:\n\n$$k + n - 1 = 5 + 1000 - 1 = 1004\\ \\text{cycles}$$"
+        },
+        {
+          "title": "Total time",
+          "body": "$$T = 1004 \\times 260\\ \\text{ns} = 261{,}040\\ \\text{ns} = 261.04\\ \\mu\\text{s}$$\n\nThis lies in the official range 260.20 to 261.20."
+        }
+      ],
+      "answer": {
+        "value": "$1004 \\times 260$ ns $=$ **261.04 µs**",
+        "number": 261.04,
+        "matchesKey": true
+      },
+      "shortcut": "$(k + n - 1)(\\max + \\text{latch}) = 1004 \\times 260 = 261.04\\ \\mu$s.",
+      "pitfalls": [
+        "Summing the stage delays ($1000$ ns) as the cycle time — that is the non-pipelined time per instruction.",
+        "Forgetting the latch: $1004 \\times 250 = 251$ µs.",
+        "Using $n \\times k$ cycles instead of $k + n - 1$."
+      ],
+      "verification": "Steady state alone gives $1000 \\times 260$ ns $= 260$ µs; the fill adds $4 \\times 260 = 1040$ ns $\\approx 1.04$ µs, total $261.04$ µs ✓.",
+      "animation": {
+        "kind": "bars",
+        "title": "Stage delays (ns)",
+        "unit": "ns",
+        "bars": [
+          {
+            "label": "S1",
+            "value": 180
+          },
+          {
+            "label": "S2",
+            "value": 250,
+            "tone": "accent"
+          },
+          {
+            "label": "S3",
+            "value": 150
+          },
+          {
+            "label": "S4",
+            "value": 170
+          },
+          {
+            "label": "S5",
+            "value": 250,
+            "tone": "accent"
+          },
+          {
+            "label": "latch",
+            "value": 10,
+            "tone": "warning"
+          }
+        ],
+        "caption": "Cycle = slowest stage + latch"
+      }
+    },
+    "cse-2025-2-cs-47": {
+      "approach": "Insert 23 into leaf C: C overflows and splits, copying the new leaf's smallest key up into B; B then has 5 keys and splits, pushing its middle key up into A. Read off the new parent of the leaf holding $25^*$.",
+      "concepts": [
+        "B+ tree insertion",
+        "Leaf split (copy up)",
+        "Internal node split (push up)"
+      ],
+      "given": "Max 4 keys per node. Root-to-leaf path: $A = (49, 77, 83, -)$, $B = (7, 19, 33, 44)$, $C = (20^*, 22^*, 25^*, 26^*)$. Insert 23.",
+      "steps": [
+        {
+          "title": "Locate the leaf",
+          "body": "$23 < 49$ ⇒ from $A$ follow the first pointer to $B$. In $B$, $19 \\le 23 < 33$ ⇒ follow the pointer between 19 and 33 to leaf $C$, which is full."
+        },
+        {
+          "title": "Split leaf C and copy 23 up",
+          "body": "C would hold $20, 22, 23, 25, 26$ (5 keys > 4). Split into $(20^*, 22^*)$ and the new leaf $(23^*, 25^*, 26^*)$; the new leaf's smallest key **23 is copied up** into $B$:\n\n$$B = (7, 19, 23, 33, 44)$$\n\n5 keys — $B$ overflows too.",
+          "scene": {
+            "root": {
+              "label": [
+                49,
+                77,
+                83
+              ],
+              "children": [
+                {
+                  "id": "B",
+                  "label": [
+                    7,
+                    19,
+                    23,
+                    33,
+                    44
+                  ],
+                  "tone": "error",
+                  "children": [
+                    {
+                      "id": "b0",
+                      "label": "…",
+                      "tone": "muted"
+                    },
+                    {
+                      "id": "b1",
+                      "label": "…",
+                      "tone": "muted"
+                    },
+                    {
+                      "id": "c1",
+                      "label": [
+                        "20*",
+                        "22*"
+                      ]
+                    },
+                    {
+                      "id": "c2",
+                      "label": [
+                        "23*",
+                        "25*",
+                        "26*"
+                      ],
+                      "tone": "accent"
+                    },
+                    {
+                      "id": "b3",
+                      "label": "…",
+                      "tone": "muted"
+                    },
+                    {
+                      "id": "b4",
+                      "label": "…",
+                      "tone": "muted"
+                    }
+                  ]
+                },
+                {
+                  "id": "a1",
+                  "label": "…",
+                  "tone": "muted"
+                },
+                {
+                  "id": "a2",
+                  "label": "…",
+                  "tone": "muted"
+                },
+                {
+                  "id": "a3",
+                  "label": "…",
+                  "tone": "muted"
+                }
+              ]
+            },
+            "caption": "Leaf split: 23 copied up — B now has 5 keys"
+          }
+        },
+        {
+          "title": "Split B and push 23 up",
+          "body": "An internal split keeps two keys on each side and **moves** the middle key up: $(7, 19)\\ |\\ 23\\ |\\ (33, 44)$. Root $A$ becomes $(23, 49, 77, 83)$ — 4 keys, no further split.\n\nThe leaf $(23^*, 25^*, 26^*)$ holds keys in $[23, 33)$, so it hangs from the first pointer of the new right node $(33, 44)$.",
+          "scene": {
+            "root": {
+              "label": [
+                23,
+                49,
+                77,
+                83
+              ],
+              "tone": "warning",
+              "children": [
+                {
+                  "id": "B1",
+                  "label": [
+                    7,
+                    19
+                  ],
+                  "children": [
+                    {
+                      "id": "b0",
+                      "label": "…",
+                      "tone": "muted"
+                    },
+                    {
+                      "id": "b1",
+                      "label": "…",
+                      "tone": "muted"
+                    },
+                    {
+                      "id": "c1",
+                      "label": [
+                        "20*",
+                        "22*"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "B2",
+                  "label": [
+                    33,
+                    44
+                  ],
+                  "tone": "success",
+                  "children": [
+                    {
+                      "id": "c2",
+                      "label": [
+                        "23*",
+                        "25*",
+                        "26*"
+                      ],
+                      "tone": "accent"
+                    },
+                    {
+                      "id": "b3",
+                      "label": "…",
+                      "tone": "muted"
+                    },
+                    {
+                      "id": "b4",
+                      "label": "…",
+                      "tone": "muted"
+                    }
+                  ]
+                },
+                {
+                  "id": "a1",
+                  "label": "…",
+                  "tone": "muted"
+                },
+                {
+                  "id": "a2",
+                  "label": "…",
+                  "tone": "muted"
+                },
+                {
+                  "id": "a3",
+                  "label": "…",
+                  "tone": "muted"
+                }
+              ]
+            },
+            "caption": "Parent of the leaf with 25* is (33, 44)"
+          }
+        },
+        {
+          "title": "Read the answer",
+          "body": "Parent of the leaf containing $25^*$ is $(33, 44)$; its smallest key is **33**.\n\nThe other leaf-split convention, $(20^*, 22^*, 23^*)\\ |\\ (25^*, 26^*)$, copies 25 up; $B = (7, 19, 25, 33, 44)$ then pushes 25 up and the leaf $(25^*, 26^*)$ again hangs under $(33, 44)$. Same answer."
+        }
+      ],
+      "answer": {
+        "value": "Smallest key in the parent $(33, 44)$ is **33**",
+        "number": 33,
+        "matchesKey": true
+      },
+      "shortcut": "Both C and B are full, so both split. B's middle key (the copied-up 23 or 25) goes to the root, and the leaf with 25 lands under B's right half $(33, 44)$.",
+      "pitfalls": [
+        "Copying the middle key up from an internal split (internal splits move it; only leaf splits copy).",
+        "Answering 23: 23 moves up to the root and is no longer in the parent.",
+        "Forgetting that B overflows and answering from $(7, 19, 23, 33, 44)$, i.e. 7."
+      ],
+      "verification": "Search 25 in the new tree: root $(23, 49, 77, 83)$: $23 \\le 25 < 49$ ⇒ second child $(33, 44)$; $25 < 33$ ⇒ first leaf $(23^*, 25^*, 26^*)$ ✓, and every node has ≤ 4 keys ✓.",
+      "animation": {
+        "kind": "tree",
+        "title": "B+ tree path (… = untouched subtrees)",
+        "root": {
+          "label": [
+            49,
+            77,
+            83
+          ],
+          "children": [
+            {
+              "id": "B",
+              "label": [
+                7,
+                19,
+                33,
+                44
+              ],
+              "children": [
+                {
+                  "id": "b0",
+                  "label": "…",
+                  "tone": "muted"
+                },
+                {
+                  "id": "b1",
+                  "label": "…",
+                  "tone": "muted"
+                },
+                {
+                  "id": "C",
+                  "label": [
+                    "20*",
+                    "22*",
+                    "25*",
+                    "26*"
+                  ],
+                  "tone": "accent"
+                },
+                {
+                  "id": "b3",
+                  "label": "…",
+                  "tone": "muted"
+                },
+                {
+                  "id": "b4",
+                  "label": "…",
+                  "tone": "muted"
+                }
+              ]
+            },
+            {
+              "id": "a1",
+              "label": "…",
+              "tone": "muted"
+            },
+            {
+              "id": "a2",
+              "label": "…",
+              "tone": "muted"
+            },
+            {
+              "id": "a3",
+              "label": "…",
+              "tone": "muted"
+            }
+          ]
+        },
+        "caption": "Before: 23 goes to the full leaf C"
+      }
+    },
+    "cse-2025-2-cs-48": {
+      "approach": "The page offset takes $\\log_2 4096 = 12$ bits. An inner page table occupies exactly one page, so it holds $4096 / 8 = 512$ entries ⇒ 9 index bits. The outer index gets the remaining bits.",
+      "concepts": [
+        "Two-level paging",
+        "Page table entry size",
+        "Logical address split"
+      ],
+      "given": "Logical address $= 32$ bits, page $= 4096 = 2^{12}$ B, inner PTE $= 8$ B, page tables are one page in size.",
+      "steps": [
+        {
+          "title": "Offset within the page",
+          "body": "$$\\log_2 4096 = 12\\ \\text{bits}$$",
+          "scene": {
+            "rows": [
+              {
+                "label": "32-bit address",
+                "fields": [
+                  {
+                    "bits": "xxxxxxxxxxxxxxxxxxxx",
+                    "label": "page number (20)"
+                  },
+                  {
+                    "bits": "xxxxxxxxxxxx",
+                    "label": "offset (12)",
+                    "tone": "info"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "title": "Inner page table index",
+          "body": "One page of the inner table holds\n\n$$\\frac{4096}{8} = \\frac{2^{12}}{2^3} = 2^9 = 512\\ \\text{entries}$$\n\nso the offset within the inner page table page needs **9 bits**.",
+          "scene": {
+            "rows": [
+              {
+                "label": "32-bit address",
+                "fields": [
+                  {
+                    "bits": "xxxxxxxxxxx",
+                    "label": "outer (?)"
+                  },
+                  {
+                    "bits": "xxxxxxxxx",
+                    "label": "inner (9)",
+                    "tone": "warning"
+                  },
+                  {
+                    "bits": "xxxxxxxxxxxx",
+                    "label": "offset (12)",
+                    "tone": "info"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "title": "Outer index",
+          "body": "$$b = 32 - 9 - 12 = 11$$\n\nThe outer page table then has $2^{11}$ entries.",
+          "scene": {
+            "rows": [
+              {
+                "label": "32-bit address",
+                "fields": [
+                  {
+                    "bits": "xxxxxxxxxxx",
+                    "label": "outer b = 11",
+                    "tone": "success"
+                  },
+                  {
+                    "bits": "xxxxxxxxx",
+                    "label": "inner (9)",
+                    "tone": "warning"
+                  },
+                  {
+                    "bits": "xxxxxxxxxxxx",
+                    "label": "offset (12)",
+                    "tone": "info"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "$b = 32 - 9 - 12 =$ **11**",
+        "number": 11,
+        "matchesKey": true
+      },
+      "shortcut": "$b = 32 - 12 - \\log_2(4096/8) = 32 - 12 - 9 = 11$.",
+      "pitfalls": [
+        "Using 4-byte entries out of habit (gives 10 inner bits and $b = 10$).",
+        "Splitting the 20-bit page number evenly (10 + 10) instead of fitting the inner table into one page."
+      ],
+      "verification": "Mapped size: $2^{11}$ outer entries × $2^9$ inner entries × $2^{12}$ B pages $= 2^{32}$ B ✓.",
+      "animation": {
+        "kind": "bits",
+        "title": "Logical address split",
+        "rows": [
+          {
+            "label": "32-bit address",
+            "fields": [
+              {
+                "bits": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                "label": "32 bits"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "cse-2025-2-cs-49": {
+      "approach": "someAlgo is the classic double-BFS: in a tree, a vertex farthest from any start vertex is an end of a longest path, so the second BFS returns the **diameter** of the tree. Run both BFS passes on the figure (vertices labelled A–N for reference).",
+      "concepts": [
+        "Breadth-first search",
+        "Tree diameter",
+        "Eccentricity"
+      ],
+      "given": "Tree of the figure, labelled A–N (labels added only for the explanation): edges A–B, B–C, B–E, D–E, E–F, F–G, E–H, H–I, H–J, H–K, K–L, K–M, M–N.",
+      "steps": [
+        {
+          "title": "First BFS from any vertex, say H",
+          "body": "Distances from $v = H$: level 1 = E, I, J, K; level 2 = B, D, F, L, M; level 3 = A, C, G, N.\n\nMaximum distance 3, reached by A, C, G and N. Take $u = N$ (any of them works).",
+          "scene": {
+            "tones": {
+              "H": "accent",
+              "N": "warning",
+              "A": "warning",
+              "C": "warning",
+              "G": "warning"
+            },
+            "subs": {
+              "H": "0",
+              "E": "1",
+              "I": "1",
+              "J": "1",
+              "K": "1",
+              "B": "2",
+              "D": "2",
+              "F": "2",
+              "L": "2",
+              "M": "2",
+              "A": "3",
+              "C": "3",
+              "G": "3",
+              "N": "3"
+            },
+            "caption": "BFS from v = H: farthest vertices at distance 3"
+          }
+        },
+        {
+          "title": "Second BFS from u = N",
+          "body": "Distances from $N$: M 1, K 2, H 3, L 3, E 4, I 4, J 4, B 5, D 5, F 5, A 6, C 6, G 6.\n\nThe maximum is **6** (at A, C or G); output $d(u, z) = 6$.",
+          "scene": {
+            "tones": {
+              "N": "accent",
+              "A": "success",
+              "C": "success",
+              "G": "success"
+            },
+            "subs": {
+              "N": "0",
+              "M": "1",
+              "K": "2",
+              "H": "3",
+              "L": "3",
+              "E": "4",
+              "I": "4",
+              "J": "4",
+              "B": "5",
+              "D": "5",
+              "F": "5",
+              "A": "6",
+              "C": "6",
+              "G": "6"
+            },
+            "caption": "BFS from u = N: maximum distance 6"
+          }
+        },
+        {
+          "title": "This is the diameter",
+          "body": "A longest path is G–F–E–H–K–M–N with 6 edges. No path is longer: every path between the two sides of E uses at most 2 edges on the left (to A, C or G) and at most 4 on the right (to N), giving $2 + 4 = 6$; paths not through E are shorter (e.g. N to I is 4). The double BFS returns the diameter whatever $v$ and tie-breaks are chosen (from $u = A$ the second BFS also reaches N at distance 6).",
+          "scene": {
+            "tones": {
+              "G": "success",
+              "F": "success",
+              "E": "success",
+              "H": "success",
+              "K": "success",
+              "M": "success",
+              "N": "success"
+            },
+            "edgeTones": {
+              "F>G": "success",
+              "E>F": "success",
+              "E>H": "success",
+              "H>K": "success",
+              "K>M": "success",
+              "M>N": "success"
+            },
+            "subs": {},
+            "caption": "Diameter path G–F–E–H–K–M–N: 6 edges"
+          }
+        }
+      ],
+      "answer": {
+        "value": "someAlgo$(T)$ outputs the diameter, **6**",
+        "number": 6,
+        "matchesKey": true
+      },
+      "shortcut": "Recognise double-BFS = tree diameter, then just find the longest leaf-to-leaf path: two hops left of the hub E plus four hops to the far-right leaf, $2 + 4 = 6$.",
+      "pitfalls": [
+        "Counting vertices on the path (7) instead of edges (6).",
+        "Stopping after the first BFS (its maximum, 3 from H, is the eccentricity of H, not the diameter)."
+      ],
+      "verification": "Repeat with $v = A$: farthest is N at distance 6; BFS from N gives 6 again ✓. 14 vertices and 13 edges confirm the figure is a tree.",
+      "animation": {
+        "kind": "graph",
+        "title": "Tree T (labels added)",
+        "nodes": [
+          {
+            "id": "A",
+            "x": 22,
+            "y": 3
+          },
+          {
+            "id": "B",
+            "x": 26,
+            "y": 12
+          },
+          {
+            "id": "C",
+            "x": 40,
+            "y": 11
+          },
+          {
+            "id": "D",
+            "x": 9,
+            "y": 9
+          },
+          {
+            "id": "E",
+            "x": 17.5,
+            "y": 16.7
+          },
+          {
+            "id": "F",
+            "x": 7,
+            "y": 21.5
+          },
+          {
+            "id": "G",
+            "x": 3,
+            "y": 32
+          },
+          {
+            "id": "H",
+            "x": 29.4,
+            "y": 22.8
+          },
+          {
+            "id": "I",
+            "x": 37,
+            "y": 30
+          },
+          {
+            "id": "J",
+            "x": 18,
+            "y": 33
+          },
+          {
+            "id": "K",
+            "x": 44,
+            "y": 19
+          },
+          {
+            "id": "L",
+            "x": 51,
+            "y": 9
+          },
+          {
+            "id": "M",
+            "x": 57,
+            "y": 21
+          },
+          {
+            "id": "N",
+            "x": 71,
+            "y": 21
+          }
+        ],
+        "edges": [
+          {
+            "from": "A",
+            "to": "B"
+          },
+          {
+            "from": "B",
+            "to": "C"
+          },
+          {
+            "from": "B",
+            "to": "E"
+          },
+          {
+            "from": "D",
+            "to": "E"
+          },
+          {
+            "from": "E",
+            "to": "F"
+          },
+          {
+            "from": "F",
+            "to": "G"
+          },
+          {
+            "from": "E",
+            "to": "H"
+          },
+          {
+            "from": "H",
+            "to": "I"
+          },
+          {
+            "from": "H",
+            "to": "J"
+          },
+          {
+            "from": "H",
+            "to": "K"
+          },
+          {
+            "from": "K",
+            "to": "L"
+          },
+          {
+            "from": "K",
+            "to": "M"
+          },
+          {
+            "from": "M",
+            "to": "N"
+          }
+        ],
+        "caption": "someAlgo = BFS twice"
+      }
+    },
+    "cse-2025-2-cs-50": {
+      "approach": "A DFA only needs to remember $prod(x) \\bmod 7$. Since no symbol is a multiple of 7, the product is never 0, so the reachable values are exactly the 6 non-zero residues; multiplication by a fixed residue is a bijection, so all 6 are pairwise distinguishable.",
+      "concepts": [
+        "Myhill–Nerode / DFA minimisation",
+        "Modular arithmetic (multiplicative group mod 7)",
+        "Reachable states"
+      ],
+      "given": "$\\Sigma = \\{1, 2, 3, 4\\}$, state $r = prod(x) \\bmod 7$, start $r = 1$, accept $r = 2$. Transition $\\delta(r, s) = r \\cdot s \\bmod 7$.",
+      "steps": [
+        {
+          "title": "States are residues; 0 never occurs",
+          "body": "7 is prime and every symbol is in $\\{1, \\dots, 4\\}$, so a product of such numbers is never divisible by 7: residue 0 (and a dead state) never appears. Candidate states: $1, 2, 3, 4, 5, 6$.",
+          "scene": {
+            "reveal": 0
+          }
+        },
+        {
+          "title": "Transition table and reachability",
+          "body": "All six residues are reachable from the start state 1: $1, 2, 3, 4$ by one symbol, $5$ by \"34\" ($12 \\bmod 7 = 5$), $6$ by \"23\" ($6$). The full table $\\delta(r, s) = rs \\bmod 7$ is on the canvas.",
+          "scene": {
+            "reveal": 24,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "info"
+              }
+            ]
+          }
+        },
+        {
+          "title": "All six states are distinguishable",
+          "body": "Take states $r \\ne r'$. Choose a string $w$ with $prod(w) \\equiv 2 r^{-1} \\pmod 7$ (every residue $1$–$6$ is a product of symbols, as shown). Then from $r$ the product is $2$ (accept) and from $r'$ it is $2 r' r^{-1} \\ne 2$ (reject). Example: states 1 and 4 — $w = 2$ gives $2$ (accept) vs $8 \\bmod 7 = 1$ (reject).\n\nSo no two states merge: the minimum DFA has **6** states (accepting state: 2).",
+          "scene": {
+            "hl": [
+              {
+                "r": 1,
+                "tone": "success"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "Minimum DFA has **6** states",
+        "number": 6,
+        "matchesKey": true
+      },
+      "shortcut": "Mod-$p$ product automaton over symbols coprime to $p$: states = the $p - 1$ non-zero residues, all distinguishable ⇒ $7 - 1 = 6$.",
+      "pitfalls": [
+        "Adding a state for residue 0 or a dead state (answer 7): 0 is unreachable and the DFA is already complete.",
+        "Thinking only residues 1–4 are reachable because the alphabet is $\\{1,2,3,4\\}$."
+      ],
+      "verification": "Each column of the table is a permutation of $\\{1, \\dots, 6\\}$ (multiplication by a unit), so the DFA is a permutation automaton: its minimisation keeps every reachable state when exactly one state accepts ✓.",
+      "animation": {
+        "kind": "table",
+        "title": "δ(r, s) = r·s mod 7  (start 1, accept 2)",
+        "corner": "r \\ s",
+        "cols": [
+          "1",
+          "2",
+          "3",
+          "4"
+        ],
+        "rowLabels": [
+          "1 (start)",
+          "2 (accept)",
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "rows": [
+          [
+            1,
+            2,
+            3,
+            4
+          ],
+          [
+            2,
+            4,
+            6,
+            1
+          ],
+          [
+            3,
+            6,
+            2,
+            5
+          ],
+          [
+            4,
+            1,
+            5,
+            2
+          ],
+          [
+            5,
+            3,
+            1,
+            6
+          ],
+          [
+            6,
+            5,
+            4,
+            3
+          ]
+        ],
+        "mono": true,
+        "reveal": 0
+      }
+    },
+    "cse-2025-2-cs-51": {
+      "approach": "Total cycles $= \\sum (\\text{CPI}_i \\times N_i)$. Since execution time $=$ cycles $\\times$ clock period, the clock period is time divided by total cycles.",
+      "concepts": [
+        "CPU time equation",
+        "Weighted CPI",
+        "Clock cycle time"
+      ],
+      "given": "| Type | CPI | Count |\n|---|---|---|\n| Branch | 2 | $2.25 \\times 10^8$ |\n| Load | 5 | $1.20 \\times 10^8$ |\n| Store | 4 | $1.65 \\times 10^8$ |\n| Arithmetic | 3 | $1.30 \\times 10^8$ |\n\nTime $= 6.3$ s; total $6.4 \\times 10^8$ instructions.",
+      "steps": [
+        {
+          "title": "Cycles per instruction type",
+          "body": "- Branch: $2 \\times 2.25 = 4.50$\n- Load: $5 \\times 1.20 = 6.00$\n- Store: $4 \\times 1.65 = 6.60$\n- Arithmetic: $3 \\times 1.30 = 3.90$\n\n(all $\\times 10^8$ cycles). Check counts: $2.25 + 1.20 + 1.65 + 1.30 = 6.40$ ✓.",
+          "scene": {
+            "reveal": 16
+          }
+        },
+        {
+          "title": "Total cycles",
+          "body": "$$4.50 + 6.00 + 6.60 + 3.90 = 21.0 \\Rightarrow 21 \\times 10^8 \\text{ cycles}$$",
+          "scene": {
+            "hl": [
+              {
+                "r": 4,
+                "tone": "success"
+              }
+            ],
+            "reveal": 20
+          }
+        },
+        {
+          "title": "Clock period",
+          "body": "$$t_{clk} = \\frac{6.3\\ \\text{s}}{21 \\times 10^8} = 0.3 \\times 10^{-8}\\ \\text{s} = 3 \\times 10^{-9}\\ \\text{s} = 3.0\\ \\text{ns}$$"
+        }
+      ],
+      "answer": {
+        "value": "Clock cycle $= \\frac{6.3}{21 \\times 10^8}$ s $=$ **3.0 ns**",
+        "number": 3,
+        "matchesKey": true
+      },
+      "shortcut": "Average CPI $= 21/6.4 = 3.28125$; $t_{clk} = 6.3 / (6.4 \\times 10^8 \\times 3.28125) = 3$ ns.",
+      "pitfalls": [
+        "Using the plain mean of the CPIs $(2+5+4+3)/4 = 3.5$ instead of the count-weighted CPI (gives 2.8 ns).",
+        "Dropping the $10^8$ when converting to nanoseconds."
+      ],
+      "verification": "Back-substitute: $21 \\times 10^8$ cycles $\\times 3$ ns $= 63 \\times 10^8$ ns $= 6.3$ s ✓.",
+      "animation": {
+        "kind": "table",
+        "title": "Cycles = CPI × count",
+        "cols": [
+          "CPI",
+          "Count (×10⁸)",
+          "Cycles (×10⁸)",
+          ""
+        ],
+        "rowLabels": [
+          "Branch",
+          "Load",
+          "Store",
+          "Arithmetic",
+          "Total"
+        ],
+        "rows": [
+          [
+            2,
+            "2.25",
+            "4.50",
+            ""
+          ],
+          [
+            5,
+            "1.20",
+            "6.00",
+            ""
+          ],
+          [
+            4,
+            "1.65",
+            "6.60",
+            ""
+          ],
+          [
+            3,
+            "1.30",
+            "3.90",
+            ""
+          ],
+          [
+            "",
+            "6.40",
+            "21.0",
+            "→ 3.0 ns"
+          ]
+        ],
+        "reveal": 0
+      }
+    },
+    "cse-2025-2-cs-52": {
+      "approach": "Trace the pointer: a partially initialised array has its remaining elements set to 0, `&arr[0] + 1` points at `arr[1]`, and `(*ptr)++` changes the array element itself, which `arr[1]` later reads.",
+      "concepts": [
+        "Pointer arithmetic",
+        "Partial array initialisation",
+        "Dereference vs pointer increment"
+      ],
+      "steps": [
+        {
+          "title": "Initialisation",
+          "body": "`int arr[5] = {30,50,10};` — the missing elements are zero-initialised: $arr = [30, 50, 10, 0, 0]$.",
+          "scene": {
+            "panels": [
+              {
+                "line": 4
+              },
+              {
+                "kind": "array",
+                "label": "arr",
+                "cells": [
+                  30,
+                  50,
+                  10,
+                  0,
+                  0
+                ],
+                "pointers": []
+              }
+            ]
+          }
+        },
+        {
+          "title": "ptr points at arr[1]; a = 50",
+          "body": "`&arr[0] + 1` advances by one `int`, so `ptr = &arr[1]`. Then `a = *ptr = 50`.",
+          "scene": {
+            "panels": [
+              {
+                "line": 7,
+                "vars": {
+                  "a": 50
+                }
+              },
+              {
+                "kind": "array",
+                "label": "arr",
+                "cells": [
+                  30,
+                  50,
+                  10,
+                  0,
+                  0
+                ],
+                "pointers": [
+                  {
+                    "name": "ptr",
+                    "at": 1
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "title": "(*ptr)++ modifies arr[1]",
+          "body": "The parentheses make `++` apply to the pointed-to value: $arr[1] = 50 + 1 = 51$. `a` keeps its copy, 50.",
+          "scene": {
+            "panels": [
+              {
+                "line": 8,
+                "vars": {
+                  "a": 50,
+                  "arr[1]": 51
+                }
+              },
+              {
+                "cells": [
+                  30,
+                  {
+                    "v": 51,
+                    "tone": "warning"
+                  },
+                  10,
+                  0,
+                  0
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "title": "ptr++ then print",
+          "body": "Now `ptr = &arr[2]`, so `*ptr = 10`.\n\n$$a + (*ptr) + arr[1] = 50 + 10 + 51 = 111$$",
+          "scene": {
+            "panels": [
+              {
+                "line": 10,
+                "vars": {
+                  "a": 50,
+                  "*ptr": 10,
+                  "arr[1]": 51
+                },
+                "output": "111"
+              },
+              {
+                "cells": [
+                  30,
+                  {
+                    "v": 51,
+                    "tone": "success"
+                  },
+                  {
+                    "v": 10,
+                    "tone": "success"
+                  },
+                  0,
+                  0
+                ],
+                "pointers": [
+                  {
+                    "name": "ptr",
+                    "at": 2
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "The program prints **111**",
+        "number": 111,
+        "matchesKey": true
+      },
+      "shortcut": "$a = 50$, `arr[1]` becomes 51, `*ptr` is now `arr[2] = 10`: $50 + 10 + 51 = 111$.",
+      "pitfalls": [
+        "Reading `(*ptr)++` as `*ptr++` (which would move the pointer instead of incrementing the value).",
+        "Using 50 for `arr[1]` in the sum — it was incremented through the pointer (answer 110).",
+        "Thinking `a` changes too: it holds a copy of the value."
+      ],
+      "verification": "Values used: $a$ (copy before increment) $= 50$, `arr[1]` after increment $= 51$, `arr[2]` $= 10$; $50 + 51 + 10 = 111$ ✓.",
+      "animation": {
+        "kind": "panels",
+        "panels": [
+          {
+            "kind": "code",
+            "lang": "c",
+            "code": "#include <stdio.h>\nint main(){\n    int a;\n    int arr[5] = {30,50,10};\n    int *ptr;\n    ptr = &arr[0] + 1;\n    a = *ptr;\n    (*ptr)++;\n    ptr++;\n    printf(\"%d\", a + (*ptr) + arr[1]);\n    return 0;\n}",
+            "line": 4
+          },
+          {
+            "kind": "array",
+            "label": "arr",
+            "cells": [
+              30,
+              50,
+              10,
+              0,
+              0
+            ],
+            "pointers": []
+          }
+        ]
+      }
+    },
+    "cse-2025-2-cs-53": {
+      "approach": "Compose the functions symbolically: $f(n) = g(2n) = 2n + 10$, so $g(f(n)) = 2n + 20$. The loop runs for $n = 1, 2$.",
+      "concepts": [
+        "Function composition",
+        "Loop bounds",
+        "Call by value"
+      ],
+      "steps": [
+        {
+          "title": "Simplify g(f(n))",
+          "body": "$g(n) = n + 10$, $f(n) = g(2n) = 2n + 10$, so\n\n$$g(f(n)) = (2n + 10) + 10 = 2n + 20$$",
+          "scene": {
+            "line": 6
+          }
+        },
+        {
+          "title": "n = 1",
+          "body": "$f(1) = g(2) = 12$, $g(12) = 22$. $sum = 0 + 22 = 22$.",
+          "scene": {
+            "line": 12,
+            "vars": {
+              "n": 1,
+              "sum": 22
+            },
+            "callStack": [
+              {
+                "name": "main",
+                "vars": {
+                  "n": 1
+                }
+              },
+              {
+                "name": "g",
+                "vars": {
+                  "n": 12
+                }
+              }
+            ]
+          }
+        },
+        {
+          "title": "n = 2, then the loop stops",
+          "body": "$f(2) = g(4) = 14$, $g(14) = 24$. $sum = 22 + 24 = 46$.\n\nThen $n = 3$ fails $n < 3$, and the program prints **46**.",
+          "scene": {
+            "line": 13,
+            "vars": {
+              "n": 3,
+              "sum": 46
+            },
+            "callStack": [
+              {
+                "name": "main",
+                "vars": {
+                  "n": 3,
+                  "sum": 46
+                }
+              }
+            ],
+            "output": "46"
+          }
+        }
+      ],
+      "answer": {
+        "value": "The program prints **46**",
+        "number": 46,
+        "matchesKey": true
+      },
+      "shortcut": "$\\sum_{n=1}^{2} (2n + 20) = 22 + 24 = 46$.",
+      "pitfalls": [
+        "Running the loop for $n = 1, 2, 3$ (gives $46 + 26 = 72$).",
+        "Applying $g$ only once (forgetting the outer $g$): $12 + 14 = 26$."
+      ],
+      "verification": "Direct: $g(f(1)) = g(g(2)) = g(12) = 22$ and $g(f(2)) = g(g(4)) = g(14) = 24$; $22 + 24 = 46$ ✓.",
+      "animation": {
+        "kind": "code",
+        "lang": "c",
+        "code": "#include <stdio.h>\nint g(int n) {\n    return (n+10);\n}\nint f(int n) {\n    return g(n*2);\n}\nint main() {\n    int sum, n;\n    sum=0;\n    for (n=1; n<3; n++)\n        sum += g(f(n));\n    printf (\"%d\", sum);\n    return 0;\n}",
+        "line": 10,
+        "vars": {
+          "sum": 0
+        },
+        "callStack": [
+          {
+            "name": "main"
+          }
+        ],
+        "output": ""
+      }
+    },
+    "cse-2025-2-cs-54": {
+      "approach": "Two monic quadratics are equal iff their root multisets are equal, so $\\{\\alpha, \\beta\\} = \\{\\alpha^2, \\beta^2\\}$. Either each root is fixed by squaring, or squaring swaps the two roots. List the distinct polynomials and count those with equal roots.",
+      "concepts": [
+        "Equality of polynomials ⇔ equal root multisets",
+        "Roots of unity",
+        "Classical (equally likely) probability"
+      ],
+      "steps": [
+        {
+          "title": "Case 1: α² = α and β² = β",
+          "body": "$\\alpha^2 = \\alpha \\Rightarrow \\alpha(\\alpha - 1) = 0 \\Rightarrow \\alpha \\in \\{0, 1\\}$, same for $\\beta$. Polynomials (roots as multisets): $\\{0, 0\\}$, $\\{0, 1\\}$, $\\{1, 1\\}$, i.e. $x^2$, $x(x-1)$, $(x-1)^2$.",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "Case 2: α² = β and β² = α",
+          "body": "Then $\\alpha = \\beta^2 = \\alpha^4 \\Rightarrow \\alpha(\\alpha^3 - 1) = 0 \\Rightarrow \\alpha \\in \\{0, 1, \\omega, \\omega^2\\}$ with $\\omega = e^{2\\pi i/3}$, and $\\beta = \\alpha^2$:\n\n- $\\alpha = 0 \\Rightarrow \\{0, 0\\}$ and $\\alpha = 1 \\Rightarrow \\{1, 1\\}$ (already counted)\n- $\\alpha = \\omega \\Rightarrow \\beta = \\omega^2$, and $\\alpha = \\omega^2 \\Rightarrow \\beta = \\omega^4 = \\omega$: the same polynomial $(x - \\omega)(x - \\omega^2) = x^2 + x + 1$. **New.**",
+          "scene": {
+            "reveal": 4
+          }
+        },
+        {
+          "title": "Count and divide",
+          "body": "Square invariant polynomials: $x^2$, $x^2 - x$, $(x-1)^2$, $x^2 + x + 1$ — **4** in total. Equal roots: $x^2$ and $(x-1)^2$ — **2**.\n\n$$P = \\frac{2}{4} = 0.5$$",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "tone": "success"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "$P = \\frac{2}{4} =$ **0.5**",
+        "number": 0.5,
+        "matchesKey": true
+      },
+      "shortcut": "Squaring must permute the roots: fixed points $\\{0, 1\\}$ give 3 multisets, a 2-cycle needs $\\alpha^3 = 1$, $\\alpha \\ne 1$ ⇒ $\\{\\omega, \\omega^2\\}$. $2$ of $4$ have equal roots.",
+      "pitfalls": [
+        "Counting ordered pairs $(\\alpha, \\beta)$ instead of polynomials: $(0,1)$ and $(1,0)$ are the same polynomial, as are $(\\omega, \\omega^2)$ and $(\\omega^2, \\omega)$.",
+        "Missing the swap case and answering $2/3 \\approx 0.7$."
+      ],
+      "verification": "Check $x^2 + x + 1$: roots $\\omega, \\omega^2$; squares $\\omega^2, \\omega^4 = \\omega$ — the same set ✓. Check $x(x-1)$: squares of $0, 1$ are $0, 1$ ✓.",
+      "animation": {
+        "kind": "table",
+        "title": "All square invariant quadratics",
+        "cols": [
+          "roots",
+          "polynomial",
+          "equal roots?"
+        ],
+        "rows": [
+          [
+            "0, 0",
+            "x²",
+            "yes"
+          ],
+          [
+            "0, 1",
+            "x² − x",
+            "no"
+          ],
+          [
+            "1, 1",
+            "(x − 1)²",
+            "yes"
+          ],
+          [
+            "ω, ω²",
+            "x² + x + 1",
+            "no"
+          ]
+        ],
+        "reveal": 0
+      }
+    },
+    "cse-2025-2-cs-55": {
+      "approach": "Let the cut be $U \\sim \\text{Uniform}(0,1)$. If $U < 0.4$ the piece containing 0.4 is $(U, 1)$ of length $1 - U$; if $U > 0.4$ it is $(0, U)$ of length $U$. Integrate the length against the density 1.",
+      "concepts": [
+        "Uniform distribution",
+        "Expectation of a function of a random variable",
+        "Piecewise integration"
+      ],
+      "steps": [
+        {
+          "title": "Length as a function of the cut U",
+          "body": "$$\\ell(U) = \\begin{cases} 1 - U, & 0 < U < 0.4 \\\\ U, & 0.4 < U < 1 \\end{cases}$$\n\n($U = 0.4$ exactly has probability 0.)",
+          "scene": {
+            "reveal": 1
+          }
+        },
+        {
+          "title": "Integrate",
+          "body": "$$E[\\ell] = \\int_0^{0.4} (1 - u)\\,du + \\int_{0.4}^{1} u\\,du$$\n\n$$\\int_0^{0.4} (1 - u)\\,du = 0.4 - \\frac{0.4^2}{2} = 0.4 - 0.08 = 0.32$$\n\n$$\\int_{0.4}^{1} u\\,du = \\frac{1 - 0.16}{2} = \\frac{0.84}{2} = 0.42$$",
+          "scene": {
+            "reveal": 4
+          }
+        },
+        {
+          "title": "Add",
+          "body": "$$E[\\ell] = 0.32 + 0.42 = 0.74$$\n\nThis lies in the official range 0.70 to 0.80.",
+          "scene": {
+            "reveal": 5
+          }
+        }
+      ],
+      "answer": {
+        "value": "Expected length $=$ **0.74**",
+        "number": 0.74,
+        "matchesKey": true
+      },
+      "shortcut": "For a point $p$: $E = \\tfrac12 + p(1 - p) = 0.5 + 0.4 \\times 0.6 = 0.74$.",
+      "pitfalls": [
+        "Answering 0.5 (the expected length of a fixed piece, e.g. the left one) — the piece containing 0.4 is more likely to be the longer one.",
+        "Swapping the cases: for $U < 0.4$ the point is in the right piece $(U, 1)$."
+      ],
+      "verification": "General formula: $\\int_0^p (1-u)\\,du + \\int_p^1 u\\,du = p - \\tfrac{p^2}{2} + \\tfrac{1 - p^2}{2} = \\tfrac12 + p - p^2$; at $p = 0.4$: $0.5 + 0.4 - 0.16 = 0.74$ ✓. At $p = 0.5$ it gives the known $0.75$.",
+      "animation": {
+        "kind": "equation",
+        "title": "Cut at U ~ Uniform(0, 1), point 0.4",
+        "lines": [
+          {
+            "tex": "\\ell(U) = 1 - U \\ (U < 0.4),\\quad \\ell(U) = U \\ (U > 0.4)"
+          },
+          {
+            "tex": "E[\\ell] = \\int_0^{0.4} (1-u)\\,du + \\int_{0.4}^{1} u\\,du"
+          },
+          {
+            "tex": "= (0.4 - 0.08)",
+            "note": "left part"
+          },
+          {
+            "tex": "\\;+\\; \\tfrac{1 - 0.16}{2} = 0.32 + 0.42",
+            "note": "right part"
+          },
+          {
+            "tex": "= 0.74",
+            "tone": "success"
+          }
+        ],
+        "reveal": 0
+      }
     }
   }
 }
