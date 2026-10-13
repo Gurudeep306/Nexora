@@ -1,0 +1,1408 @@
+{
+  "paper": "da-2026",
+  "version": 2,
+  "solutions": {
+    "da-2026-da-43": {
+      "approach": "Reduce every statement to the definition $\\chi^2_k = $ sum of squares of $k$ independent standard normals, plus two facts: $\\chi^2_2 = \\text{Exp}(\\text{mean } 2)$ and $\\sum (X_i-\\bar X)^2 \\sim \\chi^2_{n-1}$ for normal samples.",
+      "concepts": [
+        "Chi-square distribution",
+        "Distribution of the sample mean",
+        "Sample variance of a normal sample (Cochran)",
+        "Exponential = Gamma(1)"
+      ],
+      "steps": [
+        {
+          "title": "Option (A): sum of n squared standard normals",
+          "body": "By definition, if $Z_1,\\ldots,Z_k$ are i.i.d. $N(0,1)$ then $\\sum_{i=1}^k Z_i^2 \\sim \\chi^2_k$. Here $k = n$, so $\\sum_{i=1}^{n} X_i^2 \\sim \\chi^2_n$. **(A) correct.**",
+          "scene": {
+            "reveal": 3,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Option (B): deviations from the sample mean",
+          "body": "For an i.i.d. $N(\\mu,\\sigma^2)$ sample, $\\frac{(n-1)s^2}{\\sigma^2} = \\frac{\\sum (X_i-\\bar X)^2}{\\sigma^2} \\sim \\chi^2_{n-1}$ (and it is independent of $\\bar X$). With $\\sigma^2 = 1$: $\\sum_{i=1}^n (X_i - \\bar X)^2 \\sim \\chi^2_{n-1}$. One degree of freedom is lost because the $n$ deviations satisfy the linear constraint $\\sum (X_i - \\bar X) = 0$. **(B) correct.**",
+          "scene": {
+            "reveal": 6,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Option (C): two squared normals give an exponential",
+          "body": "$X_1^2 + X_n^2 \\sim \\chi^2_2$ (two independent standard normals). The $\\chi^2_k$ density is that of $\\text{Gamma}\\left(\\frac{k}{2}, \\text{scale } 2\\right)$; for $k=2$ it is $\\text{Gamma}(1, 2)$:\n$$f(y) = \\tfrac12 e^{-y/2},\\quad y > 0,$$\nwhich is the exponential density with mean $2$ (rate $\\tfrac12$). Also $E[\\chi^2_2] = 2$. **(C) correct.**",
+          "scene": {
+            "reveal": 9,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Option (D): the squared standardised mean",
+          "body": "$\\bar X \\sim N\\left(0, \\frac{1}{n}\\right)$ because $\\text{Var}(\\bar X) = \\frac{1}{n^2}\\cdot n\\cdot 1 = \\frac1n$. Hence $\\sqrt n\\,\\bar X \\sim N(0,1)$ — a **single** standard normal — and $(\\sqrt n\\,\\bar X)^2 \\sim \\chi^2_1$, not $\\chi^2_2$. **(D) incorrect.**",
+          "scene": {
+            "reveal": 12,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "tone": "success"
+              },
+              {
+                "r": 3,
+                "tone": "error"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "**(A), (B), (C)**",
+        "choice": [
+          "A",
+          "B",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Sum of squares of $n$ independent $N(0,1)$ variables is $\\chi^2_n$ by definition."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Standard result for normal samples: $\\sum (X_i-\\bar X)^2/\\sigma^2 \\sim \\chi^2_{n-1}$; the constraint $\\sum(X_i-\\bar X)=0$ removes one degree of freedom."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$\\chi^2_2$ has density $\\frac12 e^{-y/2}$, i.e. exponential with mean 2."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$\\sqrt n\\,\\bar X$ is one standard normal, so its square is $\\chi^2_1$; \"2 degrees of freedom\" is wrong."
+        }
+      ],
+      "shortcut": "Count independent standard normals being squared: $n$ in (A), $n-1$ effective in (B), $2$ in (C) ($\\chi^2_2 \\equiv$ Exp(mean 2)), and just $1$ in (D).",
+      "pitfalls": [
+        "Thinking $\\chi^2_2$ and the exponential are different families — $\\chi^2_2$ is exactly Exp with mean 2.",
+        "Forgetting the $\\sqrt n$ standardisation makes $\\sqrt n\\,\\bar X$ a single $N(0,1)$, giving 1 (not 2) degree of freedom.",
+        "Using $n$ instead of $n-1$ degrees of freedom in (B)."
+      ],
+      "verification": "Means check: $E[\\chi^2_k] = k$. (A) $E\\sum X_i^2 = n$ ✓; (B) $E\\sum(X_i-\\bar X)^2 = (n-1)\\sigma^2 = n-1$ ✓; (C) $E[X_1^2+X_n^2] = 2$ = mean of Exp(mean 2) ✓; (D) $E[n\\bar X^2] = n\\cdot\\frac1n = 1 \\ne 2$ ✗.",
+      "animation": {
+        "kind": "table",
+        "title": "Which chi-square is each statistic?",
+        "cols": [
+          "statistic",
+          "distribution",
+          "verdict"
+        ],
+        "rows": [
+          [
+            "ΣXᵢ²",
+            "χ²ₙ",
+            "A ✓"
+          ],
+          [
+            "Σ(Xᵢ − X̄)²",
+            "χ²ₙ₋₁",
+            "B ✓"
+          ],
+          [
+            "X₁² + Xₙ²",
+            "χ²₂ = Exp(mean 2)",
+            "C ✓"
+          ],
+          [
+            "(√n X̄)²",
+            "χ²₁",
+            "D ✗"
+          ]
+        ],
+        "reveal": 0
+      }
+    },
+    "da-2026-da-44": {
+      "approach": "Check each statement against the three defining properties of any CDF — non-decreasing, limits $0$ and $1$, right-continuous — plus the fact that a discrete variable puts positive mass $P(X=a) = F(a) - F(a^-)$ at its support points.",
+      "concepts": [
+        "Cumulative distribution function",
+        "Right-continuity",
+        "Jumps of a discrete CDF"
+      ],
+      "steps": [
+        {
+          "title": "(A) positive everywhere? No",
+          "body": "$F(x) = P(X \\le x) \\ge 0$, and $\\lim_{x\\to-\\infty} F(x) = 0$. For example, for $X \\sim \\text{Bernoulli}(0.5)$, $F(x) = 0$ for all $x < 0$. So $F$ is **non-negative**, not always positive. **(A) false.**",
+          "scene": {
+            "reveal": 3,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "error"
+              }
+            ]
+          }
+        },
+        {
+          "title": "(B) non-decreasing: yes",
+          "body": "If $x_1 < x_2$ then $\\{X \\le x_1\\} \\subseteq \\{X \\le x_2\\}$, so $F(x_1) \\le F(x_2)$. **(B) true.**",
+          "scene": {
+            "reveal": 6,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "error"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "(C) jump discontinuity: yes",
+          "body": "A discrete $X$ has some value $a$ with $P(X = a) > 0$. Then\n$$F(a) - \\lim_{x\\to a^-}F(x) = P(X = a) > 0,$$\nso $F$ jumps at $a$: the CDF is a step function. **(C) true.**",
+          "scene": {
+            "reveal": 9,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "error"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "(D) left-continuous? No — right-continuous",
+          "body": "Every CDF is **right**-continuous: $\\lim_{x\\to a^+}F(x) = F(a)$, because $\\{X\\le a+\\tfrac1k\\}\\downarrow\\{X\\le a\\}$. At a jump point the left limit is $F(a) - P(X=a) \\ne F(a)$, so $F$ is not left-continuous there. **(D) false.**",
+          "scene": {
+            "reveal": 12,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "error"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "tone": "success"
+              },
+              {
+                "r": 3,
+                "tone": "error"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "**(B), (C)**",
+        "choice": [
+          "B",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$F(x) = 0$ to the left of the smallest support point (e.g. $x<0$ for a Bernoulli), so it is non-negative, not positive."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$\\{X\\le x_1\\}\\subseteq\\{X\\le x_2\\}$ for $x_1<x_2$ — monotonicity of probability."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "At each mass point the jump size is $P(X=a) > 0$; a discrete CDF is a step function."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "CDFs are right-continuous; at a jump the left limit is $F(a)-P(X=a) \\ne F(a)$."
+        }
+      ],
+      "shortcut": "$F(x) = P(X \\le x)$ with \"$\\le$\" includes the point itself, so the value at a jump belongs to the right piece — right-continuous, not left.",
+      "pitfalls": [
+        "Confusing \"positive\" with \"non-negative\".",
+        "Mixing up left/right continuity; it would be left-continuous only under the alternative convention $F(x) = P(X < x)$, which GATE does not use."
+      ],
+      "verification": "Bernoulli(0.5): $F = 0$ on $(-\\infty,0)$, $0.5$ on $[0,1)$, $1$ on $[1,\\infty)$ — non-decreasing, zero on the left, jumps at 0 and 1, and the filled dots sit on the right pieces (right-continuous).",
+      "animation": {
+        "kind": "table",
+        "title": "CDF of a discrete random variable",
+        "cols": [
+          "statement",
+          "truth",
+          "verdict"
+        ],
+        "rows": [
+          [
+            "always positive",
+            "F = 0 left of the support",
+            "A ✗"
+          ],
+          [
+            "non-decreasing",
+            "X≤x₁ ⊆ X≤x₂",
+            "B ✓"
+          ],
+          [
+            "jump discontinuity",
+            "jump = P(X = a) > 0",
+            "C ✓"
+          ],
+          [
+            "left continuous",
+            "right-continuous instead",
+            "D ✗"
+          ]
+        ],
+        "reveal": 0
+      }
+    },
+    "da-2026-da-45": {
+      "approach": "Ridge regression adds $\\lambda\\lVert w\\rVert_2^2$ to the data loss. Compute the prediction, the MAE on this single instance, the squared-L2 penalty, and add.",
+      "concepts": [
+        "Ridge (L2) regularisation",
+        "Mean absolute error",
+        "Regularised loss = data loss + λ‖w‖²"
+      ],
+      "given": "| quantity | value |\n|---|---|\n| $w$ | $[-3, 4]^T$ |\n| $x$ | $[1, 2]^T$ |\n| $y_{true}$ | $x_1 + x_2$ |\n| $\\lambda$ | $0.20$ |",
+      "steps": [
+        {
+          "title": "Prediction and true value",
+          "body": "$y_{pred} = w^Tx = (-3)(1) + (4)(2) = -3 + 8 = 5$.\n\n$y_{true} = x_1 + x_2 = 1 + 2 = 3$.",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Data loss (MAE on one instance)",
+          "body": "$\\text{MAE} = \\lvert y_{pred} - y_{true}\\rvert = \\lvert 5 - 3\\rvert = 2$.",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "Ridge penalty",
+          "body": "Ridge uses the squared L2 norm: $\\lVert w\\rVert_2^2 = (-3)^2 + 4^2 = 9 + 16 = 25$, so the penalty is $\\lambda\\lVert w\\rVert_2^2 = 0.20 \\times 25 = 5$.",
+          "scene": {
+            "reveal": 4
+          }
+        },
+        {
+          "title": "Overall regularised loss",
+          "body": "$L = \\text{MAE} + \\lambda\\lVert w\\rVert_2^2 = 2 + 5 = 7.00$.",
+          "scene": {
+            "reveal": 5
+          }
+        }
+      ],
+      "answer": {
+        "value": "Regularised loss $= 2 + 5 =$ **7.00**",
+        "number": 7,
+        "matchesKey": true
+      },
+      "shortcut": "$\\lvert w^Tx - (x_1+x_2)\\rvert + \\lambda(w_1^2+w_2^2) = \\lvert 5-3\\rvert + 0.2(25) = 7$.",
+      "pitfalls": [
+        "Using $\\lVert w\\rVert_2 = 5$ instead of $\\lVert w\\rVert_2^2 = 25$ gives $3$ — ridge penalises the **squared** norm.",
+        "Using the L1 norm ($\\lvert -3\\rvert + 4 = 7$, lasso) gives $2 + 1.4 = 3.4$.",
+        "Squaring the error (MSE) instead of taking its absolute value gives $4 + 5 = 9$."
+      ],
+      "verification": "Units check: both terms are plain numbers on this instance; $2 \\le L$ and the penalty $5$ dominates because $\\lVert w\\rVert$ is large — consistent with $7$.",
+      "animation": {
+        "kind": "equation",
+        "title": "Ridge loss for this instance",
+        "lines": [
+          {
+            "tex": "y_{pred}=w^Tx=(-3)(1)+(4)(2)=5",
+            "note": "prediction"
+          },
+          {
+            "tex": "y_{true}=1+2=3",
+            "note": "target"
+          },
+          {
+            "tex": "\\text{MAE}=\\lvert 5-3\\rvert=2",
+            "note": "data loss"
+          },
+          {
+            "tex": "\\lambda\\lVert w\\rVert_2^2=0.2\\,(9+16)=5",
+            "note": "L2 penalty"
+          },
+          {
+            "tex": "L=2+5=7.00",
+            "tone": "success"
+          }
+        ],
+        "reveal": 0
+      }
+    },
+    "da-2026-da-46": {
+      "approach": "In a fully-connected network without biases, each pair of consecutive layers of sizes $a$ and $b$ contributes an $a\\times b$ weight matrix. Sum $a\\cdot b$ over consecutive layers.",
+      "concepts": [
+        "Fully-connected (dense) layer",
+        "Weight matrix size",
+        "Learnable parameters"
+      ],
+      "given": "Layers: input $30$ → hidden-1 $4$ → hidden-2 $3$ → output $1$; no biases.",
+      "steps": [
+        {
+          "title": "Input → hidden layer 1",
+          "body": "Every one of the $30$ inputs connects to each of the $4$ neurons: $30 \\times 4 = 120$ weights.",
+          "scene": {
+            "reveal": 4,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Hidden 1 → hidden 2 → output",
+          "body": "$4 \\times 3 = 12$ weights, then $3 \\times 1 = 3$ weights.",
+          "scene": {
+            "reveal": 12,
+            "hl": [
+              {
+                "r": 1,
+                "tone": "accent"
+              },
+              {
+                "r": 2,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Total",
+          "body": "$120 + 12 + 3 = 135$ learnable parameters (biases would have added $4 + 3 + 1 = 8$ more; they are excluded).",
+          "scene": {
+            "reveal": 16,
+            "hl": [
+              {
+                "r": 3,
+                "tone": "success"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "$120 + 12 + 3 =$ **135**",
+        "number": 135,
+        "matchesKey": true
+      },
+      "shortcut": "$\\sum_k n_k n_{k+1} = 30\\cdot4 + 4\\cdot3 + 3\\cdot1 = 135$.",
+      "pitfalls": [
+        "Adding biases (would give 143) although the question excludes them.",
+        "Counting neurons (38) instead of connections.",
+        "Treating the input layer as having learnable weights of its own."
+      ],
+      "verification": "Matrix shapes: $W_1 \\in \\mathbb{R}^{4\\times30}$ (120), $W_2 \\in \\mathbb{R}^{3\\times4}$ (12), $W_3 \\in \\mathbb{R}^{1\\times3}$ (3); total entries $= 135$.",
+      "animation": {
+        "kind": "table",
+        "title": "Weights between consecutive layers (no bias)",
+        "cols": [
+          "from",
+          "to",
+          "shape",
+          "weights"
+        ],
+        "rows": [
+          [
+            "input (30)",
+            "hidden-1 (4)",
+            "30 × 4",
+            120
+          ],
+          [
+            "hidden-1 (4)",
+            "hidden-2 (3)",
+            "4 × 3",
+            12
+          ],
+          [
+            "hidden-2 (3)",
+            "output (1)",
+            "3 × 1",
+            3
+          ],
+          [
+            "",
+            "",
+            "total",
+            135
+          ]
+        ],
+        "reveal": 0
+      }
+    },
+    "da-2026-da-47": {
+      "approach": "Bayes' theorem: $P(D\\mid +) = \\frac{P(+\\mid D)P(D)}{P(+\\mid D)P(D) + P(+\\mid D^c)P(D^c)}$. A two-level probability tree gives both terms at once.",
+      "concepts": [
+        "Bayes' theorem",
+        "Law of total probability",
+        "Sensitivity / false-positive rate"
+      ],
+      "given": "| quantity | value |\n|---|---|\n| $P(D)$ | $0.30$ |\n| $P(+\\mid D)$ | $0.80$ |\n| $P(+\\mid D^c)$ | $0.10$ |",
+      "steps": [
+        {
+          "title": "Joint probabilities of testing positive",
+          "body": "$P(D \\cap +) = 0.3 \\times 0.8 = 0.24$\n\n$P(D^c \\cap +) = 0.7 \\times 0.1 = 0.07$",
+          "scene": {
+            "caption": "Paths ending in a positive test"
+          }
+        },
+        {
+          "title": "Total probability of a positive test",
+          "body": "$P(+) = 0.24 + 0.07 = 0.31$."
+        },
+        {
+          "title": "Apply Bayes",
+          "body": "$$P(D\\mid +) = \\frac{0.24}{0.31} = \\frac{24}{31} \\approx 0.7742$$\nRounded to two decimals: **0.77**.",
+          "scene": {
+            "caption": "P(D | +) = 0.24 / 0.31 ≈ 0.77"
+          }
+        }
+      ],
+      "answer": {
+        "value": "$P(D\\mid +) = \\frac{24}{31} \\approx$ **0.77**",
+        "number": 0.77,
+        "matchesKey": true
+      },
+      "shortcut": "Think of 100 people: 30 diseased → 24 test positive; 70 healthy → 7 test positive. Of 31 positives, 24 are diseased: $24/31 \\approx 0.77$.",
+      "pitfalls": [
+        "Answering $P(+\\mid D) = 0.80$ (confusing the direction of conditioning).",
+        "Forgetting the false positives $0.7 \\times 0.1$ in the denominator."
+      ],
+      "verification": "Complement check: $P(D^c\\mid +) = 0.07/0.31 \\approx 0.2258$ and $0.7742 + 0.2258 = 1$.",
+      "animation": {
+        "kind": "tree",
+        "title": "Probability tree",
+        "caption": "Paths ending in a positive test",
+        "root": {
+          "id": "P",
+          "label": "person",
+          "children": [
+            {
+              "id": "D",
+              "label": "D",
+              "edge": "0.3",
+              "children": [
+                {
+                  "id": "Dp",
+                  "label": "+ : 0.24",
+                  "edge": "0.8",
+                  "tone": "success"
+                },
+                {
+                  "id": "Dn",
+                  "label": "− : 0.06",
+                  "edge": "0.2",
+                  "tone": "muted"
+                }
+              ]
+            },
+            {
+              "id": "H",
+              "label": "not D",
+              "edge": "0.7",
+              "children": [
+                {
+                  "id": "Hp",
+                  "label": "+ : 0.07",
+                  "edge": "0.1",
+                  "tone": "warning"
+                },
+                {
+                  "id": "Hn",
+                  "label": "− : 0.63",
+                  "edge": "0.9",
+                  "tone": "muted"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "da-2026-da-48": {
+      "approach": "One call of \\`fun\\` is exactly one bubble-sort pass that returns the number of adjacent swaps it made. Every swap of an adjacent out-of-order pair removes exactly one inversion, and 5 passes are enough to sort 5 elements, so the printed total equals the number of inversions of the initial list.",
+      "concepts": [
+        "Bubble-sort pass via tail recursion",
+        "Inversions of a permutation",
+        "Mutable list passed by reference"
+      ],
+      "steps": [
+        {
+          "title": "What one call of fun does",
+          "body": "\\`fun(L, i)\\` compares \\`L[i]\\` and \\`L[i+1]\\` for $i = 0, 1, \\ldots, \\text{len}(L)-2$, swaps them when \\`L[i] > L[i+1]\\` (the tuple assignment is a genuine swap), and adds 1 per swap. So \\`fun(data)\\` is one left-to-right bubble pass that returns its swap count. \\`data\\` is mutated in place, so the passes accumulate.",
+          "scene": {
+            "caption": "Initial list",
+            "vars": {
+              "pass": 0,
+              "count": 0
+            }
+          }
+        },
+        {
+          "title": "Pass 1: 4 swaps",
+          "body": "$[5,3,4,1,2]$: $5>3$ swap → $[3,5,4,1,2]$; $5>4$ swap → $[3,4,5,1,2]$; $5>1$ swap → $[3,4,1,5,2]$; $5>2$ swap → $[3,4,1,2,5]$. Returns $4$; count $= 4$.",
+          "scene": {
+            "cells": [
+              {
+                "v": 3,
+                "id": "n3"
+              },
+              {
+                "v": 4,
+                "id": "n4"
+              },
+              {
+                "v": 1,
+                "id": "n1"
+              },
+              {
+                "v": 2,
+                "id": "n2"
+              },
+              {
+                "v": 5,
+                "id": "n5",
+                "tone": "success"
+              }
+            ],
+            "caption": "After pass 1 (5 bubbled to the end)",
+            "vars": {
+              "pass": 1,
+              "swaps": 4,
+              "count": 4
+            }
+          }
+        },
+        {
+          "title": "Pass 2: 2 swaps",
+          "body": "$[3,4,1,2,5]$: $3<4$ no; $4>1$ swap → $[3,1,4,2,5]$; $4>2$ swap → $[3,1,2,4,5]$; $4<5$ no. Returns $2$; count $= 4+2 = 6$.",
+          "scene": {
+            "cells": [
+              {
+                "v": 3,
+                "id": "n3"
+              },
+              {
+                "v": 1,
+                "id": "n1"
+              },
+              {
+                "v": 2,
+                "id": "n2"
+              },
+              {
+                "v": 4,
+                "id": "n4",
+                "tone": "success"
+              },
+              {
+                "v": 5,
+                "id": "n5",
+                "tone": "success"
+              }
+            ],
+            "caption": "After pass 2",
+            "vars": {
+              "pass": 2,
+              "swaps": 2,
+              "count": 6
+            }
+          }
+        },
+        {
+          "title": "Pass 3: 2 swaps",
+          "body": "$[3,1,2,4,5]$: $3>1$ swap → $[1,3,2,4,5]$; $3>2$ swap → $[1,2,3,4,5]$; then $3<4$, $4<5$ no swaps. Returns $2$; count $= 6+2 = 8$.",
+          "scene": {
+            "cells": [
+              {
+                "v": 1,
+                "id": "n1",
+                "tone": "success"
+              },
+              {
+                "v": 2,
+                "id": "n2",
+                "tone": "success"
+              },
+              {
+                "v": 3,
+                "id": "n3",
+                "tone": "success"
+              },
+              {
+                "v": 4,
+                "id": "n4",
+                "tone": "success"
+              },
+              {
+                "v": 5,
+                "id": "n5",
+                "tone": "success"
+              }
+            ],
+            "caption": "After pass 3 — sorted",
+            "vars": {
+              "pass": 3,
+              "swaps": 2,
+              "count": 8
+            }
+          }
+        },
+        {
+          "title": "Passes 4 and 5: no swaps",
+          "body": "The list is sorted, so both remaining calls return $0$. Final count $= 4+2+2+0+0 = 8$; the program prints **8**.",
+          "scene": {
+            "caption": "Passes 4–5 return 0",
+            "vars": {
+              "pass": 5,
+              "swaps": 0,
+              "count": 8
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "The program prints **8**",
+        "number": 8,
+        "matchesKey": true
+      },
+      "shortcut": "Count inversions of $[5,3,4,1,2]$: $5$ beats $3,4,1,2$ (4); $3$ beats $1,2$ (2); $4$ beats $1,2$ (2); $1<2$ (0). Total $4+2+2 = 8$.",
+      "pitfalls": [
+        "Thinking each call restarts from the original list — \\`data\\` is mutated in place.",
+        "Counting comparisons (4 per pass, 20 total) instead of swaps.",
+        "Stopping after the first pass (answer 4)."
+      ],
+      "verification": "Inversion count (shortcut) and the explicit pass-by-pass trace both give $8$.",
+      "animation": {
+        "kind": "array",
+        "title": "data after each call of fun (one bubble pass)",
+        "label": "data",
+        "cells": [
+          {
+            "v": 5,
+            "id": "n5"
+          },
+          {
+            "v": 3,
+            "id": "n3"
+          },
+          {
+            "v": 4,
+            "id": "n4"
+          },
+          {
+            "v": 1,
+            "id": "n1"
+          },
+          {
+            "v": 2,
+            "id": "n2"
+          }
+        ],
+        "caption": "Initial list",
+        "vars": {
+          "pass": 0,
+          "count": 0
+        }
+      }
+    },
+    "da-2026-da-49": {
+      "approach": "Simplify the formula first: the clause $\\exists z \\in X\\,(t[P] = z[P])$ is always true (take $z = t$), so the query returns the tuples of $X$ whose $P$ value has at least one matching $Y$ tuple with $S > 1$ — a semi-join.",
+      "concepts": [
+        "Tuple relational calculus",
+        "Existential quantifier",
+        "Semi-join"
+      ],
+      "steps": [
+        {
+          "title": "The z-clause is a tautology",
+          "body": "Since $t \\in X$, choosing $z = t$ satisfies $t[P] = z[P]$. So the condition reduces to\n$$t \\in X \\land \\exists m \\in Y\\,(m[P] = t[P] \\land m[S] > 1).$$",
+          "scene": {
+            "reveal": 0
+          }
+        },
+        {
+          "title": "Check each tuple of X against Y",
+          "body": "- $t = (P1, Q1, R1)$: $Y$ has $(P1, 10)$ and $(P1, 15)$; $10 > 1$ ✓ → returned.\n- $t = (P2, Q2, R2)$: $Y$ has $(P2, 20)$; $20 > 1$ ✓ → returned.\n- $t = (P3, Q3, R2)$: the only match is $(P3, 1)$; $1 > 1$ is false ✗ → not returned.",
+          "scene": {
+            "reveal": 15,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "tone": "error"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Count",
+          "body": "The result is $\\{(P1,Q1,R1), (P2,Q2,R2)\\}$. Two $Y$ tuples match P1, but $t$ ranges over $X$, so P1 is returned once. Answer: **2** (the official key accepts the range 2 to 3)."
+        }
+      ],
+      "answer": {
+        "value": "The expression returns **2** tuples",
+        "number": 2,
+        "matchesKey": true
+      },
+      "shortcut": "It is $X \\ltimes \\sigma_{S>1}(Y)$: $\\sigma_{S>1}(Y)$ keeps P1, P1, P2; the $X$ tuples with P in $\\{P1, P2\\}$ number 2.",
+      "pitfalls": [
+        "Counting P1 twice because it matches two $Y$ tuples — the result is a set of $X$ tuples.",
+        "Treating $m[S] > 1$ as $\\ge 1$, which would wrongly include P3."
+      ],
+      "verification": "Equivalent SQL: \\`SELECT * FROM X WHERE EXISTS (SELECT * FROM Y WHERE Y.P = X.P AND Y.S > 1)\\` returns the P1 and P2 rows only.",
+      "animation": {
+        "kind": "table",
+        "title": "Tuples of X with a matching Y tuple having S > 1",
+        "cols": [
+          "P",
+          "Q",
+          "R",
+          "Y matches (S)",
+          "any S > 1?"
+        ],
+        "rows": [
+          [
+            "P1",
+            "Q1",
+            "R1",
+            "10, 15",
+            "yes"
+          ],
+          [
+            "P2",
+            "Q2",
+            "R2",
+            "20",
+            "yes"
+          ],
+          [
+            "P3",
+            "Q3",
+            "R2",
+            "1",
+            "no"
+          ]
+        ],
+        "reveal": 0
+      }
+    },
+    "da-2026-da-50": {
+      "approach": "The correlated subqueries count, for each row, how many balances are strictly larger and how many strictly smaller. Tabulate both counts per row and keep rows with (#larger) $\\ge$ (#smaller).",
+      "concepts": [
+        "Correlated subquery",
+        "COUNT(*) with strict inequalities",
+        "Ties in comparisons"
+      ],
+      "given": "Balances: A1 = 5000, A2 = 5000, A3 = 10000, A4 = 15000, A5 = 18000.",
+      "steps": [
+        {
+          "title": "Meaning of the two subqueries",
+          "body": "For the outer row $A$: the left subquery counts rows $B$ with $B.\\text{Balance} > A.\\text{Balance}$ (strictly larger); the right counts rows $C$ with $C.\\text{Balance} < A.\\text{Balance}$ (strictly smaller). Equal balances count in neither.",
+          "scene": {
+            "reveal": 0
+          }
+        },
+        {
+          "title": "A1 and A2 (5000)",
+          "body": "Larger: 10000, 15000, 18000 → $3$. Smaller: none → $0$ (the other 5000 is equal, not smaller). $3 \\ge 0$ ✓ for both A1 and A2.",
+          "scene": {
+            "reveal": 8,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "A3 (10000)",
+          "body": "Larger: 15000, 18000 → $2$. Smaller: 5000, 5000 → $2$. $2 \\ge 2$ ✓.",
+          "scene": {
+            "reveal": 12,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "A4 (15000) and A5 (18000)",
+          "body": "A4: larger $1$ (18000), smaller $3$ → $1 \\ge 3$ ✗. A5: larger $0$, smaller $4$ → ✗.\n\nRows returned: A1, A2, A3 → **3**.",
+          "scene": {
+            "reveal": 20,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "tone": "success"
+              },
+              {
+                "r": 3,
+                "tone": "error"
+              },
+              {
+                "r": 4,
+                "tone": "error"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "The query returns **3** rows (A1, A2, A3)",
+        "number": 3,
+        "matchesKey": true
+      },
+      "shortcut": "The condition \"#above $\\ge$ #below\" keeps the rows at or below the median balance (10000): A1, A2, A3.",
+      "pitfalls": [
+        "Counting the equal 5000 as \"smaller\" for A1/A2 — the comparisons are strict.",
+        "Using $>$ instead of $\\ge$ would drop A3 and give 2."
+      ],
+      "verification": "Each row's larger + smaller + equal (excluding itself) $= 4$: A1: $3+0+1$, A3: $2+2+0$, A4: $1+3+0$ ✓.",
+      "animation": {
+        "kind": "table",
+        "title": "Counts per outer row A",
+        "cols": [
+          "AccNo",
+          "Balance",
+          "# larger (B)",
+          "# smaller (C)"
+        ],
+        "rows": [
+          [
+            "A1",
+            5000,
+            3,
+            0
+          ],
+          [
+            "A2",
+            5000,
+            3,
+            0
+          ],
+          [
+            "A3",
+            10000,
+            2,
+            2
+          ],
+          [
+            "A4",
+            15000,
+            1,
+            3
+          ],
+          [
+            "A5",
+            18000,
+            0,
+            4
+          ]
+        ],
+        "reveal": 0
+      }
+    },
+    "da-2026-da-51": {
+      "approach": "Apply the standard ER-to-relational mapping: one relation per strong entity (without the multivalued attribute), one relation per multivalued attribute, and a separate relation for an M:N relationship — total participation does not allow merging an M:N relationship into either side.",
+      "concepts": [
+        "ER to relational mapping",
+        "Multivalued attribute",
+        "Many-to-many relationship",
+        "3NF"
+      ],
+      "steps": [
+        {
+          "title": "Entities",
+          "body": "$E1(\\underline{A11}, A12, A13)$ — key $A11$, in 3NF.\n\n$E2(\\underline{A21}, A23)$ — the multivalued $A22$ cannot be stored in a single column (1NF), so it is removed from $E2$.",
+          "scene": {
+            "reveal": 6,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Multivalued attribute A22",
+          "body": "$E2\\_A22(\\underline{A21, A22})$: one row per (entity, value) pair; the key is the whole schema, so it is in BCNF (hence 3NF).",
+          "scene": {
+            "reveal": 9,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "M:N relationship R12",
+          "body": "$R12(\\underline{A11, A21})$. It cannot be merged into $E1$ or $E2$: in a merged table the key would be $(A11, A21)$ while $A11 \\to A12, A13$ (or $A21 \\to A23$) is a **partial dependency**, violating 2NF/3NF and duplicating $E1$ data for every partner. Total participation only says each entity has at least one partner — it does not make the relationship functional.",
+          "scene": {
+            "reveal": 12,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "tone": "success"
+              },
+              {
+                "r": 3,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Count",
+          "body": "$E1$, $E2$, $E2\\_A22$, $R12$ → **4** relations."
+        }
+      ],
+      "answer": {
+        "value": "Minimum number of 3NF relations: **4**",
+        "number": 4,
+        "matchesKey": true
+      },
+      "shortcut": "Entities (2) + multivalued attributes (1) + M:N relationships (1) $= 4$; total participation matters only for 1:1 / 1:N merging.",
+      "pitfalls": [
+        "Merging the M:N relationship into an entity because participation is total — that creates partial dependencies.",
+        "Keeping $A22$ inside $E2$ (violates 1NF) and answering 3.",
+        "Merging $E1$, $E2$ and $R12$ into one table — key $(A11, A21)$ with partial dependencies."
+      ],
+      "verification": "Each relation's only non-trivial FDs have a superkey on the left: $A11 \\to A12A13$ in $E1$, $A21 \\to A23$ in $E2$; $E2\\_A22$ and $R12$ are all-key. All four are in BCNF, so 3NF holds; no fewer relations avoid a partial dependency.",
+      "animation": {
+        "kind": "table",
+        "title": "Relational schema (keys underlined in the text)",
+        "cols": [
+          "relation",
+          "attributes",
+          "key"
+        ],
+        "rows": [
+          [
+            "E1",
+            "A11, A12, A13",
+            "A11"
+          ],
+          [
+            "E2",
+            "A21, A23",
+            "A21"
+          ],
+          [
+            "E2_A22",
+            "A21, A22",
+            "(A21, A22)"
+          ],
+          [
+            "R12",
+            "A11, A21",
+            "(A11, A21)"
+          ]
+        ],
+        "reveal": 0
+      }
+    },
+    "da-2026-da-52": {
+      "approach": "Use the identity $\\sum_{i=1}^n\\sum_{j=1}^n (x_i - x_j)^2 = 2n\\sum_{i=1}^n (x_i - \\bar x)^2$, so the given double sum fixes the sum of squared deviations directly.",
+      "concepts": [
+        "Sum of squared deviations",
+        "Pairwise-difference form of variance",
+        "Expanding a double sum"
+      ],
+      "steps": [
+        {
+          "title": "Prove the identity",
+          "body": "Expand: $\\sum_i\\sum_j (x_i^2 + x_j^2 - 2x_ix_j) = n\\sum_i x_i^2 + n\\sum_j x_j^2 - 2\\left(\\sum_i x_i\\right)\\left(\\sum_j x_j\\right)$\n$$= 2n\\sum_i x_i^2 - 2(n\\bar x)^2 = 2n\\left(\\sum_i x_i^2 - n\\bar x^2\\right) = 2n\\sum_i (x_i - \\bar x)^2.$$",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Use the given value",
+          "body": "$\\frac{1}{2000}\\sum_i\\sum_j (x_i-x_j)^2 = 99 \\Rightarrow \\sum_i\\sum_j (x_i-x_j)^2 = 99 \\times 2000 = 198000$.",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "Sum of squared deviations",
+          "body": "$2n\\sum (x_i-\\bar x)^2 = 198000$ with $n = 100$: $\\sum (x_i-\\bar x)^2 = \\frac{198000}{200} = 990$.",
+          "scene": {
+            "reveal": 4
+          }
+        },
+        {
+          "title": "Required value",
+          "body": "$\\frac{1}{99}\\sum (x_i-\\bar x)^2 = \\frac{990}{99} = 10$. (This is the sample variance $s^2$ with divisor $n - 1 = 99$.)",
+          "scene": {
+            "reveal": 5
+          }
+        }
+      ],
+      "answer": {
+        "value": "$\\frac{1}{99}\\sum(x_i-\\bar x)^2 =$ **10**",
+        "number": 10,
+        "matchesKey": true
+      },
+      "shortcut": "$s^2 = \\frac{1}{2n(n-1)}\\sum_i\\sum_j(x_i-x_j)^2 = \\frac{198000}{2\\cdot100\\cdot99} = \\frac{198000}{19800} = 10$.",
+      "pitfalls": [
+        "Forgetting the factor 2 in $2n$ (each unordered pair is counted twice) gives 20.",
+        "Using $n^2$ instead of $2n$ in the identity."
+      ],
+      "verification": "Tiny check of the identity: $x = (0, 2)$, $n = 2$: $\\sum\\sum(x_i-x_j)^2 = 4+4 = 8$; $2n\\sum(x_i-\\bar x)^2 = 4(1+1) = 8$ ✓.",
+      "animation": {
+        "kind": "equation",
+        "title": "Pairwise differences → variance",
+        "lines": [
+          {
+            "tex": "\\sum_i\\sum_j (x_i-x_j)^2 = 2n\\sum_i x_i^2 - 2\\Big(\\sum_i x_i\\Big)^2",
+            "note": "expand"
+          },
+          {
+            "tex": "= 2n\\sum_i (x_i-\\bar x)^2",
+            "note": "identity"
+          },
+          {
+            "tex": "\\sum_i\\sum_j (x_i-x_j)^2 = 99\\times2000 = 198000",
+            "note": "given"
+          },
+          {
+            "tex": "\\sum_i (x_i-\\bar x)^2 = \\tfrac{198000}{200} = 990",
+            "note": "n = 100"
+          },
+          {
+            "tex": "\\tfrac{1}{99}\\cdot 990 = 10",
+            "tone": "success"
+          }
+        ],
+        "reveal": 0
+      }
+    },
+    "da-2026-da-53": {
+      "approach": "Compute the covariance through the tower property: $E[XY] = E[X\\,E[Y\\mid X]] = E[X^3] = 0$ by symmetry of $X$ about 0. Zero covariance (with positive variances) means zero correlation, even though $Y$ clearly depends on $X$.",
+      "concepts": [
+        "Law of iterated expectation",
+        "Covariance and correlation",
+        "Uncorrelated ≠ independent"
+      ],
+      "steps": [
+        {
+          "title": "Conditional mean of Y",
+          "body": "The mean of $Uniform(a, b)$ is $\\frac{a+b}{2}$, so $E[Y\\mid X=x] = \\frac{(x^2-0.1)+(x^2+0.1)}{2} = x^2$.",
+          "scene": {
+            "reveal": 1
+          }
+        },
+        {
+          "title": "E[X] and E[XY]",
+          "body": "$E[X] = 0$ (Uniform$(-1,1)$ is symmetric about 0).\n\n$E[XY] = E\\big[X\\,E[Y\\mid X]\\big] = E[X\\cdot X^2] = E[X^3] = \\int_{-1}^{1} \\tfrac12 x^3\\,dx = 0$ (odd integrand on a symmetric interval).",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "Covariance",
+          "body": "$\\text{Cov}(X,Y) = E[XY] - E[X]E[Y] = 0 - 0\\cdot E[Y] = 0$.",
+          "scene": {
+            "reveal": 4
+          }
+        },
+        {
+          "title": "Correlation",
+          "body": "Both variances are positive: $\\text{Var}(X) = \\frac{(1-(-1))^2}{12} = \\frac13$, and $\\text{Var}(Y) \\ge E[\\text{Var}(Y\\mid X)] = \\frac{0.2^2}{12} > 0$. Hence\n$$\\rho(X,Y) = \\frac{\\text{Cov}(X,Y)}{\\sqrt{\\text{Var}(X)\\text{Var}(Y)}} = 0.$$",
+          "scene": {
+            "reveal": 5
+          }
+        }
+      ],
+      "answer": {
+        "value": "$\\text{correlation}(X, Y) =$ **0**",
+        "number": 0,
+        "matchesKey": true
+      },
+      "shortcut": "$E[Y\\mid X] = X^2$ is an even function of a symmetric $X$, so $\\text{Cov}(X, X^2) = E[X^3] = 0$ — the dependence is purely non-linear.",
+      "pitfalls": [
+        "Concluding the correlation is non-zero because $Y$ depends on $X$ — correlation measures only linear association.",
+        "Forgetting to check that $\\text{Var}(Y) > 0$ (otherwise the correlation would be undefined)."
+      ],
+      "verification": "Symmetry: $(X, Y)$ and $(-X, Y)$ have the same joint distribution (the conditional law of $Y$ depends on $x^2$ only), so $\\text{Cov}(X,Y) = \\text{Cov}(-X,Y) = -\\text{Cov}(X,Y) \\Rightarrow 0$.",
+      "animation": {
+        "kind": "equation",
+        "title": "Covariance via the tower property",
+        "lines": [
+          {
+            "tex": "E[Y\\mid X=x]=\\tfrac{(x^2-0.1)+(x^2+0.1)}{2}=x^2"
+          },
+          {
+            "tex": "E[X]=0",
+            "note": "symmetric"
+          },
+          {
+            "tex": "E[XY]=E\\big[X\\,E[Y\\mid X]\\big]=E[X^3]=0",
+            "note": "odd moment"
+          },
+          {
+            "tex": "\\operatorname{Cov}(X,Y)=0-0=0"
+          },
+          {
+            "tex": "\\rho(X,Y)=0",
+            "tone": "success"
+          }
+        ],
+        "reveal": 0
+      }
+    },
+    "da-2026-da-54": {
+      "approach": "Row 2 and column 3 share exactly one entry, $a_{23}$. Condition on it: given $a_{23}$, the other 4 entries of the row and the other 4 of the column are disjoint independent sets, each with a Binomial$(4, \\tfrac12)$ sum.",
+      "concepts": [
+        "Conditioning on a shared variable",
+        "Binomial distribution",
+        "Independence of disjoint sets of entries"
+      ],
+      "steps": [
+        {
+          "title": "Structure",
+          "body": "Row 2 = $a_{23}$ + 4 other entries; column 3 = $a_{23}$ + 4 other entries; these 8 other entries are distinct, so the two partial sums $R', C' \\sim \\text{Bin}(4, \\tfrac12)$ are independent and independent of $a_{23}$. $P(\\text{Bin}(4,\\tfrac12) = k) = \\binom4k/16$.",
+          "scene": {
+            "reveal": 1
+          }
+        },
+        {
+          "title": "Case a₂₃ = 1",
+          "body": "Need $R' = 2$ and $C' = 2$: $P = \\frac12 \\cdot \\frac{\\binom42}{16}\\cdot\\frac{\\binom42}{16} = \\frac12\\cdot\\frac{6}{16}\\cdot\\frac{6}{16} = \\frac{36}{512}$.",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Case a₂₃ = 0",
+          "body": "Need $R' = 3$ and $C' = 3$: $P = \\frac12 \\cdot \\frac{\\binom43}{16}\\cdot\\frac{\\binom43}{16} = \\frac12\\cdot\\frac{4}{16}\\cdot\\frac{4}{16} = \\frac{16}{512}$.",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "Add the cases",
+          "body": "$P = \\frac{36 + 16}{512} = \\frac{52}{512} = \\frac{13}{128} \\approx 0.1016 \\approx$ **0.10**.",
+          "scene": {
+            "reveal": 4
+          }
+        }
+      ],
+      "answer": {
+        "value": "$\\frac{13}{128} \\approx$ **0.10**",
+        "number": 0.1,
+        "matchesKey": true
+      },
+      "shortcut": "Count the 9 relevant bits: $a_{23}=1$: $6\\cdot6 = 36$ patterns; $a_{23}=0$: $4\\cdot4 = 16$ patterns; total $52/2^9 = 52/512 \\approx 0.10$.",
+      "pitfalls": [
+        "Treating the row sum and column sum as independent: $\\left(\\binom53/32\\right)^2 = (10/32)^2 \\approx 0.098$ — close, but the reasoning is wrong (they share $a_{23}$).",
+        "Forgetting one of the two cases for the shared entry."
+      ],
+      "verification": "Brute force over the $2^9 = 512$ patterns of the 9 cells in row 2 ∪ column 3 gives exactly 52 favourable patterns, i.e. $0.1016$.",
+      "animation": {
+        "kind": "equation",
+        "title": "Condition on the shared cell a₂₃",
+        "lines": [
+          {
+            "tex": "\\text{row}_2=a_{23}+R',\\quad \\text{col}_3=a_{23}+C',\\quad R',C'\\sim\\text{Bin}(4,\\tfrac12)"
+          },
+          {
+            "tex": "a_{23}=1:\\ \\tfrac12\\cdot\\tfrac{6}{16}\\cdot\\tfrac{6}{16}=\\tfrac{36}{512}"
+          },
+          {
+            "tex": "a_{23}=0:\\ \\tfrac12\\cdot\\tfrac{4}{16}\\cdot\\tfrac{4}{16}=\\tfrac{16}{512}"
+          },
+          {
+            "tex": "P=\\tfrac{52}{512}=\\tfrac{13}{128}\\approx0.10",
+            "tone": "success"
+          }
+        ],
+        "reveal": 0
+      }
+    },
+    "da-2026-da-55": {
+      "approach": "$\\max_{\\lVert x\\rVert=1} x^TAx$ of a symmetric matrix is its largest eigenvalue (Rayleigh quotient). $A = I - \\frac1n\\mathbf{1}\\mathbf{1}^T$ is the orthogonal projection onto the complement of $\\mathbf{1}$, whose eigenvalues are $0$ and $1$.",
+      "concepts": [
+        "Rayleigh quotient",
+        "Centering matrix",
+        "Projection matrix eigenvalues"
+      ],
+      "steps": [
+        {
+          "title": "A is a symmetric projection",
+          "body": "$A^T = A$, and\n$$A^2 = I - \\tfrac2n\\mathbf{1}\\mathbf{1}^T + \\tfrac{1}{n^2}\\mathbf{1}(\\mathbf{1}^T\\mathbf{1})\\mathbf{1}^T = I - \\tfrac2n\\mathbf{1}\\mathbf{1}^T + \\tfrac{n}{n^2}\\mathbf{1}\\mathbf{1}^T = A,$$\nusing $\\mathbf{1}^T\\mathbf{1} = n$. An idempotent symmetric matrix has eigenvalues only $0$ or $1$.",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Find the eigenvalues explicitly",
+          "body": "$A\\mathbf{1} = \\mathbf{1} - \\tfrac1n\\mathbf{1}\\cdot n = \\mathbf 0$ → eigenvalue $0$ (once).\n\nFor any $v \\perp \\mathbf{1}$ ($\\mathbf{1}^Tv = 0$): $Av = v$ → eigenvalue $1$, multiplicity $n - 1$.",
+          "scene": {
+            "reveal": 4
+          }
+        },
+        {
+          "title": "Rayleigh quotient maximum",
+          "body": "For symmetric $A$, $\\max_{x^Tx=1} x^TAx = \\lambda_{\\max}(A) = 1$, attained by any unit vector with zero mean, e.g. $x = \\frac{1}{\\sqrt2}(1, -1, 0, \\ldots, 0)^T$: $x^TAx = x^Tx - \\frac1n(\\mathbf{1}^Tx)^2 = 1 - 0 = 1$.",
+          "scene": {
+            "reveal": 5
+          }
+        }
+      ],
+      "answer": {
+        "value": "$\\max_S x^TAx = \\lambda_{\\max}(A) =$ **1**",
+        "number": 1,
+        "matchesKey": true
+      },
+      "shortcut": "$x^TAx = x^Tx - \\frac1n(\\mathbf 1^Tx)^2 = 1 - \\frac1n\\big(\\sum x_i\\big)^2 \\le 1$, with equality when $\\sum x_i = 0$ (possible for $n \\ge 2$).",
+      "pitfalls": [
+        "Thinking the maximum depends on $n$ (e.g. $1 - \\frac1n$, which is the value at a standard basis vector, not the maximum).",
+        "Picking the eigenvalue $0$ (eigenvector $\\mathbf{1}$) — that is the minimum."
+      ],
+      "verification": "Two independent routes agree: the eigenvalue argument ($\\lambda_{\\max} = 1$) and the direct bound $x^TAx = 1 - \\frac1n(\\sum x_i)^2 \\le 1$ with equality at a zero-sum unit vector.",
+      "animation": {
+        "kind": "equation",
+        "title": "Rayleigh quotient of the centering matrix",
+        "lines": [
+          {
+            "tex": "A^T=A,\\quad A^2=A",
+            "note": "projection"
+          },
+          {
+            "tex": "\\lambda\\in\\{0,1\\}"
+          },
+          {
+            "tex": "A\\mathbf 1=\\mathbf 0\\ (\\lambda=0)"
+          },
+          {
+            "tex": "Av=v\\ \\text{for } v\\perp\\mathbf 1\\ (\\lambda=1,\\ n-1\\text{ times})"
+          },
+          {
+            "tex": "\\max_{x^Tx=1}x^TAx=\\lambda_{\\max}=1",
+            "tone": "success"
+          }
+        ],
+        "reveal": 0
+      }
+    }
+  }
+}
