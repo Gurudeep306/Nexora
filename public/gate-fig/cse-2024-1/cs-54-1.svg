@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 400" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="none" stroke="currentColor" stroke-width="1.6">
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="currentColor" stroke="none"/>
+    </marker>
+  </defs>
+  <!-- M1: inputs X1 (0), X2 (1); select S1 = A; output Q1 -->
+  <rect x="120" y="20" width="60" height="120"/>
+  <line x1="62" y1="45" x2="120" y2="45" marker-end="url(#ah)"/>
+  <line x1="62" y1="105" x2="120" y2="105" marker-end="url(#ah)"/>
+  <line x1="150" y1="172" x2="150" y2="140" marker-end="url(#ah)"/>
+  <!-- M2: inputs X3 (0), X4 (1); select S2 = B; output Q2 -->
+  <rect x="120" y="215" width="60" height="120"/>
+  <line x1="62" y1="240" x2="120" y2="240" marker-end="url(#ah)"/>
+  <line x1="62" y1="300" x2="120" y2="300" marker-end="url(#ah)"/>
+  <line x1="150" y1="367" x2="150" y2="335" marker-end="url(#ah)"/>
+  <!-- M3: input 0 = Q1, input 1 = Q2; select S3 = C; output Y -->
+  <rect x="260" y="130" width="70" height="120"/>
+  <polyline points="180,75 215,75 215,160 260,160" marker-end="url(#ah)"/>
+  <polyline points="180,280 215,280 215,220 260,220" marker-end="url(#ah)"/>
+  <line x1="295" y1="282" x2="295" y2="250" marker-end="url(#ah)"/>
+  <line x1="330" y1="190" x2="385" y2="190" marker-end="url(#ah)"/>
+  <g fill="currentColor" stroke="none">
+    <text x="56" y="50" text-anchor="end" font-weight="bold">X1</text>
+    <text x="56" y="110" text-anchor="end" font-weight="bold">X2</text>
+    <text x="125" y="50">0</text>
+    <text x="125" y="110">1</text>
+    <text x="142" y="110" font-weight="bold">M1</text>
+    <text x="176" y="70" text-anchor="end" font-weight="bold">Q1</text>
+    <text x="150" y="134" text-anchor="middle" font-weight="bold">S1</text>
+    <text x="150" y="188" text-anchor="middle" font-weight="bold">A</text>
+
+    <text x="56" y="245" text-anchor="end" font-weight="bold">X3</text>
+    <text x="56" y="305" text-anchor="end" font-weight="bold">X4</text>
+    <text x="125" y="245">0</text>
+    <text x="125" y="305">1</text>
+    <text x="142" y="296" font-weight="bold">M2</text>
+    <text x="176" y="275" text-anchor="end" font-weight="bold">Q2</text>
+    <text x="150" y="329" text-anchor="middle" font-weight="bold">S2</text>
+    <text x="150" y="384" text-anchor="middle" font-weight="bold">B</text>
+
+    <text x="265" y="165">0</text>
+    <text x="265" y="225">1</text>
+    <text x="300" y="195" text-anchor="middle" font-weight="bold">M3</text>
+    <text x="295" y="244" text-anchor="middle" font-weight="bold">S3</text>
+    <text x="295" y="298" text-anchor="middle" font-weight="bold">C</text>
+    <text x="392" y="195" font-weight="bold">Y</text>
+  </g>
+</svg>
