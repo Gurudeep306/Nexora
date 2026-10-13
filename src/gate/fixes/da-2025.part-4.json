@@ -1,0 +1,1011 @@
+{
+  "paper": "da-2025",
+  "fixes": [
+    {
+      "id": "da-2025-da-30",
+      "field": "text",
+      "before": "A random variable X is said to be distributed as Bernoulli(θ ), denoted by X ∼\nBernoulli(θ ), if\nP (X = 1) =θ, P (X = 0) = 1\u0000θ\nfor 0 < θ <1. Let Y =\n300∑\ni=1\nXi, where Xi∼ Bernoulli(θ ), i = 1, 2,..., 300 be\nindependent and identically distributed random variables with θ = 0.25. The value of\nP (60≤Y≤ 90), after approximation through Central Limit Theorem, is given by\n\u0000\nRecall thatφ(x) = 1√\n2π\n∫ x\n\u0000∞\ne\u0000 t2\n2 dt\n)",
+      "after": "A random variable $X$ is said to be distributed as Bernoulli$(\\theta)$, denoted by $X \\sim \\text{Bernoulli}(\\theta)$, if\n\n$$P(X = 1) = \\theta, \\qquad P(X = 0) = 1 - \\theta$$\n\nfor $0 < \\theta < 1$. Let $Y = \\sum_{i=1}^{300} X_i$, where $X_i \\sim \\text{Bernoulli}(\\theta)$, $i = 1, 2, \\ldots, 300$ be independent and identically distributed random variables with $\\theta = 0.25$. The value of $P(60 \\le Y \\le 90)$, after approximation through Central Limit Theorem, is given by\n\n$\\left(\\text{Recall that } \\varphi(x) = \\frac{1}{\\sqrt{2\\pi}} \\int_{-\\infty}^{x} e^{-\\frac{t^2}{2}}\\, dt\\right)$",
+      "reason": "Re-transcribed from the paper: the extraction lost minus signs (U+0000), broke subscripts/fractions/sums and flattened the layout; maths now typeset in KaTeX.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "da-2025-da-30",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "φ(2)\u0000φ(\u00002)"
+        },
+        {
+          "l": "B",
+          "t": "φ(1)\u0000φ(\u00001)"
+        },
+        {
+          "l": "C",
+          "t": "φ(3)\u0000φ(\u00003)"
+        },
+        {
+          "l": "D",
+          "t": "φ(90)\u0000φ(60) GATE 2025 Data Science & Artiﬁcial Intelligence - DA"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\varphi(2) - \\varphi(-2)$"
+        },
+        {
+          "l": "B",
+          "t": "$\\varphi(1) - \\varphi(-1)$"
+        },
+        {
+          "l": "C",
+          "t": "$\\varphi(3) - \\varphi(-3)$"
+        },
+        {
+          "l": "D",
+          "t": "$\\varphi(90) - \\varphi(60)$"
+        }
+      ],
+      "reason": "Options re-transcribed from the paper and typeset as KaTeX where they contain maths; the running page footer (\"GATE 2025 Data Science ...\") removed from option D; lost minus signs restored.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "da-2025-da-30",
+      "field": "subject",
+      "before": "calc",
+      "after": "prob",
+      "reason": "Subject corrected to match the question content.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "da-2025-da-30",
+      "field": "topic",
+      "before": "limits",
+      "after": "inference",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "da-2025-da-30",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "prob",
+        "inference",
+        "central-limit-theorem",
+        "bernoulli",
+        "binomial-distribution"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "da-2025-da-31",
+      "field": "text",
+      "before": "For x∈ R, the ﬂoor function is denoted byf(x) =⌊x⌋ and deﬁned as follows\n⌊x⌋ =k, k≤x<k + 1,\nwherek is an integer. Let Y =⌊X⌋, where X is an exponentially distributed random\nvariable with mean 1\nln 10, where ln denotes natural logarithm. For any positive integer\n𝓁, one can write the probability of the eventY =𝓁 as follows\nP (Y =𝓁) =q𝓁(1\u0000q)\nThe value ofq is",
+      "after": "For $x \\in \\mathbb{R}$, the floor function is denoted by $f(x) = \\lfloor x \\rfloor$ and defined as follows\n\n$$\\lfloor x \\rfloor = k, \\quad k \\le x < k + 1,$$\n\nwhere $k$ is an integer. Let $Y = \\lfloor X \\rfloor$, where $X$ is an exponentially distributed random variable with mean $\\frac{1}{\\ln 10}$, where $\\ln$ denotes natural logarithm. For any positive integer $\\ell$, one can write the probability of the event $Y = \\ell$ as follows\n\n$$P(Y = \\ell) = q^{\\ell}(1 - q)$$\n\nThe value of $q$ is",
+      "reason": "Re-transcribed from the paper: the extraction lost minus signs (U+0000), broke subscripts/fractions/sums and flattened the layout; maths now typeset in KaTeX.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "da-2025-da-31",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "0.1"
+        },
+        {
+          "l": "B",
+          "t": "0.01"
+        },
+        {
+          "l": "C",
+          "t": "0.5"
+        },
+        {
+          "l": "D",
+          "t": "0.434 GATE 2025 Data Science & Artiﬁcial Intelligence - DA"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$0.1$"
+        },
+        {
+          "l": "B",
+          "t": "$0.01$"
+        },
+        {
+          "l": "C",
+          "t": "$0.5$"
+        },
+        {
+          "l": "D",
+          "t": "$0.434$"
+        }
+      ],
+      "reason": "Options re-transcribed from the paper and typeset as KaTeX where they contain maths; the running page footer (\"GATE 2025 Data Science ...\") removed from option D.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "da-2025-da-31",
+      "field": "subject",
+      "before": "ga",
+      "after": "prob",
+      "reason": "Subject corrected to match the question content.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "da-2025-da-31",
+      "field": "topic",
+      "before": "quant",
+      "after": "rv",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "da-2025-da-31",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "prob",
+        "rv",
+        "exponential-distribution",
+        "geometric-distribution"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "da-2025-da-32",
+      "field": "text",
+      "before": "Consider the neural network shown in the ﬁgure with\ninputs:u,v\nweights:a,b,c,d,e,f\noutput:y\nR denotes the ReLU function,R(x) = max(0,x).\nu\nv R\nR\nR\na\nb\nc\nd\ne\nf\ny\nGivenu = 2,v = 3,\na = 1,b = 1,c = 1,d =\u00001,e = 4,f =\u00001,\nwhich one of the following is correct?",
+      "after": "Consider the neural network shown in the figure with\n\n*inputs*: $u, v$\n\n*weights*: $a, b, c, d, e, f$\n\n*output*: $y$\n\n$R$ denotes the ReLU function, $R(x) = \\max(0, x)$.\n\nGiven $u = 2, v = 3$,\n\n$a = 1, b = 1, c = 1, d = -1, e = 4, f = -1$,\n\nwhich one of the following is correct?",
+      "reason": "Re-transcribed from the paper: the extraction lost minus signs (U+0000), broke subscripts/fractions/sums and flattened the layout; maths now typeset in KaTeX and the figure-label debris removed (the figure is attached separately).",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "da-2025-da-32",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "∂y ∂a = 8,∂y ∂f = 0"
+        },
+        {
+          "l": "B",
+          "t": "∂y ∂a = 1,∂y ∂f = 0"
+        },
+        {
+          "l": "C",
+          "t": "∂y ∂a = 1,∂y ∂f =\u00001"
+        },
+        {
+          "l": "D",
+          "t": "∂y ∂a = 2,∂y ∂f =\u00001 GATE 2025 Data Science & Artiﬁcial Intelligence - DA"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\frac{\\partial y}{\\partial a} = 8,\\ \\frac{\\partial y}{\\partial f} = 0$"
+        },
+        {
+          "l": "B",
+          "t": "$\\frac{\\partial y}{\\partial a} = 1,\\ \\frac{\\partial y}{\\partial f} = 0$"
+        },
+        {
+          "l": "C",
+          "t": "$\\frac{\\partial y}{\\partial a} = 1,\\ \\frac{\\partial y}{\\partial f} = -1$"
+        },
+        {
+          "l": "D",
+          "t": "$\\frac{\\partial y}{\\partial a} = 2,\\ \\frac{\\partial y}{\\partial f} = -1$"
+        }
+      ],
+      "reason": "Options re-transcribed from the paper and typeset as KaTeX where they contain maths; the running page footer (\"GATE 2025 Data Science ...\") removed from option D; lost minus signs restored.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "da-2025-da-32",
+      "field": "topic",
+      "before": "neural-nets",
+      "after": "neural",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "da-2025-da-32",
+      "field": "tags",
+      "before": [
+        "neural-nets"
+      ],
+      "after": [
+        "ml",
+        "neural",
+        "backpropagation",
+        "relu"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "da-2025-da-32",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "da-2025/da-32-1.svg",
+          "svg": "da-2025/da-32-1.svg",
+          "alt": "Feed-forward network. Input node u connects to the upper hidden ReLU node R with weight a and to the lower hidden ReLU node R with weight c (the two crossing edges: b runs from v to the upper R, c from u to the lower R). Input node v connects to the upper R with weight b and to the lower R with weight d. The upper hidden R connects to the output ReLU node R with weight e, the lower hidden R with weight f; the output node produces y."
+        }
+      ],
+      "reason": "The question depends on its figure, which the bank was missing. Redrawn as an SVG from the paper.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "da-2025-da-33",
+      "field": "text",
+      "before": "Consider game trees Tree-1 and Tree-2 as shown. The ﬁrst level is a MAX agent and\nthe second level is a MIN agent. The value in the square node is the output of the utility\nfunction.\nA\n2 B\nx 1\nC\nD E\n5 y 2\nMAX\nMIN\nTree-1 Tree-2\nFor what ranges ofx andy, the right child of nodeB and the right child of nodeE will\nbe pruned by alpha-beta pruning algorithm?",
+      "after": "Consider game trees Tree-1 and Tree-2 as shown. The first level is a MAX agent and the second level is a MIN agent. The value in the square node is the output of the utility function.\n\nFor what ranges of $x$ and $y$, the right child of node $B$ and the right child of node $E$ will be pruned by alpha-beta pruning algorithm?",
+      "reason": "Re-transcribed from the paper: the extraction lost minus signs (U+0000), broke subscripts/fractions/sums and flattened the layout; maths now typeset in KaTeX and the figure-label debris removed (the figure is attached separately).",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "da-2025-da-33",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "x∈ [1,∞) andy∈ (\u0000∞, 2]"
+        },
+        {
+          "l": "B",
+          "t": "x∈ (\u0000∞, 2] andy∈ (\u0000∞, 5]"
+        },
+        {
+          "l": "C",
+          "t": "x∈ (\u0000∞, 2] andy∈ [2,∞)"
+        },
+        {
+          "l": "D",
+          "t": "x∈ [1,∞) andy∈ (\u0000∞, 5] GATE 2025 Data Science & Artiﬁcial Intelligence - DA"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$x \\in [1, \\infty)$ and $y \\in (-\\infty, 2]$"
+        },
+        {
+          "l": "B",
+          "t": "$x \\in (-\\infty, 2]$ and $y \\in (-\\infty, 5]$"
+        },
+        {
+          "l": "C",
+          "t": "$x \\in (-\\infty, 2]$ and $y \\in [2, \\infty)$"
+        },
+        {
+          "l": "D",
+          "t": "$x \\in [1, \\infty)$ and $y \\in (-\\infty, 5]$"
+        }
+      ],
+      "reason": "Options re-transcribed from the paper and typeset as KaTeX where they contain maths; the running page footer (\"GATE 2025 Data Science ...\") removed from option D; lost minus signs restored.",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "da-2025-da-33",
+      "field": "subject",
+      "before": "coa",
+      "after": "ai",
+      "reason": "Subject corrected to match the question content.",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "da-2025-da-33",
+      "field": "topic",
+      "before": "isa",
+      "after": "search",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "da-2025-da-33",
+      "field": "tags",
+      "before": [
+        "search"
+      ],
+      "after": [
+        "ai",
+        "search",
+        "alpha-beta-pruning",
+        "minimax"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "da-2025-da-33",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "da-2025/da-33-1.svg",
+          "svg": "da-2025/da-33-1.svg",
+          "alt": "Two game trees; circles are MAX/MIN nodes, squares are utility leaves. Tree-1: MAX root A has left child leaf 2 and right child MIN node B; B has left leaf x and right leaf 1, the edge to 1 drawn dotted (pruned). Tree-2: MAX root C has MIN children D and E; D has leaves 5 and y; E has left leaf 2 and a dotted edge to a right child drawn as an unexpanded triangle subtree."
+        }
+      ],
+      "reason": "The question depends on its figure, which the bank was missing. Redrawn as an SVG from the paper.",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "da-2025-da-34",
+      "field": "text",
+      "before": "The state graph shows the action cost along the edges and the heuristic function h asso-\nciated with each state.\nS\nA\nE\nB C\nD G\n4\n1\n2 2\n3\n32\nh=2 h=2 h=6\nh=2 h=0\nh=6\nSuppose A∗ algorithm is applied on this state graph using priority queue to store the\nfrontier. In what sequence are the nodes expanded?",
+      "after": "The state graph shows the action cost along the edges and the heuristic function h associated with each state.\n\nSuppose $A^*$ algorithm is applied on this state graph using priority queue to store the frontier. In what sequence are the nodes expanded?",
+      "reason": "Re-transcribed from the paper: the extraction lost minus signs (U+0000), broke subscripts/fractions/sums and flattened the layout; maths now typeset in KaTeX and the figure-label debris removed (the figure is attached separately).",
+      "source": "pdf p.24"
+    },
+    {
+      "id": "da-2025-da-34",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "S,A,E,C,B,D,G"
+        },
+        {
+          "l": "B",
+          "t": "S,E,A,C,B,D,G"
+        },
+        {
+          "l": "C",
+          "t": "S,A,E,B,C,D,G"
+        },
+        {
+          "l": "D",
+          "t": "S,A,B,E,C,D,G"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "S, A, E, C, B, D, G"
+        },
+        {
+          "l": "B",
+          "t": "S, E, A, C, B, D, G"
+        },
+        {
+          "l": "C",
+          "t": "S, A, E, B, C, D, G"
+        },
+        {
+          "l": "D",
+          "t": "S, A, B, E, C, D, G"
+        }
+      ],
+      "reason": "Options re-transcribed from the paper and typeset as KaTeX where they contain maths.",
+      "source": "pdf p.24"
+    },
+    {
+      "id": "da-2025-da-34",
+      "field": "subject",
+      "before": "prob",
+      "after": "ai",
+      "reason": "Subject corrected to match the question content.",
+      "source": "pdf p.24"
+    },
+    {
+      "id": "da-2025-da-34",
+      "field": "topic",
+      "before": "bayes",
+      "after": "search",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.24"
+    },
+    {
+      "id": "da-2025-da-34",
+      "field": "tags",
+      "before": [
+        "search"
+      ],
+      "after": [
+        "ai",
+        "search",
+        "a-star",
+        "informed-search"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.24"
+    },
+    {
+      "id": "da-2025-da-34",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "da-2025/da-34-1.svg",
+          "svg": "da-2025/da-34-1.svg",
+          "alt": "Directed state graph with edge costs: S→A 4, S→E 1, A→B 2, B→C 2, E→C 2, C→D 3, D→G 3. Heuristic values in boxes next to the states: h(A)=2, h(B)=2, h(C)=6, h(E)=6, h(D)=2, h(G)=0 (no h is shown for the start state S)."
+        }
+      ],
+      "reason": "The question depends on its figure, which the bank was missing. Redrawn as an SVG from the paper.",
+      "source": "pdf p.24"
+    },
+    {
+      "id": "da-2025-da-35",
+      "field": "text",
+      "before": "A random experiment consists of throwing 100 fair dice, each die having six faces\nnumbered 1 to 6. An event A represents the set of all outcomes where at least one of\nthe dice shows a 1. Then,P",
+      "after": "A random experiment consists of throwing 100 fair dice, each die having six faces numbered 1 to 6. An event $A$ represents the set of all outcomes where at least one of the dice shows a $1$. Then, $P(A) =$",
+      "reason": "Re-transcribed from the paper: the extraction lost minus signs (U+0000), broke subscripts/fractions/sums and flattened the layout; maths now typeset in KaTeX.",
+      "source": "pdf p.24"
+    },
+    {
+      "id": "da-2025-da-35",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "= (A) 0"
+        },
+        {
+          "l": "B",
+          "t": "1"
+        },
+        {
+          "l": "C",
+          "t": "1\u0000 (5 6 )100"
+        },
+        {
+          "l": "D",
+          "t": "(5 6 )100 GATE 2025 Data Science & Artiﬁcial Intelligence - DA"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$0$"
+        },
+        {
+          "l": "B",
+          "t": "$1$"
+        },
+        {
+          "l": "C",
+          "t": "$1 - \\left(\\frac{5}{6}\\right)^{100}$"
+        },
+        {
+          "l": "D",
+          "t": "$\\left(\\frac{5}{6}\\right)^{100}$"
+        }
+      ],
+      "reason": "Options re-transcribed from the paper and typeset as KaTeX where they contain maths; the running page footer (\"GATE 2025 Data Science ...\") removed from option D; lost minus signs restored.",
+      "source": "pdf p.24"
+    },
+    {
+      "id": "da-2025-da-35",
+      "field": "subject",
+      "before": "ga",
+      "after": "prob",
+      "reason": "Subject corrected to match the question content.",
+      "source": "pdf p.24"
+    },
+    {
+      "id": "da-2025-da-35",
+      "field": "topic",
+      "before": "quant",
+      "after": "basic",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.24"
+    },
+    {
+      "id": "da-2025-da-35",
+      "field": "tags",
+      "before": [
+        "quant"
+      ],
+      "after": [
+        "prob",
+        "basic",
+        "complement",
+        "independence"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.24"
+    },
+    {
+      "id": "da-2025-da-36",
+      "field": "text",
+      "before": "Consider a fact table in an OLAP application: Facts(D1, D2, val), where D1\nand D2 are its dimension attributes and val is a dependent attribute. Suppose attribute\nD1 takes 3 values andD2 takes 2 values, and all combinations of these values are present\nin the table Facts. How many tuples are there in the result of the following query?\nSELECT D1, D2, sum(val)\nFROM Facts\nGROUP BY CUBE (D1, D2);",
+      "after": "Consider a fact table in an OLAP application: Facts(D1, D2, val), where D1 and D2 are its dimension attributes and val is a dependent attribute. Suppose attribute D1 takes 3 values and D2 takes 2 values, and all combinations of these values are present in the table Facts. How many tuples are there in the result of the following query?\n\n```sql\nSELECT D1, D2, sum(val)\nFROM Facts\nGROUP BY CUBE (D1, D2);\n```",
+      "reason": "Re-transcribed from the paper: the extraction lost minus signs (U+0000), broke subscripts/fractions/sums and flattened the layout; maths now typeset in KaTeX.",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "da-2025-da-36",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "1"
+        },
+        {
+          "l": "B",
+          "t": "6"
+        },
+        {
+          "l": "C",
+          "t": "9"
+        },
+        {
+          "l": "D",
+          "t": "12 GATE 2025 Data Science & Artiﬁcial Intelligence - DA"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "1"
+        },
+        {
+          "l": "B",
+          "t": "6"
+        },
+        {
+          "l": "C",
+          "t": "9"
+        },
+        {
+          "l": "D",
+          "t": "12"
+        }
+      ],
+      "reason": "Options re-transcribed from the paper and typeset as KaTeX where they contain maths; the running page footer (\"GATE 2025 Data Science ...\") removed from option D.",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "da-2025-da-36",
+      "field": "subject",
+      "before": "ga",
+      "after": "dbw",
+      "reason": "Subject corrected to match the question content.",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "da-2025-da-36",
+      "field": "topic",
+      "before": "spatial",
+      "after": "warehousing",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "da-2025-da-36",
+      "field": "tags",
+      "before": [
+        "quant"
+      ],
+      "after": [
+        "dbw",
+        "warehousing",
+        "olap",
+        "data-cube"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "da-2025-da-37",
+      "field": "text",
+      "before": "Consider the following Python code snippet.\nA={\"this\",\"that\"}\nB={\"that\",\"other\"}\nC={\"other\",\"this\"}\nwhile \"other\" in C:\nif \"this\" in A:\nA,B,C=A-B,B-C,C-A\nif \"that\" in B:\nA,B,C=C|A,A|B,B|C\nWhen the above program is executed, at the end, which of the following sets contains\n\"this\"?",
+      "after": "Consider the following Python code snippet.\n\n```python\nA={\"this\",\"that\"}\nB={\"that\",\"other\"}\nC={\"other\",\"this\"}\nwhile \"other\" in C:\n    if \"this\" in A:\n        A,B,C=A-B,B-C,C-A\n    if \"that\" in B:\n        A,B,C=C|A,A|B,B|C\n```\n\nWhen the above program is executed, at the end, which of the following sets contains \"this\"?",
+      "reason": "Re-transcribed from the paper: the extraction lost minus signs (U+0000), broke subscripts/fractions/sums and flattened the layout; maths now typeset in KaTeX.",
+      "source": "pdf p.26"
+    },
+    {
+      "id": "da-2025-da-37",
+      "field": "topic",
+      "before": "dsa",
+      "after": "python",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.26"
+    },
+    {
+      "id": "da-2025-da-37",
+      "field": "tags",
+      "before": [
+        "data-science"
+      ],
+      "after": [
+        "pdsa",
+        "python",
+        "sets",
+        "tuple-assignment"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.26"
+    },
+    {
+      "id": "da-2025-da-38",
+      "field": "text",
+      "before": "Which of the following statements is/are correct about the rectiﬁed linear unit (ReLU)\nactivation function deﬁned as ReLU(x) = max(x, 0), wherex∈ R?",
+      "after": "Which of the following statements is/are correct about the rectified linear unit (ReLU) activation function defined as $\\text{ReLU}(x) = \\max(x, 0)$, where $x \\in \\mathbb{R}$?",
+      "reason": "Re-transcribed from the paper: the extraction lost minus signs (U+0000), broke subscripts/fractions/sums and flattened the layout; maths now typeset in KaTeX.",
+      "source": "pdf p.26"
+    },
+    {
+      "id": "da-2025-da-38",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "ReLU is continuous everywhere"
+        },
+        {
+          "l": "B",
+          "t": "ReLU is differentiable everywhere"
+        },
+        {
+          "l": "C",
+          "t": "ReLU is not differentiable at x = 0"
+        },
+        {
+          "l": "D",
+          "t": "ReLU(x) = ReLU(ax), for alla∈ R GATE 2025 Data Science & Artiﬁcial Intelligence - DA"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "ReLU is continuous everywhere"
+        },
+        {
+          "l": "B",
+          "t": "ReLU is differentiable everywhere"
+        },
+        {
+          "l": "C",
+          "t": "ReLU is not differentiable at $x = 0$"
+        },
+        {
+          "l": "D",
+          "t": "$\\text{ReLU}(x) = \\text{ReLU}(ax)$, for all $a \\in \\mathbb{R}$"
+        }
+      ],
+      "reason": "Options re-transcribed from the paper and typeset as KaTeX where they contain maths; the running page footer (\"GATE 2025 Data Science ...\") removed from option D.",
+      "source": "pdf p.26"
+    },
+    {
+      "id": "da-2025-da-38",
+      "field": "subject",
+      "before": "ml",
+      "after": "calc",
+      "reason": "Subject corrected to match the question content.",
+      "source": "pdf p.26"
+    },
+    {
+      "id": "da-2025-da-38",
+      "field": "topic",
+      "before": "neural-nets",
+      "after": "functions",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.26"
+    },
+    {
+      "id": "da-2025-da-38",
+      "field": "tags",
+      "before": [
+        "neural-nets"
+      ],
+      "after": [
+        "calc",
+        "functions",
+        "relu",
+        "continuity",
+        "differentiability"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.26"
+    },
+    {
+      "id": "da-2025-da-39",
+      "field": "text",
+      "before": "Consider the function f(x) = x3\n3 + 7\n2x2 + 10x + 133\n2 , x∈ [\u00008, 0]. Which of the\nfollowing statements is/are correct?",
+      "after": "Consider the function $f(x) = \\frac{x^3}{3} + \\frac{7}{2}x^2 + 10x + \\frac{133}{2}$, $x \\in [-8, 0]$. Which of the following statements is/are correct?",
+      "reason": "Re-transcribed from the paper: the extraction lost minus signs (U+0000), broke subscripts/fractions/sums and flattened the layout; maths now typeset in KaTeX.",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "da-2025-da-39",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "The maximum value of f is attained atx =\u00005"
+        },
+        {
+          "l": "B",
+          "t": "The minimum value of f is attained atx =\u00002"
+        },
+        {
+          "l": "C",
+          "t": "The maximum value of f is 133 2"
+        },
+        {
+          "l": "D",
+          "t": "The minimum value of the derivative of f is attained atx =\u00007 2"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "The maximum value of $f$ is attained at $x = -5$"
+        },
+        {
+          "l": "B",
+          "t": "The minimum value of $f$ is attained at $x = -2$"
+        },
+        {
+          "l": "C",
+          "t": "The maximum value of $f$ is $\\frac{133}{2}$"
+        },
+        {
+          "l": "D",
+          "t": "The minimum value of the derivative of $f$ is attained at $x = -\\frac{7}{2}$"
+        }
+      ],
+      "reason": "Options re-transcribed from the paper and typeset as KaTeX where they contain maths; lost minus signs restored.",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "da-2025-da-39",
+      "field": "subject",
+      "before": "pdsa",
+      "after": "calc",
+      "reason": "Subject corrected to match the question content.",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "da-2025-da-39",
+      "field": "topic",
+      "before": "dsa",
+      "after": "optimization",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "da-2025-da-39",
+      "field": "tags",
+      "before": [
+        "data-science"
+      ],
+      "after": [
+        "calc",
+        "optimization",
+        "maxima-minima",
+        "closed-interval"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "da-2025-da-40",
+      "field": "text",
+      "before": "Let x1,x 2,x 3,x 4,x 5 be a system of orthonormal vectors in R10. Consider the matrix\nA =x1x⊤\n1 +... +x5x⊤\n5 . Which of the following statements is/are correct?",
+      "after": "Let $x_1, x_2, x_3, x_4, x_5$ be a system of orthonormal vectors in $\\mathbb{R}^{10}$. Consider the matrix $A = x_1x_1^{\\top} + \\ldots + x_5x_5^{\\top}$. Which of the following statements is/are correct?",
+      "reason": "Re-transcribed from the paper: the extraction lost minus signs (U+0000), broke subscripts/fractions/sums and flattened the layout; maths now typeset in KaTeX.",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "da-2025-da-40",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Singular values of A are also its eigenvalues"
+        },
+        {
+          "l": "B",
+          "t": "Singular values of A are either 0 or 1"
+        },
+        {
+          "l": "C",
+          "t": "Determinant of A is 1"
+        },
+        {
+          "l": "D",
+          "t": "A is invertible"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Singular values of $A$ are also its eigenvalues"
+        },
+        {
+          "l": "B",
+          "t": "Singular values of $A$ are either $0$ or $1$"
+        },
+        {
+          "l": "C",
+          "t": "Determinant of $A$ is $1$"
+        },
+        {
+          "l": "D",
+          "t": "$A$ is invertible"
+        }
+      ],
+      "reason": "Options re-transcribed from the paper and typeset as KaTeX where they contain maths.",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "da-2025-da-40",
+      "field": "topic",
+      "before": "matrices",
+      "after": "eigen",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "da-2025-da-40",
+      "field": "tags",
+      "before": [
+        "matrices"
+      ],
+      "after": [
+        "la",
+        "eigen",
+        "projection-matrix",
+        "singular-values"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "da-2025-da-41",
+      "field": "text",
+      "before": "Let f : R→ R be a twice-differentiable function and suppose its second derivative\nsatisﬁes f′′(x) > 0 for all x∈ R. Which of the following statements is/are ALW AYS\ncorrect?",
+      "after": "Let $f : \\mathbb{R} \\to \\mathbb{R}$ be a twice-differentiable function and suppose its second derivative satisfies $f''(x) > 0$ for all $x \\in \\mathbb{R}$. Which of the following statements is/are ALWAYS correct?",
+      "reason": "Re-transcribed from the paper: the extraction lost minus signs (U+0000), broke subscripts/fractions/sums and flattened the layout; maths now typeset in KaTeX.",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "da-2025-da-41",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "f has a local minima"
+        },
+        {
+          "l": "B",
+          "t": "There does not exist x andy,x⁄=y, such thatf′(x) =f′(y) = 0"
+        },
+        {
+          "l": "C",
+          "t": "f has at most one global minimum"
+        },
+        {
+          "l": "D",
+          "t": "f has at most one local minimum GATE 2025 Data Science & Artiﬁcial Intelligence - DA"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$f$ has a local minima"
+        },
+        {
+          "l": "B",
+          "t": "There does not exist $x$ and $y$, $x \\ne y$, such that $f'(x) = f'(y) = 0$"
+        },
+        {
+          "l": "C",
+          "t": "$f$ has at most one global minimum"
+        },
+        {
+          "l": "D",
+          "t": "$f$ has at most one local minimum"
+        }
+      ],
+      "reason": "Options re-transcribed from the paper and typeset as KaTeX where they contain maths; the running page footer (\"GATE 2025 Data Science ...\") removed from option D.",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "da-2025-da-41",
+      "field": "topic",
+      "before": "maxmin",
+      "after": "optimization",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "da-2025-da-41",
+      "field": "tags",
+      "before": [
+        "data-science"
+      ],
+      "after": [
+        "calc",
+        "optimization",
+        "convexity"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "da-2025-da-42",
+      "field": "text",
+      "before": "An n× n matrix A with real entries satisﬁes the property: ‖Ax‖2 = ‖x‖2, for all\nx∈ Rn, where‖·‖ denotes the Euclidean norm. Which of the following statements\nis/are ALW AYS correct?",
+      "after": "An $n \\times n$ matrix $A$ with real entries satisfies the property: $\\lVert Ax \\rVert_2 = \\lVert x \\rVert_2$, for all $x \\in \\mathbb{R}^n$, where $\\lVert \\cdot \\rVert$ denotes the Euclidean norm. Which of the following statements is/are ALWAYS correct?",
+      "reason": "Re-transcribed from the paper: the extraction lost minus signs (U+0000), broke subscripts/fractions/sums and flattened the layout; maths now typeset in KaTeX.",
+      "source": "pdf p.28"
+    },
+    {
+      "id": "da-2025-da-42",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "A must be orthogonal"
+        },
+        {
+          "l": "B",
+          "t": "A =I, whereI denotes the identity matrix, is the only solution"
+        },
+        {
+          "l": "C",
+          "t": "The eigenvalues of A are either +1 or\u00001"
+        },
+        {
+          "l": "D",
+          "t": "A has full rank"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$A$ must be orthogonal"
+        },
+        {
+          "l": "B",
+          "t": "$A = I$, where $I$ denotes the identity matrix, is the only solution"
+        },
+        {
+          "l": "C",
+          "t": "The eigenvalues of $A$ are either $+1$ or $-1$"
+        },
+        {
+          "l": "D",
+          "t": "$A$ has full rank"
+        }
+      ],
+      "reason": "Options re-transcribed from the paper and typeset as KaTeX where they contain maths; lost minus signs restored.",
+      "source": "pdf p.28"
+    },
+    {
+      "id": "da-2025-da-42",
+      "field": "tags",
+      "before": [
+        "matrices"
+      ],
+      "after": [
+        "la",
+        "matrices",
+        "orthogonal-matrix",
+        "isometry"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.28"
+    }
+  ]
+}
