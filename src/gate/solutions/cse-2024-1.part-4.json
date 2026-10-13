@@ -1,0 +1,1887 @@
+{
+  "paper": "cse-2024-1",
+  "version": 2,
+  "solutions": {
+    "cse-2024-1-cs-30": {
+      "approach": "Each variable is updated once by each thread, so its final value depends only on which of its two updates runs first. Program order inside the threads then decides which (a, b) pairs are reachable — no need to blindly enumerate.",
+      "concepts": [
+        "Interleaving of atomic statements",
+        "Program order within a thread",
+        "Race condition"
+      ],
+      "given": "Start: $a = b = 1$. Name the statements:\n\n| thread | 1st statement | 2nd statement |\n|---|---|---|\n| T1 | A1: `a = a + 1` | B1: `b = b + 1` |\n| T2 | B2: `b = 2 * b` | A2: `a = 2 * a` |\n\nInside a thread the order is fixed (A1 before B1, B2 before A2); between threads any interleaving is possible.",
+      "steps": [
+        {
+          "title": "Final a and b each depend on one ordering",
+          "body": "Variable `a` is changed by A1 ($+1$) and A2 ($\\times 2$):\n\n- A1 before A2: $(1+1)\\times 2 = 4$;\n- A2 before A1: $1 \\times 2 + 1 = 3$.\n\nVariable `b` is changed by B1 ($+1$) and B2 ($\\times 2$):\n\n- B1 before B2: $(1+1) \\times 2 = 4$;\n- B2 before B1: $1 \\times 2 + 1 = 3$.\n\nSo the only candidates are $a, b \\in \\{3, 4\\}$. The two serial runs give $(4, 4)$ (T1 first) and $(3, 3)$ (T2 first).",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 5,
+                "tone": "success"
+              }
+            ],
+            "caption": "Serial runs: T1;T2 gives (4, 4), T2;T1 gives (3, 3)."
+          }
+        },
+        {
+          "title": "a = 3 forces b = 3, so (3, 4) is impossible",
+          "body": "$a = 3$ needs A2 before A1. A2 is the **last** statement of T2, so B2 has already run; A1 is the **first** statement of T1, so B1 has not run yet. Hence B2 runs before B1:\n\n$$\\text{B2} < \\text{A2} < \\text{A1} < \\text{B1} \\;\\Rightarrow\\; b = 1 \\times 2 + 1 = 3.$$\n\nSo whenever $a = 3$ we get $b = 3$: the pair $(a = 3, b = 4)$ can **never** occur.",
+          "scene": {
+            "hl": [
+              {
+                "r": 5,
+                "tone": "warning"
+              }
+            ],
+            "caption": "The only order with A2 before A1 is the serial run T2;T1."
+          }
+        },
+        {
+          "title": "The mixed pair (4, 3) is reachable",
+          "body": "Take A1, B2, B1, A2: $a = 1+1 = 2$, $b = 2 \\times 1 = 2$, $b = 2 + 1 = 3$, $a = 2 \\times 2 = 4$. Final $(a, b) = (4, 3)$. (Four of the six interleavings end this way.)",
+          "scene": {
+            "hl": [
+              {
+                "r": 1,
+                "tone": "info"
+              },
+              {
+                "r": 2,
+                "tone": "info"
+              },
+              {
+                "r": 3,
+                "tone": "info"
+              },
+              {
+                "r": 4,
+                "tone": "info"
+              }
+            ],
+            "caption": "Every interleaving that is not serial gives (4, 3)."
+          }
+        },
+        {
+          "title": "All possible outcomes",
+          "body": "The reachable combinations are exactly $(4, 4)$, $(3, 3)$ and $(4, 3)$ — option **(A)**. Options (B), (C) and (D) all list $(a = 3, b = 4)$, which step 2 showed is impossible.",
+          "scene": {
+            "hl": [
+              {
+                "c": 1,
+                "tone": "success"
+              },
+              {
+                "c": 2,
+                "tone": "success"
+              }
+            ],
+            "caption": "Outcomes: (4, 4), (4, 3), (3, 3)."
+          }
+        }
+      ],
+      "answer": {
+        "value": "$(a=4, b=4);\\ (a=3, b=3);\\ (a=4, b=3)$ — option **(A)**",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Exactly the three reachable outcomes: (4, 4) from T1;T2, (3, 3) from T2;T1 and (4, 3) from every genuine interleaving."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Contains the impossible (3, 4) and misses (4, 4), the result of simply running T1 then T2."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Contains the impossible (3, 4) and misses (3, 3), the result of running T2 then T1."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "(2, 2) and (2, 3) are intermediate states (a incremented but not yet doubled), not final values; it also contains the impossible (3, 4)."
+        }
+      ],
+      "shortcut": "The only pair that needs checking is (3, 4): $a = 3$ means A2 ran before A1, which by program order forces B2 before B1, i.e. $b = 3$. (B), (C) and (D) all contain (3, 4), so (A) is the answer.",
+      "pitfalls": [
+        "Forgetting the program order inside a thread and allowing, for example, A2 to run before B2.",
+        "Listing intermediate values such as (2, 2) as final outcomes.",
+        "Assuming only the two serial orders are possible and missing (4, 3)."
+      ],
+      "verification": "There are $\\binom{4}{2} = 6$ interleavings of two 2-statement threads; the table evaluates all six: one gives (4, 4), four give (4, 3), one gives (3, 3).",
+      "animation": {
+        "kind": "table",
+        "title": "All 6 interleavings (start a = b = 1)",
+        "cols": [
+          "order of statements",
+          "final a",
+          "final b"
+        ],
+        "rows": [
+          [
+            "A1 B1 B2 A2 (T1 then T2)",
+            4,
+            4
+          ],
+          [
+            "A1 B2 B1 A2",
+            4,
+            3
+          ],
+          [
+            "A1 B2 A2 B1",
+            4,
+            3
+          ],
+          [
+            "B2 A1 B1 A2",
+            4,
+            3
+          ],
+          [
+            "B2 A1 A2 B1",
+            4,
+            3
+          ],
+          [
+            "B2 A2 A1 B1 (T2 then T1)",
+            3,
+            3
+          ]
+        ],
+        "mono": true
+      }
+    },
+    "cse-2024-1-cs-31": {
+      "approach": "Use the bottom-up heapify (build-heap) procedure: sift down every internal node from the last one ($i = \\lfloor n/2 \\rfloor$) up to the root. The options settle min-heap vs max-heap first: no option starts with the minimum $11$, so the heap is a max-heap.",
+      "concepts": [
+        "Build-heap (bottom-up heapify)",
+        "Sift-down",
+        "Max-heap property"
+      ],
+      "given": "$n = 10$, 1-based indices; children of $i$ are $2i$ and $2i+1$.\n\n| $i$ | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |\n|---|---|---|---|---|---|---|---|---|---|---|\n| $A[i]$ | 82 | 101 | 90 | 11 | 111 | 75 | 33 | 131 | 44 | 93 |",
+      "steps": [
+        {
+          "title": "Max-heap, internal nodes 5 down to 1",
+          "body": "A heap's root is the minimum ($11$) or the maximum ($131$). No option begins with $11$, so \"heapified\" means a **max-heap**, and the root will be $131$.\n\nInternal nodes are $i = 1, \\dots, \\lfloor 10/2 \\rfloor = 5$; build-heap sifts them down in the order $5, 4, 3, 2, 1$.",
+          "scene": {
+            "caption": "The array as a complete binary tree (level order)."
+          }
+        },
+        {
+          "title": "i = 5 and i = 4",
+          "body": "- $i=5$: $111$ vs its only child $A[10] = 93$ — already larger, no swap.\n- $i=4$: $11$ vs children $A[8]=131$, $A[9]=44$; the larger child is $131 > 11$, so swap: $A[4] = 131$, $A[8] = 11$.",
+          "scene": {
+            "root": {
+              "id": "v82",
+              "label": 82,
+              "children": [
+                {
+                  "id": "v101",
+                  "label": 101,
+                  "children": [
+                    {
+                      "id": "v131",
+                      "label": 131,
+                      "tone": "warning",
+                      "children": [
+                        {
+                          "id": "v11",
+                          "label": 11,
+                          "tone": "warning"
+                        },
+                        {
+                          "id": "v44",
+                          "label": 44
+                        }
+                      ]
+                    },
+                    {
+                      "id": "v111",
+                      "label": 111,
+                      "children": [
+                        {
+                          "id": "v93",
+                          "label": 93
+                        },
+                        null
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "v90",
+                  "label": 90,
+                  "children": [
+                    {
+                      "id": "v75",
+                      "label": 75
+                    },
+                    {
+                      "id": "v33",
+                      "label": 33
+                    }
+                  ]
+                }
+              ]
+            },
+            "caption": "i = 4: 11 swaps with its larger child 131."
+          }
+        },
+        {
+          "title": "i = 3 and i = 2",
+          "body": "- $i=3$: $90$ vs children $75, 33$ — no swap.\n- $i=2$: $101$ vs children $A[4]=131$, $A[5]=111$; swap with $131$. Now $101$ sits at index 4 with children $11, 44$ — both smaller, stop.\n\nArray: $[82, 131, 90, 101, 111, 75, 33, 11, 44, 93]$.",
+          "scene": {
+            "root": {
+              "id": "v82",
+              "label": 82,
+              "children": [
+                {
+                  "id": "v131",
+                  "label": 131,
+                  "tone": "warning",
+                  "children": [
+                    {
+                      "id": "v101",
+                      "label": 101,
+                      "tone": "warning",
+                      "children": [
+                        {
+                          "id": "v11",
+                          "label": 11
+                        },
+                        {
+                          "id": "v44",
+                          "label": 44
+                        }
+                      ]
+                    },
+                    {
+                      "id": "v111",
+                      "label": 111,
+                      "children": [
+                        {
+                          "id": "v93",
+                          "label": 93
+                        },
+                        null
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "v90",
+                  "label": 90,
+                  "children": [
+                    {
+                      "id": "v75",
+                      "label": 75
+                    },
+                    {
+                      "id": "v33",
+                      "label": 33
+                    }
+                  ]
+                }
+              ]
+            },
+            "caption": "i = 2: 101 swaps with 131."
+          }
+        },
+        {
+          "title": "i = 1: 82 sinks three levels",
+          "body": "- $82$ vs children $131, 90$: swap with $131$ ($82$ moves to index 2).\n- $82$ vs children $A[4] = 101$, $A[5] = 111$: swap with $111$ ($82$ moves to index 5).\n- $82$ vs child $A[10] = 93$: swap ($82$ moves to index 10, a leaf).\n\nFinal heap: $[131, 111, 90, 101, 93, 75, 33, 11, 44, 82]$.",
+          "scene": {
+            "root": {
+              "id": "v131",
+              "label": 131,
+              "tone": "success",
+              "children": [
+                {
+                  "id": "v111",
+                  "label": 111,
+                  "tone": "success",
+                  "children": [
+                    {
+                      "id": "v101",
+                      "label": 101,
+                      "children": [
+                        {
+                          "id": "v11",
+                          "label": 11
+                        },
+                        {
+                          "id": "v44",
+                          "label": 44
+                        }
+                      ]
+                    },
+                    {
+                      "id": "v93",
+                      "label": 93,
+                      "children": [
+                        {
+                          "id": "v82",
+                          "label": 82,
+                          "tone": "warning"
+                        },
+                        null
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "v90",
+                  "label": 90,
+                  "tone": "success",
+                  "children": [
+                    {
+                      "id": "v75",
+                      "label": 75
+                    },
+                    {
+                      "id": "v33",
+                      "label": 33
+                    }
+                  ]
+                }
+              ]
+            },
+            "caption": "Final max-heap; the first three elements are 131, 111, 90."
+          }
+        },
+        {
+          "title": "Read off the first three elements",
+          "body": "The first three array positions hold $131, 111, 90$ — option **(D)**. Check: every parent is larger than its children ($131 > 111, 90$; $111 > 101, 93$; $90 > 75, 33$; $101 > 11, 44$; $93 > 82$)."
+        }
+      ],
+      "answer": {
+        "value": "$131, 111, 90$ — option **(D)**",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "A heap root must be the minimum (11) or the maximum (131); 82 is neither. This is just the original first element followed by two values, not a heap."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Root 82 is again neither extreme; 11 at index 2 would also need its whole subtree to be larger, which a max-heap forbids."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Root 131 is right, but 11 is the smallest value and cannot be a child of the root in a max-heap (its children 101/111 would exceed it)."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Bottom-up build-max-heap gives $[131, 111, 90, 101, 93, 75, 33, 11, 44, 82]$."
+        }
+      ],
+      "shortcut": "No option starts with the minimum 11, so it is a max-heap and the root is 131 — only (C) and (D) remain. In (C) the value 11 would be at index 2, an internal node with children; in a max-heap it would have to exceed its children, impossible for the global minimum. So (D).",
+      "pitfalls": [
+        "Inserting the elements one by one (top-down) instead of bottom-up heapify — the two methods can give different arrays in general (here both happen to give the same result).",
+        "Stopping the sift-down of 82 after the first swap; it must continue until both children are smaller.",
+        "Assuming a min-heap, which matches no option."
+      ],
+      "verification": "Max-heap check on the final array: $131 \\ge 111, 90$; $111 \\ge 101, 93$; $90 \\ge 75, 33$; $101 \\ge 11, 44$; $93 \\ge 82$ — all hold, and the array is a permutation of the input.",
+      "animation": {
+        "kind": "tree",
+        "title": "Build-max-heap on the given array",
+        "root": {
+          "id": "v82",
+          "label": 82,
+          "children": [
+            {
+              "id": "v101",
+              "label": 101,
+              "children": [
+                {
+                  "id": "v11",
+                  "label": 11,
+                  "children": [
+                    {
+                      "id": "v131",
+                      "label": 131
+                    },
+                    {
+                      "id": "v44",
+                      "label": 44
+                    }
+                  ]
+                },
+                {
+                  "id": "v111",
+                  "label": 111,
+                  "children": [
+                    {
+                      "id": "v93",
+                      "label": 93
+                    },
+                    null
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "v90",
+              "label": 90,
+              "children": [
+                {
+                  "id": "v75",
+                  "label": 75
+                },
+                {
+                  "id": "v33",
+                  "label": 33
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "cse-2024-1-cs-32": {
+      "approach": "Divide the recurrence by $n$: the factor $\\sqrt{n}$ in front of $T(\\sqrt{n})$ cancels exactly, leaving $S(n) = S(\\sqrt{n}) + 1$ for $S(n) = T(n)/n$. Repeated square roots reach a constant after $\\log\\log n$ steps.",
+      "concepts": [
+        "Recurrence by substitution",
+        "Repeated square root depth",
+        "Recursion tree"
+      ],
+      "steps": [
+        {
+          "title": "Divide by n",
+          "body": "For $n > 1$, $T(n) = \\sqrt{n}\\,T(\\sqrt{n}) + n$. Divide both sides by $n$ and use $\\frac{\\sqrt{n}}{n} = \\frac{1}{\\sqrt{n}}$:\n\n$$\\frac{T(n)}{n} = \\frac{T(\\sqrt{n})}{\\sqrt{n}} + 1.$$\n\nWith $S(n) = \\frac{T(n)}{n}$ this is $S(n) = S(\\sqrt{n}) + 1$.",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Count the square roots",
+          "body": "Unrolling $k$ times: $S(n) = S\\!\\left(n^{1/2^k}\\right) + k$. Stop when the argument is a constant, say $2$:\n\n$$n^{1/2^k} = 2 \\iff \\frac{\\log_2 n}{2^k} = 1 \\iff 2^k = \\log_2 n \\iff k = \\log_2 \\log_2 n.$$\n\nSo $S(n) = \\log_2\\log_2 n + S(2) = \\Theta(\\log \\log n)$.",
+          "scene": {
+            "reveal": 4
+          }
+        },
+        {
+          "title": "Multiply back by n",
+          "body": "$T(n) = n \\cdot S(n) = n\\,(\\log_2 \\log_2 n + c) = \\Theta(n \\log \\log n)$ — option **(A)**.",
+          "scene": {
+            "reveal": 5
+          }
+        },
+        {
+          "title": "Same answer from the recursion tree",
+          "body": "At depth $i$ there are $n^{1 - 1/2^i}$ subproblems, each of size $n^{1/2^i}$ and each doing work equal to its size, so every level costs $n^{1-1/2^i} \\cdot n^{1/2^i} = n$. There are $\\log_2\\log_2 n$ levels, giving $n \\log \\log n$ again."
+        }
+      ],
+      "answer": {
+        "value": "$T(n) = \\Theta(n \\log \\log n)$ — option **(A)**",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Each level of the recursion costs exactly $n$ and there are $\\log\\log n$ levels."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Comes from assuming $\\log n$ levels (as for $T(n) = 2T(n/2) + n$); repeated square roots shrink the size much faster — only $\\log \\log n$ levels."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Treats the per-level cost as $n^2$ (e.g. multiplying $\\sqrt{n}$ subproblems by an $n$-sized cost each) and also uses the wrong depth."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Right depth but wrong per-level cost: $\\sqrt{n}$ subproblems of size $\\sqrt{n}$ cost $\\sqrt{n} \\cdot \\sqrt{n} = n$, not $n^2$."
+        }
+      ],
+      "shortcut": "Divide by $n$: $T(n)/n$ grows by $1$ per square root, and $n$ takes $\\log\\log n$ square roots to reach a constant. Hence $n \\log\\log n$.",
+      "pitfalls": [
+        "Applying the Master theorem — it does not fit, since the subproblem size is $\\sqrt{n}$, not $n/b$.",
+        "Confusing the depth $\\log\\log n$ (repeated square roots) with $\\log n$ (repeated halving).",
+        "The paper prints \"$n \\geq 1$\" for the first case; it is meant as $n > 1$ (the second case is the base case $n = 1$)."
+      ],
+      "verification": "For $n = 2^{16} = 65536$: square roots go $65536 \\to 256 \\to 16 \\to 4 \\to 2$, i.e. $4 = \\log_2\\log_2 65536 = \\log_2 16$ levels, each costing $n$, so $T(n) = n\\,(4 + S(2))$ — linear in $n$ times $\\log\\log n$.",
+      "animation": {
+        "kind": "equation",
+        "title": "Normalising by n",
+        "lines": [
+          {
+            "tex": "T(n)=\\sqrt{n}\\,T(\\sqrt{n})+n",
+            "note": "given"
+          },
+          {
+            "tex": "S(n)=S(\\sqrt{n})+1",
+            "note": "S(n) = T(n)/n"
+          },
+          {
+            "tex": "S(n)=S\\left(n^{1/2^k}\\right)+k",
+            "note": "unroll k times"
+          },
+          {
+            "tex": "n^{1/2^k}=2\\iff k=\\log_2\\log_2 n",
+            "note": "depth"
+          },
+          {
+            "tex": "T(n)=n\\,S(n)=\\Theta(n\\log\\log n)",
+            "tone": "success"
+          }
+        ],
+        "reveal": 1
+      }
+    },
+    "cse-2024-1-cs-33": {
+      "approach": "In a min-heap every internal node is smaller than its children, so the maximum must sit at a leaf; conversely it can sit at any leaf. Count the leaves of a 105-node complete binary tree stored in an array.",
+      "concepts": [
+        "Min-heap property",
+        "Leaves of an array-based heap",
+        "Index arithmetic"
+      ],
+      "steps": [
+        {
+          "title": "The maximum must be a leaf",
+          "body": "If the maximum $M$ were at an internal node, it would have a child $c$ with $c > M$ (heap order: parent $<$ child, elements distinct) — impossible since $M$ is the largest. So $k$ is a **leaf** index.",
+          "scene": {
+            "intervals": [
+              {
+                "from": 1,
+                "to": 52,
+                "label": "internal",
+                "tone": "muted"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Count the leaves",
+          "body": "With 1-based indices, node $i$ has a child iff $2i \\le 105$, i.e. $i \\le \\lfloor 105/2 \\rfloor = 52$. So nodes $1..52$ are internal and the leaves are $53, 54, \\dots, 105$:\n\n$$105 - 52 = 53 \\text{ leaves}.$$\n\n(With 0-based indexing the leaves are $52..104$ — still 53 positions.)",
+          "scene": {
+            "intervals": [
+              {
+                "from": 1,
+                "to": 52,
+                "label": "internal",
+                "tone": "muted"
+              },
+              {
+                "from": 53,
+                "to": 105,
+                "label": "leaves: 53",
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Every leaf is achievable",
+          "body": "The sorted array is a valid min-heap with the maximum at index 105. For any other leaf $j$, swap the values at positions $j$ and $105$: position $j$ gets the maximum (it has no children, and its parent is smaller), and position $105$ gets the old $A[j]$, which is larger than $A[52]$ (its new parent) because $j > 52$ in sorted order. So all **53** leaf positions are possible — option **(A)**."
+        }
+      ],
+      "answer": {
+        "value": "**53** possible values of $k$ — option **(A)**",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "The maximum can be at exactly the leaves $53..105$, and every one of them can actually hold it."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "52 is the number of internal nodes ($\\lfloor 105/2 \\rfloor$) — the complement of the right set, or an off-by-one in $105 - 53$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Roughly half the leaves; nothing restricts the maximum to one side of the tree or to left/right children only."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The maximum need not be in the last array position — any leaf works."
+        }
+      ],
+      "shortcut": "Leaves of an $n$-node heap $= n - \\lfloor n/2 \\rfloor = \\lceil n/2 \\rceil = \\lceil 105/2 \\rceil = 53$.",
+      "pitfalls": [
+        "Counting only the leaves on the last level (indices $64..105$, i.e. 42); the leaves $53..63$ on the level above count too.",
+        "Thinking the maximum must be at the last index."
+      ],
+      "verification": "Levels hold $1, 2, 4, 8, 16, 32$ nodes ($63$ total) and the last level holds $105 - 63 = 42$. These 42 nodes have parents $32..52$, so of the 32 nodes on level 5, $63 - 52 = 11$ are leaves. Leaves $= 42 + 11 = 53$.",
+      "animation": {
+        "kind": "numberline",
+        "title": "Array positions 1..105 of the min-heap",
+        "min": 1,
+        "max": 105,
+        "step": 13,
+        "points": [
+          {
+            "x": 52,
+            "label": "52"
+          },
+          {
+            "x": 53,
+            "label": "53",
+            "tone": "success"
+          },
+          {
+            "x": 105,
+            "label": "105",
+            "tone": "success"
+          }
+        ]
+      }
+    },
+    "cse-2024-1-cs-34": {
+      "approach": "Check each implication with Armstrong's axioms (reflexivity, augmentation, transitivity, and the derived decomposition and pseudotransitivity rules); for the one that does not follow, a two-tuple counterexample settles it.",
+      "concepts": [
+        "Armstrong's axioms",
+        "Decomposition rule",
+        "Pseudotransitivity"
+      ],
+      "steps": [
+        {
+          "title": "(A) fails: a determinant cannot be shrunk",
+          "body": "$XY \\to ZW$ only says tuples that agree on **both** $X$ and $Y$ agree on $ZW$. The relation in the table satisfies it (the two tuples differ on $Y$), yet they agree on $X$ and differ on $Z, W$, so $X \\to ZW$ is violated. (A) is false.",
+          "scene": {
+            "caption": "Two tuples: equal X, different Y, different Z, W."
+          }
+        },
+        {
+          "title": "(B) decomposition",
+          "body": "By reflexivity $ZW \\to Z$. By transitivity, $XY \\to ZW$ and $ZW \\to Z$ give $XY \\to Z$. (B) is true."
+        },
+        {
+          "title": "(C) pseudotransitivity",
+          "body": "Augment $W \\to Y$ with $X$: $XW \\to XY$. Combined with $XY \\to Z$ by transitivity: $XW \\to Z$. (C) is true.",
+          "scene": {
+            "kind": "equation",
+            "title": "Deriving (C)",
+            "lines": [
+              {
+                "tex": "W\\to Y",
+                "note": "given"
+              },
+              {
+                "tex": "XW\\to XY",
+                "note": "augment by X"
+              },
+              {
+                "tex": "XY\\to Z",
+                "note": "given"
+              },
+              {
+                "tex": "XW\\to Z",
+                "note": "transitivity",
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "(D) transitivity",
+          "body": "$X \\to Y$ and $Y \\to Z$ give $X \\to Z$ — Armstrong's transitivity axiom. (D) is true.\n\nTrue options: **B, C, D**."
+        }
+      ],
+      "answer": {
+        "value": "Options **(B), (C), (D)**",
+        "choice": [
+          "B",
+          "C",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Removing attributes from the left side is not allowed: the two-tuple relation $(x_1, y_1, z_1, w_1), (x_1, y_2, z_2, w_2)$ satisfies $XY \\to ZW$ but not $X \\to ZW$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Decomposition: reflexivity gives $ZW \\to Z$, then transitivity."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Pseudotransitivity: augment $W \\to Y$ to $XW \\to XY$, then use $XY \\to Z$."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Transitivity is one of Armstrong's axioms."
+        }
+      ],
+      "shortcut": "Right sides may be split (B) and chained (D, C via augmentation); left sides may be enlarged but never shrunk — so only (A) is false.",
+      "pitfalls": [
+        "Confusing decomposition of the right side (valid) with decomposition of the left side (invalid).",
+        "Missing that (C) needs augmentation by $X$ before transitivity."
+      ],
+      "verification": "Closure check for (C): start with $\\{X, W\\}$; $W \\to Y$ adds $Y$; now $\\{X, Y\\} \\subseteq$ closure so $XY \\to Z$ adds $Z$. $Z \\in \\{X,W\\}^+$. For (A): $\\{X\\}^+ = \\{X\\}$ under $XY \\to ZW$ alone.",
+      "animation": {
+        "kind": "table",
+        "title": "Counterexample for (A)",
+        "cols": [
+          "X",
+          "Y",
+          "Z",
+          "W"
+        ],
+        "rows": [
+          [
+            "x1",
+            "y1",
+            "z1",
+            "w1"
+          ],
+          [
+            "x1",
+            "y2",
+            "z2",
+            "w2"
+          ]
+        ],
+        "hl": [
+          {
+            "c": 0,
+            "tone": "warning"
+          },
+          {
+            "c": 2,
+            "tone": "error"
+          },
+          {
+            "c": 3,
+            "tone": "error"
+          }
+        ]
+      }
+    },
+    "cse-2024-1-cs-35": {
+      "approach": "Use the defining property of a BFS tree: every vertex sits at depth equal to its shortest distance from $v$, so any edge $u \\to w$ satisfies $d(w) \\le d(u) + 1$. That kills forward edges; one small example shows back and cross edges can still exist.",
+      "concepts": [
+        "DFS edge classification",
+        "BFS tree = shortest-path tree",
+        "Counterexample"
+      ],
+      "steps": [
+        {
+          "title": "A graph whose DFS tree equals its BFS tree",
+          "body": "Take vertices $v, a, b, c$ and edges $v \\to a$, $v \\to b$, $a \\to c$, $c \\to v$, $b \\to a$.\n\n- **DFS** from $v$ (visit $a$ first): $v \\to a \\to c$; $c \\to v$ sees an ancestor; back up, then $v \\to b$; $b \\to a$ sees a finished vertex. Tree: $\\{v\\to a, a \\to c, v \\to b\\}$.\n- **BFS** from $v$: level 1 = $\\{a, b\\}$ (parent $v$), level 2 = $\\{c\\}$ (parent $a$). Same tree.",
+          "scene": {
+            "edgeTones": {
+              "v>a": "info",
+              "v>b": "info",
+              "a>c": "info"
+            },
+            "subs": {
+              "v": "d=0",
+              "a": "d=1",
+              "b": "d=1",
+              "c": "d=2"
+            },
+            "caption": "Blue edges: the tree T (both DFS and BFS)."
+          }
+        },
+        {
+          "title": "Back and cross edges can exist",
+          "body": "- $c \\to v$ goes to an ancestor of $c$: a **back edge**. So (A) is false.\n- $b \\to a$ goes to a vertex in another, already finished branch: a **cross edge**. So (B) is false.\n- $G$ has 5 edges but $T$ only 3, so (D) is false.",
+          "scene": {
+            "edgeTones": {
+              "v>a": "info",
+              "v>b": "info",
+              "a>c": "info",
+              "c>v": "error",
+              "b>a": "warning"
+            },
+            "caption": "Red: back edge c→v. Orange: cross edge b→a."
+          }
+        },
+        {
+          "title": "Forward edges are impossible",
+          "body": "Because $T$ is a BFS tree, the depth of each vertex in $T$ is its shortest distance $d(\\cdot)$ from $v$, and every edge $u \\to w$ gives $d(w) \\le d(u) + 1$.\n\nA forward edge $u \\to w$ joins $u$ to a proper descendant $w$ that is **not** its child, so $\\text{depth}(w) \\ge \\text{depth}(u) + 2$, i.e. $d(w) \\ge d(u) + 2$ — contradicting $d(w) \\le d(u) + 1$. Hence there are no forward edges: (C) is true, and it is the only true statement."
+        }
+      ],
+      "answer": {
+        "value": "Only option **(C)**",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "False: in the example, $c \\to v$ is a back edge although $T$ is both a DFS and a BFS tree (a BFS tree only limits edges going **down** by more than one level)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "False: $b \\to a$ is a cross edge in the example — it goes sideways between two depth-1 vertices, which a BFS tree allows."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "True: a forward edge would skip at least two levels down, giving a shorter path than the BFS depth."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "False: non-tree edges (back and cross) may be present, as the example shows."
+        }
+      ],
+      "shortcut": "BFS tree ⇒ no non-tree edge goes down more than one level. Forward edges always go down $\\ge 2$ levels; back edges go up and cross edges go sideways/up, which BFS permits.",
+      "pitfalls": [
+        "Using the undirected-graph fact \"DFS has no cross edges\" — in a directed graph cross edges are normal.",
+        "Thinking DFS tree = BFS tree forces $G$ to be a tree; only edges that jump down two or more levels are excluded."
+      ],
+      "verification": "In the example, check every non-tree edge against $d(w) \\le d(u) + 1$: $c \\to v$: $0 \\le 3$; $b \\to a$: $1 \\le 2$. Both allowed, while a hypothetical forward edge $v \\to c$ would give $d(c) = 1$ and change the BFS tree.",
+      "animation": {
+        "kind": "graph",
+        "title": "G with T = DFS tree = BFS tree",
+        "directed": true,
+        "layout": "manual",
+        "nodes": [
+          {
+            "id": "v",
+            "x": 1,
+            "y": 0
+          },
+          {
+            "id": "a",
+            "x": 0,
+            "y": 1
+          },
+          {
+            "id": "b",
+            "x": 2,
+            "y": 1
+          },
+          {
+            "id": "c",
+            "x": 0,
+            "y": 2
+          }
+        ],
+        "edges": [
+          {
+            "from": "v",
+            "to": "a"
+          },
+          {
+            "from": "v",
+            "to": "b"
+          },
+          {
+            "from": "a",
+            "to": "c"
+          },
+          {
+            "from": "c",
+            "to": "v",
+            "w": "back"
+          },
+          {
+            "from": "b",
+            "to": "a",
+            "w": "cross"
+          }
+        ]
+      }
+    },
+    "cse-2024-1-cs-36": {
+      "approach": "Build the precedence (conflict) graph: an edge $T_i \\to T_j$ for every pair of conflicting operations where $T_i$'s comes first. The serial schedules conflict-equivalent to $S$ are exactly the topological orders of that graph.",
+      "concepts": [
+        "Conflicting operations",
+        "Precedence graph",
+        "Topological order"
+      ],
+      "given": "| item | operations in order |\n|---|---|\n| $x$ | $r_2(x),\\ w_2(x)$ |\n| $y$ | $r_3(y),\\ w_3(y),\\ r_2(y),\\ w_2(y)$ |\n| $z$ | $r_1(z),\\ w_1(z)$ |",
+      "steps": [
+        {
+          "title": "Items x and z cause no conflicts",
+          "body": "Two operations conflict if they belong to different transactions, touch the same item and at least one is a write. Item $z$ is used only by $T_1$ ($r_1(z), w_1(z)$) and item $x$ only by $T_2$ ($r_2(x), w_2(x)$), so neither gives an edge. In particular $T_1$ conflicts with nobody.",
+          "scene": {
+            "tones": {
+              "T1": "muted"
+            },
+            "caption": "T1 shares no data item with T2 or T3."
+          }
+        },
+        {
+          "title": "Conflicts on y all point T3 → T2",
+          "body": "On $y$ the order is $r_3(y), w_3(y), r_2(y), w_2(y)$. The conflicting pairs (different transactions, at least one write) are\n\n- $r_3(y) \\prec w_2(y)$ (read–write),\n- $w_3(y) \\prec r_2(y)$ (write–read),\n- $w_3(y) \\prec w_2(y)$ (write–write),\n\nand all three give the edge $T_3 \\to T_2$. The graph is acyclic, so $S$ is conflict serializable.",
+          "scene": {
+            "edgeTones": {
+              "T3>T2": "warning"
+            },
+            "caption": "Every conflict on y points from T3 to T2."
+          }
+        },
+        {
+          "title": "Serial orders consistent with T3 → T2",
+          "body": "The only constraint is $T_3$ before $T_2$; $T_1$ can go anywhere. Of the $3! = 6$ orders, the valid ones are\n\n$$T_1 T_3 T_2,\\quad T_3 T_1 T_2,\\quad T_3 T_2 T_1.$$\n\n$T_1 T_2 T_3$ puts $T_2$ before $T_3$ and is **not** equivalent. Answer: **B, C, D**.",
+          "scene": {
+            "edgeTones": {
+              "T3>T2": "success"
+            },
+            "tones": {
+              "T1": "muted",
+              "T3": "success",
+              "T2": "success"
+            },
+            "caption": "T1 is unconstrained; T3 must precede T2."
+          }
+        }
+      ],
+      "answer": {
+        "value": "Options **(B), (C), (D)**",
+        "choice": [
+          "B",
+          "C",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Runs $T_2$ before $T_3$, reversing the conflicts on $y$ ($w_3(y)$ precedes $r_2(y)$ and $w_2(y)$ in $S$)."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$T_3$ before $T_2$, with $T_1$ (no conflicts) first."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$T_3$ before $T_2$, with $T_1$ last — allowed because $T_1$ shares no item with the others."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "$T_3$ before $T_2$, with $T_1$ in between."
+        }
+      ],
+      "shortcut": "$T_1$ only touches $z$, which nobody else uses, so it floats freely. On $y$, $T_3$ finishes all its operations before $T_2$ touches $y$, so any order with $T_3$ before $T_2$ works.",
+      "pitfalls": [
+        "Treating $r_2(x)$ and $r_3(y)$ (different items) as a conflict.",
+        "Assuming the serial order must follow the order in which transactions **start** ($T_1, T_2, T_3$)."
+      ],
+      "verification": "Swap check for $T_3T_2T_1$: $T_1$'s operations on $z$ commute with everything, so they can be moved to the end; $r_2(x)$ commutes with $r_3(y), w_3(y)$ (different items), so all of $T_3$ moves before $T_2$ — giving $T_3T_2T_1$ by non-conflicting swaps only.",
+      "animation": {
+        "kind": "graph",
+        "title": "Precedence graph of S",
+        "directed": true,
+        "layout": "manual",
+        "nodes": [
+          {
+            "id": "T1",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "T3",
+            "x": 1,
+            "y": 1
+          },
+          {
+            "id": "T2",
+            "x": 2,
+            "y": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "T3",
+            "to": "T2",
+            "w": "y"
+          }
+        ]
+      }
+    },
+    "cse-2024-1-cs-37": {
+      "approach": "Put the minterms on a 3-variable K-map: $\\sum(3,5,6,7)$ is the majority function, whose minimal SOP is $XY + YZ + XZ$. The POS form uses the remaining indices, and dependence on a variable is shown by one pair of inputs differing only in it.",
+      "concepts": [
+        "Canonical SOP and POS",
+        "K-map minimisation",
+        "Majority function"
+      ],
+      "given": "| $m$ | $XYZ$ | $F$ |\n|---|---|---|\n| 3 | 011 | 1 |\n| 5 | 101 | 1 |\n| 6 | 110 | 1 |\n| 7 | 111 | 1 |\n| 0, 1, 2, 4 | — | 0 |",
+      "steps": [
+        {
+          "title": "(A): maxterms are the missing indices",
+          "body": "A 3-variable function has indices $0..7$. $F = 1$ on $\\{3, 5, 6, 7\\}$, so $F = 0$ on $\\{0, 1, 2, 4\\}$, and the canonical POS is $F = \\Pi(0, 1, 2, 4)$. (A) is true."
+        },
+        {
+          "title": "(B): minimise with the K-map",
+          "body": "Minterm 7 pairs with each of the other three:\n\n- $\\{6, 7\\} = XYZ' + XYZ = XY$\n- $\\{3, 7\\} = X'YZ + XYZ = YZ$\n- $\\{5, 7\\} = XY'Z + XYZ = XZ$\n\nSo $F = XY + YZ + XZ$ (output is 1 when at least two inputs are 1). (B) is true.",
+          "scene": {
+            "groups": [
+              {
+                "cells": [
+                  6,
+                  7
+                ],
+                "label": "XY",
+                "tone": "cat1"
+              },
+              {
+                "cells": [
+                  3,
+                  7
+                ],
+                "label": "YZ",
+                "tone": "cat2"
+              },
+              {
+                "cells": [
+                  5,
+                  7
+                ],
+                "label": "XZ",
+                "tone": "cat3"
+              }
+            ]
+          }
+        },
+        {
+          "title": "(C) and (D): F depends on Y and on X",
+          "body": "- Change only $Y$: $F(0,0,1) = m_1 = 0$ but $F(0,1,1) = m_3 = 1$. So $F$ depends on $Y$ — (C) is false.\n- Change only $X$: $F(0,0,1) = m_1 = 0$ but $F(1,0,1) = m_5 = 1$. So $F$ depends on $X$ — (D) is false.\n\nCorrect: **A, B**.",
+          "scene": {
+            "groups": [
+              {
+                "cells": [
+                  6,
+                  7
+                ],
+                "label": "XY",
+                "tone": "cat1"
+              },
+              {
+                "cells": [
+                  3,
+                  7
+                ],
+                "label": "YZ",
+                "tone": "cat2"
+              },
+              {
+                "cells": [
+                  5,
+                  7
+                ],
+                "label": "XZ",
+                "tone": "cat3"
+              }
+            ],
+            "hl": [
+              {
+                "cell": 1,
+                "tone": "error"
+              },
+              {
+                "cell": 3,
+                "tone": "success"
+              },
+              {
+                "cell": 5,
+                "tone": "success"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "Options **(A), (B)**",
+        "choice": [
+          "A",
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "The canonical POS lists the indices where $F = 0$: $\\{0, 1, 2, 4\\}$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "The three pairs $\\{6,7\\}, \\{3,7\\}, \\{5,7\\}$ give $XY + YZ + XZ$, the majority function."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "False: $F(0,0,1) = 0$ but $F(0,1,1) = 1$ — flipping $Y$ alone changes $F$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "False: $F(0,0,1) = 0$ but $F(1,0,1) = 1$ — flipping $X$ alone changes $F$."
+        }
+      ],
+      "shortcut": "$3, 5, 6, 7$ are exactly the 3-bit numbers with at least two 1s, i.e. the majority function $XY+YZ+XZ$ — symmetric in all three inputs, so it depends on every input.",
+      "pitfalls": [
+        "Writing the POS with the same indices as the SOP ($\\Pi(3,5,6,7)$) instead of the complementary ones.",
+        "Missing that one pair of inputs differing only in a variable is enough to prove dependence."
+      ],
+      "verification": "Evaluate $XY+YZ+XZ$ on all 8 inputs: it is 1 exactly for $011, 101, 110, 111$ = minterms $3, 5, 6, 7$.",
+      "animation": {
+        "kind": "kmap",
+        "title": "K-map of F = Σ(3,5,6,7)",
+        "variables": [
+          "X",
+          "Y",
+          "Z"
+        ],
+        "ones": [
+          3,
+          5,
+          6,
+          7
+        ]
+      }
+    },
+    "cse-2024-1-cs-38": {
+      "approach": "Find a closed form instead of tracing 20 iterations: the update $x \\leftarrow 2x + y$ becomes pure doubling for $x + y$, so after $y$ iterations $f(x, y) = 2^{y}(x + y) - y$. Then compare with $2^{10} = 1024$ and $2^{20} = 1\\,048\\,576$.",
+      "concepts": [
+        "Loop invariant / closed form",
+        "Linear recurrence",
+        "Integer range"
+      ],
+      "steps": [
+        {
+          "title": "Closed form of the loop",
+          "scene": {
+            "reveal": 2,
+            "caption": "First iteration: x = 20 + 20 + 10 = 50."
+          },
+          "body": "Each iteration does $x \\leftarrow x + x + y = 2x + y$. Adding $y$ to both sides:\n\n$$x_{\\text{new}} + y = 2x + 2y = 2(x + y).$$\n\nSo $x + y$ doubles every iteration. The loop runs $y$ times ($i = 0, \\dots, y-1$; $y$ itself never changes), hence\n\n$$f(x, y) = 2^{y}(x + y) - y.$$"
+        },
+        {
+          "title": "f(20, 10) = 30710",
+          "body": "$f(20, 10) = 2^{10}(20 + 10) - 10 = 1024 \\times 30 - 10 = 30720 - 10 = 30710$, matching the trace in the table.\n\n- (A): $30710 > 2^{20} = 1048576$? **No** — false.\n- (C): $30710 < 2^{10} = 1024$? **No** — false.",
+          "scene": {
+            "reveal": 20,
+            "hl": [
+              {
+                "r": 9,
+                "tone": "warning"
+              }
+            ],
+            "caption": "f(20, 10) = 30710: below $2^{20}$, above $2^{10}$."
+          }
+        },
+        {
+          "title": "f(20, 20) and f(10, 20)",
+          "body": "- (B): $f(20, 20) = 2^{20}(20 + 20) - 20 = 1048576 \\times 40 - 20 = 41943040 - 20 = 41943020 > 2^{20}$ — **true**.\n- (D): $f(10, 20) = 2^{20}(10 + 20) - 20 = 1048576 \\times 30 - 20 = 31457280 - 20 = 31457260 > 2^{20}$ — **true**.\n\nBoth values are below $2^{31} - 1 = 2147483647$, so there is no `int` overflow. Answer: **B, D**.",
+          "scene": {
+            "kind": "equation",
+            "title": "f(x, y) = 2^y (x + y) − y",
+            "lines": [
+              {
+                "tex": "f(20,10)=2^{10}\\cdot 30-10=30710",
+                "note": "< 2^20, > 2^10",
+                "tone": "error"
+              },
+              {
+                "tex": "f(20,20)=2^{20}\\cdot 40-20=41943020",
+                "note": "> 2^20",
+                "tone": "success"
+              },
+              {
+                "tex": "f(10,20)=2^{20}\\cdot 30-20=31457260",
+                "note": "> 2^20",
+                "tone": "success"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "Options **(B), (D)**",
+        "choice": [
+          "B",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "False: $f(20, 10) = 2^{10} \\cdot 30 - 10 = 30710$, far below $2^{20} = 1048576$ (only 10 doublings happen)."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "True: $f(20, 20) = 2^{20} \\cdot 40 - 20 = 41943020 > 2^{20}$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "False: $30710$ is much larger than $2^{10} = 1024$; the sum $x + y = 30$ is already multiplied by $2^{10}$."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "True: $f(10, 20) = 2^{20} \\cdot 30 - 20 = 31457260 > 2^{20}$."
+        }
+      ],
+      "shortcut": "With $y$ iterations the result is about $2^{y}(x + y)$: for $y = 10$ that is $\\approx 30 \\cdot 2^{10}$ (between $2^{10}$ and $2^{20}$), for $y = 20$ it is $\\approx 30$–$40 \\cdot 2^{20}$ (above $2^{20}$). So (B) and (D).",
+      "pitfalls": [
+        "Reading $2^{20}$ as \"220\" (the superscript is easy to miss) — with 220, option (A) would look true.",
+        "Forgetting that $y$ also controls the number of iterations, not only the added constant.",
+        "Worrying about overflow: the largest value, $41943020$, fits easily in a 32-bit `int`."
+      ],
+      "verification": "Direct trace for $(20, 10)$: $50, 110, 230, 470, 950, 1910, 3830, 7670, 15350, 30710$ — the 10th value equals the closed form $30710$.",
+      "animation": {
+        "kind": "table",
+        "title": "Trace of f(20, 10)",
+        "cols": [
+          "i",
+          "x after iteration"
+        ],
+        "rows": [
+          [
+            0,
+            50
+          ],
+          [
+            1,
+            110
+          ],
+          [
+            2,
+            230
+          ],
+          [
+            3,
+            470
+          ],
+          [
+            4,
+            950
+          ],
+          [
+            5,
+            1910
+          ],
+          [
+            6,
+            3830
+          ],
+          [
+            7,
+            7670
+          ],
+          [
+            8,
+            15350
+          ],
+          [
+            9,
+            30710
+          ]
+        ],
+        "reveal": 0,
+        "mono": true
+      }
+    },
+    "cse-2024-1-cs-39": {
+      "approach": "Use rank–nullity: the solution space of $Ax = \\mathbf{0}$ has dimension $m - r \\ge m - n$ where $r = \\operatorname{rank} A \\le n$. Statement (A) follows; (B), (C), (D) each fail on a tiny matrix.",
+      "concepts": [
+        "Rank–nullity theorem",
+        "Null space basis",
+        "Counterexamples"
+      ],
+      "steps": [
+        {
+          "title": "Dimension of the solution space",
+          "body": "The solutions of $Ax = \\mathbf{0}$ form the null space of $A$, of dimension $m - r$ where $r = \\operatorname{rank}(A)$. Since $A$ has $n$ rows, $r \\le n$, so\n\n$$\\dim N(A) = m - r \\ge m - n \\ge 1.$$"
+        },
+        {
+          "title": "(A) is true",
+          "body": "A basis of $N(A)$ consists of $m - r \\ge m - n$ linearly independent solutions. So there are at least $m - n$ linearly independent solutions."
+        },
+        {
+          "title": "(B) is false when rank < n",
+          "body": "If $r < n$, then $\\dim N(A) = m - r > m - n$, and $m - n$ vectors cannot span it. Example: $n = 1$, $m = 2$, $A = [\\,0 \\;\\; 0\\,]$: every $x \\in \\mathbb{R}^2$ is a solution, which needs 2 vectors, but $m - n = 1$."
+        },
+        {
+          "title": "(C) is false",
+          "body": "Example: $n = 1$, $m = 2$, $A = [\\,1 \\;\\; 1\\,]$. Solutions: $x = t(1, -1)$. Every non-zero solution has **both** entries non-zero, so none has at least $m - n = 1$ zero variable. (In general one can only guarantee $m - n - 1$ zeros, using $n + 1$ dependent columns.)"
+        },
+        {
+          "title": "(D) is false",
+          "body": "Example: $n = 2$, $m = 3$, $A = \\begin{bmatrix} 1 & 0 & 0 \\\\ 0 & 1 & 0 \\end{bmatrix}$. The equations force $x_1 = x_2 = 0$, so every solution is $(0, 0, t)$ with at most $1 < n = 2$ non-zero variables.\n\nOnly **(A)** is always true."
+        }
+      ],
+      "answer": {
+        "value": "Only option **(A)**",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Nullity $= m - \\operatorname{rank} A \\ge m - n$, so a null-space basis gives at least $m - n$ independent solutions."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Only true when $\\operatorname{rank} A = n$; for $A = [0 \\; 0]$ the solution space has dimension $2 > m - n = 1$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "For $A = [1 \\; 1]$ all non-zero solutions $t(1, -1)$ have no zero entry, though $m - n = 1$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "For $A = \\begin{bmatrix} 1&0&0 \\\\ 0&1&0 \\end{bmatrix}$ solutions are $(0,0,t)$: only one non-zero variable, fewer than $n = 2$."
+        }
+      ],
+      "shortcut": "Rank–nullity gives a lower bound $m - n$ on the solution-space dimension, nothing more. Any statement claiming an exact count (B) or a special sparsity pattern (C, D) breaks on a $1 \\times 2$ or $2 \\times 3$ example.",
+      "pitfalls": [
+        "Assuming $A$ has full row rank — the question says **any** $n \\times m$ matrix, including rank-deficient ones.",
+        "Counting the trivial solution as \"non-zero\" or forgetting (D) asks about non-zero **entries**."
+      ],
+      "verification": "Each counterexample satisfies $m > n$: $(n, m) = (1, 2), (1, 2), (2, 3)$. For (A) on the same matrices: nullities are $2, 1, 1 \\ge m - n = 1, 1, 1$."
+    },
+    "cse-2024-1-cs-40": {
+      "approach": "Give each state the value $d = n_0(w) - n_1(w) \\bmod 3$ of the strings reaching it: every $0$ adds $1$ and every $1$ subtracts $1$. The DFA then accepts exactly $n_0 \\equiv n_1 \\pmod 3$, and states with the same residue are equivalent. The question asks for the **FALSE** statements.",
+      "concepts": [
+        "DFA state equivalence",
+        "Counting modulo 3",
+        "Pair (table-filling) test"
+      ],
+      "given": "| state | on 0 | on 1 |\n|---|---|---|\n| $\\to$ **1** (final) | 2 | 4 |\n| 2 | 3 | 1 |\n| 3 | 1 | 2 |\n| 4 | 1 | 5 |\n| 5 | 4 | 1 |",
+      "steps": [
+        {
+          "title": "Each state tracks (n0 − n1) mod 3",
+          "body": "Assign $d(1) = 0$, $d(2) = 1$, $d(3) = 2$, $d(4) = 2\\ (\\equiv -1)$, $d(5) = 1\\ (\\equiv -2)$. Check every edge ($0$: $d+1$, $1$: $d-1$, mod 3):\n\n- $1 \\xrightarrow{0} 2$: $0 \\to 1$; $1 \\xrightarrow{1} 4$: $0 \\to 2$\n- $2 \\xrightarrow{0} 3$: $1 \\to 2$; $2 \\xrightarrow{1} 1$: $1 \\to 0$\n- $3 \\xrightarrow{0} 1$: $2 \\to 0$; $3 \\xrightarrow{1} 2$: $2 \\to 1$\n- $4 \\xrightarrow{0} 1$: $2 \\to 0$; $4 \\xrightarrow{1} 5$: $2 \\to 1$\n- $5 \\xrightarrow{0} 4$: $1 \\to 2$; $5 \\xrightarrow{1} 1$: $1 \\to 0$\n\nAll consistent. Only state 1 ($d = 0$) is final, so $L(M) = \\{w : n_0(w) \\equiv n_1(w) \\pmod 3\\}$.",
+          "scene": {
+            "states": [
+              {
+                "id": "1",
+                "x": 0,
+                "y": 1.5,
+                "start": true,
+                "accept": true,
+                "label": "1 (0)",
+                "tone": "success"
+              },
+              {
+                "id": "2",
+                "x": 1.5,
+                "y": 0.6,
+                "label": "2 (1)",
+                "tone": "cat1"
+              },
+              {
+                "id": "3",
+                "x": 3,
+                "y": 0,
+                "label": "3 (2)",
+                "tone": "cat2"
+              },
+              {
+                "id": "4",
+                "x": 1.5,
+                "y": 2.4,
+                "label": "4 (2)",
+                "tone": "cat2"
+              },
+              {
+                "id": "5",
+                "x": 3,
+                "y": 3,
+                "label": "5 (1)",
+                "tone": "cat1"
+              }
+            ],
+            "caption": "State (residue of $n_0 - n_1$ mod 3); same colour = same residue."
+          }
+        },
+        {
+          "title": "(D) is true",
+          "body": "If $n_0(w) = n_1(w)$ then $n_0(w) - n_1(w) = 0 \\equiv 0 \\pmod 3$, so $w$ ends in state 1 and is accepted. E.g. $0110$: $1 \\to 2 \\to 1 \\to 4 \\to 1$. (D) is a TRUE statement — not selected.",
+          "scene": {
+            "current": [
+              "1"
+            ],
+            "caption": "$0110$: 1 → 2 → 1 → 4 → 1, ends in the final state."
+          }
+        },
+        {
+          "title": "(A) is true: string 1 separates 2 and 4",
+          "body": "From state 2, input $1$ leads to state 1 (final); from state 4, input $1$ leads to state 5 (non-final). So 2 and 4 are distinguishable (their residues $1$ and $2$ differ). (A) is TRUE — not selected.",
+          "scene": {
+            "current": [
+              "1",
+              "5"
+            ],
+            "edgeTones": {
+              "2>1": "success",
+              "4>5": "error"
+            },
+            "caption": "On input 1: 2 → 1 (accept), 4 → 5 (reject)."
+          }
+        },
+        {
+          "title": "(B) and (C) are false: 3 ≡ 4 and 2 ≡ 5",
+          "body": "Pair test: $(3,4) \\xrightarrow{0} (1,1)$, $(3,4) \\xrightarrow{1} (2,5)$; $(2,5) \\xrightarrow{0} (3,4)$, $(2,5) \\xrightarrow{1} (1,1)$. Starting from $\\{3,4\\}$ or $\\{2,5\\}$ we only ever reach the pairs $\\{3,4\\}, \\{2,5\\}, \\{1,1\\}$ — never a final/non-final pair. So no string distinguishes 3 from 4, or 2 from 5 (the minimal DFA has just 3 states).\n\nStatements (B) and (C) are **FALSE** — they are the answer.",
+          "scene": {
+            "current": [],
+            "edgeTones": {
+              "3>1": "success",
+              "4>1": "success",
+              "3>2": "warning",
+              "4>5": "warning",
+              "2>3": "warning",
+              "5>4": "warning",
+              "2>1": "success",
+              "5>1": "success"
+            },
+            "caption": "Pairs (3,4) and (2,5) move together and always agree on acceptance."
+          }
+        }
+      ],
+      "answer": {
+        "value": "The FALSE statements are **(B)** and **(C)**",
+        "choice": [
+          "B",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Not selected — the statement is TRUE: the string $1$ takes 2 to the final state 1 and 4 to the non-final state 5."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Selected — the statement is FALSE: 3 and 4 both have residue 2; on $0$ both go to 1 and on $1$ they go to the equivalent pair (2, 5)."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Selected — the statement is FALSE: 2 and 5 both have residue 1; on $1$ both go to 1 and on $0$ they go to the equivalent pair (3, 4)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Not selected — the statement is TRUE: equal counts give difference $0 \\equiv 0 \\pmod 3$, which is exactly acceptance."
+        }
+      ],
+      "shortcut": "Read the DFA as a counter of $n_0 - n_1 \\bmod 3$: residues are 1:0, 2:1, 3:2, 4:2, 5:1. Equal residue ⇔ equivalent. So 3≡4 and 2≡5 (B, C false), 2≢4 (A true), and $n_0 = n_1$ ⇒ residue 0 ⇒ accepted (D true).",
+      "pitfalls": [
+        "Answering with the TRUE statements (A, D) — the question asks which are FALSE.",
+        "Thinking 3 and 4 differ because they are in different \"branches\" of the drawing; equivalence depends only on future behaviour.",
+        "Reading $L(M)$ as $n_0 = n_1$ exactly; the DFA counts only modulo 3 (e.g. $000$ is accepted)."
+      ],
+      "verification": "Spot-checks of $L(M) = \\{n_0 \\equiv n_1 \\pmod 3\\}$: $000$ runs $1 \\to 2 \\to 3 \\to 1$ (accepted; $3 - 0 \\equiv 0$); $111$ runs $1 \\to 4 \\to 5 \\to 1$ (accepted; $0 - 3 \\equiv 0$); $0$ ends in 2 (rejected; residue 1). Merging 2 with 5 and 3 with 4 leaves the 3-state mod-3 counter.",
+      "animation": {
+        "kind": "automaton",
+        "title": "DFA M",
+        "layout": "manual",
+        "states": [
+          {
+            "id": "1",
+            "x": 0,
+            "y": 1.5,
+            "start": true,
+            "accept": true
+          },
+          {
+            "id": "2",
+            "x": 1.5,
+            "y": 0.6
+          },
+          {
+            "id": "3",
+            "x": 3,
+            "y": 0
+          },
+          {
+            "id": "4",
+            "x": 1.5,
+            "y": 2.4
+          },
+          {
+            "id": "5",
+            "x": 3,
+            "y": 3
+          }
+        ],
+        "edges": [
+          {
+            "from": "1",
+            "to": "2",
+            "label": "0"
+          },
+          {
+            "from": "1",
+            "to": "4",
+            "label": "1"
+          },
+          {
+            "from": "2",
+            "to": "3",
+            "label": "0"
+          },
+          {
+            "from": "2",
+            "to": "1",
+            "label": "1"
+          },
+          {
+            "from": "3",
+            "to": "1",
+            "label": "0"
+          },
+          {
+            "from": "3",
+            "to": "2",
+            "label": "1"
+          },
+          {
+            "from": "4",
+            "to": "1",
+            "label": "0"
+          },
+          {
+            "from": "4",
+            "to": "5",
+            "label": "1"
+          },
+          {
+            "from": "5",
+            "to": "4",
+            "label": "0"
+          },
+          {
+            "from": "5",
+            "to": "1",
+            "label": "1"
+          }
+        ]
+      }
+    },
+    "cse-2024-1-cs-41": {
+      "approach": "Fix an optimal colouring: it splits the $n$ vertices into $k$ independent colour classes, and every pair of classes must be joined by an edge (otherwise two classes could merge). These two facts prove (B) and (C); $C_5$ and $K_k$ refute (A) and (D).",
+      "concepts": [
+        "Chromatic number",
+        "Colour classes are independent sets",
+        "Pigeonhole principle"
+      ],
+      "steps": [
+        {
+          "title": "(B): the largest colour class",
+          "body": "An optimal colouring partitions the $n$ vertices into $k$ colour classes, each an independent set. By pigeonhole the largest has at least $\\lceil n/k \\rceil \\ge n/k$ vertices. (B) is always true.",
+          "scene": {
+            "tones": {
+              "1": "cat1",
+              "2": "cat2",
+              "3": "cat1",
+              "4": "cat2",
+              "5": "cat3"
+            },
+            "caption": "Colour classes {1, 3}, {2, 4}, {5} — each independent."
+          }
+        },
+        {
+          "title": "(C): every two classes are adjacent",
+          "body": "If two colour classes $C_i, C_j$ had no edge between them, $C_i \\cup C_j$ would be independent and could share one colour, giving a proper colouring with $k - 1$ colours — contradicting $\\chi(G) = k$. So each of the $\\binom{k}{2}$ pairs of classes contributes at least one edge (different pairs give different edges):\n\n$$|E| \\ge \\binom{k}{2} = \\frac{k(k-1)}{2}.$$\n\n(C) is always true."
+        },
+        {
+          "title": "(A) fails: C5",
+          "body": "The 5-cycle is an odd cycle, so it needs 3 colours ($k = 3$), yet its largest complete subgraph is a single edge ($K_2$) — there is no triangle. (A) is false.",
+          "scene": {
+            "caption": "Odd cycle: 3 colours needed, but no $K_3$ inside."
+          }
+        },
+        {
+          "title": "(D) fails: the complete graph K_k",
+          "body": "$K_k$ has chromatic number $k$, but every vertex has degree $k - 1 < k$. (D) is false. (What is always true is a vertex of degree **at least $k - 1$**.)\n\nAlways true: **B, C**.",
+          "scene": {
+            "kind": "graph",
+            "title": "K3: chromatic number 3, every degree 2",
+            "layout": "circle",
+            "nodes": [
+              {
+                "id": "a",
+                "tone": "cat1"
+              },
+              {
+                "id": "b",
+                "tone": "cat2"
+              },
+              {
+                "id": "c",
+                "tone": "cat3"
+              }
+            ],
+            "edges": [
+              {
+                "from": "a",
+                "to": "b"
+              },
+              {
+                "from": "b",
+                "to": "c"
+              },
+              {
+                "from": "c",
+                "to": "a"
+              }
+            ],
+            "subs": {
+              "a": "deg 2",
+              "b": "deg 2",
+              "c": "deg 2"
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "Options **(B), (C)**",
+        "choice": [
+          "B",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "False: $C_5$ has $\\chi = 3$ but no triangle; high chromatic number does not force a large clique (Mycielski graphs even have $\\chi = k$ with no triangle)."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "True: the largest of the $k$ independent colour classes has at least $n/k$ vertices."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "True: every pair of colour classes in an optimal colouring is joined by an edge, giving at least $\\binom{k}{2}$ edges."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "False: in $K_k$ all degrees are $k - 1$; the correct bound is a vertex of degree at least $k - 1$."
+        }
+      ],
+      "shortcut": "Test the extreme graphs: $K_k$ (kills D: degrees $k-1$) and an odd cycle $C_5$ (kills A: $\\chi = 3$, no triangle). (B) is pigeonhole, (C) is \"classes can't be merged\".",
+      "pitfalls": [
+        "Confusing \"$\\chi \\ge \\omega$\" (clique number is a lower bound) with equality — that is what (A) claims.",
+        "Off-by-one in (D): Brooks-type bounds give $\\Delta \\ge k - 1$, not $\\ge k$."
+      ],
+      "verification": "$K_k$ meets (C) with equality ($\\binom{k}{2}$ edges) and (B) with equality ($n = k$, independent set of size 1). $C_5$: $n/k = 5/3$, and $\\{1, 3\\}$ is an independent set of size $2 \\ge 5/3$; it has $5 \\ge 3$ edges.",
+      "animation": {
+        "kind": "graph",
+        "title": "C5: chromatic number 3, no triangle",
+        "layout": "circle",
+        "nodes": [
+          {
+            "id": "1"
+          },
+          {
+            "id": "2"
+          },
+          {
+            "id": "3"
+          },
+          {
+            "id": "4"
+          },
+          {
+            "id": "5"
+          }
+        ],
+        "edges": [
+          {
+            "from": "1",
+            "to": "2"
+          },
+          {
+            "from": "2",
+            "to": "3"
+          },
+          {
+            "from": "3",
+            "to": "4"
+          },
+          {
+            "from": "4",
+            "to": "5"
+          },
+          {
+            "from": "5",
+            "to": "1"
+          }
+        ]
+      }
+    },
+    "cse-2024-1-cs-42": {
+      "approach": "Expand both sides of each law symbolically; when they are different polynomials, one numeric instance (all ones) is a counterexample, and when identical the law holds for all positive integers.",
+      "concepts": [
+        "Associative law",
+        "Distributive law",
+        "Binary operations"
+      ],
+      "steps": [
+        {
+          "title": "(A): ◊ is not associative",
+          "body": "$(a \\lozenge b) \\lozenge c = (a + 2b) + 2c = a + 2b + 2c$, while $a \\lozenge (b \\lozenge c) = a + 2(b + 2c) = a + 2b + 4c$. They differ whenever $c \\neq 0$; with $a = b = c = 1$: $5 \\ne 7$. (A) is false.",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "(B): □ is associative",
+          "body": "$\\square$ is ordinary multiplication: $(ab)c = a(bc)$. (B) is true.",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "(C): ◊ does not distribute over □",
+          "body": "Need $a \\lozenge (b \\square c) = (a \\lozenge b) \\square (a \\lozenge c)$. Left: $a + 2bc$. Right: $(a + 2b)(a + 2c) = a^2 + 2ac + 2ab + 4bc$. With $a = b = c = 1$: left $= 3$, right $= 3 \\times 3 = 9$. (C) is false.",
+          "scene": {
+            "reveal": 5
+          }
+        },
+        {
+          "title": "(D): □ distributes over ◊",
+          "body": "Left distributivity: $a \\square (b \\lozenge c) = a(b + 2c) = ab + 2ac = (a \\square b) \\lozenge (a \\square c)$.\n\nRight distributivity: $(b \\lozenge c) \\square a = (b + 2c)a = ba + 2ca = (b \\square a) \\lozenge (c \\square a)$. Both hold for all positive integers, so (D) is true.\n\nTrue: **B, D**.",
+          "scene": {
+            "reveal": 7
+          }
+        }
+      ],
+      "answer": {
+        "value": "Options **(B), (D)**",
+        "choice": [
+          "B",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "False: $(a \\lozenge b) \\lozenge c = a + 2b + 2c$ but $a \\lozenge (b \\lozenge c) = a + 2b + 4c$ (e.g. $5 \\ne 7$ at $1,1,1$)."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "True: $\\square$ is multiplication, which is associative."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "False: $a + 2bc \\ne (a+2b)(a+2c)$ in general (e.g. $3 \\ne 9$ at $1,1,1$)."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "True: multiplication distributes over $a + 2b$ because it distributes over addition and commutes with the constant 2: $a(b + 2c) = ab + 2ac$."
+        }
+      ],
+      "shortcut": "$a \\lozenge b$ is a linear combination $a + 2b$; multiplication distributes over any linear combination, but a linear combination does not distribute over multiplication, and weighting the second argument by 2 breaks associativity.",
+      "pitfalls": [
+        "Checking only left distributivity — here it is easy, but both sides hold for (D) since $\\square$ is commutative.",
+        "Reading \"◊ over □\" the wrong way round: \"X over Y\" means $a\\,X\\,(b\\,Y\\,c) = (a\\,X\\,b)\\,Y\\,(a\\,X\\,c)$."
+      ],
+      "verification": "Numeric check of (D) with $a = 2, b = 3, c = 5$: $2 \\square (3 \\lozenge 5) = 2 \\times 13 = 26$ and $(2 \\square 3) \\lozenge (2 \\square 5) = 6 \\lozenge 10 = 6 + 20 = 26$. ✓",
+      "animation": {
+        "kind": "equation",
+        "title": "a ◊ b = a + 2b,  a □ b = ab",
+        "lines": [
+          {
+            "tex": "(a\\lozenge b)\\lozenge c=a+2b+2c",
+            "note": "left grouping"
+          },
+          {
+            "tex": "a\\lozenge(b\\lozenge c)=a+2b+4c",
+            "note": "≠ → (A) false",
+            "tone": "error"
+          },
+          {
+            "tex": "(ab)c=a(bc)",
+            "note": "(B) true",
+            "tone": "success"
+          },
+          {
+            "tex": "a\\lozenge(b\\square c)=a+2bc",
+            "note": "left side of (C)"
+          },
+          {
+            "tex": "(a\\lozenge b)\\square(a\\lozenge c)=(a+2b)(a+2c)",
+            "note": "≠ → (C) false",
+            "tone": "error"
+          },
+          {
+            "tex": "a\\square(b\\lozenge c)=ab+2ac",
+            "note": "left side of (D)"
+          },
+          {
+            "tex": "(a\\square b)\\lozenge(a\\square c)=ab+2ac",
+            "note": "= → (D) true",
+            "tone": "success"
+          }
+        ],
+        "reveal": 0
+      }
+    }
+  }
+}

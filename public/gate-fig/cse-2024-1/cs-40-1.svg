@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="14 12 330 318" role="img" aria-label="Five-state DFA M: start and only final state 1" fill="none" stroke="currentColor" stroke-width="1.6" font-family="Arial, Helvetica, sans-serif" font-size="15">
+  <title>DFA M with states 1 to 5; state 1 is the start state and the only final state</title>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0.8 L10,5 L0,9.2 z" fill="currentColor" stroke="none"/>
+    </marker>
+  </defs>
+  <!-- start arrow into 1 -->
+  <line x1="28" y1="204" x2="67" y2="181" marker-end="url(#ah)"/>
+  <!-- states -->
+  <circle cx="90" cy="170" r="24"/>
+  <circle cx="90" cy="170" r="19"/>
+  <circle cx="190" cy="110" r="24"/>
+  <circle cx="310" cy="80" r="24"/>
+  <circle cx="190" cy="235" r="24"/>
+  <circle cx="310" cy="265" r="24"/>
+  <g fill="currentColor" stroke="none" text-anchor="middle" font-size="16">
+    <text x="90" y="176">1</text>
+    <text x="190" y="116">2</text>
+    <text x="310" y="86">3</text>
+    <text x="190" y="241">4</text>
+    <text x="310" y="271">5</text>
+  </g>
+  <!-- 1 -0-> 2 (upper) and 2 -1-> 1 (lower) -->
+  <line x1="107.5" y1="152.6" x2="166.3" y2="117.2" marker-end="url(#ah)"/>
+  <line x1="172.5" y1="127.4" x2="113.7" y2="162.8" marker-end="url(#ah)"/>
+  <!-- 2 -0-> 3 (upper) and 3 -1-> 2 (lower) -->
+  <line x1="211.8" y1="98.4" x2="285.2" y2="80" marker-end="url(#ah)"/>
+  <line x1="288.2" y1="91.6" x2="214.8" y2="110" marker-end="url(#ah)"/>
+  <!-- 4 -0-> 1 (upper) and 1 -1-> 4 (lower) -->
+  <line x1="173.2" y1="216.9" x2="113.4" y2="178.1" marker-end="url(#ah)"/>
+  <line x1="106.8" y1="188.1" x2="166.6" y2="226.9" marker-end="url(#ah)"/>
+  <!-- 4 -1-> 5 (upper) and 5 -0-> 4 (lower) -->
+  <line x1="214.8" y1="235" x2="288.2" y2="253.4" marker-end="url(#ah)"/>
+  <line x1="285.2" y1="265" x2="211.8" y2="246.6" marker-end="url(#ah)"/>
+  <!-- 3 -0-> 1 (arc over the top) -->
+  <path d="M296,61 C240,10 95,22 84,146" marker-end="url(#ah)"/>
+  <!-- 5 -1-> 1 (arc under the bottom) -->
+  <path d="M298,286 C245,330 95,318 84,194" marker-end="url(#ah)"/>
+  <g fill="currentColor" stroke="none" text-anchor="middle">
+    <text x="127" y="126">0</text>
+    <text x="153" y="163">1</text>
+    <text x="246" y="80">0</text>
+    <text x="254" y="116">1</text>
+    <text x="153" y="187">0</text>
+    <text x="131" y="225">1</text>
+    <text x="250" y="232">1</text>
+    <text x="246" y="275">0</text>
+    <text x="190" y="28">0</text>
+    <text x="190" y="324">1</text>
+  </g>
+</svg>
