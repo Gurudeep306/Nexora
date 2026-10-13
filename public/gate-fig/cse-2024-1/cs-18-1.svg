@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 170" font-family="Arial, Helvetica, sans-serif" fill="none" stroke="currentColor" role="img" aria-label="Input X drives one input of a 2-input AND gate directly and the other input through a NOT gate; the AND output is Y">
+  <title>X feeds an AND gate directly and through a NOT gate; output Y</title>
+  <g stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+    <line x1="30" y1="50" x2="292" y2="50" />
+    <polyline points="90,50 90,130 150,130" />
+    <polygon points="150,108 150,152 196,130" />
+    <circle cx="204" cy="130" r="8" />
+    <polyline points="212,130 250,130 250,90 292,90" />
+    <path d="M300,30 L340,30 A40,40 0 0 1 340,110 L300,110 Z" />
+    <line x1="380" y1="70" x2="420" y2="70" />
+  </g>
+  <g fill="currentColor" stroke="none">
+    <circle cx="90" cy="50" r="4" />
+    <polygon points="300,50 290,45 290,55" />
+    <polygon points="300,90 290,85 290,95" />
+  </g>
+  <g fill="currentColor" stroke="none">
+    <text x="30" y="38" font-size="20" font-style="italic" font-weight="700">X</text>
+    <text x="334" y="77" font-size="18" text-anchor="middle">AND</text>
+    <text x="155" y="135" font-size="11">NOT</text>
+    <text x="396" y="60" font-size="20" font-style="italic" font-weight="700">Y</text>
+  </g>
+</svg>
