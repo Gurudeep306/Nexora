@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 215 180" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<rect x="70" y="10" width="90" height="120" stroke-width="2"/>
+<line x1="40" y1="28" x2="70" y2="28"/>
+<line x1="40" y1="56" x2="70" y2="56"/>
+<line x1="40" y1="84" x2="70" y2="84"/>
+<line x1="40" y1="112" x2="70" y2="112"/>
+<line x1="100" y1="155" x2="100" y2="134"/><path d="M96,140 L100,132 L104,140" fill="currentColor"/>
+<line x1="133" y1="155" x2="133" y2="134"/><path d="M129,140 L133,132 L137,140" fill="currentColor"/>
+<line x1="160" y1="62" x2="190" y2="62"/><path d="M184,58 L192,62 L184,66" fill="currentColor"/>
+<g font-family="Arial, Helvetica, sans-serif" font-size="14" fill="currentColor" stroke="none">
+<text x="34" y="33" text-anchor="end" font-style="italic">x</text><text x="75" y="33">0</text>
+<text x="34" y="61" text-anchor="end" font-style="italic">1</text><text x="75" y="61">1</text>
+<text x="34" y="89" text-anchor="end" font-style="italic">x′</text><text x="75" y="89">2</text>
+<text x="34" y="117" text-anchor="end" font-style="italic">1</text><text x="75" y="117">3</text>
+<text x="98" y="56">4×1</text><text x="96" y="78">MUX</text>
+<text x="94" y="117">s<tspan font-size="10" dy="3">1</tspan></text><text x="126" y="117">s<tspan font-size="10" dy="3">0</tspan></text>
+<text x="100" y="172" text-anchor="middle" font-style="italic">y</text><text x="133" y="172" text-anchor="middle" font-style="italic">z</text><text x="200" y="66" font-style="italic">f</text>
+</g>
+</svg>
