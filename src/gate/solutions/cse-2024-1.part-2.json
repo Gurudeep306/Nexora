@@ -1,0 +1,1312 @@
+{
+  "paper": "cse-2024-1",
+  "version": 2,
+  "solutions": {
+    "cse-2024-1-cs-4": {
+      "approach": "Only the relative order of 1, 2, 3, 4 matters, and in a uniform permutation all $4! = 24$ relative orders are equally likely. Compute $P(X)$, $P(Y)$ and $P(X \\cap Y)$ by symmetry and compare $P(X \\cap Y)$ with $P(X)\\,P(Y)$.",
+      "concepts": [
+        "Uniform random permutation",
+        "Symmetry",
+        "Independent events",
+        "Mutually exclusive events"
+      ],
+      "steps": [
+        {
+          "title": "Reduce to the relative order of 1, 2, 3, 4",
+          "body": "Whatever the other $n-4$ numbers do, the four values $1,2,3,4$ appear in some relative order, and by symmetry each of the $4! = 24$ relative orders is equally likely. Both events depend only on this relative order.",
+          "scene": {
+            "reveal": 0
+          }
+        },
+        {
+          "title": "$P(X)$ and $P(Y)$",
+          "body": "Swapping the positions of 1 and 2 is a bijection between permutations with \"1 before 2\" and those with \"2 before 1\", so\n$$P(X) = \\frac{1}{2}.$$\nIn the same way $P(Y) = \\frac{1}{2}$.",
+          "scene": {
+            "reveal": 2,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "$P(X cap Y)$ by counting",
+          "body": "Relative orders of $1,2,3,4$ with 1 before 2 **and** 3 before 4: choose the 2 positions (out of 4) for $\\{1,2\\}$ — their internal order is then forced, and so is that of $\\{3,4\\}$:\n$$\\binom{4}{2} = 6 \\text{ orders} \\quad\\Rightarrow\\quad P(X \\cap Y) = \\frac{6}{24} = \\frac{1}{4}.$$",
+          "scene": {
+            "reveal": 4,
+            "hl": [
+              {
+                "r": 0,
+                "c": 0,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Compare with the product",
+          "body": "$$P(X)\\,P(Y) = \\frac{1}{2} \\times \\frac{1}{2} = \\frac{1}{4} = P(X \\cap Y),$$\nso $X$ and $Y$ are **independent**. Intuitively, the order of the pair $\\{1,2\\}$ tells you nothing about the order of the disjoint pair $\\{3,4\\}$."
+        }
+      ],
+      "answer": {
+        "value": "The events $X$ and $Y$ are **independent** — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "False: $P(X \\cap Y) = \\frac{1}{4} \\ne 0$ — e.g. the order $1,2,3,4$ satisfies both events."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "True: $P(X \\cap Y) = \\frac{1}{4} = \\frac{1}{2} \\cdot \\frac{1}{2} = P(X)\\,P(Y)$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "False: $P(X \\cup Y) = \\frac{1}{2} + \\frac{1}{2} - \\frac{1}{4} = \\frac{3}{4} < 1$; the order $2,1,4,3$ satisfies neither event."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "False: by symmetry $P(X) = P(Y) = \\frac{1}{2}$, so neither is more likely."
+        }
+      ],
+      "shortcut": "Events defined on **disjoint** sets of elements of a random permutation (here $\\{1,2\\}$ and $\\{3,4\\}$, comparing order *within* each pair) are independent; each pair is in a given order with probability $\\frac12$.",
+      "pitfalls": [
+        "Confusing \"independent\" with \"mutually exclusive\" — two events with positive probability that are independent cannot be mutually exclusive.",
+        "Thinking the positions of 1 and 2 constrain where 3 and 4 can go and therefore create dependence; only the order within each pair matters."
+      ],
+      "verification": "Brute force over the 24 orders: 12 have 1 before 2; among those 12, exactly half (6) have 3 before 4, so $P(Y \\mid X) = \\frac{6}{12} = \\frac{1}{2} = P(Y)$ — independence again.",
+      "animation": {
+        "kind": "table",
+        "title": "The 24 relative orders of 1, 2, 3, 4",
+        "corner": "pair {1,2} \\ pair {3,4}",
+        "cols": [
+          "3 before 4 (Y)",
+          "4 before 3 (not Y)"
+        ],
+        "rowLabels": [
+          "1 before 2 (X)",
+          "2 before 1 (not X)"
+        ],
+        "rows": [
+          [
+            "6 / 24",
+            "6 / 24"
+          ],
+          [
+            "6 / 24",
+            "6 / 24"
+          ]
+        ],
+        "caption": "Every cell holds a quarter of the orders: P(X∩Y) = 1/4 = P(X)·P(Y)."
+      }
+    },
+    "cse-2024-1-cs-5": {
+      "approach": "Check each statement against what the CPU does while waiting for the device: programmed I/O busy-waits (polls), so it wastes CPU cycles — that is the false statement. The DMA and vectored-interrupt statements are textbook facts.",
+      "concepts": [
+        "Programmed I/O (polling)",
+        "Interrupt-driven I/O",
+        "DMA cycle stealing vs burst mode",
+        "Vectored interrupts"
+      ],
+      "steps": [
+        {
+          "title": "DMA cycle stealing",
+          "body": "In cycle-stealing mode the DMA controller takes the system bus for **one bus cycle at a time**, transfers **one word** between the device and memory, and hands the bus back to the CPU. So (A) is TRUE."
+        },
+        {
+          "title": "DMA burst mode",
+          "body": "In burst (block) mode the DMA controller keeps the bus until the **whole block** is transferred. There is no repeated bus request/grant for every word, so for bulk transfers burst mode has the higher throughput (at the cost of stalling the CPU longer). (B) is TRUE."
+        },
+        {
+          "title": "Programmed I/O vs interrupt-driven I/O",
+          "body": "With programmed I/O the CPU repeatedly reads the device status register until the device is ready (busy-waiting). Those polling cycles do no useful work. With interrupt-driven I/O the CPU runs other processes and is interrupted only when the device is ready. Hence interrupt-driven I/O has the **better** CPU utilization, and (C) is **FALSE**."
+        },
+        {
+          "title": "Vectored interrupts",
+          "body": "A vectored interrupt supplies the address (or vector number) of its ISR along with the request, so the CPU jumps straight to the right ISR. A non-vectored interrupt goes to a common handler that must first **poll** devices to find the source. Vectored interrupts therefore start the ISR faster: (D) is TRUE."
+        }
+      ],
+      "answer": {
+        "value": "The FALSE statement is **(C)**: programmed I/O wastes CPU time in busy-waiting",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "True: cycle stealing transfers exactly one word per stolen bus cycle."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "True: burst mode moves the whole block in one bus tenure, so it has higher throughput for bulk data."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "FALSE (the answer): programmed I/O busy-waits on the status register, giving worse CPU utilization than interrupt-driven I/O."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "True: the vector identifies the ISR immediately, with no device polling."
+        }
+      ],
+      "shortcut": "\"Better CPU utilization\" and \"polling/busy-waiting\" never go together — programmed I/O is the least CPU-efficient of the three I/O methods (programmed < interrupt-driven < DMA).",
+      "pitfalls": [
+        "Reading the question as \"which is TRUE\" — it asks for the FALSE statement.",
+        "Mixing up throughput and CPU utilization in (B): burst mode stalls the CPU more, but its data throughput is higher."
+      ],
+      "verification": "Order of CPU involvement per transferred word: programmed I/O (CPU moves every word and polls), interrupt-driven (CPU moves every word, no polling), DMA (CPU only sets up and handles the completion interrupt). Only (C) contradicts this ordering."
+    },
+    "cse-2024-1-cs-6": {
+      "approach": "Follow the dependencies: the browser needs the server IP before it can open TCP, needs the TCP connection before any HTTP request, and learns about the embedded images only after it receives the index page.",
+      "concepts": [
+        "DNS resolution",
+        "TCP three-way handshake",
+        "HTTP over a persistent connection",
+        "Embedded objects"
+      ],
+      "steps": [
+        {
+          "title": "First: DNS request (ii)",
+          "body": "The DNS cache is empty and the browser knows only the server name. A TCP SYN needs the destination **IP address**, so the DNS query (ii) must leave first.",
+          "scene": {
+            "upto": 1
+          }
+        },
+        {
+          "title": "Second: TCP SYN (iv)",
+          "body": "With the IP address known, the browser opens the single TCP connection: SYN (iv) leaves, SYN-ACK comes back, the browser ACKs.",
+          "scene": {
+            "upto": 4
+          }
+        },
+        {
+          "title": "Third: GET for the index page (i)",
+          "body": "HTTP runs over the established TCP connection, so the first HTTP request (i) can leave only after the handshake.",
+          "scene": {
+            "upto": 5
+          }
+        },
+        {
+          "title": "Last: GET for an image (iii)",
+          "body": "The browser cannot know which images to fetch until it has received and parsed the index page (the `<img>` references are inside it). So the image GET (iii) leaves last, on the same connection.",
+          "scene": {
+            "upto": 7
+          }
+        },
+        {
+          "title": "Order",
+          "body": "$$\\text{(ii)} \\rightarrow \\text{(iv)} \\rightarrow \\text{(i)} \\rightarrow \\text{(iii)}$$\nwhich is option (C)."
+        }
+      ],
+      "answer": {
+        "value": "Order **(ii), (iv), (i), (iii)** — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Wrong: a TCP SYN cannot be sent before DNS supplies the IP address, and the image GET cannot precede the index GET."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Wrong: DNS then SYN is right, but the image is requested before the index page that references it."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: DNS → TCP SYN → GET index → GET image."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Wrong: TCP SYN before the DNS request is impossible with an empty DNS cache."
+        }
+      ],
+      "shortcut": "Name → connection → page → contents of the page. Only one option starts with (ii) and ends with (iii).",
+      "pitfalls": [
+        "Forgetting that TCP needs an IP address, i.e. DNS must finish first.",
+        "Assuming the browser can request images in parallel with the index page — it does not know their URLs yet."
+      ],
+      "verification": "Each packet depends on information produced by the previous one (IP address → connection → HTML → image URLs), so the order is forced; no other permutation is consistent.",
+      "animation": {
+        "kind": "sequence",
+        "title": "Packets on the wire",
+        "actors": [
+          "Browser",
+          "DNS server",
+          "Web server"
+        ],
+        "unit": "step",
+        "messages": [
+          {
+            "from": "Browser",
+            "to": "DNS server",
+            "t0": 0,
+            "t1": 1,
+            "label": "(ii) DNS query",
+            "tone": "accent"
+          },
+          {
+            "from": "DNS server",
+            "to": "Browser",
+            "t0": 1,
+            "t1": 2,
+            "label": "IP address"
+          },
+          {
+            "from": "Browser",
+            "to": "Web server",
+            "t0": 2,
+            "t1": 3,
+            "label": "(iv) SYN",
+            "tone": "accent"
+          },
+          {
+            "from": "Web server",
+            "to": "Browser",
+            "t0": 3,
+            "t1": 4,
+            "label": "SYN-ACK"
+          },
+          {
+            "from": "Browser",
+            "to": "Web server",
+            "t0": 4,
+            "t1": 5,
+            "label": "ACK"
+          },
+          {
+            "from": "Browser",
+            "to": "Web server",
+            "t0": 5,
+            "t1": 6,
+            "label": "(i) GET index",
+            "tone": "accent"
+          },
+          {
+            "from": "Web server",
+            "to": "Browser",
+            "t0": 6,
+            "t1": 7,
+            "label": "index.html"
+          },
+          {
+            "from": "Browser",
+            "to": "Web server",
+            "t0": 7,
+            "t1": 8,
+            "label": "(iii) GET image",
+            "tone": "success"
+          }
+        ],
+        "upto": 7
+      }
+    },
+    "cse-2024-1-cs-7": {
+      "approach": "Bound the work of the single pass from above and below in the worst case: it never does more than a constant times $N$ comparisons, and on a sorted input it must do at least $N-1$. So the worst case is $\\Theta(N)$, i.e. both $O(N)$ and $\\Omega(N)$.",
+      "concepts": [
+        "Worst-case complexity",
+        "Big-O, Big-Omega, Big-Theta",
+        "Linear scan"
+      ],
+      "steps": [
+        {
+          "title": "Upper bound: $O(N)$",
+          "body": "One pass compares each adjacent pair $(A[i], A[i+1])$, $0 \\le i \\le N-2$. Even if it keeps two flags (\"still ascending\", \"still descending\"), each pair costs at most 2 comparisons, so the total is at most\n$$2(N-1) \\le 2N \\;\\Rightarrow\\; T_{\\text{worst}}(N) = O(N).$$"
+        },
+        {
+          "title": "Lower bound: $Omega(N)$",
+          "body": "Take a sorted array as input — the worst case for this algorithm, since it can never stop early. To answer \"sorted\" it must examine every adjacent pair: if it skipped the pair $(A[i], A[i+1])$, changing $A[i+1]$ alone could make the array unsorted without the algorithm noticing. So it performs at least $N-1$ comparisons:\n$$T_{\\text{worst}}(N) \\ge N-1 \\;\\Rightarrow\\; T_{\\text{worst}}(N) = \\Omega(N).$$"
+        },
+        {
+          "title": "Combine",
+          "body": "$N-1 \\le T_{\\text{worst}}(N) \\le 2(N-1)$, hence $T_{\\text{worst}}(N) = \\Theta(N)$, which by definition means it is **both** $O(N)$ and $\\Omega(N)$ — option (A)."
+        }
+      ],
+      "answer": {
+        "value": "The worst case is $\\Theta(N)$: **both $O(N)$ and $\\Omega(N)$** — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: worst-case cost lies between $N-1$ and $2(N-1)$ comparisons, i.e. $\\Theta(N)$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Wrong: \"not $\\Omega(N)$\" would need the worst case to grow slower than $N$, but a sorted array forces $N-1$ comparisons."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Wrong: a single pass with a constant amount of work per element is clearly $O(N)$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Wrong: the worst case is tightly linear, so both bounds hold."
+        }
+      ],
+      "shortcut": "Worst case of a single pass that must read the whole input $= \\Theta(N) \\Rightarrow$ both $O(N)$ and $\\Omega(N)$.",
+      "pitfalls": [
+        "Mixing up \"worst case\" with \"Big-O\": $O$, $\\Omega$, $\\Theta$ are bounds on a function and apply to the worst-case running time as a whole.",
+        "Thinking early termination makes it \"not $\\Omega(N)$\" — early exit only helps on unsorted inputs, not in the worst case."
+      ],
+      "verification": "$N = 5$, input $1,2,3,4,5$: the scan compares $(1,2),(2,3),(3,4),(4,5)$ — exactly $N-1 = 4$ pairs, growing linearly with $N$."
+    },
+    "cse-2024-1-cs-8": {
+      "approach": "Trace the loop variable with C integer division. Once $a$ becomes 1, the body maps $1 \\mapsto 1/12 + 1 + 0 = 1$, a fixed point below 10, so the condition never fails.",
+      "concepts": [
+        "Integer division truncation",
+        "Loop invariant / fixed point",
+        "Infinite loop"
+      ],
+      "steps": [
+        {
+          "title": "Initial values",
+          "body": "$a = 6$, $b = 0$. Since $b$ is never changed, `a += b` never changes $a$.",
+          "scene": {
+            "line": 5,
+            "vars": {
+              "a": 6,
+              "b": 0
+            }
+          }
+        },
+        {
+          "title": "First iteration",
+          "body": "$6 < 10$ holds, so the body runs:\n$$a = \\left\\lfloor \\frac{6}{12} \\right\\rfloor + 1 = 0 + 1 = 1, \\qquad a = 1 + 0 = 1.$$",
+          "scene": {
+            "line": 8,
+            "vars": {
+              "a": 1,
+              "b": 0
+            }
+          }
+        },
+        {
+          "title": "Second iteration: a fixed point",
+          "body": "$1 < 10$ holds again:\n$$a = \\left\\lfloor \\frac{1}{12} \\right\\rfloor + 1 = 0 + 1 = 1, \\qquad a = 1 + 0 = 1.$$\n$a$ is still 1. In fact for any $0 \\le a < 10$ the body yields $\\lfloor a/12 \\rfloor + 1 = 1$, so $a$ stays 1 forever.",
+          "scene": {
+            "line": 6,
+            "hl": [
+              6,
+              7,
+              8
+            ],
+            "vars": {
+              "a": 1,
+              "b": 0
+            },
+            "caption": "a = 1 → 1 → 1 → … and 1 < 10 forever"
+          }
+        },
+        {
+          "title": "Conclusion",
+          "body": "The condition $a < 10$ is always true, `printf` is never reached and the program **gets stuck in an infinite loop** — option (C)."
+        }
+      ],
+      "answer": {
+        "value": "The program **gets stuck in an infinite loop** — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Wrong: nothing is ever printed; 9 would need the loop to exit, but a stays 1."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Wrong: reaching 10 would need $a$ to grow, but every iteration sets it to 1."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: $a$ becomes 1 and stays 1, so $a < 10$ never fails."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Wrong: printing 6 would need the loop body to be skipped, but 6 < 10 enters the loop."
+        }
+      ],
+      "shortcut": "While $a < 10$: $a/12 = 0$ in integer arithmetic, so $a$ becomes $0 + 1 + b = 1$ every time — it can never reach 10.",
+      "pitfalls": [
+        "Using real division ($6/12 = 0.5$) instead of C integer division ($6/12 = 0$).",
+        "Misreading the braces: both `a = a/12 + 1;` and `a += b;` are inside the loop."
+      ],
+      "verification": "Loop invariant: after any iteration $a = 1 + b = 1$. Since $1 < 10$, the exit condition is unreachable.",
+      "animation": {
+        "kind": "code",
+        "lang": "c",
+        "code": "#include <stdio.h>\n\nint main(){\n    int a = 6;\n    int b = 0;\n    while(a < 10) {\n        a = a / 12 + 1;\n        a += b;}\n    printf(\"%d\", a);\n    return 0;}",
+        "line": 4,
+        "vars": {
+          "a": 6
+        },
+        "title": "Tracing the while loop"
+      }
+    },
+    "cse-2024-1-cs-9": {
+      "approach": "Each call reads one character into its own local `a` and recurses before printing. The recursion stops at the newline, and the characters are printed while the calls return — i.e. in reverse order (the call stack behaves like a stack of characters).",
+      "concepts": [
+        "Recursion",
+        "Local variables per activation record",
+        "Printing after the recursive call (reversal)"
+      ],
+      "steps": [
+        {
+          "title": "Calls 1–4 read 1, 2, 3, 4",
+          "body": "`main` calls `fX`. Each activation reads one character: the 1st gets `'1'`, the 2nd `'2'`, the 3rd `'3'`, the 4th `'4'`. None is `'\\n'`, so each calls `fX()` again **before** reaching its `putchar`. Every activation has its own `a`.",
+          "scene": {
+            "line": 10,
+            "callStack": [
+              {
+                "name": "main"
+              },
+              {
+                "name": "fX",
+                "vars": {
+                  "a": "'1'"
+                }
+              },
+              {
+                "name": "fX",
+                "vars": {
+                  "a": "'2'"
+                }
+              },
+              {
+                "name": "fX",
+                "vars": {
+                  "a": "'3'"
+                }
+              },
+              {
+                "name": "fX",
+                "vars": {
+                  "a": "'4'"
+                }
+              }
+            ],
+            "output": ""
+          }
+        },
+        {
+          "title": "Call 5 reads the newline",
+          "body": "The 5th activation reads `'\\n'`: the first `if` fails (no further call), the second `if` also fails (no output). It returns. The recursion depth is finite, so the program will terminate.",
+          "scene": {
+            "line": 11,
+            "callStack": [
+              {
+                "name": "main"
+              },
+              {
+                "name": "fX",
+                "vars": {
+                  "a": "'1'"
+                }
+              },
+              {
+                "name": "fX",
+                "vars": {
+                  "a": "'2'"
+                }
+              },
+              {
+                "name": "fX",
+                "vars": {
+                  "a": "'3'"
+                }
+              },
+              {
+                "name": "fX",
+                "vars": {
+                  "a": "'4'"
+                }
+              },
+              {
+                "name": "fX",
+                "vars": {
+                  "a": "'\\n'"
+                }
+              }
+            ],
+            "output": ""
+          }
+        },
+        {
+          "title": "Unwinding prints 4 first",
+          "body": "Control returns into the 4th activation, right after its `fX()` call. Its `a` is `'4'` $\\ne$ `'\\n'`, so it prints `4` and returns.",
+          "scene": {
+            "line": 12,
+            "callStack": [
+              {
+                "name": "main"
+              },
+              {
+                "name": "fX",
+                "vars": {
+                  "a": "'1'"
+                }
+              },
+              {
+                "name": "fX",
+                "vars": {
+                  "a": "'2'"
+                }
+              },
+              {
+                "name": "fX",
+                "vars": {
+                  "a": "'3'"
+                }
+              },
+              {
+                "name": "fX",
+                "vars": {
+                  "a": "'4'"
+                }
+              }
+            ],
+            "output": "4"
+          }
+        },
+        {
+          "title": "Then 3, 2, 1",
+          "body": "The 3rd, 2nd and 1st activations resume in that order and print `3`, `2`, `1`. Then `main` returns 0.\n\nOutput: **4321**, and the program terminates — option (C).",
+          "scene": {
+            "line": 5,
+            "callStack": [
+              {
+                "name": "main"
+              }
+            ],
+            "output": "4321"
+          }
+        }
+      ],
+      "answer": {
+        "value": "The program terminates with **4321** as output — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Wrong: the 5th call reads `'\\n'` and does not recurse, so the recursion depth is 5 and everything returns."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Wrong: only the activation holding `'\\n'` skips `putchar`; the other four print their characters."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: characters are printed after the recursive call returns, i.e. in reverse order of reading."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Wrong: 1234 would be printed if `putchar` came **before** the recursive call."
+        }
+      ],
+      "shortcut": "Read → recurse → print ⇒ reversed output. Recurse after printing would preserve the order.",
+      "pitfalls": [
+        "Assuming all calls share one variable `a` — each activation record has its own local `a`.",
+        "Forgetting that the second `if` suppresses printing of the newline itself, so the output is exactly `4321` with no trailing newline."
+      ],
+      "verification": "Same pattern as printing a linked list in reverse recursively: the last element read is at the top of the call stack and is printed first. Depth = 4 characters + 1 newline = 5 calls.",
+      "animation": {
+        "kind": "code",
+        "lang": "c",
+        "code": "#include <stdio.h>\nvoid fX();\nint main(){\n    fX();\n    return 0;}\n\nvoid fX(){\n    char a;\n    if((a=getchar()) != '\\n')\n        fX();\n    if(a != '\\n')\n        putchar(a);}",
+        "line": 4,
+        "callStack": [
+          {
+            "name": "main"
+          }
+        ],
+        "output": "",
+        "title": "Call stack of fX()"
+      }
+    },
+    "cse-2024-1-cs-10": {
+      "approach": "Turn the specification into its required pieces — four entity sets (Instructor, Course, Student, Classroom) and four binary relationships (Teaches, Registration, Allocation, Guides) — and reject every diagram that draws an entity as a diamond, a relationship as a rectangle, or connects a relationship to the wrong entities.",
+      "concepts": [
+        "ER model",
+        "Entity sets (rectangles)",
+        "Relationship sets (diamonds)"
+      ],
+      "given": "| Sentence | Entity sets | Relationship |\n|---|---|---|\n| Instructors teach courses | Instructor, Course | Teaches |\n| Students register for courses | Student, Course | Registration |\n| Courses are allocated classrooms | Course, Classroom | Allocation |\n| Instructors guide students | Instructor, Student | Guides |",
+      "steps": [
+        {
+          "title": "What a correct diagram must contain",
+          "body": "Nouns become entity sets (rectangles): **Instructor, Course, Student, Classroom**. Verbs become relationship sets (diamonds), each joining exactly the two entity sets of its sentence: **Teaches** (Instructor–Course), **Registration** (Student–Course), **Allocation** (Course–Classroom), **Guides** (Instructor–Student).",
+          "scene": {
+            "reveal": 0
+          }
+        },
+        {
+          "title": "Diagram (i)",
+          "body": "*Student* is drawn as a **diamond** (a relationship) and *Registration* as a **rectangle** (an entity) hanging off Course. So there is no Student entity set, Guides does not reach a Student entity, and the \"students register\" relationship is missing. Reject (i).",
+          "scene": {
+            "reveal": 4,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "error"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Diagram (ii)",
+          "body": "There is no Student entity at all; instead an entity **Projects** sits between Registration and Guides. Then Registration links Course with Projects and Guides links Instructor with Projects, neither of which the specification says. Reject (ii).",
+          "scene": {
+            "reveal": 8,
+            "hl": [
+              {
+                "r": 1,
+                "tone": "error"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Diagram (iii)",
+          "body": "Teaches, Registration and Guides are right, but **Allocation** is attached only to Course, and Classroom is joined to Course by a bare line with no relationship. \"Courses are allocated classrooms\" is therefore not represented (an edge between two entity sets is not valid ER notation). Reject (iii).",
+          "scene": {
+            "reveal": 12,
+            "hl": [
+              {
+                "r": 2,
+                "tone": "error"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Diagram (iv)",
+          "body": "Instructor–**Teaches**–Course, Student–**Registration**–Course, Course–**Allocation**–Classroom and Instructor–**Guides**–Student are all present, with all four nouns as rectangles and all four verbs as diamonds. (iv) is correct — option (D).",
+          "scene": {
+            "reveal": 16,
+            "hl": [
+              {
+                "r": 3,
+                "tone": "success"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "Diagram **(iv)** — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Wrong: Student is a relationship (diamond) and Registration an entity (rectangle) — roles swapped."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Wrong: an entity \"Projects\" replaces Student, so neither Registration nor Guides involves students."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Wrong: Allocation is connected only to Course; Classroom is linked to Course by a plain line, so the allocation of classrooms is not modelled."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: four entity sets and the four binary relationships of the specification, each connecting the right pair."
+        }
+      ],
+      "shortcut": "Only (iii) and (iv) have Student as an entity linked to both Registration and Guides; between them, only (iv) puts Allocation between Course and Classroom.",
+      "pitfalls": [
+        "Looking only at the labels and not at the shapes: in (i) the words are all present but Student and Registration have the wrong shapes.",
+        "Accepting a direct line between two entity sets (Course–Classroom in (iii)) as a relationship."
+      ],
+      "verification": "Count check for (iv): 4 rectangles (Instructor, Course, Student, Classroom), 4 diamonds (Teaches, Registration, Allocation, Guides), every diamond has exactly two edges, to the entity sets named in its sentence.",
+      "animation": {
+        "kind": "table",
+        "title": "Does each diagram model each sentence?",
+        "corner": "diagram",
+        "cols": [
+          "Teaches",
+          "Registration",
+          "Allocation",
+          "Guides"
+        ],
+        "rowLabels": [
+          "(i)",
+          "(ii)",
+          "(iii)",
+          "(iv)"
+        ],
+        "rows": [
+          [
+            {
+              "v": "✓",
+              "tone": "success"
+            },
+            {
+              "v": "✗",
+              "tone": "error"
+            },
+            {
+              "v": "✓",
+              "tone": "success"
+            },
+            {
+              "v": "✗",
+              "tone": "error"
+            }
+          ],
+          [
+            {
+              "v": "✓",
+              "tone": "success"
+            },
+            {
+              "v": "✗",
+              "tone": "error"
+            },
+            {
+              "v": "✓",
+              "tone": "success"
+            },
+            {
+              "v": "✗",
+              "tone": "error"
+            }
+          ],
+          [
+            {
+              "v": "✓",
+              "tone": "success"
+            },
+            {
+              "v": "✓",
+              "tone": "success"
+            },
+            {
+              "v": "✗",
+              "tone": "error"
+            },
+            {
+              "v": "✓",
+              "tone": "success"
+            }
+          ],
+          [
+            {
+              "v": "✓",
+              "tone": "success"
+            },
+            {
+              "v": "✓",
+              "tone": "success"
+            },
+            {
+              "v": "✓",
+              "tone": "success"
+            },
+            {
+              "v": "✓",
+              "tone": "success"
+            }
+          ]
+        ]
+      }
+    },
+    "cse-2024-1-cs-11": {
+      "approach": "Recall the B+ tree occupancy rule: every node except the root must be at least half full. The root is exempt because the tree grows and shrinks at the root.",
+      "concepts": [
+        "B+ tree",
+        "Minimum occupancy",
+        "Root split and merge"
+      ],
+      "steps": [
+        {
+          "title": "The rule",
+          "body": "For order $p$ (max $p$ pointers per internal node), every **internal node other than the root** has at least $\\lceil p/2 \\rceil$ children, and every **leaf** holds at least about half of its maximum number of keys — unless that leaf is the root."
+        },
+        {
+          "title": "Why only the root is exempt",
+          "body": "- The tree grows upward: when the root splits, a **new root with just one key and two children** is created — far below half full.\n- When deletions merge the root's last two children, the root is removed and the height shrinks.\n\nSo the root may hold as little as 1 key (2 children), or, if it is the only node, even fewer than half the keys of a leaf. All other nodes must stay at least half full; splits and merges/redistribution maintain this."
+        },
+        {
+          "title": "Check the options",
+          "body": "Leaves (B) and internal nodes (C) must be at least half full; the leftmost leaf (D) gets no special treatment. Only the root is relaxed — option (A)."
+        }
+      ],
+      "answer": {
+        "value": "**Only the root node** — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: the root may have as few as two children (one key); a root that is a leaf can be almost empty."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Wrong: non-root leaves must be at least half full; underflow triggers redistribution or merge."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Wrong: non-root internal nodes must have at least $\\lceil p/2 \\rceil$ children."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Wrong: leaf position plays no role in the occupancy rule."
+        }
+      ],
+      "shortcut": "B-tree and B+ tree: \"at least half full, except the root\".",
+      "pitfalls": [
+        "Thinking leaves are exempt because they hold data pointers instead of child pointers — the half-full rule applies to leaves too."
+      ],
+      "verification": "Insert into an order-3 B+ tree until the first root split: the new root has exactly 1 key and 2 children, which violates \"half full\" for any larger order — so the exemption must exist, and only for the root."
+    },
+    "cse-2024-1-cs-12": {
+      "approach": "1NF says only one thing: every attribute value is atomic (no composite or multi-valued attributes, no repeating groups). It puts no restriction on keys, so test each statement against that single rule.",
+      "concepts": [
+        "First normal form (1NF)",
+        "Atomic attributes",
+        "Composite key vs composite attribute",
+        "Candidate and foreign keys"
+      ],
+      "steps": [
+        {
+          "title": "Definition of 1NF",
+          "body": "A relation is in 1NF iff the domain of every attribute contains only **atomic** (indivisible) values — no composite attributes (e.g. Address = {street, city}) and no multi-valued attributes / repeating groups."
+        },
+        {
+          "title": "Statements about keys: (A), (B), (D)",
+          "body": "- (A) A key made of several attributes (composite key), e.g. $\\{\\text{RollNo}, \\text{CourseId}\\}$ in Enrolment, is perfectly legal in 1NF — **TRUE**.\n- (B) A 1NF relation can have a foreign key (Enrolment.CourseId referencing Course) — the statement \"cannot\" is **FALSE**.\n- (D) A relation may have several candidate keys (e.g. RollNo and Email in Student) — \"cannot\" is **FALSE**."
+        },
+        {
+          "title": "Statement about attributes: (C)",
+          "body": "A composite attribute is not atomic, so it violates 1NF; it has to be flattened into its component attributes. \"R cannot have a composite attribute\" is **TRUE**."
+        }
+      ],
+      "answer": {
+        "value": "Statements **(A)** and **(C)** are TRUE",
+        "choice": [
+          "A",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "True: a multi-attribute (composite) key is allowed in every normal form."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "False: normal forms do not forbid foreign keys."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "True: a composite attribute is non-atomic, which 1NF forbids."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "False: any relation may have more than one candidate key."
+        }
+      ],
+      "shortcut": "1NF restricts **values** (atomicity), never **keys**: so the key statements B and D (\"cannot\") are false, A is true, and C is the atomicity rule itself.",
+      "pitfalls": [
+        "Confusing a composite **key** (several attributes forming a key — allowed) with a composite **attribute** (one attribute with sub-parts — not allowed)."
+      ],
+      "verification": "Example: Enrolment(RollNo, CourseId, Grade) with key {RollNo, CourseId} and foreign key CourseId → Course is in 1NF (A true, B false); replacing Grade by a composite Result(marks, grade) breaks 1NF (C true)."
+    },
+    "cse-2024-1-cs-13": {
+      "approach": "Use closure of regular languages under complement and union for (C) and (D), and kill (A) and (B) with tiny counterexamples (an empty language for A, Σ* for B).",
+      "concepts": [
+        "Closure under complement",
+        "Closure under union",
+        "Subset vs equality",
+        "Counterexamples"
+      ],
+      "steps": [
+        {
+          "title": "(A): $L_1 \\cap \\overline{L_2} = \\phi$ only says $L_1 \\subseteq L_2$",
+          "body": "$L_1 \\cap \\overline{L_2} = \\phi$ means no string of $L_1$ lies outside $L_2$, i.e. $L_1 \\subseteq L_2$ — not equality. Counterexample: $L_1 = \\phi$, $L_2 = \\{a\\}$ (both regular): $L_1 \\cap \\overline{L_2} = \\phi$ but $L_1 \\ne L_2$. The \"if\" direction fails, so (A) is **false**. (Equality needs $L_1 \\cap \\overline{L_2} = \\phi$ **and** $L_2 \\cap \\overline{L_1} = \\phi$.)"
+        },
+        {
+          "title": "(B): $L_1 \\cup L_3$ can be regular",
+          "body": "Take $L_1 = \\Sigma^*$ (regular) and any non-regular $L_3$, e.g. $\\{a^n b^n \\mid n \\ge 0\\}$. Then $L_1 \\cup L_3 = \\Sigma^*$, which is regular. So (B) is not always true."
+        },
+        {
+          "title": "(C): $\\overline{L_3}$ is not regular",
+          "body": "Suppose $\\overline{L_3}$ were regular. Regular languages are closed under complement, so $\\overline{\\overline{L_3}} = L_3$ would be regular — a contradiction. Hence $\\overline{L_3}$ is never regular: (C) is **always true**."
+        },
+        {
+          "title": "(D): $\\overline{L_1} \\cup \\overline{L_2}$ is regular",
+          "body": "$\\overline{L_1}$ and $\\overline{L_2}$ are regular (closure under complement), and their union is regular (closure under union). Equivalently, $\\overline{L_1} \\cup \\overline{L_2} = \\overline{L_1 \\cap L_2}$. (D) is **always true**."
+        }
+      ],
+      "answer": {
+        "value": "Statements **(C)** and **(D)** are always TRUE",
+        "choice": [
+          "C",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "False: the condition only gives $L_1 \\subseteq L_2$; $L_1 = \\phi$, $L_2 = \\{a\\}$ is a counterexample."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "False: with $L_1 = \\Sigma^*$ the union is $\\Sigma^*$, which is regular."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "True: if the complement were regular, complementing again would make $L_3$ regular."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "True: complement and union both preserve regularity."
+        }
+      ],
+      "shortcut": "\"Regular op non-regular\" can go either way (pick $\\phi$ or $\\Sigma^*$ to break it); \"complement of non-regular\" is always non-regular because complement is an involution that preserves regularity.",
+      "pitfalls": [
+        "Reading $L_1 \\cap \\overline{L_2} = \\phi$ as equality — it is only containment.",
+        "Assuming \"regular ∪ non-regular is non-regular\" — true for some pairs, not always."
+      ],
+      "verification": "(A) is true exactly when we use the symmetric difference: $L_1 = L_2 \\iff (L_1 \\cap \\overline{L_2}) \\cup (L_2 \\cap \\overline{L_1}) = \\phi$ — the question's version drops one half, confirming it is false."
+    },
+    "cse-2024-1-cs-14": {
+      "approach": "Split the process state into what is per-thread (program counter, registers, **stack**) and what is shared by all threads of a process (address space, code, data, heap, **open files**). Then check each statement.",
+      "concepts": [
+        "Threads vs processes",
+        "Per-thread state",
+        "User-level vs kernel-level threads",
+        "Shared address space"
+      ],
+      "given": "| Per thread | Shared by all threads of a process |\n|---|---|\n| Thread ID, program counter, registers, stack | Code, global data, heap, open files (file-descriptor table), signals |",
+      "steps": [
+        {
+          "title": "(A) Threads only in kernel space?",
+          "body": "No. **User-level threads** are implemented entirely by a library in user space (many-to-one model, e.g. green threads); the kernel sees only the process. So (A) is **false**."
+        },
+        {
+          "title": "(B) and (C): what each thread owns",
+          "body": "The file-descriptor table belongs to the **process**; a file opened by one thread is usable by every other thread. So (B) is **false**. Each thread needs its **own stack** for its own chain of function calls and local variables; a shared stack would be corrupted by concurrent calls. So (C) is **false**."
+        },
+        {
+          "title": "(D) Protection between threads",
+          "body": "All threads of a process share one address space, so any thread can read or overwrite another thread's data (even its stack, through a pointer). The OS gives no memory protection between them by default. (D) is **true**."
+        }
+      ],
+      "answer": {
+        "value": "Only statement **(D)** is TRUE",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "False: user-level thread libraries implement threads in user space."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "False: open files (the descriptor table) are shared by all threads of a process."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "False: every thread has a private stack (and registers, PC)."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "True: threads share the address space, so they are not protected from each other."
+        }
+      ],
+      "shortcut": "Threads own only \"execution state\": PC, registers, stack. Everything else — memory, files — is shared, hence unprotected.",
+      "pitfalls": [
+        "Mixing \"share the address space\" with \"share the stack\": the stacks live in the shared address space, but each thread has its own."
+      ],
+      "verification": "POSIX `pthread_create` allocates a new stack for each thread, while a descriptor returned by `open()` in one thread is valid in all of them — consistent with B and C false, D true."
+    },
+    "cse-2024-1-cs-15": {
+      "approach": "Draw the five-state process model and check whether each asked transition is an arrow in it. Only the scheduler moves a process to Running (from Ready), and only a running process can block itself.",
+      "concepts": [
+        "Process state diagram",
+        "Dispatcher",
+        "Blocking system calls",
+        "Preemption"
+      ],
+      "steps": [
+        {
+          "title": "The five-state model",
+          "body": "Arrows: New → Ready (admit), Ready → Running (dispatch), Running → Ready (preemption / time-slice expiry), Running → Waiting (I/O request or wait on an event), Waiting → Ready (I/O or event completion), Running → Terminated (exit)."
+        },
+        {
+          "title": "(A) and (D) are possible",
+          "body": "Running → Ready happens on a timer interrupt or when a higher-priority process arrives (preemption). Running → Terminated happens when the process calls `exit` or is killed. Both are arrows, so they are possible.",
+          "scene": {
+            "edgeTones": {
+              "Running>Ready": "success",
+              "Running>Terminated": "success"
+            }
+          }
+        },
+        {
+          "title": "(B) Waiting → Running is not possible",
+          "body": "When the awaited I/O completes, the process does not get the CPU directly; the CPU may be busy with another process. It goes to **Ready**, and only the dispatcher can later move it to Running. The path is Waiting → Ready → Running, never a direct arrow.",
+          "scene": {
+            "tones": {
+              "Waiting": "error",
+              "Running": "warning"
+            },
+            "edgeTones": {
+              "Waiting>Ready": "warning",
+              "Ready>Running": "warning"
+            }
+          }
+        },
+        {
+          "title": "(C) Ready → Waiting is not possible",
+          "body": "A process enters Waiting by **executing** a blocking request (e.g. a `read` system call). A ready process is not executing, so it cannot issue such a request; it must first be dispatched to Running. Hence no Ready → Waiting arrow.\n\nNOT possible: **(B) and (C)**.",
+          "scene": {
+            "tones": {
+              "Ready": "error",
+              "Waiting": "error"
+            },
+            "edgeTones": {
+              "Ready>Running": "warning",
+              "Running>Waiting": "warning"
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "**(B) Waiting → Running** and **(C) Ready → Waiting** are NOT possible",
+        "choice": [
+          "B",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Possible (so not selected): preemption moves a running process back to Ready."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "NOT possible: a process whose I/O finishes goes to Ready; only the dispatcher moves Ready → Running."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "NOT possible: only a running process can execute the blocking call that puts it in Waiting."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Possible (so not selected): a running process terminates by calling exit (or being killed)."
+        }
+      ],
+      "shortcut": "Running is entered only from Ready, and Waiting is entered only from Running.",
+      "pitfalls": [
+        "Reading the question as \"possible\" — it asks for the transitions that are NOT possible.",
+        "Assuming an I/O-completion interrupt hands the CPU straight to the waiting process."
+      ],
+      "verification": "In-degree check on the diagram: Running has exactly one incoming arrow (from Ready) and Waiting exactly one (from Running); B and C name the other sources, so both are impossible.",
+      "animation": {
+        "kind": "graph",
+        "directed": true,
+        "title": "Five-state process model",
+        "nodes": [
+          {
+            "id": "New",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "Ready",
+            "x": 1.6,
+            "y": 2
+          },
+          {
+            "id": "Running",
+            "x": 4.4,
+            "y": 2
+          },
+          {
+            "id": "Waiting",
+            "x": 3,
+            "y": 4
+          },
+          {
+            "id": "Terminated",
+            "x": 6,
+            "y": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "New",
+            "to": "Ready",
+            "w": "admit"
+          },
+          {
+            "from": "Ready",
+            "to": "Running",
+            "w": "dispatch"
+          },
+          {
+            "from": "Running",
+            "to": "Ready",
+            "w": "preempt"
+          },
+          {
+            "from": "Running",
+            "to": "Waiting",
+            "w": "I/O or event wait"
+          },
+          {
+            "from": "Waiting",
+            "to": "Ready",
+            "w": "I/O done"
+          },
+          {
+            "from": "Running",
+            "to": "Terminated",
+            "w": "exit"
+          }
+        ]
+      }
+    },
+    "cse-2024-1-cs-16": {
+      "approach": "Classify each parser by the direction in which it builds the parse tree: bottom-up parsers start from the input and **reduce** handles to the start symbol (reverse rightmost derivation); top-down parsers start from the start symbol and **expand** (leftmost derivation).",
+      "concepts": [
+        "Bottom-up parsing",
+        "Top-down parsing",
+        "Shift-reduce / LR parsing",
+        "Predictive / LL(1) parsing"
+      ],
+      "steps": [
+        {
+          "title": "Bottom-up family",
+          "body": "A **shift-reduce** parser shifts input symbols onto a stack and reduces a handle on top of the stack to a non-terminal — the generic bottom-up method. **LR** parsers (LR(0), SLR(1), LALR(1), CLR(1)) are table-driven shift-reduce parsers that produce a rightmost derivation in reverse. So (A) and (D) are bottom-up."
+        },
+        {
+          "title": "Top-down family",
+          "body": "A **predictive** parser chooses the production for the leftmost non-terminal by looking ahead, without backtracking; **LL(1)** is the table-driven predictive parser (Left-to-right scan, Leftmost derivation, 1 lookahead). Both expand from the start symbol, so (B) and (C) are top-down."
+        },
+        {
+          "title": "See the difference on one input",
+          "body": "Grammar $S \\to aB$, $B \\to b$, input $ab$.\n- **Bottom-up (shift-reduce / LR):** shift $a$, shift $b$, reduce $b$ to $B$, reduce $aB$ to $S$ — the tree is built from the leaves up, and the reductions in reverse give the rightmost derivation $S \\Rightarrow aB \\Rightarrow ab$.\n- **Top-down (predictive / LL(1)):** start with $S$, expand $S \\to aB$, match $a$, expand $B \\to b$, match $b$ — the tree is built from the root down.\n\nBottom-up parsers: **(A) and (D)**."
+        }
+      ],
+      "answer": {
+        "value": "**(A) Shift-reduce Parser** and **(D) LR Parser** are bottom-up",
+        "choice": [
+          "A",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Bottom-up: reduces handles to non-terminals until the start symbol remains."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Top-down: predicts and expands productions from the start symbol."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Top-down: LL(1) builds a leftmost derivation from the start symbol."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Bottom-up: LR parsing is shift-reduce parsing driven by an LR table (reverse rightmost derivation)."
+        }
+      ],
+      "shortcut": "Second letter tells the derivation: L**L** = leftmost (top-down), L**R** = rightmost in reverse (bottom-up); shift-reduce is the umbrella name for the LR family.",
+      "pitfalls": [
+        "Treating \"predictive\" as a bottom-up term because it uses a parsing table — LR parsers use tables too, but predictive parsers are top-down."
+      ],
+      "verification": "On $E \\to E + id \\mid id$ with input $id + id$: a shift-reduce parser reduces $id \\Rightarrow E$ first (bottom-up), while an LL parser would first expand $E$ — and in fact cannot, since the grammar is left-recursive (LR handles it, LL(1) does not), consistent with the two families being different."
+    }
+  }
+}
