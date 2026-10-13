@@ -1,0 +1,1305 @@
+{
+ "paper": "cse-2022",
+ "fixes": [
+  {
+   "id": "cse-2022-ga-1",
+   "field": "topic",
+   "before": "quant",
+   "after": "verbal",
+   "reason": "Homophone fill-in-the-blank is verbal aptitude, not quantitative.",
+   "source": "pdf p.1"
+  },
+  {
+   "id": "cse-2022-ga-1",
+   "field": "tags",
+   "before": [
+    "quantitative-aptitude"
+   ],
+   "after": [
+    "verbal-aptitude",
+    "homophones"
+   ],
+   "reason": "Specific tags for the question's actual topic.",
+   "source": "pdf p.1"
+  },
+  {
+   "id": "cse-2022-ga-2",
+   "field": "text",
+   "before": "A function y(x) is defined in the interval [0, 1] on the 𝑥-axis as\n𝑦(𝑥) =\n⎩\n⎪\n⎨\n⎪\n⎧\n2   if    0 ≤ 𝑥 < 1\n3\n3   if   1\n3 ≤ 𝑥 < 3\n4\n1   if   3\n4 ≤ 𝑥 ≤ 1\nWhich one of the following is the area under the curve for the interval [0, 1] on\nthe 𝑥-axis?",
+   "after": "A function $y(x)$ is defined in the interval $[0, 1]$ on the $x$-axis as\n\n$$y(x)=\\begin{cases} 2 & \\text{if } 0 \\le x < \\frac{1}{3} \\\\ 3 & \\text{if } \\frac{1}{3} \\le x < \\frac{3}{4} \\\\ 1 & \\text{if } \\frac{3}{4} \\le x \\le 1 \\end{cases}$$\n\nWhich one of the following is the area under the curve for the interval $[0, 1]$ on the $x$-axis?",
+   "reason": "The piecewise definition was garbled by PDF extraction; rewritten in KaTeX from the paper.",
+   "source": "pdf p.2"
+  },
+  {
+   "id": "cse-2022-ga-2",
+   "field": "options",
+   "before": [
+    {
+     "l": "A",
+     "t": "5 6"
+    },
+    {
+     "l": "B",
+     "t": "6 5"
+    },
+    {
+     "l": "C",
+     "t": "13 6"
+    },
+    {
+     "l": "D",
+     "t": "6 13"
+    }
+   ],
+   "after": [
+    {
+     "l": "A",
+     "t": "$\\frac{5}{6}$"
+    },
+    {
+     "l": "B",
+     "t": "$\\frac{6}{5}$"
+    },
+    {
+     "l": "C",
+     "t": "$\\frac{13}{6}$"
+    },
+    {
+     "l": "D",
+     "t": "$\\frac{6}{13}$"
+    }
+   ],
+   "reason": "Fractions were flattened to '5 6' etc.; rewritten in KaTeX.",
+   "source": "pdf p.2"
+  },
+  {
+   "id": "cse-2022-ga-2",
+   "field": "tags",
+   "before": [
+    "quantitative-aptitude"
+   ],
+   "after": [
+    "quantitative-aptitude",
+    "area-under-curve"
+   ],
+   "reason": "Specific tags for the question's actual topic.",
+   "source": "pdf p.2"
+  },
+  {
+   "id": "cse-2022-ga-3",
+   "field": "text",
+   "before": "Let r be a root of the equation 𝑥ଶ + 2𝑥 + 6 = 0.\nThen the value of the expression (𝑟 + 2)(𝑟 + 3)(𝑟 + 4)(𝑟 + 5) is",
+   "after": "Let $r$ be a root of the equation $x^2 + 2x + 6 = 0$.\n\nThen the value of the expression $(r + 2)(r + 3)(r + 4)(r + 5)$ is",
+   "reason": "The superscript in $x^2$ was garbled ('xଶ'); rewritten in KaTeX.",
+   "source": "pdf p.3"
+  },
+  {
+   "id": "cse-2022-ga-3",
+   "field": "options",
+   "before": [
+    {
+     "l": "A",
+     "t": "51"
+    },
+    {
+     "l": "B",
+     "t": "−51"
+    },
+    {
+     "l": "C",
+     "t": "126"
+    },
+    {
+     "l": "D",
+     "t": "−126"
+    }
+   ],
+   "after": [
+    {
+     "l": "A",
+     "t": "$51$"
+    },
+    {
+     "l": "B",
+     "t": "$-51$"
+    },
+    {
+     "l": "C",
+     "t": "$126$"
+    },
+    {
+     "l": "D",
+     "t": "$-126$"
+    }
+   ],
+   "reason": "Numbers typeset in KaTeX (proper minus sign).",
+   "source": "pdf p.3"
+  },
+  {
+   "id": "cse-2022-ga-3",
+   "field": "tags",
+   "before": [
+    "quantitative-aptitude"
+   ],
+   "after": [
+    "quantitative-aptitude",
+    "quadratic-equations",
+    "algebra"
+   ],
+   "reason": "Specific tags for the question's actual topic.",
+   "source": "pdf p.3"
+  },
+  {
+   "id": "cse-2022-ga-4",
+   "field": "text",
+   "before": "Given below are four statements.\nStatement 1: All students are inquisitive.\nStatement 2: Some students are inquisitive.\nStatement 3: No student is inquisitive.\nStatement 4: Some students are not inquisitive.\nFrom the given four statements, find the two statements that CANNOT BE\nTRUE simultaneously, assuming that there is at least one student in the class.",
+   "after": "Given below are four statements.\n\n- Statement 1: All students are inquisitive.\n- Statement 2: Some students are inquisitive.\n- Statement 3: No student is inquisitive.\n- Statement 4: Some students are not inquisitive.\n\nFrom the given four statements, find the two statements that CANNOT BE TRUE simultaneously, assuming that there is at least one student in the class.",
+   "reason": "Statements laid out as a list for readability.",
+   "source": "pdf p.4"
+  },
+  {
+   "id": "cse-2022-ga-4",
+   "field": "topic",
+   "before": "quant",
+   "after": "analytical",
+   "reason": "Compatibility of categorical statements is analytical (logical) reasoning, not quantitative aptitude.",
+   "source": "pdf p.4"
+  },
+  {
+   "id": "cse-2022-ga-4",
+   "field": "tags",
+   "before": [
+    "quantitative-aptitude"
+   ],
+   "after": [
+    "analytical-aptitude",
+    "syllogism",
+    "logical-reasoning"
+   ],
+   "reason": "Specific tags for the question's actual topic.",
+   "source": "pdf p.4"
+  },
+  {
+   "id": "cse-2022-ga-5",
+   "field": "text",
+   "before": "A palindrome is a word that reads the same forwards and backwards. In a game\nof words, a player has the following two plates painted with letters.\nFrom the additional plates given in the options, which one of the combinations\nof additional plates would allow the player to construct a five-letter palindrome.\nThe player should use all the five plates exactly once. The plates can be rotated\nin their plane.",
+   "after": "A palindrome is a word that reads the same forwards and backwards. In a game of words, a player has the following two plates painted with letters: **A** and **D** (see figure).\n\nFrom the additional plates given in the options (shown in the figure), which one of the combinations of additional plates would allow the player to construct a five-letter palindrome? The player should use all the five plates exactly once. The plates can be rotated in their plane.",
+   "reason": "The plates are pictures in the paper; text now points to the redrawn figure and names the given plates.",
+   "source": "pdf p.5"
+  },
+  {
+   "id": "cse-2022-ga-5",
+   "field": "options",
+   "before": [
+    {
+     "l": "A",
+     "t": "(B)"
+    },
+    {
+     "l": "C",
+     "t": "(D)"
+    }
+   ],
+   "after": [
+    {
+     "l": "A",
+     "t": "Plates D, D (printed rotated 180°) and J"
+    },
+    {
+     "l": "B",
+     "t": "Plates R, A (printed rotated 180°) and R (printed rotated 180°)"
+    },
+    {
+     "l": "C",
+     "t": "Plates Z, E (printed rotated 180°) and D"
+    },
+    {
+     "l": "D",
+     "t": "Plates I, L (printed rotated 180°) and Y"
+    }
+   ],
+   "reason": "Options were images; the record had only two broken entries ('(B)', '(D)'). Rewritten as text describing each option's three plates as printed.",
+   "source": "pdf p.5"
+  },
+  {
+   "id": "cse-2022-ga-5",
+   "field": "figures",
+   "before": [],
+   "after": [
+    {
+     "f": "cse-2022/ga-5-1.svg",
+     "svg": "cse-2022/ga-5-1.svg",
+     "alt": "Letter plates. Given plates: A and D. Option (A): D, D rotated 180 degrees, J. Option (B): R, A rotated 180 degrees (upside down), R rotated 180 degrees. Option (C): Z, E rotated 180 degrees, D. Option (D): I, L rotated 180 degrees, Y."
+    }
+   ],
+   "reason": "The question and its options are pictures of letter plates, missing from the bank. Redrawn as SVG from the paper.",
+   "source": "pdf p.5"
+  },
+  {
+   "id": "cse-2022-ga-5",
+   "field": "topic",
+   "before": "verbal",
+   "after": "spatial",
+   "reason": "Rearranging rotatable letter plates is spatial aptitude.",
+   "source": "pdf p.5"
+  },
+  {
+   "id": "cse-2022-ga-5",
+   "field": "tags",
+   "before": [
+    "verbal-aptitude"
+   ],
+   "after": [
+    "spatial-aptitude",
+    "palindrome",
+    "rotation"
+   ],
+   "reason": "Specific tags for the question's actual topic.",
+   "source": "pdf p.5"
+  },
+  {
+   "id": "cse-2022-ga-6",
+   "field": "tags",
+   "before": [
+    "verbal-aptitude"
+   ],
+   "after": [
+    "verbal-aptitude",
+    "logical-inference"
+   ],
+   "reason": "Specific tags for the question's actual topic.",
+   "source": "pdf p.6"
+  },
+  {
+   "id": "cse-2022-ga-7",
+   "field": "topic",
+   "before": "verbal",
+   "after": "analytical",
+   "reason": "Drawing an inference from percentage data is analytical reasoning.",
+   "source": "pdf p.7"
+  },
+  {
+   "id": "cse-2022-ga-7",
+   "field": "tags",
+   "before": [
+    "verbal-aptitude"
+   ],
+   "after": [
+    "analytical-aptitude",
+    "logical-inference",
+    "percentages"
+   ],
+   "reason": "Specific tags for the question's actual topic.",
+   "source": "pdf p.7"
+  },
+  {
+   "id": "cse-2022-ga-8",
+   "field": "options",
+   "before": [
+    {
+     "l": "A",
+     "t": "1 2"
+    },
+    {
+     "l": "B",
+     "t": "8 25"
+    },
+    {
+     "l": "C",
+     "t": "19 50"
+    },
+    {
+     "l": "D",
+     "t": "23 50"
+    }
+   ],
+   "after": [
+    {
+     "l": "A",
+     "t": "$\\frac{1}{2}$"
+    },
+    {
+     "l": "B",
+     "t": "$\\frac{8}{25}$"
+    },
+    {
+     "l": "C",
+     "t": "$\\frac{19}{50}$"
+    },
+    {
+     "l": "D",
+     "t": "$\\frac{23}{50}$"
+    }
+   ],
+   "reason": "Fractions were flattened to '1 2' etc.; rewritten in KaTeX.",
+   "source": "pdf p.8"
+  },
+  {
+   "id": "cse-2022-ga-8",
+   "field": "topic",
+   "before": "spatial",
+   "after": "quant",
+   "reason": "Conditional/total probability is quantitative aptitude, not spatial.",
+   "source": "pdf p.8"
+  },
+  {
+   "id": "cse-2022-ga-8",
+   "field": "tags",
+   "before": [
+    "quantitative-aptitude"
+   ],
+   "after": [
+    "quantitative-aptitude",
+    "probability",
+    "total-probability"
+   ],
+   "reason": "Specific tags for the question's actual topic.",
+   "source": "pdf p.8"
+  },
+  {
+   "id": "cse-2022-ga-9",
+   "field": "text",
+   "before": "The corners and mid-points of the sides of a triangle are named using the distinct\nletters P, Q, R, S, T and U, but not necessarily in the same order. Consider the\nfollowing statements:\n The line joining P and R is parallel to the line joining Q and S.\n P is placed on the side opposite to the corner T.\n S and U cannot be placed on the same side.\nWhich one of the following statements is correct based on the above\ninformation?",
+   "after": "The corners and mid-points of the sides of a triangle are named using the distinct letters P, Q, R, S, T and U, but not necessarily in the same order. Consider the following statements:\n\n- The line joining P and R is parallel to the line joining Q and S.\n- P is placed on the side opposite to the corner T.\n- S and U cannot be placed on the same side.\n\nWhich one of the following statements is correct based on the above information?",
+   "reason": "Bullet glyphs were lost in extraction; statements laid out as a list.",
+   "source": "pdf p.9"
+  },
+  {
+   "id": "cse-2022-ga-9",
+   "field": "topic",
+   "before": "quant",
+   "after": "analytical",
+   "reason": "Placement puzzle with constraints is analytical reasoning.",
+   "source": "pdf p.9"
+  },
+  {
+   "id": "cse-2022-ga-9",
+   "field": "tags",
+   "before": [
+    "quantitative-aptitude"
+   ],
+   "after": [
+    "analytical-aptitude",
+    "logical-reasoning",
+    "geometry"
+   ],
+   "reason": "Specific tags for the question's actual topic.",
+   "source": "pdf p.9"
+  },
+  {
+   "id": "cse-2022-ga-10",
+   "field": "options",
+   "before": [
+    {
+     "l": "A",
+     "t": "2"
+    },
+    {
+     "l": "B",
+     "t": "4"
+    },
+    {
+     "l": "C",
+     "t": "5"
+    },
+    {
+     "l": "D",
+     "t": "3 GATE 2022 Computer Science and Information Technology (CS)"
+    }
+   ],
+   "after": [
+    {
+     "l": "A",
+     "t": "2"
+    },
+    {
+     "l": "B",
+     "t": "4"
+    },
+    {
+     "l": "C",
+     "t": "5"
+    },
+    {
+     "l": "D",
+     "t": "3"
+    }
+   ],
+   "reason": "Removed the page-header text that leaked into option (D).",
+   "source": "pdf p.10"
+  },
+  {
+   "id": "cse-2022-ga-10",
+   "field": "figures",
+   "before": [],
+   "after": [
+    {
+     "f": "cse-2022/ga-10-1.svg",
+     "svg": "cse-2022/ga-10-1.svg",
+     "alt": "A 7 by 7 grid of equally spaced poles (columns 0 to 6, rows 0 to 6 from the top) forming a square plot whose top-right and bottom-left corners are cut off diagonally: the boundary runs (0,0) to (5,0), diagonally to (6,1), down to (6,6), left to (1,6), diagonally to (0,5) and up to (0,0); the corner poles (6,0) and (0,6) are absent. Rope R1 runs horizontally from the left boundary pole (0,4) to pole (2,4). Rope R2 runs vertically from the top boundary pole (4,0) down to pole (4,2)."
+    }
+   ],
+   "reason": "The land figure was missing from the bank. Redrawn as SVG from the paper.",
+   "source": "pdf p.10"
+  },
+  {
+   "id": "cse-2022-ga-10",
+   "field": "tags",
+   "before": [
+    "quantitative-aptitude"
+   ],
+   "after": [
+    "spatial-aptitude",
+    "partitioning",
+    "similar-figures"
+   ],
+   "reason": "Specific tags for the question's actual topic.",
+   "source": "pdf p.10"
+  },
+  {
+   "id": "cse-2022-cs-1",
+   "field": "text",
+   "before": "Which one of the following statements is TRUE for all positive functions ( )f n ?",
+   "after": "Which one of the following statements is TRUE for all positive functions $f(n)$?",
+   "reason": "Function notation was garbled; rewritten in KaTeX.",
+   "source": "pdf p.11"
+  },
+  {
+   "id": "cse-2022-cs-1",
+   "field": "options",
+   "before": [
+    {
+     "l": "A",
+     "t": "2 2( ) ( ( ) ),f n f n when ( )f n is a polynomial"
+    },
+    {
+     "l": "B",
+     "t": "2 2( ) ( ( ) )f n o f n"
+    },
+    {
+     "l": "C",
+     "t": "2 2( ) ( ( ) ),f n O f n when ( )f n is an exponential function"
+    },
+    {
+     "l": "D",
+     "t": "2 2( ) ( ( ) )f n f n"
+    }
+   ],
+   "after": [
+    {
+     "l": "A",
+     "t": "$f(n^2) = \\Theta\\left(f(n)^2\\right)$, when $f(n)$ is a polynomial"
+    },
+    {
+     "l": "B",
+     "t": "$f(n^2) = o\\left(f(n)^2\\right)$"
+    },
+    {
+     "l": "C",
+     "t": "$f(n^2) = O\\left(f(n)^2\\right)$, when $f(n)$ is an exponential function"
+    },
+    {
+     "l": "D",
+     "t": "$f(n^2) = \\Omega\\left(f(n)^2\\right)$"
+    }
+   ],
+   "reason": "Asymptotic symbols and superscripts were lost ('2 2( ) ( ( ) )'); rewritten in KaTeX from the paper.",
+   "source": "pdf p.11"
+  },
+  {
+   "id": "cse-2022-cs-1",
+   "field": "subject",
+   "before": "pds",
+   "after": "algo",
+   "reason": "Asymptotic notation belongs to algorithms, not C programming.",
+   "source": "pdf p.11"
+  },
+  {
+   "id": "cse-2022-cs-1",
+   "field": "topic",
+   "before": "c-prog",
+   "after": "asymptotics",
+   "reason": "Asymptotic notation belongs to algorithms, not C programming.",
+   "source": "pdf p.11"
+  },
+  {
+   "id": "cse-2022-cs-1",
+   "field": "tags",
+   "before": [
+    "computer-science"
+   ],
+   "after": [
+    "asymptotic-notation",
+    "growth-of-functions"
+   ],
+   "reason": "Specific tags for the question's actual topic.",
+   "source": "pdf p.11"
+  },
+  {
+   "id": "cse-2022-cs-2",
+   "field": "options",
+   "before": [
+    {
+     "l": "A",
+     "t": "* * * *ab bab ba aba"
+    },
+    {
+     "l": "B",
+     "t": "* * * * * *( ) ( )ab b ab ba a ba"
+    },
+    {
+     "l": "C",
+     "t": "* * * * *( ) ( )ab b ba a a b "
+    },
+    {
+     "l": "D",
+     "t": "* * * * *( ) ( )ba a ab b ab ba  GATE 2022 Computer Science and Information Technology (CS)"
+    }
+   ],
+   "after": [
+    {
+     "l": "A",
+     "t": "$ab^*bab^* + ba^*aba^*$"
+    },
+    {
+     "l": "B",
+     "t": "$(ab^*b)^*ab^* + (ba^*a)^*ba^*$"
+    },
+    {
+     "l": "C",
+     "t": "$(ab^*b + ba^*a)^*(a^* + b^*)$"
+    },
+    {
+     "l": "D",
+     "t": "$(ba^*a + ab^*b)^*(ab^* + ba^*)$"
+    }
+   ],
+   "reason": "Stars and '+' were scrambled by extraction and option (D) had page-header junk; rewritten in KaTeX from the paper.",
+   "source": "pdf p.11"
+  },
+  {
+   "id": "cse-2022-cs-2",
+   "field": "figures",
+   "before": [],
+   "after": [
+    {
+     "f": "cse-2022/cs-2-1.svg",
+     "svg": "cse-2022/cs-2-1.svg",
+     "alt": "Finite automaton with three states. The start state (left, non-accepting) has an edge labelled a to an upper accepting state and an edge labelled b to a lower accepting state. The upper accepting state has a self-loop on b and an edge labelled b back to the start state. The lower accepting state has a self-loop on a and an edge labelled a back to the start state."
+    }
+   ],
+   "reason": "The automaton was missing from the bank. Redrawn as SVG from the paper.",
+   "source": "pdf p.11"
+  },
+  {
+   "id": "cse-2022-cs-2",
+   "field": "tags",
+   "before": [
+    "regular"
+   ],
+   "after": [
+    "regular-expressions",
+    "finite-automata",
+    "state-elimination"
+   ],
+   "reason": "Specific tags for the question's actual topic.",
+   "source": "pdf p.11"
+  },
+  {
+   "id": "cse-2022-cs-3",
+   "field": "options",
+   "before": [
+    {
+     "l": "A",
+     "t": "The (1)LALR parser for a grammar G cannot have reduce-reduce conflict if the (1)LR parser for G does not have reduce-reduce conflict."
+    },
+    {
+     "l": "B",
+     "t": "Symbol table is accessed only during the lexical analysis phase."
+    },
+    {
+     "l": "C",
+     "t": "Data flow analysis is necessary for run-time memory management."
+    },
+    {
+     "l": "D",
+     "t": "(1)LR parsing is sufficient for deterministic context-free languages."
+    }
+   ],
+   "after": [
+    {
+     "l": "A",
+     "t": "The $LALR(1)$ parser for a grammar $G$ cannot have reduce-reduce conflict if the $LR(1)$ parser for $G$ does not have reduce-reduce conflict."
+    },
+    {
+     "l": "B",
+     "t": "Symbol table is accessed only during the lexical analysis phase."
+    },
+    {
+     "l": "C",
+     "t": "Data flow analysis is necessary for run-time memory management."
+    },
+    {
+     "l": "D",
+     "t": "$LR(1)$ parsing is sufficient for deterministic context-free languages."
+    }
+   ],
+   "reason": "'(1)LALR'/'(1)LR' were garbled; restored as LALR(1)/LR(1).",
+   "source": "pdf p.12"
+  },
+  {
+   "id": "cse-2022-cs-3",
+   "field": "subject",
+   "before": "pds",
+   "after": "cd",
+   "reason": "Parsers, symbol table and data-flow analysis are compiler design, not C programming.",
+   "source": "pdf p.12"
+  },
+  {
+   "id": "cse-2022-cs-3",
+   "field": "topic",
+   "before": "c-prog",
+   "after": "parsing",
+   "reason": "Parsers, symbol table and data-flow analysis are compiler design, not C programming.",
+   "source": "pdf p.12"
+  },
+  {
+   "id": "cse-2022-cs-3",
+   "field": "tags",
+   "before": [
+    "computer-science"
+   ],
+   "after": [
+    "lr-parsing",
+    "lalr",
+    "compiler-phases"
+   ],
+   "reason": "Specific tags for the question's actual topic.",
+   "source": "pdf p.12"
+  },
+  {
+   "id": "cse-2022-cs-4",
+   "field": "options",
+   "before": [
+    {
+     "l": "A",
+     "t": "A relation with only two attributes is always in BCNF."
+    },
+    {
+     "l": "B",
+     "t": "If all attributes of a relation are prime attributes, then the relation is in BCNF."
+    },
+    {
+     "l": "C",
+     "t": "Every relation has at least one non-prime attribute."
+    },
+    {
+     "l": "D",
+     "t": "BCNF decompositions preserve functional dependencies. GATE 2022 Computer Science and Information Technology (CS)"
+    }
+   ],
+   "after": [
+    {
+     "l": "A",
+     "t": "A relation with only two attributes is always in BCNF."
+    },
+    {
+     "l": "B",
+     "t": "If all attributes of a relation are prime attributes, then the relation is in BCNF."
+    },
+    {
+     "l": "C",
+     "t": "Every relation has at least one non-prime attribute."
+    },
+    {
+     "l": "D",
+     "t": "BCNF decompositions preserve functional dependencies."
+    }
+   ],
+   "reason": "Removed the page-header text that leaked into option (D).",
+   "source": "pdf p.12"
+  },
+  {
+   "id": "cse-2022-cs-4",
+   "field": "subject",
+   "before": "dm",
+   "after": "db",
+   "reason": "BCNF and prime attributes are database normalization, not discrete-math sets.",
+   "source": "pdf p.12"
+  },
+  {
+   "id": "cse-2022-cs-4",
+   "field": "topic",
+   "before": "sets",
+   "after": "normalization",
+   "reason": "BCNF and prime attributes are database normalization, not discrete-math sets.",
+   "source": "pdf p.12"
+  },
+  {
+   "id": "cse-2022-cs-4",
+   "field": "tags",
+   "before": [
+    "computer-science"
+   ],
+   "after": [
+    "bcnf",
+    "normal-forms",
+    "dependency-preservation"
+   ],
+   "reason": "Specific tags for the question's actual topic.",
+   "source": "pdf p.12"
+  },
+  {
+   "id": "cse-2022-cs-5",
+   "field": "text",
+   "before": "Consider the problem of reversing a singly linked list. To take an example, given\nthe linked list below,\nthe reversed linked list should look like\nWhich one of the following statements is TRUE about the time complexity of\nalgorithms that solve the above problem in (1)O  space?",
+   "after": "Consider the problem of reversing a singly linked list. To take an example, given the linked list below (see figure),\n\nhead → a → b → c → d → e → NULL\n\nthe reversed linked list should look like\n\nhead → e → d → c → b → a → NULL\n\nWhich one of the following statements is TRUE about the time complexity of algorithms that solve the above problem in $O(1)$ space?",
+   "reason": "The two list diagrams were lost and $O(1)$ was garbled; restored (figure added).",
+   "source": "pdf p.13"
+  },
+  {
+   "id": "cse-2022-cs-5",
+   "field": "options",
+   "before": [
+    {
+     "l": "A",
+     "t": "The best algorithm for the problem takes ( )n time in the worst case."
+    },
+    {
+     "l": "B",
+     "t": "The best algorithm for the problem takes ( log )n n time in the worst case."
+    },
+    {
+     "l": "C",
+     "t": "The best algorithm for the problem takes 2( )n time in the worst case."
+    },
+    {
+     "l": "D",
+     "t": "It is not possible to reverse a singly linked list in (1)O space."
+    }
+   ],
+   "after": [
+    {
+     "l": "A",
+     "t": "The best algorithm for the problem takes $\\Theta(n)$ time in the worst case."
+    },
+    {
+     "l": "B",
+     "t": "The best algorithm for the problem takes $\\Theta(n \\log n)$ time in the worst case."
+    },
+    {
+     "l": "C",
+     "t": "The best algorithm for the problem takes $\\Theta(n^2)$ time in the worst case."
+    },
+    {
+     "l": "D",
+     "t": "It is not possible to reverse a singly linked list in $O(1)$ space."
+    }
+   ],
+   "reason": "Theta and O symbols were lost; rewritten in KaTeX.",
+   "source": "pdf p.13"
+  },
+  {
+   "id": "cse-2022-cs-5",
+   "field": "figures",
+   "before": [],
+   "after": [
+    {
+     "f": "cse-2022/cs-5-1.svg",
+     "svg": "cse-2022/cs-5-1.svg",
+     "alt": "Two singly linked lists. Given list: head points to node a, then b, c, d, e; e's next pointer is null (ground symbol). Reversed list: head points to node e, then d, c, b, a; a's next pointer is null."
+    }
+   ],
+   "reason": "The list diagrams were missing from the bank. Redrawn as SVG from the paper.",
+   "source": "pdf p.13"
+  },
+  {
+   "id": "cse-2022-cs-5",
+   "field": "subject",
+   "before": "pdsa",
+   "after": "pds",
+   "reason": "Reversing a singly linked list is a data-structures (linked list) question.",
+   "source": "pdf p.13"
+  },
+  {
+   "id": "cse-2022-cs-5",
+   "field": "topic",
+   "before": "dsa",
+   "after": "linked-lists",
+   "reason": "Reversing a singly linked list is a data-structures (linked list) question.",
+   "source": "pdf p.13"
+  },
+  {
+   "id": "cse-2022-cs-5",
+   "field": "tags",
+   "before": [
+    "asymptotics"
+   ],
+   "after": [
+    "linked-list",
+    "reversal",
+    "time-complexity"
+   ],
+   "reason": "Specific tags for the question's actual topic.",
+   "source": "pdf p.13"
+  },
+  {
+   "id": "cse-2022-cs-6",
+   "field": "text",
+   "before": "Suppose we are given n keys, m hash table slots, and two simple uniform hash\nfunctions 1h  and 2h . Further suppose our hashing scheme uses 1h  for the odd keys\nand 2h  for the even keys. What is the expected number of keys in a slot?",
+   "after": "Suppose we are given $n$ keys, $m$ hash table slots, and two simple uniform hash functions $h_1$ and $h_2$. Further suppose our hashing scheme uses $h_1$ for the odd keys and $h_2$ for the even keys. What is the expected number of keys in a slot?",
+   "reason": "Subscripts were garbled ('1h'); rewritten in KaTeX.",
+   "source": "pdf p.13"
+  },
+  {
+   "id": "cse-2022-cs-6",
+   "field": "options",
+   "before": [
+    {
+     "l": "A",
+     "t": "m n"
+    },
+    {
+     "l": "B",
+     "t": "n m"
+    },
+    {
+     "l": "C",
+     "t": "2n m"
+    },
+    {
+     "l": "D",
+     "t": "2 n m GATE 2022 Computer Science and Information Technology (CS)"
+    }
+   ],
+   "after": [
+    {
+     "l": "A",
+     "t": "$\\frac{m}{n}$"
+    },
+    {
+     "l": "B",
+     "t": "$\\frac{n}{m}$"
+    },
+    {
+     "l": "C",
+     "t": "$\\frac{2n}{m}$"
+    },
+    {
+     "l": "D",
+     "t": "$\\frac{n}{2m}$"
+    }
+   ],
+   "reason": "Fractions were flattened ('m n') and option (D) had header junk; rewritten in KaTeX.",
+   "source": "pdf p.13"
+  },
+  {
+   "id": "cse-2022-cs-6",
+   "field": "subject",
+   "before": "pdsa",
+   "after": "algo",
+   "reason": "Expected slot load under uniform hashing is a hashing question.",
+   "source": "pdf p.13"
+  },
+  {
+   "id": "cse-2022-cs-6",
+   "field": "topic",
+   "before": "dsa",
+   "after": "hashing",
+   "reason": "Expected slot load under uniform hashing is a hashing question.",
+   "source": "pdf p.13"
+  },
+  {
+   "id": "cse-2022-cs-6",
+   "field": "tags",
+   "before": [
+    "computer-science"
+   ],
+   "after": [
+    "hashing",
+    "simple-uniform-hashing",
+    "load-factor"
+   ],
+   "reason": "Specific tags for the question's actual topic.",
+   "source": "pdf p.13"
+  },
+  {
+   "id": "cse-2022-cs-7",
+   "field": "subject",
+   "before": "db",
+   "after": "coa",
+   "reason": "DMA vs interrupt/programmed I/O is computer organisation (I/O), not SQL.",
+   "source": "pdf p.14"
+  },
+  {
+   "id": "cse-2022-cs-7",
+   "field": "topic",
+   "before": "sql",
+   "after": "io",
+   "reason": "DMA vs interrupt/programmed I/O is computer organisation (I/O), not SQL.",
+   "source": "pdf p.14"
+  },
+  {
+   "id": "cse-2022-cs-7",
+   "field": "tags",
+   "before": [
+    "sql"
+   ],
+   "after": [
+    "dma",
+    "io-transfer-modes"
+   ],
+   "reason": "Specific tags for the question's actual topic.",
+   "source": "pdf p.14"
+  },
+  {
+   "id": "cse-2022-cs-8",
+   "field": "options",
+   "before": [
+    {
+     "l": "A",
+     "t": "R1 = 1011 and R2 = 1110"
+    },
+    {
+     "l": "B",
+     "t": "R1 = 1100 and R2 = 1010"
+    },
+    {
+     "l": "C",
+     "t": "R1 = 0011 and R2 = 0100"
+    },
+    {
+     "l": "D",
+     "t": "R1 = 1001 and R2 = 1111 GATE 2022 Computer Science and Information Technology (CS)"
+    }
+   ],
+   "after": [
+    {
+     "l": "A",
+     "t": "R1 = 1011 and R2 = 1110"
+    },
+    {
+     "l": "B",
+     "t": "R1 = 1100 and R2 = 1010"
+    },
+    {
+     "l": "C",
+     "t": "R1 = 0011 and R2 = 0100"
+    },
+    {
+     "l": "D",
+     "t": "R1 = 1001 and R2 = 1111"
+    }
+   ],
+   "reason": "Removed the page-header text that leaked into option (D).",
+   "source": "pdf p.14"
+  },
+  {
+   "id": "cse-2022-cs-8",
+   "field": "subject",
+   "before": "ga",
+   "after": "dl",
+   "reason": "2's complement overflow is digital-logic arithmetic, not general aptitude.",
+   "source": "pdf p.14"
+  },
+  {
+   "id": "cse-2022-cs-8",
+   "field": "topic",
+   "before": "quant",
+   "after": "arithmetic",
+   "reason": "2's complement overflow is digital-logic arithmetic, not general aptitude.",
+   "source": "pdf p.14"
+  },
+  {
+   "id": "cse-2022-cs-8",
+   "field": "tags",
+   "before": [
+    "quant"
+   ],
+   "after": [
+    "twos-complement",
+    "overflow",
+    "binary-addition"
+   ],
+   "reason": "Specific tags for the question's actual topic.",
+   "source": "pdf p.14"
+  },
+  {
+   "id": "cse-2022-cs-9",
+   "field": "text",
+   "before": "Consider the following threads, T 1, T 2, and T 3 executing on a single processor,\nsynchronized using three binary semaphore variables, S1, S2, and S3, operated upon\nusing standard wait() and signal(). The threads can be context switched in\nany order and at any time.\nT1 T 2 T 3\nwhile(true){\nwait(S3);\nprint(“C”);\nsignal(S2); }\nwhile(true){\nwait(S1);\nprint(“B”);\nsignal(S3); }\nwhile(true){\nwait(S2);\nprint(“A”);\nsignal(S1); }\nWhich initialization of the semaphores would print the sequence BCABCABCA….?",
+   "after": "Consider the following threads, T1, T2, and T3 executing on a single processor, synchronized using three binary semaphore variables, S1, S2, and S3, operated upon using standard `wait()` and `signal()`. The threads can be context switched in any order and at any time.\n\n```c\n/* T1 */               /* T2 */               /* T3 */\nwhile(true){           while(true){           while(true){\n    wait(S3);              wait(S1);              wait(S2);\n    print(\"C\");            print(\"B\");            print(\"A\");\n    signal(S2); }          signal(S3); }          signal(S1); }\n```\n\nWhich initialization of the semaphores would print the sequence BCABCABCA….?",
+   "reason": "The three thread bodies were flattened into interleaved lines; restored as side-by-side code.",
+   "source": "pdf p.15"
+  },
+  {
+   "id": "cse-2022-cs-9",
+   "field": "options",
+   "before": [
+    {
+     "l": "A",
+     "t": "S 1 = 1; S2 = 1; S3 = 1"
+    },
+    {
+     "l": "B",
+     "t": "S 1 = 1; S2 = 1; S3 = 0"
+    },
+    {
+     "l": "C",
+     "t": "S 1 = 1; S2 = 0; S3 = 0"
+    },
+    {
+     "l": "D",
+     "t": "S 1 = 0; S2 = 1; S3 = 1 GATE 2022 Computer Science and Information Technology (CS)"
+    }
+   ],
+   "after": [
+    {
+     "l": "A",
+     "t": "S1 = 1; S2 = 1; S3 = 1"
+    },
+    {
+     "l": "B",
+     "t": "S1 = 1; S2 = 1; S3 = 0"
+    },
+    {
+     "l": "C",
+     "t": "S1 = 1; S2 = 0; S3 = 0"
+    },
+    {
+     "l": "D",
+     "t": "S1 = 0; S2 = 1; S3 = 1"
+    }
+   ],
+   "reason": "Removed stray spaces ('S 1') and the page-header junk in option (D).",
+   "source": "pdf p.15"
+  },
+  {
+   "id": "cse-2022-cs-9",
+   "field": "tags",
+   "before": [
+    "sync"
+   ],
+   "after": [
+    "semaphores",
+    "process-synchronization",
+    "ordering"
+   ],
+   "reason": "Specific tags for the question's actual topic.",
+   "source": "pdf p.15"
+  },
+  {
+   "id": "cse-2022-cs-10",
+   "field": "text",
+   "before": "Consider the following two statements with respect to the matrices m nA  , n mB  ,\nn nC   and .n nD \nStatement 1: tr(AB) = tr(BA)\nStatement 2: tr(CD) = tr(DC)\nwhere tr() represents the trace of a matrix. Which one of the following holds?",
+   "after": "Consider the following two statements with respect to the matrices $A_{m \\times n}$, $B_{n \\times m}$, $C_{n \\times n}$ and $D_{n \\times n}$.\n\n- Statement 1: $\\operatorname{tr}(AB) = \\operatorname{tr}(BA)$\n- Statement 2: $\\operatorname{tr}(CD) = \\operatorname{tr}(DC)$\n\nwhere $\\operatorname{tr}()$ represents the trace of a matrix. Which one of the following holds?",
+   "reason": "Matrix dimension subscripts were garbled ('m nA'); rewritten in KaTeX.",
+   "source": "pdf p.16"
+  },
+  {
+   "id": "cse-2022-cs-10",
+   "field": "options",
+   "before": [
+    {
+     "l": "A",
+     "t": "Statement 1 is correct and Statement 2 is wrong."
+    },
+    {
+     "l": "B",
+     "t": "Statement 1 is wrong and Statement 2 is correct."
+    },
+    {
+     "l": "C",
+     "t": "Both Statement 1 and Statement 2 are correct."
+    },
+    {
+     "l": "D",
+     "t": "Both Statement 1 and Statement 2 are wrong. GATE 2022 Computer Science and Information Technology (CS)"
+    }
+   ],
+   "after": [
+    {
+     "l": "A",
+     "t": "Statement 1 is correct and Statement 2 is wrong."
+    },
+    {
+     "l": "B",
+     "t": "Statement 1 is wrong and Statement 2 is correct."
+    },
+    {
+     "l": "C",
+     "t": "Both Statement 1 and Statement 2 are correct."
+    },
+    {
+     "l": "D",
+     "t": "Both Statement 1 and Statement 2 are wrong."
+    }
+   ],
+   "reason": "Removed the page-header text that leaked into option (D).",
+   "source": "pdf p.16"
+  },
+  {
+   "id": "cse-2022-cs-10",
+   "field": "topic",
+   "before": "eigen",
+   "after": "matrices",
+   "reason": "Trace of matrix products is a matrices question, not eigenvalues.",
+   "source": "pdf p.16"
+  },
+  {
+   "id": "cse-2022-cs-10",
+   "field": "tags",
+   "before": [
+    "verbal"
+   ],
+   "after": [
+    "trace",
+    "matrix-multiplication"
+   ],
+   "reason": "Specific tags for the question's actual topic.",
+   "source": "pdf p.16"
+  },
+  {
+   "id": "cse-2022-cs-11",
+   "field": "text",
+   "before": "What is printed by the following ANSI C program?\n#include<stdio.h>\nint main(int argc, char *argv[])\n{\nint x = 1, z[2] = {10, 11};\nint *p = NULL;\np = &x;\n*p = 10;\np = &z[1];\n*(&z[0] + 1) += 3;\nprintf(\"%d, %d, %d\\n\", x, z[0], z[1]);\nreturn 0;\n}",
+   "after": "What is printed by the following ANSI C program?\n\n```c\n#include<stdio.h>\nint main(int argc, char *argv[])\n{\n    int x = 1, z[2] = {10, 11};\n    int *p = NULL;\n    p = &x;\n    *p = 10;\n    p = &z[1];\n    *(&z[0] + 1) += 3;\n    printf(\"%d, %d, %d\\n\", x, z[0], z[1]);\n    return 0;\n}\n```",
+   "reason": "Program put in a fenced code block with its indentation.",
+   "source": "pdf p.17"
+  },
+  {
+   "id": "cse-2022-cs-11",
+   "field": "options",
+   "before": [
+    {
+     "l": "A",
+     "t": "1, 10, 11"
+    },
+    {
+     "l": "B",
+     "t": "1, 10, 14"
+    },
+    {
+     "l": "C",
+     "t": "10, 14, 11"
+    },
+    {
+     "l": "D",
+     "t": "10, 10, 14 GATE 2022 Computer Science and Information Technology (CS)"
+    }
+   ],
+   "after": [
+    {
+     "l": "A",
+     "t": "1, 10, 11"
+    },
+    {
+     "l": "B",
+     "t": "1, 10, 14"
+    },
+    {
+     "l": "C",
+     "t": "10, 14, 11"
+    },
+    {
+     "l": "D",
+     "t": "10, 10, 14"
+    }
+   ],
+   "reason": "Removed the page-header text that leaked into option (D).",
+   "source": "pdf p.17"
+  },
+  {
+   "id": "cse-2022-cs-11",
+   "field": "tags",
+   "before": [
+    "c-prog"
+   ],
+   "after": [
+    "pointers",
+    "arrays",
+    "pointer-arithmetic"
+   ],
+   "reason": "Specific tags for the question's actual topic.",
+   "source": "pdf p.17"
+  },
+  {
+   "id": "cse-2022-cs-12",
+   "field": "options",
+   "before": [
+    {
+     "l": "A",
+     "t": "3"
+    },
+    {
+     "l": "B",
+     "t": "12"
+    },
+    {
+     "l": "C",
+     "t": "6"
+    },
+    {
+     "l": "D",
+     "t": "8 GATE 2022 Computer Science and Information Technology (CS)"
+    }
+   ],
+   "after": [
+    {
+     "l": "A",
+     "t": "3"
+    },
+    {
+     "l": "B",
+     "t": "12"
+    },
+    {
+     "l": "C",
+     "t": "6"
+    },
+    {
+     "l": "D",
+     "t": "8"
+    }
+   ],
+   "reason": "Removed the page-header text that leaked into option (D).",
+   "source": "pdf p.18"
+  },
+  {
+   "id": "cse-2022-cs-12",
+   "field": "figures",
+   "before": [],
+   "after": [
+    {
+     "f": "cse-2022/cs-12-1.svg",
+     "svg": "cse-2022/cs-12-1.svg",
+     "alt": "Enterprise network. A firewall has a link going left labelled To Internet. The firewall is linked to a top router (right) and to a left router (below). The top router is linked to a web server below it and to a right router. The left router connects to an Ethernet segment with several computers; the right router connects to a second Ethernet segment with several computers."
+    }
+   ],
+   "reason": "The network diagram was missing from the bank. Redrawn as SVG from the paper.",
+   "source": "pdf p.18"
+  },
+  {
+   "id": "cse-2022-cs-12",
+   "field": "topic",
+   "before": "datalink",
+   "after": "ip",
+   "reason": "Counting subnets separated by routers is a network-layer (IP) question, not data link.",
+   "source": "pdf p.18"
+  },
+  {
+   "id": "cse-2022-cs-12",
+   "field": "tags",
+   "before": [
+    "data-link"
+   ],
+   "after": [
+    "subnetting",
+    "routers",
+    "broadcast-domains"
+   ],
+   "reason": "Specific tags for the question's actual topic.",
+   "source": "pdf p.18"
+  }
+ ]
+}
