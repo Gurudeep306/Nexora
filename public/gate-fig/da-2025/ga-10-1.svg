@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 330" font-family="Arial, Helvetica, sans-serif">
+  <g fill="none" stroke="currentColor">
+    <line x1="70" y1="222" x2="500" y2="222" stroke-width="0.8" stroke-opacity="0.35"/>
+    <line x1="70" y1="174" x2="500" y2="174" stroke-width="0.8" stroke-opacity="0.35"/>
+    <line x1="70" y1="126" x2="500" y2="126" stroke-width="0.8" stroke-opacity="0.35"/>
+    <line x1="70" y1="78" x2="500" y2="78" stroke-width="0.8" stroke-opacity="0.35"/>
+    <rect x="70" y="30" width="430" height="240" stroke-width="1.4"/>
+    <line x1="65" y1="270" x2="70" y2="270" stroke-width="1.4"/>
+    <line x1="65" y1="222" x2="70" y2="222" stroke-width="1.4"/>
+    <line x1="65" y1="174" x2="70" y2="174" stroke-width="1.4"/>
+    <line x1="65" y1="126" x2="70" y2="126" stroke-width="1.4"/>
+    <line x1="65" y1="78" x2="70" y2="78" stroke-width="1.4"/>
+    <line x1="65" y1="30" x2="70" y2="30" stroke-width="1.4"/>
+    <rect x="99.75" y="174" width="48" height="96" stroke-width="2"/>
+    <rect x="207.25" y="78" width="48" height="192" stroke-width="2"/>
+    <rect x="314.75" y="126" width="48" height="144" stroke-width="2"/>
+    <rect x="422.25" y="222" width="48" height="48" stroke-width="2"/>
+  </g>
+  <g fill="currentColor" font-size="16" text-anchor="middle">
+    <text x="60" y="275" text-anchor="end">0</text>
+    <text x="60" y="227" text-anchor="end">10</text>
+    <text x="60" y="179" text-anchor="end">20</text>
+    <text x="60" y="131" text-anchor="end">30</text>
+    <text x="60" y="83" text-anchor="end">40</text>
+    <text x="60" y="35" text-anchor="end">50</text>
+    <text x="123.75" y="165">20</text>
+    <text x="123.75" y="292">5</text>
+    <text x="231.25" y="69">40</text>
+    <text x="231.25" y="292">6</text>
+    <text x="338.75" y="117">30</text>
+    <text x="338.75" y="292">7</text>
+    <text x="446.25" y="213">10</text>
+    <text x="446.25" y="292">8</text>
+    <text x="285" y="320">Number of patients per shift (X)</text>
+    <text x="22" y="150" transform="rotate(-90 22 150)">Number of shifts</text>
+  </g>
+</svg>

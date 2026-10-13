@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 336" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="currentColor">
+<g stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round">
+<polygon points="246,34 32,300 332,300"/>
+<line x1="139" y1="167" x2="289" y2="167"/>
+</g>
+<g text-anchor="middle">
+<text x="248" y="24">P</text>
+<text x="124" y="166">S</text>
+<text x="305" y="174">T</text>
+<text x="24" y="324">Q</text>
+<text x="342" y="324">R</text>
+</g>
+</svg>
