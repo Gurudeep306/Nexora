@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 380" role="img" aria-label="Weighted undirected graph on vertices a, b, c, d, e, f, g with g in the centre">
+  <g stroke="currentColor" stroke-width="2" fill="none">
+    <line x1="110.2" y1="171.0" x2="243.8" y2="81.0"/>
+    <line x1="116.0" y1="190.0" x2="424.0" y2="190.0"/>
+    <line x1="110.4" y1="208.7" x2="243.6" y2="296.3"/>
+    <line x1="306.0" y1="62.0" x2="611.0" y2="62.0"/>
+    <line x1="300.0" y1="81.3" x2="430.0" y2="170.7"/>
+    <line x1="300.2" y1="296.0" x2="429.8" y2="209.0"/>
+    <line x1="306.0" y1="315.0" x2="611.0" y2="315.0"/>
+    <line x1="486.1" y1="170.8" x2="616.9" y2="81.2"/>
+    <line x1="492.0" y1="190.0" x2="801.0" y2="190.0"/>
+    <line x1="486.3" y1="208.9" x2="616.7" y2="296.1"/>
+    <line x1="673.2" y1="81.0" x2="806.8" y2="171.0"/>
+    <line x1="673.4" y1="296.3" x2="806.6" y2="208.7"/>
+    <circle cx="82" cy="190" r="34"/>
+    <circle cx="272" cy="62" r="34"/>
+    <circle cx="645" cy="62" r="34"/>
+    <circle cx="458" cy="190" r="34"/>
+    <circle cx="835" cy="190" r="34"/>
+    <circle cx="272" cy="315" r="34"/>
+    <circle cx="645" cy="315" r="34"/>
+  </g>
+  <g fill="currentColor" font-family="Arial, Helvetica, sans-serif" font-size="28" text-anchor="middle">
+    <text x="82" y="200">a</text>
+    <text x="272" y="72">b</text>
+    <text x="645" y="72">c</text>
+    <text x="458" y="200">g</text>
+    <text x="835" y="200">d</text>
+    <text x="272" y="325">f</text>
+    <text x="645" y="325">e</text>
+  </g>
+  <g fill="currentColor" font-family="Arial, Helvetica, sans-serif" font-size="26" text-anchor="middle">
+    <text x="155" y="113">1</text>
+    <text x="270" y="179">2</text>
+    <text x="155" y="285">1</text>
+    <text x="458" y="45">3</text>
+    <text x="372" y="113">2</text>
+    <text x="337" y="245">2</text>
+    <text x="458" y="355">3</text>
+    <text x="533" y="115">2</text>
+    <text x="642" y="179">2</text>
+    <text x="560" y="243">2</text>
+    <text x="760" y="111">1</text>
+    <text x="762" y="283">1</text>
+  </g>
+</svg>
