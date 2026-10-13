@@ -1,0 +1,5174 @@
+{
+  "paper": "da-2024",
+  "version": 2,
+  "solutions": {
+    "da-2024-ga-1": {
+      "approach": "Read the given chain as a scale of one idea: sick → infirm → moribund is *ill → weak → dying*. The second chain must be the same idea of foolishness growing stronger: silly → ? → daft. Pick the option that means *foolish/senseless*.",
+      "concepts": [
+        "Word analogy (degree of intensity)",
+        "Vocabulary"
+      ],
+      "steps": [
+        {
+          "title": "Decode the first chain",
+          "body": "- **sick**: unwell (mild)\n- **infirm**: physically weak, frail — stronger\n- **moribund**: at the point of death — strongest\n\nOne idea (ill-health), rising in intensity."
+        },
+        {
+          "title": "Fix the theme of the second chain",
+          "body": "**silly** = lacking good sense (mild); **daft** = senseless, crazy (strong). The blank must be a word for *lacking sense* that sits between them."
+        },
+        {
+          "title": "Test the options",
+          "body": "- **frown**: a facial expression — not about sense.\n- **fawn**: a young deer / to flatter servilely — off-theme.\n- **vein**: a blood vessel or a streak/mood — off-theme.\n- **vain**: futile, *senseless*, foolishly conceited — on-theme.\n\nOnly **vain** belongs to the foolishness scale."
+        }
+      ],
+      "answer": {
+        "value": "**vain** — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "*frown* is a facial expression of displeasure; it says nothing about lack of sense."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "*fawn* (a young deer; to flatter) is unrelated — a distractor that only looks like a vocabulary word."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "*vein* is a homophone trap for *vain*; it means a blood vessel or a streak."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "*vain* means futile/senseless (as in *a vain attempt*), fitting between *silly* and *daft*."
+        }
+      ],
+      "shortcut": "Three of the four options are not even about sense or folly; the homophone pair vein/vain is a hint that the spelling matters — pick the adjective.",
+      "pitfalls": [
+        "Choosing *vein* by sound — it is a noun with an unrelated meaning."
+      ],
+      "verification": "Check the parallel: both chains are adjective → adjective → adjective of one theme. *silly → vain → daft* keeps all three as adjectives of foolishness, as *sick → infirm → moribund* are adjectives of ill-health."
+    },
+    "da-2024-ga-2": {
+      "approach": "Find a small group of regions that already forces a contradiction with 3 colours: the 3 circle sectors plus the 4 trapezoids around them. Then show a 4-colouring of all 15 parts exists, so the minimum is exactly 4.",
+      "concepts": [
+        "Map colouring",
+        "Graph colouring / chromatic number"
+      ],
+      "given": "15 parts: 3 sectors of the circle, 4 trapezoids between circle and rectangle, and 8 parts (4 sides, 4 corners) between rectangle and ellipse. Parts touching only at a corner may share a colour.",
+      "steps": [
+        {
+          "title": "The three sectors need 3 colours",
+          "body": "The three sectors of the circle meet pairwise along the radii, so they are mutually adjacent: colour them **1** (upper-left), **2** (upper-right), **3** (bottom).",
+          "scene": {
+            "tones": {
+              "UL": "cat1",
+              "UR": "cat2",
+              "Bt": "cat3"
+            },
+            "caption": "Sectors: UL = 1, UR = 2, Bt = 3"
+          }
+        },
+        {
+          "title": "Which sectors each trapezoid touches",
+          "body": "The radii point up, lower-left and lower-right, and the diagonals meet the circle at upper-left, upper-right, lower-left and lower-right. So the arc of\n- the **top** trapezoid contains the upward radius → touches UL and UR;\n- the **left** trapezoid contains the lower-left radius → touches UL and Bt;\n- the **right** trapezoid contains the lower-right radius → touches UR and Bt;\n- the **bottom** trapezoid touches only Bt.\n\nNeighbouring trapezoids also share a diagonal edge (top–left, top–right, left–bottom, right–bottom)."
+        },
+        {
+          "title": "With 3 colours every choice is forced",
+          "body": "- Top touches UL(1), UR(2) → must be **3**.\n- Left touches UL(1), Bt(3) → must be **2**.\n- Right touches UR(2), Bt(3) → must be **1**.\n\nThe bottom trapezoid touches Bt(3), Left(2) and Right(1): all three colours are used up. **Contradiction** — 3 colours are not enough.",
+          "scene": {
+            "tones": {
+              "UL": "cat1",
+              "UR": "cat2",
+              "Bt": "cat3",
+              "T": "cat3",
+              "L": "cat2",
+              "R": "cat1",
+              "Bm": "error"
+            },
+            "subs": {
+              "T": "3",
+              "L": "2",
+              "R": "1",
+              "Bm": "?"
+            },
+            "caption": "Bottom trapezoid sees colours 3, 2, 1 → needs a 4th"
+          }
+        },
+        {
+          "title": "4 colours suffice for all 15 parts",
+          "body": "Give the bottom trapezoid colour **4**. Outer parts: top/left/bottom sides touch trapezoids coloured 3, 2, 4 → colour them **1**; the right side touches R(1) → colour **2**. Each corner part touches only its two side parts (it meets the rectangle at a single point): TL, BL between 1 and 1 → **2**; TR, BR between 1 and 2 → **3**. No two adjacent parts share a colour.",
+          "scene": {
+            "tones": {
+              "UL": "cat1",
+              "UR": "cat2",
+              "Bt": "cat3",
+              "T": "cat3",
+              "L": "cat2",
+              "R": "cat1",
+              "Bm": "success"
+            },
+            "subs": {
+              "T": "3",
+              "L": "2",
+              "R": "1",
+              "Bm": "4"
+            },
+            "caption": "A valid 4-colouring exists → minimum = 4"
+          }
+        }
+      ],
+      "answer": {
+        "value": "**4** colours — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "3 colours fail on the bottom trapezoid; an explicit 4-colouring of all 15 parts exists."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "3 is forced on the three sectors and then on the top, left and right trapezoids, leaving none for the bottom trapezoid."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "5 is an upper bound guess; a 4-colouring is shown explicitly, so 5 is not the minimum."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "6 over-counts — perhaps by treating corner-touching parts as adjacent, which the question excludes."
+        }
+      ],
+      "shortcut": "A planar map never needs more than 4 colours (Four Colour Theorem), so the answer is 3 or 4; finding one forced contradiction with 3 colours settles it at 4.",
+      "pitfalls": [
+        "Counting corner contacts as adjacency (the outer corner parts touch the rectangle only at a point).",
+        "Assuming a ring of 4 trapezoids is 2-colourable on its own and forgetting the sectors they also touch."
+      ],
+      "verification": "Lower bound: the 7 inner parts are not 3-colourable (every colour is forced). Upper bound: the explicit colouring above uses 4 colours with no conflict. Four Colour Theorem agrees (≤ 4).",
+      "animation": {
+        "kind": "graph",
+        "title": "Adjacency of the inner 7 parts",
+        "nodes": [
+          {
+            "id": "UL",
+            "x": -1,
+            "y": -0.6
+          },
+          {
+            "id": "UR",
+            "x": 1,
+            "y": -0.6
+          },
+          {
+            "id": "Bt",
+            "x": 0,
+            "y": 1
+          },
+          {
+            "id": "T",
+            "x": 0,
+            "y": -2.4
+          },
+          {
+            "id": "L",
+            "x": -2.6,
+            "y": 0.4
+          },
+          {
+            "id": "R",
+            "x": 2.6,
+            "y": 0.4
+          },
+          {
+            "id": "Bm",
+            "x": 0,
+            "y": 2.8
+          }
+        ],
+        "edges": [
+          {
+            "from": "UL",
+            "to": "UR"
+          },
+          {
+            "from": "UR",
+            "to": "Bt"
+          },
+          {
+            "from": "Bt",
+            "to": "UL"
+          },
+          {
+            "from": "T",
+            "to": "UL"
+          },
+          {
+            "from": "T",
+            "to": "UR"
+          },
+          {
+            "from": "L",
+            "to": "UL"
+          },
+          {
+            "from": "L",
+            "to": "Bt"
+          },
+          {
+            "from": "R",
+            "to": "UR"
+          },
+          {
+            "from": "R",
+            "to": "Bt"
+          },
+          {
+            "from": "Bm",
+            "to": "Bt"
+          },
+          {
+            "from": "T",
+            "to": "L"
+          },
+          {
+            "from": "T",
+            "to": "R"
+          },
+          {
+            "from": "L",
+            "to": "Bm"
+          },
+          {
+            "from": "R",
+            "to": "Bm"
+          }
+        ],
+        "caption": "UL, UR, Bt = circle sectors; T, L, R, Bm = trapezoids"
+      }
+    },
+    "da-2024-ga-3": {
+      "approach": "Divisibility by 3 depends only on the digit sum. The five digits sum to 21, so a 4-digit choice (dropping one digit $d$) works exactly when $21 - d$ is a multiple of 3, i.e. $d$ is itself a multiple of 3. Count the valid digit sets, then arrange.",
+      "concepts": [
+        "Divisibility rule for 3",
+        "Permutations"
+      ],
+      "steps": [
+        {
+          "title": "Sum of all five digits",
+          "body": "$1 + 3 + 4 + 6 + 7 = 21$, which is divisible by 3."
+        },
+        {
+          "title": "Which digit can be left out",
+          "body": "Using 4 distinct digits means omitting exactly one digit $d$. The digit sum is $21 - d$, divisible by 3 iff $d$ is divisible by 3: $d \\in \\{3, 6\\}$.\n\n- omit 3: $\\{1, 4, 6, 7\\}$, sum $18$ ✓\n- omit 6: $\\{1, 3, 4, 7\\}$, sum $15$ ✓\n- omit 1, 4 or 7: sums $20, 17, 14$ ✗"
+        },
+        {
+          "title": "Arrange each set",
+          "body": "No digit is 0, so every ordering of 4 distinct digits is a valid 4-digit number: $4! = 24$ per set.\n$$2 \\times 24 = 48$$"
+        }
+      ],
+      "answer": {
+        "value": "**48** — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "24 counts only one valid digit set (e.g. only $\\{1,4,6,7\\}$)."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Two valid digit sets, each arranged in $4! = 24$ ways: $48$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "72 would need three valid sets; omitting 1, 4 or 7 leaves a sum not divisible by 3."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "12 is $\\frac{4!}{2}$ — no reason to halve the arrangements."
+        }
+      ],
+      "shortcut": "Total 21 ≡ 0 (mod 3) ⇒ drop a multiple of 3 ⇒ 2 choices × 4! = 48.",
+      "pitfalls": [
+        "Worrying about a leading zero — there is no 0 among the digits, so all $4!$ orders count."
+      ],
+      "verification": "Brute check of the 5 possible omissions: sums 20, 18, 17, 15, 14 → exactly two (18, 15) are multiples of 3, giving $2 \\times 24 = 48$."
+    },
+    "da-2024-ga-4": {
+      "approach": "The terms after 2 are two interleaved geometric series: powers of $\\tfrac12$ and powers of $\\tfrac13$. Sum each with $\\frac{a}{1-r}$ and add 2.",
+      "concepts": [
+        "Infinite geometric series",
+        "Regrouping a convergent positive series"
+      ],
+      "steps": [
+        {
+          "title": "Split the series",
+          "body": "$$2 + \\left(\\tfrac12 + \\tfrac14 + \\tfrac18 + \\tfrac1{16} + \\cdots\\right) + \\left(\\tfrac13 + \\tfrac19 + \\tfrac1{27} + \\cdots\\right)$$\nAll terms are positive, so regrouping does not change the sum."
+        },
+        {
+          "title": "Sum each geometric series",
+          "body": "$$\\tfrac12 + \\tfrac14 + \\cdots = \\frac{1/2}{1 - 1/2} = \\frac{1/2}{1/2} = 1$$\n$$\\tfrac13 + \\tfrac19 + \\cdots = \\frac{1/3}{1 - 1/3} = \\frac{1/3}{2/3} = \\frac12$$"
+        },
+        {
+          "title": "Add",
+          "body": "$$2 + 1 + \\tfrac12 = \\tfrac72$$"
+        }
+      ],
+      "answer": {
+        "value": "$\\dfrac{7}{2}$ — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$\\tfrac{11}{3} = 2 + 1 + \\tfrac23$: uses $\\frac{1}{1-1/3} - \\frac13$ wrongly (or sums the $\\frac13$-series as $\\frac23$)."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$2 + 1 + \\tfrac12 = \\tfrac72$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$\\tfrac{13}{4}$ treats the $\\frac12$-series as summing to $\\frac34$ — a partial sum, not the limit."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$\\tfrac92 = 2 + 2 + \\tfrac12$: uses $\\frac{1}{1-r}$ (which includes the term 1) for the halves series."
+        }
+      ],
+      "shortcut": "Remember $\\sum_{k\\ge1} r^k = \\frac{r}{1-r}$: $r = \\frac12 \\to 1$, $r = \\frac13 \\to \\frac12$.",
+      "pitfalls": [
+        "Using $\\frac{1}{1-r}$ (series starting at $r^0 = 1$) instead of $\\frac{r}{1-r}$."
+      ],
+      "verification": "Partial sum of the 8 written terms: $2 + 0.5 + 0.333 + 0.25 + 0.125 + 0.111 + 0.0625 + 0.037 = 3.419$; the remaining tails ($\\frac1{16}$ and $\\frac1{54}$) add $\\approx 0.081$, giving $3.5$ ✓."
+    },
+    "da-2024-ga-5": {
+      "approach": "The pie chart gives shares of **valid** votes, so first remove the invalid votes, then take B's and C's combined share $25\\% + 20\\% = 45\\%$.",
+      "concepts": [
+        "Data interpretation (pie chart)",
+        "Percentages"
+      ],
+      "given": "| Candidate | Share of valid votes |\n|---|---|\n| A | 40% |\n| B | 25% |\n| C | 20% |\n| D | 15% |\n\nVotes cast $= 1{,}15{,}000$; invalid $= 5{,}000$.",
+      "steps": [
+        {
+          "title": "Valid votes",
+          "body": "$$1{,}15{,}000 - 5{,}000 = 1{,}10{,}000$$"
+        },
+        {
+          "title": "Votes of B and of C separately",
+          "body": "$$B = 0.25 \\times 1{,}10{,}000 = 27{,}500$$\n$$C = 0.20 \\times 1{,}10{,}000 = 22{,}000$$"
+        },
+        {
+          "title": "Total for B and C",
+          "body": "$$27{,}500 + 22{,}000 = 49{,}500$$\nEquivalently $(25\\% + 20\\%) \\times 1{,}10{,}000 = 0.45 \\times 1{,}10{,}000 = 49{,}500$."
+        }
+      ],
+      "answer": {
+        "value": "**49,500** — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "45,000 is 45% of 1,00,000 — a wrong base."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "45% of the 1,10,000 valid votes."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "51,750 is 45% of 1,15,000 — forgets to remove the invalid votes."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "54,000 does not correspond to 45% of either base (it is ≈ 49% of 1,10,000)."
+        }
+      ],
+      "shortcut": "45% of 1,10,000 = 45% of 1,00,000 + 45% of 10,000 = 45,000 + 4,500.",
+      "pitfalls": [
+        "Applying the percentages to all votes cast (1,15,000) instead of valid votes."
+      ],
+      "verification": "All four shares: A 44,000 + B 27,500 + C 22,000 + D 16,500 = 1,10,000 ✓; B + C = 27,500 + 22,000 = 49,500."
+    },
+    "da-2024-ga-6": {
+      "approach": "An inference must follow from the passage alone. The passage says only that *some* people, after a gene mutated, became able to digest milk — so the ability is tied to the mutated gene, and nothing is said about all or no humans.",
+      "concepts": [
+        "Inference from a passage",
+        "Quantifier scope (some / all / no)"
+      ],
+      "steps": [
+        {
+          "title": "What the passage asserts",
+          "body": "1. *Some* people began dairy farming.\n2. This coincided with mutations in a particular gene.\n3. Those mutations *resulted in* these people being able to digest dairy milk."
+        },
+        {
+          "title": "Eliminate the out-of-scope options",
+          "body": "- (A) \"All humans can digest milk\" and (B) \"No human can\" are universal claims; the passage speaks only of *some* people, and (B) even contradicts it.\n- (C) \"Essential for humans\" is a value judgement the passage never makes."
+        },
+        {
+          "title": "Confirm the remaining option",
+          "body": "(D) \"digestion of dairy milk resulted from a mutated gene\" restates point 3 (the mutations *resulted in* the ability). It follows directly."
+        }
+      ],
+      "answer": {
+        "value": "In human beings, digestion of dairy milk resulted from a mutated gene — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Over-generalises *some people* to *all human beings*."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Contradicts the passage: these people did develop the ability."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Necessity/essentiality is never discussed — outside the passage."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Directly supported: the mutations *resulted in* the ability to digest milk."
+        }
+      ],
+      "shortcut": "Eliminate the absolute words (*all*, *no*, *essential*) first; the remaining option paraphrases the passage.",
+      "pitfalls": [
+        "Bringing in outside knowledge (lactose intolerance statistics) instead of reading only the passage."
+      ],
+      "verification": "Option D uses only the passage's own causal link (mutation → ability); every other option needs a fact not stated."
+    },
+    "da-2024-ga-7": {
+      "approach": "Each birth is an independent fair trial, so the number of girls in 3 children is Binomial$(3, \\tfrac12)$: $P(2 \\text{ girls}) = \\binom32 (\\tfrac12)^3$.",
+      "concepts": [
+        "Independent events",
+        "Binomial probability"
+      ],
+      "steps": [
+        {
+          "title": "Sample space",
+          "body": "Each child is B or G with probability $\\tfrac12$, independently, so there are $2^3 = 8$ equally likely sequences, each with probability $\\left(\\tfrac12\\right)^3 = \\tfrac18$."
+        },
+        {
+          "title": "Count the favourable orders",
+          "body": "Two girls and one boy: the boy can be 1st, 2nd or 3rd → GGB, GBG, BGG, i.e. $\\binom32 = 3$ sequences."
+        },
+        {
+          "title": "Probability",
+          "body": "$$P = 3 \\times \\tfrac18 = \\tfrac38$$",
+          "scene": {
+            "bars": [
+              {
+                "label": "0 girls",
+                "value": 1,
+                "display": "1/8"
+              },
+              {
+                "label": "1 girl",
+                "value": 3,
+                "display": "3/8"
+              },
+              {
+                "label": "2 girls",
+                "value": 3,
+                "display": "3/8",
+                "tone": "success"
+              },
+              {
+                "label": "3 girls",
+                "value": 1,
+                "display": "1/8"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "$\\dfrac38$ — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "3 favourable orders out of 8 equally likely sequences."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$\\tfrac18$ is one particular order (e.g. GGB) — forgets the $\\binom32$ arrangements."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$\\tfrac14$ comes from treating the 4 gender *counts* (0–3 girls) as equally likely."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$\\tfrac12$ is $P(\\text{at least 2 girls}) = \\tfrac38 + \\tfrac18$, not exactly 2."
+        }
+      ],
+      "shortcut": "Row 3 of Pascal's triangle is 1 3 3 1 over 8: exactly 2 girls → 3/8.",
+      "pitfalls": [
+        "Treating the outcomes \"0, 1, 2, 3 girls\" as equally likely."
+      ],
+      "verification": "Distribution sums to 1: $\\tfrac{1 + 3 + 3 + 1}{8} = 1$ ✓.",
+      "animation": {
+        "kind": "bars",
+        "title": "Number of girls among 3 children",
+        "bars": [
+          {
+            "label": "0 girls",
+            "value": 1,
+            "display": "1/8"
+          },
+          {
+            "label": "1 girl",
+            "value": 3,
+            "display": "3/8"
+          },
+          {
+            "label": "2 girls",
+            "value": 3,
+            "display": "3/8"
+          },
+          {
+            "label": "3 girls",
+            "value": 1,
+            "display": "1/8"
+          }
+        ]
+      }
+    },
+    "da-2024-ga-8": {
+      "approach": "Only the **gains** matter (both persons invest ₹50,000 in total). Let fund A's return be $r$; write each person's gain and use Gain₁ − Gain₂ = ₹500.",
+      "concepts": [
+        "Percentages",
+        "Linear equation"
+      ],
+      "given": "| | A | B | C | Total |\n|---|---|---|---|---|\n| Person 1 | 10,000 | 20,000 | 20,000 | 50,000 |\n| Person 2 | 20,000 | 15,000 | 15,000 | 50,000 |\n\nReturns: B = C = 15%, A = $r$. Person 1 ends with ₹500 more.",
+      "steps": [
+        {
+          "title": "Principals are equal, so compare gains",
+          "body": "Both invest $10{,}000 + 20{,}000 + 20{,}000 = 20{,}000 + 15{,}000 + 15{,}000 = 50{,}000$. So Person 1's gain exceeds Person 2's by ₹500."
+        },
+        {
+          "title": "Gains",
+          "body": "Person 1: $10{,}000\\,r + 0.15 \\times 40{,}000 = 10{,}000\\,r + 6{,}000$\n\nPerson 2: $20{,}000\\,r + 0.15 \\times 30{,}000 = 20{,}000\\,r + 4{,}500$"
+        },
+        {
+          "title": "Solve",
+          "body": "$$(10{,}000\\,r + 6{,}000) - (20{,}000\\,r + 4{,}500) = 500$$\n$$1{,}500 - 10{,}000\\,r = 500 \\;\\Rightarrow\\; 10{,}000\\,r = 1{,}000 \\;\\Rightarrow\\; r = 0.10 = 10\\%$$"
+        }
+      ],
+      "answer": {
+        "value": "**10%** — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "At 7.5%: gains 6,750 vs 6,000 → difference 750, not 500."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "At 10%: gains 7,000 vs 6,500 → difference exactly 500."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "At 15%: gains 7,500 vs 7,500 → no difference."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "At 20%: gains 8,000 vs 8,500 → Person 2 ahead by 500 (sign reversed)."
+        }
+      ],
+      "shortcut": "Person 1 has ₹10,000 more in B+C (earning 15% → ₹1,500 extra) and ₹10,000 less in A. The net lead is ₹500, so ₹10,000 in A earns ₹1,000 → 10%.",
+      "pitfalls": [
+        "Getting the sign backwards and answering 20% (where Person 2 leads by ₹500)."
+      ],
+      "verification": "Final amounts at 10%: Person 1 $= 11{,}000 + 23{,}000 + 23{,}000 = 57{,}000$; Person 2 $= 22{,}000 + 17{,}250 + 17{,}250 = 56{,}500$; difference ₹500 ✓."
+    },
+    "da-2024-ga-9": {
+      "approach": "First derive the **opposite-face pairs** from the three views (a face's opposite is the one number never seen next to it). Then in each net, faces two apart in a straight strip are opposite; keep the net whose opposite pairs match. Finally confirm the corner orientation.",
+      "concepts": [
+        "Dice: opposite faces",
+        "Cube nets"
+      ],
+      "given": "Views (top, left, right): (5, 4, 1), (4, 6, 3), (2, 6, 5).\n\nEvery net has the same shape: a square $p$ left of the top of a 4-square column $c_1, c_2, c_3, c_4$, and a square $q$ right of $c_4$.",
+      "steps": [
+        {
+          "title": "Opposite pairs from the views",
+          "body": "Faces seen together are adjacent.\n- Neighbours of 4: 5, 1 (view 1), 6, 3 (view 2) → 4 is opposite **2**.\n- Neighbours of 6: 4, 3 (view 2), 2, 5 (view 3) → 6 is opposite **1**.\n- The remaining pair: 5 opposite **3**.\n\nOpposites: $\\{4,2\\}, \\{6,1\\}, \\{5,3\\}$."
+        },
+        {
+          "title": "Opposites in the net shape",
+          "body": "In the 4-square column, $c_1$ and $c_3$ are opposite, and $c_2$ and $c_4$ are opposite (alternate squares of a strip). The side squares $p$ (on $c_1$'s left) and $q$ (on $c_4$'s right) both fold onto the sides of that loop, on opposite sides: $p$ is opposite $q$."
+        },
+        {
+          "title": "Test each net",
+          "body": "| Net | $c_1$–$c_3$ | $c_2$–$c_4$ | $p$–$q$ | OK? |\n|---|---|---|---|---|\n| A | 1–6 ✓ | 4–2 ✓ | 5–3 ✓ | yes |\n| B | 1–2 ✗ | 4–6 ✗ | 5–3 | no |\n| C | 1–2 ✗ | 3–4 ✗ | 5–6 ✗ | no |\n| D | 1–6 ✓ | 4–3 ✗ | 5–2 ✗ | no |\n\nOnly net (A) survives."
+        },
+        {
+          "title": "Check orientation of net (A)",
+          "body": "Fold (A) with 4 as the front: 1 goes on top, 6 at the bottom, 2 at the back, 5 on the left and 3 on the right. Look at the top-front-left corner: going clockwise from the top we meet 1 (top) → 4 (front) → 5 (left), the same cyclic order as view 1 (5 → 1 → 4). Views 2 and 3 check the same way (corners 4-3-6 and 2-5-6), so the net folds into exactly this die."
+        }
+      ],
+      "answer": {
+        "value": "Net **(A)**",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Opposite pairs 1–6, 4–2, 5–3 match the views, and the corner orientations agree."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Puts 4 opposite 6 (and 1 opposite 2), but 4 and 6 are seen side by side in view 2, so they cannot be opposite."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Puts 5 opposite 6, but 5 and 6 are adjacent in view 3."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Puts 4 opposite 3 and 5 opposite 2, but 4 and 3 are adjacent in view 2 (and 2, 5 in view 3)."
+        }
+      ],
+      "shortcut": "Number 4 appears in two views with four different neighbours (5, 1, 6, 3), so its opposite is 2. Only net (A) places 4 and 2 on alternate squares of the column.",
+      "pitfalls": [
+        "Treating squares that are merely far apart in the drawing as opposite — only alternate squares of a straight strip (and the two side flaps here) are opposite.",
+        "Stopping at opposite pairs: a mirror-image net would also match them, so check one corner's orientation."
+      ],
+      "verification": "Independent check: in net (A), 6 is adjacent to 4, 2, 5 and 3 (all faces except its opposite 1) — exactly the neighbours of 6 seen in views 2 and 3. The orientation check in the last step rules out a mirror-image die."
+    },
+    "da-2024-ga-10": {
+      "approach": "A plane through both apexes contains the common axis, so it is an **axial section**. The axial section of one cone is an isosceles triangle; the two triangles share the base diameter and point in opposite directions, forming a rhombus.",
+      "concepts": [
+        "Axial cross-section of a cone",
+        "Rhombus"
+      ],
+      "steps": [
+        {
+          "title": "The plane contains the axis",
+          "body": "The two apexes lie on the common axis (one above, one below the shared base). A plane through both apexes therefore contains the whole axis and cuts the base circle along a **diameter**."
+        },
+        {
+          "title": "Section of each cone",
+          "body": "An axial plane cuts a right circular cone in an isosceles triangle: apex + the two ends of the diameter. Both triangles have sides = slant height $l$ and base = diameter $2r$."
+        },
+        {
+          "title": "Put them together",
+          "body": "The two triangles share the base diameter and lie on opposite sides of it. The outer boundary is a quadrilateral apex₁ → end₁ → apex₂ → end₂ with all four sides equal to $l$ — a **rhombus** (its diagonals are the axis $2h$ and the diameter $2r$, perpendicular bisectors of each other)."
+        }
+      ],
+      "answer": {
+        "value": "**A rhombus** — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Two congruent isosceles triangles on a common base form a quadrilateral with four equal sides."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "A triangle is the axial section of **one** cone only."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "An ellipse comes from a plane cutting a single cone obliquely, not through the apex."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "A plane section of two cones has no reason to produce six straight edges; the boundary has only 4 corners (2 apexes, 2 rim points)."
+        }
+      ],
+      "shortcut": "Draw the side view of the double cone: it is literally a diamond shape ◇.",
+      "pitfalls": [
+        "Thinking of conic sections (ellipse) — those arise from planes that do **not** pass through the apex."
+      ],
+      "verification": "Special case: if $h = r$ the diagonals $2h$ and $2r$ are equal and the rhombus is a square — still a rhombus, consistent."
+    },
+    "da-2024-da-1": {
+      "approach": "Recall the two standard facts: Poisson$(\\lambda)$ has $E[X] = \\operatorname{Var}(X) = \\lambda$, and the standard normal $N(0, 1)$ is by definition the normal with mean 0 and variance 1.",
+      "concepts": [
+        "Poisson distribution",
+        "Standard normal distribution"
+      ],
+      "steps": [
+        {
+          "title": "Statement (i): Poisson",
+          "body": "For $P(X = k) = \\dfrac{e^{-\\lambda}\\lambda^k}{k!}$:\n$$E[X] = \\lambda, \\qquad E[X(X-1)] = \\lambda^2$$\n$$\\operatorname{Var}(X) = E[X(X-1)] + E[X] - (E[X])^2 = \\lambda^2 + \\lambda - \\lambda^2 = \\lambda$$\nMean = variance = $\\lambda$ → **true**."
+        },
+        {
+          "title": "Statement (ii): standard normal",
+          "body": "$Z \\sim N(0, 1)$ has density $\\frac{1}{\\sqrt{2\\pi}} e^{-z^2/2}$, mean $0$ and variance $1$ — that is the definition of *standard*. → **true**."
+        },
+        {
+          "title": "Combine",
+          "body": "Both (i) and (ii) are true, which is option (A)."
+        }
+      ],
+      "answer": {
+        "value": "Both (i) and (ii) are true — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Both are standard facts: Poisson mean = variance = λ; N(0,1) has mean 0, variance 1."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "(ii) is the definition of the standard normal, so it cannot be false."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "(i) is true: $\\operatorname{Var} = \\lambda^2 + \\lambda - \\lambda^2 = \\lambda$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Both statements hold."
+        }
+      ],
+      "shortcut": "Poisson is the limit of Binomial$(n, p)$ with $np = \\lambda$: variance $np(1-p) \\to \\lambda$ as $p \\to 0$, equal to the mean.",
+      "pitfalls": [
+        "Confusing \"variance one\" with \"standard deviation one\" — for $N(0,1)$ both equal 1 anyway."
+      ],
+      "verification": "Binomial limit: $np = \\lambda$, $np(1-p) = \\lambda(1-p) \\to \\lambda$ — consistent with (i)."
+    },
+    "da-2024-da-2": {
+      "approach": "With only 3 tosses, \"at least 2 heads\" means at most 1 tail, so it cannot coexist with \"at least 2 tails\": the events are disjoint and $P(T \\cap S) = 0$.",
+      "concepts": [
+        "Mutually exclusive events",
+        "Sample space of coin tosses"
+      ],
+      "steps": [
+        {
+          "title": "Count heads and tails",
+          "body": "Every outcome has $h$ heads and $3 - h$ tails. $T$: $h \\ge 2$. $S$: $3 - h \\ge 2 \\iff h \\le 1$."
+        },
+        {
+          "title": "The events separately",
+          "body": "$T = \\{HHH, HHT, HTH, THH\\}$, $P(T) = \\tfrac48 = 0.5$.\n\n$S = \\{TTT, TTH, THT, HTT\\}$, $P(S) = \\tfrac48 = 0.5$.\n\nThe two lists share no outcome — together they are all 8 outcomes."
+        },
+        {
+          "title": "Intersect",
+          "body": "$T \\cap S$ needs $h \\ge 2$ **and** $h \\le 1$ — impossible. So $T \\cap S = \\varnothing$ and\n$$P(T \\cap S) = 0$$",
+          "scene": {
+            "hl": [
+              {
+                "c": 2,
+                "tone": "info"
+              },
+              {
+                "c": 3,
+                "tone": "warning"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "$P(T \\cap S) = 0$ — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "No outcome of 3 tosses has both ≥ 2 heads and ≥ 2 tails (that would need ≥ 4 tosses)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "0.5 is $P(T)$ (or $P(S)$) alone, not the intersection."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "0.25 is $P(T)P(S)$ — multiplying as if $T$ and $S$ were independent."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "1 is $P(T \\cup S)$: every outcome has ≥ 2 heads or ≥ 2 tails."
+        }
+      ],
+      "shortcut": "≥ 2 heads + ≥ 2 tails needs ≥ 4 coins; with 3 coins the intersection is empty.",
+      "pitfalls": [
+        "Multiplying $P(T)\\,P(S) = 0.25$ — the events are mutually exclusive, hence strongly **dependent**."
+      ],
+      "verification": "$P(T \\cup S) = P(T) + P(S) - P(T \\cap S) = 0.5 + 0.5 - 0 = 1$, matching the fact that every outcome lies in $T$ or $S$ ✓.",
+      "animation": {
+        "kind": "table",
+        "title": "All 8 outcomes",
+        "cols": [
+          "outcome",
+          "heads",
+          "in T (h ≥ 2)",
+          "in S (h ≤ 1)"
+        ],
+        "rows": [
+          [
+            "HHH",
+            3,
+            "✓",
+            ""
+          ],
+          [
+            "HHT",
+            2,
+            "✓",
+            ""
+          ],
+          [
+            "HTH",
+            2,
+            "✓",
+            ""
+          ],
+          [
+            "THH",
+            2,
+            "✓",
+            ""
+          ],
+          [
+            "HTT",
+            1,
+            "",
+            "✓"
+          ],
+          [
+            "THT",
+            1,
+            "",
+            "✓"
+          ],
+          [
+            "TTH",
+            1,
+            "",
+            "✓"
+          ],
+          [
+            "TTT",
+            0,
+            "",
+            "✓"
+          ]
+        ],
+        "caption": "No row has a ✓ in both T and S"
+      }
+    },
+    "da-2024-da-3": {
+      "approach": "For a $2 \\times 2$ matrix the eigenvalues solve $\\lambda^2 - (\\operatorname{tr})\\lambda + \\det = 0$; the sign of the discriminant $\\operatorname{tr}^2 - 4\\det$ decides real vs complex at once.",
+      "concepts": [
+        "Characteristic equation",
+        "Trace and determinant",
+        "Complex eigenvalues of real matrices"
+      ],
+      "steps": [
+        {
+          "title": "Trace and determinant",
+          "body": "$$\\operatorname{tr} M = 2 + 1 = 3, \\qquad \\det M = 2 \\cdot 1 - (-1)\\cdot 3 = 2 + 3 = 5$$"
+        },
+        {
+          "title": "Characteristic equation",
+          "body": "$$\\lambda^2 - 3\\lambda + 5 = 0, \\qquad \\Delta = 3^2 - 4 \\cdot 5 = 9 - 20 = -11 < 0$$",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "Eigenvalues",
+          "body": "$$\\lambda = \\frac{3 \\pm i\\sqrt{11}}{2}$$\nA negative discriminant with real coefficients gives a **complex conjugate pair**.",
+          "scene": {
+            "reveal": 4
+          }
+        }
+      ],
+      "answer": {
+        "value": "The eigenvalues are a complex conjugate pair $\\frac{3 \\pm i\\sqrt{11}}{2}$ — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The eigenvalues are not real ($\\Delta = -11 < 0$)."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$\\lambda = \\frac{3 \\pm i\\sqrt{11}}{2}$, conjugates of each other."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "A zero eigenvalue needs $\\det M = 0$, but $\\det M = 5$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "One positive and one negative real eigenvalue needs $\\det M < 0$; here $\\det M = 5 > 0$ and the roots are not even real."
+        }
+      ],
+      "shortcut": "$\\operatorname{tr}^2 = 9 < 4\\det = 20$ ⇒ complex pair, in five seconds.",
+      "pitfalls": [
+        "Computing $\\det M = 2 - 3 = -1$ by forgetting the minus sign of $-1$; that would wrongly suggest real eigenvalues of opposite signs (option D)."
+      ],
+      "verification": "Sum of roots $= \\frac{3 + 3}{2} = 3 = \\operatorname{tr} M$ ✓; product $= \\frac{9 + 11}{4} = 5 = \\det M$ ✓.",
+      "animation": {
+        "kind": "equation",
+        "title": "Eigenvalues of M",
+        "lines": [
+          {
+            "tex": "\\operatorname{tr}M = 3,\\quad \\det M = 2 + 3 = 5"
+          },
+          {
+            "tex": "\\lambda^2 - 3\\lambda + 5 = 0"
+          },
+          {
+            "tex": "\\Delta = 9 - 20 = -11 < 0",
+            "tone": "warning"
+          },
+          {
+            "tex": "\\lambda = \\tfrac{3 \\pm i\\sqrt{11}}{2}",
+            "tone": "success"
+          }
+        ],
+        "reveal": 1
+      }
+    },
+    "da-2024-da-4": {
+      "approach": "In an undirected DFS every edge is either a **tree** edge or a **back** edge (no cross/forward edges), and an edge is classified by the direction in which it is *first* explored. Exploring $(u,v)$ from $u$ while $v$ is still undiscovered (white) makes it a tree edge — the case the official key intends.",
+      "concepts": [
+        "DFS edge classification",
+        "White / gray / black vertices",
+        "Undirected graphs have no cross edges"
+      ],
+      "given": "| Item | Value |\n|---|---|\n| Graph | undirected, unweighted, DFS from $s$ |\n| $d[u]$ | BFS (shortest-path) distance from $s$ |\n| Edge | $(u,v)$ with $d[u] < d[v]$, first explored $u \\to v$ |",
+      "steps": [
+        {
+          "title": "Edge types in an undirected DFS",
+          "body": "When DFS at $u$ examines $(u,v)$ for the first time, $v$ is either **white** (undiscovered) → the edge becomes a **tree** edge, or **gray** (an ancestor of $u$ still on the stack) → a **back** edge. $v$ cannot be black: a black $v$ would already have scanned $(v,u)$, so the edge would not be explored first from $u$. Hence undirected DFS has **no cross (or forward) edges**, and \"gray\" is a vertex colour, not an edge type.",
+          "scene": {
+            "caption": "Order 1: s visits u first",
+            "edgeTones": {},
+            "tones": {
+              "s": "accent"
+            },
+            "subs": {
+              "s": "d=0",
+              "u": "d=1",
+              "a": "d=1",
+              "v": "d=2",
+              "w": "d=2"
+            }
+          }
+        },
+        {
+          "title": "Typical case: v is still white",
+          "body": "$d[u] < d[v]$ means $v$ is farther from $s$ than $u$. In the natural run (adjacency of $s$ = $[u, a]$), DFS reaches $u$ first: $s \\to u$, and $u$ scans $v$ while $v$ is still **white**, so $u \\to v$ discovers $v$ and $(u,v)$ becomes a **tree** edge. This is the reasoning behind the official answer.",
+          "scene": {
+            "caption": "Order 1: s → u → v — (u, v) is a tree edge",
+            "tones": {
+              "s": "info",
+              "u": "accent",
+              "v": "success"
+            },
+            "edgeTones": {
+              "s>u": "info",
+              "u>v": "success"
+            }
+          }
+        },
+        {
+          "title": "Eliminate the other options",
+          "body": "**cross**: impossible in an undirected DFS (step 1). **gray**: not an edge class at all. That leaves *tree* vs *back*; the key picks **tree** — option (A)."
+        },
+        {
+          "title": "Caveat: a back edge is also possible",
+          "body": "DFS depth is not BFS distance. Same graph, adjacency $s:[a,u]$, $v:[w,u,a]$, $w:[u,v]$, $u:[v,s]$: DFS goes $s \\to a \\to v \\to w \\to u$. At $u$ the first edge scanned is $(u,v)$, and $v$ is a **gray ancestor** of $u$ — so the edge is first explored $u \\to v$ yet it is a **back** edge, although $d[u]=1<d[v]=2$. The question is therefore ambiguous; the official key (A) is kept and the record is flagged for review.",
+          "scene": {
+            "caption": "Order 2: s → a → v → w → u, then u scans v (gray) — back edge",
+            "tones": {
+              "s": "info",
+              "a": "info",
+              "v": "warning",
+              "w": "info",
+              "u": "accent"
+            },
+            "edgeTones": {
+              "s>a": "info",
+              "a>v": "info",
+              "v>w": "info",
+              "w>u": "info",
+              "u>v": "error"
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "**tree** edge — option (A) (official key; see the caveat in the last step)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Official answer: when $u$ scans $(u,v)$ and $v$ is still undiscovered, $v$ is discovered from $u$ and the edge becomes a tree edge."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Undirected DFS never produces cross edges — any edge to an already finished vertex would have been explored from that vertex first."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "A back edge needs $v$ to be a gray ancestor of $u$; the key rejects it (though, as shown in the last step, it can happen, which makes the question ambiguous)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "\"Gray\" is a vertex colour (discovered, not finished) in DFS, not a type of edge."
+        }
+      ],
+      "shortcut": "Undirected DFS has only tree and back edges; \"cross\" and \"gray\" are out immediately. The intended reading \"u is closer to s, so u reaches v first\" gives tree.",
+      "pitfalls": [
+        "Choosing \"cross\": cross edges exist only in DFS of directed graphs.",
+        "Treating \"gray\" as an edge type — it is the colour of a vertex on the recursion stack.",
+        "Assuming DFS depth equals BFS distance $d[\\cdot]$; it does not, which is exactly why a back edge is also possible here."
+      ],
+      "verification": "Trace both adjacency orders on the 5-vertex graph in the animation: order 1 makes $(u,v)$ a tree edge, order 2 a back edge, while $d[u]=1<d[v]=2$ in both. The official key (Q.14 in the IISc final key) is A.",
+      "animation": {
+        "kind": "graph",
+        "title": "DFS on a graph with d[u] < d[v]",
+        "caption": "BFS distances shown under each vertex",
+        "nodes": [
+          {
+            "id": "s",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "id": "u",
+            "x": 1,
+            "y": 1.4
+          },
+          {
+            "id": "a",
+            "x": 3,
+            "y": 1.4
+          },
+          {
+            "id": "w",
+            "x": 0.6,
+            "y": 2.8
+          },
+          {
+            "id": "v",
+            "x": 2.4,
+            "y": 2.8
+          }
+        ],
+        "edges": [
+          {
+            "from": "s",
+            "to": "u"
+          },
+          {
+            "from": "s",
+            "to": "a"
+          },
+          {
+            "from": "a",
+            "to": "v"
+          },
+          {
+            "from": "v",
+            "to": "w"
+          },
+          {
+            "from": "w",
+            "to": "u"
+          },
+          {
+            "from": "u",
+            "to": "v"
+          }
+        ]
+      }
+    },
+    "da-2024-da-5": {
+      "approach": "Second-derivative test: $f'(x^*)=0$ makes $x^*$ a stationary point and $f''(x^*)>0$ makes $f$ curve upward there, so $x^*$ is a **strict local minimum**. Nothing about the rest of the real line is known, so \"global\" cannot be claimed.",
+      "concepts": [
+        "Second-derivative test",
+        "Local vs global extrema"
+      ],
+      "steps": [
+        {
+          "title": "Taylor expansion near x*",
+          "body": "For small $h$: $f(x^*+h) = f(x^*) + f'(x^*)h + \\tfrac12 f''(x^*)h^2 + o(h^2) = f(x^*) + \\tfrac12 f''(x^*)h^2 + o(h^2)$ since $f'(x^*)=0$."
+        },
+        {
+          "title": "Sign of the change",
+          "body": "Because $f''(x^*) > 0$, the term $\\tfrac12 f''(x^*)h^2 > 0$ dominates $o(h^2)$ for all small $h \\neq 0$, so $f(x^*+h) > f(x^*)$ in a neighbourhood of $x^*$: a **local minimum**."
+        },
+        {
+          "title": "Why not global",
+          "body": "Counter-example: $f(x) = x^3 - 3x$. Then $f'(1) = 3 - 3 = 0$ and $f''(1) = 6 > 0$, but $f(-3) = -27 + 9 = -18 < f(1) = -2$. So $x^*=1$ is a local but **not** a global minimum."
+        }
+      ],
+      "answer": {
+        "value": "**local minimum** — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$f'=0$ and $f''>0$ give $f(x^*+h) > f(x^*)$ for all small $h \\ne 0$ — a strict local minimum."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Only local information is given; $f(x)=x^3-3x$ at $x^*=1$ satisfies the conditions but is not a global minimum. (\"Necessarily\" fails.)"
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "A local maximum needs $f''(x^*) < 0$ — the opposite curvature."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Wrong curvature and wrong scope: a global maximum would need $f'' \\le 0$ near $x^*$ at least."
+        }
+      ],
+      "shortcut": "$f''>0$ → \"smile\" → minimum; the test is a local statement, so the answer is the local one.",
+      "pitfalls": [
+        "Upgrading to \"global minimum\" — that needs extra structure such as convexity of $f$ on all of $\\mathbb{R}$.",
+        "Mixing up the signs: $f''<0$ gives a maximum."
+      ],
+      "verification": "Check with $f(x)=x^2$: $f'(0)=0$, $f''(0)=2>0$ and $0$ is a minimum; the cubic counter-example shows it need not be global."
+    },
+    "da-2024-da-6": {
+      "approach": "Match each access discipline to the structure defined by it: FIFO is the queue, LIFO is the stack, and key-based lookup is what a hash table is built for.",
+      "concepts": [
+        "Stack (LIFO)",
+        "Queue (FIFO)",
+        "Hash table lookup"
+      ],
+      "steps": [
+        {
+          "title": "(p) First In First Out",
+          "body": "A **queue** removes elements in the order they were inserted (enqueue at the rear, dequeue at the front) → (p) − (ii)."
+        },
+        {
+          "title": "(q) Lookup operation",
+          "body": "A **hash table** maps a key to a slot with a hash function, giving expected $O(1)$ search (lookup) → (q) − (iii)."
+        },
+        {
+          "title": "(r) Last In First Out",
+          "body": "A **stack** pushes and pops at the same end, so the last element pushed is the first popped → (r) − (i)."
+        },
+        {
+          "title": "Pick the option",
+          "body": "(p) − (ii), (q) − (iii), (r) − (i) is option **(A)**."
+        }
+      ],
+      "answer": {
+        "value": "(p) − (ii), (q) − (iii), (r) − (i) — option **(A)**",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "FIFO–queue, lookup–hash table, LIFO–stack: all three pairs are correct."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Pairs lookup with stacks and LIFO with hash tables; a stack offers no efficient lookup and a hash table has no LIFO order."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Swaps FIFO and LIFO (stack is LIFO, not FIFO) and gives lookup to queues."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Gets lookup right but swaps the stack and queue disciplines."
+        }
+      ],
+      "pitfalls": [
+        "Swapping stack and queue: Stack = **L**IFO (plates), Queue = **F**IFO (ticket line)."
+      ],
+      "verification": "Only one option has FIFO → queue and LIFO → stack simultaneously (A); it also has lookup → hash table."
+    },
+    "da-2024-da-7": {
+      "approach": "The data are symmetric about the line $x_1 + x_2 = 0$; the max-margin separator is that line ($w \\propto (1,1)$, $b=0$). Support vectors are the points lying exactly on the margins $w^Tx + b = \\pm 1$, i.e. the points closest to the boundary.",
+      "concepts": [
+        "Hard-margin SVM",
+        "Support vectors",
+        "Geometric margin"
+      ],
+      "given": "| Point | $\\mathbf{x}$ | $y$ |\n|---|---|---|\n| $\\mathbf{x}_1$ | $(1,0)$ | $+1$ |\n| $\\mathbf{x}_2$ | $(0,1)$ | $+1$ |\n| $\\mathbf{x}_5$ | $(2,2)$ | $+1$ |\n| $\\mathbf{x}_3$ | $(0,-1)$ | $-1$ |\n| $\\mathbf{x}_4$ | $(-1,0)$ | $-1$ |\n| $\\mathbf{x}_6$ | $(-2,-2)$ | $-1$ |",
+      "steps": [
+        {
+          "title": "Margin for a unit direction (a, b)",
+          "body": "Project onto a unit normal $w=(a,b)$. Positives give $a$, $b$, $2a+2b$; negatives give $-b$, $-a$, $-2a-2b$. The gap between the classes is $\\min(a,b,2a+2b) - \\max(-b,-a,-2a-2b) = 2\\min(a, b, 2(a+b))$, which is positive only when $a, b > 0$.",
+          "scene": {
+            "caption": "Six points: + class (success), − class (error)"
+          }
+        },
+        {
+          "title": "Maximise the gap",
+          "body": "With $a, b > 0$, $2(a+b) > \\min(a,b)$, so the gap is $2\\min(a,b)$. Subject to $a^2+b^2=1$ it is largest when $a=b=\\tfrac{1}{\\sqrt2}$, giving gap $\\tfrac{2}{\\sqrt2}=\\sqrt2$. So $w \\propto (1,1)$ and the boundary is midway: $x_1 + x_2 = 0$ ($b=0$).",
+          "scene": {
+            "caption": "Max-margin boundary: x₁ + x₂ = 0 (dashed)",
+            "edgeTones": {
+              "L1>L2": "accent"
+            }
+          }
+        },
+        {
+          "title": "Scale to the canonical form",
+          "body": "Take $w=(1,1)$, $b=0$. Then $y_i(w^T\\mathbf{x}_i)$: $\\mathbf{x}_1: 1$, $\\mathbf{x}_2: 1$, $\\mathbf{x}_3: -1\\cdot(-1)=1$, $\\mathbf{x}_4: -1\\cdot(-1)=1$, $\\mathbf{x}_5: 4$, $\\mathbf{x}_6: -1\\cdot(-4)=4$. All constraints $y_i(w^Tx_i+b)\\ge1$ hold, and exactly $\\mathbf{x}_1,\\mathbf{x}_2,\\mathbf{x}_3,\\mathbf{x}_4$ are **tight**.",
+          "scene": {
+            "caption": "Tight points x1, x2, x3, x4 lie on the margins x₁+x₂ = ±1",
+            "tones": {
+              "x1": "accent",
+              "x2": "accent",
+              "x3": "accent",
+              "x4": "accent",
+              "x5": "success",
+              "x6": "error"
+            }
+          }
+        },
+        {
+          "title": "Match with the options",
+          "body": "The support vectors (points on the margin) are $\\{\\mathbf{x}_1,\\mathbf{x}_2,\\mathbf{x}_3,\\mathbf{x}_4\\}$ — option **(D)**. $\\mathbf{x}_5$ and $\\mathbf{x}_6$ are at functional margin 4, far from the boundary, so they can never be support vectors."
+        }
+      ],
+      "answer": {
+        "value": "$\\{\\mathbf{x}_1,\\mathbf{x}_2,\\mathbf{x}_3,\\mathbf{x}_4\\}$ — option **(D)**",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$\\mathbf{x}_5=(2,2)$ has $w^T\\mathbf{x}_5 = 4$, well beyond the margin; also a support set needs points of **both** classes."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Again contains $\\mathbf{x}_5$ (not on the margin)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$\\mathbf{x}_5$ is not on the margin; the boundary defined by $\\mathbf{x}_4$ and $\\mathbf{x}_5$ alone would not be the max-margin one."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Exactly the four points with $y_i(w^T\\mathbf{x}_i+b)=1$ for $w=(1,1)$, $b=0$."
+        }
+      ],
+      "shortcut": "Points nearest the opposite class are the candidates: $\\mathbf{x}_1,\\mathbf{x}_2$ (distance $\\tfrac{1}{\\sqrt2}$ from $x_1+x_2=0$) and $\\mathbf{x}_3,\\mathbf{x}_4$; the far points $\\pm(2,2)$ are never support vectors — only (D) avoids $\\mathbf{x}_5$.",
+      "pitfalls": [
+        "Picking the \"extreme\" points $\\mathbf{x}_5$, $\\mathbf{x}_6$ — support vectors are the points **closest** to the boundary, not farthest.",
+        "Forgetting that support vectors must include points from both classes."
+      ],
+      "verification": "Distances to $x_1+x_2=0$: $\\mathbf{x}_1,\\ldots,\\mathbf{x}_4$ at $\\tfrac{1}{\\sqrt2}\\approx0.707$; $\\mathbf{x}_5,\\mathbf{x}_6$ at $\\tfrac{4}{\\sqrt2}\\approx2.83$. Margin width $\\tfrac{2}{\\lVert w\\rVert}=\\tfrac{2}{\\sqrt2}=\\sqrt2$, matching step 2.",
+      "animation": {
+        "kind": "graph",
+        "title": "Training points (y-axis up)",
+        "nodes": [
+          {
+            "id": "x1",
+            "label": "x1",
+            "x": 1,
+            "y": 0,
+            "sub": "(1,0) +"
+          },
+          {
+            "id": "x2",
+            "label": "x2",
+            "x": 0,
+            "y": -1,
+            "sub": "(0,1) +"
+          },
+          {
+            "id": "x5",
+            "label": "x5",
+            "x": 2,
+            "y": -2,
+            "sub": "(2,2) +"
+          },
+          {
+            "id": "x3",
+            "label": "x3",
+            "x": 0,
+            "y": 1,
+            "sub": "(0,−1) −"
+          },
+          {
+            "id": "x4",
+            "label": "x4",
+            "x": -1,
+            "y": 0,
+            "sub": "(−1,0) −"
+          },
+          {
+            "id": "x6",
+            "label": "x6",
+            "x": -2,
+            "y": 2,
+            "sub": "(−2,−2) −"
+          },
+          {
+            "id": "L1",
+            "label": "",
+            "x": -2,
+            "y": -2
+          },
+          {
+            "id": "L2",
+            "label": "",
+            "x": 2,
+            "y": 2
+          }
+        ],
+        "edges": [
+          {
+            "from": "L1",
+            "to": "L2",
+            "dashed": true
+          }
+        ],
+        "tones": {
+          "x1": "success",
+          "x2": "success",
+          "x5": "success",
+          "x3": "error",
+          "x4": "error",
+          "x6": "error",
+          "L1": "muted",
+          "L2": "muted"
+        },
+        "edgeTones": {
+          "L1>L2": "muted"
+        }
+      }
+    },
+    "da-2024-da-8": {
+      "approach": "Classify each method by what it models: PCA finds a low-dimensional projection (no labels), naïve Bayes models the joint $P(x, y)=P(y)P(x\\mid y)$ (generative), logistic regression models $P(y\\mid x)$ directly (discriminative).",
+      "concepts": [
+        "Generative vs discriminative models",
+        "Dimensionality reduction (PCA)"
+      ],
+      "steps": [
+        {
+          "title": "(p) PCA",
+          "body": "PCA projects data onto the top eigenvectors of the covariance matrix to keep most variance in fewer dimensions → **dimensionality reduction** (ii)."
+        },
+        {
+          "title": "(q) Naïve Bayes",
+          "body": "It learns the class prior $P(y)$ and class-conditional likelihoods $P(x_j\\mid y)$, i.e. the joint distribution, and classifies via Bayes' rule → **generative** (iii)."
+        },
+        {
+          "title": "(r) Logistic regression",
+          "body": "It models $P(y=1\\mid x) = \\sigma(w^Tx+b)$ directly, never $P(x)$ → **discriminative** (i)."
+        },
+        {
+          "title": "Pick the option",
+          "body": "(p) − (ii), (q) − (iii), (r) − (i) is option **(C)**."
+        }
+      ],
+      "answer": {
+        "value": "(p) − (ii), (q) − (iii), (r) − (i) — option **(C)**",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Calls PCA generative and logistic regression a dimensionality-reduction method — both wrong."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Swaps the generative/discriminative labels of naïve Bayes and logistic regression."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "PCA–dimensionality reduction, NB–generative, LR–discriminative: all correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Calls PCA generative and naïve Bayes dimensionality reduction."
+        }
+      ],
+      "pitfalls": [
+        "Swapping NB and LR: naïve Bayes and logistic regression form the classic *generative–discriminative pair* — NB models $P(x\\mid y)$, LR models $P(y\\mid x)$."
+      ],
+      "verification": "Only (C) and (B) map PCA correctly; of those, only (C) labels naïve Bayes generative."
+    },
+    "da-2024-da-9": {
+      "approach": "At convergence each $k$-means cluster is the set of points nearer to its centroid than to any other — a **Voronoi cell**, which is an intersection of half-planes and hence **convex**. A convex set containing $(1,1)$ and $(-1,1)$ contains the whole segment between them, in particular the midpoint $(0,1)$.",
+      "concepts": [
+        "k-means assignment rule",
+        "Voronoi cells are convex",
+        "Convex combination"
+      ],
+      "steps": [
+        {
+          "title": "The assignment region is a half-plane intersection",
+          "body": "$x$ joins cluster 3 iff $\\lVert x-\\mu_3\\rVert \\le \\lVert x-\\mu_j\\rVert$ for $j=1,2$. Squaring and cancelling $\\lVert x\\rVert^2$: $2(\\mu_j-\\mu_3)^T x \\le \\lVert\\mu_j\\rVert^2-\\lVert\\mu_3\\rVert^2$ — a **linear** inequality, i.e. a half-plane. Cluster 3's region is the intersection of two half-planes, hence convex."
+        },
+        {
+          "title": "Midpoint of the two given points",
+          "body": "$\\tfrac12\\left(\\begin{bmatrix}1\\\\1\\end{bmatrix}+\\begin{bmatrix}-1\\\\1\\end{bmatrix}\\right)=\\begin{bmatrix}0\\\\1\\end{bmatrix}$. Each linear inequality holds at both endpoints, so it holds at their average; therefore $(0,1)$ lies in cluster 3's region.",
+          "scene": {
+            "caption": "Midpoint (0,1) lies on the segment joining the two cluster-3 points",
+            "tones": {
+              "P": "success",
+              "Q": "success",
+              "D": "accent",
+              "A": "default",
+              "B": "default",
+              "C": "default"
+            },
+            "edgeTones": {
+              "P>Q": "success"
+            }
+          }
+        },
+        {
+          "title": "The other options are not forced",
+          "body": "$(0,0)$, $(0,2)$ and $(2,0)$ lie **outside** the segment, so a centroid of another cluster can be closer to them. E.g. with centroids $\\mu_3=(0,1)$, $\\mu_1=(0,-0.8)$ (and $\\mu_2$ far away): $(1,1)$ is at distance $1$ from $\\mu_3$ and $\\sqrt{1+1.8^2}=\\sqrt{4.24}\\approx2.06$ from $\\mu_1$, so it stays in cluster 3 (same for $(-1,1)$), yet $(0,0)$ is $0.8$ from $\\mu_1$ but $1$ from $\\mu_3$ — it goes to cluster 1. Centroids placed above or to the right similarly capture $(0,2)$ or $(2,0)$.",
+          "scene": {
+            "caption": "Points off the segment can belong to another cluster",
+            "tones": {
+              "P": "success",
+              "Q": "success",
+              "D": "success",
+              "A": "muted",
+              "B": "muted",
+              "C": "muted"
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "$\\begin{bmatrix}0\\\\1\\end{bmatrix}$ — option **(D)**",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$(0,0)$ is not a convex combination of $(1,1)$ and $(-1,1)$ (both have second coordinate 1); a centroid below, e.g. $(0,-0.8)$, can claim it."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$(0,2)$ is off the segment; a centroid above (e.g. $(0,2.5)$) can claim it."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$(2,0)$ is off the segment; a centroid to the right can claim it."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "$(0,1)$ is the midpoint of the two cluster-3 points; clusters are convex, so it must be in cluster 3."
+        }
+      ],
+      "shortcut": "k-means clusters are convex ⇒ the answer is the only option on the segment joining the two given points: the midpoint $(0,1)$.",
+      "pitfalls": [
+        "Picking $(0,0)$ because it is \"central\" to the data — convexity only guarantees points **between** members of the same cluster."
+      ],
+      "verification": "Direct check with the linear form: if $a^Tx\\le c$ at $(1,1)$ and $(-1,1)$, then at $(0,1)$: $a^T(0,1)=\\tfrac12[a^T(1,1)+a^T(-1,1)]\\le c$. ✓",
+      "animation": {
+        "kind": "graph",
+        "title": "Cluster-3 points and the options (y-axis up)",
+        "nodes": [
+          {
+            "id": "P",
+            "label": "(1,1)",
+            "x": 1,
+            "y": -1
+          },
+          {
+            "id": "Q",
+            "label": "(−1,1)",
+            "x": -1,
+            "y": -1
+          },
+          {
+            "id": "A",
+            "label": "A",
+            "x": 0,
+            "y": 0,
+            "sub": "(0,0)"
+          },
+          {
+            "id": "B",
+            "label": "B",
+            "x": 0,
+            "y": -2,
+            "sub": "(0,2)"
+          },
+          {
+            "id": "C",
+            "label": "C",
+            "x": 2,
+            "y": 0,
+            "sub": "(2,0)"
+          },
+          {
+            "id": "D",
+            "label": "D",
+            "x": 0,
+            "y": -1,
+            "sub": "(0,1)"
+          }
+        ],
+        "edges": [
+          {
+            "from": "P",
+            "to": "Q",
+            "dashed": true
+          }
+        ],
+        "tones": {
+          "P": "success",
+          "Q": "success"
+        }
+      }
+    },
+    "da-2024-da-10": {
+      "approach": "Naïve Bayes needs the class prior and, for every class, one Bernoulli parameter per attribute (conditional independence means no joint table). Count independent parameters: $1 + 2K$.",
+      "concepts": [
+        "Naïve Bayes conditional independence",
+        "Bernoulli parameters",
+        "Counting free parameters"
+      ],
+      "steps": [
+        {
+          "title": "Class prior",
+          "body": "Two classes: $P(y=1)=\\pi$ and $P(y=0)=1-\\pi$ → **1** free parameter.",
+          "scene": {
+            "reveal": 2,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Class-conditional likelihoods",
+          "body": "Naïve Bayes assumes $P(x_1,\\dots,x_K\\mid y)=\\prod_{j=1}^{K}P(x_j\\mid y)$. Each binary $x_j$ needs one parameter $\\theta_{jc}=P(x_j=1\\mid y=c)$ per class: $K$ attributes $\\times$ 2 classes $= 2K$ parameters.",
+          "scene": {
+            "reveal": 6,
+            "hl": [
+              {
+                "r": 1,
+                "tone": "accent"
+              },
+              {
+                "r": 2,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Total",
+          "body": "$1 + 2K = 2K + 1$ — option **(B)**. (Without the independence assumption the full joint $P(x\\mid y)$ would need $2(2^K-1)$ parameters.)",
+          "scene": {
+            "reveal": 8,
+            "hl": [
+              {
+                "r": 3,
+                "tone": "success"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "$2K + 1$ — option **(B)**",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$2^K+1$ looks like a full joint table over $K$ binary attributes — exactly what the naïve assumption avoids."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "1 prior + $K$ Bernoulli parameters for each of the 2 classes = $2K+1$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$2^{K+1}+1$ counts a full joint table for each class (and then over-counts the normalisation) — the non-naïve model."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$K^2+1$ would correspond to pairwise attribute interactions, which naïve Bayes does not model."
+        }
+      ],
+      "shortcut": "Parameters = (classes − 1) + classes × attributes × (values − 1) = $1 + 2\\cdot K\\cdot1 = 2K+1$.",
+      "pitfalls": [
+        "Counting both $P(x_j=1\\mid y)$ and $P(x_j=0\\mid y)$ — they sum to 1, so only one is free.",
+        "Using the full joint likelihood instead of the factorised one."
+      ],
+      "verification": "Small case $K=1$: prior $\\pi$ plus $P(x=1\\mid y=0)$, $P(x=1\\mid y=1)$ — 3 numbers fully specify $P(x,y)$, and $2(1)+1=3$ ✓.",
+      "animation": {
+        "kind": "table",
+        "title": "Parameters of the naïve Bayes model",
+        "cols": [
+          "what",
+          "count"
+        ],
+        "rows": [
+          [
+            "prior P(y=1)",
+            "1"
+          ],
+          [
+            "P(x_j=1 | y=0), j=1..K",
+            "K"
+          ],
+          [
+            "P(x_j=1 | y=1), j=1..K",
+            "K"
+          ],
+          [
+            "total",
+            "2K + 1"
+          ]
+        ],
+        "reveal": 0
+      }
+    },
+    "da-2024-da-11": {
+      "approach": "Inserting into an open-address table probes exactly like an unsuccessful search: it keeps probing occupied slots until it finds an empty one, then stores the key there. So its expected cost has the same bound, $\\frac{1}{1-\\alpha}$.",
+      "concepts": [
+        "Open addressing",
+        "Uniform hashing",
+        "Unsuccessful search = insertion"
+      ],
+      "steps": [
+        {
+          "title": "What insertion does",
+          "body": "To insert key $k$, probe $h(k,0), h(k,1), \\dots$ until an **empty** slot is found. An unsuccessful search for $k$ follows the same probe sequence and also stops at the first empty slot."
+        },
+        {
+          "title": "Same probe count",
+          "body": "The insertion therefore makes exactly the probes of an unsuccessful search in the current table (load factor $\\alpha=n/m$), so its expected number is at most $\\dfrac{1}{1-\\alpha}$."
+        },
+        {
+          "title": "Derivation of the bound (for completeness)",
+          "body": "With uniform hashing, probe $i$ hits an occupied slot with probability at most $\\alpha$, so $P(\\text{more than } i \\text{ probes}) \\le \\alpha^i$ and $E[\\text{probes}] \\le \\sum_{i\\ge0}\\alpha^i = \\dfrac{1}{1-\\alpha}$. Answer: option **(B)**."
+        }
+      ],
+      "answer": {
+        "value": "$\\dfrac{1}{1-\\alpha}$ — option **(B)**",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$\\frac{1}{\\alpha}\\ln\\frac{1}{1-\\alpha}$ is the bound for a **successful** search (and this option even drops the $\\frac1\\alpha$ factor)."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Insertion = unsuccessful search, bound $\\frac{1}{1-\\alpha}$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$1+\\frac{\\alpha}{2}$ is the expected cost of a successful search with **chaining**, not open addressing."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$\\frac{1}{1+\\alpha}<1$ — fewer than one probe on average is impossible, since every insertion probes at least once."
+        }
+      ],
+      "shortcut": "Insertion = unsuccessful search; the question already gives that bound.",
+      "pitfalls": [
+        "Confusing with the successful-search bound $\\frac1\\alpha\\ln\\frac{1}{1-\\alpha}$.",
+        "Mixing open-addressing formulas with chaining formulas ($1+\\alpha$, $1+\\alpha/2$)."
+      ],
+      "verification": "Sanity: at $\\alpha=0$ the bound is 1 probe (empty table — the first slot is free), and it blows up as $\\alpha\\to1$ (table almost full), as expected."
+    },
+    "da-2024-da-12": {
+      "approach": "Set the gradient of the Rayleigh quotient $J(u)$ to zero. The stationarity condition is the generalised eigenproblem $S_B u = \\lambda S_W u$; multiply by $S_W^{-1}$ (it exists) to get $S_W^{-1}S_Bu^*=\\lambda u^*$.",
+      "concepts": [
+        "Fisher linear discriminant",
+        "Generalised Rayleigh quotient",
+        "Generalised eigenvalue problem"
+      ],
+      "steps": [
+        {
+          "title": "Differentiate the quotient",
+          "body": "Let $N=u^TS_Bu$, $D=u^TS_Wu$ (both matrices symmetric). Then $\\nabla N = 2S_Bu$, $\\nabla D = 2S_Wu$ and $\\nabla J = \\dfrac{2S_Bu\\,D - 2S_Wu\\,N}{D^2}$.",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Stationarity at the maximiser",
+          "body": "At $u^*$: $\\nabla J=0 \\Rightarrow S_Bu^*\\,D = S_Wu^*\\,N \\Rightarrow S_Bu^* = \\dfrac{N}{D}S_Wu^* = \\lambda S_Wu^*$, since $\\lambda = J(u^*) = N/D$.",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "Multiply by the inverse",
+          "body": "$S_W$ is non-singular, so $S_W^{-1}S_Bu^* = \\lambda u^*$: $u^*$ is an eigenvector of $S_W^{-1}S_B$ with eigenvalue $\\lambda$ (the largest one, because $J$ is maximised). Option **(A)**.",
+          "scene": {
+            "reveal": 4
+          }
+        }
+      ],
+      "answer": {
+        "value": "$S_W^{-1}S_Bu^* = \\lambda u^*$ — option **(A)**",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Exactly the stationarity condition $S_Bu^*=\\lambda S_Wu^*$ multiplied by $S_W^{-1}$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Has the matrices swapped: it would mean $J(u^*) = 1/\\lambda$, not $\\lambda$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$S_BS_W$ is the wrong product; the condition involves $S_W^{-1}S_B$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "No norm condition of this form follows; $J$ is scale-invariant, so $\\lVert u^*\\rVert$ is arbitrary."
+        }
+      ],
+      "shortcut": "Max of $\\frac{u^TAu}{u^TBu}$ ⇒ $Au=\\lambda Bu$ ⇒ $B^{-1}Au=\\lambda u$.",
+      "pitfalls": [
+        "Writing $S_Wu=\\lambda S_Bu$ — that corresponds to the reciprocal ratio.",
+        "Imposing a norm on $u^*$: $J(cu)=J(u)$ for any $c\\ne0$."
+      ],
+      "verification": "Plug back: if $S_Bu^*=\\lambda S_Wu^*$ then $J(u^*)=\\dfrac{u^{*T}\\lambda S_Wu^*}{u^{*T}S_Wu^*}=\\lambda$ ✓.",
+      "animation": {
+        "kind": "equation",
+        "title": "Fisher criterion stationarity",
+        "lines": [
+          {
+            "tex": "J(u)=\\frac{u^TS_Bu}{u^TS_Wu}",
+            "note": "maximise"
+          },
+          {
+            "tex": "\\nabla J=\\frac{2S_Bu\\,(u^TS_Wu)-2S_Wu\\,(u^TS_Bu)}{(u^TS_Wu)^2}",
+            "note": "quotient rule"
+          },
+          {
+            "tex": "\\nabla J(u^*)=0\\ \\Rightarrow\\ S_Bu^*=\\lambda S_Wu^*",
+            "note": "λ = J(u*)"
+          },
+          {
+            "tex": "S_W^{-1}S_Bu^*=\\lambda u^*",
+            "note": "S_W invertible",
+            "tone": "success"
+          }
+        ],
+        "reveal": 1
+      }
+    },
+    "da-2024-da-13": {
+      "approach": "Admissible means $0\\le h(n)\\le h^*(n)$ for every node. Since both $h_1,h_2\\in[0,h^*]$, their distance $\\lvert h_1-h_2\\rvert\\le\\max(h_1,h_2)\\le h^*$, while sums, products and ratios can overshoot $h^*$ — one numeric counter-example kills each.",
+      "concepts": [
+        "Admissible heuristic",
+        "A* search"
+      ],
+      "steps": [
+        {
+          "title": "Prove D is admissible",
+          "body": "For any node, $0\\le h_1,h_2\\le h^*$. WLOG $h_1\\ge h_2$: $\\lvert h_1-h_2\\rvert = h_1-h_2 \\le h_1 \\le h^*$, and it is $\\ge 0$. So $\\lvert h_1-h_2\\rvert$ never overestimates.",
+          "scene": {
+            "hl": [
+              {
+                "c": 4,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Counter-example for the sum and the product",
+          "body": "Take a node with true cost $h^*=10$ and $h_1=h_2=10$ (both admissible, even perfect): $h_1+h_2=20>10$ and $h_1\\times h_2=100>10$. Both overestimate, so A and B are not always admissible.",
+          "scene": {
+            "hl": [
+              {
+                "c": 1,
+                "tone": "error"
+              },
+              {
+                "c": 2,
+                "tone": "error"
+              },
+              {
+                "c": 4,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Counter-example for the ratio",
+          "body": "Take $h_1=10$ (perfect) and $h_2=0.5$ (admissible, just weak): $h_1/h_2=\\tfrac{10}{0.5}=20>10$. A small denominator inflates the ratio without bound, so C fails too. Only D survives.",
+          "scene": {
+            "hl": [
+              {
+                "c": 1,
+                "tone": "error"
+              },
+              {
+                "c": 2,
+                "tone": "error"
+              },
+              {
+                "c": 3,
+                "tone": "error"
+              },
+              {
+                "c": 4,
+                "tone": "success"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "$\\lvert h_1-h_2\\rvert$ — option **(D)**",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Can reach $2h^*$ (e.g. $h_1=h_2=h^*$) — overestimates."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Can reach $(h^*)^2$, which exceeds $h^*$ whenever $h^*>1$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "A small $h_2$ blows the ratio up: $10/0.5=20>h^*=10$."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "$\\lvert h_1-h_2\\rvert\\le\\max(h_1,h_2)\\le h^*$ and it is non-negative — always admissible (though usually weak)."
+        }
+      ],
+      "shortcut": "Combinations that stay admissible: $\\max(h_1,h_2)$, convex combinations, and anything bounded by one of them — $\\lvert h_1-h_2\\rvert\\le\\max(h_1,h_2)$.",
+      "pitfalls": [
+        "Thinking a sum of admissible heuristics is admissible — only $\\max$ (or a weighted average) is safe."
+      ],
+      "verification": "Table check: with $h^*=10$ the four expressions give 20, 100, 20 and at most 10 respectively; only D stays $\\le h^*$ in every case.",
+      "animation": {
+        "kind": "table",
+        "title": "Counter-examples (true cost h* = 10)",
+        "cols": [
+          "h₁, h₂",
+          "h₁+h₂",
+          "h₁×h₂",
+          "h₁/h₂",
+          "|h₁−h₂|"
+        ],
+        "rows": [
+          [
+            "10, 10",
+            20,
+            100,
+            1,
+            0
+          ],
+          [
+            "10, 0.5",
+            10.5,
+            5,
+            20,
+            9.5
+          ],
+          [
+            "3, 7",
+            10,
+            21,
+            "0.43",
+            4
+          ]
+        ]
+      }
+    },
+    "da-2024-da-14": {
+      "approach": "Read the factorisation as a Bayesian network $U\\to W\\leftarrow V$, $W\\to X$, $W\\to Y$ and use d-separation. Conditioning on the **collider** $W$ couples its parents $U$ and $V$ (explaining away), so statement C is the false one.",
+      "concepts": [
+        "Bayesian network factorisation",
+        "d-separation",
+        "Explaining away (v-structure)"
+      ],
+      "steps": [
+        {
+          "title": "Draw the network",
+          "body": "$P(U)P(V)P(W\\mid U,V)P(X\\mid W)P(Y\\mid W)$: $U$, $V$ are roots, $W$ has parents $U,V$, and $X$, $Y$ each have parent $W$.",
+          "scene": {
+            "caption": "U → W ← V, W → X, W → Y"
+          }
+        },
+        {
+          "title": "A, B, D: paths through W as a chain/fork are blocked",
+          "body": "$V\\to W\\to Y$ (chain) and $U\\to W\\to X$ (chain) are blocked by observing $W$, so $Y\\perp V\\mid W$ and $X\\perp U\\mid W$. $X\\leftarrow W\\to Y$ is a fork, also blocked by $W$: $X\\perp Y\\mid W$. All three are TRUE.",
+          "scene": {
+            "caption": "Observed W blocks chains and forks",
+            "tones": {
+              "W": "accent",
+              "X": "success",
+              "Y": "success",
+              "U": "success",
+              "V": "success"
+            },
+            "edgeTones": {
+              "W>X": "muted",
+              "W>Y": "muted"
+            }
+          }
+        },
+        {
+          "title": "C: the v-structure is opened by W",
+          "body": "$U\\to W\\leftarrow V$ is a collider. Unconditionally $U\\perp V$ (since $P(U,V)=P(U)P(V)$), but observing $W$ **activates** the path: $P(U,V\\mid W)\\propto P(U)P(V)P(W\\mid U,V)$ generally does not factor. E.g. $W=U\\oplus V$ with fair $U,V$: given $W=0$, $U=V$ — fully dependent. So C is **FALSE**.",
+          "scene": {
+            "caption": "Observed collider W makes U and V dependent",
+            "tones": {
+              "W": "accent",
+              "U": "error",
+              "V": "error",
+              "X": "default",
+              "Y": "default"
+            },
+            "edgeTones": {
+              "U>W": "error",
+              "V>W": "error"
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "\"$U$ and $V$ are conditionally independent given $W$\" is FALSE — option **(C)**",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "TRUE: the only path $V\\to W\\to Y$ is a chain through observed $W$ — blocked."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "TRUE: the only path $U\\to W\\to X$ is a chain through observed $W$ — blocked."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "FALSE (the answer): $W$ is a collider of $U$ and $V$; conditioning on it makes them dependent (explaining away)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "TRUE: $X\\leftarrow W\\to Y$ is a fork; observing $W$ blocks it."
+        }
+      ],
+      "shortcut": "Look for a v-structure: $U\\to W\\leftarrow V$. \"Independent given the common child\" is the classic false statement.",
+      "pitfalls": [
+        "Confusing marginal and conditional independence: $U\\perp V$ holds, $U\\perp V\\mid W$ does not."
+      ],
+      "verification": "XOR example: $U,V$ fair bits, $W=U\\oplus V$. $P(U=0\\mid W=0)=\\tfrac12$ but $P(U=0\\mid W=0,V=0)=1$ — dependence given $W$ confirmed.",
+      "animation": {
+        "kind": "graph",
+        "directed": true,
+        "title": "Bayesian network of the factorisation",
+        "nodes": [
+          {
+            "id": "U",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "V",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "id": "W",
+            "x": 1,
+            "y": 1.2
+          },
+          {
+            "id": "X",
+            "x": 0,
+            "y": 2.4
+          },
+          {
+            "id": "Y",
+            "x": 2,
+            "y": 2.4
+          }
+        ],
+        "edges": [
+          {
+            "from": "U",
+            "to": "W"
+          },
+          {
+            "from": "V",
+            "to": "W"
+          },
+          {
+            "from": "W",
+            "to": "X"
+          },
+          {
+            "from": "W",
+            "to": "Y"
+          }
+        ]
+      }
+    },
+    "da-2024-da-15": {
+      "approach": "By definition (Russell & Norvig), $\\alpha$ is the value of the **best (highest)** choice found so far for MAX along the path, and $\\beta$ the value of the **best (lowest)** choice found so far for MIN. Pruning happens when $\\alpha\\ge\\beta$.",
+      "concepts": [
+        "Minimax",
+        "Alpha–beta pruning"
+      ],
+      "steps": [
+        {
+          "title": "What α tracks",
+          "body": "MAX wants the largest value, so the best guaranteed option for MAX found so far is the **highest** value: $\\alpha$ only ever increases (initially $-\\infty$). → (m) = highest."
+        },
+        {
+          "title": "What β tracks",
+          "body": "MIN wants the smallest value, so its best guaranteed option so far is the **lowest** value: $\\beta$ only ever decreases (initially $+\\infty$). → (n) = lowest."
+        },
+        {
+          "title": "Consistency check and answer",
+          "body": "A branch is pruned when $\\alpha\\ge\\beta$: MAX already has a choice at least as good as anything MIN would allow down this path. This works at any depth because $\\alpha,\\beta$ are passed down the path. Option **(C)**."
+        }
+      ],
+      "answer": {
+        "value": "(m) = highest, (n) = lowest — option **(C)**",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "β as the *highest* value would be the worst choice for MIN, not its best."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Both reversed: α would be MAX's worst and β MIN's worst choice."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "α = highest value for MAX, β = lowest value for MIN — the standard definitions."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "α as the *lowest* value is MAX's worst choice; pruning would be invalid."
+        }
+      ],
+      "pitfalls": [
+        "Reversing the roles — remember the initial values $\\alpha=-\\infty$ (raised by MAX) and $\\beta=+\\infty$ (lowered by MIN)."
+      ],
+      "verification": "The pruning condition $\\alpha\\ge\\beta$ only makes sense with these definitions: MAX can secure at least $\\alpha$, MIN can hold MAX to at most $\\beta$."
+    },
+    "da-2024-da-16": {
+      "approach": "\"Every name in Team appears in Defender **or** Forward\" means $\\Pi_{name}(\\text{Team}) \\subseteq \\Pi_{name}(\\text{Defender}) \\cup \\Pi_{name}(\\text{Forward})$; a subset test $A\\subseteq B$ is written $A\\setminus B=\\phi$.",
+      "concepts": [
+        "Relational algebra set operators",
+        "Subset test via set difference"
+      ],
+      "steps": [
+        {
+          "title": "Translate \"or\" into a union",
+          "body": "Names that are a defender or a forward: $P = \\Pi_{name}(\\text{Defender}) \\cup \\Pi_{name}(\\text{Forward})$.",
+          "scene": {
+            "hl": [
+              {
+                "region": "B"
+              },
+              {
+                "region": "C"
+              },
+              {
+                "region": "BC"
+              },
+              {
+                "region": "AB"
+              },
+              {
+                "region": "AC"
+              },
+              {
+                "region": "ABC"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Subset as an empty difference",
+          "body": "$T=\\Pi_{name}(\\text{Team})\\subseteq P \\iff T\\setminus P=\\phi$: no Team name may lie outside both players' relations — the shaded region \"Team only\" must be empty.",
+          "scene": {
+            "hl": [
+              {
+                "region": "A",
+                "tone": "error"
+              }
+            ],
+            "caption": "Team \\ (Defender ∪ Forward) must be empty"
+          }
+        },
+        {
+          "title": "Pick the option",
+          "body": "$\\Pi_{name}(\\text{Team}) \\setminus (\\Pi_{name}(\\text{Defender}) \\cup \\Pi_{name}(\\text{Forward})) = \\phi$ — option **(C)**."
+        }
+      ],
+      "answer": {
+        "value": "$\\Pi_{name}(\\text{Team}) \\setminus (\\Pi_{name}(\\text{Defender}) \\cup \\Pi_{name}(\\text{Forward})) = \\phi$ — option **(C)**",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Uses $\\cap$: it demands every Team name be **both** a defender and a forward — too strong."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Checks the reverse inclusion (players who are both defender and forward must be in Team)."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Exactly $\\Pi_{name}(\\text{Team})\\subseteq\\Pi_{name}(\\text{Defender})\\cup\\Pi_{name}(\\text{Forward})$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Checks the reverse: every defender or forward appears in Team."
+        }
+      ],
+      "shortcut": "\"Every X is in Y\" ⇒ $X \\setminus Y = \\phi$ with X on the **left**; \"either…or\" ⇒ $\\cup$. Only (C) has both.",
+      "pitfalls": [
+        "Putting the sets in the wrong order in the difference — $A\\setminus B=\\phi$ means $A\\subseteq B$, not $B\\subseteq A$.",
+        "Reading \"either … or\" as intersection."
+      ],
+      "verification": "Example: Team = {a, b}, Defender = {a}, Forward = {b}. The condition is satisfied; (C) gives $\\{a,b\\}\\setminus\\{a,b\\}=\\phi$ ✓, while (A) gives $\\{a,b\\}\\setminus\\phi=\\{a,b\\}\\ne\\phi$ ✗.",
+      "animation": {
+        "kind": "venn",
+        "title": "Names in Team, Defender, Forward",
+        "sets": [
+          {
+            "id": "A",
+            "label": "Team"
+          },
+          {
+            "id": "B",
+            "label": "Defender"
+          },
+          {
+            "id": "C",
+            "label": "Forward"
+          }
+        ],
+        "regions": {
+          "A": "∅ ?",
+          "AB": "✓",
+          "AC": "✓",
+          "ABC": "✓"
+        }
+      }
+    },
+    "da-2024-da-17": {
+      "approach": "z-score normalisation uses only the mean and the standard deviation: $z = \\dfrac{v-\\mu}{\\sigma}$. The minimum and maximum are decoys (they belong to min–max normalisation).",
+      "concepts": [
+        "z-score (standardisation)",
+        "Data normalisation",
+        "Min–max vs z-score"
+      ],
+      "given": "| quantity | value |\n|---|---|\n| min, max | ₹46000, ₹170000 (not needed) |\n| mean $\\mu$ | ₹96000 |\n| std. dev. $\\sigma$ | ₹21000 |\n| value $v$ | ₹106000 |",
+      "steps": [
+        {
+          "title": "Pick the right formula",
+          "body": "z-score normalisation measures how many standard deviations a value lies from the mean:\n\n$$z = \\frac{v-\\mu}{\\sigma}.$$\n\nOnly $\\mu$ and $\\sigma$ appear, so the given minimum and maximum play no role."
+        },
+        {
+          "title": "Substitute the numbers",
+          "body": "$$z = \\frac{106000-96000}{21000} = \\frac{10000}{21000} = \\frac{10}{21} \\approx 0.476.$$\n\nSo ₹106000 lies about half a standard deviation above the mean.",
+          "scene": {
+            "points": [
+              {
+                "x": 0,
+                "label": "μ = 96000"
+              },
+              {
+                "x": 0.476,
+                "label": "z ≈ 0.476",
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Match the option",
+          "body": "$0.476$ is option **(B)**."
+        }
+      ],
+      "answer": {
+        "value": "$z = \\frac{10000}{21000} \\approx$ **0.476** — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$0.217 \\approx \\frac{10000}{46000}$: dividing the deviation by the **minimum** instead of the standard deviation."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$\\frac{106000-96000}{21000} = 0.476$ — the z-score."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$0.623 \\approx \\frac{106000}{170000}$: dividing the value by the **maximum** (a crude max-scaling), not standardising."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$2.304 \\approx \\frac{106000}{46000}$: dividing the value by the **minimum** — meaningless as a normalisation."
+        }
+      ],
+      "shortcut": "$\\frac{10}{21}$ is a little under $\\frac12$ — only (B) fits.",
+      "pitfalls": [
+        "Using min–max normalisation $\\frac{v-\\min}{\\max-\\min} = \\frac{60000}{124000} \\approx 0.484$ — a different method (it happens to be near 0.476, but the question asks for the z-score).",
+        "Forgetting to subtract the mean before dividing by σ."
+      ],
+      "verification": "Back-substitute: $\\mu + z\\sigma = 96000 + 0.476 \\times 21000 \\approx 96000 + 10000 = 106000$ ✓.",
+      "animation": {
+        "kind": "numberline",
+        "title": "Income in standard-deviation units",
+        "min": -1,
+        "max": 1.5,
+        "step": 0.5,
+        "points": [
+          {
+            "x": 0,
+            "label": "μ = 96000"
+          }
+        ],
+        "intervals": [
+          {
+            "from": 0,
+            "to": 1,
+            "label": "1σ = ₹21000",
+            "tone": "info"
+          }
+        ],
+        "caption": "₹106000 is 10000/21000 of a σ above the mean"
+      }
+    },
+    "da-2024-da-18": {
+      "approach": "Check each pair against the reason reconstruction can fail. Inorder + (pre or post) always works; preorder + postorder fails for general trees only because a node with a **single** child cannot be placed left or right — and a full binary tree has no such node. Inorder alone never fixes the root.",
+      "concepts": [
+        "Tree traversals",
+        "Full binary tree (0 or 2 children)",
+        "Tree reconstruction"
+      ],
+      "steps": [
+        {
+          "title": "(i) Preorder + (ii) Inorder: unique",
+          "body": "The first preorder key is the root. Finding it in the inorder sequence splits the remaining keys into the left subtree (keys before it) and the right subtree (keys after it), and the sizes tell how to split the rest of the preorder. Recursing rebuilds **any** binary tree with distinct keys uniquely, so (A) is sufficient."
+        },
+        {
+          "title": "(ii) Inorder + (iii) Postorder: unique",
+          "body": "Same argument with the root taken as the **last** postorder key: the inorder position of the root separates left and right subtrees, and recursion is forced. So (B) is sufficient."
+        },
+        {
+          "title": "(i) Preorder + (iii) Postorder: unique for full trees",
+          "body": "For a general binary tree, a node with one child gives the same pre- and postorder whether the child is left or right — that is the only ambiguity.\n\nIn a **full** binary tree each internal node has exactly two children. Then, after the root $r$, the next preorder key $\\ell$ must be the root of the **left** subtree. In postorder, every key up to and including $\\ell$ forms the left subtree; the keys after $\\ell$ (before $r$) form the right subtree. Both pieces are again full trees, so recursion is forced. Hence (C) is sufficient."
+        },
+        {
+          "title": "(ii) Inorder alone: not unique",
+          "body": "The two full binary trees in the figure both have inorder $D\\,B\\,E\\,A\\,C$ but different roots (their preorders are $A\\,B\\,D\\,E\\,C$ and $B\\,D\\,A\\,E\\,C$). One inorder sequence cannot tell them apart, so (D) is **not** sufficient.",
+          "scene": {
+            "caption": "Same inorder D B E A C — two different full binary trees"
+          }
+        }
+      ],
+      "answer": {
+        "value": "**(A), (B) and (C)** — any two of the three traversals suffice for a full binary tree; inorder alone does not",
+        "choice": [
+          "A",
+          "B",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Preorder gives the root, inorder splits left/right — unique for every binary tree."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Postorder gives the root (last key), inorder splits left/right — unique for every binary tree."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "In a full binary tree no node has a single child, so the key after the root in preorder is the left child and its position in postorder splits the subtrees — unique."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Inorder alone does not identify the root; the two trees in the figure share inorder D B E A C."
+        }
+      ],
+      "shortcut": "Memorise: pre+in and post+in always work; pre+post works exactly when no node has one child (full trees); a single traversal never works.",
+      "pitfalls": [
+        "Rejecting (C) by recalling \"pre + post is not enough\" — that holds for general binary trees, not full ones.",
+        "Assuming keys may repeat; reconstruction assumes distinct node labels."
+      ],
+      "verification": "For the pair of trees in the figure: preorders differ ($ABDEC$ vs $BDAEC$) and postorders differ ($DEBCA$ vs $DECAB$), so any pair containing pre or post separates them, while inorder alone does not.",
+      "animation": {
+        "kind": "panels",
+        "title": "Inorder alone is ambiguous",
+        "panels": [
+          {
+            "kind": "tree",
+            "title": "Tree 1 (pre: A B D E C)",
+            "root": {
+              "label": "A",
+              "id": "a",
+              "children": [
+                {
+                  "label": "B",
+                  "id": "b",
+                  "children": [
+                    {
+                      "label": "D",
+                      "id": "d"
+                    },
+                    {
+                      "label": "E",
+                      "id": "e"
+                    }
+                  ]
+                },
+                {
+                  "label": "C",
+                  "id": "c"
+                }
+              ]
+            }
+          },
+          {
+            "kind": "tree",
+            "title": "Tree 2 (pre: B D A E C)",
+            "root": {
+              "label": "B",
+              "id": "b",
+              "children": [
+                {
+                  "label": "D",
+                  "id": "d"
+                },
+                {
+                  "label": "A",
+                  "id": "a",
+                  "children": [
+                    {
+                      "label": "E",
+                      "id": "e"
+                    },
+                    {
+                      "label": "C",
+                      "id": "c"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "caption": "Both trees are full binary trees"
+      }
+    },
+    "da-2024-da-19": {
+      "approach": "An implication $P \\implies Q$ can fail only on rows where $P$ is true. Each premise here ($\\neg x \\land y$ or $x \\land \\neg y$) is true on exactly **one** row, so each option needs a single row check.",
+      "concepts": [
+        "Tautology",
+        "Material implication",
+        "Truth tables"
+      ],
+      "steps": [
+        {
+          "title": "Where the premises are true",
+          "body": "$\\neg x \\land y$ is true only for $x=0, y=1$; $x \\land \\neg y$ is true only for $x=1, y=0$. On every other row the implication is true automatically (false premise).",
+          "scene": {
+            "hl": [
+              {
+                "r": 1,
+                "tone": "info"
+              },
+              {
+                "r": 2,
+                "tone": "info"
+              }
+            ]
+          }
+        },
+        {
+          "title": "(A) fails at x = 0, y = 1",
+          "body": "Conclusion $y \\implies x$ becomes $1 \\implies 0 = \\text{F}$. Premise true, conclusion false, so (A) is **false** on that row — not a tautology.",
+          "scene": {
+            "hl": [
+              {
+                "r": 1,
+                "c": 2,
+                "tone": "error"
+              }
+            ]
+          }
+        },
+        {
+          "title": "(B) and (D) at x = 1, y = 0",
+          "body": "(B): $\\neg x \\implies y$ is $0 \\implies 0 = \\text{T}$.\n\n(D): $y \\implies x$ is $0 \\implies 1 = \\text{T}$.\n\nBoth are true on their only critical row, so (B) and (D) are tautologies.",
+          "scene": {
+            "hl": [
+              {
+                "r": 2,
+                "c": 3,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "c": 5,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "(C) at x = 0, y = 1",
+          "body": "$\\neg x \\implies y$ is $1 \\implies 1 = \\text{T}$, so (C) is a tautology. In fact its premise $\\neg x \\land y$ makes both $\\neg x$ and $y$ true.",
+          "scene": {
+            "hl": [
+              {
+                "r": 1,
+                "c": 4,
+                "tone": "success"
+              },
+              {
+                "c": 3,
+                "tone": "success"
+              },
+              {
+                "c": 5,
+                "tone": "success"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "**(B), (C), (D)** are tautologies; (A) is false at $x=0, y=1$",
+        "choice": [
+          "B",
+          "C",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "At $x=0, y=1$: premise $\\neg x \\land y = 1$, conclusion $y \\implies x = 1 \\implies 0 = 0$ — false, so not a tautology."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Only critical row $x=1, y=0$: $\\neg x \\implies y = 0 \\implies 0 = 1$ — always true."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Only critical row $x=0, y=1$: $\\neg x \\implies y = 1 \\implies 1 = 1$ — always true."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Only critical row $x=1, y=0$: $y \\implies x = 0 \\implies 1 = 1$ — always true."
+        }
+      ],
+      "shortcut": "(B) and (D) have a false antecedent ($\\neg x$ or $y$ is 0) inside the conclusion whenever the premise holds, so the conclusion is vacuously true; (C)'s premise literally contains $\\neg x$ and $y$.",
+      "pitfalls": [
+        "Reading $p \\implies q$ as false whenever $p$ is false — it is **true** then.",
+        "Treating this as single-answer: it is a multiple-select question."
+      ],
+      "verification": "The full truth table in the figure: columns B, C, D are all T; column A has one F (row x = 0, y = 1).",
+      "animation": {
+        "kind": "table",
+        "title": "Truth table of the four statements",
+        "cols": [
+          "x",
+          "y",
+          "(A)",
+          "(B)",
+          "(C)",
+          "(D)"
+        ],
+        "rows": [
+          [
+            "0",
+            "0",
+            "T",
+            "T",
+            "T",
+            "T"
+          ],
+          [
+            "0",
+            "1",
+            "F",
+            "T",
+            "T",
+            "T"
+          ],
+          [
+            "1",
+            "0",
+            "T",
+            "T",
+            "T",
+            "T"
+          ],
+          [
+            "1",
+            "1",
+            "T",
+            "T",
+            "T",
+            "T"
+          ]
+        ],
+        "mono": true
+      }
+    },
+    "da-2024-da-20": {
+      "approach": "Trace the last-element-pivot (Lomuto) partition on the already sorted input: every element is $\\le$ the pivot, so the \"swap\" index $i$ always equals the scan index $j$ and the pivot already sits at its final place. Nothing ever moves, so an implementation that skips self-swaps does **0** swaps — the minimum.",
+      "concepts": [
+        "Quicksort",
+        "Lomuto partition (last element pivot)",
+        "Sorted input = worst case"
+      ],
+      "steps": [
+        {
+          "title": "Partition 1: pivot 100",
+          "body": "Scan $60, 70, 80, 90$: each is $\\le 100$, so $i$ advances with $j$ and every exchange would be $A[i] \\leftrightarrow A[i]$ (same position). The pivot's final index is $i+1 = 4$, its current index. **No element moves.** Split: $[60, 70, 80, 90]$ | $100$ | $[\\,]$.",
+          "scene": {
+            "cells": [
+              {
+                "v": 60,
+                "id": "v60"
+              },
+              {
+                "v": 70,
+                "id": "v70"
+              },
+              {
+                "v": 80,
+                "id": "v80"
+              },
+              {
+                "v": 90,
+                "id": "v90"
+              },
+              {
+                "v": 100,
+                "id": "v100"
+              }
+            ],
+            "pointers": [
+              {
+                "name": "pivot",
+                "at": 4,
+                "tone": "warning"
+              }
+            ],
+            "ranges": [
+              {
+                "from": 0,
+                "to": 4,
+                "label": "partition"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Partitions on 4, 3, 2 elements",
+          "body": "Pivot $90$ on $[60,70,80,90]$, then $80$ on $[60,70,80]$, then $70$ on $[60,70]$: the same thing happens each time — every scanned element is smaller than the pivot, the pivot is already last. The single element $[60]$ needs no work.",
+          "scene": {
+            "cells": [
+              {
+                "v": 60,
+                "id": "v60"
+              },
+              {
+                "v": 70,
+                "id": "v70",
+                "tone": "success"
+              },
+              {
+                "v": 80,
+                "id": "v80",
+                "tone": "success"
+              },
+              {
+                "v": 90,
+                "id": "v90",
+                "tone": "success"
+              },
+              {
+                "v": 100,
+                "id": "v100",
+                "tone": "success"
+              }
+            ],
+            "pointers": [
+              {
+                "name": "pivot",
+                "at": 1,
+                "tone": "warning"
+              }
+            ],
+            "ranges": [
+              {
+                "from": 0,
+                "to": 1,
+                "label": "last partition"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Count the swaps",
+          "body": "In every call, each would-be swap exchanges an element with itself, which changes nothing and is skipped by a swap-only-when-needed implementation (`if i != j`). Since the array is already sorted and no element ever has to change position, the minimum number of swaps is\n\n$$\\mathbf{0}.$$\n\n(The comparisons are still the worst case: $4+3+2+1 = 10$.)",
+          "scene": {
+            "cells": [
+              {
+                "v": 60,
+                "id": "v60",
+                "tone": "success"
+              },
+              {
+                "v": 70,
+                "id": "v70",
+                "tone": "success"
+              },
+              {
+                "v": 80,
+                "id": "v80",
+                "tone": "success"
+              },
+              {
+                "v": 90,
+                "id": "v90",
+                "tone": "success"
+              },
+              {
+                "v": 100,
+                "id": "v100",
+                "tone": "success"
+              }
+            ],
+            "pointers": [],
+            "ranges": [],
+            "caption": "Sorted, nothing moved: 0 swaps"
+          }
+        }
+      ],
+      "answer": {
+        "value": "Minimum number of swaps = **0**",
+        "number": 0,
+        "matchesKey": true
+      },
+      "shortcut": "An already sorted array with last-element pivot: every element is already in its final place, so no swap is ever *required* — the minimum is 0.",
+      "pitfalls": [
+        "Counting textbook Lomuto's self-swaps: $(4+1)+(3+1)+(2+1)+(1+1) = 14$ \"swaps\" that move nothing — the question asks for the **minimum**.",
+        "Confusing swaps with comparisons (10 here — sorted input is the worst case for comparisons, not swaps)."
+      ],
+      "verification": "Hoare-style partitioning with the last element as pivot reaches the same conclusion: the left scan finds no element $>$ pivot before the pivot itself, so no out-of-place pair exists in any call — 0 exchanges.",
+      "animation": {
+        "kind": "array",
+        "title": "Quicksort with last-element pivot",
+        "label": "A",
+        "cells": [
+          {
+            "v": 60,
+            "id": "v60"
+          },
+          {
+            "v": 70,
+            "id": "v70"
+          },
+          {
+            "v": 80,
+            "id": "v80"
+          },
+          {
+            "v": 90,
+            "id": "v90"
+          },
+          {
+            "v": 100,
+            "id": "v100"
+          }
+        ],
+        "caption": "Input is already in ascending order"
+      }
+    },
+    "da-2024-da-21": {
+      "approach": "The comma join with $\\text{Raider.ID} = \\text{Team.ID}$ pairs each Team row with its raider (6 rows); then keep rows with City = Jaipur **and** RaidPoints $> 200$ and count.",
+      "concepts": [
+        "Equi-join (FROM … WHERE)",
+        "Selection with AND",
+        "Strict inequality"
+      ],
+      "steps": [
+        {
+          "title": "Join on ID",
+          "body": "Each Team row matches exactly one Raider (ID is Raider's key), giving 6 joined rows (figure).",
+          "scene": {
+            "hl": []
+          }
+        },
+        {
+          "title": "Filter City = \"Jaipur\"",
+          "body": "Jaipur rows: IDs $2, 1, 6$ (Ankush, Arjun, Gopal). The Patna (3, 4) and Hyderabad (5) rows are dropped.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "info"
+              },
+              {
+                "r": 3,
+                "tone": "info"
+              },
+              {
+                "r": 5,
+                "tone": "info"
+              },
+              {
+                "r": 1,
+                "tone": "muted"
+              },
+              {
+                "r": 2,
+                "tone": "muted"
+              },
+              {
+                "r": 4,
+                "tone": "muted"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Filter RaidPoints > 200 and count",
+          "body": "Ankush $219 > 200$ ✓, Arjun $250 > 200$ ✓, Gopal $215 > 200$ ✓. All three Jaipur rows survive, so the query returns **3** rows.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 3,
+                "tone": "success"
+              },
+              {
+                "r": 5,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "tone": "muted"
+              },
+              {
+                "r": 2,
+                "tone": "muted"
+              },
+              {
+                "r": 4,
+                "tone": "muted"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "The query returns **3** rows (Ankush, Arjun, Gopal)",
+        "number": 3,
+        "matchesKey": true
+      },
+      "shortcut": "Look only at the Jaipur rows of Team (IDs 2, 1, 6) and check their RaidPoints: 219, 250, 215 — all above 200.",
+      "pitfalls": [
+        "Counting Pratham (220 > 200) — his team is in Hyderabad.",
+        "Forgetting the join condition: the bare cross product has 6 × 6 = 36 rows.",
+        "Using ≥: Sunil has exactly 200, though he is in Patna anyway."
+      ],
+      "verification": "Reverse check: raiders with RaidPoints > 200 are Arjun(1), Ankush(2), Pratham(5), Gopal(6); of these, Team places 1, 2, 6 in Jaipur and 5 in Hyderabad — 3 rows.",
+      "animation": {
+        "kind": "table",
+        "title": "Raider ⋈ Team (on ID)",
+        "cols": [
+          "ID",
+          "Name",
+          "RaidPoints",
+          "City",
+          "Jaipur?",
+          "> 200?"
+        ],
+        "rows": [
+          [
+            2,
+            "Ankush",
+            219,
+            "Jaipur",
+            "✓",
+            "✓"
+          ],
+          [
+            3,
+            "Sunil",
+            200,
+            "Patna",
+            "✗",
+            "✗"
+          ],
+          [
+            5,
+            "Pratham",
+            220,
+            "Hyderabad",
+            "✗",
+            "✓"
+          ],
+          [
+            1,
+            "Arjun",
+            250,
+            "Jaipur",
+            "✓",
+            "✓"
+          ],
+          [
+            4,
+            "Reza",
+            190,
+            "Patna",
+            "✗",
+            "✗"
+          ],
+          [
+            6,
+            "Gopal",
+            215,
+            "Jaipur",
+            "✓",
+            "✓"
+          ]
+        ]
+      }
+    },
+    "da-2024-da-22": {
+      "approach": "Simulate the deque front → rear, recording a after each removal; the last assignment decides the answer.",
+      "concepts": [
+        "Double-ended queue",
+        "Simulation"
+      ],
+      "steps": [
+        {
+          "title": "insertFirst(10), insertLast(32)",
+          "body": "D (front → rear) $= [10, 32]$.",
+          "scene": {
+            "cells": [
+              {
+                "v": 10,
+                "id": "d10"
+              },
+              {
+                "v": 32,
+                "id": "d32"
+              }
+            ],
+            "vars": {
+              "a": "–"
+            },
+            "hl": []
+          }
+        },
+        {
+          "title": "a ← removeFirst()",
+          "body": "Removes the front: $a = 10$, D $= [32]$.",
+          "scene": {
+            "cells": [
+              {
+                "v": 32,
+                "id": "d32"
+              }
+            ],
+            "vars": {
+              "a": 10
+            }
+          }
+        },
+        {
+          "title": "insertLast(28), insertLast(17)",
+          "body": "Both go to the rear, in order: $[32] \\to [32, 28] \\to [32, 28, 17]$. The front is still 32 and the rear is now 17.",
+          "scene": {
+            "cells": [
+              {
+                "v": 32,
+                "id": "d32"
+              },
+              {
+                "v": 28,
+                "id": "d28"
+              },
+              {
+                "v": 17,
+                "id": "d17"
+              }
+            ]
+          }
+        },
+        {
+          "title": "a ← removeFirst()",
+          "body": "Removes the front: $a = 32$, D $= [28, 17]$.",
+          "scene": {
+            "cells": [
+              {
+                "v": 28,
+                "id": "d28"
+              },
+              {
+                "v": 17,
+                "id": "d17"
+              }
+            ],
+            "vars": {
+              "a": 32
+            }
+          }
+        },
+        {
+          "title": "a ← removeLast()",
+          "body": "Removes the rear: $a = 17$, D $= [28]$. This is the last assignment, so $a = 17$.",
+          "scene": {
+            "cells": [
+              {
+                "v": 28,
+                "id": "d28"
+              }
+            ],
+            "vars": {
+              "a": 17
+            },
+            "caption": "removeLast returned 17"
+          }
+        }
+      ],
+      "answer": {
+        "value": "$a =$ **17**",
+        "number": 17,
+        "matchesKey": true
+      },
+      "shortcut": "Only the last removeLast() matters: the rear at that moment is the most recent insertLast that has not been removed — 17.",
+      "pitfalls": [
+        "Answering 28 by treating removeLast() as removing the front.",
+        "Answering 10 or 32 by reporting an earlier value of a."
+      ],
+      "verification": "Elements in: 10, 32, 28, 17 (4); removed: 10, 32, 17 (3); one element (28) remains — consistent.",
+      "animation": {
+        "kind": "array",
+        "title": "Deque D (front → rear)",
+        "label": "D",
+        "showIndex": false,
+        "cells": [
+          {
+            "v": 10,
+            "id": "d10"
+          },
+          {
+            "v": 32,
+            "id": "d32"
+          }
+        ],
+        "vars": {
+          "a": "–"
+        }
+      }
+    },
+    "da-2024-da-23": {
+      "approach": "Use the sigmoid identity $f'(x) = f(x)\\,\\bigl(1-f(x)\\bigr)$; with $f(x) = 0.4$ there is no need to find $x$.",
+      "concepts": [
+        "Sigmoid (logistic) function",
+        "Chain rule",
+        "$\\sigma' = \\sigma(1-\\sigma)$"
+      ],
+      "steps": [
+        {
+          "title": "Differentiate",
+          "body": "$f(x) = (1+e^{-x})^{-1}$, so by the chain rule\n\n$$f'(x) = -(1+e^{-x})^{-2}\\cdot(-e^{-x}) = \\frac{e^{-x}}{(1+e^{-x})^2}.$$",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Rewrite in terms of f",
+          "body": "$$\\frac{e^{-x}}{(1+e^{-x})^2} = \\frac{1}{1+e^{-x}}\\cdot\\frac{e^{-x}}{1+e^{-x}} = f(x)\\bigl(1-f(x)\\bigr),$$\n\nbecause $\\frac{e^{-x}}{1+e^{-x}} = 1 - \\frac{1}{1+e^{-x}}$.",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "Substitute f(x) = 0.4",
+          "body": "$$f'(x) = 0.4 \\times (1-0.4) = 0.4 \\times 0.6 = 0.24.$$",
+          "scene": {
+            "reveal": 4
+          }
+        }
+      ],
+      "answer": {
+        "value": "$f'(x) =$ **0.24**",
+        "number": 0.24,
+        "matchesKey": true
+      },
+      "shortcut": "$\\sigma' = \\sigma(1-\\sigma) = 0.4 \\times 0.6$.",
+      "pitfalls": [
+        "Reading the question as \"$f'$ at $x = 0.4$\": the condition is on the **output** $f(x) = 0.4$ (here $x = \\ln\\frac23 \\approx -0.405$). The numbers happen to be close because $p(1-p)$ is flat near $p = \\frac12$, but the method is different.",
+        "Sign slip in the chain rule (the two minus signs cancel).",
+        "Solving for $x$ first — valid, but slower than $f(1-f)$."
+      ],
+      "verification": "Solve $f(x) = 0.4$: $1+e^{-x} = 2.5 \\Rightarrow e^{-x} = 1.5$. Then $f'(x) = \\frac{1.5}{2.5^2} = \\frac{1.5}{6.25} = 0.24$ ✓.",
+      "animation": {
+        "kind": "equation",
+        "title": "Derivative of the sigmoid",
+        "lines": [
+          {
+            "tex": "f(x)=\\left(1+e^{-x}\\right)^{-1}"
+          },
+          {
+            "tex": "f'(x)=\\frac{e^{-x}}{(1+e^{-x})^{2}}",
+            "note": "chain rule"
+          },
+          {
+            "tex": "=f(x)\\,\\bigl(1-f(x)\\bigr)",
+            "note": "split the fraction"
+          },
+          {
+            "tex": "=0.4\\times0.6=0.24",
+            "tone": "success"
+          }
+        ],
+        "reveal": 1
+      }
+    },
+    "da-2024-da-24": {
+      "approach": "Recover the old total from the mean ($n\\bar x$), add the new point, divide by $n+1$.",
+      "concepts": [
+        "Sample mean",
+        "Updating a mean"
+      ],
+      "steps": [
+        {
+          "title": "Old total",
+          "body": "Sum of the 50 points $= 50 \\times 40 = 2000$."
+        },
+        {
+          "title": "Add the new point",
+          "body": "New sum $= 2000 + 142 = 2142$, over $50 + 1 = 51$ points."
+        },
+        {
+          "title": "New mean",
+          "body": "$$\\bar x_{\\text{new}} = \\frac{2142}{51} = 42.$$ (Check: $51 \\times 42 = 2142$.)"
+        }
+      ],
+      "answer": {
+        "value": "Updated sample average = **42**",
+        "number": 42,
+        "matchesKey": true
+      },
+      "shortcut": "Incremental update: $\\bar x_{\\text{new}} = \\bar x + \\frac{x - \\bar x}{n+1} = 40 + \\frac{142-40}{51} = 40 + \\frac{102}{51} = 42$.",
+      "pitfalls": [
+        "Dividing by 50 instead of 51 (gives 42.84).",
+        "Averaging the two numbers, $\\frac{40+142}{2} = 91$ — ignores that 40 represents 50 points."
+      ],
+      "verification": "$51 \\times 42 = 2142 = 2000 + 142$ ✓."
+    },
+    "da-2024-da-25": {
+      "approach": "Factor $M^2 + 12M = M(M + 12I)$, so $\\det = \\det M \\cdot \\det(M+12I)$. Row 3 of $M$ equals row 1 + row 2, hence $\\det M = 0$ and the whole determinant is 0 — no need to form $M^2$.",
+      "concepts": [
+        "Determinant of a product",
+        "Linearly dependent rows",
+        "Matrix polynomial factoring"
+      ],
+      "steps": [
+        {
+          "title": "Factor the matrix polynomial",
+          "body": "$M^2 + 12M = M\\,M + M\\,(12I) = M\\,(M + 12I)$, and $\\det(AB) = \\det A \\cdot \\det B$, so\n\n$$\\det(M^2+12M) = \\det M \\cdot \\det(M+12I).$$"
+        },
+        {
+          "title": "Spot the dependent row",
+          "body": "Row 1 + Row 2 $= (1+3,\\ 2+1,\\ 3+3) = (4, 3, 6) =$ Row 3. A matrix with linearly dependent rows is singular: $\\det M = 0$.",
+          "scene": {
+            "terms": [
+              {
+                "name": "M",
+                "rows": [
+                  [
+                    1,
+                    2,
+                    3
+                  ],
+                  [
+                    3,
+                    1,
+                    3
+                  ],
+                  [
+                    4,
+                    3,
+                    6
+                  ]
+                ],
+                "hl": [
+                  {
+                    "r": 0,
+                    "tone": "info"
+                  },
+                  {
+                    "r": 1,
+                    "tone": "info"
+                  },
+                  {
+                    "r": 2,
+                    "tone": "success"
+                  }
+                ]
+              }
+            ],
+            "caption": "R₃ = R₁ + R₂"
+          }
+        },
+        {
+          "title": "Conclude",
+          "body": "$\\det(M^2+12M) = 0 \\times \\det(M+12I) = \\mathbf{0}$, whatever $\\det(M+12I)$ is."
+        }
+      ],
+      "answer": {
+        "value": "$\\det(M^2+12M) =$ **0**",
+        "number": 0,
+        "matchesKey": true
+      },
+      "shortcut": "Any polynomial $p(M)$ with zero constant term has $M$ as a factor, so $\\det p(M) = 0$ whenever $M$ is singular.",
+      "pitfalls": [
+        "Expanding $M^2 + 12M$ entry by entry — long and error-prone.",
+        "Thinking $\\det(A+B) = \\det A + \\det B$ (false in general)."
+      ],
+      "verification": "Cofactor expansion along row 1: $\\det M = 1(1\\cdot6-3\\cdot3) - 2(3\\cdot6-3\\cdot4) + 3(3\\cdot3-1\\cdot4) = 1(-3) - 2(6) + 3(5) = -3-12+15 = 0$ ✓.",
+      "animation": {
+        "kind": "matrix",
+        "title": "M has a dependent row",
+        "terms": [
+          {
+            "name": "M",
+            "rows": [
+              [
+                1,
+                2,
+                3
+              ],
+              [
+                3,
+                1,
+                3
+              ],
+              [
+                4,
+                3,
+                6
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    "da-2024-da-26": {
+      "approach": "First-step analysis on a 3-state Markov chain (no current even streak / one even just seen / done) with $p = P(\\text{even}) = \\frac12$; two linear equations give the expected number of throws.",
+      "concepts": [
+        "Expected waiting time",
+        "First-step analysis",
+        "Markov chain"
+      ],
+      "given": "$P(\\text{even}) = P(\\{2,4,6\\}) = \\frac36 = \\frac12$, throws independent.",
+      "steps": [
+        {
+          "title": "Set up the states",
+          "body": "Let $E_0$ = expected further throws when the streak of evens is 0 (start, or last throw odd), and $E_1$ = expected further throws when the last throw was even (streak 1). The target is $E_0$.",
+          "scene": {
+            "current": [
+              "S0"
+            ]
+          }
+        },
+        {
+          "title": "Write the first-step equations",
+          "body": "From streak 0: one throw, then even (prob $\\frac12$) → streak 1, odd → streak 0:\n$$E_0 = 1 + \\tfrac12 E_1 + \\tfrac12 E_0.$$\nFrom streak 1: one throw, then even → done, odd → streak 0:\n$$E_1 = 1 + \\tfrac12 \\cdot 0 + \\tfrac12 E_0.$$",
+          "scene": {
+            "current": [
+              "S1"
+            ],
+            "edgeTones": {
+              "S0>S1": "accent",
+              "S1>S2": "accent",
+              "S1>S0": "warning",
+              "S0>S0": "warning"
+            }
+          }
+        },
+        {
+          "title": "Solve",
+          "body": "First equation: $\\tfrac12 E_0 = 1 + \\tfrac12 E_1 \\Rightarrow E_0 = 2 + E_1$.\n\nSubstitute into the second: $E_1 = 1 + \\tfrac12(2 + E_1) = 2 + \\tfrac12 E_1 \\Rightarrow \\tfrac12 E_1 = 2 \\Rightarrow E_1 = 4$.\n\nSo $E_0 = 2 + 4 = 6$.",
+          "scene": {
+            "current": [
+              "S2"
+            ],
+            "edgeTones": {},
+            "vars": {
+              "E₁": 4,
+              "E₀": 6
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "Expected number of throws = **6** — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$2 = 1/p$ is the expected wait for the **first** even number only."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$4 = 1/p^2$ treats \"two evens\" as one event of probability $\\frac14$ per throw, or reports $E_1$ (the wait once one even has already been seen)."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$E_0 = 6$ from the first-step equations (also $\\frac1p + \\frac1{p^2} = 2 + 4$)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$8$ comes from splitting the throws into disjoint pairs ($4$ pairs $\\times$ 2 throws), which misses runs that straddle a pair boundary."
+        }
+      ],
+      "shortcut": "Expected throws for $k$ consecutive successes: $\\frac1p + \\frac1{p^2} + \\dots + \\frac1{p^k}$. For $k = 2$, $p = \\frac12$: $2 + 4 = 6$.",
+      "pitfalls": [
+        "Using 1/p² = 4 (ignores that a failure resets the streak).",
+        "Counting non-overlapping pairs (gives 8)."
+      ],
+      "verification": "Closed form $\\frac{1-p^k}{(1-p)p^k} = \\frac{1-\\frac14}{\\frac12 \\cdot \\frac14} = \\frac{3/4}{1/8} = 6$ ✓.",
+      "animation": {
+        "kind": "automaton",
+        "title": "Streak of consecutive evens",
+        "layout": "row",
+        "states": [
+          {
+            "id": "S0",
+            "label": "0",
+            "start": true
+          },
+          {
+            "id": "S1",
+            "label": "1"
+          },
+          {
+            "id": "S2",
+            "label": "2",
+            "accept": true
+          }
+        ],
+        "edges": [
+          {
+            "from": "S0",
+            "to": "S0",
+            "label": "odd ½"
+          },
+          {
+            "from": "S0",
+            "to": "S1",
+            "label": "even ½"
+          },
+          {
+            "from": "S1",
+            "to": "S0",
+            "label": "odd ½"
+          },
+          {
+            "from": "S1",
+            "to": "S2",
+            "label": "even ½"
+          }
+        ],
+        "caption": "State = current run of even throws"
+      }
+    },
+    "da-2024-da-27": {
+      "approach": "Match value and slope at both joints $x = \\pm 2$: four linear equations in $a, b, c$. Symmetry ($|x|$ outside) forces $b = 0$ immediately.",
+      "concepts": [
+        "Continuity at a joint",
+        "Differentiability (matching slopes)",
+        "Piecewise functions"
+      ],
+      "steps": [
+        {
+          "title": "Continuity at x = 2 and x = −2",
+          "body": "At $x = 2$: $4a + 2b + c = 2$ (value of $x$ at 2).\n\nAt $x = -2$: $4a - 2b + c = 2$ (value of $-x$ at $-2$).\n\nSubtracting: $4b = 0 \\Rightarrow b = 0$, and then $4a + c = 2$.",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Matching slopes",
+          "body": "On $[-2,2]$, $f'(x) = 2ax + b$.\n\nAt $x = 2$ the right piece $x$ has slope $1$: $4a + b = 1$.\n\nAt $x = -2$ the left piece $-x$ has slope $-1$: $-4a + b = -1$.\n\nWith $b = 0$: $4a = 1 \\Rightarrow a = \\frac14$.",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "Find c and check",
+          "body": "$c = 2 - 4a = 2 - 1 = 1$. So $f(x) = \\frac{x^2}{4} + 1$ on $[-2,2]$: $f(\\pm2) = 1 + 1 = 2$ ✓ and $f'(\\pm 2) = \\pm\\frac{2}{2} = \\pm1$ ✓.",
+          "scene": {
+            "reveal": 4
+          }
+        }
+      ],
+      "answer": {
+        "value": "$a = \\frac14,\\ b = 0,\\ c = 1$ — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$f = \\frac{x^2}{4}+1$: values $2$ and slopes $\\pm1$ match at both joints."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$f = \\frac{x^2}{2}$ is continuous ($f(\\pm2) = 2$) but $f'(2) = 2 \\ne 1$ — a corner, not differentiable."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$f = 0$ on $[-2,2]$ jumps from $0$ to $2$ at $x = \\pm2$ — not even continuous."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$f(2) = 4+2-4 = 2$ ✓ but $f(-2) = 4-2-4 = -2 \\ne 2$ — discontinuous at $-2$."
+        }
+      ],
+      "shortcut": "Outside $[-2,2]$ the function is $|x|$, which is even, so $b = 0$; the parabola must touch $y = x$ at $(2,2)$ with slope 1: $4a = 1$, $c = 2 - 4a = 1$.",
+      "pitfalls": [
+        "Checking only continuity — option (B) passes it.",
+        "Using $f(-2) = -2$ instead of $-(-2) = 2$ for the left piece."
+      ],
+      "verification": "Option (A) passes all four conditions: $4\\cdot\\frac14 + 0 + 1 = 2$ (both joints) and $2\\cdot\\frac14\\cdot(\\pm2) = \\pm1$.",
+      "animation": {
+        "kind": "equation",
+        "title": "Joint conditions at x = ±2",
+        "lines": [
+          {
+            "tex": "4a+2b+c=2,\\quad 4a-2b+c=2",
+            "note": "continuity"
+          },
+          {
+            "tex": "\\Rightarrow b=0,\\ 4a+c=2"
+          },
+          {
+            "tex": "4a+b=1,\\quad -4a+b=-1 \\Rightarrow a=\\tfrac14",
+            "note": "slopes"
+          },
+          {
+            "tex": "c=2-4a=1",
+            "tone": "success"
+          }
+        ],
+        "reveal": 0
+      }
+    },
+    "da-2024-da-28": {
+      "approach": "count(i) returns 1 for a node with no children and $1 + \\sum$ count(child) otherwise — i.e. the **number of nodes in the subtree** rooted at i. The dictionary describes a tree with 9 nodes (0–8).",
+      "concepts": [
+        "Recursion",
+        "Python dictionaries",
+        "Subtree size"
+      ],
+      "given": "child_dict: $0 \\to [1, 2]$, $1 \\to [3, 4, 5]$, $2 \\to [6, 7, 8]$; keys $3$–$8$ are absent (leaves).",
+      "steps": [
+        {
+          "title": "Leaves return 1",
+          "body": "For $i \\in \\{3,4,5,6,7,8\\}$, $i$ is not a key of child_dict, so count returns $1$.",
+          "scene": {
+            "root": {
+              "label": 0,
+              "id": "n0",
+              "children": [
+                {
+                  "label": 1,
+                  "id": "n1",
+                  "children": [
+                    {
+                      "label": 3,
+                      "id": "n3",
+                      "sub": "1",
+                      "tone": "info"
+                    },
+                    {
+                      "label": 4,
+                      "id": "n4",
+                      "sub": "1",
+                      "tone": "info"
+                    },
+                    {
+                      "label": 5,
+                      "id": "n5",
+                      "sub": "1",
+                      "tone": "info"
+                    }
+                  ]
+                },
+                {
+                  "label": 2,
+                  "id": "n2",
+                  "children": [
+                    {
+                      "label": 6,
+                      "id": "n6",
+                      "sub": "1",
+                      "tone": "info"
+                    },
+                    {
+                      "label": 7,
+                      "id": "n7",
+                      "sub": "1",
+                      "tone": "info"
+                    },
+                    {
+                      "label": 8,
+                      "id": "n8",
+                      "sub": "1",
+                      "tone": "info"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Nodes 1 and 2",
+          "body": "count(1) $= 1 + \\text{count}(3) + \\text{count}(4) + \\text{count}(5) = 1 + 1 + 1 + 1 = 4$.\n\ncount(2) $= 1 + 1 + 1 + 1 = 4$ likewise.",
+          "scene": {
+            "root": {
+              "label": 0,
+              "id": "n0",
+              "children": [
+                {
+                  "label": 1,
+                  "id": "n1",
+                  "sub": "4",
+                  "tone": "success",
+                  "children": [
+                    {
+                      "label": 3,
+                      "id": "n3",
+                      "sub": "1",
+                      "tone": "info"
+                    },
+                    {
+                      "label": 4,
+                      "id": "n4",
+                      "sub": "1",
+                      "tone": "info"
+                    },
+                    {
+                      "label": 5,
+                      "id": "n5",
+                      "sub": "1",
+                      "tone": "info"
+                    }
+                  ]
+                },
+                {
+                  "label": 2,
+                  "id": "n2",
+                  "sub": "4",
+                  "tone": "success",
+                  "children": [
+                    {
+                      "label": 6,
+                      "id": "n6",
+                      "sub": "1",
+                      "tone": "info"
+                    },
+                    {
+                      "label": 7,
+                      "id": "n7",
+                      "sub": "1",
+                      "tone": "info"
+                    },
+                    {
+                      "label": 8,
+                      "id": "n8",
+                      "sub": "1",
+                      "tone": "info"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Root",
+          "body": "count(0) $= 1 + \\text{count}(1) + \\text{count}(2) = 1 + 4 + 4 = 9$. The program prints **9**.",
+          "scene": {
+            "root": {
+              "label": 0,
+              "id": "n0",
+              "sub": "9",
+              "tone": "success",
+              "children": [
+                {
+                  "label": 1,
+                  "id": "n1",
+                  "sub": "4",
+                  "tone": "success",
+                  "children": [
+                    {
+                      "label": 3,
+                      "id": "n3",
+                      "sub": "1",
+                      "tone": "info"
+                    },
+                    {
+                      "label": 4,
+                      "id": "n4",
+                      "sub": "1",
+                      "tone": "info"
+                    },
+                    {
+                      "label": 5,
+                      "id": "n5",
+                      "sub": "1",
+                      "tone": "info"
+                    }
+                  ]
+                },
+                {
+                  "label": 2,
+                  "id": "n2",
+                  "sub": "4",
+                  "tone": "success",
+                  "children": [
+                    {
+                      "label": 6,
+                      "id": "n6",
+                      "sub": "1",
+                      "tone": "info"
+                    },
+                    {
+                      "label": 7,
+                      "id": "n7",
+                      "sub": "1",
+                      "tone": "info"
+                    },
+                    {
+                      "label": 8,
+                      "id": "n8",
+                      "sub": "1",
+                      "tone": "info"
+                    }
+                  ]
+                }
+              ]
+            },
+            "caption": "count(0) = 9 = number of nodes"
+          }
+        }
+      ],
+      "answer": {
+        "value": "The program prints **9** — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$6$ is the number of **leaves** (3–8) only; the internal nodes 0, 1, 2 also add 1 each (ans = 1)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$1$ would require node 0 to be absent from child_dict; it is a key, so the loop runs."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$8$ counts every node except the root (forgetting the root's own ans = 1) — i.e. the number of edges/descendants."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "$1 + 4 + 4 = 9$ — the size of the whole tree."
+        }
+      ],
+      "shortcut": "count = subtree size; the tree has nodes 0–8, so 9.",
+      "pitfalls": [
+        "Counting only leaves (6).",
+        "Forgetting that ans starts at 1 for internal nodes (gives 6 or 8)."
+      ],
+      "verification": "Distinct nodes mentioned: 0, 1, 2 (keys) and 3–8 (values) = $3 + 6 = 9$ ✓.",
+      "animation": {
+        "kind": "tree",
+        "title": "Recursion tree of count(child_dict, 0)",
+        "root": {
+          "label": 0,
+          "id": "n0",
+          "children": [
+            {
+              "label": 1,
+              "id": "n1",
+              "children": [
+                {
+                  "label": 3,
+                  "id": "n3"
+                },
+                {
+                  "label": 4,
+                  "id": "n4"
+                },
+                {
+                  "label": 5,
+                  "id": "n5"
+                }
+              ]
+            },
+            {
+              "label": 2,
+              "id": "n2",
+              "children": [
+                {
+                  "label": 6,
+                  "id": "n6"
+                },
+                {
+                  "label": 7,
+                  "id": "n7"
+                },
+                {
+                  "label": 8,
+                  "id": "n8"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "da-2024-da-29": {
+      "approach": "$S[i]$ restarts at 1 and adds $S[i-1]$ only when $X[i-1] \\le X[i]$, so $S[i]$ is the length of the non-decreasing run ending at $i$. Trace the five positions.",
+      "concepts": [
+        "Pseudocode tracing",
+        "Run length (non-decreasing streak)"
+      ],
+      "given": "$X = [6, 3, 5, 4, 10]$ (1-indexed).",
+      "steps": [
+        {
+          "title": "i = 1, 2",
+          "body": "$S[1] = 1$. $i = 2$: $X[1] = 6 \\le X[2] = 3$? No, so $S[2] = 1$.",
+          "scene": {
+            "reveal": 10
+          }
+        },
+        {
+          "title": "i = 3",
+          "body": "$X[2] = 3 \\le X[3] = 5$? Yes, so $S[3] = 1 + S[2] = 1 + 1 = 2$.",
+          "scene": {
+            "reveal": 15,
+            "hl": [
+              {
+                "r": 2,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "i = 4",
+          "body": "$X[3] = 5 \\le X[4] = 4$? No, so $S[4] = 1$ (the run resets).",
+          "scene": {
+            "reveal": 20,
+            "hl": [
+              {
+                "r": 3,
+                "tone": "error"
+              }
+            ]
+          }
+        },
+        {
+          "title": "i = 5",
+          "body": "$X[4] = 4 \\le X[5] = 10$? Yes, so $S[5] = 1 + S[4] = 1 + 1 = 2$.\n\n$S = [1, 1, 2, 1, 2]$.",
+          "scene": {
+            "reveal": 25,
+            "hl": [
+              {
+                "r": 4,
+                "tone": "success"
+              },
+              {
+                "c": 4,
+                "tone": "accent"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "$S = [1, 1, 2, 1, 2]$ — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$S[4] = 3$ ignores the reset: $5 \\le 4$ is false, so $S[4] = 1$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Same error at $i = 4$ ($S[4]$ must be 1), and then $S[5] = 1 + S[4] = 2$, not 3."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$[1, 1, 2, 1, 2]$ matches the trace."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$S[5] = 5$ would need $S[4] = 4$; actually $S[5] = 1 + S[4] = 2$."
+        }
+      ],
+      "shortcut": "Read off non-decreasing run lengths: 6 | 3 5 | 4 10 → 1 | 1 2 | 1 2.",
+      "pitfalls": [
+        "Forgetting that S[i] is reset to 1 every iteration before the test.",
+        "Comparing with ≥ instead of ≤."
+      ],
+      "verification": "Runs of X: [6], [3, 5], [4, 10] — position-in-run numbers 1; 1, 2; 1, 2 ✓.",
+      "animation": {
+        "kind": "table",
+        "title": "Trace of computeS([6, 3, 5, 4, 10])",
+        "cols": [
+          "i",
+          "X[i−1]",
+          "X[i]",
+          "X[i−1] ≤ X[i]?",
+          "S[i]"
+        ],
+        "rows": [
+          [
+            1,
+            "–",
+            6,
+            "–",
+            1
+          ],
+          [
+            2,
+            6,
+            3,
+            "no",
+            1
+          ],
+          [
+            3,
+            3,
+            5,
+            "yes",
+            2
+          ],
+          [
+            4,
+            5,
+            4,
+            "no",
+            1
+          ],
+          [
+            5,
+            4,
+            10,
+            "yes",
+            2
+          ]
+        ],
+        "reveal": 5,
+        "mono": true
+      }
+    },
+    "da-2024-da-43": {
+      "approach": "Two classes are linearly separable when one straight line puts every circle on one side and every square on the other. Either exhibit such a line, or find a structural obstruction (a point of one class inside the convex hull of the other, or crossing diagonals as in XOR).",
+      "concepts": [
+        "Linear separability",
+        "Convex hull",
+        "XOR pattern"
+      ],
+      "given": "| Plot | Circles | Squares |\n|---|---|---|\n| (i) | $(1,3),(2,3),(1,2)$ | $(2,1.2),(3,1.2),(2,0.3)$ |\n| (ii) | $(2,2)$ | $(2,3),(1,2),(3,2),(2,1)$ |\n| (iii) | $(1,1),(3,3)$ | $(1,3),(3,1)$ |\n| (iv) | $(3,1.5),(2,0.5),(3,0.5)$ | $(1,2.2),(1,1.2),(2,2.6)$ |\n\n(Coordinates read from the figure; squares in (i) and (iv) sit slightly off the gridlines.)",
+      "steps": [
+        {
+          "title": "Plot (i): the line $x - y = 0$ works",
+          "body": "Compute $x-y$ for each point.\n\n- Circles: $1-3=-2$, $2-3=-1$, $1-2=-1$ — all **negative**.\n- Squares: $2-1.2=0.8$, $3-1.2=1.8$, $2-0.3=1.7$ — all **positive**.\n\nSo the line $y = x$ separates the classes: (i) **is** linearly separable."
+        },
+        {
+          "title": "Plot (ii): the circle is inside the squares' hull",
+          "body": "The four squares $(2,3),(1,2),(3,2),(2,1)$ form a diamond whose centre is exactly the circle $(2,2) = \\tfrac12\\big[(1,2)+(3,2)\\big]$.\n\nA half-plane is convex: if both $(1,2)$ and $(3,2)$ lie in the squares' half-plane, so does their midpoint $(2,2)$. Hence no line can put the circle on the other side — (ii) is **not** separable."
+        },
+        {
+          "title": "Plot (iii): the XOR configuration",
+          "body": "Circles on one diagonal $(1,1),(3,3)$, squares on the other $(1,3),(3,1)$. Both diagonals pass through $(2,2)$:\n\n$$\\tfrac12\\big[(1,1)+(3,3)\\big] = (2,2) = \\tfrac12\\big[(1,3)+(3,1)\\big]$$\n\nSo $(2,2)$ would have to be on the circle side *and* on the square side of the same line — impossible. (iii) is **not** separable."
+        },
+        {
+          "title": "Plot (iv): the line $y = x - 0.5$ works",
+          "body": "Compute $y - x$:\n\n- Squares: $2.2-1=1.2$, $1.2-1=0.2$, $2.6-2=0.6$ — all $> -0.5$.\n- Circles: $1.5-3=-1.5$, $0.5-2=-1.5$, $0.5-3=-2.5$ — all $< -0.5$.\n\nSo $y - x = -0.5$ separates them: (iv) **is** linearly separable."
+        }
+      ],
+      "answer": {
+        "value": "(i) and (iv) are linearly separable — options **(A)** and **(D)**",
+        "choice": [
+          "A",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Circles are above the diagonal $y=x$ and squares below it."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "The circle $(2,2)$ is the midpoint of the squares $(1,2)$ and $(3,2)$, so it lies inside their convex hull."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "This is XOR: the two diagonals cross at $(2,2)$, so the convex hulls of the classes intersect."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Squares lie upper-left and circles lower-right; $y = x - 0.5$ separates them."
+        }
+      ],
+      "shortcut": "Look for the two classic non-separable shapes: one class surrounded by the other (ii) and the XOR checkerboard (iii). Everything else here is split by a diagonal line.",
+      "pitfalls": [
+        "Thinking (iv) is not separable because the points are not on the grid — a slanted line still separates them.",
+        "Requiring an axis-parallel line; any straight line counts.",
+        "Calling (iii) separable because each class alone looks \"linear\" (a diagonal)."
+      ],
+      "verification": "Convex-hull test: in (i) and (iv) the triangles formed by the circles and by the squares are disjoint (the separating lines above prove it); in (ii) and (iii) the hulls share the point $(2,2)$."
+    },
+    "da-2024-da-44": {
+      "approach": "“All balls are round except rugby balls” says two things: a non-rugby ball is round, and a rugby ball is not round. Write those as implications, then use the fact that each $s_i$ is either one of them or its contrapositive.",
+      "concepts": [
+        "First-order logic",
+        "Implication and contrapositive",
+        "“Except” = both directions"
+      ],
+      "given": "Write $g = \\text{game(ball, rugby)}$, $r = \\text{shape(ball, round)}$ (for a fixed ball).\n\n$s_1: \\neg g \\Rightarrow r$, $\\quad s_2: \\neg r \\Rightarrow g$, $\\quad s_3: g \\Rightarrow \\neg r$, $\\quad s_4: r \\Rightarrow \\neg g$.",
+      "steps": [
+        {
+          "title": "Translate the assertion",
+          "body": "“All balls are round **except** balls used in rugby” has two parts:\n\n1. Every non-rugby ball is round: $\\forall\\,\\text{ball}\\ (\\neg g \\Rightarrow r)$ — this is $s_1$.\n2. The excepted balls are not round: $\\forall\\,\\text{ball}\\ (g \\Rightarrow \\neg r)$ — this is $s_3$.\n\nTogether: for every ball $r \\Leftrightarrow \\neg g$, i.e. $g \\oplus r$ (exactly one holds).",
+          "scene": {
+            "caption": "claim column: true exactly when g and r differ",
+            "hl": [
+              {
+                "c": 4,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Spot the contrapositive pairs",
+          "body": "An implication equals its contrapositive: $(p \\Rightarrow q) \\equiv (\\neg q \\Rightarrow \\neg p)$.\n\n- $s_2: \\neg r \\Rightarrow g$ is the contrapositive of $s_1$, so $s_1 \\equiv s_2$.\n- $s_4: r \\Rightarrow \\neg g$ is the contrapositive of $s_3$, so $s_3 \\equiv s_4$.\n\nThe table confirms it: columns $s_1, s_2$ are identical, and so are $s_3, s_4$.",
+          "scene": {
+            "caption": "s1 = s2 and s3 = s4 column-for-column",
+            "hl": [
+              {
+                "c": 0,
+                "tone": "info"
+              },
+              {
+                "c": 1,
+                "tone": "info"
+              },
+              {
+                "c": 2,
+                "tone": "warning"
+              },
+              {
+                "c": 3,
+                "tone": "warning"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Evaluate each option",
+          "body": "The assertion needs one sentence from $\\{s_1, s_2\\}$ **and** one from $\\{s_3, s_4\\}$.\n\n- $s_1 \\wedge s_3$: column $F,T,T,F$ = claim ✓\n- $s_1 \\wedge s_2 \\equiv s_1$: $F,T,T,T$ — allows a round rugby ball ✗\n- $s_2 \\wedge s_3 \\equiv s_1 \\wedge s_3$: $F,T,T,F$ ✓\n- $s_3 \\wedge s_4 \\equiv s_3$: $T,T,T,F$ — allows a non-round non-rugby ball ✗",
+          "scene": {
+            "caption": "s1∧s3 (= s2∧s3) reproduces the claim column",
+            "hl": [
+              {
+                "c": 0,
+                "tone": "success"
+              },
+              {
+                "c": 2,
+                "tone": "success"
+              },
+              {
+                "c": 4,
+                "tone": "success"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "Options **(A)** $s_1 \\wedge s_3$ and **(C)** $s_2 \\wedge s_3$",
+        "choice": [
+          "A",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$s_1$ makes non-rugby balls round and $s_3$ makes rugby balls non-round — exactly the two halves of the assertion."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$s_2$ is the contrapositive of $s_1$, so $s_1 \\wedge s_2 \\equiv s_1$; it says nothing about rugby balls, so a round rugby ball would satisfy it."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$s_2 \\equiv s_1$, so $s_2 \\wedge s_3 \\equiv s_1 \\wedge s_3$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$s_4 \\equiv s_3$, so this is just $s_3$; it never forces non-rugby balls to be round."
+        }
+      ],
+      "shortcut": "Group the sentences into contrapositive pairs $\\{s_1,s_2\\}$ and $\\{s_3,s_4\\}$. A correct option must take one from each pair: only A and C do.",
+      "pitfalls": [
+        "Reading “except” as only $\\neg g \\Rightarrow r$; in the official reading the exception also says rugby balls are not round.",
+        "Taking $s_1 \\wedge s_2$ as “both directions” — $s_2$ is the contrapositive, not the converse.",
+        "Confusing the converse ($r \\Rightarrow \\neg g$ is the contrapositive of $s_3$, not of $s_1$)."
+      ],
+      "verification": "Truth table over the four ball types $(g,r)$: the claim is true only for $(0,1)$ and $(1,0)$; $s_1\\wedge s_3$ and $s_2\\wedge s_3$ are true exactly there, while B fails at $(1,1)$ and D fails at $(0,0)$.",
+      "animation": {
+        "kind": "table",
+        "title": "All four kinds of ball",
+        "cols": [
+          "s1",
+          "s2",
+          "s3",
+          "s4",
+          "claim"
+        ],
+        "rowLabels": [
+          "g=0, r=0",
+          "g=0, r=1",
+          "g=1, r=0",
+          "g=1, r=1"
+        ],
+        "corner": "g=rugby, r=round",
+        "rows": [
+          [
+            "F",
+            "F",
+            "T",
+            "T",
+            "F"
+          ],
+          [
+            "T",
+            "T",
+            "T",
+            "T",
+            "T"
+          ],
+          [
+            "T",
+            "T",
+            "T",
+            "T",
+            "T"
+          ],
+          [
+            "T",
+            "T",
+            "F",
+            "F",
+            "F"
+          ]
+        ],
+        "caption": "Each row is one kind of ball; T/F is the value of the sentence for it"
+      }
+    },
+    "da-2024-da-45": {
+      "approach": "Classify every predicate: equality predicates can use either a hash index or a B+ tree, but the range predicate `CustomerRating > 3.4` can only use an ordered index (B+ tree). An option is valid when every predicate gets an index that can serve it.",
+      "concepts": [
+        "Hash index (equality only)",
+        "B+ tree (equality and range)",
+        "Index-supported joins"
+      ],
+      "given": "| Predicate | Kind |\n|---|---|\n| `Movie.CustomerRating > 3.4` | range |\n| `Genre.Name = \"Comedy\"` | equality (selection) |\n| `Movie_Genre.MovieID = Movie.ID` | equality (join) |\n| `Movie_Genre.GenreID = Genre.ID` | equality (join) |",
+      "steps": [
+        {
+          "title": "What each index can answer",
+          "body": "- A **hash index** maps a key to a bucket. It finds rows with `attr = value` in about one I/O, but the hash scatters neighbouring values, so it cannot list all keys $> 3.4$ — a range query must still scan.\n- A **B+ tree** keeps keys sorted with linked leaves: it answers equality *and* ranges (descend to $3.4$, then walk the leaves).",
+          "scene": {
+            "hl": [
+              {
+                "c": 1,
+                "tone": "accent"
+              },
+              {
+                "c": 2,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Match predicates to index types",
+          "body": "- Range on `CustomerRating` ⇒ needs a **B+ tree**.\n- Equality on `Genre.Name` ⇒ hash or B+ tree.\n- Equality joins on `ID`, `MovieID`, `GenreID` ⇒ hash or B+ tree (index nested-loop or hash join).",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "warning"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Check the options",
+          "body": "- **A** B+ tree everywhere: every predicate (including the range) is served ✓\n- **B** hash on `Genre.Name` (equality — ideal) + B+ trees on the rest, including `CustomerRating` ✓\n- **C** hash on `CustomerRating` — useless for `> 3.4`, so the most selective-looking filter still needs a full scan ✗\n- **D** hash on everything — same defect as C ✗",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "c": 1,
+                "tone": "error"
+              },
+              {
+                "r": 0,
+                "c": 2,
+                "tone": "success"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "Options **(A)** and **(B)**",
+        "choice": [
+          "A",
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "B+ trees support both the range filter on `CustomerRating` and all equality predicates/joins."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "The hash index on `Genre.Name` is ideal for `= \"Comedy\"`, and `CustomerRating` still gets a B+ tree for the range."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "A hash index cannot answer `CustomerRating > 3.4`; the range filter falls back to a scan."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Same flaw as C: the range predicate is on a hash-indexed attribute."
+        }
+      ],
+      "shortcut": "Find the only range predicate (`> 3.4`). Any option that puts a hash index on that attribute is out; the rest are in.",
+      "pitfalls": [
+        "Thinking hash indexes are always faster — only for equality lookups.",
+        "Arguing C still \"speeds up\" the joins; the intended criterion is that every predicate can use its index.",
+        "Forgetting that joins are equality predicates, so hash indexes are fine there."
+      ],
+      "verification": "Only `CustomerRating` appears in a range comparison; A and B give it a B+ tree, C and D give it a hash index — consistent with the official key A;B.",
+      "animation": {
+        "kind": "table",
+        "title": "Can this index serve the predicate?",
+        "cols": [
+          "kind",
+          "hash",
+          "B+ tree"
+        ],
+        "rowLabels": [
+          "CustomerRating > 3.4",
+          "Name = \"Comedy\"",
+          "MovieID = Movie.ID",
+          "GenreID = Genre.ID"
+        ],
+        "rows": [
+          [
+            "range",
+            "✗",
+            "✓"
+          ],
+          [
+            "equality",
+            "✓",
+            "✓"
+          ],
+          [
+            "join (=)",
+            "✓",
+            "✓"
+          ],
+          [
+            "join (=)",
+            "✓",
+            "✓"
+          ]
+        ],
+        "caption": "Only the range predicate rules out a hash index"
+      }
+    },
+    "da-2024-da-46": {
+      "approach": "$(X,Y)$ is uniform on the square $[1,3]\\times[2,4]$ (area 4), so the probability is the area of the part with $x \\ge y$ divided by 4 — a small triangle.",
+      "concepts": [
+        "Joint uniform density",
+        "Probability as area"
+      ],
+      "given": "$X \\sim U[1,3]$, $Y \\sim U[2,4]$, independent. Find $P(X \\ge Y)$.",
+      "steps": [
+        {
+          "title": "Joint density",
+          "body": "By independence $f_{X,Y}(x,y) = \\dfrac{1}{3-1}\\cdot\\dfrac{1}{4-2} = \\dfrac12\\cdot\\dfrac12 = \\dfrac14$ on $[1,3]\\times[2,4]$, so $P(A) = \\dfrac{\\text{area}(A)}{4}$."
+        },
+        {
+          "title": "Region where $x \\ge y$",
+          "body": "Inside the square $y \\ge 2$, so $x \\ge y$ needs $x \\ge 2$. For $x \\in [2,3]$, $y$ runs from $2$ to $x$. That is the triangle with vertices $(2,2), (3,2), (3,3)$:\n\n$$\\text{area} = \\int_2^3 (x-2)\\,dx = \\Big[\\tfrac{(x-2)^2}{2}\\Big]_2^3 = \\tfrac12$$"
+        },
+        {
+          "title": "Probability",
+          "body": "$$P(X \\ge Y) = \\frac{1/2}{4} = \\frac18 = 0.125$$"
+        }
+      ],
+      "answer": {
+        "value": "$P(X \\ge Y) = \\tfrac18 =$ **0.125**",
+        "number": 0.125,
+        "matchesKey": true
+      },
+      "shortcut": "$X \\ge Y$ is possible only when both land in the overlap $[2,3]$: $P(X \\ge 2)\\,P(Y \\le 3) = \\tfrac12\\cdot\\tfrac12 = \\tfrac14$. Given that, both are i.i.d. $U[2,3]$, so $X \\ge Y$ with probability $\\tfrac12$. Total $\\tfrac14 \\cdot \\tfrac12 = \\tfrac18$.",
+      "pitfalls": [
+        "Forgetting the joint density is $\\tfrac14$, not 1 (answering 0.5).",
+        "Integrating over the whole $x$-range $[1,3]$ — for $x<2$ no $y$ in $[2,4]$ is $\\le x$."
+      ],
+      "verification": "The shortcut (conditioning on both landing in $[2,3]$) gives the same $\\tfrac18$; and $P(Y \\ge X) = 1 - \\tfrac18 = \\tfrac78$ is plausible since $Y$ is shifted one unit up."
+    },
+    "da-2024-da-47": {
+      "approach": "Use the standard exponential moments $E(X) = 1/\\lambda$ and $\\mathrm{Var}(X) = 1/\\lambda^2$ and solve the one equation.",
+      "concepts": [
+        "Exponential distribution",
+        "Mean and variance"
+      ],
+      "steps": [
+        {
+          "title": "Mean",
+          "body": "Using $\\int_0^\\infty x^n e^{-\\lambda x}dx = \\dfrac{n!}{\\lambda^{n+1}}$:\n\n$$E(X) = \\lambda\\cdot\\frac{1!}{\\lambda^2} = \\frac1\\lambda$$"
+        },
+        {
+          "title": "Variance",
+          "body": "$$E(X^2) = \\lambda\\cdot\\frac{2!}{\\lambda^3} = \\frac{2}{\\lambda^2}, \\qquad \\mathrm{Var}(X) = E(X^2) - E(X)^2 = \\frac{2}{\\lambda^2} - \\frac{1}{\\lambda^2} = \\frac{1}{\\lambda^2}$$"
+        },
+        {
+          "title": "Solve $5E(X) = \\mathrm{Var}(X)$",
+          "body": "$$\\frac{5}{\\lambda} = \\frac{1}{\\lambda^2} \\;\\Rightarrow\\; 5\\lambda^2 = \\lambda \\;\\Rightarrow\\; \\lambda(5\\lambda - 1) = 0$$\n\nSince $\\lambda > 0$, $\\lambda = \\dfrac15 = 0.2$."
+        }
+      ],
+      "answer": {
+        "value": "$\\lambda = \\tfrac15 =$ **0.2**",
+        "number": 0.2,
+        "matchesKey": true
+      },
+      "shortcut": "For an exponential, $\\mathrm{Var}/E = 1/\\lambda$. Here the ratio is 5, so $\\lambda = 1/5$.",
+      "pitfalls": [
+        "Using $E(X) = \\lambda$ (that is the Poisson mean) — gives $\\lambda = 5$.",
+        "Using standard deviation $1/\\lambda$ in place of variance."
+      ],
+      "verification": "With $\\lambda = 0.2$: $E(X) = 5$, $\\mathrm{Var}(X) = 25 = 5 \\times 5$ ✓."
+    },
+    "da-2024-da-48": {
+      "approach": "Bayes' theorem: draw the two-level tree $T/\\bar T$ then $S$, add the two $S$-leaves for $P(S)$, and take the share of the $T$-branch.",
+      "concepts": [
+        "Total probability",
+        "Bayes' theorem"
+      ],
+      "given": "$P(\\bar T) = 0.6$, $P(S \\mid T) = 0.3$, $P(S \\mid \\bar T) = 0.6$.",
+      "steps": [
+        {
+          "title": "Prior of $T$",
+          "body": "$P(T) = 1 - P(\\bar T) = 1 - 0.6 = 0.4$."
+        },
+        {
+          "title": "Joint probabilities of the $S$-leaves",
+          "body": "$P(T \\cap S) = P(T)\\,P(S\\mid T) = 0.4 \\times 0.3 = 0.12$\n\n$P(\\bar T \\cap S) = P(\\bar T)\\,P(S\\mid \\bar T) = 0.6 \\times 0.6 = 0.36$",
+          "scene": {
+            "kind": "tree",
+            "title": "Probability tree",
+            "root": {
+              "label": "start",
+              "children": [
+                {
+                  "label": "T",
+                  "edge": "0.4",
+                  "children": [
+                    {
+                      "label": "S: 0.12",
+                      "id": "ts",
+                      "edge": "0.3",
+                      "tone": "warning"
+                    },
+                    {
+                      "label": "S̄",
+                      "id": "tn",
+                      "edge": "0.7"
+                    }
+                  ]
+                },
+                {
+                  "label": "T̄",
+                  "edge": "0.6",
+                  "children": [
+                    {
+                      "label": "S: 0.36",
+                      "id": "ns",
+                      "edge": "0.6",
+                      "tone": "warning"
+                    },
+                    {
+                      "label": "S̄",
+                      "id": "nn",
+                      "edge": "0.4"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Total probability and Bayes",
+          "body": "$$P(S) = 0.12 + 0.36 = 0.48$$\n\n$$P(T \\mid S) = \\frac{P(T\\cap S)}{P(S)} = \\frac{0.12}{0.48} = 0.25$$",
+          "scene": {
+            "kind": "tree",
+            "title": "Probability tree",
+            "root": {
+              "label": "start",
+              "children": [
+                {
+                  "label": "T",
+                  "edge": "0.4",
+                  "tone": "success",
+                  "children": [
+                    {
+                      "label": "S: 0.12",
+                      "id": "ts",
+                      "edge": "0.3",
+                      "tone": "success"
+                    },
+                    {
+                      "label": "S̄",
+                      "id": "tn",
+                      "edge": "0.7"
+                    }
+                  ]
+                },
+                {
+                  "label": "T̄",
+                  "edge": "0.6",
+                  "children": [
+                    {
+                      "label": "S: 0.36",
+                      "id": "ns",
+                      "edge": "0.6",
+                      "tone": "info"
+                    },
+                    {
+                      "label": "S̄",
+                      "id": "nn",
+                      "edge": "0.4"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "$P(T \\mid S) = \\tfrac{0.12}{0.48} =$ **0.25**",
+        "number": 0.25,
+        "matchesKey": true
+      },
+      "shortcut": "Odds form: $\\dfrac{P(T\\mid S)}{P(\\bar T\\mid S)} = \\dfrac{0.4}{0.6}\\cdot\\dfrac{0.3}{0.6} = \\dfrac13$, so $P(T\\mid S) = \\dfrac{1}{1+3} = 0.25$.",
+      "pitfalls": [
+        "Using $P(\\bar T) = 0.6$ as $P(T)$.",
+        "Answering $P(S\\mid T) = 0.3$ — the question asks for the reverse conditional.",
+        "Forgetting the $\\bar T$ branch in $P(S)$."
+      ],
+      "verification": "$P(\\bar T \\mid S) = 0.36/0.48 = 0.75$ and $0.25 + 0.75 = 1$ ✓; the odds-form shortcut agrees.",
+      "animation": {
+        "kind": "tree",
+        "title": "Probability tree",
+        "root": {
+          "label": "start",
+          "children": [
+            {
+              "label": "T",
+              "edge": "0.4",
+              "children": [
+                {
+                  "label": "S: 0.12",
+                  "id": "ts",
+                  "edge": "0.3"
+                },
+                {
+                  "label": "S̄",
+                  "id": "tn",
+                  "edge": "0.7"
+                }
+              ]
+            },
+            {
+              "label": "T̄",
+              "edge": "0.6",
+              "children": [
+                {
+                  "label": "S: 0.36",
+                  "id": "ns",
+                  "edge": "0.6"
+                },
+                {
+                  "label": "S̄",
+                  "id": "nn",
+                  "edge": "0.4"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "da-2024-da-49": {
+      "approach": "The conditional density $f_{Y\\mid X}(y\\mid x) = f(x,y)/f_X(x)$ is the slice $y \\mapsto 2xy$ renormalised on $0<y<x$, so any constant factor (even a wrong one) cancels. Integrate the slice at $x = 1.5$.",
+      "concepts": [
+        "Conditional density",
+        "Conditional expectation",
+        "Normalisation of a pdf"
+      ],
+      "given": "$f_{X,Y}(x,y) = 2xy$ on $0<x<2,\\ 0<y<x$. Find $E[Y \\mid X=1.5]$.",
+      "steps": [
+        {
+          "title": "Check the density (why the key is MTA)",
+          "body": "$$\\int_0^2\\!\\int_0^x 2xy\\,dy\\,dx = \\int_0^2 x\\cdot x^2\\,dx = \\Big[\\tfrac{x^4}{4}\\Big]_0^2 = 4 \\ne 1$$\n\nSo the given $f$ is **not** a valid joint pdf; the official key therefore awards marks to all (MTA)."
+        },
+        {
+          "title": "Conditional density at $X = 1.5$",
+          "body": "Marginal (of the given function): $f_X(x) = \\int_0^x 2xy\\,dy = x\\cdot x^2 = x^3$. Then\n\n$$f_{Y\\mid X}(y\\mid x) = \\frac{2xy}{x^3} = \\frac{2y}{x^2}, \\quad 0<y<x$$\n\nThis integrates to $\\frac{x^2}{x^2} = 1$ — the bad constant cancelled. At $x = 1.5$: $f(y\\mid 1.5) = \\dfrac{2y}{2.25}$ on $(0, 1.5)$."
+        },
+        {
+          "title": "Expectation",
+          "body": "$$E[Y\\mid X=x] = \\int_0^x y\\cdot\\frac{2y}{x^2}\\,dy = \\frac{2}{x^2}\\cdot\\frac{x^3}{3} = \\frac{2x}{3}$$\n\n$$E[Y\\mid X=1.5] = \\frac{2 \\times 1.5}{3} = 1$$"
+        }
+      ],
+      "answer": {
+        "value": "$E[Y\\mid X=1.5] = \\tfrac{2(1.5)}{3} =$ **1** (official key: marks to all)",
+        "number": 1,
+        "matchesKey": false,
+        "keyNote": "The official key is \"MTA\" (marks to all) because the given $f$ integrates to 4, not 1. The conditional expectation is unaffected by the normalising constant, so the intended answer is 1."
+      },
+      "shortcut": "Given $X=x$, $Y$ has density $\\propto y$ on $(0,x)$ — a \"ramp\", whose mean is $\\tfrac23$ of the way along: $\\tfrac23 \\times 1.5 = 1$.",
+      "pitfalls": [
+        "Plugging $x=1.5$ into $f(x,y)$ without dividing by the marginal.",
+        "Using the range $0<y<2$ instead of $0<y<x$.",
+        "Trying to \"fix\" the pdf to $\\tfrac12 xy$ and thinking the answer changes — it does not."
+      ],
+      "verification": "With the corrected pdf $\\tfrac12 xy$: $f_X(x) = \\tfrac14 x^3$ and $f(y\\mid x) = \\tfrac{xy/2}{x^3/4} = \\tfrac{2y}{x^2}$ — identical, so $E = 1$ again."
+    },
+    "da-2024-da-50": {
+      "approach": "Split the logarithm of the product into two logs and use the standard expansions $\\ln(1+t) \\approx t$ and $\\cos x \\approx 1 - x^2/2$.",
+      "concepts": [
+        "Standard limits",
+        "Taylor series",
+        "Logarithm of a product"
+      ],
+      "steps": [
+        {
+          "title": "Split the log",
+          "body": "$$\\frac{\\ln\\big((x^2+1)\\cos x\\big)}{x^2} = \\frac{\\ln(1+x^2)}{x^2} + \\frac{\\ln\\cos x}{x^2}$$"
+        },
+        {
+          "title": "First term",
+          "body": "With $t = x^2 \\to 0$: $\\dfrac{\\ln(1+t)}{t} \\to 1$."
+        },
+        {
+          "title": "Second term",
+          "body": "$\\cos x = 1 - \\dfrac{x^2}{2} + O(x^4)$, so $\\ln\\cos x = \\ln\\Big(1 - \\dfrac{x^2}{2} + O(x^4)\\Big) = -\\dfrac{x^2}{2} + O(x^4)$, hence\n\n$$\\frac{\\ln\\cos x}{x^2} \\to -\\frac12$$"
+        },
+        {
+          "title": "Add",
+          "body": "$$\\lim_{x\\to0} = 1 + \\left(-\\frac12\\right) = \\frac12 = 0.5$$"
+        }
+      ],
+      "answer": {
+        "value": "Limit $= 1 - \\tfrac12 =$ **0.5**",
+        "number": 0.5,
+        "matchesKey": true
+      },
+      "shortcut": "Product inside the log: $(1+x^2)(1-\\tfrac{x^2}{2}) \\approx 1 + \\tfrac{x^2}{2}$, and $\\ln(1+\\tfrac{x^2}{2}) \\approx \\tfrac{x^2}{2}$, so the ratio $\\to \\tfrac12$.",
+      "pitfalls": [
+        "Treating $\\ln\\cos x \\to 0$ and dropping it (answer 1).",
+        "Using $\\cos x \\approx 1 - x^2$ (missing the factor $\\tfrac12$)."
+      ],
+      "verification": "L'Hôpital: derivative of the numerator is $\\dfrac{2x}{1+x^2} - \\tan x$, of the denominator $2x$; the ratio $\\dfrac{1}{1+x^2} - \\dfrac{\\tan x}{2x} \\to 1 - \\tfrac12 = \\tfrac12$ ✓."
+    },
+    "da-2024-da-51": {
+      "approach": "$M = uu^T$ has rank 1, so it has a single non-zero singular value. Since $M$ is symmetric positive semidefinite, singular values = eigenvalues, and the only non-zero eigenvalue is $u^Tu = \\lVert u\\rVert^2$.",
+      "concepts": [
+        "Rank-one matrix",
+        "Singular values of a PSD matrix",
+        "Trace"
+      ],
+      "given": "$u = (1,2,3,4,5)^T$, $M = uu^T \\in \\mathbb{R}^{5\\times5}$.",
+      "steps": [
+        {
+          "title": "Eigen-structure of $uu^T$",
+          "body": "$Mu = u(u^Tu) = \\lVert u\\rVert^2 u$, so $u$ is an eigenvector with eigenvalue $\\lVert u\\rVert^2$. Any $v \\perp u$ gives $Mv = u(u^Tv) = 0$, so the other four eigenvalues are $0$."
+        },
+        {
+          "title": "Singular values = eigenvalues here",
+          "body": "$M$ is symmetric and $x^TMx = (u^Tx)^2 \\ge 0$, so $M$ is PSD; for such matrices $\\sigma_i = \\lvert\\lambda_i\\rvert = \\lambda_i$. Hence the singular values are $\\lVert u\\rVert^2, 0, 0, 0, 0$."
+        },
+        {
+          "title": "Compute $\\lVert u\\rVert^2$",
+          "body": "$$\\sum_{i=1}^{5}\\sigma_i = 1^2+2^2+3^2+4^2+5^2 = 1+4+9+16+25 = 55$$"
+        }
+      ],
+      "answer": {
+        "value": "$\\sum \\sigma_i = \\lVert u\\rVert^2 =$ **55**",
+        "number": 55,
+        "matchesKey": true
+      },
+      "shortcut": "For a PSD matrix, sum of singular values = trace. $\\operatorname{tr}(uu^T) = u^Tu = 55$.",
+      "pitfalls": [
+        "Answering $\\lVert u\\rVert = \\sqrt{55} \\approx 7.42$ — that is the singular value of the vector $u$, not of $uu^T$.",
+        "Expecting five non-zero singular values; $uu^T$ has rank 1."
+      ],
+      "verification": "Trace check: the diagonal of $uu^T$ is $u_i^2 = 1,4,9,16,25$, summing to $55$, which equals the sum of eigenvalues ($55+0+0+0+0$)."
+    },
+    "da-2024-da-52": {
+      "approach": "$\\text{IG}(C,\\text{Pitch}) = H(C) - \\sum_v \\frac{\\lvert C_v\\rvert}{\\lvert C\\rvert}H(C_v)$: count Green/Blue overall and within each pitch value, then apply binary entropy (base 2).",
+      "concepts": [
+        "Entropy (base 2)",
+        "Information gain",
+        "Decision-tree splitting"
+      ],
+      "steps": [
+        {
+          "title": "Entropy of the target",
+          "body": "Green wins matches 1, 5, 7, 10 ⇒ 4 Green, 6 Blue.\n\n$$H(C) = -0.4\\log_2 0.4 - 0.6\\log_2 0.6 = 0.4(1.3219) + 0.6(0.7370) = 0.5288 + 0.4422 = 0.9710$$",
+          "scene": {
+            "reveal": 4,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Split on Pitch = S",
+          "body": "Matches 1, 2, 4, 7, 10: Green in 1, 7, 10 and Blue in 2, 4 ⇒ $3$ Green, $2$ Blue.\n\n$$H(C_S) = -0.6\\log_2 0.6 - 0.4\\log_2 0.4 = 0.9710$$",
+          "scene": {
+            "reveal": 8,
+            "hl": [
+              {
+                "r": 1,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Split on Pitch = F",
+          "body": "Matches 3, 5, 6, 8, 9: Green only in 5 ⇒ $1$ Green, $4$ Blue.\n\n$$H(C_F) = -0.2\\log_2 0.2 - 0.8\\log_2 0.8 = 0.2(2.3219) + 0.8(0.3219) = 0.4644 + 0.2575 = 0.7219$$",
+          "scene": {
+            "reveal": 12,
+            "hl": [
+              {
+                "r": 2,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Information gain",
+          "body": "Weighted child entropy: $\\tfrac5{10}(0.9710) + \\tfrac5{10}(0.7219) = 0.4855 + 0.3610 = 0.8464$.\n\n$$\\text{IG} = 0.9710 - 0.8464 = 0.1245 \\approx 0.12$$",
+          "scene": {
+            "hl": [
+              {
+                "c": 3,
+                "tone": "success"
+              }
+            ],
+            "caption": "IG = 0.971 − (0.5·0.971 + 0.5·0.722) ≈ 0.12"
+          }
+        }
+      ],
+      "answer": {
+        "value": "$\\text{InformationGain}(C, \\text{Pitch}) \\approx 0.1245 \\to$ **0.12**",
+        "number": 0.12,
+        "matchesKey": true
+      },
+      "shortcut": "The $S$ branch has the same 3:2 mix as the parent (4:6 mirrored), so it contributes $\\tfrac12 H(C)$; IG $= \\tfrac12\\big(H(0.4) - H(0.2)\\big) = \\tfrac12(0.971 - 0.722) = 0.1245$.",
+      "pitfalls": [
+        "Using natural logs (gives $0.086$).",
+        "Forgetting to weight child entropies by $5/10$.",
+        "Miscounting the winners — Format is irrelevant to this split."
+      ],
+      "verification": "Shortcut gives the same $0.1245$; the key range $0.12$–$0.13$ contains it.",
+      "animation": {
+        "kind": "table",
+        "title": "Winner counts by Pitch",
+        "cols": [
+          "Green",
+          "Blue",
+          "n",
+          "Entropy"
+        ],
+        "rowLabels": [
+          "All (C)",
+          "Pitch = S",
+          "Pitch = F"
+        ],
+        "rows": [
+          [
+            4,
+            6,
+            10,
+            "0.971"
+          ],
+          [
+            3,
+            2,
+            5,
+            "0.971"
+          ],
+          [
+            1,
+            4,
+            5,
+            "0.722"
+          ]
+        ],
+        "reveal": 0
+      }
+    },
+    "da-2024-da-53": {
+      "approach": "Sort the five training points by Euclidean distance from the diamond $(2,1)$ and take a majority vote among the $k$ nearest for $k = 1, 3, 5$ until squares win.",
+      "concepts": [
+        "k-nearest neighbours",
+        "Euclidean distance",
+        "Majority vote"
+      ],
+      "given": "Circles: $(1,1), (1,2)$. Squares: $(2,3), (3,2), (3,3)$. Query (diamond): $(2,1)$.",
+      "steps": [
+        {
+          "title": "Distances from $(2,1)$",
+          "body": "| Point | Class | $d$ |\n|---|---|---|\n| $(1,1)$ | circle | $\\sqrt{1^2+0^2} = 1$ |\n| $(1,2)$ | circle | $\\sqrt{1^2+1^2} = \\sqrt2 \\approx 1.41$ |\n| $(3,2)$ | square | $\\sqrt{1^2+1^2} = \\sqrt2 \\approx 1.41$ |\n| $(2,3)$ | square | $\\sqrt{0^2+2^2} = 2$ |\n| $(3,3)$ | square | $\\sqrt{1^2+2^2} = \\sqrt5 \\approx 2.24$ |",
+          "scene": {
+            "subs": {
+              "●(1,1)": "1",
+              "●(1,2)": "1.41",
+              "■(3,2)": "1.41",
+              "■(2,3)": "2",
+              "■(3,3)": "2.24"
+            }
+          }
+        },
+        {
+          "title": "$k = 1$: circle",
+          "body": "Nearest is $(1,1)$ at distance $1$ — a circle. Label: **circle**.",
+          "scene": {
+            "edgeTones": {
+              "◇(2,1)>●(1,1)": "warning",
+              "◇(2,1)>●(1,2)": "muted",
+              "◇(2,1)>■(3,2)": "muted",
+              "◇(2,1)>■(2,3)": "muted",
+              "◇(2,1)>■(3,3)": "muted"
+            }
+          }
+        },
+        {
+          "title": "$k = 3$: still circle",
+          "body": "Three nearest: $(1,1)$, $(1,2)$, $(3,2)$ — both $\\sqrt2$ points are included, so there is no tie problem. Votes: 2 circles, 1 square ⇒ **circle**.",
+          "scene": {
+            "edgeTones": {
+              "◇(2,1)>●(1,1)": "warning",
+              "◇(2,1)>●(1,2)": "warning",
+              "◇(2,1)>■(3,2)": "warning",
+              "◇(2,1)>■(2,3)": "muted",
+              "◇(2,1)>■(3,3)": "muted"
+            }
+          }
+        },
+        {
+          "title": "$k = 5$: square",
+          "body": "All five points vote: 2 circles, 3 squares ⇒ **square**. So the smallest odd $k$ is $5$.",
+          "scene": {
+            "edgeTones": {
+              "◇(2,1)>●(1,1)": "warning",
+              "◇(2,1)>●(1,2)": "warning",
+              "◇(2,1)>■(3,2)": "warning",
+              "◇(2,1)>■(2,3)": "warning",
+              "◇(2,1)>■(3,3)": "warning"
+            },
+            "tones": {
+              "◇(2,1)": "success",
+              "●(1,1)": "cat1",
+              "●(1,2)": "cat1",
+              "■(3,2)": "cat2",
+              "■(2,3)": "cat2",
+              "■(3,3)": "cat2"
+            },
+            "caption": "k = 5: 3 squares vs 2 circles"
+          }
+        }
+      ],
+      "answer": {
+        "value": "Minimum odd $k =$ **5**",
+        "number": 5,
+        "matchesKey": true
+      },
+      "shortcut": "There are only 2 circles and 3 squares, and both circles are among the 3 nearest. Squares can win only when $k$ reaches 5.",
+      "pitfalls": [
+        "Mis-reading the diamond as $(2,2)$ or the circle at $(1,2)$ as a square.",
+        "Worrying about a tie at $\\sqrt2$ for $k=3$ — both tied points are inside the top 3.",
+        "Answering 4 (an even $k$ is excluded by the question)."
+      ],
+      "verification": "Even ignoring distances, squares need at least 3 of $k$ votes while both circles are within distance $\\sqrt2$; for $k=3$ at most 1 square is in range, so $k=5$ is forced.",
+      "animation": {
+        "kind": "graph",
+        "title": "Neighbours of the diamond (2,1)",
+        "directed": false,
+        "layout": "manual",
+        "nodes": [
+          {
+            "id": "◇(2,1)",
+            "x": 2,
+            "y": 2
+          },
+          {
+            "id": "●(1,1)",
+            "x": 1,
+            "y": 2
+          },
+          {
+            "id": "●(1,2)",
+            "x": 1,
+            "y": 1
+          },
+          {
+            "id": "■(3,2)",
+            "x": 3,
+            "y": 1
+          },
+          {
+            "id": "■(2,3)",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "id": "■(3,3)",
+            "x": 3,
+            "y": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "◇(2,1)",
+            "to": "●(1,1)"
+          },
+          {
+            "from": "◇(2,1)",
+            "to": "●(1,2)"
+          },
+          {
+            "from": "◇(2,1)",
+            "to": "■(3,2)"
+          },
+          {
+            "from": "◇(2,1)",
+            "to": "■(2,3)"
+          },
+          {
+            "from": "◇(2,1)",
+            "to": "■(3,3)"
+          }
+        ],
+        "edgeTones": {
+          "◇(2,1)>●(1,1)": "muted",
+          "◇(2,1)>●(1,2)": "muted",
+          "◇(2,1)>■(3,2)": "muted",
+          "◇(2,1)>■(2,3)": "muted",
+          "◇(2,1)>■(3,3)": "muted"
+        },
+        "tones": {
+          "◇(2,1)": "accent",
+          "●(1,1)": "cat1",
+          "●(1,2)": "cat1",
+          "■(3,2)": "cat2",
+          "■(2,3)": "cat2",
+          "■(3,3)": "cat2"
+        },
+        "caption": "● circles (cat1), ■ squares (cat2); edges = current neighbours"
+      }
+    },
+    "da-2024-da-54": {
+      "approach": "A Bayesian network factorises the joint as the product of each node given its parents: $P(U,V,W,Z) = P(U)\\,P(V\\mid U)\\,P(W\\mid U)\\,P(Z\\mid V,W)$. Read the four entries from the CPTs and multiply.",
+      "concepts": [
+        "Bayesian network factorisation",
+        "Conditional probability tables"
+      ],
+      "given": "Edges $U\\to V$, $U\\to W$, $V\\to Z$, $W\\to Z$.",
+      "steps": [
+        {
+          "title": "Factorise the joint",
+          "body": "Parents: $U$ none; $V$: $U$; $W$: $U$; $Z$: $V, W$. So\n\n$$P(U{=}1,V{=}1,W{=}1,Z{=}1) = P(U{=}1)\\,P(V{=}1\\mid U{=}1)\\,P(W{=}1\\mid U{=}1)\\,P(Z{=}1\\mid V{=}1,W{=}1)$$",
+          "scene": {
+            "panels": [
+              {
+                "tones": {
+                  "U": "accent",
+                  "V": "accent",
+                  "W": "accent",
+                  "Z": "accent"
+                }
+              },
+              {
+                "reveal": 1
+              }
+            ]
+          }
+        },
+        {
+          "title": "Read the CPT entries",
+          "body": "- $P(U=1) = 0.5$\n- $P(V=1\\mid U=1) = 0.5$\n- $P(W=1\\mid U=1) = 1$\n- $P(Z=1\\mid V=1, W=1) = 0.5$",
+          "scene": {
+            "panels": [
+              null,
+              {
+                "reveal": 2
+              }
+            ]
+          }
+        },
+        {
+          "title": "Multiply",
+          "body": "$$0.5 \\times 0.5 \\times 1 \\times 0.5 = 0.125$$",
+          "scene": {
+            "panels": [
+              {
+                "tones": {
+                  "U": "success",
+                  "V": "success",
+                  "W": "success",
+                  "Z": "success"
+                }
+              },
+              {
+                "reveal": 3
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "$P(U{=}1,V{=}1,W{=}1,Z{=}1) =$ **0.125**",
+        "number": 0.125,
+        "matchesKey": true
+      },
+      "shortcut": "$W$ is a copy of $U$, so $P(W{=}1\\mid U{=}1) = 1$; the other three factors are $0.5$ each: $0.5^3 = 0.125$.",
+      "pitfalls": [
+        "Reading $P(Z=1\\mid V=1, W=1)$ from the wrong row (rows $V{=}0,W{=}1$ and $V{=}1,W{=}0$ give 0).",
+        "Multiplying unconditional marginals instead of the CPT entries given the parents."
+      ],
+      "verification": "Sum over $Z$: $P(U{=}1,V{=}1,W{=}1) = 0.5\\times0.5\\times1 = 0.25$, and half of it has $Z=1$, giving $0.125$ ✓.",
+      "animation": {
+        "kind": "panels",
+        "title": "Network and factorisation",
+        "panels": [
+          {
+            "kind": "graph",
+            "directed": true,
+            "layout": "manual",
+            "nodes": [
+              {
+                "id": "U",
+                "x": 1,
+                "y": 0
+              },
+              {
+                "id": "V",
+                "x": 0,
+                "y": 1
+              },
+              {
+                "id": "W",
+                "x": 2,
+                "y": 1
+              },
+              {
+                "id": "Z",
+                "x": 1,
+                "y": 2
+              }
+            ],
+            "edges": [
+              {
+                "from": "U",
+                "to": "V"
+              },
+              {
+                "from": "U",
+                "to": "W"
+              },
+              {
+                "from": "V",
+                "to": "Z"
+              },
+              {
+                "from": "W",
+                "to": "Z"
+              }
+            ]
+          },
+          {
+            "kind": "equation",
+            "lines": [
+              {
+                "tex": "P = P(U)\\,P(V\\mid U)\\,P(W\\mid U)\\,P(Z\\mid V,W)",
+                "note": "chain rule on the DAG"
+              },
+              {
+                "tex": "= 0.5 \\times 0.5 \\times 1 \\times 0.5",
+                "note": "CPT entries"
+              },
+              {
+                "tex": "= 0.125",
+                "tone": "success"
+              }
+            ],
+            "reveal": 0
+          }
+        ]
+      }
+    },
+    "da-2024-da-55": {
+      "approach": "Use $\\mathrm{Cov}(X,Y) = E[XY] - E[X]E[Y]$. Since $X=1$ forces $Y=1$, $XY = X$, so $E[XY] = E[X]$.",
+      "concepts": [
+        "Indicator random variables",
+        "Covariance"
+      ],
+      "given": "| Outcome | $X$ | $Y$ | $XY$ |\n|---|---|---|---|\n| HH | 1 | 1 | 1 |\n| HT | 0 | 1 | 0 |\n| TH | 0 | 1 | 0 |\n| TT | 0 | 0 | 0 |\n\nEach outcome has probability $\\tfrac14$.",
+      "steps": [
+        {
+          "title": "Means",
+          "body": "$E[X] = P(HH) = \\tfrac14$; $\\ E[Y] = P(\\text{at least one H}) = 1 - P(TT) = 1 - \\tfrac14 = \\tfrac34$."
+        },
+        {
+          "title": "Product moment",
+          "body": "$XY = 1$ only on HH, so $E[XY] = \\tfrac14$."
+        },
+        {
+          "title": "Covariance",
+          "body": "$$\\mathrm{Cov}(X,Y) = \\frac14 - \\frac14\\cdot\\frac34 = \\frac{4}{16} - \\frac{3}{16} = \\frac1{16} = 0.0625$$"
+        }
+      ],
+      "answer": {
+        "value": "$\\mathrm{Cov}(X,Y) = \\tfrac1{16} =$ **0.0625** (key range 0.062 to 0.063)",
+        "number": 0.0625,
+        "matchesKey": true
+      },
+      "shortcut": "When $X \\le Y$ are indicators with $X \\Rightarrow Y$: $\\mathrm{Cov} = E[X](1 - E[Y]) = \\tfrac14\\cdot\\tfrac14 = \\tfrac1{16}$.",
+      "pitfalls": [
+        "Assuming $X$ and $Y$ independent (covariance 0) — they are built from the same tosses.",
+        "Taking $E[Y] = \\tfrac12$ (\"exactly one head\") instead of $\\tfrac34$."
+      ],
+      "verification": "Direct: $E[(X-\\tfrac14)(Y-\\tfrac34)] = \\tfrac14\\big[(\\tfrac34)(\\tfrac14) + 2(-\\tfrac14)(\\tfrac14) + (-\\tfrac14)(-\\tfrac34)\\big] = \\tfrac14\\cdot\\tfrac{3-2+3}{16} = \\tfrac1{16}$ ✓."
+    }
+  }
+}

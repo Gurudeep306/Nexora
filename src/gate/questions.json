@@ -147396,31 +147396,32 @@
       "number": "4",
       "marks": 1,
       "type": "MCQ",
-      "text": "The format of a single -precision floating -point number as per the\nIEEE 754 standard is:\nSign\n(1bit)\nExponent\n(8 bits)\nMantissa\n(23 bits)\nChoose the largest floating-point number among the following options.",
+      "text": "The format of a single-precision floating-point number as per the IEEE 754 standard is:\n\n| Sign | Exponent | Mantissa |\n|:---:|:---:|:---:|\n| (1 bit) | (8 bits) | (23 bits) |\n\nChoose the largest floating-point number among the following options.",
       "options": [
         {
           "l": "A",
-          "t": "Sign Exponent Mantissa 0 0111 1111 1111 1111 1111 1111 1111 111"
+          "t": "Sign `0` · Exponent `0111 1111` · Mantissa `1111 1111 1111 1111 1111 111`"
         },
         {
           "l": "B",
-          "t": "Sign Exponent Mantissa 0 1111 1110 1111 1111 1111 1111 1111 111"
+          "t": "Sign `0` · Exponent `1111 1110` · Mantissa `1111 1111 1111 1111 1111 111`"
         },
         {
           "l": "C",
-          "t": "Sign Exponent Mantissa 0 1111 1111 1111 1111 1111 1111 1111 111"
+          "t": "Sign `0` · Exponent `1111 1111` · Mantissa `1111 1111 1111 1111 1111 111`"
         },
         {
           "l": "D",
-          "t": "Sign Exponent Mantissa 0 0111 1111 0000 0000 0000 0000 0000 000 Computer Science and Information Technology Set 2 (CS2)"
+          "t": "Sign `0` · Exponent `0111 1111` · Mantissa `0000 0000 0000 0000 0000 000`"
         }
       ],
       "figures": [],
       "group": null,
       "subject": "dl",
-      "topic": "number",
+      "topic": "floating",
       "tags": [
-        "codegen"
+        "ieee-754",
+        "floating-point"
       ],
       "answer": "B",
       "answerSource": "official",
@@ -147441,30 +147442,32 @@
       "number": "5",
       "marks": 1,
       "type": "MCQ",
-      "text": "Let 𝑇(𝑛) be the recurrence relation defined as follows:\n𝑇(0) = 1,\n𝑇(1) = 2, and\n𝑇(𝑛) = 5𝑇(𝑛 − 1) − 6𝑇(𝑛 − 2)    for 𝑛 ≥ 2\nWhich one of the following statements is TRUE?",
+      "text": "Let $T(n)$ be the recurrence relation defined as follows:\n\n$$T(0) = 1,\\qquad T(1) = 2,\\qquad T(n) = 5T(n-1) - 6T(n-2)\\quad \\text{for } n \\ge 2$$\n\nWhich one of the following statements is TRUE?",
       "options": [
         {
           "l": "A",
-          "t": "𝑇(𝑛) = ⁡Θ(2𝑛)⁡"
+          "t": "$T(n) = \\Theta(2^n)$"
         },
         {
           "l": "B",
-          "t": "𝑇(𝑛) = ⁡Θ(𝑛2𝑛)"
+          "t": "$T(n) = \\Theta(n2^n)$"
         },
         {
           "l": "C",
-          "t": "𝑇(𝑛) = ⁡Θ(3𝑛)"
+          "t": "$T(n) = \\Theta(3^n)$"
         },
         {
           "l": "D",
-          "t": "𝑇(𝑛) = ⁡Θ(𝑛3𝑛)"
+          "t": "$T(n) = \\Theta(n3^n)$"
         }
       ],
       "figures": [],
       "group": null,
       "subject": "dm",
-      "topic": "combinatorics",
+      "topic": "recurrences",
       "tags": [
+        "recurrence",
+        "characteristic-equation",
         "asymptotics"
       ],
       "answer": "A",
@@ -147486,7 +147489,7 @@
       "number": "6",
       "marks": 1,
       "type": "MCQ",
-      "text": "Let 𝑓(𝑥) be a continuous function from ℝ to ℝ such that\n𝑓(𝑥) = 1 − 𝑓(2 − 𝑥)\nWhich one of the following options is the CORRECT value of ∫ 𝑓(𝑥)𝑑𝑥\n2\n0  ?",
+      "text": "Let $f(x)$ be a continuous function from $\\mathbb{R}$ to $\\mathbb{R}$ such that\n\n$$f(x) = 1 - f(2 - x)$$\n\nWhich one of the following options is the CORRECT value of $\\displaystyle\\int_0^2 f(x)\\,dx$?",
       "options": [
         {
           "l": "A",
@@ -147502,15 +147505,17 @@
         },
         {
           "l": "D",
-          "t": "−1 Computer Science and Information Technology Set 2 (CS2)"
+          "t": "−1"
         }
       ],
       "figures": [],
       "group": null,
       "subject": "calc",
-      "topic": "limits",
+      "topic": "integration",
       "tags": [
-        "sql"
+        "definite-integral",
+        "symmetry",
+        "substitution"
       ],
       "answer": "B",
       "answerSource": "official",
@@ -147531,23 +147536,23 @@
       "number": "7",
       "marks": 1,
       "type": "MCQ",
-      "text": "Let 𝐴 be the adjacency matrix of a simple undirected graph 𝐺.  Suppose 𝐴 is its own\ninverse. Which one of the following statements is always TRUE?",
+      "text": "Let $A$ be the adjacency matrix of a simple undirected graph $G$. Suppose $A$ is its own inverse. Which one of the following statements is always TRUE?",
       "options": [
         {
           "l": "A",
-          "t": "𝐺 is a cycle"
+          "t": "$G$ is a cycle"
         },
         {
           "l": "B",
-          "t": "𝐺 is a perfect matching"
+          "t": "$G$ is a perfect matching"
         },
         {
           "l": "C",
-          "t": "𝐺 is a complete graph"
+          "t": "$G$ is a complete graph"
         },
         {
           "l": "D",
-          "t": "There is no such graph 𝐺"
+          "t": "There is no such graph $G$"
         }
       ],
       "figures": [],
@@ -147555,7 +147560,9 @@
       "subject": "la",
       "topic": "matrices",
       "tags": [
-        "computer-science"
+        "adjacency-matrix",
+        "graph-theory",
+        "matrix-inverse"
       ],
       "answer": "B",
       "answerSource": "official",
@@ -147576,31 +147583,33 @@
       "number": "8",
       "marks": 1,
       "type": "MCQ",
-      "text": "When s ix unbiased dice are rolled simultaneously , the probability of getting all\ndistinct numbers (i.e., 1, 2, 3, 4, 5, and 6) is",
+      "text": "When six unbiased dice are rolled simultaneously, the probability of getting all distinct numbers (i.e., 1, 2, 3, 4, 5, and 6) is",
       "options": [
         {
           "l": "A",
-          "t": "1 324"
+          "t": "$\\dfrac{1}{324}$"
         },
         {
           "l": "B",
-          "t": "5 324"
+          "t": "$\\dfrac{5}{324}$"
         },
         {
           "l": "C",
-          "t": "7 324"
+          "t": "$\\dfrac{7}{324}$"
         },
         {
           "l": "D",
-          "t": "11 324 Computer Science and Information Technology Set 2 (CS2)"
+          "t": "$\\dfrac{11}{324}$"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "prob",
+      "topic": "basic",
       "tags": [
-        "quant"
+        "probability",
+        "permutations",
+        "dice"
       ],
       "answer": "B",
       "answerSource": "official",
@@ -147621,7 +147630,7 @@
       "number": "9",
       "marks": 1,
       "type": "MCQ",
-      "text": "Once the DBMS informs the user that a transaction has been successfully\ncompleted, its effect should persist even if the system crashes before all its changes\nare reflected on disk. This property is called",
+      "text": "Once the DBMS informs the user that a transaction has been successfully completed, its effect should persist even if the system crashes before all its changes are reflected on disk. This property is called",
       "options": [
         {
           "l": "A",
@@ -147642,10 +147651,12 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "c-prog",
+      "subject": "db",
+      "topic": "transactions",
       "tags": [
-        "computer-science"
+        "acid",
+        "durability",
+        "recovery"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -147666,7 +147677,7 @@
       "number": "10",
       "marks": 1,
       "type": "MCQ",
-      "text": "In the context of owner and weak entity sets in the ER (Entity-Relationship) data\nmodel, which one of the following statements is TRUE?",
+      "text": "In the context of owner and weak entity sets in the ER (Entity-Relationship) data model, which one of the following statements is TRUE?",
       "options": [
         {
           "l": "A",
@@ -147682,15 +147693,17 @@
         },
         {
           "l": "D",
-          "t": "Neither weak entity set nor owner entity set MUST have total participation in the identifying relationship Computer Science and Information Technology Set 2 (CS2)"
+          "t": "Neither weak entity set nor owner entity set MUST have total participation in the identifying relationship"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "dm",
-      "topic": "sets",
+      "subject": "db",
+      "topic": "er",
       "tags": [
-        "computer-science"
+        "er-model",
+        "weak-entity",
+        "participation"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -147711,7 +147724,7 @@
       "number": "11",
       "marks": 1,
       "type": "MCQ",
-      "text": "Consider the following two sets:\nSet X                                                                Set Y\nP. Lexical Analyzer                                         1. Abstract Syntax Tree\nQ. Syntax Analyzer                                         2. Token\nR. Intermediate Code Generator                     3. Parse Tree\nS. Code Optimizer                                          4. Constant Folding\nWhich one of the following options is the CORRECT match from Set X to Set Y ?",
+      "text": "Consider the following two sets:\n\n| Set X | Set Y |\n|---|---|\n| P. Lexical Analyzer | 1. Abstract Syntax Tree |\n| Q. Syntax Analyzer | 2. Token |\n| R. Intermediate Code Generator | 3. Parse Tree |\n| S. Code Optimizer | 4. Constant Folding |\n\nWhich one of the following options is the CORRECT match from Set X to Set Y ?",
       "options": [
         {
           "l": "A",
@@ -147727,15 +147740,18 @@
         },
         {
           "l": "D",
-          "t": "P – 4; Q – 3; R – 2; S – 1 Computer Science and Information Technology Set 2 (CS2)"
+          "t": "P – 4; Q – 3; R – 2; S – 1"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "db",
-      "topic": "sql",
+      "subject": "cd",
+      "topic": "icg",
       "tags": [
-        "codegen"
+        "compiler-phases",
+        "tokens",
+        "parse-tree",
+        "constant-folding"
       ],
       "answer": "B",
       "answerSource": "official",
@@ -147756,31 +147772,39 @@
       "number": "12",
       "marks": 1,
       "type": "MCQ",
-      "text": "Which one of the following regular expressions is equivalent to the language\naccepted by the DFA given below?\n1\n1\n00",
+      "text": "Which one of the following regular expressions is equivalent to the language accepted by the DFA given below?",
       "options": [
         {
           "l": "A",
-          "t": "0∗1(0 + 10∗1)∗"
+          "t": "$0^*1(0 + 10^*1)^*$"
         },
         {
           "l": "B",
-          "t": "0∗(10∗11)∗0∗"
+          "t": "$0^*(10^*11)^*0^*$"
         },
         {
           "l": "C",
-          "t": "0∗1(010∗1)∗0∗"
+          "t": "$0^*1(010^*1)^*0^*$"
         },
         {
           "l": "D",
-          "t": "0(1 + 0∗10∗1)∗0∗ Computer Science and Information Technology Set 2 (CS2)"
+          "t": "$0(1 + 0^*10^*1)^*0^*$"
         }
       ],
-      "figures": [],
+      "figures": [
+        {
+          "f": "cse-2024-2/cs-12-1.svg",
+          "svg": "cse-2024-2/cs-12-1.svg",
+          "alt": "A two-state DFA. The left state is the start state (incoming arrow) and is non-accepting; the right state is accepting (double circle). Each state has a self-loop on 0. An edge labelled 1 goes from the left state to the right state, and an edge labelled 1 goes from the right state back to the left state."
+        }
+      ],
       "group": null,
       "subject": "toc",
       "topic": "regular",
       "tags": [
-        "regular"
+        "dfa",
+        "regular-expression",
+        "state-elimination"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -147801,7 +147825,7 @@
       "number": "13",
       "marks": 1,
       "type": "MSQ",
-      "text": "Node X has a TCP connection open to node Y. The packets from X to Y go through\nan intermediate IP router R. Ethernet switch S is the first switch on the network path\nbetween X and R. Consider a packet sent from X to Y over this connection.\nWhich of the following statements is/are TRUE about the destination IP and MAC\naddresses on this packet at the time it leaves X?",
+      "text": "Node X has a TCP connection open to node Y. The packets from X to Y go through an intermediate IP router R. Ethernet switch S is the first switch on the network path between X and R. Consider a packet sent from X to Y over this connection.\n\nWhich of the following statements is/are TRUE about the destination IP and MAC addresses on this packet at the time it leaves X?",
       "options": [
         {
           "l": "A",
@@ -147822,10 +147846,13 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "db",
-      "topic": "sql",
+      "subject": "cn",
+      "topic": "ip",
       "tags": [
-        "sql"
+        "ip-address",
+        "mac-address",
+        "switch",
+        "router"
       ],
       "answer": "B",
       "answerSource": "official",
@@ -147846,7 +147873,7 @@
       "number": "14",
       "marks": 1,
       "type": "MSQ",
-      "text": "Which of the following tasks is/are the responsibility/responsibilities of the memory\nmanagement unit (MMU) in a system with paging-based memory management?",
+      "text": "Which of the following tasks is/are the responsibility/responsibilities of the memory management unit (MMU) in a system with paging-based memory management?",
       "options": [
         {
           "l": "A",
@@ -147862,15 +147889,18 @@
         },
         {
           "l": "D",
-          "t": "Raise a trap when a process tries to write to a page marked with read-only permission in the page table Computer Science and Information Technology Set 2 (CS2)"
+          "t": "Raise a trap when a process tries to write to a page marked with read-only permission in the page table"
         }
       ],
       "figures": [],
       "group": null,
       "subject": "os",
-      "topic": "memory",
+      "topic": "virtual-memory",
       "tags": [
-        "memory"
+        "mmu",
+        "paging",
+        "page-fault",
+        "protection"
       ],
       "answer": "B;C;D",
       "answerSource": "official",
@@ -147890,8 +147920,8 @@
       "section": "cs",
       "number": "15",
       "marks": 1,
-      "type": "MCQ",
-      "text": "Consider a process P running on a CPU. Which one or more of the following events\nwill always trigger a context switch by the OS that results in process P moving to a\nnon-running state (e.g., ready, blocked)?",
+      "type": "MSQ",
+      "text": "Consider a process P running on a CPU. Which one or more of the following events will always trigger a context switch by the OS that results in process P moving to a non-running state (e.g., ready, blocked)?",
       "options": [
         {
           "l": "A",
@@ -147912,10 +147942,13 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "c-prog",
+      "subject": "os",
+      "topic": "processes",
       "tags": [
-        "computer-science"
+        "context-switch",
+        "process-states",
+        "interrupts",
+        "page-fault"
       ],
       "answer": "A;B",
       "answerSource": "official",
@@ -147936,7 +147969,7 @@
       "number": "16",
       "marks": 1,
       "type": "MSQ",
-      "text": "Which of the following file organizations is/are I/O efficient for the scan operation\nin DBMS?",
+      "text": "Which of the following file organizations is/are I/O efficient for the scan operation in DBMS?",
       "options": [
         {
           "l": "A",
@@ -147952,15 +147985,17 @@
         },
         {
           "l": "D",
-          "t": "Unclustered hash index Computer Science and Information Technology Set 2 (CS2)"
+          "t": "Unclustered hash index"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "db",
+      "topic": "indexing",
       "tags": [
-        "quant"
+        "file-organization",
+        "scan",
+        "unclustered-index"
       ],
       "answer": "A;B",
       "answerSource": "official",
@@ -147981,7 +148016,7 @@
       "number": "17",
       "marks": 1,
       "type": "MSQ",
-      "text": "Which of the following statements about the T wo Phase Locking (2PL) protocol\nis/are TRUE?",
+      "text": "Which of the following statements about the Two Phase Locking (2PL) protocol is/are TRUE?",
       "options": [
         {
           "l": "A",
@@ -148005,7 +148040,9 @@
       "subject": "db",
       "topic": "transactions",
       "tags": [
-        "transactions"
+        "transactions",
+        "two-phase-locking",
+        "concurrency-control"
       ],
       "answer": "A;C;D",
       "answerSource": "official",
@@ -148042,7 +148079,7 @@
         },
         {
           "l": "D",
-          "t": "The reassembly of fragments is performed at all intermediate routers along the path from the source to the destination Computer Science and Information Technology Set 2 (CS2)"
+          "t": "The reassembly of fragments is performed at all intermediate routers along the path from the source to the destination"
         }
       ],
       "figures": [],
@@ -148050,7 +148087,8 @@
       "subject": "cn",
       "topic": "ip",
       "tags": [
-        "computer-science"
+        "ipv4",
+        "fragmentation"
       ],
       "answer": "B;C",
       "answerSource": "official",
@@ -148079,7 +148117,7 @@
         },
         {
           "l": "B",
-          "t": "The attributes in a L -attributed definition cannot always be e valuated in a depth - first order"
+          "t": "The attributes in a L-attributed definition cannot always be evaluated in a depth-first order"
         },
         {
           "l": "C",
@@ -148087,15 +148125,17 @@
         },
         {
           "l": "D",
-          "t": "All L -attributed definitions based on LR(1) grammar can be evaluated using a bottom-up parsing strategy"
+          "t": "All L-attributed definitions based on LR(1) grammar can be evaluated using a bottom-up parsing strategy"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "c-prog",
+      "subject": "cd",
+      "topic": "sdt",
       "tags": [
-        "computer-science"
+        "syntax-directed-translation",
+        "l-attributed",
+        "attribute-grammar"
       ],
       "answer": "B;D",
       "answerSource": "official",
@@ -148116,31 +148156,32 @@
       "number": "20",
       "marks": 1,
       "type": "MSQ",
-      "text": "For a Boolean variable 𝑥, which of the following statements is/are FALSE?",
+      "text": "For a Boolean variable $x$, which of the following statements is/are FALSE?",
       "options": [
         {
           "l": "A",
-          "t": "𝑥. 1 = 𝑥"
+          "t": "$x \\cdot 1 = x$"
         },
         {
           "l": "B",
-          "t": "𝑥 + 1 = 𝑥"
+          "t": "$x + 1 = x$"
         },
         {
           "l": "C",
-          "t": "𝑥. 𝑥 = 0"
+          "t": "$x \\cdot x = 0$"
         },
         {
           "l": "D",
-          "t": "𝑥 + 𝑥̅ = 1 Computer Science and Information Technology Set 2 (CS2)"
+          "t": "$x + \\bar{x} = 1$"
         }
       ],
       "figures": [],
       "group": null,
       "subject": "dl",
-      "topic": "combinational",
+      "topic": "boolean",
       "tags": [
-        "combinational"
+        "boolean-algebra",
+        "identities"
       ],
       "answer": "B;C",
       "answerSource": "official",
@@ -148161,7 +148202,7 @@
       "number": "21",
       "marks": 1,
       "type": "MSQ",
-      "text": "An instruction format has the following structure:\nInstruction Number: Opcode destination reg, source reg-1, source reg-2\nConsider the following sequence of instructions to be executed in a pipelined\nprocessor:\nI1: DIV R3, R1, R2\nI2: SUB R5, R3, R4\nI3: ADD R3, R5, R6\nI4: MUL R7, R3, R8\nWhich of the following statements is/are TRUE?",
+      "text": "An instruction format has the following structure:\n\n`Instruction Number: Opcode destination reg, source reg-1, source reg-2`\n\nConsider the following sequence of instructions to be executed in a pipelined processor:\n\n```\nI1: DIV R3, R1, R2\nI2: SUB R5, R3, R4\nI3: ADD R3, R5, R6\nI4: MUL R7, R3, R8\n```\n\nWhich of the following statements is/are TRUE?",
       "options": [
         {
           "l": "A",
@@ -148177,15 +148218,17 @@
         },
         {
           "l": "D",
-          "t": "There is a WAW dependency on R3 between I3 and I4 Computer Science and Information Technology Set 2 (CS2)"
+          "t": "There is a WAW dependency on R3 between I3 and I4"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "c-prog",
+      "subject": "coa",
+      "topic": "pipeline",
       "tags": [
-        "c-prog"
+        "pipeline",
+        "data-hazards",
+        "raw-war-waw"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -148206,7 +148249,7 @@
       "number": "22",
       "marks": 1,
       "type": "MSQ",
-      "text": "Which of the following fields of an IP header is/are always modified by any router\nbefore it forwards the IP packet?",
+      "text": "Which of the following fields of an IP header is/are always modified by any router before it forwards the IP packet?",
       "options": [
         {
           "l": "A",
@@ -148228,9 +148271,11 @@
       "figures": [],
       "group": null,
       "subject": "cn",
-      "topic": "transport",
+      "topic": "ip",
       "tags": [
-        "computer-science"
+        "ipv4-header",
+        "ttl",
+        "checksum"
       ],
       "answer": "C;D",
       "answerSource": "official",
@@ -148251,15 +148296,15 @@
       "number": "23",
       "marks": 1,
       "type": "MSQ",
-      "text": "Consider the following C function definition.\nint fX(char *a){\nchar *b = a;\nwhile(*b)\nb++;\nreturn b - a;}\nWhich of the following statements is/are TRUE?",
+      "text": "Consider the following C function definition.\n\n```c\nint fX(char *a){\n    char *b = a;\n    while(*b)\n        b++;\n    return b - a;}\n```\n\nWhich of the following statements is/are TRUE?",
       "options": [
         {
           "l": "A",
-          "t": "The function call fX(”abcd”) will always return a value"
+          "t": "The function call `fX(\"abcd\")` will always return a value"
         },
         {
           "l": "B",
-          "t": "Assuming a character array c is declared as char c[] = ”abcd” in main(), the function call fX(c)will always return a value"
+          "t": "Assuming a character array `c` is declared as `char c[] = \"abcd\"` in `main()`, the function call `fX(c)` will always return a value"
         },
         {
           "l": "C",
@@ -148267,15 +148312,17 @@
         },
         {
           "l": "D",
-          "t": "Assuming a character pointer c is declared as char *c = ”abcd” in main(), the function call fX(c)will always return a value Computer Science and Information Technology Set 2 (CS2)"
+          "t": "Assuming a character pointer `c` is declared as `char *c = \"abcd\"` in `main()`, the function call `fX(c)` will always return a value"
         }
       ],
       "figures": [],
       "group": null,
       "subject": "pds",
-      "topic": "c-prog",
+      "topic": "c",
       "tags": [
-        "computer-science"
+        "pointers",
+        "strings",
+        "pointer-arithmetic"
       ],
       "answer": "A;B;D",
       "answerSource": "official",
@@ -148296,14 +148343,16 @@
       "number": "24",
       "marks": 1,
       "type": "NAT",
-      "text": "Let 𝑃 be the partial order defined on the set {1,2,3,4} as follows\n𝑃 = {(𝑥, 𝑥)⁡|⁡𝑥⁡ ∈ {1,2,3,4}} ∪ {(1,2), (3,2), (3,4)}\nThe number of total orders on {1,2,3,4} that contain 𝑃 is __________",
+      "text": "Let $P$ be the partial order defined on the set $\\{1,2,3,4\\}$ as follows\n\n$$P = \\{(x, x) \\mid x \\in \\{1,2,3,4\\}\\} \\cup \\{(1,2), (3,2), (3,4)\\}$$\n\nThe number of total orders on $\\{1,2,3,4\\}$ that contain $P$ is __________",
       "options": [],
       "figures": [],
       "group": null,
       "subject": "dm",
-      "topic": "relations",
+      "topic": "posets",
       "tags": [
-        "relations"
+        "partial-order",
+        "total-order",
+        "linear-extension"
       ],
       "answer": "5 to 5",
       "answerSource": "official",
@@ -148324,14 +148373,15 @@
       "number": "25",
       "marks": 1,
       "type": "NAT",
-      "text": "Let 𝐴⁡be an array containing integer values. The distance of 𝐴 is defined as the\nminimum number of elements in 𝐴 that must be replaced with another integer so\nthat the resulting array is sorted in non -decreasing order. The distance of the array\n[2, 5, 3, 1, 4, 2, 6] is ___________\nComputer Science and Information Technology Set 2 (CS2)",
+      "text": "Let $A$ be an array containing integer values. The distance of $A$ is defined as the minimum number of elements in $A$ that must be replaced with another integer so that the resulting array is sorted in non-decreasing order. The distance of the array $[2, 5, 3, 1, 4, 2, 6]$ is ___________",
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "algo",
+      "topic": "dp",
       "tags": [
-        "quant"
+        "longest-increasing-subsequence",
+        "arrays"
       ],
       "answer": "3 to 3",
       "answerSource": "official",
@@ -148352,7 +148402,7 @@
       "number": "26",
       "marks": 2,
       "type": "MCQ",
-      "text": "What is the output of the following C program?\n#include <stdio.h>\nint main() {\ndouble a[2]={20.0, 25.0}, *p, *q;\np = a;\nq = p + 1;\nprintf(”%d,%d”, (int)(q – p), (int)(*q – *p));\nreturn 0;}",
+      "text": "What is the output of the following C program?\n\n```c\n#include <stdio.h>\nint main() {\n    double a[2]={20.0, 25.0}, *p, *q;\n    p = a;\n    q = p + 1;\n    printf(\"%d,%d\", (int)(q - p), (int)(*q - *p));\n    return 0;}\n```",
       "options": [
         {
           "l": "A",
@@ -148368,15 +148418,16 @@
         },
         {
           "l": "D",
-          "t": "1,8 Computer Science and Information Technology Set 2 (CS2)"
+          "t": "1,8"
         }
       ],
       "figures": [],
       "group": null,
       "subject": "pds",
-      "topic": "c-prog",
+      "topic": "c",
       "tags": [
-        "c-prog"
+        "pointer-arithmetic",
+        "type-cast"
       ],
       "answer": "B",
       "answerSource": "official",
@@ -148397,7 +148448,7 @@
       "number": "27",
       "marks": 2,
       "type": "MCQ",
-      "text": "Consider a single processor system with four processes A, B, C, and D, represented\nas given below, where for each process  the first value is its arrival time, and the\nsecond value is its CPU burst time.\nA (0, 10), B (2, 6), C (4, 3), and D (6, 7).\nWhich one of the following options gives the average waiting times when\npreemptive Shortest Remaining Time First (SRTF) and Non -Preemptive Shortest\nJob First (NP-SJF) CPU scheduling algorithms are applied to the processes?",
+      "text": "Consider a single processor system with four processes A, B, C, and D, represented as given below, where for each process the first value is its arrival time, and the second value is its CPU burst time.\n\nA (0, 10), B (2, 6), C (4, 3), and D (6, 7).\n\nWhich one of the following options gives the average waiting times when preemptive Shortest Remaining Time First (SRTF) and Non-Preemptive Shortest Job First (NP-SJF) CPU scheduling algorithms are applied to the processes?",
       "options": [
         {
           "l": "A",
@@ -148418,10 +148469,12 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "coa",
-      "topic": "isa",
+      "subject": "os",
+      "topic": "scheduling",
       "tags": [
-        "cpu-scheduling"
+        "cpu-scheduling",
+        "srtf",
+        "sjf"
       ],
       "answer": "B",
       "answerSource": "official",
@@ -148487,31 +148540,32 @@
       "number": "29",
       "marks": 2,
       "type": "MCQ",
-      "text": "You are given a set 𝑉 of distinct integers. A binary search tree 𝑇 is created by\ninserting all elements of 𝑉 one by one, starting with an empty tree. The tree 𝑇\nfollows the convention that, at each node, all values stored in the left subtree of the\nnode are smaller than the value stored at the node. You are not aware of the sequence\nin which these values were inserted into 𝑇, and you do not have access to 𝑇.\nWhich one of the following statements is TRUE?",
+      "text": "You are given a set $V$ of distinct integers. A binary search tree $T$ is created by inserting all elements of $V$ one by one, starting with an empty tree. The tree $T$ follows the convention that, at each node, all values stored in the left subtree of the node are smaller than the value stored at the node. You are not aware of the sequence in which these values were inserted into $T$, and you do not have access to $T$.\n\nWhich one of the following statements is TRUE?",
       "options": [
         {
           "l": "A",
-          "t": "Inorder traversal of 𝑇 can be determined from 𝑉"
+          "t": "Inorder traversal of $T$ can be determined from $V$"
         },
         {
           "l": "B",
-          "t": "Root node of 𝑇 can be determined from 𝑉"
+          "t": "Root node of $T$ can be determined from $V$"
         },
         {
           "l": "C",
-          "t": "Preorder traversal of 𝑇 can be determined from 𝑉"
+          "t": "Preorder traversal of $T$ can be determined from $V$"
         },
         {
           "l": "D",
-          "t": "Postorder traversal of 𝑇 can be determined from 𝑉 Computer Science and Information Technology Set 2 (CS2)"
+          "t": "Postorder traversal of $T$ can be determined from $V$"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "coa",
-      "topic": "isa",
+      "subject": "pds",
+      "topic": "bst",
       "tags": [
-        "trees"
+        "bst",
+        "tree-traversal"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -148532,31 +148586,33 @@
       "number": "30",
       "marks": 2,
       "type": "MCQ",
-      "text": "Consider the following context -free grammar where the start symbol is 𝑆 and the\nset of terminals is {𝑎,𝑏,𝑐,𝑑}.\n𝑆 → 𝐴𝑎𝐴𝑏⁡|⁡𝐵𝑏𝐵𝑎\n𝐴 → 𝑐𝑆⁡|⁡𝜖\n𝐵 → 𝑑𝑆⁡|⁡𝜖\nThe following is a partially-filled LL(1) parsing table.\n𝑎 𝑏 𝑐 𝑑 $\n𝑆 𝑆 → 𝐴𝑎𝐴𝑏 𝑆 → 𝐵𝑏𝐵𝑎 (1) (2)\n𝐴 𝐴 → 𝜖 (3) 𝐴 → 𝑐𝑆\n𝐵 (4) 𝐵 → 𝜖  𝐵 → 𝑑𝑆\nWhich one of the following options represents the CORRECT combination for the\nnumbered cells in the parsing table?\nNote: In the options, “blank” denotes that the corresponding cell is empty.",
+      "text": "Consider the following context-free grammar where the start symbol is $S$ and the set of terminals is $\\{a, b, c, d\\}$.\n\n$$\n\\begin{aligned}\nS &\\to AaAb \\mid BbBa \\\\\nA &\\to cS \\mid \\epsilon \\\\\nB &\\to dS \\mid \\epsilon\n\\end{aligned}\n$$\n\nThe following is a partially-filled LL(1) parsing table.\n\n|  | $a$ | $b$ | $c$ | $d$ | \\$ |\n|---|---|---|---|---|---|\n| $S$ | $S \\to AaAb$ | $S \\to BbBa$ | (1) | (2) |  |\n| $A$ | $A \\to \\epsilon$ | (3) | $A \\to cS$ |  |  |\n| $B$ | (4) | $B \\to \\epsilon$ |  | $B \\to dS$ |  |\n\nWhich one of the following options represents the CORRECT combination for the numbered cells in the parsing table?\n\nNote: In the options, “blank” denotes that the corresponding cell is empty.",
       "options": [
         {
           "l": "A",
-          "t": "(1) 𝑆 → 𝐴𝑎𝐴𝑏 (2) 𝑆 → 𝐵𝑏𝐵𝑎 (3) 𝐴 → 𝜖 (4) 𝐵 → 𝜖"
+          "t": "(1) $S \\to AaAb$; (2) $S \\to BbBa$; (3) $A \\to \\epsilon$; (4) $B \\to \\epsilon$"
         },
         {
           "l": "B",
-          "t": "(1) 𝑆 → 𝐵𝑏𝐵𝑎 (2) 𝑆 → 𝐴𝑎𝐴𝑏 (3) 𝐴 → 𝜖 (4) 𝐵 → 𝜖"
+          "t": "(1) $S \\to BbBa$; (2) $S \\to AaAb$; (3) $A \\to \\epsilon$; (4) $B \\to \\epsilon$"
         },
         {
           "l": "C",
-          "t": "(1) 𝑆 → 𝐴𝑎𝐴𝑏 (2) 𝑆 → 𝐵𝑏𝐵𝑎 (3) blank (4) blank"
+          "t": "(1) $S \\to AaAb$; (2) $S \\to BbBa$; (3) blank; (4) blank"
         },
         {
           "l": "D",
-          "t": "(1) 𝑆 → 𝐵𝑏𝐵𝑎 (2) 𝑆 → 𝐴𝑎𝐴𝑏 (3) blank (4) blank Computer Science and Information Technology Set 2 (CS2)"
+          "t": "(1) $S \\to BbBa$; (2) $S \\to AaAb$; (3) blank; (4) blank"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "dm",
-      "topic": "combinatorics",
+      "subject": "cd",
+      "topic": "parsing",
       "tags": [
-        "parsing"
+        "parsing",
+        "ll1",
+        "first-follow"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -148577,31 +148633,39 @@
       "number": "31",
       "marks": 2,
       "type": "MCQ",
-      "text": "Let 𝑀 be the 5-state NFA with 𝜖-transitions shown in the diagram below.\nWhich one of the following regular expressions represents the language accepted\nby 𝑀 ?",
+      "text": "Let $M$ be the 5-state NFA with $\\epsilon$-transitions shown in the diagram below.\n\nWhich one of the following regular expressions represents the language accepted by $M$?",
       "options": [
         {
           "l": "A",
-          "t": "⁡(00)∗ ⁡ + ⁡1(11)∗"
+          "t": "$(00)^* + 1(11)^*$"
         },
         {
           "l": "B",
-          "t": "⁡0∗ + (1 + 0(00)∗)(11)∗⁡"
+          "t": "$0^* + (1 + 0(00)^*)(11)^*$"
         },
         {
           "l": "C",
-          "t": "⁡(00)∗ + (1 + (00)∗)(11)∗⁡"
+          "t": "$(00)^* + (1 + (00)^*)(11)^*$"
         },
         {
           "l": "D",
-          "t": "⁡0+ + 1(11)∗ + 0(11)∗⁡ Computer Science and Information Technology Set 2 (CS2)"
+          "t": "$0^+ + 1(11)^* + 0(11)^*$"
         }
       ],
-      "figures": [],
+      "figures": [
+        {
+          "f": "cse-2024-2/cs-31-1.svg",
+          "svg": "cse-2024-2/cs-31-1.svg",
+          "alt": "NFA with 5 states. State 1 is the start state. Epsilon edges go from 1 to 2 and from 1 to 4. State 2 (accepting) goes to state 3 on 0, and 3 goes back to 2 on 0. State 3 has an epsilon edge down to state 5. State 4 goes to state 5 (accepting) on 1, and 5 goes back to 4 on 1. States 2 and 5 are the accepting states."
+        }
+      ],
       "group": null,
       "subject": "toc",
       "topic": "regular",
       "tags": [
-        "regular"
+        "regular",
+        "epsilon-nfa",
+        "regular-expressions"
       ],
       "answer": "B",
       "answerSource": "official",
@@ -148622,31 +148686,33 @@
       "number": "32",
       "marks": 2,
       "type": "MCQ",
-      "text": "Consider an array X that contains n positive integers. A subarray of X is defined to\nbe a sequence of array locations with consecutive indices.\nThe C code snippet given below has been written to compute the length of the\nlongest subarray of X that contains at most two distinct integers. The code has two\nmissing expressions labelled (𝑃)⁡and (𝑄).\nint first=0, second=0, len1=0, len2=0, maxlen=0;\nfor (int i=0; i < n; i++) {\nif (X[i] == first) {\nlen2++; len1++;\n} else if (X[i] == second) {\nlen2++;\nlen1 = ⁡⁡⁡⁡⁡(𝑃)⁡⁡⁡⁡⁡⁡⁡;\nsecond = first;\n} else {\nlen2 = ⁡⁡⁡⁡⁡(𝑄)⁡⁡⁡⁡⁡⁡;\nlen1 = 1; second = first;\n}\nif (len2 > maxlen) {\nmaxlen = len2;\n}\nfirst = X[i];\n}\nWhich one of the following options gives the CORRECT missing expressions?\n(Hint: At the end of the i-th iteration, the value of len1 is the length of the longest\nsubarray ending with X[i] that contains all equal values, and len2 is the length\nof the longest subarray ending with X[i] that contains at most two distinct values.)",
+      "text": "Consider an array X that contains n positive integers. A subarray of X is defined to be a sequence of array locations with consecutive indices.\n\nThe C code snippet given below has been written to compute the length of the longest subarray of X that contains at most two distinct integers. The code has two missing expressions labelled (P) and (Q).\n\n```c\nint first=0, second=0, len1=0, len2=0, maxlen=0;\nfor (int i=0; i < n; i++) {\n  if (X[i] == first) {\n    len2++; len1++;\n  } else if (X[i] == second) {\n    len2++;\n    len1 = (P);\n    second = first;\n  } else {\n    len2 = (Q);\n    len1 = 1; second = first;\n  }\n  if (len2 > maxlen) {\n    maxlen = len2;\n  }\n  first = X[i];\n}\n```\n\nWhich one of the following options gives the CORRECT missing expressions?\n\n(Hint: At the end of the i-th iteration, the value of len1 is the length of the longest subarray ending with X[i] that contains all equal values, and len2 is the length of the longest subarray ending with X[i] that contains at most two distinct values.)",
       "options": [
         {
           "l": "A",
-          "t": "(𝑃) len1+1 (𝑄) len2+1"
+          "t": "(P) `len1+1`; (Q) `len2+1`"
         },
         {
           "l": "B",
-          "t": "(𝑃) 1 (𝑄) len1+1"
+          "t": "(P) `1`; (Q) `len1+1`"
         },
         {
           "l": "C",
-          "t": "(𝑃) 1 (𝑄) len2+1"
+          "t": "(P) `1`; (Q) `len2+1`"
         },
         {
           "l": "D",
-          "t": "(𝑃) len2+1 (𝑄) len1+1 Computer Science and Information Technology Set 2 (CS2)"
+          "t": "(P) `len2+1`; (Q) `len1+1`"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "pds",
+      "topic": "arrays",
       "tags": [
-        "quant"
+        "c-prog",
+        "arrays",
+        "sliding-window"
       ],
       "answer": "B",
       "answerSource": "official",
@@ -148667,31 +148733,33 @@
       "number": "33",
       "marks": 2,
       "type": "MCQ",
-      "text": "Consider the following expression: 𝑥[𝑖] = (𝑝 + 𝑟) ∗ −𝑠[𝑖] + 𝑢/𝑤. The following\nsequence shows the list of triples representing the given expression, with entries\nmissing for triples (1), (3), and (6).\nWhich one of the following options fills in the missing entries CORRECTLY?\n(0) + 𝑝 𝑟\n(1)\n(2) uminus (1)\n(3)\n(4) / 𝑢 𝑤\n(5) + (3) (4)\n(6)\n(7) = (6) (5)",
+      "text": "Consider the following expression: $x[i] = (p + r) * -s[i] + u/w$. The following sequence shows the list of triples representing the given expression, with entries missing for triples (1), (3), and (6).\n\n| Triple | op | arg 1 | arg 2 |\n|---|---|---|---|\n| (0) | + | $p$ | $r$ |\n| (1) |  |  |  |\n| (2) | uminus | (1) |  |\n| (3) |  |  |  |\n| (4) | / | $u$ | $w$ |\n| (5) | + | (3) | (4) |\n| (6) |  |  |  |\n| (7) | = | (6) | (5) |\n\nWhich one of the following options fills in the missing entries CORRECTLY?",
       "options": [
         {
           "l": "A",
-          "t": "(1) =[]⁡⁡𝑠⁡⁡𝑖 (3) * (0) (2) (6) []=⁡⁡𝑥⁡⁡𝑖"
+          "t": "(1) `=[]` $s$ $i$; (3) `*` (0) (2); (6) `[]=` $x$ $i$"
         },
         {
           "l": "B",
-          "t": "(1) []=⁡⁡𝑠⁡⁡𝑖 (3) –⁡(0)⁡(2) (6) =[] ⁡𝑥⁡⁡(5)"
+          "t": "(1) `[]=` $s$ $i$; (3) `–` (0) (2); (6) `=[]` $x$ (5)"
         },
         {
           "l": "C",
-          "t": "(1) =[] ⁡𝑠⁡𝑖 (3) * (0)⁡⁡(2) (6) []= ⁡𝑥⁡⁡(5)"
+          "t": "(1) `=[]` $s$ $i$; (3) `*` (0) (2); (6) `[]=` $x$ (5)"
         },
         {
           "l": "D",
-          "t": "(1) []= ⁡𝑠⁡⁡𝑖 (3) –⁡(0)⁡(2) (6) =[] 𝑥⁡⁡𝑖 Computer Science and Information Technology Set 2 (CS2)"
+          "t": "(1) `[]=` $s$ $i$; (3) `–` (0) (2); (6) `=[]` $x$ $i$"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "cn",
-      "topic": "ip",
+      "subject": "cd",
+      "topic": "icg",
       "tags": [
-        "network"
+        "three-address-code",
+        "triples",
+        "intermediate-code"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -148712,31 +148780,32 @@
       "number": "34",
       "marks": 2,
       "type": "MCQ",
-      "text": "Let 𝑥 and 𝑦 be random variables, not necessarily independent, that take real values\nin the interval [0,1]. Let 𝑧 = 𝑥𝑦 and let the mean values of 𝑥, 𝑦, 𝑧 be 𝑥̅, 𝑦̅, 𝑧̅,\nrespectively. Which one of the following statements is TRUE?",
+      "text": "Let $x$ and $y$ be random variables, not necessarily independent, that take real values in the interval $[0,1]$. Let $z = xy$ and let the mean values of $x, y, z$ be $\\bar{x}, \\bar{y}, \\bar{z}$, respectively. Which one of the following statements is TRUE?",
       "options": [
         {
           "l": "A",
-          "t": "𝑧̅ = ⁡ 𝑥̅𝑦̅"
+          "t": "$\\bar{z} = \\bar{x}\\,\\bar{y}$"
         },
         {
           "l": "B",
-          "t": "𝑧̅ ⁡ ≤ ⁡ 𝑥̅𝑦̅"
+          "t": "$\\bar{z} \\le \\bar{x}\\,\\bar{y}$"
         },
         {
           "l": "C",
-          "t": "𝑧̅ ⁡ ≥ ⁡ 𝑥⁡̅ 𝑦̅"
+          "t": "$\\bar{z} \\ge \\bar{x}\\,\\bar{y}$"
         },
         {
           "l": "D",
-          "t": "𝑧̅ ⁡ ≤ ⁡ 𝑥̅⁡"
+          "t": "$\\bar{z} \\le \\bar{x}$"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "prob",
+      "topic": "stats",
       "tags": [
-        "codegen"
+        "expectation",
+        "random-variables"
       ],
       "answer": "D",
       "answerSource": "official",
@@ -148757,7 +148826,7 @@
       "number": "35",
       "marks": 2,
       "type": "MCQ",
-      "text": "The relation schema,  Person(pid,city), describes the city of residence for\nevery person uniquely identified by pid. The following relational algebra operators\nare available: selection, projection, cross product, and rename.\nTo find the list of cities where at least 3 persons reside, using the above operators,\nthe minimum number of cross product operations that must be used is",
+      "text": "The relation schema, `Person(pid,city)`, describes the city of residence for every person uniquely identified by `pid`. The following relational algebra operators are available: selection, projection, cross product, and rename.\n\nTo find the list of cities where at least 3 persons reside, using the above operators, the minimum number of cross product operations that must be used is",
       "options": [
         {
           "l": "A",
@@ -148773,15 +148842,17 @@
         },
         {
           "l": "D",
-          "t": "4 Computer Science and Information Technology Set 2 (CS2)"
+          "t": "4"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "db",
+      "topic": "ra",
       "tags": [
-        "quant"
+        "relational-algebra",
+        "cross-product",
+        "self-join"
       ],
       "answer": "B",
       "answerSource": "official",
@@ -148802,7 +148873,7 @@
       "number": "36",
       "marks": 2,
       "type": "MSQ",
-      "text": "Consider a multi-threaded program with two threads T1 and T2. The threads share\ntwo semaphores: s1 (initialized to 1)  and s2 (initialized to 0). The threads also\nshare a global variable x (initialized to 0). The threads execute the code shown\nbelow.\n// code of T1\nwait(s1);\nx = x+1;\nprint(x);\nwait(s2);\nsignal(s1);\n// code of T2\nwait(s1);\nx = x+1;\nprint(x);\nsignal(s2);\nsignal(s1);\nWhich of the following outcomes is/are possible when threads T1 and T2 execute\nconcurrently?",
+      "text": "Consider a multi-threaded program with two threads T1 and T2. The threads share two semaphores: s1 (initialized to 1) and s2 (initialized to 0). The threads also share a global variable x (initialized to 0). The threads execute the code shown below.\n\n```c\n// code of T1        // code of T2\nwait(s1);            wait(s1);\nx = x+1;             x = x+1;\nprint(x);            print(x);\nwait(s2);            signal(s2);\nsignal(s1);          signal(s1);\n```\n\nWhich of the following outcomes is/are possible when threads T1 and T2 execute concurrently?",
       "options": [
         {
           "l": "A",
@@ -148826,6 +148897,8 @@
       "subject": "os",
       "topic": "sync",
       "tags": [
+        "semaphores",
+        "deadlock",
         "sync"
       ],
       "answer": "B;C",
@@ -148847,31 +148920,33 @@
       "number": "37",
       "marks": 2,
       "type": "MSQ",
-      "text": "Let 𝐴 be an 𝑛 × 𝑛 matrix over the set of all real numbers ℝ. Let 𝐵 be a matrix\nobtained from 𝐴 by swapping two rows. Which of the following statements is/are\nTRUE?",
+      "text": "Let $A$ be an $n \\times n$ matrix over the set of all real numbers $\\mathbb{R}$. Let $B$ be a matrix obtained from $A$ by swapping two rows. Which of the following statements is/are TRUE?",
       "options": [
         {
           "l": "A",
-          "t": "The determinant of 𝐵 is the negative of the determinant of 𝐴"
+          "t": "The determinant of $B$ is the negative of the determinant of $A$"
         },
         {
           "l": "B",
-          "t": "If 𝐴 is invertible, then 𝐵 is also invertible"
+          "t": "If $A$ is invertible, then $B$ is also invertible"
         },
         {
           "l": "C",
-          "t": "If 𝐴⁡is symmetric, then 𝐵 is also symmetric"
+          "t": "If $A$ is symmetric, then $B$ is also symmetric"
         },
         {
           "l": "D",
-          "t": "If the trace of 𝐴 is zero, then the trace of 𝐵⁡is also zero Computer Science and Information Technology Set 2 (CS2)"
+          "t": "If the trace of $A$ is zero, then the trace of $B$ is also zero"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "db",
-      "topic": "sql",
+      "subject": "la",
+      "topic": "matrices",
       "tags": [
-        "sql"
+        "determinant",
+        "elementary-row-operations",
+        "trace"
       ],
       "answer": "A;B",
       "answerSource": "official",
@@ -148891,8 +148966,8 @@
       "section": "cs",
       "number": "38",
       "marks": 2,
-      "type": "MCQ",
-      "text": "Let S1 and S2 be two stacks . S1 has capacity of 4 elements. S2 has capacity of\n2 elements. S1 already has 4 elements: 100, 200, 300, and 400, whereas S2 is\nempty, as shown below.\nOnly the following three operations are available:\nPushToS2: Pop the top element from S1 and push it on S2.\nPushToS1: Pop the top element from S2 and push it on S1.\nGenerateOutput: Pop the top element from S1 and output it to the\nuser.\nNote that the pop operation is not allowed on an empty stack and the push operation\nis not allowed on a full stack.\nWhich of the following output sequences can be generated by using the above\noperations?\n400 (Top)\n300\n200\n100\nStack S1\nStack S2",
+      "type": "MSQ",
+      "text": "Let `S1` and `S2` be two stacks. `S1` has capacity of 4 elements. `S2` has capacity of 2 elements. `S1` already has 4 elements: 100, 200, 300, and 400, whereas `S2` is empty, as shown below.\n\nOnly the following three operations are available:\n\n- `PushToS2`: Pop the top element from `S1` and push it on `S2`.\n- `PushToS1`: Pop the top element from `S2` and push it on `S1`.\n- `GenerateOutput`: Pop the top element from `S1` and output it to the user.\n\nNote that the pop operation is not allowed on an empty stack and the push operation is not allowed on a full stack.\n\nWhich of the following output sequences can be generated by using the above operations?",
       "options": [
         {
           "l": "A",
@@ -148908,15 +148983,22 @@
         },
         {
           "l": "D",
-          "t": "300, 200, 400, 100 Computer Science and Information Technology Set 2 (CS2)"
+          "t": "300, 200, 400, 100"
         }
       ],
-      "figures": [],
+      "figures": [
+        {
+          "f": "cse-2024-2/cs-38-1.svg",
+          "svg": "cse-2024-2/cs-38-1.svg",
+          "alt": "Stack S1 with four cells, from top to bottom: 400 (Top), 300, 200, 100. Stack S2 with two empty cells."
+        }
+      ],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "pds",
+      "topic": "stacks-queues",
       "tags": [
-        "quant"
+        "stacks",
+        "stack-permutations"
       ],
       "answer": "B;C;D",
       "answerSource": "official",
@@ -148953,15 +149035,16 @@
         },
         {
           "l": "D",
-          "t": "121 in radix-7 Computer Science and Information Technology Set 2 (CS2)"
+          "t": "121 in radix-7"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "c-prog",
+      "subject": "dl",
+      "topic": "number",
       "tags": [
-        "computer-science"
+        "number-systems",
+        "base-conversion"
       ],
       "answer": "A;B;D",
       "answerSource": "official",
@@ -148982,31 +149065,39 @@
       "number": "40",
       "marks": 2,
       "type": "MSQ",
-      "text": "Consider 4-variable functions f1, f2, f3, f4 expressed in sum-of-minterms form as\ngiven below.\nf1 = ∑(0,2,3,5,7,8,11,13)\nf2 = ∑(1,3,5,7,11,13, 15)\nf3 = ∑(0,1,4,11)\nf4 = ∑(0,2,6,13)\nWith respect to the circuit given above, which of the following options is/are\nCORRECT?",
+      "text": "Consider 4-variable functions f1, f2, f3, f4 expressed in sum-of-minterms form as given below.\n\n- f1 = $\\sum(0,2,3,5,7,8,11,13)$\n- f2 = $\\sum(1,3,5,7,11,13,15)$\n- f3 = $\\sum(0,1,4,11)$\n- f4 = $\\sum(0,2,6,13)$\n\nWith respect to the circuit given above, which of the following options is/are CORRECT?",
       "options": [
         {
           "l": "A",
-          "t": "𝒀 = ∑(0,1,2,11,13)"
+          "t": "$Y = \\sum(0,1,2,11,13)$"
         },
         {
           "l": "B",
-          "t": "𝒀 = Π(3,4, 5,6,7,8,9,10,12,14,15)"
+          "t": "$Y = \\prod(3,4,5,6,7,8,9,10,12,14,15)$"
         },
         {
           "l": "C",
-          "t": "𝒀 = ∑(0,1,2,3,4,5,6,7)"
+          "t": "$Y = \\sum(0,1,2,3,4,5,6,7)$"
         },
         {
           "l": "D",
-          "t": "𝒀 = Π(8,9,10,11,12,13,14,15) Computer Science and Information Technology Set 2 (CS2)"
+          "t": "$Y = \\prod(8,9,10,11,12,13,14,15)$"
         }
       ],
-      "figures": [],
+      "figures": [
+        {
+          "f": "cse-2024-2/cs-40-1.svg",
+          "svg": "cse-2024-2/cs-40-1.svg",
+          "alt": "Circuit: f1 and f2 feed an AND gate; f3 and f4 feed an OR gate; the AND output and the OR output feed an XOR gate whose output is Y."
+        }
+      ],
       "group": null,
-      "subject": "pds",
-      "topic": "c-prog",
+      "subject": "dl",
+      "topic": "gates",
       "tags": [
-        "computer-science"
+        "minterms",
+        "logic-gates",
+        "canonical-forms"
       ],
       "answer": "C;D",
       "answerSource": "official",
@@ -149027,31 +149118,33 @@
       "number": "41",
       "marks": 2,
       "type": "MSQ",
-      "text": "Let 𝐺 be an undirected connected graph in which every edge has a positive integer\nweight. Suppose that every spanning tree in 𝐺 has even weight. Which of the\nfollowing statements is/are TRUE for every such graph 𝐺 ?",
+      "text": "Let $G$ be an undirected connected graph in which every edge has a positive integer weight. Suppose that every spanning tree in $G$ has even weight. Which of the following statements is/are TRUE for every such graph $G$?",
       "options": [
         {
           "l": "A",
-          "t": "All edges in 𝐺 have even weight"
+          "t": "All edges in $G$ have even weight"
         },
         {
           "l": "B",
-          "t": "All edges in 𝐺 have even weight OR all edges in 𝐺 have odd weight"
+          "t": "All edges in $G$ have even weight OR all edges in $G$ have odd weight"
         },
         {
           "l": "C",
-          "t": "In each cycle 𝐶 in 𝐺, all edges in 𝐶 have even weight"
+          "t": "In each cycle $C$ in $G$, all edges in $C$ have even weight"
         },
         {
           "l": "D",
-          "t": "In each cycle 𝐶 in 𝐺, either all edges in 𝐶 have even weight OR all edges in 𝐶 have odd weight"
+          "t": "In each cycle $C$ in $G$, either all edges in $C$ have even weight OR all edges in $C$ have odd weight"
         }
       ],
       "figures": [],
       "group": null,
       "subject": "algo",
-      "topic": "graphs",
+      "topic": "mst",
       "tags": [
-        "graphs"
+        "spanning-trees",
+        "graphs",
+        "exchange-argument"
       ],
       "answer": "D",
       "answerSource": "official",
@@ -149072,31 +149165,33 @@
       "number": "42",
       "marks": 2,
       "type": "MSQ",
-      "text": "Consider a context-free grammar 𝐺 with the following 3 rules.\n𝑆 → 𝑎𝑆, 𝑆 → 𝑎𝑆𝑏𝑆, 𝑆 → 𝑐\nLet 𝑤 ∈ ⁡𝐿(𝐺). Let 𝑛𝑎(𝑤), 𝑛𝑏(𝑤), 𝑛𝑐(𝑤)⁡denote the number of times 𝑎, 𝑏, 𝑐\noccur in 𝑤, respectively. Which of the following statements is/are TRUE?",
+      "text": "Consider a context-free grammar $G$ with the following 3 rules.\n\n$$S \\to aS, \\quad S \\to aSbS, \\quad S \\to c$$\n\nLet $w \\in L(G)$. Let $n_a(w), n_b(w), n_c(w)$ denote the number of times $a, b, c$ occur in $w$, respectively. Which of the following statements is/are TRUE?",
       "options": [
         {
           "l": "A",
-          "t": "𝑛𝑎(𝑤) > 𝑛𝑏(𝑤)⁡"
+          "t": "$n_a(w) > n_b(w)$"
         },
         {
           "l": "B",
-          "t": "𝑛𝑎(𝑤) > 𝑛𝑐(𝑤) − 2"
+          "t": "$n_a(w) > n_c(w) - 2$"
         },
         {
           "l": "C",
-          "t": "𝑛𝑐(𝑤) = 𝑛𝑏(𝑤) + 1"
+          "t": "$n_c(w) = n_b(w) + 1$"
         },
         {
           "l": "D",
-          "t": "𝑛𝑐(𝑤) = 𝑛𝑏(𝑤) ∗ 2 Computer Science and Information Technology Set 2 (CS2)"
+          "t": "$n_c(w) = n_b(w) * 2$"
         }
       ],
       "figures": [],
       "group": null,
       "subject": "toc",
-      "topic": "cfl",
+      "topic": "cfg",
       "tags": [
-        "cfl"
+        "cfg",
+        "derivations",
+        "invariants"
       ],
       "answer": "B;C",
       "answerSource": "official",
@@ -149117,14 +149212,16 @@
       "number": "43",
       "marks": 2,
       "type": "NAT",
-      "text": "Consider a disk with the following specifications: rotation speed of 6000 RPM,\naverage seek time of 5 milliseconds, 500 sectors/track, 512 -byte sectors.\nA file has content stored in 3000 sectors located randomly on the disk. Assuming\naverage rotational latency, the total time  (in seconds, rounded off to 2 decimal\nplaces) to read the entire file from the disk is _________",
+      "text": "Consider a disk with the following specifications: rotation speed of 6000 RPM, average seek time of 5 milliseconds, 500 sectors/track, 512-byte sectors. A file has content stored in 3000 sectors located randomly on the disk. Assuming average rotational latency, the total time (in seconds, rounded off to 2 decimal places) to read the entire file from the disk is _________",
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "coa",
+      "topic": "memory",
       "tags": [
-        "quant"
+        "disk-access-time",
+        "seek-time",
+        "rotational-latency"
       ],
       "answer": "29.50 to 30.50",
       "answerSource": "official",
@@ -149145,14 +149242,16 @@
       "number": "44",
       "marks": 2,
       "type": "NAT",
-      "text": "Consider a TCP connection operating at a point of time with the congestion window\nof size 12 MSS (Maximum Segment Size), when a timeout occurs due to packet\nloss. Assuming that all the segments transmitted in the next two RTTs (Round Trip\nTime) are acknowledged correctly, the congestion window size (in MSS) during the\nthird RTT will be _________",
+      "text": "Consider a TCP connection operating at a point of time with the congestion window of size 12 MSS (Maximum Segment Size), when a timeout occurs due to packet loss. Assuming that all the segments transmitted in the next two RTTs (Round Trip Time) are acknowledged correctly, the congestion window size (in MSS) during the third RTT will be _________",
       "options": [],
       "figures": [],
       "group": null,
       "subject": "cn",
-      "topic": "network",
+      "topic": "transport",
       "tags": [
-        "network"
+        "tcp-congestion-control",
+        "slow-start",
+        "timeout"
       ],
       "answer": "4 to 4",
       "answerSource": "official",
@@ -149173,14 +149272,16 @@
       "number": "45",
       "marks": 2,
       "type": "NAT",
-      "text": "Consider a n Ethernet segment with a transmission speed of 10 8 bits/sec and a\nmaximum segment length of 500 meters. If the speed of propagation of the signal\nin the medium is 2×108 meters/sec, then the minimum frame size (in bits) required\nfor collision detection is _________",
+      "text": "Consider an Ethernet segment with a transmission speed of $10^8$ bits/sec and a maximum segment length of 500 meters. If the speed of propagation of the signal in the medium is $2\\times10^8$ meters/sec, then the minimum frame size (in bits) required for collision detection is _________",
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "cn",
+      "topic": "datalink",
       "tags": [
-        "quant"
+        "csma-cd",
+        "ethernet",
+        "minimum-frame-size"
       ],
       "answer": "500 to 500",
       "answerSource": "official",
@@ -149201,14 +149302,15 @@
       "number": "46",
       "marks": 2,
       "type": "NAT",
-      "text": "A functional dependency 𝐹:⁡𝑋 → 𝑌 is termed as a useful functional dependency if\nand only if it satisfies all the following three conditions:\n• 𝑋 is not the empty set.\n• 𝑌 is not the empty set.\n• Intersection of 𝑋 and 𝑌 is the empty set.\nFor a relation 𝑅 with 4 attributes, the total number of possible useful functional\ndependencies is ________",
+      "text": "A functional dependency $F: X \\to Y$ is termed as a useful functional dependency if and only if it satisfies all the following three conditions:\n\n- $X$ is not the empty set.\n- $Y$ is not the empty set.\n- Intersection of $X$ and $Y$ is the empty set.\n\nFor a relation $R$ with 4 attributes, the total number of possible useful functional dependencies is ________",
       "options": [],
       "figures": [],
       "group": null,
       "subject": "db",
       "topic": "normalization",
       "tags": [
-        "normalization"
+        "functional-dependency",
+        "counting"
       ],
       "answer": "50 to 50",
       "answerSource": "official",
@@ -149229,14 +149331,16 @@
       "number": "47",
       "marks": 2,
       "type": "NAT",
-      "text": "A processor with 16 general purpose registers uses a 32-bit instruction format. The\ninstruction format consists of an opcode field, an addressing mode field, two register\noperand fields, and a 16-bit scalar field. If 8 addressing modes are to be supported,\nthe maximum number of unique opcodes possible for every addressing mode\nis _________\nComputer Science and Information Technology Set 2 (CS2)",
+      "text": "A processor with 16 general purpose registers uses a 32-bit instruction format. The instruction format consists of an opcode field, an addressing mode field, two register operand fields, and a 16-bit scalar field. If 8 addressing modes are to be supported, the maximum number of unique opcodes possible for every addressing mode is _________",
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "c-prog",
+      "subject": "coa",
+      "topic": "isa",
       "tags": [
-        "c-prog"
+        "instruction-format",
+        "opcode",
+        "addressing-modes"
       ],
       "answer": "32 to 32",
       "answerSource": "official",
@@ -149257,14 +149361,16 @@
       "number": "48",
       "marks": 2,
       "type": "NAT",
-      "text": "A non-pipelined instruction execution unit operating at 2 GHz takes an average of\n6 cycles to execute an instruction of a program P. The unit is then redesigned to\noperate on a 5 -stage pipeline at 2 GHz. Assume that the ideal throughput of the\npipelined unit is 1 instruction per cycle. In the execution of program  P,\n20% instructions incur an average of 2 cycle s stall due to data hazards and\n20% instructions incur an average of 3 cycle s stall due to control hazards. The\nspeedup (rounded off to one  decimal place) obtained by the pipelined design over\nthe non-pipelined design is _________",
+      "text": "A non-pipelined instruction execution unit operating at 2 GHz takes an average of 6 cycles to execute an instruction of a program P. The unit is then redesigned to operate on a 5-stage pipeline at 2 GHz. Assume that the ideal throughput of the pipelined unit is 1 instruction per cycle. In the execution of program P, 20% instructions incur an average of 2 cycles stall due to data hazards and 20% instructions incur an average of 3 cycles stall due to control hazards. The speedup (rounded off to one decimal place) obtained by the pipelined design over the non-pipelined design is _________",
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "coa",
+      "topic": "pipeline",
       "tags": [
-        "quant"
+        "pipelining",
+        "hazards",
+        "speedup"
       ],
       "answer": "2.9 to 3.1",
       "answerSource": "official",
@@ -149285,14 +149391,22 @@
       "number": "49",
       "marks": 2,
       "type": "NAT",
-      "text": "The number of distinct minimum -weight spanning trees of the following graph\nis _________\na\nb\ng d\nc\nf e\n3\n2\n2\n1\n2\n3\n2\n2\n2\n1\n1\n1",
+      "text": "The number of distinct minimum-weight spanning trees of the following graph is _________",
       "options": [],
-      "figures": [],
+      "figures": [
+        {
+          "f": "cse-2024-2/cs-49-1.svg",
+          "svg": "cse-2024-2/cs-49-1.svg",
+          "alt": "Undirected weighted graph with seven vertices: b and c on top, a on the left, g in the centre, d on the right, f and e at the bottom. Edges: a–b 1, a–f 1, a–g 2, b–g 2, f–g 2, b–c 3, f–e 3, g–c 2, g–d 2, g–e 2, c–d 1, e–d 1."
+        }
+      ],
       "group": null,
       "subject": "algo",
-      "topic": "graphs",
+      "topic": "mst",
       "tags": [
-        "graphs"
+        "minimum-spanning-tree",
+        "counting-msts",
+        "kruskal"
       ],
       "answer": "9 to 9",
       "answerSource": "official",
@@ -149313,14 +149427,22 @@
       "number": "50",
       "marks": 2,
       "type": "NAT",
-      "text": "The chromatic number of a graph is the minimum number of colours used in a\nproper colouring of the graph.  The chromatic number of the following graph\nis _________\nComputer Science and Information Technology Set 2 (CS2)",
+      "text": "The chromatic number of a graph is the minimum number of colours used in a proper colouring of the graph. The chromatic number of the following graph is _________",
       "options": [],
-      "figures": [],
+      "figures": [
+        {
+          "f": "cse-2024-2/cs-50-1.svg",
+          "svg": "cse-2024-2/cs-50-1.svg",
+          "alt": "Eight unlabelled vertices placed at the corners of an octagon (two on top, two on the right, two at the bottom, two on the left) with 16 edges: the 8 octagon sides; the 2 horizontal chords joining the upper-left to upper-right and lower-left to lower-right vertices; the 2 vertical chords joining each top vertex to the bottom vertex below it; and 4 long diagonals: top-left to lower-right, top-right to lower-left, upper-left to bottom-right, upper-right to bottom-left. Every vertex has degree 4."
+        }
+      ],
       "group": null,
       "subject": "dm",
-      "topic": "graph-theory",
+      "topic": "graphs",
       "tags": [
-        "graph-theory"
+        "graph-colouring",
+        "chromatic-number",
+        "bipartite-graph"
       ],
       "answer": "2 to 2",
       "answerSource": "official",
@@ -149341,14 +149463,16 @@
       "number": "51",
       "marks": 2,
       "type": "NAT",
-      "text": "A processor uses a 32-bit instruction format and supports byte-addressable memory\naccess. The ISA of the processor has 150 distinct instructions. The instructions are\nequally divided into two types, namely R-type and I-type, whose formats are shown\nbelow.\nR-type Instruction Format:\nOPCODE UNUSED DST Register SRC Register1 SRC Register 2\nI-type Instruction Format:\nOPCODE DST Register SRC Register # Immediate value/address\nIn the OPCODE, 1 bit is used to distinguish between I-type and R-type instructions\nand the remaining bits indicate the operation. The processor has 50 architectural\nregisters, and all register fields in the instructions are of equal size.\nLet 𝑋 be the number of bits used to encode the UNUSED field, 𝑌 be the number\nof bits used to encode the OPCODE field, and 𝑍 be the number of bits used to\nencode the immediate value/address field. The value of 𝑋 + 2𝑌 + 𝑍 is ________",
+      "text": "A processor uses a 32-bit instruction format and supports byte-addressable memory access. The ISA of the processor has 150 distinct instructions. The instructions are equally divided into two types, namely R-type and I-type, whose formats are shown below.\n\nR-type Instruction Format:\n\n| OPCODE | UNUSED | DST Register | SRC Register1 | SRC Register 2 |\n|---|---|---|---|---|\n\nI-type Instruction Format:\n\n| OPCODE | DST Register | SRC Register | # Immediate value/address |\n|---|---|---|---|\n\nIn the OPCODE, 1 bit is used to distinguish between I-type and R-type instructions and the remaining bits indicate the operation. The processor has 50 architectural registers, and all register fields in the instructions are of equal size.\n\nLet $X$ be the number of bits used to encode the UNUSED field, $Y$ be the number of bits used to encode the OPCODE field, and $Z$ be the number of bits used to encode the immediate value/address field. The value of $X + 2Y + Z$ is ________",
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "coa",
+      "topic": "isa",
       "tags": [
-        "quant"
+        "instruction-format",
+        "opcode",
+        "register-fields"
       ],
       "answer": "34 to 34",
       "answerSource": "official",
@@ -149369,14 +149493,15 @@
       "number": "52",
       "marks": 2,
       "type": "NAT",
-      "text": "Let 𝐿1 be the language represented by the regular expression  𝑏∗𝑎𝑏∗(𝑎𝑏∗𝑎𝑏∗)∗\nand 𝐿2 = {⁡𝑤 ∈ (𝑎 + 𝑏)∗⁡|⁡⁡|𝑤| ≤ 4}, where |𝑤| denotes the length of string\n𝑤.  The number of strings in 𝐿2 which are also in 𝐿1 is ___________",
+      "text": "Let $L_1$ be the language represented by the regular expression $b^*ab^*(ab^*ab^*)^*$ and $L_2 = \\{\\, w \\in (a+b)^* \\mid \\lvert w\\rvert \\le 4 \\,\\}$, where $\\lvert w\\rvert$ denotes the length of string $w$. The number of strings in $L_2$ which are also in $L_1$ is ___________",
       "options": [],
       "figures": [],
       "group": null,
       "subject": "toc",
       "topic": "regular",
       "tags": [
-        "regular"
+        "regular-expressions",
+        "counting-strings"
       ],
       "answer": "15 to 15",
       "answerSource": "official",
@@ -149397,14 +149522,16 @@
       "number": "53",
       "marks": 2,
       "type": "NAT",
-      "text": "Let 𝑍𝑛 be the group of integers {0, 1, 2, … , 𝑛 − 1} with addition modulo 𝑛 as the\ngroup operation.  The number of elements in the group 𝑍2 × 𝑍3 × 𝑍4 that are their\nown inverses is ________\nComputer Science and Information Technology Set 2 (CS2)",
+      "text": "Let $Z_n$ be the group of integers $\\{0, 1, 2, \\ldots, n-1\\}$ with addition modulo $n$ as the group operation. The number of elements in the group $Z_2 \\times Z_3 \\times Z_4$ that are their own inverses is ________",
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "dm",
+      "topic": "groups",
       "tags": [
-        "quant"
+        "group-theory",
+        "direct-product",
+        "inverse"
       ],
       "answer": "4 to 4",
       "answerSource": "official",
@@ -149425,14 +149552,16 @@
       "number": "54",
       "marks": 2,
       "type": "NAT",
-      "text": "Consider a 32-bit system with 4 KB page size and page table entries of size 4 bytes\neach. Assume 1 K B = 2 10 bytes. The OS uses a 2 -level page table for memory\nmanagement, with the page table containing an outer page directory and an inner\npage table. The OS allocates a page for the outer page directory upon process\ncreation. The OS uses demand paging when allocating m emory for the inner page\ntable, i.e., a page of the inner page table is allocated only if it contains at least one\nvalid page table entry.\nAn active process in this system accesses 2000 unique pages during its execution,\nand none of the pages are swapped out to disk. After it completes the page accesses,\nlet X denote the minimum and Y denote the maximum number of pages across the\ntwo levels of the page table of the process.\nThe value of X+Y is ________",
+      "text": "Consider a 32-bit system with 4 KB page size and page table entries of size 4 bytes each. Assume 1 KB = $2^{10}$ bytes. The OS uses a 2-level page table for memory management, with the page table containing an outer page directory and an inner page table. The OS allocates a page for the outer page directory upon process creation. The OS uses demand paging when allocating memory for the inner page table, i.e., a page of the inner page table is allocated only if it contains at least one valid page table entry.\n\nAn active process in this system accesses 2000 unique pages during its execution, and none of the pages are swapped out to disk. After it completes the page accesses, let X denote the minimum and Y denote the maximum number of pages across the two levels of the page table of the process.\n\nThe value of X+Y is ________",
       "options": [],
       "figures": [],
       "group": null,
       "subject": "os",
-      "topic": "memory",
+      "topic": "virtual-memory",
       "tags": [
-        "memory"
+        "multilevel-paging",
+        "page-table",
+        "demand-paging"
       ],
       "answer": "1028 to 1028",
       "answerSource": "official",
@@ -149453,14 +149582,16 @@
       "number": "55",
       "marks": 2,
       "type": "NAT",
-      "text": "Consider the following augmented grammar, which is to be parsed with a SLR\nparser. The set of terminals is {𝑎,𝑏,𝑐,𝑑,#,@}\n𝑆′ → 𝑆\n𝑆 → 𝑆𝑆⁡|⁡𝐴𝑎⁡|⁡𝑏𝐴𝑐⁡|⁡𝐵𝑐⁡|⁡𝑏𝐵𝑎\n𝐴 → 𝑑#\n𝐵 → @\nLet 𝐼0 = 𝐶𝐿𝑂𝑆𝑈𝑅𝐸({𝑆′ →⁡• 𝑆}). The number of items in the set 𝐺𝑂𝑇𝑂(𝐼0, 𝑆)\nis ___________",
+      "text": "Consider the following augmented grammar, which is to be parsed with a SLR parser. The set of terminals is $\\{a, b, c, d, \\#, @\\}$\n\n$$\\begin{aligned} S' &\\to S \\\\ S &\\to SS \\mid Aa \\mid bAc \\mid Bc \\mid bBa \\\\ A &\\to d\\# \\\\ B &\\to @ \\end{aligned}$$\n\nLet $I_0 = \\text{CLOSURE}(\\{S' \\to \\bullet S\\})$. The number of items in the set $\\text{GOTO}(I_0, S)$ is ___________",
       "options": [],
       "figures": [],
       "group": null,
       "subject": "cd",
       "topic": "parsing",
       "tags": [
-        "parsing"
+        "slr-parsing",
+        "lr0-items",
+        "closure-goto"
       ],
       "answer": "9 to 9",
       "answerSource": "official",
@@ -149497,7 +149628,7 @@
         },
         {
           "l": "D",
-          "t": "vain Data Science and Artificial Intelligence (DA)"
+          "t": "vain"
         }
       ],
       "figures": [],
@@ -149505,7 +149636,10 @@
       "subject": "ga",
       "topic": "verbal",
       "tags": [
-        "verbal-aptitude"
+        "ga",
+        "verbal",
+        "analogy",
+        "vocabulary"
       ],
       "answer": "D",
       "answerSource": "official",
@@ -149542,15 +149676,24 @@
         },
         {
           "l": "D",
-          "t": "6 Data Science and Artificial Intelligence (DA)"
+          "t": "6"
         }
       ],
-      "figures": [],
+      "figures": [
+        {
+          "f": "da-2024/ga-2-1.svg",
+          "svg": "da-2024/ga-2-1.svg",
+          "alt": "A horizontal ellipse containing a tall rectangle (square-like) centred in it, and a small circle at the centre of the rectangle. The circle is split into 3 sectors by three radii pointing up (12 o'clock), lower-left (about 8 o'clock) and lower-right (about 4 o'clock). Four diagonal segments join each corner of the rectangle to the circle, splitting the ring between rectangle and circle into 4 trapezoid-like parts (top, right, bottom, left). From each rectangle corner two segments run outward to the ellipse (one steeply up/down towards the top/bottom of the ellipse, one shallowly sideways towards its left/right), cutting the space between rectangle and ellipse into 4 small corner parts and 4 side parts (top, bottom, left, right). Total 3 + 4 + 8 = 15 parts."
+        }
+      ],
       "group": null,
       "subject": "ga",
-      "topic": "quant",
+      "topic": "analytical",
       "tags": [
-        "quantitative-aptitude"
+        "ga",
+        "analytical",
+        "map-colouring",
+        "graph-colouring"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -149571,7 +149714,7 @@
       "number": "3",
       "marks": 1,
       "type": "MCQ",
-      "text": "How many 4 -digit positive integers divisible by 3 can be formed using only the\ndigits {1, 3,4, 6, 7}, such that no digit appears more than once in a number?",
+      "text": "How many 4-digit positive integers divisible by 3 can be formed using only the\ndigits {1, 3, 4, 6, 7}, such that no digit appears more than once in a number?",
       "options": [
         {
           "l": "A",
@@ -149595,7 +149738,10 @@
       "subject": "ga",
       "topic": "quant",
       "tags": [
-        "quantitative-aptitude"
+        "ga",
+        "quant",
+        "permutations",
+        "divisibility"
       ],
       "answer": "B",
       "answerSource": "official",
@@ -149616,7 +149762,7 @@
       "number": "4",
       "marks": 1,
       "type": "MCQ",
-      "text": "The sum of the following infinite series is\n2 + 1\n2 + 1\n3 + 1\n4 + 1\n8 + 1\n9 + 1\n16 + 1\n27 + ⋯",
+      "text": "The sum of the following infinite series is\n\n$$2 + \\frac{1}{2} + \\frac{1}{3} + \\frac{1}{4} + \\frac{1}{8} + \\frac{1}{9} + \\frac{1}{16} + \\frac{1}{27} + \\cdots$$",
       "options": [
         {
           "l": "A",
@@ -149632,7 +149778,7 @@
         },
         {
           "l": "D",
-          "t": "9/2 Data Science and Artificial Intelligence (DA)"
+          "t": "9/2"
         }
       ],
       "figures": [],
@@ -149640,7 +149786,9 @@
       "subject": "ga",
       "topic": "quant",
       "tags": [
-        "quantitative-aptitude"
+        "ga",
+        "quant",
+        "geometric-series"
       ],
       "answer": "B",
       "answerSource": "official",
@@ -149661,7 +149809,7 @@
       "number": "5",
       "marks": 1,
       "type": "MCQ",
-      "text": "In an election, the share of valid votes received by the four candidates A, B, C, and\nD is represented by the pie chart shown. The total number of votes cast in the\nelection were 1,15,000, out of which 5,000 were invalid.\nBased on the data provided, t he total number of valid votes received by the\ncandidates B and C is",
+      "text": "In an election, the share of valid votes received by the four candidates A, B, C, and\nD is represented by the pie chart shown. The total number of votes cast in the\nelection were 1,15,000, out of which 5,000 were invalid.\n\nBased on the data provided, the total number of valid votes received by the\ncandidates B and C is",
       "options": [
         {
           "l": "A",
@@ -149677,15 +149825,24 @@
         },
         {
           "l": "D",
-          "t": "54,000 A 40% B 25% C 20% D 15% Share of valid votes Data Science and Artificial Intelligence (DA)"
+          "t": "54,000"
         }
       ],
-      "figures": [],
+      "figures": [
+        {
+          "f": "da-2024/ga-5-1.svg",
+          "svg": "da-2024/ga-5-1.svg",
+          "alt": "Pie chart titled \"Share of valid votes\". Starting at 12 o'clock and going clockwise: A 40% (right half, largest slice), B 25% (bottom), C 20% (left), D 15% (upper left)."
+        }
+      ],
       "group": null,
       "subject": "ga",
       "topic": "quant",
       "tags": [
-        "quantitative-aptitude"
+        "ga",
+        "quant",
+        "data-interpretation",
+        "percentages"
       ],
       "answer": "B",
       "answerSource": "official",
@@ -149706,7 +149863,7 @@
       "number": "6",
       "marks": 2,
       "type": "MCQ",
-      "text": "Thousands of years ago, some people began dairy farming. This coincided with a\nnumber of mutations in a particular gene that resulted in these people developing\nthe ability to digest dairy milk.\nBased on the given passage, which of the following can be inferred?",
+      "text": "Thousands of years ago, some people began dairy farming. This coincided with a\nnumber of mutations in a particular gene that resulted in these people developing\nthe ability to digest dairy milk.\n\nBased on the given passage, which of the following can be inferred?",
       "options": [
         {
           "l": "A",
@@ -149730,7 +149887,10 @@
       "subject": "ga",
       "topic": "verbal",
       "tags": [
-        "verbal-aptitude"
+        "ga",
+        "verbal",
+        "inference",
+        "reading-comprehension"
       ],
       "answer": "D",
       "answerSource": "official",
@@ -149767,7 +149927,7 @@
         },
         {
           "l": "D",
-          "t": "1/2 Data Science and Artificial Intelligence (DA)"
+          "t": "1/2"
         }
       ],
       "figures": [],
@@ -149775,7 +149935,10 @@
       "subject": "ga",
       "topic": "quant",
       "tags": [
-        "quantitative-aptitude"
+        "ga",
+        "quant",
+        "probability",
+        "binomial"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -149796,7 +149959,7 @@
       "number": "8",
       "marks": 2,
       "type": "MCQ",
-      "text": "Person 1 and Person 2 invest in three mutual funds A, B, and C. The amounts they\ninvest in each of these mutual funds are given in the table.\nMutual fund A Mutual fund B Mutual fund C\nPerson 1 ₹10,000 ₹20,000 ₹20,000\nPerson 2 ₹20,000 ₹15,000 ₹15,000\nAt the end of one year, the total amount that Person 1 gets is ₹500 more than\nPerson 2. The annual rate of return for the mutual funds B and C is 15% each. What\nis the annual rate of return for the mutual fund A?",
+      "text": "Person 1 and Person 2 invest in three mutual funds A, B, and C. The amounts they\ninvest in each of these mutual funds are given in the table.\n\n| | Mutual fund A | Mutual fund B | Mutual fund C |\n|---|---|---|---|\n| Person 1 | ₹10,000 | ₹20,000 | ₹20,000 |\n| Person 2 | ₹20,000 | ₹15,000 | ₹15,000 |\n\nAt the end of one year, the total amount that Person 1 gets is ₹500 more than\nPerson 2. The annual rate of return for the mutual funds B and C is 15% each. What\nis the annual rate of return for the mutual fund A?",
       "options": [
         {
           "l": "A",
@@ -149812,7 +149975,7 @@
         },
         {
           "l": "D",
-          "t": "20% Data Science and Artificial Intelligence (DA)"
+          "t": "20%"
         }
       ],
       "figures": [],
@@ -149820,7 +149983,10 @@
       "subject": "ga",
       "topic": "quant",
       "tags": [
-        "quantitative-aptitude"
+        "ga",
+        "quant",
+        "percentages",
+        "rate-of-return"
       ],
       "answer": "B",
       "answerSource": "official",
@@ -149845,19 +150011,56 @@
       "options": [
         {
           "l": "A",
-          "t": "(B)"
+          "t": "Net **(A)**: top row 5 | 1; under the 1: 4, then 6; bottom row 2 | 3"
+        },
+        {
+          "l": "B",
+          "t": "Net **(B)**: top row 5 | 1; under the 1: 4, then 2; bottom row 6 | 3"
         },
         {
           "l": "C",
-          "t": "(D) Data Science and Artificial Intelligence (DA)"
+          "t": "Net **(C)**: top row 5 | 1; under the 1: 3, then 2; bottom row 4 | 6"
+        },
+        {
+          "l": "D",
+          "t": "Net **(D)**: top row 5 | 1; under the 1: 4, then 6; bottom row 3 | 2"
         }
       ],
-      "figures": [],
+      "figures": [
+        {
+          "f": "da-2024/ga-9-1.svg",
+          "svg": "da-2024/ga-9-1.svg",
+          "alt": "Three isometric views of the same die, each showing the top face and two side faces (left-front and right-front). View 1: top 5, left 4, right 1. View 2: top 4, left 6, right 3. View 3: top 2, left 6, right 5."
+        },
+        {
+          "f": "da-2024/ga-9-2.svg",
+          "svg": "da-2024/ga-9-2.svg",
+          "alt": "Option (A) net of six unit squares: a top row of two squares 5 (left) and 1 (right); below 1 a column of three more squares 4, 6, 2 (top to bottom); and a square 3 to the right of 2."
+        },
+        {
+          "f": "da-2024/ga-9-3.svg",
+          "svg": "da-2024/ga-9-3.svg",
+          "alt": "Option (B) net of six unit squares: a top row of two squares 5 (left) and 1 (right); below 1 a column of three more squares 4, 2, 6 (top to bottom); and a square 3 to the right of 6."
+        },
+        {
+          "f": "da-2024/ga-9-4.svg",
+          "svg": "da-2024/ga-9-4.svg",
+          "alt": "Option (C) net of six unit squares: a top row of two squares 5 (left) and 1 (right); below 1 a column of three more squares 3, 2, 4 (top to bottom); and a square 6 to the right of 4."
+        },
+        {
+          "f": "da-2024/ga-9-5.svg",
+          "svg": "da-2024/ga-9-5.svg",
+          "alt": "Option (D) net of six unit squares: a top row of two squares 5 (left) and 1 (right); below 1 a column of three more squares 4, 6, 3 (top to bottom); and a square 2 to the right of 3."
+        }
+      ],
       "group": null,
       "subject": "ga",
       "topic": "spatial",
       "tags": [
-        "quantitative-aptitude"
+        "ga",
+        "spatial",
+        "dice",
+        "cube-nets"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -149878,7 +150081,7 @@
       "number": "10",
       "marks": 2,
       "type": "MCQ",
-      "text": "Visualize two identical right circular cones such that one is inverted over the other\nand they share a common circular base. If a cutting plane passes through the vertices\nof the assembled cones, what shape does the  outer boundary of the\nresulting cross-section make?",
+      "text": "Visualize two identical right circular cones such that one is inverted over the other\nand they share a common circular base. If a cutting plane passes through the vertices\nof the assembled cones, what shape does the outer boundary of the\nresulting cross-section make?",
       "options": [
         {
           "l": "A",
@@ -149894,7 +150097,7 @@
         },
         {
           "l": "D",
-          "t": "A hexagon Data Science and Artificial Intelligence (DA)"
+          "t": "A hexagon"
         }
       ],
       "figures": [],
@@ -149902,7 +150105,10 @@
       "subject": "ga",
       "topic": "spatial",
       "tags": [
-        "quantitative-aptitude"
+        "ga",
+        "spatial",
+        "solid-geometry",
+        "cross-section"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -149923,7 +150129,7 @@
       "number": "1",
       "marks": 1,
       "type": "MCQ",
-      "text": "Consider the following statements:\n(i) The mean and variance of a Poisson random variable are equal.\n(ii) For a standard normal random variable, the mean is zero and the\nvariance is one.\nWhich ONE of the following options is correct?",
+      "text": "Consider the following statements:\n\n(i) The mean and variance of a Poisson random variable are equal.\n\n(ii) For a standard normal random variable, the mean is zero and the variance is one.\n\nWhich ONE of the following options is correct?",
       "options": [
         {
           "l": "A",
@@ -149944,10 +150150,13 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "prob",
+      "topic": "rv",
       "tags": [
-        "probability"
+        "prob",
+        "rv",
+        "poisson",
+        "normal-distribution"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -149968,7 +150177,7 @@
       "number": "2",
       "marks": 1,
       "type": "MCQ",
-      "text": "Three fair coins are tossed independently. T is the event that two or more tosses\nresult in heads. S is the event that two or more tosses result in tails.\nWhat is the probability of the event 𝑇 ∩ 𝑆 ?",
+      "text": "Three fair coins are tossed independently. T is the event that two or more tosses\nresult in heads. S is the event that two or more tosses result in tails.\n\nWhat is the probability of the event $T \\cap S$?",
       "options": [
         {
           "l": "A",
@@ -149984,15 +150193,18 @@
         },
         {
           "l": "D",
-          "t": "1 Data Science and Artificial Intelligence (DA)"
+          "t": "1"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "prob",
+      "topic": "basic",
       "tags": [
-        "data-science"
+        "prob",
+        "basic",
+        "events",
+        "coin-toss"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -150013,31 +150225,34 @@
       "number": "3",
       "marks": 1,
       "type": "MCQ",
-      "text": "Consider the matrix 𝑴 = [2 −1\n3 1 ].\nWhich ONE of the following statements is TRUE?",
+      "text": "Consider the matrix $M = \\begin{bmatrix} 2 & -1 \\\\ 3 & 1 \\end{bmatrix}$.\n\nWhich ONE of the following statements is TRUE?",
       "options": [
         {
           "l": "A",
-          "t": "The eigenvalues of 𝑴 are non-negative and real."
+          "t": "The eigenvalues of $M$ are non-negative and real."
         },
         {
           "l": "B",
-          "t": "The eigenvalues of 𝑴 are complex conjugate pairs."
+          "t": "The eigenvalues of $M$ are complex conjugate pairs."
         },
         {
           "l": "C",
-          "t": "One eigenvalue of 𝑴 is positive and real, and another eigenvalue of 𝑴 is zero."
+          "t": "One eigenvalue of $M$ is positive and real, and another eigenvalue of $M$ is zero."
         },
         {
           "l": "D",
-          "t": "One eigenvalue of 𝑴 is non-negative and real, and another eigenvalue of 𝑴 is negative and real."
+          "t": "One eigenvalue of $M$ is non-negative and real, and another eigenvalue of $M$ is negative and real."
         }
       ],
       "figures": [],
       "group": null,
       "subject": "la",
-      "topic": "matrices",
+      "topic": "eigen",
       "tags": [
-        "matrices"
+        "la",
+        "eigen",
+        "eigenvalues",
+        "characteristic-equation"
       ],
       "answer": "B",
       "answerSource": "official",
@@ -150058,7 +150273,7 @@
       "number": "4",
       "marks": 1,
       "type": "MCQ",
-      "text": "Consider performing depth -first search (DFS) on an undirected and unweighted\ngraph G starting at vertex 𝑠. For any vertex 𝑢 in G, 𝑑[𝑢] is the length of the shortest\npath from 𝑠 to 𝑢. Let (𝑢, 𝑣) be an edge in G such that 𝑑[𝑢] < 𝑑[𝑣]. If the edge\n(𝑢, 𝑣) is explored first in the direction from 𝑢 to 𝑣 during the above DFS, then (𝑢, 𝑣)\nbecomes a ______ edge.",
+      "text": "Consider performing depth-first search (DFS) on an undirected and unweighted graph $G$ starting at vertex $s$. For any vertex $u$ in $G$, $d[u]$ is the length of the shortest path from $s$ to $u$. Let $(u, v)$ be an edge in $G$ such that $d[u] < d[v]$. If the edge $(u, v)$ is explored first in the direction from $u$ to $v$ during the above DFS, then $(u, v)$ becomes a ______ edge.",
       "options": [
         {
           "l": "A",
@@ -150074,15 +150289,19 @@
         },
         {
           "l": "D",
-          "t": "gray Data Science and Artificial Intelligence (DA)"
+          "t": "gray"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "db",
-      "topic": "sql",
+      "subject": "pdsa",
+      "topic": "algorithms",
       "tags": [
-        "search"
+        "pdsa",
+        "algorithms",
+        "graph-traversal",
+        "dfs",
+        "edge-classification"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -150090,8 +150309,8 @@
       "solution": "**Step 1: Problem Formulation & Exam Context**\nTargeting **DB** (Sql) from **DA-2024 Q4** (1 Mark) (MCQ).\n- Evaluation Target: Official verified examination outcome **A**.\n\n**Step 2: Governing Principles & Formal Rules**\n- Relational algebra and SQL grouping semantics: Aggregates evaluate per group defined by `GROUP BY` after applying `WHERE` row filters.\n- Conflict serializability: A schedule is conflict serializable iff its precedence (conflict) graph contains no directed cycles.\n\n**Step 3: Step-by-Step Analytical Derivation & Calculation**\n- Applying the governing laws and boundary conditions from the problem statement.\n- Evaluating the functional transformation leads deterministically to the confirmed outcome:\n\n$$\\mathbf{A}$$\n\n**Step 4: Conclusion & Verification**\n- **Official Verified Key:** **A**\n- Completely verified against standard computer science literature and official GATE authority key archives.\n\n⚡ **Topper's Shortcut:** Identify governing structural invariants (e.g., symmetry, closure, master theorem cases, or truth-table Karnaugh maps) directly to eliminate distractors in < 45 seconds.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": false,
-      "reviewNote": null
+      "needsReview": true,
+      "reviewNote": "Official key is A (tree) and is kept. Strictly, a back edge is also possible: edges s-u, s-a, a-v, v-w, w-u, u-v give d[u]=1 < d[v]=2; with DFS order s, a, v, w, u (adjacency lists s:[a,u], v:[w,u,a], w:[u,v], u:[v,s]) the edge (u,v) is first explored from u while v is a gray ancestor, so it is a back edge. The intended answer assumes v is still undiscovered."
     },
     {
       "id": "da-2024-da-5",
@@ -150103,7 +150322,7 @@
       "number": "5",
       "marks": 1,
       "type": "MCQ",
-      "text": "For any twice differentiable function 𝑓: ℝ → ℝ, if at some 𝑥 ∗ ∈ ℝ, 𝑓 ′(𝑥 ∗) = 0\nand 𝑓′′(𝑥 ∗) > 0, then the function 𝑓 necessarily has a ______ at 𝑥 = 𝑥 ∗.\nNote: ℝ denotes the set of real numbers.",
+      "text": "For any twice differentiable function $f: \\mathbb{R} \\to \\mathbb{R}$, if at some $x^* \\in \\mathbb{R}$, $f'(x^*) = 0$ and $f''(x^*) > 0$, then the function $f$ necessarily has a ______ at $x = x^*$.\n\nNote: $\\mathbb{R}$ denotes the set of real numbers.",
       "options": [
         {
           "l": "A",
@@ -150125,9 +150344,12 @@
       "figures": [],
       "group": null,
       "subject": "calc",
-      "topic": "maxmin",
+      "topic": "optimization",
       "tags": [
-        "data-science"
+        "calc",
+        "optimization",
+        "second-derivative-test",
+        "local-minimum"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -150148,7 +150370,7 @@
       "number": "6",
       "marks": 1,
       "type": "MCQ",
-      "text": "Match the items in Column 1 with the items in Column 2 in the following table:\nColumn 1 Column 2\n(p) First In First Out\n(q) Lookup Operation\n(r) Last In First Out\n(i) Stacks\n(ii) Queues\n(iii) Hash Tables",
+      "text": "Match the items in Column 1 with the items in Column 2 in the following table:\n\n| | Column 1 | | Column 2 |\n|---|---|---|---|\n| (p) | First In First Out | (i) | Stacks |\n| (q) | Lookup Operation | (ii) | Queues |\n| (r) | Last In First Out | (iii) | Hash Tables |",
       "options": [
         {
           "l": "A",
@@ -150164,15 +150386,19 @@
         },
         {
           "l": "D",
-          "t": "(p) − (i), (q) − (iii), (r) − (ii) Data Science and Artificial Intelligence (DA)"
+          "t": "(p) − (i), (q) − (iii), (r) − (ii)"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "pdsa",
+      "topic": "ds",
       "tags": [
-        "quant"
+        "pdsa",
+        "ds",
+        "stacks",
+        "queues",
+        "hashing"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -150193,31 +150419,35 @@
       "number": "7",
       "marks": 1,
       "type": "MCQ",
-      "text": "Consider the dataset with six datapoints: {(𝒙𝟏, 𝒚𝟏),(𝒙𝟐, 𝒚𝟐),… , (𝒙𝟔,𝒚𝟔)},\nwhere 𝒙𝟏 =  [1\n0] ,  𝒙𝟐 =  [0\n1] , 𝒙𝟑 =  [ 0\n−1] , 𝒙𝟒 =  [−1\n0 ] , 𝒙𝟓 =  [2\n2] , 𝒙𝟔 =  [−2\n−2]\nand the labels are given by 𝒚𝟏 = 𝒚𝟐 = 𝒚𝟓 = 1, and 𝒚𝟑 = 𝒚𝟒 = 𝒚𝟔 =  −1. A hard\nmargin linear support vector machine is trained on the above dataset.\nWhich ONE of the following sets is a possible set of support vectors?",
+      "text": "Consider the dataset with six datapoints: $\\{(\\mathbf{x}_1, y_1), (\\mathbf{x}_2, y_2), \\ldots, (\\mathbf{x}_6, y_6)\\}$, where\n\n$$\\mathbf{x}_1 = \\begin{bmatrix} 1 \\\\ 0 \\end{bmatrix},\\ \\mathbf{x}_2 = \\begin{bmatrix} 0 \\\\ 1 \\end{bmatrix},\\ \\mathbf{x}_3 = \\begin{bmatrix} 0 \\\\ -1 \\end{bmatrix},\\ \\mathbf{x}_4 = \\begin{bmatrix} -1 \\\\ 0 \\end{bmatrix},\\ \\mathbf{x}_5 = \\begin{bmatrix} 2 \\\\ 2 \\end{bmatrix},\\ \\mathbf{x}_6 = \\begin{bmatrix} -2 \\\\ -2 \\end{bmatrix}$$\n\nand the labels are given by $y_1 = y_2 = y_5 = 1$, and $y_3 = y_4 = y_6 = -1$. A hard margin linear support vector machine is trained on the above dataset.\n\nWhich ONE of the following sets is a possible set of support vectors?",
       "options": [
         {
           "l": "A",
-          "t": "{𝒙𝟏, 𝒙𝟐,𝒙𝟓}"
+          "t": "$\\{\\mathbf{x}_1, \\mathbf{x}_2, \\mathbf{x}_5\\}$"
         },
         {
           "l": "B",
-          "t": "{𝒙𝟑, 𝒙𝟒,𝒙𝟓}"
+          "t": "$\\{\\mathbf{x}_3, \\mathbf{x}_4, \\mathbf{x}_5\\}$"
         },
         {
           "l": "C",
-          "t": "{𝒙𝟒, 𝒙𝟓}"
+          "t": "$\\{\\mathbf{x}_4, \\mathbf{x}_5\\}$"
         },
         {
           "l": "D",
-          "t": "{𝒙𝟏, 𝒙𝟐,𝒙𝟑, 𝒙𝟒}"
+          "t": "$\\{\\mathbf{x}_1, \\mathbf{x}_2, \\mathbf{x}_3, \\mathbf{x}_4\\}$"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "db",
-      "topic": "sql",
+      "subject": "ml",
+      "topic": "supervised",
       "tags": [
-        "supervised"
+        "ml",
+        "supervised",
+        "svm",
+        "support-vectors",
+        "max-margin"
       ],
       "answer": "D",
       "answerSource": "official",
@@ -150238,7 +150468,7 @@
       "number": "8",
       "marks": 1,
       "type": "MCQ",
-      "text": "Match the items in Column 1 with the items in Column 2 in the following table:\nColumn 1 Column 2\n(p) Principal Component Analysis\n(q) Naïve Bayes Classification\n(r) Logistic Regression\n(i) Discriminative Model\n(ii) Dimensionality Reduction\n(iii) Generative Model",
+      "text": "Match the items in Column 1 with the items in Column 2 in the following table:\n\n| | Column 1 | | Column 2 |\n|---|---|---|---|\n| (p) | Principal Component Analysis | (i) | Discriminative Model |\n| (q) | Naïve Bayes Classification | (ii) | Dimensionality Reduction |\n| (r) | Logistic Regression | (iii) | Generative Model |",
       "options": [
         {
           "l": "A",
@@ -150254,15 +150484,21 @@
         },
         {
           "l": "D",
-          "t": "(p) − (iii), (q) − (ii), (r) − (i) Data Science and Artificial Intelligence (DA)"
+          "t": "(p) − (iii), (q) − (ii), (r) − (i)"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "ml",
+      "topic": "supervised",
       "tags": [
-        "supervised"
+        "ml",
+        "supervised",
+        "unsupervised",
+        "pca",
+        "naive-bayes",
+        "logistic-regression",
+        "generative-vs-discriminative"
       ],
       "answer": "C",
       "answerSource": "official",
@@ -150283,31 +150519,36 @@
       "number": "9",
       "marks": 1,
       "type": "MCQ",
-      "text": "Euclidean distance based 𝑘-means clustering algorithm was run on a dataset of 100\npoints with 𝑘 = 3. If the points [1\n1] and  [−1\n1 ] are both part of cluster 3, then which\nONE of the following points is necessarily also part of cluster 3?",
+      "text": "Euclidean distance based $k$-means clustering algorithm was run on a dataset of 100 points with $k = 3$. If the points $\\begin{bmatrix} 1 \\\\ 1 \\end{bmatrix}$ and $\\begin{bmatrix} -1 \\\\ 1 \\end{bmatrix}$ are both part of cluster 3, then which ONE of the following points is necessarily also part of cluster 3?",
       "options": [
         {
           "l": "A",
-          "t": "[0 0]"
+          "t": "$\\begin{bmatrix} 0 \\\\ 0 \\end{bmatrix}$"
         },
         {
           "l": "B",
-          "t": "[0 2]"
+          "t": "$\\begin{bmatrix} 0 \\\\ 2 \\end{bmatrix}$"
         },
         {
           "l": "C",
-          "t": "[2 0]"
+          "t": "$\\begin{bmatrix} 2 \\\\ 0 \\end{bmatrix}$"
         },
         {
           "l": "D",
-          "t": "[0 1]"
+          "t": "$\\begin{bmatrix} 0 \\\\ 1 \\end{bmatrix}$"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "ml",
+      "topic": "unsupervised",
       "tags": [
-        "quant"
+        "ml",
+        "unsupervised",
+        "k-means",
+        "clustering",
+        "voronoi",
+        "convexity"
       ],
       "answer": "D",
       "answerSource": "official",
@@ -150328,31 +150569,34 @@
       "number": "10",
       "marks": 1,
       "type": "MCQ",
-      "text": "Given a dataset with 𝐾 binary-valued attributes (where 𝐾 > 2) for a two -class\nclassification task, the number of parameters to be estimated for learning a naïve\nBayes classifier is",
+      "text": "Given a dataset with $K$ binary-valued attributes (where $K > 2$) for a two-class classification task, the number of parameters to be estimated for learning a naïve Bayes classifier is",
       "options": [
         {
           "l": "A",
-          "t": "2𝐾 + 1"
+          "t": "$2^K + 1$"
         },
         {
           "l": "B",
-          "t": "2𝐾 + 1"
+          "t": "$2K + 1$"
         },
         {
           "l": "C",
-          "t": "2𝐾+1 + 1"
+          "t": "$2^{K+1} + 1$"
         },
         {
           "l": "D",
-          "t": "𝐾2 + 1 Data Science and Artificial Intelligence (DA)"
+          "t": "$K^2 + 1$"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "prob",
-      "topic": "bayes",
+      "subject": "ml",
+      "topic": "supervised",
       "tags": [
-        "sql"
+        "ml",
+        "supervised",
+        "naive-bayes",
+        "parameter-count"
       ],
       "answer": "B",
       "answerSource": "official",
@@ -150373,31 +150617,35 @@
       "number": "11",
       "marks": 1,
       "type": "MCQ",
-      "text": "Consider performing uniform hashing on an open address  hash table with load\nfactor 𝛼 =\n𝑛\n𝑚 < 1, where 𝑛 elements are stored in the table with 𝑚 slots. The\nexpected number of probes in an unsuccessful search is at most\n1\n1−𝛼 .\nInserting an element in this hash table requires at most ______ probes, on average.",
+      "text": "Consider performing uniform hashing on an open address hash table with load factor $\\alpha = \\dfrac{n}{m} < 1$, where $n$ elements are stored in the table with $m$ slots. The expected number of probes in an unsuccessful search is at most $\\dfrac{1}{1-\\alpha}$.\n\nInserting an element in this hash table requires at most ______ probes, on average.",
       "options": [
         {
           "l": "A",
-          "t": "ln ( 1 1 − 𝛼)"
+          "t": "$\\ln\\left(\\dfrac{1}{1-\\alpha}\\right)$"
         },
         {
           "l": "B",
-          "t": "1 1 − 𝛼"
+          "t": "$\\dfrac{1}{1-\\alpha}$"
         },
         {
           "l": "C",
-          "t": "1 + 𝛼 2"
+          "t": "$1 + \\dfrac{\\alpha}{2}$"
         },
         {
           "l": "D",
-          "t": "1 1 + 𝛼"
+          "t": "$\\dfrac{1}{1+\\alpha}$"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "db",
-      "topic": "sql",
+      "subject": "pdsa",
+      "topic": "ds",
       "tags": [
-        "sql"
+        "pdsa",
+        "ds",
+        "hashing",
+        "open-addressing",
+        "uniform-hashing"
       ],
       "answer": "B",
       "answerSource": "official",
@@ -150418,31 +150666,34 @@
       "number": "12",
       "marks": 1,
       "type": "MCQ",
-      "text": "For any binary classification dataset, let 𝑆𝐵 ∈ ℝ𝑑×𝑑 and 𝑆𝑊 ∈ ℝ𝑑×𝑑 be the\nbetween-class and within -class scatter (covariance) matrices, respectively. The\nFisher linear discriminant is defined by  𝑢∗ ∈ ℝ𝑑, that maximizes\n𝐽(𝑢) = 𝑢𝑇 𝑆𝐵𝑢\n𝑢𝑇𝑆𝑊𝑢\nIf 𝜆 = 𝐽(𝑢∗),  𝑆𝑊 is non-singular and 𝑆𝐵 ≠ 0, then (𝑢∗, 𝜆) must satisfy which ONE\nof the following equations?\nNote: ℝ denotes the set of real numbers.",
+      "text": "For any binary classification dataset, let $S_B \\in \\mathbb{R}^{d \\times d}$ and $S_W \\in \\mathbb{R}^{d \\times d}$ be the between-class and within-class scatter (covariance) matrices, respectively. The Fisher linear discriminant is defined by $u^* \\in \\mathbb{R}^d$, that maximizes\n\n$$J(u) = \\frac{u^T S_B u}{u^T S_W u}$$\n\nIf $\\lambda = J(u^*)$, $S_W$ is non-singular and $S_B \\neq 0$, then $(u^*, \\lambda)$ must satisfy which ONE of the following equations?\n\nNote: $\\mathbb{R}$ denotes the set of real numbers.",
       "options": [
         {
           "l": "A",
-          "t": "𝑆𝑊 −1𝑆𝐵𝑢∗ = 𝜆𝑢∗"
+          "t": "$S_W^{-1} S_B u^* = \\lambda u^*$"
         },
         {
           "l": "B",
-          "t": "𝑆𝑊𝑢∗ = 𝜆𝑆𝐵𝑢∗"
+          "t": "$S_W u^* = \\lambda S_B u^*$"
         },
         {
           "l": "C",
-          "t": "𝑆𝐵𝑆𝑊𝑢∗ = 𝜆𝑢∗"
+          "t": "$S_B S_W u^* = \\lambda u^*$"
         },
         {
           "l": "D",
-          "t": "𝑢∗𝑇𝑢∗ = 𝜆2 Data Science and Artificial Intelligence (DA)"
+          "t": "$u^{*T} u^* = \\lambda^2$"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "la",
-      "topic": "matrices",
+      "subject": "ml",
+      "topic": "supervised",
       "tags": [
-        "probability"
+        "ml",
+        "supervised",
+        "fisher-lda",
+        "generalized-eigenvalue"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -150463,23 +150714,23 @@
       "number": "13",
       "marks": 1,
       "type": "MCQ",
-      "text": "Let ℎ1and ℎ2 be two admissible heuristics used in 𝐴∗ search.\nWhich ONE of the following expressions is always an admissible heuristic?",
+      "text": "Let $h_1$ and $h_2$ be two admissible heuristics used in $A^*$ search.\n\nWhich ONE of the following expressions is always an admissible heuristic?",
       "options": [
         {
           "l": "A",
-          "t": "ℎ1 + ℎ2"
+          "t": "$h_1 + h_2$"
         },
         {
           "l": "B",
-          "t": "ℎ1 × ℎ2"
+          "t": "$h_1 \\times h_2$"
         },
         {
           "l": "C",
-          "t": "ℎ1/ℎ2, (ℎ2 ≠ 0)"
+          "t": "$h_1 / h_2,\\ (h_2 \\neq 0)$"
         },
         {
           "l": "D",
-          "t": "|ℎ1 − ℎ2|"
+          "t": "$\\lvert h_1 - h_2 \\rvert$"
         }
       ],
       "figures": [],
@@ -150487,7 +150738,10 @@
       "subject": "ai",
       "topic": "search",
       "tags": [
-        "search"
+        "ai",
+        "search",
+        "a-star",
+        "admissible-heuristic"
       ],
       "answer": "D",
       "answerSource": "official",
@@ -150508,31 +150762,35 @@
       "number": "14",
       "marks": 1,
       "type": "MCQ",
-      "text": "Consider five random variables 𝑈, 𝑉, 𝑊, 𝑋, and 𝑌 whose joint distribution\nsatisfies:\n𝑃(𝑈, 𝑉, 𝑊, 𝑋, 𝑌) = 𝑃(𝑈)𝑃(𝑉)𝑃(𝑊|𝑈, 𝑉)𝑃(𝑋|𝑊)𝑃(𝑌|𝑊)\nWhich ONE of the following statements is FALSE?",
+      "text": "Consider five random variables $U$, $V$, $W$, $X$, and $Y$ whose joint distribution satisfies:\n\n$$P(U, V, W, X, Y) = P(U)\\,P(V)\\,P(W \\mid U, V)\\,P(X \\mid W)\\,P(Y \\mid W)$$\n\nWhich ONE of the following statements is FALSE?",
       "options": [
         {
           "l": "A",
-          "t": "𝑌 is conditionally independent of 𝑉 given 𝑊"
+          "t": "$Y$ is conditionally independent of $V$ given $W$"
         },
         {
           "l": "B",
-          "t": "𝑋 is conditionally independent of 𝑈 given 𝑊"
+          "t": "$X$ is conditionally independent of $U$ given $W$"
         },
         {
           "l": "C",
-          "t": "𝑈 and 𝑉 are conditionally independent given 𝑊"
+          "t": "$U$ and $V$ are conditionally independent given $W$"
         },
         {
           "l": "D",
-          "t": "𝑌 and 𝑋 are conditionally independent given 𝑊 Data Science and Artificial Intelligence (DA)"
+          "t": "$Y$ and $X$ are conditionally independent given $W$"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "prob",
-      "topic": "rv",
+      "subject": "ai",
+      "topic": "uncertainty",
       "tags": [
-        "probability"
+        "ai",
+        "uncertainty",
+        "bayesian-networks",
+        "conditional-independence",
+        "d-separation"
       ],
       "answer": "C",
       "answerSource": "official",
@@ -150553,7 +150811,7 @@
       "number": "15",
       "marks": 1,
       "type": "MCQ",
-      "text": "Consider the following statement:\nIn adversarial search, 𝛼– 𝛽 pruning can be applied to game trees of any depth where\n𝛼 is the    (m)    value choice we have formed so far at any choice point along the\npath for the MAX player and 𝛽 is the      (n)    value choice we have formed so far\nat any choice point along the path for the MIN player.\nWhich ONE of the following choices of (m) and (n) makes the above statement\nvalid?",
+      "text": "Consider the following statement:\n\nIn adversarial search, $\\alpha$–$\\beta$ pruning can be applied to game trees of any depth where $\\alpha$ is the (m) value choice we have formed so far at any choice point along the path for the MAX player and $\\beta$ is the (n) value choice we have formed so far at any choice point along the path for the MIN player.\n\nWhich ONE of the following choices of (m) and (n) makes the above statement valid?",
       "options": [
         {
           "l": "A",
@@ -150574,10 +150832,14 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "coa",
-      "topic": "isa",
+      "subject": "ai",
+      "topic": "search",
       "tags": [
-        "search"
+        "ai",
+        "search",
+        "alpha-beta-pruning",
+        "minimax",
+        "adversarial-search"
       ],
       "answer": "C",
       "answerSource": "official",
@@ -150598,31 +150860,34 @@
       "number": "16",
       "marks": 1,
       "type": "MCQ",
-      "text": "Consider a database that includes the following relations:\nDefender(name, rating, side, goals)\nForward(name, rating, assists, goals)\nTeam(name, club, price)\nWhich ONE of the following relational algebra expressions checks that every name\noccurring in Team appears in either Defender or Forward, where 𝜙 denotes the\nempty set?",
+      "text": "Consider a database that includes the following relations:\n\n- Defender(name, rating, side, goals)\n- Forward(name, rating, assists, goals)\n- Team(name, club, price)\n\nWhich ONE of the following relational algebra expressions checks that every name occurring in Team appears in either Defender or Forward, where $\\phi$ denotes the empty set?",
       "options": [
         {
           "l": "A",
-          "t": "Π𝑛𝑎𝑚𝑒 (Team) ∖ (Π𝑛𝑎𝑚𝑒 (Defender) ∩ Π𝑛𝑎𝑚𝑒 (Forward)) = 𝜙"
+          "t": "$\\Pi_{name}(\\text{Team}) \\setminus \\big(\\Pi_{name}(\\text{Defender}) \\cap \\Pi_{name}(\\text{Forward})\\big) = \\phi$"
         },
         {
           "l": "B",
-          "t": "(Π𝑛𝑎𝑚𝑒 (Defender) ∩ Π𝑛𝑎𝑚𝑒 (Forward)) ∖ Π𝑛𝑎𝑚𝑒 (Team) = 𝜙"
+          "t": "$\\big(\\Pi_{name}(\\text{Defender}) \\cap \\Pi_{name}(\\text{Forward})\\big) \\setminus \\Pi_{name}(\\text{Team}) = \\phi$"
         },
         {
           "l": "C",
-          "t": "Π𝑛𝑎𝑚𝑒 (Team) ∖ (Π𝑛𝑎𝑚𝑒 (Defender) ∪ Π𝑛𝑎𝑚𝑒 (Forward)) = 𝜙"
+          "t": "$\\Pi_{name}(\\text{Team}) \\setminus \\big(\\Pi_{name}(\\text{Defender}) \\cup \\Pi_{name}(\\text{Forward})\\big) = \\phi$"
         },
         {
           "l": "D",
-          "t": "(Π𝑛𝑎𝑚𝑒 (Defender) ∪ Π𝑛𝑎𝑚𝑒 (Forward)) ∖ Π𝑛𝑎𝑚𝑒 (Team) = 𝜙 Data Science and Artificial Intelligence (DA)"
+          "t": "$\\big(\\Pi_{name}(\\text{Defender}) \\cup \\Pi_{name}(\\text{Forward})\\big) \\setminus \\Pi_{name}(\\text{Team}) = \\phi$"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "dm",
-      "topic": "sets",
+      "subject": "dbw",
+      "topic": "relational",
       "tags": [
-        "sql"
+        "dbw",
+        "relational",
+        "relational-algebra",
+        "set-difference"
       ],
       "answer": "C",
       "answerSource": "official",
@@ -150643,7 +150908,7 @@
       "number": "17",
       "marks": 1,
       "type": "MCQ",
-      "text": "Let the minimum, maximum, mean and standard deviation values for the attribute\nincome of data scientists be ₹46000, ₹170000, ₹96000, and ₹21000, respectively.\nThe z-score normalized income value of ₹106000 is closest to which ONE of the\nfollowing options?",
+      "text": "Let the minimum, maximum, mean and standard deviation values for the attribute *income* of data scientists be ₹46000, ₹170000, ₹96000, and ₹21000, respectively.\n\nThe z-score normalized income value of ₹106000 is closest to which ONE of the following options?",
       "options": [
         {
           "l": "A",
@@ -150664,10 +150929,12 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "dbw",
+      "topic": "warehousing",
       "tags": [
-        "data-science"
+        "data-preprocessing",
+        "normalization",
+        "z-score"
       ],
       "answer": "B",
       "answerSource": "official",
@@ -150688,7 +150955,7 @@
       "number": "18",
       "marks": 1,
       "type": "MSQ",
-      "text": "Consider the following tree traversals on a full binary tree:\n(i) Preorder\n(ii) Inorder\n(iii) Postorder\nWhich of the following traversal options is/are sufficient to uniquely reconstruct\nthe full binary tree?",
+      "text": "Consider the following tree traversals on a full binary tree:\n\n- (i) Preorder\n- (ii) Inorder\n- (iii) Postorder\n\nWhich of the following traversal options is/are sufficient to uniquely reconstruct the full binary tree?",
       "options": [
         {
           "l": "A",
@@ -150704,15 +150971,17 @@
         },
         {
           "l": "D",
-          "t": "(ii) only Data Science and Artificial Intelligence (DA)"
+          "t": "(ii) only"
         }
       ],
       "figures": [],
       "group": null,
       "subject": "pdsa",
-      "topic": "dsa",
+      "topic": "ds",
       "tags": [
-        "dsa"
+        "binary-trees",
+        "tree-traversal",
+        "tree-reconstruction"
       ],
       "answer": "A;B;C",
       "answerSource": "official",
@@ -150732,32 +151001,34 @@
       "section": "da",
       "number": "19",
       "marks": 1,
-      "type": "MCQ",
-      "text": "Let 𝑥 and 𝑦 be two propositions. Which of the following statements is a tautology\n/are tautologies?",
+      "type": "MSQ",
+      "text": "Let $x$ and $y$ be two propositions. Which of the following statements is a tautology /are tautologies?",
       "options": [
         {
           "l": "A",
-          "t": "(¬𝑥 ∧ 𝑦 ) ⟹ (𝑦 ⟹ 𝑥)"
+          "t": "$(\\neg x \\land y) \\implies (y \\implies x)$"
         },
         {
           "l": "B",
-          "t": "(𝑥 ∧ ¬𝑦 ) ⟹ (¬𝑥 ⟹ 𝑦)"
+          "t": "$(x \\land \\neg y) \\implies (\\neg x \\implies y)$"
         },
         {
           "l": "C",
-          "t": "(¬𝑥 ∧ 𝑦 ) ⟹ (¬𝑥 ⟹ 𝑦)"
+          "t": "$(\\neg x \\land y) \\implies (\\neg x \\implies y)$"
         },
         {
           "l": "D",
-          "t": "(𝑥 ∧ ¬𝑦 ) ⟹ (𝑦 ⟹ 𝑥)"
+          "t": "$(x \\land \\neg y) \\implies (y \\implies x)$"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "ai",
+      "topic": "logic",
       "tags": [
-        "data-science"
+        "propositional-logic",
+        "tautology",
+        "implication"
       ],
       "answer": "B;C;D",
       "answerSource": "official",
@@ -150778,14 +151049,16 @@
       "number": "20",
       "marks": 1,
       "type": "NAT",
-      "text": "Consider sorting the following array of integers in ascending order using an in-place\nQuicksort algorithm that uses the last element as the pivot.\n60 70 80 90 100\nThe minimum number of swaps performed during this Quicksort is ______.\nData Science and Artificial Intelligence (DA)",
+      "text": "Consider sorting the following array of integers in ascending order using an in-place Quicksort algorithm that uses the last element as the pivot.\n\n| 60 | 70 | 80 | 90 | 100 |\n|---|---|---|---|---|\n\nThe minimum number of swaps performed during this Quicksort is ______.",
       "options": [],
       "figures": [],
       "group": null,
       "subject": "pdsa",
-      "topic": "dsa",
+      "topic": "algorithms",
       "tags": [
-        "dsa"
+        "quicksort",
+        "sorting",
+        "partition"
       ],
       "answer": "0 to 0",
       "answerSource": "official",
@@ -150806,14 +151079,16 @@
       "number": "21",
       "marks": 1,
       "type": "NAT",
-      "text": "Consider the following two tables named Raider and Team in a relational database\nmaintained by a Kabaddi league. The attribute ID in table Team references the\nprimary key of the Raider table, ID.\nRaider\nID Name Raids RaidPoints\n1 Arjun 200 250\n2 Ankush 190 219\n3 Sunil 150 200\n4 Reza 150 190\n5 Pratham 175 220\n6 Gopal 193 215\nThe SQL query described below is executed on this database:\nSELECT *\nFROM Raider, Team\nWHERE Raider.ID=Team.ID AND City=“Jaipur” AND\nRaidPoints > 200;\nThe number of rows returned by this query is ______.\nTeam\nCity ID BidPoints\nJaipur 2 200\nPatna 3 195\nHyderabad 5 175\nJaipur 1 250\nPatna 4 200\nJaipur 6 200\nData Science and Artificial Intelligence (DA)",
+      "text": "Consider the following two tables named Raider and Team in a relational database maintained by a Kabaddi league. The attribute ID in table Team references the primary key of the Raider table, ID.\n\n**Raider**\n\n| ID | Name | Raids | RaidPoints |\n|---|---|---|---|\n| 1 | Arjun | 200 | 250 |\n| 2 | Ankush | 190 | 219 |\n| 3 | Sunil | 150 | 200 |\n| 4 | Reza | 150 | 190 |\n| 5 | Pratham | 175 | 220 |\n| 6 | Gopal | 193 | 215 |\n\n**Team**\n\n| City | ID | BidPoints |\n|---|---|---|\n| Jaipur | 2 | 200 |\n| Patna | 3 | 195 |\n| Hyderabad | 5 | 175 |\n| Jaipur | 1 | 250 |\n| Patna | 4 | 200 |\n| Jaipur | 6 | 200 |\n\nThe SQL query described below is executed on this database:\n\n```sql\nSELECT *\nFROM Raider, Team\nWHERE Raider.ID=Team.ID AND City=“Jaipur” AND\nRaidPoints > 200;\n```\n\nThe number of rows returned by this query is ______.",
       "options": [],
       "figures": [],
       "group": null,
       "subject": "dbw",
-      "topic": "sql",
+      "topic": "relational",
       "tags": [
-        "sql"
+        "sql",
+        "join",
+        "selection"
       ],
       "answer": "3 to 3",
       "answerSource": "official",
@@ -150834,14 +151109,15 @@
       "number": "22",
       "marks": 1,
       "type": "NAT",
-      "text": "The fundamental operations in a double-ended queue D are:\ninsertFirst(e) – Insert a new element e at the beginning of D.\ninsertLast(e) – Insert a new element e at the end of D.\nremoveFirst() – Remove and return the first element of D.\nremoveLast() – Remove and return the last element of D.\nIn an empty double-ended queue, the following operations are performed:\ninsertFirst(10)\ninsertLast(32)\na ←removeFirst()\ninsertLast(28)\ninsertLast(17)\na ←removeFirst()\na ← removeLast()\nThe value of a is ______.",
+      "text": "The fundamental operations in a double-ended queue D are:\n\n- `insertFirst(e)` – Insert a new element `e` at the beginning of D.\n- `insertLast(e)` – Insert a new element `e` at the end of D.\n- `removeFirst()` – Remove and return the first element of D.\n- `removeLast()` – Remove and return the last element of D.\n\nIn an empty double-ended queue, the following operations are performed:\n\n```\ninsertFirst(10)\ninsertLast(32)\na ← removeFirst()\ninsertLast(28)\ninsertLast(17)\na ← removeFirst()\na ← removeLast()\n```\n\nThe value of a is ______.",
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "pdsa",
+      "topic": "ds",
       "tags": [
-        "quant"
+        "deque",
+        "queues"
       ],
       "answer": "17 to 17",
       "answerSource": "official",
@@ -150862,14 +151138,15 @@
       "number": "23",
       "marks": 1,
       "type": "NAT",
-      "text": "Let 𝑓: ℝ → ℝ be the function 𝑓(𝑥) =\n1\n1+𝑒−𝑥 .\nThe value of the derivative of 𝑓 at 𝑥 where 𝑓(𝑥) = 0.4 is ______\n(rounded off to two decimal places).\nNote: ℝ denotes the set of real numbers.\nData Science and Artificial Intelligence (DA)",
+      "text": "Let $f: \\mathbb{R} \\to \\mathbb{R}$ be the function $f(x) = \\dfrac{1}{1+e^{-x}}$.\n\nThe value of the derivative of $f$ at $x$ where $f(x) = 0.4$ is ______ (rounded off to two decimal places).\n\nNote: $\\mathbb{R}$ denotes the set of real numbers.",
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "dbw",
-      "topic": "sql",
+      "subject": "calc",
+      "topic": "functions",
       "tags": [
-        "sql"
+        "sigmoid",
+        "derivatives"
       ],
       "answer": "0.24 to 0.24",
       "answerSource": "official",
@@ -150894,10 +151171,11 @@
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "coa",
-      "topic": "isa",
+      "subject": "prob",
+      "topic": "stats",
       "tags": [
-        "data-science"
+        "sample-mean",
+        "descriptive-statistics"
       ],
       "answer": "42 to 42",
       "answerSource": "official",
@@ -150918,14 +151196,15 @@
       "number": "25",
       "marks": 1,
       "type": "NAT",
-      "text": "Consider the 3 × 3 matrix 𝑴 = [\n1 2 3\n3 1 3\n4 3 6\n].\nThe determinant of (𝑴𝟐 + 12𝑴)  is ______.",
+      "text": "Consider the $3 \\times 3$ matrix $\\boldsymbol{M} = \\begin{bmatrix} 1 & 2 & 3 \\\\ 3 & 1 & 3 \\\\ 4 & 3 & 6 \\end{bmatrix}$.\n\nThe determinant of $(\\boldsymbol{M}^2 + 12\\boldsymbol{M})$ is ______.",
       "options": [],
       "figures": [],
       "group": null,
       "subject": "la",
       "topic": "matrices",
       "tags": [
-        "matrices"
+        "determinant",
+        "singular-matrix"
       ],
       "answer": "0 to 0",
       "answerSource": "official",
@@ -150962,15 +151241,17 @@
         },
         {
           "l": "D",
-          "t": "8 Data Science and Artificial Intelligence (DA)"
+          "t": "8"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "pdsa",
-      "topic": "dsa",
+      "subject": "prob",
+      "topic": "rv",
       "tags": [
-        "data-science"
+        "expectation",
+        "markov-chain",
+        "waiting-time"
       ],
       "answer": "C",
       "answerSource": "official",
@@ -150991,31 +151272,33 @@
       "number": "27",
       "marks": 2,
       "type": "MCQ",
-      "text": "Let 𝑓: ℝ → ℝ be a function. Note: ℝ denotes the set of real numbers.\n𝑓(𝑥) =  {\n−𝑥,                         if 𝑥 < −2\n𝑎𝑥 2 + 𝑏𝑥 + 𝑐,            if 𝑥 ∈ [−2,2]\n𝑥,                          if 𝑥 > 2\nWhich ONE of the following choices gives the values of 𝑎, 𝑏, 𝑐 that make the\nfunction 𝑓 continuous and differentiable?",
+      "text": "Let $f: \\mathbb{R} \\to \\mathbb{R}$ be a function. Note: $\\mathbb{R}$ denotes the set of real numbers.\n\n$$f(x) = \\begin{cases} -x, & \\text{if } x < -2 \\\\ ax^2 + bx + c, & \\text{if } x \\in [-2, 2] \\\\ x, & \\text{if } x > 2 \\end{cases}$$\n\nWhich ONE of the following choices gives the values of $a, b, c$ that make the function $f$ continuous and differentiable?",
       "options": [
         {
           "l": "A",
-          "t": "𝑎 = 1 4 , 𝑏 = 0, 𝑐 = 1"
+          "t": "$a = \\frac{1}{4},\\ b = 0,\\ c = 1$"
         },
         {
           "l": "B",
-          "t": "𝑎 = 1 2 , 𝑏 = 0, 𝑐 = 0"
+          "t": "$a = \\frac{1}{2},\\ b = 0,\\ c = 0$"
         },
         {
           "l": "C",
-          "t": "𝑎 = 0, 𝑏 = 0, 𝑐 = 0"
+          "t": "$a = 0,\\ b = 0,\\ c = 0$"
         },
         {
           "l": "D",
-          "t": "𝑎 = 1, 𝑏 = 1, 𝑐 = −4 Data Science and Artificial Intelligence (DA)"
+          "t": "$a = 1,\\ b = 1,\\ c = -4$"
         }
       ],
       "figures": [],
       "group": null,
       "subject": "calc",
-      "topic": "maxmin",
+      "topic": "functions",
       "tags": [
-        "data-science"
+        "continuity",
+        "differentiability",
+        "piecewise-functions"
       ],
       "answer": "A",
       "answerSource": "official",
@@ -151036,7 +151319,7 @@
       "number": "28",
       "marks": 2,
       "type": "MCQ",
-      "text": "Consider the following Python code:\ndef count(child_dict, i):\nif i not in child_dict.keys():\nreturn 1\nans = 1\nfor j in child_dict[i]:\nans += count(child_dict, j)\nreturn ans\nchild_dict = dict()\nchild_dict[0] = [1,2]\nchild_dict[1] = [3,4,5]\nchild_dict[2] = [6,7,8]\nprint(count(child_dict,0))\nWhich ONE of the following is the output of this code?",
+      "text": "Consider the following Python code:\n\n```python\ndef count(child_dict, i):\n    if i not in child_dict.keys():\n        return 1\n    ans = 1\n    for j in child_dict[i]:\n        ans += count(child_dict, j)\n    return ans\n\nchild_dict = dict()\nchild_dict[0] = [1,2]\nchild_dict[1] = [3,4,5]\nchild_dict[2] = [6,7,8]\nprint(count(child_dict,0))\n```\n\nWhich ONE of the following is the output of this code?",
       "options": [
         {
           "l": "A",
@@ -151052,15 +151335,17 @@
         },
         {
           "l": "D",
-          "t": "9 Data Science and Artificial Intelligence (DA)"
+          "t": "9"
         }
       ],
       "figures": [],
       "group": null,
       "subject": "pdsa",
-      "topic": "dsa",
+      "topic": "python",
       "tags": [
-        "data-science"
+        "python",
+        "recursion",
+        "tree-size"
       ],
       "answer": "D",
       "answerSource": "official",
@@ -151081,7 +151366,7 @@
       "number": "29",
       "marks": 2,
       "type": "MCQ",
-      "text": "Consider the function computeS(X) whose pseudocode is given below:\nWhich ONE of the following values is returned by the function computeS(X)\nfor X = [6, 3, 5, 4, 10]?",
+      "text": "Consider the function **computeS**(X) whose pseudocode is given below:\n\n```\ncomputeS(X)\nS[1] ← 1\nfor i ← 2 to length(X)\n   S[i] ← 1\n   if X[i − 1] ≤ X[i]\n       S[i] ← S[i] + S[i − 1]\n   end if\nend for\nreturn S\n```\n\nWhich ONE of the following values is returned by the function computeS(X) for X = [6, 3, 5, 4, 10]?",
       "options": [
         {
           "l": "A",
@@ -151097,15 +151382,17 @@
         },
         {
           "l": "D",
-          "t": "[1, 1, 2, 1, 5] computeS(X) 𝑆[1] ← 1 for 𝑖 ←2 to 𝑙𝑒𝑛𝑔𝑡ℎ(𝑋) 𝑆[𝑖] ← 1 if 𝑋[𝑖 − 1] ≤ 𝑋[𝑖] 𝑆[𝑖] ← 𝑆[𝑖] + 𝑆[𝑖 − 1] end if end for return S Data Science and Artificial Intelligence (DA)"
+          "t": "[1, 1, 2, 1, 5]"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "coa",
-      "topic": "isa",
+      "subject": "pdsa",
+      "topic": "algorithms",
       "tags": [
-        "data-science"
+        "pseudocode",
+        "array-scan",
+        "tracing"
       ],
       "answer": "C",
       "answerSource": "official",
@@ -151703,7 +151990,7 @@
       "number": "43",
       "marks": 2,
       "type": "MSQ",
-      "text": "Consider the following figures representing datasets consisting of\ntwo-dimensional features with two classes denoted by circles and squares.\n(i)\n(ii)\n(iii)\n(iv)\nWhich of the following is/are TRUE?",
+      "text": "Consider the following figures representing datasets consisting of two-dimensional features with two classes denoted by circles and squares.\n\nWhich of the following is/are TRUE?",
       "options": [
         {
           "l": "A",
@@ -151719,15 +152006,22 @@
         },
         {
           "l": "D",
-          "t": "(iv) is linearly separable. Data Science and Artificial Intelligence (DA)"
+          "t": "(iv) is linearly separable."
         }
       ],
-      "figures": [],
+      "figures": [
+        {
+          "f": "da-2024/da-43-1.svg",
+          "svg": "da-2024/da-43-1.svg",
+          "alt": "Four scatter plots on a grid with x and y gridlines at 1, 2, 3. (i): circles at (1,3), (2,3), (1,2); squares at (2,1.2), (3,1.2), (2,0.3). (ii): a circle at (2,2) surrounded by squares at (2,3), (1,2), (3,2), (2,1). (iii): squares at (1,3) and (3,1); circles at (3,3) and (1,1) (XOR pattern). (iv): squares at (1,2.2), (1,1.2), (2,2.6); circles at (3,1.5), (2,0.5), (3,0.5)."
+        }
+      ],
       "group": null,
-      "subject": "pdsa",
-      "topic": "dsa",
+      "subject": "ml",
+      "topic": "supervised",
       "tags": [
-        "data-science"
+        "linear-separability",
+        "classification"
       ],
       "answer": "A;D",
       "answerSource": "official",
@@ -151748,31 +152042,33 @@
       "number": "44",
       "marks": 2,
       "type": "MSQ",
-      "text": "Let game(ball, rugby) be true if the ball is used in rugby and false otherwise.\nLet shape(ball, round) be true if the ball is round and false otherwise.\nConsider the following logical sentences:\ns1: ∀ball ¬ game(ball, rugby) ⟹shape(ball, round)\ns2: ∀ball ¬ shape(ball, round) ⟹game(ball, rugby)\ns3: ∀ball  game(ball, rugby) ⟹ ¬ shape(ball, round)\ns4: ∀ball  shape(ball, round) ⟹ ¬ game(ball, rugby)\nWhich of the following choices is/are logical representations of the assertion,\n“All balls are round except balls used in rugby”?",
+      "text": "Let game(ball, rugby) be true if the ball is used in rugby and false otherwise.\n\nLet shape(ball, round) be true if the ball is round and false otherwise.\n\nConsider the following logical sentences:\n\n- $s_1$: $\\forall\\,\\text{ball}\\ \\ \\neg\\,\\text{game(ball, rugby)} \\Rightarrow \\text{shape(ball, round)}$\n- $s_2$: $\\forall\\,\\text{ball}\\ \\ \\neg\\,\\text{shape(ball, round)} \\Rightarrow \\text{game(ball, rugby)}$\n- $s_3$: $\\forall\\,\\text{ball}\\ \\ \\text{game(ball, rugby)} \\Rightarrow \\neg\\,\\text{shape(ball, round)}$\n- $s_4$: $\\forall\\,\\text{ball}\\ \\ \\text{shape(ball, round)} \\Rightarrow \\neg\\,\\text{game(ball, rugby)}$\n\nWhich of the following choices is/are logical representations of the assertion, “All balls are round except balls used in rugby”?",
       "options": [
         {
           "l": "A",
-          "t": "𝑠1 ∧ 𝑠3"
+          "t": "$s_1 \\wedge s_3$"
         },
         {
           "l": "B",
-          "t": "𝑠1 ∧ 𝑠2"
+          "t": "$s_1 \\wedge s_2$"
         },
         {
           "l": "C",
-          "t": "𝑠2 ∧ 𝑠3"
+          "t": "$s_2 \\wedge s_3$"
         },
         {
           "l": "D",
-          "t": "𝑠3 ∧ 𝑠4 Data Science and Artificial Intelligence (DA)"
+          "t": "$s_3 \\wedge s_4$"
         }
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "verbal",
+      "subject": "ai",
+      "topic": "logic",
       "tags": [
-        "verbal"
+        "first-order-logic",
+        "implication",
+        "contrapositive"
       ],
       "answer": "A;C",
       "answerSource": "official",
@@ -151792,14 +152088,34 @@
       "section": "da",
       "number": "45",
       "marks": 2,
-      "type": "NAT",
-      "text": "An OTT company is maintaining a large disk-based relational database of different\nmovies with the following schema:\nMovie(ID, CustomerRating)\nGenre(ID, Name)\nMovie_Genre(MovieID, GenreID)\nConsider the following SQL query on the relation database above:\nSELECT *\nFROM Movie, Genre, Movie_Genre\nWHERE\nMovie.CustomerRating > 3.4 AND\nGenre.Name = “Comedy” AND\nMovie_Genre.MovieID = Movie.ID AND\nMovie_Genre.GenreID = Genre.ID;\nThis SQL query can be sped up using which of the following indexing options?\nA B + tree on all the attributes.\nB Hash index on Genre .Name and B + tree on the remaining attributes.\nC Hash index on Movie .CustomerRating and B + tree on the remaining\nattributes.\nD Hash index on all the attributes.",
-      "options": [],
+      "type": "MSQ",
+      "text": "An OTT company is maintaining a large disk-based relational database of different movies with the following schema:\n\n```\nMovie(ID, CustomerRating)\nGenre(ID, Name)\nMovie_Genre(MovieID, GenreID)\n```\n\nConsider the following SQL query on the relation database above:\n\n```sql\nSELECT *\nFROM Movie, Genre, Movie_Genre\nWHERE\n    Movie.CustomerRating > 3.4 AND\n    Genre.Name = \"Comedy\" AND\n    Movie_Genre.MovieID = Movie.ID AND\n    Movie_Genre.GenreID = Genre.ID;\n```\n\nThis SQL query can be sped up using which of the following indexing options?",
+      "options": [
+        {
+          "l": "A",
+          "t": "B+ tree on all the attributes."
+        },
+        {
+          "l": "B",
+          "t": "Hash index on Genre.Name and B+ tree on the remaining attributes."
+        },
+        {
+          "l": "C",
+          "t": "Hash index on Movie.CustomerRating and B+ tree on the remaining attributes."
+        },
+        {
+          "l": "D",
+          "t": "Hash index on all the attributes."
+        }
+      ],
       "figures": [],
       "group": null,
       "subject": "dbw",
-      "topic": "sql",
+      "topic": "relational",
       "tags": [
+        "indexing",
+        "b-plus-tree",
+        "hashing",
         "sql"
       ],
       "answer": "A;B",
@@ -151821,14 +152137,15 @@
       "number": "46",
       "marks": 2,
       "type": "NAT",
-      "text": "Let 𝑋 be a random variable uniformly distributed in the interval [1, 3] and 𝑌 be a\nrandom variable uniformly distributed in the interval [2, 4]. If X and Y are\nindependent of each other, the probability P(𝑋 ≥ 𝑌) is ______ (rounded off to\nthree decimal places).\nData Science and Artificial Intelligence (DA)",
+      "text": "Let $X$ be a random variable uniformly distributed in the interval $[1, 3]$ and $Y$ be a random variable uniformly distributed in the interval $[2, 4]$. If $X$ and $Y$ are independent of each other, the probability $P(X \\ge Y)$ is ______ (rounded off to three decimal places).",
       "options": [],
       "figures": [],
       "group": null,
       "subject": "prob",
-      "topic": "probability",
+      "topic": "rv",
       "tags": [
-        "probability"
+        "uniform-distribution",
+        "joint-distribution"
       ],
       "answer": "0.125 to 0.125",
       "answerSource": "official",
@@ -151849,14 +152166,16 @@
       "number": "47",
       "marks": 2,
       "type": "NAT",
-      "text": "Let 𝑋 be a random variable exponentially distributed with parameter 𝜆 > 0. The\nprobability density function of X is given by:\n𝑓𝑋(𝑥) = {𝜆 𝑒−𝜆𝑥,         𝑥 ≥ 0\n0,           𝑜𝑡ℎ𝑒𝑟𝑤𝑖𝑠𝑒\nIf 5𝐸(𝑋) = 𝑉𝑎𝑟(𝑋), where 𝐸(𝑋) and 𝑉𝑎𝑟(𝑋) indicate the expectation and variance\nof 𝑋, respectively, the value of 𝜆 is ______  (rounded off to one decimal place).",
+      "text": "Let $X$ be a random variable exponentially distributed with parameter $\\lambda > 0$. The probability density function of $X$ is given by:\n\n$$f_X(x) = \\begin{cases} \\lambda e^{-\\lambda x}, & x \\ge 0 \\\\ 0, & \\text{otherwise} \\end{cases}$$\n\nIf $5E(X) = \\mathrm{Var}(X)$, where $E(X)$ and $\\mathrm{Var}(X)$ indicate the expectation and variance of $X$, respectively, the value of $\\lambda$ is ______ (rounded off to one decimal place).",
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "dbw",
-      "topic": "sql",
+      "subject": "prob",
+      "topic": "rv",
       "tags": [
-        "sql"
+        "exponential-distribution",
+        "expectation",
+        "variance"
       ],
       "answer": "0.2 to 0.2",
       "answerSource": "official",
@@ -151877,14 +152196,15 @@
       "number": "48",
       "marks": 2,
       "type": "NAT",
-      "text": "Consider two events T and S. Let 𝑇 ̅denote the complement of the event T. The\nprobability associated with different events are given as follows:\n𝑃(𝑇 ̅ ) = 0.6, 𝑃(𝑆|𝑇) = 0.3, 𝑃(𝑆|𝑇 ̅) = 0.6\nThen, 𝑃(𝑇|𝑆) is ______ (rounded off to two decimal places).",
+      "text": "Consider two events $T$ and $S$. Let $\\bar{T}$ denote the complement of the event $T$. The probability associated with different events are given as follows:\n\n$$P(\\bar{T}) = 0.6, \\qquad P(S \\mid T) = 0.3, \\qquad P(S \\mid \\bar{T}) = 0.6$$\n\nThen, $P(T \\mid S)$ is ______ (rounded off to two decimal places).",
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "prob",
+      "topic": "basic",
       "tags": [
-        "data-science"
+        "bayes-theorem",
+        "conditional-probability"
       ],
       "answer": "0.25 to 0.25",
       "answerSource": "official",
@@ -151905,14 +152225,15 @@
       "number": "49",
       "marks": 2,
       "type": "NAT",
-      "text": "Consider a joint probability density function of two random variables X and Y\n𝑓𝑋,𝑌(𝑥, 𝑦) = {2𝑥𝑦, 0 < 𝑥 < 2, 0 < 𝑦 < 𝑥\n0, otherwise\nThen, 𝐸[𝑌|𝑋 = 1.5] is ______.",
+      "text": "Consider a joint probability density function of two random variables $X$ and $Y$\n\n$$f_{X,Y}(x, y) = \\begin{cases} 2xy, & 0 < x < 2,\\ \\ 0 < y < x \\\\ 0, & \\text{otherwise} \\end{cases}$$\n\nThen, $E[Y \\mid X = 1.5]$ is ______.",
       "options": [],
       "figures": [],
       "group": null,
       "subject": "prob",
-      "topic": "probability",
+      "topic": "rv",
       "tags": [
-        "probability"
+        "joint-pdf",
+        "conditional-expectation"
       ],
       "answer": "MTA",
       "answerSource": "official",
@@ -151920,8 +152241,8 @@
       "solution": "**Step 1: Problem Formulation & Exam Context**\nTargeting **PROB** (Probability) from **DA-2024 Q49** (2 Marks) (NAT).\n- Evaluation Target: Official verified examination outcome **MTA**.\n\n**Step 2: Governing Principles & Formal Rules**\n- Probability & Invariance: In Pólya's urn scheme with symmetric reinforcement, the marginal probability of drawing a specific color on trial $k$ equals the initial proportion $r/(r+b)$.\n- Discrete calculus & Combinatorics: Recurrence relation solution via characteristic equations and generating functions.\n\n**Step 3: Step-by-Step Analytical Derivation & Calculation**\n- Applying the governing laws and boundary conditions from the problem statement.\n- Evaluating the functional transformation leads deterministically to the confirmed outcome:\n\n$$\\mathbf{MTA}$$\n\n**Step 4: Conclusion & Verification**\n- **Official Verified Key:** **MTA**\n- Completely verified against standard computer science literature and official GATE authority key archives.\n\n⚡ **Topper's Shortcut:** Identify governing structural invariants (e.g., symmetry, closure, master theorem cases, or truth-table Karnaugh maps) directly to eliminate distractors in < 45 seconds.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": false,
-      "reviewNote": null
+      "needsReview": true,
+      "reviewNote": "Official key: marks to all (MTA). The stated f(x,y)=2xy integrates to 4 over 0<y<x<2, so it is not a valid joint pdf. The conditional density f(y|x) does not depend on the normalising constant, so E[Y|X=1.5] = 1 under any rescaling; the solution gives 1."
     },
     {
       "id": "da-2024-da-50",
@@ -151933,14 +152254,15 @@
       "number": "50",
       "marks": 2,
       "type": "NAT",
-      "text": "Evaluate the following limit:\nlim\n𝑥→0\nln ((𝑥2+1) cos 𝑥)\n𝑥2 = ______.\nData Science and Artificial Intelligence (DA)",
+      "text": "Evaluate the following limit:\n\n$$\\lim_{x \\to 0} \\frac{\\ln\\left((x^2 + 1)\\cos x\\right)}{x^2} = \\text{______}.$$",
       "options": [],
       "figures": [],
       "group": null,
       "subject": "calc",
-      "topic": "limits",
+      "topic": "functions",
       "tags": [
-        "data-science"
+        "limits",
+        "taylor-series"
       ],
       "answer": "0.5 to 0.5",
       "answerSource": "official",
@@ -151961,14 +152283,16 @@
       "number": "51",
       "marks": 2,
       "type": "NAT",
-      "text": "Let 𝒖 =\n[\n1\n2\n3\n4\n5 ]\n,   and let  𝜎1, 𝜎2,𝜎3, 𝜎4, 𝜎5 be the singular values of the matrix\n𝑴= 𝒖𝒖𝑻 (where 𝒖𝑻 is the transpose of 𝒖). The value of  ∑ 𝜎𝑖  5\n𝑖=1  is ______.",
+      "text": "Let $\\boldsymbol{u} = \\begin{bmatrix} 1 \\\\ 2 \\\\ 3 \\\\ 4 \\\\ 5 \\end{bmatrix}$, and let $\\sigma_1, \\sigma_2, \\sigma_3, \\sigma_4, \\sigma_5$ be the singular values of the matrix $\\boldsymbol{M} = \\boldsymbol{u}\\boldsymbol{u}^T$ (where $\\boldsymbol{u}^T$ is the transpose of $\\boldsymbol{u}$). The value of $\\sum_{i=1}^{5} \\sigma_i$ is ______.",
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "dbw",
-      "topic": "sql",
+      "subject": "la",
+      "topic": "eigen",
       "tags": [
-        "sql"
+        "singular-values",
+        "rank-one-matrix",
+        "svd"
       ],
       "answer": "55 to 55",
       "answerSource": "official",
@@ -151989,14 +152313,16 @@
       "number": "52",
       "marks": 2,
       "type": "NAT",
-      "text": "Details of ten international cricket games between two teams “Green” and “Blue”\nare given in Table C. This table consists of matches played on different pitches,\nacross formats along with their winners. The attribute Pitch can take one of two\nvalues: spin-friendly (represented as 𝑆) or pace -friendly (represented as 𝐹). The\nattribute Format can take one of two values: one -day match (represented as 𝑂) or\ntest match (represented as 𝑇).\nA cricket organization would like to use the information given in Table C to develop\na decision-tree model to predict outcomes of future games between these two teams.\nTo develop such a model, the computed InformationGain(C, Pitch ) with respect to\nthe Target is ______ (rounded off to two decimal places).\nTable C\nMatch\nNumber\nPitch Format Winner (Target)\n1 𝑆 𝑇 Green\n2 𝑆 𝑇 Blue\n3 𝐹 𝑂 Blue\n4 𝑆 𝑂 Blue\n5 𝐹 𝑇 Green\n6 𝐹 𝑂 Blue\n7 𝑆 𝑂 Green\n8 𝐹 𝑇 Blue\n9 𝐹 𝑂 Blue\n10 𝑆 𝑂 Green\nData Science and Artificial Intelligence (DA)",
+      "text": "Details of ten international cricket games between two teams “Green” and “Blue” are given in Table C. This table consists of matches played on different pitches, across formats along with their winners. The attribute Pitch can take one of two values: spin-friendly (represented as $S$) or pace-friendly (represented as $F$). The attribute Format can take one of two values: one-day match (represented as $O$) or test match (represented as $T$).\n\nA cricket organization would like to use the information given in Table C to develop a decision-tree model to predict outcomes of future games between these two teams.\n\nTo develop such a model, the computed InformationGain(C, Pitch) with respect to the Target is ______ (rounded off to two decimal places).\n\n**Table C**\n\n| Match Number | Pitch | Format | Winner (Target) |\n|---|---|---|---|\n| 1 | $S$ | $T$ | Green |\n| 2 | $S$ | $T$ | Blue |\n| 3 | $F$ | $O$ | Blue |\n| 4 | $S$ | $O$ | Blue |\n| 5 | $F$ | $T$ | Green |\n| 6 | $F$ | $O$ | Blue |\n| 7 | $S$ | $O$ | Green |\n| 8 | $F$ | $T$ | Blue |\n| 9 | $F$ | $O$ | Blue |\n| 10 | $S$ | $O$ | Green |",
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "pdsa",
-      "topic": "dsa",
+      "subject": "ml",
+      "topic": "supervised",
       "tags": [
-        "dsa"
+        "decision-tree",
+        "entropy",
+        "information-gain"
       ],
       "answer": "0.12 to 0.13",
       "answerSource": "official",
@@ -152017,14 +152343,22 @@
       "number": "53",
       "marks": 2,
       "type": "NAT",
-      "text": "Given the two -dimensional dataset consisting of 5 data points from two classes\n(circles and squares) and assume that the Euclidean distance is used to measure the\ndistance between two points. The minimum odd value of 𝑘 in 𝑘-nearest neighbor\nalgorithm for which the diamond (⋄) shaped data point is assigned the label square\nis ______.\nData Science and Artificial Intelligence (DA)",
+      "text": "Given the two-dimensional dataset consisting of 5 data points from two classes (circles and squares) and assume that the Euclidean distance is used to measure the distance between two points. The minimum odd value of $k$ in $k$-nearest neighbor algorithm for which the diamond ($\\diamond$) shaped data point is assigned the label square is ______.",
       "options": [],
-      "figures": [],
+      "figures": [
+        {
+          "f": "da-2024/da-53-1.svg",
+          "svg": "da-2024/da-53-1.svg",
+          "alt": "Grid with gridlines at 1, 2, 3 on both axes. Filled circles at (1,2) and (1,1); filled squares at (2,3), (3,3) and (3,2); an open diamond (the query point) at (2,1). Each point is labelled with its coordinates."
+        }
+      ],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "ml",
+      "topic": "supervised",
       "tags": [
-        "quant"
+        "knn",
+        "euclidean-distance",
+        "classification"
       ],
       "answer": "5 to 5",
       "answerSource": "official",
@@ -152045,14 +152379,22 @@
       "number": "54",
       "marks": 2,
       "type": "NAT",
-      "text": "Given the following Bayesian Network consisting of four Bernoulli random\nvariables and the associated conditional probability tables:\n𝑃(𝑊 = 0| ⋅) 𝑃(𝑊 = 1| ⋅)\n𝑈 = 0 1 0\n𝑈 = 1 0 1\n𝑃(𝑍 = 0| ⋅) 𝑃(𝑍 = 1| ⋅)\n𝑉 = 0 𝑊 = 0 0.5 0.5\n𝑉 = 0 𝑊 = 1 1 0\n𝑉 = 1 𝑊 = 0 1 0\n𝑉 = 1 𝑊 = 1 0.5 0.5\nThe value of 𝑃(𝑈 = 1, 𝑉 = 1, 𝑊 = 1,𝑍 = 1) = ______ (rounded off to three\ndecimal places).\n𝑃(⋅)\n𝑈 = 0 0.5\n𝑈 = 1 0.5\n𝑃(𝑉 = 0| ⋅) 𝑃(𝑉 = 1| ⋅)\n𝑈 =  0 0.5 0.5\n𝑈 = 1 0.5 0.5",
+      "text": "Given the following Bayesian Network consisting of four Bernoulli random variables and the associated conditional probability tables:\n\n| | $P(\\cdot)$ |\n|---|---|\n| $U = 0$ | 0.5 |\n| $U = 1$ | 0.5 |\n\n| | $P(V = 0 \\mid \\cdot)$ | $P(V = 1 \\mid \\cdot)$ |\n|---|---|---|\n| $U = 0$ | 0.5 | 0.5 |\n| $U = 1$ | 0.5 | 0.5 |\n\n| | $P(W = 0 \\mid \\cdot)$ | $P(W = 1 \\mid \\cdot)$ |\n|---|---|---|\n| $U = 0$ | 1 | 0 |\n| $U = 1$ | 0 | 1 |\n\n| | | $P(Z = 0 \\mid \\cdot)$ | $P(Z = 1 \\mid \\cdot)$ |\n|---|---|---|---|\n| $V = 0$ | $W = 0$ | 0.5 | 0.5 |\n| $V = 0$ | $W = 1$ | 1 | 0 |\n| $V = 1$ | $W = 0$ | 1 | 0 |\n| $V = 1$ | $W = 1$ | 0.5 | 0.5 |\n\nThe value of $P(U = 1, V = 1, W = 1, Z = 1) =$ ______ (rounded off to three decimal places).",
       "options": [],
-      "figures": [],
+      "figures": [
+        {
+          "f": "da-2024/da-54-1.svg",
+          "svg": "da-2024/da-54-1.svg",
+          "alt": "Bayesian network with four nodes in a diamond: U at the top with arrows to V (left) and W (right); V and W each have an arrow to Z at the bottom."
+        }
+      ],
       "group": null,
-      "subject": "prob",
-      "topic": "probability",
+      "subject": "ai",
+      "topic": "uncertainty",
       "tags": [
-        "probability"
+        "bayesian-network",
+        "joint-probability",
+        "chain-rule"
       ],
       "answer": "0.125 to 0.125",
       "answerSource": "official",
@@ -152073,14 +152415,15 @@
       "number": "55",
       "marks": 2,
       "type": "NAT",
-      "text": "Two fair coins are tossed independently. X is a random variable that takes a value\nof 1 if both tosses are heads and 0 otherwise. Y is a random variable that takes a\nvalue of 1 if at least one of the tosses is heads and 0 otherwise.\nThe value of the covariance of X and Y is ______ (rounded off to three decimal\nplaces).",
+      "text": "Two fair coins are tossed independently. $X$ is a random variable that takes a value of 1 if both tosses are heads and 0 otherwise. $Y$ is a random variable that takes a value of 1 if at least one of the tosses is heads and 0 otherwise.\n\nThe value of the covariance of $X$ and $Y$ is ______ (rounded off to three decimal places).",
       "options": [],
       "figures": [],
       "group": null,
       "subject": "prob",
-      "topic": "probability",
+      "topic": "stats",
       "tags": [
-        "probability"
+        "covariance",
+        "indicator-variables"
       ],
       "answer": "0.062 to 0.063",
       "answerSource": "official",
