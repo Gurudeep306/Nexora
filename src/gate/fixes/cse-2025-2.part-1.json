@@ -1,0 +1,933 @@
+{
+  "paper": "cse-2025-2",
+  "fixes": [
+    {
+      "id": "cse-2025-2-ga-1",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "ambivalence"
+        },
+        {
+          "l": "B",
+          "t": "satisfaction"
+        },
+        {
+          "l": "C",
+          "t": "resolve"
+        },
+        {
+          "l": "D",
+          "t": "revolve Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "ambivalence"
+        },
+        {
+          "l": "B",
+          "t": "satisfaction"
+        },
+        {
+          "l": "C",
+          "t": "resolve"
+        },
+        {
+          "l": "D",
+          "t": "revolve"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology (CS2)\" removed from option D.",
+      "source": "pdf p.1"
+    },
+    {
+      "id": "cse-2025-2-ga-1",
+      "field": "tags",
+      "before": [
+        "verbal-aptitude"
+      ],
+      "after": [
+        "verbal-aptitude",
+        "vocabulary",
+        "sentence-completion"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.1"
+    },
+    {
+      "id": "cse-2025-2-ga-2",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Kennel"
+        },
+        {
+          "l": "B",
+          "t": "Hammock"
+        },
+        {
+          "l": "C",
+          "t": "Hive"
+        },
+        {
+          "l": "D",
+          "t": "Lair Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Kennel"
+        },
+        {
+          "l": "B",
+          "t": "Hammock"
+        },
+        {
+          "l": "C",
+          "t": "Hive"
+        },
+        {
+          "l": "D",
+          "t": "Lair"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology (CS2)\" removed from option D.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2025-2-ga-2",
+      "field": "tags",
+      "before": [
+        "verbal-aptitude"
+      ],
+      "after": [
+        "verbal-aptitude",
+        "analogy"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2025-2-ga-3",
+      "field": "text",
+      "before": "If 𝑃𝑒𝑥 = 𝑄𝑒−𝑥 for all real values of 𝑥, which one of the following statements is\ntrue?",
+      "after": "If $Pe^{x} = Qe^{-x}$ for all real values of $x$, which one of the following statements is true?",
+      "reason": "Unicode maths italics and a broken superscript replaced by KaTeX.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2025-2-ga-3",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝑃 = 𝑄 = 0"
+        },
+        {
+          "l": "B",
+          "t": "𝑃 = 𝑄 = 1"
+        },
+        {
+          "l": "C",
+          "t": "𝑃 = 1; 𝑄 = −1"
+        },
+        {
+          "l": "D",
+          "t": "𝑃 𝑄 = 0 Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$P = Q = 0$"
+        },
+        {
+          "l": "B",
+          "t": "$P = Q = 1$"
+        },
+        {
+          "l": "C",
+          "t": "$P = 1;\\ Q = -1$"
+        },
+        {
+          "l": "D",
+          "t": "$\\dfrac{P}{Q} = 0$"
+        }
+      ],
+      "reason": "Option D is the fraction P/Q = 0 in the paper (the transcription lost the fraction bar and pasted the page header); all options converted to KaTeX.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2025-2-ga-3",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "quantitative-aptitude",
+        "exponential-functions",
+        "identities"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2025-2-ga-4",
+      "field": "text",
+      "before": "The paper as shown in the figure is folded to make a cube  where each square\ncorresponds to a particular face of the cube . Which one of the following options\ncorrectly represents the cube?\nNote: The figures shown are representative.",
+      "after": "The paper as shown in the figure is folded to make a cube where each square corresponds to a particular face of the cube. Which one of the following options correctly represents the cube?\n\nNote: The figures shown are representative.",
+      "reason": "Stray spaces before punctuation removed.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2025-2-ga-4",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "(B)"
+        },
+        {
+          "l": "C",
+          "t": "(D) Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Cube (A): front face open triangle, top face black dot, right face blank"
+        },
+        {
+          "l": "B",
+          "t": "Cube (B): front face open triangle, right face black triangle"
+        },
+        {
+          "l": "C",
+          "t": "Cube (C): front face open triangle, top face blank, right face blank"
+        },
+        {
+          "l": "D",
+          "t": "Cube (D): front face open triangle, top face black triangle, right face black dot"
+        }
+      ],
+      "reason": "The options are pictures; the record held only two broken entries (\"(B)\" and \"(D)\" + page header). Restored four options (A)-(D) describing the drawn cubes, with the pictures in the figure.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2025-2-ga-4",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2025-2/ga-4-1.svg",
+          "svg": "cse-2025-2/ga-4-1.svg",
+          "alt": "Top: a cross-shaped cube net. A vertical column of three squares: the top square has a black dot, the middle square an open (white) triangle, the bottom square an open circle. The middle row extends the middle square with one blank square on its left and, on its right, a blank square followed by a square with a black triangle. Bottom: four option cubes, each showing the front, top and right faces. (A): front open triangle, top black dot, right blank. (B): front open triangle, top blank, right black triangle. (C): front open triangle, top blank, right blank. (D): front open triangle, top black triangle, right black dot."
+        }
+      ],
+      "reason": "The question depends on the net and the four option cubes, which were missing; redrawn from the paper.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2025-2-ga-4",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "spatial-aptitude",
+        "cube-folding",
+        "paper-folding"
+      ],
+      "reason": "Tags match the spatial topic.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2025-2-ga-5",
+      "field": "text",
+      "before": "Let 𝑝1 and 𝑝2 denote two arbitrary prime numbers. Which one of the following\nstatements is correct for all values of 𝑝1 and 𝑝2?",
+      "after": "Let $p_1$ and $p_2$ denote two arbitrary prime numbers. Which one of the following statements is correct for all values of $p_1$ and $p_2$?",
+      "reason": "Unicode maths italics replaced by KaTeX subscripts.",
+      "source": "pdf p.5"
+    },
+    {
+      "id": "cse-2025-2-ga-5",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝑝1 + 𝑝2 is not a prime number."
+        },
+        {
+          "l": "B",
+          "t": "𝑝1𝑝2 is not a prime number."
+        },
+        {
+          "l": "C",
+          "t": "𝑝1 + 𝑝2 + 1 is a prime number."
+        },
+        {
+          "l": "D",
+          "t": "𝑝1𝑝2 + 1 is a prime number. Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$p_1 + p_2$ is not a prime number."
+        },
+        {
+          "l": "B",
+          "t": "$p_1 p_2$ is not a prime number."
+        },
+        {
+          "l": "C",
+          "t": "$p_1 + p_2 + 1$ is a prime number."
+        },
+        {
+          "l": "D",
+          "t": "$p_1 p_2 + 1$ is a prime number."
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology (CS2)\" removed from option D; maths converted to KaTeX.",
+      "source": "pdf p.5"
+    },
+    {
+      "id": "cse-2025-2-ga-5",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "quantitative-aptitude",
+        "prime-numbers",
+        "number-theory"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.5"
+    },
+    {
+      "id": "cse-2025-2-ga-6",
+      "field": "text",
+      "before": "Based only on the conversation below, identify the logically correct inference:\n“Even if I had known that you were in the hospital, I would not have gone there to\nsee you”, Ramya told Josephine.",
+      "after": "Based only on the conversation below, identify the logically correct inference:\n\n“Even if I had known that you were in the hospital, I would not have gone there to see you”, Ramya told Josephine.",
+      "reason": "Line break from the PDF layout removed; paragraph break restored.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2025-2-ga-6",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Ramya knew that Josephine was in the hospital."
+        },
+        {
+          "l": "B",
+          "t": "Ramya did not know that Josephine was in the hospital."
+        },
+        {
+          "l": "C",
+          "t": "Ramya and Josephine were once close friends; but now, they are not."
+        },
+        {
+          "l": "D",
+          "t": "Josephine was in the hospital due to an injury to her leg. Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Ramya knew that Josephine was in the hospital."
+        },
+        {
+          "l": "B",
+          "t": "Ramya did not know that Josephine was in the hospital."
+        },
+        {
+          "l": "C",
+          "t": "Ramya and Josephine were once close friends; but now, they are not."
+        },
+        {
+          "l": "D",
+          "t": "Josephine was in the hospital due to an injury to her leg."
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology (CS2)\" removed from option D.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2025-2-ga-6",
+      "field": "topic",
+      "before": "quant",
+      "after": "verbal",
+      "reason": "Inference from a counterfactual sentence is verbal reasoning, not quantitative aptitude.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2025-2-ga-6",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "verbal-aptitude",
+        "logical-inference",
+        "counterfactual"
+      ],
+      "reason": "Tags match the corrected topic.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2025-2-ga-7",
+      "field": "text",
+      "before": "If IMAGE and FIELD are coded as FHBNJ and EMFJG respectively then, which\none among the given options is the most appropriate code for BEACH ?",
+      "after": "If IMAGE and FIELD are coded as FHBNJ and EMFJG respectively then, which one among the given options is the most appropriate code for BEACH?",
+      "reason": "Line break and stray space before \"?\" removed.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2025-2-ga-7",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "CEADP"
+        },
+        {
+          "l": "B",
+          "t": "IDBFC"
+        },
+        {
+          "l": "C",
+          "t": "JGIBC"
+        },
+        {
+          "l": "D",
+          "t": "IBCEC Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "CEADP"
+        },
+        {
+          "l": "B",
+          "t": "IDBFC"
+        },
+        {
+          "l": "C",
+          "t": "JGIBC"
+        },
+        {
+          "l": "D",
+          "t": "IBCEC"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology (CS2)\" removed from option D.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2025-2-ga-7",
+      "field": "topic",
+      "before": "quant",
+      "after": "analytical",
+      "reason": "Coding-decoding is analytical reasoning, not quantitative aptitude.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2025-2-ga-7",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "analytical-aptitude",
+        "coding-decoding"
+      ],
+      "reason": "Tags match the corrected topic.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2025-2-ga-8",
+      "field": "text",
+      "before": "Which one of the following options is correct for the given data in the table?\nIteration (i)      0      1    2    3\nInput (I)     20   −4   10   15\nOutput (X)     20    16    26     41\nOutput (Y)     20   −80  −800    −12000",
+      "after": "Which one of the following options is correct for the given data in the table?\n\n| Iteration ($i$) | 0 | 1 | 2 | 3 |\n|---|---|---|---|---|\n| Input ($I$) | 20 | −4 | 10 | 15 |\n| Output ($X$) | 20 | 16 | 26 | 41 |\n| Output ($Y$) | 20 | −80 | −800 | −12000 |",
+      "reason": "Space-aligned table converted to a markdown table.",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2025-2-ga-8",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝑋(𝑖) = 𝑋(𝑖 − 1) + 𝐼(𝑖); 𝑌(𝑖) = 𝑌(𝑖 − 1)𝐼(𝑖); 𝑖 > 0"
+        },
+        {
+          "l": "B",
+          "t": "𝑋(𝑖) = 𝑋(𝑖 − 1)𝐼(𝑖); 𝑌(𝑖) = 𝑌(𝑖 − 1) + 𝐼(𝑖); 𝑖 > 0"
+        },
+        {
+          "l": "C",
+          "t": "𝑋(𝑖) = 𝑋(𝑖 − 1)𝐼(𝑖); 𝑌(𝑖) = 𝑌(𝑖 − 1)𝐼(𝑖); 𝑖 > 0"
+        },
+        {
+          "l": "D",
+          "t": "𝑋(𝑖) = 𝑋(𝑖 − 1) + 𝐼(𝑖); 𝑌(𝑖) = 𝑌(𝑖 − 1)𝐼(𝑖 − 1); 𝑖 > 0 Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$X(i) = X(i-1) + I(i);\\quad Y(i) = Y(i-1)\\,I(i);\\quad i > 0$"
+        },
+        {
+          "l": "B",
+          "t": "$X(i) = X(i-1)\\,I(i);\\quad Y(i) = Y(i-1) + I(i);\\quad i > 0$"
+        },
+        {
+          "l": "C",
+          "t": "$X(i) = X(i-1)\\,I(i);\\quad Y(i) = Y(i-1)\\,I(i);\\quad i > 0$"
+        },
+        {
+          "l": "D",
+          "t": "$X(i) = X(i-1) + I(i);\\quad Y(i) = Y(i-1)\\,I(i-1);\\quad i > 0$"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology (CS2)\" removed from option D; Unicode maths italics converted to KaTeX.",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2025-2-ga-8",
+      "field": "topic",
+      "before": "quant",
+      "after": "analytical",
+      "reason": "Identifying a recurrence from a data table is analytical reasoning.",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2025-2-ga-8",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "analytical-aptitude",
+        "recurrence",
+        "pattern-recognition"
+      ],
+      "reason": "Tags match the corrected topic.",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2025-2-ga-9",
+      "field": "text",
+      "before": "In the given figure, PQRS is a square of side 2 cm and PLMN is a rectangle. The\ncorner L of the rectangle is on the side QR. Side MN of the rectangle passes through\nthe corner S of the square.\nWhat is the area (in cm2) of the rectangle PLMN?\nNote: The figure shown is representative.",
+      "after": "In the given figure, PQRS is a square of side 2 cm and PLMN is a rectangle. The corner L of the rectangle is on the side QR. Side MN of the rectangle passes through the corner S of the square.\n\nWhat is the area (in cm$^2$) of the rectangle PLMN?\n\nNote: The figure shown is representative.",
+      "reason": "Lost superscript in cm² restored; layout line breaks removed.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "cse-2025-2-ga-9",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "2√2"
+        },
+        {
+          "l": "B",
+          "t": "2"
+        },
+        {
+          "l": "C",
+          "t": "8"
+        },
+        {
+          "l": "D",
+          "t": "4 P Q R S L M N Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$2\\sqrt{2}$"
+        },
+        {
+          "l": "B",
+          "t": "$2$"
+        },
+        {
+          "l": "C",
+          "t": "$8$"
+        },
+        {
+          "l": "D",
+          "t": "$4$"
+        }
+      ],
+      "reason": "Figure labels and the page header were pasted into option D; options converted to KaTeX.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "cse-2025-2-ga-9",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2025-2/ga-9-1.svg",
+          "svg": "cse-2025-2/ga-9-1.svg",
+          "alt": "Square PQRS with P top-left, S top-right, R bottom-right and Q bottom-left. A tilted rectangle PLMN shares corner P with the square: side PL runs from P down to a point L on the bottom side QR (a little left of its middle); side LM runs up and to the right from L to M, which lies outside the square to the right; side MN passes through the square's corner S and continues up to N above the square; side NP closes the rectangle back to P."
+        }
+      ],
+      "reason": "The question depends on the figure, which was missing; redrawn from the paper.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "cse-2025-2-ga-9",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "quantitative-aptitude",
+        "geometry",
+        "area"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "cse-2025-2-ga-10",
+      "field": "text",
+      "before": "The diagram below shows a river system consisting of 7 segments, marked P, Q, R,\nS, T, U, and V. It splits the land into 5 zones, marked Z1, Z2, Z3, Z4, and Z5. We\nneed to connect these zones using the least number of bridges. Out of the following\noptions, which one is correct?\nNote: The figure shown is representative.",
+      "after": "The diagram below shows a river system consisting of 7 segments, marked P, Q, R, S, T, U, and V. It splits the land into 5 zones, marked Z1, Z2, Z3, Z4, and Z5. We need to connect these zones using the least number of bridges. Out of the following options, which one is correct?\n\nNote: The figure shown is representative.",
+      "reason": "Layout line breaks removed.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2025-2-ga-10",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Bridges on P, Q, and T"
+        },
+        {
+          "l": "B",
+          "t": "Bridges on P, Q, S, and T"
+        },
+        {
+          "l": "C",
+          "t": "Bridges on Q, R, T, and V"
+        },
+        {
+          "l": "D",
+          "t": "Bridges on P, Q, S, U, and V P Q R S T U V Z1 Z2 Z3 Z4 Z5 Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Bridges on P, Q, and T"
+        },
+        {
+          "l": "B",
+          "t": "Bridges on P, Q, S, and T"
+        },
+        {
+          "l": "C",
+          "t": "Bridges on Q, R, T, and V"
+        },
+        {
+          "l": "D",
+          "t": "Bridges on P, Q, S, U, and V"
+        }
+      ],
+      "reason": "Figure labels and the page header were pasted into option D.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2025-2-ga-10",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2025-2/ga-10-1.svg",
+          "svg": "cse-2025-2/ga-10-1.svg",
+          "alt": "A rectangular map crossed by a river drawn as thick lines with three junctions. Segment P enters from the left edge and ends at the left junction; from there R runs up to the top edge and Q runs right to the middle junction. From the middle junction S runs down to the bottom edge and T runs right to the right junction, from which V runs up-right and U runs down-right to the right edge. Zones: Z2 top-left (above P, left of R); Z3 top-middle (right of R, above Q, T and V); Z4 at the right between V and U; Z5 bottom-middle (right of S, below T and U); Z1 bottom-left (below P and Q, left of S). So P separates Z1|Z2, R separates Z2|Z3, Q separates Z1|Z3, S separates Z1|Z5, T separates Z3|Z5, V separates Z3|Z4 and U separates Z4|Z5."
+        }
+      ],
+      "reason": "The question depends on the river map, which was missing; redrawn from the paper.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2025-2-ga-10",
+      "field": "topic",
+      "before": "quant",
+      "after": "analytical",
+      "reason": "Connecting zones with the fewest bridges is a spanning-tree reasoning puzzle (analytical), not quantitative aptitude.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2025-2-ga-10",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "analytical-aptitude",
+        "graphs",
+        "spanning-tree"
+      ],
+      "reason": "Tags match the corrected topic.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2025-2-cs-1",
+      "field": "text",
+      "before": "If 𝐴 = (1 2\n2 −1), then which ONE of the following is 𝐴8 ?",
+      "after": "If $A = \\begin{pmatrix} 1 & 2 \\\\ 2 & -1 \\end{pmatrix}$, then which ONE of the following is $A^8$?",
+      "reason": "The 2x2 matrix and the exponent were flattened by the transcription; rewritten in KaTeX.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2025-2-cs-1",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "(25 0 0 25)"
+        },
+        {
+          "l": "B",
+          "t": "(125 0 0 125)"
+        },
+        {
+          "l": "C",
+          "t": "(625 0 0 625)"
+        },
+        {
+          "l": "D",
+          "t": "(3125 0 0 3125)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\begin{pmatrix} 25 & 0 \\\\ 0 & 25 \\end{pmatrix}$"
+        },
+        {
+          "l": "B",
+          "t": "$\\begin{pmatrix} 125 & 0 \\\\ 0 & 125 \\end{pmatrix}$"
+        },
+        {
+          "l": "C",
+          "t": "$\\begin{pmatrix} 625 & 0 \\\\ 0 & 625 \\end{pmatrix}$"
+        },
+        {
+          "l": "D",
+          "t": "$\\begin{pmatrix} 3125 & 0 \\\\ 0 & 3125 \\end{pmatrix}$"
+        }
+      ],
+      "reason": "Diagonal matrices were flattened to \"(n 0 0 n)\"; rewritten as KaTeX matrices.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2025-2-cs-1",
+      "field": "subject",
+      "before": "pds",
+      "after": "la",
+      "reason": "Matrix power: Linear Algebra, not Programming & Data Structures.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2025-2-cs-1",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "matrices",
+      "reason": "Matrix power: Linear Algebra, not C programming.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2025-2-cs-1",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "linear-algebra",
+        "matrix-power",
+        "cayley-hamilton"
+      ],
+      "reason": "Tags match the corrected subject.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2025-2-cs-2",
+      "field": "text",
+      "before": "The value of 𝑥 such that 𝑥 > 1, satisfying the equation ∫ 𝑡 ln 𝑡 𝑑𝑡 =\n1\n4\n𝑥\n1   is",
+      "after": "The value of $x$ such that $x > 1$, satisfying the equation $\\displaystyle\\int_1^x t \\ln t \\, dt = \\frac{1}{4}$ is",
+      "reason": "The integral with its limits and the fraction 1/4 were scattered over several lines; rewritten in KaTeX.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2025-2-cs-2",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "√𝑒"
+        },
+        {
+          "l": "B",
+          "t": "𝑒"
+        },
+        {
+          "l": "C",
+          "t": "𝑒2"
+        },
+        {
+          "l": "D",
+          "t": "𝑒 − 1 Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\sqrt{e}$"
+        },
+        {
+          "l": "B",
+          "t": "$e$"
+        },
+        {
+          "l": "C",
+          "t": "$e^2$"
+        },
+        {
+          "l": "D",
+          "t": "$e - 1$"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology (CS2)\" removed from option D; lost superscript in e² restored; KaTeX.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2025-2-cs-2",
+      "field": "subject",
+      "before": "coa",
+      "after": "calc",
+      "reason": "Definite integral: Calculus, not Computer Organization.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2025-2-cs-2",
+      "field": "topic",
+      "before": "isa",
+      "after": "integration",
+      "reason": "Definite integral: Calculus / integration.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2025-2-cs-2",
+      "field": "tags",
+      "before": [
+        "isa"
+      ],
+      "after": [
+        "calculus",
+        "integration-by-parts",
+        "definite-integral"
+      ],
+      "reason": "Tags match the corrected subject.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2025-2-cs-3",
+      "field": "text",
+      "before": "Consider a  binary tree  𝑇 in which  every node has either zero or two children.\nLet 𝑛 > 0 be the number of nodes in 𝑇.\nWhich ONE of the following is the number of nodes  in 𝑇 that have exactly two\nchildren?",
+      "after": "Consider a binary tree $T$ in which every node has either zero or two children. Let $n > 0$ be the number of nodes in $T$.\n\nWhich ONE of the following is the number of nodes in $T$ that have exactly two children?",
+      "reason": "Doubled spaces and Unicode maths italics cleaned up.",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "cse-2025-2-cs-3",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝑛 − 2 2"
+        },
+        {
+          "l": "B",
+          "t": "𝑛 − 1 2"
+        },
+        {
+          "l": "C",
+          "t": "𝑛 2"
+        },
+        {
+          "l": "D",
+          "t": "𝑛 + 1 2 Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\dfrac{n-2}{2}$"
+        },
+        {
+          "l": "B",
+          "t": "$\\dfrac{n-1}{2}$"
+        },
+        {
+          "l": "C",
+          "t": "$\\dfrac{n}{2}$"
+        },
+        {
+          "l": "D",
+          "t": "$\\dfrac{n+1}{2}$"
+        }
+      ],
+      "reason": "Fractions were flattened to \"n − 1 2\" and the page header was pasted into option D; rewritten as KaTeX fractions.",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "cse-2025-2-cs-3",
+      "field": "subject",
+      "before": "dl",
+      "after": "pds",
+      "reason": "Full binary tree counting: Programming & Data Structures (trees), not Digital Logic.",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "cse-2025-2-cs-3",
+      "field": "topic",
+      "before": "number",
+      "after": "trees",
+      "reason": "Full binary tree counting belongs to trees and binary trees.",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "cse-2025-2-cs-3",
+      "field": "tags",
+      "before": [
+        "graph-theory"
+      ],
+      "after": [
+        "data-structures",
+        "binary-trees",
+        "full-binary-tree"
+      ],
+      "reason": "Tags match the corrected subject.",
+      "source": "pdf p.12"
+    }
+  ]
+}
