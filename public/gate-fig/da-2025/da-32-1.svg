@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 220" role="img" aria-label="Two-layer ReLU network: inputs u and v feed two hidden ReLU units with weights a, b, c, d; the hidden units feed an output ReLU unit with weights e and f, producing y" fill="none" stroke="currentColor" stroke-width="2" font-family="Arial, Helvetica, sans-serif" font-size="18">
+  <title>Neural network with ReLU units</title>
+  <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto" markerUnits="strokeWidth"><path d="M0,0.8 L10,5 L0,9.2 z" fill="currentColor" stroke="none"/></marker></defs>
+  <circle cx="60" cy="50" r="20"/>
+  <circle cx="60" cy="170" r="20"/>
+  <circle cx="260" cy="50" r="20"/>
+  <circle cx="260" cy="170" r="20"/>
+  <circle cx="380" cy="110" r="20"/>
+  <line x1="80" y1="50" x2="238" y2="50" marker-end="url(#ah)"/>
+  <line x1="78" y1="160" x2="241" y2="60" marker-end="url(#ah)"/>
+  <line x1="78" y1="60" x2="241" y2="160" marker-end="url(#ah)"/>
+  <line x1="80" y1="170" x2="238" y2="170" marker-end="url(#ah)"/>
+  <line x1="278" y1="59" x2="360" y2="101" marker-end="url(#ah)"/>
+  <line x1="278" y1="161" x2="360" y2="119" marker-end="url(#ah)"/>
+  <line x1="400" y1="110" x2="448" y2="110" marker-end="url(#ah)"/>
+  <g fill="currentColor" stroke="none" text-anchor="middle" font-style="italic">
+    <text x="60" y="56">u</text>
+    <text x="60" y="176">v</text>
+    <text x="260" y="56">R</text>
+    <text x="260" y="176">R</text>
+    <text x="380" y="116">R</text>
+    <text x="464" y="116">y</text>
+    <text x="160" y="40">a</text>
+    <text x="208" y="68">b</text>
+    <text x="208" y="162">c</text>
+    <text x="160" y="162">d</text>
+    <text x="328" y="66">e</text>
+    <text x="328" y="166">f</text>
+  </g>
+</svg>
