@@ -1,0 +1,977 @@
+{
+  "paper": "da-2024",
+  "fixes": [
+    {
+      "id": "da-2024-da-4",
+      "field": "text",
+      "before": "Consider performing depth -first search (DFS) on an undirected and unweighted\ngraph G starting at vertex 𝑠. For any vertex 𝑢 in G, 𝑑[𝑢] is the length of the shortest\npath from 𝑠 to 𝑢. Let (𝑢, 𝑣) be an edge in G such that 𝑑[𝑢] < 𝑑[𝑣]. If the edge\n(𝑢, 𝑣) is explored first in the direction from 𝑢 to 𝑣 during the above DFS, then (𝑢, 𝑣)\nbecomes a ______ edge.",
+      "after": "Consider performing depth-first search (DFS) on an undirected and unweighted graph $G$ starting at vertex $s$. For any vertex $u$ in $G$, $d[u]$ is the length of the shortest path from $s$ to $u$. Let $(u, v)$ be an edge in $G$ such that $d[u] < d[v]$. If the edge $(u, v)$ is explored first in the direction from $u$ to $v$ during the above DFS, then $(u, v)$ becomes a ______ edge.",
+      "reason": "Unicode maths italics / broken sub- and superscripts rewritten as KaTeX, exactly as in the paper.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "da-2024-da-4",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "tree"
+        },
+        {
+          "l": "B",
+          "t": "cross"
+        },
+        {
+          "l": "C",
+          "t": "back"
+        },
+        {
+          "l": "D",
+          "t": "gray Data Science and Artificial Intelligence (DA)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "tree"
+        },
+        {
+          "l": "B",
+          "t": "cross"
+        },
+        {
+          "l": "C",
+          "t": "back"
+        },
+        {
+          "l": "D",
+          "t": "gray"
+        }
+      ],
+      "reason": "Running page header \"Data Science and Artificial Intelligence (DA)\" removed from option D.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "da-2024-da-4",
+      "field": "subject",
+      "before": "db",
+      "after": "pdsa",
+      "reason": "Wrong subject from the importer.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "da-2024-da-4",
+      "field": "topic",
+      "before": "sql",
+      "after": "algorithms",
+      "reason": "Wrong topic from the importer.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "da-2024-da-4",
+      "field": "tags",
+      "before": [
+        "search"
+      ],
+      "after": [
+        "pdsa",
+        "algorithms",
+        "graph-traversal",
+        "dfs",
+        "edge-classification"
+      ],
+      "reason": "Specific tags for the question.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "da-2024-da-4",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Official key (A) kept, but the question is flawed — see reviewNote.",
+      "source": "https://gate2024.iisc.ac.in/wp-content/uploads/2024/DAFinalAnswerKey.pdf (Q.14)"
+    },
+    {
+      "id": "da-2024-da-4",
+      "field": "reviewNote",
+      "before": null,
+      "after": "Official key is A (tree) and is kept. Strictly, a back edge is also possible: edges s-u, s-a, a-v, v-w, w-u, u-v give d[u]=1 < d[v]=2; with DFS order s, a, v, w, u (adjacency lists s:[a,u], v:[w,u,a], w:[u,v], u:[v,s]) the edge (u,v) is first explored from u while v is a gray ancestor, so it is a back edge. The intended answer assumes v is still undiscovered.",
+      "reason": "independent analysis; https://gate2024.iisc.ac.in/wp-content/uploads/2024/DAFinalAnswerKey.pdf (Q.14)",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "da-2024-da-5",
+      "field": "text",
+      "before": "For any twice differentiable function 𝑓: ℝ → ℝ, if at some 𝑥 ∗ ∈ ℝ, 𝑓 ′(𝑥 ∗) = 0\nand 𝑓′′(𝑥 ∗) > 0, then the function 𝑓 necessarily has a ______ at 𝑥 = 𝑥 ∗.\nNote: ℝ denotes the set of real numbers.",
+      "after": "For any twice differentiable function $f: \\mathbb{R} \\to \\mathbb{R}$, if at some $x^* \\in \\mathbb{R}$, $f'(x^*) = 0$ and $f''(x^*) > 0$, then the function $f$ necessarily has a ______ at $x = x^*$.\n\nNote: $\\mathbb{R}$ denotes the set of real numbers.",
+      "reason": "Unicode maths italics / broken sub- and superscripts rewritten as KaTeX, exactly as in the paper.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "da-2024-da-5",
+      "field": "topic",
+      "before": "maxmin",
+      "after": "optimization",
+      "reason": "Wrong topic from the importer.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "da-2024-da-5",
+      "field": "tags",
+      "before": [
+        "data-science"
+      ],
+      "after": [
+        "calc",
+        "optimization",
+        "second-derivative-test",
+        "local-minimum"
+      ],
+      "reason": "Specific tags for the question.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "da-2024-da-6",
+      "field": "text",
+      "before": "Match the items in Column 1 with the items in Column 2 in the following table:\nColumn 1 Column 2\n(p) First In First Out\n(q) Lookup Operation\n(r) Last In First Out\n(i) Stacks\n(ii) Queues\n(iii) Hash Tables",
+      "after": "Match the items in Column 1 with the items in Column 2 in the following table:\n\n| | Column 1 | | Column 2 |\n|---|---|---|---|\n| (p) | First In First Out | (i) | Stacks |\n| (q) | Lookup Operation | (ii) | Queues |\n| (r) | Last In First Out | (iii) | Hash Tables |",
+      "reason": "Two-column match table restored as a markdown table (columns were flattened into one list).",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "da-2024-da-6",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "(p) − (ii), (q) − (iii), (r) − (i)"
+        },
+        {
+          "l": "B",
+          "t": "(p) − (ii), (q) − (i), (r) − (iii)"
+        },
+        {
+          "l": "C",
+          "t": "(p) − (i), (q) − (ii), (r) − (iii)"
+        },
+        {
+          "l": "D",
+          "t": "(p) − (i), (q) − (iii), (r) − (ii) Data Science and Artificial Intelligence (DA)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "(p) − (ii), (q) − (iii), (r) − (i)"
+        },
+        {
+          "l": "B",
+          "t": "(p) − (ii), (q) − (i), (r) − (iii)"
+        },
+        {
+          "l": "C",
+          "t": "(p) − (i), (q) − (ii), (r) − (iii)"
+        },
+        {
+          "l": "D",
+          "t": "(p) − (i), (q) − (iii), (r) − (ii)"
+        }
+      ],
+      "reason": "Running page header \"Data Science and Artificial Intelligence (DA)\" removed from option D.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "da-2024-da-6",
+      "field": "subject",
+      "before": "ga",
+      "after": "pdsa",
+      "reason": "Wrong subject from the importer.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "da-2024-da-6",
+      "field": "topic",
+      "before": "quant",
+      "after": "ds",
+      "reason": "Wrong topic from the importer.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "da-2024-da-6",
+      "field": "tags",
+      "before": [
+        "quant"
+      ],
+      "after": [
+        "pdsa",
+        "ds",
+        "stacks",
+        "queues",
+        "hashing"
+      ],
+      "reason": "Specific tags for the question.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "da-2024-da-7",
+      "field": "text",
+      "before": "Consider the dataset with six datapoints: {(𝒙𝟏, 𝒚𝟏),(𝒙𝟐, 𝒚𝟐),… , (𝒙𝟔,𝒚𝟔)},\nwhere 𝒙𝟏 =  [1\n0] ,  𝒙𝟐 =  [0\n1] , 𝒙𝟑 =  [ 0\n−1] , 𝒙𝟒 =  [−1\n0 ] , 𝒙𝟓 =  [2\n2] , 𝒙𝟔 =  [−2\n−2]\nand the labels are given by 𝒚𝟏 = 𝒚𝟐 = 𝒚𝟓 = 1, and 𝒚𝟑 = 𝒚𝟒 = 𝒚𝟔 =  −1. A hard\nmargin linear support vector machine is trained on the above dataset.\nWhich ONE of the following sets is a possible set of support vectors?",
+      "after": "Consider the dataset with six datapoints: $\\{(\\mathbf{x}_1, y_1), (\\mathbf{x}_2, y_2), \\ldots, (\\mathbf{x}_6, y_6)\\}$, where\n\n$$\\mathbf{x}_1 = \\begin{bmatrix} 1 \\\\ 0 \\end{bmatrix},\\ \\mathbf{x}_2 = \\begin{bmatrix} 0 \\\\ 1 \\end{bmatrix},\\ \\mathbf{x}_3 = \\begin{bmatrix} 0 \\\\ -1 \\end{bmatrix},\\ \\mathbf{x}_4 = \\begin{bmatrix} -1 \\\\ 0 \\end{bmatrix},\\ \\mathbf{x}_5 = \\begin{bmatrix} 2 \\\\ 2 \\end{bmatrix},\\ \\mathbf{x}_6 = \\begin{bmatrix} -2 \\\\ -2 \\end{bmatrix}$$\n\nand the labels are given by $y_1 = y_2 = y_5 = 1$, and $y_3 = y_4 = y_6 = -1$. A hard margin linear support vector machine is trained on the above dataset.\n\nWhich ONE of the following sets is a possible set of support vectors?",
+      "reason": "Unicode maths italics / broken sub- and superscripts rewritten as KaTeX, exactly as in the paper. Column vectors restored.",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "da-2024-da-7",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "{𝒙𝟏, 𝒙𝟐,𝒙𝟓}"
+        },
+        {
+          "l": "B",
+          "t": "{𝒙𝟑, 𝒙𝟒,𝒙𝟓}"
+        },
+        {
+          "l": "C",
+          "t": "{𝒙𝟒, 𝒙𝟓}"
+        },
+        {
+          "l": "D",
+          "t": "{𝒙𝟏, 𝒙𝟐,𝒙𝟑, 𝒙𝟒}"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\{\\mathbf{x}_1, \\mathbf{x}_2, \\mathbf{x}_5\\}$"
+        },
+        {
+          "l": "B",
+          "t": "$\\{\\mathbf{x}_3, \\mathbf{x}_4, \\mathbf{x}_5\\}$"
+        },
+        {
+          "l": "C",
+          "t": "$\\{\\mathbf{x}_4, \\mathbf{x}_5\\}$"
+        },
+        {
+          "l": "D",
+          "t": "$\\{\\mathbf{x}_1, \\mathbf{x}_2, \\mathbf{x}_3, \\mathbf{x}_4\\}$"
+        }
+      ],
+      "reason": "Unicode maths italics / broken sub- and superscripts rewritten as KaTeX, exactly as in the paper.",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "da-2024-da-7",
+      "field": "subject",
+      "before": "db",
+      "after": "ml",
+      "reason": "Wrong subject from the importer.",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "da-2024-da-7",
+      "field": "topic",
+      "before": "sql",
+      "after": "supervised",
+      "reason": "Wrong topic from the importer.",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "da-2024-da-7",
+      "field": "tags",
+      "before": [
+        "supervised"
+      ],
+      "after": [
+        "ml",
+        "supervised",
+        "svm",
+        "support-vectors",
+        "max-margin"
+      ],
+      "reason": "Specific tags for the question.",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "da-2024-da-8",
+      "field": "text",
+      "before": "Match the items in Column 1 with the items in Column 2 in the following table:\nColumn 1 Column 2\n(p) Principal Component Analysis\n(q) Naïve Bayes Classification\n(r) Logistic Regression\n(i) Discriminative Model\n(ii) Dimensionality Reduction\n(iii) Generative Model",
+      "after": "Match the items in Column 1 with the items in Column 2 in the following table:\n\n| | Column 1 | | Column 2 |\n|---|---|---|---|\n| (p) | Principal Component Analysis | (i) | Discriminative Model |\n| (q) | Naïve Bayes Classification | (ii) | Dimensionality Reduction |\n| (r) | Logistic Regression | (iii) | Generative Model |",
+      "reason": "Two-column match table restored as a markdown table (columns were flattened into one list).",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "da-2024-da-8",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "(p) − (iii), (q) − (i), (r) − (ii)"
+        },
+        {
+          "l": "B",
+          "t": "(p) − (ii), (q) − (i), (r) − (iii)"
+        },
+        {
+          "l": "C",
+          "t": "(p) − (ii), (q) − (iii), (r) − (i)"
+        },
+        {
+          "l": "D",
+          "t": "(p) − (iii), (q) − (ii), (r) − (i) Data Science and Artificial Intelligence (DA)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "(p) − (iii), (q) − (i), (r) − (ii)"
+        },
+        {
+          "l": "B",
+          "t": "(p) − (ii), (q) − (i), (r) − (iii)"
+        },
+        {
+          "l": "C",
+          "t": "(p) − (ii), (q) − (iii), (r) − (i)"
+        },
+        {
+          "l": "D",
+          "t": "(p) − (iii), (q) − (ii), (r) − (i)"
+        }
+      ],
+      "reason": "Running page header \"Data Science and Artificial Intelligence (DA)\" removed from option D.",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "da-2024-da-8",
+      "field": "subject",
+      "before": "ga",
+      "after": "ml",
+      "reason": "Wrong subject from the importer.",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "da-2024-da-8",
+      "field": "topic",
+      "before": "quant",
+      "after": "supervised",
+      "reason": "Wrong topic from the importer.",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "da-2024-da-8",
+      "field": "tags",
+      "before": [
+        "supervised"
+      ],
+      "after": [
+        "ml",
+        "supervised",
+        "unsupervised",
+        "pca",
+        "naive-bayes",
+        "logistic-regression",
+        "generative-vs-discriminative"
+      ],
+      "reason": "Specific tags for the question.",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "da-2024-da-9",
+      "field": "text",
+      "before": "Euclidean distance based 𝑘-means clustering algorithm was run on a dataset of 100\npoints with 𝑘 = 3. If the points [1\n1] and  [−1\n1 ] are both part of cluster 3, then which\nONE of the following points is necessarily also part of cluster 3?",
+      "after": "Euclidean distance based $k$-means clustering algorithm was run on a dataset of 100 points with $k = 3$. If the points $\\begin{bmatrix} 1 \\\\ 1 \\end{bmatrix}$ and $\\begin{bmatrix} -1 \\\\ 1 \\end{bmatrix}$ are both part of cluster 3, then which ONE of the following points is necessarily also part of cluster 3?",
+      "reason": "Unicode maths italics / broken sub- and superscripts rewritten as KaTeX, exactly as in the paper. Column vectors restored.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "da-2024-da-9",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "[0 0]"
+        },
+        {
+          "l": "B",
+          "t": "[0 2]"
+        },
+        {
+          "l": "C",
+          "t": "[2 0]"
+        },
+        {
+          "l": "D",
+          "t": "[0 1]"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\begin{bmatrix} 0 \\\\ 0 \\end{bmatrix}$"
+        },
+        {
+          "l": "B",
+          "t": "$\\begin{bmatrix} 0 \\\\ 2 \\end{bmatrix}$"
+        },
+        {
+          "l": "C",
+          "t": "$\\begin{bmatrix} 2 \\\\ 0 \\end{bmatrix}$"
+        },
+        {
+          "l": "D",
+          "t": "$\\begin{bmatrix} 0 \\\\ 1 \\end{bmatrix}$"
+        }
+      ],
+      "reason": "Column vectors restored (the importer flattened them to \"[0 0]\").",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "da-2024-da-9",
+      "field": "subject",
+      "before": "ga",
+      "after": "ml",
+      "reason": "Wrong subject from the importer.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "da-2024-da-9",
+      "field": "topic",
+      "before": "quant",
+      "after": "unsupervised",
+      "reason": "Wrong topic from the importer.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "da-2024-da-9",
+      "field": "tags",
+      "before": [
+        "quant"
+      ],
+      "after": [
+        "ml",
+        "unsupervised",
+        "k-means",
+        "clustering",
+        "voronoi",
+        "convexity"
+      ],
+      "reason": "Specific tags for the question.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "da-2024-da-10",
+      "field": "text",
+      "before": "Given a dataset with 𝐾 binary-valued attributes (where 𝐾 > 2) for a two -class\nclassification task, the number of parameters to be estimated for learning a naïve\nBayes classifier is",
+      "after": "Given a dataset with $K$ binary-valued attributes (where $K > 2$) for a two-class classification task, the number of parameters to be estimated for learning a naïve Bayes classifier is",
+      "reason": "Unicode maths italics / broken sub- and superscripts rewritten as KaTeX, exactly as in the paper.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "da-2024-da-10",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "2𝐾 + 1"
+        },
+        {
+          "l": "B",
+          "t": "2𝐾 + 1"
+        },
+        {
+          "l": "C",
+          "t": "2𝐾+1 + 1"
+        },
+        {
+          "l": "D",
+          "t": "𝐾2 + 1 Data Science and Artificial Intelligence (DA)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$2^K + 1$"
+        },
+        {
+          "l": "B",
+          "t": "$2K + 1$"
+        },
+        {
+          "l": "C",
+          "t": "$2^{K+1} + 1$"
+        },
+        {
+          "l": "D",
+          "t": "$K^2 + 1$"
+        }
+      ],
+      "reason": "Superscripts were lost (option A read \"2K + 1\", identical to B; C and D lost their exponents); footer junk removed from D.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "da-2024-da-10",
+      "field": "subject",
+      "before": "prob",
+      "after": "ml",
+      "reason": "Wrong subject from the importer.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "da-2024-da-10",
+      "field": "topic",
+      "before": "bayes",
+      "after": "supervised",
+      "reason": "Wrong topic from the importer.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "da-2024-da-10",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "ml",
+        "supervised",
+        "naive-bayes",
+        "parameter-count"
+      ],
+      "reason": "Specific tags for the question.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "da-2024-da-11",
+      "field": "text",
+      "before": "Consider performing uniform hashing on an open address  hash table with load\nfactor 𝛼 =\n𝑛\n𝑚 < 1, where 𝑛 elements are stored in the table with 𝑚 slots. The\nexpected number of probes in an unsuccessful search is at most\n1\n1−𝛼 .\nInserting an element in this hash table requires at most ______ probes, on average.",
+      "after": "Consider performing uniform hashing on an open address hash table with load factor $\\alpha = \\dfrac{n}{m} < 1$, where $n$ elements are stored in the table with $m$ slots. The expected number of probes in an unsuccessful search is at most $\\dfrac{1}{1-\\alpha}$.\n\nInserting an element in this hash table requires at most ______ probes, on average.",
+      "reason": "Unicode maths italics / broken sub- and superscripts rewritten as KaTeX, exactly as in the paper. Fractions restored.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "da-2024-da-11",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "ln ( 1 1 − 𝛼)"
+        },
+        {
+          "l": "B",
+          "t": "1 1 − 𝛼"
+        },
+        {
+          "l": "C",
+          "t": "1 + 𝛼 2"
+        },
+        {
+          "l": "D",
+          "t": "1 1 + 𝛼"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\ln\\left(\\dfrac{1}{1-\\alpha}\\right)$"
+        },
+        {
+          "l": "B",
+          "t": "$\\dfrac{1}{1-\\alpha}$"
+        },
+        {
+          "l": "C",
+          "t": "$1 + \\dfrac{\\alpha}{2}$"
+        },
+        {
+          "l": "D",
+          "t": "$\\dfrac{1}{1+\\alpha}$"
+        }
+      ],
+      "reason": "Fractions were flattened (\"1 1 − 𝛼\"); restored as KaTeX.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "da-2024-da-11",
+      "field": "subject",
+      "before": "db",
+      "after": "pdsa",
+      "reason": "Wrong subject from the importer.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "da-2024-da-11",
+      "field": "topic",
+      "before": "sql",
+      "after": "ds",
+      "reason": "Wrong topic from the importer.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "da-2024-da-11",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "pdsa",
+        "ds",
+        "hashing",
+        "open-addressing",
+        "uniform-hashing"
+      ],
+      "reason": "Specific tags for the question.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "da-2024-da-12",
+      "field": "text",
+      "before": "For any binary classification dataset, let 𝑆𝐵 ∈ ℝ𝑑×𝑑 and 𝑆𝑊 ∈ ℝ𝑑×𝑑 be the\nbetween-class and within -class scatter (covariance) matrices, respectively. The\nFisher linear discriminant is defined by  𝑢∗ ∈ ℝ𝑑, that maximizes\n𝐽(𝑢) = 𝑢𝑇 𝑆𝐵𝑢\n𝑢𝑇𝑆𝑊𝑢\nIf 𝜆 = 𝐽(𝑢∗),  𝑆𝑊 is non-singular and 𝑆𝐵 ≠ 0, then (𝑢∗, 𝜆) must satisfy which ONE\nof the following equations?\nNote: ℝ denotes the set of real numbers.",
+      "after": "For any binary classification dataset, let $S_B \\in \\mathbb{R}^{d \\times d}$ and $S_W \\in \\mathbb{R}^{d \\times d}$ be the between-class and within-class scatter (covariance) matrices, respectively. The Fisher linear discriminant is defined by $u^* \\in \\mathbb{R}^d$, that maximizes\n\n$$J(u) = \\frac{u^T S_B u}{u^T S_W u}$$\n\nIf $\\lambda = J(u^*)$, $S_W$ is non-singular and $S_B \\neq 0$, then $(u^*, \\lambda)$ must satisfy which ONE of the following equations?\n\nNote: $\\mathbb{R}$ denotes the set of real numbers.",
+      "reason": "Unicode maths italics / broken sub- and superscripts rewritten as KaTeX, exactly as in the paper.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "da-2024-da-12",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝑆𝑊 −1𝑆𝐵𝑢∗ = 𝜆𝑢∗"
+        },
+        {
+          "l": "B",
+          "t": "𝑆𝑊𝑢∗ = 𝜆𝑆𝐵𝑢∗"
+        },
+        {
+          "l": "C",
+          "t": "𝑆𝐵𝑆𝑊𝑢∗ = 𝜆𝑢∗"
+        },
+        {
+          "l": "D",
+          "t": "𝑢∗𝑇𝑢∗ = 𝜆2 Data Science and Artificial Intelligence (DA)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$S_W^{-1} S_B u^* = \\lambda u^*$"
+        },
+        {
+          "l": "B",
+          "t": "$S_W u^* = \\lambda S_B u^*$"
+        },
+        {
+          "l": "C",
+          "t": "$S_B S_W u^* = \\lambda u^*$"
+        },
+        {
+          "l": "D",
+          "t": "$u^{*T} u^* = \\lambda^2$"
+        }
+      ],
+      "reason": "Unicode maths italics / broken sub- and superscripts rewritten as KaTeX, exactly as in the paper. Footer junk removed from D.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "da-2024-da-12",
+      "field": "subject",
+      "before": "la",
+      "after": "ml",
+      "reason": "Wrong subject from the importer.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "da-2024-da-12",
+      "field": "topic",
+      "before": "matrices",
+      "after": "supervised",
+      "reason": "Wrong topic from the importer.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "da-2024-da-12",
+      "field": "tags",
+      "before": [
+        "probability"
+      ],
+      "after": [
+        "ml",
+        "supervised",
+        "fisher-lda",
+        "generalized-eigenvalue"
+      ],
+      "reason": "Specific tags for the question.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "da-2024-da-13",
+      "field": "text",
+      "before": "Let ℎ1and ℎ2 be two admissible heuristics used in 𝐴∗ search.\nWhich ONE of the following expressions is always an admissible heuristic?",
+      "after": "Let $h_1$ and $h_2$ be two admissible heuristics used in $A^*$ search.\n\nWhich ONE of the following expressions is always an admissible heuristic?",
+      "reason": "Unicode maths italics / broken sub- and superscripts rewritten as KaTeX, exactly as in the paper.",
+      "source": "pdf p.15"
+    },
+    {
+      "id": "da-2024-da-13",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "ℎ1 + ℎ2"
+        },
+        {
+          "l": "B",
+          "t": "ℎ1 × ℎ2"
+        },
+        {
+          "l": "C",
+          "t": "ℎ1/ℎ2, (ℎ2 ≠ 0)"
+        },
+        {
+          "l": "D",
+          "t": "|ℎ1 − ℎ2|"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$h_1 + h_2$"
+        },
+        {
+          "l": "B",
+          "t": "$h_1 \\times h_2$"
+        },
+        {
+          "l": "C",
+          "t": "$h_1 / h_2,\\ (h_2 \\neq 0)$"
+        },
+        {
+          "l": "D",
+          "t": "$\\lvert h_1 - h_2 \\rvert$"
+        }
+      ],
+      "reason": "Unicode maths italics / broken sub- and superscripts rewritten as KaTeX, exactly as in the paper.",
+      "source": "pdf p.15"
+    },
+    {
+      "id": "da-2024-da-13",
+      "field": "tags",
+      "before": [
+        "search"
+      ],
+      "after": [
+        "ai",
+        "search",
+        "a-star",
+        "admissible-heuristic"
+      ],
+      "reason": "Specific tags for the question.",
+      "source": "pdf p.15"
+    },
+    {
+      "id": "da-2024-da-14",
+      "field": "text",
+      "before": "Consider five random variables 𝑈, 𝑉, 𝑊, 𝑋, and 𝑌 whose joint distribution\nsatisfies:\n𝑃(𝑈, 𝑉, 𝑊, 𝑋, 𝑌) = 𝑃(𝑈)𝑃(𝑉)𝑃(𝑊|𝑈, 𝑉)𝑃(𝑋|𝑊)𝑃(𝑌|𝑊)\nWhich ONE of the following statements is FALSE?",
+      "after": "Consider five random variables $U$, $V$, $W$, $X$, and $Y$ whose joint distribution satisfies:\n\n$$P(U, V, W, X, Y) = P(U)\\,P(V)\\,P(W \\mid U, V)\\,P(X \\mid W)\\,P(Y \\mid W)$$\n\nWhich ONE of the following statements is FALSE?",
+      "reason": "Unicode maths italics / broken sub- and superscripts rewritten as KaTeX, exactly as in the paper.",
+      "source": "pdf p.15"
+    },
+    {
+      "id": "da-2024-da-14",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝑌 is conditionally independent of 𝑉 given 𝑊"
+        },
+        {
+          "l": "B",
+          "t": "𝑋 is conditionally independent of 𝑈 given 𝑊"
+        },
+        {
+          "l": "C",
+          "t": "𝑈 and 𝑉 are conditionally independent given 𝑊"
+        },
+        {
+          "l": "D",
+          "t": "𝑌 and 𝑋 are conditionally independent given 𝑊 Data Science and Artificial Intelligence (DA)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$Y$ is conditionally independent of $V$ given $W$"
+        },
+        {
+          "l": "B",
+          "t": "$X$ is conditionally independent of $U$ given $W$"
+        },
+        {
+          "l": "C",
+          "t": "$U$ and $V$ are conditionally independent given $W$"
+        },
+        {
+          "l": "D",
+          "t": "$Y$ and $X$ are conditionally independent given $W$"
+        }
+      ],
+      "reason": "Unicode maths italics / broken sub- and superscripts rewritten as KaTeX, exactly as in the paper. Footer junk removed from D.",
+      "source": "pdf p.15"
+    },
+    {
+      "id": "da-2024-da-14",
+      "field": "subject",
+      "before": "prob",
+      "after": "ai",
+      "reason": "Wrong subject from the importer.",
+      "source": "pdf p.15"
+    },
+    {
+      "id": "da-2024-da-14",
+      "field": "topic",
+      "before": "rv",
+      "after": "uncertainty",
+      "reason": "Wrong topic from the importer.",
+      "source": "pdf p.15"
+    },
+    {
+      "id": "da-2024-da-14",
+      "field": "tags",
+      "before": [
+        "probability"
+      ],
+      "after": [
+        "ai",
+        "uncertainty",
+        "bayesian-networks",
+        "conditional-independence",
+        "d-separation"
+      ],
+      "reason": "Specific tags for the question.",
+      "source": "pdf p.15"
+    },
+    {
+      "id": "da-2024-da-15",
+      "field": "text",
+      "before": "Consider the following statement:\nIn adversarial search, 𝛼– 𝛽 pruning can be applied to game trees of any depth where\n𝛼 is the    (m)    value choice we have formed so far at any choice point along the\npath for the MAX player and 𝛽 is the      (n)    value choice we have formed so far\nat any choice point along the path for the MIN player.\nWhich ONE of the following choices of (m) and (n) makes the above statement\nvalid?",
+      "after": "Consider the following statement:\n\nIn adversarial search, $\\alpha$–$\\beta$ pruning can be applied to game trees of any depth where $\\alpha$ is the (m) value choice we have formed so far at any choice point along the path for the MAX player and $\\beta$ is the (n) value choice we have formed so far at any choice point along the path for the MIN player.\n\nWhich ONE of the following choices of (m) and (n) makes the above statement valid?",
+      "reason": "Unicode maths italics / broken sub- and superscripts rewritten as KaTeX, exactly as in the paper. Stray spacing around the blanks removed.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "da-2024-da-15",
+      "field": "subject",
+      "before": "coa",
+      "after": "ai",
+      "reason": "Wrong subject from the importer.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "da-2024-da-15",
+      "field": "topic",
+      "before": "isa",
+      "after": "search",
+      "reason": "Wrong topic from the importer.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "da-2024-da-15",
+      "field": "tags",
+      "before": [
+        "search"
+      ],
+      "after": [
+        "ai",
+        "search",
+        "alpha-beta-pruning",
+        "minimax",
+        "adversarial-search"
+      ],
+      "reason": "Specific tags for the question.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "da-2024-da-16",
+      "field": "text",
+      "before": "Consider a database that includes the following relations:\nDefender(name, rating, side, goals)\nForward(name, rating, assists, goals)\nTeam(name, club, price)\nWhich ONE of the following relational algebra expressions checks that every name\noccurring in Team appears in either Defender or Forward, where 𝜙 denotes the\nempty set?",
+      "after": "Consider a database that includes the following relations:\n\n- Defender(name, rating, side, goals)\n- Forward(name, rating, assists, goals)\n- Team(name, club, price)\n\nWhich ONE of the following relational algebra expressions checks that every name occurring in Team appears in either Defender or Forward, where $\\phi$ denotes the empty set?",
+      "reason": "Unicode maths italics / broken sub- and superscripts rewritten as KaTeX, exactly as in the paper.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "da-2024-da-16",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Π𝑛𝑎𝑚𝑒 (Team) ∖ (Π𝑛𝑎𝑚𝑒 (Defender) ∩ Π𝑛𝑎𝑚𝑒 (Forward)) = 𝜙"
+        },
+        {
+          "l": "B",
+          "t": "(Π𝑛𝑎𝑚𝑒 (Defender) ∩ Π𝑛𝑎𝑚𝑒 (Forward)) ∖ Π𝑛𝑎𝑚𝑒 (Team) = 𝜙"
+        },
+        {
+          "l": "C",
+          "t": "Π𝑛𝑎𝑚𝑒 (Team) ∖ (Π𝑛𝑎𝑚𝑒 (Defender) ∪ Π𝑛𝑎𝑚𝑒 (Forward)) = 𝜙"
+        },
+        {
+          "l": "D",
+          "t": "(Π𝑛𝑎𝑚𝑒 (Defender) ∪ Π𝑛𝑎𝑚𝑒 (Forward)) ∖ Π𝑛𝑎𝑚𝑒 (Team) = 𝜙 Data Science and Artificial Intelligence (DA)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\Pi_{name}(\\text{Team}) \\setminus \\big(\\Pi_{name}(\\text{Defender}) \\cap \\Pi_{name}(\\text{Forward})\\big) = \\phi$"
+        },
+        {
+          "l": "B",
+          "t": "$\\big(\\Pi_{name}(\\text{Defender}) \\cap \\Pi_{name}(\\text{Forward})\\big) \\setminus \\Pi_{name}(\\text{Team}) = \\phi$"
+        },
+        {
+          "l": "C",
+          "t": "$\\Pi_{name}(\\text{Team}) \\setminus \\big(\\Pi_{name}(\\text{Defender}) \\cup \\Pi_{name}(\\text{Forward})\\big) = \\phi$"
+        },
+        {
+          "l": "D",
+          "t": "$\\big(\\Pi_{name}(\\text{Defender}) \\cup \\Pi_{name}(\\text{Forward})\\big) \\setminus \\Pi_{name}(\\text{Team}) = \\phi$"
+        }
+      ],
+      "reason": "Unicode maths italics / broken sub- and superscripts rewritten as KaTeX, exactly as in the paper. Footer junk removed from D.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "da-2024-da-16",
+      "field": "subject",
+      "before": "dm",
+      "after": "dbw",
+      "reason": "Wrong subject from the importer.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "da-2024-da-16",
+      "field": "topic",
+      "before": "sets",
+      "after": "relational",
+      "reason": "Wrong topic from the importer.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "da-2024-da-16",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "dbw",
+        "relational",
+        "relational-algebra",
+        "set-difference"
+      ],
+      "reason": "Specific tags for the question.",
+      "source": "pdf p.16"
+    }
+  ]
+}
