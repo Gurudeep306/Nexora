@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 330" fill="none" stroke="currentColor" stroke-width="1.5" font-family="Arial, Helvetica, sans-serif" font-size="13">
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="currentColor" stroke="none"/>
+    </marker>
+  </defs>
+  <g fill="currentColor" stroke="none" text-anchor="middle">
+    <text x="200" y="18">Code Word</text>
+  </g>
+  <rect x="20" y="30" width="360" height="30"/>
+  <line x1="70" y1="30" x2="70" y2="60"/>
+  <line x1="220" y1="30" x2="220" y2="60"/>
+  <g fill="currentColor" stroke="none" text-anchor="middle">
+    <text x="45" y="50">M</text>
+    <text x="145" y="50">S-address</text>
+    <text x="300" y="50">R-address</text>
+  </g>
+  <rect x="110" y="90" width="60" height="34"/>
+  <rect x="290" y="90" width="60" height="34"/>
+  <rect x="175" y="150" width="50" height="58"/>
+  <rect x="240" y="150" width="50" height="58"/>
+  <rect x="175" y="240" width="115" height="34"/>
+  <rect x="195" y="292" width="75" height="32"/>
+  <rect x="270" y="292" width="85" height="32"/>
+  <g fill="currentColor" stroke="none" text-anchor="middle">
+    <text x="140" y="112">P</text>
+    <text x="320" y="112">Q</text>
+    <text x="200" y="184">S</text>
+    <text x="265" y="184">R</text>
+    <text x="232" y="262">T</text>
+    <text x="232" y="313">X</text>
+    <text x="312" y="313">DDS</text>
+  </g>
+  <line x1="140" y1="60" x2="140" y2="88" marker-end="url(#ah)"/>
+  <line x1="320" y1="60" x2="320" y2="88" marker-end="url(#ah)"/>
+  <polyline points="170,107 200,107 200,148" marker-end="url(#ah)"/>
+  <polyline points="290,107 265,107 265,148" marker-end="url(#ah)"/>
+  <line x1="200" y1="208" x2="200" y2="238" marker-end="url(#ah)"/>
+  <line x1="265" y1="208" x2="265" y2="238" marker-end="url(#ah)"/>
+  <polyline points="45,60 45,257 173,257" marker-end="url(#ah)"/>
+  <line x1="232" y1="274" x2="232" y2="290" marker-end="url(#ah)"/>
+</svg>
