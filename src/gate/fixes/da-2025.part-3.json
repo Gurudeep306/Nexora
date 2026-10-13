@@ -1,0 +1,719 @@
+{
+  "paper": "da-2025",
+  "fixes": [
+    {
+      "id": "da-2025-da-17",
+      "field": "text",
+      "before": "For which of the following inputs does binary search take time O(logn) in the worst\ncase?",
+      "after": "For which of the following inputs does binary search take time $O(\\log n)$ in the worst case?",
+      "reason": "Extraction lost the maths (spacing, minus signs, superscripts, fractions); rewritten in KaTeX exactly as printed.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "da-2025-da-17",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "An array of n integers in any order"
+        },
+        {
+          "l": "B",
+          "t": "A linked list of n integers in any order"
+        },
+        {
+          "l": "C",
+          "t": "An array of n integers in increasing order"
+        },
+        {
+          "l": "D",
+          "t": "A linked list of n integers in increasing order"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "An array of $n$ integers in any order"
+        },
+        {
+          "l": "B",
+          "t": "A linked list of $n$ integers in any order"
+        },
+        {
+          "l": "C",
+          "t": "An array of $n$ integers in increasing order"
+        },
+        {
+          "l": "D",
+          "t": "A linked list of $n$ integers in increasing order"
+        }
+      ],
+      "reason": "Variable $n$ set as maths, as printed.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "da-2025-da-17",
+      "field": "subject",
+      "before": "ga",
+      "after": "pdsa",
+      "reason": "Binary search is Programming, Data Structures and Algorithms, not General Aptitude.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "da-2025-da-17",
+      "field": "topic",
+      "before": "quant",
+      "after": "algorithms",
+      "reason": "Searching algorithm (worst-case complexity).",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "da-2025-da-17",
+      "field": "tags",
+      "before": [
+        "dsa"
+      ],
+      "after": [
+        "pdsa",
+        "algorithms",
+        "binary-search",
+        "linked-list",
+        "time-complexity"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "da-2025-da-18",
+      "field": "text",
+      "before": "Let A =In +xx⊤, whereIn is then×n identity matrix andx∈ Rn,x⊤x = 1. Which\nof the following options is/are correct?",
+      "after": "Let $A = I_n + xx^\\top$, where $I_n$ is the $n \\times n$ identity matrix and $x \\in \\mathbb{R}^n$, $x^\\top x = 1$. Which of the following options is/are correct?",
+      "reason": "Extraction lost the maths (spacing, minus signs, superscripts, fractions); rewritten in KaTeX exactly as printed.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "da-2025-da-18",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Rank of A isn"
+        },
+        {
+          "l": "B",
+          "t": "A is invertible"
+        },
+        {
+          "l": "C",
+          "t": "0 is an eigenvalue ofA"
+        },
+        {
+          "l": "D",
+          "t": "A\u00001 has a negative eigenvalue"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Rank of $A$ is $n$"
+        },
+        {
+          "l": "B",
+          "t": "$A$ is invertible"
+        },
+        {
+          "l": "C",
+          "t": "$0$ is an eigenvalue of $A$"
+        },
+        {
+          "l": "D",
+          "t": "$A^{-1}$ has a negative eigenvalue"
+        }
+      ],
+      "reason": "Option D lost its minus sign (\"A\\u00001\"); maths restored in KaTeX.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "da-2025-da-18",
+      "field": "topic",
+      "before": "matrices",
+      "after": "eigen",
+      "reason": "The question is about the eigenvalues of a rank-one update of the identity.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "da-2025-da-18",
+      "field": "tags",
+      "before": [
+        "matrices"
+      ],
+      "after": [
+        "la",
+        "eigen",
+        "rank-one-update",
+        "invertibility",
+        "rank"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "da-2025-da-19",
+      "field": "text",
+      "before": "Suppose that insertion sort is applied to the array [1, 3, 5, 7, 9, 11,x, 15, 13] and it takes\nexactly two swaps to sort the array. Select all possible values ofx.",
+      "after": "Suppose that insertion sort is applied to the array $[1, 3, 5, 7, 9, 11, x, 15, 13]$ and it takes exactly two swaps to sort the array. Select all possible values of $x$.",
+      "reason": "Extraction lost the maths (spacing, minus signs, superscripts, fractions); rewritten in KaTeX exactly as printed.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "da-2025-da-19",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "10"
+        },
+        {
+          "l": "B",
+          "t": "12"
+        },
+        {
+          "l": "C",
+          "t": "14"
+        },
+        {
+          "l": "D",
+          "t": "16 GATE 2025 Data Science & Artiﬁcial Intelligence - DA"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "10"
+        },
+        {
+          "l": "B",
+          "t": "12"
+        },
+        {
+          "l": "C",
+          "t": "14"
+        },
+        {
+          "l": "D",
+          "t": "16"
+        }
+      ],
+      "reason": "Running page header \"GATE 2025 Data Science & Artificial Intelligence - DA\" pasted into option D.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "da-2025-da-19",
+      "field": "type",
+      "before": "MCQ",
+      "after": "MSQ",
+      "reason": "\"Select all possible values\" and the official key A;C (two options) make this a multiple-select question.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "da-2025-da-19",
+      "field": "subject",
+      "before": "coa",
+      "after": "pdsa",
+      "reason": "Insertion sort belongs to Programming, Data Structures and Algorithms, not Computer Organization.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "da-2025-da-19",
+      "field": "topic",
+      "before": "isa",
+      "after": "algorithms",
+      "reason": "Sorting algorithm analysis.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "da-2025-da-19",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "pdsa",
+        "algorithms",
+        "insertion-sort",
+        "inversions",
+        "swaps"
+      ],
+      "reason": "Tags follow the corrected subject/topic (the old tag \"sql\" was wrong).",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "da-2025-da-20",
+      "field": "text",
+      "before": "Let C1 andC2 be two sets of objects. LetD(x,y ) be a measure of dissimilarity between\ntwo objectsx andy. Consider the following deﬁnitions of dissimilarity betweenC1 and\nC2.\nDIS-1(C1,C 2) = max\nx∈C1, y∈C2\nD(x,y )\nDIS-2(C1,C 2) = min\nx∈C1, y∈C2\nD(x,y )\nWhich of the following statements is/are correct?",
+      "after": "Let $C_1$ and $C_2$ be two sets of objects. Let $D(x, y)$ be a measure of dissimilarity between two objects $x$ and $y$. Consider the following definitions of dissimilarity between $C_1$ and $C_2$.\n\n$$\\textbf{DIS-1}(C_1, C_2) = \\max_{x \\in C_1,\\, y \\in C_2} D(x, y)$$\n\n$$\\textbf{DIS-2}(C_1, C_2) = \\min_{x \\in C_1,\\, y \\in C_2} D(x, y)$$\n\nWhich of the following statements is/are correct?",
+      "reason": "Extraction lost the maths (spacing, minus signs, superscripts, fractions); rewritten in KaTeX exactly as printed. The two definitions are display equations.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "da-2025-da-20",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Single Linkage Clustering uses DIS-1"
+        },
+        {
+          "l": "B",
+          "t": "Single Linkage Clustering uses DIS-2"
+        },
+        {
+          "l": "C",
+          "t": "Complete Linkage Clustering uses DIS-2"
+        },
+        {
+          "l": "D",
+          "t": "Complete Linkage Clustering uses DIS-1"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Single Linkage Clustering uses **DIS-1**"
+        },
+        {
+          "l": "B",
+          "t": "Single Linkage Clustering uses **DIS-2**"
+        },
+        {
+          "l": "C",
+          "t": "Complete Linkage Clustering uses **DIS-2**"
+        },
+        {
+          "l": "D",
+          "t": "Complete Linkage Clustering uses **DIS-1**"
+        }
+      ],
+      "reason": "DIS-1 / DIS-2 are bold in the paper.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "da-2025-da-20",
+      "field": "subject",
+      "before": "pdsa",
+      "after": "ml",
+      "reason": "Linkage criteria of hierarchical clustering are Machine Learning (unsupervised), not PDSA.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "da-2025-da-20",
+      "field": "topic",
+      "before": "dsa",
+      "after": "unsupervised",
+      "reason": "Hierarchical (agglomerative) clustering.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "da-2025-da-20",
+      "field": "tags",
+      "before": [
+        "data-science"
+      ],
+      "after": [
+        "ml",
+        "unsupervised",
+        "hierarchical-clustering",
+        "single-linkage",
+        "complete-linkage"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "da-2025-da-21",
+      "field": "text",
+      "before": "There are three boxes containing white balls and black balls.\nBox-1 contains 2 black and 1 white balls.\nBox-2 contains 1 black and 2 white balls.\nBox-3 contains 3 black and 3 white balls.\nIn a random experiment, one of these boxes is selected, where the probability of choos-\ning Box-1 is 1\n2, Box-2 is 1\n6, and Box-3 is 1\n3. A ball is drawn at random from the selected\nbox. Given that the ball drawn is white, the probability that it is drawn from Box-2 is\n(Round off to two decimal places)",
+      "after": "There are three boxes containing white balls and black balls.\n\n- Box-1 contains 2 black and 1 white balls.\n- Box-2 contains 1 black and 2 white balls.\n- Box-3 contains 3 black and 3 white balls.\n\nIn a random experiment, one of these boxes is selected, where the probability of choosing Box-1 is $\\frac{1}{2}$, Box-2 is $\\frac{1}{6}$, and Box-3 is $\\frac{1}{3}$. A ball is drawn at random from the selected box. Given that the ball drawn is white, the probability that it is drawn from Box-2 is _______ (Round off to two decimal places)",
+      "reason": "Extraction lost the maths (spacing, minus signs, superscripts, fractions); rewritten in KaTeX exactly as printed. The fractions 1/2, 1/6, 1/3 had been split across lines.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "da-2025-da-21",
+      "field": "subject",
+      "before": "dbw",
+      "after": "prob",
+      "reason": "Bayes' theorem is Probability, not Databases.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "da-2025-da-21",
+      "field": "topic",
+      "before": "sql",
+      "after": "basic",
+      "reason": "Conditional probability / Bayes' theorem.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "da-2025-da-21",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "prob",
+        "basic",
+        "bayes-theorem",
+        "total-probability",
+        "conditional-probability"
+      ],
+      "reason": "Tags follow the corrected subject/topic (the old tag \"sql\" was wrong).",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "da-2025-da-22",
+      "field": "text",
+      "before": "lim\nt→+∞\n√\nt2 +t\u0000t =\n(Round off to one decimal place)\nGATE 2025 Data Science & Artiﬁcial Intelligence - DA",
+      "after": "$\\displaystyle \\lim_{t \\to +\\infty} \\sqrt{t^2 + t} - t =$ _______\n\n(Round off to one decimal place)",
+      "reason": "Extraction scattered the limit over several lines and dropped the minus sign; rewritten in KaTeX exactly as printed.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "da-2025-da-22",
+      "field": "subject",
+      "before": "pdsa",
+      "after": "calc",
+      "reason": "A limit is Calculus, not PDSA.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "da-2025-da-22",
+      "field": "topic",
+      "before": "dsa",
+      "after": "functions",
+      "reason": "Limits of functions.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "da-2025-da-22",
+      "field": "tags",
+      "before": [
+        "data-science"
+      ],
+      "after": [
+        "calc",
+        "functions",
+        "limits",
+        "rationalization"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "da-2025-da-23",
+      "field": "text",
+      "before": "On a relation named Loan of a bank:\nLoan\nloan number branch name amount\nL11 Banjara Hills 90000\nL14 Kondapur 50000\nL15 SR Nagar 40000\nL22 SR Nagar 25000\nL23 Balanagar 80000\nL25 Kondapur 70000\nL19 SR Nagar 65000\nthe following SQL query is executed.\nSELECT L1.loan number\nFROM Loan L1\nWHERE L1.amount > (SELECT MAX (L2.amount)\nFROM Loan L2\nWHERE L2.branch name = ’SR Nagar’);\nThe number of rows returned by the query is (Answer in integer)",
+      "after": "On a relation named **Loan** of a bank:\n\n| loan_number | branch_name | amount |\n|---|---|---|\n| L11 | Banjara Hills | 90000 |\n| L14 | Kondapur | 50000 |\n| L15 | SR Nagar | 40000 |\n| L22 | SR Nagar | 25000 |\n| L23 | Balanagar | 80000 |\n| L25 | Kondapur | 70000 |\n| L19 | SR Nagar | 65000 |\n\nthe following SQL query is executed.\n\n```sql\nSELECT L1.loan_number\nFROM Loan L1\nWHERE L1.amount > (SELECT MAX (L2.amount)\n                   FROM Loan L2\n                   WHERE L2.branch_name = 'SR Nagar');\n```\n\nThe number of rows returned by the query is _______ (Answer in integer)",
+      "reason": "Table flattened to text and the underscores of loan_number / branch_name lost; restored as a markdown table and a SQL code block as printed.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "da-2025-da-23",
+      "field": "topic",
+      "before": "sql",
+      "after": "relational",
+      "reason": "SQL belongs to the relational topic of the DA syllabus (\"sql\" is not a DA topic id).",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "da-2025-da-23",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "dbw",
+        "relational",
+        "sql",
+        "subquery",
+        "aggregate-max"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "da-2025-da-24",
+      "field": "text",
+      "before": "Given data {(\u00001, 1), (2,\u00005), (3, 5)} of the form (x,y ), we ﬁt a model y = wx using\nlinear least-squares regression. The optimal value ofw is\n(Round off to three decimal places)",
+      "after": "Given data $\\{(-1, 1), (2, -5), (3, 5)\\}$ of the form $(x, y)$, we fit a model $y = wx$ using linear least-squares regression. The optimal value of $w$ is _______ (Round off to three decimal places)",
+      "reason": "Extraction dropped both minus signs: the data are (−1, 1), (2, −5), (3, 5), not (1, 1), (2, 5), (3, 5). Rewritten in KaTeX.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "da-2025-da-24",
+      "field": "subject",
+      "before": "coa",
+      "after": "ml",
+      "reason": "Least-squares regression is Machine Learning (supervised), not Computer Organization.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "da-2025-da-24",
+      "field": "topic",
+      "before": "isa",
+      "after": "supervised",
+      "reason": "Linear regression.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "da-2025-da-24",
+      "field": "tags",
+      "before": [
+        "data-science"
+      ],
+      "after": [
+        "ml",
+        "supervised",
+        "linear-regression",
+        "least-squares"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "da-2025-da-25",
+      "field": "text",
+      "before": "The naive Bayes classiﬁer is used to solve a two-class classiﬁcation problem with class-\nlabelsy1,y2. Suppose the prior probabilities areP (y1) = 1\n3 andP (y2) = 2\n3. Assuming\na discrete feature space with\nP (x|y1) = 3\n4 and P (x|y2) = 1\n4\nfor a speciﬁc feature vectorx. The probability of misclassifyingx is\n(Round off to two decimal places)\nGATE 2025 Data Science & Artiﬁcial Intelligence - DA",
+      "after": "The naive Bayes classifier is used to solve a two-class classification problem with class-labels $y_1, y_2$. Suppose the prior probabilities are $P(y_1) = \\frac{1}{3}$ and $P(y_2) = \\frac{2}{3}$. Assuming a discrete feature space with\n\n$$P(x \\mid y_1) = \\frac{3}{4} \\quad \\text{and} \\quad P(x \\mid y_2) = \\frac{1}{4}$$\n\nfor a specific feature vector $x$. The probability of misclassifying $x$ is _______ (Round off to two decimal places)",
+      "reason": "Extraction lost the maths (spacing, minus signs, superscripts, fractions); rewritten in KaTeX exactly as printed.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "da-2025-da-25",
+      "field": "tags",
+      "before": [
+        "supervised"
+      ],
+      "after": [
+        "ml",
+        "supervised",
+        "naive-bayes",
+        "bayes-error",
+        "posterior"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "da-2025-da-26",
+      "field": "text",
+      "before": "Let Y = Z 2, Z = X\u0000µ\nσ , where X is a normal random variable with mean µ and\nvarianceσ2. The variance ofY is",
+      "after": "Let $Y = Z^2$, $Z = \\dfrac{X - \\mu}{\\sigma}$, where $X$ is a normal random variable with mean $\\mu$ and variance $\\sigma^2$. The variance of $Y$ is",
+      "reason": "Extraction lost the maths (spacing, minus signs, superscripts, fractions); rewritten in KaTeX exactly as printed.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "da-2025-da-26",
+      "field": "subject",
+      "before": "ga",
+      "after": "prob",
+      "reason": "Variance of a function of a normal variable is Probability, not General Aptitude.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "da-2025-da-26",
+      "field": "topic",
+      "before": "quant",
+      "after": "rv",
+      "reason": "Normal / chi-square random variables.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "da-2025-da-26",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "prob",
+        "rv",
+        "normal-distribution",
+        "chi-square",
+        "variance",
+        "moments"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "da-2025-da-27",
+      "field": "text",
+      "before": "Let A∈ Rn×n be such thatA3 =A. Which one of the following statements is ALW AYS\ncorrect?",
+      "after": "Let $A \\in \\mathbb{R}^{n \\times n}$ be such that $A^3 = A$. Which one of the following statements is ALWAYS correct?",
+      "reason": "Extraction lost the maths (spacing, minus signs, superscripts, fractions); rewritten in KaTeX exactly as printed.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "da-2025-da-27",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "A is invertible"
+        },
+        {
+          "l": "B",
+          "t": "Determinant of A is 0"
+        },
+        {
+          "l": "C",
+          "t": "The sum of the diagonal elements of A is 1"
+        },
+        {
+          "l": "D",
+          "t": "A andA2 have the same rank"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$A$ is invertible"
+        },
+        {
+          "l": "B",
+          "t": "Determinant of $A$ is $0$"
+        },
+        {
+          "l": "C",
+          "t": "The sum of the diagonal elements of $A$ is $1$"
+        },
+        {
+          "l": "D",
+          "t": "$A$ and $A^2$ have the same rank"
+        }
+      ],
+      "reason": "Option D lost its space and superscript (\"A andA2\"); maths restored in KaTeX.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "da-2025-da-27",
+      "field": "subject",
+      "before": "pdsa",
+      "after": "la",
+      "reason": "Matrix rank is Linear Algebra, not PDSA.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "da-2025-da-27",
+      "field": "topic",
+      "before": "dsa",
+      "after": "matrices",
+      "reason": "Rank and determinant of a matrix.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "da-2025-da-27",
+      "field": "tags",
+      "before": [
+        "data-science"
+      ],
+      "after": [
+        "la",
+        "matrices",
+        "rank",
+        "eigenvalues",
+        "matrix-polynomial"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "da-2025-da-28",
+      "field": "text",
+      "before": "Let {x1,x 2,...,x n} be a set of linearly independent vectors in Rn. Let the (i,j )-th\nelement of matrixA∈ Rn×n be given byAij =x⊤\nixj, 1≤i,j ≤n. Which one of the\nfollowing statements is correct?",
+      "after": "Let $\\{x_1, x_2, \\ldots, x_n\\}$ be a set of linearly independent vectors in $\\mathbb{R}^n$. Let the $(i, j)$-th element of matrix $A \\in \\mathbb{R}^{n \\times n}$ be given by $A_{ij} = x_i^\\top x_j$, $1 \\le i, j \\le n$. Which one of the following statements is correct?",
+      "reason": "Extraction lost the maths (spacing, minus signs, superscripts, fractions); rewritten in KaTeX exactly as printed.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "da-2025-da-28",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "A is invertible"
+        },
+        {
+          "l": "B",
+          "t": "0 is a singular value ofA"
+        },
+        {
+          "l": "C",
+          "t": "Determinant of A is 0"
+        },
+        {
+          "l": "D",
+          "t": "z⊤Az = 0 for some non-zeroz∈ Rn GATE 2025 Data Science & Artiﬁcial Intelligence - DA"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$A$ is invertible"
+        },
+        {
+          "l": "B",
+          "t": "$0$ is a singular value of $A$"
+        },
+        {
+          "l": "C",
+          "t": "Determinant of $A$ is $0$"
+        },
+        {
+          "l": "D",
+          "t": "$z^\\top A z = 0$ for some non-zero $z \\in \\mathbb{R}^n$"
+        }
+      ],
+      "reason": "Running page header \"GATE 2025 Data Science & Artificial Intelligence - DA\" pasted into option D; maths restored in KaTeX.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "da-2025-da-28",
+      "field": "tags",
+      "before": [
+        "matrices"
+      ],
+      "after": [
+        "la",
+        "matrices",
+        "gram-matrix",
+        "positive-definite",
+        "invertibility"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "da-2025-da-29",
+      "field": "text",
+      "before": "Consider the cumulative distribution function (CDF) of a random variable X:\nFX(x) =\n\n\n\n0 x≤\u0000 1\n1\n4(x + 1)2 \u00001≤x≤ 1\n1 x≥ 1\nThe value ofP (X 2≤ 0.25) is",
+      "after": "Consider the cumulative distribution function (CDF) of a random variable $X$:\n\n$$F_X(x) = \\begin{cases} 0 & x \\le -1 \\\\ \\frac{1}{4}(x + 1)^2 & -1 \\le x \\le 1 \\\\ 1 & x \\ge 1 \\end{cases}$$\n\nThe value of $P(X^2 \\le 0.25)$ is",
+      "reason": "Extraction broke the piecewise CDF and dropped the minus signs of −1; rewritten as a KaTeX cases block exactly as printed.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "da-2025-da-29",
+      "field": "tags",
+      "before": [
+        "probability"
+      ],
+      "after": [
+        "prob",
+        "rv",
+        "cdf",
+        "continuous-random-variable"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.20"
+    }
+  ]
+}
