@@ -1,0 +1,1328 @@
+{
+  "paper": "cse-2021-1",
+  "version": 2,
+  "solutions": {
+    "cse-2021-1-cs-13": {
+      "approach": "Without checkpoints, the log is the only record of what to undo/redo, and log-based undo/redo operations are idempotent; so a second recovery simply rebuilds its lists from the same log and runs again.",
+      "concepts": [
+        "Log-based recovery",
+        "Undo/redo lists",
+        "Idempotence",
+        "Checkpointing"
+      ],
+      "steps": [
+        {
+          "title": "Where the lists come from",
+          "body": "After a crash the recovery manager scans the log: transactions with `<T start>` and `<T commit>` go to the **redo list**, those with `<T start>` but no commit go to the **undo list**. With no checkpoint written (neither during normal work nor during recovery), the second recovery scans the same log from the beginning and builds the **same undo and redo lists** — (A)."
+        },
+        {
+          "title": "Why recovery still succeeds",
+          "body": "Redo writes the new value and undo writes the old value logged for each update. Doing this twice gives the same result as doing it once (idempotent), so a crash in the middle of recovery is harmless: the system just recovers again. So (B) and (D) are false."
+        },
+        {
+          "title": "Statement C",
+          "body": "The stored key also includes (C), read as: work that the interrupted recovery has already completed does not need to be recovered as a separate, extra step — the restarted recovery just reapplies the same lists, which leaves those items unchanged. (Read literally, the restarted recovery does re-run idempotent operations over them, which is why this statement is debated.)"
+        }
+      ],
+      "answer": {
+        "value": "A, C",
+        "choice": [
+          "A",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "No checkpoint means the same log scan produces the same undo and redo lists."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Undo/redo are idempotent, so recovery can simply be restarted."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Included in the stored key: already undone/redone work needs no separate recovery; reapplying idempotent operations changes nothing."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Once recovery completes the database is consistent; a repeated crash does not corrupt it."
+        }
+      ],
+      "pitfalls": [
+        "Thinking a crash during recovery is unrecoverable — idempotent redo/undo make restarting safe."
+      ],
+      "verification": "The log is unchanged except for appended records, and with no checkpoint the restart scans it from the start, giving identical lists; idempotence makes repeated application safe."
+    },
+    "cse-2021-1-cs-14": {
+      "approach": "A library call always enters the kernel only if its job inherently needs a kernel service every time; check each function for a path that stays in user space.",
+      "concepts": [
+        "System calls",
+        "C standard library",
+        "User vs kernel mode"
+      ],
+      "steps": [
+        {
+          "title": "Always kernel",
+          "body": "`exit` must terminate the process, which only the kernel can do (it ends in the `_exit`/`exit_group` system call). `sleep` must block the process for a time, which needs the scheduler (`nanosleep` system call). Both always trap into the kernel."
+        },
+        {
+          "title": "Not always",
+          "body": "`malloc` serves most requests from the heap already obtained by the process and calls `brk`/`mmap` only when the free pool is exhausted. `strlen` just walks bytes in user memory and never needs the kernel."
+        }
+      ],
+      "answer": {
+        "value": "A, C",
+        "choice": [
+          "A",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Process termination is a kernel operation (`_exit`)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Small allocations come from the existing heap; `brk`/`mmap` only sometimes."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Suspending the process needs the kernel scheduler (`nanosleep`)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Pure user-space computation over a string."
+        }
+      ],
+      "pitfalls": [
+        "Marking `malloc` as always making a system call — it is buffered by the allocator."
+      ],
+      "verification": "Tracing a loop of small `malloc` calls with strace shows only occasional `brk`/`mmap`, while every `sleep` shows `nanosleep` and `exit` shows `exit_group`."
+    },
+    "cse-2021-1-cs-15": {
+      "approach": "In an unsorted linear list a scan can stop early when it finds the target, but proving a name is absent needs the whole list. So an operation needs a full scan exactly when it must check that some name does not already exist.",
+      "concepts": [
+        "Directory implementation",
+        "Linear list",
+        "Unique file names"
+      ],
+      "steps": [
+        {
+          "title": "Operations that must prove absence",
+          "body": "**Create**: the new name must not already be in `foo`, so every entry must be examined before appending. **Rename**: the new name must not clash with any existing file, so again every entry must be checked. Both need a full scan."
+        },
+        {
+          "title": "Operations that look up one existing name",
+          "body": "**Delete** and **open** only need to locate the given file; the scan stops as soon as the name is found, which can be the first node. So a full scan is not necessary."
+        }
+      ],
+      "answer": {
+        "value": "A, C",
+        "choice": [
+          "A",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Must confirm the name is not already present: whole list."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Stops once the file is found; may be the first node."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "The new name must be checked against every entry for duplicates."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Search stops at the matching entry."
+        }
+      ],
+      "pitfalls": [
+        "Forgetting that rename also has to enforce unique names in the directory."
+      ],
+      "verification": "Worst case vs necessary case: delete/open can succeed after one comparison; create/rename cannot succeed without comparing against all n entries."
+    },
+    "cse-2021-1-cs-16": {
+      "approach": "Euler's formula for a connected planar graph links vertices, edges and faces directly.",
+      "concepts": [
+        "Euler's formula",
+        "Planar graphs"
+      ],
+      "steps": [
+        {
+          "title": "Euler's formula",
+          "body": "For a connected planar graph, $V - E + F = 2$."
+        },
+        {
+          "title": "Substitute",
+          "body": "$8 - E + 5 = 2 \\Rightarrow E = 8 + 5 - 2 = 11$."
+        }
+      ],
+      "answer": {
+        "value": "11",
+        "number": 11,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Forgetting to count the outer (unbounded) face — the given 5 faces already include it."
+      ],
+      "verification": "Check: $8 - 11 + 5 = 2$ ✓; also $E = 11 \\le 3V - 6 = 18$, so such a planar graph can exist."
+    },
+    "cse-2021-1-cs-17": {
+      "approach": "Kruskal's view: take every 0.1 edge (they form no cycle), see how many components remain, and count the ways to join them with the cheapest available 0.9 edges.",
+      "concepts": [
+        "Minimum spanning tree",
+        "Kruskal's algorithm",
+        "Counting MSTs"
+      ],
+      "steps": [
+        {
+          "title": "Take all 0.1 edges",
+          "body": "Name the grid rows a b c / d e f / g h i. The seven 0.1 edges are a–b, b–c, d–e, h–i, d–g, e–h, f–i. They form no cycle, so every MST contains all of them.",
+          "scene": {
+            "edgeTones": {
+              "a>b": "success",
+              "b>c": "success",
+              "d>e": "success",
+              "h>i": "success",
+              "d>g": "success",
+              "e>h": "success",
+              "f>i": "success"
+            },
+            "caption": "All seven 0.1 edges are safe"
+          }
+        },
+        {
+          "title": "Components left",
+          "body": "Two components remain: $\\{a,b,c\\}$ (top row) and $\\{d,e,f,g,h,i\\}$ (5 edges on 6 vertices, already a tree). We need $8 - 7 = 1$ more edge, of weight 0.9, joining them.",
+          "scene": {
+            "tones": {
+              "a": "cat1",
+              "b": "cat1",
+              "c": "cat1",
+              "d": "cat2",
+              "e": "cat2",
+              "f": "cat2",
+              "g": "cat2",
+              "h": "cat2",
+              "i": "cat2"
+            },
+            "caption": "Top row vs the rest"
+          }
+        },
+        {
+          "title": "Count the choices",
+          "body": "The 0.9 edges e–f and g–h lie inside the bottom component (they would make a cycle). The only crossing edges are the three verticals a–d, b–e, c–f, each of weight 0.9. Any one of them completes an MST, giving **3** minimum spanning trees of weight $7(0.1) + 0.9 = 1.6$.",
+          "scene": {
+            "edgeTones": {
+              "a>b": "success",
+              "b>c": "success",
+              "d>e": "success",
+              "h>i": "success",
+              "d>g": "success",
+              "e>h": "success",
+              "f>i": "success",
+              "a>d": "warning",
+              "b>e": "warning",
+              "c>f": "warning",
+              "e>f": "muted",
+              "g>h": "muted"
+            },
+            "caption": "Pick exactly one of the 3 crossing 0.9 edges"
+          }
+        }
+      ],
+      "animation": {
+        "kind": "graph",
+        "directed": false,
+        "nodes": [
+          {
+            "id": "a",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "b",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "id": "c",
+            "x": 4,
+            "y": 0
+          },
+          {
+            "id": "d",
+            "x": 0,
+            "y": 1.3
+          },
+          {
+            "id": "e",
+            "x": 2,
+            "y": 1.3
+          },
+          {
+            "id": "f",
+            "x": 4,
+            "y": 1.3
+          },
+          {
+            "id": "g",
+            "x": 0,
+            "y": 2.6
+          },
+          {
+            "id": "h",
+            "x": 2,
+            "y": 2.6
+          },
+          {
+            "id": "i",
+            "x": 4,
+            "y": 2.6
+          }
+        ],
+        "edges": [
+          {
+            "from": "a",
+            "to": "b",
+            "w": 0.1
+          },
+          {
+            "from": "b",
+            "to": "c",
+            "w": 0.1
+          },
+          {
+            "from": "d",
+            "to": "e",
+            "w": 0.1
+          },
+          {
+            "from": "e",
+            "to": "f",
+            "w": 0.9
+          },
+          {
+            "from": "g",
+            "to": "h",
+            "w": 0.9
+          },
+          {
+            "from": "h",
+            "to": "i",
+            "w": 0.1
+          },
+          {
+            "from": "a",
+            "to": "d",
+            "w": 0.9
+          },
+          {
+            "from": "b",
+            "to": "e",
+            "w": 0.9
+          },
+          {
+            "from": "c",
+            "to": "f",
+            "w": 0.9
+          },
+          {
+            "from": "d",
+            "to": "g",
+            "w": 0.1
+          },
+          {
+            "from": "e",
+            "to": "h",
+            "w": 0.1
+          },
+          {
+            "from": "f",
+            "to": "i",
+            "w": 0.1
+          }
+        ],
+        "caption": "9 vertices: a spanning tree needs 8 edges"
+      },
+      "answer": {
+        "value": "3",
+        "number": 3,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Counting all 0.9 edges as candidates — e–f and g–h close cycles in the lower component."
+      ],
+      "verification": "Each candidate tree has 8 edges, no cycle, and weight 1.6; any spanning tree must use at least one top-to-middle vertical (all 0.9), so 1.6 is minimum and only these 3 trees achieve it."
+    },
+    "cse-2021-1-cs-18": {
+      "approach": "For an exponential variable the tail is $P(X > t) = e^{-\\lambda t}$ and the mean is $1/\\lambda$, so $P(X > E[X]) = e^{-1}$ whatever the parameter.",
+      "concepts": [
+        "Exponential distribution",
+        "Expectation",
+        "Tail probability"
+      ],
+      "steps": [
+        {
+          "title": "Mean",
+          "body": "With rate $\\lambda = 2$: $f(x) = 2e^{-2x}$ for $x \\ge 0$ and $E[X] = \\frac{1}{\\lambda} = \\frac{1}{2}$."
+        },
+        {
+          "title": "Tail probability",
+          "body": "$P(X > \\tfrac12) = \\int_{1/2}^{\\infty} 2e^{-2x}\\,dx = e^{-2 \\cdot \\frac12} = e^{-1} \\approx 0.3679 \\approx 0.37$."
+        }
+      ],
+      "answer": {
+        "value": "0.37",
+        "number": 0.37,
+        "matchesKey": true
+      },
+      "shortcut": "$P(X > E[X]) = e^{-\\lambda \\cdot (1/\\lambda)} = e^{-1}$ — no need to know $\\lambda$.",
+      "pitfalls": [
+        "Reading \"parameter 2\" as the mean changes $E[X]$ but not the answer — it is still $e^{-1}$."
+      ],
+      "verification": "$e \\approx 2.71828$, so $1/e \\approx 0.36788$, which rounds to 0.37 (key range 0.36–0.37)."
+    },
+    "cse-2021-1-cs-19": {
+      "approach": "The two fixed jobs already give the fastest and slowest computers a job; only the middle computer can end up empty, so count assignments of the other 4 jobs and subtract those that skip it.",
+      "concepts": [
+        "Counting functions",
+        "Complementary counting"
+      ],
+      "steps": [
+        {
+          "title": "Fix the forced jobs",
+          "body": "Toughest job → fastest computer, easiest job → slowest computer. These two computers are now non-empty. The remaining 4 jobs can go to any of the 3 computers: $3^4 = 81$ ways."
+        },
+        {
+          "title": "Remove bad cases",
+          "body": "The only way to violate \"every computer gets a job\" is for the middle computer to get none, i.e. all 4 jobs go to the fastest or slowest: $2^4 = 16$ ways."
+        },
+        {
+          "title": "Count",
+          "body": "Valid assignments = all assignments of the 4 free jobs − those leaving the middle computer empty: $81 - 16 = 65$."
+        }
+      ],
+      "answer": {
+        "value": "65",
+        "number": 65,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Treating jobs as identical or counting only how many jobs each computer gets (that gives a small number like 10)."
+      ],
+      "verification": "Direct count by how many of the 4 free jobs the middle computer gets: $\\binom41 2^3 + \\binom42 2^2 + \\binom43 2 + \\binom44 = 32 + 24 + 8 + 1 = 65$ ✓."
+    },
+    "cse-2021-1-cs-20": {
+      "approach": "The limit is $0/0$ and equals the derivative of $\\sqrt{2x+22}$ at $x=-3$ (since $\\sqrt{16}=4$); rationalising gives the same.",
+      "concepts": [
+        "Limits",
+        "Rationalisation",
+        "Derivative as a limit"
+      ],
+      "steps": [
+        {
+          "title": "Rationalise",
+          "body": "$\\dfrac{\\sqrt{2x+22}-4}{x+3} \\cdot \\dfrac{\\sqrt{2x+22}+4}{\\sqrt{2x+22}+4} = \\dfrac{2x+22-16}{(x+3)(\\sqrt{2x+22}+4)} = \\dfrac{2(x+3)}{(x+3)(\\sqrt{2x+22}+4)} = \\dfrac{2}{\\sqrt{2x+22}+4}$."
+        },
+        {
+          "title": "Substitute",
+          "body": "At $x=-3$: $\\sqrt{-6+22} = \\sqrt{16} = 4$, so the limit is $\\dfrac{2}{4+4} = \\dfrac14 = 0.25$."
+        }
+      ],
+      "answer": {
+        "value": "0.25",
+        "number": 0.25,
+        "matchesKey": true
+      },
+      "shortcut": "L'Hôpital: $\\frac{d}{dx}\\sqrt{2x+22} = \\frac{1}{\\sqrt{2x+22}} = \\frac14$ at $x=-3$.",
+      "verification": "Numerically at $x=-2.99$: $\\sqrt{16.02} - 4 \\approx 0.0025$, divided by $0.01$ gives $0.25$ ✓."
+    },
+    "cse-2021-1-cs-21": {
+      "approach": "Simulate both structures: the stack returns the most recent push (LIFO), the queue returns the oldest remaining element (FIFO).",
+      "concepts": [
+        "Stack (LIFO)",
+        "Queue (FIFO)"
+      ],
+      "steps": [
+        {
+          "title": "Stack",
+          "body": "push 54, push 52 → [54, 52]; pop removes 52 → [54]; push 55, push 62 → [54, 55, 62]; pop returns **s = 62**.",
+          "scene": {
+            "kind": "stack",
+            "items": [
+              "54",
+              "55"
+            ],
+            "popped": "62",
+            "caption": "s = pop() = 62"
+          }
+        },
+        {
+          "title": "Queue",
+          "body": "enqueue 21, 24 → [21, 24]; dequeue removes 21 → [24]; enqueue 28, 32 → [24, 28, 32]; dequeue returns **q = 24**.",
+          "scene": {
+            "kind": "queue",
+            "items": [
+              "28",
+              "32"
+            ],
+            "dequeued": "24",
+            "caption": "q = dequeue() = 24"
+          }
+        },
+        {
+          "title": "Sum",
+          "body": "$s + q = 62 + 24 = 86$."
+        }
+      ],
+      "animation": {
+        "kind": "stack",
+        "items": [
+          "54",
+          "52"
+        ],
+        "caption": "push(54); push(52)"
+      },
+      "answer": {
+        "value": "86",
+        "number": 86,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Taking q = 28 by forgetting that 24 is still at the front after the first dequeue."
+      ],
+      "verification": "Stack top before the last pop is the last pushed value 62; queue front after removing 21 is 24."
+    },
+    "cse-2021-1-cs-22": {
+      "approach": "Address = tag + index + offset; for direct mapping the index selects one of (cache size / block size) lines.",
+      "concepts": [
+        "Direct-mapped cache",
+        "Address breakdown"
+      ],
+      "steps": [
+        {
+          "title": "Offset and index",
+          "body": "Offset: $64 = 2^6$ bytes → 6 bits. Lines: $\\dfrac{32\\text{ KB}}{64\\text{ B}} = \\dfrac{2^{15}}{2^6} = 2^9$ → 9 index bits."
+        },
+        {
+          "title": "Tag",
+          "body": "Address is 32 bits, so tag $= 32 - 9 - 6 = 17$ bits."
+        }
+      ],
+      "answer": {
+        "value": "17",
+        "number": 17,
+        "matchesKey": true
+      },
+      "shortcut": "Tag $= \\log_2(\\text{memory}/\\text{cache}) = \\log_2(2^{32}/2^{15}) = 17$.",
+      "verification": "$17 + 9 + 6 = 32$ ✓."
+    },
+    "cse-2021-1-cs-23": {
+      "approach": "With uniform, independent attributes, estimate the selectivity of the OR with inclusion–exclusion: $P(X \\lor Y) = P(X) + P(Y) - P(X)P(Y)$.",
+      "concepts": [
+        "Selectivity estimation",
+        "Inclusion–exclusion",
+        "Independence"
+      ],
+      "steps": [
+        {
+          "title": "Individual selectivities",
+          "body": "$A \\in \\{6,\\dots,20\\}$: 15 values; $A > 10$ means $11..20$: 10 values, so $P(A>10) = \\frac{10}{15} = \\frac23$. $B \\in \\{1,\\dots,20\\}$: $P(B=18) = \\frac{1}{20}$."
+        },
+        {
+          "title": "Combine",
+          "body": "$P = \\frac23 + \\frac1{20} - \\frac23 \\cdot \\frac1{20} = \\frac{40}{60} + \\frac{3}{60} - \\frac{2}{60} = \\frac{41}{60}$."
+        },
+        {
+          "title": "Estimate",
+          "body": "$1200 \\times \\frac{41}{60} = 20 \\times 41 = 820$ tuples."
+        }
+      ],
+      "answer": {
+        "value": "820",
+        "number": 820,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Adding the two counts (800 + 60 = 860) and double-counting the 40 tuples satisfying both."
+      ],
+      "verification": "Complement: $P(\\text{neither}) = \\frac13 \\cdot \\frac{19}{20} = \\frac{19}{60}$, so $1200(1 - \\frac{19}{60}) = 1200 - 380 = 820$ ✓."
+    },
+    "cse-2021-1-cs-24": {
+      "approach": "Value $= (-1)^S \\times 1.F \\times 2^{E-127}$ for a normalised number.",
+      "concepts": [
+        "IEEE 754 single precision",
+        "Biased exponent"
+      ],
+      "steps": [
+        {
+          "title": "Fields",
+          "body": "$S=1$ → negative. $E = 10000001_2 = 129$, so the true exponent is $129 - 127 = 2$. Mantissa $1.1111_2 = 1 + \\frac12 + \\frac14 + \\frac18 + \\frac1{16} = 1.9375$."
+        },
+        {
+          "title": "Value",
+          "body": "$-1.9375 \\times 2^2 = -7.75$ (equivalently $-111.11_2 = -(4+2+1+0.5+0.25)$)."
+        }
+      ],
+      "answer": {
+        "value": "-7.75",
+        "number": -7.75,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Forgetting the hidden leading 1 (that gives −3.75)."
+      ],
+      "verification": "$7.75 = 111.11_2 = 1.1111_2 \\times 2^2$, exponent field $2+127 = 129 = 10000001_2$ ✓."
+    },
+    "cse-2021-1-cs-25": {
+      "approach": "With all arrivals at 0 and known bursts, non-preemptive Shortest Job First minimises average waiting time.",
+      "concepts": [
+        "SJF scheduling",
+        "Waiting time"
+      ],
+      "steps": [
+        {
+          "title": "Order by burst",
+          "body": "Run 10, then 16, then 20 ms.",
+          "scene": {
+            "upto": 46,
+            "cursor": 46,
+            "caption": "SJF order: 10, 16, 20"
+          }
+        },
+        {
+          "title": "Waiting times",
+          "body": "Waits are $0$, $10$, $10+16 = 26$. Average $= \\frac{0+10+26}{3} = \\frac{36}{3} = 12$ ms."
+        }
+      ],
+      "animation": {
+        "kind": "gantt",
+        "unit": "ms",
+        "lanes": [
+          {
+            "label": "CPU",
+            "bars": [
+              {
+                "start": 0,
+                "end": 10,
+                "label": "P3 (10)"
+              },
+              {
+                "start": 10,
+                "end": 26,
+                "label": "P1 (16)"
+              },
+              {
+                "start": 26,
+                "end": 46,
+                "label": "P2 (20)"
+              }
+            ]
+          }
+        ],
+        "upto": 0,
+        "cursor": 0
+      },
+      "answer": {
+        "value": "12",
+        "number": 12,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Using FCFS order 16, 20, 10: waits 0, 16, 36 → 17.33 ms, not the minimum."
+      ],
+      "verification": "Exchange argument: swapping any adjacent longer-before-shorter pair reduces total waiting, so ascending order is optimal."
+    },
+    "cse-2021-1-cs-26": {
+      "approach": "Check what type each production assigns: the rule E → ID always sets int, ignoring the declared type, so only programs that use int variables are type-checked correctly.",
+      "concepts": [
+        "Syntax-directed translation",
+        "Type checking",
+        "Symbol table"
+      ],
+      "steps": [
+        {
+          "title": "Spot the flaw",
+          "body": "`E → ID {set E.type := int}` never looks up the type recorded by the declaration. A variable declared `bool` is still treated as `int` in expressions."
+        },
+        {
+          "title": "Consequences",
+          "body": "For a bool variable `b`, `!b` would be rejected (E1.type is int, not bool), and `b + 1` would be wrongly accepted. So boolean declarations/expressions are mishandled and (A), (C) fail. If every variable is int, every type it assigns is right and `+` is checked correctly — (B)."
+        },
+        {
+          "title": "No infinite loop",
+          "body": "Actions are executed once per production during parsing/traversal; left recursion in E matters only for a top-down parser, not for the SDT actions themselves. (D) is false."
+        }
+      ],
+      "answer": {
+        "value": "B",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Fails for bool variables: E → ID types every identifier as int."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "For int declarations and int expressions every assigned type is correct."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "A bool identifier gets type int, so `!b` is rejected."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The actions are simple assignments/checks executed once per node."
+        }
+      ],
+      "verification": "Try `bool b; !b`: E → ID sets int, then `!` requires bool → spurious error, confirming bool checking is broken while int-only programs pass."
+    },
+    "cse-2021-1-cs-27": {
+      "approach": "A theta-join on age > age1 keeps an employee whenever at least one other employee is strictly younger; projecting empNo gives everyone except those with the minimum age.",
+      "concepts": [
+        "Theta join",
+        "Rename",
+        "Projection"
+      ],
+      "steps": [
+        {
+          "title": "What the join pairs",
+          "body": "$empAge \\bowtie_{age > age1} \\rho_{empNo1,age1}(empAge)$ pairs each employee $e$ with every employee $e'$ whose age is strictly less than $e$'s age."
+        },
+        {
+          "title": "Projection",
+          "body": "$\\Pi_{empNo}$ keeps $e$ iff at least one such $e'$ exists, i.e. $e$'s age is not the minimum. Employees with the minimum age have no partner and disappear."
+        }
+      ],
+      "answer": {
+        "value": "C",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Any non-minimum employee appears, not only the oldest."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "\"At least one\", not \"exactly one\", younger employee."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Exactly those having someone strictly younger, i.e. age not minimum."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Minimum-age employees are precisely the ones that never join."
+        }
+      ],
+      "verification": "Ages {20, 20, 30, 40}: output = employees aged 30 and 40 — all but the minimum-age ones."
+    },
+    "cse-2021-1-cs-28": {
+      "approach": "Read the T inputs from the circuit ($T_P = R$, $T_Q = P'$, $T_R = Q'$) and apply $Q^+ = Q \\oplus T$ on each clock pulse.",
+      "concepts": [
+        "T flip-flop",
+        "Synchronous counter",
+        "State table"
+      ],
+      "given": "| Flip-flop | T input |\n|---|---|\n| P | $R$ |\n| Q | $P'$ |\n| R | $Q'$ |",
+      "steps": [
+        {
+          "title": "From 000",
+          "body": "$T_P = R = 0$, $T_Q = P' = 1$, $T_R = Q' = 1$ → P stays 0, Q and R toggle: **011**.",
+          "scene": {
+            "reveal": 7,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "accent"
+              }
+            ],
+            "caption": "000 → 011"
+          }
+        },
+        {
+          "title": "From 011",
+          "body": "$T_P = R = 1$, $T_Q = P' = 1$, $T_R = Q' = 0$ → P toggles to 1, Q toggles to 0, R stays 1: **101**.",
+          "scene": {
+            "reveal": 14,
+            "hl": [
+              {
+                "r": 1,
+                "tone": "accent"
+              }
+            ],
+            "caption": "011 → 101"
+          }
+        },
+        {
+          "title": "From 101",
+          "body": "$T_P = R = 1$, $T_Q = P' = 0$, $T_R = Q' = 1$ → P toggles to 0, Q stays 0, R toggles to 0: **000**.",
+          "scene": {
+            "reveal": 21,
+            "hl": [
+              {
+                "r": 2,
+                "tone": "success"
+              }
+            ],
+            "caption": "101 → 000"
+          }
+        }
+      ],
+      "animation": {
+        "kind": "table",
+        "cols": [
+          "P",
+          "Q",
+          "R",
+          "T_P=R",
+          "T_Q=P'",
+          "T_R=Q'",
+          "Next PQR"
+        ],
+        "rows": [
+          [
+            "0",
+            "0",
+            "0",
+            "0",
+            "1",
+            "1",
+            "011"
+          ],
+          [
+            "0",
+            "1",
+            "1",
+            "1",
+            "1",
+            "0",
+            "101"
+          ],
+          [
+            "1",
+            "0",
+            "1",
+            "1",
+            "0",
+            "1",
+            "000"
+          ]
+        ],
+        "reveal": 0,
+        "mono": true
+      },
+      "answer": {
+        "value": "A",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Matches the state sequence 000 → 011 → 101 → 000."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "From 000 both Q and R toggle (T = 1), so the next state is 011, not 001."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "From 101, $T_Q = P' = 0$ keeps Q at 0, so it cannot reach 111."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Wrong first step, as in (B)."
+        }
+      ],
+      "verification": "The counter has the 3-cycle 000 → 011 → 101 → 000; each transition re-checked with $Q^+ = Q \\oplus T$."
+    },
+    "cse-2021-1-cs-29": {
+      "approach": "Number the codeword positions 12…1 from left to right as written; each check bit c_k sits at position k and gives even parity over the positions whose binary index contains k.",
+      "concepts": [
+        "Hamming code",
+        "Even parity",
+        "Check-bit positions"
+      ],
+      "given": "| Pos | 12 | 11 | 10 | 9 | 8 | 7 | 6 | 5 | 4 | 3 | 2 | 1 |\n|---|---|---|---|---|---|---|---|---|---|---|---|---|\n| Bit | $d_8$ | $d_7$ | $d_6$ | $d_5$ | $c_8$ | $d_4$ | $d_3$ | $d_2$ | $c_4$ | $d_1$ | $c_2$ | $c_1$ |\n| Value | 1 | 1 | 0 | $x$ | $y$ | 0 | 1 | 0 | 0 | 1 | 1 | 0 |",
+      "steps": [
+        {
+          "title": "Find x from c1",
+          "body": "$c_1$ covers positions 1, 3, 5, 7, 9, 11: $c_1 \\oplus d_1 \\oplus d_2 \\oplus d_4 \\oplus d_5 \\oplus d_7 = 0 \\oplus 1 \\oplus 0 \\oplus 0 \\oplus x \\oplus 1 = x$. Even parity needs this to be 0, so $x = 0$."
+        },
+        {
+          "title": "Check c2 and c4 (consistency)",
+          "body": "$c_2$ (2, 3, 6, 7, 10, 11): $1 \\oplus 1 \\oplus 1 \\oplus 0 \\oplus 0 \\oplus 1 = 0$ ✓. $c_4$ (4, 5, 6, 7, 12): $0 \\oplus 0 \\oplus 1 \\oplus 0 \\oplus 1 = 0$ ✓ — even parity confirmed."
+        },
+        {
+          "title": "Find y from c8",
+          "body": "$c_8$ covers 8, 9, 10, 11, 12: $y \\oplus x \\oplus 0 \\oplus 1 \\oplus 1 = y \\oplus x = 0$, so $y = x = 0$."
+        }
+      ],
+      "answer": {
+        "value": "A",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "c1 forces x = 0, then c8 forces y = 0."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "With x = 0, y = 1 makes the c8 group odd."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "x = 1 makes the c1 group odd."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "x = 1 already violates the c1 parity."
+        }
+      ],
+      "pitfalls": [
+        "Assuming odd parity — the given c2 and c4 only work with even parity."
+      ],
+      "verification": "With x = y = 0 all four parity groups (c1, c2, c4, c8) have an even number of 1s."
+    },
+    "cse-2021-1-cs-30": {
+      "approach": "For $T(n) = T(an) + T(bn) + cn$ with $a + b < 1$, the work per level shrinks geometrically, so the root's $\\Theta(n)$ dominates.",
+      "concepts": [
+        "Recursion tree",
+        "Geometric series",
+        "Asymptotic bounds"
+      ],
+      "steps": [
+        {
+          "title": "Work per level",
+          "body": "Level 0 does $7n$. Level 1 does $7(\\frac n2 + \\frac{2n}{5}) = 7n \\cdot \\frac{9}{10}$. Level $k$ does at most $7n(\\frac{9}{10})^k$."
+        },
+        {
+          "title": "Sum",
+          "body": "$T(n) \\le 7n \\sum_{k \\ge 0} (0.9)^k = 7n \\cdot \\frac{1}{1 - 0.9} = 70n$ (plus $O(n)$ leaves). Also $T(n) \\ge 7n$. Hence $T(n) = \\Theta(n)$."
+        }
+      ],
+      "answer": {
+        "value": "C",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Far too large: total work is at most 70n."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "n log n arises only when the fractions sum to exactly 1 (e.g. n/2 + n/2)."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Geometric decrease by 9/10 per level gives Θ(n)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Sub-linear is impossible: the root alone costs 7n."
+        }
+      ],
+      "verification": "Substitution: assume $T(m) \\le 70m$ for $m < n$; then $T(n) \\le 35n + 28n + 7n = 70n$ ✓."
+    },
+    "cse-2021-1-cs-31": {
+      "approach": "Only FIRST(S) and FOLLOW(T) are needed: cells ①② come from FIRST(Rf), cells ③④ are where T → ε goes, i.e. FOLLOW(T).",
+      "concepts": [
+        "LL(1) parsing table",
+        "FIRST set",
+        "FOLLOW set"
+      ],
+      "steps": [
+        {
+          "title": "Cells ① and ②",
+          "body": "R is nullable with $FIRST(R) = \\{c\\}$, so $FIRST(R\\,f) = \\{c, f\\}$. Hence $S \\to R\\,f$ goes in columns $c$ (①) and $f$ (②).",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "c": 2,
+                "tone": "success"
+              },
+              {
+                "r": 0,
+                "c": 4,
+                "tone": "success"
+              }
+            ],
+            "caption": "FIRST(Rf) = {c, f}"
+          }
+        },
+        {
+          "title": "FOLLOW(T)",
+          "body": "$S \\to d\\,a\\,T$: $FOLLOW(S) \\subseteq FOLLOW(T)$, and $FOLLOW(S) \\ni \\$$. $R \\to c\\,a\\,T\\,R$: $FIRST(R) = \\{c\\} \\subseteq FOLLOW(T)$, and since R is nullable $FOLLOW(R) = \\{f\\} \\subseteq FOLLOW(T)$. So $FOLLOW(T) = \\{\\$, c, f\\}$."
+        },
+        {
+          "title": "Cells ③ and ④",
+          "body": "$T \\to \\epsilon$ goes in every column of $FOLLOW(T)$: $c$ (③), $f$ (already given) and $\\$$ (④). So the combination is (A).",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "c": 2,
+                "tone": "success"
+              },
+              {
+                "r": 0,
+                "c": 4,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "c": 2,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "c": 5,
+                "tone": "success"
+              }
+            ],
+            "caption": "FOLLOW(T) = {\\$, c, f}"
+          }
+        }
+      ],
+      "animation": {
+        "kind": "table",
+        "cols": [
+          "a",
+          "b",
+          "c",
+          "d",
+          "f",
+          "$"
+        ],
+        "rowLabels": [
+          "S",
+          "T",
+          "R"
+        ],
+        "rows": [
+          [
+            "",
+            "",
+            "S→Rf",
+            "S→daT",
+            "S→Rf",
+            ""
+          ],
+          [
+            "T→aS",
+            "T→baT",
+            "T→ε",
+            "",
+            "T→ε",
+            "T→ε"
+          ],
+          [
+            "",
+            "",
+            "R→caTR",
+            "",
+            "R→ε",
+            ""
+          ]
+        ],
+        "mono": true
+      },
+      "answer": {
+        "value": "A",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "① ② from FIRST(Rf) = {c, f}; ③ ④ from FOLLOW(T) ∋ c, \\$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "① cannot be blank: c ∈ FIRST(R) ⊆ FIRST(Rf)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "② needs S → Rf (R nullable, so f ∈ FIRST(Rf)); ③ needs T → ε."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "① and ③, ④ are all non-blank."
+        }
+      ],
+      "verification": "Parse \"caf$\" (S ⇒ Rf ⇒ caTRf ⇒ caRf ⇒ caf): with S on c we need ①, and T on lookahead f/$ or c needs T → ε — consistent with (A)."
+    },
+    "cse-2021-1-cs-32": {
+      "approach": "Draw the precedence graph from conflicting pairs (same item, different transactions, at least one write); the schedule is conflict serializable iff the graph is acyclic.",
+      "concepts": [
+        "Conflict serializability",
+        "Precedence graph"
+      ],
+      "steps": [
+        {
+          "title": "S1 conflicts",
+          "body": "$r_1(y)$ before $w_2(y)$ → $T_1 \\to T_2$. $r_2(x)$ before $w_1(x)$ → $T_2 \\to T_1$. Cycle, so $S_1$ is **not** conflict serializable.",
+          "scene": {
+            "edgeTones": {
+              "T1>T2": "error",
+              "T2>T1": "error"
+            },
+            "caption": "S1: T1 → T2 and T2 → T1 (cycle)"
+          }
+        },
+        {
+          "title": "S2 conflicts",
+          "body": "$w_2(y)$ before $r_1(y)$ → $T_2 \\to T_1$. $r_2(x)$ before $w_1(x)$ → $T_2 \\to T_1$. (No $T_1 \\to T_2$ edge: $r_1(x)$ precedes only a read $r_2(x)$.) Acyclic, so $S_2$ is conflict serializable, equivalent to $T_2\\,T_1$.",
+          "scene": {
+            "kind": "graph",
+            "directed": true,
+            "nodes": [
+              {
+                "id": "T1",
+                "x": 0,
+                "y": 0
+              },
+              {
+                "id": "T2",
+                "x": 3,
+                "y": 0
+              }
+            ],
+            "edges": [
+              {
+                "from": "T2",
+                "to": "T1"
+              }
+            ],
+            "edgeTones": {
+              "T2>T1": "success"
+            },
+            "caption": "S2: only T2 → T1 (acyclic)"
+          }
+        }
+      ],
+      "animation": {
+        "kind": "graph",
+        "directed": true,
+        "nodes": [
+          {
+            "id": "T1",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "T2",
+            "x": 3,
+            "y": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "T1",
+            "to": "T2"
+          },
+          {
+            "from": "T2",
+            "to": "T1"
+          }
+        ],
+        "caption": "S1 precedence graph"
+      },
+      "answer": {
+        "value": "B",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Reversed: S1 has a cycle, S2 does not."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "S1 has the cycle T1 ⇄ T2; S2 has only T2 → T1."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "S1 is not conflict serializable."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "S2 is conflict serializable (≡ T2 T1)."
+        }
+      ],
+      "verification": "Serial T2 T1 keeps every conflicting pair of S2 in the same order: w2(y) < r1(y) and r2(x) < w1(x) ✓."
+    },
+    "cse-2021-1-cs-33": {
+      "approach": "Join the fragments step by step; each join is lossless when the common attributes are a key (via the FDs) of one side. A fragment sharing no attributes with the rest makes the decomposition lossy.",
+      "concepts": [
+        "Lossless join",
+        "Attribute closure",
+        "Decomposition"
+      ],
+      "steps": [
+        {
+          "title": "D1: chain of lossless joins",
+          "body": "$(Q,Y) \\bowtie (Y,Z,W)$: common $Y$, $Y \\to ZW$ → lossless, gives $QYZW$. Join with $(P,Q,S,T)$: common $Q$, $Q \\to Y \\to ZW$, so $Q$ is a key of $QYZW$ → $PQSTYZW$. Join with $(P,T,X)$: common $PT$, and $P \\to X$ gives $PT \\to PTX$ → lossless, giving all of $R$."
+        },
+        {
+          "title": "D2: isolated fragment",
+          "body": "$(T,X)$ shares only $T$ or $X$ with nothing: the other fragments $PQS, QY, YZW$ contain neither $T$ nor $X$. Joining with no common attribute is a Cartesian product, so spurious tuples appear — $D_2$ is lossy."
+        }
+      ],
+      "answer": {
+        "value": "A",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "D1 joins losslessly on Y, Q, PT; D2 has the disconnected fragment (T, X)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Reversed."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "D2 is lossy: (T, X) shares no attributes with the others."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "D1 is lossless."
+        }
+      ],
+      "verification": "Chase test for D1: the row of (P,Q,S,T) becomes all-distinguished after applying Q → Y, Y → ZW and P → X ✓."
+    },
+    "cse-2021-1-cs-34": {
+      "approach": "By Lagrange, a proper non-trivial subgroup of a group of order 6 has order 2 or 3 — prime, hence cyclic; G itself can be the non-abelian S3.",
+      "concepts": [
+        "Lagrange's theorem",
+        "Cyclic groups",
+        "Symmetric group S3"
+      ],
+      "steps": [
+        {
+          "title": "Order of H",
+          "body": "$|H|$ divides 6 and $1 < |H| < 6$, so $|H| \\in \\{2, 3\\}$. Every group of prime order is cyclic (any non-identity element generates it). So $H$ is always cyclic."
+        },
+        {
+          "title": "G need not be cyclic",
+          "body": "$S_3$ has order 6 but no element of order 6 (its elements have orders 1, 2, 3), so it is not cyclic. Hence $G$ may not be cyclic."
+        }
+      ],
+      "answer": {
+        "value": "B",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "G = S3 is not cyclic."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "H has prime order (2 or 3) so is cyclic; G can be S3."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "G is not always cyclic, and H always is."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "H is always cyclic."
+        }
+      ],
+      "verification": "Subgroups of S3: three of order 2 and one of order 3 (A3), all cyclic; S3 itself is not."
+    }
+  }
+}
