@@ -1,0 +1,1404 @@
+{
+  "paper": "da-2025",
+  "version": 2,
+  "solutions": {
+    "da-2025-da-4": {
+      "approach": "Recognise $f(x)=\\frac{e^x-e^{-x}}{2}=\\sinh x$. Differentiating twice returns $f$ itself, so every even-order derivative equals $f$ and $f^{(10)}(0)=f(0)=0$ — no series expansion needed.",
+      "concepts": [
+        "Hyperbolic functions",
+        "Higher-order derivatives",
+        "Odd functions and Maclaurin series"
+      ],
+      "steps": [
+        {
+          "title": "First derivative",
+          "body": "Using $\\frac{d}{dx}e^{x}=e^{x}$ and $\\frac{d}{dx}e^{-x}=-e^{-x}$:\n$$f'(x)=\\frac{e^{x}-(-e^{-x})}{2}=\\frac{e^{x}+e^{-x}}{2}=\\cosh x.$$",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Second derivative brings back f",
+          "body": "$$f''(x)=\\frac{e^{x}+(-e^{-x})}{2}=\\frac{e^{x}-e^{-x}}{2}=f(x).$$\nSo the derivatives repeat with period 2: $f,\\ f',\\ f,\\ f',\\dots$, i.e. $f^{(2m)}=f$ and $f^{(2m+1)}=f'$.",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "Evaluate the 10th derivative at 0",
+          "body": "$10=2\\times5$ is even, so $f^{(10)}(x)=f(x)$ and\n$$f^{(10)}(0)=\\frac{e^{0}-e^{0}}{2}=\\frac{1-1}{2}=0.$$\nAnswer: **(A)**.",
+          "scene": {
+            "reveal": 5
+          }
+        }
+      ],
+      "answer": {
+        "value": "$f^{(10)}(0)=$ **0** — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Even-order derivatives of $\\sinh x$ equal $\\sinh x$, and $\\sinh 0=0$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$1=\\cosh 0$ is the value of every **odd**-order derivative at 0 (e.g. $f^{(9)}(0)$ or $f^{(11)}(0)$), not the 10th."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Confuses the derivative with a Maclaurin coefficient: $\\frac{1}{10!}$ is the $x^{10}$ coefficient of $e^{x}$; for $f$ that coefficient is $\\frac{f^{(10)}(0)}{10!}=0$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Same coefficient confusion, plus adding instead of subtracting the two exponentials' contributions; the $\\frac{1}{10!}$ terms from $e^{x}$ and $e^{-x}$ cancel in $f$."
+        }
+      ],
+      "shortcut": "$f$ is an **odd** function ($f(-x)=-f(x)$), so its Maclaurin series has only odd powers; every even-order derivative at 0 is 0.",
+      "pitfalls": [
+        "Thinking the 10th derivative of $e^{-x}$ is $-e^{-x}$: $(−1)^{10}=+1$, so it is $+e^{-x}$ and the two terms cancel at 0.",
+        "Reporting a Taylor coefficient ($\\frac{1}{10!}$-type) instead of the derivative itself."
+      ],
+      "verification": "Directly: $\\frac{d^{10}}{dx^{10}}e^{-x}=(-1)^{10}e^{-x}=e^{-x}$, so $f^{(10)}(x)=\\frac{e^{x}-e^{-x}}{2}$ and $f^{(10)}(0)=0$. Series check: $\\sinh x=x+\\frac{x^3}{3!}+\\frac{x^5}{5!}+\\cdots$ has no $x^{10}$ term.",
+      "animation": {
+        "kind": "equation",
+        "title": "Derivatives of sinh x",
+        "lines": [
+          {
+            "tex": "f(x)=\\tfrac{e^{x}-e^{-x}}{2}=\\sinh x"
+          },
+          {
+            "tex": "f'(x)=\\tfrac{e^{x}+e^{-x}}{2}=\\cosh x"
+          },
+          {
+            "tex": "f''(x)=\\tfrac{e^{x}-e^{-x}}{2}=f(x)",
+            "note": "period 2"
+          },
+          {
+            "tex": "f^{(10)}=f^{(2\\cdot5)}=f"
+          },
+          {
+            "tex": "f^{(10)}(0)=\\tfrac{1-1}{2}=0",
+            "tone": "success"
+          }
+        ],
+        "reveal": 1
+      }
+    },
+    "da-2025-da-5": {
+      "approach": "Write the four-row truth table of all four statements and compare columns: two formulas are equivalent exactly when their columns agree on every row. This also exposes the row where each wrong pair differs.",
+      "concepts": [
+        "Truth tables",
+        "Material implication",
+        "Logical equivalence"
+      ],
+      "given": "$S_1: p\\to q,\\quad S_2: \\neg p\\wedge q,\\quad S_3: \\neg p\\vee q,\\quad S_4: \\neg p\\vee\\neg q$",
+      "steps": [
+        {
+          "title": "Truth table of all four statements",
+          "body": "$p\\to q$ is false only when $p=T, q=F$. $\\neg p\\wedge q$ is true only when $p=F,q=T$. $\\neg p\\vee q$ is false only when $\\neg p=F$ and $q=F$, i.e. $p=T,q=F$. $\\neg p\\vee\\neg q=\\neg(p\\wedge q)$ is false only when $p=q=T$.\n\n| $p$ | $q$ | $S_1$ | $S_2$ | $S_3$ | $S_4$ |\n|---|---|---|---|---|---|\n| T | T | T | F | T | F |\n| T | F | F | F | F | T |\n| F | T | T | T | T | T |\n| F | F | T | F | T | T |",
+          "scene": {
+            "reveal": 24
+          }
+        },
+        {
+          "title": "S1 and S3 have identical columns",
+          "body": "Column $S_1$ = (T, F, T, T) and column $S_3$ = (T, F, T, T): they agree on all 4 rows, so $S_1\\equiv S_3$ — the standard identity $p\\to q\\equiv\\neg p\\vee q$.",
+          "scene": {
+            "hl": [
+              {
+                "c": 2,
+                "tone": "success"
+              },
+              {
+                "c": 4,
+                "tone": "success"
+              }
+            ],
+            "caption": "S1 ≡ S3"
+          }
+        },
+        {
+          "title": "Every other pair differs somewhere",
+          "body": "- $S_2$ vs $S_3$: row $p=T,q=T$ gives F vs T.\n- $S_2$ vs $S_4$: row $p=T,q=F$ gives F vs T.\n- $S_1$ vs $S_4$: row $p=T,q=T$ gives T vs F.\n\nOnly option **(A)** is correct.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "error"
+              },
+              {
+                "r": 1,
+                "tone": "error"
+              }
+            ],
+            "caption": "Rows that break the other pairs"
+          }
+        }
+      ],
+      "answer": {
+        "value": "$S_1\\equiv S_3$ — option **(A)**",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$p\\to q\\equiv\\neg p\\vee q$: both are false only at $p=T,q=F$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "At $p=q=T$: $S_2=F$ but $S_3=T$. $S_2$ is true in just one row, $S_3$ in three."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "At $p=T,q=F$: $S_2=F$ but $S_4=T$. (They agree only at $p=F,q=T$.)"
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "At $p=q=T$: $S_1=T$ but $S_4=F$. $S_4=\\neg(p\\wedge q)$ is the NAND, not the implication."
+        }
+      ],
+      "shortcut": "Memorise $p\\to q\\equiv\\neg p\\vee q$; spot it immediately in option (A).",
+      "pitfalls": [
+        "Confusing $\\neg p\\vee q$ with $\\neg p\\wedge q$ (one connective changes everything).",
+        "Treating $\\neg p\\vee\\neg q$ as the implication; it is $\\neg(p\\wedge q)$ by De Morgan."
+      ],
+      "verification": "Algebraically: $\\neg(p\\to q)\\equiv p\\wedge\\neg q$, and by De Morgan $\\neg(\\neg p\\vee q)\\equiv p\\wedge\\neg q$ too, so the negations coincide and hence $S_1\\equiv S_3$.",
+      "animation": {
+        "kind": "table",
+        "title": "Truth table",
+        "cols": [
+          "p",
+          "q",
+          "S1: p→q",
+          "S2: ¬p∧q",
+          "S3: ¬p∨q",
+          "S4: ¬p∨¬q"
+        ],
+        "rows": [
+          [
+            "T",
+            "T",
+            "T",
+            "F",
+            "T",
+            "F"
+          ],
+          [
+            "T",
+            "F",
+            "F",
+            "F",
+            "F",
+            "T"
+          ],
+          [
+            "F",
+            "T",
+            "T",
+            "T",
+            "T",
+            "T"
+          ],
+          [
+            "F",
+            "F",
+            "T",
+            "F",
+            "T",
+            "T"
+          ]
+        ],
+        "reveal": 8,
+        "mono": true
+      }
+    },
+    "da-2025-da-6": {
+      "approach": "A dependency that is not preserved has its attributes split across different decomposed relations, so no single relation can check it. The only way to test it is to recombine the relations — a join — on every insert/update.",
+      "concepts": [
+        "Lossless decomposition",
+        "Dependency preservation",
+        "Natural join"
+      ],
+      "steps": [
+        {
+          "title": "What dependency preservation buys",
+          "body": "A decomposition of $R$ into $R_1,\\dots,R_k$ is dependency-preserving if $(F_1\\cup\\dots\\cup F_k)^+=F^+$, where $F_i$ is the set of FDs of $F^+$ that mention only attributes of $R_i$. Then each FD can be enforced **locally**, inside one relation, with no extra work."
+        },
+        {
+          "title": "What goes wrong without it",
+          "body": "Example: $R(A,B,C)$ with $F=\\{AB\\to C,\\ C\\to B\\}$ decomposed (losslessly, into BCNF) as $R_1(A,C)$, $R_2(B,C)$. The FD $AB\\to C$ mentions $A$ (only in $R_1$) and $B$ (only in $R_2$), so it is not implied by the local FDs ($\\{C\\to B\\}$).\n\nTo verify $AB\\to C$ after an update we must form $R_1\\bowtie R_2$ and check it on the result."
+        },
+        {
+          "title": "So joins are executed more often",
+          "body": "Every modification that might violate a non-preserved FD forces a reconstruction of the original relation (or the relevant part of it) by **joining** the decomposed relations. Hence the operator executed more frequently is **Join** — option **(C)**."
+        }
+      ],
+      "answer": {
+        "value": "**Join** — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Selection filters rows of one relation; it cannot bring together attributes that live in different relations."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Projection is what *creates* the decomposition ($R_i=\\pi_{R_i}(R)$); checking a lost FD needs the opposite operation."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "The lost FD spans several relations, so they must be joined to test it."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Union combines tuples of union-compatible relations; decomposed relations have different schemas, so union does not reconstruct the cross-relation FD."
+        }
+      ],
+      "shortcut": "Not dependency-preserving ⇒ some FD spans relations ⇒ checking it needs a join.",
+      "pitfalls": [
+        "Mixing up lossless-join (correct reconstruction) with dependency preservation (cheap FD checking): the question is about the latter.",
+        "Choosing projection because decomposition is done by projection."
+      ],
+      "verification": "In the example, a new tuple in $R_1(a_1,c_1)$ and $R_2(b_1,c_1)$ can create a second $C$-value for the pair $(a_1,b_1)$ only visible in $R_1\\bowtie R_2$ — confirming the join is required."
+    },
+    "da-2025-da-7": {
+      "approach": "Evaluate the expression inside-out, describing in words the set of tuples each sub-expression produces; the natural joins connect `Make`→`Car` on `model` and `Car`→`Own` on `serial`.",
+      "concepts": [
+        "Relational algebra",
+        "Selection and projection",
+        "Natural join on common attributes"
+      ],
+      "steps": [
+        {
+          "title": "Innermost: models made by ABC",
+          "body": "$\\sigma_{\\text{maker}=\\text{“ABC”}}(\\text{Make})$ keeps the `Make` tuples whose maker is ABC, i.e. the **models made by ABC**.",
+          "scene": {
+            "root": {
+              "label": "π owner",
+              "children": [
+                {
+                  "label": "Own"
+                },
+                {
+                  "label": "⋈",
+                  "id": "j1",
+                  "children": [
+                    {
+                      "label": "σ color='red'",
+                      "children": [
+                        {
+                          "label": "⋈",
+                          "id": "j2",
+                          "children": [
+                            {
+                              "label": "Car"
+                            },
+                            {
+                              "label": "σ maker='ABC'",
+                              "tone": "accent",
+                              "children": [
+                                {
+                                  "label": "Make",
+                                  "tone": "info"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Join with Car on model",
+          "body": "`Car` and `Make` share only the attribute `model`, so $\\text{Car}\\bowtie(\\dots)$ pairs every car with its maker when that maker is ABC: the result is **all cars made by ABC** (schema: model, year, serial, color, maker).",
+          "scene": {
+            "root": {
+              "label": "π owner",
+              "children": [
+                {
+                  "label": "Own"
+                },
+                {
+                  "label": "⋈",
+                  "id": "j1",
+                  "children": [
+                    {
+                      "label": "σ color='red'",
+                      "children": [
+                        {
+                          "label": "⋈",
+                          "id": "j2",
+                          "tone": "accent",
+                          "children": [
+                            {
+                              "label": "Car",
+                              "tone": "info"
+                            },
+                            {
+                              "label": "σ maker='ABC'",
+                              "tone": "info",
+                              "children": [
+                                {
+                                  "label": "Make",
+                                  "tone": "info"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Keep only red cars",
+          "body": "$\\sigma_{\\text{color}=\\text{“red”}}$ then leaves **red cars made by ABC** — both conditions hold for the *same* car.",
+          "scene": {
+            "root": {
+              "label": "π owner",
+              "children": [
+                {
+                  "label": "Own"
+                },
+                {
+                  "label": "⋈",
+                  "id": "j1",
+                  "children": [
+                    {
+                      "label": "σ color='red'",
+                      "tone": "accent",
+                      "children": [
+                        {
+                          "label": "⋈",
+                          "id": "j2",
+                          "tone": "info",
+                          "children": [
+                            {
+                              "label": "Car",
+                              "tone": "info"
+                            },
+                            {
+                              "label": "σ maker='ABC'",
+                              "tone": "info",
+                              "children": [
+                                {
+                                  "label": "Make",
+                                  "tone": "info"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Join with Own on serial, project owner",
+          "body": "`Own(owner, serial)` shares only `serial` with the intermediate result, so the join attaches each red ABC car's owner(s). $\\pi_{\\text{owner}}$ keeps just the owner names (duplicates removed).\n\nResult: **all owners of a red car made by ABC** — option **(C)**.",
+          "scene": {
+            "root": {
+              "label": "π owner",
+              "tone": "success",
+              "children": [
+                {
+                  "label": "Own",
+                  "tone": "info"
+                },
+                {
+                  "label": "⋈",
+                  "id": "j1",
+                  "tone": "success",
+                  "children": [
+                    {
+                      "label": "σ color='red'",
+                      "tone": "info",
+                      "children": [
+                        {
+                          "label": "⋈",
+                          "id": "j2",
+                          "tone": "info",
+                          "children": [
+                            {
+                              "label": "Car",
+                              "tone": "info"
+                            },
+                            {
+                              "label": "σ maker='ABC'",
+                              "tone": "info",
+                              "children": [
+                                {
+                                  "label": "Make",
+                                  "tone": "info"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "caption": "Owners of at least one red ABC car"
+          }
+        }
+      ],
+      "answer": {
+        "value": "All owners of a red car made by ABC — option **(C)**",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "An \"or\" of conditions would need a union ($\\cup$) of separate selections; here the selections are composed, so both conditions apply to the same car."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Nothing counts cars per owner; an owner with exactly one red ABC car is in the result. Testing \"more than one car\" would need a self-join or aggregation."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Selections on maker and colour apply to the same car, then the owners of those cars are projected."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The final projection is on `owner`, so the output is people, not cars (serials)."
+        }
+      ],
+      "shortcut": "Composed selections = AND on the same tuple; the outermost projection tells you the output (owners).",
+      "pitfalls": [
+        "Reading the nested selections as alternatives (OR) instead of conjunctions.",
+        "Forgetting that the outer $\\pi_{\\text{owner}}$ makes the answer a set of owners, not cars."
+      ],
+      "verification": "Toy check: Make={(ABC,M1),(XYZ,M2)}, Car={(M1,2020,s1,red),(M2,2021,s2,red),(M1,2022,s3,blue)}, Own={(Ann,s1),(Bob,s2),(Cy,s3)}. Only s1 is red and by ABC, so the result is {Ann} — Bob (red, not ABC) and Cy (ABC, not red) are excluded, matching (C) and ruling out (A).",
+      "animation": {
+        "kind": "tree",
+        "title": "Expression tree, evaluated bottom-up",
+        "root": {
+          "label": "π owner",
+          "children": [
+            {
+              "label": "Own"
+            },
+            {
+              "label": "⋈",
+              "id": "j1",
+              "children": [
+                {
+                  "label": "σ color='red'",
+                  "children": [
+                    {
+                      "label": "⋈",
+                      "id": "j2",
+                      "children": [
+                        {
+                          "label": "Car"
+                        },
+                        {
+                          "label": "σ maker='ABC'",
+                          "children": [
+                            {
+                              "label": "Make"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "da-2025-da-8": {
+      "approach": "Compute each key's home slot $h(x)=3x \\bmod 10$, insert in the given order, and on a collision step to the next slot $(i+1)\\bmod 10$ until a free one is found. Only 14 and 15 collide.",
+      "concepts": [
+        "Hashing",
+        "Linear probing",
+        "Modular arithmetic"
+      ],
+      "given": "| key | 1 | 4 | 5 | 6 | 14 | 15 |\n|---|---|---|---|---|---|---|\n| $3x$ | 3 | 12 | 15 | 18 | 42 | 45 |\n| $h(x)=3x \\bmod 10$ | 3 | 2 | 5 | 8 | 2 | 5 |",
+      "steps": [
+        {
+          "title": "Home slots",
+          "body": "$h(1)=3$, $h(4)=12\\bmod10=2$, $h(5)=15\\bmod10=5$, $h(6)=18\\bmod10=8$, $h(14)=42\\bmod10=2$, $h(15)=45\\bmod10=5$.",
+          "scene": {
+            "cells": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ],
+            "hl": [],
+            "pointers": [],
+            "caption": "Empty table, size 10"
+          }
+        },
+        {
+          "title": "Insert 1, 4, 5, 6 — no collisions",
+          "body": "Slots 3, 2, 5, 8 are all distinct and empty, so: 1→3, 4→2, 5→5, 6→8.",
+          "scene": {
+            "cells": [
+              null,
+              null,
+              4,
+              1,
+              null,
+              5,
+              null,
+              null,
+              6,
+              null
+            ],
+            "hl": [
+              {
+                "at": 2,
+                "tone": "info"
+              },
+              {
+                "at": 3,
+                "tone": "info"
+              },
+              {
+                "at": 5,
+                "tone": "info"
+              },
+              {
+                "at": 8,
+                "tone": "info"
+              }
+            ],
+            "pointers": []
+          }
+        },
+        {
+          "title": "Insert 14: probe 2 → 3 → 4",
+          "body": "Home slot 2 holds 4 (collision); next slot 3 holds 1 (collision); slot 4 is free. **14 → index 4** (2 probes after the home slot).",
+          "scene": {
+            "cells": [
+              null,
+              null,
+              4,
+              1,
+              14,
+              5,
+              null,
+              null,
+              6,
+              null
+            ],
+            "hl": [
+              {
+                "at": 2,
+                "tone": "error"
+              },
+              {
+                "at": 3,
+                "tone": "error"
+              },
+              {
+                "at": 4,
+                "tone": "success"
+              }
+            ],
+            "pointers": [
+              {
+                "name": "h(14)",
+                "at": 2
+              }
+            ]
+          }
+        },
+        {
+          "title": "Insert 15: probe 5 → 6",
+          "body": "Home slot 5 holds 5 (collision); slot 6 is free. **15 → index 6**.\n\nSo 14 and 15 are at indices **4 and 6** — option **(D)**.",
+          "scene": {
+            "cells": [
+              null,
+              null,
+              4,
+              1,
+              14,
+              5,
+              15,
+              null,
+              6,
+              null
+            ],
+            "hl": [
+              {
+                "at": 5,
+                "tone": "error"
+              },
+              {
+                "at": 4,
+                "tone": "success"
+              },
+              {
+                "at": 6,
+                "tone": "success"
+              }
+            ],
+            "pointers": [
+              {
+                "name": "h(15)",
+                "at": 5
+              }
+            ],
+            "caption": "14 at index 4, 15 at index 6"
+          }
+        }
+      ],
+      "answer": {
+        "value": "Indices **4 and 6** — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "2 and 5 are only the *home* slots $h(14)$ and $h(15)$; both are already occupied (by 4 and 5)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "6 is right for 15, but 14 cannot stay at its occupied home slot 2."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "4 is right for 14, but slot 5 already holds key 5, so 15 moves on to 6."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "14 probes 2 (full), 3 (full), 4 (free); 15 probes 5 (full), 6 (free)."
+        }
+      ],
+      "shortcut": "Only colliding keys matter: 14 lands in the first free slot from 2 (2, 3 taken → 4); 15 in the first free slot from 5 (5 taken → 6).",
+      "pitfalls": [
+        "Using $h(x)=x\\bmod10$ (forgetting the factor 3): that would put 14 at 4 and 15 at 5 directly.",
+        "Inserting out of order — 14 must be placed before 15, and the earlier keys 1 and 4 block slots 2–3."
+      ],
+      "verification": "Final table: index 2→4, 3→1, 4→14, 5→5, 6→15, 8→6 — six keys in six distinct slots, each reached by scanning forward from its home slot over occupied cells only.",
+      "animation": {
+        "kind": "array",
+        "title": "Hash table (linear probing)",
+        "label": "T",
+        "showIndex": true,
+        "cells": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "da-2025-da-9": {
+      "approach": "The median $m$ satisfies $F_X(m)=\\tfrac12$. Since $3$ lies in the middle branch, solve $\\frac{3-t}{4-t}=\\frac12$ for $t$. (Equivalently $X\\sim U(t,4)$, whose median is the midpoint.)",
+      "concepts": [
+        "CDF",
+        "Median of a continuous distribution",
+        "Uniform distribution"
+      ],
+      "steps": [
+        {
+          "title": "Set the CDF at the median to 1/2",
+          "body": "For a continuous random variable the median $m$ satisfies $F_X(m)=\\frac12$. With $m=3$ in the branch $t\\le x\\le4$:\n$$\\frac{3-t}{4-t}=\\frac12.$$",
+          "scene": {
+            "reveal": 1
+          }
+        },
+        {
+          "title": "Solve for t",
+          "body": "Cross-multiplying: $2(3-t)=4-t\\ \\Rightarrow\\ 6-2t=4-t\\ \\Rightarrow\\ 6-4=2t-t\\ \\Rightarrow\\ t=2$.",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "Check the branch and the CDF",
+          "body": "With $t=2$: $2<3<4$, so $x=3$ is indeed in the middle branch, and $F_X(3)=\\frac{3-2}{4-2}=\\frac12$ ✓. The CDF rises linearly from $0$ at $x=2$ to $1$ at $x=4$ (continuous at both ends: $\\frac{t-t}{4-t}=0$, $\\frac{4-t}{4-t}=1$). Answer **(A)**.",
+          "scene": {
+            "caption": "X ~ U(2, 4): median 3"
+          }
+        }
+      ],
+      "answer": {
+        "value": "$t=$ **2** — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$F_X(3)=\\frac{3-2}{4-2}=\\frac12$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$t=1$: $F_X(3)=\\frac{2}{3}\\ne\\frac12$ (median would be $2.5$)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$t=-1$: $F_X(3)=\\frac{4}{5}\\ne\\frac12$ (median would be $1.5$)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$t=0$: $F_X(3)=\\frac34\\ne\\frac12$ (median would be $2$)."
+        }
+      ],
+      "shortcut": "The CDF is linear from $t$ to $4$, so $X\\sim U(t,4)$ and its median is $\\frac{t+4}{2}=3\\Rightarrow t=2$.",
+      "pitfalls": [
+        "Setting $F_X(3)=3$ or using the mean formula of some other distribution.",
+        "Forgetting to check that $x=3$ falls in the middle branch for the found $t$."
+      ],
+      "verification": "With $t=2$, $X\\sim U(2,4)$: median $=\\frac{2+4}{2}=3$ ✓.",
+      "animation": {
+        "kind": "equation",
+        "title": "Median condition",
+        "lines": [
+          {
+            "tex": "F_X(3)=\\frac{3-t}{4-t}=\\frac12",
+            "note": "median"
+          },
+          {
+            "tex": "6-2t=4-t"
+          },
+          {
+            "tex": "t=2",
+            "tone": "success"
+          }
+        ],
+        "reveal": 1
+      }
+    },
+    "da-2025-da-10": {
+      "approach": "Use $E[Z]=0$ and $E[Z^2]=\\operatorname{Var}(Z)=1$. Then $E[X]=b$ and $X-E[X]=aZ$, so the second condition gives $a$ directly and the third is a consistency check.",
+      "concepts": [
+        "Linearity of expectation",
+        "Standard normal moments",
+        "Covariance"
+      ],
+      "given": "$X=aZ+b$, $Z\\sim N(0,1)$; $E[X]=1$, $E[(X-E[X])Z]=-2$, $E[(X-E[X])^2]=4$.",
+      "steps": [
+        {
+          "title": "Mean gives b",
+          "body": "$E[X]=aE[Z]+b=a\\cdot0+b=b$, so $b=1$.",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Covariance condition gives a",
+          "body": "$X-E[X]=aZ+b-b=aZ$. Hence\n$$E[(X-E[X])Z]=E[aZ\\cdot Z]=aE[Z^2]=a\\cdot1=a=-2.$$",
+          "scene": {
+            "reveal": 4
+          }
+        },
+        {
+          "title": "Check the variance",
+          "body": "$E[(X-E[X])^2]=E[a^2Z^2]=a^2E[Z^2]=(-2)^2\\cdot1=4$ ✓. So $a=-2,\\ b=1$ — option **(A)**.",
+          "scene": {
+            "reveal": 6
+          }
+        }
+      ],
+      "answer": {
+        "value": "$a=-2,\\ b=1$ — option **(A)**",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$b=E[X]=1$ and $a=\\operatorname{Cov}(X,Z)=-2$; $a^2=4$ matches the variance."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$a=2$ gives $E[(X-E[X])Z]=+2$ and $b=-1$ gives $E[X]=-1$; both conditions fail (only the variance, which ignores the sign of $a$, matches)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$a=-2$ is right but $b=-1$ makes $E[X]=-1\\ne1$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$a=1$ gives covariance $1\\ne-2$ and variance $1\\ne4$."
+        }
+      ],
+      "shortcut": "For $X=aZ+b$ with standard normal $Z$: $b=E[X]$, $a=\\operatorname{Cov}(X,Z)$ — read both off the data.",
+      "pitfalls": [
+        "Using only the variance condition: $a^2=4$ allows $a=\\pm2$; the sign comes from the covariance condition.",
+        "Forgetting $E[Z]=0$, which makes $b$ equal to the mean."
+      ],
+      "verification": "With $a=-2$, $b=1$: $X=1-2Z\\sim N(1,4)$, so $E[X]=1$, $\\operatorname{Var}(X)=4$, $\\operatorname{Cov}(X,Z)=-2\\operatorname{Var}(Z)=-2$ ✓.",
+      "animation": {
+        "kind": "equation",
+        "title": "Reading off a and b",
+        "lines": [
+          {
+            "tex": "E[X]=aE[Z]+b=b",
+            "note": "E[Z]=0"
+          },
+          {
+            "tex": "b=1",
+            "tone": "success"
+          },
+          {
+            "tex": "E[(X-E[X])Z]=E[aZ^2]=a",
+            "note": "E[Z²]=1"
+          },
+          {
+            "tex": "a=-2",
+            "tone": "success"
+          },
+          {
+            "tex": "E[(X-E[X])^2]=a^2=4",
+            "note": "check"
+          },
+          {
+            "tex": "(a,b)=(-2,1)",
+            "tone": "success"
+          }
+        ],
+        "reveal": 1
+      }
+    },
+    "da-2025-da-11": {
+      "approach": "For an exponential random variable with rate $\\lambda$ (mean $1/\\lambda$), the survival function is $P(X\\ge x)=e^{-\\lambda x}$. Set $e^{-2\\lambda}=\\frac14$ and solve with logarithms.",
+      "concepts": [
+        "Exponential distribution",
+        "Survival function",
+        "Logarithms"
+      ],
+      "steps": [
+        {
+          "title": "Survival function",
+          "body": "Mean $1/\\lambda$ means rate $\\lambda$: $f(x)=\\lambda e^{-\\lambda x}$ for $x\\ge0$, so $P(X\\ge x)=\\int_x^\\infty\\lambda e^{-\\lambda u}\\,du=e^{-\\lambda x}$. Thus $P(X\\ge2)=e^{-2\\lambda}$.",
+          "scene": {
+            "reveal": 1
+          }
+        },
+        {
+          "title": "Take logarithms",
+          "body": "$$e^{-2\\lambda}=\\frac14\\ \\Rightarrow\\ -2\\lambda=\\ln\\frac14=-\\ln4.$$",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Solve for λ",
+          "body": "$$\\lambda=\\frac{\\ln4}{2}=\\frac{\\ln2^2}{2}=\\frac{2\\ln2}{2}=\\ln2\\approx0.693>0.$$\nAnswer **(A)**.",
+          "scene": {
+            "reveal": 4
+          }
+        }
+      ],
+      "answer": {
+        "value": "$\\lambda=\\ln 2$ — option **(A)**",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$e^{-2\\ln2}=2^{-2}=\\frac14$ ✓."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Forgets to divide by 2: $e^{-2\\ln4}=4^{-2}=\\frac1{16}\\ne\\frac14$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$e^{-2\\ln3}=\\frac19\\ne\\frac14$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$\\ln0.25<0$, but a rate must be positive; it comes from dropping the minus sign and the factor 2."
+        }
+      ],
+      "shortcut": "$e^{-2\\lambda}=\\frac14=\\left(\\frac12\\right)^2\\Rightarrow e^{-\\lambda}=\\frac12\\Rightarrow\\lambda=\\ln2$.",
+      "pitfalls": [
+        "Confusing rate and mean: here $E[X]=1/\\lambda$, so $\\lambda$ is the rate.",
+        "Using the CDF $1-e^{-\\lambda x}$ in place of the tail probability."
+      ],
+      "verification": "Half-life view: $\\lambda=\\ln2$ means $P(X\\ge1)=\\frac12$, so surviving 2 units has probability $\\frac12\\cdot\\frac12=\\frac14$ (memorylessness) ✓.",
+      "animation": {
+        "kind": "equation",
+        "title": "Solving for the rate",
+        "lines": [
+          {
+            "tex": "P(X\\ge2)=e^{-2\\lambda}=\\tfrac14"
+          },
+          {
+            "tex": "-2\\lambda=\\ln\\tfrac14=-\\ln4"
+          },
+          {
+            "tex": "\\lambda=\\tfrac{\\ln4}{2}"
+          },
+          {
+            "tex": "\\lambda=\\ln2",
+            "tone": "success"
+          }
+        ],
+        "reveal": 1
+      }
+    },
+    "da-2025-da-12": {
+      "approach": "Substitute the perceptron update into $f$ at the same point $x_n$: $f$ changes by exactly $y_n(\\lVert x_n\\rVert^2+1)$, which is strictly positive when $y_n=+1$.",
+      "concepts": [
+        "Perceptron learning rule",
+        "Linear classifier",
+        "Dot product"
+      ],
+      "steps": [
+        {
+          "title": "Apply the update with y_n = +1",
+          "body": "The sample is misclassified ($f<0$ means prediction $-1\\ne+1$), so the update fires with $y_n=+1$: $w_{new}=w_{old}+x_n$, $b_{new}=b_{old}+1$.",
+          "scene": {
+            "reveal": 1
+          }
+        },
+        {
+          "title": "Evaluate the new score at x_n",
+          "body": "$$f(x_n;w_{new},b_{new})=(w_{old}+x_n)^{\\top}x_n+b_{old}+1=\\underbrace{w_{old}^{\\top}x_n+b_{old}}_{f(x_n;w_{old},b_{old})}+x_n^{\\top}x_n+1.$$",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "The increment is strictly positive",
+          "body": "$x_n^{\\top}x_n+1=\\lVert x_n\\rVert^2+1\\ge1>0$, so\n$$f(x_n;w_{new},b_{new})=f(x_n;w_{old},b_{old})+\\lVert x_n\\rVert^2+1>f(x_n;w_{old},b_{old}).$$\nOption **(A)**.",
+          "scene": {
+            "reveal": 4
+          }
+        }
+      ],
+      "answer": {
+        "value": "$f(x_n;w_{new},b_{new})>f(x_n;w_{old},b_{old})$ — option **(A)**",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "The score at $x_n$ rises by $\\lVert x_n\\rVert^2+1\\ge1$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Would require the increment $\\lVert x_n\\rVert^2+1$ to be negative — impossible."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Would require $\\lVert x_n\\rVert^2+1=0$; the bias update alone already adds 1."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$y_nf(x_n;w_{old},b_{old})=(+1)\\cdot f<0$ by assumption, so it cannot exceed 1."
+        }
+      ],
+      "shortcut": "In general the update raises $y_nf(x_n)$ by $\\lVert x_n\\rVert^2+1$ — it always moves the score toward the correct sign.",
+      "pitfalls": [
+        "Thinking one update must make the sample correctly classified — it only increases the score; it may still be negative.",
+        "Forgetting the bias term, which adds the extra $+1$."
+      ],
+      "verification": "Numeric check: $w_{old}=(-1,0)$, $b_{old}=0$, $x_n=(1,1)$: $f_{old}=-1$. Update: $w_{new}=(0,1)$, $b_{new}=1$, $f_{new}=0+1+1=2$, and $2-(-1)=3=\\lVert x_n\\rVert^2+1=2+1$ ✓.",
+      "animation": {
+        "kind": "equation",
+        "title": "Effect of one perceptron update",
+        "lines": [
+          {
+            "tex": "w_{new}=w_{old}+x_n,\\quad b_{new}=b_{old}+1",
+            "note": "y_n=+1"
+          },
+          {
+            "tex": "f_{new}(x_n)=(w_{old}+x_n)^{\\top}x_n+b_{old}+1"
+          },
+          {
+            "tex": "=f_{old}(x_n)+\\lVert x_n\\rVert^2+1"
+          },
+          {
+            "tex": "f_{new}(x_n)>f_{old}(x_n)",
+            "tone": "success"
+          }
+        ],
+        "reveal": 1
+      }
+    },
+    "da-2025-da-13": {
+      "approach": "Recall what each list method does: `extend` adds every element of an iterable, `append` adds one object, `insert` needs an index, and lists have no `update` method.",
+      "concepts": [
+        "Python list methods",
+        "In-place mutation",
+        "extend vs append"
+      ],
+      "steps": [
+        {
+          "title": "A.extend(B) appends each element",
+          "body": "`list.extend(iterable)` iterates over `B` and appends `4`, `5`, `6` one by one: `A` becomes `[1, 2, 3, 4, 5, 6]` ✓.",
+          "scene": {
+            "panels": [
+              {
+                "hl": [
+                  {
+                    "at": [
+                      3,
+                      5
+                    ],
+                    "tone": "success"
+                  }
+                ]
+              },
+              null
+            ]
+          }
+        },
+        {
+          "title": "A.append(B) nests the list",
+          "body": "`list.append(x)` adds its argument as **one** element, so `A` becomes `[1, 2, 3, [4, 5, 6]]` — length 4, last element is the list `B` itself. ✗",
+          "scene": {
+            "panels": [
+              null,
+              {
+                "hl": [
+                  {
+                    "at": 3,
+                    "tone": "error"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "title": "update and insert raise errors",
+          "body": "- `A.update(B)` raises `AttributeError: 'list' object has no attribute 'update'` (`update` belongs to `set`/`dict`).\n- `A.insert(B)` raises `TypeError` — `insert(index, object)` needs two arguments.\n\nOnly option **(A)** works."
+        }
+      ],
+      "answer": {
+        "value": "`A.extend(B)` — option **(A)**",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "`extend` adds the elements of `B` individually, giving `[1, 2, 3, 4, 5, 6]`."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "`append` adds `B` as a single element, giving the nested list `[1, 2, 3, [4, 5, 6]]`."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "`list` has no `update` method (that is `set.update`/`dict.update`), so this raises `AttributeError`."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "`insert` takes `(index, object)`; with one argument it raises `TypeError`, and even `A.insert(3, B)` would nest `B`."
+        }
+      ],
+      "shortcut": "Flat concatenation in place = `extend` (or `A += B`).",
+      "pitfalls": [
+        "Confusing `append` with `extend` — the classic nested-list trap.",
+        "Assuming `update` works on lists because it works on sets and dicts."
+      ],
+      "verification": "`A += B` is the in-place equivalent of `A.extend(B)` and also yields `[1, 2, 3, 4, 5, 6]`; `len(A)` is 6 after `extend` but 4 after `append`.",
+      "animation": {
+        "kind": "panels",
+        "title": "extend vs append",
+        "panels": [
+          {
+            "kind": "array",
+            "label": "A.extend(B)",
+            "cells": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ]
+          },
+          {
+            "kind": "array",
+            "label": "A.append(B)",
+            "cells": [
+              1,
+              2,
+              3,
+              "[4,5,6]"
+            ]
+          }
+        ]
+      }
+    },
+    "da-2025-da-14": {
+      "approach": "Sum, product and quotient rules need only differentiability **at $c$** (plus $g(c)\\ne0$ for the quotient, guaranteed by $g>1$). A composition $f\\circ g$ needs $f$ differentiable at $g(c)$, which is not given — build a counterexample.",
+      "concepts": [
+        "Differentiability",
+        "Sum/product/quotient rules",
+        "Chain rule hypotheses"
+      ],
+      "steps": [
+        {
+          "title": "f ± g and f · g",
+          "body": "If $f,g$ are differentiable at $c$, then $(f\\pm g)'(c)=f'(c)\\pm g'(c)$ and $(f\\cdot g)'(c)=f'(c)g(c)+f(c)g'(c)$ exist. **(A), (B) always differentiable.**"
+        },
+        {
+          "title": "f / g",
+          "body": "The quotient rule needs $g(c)\\ne0$. Since $g:\\mathbb{R}\\to(1,\\infty)$, $g(c)>1>0$, so\n$$\\left(\\frac fg\\right)'(c)=\\frac{f'(c)g(c)-f(c)g'(c)}{g(c)^2}$$\nexists. **(C) always differentiable.**"
+        },
+        {
+          "title": "Composition can fail",
+          "body": "The chain rule for $f\\circ g$ at $c$ needs $f$ differentiable at $g(c)$, and for $g\\circ f$ needs $g$ differentiable at $f(c)$ — neither is given.\n\nCounterexample with $c=0$: $g(x)=2+e^{x}$ (values in $(2,\\infty)\\subset(1,\\infty)$, $g(0)=3$), $f(x)=\\lvert x-3\\rvert$ (differentiable at $0$ since $f(x)=3-x$ near $0$).\n\nThen $f(g(x))=\\lvert e^{x}-1\\rvert$ has left derivative $-1$ and right derivative $+1$ at $0$, while $g(f(x))=2+e^{\\lvert x-3\\rvert}=2+e^{3-x}$ near $0$ is differentiable. A non-differentiable plus a differentiable function is non-differentiable, so $f\\circ g+g\\circ f$ fails at $0$. **(D) not always.**"
+        }
+      ],
+      "answer": {
+        "value": "$f\\pm g$, $f\\cdot g$, $\\dfrac fg$ — options **(A), (B), (C)**",
+        "choice": [
+          "A",
+          "B",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Sum/difference rule: only needs both derivatives at $c$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Product rule: only needs both derivatives at $c$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Quotient rule applies because $g(c)>1$, so $g(c)\\ne0$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$f\\circ g$ needs $f$ differentiable at $g(c)$, not at $c$; e.g. $f=\\lvert x-3\\rvert$, $g=2+e^{x}$, $c=0$ gives a corner."
+        }
+      ],
+      "shortcut": "Algebraic combinations inherit differentiability at the same point; compositions move the point ($g(c)$ or $f(c)$), so nothing is guaranteed.",
+      "pitfalls": [
+        "Rejecting $f/g$ out of habit: the codomain $(1,\\infty)$ is there precisely to rule out $g(c)=0$.",
+        "Applying the chain rule without checking that the outer function is differentiable at the inner function's value."
+      ],
+      "verification": "Corner check: for $x>0$, $\\lvert e^x-1\\rvert=e^x-1$ with derivative $e^0=1$ at $0^+$; for $x<0$, it is $1-e^x$ with derivative $-1$ at $0^-$. One-sided derivatives differ ⇒ not differentiable ✓."
+    },
+    "da-2025-da-15": {
+      "approach": "Test each statement with the standard facts: rotating an orthonormal basis gives another one (so it is not unique), independence does not imply orthogonality, and orthonormality does imply independence (take dot products).",
+      "concepts": [
+        "Orthonormal basis",
+        "Linear independence",
+        "Rotations"
+      ],
+      "steps": [
+        {
+          "title": "Orthonormal bases are not unique",
+          "body": "In $\\mathbb{R}^2$ both $\\{(1,0),(0,1)\\}$ and $\\left\\{\\left(\\tfrac1{\\sqrt2},\\tfrac1{\\sqrt2}\\right),\\left(\\tfrac1{\\sqrt2},-\\tfrac1{\\sqrt2}\\right)\\right\\}$ are orthonormal bases: each vector has length $\\sqrt{\\tfrac12+\\tfrac12}=1$ and their dot product is $\\tfrac12-\\tfrac12=0$. In general $\\{Qe_1,\\dots,Qe_n\\}$ is orthonormal for every orthogonal $Q$ (even $\\{-e_1,e_2,\\dots\\}$ works, also for $n=1$). So **(A) false, (B) true**."
+        },
+        {
+          "title": "Independent does not mean orthonormal",
+          "body": "$(1,0)$ and $(1,1)$ are independent (neither is a multiple of the other) but $(1,0)\\cdot(1,1)=1\\ne0$ and $\\lVert(1,1)\\rVert=\\sqrt2\\ne1$. **(C) false.**"
+        },
+        {
+          "title": "Orthonormal implies independent",
+          "body": "If $v_1,\\dots,v_k$ are orthonormal and $\\sum_i c_iv_i=0$, dot both sides with $v_j$: $\\sum_i c_i(v_i\\cdot v_j)=c_j\\cdot1=0$, so every $c_j=0$. **(D) true.**\n\nCorrect: **(B), (D)**."
+        }
+      ],
+      "answer": {
+        "value": "Options **(B)** and **(D)**",
+        "choice": [
+          "B",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Any rotation or reflection of the standard basis is another orthonormal basis, so there are infinitely many (for $n\\ge2$; even for $n=1$, $\\{1\\}$ and $\\{-1\\}$)."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Exactly the negation of (A), which is false."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Counterexample $(1,0),(1,1)$: independent, but neither orthogonal nor both unit length."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Dotting a vanishing linear combination with each $v_j$ forces $c_j=0$."
+        }
+      ],
+      "shortcut": "Orthonormal ⇒ independent (one direction only); bases are never unique — just rotate.",
+      "pitfalls": [
+        "Confusing \"the standard basis\" with \"the only orthonormal basis\".",
+        "Believing the converse of (D); Gram–Schmidt is needed to turn an independent set into an orthonormal one."
+      ],
+      "verification": "Gram–Schmidt on $(1,0),(1,1)$ outputs $(1,0),(0,1)$ — a *different* set, confirming that independent vectors need not already be orthonormal."
+    },
+    "da-2025-da-16": {
+      "approach": "Classify each Bayesian-network inference algorithm as exact (variable elimination, enumeration, junction tree) or approximate (sampling methods: rejection, likelihood weighting, Gibbs/MCMC), and recall what they compute (posterior conditional probabilities).",
+      "concepts": [
+        "Bayesian networks",
+        "Exact inference (variable elimination)",
+        "Approximate inference (sampling)"
+      ],
+      "steps": [
+        {
+          "title": "Variable elimination is exact",
+          "body": "Variable elimination computes a query such as $P(X\\mid e)$ by summing out hidden variables from the product of the CPTs, caching intermediate factors. It performs no sampling — the result is the exact posterior. So **(A) is false** and **(C) is true**: its purpose is computing conditional (posterior) probabilities."
+        },
+        {
+          "title": "Gibbs sampling is approximate",
+          "body": "Gibbs sampling is a Markov chain Monte Carlo method: starting from a state consistent with the evidence, it repeatedly resamples one non-evidence variable from its distribution given its Markov blanket and estimates $P(X\\mid e)$ from visit frequencies. The estimate converges to the true posterior only as the number of samples grows. So **(B) is false**."
+        },
+        {
+          "title": "Rejection sampling is approximate",
+          "body": "Rejection sampling draws complete samples from the network's prior (ancestral sampling), discards those inconsistent with the evidence $e$, and estimates $P(X\\mid e)$ as the fraction of kept samples with each value of $X$ — a Monte Carlo estimate. So **(D) is true**.\n\nCorrect: **(C), (D)**."
+        }
+      ],
+      "answer": {
+        "value": "Options **(C)** and **(D)**",
+        "choice": [
+          "C",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Variable elimination is an exact algorithm; it is only expensive (exponential in the treewidth), not approximate."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Gibbs sampling is an MCMC method: it yields estimates that converge to the true posterior, i.e. approximate inference."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Variable elimination answers queries $P(X\\mid e)$ — conditional probabilities given evidence."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Rejection sampling estimates probabilities from sample frequencies — approximate inference."
+        }
+      ],
+      "shortcut": "Exact = enumeration / variable elimination / junction tree; approximate = anything that samples (rejection, likelihood weighting, Gibbs).",
+      "pitfalls": [
+        "Calling variable elimination approximate because exact inference is NP-hard in general — hardness affects running time, not exactness.",
+        "Thinking MCMC is exact because it converges in the limit."
+      ],
+      "verification": "Russell & Norvig (AIMA, ch. on probabilistic reasoning) presents enumeration and variable elimination under exact inference, and rejection sampling, likelihood weighting and Gibbs sampling under approximate inference."
+    }
+  }
+}
