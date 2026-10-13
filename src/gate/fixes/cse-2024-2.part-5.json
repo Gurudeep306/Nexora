@@ -1,0 +1,445 @@
+{
+  "paper": "cse-2024-2",
+  "fixes": [
+    {
+      "id": "cse-2024-2-cs-43",
+      "field": "text",
+      "before": "Consider a disk with the following specifications: rotation speed of 6000 RPM,\naverage seek time of 5 milliseconds, 500 sectors/track, 512 -byte sectors.\nA file has content stored in 3000 sectors located randomly on the disk. Assuming\naverage rotational latency, the total time  (in seconds, rounded off to 2 decimal\nplaces) to read the entire file from the disk is _________",
+      "after": "Consider a disk with the following specifications: rotation speed of 6000 RPM, average seek time of 5 milliseconds, 500 sectors/track, 512-byte sectors. A file has content stored in 3000 sectors located randomly on the disk. Assuming average rotational latency, the total time (in seconds, rounded off to 2 decimal places) to read the entire file from the disk is _________",
+      "reason": "Rejoined the PDF line breaks into one paragraph and removed stray spaces (\"512 -byte\", double space).",
+      "source": "pdf p.37 (Q.53)"
+    },
+    {
+      "id": "cse-2024-2-cs-43",
+      "field": "subject",
+      "before": "ga",
+      "after": "coa",
+      "reason": "Q.53 is a disk access-time calculation (secondary storage, COA), not General Aptitude.",
+      "source": "pdf p.37 (Q.53)"
+    },
+    {
+      "id": "cse-2024-2-cs-43",
+      "field": "topic",
+      "before": "quant",
+      "after": "memory",
+      "reason": "Q.53 is a disk access-time calculation (secondary storage, COA), not General Aptitude.",
+      "source": "pdf p.37 (Q.53)"
+    },
+    {
+      "id": "cse-2024-2-cs-43",
+      "field": "tags",
+      "before": [
+        "quant"
+      ],
+      "after": [
+        "disk-access-time",
+        "seek-time",
+        "rotational-latency"
+      ],
+      "reason": "Tags follow the corrected subject/topic and name the concepts tested.",
+      "source": "pdf p.37 (Q.53)"
+    },
+    {
+      "id": "cse-2024-2-cs-44",
+      "field": "text",
+      "before": "Consider a TCP connection operating at a point of time with the congestion window\nof size 12 MSS (Maximum Segment Size), when a timeout occurs due to packet\nloss. Assuming that all the segments transmitted in the next two RTTs (Round Trip\nTime) are acknowledged correctly, the congestion window size (in MSS) during the\nthird RTT will be _________",
+      "after": "Consider a TCP connection operating at a point of time with the congestion window of size 12 MSS (Maximum Segment Size), when a timeout occurs due to packet loss. Assuming that all the segments transmitted in the next two RTTs (Round Trip Time) are acknowledged correctly, the congestion window size (in MSS) during the third RTT will be _________",
+      "reason": "Rejoined the PDF line breaks into one paragraph.",
+      "source": "pdf p.37 (Q.54)"
+    },
+    {
+      "id": "cse-2024-2-cs-44",
+      "field": "topic",
+      "before": "network",
+      "after": "transport",
+      "reason": "Q.54 is TCP congestion control (transport layer); \"network\" is not a valid CN topic id.",
+      "source": "pdf p.37 (Q.54)"
+    },
+    {
+      "id": "cse-2024-2-cs-44",
+      "field": "tags",
+      "before": [
+        "network"
+      ],
+      "after": [
+        "tcp-congestion-control",
+        "slow-start",
+        "timeout"
+      ],
+      "reason": "Tags follow the corrected subject/topic and name the concepts tested.",
+      "source": "pdf p.37 (Q.54)"
+    },
+    {
+      "id": "cse-2024-2-cs-45",
+      "field": "text",
+      "before": "Consider a n Ethernet segment with a transmission speed of 10 8 bits/sec and a\nmaximum segment length of 500 meters. If the speed of propagation of the signal\nin the medium is 2×108 meters/sec, then the minimum frame size (in bits) required\nfor collision detection is _________",
+      "after": "Consider an Ethernet segment with a transmission speed of $10^8$ bits/sec and a maximum segment length of 500 meters. If the speed of propagation of the signal in the medium is $2\\times10^8$ meters/sec, then the minimum frame size (in bits) required for collision detection is _________",
+      "reason": "Exponents were flattened (\"10 8\", \"2×108\" for $10^8$ and $2\\times10^8$) and \"an\" was split (\"a n\"); rejoined into one paragraph.",
+      "source": "pdf p.37 (Q.55)"
+    },
+    {
+      "id": "cse-2024-2-cs-45",
+      "field": "subject",
+      "before": "ga",
+      "after": "cn",
+      "reason": "Q.55 is CSMA/CD minimum frame size (data link layer), not General Aptitude.",
+      "source": "pdf p.37 (Q.55)"
+    },
+    {
+      "id": "cse-2024-2-cs-45",
+      "field": "topic",
+      "before": "quant",
+      "after": "datalink",
+      "reason": "Q.55 is CSMA/CD minimum frame size (data link layer), not General Aptitude.",
+      "source": "pdf p.37 (Q.55)"
+    },
+    {
+      "id": "cse-2024-2-cs-45",
+      "field": "tags",
+      "before": [
+        "quant"
+      ],
+      "after": [
+        "csma-cd",
+        "ethernet",
+        "minimum-frame-size"
+      ],
+      "reason": "Tags follow the corrected subject/topic and name the concepts tested.",
+      "source": "pdf p.37 (Q.55)"
+    },
+    {
+      "id": "cse-2024-2-cs-46",
+      "field": "text",
+      "before": "A functional dependency 𝐹:⁡𝑋 → 𝑌 is termed as a useful functional dependency if\nand only if it satisfies all the following three conditions:\n• 𝑋 is not the empty set.\n• 𝑌 is not the empty set.\n• Intersection of 𝑋 and 𝑌 is the empty set.\nFor a relation 𝑅 with 4 attributes, the total number of possible useful functional\ndependencies is ________",
+      "after": "A functional dependency $F: X \\to Y$ is termed as a useful functional dependency if and only if it satisfies all the following three conditions:\n\n- $X$ is not the empty set.\n- $Y$ is not the empty set.\n- Intersection of $X$ and $Y$ is the empty set.\n\nFor a relation $R$ with 4 attributes, the total number of possible useful functional dependencies is ________",
+      "reason": "Unicode math italics and invisible function-application characters replaced by KaTeX; the three conditions rendered as a markdown list; lines rejoined.",
+      "source": "pdf p.37 (Q.56)"
+    },
+    {
+      "id": "cse-2024-2-cs-46",
+      "field": "tags",
+      "before": [
+        "normalization"
+      ],
+      "after": [
+        "functional-dependency",
+        "counting"
+      ],
+      "reason": "Tags follow the corrected subject/topic and name the concepts tested.",
+      "source": "pdf p.37 (Q.56)"
+    },
+    {
+      "id": "cse-2024-2-cs-47",
+      "field": "text",
+      "before": "A processor with 16 general purpose registers uses a 32-bit instruction format. The\ninstruction format consists of an opcode field, an addressing mode field, two register\noperand fields, and a 16-bit scalar field. If 8 addressing modes are to be supported,\nthe maximum number of unique opcodes possible for every addressing mode\nis _________\nComputer Science and Information Technology Set 2 (CS2)",
+      "after": "A processor with 16 general purpose registers uses a 32-bit instruction format. The instruction format consists of an opcode field, an addressing mode field, two register operand fields, and a 16-bit scalar field. If 8 addressing modes are to be supported, the maximum number of unique opcodes possible for every addressing mode is _________",
+      "reason": "Running page header \"Computer Science and Information Technology Set 2 (CS2)\" was appended to the text; lines rejoined.",
+      "source": "pdf p.37 (Q.57)"
+    },
+    {
+      "id": "cse-2024-2-cs-47",
+      "field": "subject",
+      "before": "pds",
+      "after": "coa",
+      "reason": "Q.57 is an instruction-format question (COA / ISA), not C programming.",
+      "source": "pdf p.37 (Q.57)"
+    },
+    {
+      "id": "cse-2024-2-cs-47",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "isa",
+      "reason": "Q.57 is an instruction-format question (COA / ISA), not C programming.",
+      "source": "pdf p.37 (Q.57)"
+    },
+    {
+      "id": "cse-2024-2-cs-47",
+      "field": "tags",
+      "before": [
+        "c-prog"
+      ],
+      "after": [
+        "instruction-format",
+        "opcode",
+        "addressing-modes"
+      ],
+      "reason": "Tags follow the corrected subject/topic and name the concepts tested.",
+      "source": "pdf p.37 (Q.57)"
+    },
+    {
+      "id": "cse-2024-2-cs-48",
+      "field": "text",
+      "before": "A non-pipelined instruction execution unit operating at 2 GHz takes an average of\n6 cycles to execute an instruction of a program P. The unit is then redesigned to\noperate on a 5 -stage pipeline at 2 GHz. Assume that the ideal throughput of the\npipelined unit is 1 instruction per cycle. In the execution of program  P,\n20% instructions incur an average of 2 cycle s stall due to data hazards and\n20% instructions incur an average of 3 cycle s stall due to control hazards. The\nspeedup (rounded off to one  decimal place) obtained by the pipelined design over\nthe non-pipelined design is _________",
+      "after": "A non-pipelined instruction execution unit operating at 2 GHz takes an average of 6 cycles to execute an instruction of a program P. The unit is then redesigned to operate on a 5-stage pipeline at 2 GHz. Assume that the ideal throughput of the pipelined unit is 1 instruction per cycle. In the execution of program P, 20% instructions incur an average of 2 cycles stall due to data hazards and 20% instructions incur an average of 3 cycles stall due to control hazards. The speedup (rounded off to one decimal place) obtained by the pipelined design over the non-pipelined design is _________",
+      "reason": "Removed PDF extraction spaces (\"5 -stage\", \"cycle s\", double spaces) and rejoined lines.",
+      "source": "pdf p.38 (Q.58)"
+    },
+    {
+      "id": "cse-2024-2-cs-48",
+      "field": "subject",
+      "before": "ga",
+      "after": "coa",
+      "reason": "Q.58 is pipeline speedup with stalls (COA), not General Aptitude.",
+      "source": "pdf p.38 (Q.58)"
+    },
+    {
+      "id": "cse-2024-2-cs-48",
+      "field": "topic",
+      "before": "quant",
+      "after": "pipeline",
+      "reason": "Q.58 is pipeline speedup with stalls (COA), not General Aptitude.",
+      "source": "pdf p.38 (Q.58)"
+    },
+    {
+      "id": "cse-2024-2-cs-48",
+      "field": "tags",
+      "before": [
+        "quant"
+      ],
+      "after": [
+        "pipelining",
+        "hazards",
+        "speedup"
+      ],
+      "reason": "Tags follow the corrected subject/topic and name the concepts tested.",
+      "source": "pdf p.38 (Q.58)"
+    },
+    {
+      "id": "cse-2024-2-cs-49",
+      "field": "text",
+      "before": "The number of distinct minimum -weight spanning trees of the following graph\nis _________\na\nb\ng d\nc\nf e\n3\n2\n2\n1\n2\n3\n2\n2\n2\n1\n1\n1",
+      "after": "The number of distinct minimum-weight spanning trees of the following graph is _________",
+      "reason": "The figure's vertex and edge labels were extracted as a jumble of letters and numbers into the text; the graph is now given as a redrawn figure.",
+      "source": "pdf p.38 (Q.59)"
+    },
+    {
+      "id": "cse-2024-2-cs-49",
+      "field": "topic",
+      "before": "graphs",
+      "after": "mst",
+      "reason": "Q.59 counts minimum spanning trees; \"graphs\" is not a valid algorithms topic id (mst is).",
+      "source": "pdf p.38 (Q.59)"
+    },
+    {
+      "id": "cse-2024-2-cs-49",
+      "field": "tags",
+      "before": [
+        "graphs"
+      ],
+      "after": [
+        "minimum-spanning-tree",
+        "counting-msts",
+        "kruskal"
+      ],
+      "reason": "Tags follow the corrected subject/topic and name the concepts tested.",
+      "source": "pdf p.38 (Q.59)"
+    },
+    {
+      "id": "cse-2024-2-cs-49",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2024-2/cs-49-1.svg",
+          "svg": "cse-2024-2/cs-49-1.svg",
+          "alt": "Undirected weighted graph with seven vertices: b and c on top, a on the left, g in the centre, d on the right, f and e at the bottom. Edges: a–b 1, a–f 1, a–g 2, b–g 2, f–g 2, b–c 3, f–e 3, g–c 2, g–d 2, g–e 2, c–d 1, e–d 1."
+        }
+      ],
+      "reason": "The question depends on its figure, which the bank was missing. Redrawn as an SVG from the paper with every vertex and weight.",
+      "source": "pdf p.38 (Q.59)"
+    },
+    {
+      "id": "cse-2024-2-cs-50",
+      "field": "text",
+      "before": "The chromatic number of a graph is the minimum number of colours used in a\nproper colouring of the graph.  The chromatic number of the following graph\nis _________\nComputer Science and Information Technology Set 2 (CS2)",
+      "after": "The chromatic number of a graph is the minimum number of colours used in a proper colouring of the graph. The chromatic number of the following graph is _________",
+      "reason": "Running page header \"Computer Science and Information Technology Set 2 (CS2)\" was appended to the text; lines rejoined.",
+      "source": "pdf p.38 (Q.60)"
+    },
+    {
+      "id": "cse-2024-2-cs-50",
+      "field": "topic",
+      "before": "graph-theory",
+      "after": "graphs",
+      "reason": "Q.60 is graph colouring (Discrete Mathematics / graph theory); \"graph-theory\" is not a valid topic id.",
+      "source": "pdf p.38 (Q.60)"
+    },
+    {
+      "id": "cse-2024-2-cs-50",
+      "field": "tags",
+      "before": [
+        "graph-theory"
+      ],
+      "after": [
+        "graph-colouring",
+        "chromatic-number",
+        "bipartite-graph"
+      ],
+      "reason": "Tags follow the corrected subject/topic and name the concepts tested.",
+      "source": "pdf p.38 (Q.60)"
+    },
+    {
+      "id": "cse-2024-2-cs-50",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2024-2/cs-50-1.svg",
+          "svg": "cse-2024-2/cs-50-1.svg",
+          "alt": "Eight unlabelled vertices placed at the corners of an octagon (two on top, two on the right, two at the bottom, two on the left) with 16 edges: the 8 octagon sides; the 2 horizontal chords joining the upper-left to upper-right and lower-left to lower-right vertices; the 2 vertical chords joining each top vertex to the bottom vertex below it; and 4 long diagonals: top-left to lower-right, top-right to lower-left, upper-left to bottom-right, upper-right to bottom-left. Every vertex has degree 4."
+        }
+      ],
+      "reason": "The question depends on its figure, which the bank was missing. Redrawn as an SVG from the paper with all 8 vertices and 16 edges.",
+      "source": "pdf p.38 (Q.60)"
+    },
+    {
+      "id": "cse-2024-2-cs-51",
+      "field": "text",
+      "before": "A processor uses a 32-bit instruction format and supports byte-addressable memory\naccess. The ISA of the processor has 150 distinct instructions. The instructions are\nequally divided into two types, namely R-type and I-type, whose formats are shown\nbelow.\nR-type Instruction Format:\nOPCODE UNUSED DST Register SRC Register1 SRC Register 2\nI-type Instruction Format:\nOPCODE DST Register SRC Register # Immediate value/address\nIn the OPCODE, 1 bit is used to distinguish between I-type and R-type instructions\nand the remaining bits indicate the operation. The processor has 50 architectural\nregisters, and all register fields in the instructions are of equal size.\nLet 𝑋 be the number of bits used to encode the UNUSED field, 𝑌 be the number\nof bits used to encode the OPCODE field, and 𝑍 be the number of bits used to\nencode the immediate value/address field. The value of 𝑋 + 2𝑌 + 𝑍 is ________",
+      "after": "A processor uses a 32-bit instruction format and supports byte-addressable memory access. The ISA of the processor has 150 distinct instructions. The instructions are equally divided into two types, namely R-type and I-type, whose formats are shown below.\n\nR-type Instruction Format:\n\n| OPCODE | UNUSED | DST Register | SRC Register1 | SRC Register 2 |\n|---|---|---|---|---|\n\nI-type Instruction Format:\n\n| OPCODE | DST Register | SRC Register | # Immediate value/address |\n|---|---|---|---|\n\nIn the OPCODE, 1 bit is used to distinguish between I-type and R-type instructions and the remaining bits indicate the operation. The processor has 50 architectural registers, and all register fields in the instructions are of equal size.\n\nLet $X$ be the number of bits used to encode the UNUSED field, $Y$ be the number of bits used to encode the OPCODE field, and $Z$ be the number of bits used to encode the immediate value/address field. The value of $X + 2Y + Z$ is ________",
+      "reason": "The two boxed instruction formats were flattened into plain lines; restored as tables. Unicode math italics replaced by KaTeX; paragraphs rejoined as in the paper.",
+      "source": "pdf p.39 (Q.61)"
+    },
+    {
+      "id": "cse-2024-2-cs-51",
+      "field": "subject",
+      "before": "ga",
+      "after": "coa",
+      "reason": "Q.61 is an instruction-format question (COA / ISA), not General Aptitude.",
+      "source": "pdf p.39 (Q.61)"
+    },
+    {
+      "id": "cse-2024-2-cs-51",
+      "field": "topic",
+      "before": "quant",
+      "after": "isa",
+      "reason": "Q.61 is an instruction-format question (COA / ISA), not General Aptitude.",
+      "source": "pdf p.39 (Q.61)"
+    },
+    {
+      "id": "cse-2024-2-cs-51",
+      "field": "tags",
+      "before": [
+        "quant"
+      ],
+      "after": [
+        "instruction-format",
+        "opcode",
+        "register-fields"
+      ],
+      "reason": "Tags follow the corrected subject/topic and name the concepts tested.",
+      "source": "pdf p.39 (Q.61)"
+    },
+    {
+      "id": "cse-2024-2-cs-52",
+      "field": "text",
+      "before": "Let 𝐿1 be the language represented by the regular expression  𝑏∗𝑎𝑏∗(𝑎𝑏∗𝑎𝑏∗)∗\nand 𝐿2 = {⁡𝑤 ∈ (𝑎 + 𝑏)∗⁡|⁡⁡|𝑤| ≤ 4}, where |𝑤| denotes the length of string\n𝑤.  The number of strings in 𝐿2 which are also in 𝐿1 is ___________",
+      "after": "Let $L_1$ be the language represented by the regular expression $b^*ab^*(ab^*ab^*)^*$ and $L_2 = \\{\\, w \\in (a+b)^* \\mid \\lvert w\\rvert \\le 4 \\,\\}$, where $\\lvert w\\rvert$ denotes the length of string $w$. The number of strings in $L_2$ which are also in $L_1$ is ___________",
+      "reason": "Unicode math italics and invisible characters replaced by KaTeX; lines rejoined.",
+      "source": "pdf p.39 (Q.62)"
+    },
+    {
+      "id": "cse-2024-2-cs-52",
+      "field": "tags",
+      "before": [
+        "regular"
+      ],
+      "after": [
+        "regular-expressions",
+        "counting-strings"
+      ],
+      "reason": "Tags follow the corrected subject/topic and name the concepts tested.",
+      "source": "pdf p.39 (Q.62)"
+    },
+    {
+      "id": "cse-2024-2-cs-53",
+      "field": "text",
+      "before": "Let 𝑍𝑛 be the group of integers {0, 1, 2, … , 𝑛 − 1} with addition modulo 𝑛 as the\ngroup operation.  The number of elements in the group 𝑍2 × 𝑍3 × 𝑍4 that are their\nown inverses is ________\nComputer Science and Information Technology Set 2 (CS2)",
+      "after": "Let $Z_n$ be the group of integers $\\{0, 1, 2, \\ldots, n-1\\}$ with addition modulo $n$ as the group operation. The number of elements in the group $Z_2 \\times Z_3 \\times Z_4$ that are their own inverses is ________",
+      "reason": "Running page header \"Computer Science and Information Technology Set 2 (CS2)\" was appended to the text; Unicode math italics replaced by KaTeX (subscripts restored).",
+      "source": "pdf p.39 (Q.63)"
+    },
+    {
+      "id": "cse-2024-2-cs-53",
+      "field": "subject",
+      "before": "ga",
+      "after": "dm",
+      "reason": "Q.63 is group theory (Discrete Mathematics), not General Aptitude.",
+      "source": "pdf p.39 (Q.63)"
+    },
+    {
+      "id": "cse-2024-2-cs-53",
+      "field": "topic",
+      "before": "quant",
+      "after": "groups",
+      "reason": "Q.63 is group theory (Discrete Mathematics), not General Aptitude.",
+      "source": "pdf p.39 (Q.63)"
+    },
+    {
+      "id": "cse-2024-2-cs-53",
+      "field": "tags",
+      "before": [
+        "quant"
+      ],
+      "after": [
+        "group-theory",
+        "direct-product",
+        "inverse"
+      ],
+      "reason": "Tags follow the corrected subject/topic and name the concepts tested.",
+      "source": "pdf p.39 (Q.63)"
+    },
+    {
+      "id": "cse-2024-2-cs-54",
+      "field": "text",
+      "before": "Consider a 32-bit system with 4 KB page size and page table entries of size 4 bytes\neach. Assume 1 K B = 2 10 bytes. The OS uses a 2 -level page table for memory\nmanagement, with the page table containing an outer page directory and an inner\npage table. The OS allocates a page for the outer page directory upon process\ncreation. The OS uses demand paging when allocating m emory for the inner page\ntable, i.e., a page of the inner page table is allocated only if it contains at least one\nvalid page table entry.\nAn active process in this system accesses 2000 unique pages during its execution,\nand none of the pages are swapped out to disk. After it completes the page accesses,\nlet X denote the minimum and Y denote the maximum number of pages across the\ntwo levels of the page table of the process.\nThe value of X+Y is ________",
+      "after": "Consider a 32-bit system with 4 KB page size and page table entries of size 4 bytes each. Assume 1 KB = $2^{10}$ bytes. The OS uses a 2-level page table for memory management, with the page table containing an outer page directory and an inner page table. The OS allocates a page for the outer page directory upon process creation. The OS uses demand paging when allocating memory for the inner page table, i.e., a page of the inner page table is allocated only if it contains at least one valid page table entry.\n\nAn active process in this system accesses 2000 unique pages during its execution, and none of the pages are swapped out to disk. After it completes the page accesses, let X denote the minimum and Y denote the maximum number of pages across the two levels of the page table of the process.\n\nThe value of X+Y is ________",
+      "reason": "Exponent flattened (\"2 10\" for $2^{10}$) and words split (\"1 K B\", \"2 -level\", \"m emory\"); paragraphs rejoined as in the paper.",
+      "source": "pdf p.40 (Q.64)"
+    },
+    {
+      "id": "cse-2024-2-cs-54",
+      "field": "topic",
+      "before": "memory",
+      "after": "virtual-memory",
+      "reason": "Q.64 is multi-level paging; \"memory\" is not a valid OS topic id (virtual-memory is).",
+      "source": "pdf p.40 (Q.64)"
+    },
+    {
+      "id": "cse-2024-2-cs-54",
+      "field": "tags",
+      "before": [
+        "memory"
+      ],
+      "after": [
+        "multilevel-paging",
+        "page-table",
+        "demand-paging"
+      ],
+      "reason": "Tags follow the corrected subject/topic and name the concepts tested.",
+      "source": "pdf p.40 (Q.64)"
+    },
+    {
+      "id": "cse-2024-2-cs-55",
+      "field": "text",
+      "before": "Consider the following augmented grammar, which is to be parsed with a SLR\nparser. The set of terminals is {𝑎,𝑏,𝑐,𝑑,#,@}\n𝑆′ → 𝑆\n𝑆 → 𝑆𝑆⁡|⁡𝐴𝑎⁡|⁡𝑏𝐴𝑐⁡|⁡𝐵𝑐⁡|⁡𝑏𝐵𝑎\n𝐴 → 𝑑#\n𝐵 → @\nLet 𝐼0 = 𝐶𝐿𝑂𝑆𝑈𝑅𝐸({𝑆′ →⁡• 𝑆}). The number of items in the set 𝐺𝑂𝑇𝑂(𝐼0, 𝑆)\nis ___________",
+      "after": "Consider the following augmented grammar, which is to be parsed with a SLR parser. The set of terminals is $\\{a, b, c, d, \\#, @\\}$\n\n$$\\begin{aligned} S' &\\to S \\\\ S &\\to SS \\mid Aa \\mid bAc \\mid Bc \\mid bBa \\\\ A &\\to d\\# \\\\ B &\\to @ \\end{aligned}$$\n\nLet $I_0 = \\text{CLOSURE}(\\{S' \\to \\bullet S\\})$. The number of items in the set $\\text{GOTO}(I_0, S)$ is ___________",
+      "reason": "Unicode math italics and invisible characters replaced by KaTeX; the grammar is set as a display block.",
+      "source": "pdf p.40 (Q.65)"
+    },
+    {
+      "id": "cse-2024-2-cs-55",
+      "field": "tags",
+      "before": [
+        "parsing"
+      ],
+      "after": [
+        "slr-parsing",
+        "lr0-items",
+        "closure-goto"
+      ],
+      "reason": "Tags follow the corrected subject/topic and name the concepts tested.",
+      "source": "pdf p.40 (Q.65)"
+    }
+  ]
+}
