@@ -1,0 +1,1561 @@
+{
+  "paper": "da-2025",
+  "version": 2,
+  "solutions": {
+    "da-2025-da-43": {
+      "approach": "For a hard-margin SVM the boundary is the perpendicular bisector of the shortest segment between the two classes' convex hulls. Find it geometrically, then scale $w, b$ so that the support vectors satisfy $y_i(w^\\top x_i + b) = 1$; every option follows from that $w, b$.",
+      "concepts": [
+        "Hard-margin SVM",
+        "Canonical hyperplane $y_i(w^\\top x_i+b)\\ge 1$",
+        "Support vectors",
+        "Margin $2/\\lVert w\\rVert$"
+      ],
+      "given": "| Class | Points |\n|---|---|\n| Class-1 ($y=+1$) | $(2,0),\\ (0,2),\\ (2,2)$ |\n| Class-2 ($y=-1$) | $(0,0)$ |",
+      "steps": [
+        {
+          "title": "Closest points of the two classes",
+          "body": "Class-2 is the single point $O=(0,0)$. The convex hull of Class-1 is the triangle $(2,0),(0,2),(2,2)$. Its point nearest to $O$ lies on the edge from $(2,0)$ to $(0,2)$, i.e. on the line $x_1+x_2=2$; the foot of the perpendicular from $O$ is $M=(1,1)$, at distance $\\sqrt{1^2+1^2}=\\sqrt2$.\n\n$(2,2)$ is farther: $\\sqrt{2^2+2^2}=2\\sqrt2$.",
+          "scene": {
+            "tones": {
+              "O": "error",
+              "P": "success",
+              "Q": "success",
+              "T": "success",
+              "M": "warning",
+              "H1": "muted",
+              "H2": "muted"
+            },
+            "edgeTones": {
+              "O>M": "warning"
+            },
+            "caption": "Shortest gap: $O$ to $M=(1,1)$, length $\\sqrt2$"
+          }
+        },
+        {
+          "title": "Maximum-margin boundary: $x_1 + x_2 = 1$",
+          "body": "The hard-margin boundary is the perpendicular bisector of $OM$: normal direction $(1,1)$, passing through the midpoint $(0.5, 0.5)$:\n$$x_1 + x_2 = 0.5+0.5 = 1.$$\nSo $w = (a, a)$ and $b = -a$ for some $a > 0$ (Class-1 on the positive side).",
+          "scene": {
+            "edgeTones": {
+              "O>M": "warning",
+              "H1>H2": "accent"
+            },
+            "caption": "Boundary $x_1+x_2=1$ halfway between $O$ and the line $x_1+x_2=2$"
+          }
+        },
+        {
+          "title": "Scale to the canonical form",
+          "body": "Support vectors must satisfy $y_i(w^\\top x_i + b) = 1$:\n\n- $O$ (Class-2): $-(a\\cdot 0 + a\\cdot 0 - a) = a = 1$.\n- $(2,0)$: $a\\cdot 2 + a \\cdot 0 - a = a = 1$ ✓, and $(0,2)$ the same.\n\nHence $w = (1, 1)^\\top$, $b = -1$. Check $(2,2)$: $2+2-1 = 3 > 1$, strictly outside the margin.",
+          "scene": {
+            "vars": {
+              "w": "(1, 1)",
+              "b": -1,
+              "‖w‖": "√2"
+            }
+          }
+        },
+        {
+          "title": "Support vectors and margin",
+          "body": "Points with $y_i(w^\\top x_i+b)=1$ exactly: $O$, $(2,0)$, $(0,2)$ — **3 support vectors**; $(2,2)$ gives $3$, so it is not one.\n\nMargin (width of the band between $w^\\top x + b = \\pm 1$):\n$$\\frac{2}{\\lVert w \\rVert} = \\frac{2}{\\sqrt{1^2+1^2}} = \\frac{2}{\\sqrt2} = \\sqrt2,$$\nwhich equals the gap $\\lvert OM \\rvert = \\sqrt2$ found in step 1.",
+          "scene": {
+            "tones": {
+              "O": "warning",
+              "P": "warning",
+              "Q": "warning",
+              "T": "success",
+              "M": "muted",
+              "H1": "muted",
+              "H2": "muted"
+            },
+            "caption": "Support vectors (amber): $O$, $(2,0)$, $(0,2)$; margin $=\\sqrt2$"
+          }
+        },
+        {
+          "title": "Check each option",
+          "body": "- (A) $w=(4,4)$, $b=1$ gives $+1$ at $O$ and $9$ at $(2,0)$ — both positive, so it does not even separate the classes. **False.**\n- (B) 3 support vectors. **True.**\n- (C) Margin $\\sqrt2$. **True.**\n- (D) The data are linearly separable and a hard-margin SVM classifies every training point correctly: accuracy is $100\\%$, not $98\\%$ (with 4 points, 98% is impossible anyway). **False.**"
+        }
+      ],
+      "answer": {
+        "value": "**(B) and (C)** — 3 support vectors and margin $\\sqrt2$, with $w=(1,1)^\\top$, $b=-1$",
+        "choice": [
+          "B",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The canonical solution is $w=(1,1)$, $b=-1$. $w=(4,4), b=1$ puts $O$ ($+1$) and $(2,0)$ ($+9$) on the same side, so it is not even a separator."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$O$, $(2,0)$ and $(0,2)$ all satisfy $y_i(w^\\top x_i+b)=1$; $(2,2)$ gives $3$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$2/\\lVert w\\rVert = 2/\\sqrt2 = \\sqrt2$, the distance from $O$ to $(1,1)$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Separable data + hard margin ⇒ $100\\%$ training accuracy; 98% of 4 points is not even attainable."
+        }
+      ],
+      "shortcut": "Margin = distance between the classes = distance from $O$ to the line $x_1+x_2=2$ $= \\frac{2}{\\sqrt2} = \\sqrt2$; the points on the margin are $O$, $(2,0)$, $(0,2)$. That settles B and C without solving for $w$.",
+      "pitfalls": [
+        "Using the half-margin $1/\\lVert w\\rVert = 1/\\sqrt2$ — GATE's \"margin\" is the full width $2/\\lVert w\\rVert$.",
+        "Counting $(2,2)$ as a support vector: it lies at functional distance $3$, outside the margin.",
+        "Accepting any $w$ in the right direction: SVM fixes the scale by $y_i(w^\\top x_i+b)=1$ on support vectors."
+      ],
+      "verification": "Dual check: with $\\alpha_O=1$, $\\alpha_{(2,0)}=\\alpha_{(0,2)}=\\tfrac12$, $\\alpha_{(2,2)}=0$: $\\sum\\alpha_i y_i = \\tfrac12+\\tfrac12-1 = 0$ and $w=\\sum \\alpha_i y_i x_i = \\tfrac12(2,0)+\\tfrac12(0,2) = (1,1)$ — all $\\alpha_i\\ge0$, so the KKT conditions hold.",
+      "animation": {
+        "kind": "graph",
+        "title": "Training points (y-axis up)",
+        "nodes": [
+          {
+            "id": "O",
+            "label": "(0,0)",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "P",
+            "label": "(2,0)",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "id": "Q",
+            "label": "(0,2)",
+            "x": 0,
+            "y": -2
+          },
+          {
+            "id": "T",
+            "label": "(2,2)",
+            "x": 2,
+            "y": -2
+          },
+          {
+            "id": "M",
+            "label": "(1,1)",
+            "x": 1,
+            "y": -1
+          },
+          {
+            "id": "H1",
+            "label": "(1,0)",
+            "x": 1,
+            "y": 0
+          },
+          {
+            "id": "H2",
+            "label": "(0,1)",
+            "x": 0,
+            "y": -1
+          }
+        ],
+        "edges": [
+          {
+            "from": "O",
+            "to": "M",
+            "dashed": true,
+            "w": "√2"
+          },
+          {
+            "from": "H1",
+            "to": "H2",
+            "w": "x₁+x₂=1"
+          },
+          {
+            "from": "P",
+            "to": "M",
+            "dashed": true,
+            "w": "x₁+x₂=2"
+          },
+          {
+            "from": "M",
+            "to": "Q",
+            "dashed": true
+          }
+        ],
+        "tones": {
+          "O": "error",
+          "P": "success",
+          "Q": "success",
+          "T": "success",
+          "M": "muted",
+          "H1": "muted",
+          "H2": "muted"
+        },
+        "edgeTones": {
+          "O>M": "muted",
+          "H1>H2": "muted"
+        },
+        "caption": "Class-1 (green) and Class-2 (red)"
+      }
+    },
+    "da-2025-da-44": {
+      "approach": "Each $X_i$ is Bernoulli($p$). Linearity of expectation gives the mean of $\\widehat p$; independence lets variances add, giving $\\operatorname{Var}(\\widehat p)=p(1-p)/n$.",
+      "concepts": [
+        "Bernoulli random variable",
+        "Linearity of expectation",
+        "Variance of a sum of independent variables",
+        "Unbiased estimator"
+      ],
+      "steps": [
+        {
+          "title": "Mean and variance of one toss",
+          "body": "$X_i \\in \\{0,1\\}$ with $P(X_i=1)=p$:\n$$E[X_i] = 1\\cdot p + 0\\cdot(1-p) = p,\\qquad E[X_i^2] = p,$$\n$$\\operatorname{Var}(X_i) = E[X_i^2]-E[X_i]^2 = p - p^2 = p(1-p).$$"
+        },
+        {
+          "title": "Expectation of $\\widehat p$",
+          "body": "$$E[\\widehat p] = \\frac1n\\sum_{i=1}^n E[X_i] = \\frac1n \\cdot n p = p.$$\nSo (A) is true and (B) $p/n$ is false — $\\widehat p$ is an unbiased estimator of $p$."
+        },
+        {
+          "title": "Variance of $\\widehat p$",
+          "body": "The tosses are independent, so the variance of the sum is the sum of the variances, and a constant factor comes out squared:\n$$\\operatorname{Var}(\\widehat p) = \\frac{1}{n^2}\\sum_{i=1}^n \\operatorname{Var}(X_i) = \\frac{1}{n^2}\\cdot n\\,p(1-p) = \\frac{p(1-p)}{n}.$$\nThis depends on $n$ and shrinks as $n$ grows (for $0<p<1$): (C) true, (D) false."
+        }
+      ],
+      "answer": {
+        "value": "**(A) and (C)** — $E[\\widehat p]=p$ and $\\operatorname{Var}(\\widehat p)=p(1-p)/n$ decreases with $n$",
+        "choice": [
+          "A",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$E[\\widehat p] = \\frac1n \\cdot np = p$ by linearity."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Forgets that the sum has $n$ terms each with mean $p$: $\\frac1n\\cdot np = p$, not $p/n$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$\\operatorname{Var}(\\widehat p) = p(1-p)/n$, which falls as $n$ grows."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The variance carries the factor $1/n$."
+        }
+      ],
+      "shortcut": "An average of $n$ i.i.d. variables keeps the mean and divides the variance by $n$: $E=p$, $\\operatorname{Var} = p(1-p)/n$.",
+      "pitfalls": [
+        "Pulling $1/n$ out of a variance as $1/n$ instead of $1/n^2$ (that would give $p(1-p)$, independent of $n$, and suggest D).",
+        "Confusing the mean of the sum ($np$) with the mean of the average ($p$)."
+      ],
+      "verification": "Extreme check: $n=1$ gives $\\widehat p = X_1$ with variance $p(1-p)$ ✓; as $n\\to\\infty$ the variance $\\to 0$, consistent with the law of large numbers ($\\widehat p \\to p$)."
+    },
+    "da-2025-da-45": {
+      "approach": "Expand both squared norms: the $\\lVert x\\rVert^2$ terms cancel, leaving an affine function $w^\\top x + b$. Then test each statement on that closed form.",
+      "concepts": [
+        "Squared Euclidean distance",
+        "Nearest-mean (minimum-distance) classifier",
+        "Linear decision boundary"
+      ],
+      "steps": [
+        {
+          "title": "Expand each squared distance",
+          "body": "For any vector $\\mu$: $\\lVert \\mu - x\\rVert^2 = (\\mu-x)^\\top(\\mu-x) = \\lVert\\mu\\rVert^2 - 2\\mu^\\top x + \\lVert x\\rVert^2.$",
+          "scene": {
+            "reveal": 1
+          }
+        },
+        {
+          "title": "Subtract: the quadratic term cancels",
+          "body": "$$f(x) = \\big(\\lVert\\mu_{red}\\rVert^2 - 2\\mu_{red}^\\top x + \\lVert x\\rVert^2\\big) - \\big(\\lVert\\mu_{green}\\rVert^2 - 2\\mu_{green}^\\top x + \\lVert x\\rVert^2\\big)$$\n$$= 2(\\mu_{green}-\\mu_{red})^\\top x + \\big(\\lVert\\mu_{red}\\rVert^2 - \\lVert\\mu_{green}\\rVert^2\\big).$$\nSo $f(x) = w^\\top x + b$ with $w = 2(\\mu_{green}-\\mu_{red})$ and $b = \\lVert\\mu_{red}\\rVert^2 - \\lVert\\mu_{green}\\rVert^2$ — functions of the two means only. (B) and (C) are true; (D) is false because no $x^\\top x$ (or any degree-2) term survives.",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "Test option (A) at $x = 0$",
+          "body": "$$f(0) = w^\\top 0 + b = \\lVert\\mu_{red}\\rVert^2 - \\lVert\\mu_{green}\\rVert^2.$$\nIf $\\lVert\\mu_{red}\\rVert < \\lVert\\mu_{green}\\rVert$ then $f(0) < 0$, so $x=0$ is labelled **red**, not green. (A) is false — which is also obvious directly: $0$ is closer to $\\mu_{red}$ since $\\lVert\\mu_{red}-0\\rVert<\\lVert\\mu_{green}-0\\rVert$.",
+          "scene": {
+            "reveal": 4
+          }
+        }
+      ],
+      "answer": {
+        "value": "**(B) and (C)** — $f(x) = 2(\\mu_{green}-\\mu_{red})^\\top x + \\lVert\\mu_{red}\\rVert^2-\\lVert\\mu_{green}\\rVert^2$",
+        "choice": [
+          "B",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$f(0)=\\lVert\\mu_{red}\\rVert^2-\\lVert\\mu_{green}\\rVert^2<0$ under that condition, so $0$ is labelled red."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "After the $\\lVert x\\rVert^2$ terms cancel, $f$ is linear (affine) in $x$ — a linear classifier."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$w = 2(\\mu_{green}-\\mu_{red})$, $b = \\lVert\\mu_{red}\\rVert^2-\\lVert\\mu_{green}\\rVert^2$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Each distance is quadratic, but their difference is not: the $\\lVert x\\rVert^2$ terms cancel."
+        }
+      ],
+      "shortcut": "Two equal-weight squared distances always differ by an affine function, so the nearest-mean boundary is the perpendicular bisector hyperplane of $\\mu_{red}\\mu_{green}$.",
+      "pitfalls": [
+        "Seeing squared norms and answering \"quadratic\" (D) without expanding.",
+        "Reading option (A) backwards: closer to $\\mu_{red}$ means red."
+      ],
+      "verification": "At the midpoint $x=\\tfrac12(\\mu_{red}+\\mu_{green})$ both distances are equal, so $f$ must be $0$: $(\\mu_{green}-\\mu_{red})^\\top(\\mu_{red}+\\mu_{green}) + \\lVert\\mu_{red}\\rVert^2-\\lVert\\mu_{green}\\rVert^2 = \\lVert\\mu_{green}\\rVert^2-\\lVert\\mu_{red}\\rVert^2+\\lVert\\mu_{red}\\rVert^2-\\lVert\\mu_{green}\\rVert^2 = 0$ ✓.",
+      "animation": {
+        "kind": "equation",
+        "title": "Expanding f(x)",
+        "lines": [
+          {
+            "tex": "\\lVert\\mu-x\\rVert^2=\\lVert\\mu\\rVert^2-2\\mu^\\top x+\\lVert x\\rVert^2",
+            "note": "expand"
+          },
+          {
+            "tex": "f(x)=(\\lVert\\mu_{r}\\rVert^2-2\\mu_{r}^\\top x+\\cancel{\\lVert x\\rVert^2})-(\\lVert\\mu_{g}\\rVert^2-2\\mu_{g}^\\top x+\\cancel{\\lVert x\\rVert^2})",
+            "note": "subtract"
+          },
+          {
+            "tex": "f(x)=\\underbrace{2(\\mu_{g}-\\mu_{r})^\\top}_{w^\\top}x+\\underbrace{\\lVert\\mu_{r}\\rVert^2-\\lVert\\mu_{g}\\rVert^2}_{b}",
+            "note": "affine",
+            "tone": "success"
+          },
+          {
+            "tex": "f(0)=\\lVert\\mu_{r}\\rVert^2-\\lVert\\mu_{g}\\rVert^2<0\\ \\Rightarrow\\ \\text{red}",
+            "note": "option A",
+            "tone": "error"
+          }
+        ],
+        "reveal": 1,
+        "caption": "$r$ = red, $g$ = green"
+      }
+    },
+    "da-2025-da-46": {
+      "approach": "Read off what each declared constraint guarantees: PRIMARY KEY ⇒ unique and NOT NULL; a FOREIGN KEY only restricts values to existing parent keys; an unconstrained column may be NULL. Then refute A with a legal instance.",
+      "concepts": [
+        "Primary key and candidate key",
+        "Foreign key (referential integrity)",
+        "NULL values"
+      ],
+      "steps": [
+        {
+          "title": "`Person`: aadhaar is the primary key",
+          "body": "A primary key is a chosen candidate key, so `aadhaar` is a candidate key of `Person` — (C) true. Entity integrity forbids NULL in a primary-key column — (D) false."
+        },
+        {
+          "title": "`Customer.phone` has no constraint",
+          "body": "`phone CHAR(10)` carries no `NOT NULL`, `UNIQUE` or key constraint, so a row may leave it NULL — (B) true.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "c": 2,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "`Customer.aadhaar` is only a foreign key",
+          "body": "The foreign key only says every non-NULL `Customer.aadhaar` must appear in `Person.aadhaar`. Nothing makes it unique: one person may register two e-mail addresses. The instance on the canvas satisfies every declared constraint (distinct `email`s, valid FK), yet two rows share the same `aadhaar`, so `aadhaar` does not identify a `Customer` tuple — (A) false.",
+          "scene": {
+            "hl": [
+              {
+                "c": 3,
+                "tone": "error"
+              },
+              {
+                "r": 0,
+                "c": 2,
+                "tone": "success"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "**(B) and (C)**",
+        "choice": [
+          "B",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "No UNIQUE/key constraint on `Customer.aadhaar`; two customers (two e-mails) can share one aadhaar. A foreign key is not a key of the referencing table."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "`phone` has no NOT NULL or key constraint."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "It is the declared PRIMARY KEY of `Person`, hence a candidate key."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Primary-key attributes can never be NULL."
+        }
+      ],
+      "shortcut": "Only PRIMARY KEY/UNIQUE make keys and only PRIMARY KEY/NOT NULL forbid NULLs; FOREIGN KEY does neither.",
+      "pitfalls": [
+        "Treating a foreign key as a key of the referencing relation.",
+        "Thinking a foreign-key column cannot be NULL — it can (here `Customer.aadhaar` may also be NULL)."
+      ],
+      "verification": "The example instance is accepted by the schema: both rows have distinct non-NULL `email`s, the shared aadhaar exists in `Person`, and one `phone` is NULL — so A fails and B holds in a concrete case.",
+      "animation": {
+        "kind": "table",
+        "title": "A legal Customer instance",
+        "cols": [
+          "name",
+          "email (PK)",
+          "phone",
+          "aadhaar (FK)"
+        ],
+        "rows": [
+          [
+            "Ravi",
+            "ravi@a.in",
+            "NULL",
+            "111122223333"
+          ],
+          [
+            "Ravi",
+            "ravi@b.in",
+            "9876543210",
+            "111122223333"
+          ]
+        ],
+        "mono": true,
+        "caption": "Person contains aadhaar 111122223333"
+      }
+    },
+    "da-2025-da-47": {
+      "approach": "Compute attribute closures. Since only $BC \\to A$ produces $A$, every key must contain $A$ or $BC$; that pins down all candidate keys. BCNF fails as soon as one FD has a non-superkey left side.",
+      "concepts": [
+        "Attribute closure",
+        "Candidate key",
+        "BCNF"
+      ],
+      "given": "$R(A,B,C,D,E,F,G)$ with $A\\to BCEF$, $E\\to DG$, $BC\\to A$.",
+      "steps": [
+        {
+          "title": "Closure of $A$",
+          "body": "$A^+$: start $\\{A\\}$; $A\\to BCEF$ adds $B,C,E,F$; $E\\to DG$ adds $D,G$. $A^+ = \\{A,B,C,D,E,F,G\\}$ — all 7 attributes, and $A$ is a single attribute, so $A$ is a candidate key.",
+          "scene": {
+            "reveal": 3,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Closure of $BC$",
+          "body": "$BC^+$: $BC\\to A$ adds $A$, then $A^+$ adds everything: $BC^+ = ABCDEFG$. Minimal? $B^+ = \\{B\\}$ and $C^+=\\{C\\}$ (no FD has $B$ or $C$ alone on the left), so $BC$ is a candidate key.",
+          "scene": {
+            "reveal": 12,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "No other candidate keys; $E$ is not a key",
+          "body": "$E^+ = \\{E, D, G\\}$ — not all attributes, so (C) is false.\n\nAny superkey $K$ must yield $A$ in its closure. The only FD with $A$ on the right is $BC\\to A$, so $K$ contains $A$, or derives $B$ and $C$ — but $B, C$ themselves only come from $A$. Hence $K \\supseteq \\{A\\}$ or $K \\supseteq \\{B,C\\}$, and the candidate keys are exactly $A$ and $BC$: (B) true, (A) false.",
+          "scene": {
+            "reveal": 15,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 4,
+                "tone": "error"
+              }
+            ]
+          }
+        },
+        {
+          "title": "BCNF check",
+          "body": "BCNF needs every non-trivial FD $X\\to Y$ to have $X$ a superkey. $A\\to BCEF$ ✓ and $BC\\to A$ ✓, but $E\\to DG$ has $E^+ = \\{D,E,G\\}$, not a superkey. So $R$ is **not** in BCNF — (D) true. (It is not even in 3NF: $D, G$ are non-prime and depend transitively on the key via $E$.)"
+        }
+      ],
+      "answer": {
+        "value": "**(B) and (D)** — keys $A$ and $BC$; $E\\to DG$ violates BCNF",
+        "choice": [
+          "B",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$BC^+$ is also all of $R$ and $BC$ is minimal, so $A$ is not the only key."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$A^+ = BC^+ = ABCDEFG$, both minimal, and every key contains $A$ or $BC$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$E^+ = DEG$, so $E$ is not even a superkey."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "$E\\to DG$ with $E$ not a superkey violates BCNF."
+        }
+      ],
+      "shortcut": "Attributes never on any right side must be in every key; here every attribute appears on some right side, so look at which FDs generate $A$: only $BC\\to A$ ⇒ keys $A$, $BC$.",
+      "pitfalls": [
+        "Taking $E$ as a key because it appears on a left side.",
+        "Missing $BC$ as a key by stopping after $A^+$."
+      ],
+      "verification": "Brute force over single attributes and pairs: only $A^+$ (singles) and $BC^+$ (pairs without $A$) are complete; e.g. $BE^+ = BDEG$, $CE^+ = CDEG$, $BD^+ = BD$ — consistent with keys $\\{A\\}$, $\\{B,C\\}$.",
+      "animation": {
+        "kind": "table",
+        "title": "Attribute closures",
+        "cols": [
+          "X",
+          "X⁺",
+          "key?"
+        ],
+        "rows": [
+          [
+            "A",
+            "ABCDEFG",
+            "yes"
+          ],
+          [
+            "BC",
+            "ABCDEFG",
+            "yes"
+          ],
+          [
+            "B",
+            "B",
+            "no"
+          ],
+          [
+            "C",
+            "C",
+            "no"
+          ],
+          [
+            "E",
+            "DEG",
+            "no"
+          ]
+        ],
+        "reveal": 0
+      }
+    },
+    "da-2025-da-48": {
+      "approach": "The three given shortest paths fix $d(a,d)=d(e,h)=d(a,h)=3$. A candidate edge cannot exist if it would create a path of length 2 between one of these pairs; test each option against that.",
+      "concepts": [
+        "Shortest path (unweighted)",
+        "Proof by contradiction",
+        "Graph distance"
+      ],
+      "given": "Shortest paths: $a-b-c-d$, $e-f-g-h$, $a-f-c-h$ — so $d(a,d) = d(e,h) = d(a,h) = 3$.",
+      "steps": [
+        {
+          "title": "What the shortest paths tell us",
+          "body": "Each given shortest path has 3 edges, so in $G$:\n$$d(a,d)=3,\\quad d(e,h)=3,\\quad d(a,h)=3.$$\nAny edge that would create a path of length $\\le 2$ between such a pair contradicts the given information, so it is NOT an edge of $G$.",
+          "scene": {
+            "tones": {
+              "a": "accent",
+              "d": "accent",
+              "e": "accent",
+              "h": "accent"
+            }
+          }
+        },
+        {
+          "title": "Edge $(b, d)$",
+          "body": "If $(b,d)$ existed, $a-b-d$ would be a path of length $2 < 3 = d(a,d)$. Contradiction ⇒ $(b,d)$ is **not** an edge.",
+          "scene": {
+            "edges": [
+              {
+                "from": "a",
+                "to": "b"
+              },
+              {
+                "from": "b",
+                "to": "c"
+              },
+              {
+                "from": "c",
+                "to": "d"
+              },
+              {
+                "from": "e",
+                "to": "f"
+              },
+              {
+                "from": "f",
+                "to": "g"
+              },
+              {
+                "from": "g",
+                "to": "h"
+              },
+              {
+                "from": "a",
+                "to": "f"
+              },
+              {
+                "from": "f",
+                "to": "c"
+              },
+              {
+                "from": "c",
+                "to": "h"
+              },
+              {
+                "from": "b",
+                "to": "d",
+                "dashed": true
+              }
+            ],
+            "edgeTones": {
+              "b>d": "error",
+              "a>b": "warning"
+            },
+            "tones": {
+              "a": "accent",
+              "d": "accent"
+            }
+          }
+        },
+        {
+          "title": "Edge $(b, h)$",
+          "body": "If $(b,h)$ existed, $a-b-h$ would have length $2 < 3 = d(a,h)$. ⇒ **not** an edge.",
+          "scene": {
+            "edges": [
+              {
+                "from": "a",
+                "to": "b"
+              },
+              {
+                "from": "b",
+                "to": "c"
+              },
+              {
+                "from": "c",
+                "to": "d"
+              },
+              {
+                "from": "e",
+                "to": "f"
+              },
+              {
+                "from": "f",
+                "to": "g"
+              },
+              {
+                "from": "g",
+                "to": "h"
+              },
+              {
+                "from": "a",
+                "to": "f"
+              },
+              {
+                "from": "f",
+                "to": "c"
+              },
+              {
+                "from": "c",
+                "to": "h"
+              },
+              {
+                "from": "b",
+                "to": "h",
+                "dashed": true
+              }
+            ],
+            "edgeTones": {
+              "b>h": "error",
+              "a>b": "warning"
+            },
+            "tones": {
+              "a": "accent",
+              "h": "accent"
+            }
+          }
+        },
+        {
+          "title": "Edge $(e, g)$",
+          "body": "If $(e,g)$ existed, $e-g-h$ would have length $2 < 3 = d(e,h)$. ⇒ **not** an edge.",
+          "scene": {
+            "edges": [
+              {
+                "from": "a",
+                "to": "b"
+              },
+              {
+                "from": "b",
+                "to": "c"
+              },
+              {
+                "from": "c",
+                "to": "d"
+              },
+              {
+                "from": "e",
+                "to": "f"
+              },
+              {
+                "from": "f",
+                "to": "g"
+              },
+              {
+                "from": "g",
+                "to": "h"
+              },
+              {
+                "from": "a",
+                "to": "f"
+              },
+              {
+                "from": "f",
+                "to": "c"
+              },
+              {
+                "from": "c",
+                "to": "h"
+              },
+              {
+                "from": "e",
+                "to": "g",
+                "dashed": true
+              }
+            ],
+            "edgeTones": {
+              "e>g": "error",
+              "g>h": "warning"
+            },
+            "tones": {
+              "e": "accent",
+              "h": "accent"
+            }
+          }
+        },
+        {
+          "title": "Edge $(b, g)$ is consistent",
+          "body": "Add $(b,g)$ to the drawn edges and recompute the three distances:\n- $a\\to d$: through $b-g$ we reach $g$ in 2 steps, but $g$'s other neighbours are $f, h$, neither adjacent to $d$, so the best is still $3$.\n- $a\\to h$: $a-b-g-h$ has length $3$ — equal to $3$, not shorter.\n- $e\\to h$: $e$'s only neighbour is $f$, and $f-b-g-h$ is no shortcut; still $3$.\n\nAll three paths stay shortest, so $(b,g)$ may well be an edge — it cannot be declared NOT an edge.",
+          "scene": {
+            "edges": [
+              {
+                "from": "a",
+                "to": "b"
+              },
+              {
+                "from": "b",
+                "to": "c"
+              },
+              {
+                "from": "c",
+                "to": "d"
+              },
+              {
+                "from": "e",
+                "to": "f"
+              },
+              {
+                "from": "f",
+                "to": "g"
+              },
+              {
+                "from": "g",
+                "to": "h"
+              },
+              {
+                "from": "a",
+                "to": "f"
+              },
+              {
+                "from": "f",
+                "to": "c"
+              },
+              {
+                "from": "c",
+                "to": "h"
+              },
+              {
+                "from": "b",
+                "to": "g",
+                "dashed": true
+              }
+            ],
+            "edgeTones": {
+              "b>g": "success"
+            },
+            "tones": {
+              "a": "accent",
+              "d": "accent",
+              "e": "accent",
+              "h": "accent"
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "**(A), (C) and (D)** — $(b,d)$, $(b,h)$ and $(e,g)$ would each shorten a given shortest path",
+        "choice": [
+          "A",
+          "C",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$a-b-d$ would have length 2, but $d(a,d)=3$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Adding $(b,g)$ keeps $d(a,d)=d(e,h)=d(a,h)=3$ (e.g. $a-b-g-h$ is also length 3), so it can be an edge."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$a-b-h$ would have length 2, but $d(a,h)=3$."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "$e-g-h$ would have length 2, but $d(e,h)=3$."
+        }
+      ],
+      "shortcut": "An edge $(u,v)$ is ruled out exactly when it joins a vertex adjacent to one end of a length-3 shortest path to the other end (or skips a vertex on it): $b$–$d$, $b$–$h$, $e$–$g$.",
+      "pitfalls": [
+        "Answering \"edges not drawn\" — the figure shows only a subset, so missing edges may still exist.",
+        "Rejecting $(b,g)$ because $a-b-g-h$ is another path of length 3: ties are allowed, only a *shorter* path contradicts."
+      ],
+      "verification": "For each option the contradiction (or its absence) was checked against all three given distances; only $(b,g)$ produces no path of length $\\le 2$ between $a,d$ / $e,h$ / $a,h$.",
+      "animation": {
+        "kind": "graph",
+        "title": "Known part of G",
+        "nodes": [
+          {
+            "id": "a",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "b",
+            "x": 1,
+            "y": 0
+          },
+          {
+            "id": "c",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "id": "d",
+            "x": 3,
+            "y": 0
+          },
+          {
+            "id": "e",
+            "x": 0,
+            "y": 1
+          },
+          {
+            "id": "f",
+            "x": 1,
+            "y": 1
+          },
+          {
+            "id": "g",
+            "x": 2,
+            "y": 1
+          },
+          {
+            "id": "h",
+            "x": 3,
+            "y": 1
+          }
+        ],
+        "edges": [
+          {
+            "from": "a",
+            "to": "b"
+          },
+          {
+            "from": "b",
+            "to": "c"
+          },
+          {
+            "from": "c",
+            "to": "d"
+          },
+          {
+            "from": "e",
+            "to": "f"
+          },
+          {
+            "from": "f",
+            "to": "g"
+          },
+          {
+            "from": "g",
+            "to": "h"
+          },
+          {
+            "from": "a",
+            "to": "f"
+          },
+          {
+            "from": "f",
+            "to": "c"
+          },
+          {
+            "from": "c",
+            "to": "h"
+          }
+        ],
+        "caption": "Dashed = candidate edge being tested"
+      }
+    },
+    "da-2025-da-49": {
+      "approach": "Chop $[0,1]$ into $n$ equal pieces and telescope: the triangle inequality bounds $\\lvert f(1)-f(0)\\rvert$ by $n\\cdot(1/n)^2 = 1/n$, for every $n$. This needs no differentiability and forces the difference to be $0$.",
+      "concepts": [
+        "Telescoping sum",
+        "Triangle inequality",
+        "Hölder condition of order 2 ⇒ constant"
+      ],
+      "steps": [
+        {
+          "title": "Telescope over $n$ equal steps",
+          "body": "Let $x_k = k/n$ for $k=0,1,\\dots,n$. Then\n$$f(1)-f(0) = \\sum_{k=1}^{n}\\big(f(x_k)-f(x_{k-1})\\big).$$",
+          "scene": {
+            "reveal": 1
+          }
+        },
+        {
+          "title": "Bound each step",
+          "body": "By the triangle inequality and the hypothesis with $x_k - x_{k-1} = 1/n$:\n$$\\lvert f(1)-f(0)\\rvert \\le \\sum_{k=1}^{n}\\lvert f(x_k)-f(x_{k-1})\\rvert \\le \\sum_{k=1}^{n}\\left(\\frac1n\\right)^2 = n\\cdot\\frac{1}{n^2} = \\frac1n.$$",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "Let $n\\to\\infty$",
+          "body": "$\\lvert f(1)-f(0)\\rvert \\le \\frac1n$ holds for **every** positive integer $n$, so it must be $0$:\n$$f(1)-f(0) = 0.$$",
+          "scene": {
+            "reveal": 4
+          }
+        }
+      ],
+      "answer": {
+        "value": "$f(1)-f(0) =$ **0**",
+        "number": 0,
+        "matchesKey": true
+      },
+      "shortcut": "Divide by $\\lvert x-y\\rvert$: $\\left\\lvert\\frac{f(x)-f(y)}{x-y}\\right\\rvert \\le \\lvert x-y\\rvert \\to 0$, so $f'(x)=0$ everywhere and $f$ is constant.",
+      "pitfalls": [
+        "Plugging $x=1, y=0$ only: that gives $\\lvert f(1)-f(0)\\rvert\\le 1$, which does not determine the value.",
+        "Answering 1 from that loose bound."
+      ],
+      "verification": "Derivative route: $\\lvert f(x+h)-f(x)\\rvert/\\lvert h\\rvert \\le \\lvert h\\rvert \\to 0$, so $f'\\equiv 0$ and $f$ is constant (mean value theorem); hence $f(1)=f(0)$ ✓. Example: any constant function satisfies the hypothesis.",
+      "animation": {
+        "kind": "equation",
+        "title": "Squeezing the difference",
+        "lines": [
+          {
+            "tex": "f(1)-f(0)=\\sum_{k=1}^{n}\\big(f(\\tfrac kn)-f(\\tfrac{k-1}n)\\big)",
+            "note": "telescope"
+          },
+          {
+            "tex": "\\lvert f(1)-f(0)\\rvert\\le\\sum_{k=1}^{n}\\big(\\tfrac1n\\big)^2",
+            "note": "triangle inequality"
+          },
+          {
+            "tex": "=\\tfrac1n",
+            "note": "for every n"
+          },
+          {
+            "tex": "\\Rightarrow\\ f(1)-f(0)=0",
+            "tone": "success"
+          }
+        ],
+        "reveal": 0
+      }
+    },
+    "da-2025-da-50": {
+      "approach": "With zero-mean data, $\\frac1n\\sum (u^\\top x^{(i)})^2 = u^\\top C u$ is the variance along $u$; over unit vectors it is maximised by the top eigenvector, where it equals $\\lambda_{\\max}$.",
+      "concepts": [
+        "Covariance matrix",
+        "Variance along a direction $u^\\top C u$",
+        "PCA / Rayleigh quotient"
+      ],
+      "steps": [
+        {
+          "title": "Rewrite the sum as a quadratic form",
+          "body": "The mean is $\\frac1n\\sum x^{(i)} = 0$, so the covariance matrix is $C = \\frac1n\\sum_{i=1}^n x^{(i)}x^{(i)\\top}$. Since $(u^\\top x)^2 = u^\\top x\\,x^\\top u$:\n$$\\frac1n\\sum_{i=1}^{n}(u^\\top x^{(i)})^2 = u^\\top\\Big(\\frac1n\\sum_{i=1}^n x^{(i)}x^{(i)\\top}\\Big)u = u^\\top C u.$$",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Maximum-variance direction",
+          "body": "For unit $u$, $u^\\top C u$ (the Rayleigh quotient) is at most $\\lambda_{\\max}$, with equality at the corresponding eigenvector — that is the \"direction of maximum variance\". Then $u^\\top C u = u^\\top(\\lambda_{\\max}u) = \\lambda_{\\max}\\,u^\\top u = \\lambda_{\\max}$.",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "Largest eigenvalue",
+          "body": "$\\lambda_i = 100^{2-i}$ decreases with $i$:\n$$\\lambda_1 = 100^{1} = 100,\\quad \\lambda_2 = 100^{0} = 1,\\quad \\lambda_3 = 100^{-1} = 0.01,\\ \\dots$$\nSo $\\lambda_{\\max} = \\lambda_1 = 100$ and the required value is $\\mathbf{100}$.",
+          "scene": {
+            "reveal": 4
+          }
+        }
+      ],
+      "answer": {
+        "value": "$\\frac1n\\sum_i (u^\\top x^{(i)})^2 = \\lambda_1 =$ **100**",
+        "number": 100,
+        "matchesKey": true
+      },
+      "shortcut": "Variance of the data projected on the first principal component = largest eigenvalue $=100^{2-1}=100$.",
+      "pitfalls": [
+        "Reading $\\lambda_i=100^{2-i}$ as $100\\cdot 2^{-i}$ (gives 50).",
+        "Taking $\\lambda_{100}$ or the sum of all eigenvalues (total variance) instead of $\\lambda_1$."
+      ],
+      "verification": "Write $u=\\sum_j c_j v_j$ in the eigenbasis with $\\sum c_j^2=1$: $u^\\top C u = \\sum_j c_j^2 \\lambda_j \\le \\lambda_1 \\sum c_j^2 = 100$, with equality only for $u=\\pm v_1$ ✓.",
+      "animation": {
+        "kind": "equation",
+        "title": "Projected variance",
+        "lines": [
+          {
+            "tex": "\\tfrac1n\\textstyle\\sum_i (u^\\top x^{(i)})^2=u^\\top\\big(\\tfrac1n\\sum_i x^{(i)}x^{(i)\\top}\\big)u",
+            "note": "expand square"
+          },
+          {
+            "tex": "=u^\\top C\\,u",
+            "note": "zero mean"
+          },
+          {
+            "tex": "\\max_{\\lVert u\\rVert=1}u^\\top Cu=\\lambda_{\\max}",
+            "note": "Rayleigh quotient"
+          },
+          {
+            "tex": "\\lambda_1=100^{2-1}=100",
+            "tone": "success"
+          }
+        ],
+        "reveal": 1
+      }
+    },
+    "da-2025-da-51": {
+      "approach": "Draws with replacement are independent with the same black-probability $p=\\frac{10}{15}$, so $S_{100}\\sim\\text{Binomial}(100, \\tfrac23)$ and $E[S_{100}] = np$ by linearity of expectation.",
+      "concepts": [
+        "Indicator variables",
+        "Linearity of expectation",
+        "Binomial mean $np$"
+      ],
+      "steps": [
+        {
+          "title": "Probability of black on one draw",
+          "body": "The bag has $5+10 = 15$ balls, and replacement restores it before every draw, so on each draw\n$$P(\\text{black}) = \\frac{10}{15} = \\frac23.$$"
+        },
+        {
+          "title": "Expected count by linearity",
+          "body": "Let $B_k = 1$ if draw $k$ is black. Then $S_{100} = \\sum_{k=1}^{100} B_k$ and\n$$E[S_{100}] = \\sum_{k=1}^{100}E[B_k] = 100\\times P(\\text{black}) = 100\\times\\frac23.$$\n(Equivalently $S_{100}\\sim\\text{Binomial}(100, \\tfrac23)$, whose mean is $np$.)"
+        },
+        {
+          "title": "Evaluate and round",
+          "body": "$$100\\times\\frac23 = \\frac{200}{3} = 66.666\\ldots$$\nRounded to one decimal place: $E[S_{100}] \\approx 66.7$."
+        }
+      ],
+      "answer": {
+        "value": "$E[S_{100}] = \\frac{200}{3} \\approx$ **66.7**",
+        "number": 66.67,
+        "matchesKey": true
+      },
+      "shortcut": "$E = np = 100 \\times \\frac{10}{15} = 66.7$.",
+      "pitfalls": [
+        "Using the black : white ratio $10/5 = 2$ as a probability, or the white probability $\\frac{5}{15}$ (gives 33.3).",
+        "Truncating $66.67$ to $66.6$ instead of rounding (the official range accepts both 66.6 and 66.7)."
+      ],
+      "verification": "Complement check: expected whites $= 100\\times\\frac13 = 33.3$, and $66.7+33.3=100$ draws ✓."
+    },
+    "da-2025-da-52": {
+      "approach": "Division $T(\\text{branch}, \\text{customer}) \\div B(\\text{branch})$ returns the customers paired with **every** branch in $B$. Build the (branch, customer) pairs from the join, then check each customer against all four branches.",
+      "concepts": [
+        "Natural join",
+        "Projection",
+        "Relational division (\"for all\")"
+      ],
+      "steps": [
+        {
+          "title": "Join on loan_num and project",
+          "body": "Each Borrower row picks up the branch of its loan:\n\n| loan | branch_name | customer_name |\n|---|---|---|\n| L11 | Banjara Hills | Anand, Karteek |\n| L14 | Kondapur | Karteek |\n| L15 | SR Nagar | Ankita |\n| L19 | SR Nagar | Gopal |\n| L22 | SR Nagar | Karteek |\n| L23 | Balanagar | Karteek, Sunil |\n| L25 | Kondapur | Sunil |\n\nProjecting on (branch_name, customer_name) gives these 9 distinct pairs.",
+          "scene": {
+            "reveal": 20
+          }
+        },
+        {
+          "title": "The divisor",
+          "body": "$\\pi_{\\text{branch\\_name}}(\\text{Loan}) = \\{\\text{Banjara Hills},\\ \\text{Kondapur},\\ \\text{SR Nagar},\\ \\text{Balanagar}\\}$ — 4 branches (duplicates removed).",
+          "scene": {
+            "caption": "Columns = the 4 branches of the divisor"
+          }
+        },
+        {
+          "title": "Which customers cover all four branches?",
+          "body": "Read the grid row by row:\n- Anand: only Banjara Hills ✗\n- **Karteek**: Banjara Hills (L11), Kondapur (L14), SR Nagar (L22), Balanagar (L23) ✓\n- Ankita, Gopal: only SR Nagar ✗\n- Sunil: Balanagar, Kondapur ✗\n\nOnly Karteek survives, so the result has **1** tuple: (Karteek).",
+          "scene": {
+            "hl": [
+              {
+                "r": 1,
+                "tone": "success"
+              }
+            ],
+            "caption": "Only Karteek has a ✓ in every column"
+          }
+        }
+      ],
+      "answer": {
+        "value": "The result is $\\{(\\text{Karteek})\\}$ — **1** tuple",
+        "number": 1,
+        "matchesKey": true
+      },
+      "shortcut": "A customer must have at least 4 loans at 4 different branches; only Karteek (4 loans: L11, L14, L22, L23) has enough, and those are 4 distinct branches.",
+      "pitfalls": [
+        "Counting customers with loans in more than one branch (Karteek and Sunil) instead of in **all** branches.",
+        "Forgetting that the divisor is computed from Loan (4 branches), not from the joined pairs."
+      ],
+      "verification": "Division identity: $T\\div B = \\pi_c(T) - \\pi_c\\big((\\pi_c(T)\\times B) - T\\big)$. Every customer except Karteek has some missing (branch, customer) pair, so only Karteek remains ✓.",
+      "animation": {
+        "kind": "table",
+        "title": "customer × branch (✓ = pair in the join)",
+        "corner": "customer \\ branch",
+        "cols": [
+          "Banjara Hills",
+          "Kondapur",
+          "SR Nagar",
+          "Balanagar"
+        ],
+        "rowLabels": [
+          "Anand",
+          "Karteek",
+          "Ankita",
+          "Gopal",
+          "Sunil"
+        ],
+        "rows": [
+          [
+            "✓",
+            "·",
+            "·",
+            "·"
+          ],
+          [
+            "✓",
+            "✓",
+            "✓",
+            "✓"
+          ],
+          [
+            "·",
+            "·",
+            "✓",
+            "·"
+          ],
+          [
+            "·",
+            "·",
+            "✓",
+            "·"
+          ],
+          [
+            "·",
+            "✓",
+            "·",
+            "✓"
+          ]
+        ],
+        "reveal": 0
+      }
+    },
+    "da-2025-da-53": {
+      "approach": "Trace the recursion: every argument on the way down is odd ($15 \\to 7 \\to 3 \\to 1 \\to 0$), so only the doubling branch runs; the base case returns $b=10$ and four doublings give $10\\times 2^4$.",
+      "concepts": [
+        "Recursion trace",
+        "Python `/` (true division) and `%` on floats"
+      ],
+      "steps": [
+        {
+          "title": "Call chain going down",
+          "body": "- $f(15,10)$: $15\\%2=1$ ⇒ returns $2\\cdot f(\\frac{14}{2}) = 2\\cdot f(7.0,10)$.\n- $f(7.0,10)$: $7.0\\%2 = 1.0$, and `1.0 == 1` is True ⇒ $2\\cdot f(3.0,10)$.\n- $f(3.0,10)$ ⇒ $2\\cdot f(1.0,10)$.\n- $f(1.0,10)$ ⇒ $2\\cdot f(0.0,10)$.\n\n(In Python 3 `/` gives floats, but they compare equal to the integers, so the branches are the same.)",
+          "scene": {
+            "line": 5,
+            "callStack": [
+              {
+                "name": "f(15,10)"
+              },
+              {
+                "name": "f(7.0,10)"
+              },
+              {
+                "name": "f(3.0,10)"
+              },
+              {
+                "name": "f(1.0,10)"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Base case",
+          "body": "$f(0.0,10)$: `0.0 == 0` is True ⇒ returns $b = 10$ (an int).",
+          "scene": {
+            "line": 3,
+            "callStack": [
+              {
+                "name": "f(15,10)"
+              },
+              {
+                "name": "f(7.0,10)"
+              },
+              {
+                "name": "f(3.0,10)"
+              },
+              {
+                "name": "f(1.0,10)"
+              },
+              {
+                "name": "f(0.0,10)",
+                "vars": {
+                  "ret": 10
+                }
+              }
+            ]
+          }
+        },
+        {
+          "title": "Unwind: four doublings",
+          "body": "$$f(1.0)=2\\times10=20,\\quad f(3.0)=2\\times20=40,\\quad f(7.0)=2\\times40=80,\\quad f(15)=2\\times80=160.$$\nAll values are ints (the base case returns the int $10$), so the program prints **160**.",
+          "scene": {
+            "line": 7,
+            "callStack": [
+              {
+                "name": "f(15,10)",
+                "vars": {
+                  "ret": 160
+                }
+              }
+            ],
+            "output": "160"
+          }
+        }
+      ],
+      "answer": {
+        "value": "The program prints **160**",
+        "number": 160,
+        "matchesKey": true
+      },
+      "shortcut": "$15 = 1111_2$: each odd step strips a 1-bit and doubles; four 1-bits ⇒ $10\\times2^4 = 160$.",
+      "pitfalls": [
+        "Assuming the function multiplies, $15\\times10=150$ — the odd branch doubles without adding $b$.",
+        "Worrying that `(a-1)/2` is a float: $7.0\\%2 = 1.0 = 1$ and $0.0 = 0$, so the same branches run."
+      ],
+      "verification": "Closed form for this chain: $f(2^k-1, b) = 2^k b$ (induction: $f(2^k-1)=2f(2^{k-1}-1)$, $f(0)=b$). With $k=4$, $b=10$: $160$ ✓.",
+      "animation": {
+        "kind": "code",
+        "title": "Tracing f(15,10)",
+        "lang": "python",
+        "code": "def f(a,b):\n    if (a==0):\n        return b\n    if (a%2==1):\n        return 2*f((a-1)/2,b)\n    return b+f(a-1,b)\nprint(f(15,10))",
+        "line": 7,
+        "callStack": [
+          {
+            "name": "f(15,10)"
+          }
+        ],
+        "output": ""
+      }
+    },
+    "da-2025-da-54": {
+      "approach": "Simulate: the stack fills $0,1,\\dots,8$; from then on each iteration pops one value, adds it to `sum`, and if it is odd also discards the next value. So only $8$ and the odd numbers $7,5,3,1$ are added.",
+      "concepts": [
+        "Stack (LIFO)",
+        "Loop trace"
+      ],
+      "steps": [
+        {
+          "title": "Push phase",
+          "body": "Initially $S=[0]$, $x=0$, flag $=0$. Each iteration with flag $=0$ increments $x$ and pushes it. In the iteration that pushes $8$, the test `x equals 8` sets flag $=1$, so the stack is $[0,1,2,\\dots,8]$ (top $=8$) and popping starts in the same iteration.",
+          "scene": {
+            "items": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "vars": {
+              "x": 8,
+              "flag": 1,
+              "sum": 0
+            }
+          }
+        },
+        {
+          "title": "Pop 8 (even)",
+          "body": "Pop $x=8$: even, so nothing else is popped. sum $=0+8=8$. Stack $[0..7]$.",
+          "scene": {
+            "items": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7
+            ],
+            "popped": 8,
+            "vars": {
+              "x": 8,
+              "flag": 1,
+              "sum": 8
+            }
+          }
+        },
+        {
+          "title": "Pop 7 (odd) and discard 6",
+          "body": "flag is 1, so no push. Pop $x=7$: odd ⇒ pop and discard $6$. sum $=8+7=15$. Stack $[0..5]$.",
+          "scene": {
+            "items": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "popped": "7, 6",
+            "vars": {
+              "x": 7,
+              "flag": 1,
+              "sum": 15
+            }
+          }
+        },
+        {
+          "title": "Pop 5, 3, 1 the same way",
+          "body": "- Pop $5$ (odd), discard $4$: sum $=15+5=20$, stack $[0,1,2,3]$.\n- Pop $3$ (odd), discard $2$: sum $=20+3=23$, stack $[0,1]$.\n- Pop $1$ (odd), discard $0$: sum $=23+1=24$, stack empty ⇒ loop ends.",
+          "scene": {
+            "items": [],
+            "popped": "1, 0",
+            "vars": {
+              "x": 1,
+              "flag": 1,
+              "sum": 24
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "`sum` $= 8+7+5+3+1 =$ **24**",
+        "number": 24,
+        "matchesKey": true
+      },
+      "shortcut": "Top is 8 (even, added); then pairs (7,6), (5,4), (3,2), (1,0) each contribute only the odd number: $8+7+5+3+1=24$.",
+      "pitfalls": [
+        "Missing that the pop happens in the same iteration that pushes 8 (flag is set before the pop test).",
+        "Adding the discarded even values too (that would give $36 = 0+1+\\dots+8$).",
+        "Thinking the `x equals 8` test re-triggers pushes later — it only sets flag to 1 again."
+      ],
+      "verification": "Count pops: the 9 values $0..8$ are removed as $8$, then four pairs = $1+8=9$ pops, leaving the stack empty exactly after sum reaches $24$ ✓.",
+      "animation": {
+        "kind": "stack",
+        "title": "Stack S",
+        "label": "S",
+        "items": [
+          0
+        ],
+        "vars": {
+          "x": 0,
+          "flag": 0,
+          "sum": 0
+        }
+      }
+    },
+    "da-2025-da-55": {
+      "approach": "With decreasing adjacency lists DFS always takes the $+2$ edge first, so it runs down the even vertices to 100, then picks up the odd vertices one per backtrack step ($99, 97, \\dots, 1$). Count what comes after 50 in that order.",
+      "concepts": [
+        "Depth-first search",
+        "Discovery order",
+        "Backtracking"
+      ],
+      "given": "$V=\\{0,\\dots,100\\}$; edges $i\\to i+1$ and $i\\to i+2$ (when the target exists); adjacency list of $i$ is $[i+2,\\ i+1]$.",
+      "steps": [
+        {
+          "title": "Going down the evens",
+          "body": "From $0$ the first neighbour is $2$, from $2$ it is $4$, … so DFS discovers $0, 2, 4, \\dots, 100$ in that order without backtracking. Vertex $100$ has no out-edges ($101, 102 \\notin V$).",
+          "scene": {
+            "hl": [
+              {
+                "at": [
+                  0,
+                  7
+                ],
+                "tone": "info"
+              }
+            ],
+            "pointers": [
+              {
+                "name": "50",
+                "at": 4,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Backtracking picks up the odds",
+          "body": "Back at $98$: next neighbour $99$ is new ⇒ discover $99$. Its neighbours $100$ (and $101\\notin V$) are done ⇒ back to $98$, then $96$: neighbour $97$ is new; $97\\to 99, 98$ both visited. In general, returning to $2k$ discovers $2k+1$, whose targets $2k+3, 2k+2$ are already visited. So the odds are discovered in the order $99, 97, \\dots, 3, 1$ (vertex $1$ last, when DFS returns to $0$).",
+          "scene": {
+            "hl": [
+              {
+                "at": [
+                  0,
+                  7
+                ],
+                "tone": "info"
+              },
+              {
+                "at": [
+                  8,
+                  11
+                ],
+                "tone": "warning"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Count vertices after 50",
+          "body": "Discovered after $50$:\n- evens $52, 54, \\dots, 100$: $\\frac{100-52}{2}+1 = 25$\n- all odds $99, \\dots, 1$: $50$\n\nTotal $= 25 + 50 = 75$.",
+          "scene": {
+            "hl": [
+              {
+                "at": [
+                  5,
+                  11
+                ],
+                "tone": "success"
+              }
+            ],
+            "ranges": [
+              {
+                "from": 0,
+                "to": 4,
+                "label": "26 (0…50)"
+              },
+              {
+                "from": 5,
+                "to": 7,
+                "label": "25 evens"
+              },
+              {
+                "from": 8,
+                "to": 11,
+                "label": "50 odds"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "**75** vertices are discovered after vertex 50",
+        "number": 75,
+        "matchesKey": true
+      },
+      "shortcut": "$101$ vertices in all; $50$ is the 26th discovered ($0,2,\\dots,50$), so $101-26 = 75$ come after it.",
+      "pitfalls": [
+        "Assuming DFS visits the odds on the way down (that happens with increasing adjacency lists).",
+        "Counting only the evens after 50 (25) and forgetting that every odd vertex is discovered during backtracking."
+      ],
+      "verification": "Total check: $26$ (up to and including 50) $+ 25 + 50 = 101 = \\lvert V\\rvert$ ✓.",
+      "animation": {
+        "kind": "array",
+        "title": "DFS discovery order",
+        "cells": [
+          "0",
+          "2",
+          "…",
+          "48",
+          "50",
+          "52",
+          "…",
+          "100",
+          "99",
+          "97",
+          "…",
+          "1"
+        ],
+        "showIndex": false,
+        "hl": []
+      }
+    }
+  }
+}
