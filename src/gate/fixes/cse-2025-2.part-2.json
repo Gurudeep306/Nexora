@@ -1,0 +1,832 @@
+{
+  "paper": "cse-2025-2",
+  "fixes": [
+    {
+      "id": "cse-2025-2-cs-4",
+      "field": "text",
+      "before": "Let 𝐿, 𝑀, and 𝑁 be non-singular matrices of order 3 satisfying the equations\n𝐿2 = 𝐿−1 , 𝑀 = 𝐿8 and 𝑁 = 𝐿2.\nWhich ONE of the following is the value of the determinant of (𝑀 − 𝑁)?",
+      "after": "Let $L$, $M$, and $N$ be non-singular matrices of order 3 satisfying the equations\n\n$$L^2 = L^{-1}, \\quad M = L^8 \\quad \\text{and} \\quad N = L^2.$$\n\nWhich ONE of the following is the value of the determinant of $(M - N)$?",
+      "reason": "Unicode maths italics and lost superscripts (L2, L−1, L8) replaced with KaTeX.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "cse-2025-2-cs-4",
+      "field": "tags",
+      "before": [
+        "turing"
+      ],
+      "after": [
+        "determinant",
+        "matrix-powers",
+        "inverse"
+      ],
+      "reason": "Tags described the wrong subject (\"turing\").",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "cse-2025-2-cs-5",
+      "field": "text",
+      "before": "Let 𝑃(𝑥) be an arbitrary predicate over the domain of natural numbers.\nWhich ONE of the following statements is TRUE?",
+      "after": "Let $P(x)$ be an arbitrary predicate over the domain of natural numbers.\n\nWhich ONE of the following statements is TRUE?",
+      "reason": "Unicode maths italics replaced with KaTeX.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "cse-2025-2-cs-5",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "(𝑃(0) ∧ (∀𝑥 [𝑃(𝑥) ⇒ 𝑃(𝑥 + 1)])) ⇒ (∀𝑥 𝑃(𝑥))"
+        },
+        {
+          "l": "B",
+          "t": "(𝑃(0) ∧ (∀𝑥 [𝑃(𝑥) ⇒ 𝑃(𝑥 − 1)])) ⇒ (∀𝑥 𝑃(𝑥))"
+        },
+        {
+          "l": "C",
+          "t": "(𝑃(1000) ∧ (∀𝑥 [𝑃(𝑥) ⇒ 𝑃(𝑥 − 1)])) ⇒ (∀𝑥 𝑃(𝑥))"
+        },
+        {
+          "l": "D",
+          "t": "(𝑃(1000) ∧ (∀𝑥 [𝑃(𝑥) ⇒ 𝑃(𝑥 + 1)])) ⇒ (∀𝑥 𝑃(𝑥)) Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\big(P(0) \\land \\forall x\\,[P(x) \\Rightarrow P(x + 1)]\\big) \\Rightarrow \\forall x\\, P(x)$"
+        },
+        {
+          "l": "B",
+          "t": "$\\big(P(0) \\land \\forall x\\,[P(x) \\Rightarrow P(x - 1)]\\big) \\Rightarrow \\forall x\\, P(x)$"
+        },
+        {
+          "l": "C",
+          "t": "$\\big(P(1000) \\land \\forall x\\,[P(x) \\Rightarrow P(x - 1)]\\big) \\Rightarrow \\forall x\\, P(x)$"
+        },
+        {
+          "l": "D",
+          "t": "$\\big(P(1000) \\land \\forall x\\,[P(x) \\Rightarrow P(x + 1)]\\big) \\Rightarrow \\forall x\\, P(x)$"
+        }
+      ],
+      "reason": "Unicode maths italics replaced with KaTeX; running page header removed from option D.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "cse-2025-2-cs-5",
+      "field": "tags",
+      "before": [
+        "network"
+      ],
+      "after": [
+        "first-order-logic",
+        "mathematical-induction",
+        "quantifiers"
+      ],
+      "reason": "Tags described the wrong subject (\"network\").",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "cse-2025-2-cs-6",
+      "field": "text",
+      "before": "Consider the following statements:\n(i) Address Resolution Protocol ( ARP) provides a mapping from an IP\naddress to the corresponding hardware (link-layer) address.\n(ii) A single TCP segment from a sender S to a receiver R cannot carry both\ndata from S to R and acknowledgement for a segment from R to S.\nWhich ONE of the following is CORRECT?",
+      "after": "Consider the following statements:\n\n(i) Address Resolution Protocol (ARP) provides a mapping from an IP address to the corresponding hardware (link-layer) address.\n\n(ii) A single TCP segment from a sender S to a receiver R cannot carry both data from S to R and acknowledgement for a segment from R to S.\n\nWhich ONE of the following is CORRECT?",
+      "reason": "Statements put on their own paragraphs (they rendered run together); stray space in \"( ARP)\" removed.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2025-2-cs-6",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Both (i) and (ii) are TRUE"
+        },
+        {
+          "l": "B",
+          "t": "(i) is TRUE and (ii) is FALSE"
+        },
+        {
+          "l": "C",
+          "t": "(i) is FALSE and (ii) is TRUE"
+        },
+        {
+          "l": "D",
+          "t": "Both (i) and (ii) are FALSE Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Both (i) and (ii) are TRUE"
+        },
+        {
+          "l": "B",
+          "t": "(i) is TRUE and (ii) is FALSE"
+        },
+        {
+          "l": "C",
+          "t": "(i) is FALSE and (ii) is TRUE"
+        },
+        {
+          "l": "D",
+          "t": "Both (i) and (ii) are FALSE"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology (CS2)\" was transcribed into option D.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2025-2-cs-6",
+      "field": "subject",
+      "before": "db",
+      "after": "cn",
+      "reason": "ARP and TCP piggybacking are Computer Networks, not Databases.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2025-2-cs-6",
+      "field": "topic",
+      "before": "sql",
+      "after": "support",
+      "reason": "ARP is a network support protocol (statement ii is about TCP acknowledgements).",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2025-2-cs-6",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "arp",
+        "tcp",
+        "piggybacking"
+      ],
+      "reason": "Tags follow the corrected subject.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2025-2-cs-7",
+      "field": "text",
+      "before": "Consider the routing protocols given in List I and the names given in List II:\nList I List II\n(i) Distance vector routing (a) Bellman-Ford\n(ii) Link state routing (b) Dijkstra\nFor matching of items in List I with those in List II, which ONE of the following\noptions is CORRECT?",
+      "after": "Consider the routing protocols given in List I and the names given in List II:\n\n| List I | List II |\n|---|---|\n| (i) Distance vector routing | (a) Bellman-Ford |\n| (ii) Link state routing | (b) Dijkstra |\n\nFor matching of items in List I with those in List II, which ONE of the following options is CORRECT?",
+      "reason": "The two lists were flattened into running text; restored as a table.",
+      "source": "pdf p.15"
+    },
+    {
+      "id": "cse-2025-2-cs-7",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "(i) – (a) and (ii) – (b)"
+        },
+        {
+          "l": "B",
+          "t": "(i) – (a) and (ii) – (a)"
+        },
+        {
+          "l": "C",
+          "t": "(i) – (b) and (ii) – (a)"
+        },
+        {
+          "l": "D",
+          "t": "(i) – (b) and (ii) – (b) Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "(i) – (a) and (ii) – (b)"
+        },
+        {
+          "l": "B",
+          "t": "(i) – (a) and (ii) – (a)"
+        },
+        {
+          "l": "C",
+          "t": "(i) – (b) and (ii) – (a)"
+        },
+        {
+          "l": "D",
+          "t": "(i) – (b) and (ii) – (b)"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology (CS2)\" was transcribed into option D.",
+      "source": "pdf p.15"
+    },
+    {
+      "id": "cse-2025-2-cs-7",
+      "field": "subject",
+      "before": "ga",
+      "after": "cn",
+      "reason": "Routing protocols are Computer Networks, not General Aptitude.",
+      "source": "pdf p.15"
+    },
+    {
+      "id": "cse-2025-2-cs-7",
+      "field": "topic",
+      "before": "quant",
+      "after": "routing",
+      "reason": "Distance-vector vs link-state routing.",
+      "source": "pdf p.15"
+    },
+    {
+      "id": "cse-2025-2-cs-7",
+      "field": "tags",
+      "before": [
+        "quant"
+      ],
+      "after": [
+        "distance-vector",
+        "link-state",
+        "bellman-ford",
+        "dijkstra"
+      ],
+      "reason": "Tags follow the corrected subject.",
+      "source": "pdf p.15"
+    },
+    {
+      "id": "cse-2025-2-cs-8",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Internet Control Message Protocol (ICMP)"
+        },
+        {
+          "l": "B",
+          "t": "Internet Group Management Protocol (IGMP)"
+        },
+        {
+          "l": "C",
+          "t": "Open Shortest Path First (OSPF)"
+        },
+        {
+          "l": "D",
+          "t": "Routing Information Protocol (RIP) Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Internet Control Message Protocol (ICMP)"
+        },
+        {
+          "l": "B",
+          "t": "Internet Group Management Protocol (IGMP)"
+        },
+        {
+          "l": "C",
+          "t": "Open Shortest Path First (OSPF)"
+        },
+        {
+          "l": "D",
+          "t": "Routing Information Protocol (RIP)"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology (CS2)\" was transcribed into option D.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "cse-2025-2-cs-8",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "ipv4-header",
+        "protocol-field",
+        "encapsulation"
+      ],
+      "reason": "Generic tag \"computer-science\" replaced with specific tags.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "cse-2025-2-cs-9",
+      "field": "text",
+      "before": "Consider the following C program:\n#include <stdio.h>\nvoid stringcopy(char *, char *);\nint main(){\nchar a[30] = \"@#Hello World!\";\nstringcopy(a, a + 2);\nprintf(\"%s\\n\", a);\nreturn 0;\n}\nvoid stringcopy(char *s, char *t) {\nwhile(*t)\n*s++ = *t++;\n}\nWhich ONE of the following will be the output of the program?",
+      "after": "Consider the following C program:\n\n```c\n#include <stdio.h>\n\nvoid stringcopy(char *, char *);\n\nint main(){\n        char a[30] = \"@#Hello World!\";\n        stringcopy(a, a + 2);\n        printf(\"%s\\n\", a);\n        return 0;\n}\n\nvoid stringcopy(char *s, char *t) {\n        while(*t)\n               *s++ = *t++;\n}\n```\n\nWhich ONE of the following will be the output of the program?",
+      "reason": "Program lost its code formatting; restored as a fenced C block with the paper's indentation.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2025-2-cs-9",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "@#Hello World!"
+        },
+        {
+          "l": "B",
+          "t": "Hello World!"
+        },
+        {
+          "l": "C",
+          "t": "ello World!"
+        },
+        {
+          "l": "D",
+          "t": "Hello World!d! Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "@#Hello World!"
+        },
+        {
+          "l": "B",
+          "t": "Hello World!"
+        },
+        {
+          "l": "C",
+          "t": "ello World!"
+        },
+        {
+          "l": "D",
+          "t": "Hello World!d!"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology (CS2)\" was transcribed into option D.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2025-2-cs-9",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "c",
+      "reason": "Topic id \"c-prog\" does not exist; the C-programming topic is \"c\".",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2025-2-cs-9",
+      "field": "tags",
+      "before": [
+        "c-prog"
+      ],
+      "after": [
+        "pointers",
+        "strings",
+        "overlapping-copy"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2025-2-cs-10",
+      "field": "text",
+      "before": "Consider an unordered list of 𝑁 distinct integers.\nWhat is the minimum number of element comparisons required to find an integer\nin the list that is NOT the largest in the list?",
+      "after": "Consider an unordered list of $N$ distinct integers.\n\nWhat is the minimum number of element comparisons required to find an integer in the list that is NOT the largest in the list?",
+      "reason": "Unicode maths italics replaced with KaTeX.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2025-2-cs-10",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "1"
+        },
+        {
+          "l": "B",
+          "t": "𝑁 − 1"
+        },
+        {
+          "l": "C",
+          "t": "𝑁"
+        },
+        {
+          "l": "D",
+          "t": "2𝑁 − 1"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "1"
+        },
+        {
+          "l": "B",
+          "t": "$N - 1$"
+        },
+        {
+          "l": "C",
+          "t": "$N$"
+        },
+        {
+          "l": "D",
+          "t": "$2N - 1$"
+        }
+      ],
+      "reason": "Unicode maths italics replaced with KaTeX.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2025-2-cs-10",
+      "field": "subject",
+      "before": "calc",
+      "after": "algo",
+      "reason": "Counting comparisons is Algorithms, not Calculus.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2025-2-cs-10",
+      "field": "topic",
+      "before": "maxmin",
+      "after": "searching",
+      "reason": "Finding an element (not the maximum) by comparisons.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2025-2-cs-10",
+      "field": "tags",
+      "before": [
+        "combinational"
+      ],
+      "after": [
+        "comparisons",
+        "lower-bound",
+        "maximum"
+      ],
+      "reason": "Tags described the wrong subject (\"combinational\").",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2025-2-cs-11",
+      "field": "text",
+      "before": "Consider the following statements about the use of backpatching in a compiler for\nintermediate code generation:\n(I) Backpatching can be used to generate code for Boolean expression in\none pass.\n(II) Backpatching can be used to generate code for flow-of-control\nstatements in one pass.\nWhich ONE of the following options is CORRECT?",
+      "after": "Consider the following statements about the use of backpatching in a compiler for intermediate code generation:\n\n(I) Backpatching can be used to generate code for Boolean expression in one pass.\n\n(II) Backpatching can be used to generate code for flow-of-control statements in one pass.\n\nWhich ONE of the following options is CORRECT?",
+      "reason": "Statements put on their own paragraphs (they rendered run together).",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2025-2-cs-11",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Only (I) is correct."
+        },
+        {
+          "l": "B",
+          "t": "Only (II) is correct."
+        },
+        {
+          "l": "C",
+          "t": "Both (I) and (II) are correct."
+        },
+        {
+          "l": "D",
+          "t": "Neither (I) nor (II) is correct. Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Only (I) is correct."
+        },
+        {
+          "l": "B",
+          "t": "Only (II) is correct."
+        },
+        {
+          "l": "C",
+          "t": "Both (I) and (II) are correct."
+        },
+        {
+          "l": "D",
+          "t": "Neither (I) nor (II) is correct."
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology (CS2)\" was transcribed into option D.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2025-2-cs-11",
+      "field": "subject",
+      "before": "ga",
+      "after": "cd",
+      "reason": "Backpatching is Compiler Design, not General Aptitude.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2025-2-cs-11",
+      "field": "topic",
+      "before": "quant",
+      "after": "icg",
+      "reason": "Backpatching is an intermediate-code-generation technique.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2025-2-cs-11",
+      "field": "tags",
+      "before": [
+        "quant"
+      ],
+      "after": [
+        "backpatching",
+        "boolean-expressions",
+        "flow-of-control"
+      ],
+      "reason": "Tags follow the corrected subject.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2025-2-cs-12",
+      "field": "text",
+      "before": "Given the following syntax directed translation rules:\nRule 1: 𝑅 → 𝐴𝐵 {𝐵. 𝑖 = 𝑅. 𝑖 − 1; 𝐴. 𝑖 = 𝐵. 𝑖; 𝑅. 𝑖 = 𝐴. 𝑖 + 1; }\nRule 2: 𝑃 → 𝐶𝐷 {𝑃. 𝑖 = 𝐶. 𝑖 + 𝐷. 𝑖; 𝐷. 𝑖 = 𝐶. 𝑖 + 2; }\nRule 3: 𝑄 → 𝐸𝐹 {𝑄. 𝑖 = 𝐸. 𝑖 + 𝐹. 𝑖; }\nWhich ONE is the CORRECT option among the following?",
+      "after": "Given the following syntax directed translation rules:\n\n- Rule 1: $R \\to AB \\;\\{\\, B.i = R.i - 1;\\ A.i = B.i;\\ R.i = A.i + 1; \\,\\}$\n- Rule 2: $P \\to CD \\;\\{\\, P.i = C.i + D.i;\\ D.i = C.i + 2; \\,\\}$\n- Rule 3: $Q \\to EF \\;\\{\\, Q.i = E.i + F.i; \\,\\}$\n\nWhich ONE is the CORRECT option among the following?",
+      "reason": "Unicode maths italics and spaced-out attribute names (\"B. i\") replaced with KaTeX; rules listed one per line.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2025-2-cs-12",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Rule 1 is S-attributed and L-attributed; Rule 2 is S-attributed and not L-attributed; Rule 3 is neither S-attributed nor L-attributed"
+        },
+        {
+          "l": "B",
+          "t": "Rule 1 is neither S -attributed nor L -attributed; Rule 2 is S -attributed and L- attributed; Rule 3 is S-attributed and L-attributed"
+        },
+        {
+          "l": "C",
+          "t": "Rule 1 is neither S -attributed nor L -attributed; Rule 2 is not S -attributed and is L-attributed; Rule 3 is S-attributed and L-attributed"
+        },
+        {
+          "l": "D",
+          "t": "Rule 1 is S -attributed and not L -attributed; Rule 2 is not S -attributed and is L-attributed; Rule 3 is S-attributed and L-attributed Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Rule 1 is S-attributed and L-attributed; Rule 2 is S-attributed and not L-attributed; Rule 3 is neither S-attributed nor L-attributed"
+        },
+        {
+          "l": "B",
+          "t": "Rule 1 is neither S-attributed nor L-attributed; Rule 2 is S-attributed and L-attributed; Rule 3 is S-attributed and L-attributed"
+        },
+        {
+          "l": "C",
+          "t": "Rule 1 is neither S-attributed nor L-attributed; Rule 2 is not S-attributed and is L-attributed; Rule 3 is S-attributed and L-attributed"
+        },
+        {
+          "l": "D",
+          "t": "Rule 1 is S-attributed and not L-attributed; Rule 2 is not S-attributed and is L-attributed; Rule 3 is S-attributed and L-attributed"
+        }
+      ],
+      "reason": "Stray spaces (\"S -attributed\", \"L- attributed\") removed; running page header removed from option D.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2025-2-cs-12",
+      "field": "subject",
+      "before": "cn",
+      "after": "cd",
+      "reason": "S-/L-attributed definitions are Compiler Design, not Computer Networks.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2025-2-cs-12",
+      "field": "topic",
+      "before": "transport",
+      "after": "sdt",
+      "reason": "Syntax-directed translation.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2025-2-cs-12",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "s-attributed",
+        "l-attributed",
+        "inherited-attributes"
+      ],
+      "reason": "Tags follow the corrected subject.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2025-2-cs-13",
+      "field": "text",
+      "before": "Consider a network that uses Ethernet and IPv4. Assume that IPv4 headers do not\nuse any options field. Each Ethernet frame can carry a maximum of 1500 bytes in\nits data field . A UDP segment is transmitted. The payload (data) in the UDP\nsegment is 7488 bytes.\nWhich ONE of the following choices has the CORRECT total number of fragments\ntransmitted and the size of the last fragment including IPv4 header?",
+      "after": "Consider a network that uses Ethernet and IPv4. Assume that IPv4 headers do not use any options field. Each Ethernet frame can carry a maximum of 1500 bytes in its data field. A UDP segment is transmitted. The payload (data) in the UDP segment is 7488 bytes.\n\nWhich ONE of the following choices has the CORRECT total number of fragments transmitted and the size of the last fragment including IPv4 header?",
+      "reason": "Stray space before full stop removed; paragraphs re-joined as in the paper.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2025-2-cs-13",
+      "field": "subject",
+      "before": "calc",
+      "after": "cn",
+      "reason": "IP fragmentation is Computer Networks, not Calculus.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2025-2-cs-13",
+      "field": "topic",
+      "before": "maxmin",
+      "after": "ip",
+      "reason": "IPv4 fragmentation.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2025-2-cs-13",
+      "field": "tags",
+      "before": [
+        "memory"
+      ],
+      "after": [
+        "ip-fragmentation",
+        "mtu",
+        "udp"
+      ],
+      "reason": "Tags described the wrong subject (\"memory\").",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2025-2-cs-14",
+      "field": "text",
+      "before": "Which ONE of the following languages is accepted by a deterministic push down\nautomaton?",
+      "after": "Which ONE of the following languages is accepted by a deterministic pushdown automaton?",
+      "reason": "\"push down\" → \"pushdown\" as printed.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2025-2-cs-14",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Any regular language."
+        },
+        {
+          "l": "B",
+          "t": "Any context-free language."
+        },
+        {
+          "l": "C",
+          "t": "Any language accepted by a non-deterministic pushdown automaton."
+        },
+        {
+          "l": "D",
+          "t": "Any decidable language. Computer Science and Information Technology (CS2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Any regular language."
+        },
+        {
+          "l": "B",
+          "t": "Any context-free language."
+        },
+        {
+          "l": "C",
+          "t": "Any language accepted by a non-deterministic pushdown automaton."
+        },
+        {
+          "l": "D",
+          "t": "Any decidable language."
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology (CS2)\" was transcribed into option D.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2025-2-cs-14",
+      "field": "subject",
+      "before": "pds",
+      "after": "toc",
+      "reason": "Pushdown automata are Theory of Computation, not Programming.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2025-2-cs-14",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "cfg",
+      "reason": "DPDA / deterministic CFLs.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2025-2-cs-14",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "dpda",
+        "dcfl",
+        "chomsky-hierarchy"
+      ],
+      "reason": "Tags follow the corrected subject.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2025-2-cs-15",
+      "field": "text",
+      "before": "Let 𝐺1, 𝐺2 be Context Free Grammars (CFGs) and 𝑅 be a regular expression. For a\ngrammar 𝐺,  let 𝐿(𝐺) denote the language generated by 𝐺.\nWhich ONE among the following questions is decidable?",
+      "after": "Let $G_1$, $G_2$ be Context Free Grammars (CFGs) and $R$ be a regular expression. For a grammar $G$, let $L(G)$ denote the language generated by $G$.\n\nWhich ONE among the following questions is decidable?",
+      "reason": "Unicode maths italics replaced with KaTeX.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2025-2-cs-15",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Is 𝐿(𝐺1) = 𝐿(𝐺2)?"
+        },
+        {
+          "l": "B",
+          "t": "Is 𝐿(𝐺1) ∩ 𝐿(𝐺2) = ∅?"
+        },
+        {
+          "l": "C",
+          "t": "Is 𝐿(𝐺1) = 𝐿(𝑅)?"
+        },
+        {
+          "l": "D",
+          "t": "Is 𝐿(𝐺1) = ∅?"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Is $L(G_1) = L(G_2)$?"
+        },
+        {
+          "l": "B",
+          "t": "Is $L(G_1) \\cap L(G_2) = \\emptyset$?"
+        },
+        {
+          "l": "C",
+          "t": "Is $L(G_1) = L(R)$?"
+        },
+        {
+          "l": "D",
+          "t": "Is $L(G_1) = \\emptyset$?"
+        }
+      ],
+      "reason": "Unicode maths italics replaced with KaTeX.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2025-2-cs-15",
+      "field": "topic",
+      "before": "regular",
+      "after": "tm",
+      "reason": "Decidability questions belong to the decidability topic, not regular languages.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2025-2-cs-15",
+      "field": "tags",
+      "before": [
+        "regular"
+      ],
+      "after": [
+        "decidability",
+        "cfg-emptiness",
+        "cfg-equivalence"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2025-2-cs-16",
+      "field": "text",
+      "before": "Processes 𝑃1, 𝑃2, 𝑃3, 𝑃4 arrive in that order at times  0, 1, 2, and 8 milliseconds\nrespectively, and have execution times of 10, 13, 6, and 9 milliseconds respectively.\nShortest Remaining Time  First (SRTF) algorithm is used as the CPU  scheduling\npolicy. Ignore context switching times.\nWhich ONE of the following correctly gives the average turnaround time of the four\nprocesses in milliseconds?",
+      "after": "Processes $P_1, P_2, P_3, P_4$ arrive in that order at times 0, 1, 2, and 8 milliseconds respectively, and have execution times of 10, 13, 6, and 9 milliseconds respectively. Shortest Remaining Time First (SRTF) algorithm is used as the CPU scheduling policy. Ignore context switching times.\n\nWhich ONE of the following correctly gives the average turnaround time of the four processes in milliseconds?",
+      "reason": "Unicode maths italics replaced with KaTeX; double spaces removed.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2025-2-cs-16",
+      "field": "tags",
+      "before": [
+        "cpu-scheduling"
+      ],
+      "after": [
+        "cpu-scheduling",
+        "srtf",
+        "turnaround-time"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.21"
+    }
+  ]
+}

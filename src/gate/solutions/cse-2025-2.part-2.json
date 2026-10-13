@@ -1,0 +1,1531 @@
+{
+  "paper": "cse-2025-2",
+  "version": 2,
+  "solutions": {
+    "cse-2025-2-cs-4": {
+      "approach": "Turn $L^2 = L^{-1}$ into $L^3 = I$; then every power of $L$ reduces modulo 3, so $M = L^8$ collapses to $L^2 = N$ and $M - N$ is the zero matrix.",
+      "concepts": [
+        "Matrix powers",
+        "Inverse of a matrix",
+        "Determinant of the zero matrix"
+      ],
+      "steps": [
+        {
+          "title": "Get rid of the inverse",
+          "body": "Multiply $L^2 = L^{-1}$ on the right by $L$ (allowed: $L$ is non-singular, so $L^{-1}$ exists):\n\n$$L^2 \\cdot L = L^{-1} \\cdot L \\;\\Rightarrow\\; L^3 = I.$$",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Reduce $M = L^8$",
+          "body": "Since $8 = 2\\cdot 3 + 2$,\n\n$$M = L^8 = (L^3)^2 \\cdot L^2 = I^2 \\cdot L^2 = L^2.$$",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "Subtract and take the determinant",
+          "body": "$N = L^2$ as well, so\n\n$$M - N = L^2 - L^2 = O_{3\\times 3},$$\n\nthe $3\\times 3$ zero matrix. Every entry is 0, so $\\det(M - N) = 0$.",
+          "scene": {
+            "reveal": 5
+          }
+        }
+      ],
+      "answer": {
+        "value": "$\\det(M - N) =$ **0** — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$L^3 = I$ gives $M = L^8 = L^2 = N$, so $M - N$ is the zero matrix and its determinant is 0."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "1 would come from confusing $\\det(M-N)$ with $\\det(M)\\det(N)^{-1} = 1$ or with $\\det(I)$; the determinant of a difference is not the ratio of determinants."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "No valid manipulation gives 2; $M - N$ is identically zero."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "3 is the order of the matrices (or $\\operatorname{tr} I$), not the determinant of $M - N$."
+        }
+      ],
+      "shortcut": "$L^{-1} = L^2 \\Rightarrow L^3 = I \\Rightarrow L^8 = L^{8 \\bmod 3} = L^2$. So $M = N$ and the answer is 0 at sight.",
+      "pitfalls": [
+        "Trying to find $\\det L$ first: $(\\det L)^3 = 1$ only says $\\det L = 1$ (real case) and does not determine $\\det(M - N)$ by itself — reduce the powers instead.",
+        "Assuming $\\det(M - N) = \\det M - \\det N$; determinants are not additive (here both sides happen to be 0, but the reasoning is wrong in general)."
+      ],
+      "verification": "Example: the cyclic permutation matrix $L$ with $L^3 = I$ (non-singular). Then $L^{-1} = L^2$, $L^8 = L^2$, so $M - N = O$ and $\\det = 0$.",
+      "animation": {
+        "kind": "equation",
+        "title": "Reducing the powers of L",
+        "lines": [
+          {
+            "tex": "L^2 = L^{-1}",
+            "note": "given"
+          },
+          {
+            "tex": "L^3 = I",
+            "note": "multiply by L"
+          },
+          {
+            "tex": "M = L^8 = (L^3)^2 L^2 = L^2",
+            "note": "8 = 2·3 + 2"
+          },
+          {
+            "tex": "M - N = L^2 - L^2 = O",
+            "note": "N = L²"
+          },
+          {
+            "tex": "\\det(M - N) = 0",
+            "tone": "success"
+          }
+        ],
+        "reveal": 1
+      }
+    },
+    "cse-2025-2-cs-5": {
+      "approach": "Option (A) is exactly the principle of mathematical induction on $\\mathbb{N} = \\{0,1,2,\\dots\\}$, so it is valid. Each other option is refuted by a single predicate that satisfies the hypothesis but is false somewhere.",
+      "concepts": [
+        "Mathematical induction",
+        "Validity of first-order formulas",
+        "Counterexample"
+      ],
+      "given": "Domain: natural numbers $\\{0, 1, 2, \\dots\\}$; $P$ is **arbitrary**, so a statement is TRUE only if it holds for every predicate $P$.",
+      "steps": [
+        {
+          "title": "(A) is the induction principle",
+          "body": "Base case $P(0)$; step $P(x) \\Rightarrow P(x+1)$ for every $x$. From $P(0)$ the step gives $P(1)$, then $P(2)$, … and every natural number is reached from 0 by repeatedly adding 1. Hence $\\forall x\\, P(x)$. (A) holds for **every** $P$.",
+          "scene": {
+            "intervals": [
+              {
+                "from": 0,
+                "to": 1500,
+                "tone": "success",
+                "label": "P true (A)",
+                "open": [
+                  false,
+                  true
+                ]
+              }
+            ],
+            "points": [
+              {
+                "x": 0,
+                "label": "P(0)",
+                "tone": "success"
+              }
+            ],
+            "caption": "Base 0, step +1: the truth spreads to all of ℕ"
+          }
+        },
+        {
+          "title": "(B) and (C): the step goes downwards",
+          "body": "Take $P(x) \\equiv (x \\le 1000)$.\n\n- $P(0)$ and $P(1000)$ are both true.\n- If $x \\le 1000$ then $x - 1 \\le 1000$, so $P(x) \\Rightarrow P(x-1)$ holds for every $x$.\n- But $P(1001)$ is false, so $\\forall x\\, P(x)$ is false.\n\nThe hypotheses of (B) and (C) are true and the conclusion is false, so both implications fail. Downward steps can never reach numbers **above** the base.",
+          "scene": {
+            "intervals": [
+              {
+                "from": 0,
+                "to": 1000,
+                "tone": "warning",
+                "label": "P(x) ≡ x ≤ 1000"
+              },
+              {
+                "from": 1000,
+                "to": 1500,
+                "tone": "error",
+                "label": "P false",
+                "open": [
+                  true,
+                  true
+                ]
+              }
+            ],
+            "points": [
+              {
+                "x": 0,
+                "label": "P(0)"
+              },
+              {
+                "x": 1000,
+                "label": "P(1000)",
+                "tone": "warning"
+              }
+            ],
+            "caption": "Hypotheses of (B)/(C) hold, but P(1001) is false"
+          }
+        },
+        {
+          "title": "(D): upward step from the wrong base",
+          "body": "Take $P(x) \\equiv (x \\ge 1000)$. $P(1000)$ is true and $x \\ge 1000 \\Rightarrow x + 1 \\ge 1000$, so the hypothesis holds; yet $P(0)$ is false. Induction from 1000 only proves $P$ for $x \\ge 1000$.",
+          "scene": {
+            "intervals": [
+              {
+                "from": 0,
+                "to": 1000,
+                "tone": "error",
+                "label": "P false",
+                "open": [
+                  false,
+                  true
+                ]
+              },
+              {
+                "from": 1000,
+                "to": 1500,
+                "tone": "warning",
+                "label": "P(x) ≡ x ≥ 1000",
+                "open": [
+                  false,
+                  true
+                ]
+              }
+            ],
+            "points": [
+              {
+                "x": 0,
+                "label": "P(0) false",
+                "tone": "error"
+              },
+              {
+                "x": 1000,
+                "label": "P(1000)",
+                "tone": "warning"
+              }
+            ],
+            "caption": "Hypothesis of (D) holds, but P(0) is false"
+          }
+        }
+      ],
+      "answer": {
+        "value": "Option **(A)** — the principle of mathematical induction",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Base $P(0)$ plus the step $P(x) \\Rightarrow P(x+1)$ reaches every natural number — this is induction, valid for every $P$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Counterexample $P(x) \\equiv x \\le 1000$: $P(0)$ holds and $P$ is closed downward, but $P(1001)$ is false."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Same counterexample $P(x) \\equiv x \\le 1000$: $P(1000)$ holds and the downward step holds, but nothing above 1000 is covered."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Counterexample $P(x) \\equiv x \\ge 1000$: $P(1000)$ and the upward step hold, but $P(0)$ is false."
+        }
+      ],
+      "shortcut": "Ask \"which numbers does the hypothesis force?\" (A) forces $0,1,2,\\dots$ = all of $\\mathbb{N}$; (B) forces only $\\{0\\}$; (C) forces $\\{0,\\dots,1000\\}$; (D) forces $\\{1000, 1001, \\dots\\}$.",
+      "pitfalls": [
+        "Reading (C) as \"strong\" or \"backward\" induction: going down from 1000 only covers the finite set $\\{0,\\dots,1000\\}$.",
+        "Treating \"TRUE\" as \"true for some $P$\": $P$ is arbitrary, so the implication must hold for every predicate (validity)."
+      ],
+      "verification": "Each wrong option has an explicit predicate making its hypothesis true and conclusion false, while (A) is the standard induction axiom of the naturals.",
+      "animation": {
+        "kind": "numberline",
+        "title": "Where must P be true?",
+        "min": 0,
+        "max": 1500,
+        "step": 250,
+        "points": [],
+        "intervals": []
+      }
+    },
+    "cse-2025-2-cs-6": {
+      "approach": "Check each statement against its protocol's definition: ARP resolves IP → MAC, and TCP routinely **piggybacks** acknowledgements on data segments because every segment carries an ACK field.",
+      "concepts": [
+        "ARP",
+        "TCP segment header",
+        "Piggybacking"
+      ],
+      "steps": [
+        {
+          "title": "Statement (i): ARP",
+          "body": "To deliver an IP datagram on a LAN, a host needs the next hop's link-layer (MAC) address. ARP broadcasts \"who has IP $x$?\" and the owner replies with its MAC address, so ARP maps an **IP address to a hardware address**. (i) is **TRUE**."
+        },
+        {
+          "title": "Statement (ii): data + ACK in one segment",
+          "body": "Every TCP header has a 32-bit **acknowledgement number** field and an ACK flag. In a bidirectional connection, a segment from S to R carries S's data **and** acknowledges R's bytes in the same header — this is piggybacking, and it is the normal case after the handshake. So (ii) is **FALSE**."
+        },
+        {
+          "title": "Combine the verdicts",
+          "body": "(i) TRUE, (ii) FALSE ⇒ the matching option is **(B)**."
+        }
+      ],
+      "answer": {
+        "value": "(i) is TRUE and (ii) is FALSE — option **(B)**",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "(ii) is false: TCP piggybacks ACKs on data segments."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "(i) is the definition of ARP and (ii) contradicts piggybacking — exactly this option."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "(i) is true; the reverse mapping (MAC → IP) would be RARP."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "(i) is true, so \"both false\" is wrong."
+        }
+      ],
+      "shortcut": "ARP: IP → MAC (RARP is the reverse). TCP header always has an acknowledgement-number field ⇒ data + ACK together is routine.",
+      "pitfalls": [
+        "Mixing up ARP (IP → MAC) with RARP (MAC → IP).",
+        "Thinking ACKs are separate control packets as in simple stop-and-wait; TCP is full-duplex and piggybacks."
+      ],
+      "verification": "RFC 826 defines ARP as resolving a protocol (IP) address to a hardware address; RFC 793/9293 put the acknowledgement number in every TCP segment header, valid whenever the ACK bit is set (on all segments after the SYN)."
+    },
+    "cse-2025-2-cs-7": {
+      "approach": "Recall which shortest-path algorithm each routing family runs: distance-vector routers iterate the **Bellman–Ford** equation with neighbours' vectors; link-state routers know the whole topology and run **Dijkstra** locally.",
+      "concepts": [
+        "Distance-vector routing",
+        "Link-state routing",
+        "Bellman–Ford",
+        "Dijkstra"
+      ],
+      "steps": [
+        {
+          "title": "Distance vector ↔ Bellman–Ford",
+          "body": "Each router keeps only distances and updates them from its neighbours' vectors with\n\n$$D_x(y) = \\min_{v \\in \\text{nbrs}(x)} \\{\\, c(x,v) + D_v(y) \\,\\},$$\n\nthe (distributed, asynchronous) **Bellman–Ford** equation. So (i) – (a). Example: RIP."
+        },
+        {
+          "title": "Link state ↔ Dijkstra",
+          "body": "Each router floods link-state advertisements, so every router has the complete graph, and computes its shortest-path tree with **Dijkstra**'s algorithm. So (ii) – (b). Example: OSPF."
+        },
+        {
+          "title": "Read off the option",
+          "body": "The pairing (i) – (a), (ii) – (b) is option **(A)**. Each algorithm belongs to exactly one family, so options that pair both items with the same name, or swap them, are wrong."
+        }
+      ],
+      "answer": {
+        "value": "(i) – (a) and (ii) – (b) — option **(A)**",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Distance vector = Bellman–Ford, link state = Dijkstra."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Link-state routing does not use Bellman–Ford; it has the full map and runs Dijkstra."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Swapped: distance vector cannot run Dijkstra (it has no global topology)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Distance-vector routing uses Bellman–Ford, not Dijkstra."
+        }
+      ],
+      "shortcut": "DV = Bellman–Ford (RIP); LS = Dijkstra (OSPF).",
+      "pitfalls": [
+        "Swapping the two: Dijkstra needs the whole graph, which only link-state routers have."
+      ],
+      "verification": "Kurose–Ross present the DV algorithm as the Bellman–Ford equation and the LS algorithm as Dijkstra's — consistent with (A)."
+    },
+    "cse-2025-2-cs-8": {
+      "approach": "The IPv4 *protocol* field names the protocol carried **directly** inside the IP payload. So ask, for each option, whether it sits directly on IP or on top of TCP/UDP.",
+      "concepts": [
+        "IPv4 header protocol field",
+        "Encapsulation",
+        "Routing protocols"
+      ],
+      "steps": [
+        {
+          "title": "What the protocol field means",
+          "body": "The 8-bit protocol field tells the receiver which handler gets the IP payload: e.g. 6 = TCP, 17 = UDP. A protocol carried inside TCP or UDP never appears there — the field would say 6 or 17 instead.",
+          "scene": {
+            "hl": []
+          }
+        },
+        {
+          "title": "ICMP, IGMP and OSPF ride directly on IP",
+          "body": "ICMP is protocol number **1**, IGMP is **2**, and OSPF is **89**: each is placed straight into the IP payload, so each can be the value $X$.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "RIP rides on UDP",
+          "body": "RIP messages are sent in **UDP** datagrams to port **520**. For a RIP packet the IP protocol field holds **17 (UDP)**, never \"RIP\" — RIP has no IP protocol number. So RIP is NOT a possible candidate.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "tone": "success"
+              },
+              {
+                "r": 3,
+                "tone": "error"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "**Routing Information Protocol (RIP)** — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "ICMP is carried directly in IP (protocol 1), so it can be $X$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "IGMP is carried directly in IP (protocol 2), so it can be $X$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "OSPF is carried directly in IP (protocol 89) — unlike RIP and BGP, it uses no transport protocol."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "RIP runs over UDP port 520; the protocol field would show UDP (17), so RIP cannot be $X$."
+        }
+      ],
+      "shortcut": "Routing protocols: RIP → UDP 520, BGP → TCP 179, OSPF → directly on IP (89). ICMP/IGMP are IP-layer helpers.",
+      "pitfalls": [
+        "Thinking OSPF uses UDP like RIP — OSPF is encapsulated directly in IP.",
+        "Treating ICMP as an application protocol: it is carried in IP with protocol number 1."
+      ],
+      "verification": "IANA's protocol-number registry lists ICMP = 1, IGMP = 2, TCP = 6, UDP = 17, OSPF = 89 and has no entry for RIP; RFC 2453 specifies RIP over UDP port 520.",
+      "animation": {
+        "kind": "table",
+        "title": "What the IPv4 protocol field can name",
+        "cols": [
+          "Carried in",
+          "IP protocol no."
+        ],
+        "rowLabels": [
+          "ICMP",
+          "IGMP",
+          "OSPF",
+          "RIP"
+        ],
+        "corner": "Protocol",
+        "rows": [
+          [
+            "IP directly",
+            1
+          ],
+          [
+            "IP directly",
+            2
+          ],
+          [
+            "IP directly",
+            89
+          ],
+          [
+            "UDP (port 520)",
+            "— (field = 17)"
+          ]
+        ]
+      }
+    },
+    "cse-2025-2-cs-9": {
+      "approach": "Trace the array byte by byte. The loop copies characters **while `*t` is non-zero**, so the terminating `\\0` is never copied; the two bytes after the copied text keep their old values.",
+      "concepts": [
+        "Pointers and pointer arithmetic",
+        "C strings and the null terminator",
+        "Overlapping copy"
+      ],
+      "given": "`a` = `@ # H e l l o ␣ W o r l d !` followed by `\\0` at index 14 (14 visible characters). `stringcopy(a, a + 2)`: `s` starts at `a[0]`, `t` at `a[2]`.",
+      "steps": [
+        {
+          "title": "Initial layout",
+          "body": "Indices: `a[0]='@'`, `a[1]='#'`, `a[2..13]` = `Hello World!` (12 characters), `a[14]='\\0'`. Initially $s = a$, $t = a + 2$.",
+          "scene": {
+            "cells": [
+              "@",
+              "#",
+              "H",
+              "e",
+              "l",
+              "l",
+              "o",
+              "␣",
+              "W",
+              "o",
+              "r",
+              "l",
+              "d",
+              "!",
+              "\\0"
+            ],
+            "pointers": [
+              {
+                "name": "s",
+                "at": 0
+              },
+              {
+                "name": "t",
+                "at": 2
+              }
+            ],
+            "hl": [],
+            "caption": "Before the call"
+          }
+        },
+        {
+          "title": "Each iteration shifts one character left by 2",
+          "body": "`*s++ = *t++` copies `a[k+2]` into `a[k]`. The reads stay **ahead** of the writes ($t = s + 2$ always), so every character is read before it is overwritten — the overlap is harmless. First iteration: `a[0] = 'H'`, then $s = 1$, $t = 3$.",
+          "scene": {
+            "cells": [
+              "H",
+              "#",
+              "H",
+              "e",
+              "l",
+              "l",
+              "o",
+              "␣",
+              "W",
+              "o",
+              "r",
+              "l",
+              "d",
+              "!",
+              "\\0"
+            ],
+            "pointers": [
+              {
+                "name": "s",
+                "at": 1
+              },
+              {
+                "name": "t",
+                "at": 3
+              }
+            ],
+            "hl": [
+              {
+                "at": 0,
+                "tone": "warning"
+              }
+            ],
+            "caption": "Iteration 1: a[0] ← a[2]"
+          }
+        },
+        {
+          "title": "Loop stops at the terminator",
+          "body": "After $14 - 2 = 12$ iterations, `a[0..11]` = `Hello World!`, $s = 12$ and $t = 14$. Now `*t == '\\0'`, so the loop exits **without copying the `\\0`**. `a[12]` and `a[13]` still hold their old characters `d` and `!`.",
+          "scene": {
+            "cells": [
+              "H",
+              "e",
+              "l",
+              "l",
+              "o",
+              "␣",
+              "W",
+              "o",
+              "r",
+              "l",
+              "d",
+              "!",
+              "d",
+              "!",
+              "\\0"
+            ],
+            "pointers": [
+              {
+                "name": "s",
+                "at": 12
+              },
+              {
+                "name": "t",
+                "at": 14
+              }
+            ],
+            "hl": [
+              {
+                "at": [
+                  0,
+                  11
+                ],
+                "tone": "success"
+              },
+              {
+                "at": [
+                  12,
+                  13
+                ],
+                "tone": "error"
+              }
+            ],
+            "caption": "Copied 12 bytes; a[12], a[13] untouched"
+          }
+        },
+        {
+          "title": "What printf prints",
+          "body": "`printf(\"%s\", a)` prints until the first `\\0`, which is still at index 14:\n\n`Hello World!` + `d!` = **`Hello World!d!`**",
+          "scene": {
+            "ranges": [
+              {
+                "from": 0,
+                "to": 13,
+                "label": "printed by %s"
+              }
+            ],
+            "caption": "Output: Hello World!d!"
+          }
+        }
+      ],
+      "answer": {
+        "value": "The program prints **`Hello World!d!`** — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The array is modified: its first 12 bytes are overwritten with `Hello World!`."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Would require copying the `\\0` too (as `strcpy` does); `while(*t)` stops before copying it."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Would need the copy to start from `a+3` or skip a character; `t` starts at `a+2` (`H`)."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "The 12 copied characters plus the stale `d!` at indices 12–13, ended by the original `\\0` at 14."
+        }
+      ],
+      "shortcut": "Copy length = 12, gap = 2 ⇒ the last 2 characters of the original string (`d!`) survive after the copy: `Hello World!` + `d!`.",
+      "pitfalls": [
+        "Assuming the function behaves like `strcpy`: the terminator is never copied because the loop condition tests `*t` first.",
+        "Worrying that the overlapping copy corrupts data: the source is ahead of the destination, so a forward copy is safe here."
+      ],
+      "verification": "Length check: `Hello World!d!` has 14 characters, matching the original 14-character string whose `\\0` at index 14 was never moved.",
+      "animation": {
+        "kind": "array",
+        "title": "char a[ ] (indices 0–14)",
+        "label": "a",
+        "cells": [
+          "@",
+          "#",
+          "H",
+          "e",
+          "l",
+          "l",
+          "o",
+          "␣",
+          "W",
+          "o",
+          "r",
+          "l",
+          "d",
+          "!",
+          "\\0"
+        ],
+        "pointers": [],
+        "hl": []
+      }
+    },
+    "cse-2025-2-cs-10": {
+      "approach": "One comparison between **any** two elements suffices: the smaller of the two cannot be the maximum. With zero comparisons nothing can be guaranteed.",
+      "concepts": [
+        "Comparison model",
+        "Adversary / lower-bound argument"
+      ],
+      "steps": [
+        {
+          "title": "An upper bound of 1",
+          "body": "Pick any two elements $x$ and $y$ (possible since $N \\ge 2$ for the question to make sense) and compare them once. The distinct integers give $x \\ne y$; say $x < y$. Then $y$ is larger than $x$, so $x$ is **not the largest** — output $x$."
+        },
+        {
+          "title": "A lower bound of 1",
+          "body": "With 0 comparisons the algorithm must output a fixed position knowing nothing; an adversary can place the maximum exactly there. So at least 1 comparison is necessary, and the minimum is exactly **1**."
+        },
+        {
+          "title": "Why not the other counts",
+          "body": "$N - 1$ comparisons are needed to **identify the largest** element (every non-maximum must lose at least once), and $N$ or $2N-1$ are even more. Our task is weaker — any non-maximum will do — so a single comparison suffices; for $N = 2$ this coincides with $N - 1 = 1$, but the general answer is 1."
+        }
+      ],
+      "answer": {
+        "value": "**1** comparison — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Compare any two elements; the smaller is certainly not the largest."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$N-1$ comparisons find the largest element itself — more work than needed."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$N$ is more than even finding the maximum requires."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$2N - 1$ matches no relevant bound; even finding both the maximum and the minimum needs only about $3N/2$ comparisons."
+        }
+      ],
+      "shortcut": "Not-the-max = loser of any single comparison.",
+      "pitfalls": [
+        "Confusing \"find an element that is not the largest\" with \"find the largest\" ($N-1$)."
+      ],
+      "verification": "For $N = 2$: one comparison is necessary and sufficient; for larger $N$ the same single comparison still works, so the answer does not depend on $N$."
+    },
+    "cse-2025-2-cs-11": {
+      "approach": "Backpatching exists precisely to remove the need for a second pass: jumps whose targets are not yet known are emitted with empty targets, kept on lists (`truelist`, `falselist`, `nextlist`), and filled in when the label becomes known.",
+      "concepts": [
+        "Backpatching",
+        "Short-circuit Boolean code",
+        "Flow-of-control translation"
+      ],
+      "steps": [
+        {
+          "title": "Why a second pass seems necessary",
+          "body": "For `if (B) S`, the jump taken when `B` is false must go **after** `S`, but that address is unknown when the jump is emitted. A naive translator would need a second pass to fill such targets."
+        },
+        {
+          "title": "Statement (I): Boolean expressions",
+          "body": "With backpatching each Boolean expression gets `B.truelist` and `B.falselist` (lists of incomplete jumps). For `B → B₁ || M B₂`: `backpatch(B₁.falselist, M.instr)`, `B.truelist = merge(B₁.truelist, B₂.truelist)`, `B.falselist = B₂.falselist`. Everything is done during the single parse. (I) is **correct**."
+        },
+        {
+          "title": "Statement (II): flow-of-control statements",
+          "body": "Statements get a `nextlist`. For `S → if (B) M S₁`: `backpatch(B.truelist, M.instr)`, `S.nextlist = merge(B.falselist, S₁.nextlist)`; `while`, `if-else` and sequencing are handled the same way. Again one pass. (II) is **correct**."
+        }
+      ],
+      "answer": {
+        "value": "Both (I) and (II) are correct — option **(C)**",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "(II) is also correct: `nextlist` backpatching handles if/while/sequences in one pass."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "(I) is also correct: `truelist`/`falselist` handle Boolean expressions in one pass."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Backpatching is the textbook one-pass technique for both (Aho et al., §6.7)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Both are the stated purpose of backpatching."
+        }
+      ],
+      "shortcut": "Backpatching = \"one-pass code generation for Boolean expressions and flow of control\" — the dragon book's own definition.",
+      "pitfalls": [
+        "Thinking backpatching applies only to jumps in Boolean expressions; statement lists (`nextlist`) use the same idea."
+      ],
+      "verification": "Aho, Lam, Sethi, Ullman §6.7 \"Backpatching\" gives one-pass translation schemes for both Boolean expressions (Fig. 6.43) and flow-of-control statements (Fig. 6.46)."
+    },
+    "cse-2025-2-cs-12": {
+      "approach": "Classify each attribute assignment: S-attributed allows **only synthesized** attributes (head's attribute from children). L-attributed additionally allows an inherited attribute of $X_j$ that uses only the head's **inherited** attributes and attributes of siblings **to its left**.",
+      "concepts": [
+        "S-attributed definitions",
+        "L-attributed definitions",
+        "Inherited vs synthesized attributes"
+      ],
+      "steps": [
+        {
+          "title": "Rule 1: neither",
+          "body": "$B.i = R.i - 1$ and $A.i = B.i$ define attributes of **children**, so they are inherited ⇒ not S-attributed.\n\n$A.i = B.i$ makes $A$ (the left child) depend on its **right** sibling $B$ ⇒ violates the L condition. (Also $R.i = A.i + 1$ while $B.i$ uses $R.i$ creates the cycle $R.i \\to B.i \\to A.i \\to R.i$.) Rule 1 is **neither S- nor L-attributed**.",
+          "scene": {
+            "kind": "graph",
+            "title": "Rule 1: R → A B",
+            "directed": true,
+            "nodes": [
+              {
+                "id": "R.i",
+                "x": 1,
+                "y": 0
+              },
+              {
+                "id": "A.i",
+                "x": 0,
+                "y": 1.2
+              },
+              {
+                "id": "B.i",
+                "x": 2,
+                "y": 1.2
+              }
+            ],
+            "edges": [
+              {
+                "from": "R.i",
+                "to": "B.i",
+                "w": "−1"
+              },
+              {
+                "from": "B.i",
+                "to": "A.i",
+                "w": "copy"
+              },
+              {
+                "from": "A.i",
+                "to": "R.i",
+                "w": "+1"
+              }
+            ],
+            "edgeTones": {
+              "B.i>A.i": "error",
+              "R.i>B.i": "warning",
+              "A.i>R.i": "warning"
+            },
+            "caption": "Red: A inherits from its right sibling B"
+          }
+        },
+        {
+          "title": "Rule 2: L-attributed, not S-attributed",
+          "body": "$D.i = C.i + 2$ is an inherited attribute of $D$ ⇒ not S-attributed. But it uses only $C$, the sibling to its **left** ⇒ allowed in an L-attributed definition. $P.i = C.i + D.i$ is synthesized. So Rule 2 is **not S-attributed but L-attributed**.",
+          "scene": {
+            "kind": "graph",
+            "title": "Rule 2: P → C D",
+            "directed": true,
+            "nodes": [
+              {
+                "id": "P.i",
+                "x": 1,
+                "y": 0
+              },
+              {
+                "id": "C.i",
+                "x": 0,
+                "y": 1.2
+              },
+              {
+                "id": "D.i",
+                "x": 2,
+                "y": 1.2
+              }
+            ],
+            "edges": [
+              {
+                "from": "C.i",
+                "to": "D.i",
+                "w": "+2"
+              },
+              {
+                "from": "C.i",
+                "to": "P.i"
+              },
+              {
+                "from": "D.i",
+                "to": "P.i"
+              }
+            ],
+            "edgeTones": {
+              "C.i>D.i": "warning",
+              "C.i>P.i": "success",
+              "D.i>P.i": "success"
+            },
+            "caption": "Left-to-right inherited flow (C → D) is L-allowed"
+          }
+        },
+        {
+          "title": "Rule 3: S-attributed (hence L-attributed)",
+          "body": "Only $Q.i = E.i + F.i$: the head's attribute computed from its children — purely synthesized ⇒ **S-attributed**, and every S-attributed definition is also **L-attributed**.",
+          "scene": {
+            "kind": "graph",
+            "title": "Rule 3: Q → E F",
+            "directed": true,
+            "nodes": [
+              {
+                "id": "Q.i",
+                "x": 1,
+                "y": 0
+              },
+              {
+                "id": "E.i",
+                "x": 0,
+                "y": 1.2
+              },
+              {
+                "id": "F.i",
+                "x": 2,
+                "y": 1.2
+              }
+            ],
+            "edges": [
+              {
+                "from": "E.i",
+                "to": "Q.i"
+              },
+              {
+                "from": "F.i",
+                "to": "Q.i"
+              }
+            ],
+            "edgeTones": {
+              "E.i>Q.i": "success",
+              "F.i>Q.i": "success"
+            },
+            "caption": "Only upward (synthesized) flow"
+          }
+        }
+      ],
+      "answer": {
+        "value": "Rule 1: neither; Rule 2: not S but L; Rule 3: S and L — option **(C)**",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Rule 1 has inherited attributes (not S) and right-to-left flow (not L); Rule 2 is L but not S; Rule 3 is purely synthesized."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Rule 2 is not S-attributed: $D.i = C.i + 2$ is an inherited attribute."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Matches all three classifications."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Rule 1 is not S-attributed: $B.i$ and $A.i$ are inherited."
+        }
+      ],
+      "shortcut": "Child attribute on the left of \"=\" ⇒ not S. If that child reads a sibling to its **right** ⇒ not L either.",
+      "pitfalls": [
+        "Calling an attribute synthesized just because it has the same name `i` everywhere; what matters is whether it is defined at the head or at a child.",
+        "Forgetting that S-attributed ⊂ L-attributed, so Rule 3 is both."
+      ],
+      "verification": "Arrows from a child to a left sibling only (Rule 2) or upward only (Rule 3) can be evaluated in one left-to-right depth-first pass; Rule 1 has a right-to-left arrow and even a cycle, so no such order exists.",
+      "animation": {
+        "kind": "graph",
+        "title": "Rule 1: R → A B",
+        "directed": true,
+        "nodes": [
+          {
+            "id": "R.i",
+            "x": 1,
+            "y": 0
+          },
+          {
+            "id": "A.i",
+            "x": 0,
+            "y": 1.2
+          },
+          {
+            "id": "B.i",
+            "x": 2,
+            "y": 1.2
+          }
+        ],
+        "edges": [
+          {
+            "from": "R.i",
+            "to": "B.i",
+            "w": "−1"
+          },
+          {
+            "from": "B.i",
+            "to": "A.i",
+            "w": "copy"
+          },
+          {
+            "from": "A.i",
+            "to": "R.i",
+            "w": "+1"
+          }
+        ],
+        "edgeTones": {},
+        "caption": "Arrows show \"is used to compute\""
+      }
+    },
+    "cse-2025-2-cs-13": {
+      "approach": "IP fragments the whole **UDP datagram** (header + data). Each fragment carries at most $1500 - 20 = 1480$ payload bytes, which is already a multiple of 8, so count full fragments and add the 20-byte IP header to the remainder.",
+      "concepts": [
+        "IPv4 fragmentation",
+        "MTU",
+        "Fragment offset (8-byte units)"
+      ],
+      "given": "| Quantity | Value |\n|---|---|\n| Ethernet MTU (IP datagram size) | 1500 B |\n| IPv4 header | 20 B (no options) |\n| UDP header | 8 B |\n| UDP data | 7488 B |",
+      "steps": [
+        {
+          "title": "Size of the IP payload",
+          "body": "IP carries the complete UDP segment:\n\n$$7488 + 8 = 7496 \\text{ bytes}.$$",
+          "scene": {
+            "reveal": 0,
+            "vars": {
+              "IP payload": 7496
+            }
+          }
+        },
+        {
+          "title": "Payload per fragment",
+          "body": "Each fragment is at most 1500 bytes including its own 20-byte header, so it carries at most $1500 - 20 = 1480$ payload bytes. Offsets are in 8-byte units and $1480 / 8 = 185$ is an integer, so 1480 is usable as is.",
+          "scene": {
+            "reveal": 20,
+            "vars": {
+              "IP payload": 7496,
+              "per fragment": 1480
+            }
+          }
+        },
+        {
+          "title": "Number of fragments",
+          "body": "$$\\left\\lceil \\frac{7496}{1480} \\right\\rceil = \\lceil 5.06 \\rceil = 6.$$\n\nFive full fragments carry $5 \\times 1480 = 7400$ bytes.",
+          "scene": {
+            "reveal": 20,
+            "hl": [
+              {
+                "r": 4
+              }
+            ]
+          }
+        },
+        {
+          "title": "Size of the last fragment",
+          "body": "Remaining payload: $7496 - 7400 = 96$ bytes (offset $7400/8 = 925$, MF = 0). With its IPv4 header:\n\n$$96 + 20 = 116 \\text{ bytes}.$$\n\nSo **6 fragments, last one 116 bytes**.",
+          "scene": {
+            "reveal": 24,
+            "hl": [
+              {
+                "r": 5,
+                "tone": "success"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "**6 fragments, 116 bytes** — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Treats 1500 bytes of data per fragment and ignores all headers: $7488 - 4 \\times 1500 = 1488$ in a 5th fragment."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Uses only the UDP data: $7488 - 7400 = 88$, forgetting both the UDP header (8) and the last fragment's IP header (20)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Adds the IP header but forgets the 8-byte UDP header: $88 + 20 = 108$."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Payload $7496 = 5 \\times 1480 + 96$; last fragment $96 + 20 = 116$ bytes, 6 fragments in total."
+        }
+      ],
+      "shortcut": "Remainder of $(\\text{data} + 8) \\bmod 1480$, then $+20$: $7496 \\bmod 1480 = 96 \\Rightarrow 116$.",
+      "pitfalls": [
+        "Forgetting that the UDP header is part of what IP fragments (only the first fragment contains it, but it counts once).",
+        "Forgetting that every fragment, including the last, gets its own 20-byte IP header.",
+        "Not checking that the per-fragment payload is a multiple of 8 (here 1480 already is)."
+      ],
+      "verification": "Total payload across fragments: $5 \\times 1480 + 96 = 7400 + 96 = 7496 = 7488 + 8$ ✓. Total bytes on the wire: $5 \\times 1500 + 116 = 7616 = 7496 + 6 \\times 20$ ✓.",
+      "animation": {
+        "kind": "table",
+        "title": "Fragments of the 7496-byte UDP datagram",
+        "cols": [
+          "payload (B)",
+          "offset (×8)",
+          "total length",
+          "MF"
+        ],
+        "rowLabels": [
+          "F1",
+          "F2",
+          "F3",
+          "F4",
+          "F5",
+          "F6"
+        ],
+        "corner": "Fragment",
+        "rows": [
+          [
+            1480,
+            0,
+            1500,
+            1
+          ],
+          [
+            1480,
+            185,
+            1500,
+            1
+          ],
+          [
+            1480,
+            370,
+            1500,
+            1
+          ],
+          [
+            1480,
+            555,
+            1500,
+            1
+          ],
+          [
+            1480,
+            740,
+            1500,
+            1
+          ],
+          [
+            96,
+            925,
+            116,
+            0
+          ]
+        ],
+        "reveal": 0,
+        "mono": true
+      }
+    },
+    "cse-2025-2-cs-14": {
+      "approach": "Place the classes on the Chomsky hierarchy: Regular ⊊ DCFL ⊊ CFL ⊊ Decidable. A DPDA accepts exactly the DCFLs, so only the class **below** DCFL is always accepted.",
+      "concepts": [
+        "Deterministic PDA",
+        "Deterministic CFLs",
+        "Language class inclusions"
+      ],
+      "steps": [
+        {
+          "title": "Every regular language is DPDA-accepted",
+          "body": "A DFA for a regular language is a DPDA that never touches its stack: same states, same transitions, push/pop nothing, accept by final state. So **any regular language** is accepted by a DPDA."
+        },
+        {
+          "title": "The larger classes fail",
+          "body": "- **CFL / NPDA languages:** these are the same class. $L = \\{ww^R \\mid w \\in \\{a,b\\}^*\\}$ (even palindromes) is context-free but not deterministic: a DPDA cannot know where the middle is.\n- **Decidable:** $\\{a^n b^n c^n \\mid n \\ge 0\\}$ is decidable but not even context-free, so no PDA accepts it."
+        },
+        {
+          "title": "Place the options on the hierarchy",
+          "body": "$$\\text{Regular} \\subsetneq \\text{DCFL} = L(\\text{DPDA}) \\subsetneq \\text{CFL} = L(\\text{NPDA}) \\subsetneq \\text{Decidable}$$\n\nOnly option (A) names a class contained in DCFL, so only \"any regular language\" is guaranteed to be accepted by a DPDA."
+        }
+      ],
+      "answer": {
+        "value": "**Any regular language** — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Regular ⊂ DCFL: a DFA is a DPDA that ignores its stack."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Not every CFL is deterministic, e.g. even-length palindromes $ww^R$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "NPDA languages are exactly the CFLs — same counterexample $ww^R$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Decidable languages include non-CFLs such as $a^n b^n c^n$."
+        }
+      ],
+      "shortcut": "DPDA = DCFL; the only option that is a subset of DCFL is \"regular\".",
+      "pitfalls": [
+        "Assuming determinism does not matter for PDAs as it does not for finite automata — for PDAs nondeterminism is strictly more powerful."
+      ],
+      "verification": "Standard results (Hopcroft–Motwani–Ullman §6.4): every regular language is a DCFL, and $\\{ww^R\\}$ is a CFL that is not a DCFL."
+    },
+    "cse-2025-2-cs-15": {
+      "approach": "Recall the CFG decision problems: emptiness, membership and finiteness are decidable; equivalence, universality and intersection-emptiness are undecidable. Only (D) is emptiness.",
+      "concepts": [
+        "Decidability of CFG problems",
+        "Emptiness test (generating symbols)",
+        "Reductions from PCP / universality"
+      ],
+      "steps": [
+        {
+          "title": "(D) Emptiness is decidable",
+          "body": "Mark terminals as *generating*; repeatedly mark a variable $A$ if some rule $A \\to \\alpha$ has every symbol of $\\alpha$ marked. This stops after at most $|V|$ rounds. $L(G_1) = \\emptyset$ **iff** the start symbol is not marked. So (D) is decidable."
+        },
+        {
+          "title": "(A) and (C): equivalence is undecidable",
+          "body": "Universality \"$L(G) = \\Sigma^*$?\" is undecidable for CFGs. Choosing $R = \\Sigma^*$ makes (C) the universality problem, so (C) is undecidable. Choosing $G_2$ to be a CFG for $\\Sigma^*$ does the same for (A)."
+        },
+        {
+          "title": "(B) Intersection emptiness is undecidable",
+          "body": "Post's Correspondence Problem reduces to it: build two (even deterministic) CFGs whose languages intersect exactly when the PCP instance has a solution. Hence \"Is $L(G_1) \\cap L(G_2) = \\emptyset$?\" is undecidable. (CFLs are not closed under intersection, so the emptiness test of (D) cannot be applied.)"
+        }
+      ],
+      "answer": {
+        "value": "**Is $L(G_1) = \\emptyset$?** — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "CFG equivalence is undecidable (with $L(G_2) = \\Sigma^*$ it is universality)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Intersection emptiness of two CFLs is undecidable (reduction from PCP)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "With $R = \\Sigma^*$ this is CFG universality, which is undecidable."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Emptiness is decidable by the generating-symbols fixpoint algorithm."
+        }
+      ],
+      "shortcut": "For CFLs: emptiness, finiteness, membership — decidable. Anything comparing two languages (=, ⊆, ∩ = ∅) or \"= Σ*\" — undecidable.",
+      "pitfalls": [
+        "Thinking (C) is decidable because $R$ is regular: even the simplest regular $R = \\Sigma^*$ already gives universality.",
+        "Thinking (B) reduces to emptiness: the intersection of two CFLs need not be context-free."
+      ],
+      "verification": "Hopcroft–Motwani–Ullman §7.4 (emptiness algorithm) and §9.5.2 (undecidability of CFG ambiguity, intersection-emptiness, equivalence and universality) confirm the classification."
+    },
+    "cse-2025-2-cs-16": {
+      "approach": "Simulate SRTF event by event: re-decide only when a process **arrives** or **finishes**, always running the ready process with the least remaining time. Then use $TAT = CT - AT$ for each process and average.",
+      "concepts": [
+        "SRTF (preemptive SJF)",
+        "Gantt chart",
+        "Turnaround time"
+      ],
+      "given": "| Process | Arrival (ms) | Burst (ms) |\n|---|---|---|\n| P1 | 0 | 10 |\n| P2 | 1 | 13 |\n| P3 | 2 | 6 |\n| P4 | 8 | 9 |\n\nNo context-switch overhead.",
+      "steps": [
+        {
+          "title": "Start at t = 0 with the only arrival",
+          "body": "At $t=0$ only P1 is in the ready queue, so P1 starts. With SRTF the scheduler re-checks the choice only at the next **arrival** or **completion**.",
+          "scene": {
+            "upto": 0,
+            "cursor": 0,
+            "vars": {
+              "t": 0,
+              "running": "P1",
+              "ready (remaining)": "—"
+            }
+          }
+        },
+        {
+          "title": "t = 1: P2 arrives but cannot preempt",
+          "body": "P1 has run 1 ms, so its remaining time is $10-1=9$. P2 needs $13$. Since $13 > 9$, P1 keeps the CPU.",
+          "scene": {
+            "upto": 1,
+            "cursor": 1,
+            "vars": {
+              "t": 1,
+              "running": "P1 (9 left)",
+              "ready (remaining)": "P2 (13)"
+            }
+          }
+        },
+        {
+          "title": "t = 2: P3 arrives and preempts P1",
+          "body": "P1's remaining time is now $10-2=8$; P3 needs $6$. Since $6 < 8$, **P3 preempts P1**. Nobody else arrives before $t=8$, and P3 runs its full $6$ ms: it finishes at $2+6=8$.",
+          "scene": {
+            "upto": 8,
+            "cursor": 8,
+            "vars": {
+              "t": 8,
+              "running": "P3 → done",
+              "ready (remaining)": "P1 (8), P2 (13)"
+            }
+          }
+        },
+        {
+          "title": "t = 8: P4 arrives; choose the shortest remaining",
+          "body": "Ready at $t=8$: P1 ($8$ left), P2 ($13$), P4 ($9$). The minimum is **P1 with 8**, so P1 runs $8 \\to 16$ and completes. No arrivals remain, so there are no more preemptions.",
+          "scene": {
+            "upto": 16,
+            "cursor": 16,
+            "vars": {
+              "t": 16,
+              "running": "P1 → done",
+              "ready (remaining)": "P2 (13), P4 (9)"
+            }
+          }
+        },
+        {
+          "title": "Finish the remaining jobs shortest-first",
+          "body": "P4 ($9$) runs $16 \\to 25$, then P2 ($13$) runs $25 \\to 38$.\n\nSchedule: P1 $[0,2)$, P3 $[2,8)$, P1 $[8,16)$, P4 $[16,25)$, P2 $[25,38)$.",
+          "scene": {
+            "upto": 38,
+            "cursor": 38,
+            "vars": {
+              "t": 38,
+              "running": "—",
+              "ready (remaining)": "—"
+            }
+          }
+        },
+        {
+          "title": "Turnaround times and their average",
+          "body": "$TAT = CT - AT$:\n\n| Process | CT | AT | TAT |\n|---|---|---|---|\n| P1 | 16 | 0 | 16 |\n| P2 | 38 | 1 | 37 |\n| P3 | 8 | 2 | 6 |\n| P4 | 25 | 8 | 17 |\n\n$$\\overline{TAT} = \\frac{16+37+6+17}{4} = \\frac{76}{4} = 19 \\text{ ms}$$",
+          "scene": {
+            "kind": "table",
+            "title": "Turnaround = completion − arrival",
+            "cols": [
+              "AT",
+              "BT",
+              "CT",
+              "TAT"
+            ],
+            "rowLabels": [
+              "P1",
+              "P2",
+              "P3",
+              "P4"
+            ],
+            "rows": [
+              [
+                0,
+                10,
+                16,
+                16
+              ],
+              [
+                1,
+                13,
+                38,
+                37
+              ],
+              [
+                2,
+                6,
+                8,
+                6
+              ],
+              [
+                8,
+                9,
+                25,
+                17
+              ]
+            ],
+            "hl": [
+              {
+                "c": 3,
+                "tone": "success"
+              }
+            ],
+            "vars": {
+              "sum": 76,
+              "average": "76 / 4 = 19 ms"
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "**19 ms** — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "22 would need a total turnaround of 88 ms; the SRTF schedule gives 76 ms."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "15 would need a total of 60 ms — P2 alone waits until 25 and turns around in 37 ms, so this is impossible."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "37 ms is P2's own turnaround time ($38-1$), not the average over four processes."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "$(16+37+6+17)/4 = 19$ ms."
+        }
+      ],
+      "shortcut": "The CPU is never idle and there is no overhead, so the last completion is $\\sum BT = 38$. Only the order matters: after $t=8$ nothing arrives, so the remaining jobs simply run shortest-first (P1 8, P4 9, P2 13).",
+      "pitfalls": [
+        "Preempting P1 at $t=1$: compare P2's burst with P1's **remaining** time (9), not its original burst.",
+        "Using waiting time instead of turnaround time ($\\overline{WT} = 19 - 38/4 = 9.5$ ms).",
+        "Forgetting to subtract the arrival time (P4 completes at 25 but arrived at 8)."
+      ],
+      "verification": "Check: $\\sum CT - \\sum AT = (16+38+8+25) - (0+1+2+8) = 87 - 11 = 76$, and the last completion $38$ equals the total burst $10+13+6+9$.",
+      "animation": {
+        "kind": "gantt",
+        "title": "SRTF schedule",
+        "unit": "ms",
+        "lanes": [
+          {
+            "label": "CPU",
+            "bars": [
+              {
+                "start": 0,
+                "end": 2,
+                "label": "P1"
+              },
+              {
+                "start": 2,
+                "end": 8,
+                "label": "P3"
+              },
+              {
+                "start": 8,
+                "end": 16,
+                "label": "P1"
+              },
+              {
+                "start": 16,
+                "end": 25,
+                "label": "P4"
+              },
+              {
+                "start": 25,
+                "end": 38,
+                "label": "P2"
+              }
+            ]
+          }
+        ],
+        "marks": [
+          {
+            "t": 0,
+            "label": "P1↓"
+          },
+          {
+            "t": 1,
+            "label": "P2↓"
+          },
+          {
+            "t": 2,
+            "label": "P3↓"
+          },
+          {
+            "t": 8,
+            "label": "P4↓"
+          }
+        ]
+      }
+    }
+  }
+}
