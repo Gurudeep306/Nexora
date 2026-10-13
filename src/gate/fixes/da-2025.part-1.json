@@ -1,0 +1,895 @@
+{
+  "paper": "da-2025",
+  "fixes": [
+    {
+      "id": "da-2025-ga-1",
+      "field": "tags",
+      "before": [
+        "verbal-aptitude"
+      ],
+      "after": [
+        "ga",
+        "verbal",
+        "analogy"
+      ],
+      "reason": "Specific tags for the question.",
+      "source": "pdf p.1"
+    },
+    {
+      "id": "da-2025-ga-2",
+      "field": "text",
+      "before": "We __________ tennis in the lawn when it suddenly started to rain.\nSelect the most appropriate option to complete the above sentence.",
+      "after": "We __________ tennis in the lawn when it suddenly started to rain.\n\nSelect the most appropriate option to complete the above sentence.",
+      "reason": "Paragraph break as in the paper.",
+      "source": "pdf p.1"
+    },
+    {
+      "id": "da-2025-ga-2",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "have been playing"
+        },
+        {
+          "l": "B",
+          "t": "had been playing"
+        },
+        {
+          "l": "C",
+          "t": "would have been playing"
+        },
+        {
+          "l": "D",
+          "t": "could be playing Data Science & Artificial Intelligence - DA"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "have been playing"
+        },
+        {
+          "l": "B",
+          "t": "had been playing"
+        },
+        {
+          "l": "C",
+          "t": "would have been playing"
+        },
+        {
+          "l": "D",
+          "t": "could be playing"
+        }
+      ],
+      "reason": "Removed the running page footer (\"Data Science & Artificial Intelligence - DA\") that was pasted into option D.",
+      "source": "pdf p.1"
+    },
+    {
+      "id": "da-2025-ga-2",
+      "field": "tags",
+      "before": [
+        "verbal-aptitude"
+      ],
+      "after": [
+        "ga",
+        "verbal",
+        "grammar",
+        "tenses"
+      ],
+      "reason": "Specific tags for the question.",
+      "source": "pdf p.1"
+    },
+    {
+      "id": "da-2025-ga-3",
+      "field": "text",
+      "before": "A 4 × 4 digital image has pixel intensities ( 𝑈) as shown in the figure. The number of\npixels with 𝑈 ≤ 4 is:",
+      "after": "A $4 \\times 4$ digital image has pixel intensities ($U$) as shown in the figure. The number of pixels with $U \\le 4$ is:",
+      "reason": "Unicode maths italics (𝑈) typeset as KaTeX; spurious line break removed.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "da-2025-ga-3",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "3"
+        },
+        {
+          "l": "B",
+          "t": "8"
+        },
+        {
+          "l": "C",
+          "t": "11"
+        },
+        {
+          "l": "D",
+          "t": "9 Data Science & Artificial Intelligence - DA"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "3"
+        },
+        {
+          "l": "B",
+          "t": "8"
+        },
+        {
+          "l": "C",
+          "t": "11"
+        },
+        {
+          "l": "D",
+          "t": "9"
+        }
+      ],
+      "reason": "Removed the running page footer (\"Data Science & Artificial Intelligence - DA\") that was pasted into option D.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "da-2025-ga-3",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "da-2025/ga-3-1.svg",
+          "svg": "da-2025/ga-3-1.svg",
+          "alt": "A 4 × 4 grid of pixel intensities. Row 1: 0, 1, 0, 2. Row 2: 4, 7, 3, 3. Row 3: 5, 5, 4, 4. Row 4: 6, 7, 3, 2."
+        }
+      ],
+      "reason": "The question cannot be answered without its figure, which the bank was missing. Redrawn as an SVG from the paper.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "da-2025-ga-3",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "ga",
+        "quant",
+        "data-interpretation",
+        "counting"
+      ],
+      "reason": "Specific tags for the question.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "da-2025-ga-4",
+      "field": "text",
+      "before": "In the given figure, the numbers associated with the rectangle, triangle, and ellipse\nare 1, 2, and 3 , respectively. Which one among the given options is the most\nappropriate combination of P, Q, and R ?",
+      "after": "In the given figure, the numbers associated with the rectangle, triangle, and ellipse are 1, 2, and 3, respectively. Which one among the given options is the most appropriate combination of P, Q, and R ?",
+      "reason": "Joined the PDF line wraps.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "da-2025-ga-4",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "P = 6; Q = 5; R = 3"
+        },
+        {
+          "l": "B",
+          "t": "P = 5; Q = 6; R = 3"
+        },
+        {
+          "l": "C",
+          "t": "P = 3; Q = 6; R = 6"
+        },
+        {
+          "l": "D",
+          "t": "P = 5; Q = 3; R = 6 1 2 4 3 P Q R Data Science & Artificial Intelligence - DA"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "P = 6; Q = 5; R = 3"
+        },
+        {
+          "l": "B",
+          "t": "P = 5; Q = 6; R = 3"
+        },
+        {
+          "l": "C",
+          "t": "P = 3; Q = 6; R = 6"
+        },
+        {
+          "l": "D",
+          "t": "P = 5; Q = 3; R = 6"
+        }
+      ],
+      "reason": "Removed figure labels (\"1 2 4 3 P Q R\") and the running page footer that were pasted into option D.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "da-2025-ga-4",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "da-2025/ga-4-1.svg",
+          "svg": "da-2025/ga-4-1.svg",
+          "alt": "Three overlapping outlines: a wide rectangle on the left, a tall triangle whose apex rises above the rectangle's top-right corner and whose base lies on the rectangle's bottom edge line and extends to its right, and an ellipse centred near the rectangle's bottom-right corner that bulges below the base line. Region labels: 1 in the rectangle only (left part); 2 in the triangle only (near the apex); 3 in the ellipse only (below the base line); 4 inside the rectangle and the ellipse but left of the triangle; R inside the rectangle and the triangle but above the ellipse; P inside all three shapes; Q inside the triangle and the ellipse but right of the rectangle."
+        }
+      ],
+      "reason": "The question cannot be answered without its figure, which the bank was missing. Redrawn as an SVG from the paper.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "da-2025-ga-4",
+      "field": "topic",
+      "before": "quant",
+      "after": "analytical",
+      "reason": "Region-wise reasoning on overlapping shapes is analytical reasoning, not arithmetic.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "da-2025-ga-4",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "ga",
+        "analytical",
+        "venn-diagram",
+        "pattern"
+      ],
+      "reason": "Tags follow the corrected topic.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "da-2025-ga-5",
+      "field": "text",
+      "before": "A rectangle has a length L and a width W, where L > W. If the width, W, is increased\nby 10%, which one of the following statements is correct for all values of L and W?",
+      "after": "A rectangle has a length $L$ and a width $W$, where $L > W$. If the width, $W$, is increased by 10%, which one of the following statements is correct for all values of $L$ and $W$?",
+      "reason": "Variables typeset as maths; PDF line wrap removed.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "da-2025-ga-5",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Perimeter increases by 10%."
+        },
+        {
+          "l": "B",
+          "t": "Length of the diagonals increases by 10%."
+        },
+        {
+          "l": "C",
+          "t": "Area increases by 10%."
+        },
+        {
+          "l": "D",
+          "t": "The rectangle becomes a square. Data Science & Artificial Intelligence - DA"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Perimeter increases by 10%."
+        },
+        {
+          "l": "B",
+          "t": "Length of the diagonals increases by 10%."
+        },
+        {
+          "l": "C",
+          "t": "Area increases by 10%."
+        },
+        {
+          "l": "D",
+          "t": "The rectangle becomes a square."
+        }
+      ],
+      "reason": "Removed the running page footer (\"Data Science & Artificial Intelligence - DA\") that was pasted into option D.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "da-2025-ga-5",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "ga",
+        "quant",
+        "percentages",
+        "mensuration"
+      ],
+      "reason": "Specific tags for the question.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "da-2025-ga-6",
+      "field": "text",
+      "before": "Column-I has statements made by Shanthala; and, Column -II has responses given\nby Kanishk.\nColumn-I Column-II\nP.  This house is in a mess. 1.  Alright, I won’t bring it up during\nour conversations.\nQ. I am not happy with the marks\ngiven to me.\n2.  Well, you can easily look it up.\nR. Politics is a subject I avoid talking\nabout.\n3.  No problem, let me clear it up for\nyou.\nS. I don’t know what this word\nmeans.\n4.  Don’t worry, I will take it up with\nyour teacher.\nIdentify the option that has the correct match between Column-I and Column-II.",
+      "after": "Column-I has statements made by Shanthala; and, Column-II has responses given by Kanishk.\n\n| Column-I | Column-II |\n|---|---|\n| P. This house is in a mess. | 1. Alright, I won’t bring it up during our conversations. |\n| Q. I am not happy with the marks given to me. | 2. Well, you can easily look it up. |\n| R. Politics is a subject I avoid talking about. | 3. No problem, let me clear it up for you. |\n| S. I don’t know what this word means. | 4. Don’t worry, I will take it up with your teacher. |\n\nIdentify the option that has the correct match between Column-I and Column-II.",
+      "reason": "The two-column match list was flattened into interleaved lines; restored as a markdown table.",
+      "source": "pdf p.5"
+    },
+    {
+      "id": "da-2025-ga-6",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "P – 2; Q – 3; R – 1; S – 4"
+        },
+        {
+          "l": "B",
+          "t": "P – 3; Q – 4; R – 1; S – 2"
+        },
+        {
+          "l": "C",
+          "t": "P – 4; Q – 1; R – 2; S – 3"
+        },
+        {
+          "l": "D",
+          "t": "P – 1; Q – 2; R – 4; S – 3 Data Science & Artificial Intelligence - DA"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "P – 2; Q – 3; R – 1; S – 4"
+        },
+        {
+          "l": "B",
+          "t": "P – 3; Q – 4; R – 1; S – 2"
+        },
+        {
+          "l": "C",
+          "t": "P – 4; Q – 1; R – 2; S – 3"
+        },
+        {
+          "l": "D",
+          "t": "P – 1; Q – 2; R – 4; S – 3"
+        }
+      ],
+      "reason": "Removed the running page footer (\"Data Science & Artificial Intelligence - DA\") that was pasted into option D.",
+      "source": "pdf p.5"
+    },
+    {
+      "id": "da-2025-ga-6",
+      "field": "tags",
+      "before": [
+        "verbal-aptitude"
+      ],
+      "after": [
+        "ga",
+        "verbal",
+        "phrasal-verbs"
+      ],
+      "reason": "Specific tags for the question.",
+      "source": "pdf p.5"
+    },
+    {
+      "id": "da-2025-ga-7",
+      "field": "text",
+      "before": "Weight of a person can be expressed as a function of their age. The function usually\nvaries from person to person. Suppose this function is identical for two brothers,\nand it monotonically increases till the age of 50 years and then it monotonically\ndecreases. Let 𝑎1 and 𝑎2 (in years) denote the ages of the brothers and 𝑎1 < 𝑎2.\nWhich one of the following statements is correct about their age on the day when\nthey attain the same weight?",
+      "after": "Weight of a person can be expressed as a function of their age. The function usually varies from person to person. Suppose this function is identical for two brothers, and it monotonically increases till the age of 50 years and then it monotonically decreases. Let $a_1$ and $a_2$ (in years) denote the ages of the brothers and $a_1 < a_2$.\n\nWhich one of the following statements is correct about their age on the day when they attain the same weight?",
+      "reason": "Unicode maths italics (𝑎1) typeset as $a_1$; PDF line wraps removed.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "da-2025-ga-7",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝑎1 < 𝑎2 < 50"
+        },
+        {
+          "l": "B",
+          "t": "𝑎1 < 50 < 𝑎2"
+        },
+        {
+          "l": "C",
+          "t": "50 < 𝑎1 < 𝑎2"
+        },
+        {
+          "l": "D",
+          "t": "Either 𝑎1 = 50 or 𝑎2 = 50 Data Science & Artificial Intelligence - DA"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$a_1 < a_2 < 50$"
+        },
+        {
+          "l": "B",
+          "t": "$a_1 < 50 < a_2$"
+        },
+        {
+          "l": "C",
+          "t": "$50 < a_1 < a_2$"
+        },
+        {
+          "l": "D",
+          "t": "Either $a_1 = 50$ or $a_2 = 50$"
+        }
+      ],
+      "reason": "Options typeset as maths; removed the running page footer (\"Data Science & Artificial Intelligence - DA\") that was pasted into option D.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "da-2025-ga-7",
+      "field": "topic",
+      "before": "quant",
+      "after": "analytical",
+      "reason": "Reasoning about a unimodal function (no computation) is analytical reasoning.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "da-2025-ga-7",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "ga",
+        "analytical",
+        "functions",
+        "monotonicity"
+      ],
+      "reason": "Tags follow the corrected topic.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "da-2025-ga-8",
+      "field": "text",
+      "before": "A regular dodecagon (12-sided regular polygon) is inscribed in a circle of radius r\ncm as shown in the figure. The side of the dodecagon is d cm. All the triangles\n(numbered 1 to 12)  in the figure are used to form squares  of side r cm and each\nnumbered triangle is used only once to form a square.\nThe number of squares that can be formed and the number of triangles required to\nform each square, respectively, are:\nNote: The figure shown is representative.",
+      "after": "A regular dodecagon (12-sided regular polygon) is inscribed in a circle of radius r cm as shown in the figure. The side of the dodecagon is d cm. All the triangles (numbered 1 to 12) in the figure are used to form squares of side r cm and each numbered triangle is used only once to form a square.\n\nThe number of squares that can be formed and the number of triangles required to form each square, respectively, are:\n\nNote: The figure shown is representative.",
+      "reason": "Joined PDF line wraps and paragraphs as in the paper.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "da-2025-ga-8",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "3; 4"
+        },
+        {
+          "l": "B",
+          "t": "4; 3"
+        },
+        {
+          "l": "C",
+          "t": "3; 3"
+        },
+        {
+          "l": "D",
+          "t": "3; 2 Data Science & Artificial Intelligence - DA"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "3; 4"
+        },
+        {
+          "l": "B",
+          "t": "4; 3"
+        },
+        {
+          "l": "C",
+          "t": "3; 3"
+        },
+        {
+          "l": "D",
+          "t": "3; 2"
+        }
+      ],
+      "reason": "Removed the running page footer (\"Data Science & Artificial Intelligence - DA\") that was pasted into option D.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "da-2025-ga-8",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "da-2025/ga-8-1.svg",
+          "svg": "da-2025/ga-8-1.svg",
+          "alt": "A regular dodecagon inscribed in a dashed circle with centre O, one vertex at the top. From O, segments go to nine of the twelve vertices (all except the top vertex, the vertex just right of the rightmost-lower one and the vertex just left of the leftmost-lower one), and three chords each skip one vertex: across the top, at the lower right and at the lower left. This cuts the dodecagon into 12 triangles: three equilateral triangles O-chord (1 at the top, 4 at the lower right, 7 at the lower left), three thin triangles between each chord and the two dodecagon sides it cuts off (10 at the top, 11 at the lower right, 12 at the lower left), and six narrow isosceles triangles with apex O and one dodecagon side as base (2, 3, 5, 6, 8, 9). The side of triangle 3 on the dodecagon is marked d."
+        }
+      ],
+      "reason": "The question cannot be answered without its figure, which the bank was missing. Redrawn as an SVG from the paper.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "da-2025-ga-8",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "ga",
+        "quant",
+        "geometry",
+        "area"
+      ],
+      "reason": "Specific tags for the question.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "da-2025-ga-9",
+      "field": "text",
+      "before": "If a real variable 𝑥 satisfies 3𝑥2\n= 27 × 9𝑥, then the value of\n2𝑥2\n(2𝑥)2 is:",
+      "after": "If a real variable $x$ satisfies $3^{x^2} = 27 \\times 9^{x}$, then the value of $\\dfrac{2^{x^2}}{(2^{x})^2}$ is:",
+      "reason": "Exponents were flattened (\"3𝑥2 = 27 × 9𝑥\", \"2𝑥2 / (2𝑥)2\"); typeset as in the paper.",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "da-2025-ga-9",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "2−1"
+        },
+        {
+          "l": "B",
+          "t": "20"
+        },
+        {
+          "l": "C",
+          "t": "23"
+        },
+        {
+          "l": "D",
+          "t": "215 Data Science & Artificial Intelligence - DA"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$2^{-1}$"
+        },
+        {
+          "l": "B",
+          "t": "$2^{0}$"
+        },
+        {
+          "l": "C",
+          "t": "$2^{3}$"
+        },
+        {
+          "l": "D",
+          "t": "$2^{15}$"
+        }
+      ],
+      "reason": "Exponents were flattened (\"2−1\", \"215\"), and the page footer was pasted into option D; typeset as powers of 2.",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "da-2025-ga-9",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "ga",
+        "quant",
+        "exponents",
+        "quadratic-equations"
+      ],
+      "reason": "Specific tags for the question.",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "da-2025-ga-10",
+      "field": "text",
+      "before": "The number of patients per shift (𝑋) consulting Dr. Gita in her past 100 shifts is\nshown in the figure. If the amount she earns is ₹ 1000(𝑋 − 0.2), what is the average\namount (in ₹) she has earned per shift in the past 100 shifts?\nNote: The figure shown is representative.",
+      "after": "The number of patients per shift ($X$) consulting Dr. Gita in her past 100 shifts is shown in the figure. If the amount she earns is ₹ $1000(X - 0.2)$, what is the average amount (in ₹) she has earned per shift in the past 100 shifts?\n\nNote: The figure shown is representative.",
+      "reason": "Unicode maths italics (𝑋) typeset as KaTeX; PDF line wraps removed.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "da-2025-ga-10",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "6,100"
+        },
+        {
+          "l": "B",
+          "t": "6,300"
+        },
+        {
+          "l": "C",
+          "t": "6,000"
+        },
+        {
+          "l": "D",
+          "t": "6,500 20 40 30 10 0 10 20 30 40 50 5 6 7 8 Number of shifts Number of patients per shift (X) GATE 2025 Data Science & Artiﬁcial Intelligence - DA"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "6,100"
+        },
+        {
+          "l": "B",
+          "t": "6,300"
+        },
+        {
+          "l": "C",
+          "t": "6,000"
+        },
+        {
+          "l": "D",
+          "t": "6,500"
+        }
+      ],
+      "reason": "Removed the bar-chart labels and the running page header/footer that were pasted into option D.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "da-2025-ga-10",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "da-2025/ga-10-1.svg",
+          "svg": "da-2025/ga-10-1.svg",
+          "alt": "Bar chart. Horizontal axis: number of patients per shift (X) = 5, 6, 7, 8. Vertical axis: number of shifts, 0 to 50 in steps of 10. Bar heights (labelled on top): X = 5 → 20 shifts, X = 6 → 40 shifts, X = 7 → 30 shifts, X = 8 → 10 shifts."
+        }
+      ],
+      "reason": "The question cannot be answered without its figure, which the bank was missing. Redrawn as an SVG from the paper.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "da-2025-ga-10",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "ga",
+        "quant",
+        "data-interpretation",
+        "average"
+      ],
+      "reason": "Specific tags for the question.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "da-2025-da-1",
+      "field": "text",
+      "before": "Suppose X andY are random variables. The conditional expectation of X givenY is\ndenoted byE[X|Y ]. ThenE[E[X|Y ]] equals",
+      "after": "Suppose $X$ and $Y$ are random variables. The conditional expectation of $X$ given $Y$ is denoted by $E[X \\mid Y]$. Then $E[E[X \\mid Y]]$ equals",
+      "reason": "Lost spaces (\"X andY\", \"byE[X|Y ]\") and plain-text maths; typeset as in the paper.",
+      "source": "pdf p.10 (Q.11)"
+    },
+    {
+      "id": "da-2025-da-1",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "E[X|Y ]"
+        },
+        {
+          "l": "B",
+          "t": "E[X] E[Y ]"
+        },
+        {
+          "l": "C",
+          "t": "E[X]"
+        },
+        {
+          "l": "D",
+          "t": "E[Y ]"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$E[X \\mid Y]$"
+        },
+        {
+          "l": "B",
+          "t": "$\\dfrac{E[X]}{E[Y]}$"
+        },
+        {
+          "l": "C",
+          "t": "$E[X]$"
+        },
+        {
+          "l": "D",
+          "t": "$E[Y]$"
+        }
+      ],
+      "reason": "Option B is the fraction E[X]/E[Y] in the paper; the extraction had dropped the fraction bar (\"E[X] E[Y ]\" reads as a product). Options typeset as maths.",
+      "source": "pdf p.10 (Q.11)"
+    },
+    {
+      "id": "da-2025-da-1",
+      "field": "tags",
+      "before": [
+        "probability"
+      ],
+      "after": [
+        "prob",
+        "rv",
+        "conditional-expectation",
+        "law-of-total-expectation"
+      ],
+      "reason": "Specific tags for the question.",
+      "source": "pdf p.10 (Q.11)"
+    },
+    {
+      "id": "da-2025-da-2",
+      "field": "text",
+      "before": "The number of additions and multiplications involved in performing Gaussian elimina-\ntion on anyn×n upper triangular matrix is of the order",
+      "after": "The number of additions and multiplications involved in performing Gaussian elimination on any $n \\times n$ upper triangular matrix is of the order",
+      "reason": "Rejoined the hyphenated line break (\"elimina-\\ntion\") and the lost space (\"anyn×n\").",
+      "source": "pdf p.10 (Q.12)"
+    },
+    {
+      "id": "da-2025-da-2",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "O(n)"
+        },
+        {
+          "l": "B",
+          "t": "O(n2)"
+        },
+        {
+          "l": "C",
+          "t": "O(n3)"
+        },
+        {
+          "l": "D",
+          "t": "O(n4)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$O(n)$"
+        },
+        {
+          "l": "B",
+          "t": "$O(n^2)$"
+        },
+        {
+          "l": "C",
+          "t": "$O(n^3)$"
+        },
+        {
+          "l": "D",
+          "t": "$O(n^4)$"
+        }
+      ],
+      "reason": "Exponents were flattened (\"O(n2)\"); typeset as maths.",
+      "source": "pdf p.10 (Q.12)"
+    },
+    {
+      "id": "da-2025-da-2",
+      "field": "topic",
+      "before": "matrices",
+      "after": "systems",
+      "reason": "Gaussian elimination is about solving systems of linear equations.",
+      "source": "pdf p.10 (Q.12)"
+    },
+    {
+      "id": "da-2025-da-2",
+      "field": "tags",
+      "before": [
+        "matrices"
+      ],
+      "after": [
+        "la",
+        "systems",
+        "gaussian-elimination",
+        "back-substitution"
+      ],
+      "reason": "Tags follow the corrected topic.",
+      "source": "pdf p.10 (Q.12)"
+    },
+    {
+      "id": "da-2025-da-3",
+      "field": "text",
+      "before": "The sum of the elements in each row of A∈ Rn×n is 1. If B =A3\u0000 2A2 +A, which\none of the following statements is correct (forx∈ Rn)?",
+      "after": "The sum of the elements in each row of $A \\in \\mathbb{R}^{n \\times n}$ is 1. If $B = A^3 - 2A^2 + A$, which one of the following statements is correct (for $x \\in \\mathbb{R}^n$)?",
+      "reason": "The minus sign was extracted as a NUL character and the exponents were flattened (\"A3 2A2 +A\"); typeset as in the paper.",
+      "source": "pdf p.10 (Q.13)"
+    },
+    {
+      "id": "da-2025-da-3",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "The equation Bx = 0 has no solution"
+        },
+        {
+          "l": "B",
+          "t": "The equation Bx = 0 has exactly two solutions"
+        },
+        {
+          "l": "C",
+          "t": "The equation Bx = 0 has inﬁnitely many solutions"
+        },
+        {
+          "l": "D",
+          "t": "The equation Bx = 0 has a unique solution GATE 2025 Data Science & Artiﬁcial Intelligence - DA"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "The equation $Bx = 0$ has no solution"
+        },
+        {
+          "l": "B",
+          "t": "The equation $Bx = 0$ has exactly two solutions"
+        },
+        {
+          "l": "C",
+          "t": "The equation $Bx = 0$ has infinitely many solutions"
+        },
+        {
+          "l": "D",
+          "t": "The equation $Bx = 0$ has a unique solution"
+        }
+      ],
+      "reason": "Removed the running page header/footer pasted into option D; typeset as maths.",
+      "source": "pdf p.10 (Q.13)"
+    },
+    {
+      "id": "da-2025-da-3",
+      "field": "subject",
+      "before": "ga",
+      "after": "la",
+      "reason": "A linear-algebra question (null space of a matrix polynomial) was filed under General Aptitude.",
+      "source": "pdf p.10 (Q.13)"
+    },
+    {
+      "id": "da-2025-da-3",
+      "field": "topic",
+      "before": "quant",
+      "after": "systems",
+      "reason": "The question asks how many solutions the homogeneous system $Bx = 0$ has.",
+      "source": "pdf p.10 (Q.13)"
+    },
+    {
+      "id": "da-2025-da-3",
+      "field": "tags",
+      "before": [
+        "data-science"
+      ],
+      "after": [
+        "la",
+        "systems",
+        "null-space",
+        "eigenvalues",
+        "stochastic-matrix"
+      ],
+      "reason": "Tags follow the corrected subject/topic.",
+      "source": "pdf p.10 (Q.13)"
+    }
+  ]
+}
