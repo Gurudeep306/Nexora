@@ -1,0 +1,761 @@
+{
+  "paper": "cse-2024-1",
+  "fixes": [
+    {
+      "id": "cse-2024-1-ga-1",
+      "field": "text",
+      "before": "If ‘→’ denotes increasing order of intensity, then the meaning of the words\n[dry → arid → parched] is analogous to [diet → fast → ________ ].\nWhich one of the given options is appropriate to fill the blank?",
+      "after": "If ‘→’ denotes increasing order of intensity, then the meaning of the words\n\n[dry → arid → parched] is analogous to [diet → fast → ________ ].\n\nWhich one of the given options is appropriate to fill the blank?",
+      "reason": "Paragraph breaks as in the paper.",
+      "source": "pdf p.1"
+    },
+    {
+      "id": "cse-2024-1-ga-1",
+      "field": "tags",
+      "before": [
+        "verbal-aptitude"
+      ],
+      "after": [
+        "verbal-aptitude",
+        "analogy",
+        "word-intensity"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.1"
+    },
+    {
+      "id": "cse-2024-1-ga-2",
+      "field": "text",
+      "before": "If two distinct non-zero real variables 𝑥 and 𝑦 are such that (𝑥 + 𝑦) is proportional\nto (𝑥 − 𝑦) then the value of\n𝑥\n𝑦",
+      "after": "If two distinct non-zero real variables $x$ and $y$ are such that $(x + y)$ is proportional to $(x - y)$ then the value of $\\dfrac{x}{y}$",
+      "reason": "The fraction x/y was split over three lines and the variables were Unicode maths italics; rewritten in KaTeX.",
+      "source": "pdf p.1"
+    },
+    {
+      "id": "cse-2024-1-ga-2",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "depends on 𝑥𝑦"
+        },
+        {
+          "l": "B",
+          "t": "depends only on 𝑥 and not on 𝑦"
+        },
+        {
+          "l": "C",
+          "t": "depends only on 𝑦 and not on 𝑥"
+        },
+        {
+          "l": "D",
+          "t": "is a constant Computer Science and Information Technology Set 1 (CS1)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "depends on $xy$"
+        },
+        {
+          "l": "B",
+          "t": "depends only on $x$ and not on $y$"
+        },
+        {
+          "l": "C",
+          "t": "depends only on $y$ and not on $x$"
+        },
+        {
+          "l": "D",
+          "t": "is a constant"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology Set 1 (CS1)\" pasted into option D. Variables rewritten in KaTeX.",
+      "source": "pdf p.1"
+    },
+    {
+      "id": "cse-2024-1-ga-2",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "quantitative-aptitude",
+        "proportion",
+        "ratio"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.1"
+    },
+    {
+      "id": "cse-2024-1-ga-3",
+      "field": "text",
+      "before": "Consider the following sample of numbers:\n9, 18, 11, 14, 15, 17, 10, 69, 11, 13\nThe median of the sample is",
+      "after": "Consider the following sample of numbers:\n\n9, 18, 11, 14, 15, 17, 10, 69, 11, 13\n\nThe median of the sample is",
+      "reason": "The data line is centred on its own line in the paper.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2024-1-ga-3",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "quantitative-aptitude",
+        "statistics",
+        "median"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2024-1-ga-4",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "21%"
+        },
+        {
+          "l": "B",
+          "t": "14 2 7%"
+        },
+        {
+          "l": "C",
+          "t": "10%"
+        },
+        {
+          "l": "D",
+          "t": "30% Computer Science and Information Technology Set 1 (CS1)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "21%"
+        },
+        {
+          "l": "B",
+          "t": "$14\\frac{2}{7}\\%$"
+        },
+        {
+          "l": "C",
+          "t": "10%"
+        },
+        {
+          "l": "D",
+          "t": "30%"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology Set 1 (CS1)\" pasted into option D. Option B is the mixed number 14 2/7 % (the extraction flattened it to \"14 2 7%\").",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2024-1-ga-4",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "quantitative-aptitude",
+        "ratio",
+        "percentage"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2024-1-ga-5",
+      "field": "text",
+      "before": "For positive non-zero real variables 𝑝 and 𝑞, if\nlog  (𝑝2 + 𝑞2) =  log 𝑝 + log 𝑞 + 2 log 3 ,\nthen, the value of\n𝑝4+𝑞4\n𝑝2𝑞2   is",
+      "after": "For positive non-zero real variables $p$ and $q$, if\n\n$$\\log (p^2 + q^2) = \\log p + \\log q + 2 \\log 3,$$\n\nthen, the value of $\\dfrac{p^4 + q^4}{p^2 q^2}$ is",
+      "reason": "Exponents were lost (p2, q4 …) and the fraction was split over lines; rewritten in KaTeX.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2024-1-ga-5",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "79"
+        },
+        {
+          "l": "B",
+          "t": "81"
+        },
+        {
+          "l": "C",
+          "t": "9"
+        },
+        {
+          "l": "D",
+          "t": "83 Computer Science and Information Technology Set 1 (CS1)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "79"
+        },
+        {
+          "l": "B",
+          "t": "81"
+        },
+        {
+          "l": "C",
+          "t": "9"
+        },
+        {
+          "l": "D",
+          "t": "83"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology Set 1 (CS1)\" pasted into option D.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2024-1-ga-5",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "quantitative-aptitude",
+        "logarithms",
+        "algebraic-identities"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2024-1-ga-6",
+      "field": "text",
+      "before": "In the given text, the blanks are numbered (i)−(iv). Select the best match for all the\nblanks.\nSteve was advised to keep his head       (i)       before heading       (ii)       to bat;\nfor, while he had a head       (iii)       batting, he could only do so with a cool head\ns       (iv)        his shoulders.",
+      "after": "In the given text, the blanks are numbered (i)−(iv). Select the best match for all the blanks.\n\nSteve was advised to keep his head ____(i)____ before heading ____(ii)____ to bat; for, while he had a head ____(iii)____ batting, he could only do so with a cool head ____(iv)____ his shoulders.",
+      "reason": "The blanks had lost their underlines and a stray \"s\" appeared before blank (iv); rebuilt as in the paper.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2024-1-ga-6",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "(i) down (ii) down (iii) on (iv) for"
+        },
+        {
+          "l": "B",
+          "t": "(i) on (ii) down (iii) for (iv) on"
+        },
+        {
+          "l": "C",
+          "t": "(i) down (ii) out (iii) for (iv) on"
+        },
+        {
+          "l": "D",
+          "t": "(i) on (ii) out (iii) on (iv) for Computer Science and Information Technology Set 1 (CS1)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "(i) down (ii) down (iii) on (iv) for"
+        },
+        {
+          "l": "B",
+          "t": "(i) on (ii) down (iii) for (iv) on"
+        },
+        {
+          "l": "C",
+          "t": "(i) down (ii) out (iii) for (iv) on"
+        },
+        {
+          "l": "D",
+          "t": "(i) on (ii) out (iii) on (iv) for"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology Set 1 (CS1)\" pasted into option D.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2024-1-ga-6",
+      "field": "topic",
+      "before": "quant",
+      "after": "verbal",
+      "reason": "Choosing prepositions in idioms is verbal ability, not quantitative aptitude.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2024-1-ga-6",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "verbal-aptitude",
+        "prepositions",
+        "idioms"
+      ],
+      "reason": "Tags follow the corrected topic.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2024-1-ga-7",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "1/π"
+        },
+        {
+          "l": "B",
+          "t": "2/π"
+        },
+        {
+          "l": "C",
+          "t": "3/π"
+        },
+        {
+          "l": "D",
+          "t": "4/π Computer Science and Information Technology Set 1 (CS1)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "1/π"
+        },
+        {
+          "l": "B",
+          "t": "2/π"
+        },
+        {
+          "l": "C",
+          "t": "3/π"
+        },
+        {
+          "l": "D",
+          "t": "4/π"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology Set 1 (CS1)\" pasted into option D.",
+      "source": "pdf p.5"
+    },
+    {
+      "id": "cse-2024-1-ga-7",
+      "field": "topic",
+      "before": "spatial",
+      "after": "quant",
+      "reason": "Volumes of a cylinder and a cube (mensuration) are quantitative aptitude, not spatial reasoning.",
+      "source": "pdf p.5"
+    },
+    {
+      "id": "cse-2024-1-ga-7",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "quantitative-aptitude",
+        "mensuration",
+        "volume"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.5"
+    },
+    {
+      "id": "cse-2024-1-ga-8",
+      "field": "text",
+      "before": "The pie chart presents the percentage contribution of different macronutrients to a\ntypical 2,000 kcal diet of a person.\nThe typical energy density (kcal/g) of these macronutrients is given in the table.\nMacronutrient Energy density (kcal/g)\nCarbohydrates 4\nProteins 4\nUnsaturated fat 9\nSaturated fat 9\nTrans fat 9\nThe total fat (all three types), in grams, this person consumes is",
+      "after": "The pie chart presents the percentage contribution of different macronutrients to a typical 2,000 kcal diet of a person.\n\nThe typical energy density (kcal/g) of these macronutrients is given in the table.\n\n| Macronutrient | Energy density (kcal/g) |\n|---|---|\n| Carbohydrates | 4 |\n| Proteins | 4 |\n| Unsaturated fat | 9 |\n| Saturated fat | 9 |\n| Trans fat | 9 |\n\nThe total fat (all three types), in grams, this person consumes is",
+      "reason": "The energy-density table was flattened into plain lines; rebuilt as a markdown table.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2024-1-ga-8",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "44.4"
+        },
+        {
+          "l": "B",
+          "t": "77.8"
+        },
+        {
+          "l": "C",
+          "t": "100"
+        },
+        {
+          "l": "D",
+          "t": "3,600 Carbohydrates 35% Proteins 20% Unsaturated fat 20% Saturated fat 20% Trans fat 5% Macronutrient energy contribution Computer Science and Information Technology Set 1 (CS1)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "44.4"
+        },
+        {
+          "l": "B",
+          "t": "77.8"
+        },
+        {
+          "l": "C",
+          "t": "100"
+        },
+        {
+          "l": "D",
+          "t": "3,600"
+        }
+      ],
+      "reason": "The pie-chart labels and the running page header were pasted into option D.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2024-1-ga-8",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2024-1/ga-8-1.svg",
+          "svg": "cse-2024-1/ga-8-1.svg",
+          "alt": "Pie chart titled \"Macronutrient energy contribution\". Going clockwise from the top: Carbohydrates 35%, Proteins 20%, Unsaturated fat 20%, Saturated fat 20% and a thin slice Trans fat 5%."
+        }
+      ],
+      "reason": "The question depends on the pie chart, which was missing; redrawn from the paper.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2024-1-ga-8",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "quantitative-aptitude",
+        "data-interpretation",
+        "pie-chart"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2024-1-ga-9",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "spatial-aptitude",
+        "paper-folding",
+        "perimeter"
+      ],
+      "reason": "Paper folding is spatial aptitude; more specific tags.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2024-1-ga-10",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "6"
+        },
+        {
+          "l": "B",
+          "t": "4"
+        },
+        {
+          "l": "C",
+          "t": "5"
+        },
+        {
+          "l": "D",
+          "t": "7 Computer Science and Information Technology Set 1 (CS1)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "6"
+        },
+        {
+          "l": "B",
+          "t": "4"
+        },
+        {
+          "l": "C",
+          "t": "5"
+        },
+        {
+          "l": "D",
+          "t": "7"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology Set 1 (CS1)\" pasted into option D.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2024-1-ga-10",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2024-1/ga-10-1.svg",
+          "svg": "cse-2024-1/ga-10-1.svg",
+          "alt": "A horizontal dashed line runs from A (left) to B (right). Unit squares sit on a grid of five columns, numbered 0 to 4 from the left; column 2 is empty. Above the line there is a single square, in column 1, resting on the line. In the row directly below the line there are squares in columns 0, 1, 3 and 4. In the next row down there are squares in columns 1 and 4. Seven squares in all: one above AB and six below it."
+        }
+      ],
+      "reason": "The question depends on the figure, which was missing; redrawn from the paper.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2024-1-ga-10",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "spatial-aptitude",
+        "mirror-image",
+        "symmetry"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2024-1-ga-10",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Official final key (A) 6 disagrees with a direct count of 5 (C).",
+      "source": "https://gate2024.iisc.ac.in/wp-content/uploads/2024/CS1FinalAnswerKey.pdf"
+    },
+    {
+      "id": "cse-2024-1-ga-10",
+      "field": "reviewNote",
+      "before": null,
+      "after": "The official final key (IISc, CS1FinalAnswerKey.pdf) is (A) 6, and it is kept. A direct count gives 5: reflecting the six squares below AB needs squares above AB in columns 0, 1, 3, 4 (first row) and 1, 4 (second row); column 1 of the first row is already filled, so 3 + 2 = 5 squares are added, and the existing square above AB already has its mirror below. 6 results from mirroring all six squares below AB while overlooking the square that is already above the line. The GATE Overflow discussion of this question raises the same objection (answer 5).",
+      "reason": "Official final key (A) 6 disagrees with a direct count of 5 (C).",
+      "source": "https://gate2024.iisc.ac.in/wp-content/uploads/2024/CS1FinalAnswerKey.pdf"
+    },
+    {
+      "id": "cse-2024-1-cs-1",
+      "field": "text",
+      "before": "Let 𝑓: ℝ →  ℝ be a function such that 𝑓(𝑥) = max{𝑥, 𝑥3}, 𝑥 ∈ ℝ , where ℝ is the\nset of all real numbers. The set of all points where 𝑓(𝑥) is\nNOT differentiable is",
+      "after": "Let $f: \\mathbb{R} \\to \\mathbb{R}$ be a function such that $f(x) = \\max\\{x, x^3\\}$, $x \\in \\mathbb{R}$, where $\\mathbb{R}$ is the set of all real numbers. The set of all points where $f(x)$ is NOT differentiable is",
+      "reason": "The exponent in x³ was lost (max{x, x3}); rewritten in KaTeX.",
+      "source": "pdf p.8 (Q.11)"
+    },
+    {
+      "id": "cse-2024-1-cs-1",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "{−1, 1, 2}"
+        },
+        {
+          "l": "B",
+          "t": "{−2, −1, 1}"
+        },
+        {
+          "l": "C",
+          "t": "{0, 1}"
+        },
+        {
+          "l": "D",
+          "t": "{−1, 0, 1}"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\{-1, 1, 2\\}$"
+        },
+        {
+          "l": "B",
+          "t": "$\\{-2, -1, 1\\}$"
+        },
+        {
+          "l": "C",
+          "t": "$\\{0, 1\\}$"
+        },
+        {
+          "l": "D",
+          "t": "$\\{-1, 0, 1\\}$"
+        }
+      ],
+      "reason": "Sets rewritten in KaTeX.",
+      "source": "pdf p.8 (Q.11)"
+    },
+    {
+      "id": "cse-2024-1-cs-1",
+      "field": "topic",
+      "before": "maxmin",
+      "after": "limits",
+      "reason": "The question is about differentiability (limits, continuity, differentiability), not maxima/minima.",
+      "source": "pdf p.8 (Q.11)"
+    },
+    {
+      "id": "cse-2024-1-cs-1",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "differentiability",
+        "piecewise-functions"
+      ],
+      "reason": "The stored tag \"sql\" was unrelated.",
+      "source": "pdf p.8 (Q.11)"
+    },
+    {
+      "id": "cse-2024-1-cs-2",
+      "field": "text",
+      "before": "The product of all eigenvalues of the matrix  [\n1 2 3\n4 5 6\n7 8 9\n]  is",
+      "after": "The product of all eigenvalues of the matrix $\\begin{bmatrix} 1 & 2 & 3 \\\\ 4 & 5 & 6 \\\\ 7 & 8 & 9 \\end{bmatrix}$ is",
+      "reason": "The matrix was split over several lines; rewritten in KaTeX.",
+      "source": "pdf p.8 (Q.12)"
+    },
+    {
+      "id": "cse-2024-1-cs-2",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "−1"
+        },
+        {
+          "l": "B",
+          "t": "0"
+        },
+        {
+          "l": "C",
+          "t": "1"
+        },
+        {
+          "l": "D",
+          "t": "2 Computer Science and Information Technology Set 1 (CS1)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "−1"
+        },
+        {
+          "l": "B",
+          "t": "0"
+        },
+        {
+          "l": "C",
+          "t": "1"
+        },
+        {
+          "l": "D",
+          "t": "2"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology Set 1 (CS1)\" pasted into option D.",
+      "source": "pdf p.8 (Q.12)"
+    },
+    {
+      "id": "cse-2024-1-cs-2",
+      "field": "tags",
+      "before": [
+        "isa"
+      ],
+      "after": [
+        "eigenvalues",
+        "determinant"
+      ],
+      "reason": "The stored tag \"isa\" was unrelated.",
+      "source": "pdf p.8 (Q.12)"
+    },
+    {
+      "id": "cse-2024-1-cs-3",
+      "field": "text",
+      "before": "Consider a system that uses 5 bits for representing signed integers in 2’s complement\nformat. In this system, two integers 𝐴 and 𝐵 are represented as 𝐴=01010 and\n𝐵=11010. Which one of the following operations will result in either an arithmetic\noverflow or an arithmetic underflow?",
+      "after": "Consider a system that uses 5 bits for representing signed integers in 2’s complement format. In this system, two integers $A$ and $B$ are represented as $A = 01010$ and $B = 11010$. Which one of the following operations will result in either an arithmetic overflow or an arithmetic underflow?",
+      "reason": "Variables were Unicode maths italics; rewritten in KaTeX.",
+      "source": "pdf p.9 (Q.13)"
+    },
+    {
+      "id": "cse-2024-1-cs-3",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝐴 + 𝐵"
+        },
+        {
+          "l": "B",
+          "t": "𝐴 − 𝐵"
+        },
+        {
+          "l": "C",
+          "t": "𝐵 − 𝐴"
+        },
+        {
+          "l": "D",
+          "t": "2 ∗ 𝐵"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$A + B$"
+        },
+        {
+          "l": "B",
+          "t": "$A - B$"
+        },
+        {
+          "l": "C",
+          "t": "$B - A$"
+        },
+        {
+          "l": "D",
+          "t": "$2 \\ast B$"
+        }
+      ],
+      "reason": "Operations rewritten in KaTeX.",
+      "source": "pdf p.9 (Q.13)"
+    },
+    {
+      "id": "cse-2024-1-cs-3",
+      "field": "subject",
+      "before": "ga",
+      "after": "dl",
+      "reason": "2’s complement overflow is Digital Logic (computer arithmetic), not General Aptitude.",
+      "source": "pdf p.9 (Q.13)"
+    },
+    {
+      "id": "cse-2024-1-cs-3",
+      "field": "topic",
+      "before": "quant",
+      "after": "arithmetic",
+      "reason": "Overflow in signed fixed-point arithmetic.",
+      "source": "pdf p.9 (Q.13)"
+    },
+    {
+      "id": "cse-2024-1-cs-3",
+      "field": "tags",
+      "before": [
+        "quant"
+      ],
+      "after": [
+        "twos-complement",
+        "overflow",
+        "signed-arithmetic"
+      ],
+      "reason": "The stored tag \"quant\" was unrelated.",
+      "source": "pdf p.9 (Q.13)"
+    }
+  ]
+}
