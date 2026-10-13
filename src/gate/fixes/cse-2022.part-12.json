@@ -1,0 +1,1237 @@
+{
+  "paper": "cse-2022",
+  "fixes": [
+    {
+      "id": "cse-2022-cs-13",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Every subset of a recursively enumerable language is recursive."
+        },
+        {
+          "l": "B",
+          "t": "If a language L and its complement L are both recursively enumerable, then L must be recursive."
+        },
+        {
+          "l": "C",
+          "t": "Complement of a context-free language must be recursive."
+        },
+        {
+          "l": "D",
+          "t": "If 1L and 2L are regular, then 1 2L L must be deterministic context-free."
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Every subset of a recursively enumerable language is recursive."
+        },
+        {
+          "l": "B",
+          "t": "If a language $L$ and its complement $\\overline{L}$ are both recursively enumerable, then $L$ must be recursive."
+        },
+        {
+          "l": "C",
+          "t": "Complement of a context-free language must be recursive."
+        },
+        {
+          "l": "D",
+          "t": "If $L_1$ and $L_2$ are regular, then $L_1 \\cap L_2$ must be deterministic context-free."
+        }
+      ],
+      "reason": "Restored the complement bar and subscripts/intersection symbol lost in extraction.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2022-cs-13",
+      "field": "subject",
+      "before": "pds",
+      "after": "toc",
+      "reason": "Question is on recursive/RE/CFL/regular language classes (theory of computation), not C programming.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2022-cs-13",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "tm",
+      "reason": "Question is on recursive/RE/CFL/regular language classes (theory of computation), not C programming.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2022-cs-13",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "decidability",
+        "recursive-languages",
+        "re-languages",
+        "closure-properties"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2022-cs-14",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Each cache block in WB and WT has a dirty bit."
+        },
+        {
+          "l": "B",
+          "t": "Every write hit in WB leads to a data transfer from cache to main memory."
+        },
+        {
+          "l": "C",
+          "t": "Eviction of a block from WT will not lead to data transfer from cache to main memory."
+        },
+        {
+          "l": "D",
+          "t": "A read miss in WB will never lead to eviction of a dirty block from WB. GATE 2022 Computer Science and Information Technology (CS)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Each cache block in WB and WT has a dirty bit."
+        },
+        {
+          "l": "B",
+          "t": "Every write hit in WB leads to a data transfer from cache to main memory."
+        },
+        {
+          "l": "C",
+          "t": "Eviction of a block from WT will not lead to data transfer from cache to main memory."
+        },
+        {
+          "l": "D",
+          "t": "A read miss in WB will never lead to eviction of a dirty block from WB."
+        }
+      ],
+      "reason": "Removed the page header text appended to option D.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2022-cs-14",
+      "field": "subject",
+      "before": "os",
+      "after": "coa",
+      "reason": "Write-back vs write-through cache is computer organisation (cache), not OS memory.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2022-cs-14",
+      "field": "topic",
+      "before": "memory",
+      "after": "cache",
+      "reason": "Write-back vs write-through cache is computer organisation (cache), not OS memory.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2022-cs-14",
+      "field": "tags",
+      "before": [
+        "memory"
+      ],
+      "after": [
+        "cache",
+        "write-back",
+        "write-through",
+        "dirty-bit"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2022-cs-15",
+      "field": "text",
+      "before": "Consider the following three relations in a relational database.\n( , ),Employee eId Name  ( , ),Brand bId bName  ( , )Own eId bId\nWhich of the following relational algebra expressions return the set of eIds\nwho own all the brands?",
+      "after": "Consider the following three relations in a relational database.\n\n$$\\textit{Employee}(\\underline{eId}, \\textit{Name}),\\quad \\textit{Brand}(\\underline{bId}, \\textit{bName}),\\quad \\textit{Own}(\\underline{eId}, \\underline{bId})$$\n\nWhich of the following relational algebra expressions return the set of $eId$s who own all the brands?",
+      "reason": "Restored the relation schemas (keys underlined) lost in extraction.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2022-cs-15",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": ",( ( ) / ( ))eId eId bId bId Own Brand  "
+        },
+        {
+          "l": "B",
+          "t": " ,( ) ( ( ) ( )) ( )eId eId eId bId eId bIdOwn Own Brand Own    "
+        },
+        {
+          "l": "C",
+          "t": ",( ( ) / ( ))eId eId bId bId Own Own  "
+        },
+        {
+          "l": "D",
+          "t": " ( ( ) ( )) / ( )eId eId bId bIdOwn Own Brand   "
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\Pi_{eId}\\left(\\Pi_{eId,bId}(Own) \\,/\\, \\Pi_{bId}(Brand)\\right)$"
+        },
+        {
+          "l": "B",
+          "t": "$\\Pi_{eId}(Own) - \\Pi_{eId}\\left(\\left(\\Pi_{eId}(Own) \\times \\Pi_{bId}(Brand)\\right) - \\Pi_{eId,bId}(Own)\\right)$"
+        },
+        {
+          "l": "C",
+          "t": "$\\Pi_{eId}\\left(\\Pi_{eId,bId}(Own) \\,/\\, \\Pi_{bId}(Own)\\right)$"
+        },
+        {
+          "l": "D",
+          "t": "$\\Pi_{eId}\\left(\\left(\\Pi_{eId}(Own) \\times \\Pi_{bId}(Own)\\right) \\,/\\, \\Pi_{bId}(Brand)\\right)$"
+        }
+      ],
+      "reason": "Options were garbled relational-algebra symbols; rewritten in KaTeX from the paper.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2022-cs-15",
+      "field": "type",
+      "before": "MCQ",
+      "after": "MSQ",
+      "reason": "Q.25 is in the paper's MSQ section (Q.23–Q.27) and the official key has two options (A, B).",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2022-cs-15",
+      "field": "subject",
+      "before": "dm",
+      "after": "db",
+      "reason": "Relational algebra division question (databases), not sets.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2022-cs-15",
+      "field": "topic",
+      "before": "sets",
+      "after": "ra",
+      "reason": "Relational algebra division question (databases), not sets.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2022-cs-15",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "relational-algebra",
+        "division",
+        "set-difference"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2022-cs-16",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Circular wait is a necessary condition for the formation of deadlock."
+        },
+        {
+          "l": "B",
+          "t": "In a system where each resource has more than one instance, a cycle in its wait-for graph indicates the presence of a deadlock."
+        },
+        {
+          "l": "C",
+          "t": "If the current allocation of resources to processes leads the system to unsafe state, then deadlock will necessarily occur."
+        },
+        {
+          "l": "D",
+          "t": "In the resource-allocation graph of a system, if every edge is an assignment edge, then the system is not in deadlock state. GATE 2022 Computer Science and Information Technology (CS)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Circular wait is a necessary condition for the formation of deadlock."
+        },
+        {
+          "l": "B",
+          "t": "In a system where each resource has more than one instance, a cycle in its wait-for graph indicates the presence of a deadlock."
+        },
+        {
+          "l": "C",
+          "t": "If the current allocation of resources to processes leads the system to unsafe state, then deadlock will necessarily occur."
+        },
+        {
+          "l": "D",
+          "t": "In the resource-allocation graph of a system, if every edge is an assignment edge, then the system is not in deadlock state."
+        }
+      ],
+      "reason": "Removed the page header text appended to option D.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2022-cs-16",
+      "field": "tags",
+      "before": [
+        "deadlock"
+      ],
+      "after": [
+        "deadlock",
+        "resource-allocation-graph",
+        "safe-state"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2022-cs-17",
+      "field": "text",
+      "before": "Which of the following statements is/are TRUE for a group ?G",
+      "after": "Which of the following statements is/are TRUE for a group $G$?",
+      "reason": "Removed the page header/footer text and restored the paper's mathematical notation.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2022-cs-17",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "If for all ,x y G , 2 2 2( ) ,xy x y then G is commutative."
+        },
+        {
+          "l": "B",
+          "t": "If for all x G , 2 1,x  then G is commutative. Here, 1 is the identity element of .G"
+        },
+        {
+          "l": "C",
+          "t": "If the order of G is 2, then G is commutative."
+        },
+        {
+          "l": "D",
+          "t": "If G is commutative, then a subgroup of G need not be commutative. GATE 2022 Computer Science and Information Technology (CS)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "If for all $x, y \\in G$, $(xy)^2 = x^2y^2$, then $G$ is commutative."
+        },
+        {
+          "l": "B",
+          "t": "If for all $x \\in G$, $x^2 = 1$, then $G$ is commutative. Here, $1$ is the identity element of $G$."
+        },
+        {
+          "l": "C",
+          "t": "If the order of $G$ is $2$, then $G$ is commutative."
+        },
+        {
+          "l": "D",
+          "t": "If $G$ is commutative, then a subgroup of $G$ need not be commutative."
+        }
+      ],
+      "reason": "Removed the page header/footer text and restored the paper's mathematical notation.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2022-cs-17",
+      "field": "subject",
+      "before": "pds",
+      "after": "dm",
+      "reason": "Group theory (discrete mathematics), not C programming.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2022-cs-17",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "groups",
+      "reason": "Group theory (discrete mathematics), not C programming.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2022-cs-17",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "group-theory",
+        "abelian-group"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2022-cs-18",
+      "field": "text",
+      "before": "Suppose a binary search tree with 1000 distinct elements is also a complete binary\ntree. The tree is stored using the array representation of binary heap trees. Assuming\nthat the array indices start with 0, the 3 rd largest element of the tree is stored at\nindex_____________.",
+      "after": "Suppose a binary search tree with 1000 distinct elements is also a complete binary tree. The tree is stored using the array representation of binary heap trees. Assuming that the array indices start with 0, the 3rd largest element of the tree is stored at index _____________.",
+      "reason": "Fixed \"3 rd\" superscript extraction.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "cse-2022-cs-18",
+      "field": "subject",
+      "before": "ga",
+      "after": "pds",
+      "reason": "BST/complete-tree array indexing (data structures), not quantitative aptitude.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "cse-2022-cs-18",
+      "field": "topic",
+      "before": "quant",
+      "after": "bst",
+      "reason": "BST/complete-tree array indexing (data structures), not quantitative aptitude.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "cse-2022-cs-18",
+      "field": "tags",
+      "before": [
+        "quant"
+      ],
+      "after": [
+        "bst",
+        "complete-binary-tree",
+        "array-representation"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "cse-2022-cs-19",
+      "field": "text",
+      "before": "Consider the augmented grammar with { , *, (, ), }id  as the set of terminals.\nS S \n|S S R R \n* |R R P P\n( ) |P S id\nIf 0I  is the set of two (0)LR  items • •{[ ], [ ]}S S S S R    , then\n0( ( ), )goto closure I   contains exactly __________ items.",
+      "after": "Consider the augmented grammar with $\\{+, *, (, ), id\\}$ as the set of terminals.\n\n$$\\begin{aligned} S' &\\to S \\\\ S &\\to S + R \\mid R \\\\ R &\\to R * P \\mid P \\\\ P &\\to (S) \\mid id \\end{aligned}$$\n\nIf $I_0$ is the set of two $LR(0)$ items $\\{[S' \\to S\\,\\bullet],\\ [S \\to S\\,\\bullet + R]\\}$, then $goto(closure(I_0), +)$ contains exactly __________ items.",
+      "reason": "Grammar and items were garbled (the \"+\" terminal was lost); rewritten in KaTeX.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "cse-2022-cs-19",
+      "field": "tags",
+      "before": [
+        "parsing"
+      ],
+      "after": [
+        "lr0-items",
+        "closure",
+        "goto"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "cse-2022-cs-20",
+      "field": "subject",
+      "before": "calc",
+      "after": "dm",
+      "reason": "Graph theory, not calculus.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "cse-2022-cs-20",
+      "field": "topic",
+      "before": "maxmin",
+      "after": "graphs",
+      "reason": "Graph theory, not calculus.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "cse-2022-cs-20",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "graph-theory",
+        "connectivity",
+        "edge-count"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "cse-2022-cs-21",
+      "field": "text",
+      "before": "Consider a relation ( , , , , )R A B C D E  with the following three functional\ndependencies.\n𝐴𝐵 → 𝐶;   𝐵𝐶 → 𝐷;   𝐶 → 𝐸;\nThe number of superkeys in the relation R is _____________.",
+      "after": "Consider a relation $R(A, B, C, D, E)$ with the following three functional dependencies.\n\n$$AB \\to C;\\quad BC \\to D;\\quad C \\to E;$$\n\nThe number of superkeys in the relation R is _____________.",
+      "reason": "Removed the page header/footer text and restored the paper's mathematical notation.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "cse-2022-cs-21",
+      "field": "subject",
+      "before": "dm",
+      "after": "db",
+      "reason": "Functional dependencies / keys (databases), not sets.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "cse-2022-cs-21",
+      "field": "topic",
+      "before": "sets",
+      "after": "normalization",
+      "reason": "Functional dependencies / keys (databases), not sets.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "cse-2022-cs-21",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "functional-dependencies",
+        "superkey",
+        "attribute-closure"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "cse-2022-cs-22",
+      "field": "text",
+      "before": "The number of arrangements of six identical balls in three identical bins is______.\nGATE 2022 Computer Science and Information Technology (CS)",
+      "after": "The number of arrangements of six identical balls in three identical bins is ______.",
+      "reason": "Removed the page header text.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "cse-2022-cs-22",
+      "field": "subject",
+      "before": "ga",
+      "after": "dm",
+      "reason": "Counting partitions (combinatorics), not aptitude.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "cse-2022-cs-22",
+      "field": "topic",
+      "before": "quant",
+      "after": "combinatorics",
+      "reason": "Counting partitions (combinatorics), not aptitude.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "cse-2022-cs-22",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "integer-partitions",
+        "counting"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "cse-2022-cs-23",
+      "field": "subject",
+      "before": "calc",
+      "after": "coa",
+      "reason": "Average memory access time is computer organisation (cache), not calculus.",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "cse-2022-cs-23",
+      "field": "topic",
+      "before": "maxmin",
+      "after": "cache",
+      "reason": "Average memory access time is computer organisation (cache), not calculus.",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "cse-2022-cs-23",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "cache",
+        "amat",
+        "hit-rate"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "cse-2022-cs-24",
+      "field": "text",
+      "before": "The value of the following limit is _____________.\n20 1 xx\nxlim\ne  ",
+      "after": "The value of the following limit is _____________.\n\n$$\\lim_{x \\to 0^+} \\frac{\\sqrt{x}}{1 - e^{2\\sqrt{x}}}$$",
+      "reason": "The limit expression was garbled (the square roots were lost); rewritten in KaTeX from the paper.",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "cse-2022-cs-24",
+      "field": "subject",
+      "before": "coa",
+      "after": "calc",
+      "reason": "A limit (calculus), not ISA.",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "cse-2022-cs-24",
+      "field": "topic",
+      "before": "isa",
+      "after": "limits",
+      "reason": "A limit (calculus), not ISA.",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "cse-2022-cs-24",
+      "field": "tags",
+      "before": [
+        "isa"
+      ],
+      "after": [
+        "limits",
+        "standard-limits"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "cse-2022-cs-25",
+      "field": "text",
+      "before": "Consider the resolution of the domain name www.gate.org.in by a DNS\nresolver. Assume that no resource records are cached anywhere across the DNS\nservers and that iterative query mechanism is used in the resolution. The number\nof DNS query-response pairs involved in completely resolving the domain name\nis_____________.\nGATE 2022 Computer Science and Information Technology (CS)",
+      "after": "Consider the resolution of the domain name `www.gate.org.in` by a DNS resolver. Assume that no resource records are cached anywhere across the DNS servers and that iterative query mechanism is used in the resolution. The number of DNS query-response pairs involved in completely resolving the domain name is _____________.",
+      "reason": "Removed the page header text; domain name in code font as in the paper.",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "cse-2022-cs-25",
+      "field": "subject",
+      "before": "db",
+      "after": "cn",
+      "reason": "DNS (computer networks, application layer), not SQL.",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "cse-2022-cs-25",
+      "field": "topic",
+      "before": "sql",
+      "after": "application",
+      "reason": "DNS (computer networks, application layer), not SQL.",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "cse-2022-cs-25",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "dns",
+        "iterative-query"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "cse-2022-cs-26",
+      "field": "text",
+      "before": "Which one of the following is the closed form for the generating function of the\nsequence 0{ }n na   defined below?\n1,  is odd\n1, otherwise\nn\nn na \n",
+      "after": "Which one of the following is the closed form for the generating function of the sequence $\\{a_n\\}_{n \\ge 0}$ defined below?\n\n$$a_n = \\begin{cases} n + 1, & n \\text{ is odd} \\\\ 1, & \\text{otherwise} \\end{cases}$$",
+      "reason": "The sequence definition was garbled; rewritten in KaTeX from the paper.",
+      "source": "pdf p.24"
+    },
+    {
+      "id": "cse-2022-cs-26",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "    2 22 1 1 11 x x xx   "
+        },
+        {
+          "l": "B",
+          "t": "  2 22 (3 ) 1 11 x x xx   "
+        },
+        {
+          "l": "C",
+          "t": "  22 2 1 11 x xx  "
+        },
+        {
+          "l": "D",
+          "t": "2 2 1 (1 ) 1 x x x  "
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\dfrac{x(1+x^2)}{(1-x^2)^2} + \\dfrac{1}{1-x}$"
+        },
+        {
+          "l": "B",
+          "t": "$\\dfrac{x(3-x^2)}{(1-x^2)^2} + \\dfrac{1}{1-x}$"
+        },
+        {
+          "l": "C",
+          "t": "$\\dfrac{2x}{(1-x^2)^2} + \\dfrac{1}{1-x}$"
+        },
+        {
+          "l": "D",
+          "t": "$\\dfrac{x}{(1-x^2)^2} + \\dfrac{1}{1-x}$"
+        }
+      ],
+      "reason": "Options were garbled; rewritten in KaTeX from the paper.",
+      "source": "pdf p.24"
+    },
+    {
+      "id": "cse-2022-cs-26",
+      "field": "tags",
+      "before": [
+        "combinatorics"
+      ],
+      "after": [
+        "generating-functions",
+        "power-series"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.24"
+    },
+    {
+      "id": "cse-2022-cs-27",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "3A"
+        },
+        {
+          "l": "B",
+          "t": "3A divided by 2"
+        },
+        {
+          "l": "C",
+          "t": "3A divided by 3"
+        },
+        {
+          "l": "D",
+          "t": "3A divided by 6 GATE 2022 Computer Science and Information Technology (CS)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$A^3$"
+        },
+        {
+          "l": "B",
+          "t": "$A^3$ divided by 2"
+        },
+        {
+          "l": "C",
+          "t": "$A^3$ divided by 3"
+        },
+        {
+          "l": "D",
+          "t": "$A^3$ divided by 6"
+        }
+      ],
+      "reason": "Restored the exponent and removed the header text in option D.",
+      "source": "pdf p.24"
+    },
+    {
+      "id": "cse-2022-cs-27",
+      "field": "subject",
+      "before": "la",
+      "after": "dm",
+      "reason": "Counting triangles via the adjacency matrix is graph theory.",
+      "source": "pdf p.24"
+    },
+    {
+      "id": "cse-2022-cs-27",
+      "field": "topic",
+      "before": "eigen",
+      "after": "graphs",
+      "reason": "Counting triangles via the adjacency matrix is graph theory.",
+      "source": "pdf p.24"
+    },
+    {
+      "id": "cse-2022-cs-27",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "graph-theory",
+        "adjacency-matrix",
+        "triangles"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.24"
+    },
+    {
+      "id": "cse-2022-cs-28",
+      "field": "subject",
+      "before": "pds",
+      "after": "os",
+      "reason": "TLB / page tables (OS virtual memory), not C programming.",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "cse-2022-cs-28",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "virtual-memory",
+      "reason": "TLB / page tables (OS virtual memory), not C programming.",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "cse-2022-cs-28",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "tlb",
+        "inverted-page-table",
+        "hashed-page-table",
+        "paging"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "cse-2022-cs-29",
+      "field": "text",
+      "before": "Let ( )iR z  and ( )iW z  denote read and write operations on a data element z  by a\ntransaction iT  , respectively. Consider the schedule S with four transactions.\nS: 4 2 3 1 1 2 3 4( ) ( ) ( ) ( ) ( ) ( ) ( ) ( )R x R x R x R y W y W x W y R y\nWhich one of the following serial schedules is conflict equivalent to S?",
+      "after": "Let $R_i(z)$ and $W_i(z)$ denote read and write operations on a data element $z$ by a transaction $T_i$, respectively. Consider the schedule $S$ with four transactions.\n\n$$S:\\ R_4(x)\\,R_2(x)\\,R_3(x)\\,R_1(y)\\,W_1(y)\\,W_2(x)\\,W_3(y)\\,R_4(y)$$\n\nWhich one of the following serial schedules is conflict equivalent to $S$?",
+      "reason": "The schedule was garbled (subscripts detached); rewritten in KaTeX from the paper.",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "cse-2022-cs-29",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "𝑇ଵ → 𝑇ଷ → 𝑇ସ → 𝑇ଶ"
+        },
+        {
+          "l": "B",
+          "t": "𝑇ଵ → 𝑇ସ → 𝑇ଷ → 𝑇ଶ"
+        },
+        {
+          "l": "C",
+          "t": "𝑇ସ → 𝑇ଵ → 𝑇ଷ → 𝑇ଶ"
+        },
+        {
+          "l": "D",
+          "t": "𝑇ଷ → 𝑇ଵ → 𝑇ସ → 𝑇ଶ GATE 2022 Computer Science and Information Technology (CS)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$T_1 \\to T_3 \\to T_4 \\to T_2$"
+        },
+        {
+          "l": "B",
+          "t": "$T_1 \\to T_4 \\to T_3 \\to T_2$"
+        },
+        {
+          "l": "C",
+          "t": "$T_4 \\to T_1 \\to T_3 \\to T_2$"
+        },
+        {
+          "l": "D",
+          "t": "$T_3 \\to T_1 \\to T_4 \\to T_2$"
+        }
+      ],
+      "reason": "Subscripts were unreadable glyphs; rewritten in KaTeX.",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "cse-2022-cs-29",
+      "field": "subject",
+      "before": "ga",
+      "after": "db",
+      "reason": "Conflict serializability (databases), not aptitude.",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "cse-2022-cs-29",
+      "field": "topic",
+      "before": "quant",
+      "after": "transactions",
+      "reason": "Conflict serializability (databases), not aptitude.",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "cse-2022-cs-29",
+      "field": "tags",
+      "before": [
+        "quant"
+      ],
+      "after": [
+        "conflict-serializability",
+        "precedence-graph"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "cse-2022-cs-30",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "P is 10:1 multiplexer; Q is 5:1 multiplexer; T is 2:1 multiplexer"
+        },
+        {
+          "l": "B",
+          "t": "P is 10:2 10 decoder; Q is 5:2 5 decoder; T is 2:1 encoder"
+        },
+        {
+          "l": "C",
+          "t": "P is 10:2 10 decoder; Q is 5:2 5 decoder; T is 2:1 multiplexer"
+        },
+        {
+          "l": "D",
+          "t": "P is 1:10 de-multiplexer; Q is 1:5 de-multiplexer; T is 2:1 multiplexer X P Q T S R DDS M S-address R-address Code Word GATE 2022 Computer Science and Information Technology (CS)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "P is 10:1 multiplexer; Q is 5:1 multiplexer; T is 2:1 multiplexer"
+        },
+        {
+          "l": "B",
+          "t": "P is $10:2^{10}$ decoder; Q is $5:2^{5}$ decoder; T is 2:1 encoder"
+        },
+        {
+          "l": "C",
+          "t": "P is $10:2^{10}$ decoder; Q is $5:2^{5}$ decoder; T is 2:1 multiplexer"
+        },
+        {
+          "l": "D",
+          "t": "P is 1:10 de-multiplexer; Q is 1:5 de-multiplexer; T is 2:1 multiplexer"
+        }
+      ],
+      "reason": "Restored the superscripts ($2^{10}$, $2^5$) and removed figure labels/header text from option D.",
+      "source": "pdf p.26"
+    },
+    {
+      "id": "cse-2022-cs-30",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2022/cs-30-1.svg",
+          "svg": "cse-2022/cs-30-1.svg",
+          "alt": "Block diagram. A code word at the top is split into three fields: M, S-address and R-address. The S-address field feeds block P, whose output feeds block S; the R-address field feeds block Q, whose output feeds block R. The outputs of S and R both enter block T. The M bit has a line running down the left side into T. The output of T goes into register X, which sits next to the DDS (display) block."
+        }
+      ],
+      "reason": "The question depends on its figure, which the bank was missing. Redrawn as SVG from the paper.",
+      "source": "pdf p.26"
+    },
+    {
+      "id": "cse-2022-cs-30",
+      "field": "subject",
+      "before": "ga",
+      "after": "dl",
+      "reason": "Decoders/multiplexers are digital logic, not verbal aptitude.",
+      "source": "pdf p.26"
+    },
+    {
+      "id": "cse-2022-cs-30",
+      "field": "topic",
+      "before": "verbal",
+      "after": "combinational",
+      "reason": "Decoders/multiplexers are digital logic, not verbal aptitude.",
+      "source": "pdf p.26"
+    },
+    {
+      "id": "cse-2022-cs-30",
+      "field": "tags",
+      "before": [
+        "verbal"
+      ],
+      "after": [
+        "decoder",
+        "multiplexer",
+        "memory-addressing"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.26"
+    },
+    {
+      "id": "cse-2022-cs-31",
+      "field": "text",
+      "before": "Consider three floating point numbers A, B  and C  stored in registers R A, RB and\nRC, respectively as per IEEE-754 single precision floating point format. The 32-bit\ncontent stored in these registers (in hexadecimal form) are as follows.\nRA= 0xC1400000 R B = 0x42100000 R C = 0x41400000\nWhich one of the following is FALSE?",
+      "after": "Consider three floating point numbers $A$, $B$ and $C$ stored in registers $R_A$, $R_B$ and $R_C$, respectively as per IEEE-754 single precision floating point format. The 32-bit content stored in these registers (in hexadecimal form) are as follows.\n\n| $R_A$ | $R_B$ | $R_C$ |\n|---|---|---|\n| 0xC1400000 | 0x42100000 | 0x41400000 |\n\nWhich one of the following is FALSE?",
+      "reason": "Register subscripts restored and values shown as a table as in the paper.",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "cse-2022-cs-31",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "0A C "
+        },
+        {
+          "l": "B",
+          "t": "C A B "
+        },
+        {
+          "l": "C",
+          "t": "3B C"
+        },
+        {
+          "l": "D",
+          "t": "( ) 0B C "
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$A + C = 0$"
+        },
+        {
+          "l": "B",
+          "t": "$C = A + B$"
+        },
+        {
+          "l": "C",
+          "t": "$B = 3C$"
+        },
+        {
+          "l": "D",
+          "t": "$(B - C) > 0$"
+        }
+      ],
+      "reason": "Operators were lost in extraction; rewritten from the paper.",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "cse-2022-cs-31",
+      "field": "subject",
+      "before": "coa",
+      "after": "dl",
+      "reason": "IEEE-754 decoding belongs to number representation (floating point).",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "cse-2022-cs-31",
+      "field": "topic",
+      "before": "isa",
+      "after": "floating",
+      "reason": "IEEE-754 decoding belongs to number representation (floating point).",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "cse-2022-cs-31",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "ieee-754",
+        "floating-point"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "cse-2022-cs-32",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "P = 4, Q = 10, R = 6, S = 2"
+        },
+        {
+          "l": "B",
+          "t": "P = 2, Q = 9, R = 5, S = 1"
+        },
+        {
+          "l": "C",
+          "t": "P = 4, Q = 12, R = 5, S = 4"
+        },
+        {
+          "l": "D",
+          "t": "P = 3, Q = 7, R = 7, S = 3 GATE 2022 Computer Science and Information Technology (CS)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "P = 4, Q = 10, R = 6, S = 2"
+        },
+        {
+          "l": "B",
+          "t": "P = 2, Q = 9, R = 5, S = 1"
+        },
+        {
+          "l": "C",
+          "t": "P = 4, Q = 12, R = 5, S = 4"
+        },
+        {
+          "l": "D",
+          "t": "P = 3, Q = 7, R = 7, S = 3"
+        }
+      ],
+      "reason": "Removed the page header text appended to option D.",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "cse-2022-cs-32",
+      "field": "tags",
+      "before": [
+        "cpu-scheduling"
+      ],
+      "after": [
+        "cpu-scheduling",
+        "round-robin",
+        "context-switch"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "cse-2022-cs-33",
+      "field": "text",
+      "before": "What is printed by the following ANSI C program?\n#include<stdio.h>\nint main(int argc, char *argv[])\n{\nint a[3][3][3] =\n{{1, 2, 3, 4, 5, 6, 7, 8, 9},\n{10, 11, 12, 13, 14, 15, 16, 17, 18},\n{19, 20, 21, 22, 23, 24, 25, 26, 27}};\nint i = 0, j = 0, k = 0;\nfor( i = 0; i < 3; i++ ){\nfor(k = 0; k < 3; k++ )\nprintf(\"%d \", a[i][j][k]);\nprintf(\"\\n\");\n}\nreturn 0;\n}",
+      "after": "What is printed by the following ANSI C program?\n\n```c\n#include<stdio.h>\nint main(int argc, char *argv[])\n{\n    int a[3][3][3] =\n        {{1, 2, 3, 4, 5, 6, 7, 8, 9},\n         {10, 11, 12, 13, 14, 15, 16, 17, 18},\n         {19, 20, 21, 22, 23, 24, 25, 26, 27}};\n    int i = 0, j = 0, k = 0;\n    for( i = 0; i < 3; i++ ){\n        for(k = 0; k < 3; k++ )\n            printf(\"%d \", a[i][j][k]);\n        printf(\"\\n\");\n    }\n    return 0;\n}\n```",
+      "reason": "Program put in a fenced code block with its indentation.",
+      "source": "pdf p.28"
+    },
+    {
+      "id": "cse-2022-cs-33",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "1 2 3 10 11 12 19 20 21"
+        },
+        {
+          "l": "B",
+          "t": "1 4 7 10 13 16 19 22 25"
+        },
+        {
+          "l": "C",
+          "t": "1 2 3 4 5 6 7 8 9"
+        },
+        {
+          "l": "D",
+          "t": "1 2 3 13 14 15 25 26 27 GATE 2022 Computer Science and Information Technology (CS)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "```\n1 2 3\n10 11 12\n19 20 21\n```"
+        },
+        {
+          "l": "B",
+          "t": "```\n1 4 7\n10 13 16\n19 22 25\n```"
+        },
+        {
+          "l": "C",
+          "t": "```\n1 2 3\n4 5 6\n7 8 9\n```"
+        },
+        {
+          "l": "D",
+          "t": "```\n1 2 3\n13 14 15\n25 26 27\n```"
+        }
+      ],
+      "reason": "Each option is three printed lines in the paper; kept the line breaks and removed the header text.",
+      "source": "pdf p.28"
+    },
+    {
+      "id": "cse-2022-cs-33",
+      "field": "tags",
+      "before": [
+        "c-prog"
+      ],
+      "after": [
+        "c-programming",
+        "multidimensional-arrays",
+        "array-initialization"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.28"
+    },
+    {
+      "id": "cse-2022-cs-34",
+      "field": "text",
+      "before": "What is printed by the following ANSI C program?\n#include<stdio.h>\nint main(int argc, char *argv[]){\nchar a = 'P';\nchar b = 'x';\nchar c = (a & b) + '*';\nchar d = (a | b) - '-';\nchar e = (a ^ b) + '+';\nprintf(\"%c %c %c\\n\", c, d, e);\nreturn 0;\n}\nASCII encoding for relevant characters is given below",
+      "after": "What is printed by the following ANSI C program?\n\n```c\n#include<stdio.h>\n\nint main(int argc, char *argv[]){\n    char a = 'P';\n    char b = 'x';\n    char c = (a & b) + '*';\n    char d = (a | b) - '-';\n    char e = (a ^ b) + '+';\n    printf(\"%c %c %c\\n\", c, d, e);\n    return 0;\n}\n```\n\nASCII encoding for relevant characters is given below\n\n| A | B | C | … | Z |\n|---|---|---|---|---|\n| 65 | 66 | 67 | … | 90 |\n\n| a | b | c | … | z |\n|---|---|---|---|---|\n| 97 | 98 | 99 | … | 122 |\n\n| * | + | - |\n|---|---|---|\n| 42 | 43 | 45 |",
+      "reason": "Program in a fenced code block; the ASCII tables (missing from the bank) added as markdown tables from the paper.",
+      "source": "pdf p.29"
+    },
+    {
+      "id": "cse-2022-cs-34",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "z K S"
+        },
+        {
+          "l": "B",
+          "t": "122 75 83"
+        },
+        {
+          "l": "C",
+          "t": "* - +"
+        },
+        {
+          "l": "D",
+          "t": "P x + GATE 2022 Computer Science and Information Technology (CS)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "`z K S`"
+        },
+        {
+          "l": "B",
+          "t": "`122 75 83`"
+        },
+        {
+          "l": "C",
+          "t": "`* - +`"
+        },
+        {
+          "l": "D",
+          "t": "`P x +`"
+        }
+      ],
+      "reason": "Removed the page header text from option D; outputs in code font as in the paper.",
+      "source": "pdf p.29"
+    },
+    {
+      "id": "cse-2022-cs-34",
+      "field": "tags",
+      "before": [
+        "c-prog"
+      ],
+      "after": [
+        "c-programming",
+        "bitwise-operators",
+        "ascii"
+      ],
+      "reason": "More specific tags.",
+      "source": "pdf p.29"
+    }
+  ]
+}
