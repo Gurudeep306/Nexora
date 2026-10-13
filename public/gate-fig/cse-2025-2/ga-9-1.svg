@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 450" role="img" aria-label="Square PQRS with rectangle PLMN: L on side QR, side MN passing through S" font-family="Arial, Helvetica, sans-serif">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="miter">
+    <polygon points="110,140 372,140 372,402 110,402"/>
+    <polygon points="110,140 246,402 452.4,294.9 316.4,32.9"/>
+  </g>
+  <g fill="currentColor" stroke="none" font-size="30">
+    <text x="100" y="138" text-anchor="end">P</text>
+    <text x="380" y="138">S</text>
+    <text x="100" y="430" text-anchor="end">Q</text>
+    <text x="384" y="430">R</text>
+    <text x="246" y="438" text-anchor="middle">L</text>
+    <text x="462" y="306">M</text>
+    <text x="324" y="34">N</text>
+  </g>
+</svg>

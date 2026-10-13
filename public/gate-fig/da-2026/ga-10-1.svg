@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 370" font-family="Arial, Helvetica, sans-serif" fill="none" stroke="currentColor">
+  <!-- circle: centre O (200,190), radius 150 (= 10 cm); Q at the top, P and R with angle POR = 90 deg -->
+  <path d="M93.93,296.07 L200,40 L306.07,296.07 L200,190 Z" fill="currentColor" fill-opacity="0.22" stroke-width="2.2" stroke-linejoin="miter"/>
+  <circle cx="200" cy="190" r="150" stroke-width="2.4"/>
+  <path d="M186.61,72.34 A35,35 0 0 0 213.39,72.34" stroke-width="1.6"/>
+  <g fill="currentColor" stroke="none" font-style="italic" font-size="20" text-anchor="middle">
+    <text x="203" y="32">Q</text>
+    <text x="78" y="320">P</text>
+    <text x="322" y="320">R</text>
+    <text x="200" y="220">O</text>
+  </g>
+  <text x="201" y="96" fill="currentColor" stroke="none" font-size="16" text-anchor="middle">45°</text>
+</svg>

@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 180" font-family="Arial, Helvetica, sans-serif">
+  <g stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round">
+    <line x1="58" y1="40" x2="122" y2="40"/>
+    <line x1="158" y1="40" x2="222" y2="40"/>
+    <line x1="258" y1="40" x2="322" y2="40"/>
+    <line x1="58" y1="140" x2="122" y2="140"/>
+    <line x1="158" y1="140" x2="222" y2="140"/>
+    <line x1="258" y1="140" x2="322" y2="140"/>
+    <line x1="52.7" y1="52.7" x2="127.3" y2="127.3"/>
+    <line x1="152.7" y1="127.3" x2="227.3" y2="52.7"/>
+    <line x1="252.7" y1="52.7" x2="327.3" y2="127.3"/>
+    <circle cx="40" cy="40" r="18"/>
+    <circle cx="140" cy="40" r="18"/>
+    <circle cx="240" cy="40" r="18"/>
+    <circle cx="340" cy="40" r="18"/>
+    <circle cx="40" cy="140" r="18"/>
+    <circle cx="140" cy="140" r="18"/>
+    <circle cx="240" cy="140" r="18"/>
+    <circle cx="340" cy="140" r="18"/>
+  </g>
+  <g fill="currentColor" font-size="20" font-style="italic" text-anchor="middle">
+    <text x="40" y="47">a</text>
+    <text x="140" y="47">b</text>
+    <text x="240" y="47">c</text>
+    <text x="340" y="47">d</text>
+    <text x="40" y="147">e</text>
+    <text x="140" y="147">f</text>
+    <text x="240" y="147">g</text>
+    <text x="340" y="147">h</text>
+  </g>
+</svg>
