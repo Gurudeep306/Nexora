@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 230" role="img" aria-label="Two game trees. Tree-1: MAX node A with children leaf 2 and MIN node B; B has leaves x and 1, the edge to 1 dotted. Tree-2: MAX node C with MIN children D and E; D has leaves 5 and y; E has leaf 2 and a dotted edge to an unexpanded subtree drawn as a triangle." fill="none" stroke="currentColor" stroke-width="2" font-family="Arial, Helvetica, sans-serif" font-size="17">
+  <title>Alpha-beta game trees</title>
+  <!-- Tree-1 -->
+  <line x1="180" y1="48" x2="152" y2="96"/>
+  <line x1="198" y1="48" x2="226" y2="90"/>
+  <line x1="226" y1="126" x2="200" y2="166"/>
+  <line x1="244" y1="126" x2="270" y2="166" stroke-dasharray="2 4"/>
+  <circle cx="190" cy="34" r="17"/>
+  <rect x="139" y="96" width="26" height="26"/>
+  <circle cx="236" cy="108" r="17"/>
+  <rect x="186" y="166" width="26" height="26"/>
+  <rect x="258" y="166" width="26" height="26"/>
+  <!-- Tree-2 -->
+  <line x1="420" y1="48" x2="396" y2="92"/>
+  <line x1="436" y1="48" x2="460" y2="92"/>
+  <line x1="384" y1="125" x2="372" y2="166"/>
+  <line x1="396" y1="125" x2="408" y2="166"/>
+  <line x1="460" y1="125" x2="448" y2="166"/>
+  <line x1="476" y1="125" x2="492" y2="164" stroke-dasharray="2 4"/>
+  <circle cx="428" cy="34" r="17"/>
+  <circle cx="390" cy="108" r="17"/>
+  <circle cx="468" cy="108" r="17"/>
+  <rect x="358" y="166" width="26" height="26"/>
+  <rect x="395" y="166" width="26" height="26"/>
+  <rect x="434" y="166" width="26" height="26"/>
+  <path d="M496,164 L475,194 L517,194 Z"/>
+  <g fill="currentColor" stroke="none" text-anchor="middle">
+    <text x="60" y="40">MAX</text>
+    <text x="60" y="114">MIN</text>
+    <g font-style="italic">
+      <text x="190" y="40">A</text>
+      <text x="236" y="114">B</text>
+      <text x="199" y="185">x</text>
+      <text x="428" y="40">C</text>
+      <text x="390" y="114">D</text>
+      <text x="468" y="114">E</text>
+      <text x="408" y="184">y</text>
+    </g>
+    <text x="152" y="115">2</text>
+    <text x="271" y="185">1</text>
+    <text x="371" y="185">5</text>
+    <text x="447" y="185">2</text>
+    <text x="200" y="222">Tree-1</text>
+    <text x="428" y="222">Tree-2</text>
+  </g>
+</svg>
