@@ -1,0 +1,1120 @@
+{
+  "paper": "da-2026-2",
+  "version": 2,
+  "solutions": {
+    "da-2026-2-da-17": {
+      "approach": "Write down the ridge objective: the penalty is $\\lambda\\lVert w\\rVert_2^2 = \\lambda\\sum_j w_j^2$. Recognising the L2 norm squared (versus the L1 norm of lasso) settles it immediately.",
+      "concepts": [
+        "Ridge regression",
+        "L2 regularisation",
+        "Shrinkage",
+        "Lasso (L1) contrast"
+      ],
+      "steps": [
+        {
+          "title": "Ridge objective",
+          "body": "Ridge regression minimises the residual sum of squares plus an L2 penalty:\n$$J(w) = \\sum_{i=1}^{n}\\left(y_i - x_i^\\top w\\right)^2 + \\lambda\\sum_{j=1}^{p} w_j^2,\\qquad \\lambda \\ge 0.$$\nThe penalty is $\\lambda\\lVert w\\rVert_2^2$ — the **sum of squared weights** (the intercept is usually not penalised)."
+        },
+        {
+          "title": "Why it shrinks towards zero",
+          "body": "Setting $\\nabla J = -2X^\\top(y - Xw) + 2\\lambda w = 0$ gives\n$$\\hat w_{\\text{ridge}} = (X^\\top X + \\lambda I)^{-1}X^\\top y.$$\nWith orthonormal features ($X^\\top X = I$) this is $\\hat w_{\\text{ridge}} = \\dfrac{\\hat w_{\\text{OLS}}}{1+\\lambda}$: every coefficient is scaled down by the factor $\\frac{1}{1+\\lambda}$, smoothly towards $0$ but never exactly to $0$."
+        },
+        {
+          "title": "Match with the options",
+          "body": "The penalised quantity is $\\sum_j w_j^2$ → option **(A)**. $\\sum_j |w_j|$ is the lasso (L1) penalty, and rank / condition number are not penalty terms at all."
+        }
+      ],
+      "answer": {
+        "value": "The **sum of squared weights** $\\sum_j w_j^2$ — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: ridge adds $\\lambda\\sum_j w_j^2 = \\lambda\\lVert w\\rVert_2^2$ to the squared-error loss."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$\\sum_j |w_j|$ is the L1 penalty of **lasso**, which can set weights exactly to zero; ridge only shrinks them."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "The rank of $X$ is a property of the data, not of $w$, and is not penalised. (Ridge does make $X^\\top X+\\lambda I$ full rank, which may cause this confusion.)"
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Ridge improves the condition number of $X^\\top X + \\lambda I$ as a side effect, but the penalty term itself is on the weights, not on any condition number."
+        }
+      ],
+      "shortcut": "Ridge = L2 = squares; Lasso = L1 = absolute values.",
+      "pitfalls": [
+        "Swapping ridge (L2, $\\sum w_j^2$) and lasso (L1, $\\sum\\lvert w_j\\rvert$).",
+        "Thinking ridge produces exact zeros (sparsity) — only L1 does that."
+      ],
+      "verification": "In the orthonormal case the ridge solution $\\hat w_{\\text{OLS}}/(1+\\lambda)$ reproduces the OLS answer at $\\lambda=0$ and tends to $0$ as $\\lambda\\to\\infty$, as expected of a shrinkage penalty on $\\sum w_j^2$."
+    },
+    "da-2026-2-da-18": {
+      "approach": "Apply the convolution output-size formula $O = \\lfloor (W - K + 2P)/S\\rfloor + 1$ to the spatial dimensions; the depth 3 of the filter matches the input depth and only fixes the output depth.",
+      "concepts": [
+        "Convolution output size",
+        "Stride and padding",
+        "Valid convolution"
+      ],
+      "given": "| Quantity | Value |\n|---|---|\n| Input $W\\times H\\times C$ | $32\\times32\\times3$ |\n| Filter $K\\times K\\times C$ | $5\\times5\\times3$ |\n| Stride $S$ | $1$ |\n| Padding $P$ | $0$ |",
+      "steps": [
+        {
+          "title": "Output-size formula",
+          "body": "Along each spatial axis the filter can be placed at positions $0, S, 2S, \\dots$ as long as it fits inside the padded input of width $W+2P$:\n$$O = \\left\\lfloor\\frac{W - K + 2P}{S}\\right\\rfloor + 1.$$",
+          "scene": {
+            "reveal": 1
+          }
+        },
+        {
+          "title": "Substitute the numbers",
+          "body": "$$O = \\frac{32 - 5 + 2\\cdot 0}{1} + 1 = \\frac{27}{1} + 1 = 28.$$\nThe height is identical ($32\\times32$ input, square filter), so the map is $28\\times28$.",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "Depth of the output",
+          "body": "The filter depth $3$ equals the input depth, so each filter collapses the 3 channels into one: one filter gives a $28\\times28\\times1$ map (with $F$ filters, $28\\times28\\times F$). The spatial size is **$28\\times28$** → option (A).",
+          "scene": {
+            "reveal": 4
+          }
+        }
+      ],
+      "answer": {
+        "value": "**28 × 28** — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: $(32-5+0)/1+1 = 28$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$30\\times30$ is what a $3\\times3$ filter would give ($32-3+1$); with a $5\\times5$ filter it is wrong."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$27\\times27$ forgets the $+1$ in the formula (it counts the shifts, not the positions)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$32\\times32$ needs \"same\" padding $P=2$; the question says no padding."
+        }
+      ],
+      "shortcut": "Stride 1, no padding: $O = W - K + 1 = 32 - 5 + 1 = 28$.",
+      "pitfalls": [
+        "Dropping the $+1$ (gives 27).",
+        "Thinking the filter depth 3 changes the spatial size — it only matches the input channels."
+      ],
+      "verification": "Count positions directly: the left edge of a 5-wide filter can sit at columns $0,1,\\dots,27$ (since $27+5 = 32$), i.e. $28$ positions.",
+      "animation": {
+        "kind": "equation",
+        "title": "Convolution output size",
+        "lines": [
+          {
+            "tex": "O=\\left\\lfloor\\frac{W-K+2P}{S}\\right\\rfloor+1",
+            "note": "per spatial axis"
+          },
+          {
+            "tex": "=\\frac{32-5+2\\cdot0}{1}+1",
+            "note": "W=32, K=5, P=0, S=1"
+          },
+          {
+            "tex": "=27+1=28",
+            "tone": "success"
+          },
+          {
+            "tex": "\\Rightarrow\\ 28\\times28\\ (\\times1\\text{ per filter})",
+            "tone": "success"
+          }
+        ],
+        "reveal": 1
+      }
+    },
+    "da-2026-2-da-19": {
+      "approach": "Use the definition: $Q$ is orthogonal when its columns (equivalently rows) are orthonormal, i.e. $Q^\\top Q = I$; for a square matrix this forces $Q^{-1} = Q^\\top$ and hence $QQ^\\top = I$ too. Then knock out each other option with a counterexample.",
+      "concepts": [
+        "Orthogonal matrix",
+        "Orthonormal columns",
+        "Inverse equals transpose",
+        "Determinant ±1"
+      ],
+      "steps": [
+        {
+          "title": "Definition",
+          "body": "Let $Q = [q_1 \\;\\cdots\\; q_n]$. Entry $(i,j)$ of $Q^\\top Q$ is $q_i^\\top q_j$, so\n$$Q^\\top Q = I \\iff q_i^\\top q_j = \\begin{cases}1 & i=j\\\\ 0 & i\\ne j\\end{cases},$$\ni.e. the columns are orthonormal — this is the definition of an orthogonal matrix."
+        },
+        {
+          "title": "Both products equal I",
+          "body": "For a square matrix, $Q^\\top Q = I$ means $Q^\\top$ is a left inverse, hence the (two-sided) inverse: $Q^{-1} = Q^\\top$. Therefore $QQ^\\top = QQ^{-1} = I$ as well. So $Q$ is orthogonal $\\iff Q^\\top Q = QQ^\\top = I$ → option **(C)**."
+        },
+        {
+          "title": "Counterexamples for the rest",
+          "body": "Rotation by $90^\\circ$, $R = \\begin{bmatrix}0&-1\\\\1&0\\end{bmatrix}$, is orthogonal ($R^\\top R = I$) but $R \\ne R^\\top$ and $R^2 = -I \\ne R$, so (A) and (B) are not necessary. $S=\\begin{bmatrix}2&0\\\\0&1\\end{bmatrix}$ is symmetric but $S^\\top S = \\operatorname{diag}(4,1)\\ne I$, so (A) is not sufficient. Finally $\\det(Q^\\top Q) = \\det(Q)^2 = 1$ gives $\\det Q = \\pm1 \\ne 0$, contradicting (D)."
+        }
+      ],
+      "answer": {
+        "value": "$Q^\\top Q = QQ^\\top = I$ — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$Q = Q^\\top$ defines a **symmetric** matrix. The $90^\\circ$ rotation is orthogonal but not symmetric, and $\\operatorname{diag}(2,1)$ is symmetric but not orthogonal."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$Q^2 = Q$ defines an **idempotent** (projection) matrix; the $90^\\circ$ rotation has $R^2 = -I$. The only matrix that is both orthogonal and idempotent is $I$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: orthonormal columns and rows, i.e. $Q^{-1} = Q^\\top$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Orthogonal matrices have $\\det Q = \\pm 1$, so they are always invertible; $\\det Q = 0$ is impossible."
+        }
+      ],
+      "shortcut": "Orthogonal ⇔ $Q^{-1} = Q^\\top$; the only option stating that is (C).",
+      "pitfalls": [
+        "Confusing orthogonal with symmetric ($Q=Q^\\top$) or with idempotent/projection ($Q^2 = Q$).",
+        "Thinking only one of $Q^\\top Q = I$, $QQ^\\top = I$ holds — for square matrices each implies the other."
+      ],
+      "verification": "Check $R$: $R^\\top R = \\begin{bmatrix}0&1\\\\-1&0\\end{bmatrix}\\begin{bmatrix}0&-1\\\\1&0\\end{bmatrix} = I$ and $\\det R = 1$, consistent with (C) and ruling out (A), (B), (D).",
+      "animation": {
+        "kind": "matrix",
+        "title": "90° rotation is orthogonal",
+        "caption": "$R^\\top R = I$, yet $R\\ne R^\\top$, $R^2\\ne R$, $\\det R = 1$",
+        "terms": [
+          {
+            "name": "Rᵀ",
+            "rows": [
+              [
+                0,
+                1
+              ],
+              [
+                -1,
+                0
+              ]
+            ]
+          },
+          "×",
+          {
+            "name": "R",
+            "rows": [
+              [
+                0,
+                -1
+              ],
+              [
+                1,
+                0
+              ]
+            ]
+          },
+          "=",
+          {
+            "name": "I",
+            "rows": [
+              [
+                1,
+                0
+              ],
+              [
+                0,
+                1
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    "da-2026-2-da-20": {
+      "approach": "For a Poisson variable the variance equals the mean, $\\operatorname{Var}(X) = \\lambda$; then use $\\operatorname{Var}(aX+b) = a^2\\operatorname{Var}(X)$ — the shift $b$ does not change the spread.",
+      "concepts": [
+        "Poisson distribution",
+        "Variance of a linear transformation"
+      ],
+      "steps": [
+        {
+          "title": "Variance of X",
+          "body": "For $X\\sim\\text{Poisson}(\\lambda)$, $E[X] = \\operatorname{Var}(X) = \\lambda$. Here $\\operatorname{Var}(X) = 4$.",
+          "scene": {
+            "reveal": 1
+          }
+        },
+        {
+          "title": "Variance of a linear function",
+          "body": "For $Y = aX + b$: $Y - E[Y] = a\\,(X - E[X])$, so\n$$\\operatorname{Var}(Y) = E\\big[a^2 (X-E[X])^2\\big] = a^2\\operatorname{Var}(X).$$\nThe constant $b$ cancels.",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Substitute",
+          "body": "$$\\operatorname{Var}(3X+5) = 3^2 \\times 4 = 9\\times4 = 36 \\;\\to\\; \\text{option (A)}.$$",
+          "scene": {
+            "reveal": 3
+          }
+        }
+      ],
+      "answer": {
+        "value": "$\\operatorname{Var}(Y) = 9\\times4 =$ **36** — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: $3^2\\times4 = 36$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$17 = 3\\times4+5$ applies the transformation to the variance as if it were the mean ($E[Y] = 17$ is the mean, not the variance)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$12 = 3\\times4$ forgets to square the scale factor."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$41 = 9\\times4+5$ squares correctly but wrongly adds the shift; constants do not affect variance."
+        }
+      ],
+      "shortcut": "Shift ignored, scale squared: $3^2\\cdot\\lambda = 36$.",
+      "pitfalls": [
+        "Adding the constant 5 to the variance.",
+        "Using $a$ instead of $a^2$.",
+        "Note $Y$ itself is **not** Poisson (its variance 36 ≠ its mean 17)."
+      ],
+      "verification": "Mean check: $E[Y] = 3\\cdot4+5 = 17$, which is option B — confirming B is the \"mean\" distractor. Standard deviation of $Y$ is $3\\sqrt4 = 6$, and $6^2 = 36$.",
+      "animation": {
+        "kind": "equation",
+        "title": "Variance of Y = 3X + 5",
+        "lines": [
+          {
+            "tex": "\\operatorname{Var}(X)=\\lambda=4",
+            "note": "Poisson: variance = mean"
+          },
+          {
+            "tex": "\\operatorname{Var}(aX+b)=a^2\\operatorname{Var}(X)",
+            "note": "shift b drops out"
+          },
+          {
+            "tex": "\\operatorname{Var}(3X+5)=9\\times4=36",
+            "tone": "success"
+          }
+        ],
+        "reveal": 1
+      }
+    },
+    "da-2026-2-da-21": {
+      "approach": "Match the argument form $P,\\; P\\to Q \\;\\vdash\\; Q$ (\"affirming the antecedent\") against the standard named rules; it is exactly modus ponens.",
+      "concepts": [
+        "Rules of inference",
+        "Modus ponens",
+        "Modus tollens",
+        "Resolution"
+      ],
+      "steps": [
+        {
+          "title": "The argument form",
+          "body": "Premises $P$ and $P\\to Q$; conclusion $Q$:\n$$\\frac{P \\qquad P\\to Q}{\\therefore\\; Q}$$\nThis is **modus ponens**."
+        },
+        {
+          "title": "Check it is valid",
+          "body": "| $P$ | $Q$ | $P\\to Q$ |\n|---|---|---|\n| T | T | T |\n| T | F | F |\n| F | T | T |\n| F | F | T |\n\nThe only row where both premises $P$ and $P\\to Q$ are true is row 1, and there $Q$ is true — so the inference is valid.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "The other named rules",
+          "body": "- Modus tollens: $\\neg Q,\\; P\\to Q \\vdash \\neg P$.\n- Hypothetical syllogism: $P\\to Q,\\; Q\\to R \\vdash P\\to R$.\n- Resolution: $A\\lor B,\\; \\neg B\\lor C \\vdash A\\lor C$ (works on clauses).\n\nOnly modus ponens has premises $P$, $P\\to Q$ and conclusion $Q$ → option **(A)**."
+        }
+      ],
+      "answer": {
+        "value": "**Modus Ponens** — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: $P,\\; P\\to Q \\vdash Q$ is the definition of modus ponens."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Modus tollens uses $\\neg Q$ and $P\\to Q$ to conclude $\\neg P$ — it denies the consequent."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Resolution works on clauses ($A\\lor B,\\ \\neg B\\lor C \\vdash A\\lor C$). After rewriting $P\\to Q$ as $\\neg P\\lor Q$ it could also yield $Q$, but the rule that derives $Q$ directly from $P$ and $P\\to Q$ is modus ponens (resolution generalises it)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Hypothetical syllogism chains two implications into $P\\to R$; it needs no fact $P$ and concludes an implication, not $Q$."
+        }
+      ],
+      "shortcut": "Ponens = \"putting\" the antecedent ($P$) to get $Q$; Tollens = \"taking away\" $Q$ to deny $P$.",
+      "pitfalls": [
+        "Swapping modus ponens and modus tollens.",
+        "Confusing it with the invalid \"affirming the consequent\" ($Q,\\ P\\to Q \\vdash P$)."
+      ],
+      "verification": "Truth table: the single row with $P = $ T and $P\\to Q = $ T has $Q = $ T, so the inference is valid.",
+      "animation": {
+        "kind": "table",
+        "title": "Truth table of P → Q",
+        "caption": "Rows where both premises are true",
+        "cols": [
+          "P",
+          "Q",
+          "P→Q"
+        ],
+        "rows": [
+          [
+            "T",
+            "T",
+            "T"
+          ],
+          [
+            "T",
+            "F",
+            "F"
+          ],
+          [
+            "F",
+            "T",
+            "T"
+          ],
+          [
+            "F",
+            "F",
+            "T"
+          ]
+        ],
+        "mono": true
+      }
+    },
+    "da-2026-2-da-22": {
+      "approach": "A moving average needs, for every row, an aggregate over a sliding set of neighbouring rows without collapsing the rows — that is exactly what SQL window functions (`OVER (PARTITION BY … ORDER BY …)`) provide.",
+      "concepts": [
+        "SQL window functions",
+        "OLAP aggregates",
+        "ROLLUP",
+        "PIVOT"
+      ],
+      "steps": [
+        {
+          "title": "What a moving average needs",
+          "body": "For each row (e.g. each day of each store) we want the average of that row and its previous few rows **in the same group, in time order**, while keeping one output row per input row. GROUP BY cannot do this — it collapses each group to a single row."
+        },
+        {
+          "title": "The window clause",
+          "body": "A window function attaches an aggregate to every row:\n\n```sql\nSELECT store, day, sales,\n       AVG(sales) OVER (PARTITION BY store\n                        ORDER BY day\n                        ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS ma3\nFROM daily_sales;\n```\n\n\\`PARTITION BY\\` splits rows into independent groups, \\`ORDER BY\\` orders them, and the frame (\\`ROWS BETWEEN …\\`) defines the rolling window → option **(A)**."
+        },
+        {
+          "title": "Why the others do not fit",
+          "body": "\\`GROUP BY ROLLUP\\` adds subtotal/grand-total rows, \\`HAVING\\` filters groups after aggregation, and \\`PIVOT\\` turns row values into columns — none of them defines a per-row sliding window."
+        }
+      ],
+      "answer": {
+        "value": "**OVER (PARTITION BY … ORDER BY …)** (window functions) — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: the OVER clause with PARTITION BY, ORDER BY and a ROWS/RANGE frame computes rolling aggregates such as moving averages."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "ROLLUP is an OLAP extension of GROUP BY that adds hierarchical subtotals (e.g. per (region, city), per region, grand total); it collapses rows and has no notion of a sliding window."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "HAVING COUNT(*) > 1 only filters groups produced by GROUP BY; it computes no rolling aggregate."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "PIVOT … FOR … rotates distinct row values into columns (cross-tab); it does not define windows."
+        }
+      ],
+      "shortcut": "\"Rolling / moving / running / rank within group\" in SQL ⇒ window function ⇒ OVER(…).",
+      "pitfalls": [
+        "Choosing ROLLUP because it is also an \"OLAP\" feature — it builds subtotals, not windows.",
+        "Forgetting that without ORDER BY and a frame, AVG() OVER (PARTITION BY …) gives the whole-partition average, not a moving one."
+      ],
+      "verification": "Window functions keep the row count unchanged (one ma3 value per row), which is what a moving-average series requires; every other option either collapses rows or reshapes columns."
+    },
+    "da-2026-2-da-23": {
+      "approach": "Use the second-order Taylor expansion at a critical point: the change $f(x^*+h)-f(x^*)$ is governed by the quadratic form $\\tfrac12 h^\\top H h$, which is positive for every small $h\\ne0$ exactly when $H$ is positive definite.",
+      "concepts": [
+        "Second-order sufficient condition",
+        "Hessian",
+        "Positive definite matrix",
+        "Saddle point"
+      ],
+      "steps": [
+        {
+          "title": "Taylor expansion at the critical point",
+          "body": "With $\\nabla f(x^*) = 0$ and $H = \\nabla^2 f(x^*)$:\n$$f(x^*+h) = f(x^*) + \\underbrace{\\nabla f(x^*)^\\top h}_{=0} + \\tfrac12\\,h^\\top H h + o(\\lVert h\\rVert^2).$$"
+        },
+        {
+          "title": "Positive definite gives a strict minimum",
+          "body": "If $H \\succ 0$, let $\\mu>0$ be its smallest eigenvalue; then $h^\\top H h \\ge \\mu\\lVert h\\rVert^2$, so\n$$f(x^*+h) - f(x^*) \\ge \\tfrac{\\mu}{2}\\lVert h\\rVert^2 + o(\\lVert h\\rVert^2) > 0$$\nfor all sufficiently small $h\\ne 0$. Hence $x^*$ is a **strict local minimum** → option **(C)**."
+        },
+        {
+          "title": "The other cases",
+          "body": "- $H$ negative definite: $h^\\top H h<0$ ⇒ strict local **maximum**.\n- $H$ indefinite: increases along some directions, decreases along others ⇒ **saddle point** (e.g. $f = x^2 - y^2$ at the origin).\n- $H$ singular: test is inconclusive — $x^4$, $-x^4$ and $x^3$ all have $f'(0)=f''(0)=0$ but give a minimum, a maximum and neither."
+        }
+      ],
+      "answer": {
+        "value": "**Positive definite** — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Indefinite Hessian ⇒ saddle point (e.g. $x^2-y^2$ at $0$), not a minimum."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "A singular Hessian makes the second-order test inconclusive ($x^4$ min, $-x^4$ max, $x^3$ neither); it cannot guarantee a strict minimum."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: $h^\\top H h>0$ for all $h\\ne0$ makes $f$ rise in every direction from $x^*$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Negative definite ⇒ strict local **maximum**."
+        }
+      ],
+      "shortcut": "Gradient zero + Hessian PD ⇒ min; ND ⇒ max; indefinite ⇒ saddle; semidefinite/singular ⇒ inconclusive.",
+      "pitfalls": [
+        "Treating positive **semi**definite as sufficient — it is only necessary (e.g. $x^4$ vs $x^3$).",
+        "Mixing up the signs: negative definite gives a maximum."
+      ],
+      "verification": "1-D check: $f(x) = x^2$ has $f'(0)=0$, $f''(0) = 2>0$ (a $1\\times1$ PD Hessian) and a strict minimum at $0$; $f=-x^2$ (ND) has a maximum."
+    },
+    "da-2026-2-da-24": {
+      "approach": "Find the minimum number of nodes $N(h)$ an AVL tree of height $h$ can have — the recurrence $N(h) = N(h-1)+N(h-2)+1$ is Fibonacci-like, so $n$ grows like $\\varphi^h$ and the height is at most $\\log_\\varphi n \\approx 1.44\\log_2 n$.",
+      "concepts": [
+        "AVL tree",
+        "Height balance",
+        "Fibonacci trees",
+        "Golden ratio bound"
+      ],
+      "steps": [
+        {
+          "title": "Sparsest AVL tree of height h",
+          "body": "To get height $h$ with as few nodes as possible, the root has one subtree of height $h-1$ and the other of height $h-2$ (the balance condition allows a difference of at most 1), each itself sparsest:\n$$N(h) = N(h-1) + N(h-2) + 1,\\qquad N(0)=1,\\; N(1)=2.$$",
+          "scene": {
+            "reveal": 6
+          }
+        },
+        {
+          "title": "Tabulate",
+          "body": "$N(2) = 2+1+1 = 4$, $N(3) = 4+2+1 = 7$, $N(4) = 7+4+1 = 12$, $N(5) = 12+7+1 = 20$, $N(6) = 20+12+1 = 33$. In general $N(h) = F_{h+3} - 1$ (Fibonacci numbers $F_1=F_2=1$).",
+          "scene": {
+            "reveal": 21
+          }
+        },
+        {
+          "title": "Invert to bound the height",
+          "body": "Since $F_k \\approx \\varphi^k/\\sqrt5$ with $\\varphi = \\frac{1+\\sqrt5}{2}\\approx1.618$, any AVL tree with $n$ nodes and height $h$ satisfies $n \\ge N(h) \\approx \\varphi^{h+3}/\\sqrt5 - 1$, so\n$$h \\lesssim \\log_\\varphi n = \\frac{\\log_2 n}{\\log_2 \\varphi} = \\frac{\\log_2 n}{0.694} \\approx 1.44\\log_2 n.$$\n(Precisely, $h < 1.4405\\log_2(n+2) - 0.3277$.) Worst-case height $\\approx 1.44\\log_2 n$ → option **(A)**.",
+          "scene": {
+            "reveal": 21,
+            "hl": [
+              {
+                "r": 6,
+                "tone": "success"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "About $1.44\\log_2 n$ (i.e. $\\Theta(\\log n)$) — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: the Fibonacci-tree bound gives $h \\le 1.44\\log_2(n+2) - 0.328$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$\\Theta(n)$ is the worst case of an **unbalanced** BST (a chain); AVL rotations prevent it."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Too small: any binary tree with $n$ nodes has height at least $\\log_2(n+1)-1 = \\Omega(\\log n)$, so $\\Theta(\\log\\log n)$ is impossible."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Impossible for any tree: a tree with $n$ nodes has height at most $n-1$."
+        }
+      ],
+      "shortcut": "AVL worst height ≈ $1.44\\log_2 n$; red-black ≤ $2\\log_2(n+1)$; perfectly balanced ≈ $\\log_2 n$.",
+      "pitfalls": [
+        "Confusing the AVL bound with the unbalanced-BST worst case $\\Theta(n)$.",
+        "Using $N(h) = 2N(h-1)+1$ (that is a complete tree, giving the best case, not the worst)."
+      ],
+      "verification": "Numerical check: $N(6) = 33$ nodes reach height 6, and $1.4405\\log_2(33+2) - 0.3277 = 1.4405\\times5.13 - 0.33 \\approx 7.06 > 6$, while $\\log_2 33\\approx5.04 < 6$ — so the sparsest AVL tree really is taller than $\\log_2 n$ but within $1.44\\log_2 n$.",
+      "animation": {
+        "kind": "table",
+        "title": "Minimum nodes N(h) of an AVL tree",
+        "caption": "$N(h) = N(h-1)+N(h-2)+1$",
+        "cols": [
+          "h",
+          "N(h)",
+          "F(h+3) − 1"
+        ],
+        "rows": [
+          [
+            0,
+            1,
+            "2 − 1"
+          ],
+          [
+            1,
+            2,
+            "3 − 1"
+          ],
+          [
+            2,
+            4,
+            "5 − 1"
+          ],
+          [
+            3,
+            7,
+            "8 − 1"
+          ],
+          [
+            4,
+            12,
+            "13 − 1"
+          ],
+          [
+            5,
+            20,
+            "21 − 1"
+          ],
+          [
+            6,
+            33,
+            "34 − 1"
+          ]
+        ],
+        "reveal": 0,
+        "mono": true
+      }
+    },
+    "da-2026-2-da-25": {
+      "approach": "Write down the ridge objective: the penalty is $\\lambda\\lVert w\\rVert_2^2 = \\lambda\\sum_j w_j^2$. Recognising the L2 norm squared (versus the L1 norm of lasso) settles it immediately.",
+      "concepts": [
+        "Ridge regression",
+        "L2 regularisation",
+        "Shrinkage",
+        "Lasso (L1) contrast"
+      ],
+      "steps": [
+        {
+          "title": "Ridge objective",
+          "body": "Ridge regression minimises the residual sum of squares plus an L2 penalty:\n$$J(w) = \\sum_{i=1}^{n}\\left(y_i - x_i^\\top w\\right)^2 + \\lambda\\sum_{j=1}^{p} w_j^2,\\qquad \\lambda \\ge 0.$$\nThe penalty is $\\lambda\\lVert w\\rVert_2^2$ — the **sum of squared weights** (the intercept is usually not penalised)."
+        },
+        {
+          "title": "Why it shrinks towards zero",
+          "body": "Setting $\\nabla J = -2X^\\top(y - Xw) + 2\\lambda w = 0$ gives\n$$\\hat w_{\\text{ridge}} = (X^\\top X + \\lambda I)^{-1}X^\\top y.$$\nWith orthonormal features ($X^\\top X = I$) this is $\\hat w_{\\text{ridge}} = \\dfrac{\\hat w_{\\text{OLS}}}{1+\\lambda}$: every coefficient is scaled down by the factor $\\frac{1}{1+\\lambda}$, smoothly towards $0$ but never exactly to $0$."
+        },
+        {
+          "title": "Match with the options",
+          "body": "The penalised quantity is $\\sum_j w_j^2$ → option **(A)**. $\\sum_j |w_j|$ is the lasso (L1) penalty, and rank / condition number are not penalty terms at all."
+        }
+      ],
+      "answer": {
+        "value": "The **sum of squared weights** $\\sum_j w_j^2$ — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: ridge adds $\\lambda\\sum_j w_j^2 = \\lambda\\lVert w\\rVert_2^2$ to the squared-error loss."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$\\sum_j |w_j|$ is the L1 penalty of **lasso**, which can set weights exactly to zero; ridge only shrinks them."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "The rank of $X$ is a property of the data, not of $w$, and is not penalised. (Ridge does make $X^\\top X+\\lambda I$ full rank, which may cause this confusion.)"
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Ridge improves the condition number of $X^\\top X + \\lambda I$ as a side effect, but the penalty term itself is on the weights, not on any condition number."
+        }
+      ],
+      "shortcut": "Ridge = L2 = squares; Lasso = L1 = absolute values.",
+      "pitfalls": [
+        "Swapping ridge (L2, $\\sum w_j^2$) and lasso (L1, $\\sum\\lvert w_j\\rvert$).",
+        "Thinking ridge produces exact zeros (sparsity) — only L1 does that."
+      ],
+      "verification": "In the orthonormal case the ridge solution $\\hat w_{\\text{OLS}}/(1+\\lambda)$ reproduces the OLS answer at $\\lambda=0$ and tends to $0$ as $\\lambda\\to\\infty$, as expected of a shrinkage penalty on $\\sum w_j^2$."
+    },
+    "da-2026-2-da-26": {
+      "approach": "Apply the convolution output-size formula $O = \\lfloor (W - K + 2P)/S\\rfloor + 1$ to the spatial dimensions; the depth 3 of the filter matches the input depth and only fixes the output depth.",
+      "concepts": [
+        "Convolution output size",
+        "Stride and padding",
+        "Valid convolution"
+      ],
+      "given": "| Quantity | Value |\n|---|---|\n| Input $W\\times H\\times C$ | $32\\times32\\times3$ |\n| Filter $K\\times K\\times C$ | $5\\times5\\times3$ |\n| Stride $S$ | $1$ |\n| Padding $P$ | $0$ |",
+      "steps": [
+        {
+          "title": "Output-size formula",
+          "body": "Along each spatial axis the filter can be placed at positions $0, S, 2S, \\dots$ as long as it fits inside the padded input of width $W+2P$:\n$$O = \\left\\lfloor\\frac{W - K + 2P}{S}\\right\\rfloor + 1.$$",
+          "scene": {
+            "reveal": 1
+          }
+        },
+        {
+          "title": "Substitute the numbers",
+          "body": "$$O = \\frac{32 - 5 + 2\\cdot 0}{1} + 1 = \\frac{27}{1} + 1 = 28.$$\nThe height is identical ($32\\times32$ input, square filter), so the map is $28\\times28$.",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "Depth of the output",
+          "body": "The filter depth $3$ equals the input depth, so each filter collapses the 3 channels into one: one filter gives a $28\\times28\\times1$ map (with $F$ filters, $28\\times28\\times F$). The spatial size is **$28\\times28$** → option (A).",
+          "scene": {
+            "reveal": 4
+          }
+        }
+      ],
+      "answer": {
+        "value": "**28 × 28** — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: $(32-5+0)/1+1 = 28$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$30\\times30$ is what a $3\\times3$ filter would give ($32-3+1$); with a $5\\times5$ filter it is wrong."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$27\\times27$ forgets the $+1$ in the formula (it counts the shifts, not the positions)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$32\\times32$ needs \"same\" padding $P=2$; the question says no padding."
+        }
+      ],
+      "shortcut": "Stride 1, no padding: $O = W - K + 1 = 32 - 5 + 1 = 28$.",
+      "pitfalls": [
+        "Dropping the $+1$ (gives 27).",
+        "Thinking the filter depth 3 changes the spatial size — it only matches the input channels."
+      ],
+      "verification": "Count positions directly: the left edge of a 5-wide filter can sit at columns $0,1,\\dots,27$ (since $27+5 = 32$), i.e. $28$ positions.",
+      "animation": {
+        "kind": "equation",
+        "title": "Convolution output size",
+        "lines": [
+          {
+            "tex": "O=\\left\\lfloor\\frac{W-K+2P}{S}\\right\\rfloor+1",
+            "note": "per spatial axis"
+          },
+          {
+            "tex": "=\\frac{32-5+2\\cdot0}{1}+1",
+            "note": "W=32, K=5, P=0, S=1"
+          },
+          {
+            "tex": "=27+1=28",
+            "tone": "success"
+          },
+          {
+            "tex": "\\Rightarrow\\ 28\\times28\\ (\\times1\\text{ per filter})",
+            "tone": "success"
+          }
+        ],
+        "reveal": 1
+      }
+    },
+    "da-2026-2-da-27": {
+      "approach": "Use the definition: $Q$ is orthogonal when its columns (equivalently rows) are orthonormal, i.e. $Q^\\top Q = I$; for a square matrix this forces $Q^{-1} = Q^\\top$ and hence $QQ^\\top = I$ too. Then knock out each other option with a counterexample.",
+      "concepts": [
+        "Orthogonal matrix",
+        "Orthonormal columns",
+        "Inverse equals transpose",
+        "Determinant ±1"
+      ],
+      "steps": [
+        {
+          "title": "Definition",
+          "body": "Let $Q = [q_1 \\;\\cdots\\; q_n]$. Entry $(i,j)$ of $Q^\\top Q$ is $q_i^\\top q_j$, so\n$$Q^\\top Q = I \\iff q_i^\\top q_j = \\begin{cases}1 & i=j\\\\ 0 & i\\ne j\\end{cases},$$\ni.e. the columns are orthonormal — this is the definition of an orthogonal matrix."
+        },
+        {
+          "title": "Both products equal I",
+          "body": "For a square matrix, $Q^\\top Q = I$ means $Q^\\top$ is a left inverse, hence the (two-sided) inverse: $Q^{-1} = Q^\\top$. Therefore $QQ^\\top = QQ^{-1} = I$ as well. So $Q$ is orthogonal $\\iff Q^\\top Q = QQ^\\top = I$ → option **(C)**."
+        },
+        {
+          "title": "Counterexamples for the rest",
+          "body": "Rotation by $90^\\circ$, $R = \\begin{bmatrix}0&-1\\\\1&0\\end{bmatrix}$, is orthogonal ($R^\\top R = I$) but $R \\ne R^\\top$ and $R^2 = -I \\ne R$, so (A) and (B) are not necessary. $S=\\begin{bmatrix}2&0\\\\0&1\\end{bmatrix}$ is symmetric but $S^\\top S = \\operatorname{diag}(4,1)\\ne I$, so (A) is not sufficient. Finally $\\det(Q^\\top Q) = \\det(Q)^2 = 1$ gives $\\det Q = \\pm1 \\ne 0$, contradicting (D)."
+        }
+      ],
+      "answer": {
+        "value": "$Q^\\top Q = QQ^\\top = I$ — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$Q = Q^\\top$ defines a **symmetric** matrix. The $90^\\circ$ rotation is orthogonal but not symmetric, and $\\operatorname{diag}(2,1)$ is symmetric but not orthogonal."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$Q^2 = Q$ defines an **idempotent** (projection) matrix; the $90^\\circ$ rotation has $R^2 = -I$. The only matrix that is both orthogonal and idempotent is $I$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: orthonormal columns and rows, i.e. $Q^{-1} = Q^\\top$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Orthogonal matrices have $\\det Q = \\pm 1$, so they are always invertible; $\\det Q = 0$ is impossible."
+        }
+      ],
+      "shortcut": "Orthogonal ⇔ $Q^{-1} = Q^\\top$; the only option stating that is (C).",
+      "pitfalls": [
+        "Confusing orthogonal with symmetric ($Q=Q^\\top$) or with idempotent/projection ($Q^2 = Q$).",
+        "Thinking only one of $Q^\\top Q = I$, $QQ^\\top = I$ holds — for square matrices each implies the other."
+      ],
+      "verification": "Check $R$: $R^\\top R = \\begin{bmatrix}0&1\\\\-1&0\\end{bmatrix}\\begin{bmatrix}0&-1\\\\1&0\\end{bmatrix} = I$ and $\\det R = 1$, consistent with (C) and ruling out (A), (B), (D).",
+      "animation": {
+        "kind": "matrix",
+        "title": "90° rotation is orthogonal",
+        "caption": "$R^\\top R = I$, yet $R\\ne R^\\top$, $R^2\\ne R$, $\\det R = 1$",
+        "terms": [
+          {
+            "name": "Rᵀ",
+            "rows": [
+              [
+                0,
+                1
+              ],
+              [
+                -1,
+                0
+              ]
+            ]
+          },
+          "×",
+          {
+            "name": "R",
+            "rows": [
+              [
+                0,
+                -1
+              ],
+              [
+                1,
+                0
+              ]
+            ]
+          },
+          "=",
+          {
+            "name": "I",
+            "rows": [
+              [
+                1,
+                0
+              ],
+              [
+                0,
+                1
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    "da-2026-2-da-28": {
+      "approach": "For a Poisson variable the variance equals the mean, $\\operatorname{Var}(X) = \\lambda$; then use $\\operatorname{Var}(aX+b) = a^2\\operatorname{Var}(X)$ — the shift $b$ does not change the spread.",
+      "concepts": [
+        "Poisson distribution",
+        "Variance of a linear transformation"
+      ],
+      "steps": [
+        {
+          "title": "Variance of X",
+          "body": "For $X\\sim\\text{Poisson}(\\lambda)$, $E[X] = \\operatorname{Var}(X) = \\lambda$. Here $\\operatorname{Var}(X) = 4$.",
+          "scene": {
+            "reveal": 1
+          }
+        },
+        {
+          "title": "Variance of a linear function",
+          "body": "For $Y = aX + b$: $Y - E[Y] = a\\,(X - E[X])$, so\n$$\\operatorname{Var}(Y) = E\\big[a^2 (X-E[X])^2\\big] = a^2\\operatorname{Var}(X).$$\nThe constant $b$ cancels.",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Substitute",
+          "body": "$$\\operatorname{Var}(3X+5) = 3^2 \\times 4 = 9\\times4 = 36 \\;\\to\\; \\text{option (A)}.$$",
+          "scene": {
+            "reveal": 3
+          }
+        }
+      ],
+      "answer": {
+        "value": "$\\operatorname{Var}(Y) = 9\\times4 =$ **36** — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: $3^2\\times4 = 36$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$17 = 3\\times4+5$ applies the transformation to the variance as if it were the mean ($E[Y] = 17$ is the mean, not the variance)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$12 = 3\\times4$ forgets to square the scale factor."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$41 = 9\\times4+5$ squares correctly but wrongly adds the shift; constants do not affect variance."
+        }
+      ],
+      "shortcut": "Shift ignored, scale squared: $3^2\\cdot\\lambda = 36$.",
+      "pitfalls": [
+        "Adding the constant 5 to the variance.",
+        "Using $a$ instead of $a^2$.",
+        "Note $Y$ itself is **not** Poisson (its variance 36 ≠ its mean 17)."
+      ],
+      "verification": "Mean check: $E[Y] = 3\\cdot4+5 = 17$, which is option B — confirming B is the \"mean\" distractor. Standard deviation of $Y$ is $3\\sqrt4 = 6$, and $6^2 = 36$.",
+      "animation": {
+        "kind": "equation",
+        "title": "Variance of Y = 3X + 5",
+        "lines": [
+          {
+            "tex": "\\operatorname{Var}(X)=\\lambda=4",
+            "note": "Poisson: variance = mean"
+          },
+          {
+            "tex": "\\operatorname{Var}(aX+b)=a^2\\operatorname{Var}(X)",
+            "note": "shift b drops out"
+          },
+          {
+            "tex": "\\operatorname{Var}(3X+5)=9\\times4=36",
+            "tone": "success"
+          }
+        ],
+        "reveal": 1
+      }
+    },
+    "da-2026-2-da-29": {
+      "approach": "Match the argument form $P,\\; P\\to Q \\;\\vdash\\; Q$ (\"affirming the antecedent\") against the standard named rules; it is exactly modus ponens.",
+      "concepts": [
+        "Rules of inference",
+        "Modus ponens",
+        "Modus tollens",
+        "Resolution"
+      ],
+      "steps": [
+        {
+          "title": "The argument form",
+          "body": "Premises $P$ and $P\\to Q$; conclusion $Q$:\n$$\\frac{P \\qquad P\\to Q}{\\therefore\\; Q}$$\nThis is **modus ponens**."
+        },
+        {
+          "title": "Check it is valid",
+          "body": "| $P$ | $Q$ | $P\\to Q$ |\n|---|---|---|\n| T | T | T |\n| T | F | F |\n| F | T | T |\n| F | F | T |\n\nThe only row where both premises $P$ and $P\\to Q$ are true is row 1, and there $Q$ is true — so the inference is valid.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "The other named rules",
+          "body": "- Modus tollens: $\\neg Q,\\; P\\to Q \\vdash \\neg P$.\n- Hypothetical syllogism: $P\\to Q,\\; Q\\to R \\vdash P\\to R$.\n- Resolution: $A\\lor B,\\; \\neg B\\lor C \\vdash A\\lor C$ (works on clauses).\n\nOnly modus ponens has premises $P$, $P\\to Q$ and conclusion $Q$ → option **(A)**."
+        }
+      ],
+      "answer": {
+        "value": "**Modus Ponens** — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: $P,\\; P\\to Q \\vdash Q$ is the definition of modus ponens."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Modus tollens uses $\\neg Q$ and $P\\to Q$ to conclude $\\neg P$ — it denies the consequent."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Resolution works on clauses ($A\\lor B,\\ \\neg B\\lor C \\vdash A\\lor C$). After rewriting $P\\to Q$ as $\\neg P\\lor Q$ it could also yield $Q$, but the rule that derives $Q$ directly from $P$ and $P\\to Q$ is modus ponens (resolution generalises it)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Hypothetical syllogism chains two implications into $P\\to R$; it needs no fact $P$ and concludes an implication, not $Q$."
+        }
+      ],
+      "shortcut": "Ponens = \"putting\" the antecedent ($P$) to get $Q$; Tollens = \"taking away\" $Q$ to deny $P$.",
+      "pitfalls": [
+        "Swapping modus ponens and modus tollens.",
+        "Confusing it with the invalid \"affirming the consequent\" ($Q,\\ P\\to Q \\vdash P$)."
+      ],
+      "verification": "Truth table: the single row with $P = $ T and $P\\to Q = $ T has $Q = $ T, so the inference is valid.",
+      "animation": {
+        "kind": "table",
+        "title": "Truth table of P → Q",
+        "caption": "Rows where both premises are true",
+        "cols": [
+          "P",
+          "Q",
+          "P→Q"
+        ],
+        "rows": [
+          [
+            "T",
+            "T",
+            "T"
+          ],
+          [
+            "T",
+            "F",
+            "F"
+          ],
+          [
+            "F",
+            "T",
+            "T"
+          ],
+          [
+            "F",
+            "F",
+            "T"
+          ]
+        ],
+        "mono": true
+      }
+    }
+  }
+}
