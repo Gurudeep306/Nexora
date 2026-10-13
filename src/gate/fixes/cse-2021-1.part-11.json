@@ -1,0 +1,131 @@
+{
+  "paper": "cse-2021-1",
+  "fixes": [
+    {
+      "id": "cse-2021-1-ga-2",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2021-1/ga-2-A.png",
+          "alt": "Grey chevron-shaped hexagon pointing right with a V-shaped notch cut into its left side",
+          "svg": "cse-2021-1/ga-2-A.svg"
+        },
+        {
+          "f": "cse-2021-1/ga-2-B.png",
+          "alt": "Grey triangle",
+          "svg": "cse-2021-1/ga-2-B.svg"
+        },
+        {
+          "f": "cse-2021-1/ga-2-C.png",
+          "alt": "Grey square",
+          "svg": "cse-2021-1/ga-2-C.svg"
+        },
+        {
+          "f": "cse-2021-1/ga-2-D.png",
+          "alt": "Grey trapezium, narrower at the top and wider at the bottom",
+          "svg": "cse-2021-1/ga-2-D.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2021-1/ga-2-A.png",
+          "alt": "Grey chevron-shaped hexagon pointing right with a V-shaped notch cut into its left side",
+          "svg": "cse-2021-1/ga-2-A.svg"
+        },
+        {
+          "f": "cse-2021-1/ga-2-B.png",
+          "alt": "Grey triangle",
+          "svg": "cse-2021-1/ga-2-B.svg"
+        },
+        {
+          "f": "cse-2021-1/ga-2-C.png",
+          "alt": "Grey square",
+          "svg": "cse-2021-1/ga-2-C.svg"
+        },
+        {
+          "f": "cse-2021-1/ga-2-D.png",
+          "alt": "Grey trapezium, narrower at the top and wider at the bottom",
+          "svg": "cse-2021-1/ga-2-D.svg"
+        }
+      ],
+      "reason": "Redrew option SVGs faithfully from the PDF; precise alt text.",
+      "source": "GATE2021_QP_CS-1.pdf p.2"
+    },
+    {
+      "id": "cse-2021-1-ga-4",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2021-1/ga-4-q.png",
+          "alt": "Three stages: a circle with a vertical diameter, its right half folded onto the left; the semicircle folded along the horizontal radius, lower part up; the final top-left quarter punched with a wide short rectangle on the vertical fold edge near the top, a small square on the horizontal fold edge, and a quarter-circle at the centre corner",
+          "svg": "cse-2021-1/ga-4-q.svg"
+        },
+        {
+          "f": "cse-2021-1/ga-4-A.png",
+          "alt": "Circle with a central circular hole, wide horizontal slots at top and bottom, and small upright slots at left and right",
+          "svg": "cse-2021-1/ga-4-A.svg"
+        },
+        {
+          "f": "cse-2021-1/ga-4-B.png",
+          "alt": "Circle with a central circular hole, wide horizontal slots at top and bottom, and small horizontal slots at left and right",
+          "svg": "cse-2021-1/ga-4-B.svg"
+        },
+        {
+          "f": "cse-2021-1/ga-4-C.png",
+          "alt": "Circle with a central circular hole, small horizontal slots at top and bottom, and tall vertical slots at left and right",
+          "svg": "cse-2021-1/ga-4-C.svg"
+        },
+        {
+          "f": "cse-2021-1/ga-4-D.png",
+          "alt": "Circle with a central circular hole, small upright slots at top and bottom, and tall vertical slots at left and right",
+          "svg": "cse-2021-1/ga-4-D.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2021-1/ga-4-q.png",
+          "alt": "Three stages: a circle with a vertical diameter, its right half folded onto the left; the semicircle folded along the horizontal radius, lower part up; the final top-left quarter punched with a wide short rectangle on the vertical fold edge near the top, a small square on the horizontal fold edge, and a quarter-circle at the centre corner",
+          "svg": "cse-2021-1/ga-4-q.svg"
+        },
+        {
+          "f": "cse-2021-1/ga-4-A.png",
+          "alt": "Circle with a central circular hole, wide horizontal slots at top and bottom, and small upright slots at left and right",
+          "svg": "cse-2021-1/ga-4-A.svg"
+        },
+        {
+          "f": "cse-2021-1/ga-4-B.png",
+          "alt": "Circle with a central circular hole, wide horizontal slots at top and bottom, and small horizontal slots at left and right",
+          "svg": "cse-2021-1/ga-4-B.svg"
+        },
+        {
+          "f": "cse-2021-1/ga-4-C.png",
+          "alt": "Circle with a central circular hole, small horizontal slots at top and bottom, and tall vertical slots at left and right",
+          "svg": "cse-2021-1/ga-4-C.svg"
+        },
+        {
+          "f": "cse-2021-1/ga-4-D.png",
+          "alt": "Circle with a central circular hole, small upright slots at top and bottom, and tall vertical slots at left and right",
+          "svg": "cse-2021-1/ga-4-D.svg"
+        }
+      ],
+      "reason": "Redrew question and option SVGs faithfully from the PDF; precise alt text.",
+      "source": "GATE2021_QP_CS-1.pdf p.4"
+    },
+    {
+      "id": "cse-2021-1-ga-4",
+      "field": "needsReview",
+      "before": false,
+      "after": false,
+      "reason": "Unfolding re-derived step by step; result (A) follows unambiguously from the punch positions.",
+      "source": "GATE2021_QP_CS-1.pdf p.4 (solved)"
+    },
+    {
+      "id": "cse-2021-1-ga-4",
+      "field": "reviewNote",
+      "before": null,
+      "after": null,
+      "reason": "Review resolved.",
+      "source": "GATE2021_QP_CS-1.pdf p.4 (solved)"
+    }
+  ]
+}
