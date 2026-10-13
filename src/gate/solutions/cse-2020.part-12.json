@@ -1,0 +1,1392 @@
+{
+ "paper": "cse-2020",
+ "version": 2,
+ "solutions": {
+  "cse-2020-cs-13": {
+   "approach": "Evaluate the uncorrelated subquery once (average cost of P4), then count Catalogue rows above it; each joins with exactly one supplier and there is no DISTINCT, so duplicates of a supplier are all returned.",
+   "concepts": [
+    "Uncorrelated subquery",
+    "AVG with GROUP BY",
+    "Equi-join",
+    "Duplicates without DISTINCT"
+   ],
+   "steps": [
+    {
+     "title": "Inner query",
+     "body": "Rows with `pno = 'P4'`: $(S2,P4,200)$ and $(S3,P4,250)$.\\n\\n$$\\text{AVG(cost)} = \\frac{200+250}{2} = \\frac{450}{2} = 225$$\\nGROUP BY pno gives a single group, so the subquery returns one value, 225.",
+     "scene": {
+      "hl": [
+       {
+        "r": 3,
+        "tone": "warning"
+       },
+       {
+        "r": 8,
+        "tone": "warning"
+       }
+      ],
+      "caption": "P4 rows: average = (200 + 250)/2 = 225"
+     }
+    },
+    {
+     "title": "Catalogue rows with cost > 225",
+     "body": "Check each cost against 225: 150, 50, 100, 200, 150 fail; $(S2,P5,250)$, $(S3,P1,250)$, $(S3,P5,300)$, $(S3,P4,250)$ pass. That is **4 rows**.",
+     "scene": {
+      "hl": [
+       {
+        "r": 4,
+        "tone": "success"
+       },
+       {
+        "r": 5,
+        "tone": "success"
+       },
+       {
+        "r": 7,
+        "tone": "success"
+       },
+       {
+        "r": 8,
+        "tone": "success"
+       }
+      ],
+      "caption": "4 rows have cost > 225"
+     }
+    },
+    {
+     "title": "Join and count",
+     "body": "`s.sno = c.sno` matches each surviving row with exactly one supplier (sno is the key of Suppliers). Output: (S2, M/s Balaji furniture) once and (S3, M/s Premium furniture) three times. With no DISTINCT, all **4** rows are returned."
+    }
+   ],
+   "answer": {
+    "value": "4",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "4 Catalogue rows have cost > 225 and each joins with one supplier."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "5 would need another row above 225; the 200 row of P4 is not above the average."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "0 would need the average to be at least 300; it is 225."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "2 is the number of distinct suppliers; SELECT without DISTINCT keeps duplicate rows."
+    }
+   ],
+   "pitfalls": [
+    "Applying DISTINCT mentally and answering 2.",
+    "Using the average of all costs instead of P4 only."
+   ],
+   "verification": "Recounted costs above 225 from the table: 250, 250, 300, 250, so 4 rows.",
+   "animation": {
+    "kind": "table",
+    "title": "Catalogue",
+    "cols": [
+     "sno",
+     "pno",
+     "cost"
+    ],
+    "rows": [
+     [
+      "S1",
+      "P1",
+      150
+     ],
+     [
+      "S1",
+      "P2",
+      50
+     ],
+     [
+      "S1",
+      "P3",
+      100
+     ],
+     [
+      "S2",
+      "P4",
+      200
+     ],
+     [
+      "S2",
+      "P5",
+      250
+     ],
+     [
+      "S3",
+      "P1",
+      250
+     ],
+     [
+      "S3",
+      "P2",
+      150
+     ],
+     [
+      "S3",
+      "P5",
+      300
+     ],
+     [
+      "S3",
+      "P4",
+      250
+     ]
+    ],
+    "mono": true,
+    "caption": "Catalogue relation"
+   }
+  },
+  "cse-2020-cs-14": {
+   "approach": "The supporting (identifying) many-one relationship that links a weak entity set to its owner is drawn as a diamond with a double border; the double rectangle is the weak entity set itself.",
+   "concepts": [
+    "Weak entity set",
+    "Identifying relationship",
+    "ER notation"
+   ],
+   "steps": [
+    {
+     "title": "What is being drawn",
+     "body": "The 'supporting many-one relationship' of a weak entity set is its identifying relationship to the owner (strong) entity set."
+    },
+    {
+     "title": "Notation",
+     "body": "Identifying relationship: diamond with double/bold border. Weak entity set: rectangle with double border. Multivalued attribute: double oval. Key attribute: underlined name in an oval. So the answer is **diamonds with double/bold border**."
+    }
+   ],
+   "answer": {
+    "value": "Diamonds with double/bold border",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Identifying (supporting) relationships are double-bordered diamonds."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "A double-bordered rectangle denotes the weak entity set, not its relationship."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "A double oval denotes a multivalued attribute."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Underlined identifiers in ovals denote key attributes."
+    }
+   ],
+   "pitfalls": [
+    "Confusing the weak entity set (double rectangle) with its identifying relationship (double diamond)."
+   ],
+   "verification": "Matches the official IIT Delhi key (A) and standard Chen/Silberschatz notation."
+  },
+  "cse-2020-cs-15": {
+   "approach": "Check each claim against what a router does to every forwarded IPv4 packet: TTL and checksum always change, routes may be static, and reassembly happens only at the destination.",
+   "concepts": [
+    "IP forwarding",
+    "TTL and header checksum",
+    "Static routing",
+    "Fragmentation and reassembly"
+   ],
+   "steps": [
+    {
+     "title": "Statement I",
+     "body": "False. A router decrements TTL and recomputes the header checksum of every forwarded packet (and may fragment it), so the packet is modified."
+    },
+    {
+     "title": "Statement II",
+     "body": "True. A router can forward using manually configured static routes; running RIP/OSPF/BGP is not mandatory."
+    },
+    {
+     "title": "Statement III",
+     "body": "False. IPv4 fragments are reassembled only by the final destination host, never by intermediate routers, whatever the outgoing MTU."
+    },
+    {
+     "title": "Conclusion",
+     "body": "Only II is true, so the answer is **II only**."
+    }
+   ],
+   "answer": {
+    "value": "II only",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Includes I, but TTL and checksum are changed at every hop."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "I is false and II (true) is missing."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "III is false: routers do not reassemble fragments."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Only II holds: static routing needs no routing protocol."
+    }
+   ],
+   "pitfalls": [
+    "Thinking a router forwards packets untouched (it always changes TTL)."
+   ],
+   "verification": "Each statement checked against RFC 791 behaviour: TTL decrement per hop, reassembly at destination only."
+  },
+  "cse-2020-cs-16": {
+   "approach": "A linked list has no random access, so each insertion must walk the list to find its place; in the worst case the walk is as long as the list.",
+   "concepts": [
+    "Sorted linked list",
+    "Linear search",
+    "Arithmetic series"
+   ],
+   "steps": [
+    {
+     "title": "Cost of one insertion",
+     "body": "Inserting into a sorted list of $i$ nodes needs up to $i$ comparisons (e.g. when elements arrive in increasing order, each goes to the end); linking is $O(1)$."
+    },
+    {
+     "title": "Total",
+     "body": "$$\\sum_{i=0}^{n-1} i = \\frac{n(n-1)}{2} = \\Theta(n^2)$$"
+    }
+   ],
+   "answer": {
+    "value": "Θ(n²)",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Θ(n) would need O(1) per insertion, impossible without knowing the position."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "n log n needs binary search, which a linked list does not support."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Worst case 0 + 1 + … + (n−1) = n(n−1)/2 comparisons."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Even reading n elements takes Ω(n)."
+    }
+   ],
+   "pitfalls": [
+    "Assuming binary search works on a linked list."
+   ],
+   "verification": "Increasing-order input forces a full traversal each time: n(n−1)/2 comparisons."
+  },
+  "cse-2020-cs-17": {
+   "approach": "Count relations as subsets of A×A; a reflexive relation must contain the 3 diagonal pairs and is free on the other 6.",
+   "concepts": [
+    "Binary relation",
+    "Reflexive relation",
+    "Counting subsets"
+   ],
+   "steps": [
+    {
+     "title": "All relations",
+     "body": "$|A\\times A| = 3^2 = 9$, so $|\\mathcal{R}| = 2^9 = 512$."
+    },
+    {
+     "title": "Reflexive relations",
+     "body": "$(1,1),(2,2),(3,3)$ are forced in; the other $9-3=6$ pairs are free: $2^6 = 64$."
+    },
+    {
+     "title": "Probability",
+     "body": "$$P = \\frac{64}{512} = \\frac{1}{8} = 0.125$$"
+    }
+   ],
+   "answer": {
+    "value": "0.125",
+    "number": 0.125,
+    "matchesKey": true
+   },
+   "shortcut": "Each diagonal pair is in with probability $1/2$ independently: $(1/2)^3 = 0.125$.",
+   "pitfalls": [
+    "Counting reflexive relations as 2^3 instead of 2^(n²−n)."
+   ],
+   "verification": "Independent-pair view gives (1/2)^3 = 0.125, same as 64/512."
+  },
+  "cse-2020-cs-18": {
+   "approach": "By Lagrange's theorem a subgroup's order divides 35; the largest proper divisor is 7, and a group of order 35 does have a subgroup of order 7.",
+   "concepts": [
+    "Lagrange's theorem",
+    "Cauchy's theorem"
+   ],
+   "steps": [
+    {
+     "title": "Possible orders",
+     "body": "Divisors of $35 = 5\\times 7$: $1, 5, 7, 35$. A proper subgroup has order $1$, $5$ or $7$."
+    },
+    {
+     "title": "Existence",
+     "body": "Since $7$ is a prime dividing $35$, Cauchy's theorem gives an element of order 7, hence a subgroup of order 7. (In fact every group of order 35 is cyclic, $\\mathbb{Z}_{35}$.) Largest proper subgroup: **7**."
+    }
+   ],
+   "answer": {
+    "value": "7",
+    "number": 7,
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Answering 34 or 17 (orders that do not divide 35)."
+   ],
+   "verification": "In Z35 the subgroup generated by 5 has order 35/5 = 7."
+  },
+  "cse-2020-cs-19": {
+   "approach": "A MUX choosing one of N inputs needs ⌈log₂N⌉ select lines.",
+   "concepts": [
+    "Multiplexer",
+    "Select lines"
+   ],
+   "steps": [
+    {
+     "title": "Inputs",
+     "body": "Each of the 32 registers is one data input of the multiplexer; exactly one is routed to the accumulator."
+    },
+    {
+     "title": "Select lines",
+     "body": "$$s = \\lceil \\log_2 32 \\rceil = 5 \\quad (2^5 = 32)$$"
+    }
+   ],
+   "answer": {
+    "value": "5",
+    "number": 5,
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Answering 32 (number of inputs) instead of select lines."
+   ],
+   "verification": "4 lines select only 16 inputs; 5 lines select 32."
+  },
+  "cse-2020-cs-20": {
+   "approach": "Uniquely addressing every byte of a 1 KB RAM needs a 10-to-1024 decoder: 10 address inputs and one output line per byte.",
+   "concepts": [
+    "Decoder",
+    "Byte addressing"
+   ],
+   "steps": [
+    {
+     "title": "Addresses",
+     "body": "$1\\text{ KB} = 2^{10} = 1024$ bytes, so $m = \\log_2 1024 = 10$ address inputs."
+    },
+    {
+     "title": "Outputs and sum",
+     "body": "An $m$-to-$2^m$ decoder has $n = 2^{10} = 1024$ outputs. $$m + n = 10 + 1024 = 1034$$"
+    }
+   ],
+   "answer": {
+    "value": "1034",
+    "number": 1034,
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Using bits instead of bytes (8 Kbit) or forgetting to add m."
+   ],
+   "verification": "1024 distinct bytes need 1024 distinct select outputs, which need 10 inputs."
+  },
+  "cse-2020-cs-21": {
+   "approach": "Miss penalty = time to bring a whole block word by word; then AMAT = hit time + miss rate × miss penalty.",
+   "concepts": [
+    "Average memory access time",
+    "Miss penalty",
+    "Block transfer"
+   ],
+   "given": "| Item | Value |\n|---|---|\n| Block | 256 B |\n| Word | 64 bits = 8 B |\n| Cache access | 3 ns |\n| Hit rate | 94% |\n| First word / next words | 20 ns / 5 ns |",
+   "steps": [
+    {
+     "title": "Words per block",
+     "body": "$$\\frac{256\\text{ B}}{8\\text{ B}} = 32 \\text{ words}$$"
+    },
+    {
+     "title": "Miss penalty",
+     "body": "$$20 + (32-1)\\times 5 = 20 + 155 = 175\\text{ ns}$$"
+    },
+    {
+     "title": "AMAT",
+     "body": "$$T = 3 + 0.06\\times 175 = 3 + 10.5 = 13.5\\text{ ns}$$\\nEquivalently $0.94\\times 3 + 0.06\\times(3+175) = 2.82 + 10.68 = 13.5$ ns."
+    }
+   ],
+   "answer": {
+    "value": "13.5",
+    "number": 13.5,
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Charging 20 ns for every word (gives 640 ns penalty).",
+    "Dropping the cache access on a miss: 0.94×3 + 0.06×175 = 13.32."
+   ],
+   "verification": "Both standard AMAT formulas (hierarchical and hit-time + miss-rate × penalty) give 13.5 ns."
+  },
+  "cse-2020-cs-22": {
+   "approach": "Decode the pointer expression from the inside out: **a is a[0][0], a+k moves k rows, and *(row)+j moves j ints within the row.",
+   "concepts": [
+    "2-D arrays and pointers",
+    "Pointer arithmetic"
+   ],
+   "steps": [
+    {
+     "title": "Innermost term",
+     "body": "`**a` $=$ `a[0][0]` $= 1$, so `a + **a + 2` $=$ `a + 3`, a pointer to row 3."
+    },
+    {
+     "title": "Select the element",
+     "body": "`*(a+3)` is row `a[3]` (decays to `&a[3][0]`); `+3` gives `&a[3][3]`; the outer `*` reads `a[3][3]`."
+    },
+    {
+     "title": "Value",
+     "body": "Row 3 is $\\{16, 17, 18, 19, 20\\}$, so `a[3][3]` $= 19$. Output: **19**."
+    }
+   ],
+   "answer": {
+    "value": "19",
+    "number": 19,
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Treating a+3 as moving 3 ints instead of 3 rows of 5 ints."
+   ],
+   "verification": "Byte check: a+3 is offset 3×5 = 15 ints, +3 gives index 18 in row-major order; the 19th value is 19."
+  },
+  "cse-2020-cs-23": {
+   "approach": "Double hashing probe i is (h₁(k) + i·h₂(k)) mod m; compute both hashes for k = 90 and take i = 1.",
+   "concepts": [
+    "Double hashing",
+    "Open addressing"
+   ],
+   "steps": [
+    {
+     "title": "Primary hash (probe 0)",
+     "body": "$$h_1(90) = 90 \\bmod 23 = 90 - 69 = 21$$",
+     "scene": {
+      "pointers": [
+       {
+        "name": "probe 0",
+        "at": 21
+       }
+      ],
+      "hl": [
+       {
+        "at": [
+         21,
+         21
+        ],
+        "tone": "warning"
+       }
+      ],
+      "caption": "probe 0 → slot 21"
+     }
+    },
+    {
+     "title": "Secondary hash",
+     "body": "$$h_2(90) = 1 + (90 \\bmod 19) = 1 + (90 - 76) = 1 + 14 = 15$$"
+    },
+    {
+     "title": "Probe 1",
+     "body": "$$(21 + 1\\times 15) \\bmod 23 = 36 \\bmod 23 = 13$$",
+     "scene": {
+      "pointers": [
+       {
+        "name": "probe 0",
+        "at": 21
+       },
+       {
+        "name": "probe 1",
+        "at": 13
+       }
+      ],
+      "hl": [
+       {
+        "at": [
+         21,
+         21
+        ],
+        "tone": "muted"
+       },
+       {
+        "at": [
+         13,
+         13
+        ],
+        "tone": "success"
+       }
+      ],
+      "caption": "probe 1 → (21 + 15) mod 23 = 13"
+     }
+    }
+   ],
+   "answer": {
+    "value": "13",
+    "number": 13,
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Answering 21 (probe 0) or 36 (forgetting mod 23)."
+   ],
+   "verification": "36 − 23 = 13, inside 0..22.",
+   "animation": {
+    "kind": "array",
+    "label": "Table (size 23)",
+    "cells": [
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    "caption": "k = 90"
+   }
+  },
+  "cse-2020-cs-24": {
+   "approach": "A bottom-up parse performs one reduction per production used in the rightmost derivation, so count the productions: S → aSB three times, S → d once, B → b three times.",
+   "concepts": [
+    "Shift-reduce parsing",
+    "Rightmost derivation in reverse"
+   ],
+   "steps": [
+    {
+     "title": "Derivation",
+     "body": "$S \\Rightarrow aSB \\Rightarrow aSb \\Rightarrow aaSBb \\Rightarrow aaSbb \\Rightarrow aaaSBbb \\Rightarrow aaaSbbb \\Rightarrow aaadbbb$: 7 production uses.",
+     "scene": {
+      "reveal": 6
+     }
+    },
+    {
+     "title": "Shift-reduce trace",
+     "body": "The parser shifts a, a, a, d, reduces S → d, then for each b: shift b, reduce B → b, reduce S → aSB.",
+     "scene": {
+      "reveal": 24,
+      "hl": [
+       {
+        "r": 4,
+        "tone": "warning"
+       },
+       {
+        "r": 7,
+        "tone": "warning"
+       }
+      ]
+     }
+    },
+    {
+     "title": "Count",
+     "body": "$$1\\ (S\\to d) + 3\\ (B\\to b) + 3\\ (S\\to aSB) = 7$$",
+     "scene": {
+      "reveal": 36,
+      "hl": [
+       {
+        "r": 11,
+        "tone": "success"
+       }
+      ],
+      "caption": "7 reductions, then accept"
+     }
+    }
+   ],
+   "answer": {
+    "value": "7",
+    "number": 7,
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Counting shifts too, or forgetting the B → b reductions."
+   ],
+   "verification": "Number of reductions equals the number of internal nodes of the parse tree: 3 (aSB) + 1 (d) + 3 (b) = 7.",
+   "animation": {
+    "kind": "table",
+    "title": "Shift-reduce parse of aaadbbb",
+    "cols": [
+     "Stack",
+     "Input",
+     "Action"
+    ],
+    "rows": [
+     [
+      "$",
+      "aaadbbb$",
+      "shift a, a, a, d"
+     ],
+     [
+      "$aaad",
+      "bbb$",
+      "reduce S → d (1)"
+     ],
+     [
+      "$aaaS",
+      "bbb$",
+      "shift b"
+     ],
+     [
+      "$aaaSb",
+      "bb$",
+      "reduce B → b (2)"
+     ],
+     [
+      "$aaaSB",
+      "bb$",
+      "reduce S → aSB (3)"
+     ],
+     [
+      "$aaS",
+      "bb$",
+      "shift b"
+     ],
+     [
+      "$aaSb",
+      "b$",
+      "reduce B → b (4)"
+     ],
+     [
+      "$aaSB",
+      "b$",
+      "reduce S → aSB (5)"
+     ],
+     [
+      "$aS",
+      "b$",
+      "shift b"
+     ],
+     [
+      "$aSb",
+      "$",
+      "reduce B → b (6)"
+     ],
+     [
+      "$aSB",
+      "$",
+      "reduce S → aSB (7)"
+     ],
+     [
+      "$S",
+      "$",
+      "accept"
+     ]
+    ],
+    "reveal": 3,
+    "mono": true
+   }
+  },
+  "cse-2020-cs-25": {
+   "approach": "Non-persistent HTTP opens a fresh TCP connection for every object; count the objects.",
+   "concepts": [
+    "Non-persistent HTTP",
+    "TCP connections per object"
+   ],
+   "steps": [
+    {
+     "title": "Objects",
+     "body": "1 base HTML file (the text) + 5 images = 6 objects; the cache is empty so all must be fetched."
+    },
+    {
+     "title": "Connections",
+     "body": "Each object needs its own TCP connection in non-persistent mode: **6** connections."
+    }
+   ],
+   "answer": {
+    "value": "6",
+    "number": 6,
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Answering 1 (that is persistent HTTP) or counting the text separately from the HTML file."
+   ],
+   "verification": "Persistent mode would need 1; non-persistent needs one per object = 6."
+  },
+  "cse-2020-cs-26": {
+   "approach": "Use Rice's theorem for non-trivial properties of L(M); a question about a bounded number of steps is decidable by direct simulation.",
+   "concepts": [
+    "Rice's theorem",
+    "Decidability",
+    "Bounded simulation"
+   ],
+   "steps": [
+    {
+     "title": "L1 and L4",
+     "body": "$L(M)=\\emptyset$ and $|L(M)|\\ge 21$ are non-trivial properties of the recognised language (some TMs have them, some don't), so by Rice's theorem both are undecidable."
+    },
+    {
+     "title": "Language L3",
+     "body": "'L(M) is not recursive' is also a non-trivial language property (true for a TM accepting the halting language, false for one accepting ∅), so it is undecidable."
+    },
+    {
+     "title": "Language L2",
+     "body": "Simulate M on w for exactly 100 steps and check whether the state is q; this always halts, so L2 is decidable. Undecidable: **L1, L3, L4**."
+    }
+   ],
+   "answer": {
+    "value": "L1, L3, and L4 only",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "L1, L3, L4 are non-trivial properties of L(M); only L2 is decidable."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Misses L4, which is undecidable by Rice's theorem."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Includes L2, which a 100-step simulation decides."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Includes L2 and omits L1."
+    }
+   ],
+   "pitfalls": [
+    "Thinking L4 is decidable because it is semi-decidable."
+   ],
+   "verification": "Each of L1, L3, L4 depends only on L(M) and has a yes and a no instance; L2 has a finite-time decider."
+  },
+  "cse-2020-cs-27": {
+   "approach": "Test each identity with standard theorems or a 2×2 counterexample.",
+   "concepts": [
+    "Rank",
+    "Determinant",
+    "Subadditivity of rank"
+   ],
+   "steps": [
+    {
+     "title": "I is false",
+     "body": "$A = B = I_2$: $\\text{rank}(AB) = 2$ but $\\text{rank}(A)\\,\\text{rank}(B) = 4$. In general $\\text{rank}(AB) \\le \\min(\\text{rank} A, \\text{rank} B)$."
+    },
+    {
+     "title": "II and III are true",
+     "body": "$\\det(AB) = \\det A \\det B$ is the multiplicative property. The column space of $A+B$ lies in $\\text{col}(A) + \\text{col}(B)$, so $\\text{rank}(A+B) \\le \\text{rank}A + \\text{rank}B$."
+    },
+    {
+     "title": "IV is false",
+     "body": "$A = B = I_2$: $\\det(2I_2) = 4 > 1 + 1 = 2$. So only **II and III** hold."
+    }
+   ],
+   "answer": {
+    "value": "II and III only",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "I fails for A = B = I₂ (2 ≠ 4)."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Both I and IV fail for A = B = I₂."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "det is multiplicative and rank is subadditive."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "IV fails: det(2I₂) = 4 > 2."
+    }
+   ],
+   "verification": "A = B = I₂ refutes I and IV; II and III are standard theorems."
+  },
+  "cse-2020-cs-28": {
+   "approach": "Read the circuit as z = a + b̄c, then list the minterms: all four with a = 1 plus a = 0, b = 0, c = 1.",
+   "concepts": [
+    "Logic gates",
+    "Sum of minterms"
+   ],
+   "steps": [
+    {
+     "title": "Expression",
+     "body": "NOT gives $\\bar b$; AND gives $\\bar b c$; OR with $a$ gives $$z = a + \\bar b c$$"
+    },
+    {
+     "title": "Minterms",
+     "body": "$a = 1$: minterms $4,5,6,7$. $\\bar b c$ with $a=0$: $abc = 001 = 1$. So $z = \\sum(1,4,5,6,7)$.",
+     "scene": {
+      "hl": [
+       {
+        "r": 1,
+        "tone": "success"
+       },
+       {
+        "r": 4,
+        "tone": "success"
+       },
+       {
+        "r": 5,
+        "tone": "success"
+       },
+       {
+        "r": 6,
+        "tone": "success"
+       },
+       {
+        "r": 7,
+        "tone": "success"
+       }
+      ],
+      "caption": "z = 1 for minterms 1, 4, 5, 6, 7"
+     }
+    }
+   ],
+   "answer": {
+    "value": "z = Σ(1,4,5,6,7)",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Contains 0 (z = 0 when a = b = c = 0) and misses 4, 5, 6."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Exactly the rows where a = 1 or (b = 0 and c = 1)."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Contains 2 (abc = 010 gives z = 0) and misses 1."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Contains 2 and 3, both 0, and misses 1, 4, 6, 7."
+    }
+   ],
+   "verification": "Truth table of z = a + b̄c checked row by row.",
+   "animation": {
+    "kind": "table",
+    "title": "Truth table",
+    "cols": [
+     "m",
+     "a",
+     "b",
+     "c",
+     "b̄c",
+     "z"
+    ],
+    "rows": [
+     [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      1,
+      0,
+      0,
+      1,
+      1,
+      1
+     ],
+     [
+      2,
+      0,
+      1,
+      0,
+      0,
+      0
+     ],
+     [
+      3,
+      0,
+      1,
+      1,
+      0,
+      0
+     ],
+     [
+      4,
+      1,
+      0,
+      0,
+      0,
+      1
+     ],
+     [
+      5,
+      1,
+      0,
+      1,
+      1,
+      1
+     ],
+     [
+      6,
+      1,
+      1,
+      0,
+      0,
+      1
+     ],
+     [
+      7,
+      1,
+      1,
+      1,
+      0,
+      1
+     ]
+    ],
+    "mono": true
+   }
+  },
+  "cse-2020-cs-29": {
+   "approach": "Decode both IEEE-754 values, divide, and re-encode the quotient.",
+   "concepts": [
+    "IEEE-754 single precision",
+    "Bias 127"
+   ],
+   "steps": [
+    {
+     "title": "Decode R1",
+     "body": "0x42200000 = 0 10000100 0100…0: sign +, exponent $132 - 127 = 5$, significand $1.01_2 = 1.25$. $$R1 = 1.25\\times 2^5 = 40$$"
+    },
+    {
+     "title": "Decode R2",
+     "body": "0xC1200000 = 1 10000010 0100…0: sign −, exponent $130-127 = 3$, significand $1.25$. $$R2 = -1.25\\times 2^3 = -10$$"
+    },
+    {
+     "title": "Divide and encode",
+     "body": "$R3 = 40 / (-10) = -4 = -1.0\\times 2^2$. Sign 1, exponent $2 + 127 = 129 = 10000001_2$, fraction 0: $$1\\,10000001\\,000\\ldots0 = \\texttt{0xC0800000}$$"
+    }
+   ],
+   "answer": {
+    "value": "0xC0800000",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "0x40800000 is +4; the quotient is negative."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Encodes −1.0 × 2²."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "0x83400000 has exponent field 6 → a tiny value near 10⁻³⁷."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "0xC8500000 has exponent field 144 → about −2.1 × 10⁵."
+    }
+   ],
+   "shortcut": "Signs differ → result negative; exponents subtract 5 − 3 = 2 and significands 1.25/1.25 = 1, so −1.0 × 2² directly.",
+   "verification": "Re-decode 0xC0800000: sign −, exponent 129 − 127 = 2, significand 1 → −4 = 40/−10."
+  },
+  "cse-2020-cs-30": {
+   "approach": "Find the set-index field: 256 B blocks give an 8-bit offset, 64 KB / (256 B × 4) = 64 sets give 6 index bits, so set = (address >> 8) mod 64.",
+   "concepts": [
+    "Set-associative mapping",
+    "Address fields"
+   ],
+   "steps": [
+    {
+     "title": "Field widths",
+     "body": "16 MB → 24-bit address. Offset $= \\log_2 256 = 8$ bits. Blocks $= 64\\text{ KB}/256 = 256$; sets $= 256/4 = 64$ → 6 index bits. Tag $= 24 - 6 - 8 = 10$ bits."
+    },
+    {
+     "title": "Set of each address",
+     "body": "Drop the last two hex digits (offset) and take the low 6 bits of the next byte: 0x**C8** → $0xC8 \\bmod 64 = 8$; 0x**68** → 40; 0x**28** → 40; 0x**48** → 8.",
+     "scene": {
+      "reveal": 16,
+      "caption": "set = (address >> 8) mod 64"
+     }
+    },
+    {
+     "title": "Compare",
+     "body": "A1 and A4 → set 8; A2 and A3 → set 40. So **A2 and A3 map to the same set**.",
+     "scene": {
+      "reveal": 16,
+      "hl": [
+       {
+        "r": 1,
+        "tone": "success"
+       },
+       {
+        "r": 2,
+        "tone": "success"
+       },
+       {
+        "r": 0,
+        "tone": "info"
+       },
+       {
+        "r": 3,
+        "tone": "info"
+       }
+      ],
+      "caption": "A2, A3 → set 40; A1, A4 → set 8"
+     }
+    }
+   ],
+   "answer": {
+    "value": "A2 and A3 are mapped to the same cache set.",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "A1 and A4 both map to set 8."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "A2 and A3 both map to set 40."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "A3 → set 40, A4 → set 8."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "A1 → set 8, A3 → set 40."
+    }
+   ],
+   "pitfalls": [
+    "Using 8 index bits (direct-mapped count of 256 lines) instead of 6 for 64 sets."
+   ],
+   "verification": "Binary check: 0xC8 = 11001000 → low 6 bits 001000 = 8; 0x68 = 01101000 → 101000 = 40.",
+   "animation": {
+    "kind": "table",
+    "title": "Set index",
+    "cols": [
+     "Address",
+     "addr >> 8",
+     "index byte",
+     "set (mod 64)"
+    ],
+    "rows": [
+     [
+      "A1 0x42C8A4",
+      "0x42C8",
+      "0xC8",
+      8
+     ],
+     [
+      "A2 0x546888",
+      "0x5468",
+      "0x68",
+      40
+     ],
+     [
+      "A3 0x6A289C",
+      "0x6A28",
+      "0x28",
+      40
+     ],
+     [
+      "A4 0x5E4880",
+      "0x5E48",
+      "0x48",
+      8
+     ]
+    ],
+    "reveal": 4,
+    "mono": true
+   }
+  },
+  "cse-2020-cs-31": {
+   "approach": "By the cycle property, T stays an MST iff the new edge is not lighter than the heaviest edge on the u–v path in T; that path is found by one DFS/BFS of the tree, which has |V| − 1 edges.",
+   "concepts": [
+    "Cycle property of MST",
+    "Tree traversal"
+   ],
+   "steps": [
+    {
+     "title": "Criterion",
+     "body": "Adding (u, v) to T creates exactly one cycle: the u–v tree path plus the new edge. T remains an MST iff w(u, v) ≥ the maximum weight on that path."
+    },
+    {
+     "title": "Cost",
+     "body": "DFS/BFS from $u$ in $T$ (adjacency lists, $|V|-1$ edges) finds the path and its maximum edge in $O(|V|)$; in the worst case the path has $\\Theta(|V|)$ edges, so the time is $\\Theta(|V|)$."
+    }
+   ],
+   "answer": {
+    "value": "Θ(|V|)",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Only T (|V| − 1 edges) must be scanned, not all of E."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "No need to recompute anything per edge."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "That is the cost of recomputing an MST from scratch."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "One traversal of the tree path finds the maximum edge."
+    }
+   ],
+   "pitfalls": [
+    "Rerunning Kruskal/Prim instead of using the cycle property."
+   ],
+   "verification": "A path-shaped T with u, v at the ends forces Θ(|V|) work, and O(|V|) suffices."
+  },
+  "cse-2020-cs-32": {
+   "approach": "Shrink x in L1 to its last symbol to see L1 is a simple regular pattern; L2 is the classic CFL 'two halves differ at some position'.",
+   "concepts": [
+    "Regular languages",
+    "Context-free languages",
+    "Closure tricks"
+   ],
+   "steps": [
+    {
+     "title": "L1 is regular",
+     "body": "If $x = x'c$ ($c$ a symbol), then $wxyx = (wx')\\,c\\,(yx')\\,c$ with $wx'$ and $yx'$ non-empty. Conversely $x = c$ is allowed. So $$L_1 = (0+1)^+\\,0\\,(0+1)^+\\,0 \\;+\\; (0+1)^+\\,1\\,(0+1)^+\\,1,$$ which is regular."
+    },
+    {
+     "title": "L2 is context-free",
+     "body": "$|x|=|y|=n$ and $x\\ne y$ means $x_i \\ne y_i$ for some $i$. Then $xy = u\\,c\\,v\\,u'\\,d\\,v'$ with $|u|=|u'|=i-1$, $|v|=|v'|=n-i$, $c\\ne d$. Re-split it as $(u\\,c\\,s)(t\\,d\\,v')$ where $st = vu'$, $|s| = |u|$, $|t| = |v'|$: two odd-length blocks whose middle symbols differ. Conversely, any such pair has even length and differing symbols at matching positions of the two halves. Hence $$S\\to AB\\mid BA,\\; A\\to XAX\\mid a,\\; B\\to XBX\\mid b,\\; X\\to a\\mid b$$ generates $L_2$, so it is context-free."
+    },
+    {
+     "title": "Conclusion",
+     "body": "L1 regular, L2 context-free: **option A**."
+    }
+   ],
+   "answer": {
+    "value": "L1 is regular and L2 is context-free.",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "L1 reduces to a regular pattern; L2 has the grammar S → AB | BA."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "L1 is regular, so 'not regular' is wrong."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Both are context-free (L1 is even regular)."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "L2 is context-free, unlike {ww}."
+    }
+   ],
+   "pitfalls": [
+    "Assuming the repeated x forces a copy language; only its last symbol matters.",
+    "Confusing L2 with {ww}, which is not CFL."
+   ],
+   "verification": "1011 ∈ L1 (w=1, x=1, y=0) matches the regex; for L2, abba (x = ab, y = ba) splits as (a)(bba) with middles a and b, so S → AB derives it."
+  },
+  "cse-2020-cs-33": {
+   "approach": "In an L-attributed SDD, an inherited attribute of a child may depend only on the parent's inherited attributes and attributes of children to its left.",
+   "concepts": [
+    "L-attributed definitions",
+    "Inherited and synthesized attributes"
+   ],
+   "steps": [
+    {
+     "title": "Rule 1 (A → PQ)",
+     "body": "P.i uses A.i (parent inherited) ✓. Q.i uses P.i (left sibling) and A.i ✓. A.s is synthesized ✓. Rule 1 is L-attributed."
+    },
+    {
+     "title": "Rule 2 (A → XY)",
+     "body": "X.i = A.i + Y.s uses Y, which is to the **right** of X ✗. So Rule 2 is not L-attributed (Y.i = X.s + A.i alone would be fine)."
+    },
+    {
+     "title": "Conclusion",
+     "body": "Only Rule 1 is L-attributed."
+    }
+   ],
+   "answer": {
+    "value": "Only Rule 1 is L-attributed.",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Rule 2 has X.i depending on its right sibling Y."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Rule 1 uses only parent and left-sibling attributes."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Rule 1 is L-attributed; Rule 2 is not."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Rule 1 satisfies every L-attributed condition."
+    }
+   ],
+   "verification": "Left-to-right evaluation order: Rule 1 can evaluate P.i, P.s, Q.i, Q.s, A.s in order; Rule 2 would need Y.s before X.i."
+  },
+  "cse-2020-cs-34": {
+   "approach": "This is a barrier: a protects count, b stays 0 until the n-th arrival signals it, and wait(b); signal(b) is a turnstile that lets every waiter through one after another.",
+   "concepts": [
+    "Semaphores",
+    "Barrier synchronisation",
+    "Turnstile"
+   ],
+   "steps": [
+    {
+     "title": "Counting arrivals",
+     "body": "wait(a)…signal(a) makes count = count + 1 mutually exclusive. The first n − 1 processes find count < n and block on wait(b) because b = 0."
+    },
+    {
+     "title": "Release",
+     "body": "The n-th process sets count = n and does signal(b). One waiter passes wait(b) and immediately signal(b)s, releasing the next: all n pass, and only after all n have finished CODE SECTION P."
+    },
+    {
+     "title": "Check the options",
+     "body": "So no process enters CODE SECTION Q before every process has finished P; once released, all n may be in Q together, and P itself is not protected."
+    }
+   ],
+   "answer": {
+    "value": "It ensures that no process executes CODE SECTION Q before every process has finished CODE SECTION P.",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "b becomes positive only after the n-th increment, i.e. after all have finished P."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "The turnstile releases all n processes; nothing limits Q to two."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "CODE SECTION P runs before wait(a), so it is not mutually exclusive."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Nothing restricts entry to P; all n can be in P together."
+    }
+   ],
+   "pitfalls": [
+    "Thinking signal(b) by the n-th process releases only one waiter (the wait(b); signal(b) pair passes the baton)."
+   ],
+   "verification": "Traced n = 3: P1, P2 block on b; P3 signals b; P1 passes and signals; P2 passes and signals; P3 passes."
+  }
+ }
+}
