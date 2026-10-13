@@ -1,0 +1,1268 @@
+{
+  "paper": "cse-2024-2",
+  "version": 2,
+  "solutions": {
+    "cse-2024-2-ga-1": {
+      "approach": "Rank the words by intensity. The blank must be a word that means \"disturbed\" more strongly than *bothered* but less strongly than *daunted*; only one option is even about being disturbed.",
+      "concepts": [
+        "Word analogy",
+        "Degree of intensity",
+        "Homophones"
+      ],
+      "steps": [
+        {
+          "title": "Read the pattern",
+          "body": "walk → jog → sprint is the same action (moving on foot) at rising intensity. So the blank must be a state of being upset that sits **between** *bothered* (mildly troubled) and *daunted* (so unsettled that one loses courage)."
+        },
+        {
+          "title": "Eliminate words that are not feelings",
+          "body": "- *phased* — done in stages (it only **sounds** like the right word).\n- *phrased* — put into words.\n- *fused* — joined or melted together.\n\nNone of these describes a state of mind, so none can sit on a bothered–daunted scale."
+        },
+        {
+          "title": "Place the remaining word",
+          "body": "**fazed** means disturbed or disconcerted — clearly more than *bothered*, but short of *daunted* (intimidated, disheartened). So bothered → **fazed** → daunted."
+        }
+      ],
+      "answer": {
+        "value": "**fazed** — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "\"Phased\" (carried out in stages) sounds exactly like \"fazed\" but has nothing to do with being disturbed."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "\"Phrased\" means expressed in words — unrelated to emotional intensity."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "\"Fazed\" = disconcerted; it is a stronger form of \"bothered\" and a milder form of \"daunted\", completing the scale."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "\"Fused\" means joined or melted together — unrelated."
+        }
+      ],
+      "shortcut": "Eliminate every option that is not an emotion: only \"fazed\" is left.",
+      "pitfalls": [
+        "Choosing \"phased\" because it sounds like the right word — GATE often tests the homophone pair phase/faze."
+      ],
+      "verification": "Read the analogy aloud: \"bothered → fazed → daunted\" mirrors \"walk → jog → sprint\" — same idea, rising intensity."
+    },
+    "cse-2024-2-ga-2": {
+      "approach": "Each wizard independently tries every ordering of the 4 distinct elements, so his number of attempts is the number of permutations of 4 objects, $4!$.",
+      "concepts": [
+        "Permutations",
+        "Factorial"
+      ],
+      "steps": [
+        {
+          "title": "What is one attempt?",
+          "body": "Every attempt uses **all four** elements; only their order changes. So an attempt is a permutation of 4 distinct objects, and trying \"all possible orders\" means trying every permutation once."
+        },
+        {
+          "title": "Count the permutations",
+          "body": "The first position can take 4 elements, the next 3, then 2, then 1:\n\n$$4! = 4 \\times 3 \\times 2 \\times 1 = 24$$"
+        },
+        {
+          "title": "Apply \"independently\"",
+          "body": "The wizards work independently, so **each** wizard makes all $24$ attempts on his own. The question asks per wizard, so the answer is **24** (the pair together make $2 \\times 24 = 48$, which is not what is asked)."
+        }
+      ],
+      "answer": {
+        "value": "**24** attempts each — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$4! = 24$ orderings, and each wizard tries all of them."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$48 = 2 \\times 24$ is the total for both wizards together, not per wizard."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$16 = 4^2$ (or $2^4$) does not count orderings of four distinct elements."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$12 = 4 \\times 3$ counts ordered pairs only, or $4!/2$ — neither is the number of full orderings."
+        }
+      ],
+      "pitfalls": [
+        "Doubling for two wizards — \"independently\" means each one does the full set of 24.",
+        "Using combinations: all four elements are always used, so only the order varies."
+      ],
+      "verification": "Fix water first: the other three can be arranged in $3! = 6$ ways; each of the 4 elements can be first, so $4 \\times 6 = 24$."
+    },
+    "cse-2024-2-ga-3": {
+      "approach": "Use $n(C \\cup O) = n(C) + n(O) - n(C \\cap O)$ with $n(C \\cup O) = 10000 - 1500$ and $n(C) = \\tfrac14 n(O)$: one linear equation in one unknown.",
+      "concepts": [
+        "Sets and Venn diagrams",
+        "Inclusion–exclusion"
+      ],
+      "given": "| Quantity | Value |\n|---|---|\n| Total students | 10,000 |\n| Like neither | 1,500 |\n| Like both ($C \\cap O$) | 500 |\n| $n(C)$ | $\\tfrac14\\, n(O)$ |",
+      "steps": [
+        {
+          "title": "Students who like at least one",
+          "body": "$$n(C \\cup O) = 10000 - 1500 = 8500$$"
+        },
+        {
+          "title": "Inclusion–exclusion",
+          "body": "Let $n(O) = 4k$, so $n(C) = k$.\n\n$$k + 4k - 500 = 8500 \\;\\Rightarrow\\; 5k = 9000 \\;\\Rightarrow\\; k = 1800$$\n\nSo $n(C) = 1800$ and $n(O) = 7200$."
+        },
+        {
+          "title": "Check with the Venn regions",
+          "body": "Core only $= 1800 - 500 = 1300$, both $= 500$, other only $= 7200 - 500 = 6700$, neither $= 1500$.\n\n$$1300 + 500 + 6700 + 1500 = 10000 \\;\\checkmark$$"
+        }
+      ],
+      "answer": {
+        "value": "**1,800** students like their core branch — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "From $5k - 500 = 8500$: $k = 1800$, and the Venn regions add up to 10,000."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "If $n(C) = 3500$ then $n(O) = 14000$, more than the whole college."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$1600 = (8500 - 500)/5$ — subtracting the overlap instead of adding it back."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$1500$ is the number who like neither branch, not core."
+        }
+      ],
+      "pitfalls": [
+        "Writing $n(C) + n(O) = 8500$ and forgetting that the 500 in both are counted twice."
+      ],
+      "verification": "Ratio check: $1800 / 7200 = 1/4$ ✓; union $1800 + 7200 - 500 = 8500$ ✓.",
+      "animation": {
+        "kind": "venn",
+        "title": "Students by branch preference",
+        "sets": [
+          {
+            "id": "A",
+            "label": "Core (1800)"
+          },
+          {
+            "id": "B",
+            "label": "Other (7200)"
+          }
+        ],
+        "regions": {
+          "A": 1300,
+          "AB": 500,
+          "B": 6700,
+          "-": 1500
+        },
+        "hl": [
+          {
+            "region": "A"
+          },
+          {
+            "region": "AB"
+          }
+        ],
+        "caption": "Core = 1300 + 500 = 1800"
+      }
+    },
+    "cse-2024-2-ga-4": {
+      "approach": "Undo the logarithms: the condition says the arithmetic mean of $x, y$ equals their geometric mean, which forces $x = y$; then $\\frac{x}{y} + \\frac{y}{x} = 1 + 1$.",
+      "concepts": [
+        "Logarithm laws",
+        "AM–GM equality"
+      ],
+      "steps": [
+        {
+          "title": "Rewrite the right side",
+          "body": "$$\\tfrac12[\\ln x + \\ln y] = \\tfrac12 \\ln(xy) = \\ln\\sqrt{xy}$$\n\nSo $\\ln\\left(\\frac{x+y}{2}\\right) = \\ln\\sqrt{xy}$, and since $\\ln$ is one-to-one,\n\n$$\\frac{x+y}{2} = \\sqrt{xy}$$"
+        },
+        {
+          "title": "Equality in AM–GM forces $x = y$",
+          "body": "$$x + y - 2\\sqrt{xy} = 0 \\;\\Rightarrow\\; \\left(\\sqrt{x} - \\sqrt{y}\\right)^2 = 0 \\;\\Rightarrow\\; x = y$$"
+        },
+        {
+          "title": "Evaluate",
+          "body": "$$\\frac{x}{y} + \\frac{y}{x} = 1 + 1 = 2$$"
+        }
+      ],
+      "answer": {
+        "value": "$\\frac{x}{y} + \\frac{y}{x} =$ **2** — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$1$ is just $\\frac{x}{y}$ alone; the sum has two terms, each equal to 1."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$\\frac12$ has no derivation here; for positive $x, y$ the sum is always $\\ge 2$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "With $x = y$ each ratio is 1, so the sum is 2."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$4 = \\frac{(x+y)^2}{xy} = \\frac{x}{y} + \\frac{y}{x} + 2$ — squaring the mean condition and forgetting to subtract 2."
+        }
+      ],
+      "shortcut": "Plug $x = y = 1$: $\\ln 1 = \\tfrac12(0 + 0)$ holds, and $\\frac11 + \\frac11 = 2$.",
+      "pitfalls": [
+        "Squaring $(x+y)/2 = \\sqrt{xy}$ to $(x+y)^2 = 4xy$ and reading off $\\frac{(x+y)^2}{xy} = 4$ as the answer."
+      ],
+      "verification": "Alternative: $(x+y)^2 = 4xy \\Rightarrow x^2 + y^2 = 2xy \\Rightarrow \\frac{x^2 + y^2}{xy} = \\frac{x}{y} + \\frac{y}{x} = 2$."
+    },
+    "cse-2024-2-ga-5": {
+      "approach": "Take successive differences: 3, 5, ?, ?, 11 suggests consecutive odd numbers 3, 5, 7, 9, 11, which fixes $x$.",
+      "concepts": [
+        "Number series",
+        "Difference method"
+      ],
+      "steps": [
+        {
+          "title": "Differences of the known terms",
+          "body": "$9 - 6 = 3$, $14 - 9 = 5$, $41 - 30 = 11$. The differences are odd numbers increasing by 2, so the full list should be $3, 5, 7, 9, 11$."
+        },
+        {
+          "title": "Fill in $x$",
+          "body": "$$x = 14 + 7 = 21, \\qquad 21 + 9 = 30 \\;\\checkmark$$"
+        },
+        {
+          "title": "Closed form",
+          "body": "Equivalently the $n$-th term is $n^2 + 5$: $1+5 = 6,\\ 4+5 = 9,\\ 9+5 = 14,\\ 16+5 = 21,\\ 25+5 = 30,\\ 36+5 = 41$."
+        }
+      ],
+      "answer": {
+        "value": "$x =$ **21** — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$x = 25$ gives differences $3, 5, 11, 5, 11$ — no pattern."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$x = 21$ gives differences $3, 5, 7, 9, 11$ (terms $n^2 + 5$)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$x = 18$ gives differences $3, 5, 4, 12, 11$ — no pattern."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$x = 20$ gives differences $3, 5, 6, 10, 11$ — no pattern."
+        }
+      ],
+      "shortcut": "Spot $6, 9, 14 = 1+5, 4+5, 9+5$; the fourth term is $16 + 5 = 21$.",
+      "verification": "Both checks agree: $x$ must satisfy $14 + 7$ and $30 - 9$, and both give 21.",
+      "animation": {
+        "kind": "array",
+        "title": "Sequence and its differences",
+        "label": "term",
+        "cells": [
+          6,
+          9,
+          14,
+          {
+            "v": 21,
+            "tone": "success"
+          },
+          30,
+          41
+        ],
+        "caption": "differences 3, 5, 7, 9, 11"
+      }
+    },
+    "cse-2024-2-ga-6": {
+      "approach": "Use the linking words: one sentence introduces the event (no back-reference), \"This … event\" and \"this massive edifice\" must follow what they refer to, and \"Thus\" draws the conclusion at the end.",
+      "concepts": [
+        "Para-jumbles",
+        "Referential links",
+        "Connectives"
+      ],
+      "steps": [
+        {
+          "title": "Opener",
+          "body": "**S** tells a self-contained story start: *Many millennia ago*, a chunk of the Antarctic Plate collided with the Eurasian Plate. P (*This fortuitous geological event*), R (*this massive edifice*) and Q (*Thus*) all point back to something earlier, so none can open."
+        },
+        {
+          "title": "Follow the references",
+          "body": "*This fortuitous geological event* in **P** is the collision in S, and P produces the rocks rising 4 km — the mountains. *This massive edifice* in **R** is those raised rocks, so R follows P: **S → P → R**."
+        },
+        {
+          "title": "Conclusion",
+          "body": "**Q** begins with *Thus* and generalises — geophysicists see the Himalayas as an active event — so it closes the passage: **SPRQ**."
+        }
+      ],
+      "answer": {
+        "value": "**SPRQ** — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Opens with Q's \"Thus\", a conclusion with nothing before it."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Also opens with \"Thus\" (Q)."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Collision → energy raises the rocks → cooling of that edifice → conclusion; every reference has an antecedent."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Puts R (\"this massive edifice\") before P, i.e. before the rocks have risen and any edifice exists."
+        }
+      ],
+      "pitfalls": [
+        "Treating Q as an introduction because it names the Himalayas — \"Thus\" marks a conclusion."
+      ],
+      "verification": "Read SPRQ through: collision → uplift → cooling absorbs CO₂ → \"Thus\" the Himalayas are an active event. It flows without gaps."
+    },
+    "cse-2024-2-ga-7": {
+      "approach": "Same selling price with equal profit and loss of $x\\%$ always gives a net **loss** of $\\frac{x^2}{100}\\%$; derive it by taking a convenient selling price.",
+      "concepts": [
+        "Profit and loss",
+        "Cost price vs selling price"
+      ],
+      "steps": [
+        {
+          "title": "Find each cost price",
+          "body": "Let each item sell for $S$.\n\nProfit 10%: $CP_1 = \\dfrac{S}{1.1}$. Loss 10%: $CP_2 = \\dfrac{S}{0.9}$."
+        },
+        {
+          "title": "Total cost vs total selling price",
+          "body": "$$CP_1 + CP_2 = S\\left(\\frac{1}{1.1} + \\frac{1}{0.9}\\right) = S \\cdot \\frac{0.9 + 1.1}{0.99} = \\frac{2S}{0.99}$$\n\nTotal SP $= 2S$, which is less than total CP, so it is a loss."
+        },
+        {
+          "title": "Loss percentage",
+          "body": "$$\\text{Loss\\%} = \\frac{\\frac{2S}{0.99} - 2S}{\\frac{2S}{0.99}} \\times 100 = (1 - 0.99) \\times 100 = 1\\%$$"
+        }
+      ],
+      "answer": {
+        "value": "**1% loss** — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "There is no profit: the loss-making item cost more ($S/0.9$) than the profit-making item gained."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Wrong sign and wrong size."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Net loss $= \\frac{10^2}{100}\\% = 1\\%$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "With SP = 99 each, the loss is 2 in absolute terms; as a percentage of the total cost 200 it is only 1%, not 2%."
+        }
+      ],
+      "shortcut": "Equal SP, $x\\%$ gain on one and $x\\%$ loss on the other ⇒ loss $= \\frac{x^2}{100}\\% = \\frac{100}{100} = 1\\%$.",
+      "pitfalls": [
+        "Assuming +10% and −10% cancel: the percentages are on different cost prices."
+      ],
+      "verification": "Take $S = 99$: $CP_1 = 90$, $CP_2 = 110$, total CP $= 200$, total SP $= 198$, loss $= \\frac{2}{200} = 1\\%$."
+    },
+    "cse-2024-2-ga-8": {
+      "approach": "Add the renewable shares (Hydro + Solar + Wind) for each year; since the total generation is unchanged, the percentage increase in share is the relative change of these sums.",
+      "concepts": [
+        "Data interpretation (pie charts)",
+        "Percentage change"
+      ],
+      "given": "| Source | 2007 | 2023 |\n|---|---|---|\n| Hydro | 30% | 35% |\n| Solar | 5% | 20% |\n| Wind | 5% | 10% |\n| **Renewables** | **40%** | **65%** |",
+      "steps": [
+        {
+          "title": "Renewable share each year",
+          "body": "2007: $30 + 5 + 5 = 40\\%$.\n\n2023: $35 + 20 + 10 = 65\\%$."
+        },
+        {
+          "title": "Why the shares can be compared directly",
+          "body": "Renewable output $=$ share $\\times$ total $T$. The total is the same in both years, so the ratio of outputs equals the ratio of shares: $\\frac{0.65T}{0.40T} = \\frac{65}{40}$."
+        },
+        {
+          "title": "Percentage increase",
+          "body": "The total is the same in both years, so compare the shares directly:\n\n$$\\frac{65 - 40}{40} \\times 100 = \\frac{25}{40} \\times 100 = 62.5\\%$$"
+        }
+      ],
+      "answer": {
+        "value": "**62.5%** — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$25\\%$ is the rise in percentage **points** ($65 - 40$), not the percentage increase."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$50\\%$ has no basis in the data (e.g. a guess at \"a bit less than double\" of some single source)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$77.5\\%$ does not follow from the chart values."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "$\\frac{25}{40} = 0.625$, i.e. a 62.5% increase."
+        }
+      ],
+      "pitfalls": [
+        "Confusing percentage points with percent: the share rose by 25 points, which is 62.5% of the old 40%.",
+        "Including Gas as renewable."
+      ],
+      "verification": "Take total generation 100 units: renewables go from 40 to 65 units; $40 \\times 1.625 = 65$ ✓.",
+      "animation": {
+        "kind": "bars",
+        "title": "Renewable share of generation",
+        "bars": [
+          {
+            "label": "2007",
+            "value": 40,
+            "display": "40%"
+          },
+          {
+            "label": "2023",
+            "value": 65,
+            "display": "65%",
+            "tone": "success"
+          }
+        ],
+        "caption": "(65 − 40) / 40 = 62.5% increase"
+      }
+    },
+    "cse-2024-2-ga-9": {
+      "approach": "Three mutually perpendicular plane cuts through the centre give $2 \\times 2 \\times 2 = 8$ equal cubes; two straight cuts can never make more than 4 pieces, so 3 is the minimum.",
+      "concepts": [
+        "Spatial reasoning",
+        "Plane cuts of a solid"
+      ],
+      "steps": [
+        {
+          "title": "Three cuts suffice",
+          "body": "Cut once through the centre parallel to the front face, once parallel to the side face, and once parallel to the top face. Each cut halves the cube along one axis, giving $2 \\times 2 \\times 2 = 8$ identical small cubes, each of side $\\frac{a}{2}$."
+        },
+        {
+          "title": "Two cuts are not enough",
+          "body": "One plane cut makes at most 2 pieces; a second plane can cross each existing piece at most once, so it can at most double the count: $2 \\times 2 = 4 < 8$. Hence at least 3 cuts are needed."
+        },
+        {
+          "title": "Conclude",
+          "body": "Three cuts are enough and two are not, so the minimum number of straight, through cuts is **3**."
+        }
+      ],
+      "answer": {
+        "value": "**3** cuts — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Three perpendicular central cuts give 8 congruent cubes, and 2 cuts give at most 4 pieces."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "4 cuts work too but are not the minimum."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "7 parallel cuts give 8 equal slabs — valid, but far from minimal."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "8 is the number of pieces, not the number of cuts."
+        }
+      ],
+      "pitfalls": [
+        "Thinking only of parallel slices (7 cuts for 8 pieces)."
+      ],
+      "verification": "Each straight cut can at most double the number of pieces: $1 \\to 2 \\to 4 \\to 8$, so 3 cuts is both achievable and necessary."
+    },
+    "cse-2024-2-ga-10": {
+      "approach": "Each last-row cell has only row 3 and its row-4 neighbours around it, and row 4 has no crosses; count, for each, its neighbours that are not X.",
+      "concepts": [
+        "Grid puzzles",
+        "Neighbour counting"
+      ],
+      "given": "| | C1 | C2 | C3 | C4 |\n|---|---|---|---|---|\n| R1 | 1 | X | 4 | 3 |\n| R2 | X | 5 | 5 | 4 |\n| R3 | 3 | X | 6 | X |\n| R4 | ? | ? | ? | ? |",
+      "steps": [
+        {
+          "title": "R4C1",
+          "body": "Neighbours: R3C1 (3), R3C2 (**X**), R4C2. Non-X: R3C1 and R4C2 → **2**.",
+          "scene": {
+            "rows": [
+              [
+                "1",
+                "X",
+                "4",
+                "3"
+              ],
+              [
+                "X",
+                "5",
+                "5",
+                "4"
+              ],
+              [
+                "3",
+                "X",
+                "6",
+                "X"
+              ],
+              [
+                "2",
+                "?",
+                "?",
+                "?"
+              ]
+            ],
+            "hl": [
+              {
+                "r": 3,
+                "c": 0,
+                "tone": "accent"
+              },
+              {
+                "r": 2,
+                "c": 0,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "c": 1,
+                "tone": "error"
+              },
+              {
+                "r": 3,
+                "c": 1,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "R4C2",
+          "body": "Neighbours: R3C1 (3), R3C2 (**X**), R3C3 (6), R4C1, R4C3. Non-X: 4 → **4**.",
+          "scene": {
+            "rows": [
+              [
+                "1",
+                "X",
+                "4",
+                "3"
+              ],
+              [
+                "X",
+                "5",
+                "5",
+                "4"
+              ],
+              [
+                "3",
+                "X",
+                "6",
+                "X"
+              ],
+              [
+                "2",
+                "4",
+                "?",
+                "?"
+              ]
+            ],
+            "hl": [
+              {
+                "r": 3,
+                "c": 1,
+                "tone": "accent"
+              },
+              {
+                "r": 2,
+                "c": 0,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "c": 1,
+                "tone": "error"
+              },
+              {
+                "r": 2,
+                "c": 2,
+                "tone": "success"
+              },
+              {
+                "r": 3,
+                "c": 0,
+                "tone": "success"
+              },
+              {
+                "r": 3,
+                "c": 2,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "R4C3",
+          "body": "Neighbours: R3C2 (**X**), R3C3 (6), R3C4 (**X**), R4C2, R4C4. Non-X: 3 → **3**.",
+          "scene": {
+            "rows": [
+              [
+                "1",
+                "X",
+                "4",
+                "3"
+              ],
+              [
+                "X",
+                "5",
+                "5",
+                "4"
+              ],
+              [
+                "3",
+                "X",
+                "6",
+                "X"
+              ],
+              [
+                "2",
+                "4",
+                "3",
+                "?"
+              ]
+            ],
+            "hl": [
+              {
+                "r": 3,
+                "c": 2,
+                "tone": "accent"
+              },
+              {
+                "r": 2,
+                "c": 1,
+                "tone": "error"
+              },
+              {
+                "r": 2,
+                "c": 2,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "c": 3,
+                "tone": "error"
+              },
+              {
+                "r": 3,
+                "c": 1,
+                "tone": "success"
+              },
+              {
+                "r": 3,
+                "c": 3,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "R4C4",
+          "body": "Neighbours: R3C3 (6), R3C4 (**X**), R4C3. Non-X: 2 → **2**.",
+          "scene": {
+            "rows": [
+              [
+                "1",
+                "X",
+                "4",
+                "3"
+              ],
+              [
+                "X",
+                "5",
+                "5",
+                "4"
+              ],
+              [
+                "3",
+                "X",
+                "6",
+                "X"
+              ],
+              [
+                "2",
+                "4",
+                "3",
+                "2"
+              ]
+            ],
+            "hl": [
+              {
+                "r": 3,
+                "c": 3,
+                "tone": "accent"
+              },
+              {
+                "r": 2,
+                "c": 2,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "c": 3,
+                "tone": "error"
+              },
+              {
+                "r": 3,
+                "c": 2,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Add them",
+          "body": "$$2 + 4 + 3 + 2 = 11$$",
+          "scene": {
+            "hl": [
+              {
+                "r": 3,
+                "tone": "success"
+              }
+            ],
+            "caption": "Last row: 2, 4, 3, 2 → sum 11"
+          }
+        }
+      ],
+      "answer": {
+        "value": "Sum of the last row $= 2 + 4 + 3 + 2 =$ **11** — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Counts 2, 4, 3, 2 add to 11."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "10 drops one non-X neighbour, typically forgetting the row-4 neighbours of an end cell."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "12 misses one diagonal X (e.g. R3C2 seen from R4C1 or R4C3)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "9 forgets the horizontal neighbours in row 4 for two cells, or counts an extra X."
+        }
+      ],
+      "shortcut": "Neighbour counts of the last row are $3, 5, 5, 3$ (total 16). The X at R3C2 touches R4C1, R4C2, R4C3 (3 cells) and the X at R3C4 touches R4C3, R4C4 (2 cells): $16 - 3 - 2 = 11$.",
+      "pitfalls": [
+        "Forgetting that diagonal neighbours count.",
+        "Ignoring the neighbours in the last row itself (they are non-X)."
+      ],
+      "verification": "The rule reproduces every given number, e.g. R3C1 = 3 (R2C2, R4C1, R4C2) and R3C3 = 6 (R2C2, R2C3, R2C4, R4C2, R4C3, R4C4), so the reading of the rule is right; the shortcut also gives 11.",
+      "animation": {
+        "kind": "table",
+        "title": "4 × 4 array",
+        "cols": [
+          "C1",
+          "C2",
+          "C3",
+          "C4"
+        ],
+        "rowLabels": [
+          "R1",
+          "R2",
+          "R3",
+          "R4"
+        ],
+        "rows": [
+          [
+            "1",
+            "X",
+            "4",
+            "3"
+          ],
+          [
+            "X",
+            "5",
+            "5",
+            "4"
+          ],
+          [
+            "3",
+            "X",
+            "6",
+            "X"
+          ],
+          [
+            "?",
+            "?",
+            "?",
+            "?"
+          ]
+        ],
+        "mono": true,
+        "caption": "Green = non-X neighbour, red = X"
+      }
+    },
+    "cse-2024-2-cs-1": {
+      "approach": "With cycle stealing, DMA gets 1% of the 4 million cycles each second and moves 8 bytes in each stolen cycle; multiply and convert bytes to bits.",
+      "concepts": [
+        "DMA",
+        "Cycle stealing",
+        "Data transfer rate"
+      ],
+      "given": "| Quantity | Value |\n|---|---|\n| Clock | 4 MHz $= 4 \\times 10^6$ cycles/s |\n| Data per stolen cycle | 8 bytes |\n| Share of cycles for DMA | 1% |",
+      "steps": [
+        {
+          "title": "Cycles per second given to DMA",
+          "body": "$$0.01 \\times 4 \\times 10^6 = 4 \\times 10^4 \\text{ cycles/s}$$"
+        },
+        {
+          "title": "Bytes per second",
+          "body": "$$4 \\times 10^4 \\times 8 = 3.2 \\times 10^5 \\text{ bytes/s}$$",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Bits per second",
+          "body": "$$3.2 \\times 10^5 \\times 8 = 2.56 \\times 10^6 \\text{ bits/s} = 2{,}560{,}000$$\n\nIn the Indian digit grouping used by the options this is written **25,60,000**.",
+          "scene": {
+            "reveal": 3
+          }
+        }
+      ],
+      "answer": {
+        "value": "$2.56 \\times 10^6$ bps $=$ **25,60,000** — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "2,56,000 $= 2.56 \\times 10^5$ — ten times too small (a power-of-ten slip)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "3,200 applies the 1% twice and stays in bytes: $4 \\times 10^6 \\times 0.01 \\times 0.01 \\times 8$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "25,60,000 $= 2.56 \\times 10^6$ bits/s, matching the computation."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "32,000 is in bytes and ten times too small ($3.2 \\times 10^5$ is the correct byte rate)."
+        }
+      ],
+      "pitfalls": [
+        "Answering in bytes per second ($3.2 \\times 10^5$) when bits are asked.",
+        "Misreading Indian digit grouping: 25,60,000 is 2.56 million."
+      ],
+      "verification": "One-line check: $4 \\times 10^6 \\times 0.01 \\times 64 \\text{ bits} = 2.56 \\times 10^6$ bps.",
+      "animation": {
+        "kind": "equation",
+        "title": "DMA transfer rate",
+        "lines": [
+          {
+            "tex": "4\\times10^6 \\times 0.01 = 4\\times10^4\\ \\text{cycles/s}",
+            "note": "1% of cycles"
+          },
+          {
+            "tex": "4\\times10^4 \\times 8\\ \\text{B} = 3.2\\times10^5\\ \\text{B/s}",
+            "note": "8 bytes per cycle"
+          },
+          {
+            "tex": "3.2\\times10^5 \\times 8 = 2.56\\times10^6\\ \\text{bps}",
+            "note": "bytes → bits",
+            "tone": "success"
+          }
+        ],
+        "reveal": 1
+      }
+    },
+    "cse-2024-2-cs-2": {
+      "approach": "\"$X$ cannot happen when $Y$\" means \"if $Y$ then not $X$\". Here $Y = q$ (scores > 50%) and $X = p$ (fail grade can be given), so the statement is $q \\to \\neg p$.",
+      "concepts": [
+        "Propositional logic",
+        "Implication",
+        "Translating English to logic"
+      ],
+      "steps": [
+        {
+          "title": "Identify condition and consequence",
+          "body": "\"Fail grade cannot be given **when** student scores more than 50% marks.\"\n\n- Condition (\"when …\"): the student scores more than 50% → $q$.\n- Consequence: fail grade cannot be given → $\\neg p$.\n\nSo the statement is $q \\to \\neg p$."
+        },
+        {
+          "title": "Confirm with the forbidden case",
+          "body": "The statement is violated exactly when a student scores more than 50% **and** a fail grade can be given, i.e. $p = T, q = T$. The table row $p = T, q = T$ is the only row where $q \\to \\neg p$ is false; it is true everywhere else, as the statement should be.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "warning"
+              },
+              {
+                "c": 2,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Reject the other forms",
+          "body": "$q \\to p$, $p \\to q$ and $\\neg p \\to q$ are all **true** in the forbidden row $p = q = T$, so none of them forbids failing a student who scored above 50%.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "c": 2,
+                "tone": "success"
+              },
+              {
+                "r": 0,
+                "c": 3,
+                "tone": "error"
+              },
+              {
+                "r": 0,
+                "c": 4,
+                "tone": "error"
+              },
+              {
+                "r": 0,
+                "c": 5,
+                "tone": "error"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "$q \\to \\neg p$ — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "If the student scores above 50% ($q$), a fail grade cannot be given ($\\neg p$). Equivalent to $\\neg(p \\wedge q)$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$q \\to p$ says a high score means a fail grade **can** be given — the negation is lost."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$p \\to q$ says \"if a fail grade can be given, the student scored above 50%\" — the opposite sense."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$\\neg p \\to q$ says \"if no fail grade, then the student scored above 50%\"; it is true when $p = q = T$, so it does not forbid the case the statement forbids."
+        }
+      ],
+      "shortcut": "The statement forbids exactly $p \\wedge q$, i.e. it is $\\neg(p \\wedge q) \\equiv \\neg q \\vee \\neg p \\equiv q \\to \\neg p$.",
+      "pitfalls": [
+        "Reading \"A when B\" as $A \\to B$ — the clause after \"when\" is the condition.",
+        "Mixing up $\\neg p \\to q$ with the contrapositive $p \\to \\neg q$ (which **is** equivalent to the answer)."
+      ],
+      "verification": "Contrapositive check: $q \\to \\neg p \\equiv p \\to \\neg q$ — \"if a fail grade can be given, the student did not score above 50%\", which says the same thing.",
+      "animation": {
+        "kind": "table",
+        "title": "Truth table: p = fail grade can be given, q = scores > 50%",
+        "cols": [
+          "p",
+          "q",
+          "q→¬p",
+          "q→p",
+          "p→q",
+          "¬p→q"
+        ],
+        "rows": [
+          [
+            "T",
+            "T",
+            "F",
+            "T",
+            "T",
+            "T"
+          ],
+          [
+            "T",
+            "F",
+            "T",
+            "T",
+            "F",
+            "T"
+          ],
+          [
+            "F",
+            "T",
+            "T",
+            "F",
+            "T",
+            "T"
+          ],
+          [
+            "F",
+            "F",
+            "T",
+            "T",
+            "T",
+            "F"
+          ]
+        ],
+        "mono": true,
+        "caption": "Forbidden case: p = T and q = T (row 1)"
+      }
+    },
+    "cse-2024-2-cs-3": {
+      "approach": "Trace the calls in order: before `f` runs, its arguments are evaluated right to left (`h(20)` then `g(10)`), each printing its value; then `f`'s body prints `x` and `y` in order.",
+      "concepts": [
+        "Function call evaluation",
+        "Order of argument evaluation",
+        "C printf trace"
+      ],
+      "steps": [
+        {
+          "title": "Evaluate the right argument: h(20)",
+          "body": "Arguments are evaluated right to left, so `h(20)` runs first: it prints **20** and returns 20, which becomes `y`.\n\nOutput so far: `20`",
+          "scene": {
+            "line": 4,
+            "hl": [
+              12
+            ],
+            "vars": {
+              "y": 20
+            },
+            "callStack": [
+              {
+                "name": "main"
+              },
+              {
+                "name": "h",
+                "vars": {
+                  "q": 20
+                }
+              }
+            ],
+            "output": "20"
+          }
+        },
+        {
+          "title": "Evaluate the left argument: g(10)",
+          "body": "`g(10)` prints **10** and returns 10, which becomes `x`.\n\nOutput so far: `2010`",
+          "scene": {
+            "line": 3,
+            "vars": {
+              "x": 10,
+              "y": 20
+            },
+            "callStack": [
+              {
+                "name": "main"
+              },
+              {
+                "name": "g",
+                "vars": {
+                  "p": 10
+                }
+              }
+            ],
+            "output": "2010"
+          }
+        },
+        {
+          "title": "Inside f: g(x)",
+          "body": "`f(10, 20)` now runs. Its first statement `g(x)` prints **10**.\n\nOutput so far: `201010`",
+          "scene": {
+            "line": 7,
+            "hl": [
+              7
+            ],
+            "callStack": [
+              {
+                "name": "main"
+              },
+              {
+                "name": "f",
+                "vars": {
+                  "x": 10,
+                  "y": 20
+                }
+              }
+            ],
+            "output": "201010"
+          }
+        },
+        {
+          "title": "Inside f: h(y)",
+          "body": "The second statement `h(y)` prints **20**. The digits are printed with no separators, so the complete output is\n\n`20101020`",
+          "scene": {
+            "line": 8,
+            "hl": [
+              8
+            ],
+            "output": "20101020"
+          }
+        }
+      ],
+      "answer": {
+        "value": "The program prints **20101020** — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Arguments right to left (20, 10), then the body of `f` in order (10, 20)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "10202010 evaluates the arguments left to right and then runs `f`'s body in reverse."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "20102010 gets the arguments right but runs `f`'s body as `h(y)` before `g(x)`."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "10201020 evaluates the arguments left to right, ignoring the given assumption."
+        }
+      ],
+      "pitfalls": [
+        "Forgetting that the argument calls themselves print before `f` starts.",
+        "Applying the right-to-left rule to the statements inside `f` — it applies only to evaluating arguments."
+      ],
+      "verification": "Each of the four printf calls prints one 2-digit number: two come from argument evaluation (20 then 10) and two from `f`'s body (x = 10 then y = 20), giving 20 | 10 | 10 | 20.",
+      "animation": {
+        "kind": "code",
+        "title": "Call trace",
+        "lang": "c",
+        "code": "#include <stdio.h>\n\nint g(int p) { printf(\"%d\", p); return p; }\nint h(int q) { printf(\"%d\", q); return q; }\n\nvoid f(int x, int y) {\n  g(x);\n  h(y);\n}\n\nint main() {\n  f(g(10),h(20));\n}",
+        "line": 12,
+        "hl": [
+          12
+        ],
+        "vars": {},
+        "callStack": [
+          {
+            "name": "main"
+          }
+        ],
+        "output": ""
+      }
+    }
+  }
+}
