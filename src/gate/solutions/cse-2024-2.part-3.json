@@ -1,0 +1,1625 @@
+{
+  "paper": "cse-2024-2",
+  "version": 2,
+  "solutions": {
+    "cse-2024-2-cs-17": {
+      "approach": "Test every statement against the definition of 2PL: each transaction has a growing phase (acquire only) followed by a shrinking phase (release only). The lock point of each transaction gives a serial order, but nothing in the rule prevents circular waits.",
+      "concepts": [
+        "Two-phase locking (2PL)",
+        "Lock point",
+        "Conflict serializability",
+        "Deadlock"
+      ],
+      "steps": [
+        {
+          "title": "The 2PL rule itself",
+          "body": "Under 2PL every transaction runs in two phases:\n\n1. **Growing phase** — it may acquire locks but may not release any.\n2. **Shrinking phase** — it may release locks but may not acquire any.\n\nThe phase switches at the **first unlock**. So once any lock is released, no further lock on any item can be obtained — that is statement **(C)** word for word. **(C) is TRUE.**"
+        },
+        {
+          "title": "Why every 2PL schedule is serializable (A)",
+          "body": "Let the **lock point** $LP(T)$ be the moment $T$ acquires its last lock. If the precedence graph has an edge $T_i \\to T_j$, then $T_i$ released a lock on some item before $T_j$ could lock it, so\n\n$$LP(T_i) < \\text{unlock by } T_i < \\text{lock by } T_j \\le LP(T_j).$$\n\nA cycle $T_1 \\to T_2 \\to \\dots \\to T_1$ would need $LP(T_1) < LP(T_1)$ — impossible. Hence the precedence graph is acyclic and every schedule 2PL allows is (conflict) serializable, equivalent to the serial order of lock points. **(A) is TRUE.**"
+        },
+        {
+          "title": "Lock-per-operation is not 2PL (B)",
+          "body": "If a transaction locks an item just before each operation and unlocks it right after, then a transaction with two operations does *unlock → lock*, which violates the growing/shrinking rule. That scheme is exactly the kind of short-duration locking that 2PL forbids (and it can produce non-serializable schedules). **(B) is FALSE.**"
+        },
+        {
+          "title": "2PL can deadlock (D)",
+          "body": "Both transactions below are still in their growing phase, so every request is legal under 2PL — yet each waits for a lock the other holds:\n\n| time | $T_1$ | $T_2$ |\n|---|---|---|\n| 1 | lock-X(A) | |\n| 2 | | lock-X(B) |\n| 3 | lock-X(B) → **waits** | |\n| 4 | | lock-X(A) → **waits** |\n\nCircular wait ⇒ deadlock. (Only *conservative* 2PL, which pre-claims all locks, avoids this.) **(D) is TRUE.**",
+          "scene": {
+            "reveal": 8,
+            "hl": [
+              {
+                "r": 2,
+                "tone": "error"
+              },
+              {
+                "r": 3,
+                "tone": "error"
+              }
+            ],
+            "caption": "Circular wait: $T_1$ needs B (held by $T_2$), $T_2$ needs A (held by $T_1$)"
+          }
+        }
+      ],
+      "answer": {
+        "value": "**(A), (C) and (D)** are true",
+        "choice": [
+          "A",
+          "C",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Ordering transactions by lock point gives an acyclic precedence graph, so 2PL admits only (conflict) serializable schedules."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Releasing a lock right after each operation and locking again later breaks the two-phase rule; this is the non-2PL scheme 2PL is designed to replace."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "This is the definition of 2PL: after the first release the transaction is in its shrinking phase and cannot acquire any lock."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Two transactions in their growing phases can each hold one item and request the other's, giving a circular wait; basic 2PL does not prevent deadlock."
+        }
+      ],
+      "shortcut": "Remember the pair of facts: 2PL ⇒ conflict serializable (yes), 2PL ⇒ deadlock-free (no). Statement (C) is the definition and (B) contradicts it.",
+      "pitfalls": [
+        "Thinking 2PL prevents deadlocks — that is conservative (static) 2PL, not basic 2PL.",
+        "Reading (A) as \"2PL permits all serializable schedules\" — it does not, but every schedule it permits is serializable, which is what (A) says."
+      ],
+      "verification": "The lock-point argument shows (A); the four-row schedule is a concrete 2PL-legal deadlock for (D); (B) and (C) are the negation and the statement of the two-phase rule.",
+      "animation": {
+        "kind": "table",
+        "title": "A deadlock that 2PL allows",
+        "cols": [
+          "T1",
+          "T2"
+        ],
+        "rowLabels": [
+          "t=1",
+          "t=2",
+          "t=3",
+          "t=4"
+        ],
+        "rows": [
+          [
+            "lock-X(A)",
+            "—"
+          ],
+          [
+            "—",
+            "lock-X(B)"
+          ],
+          [
+            "lock-X(B): wait",
+            "—"
+          ],
+          [
+            "—",
+            "lock-X(A): wait"
+          ]
+        ],
+        "reveal": 0
+      }
+    },
+    "cse-2024-2-cs-18": {
+      "approach": "Recall where IPv4 does each half of the job: any router may fragment when the outgoing link's MTU is too small, but fragments are put back together only at the final destination.",
+      "concepts": [
+        "IPv4 fragmentation",
+        "MTU",
+        "Reassembly at destination",
+        "Identification / MF / Fragment offset"
+      ],
+      "steps": [
+        {
+          "title": "Who fragments in IPv4",
+          "body": "A datagram may cross links with different MTUs. In IPv4, **any router** whose outgoing link has an MTU smaller than the datagram splits it into fragments (unless the DF bit is set, in which case it drops the datagram and sends an ICMP error). The source may fragment too, but it is **not the only** place. So **(A) is FALSE** and **(B) is TRUE**.\n\n(Source-only fragmentation is the IPv6 rule — a classic mix-up.)"
+        },
+        {
+          "title": "Who reassembles",
+          "body": "Fragments are independent datagrams: they may follow different routes and arrive out of order, so an intermediate router cannot be sure it will see all of them. Reassembly is done **only at the destination host**, using the Identification field (which fragments belong together), the MF flag and the Fragment Offset (in 8-byte units). So **(C) is TRUE** and **(D) is FALSE**."
+        },
+        {
+          "title": "Collect the true statements",
+          "body": "True: **(B)** and **(C)**."
+        }
+      ],
+      "answer": {
+        "value": "**(B) and (C)**",
+        "choice": [
+          "B",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "IPv4 routers also fragment when a datagram exceeds the next link's MTU; \"only at the source\" describes IPv6."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Any IPv4 router that finds the datagram larger than the outgoing MTU fragments it (if DF is not set)."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Fragments may take different paths, so only the destination is guaranteed to receive them all and reassembles them."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Intermediate routers forward fragments as separate datagrams; reassembling at every hop would be impossible (different paths) and wasteful."
+        }
+      ],
+      "shortcut": "IPv4: fragment anywhere, reassemble at the destination only. IPv6: fragment at the source only.",
+      "pitfalls": [
+        "Confusing the IPv4 and IPv6 rules for fragmentation.",
+        "Assuming a router that fragmented a datagram must also reassemble it downstream."
+      ],
+      "verification": "RFC 791: gateways (routers) may fragment; \"the internet module at the destination\" reassembles — consistent with (B) and (C)."
+    },
+    "cse-2024-2-cs-19": {
+      "approach": "The question asks for FALSE statements, so judge each one against the standard (Dragon-book) definitions of attribute grammars, L-attributed and S-attributed definitions, then pick those that fail.",
+      "concepts": [
+        "Syntax-directed definitions",
+        "Attribute grammar",
+        "L-attributed definitions",
+        "Bottom-up evaluation of attributes"
+      ],
+      "steps": [
+        {
+          "title": "(A) Attribute grammar",
+          "body": "By definition, *an SDD whose semantic rules have no side effects is called an attribute grammar*. The statement is the definition, so **(A) is TRUE** — not selected."
+        },
+        {
+          "title": "(B) L-attributed means depth-first works",
+          "body": "In an L-attributed SDD, every inherited attribute of $X_i$ in $A \\to X_1X_2\\dots X_n$ depends only on inherited attributes of $A$ and attributes of the **left siblings** $X_1,\\dots,X_{i-1}$. Visiting children left to right in a depth-first traversal, computing inherited attributes on the way down and synthesized ones on the way up, therefore **always** succeeds. The claim \"cannot always be evaluated in depth-first order\" is **FALSE** — selected."
+        },
+        {
+          "title": "(C) Synthesized attributes bottom-up",
+          "body": "A synthesized attribute of $A$ depends only on its children, which are all on the parser stack when $A \\to \\alpha$ is reduced. The value is computed at reduction time (S-attributed SDDs on LR parsers), so **(C) is TRUE** — not selected."
+        },
+        {
+          "title": "(D) L-attributed on LR(1) grammars bottom-up",
+          "body": "The bottom-up technique for L-attributed SDDs inserts marker nonterminals ($M \\to \\varepsilon$) to compute inherited attributes. That is guaranteed to work when the grammar is **LL**; for an arbitrary **LR(1)** grammar the markers can introduce parsing conflicts, so not every L-attributed definition on an LR(1) grammar can be evaluated during bottom-up parsing. **(D) is FALSE** — selected."
+        }
+      ],
+      "answer": {
+        "value": "False statements: **(B) and (D)**",
+        "choice": [
+          "B",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "True statement (the definition of an attribute grammar), so it is not chosen."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "False statement: dependencies only on the parent's inherited and left siblings' attributes guarantee a left-to-right depth-first evaluation always works."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "True statement: synthesized attributes are computed at each reduction in a bottom-up parser."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "False statement: only L-attributed SDDs on LL grammars are guaranteed bottom-up evaluable; marker nonterminals may cause conflicts for general LR(1) grammars."
+        }
+      ],
+      "shortcut": "L-attributed = \"left-to-right depth-first always works\"; bottom-up evaluation is guaranteed for S-attributed SDDs and for L-attributed SDDs on LL grammars — not on every LR(1) grammar.",
+      "pitfalls": [
+        "Selecting the true statements — the question asks which are FALSE.",
+        "Extending the \"LL grammar ⇒ bottom-up implementable\" result to all LR(1) grammars."
+      ],
+      "verification": "Matches the official key B;D (GATE 2024 CS2 final answer key)."
+    },
+    "cse-2024-2-cs-20": {
+      "approach": "With a single variable, a two-row truth table settles every identity: an equation is true only if both sides agree for $x=0$ and $x=1$. Here \".\" is AND and \"+\" is OR.",
+      "concepts": [
+        "Boolean algebra identities",
+        "Idempotent law",
+        "Null (dominance) law",
+        "Complement law"
+      ],
+      "steps": [
+        {
+          "title": "Build the truth table",
+          "body": "Evaluate each left-hand side for $x = 0$ and $x = 1$:\n\n- $x \\cdot 1$: $0\\cdot1 = 0$, $1 \\cdot 1 = 1$\n- $x + 1$: $0+1 = 1$, $1+1 = 1$\n- $x \\cdot x$: $0\\cdot0 = 0$, $1\\cdot1 = 1$\n- $x + \\bar{x}$: $0+1 = 1$, $1+0 = 1$",
+          "scene": {
+            "reveal": 10
+          }
+        },
+        {
+          "title": "Compare with the right-hand sides",
+          "body": "- (A) $x\\cdot1$ column equals $x$ in both rows — **true** (identity law).\n- (B) $x+1$ is 1 in both rows, but $x=0$ in row 1: $1 \\ne 0$ — **false** (actually $x+1=1$).\n- (C) $x\\cdot x$ is 1 when $x=1$, not 0 — **false** (actually $x \\cdot x = x$, idempotent law).\n- (D) $x+\\bar{x}$ is 1 in both rows — **true** (complement law).",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "c": 2,
+                "tone": "error"
+              },
+              {
+                "r": 1,
+                "c": 3,
+                "tone": "error"
+              },
+              {
+                "c": 1,
+                "tone": "success"
+              },
+              {
+                "c": 4,
+                "tone": "success"
+              }
+            ],
+            "caption": "Red cells break the claimed identity"
+          }
+        },
+        {
+          "title": "Pick the FALSE statements",
+          "body": "The false ones are **(B)** and **(C)**."
+        }
+      ],
+      "answer": {
+        "value": "False statements: **(B) and (C)**",
+        "choice": [
+          "B",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$x\\cdot1 = x$ is the identity law — true, so not selected."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$x+1 = 1$ (null law); for $x=0$ it gives $1 \\ne 0$, so \"$x+1=x$\" is false."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$x\\cdot x = x$ (idempotent law); for $x=1$ it gives $1 \\ne 0$, so \"$x \\cdot x = 0$\" is false. It would be true only for $x\\cdot\\bar{x}$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$x+\\bar{x} = 1$ is the complement law — true, so not selected."
+        }
+      ],
+      "shortcut": "One counterexample kills an identity: put $x=0$ into (B) and $x=1$ into (C).",
+      "pitfalls": [
+        "Reading option (C) as $x\\cdot\\bar{x} = 0$ — the paper has no complement bar there.",
+        "Choosing the true identities when the question asks for FALSE ones."
+      ],
+      "verification": "Known laws: $x+1=1$ and $x\\cdot x=x$ contradict (B) and (C) whenever $x \\ne$ the right-hand side, while (A) and (D) are textbook identities.",
+      "animation": {
+        "kind": "table",
+        "title": "Truth table for one variable",
+        "cols": [
+          "x",
+          "x·1",
+          "x+1",
+          "x·x",
+          "x+x̄"
+        ],
+        "rows": [
+          [
+            0,
+            0,
+            1,
+            0,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        ],
+        "reveal": 0,
+        "mono": true
+      }
+    },
+    "cse-2024-2-cs-21": {
+      "approach": "Write each instruction's destination and sources, then classify every pair on R3 by who writes and who reads: write→read is RAW, read→write is WAR, write→write is WAW (always in program order).",
+      "concepts": [
+        "Data dependences",
+        "RAW (true dependence)",
+        "WAR (anti-dependence)",
+        "WAW (output dependence)"
+      ],
+      "given": "| Instr | dest | sources |\n|---|---|---|\n| I1: DIV | R3 | R1, R2 |\n| I2: SUB | R5 | R3, R4 |\n| I3: ADD | R3 | R5, R6 |\n| I4: MUL | R7 | R3, R8 |",
+      "steps": [
+        {
+          "title": "I1 → I2: write then read R3",
+          "body": "I1 **writes** R3 and I2 **reads** R3 (no write to R3 in between): a **RAW** dependence on R3. **(A) is TRUE.**",
+          "scene": {
+            "edgeTones": {
+              "I1>I2": "success"
+            },
+            "tones": {
+              "I1": "accent",
+              "I2": "accent"
+            }
+          }
+        },
+        {
+          "title": "I1 and I3: both write R3",
+          "body": "I1 writes R3 and I3 also writes R3 — that is write-after-write, a **WAW** (output) dependence, not WAR. Neither of them reads R3. **(B) is FALSE.**",
+          "scene": {
+            "edgeTones": {
+              "I1>I2": "success",
+              "I1>I3": "warning"
+            },
+            "tones": {
+              "I1": "accent",
+              "I3": "accent"
+            }
+          }
+        },
+        {
+          "title": "I2 and I3: read R3, then write R3",
+          "body": "I2 **reads** R3 and the later I3 **writes** R3: that is **WAR** (anti-dependence) on R3. The RAW between I2 and I3 is on **R5** (I2 writes R5, I3 reads it), not on R3. **(C) is FALSE.**",
+          "scene": {
+            "edgeTones": {
+              "I1>I2": "success",
+              "I1>I3": "warning",
+              "I2>I3": "warning"
+            },
+            "tones": {
+              "I2": "accent",
+              "I3": "accent"
+            }
+          }
+        },
+        {
+          "title": "I3 and I4: write R3, then read R3",
+          "body": "I3 **writes** R3 and I4 **reads** it: a **RAW** dependence, not WAW (I4 writes R7). **(D) is FALSE.**\n\nOnly **(A)** is true.",
+          "scene": {
+            "edgeTones": {
+              "I1>I2": "success",
+              "I1>I3": "warning",
+              "I2>I3": "warning",
+              "I3>I4": "success"
+            },
+            "tones": {
+              "I3": "accent",
+              "I4": "accent"
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "Only **(A)**",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "I1 writes R3, I2 then reads it — read after write."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Both I1 and I3 write R3: the dependence is WAW, not WAR."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "On R3, I2 reads and I3 writes — WAR. The RAW from I2 to I3 is on R5."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "I3 writes R3 and I4 reads R3 — RAW. I4 writes R7, so there is no WAW."
+        }
+      ],
+      "shortcut": "Name the hazard by the *second* instruction's action followed by the first's: read-after-write (RAW), write-after-read (WAR), write-after-write (WAW). Check each option's pair in two seconds.",
+      "pitfalls": [
+        "Reversing the order of the acronym (e.g. calling I2-reads/I3-writes a RAW).",
+        "Accepting (C) because a RAW exists between I2 and I3 — it is on R5, not R3."
+      ],
+      "verification": "Full dependence list: RAW I1→I2 (R3), RAW I2→I3 (R5), RAW I3→I4 (R3), WAR I2→I3 (R3), WAW I1→I3 (R3). Only (A) appears exactly as stated.",
+      "animation": {
+        "kind": "graph",
+        "title": "Dependences in program order",
+        "directed": true,
+        "nodes": [
+          {
+            "id": "I1",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "I2",
+            "x": 2,
+            "y": 1.6
+          },
+          {
+            "id": "I3",
+            "x": 4,
+            "y": 0
+          },
+          {
+            "id": "I4",
+            "x": 6,
+            "y": 1.6
+          }
+        ],
+        "edges": [
+          {
+            "from": "I1",
+            "to": "I2",
+            "w": "RAW R3"
+          },
+          {
+            "from": "I1",
+            "to": "I3",
+            "w": "WAW R3"
+          },
+          {
+            "from": "I2",
+            "to": "I3",
+            "w": "WAR R3, RAW R5"
+          },
+          {
+            "from": "I3",
+            "to": "I4",
+            "w": "RAW R3"
+          }
+        ],
+        "subs": {
+          "I1": "R3←",
+          "I2": "R5←",
+          "I3": "R3←",
+          "I4": "R7←"
+        }
+      }
+    },
+    "cse-2024-2-cs-22": {
+      "approach": "Ask which fields a plain IPv4 router must change on every hop: it decrements TTL, and because TTL is inside the header the header checksum has to be recomputed. Everything else is end-to-end information.",
+      "concepts": [
+        "IPv4 header",
+        "Time to Live (TTL)",
+        "Header checksum",
+        "Router forwarding"
+      ],
+      "steps": [
+        {
+          "title": "TTL changes at every hop",
+          "body": "Each router decrements TTL by 1 before forwarding (and discards the packet, sending ICMP Time Exceeded, if it reaches 0). So TTL is **always** modified. **(C) is TRUE.**"
+        },
+        {
+          "title": "The checksum follows the TTL",
+          "body": "The header checksum covers the whole IPv4 header, including TTL. Since TTL changed, the checksum must be recomputed (or incrementally updated) before forwarding — **always**. **(D) is TRUE.**"
+        },
+        {
+          "title": "Fields that stay the same",
+          "body": "- **Source IP address** identifies the original sender; an ordinary router never rewrites it (only a NAT box does, which is not \"any router\"). **(A) is FALSE.**\n- **Protocol** names the payload's upper-layer protocol (TCP = 6, UDP = 17, …), which is the same end to end. **(B) is FALSE.**\n\nAnswer: **(C) and (D)**."
+        }
+      ],
+      "answer": {
+        "value": "**(C) and (D)**",
+        "choice": [
+          "C",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Routers forward without touching the source address; only NAT devices rewrite it, so it is not modified by *any* router."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "The Protocol field describes the payload (TCP/UDP/ICMP…) and never changes in transit."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "TTL is decremented by one at every router."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "TTL is part of the checksummed header, so the checksum must be recomputed at every hop."
+        }
+      ],
+      "shortcut": "TTL − 1 at every hop ⇒ header changed ⇒ checksum recomputed. Two fields, always.",
+      "pitfalls": [
+        "Choosing the source address because of NAT — NAT is a special device, not every router.",
+        "Thinking fragmentation fields (total length, offset, flags) belong in the answer — they change only when a router fragments, not always."
+      ],
+      "verification": "RFC 791/1812: routers must decrement TTL and update the checksum; fields like source address and protocol are end-to-end."
+    },
+    "cse-2024-2-cs-23": {
+      "approach": "Recognise that `fX` is `strlen`: it walks `b` to the terminating `'\\0'` and returns the pointer difference. Then check, for each call, that the argument really is NUL-terminated.",
+      "concepts": [
+        "String literals and NUL terminator",
+        "Pointer arithmetic",
+        "Array vs pointer initialisation"
+      ],
+      "steps": [
+        {
+          "title": "What fX computes",
+          "body": "`b` starts at `a`; `while(*b) b++;` stops at the first byte equal to `'\\0'`. Then `b - a` is the number of characters before it, i.e. the string length. The code is legal C: `b - a` is a `ptrdiff_t` that is implicitly converted to the `int` return type. So **(C) is FALSE**.",
+          "scene": {
+            "pointers": [
+              {
+                "name": "a",
+                "at": 0
+              },
+              {
+                "name": "b",
+                "at": 0
+              }
+            ],
+            "caption": "b starts at a"
+          }
+        },
+        {
+          "title": "fX(\"abcd\") — a string literal",
+          "body": "A string literal `\"abcd\"` is stored as 5 bytes: `a b c d \\0`. The loop advances `b` 4 times and stops at index 4, so the call returns $4 - 0 = 4$. It always returns. **(A) is TRUE.**",
+          "scene": {
+            "pointers": [
+              {
+                "name": "a",
+                "at": 0
+              },
+              {
+                "name": "b",
+                "at": 4
+              }
+            ],
+            "hl": [
+              {
+                "at": 4,
+                "tone": "success"
+              }
+            ],
+            "vars": {
+              "b − a": 4
+            },
+            "caption": "*b == '\\0' ⇒ loop ends, return 4"
+          }
+        },
+        {
+          "title": "char c[] = \"abcd\" and char *c = \"abcd\"",
+          "body": "- `char c[] = \"abcd\";` — the array size is taken from the initializer **including** the terminator: `sizeof c` $= 5$. `fX(c)` returns 4. **(B) is TRUE.**\n- `char *c = \"abcd\";` — `c` points to the same kind of NUL-terminated literal. `fX(c)` returns 4. **(D) is TRUE.**\n\n(Only something like `char c[4] = \"abcd\";` would drop the `'\\0'` and make the loop run past the array.)"
+        }
+      ],
+      "answer": {
+        "value": "**(A), (B) and (D)** are true",
+        "choice": [
+          "A",
+          "B",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "The literal \"abcd\" carries a terminating '\\0', so the loop stops after 4 steps and returns 4."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "char c[] = \"abcd\" sizes the array as 5 bytes including '\\0'; fX(c) returns 4."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Every statement is valid C; returning the ptrdiff_t b − a as int is an ordinary implicit conversion."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "c points to a NUL-terminated string literal, so fX(c) returns 4."
+        }
+      ],
+      "shortcut": "fX is strlen. Every way of writing \"abcd\" in (A), (B), (D) keeps the '\\0', so all return 4; the function obviously compiles.",
+      "pitfalls": [
+        "Thinking `char c[] = \"abcd\"` has 4 elements — the size is 5 because the terminator is counted.",
+        "Expecting `b - a` to be a byte count that needs `sizeof` — for `char*` it is the same thing, and in any case pointer subtraction counts elements."
+      ],
+      "verification": "Hand-trace: b moves 0→1→2→3→4; *b at index 4 is 0, so the result is 4 for all three arguments, matching strlen(\"abcd\") = 4.",
+      "animation": {
+        "kind": "array",
+        "title": "Bytes of \"abcd\" in memory",
+        "label": "string",
+        "cells": [
+          "a",
+          "b",
+          "c",
+          "d",
+          "\\0"
+        ],
+        "pointers": [
+          {
+            "name": "a",
+            "at": 0
+          },
+          {
+            "name": "b",
+            "at": 0
+          }
+        ]
+      }
+    },
+    "cse-2024-2-cs-24": {
+      "approach": "A total order containing $P$ is a linear extension: a listing of $1,2,3,4$ with $1$ before $2$, $3$ before $2$ and $3$ before $4$. Count them by casing on the first (minimal) element.",
+      "concepts": [
+        "Partial order",
+        "Linear extension (topological order)",
+        "Hasse diagram"
+      ],
+      "given": "Strict relations in $P$: $1 < 2$, $3 < 2$, $3 < 4$ (plus reflexive pairs).",
+      "steps": [
+        {
+          "title": "Read the constraints from the Hasse diagram",
+          "body": "A total order on $\\{1,2,3,4\\}$ contains $P$ exactly when, written as a sequence from smallest to largest, $1$ comes before $2$, $3$ comes before $2$ and $3$ comes before $4$. The first element must be a minimal element of $P$: either $1$ or $3$."
+        },
+        {
+          "title": "Case 1: 1 is first",
+          "body": "Remaining $\\{2,3,4\\}$ with $3<2$ and $3<4$: $3$ is the only minimal element, so it comes next; then $2$ and $4$ are unrelated and can go in either order:\n\n$$1\\,3\\,2\\,4, \\quad 1\\,3\\,4\\,2 \\qquad (2 \\text{ orders})$$",
+          "scene": {
+            "panels": [
+              null,
+              {
+                "reveal": 4
+              }
+            ]
+          }
+        },
+        {
+          "title": "Case 2: 3 is first",
+          "body": "Remaining $\\{1,2,4\\}$ with only $1<2$. Of the $3! = 6$ arrangements, exactly half have $1$ before $2$: $\\frac{6}{2} = 3$:\n\n$$3\\,1\\,2\\,4, \\quad 3\\,1\\,4\\,2, \\quad 3\\,4\\,1\\,2 \\qquad (3 \\text{ orders})$$",
+          "scene": {
+            "panels": [
+              null,
+              {
+                "reveal": 10
+              }
+            ]
+          }
+        },
+        {
+          "title": "Add the cases",
+          "body": "Total $= 2 + 3 =$ **5** total orders contain $P$.",
+          "scene": {
+            "panels": [
+              null,
+              {
+                "reveal": 10,
+                "hl": [
+                  {
+                    "c": 1,
+                    "tone": "success"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "**5** total orders",
+        "number": 5,
+        "matchesKey": true
+      },
+      "shortcut": "First fix the relative order of $\\{2,3,4\\}$ ($3$ first, then $2,4$ either way: 2 ways), then insert $1$ before $2$: in $3\\,2\\,4$ there are 2 slots before $2$, in $3\\,4\\,2$ there are 3 — total $2+3=5$.",
+      "pitfalls": [
+        "Counting all $4! = 24$ permutations or forgetting a constraint (e.g. dropping $3<4$ gives 8).",
+        "Treating $1$ and $3$ as comparable — they are not, so both can come first."
+      ],
+      "verification": "The shortcut (insert $1$ into the orders of $\\{2,3,4\\}$) gives $2 + 3 = 5$, the same as the case split; the five orders listed all satisfy $1<2$, $3<2$, $3<4$.",
+      "animation": {
+        "kind": "panels",
+        "title": "Linear extensions of P",
+        "panels": [
+          {
+            "kind": "graph",
+            "directed": true,
+            "nodes": [
+              {
+                "id": "1",
+                "x": 0,
+                "y": 2
+              },
+              {
+                "id": "3",
+                "x": 2,
+                "y": 2
+              },
+              {
+                "id": "2",
+                "x": 1,
+                "y": 0
+              },
+              {
+                "id": "4",
+                "x": 3,
+                "y": 0
+              }
+            ],
+            "edges": [
+              {
+                "from": "1",
+                "to": "2"
+              },
+              {
+                "from": "3",
+                "to": "2"
+              },
+              {
+                "from": "3",
+                "to": "4"
+              }
+            ],
+            "caption": "Hasse diagram (arrow = \"less than\")"
+          },
+          {
+            "kind": "table",
+            "cols": [
+              "#",
+              "order (low → high)"
+            ],
+            "rows": [
+              [
+                1,
+                "1 3 2 4"
+              ],
+              [
+                2,
+                "1 3 4 2"
+              ],
+              [
+                3,
+                "3 1 2 4"
+              ],
+              [
+                4,
+                "3 1 4 2"
+              ],
+              [
+                5,
+                "3 4 1 2"
+              ]
+            ],
+            "reveal": 0
+          }
+        ]
+      }
+    },
+    "cse-2024-2-cs-25": {
+      "approach": "The elements we keep must already form a non-decreasing subsequence, and any such subsequence can be kept. So distance $= n - $ (length of the longest non-decreasing subsequence), found with the $O(n^2)$ LIS recurrence.",
+      "concepts": [
+        "Longest non-decreasing subsequence",
+        "Dynamic programming",
+        "Complement counting"
+      ],
+      "steps": [
+        {
+          "title": "Reduce to a longest subsequence",
+          "body": "Unreplaced elements keep their values and order, so they must be non-decreasing. Conversely, if a non-decreasing subsequence is kept, each other element can be replaced by a copy of the nearest kept value on its left (or the first kept value if none) — the result is sorted. Hence\n\n$$\\text{distance} = n - L_{\\max}, \\quad n = 7.$$"
+        },
+        {
+          "title": "Fill the recurrence",
+          "body": "$L[i] = 1 + \\max\\{L[j] : j<i,\\ A[j] \\le A[i]\\}$ (or 1 if no such $j$):\n\n- $L[0]=1$ (2)\n- $L[1]=1+L[0]=2$ (5 after 2)\n- $L[2]=1+L[0]=2$ (3 after 2)\n- $L[3]=1$ (nothing $\\le 1$ before it)\n- $L[4]=1+\\max(L[0],L[2],L[3])=1+2=3$ (4 after 2,3)\n- $L[5]=1+\\max(L[0],L[3])=1+1=2$ (2 after 2 or 1)\n- $L[6]=1+L[4]=4$ (6 after 2,3,4)",
+          "scene": {
+            "reveal": 14
+          }
+        },
+        {
+          "title": "Longest subsequence and the distance",
+          "body": "$L_{\\max} = 4$, achieved by $2, 3, 4, 6$ at positions $0, 2, 4, 6$. So\n\n$$\\text{distance} = 7 - 4 = 3.$$",
+          "scene": {
+            "reveal": 14,
+            "hl": [
+              {
+                "c": 0,
+                "tone": "success"
+              },
+              {
+                "c": 2,
+                "tone": "success"
+              },
+              {
+                "c": 4,
+                "tone": "success"
+              },
+              {
+                "c": 6,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Show that 3 replacements suffice",
+          "body": "Replace $5 \\to 2$, $1 \\to 3$, $2 \\to 4$:\n\n$$[2, 5, 3, 1, 4, 2, 6] \\to [2, 2, 3, 3, 4, 4, 6],$$\n\nwhich is non-decreasing. Fewer than 3 is impossible because that would keep 5 elements in non-decreasing order, but $L_{\\max} = 4$.",
+          "scene": {
+            "kind": "array",
+            "title": "After 3 replacements",
+            "label": "A",
+            "cells": [
+              {
+                "v": 2,
+                "tone": "success"
+              },
+              {
+                "v": 2,
+                "tone": "warning"
+              },
+              {
+                "v": 3,
+                "tone": "success"
+              },
+              {
+                "v": 3,
+                "tone": "warning"
+              },
+              {
+                "v": 4,
+                "tone": "success"
+              },
+              {
+                "v": 4,
+                "tone": "warning"
+              },
+              {
+                "v": 6,
+                "tone": "success"
+              }
+            ],
+            "caption": "Amber = replaced, green = kept"
+          }
+        }
+      ],
+      "answer": {
+        "value": "Distance $=$ **3**",
+        "number": 3,
+        "matchesKey": true
+      },
+      "shortcut": "Spot $2,3,4,6$ by eye (length 4); no 5-long non-decreasing run exists because $5$ blocks $3,4$ and $1$ is smaller than everything before it. $7-4=3$.",
+      "pitfalls": [
+        "Using strictly increasing subsequences — equal values are allowed (non-decreasing), though here it does not change the length.",
+        "Counting misplaced elements against the sorted array $[1,2,2,3,4,5,6]$ (6 mismatches) — replacement does not require the final array to be a permutation of the original."
+      ],
+      "verification": "Constructive check: the array $[2,2,3,3,4,4,6]$ differs from the original in exactly 3 positions and is sorted; the DP proves no 5 elements can be kept.",
+      "animation": {
+        "kind": "table",
+        "title": "L[i] = longest non-decreasing subsequence ending at i",
+        "cols": [
+          "0",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "rowLabels": [
+          "A[i]",
+          "L[i]"
+        ],
+        "rows": [
+          [
+            2,
+            5,
+            3,
+            1,
+            4,
+            2,
+            6
+          ],
+          [
+            1,
+            2,
+            2,
+            1,
+            3,
+            2,
+            4
+          ]
+        ],
+        "reveal": 7,
+        "mono": true
+      }
+    },
+    "cse-2024-2-cs-26": {
+      "approach": "Use the two pointer-arithmetic rules: `p + 1` moves by one element (8 bytes for `double`), and `q - p` counts elements, not bytes. The second value is ordinary arithmetic on the pointed-to doubles.",
+      "concepts": [
+        "Pointer arithmetic",
+        "Pointer subtraction gives element count",
+        "Type cast double → int"
+      ],
+      "steps": [
+        {
+          "title": "p points to a[0]",
+          "body": "`p = a;` — the array name decays to `&a[0]`, so `*p` $= 20.0$.",
+          "scene": {
+            "panels": [
+              {
+                "line": 4,
+                "vars": {
+                  "p": "&a[0]"
+                }
+              },
+              {
+                "pointers": [
+                  {
+                    "name": "p",
+                    "at": 0
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "title": "q = p + 1 points to a[1]",
+          "body": "Adding 1 to a `double*` advances by `sizeof(double)` bytes (typically 8), i.e. to the **next element**: `q` $=$ `&a[1]`, so `*q` $= 25.0$.",
+          "scene": {
+            "panels": [
+              {
+                "line": 5,
+                "vars": {
+                  "p": "&a[0]",
+                  "q": "&a[1]"
+                }
+              },
+              {
+                "pointers": [
+                  {
+                    "name": "p",
+                    "at": 0
+                  },
+                  {
+                    "name": "q",
+                    "at": 1
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "title": "Evaluate both printed values",
+          "body": "- `q - p`: pointer subtraction gives the number of **elements** between them: $\\frac{8 \\text{ bytes}}{8 \\text{ bytes/element}} = 1$. Cast to `int`: **1**.\n- `*q - *p` $= 25.0 - 20.0 = 5.0$; `(int)5.0` $=$ **5**.\n\nThe format `\"%d,%d\"` prints **1,5**.",
+          "scene": {
+            "panels": [
+              {
+                "line": 6,
+                "vars": {
+                  "p": "&a[0]",
+                  "q": "&a[1]",
+                  "q−p": 1,
+                  "*q−*p": 5
+                },
+                "output": "1,5"
+              },
+              {
+                "pointers": [
+                  {
+                    "name": "p",
+                    "at": 0
+                  },
+                  {
+                    "name": "q",
+                    "at": 1
+                  }
+                ],
+                "ranges": [
+                  {
+                    "from": 0,
+                    "to": 1,
+                    "label": "q − p = 1 element"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "The program prints **1,5** — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "\"4,8\" mixes up sizes (4 or 8 bytes) with element differences and value differences; neither printed value is a byte count."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "q − p = 1 element and (int)(25.0 − 20.0) = 5."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "\"8\" is the byte distance between the pointers, but pointer subtraction is scaled by sizeof(double) and gives 1."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The first value 1 is right, but the second is the difference of the values 25.0 − 20.0 = 5, not sizeof(double) = 8."
+        }
+      ],
+      "shortcut": "Pointer difference = index difference ($1 - 0 = 1$); value difference $= 25 - 20 = 5$.",
+      "pitfalls": [
+        "Treating `q - p` as a byte difference (8).",
+        "Thinking `(int)` applied to `q - p` changes the units — the subtraction already yields an element count."
+      ],
+      "verification": "Indices: p ↔ a[0], q ↔ a[1], so q − p = 1 − 0 = 1; values: a[1] − a[0] = 5. Output \"1,5\".",
+      "animation": {
+        "kind": "panels",
+        "title": "Pointers into double a[2]",
+        "panels": [
+          {
+            "kind": "code",
+            "lang": "c",
+            "code": "#include <stdio.h>\nint main() {\n    double a[2]={20.0, 25.0}, *p, *q;\n    p = a;\n    q = p + 1;\n    printf(\"%d,%d\", (int)(q - p), (int)(*q - *p));\n    return 0;}",
+            "line": 3,
+            "vars": {}
+          },
+          {
+            "kind": "array",
+            "label": "a (8 bytes per element)",
+            "cells": [
+              "20.0",
+              "25.0"
+            ]
+          }
+        ]
+      }
+    },
+    "cse-2024-2-cs-27": {
+      "approach": "Draw both Gantt charts, re-deciding SRTF at every arrival and completion and NP-SJF only at completions, then use waiting time $=$ completion $-$ arrival $-$ burst.",
+      "concepts": [
+        "SRTF (preemptive SJF)",
+        "Non-preemptive SJF",
+        "Waiting time = CT − AT − BT"
+      ],
+      "given": "| Process | Arrival | Burst |\n|---|---|---|\n| A | 0 | 10 |\n| B | 2 | 6 |\n| C | 4 | 3 |\n| D | 6 | 7 |",
+      "steps": [
+        {
+          "title": "SRTF, t = 0 to 7",
+          "body": "- $t=0$: only A, it runs.\n- $t=2$: B arrives (6) vs A's remaining $10-2=8$ → **B preempts**.\n- $t=4$: C arrives (3) vs B's remaining $6-2=4$ → **C preempts**.\n- $t=6$: D arrives (7) vs C's remaining $3-2=1$ → C continues and finishes at $t=7$.",
+          "scene": {
+            "upto": 7,
+            "cursor": 7
+          }
+        },
+        {
+          "title": "SRTF, t = 7 to 26",
+          "body": "At $t=7$ remaining: A $8$, B $4$, D $7$ → **B** runs $7$–$11$. Then D ($7$) $<$ A ($8$) → **D** runs $11$–$18$; finally **A** runs $18$–$26$.",
+          "scene": {
+            "upto": 26,
+            "cursor": 26
+          }
+        },
+        {
+          "title": "SRTF waiting times",
+          "body": "| | CT | CT − AT − BT |\n|---|---|---|\n| A | 26 | $26-0-10 = 16$ |\n| B | 11 | $11-2-6 = 3$ |\n| C | 7 | $7-4-3 = 0$ |\n| D | 18 | $18-6-7 = 5$ |\n\n$$\\text{avg} = \\frac{16+3+0+5}{4} = \\frac{24}{4} = 6$$",
+          "scene": {
+            "vars": {
+              "SRTF avg WT": 6
+            }
+          }
+        },
+        {
+          "title": "NP-SJF schedule",
+          "body": "At $t=0$ only A is present, so A runs to completion $0$–$10$ (no preemption). At $t=10$, B (6), C (3) and D (7) are all waiting → shortest first: **C** $10$–$13$, **B** $13$–$19$, **D** $19$–$26$.",
+          "scene": {
+            "lanes": [
+              {
+                "label": "SRTF",
+                "bars": [
+                  {
+                    "start": 0,
+                    "end": 2,
+                    "label": "A"
+                  },
+                  {
+                    "start": 2,
+                    "end": 4,
+                    "label": "B"
+                  },
+                  {
+                    "start": 4,
+                    "end": 7,
+                    "label": "C"
+                  },
+                  {
+                    "start": 7,
+                    "end": 11,
+                    "label": "B"
+                  },
+                  {
+                    "start": 11,
+                    "end": 18,
+                    "label": "D"
+                  },
+                  {
+                    "start": 18,
+                    "end": 26,
+                    "label": "A"
+                  }
+                ]
+              },
+              {
+                "label": "NP-SJF",
+                "bars": [
+                  {
+                    "start": 0,
+                    "end": 10,
+                    "label": "A"
+                  },
+                  {
+                    "start": 10,
+                    "end": 13,
+                    "label": "C"
+                  },
+                  {
+                    "start": 13,
+                    "end": 19,
+                    "label": "B"
+                  },
+                  {
+                    "start": 19,
+                    "end": 26,
+                    "label": "D"
+                  }
+                ]
+              }
+            ],
+            "upto": 26,
+            "cursor": 26
+          }
+        },
+        {
+          "title": "NP-SJF waiting times",
+          "body": "Waiting $=$ start $-$ arrival (each runs once):\n\n- A: $0 - 0 = 0$\n- C: $10 - 4 = 6$\n- B: $13 - 2 = 11$\n- D: $19 - 6 = 13$\n\n$$\\text{avg} = \\frac{0+6+11+13}{4} = \\frac{30}{4} = 7.5$$\n\nSo SRTF $= 6$, NP-SJF $= 7.5$ — option **(B)**.",
+          "scene": {
+            "vars": {
+              "SRTF avg WT": 6,
+              "NP-SJF avg WT": 7.5
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "**SRTF = 6, NP-SJF = 7.5** — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "SRTF = 6 is right, but NP-SJF totals $0+6+11+13 = 30$, i.e. 7.5, not 7."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Total waiting 24 (SRTF) and 30 (NP-SJF) over 4 processes give 6 and 7.5."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "SRTF total waiting is $16+3+0+5 = 24$, average 6, not 7."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Both values are wrong: the averages are 6 and 7.5."
+        }
+      ],
+      "shortcut": "SRTF: only A and B ever wait meaningfully — A waits $26-10=16$, B $3$, D $5$, C $0$ → 24/4 = 6. NP-SJF: after A, run C, B, D → waits $6, 11, 13$ → 30/4 = 7.5.",
+      "pitfalls": [
+        "Letting D preempt C at $t=6$ — C has only 1 unit left.",
+        "In NP-SJF, picking B at $t=10$ because it arrived first — SJF chooses the shortest burst, C.",
+        "Using turnaround time instead of waiting time."
+      ],
+      "verification": "Sum of waiting times also equals sum of turnaround minus total burst: SRTF $(26+9+3+12) - 26 = 50 - 26 = 24$ ✓; NP-SJF $(10+17+9+20) - 26 = 56 - 26 = 30$ ✓.",
+      "animation": {
+        "kind": "gantt",
+        "title": "SRTF schedule",
+        "unit": "",
+        "lanes": [
+          {
+            "label": "SRTF",
+            "bars": [
+              {
+                "start": 0,
+                "end": 2,
+                "label": "A"
+              },
+              {
+                "start": 2,
+                "end": 4,
+                "label": "B"
+              },
+              {
+                "start": 4,
+                "end": 7,
+                "label": "C"
+              },
+              {
+                "start": 7,
+                "end": 11,
+                "label": "B"
+              },
+              {
+                "start": 11,
+                "end": 18,
+                "label": "D"
+              },
+              {
+                "start": 18,
+                "end": 26,
+                "label": "A"
+              }
+            ]
+          }
+        ],
+        "marks": [
+          {
+            "t": 2,
+            "label": "B↓"
+          },
+          {
+            "t": 4,
+            "label": "C↓"
+          },
+          {
+            "t": 6,
+            "label": "D↓"
+          }
+        ],
+        "upto": 0,
+        "cursor": 0
+      }
+    },
+    "cse-2024-2-cs-28": {
+      "approach": "A CIDR block $a.b.c.d/n$ contains exactly $2^{32-n}$ addresses, from the network address (host bits all 0) to the broadcast address (host bits all 1). So count the addresses in the range to get $n$, then check that the first address is aligned to that block size.",
+      "concepts": [
+        "CIDR",
+        "Subnet mask",
+        "Address block alignment"
+      ],
+      "given": "Range $10.12.2.0$ to $10.12.3.255$ (inclusive).",
+      "steps": [
+        {
+          "title": "Count the addresses",
+          "body": "The first two octets are fixed. The third goes from 2 to 3 and the fourth covers $0$–$255$ each time:\n\n$$2 \\times 256 = 512 = 2^9 \\text{ addresses}$$\n\nSo the block needs **9 host bits** and the prefix length is $32 - 9 = 23$.",
+          "scene": {
+            "vars": {
+              "addresses": "2 × 256 = 512 = 2⁹",
+              "host bits": 9,
+              "prefix": "/23"
+            }
+          }
+        },
+        {
+          "title": "Compare the endpoints in binary",
+          "body": "The first 23 bits of the two endpoints are identical, and the last 9 bits go from all 0s to all 1s. That is exactly the shape of one CIDR block: network address $\\to$ broadcast address.",
+          "scene": {
+            "rows": [
+              {
+                "label": "first",
+                "fields": [
+                  {
+                    "bits": "00001010000011000000001",
+                    "label": "common prefix (23 bits)",
+                    "tone": "accent"
+                  },
+                  {
+                    "bits": "000000000",
+                    "label": "host = 0…0",
+                    "tone": "success"
+                  }
+                ],
+                "value": "10.12.2.0"
+              },
+              {
+                "label": "last",
+                "fields": [
+                  {
+                    "bits": "00001010000011000000001",
+                    "label": "common prefix (23 bits)",
+                    "tone": "accent"
+                  },
+                  {
+                    "bits": "111111111",
+                    "label": "host = 1…1",
+                    "tone": "warning"
+                  }
+                ],
+                "value": "10.12.3.255"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Check alignment and pick the option",
+          "body": "A /23 block starts at a multiple of 512, i.e. an **even** third octet. $10.12.2.0$ has third octet 2, so it is a valid /23 network address and $10.12.2.0/23$ covers exactly $10.12.2.0$–$10.12.3.255$, with mask $255.255.254.0$.",
+          "scene": {
+            "rows": [
+              {
+                "label": "first",
+                "fields": [
+                  {
+                    "bits": "00001010000011000000001",
+                    "label": "network (23 bits)",
+                    "tone": "accent"
+                  },
+                  {
+                    "bits": "000000000",
+                    "label": "host",
+                    "tone": "success"
+                  }
+                ],
+                "value": "10.12.2.0"
+              },
+              {
+                "label": "last",
+                "fields": [
+                  {
+                    "bits": "00001010000011000000001",
+                    "label": "network (23 bits)",
+                    "tone": "accent"
+                  },
+                  {
+                    "bits": "111111111",
+                    "label": "host",
+                    "tone": "warning"
+                  }
+                ],
+                "value": "10.12.3.255"
+              },
+              {
+                "label": "/23 mask",
+                "fields": [
+                  {
+                    "bits": "11111111111111111111111",
+                    "tone": "info"
+                  },
+                  {
+                    "bits": "000000000"
+                  }
+                ],
+                "value": "255.255.254.0"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "**10.12.2.0/23** — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$2^{9} = 512$ addresses starting at an aligned network address: $10.12.2.0$–$10.12.3.255$ exactly."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "/24 holds only 256 addresses: $10.12.2.0$–$10.12.2.255$, missing all of $10.12.3.x$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$10.12.0.0/22$ spans $10.12.0.0$–$10.12.3.255$ (1024 addresses) — it also includes $10.12.0.x$ and $10.12.1.x$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "A /22 block must start at a third octet that is a multiple of 4; masking $10.12.2.0$ with /22 gives $10.12.0.0$, the same oversized block as (C)."
+        }
+      ],
+      "shortcut": "Block size $= 512 = 2^9 \\Rightarrow /23$, and $2$ is a multiple of $512/256 = 2$ in the third octet, so the block starts exactly at $10.12.2.0$.",
+      "pitfalls": [
+        "Choosing /22 because the range touches two /24s — two /24s make a /23, four make a /22.",
+        "Ignoring alignment: a prefix like $10.12.1.0/23$ would not even be a valid network address."
+      ],
+      "verification": "Broadcast of $10.12.2.0/23$: set the 9 host bits to 1 → third octet $00000011 = 3$, fourth $11111111 = 255$ → $10.12.3.255$ ✓.",
+      "animation": {
+        "kind": "bits",
+        "title": "Endpoints in binary (32 bits)",
+        "group": 8,
+        "rows": [
+          {
+            "label": "first",
+            "fields": [
+              {
+                "bits": "00001010000011000000001000000000"
+              }
+            ],
+            "value": "10.12.2.0"
+          },
+          {
+            "label": "last",
+            "fields": [
+              {
+                "bits": "00001010000011000000001111111111"
+              }
+            ],
+            "value": "10.12.3.255"
+          }
+        ]
+      }
+    },
+    "cse-2024-2-cs-29": {
+      "approach": "Inorder traversal of any BST lists its keys in sorted order, whatever the insertion order — so it depends only on $V$. Root, preorder and postorder depend on the insertion order; one small counterexample kills all three.",
+      "concepts": [
+        "BST property",
+        "Inorder traversal = sorted order",
+        "Insertion order determines shape"
+      ],
+      "steps": [
+        {
+          "title": "Inorder is determined by V",
+          "body": "Inorder visits left subtree, node, right subtree. By the BST property everything in the left subtree is smaller and everything in the right subtree is larger, so by induction inorder outputs the keys in **increasing order**. Hence the inorder traversal is simply $V$ sorted. **(A) is TRUE.**"
+        },
+        {
+          "title": "Counterexample tree 1: insert 2, 1, 3",
+          "body": "Take $V = \\{1, 2, 3\\}$ and insert in the order $2, 1, 3$: $2$ becomes the root, $1$ goes left, $3$ goes right.\n\nPreorder $2\\,1\\,3$, inorder $1\\,2\\,3$, postorder $1\\,3\\,2$.",
+          "scene": {
+            "panels": [
+              {
+                "caption": "insert 2, 1, 3 → root 2"
+              },
+              null
+            ]
+          }
+        },
+        {
+          "title": "Counterexample tree 2: insert 1, 2, 3",
+          "body": "Same set, order $1, 2, 3$: each new key is larger, so it goes right — a chain rooted at $1$.\n\nPreorder $1\\,2\\,3$, inorder $1\\,2\\,3$, postorder $3\\,2\\,1$.",
+          "scene": {
+            "panels": [
+              null,
+              {
+                "caption": "insert 1, 2, 3 → root 1"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Compare the two trees",
+          "body": "Both trees store exactly $V$ and have the same inorder $1\\,2\\,3$, but their roots ($2$ vs $1$), preorders ($213$ vs $123$) and postorders ($132$ vs $321$) differ. So none of these can be determined from $V$ alone: **(B), (C), (D) are FALSE**, and only **(A)** is true."
+        }
+      ],
+      "answer": {
+        "value": "**(A)** — the inorder traversal is $V$ in sorted order",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Inorder of any BST is the sorted sequence of its keys, so it is just $V$ sorted."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "The root is the first inserted element, which is unknown: inserting 2,1,3 gives root 2, inserting 1,2,3 gives root 1."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Preorder starts with the root and follows the shape, which depends on the insertion order (213 vs 123)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Postorder also depends on the shape (132 vs 321 for the two insertion orders)."
+        }
+      ],
+      "shortcut": "\"BST inorder = sorted\" — the only traversal independent of the shape.",
+      "pitfalls": [
+        "Assuming the root is the median or the smallest element — it is whatever was inserted first.",
+        "Thinking preorder can be recovered from inorder alone — that needs the tree shape (or the insertion order)."
+      ],
+      "verification": "The counterexample shows two valid BSTs over the same set with different root, preorder and postorder but identical inorder $1\\,2\\,3$.",
+      "animation": {
+        "kind": "panels",
+        "title": "Same set, two insertion orders",
+        "panels": [
+          {
+            "kind": "tree",
+            "root": {
+              "label": 2,
+              "tone": "accent",
+              "children": [
+                {
+                  "label": 1
+                },
+                {
+                  "label": 3
+                }
+              ]
+            },
+            "caption": "V = {1, 2, 3}"
+          },
+          {
+            "kind": "tree",
+            "root": {
+              "label": 1,
+              "tone": "accent",
+              "children": [
+                null,
+                {
+                  "label": 2,
+                  "children": [
+                    null,
+                    {
+                      "label": 3
+                    }
+                  ]
+                }
+              ]
+            },
+            "caption": "inorder 1 2 3 in both"
+          }
+        ]
+      }
+    }
+  }
+}
