@@ -1,0 +1,1135 @@
+{
+  "paper": "da-2024",
+  "version": 2,
+  "solutions": {
+    "da-2024-da-43": {
+      "approach": "Two classes are linearly separable when one straight line puts every circle on one side and every square on the other. Either exhibit such a line, or find a structural obstruction (a point of one class inside the convex hull of the other, or crossing diagonals as in XOR).",
+      "concepts": [
+        "Linear separability",
+        "Convex hull",
+        "XOR pattern"
+      ],
+      "given": "| Plot | Circles | Squares |\n|---|---|---|\n| (i) | $(1,3),(2,3),(1,2)$ | $(2,1.2),(3,1.2),(2,0.3)$ |\n| (ii) | $(2,2)$ | $(2,3),(1,2),(3,2),(2,1)$ |\n| (iii) | $(1,1),(3,3)$ | $(1,3),(3,1)$ |\n| (iv) | $(3,1.5),(2,0.5),(3,0.5)$ | $(1,2.2),(1,1.2),(2,2.6)$ |\n\n(Coordinates read from the figure; squares in (i) and (iv) sit slightly off the gridlines.)",
+      "steps": [
+        {
+          "title": "Plot (i): the line $x - y = 0$ works",
+          "body": "Compute $x-y$ for each point.\n\n- Circles: $1-3=-2$, $2-3=-1$, $1-2=-1$ — all **negative**.\n- Squares: $2-1.2=0.8$, $3-1.2=1.8$, $2-0.3=1.7$ — all **positive**.\n\nSo the line $y = x$ separates the classes: (i) **is** linearly separable."
+        },
+        {
+          "title": "Plot (ii): the circle is inside the squares' hull",
+          "body": "The four squares $(2,3),(1,2),(3,2),(2,1)$ form a diamond whose centre is exactly the circle $(2,2) = \\tfrac12\\big[(1,2)+(3,2)\\big]$.\n\nA half-plane is convex: if both $(1,2)$ and $(3,2)$ lie in the squares' half-plane, so does their midpoint $(2,2)$. Hence no line can put the circle on the other side — (ii) is **not** separable."
+        },
+        {
+          "title": "Plot (iii): the XOR configuration",
+          "body": "Circles on one diagonal $(1,1),(3,3)$, squares on the other $(1,3),(3,1)$. Both diagonals pass through $(2,2)$:\n\n$$\\tfrac12\\big[(1,1)+(3,3)\\big] = (2,2) = \\tfrac12\\big[(1,3)+(3,1)\\big]$$\n\nSo $(2,2)$ would have to be on the circle side *and* on the square side of the same line — impossible. (iii) is **not** separable."
+        },
+        {
+          "title": "Plot (iv): the line $y = x - 0.5$ works",
+          "body": "Compute $y - x$:\n\n- Squares: $2.2-1=1.2$, $1.2-1=0.2$, $2.6-2=0.6$ — all $> -0.5$.\n- Circles: $1.5-3=-1.5$, $0.5-2=-1.5$, $0.5-3=-2.5$ — all $< -0.5$.\n\nSo $y - x = -0.5$ separates them: (iv) **is** linearly separable."
+        }
+      ],
+      "answer": {
+        "value": "(i) and (iv) are linearly separable — options **(A)** and **(D)**",
+        "choice": [
+          "A",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Circles are above the diagonal $y=x$ and squares below it."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "The circle $(2,2)$ is the midpoint of the squares $(1,2)$ and $(3,2)$, so it lies inside their convex hull."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "This is XOR: the two diagonals cross at $(2,2)$, so the convex hulls of the classes intersect."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Squares lie upper-left and circles lower-right; $y = x - 0.5$ separates them."
+        }
+      ],
+      "shortcut": "Look for the two classic non-separable shapes: one class surrounded by the other (ii) and the XOR checkerboard (iii). Everything else here is split by a diagonal line.",
+      "pitfalls": [
+        "Thinking (iv) is not separable because the points are not on the grid — a slanted line still separates them.",
+        "Requiring an axis-parallel line; any straight line counts.",
+        "Calling (iii) separable because each class alone looks \"linear\" (a diagonal)."
+      ],
+      "verification": "Convex-hull test: in (i) and (iv) the triangles formed by the circles and by the squares are disjoint (the separating lines above prove it); in (ii) and (iii) the hulls share the point $(2,2)$."
+    },
+    "da-2024-da-44": {
+      "approach": "“All balls are round except rugby balls” says two things: a non-rugby ball is round, and a rugby ball is not round. Write those as implications, then use the fact that each $s_i$ is either one of them or its contrapositive.",
+      "concepts": [
+        "First-order logic",
+        "Implication and contrapositive",
+        "“Except” = both directions"
+      ],
+      "given": "Write $g = \\text{game(ball, rugby)}$, $r = \\text{shape(ball, round)}$ (for a fixed ball).\n\n$s_1: \\neg g \\Rightarrow r$, $\\quad s_2: \\neg r \\Rightarrow g$, $\\quad s_3: g \\Rightarrow \\neg r$, $\\quad s_4: r \\Rightarrow \\neg g$.",
+      "steps": [
+        {
+          "title": "Translate the assertion",
+          "body": "“All balls are round **except** balls used in rugby” has two parts:\n\n1. Every non-rugby ball is round: $\\forall\\,\\text{ball}\\ (\\neg g \\Rightarrow r)$ — this is $s_1$.\n2. The excepted balls are not round: $\\forall\\,\\text{ball}\\ (g \\Rightarrow \\neg r)$ — this is $s_3$.\n\nTogether: for every ball $r \\Leftrightarrow \\neg g$, i.e. $g \\oplus r$ (exactly one holds).",
+          "scene": {
+            "caption": "claim column: true exactly when g and r differ",
+            "hl": [
+              {
+                "c": 4,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Spot the contrapositive pairs",
+          "body": "An implication equals its contrapositive: $(p \\Rightarrow q) \\equiv (\\neg q \\Rightarrow \\neg p)$.\n\n- $s_2: \\neg r \\Rightarrow g$ is the contrapositive of $s_1$, so $s_1 \\equiv s_2$.\n- $s_4: r \\Rightarrow \\neg g$ is the contrapositive of $s_3$, so $s_3 \\equiv s_4$.\n\nThe table confirms it: columns $s_1, s_2$ are identical, and so are $s_3, s_4$.",
+          "scene": {
+            "caption": "s1 = s2 and s3 = s4 column-for-column",
+            "hl": [
+              {
+                "c": 0,
+                "tone": "info"
+              },
+              {
+                "c": 1,
+                "tone": "info"
+              },
+              {
+                "c": 2,
+                "tone": "warning"
+              },
+              {
+                "c": 3,
+                "tone": "warning"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Evaluate each option",
+          "body": "The assertion needs one sentence from $\\{s_1, s_2\\}$ **and** one from $\\{s_3, s_4\\}$.\n\n- $s_1 \\wedge s_3$: column $F,T,T,F$ = claim ✓\n- $s_1 \\wedge s_2 \\equiv s_1$: $F,T,T,T$ — allows a round rugby ball ✗\n- $s_2 \\wedge s_3 \\equiv s_1 \\wedge s_3$: $F,T,T,F$ ✓\n- $s_3 \\wedge s_4 \\equiv s_3$: $T,T,T,F$ — allows a non-round non-rugby ball ✗",
+          "scene": {
+            "caption": "s1∧s3 (= s2∧s3) reproduces the claim column",
+            "hl": [
+              {
+                "c": 0,
+                "tone": "success"
+              },
+              {
+                "c": 2,
+                "tone": "success"
+              },
+              {
+                "c": 4,
+                "tone": "success"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "Options **(A)** $s_1 \\wedge s_3$ and **(C)** $s_2 \\wedge s_3$",
+        "choice": [
+          "A",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$s_1$ makes non-rugby balls round and $s_3$ makes rugby balls non-round — exactly the two halves of the assertion."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$s_2$ is the contrapositive of $s_1$, so $s_1 \\wedge s_2 \\equiv s_1$; it says nothing about rugby balls, so a round rugby ball would satisfy it."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$s_2 \\equiv s_1$, so $s_2 \\wedge s_3 \\equiv s_1 \\wedge s_3$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$s_4 \\equiv s_3$, so this is just $s_3$; it never forces non-rugby balls to be round."
+        }
+      ],
+      "shortcut": "Group the sentences into contrapositive pairs $\\{s_1,s_2\\}$ and $\\{s_3,s_4\\}$. A correct option must take one from each pair: only A and C do.",
+      "pitfalls": [
+        "Reading “except” as only $\\neg g \\Rightarrow r$; in the official reading the exception also says rugby balls are not round.",
+        "Taking $s_1 \\wedge s_2$ as “both directions” — $s_2$ is the contrapositive, not the converse.",
+        "Confusing the converse ($r \\Rightarrow \\neg g$ is the contrapositive of $s_3$, not of $s_1$)."
+      ],
+      "verification": "Truth table over the four ball types $(g,r)$: the claim is true only for $(0,1)$ and $(1,0)$; $s_1\\wedge s_3$ and $s_2\\wedge s_3$ are true exactly there, while B fails at $(1,1)$ and D fails at $(0,0)$.",
+      "animation": {
+        "kind": "table",
+        "title": "All four kinds of ball",
+        "cols": [
+          "s1",
+          "s2",
+          "s3",
+          "s4",
+          "claim"
+        ],
+        "rowLabels": [
+          "g=0, r=0",
+          "g=0, r=1",
+          "g=1, r=0",
+          "g=1, r=1"
+        ],
+        "corner": "g=rugby, r=round",
+        "rows": [
+          [
+            "F",
+            "F",
+            "T",
+            "T",
+            "F"
+          ],
+          [
+            "T",
+            "T",
+            "T",
+            "T",
+            "T"
+          ],
+          [
+            "T",
+            "T",
+            "T",
+            "T",
+            "T"
+          ],
+          [
+            "T",
+            "T",
+            "F",
+            "F",
+            "F"
+          ]
+        ],
+        "caption": "Each row is one kind of ball; T/F is the value of the sentence for it"
+      }
+    },
+    "da-2024-da-45": {
+      "approach": "Classify every predicate: equality predicates can use either a hash index or a B+ tree, but the range predicate `CustomerRating > 3.4` can only use an ordered index (B+ tree). An option is valid when every predicate gets an index that can serve it.",
+      "concepts": [
+        "Hash index (equality only)",
+        "B+ tree (equality and range)",
+        "Index-supported joins"
+      ],
+      "given": "| Predicate | Kind |\n|---|---|\n| `Movie.CustomerRating > 3.4` | range |\n| `Genre.Name = \"Comedy\"` | equality (selection) |\n| `Movie_Genre.MovieID = Movie.ID` | equality (join) |\n| `Movie_Genre.GenreID = Genre.ID` | equality (join) |",
+      "steps": [
+        {
+          "title": "What each index can answer",
+          "body": "- A **hash index** maps a key to a bucket. It finds rows with `attr = value` in about one I/O, but the hash scatters neighbouring values, so it cannot list all keys $> 3.4$ — a range query must still scan.\n- A **B+ tree** keeps keys sorted with linked leaves: it answers equality *and* ranges (descend to $3.4$, then walk the leaves).",
+          "scene": {
+            "hl": [
+              {
+                "c": 1,
+                "tone": "accent"
+              },
+              {
+                "c": 2,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Match predicates to index types",
+          "body": "- Range on `CustomerRating` ⇒ needs a **B+ tree**.\n- Equality on `Genre.Name` ⇒ hash or B+ tree.\n- Equality joins on `ID`, `MovieID`, `GenreID` ⇒ hash or B+ tree (index nested-loop or hash join).",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "warning"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Check the options",
+          "body": "- **A** B+ tree everywhere: every predicate (including the range) is served ✓\n- **B** hash on `Genre.Name` (equality — ideal) + B+ trees on the rest, including `CustomerRating` ✓\n- **C** hash on `CustomerRating` — useless for `> 3.4`, so the most selective-looking filter still needs a full scan ✗\n- **D** hash on everything — same defect as C ✗",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "c": 1,
+                "tone": "error"
+              },
+              {
+                "r": 0,
+                "c": 2,
+                "tone": "success"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "Options **(A)** and **(B)**",
+        "choice": [
+          "A",
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "B+ trees support both the range filter on `CustomerRating` and all equality predicates/joins."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "The hash index on `Genre.Name` is ideal for `= \"Comedy\"`, and `CustomerRating` still gets a B+ tree for the range."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "A hash index cannot answer `CustomerRating > 3.4`; the range filter falls back to a scan."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Same flaw as C: the range predicate is on a hash-indexed attribute."
+        }
+      ],
+      "shortcut": "Find the only range predicate (`> 3.4`). Any option that puts a hash index on that attribute is out; the rest are in.",
+      "pitfalls": [
+        "Thinking hash indexes are always faster — only for equality lookups.",
+        "Arguing C still \"speeds up\" the joins; the intended criterion is that every predicate can use its index.",
+        "Forgetting that joins are equality predicates, so hash indexes are fine there."
+      ],
+      "verification": "Only `CustomerRating` appears in a range comparison; A and B give it a B+ tree, C and D give it a hash index — consistent with the official key A;B.",
+      "animation": {
+        "kind": "table",
+        "title": "Can this index serve the predicate?",
+        "cols": [
+          "kind",
+          "hash",
+          "B+ tree"
+        ],
+        "rowLabels": [
+          "CustomerRating > 3.4",
+          "Name = \"Comedy\"",
+          "MovieID = Movie.ID",
+          "GenreID = Genre.ID"
+        ],
+        "rows": [
+          [
+            "range",
+            "✗",
+            "✓"
+          ],
+          [
+            "equality",
+            "✓",
+            "✓"
+          ],
+          [
+            "join (=)",
+            "✓",
+            "✓"
+          ],
+          [
+            "join (=)",
+            "✓",
+            "✓"
+          ]
+        ],
+        "caption": "Only the range predicate rules out a hash index"
+      }
+    },
+    "da-2024-da-46": {
+      "approach": "$(X,Y)$ is uniform on the square $[1,3]\\times[2,4]$ (area 4), so the probability is the area of the part with $x \\ge y$ divided by 4 — a small triangle.",
+      "concepts": [
+        "Joint uniform density",
+        "Probability as area"
+      ],
+      "given": "$X \\sim U[1,3]$, $Y \\sim U[2,4]$, independent. Find $P(X \\ge Y)$.",
+      "steps": [
+        {
+          "title": "Joint density",
+          "body": "By independence $f_{X,Y}(x,y) = \\dfrac{1}{3-1}\\cdot\\dfrac{1}{4-2} = \\dfrac12\\cdot\\dfrac12 = \\dfrac14$ on $[1,3]\\times[2,4]$, so $P(A) = \\dfrac{\\text{area}(A)}{4}$."
+        },
+        {
+          "title": "Region where $x \\ge y$",
+          "body": "Inside the square $y \\ge 2$, so $x \\ge y$ needs $x \\ge 2$. For $x \\in [2,3]$, $y$ runs from $2$ to $x$. That is the triangle with vertices $(2,2), (3,2), (3,3)$:\n\n$$\\text{area} = \\int_2^3 (x-2)\\,dx = \\Big[\\tfrac{(x-2)^2}{2}\\Big]_2^3 = \\tfrac12$$"
+        },
+        {
+          "title": "Probability",
+          "body": "$$P(X \\ge Y) = \\frac{1/2}{4} = \\frac18 = 0.125$$"
+        }
+      ],
+      "answer": {
+        "value": "$P(X \\ge Y) = \\tfrac18 =$ **0.125**",
+        "number": 0.125,
+        "matchesKey": true
+      },
+      "shortcut": "$X \\ge Y$ is possible only when both land in the overlap $[2,3]$: $P(X \\ge 2)\\,P(Y \\le 3) = \\tfrac12\\cdot\\tfrac12 = \\tfrac14$. Given that, both are i.i.d. $U[2,3]$, so $X \\ge Y$ with probability $\\tfrac12$. Total $\\tfrac14 \\cdot \\tfrac12 = \\tfrac18$.",
+      "pitfalls": [
+        "Forgetting the joint density is $\\tfrac14$, not 1 (answering 0.5).",
+        "Integrating over the whole $x$-range $[1,3]$ — for $x<2$ no $y$ in $[2,4]$ is $\\le x$."
+      ],
+      "verification": "The shortcut (conditioning on both landing in $[2,3]$) gives the same $\\tfrac18$; and $P(Y \\ge X) = 1 - \\tfrac18 = \\tfrac78$ is plausible since $Y$ is shifted one unit up."
+    },
+    "da-2024-da-47": {
+      "approach": "Use the standard exponential moments $E(X) = 1/\\lambda$ and $\\mathrm{Var}(X) = 1/\\lambda^2$ and solve the one equation.",
+      "concepts": [
+        "Exponential distribution",
+        "Mean and variance"
+      ],
+      "steps": [
+        {
+          "title": "Mean",
+          "body": "Using $\\int_0^\\infty x^n e^{-\\lambda x}dx = \\dfrac{n!}{\\lambda^{n+1}}$:\n\n$$E(X) = \\lambda\\cdot\\frac{1!}{\\lambda^2} = \\frac1\\lambda$$"
+        },
+        {
+          "title": "Variance",
+          "body": "$$E(X^2) = \\lambda\\cdot\\frac{2!}{\\lambda^3} = \\frac{2}{\\lambda^2}, \\qquad \\mathrm{Var}(X) = E(X^2) - E(X)^2 = \\frac{2}{\\lambda^2} - \\frac{1}{\\lambda^2} = \\frac{1}{\\lambda^2}$$"
+        },
+        {
+          "title": "Solve $5E(X) = \\mathrm{Var}(X)$",
+          "body": "$$\\frac{5}{\\lambda} = \\frac{1}{\\lambda^2} \\;\\Rightarrow\\; 5\\lambda^2 = \\lambda \\;\\Rightarrow\\; \\lambda(5\\lambda - 1) = 0$$\n\nSince $\\lambda > 0$, $\\lambda = \\dfrac15 = 0.2$."
+        }
+      ],
+      "answer": {
+        "value": "$\\lambda = \\tfrac15 =$ **0.2**",
+        "number": 0.2,
+        "matchesKey": true
+      },
+      "shortcut": "For an exponential, $\\mathrm{Var}/E = 1/\\lambda$. Here the ratio is 5, so $\\lambda = 1/5$.",
+      "pitfalls": [
+        "Using $E(X) = \\lambda$ (that is the Poisson mean) — gives $\\lambda = 5$.",
+        "Using standard deviation $1/\\lambda$ in place of variance."
+      ],
+      "verification": "With $\\lambda = 0.2$: $E(X) = 5$, $\\mathrm{Var}(X) = 25 = 5 \\times 5$ ✓."
+    },
+    "da-2024-da-48": {
+      "approach": "Bayes' theorem: draw the two-level tree $T/\\bar T$ then $S$, add the two $S$-leaves for $P(S)$, and take the share of the $T$-branch.",
+      "concepts": [
+        "Total probability",
+        "Bayes' theorem"
+      ],
+      "given": "$P(\\bar T) = 0.6$, $P(S \\mid T) = 0.3$, $P(S \\mid \\bar T) = 0.6$.",
+      "steps": [
+        {
+          "title": "Prior of $T$",
+          "body": "$P(T) = 1 - P(\\bar T) = 1 - 0.6 = 0.4$."
+        },
+        {
+          "title": "Joint probabilities of the $S$-leaves",
+          "body": "$P(T \\cap S) = P(T)\\,P(S\\mid T) = 0.4 \\times 0.3 = 0.12$\n\n$P(\\bar T \\cap S) = P(\\bar T)\\,P(S\\mid \\bar T) = 0.6 \\times 0.6 = 0.36$",
+          "scene": {
+            "kind": "tree",
+            "title": "Probability tree",
+            "root": {
+              "label": "start",
+              "children": [
+                {
+                  "label": "T",
+                  "edge": "0.4",
+                  "children": [
+                    {
+                      "label": "S: 0.12",
+                      "id": "ts",
+                      "edge": "0.3",
+                      "tone": "warning"
+                    },
+                    {
+                      "label": "S̄",
+                      "id": "tn",
+                      "edge": "0.7"
+                    }
+                  ]
+                },
+                {
+                  "label": "T̄",
+                  "edge": "0.6",
+                  "children": [
+                    {
+                      "label": "S: 0.36",
+                      "id": "ns",
+                      "edge": "0.6",
+                      "tone": "warning"
+                    },
+                    {
+                      "label": "S̄",
+                      "id": "nn",
+                      "edge": "0.4"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Total probability and Bayes",
+          "body": "$$P(S) = 0.12 + 0.36 = 0.48$$\n\n$$P(T \\mid S) = \\frac{P(T\\cap S)}{P(S)} = \\frac{0.12}{0.48} = 0.25$$",
+          "scene": {
+            "kind": "tree",
+            "title": "Probability tree",
+            "root": {
+              "label": "start",
+              "children": [
+                {
+                  "label": "T",
+                  "edge": "0.4",
+                  "tone": "success",
+                  "children": [
+                    {
+                      "label": "S: 0.12",
+                      "id": "ts",
+                      "edge": "0.3",
+                      "tone": "success"
+                    },
+                    {
+                      "label": "S̄",
+                      "id": "tn",
+                      "edge": "0.7"
+                    }
+                  ]
+                },
+                {
+                  "label": "T̄",
+                  "edge": "0.6",
+                  "children": [
+                    {
+                      "label": "S: 0.36",
+                      "id": "ns",
+                      "edge": "0.6",
+                      "tone": "info"
+                    },
+                    {
+                      "label": "S̄",
+                      "id": "nn",
+                      "edge": "0.4"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "$P(T \\mid S) = \\tfrac{0.12}{0.48} =$ **0.25**",
+        "number": 0.25,
+        "matchesKey": true
+      },
+      "shortcut": "Odds form: $\\dfrac{P(T\\mid S)}{P(\\bar T\\mid S)} = \\dfrac{0.4}{0.6}\\cdot\\dfrac{0.3}{0.6} = \\dfrac13$, so $P(T\\mid S) = \\dfrac{1}{1+3} = 0.25$.",
+      "pitfalls": [
+        "Using $P(\\bar T) = 0.6$ as $P(T)$.",
+        "Answering $P(S\\mid T) = 0.3$ — the question asks for the reverse conditional.",
+        "Forgetting the $\\bar T$ branch in $P(S)$."
+      ],
+      "verification": "$P(\\bar T \\mid S) = 0.36/0.48 = 0.75$ and $0.25 + 0.75 = 1$ ✓; the odds-form shortcut agrees.",
+      "animation": {
+        "kind": "tree",
+        "title": "Probability tree",
+        "root": {
+          "label": "start",
+          "children": [
+            {
+              "label": "T",
+              "edge": "0.4",
+              "children": [
+                {
+                  "label": "S: 0.12",
+                  "id": "ts",
+                  "edge": "0.3"
+                },
+                {
+                  "label": "S̄",
+                  "id": "tn",
+                  "edge": "0.7"
+                }
+              ]
+            },
+            {
+              "label": "T̄",
+              "edge": "0.6",
+              "children": [
+                {
+                  "label": "S: 0.36",
+                  "id": "ns",
+                  "edge": "0.6"
+                },
+                {
+                  "label": "S̄",
+                  "id": "nn",
+                  "edge": "0.4"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "da-2024-da-49": {
+      "approach": "The conditional density $f_{Y\\mid X}(y\\mid x) = f(x,y)/f_X(x)$ is the slice $y \\mapsto 2xy$ renormalised on $0<y<x$, so any constant factor (even a wrong one) cancels. Integrate the slice at $x = 1.5$.",
+      "concepts": [
+        "Conditional density",
+        "Conditional expectation",
+        "Normalisation of a pdf"
+      ],
+      "given": "$f_{X,Y}(x,y) = 2xy$ on $0<x<2,\\ 0<y<x$. Find $E[Y \\mid X=1.5]$.",
+      "steps": [
+        {
+          "title": "Check the density (why the key is MTA)",
+          "body": "$$\\int_0^2\\!\\int_0^x 2xy\\,dy\\,dx = \\int_0^2 x\\cdot x^2\\,dx = \\Big[\\tfrac{x^4}{4}\\Big]_0^2 = 4 \\ne 1$$\n\nSo the given $f$ is **not** a valid joint pdf; the official key therefore awards marks to all (MTA)."
+        },
+        {
+          "title": "Conditional density at $X = 1.5$",
+          "body": "Marginal (of the given function): $f_X(x) = \\int_0^x 2xy\\,dy = x\\cdot x^2 = x^3$. Then\n\n$$f_{Y\\mid X}(y\\mid x) = \\frac{2xy}{x^3} = \\frac{2y}{x^2}, \\quad 0<y<x$$\n\nThis integrates to $\\frac{x^2}{x^2} = 1$ — the bad constant cancelled. At $x = 1.5$: $f(y\\mid 1.5) = \\dfrac{2y}{2.25}$ on $(0, 1.5)$."
+        },
+        {
+          "title": "Expectation",
+          "body": "$$E[Y\\mid X=x] = \\int_0^x y\\cdot\\frac{2y}{x^2}\\,dy = \\frac{2}{x^2}\\cdot\\frac{x^3}{3} = \\frac{2x}{3}$$\n\n$$E[Y\\mid X=1.5] = \\frac{2 \\times 1.5}{3} = 1$$"
+        }
+      ],
+      "answer": {
+        "value": "$E[Y\\mid X=1.5] = \\tfrac{2(1.5)}{3} =$ **1** (official key: marks to all)",
+        "number": 1,
+        "matchesKey": false,
+        "keyNote": "The official key is \"MTA\" (marks to all) because the given $f$ integrates to 4, not 1. The conditional expectation is unaffected by the normalising constant, so the intended answer is 1."
+      },
+      "shortcut": "Given $X=x$, $Y$ has density $\\propto y$ on $(0,x)$ — a \"ramp\", whose mean is $\\tfrac23$ of the way along: $\\tfrac23 \\times 1.5 = 1$.",
+      "pitfalls": [
+        "Plugging $x=1.5$ into $f(x,y)$ without dividing by the marginal.",
+        "Using the range $0<y<2$ instead of $0<y<x$.",
+        "Trying to \"fix\" the pdf to $\\tfrac12 xy$ and thinking the answer changes — it does not."
+      ],
+      "verification": "With the corrected pdf $\\tfrac12 xy$: $f_X(x) = \\tfrac14 x^3$ and $f(y\\mid x) = \\tfrac{xy/2}{x^3/4} = \\tfrac{2y}{x^2}$ — identical, so $E = 1$ again."
+    },
+    "da-2024-da-50": {
+      "approach": "Split the logarithm of the product into two logs and use the standard expansions $\\ln(1+t) \\approx t$ and $\\cos x \\approx 1 - x^2/2$.",
+      "concepts": [
+        "Standard limits",
+        "Taylor series",
+        "Logarithm of a product"
+      ],
+      "steps": [
+        {
+          "title": "Split the log",
+          "body": "$$\\frac{\\ln\\big((x^2+1)\\cos x\\big)}{x^2} = \\frac{\\ln(1+x^2)}{x^2} + \\frac{\\ln\\cos x}{x^2}$$"
+        },
+        {
+          "title": "First term",
+          "body": "With $t = x^2 \\to 0$: $\\dfrac{\\ln(1+t)}{t} \\to 1$."
+        },
+        {
+          "title": "Second term",
+          "body": "$\\cos x = 1 - \\dfrac{x^2}{2} + O(x^4)$, so $\\ln\\cos x = \\ln\\Big(1 - \\dfrac{x^2}{2} + O(x^4)\\Big) = -\\dfrac{x^2}{2} + O(x^4)$, hence\n\n$$\\frac{\\ln\\cos x}{x^2} \\to -\\frac12$$"
+        },
+        {
+          "title": "Add",
+          "body": "$$\\lim_{x\\to0} = 1 + \\left(-\\frac12\\right) = \\frac12 = 0.5$$"
+        }
+      ],
+      "answer": {
+        "value": "Limit $= 1 - \\tfrac12 =$ **0.5**",
+        "number": 0.5,
+        "matchesKey": true
+      },
+      "shortcut": "Product inside the log: $(1+x^2)(1-\\tfrac{x^2}{2}) \\approx 1 + \\tfrac{x^2}{2}$, and $\\ln(1+\\tfrac{x^2}{2}) \\approx \\tfrac{x^2}{2}$, so the ratio $\\to \\tfrac12$.",
+      "pitfalls": [
+        "Treating $\\ln\\cos x \\to 0$ and dropping it (answer 1).",
+        "Using $\\cos x \\approx 1 - x^2$ (missing the factor $\\tfrac12$)."
+      ],
+      "verification": "L'Hôpital: derivative of the numerator is $\\dfrac{2x}{1+x^2} - \\tan x$, of the denominator $2x$; the ratio $\\dfrac{1}{1+x^2} - \\dfrac{\\tan x}{2x} \\to 1 - \\tfrac12 = \\tfrac12$ ✓."
+    },
+    "da-2024-da-51": {
+      "approach": "$M = uu^T$ has rank 1, so it has a single non-zero singular value. Since $M$ is symmetric positive semidefinite, singular values = eigenvalues, and the only non-zero eigenvalue is $u^Tu = \\lVert u\\rVert^2$.",
+      "concepts": [
+        "Rank-one matrix",
+        "Singular values of a PSD matrix",
+        "Trace"
+      ],
+      "given": "$u = (1,2,3,4,5)^T$, $M = uu^T \\in \\mathbb{R}^{5\\times5}$.",
+      "steps": [
+        {
+          "title": "Eigen-structure of $uu^T$",
+          "body": "$Mu = u(u^Tu) = \\lVert u\\rVert^2 u$, so $u$ is an eigenvector with eigenvalue $\\lVert u\\rVert^2$. Any $v \\perp u$ gives $Mv = u(u^Tv) = 0$, so the other four eigenvalues are $0$."
+        },
+        {
+          "title": "Singular values = eigenvalues here",
+          "body": "$M$ is symmetric and $x^TMx = (u^Tx)^2 \\ge 0$, so $M$ is PSD; for such matrices $\\sigma_i = \\lvert\\lambda_i\\rvert = \\lambda_i$. Hence the singular values are $\\lVert u\\rVert^2, 0, 0, 0, 0$."
+        },
+        {
+          "title": "Compute $\\lVert u\\rVert^2$",
+          "body": "$$\\sum_{i=1}^{5}\\sigma_i = 1^2+2^2+3^2+4^2+5^2 = 1+4+9+16+25 = 55$$"
+        }
+      ],
+      "answer": {
+        "value": "$\\sum \\sigma_i = \\lVert u\\rVert^2 =$ **55**",
+        "number": 55,
+        "matchesKey": true
+      },
+      "shortcut": "For a PSD matrix, sum of singular values = trace. $\\operatorname{tr}(uu^T) = u^Tu = 55$.",
+      "pitfalls": [
+        "Answering $\\lVert u\\rVert = \\sqrt{55} \\approx 7.42$ — that is the singular value of the vector $u$, not of $uu^T$.",
+        "Expecting five non-zero singular values; $uu^T$ has rank 1."
+      ],
+      "verification": "Trace check: the diagonal of $uu^T$ is $u_i^2 = 1,4,9,16,25$, summing to $55$, which equals the sum of eigenvalues ($55+0+0+0+0$)."
+    },
+    "da-2024-da-52": {
+      "approach": "$\\text{IG}(C,\\text{Pitch}) = H(C) - \\sum_v \\frac{\\lvert C_v\\rvert}{\\lvert C\\rvert}H(C_v)$: count Green/Blue overall and within each pitch value, then apply binary entropy (base 2).",
+      "concepts": [
+        "Entropy (base 2)",
+        "Information gain",
+        "Decision-tree splitting"
+      ],
+      "steps": [
+        {
+          "title": "Entropy of the target",
+          "body": "Green wins matches 1, 5, 7, 10 ⇒ 4 Green, 6 Blue.\n\n$$H(C) = -0.4\\log_2 0.4 - 0.6\\log_2 0.6 = 0.4(1.3219) + 0.6(0.7370) = 0.5288 + 0.4422 = 0.9710$$",
+          "scene": {
+            "reveal": 4,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Split on Pitch = S",
+          "body": "Matches 1, 2, 4, 7, 10: Green in 1, 7, 10 and Blue in 2, 4 ⇒ $3$ Green, $2$ Blue.\n\n$$H(C_S) = -0.6\\log_2 0.6 - 0.4\\log_2 0.4 = 0.9710$$",
+          "scene": {
+            "reveal": 8,
+            "hl": [
+              {
+                "r": 1,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Split on Pitch = F",
+          "body": "Matches 3, 5, 6, 8, 9: Green only in 5 ⇒ $1$ Green, $4$ Blue.\n\n$$H(C_F) = -0.2\\log_2 0.2 - 0.8\\log_2 0.8 = 0.2(2.3219) + 0.8(0.3219) = 0.4644 + 0.2575 = 0.7219$$",
+          "scene": {
+            "reveal": 12,
+            "hl": [
+              {
+                "r": 2,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Information gain",
+          "body": "Weighted child entropy: $\\tfrac5{10}(0.9710) + \\tfrac5{10}(0.7219) = 0.4855 + 0.3610 = 0.8464$.\n\n$$\\text{IG} = 0.9710 - 0.8464 = 0.1245 \\approx 0.12$$",
+          "scene": {
+            "hl": [
+              {
+                "c": 3,
+                "tone": "success"
+              }
+            ],
+            "caption": "IG = 0.971 − (0.5·0.971 + 0.5·0.722) ≈ 0.12"
+          }
+        }
+      ],
+      "answer": {
+        "value": "$\\text{InformationGain}(C, \\text{Pitch}) \\approx 0.1245 \\to$ **0.12**",
+        "number": 0.12,
+        "matchesKey": true
+      },
+      "shortcut": "The $S$ branch has the same 3:2 mix as the parent (4:6 mirrored), so it contributes $\\tfrac12 H(C)$; IG $= \\tfrac12\\big(H(0.4) - H(0.2)\\big) = \\tfrac12(0.971 - 0.722) = 0.1245$.",
+      "pitfalls": [
+        "Using natural logs (gives $0.086$).",
+        "Forgetting to weight child entropies by $5/10$.",
+        "Miscounting the winners — Format is irrelevant to this split."
+      ],
+      "verification": "Shortcut gives the same $0.1245$; the key range $0.12$–$0.13$ contains it.",
+      "animation": {
+        "kind": "table",
+        "title": "Winner counts by Pitch",
+        "cols": [
+          "Green",
+          "Blue",
+          "n",
+          "Entropy"
+        ],
+        "rowLabels": [
+          "All (C)",
+          "Pitch = S",
+          "Pitch = F"
+        ],
+        "rows": [
+          [
+            4,
+            6,
+            10,
+            "0.971"
+          ],
+          [
+            3,
+            2,
+            5,
+            "0.971"
+          ],
+          [
+            1,
+            4,
+            5,
+            "0.722"
+          ]
+        ],
+        "reveal": 0
+      }
+    },
+    "da-2024-da-53": {
+      "approach": "Sort the five training points by Euclidean distance from the diamond $(2,1)$ and take a majority vote among the $k$ nearest for $k = 1, 3, 5$ until squares win.",
+      "concepts": [
+        "k-nearest neighbours",
+        "Euclidean distance",
+        "Majority vote"
+      ],
+      "given": "Circles: $(1,1), (1,2)$. Squares: $(2,3), (3,2), (3,3)$. Query (diamond): $(2,1)$.",
+      "steps": [
+        {
+          "title": "Distances from $(2,1)$",
+          "body": "| Point | Class | $d$ |\n|---|---|---|\n| $(1,1)$ | circle | $\\sqrt{1^2+0^2} = 1$ |\n| $(1,2)$ | circle | $\\sqrt{1^2+1^2} = \\sqrt2 \\approx 1.41$ |\n| $(3,2)$ | square | $\\sqrt{1^2+1^2} = \\sqrt2 \\approx 1.41$ |\n| $(2,3)$ | square | $\\sqrt{0^2+2^2} = 2$ |\n| $(3,3)$ | square | $\\sqrt{1^2+2^2} = \\sqrt5 \\approx 2.24$ |",
+          "scene": {
+            "subs": {
+              "●(1,1)": "1",
+              "●(1,2)": "1.41",
+              "■(3,2)": "1.41",
+              "■(2,3)": "2",
+              "■(3,3)": "2.24"
+            }
+          }
+        },
+        {
+          "title": "$k = 1$: circle",
+          "body": "Nearest is $(1,1)$ at distance $1$ — a circle. Label: **circle**.",
+          "scene": {
+            "edgeTones": {
+              "◇(2,1)>●(1,1)": "warning",
+              "◇(2,1)>●(1,2)": "muted",
+              "◇(2,1)>■(3,2)": "muted",
+              "◇(2,1)>■(2,3)": "muted",
+              "◇(2,1)>■(3,3)": "muted"
+            }
+          }
+        },
+        {
+          "title": "$k = 3$: still circle",
+          "body": "Three nearest: $(1,1)$, $(1,2)$, $(3,2)$ — both $\\sqrt2$ points are included, so there is no tie problem. Votes: 2 circles, 1 square ⇒ **circle**.",
+          "scene": {
+            "edgeTones": {
+              "◇(2,1)>●(1,1)": "warning",
+              "◇(2,1)>●(1,2)": "warning",
+              "◇(2,1)>■(3,2)": "warning",
+              "◇(2,1)>■(2,3)": "muted",
+              "◇(2,1)>■(3,3)": "muted"
+            }
+          }
+        },
+        {
+          "title": "$k = 5$: square",
+          "body": "All five points vote: 2 circles, 3 squares ⇒ **square**. So the smallest odd $k$ is $5$.",
+          "scene": {
+            "edgeTones": {
+              "◇(2,1)>●(1,1)": "warning",
+              "◇(2,1)>●(1,2)": "warning",
+              "◇(2,1)>■(3,2)": "warning",
+              "◇(2,1)>■(2,3)": "warning",
+              "◇(2,1)>■(3,3)": "warning"
+            },
+            "tones": {
+              "◇(2,1)": "success",
+              "●(1,1)": "cat1",
+              "●(1,2)": "cat1",
+              "■(3,2)": "cat2",
+              "■(2,3)": "cat2",
+              "■(3,3)": "cat2"
+            },
+            "caption": "k = 5: 3 squares vs 2 circles"
+          }
+        }
+      ],
+      "answer": {
+        "value": "Minimum odd $k =$ **5**",
+        "number": 5,
+        "matchesKey": true
+      },
+      "shortcut": "There are only 2 circles and 3 squares, and both circles are among the 3 nearest. Squares can win only when $k$ reaches 5.",
+      "pitfalls": [
+        "Mis-reading the diamond as $(2,2)$ or the circle at $(1,2)$ as a square.",
+        "Worrying about a tie at $\\sqrt2$ for $k=3$ — both tied points are inside the top 3.",
+        "Answering 4 (an even $k$ is excluded by the question)."
+      ],
+      "verification": "Even ignoring distances, squares need at least 3 of $k$ votes while both circles are within distance $\\sqrt2$; for $k=3$ at most 1 square is in range, so $k=5$ is forced.",
+      "animation": {
+        "kind": "graph",
+        "title": "Neighbours of the diamond (2,1)",
+        "directed": false,
+        "layout": "manual",
+        "nodes": [
+          {
+            "id": "◇(2,1)",
+            "x": 2,
+            "y": 2
+          },
+          {
+            "id": "●(1,1)",
+            "x": 1,
+            "y": 2
+          },
+          {
+            "id": "●(1,2)",
+            "x": 1,
+            "y": 1
+          },
+          {
+            "id": "■(3,2)",
+            "x": 3,
+            "y": 1
+          },
+          {
+            "id": "■(2,3)",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "id": "■(3,3)",
+            "x": 3,
+            "y": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "◇(2,1)",
+            "to": "●(1,1)"
+          },
+          {
+            "from": "◇(2,1)",
+            "to": "●(1,2)"
+          },
+          {
+            "from": "◇(2,1)",
+            "to": "■(3,2)"
+          },
+          {
+            "from": "◇(2,1)",
+            "to": "■(2,3)"
+          },
+          {
+            "from": "◇(2,1)",
+            "to": "■(3,3)"
+          }
+        ],
+        "edgeTones": {
+          "◇(2,1)>●(1,1)": "muted",
+          "◇(2,1)>●(1,2)": "muted",
+          "◇(2,1)>■(3,2)": "muted",
+          "◇(2,1)>■(2,3)": "muted",
+          "◇(2,1)>■(3,3)": "muted"
+        },
+        "tones": {
+          "◇(2,1)": "accent",
+          "●(1,1)": "cat1",
+          "●(1,2)": "cat1",
+          "■(3,2)": "cat2",
+          "■(2,3)": "cat2",
+          "■(3,3)": "cat2"
+        },
+        "caption": "● circles (cat1), ■ squares (cat2); edges = current neighbours"
+      }
+    },
+    "da-2024-da-54": {
+      "approach": "A Bayesian network factorises the joint as the product of each node given its parents: $P(U,V,W,Z) = P(U)\\,P(V\\mid U)\\,P(W\\mid U)\\,P(Z\\mid V,W)$. Read the four entries from the CPTs and multiply.",
+      "concepts": [
+        "Bayesian network factorisation",
+        "Conditional probability tables"
+      ],
+      "given": "Edges $U\\to V$, $U\\to W$, $V\\to Z$, $W\\to Z$.",
+      "steps": [
+        {
+          "title": "Factorise the joint",
+          "body": "Parents: $U$ none; $V$: $U$; $W$: $U$; $Z$: $V, W$. So\n\n$$P(U{=}1,V{=}1,W{=}1,Z{=}1) = P(U{=}1)\\,P(V{=}1\\mid U{=}1)\\,P(W{=}1\\mid U{=}1)\\,P(Z{=}1\\mid V{=}1,W{=}1)$$",
+          "scene": {
+            "panels": [
+              {
+                "tones": {
+                  "U": "accent",
+                  "V": "accent",
+                  "W": "accent",
+                  "Z": "accent"
+                }
+              },
+              {
+                "reveal": 1
+              }
+            ]
+          }
+        },
+        {
+          "title": "Read the CPT entries",
+          "body": "- $P(U=1) = 0.5$\n- $P(V=1\\mid U=1) = 0.5$\n- $P(W=1\\mid U=1) = 1$\n- $P(Z=1\\mid V=1, W=1) = 0.5$",
+          "scene": {
+            "panels": [
+              null,
+              {
+                "reveal": 2
+              }
+            ]
+          }
+        },
+        {
+          "title": "Multiply",
+          "body": "$$0.5 \\times 0.5 \\times 1 \\times 0.5 = 0.125$$",
+          "scene": {
+            "panels": [
+              {
+                "tones": {
+                  "U": "success",
+                  "V": "success",
+                  "W": "success",
+                  "Z": "success"
+                }
+              },
+              {
+                "reveal": 3
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "$P(U{=}1,V{=}1,W{=}1,Z{=}1) =$ **0.125**",
+        "number": 0.125,
+        "matchesKey": true
+      },
+      "shortcut": "$W$ is a copy of $U$, so $P(W{=}1\\mid U{=}1) = 1$; the other three factors are $0.5$ each: $0.5^3 = 0.125$.",
+      "pitfalls": [
+        "Reading $P(Z=1\\mid V=1, W=1)$ from the wrong row (rows $V{=}0,W{=}1$ and $V{=}1,W{=}0$ give 0).",
+        "Multiplying unconditional marginals instead of the CPT entries given the parents."
+      ],
+      "verification": "Sum over $Z$: $P(U{=}1,V{=}1,W{=}1) = 0.5\\times0.5\\times1 = 0.25$, and half of it has $Z=1$, giving $0.125$ ✓.",
+      "animation": {
+        "kind": "panels",
+        "title": "Network and factorisation",
+        "panels": [
+          {
+            "kind": "graph",
+            "directed": true,
+            "layout": "manual",
+            "nodes": [
+              {
+                "id": "U",
+                "x": 1,
+                "y": 0
+              },
+              {
+                "id": "V",
+                "x": 0,
+                "y": 1
+              },
+              {
+                "id": "W",
+                "x": 2,
+                "y": 1
+              },
+              {
+                "id": "Z",
+                "x": 1,
+                "y": 2
+              }
+            ],
+            "edges": [
+              {
+                "from": "U",
+                "to": "V"
+              },
+              {
+                "from": "U",
+                "to": "W"
+              },
+              {
+                "from": "V",
+                "to": "Z"
+              },
+              {
+                "from": "W",
+                "to": "Z"
+              }
+            ]
+          },
+          {
+            "kind": "equation",
+            "lines": [
+              {
+                "tex": "P = P(U)\\,P(V\\mid U)\\,P(W\\mid U)\\,P(Z\\mid V,W)",
+                "note": "chain rule on the DAG"
+              },
+              {
+                "tex": "= 0.5 \\times 0.5 \\times 1 \\times 0.5",
+                "note": "CPT entries"
+              },
+              {
+                "tex": "= 0.125",
+                "tone": "success"
+              }
+            ],
+            "reveal": 0
+          }
+        ]
+      }
+    },
+    "da-2024-da-55": {
+      "approach": "Use $\\mathrm{Cov}(X,Y) = E[XY] - E[X]E[Y]$. Since $X=1$ forces $Y=1$, $XY = X$, so $E[XY] = E[X]$.",
+      "concepts": [
+        "Indicator random variables",
+        "Covariance"
+      ],
+      "given": "| Outcome | $X$ | $Y$ | $XY$ |\n|---|---|---|---|\n| HH | 1 | 1 | 1 |\n| HT | 0 | 1 | 0 |\n| TH | 0 | 1 | 0 |\n| TT | 0 | 0 | 0 |\n\nEach outcome has probability $\\tfrac14$.",
+      "steps": [
+        {
+          "title": "Means",
+          "body": "$E[X] = P(HH) = \\tfrac14$; $\\ E[Y] = P(\\text{at least one H}) = 1 - P(TT) = 1 - \\tfrac14 = \\tfrac34$."
+        },
+        {
+          "title": "Product moment",
+          "body": "$XY = 1$ only on HH, so $E[XY] = \\tfrac14$."
+        },
+        {
+          "title": "Covariance",
+          "body": "$$\\mathrm{Cov}(X,Y) = \\frac14 - \\frac14\\cdot\\frac34 = \\frac{4}{16} - \\frac{3}{16} = \\frac1{16} = 0.0625$$"
+        }
+      ],
+      "answer": {
+        "value": "$\\mathrm{Cov}(X,Y) = \\tfrac1{16} =$ **0.0625** (key range 0.062 to 0.063)",
+        "number": 0.0625,
+        "matchesKey": true
+      },
+      "shortcut": "When $X \\le Y$ are indicators with $X \\Rightarrow Y$: $\\mathrm{Cov} = E[X](1 - E[Y]) = \\tfrac14\\cdot\\tfrac14 = \\tfrac1{16}$.",
+      "pitfalls": [
+        "Assuming $X$ and $Y$ independent (covariance 0) — they are built from the same tosses.",
+        "Taking $E[Y] = \\tfrac12$ (\"exactly one head\") instead of $\\tfrac34$."
+      ],
+      "verification": "Direct: $E[(X-\\tfrac14)(Y-\\tfrac34)] = \\tfrac14\\big[(\\tfrac34)(\\tfrac14) + 2(-\\tfrac14)(\\tfrac14) + (-\\tfrac14)(-\\tfrac34)\\big] = \\tfrac14\\cdot\\tfrac{3-2+3}{16} = \\tfrac1{16}$ ✓."
+    }
+  }
+}
