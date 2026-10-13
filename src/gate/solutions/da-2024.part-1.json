@@ -1,0 +1,1031 @@
+{
+  "paper": "da-2024",
+  "version": 2,
+  "solutions": {
+    "da-2024-ga-1": {
+      "approach": "Read the given chain as a scale of one idea: sick → infirm → moribund is *ill → weak → dying*. The second chain must be the same idea of foolishness growing stronger: silly → ? → daft. Pick the option that means *foolish/senseless*.",
+      "concepts": [
+        "Word analogy (degree of intensity)",
+        "Vocabulary"
+      ],
+      "steps": [
+        {
+          "title": "Decode the first chain",
+          "body": "- **sick**: unwell (mild)\n- **infirm**: physically weak, frail — stronger\n- **moribund**: at the point of death — strongest\n\nOne idea (ill-health), rising in intensity."
+        },
+        {
+          "title": "Fix the theme of the second chain",
+          "body": "**silly** = lacking good sense (mild); **daft** = senseless, crazy (strong). The blank must be a word for *lacking sense* that sits between them."
+        },
+        {
+          "title": "Test the options",
+          "body": "- **frown**: a facial expression — not about sense.\n- **fawn**: a young deer / to flatter servilely — off-theme.\n- **vein**: a blood vessel or a streak/mood — off-theme.\n- **vain**: futile, *senseless*, foolishly conceited — on-theme.\n\nOnly **vain** belongs to the foolishness scale."
+        }
+      ],
+      "answer": {
+        "value": "**vain** — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "*frown* is a facial expression of displeasure; it says nothing about lack of sense."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "*fawn* (a young deer; to flatter) is unrelated — a distractor that only looks like a vocabulary word."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "*vein* is a homophone trap for *vain*; it means a blood vessel or a streak."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "*vain* means futile/senseless (as in *a vain attempt*), fitting between *silly* and *daft*."
+        }
+      ],
+      "shortcut": "Three of the four options are not even about sense or folly; the homophone pair vein/vain is a hint that the spelling matters — pick the adjective.",
+      "pitfalls": [
+        "Choosing *vein* by sound — it is a noun with an unrelated meaning."
+      ],
+      "verification": "Check the parallel: both chains are adjective → adjective → adjective of one theme. *silly → vain → daft* keeps all three as adjectives of foolishness, as *sick → infirm → moribund* are adjectives of ill-health."
+    },
+    "da-2024-ga-2": {
+      "approach": "Find a small group of regions that already forces a contradiction with 3 colours: the 3 circle sectors plus the 4 trapezoids around them. Then show a 4-colouring of all 15 parts exists, so the minimum is exactly 4.",
+      "concepts": [
+        "Map colouring",
+        "Graph colouring / chromatic number"
+      ],
+      "given": "15 parts: 3 sectors of the circle, 4 trapezoids between circle and rectangle, and 8 parts (4 sides, 4 corners) between rectangle and ellipse. Parts touching only at a corner may share a colour.",
+      "steps": [
+        {
+          "title": "The three sectors need 3 colours",
+          "body": "The three sectors of the circle meet pairwise along the radii, so they are mutually adjacent: colour them **1** (upper-left), **2** (upper-right), **3** (bottom).",
+          "scene": {
+            "tones": {
+              "UL": "cat1",
+              "UR": "cat2",
+              "Bt": "cat3"
+            },
+            "caption": "Sectors: UL = 1, UR = 2, Bt = 3"
+          }
+        },
+        {
+          "title": "Which sectors each trapezoid touches",
+          "body": "The radii point up, lower-left and lower-right, and the diagonals meet the circle at upper-left, upper-right, lower-left and lower-right. So the arc of\n- the **top** trapezoid contains the upward radius → touches UL and UR;\n- the **left** trapezoid contains the lower-left radius → touches UL and Bt;\n- the **right** trapezoid contains the lower-right radius → touches UR and Bt;\n- the **bottom** trapezoid touches only Bt.\n\nNeighbouring trapezoids also share a diagonal edge (top–left, top–right, left–bottom, right–bottom)."
+        },
+        {
+          "title": "With 3 colours every choice is forced",
+          "body": "- Top touches UL(1), UR(2) → must be **3**.\n- Left touches UL(1), Bt(3) → must be **2**.\n- Right touches UR(2), Bt(3) → must be **1**.\n\nThe bottom trapezoid touches Bt(3), Left(2) and Right(1): all three colours are used up. **Contradiction** — 3 colours are not enough.",
+          "scene": {
+            "tones": {
+              "UL": "cat1",
+              "UR": "cat2",
+              "Bt": "cat3",
+              "T": "cat3",
+              "L": "cat2",
+              "R": "cat1",
+              "Bm": "error"
+            },
+            "subs": {
+              "T": "3",
+              "L": "2",
+              "R": "1",
+              "Bm": "?"
+            },
+            "caption": "Bottom trapezoid sees colours 3, 2, 1 → needs a 4th"
+          }
+        },
+        {
+          "title": "4 colours suffice for all 15 parts",
+          "body": "Give the bottom trapezoid colour **4**. Outer parts: top/left/bottom sides touch trapezoids coloured 3, 2, 4 → colour them **1**; the right side touches R(1) → colour **2**. Each corner part touches only its two side parts (it meets the rectangle at a single point): TL, BL between 1 and 1 → **2**; TR, BR between 1 and 2 → **3**. No two adjacent parts share a colour.",
+          "scene": {
+            "tones": {
+              "UL": "cat1",
+              "UR": "cat2",
+              "Bt": "cat3",
+              "T": "cat3",
+              "L": "cat2",
+              "R": "cat1",
+              "Bm": "success"
+            },
+            "subs": {
+              "T": "3",
+              "L": "2",
+              "R": "1",
+              "Bm": "4"
+            },
+            "caption": "A valid 4-colouring exists → minimum = 4"
+          }
+        }
+      ],
+      "answer": {
+        "value": "**4** colours — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "3 colours fail on the bottom trapezoid; an explicit 4-colouring of all 15 parts exists."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "3 is forced on the three sectors and then on the top, left and right trapezoids, leaving none for the bottom trapezoid."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "5 is an upper bound guess; a 4-colouring is shown explicitly, so 5 is not the minimum."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "6 over-counts — perhaps by treating corner-touching parts as adjacent, which the question excludes."
+        }
+      ],
+      "shortcut": "A planar map never needs more than 4 colours (Four Colour Theorem), so the answer is 3 or 4; finding one forced contradiction with 3 colours settles it at 4.",
+      "pitfalls": [
+        "Counting corner contacts as adjacency (the outer corner parts touch the rectangle only at a point).",
+        "Assuming a ring of 4 trapezoids is 2-colourable on its own and forgetting the sectors they also touch."
+      ],
+      "verification": "Lower bound: the 7 inner parts are not 3-colourable (every colour is forced). Upper bound: the explicit colouring above uses 4 colours with no conflict. Four Colour Theorem agrees (≤ 4).",
+      "animation": {
+        "kind": "graph",
+        "title": "Adjacency of the inner 7 parts",
+        "nodes": [
+          {
+            "id": "UL",
+            "x": -1,
+            "y": -0.6
+          },
+          {
+            "id": "UR",
+            "x": 1,
+            "y": -0.6
+          },
+          {
+            "id": "Bt",
+            "x": 0,
+            "y": 1
+          },
+          {
+            "id": "T",
+            "x": 0,
+            "y": -2.4
+          },
+          {
+            "id": "L",
+            "x": -2.6,
+            "y": 0.4
+          },
+          {
+            "id": "R",
+            "x": 2.6,
+            "y": 0.4
+          },
+          {
+            "id": "Bm",
+            "x": 0,
+            "y": 2.8
+          }
+        ],
+        "edges": [
+          {
+            "from": "UL",
+            "to": "UR"
+          },
+          {
+            "from": "UR",
+            "to": "Bt"
+          },
+          {
+            "from": "Bt",
+            "to": "UL"
+          },
+          {
+            "from": "T",
+            "to": "UL"
+          },
+          {
+            "from": "T",
+            "to": "UR"
+          },
+          {
+            "from": "L",
+            "to": "UL"
+          },
+          {
+            "from": "L",
+            "to": "Bt"
+          },
+          {
+            "from": "R",
+            "to": "UR"
+          },
+          {
+            "from": "R",
+            "to": "Bt"
+          },
+          {
+            "from": "Bm",
+            "to": "Bt"
+          },
+          {
+            "from": "T",
+            "to": "L"
+          },
+          {
+            "from": "T",
+            "to": "R"
+          },
+          {
+            "from": "L",
+            "to": "Bm"
+          },
+          {
+            "from": "R",
+            "to": "Bm"
+          }
+        ],
+        "caption": "UL, UR, Bt = circle sectors; T, L, R, Bm = trapezoids"
+      }
+    },
+    "da-2024-ga-3": {
+      "approach": "Divisibility by 3 depends only on the digit sum. The five digits sum to 21, so a 4-digit choice (dropping one digit $d$) works exactly when $21 - d$ is a multiple of 3, i.e. $d$ is itself a multiple of 3. Count the valid digit sets, then arrange.",
+      "concepts": [
+        "Divisibility rule for 3",
+        "Permutations"
+      ],
+      "steps": [
+        {
+          "title": "Sum of all five digits",
+          "body": "$1 + 3 + 4 + 6 + 7 = 21$, which is divisible by 3."
+        },
+        {
+          "title": "Which digit can be left out",
+          "body": "Using 4 distinct digits means omitting exactly one digit $d$. The digit sum is $21 - d$, divisible by 3 iff $d$ is divisible by 3: $d \\in \\{3, 6\\}$.\n\n- omit 3: $\\{1, 4, 6, 7\\}$, sum $18$ ✓\n- omit 6: $\\{1, 3, 4, 7\\}$, sum $15$ ✓\n- omit 1, 4 or 7: sums $20, 17, 14$ ✗"
+        },
+        {
+          "title": "Arrange each set",
+          "body": "No digit is 0, so every ordering of 4 distinct digits is a valid 4-digit number: $4! = 24$ per set.\n$$2 \\times 24 = 48$$"
+        }
+      ],
+      "answer": {
+        "value": "**48** — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "24 counts only one valid digit set (e.g. only $\\{1,4,6,7\\}$)."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Two valid digit sets, each arranged in $4! = 24$ ways: $48$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "72 would need three valid sets; omitting 1, 4 or 7 leaves a sum not divisible by 3."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "12 is $\\frac{4!}{2}$ — no reason to halve the arrangements."
+        }
+      ],
+      "shortcut": "Total 21 ≡ 0 (mod 3) ⇒ drop a multiple of 3 ⇒ 2 choices × 4! = 48.",
+      "pitfalls": [
+        "Worrying about a leading zero — there is no 0 among the digits, so all $4!$ orders count."
+      ],
+      "verification": "Brute check of the 5 possible omissions: sums 20, 18, 17, 15, 14 → exactly two (18, 15) are multiples of 3, giving $2 \\times 24 = 48$."
+    },
+    "da-2024-ga-4": {
+      "approach": "The terms after 2 are two interleaved geometric series: powers of $\\tfrac12$ and powers of $\\tfrac13$. Sum each with $\\frac{a}{1-r}$ and add 2.",
+      "concepts": [
+        "Infinite geometric series",
+        "Regrouping a convergent positive series"
+      ],
+      "steps": [
+        {
+          "title": "Split the series",
+          "body": "$$2 + \\left(\\tfrac12 + \\tfrac14 + \\tfrac18 + \\tfrac1{16} + \\cdots\\right) + \\left(\\tfrac13 + \\tfrac19 + \\tfrac1{27} + \\cdots\\right)$$\nAll terms are positive, so regrouping does not change the sum."
+        },
+        {
+          "title": "Sum each geometric series",
+          "body": "$$\\tfrac12 + \\tfrac14 + \\cdots = \\frac{1/2}{1 - 1/2} = \\frac{1/2}{1/2} = 1$$\n$$\\tfrac13 + \\tfrac19 + \\cdots = \\frac{1/3}{1 - 1/3} = \\frac{1/3}{2/3} = \\frac12$$"
+        },
+        {
+          "title": "Add",
+          "body": "$$2 + 1 + \\tfrac12 = \\tfrac72$$"
+        }
+      ],
+      "answer": {
+        "value": "$\\dfrac{7}{2}$ — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$\\tfrac{11}{3} = 2 + 1 + \\tfrac23$: uses $\\frac{1}{1-1/3} - \\frac13$ wrongly (or sums the $\\frac13$-series as $\\frac23$)."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$2 + 1 + \\tfrac12 = \\tfrac72$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$\\tfrac{13}{4}$ treats the $\\frac12$-series as summing to $\\frac34$ — a partial sum, not the limit."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$\\tfrac92 = 2 + 2 + \\tfrac12$: uses $\\frac{1}{1-r}$ (which includes the term 1) for the halves series."
+        }
+      ],
+      "shortcut": "Remember $\\sum_{k\\ge1} r^k = \\frac{r}{1-r}$: $r = \\frac12 \\to 1$, $r = \\frac13 \\to \\frac12$.",
+      "pitfalls": [
+        "Using $\\frac{1}{1-r}$ (series starting at $r^0 = 1$) instead of $\\frac{r}{1-r}$."
+      ],
+      "verification": "Partial sum of the 8 written terms: $2 + 0.5 + 0.333 + 0.25 + 0.125 + 0.111 + 0.0625 + 0.037 = 3.419$; the remaining tails ($\\frac1{16}$ and $\\frac1{54}$) add $\\approx 0.081$, giving $3.5$ ✓."
+    },
+    "da-2024-ga-5": {
+      "approach": "The pie chart gives shares of **valid** votes, so first remove the invalid votes, then take B's and C's combined share $25\\% + 20\\% = 45\\%$.",
+      "concepts": [
+        "Data interpretation (pie chart)",
+        "Percentages"
+      ],
+      "given": "| Candidate | Share of valid votes |\n|---|---|\n| A | 40% |\n| B | 25% |\n| C | 20% |\n| D | 15% |\n\nVotes cast $= 1{,}15{,}000$; invalid $= 5{,}000$.",
+      "steps": [
+        {
+          "title": "Valid votes",
+          "body": "$$1{,}15{,}000 - 5{,}000 = 1{,}10{,}000$$"
+        },
+        {
+          "title": "Votes of B and of C separately",
+          "body": "$$B = 0.25 \\times 1{,}10{,}000 = 27{,}500$$\n$$C = 0.20 \\times 1{,}10{,}000 = 22{,}000$$"
+        },
+        {
+          "title": "Total for B and C",
+          "body": "$$27{,}500 + 22{,}000 = 49{,}500$$\nEquivalently $(25\\% + 20\\%) \\times 1{,}10{,}000 = 0.45 \\times 1{,}10{,}000 = 49{,}500$."
+        }
+      ],
+      "answer": {
+        "value": "**49,500** — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "45,000 is 45% of 1,00,000 — a wrong base."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "45% of the 1,10,000 valid votes."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "51,750 is 45% of 1,15,000 — forgets to remove the invalid votes."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "54,000 does not correspond to 45% of either base (it is ≈ 49% of 1,10,000)."
+        }
+      ],
+      "shortcut": "45% of 1,10,000 = 45% of 1,00,000 + 45% of 10,000 = 45,000 + 4,500.",
+      "pitfalls": [
+        "Applying the percentages to all votes cast (1,15,000) instead of valid votes."
+      ],
+      "verification": "All four shares: A 44,000 + B 27,500 + C 22,000 + D 16,500 = 1,10,000 ✓; B + C = 27,500 + 22,000 = 49,500."
+    },
+    "da-2024-ga-6": {
+      "approach": "An inference must follow from the passage alone. The passage says only that *some* people, after a gene mutated, became able to digest milk — so the ability is tied to the mutated gene, and nothing is said about all or no humans.",
+      "concepts": [
+        "Inference from a passage",
+        "Quantifier scope (some / all / no)"
+      ],
+      "steps": [
+        {
+          "title": "What the passage asserts",
+          "body": "1. *Some* people began dairy farming.\n2. This coincided with mutations in a particular gene.\n3. Those mutations *resulted in* these people being able to digest dairy milk."
+        },
+        {
+          "title": "Eliminate the out-of-scope options",
+          "body": "- (A) \"All humans can digest milk\" and (B) \"No human can\" are universal claims; the passage speaks only of *some* people, and (B) even contradicts it.\n- (C) \"Essential for humans\" is a value judgement the passage never makes."
+        },
+        {
+          "title": "Confirm the remaining option",
+          "body": "(D) \"digestion of dairy milk resulted from a mutated gene\" restates point 3 (the mutations *resulted in* the ability). It follows directly."
+        }
+      ],
+      "answer": {
+        "value": "In human beings, digestion of dairy milk resulted from a mutated gene — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Over-generalises *some people* to *all human beings*."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Contradicts the passage: these people did develop the ability."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Necessity/essentiality is never discussed — outside the passage."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Directly supported: the mutations *resulted in* the ability to digest milk."
+        }
+      ],
+      "shortcut": "Eliminate the absolute words (*all*, *no*, *essential*) first; the remaining option paraphrases the passage.",
+      "pitfalls": [
+        "Bringing in outside knowledge (lactose intolerance statistics) instead of reading only the passage."
+      ],
+      "verification": "Option D uses only the passage's own causal link (mutation → ability); every other option needs a fact not stated."
+    },
+    "da-2024-ga-7": {
+      "approach": "Each birth is an independent fair trial, so the number of girls in 3 children is Binomial$(3, \\tfrac12)$: $P(2 \\text{ girls}) = \\binom32 (\\tfrac12)^3$.",
+      "concepts": [
+        "Independent events",
+        "Binomial probability"
+      ],
+      "steps": [
+        {
+          "title": "Sample space",
+          "body": "Each child is B or G with probability $\\tfrac12$, independently, so there are $2^3 = 8$ equally likely sequences, each with probability $\\left(\\tfrac12\\right)^3 = \\tfrac18$."
+        },
+        {
+          "title": "Count the favourable orders",
+          "body": "Two girls and one boy: the boy can be 1st, 2nd or 3rd → GGB, GBG, BGG, i.e. $\\binom32 = 3$ sequences."
+        },
+        {
+          "title": "Probability",
+          "body": "$$P = 3 \\times \\tfrac18 = \\tfrac38$$",
+          "scene": {
+            "bars": [
+              {
+                "label": "0 girls",
+                "value": 1,
+                "display": "1/8"
+              },
+              {
+                "label": "1 girl",
+                "value": 3,
+                "display": "3/8"
+              },
+              {
+                "label": "2 girls",
+                "value": 3,
+                "display": "3/8",
+                "tone": "success"
+              },
+              {
+                "label": "3 girls",
+                "value": 1,
+                "display": "1/8"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "$\\dfrac38$ — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "3 favourable orders out of 8 equally likely sequences."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$\\tfrac18$ is one particular order (e.g. GGB) — forgets the $\\binom32$ arrangements."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$\\tfrac14$ comes from treating the 4 gender *counts* (0–3 girls) as equally likely."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$\\tfrac12$ is $P(\\text{at least 2 girls}) = \\tfrac38 + \\tfrac18$, not exactly 2."
+        }
+      ],
+      "shortcut": "Row 3 of Pascal's triangle is 1 3 3 1 over 8: exactly 2 girls → 3/8.",
+      "pitfalls": [
+        "Treating the outcomes \"0, 1, 2, 3 girls\" as equally likely."
+      ],
+      "verification": "Distribution sums to 1: $\\tfrac{1 + 3 + 3 + 1}{8} = 1$ ✓.",
+      "animation": {
+        "kind": "bars",
+        "title": "Number of girls among 3 children",
+        "bars": [
+          {
+            "label": "0 girls",
+            "value": 1,
+            "display": "1/8"
+          },
+          {
+            "label": "1 girl",
+            "value": 3,
+            "display": "3/8"
+          },
+          {
+            "label": "2 girls",
+            "value": 3,
+            "display": "3/8"
+          },
+          {
+            "label": "3 girls",
+            "value": 1,
+            "display": "1/8"
+          }
+        ]
+      }
+    },
+    "da-2024-ga-8": {
+      "approach": "Only the **gains** matter (both persons invest ₹50,000 in total). Let fund A's return be $r$; write each person's gain and use Gain₁ − Gain₂ = ₹500.",
+      "concepts": [
+        "Percentages",
+        "Linear equation"
+      ],
+      "given": "| | A | B | C | Total |\n|---|---|---|---|---|\n| Person 1 | 10,000 | 20,000 | 20,000 | 50,000 |\n| Person 2 | 20,000 | 15,000 | 15,000 | 50,000 |\n\nReturns: B = C = 15%, A = $r$. Person 1 ends with ₹500 more.",
+      "steps": [
+        {
+          "title": "Principals are equal, so compare gains",
+          "body": "Both invest $10{,}000 + 20{,}000 + 20{,}000 = 20{,}000 + 15{,}000 + 15{,}000 = 50{,}000$. So Person 1's gain exceeds Person 2's by ₹500."
+        },
+        {
+          "title": "Gains",
+          "body": "Person 1: $10{,}000\\,r + 0.15 \\times 40{,}000 = 10{,}000\\,r + 6{,}000$\n\nPerson 2: $20{,}000\\,r + 0.15 \\times 30{,}000 = 20{,}000\\,r + 4{,}500$"
+        },
+        {
+          "title": "Solve",
+          "body": "$$(10{,}000\\,r + 6{,}000) - (20{,}000\\,r + 4{,}500) = 500$$\n$$1{,}500 - 10{,}000\\,r = 500 \\;\\Rightarrow\\; 10{,}000\\,r = 1{,}000 \\;\\Rightarrow\\; r = 0.10 = 10\\%$$"
+        }
+      ],
+      "answer": {
+        "value": "**10%** — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "At 7.5%: gains 6,750 vs 6,000 → difference 750, not 500."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "At 10%: gains 7,000 vs 6,500 → difference exactly 500."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "At 15%: gains 7,500 vs 7,500 → no difference."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "At 20%: gains 8,000 vs 8,500 → Person 2 ahead by 500 (sign reversed)."
+        }
+      ],
+      "shortcut": "Person 1 has ₹10,000 more in B+C (earning 15% → ₹1,500 extra) and ₹10,000 less in A. The net lead is ₹500, so ₹10,000 in A earns ₹1,000 → 10%.",
+      "pitfalls": [
+        "Getting the sign backwards and answering 20% (where Person 2 leads by ₹500)."
+      ],
+      "verification": "Final amounts at 10%: Person 1 $= 11{,}000 + 23{,}000 + 23{,}000 = 57{,}000$; Person 2 $= 22{,}000 + 17{,}250 + 17{,}250 = 56{,}500$; difference ₹500 ✓."
+    },
+    "da-2024-ga-9": {
+      "approach": "First derive the **opposite-face pairs** from the three views (a face's opposite is the one number never seen next to it). Then in each net, faces two apart in a straight strip are opposite; keep the net whose opposite pairs match. Finally confirm the corner orientation.",
+      "concepts": [
+        "Dice: opposite faces",
+        "Cube nets"
+      ],
+      "given": "Views (top, left, right): (5, 4, 1), (4, 6, 3), (2, 6, 5).\n\nEvery net has the same shape: a square $p$ left of the top of a 4-square column $c_1, c_2, c_3, c_4$, and a square $q$ right of $c_4$.",
+      "steps": [
+        {
+          "title": "Opposite pairs from the views",
+          "body": "Faces seen together are adjacent.\n- Neighbours of 4: 5, 1 (view 1), 6, 3 (view 2) → 4 is opposite **2**.\n- Neighbours of 6: 4, 3 (view 2), 2, 5 (view 3) → 6 is opposite **1**.\n- The remaining pair: 5 opposite **3**.\n\nOpposites: $\\{4,2\\}, \\{6,1\\}, \\{5,3\\}$."
+        },
+        {
+          "title": "Opposites in the net shape",
+          "body": "In the 4-square column, $c_1$ and $c_3$ are opposite, and $c_2$ and $c_4$ are opposite (alternate squares of a strip). The side squares $p$ (on $c_1$'s left) and $q$ (on $c_4$'s right) both fold onto the sides of that loop, on opposite sides: $p$ is opposite $q$."
+        },
+        {
+          "title": "Test each net",
+          "body": "| Net | $c_1$–$c_3$ | $c_2$–$c_4$ | $p$–$q$ | OK? |\n|---|---|---|---|---|\n| A | 1–6 ✓ | 4–2 ✓ | 5–3 ✓ | yes |\n| B | 1–2 ✗ | 4–6 ✗ | 5–3 | no |\n| C | 1–2 ✗ | 3–4 ✗ | 5–6 ✗ | no |\n| D | 1–6 ✓ | 4–3 ✗ | 5–2 ✗ | no |\n\nOnly net (A) survives."
+        },
+        {
+          "title": "Check orientation of net (A)",
+          "body": "Fold (A) with 4 as the front: 1 goes on top, 6 at the bottom, 2 at the back, 5 on the left and 3 on the right. Look at the top-front-left corner: going clockwise from the top we meet 1 (top) → 4 (front) → 5 (left), the same cyclic order as view 1 (5 → 1 → 4). Views 2 and 3 check the same way (corners 4-3-6 and 2-5-6), so the net folds into exactly this die."
+        }
+      ],
+      "answer": {
+        "value": "Net **(A)**",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Opposite pairs 1–6, 4–2, 5–3 match the views, and the corner orientations agree."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Puts 4 opposite 6 (and 1 opposite 2), but 4 and 6 are seen side by side in view 2, so they cannot be opposite."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Puts 5 opposite 6, but 5 and 6 are adjacent in view 3."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Puts 4 opposite 3 and 5 opposite 2, but 4 and 3 are adjacent in view 2 (and 2, 5 in view 3)."
+        }
+      ],
+      "shortcut": "Number 4 appears in two views with four different neighbours (5, 1, 6, 3), so its opposite is 2. Only net (A) places 4 and 2 on alternate squares of the column.",
+      "pitfalls": [
+        "Treating squares that are merely far apart in the drawing as opposite — only alternate squares of a straight strip (and the two side flaps here) are opposite.",
+        "Stopping at opposite pairs: a mirror-image net would also match them, so check one corner's orientation."
+      ],
+      "verification": "Independent check: in net (A), 6 is adjacent to 4, 2, 5 and 3 (all faces except its opposite 1) — exactly the neighbours of 6 seen in views 2 and 3. The orientation check in the last step rules out a mirror-image die."
+    },
+    "da-2024-ga-10": {
+      "approach": "A plane through both apexes contains the common axis, so it is an **axial section**. The axial section of one cone is an isosceles triangle; the two triangles share the base diameter and point in opposite directions, forming a rhombus.",
+      "concepts": [
+        "Axial cross-section of a cone",
+        "Rhombus"
+      ],
+      "steps": [
+        {
+          "title": "The plane contains the axis",
+          "body": "The two apexes lie on the common axis (one above, one below the shared base). A plane through both apexes therefore contains the whole axis and cuts the base circle along a **diameter**."
+        },
+        {
+          "title": "Section of each cone",
+          "body": "An axial plane cuts a right circular cone in an isosceles triangle: apex + the two ends of the diameter. Both triangles have sides = slant height $l$ and base = diameter $2r$."
+        },
+        {
+          "title": "Put them together",
+          "body": "The two triangles share the base diameter and lie on opposite sides of it. The outer boundary is a quadrilateral apex₁ → end₁ → apex₂ → end₂ with all four sides equal to $l$ — a **rhombus** (its diagonals are the axis $2h$ and the diameter $2r$, perpendicular bisectors of each other)."
+        }
+      ],
+      "answer": {
+        "value": "**A rhombus** — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Two congruent isosceles triangles on a common base form a quadrilateral with four equal sides."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "A triangle is the axial section of **one** cone only."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "An ellipse comes from a plane cutting a single cone obliquely, not through the apex."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "A plane section of two cones has no reason to produce six straight edges; the boundary has only 4 corners (2 apexes, 2 rim points)."
+        }
+      ],
+      "shortcut": "Draw the side view of the double cone: it is literally a diamond shape ◇.",
+      "pitfalls": [
+        "Thinking of conic sections (ellipse) — those arise from planes that do **not** pass through the apex."
+      ],
+      "verification": "Special case: if $h = r$ the diagonals $2h$ and $2r$ are equal and the rhombus is a square — still a rhombus, consistent."
+    },
+    "da-2024-da-1": {
+      "approach": "Recall the two standard facts: Poisson$(\\lambda)$ has $E[X] = \\operatorname{Var}(X) = \\lambda$, and the standard normal $N(0, 1)$ is by definition the normal with mean 0 and variance 1.",
+      "concepts": [
+        "Poisson distribution",
+        "Standard normal distribution"
+      ],
+      "steps": [
+        {
+          "title": "Statement (i): Poisson",
+          "body": "For $P(X = k) = \\dfrac{e^{-\\lambda}\\lambda^k}{k!}$:\n$$E[X] = \\lambda, \\qquad E[X(X-1)] = \\lambda^2$$\n$$\\operatorname{Var}(X) = E[X(X-1)] + E[X] - (E[X])^2 = \\lambda^2 + \\lambda - \\lambda^2 = \\lambda$$\nMean = variance = $\\lambda$ → **true**."
+        },
+        {
+          "title": "Statement (ii): standard normal",
+          "body": "$Z \\sim N(0, 1)$ has density $\\frac{1}{\\sqrt{2\\pi}} e^{-z^2/2}$, mean $0$ and variance $1$ — that is the definition of *standard*. → **true**."
+        },
+        {
+          "title": "Combine",
+          "body": "Both (i) and (ii) are true, which is option (A)."
+        }
+      ],
+      "answer": {
+        "value": "Both (i) and (ii) are true — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Both are standard facts: Poisson mean = variance = λ; N(0,1) has mean 0, variance 1."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "(ii) is the definition of the standard normal, so it cannot be false."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "(i) is true: $\\operatorname{Var} = \\lambda^2 + \\lambda - \\lambda^2 = \\lambda$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Both statements hold."
+        }
+      ],
+      "shortcut": "Poisson is the limit of Binomial$(n, p)$ with $np = \\lambda$: variance $np(1-p) \\to \\lambda$ as $p \\to 0$, equal to the mean.",
+      "pitfalls": [
+        "Confusing \"variance one\" with \"standard deviation one\" — for $N(0,1)$ both equal 1 anyway."
+      ],
+      "verification": "Binomial limit: $np = \\lambda$, $np(1-p) = \\lambda(1-p) \\to \\lambda$ — consistent with (i)."
+    },
+    "da-2024-da-2": {
+      "approach": "With only 3 tosses, \"at least 2 heads\" means at most 1 tail, so it cannot coexist with \"at least 2 tails\": the events are disjoint and $P(T \\cap S) = 0$.",
+      "concepts": [
+        "Mutually exclusive events",
+        "Sample space of coin tosses"
+      ],
+      "steps": [
+        {
+          "title": "Count heads and tails",
+          "body": "Every outcome has $h$ heads and $3 - h$ tails. $T$: $h \\ge 2$. $S$: $3 - h \\ge 2 \\iff h \\le 1$."
+        },
+        {
+          "title": "The events separately",
+          "body": "$T = \\{HHH, HHT, HTH, THH\\}$, $P(T) = \\tfrac48 = 0.5$.\n\n$S = \\{TTT, TTH, THT, HTT\\}$, $P(S) = \\tfrac48 = 0.5$.\n\nThe two lists share no outcome — together they are all 8 outcomes."
+        },
+        {
+          "title": "Intersect",
+          "body": "$T \\cap S$ needs $h \\ge 2$ **and** $h \\le 1$ — impossible. So $T \\cap S = \\varnothing$ and\n$$P(T \\cap S) = 0$$",
+          "scene": {
+            "hl": [
+              {
+                "c": 2,
+                "tone": "info"
+              },
+              {
+                "c": 3,
+                "tone": "warning"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "$P(T \\cap S) = 0$ — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "No outcome of 3 tosses has both ≥ 2 heads and ≥ 2 tails (that would need ≥ 4 tosses)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "0.5 is $P(T)$ (or $P(S)$) alone, not the intersection."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "0.25 is $P(T)P(S)$ — multiplying as if $T$ and $S$ were independent."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "1 is $P(T \\cup S)$: every outcome has ≥ 2 heads or ≥ 2 tails."
+        }
+      ],
+      "shortcut": "≥ 2 heads + ≥ 2 tails needs ≥ 4 coins; with 3 coins the intersection is empty.",
+      "pitfalls": [
+        "Multiplying $P(T)\\,P(S) = 0.25$ — the events are mutually exclusive, hence strongly **dependent**."
+      ],
+      "verification": "$P(T \\cup S) = P(T) + P(S) - P(T \\cap S) = 0.5 + 0.5 - 0 = 1$, matching the fact that every outcome lies in $T$ or $S$ ✓.",
+      "animation": {
+        "kind": "table",
+        "title": "All 8 outcomes",
+        "cols": [
+          "outcome",
+          "heads",
+          "in T (h ≥ 2)",
+          "in S (h ≤ 1)"
+        ],
+        "rows": [
+          [
+            "HHH",
+            3,
+            "✓",
+            ""
+          ],
+          [
+            "HHT",
+            2,
+            "✓",
+            ""
+          ],
+          [
+            "HTH",
+            2,
+            "✓",
+            ""
+          ],
+          [
+            "THH",
+            2,
+            "✓",
+            ""
+          ],
+          [
+            "HTT",
+            1,
+            "",
+            "✓"
+          ],
+          [
+            "THT",
+            1,
+            "",
+            "✓"
+          ],
+          [
+            "TTH",
+            1,
+            "",
+            "✓"
+          ],
+          [
+            "TTT",
+            0,
+            "",
+            "✓"
+          ]
+        ],
+        "caption": "No row has a ✓ in both T and S"
+      }
+    },
+    "da-2024-da-3": {
+      "approach": "For a $2 \\times 2$ matrix the eigenvalues solve $\\lambda^2 - (\\operatorname{tr})\\lambda + \\det = 0$; the sign of the discriminant $\\operatorname{tr}^2 - 4\\det$ decides real vs complex at once.",
+      "concepts": [
+        "Characteristic equation",
+        "Trace and determinant",
+        "Complex eigenvalues of real matrices"
+      ],
+      "steps": [
+        {
+          "title": "Trace and determinant",
+          "body": "$$\\operatorname{tr} M = 2 + 1 = 3, \\qquad \\det M = 2 \\cdot 1 - (-1)\\cdot 3 = 2 + 3 = 5$$"
+        },
+        {
+          "title": "Characteristic equation",
+          "body": "$$\\lambda^2 - 3\\lambda + 5 = 0, \\qquad \\Delta = 3^2 - 4 \\cdot 5 = 9 - 20 = -11 < 0$$",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "Eigenvalues",
+          "body": "$$\\lambda = \\frac{3 \\pm i\\sqrt{11}}{2}$$\nA negative discriminant with real coefficients gives a **complex conjugate pair**.",
+          "scene": {
+            "reveal": 4
+          }
+        }
+      ],
+      "answer": {
+        "value": "The eigenvalues are a complex conjugate pair $\\frac{3 \\pm i\\sqrt{11}}{2}$ — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The eigenvalues are not real ($\\Delta = -11 < 0$)."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$\\lambda = \\frac{3 \\pm i\\sqrt{11}}{2}$, conjugates of each other."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "A zero eigenvalue needs $\\det M = 0$, but $\\det M = 5$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "One positive and one negative real eigenvalue needs $\\det M < 0$; here $\\det M = 5 > 0$ and the roots are not even real."
+        }
+      ],
+      "shortcut": "$\\operatorname{tr}^2 = 9 < 4\\det = 20$ ⇒ complex pair, in five seconds.",
+      "pitfalls": [
+        "Computing $\\det M = 2 - 3 = -1$ by forgetting the minus sign of $-1$; that would wrongly suggest real eigenvalues of opposite signs (option D)."
+      ],
+      "verification": "Sum of roots $= \\frac{3 + 3}{2} = 3 = \\operatorname{tr} M$ ✓; product $= \\frac{9 + 11}{4} = 5 = \\det M$ ✓.",
+      "animation": {
+        "kind": "equation",
+        "title": "Eigenvalues of M",
+        "lines": [
+          {
+            "tex": "\\operatorname{tr}M = 3,\\quad \\det M = 2 + 3 = 5"
+          },
+          {
+            "tex": "\\lambda^2 - 3\\lambda + 5 = 0"
+          },
+          {
+            "tex": "\\Delta = 9 - 20 = -11 < 0",
+            "tone": "warning"
+          },
+          {
+            "tex": "\\lambda = \\tfrac{3 \\pm i\\sqrt{11}}{2}",
+            "tone": "success"
+          }
+        ],
+        "reveal": 1
+      }
+    }
+  }
+}
