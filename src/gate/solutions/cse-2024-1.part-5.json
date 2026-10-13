@@ -1,0 +1,1708 @@
+{
+  "paper": "cse-2024-1",
+  "version": 2,
+  "solutions": {
+    "cse-2024-1-cs-43": {
+      "approach": "Test each statement against the one fact that separates the policies: a write-back cache can hold **dirty** blocks that must be written to memory on eviction, while a write-through cache never has dirty blocks because every write already went to memory.",
+      "concepts": [
+        "Write-back vs write-through",
+        "Dirty bit",
+        "LRU replacement in a set",
+        "Write-allocate / no-write-allocate"
+      ],
+      "given": "| Cache | Write policy | Replacement |\n|---|---|---|\n| WBC | write back | LRU, set-associative |\n| WTC | write through | LRU, set-associative |",
+      "steps": [
+        {
+          "title": "What each policy keeps in the cache",
+          "body": "- **Write back (WBC):** a write hit updates only the cache line and sets its **dirty bit**. Main memory is updated only when that dirty line is evicted.\n- **Write through (WTC):** every write updates main memory immediately (usually via a write buffer). A line is therefore **never dirty**; memory always has the current copy, so evicting a line needs no write-back.",
+          "scene": {
+            "hl": []
+          }
+        },
+        {
+          "title": "(A) Read miss in WBC",
+          "body": "On a read miss the missing block must be brought into its set. If the set is full, LRU picks a victim — and nothing stops that victim from being a block that was written earlier (dirty). Then the dirty victim is evicted and written back first. So a read miss **can** evict a dirty block; \"never\" is **false**.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "error"
+              }
+            ]
+          }
+        },
+        {
+          "title": "(B) Read miss in WTC",
+          "body": "In WTC no line is ever dirty, so the evicted victim is simply overwritten: memory already holds its latest value. A read miss therefore **never** triggers a write-back of a cache block — **true**.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "error"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "(C) Write hit in WBC",
+          "body": "A write hit in a write-back cache modifies the line only in the cache, so the controller sets the dirty bit ($0 \\to 1$ if the line was clean). Hence a write hit **can** change the dirty bit — **true**. (If the line was already dirty the bit stays 1, which is why the statement says \"can\".)",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "error"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "(D) Write miss in WTC",
+          "body": "Write-through caches have no dirty blocks, so a victim is **never** written back — memory is already up to date. Moreover, write-through caches are normally **no-write-allocate**: the write goes straight to memory and no block is loaded at all. \"Always writes the victim to memory\" is **false**.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "error"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "tone": "success"
+              },
+              {
+                "r": 3,
+                "tone": "error"
+              }
+            ],
+            "caption": "TRUE: (B) and (C)"
+          }
+        }
+      ],
+      "answer": {
+        "value": "**(B) and (C)**",
+        "choice": [
+          "B",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The LRU victim of a read miss in a write-back cache may well be dirty; then it is evicted (with a write-back). \"Never\" is wrong."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Write-through keeps memory current, so no block is ever dirty and a read miss never needs a write-back."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "A write hit in a write-back cache sets the dirty bit of a clean line (0 → 1), so it can modify the bit."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Write-through blocks are never dirty, so victims are never written back; typically the write miss does not even allocate a block."
+        }
+      ],
+      "shortcut": "Ask \"can a dirty block exist?\" — in WBC yes (so A fails, C holds), in WTC never (so B holds, D fails).",
+      "pitfalls": [
+        "Thinking write-back only happens on write misses — any miss (read or write) can evict a dirty victim.",
+        "Reading \"can modify\" in (C) as \"always modifies\" — it is enough that a clean line becomes dirty.",
+        "Assuming write-through caches must write victims back; that is exactly what write-through makes unnecessary."
+      ],
+      "verification": "Consistency check: write-back is defined by deferring memory updates until eviction (so dirty victims exist, A false); write-through makes those deferred updates impossible (so B true, D false). Official key: B; C.",
+      "animation": {
+        "kind": "table",
+        "title": "Statement check",
+        "cols": [
+          "statement",
+          "key fact",
+          "verdict"
+        ],
+        "rows": [
+          [
+            "(A) WBC read miss never evicts dirty",
+            "LRU victim can be dirty",
+            "FALSE"
+          ],
+          [
+            "(B) WTC read miss never writes back",
+            "WTC lines never dirty",
+            "TRUE"
+          ],
+          [
+            "(C) WBC write hit can change dirty bit",
+            "clean line → dirty",
+            "TRUE"
+          ],
+          [
+            "(D) WTC write miss always writes victim",
+            "nothing dirty to write",
+            "FALSE"
+          ]
+        ]
+      }
+    },
+    "cse-2024-1-cs-44": {
+      "approach": "A cylinder is the set of tracks at one arm position — one track per surface. Divide the disk capacity by the capacity of one cylinder, working in powers of two.",
+      "concepts": [
+        "Disk geometry",
+        "Cylinder = tracks across all surfaces",
+        "Powers of two"
+      ],
+      "given": "| Quantity | Value |\n|---|---|\n| capacity | $512\\text{ GB} = 2^{39}$ B |\n| surfaces | $32 = 2^5$ |\n| sectors/track | $4096 = 2^{12}$ |\n| bytes/sector | $1024 = 2^{10}$ |",
+      "steps": [
+        {
+          "title": "Capacity of one track",
+          "body": "$$4096 \\times 1024 = 2^{12} \\times 2^{10} = 2^{22}\\text{ B} = 4\\text{ MB}$$",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Capacity of one cylinder",
+          "body": "A cylinder contains one track on each of the 32 surfaces:\n$$32 \\times 2^{22} = 2^{5} \\times 2^{22} = 2^{27}\\text{ B} = 128\\text{ MB}$$",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "Number of cylinders",
+          "body": "$512\\text{ GB} = 2^{9} \\times 2^{30} = 2^{39}$ B, so\n$$\\text{cylinders} = \\frac{2^{39}}{2^{27}} = 2^{12} = 4096$$\nThe number of cylinders equals the number of tracks per surface.",
+          "scene": {
+            "reveal": 5,
+            "vars": {
+              "cylinders": 4096
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "**4096** cylinders",
+        "number": 4096,
+        "matchesKey": true
+      },
+      "shortcut": "Tracks per surface $= \\dfrac{2^{39}}{2^{5}\\cdot 2^{12}\\cdot 2^{10}} = 2^{12}$, and #cylinders = #tracks per surface.",
+      "pitfalls": [
+        "Forgetting the 32 surfaces and answering the total number of tracks $2^{17} = 131072$.",
+        "Mixing decimal GB ($10^9$) with binary sizes — GATE disk questions use $1\\text{ GB} = 2^{30}$ B here, which gives an exact integer."
+      ],
+      "verification": "Back-multiply: $4096 \\times 32 \\times 4096 \\times 1024 = 2^{12+5+12+10} = 2^{39}$ B $= 512$ GB. ✓",
+      "animation": {
+        "kind": "equation",
+        "title": "Disk geometry",
+        "reveal": 1,
+        "lines": [
+          {
+            "tex": "512\\,\\text{GB} = 2^{39}\\ \\text{B}",
+            "note": "capacity"
+          },
+          {
+            "tex": "\\text{track} = 2^{12}\\times 2^{10} = 2^{22}\\ \\text{B}",
+            "note": "sectors × bytes"
+          },
+          {
+            "tex": "\\text{cylinder} = 2^{5}\\times 2^{22} = 2^{27}\\ \\text{B}",
+            "note": "32 surfaces"
+          },
+          {
+            "tex": "\\#\\text{cylinders} = 2^{39}/2^{27}",
+            "note": "divide"
+          },
+          {
+            "tex": "= 2^{12} = 4096",
+            "tone": "success"
+          }
+        ]
+      }
+    },
+    "cse-2024-1-cs-45": {
+      "approach": "Write the execution time as a function of the number of cores $n$: serial part + parallel part split $n$ ways + overhead for the $n-1$ extra cores. Then minimise (calculus or just tabulate small $n$).",
+      "concepts": [
+        "Amdahl's law",
+        "Parallel overhead",
+        "Minimising a function of an integer"
+      ],
+      "given": "Single-core time $100$ ns; parallelisable fraction $90\\%$; overhead $10$ ns per **additional** core. (The 2 GHz clock is not needed.)",
+      "steps": [
+        {
+          "title": "Split the baseline time",
+          "body": "Serial part $= 10\\% \\times 100 = 10$ ns (unchanged by extra cores).\n\nParallel part $= 90\\% \\times 100 = 90$ ns, shared equally, so it takes $\\dfrac{90}{n}$ ns on $n$ cores."
+        },
+        {
+          "title": "Execution time on n cores",
+          "body": "Using $n$ cores means $n-1$ additional cores, each costing 10 ns:\n$$T(n) = 10 + \\frac{90}{n} + 10(n-1)$$\nCheck: $T(1) = 10 + 90 + 0 = 100$ ns, the baseline. ✓",
+          "scene": {
+            "bars": [
+              {
+                "label": "n=1",
+                "value": 100,
+                "display": "100",
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Find the minimum",
+          "body": "Treat $n$ as continuous: $T'(n) = -\\dfrac{90}{n^2} + 10 = 0 \\Rightarrow n^2 = 9 \\Rightarrow n = 3$, and $T''(n) = \\dfrac{180}{n^3} > 0$, so it is a minimum. Since $3$ is an integer, it is the answer — confirm by the table:\n\n| $n$ | $10 + 90/n + 10(n-1)$ | $T(n)$ |\n|---|---|---|\n| 1 | $10 + 90 + 0$ | 100 |\n| 2 | $10 + 45 + 10$ | 65 |\n| 3 | $10 + 30 + 20$ | **60** |\n| 4 | $10 + 22.5 + 30$ | 62.5 |\n| 5 | $10 + 18 + 40$ | 68 |",
+          "scene": {
+            "bars": [
+              {
+                "label": "n=1",
+                "value": 100,
+                "display": "100"
+              },
+              {
+                "label": "n=2",
+                "value": 65,
+                "display": "65"
+              },
+              {
+                "label": "n=3",
+                "value": 60,
+                "display": "60",
+                "tone": "success"
+              },
+              {
+                "label": "n=4",
+                "value": 62.5,
+                "display": "62.5",
+                "tone": "warning"
+              },
+              {
+                "label": "n=5",
+                "value": 68,
+                "display": "68"
+              }
+            ],
+            "caption": "Minimum at $n = 3$: $60$ ns"
+          }
+        }
+      ],
+      "answer": {
+        "value": "**3** cores (time $60$ ns)",
+        "number": 3,
+        "matchesKey": true
+      },
+      "shortcut": "Minimise $\\dfrac{90}{n} + 10n$: by AM–GM it is smallest when $\\dfrac{90}{n} = 10n$, i.e. $n = 3$.",
+      "pitfalls": [
+        "Charging the overhead for all $n$ cores instead of the $n-1$ additional ones (the minimiser is still 3 here, but the times are off by 10 ns).",
+        "Applying plain Amdahl without overhead — time keeps falling as $n$ grows and there is no finite optimum.",
+        "Trying to use the 2 GHz clock; times are already given in ns."
+      ],
+      "verification": "$T(2) = 65 > T(3) = 60 < T(4) = 62.5$, and $T$ is convex, so $n = 3$ is the global minimum.",
+      "animation": {
+        "kind": "bars",
+        "title": "T(n) = 10 + 90/n + 10(n−1)",
+        "unit": "ns",
+        "bars": [
+          {
+            "label": "n=1",
+            "value": 100,
+            "display": "100"
+          }
+        ]
+      }
+    },
+    "cse-2024-1-cs-46": {
+      "approach": "Every instruction makes one instruction-cache access and 25% of them make one data-cache access, so add the memory-stall cycles per instruction to the ideal CPI; speedup of a perfect cache = real CPI / ideal CPI.",
+      "concepts": [
+        "CPI with memory stalls",
+        "Miss rate × miss penalty",
+        "Speedup"
+      ],
+      "given": "| Quantity | Value |\n|---|---|\n| ideal CPI | 2 |\n| load/store fraction | 0.25 |\n| I-cache miss rate | 2% |\n| D-cache miss rate | 8% |\n| miss penalty | 100 cycles |",
+      "steps": [
+        {
+          "title": "Instruction-fetch stalls",
+          "body": "Each instruction is fetched once: $1 \\times 0.02 \\times 100 = 2$ stall cycles per instruction.",
+          "scene": {
+            "reveal": 1
+          }
+        },
+        {
+          "title": "Data-access stalls",
+          "body": "Only loads/stores touch the data cache: $0.25 \\times 0.08 \\times 100 = 2$ stall cycles per instruction.",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Real CPI and speedup",
+          "body": "$$\\text{CPI}_{\\text{real}} = 2 + 2 + 2 = 6$$\nWith a perfect cache the CPI is the ideal 2, and the instruction count and clock are unchanged, so\n$$\\text{speedup} = \\frac{6}{2} = 3.00$$",
+          "scene": {
+            "reveal": 4,
+            "vars": {
+              "speedup": "3.00"
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "Speedup $= 6/2 =$ **3.00**",
+        "number": 3,
+        "matchesKey": true
+      },
+      "shortcut": "Stalls/instr $= 100(0.02 + 0.25 \\times 0.08) = 100 \\times 0.04 = 4$; CPI $= 6$; speedup $= 3$.",
+      "pitfalls": [
+        "Applying the 8% data miss rate to every instruction ($0.08 \\times 100 = 8$) instead of only the 25% loads/stores — gives CPI 12 and speedup 6.",
+        "Forgetting the instruction-cache misses — gives CPI 4 and speedup 2.",
+        "Inverting the ratio (ideal/real = 0.33)."
+      ],
+      "verification": "Memory stalls are $4$ of the $6$ cycles per instruction ($\\tfrac23$ of the time); removing them leaves $\\tfrac13$ of the time, a factor of 3. ✓",
+      "animation": {
+        "kind": "equation",
+        "title": "CPI with memory stalls",
+        "reveal": 0,
+        "lines": [
+          {
+            "tex": "\\text{I-stalls} = 1\\times0.02\\times100 = 2",
+            "note": "every instruction"
+          },
+          {
+            "tex": "\\text{D-stalls} = 0.25\\times0.08\\times100 = 2",
+            "note": "loads/stores only"
+          },
+          {
+            "tex": "\\text{CPI} = 2+2+2 = 6",
+            "note": "ideal + stalls"
+          },
+          {
+            "tex": "\\text{speedup} = 6/2 = 3.00",
+            "tone": "success"
+          }
+        ]
+      }
+    },
+    "cse-2024-1-cs-47": {
+      "approach": "Count how many processes execute each loop iteration. Every process alive in an iteration calls fork(), so the population doubles each iteration, and every process (parent and child) then prints once; wait() only orders the output, it does not change counts.",
+      "concepts": [
+        "fork() duplicates the process",
+        "Loop state copied into child",
+        "wait() does not change the count"
+      ],
+      "steps": [
+        {
+          "title": "What one iteration does",
+          "body": "A process entering the loop with value $x > 0$ calls fork(): now **two** processes, both with the same $x$, execute `printf(\"hello\")`, then `wait(NULL)`, then `x--`, and both continue the loop. The child starts right after fork(), so it also prints in this iteration.\n\nSo if $P(x)$ = number of printf calls caused by one process entering the loop with value $x$:\n$$P(x) = 2 + 2P(x-1), \\qquad P(0) = 0$$",
+          "scene": {
+            "caption": "P0 enters the loop with x = 3"
+          }
+        },
+        {
+          "title": "Iteration x = 3",
+          "body": "One process forks → $2$ processes, each prints once: $2$ printf calls.",
+          "scene": {
+            "root": {
+              "id": "n0",
+              "label": "P0",
+              "sub": "start",
+              "tone": "default",
+              "children": [
+                {
+                  "id": "n1",
+                  "label": "hello",
+                  "sub": "x=3",
+                  "tone": "accent",
+                  "children": [
+                    {
+                      "id": "n2",
+                      "label": "hello",
+                      "sub": "x=2",
+                      "tone": "muted",
+                      "children": [
+                        {
+                          "id": "n3",
+                          "label": "hello",
+                          "sub": "x=1",
+                          "tone": "muted"
+                        },
+                        {
+                          "id": "n4",
+                          "label": "hello",
+                          "sub": "x=1",
+                          "tone": "muted"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "n5",
+                      "label": "hello",
+                      "sub": "x=2",
+                      "tone": "muted",
+                      "children": [
+                        {
+                          "id": "n6",
+                          "label": "hello",
+                          "sub": "x=1",
+                          "tone": "muted"
+                        },
+                        {
+                          "id": "n7",
+                          "label": "hello",
+                          "sub": "x=1",
+                          "tone": "muted"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "n8",
+                  "label": "hello",
+                  "sub": "x=3",
+                  "tone": "accent",
+                  "children": [
+                    {
+                      "id": "n9",
+                      "label": "hello",
+                      "sub": "x=2",
+                      "tone": "muted",
+                      "children": [
+                        {
+                          "id": "n10",
+                          "label": "hello",
+                          "sub": "x=1",
+                          "tone": "muted"
+                        },
+                        {
+                          "id": "n11",
+                          "label": "hello",
+                          "sub": "x=1",
+                          "tone": "muted"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "n12",
+                      "label": "hello",
+                      "sub": "x=2",
+                      "tone": "muted",
+                      "children": [
+                        {
+                          "id": "n13",
+                          "label": "hello",
+                          "sub": "x=1",
+                          "tone": "muted"
+                        },
+                        {
+                          "id": "n14",
+                          "label": "hello",
+                          "sub": "x=1",
+                          "tone": "muted"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "vars": {
+              "x=3": 2
+            }
+          }
+        },
+        {
+          "title": "Iteration x = 2",
+          "body": "Each of the 2 processes forks → $4$ processes print: $4$ more.",
+          "scene": {
+            "root": {
+              "id": "n0",
+              "label": "P0",
+              "sub": "start",
+              "tone": "default",
+              "children": [
+                {
+                  "id": "n1",
+                  "label": "hello",
+                  "sub": "x=3",
+                  "tone": "success",
+                  "children": [
+                    {
+                      "id": "n2",
+                      "label": "hello",
+                      "sub": "x=2",
+                      "tone": "accent",
+                      "children": [
+                        {
+                          "id": "n3",
+                          "label": "hello",
+                          "sub": "x=1",
+                          "tone": "muted"
+                        },
+                        {
+                          "id": "n4",
+                          "label": "hello",
+                          "sub": "x=1",
+                          "tone": "muted"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "n5",
+                      "label": "hello",
+                      "sub": "x=2",
+                      "tone": "accent",
+                      "children": [
+                        {
+                          "id": "n6",
+                          "label": "hello",
+                          "sub": "x=1",
+                          "tone": "muted"
+                        },
+                        {
+                          "id": "n7",
+                          "label": "hello",
+                          "sub": "x=1",
+                          "tone": "muted"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "n8",
+                  "label": "hello",
+                  "sub": "x=3",
+                  "tone": "success",
+                  "children": [
+                    {
+                      "id": "n9",
+                      "label": "hello",
+                      "sub": "x=2",
+                      "tone": "accent",
+                      "children": [
+                        {
+                          "id": "n10",
+                          "label": "hello",
+                          "sub": "x=1",
+                          "tone": "muted"
+                        },
+                        {
+                          "id": "n11",
+                          "label": "hello",
+                          "sub": "x=1",
+                          "tone": "muted"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "n12",
+                      "label": "hello",
+                      "sub": "x=2",
+                      "tone": "accent",
+                      "children": [
+                        {
+                          "id": "n13",
+                          "label": "hello",
+                          "sub": "x=1",
+                          "tone": "muted"
+                        },
+                        {
+                          "id": "n14",
+                          "label": "hello",
+                          "sub": "x=1",
+                          "tone": "muted"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "vars": {
+              "x=3": 2,
+              "x=2": 4
+            }
+          }
+        },
+        {
+          "title": "Iteration x = 1",
+          "body": "Each of the 4 processes forks → $8$ processes print: $8$ more. Then $x$ becomes $0$ in all of them and the loop ends.",
+          "scene": {
+            "root": {
+              "id": "n0",
+              "label": "P0",
+              "sub": "start",
+              "tone": "default",
+              "children": [
+                {
+                  "id": "n1",
+                  "label": "hello",
+                  "sub": "x=3",
+                  "tone": "success",
+                  "children": [
+                    {
+                      "id": "n2",
+                      "label": "hello",
+                      "sub": "x=2",
+                      "tone": "success",
+                      "children": [
+                        {
+                          "id": "n3",
+                          "label": "hello",
+                          "sub": "x=1",
+                          "tone": "accent"
+                        },
+                        {
+                          "id": "n4",
+                          "label": "hello",
+                          "sub": "x=1",
+                          "tone": "accent"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "n5",
+                      "label": "hello",
+                      "sub": "x=2",
+                      "tone": "success",
+                      "children": [
+                        {
+                          "id": "n6",
+                          "label": "hello",
+                          "sub": "x=1",
+                          "tone": "accent"
+                        },
+                        {
+                          "id": "n7",
+                          "label": "hello",
+                          "sub": "x=1",
+                          "tone": "accent"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "n8",
+                  "label": "hello",
+                  "sub": "x=3",
+                  "tone": "success",
+                  "children": [
+                    {
+                      "id": "n9",
+                      "label": "hello",
+                      "sub": "x=2",
+                      "tone": "success",
+                      "children": [
+                        {
+                          "id": "n10",
+                          "label": "hello",
+                          "sub": "x=1",
+                          "tone": "accent"
+                        },
+                        {
+                          "id": "n11",
+                          "label": "hello",
+                          "sub": "x=1",
+                          "tone": "accent"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "n12",
+                      "label": "hello",
+                      "sub": "x=2",
+                      "tone": "success",
+                      "children": [
+                        {
+                          "id": "n13",
+                          "label": "hello",
+                          "sub": "x=1",
+                          "tone": "accent"
+                        },
+                        {
+                          "id": "n14",
+                          "label": "hello",
+                          "sub": "x=1",
+                          "tone": "accent"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "vars": {
+              "x=3": 2,
+              "x=2": 4,
+              "x=1": 8
+            }
+          }
+        },
+        {
+          "title": "Total",
+          "body": "$$2 + 4 + 8 = 14$$\nCheck with the recurrence: $P(1) = 2 + 2\\cdot0 = 2$, $P(2) = 2 + 2\\cdot2 = 6$, $P(3) = 2 + 2\\cdot6 = 14$.",
+          "scene": {
+            "vars": {
+              "total": 14
+            },
+            "caption": "One printf per non-root node: 2 + 4 + 8 = 14"
+          }
+        }
+      ],
+      "answer": {
+        "value": "printf runs **14** times",
+        "number": 14,
+        "matchesKey": true
+      },
+      "shortcut": "With $k$ iterations and fork before printf: $2 + 4 + \\dots + 2^k = 2^{k+1} - 2 = 2^4 - 2 = 14$.",
+      "pitfalls": [
+        "Counting only processes ($2^3 = 8$) instead of printf calls over all iterations.",
+        "Thinking wait() serialises the loop so that only the parent prints — wait() just makes the parent wait for its child; both still print.",
+        "Forgetting that the child inherits $x$ and keeps looping."
+      ],
+      "verification": "Formula check: $\\sum_{i=1}^{3} 2^i = 2^{4} - 2 = 14$, and the recurrence gives the same $P(3) = 14$.",
+      "animation": {
+        "kind": "tree",
+        "title": "Process tree (each \"hello\" node = one printf)",
+        "root": {
+          "id": "n0",
+          "label": "P0",
+          "sub": "start",
+          "tone": "default",
+          "children": [
+            {
+              "id": "n1",
+              "label": "hello",
+              "sub": "x=3",
+              "tone": "muted",
+              "children": [
+                {
+                  "id": "n2",
+                  "label": "hello",
+                  "sub": "x=2",
+                  "tone": "muted",
+                  "children": [
+                    {
+                      "id": "n3",
+                      "label": "hello",
+                      "sub": "x=1",
+                      "tone": "muted"
+                    },
+                    {
+                      "id": "n4",
+                      "label": "hello",
+                      "sub": "x=1",
+                      "tone": "muted"
+                    }
+                  ]
+                },
+                {
+                  "id": "n5",
+                  "label": "hello",
+                  "sub": "x=2",
+                  "tone": "muted",
+                  "children": [
+                    {
+                      "id": "n6",
+                      "label": "hello",
+                      "sub": "x=1",
+                      "tone": "muted"
+                    },
+                    {
+                      "id": "n7",
+                      "label": "hello",
+                      "sub": "x=1",
+                      "tone": "muted"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "n8",
+              "label": "hello",
+              "sub": "x=3",
+              "tone": "muted",
+              "children": [
+                {
+                  "id": "n9",
+                  "label": "hello",
+                  "sub": "x=2",
+                  "tone": "muted",
+                  "children": [
+                    {
+                      "id": "n10",
+                      "label": "hello",
+                      "sub": "x=1",
+                      "tone": "muted"
+                    },
+                    {
+                      "id": "n11",
+                      "label": "hello",
+                      "sub": "x=1",
+                      "tone": "muted"
+                    }
+                  ]
+                },
+                {
+                  "id": "n12",
+                  "label": "hello",
+                  "sub": "x=2",
+                  "tone": "muted",
+                  "children": [
+                    {
+                      "id": "n13",
+                      "label": "hello",
+                      "sub": "x=1",
+                      "tone": "muted"
+                    },
+                    {
+                      "id": "n14",
+                      "label": "hello",
+                      "sub": "x=1",
+                      "tone": "muted"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "cse-2024-1-cs-48": {
+      "approach": "All prefixes share 10.1.1, so only the last octet matters. Turn each prefix into an address range, find every range containing the host, and forward on the **longest** matching prefix.",
+      "concepts": [
+        "Longest prefix match",
+        "CIDR ranges",
+        "Binary of the last octet"
+      ],
+      "given": "| Prefix | Last-octet range | Next hop |\n|---|---|---|\n| 10.1.1.0/24 | 0–255 | R1 |\n| 10.1.1.128/25 | 128–255 (first bit 1) | R2 |\n| 10.1.1.64/26 | 64–127 (first bits 01) | R3 |\n| 10.1.1.192/26 | 192–255 (first bits 11) | R4 |",
+      "steps": [
+        {
+          "title": "Prefix ranges",
+          "body": "A /25 fixes 1 bit of the last octet (block of $2^7 = 128$ addresses) and a /26 fixes 2 bits (block of $64$):\n- .128/25 → $128$–$255$\n- .64/26 → $64$–$127$\n- .192/26 → $192$–$255$\n\nThe /24 matches every host, so it only wins when nothing longer matches."
+        },
+        {
+          "title": "Hosts .16 and .72",
+          "body": "- $16 = 0001\\,0000_2$: first bit 0 → not in /25; first two bits 00 → neither /26. Only /24 → **R1**.\n- $72 = 0100\\,1000_2$: first bits 01 → in .64/26 ($64 \\le 72 \\le 127$). Longest match /26 → **R3**.",
+          "scene": {
+            "reveal": 10
+          }
+        },
+        {
+          "title": "Hosts .132 and .191",
+          "body": "- $132 = 1000\\,0100_2$: first bit 1 → in /25; first two bits 10 ≠ 11 → not in .192/26. Longest /25 → **R2**.\n- $191 = 1011\\,1111_2$: first bit 1 → /25; bits 10 → not in .192/26 (which starts at 192). Longest /25 → **R2**.",
+          "scene": {
+            "reveal": 20,
+            "hl": [
+              {
+                "r": 2,
+                "tone": "success"
+              },
+              {
+                "r": 3,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Host .205 and the count",
+          "body": "$205 = 1100\\,1101_2$: bits 11 → in .192/26 (and in /25). Longest /26 → **R4**.\n\nR2 carries the traffic of 2 hosts: $2 \\times 20 = 40$ packets.",
+          "scene": {
+            "reveal": 25,
+            "hl": [
+              {
+                "r": 2,
+                "tone": "success"
+              },
+              {
+                "r": 3,
+                "tone": "success"
+              },
+              {
+                "r": 4,
+                "tone": "muted"
+              }
+            ],
+            "vars": {
+              "packets via R2": 40
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "Hosts .132 and .191 go via R2: $2 \\times 20 =$ **40** packets",
+        "number": 40,
+        "matchesKey": true
+      },
+      "shortcut": "R2 gets exactly the hosts in $128$–$191$ (inside .128/25 but outside .192/26): .132 and .191 → $40$ packets.",
+      "pitfalls": [
+        "Sending .205 to R2 because it is in .128/25 — the /26 entry .192 is longer and wins (R4).",
+        "Sending .191 to R4 — .192/26 starts at 192, so 191 is outside it.",
+        "Answering the number of hosts (2) instead of packets (40)."
+      ],
+      "verification": "Totals: R1 20, R2 40, R3 20, R4 20 → $100 = 5 \\times 20$ packets, all accounted for.",
+      "animation": {
+        "kind": "table",
+        "title": "Longest prefix match per host",
+        "mono": true,
+        "cols": [
+          "host",
+          "last octet",
+          "matches",
+          "next hop",
+          "pkts"
+        ],
+        "rows": [
+          [
+            "10.1.1.16",
+            "0001 0000",
+            "/24",
+            "R1",
+            20
+          ],
+          [
+            "10.1.1.72",
+            "0100 1000",
+            "/24, /26 (.64)",
+            "R3",
+            20
+          ],
+          [
+            "10.1.1.132",
+            "1000 0100",
+            "/24, /25",
+            "R2",
+            20
+          ],
+          [
+            "10.1.1.191",
+            "1011 1111",
+            "/24, /25",
+            "R2",
+            20
+          ],
+          [
+            "10.1.1.205",
+            "1100 1101",
+            "/24, /25, /26 (.192)",
+            "R4",
+            20
+          ]
+        ],
+        "reveal": 0
+      }
+    },
+    "cse-2024-1-cs-49": {
+      "approach": "In Chomsky Normal Form every rule is $A \\to BC$ or $A \\to a$. Count the two kinds of rule applications separately: binary rules grow the sentential form by one symbol, terminal rules turn one variable into one terminal.",
+      "concepts": [
+        "Chomsky Normal Form",
+        "Derivation length $2n-1$",
+        "Parse tree of a CNF grammar"
+      ],
+      "given": "$w = a^{30}b^{30}c^{30}$, so $n = \\lvert w \\rvert = 90$. (The number of variables, 10, is irrelevant.)",
+      "steps": [
+        {
+          "title": "Count A → BC applications",
+          "body": "The derivation starts from the single symbol $S$ (length 1) and must reach a string of length 90. Terminal rules $A \\to a$ never change the length; each $A \\to BC$ increases it by exactly 1. So the number of binary-rule applications is\n$$90 - 1 = 89.$$",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Count A → a applications",
+          "body": "Each of the 90 terminals of $w$ is produced by exactly one rule $A \\to a$ (CNF has no other way to create terminals, and no ε-rules since $w \\ne \\varepsilon$). So there are $90$ terminal-rule applications.",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "Total derivation steps",
+          "body": "$$89 + 90 = 179 = 2n - 1 = 2(90) - 1.$$",
+          "scene": {
+            "reveal": 4,
+            "vars": {
+              "steps": 179
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "$2(90) - 1 =$ **179** steps",
+        "number": 179,
+        "matchesKey": true
+      },
+      "shortcut": "Any CNF derivation of a string of length $n \\ge 1$ takes exactly $2n - 1$ steps: $2 \\times 90 - 1 = 179$.",
+      "pitfalls": [
+        "Using $\\lvert w \\rvert = 30$ instead of $90$ (it is $a^{30}b^{30}c^{30}$, length $90$) → 59.",
+        "Counting only the $n-1$ binary steps (89) or only the leaves (90).",
+        "Trying to use the 10 variables — the count does not depend on the grammar."
+      ],
+      "verification": "Parse-tree view: a CNF parse tree has $n$ leaves with $n$ pre-terminal nodes ($A \\to a$) and a full binary tree of $n - 1$ internal binary nodes above them; each internal node is one rule application, $n + (n-1) = 179$.",
+      "animation": {
+        "kind": "equation",
+        "title": "Steps in a CNF derivation",
+        "reveal": 1,
+        "lines": [
+          {
+            "tex": "n = \\lvert a^{30}b^{30}c^{30}\\rvert = 90",
+            "note": "string length"
+          },
+          {
+            "tex": "\\#(A\\to BC) = n-1 = 89",
+            "note": "length grows 1 → 90"
+          },
+          {
+            "tex": "\\#(A\\to a) = n = 90",
+            "note": "one per terminal"
+          },
+          {
+            "tex": "89 + 90 = 179",
+            "tone": "success"
+          }
+        ]
+      }
+    },
+    "cse-2024-1-cs-50": {
+      "approach": "A DFS of an undirected graph produces one spanning tree per connected component, and a tree on $k$ vertices has $k - 1$ edges. Summing over components gives edges $= V - c$.",
+      "concepts": [
+        "DFS forest",
+        "Tree has $k-1$ edges",
+        "Connected components"
+      ],
+      "given": "$V = 100$ vertices, DFS forest has $40$ edges, $c$ = number of components (= number of DFS trees).",
+      "steps": [
+        {
+          "title": "One DFS tree per component",
+          "body": "DFS restarted from every unvisited vertex visits exactly one connected component per start, and the tree edges inside it form a spanning tree of that component. So the forest has $c$ trees, with $k_1 + k_2 + \\dots + k_c = 100$ vertices."
+        },
+        {
+          "title": "Count the edges",
+          "body": "Tree $i$ has $k_i - 1$ edges, so the forest has\n$$\\sum_{i=1}^{c} (k_i - 1) = \\Big(\\sum_{i=1}^{c} k_i\\Big) - c = 100 - c \\text{ edges.}$$"
+        },
+        {
+          "title": "Solve for the number of components",
+          "body": "$$100 - c = 40 \\;\\Rightarrow\\; c = 100 - 40 = 60.$$\nThe result does not depend on how the 100 vertices are distributed among the trees."
+        }
+      ],
+      "answer": {
+        "value": "$100 - 40 =$ **60** components",
+        "number": 60,
+        "matchesKey": true
+      },
+      "shortcut": "Forest: edges $=$ vertices $-$ trees, so components $= 100 - 40 = 60$.",
+      "pitfalls": [
+        "Using the total edges of $G$ — non-tree (back) edges are not in the forest, which is why only the forest count gives $c$.",
+        "Answering $41$ (thinking one tree with 40 edges plus isolated vertices) — the 40 edges can be spread over many trees; only $V - E_{\\text{forest}}$ matters."
+      ],
+      "verification": "Example: 59 isolated vertices + one path on 41 vertices: $59 + 41 = 100$ vertices, $40$ forest edges, $60$ components. ✓"
+    },
+    "cse-2024-1-cs-51": {
+      "approach": "Count by length: there are $2^n$ strings of length $n$, and for each length $r \\cup s$ contains only a handful of strings (at most 4). Subtract and add up for $n = 0 \\dots 5$.",
+      "concepts": [
+        "Regular expression languages",
+        "Union / overlap counting",
+        "Complement counting"
+      ],
+      "given": "$r = 0^* + 1^*$ (all-0 or all-1 strings, including ε); $s = 01^* + 10^*$ (a 0 followed by only 1s, or a 1 followed by only 0s).",
+      "steps": [
+        {
+          "title": "Strings of length n in r and in s",
+          "body": "- $r$: length 0 → only $\\varepsilon$ (1 string); length $n \\ge 1$ → $0^n$ and $1^n$ (2 strings).\n- $s$: length 0 → none; length $n \\ge 1$ → $01^{n-1}$ and $10^{n-1}$ (2 strings).",
+          "scene": {
+            "reveal": 8
+          }
+        },
+        {
+          "title": "Overlap of r and s",
+          "body": "For $n = 1$: $s$ gives $0$ and $1$ — the same strings as $0^1$, $1^1$ in $r$, so $\\lvert r \\cup s\\rvert = 2$.\n\nFor $n \\ge 2$: $01^{n-1}$ and $10^{n-1}$ contain both symbols, so they are not in $r$; $\\lvert r \\cup s \\rvert = 4$.\n\nFor $n = 2$ that is all 4 strings $00, 11, 01, 10$.",
+          "scene": {
+            "reveal": 12
+          }
+        },
+        {
+          "title": "Neither r nor s, per length",
+          "body": "| $n$ | $2^n$ | $\\lvert r \\cup s\\rvert$ | neither |\n|---|---|---|---|\n| 0 | 1 | 1 | 0 |\n| 1 | 2 | 2 | 0 |\n| 2 | 4 | 4 | 0 |\n| 3 | 8 | 4 | 4 |\n| 4 | 16 | 4 | 12 |\n| 5 | 32 | 4 | 28 |",
+          "scene": {
+            "reveal": 24
+          }
+        },
+        {
+          "title": "Add up",
+          "body": "$$0 + 0 + 0 + 4 + 12 + 28 = 44$$",
+          "scene": {
+            "reveal": 24,
+            "hl": [
+              {
+                "c": 3,
+                "tone": "success"
+              }
+            ],
+            "vars": {
+              "neither": 44
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "**44** strings",
+        "number": 44,
+        "matchesKey": true
+      },
+      "shortcut": "Total strings of length ≤ 5: $2^6 - 1 = 63$. $\\lvert r \\cup s \\rvert = 11 + 10 - 2 = 19$ (11 in $r$, 10 in $s$, overlap $\\{0, 1\\}$). $63 - 19 = 44$.",
+      "pitfalls": [
+        "Forgetting ε (it is in $r$ via $0^*$) — gives 63 − 18 = 45.",
+        "Double-subtracting the strings \"0\" and \"1\", which lie in both $r$ and $s$ — gives 42.",
+        "Reading $01^*$ as $(01)^*$; the star binds only to 1."
+      ],
+      "verification": "Independent count: $63$ total; $r$ has $1 + 2\\cdot5 = 11$; $s$ has $2\\cdot5 = 10$; $r \\cap s = \\{0, 1\\}$; inclusion–exclusion $11 + 10 - 2 = 19$; $63 - 19 = 44$. ✓",
+      "animation": {
+        "kind": "table",
+        "title": "Counting by length",
+        "cols": [
+          "2^n",
+          "in r",
+          "in s",
+          "neither"
+        ],
+        "rowLabels": [
+          "n=0",
+          "n=1",
+          "n=2",
+          "n=3",
+          "n=4",
+          "n=5"
+        ],
+        "corner": "length",
+        "rows": [
+          [
+            1,
+            "ε",
+            "—",
+            0
+          ],
+          [
+            2,
+            "0, 1",
+            "0, 1",
+            0
+          ],
+          [
+            4,
+            "00, 11",
+            "01, 10",
+            0
+          ],
+          [
+            8,
+            "000, 111",
+            "011, 100",
+            4
+          ],
+          [
+            16,
+            "0⁴, 1⁴",
+            "0111, 1000",
+            12
+          ],
+          [
+            32,
+            "0⁵, 1⁵",
+            "01111, 10000",
+            28
+          ]
+        ],
+        "reveal": 0,
+        "mono": true
+      }
+    },
+    "cse-2024-1-cs-52": {
+      "approach": "Split the virtual address into page number and offset (page size $2048$), replace the page number by its frame number, keep the offset.",
+      "concepts": [
+        "Paging",
+        "Address translation",
+        "Page number / offset split"
+      ],
+      "given": "| Page | 0 | 1 | 2 | 3 |\n|---|---|---|---|---|\n| Frame | 1 | 3 | 2 | 0 |\n\nPage size $2\\text{ KB} = 2048 = 2^{11}$ B; virtual address $2500$.",
+      "steps": [
+        {
+          "title": "Page number and offset",
+          "body": "$$\\text{page} = \\left\\lfloor \\frac{2500}{2048} \\right\\rfloor = 1, \\qquad \\text{offset} = 2500 - 2048 = 452.$$\nIn binary ($11$ offset bits): $2500 = 1\\,00111000100_2$ — page bit(s) $1$, offset $00111000100_2 = 256 + 128 + 64 + 4 = 452$.",
+          "scene": {
+            "rows": [
+              {
+                "label": "VA 2500",
+                "fields": [
+                  {
+                    "bits": "01",
+                    "label": "page 1",
+                    "tone": "accent"
+                  },
+                  {
+                    "bits": "00111000100",
+                    "label": "offset 452",
+                    "tone": "info"
+                  }
+                ],
+                "value": "2500"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Look up the frame",
+          "body": "Page 1 is stored in **frame 3**."
+        },
+        {
+          "title": "Physical address",
+          "body": "$$\\text{PA} = 3 \\times 2048 + 452 = 6144 + 452 = 6596.$$\nIn binary: frame $11_2$ followed by the same offset bits.",
+          "scene": {
+            "rows": [
+              {
+                "label": "VA 2500",
+                "fields": [
+                  {
+                    "bits": "01",
+                    "label": "page 1",
+                    "tone": "accent"
+                  },
+                  {
+                    "bits": "00111000100",
+                    "label": "offset 452",
+                    "tone": "info"
+                  }
+                ],
+                "value": "2500"
+              },
+              {
+                "label": "PA",
+                "fields": [
+                  {
+                    "bits": "11",
+                    "label": "frame 3",
+                    "tone": "success"
+                  },
+                  {
+                    "bits": "00111000100",
+                    "label": "offset 452",
+                    "tone": "info"
+                  }
+                ],
+                "value": "6596"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "Page 1 → frame 3: $3 \\times 2048 + 452 =$ **6596**",
+        "number": 6596,
+        "matchesKey": true
+      },
+      "shortcut": "PA = VA + (frame − page) × 2048 = $2500 + (3 - 1) \\times 2048 = 2500 + 4096 = 6596$.",
+      "pitfalls": [
+        "Using 2 KB = 2000 B: page 1, offset 500, PA = 6500 — sizes are powers of two.",
+        "Reading the mapping backwards (frame 1 holds page 0, so looking up \"frame of page 1\" as 1 → PA 2500).",
+        "Taking 2500/2048 as page 2 after rounding."
+      ],
+      "verification": "$6596 = 3 \\times 2048 + 452$ lies in frame 3 ($6144$–$8191$) at offset $452$, the same offset as VA $2500$ in page 1 ($2048$–$4095$). ✓",
+      "animation": {
+        "kind": "bits",
+        "title": "Address translation (2 KB pages → 11-bit offset)",
+        "rows": [
+          {
+            "label": "VA 2500",
+            "fields": [
+              {
+                "bits": "0100111000100",
+                "label": "2500"
+              }
+            ],
+            "value": "2500"
+          }
+        ]
+      }
+    },
+    "cse-2024-1-cs-53": {
+      "approach": "Given the first ball is red, \"both red\" just means the second ball is red. After one red is removed the bag has 9 red out of 24 balls.",
+      "concepts": [
+        "Conditional probability",
+        "Drawing without replacement"
+      ],
+      "given": "10 red, 15 blue (25 balls); two draws without replacement; event $R_1$: first red, $R_2$: second red.",
+      "steps": [
+        {
+          "title": "Reduce the event",
+          "body": "$$P(R_1 \\cap R_2 \\mid R_1) = \\frac{P(R_1 \\cap R_2)}{P(R_1)} = P(R_2 \\mid R_1).$$",
+          "scene": {
+            "reveal": 1
+          }
+        },
+        {
+          "title": "Joint probability and the condition",
+          "body": "$$P(R_1 \\cap R_2) = \\frac{10}{25} \\times \\frac{9}{24} = \\frac{90}{600} = 0.15, \\qquad P(R_1) = \\frac{10}{25} = 0.4.$$",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "Divide",
+          "body": "$$P = \\frac{0.15}{0.4} = \\frac{9}{24} = \\frac{3}{8} = 0.375.$$\nDirectly: after one red ball is removed, 9 of the remaining 24 balls are red.",
+          "scene": {
+            "reveal": 4,
+            "vars": {
+              "P": "0.375"
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "$\\dfrac{9}{24} = \\dfrac38 =$ **0.375**",
+        "number": 0.375,
+        "matchesKey": true
+      },
+      "shortcut": "After a red is drawn: 9 red among 24 left → $9/24 = 0.375$.",
+      "pitfalls": [
+        "Answering the unconditional $P(\\text{both red}) = 0.15$.",
+        "Ignoring \"without replacement\": $10/25 = 0.4$."
+      ],
+      "verification": "Counting check: ordered pairs with first red $= 10 \\times 24 = 240$; with both red $= 10 \\times 9 = 90$; $90/240 = 0.375$. ✓",
+      "animation": {
+        "kind": "equation",
+        "title": "Conditioning on the first draw",
+        "reveal": 0,
+        "lines": [
+          {
+            "tex": "P(R_1R_2\\mid R_1) = P(R_2\\mid R_1)",
+            "note": "both red given first red"
+          },
+          {
+            "tex": "P(R_1R_2) = \\tfrac{10}{25}\\cdot\\tfrac{9}{24} = 0.15",
+            "note": "joint"
+          },
+          {
+            "tex": "P(R_1) = \\tfrac{10}{25} = 0.4",
+            "note": "condition"
+          },
+          {
+            "tex": "0.15/0.4 = \\tfrac{9}{24} = 0.375",
+            "tone": "success"
+          }
+        ]
+      }
+    },
+    "cse-2024-1-cs-54": {
+      "approach": "A 2-to-1 MUX outputs input 0 when its select is 0 and input 1 when it is 1. Because both inputs of M1 are equal (1, 1) and both inputs of M2 are equal (0, 0), A and B do not matter at all; only C decides Y.",
+      "concepts": [
+        "2-to-1 multiplexer",
+        "MUX output $= \\overline{S}I_0 + SI_1$",
+        "Counting input combinations"
+      ],
+      "given": "M1: $I_0 = X1 = 1$, $I_1 = X2 = 1$, select $A$, output $Q1$. M2: $I_0 = X3 = 0$, $I_1 = X4 = 0$, select $B$, output $Q2$. M3: $I_0 = Q1$, $I_1 = Q2$, select $C$, output $Y$.",
+      "steps": [
+        {
+          "title": "Output of M1",
+          "body": "$$Q1 = \\overline{A}\\,X1 + A\\,X2 = \\overline{A}\\cdot1 + A\\cdot1 = 1$$\nfor both values of $A$.",
+          "scene": {
+            "hl": [
+              {
+                "c": 3,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Output of M2",
+          "body": "$$Q2 = \\overline{B}\\,X3 + B\\,X4 = 0 + 0 = 0$$\nfor both values of $B$.",
+          "scene": {
+            "hl": [
+              {
+                "c": 4,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Output of M3",
+          "body": "$$Y = \\overline{C}\\,Q1 + C\\,Q2 = \\overline{C}\\cdot1 + C\\cdot0 = \\overline{C}.$$\nSo $Y = 1$ exactly when $C = 0$.",
+          "scene": {
+            "hl": [
+              {
+                "c": 5,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Count the combinations",
+          "body": "$C = 0$ is forced; $A$ and $B$ are free ($2 \\times 2$ choices):\n$$2 \\times 2 \\times 1 = 4$$\nThey are $(A, B, C) = (0,0,0), (0,1,0), (1,0,0), (1,1,0)$.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "tone": "muted"
+              },
+              {
+                "r": 2,
+                "tone": "success"
+              },
+              {
+                "r": 3,
+                "tone": "muted"
+              },
+              {
+                "r": 4,
+                "tone": "success"
+              },
+              {
+                "r": 5,
+                "tone": "muted"
+              },
+              {
+                "r": 6,
+                "tone": "success"
+              },
+              {
+                "r": 7,
+                "tone": "muted"
+              }
+            ],
+            "vars": {
+              "Y=1 rows": 4
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "$Y = \\overline{C}$, so **4** combinations",
+        "number": 4,
+        "matchesKey": true
+      },
+      "shortcut": "M1 always outputs 1, M2 always 0, so $Y = \\overline{C}$: $C = 0$ with $A, B$ free → $2^2 = 4$.",
+      "pitfalls": [
+        "Mixing up which MUX input is selected by 0 — M3 picks Q1 (input 0) when $C = 0$.",
+        "Counting only $(A, B)$ patterns that \"look\" relevant (1 or 2) — A and B are don't-cares here."
+      ],
+      "verification": "Full truth table (8 rows of $A, B, C$): $Y = 1$ in exactly the 4 rows with $C = 0$.",
+      "animation": {
+        "kind": "table",
+        "title": "All 8 select combinations (X1=X2=1, X3=X4=0)",
+        "cols": [
+          "A",
+          "B",
+          "C",
+          "Q1",
+          "Q2",
+          "Y"
+        ],
+        "rows": [
+          [
+            0,
+            0,
+            0,
+            1,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            1,
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0,
+            1,
+            0,
+            1
+          ],
+          [
+            0,
+            1,
+            1,
+            1,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            0,
+            1,
+            0,
+            1
+          ],
+          [
+            1,
+            0,
+            1,
+            1,
+            0,
+            0
+          ],
+          [
+            1,
+            1,
+            0,
+            1,
+            0,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            0,
+            0
+          ]
+        ],
+        "mono": true
+      }
+    },
+    "cse-2024-1-cs-55": {
+      "approach": "Fragment on the first link, then fragment each resulting fragment again on the second link (routers never reassemble; only the receiver does). Each fragment's data must be a multiple of 8 bytes (except the last) and data + 20-byte header must fit in the MTU.",
+      "concepts": [
+        "IPv4 fragmentation",
+        "MTU",
+        "Fragment offset in 8-byte units",
+        "Reassembly only at the destination"
+      ],
+      "given": "Datagram $1420$ B $= 20$ B header $+ 1400$ B data. MTU: link 1 $= 542$ B, link 2 $= 360$ B.",
+      "steps": [
+        {
+          "title": "Max data per fragment on each link",
+          "body": "- Link 1: $542 - 20 = 522$, rounded down to a multiple of 8 → $520$ B.\n- Link 2: $360 - 20 = 340$, rounded down to a multiple of 8 → $336$ B."
+        },
+        {
+          "title": "Fragmentation at the sender (link 1)",
+          "body": "$1400 = 520 + 520 + 360$ → three fragments:\n\n| Fragment | data | offset (×8) | total size |\n|---|---|---|---|\n| F1 | 520 | 0 | 540 |\n| F2 | 520 | 65 | 540 |\n| F3 | 360 | 130 | 380 |\n\nAll fit in 542.",
+          "scene": {
+            "hl": [
+              {
+                "c": 1,
+                "tone": "accent"
+              },
+              {
+                "c": 2,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Refragmentation at the router (link 2)",
+          "body": "Every fragment is larger than 360 B, so each is split again into chunks of at most 336 B of data:\n- F1: $520 = 336 + 184$ → 2 fragments (offsets $0$, $42$)\n- F2: $520 = 336 + 184$ → 2 fragments (offsets $65$, $107$)\n- F3: $360 = 336 + 24$ → 2 fragments (offsets $130$, $172$)\n\n(F3 is $380$ B in total, which exceeds the MTU of 360, so it must also be split.)",
+          "scene": {
+            "hl": [
+              {
+                "c": 3,
+                "tone": "warning"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Fragments reaching the receiver",
+          "body": "The router forwards fragments without reassembling, so the receiver gets\n$$2 + 2 + 2 = 6$$\nfragments and reassembles the $1400$ B of data from them.",
+          "scene": {
+            "hl": [
+              {
+                "c": 4,
+                "tone": "success"
+              },
+              {
+                "r": 3,
+                "tone": "success"
+              }
+            ],
+            "vars": {
+              "fragments": 6
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "**6** fragments arrive at the receiver",
+        "number": 6,
+        "matchesKey": true
+      },
+      "shortcut": "Link-1 pieces are 520, 520, 360 data bytes; each exceeds 336, and each is at most $2 \\times 336$, so each splits into 2 → $3 \\times 2 = 6$.",
+      "pitfalls": [
+        "Fragmenting the original 1400 B directly for the 360 MTU: $\\lceil 1400/336 \\rceil = 5$ — but fragmentation happens hop by hop on the fragments that already exist.",
+        "Using 522 or 340 data bytes per fragment — non-last fragments must carry a multiple of 8 bytes.",
+        "Assuming the router reassembles before refragmenting — IPv4 routers do not.",
+        "Thinking the 360 B data fragment F3 fits a 360 B MTU — with its 20 B header it is 380 B."
+      ],
+      "verification": "Data check: $336 + 184 + 336 + 184 + 336 + 24 = 1400$ B. ✓ Offsets $0, 42, 65, 107, 130, 172$ are contiguous: e.g. $42 \\times 8 + 184 = 520 = 65 \\times 8$. ✓",
+      "animation": {
+        "kind": "table",
+        "title": "Fragments per link (data bytes, offset in 8-byte units)",
+        "mono": true,
+        "cols": [
+          "link-1 frag",
+          "data",
+          "offset",
+          "link-2 frags (data@offset)",
+          "count"
+        ],
+        "rows": [
+          [
+            "F1",
+            520,
+            0,
+            "336@0, 184@42",
+            2
+          ],
+          [
+            "F2",
+            520,
+            65,
+            "336@65, 184@107",
+            2
+          ],
+          [
+            "F3",
+            360,
+            130,
+            "336@130, 24@172",
+            2
+          ],
+          [
+            "total",
+            1400,
+            "—",
+            "6 fragments",
+            6
+          ]
+        ]
+      }
+    }
+  }
+}
