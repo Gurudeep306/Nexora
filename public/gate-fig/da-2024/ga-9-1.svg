@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 28 500 178" font-family="Arial, Helvetica, sans-serif">
+<g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" font-size="40" text-anchor="middle">
+<polygon points="90,40 150,73 90,106 30,73"/><polygon points="30,73 90,106 90,196 30,163"/><polygon points="90,106 150,73 150,163 90,196"/><text x="90" y="87" stroke="none" fill="currentColor">5</text><text x="60" y="150.5" stroke="none" fill="currentColor">4</text><text x="120" y="150.5" stroke="none" fill="currentColor">1</text>
+<polygon points="260,40 320,73 260,106 200,73"/><polygon points="200,73 260,106 260,196 200,163"/><polygon points="260,106 320,73 320,163 260,196"/><text x="260" y="87" stroke="none" fill="currentColor">4</text><text x="230" y="150.5" stroke="none" fill="currentColor">6</text><text x="290" y="150.5" stroke="none" fill="currentColor">3</text>
+<polygon points="430,40 490,73 430,106 370,73"/><polygon points="370,73 430,106 430,196 370,163"/><polygon points="430,106 490,73 490,163 430,196"/><text x="430" y="87" stroke="none" fill="currentColor">2</text><text x="400" y="150.5" stroke="none" fill="currentColor">6</text><text x="460" y="150.5" stroke="none" fill="currentColor">5</text>
+
+</g>
+</svg>
