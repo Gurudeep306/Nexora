@@ -1,0 +1,2000 @@
+{
+  "paper": "cse-2024-1",
+  "version": 2,
+  "solutions": {
+    "cse-2024-1-cs-17": {
+      "approach": "Fill the two-set Venn diagram from the three given numbers; every option is then one region or a sum of regions. Independence is a single check: is $P(A \\cap B) = P(A)\\,P(B)$?",
+      "concepts": [
+        "Addition rule",
+        "Complement of a union (De Morgan)",
+        "Test for independence",
+        "Venn regions"
+      ],
+      "given": "$P(A) = 0.3,\\quad P(B) = 0.5,\\quad P(A \\cap B) = 0.1$",
+      "steps": [
+        {
+          "title": "Fill the four Venn regions",
+          "body": "- Only $A$: $P(A \\cap B^c) = P(A) - P(A \\cap B) = 0.3 - 0.1 = 0.2$\n- Both: $P(A \\cap B) = 0.1$\n- Only $B$: $P(A^c \\cap B) = P(B) - P(A \\cap B) = 0.5 - 0.1 = 0.4$\n- Neither: $1 - (0.2 + 0.1 + 0.4) = 1 - 0.7 = 0.3$"
+        },
+        {
+          "title": "(A) Independence test",
+          "body": "$P(A)\\,P(B) = 0.3 \\times 0.5 = 0.15$, but $P(A \\cap B) = 0.1$. Since $0.1 \\neq 0.15$, $A$ and $B$ are **not** independent: (A) is false.",
+          "scene": {
+            "hl": [
+              {
+                "region": "AB",
+                "tone": "error"
+              }
+            ],
+            "caption": "$P(A\\cap B)=0.1$ but $P(A)P(B)=0.15$"
+          }
+        },
+        {
+          "title": "(B) Probability of the union",
+          "body": "$P(A \\cup B) = P(A) + P(B) - P(A \\cap B) = 0.3 + 0.5 - 0.1 = 0.7$ — (B) is true.",
+          "scene": {
+            "hl": [
+              {
+                "region": "A",
+                "tone": "success"
+              },
+              {
+                "region": "AB",
+                "tone": "success"
+              },
+              {
+                "region": "B",
+                "tone": "success"
+              }
+            ],
+            "caption": "$0.2 + 0.1 + 0.4 = 0.7$"
+          }
+        },
+        {
+          "title": "(C) A but not B",
+          "body": "$P(A \\cap B^c)$ is the \"only $A$\" region: $0.3 - 0.1 = 0.2$ — (C) is true.",
+          "scene": {
+            "hl": [
+              {
+                "region": "A",
+                "tone": "success"
+              }
+            ],
+            "caption": "Only $A$: $0.2$"
+          }
+        },
+        {
+          "title": "(D) Neither A nor B",
+          "body": "By De Morgan, $A^c \\cap B^c = (A \\cup B)^c$, so $P(A^c \\cap B^c) = 1 - P(A \\cup B) = 1 - 0.7 = 0.3 \\neq 0.4$ — (D) is false.",
+          "scene": {
+            "hl": [
+              {
+                "region": "-",
+                "tone": "error"
+              }
+            ],
+            "caption": "Outside both: $0.3$, not $0.4$"
+          }
+        }
+      ],
+      "answer": {
+        "value": "**(B) and (C)**",
+        "choice": [
+          "B",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Independence needs $P(A \\cap B) = P(A)P(B) = 0.15$; here it is $0.1$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Addition rule: $0.3 + 0.5 - 0.1 = 0.7$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$P(A) - P(A \\cap B) = 0.3 - 0.1 = 0.2$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "\"Neither\" is $1 - 0.7 = 0.3$. The value $0.4$ is the \"only $B$\" region $P(A^c \\cap B)$ — the distractor uses the wrong region."
+        }
+      ],
+      "shortcut": "Regions: only $A$ = 0.2, both = 0.1, only $B$ = 0.4, neither = 0.3. Read every option off them; $0.3 \\times 0.5 \\ne 0.1$ kills (A).",
+      "pitfalls": [
+        "Calling the events independent because the overlap is \"small\" — only $P(A \\cap B) = P(A)P(B)$ decides it.",
+        "Forgetting to subtract the intersection when computing the union.",
+        "Confusing $P(A^c \\cap B^c)$ (neither, 0.3) with $P(A^c \\cap B)$ (only $B$, 0.4)."
+      ],
+      "verification": "The four regions add up to one: $0.2 + 0.1 + 0.4 + 0.3 = 1.0$. Also $P(A \\cap B^c) + P(A^c \\cap B^c) = 0.2 + 0.3 = 0.5 = P(B^c)$, as it must be.",
+      "animation": {
+        "kind": "venn",
+        "title": "Events A and B",
+        "sets": [
+          {
+            "id": "A",
+            "label": "A"
+          },
+          {
+            "id": "B",
+            "label": "B"
+          }
+        ],
+        "regions": {
+          "A": "0.2",
+          "AB": "0.1",
+          "B": "0.4",
+          "-": "0.3"
+        },
+        "caption": "Regions computed from $P(A)=0.3$, $P(B)=0.5$, $P(A\\cap B)=0.1$"
+      }
+    },
+    "cse-2024-1-cs-18": {
+      "approach": "Write the steady-state function $Y = X \\cdot \\overline{X}$, then argue with timing: the NOT output keeps its old value for one gate delay, so right after an edge of $X$ the AND gate may briefly see both inputs at 1 — but only on the rising edge.",
+      "concepts": [
+        "Complement law $X\\overline{X} = 0$",
+        "Propagation delay",
+        "Static-0 hazard (glitch)",
+        "Pulse (edge) detector"
+      ],
+      "given": "$Y = \\text{AND}\\big(X,\\ \\text{NOT}(X)\\big)$. Let the NOT gate have delay $t_{N}$ and the AND gate delay $t_{A}$; wires have no delay.",
+      "steps": [
+        {
+          "title": "No delays: Y is always 0",
+          "body": "Both AND inputs change together, so $Y = X \\cdot \\overline{X}$:\n\n- $X = 0$: $Y = 0 \\cdot 1 = 0$\n- $X = 1$: $Y = 1 \\cdot 0 = 0$\n\n$Y$ is always logic Zero: (A) true, (B) false.",
+          "scene": {
+            "inputs": [
+              {
+                "id": "X",
+                "value": 1
+              }
+            ],
+            "caption": "$X=1$: AND inputs $(1,0)$, so $Y=0$"
+          }
+        },
+        {
+          "title": "X rises 0 → 1: a transient 1 appears",
+          "body": "Before the edge: $X = 0$, NOT output $= 1$, $Y = 0$.\n\nAt $t = 0$ the direct input becomes 1 immediately, but the NOT output is still $1$ until $t = t_N$. During $0 < t < t_N$ the AND inputs are $(1, 1)$, so after $t_A$ the output pulses to **1** for a time $t_N$, then returns to 0 when the NOT output falls. (C) is true.",
+          "scene": {
+            "kind": "table",
+            "title": "Rising edge of X (t = 0)",
+            "cols": [
+              "interval",
+              "X",
+              "NOT out",
+              "AND inputs",
+              "Y (after t_A)"
+            ],
+            "rows": [
+              [
+                "t < 0",
+                0,
+                1,
+                "(0, 1)",
+                0
+              ],
+              [
+                "0 < t < t_N",
+                1,
+                {
+                  "v": 1,
+                  "tone": "warning",
+                  "sub": "stale"
+                },
+                "(1, 1)",
+                {
+                  "v": 1,
+                  "tone": "error",
+                  "sub": "glitch"
+                }
+              ],
+              [
+                "t > t_N",
+                1,
+                0,
+                "(1, 0)",
+                0
+              ]
+            ],
+            "hl": [
+              {
+                "r": 1,
+                "tone": "error"
+              }
+            ],
+            "caption": "The NOT output lags, so both inputs are briefly 1"
+          }
+        },
+        {
+          "title": "X falls 1 → 0: no glitch",
+          "body": "Before the edge: $X = 1$, NOT output $= 0$, $Y = 0$.\n\nAt $t = 0$ the direct input drops to 0 at once; the NOT output rises only at $t = t_N$. The AND inputs go $(1,0) \\to (0,0) \\to (0,1)$ — at least one input is always 0, so $Y$ stays 0 throughout. $Y$ was already 0, so there is nothing that could be a \"transient Zero\": (D) is false.",
+          "scene": {
+            "kind": "table",
+            "title": "Falling edge of X (t = 0)",
+            "cols": [
+              "interval",
+              "X",
+              "NOT out",
+              "AND inputs",
+              "Y (after t_A)"
+            ],
+            "rows": [
+              [
+                "t < 0",
+                1,
+                0,
+                "(1, 0)",
+                0
+              ],
+              [
+                "0 < t < t_N",
+                0,
+                {
+                  "v": 0,
+                  "tone": "warning",
+                  "sub": "stale"
+                },
+                "(0, 0)",
+                {
+                  "v": 0,
+                  "tone": "success"
+                }
+              ],
+              [
+                "t > t_N",
+                0,
+                1,
+                "(0, 1)",
+                0
+              ]
+            ],
+            "hl": [
+              {
+                "r": 1,
+                "tone": "success"
+              }
+            ],
+            "caption": "One input is always 0, so Y never leaves 0"
+          }
+        }
+      ],
+      "answer": {
+        "value": "**(A) and (C)**",
+        "choice": [
+          "A",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$X\\overline{X} = 0$ for both values of $X$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "The ideal output is the constant 0, never 1."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "On a rising edge the stale NOT output (still 1) and the new $X = 1$ overlap for $t_N$, giving a short 1 pulse."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "On a falling edge the direct input becomes 0 first, which forces the AND output to 0; $Y$ was already 0, so no transient (of either value) occurs."
+        }
+      ],
+      "shortcut": "$X \\cdot \\overline{X}$ is a static-0 circuit; its only possible glitch is a 1-pulse, and that needs both AND inputs at 1 together, which only happens when $X$ rises while $\\overline{X}$ is still stale.",
+      "pitfalls": [
+        "Marking (D) because \"the output is zero\" — a transient is a short departure from the steady value, and the steady value is already 0.",
+        "Assuming the glitch appears on both edges: on a falling edge the fast path brings a 0, which blocks the AND gate.",
+        "Forgetting that a gate output keeps its old value until its propagation delay has elapsed."
+      ],
+      "verification": "This is the classic rising-edge pulse generator: with $t_N = 1$ unit, a rising $X$ at $t=0$ gives AND inputs $(1,1)$ on $[0,1)$, so $Y = 1$ on $[t_A, 1 + t_A)$; a falling $X$ gives $(0,0)$ on $[0,1)$, so $Y$ stays 0.",
+      "animation": {
+        "kind": "circuit",
+        "title": "Steady state (no delays)",
+        "inputs": [
+          {
+            "id": "X",
+            "value": 0
+          }
+        ],
+        "gates": [
+          {
+            "id": "n",
+            "type": "NOT",
+            "in": [
+              "X"
+            ],
+            "label": "NOT"
+          },
+          {
+            "id": "g",
+            "type": "AND",
+            "in": [
+              "X",
+              "n"
+            ],
+            "label": "AND"
+          }
+        ],
+        "outputs": [
+          {
+            "id": "Y",
+            "from": "g"
+          }
+        ],
+        "caption": "$X=0$: AND inputs $(0,1)$, so $Y=0$"
+      }
+    },
+    "cse-2024-1-cs-19": {
+      "approach": "Recall two facts about the three-way handshake: each side picks a (pseudo)random initial sequence number (ISN), and the SYN flag consumes one sequence number, so it is acknowledged with ISN + 1.",
+      "concepts": [
+        "TCP three-way handshake",
+        "Initial sequence number (ISN)",
+        "SYN consumes one sequence number",
+        "Cumulative acknowledgement"
+      ],
+      "steps": [
+        {
+          "title": "P picks a random ISN for its SYN",
+          "body": "P chooses $N_P$ pseudo-randomly (clock-driven in RFC 793, randomised per connection in RFC 6528) so that delayed segments of an earlier connection on the same ports are not accepted as new data, and so that an off-path attacker cannot guess it. So $N_P$ is chosen randomly — (A) true — and is **not** always 0 — (B) false.",
+          "scene": {
+            "upto": 0,
+            "caption": "SYN carries seq $= N_P$ (random ISN)"
+          }
+        },
+        {
+          "title": "The SYN-ACK acknowledges N_P + 1",
+          "body": "The SYN flag occupies one sequence number even though it carries no data. A TCP acknowledgement number is the **next** sequence number expected, so Q acknowledges with\n$$N_Q = N_P + 1.$$\n(D) true, (C) false.",
+          "scene": {
+            "upto": 1,
+            "caption": "SYN-ACK: ack $= N_P + 1$; Q picks its own ISN $y$"
+          }
+        },
+        {
+          "title": "Handshake completes",
+          "body": "Q also sends its own random ISN $y$ in the SYN-ACK; P answers with ACK, ack $= y + 1$. P's first data byte will then carry sequence number $N_P + 1$.",
+          "scene": {
+            "upto": 2,
+            "caption": "Connection established"
+          }
+        }
+      ],
+      "answer": {
+        "value": "**(A) and (D)**",
+        "choice": [
+          "A",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "The ISN is chosen (pseudo)randomly by the sender of the SYN."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "A fixed ISN of 0 would let old duplicate segments be mistaken for new ones and make sequence-number guessing trivial. (Wireshark's \"relative\" seq = 0 is only a display convention.)"
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Ignores that the SYN consumes one sequence number; the ACK names the next byte expected, $N_P + 1$."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "SYN uses sequence number $N_P$, so the next expected is $N_P + 1$."
+        }
+      ],
+      "shortcut": "SYN and FIN each \"cost\" one sequence number; ACK = last sequence number received + 1. ISNs are random.",
+      "pitfalls": [
+        "Choosing (C): the acknowledgement number is the next expected sequence number, not the one just received.",
+        "Choosing (B) because packet captures show relative sequence numbers starting at 0."
+      ],
+      "verification": "In a capture with relative numbering the SYN shows Seq=0 and the SYN-ACK shows Ack=1 — the +1 is visible even there; switching to absolute numbers shows a random 32-bit ISN.",
+      "animation": {
+        "kind": "sequence",
+        "title": "TCP three-way handshake",
+        "actors": [
+          "P (client)",
+          "Q (server)"
+        ],
+        "messages": [
+          {
+            "from": "P (client)",
+            "to": "Q (server)",
+            "t0": 0,
+            "t1": 1,
+            "label": "SYN, seq = N_P"
+          },
+          {
+            "from": "Q (server)",
+            "to": "P (client)",
+            "t0": 1,
+            "t1": 2,
+            "label": "SYN-ACK, seq = y, ack = N_P + 1",
+            "tone": "success"
+          },
+          {
+            "from": "P (client)",
+            "to": "Q (server)",
+            "t0": 2,
+            "t1": 3,
+            "label": "ACK, ack = y + 1"
+          }
+        ]
+      }
+    },
+    "cse-2024-1-cs-20": {
+      "approach": "Check each statement against the standard 5-stage forwarding design: what forwarding is, which bypass paths exist, what it cannot remove (the load-use stall), and what hardware it costs.",
+      "concepts": [
+        "RAW data hazard",
+        "Operand forwarding (bypassing)",
+        "Load-use stall",
+        "Forwarding unit and ALU-input multiplexers"
+      ],
+      "steps": [
+        {
+          "title": "(A) What forwarding means",
+          "body": "Forwarding takes a result as soon as the stage of an earlier instruction that produces it (the *source* stage — e.g. the ALU output of \\`add\\`, latched in EX/MEM) has it, and passes it straight to the stage of a later instruction that needs it (the *destination* — the ALU inputs of \\`sub\\` in EX), instead of waiting for WB to write the register file. That is statement (A): **true**.",
+          "scene": {
+            "forwards": [
+              {
+                "from": [
+                  0,
+                  3
+                ],
+                "to": [
+                  1,
+                  4
+                ]
+              }
+            ],
+            "hl": [
+              {
+                "r": 0,
+                "c": 3,
+                "tone": "accent"
+              },
+              {
+                "r": 1,
+                "c": 4,
+                "tone": "success"
+              }
+            ],
+            "caption": "EX → EX: add's result reaches sub one cycle later"
+          }
+        },
+        {
+          "title": "(B) MEM output to EX input",
+          "body": "A load produces its value at the end of MEM (held in MEM/WB). The bypass path MEM/WB → ALU input carries it into EX of the dependent instruction: \\`lw\\` is in MEM in cycle 6 and \\`and\\` uses \\`r6\\` in EX in cycle 7. The path exists, so (B) is **true**.",
+          "scene": {
+            "forwards": [
+              {
+                "from": [
+                  0,
+                  3
+                ],
+                "to": [
+                  1,
+                  4
+                ]
+              },
+              {
+                "from": [
+                  2,
+                  6
+                ],
+                "to": [
+                  3,
+                  7
+                ]
+              }
+            ],
+            "hl": [
+              {
+                "r": 2,
+                "c": 6,
+                "tone": "accent"
+              },
+              {
+                "r": 3,
+                "c": 7,
+                "tone": "success"
+              }
+            ],
+            "caption": "MEM → EX: the loaded value r6 feeds and's ALU"
+          }
+        },
+        {
+          "title": "(C) Some stalls remain",
+          "body": "Without a stall, \\`and\\` would be in EX in cycle 6 — the same cycle \\`lw\\` is still reading memory. Forwarding cannot send data back in time, so one bubble is unavoidable (the load-use hazard). Structural and control hazards are not cured by forwarding either. (C) is **true**.",
+          "scene": {
+            "hl": [
+              {
+                "r": 3,
+                "c": 6,
+                "tone": "error"
+              },
+              {
+                "r": 2,
+                "c": 6,
+                "tone": "accent"
+              }
+            ],
+            "caption": "Cycle 6: the load-use bubble forwarding cannot remove"
+          }
+        },
+        {
+          "title": "(D) Forwarding costs hardware",
+          "body": "Forwarding needs extra wires from EX/MEM and MEM/WB back to the ALU, multiplexers in front of both ALU inputs, and a forwarding unit that compares the destination registers of earlier instructions with the source registers of the instruction in EX (plus a hazard-detection unit for the load-use stall). (D) is **false**.",
+          "scene": {
+            "hl": [],
+            "caption": "Each arrow is a real bypass path + a mux input"
+          }
+        }
+      ],
+      "answer": {
+        "value": "**(A), (B) and (C)**",
+        "choice": [
+          "A",
+          "B",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "This is the definition of forwarding (bypassing): from the producing stage of an earlier instruction to the consuming stage of a later one."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "The MEM/WB → EX bypass is a standard path (it carries load results and older ALU results)."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "A load followed immediately by a use still needs one stall; forwarding only shortens it."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Bypass paths, ALU-input multiplexers and a forwarding unit are all extra hardware."
+        }
+      ],
+      "pitfalls": [
+        "Believing forwarding removes every data stall — the load-use case still needs one bubble.",
+        "Rejecting (B) because a load's data \"arrives too late\" — the path exists; only its timing forces the bubble."
+      ],
+      "verification": "This matches the Hennessy–Patterson 5-stage MIPS pipeline: forwarding from EX/MEM and MEM/WB to the ALU inputs, and a hazard-detection unit inserting one bubble for a load-use dependence.",
+      "animation": {
+        "kind": "pipeline",
+        "title": "5-stage pipeline with forwarding",
+        "rows": [
+          {
+            "label": "add r1,r2,r3",
+            "start": 1,
+            "cells": [
+              "IF",
+              "ID",
+              "EX",
+              "MEM",
+              "WB"
+            ]
+          },
+          {
+            "label": "sub r4,r1,r5",
+            "start": 2,
+            "cells": [
+              "IF",
+              "ID",
+              "EX",
+              "MEM",
+              "WB"
+            ]
+          },
+          {
+            "label": "lw r6,0(r2)",
+            "start": 3,
+            "cells": [
+              "IF",
+              "ID",
+              "EX",
+              "MEM",
+              "WB"
+            ]
+          },
+          {
+            "label": "and r7,r6,r8",
+            "start": 4,
+            "cells": [
+              "IF",
+              "ID",
+              "-",
+              "EX",
+              "MEM",
+              "WB"
+            ]
+          }
+        ],
+        "forwards": [
+          {
+            "from": [
+              0,
+              3
+            ],
+            "to": [
+              1,
+              4
+            ]
+          },
+          {
+            "from": [
+              2,
+              6
+            ],
+            "to": [
+              3,
+              7
+            ]
+          }
+        ],
+        "caption": "sub needs r1 from add; and needs r6 from lw"
+      }
+    },
+    "cse-2024-1-cs-21": {
+      "approach": "Outgoing NAT replaces the private source address with the router's public address. Then ask which other header fields depend on that change: the header checksum does; the destination and the length do not.",
+      "concepts": [
+        "NAT / NAPT",
+        "IPv4 header checksum",
+        "Private vs public addresses"
+      ],
+      "given": "An inside host 10.0.0.5 sends a packet to the external server 93.184.216.34 through a NAT router whose public address is 203.0.113.7 (example addresses).",
+      "steps": [
+        {
+          "title": "Source IP is rewritten",
+          "body": "The private source address cannot be routed on the Internet, so the NAT box replaces 10.0.0.5 by its public address 203.0.113.7 and records the mapping (in NAPT also the port) to translate replies back. (A) is **true**.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Destination IP is untouched",
+          "body": "The packet must still reach 93.184.216.34, so the destination address is left alone. (Only *incoming* packets have their destination rewritten, back to the inside host.) (B) is **false**.",
+          "scene": {
+            "hl": [
+              {
+                "r": 1,
+                "tone": "error"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Header checksum must be recomputed",
+          "body": "The IPv4 header checksum is computed over the whole header, including the source address. Changing the address invalidates it, so NAT recomputes (or incrementally adjusts) it. (C) is **true**. (NAPT also fixes the TCP/UDP checksum, whose pseudo-header contains the addresses, but that field is not in the IP header.)",
+          "scene": {
+            "hl": [
+              {
+                "r": 2,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Total length is unchanged",
+          "body": "One 32-bit address is swapped for another 32-bit address: no bytes are added or removed, so Total Length stays the same. (D) is **false**.",
+          "scene": {
+            "hl": [
+              {
+                "r": 3,
+                "tone": "error"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "**(A) and (C)**",
+        "choice": [
+          "A",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "The private source address is replaced by the NAT device's public address."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Outgoing packets keep their external destination; destination rewriting happens to incoming replies."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "The header checksum covers the source address, so it must be recomputed after the rewrite."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Address replacement does not change the packet size."
+        }
+      ],
+      "pitfalls": [
+        "Picking (B) by mixing up the outgoing and incoming directions of NAT.",
+        "Forgetting the checksum: any change to a header field forces a checksum update.",
+        "Choosing (D) — NAT is a same-size substitution (the TTL also changes when NAT forwards, but TTL is not an option)."
+      ],
+      "verification": "RFC 3022 (Traditional NAT) states that for outbound packets the source IP address (and, for NAPT, the source port) is translated, and the IP header checksum and TCP/UDP checksums must be adjusted.",
+      "animation": {
+        "kind": "table",
+        "title": "IP header fields crossing the NAT",
+        "cols": [
+          "Field",
+          "Inside (before NAT)",
+          "Outside (after NAT)"
+        ],
+        "rows": [
+          [
+            "Source IP",
+            "10.0.0.5",
+            {
+              "v": "203.0.113.7",
+              "tone": "warning"
+            }
+          ],
+          [
+            "Destination IP",
+            "93.184.216.34",
+            "93.184.216.34"
+          ],
+          [
+            "Header checksum",
+            "c (old)",
+            {
+              "v": "c' (recomputed)",
+              "tone": "warning"
+            }
+          ],
+          [
+            "Total length",
+            "60",
+            "60"
+          ]
+        ],
+        "caption": "Example addresses; changed fields in amber"
+      }
+    },
+    "cse-2024-1-cs-22": {
+      "approach": "Bijections give equal cardinalities: $|A| = |B| = n$ and $|A \\cup B| = |A \\times A| = n^2$. Since $n \\le |A \\cup B| \\le 2n$, solve $n \\le n^2 \\le 2n$ and check each solution is realisable.",
+      "concepts": [
+        "Bijection preserves cardinality",
+        "Inclusion–exclusion for two sets",
+        "$\\lvert A \\times A \\rvert = \\lvert A \\rvert^2$"
+      ],
+      "steps": [
+        {
+          "title": "Translate the bijections",
+          "body": "(i) bijection $A \\to B$ ⇒ $|B| = |A| = n$ with $n \\ge 1$.\n\n(ii) bijection $A \\times A \\to A \\cup B$ ⇒ $|A \\cup B| = |A \\times A| = n^2$."
+        },
+        {
+          "title": "Bound the size of the union",
+          "body": "$|A \\cup B| = |A| + |B| - |A \\cap B| = 2n - |A \\cap B|$ with $0 \\le |A \\cap B| \\le n$, so\n$$n \\le |A \\cup B| \\le 2n \\quad\\Longrightarrow\\quad n \\le n^2 \\le 2n.$$"
+        },
+        {
+          "title": "Solve the inequality",
+          "body": "$n^2 \\ge n$ holds for every $n \\ge 1$. $n^2 \\le 2n \\iff n \\le 2$ (divide by $n > 0$). Hence $n \\in \\{1, 2\\}$.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "tone": "error"
+              },
+              {
+                "r": 3,
+                "tone": "error"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Both values are achievable",
+          "body": "- $n = 1$: need $|A \\cup B| = 1$, so $A = B = \\{x\\}$; $A \\times A = \\{(x,x)\\}$ maps onto $\\{x\\}$. ✓\n- $n = 2$: need $|A \\cup B| = 4 = 2n$, so $A, B$ disjoint, e.g. $A = \\{1,2\\}$, $B = \\{3,4\\}$; $|A \\times A| = 4$. ✓\n\nSo $|A|$ can take **2** values (namely 1 and 2)."
+        }
+      ],
+      "answer": {
+        "value": "$|A| \\in \\{1, 2\\}$, so the number of possible values is **2**",
+        "number": 2,
+        "matchesKey": true
+      },
+      "shortcut": "$n^2 = |A \\cup B| \\le 2n$ forces $n \\le 2$; $n = 1$ ($A = B$) and $n = 2$ ($A \\cap B = \\varnothing$) both work ⇒ 2.",
+      "pitfalls": [
+        "Answering the values themselves (1 or 2) instead of how many values there are.",
+        "Missing $n = 1$ by assuming $A$ and $B$ must be different or disjoint.",
+        "Using $|A \\cup B| = 2n$ only (disjoint sets), which gives just $n = 2$."
+      ],
+      "verification": "For $n \\ge 3$: $n^2 \\ge 3n > 2n \\ge |A \\cup B|$, so no bijection can exist; only $n = 1, 2$ survive.",
+      "animation": {
+        "kind": "table",
+        "title": "Which sizes n = |A| are possible?",
+        "cols": [
+          "n = |A|",
+          "|A×A| = n²",
+          "possible |A∪B|",
+          "feasible?"
+        ],
+        "rows": [
+          [
+            1,
+            1,
+            "1 … 2",
+            "yes (A = B)"
+          ],
+          [
+            2,
+            4,
+            "2 … 4",
+            "yes (A ∩ B = ∅)"
+          ],
+          [
+            3,
+            9,
+            "3 … 6",
+            "no"
+          ],
+          [
+            4,
+            16,
+            "4 … 8",
+            "no"
+          ]
+        ],
+        "caption": "Need n² inside the range n … 2n"
+      }
+    },
+    "cse-2024-1-cs-23": {
+      "approach": "Build the expression tree with the given rules: the **lowest**-precedence operator splits the expression first (it becomes the root), and a right-associative operator groups from the right. Then evaluate bottom-up.",
+      "concepts": [
+        "Operator precedence",
+        "Right vs left associativity",
+        "Expression tree"
+      ],
+      "given": "Precedence $+ > - > \\ast > /$; $+$ is left-associative, $-$, $\\ast$, $/$ are right-associative. Expression: $3 + 1 + 5 \\ast 2 \\,/\\, 7 + 2 - 4 - 7 - 6 \\,/\\, 2$.",
+      "steps": [
+        {
+          "title": "Split at the lowest operator: /",
+          "body": "$/$ has the lowest precedence, so the two $/$ signs split the expression into three operands:\n$$\\underbrace{3 + 1 + 5 \\ast 2}_{X} \\;/\\; \\underbrace{7 + 2 - 4 - 7 - 6}_{Y} \\;/\\; 2$$\n$/$ is right-associative, so it groups as $X \\,/\\, (Y \\,/\\, 2)$.",
+          "scene": {
+            "panels": [
+              null,
+              {
+                "reveal": 1
+              }
+            ]
+          }
+        },
+        {
+          "title": "Left operand X = 3 + 1 + 5 ∗ 2",
+          "body": "$+$ binds tighter than $\\ast$, so $X = (3 + 1 + 5) \\ast 2$. Left-associative $+$: $(3 + 1) + 5 = 4 + 5 = 9$. Then $X = 9 \\ast 2 = 18$.",
+          "scene": {
+            "panels": [
+              null,
+              {
+                "reveal": 2
+              }
+            ]
+          }
+        },
+        {
+          "title": "Middle operand Y = 7 + 2 − 4 − 7 − 6",
+          "body": "$+$ first: $7 + 2 = 9$. The three $-$ signs are right-associative:\n$$Y = 9 - \\big(4 - (7 - 6)\\big) = 9 - (4 - 1) = 9 - 3 = 6$$",
+          "scene": {
+            "panels": [
+              null,
+              {
+                "reveal": 3
+              }
+            ]
+          }
+        },
+        {
+          "title": "Divide from the right",
+          "body": "$X \\,/\\, (Y \\,/\\, 2) = 18 \\,/\\, (6 \\,/\\, 2) = 18 \\,/\\, 3 = 6$.",
+          "scene": {
+            "panels": [
+              null,
+              {
+                "reveal": 4
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "The expression evaluates to **6**",
+        "number": 6,
+        "matchesKey": true
+      },
+      "shortcut": "Bracket by precedence from the lowest operator down: $\\big((3+1)+5\\big) \\ast 2 \\;/\\; \\Big(\\big((7+2) - (4 - (7 - 6))\\big) \\,/\\, 2\\Big) = 18 / (6/2) = 6$.",
+      "pitfalls": [
+        "Evaluating $/$ left to right: $(18 / 6) / 2 = 3 / 2 = 1$ (integer division) — wrong, $/$ is right-associative here.",
+        "Evaluating $-$ left to right: $((9 - 4) - 7) - 6 = -8$.",
+        "Using the usual C precedence (∗ and / above + and −), which gives a completely different value."
+      ],
+      "verification": "Each sub-tree in the figure carries its value: $3+1 = 4$, $4+5 = 9$, $9 \\ast 2 = 18$; $7 - 6 = 1$, $4 - 1 = 3$, $9 - 3 = 6$, $6/2 = 3$; root $18/3 = 6$. All divisions are exact, so integer arithmetic does not change anything.",
+      "animation": {
+        "kind": "panels",
+        "title": "Expression tree under the given rules",
+        "panels": [
+          {
+            "kind": "tree",
+            "root": {
+              "id": "d1",
+              "label": "/",
+              "sub": "= 6",
+              "children": [
+                {
+                  "id": "m",
+                  "label": "∗",
+                  "sub": "= 18",
+                  "children": [
+                    {
+                      "id": "p2",
+                      "label": "+",
+                      "sub": "= 9",
+                      "children": [
+                        {
+                          "id": "p1",
+                          "label": "+",
+                          "sub": "= 4",
+                          "children": [
+                            {
+                              "id": "n3",
+                              "label": 3
+                            },
+                            {
+                              "id": "n1",
+                              "label": 1
+                            }
+                          ]
+                        },
+                        {
+                          "id": "n5",
+                          "label": 5
+                        }
+                      ]
+                    },
+                    {
+                      "id": "n2a",
+                      "label": 2
+                    }
+                  ]
+                },
+                {
+                  "id": "d2",
+                  "label": "/",
+                  "sub": "= 3",
+                  "children": [
+                    {
+                      "id": "s1",
+                      "label": "−",
+                      "sub": "= 6",
+                      "children": [
+                        {
+                          "id": "p3",
+                          "label": "+",
+                          "sub": "= 9",
+                          "children": [
+                            {
+                              "id": "n7a",
+                              "label": 7
+                            },
+                            {
+                              "id": "n2b",
+                              "label": 2
+                            }
+                          ]
+                        },
+                        {
+                          "id": "s2",
+                          "label": "−",
+                          "sub": "= 3",
+                          "children": [
+                            {
+                              "id": "n4",
+                              "label": 4
+                            },
+                            {
+                              "id": "s3",
+                              "label": "−",
+                              "sub": "= 1",
+                              "children": [
+                                {
+                                  "id": "n7b",
+                                  "label": 7
+                                },
+                                {
+                                  "id": "n6",
+                                  "label": 6
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "id": "n2c",
+                      "label": 2
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "kind": "equation",
+            "lines": [
+              {
+                "tex": "X \\,/\\, (Y \\,/\\, 2)",
+                "note": "/ lowest, right-assoc"
+              },
+              {
+                "tex": "X = (3+1+5) \\ast 2 = 18",
+                "note": "+ before ∗"
+              },
+              {
+                "tex": "Y = 9 - (4 - (7-6)) = 6",
+                "note": "− right-assoc"
+              },
+              {
+                "tex": "18 \\,/\\, (6 \\,/\\, 2) = 18 \\,/\\, 3 = 6",
+                "tone": "success"
+              }
+            ],
+            "reveal": 0
+          }
+        ]
+      }
+    },
+    "cse-2024-1-cs-24": {
+      "approach": "Cayley's formula: the complete graph $K_n$ has $n^{n-2}$ labelled spanning trees, so $K_4$ has $4^2 = 16$. Confirm by counting the 3-edge subsets that contain no cycle.",
+      "concepts": [
+        "Cayley's formula",
+        "Spanning tree has n − 1 edges",
+        "Complementary counting"
+      ],
+      "steps": [
+        {
+          "title": "Apply Cayley's formula",
+          "body": "$\\tau(K_n) = n^{n-2}$, so $\\tau(K_4) = 4^{4-2} = 4^2 = 16$.",
+          "scene": {
+            "edgeTones": {
+              "A>B": "success",
+              "B>C": "success",
+              "C>D": "success"
+            },
+            "caption": "One of them: the path A–B–C–D"
+          }
+        },
+        {
+          "title": "Check: choose 3 of the 6 edges",
+          "body": "A spanning tree on 4 vertices has $4 - 1 = 3$ edges. $K_4$ has $\\binom{4}{2} = 6$ edges, giving $\\binom{6}{3} = 20$ three-edge subsets.",
+          "scene": {
+            "edgeTones": {},
+            "caption": "6 edges; every spanning tree uses exactly 3"
+          }
+        },
+        {
+          "title": "Remove the triangles",
+          "body": "Three edges on four vertices either connect all four (a tree) or form a triangle that leaves the fourth vertex isolated. A triangle is fixed by its three vertices: $\\binom{4}{3} = 4$ of them (ABC, ABD, ACD, BCD). Spanning trees: $20 - 4 = 16$.",
+          "scene": {
+            "edgeTones": {
+              "A>B": "error",
+              "B>C": "error",
+              "A>C": "error"
+            },
+            "tones": {
+              "D": "muted"
+            },
+            "caption": "Triangle ABC leaves D isolated — not a tree"
+          }
+        }
+      ],
+      "answer": {
+        "value": "$4^{4-2} =$ **16** spanning trees",
+        "number": 16,
+        "matchesKey": true
+      },
+      "shortcut": "$n^{n-2}$ with $n = 4$: $16$.",
+      "pitfalls": [
+        "Counting non-isomorphic trees (only 2 shapes: the star and the path) instead of labelled spanning trees.",
+        "Using $n^{n-1}$ (= 64) or $(n-1)!$ (= 6).",
+        "Stopping at C(6,3) = 20 without excluding the 4 triangles."
+      ],
+      "verification": "Count by shape: stars — choose the centre, $4$ ways; paths — $4!/2 = 12$ (a path and its reverse are the same tree). Total $4 + 12 = 16$.",
+      "animation": {
+        "kind": "graph",
+        "title": "K₄ on A, B, C, D",
+        "nodes": [
+          {
+            "id": "A",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "B",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "id": "C",
+            "x": 2,
+            "y": 2
+          },
+          {
+            "id": "D",
+            "x": 0,
+            "y": 2
+          }
+        ],
+        "edges": [
+          {
+            "from": "A",
+            "to": "B"
+          },
+          {
+            "from": "A",
+            "to": "C"
+          },
+          {
+            "from": "A",
+            "to": "D"
+          },
+          {
+            "from": "B",
+            "to": "C"
+          },
+          {
+            "from": "B",
+            "to": "D"
+          },
+          {
+            "from": "C",
+            "to": "D"
+          }
+        ],
+        "caption": "The complete graph on 4 labelled vertices"
+      }
+    },
+    "cse-2024-1-cs-25": {
+      "approach": "Compute the equi-join tuple by tuple (match on $A$), then keep only the joined tuples with $B < C$. With 5 and 3 tuples this takes seconds.",
+      "concepts": [
+        "Equi-join (theta join on equality)",
+        "Selection σ",
+        "Relational algebra evaluation"
+      ],
+      "steps": [
+        {
+          "title": "Join on R.A = S.A",
+          "body": "Match each $R$ tuple with the $S$ tuples having the same $A$:\n\n- $(10, 20)$ ↔ $(10, 90)$\n- $(20, 30)$: no $S$ tuple with $A = 20$\n- $(30, 40)$ ↔ $(30, 45)$\n- $(30, 50)$ ↔ $(30, 45)$\n- $(50, 95)$: no $S$ tuple with $A = 50$\n\n($S$'s $(40, 80)$ matches nothing.) The join has **3** tuples.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "info"
+              },
+              {
+                "r": 2,
+                "tone": "info"
+              },
+              {
+                "r": 3,
+                "tone": "info"
+              },
+              {
+                "r": 1,
+                "tone": "muted"
+              },
+              {
+                "r": 4,
+                "tone": "muted"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Apply σ_{B<C}",
+          "body": "- $(10, 20, 90)$: $20 < 90$ ✓\n- $(30, 40, 45)$: $40 < 45$ ✓\n- $(30, 50, 45)$: $50 < 45$ ✗\n\n**2** tuples remain.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "tone": "success"
+              },
+              {
+                "r": 3,
+                "tone": "error"
+              },
+              {
+                "r": 1,
+                "tone": "muted"
+              },
+              {
+                "r": 4,
+                "tone": "muted"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Result relation",
+          "body": "$\\sigma_{B<C}(R \\bowtie_{R.A=S.A} S) = \\{(10, 20, 10, 90),\\ (30, 40, 30, 45)\\}$ with attributes $(R.A, B, S.A, C)$ — **2** tuples. $R$'s tuples with $A = 20$ and $A = 50$ and $S$'s tuple with $A = 40$ have no partner, so they never appear.",
+          "scene": {
+            "caption": "Answer: 2 tuples"
+          }
+        }
+      ],
+      "answer": {
+        "value": "**2** tuples",
+        "number": 2,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Stopping at the join (3 tuples) and forgetting the selection.",
+        "Evaluating σ on the Cartesian product (15 tuples) without the join condition — that gives 11.",
+        "Matching on B = A (e.g. pairing R's B = 40 with S's A = 40); the join condition is R.A = S.A."
+      ],
+      "verification": "Group by $A$: $A = 10$: $1 \\times 1$ pair, $A = 30$: $2 \\times 1$ pairs, $A = 20, 40, 50$: none ⇒ join size $3$. Only $(30, 50, 45)$ fails $B < C$ ⇒ $3 - 1 = 2$.",
+      "animation": {
+        "kind": "table",
+        "title": "R ⋈ S on R.A = S.A, then σ B < C",
+        "cols": [
+          "R.A",
+          "B",
+          "S.A",
+          "C",
+          "B < C ?"
+        ],
+        "rows": [
+          [
+            10,
+            20,
+            10,
+            90,
+            "20 < 90 ✓"
+          ],
+          [
+            20,
+            30,
+            "—",
+            "—",
+            "no match"
+          ],
+          [
+            30,
+            40,
+            30,
+            45,
+            "40 < 45 ✓"
+          ],
+          [
+            30,
+            50,
+            30,
+            45,
+            "50 < 45 ✗"
+          ],
+          [
+            50,
+            95,
+            "—",
+            "—",
+            "no match"
+          ]
+        ],
+        "caption": "One row per R tuple"
+      }
+    },
+    "cse-2024-1-cs-26": {
+      "approach": "Pipelined store-and-forward: chunks stream back-to-back, so the last chunk leaves P after $N$ transmission times and needs one more transmission time on Q–R. For $k$ equal links, $T = (N + k - 1)\\,t$.",
+      "concepts": [
+        "Transmission delay L/R",
+        "Store-and-forward",
+        "Pipelining of packets over hops"
+      ],
+      "given": "File $10^6$ B, chunk $10^3$ B, both links $10^6$ bit/s, propagation, processing and queueing delays negligible; Q receives and transmits simultaneously.",
+      "steps": [
+        {
+          "title": "Transmission time of one chunk",
+          "body": "$t = \\dfrac{10^3 \\times 8\\ \\text{bits}}{10^6\\ \\text{bits/s}} = \\dfrac{8000}{10^6}\\ \\text{s} = 0.008\\ \\text{s} = 8\\ \\text{ms}$.",
+          "scene": {
+            "reveal": 1
+          }
+        },
+        {
+          "title": "Number of chunks",
+          "body": "$N = \\dfrac{10^6}{10^3} = 1000$ chunks.",
+          "scene": {
+            "reveal": 2
+          }
+        },
+        {
+          "title": "P finishes after N·t",
+          "body": "Chunk $i$ is on link P–Q during $[(i-1)t,\\ it]$. The last chunk is completely received by Q at $1000 \\times 8\\ \\text{ms} = 8\\ \\text{s}$.",
+          "scene": {
+            "reveal": 3
+          }
+        },
+        {
+          "title": "One more hop for the last chunk",
+          "body": "Q forwards chunk $i$ on Q–R during $[it,\\ (i+1)t]$ — exactly while it receives chunk $i+1$ — so Q–R is free when the last chunk arrives. It is sent immediately and reaches R one transmission time later:\n$$T = 8\\ \\text{s} + 0.008\\ \\text{s} = 8.008\\ \\text{s}.$$",
+          "scene": {
+            "reveal": 5
+          }
+        }
+      ],
+      "answer": {
+        "value": "**8.008 s** — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$8.000 = N t$ is when P finishes sending; it ignores the last chunk's second hop."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$(N + 1)\\,t = 1001 \\times 8\\ \\text{ms} = 8.008$ s."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$15.992 = (2N - 1)\\,t$ would need the two links to work almost one after the other; since Q receives and transmits simultaneously, the hops overlap and only one extra $t$ is added."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$16.000 = 2Nt$: Q storing the whole file before forwarding (or no overlap of the two links) — contradicts \"Q can simultaneously receive and transmit\"."
+        }
+      ],
+      "shortcut": "$(N + \\text{hops} - 1) \\times \\frac{L}{R} = (1000 + 2 - 1) \\times 8\\ \\text{ms} = 8.008$ s.",
+      "pitfalls": [
+        "Forgetting the last chunk's extra hop (8.000).",
+        "Ignoring that Q receives and transmits at the same time, doubling the time (16.000).",
+        "Forgetting bytes → bits (×8), which gives 1 ms per chunk."
+      ],
+      "verification": "Small case: $N = 2$ chunks over 2 links gives chunk 1 on P–Q in $[0, t]$, on Q–R in $[t, 2t]$; chunk 2 on P–Q in $[t, 2t]$, on Q–R in $[2t, 3t]$, so $T = 3t = (N + 1)t$ — the same formula.",
+      "animation": {
+        "kind": "equation",
+        "title": "Pipelined store-and-forward over 2 links",
+        "lines": [
+          {
+            "tex": "t = \\frac{10^3 \\times 8}{10^6}\\ \\text{s} = 8\\ \\text{ms}",
+            "note": "per chunk, per link"
+          },
+          {
+            "tex": "N = 10^6 / 10^3 = 1000",
+            "note": "chunks"
+          },
+          {
+            "tex": "N\\,t = 1000 \\times 8\\ \\text{ms} = 8\\ \\text{s}",
+            "note": "last chunk reaches Q"
+          },
+          {
+            "tex": "T = N\\,t + t",
+            "note": "one more hop Q → R"
+          },
+          {
+            "tex": "T = 8 + 0.008 = 8.008\\ \\text{s}",
+            "tone": "success"
+          }
+        ],
+        "reveal": 0
+      }
+    },
+    "cse-2024-1-cs-27": {
+      "approach": "Build the parse tree of \"MMLK\" and evaluate the synthesized attribute bottom-up; every rule is an S-attributed sum, so it is just careful arithmetic — especially the ε-rules, which contribute negative values.",
+      "concepts": [
+        "Syntax-directed definition",
+        "Synthesized attributes",
+        "Annotated parse tree"
+      ],
+      "steps": [
+        {
+          "title": "Parse \"MMLK\"",
+          "body": "$S \\to DHTU$. $D$ must derive \"MM\": $D \\to \\text{M}\\,D_1$, $D_1 \\to \\text{M}\\,D_2$, $D_2 \\to \\epsilon$. $H$ derives \"L\": $H \\to \\text{L}\\,H_1$, $H_1 \\to \\epsilon$. There is no \"C\", so $T \\to \\epsilon$. Finally $U \\to \\text{K}$."
+        },
+        {
+          "title": "Evaluate D",
+          "body": "$D_2.\\mathit{val} = -5$, $D_1.\\mathit{val} = 5 + (-5) = 0$, $D.\\mathit{val} = 5 + 0 = 5$.",
+          "scene": {
+            "root": {
+              "id": "S",
+              "label": "S",
+              "sub": "val = 45",
+              "tone": "accent",
+              "children": [
+                {
+                  "id": "D",
+                  "label": "D",
+                  "sub": "5",
+                  "tone": "success",
+                  "children": [
+                    {
+                      "id": "M1",
+                      "label": "M"
+                    },
+                    {
+                      "id": "D1",
+                      "label": "D₁",
+                      "sub": "0",
+                      "children": [
+                        {
+                          "id": "M2",
+                          "label": "M"
+                        },
+                        {
+                          "id": "D2",
+                          "label": "D₂",
+                          "sub": "−5",
+                          "children": [
+                            {
+                              "id": "e1",
+                              "label": "ε"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "H",
+                  "label": "H",
+                  "sub": "40",
+                  "tone": "success",
+                  "children": [
+                    {
+                      "id": "L1",
+                      "label": "L"
+                    },
+                    {
+                      "id": "H1",
+                      "label": "H₁",
+                      "sub": "−10",
+                      "children": [
+                        {
+                          "id": "e2",
+                          "label": "ε"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "T",
+                  "label": "T",
+                  "sub": "−5",
+                  "tone": "success",
+                  "children": [
+                    {
+                      "id": "e3",
+                      "label": "ε"
+                    }
+                  ]
+                },
+                {
+                  "id": "U",
+                  "label": "U",
+                  "sub": "5",
+                  "tone": "success",
+                  "children": [
+                    {
+                      "id": "K1",
+                      "label": "K"
+                    }
+                  ]
+                }
+              ]
+            },
+            "caption": "Values flow bottom-up"
+          }
+        },
+        {
+          "title": "Evaluate H",
+          "body": "$H_1.\\mathit{val} = -10$, $H.\\mathit{val} = 5 \\ast 10 + (-10) = 50 - 10 = 40$."
+        },
+        {
+          "title": "Evaluate T and U",
+          "body": "$T \\to \\epsilon$ gives $T.\\mathit{val} = -5$; $U \\to \\text{K}$ gives $U.\\mathit{val} = 5$."
+        },
+        {
+          "title": "Sum at the root",
+          "body": "$S.\\mathit{val} = D.\\mathit{val} + H.\\mathit{val} + T.\\mathit{val} + U.\\mathit{val} = 5 + 40 + (-5) + 5 = 45$.",
+          "scene": {
+            "caption": "$S.val = 5 + 40 - 5 + 5 = 45$"
+          }
+        }
+      ],
+      "answer": {
+        "value": "$S.\\mathit{val} =$ **45** — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$5 + 40 - 5 + 5 = 45$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "50 results from dropping one of the $-5$ ε-values (e.g. treating $T \\to \\epsilon$ or $D_2 \\to \\epsilon$ as 0)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "55 results from ignoring $H_1 \\to \\epsilon$'s $-10$ ($H = 50$)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "65 is what you get if every ε-rule contributed 0: $10 + 50 + 0 + 5$."
+        }
+      ],
+      "shortcut": "Each nonterminal = (its per-letter value × number of letters) + its ε-value: $D = 2 \\times 5 - 5 = 5$, $H = 1 \\times 50 - 10 = 40$, $T = 0 \\times 500 - 5 = -5$, $U = 5$ ⇒ $45$.",
+      "pitfalls": [
+        "Forgetting that $T$ still appears (as $\\epsilon$) and contributes $-5$ even though there is no \"C\".",
+        "Adding the ε-value once per letter instead of once at the end of the chain."
+      ],
+      "verification": "The shortcut formula and the bottom-up tree both give $5 + 40 - 5 + 5 = 45$.",
+      "animation": {
+        "kind": "tree",
+        "title": "Parse tree of MMLK",
+        "root": {
+          "id": "S",
+          "label": "S",
+          "children": [
+            {
+              "id": "D",
+              "label": "D",
+              "children": [
+                {
+                  "id": "M1",
+                  "label": "M"
+                },
+                {
+                  "id": "D1",
+                  "label": "D₁",
+                  "children": [
+                    {
+                      "id": "M2",
+                      "label": "M"
+                    },
+                    {
+                      "id": "D2",
+                      "label": "D₂",
+                      "children": [
+                        {
+                          "id": "e1",
+                          "label": "ε"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "H",
+              "label": "H",
+              "children": [
+                {
+                  "id": "L1",
+                  "label": "L"
+                },
+                {
+                  "id": "H1",
+                  "label": "H₁",
+                  "children": [
+                    {
+                      "id": "e2",
+                      "label": "ε"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "T",
+              "label": "T",
+              "children": [
+                {
+                  "id": "e3",
+                  "label": "ε"
+                }
+              ]
+            },
+            {
+              "id": "U",
+              "label": "U",
+              "children": [
+                {
+                  "id": "K1",
+                  "label": "K"
+                }
+              ]
+            }
+          ]
+        },
+        "caption": "S → D H T U with D ⇒ MM, H ⇒ L, T ⇒ ε, U ⇒ K"
+      }
+    },
+    "cse-2024-1-cs-28": {
+      "approach": "Eliminate with FIRST sets first (they are local and quick): FIRST(T) has no $c$ but has $\\epsilon$, and FIRST(S) must contain both $c$ and $f$. Only option (A) survives; confirm by computing its FOLLOW sets.",
+      "concepts": [
+        "FIRST sets",
+        "FOLLOW sets",
+        "Nullable non-terminals"
+      ],
+      "steps": [
+        {
+          "title": "Production (2) from FIRST(T)",
+          "body": "FIRST(T) $= \\{a, b, \\epsilon\\}$: $T \\to aS$ and $T \\to bT$ give $a, b$; the missing $\\epsilon$ must come from (2), so (2) is $T \\to \\epsilon$. $T \\to cT$ would put $c$ into FIRST(T) and leave $T$ non-nullable. This rules out (C) and (D).",
+          "scene": {
+            "hl": [
+              {
+                "r": 1,
+                "c": 1,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Production (1) from FIRST(S)",
+          "body": "$S \\to daT$ gives only $d$; (1) must supply $c$ and $f$.\n\n- $S \\to fR$: adds only $f$ ⇒ FIRST(S) $= \\{d, f\\}$ ✗ (no $c$) — rules out (B).\n- $S \\to Rf$: adds $\\text{FIRST}(R) \\setminus \\{\\epsilon\\} = \\{c\\}$ and, since $R$ is nullable, $f$ ⇒ FIRST(S) $= \\{c, d, f\\}$ ✓.\n\nOnly (A) is left; with (3) $R \\to cTR$, FIRST(R) $= \\{c, \\epsilon\\}$ ✓.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "c": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "c": 1,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Confirm the FOLLOW sets for (A)",
+          "body": "Grammar (A): $S \\to daT \\mid Rf$, $T \\to aS \\mid bT \\mid \\epsilon$, $R \\to cTR \\mid \\epsilon$.\n\n- FOLLOW(R): from $S \\to Rf$ ⇒ $f$; from $R \\to cTR$ ⇒ FOLLOW(R) ⊆ FOLLOW(R). So FOLLOW(R) $= \\{f\\}$ ✓.\n- FOLLOW(T): $S \\to daT$ ⇒ FOLLOW(S) ⊆ FOLLOW(T); $R \\to cTR$ ⇒ FIRST(R) $\\setminus \\{\\epsilon\\} = \\{c\\}$, and $R$ nullable ⇒ FOLLOW(R) $= \\{f\\}$.\n- FOLLOW(S): the end marker $\\text{\\textdollar}$ ($S$ is the start symbol), and $T \\to aS$ ⇒ FOLLOW(T) ⊆ FOLLOW(S).\n\nSo FOLLOW(S) = FOLLOW(T) $= \\{c, f, \\text{\\textdollar}\\}$ ✓ — every given set matches.",
+          "scene": {
+            "hl": [
+              {
+                "c": 3,
+                "tone": "success"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "**(A)**: $S \\to Rf$, $T \\to \\epsilon$, $R \\to cTR$",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Reproduces every given FIRST and FOLLOW set."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$S \\to fR$ makes FIRST(S) $= \\{d, f\\}$ (no $c$), and would put the end marker $\\text{\\textdollar}$ into FOLLOW(R)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$T \\to cT$ puts $c$ into FIRST(T) and removes $\\epsilon$ from it; $S \\to fR$ also loses $c$ from FIRST(S)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$T \\to cT$ gives FIRST(T) $= \\{a, b, c\\}$ — no $\\epsilon$ and an extra $c$."
+        }
+      ],
+      "shortcut": "$\\epsilon \\in$ FIRST(T) forces (2) $= T \\to \\epsilon$ (kills C, D); $c \\in$ FIRST(S) needs $S \\to Rf$ (kills B).",
+      "pitfalls": [
+        "Forgetting that a nullable $R$ in $S \\to Rf$ lets $f$ into FIRST(S).",
+        "Taking FOLLOW(T) only from $S \\to daT$ and missing the $c$ contributed by $R \\to cTR$."
+      ],
+      "verification": "All three given FIRST sets and both FOLLOW lines were recomputed from grammar (A) in the table — every entry matches.",
+      "animation": {
+        "kind": "table",
+        "title": "Given sets vs grammar (A)",
+        "cols": [
+          "FIRST (given)",
+          "FIRST from (A)",
+          "FOLLOW (given)",
+          "FOLLOW from (A)"
+        ],
+        "rowLabels": [
+          "S",
+          "T",
+          "R"
+        ],
+        "corner": "NT",
+        "rows": [
+          [
+            "{c, d, f}",
+            "{c, d, f}",
+            "{c, f, $}",
+            "{c, f, $}"
+          ],
+          [
+            "{a, b, ε}",
+            "{a, b, ε}",
+            "{c, f, $}",
+            "{c, f, $}"
+          ],
+          [
+            "{c, ε}",
+            "{c, ε}",
+            "{f}",
+            "{f}"
+          ]
+        ],
+        "caption": "(A): S → daT | Rf,  T → aS | bT | ε,  R → cTR | ε"
+      }
+    },
+    "cse-2024-1-cs-29": {
+      "approach": "Find the **leaders** (first instruction, every jump target, every instruction right after a jump); each basic block runs from a leader up to the instruction before the next leader.",
+      "concepts": [
+        "Basic block",
+        "Leader algorithm",
+        "Control-flow graph"
+      ],
+      "steps": [
+        {
+          "title": "Rule 1: the first instruction",
+          "body": "The first instruction of the program always starts a basic block, so L1 is a leader. (Three rules find all leaders; each block then runs from one leader up to just before the next.)",
+          "scene": {
+            "hl": [
+              1
+            ],
+            "caption": "Leader: L1"
+          }
+        },
+        {
+          "title": "Rule 2: targets of jumps",
+          "body": "The jumps are at L9 (→ L11), L12 (→ L4) and L14 (→ L3), so L11, L4 and L3 are leaders.",
+          "scene": {
+            "hl": [
+              1,
+              3,
+              4,
+              11
+            ],
+            "caption": "Leaders: L1, L3, L4, L11"
+          }
+        },
+        {
+          "title": "Rule 3: instructions after a jump",
+          "body": "The instructions following the conditional jumps — L10 (after L9), L13 (after L12) and L15 (after L14) — are leaders.\n\nLeaders: L1, L3, L4, L10, L11, L13, L15 ⇒ **7** basic blocks.",
+          "scene": {
+            "hl": [
+              1,
+              3,
+              4,
+              10,
+              11,
+              13,
+              15
+            ],
+            "caption": "7 leaders ⇒ 7 basic blocks"
+          }
+        },
+        {
+          "title": "Cut into blocks and count instructions",
+          "body": "| Block | Instructions | Count |\n|---|---|---|\n| B1 | L1–L2 | 2 |\n| B2 | L3 | 1 |\n| B3 | L4–L9 | **6** |\n| B4 | L10 | 1 |\n| B5 | L11–L12 | 2 |\n| B6 | L13–L14 | 2 |\n| B7 | L15 | 1 |\n\nTotal $2+1+6+1+2+2+1 = 15$ ✓. The largest block, B3, has **6** instructions.",
+          "scene": {
+            "kind": "graph",
+            "title": "Control-flow graph",
+            "directed": true,
+            "nodes": [
+              {
+                "id": "B1",
+                "x": 1,
+                "y": 0,
+                "sub": "L1–L2 (2)"
+              },
+              {
+                "id": "B2",
+                "x": 0,
+                "y": 1,
+                "sub": "L3 (1)"
+              },
+              {
+                "id": "B3",
+                "x": 1,
+                "y": 2,
+                "sub": "L4–L9 (6)"
+              },
+              {
+                "id": "B4",
+                "x": 2,
+                "y": 3,
+                "sub": "L10 (1)"
+              },
+              {
+                "id": "B5",
+                "x": 1,
+                "y": 4,
+                "sub": "L11–L12 (2)"
+              },
+              {
+                "id": "B6",
+                "x": 0,
+                "y": 5,
+                "sub": "L13–L14 (2)"
+              },
+              {
+                "id": "B7",
+                "x": 0,
+                "y": 6.2,
+                "sub": "L15 (1)"
+              }
+            ],
+            "edges": [
+              {
+                "from": "B1",
+                "to": "B2"
+              },
+              {
+                "from": "B2",
+                "to": "B3"
+              },
+              {
+                "from": "B3",
+                "to": "B4"
+              },
+              {
+                "from": "B3",
+                "to": "B5"
+              },
+              {
+                "from": "B4",
+                "to": "B5"
+              },
+              {
+                "from": "B5",
+                "to": "B3",
+                "dashed": true
+              },
+              {
+                "from": "B5",
+                "to": "B6"
+              },
+              {
+                "from": "B6",
+                "to": "B2",
+                "dashed": true
+              },
+              {
+                "from": "B6",
+                "to": "B7"
+              }
+            ],
+            "tones": {
+              "B3": "success"
+            },
+            "caption": "7 blocks; the largest is B3 with 6 instructions (dashed = loop back-edges)"
+          }
+        }
+      ],
+      "answer": {
+        "value": "**7** basic blocks, largest has **6** instructions — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Six blocks means a leader was missed — typically L10 (after the jump at L9) or L15."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Misses a leader and also merges L10 into B3 (L4–L10 = 7), ignoring that L9 is a jump."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "The block count is right but the largest block L4–L9 has 6 instructions, not 7."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Leaders L1, L3, L4, L10, L11, L13, L15 ⇒ 7 blocks; L4–L9 has 6 instructions."
+        }
+      ],
+      "shortcut": "3 jumps ⇒ up to 3 targets + 3 fall-through leaders + L1 = 7 leaders (all distinct here). The longest straight run without a leader or a jump inside is L4…L9 = 6.",
+      "pitfalls": [
+        "Forgetting rule 3 — the instruction right after a conditional jump starts a new block.",
+        "Ending a block before the jump instead of including the jump as its last instruction.",
+        "Not counting L3 as a leader (it is the target of L14)."
+      ],
+      "verification": "The block sizes add up to all 15 instructions, and every block ends with a jump or just before a leader.",
+      "animation": {
+        "kind": "code",
+        "title": "Finding the leaders",
+        "lang": "pseudo",
+        "code": "L1:  t1 = -1\nL2:  t2 = 0\nL3:  t3 = 0\nL4:  t4 = 4 * t3\nL5:  t5 = 4 * t2\nL6:  t6 = t5 * M\nL7:  t7 = t4 + t6\nL8:  t8 = a[t7]\nL9:  if t8 <= max goto L11\nL10: t1 = t8\nL11: t3 = t3 + 1\nL12: if t3 < M goto L4\nL13: t2 = t2 + 1\nL14: if t2 < N goto L3\nL15: max = t1",
+        "hl": [],
+        "caption": "Three conditional jumps: L9, L12, L14"
+      }
+    }
+  }
+}

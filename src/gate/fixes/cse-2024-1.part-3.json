@@ -1,0 +1,803 @@
+{
+  "paper": "cse-2024-1",
+  "fixes": [
+    {
+      "id": "cse-2024-1-cs-17",
+      "field": "text",
+      "before": "Let 𝐴 and 𝐵 be two events in a probability space with 𝑃(𝐴) = 0.3, 𝑃(𝐵) = 0.5,\nand 𝑃(𝐴 ∩ 𝐵) = 0.1. Which of the following statements is/are TRUE?",
+      "after": "Let $A$ and $B$ be two events in a probability space with $P(A) = 0.3$, $P(B) = 0.5$, and $P(A \\cap B) = 0.1$. Which of the following statements is/are TRUE?",
+      "reason": "Rewritten from the PDF: Unicode maths italics replaced by KaTeX, PDF line wraps removed.",
+      "source": "pdf p.18 (Q.27)"
+    },
+    {
+      "id": "cse-2024-1-cs-17",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "The two events 𝐴 and 𝐵 are independent"
+        },
+        {
+          "l": "B",
+          "t": "𝑃(𝐴 ∪ 𝐵) = 0.7"
+        },
+        {
+          "l": "C",
+          "t": "𝑃(𝐴 ∩ 𝐵𝑐) = 0.2, where 𝐵𝑐 is the complement of the event 𝐵"
+        },
+        {
+          "l": "D",
+          "t": "𝑃(𝐴𝑐 ∩ 𝐵𝑐) = 0.4, where 𝐴𝑐 and 𝐵𝑐 are the complements of the events 𝐴 and 𝐵, respectively"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "The two events $A$ and $B$ are independent"
+        },
+        {
+          "l": "B",
+          "t": "$P(A \\cup B) = 0.7$"
+        },
+        {
+          "l": "C",
+          "t": "$P(A \\cap B^c) = 0.2$, where $B^c$ is the complement of the event $B$"
+        },
+        {
+          "l": "D",
+          "t": "$P(A^c \\cap B^c) = 0.4$, where $A^c$ and $B^c$ are the complements of the events $A$ and $B$, respectively"
+        }
+      ],
+      "reason": "Superscript c of the complements was flattened (\"𝐵𝑐\"); rewritten as KaTeX.",
+      "source": "pdf p.18 (Q.27)"
+    },
+    {
+      "id": "cse-2024-1-cs-17",
+      "field": "subject",
+      "before": "ga",
+      "after": "prob",
+      "reason": "Q.27 (event probabilities) belongs to subject \"prob\".",
+      "source": "pdf p.18 (Q.27)"
+    },
+    {
+      "id": "cse-2024-1-cs-17",
+      "field": "topic",
+      "before": "quant",
+      "after": "basic",
+      "reason": "Q.27 (event probabilities) belongs to topic \"basic\".",
+      "source": "pdf p.18 (Q.27)"
+    },
+    {
+      "id": "cse-2024-1-cs-17",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "probability",
+        "independence",
+        "addition-rule",
+        "complement"
+      ],
+      "reason": "Tags describing Q.27 (event probabilities).",
+      "source": "pdf p.18 (Q.27)"
+    },
+    {
+      "id": "cse-2024-1-cs-18",
+      "field": "text",
+      "before": "Consider the circuit shown below where the gates may have propagation delays.\nAssume that all signal transitions occur instantaneously and that wires have no\ndelays. Which of the following statements about the circuit is/are CORRECT?",
+      "after": "Consider the circuit shown below where the gates may have propagation delays. Assume that all signal transitions occur instantaneously and that wires have no delays. Which of the following statements about the circuit is/are CORRECT?",
+      "reason": "PDF line wraps removed.",
+      "source": "pdf p.18 (Q.28)"
+    },
+    {
+      "id": "cse-2024-1-cs-18",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "With no propagation delays, the output 𝒀 is always logic Zero"
+        },
+        {
+          "l": "B",
+          "t": "With no propagation delays, the output 𝒀 is always logic One"
+        },
+        {
+          "l": "C",
+          "t": "With propagation delays, the output 𝒀 can have a transient logic One after 𝑿 transitions from logic Zero to logic One"
+        },
+        {
+          "l": "D",
+          "t": "With propagation delays, the output 𝒀 can have a transient logic Zero after 𝑿 transitions from logic One to logic Zero Computer Science and Information Technology Set 1 (CS1)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "With no propagation delays, the output $Y$ is always logic Zero"
+        },
+        {
+          "l": "B",
+          "t": "With no propagation delays, the output $Y$ is always logic One"
+        },
+        {
+          "l": "C",
+          "t": "With propagation delays, the output $Y$ can have a transient logic One after $X$ transitions from logic Zero to logic One"
+        },
+        {
+          "l": "D",
+          "t": "With propagation delays, the output $Y$ can have a transient logic Zero after $X$ transitions from logic One to logic Zero"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology Set 1 (CS1)\" removed from option D; maths rewritten as KaTeX.",
+      "source": "pdf p.18 (Q.28)"
+    },
+    {
+      "id": "cse-2024-1-cs-18",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2024-1/cs-18-1.svg",
+          "svg": "cse-2024-1/cs-18-1.svg",
+          "alt": "Circuit: input X goes directly to the upper input of a two-input AND gate; X also branches down into a NOT gate whose output (bubble) feeds the lower input of the same AND gate. The AND gate output is Y."
+        }
+      ],
+      "reason": "The question's circuit was missing from the record; redrawn as an SVG from the paper.",
+      "source": "pdf p.18 (Q.28)"
+    },
+    {
+      "id": "cse-2024-1-cs-18",
+      "field": "subject",
+      "before": "db",
+      "after": "dl",
+      "reason": "Q.28 (gate delays and hazards) belongs to subject \"dl\".",
+      "source": "pdf p.18 (Q.28)"
+    },
+    {
+      "id": "cse-2024-1-cs-18",
+      "field": "topic",
+      "before": "sql",
+      "after": "gates",
+      "reason": "Q.28 (gate delays and hazards) belongs to topic \"gates\".",
+      "source": "pdf p.18 (Q.28)"
+    },
+    {
+      "id": "cse-2024-1-cs-18",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "propagation-delay",
+        "static-hazard",
+        "glitch"
+      ],
+      "reason": "Tags describing Q.28 (gate delays and hazards).",
+      "source": "pdf p.18 (Q.28)"
+    },
+    {
+      "id": "cse-2024-1-cs-19",
+      "field": "text",
+      "before": "TCP client P successfully establishes a connection to TCP server Q. Let 𝑁𝑃 denote\nthe sequence number in the SYN sent from P to Q. Let 𝑁𝑄 denote the\nacknowledgement number in the SYN ACK from Q to P. Which of the following\nstatements is/are CORRECT?",
+      "after": "TCP client P successfully establishes a connection to TCP server Q. Let $N_P$ denote the sequence number in the SYN sent from P to Q. Let $N_Q$ denote the acknowledgement number in the SYN ACK from Q to P. Which of the following statements is/are CORRECT?",
+      "reason": "Rewritten from the PDF: Unicode maths italics replaced by KaTeX, PDF line wraps removed.",
+      "source": "pdf p.19 (Q.29)"
+    },
+    {
+      "id": "cse-2024-1-cs-19",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "The sequence number 𝑁𝑃 is chosen randomly by P"
+        },
+        {
+          "l": "B",
+          "t": "The sequence number 𝑁𝑃 is always 0 for a new connection"
+        },
+        {
+          "l": "C",
+          "t": "The acknowledgement number 𝑁𝑄 is equal to 𝑁𝑃"
+        },
+        {
+          "l": "D",
+          "t": "The acknowledgement number 𝑁𝑄 is equal to 𝑁𝑃 + 1"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "The sequence number $N_P$ is chosen randomly by P"
+        },
+        {
+          "l": "B",
+          "t": "The sequence number $N_P$ is always 0 for a new connection"
+        },
+        {
+          "l": "C",
+          "t": "The acknowledgement number $N_Q$ is equal to $N_P$"
+        },
+        {
+          "l": "D",
+          "t": "The acknowledgement number $N_Q$ is equal to $N_P + 1$"
+        }
+      ],
+      "reason": "Subscripts were flattened (\"𝑁𝑃\"); rewritten as KaTeX.",
+      "source": "pdf p.19 (Q.29)"
+    },
+    {
+      "id": "cse-2024-1-cs-19",
+      "field": "subject",
+      "before": "db",
+      "after": "cn",
+      "reason": "Q.29 (TCP handshake) belongs to subject \"cn\".",
+      "source": "pdf p.19 (Q.29)"
+    },
+    {
+      "id": "cse-2024-1-cs-19",
+      "field": "topic",
+      "before": "sql",
+      "after": "transport",
+      "reason": "Q.29 (TCP handshake) belongs to topic \"transport\".",
+      "source": "pdf p.19 (Q.29)"
+    },
+    {
+      "id": "cse-2024-1-cs-19",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "tcp",
+        "three-way-handshake",
+        "sequence-number"
+      ],
+      "reason": "Tags describing Q.29 (TCP handshake).",
+      "source": "pdf p.19 (Q.29)"
+    },
+    {
+      "id": "cse-2024-1-cs-20",
+      "field": "text",
+      "before": "Consider a 5 -stage pipelined processor with Instruction Fetch (IF), Instruction\nDecode (ID), Execute (EX), Memory Access (MEM), and Register Writeback (WB)\nstages. Which of the following statements about forwarding is/are CORRECT?",
+      "after": "Consider a 5-stage pipelined processor with Instruction Fetch (IF), Instruction Decode (ID), Execute (EX), Memory Access (MEM), and Register Writeback (WB) stages. Which of the following statements about forwarding is/are CORRECT?",
+      "reason": "PDF line wraps and the stray space in \"5 -stage\" removed.",
+      "source": "pdf p.19 (Q.30)"
+    },
+    {
+      "id": "cse-2024-1-cs-20",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "In a pipelined execution, forwarding means the result from a source stage of an earlier instruction is passed on to the destination stage of a later instruction"
+        },
+        {
+          "l": "B",
+          "t": "In forwarding, data from the output of the MEM stage can be passed on to the input of the EX stage of the next instruction"
+        },
+        {
+          "l": "C",
+          "t": "Forwarding cannot prevent all pipeline stalls"
+        },
+        {
+          "l": "D",
+          "t": "Forwarding does not require any extra hardware to retrieve the data from the pipeline stages Computer Science and Information Technology Set 1 (CS1)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "In a pipelined execution, forwarding means the result from a source stage of an earlier instruction is passed on to the destination stage of a later instruction"
+        },
+        {
+          "l": "B",
+          "t": "In forwarding, data from the output of the MEM stage can be passed on to the input of the EX stage of the next instruction"
+        },
+        {
+          "l": "C",
+          "t": "Forwarding cannot prevent all pipeline stalls"
+        },
+        {
+          "l": "D",
+          "t": "Forwarding does not require any extra hardware to retrieve the data from the pipeline stages"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology Set 1 (CS1)\" removed from option D.",
+      "source": "pdf p.19 (Q.30)"
+    },
+    {
+      "id": "cse-2024-1-cs-20",
+      "field": "subject",
+      "before": "pds",
+      "after": "coa",
+      "reason": "Q.30 (pipeline forwarding) belongs to subject \"coa\".",
+      "source": "pdf p.19 (Q.30)"
+    },
+    {
+      "id": "cse-2024-1-cs-20",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "pipeline",
+      "reason": "Q.30 (pipeline forwarding) belongs to topic \"pipeline\".",
+      "source": "pdf p.19 (Q.30)"
+    },
+    {
+      "id": "cse-2024-1-cs-20",
+      "field": "tags",
+      "before": [
+        "c-prog"
+      ],
+      "after": [
+        "pipelining",
+        "forwarding",
+        "data-hazard",
+        "load-use-stall"
+      ],
+      "reason": "Tags describing Q.30 (pipeline forwarding).",
+      "source": "pdf p.19 (Q.30)"
+    },
+    {
+      "id": "cse-2024-1-cs-21",
+      "field": "text",
+      "before": "Which of the following fields is/are modified in the IP header of a packet going out\nof a network address translation (NAT) device from an internal network to an\nexternal network?",
+      "after": "Which of the following fields is/are modified in the IP header of a packet going out of a network address translation (NAT) device from an internal network to an external network?",
+      "reason": "PDF line wraps removed.",
+      "source": "pdf p.20 (Q.31)"
+    },
+    {
+      "id": "cse-2024-1-cs-21",
+      "field": "subject",
+      "before": "db",
+      "after": "cn",
+      "reason": "Q.31 (NAT) belongs to subject \"cn\".",
+      "source": "pdf p.20 (Q.31)"
+    },
+    {
+      "id": "cse-2024-1-cs-21",
+      "field": "topic",
+      "before": "sql",
+      "after": "support",
+      "reason": "Q.31 (NAT) belongs to topic \"support\".",
+      "source": "pdf p.20 (Q.31)"
+    },
+    {
+      "id": "cse-2024-1-cs-21",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "nat",
+        "ipv4-header",
+        "header-checksum"
+      ],
+      "reason": "Tags describing Q.31 (NAT).",
+      "source": "pdf p.20 (Q.31)"
+    },
+    {
+      "id": "cse-2024-1-cs-22",
+      "field": "text",
+      "before": "Let 𝐴 and 𝐵 be non-empty finite sets such that there exist one-to-one and onto\nfunctions (i) from 𝐴 to 𝐵 and (ii) from 𝐴 × 𝐴 to 𝐴 ∪ 𝐵. The number of possible\nvalues of |𝐴| is __________",
+      "after": "Let $A$ and $B$ be non-empty finite sets such that there exist one-to-one and onto functions (i) from $A$ to $B$ and (ii) from $A \\times A$ to $A \\cup B$. The number of possible values of $\\lvert A \\rvert$ is __________",
+      "reason": "Rewritten from the PDF: Unicode maths italics replaced by KaTeX, PDF line wraps removed.",
+      "source": "pdf p.20 (Q.32)"
+    },
+    {
+      "id": "cse-2024-1-cs-22",
+      "field": "subject",
+      "before": "db",
+      "after": "dm",
+      "reason": "Q.32 (bijections and cardinality) belongs to subject \"dm\".",
+      "source": "pdf p.20 (Q.32)"
+    },
+    {
+      "id": "cse-2024-1-cs-22",
+      "field": "topic",
+      "before": "sql",
+      "after": "sets",
+      "reason": "Q.32 (bijections and cardinality) belongs to topic \"sets\".",
+      "source": "pdf p.20 (Q.32)"
+    },
+    {
+      "id": "cse-2024-1-cs-22",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "bijection",
+        "cardinality",
+        "cartesian-product"
+      ],
+      "reason": "Tags describing Q.32 (bijections and cardinality).",
+      "source": "pdf p.20 (Q.32)"
+    },
+    {
+      "id": "cse-2024-1-cs-23",
+      "field": "text",
+      "before": "Consider the operator precedence and associativity rules for the integer arithmetic\noperators given in the table below.\nOperator Precedence Associativity\n+ Highest Left\n− High Right\n∗ Medium Right\n/ Low Right\nThe value of the expression  3 + 1 + 5 ∗ 2 / 7 + 2 − 4 − 7 − 6 / 2  as per the\nabove rules is __________\nComputer Science and Information Technology Set 1 (CS1)",
+      "after": "Consider the operator precedence and associativity rules for the integer arithmetic operators given in the table below.\n\n| Operator | Precedence | Associativity |\n|---|---|---|\n| $+$ | Highest | Left |\n| $-$ | High | Right |\n| $\\ast$ | Medium | Right |\n| $/$ | Low | Right |\n\nThe value of the expression $3 + 1 + 5 \\ast 2 \\,/\\, 7 + 2 - 4 - 7 - 6 \\,/\\, 2$ as per the above rules is __________",
+      "reason": "The flattened table is restored as a markdown table, the expression is written in KaTeX, and the running page header \"Computer Science and Information Technology Set 1 (CS1)\" is removed.",
+      "source": "pdf p.20 (Q.33)"
+    },
+    {
+      "id": "cse-2024-1-cs-23",
+      "field": "subject",
+      "before": "coa",
+      "after": "cd",
+      "reason": "Q.33 (operator precedence and associativity) belongs to subject \"cd\".",
+      "source": "pdf p.20 (Q.33)"
+    },
+    {
+      "id": "cse-2024-1-cs-23",
+      "field": "topic",
+      "before": "isa",
+      "after": "parsing",
+      "reason": "Q.33 (operator precedence and associativity) belongs to topic \"parsing\".",
+      "source": "pdf p.20 (Q.33)"
+    },
+    {
+      "id": "cse-2024-1-cs-23",
+      "field": "tags",
+      "before": [
+        "isa"
+      ],
+      "after": [
+        "operator-precedence",
+        "associativity",
+        "expression-evaluation"
+      ],
+      "reason": "Tags describing Q.33 (operator precedence and associativity).",
+      "source": "pdf p.20 (Q.33)"
+    },
+    {
+      "id": "cse-2024-1-cs-24",
+      "field": "text",
+      "before": "The number of spanning trees in a complete graph of 4 vertices labelled A, B, C,\nand D is _________",
+      "after": "The number of spanning trees in a complete graph of 4 vertices labelled A, B, C, and D is _________",
+      "reason": "PDF line wrap removed.",
+      "source": "pdf p.21 (Q.34)"
+    },
+    {
+      "id": "cse-2024-1-cs-24",
+      "field": "subject",
+      "before": "algo",
+      "after": "dm",
+      "reason": "Q.34 (counting spanning trees) belongs to subject \"dm\".",
+      "source": "pdf p.21 (Q.34)"
+    },
+    {
+      "id": "cse-2024-1-cs-24",
+      "field": "tags",
+      "before": [
+        "graphs"
+      ],
+      "after": [
+        "spanning-trees",
+        "cayley-formula",
+        "complete-graph"
+      ],
+      "reason": "Tags describing Q.34 (counting spanning trees).",
+      "source": "pdf p.21 (Q.34)"
+    },
+    {
+      "id": "cse-2024-1-cs-25",
+      "field": "text",
+      "before": "Consider the following two relations, R(A,B) and S(A,C):\n𝑹  𝑺\n𝑨 𝑩  𝑨 𝑪\n10 20  10 90\n20 30  30 45\n30 40  40 80\n30 50\n50 95\nThe total number of tuples obtained by evaluating the following expression\n𝝈𝑩<𝑪(𝑹 ⋈𝑹.𝑨=𝑺.𝑨 𝑺)\nis _________\nComputer Science and Information Technology Set 1 (CS1)",
+      "after": "Consider the following two relations, $R(A,B)$ and $S(A,C)$:\n\n**R**\n\n| A | B |\n|---|---|\n| 10 | 20 |\n| 20 | 30 |\n| 30 | 40 |\n| 30 | 50 |\n| 50 | 95 |\n\n**S**\n\n| A | C |\n|---|---|\n| 10 | 90 |\n| 30 | 45 |\n| 40 | 80 |\n\nThe total number of tuples obtained by evaluating the following expression\n\n$$\\sigma_{B<C}\\left(R \\bowtie_{R.A=S.A} S\\right)$$\n\nis _________",
+      "reason": "The two side-by-side tables had been flattened into interleaved rows; restored as two markdown tables. Expression rewritten in KaTeX; running page header removed.",
+      "source": "pdf p.21 (Q.35)"
+    },
+    {
+      "id": "cse-2024-1-cs-25",
+      "field": "subject",
+      "before": "coa",
+      "after": "db",
+      "reason": "Q.35 (relational algebra) belongs to subject \"db\".",
+      "source": "pdf p.21 (Q.35)"
+    },
+    {
+      "id": "cse-2024-1-cs-25",
+      "field": "topic",
+      "before": "isa",
+      "after": "ra",
+      "reason": "Q.35 (relational algebra) belongs to topic \"ra\".",
+      "source": "pdf p.21 (Q.35)"
+    },
+    {
+      "id": "cse-2024-1-cs-25",
+      "field": "tags",
+      "before": [
+        "isa"
+      ],
+      "after": [
+        "relational-algebra",
+        "equi-join",
+        "selection"
+      ],
+      "reason": "Tags describing Q.35 (relational algebra).",
+      "source": "pdf p.21 (Q.35)"
+    },
+    {
+      "id": "cse-2024-1-cs-26",
+      "field": "text",
+      "before": "Consider a network path P —Q—R between nodes P and R via router Q. Node P\nsends a file of size 106 bytes to R via this path  by splitting the file into chunks of\n103 bytes each. Node P sends these chunks one after the other without any wait time\nbetween the successive chunk transmissions. Assume that the size of extra headers\nadded to these chunks is negligible, and that the chunk size is less than the MTU.\nEach of the links P —Q and Q—R has a bandwidth of 106 bits/sec, and negligible\npropagation latency. Router Q immediately transmits every packet it receives from\nP to R, with negligible processing and queueing delays. Router Q can\nsimultaneously receive on link P—Q and transmit on link Q—R.\nAssume P starts transmitting the chunks at time 𝑡 = 0.\nWhich one of the following options gives the time ( in seconds, rounded off to 3\ndecimal places) at which R receives all the chunks of the file?",
+      "after": "Consider a network path P—Q—R between nodes P and R via router Q. Node P sends a file of size $10^6$ bytes to R via this path by splitting the file into chunks of $10^3$ bytes each. Node P sends these chunks one after the other without any wait time between the successive chunk transmissions. Assume that the size of extra headers added to these chunks is negligible, and that the chunk size is less than the MTU.\n\nEach of the links P—Q and Q—R has a bandwidth of $10^6$ bits/sec, and negligible propagation latency. Router Q immediately transmits every packet it receives from P to R, with negligible processing and queueing delays. Router Q can simultaneously receive on link P—Q and transmit on link Q—R.\n\nAssume P starts transmitting the chunks at time $t = 0$.\n\nWhich one of the following options gives the time (in seconds, rounded off to 3 decimal places) at which R receives all the chunks of the file?",
+      "reason": "Superscripts were lost in transcription: \"106 bytes\", \"103 bytes\" and \"106 bits/sec\" are $10^6$, $10^3$ and $10^6$ in the paper. Paragraphs restored.",
+      "source": "pdf p.22 (Q.36)"
+    },
+    {
+      "id": "cse-2024-1-cs-26",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "8.000"
+        },
+        {
+          "l": "B",
+          "t": "8.008"
+        },
+        {
+          "l": "C",
+          "t": "15.992"
+        },
+        {
+          "l": "D",
+          "t": "16.000 Computer Science and Information Technology Set 1 (CS1)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "8.000"
+        },
+        {
+          "l": "B",
+          "t": "8.008"
+        },
+        {
+          "l": "C",
+          "t": "15.992"
+        },
+        {
+          "l": "D",
+          "t": "16.000"
+        }
+      ],
+      "reason": "Running page header removed from option D.",
+      "source": "pdf p.22 (Q.36)"
+    },
+    {
+      "id": "cse-2024-1-cs-26",
+      "field": "topic",
+      "before": "transport",
+      "after": "layering",
+      "reason": "Q.36 (store-and-forward delay) belongs to topic \"layering\".",
+      "source": "pdf p.22 (Q.36)"
+    },
+    {
+      "id": "cse-2024-1-cs-26",
+      "field": "tags",
+      "before": [
+        "c-prog"
+      ],
+      "after": [
+        "store-and-forward",
+        "transmission-delay",
+        "packet-switching"
+      ],
+      "reason": "Tags describing Q.36 (store-and-forward delay).",
+      "source": "pdf p.22 (Q.36)"
+    },
+    {
+      "id": "cse-2024-1-cs-27",
+      "field": "text",
+      "before": "Consider the following syntax-directed definition (SDD).\n𝑆 → 𝐷𝐻𝑇𝑈 { 𝑆. 𝑣𝑎𝑙 =  𝐷. 𝑣𝑎𝑙 +  𝐻. 𝑣𝑎𝑙 +  𝑇. 𝑣𝑎𝑙 +  𝑈. 𝑣𝑎𝑙; }\n𝐷 → \"M\"𝐷1 { 𝐷. 𝑣𝑎𝑙 =  5 +  𝐷1. 𝑣𝑎𝑙; }\n𝐷 → 𝜖 { 𝐷. 𝑣𝑎𝑙 =  −5; }\n𝐻 → \"L\"𝐻1 { 𝐻. 𝑣𝑎𝑙 =  5 ∗ 10 +  𝐻1. 𝑣𝑎𝑙; }\n𝐻 → 𝜖 { 𝐻. 𝑣𝑎𝑙 =  −10; }\n𝑇 → \"C\"𝑇1 { 𝑇. 𝑣𝑎𝑙 =  5 ∗ 100 + 𝑇1. 𝑣𝑎𝑙; }\n𝑇 → 𝜖 { 𝑇. 𝑣𝑎𝑙 =  −5; }\n𝑈 → \"K\" { 𝑈. 𝑣𝑎𝑙 =  5; }\nGiven \"MMLK\" as the input, which one of the following options is the CORRECT\nvalue computed by the SDD (in the attribute 𝑆. 𝑣𝑎𝑙)?",
+      "after": "Consider the following syntax-directed definition (SDD).\n\n| Production | Semantic rule |\n|---|---|\n| $S \\to DHTU$ | $\\{\\ S.\\mathit{val} = D.\\mathit{val} + H.\\mathit{val} + T.\\mathit{val} + U.\\mathit{val};\\ \\}$ |\n| $D \\to \\text{\"M\"}\\,D_1$ | $\\{\\ D.\\mathit{val} = 5 + D_1.\\mathit{val};\\ \\}$ |\n| $D \\to \\epsilon$ | $\\{\\ D.\\mathit{val} = -5;\\ \\}$ |\n| $H \\to \\text{\"L\"}\\,H_1$ | $\\{\\ H.\\mathit{val} = 5 \\ast 10 + H_1.\\mathit{val};\\ \\}$ |\n| $H \\to \\epsilon$ | $\\{\\ H.\\mathit{val} = -10;\\ \\}$ |\n| $T \\to \\text{\"C\"}\\,T_1$ | $\\{\\ T.\\mathit{val} = 5 \\ast 100 + T_1.\\mathit{val};\\ \\}$ |\n| $T \\to \\epsilon$ | $\\{\\ T.\\mathit{val} = -5;\\ \\}$ |\n| $U \\to \\text{\"K\"}$ | $\\{\\ U.\\mathit{val} = 5;\\ \\}$ |\n\nGiven \"MMLK\" as the input, which one of the following options is the CORRECT value computed by the SDD (in the attribute $S.\\mathit{val}$)?",
+      "reason": "Productions and semantic rules rewritten as a KaTeX table (subscripts $D_1$, $H_1$, $T_1$ were flattened).",
+      "source": "pdf p.23 (Q.37)"
+    },
+    {
+      "id": "cse-2024-1-cs-27",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "45"
+        },
+        {
+          "l": "B",
+          "t": "50"
+        },
+        {
+          "l": "C",
+          "t": "55"
+        },
+        {
+          "l": "D",
+          "t": "65 Computer Science and Information Technology Set 1 (CS1)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "45"
+        },
+        {
+          "l": "B",
+          "t": "50"
+        },
+        {
+          "l": "C",
+          "t": "55"
+        },
+        {
+          "l": "D",
+          "t": "65"
+        }
+      ],
+      "reason": "Running page header removed from option D.",
+      "source": "pdf p.23 (Q.37)"
+    },
+    {
+      "id": "cse-2024-1-cs-27",
+      "field": "subject",
+      "before": "coa",
+      "after": "cd",
+      "reason": "Q.37 (SDD evaluation) belongs to subject \"cd\".",
+      "source": "pdf p.23 (Q.37)"
+    },
+    {
+      "id": "cse-2024-1-cs-27",
+      "field": "topic",
+      "before": "isa",
+      "after": "sdt",
+      "reason": "Q.37 (SDD evaluation) belongs to topic \"sdt\".",
+      "source": "pdf p.23 (Q.37)"
+    },
+    {
+      "id": "cse-2024-1-cs-27",
+      "field": "tags",
+      "before": [
+        "isa"
+      ],
+      "after": [
+        "syntax-directed-definition",
+        "synthesized-attributes",
+        "annotated-parse-tree"
+      ],
+      "reason": "Tags describing Q.37 (SDD evaluation).",
+      "source": "pdf p.23 (Q.37)"
+    },
+    {
+      "id": "cse-2024-1-cs-28",
+      "field": "text",
+      "before": "Consider the following grammar 𝐺, with 𝑆 as the start symbol. The grammar 𝐺 has\nthree incomplete productions denoted by (1), (2), and (3).\n𝑆 → 𝑑𝑎𝑇 |     (1)\n𝑇 → 𝑎𝑆 | 𝑏𝑇 |     (2)\n𝑅 →     (3)    | 𝜖\nThe set of terminals is {𝑎, 𝑏, 𝑐, 𝑑, 𝑓}. The FIRST and FOLLOW sets of the different\nnon-terminals are as follows.\nFIRST(𝑆) =  {𝑐, 𝑑, 𝑓},  FIRST(𝑇) =  {𝑎, 𝑏, 𝜖},  FIRST(𝑅) =  {𝑐, 𝜖}\nFOLLOW(𝑆) = FOLLOW(𝑇) =  {𝑐, 𝑓, $},  FOLLOW(𝑅) =  {𝑓}\nWhich one of the following options CORRECTLY fills in the incomplete\nproductions?",
+      "after": "Consider the following grammar $G$, with $S$ as the start symbol. The grammar $G$ has three incomplete productions denoted by (1), (2), and (3).\n\n$$\\begin{aligned} S &\\to daT \\mid (1) \\\\ T &\\to aS \\mid bT \\mid (2) \\\\ R &\\to (3) \\mid \\epsilon \\end{aligned}$$\n\nThe set of terminals is $\\{a, b, c, d, f\\}$. The FIRST and FOLLOW sets of the different non-terminals are as follows.\n\n$$\\text{FIRST}(S) = \\{c, d, f\\},\\quad \\text{FIRST}(T) = \\{a, b, \\epsilon\\},\\quad \\text{FIRST}(R) = \\{c, \\epsilon\\}$$\n\n$$\\text{FOLLOW}(S) = \\text{FOLLOW}(T) = \\{c, f, \\$\\},\\quad \\text{FOLLOW}(R) = \\{f\\}$$\n\nWhich one of the following options CORRECTLY fills in the incomplete productions?",
+      "reason": "Rewritten from the PDF: Unicode maths italics replaced by KaTeX, PDF line wraps removed.",
+      "source": "pdf p.24 (Q.38)"
+    },
+    {
+      "id": "cse-2024-1-cs-28",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "(1) 𝑆 → 𝑅𝑓 (2) 𝑇 → 𝜖 (3) 𝑅 → 𝑐𝑇𝑅"
+        },
+        {
+          "l": "B",
+          "t": "(1) 𝑆 → 𝑓𝑅 (2) 𝑇 → 𝜖 (3) 𝑅 → 𝑐𝑇𝑅"
+        },
+        {
+          "l": "C",
+          "t": "(1) 𝑆 → 𝑓𝑅 (2) 𝑇 → 𝑐𝑇 (3) 𝑅 → 𝑐𝑅"
+        },
+        {
+          "l": "D",
+          "t": "(1) 𝑆 → 𝑅𝑓 (2) 𝑇 → 𝑐𝑇 (3) 𝑅 → 𝑐𝑅 Computer Science and Information Technology Set 1 (CS1)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "(1) $S \\to Rf$ (2) $T \\to \\epsilon$ (3) $R \\to cTR$"
+        },
+        {
+          "l": "B",
+          "t": "(1) $S \\to fR$ (2) $T \\to \\epsilon$ (3) $R \\to cTR$"
+        },
+        {
+          "l": "C",
+          "t": "(1) $S \\to fR$ (2) $T \\to cT$ (3) $R \\to cR$"
+        },
+        {
+          "l": "D",
+          "t": "(1) $S \\to Rf$ (2) $T \\to cT$ (3) $R \\to cR$"
+        }
+      ],
+      "reason": "Running page header \"Computer Science and Information Technology Set 1 (CS1)\" removed from option D; maths rewritten as KaTeX.",
+      "source": "pdf p.24 (Q.38)"
+    },
+    {
+      "id": "cse-2024-1-cs-28",
+      "field": "tags",
+      "before": [
+        "parsing"
+      ],
+      "after": [
+        "first-follow",
+        "context-free-grammar",
+        "ll1"
+      ],
+      "reason": "Tags describing Q.38 (FIRST/FOLLOW sets).",
+      "source": "pdf p.24 (Q.38)"
+    },
+    {
+      "id": "cse-2024-1-cs-29",
+      "field": "text",
+      "before": "Consider the following pseudo-code.\n𝐿1:               𝑡1 =  −1\n𝐿2:               𝑡2 =  0\n𝐿3:               𝑡3 =  0\n𝐿4:               𝑡4 =  4 ∗ 𝑡3\n𝐿5:               𝑡5 =  4 ∗ 𝑡2\n𝐿6:               𝑡6 =  𝑡5 ∗ 𝑀\n𝐿7:               𝑡7 =  𝑡4 + 𝑡6\n𝐿8:               𝑡8 =  𝑎[𝑡7]\n𝐿9:               if  𝑡8 <=  𝑚𝑎𝑥 goto  𝐿11\n𝐿10:             𝑡1 =  𝑡8\n𝐿11:             𝑡3 =  𝑡3 + 1\n𝐿12:             if  𝑡3 <  𝑀 goto  𝐿4\n𝐿13:             𝑡2 =  𝑡2 + 1\n𝐿14:             if  𝑡2 <  𝑁 goto  𝐿3\n𝐿15:             𝑚𝑎𝑥 =  𝑡1\nWhich one of the following options CORRECTLY specifies the number of basic\nblocks and the number of instructions in the largest basic block, respectively ?",
+      "after": "Consider the following pseudo-code.\n\n```\nL1:   t1 = -1\nL2:   t2 = 0\nL3:   t3 = 0\nL4:   t4 = 4 * t3\nL5:   t5 = 4 * t2\nL6:   t6 = t5 * M\nL7:   t7 = t4 + t6\nL8:   t8 = a[t7]\nL9:   if t8 <= max goto L11\nL10:  t1 = t8\nL11:  t3 = t3 + 1\nL12:  if t3 < M goto L4\nL13:  t2 = t2 + 1\nL14:  if t2 < N goto L3\nL15:  max = t1\n```\n\nWhich one of the following options CORRECTLY specifies the number of basic blocks and the number of instructions in the largest basic block, respectively?",
+      "reason": "Pseudo-code put in a code block with ASCII operators (the transcription used Unicode maths italics).",
+      "source": "pdf p.25 (Q.39)"
+    },
+    {
+      "id": "cse-2024-1-cs-29",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "6 and 6"
+        },
+        {
+          "l": "B",
+          "t": "6 and 7"
+        },
+        {
+          "l": "C",
+          "t": "7 and 7"
+        },
+        {
+          "l": "D",
+          "t": "7 and 6 Computer Science and Information Technology Set 1 (CS1)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "6 and 6"
+        },
+        {
+          "l": "B",
+          "t": "6 and 7"
+        },
+        {
+          "l": "C",
+          "t": "7 and 7"
+        },
+        {
+          "l": "D",
+          "t": "7 and 6"
+        }
+      ],
+      "reason": "Running page header removed from option D.",
+      "source": "pdf p.25 (Q.39)"
+    },
+    {
+      "id": "cse-2024-1-cs-29",
+      "field": "tags",
+      "before": [
+        "codegen"
+      ],
+      "after": [
+        "basic-blocks",
+        "leaders",
+        "control-flow-graph"
+      ],
+      "reason": "Tags describing Q.39 (basic blocks).",
+      "source": "pdf p.25 (Q.39)"
+    }
+  ]
+}
