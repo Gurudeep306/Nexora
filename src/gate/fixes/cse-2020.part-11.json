@@ -1,0 +1,29 @@
+{
+  "paper": "cse-2020",
+  "fixes": [
+    {
+      "id": "cse-2020-cs-7",
+      "field": "answer",
+      "before": "B",
+      "after": "D",
+      "reason": "B only generates strings ending in 1 (misses 10). The official GATE 2020 CS key is D.",
+      "source": "GATE 2020 official answer key (via trygateai.com/pyq/.../gate-cse-2020-q7)"
+    },
+    {
+      "id": "cse-2020-cs-10",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Key C confirmed against the official key.",
+      "source": "GATE 2020 official answer key (via trygateai.com/pyq/.../gate-cse-2020-q10)"
+    },
+    {
+      "id": "cse-2020-cs-10",
+      "field": "reviewNote",
+      "before": "Statement III (not LL(k)) relies on recalled official key C.",
+      "after": null,
+      "reason": "Official key C confirmed, so the review flag is no longer needed.",
+      "source": "GATE 2020 official answer key"
+    }
+  ]
+}

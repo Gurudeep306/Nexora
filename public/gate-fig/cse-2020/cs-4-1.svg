@@ -1,13 +1,41 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 240" width="100%" height="100%">
-  <rect width="100%" height="100%" rx="16" fill="#0b1329" stroke="#1e293b" stroke-width="1.5" />
-  <rect x="20" y="16" width="160" height="24" rx="6" fill="#1e293b" />
-  <text x="30" y="32" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">TIMING WAVEFORM</text>
-  <text x="100" y="82" text-anchor="end" fill="#94a3b8" font-size="11" font-weight="bold" font-family="monospace">MAR</text>
-  <path d="M 120 88 L 180 88 L 180 70 L 240 70 L 240 88 L 320 88 L 320 70 L 400 70 L 400 88 L 480 88" fill="none" stroke="#38bdf8" stroke-width="2" />
-  <text x="100" y="124" text-anchor="end" fill="#94a3b8" font-size="11" font-weight="bold" font-family="monospace">MDR</text>
-  <path d="M 120 130 L 180 130 L 180 112 L 240 112 L 240 130 L 320 130 L 320 112 L 400 112 L 400 130 L 480 130" fill="none" stroke="#38bdf8" stroke-width="2" />
-  <text x="100" y="166" text-anchor="end" fill="#94a3b8" font-size="11" font-weight="bold" font-family="monospace">IR</text>
-  <path d="M 120 172 L 180 172 L 180 154 L 240 154 L 240 172 L 320 172 L 320 154 L 400 154 L 400 172 L 480 172" fill="none" stroke="#38bdf8" stroke-width="2" />
-  <text x="100" y="208" text-anchor="end" fill="#94a3b8" font-size="11" font-weight="bold" font-family="monospace">PC</text>
-  <path d="M 120 214 L 180 214 L 180 196 L 240 196 L 240 214 L 320 214 L 320 196 L 400 196 L 400 214 L 480 214" fill="none" stroke="#38bdf8" stroke-width="2" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 330" fill="none" stroke="currentColor" font-family="Arial, Helvetica, sans-serif" role="img" aria-label="Single-bus data path: MAR, MDR, IR, PC, register file R0 to R7, TEMP2, ALU and TEMP1 on a common bus">
+<title>Single-bus data path: MAR, MDR, IR, PC, register file R0 to R7, TEMP2, ALU and TEMP1 on a common bus</title>
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor" stroke="none"/></marker></defs>
+<line x1="10" y1="50" x2="750" y2="50" stroke-width="1.6" marker-end="url(#ah)" marker-start="url(#ah)"/>
+<text x="380" y="25" font-size="14" fill="currentColor" stroke="none" text-anchor="middle" dominant-baseline="central">BUS</text>
+<rect x="20" y="120" width="80" height="40" stroke-width="1.4"/>
+<text x="60" y="140" font-size="14" fill="currentColor" stroke="none" text-anchor="middle" dominant-baseline="central">MAR</text>
+<line x1="60" y1="50" x2="60" y2="118" stroke-width="1.6" marker-end="url(#ah)"/>
+<line x1="60" y1="160" x2="60" y2="240" stroke-width="1.6" marker-end="url(#ah)"/>
+<rect x="110" y="120" width="80" height="40" stroke-width="1.4"/>
+<text x="150" y="140" font-size="14" fill="currentColor" stroke="none" text-anchor="middle" dominant-baseline="central">MDR</text>
+<line x1="150" y1="52" x2="150" y2="118" stroke-width="1.6" marker-end="url(#ah)" marker-start="url(#ah)"/>
+<line x1="150" y1="162" x2="150" y2="240" stroke-width="1.6" marker-end="url(#ah)" marker-start="url(#ah)"/>
+<text x="105" y="262" font-size="13" fill="currentColor" stroke="none" text-anchor="middle" dominant-baseline="central">To Memory</text>
+<rect x="200" y="120" width="80" height="40" stroke-width="1.4"/>
+<text x="240" y="140" font-size="14" fill="currentColor" stroke="none" text-anchor="middle" dominant-baseline="central">IR</text>
+<line x1="240" y1="52" x2="240" y2="118" stroke-width="1.6" marker-end="url(#ah)" marker-start="url(#ah)"/>
+<rect x="290" y="120" width="80" height="40" stroke-width="1.4"/>
+<text x="330" y="140" font-size="14" fill="currentColor" stroke="none" text-anchor="middle" dominant-baseline="central">PC</text>
+<line x1="330" y1="52" x2="330" y2="118" stroke-width="1.6" marker-end="url(#ah)" marker-start="url(#ah)"/>
+<rect x="380" y="120" width="80" height="180" stroke-width="1.4"/>
+<line x1="420" y1="52" x2="420" y2="118" stroke-width="1.6" marker-end="url(#ah)" marker-start="url(#ah)"/>
+<line x1="380" y1="150" x2="460" y2="150" stroke-width="1.2"/>
+<line x1="380" y1="180" x2="460" y2="180" stroke-width="1.2"/>
+<line x1="380" y1="270" x2="460" y2="270" stroke-width="1.2"/>
+<text x="420" y="135" font-size="14" fill="currentColor" stroke="none" text-anchor="middle" dominant-baseline="central">R0</text>
+<text x="420" y="165" font-size="14" fill="currentColor" stroke="none" text-anchor="middle" dominant-baseline="central">R1</text>
+<line x1="420" y1="190" x2="420" y2="260" stroke-width="1.2" stroke-dasharray="2 4"/>
+<text x="420" y="285" font-size="14" fill="currentColor" stroke="none" text-anchor="middle" dominant-baseline="central">R7</text>
+<rect x="475" y="190" width="80" height="40" stroke-width="1.4"/>
+<text x="515" y="210" font-size="14" fill="currentColor" stroke="none" text-anchor="middle" dominant-baseline="central">TEMP2</text>
+<line x1="515" y1="190" x2="515" y2="52" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M570,140 L640,140 L660,170 L680,140 L750,140 L710,270 L610,270 Z" stroke-width="1.6"/>
+<text x="660" y="215" font-size="15" fill="currentColor" stroke="none" text-anchor="middle" dominant-baseline="central">ALU</text>
+<line x1="600" y1="50" x2="600" y2="138" stroke-width="1.6" marker-end="url(#ah)"/>
+<rect x="680" y="70" width="70" height="36" stroke-width="1.4"/>
+<text x="715" y="88" font-size="14" fill="currentColor" stroke="none" text-anchor="middle" dominant-baseline="central">TEMP1</text>
+<line x1="715" y1="50" x2="715" y2="68" stroke-width="1.6" marker-end="url(#ah)"/>
+<line x1="715" y1="106" x2="715" y2="138" stroke-width="1.6" marker-end="url(#ah)"/>
+<polyline points="660,270 660,300 515,300 515,234" stroke-width="1.6" marker-end="url(#ah)"/>
 </svg>
