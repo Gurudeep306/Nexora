@@ -1,0 +1,29 @@
+{
+  "paper": "cse-2015-1",
+  "fixes": [
+    {
+      "id": "cse-2015-1-cs-38",
+      "field": "topic",
+      "before": "perf",
+      "after": "pipeline",
+      "reason": "Pipeline speedup question; file it under the main pipeline topic.",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2015-1-cs-42",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Independently re-solved: 4 binary predicates (while, if, else-if, final if) + 1 = 5, matching the stored key; no ambiguity in the standard count.",
+      "source": "solved"
+    },
+    {
+      "id": "cse-2015-1-cs-42",
+      "field": "reviewNote",
+      "before": "Some sources count differently; 5 is the commonly cited key.",
+      "after": null,
+      "reason": "Review flag cleared.",
+      "source": "solved"
+    }
+  ]
+}
