@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect } from 'react'
+import { LegacyGateRedirect } from '@/gate/LegacyGateRedirect'
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { LoadingBlock } from '@/components/ui'
@@ -96,7 +97,7 @@ export default function App() {
             <Route path="/learn/system-design/:systemId" element={<SystemDossierPage />} />
             <Route path="/learn/dsa/:topic/practice" element={<LearnPracticePage />} />
             <Route path="/learn/dsa/:topic/:page?" element={<LearnTopicPage />} />
-            <Route path="/gate" element={<GateHomePage />} />
+            <Route path="/gate" element={<LegacyGateRedirect><GateHomePage /></LegacyGateRedirect>} />
             <Route path="/gate/practice" element={<GatePage />} />
             <Route path="/gate/review" element={<GateReviewPage />} />
             <Route path="/gate/daily" element={<GateDailyPage />} />
