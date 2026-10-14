@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 208 208" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<rect x="4" y="4" width="200" height="200" stroke-width="2.5"/>
+<line x1="104" y1="4" x2="104" y2="204" stroke-dasharray="7 6"/>
+<g transform="translate(4,4)" stroke-width="2.5">
+<path d="M0,170 C40,165 80,140 100,102"/>
+<path d="M100,102 C130,104 175,120 200,173"/>
+<line x1="54" y1="150.6" x2="54" y2="133.6"/>
+<line x1="71" y1="138.2" x2="71" y2="125.2"/>
+<line x1="152.9" y1="119" x2="126.9" y2="119"/>
+<line x1="171.3" y1="133" x2="145.3" y2="133"/>
+</g>
+</svg>

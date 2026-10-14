@@ -1,13 +1,37 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 240" width="100%" height="100%">
-  <rect width="100%" height="100%" rx="16" fill="#0b1329" stroke="#1e293b" stroke-width="1.5" />
-  <rect x="20" y="16" width="160" height="24" rx="6" fill="#1e293b" />
-  <text x="30" y="32" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">TIMING WAVEFORM</text>
-  <text x="100" y="82" text-anchor="end" fill="#94a3b8" font-size="11" font-weight="bold" font-family="monospace">CLK</text>
-  <path d="M 120 88 L 180 88 L 180 70 L 240 70 L 240 88 L 320 88 L 320 70 L 400 70 L 400 88 L 480 88" fill="none" stroke="#38bdf8" stroke-width="2" />
-  <text x="100" y="124" text-anchor="end" fill="#94a3b8" font-size="11" font-weight="bold" font-family="monospace">WR#</text>
-  <path d="M 120 130 L 180 130 L 180 112 L 240 112 L 240 130 L 320 130 L 320 112 L 400 112 L 400 130 L 480 130" fill="none" stroke="#38bdf8" stroke-width="2" />
-  <text x="100" y="166" text-anchor="end" fill="#94a3b8" font-size="11" font-weight="bold" font-family="monospace">INTR</text>
-  <path d="M 120 172 L 180 172 L 180 154 L 240 154 L 240 172 L 320 172 L 320 154 L 400 154 L 400 172 L 480 172" fill="none" stroke="#38bdf8" stroke-width="2" />
-  <text x="100" y="208" text-anchor="end" fill="#94a3b8" font-size="11" font-weight="bold" font-family="monospace">STROBE</text>
-  <path d="M 120 214 L 180 214 L 180 196 L 240 196 L 240 214 L 320 214 L 320 196 L 400 196 L 400 214 L 480 214" fill="none" stroke="#38bdf8" stroke-width="2" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 230" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="currentColor" stroke="currentColor">
+  <title>3-bit counter of three T flip-flops P, Q, R with a common clock</title>
+  <g fill="none" stroke-width="1.6">
+    <rect x="90" y="50" width="100" height="120"/>
+    <rect x="270" y="50" width="100" height="120"/>
+    <rect x="450" y="50" width="100" height="120"/>
+    <polyline points="90,110 104,120 90,130"/>
+    <polyline points="270,110 284,120 270,130"/>
+    <polyline points="450,110 464,120 450,130"/>
+    <polyline points="550,75 600,75 600,20 60,20 60,75 90,75"/>
+    <line x1="190" y1="75" x2="218" y2="75"/>
+    <polyline points="190,150 240,150 240,75 270,75"/>
+    <line x1="370" y1="75" x2="398" y2="75"/>
+    <polyline points="370,150 420,150 420,75 450,75"/>
+    <line x1="20" y1="120" x2="90" y2="120"/>
+    <polyline points="70,120 70,210 435,210 435,120 450,120"/>
+    <polyline points="255,210 255,120 270,120"/>
+  </g>
+  <g stroke="none">
+    <circle cx="70" cy="120" r="3.5"/>
+    <circle cx="255" cy="210" r="3.5"/>
+    <text x="14" y="108" font-size="13">Clock</text>
+    <text x="14" y="140" font-size="13">Pulse</text>
+    <text x="98" y="80">T<tspan font-size="11" dy="4">P</tspan></text>
+    <text x="182" y="80" text-anchor="end">P</text>
+    <text x="182" y="160" text-anchor="end">P′</text>
+    <text x="278" y="80">T<tspan font-size="11" dy="4">Q</tspan></text>
+    <text x="362" y="80" text-anchor="end">Q</text>
+    <text x="362" y="160" text-anchor="end">Q′</text>
+    <text x="458" y="80">T<tspan font-size="11" dy="4">R</tspan></text>
+    <text x="542" y="80" text-anchor="end">R</text>
+    <text x="542" y="160" text-anchor="end">R′</text>
+    <text x="222" y="70">P</text>
+    <text x="402" y="70">Q</text>
+    <text x="606" y="70">R</text>
+  </g>
 </svg>

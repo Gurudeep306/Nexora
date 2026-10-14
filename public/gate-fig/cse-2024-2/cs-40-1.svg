@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 240">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+<g fill="none" stroke="currentColor" stroke-width="1.6">
+<path d="M140,25 H170 A30,30 0 0 1 170,85 H140 Z"/>
+<path d="M135,155 Q160,185 135,215 Q190,215 215,185 Q190,155 135,155 Z"/>
+<path d="M300,90 Q345,90 370,120 Q345,150 300,150 Q320,120 300,90 Z"/>
+<path d="M291,90 Q311,120 291,150"/>
+<line x1="60" y1="40" x2="140" y2="40" marker-end="url(#ah)"/>
+<line x1="60" y1="70" x2="140" y2="70" marker-end="url(#ah)"/>
+<line x1="60" y1="170" x2="146" y2="170" marker-end="url(#ah)"/>
+<line x1="60" y1="200" x2="146" y2="200" marker-end="url(#ah)"/>
+<polyline points="200,55 250,55 250,105 302,105" marker-end="url(#ah)"/>
+<polyline points="215,185 250,185 250,135 302,135" marker-end="url(#ah)"/>
+<line x1="370" y1="120" x2="395" y2="120"/>
+</g>
+<g fill="currentColor" font-family="Arial, Helvetica, sans-serif">
+<text x="64" y="33" font-size="15" font-style="italic">f1</text>
+<text x="64" y="63" font-size="15" font-style="italic">f2</text>
+<text x="64" y="163" font-size="15" font-style="italic">f3</text>
+<text x="64" y="193" font-size="15" font-style="italic">f4</text>
+<text x="166" y="60" font-size="14" text-anchor="middle">AND</text>
+<text x="170" y="190" font-size="14" text-anchor="middle">OR</text>
+<text x="333" y="125" font-size="14" text-anchor="middle">XOR</text>
+<text x="388" y="111" font-size="16" font-weight="bold" font-style="italic">Y</text>
+</g>
+</svg>
