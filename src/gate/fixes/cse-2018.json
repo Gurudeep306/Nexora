@@ -1,0 +1,74 @@
+{
+  "paper": "cse-2018",
+  "fixes": [
+    {
+      "id": "cse-2018-cs-5",
+      "field": "subject",
+      "before": "ga",
+      "after": "coa",
+      "reason": "RISC design question belongs to Computer Organization, not General Aptitude.",
+      "source": "GATE 2018 CS question paper (PDF)"
+    },
+    {
+      "id": "cse-2018-cs-5",
+      "field": "topic",
+      "before": "quant",
+      "after": "isa",
+      "reason": "RISC characteristics are an ISA / processor design topic.",
+      "source": "GATE 2018 CS question paper (PDF)"
+    },
+    {
+      "id": "cse-2018-cs-5",
+      "field": "tags",
+      "before": [
+        "RISC"
+      ],
+      "after": [
+        "risc",
+        "hardwired-control"
+      ],
+      "reason": "Normalise tags.",
+      "source": "GATE 2018 CS question paper (PDF)"
+    },
+    {
+      "id": "cse-2018-ga-9",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2018/ga-9-1.png",
+          "alt": "Triangle-like figure: E at top, A at bottom-left, D on segment EA, line E-C-B from E to B, B on segment AF, line D-C-F from D through C to F; C is the intersection of EB and DF.",
+          "svg": "cse-2018/ga-9-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2018/ga-9-1.png",
+          "alt": "Triangle AEF with E at the top, A at the bottom-left and F at the right. D lies on side EA and B lies on side AF. Segment EB and segment DF cross at C.",
+          "svg": "cse-2018/ga-9-1.svg"
+        }
+      ],
+      "reason": "Clearer alt text; SVG redrawn from the paper.",
+      "source": "GATE 2018 CS question paper (PDF)"
+    },
+    {
+      "id": "cse-2018-cs-3",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2018/cs-3-1.png",
+          "alt": "Singly linked list of nodes (data|next boxes) left to right; head pointer points to the first node, tail pointer points to the last node whose next pointer is grounded (null).",
+          "svg": "cse-2018/cs-3-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2018/cs-3-1.png",
+          "alt": "Singly linked list drawn left to right: each node is a data box plus a next-pointer box; arrows link node to node with an ellipsis between the second and last node. The head pointer points to the first node; the tail pointer points to the last node, whose next pointer is grounded (NULL).",
+          "svg": "cse-2018/cs-3-1.svg"
+        }
+      ],
+      "reason": "Clearer alt text; SVG redrawn from the paper.",
+      "source": "GATE 2018 CS question paper (PDF)"
+    }
+  ]
+}
