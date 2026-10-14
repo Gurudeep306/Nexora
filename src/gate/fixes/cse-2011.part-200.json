@@ -1,0 +1,123 @@
+{
+  "paper": "cse-2011",
+  "fixes": [
+    {
+      "id": "cse-2011-cs-3",
+      "field": "subject",
+      "before": "ga",
+      "after": "prob",
+      "reason": "Conditional probability question in the CS section, not General Aptitude.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2011-cs-3",
+      "field": "topic",
+      "before": "quant",
+      "after": "basic",
+      "reason": "Elementary conditional probability.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2011-cs-20",
+      "field": "subject",
+      "before": "pds",
+      "after": "os",
+      "reason": "Page-fault effective access time is an operating-systems (virtual memory) question, not C programming.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2011-cs-20",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "virtual-memory",
+      "reason": "Page-fault service time and effective memory access time.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2011-cs-13",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Circuit D re-read from a 300 dpi render and redrawn: it computes A XOR B, confirming key D.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2011-cs-13",
+      "field": "reviewNote",
+      "before": "Option D gate-level circuit is hard to read at this scan quality; answer D matches recalled official key.",
+      "after": null,
+      "reason": "Resolved: circuit D verified algebraically from the redrawn figure.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2011-cs-13",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2011/cs-13-A.png",
+          "alt": "XOR gate followed by an inverter (NOT): output = XNOR",
+          "svg": "cse-2011/cs-13-A.svg"
+        },
+        {
+          "f": "cse-2011/cs-13-B.png",
+          "alt": "Each input passes through an inverter, then an XOR gate, then an inverter at the output",
+          "svg": "cse-2011/cs-13-B.svg"
+        },
+        {
+          "f": "cse-2011/cs-13-C.png",
+          "alt": "One input passes through an inverter, then an XOR gate with the other input directly",
+          "svg": "cse-2011/cs-13-C.svg"
+        },
+        {
+          "f": "cse-2011/cs-13-D.png",
+          "alt": "Two inputs A and B; an AND gate and an OR gate combined with inverters and a final AND gate followed by an inverter (NAND-like network)",
+          "svg": "cse-2011/cs-13-D.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2011/cs-13-A.png",
+          "alt": "Option A: inputs A and B feed a 2-input XOR gate whose output goes through a NOT gate to give F",
+          "svg": "cse-2011/cs-13-A.svg"
+        },
+        {
+          "f": "cse-2011/cs-13-B.png",
+          "alt": "Option B: input A goes through a NOT gate and input B goes through a NOT gate; the two inverted signals feed a 2-input XOR gate whose output goes through a NOT gate to give F",
+          "svg": "cse-2011/cs-13-B.svg"
+        },
+        {
+          "f": "cse-2011/cs-13-C.png",
+          "alt": "Option C: input A goes through a NOT gate; the inverted A and the uninverted input B feed a 2-input XOR gate whose output is F (no output inverter)",
+          "svg": "cse-2011/cs-13-C.svg"
+        },
+        {
+          "f": "cse-2011/cs-13-D.png",
+          "alt": "Option D: input A feeds the top input of AND gate G1 and, through a wire that hops over the B line, the bottom input of OR gate G2. Input B goes through a NOT gate; the inverted B feeds the bottom input of G1 and the top input of G2. The output of G1 goes through a NOT gate; that signal and the output of G2 feed AND gate G3, whose output goes through a final NOT gate to give F",
+          "svg": "cse-2011/cs-13-D.svg"
+        }
+      ],
+      "reason": "Option circuits redrawn faithfully from the paper (previous SVGs showed unrelated NOR/AND/NAND block diagrams); alt texts describe the actual circuits.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2011-cs-17",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2011/cs-17-1.png",
+          "alt": "Two graphs: K4 drawn as a square with both diagonals, and Q3 drawn as a cube (two nested squares joined at corners)",
+          "svg": "cse-2011/cs-17-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2011/cs-17-1.png",
+          "alt": "Two graphs. K4: four vertices at the corners of a square, joined by the four sides and both diagonals (6 edges). Q3: a cube drawn as two offset squares of four vertices each, with each corner of one square joined to the corresponding corner of the other (8 vertices, 12 edges)",
+          "svg": "cse-2011/cs-17-1.svg"
+        }
+      ],
+      "reason": "Figure redrawn from the paper (previous SVG showed an unrelated weighted 5-vertex graph); alt text made precise.",
+      "source": "pdf p.5"
+    }
+  ]
+}
