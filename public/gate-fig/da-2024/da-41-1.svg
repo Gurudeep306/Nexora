@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 250" role="img" aria-label="Directed acyclic graph on seven vertices: P to Q, R to Q, Q to S, Q to V, S to U, V to T. P and R are at the top, Q in the middle, S and V below Q, U below S and T below V." fill="none" stroke="currentColor" stroke-width="2" font-family="Arial, Helvetica, sans-serif" font-size="15">
+<title>Directed acyclic graph: P to Q, R to Q, Q to S, Q to V, S to U, V to T</title>
+<defs><marker id="ah41" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto" markerUnits="strokeWidth"><path d="M0,0.8 L10,5 L0,9.2 z" fill="currentColor" stroke="none"/></marker></defs>
+<line x1="59.9" y1="43.8" x2="90.1" y2="86.2" marker-end="url(#ah41)"/>
+<line x1="140.1" y1="43.8" x2="109.9" y2="86.2" marker-end="url(#ah41)"/>
+<line x1="90.1" y1="113.8" x2="59.9" y2="156.2" marker-end="url(#ah41)"/>
+<line x1="109.9" y1="113.8" x2="140.1" y2="156.2" marker-end="url(#ah41)"/>
+<line x1="50" y1="186" x2="50" y2="212" marker-end="url(#ah41)"/>
+<line x1="150" y1="186" x2="150" y2="212" marker-end="url(#ah41)"/>
+<circle cx="50" cy="30" r="17"/><text x="50" y="35" text-anchor="middle" fill="currentColor" stroke="none">P</text>
+<circle cx="150" cy="30" r="17"/><text x="150" y="35" text-anchor="middle" fill="currentColor" stroke="none">R</text>
+<circle cx="100" cy="100" r="17"/><text x="100" y="105" text-anchor="middle" fill="currentColor" stroke="none">Q</text>
+<circle cx="50" cy="170" r="17"/><text x="50" y="175" text-anchor="middle" fill="currentColor" stroke="none">S</text>
+<circle cx="150" cy="170" r="17"/><text x="150" y="175" text-anchor="middle" fill="currentColor" stroke="none">V</text>
+<circle cx="50" cy="230" r="17"/><text x="50" y="235" text-anchor="middle" fill="currentColor" stroke="none">U</text>
+<circle cx="150" cy="230" r="17"/><text x="150" y="235" text-anchor="middle" fill="currentColor" stroke="none">T</text>
+</svg>

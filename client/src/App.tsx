@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect } from 'react'
+import { LegacyGateRedirect } from '@/gate/LegacyGateRedirect'
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { LoadingBlock } from '@/components/ui'
@@ -21,6 +22,16 @@ const LearnPracticePage = lazy(pageLoaders.LearnPracticePage)
 const SystemDossierPage = lazy(pageLoaders.SystemDossierPage)
 const GatePage = lazy(pageLoaders.GatePage)
 const GateCbtPage = lazy(pageLoaders.GateCbtPage)
+const GateHomePage = lazy(pageLoaders.GateHomePage)
+const GateAnalyticsPage = lazy(pageLoaders.GateAnalyticsPage)
+const GateSyllabusPage = lazy(pageLoaders.GateSyllabusPage)
+const GatePlannerPage = lazy(pageLoaders.GatePlannerPage)
+const GateNotebookPage = lazy(pageLoaders.GateNotebookPage)
+const GateLeaderboardPage = lazy(pageLoaders.GateLeaderboardPage)
+const GateReviewPage = lazy(pageLoaders.GateReviewPage)
+const GateDailyPage = lazy(pageLoaders.GateDailyPage)
+const GateTestsPage = lazy(pageLoaders.GateTestsPage)
+const GateTestPage = lazy(pageLoaders.GateTestPage)
 const SocialPage = lazy(pageLoaders.SocialPage)
 const SubmissionsPage = lazy(pageLoaders.SubmissionsPage)
 const BookmarksPage = lazy(pageLoaders.BookmarksPage)
@@ -86,7 +97,17 @@ export default function App() {
             <Route path="/learn/system-design/:systemId" element={<SystemDossierPage />} />
             <Route path="/learn/dsa/:topic/practice" element={<LearnPracticePage />} />
             <Route path="/learn/dsa/:topic/:page?" element={<LearnTopicPage />} />
-            <Route path="/gate" element={<GatePage />} />
+            <Route path="/gate" element={<LegacyGateRedirect><GateHomePage /></LegacyGateRedirect>} />
+            <Route path="/gate/practice" element={<GatePage />} />
+            <Route path="/gate/review" element={<GateReviewPage />} />
+            <Route path="/gate/daily" element={<GateDailyPage />} />
+            <Route path="/gate/tests" element={<GateTestsPage />} />
+            <Route path="/gate/tests/:testId" element={<GateTestPage />} />
+            <Route path="/gate/analytics" element={<GateAnalyticsPage />} />
+            <Route path="/gate/syllabus" element={<GateSyllabusPage />} />
+            <Route path="/gate/planner" element={<GatePlannerPage />} />
+            <Route path="/gate/notebook" element={<GateNotebookPage />} />
+            <Route path="/gate/leaderboard" element={<GateLeaderboardPage />} />
             <Route path="/gate/cbt" element={<GateCbtPage />} />
             <Route path="/gate/cbt/:paperId" element={<GateCbtPage />} />
             <Route path="/social" element={<SocialPage />} />

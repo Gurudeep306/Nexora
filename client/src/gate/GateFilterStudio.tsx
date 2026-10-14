@@ -19,8 +19,20 @@ export interface GateFilters {
   section: string[]
   hasFigure: string
   saved: boolean
+  /** Your status on the question: unseen / correct / wrong / bookmarked / note / due. */
+  status: string
   sort: string
 }
+
+const STATUS_FILTERS: Array<{ id: string; label: string; hint: string }> = [
+  { id: '', label: 'All', hint: 'Every question' },
+  { id: 'unseen', label: 'Unseen', hint: 'Not attempted yet' },
+  { id: 'wrong', label: 'Wrong', hint: 'Last attempt was wrong or the answer was revealed' },
+  { id: 'correct', label: 'Solved', hint: 'Answered correctly' },
+  { id: 'bookmarked', label: 'Bookmarked', hint: 'Saved with B' },
+  { id: 'note', label: 'Notes', hint: 'Questions you wrote a note on' },
+  { id: 'due', label: 'Due', hint: 'Due for spaced-repetition review' },
+]
 
 const SORT_OPTIONS: SelectOption[] = [
   { value: 'year-desc', label: 'Newest first' },
@@ -28,6 +40,8 @@ const SORT_OPTIONS: SelectOption[] = [
   { value: 'marks-desc', label: '2-mark first' },
   { value: 'marks-asc', label: '1-mark first' },
   { value: 'subject-asc', label: 'Subject A–Z' },
+  { value: 'difficulty-desc', label: 'Hardest first' },
+  { value: 'difficulty-asc', label: 'Easiest first' },
 ]
 
 const EXAMS = [
@@ -77,6 +91,7 @@ export function GateFilterStudio({
   meta,
   list,
   savedCount,
+  statusCounts,
 }: {
   f: GateFilters
   searchInput: string
@@ -91,6 +106,8 @@ export function GateFilterStudio({
   meta?: GateMeta | null
   list?: GateList | null
   savedCount: number
+  /** Count per status filter (from your progress). */
+  statusCounts?: Record<string, number>
 }) {
   const [more, setMore] = useState(false)
   const facets = list?.facets
@@ -148,7 +165,7 @@ export function GateFilterStudio({
   /* Active filter chips. */
   const chips: Array<{ key: string; label: string; clear: () => void }> = []
   const subjName = (id: string) => subjectOptions.find((o) => o.value === id)?.label ?? id.toUpperCase()
-  if (f.saved) chips.push({ key: 'saved', label: 'Bookmarked', clear: () => setParam('saved', null) })
+  if (f.status) chips.push({ key: 'status', label: STATUS_FILTERS.find((x) => x.id === f.status)?.label ?? f.status, clear: () => patch({ status: null, saved: null }) })
   f.exam.forEach((e) => chips.push({ key: `e${e}`, label: `GATE ${e}`, clear: () => toggle('exam', e) }))
   f.paper.forEach((p) => chips.push({ key: `p${p}`, label: paperOptions.find((o) => o.value === p)?.label ?? p, clear: () => toggle('paper', p) }))
   f.subject.forEach((s) => chips.push({ key: `s${s}`, label: subjName(s), clear: () => toggle('subject', s) }))
@@ -260,10 +277,32 @@ export function GateFilterStudio({
           {moreCount > 0 && <span className="rounded-full bg-accent-brand px-1.5 font-mono text-[10.5px] text-on-accent-brand">{moreCount}</span>}
           <ChevronDown className={cn('size-3.5 transition-transform', more && 'rotate-180')} />
         </button>
-        <Pill on={f.saved} onClick={() => setParam('saved', f.saved ? null : '1')} title="Only bookmarked questions">
-          <Bookmark className={cn('size-3.5', f.saved && 'fill-current')} />
-          <span>Saved{savedCount ? ` (${savedCount})` : ''}</span>
-        </Pill>
+      </div>
+
+      {/* Row 3: your status */}
+      <div className="-mx-1 flex items-center gap-1.5 overflow-x-auto px-1 pb-0.5" role="radiogroup" aria-label="Your status">
+        {STATUS_FILTERS.map((st) => {
+          const on = (f.status || '') === st.id
+          const n = st.id === 'bookmarked' ? savedCount : statusCounts?.[st.id]
+          return (
+            <button
+              key={st.id || 'all'}
+              type="button"
+              role="radio"
+              aria-checked={on}
+              title={st.hint}
+              onClick={() => patch({ status: st.id || null, saved: null })}
+              className={cn(
+                'inline-flex h-8 shrink-0 items-center gap-1.5 rounded-full border px-3 text-[12.5px] transition-colors',
+                on ? 'border-accent-brand bg-accent-brand/10 font-semibold text-accent-brand' : 'border-border bg-bg-surface text-text-secondary hover:border-border-hover hover:text-text-primary',
+              )}
+            >
+              {st.id === 'bookmarked' && <Bookmark className={cn('size-3.5', on && 'fill-current')} />}
+              {st.label}
+              {n != null && n > 0 && <span className="font-mono text-[11px] opacity-70 tabular-nums">{n}</span>}
+            </button>
+          )
+        })}
       </div>
 
       {/* More filters */}

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 450" font-family="Arial, Helvetica, sans-serif">
+<text x="260" y="40" fill="currentColor" font-size="24" font-weight="bold" text-anchor="middle">Share of valid votes</text>
+<g stroke="currentColor" stroke-width="2.5">
+<path d="M260 250 L260 75 A175 175 0 0 1 362.9 391.6 Z" fill="currentColor" fill-opacity="0.35"/>
+<path d="M260 250 L362.9 391.6 A175 175 0 0 1 118.4 352.9 Z" fill="currentColor" fill-opacity="0.22"/>
+<path d="M260 250 L118.4 352.9 A175 175 0 0 1 118.4 147.1 Z" fill="currentColor" fill-opacity="0.12"/>
+<path d="M260 250 L118.4 147.1 A175 175 0 0 1 260 75 Z" fill="currentColor" fill-opacity="0"/>
+</g>
+<g fill="currentColor" font-size="22" font-weight="bold" text-anchor="middle">
+<text x="363.2" y="212.5">A</text><text x="363.2" y="238.5">40%</text>
+<text x="243" y="353.2">B</text><text x="243" y="379.2">25%</text>
+<text x="151.5" y="246">C</text><text x="151.5" y="272">20%</text>
+<text x="210.7" y="149.3">D</text><text x="210.7" y="175.3">15%</text>
+</g>
+</svg>

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 330 370" fill="none" stroke="currentColor" font-family="Arial, Helvetica, sans-serif">
+<text x="10" y="40" font-size="16" text-anchor="start" fill="currentColor" stroke="none">Given plates:</text>
+<rect x="150" y="10" width="40" height="50" stroke-width="1.6"/><text x="170" y="44" font-size="26" text-anchor="middle" fill="currentColor" stroke="none">A</text><rect x="205" y="10" width="40" height="50" stroke-width="1.6"/><text x="225" y="44" font-size="26" text-anchor="middle" fill="currentColor" stroke="none">D</text>
+<line x1="0" y1="80" x2="320" y2="80" stroke-width="0.8" stroke-dasharray="4 3"/>
+<text x="10" y="122" font-size="16" text-anchor="start" fill="currentColor" stroke="none">(A)</text>
+<rect x="80" y="90" width="40" height="50" stroke-width="1.6"/><text x="100" y="124" font-size="26" text-anchor="middle" fill="currentColor" stroke="none">D</text>
+<rect x="160" y="90" width="40" height="50" stroke-width="1.6"/><text x="180" y="124" font-size="26" text-anchor="middle" fill="currentColor" stroke="none" transform="rotate(180 180 115)">D</text>
+<rect x="240" y="90" width="40" height="50" stroke-width="1.6"/><text x="260" y="124" font-size="26" text-anchor="middle" fill="currentColor" stroke="none">J</text>
+<line x1="0" y1="150" x2="320" y2="150" stroke-width="0.8" stroke-dasharray="4 3"/>
+<text x="10" y="192" font-size="16" text-anchor="start" fill="currentColor" stroke="none">(B)</text>
+<rect x="80" y="160" width="40" height="50" stroke-width="1.6"/><text x="100" y="194" font-size="26" text-anchor="middle" fill="currentColor" stroke="none">R</text>
+<rect x="160" y="160" width="40" height="50" stroke-width="1.6"/><text x="180" y="194" font-size="26" text-anchor="middle" fill="currentColor" stroke="none" transform="rotate(180 180 185)">A</text>
+<rect x="240" y="160" width="40" height="50" stroke-width="1.6"/><text x="260" y="194" font-size="26" text-anchor="middle" fill="currentColor" stroke="none" transform="rotate(180 260 185)">R</text>
+<line x1="0" y1="220" x2="320" y2="220" stroke-width="0.8" stroke-dasharray="4 3"/>
+<text x="10" y="262" font-size="16" text-anchor="start" fill="currentColor" stroke="none">(C)</text>
+<rect x="80" y="230" width="40" height="50" stroke-width="1.6"/><text x="100" y="264" font-size="26" text-anchor="middle" fill="currentColor" stroke="none">Z</text>
+<rect x="160" y="230" width="40" height="50" stroke-width="1.6"/><text x="180" y="264" font-size="26" text-anchor="middle" fill="currentColor" stroke="none" transform="rotate(180 180 255)">E</text>
+<rect x="240" y="230" width="40" height="50" stroke-width="1.6"/><text x="260" y="264" font-size="26" text-anchor="middle" fill="currentColor" stroke="none">D</text>
+<line x1="0" y1="290" x2="320" y2="290" stroke-width="0.8" stroke-dasharray="4 3"/>
+<text x="10" y="332" font-size="16" text-anchor="start" fill="currentColor" stroke="none">(D)</text>
+<rect x="80" y="300" width="40" height="50" stroke-width="1.6"/><text x="100" y="334" font-size="26" text-anchor="middle" fill="currentColor" stroke="none">I</text>
+<rect x="160" y="300" width="40" height="50" stroke-width="1.6"/><text x="180" y="334" font-size="26" text-anchor="middle" fill="currentColor" stroke="none" transform="rotate(180 180 325)">L</text>
+<rect x="240" y="300" width="40" height="50" stroke-width="1.6"/><text x="260" y="334" font-size="26" text-anchor="middle" fill="currentColor" stroke="none">Y</text>
+</svg>
