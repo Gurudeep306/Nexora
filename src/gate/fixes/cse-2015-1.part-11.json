@@ -1,0 +1,118 @@
+{
+  "paper": "cse-2015-1",
+  "fixes": [
+    {
+      "id": "cse-2015-1-ga-5",
+      "field": "topic",
+      "before": "quant",
+      "after": "verbal",
+      "reason": "Vocabulary/synonym question belongs to verbal ability, not quant.",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2015-1-ga-4",
+      "field": "text",
+      "before": "Based on the given statements, select the most appropriate option to solve the given question.\n\nIf two floors in a certain building are 9 feet apart, how many steps are there in a set of stairs that extends from the first floor to the second floor of the building?\n\nStatements:\n\n(I) Each step is 3/4 foot high.\n(II) Each step is 1 foot wide.",
+      "after": "Based on the given statements, select the most appropriate option to solve the given question.\n\nIf two floors in a certain building are 9 feet apart, how many steps are there in a set of stairs that extends from the first floor to the second floor of the building?\n\nStatements:\n\n(I) Each step is 3/4 foot high.\n\n(II) Each step is 1 foot wide.",
+      "reason": "Separate statements into their own paragraphs so they render on separate lines.",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2015-1-ga-8",
+      "field": "text",
+      "before": "The given statement is followed by some courses of action. Assuming the statement to be true, decide the correct option.\n\nStatement:\n\nThere has been a significant drop in the water level in the lakes supplying water to the city.\n\nCourse of action:\n\n(I) The water supply authority should impose a partial cut in supply to tackle the situation.\n(II) The government should appeal to all the residents through mass media for minimal use of water.\n(III) The government should ban the water supply in lower areas.",
+      "after": "The given statement is followed by some courses of action. Assuming the statement to be true, decide the correct option.\n\nStatement:\n\nThere has been a significant drop in the water level in the lakes supplying water to the city.\n\nCourse of action:\n\n(I) The water supply authority should impose a partial cut in supply to tackle the situation.\n\n(II) The government should appeal to all the residents through mass media for minimal use of water.\n\n(III) The government should ban the water supply in lower areas.",
+      "reason": "Separate courses of action into their own paragraphs so they render on separate lines.",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2015-1-ga-10",
+      "field": "text",
+      "before": "The probabilities that a student passes in Mathematics, Physics and Chemistry are m, p, and c respectively. Of these subjects, the student has 75% chance of passing in at least one, a 50% chance of passing in at least two and a 40% chance of passing in exactly two. Following relations are drawn in m, p, c:\n\n(I) p + m + c = 27/20\n(II) p + m + c = 13/20\n(III) (p)×(m)×(c) = 1/10",
+      "after": "The probabilities that a student passes in Mathematics, Physics and Chemistry are m, p, and c respectively. Of these subjects, the student has 75% chance of passing in at least one, a 50% chance of passing in at least two and a 40% chance of passing in exactly two. Following relations are drawn in m, p, c:\n\n(I) $p + m + c = 27/20$\n\n(II) $p + m + c = 13/20$\n\n(III) $(p)\\times(m)\\times(c) = 1/10$",
+      "reason": "KaTeX for the relations and separate lines for each relation.",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2015-1-cs-3",
+      "field": "text",
+      "before": "For any two languages $L_1$ and $L_2$ such that $L_1$ is context-free and $L_2$ is recursively enumerable but not recursive, which of the following is/are necessarily true?\n\nI. $\\overline{L_1}$ (complement of $L_1$) is recursive\nII. $\\overline{L_2}$ (complement of $L_2$) is recursive\nIII. $\\overline{L_1}$ is context-free\nIV. $\\overline{L_1} \\cup L_2$ is recursively enumerable",
+      "after": "For any two languages $L_1$ and $L_2$ such that $L_1$ is context-free and $L_2$ is recursively enumerable but not recursive, which of the following is/are necessarily true?\n\nI. $\\overline{L_1}$ (complement of $L_1$) is recursive\n\nII. $\\overline{L_2}$ (complement of $L_2$) is recursive\n\nIII. $\\overline{L_1}$ is context-free\n\nIV. $\\overline{L_1} \\cup L_2$ is recursively enumerable",
+      "reason": "Separate statements I–IV into their own paragraphs so they render on separate lines.",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2015-1-cs-4",
+      "field": "subject",
+      "before": "pds",
+      "after": "calc",
+      "reason": "Limit of a function is calculus, not programming.",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2015-1-cs-4",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "limits",
+      "reason": "Limit of a function.",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2015-1-cs-4",
+      "field": "tags",
+      "before": [
+        "limit"
+      ],
+      "after": [
+        "limits",
+        "l'hopital"
+      ],
+      "reason": "Replace generic tag with specific ones.",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2015-1-cs-5",
+      "field": "topic",
+      "before": "limits",
+      "after": "functions",
+      "reason": "Function composition is a functions question, not limits.",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2015-1-cs-8",
+      "field": "text",
+      "before": "For computers based on three-address instruction formats, each address field can be used to specify which of the following:\n\n(S1) A memory operand\n(S2) A processor register\n(S3) An implied accumulator register",
+      "after": "For computers based on three-address instruction formats, each address field can be used to specify which of the following:\n\n(S1) A memory operand\n\n(S2) A processor register\n\n(S3) An implied accumulator register",
+      "reason": "Separate S1–S3 into their own paragraphs so they render on separate lines.",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2015-1-cs-10",
+      "field": "text",
+      "before": "Which of the following is/are correct inorder traversal sequence(s) of binary search tree(s)?\n\nI. 3, 5, 7, 8, 15, 19, 25\nII. 5, 8, 9, 12, 10, 15, 25\nIII. 2, 7, 10, 8, 14, 16, 20\nIV. 4, 6, 7, 9, 18, 20, 25",
+      "after": "Which of the following is/are correct inorder traversal sequence(s) of binary search tree(s)?\n\nI. 3, 5, 7, 8, 15, 19, 25\n\nII. 5, 8, 9, 12, 10, 15, 25\n\nIII. 2, 7, 10, 8, 14, 16, 20\n\nIV. 4, 6, 7, 9, 18, 20, 25",
+      "reason": "Separate sequences I–IV into their own paragraphs so they render on separate lines.",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2015-1-ga-9",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2015-1/ga-9-1.png",
+          "alt": "Pie chart: Computer Science 40%, Civil 30%, Electrical 20%, Mechanical 10%.",
+          "svg": "cse-2015-1/ga-9-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2015-1/ga-9-1.png",
+          "alt": "Exploded pie chart of students by department: Computer Science 40%, Civil 30%, Mechanical 10%, Electrical 20%.",
+          "svg": "cse-2015-1/ga-9-1.svg"
+        }
+      ],
+      "reason": "Figure redrawn as a faithful SVG pie chart; alt text made precise.",
+      "source": "pdf"
+    }
+  ]
+}
