@@ -2,6 +2,46 @@
   "paper": "cse-2007",
   "fixes": [
     {
+      "id": "cse-2007-cs-7",
+      "field": "topic",
+      "before": "pumping",
+      "after": "regular",
+      "reason": "Question is about closure properties of regular sets (finite subsets, unions), not the pumping lemma",
+      "source": "GATE 2007 CS question paper Q.7"
+    },
+    {
+      "id": "cse-2007-cs-31",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Stored key B appears wrong: {ww^R x} is not regular, while {wxw^R} (strings of length >= 3 with equal first and last symbol) is regular, so the answer should be C.",
+      "source": "GATE 2007 question paper (scanned PDF) + independent solution"
+    },
+    {
+      "id": "cse-2007-cs-31",
+      "field": "reviewNote",
+      "before": null,
+      "after": "Stored key is B, but option B {ww^R x | x,w in {0,1}+} is not regular (Myhill-Nerode: prefixes 0 1^k 00 for odd k are separated by suffix 1^k 0 1), whereas option C {wxw^R} equals 0(0+1)^+0 + 1(0+1)^+1, which is regular. Answer should be C; no official key available to confirm.",
+      "reason": "Explain disagreement with stored key.",
+      "source": "GATE 2007 question paper (scanned PDF) + independent solution"
+    },
+    {
+      "id": "cse-2007-cs-43",
+      "field": "subject",
+      "before": "coa",
+      "after": "pds",
+      "reason": "Question is about counting nodes in a full n-ary tree (data structures), not computer organisation.",
+      "source": "GATE 2007 question paper (scanned PDF) + independent solution"
+    },
+    {
+      "id": "cse-2007-cs-43",
+      "field": "topic",
+      "before": "isa",
+      "after": "trees",
+      "reason": "Question is about counting nodes in a full n-ary tree.",
+      "source": "GATE 2007 question paper (scanned PDF) + independent solution"
+    },
+    {
       "id": "cse-2007-cs-71",
       "field": "text",
       "before": "Consider the following program segment. Here R1, R2 and R3 are the general purpose registers.\n\n| Instruction | Operation | Instruction size (no. of words) |\n|---|---|---|\n| MOV R1, (3000) | R1 <- M[3000] | 2 |\n| LOOP: MOV R2, (R3) | R2 <- M[R3] | 1 |\n| ADD R2, R1 | R2 <- R1 + R2 | 1 |\n| MOV (R3), R2 | M[R3] <- R2 | 1 |\n| INC R3 | R3 <- R3 + 1 | 1 |\n| DEC R1 | R1 <- R1 - 1 | 1 |\n| BNZ LOOP | Branch on not zero | 2 |\n| HALT | Stop | 1 |\n\nAssume that the content of memory location 3000 is 10 and the content of the register R3 is 2000. The content of each of the memory locations from 2000 to 2010 is 100. The program is loaded from the memory location 1000. All the numbers are in decimal.\n\nAssume that the memory is word addressable. The number of memory references for accessing the data in executing the program completely is",

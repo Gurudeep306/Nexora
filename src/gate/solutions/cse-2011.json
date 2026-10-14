@@ -2,6 +2,484 @@
   "paper": "cse-2011",
   "version": 2,
   "solutions": {
+    "cse-2011-ga-56": {
+      "approach": "Inexplicable means \"impossible to explain or account for\". Pick the option with the same sense.",
+      "concepts": [
+        "Synonyms"
+      ],
+      "steps": [
+        {
+          "title": "Meaning",
+          "body": "*Inexplicable* means it cannot be explained, so it is beyond understanding."
+        },
+        {
+          "title": "Match",
+          "body": "*Incomprehensible* means \"cannot be understood\", which is the closest meaning."
+        }
+      ],
+      "answer": {
+        "value": "Incomprehensible",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Both describe something that cannot be explained or understood."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Indelible means cannot be erased (for example, indelible ink)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Inextricable means impossible to separate or escape from."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Infallible means incapable of making mistakes."
+        }
+      ],
+      "verification": "Substituted into a sentence: \"an inexplicable delay\" means the same as \"an incomprehensible delay\"."
+    },
+    "cse-2011-ga-57": {
+      "approach": "Set each expression equal to a common value $k$, write $\\log P$, $\\log Q$, $\\log R$ in terms of $k$, and test each option by comparing logarithms.",
+      "concepts": [
+        "Logarithm laws"
+      ],
+      "steps": [
+        {
+          "title": "Common value",
+          "body": "Let $\\log P=\\tfrac12\\log Q=\\tfrac13\\log R=k$. Then $\\log P=k$, $\\log Q=2k$ and $\\log R=3k$."
+        },
+        {
+          "title": "Test option B",
+          "body": "$\\log Q^2=2\\cdot2k=4k$ and $\\log(PR)=k+3k=4k$. They are equal, so $Q^2=PR$."
+        }
+      ],
+      "answer": {
+        "value": "$Q^2=PR$",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "LHS $2k$, RHS $3(2k)+2(3k)=12k$. They are not equal."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Both sides equal $4k$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "LHS $4k$, RHS $3(3k)+k=10k$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "LHS $3k$, RHS $2k+2(2k)=6k$."
+        }
+      ],
+      "verification": "Example: $P=10$, $Q=100$, $R=1000$ satisfies the condition, and $Q^2=10^4=PR$."
+    },
+    "cse-2011-ga-58": {
+      "approach": "The verb *contemplate* takes a gerund (-ing form) as its object, not a to-infinitive.",
+      "concepts": [
+        "Gerund vs infinitive"
+      ],
+      "steps": [
+        {
+          "title": "Verb pattern",
+          "body": "\"Contemplate\" works like *consider*: you contemplate **doing** something."
+        },
+        {
+          "title": "Complete",
+          "body": "\"I contemplated **visiting** Singapore for my vacation but decided against it.\""
+        }
+      ],
+      "answer": {
+        "value": "visiting",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "\"contemplated to visit\" is ungrammatical, because contemplate does not take a to-infinitive."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "\"having to visit\" adds an obligation that is not in the sentence."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Contemplate + gerund is the correct pattern."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "\"contemplated for a visit\" is not idiomatic. Contemplate takes a direct object."
+        }
+      ],
+      "verification": "Compared with the parallel verb consider: \"I considered visiting\" is correct and \"I considered to visit\" is not."
+    },
+    "cse-2011-ga-59": {
+      "approach": "The blank is in a list with *understated* and *tentative*, both of which mean holding back. The missing word must have the same sense.",
+      "concepts": [
+        "Sentence completion",
+        "Parallelism"
+      ],
+      "steps": [
+        {
+          "title": "Sense of the list",
+          "body": "A strong impression cannot come from being understated, tentative or ___. All three must describe a low-key, hesitant manner."
+        },
+        {
+          "title": "Pick",
+          "body": "*Restrained* (holding back, controlled) fits the list."
+        }
+      ],
+      "answer": {
+        "value": "restrained",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Hyperbolic (exaggerated) is the opposite of understated."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Restrained matches understated and tentative."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Argumentative is forceful, not a sign of weak impact."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Indifferent means not caring. It does not fit the list of ways of expressing oneself mildly."
+        }
+      ],
+      "verification": "Only (B) shares the \"holding back\" sense of the other two words."
+    },
+    "cse-2011-ga-60": {
+      "approach": "Amalgamate means to combine several things into one. Its opposite is to divide one whole into parts.",
+      "concepts": [
+        "Antonyms"
+      ],
+      "steps": [
+        {
+          "title": "Meaning",
+          "body": "*Amalgamate* means to merge or unite into a single whole (for example, two companies amalgamate)."
+        },
+        {
+          "title": "Opposite",
+          "body": "Breaking one whole into parts is to **split** it. A split is the direct reversal of an amalgamation."
+        }
+      ],
+      "answer": {
+        "value": "split",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Merge is a synonym."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Split reverses the action: one whole is divided into parts."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Collect is close to a synonym (bring together)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Separate is close, but it mainly means keeping apart things that were together. Split is the exact counter-action to merging into one, and it is the accepted key."
+        }
+      ],
+      "pitfalls": [
+        "Choosing \"separate\": both B and D are near-opposites, but GATE's key is \"split\"."
+      ],
+      "verification": "Pairing check: the opposite of a company amalgamating is the company splitting."
+    },
+    "cse-2011-ga-61": {
+      "approach": "A unit on bereavement teaches students how to cope with grief and loss. Pick the topic that is about something other than coping.",
+      "concepts": [
+        "Inference",
+        "Reading comprehension"
+      ],
+      "steps": [
+        {
+          "title": "Scope of the unit",
+          "body": "The passage is about dealing with bereavement and grief. That means expressing sympathy, understanding grief and supporting others."
+        },
+        {
+          "title": "Odd one out",
+          "body": "The leading causes of death are a medical or statistical topic. They do not help anyone deal with grief, so this topic would not be in the unit."
+        }
+      ],
+      "answer": {
+        "value": "what the leading causes of death are",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Writing a condolence letter is a practical skill for dealing with bereavement."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "The emotional stages of healing are central to understanding grief."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Causes of death are about mortality, not coping with loss."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Supporting a grieving friend is part of dealing with grief."
+        }
+      ],
+      "verification": "Options A, B and D all concern responding to loss. Only C does not."
+    },
+    "cse-2011-ga-62": {
+      "approach": "Danger is proportional to toxicity × potency × growth. Growth is the circle area ($\\propto d^2$). The y-axis gives the milligrams needed to destroy half the body mass, so fewer milligrams means more toxic: toxicity $\\propto 1/y$. Compare $\\text{potency}\\times d^2/y$ for each microbe.",
+      "concepts": [
+        "Data interpretation",
+        "Proportional reasoning"
+      ],
+      "given": "| Microbe | Potency (x) | mg to destroy half body mass (y) | Diameter d (mm) |\n|---|---|---|---|\n| P | 0.4 | 800 | 50 |\n| Q | 0.5 | 600 | 40 |\n| R | 0.4 | 300 | 30 |\n| S | 0.8 | 200 | 20 |",
+      "steps": [
+        {
+          "title": "Danger index",
+          "body": "Danger $\\propto \\dfrac{x\\cdot d^2}{y}$, since area $\\propto d^2$ and toxicity $\\propto 1/y$."
+        },
+        {
+          "title": "Compute",
+          "body": "- P: $0.4\\times2500/800=1000/800=1.25$\n- Q: $0.5\\times1600/600=800/600\\approx1.33$\n- R: $0.4\\times900/300=360/300=1.2$\n- S: $0.8\\times400/200=320/200=1.6$\n\nS is the most dangerous."
+        }
+      ],
+      "answer": {
+        "value": "S",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "P has the largest growth, but it needs 800 mg to cause harm, so its index is only 1.25."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Q's index is 1.33, which is less than S's 1.6."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "R has the lowest index, 1.2."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "S combines the highest potency (0.8) with the highest toxicity (only 200 mg needed), giving the largest index, 1.6."
+        }
+      ],
+      "pitfalls": [
+        "Reading a higher y value as more toxic. The axis is the dose needed, so a smaller dose means more toxic.",
+        "Using the diameter instead of the area for growth."
+      ],
+      "verification": "Even using d instead of d² (P 0.025, Q 0.033, R 0.04, S 0.08), S stays the largest, so the answer is robust."
+    },
+    "cse-2011-ga-63": {
+      "approach": "Minimise $C(q)=4q+100/q$ by setting the derivative to zero (or by AM–GM).",
+      "concepts": [
+        "Minimisation",
+        "AM–GM"
+      ],
+      "steps": [
+        {
+          "title": "Differentiate",
+          "body": "$C'(q)=4-\\dfrac{100}{q^2}=0 \\Rightarrow q^2=25 \\Rightarrow q=5$. Also $C''(q)=200/q^3>0$, so this is a minimum."
+        },
+        {
+          "title": "Check",
+          "body": "$C(5)=20+20=40$. Neighbours: $C(4)=16+25=41$ and $C(6)=24+16.67=40.67$. So $q=5$ is the minimum."
+        }
+      ],
+      "answer": {
+        "value": "5",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$q=5$ makes $4q=100/q$, giving the minimum total of 40."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$C(4)=41>40$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$C(7)=28+14.29=42.29>40$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$C(6)\\approx40.67>40$."
+        }
+      ],
+      "shortcut": "By AM–GM, $aq+b/q$ is minimised when $aq=b/q$, that is, $4q=100/q$, so $q=5$.",
+      "verification": "Evaluated C at every option: 40, 41, 42.29 and 40.67."
+    },
+    "cse-2011-ga-64": {
+      "approach": "Let the backlog be $B$, the new orders per day $o$, and the orders one truck clears per day $c$. Two equations give $B$ and $o$ in terms of $c$. Then find the smallest $n$ with $5nc\\ge B+5o$.",
+      "concepts": [
+        "Work and time",
+        "Linear equations"
+      ],
+      "steps": [
+        {
+          "title": "Set up",
+          "body": "7 trucks for 4 days: $B+4o=28c$. 3 trucks for 10 days: $B+10o=30c$."
+        },
+        {
+          "title": "Solve",
+          "body": "Subtracting gives $6o=2c$, so $o=c/3$. Then $B=28c-\\tfrac{4c}{3}=\\tfrac{80c}{3}$."
+        },
+        {
+          "title": "5 days",
+          "body": "Need $5nc\\ge B+5o=\\tfrac{80c}{3}+\\tfrac{5c}{3}=\\tfrac{85c}{3}$, so $n\\ge\\tfrac{85}{15}=5.67$. The minimum is **6** trucks."
+        }
+      ],
+      "answer": {
+        "value": "6",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "4 trucks clear $20c<28.33c$ in 5 days."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "5 trucks clear $25c<28.33c$, which is not enough."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "6 trucks clear $30c\\ge28.33c$, and 6 is the smallest integer $\\ge5.67$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "7 trucks work but are not the minimum."
+        }
+      ],
+      "verification": "Substituted back: $80/3+4/3=28$ and $80/3+10/3=30$, which match both scenarios."
+    },
+    "cse-2011-ga-65": {
+      "approach": "Each replacement of 1 L out of 10 L keeps a fraction $9/10$ of the spirit. After 3 replacements, spirit $=10(9/10)^3$.",
+      "concepts": [
+        "Repeated dilution"
+      ],
+      "steps": [
+        {
+          "title": "Fraction kept per step",
+          "body": "Removing 1 L of the uniform mixture removes $1/10$ of the spirit present, so $0.9$ of it remains each time."
+        },
+        {
+          "title": "Three replacements",
+          "body": "The process happens 3 times in total (first, again, and one more time):\n\n$10\\times0.9^3=10\\times0.729=7.29$ litres."
+        }
+      ],
+      "answer": {
+        "value": "7.29 litres",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "7.58 does not come from any number of 0.9 factors ($0.9^2\\cdot10=8.1$, $0.9^3\\cdot10=7.29$)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "7.84 does not come from repeated factors of 0.9 either."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "7 L assumes each step removes 1 L of pure spirit, which ignores the dilution."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "$10\\times0.9^3=7.29$."
+        }
+      ],
+      "verification": "Stepwise: 10 → 9 → 8.1 → 7.29 litres of spirit."
+    },
     "cse-2011-cs-1": {
       "approach": "Keywords are just reserved lexemes, so the scanner (lexical analyser) identifies them while grouping characters into tokens.",
       "concepts": [
@@ -2682,6 +3160,1172 @@
         "Using a full rotation (10 ms) instead of half for average latency (gives 2.0 s)."
       ],
       "verification": "$100\\times(10+5)\\text{ ms}=1.5$ s."
+    },
+    "cse-2011-cs-45": {
+      "approach": "Read off the language of $D$, then minimise it by partition refinement: merge equivalent states and keep the ones a suffix can tell apart. Compare the result with each option, rejecting wrong ones with a single counter-example string.",
+      "concepts": [
+        "DFA minimisation",
+        "Myhill–Nerode equivalence",
+        "Dead state"
+      ],
+      "steps": [
+        {
+          "title": "Language of D",
+          "body": "From $p$: reading `a` reaches accepting $s$, which loops on everything. Reading `b` reaches $q$; from $q$, `a` reaches accepting $t$ (loops on everything) and `b` reaches the dead state $r$.\n\n$$L(D)=a(a+b)^*\\;+\\;ba(a+b)^*$$\n\nso $L(D)$ is the set of strings that start with `a` or with `ba`.",
+          "scene": {
+            "current": [
+              "p"
+            ],
+            "caption": "D: start p, accepting s and t"
+          }
+        },
+        {
+          "title": "Merge equivalent states",
+          "body": "Start with the partition $\\{s,t\\}$ (accepting) and $\\{p,q,r\\}$ (non-accepting).\n\n- $s$ and $t$ both accept every suffix, and on both symbols they stay in $\\{s,t\\}$, so $s\\equiv t$.\n- $r$ rejects every suffix and is a dead state.\n- $p$ and $q$: on `b`, $p\\to q$ but $q\\to r$. The suffix `ba` is accepted from $p$ (`ba` takes it to $t$) and rejected from $q$ (`ba` takes it to $r$). So $p\\not\\equiv q$.\n- $p,q$ vs $r$: suffix `a` is accepted from $p$ and $q$ but not from $r$.\n\nThe classes are $\\{p\\},\\{q\\},\\{r\\},\\{s,t\\}$, so the minimal DFA has **4 states**.",
+          "scene": {
+            "current": [
+              "s",
+              "t"
+            ],
+            "caption": "s ≡ t (both accept everything); p, q, r are pairwise distinguishable"
+          }
+        },
+        {
+          "title": "Build the minimal DFA",
+          "body": "Replace $t$ by $s$: $p\\xrightarrow{a}s$, $p\\xrightarrow{b}q$, $q\\xrightarrow{a}s$, $q\\xrightarrow{b}r$, with $r$ looping on $a,b$ and accepting $s$ looping on $a,b$. This is exactly option **(A)**.",
+          "scene": {
+            "kind": "automaton",
+            "states": [
+              {
+                "id": "p",
+                "start": true,
+                "x": 0,
+                "y": 0
+              },
+              {
+                "id": "q",
+                "x": 2,
+                "y": 0
+              },
+              {
+                "id": "r",
+                "x": 4,
+                "y": 0
+              },
+              {
+                "id": "s",
+                "accept": true,
+                "x": 1,
+                "y": 2
+              }
+            ],
+            "edges": [
+              {
+                "from": "p",
+                "to": "q",
+                "label": "b"
+              },
+              {
+                "from": "q",
+                "to": "r",
+                "label": "b"
+              },
+              {
+                "from": "r",
+                "to": "r",
+                "label": "a,b"
+              },
+              {
+                "from": "p",
+                "to": "s",
+                "label": "a"
+              },
+              {
+                "from": "q",
+                "to": "s",
+                "label": "a"
+              },
+              {
+                "from": "s",
+                "to": "s",
+                "label": "a,b"
+              }
+            ],
+            "current": [
+              "s"
+            ],
+            "caption": "Minimal DFA = option (A)"
+          }
+        }
+      ],
+      "answer": {
+        "value": "Option (A): the 4-state DFA with t merged into s",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "It is $D$ with the equivalent states $s,t$ merged. It accepts exactly the strings that start with `a` or `ba`, and it has 4 states, which is the minimum."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "The string `b` takes $p$ to accepting $q$, so `b` is accepted, but $D$ rejects `b`."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "`b` is accepted (it ends in accepting $q$), which is wrong. It is not even a DFA, because $q$ has two `b` transitions (to $q$ and to $r$)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "`bba` is accepted ($p\\to q\\to q\\to s$), but $D$ rejects it ($p\\to q\\to r$). There is no dead state for strings that start with `bb`."
+        }
+      ],
+      "shortcut": "Describe the language as \"starts with a or ba\". Then test each option on `b` and `bba`. Only (A) rejects both and accepts `a` and `ba`.",
+      "pitfalls": [
+        "Merging $p$ and $q$ because both go to an accepting state on `a`. The suffix `ba` tells them apart.",
+        "Forgetting that a complete DFA needs the dead state $r$."
+      ],
+      "verification": "Tested `a`, `ba`, `b`, `bb`, `bba` and `aab` on $D$ and on (A). The two machines agree on all of them.",
+      "animation": {
+        "kind": "automaton",
+        "states": [
+          {
+            "id": "p",
+            "start": true,
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "q",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "id": "r",
+            "x": 4,
+            "y": 0
+          },
+          {
+            "id": "s",
+            "accept": true,
+            "x": 0,
+            "y": 2
+          },
+          {
+            "id": "t",
+            "accept": true,
+            "x": 2,
+            "y": 2
+          }
+        ],
+        "edges": [
+          {
+            "from": "p",
+            "to": "q",
+            "label": "b"
+          },
+          {
+            "from": "q",
+            "to": "r",
+            "label": "b"
+          },
+          {
+            "from": "r",
+            "to": "r",
+            "label": "a,b"
+          },
+          {
+            "from": "p",
+            "to": "s",
+            "label": "a"
+          },
+          {
+            "from": "q",
+            "to": "t",
+            "label": "a"
+          },
+          {
+            "from": "s",
+            "to": "s",
+            "label": "a,b"
+          },
+          {
+            "from": "t",
+            "to": "t",
+            "label": "a,b"
+          }
+        ],
+        "current": [
+          "p"
+        ]
+      }
+    },
+    "cse-2011-cs-46": {
+      "approach": "A natural join of S and T matches on their only common column, Bank_Manager. For each manager, multiply the number of S rows by the number of T rows, then add the products.",
+      "concepts": [
+        "Natural join",
+        "Join cardinality"
+      ],
+      "steps": [
+        {
+          "title": "Common attribute",
+          "body": "S has columns (Borrower, Bank_Manager) and T has columns (Bank_Manager, Loan_Amount). The only shared column is **Bank_Manager**, so rows join when their managers are equal. Each projection keeps all 3 rows, because every row has a distinct (Borrower) or (Loan_Amount) value."
+        },
+        {
+          "title": "Count matches per manager",
+          "body": "| Bank_Manager | rows in S | rows in T | joined rows |\n|---|---|---|---|\n| Sunderajan | 2 (Ramesh, Mahesh) | 2 (10000, 7000) | $2\\times2=4$ |\n| Ramgopal | 1 (Suresh) | 1 (5000) | $1\\times1=1$ |\n\n$\\text{count}(*)=4+1=5$."
+        }
+      ],
+      "answer": {
+        "value": "5",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "3 is the size of the original table. It ignores the spurious tuples that appear because Sunderajan has two rows in both S and T."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "9 would be the cross product $3\\times3$. A natural join keeps only rows whose managers match."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$2\\cdot2+1\\cdot1=5$ joined rows."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "6 matches no grouping. The correct per-manager products are 4 and 1."
+        }
+      ],
+      "pitfalls": [
+        "Assuming the join reconstructs the original table. Splitting on a non-key attribute is a lossy decomposition, so joining back creates spurious tuples."
+      ],
+      "verification": "Listed the 5 rows explicitly: (Ramesh,10000), (Ramesh,7000), (Mahesh,10000), (Mahesh,7000) for Sunderajan, and (Suresh,5000) for Ramgopal."
+    },
+    "cse-2011-cs-47": {
+      "approach": "Equivalence class partitioning tests one representative from each input class. The comment defines four classes: a = 0, discriminant > 0, discriminant = 0, discriminant < 0. Classify each test case and pick the option with exactly one test per class.",
+      "concepts": [
+        "Black-box testing",
+        "Equivalence class partitioning"
+      ],
+      "steps": [
+        {
+          "title": "Classify each test",
+          "body": "With $\\Delta=b^2-4ac$:\n\n| Test | a | $\\Delta$ | Class |\n|---|---|---|---|\n| T1 | 0 | — | (i) $a=0$ |\n| T2 | 0 | — | (i) $a=0$ |\n| T3 | 1 | $4-4=0$ | (iii) $\\Delta=0$ |\n| T4 | 4 | $144-144=0$ | (iii) $\\Delta=0$ |\n| T5 | 1 | $4+12=16>0$ | (ii) $\\Delta>0$ |\n| T6 | 1 | $1-16=-15<0$ | (iv) $\\Delta<0$ |"
+        },
+        {
+          "title": "Pick one per class",
+          "body": "T1/T2 are redundant with each other, and so are T3/T4. A non-redundant set needs one of {T1, T2}, one of {T3, T4}, plus T5 and T6. Only **T2, T4, T5, T6** has this form."
+        }
+      ],
+      "answer": {
+        "value": "T2, T4, T5, T6",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "T1 and T2 are both in the $a=0$ class, so one is redundant, and the $\\Delta>0$ class (T5) is not covered."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "T3 and T4 are both $\\Delta=0$, and the $\\Delta<0$ class (T6) is missing."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "It has exactly one test from each of the four classes: T2 ($a=0$), T4 ($\\Delta=0$), T5 ($\\Delta>0$) and T6 ($\\Delta<0$)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "T3 and T4 are both $\\Delta=0$, and the $\\Delta<0$ class is missing."
+        }
+      ],
+      "pitfalls": [
+        "Classifying by the expected output instead of the input. The question says \"from input perspective\"."
+      ],
+      "verification": "Recomputed each discriminant: T3 $=0$, T4 $=0$, T5 $=16$, T6 $=-15$."
+    },
+    "cse-2011-cs-48": {
+      "approach": "`foo(n, r)` adds the last base-r digit `n % r` and recurses on `n / r`. So it returns the sum of the digits of n in base r. For base 10 that is the decimal digit sum.",
+      "concepts": [
+        "Recursion",
+        "Digit sum"
+      ],
+      "steps": [
+        {
+          "title": "Unroll the recursion",
+          "body": "| call | n % 10 | next call |\n|---|---|---|\n| foo(345,10) | 5 | foo(34,10) |\n| foo(34,10) | 4 | foo(3,10) |\n| foo(3,10) | 3 | foo(0,10) |\n| foo(0,10) | returns 0 | — |"
+        },
+        {
+          "title": "Add the returns",
+          "body": "$5+4+3+0=12$."
+        }
+      ],
+      "answer": {
+        "value": "12",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "345 is the input itself. The function adds the digits, it does not rebuild the number."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Digit sum $3+4+5=12$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "5 is only the first term, `345 % 10`."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "3 is only the last non-zero term (the leading digit)."
+        }
+      ],
+      "verification": "The recursion depth is 3 (one call per digit) plus the base case, and each level contributes one digit."
+    },
+    "cse-2011-cs-49": {
+      "approach": "`foo(n, 2)` returns the sum of the binary digits of n, which is the number of 1-bits. Write 513 in binary and count its 1s.",
+      "concepts": [
+        "Recursion",
+        "Binary representation",
+        "Population count"
+      ],
+      "steps": [
+        {
+          "title": "Binary of 513",
+          "body": "$513=512+1=2^9+2^0$, so $513=(1000000001)_2$."
+        },
+        {
+          "title": "Sum the bits",
+          "body": "Each call adds `n % 2`, the current lowest bit. The bits are 1 (at the start), eight 0s, then 1, so the result is $1+0+\\dots+0+1=2$."
+        }
+      ],
+      "answer": {
+        "value": "2",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "9 is the exponent of the top bit, not the number of 1-bits."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "8 counts the zero bits between the two 1s."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "5 has no meaning here. It is the result for 345 in a different base."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "513 has exactly two 1-bits."
+        }
+      ],
+      "verification": "Successive halving: 513→256→128→64→32→16→8→4→2→1→0 gives remainders 1,0,0,0,0,0,0,0,0,1, which sum to 2."
+    },
+    "cse-2011-cs-50": {
+      "approach": "Write the next-state equation of each D flip-flop from the gates feeding its D input. Then substitute the present state PQR = 010.",
+      "concepts": [
+        "D flip-flop",
+        "Next-state equations",
+        "Counters"
+      ],
+      "steps": [
+        {
+          "title": "Next-state equations",
+          "body": "Reading the circuit:\n\n- $D_P = R$ (the R output wire feeds D of the P flip-flop)\n- $D_Q = \\overline{P+R}$ (NOR of P and R)\n- $D_R = Q\\cdot\\overline{R}$ (AND of Q and $\\overline{R}$)\n\nOn the clock edge each flip-flop copies its D input: $P^+=R$, $Q^+=\\overline{P+R}$, $R^+=Q\\overline{R}$."
+        },
+        {
+          "title": "Substitute P=0, Q=1, R=0",
+          "body": "$P^+=R=0$\n\n$Q^+=\\overline{0+0}=1$\n\n$R^+=1\\cdot\\overline{0}=1$\n\nSo $PQR$ becomes **011**."
+        }
+      ],
+      "answer": {
+        "value": "011",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "000 would need $Q^+=0$, but NOR(0,0) = 1."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "001 drops Q, but $Q^+=\\overline{P+R}=1$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "010 means nothing changed. $R^+=Q\\overline{R}=1$, so R does change."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "$P^+=0$, $Q^+=1$, $R^+=1$."
+        }
+      ],
+      "verification": "This agrees with the state cycle 000→010→011→100→000 derived in Q51."
+    },
+    "cse-2011-cs-51": {
+      "approach": "Use the next-state equations $P^+=R$, $Q^+=\\overline{P+R}$, $R^+=Q\\overline{R}$. Iterate from 000 until a state repeats, then count the distinct states in the cycle.",
+      "concepts": [
+        "Counter state sequence",
+        "D flip-flop"
+      ],
+      "steps": [
+        {
+          "title": "Next-state equations",
+          "body": "Reading the circuit:\n\n- $D_P = R$ (the R output wire feeds D of the P flip-flop)\n- $D_Q = \\overline{P+R}$ (NOR of P and R)\n- $D_R = Q\\cdot\\overline{R}$ (AND of Q and $\\overline{R}$)\n\nOn the clock edge each flip-flop copies its D input: $P^+=R$, $Q^+=\\overline{P+R}$, $R^+=Q\\overline{R}$.",
+          "scene": {
+            "reveal": 0,
+            "caption": "Start at reset state 000"
+          }
+        },
+        {
+          "title": "From 000",
+          "body": "$P^+=0$, $Q^+=\\overline{0+0}=1$, $R^+=0\\cdot1=0$, so 000 → **010**.",
+          "scene": {
+            "reveal": 5,
+            "hl": [
+              {
+                "r": 0
+              }
+            ]
+          }
+        },
+        {
+          "title": "From 010",
+          "body": "$P^+=0$, $Q^+=\\overline{0+0}=1$, $R^+=1\\cdot1=1$, so 010 → **011**.",
+          "scene": {
+            "reveal": 10,
+            "hl": [
+              {
+                "r": 1
+              }
+            ]
+          }
+        },
+        {
+          "title": "From 011",
+          "body": "$P^+=1$, $Q^+=\\overline{0+1}=0$, $R^+=1\\cdot0=0$, so 011 → **100**.",
+          "scene": {
+            "reveal": 15,
+            "hl": [
+              {
+                "r": 2
+              }
+            ]
+          }
+        },
+        {
+          "title": "From 100 — cycle closes",
+          "body": "$P^+=0$, $Q^+=\\overline{1+0}=0$, $R^+=0\\cdot1=0$, so 100 → **000**, the start state.\n\nThe cycle is 000 → 010 → 011 → 100 → 000, which has **4** distinct states.",
+          "scene": {
+            "reveal": 20,
+            "hl": [
+              {
+                "r": 3,
+                "tone": "success"
+              }
+            ],
+            "caption": "4 distinct states"
+          }
+        }
+      ],
+      "answer": {
+        "value": "4",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "3 misses one state of the cycle. The cycle from 000 visits 000, 010, 011 and 100."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "The cycle 000→010→011→100→000 has 4 states."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "5 would need one more distinct state before 000 repeats, but 100 goes straight back to 000."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "6 counts states not reachable from reset. Only 4 occur."
+        }
+      ],
+      "pitfalls": [
+        "Counting all $2^3=8$ combinations, or the states reachable from other initial values, instead of only those reachable from 000."
+      ],
+      "verification": "Q50's transition 010→011 appears in this cycle, which confirms the equations.",
+      "animation": {
+        "kind": "table",
+        "cols": [
+          "PQR",
+          "P⁺=R",
+          "Q⁺=(P+R)'",
+          "R⁺=QR'",
+          "next"
+        ],
+        "rows": [
+          [
+            "000",
+            "0",
+            "1",
+            "0",
+            "010"
+          ],
+          [
+            "010",
+            "0",
+            "1",
+            "1",
+            "011"
+          ],
+          [
+            "011",
+            "1",
+            "0",
+            "0",
+            "100"
+          ],
+          [
+            "100",
+            "0",
+            "0",
+            "0",
+            "000"
+          ]
+        ],
+        "reveal": 0,
+        "mono": true
+      }
+    },
+    "cse-2011-cs-52": {
+      "approach": "N3's neighbours are N2 (link now 2) and N4 (link 2). In the round, N3 sets each entry to $\\min(c(N3,v)+D_v(\\cdot))$ over neighbours $v$. N2's vector differs from before only in its N3 entry, which is now 2.",
+      "concepts": [
+        "Distance vector routing",
+        "Bellman–Ford update"
+      ],
+      "given": "| Vector | N1 | N2 | N3 | N4 | N5 |\n|---|---|---|---|---|---|\n| N2 (after link change) | 1 | 0 | 2 | 7 | 3 |\n| N4 | 8 | 7 | 2 | 0 | 4 |",
+      "steps": [
+        {
+          "title": "Vectors N3 receives",
+          "body": "Before the round, only the N3 entry of N2 changed (6 → 2), so N2 sends $(1,0,2,7,3)$ and N4 sends $(8,7,2,0,4)$. Both links cost 2.",
+          "scene": {
+            "reveal": 10
+          }
+        },
+        {
+          "title": "Bellman–Ford at N3",
+          "body": "| dest | via N2: $2+D_{N2}$ | via N4: $2+D_{N4}$ | min |\n|---|---|---|---|\n| N1 | $2+1=3$ | $2+8=10$ | 3 |\n| N2 | $2+0=2$ | $2+7=9$ | 2 |\n| N4 | $2+7=9$ | $2+0=2$ | 2 |\n| N5 | $2+3=5$ | $2+4=6$ | 5 |\n\nThe new vector at N3 is $(3,2,0,2,5)$.",
+          "scene": {
+            "reveal": 15,
+            "hl": [
+              {
+                "r": 2,
+                "tone": "success"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "(3, 2, 0, 2, 5)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "N1 via N2 costs $2+1=3$, and N5 via N2 costs $2+3=5$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "It keeps the old N5 cost 6 (via N4), but the route via N2 now costs $2+3=5$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "It keeps the old N1 cost 7, but the route via N2 now costs $2+1=3$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "It updates only the N2 entry and ignores the cheaper routes to N1 and N5 through N2."
+        }
+      ],
+      "verification": "The cheaper N2–N3 link (2) shortens every path that goes through N2, and both changed entries do go through N2.",
+      "animation": {
+        "kind": "table",
+        "cols": [
+          "N1",
+          "N2",
+          "N3",
+          "N4",
+          "N5"
+        ],
+        "rowLabels": [
+          "from N2",
+          "from N4",
+          "new N3"
+        ],
+        "rows": [
+          [
+            1,
+            0,
+            2,
+            7,
+            3
+          ],
+          [
+            8,
+            7,
+            2,
+            0,
+            4
+          ],
+          [
+            3,
+            2,
+            0,
+            2,
+            5
+          ]
+        ],
+        "reveal": 0,
+        "mono": true
+      }
+    },
+    "cse-2011-cs-53": {
+      "approach": "Find the vectors that N2 and N4 hold after the Q52 round. Set N2's N1 entry to ∞, then run one more Bellman–Ford update at N3 for destination N1.",
+      "concepts": [
+        "Distance vector routing",
+        "Count-to-infinity"
+      ],
+      "steps": [
+        {
+          "title": "Round 1 vectors at N2 and N4",
+          "body": "In the Q52 round N3 had sent $(7,2,0,2,6)$ (only its N2 entry changed).\n\n- N2 (neighbours N1 cost 1, N3 cost 2, N5 cost 3): to N1 it is $\\min(1+0,\\,2+7,\\,3+4)=1$, and to N4 it is $\\min(1+8,\\,2+2,\\,3+4)=4$. So N2 = $(1,0,2,4,3)$.\n- N4 (neighbours N3 cost 2, N5 cost 4): to N1 it is $\\min(2+7,\\,4+4)=8$. So N4's N1 entry stays **8**.\n- N3 = $(3,2,0,2,5)$ from Q52.",
+          "scene": {
+            "reveal": 6
+          }
+        },
+        {
+          "title": "Link N1–N2 fails",
+          "body": "N2 immediately sets its N1 entry to $\\infty$: N2 = $(\\infty,0,2,4,3)$. Nothing else changes before the next round.",
+          "scene": {
+            "reveal": 6,
+            "hl": [
+              {
+                "r": 0,
+                "c": 0,
+                "tone": "error"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Next round at N3 (destination N1)",
+          "body": "$$D_{N3}(N1)=\\min\\big(c(N3,N2)+D_{N2}(N1),\\;c(N3,N4)+D_{N4}(N1)\\big)=\\min(2+\\infty,\\;2+8)=10$$\n\nN4's stale entry of 8 is still valid here: it is the path N4–N5–N2–N1, but N4 does not yet know that path is broken. So N3 reports **10**, and count-to-infinity begins.",
+          "scene": {
+            "reveal": 9,
+            "hl": [
+              {
+                "r": 2,
+                "c": 0,
+                "tone": "warning"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "10",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "3 is N3's cost to N1 before the failure (via N2). N3 has to recompute after N2 advertises ∞."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "9 would need a neighbour advertising 7 for N1. N4 advertises 8 and N2 advertises ∞."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$\\min(2+\\infty,\\,2+8)=10$, using N4's stale entry."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "N3 does not learn of the failure yet, because N4 still advertises a finite cost (8)."
+        }
+      ],
+      "pitfalls": [
+        "Using N4's original entry as if it had changed. N4's N1 distance after round 1 is still 8 (via N5).",
+        "Assuming distance vector routing detects the failure at once (count-to-infinity)."
+      ],
+      "verification": "Recomputed N4's round-1 entry: via N3 it is $2+7=9$ and via N5 it is $4+4=8$, so the minimum is 8.",
+      "animation": {
+        "kind": "table",
+        "cols": [
+          "N1",
+          "N2",
+          "N3"
+        ],
+        "rowLabels": [
+          "N2",
+          "N4",
+          "N3 (new)"
+        ],
+        "rows": [
+          [
+            "∞",
+            0,
+            2
+          ],
+          [
+            8,
+            4,
+            2
+          ],
+          [
+            10,
+            2,
+            0
+          ]
+        ],
+        "reveal": 0,
+        "mono": true,
+        "caption": "Entries for N1, N2, N3"
+      }
+    },
+    "cse-2011-cs-54": {
+      "approach": "Run Kruskal on the structure. The cheapest edge is $v_1v_2$ (3). After that, the edge $(v_i,v_{i+2})$ (weight $2i+2$) always attaches the new vertex $v_{i+2}$ more cheaply than $(v_{i+1},v_{i+2})$ (weight $2i+3$). Sum the resulting weights.",
+      "concepts": [
+        "Minimum spanning tree",
+        "Kruskal's algorithm",
+        "Arithmetic series"
+      ],
+      "steps": [
+        {
+          "title": "Edges and weights",
+          "body": "Edges are $(v_i,v_{i+1})$ with weight $2i+1$ and $(v_i,v_{i+2})$ with weight $2i+2$. In increasing order the weights are $3,4,5,6,7,\\dots$, alternating between the two kinds.",
+          "scene": {
+            "caption": "n = 5: weights 3,4,5,6,7,8,9"
+          }
+        },
+        {
+          "title": "Kruskal (example n = 5)",
+          "body": "- 3 ($v_1v_2$): take\n- 4 ($v_1v_3$): take\n- 5 ($v_2v_3$): cycle, skip\n- 6 ($v_2v_4$): take\n- 7 ($v_3v_4$): cycle, skip\n- 8 ($v_3v_5$): take\n\nTotal $3+4+6+8=21$. In general, when vertex $v_k$ ($k\\ge3$) first becomes reachable, the cheaper edge into it is $(v_{k-2},v_k)$ with weight $2k-2$, and the edge $(v_{k-1},v_k)$ always closes a cycle.",
+          "scene": {
+            "edgeTones": {
+              "v1>v2": "success",
+              "v1>v3": "success",
+              "v2>v4": "success",
+              "v3>v5": "success"
+            },
+            "caption": "MST for n = 5 has cost 21"
+          }
+        },
+        {
+          "title": "General sum",
+          "body": "$$\\text{MST}=3+\\sum_{i=1}^{n-2}(2i+2)=3+(n-2)(n-1)+2(n-2)=3+(n-2)(n+1)=n^2-n+1.$$\n\nCheck: $n=4$ gives $3+4+6=13=16-4+1$, and $n=5$ gives $21=25-5+1$."
+        },
+        {
+          "title": "Eliminate options",
+          "body": "At $n=5$ the options give (A) $\\frac{11\\cdot25-25}{12}=20.83$, (B) $21$, (C) $6\\cdot5-11=19$, (D) $11$. Only (B) matches. (C) agrees with (B) only at $n=3$ (7) and $n=4$ (13), which is why the sample graph cannot tell them apart."
+        }
+      ],
+      "answer": {
+        "value": "$n^2-n+1$",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": false,
+        "keyNote": "The stored key C ($6n-11$) is wrong: it matches only n = 3 and n = 4. Kruskal for n = 5 gives MST cost 21 = n²−n+1, while 6n−11 = 19."
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Not an integer for $n=5$ ($250/12$). A cost made of integer weights must be an integer."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$3+\\sum_{i=1}^{n-2}(2i+2)=n^2-n+1$, verified for $n=3,4,5$ (7, 13, 21)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "It fits the sample $n=4$ (13) only by coincidence. For $n=5$ it gives 19, but the MST costs 21."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$2n+1$ gives 9 for $n=4$, but even the 3 cheapest edges sum to $3+4+5=12$."
+        }
+      ],
+      "shortcut": "Do not trust a formula that fits only the sample $n=4$. Compute $n=5$ by hand (21) and check which option gives it.",
+      "pitfalls": [
+        "Picking $6n-11$ because it matches the given sample graph. Check with a second value of $n$."
+      ],
+      "verification": "Ran Kruskal by hand for $n=5$ (21) and $n=6$: $3+4+6+8+10=31=36-6+1$. The formula $6n-11$ would give 25 for $n=6$.",
+      "animation": {
+        "kind": "graph",
+        "nodes": [
+          {
+            "id": "v1",
+            "x": 0,
+            "y": 1.2
+          },
+          {
+            "id": "v2",
+            "x": 1,
+            "y": 0
+          },
+          {
+            "id": "v3",
+            "x": 2,
+            "y": 1.2
+          },
+          {
+            "id": "v4",
+            "x": 3,
+            "y": 0
+          },
+          {
+            "id": "v5",
+            "x": 4,
+            "y": 1.2
+          }
+        ],
+        "edges": [
+          {
+            "from": "v1",
+            "to": "v2",
+            "w": 3
+          },
+          {
+            "from": "v1",
+            "to": "v3",
+            "w": 4
+          },
+          {
+            "from": "v2",
+            "to": "v3",
+            "w": 5
+          },
+          {
+            "from": "v2",
+            "to": "v4",
+            "w": 6
+          },
+          {
+            "from": "v3",
+            "to": "v4",
+            "w": 7
+          },
+          {
+            "from": "v3",
+            "to": "v5",
+            "w": 8
+          },
+          {
+            "from": "v4",
+            "to": "v5",
+            "w": 9
+          }
+        ]
+      }
+    },
+    "cse-2011-cs-55": {
+      "approach": "The MST from Q54 is $v_1v_2$ plus all edges $(v_i,v_{i+2})$. That is two chains, the odd vertices and the even vertices, joined only at $v_1$–$v_2$. The path from $v_5$ to $v_6$ goes down the odd chain to $v_1$, crosses to $v_2$, and climbs the even chain.",
+      "concepts": [
+        "Minimum spanning tree",
+        "Tree path"
+      ],
+      "steps": [
+        {
+          "title": "MST for n = 10",
+          "body": "MST edges: $v_1v_2$ (3) and $v_iv_{i+2}$ for $i=1..8$, with weights $4,6,8,10,12,14,16,18$.\n\nOdd chain: $v_1-v_3-v_5-v_7-v_9$. Even chain: $v_2-v_4-v_6-v_8-v_{10}$. The only link between the chains is $v_1v_2$.",
+          "scene": {
+            "edgeTones": {
+              "v1>v3": "muted",
+              "v2>v4": "muted",
+              "v3>v5": "muted",
+              "v4>v6": "muted",
+              "v5>v7": "muted",
+              "v6>v8": "muted",
+              "v7>v9": "muted",
+              "v8>v10": "muted",
+              "v1>v2": "muted"
+            },
+            "caption": "MST: two chains joined by v1–v2"
+          }
+        },
+        {
+          "title": "Path v5 → v6",
+          "body": "The unique tree path is $v_5\\to v_3\\to v_1\\to v_2\\to v_4\\to v_6$:\n\n$$(5+3)+(3+1)+(1+2)+(2+4)+(4+6)=8+4+3+6+10=31.$$",
+          "scene": {
+            "edgeTones": {
+              "v1>v3": "warning",
+              "v2>v4": "warning",
+              "v3>v5": "warning",
+              "v4>v6": "warning",
+              "v5>v7": "muted",
+              "v6>v8": "muted",
+              "v7>v9": "muted",
+              "v8>v10": "muted",
+              "v1>v2": "warning"
+            },
+            "tones": {
+              "v5": "accent",
+              "v6": "accent"
+            },
+            "caption": "Path length 31"
+          }
+        }
+      ],
+      "answer": {
+        "value": "31",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "11 is the weight of the direct edge $v_5v_6$, which is not in the MST."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "25 is not the length of the tree path. The only $v_5$–$v_6$ path in the MST goes through $v_1$–$v_2$ and sums to 31."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$8+4+3+6+10=31$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "41 is too large. The unique tree path has 5 edges weighing 8, 4, 3, 6 and 10, which sum to 31."
+        }
+      ],
+      "pitfalls": [
+        "Using the direct edge $v_5v_6$ (11). It is never in the MST, because $v_6$ is attached more cheaply by $v_4v_6$ (10)."
+      ],
+      "verification": "The path's edges are all in the MST, it has 5 edges, and the weights sum to 31.",
+      "animation": {
+        "kind": "graph",
+        "nodes": [
+          {
+            "id": "v1",
+            "x": 0,
+            "y": 1.2
+          },
+          {
+            "id": "v2",
+            "x": 1,
+            "y": 0
+          },
+          {
+            "id": "v3",
+            "x": 2,
+            "y": 1.2
+          },
+          {
+            "id": "v4",
+            "x": 3,
+            "y": 0
+          },
+          {
+            "id": "v5",
+            "x": 4,
+            "y": 1.2
+          },
+          {
+            "id": "v6",
+            "x": 5,
+            "y": 0
+          },
+          {
+            "id": "v7",
+            "x": 6,
+            "y": 1.2
+          },
+          {
+            "id": "v8",
+            "x": 7,
+            "y": 0
+          },
+          {
+            "id": "v9",
+            "x": 8,
+            "y": 1.2
+          },
+          {
+            "id": "v10",
+            "x": 9,
+            "y": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "v1",
+            "to": "v2",
+            "w": 3
+          },
+          {
+            "from": "v1",
+            "to": "v3",
+            "w": 4
+          },
+          {
+            "from": "v2",
+            "to": "v3",
+            "w": 5
+          },
+          {
+            "from": "v2",
+            "to": "v4",
+            "w": 6
+          },
+          {
+            "from": "v3",
+            "to": "v4",
+            "w": 7
+          },
+          {
+            "from": "v3",
+            "to": "v5",
+            "w": 8
+          },
+          {
+            "from": "v4",
+            "to": "v5",
+            "w": 9
+          },
+          {
+            "from": "v4",
+            "to": "v6",
+            "w": 10
+          },
+          {
+            "from": "v5",
+            "to": "v6",
+            "w": 11
+          },
+          {
+            "from": "v5",
+            "to": "v7",
+            "w": 12
+          },
+          {
+            "from": "v6",
+            "to": "v7",
+            "w": 13
+          },
+          {
+            "from": "v6",
+            "to": "v8",
+            "w": 14
+          },
+          {
+            "from": "v7",
+            "to": "v8",
+            "w": 15
+          },
+          {
+            "from": "v7",
+            "to": "v9",
+            "w": 16
+          },
+          {
+            "from": "v8",
+            "to": "v9",
+            "w": 17
+          },
+          {
+            "from": "v8",
+            "to": "v10",
+            "w": 18
+          },
+          {
+            "from": "v9",
+            "to": "v10",
+            "w": 19
+          }
+        ]
+      }
     }
   }
 }

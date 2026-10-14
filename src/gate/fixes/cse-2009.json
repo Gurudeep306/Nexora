@@ -1,0 +1,199 @@
+{
+  "paper": "cse-2009",
+  "fixes": [
+    {
+      "id": "cse-2009-cs-6",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Stored key D (5) is contradicted by a 3-gate realisation: NOR(NOR(A,C), NOR(B,C)) = (A+C)(B+C) = AB+C; 2 gates cannot realise it. Proven answer is B (3).",
+      "source": "independent derivation (no official pre-2014 key available)"
+    },
+    {
+      "id": "cse-2009-cs-6",
+      "field": "reviewNote",
+      "before": null,
+      "after": "Stored key D (5) looks wrong: (A+C)(B+C) = AB+C is realised by 3 two-input NOR gates (NOR(NOR(A,C),NOR(B,C))) and 2 gates provably cannot do it, so the answer should be B (3). Confirm against an official key before changing the answer.",
+      "reason": "Record why the stored key D is suspect so a reviewer can confirm B (3).",
+      "source": "independent derivation"
+    },
+    {
+      "id": "cse-2009-cs-20",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Laying the cells on the 3x3 grid gives rows per column <2,3,2> and columns per row <2,3,2> uniquely (every grid slot is filled exactly once), confirming key C.",
+      "source": "independent derivation from the PDF (page 4)"
+    },
+    {
+      "id": "cse-2009-cs-20",
+      "field": "reviewNote",
+      "before": "Option order/answer depends on counting convention (distinct cells); could not confirm official key (web rate-limited).",
+      "after": null,
+      "reason": "Review resolved: grid layout verified, key C confirmed.",
+      "source": "independent derivation from the PDF (page 4)"
+    },
+    {
+      "id": "cse-2009-cs-31",
+      "field": "topic",
+      "before": "scheduling",
+      "after": "files",
+      "reason": "Disk-head scheduling is filed under os/files across the bank (e.g. 1999-a-10, 2004-cs-12, 2014-1-cs-19).",
+      "source": "GATE 2009 CS question paper (GATE_PYQ/GATE2009.pdf)"
+    },
+    {
+      "id": "cse-2009-cs-39",
+      "field": "topic",
+      "before": "complexity",
+      "after": "sorting",
+      "reason": "Quicksort worst-case question belongs to algo/sorting.",
+      "source": "GATE 2009 CS question paper (GATE_PYQ/GATE2009.pdf)"
+    },
+    {
+      "id": "cse-2009-cs-40",
+      "field": "topic",
+      "before": "pumping",
+      "after": "cfg",
+      "reason": "Classifying a CFL intersected with a regular language is a context-free language question, not a pumping-lemma one.",
+      "source": "GATE 2009 CS question paper (GATE_PYQ/GATE2009.pdf)"
+    },
+    {
+      "id": "cse-2009-cs-32",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2009/cs-32-1.png",
+          "alt": "States Start, Ready, Running, Blocked, Terminated. Edges: A Start->Ready, B Ready->Running, C Running->Ready, D Running->Terminated, E Blocked->Ready, F Running->Blocked.",
+          "svg": "cse-2009/cs-32-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2009/cs-32-1.png",
+          "alt": "Process state diagram: Start -A-> Ready; Ready -B-> Running; Running -C-> Ready; Running -D-> Terminated; Running -F-> Blocked; Blocked -E-> Ready.",
+          "svg": "cse-2009/cs-32-1.svg"
+        }
+      ],
+      "reason": "SVG redrawn from the paper; alt made precise.",
+      "source": "GATE 2009 CS question paper (GATE_PYQ/GATE2009.pdf)"
+    },
+    {
+      "id": "cse-2009-cs-36",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2009/cs-36-a.png",
+          "alt": "Hash table of 10 slots for option A",
+          "svg": "cse-2009/cs-36-a.svg"
+        },
+        {
+          "f": "cse-2009/cs-36-b.png",
+          "alt": "Hash table of 10 slots for option B",
+          "svg": "cse-2009/cs-36-b.svg"
+        },
+        {
+          "f": "cse-2009/cs-36-c.png",
+          "alt": "Hash table of 10 slots for option C",
+          "svg": "cse-2009/cs-36-c.svg"
+        },
+        {
+          "f": "cse-2009/cs-36-d.png",
+          "alt": "Hash table of 10 slots for option D",
+          "svg": "cse-2009/cs-36-d.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2009/cs-36-a.png",
+          "alt": "Option A hash table, slots 0-9: slot 2 = 2, slot 3 = 23, slot 5 = 15, slot 8 = 18, others empty",
+          "svg": "cse-2009/cs-36-a.svg"
+        },
+        {
+          "f": "cse-2009/cs-36-b.png",
+          "alt": "Option B hash table, slots 0-9: slot 2 = 12, slot 3 = 13, slot 5 = 5, slot 8 = 18, others empty",
+          "svg": "cse-2009/cs-36-b.svg"
+        },
+        {
+          "f": "cse-2009/cs-36-c.png",
+          "alt": "Option C hash table, slots 0-9: 2 = 12, 3 = 13, 4 = 2, 5 = 3, 6 = 23, 7 = 5, 8 = 18, 9 = 15; slots 0, 1 empty",
+          "svg": "cse-2009/cs-36-c.svg"
+        },
+        {
+          "f": "cse-2009/cs-36-d.png",
+          "alt": "Option D hash table, slots 0-9: slot 2 = 12, 2; slot 3 = 13, 3, 23; slot 5 = 5, 15; slot 8 = 18; others empty",
+          "svg": "cse-2009/cs-36-d.svg"
+        }
+      ],
+      "reason": "SVGs redrawn from the paper; alt now lists slot contents.",
+      "source": "GATE 2009 CS question paper (GATE_PYQ/GATE2009.pdf)"
+    },
+    {
+      "id": "cse-2009-cs-38",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2009/cs-38-1.png",
+          "alt": "Undirected weighted graph on a,b,c,d,e,f,g: a-b 5, a-c 3, b-c 4, b-d 6, b-e 2, c-d 5, c-f 6, d-e 6, d-f 6, e-f 3, e-g 5, f-g 4.",
+          "svg": "cse-2009/cs-38-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2009/cs-38-1.png",
+          "alt": "Undirected weighted graph on vertices a-g: a-b 5, a-c 3, b-c 4, b-d 6, b-e 2, c-d 5, c-f 6, d-e 6, d-f 6, e-f 3, e-g 5, f-g 4.",
+          "svg": "cse-2009/cs-38-1.svg"
+        }
+      ],
+      "reason": "SVG redrawn from the paper; alt made precise.",
+      "source": "GATE 2009 CS question paper (GATE_PYQ/GATE2009.pdf)"
+    },
+    {
+      "id": "cse-2009-cs-45",
+      "field": "text",
+      "before": "Let $R$ and $S$ be relational schemes such that $R = \\{a, b, c\\}$ and $S = \\{c\\}$. Now consider the following queries on the database :\n\nI. $\\pi_{R-S}(r) - \\pi_{R-S}(\\pi_{R-S}(r) \\times s - \\pi_{R-S,S}(r))$\n\nII. $\\{t \\mid t \\in \\pi_{R-S}(r) \\wedge \\forall u \\in s (\\exists v \\in r (u = v[s] \\wedge t = v[R-S]))\\}$\n\nIII. $\\{t \\mid t \\in \\pi_{R-S}(r) \\wedge \\forall v \\in r (\\exists u \\in s (u = v[s] \\wedge t = v[R-S]))\\}$\n\nIV. Select R.a, R.b\nfrom R, S\nwhere R.c = S.c\n\nWhich of the above queries are equivalent ?",
+      "after": "Let $R$ and $S$ be relational schemes such that $R = \\{a, b, c\\}$ and $S = \\{c\\}$. Now consider the following queries on the database :\n\nI. $\\pi_{R-S}(r) - \\pi_{R-S}(\\pi_{R-S}(r) \\times s - \\pi_{R-S,S}(r))$\n\nII. $\\{t \\mid t \\in \\pi_{R-S}(r) \\wedge \\forall u \\in s (\\exists v \\in r (u = v[s] \\wedge t = v[R-S]))\\}$\n\nIII. $\\{t \\mid t \\in \\pi_{R-S}(r) \\wedge \\forall v \\in r (\\exists u \\in s (u = v[s] \\wedge t = v[R-S]))\\}$\n\nIV.\n\n```sql\nSelect R.a, R.b\nfrom R, S\nwhere R.c = S.c\n```\n\nWhich of the above queries are equivalent ?",
+      "reason": "Render the SQL query IV as a code block so its three lines are not merged into one paragraph.",
+      "source": "GATE 2009 CS question paper (PDF)"
+    },
+    {
+      "id": "cse-2009-cs-44",
+      "field": "reviewNote",
+      "before": "Answer depends on split convention; 4 is the maximum (matches gateoverflow accepted answer).",
+      "after": "Leaf-split count depends on the split/separator convention: right-heavy splits give 3; left-full splits with \"key <= separator goes left\" give 4 (accepted key C); left-full splits with separator = smallest key of the right leaf give 5. Official 2009 key not verified.",
+      "reason": "Make the review note precise about the conventions behind 3/4/5.",
+      "source": "Independent simulation"
+    },
+    {
+      "id": "cse-2009-cs-47",
+      "field": "reviewNote",
+      "before": "Reasoning is convention-based (Tanenbaum-style); matches gateoverflow accepted answer A.",
+      "after": "Solution uses: sequence numbers must advance at least once per maximum packet lifetime, rate >= 1/64 per s = 0.0156/s, closest 0.015/s. Official 2009 key not verified.",
+      "reason": "Record the reasoning behind the kept key.",
+      "source": "Independent solution"
+    },
+    {
+      "id": "cse-2009-cs-49",
+      "field": "answer",
+      "before": "D",
+      "after": "C",
+      "reason": "Statement II is a listed DFD mistake (external entities belong only in the context diagram) and IV is false (data stores connect only to processes); I and III are true, so the answer is C, not D.",
+      "source": "Rajib Mall, Fundamentals of Software Engineering, common errors in DFD construction"
+    },
+    {
+      "id": "cse-2009-cs-49",
+      "field": "reviewNote",
+      "before": "Official key not verified (web rate-limited).",
+      "after": "Key changed D -> C from textbook rules (Rajib Mall: external entities only in the context diagram). Official 2009 key not verified.",
+      "reason": "Explain the answer change.",
+      "source": "Independent solution"
+    },
+    {
+      "id": "cse-2009-cs-55",
+      "field": "reviewNote",
+      "before": "Query semantics do not match any option exactly; answer A is a low-confidence pick from memory of the official key.",
+      "after": "The query returns suppliers who supplied no blue part (including suppliers with no catalog rows); no option states this exactly. Kept the accepted key A (suppliers of non-blue parts). Official 2009 key not verified.",
+      "reason": "Make the review note precise.",
+      "source": "Independent solution"
+    }
+  ]
+}
