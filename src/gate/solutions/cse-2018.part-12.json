@@ -1,0 +1,1411 @@
+{
+  "paper": "cse-2018",
+  "version": 2,
+  "solutions": {
+    "cse-2018-cs-13": {
+      "approach": "Recall the fixed header field widths: port numbers are 16 bits, MAC addresses 48 bits, the IPv6 Next Header is one byte, and TCP sequence numbers are 32 bits.",
+      "concepts": [
+        "UDP header",
+        "Ethernet MAC address",
+        "IPv6 header",
+        "TCP header"
+      ],
+      "steps": [
+        {
+          "title": "Field widths",
+          "body": "| Field | Width |\n|---|---|\n| UDP source/destination port | 16 bits (port range $0$ to $65535$) |\n| Ethernet MAC address | 48 bits (6 bytes) |\n| IPv6 Next Header | 8 bits (same role as the IPv4 Protocol field) |\n| TCP sequence number | 32 bits |"
+        },
+        {
+          "title": "Map to the list",
+          "body": "P → 16 = IV, Q → 48 = I, R → 8 = II, S → 32 = III. So the mapping is **P-IV, Q-I, R-II, S-III**, which is option C."
+        }
+      ],
+      "answer": {
+        "value": "P-IV, Q-I, R-II, S-III",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Gives the UDP port 32 bits and the MAC 16 bits. Ports are 16 bits and MACs are 48 bits."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Gives the UDP port 8 bits and Next Header 16 bits; both are wrong."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "All four widths are right: 16, 48, 8, 32."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Swaps R and S: Next Header is 8 bits and the sequence number is 32 bits, not the reverse."
+        }
+      ],
+      "shortcut": "Q-I (MAC = 48) appears in B, C and D, so look at the port: only C and D give 16 bits, and the 8-bit Next Header then picks C.",
+      "pitfalls": [
+        "Mixing up the 8-bit Next Header with the 20-bit IPv6 Flow Label or the 16-bit Payload Length."
+      ],
+      "verification": "TCP sequence space is $2^{32}$ (used in Q25 of the same paper); MAC = 6 bytes = 48 bits."
+    },
+    "cse-2018-cs-14": {
+      "approach": "In slow start every ACK adds 1 MSS to cwnd. A window of w segments gets w ACKs per RTT, so cwnd goes from w to 2w each RTT: exponential growth.",
+      "concepts": [
+        "TCP slow start",
+        "Congestion window",
+        "Exponential growth"
+      ],
+      "steps": [
+        {
+          "title": "Per ACK",
+          "body": "Each new ACK does $\\text{cwnd} \\leftarrow \\text{cwnd} + 1\\,\\text{MSS}$. So (i) (adds 2 MSS) is false and (ii) (doubles per ACK) is false."
+        },
+        {
+          "title": "Per RTT",
+          "body": "With $\\text{cwnd} = w$ MSS, one RTT returns $w$ ACKs, so $w \\to w + w = 2w$. cwnd **doubles every RTT**: (iv) is true. Growth of 1 MSS per RTT, statement (iii), is congestion avoidance, not slow start."
+        },
+        {
+          "title": "Conclusion",
+          "body": "Only (iv) is true, which is option C."
+        }
+      ],
+      "answer": {
+        "value": "Only (iv) is true",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "(ii) is false (+1 MSS per ACK, not doubling) and (iii) describes congestion avoidance."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "(i) is false (the increment is 1 MSS, not 2) and (iii) is congestion avoidance."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: cwnd doubles once per RTT in slow start."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "(iv) is true but (i) is false."
+        }
+      ],
+      "pitfalls": [
+        "Mixing up the per-ACK increase (+1 MSS) with the per-RTT effect (doubling).",
+        "Mixing up slow start (exponential) with congestion avoidance (additive, +1 MSS per RTT)."
+      ],
+      "verification": "Example: cwnd 1 → 2 → 4 → 8 MSS over successive RTTs."
+    },
+    "cse-2018-cs-15": {
+      "approach": "A trial ends the game unless it is a tie. Winning on the 3rd trial means two ties and then a non-tie, a geometric probability.",
+      "concepts": [
+        "Independent trials",
+        "Geometric distribution"
+      ],
+      "steps": [
+        {
+          "title": "Tie probability",
+          "body": "A tie needs both dice to show the same face: $P(\\text{tie}) = \\frac{6}{36} = \\frac{1}{6}$, so $P(\\text{no tie}) = \\frac{5}{6}$."
+        },
+        {
+          "title": "Win on trial 3",
+          "body": "$$P = \\left(\\tfrac{1}{6}\\right)^2 \\cdot \\tfrac{5}{6} = \\frac{1}{36}\\cdot\\frac{5}{6} = \\frac{5}{216} = 0.023148\\ldots$$"
+        },
+        {
+          "title": "Round",
+          "body": "To 3 decimal places: **0.023**."
+        }
+      ],
+      "answer": {
+        "value": "0.023",
+        "number": 0.023,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Using $\\frac{1}{2}$ for the non-tie factor: \"one of them wins\" covers both P and Q winning, so it is the whole $\\frac{5}{6}$."
+      ],
+      "verification": "$5/216 = 0.0231$; summing over all trials, $\\sum_k (1/6)^{k-1}(5/6) = 1$ as expected."
+    },
+    "cse-2018-cs-16": {
+      "approach": "Substitute $t = x^2$: the integrand is exactly half the derivative of $\\sin(x^2)$.",
+      "concepts": [
+        "Integration by substitution",
+        "Definite integral"
+      ],
+      "steps": [
+        {
+          "title": "Antiderivative",
+          "body": "With $t = x^2$, $dt = 2x\\,dx$:\n$$\\int x\\cos(x^2)\\,dx = \\tfrac{1}{2}\\sin(x^2) + C$$"
+        },
+        {
+          "title": "Limits",
+          "body": "$\\frac{\\pi}{4} = \\frac{3.14}{4} = 0.785$, and $0.785^2 = 0.616225$.\n$$\\int_0^{\\pi/4} x\\cos(x^2)\\,dx = \\tfrac{1}{2}\\left[\\sin(0.616225) - \\sin 0\\right]$$"
+        },
+        {
+          "title": "Evaluate",
+          "body": "$\\sin(0.616225\\text{ rad}) \\approx 0.57796$, so the value is $\\tfrac{1}{2}(0.57796) = 0.28898 \\approx$ **0.289**."
+        }
+      ],
+      "answer": {
+        "value": "0.289",
+        "number": 0.289,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Taking $\\sin$ in degrees: the argument is in radians.",
+        "Forgetting the factor $\\tfrac{1}{2}$, which gives 0.578."
+      ],
+      "verification": "With exact $\\pi$: $(\\pi/4)^2 = 0.61685$, $\\tfrac{1}{2}\\sin(0.61685) = 0.2893$, so it still rounds to 0.289."
+    },
+    "cse-2018-cs-17": {
+      "approach": "A rank-one matrix $uv^T$ has eigenvalues $v^Tu$ (eigenvector $u$) and 0, so the largest eigenvalue is $v^Tu$.",
+      "concepts": [
+        "Rank-one matrix",
+        "Eigenvalues",
+        "Trace"
+      ],
+      "steps": [
+        {
+          "title": "Form A",
+          "body": "$$A = uv^T = \\begin{pmatrix}1\\\\2\\end{pmatrix}\\begin{pmatrix}1 & 1\\end{pmatrix} = \\begin{pmatrix}1 & 1\\\\2 & 2\\end{pmatrix}$$"
+        },
+        {
+          "title": "Eigenvalues",
+          "body": "$\\det A = 1\\cdot2 - 1\\cdot2 = 0$, so one eigenvalue is $0$. The trace is $1 + 2 = 3$, so the other is $3 - 0 = 3$. Check: $Au = u(v^Tu) = u\\cdot(1+2) = 3u$."
+        },
+        {
+          "title": "Answer",
+          "body": "The largest eigenvalue is **3**."
+        }
+      ],
+      "answer": {
+        "value": "3",
+        "number": 3,
+        "matchesKey": true
+      },
+      "shortcut": "For $uv^T$ the only non-zero eigenvalue is $v^Tu = 1\\cdot1 + 1\\cdot2 = 3$.",
+      "pitfalls": [
+        "Computing $u^Tu = 5$ or $v^Tv = 2$ instead of $v^Tu$."
+      ],
+      "verification": "$A\\begin{pmatrix}1\\\\2\\end{pmatrix} = \\begin{pmatrix}3\\\\6\\end{pmatrix} = 3\\begin{pmatrix}1\\\\2\\end{pmatrix}$."
+    },
+    "cse-2018-cs-18": {
+      "approach": "Find a triangle to get the lower bound 3, then give an explicit proper 3-colouring to get the upper bound.",
+      "concepts": [
+        "Chromatic number",
+        "Graph colouring",
+        "Cliques"
+      ],
+      "given": "Edges: a–b, a–c, a–e, b–c, b–d, b–f, c–d, c–e, d–f, e–f (6 vertices, 10 edges).",
+      "steps": [
+        {
+          "title": "Lower bound",
+          "body": "a, b, c are pairwise adjacent (a–b, a–c, b–c), so they form a triangle and need 3 colours: $\\chi \\ge 3$.",
+          "scene": {
+            "tones": {
+              "a": "accent",
+              "b": "accent",
+              "c": "accent"
+            },
+            "edgeTones": {
+              "a>b": "accent",
+              "a>c": "accent",
+              "c>b": "accent"
+            },
+            "caption": "Triangle a–b–c forces 3 colours"
+          }
+        },
+        {
+          "title": "Colour the rest",
+          "body": "Use colours 1, 2, 3 with a = 1, b = 2, c = 3.\n- e is adjacent to a (1), c (3), f, so e = 2.\n- d is adjacent to c (3), b (2), f, so d = 1.\n- f is adjacent to b (2), d (1), e (2), so f = 3.",
+          "scene": {
+            "tones": {
+              "a": "cat1",
+              "d": "cat1",
+              "b": "cat2",
+              "e": "cat2",
+              "c": "cat3",
+              "f": "cat3"
+            },
+            "edgeTones": {},
+            "subs": {
+              "a": "1",
+              "b": "2",
+              "c": "3",
+              "d": "1",
+              "e": "2",
+              "f": "3"
+            },
+            "caption": "Proper 3-colouring"
+          }
+        },
+        {
+          "title": "Check",
+          "body": "Every edge joins different colours: a–b (1,2), a–c (1,3), a–e (1,2), b–c (2,3), b–d (2,1), b–f (2,3), c–d (3,1), c–e (3,2), d–f (1,3), e–f (2,3). So $\\chi \\le 3$ and the chromatic number is **3**."
+        }
+      ],
+      "answer": {
+        "value": "3",
+        "number": 3,
+        "matchesKey": true
+      },
+      "animation": {
+        "kind": "graph",
+        "directed": false,
+        "nodes": [
+          {
+            "id": "a",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "e",
+            "x": 4,
+            "y": 0
+          },
+          {
+            "id": "c",
+            "x": 1.2,
+            "y": 1
+          },
+          {
+            "id": "d",
+            "x": 3.1,
+            "y": 1
+          },
+          {
+            "id": "b",
+            "x": 0,
+            "y": 2
+          },
+          {
+            "id": "f",
+            "x": 4,
+            "y": 2
+          }
+        ],
+        "edges": [
+          {
+            "from": "a",
+            "to": "e"
+          },
+          {
+            "from": "a",
+            "to": "c"
+          },
+          {
+            "from": "a",
+            "to": "b"
+          },
+          {
+            "from": "c",
+            "to": "e"
+          },
+          {
+            "from": "c",
+            "to": "d"
+          },
+          {
+            "from": "c",
+            "to": "b"
+          },
+          {
+            "from": "b",
+            "to": "d"
+          },
+          {
+            "from": "b",
+            "to": "f"
+          },
+          {
+            "from": "d",
+            "to": "f"
+          },
+          {
+            "from": "e",
+            "to": "f"
+          }
+        ],
+        "caption": "The given graph"
+      },
+      "pitfalls": [
+        "Assuming a 4th colour is needed because of the many edges: the colouring above shows 3 colours are enough."
+      ],
+      "verification": "All 10 edges were checked one by one for different colours."
+    },
+    "cse-2018-cs-19": {
+      "approach": "By Lagrange the order of a subgroup divides 84. A proper subgroup cannot be all of G, so its order is at most the largest proper divisor, 42. A subgroup of order 42 can exist (index 2, e.g. in the cyclic group $\\mathbb{Z}_{84}$).",
+      "concepts": [
+        "Lagrange's theorem",
+        "Proper subgroup",
+        "Cyclic groups"
+      ],
+      "steps": [
+        {
+          "title": "Divisors",
+          "body": "$84 = 2^2 \\cdot 3 \\cdot 7$. Proper divisors (excluding 84): 1, 2, 3, 4, 6, 7, 12, 14, 21, 28, **42**."
+        },
+        {
+          "title": "Achievable",
+          "body": "In $\\mathbb{Z}_{84}$ the subgroup $\\langle 2 \\rangle = \\{0, 2, 4, \\ldots, 82\\}$ has $84/2 = 42$ elements. So the largest possible proper subgroup size is **42**."
+        }
+      ],
+      "answer": {
+        "value": "42",
+        "number": 42,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Answering 83: a subgroup order must divide the group order.",
+        "Thinking every group of order 84 has a subgroup of order 42. The question asks for the largest *possible* size, which $\\mathbb{Z}_{84}$ reaches."
+      ],
+      "verification": "$42 \\times 2 = 84$, so $\\langle 2\\rangle$ has index 2."
+    },
+    "cse-2018-cs-20": {
+      "approach": "Rebuild the tree: the last postorder element is the root, and its position in the inorder sequence splits the left and right subtrees. Repeat, then measure the longest root-to-leaf path in edges.",
+      "concepts": [
+        "Tree reconstruction",
+        "Postorder",
+        "Inorder",
+        "Tree height"
+      ],
+      "given": "| Traversal | Sequence |\n|---|---|\n| Postorder | 8, 9, 6, 7, 4, 5, 2, 3, 1 |\n| Inorder | 8, 6, 9, 4, 7, 2, 5, 1, 3 |",
+      "steps": [
+        {
+          "title": "Root 1",
+          "body": "The last postorder element is **1**. In inorder, left of 1 is {8, 6, 9, 4, 7, 2, 5} and right is {3}.",
+          "scene": {
+            "root": {
+              "label": 1,
+              "children": [
+                {
+                  "label": "L: 8,6,9,4,7,2,5",
+                  "tone": "muted"
+                },
+                {
+                  "label": 3
+                }
+              ],
+              "tone": "accent"
+            },
+            "caption": "Root = 1"
+          }
+        },
+        {
+          "title": "Left subtree root 2",
+          "body": "The left part in postorder is 8, 9, 6, 7, 4, 5, **2**, so its root is 2. Inorder 8, 6, 9, 4, 7 | 2 | 5: left = {8, 6, 9, 4, 7}, right = {5}.",
+          "scene": {
+            "root": {
+              "label": 1,
+              "children": [
+                {
+                  "label": 2,
+                  "children": [
+                    {
+                      "label": "8,6,9,4,7",
+                      "tone": "muted"
+                    },
+                    {
+                      "label": 5
+                    }
+                  ],
+                  "tone": "accent"
+                },
+                {
+                  "label": 3
+                }
+              ]
+            },
+            "caption": "Root of left subtree = 2"
+          }
+        },
+        {
+          "title": "Roots 4 and 6",
+          "body": "Postorder 8, 9, 6, 7, **4**, so the root is 4. Inorder 8, 6, 9 | 4 | 7: left {8, 6, 9}, right {7}. Postorder 8, 9, **6**, so the root is 6, with left child 8 and right child 9.",
+          "scene": {
+            "root": {
+              "label": 1,
+              "children": [
+                {
+                  "label": 2,
+                  "children": [
+                    {
+                      "label": 4,
+                      "children": [
+                        {
+                          "label": 6,
+                          "children": [
+                            {
+                              "label": 8
+                            },
+                            {
+                              "label": 9
+                            }
+                          ],
+                          "tone": "accent"
+                        },
+                        {
+                          "label": 7
+                        }
+                      ],
+                      "tone": "accent"
+                    },
+                    {
+                      "label": 5
+                    }
+                  ]
+                },
+                {
+                  "label": 3
+                }
+              ]
+            },
+            "caption": "Tree fully rebuilt"
+          }
+        },
+        {
+          "title": "Height",
+          "body": "The longest path is $1 \\to 2 \\to 4 \\to 6 \\to 8$ (or ending at 9), which has **4 edges**. So the height is **4**.",
+          "scene": {
+            "root": {
+              "label": 1,
+              "children": [
+                {
+                  "label": 2,
+                  "children": [
+                    {
+                      "label": 4,
+                      "children": [
+                        {
+                          "label": 6,
+                          "children": [
+                            {
+                              "label": 8,
+                              "tone": "success"
+                            },
+                            {
+                              "label": 9
+                            }
+                          ],
+                          "tone": "success"
+                        },
+                        {
+                          "label": 7
+                        }
+                      ],
+                      "tone": "success"
+                    },
+                    {
+                      "label": 5
+                    }
+                  ],
+                  "tone": "success"
+                },
+                {
+                  "label": 3
+                }
+              ],
+              "tone": "success"
+            },
+            "caption": "Longest path: 1–2–4–6–8 (4 edges)"
+          }
+        }
+      ],
+      "answer": {
+        "value": "4",
+        "number": 4,
+        "matchesKey": true
+      },
+      "animation": {
+        "kind": "tree",
+        "root": {
+          "label": 1
+        },
+        "caption": "Rebuilding from postorder + inorder"
+      },
+      "pitfalls": [
+        "Counting nodes on the path (5) instead of edges (4); the question defines height as path length."
+      ],
+      "verification": "The postorder of the rebuilt tree is 8, 9, 6, 7, 4, 5, 2, 3, 1 and its inorder is 8, 6, 9, 4, 7, 2, 5, 1, 3. Both match the question."
+    },
+    "cse-2018-cs-21": {
+      "approach": "Every call increments `counter` once. b goes 81 → 27 → 9 → 3 and the recursion stops at b == 3, so count the calls.",
+      "concepts": [
+        "Recursion",
+        "Global variables",
+        "Recursion depth"
+      ],
+      "steps": [
+        {
+          "title": "Call chain",
+          "body": "| Call | b | Action |\n|---|---|---|\n| 1 | 81 | counter = 1, recurse with 81/3 = 27 |\n| 2 | 27 | counter = 2, recurse with 9 |\n| 3 | 9 | counter = 3, recurse with 3 |\n| 4 | 3 | counter = 4, base case returns $4^3$ |",
+          "scene": {
+            "items": [
+              "calc(4,81)",
+              "calc(4,27)",
+              "calc(4,9)",
+              "calc(4,3)"
+            ],
+            "caption": "4 frames at the deepest point; each one did counter++"
+          }
+        },
+        {
+          "title": "Output",
+          "body": "The return values ($4^3$, then cubed again, and so on) overflow `int` but are never printed. Only `counter` is printed: **4**."
+        }
+      ],
+      "answer": {
+        "value": "4",
+        "number": 4,
+        "matchesKey": true
+      },
+      "animation": {
+        "kind": "stack",
+        "items": [
+          "calc(4,81)"
+        ],
+        "caption": "Call stack"
+      },
+      "pitfalls": [
+        "Being distracted by the huge (overflowing) return values: they do not affect `counter`.",
+        "Missing the base-case call: it also does counter++ before it returns."
+      ],
+      "verification": "$81 = 3^4$, so there are 4 calls (b = 3^4, 3^3, 3^2, 3^1)."
+    },
+    "cse-2018-cs-22": {
+      "approach": "The two D flip-flops form a 2-bit shift register. With state $(Q_1Q_2)$ the next state is $(\\text{in}, Q_1)$. A self-loop needs $\\text{in} = Q_1$ and $Q_1 = Q_2$.",
+      "concepts": [
+        "D flip-flop",
+        "Shift register",
+        "State transition diagram"
+      ],
+      "steps": [
+        {
+          "title": "Next-state equations",
+          "body": "$Q_1^+ = \\text{in}$, $Q_2^+ = Q_1$. So $(Q_1Q_2) \\xrightarrow{\\text{in}} (\\text{in}\\,Q_1)$."
+        },
+        {
+          "title": "Transition table",
+          "body": "| State $Q_1Q_2$ | in = 0 | in = 1 |\n|---|---|---|\n| 00 | **00** | 10 |\n| 01 | 00 | 10 |\n| 10 | 01 | 11 |\n| 11 | 01 | **11** |",
+          "scene": {
+            "caption": "Full state diagram"
+          }
+        },
+        {
+          "title": "Self-loops",
+          "body": "Next = current needs $\\text{in}\\,Q_1 = Q_1Q_2$, so $Q_1 = Q_2$ (and $\\text{in} = Q_1$). Only states **00** (in = 0) and **11** (in = 1) qualify. The answer is **2**.",
+          "scene": {
+            "current": [
+              "00",
+              "11"
+            ],
+            "edgeTones": {
+              "00>00": "success",
+              "11>11": "success"
+            },
+            "caption": "Self-loops at 00 and 11"
+          }
+        }
+      ],
+      "answer": {
+        "value": "2",
+        "number": 2,
+        "matchesKey": true
+      },
+      "animation": {
+        "kind": "automaton",
+        "layout": "circle",
+        "states": [
+          {
+            "id": "00",
+            "start": true
+          },
+          {
+            "id": "01"
+          },
+          {
+            "id": "10"
+          },
+          {
+            "id": "11"
+          }
+        ],
+        "edges": [
+          {
+            "from": "00",
+            "to": "00",
+            "label": "0"
+          },
+          {
+            "from": "00",
+            "to": "10",
+            "label": "1"
+          },
+          {
+            "from": "01",
+            "to": "00",
+            "label": "0"
+          },
+          {
+            "from": "01",
+            "to": "10",
+            "label": "1"
+          },
+          {
+            "from": "10",
+            "to": "01",
+            "label": "0"
+          },
+          {
+            "from": "10",
+            "to": "11",
+            "label": "1"
+          },
+          {
+            "from": "11",
+            "to": "01",
+            "label": "0"
+          },
+          {
+            "from": "11",
+            "to": "11",
+            "label": "1"
+          }
+        ],
+        "caption": "States Q1Q2 (start arrow marks the reset state 00); edges labelled by in"
+      },
+      "pitfalls": [
+        "Writing the next state as $(Q_1, \\text{in})$: FF2 takes FF1’s old output."
+      ],
+      "verification": "01 → {00, 10} and 10 → {01, 11}: neither can stay put, because the bits shift."
+    },
+    "cse-2018-cs-23": {
+      "approach": "All chips are refreshed in parallel. One refresh period needs (rows × time per row-refresh). That fraction of 2 ms is lost; the remainder is available.",
+      "concepts": [
+        "DRAM refresh",
+        "Memory organisation"
+      ],
+      "given": "| Quantity | Value |\n|---|---|\n| Memory | 1 GB, 32-bit wide |\n| Chip | 256M × 4 bit |\n| Rows per chip | $2^{14}$ |\n| One refresh | 50 ns |\n| Refresh period | 2 ms |",
+      "steps": [
+        {
+          "title": "Chip layout",
+          "body": "Chip capacity $= 256\\text{M} \\times 4 \\text{ bit} = 128$ MB, so there are $1\\text{ GB}/128\\text{ MB} = 8$ chips. A 32-bit word needs $32/4 = 8$ chips side by side, so it is one bank and all 8 chips refresh simultaneously."
+        },
+        {
+          "title": "Refresh time per period",
+          "body": "Each row is refreshed once per period: $2^{14} \\times 50\\text{ ns} = 16384 \\times 50 = 819200\\text{ ns} = 0.8192$ ms."
+        },
+        {
+          "title": "Available fraction",
+          "body": "$$\\frac{0.8192}{2} = 0.4096 = 40.96\\%\\text{ busy}$$\nAvailable $= 100 - 40.96 = 59.04\\% \\approx$ **59**."
+        }
+      ],
+      "answer": {
+        "value": "59",
+        "number": 59,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Multiplying the refresh time by the 8 chips: they are refreshed in parallel.",
+        "Answering 41 (the refresh share) instead of the available share."
+      ],
+      "verification": "$59.04 + 40.96 = 100$."
+    },
+    "cse-2018-cs-24": {
+      "approach": "Worst case: every process holds $K-1$ instances and waits for one more. Deadlock is impossible if one spare instance still remains, i.e. $n(K-1) + 1 \\le R$.",
+      "concepts": [
+        "Deadlock avoidance",
+        "Resource allocation",
+        "Pigeonhole"
+      ],
+      "steps": [
+        {
+          "title": "Condition",
+          "body": "With $n = 3$ processes and $R = 4$ instances, deadlock is always avoided iff $3(K - 1) + 1 \\le 4$, i.e. $3(K-1) \\le 3$, i.e. $K \\le 2$."
+        },
+        {
+          "title": "Check both sides",
+          "body": "- $K = 2$: at worst each holds 1 ($3$ total) and the 4th instance lets one process finish and release.\n- $K = 3$: the allocation (2, 1, 1) uses all 4 instances, and each process still needs more (1, 2 and 2 instances). Nobody can proceed, so this is a deadlock.\n\nThe largest safe $K$ is **2**."
+        }
+      ],
+      "answer": {
+        "value": "2",
+        "number": 2,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Using $nK \\le R$ (giving $K = 1$): this is too strict, since a process only needs one extra instance to finish."
+      ],
+      "verification": "For K = 3 the allocation (2, 1, 1) uses all 4 instances, and every process still needs at least 1 more, so it deadlocks."
+    },
+    "cse-2018-cs-25": {
+      "approach": "TCP sequence numbers count bytes in a 32-bit space. A number repeats after $2^{32}$ bytes have been sent; at full line rate that takes $2^{32}\\times 8 / 10^9$ seconds.",
+      "concepts": [
+        "TCP sequence numbers",
+        "Wrap-around time"
+      ],
+      "steps": [
+        {
+          "title": "Sequence space",
+          "body": "32-bit field, so $2^{32} = 4294967296$ distinct byte numbers before 1234 comes back."
+        },
+        {
+          "title": "Time",
+          "body": "$$T = \\frac{2^{32}\\times 8\\text{ bits}}{10^9\\text{ bits/s}} = \\frac{34359738368}{10^9} = 34.36\\text{ s}$$\nRounded: **34** seconds."
+        }
+      ],
+      "answer": {
+        "value": "34",
+        "number": 34,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Forgetting that sequence numbers count bytes, not bits (that gives 4.29 s).",
+        "The starting value 1234 does not matter; only the size of the space does."
+      ],
+      "verification": "$1\\text{ Gbps} = 125$ MB/s and $4.295\\times10^9 / 1.25\\times10^8 = 34.36$."
+    },
+    "cse-2018-cs-26": {
+      "approach": "P is 2×2 (eigenvectors are 2-vectors). Two distinct eigenvalues would give two independent eigenvectors, so the eigenvalue must be repeated and its eigenspace is 1-dimensional. That makes P defective, so it is not diagonalizable. Nothing forces the eigenvalue to be 0.",
+      "concepts": [
+        "Eigenvectors",
+        "Algebraic vs geometric multiplicity",
+        "Diagonalizability"
+      ],
+      "steps": [
+        {
+          "title": "II is true",
+          "body": "If $P$ had distinct eigenvalues $\\lambda_1 \\ne \\lambda_2$, their eigenvectors would be independent, giving a direction other than $(1,4)^T$. So $\\lambda_1 = \\lambda_2$: a repeated eigenvalue."
+        },
+        {
+          "title": "III is true",
+          "body": "Algebraic multiplicity 2, but geometric multiplicity 1 (only multiples of $(1,4)^T$). There are not enough independent eigenvectors to form a basis, so P cannot be diagonalized."
+        },
+        {
+          "title": "I is not forced",
+          "body": "Counter-example: $P = \\begin{pmatrix}5 & -1\\\\ 16 & -3\\end{pmatrix}$ has trace 2 and $\\det P = -15 + 16 = 1$. So $\\lambda = 1$ is repeated, and $P - I = \\begin{pmatrix}4 & -1\\\\ 16 & -4\\end{pmatrix}$ has null space spanned by $(1,4)^T$. This P fits the question and is invertible. Only II and III are necessarily true: option D."
+        }
+      ],
+      "answer": {
+        "value": "Only II and III are necessarily true",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "I is not forced: the repeated eigenvalue can be non-zero (det ≠ 0)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "III is also necessarily true (a defective matrix), so \"only II\" is incomplete."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "I is not necessarily true."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: the eigenvalue is repeated and the eigenspace is deficient, so P is not diagonalizable."
+        }
+      ],
+      "pitfalls": [
+        "Assuming \"only one eigenvector direction\" means eigenvalue 0. It is about multiplicity, not the value."
+      ],
+      "verification": "The singular case also fits: $\\begin{pmatrix}-4 & 1\\\\ -16 & 4\\end{pmatrix}$ (nilpotent, eigenvector $(1,4)^T$). So I can be true or false, while II and III hold in both examples."
+    },
+    "cse-2018-cs-27": {
+      "approach": "Check each set: rationals are countable, a function from {0,1} to N is just an ordered pair in N×N, finite subsets of N are a countable union of countable sets, and functions N → {0,1} are infinite binary sequences, which are uncountable (Cantor diagonal).",
+      "concepts": [
+        "Countable sets",
+        "Cantor diagonalisation",
+        "Power set"
+      ],
+      "steps": [
+        {
+          "title": "P and Q",
+          "body": "**P**: $\\mathbb{Q}$ maps injectively into $\\mathbb{Z}\\times\\mathbb{N}$, so it is countable.\n**Q**: $f:\\{0,1\\}\\to\\mathbb{N}$ is determined by $(f(0), f(1)) \\in \\mathbb{N}\\times\\mathbb{N}$, so it is countable."
+        },
+        {
+          "title": "Set R",
+          "body": "$f:\\mathbb{N}\\to\\{0,1\\}$ is an infinite 0/1 sequence, i.e. the characteristic function of a subset of $\\mathbb{N}$. So $|R| = |2^{\\mathbb{N}}| = 2^{\\aleph_0}$, which is uncountable by Cantor's diagonal argument."
+        },
+        {
+          "title": "Set S",
+          "body": "Finite subsets of size $k$ form a countable set (a subset of $\\mathbb{N}^k$). The union over $k = 0, 1, 2, \\ldots$ is a countable union of countable sets, so S is countable. (Equivalently, map $\\{a_1,\\ldots,a_k\\}$ to $\\sum 2^{a_i}$, a bijection with $\\mathbb{N}$.) Countable: P, Q, S, which is option D."
+        }
+      ],
+      "answer": {
+        "value": "P, Q and S only",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Omits P; the rationals are countable."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Omits Q; functions {0,1} → N are just pairs of naturals."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Includes R, which is uncountable (equivalent to the power set of N)."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: P, Q, S are countable and R is not."
+        }
+      ],
+      "pitfalls": [
+        "Mixing up \"functions from N to {0,1}\" (uncountable) with \"functions from {0,1} to N\" (countable).",
+        "Mixing up finite subsets of N (countable) with all subsets of N (uncountable)."
+      ],
+      "verification": "Binary encoding: finite subsets of N correspond one-to-one with natural numbers written in binary."
+    },
+    "cse-2018-cs-28": {
+      "approach": "For a ∃*∀* (Bernays–Schönfinkel) sentence without function symbols, keep only the three elements chosen as witnesses for s, t, u. The universal part still holds on this substructure, so there is a model with at most 3 elements.",
+      "concepts": [
+        "First-order logic",
+        "Bernays–Schönfinkel class",
+        "Substructures",
+        "Universal sentences"
+      ],
+      "steps": [
+        {
+          "title": "Take witnesses",
+          "body": "In the 7-element model M pick $a, b, c$ with $M \\models \\forall v\\forall w\\forall x\\forall y\\,\\psi(a,b,c,v,w,x,y)$."
+        },
+        {
+          "title": "Restrict",
+          "body": "Let $M'$ be M restricted to $\\{a,b,c\\}$ (at most 3 elements). With no function symbols this is a valid substructure. ψ is quantifier-free, so its truth for any assignment from $\\{a,b,c\\}$ is the same in $M'$ and M. The universal quantifiers now range over fewer elements, so they still hold. Hence $M' \\models \\varphi$ with size ≤ 3: option A."
+        },
+        {
+          "title": "Other options",
+          "body": "B contradicts the model just built. For C and D, take $\\psi \\equiv (s = s)$ (always true): then φ has models of every size, including 7 and sizes larger than 7, so neither C nor D is necessarily true."
+        }
+      ],
+      "answer": {
+        "value": "There exists at least one model of φ with universe of size ≤ 3",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: the substructure on the three witnesses is a model."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "False: that substructure is a model of size ≤ 3."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Not necessary: e.g. if ψ is a tautology, φ has models of every size, including more than 7."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Not necessary: the 3-element substructure is already a smaller model."
+        }
+      ],
+      "pitfalls": [
+        "Thinking the existential witnesses must be distinct: they may coincide, which is why the bound is \"≤ 3\"."
+      ],
+      "verification": "This is the standard small-model property of the Bernays–Schönfinkel class (number of existential variables, here 3)."
+    },
+    "cse-2018-cs-29": {
+      "approach": "C passes arguments by value. `fun1` swaps its local copies of the pointers, so main is unaffected. `fun2` gets the addresses of `str1`/`str2` and swaps the pointers themselves.",
+      "concepts": [
+        "Pass by value",
+        "Pointers to pointers",
+        "String literals"
+      ],
+      "steps": [
+        {
+          "title": "fun1",
+          "body": "`s1`, `s2` are copies of `str1`, `str2`. Swapping the copies leaves `str1 = \"Hi\"`, `str2 = \"Bye\"`, so it prints `Hi Bye `."
+        },
+        {
+          "title": "fun2",
+          "body": "`s1 = &str1`, `s2 = &str2`. `*s1 = *s2` writes into `str1` itself, so after the swap `str1 = \"Bye\"`, `str2 = \"Hi\"`. It prints `Bye Hi`."
+        },
+        {
+          "title": "Output",
+          "body": "`Hi Bye Bye Hi`, which is option A."
+        }
+      ],
+      "answer": {
+        "value": "Hi Bye Bye Hi",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: fun1 has no effect, and fun2 swaps."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Would need fun2 to have no effect too, but it modifies through the double pointers."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Would need fun1 to swap and then fun2 to undo it; fun1 cannot swap."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Would need fun1 to swap; it only swaps local copies."
+        }
+      ],
+      "pitfalls": [
+        "Thinking passing a pointer lets the callee change the pointer itself; it can only change what it points to."
+      ],
+      "verification": "This is the same pattern as swap(int a, int b) (no effect) versus swap(int *a, int *b) (works), one level up."
+    },
+    "cse-2018-cs-30": {
+      "approach": "In an undirected DFS every non-tree edge joins an ancestor and a descendant, so I holds. In BFS non-tree edges join vertices whose depths differ by at most 1, and they can have equal depth (e.g. in a triangle), so II fails.",
+      "concepts": [
+        "DFS tree",
+        "BFS tree",
+        "Edge classification"
+      ],
+      "steps": [
+        {
+          "title": "Statement I",
+          "body": "Suppose edge $(u,v)$ and DFS discovers u first. While u is on the stack, v is still unvisited and adjacent, so DFS visits v before u finishes. Then v is a descendant of u. So every edge is a tree edge or a back edge: **no cross edges**. I is true."
+        },
+        {
+          "title": "Statement II",
+          "body": "Counter-example: triangle $x, y, z$ with BFS from x. Then y and z are at depth 1, and edge $(y,z)$ has $|1 - 1| = 0 \\ne 1$. BFS guarantees only $|i - j| \\le 1$. II is false."
+        },
+        {
+          "title": "Conclusion",
+          "body": "I only, which is option A."
+        }
+      ],
+      "answer": {
+        "value": "I only",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "II fails for same-level edges, and I is true."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "II is not necessary (triangle counter-example)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "I is always true for undirected graphs."
+        }
+      ],
+      "pitfalls": [
+        "Carrying over directed-graph DFS, which does have cross edges.",
+        "Reading the BFS property $|i-j| \\le 1$ as $= 1$."
+      ],
+      "verification": "The triangle shows II fails, and the white-path argument proves I."
+    },
+    "cse-2018-cs-31": {
+      "approach": "Run the matrix-chain DP on the dimensions $\\langle 2, 25, 3, 16, 1, 1000\\rangle$ and read off the optimal splits. The 1×1000 matrix should be multiplied last, after everything else is reduced to 2×1.",
+      "concepts": [
+        "Matrix chain multiplication",
+        "Dynamic programming",
+        "Optimal parenthesization"
+      ],
+      "given": "| Matrix | $F_1$ | $F_2$ | $F_3$ | $F_4$ | $F_5$ |\n|---|---|---|---|---|---|\n| Size | 2×25 | 25×3 | 3×16 | 16×1 | 1×1000 |",
+      "steps": [
+        {
+          "title": "Length-2 chains",
+          "body": "$m_{12} = 2\\cdot25\\cdot3 = 150$, $m_{23} = 25\\cdot3\\cdot16 = 1200$, $m_{34} = 3\\cdot16\\cdot1 = 48$, $m_{45} = 16\\cdot1\\cdot1000 = 16000$.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "c": 1,
+                "tone": "accent"
+              },
+              {
+                "r": 1,
+                "c": 2,
+                "tone": "accent"
+              },
+              {
+                "r": 2,
+                "c": 3,
+                "tone": "accent"
+              },
+              {
+                "r": 3,
+                "c": 4,
+                "tone": "accent"
+              }
+            ],
+            "caption": "Length-2 chains"
+          }
+        },
+        {
+          "title": "Length-3 chains",
+          "body": "$m_{13} = \\min(0 + 1200 + 2\\cdot25\\cdot16,\\ 150 + 0 + 2\\cdot3\\cdot16) = \\min(2000, 246) = 246$\n\n$m_{24} = \\min(0 + 48 + 25\\cdot3\\cdot1,\\ 1200 + 0 + 25\\cdot16\\cdot1) = \\min(123, 1600) = 123$ (split $F_2(F_3F_4)$)\n\n$m_{35} = \\min(16000 + 3\\cdot16\\cdot1000,\\ 48 + 3\\cdot1\\cdot1000) = \\min(64000, 3048) = 3048$",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "c": 2,
+                "tone": "accent"
+              },
+              {
+                "r": 1,
+                "c": 3,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "c": 4,
+                "tone": "accent"
+              }
+            ],
+            "caption": "Length-3 chains"
+          }
+        },
+        {
+          "title": "Length-4 chains",
+          "body": "$m_{14} = \\min(0 + 123 + 2\\cdot25\\cdot1,\\ 150 + 48 + 2\\cdot3\\cdot1,\\ 246 + 0 + 2\\cdot16\\cdot1) = \\min(173, 204, 278) = 173$ (split $F_1(F_2F_3F_4)$)\n\n$m_{25} = \\min(123 + 25\\cdot1\\cdot1000, \\ldots) = 25123$",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "c": 3,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "c": 4,
+                "tone": "accent"
+              }
+            ],
+            "caption": "Length-4 chains"
+          }
+        },
+        {
+          "title": "Full chain",
+          "body": "Split candidates for $m_{15}$ (last multiply $2\\times k\\times1000$):\n- after $F_1$: $0 + 25123 + 2\\cdot25\\cdot1000 = 75123$\n- after $F_2$: $150 + 3048 + 2\\cdot3\\cdot1000 = 9198$\n- after $F_3$: $246 + 16000 + 2\\cdot16\\cdot1000 = 48246$\n- after $F_4$: $173 + 0 + 2\\cdot1\\cdot1000 = 2173$\n\nThe minimum is **2173** at split $k = 4$.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "c": 4,
+                "tone": "success"
+              }
+            ],
+            "caption": "Optimal cost 2173"
+          }
+        },
+        {
+          "title": "Read the parenthesization",
+          "body": "$(F_1(F_2(F_3F_4)))F_5$. The only pair of adjacent matrices multiplied directly is $F_3F_4$. ($F_2$ multiplies the product $F_3F_4$, not $F_3$, and $F_5$ multiplies a product.) The answer is option C."
+        }
+      ],
+      "answer": {
+        "value": "F3F4 only",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "animation": {
+        "kind": "table",
+        "cols": [
+          "F1",
+          "F2",
+          "F3",
+          "F4",
+          "F5"
+        ],
+        "rowLabels": [
+          "F1",
+          "F2",
+          "F3",
+          "F4",
+          "F5"
+        ],
+        "corner": "i \\ j",
+        "rows": [
+          [
+            0,
+            150,
+            246,
+            173,
+            2173
+          ],
+          [
+            "–",
+            0,
+            1200,
+            123,
+            25123
+          ],
+          [
+            "–",
+            "–",
+            0,
+            48,
+            3048
+          ],
+          [
+            "–",
+            "–",
+            "–",
+            0,
+            16000
+          ],
+          [
+            "–",
+            "–",
+            "–",
+            "–",
+            0
+          ]
+        ],
+        "mono": true,
+        "caption": "m[i][j] = min cost for Fi..Fj"
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Computing $F_1F_2$ first leads to at best $150 + 48 + 6 + 2000 = 2204 > 2173$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$F_2F_3$ costs 1200 alone, which is far worse than the optimum."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: the optimal order is $(F_1(F_2(F_3F_4)))F_5$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$F_4F_5$ produces a 16×1000 matrix (cost 16000), which is very expensive."
+        }
+      ],
+      "shortcut": "The tiny inner dimension 1 (between $F_4$ and $F_5$) suggests collapsing $F_1\\ldots F_4$ to 2×1 first and doing $F_5$ last; within that, $F_3F_4$ (cost 48) is the cheapest start.",
+      "pitfalls": [
+        "Treating $F_2(F_3F_4)$ as making $F_2F_3$ explicitly computed."
+      ],
+      "verification": "Total of the chosen order: $48 + 75 + 50 + 2000 = 2173$, which matches the DP."
+    },
+    "cse-2018-cs-32": {
+      "approach": "The first loop counts how many times n can be halved, giving $j = \\log_2 n = 40$. The second loop counts halvings of 40 down to 1.",
+      "concepts": [
+        "Loop tracing",
+        "Integer division",
+        "Logarithms"
+      ],
+      "steps": [
+        {
+          "title": "First loop",
+          "body": "$i = 2^{40}, 2^{39}, \\ldots, 2^1$: the body runs while $i > 1$, so 40 times. $j = 40$."
+        },
+        {
+          "title": "Second loop",
+          "body": "| j | j > 1? | sum after |\n|---|---|---|\n| 40 | yes | 1 |\n| 20 | yes | 2 |\n| 10 | yes | 3 |\n| 5 | yes | 4 |\n| 2 | yes | 5 |\n| 1 | no | stop |\n\nReturns **5**, which is option B."
+        }
+      ],
+      "answer": {
+        "value": "5",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Misses one iteration (e.g. stopping at j = 2)."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: 40 → 20 → 10 → 5 → 2 → 1 gives 5 increments."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Uses $\\lceil \\log_2 40 \\rceil = 6$; integer halving (5/2 = 2) gives 5."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "That is j, not sum."
+        }
+      ],
+      "pitfalls": [
+        "Using $\\lceil\\log_2 40\\rceil = 6$: integer division gives $\\lfloor\\log_2 40\\rfloor = 5$."
+      ],
+      "verification": "$\\lfloor \\log_2 \\lfloor \\log_2 2^{40} \\rfloor \\rfloor = \\lfloor \\log_2 40 \\rfloor = 5$."
+    },
+    "cse-2018-cs-33": {
+      "approach": "Five integer bits (0–31) and three fraction bits (multiples of $1/8 = 0.125$). A number is exactly representable iff it lies in $[0, 31.875]$ and its fractional part is a multiple of 0.125.",
+      "concepts": [
+        "Fixed-point representation",
+        "Binary fractions"
+      ],
+      "steps": [
+        {
+          "title": "Format",
+          "body": "Integer part $b_7..b_3$: $0..31$. Fraction $b_2b_1b_0$: $k/8$ for $k = 0..7$ (0, 0.125, …, 0.875)."
+        },
+        {
+          "title": "Check each",
+          "body": "| Number | Integer | Fraction = k/8? | Representable |\n|---|---|---|---|\n| 31.500 | 31 = 11111 | 0.5 = 4/8 → 100 | yes |\n| 0.875 | 0 = 00000 | 0.875 = 7/8 → 111 | yes |\n| 12.100 | 12 = 01100 | 0.1 = 0.8/8 | no |\n| 3.001 | 3 = 00011 | 0.001 = 0.008/8 | no |"
+        },
+        {
+          "title": "Conclusion",
+          "body": "Only (iii) and (iv) cannot be represented exactly, which is option C."
+        }
+      ],
+      "answer": {
+        "value": "Only (iii) and (iv) cannot be exactly represented",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "(i) = 11111.100 and (ii) = 00000.111 are exact."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "0.875 = 0.111₂ is exact."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "(i) and (ii) are exact; it is (iii) and (iv) that fail."
+        }
+      ],
+      "pitfalls": [
+        "Thinking 31.5 overflows: the maximum is 31.875."
+      ],
+      "verification": "0.1 in binary is 0.000110011… (repeating), so 3 bits cannot hold it."
+    },
+    "cse-2018-cs-34": {
+      "approach": "Split the P-bit byte address into tag | set index | block offset. Offset = bits to address a byte inside a $2^{M}$-word block of $2^{W}$-byte words; sets = cache size / (block size × K).",
+      "concepts": [
+        "Set-associative cache",
+        "Address breakdown",
+        "Tag bits"
+      ],
+      "steps": [
+        {
+          "title": "Offset and index",
+          "body": "Block size $= 2^M \\cdot 2^W = 2^{M+W}$ bytes, so the offset is $M + W$ bits.\nNumber of blocks $= 2^N / 2^{M+W} = 2^{N-M-W}$; sets $= 2^{N-M-W}/K$, so the index is $N - M - W - \\log_2 K$ bits."
+        },
+        {
+          "title": "Tag",
+          "body": "$$\\text{tag} = P - (N - M - W - \\log_2 K) - (M + W) = P - N + \\log_2 K$$ This is option B."
+        }
+      ],
+      "answer": {
+        "value": "P − N + log₂K",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Sign error: more ways means fewer sets, so the tag gets longer by $\\log_2 K$, not shorter."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Subtracts the offset $M + W$ twice and has the wrong sign on $\\log_2 K$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Subtracts $M + W$ again, though N already includes the offset bits."
+        }
+      ],
+      "shortcut": "Tag = address bits − bits needed to index one way of the cache. One way holds $2^N/K$ bytes, so tag $= P - (N - \\log_2 K)$.",
+      "pitfalls": [
+        "Forgetting that block size is given in words, not bytes (that only matters if you do not cancel M + W)."
+      ],
+      "verification": "Check K = 1 (direct mapped): tag = P − N, as expected."
+    }
+  }
+}
