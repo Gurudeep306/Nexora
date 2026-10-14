@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 470" role="img" aria-label="Eight vertices on an octagon with sixteen edges; every vertex has degree 4">
+  <g stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round">
+    <line x1="220" y1="48" x2="420" y2="48"/>
+    <line x1="420" y1="48" x2="573" y2="158"/>
+    <line x1="573" y1="158" x2="573" y2="318"/>
+    <line x1="573" y1="318" x2="420" y2="418"/>
+    <line x1="420" y1="418" x2="220" y2="418"/>
+    <line x1="220" y1="418" x2="65" y2="318"/>
+    <line x1="65" y1="318" x2="65" y2="158"/>
+    <line x1="65" y1="158" x2="220" y2="48"/>
+    <line x1="65" y1="158" x2="573" y2="158"/>
+    <line x1="65" y1="318" x2="573" y2="318"/>
+    <line x1="220" y1="48" x2="220" y2="418"/>
+    <line x1="420" y1="48" x2="420" y2="418"/>
+    <line x1="220" y1="48" x2="573" y2="318"/>
+    <line x1="420" y1="48" x2="65" y2="318"/>
+    <line x1="65" y1="158" x2="420" y2="418"/>
+    <line x1="573" y1="158" x2="220" y2="418"/>
+  </g>
+  <g fill="currentColor">
+    <circle cx="220" cy="48" r="11"/>
+    <circle cx="420" cy="48" r="11"/>
+    <circle cx="573" cy="158" r="11"/>
+    <circle cx="573" cy="318" r="11"/>
+    <circle cx="420" cy="418" r="11"/>
+    <circle cx="220" cy="418" r="11"/>
+    <circle cx="65" cy="318" r="11"/>
+    <circle cx="65" cy="158" r="11"/>
+  </g>
+</svg>
