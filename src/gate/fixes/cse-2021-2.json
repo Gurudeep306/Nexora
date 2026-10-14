@@ -1,0 +1,3305 @@
+{
+  "paper": "cse-2021-2",
+  "fixes": [
+    {
+      "id": "cse-2021-2-ga-1",
+      "field": "topic",
+      "before": "quant",
+      "after": "verbal",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.1"
+    },
+    {
+      "id": "cse-2021-2-ga-1",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "grammar",
+        "comparison",
+        "idioms"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.1"
+    },
+    {
+      "id": "cse-2021-2-ga-2",
+      "field": "text",
+      "before": "A transparent square sheet shown above is folded along the dotted line. The folded\nsheet will look like ________.",
+      "after": "A transparent square sheet shown above is folded along the dotted line. The folded sheet will look like ________.",
+      "reason": "Joined PDF line breaks.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2021-2-ga-2",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "(B)"
+        },
+        {
+          "l": "C",
+          "t": "(D)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "![](/gate-fig/cse-2021-2/ga-2-A.svg)"
+        },
+        {
+          "l": "B",
+          "t": "![](/gate-fig/cse-2021-2/ga-2-B.svg)"
+        },
+        {
+          "l": "C",
+          "t": "![](/gate-fig/cse-2021-2/ga-2-C.svg)"
+        },
+        {
+          "l": "D",
+          "t": "![](/gate-fig/cse-2021-2/ga-2-D.svg)"
+        }
+      ],
+      "reason": "Options are pictures; the record had only two broken text options. Redrawn all four as SVG from the paper.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2021-2-ga-2",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2021-2/ga-2-1.svg",
+          "svg": "cse-2021-2/ga-2-1.svg",
+          "alt": "A square sheet with a vertical dotted line through its middle. On the left half a curve rises from low on the left edge, getting steeper, to a peak on the dotted line; two short vertical ticks stand up from this curve. On the right half a curve falls from the peak, getting steeper, to the bottom-right corner; two short horizontal ticks point left from this curve."
+        }
+      ],
+      "reason": "The question depends on its figure, which the bank was missing. Redrawn as SVG from the paper.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2021-2-ga-2",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "paper-folding",
+        "mirror-image"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2021-2-ga-3",
+      "field": "text",
+      "before": "If  is the angle, in degrees, between the longest diagonal of the cube and any\none of the edges of the cube, then, cos  =",
+      "after": "If $\\theta$ is the angle, in degrees, between the longest diagonal of the cube and any one of the edges of the cube, then, $\\cos\\theta =$",
+      "reason": "Restored the lost θ symbols and wrote the maths in KaTeX.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2021-2-ga-3",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "1 2"
+        },
+        {
+          "l": "B",
+          "t": "1 √3"
+        },
+        {
+          "l": "C",
+          "t": "1 √2"
+        },
+        {
+          "l": "D",
+          "t": "√3 2"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\dfrac{1}{2}$"
+        },
+        {
+          "l": "B",
+          "t": "$\\dfrac{1}{\\sqrt{3}}$"
+        },
+        {
+          "l": "C",
+          "t": "$\\dfrac{1}{\\sqrt{2}}$"
+        },
+        {
+          "l": "D",
+          "t": "$\\dfrac{\\sqrt{3}}{2}$"
+        }
+      ],
+      "reason": "Fractions were flattened in extraction; rewritten in KaTeX.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2021-2-ga-3",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "geometry",
+        "cube",
+        "space-diagonal",
+        "direction-cosines"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2021-2-ga-4",
+      "field": "text",
+      "before": "If\n2213 222x x x   − − − = +       , then the value of\nx is:",
+      "after": "If $\\left(x - \\dfrac{1}{2}\\right)^2 - \\left(x - \\dfrac{3}{2}\\right)^2 = x + 2$, then the value of $x$ is:",
+      "reason": "Equation was garbled in extraction; rewritten in KaTeX from the paper.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2021-2-ga-4",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "algebra",
+        "difference-of-squares",
+        "linear-equations"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2021-2-ga-5",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Vegetables"
+        },
+        {
+          "l": "B",
+          "t": "Sharp"
+        },
+        {
+          "l": "C",
+          "t": "Cut"
+        },
+        {
+          "l": "D",
+          "t": "Blunt answer: – 2/3)."
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Vegetables"
+        },
+        {
+          "l": "B",
+          "t": "Sharp"
+        },
+        {
+          "l": "C",
+          "t": "Cut"
+        },
+        {
+          "l": "D",
+          "t": "Blunt"
+        }
+      ],
+      "reason": "Removed header junk (\"answer: – 2/3).\") from option D.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2021-2-ga-5",
+      "field": "text",
+      "before": "Pen : Write :: Knife : _________\nWhich one of the following options maintains a similar logical relation in the\nabove?",
+      "after": "Pen : Write :: Knife : _________\n\nWhich one of the following options maintains a similar logical relation in the above?",
+      "reason": "Joined PDF line breaks.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2021-2-ga-5",
+      "field": "topic",
+      "before": "quant",
+      "after": "verbal",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2021-2-ga-5",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "analogy",
+        "tool-function"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2021-2-ga-6",
+      "field": "text",
+      "before": "Listening to music during exercise improves exercise performance and reduces\ndiscomfort. Scientists researched whether listening to music while studying can\nhelp students learn better and the results were inconclusive. Students who needed\nexternal stimulation for studying fared worse while students who did not need\nany external stimulation benefited from music.\nWhich one of the following statements is the CORRECT inference of the above\npassage?",
+      "after": "Listening to music during exercise improves exercise performance and reduces discomfort. Scientists researched whether listening to music while studying can help students learn better and the results were inconclusive. Students who needed external stimulation for studying fared worse while students who did not need any external stimulation benefited from music.\n\nWhich one of the following statements is the CORRECT inference of the above passage?",
+      "reason": "Joined PDF line breaks.",
+      "source": "pdf p.5"
+    },
+    {
+      "id": "cse-2021-2-ga-6",
+      "field": "tags",
+      "before": [
+        "verbal-aptitude"
+      ],
+      "after": [
+        "reading-comprehension",
+        "inference"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.5"
+    },
+    {
+      "id": "cse-2021-2-ga-7",
+      "field": "text",
+      "before": "A jigsaw puzzle has 2 pieces. One of the pieces is shown above. Which one of\nthe given options for the missing piece when assembled will form a rectangle?\nThe piece can be moved, rotated or flipped to assemble with the above piece.",
+      "after": "A jigsaw puzzle has 2 pieces. One of the pieces is shown above. Which one of the given options for the missing piece when assembled will form a rectangle? The piece can be moved, rotated or flipped to assemble with the above piece.",
+      "reason": "Joined PDF line breaks.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2021-2-ga-7",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "(B)"
+        },
+        {
+          "l": "C",
+          "t": "(D)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "![](/gate-fig/cse-2021-2/ga-7-A.svg)"
+        },
+        {
+          "l": "B",
+          "t": "![](/gate-fig/cse-2021-2/ga-7-B.svg)"
+        },
+        {
+          "l": "C",
+          "t": "![](/gate-fig/cse-2021-2/ga-7-C.svg)"
+        },
+        {
+          "l": "D",
+          "t": "![](/gate-fig/cse-2021-2/ga-7-D.svg)"
+        }
+      ],
+      "reason": "Options are pictures; the record had only two broken text options. Redrawn all four as SVG from the paper.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2021-2-ga-7",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2021-2/ga-7-1.svg",
+          "svg": "cse-2021-2/ga-7-1.svg",
+          "alt": "A jigsaw piece: a tall rectangle whose right edge is straight and whose left edge is a jagged profile of rectangular teeth and slots of different depths, including one hook-shaped (undercut) slot near the middle."
+        }
+      ],
+      "reason": "The question depends on its figure, which the bank was missing. Redrawn as SVG from the paper.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2021-2-ga-7",
+      "field": "topic",
+      "before": "quant",
+      "after": "spatial",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2021-2-ga-7",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "jigsaw",
+        "shape-matching",
+        "rotation-reflection"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2021-2-ga-8",
+      "field": "text",
+      "before": "The number of students in three classes is in the ratio 3:13:6. If 18 students are\nadded to each class, the ratio changes to 15:35:21.\nThe total number of students in all the three classes in the beginning was:",
+      "after": "The number of students in three classes is in the ratio 3:13:6. If 18 students are added to each class, the ratio changes to 15:35:21.\n\nThe total number of students in all the three classes in the beginning was:",
+      "reason": "Joined PDF line breaks.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2021-2-ga-8",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "ratio-proportion",
+        "linear-equations"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.7"
+    },
+    {
+      "id": "cse-2021-2-ga-9",
+      "field": "text",
+      "before": "The number of units of a product sold in three different years and the respective\nnet profits are presented in the figure above. The cost/unit in Year 3 was  ` 1, which\nwas half the cost/unit in Year 2.  The cost/unit in Year  3 was  one-third of the\ncost/unit in Year 1. Taxes were paid on the selling price at 10%, 13% and 15%\nrespectively for the three years. Net profit is calculated as the difference between\nthe selling price and the sum of cost and taxes paid in that year.\nThe ratio of the selling price in Year 2 to the selling price in Year 3 is ________.\nA) 4:3",
+      "after": "The number of units of a product sold in three different years and the respective net profits are presented in the figure above. The cost/unit in Year 3 was ₹ 1, which was half the cost/unit in Year 2. The cost/unit in Year 3 was one-third of the cost/unit in Year 1. Taxes were paid on the selling price at 10%, 13% and 15% respectively for the three years. Net profit is calculated as the difference between the selling price and the sum of cost and taxes paid in that year.\n\nThe ratio of the selling price in Year 2 to the selling price in Year 3 is ________.",
+      "reason": "Removed option A and chart residue from the text; restored the ₹ symbol.",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2021-2-ga-9",
+      "field": "options",
+      "before": [
+        {
+          "l": "B",
+          "t": "1:1"
+        },
+        {
+          "l": "C",
+          "t": "3:4"
+        },
+        {
+          "l": "D",
+          "t": "1:2 100 200 300 240 296 210 0 50 100 150 200 250 300 350 Year 1 Year 2 Year 3 Number of units Net Profit (INR) (`)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "4:3"
+        },
+        {
+          "l": "B",
+          "t": "1:1"
+        },
+        {
+          "l": "C",
+          "t": "3:4"
+        },
+        {
+          "l": "D",
+          "t": "1:2"
+        }
+      ],
+      "reason": "Options were shifted (A was inside the text, D had chart labels appended).",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2021-2-ga-9",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2021-2/ga-9-1.svg",
+          "svg": "cse-2021-2/ga-9-1.svg",
+          "alt": "Grouped bar chart, y-axis 0 to 350. For each year a hatched bar is the number of units and a solid bar the net profit in rupees. Year 1: 100 units, profit 240. Year 2: 200 units, profit 296. Year 3: 300 units, profit 210."
+        }
+      ],
+      "reason": "The question depends on its chart, which the bank was missing. Redrawn as SVG from the paper.",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2021-2-ga-9",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "data-interpretation",
+        "bar-chart",
+        "profit-loss",
+        "percentages"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.8"
+    },
+    {
+      "id": "cse-2021-2-ga-10",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "T"
+        },
+        {
+          "l": "B",
+          "t": "R"
+        },
+        {
+          "l": "C",
+          "t": "S"
+        },
+        {
+          "l": "D",
+          "t": "P answer: – 1/3)."
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "T"
+        },
+        {
+          "l": "B",
+          "t": "R"
+        },
+        {
+          "l": "C",
+          "t": "S"
+        },
+        {
+          "l": "D",
+          "t": "P"
+        }
+      ],
+      "reason": "Removed header junk (\"answer: – 1/3).\") from option D.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "cse-2021-2-ga-10",
+      "field": "text",
+      "before": "Six students P, Q, R, S, T and U, with distinct heights, compare their heights\nand make the following observations.\nObservation I: S is taller than R.\nObservation II: Q is the shortest of all.\nObservation III: U is taller than only one student.\nObservation IV: T is taller than S but is not the tallest.\nThe number of students that are taller than R is the same as the number of\nstudents shorter than ______.",
+      "after": "Six students P, Q, R, S, T and U, with distinct heights, compare their heights and make the following observations.\n\n- Observation I: S is taller than R.\n- Observation II: Q is the shortest of all.\n- Observation III: U is taller than only one student.\n- Observation IV: T is taller than S but is not the tallest.\n\nThe number of students that are taller than R is the same as the number of students shorter than ______.",
+      "reason": "Joined PDF line breaks and listed the observations.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "cse-2021-2-ga-10",
+      "field": "topic",
+      "before": "quant",
+      "after": "analytical",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "cse-2021-2-ga-10",
+      "field": "tags",
+      "before": [
+        "quantitative-aptitude"
+      ],
+      "after": [
+        "ordering",
+        "seating-ranking",
+        "logical-deduction"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.9"
+    },
+    {
+      "id": "cse-2021-2-cs-1",
+      "field": "text",
+      "before": "Let G be a connected undirected weighted graph. Consider the following two state-\nments.\nS1: There exists a minimum weight edge in G which is present in every\nminimum spanning tree of G.\nS2: If every edge in G has distinct weight, then G has a unique minimum\nspanning tree.\nWhich one of the following options is correct?",
+      "after": "Let $G$ be a connected undirected weighted graph. Consider the following two statements.\n\n- $S_1$: There exists a minimum weight edge in $G$ which is present in every minimum spanning tree of $G$.\n- $S_2$: If every edge in $G$ has distinct weight, then $G$ has a unique minimum spanning tree.\n\nWhich one of the following options is correct?",
+      "reason": "Joined PDF line breaks; statements as a list with KaTeX names.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2021-2-cs-1",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Both S1 and S2 are true."
+        },
+        {
+          "l": "B",
+          "t": "S1 is true and S2 is false."
+        },
+        {
+          "l": "C",
+          "t": "S1 is false and S2 is true."
+        },
+        {
+          "l": "D",
+          "t": "Both S1 and S2 are false."
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Both $S_1$ and $S_2$ are true."
+        },
+        {
+          "l": "B",
+          "t": "$S_1$ is true and $S_2$ is false."
+        },
+        {
+          "l": "C",
+          "t": "$S_1$ is false and $S_2$ is true."
+        },
+        {
+          "l": "D",
+          "t": "Both $S_1$ and $S_2$ are false."
+        }
+      ],
+      "reason": "KaTeX statement names.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2021-2-cs-1",
+      "field": "subject",
+      "before": "pds",
+      "after": "algo",
+      "reason": "Subject corrected to match the question content.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2021-2-cs-1",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "mst",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2021-2-cs-1",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "minimum-spanning-tree",
+        "cut-property",
+        "mst-uniqueness"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2021-2-cs-2",
+      "field": "text",
+      "before": "Let I be a binary min-heap consisting of n elements implemented as an array. What\nis the worst case time complexity of an optimal algorithm to find the maximum\nelement in H?",
+      "after": "Let $H$ be a binary min-heap consisting of $n$ elements implemented as an array. What is the worst case time complexity of an optimal algorithm to find the maximum element in $H$?",
+      "reason": "Fixed OCR errors (heap named I/H inconsistently) and line breaks.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2021-2-cs-2",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "O(1)"
+        },
+        {
+          "l": "B",
+          "t": "O(logn)"
+        },
+        {
+          "l": "C",
+          "t": "O (n)"
+        },
+        {
+          "l": "D",
+          "t": "O(nIogn)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\Theta(1)$"
+        },
+        {
+          "l": "B",
+          "t": "$\\Theta(\\log n)$"
+        },
+        {
+          "l": "C",
+          "t": "$\\Theta(n)$"
+        },
+        {
+          "l": "D",
+          "t": "$\\Theta(n \\log n)$"
+        }
+      ],
+      "reason": "The paper uses Θ, not O; fixed OCR \"nIogn\".",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2021-2-cs-2",
+      "field": "subject",
+      "before": "db",
+      "after": "pds",
+      "reason": "Subject corrected to match the question content.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2021-2-cs-2",
+      "field": "topic",
+      "before": "sql",
+      "after": "heaps",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2021-2-cs-2",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "binary-heap",
+        "min-heap",
+        "find-max",
+        "time-complexity"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.10"
+    },
+    {
+      "id": "cse-2021-2-cs-3",
+      "field": "text",
+      "before": "Consider the following ANSI C program:\nint main () {\nInteger x;\nreturn 0;\nWhich one of the following phases in a seven-phase C compiler will throw an error?",
+      "after": "Consider the following ANSI C program:\n\n```c\nint main() {\n    Integer x;\n    return 0;\n}\n```\n\nWhich one of the following phases in a seven-phase C compiler will throw an error?",
+      "reason": "Code put in a fenced block; restored the missing closing brace.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2021-2-cs-3",
+      "field": "subject",
+      "before": "pds",
+      "after": "cd",
+      "reason": "Subject corrected to match the question content.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2021-2-cs-3",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "sdt",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2021-2-cs-3",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "compiler-phases",
+        "semantic-analysis",
+        "symbol-table",
+        "undeclared-identifier"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2021-2-cs-4",
+      "field": "subject",
+      "before": "pds",
+      "after": "dl",
+      "reason": "Subject corrected to match the question content.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2021-2-cs-4",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "floating",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2021-2-cs-4",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "ieee-754",
+        "single-precision",
+        "normalized-numbers"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.11"
+    },
+    {
+      "id": "cse-2021-2-cs-5",
+      "field": "subject",
+      "before": "pds",
+      "after": "dl",
+      "reason": "Subject corrected to match the question content.",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "cse-2021-2-cs-5",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "combinational",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "cse-2021-2-cs-5",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "multiplexer",
+        "mux-implementation",
+        "minterms"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.12"
+    },
+    {
+      "id": "cse-2021-2-cs-6",
+      "field": "subject",
+      "before": "pds",
+      "after": "db",
+      "reason": "Subject corrected to match the question content.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "cse-2021-2-cs-6",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "er",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "cse-2021-2-cs-6",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "relational-model",
+        "foreign-key",
+        "referential-integrity"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "cse-2021-2-cs-7",
+      "field": "text",
+      "before": "Consider the three-way handshake mechanism followed during TCP connection es-\ntablishment between hosts P and Q. Let X and Y be two random 32-bit starting\nsequence numbers chosen by P and Q respectively. Suppose P sends a TCP connec-\ntion request message to Q with a TCP segment having SYN bit = 1, SEQ number\n= X, and ACK bit = 0. Suppose Q accepts the connection request. Which one of\nthe following choices represents the information present in the TCP segment header\nthat is sent by Q to P?",
+      "after": "Consider the three-way handshake mechanism followed during TCP connection establishment between hosts P and Q. Let X and Y be two random 32-bit starting sequence numbers chosen by P and Q respectively. Suppose P sends a TCP connection request message to Q with a TCP segment having SYN bit = 1, SEQ number = X, and ACK bit = 0. Suppose Q accepts the connection request. Which one of the following choices represents the information present in the TCP segment header that is sent by Q to P?",
+      "reason": "Joined hyphenated PDF line breaks.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "cse-2021-2-cs-7",
+      "field": "subject",
+      "before": "pds",
+      "after": "cn",
+      "reason": "Subject corrected to match the question content.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "cse-2021-2-cs-7",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "transport",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "cse-2021-2-cs-7",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "tcp",
+        "three-way-handshake",
+        "sequence-numbers",
+        "syn-ack"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.13"
+    },
+    {
+      "id": "cse-2021-2-cs-8",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "$\\Theta(n)$"
+        },
+        {
+          "l": "B",
+          "t": "$\\Theta(\\log_2 n)$"
+        },
+        {
+          "l": "C",
+          "t": "$\\Theta(n \\log_2 n)$"
+        },
+        {
+          "l": "D",
+          "t": "$\\Theta(1)$"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\Theta(\\sqrt{n})$"
+        },
+        {
+          "l": "B",
+          "t": "$\\Theta(\\log_2 n)$"
+        },
+        {
+          "l": "C",
+          "t": "$\\Theta(n^2)$"
+        },
+        {
+          "l": "D",
+          "t": "$\\Theta(n)$"
+        }
+      ],
+      "reason": "Options A, C, D did not match the paper (√n, n², n).",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2021-2-cs-8",
+      "field": "subject",
+      "before": "pds",
+      "after": "algo",
+      "reason": "Subject corrected to match the question content.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2021-2-cs-8",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "searching",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2021-2-cs-8",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "binary-search",
+        "recursion",
+        "time-complexity"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2021-2-cs-9",
+      "field": "subject",
+      "before": "pds",
+      "after": "toc",
+      "reason": "Subject corrected to match the question content.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2021-2-cs-9",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "regular",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2021-2-cs-9",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "minimal-dfa",
+        "complement",
+        "closure-properties"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2021-2-cs-10",
+      "field": "text",
+      "before": "Consider the following ANSI C program.\n#include ‹stdio.h>\nint main (){\nint arr [4] [5] ;\nint i, j;\nfor (i=0; i<4; i++){\nfor (j=0; j<5; j++) l\narr[i][j] = 10*i + j;\nprintf (\"%d\", *(arr [1] + 9)) ;\nreturn 0;\nWhat is the output of the above program?",
+      "after": "Consider the following ANSI C program.\n\n```c\n#include <stdio.h>\nint main(){\n  int arr[4][5];\n  int i, j;\n  for (i=0; i<4; i++){\n    for (j=0; j<5; j++){\n      arr[i][j] = 10*i + j;\n    }\n  }\n  printf(\"%d\", *(arr[1] + 9));\n  return 0;\n}\n```\n\nWhat is the output of the above program?",
+      "reason": "Code put in a fenced block; fixed OCR errors and missing braces.",
+      "source": "pdf p.15"
+    },
+    {
+      "id": "cse-2021-2-cs-10",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "arrays",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.15"
+    },
+    {
+      "id": "cse-2021-2-cs-10",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "2d-arrays",
+        "row-major",
+        "pointer-arithmetic"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.15"
+    },
+    {
+      "id": "cse-2021-2-cs-11",
+      "field": "text",
+      "before": "Consider the following sets, where n ≥ 2:\nS1: Set of all n × n matrices with entries from the set {a, b, c}\nS2: Set of all functions from the set {0, 1,2,..., n° - 1} to the set {0,1,2}\nWhich of the following choice(s) is/are correct?",
+      "after": "Consider the following sets, where $n \\ge 2$:\n\n- $S_1$: Set of all $n \\times n$ matrices with entries from the set $\\{a, b, c\\}$\n- $S_2$: Set of all functions from the set $\\{0, 1, 2, \\ldots, n^2 - 1\\}$ to the set $\\{0, 1, 2\\}$\n\nWhich of the following choice(s) is/are correct?",
+      "reason": "Fixed OCR \"n°\" to $n^2$; KaTeX and list layout.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "cse-2021-2-cs-11",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "There does not exist a bijection from S1 to S2."
+        },
+        {
+          "l": "B",
+          "t": "There exists a surjection from S1 to S2."
+        },
+        {
+          "l": "C",
+          "t": "There exists a bijection from S1 to S2."
+        },
+        {
+          "l": "D",
+          "t": "There does not exist an injection from S1 to S2."
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "There does not exist a bijection from $S_1$ to $S_2$."
+        },
+        {
+          "l": "B",
+          "t": "There exists a surjection from $S_1$ to $S_2$."
+        },
+        {
+          "l": "C",
+          "t": "There exists a bijection from $S_1$ to $S_2$."
+        },
+        {
+          "l": "D",
+          "t": "There does not exist an injection from $S_1$ to $S_2$."
+        }
+      ],
+      "reason": "KaTeX set names.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "cse-2021-2-cs-11",
+      "field": "subject",
+      "before": "pds",
+      "after": "dm",
+      "reason": "Subject corrected to match the question content.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "cse-2021-2-cs-11",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "sets",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "cse-2021-2-cs-11",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "functions",
+        "bijection",
+        "cardinality",
+        "counting"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "cse-2021-2-cs-12",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "$L_1 \\cap \\overline{L_2}$"
+        },
+        {
+          "l": "B",
+          "t": "$\\overline{\\overline{L_1} \\cup \\overline{L_2}}$"
+        },
+        {
+          "l": "C",
+          "t": "$L_1 \\cup (L_2 \\cup \\overline{L_2})$"
+        },
+        {
+          "l": "D",
+          "t": "$(L_1 \\cap L_2) \\cup (\\overline{L_1} \\cap L_2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$L_1 \\cap \\overline{L_2}$"
+        },
+        {
+          "l": "B",
+          "t": "$\\overline{\\overline{L_1} \\cup \\overline{L_2}}$"
+        },
+        {
+          "l": "C",
+          "t": "$L_1 \\cup (L_2 \\cup \\overline{L_2})$"
+        },
+        {
+          "l": "D",
+          "t": "$(L_1 \\cap L_2) \\cup (\\overline{L_1} \\cap L_2)$"
+        }
+      ],
+      "reason": "Option D was missing its closing $.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "cse-2021-2-cs-12",
+      "field": "topic",
+      "before": "regular",
+      "after": "pumping",
+      "reason": "Topic corrected to match the question content.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "cse-2021-2-cs-12",
+      "field": "tags",
+      "before": [
+        "regular"
+      ],
+      "after": [
+        "closure-properties",
+        "context-free-languages",
+        "regular-languages"
+      ],
+      "reason": "Specific tags for the question content.",
+      "source": "pdf p.16"
+    },
+    {
+      "id": "cse-2021-2-cs-13",
+      "field": "subject",
+      "before": "algo",
+      "after": "cd",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2021-2-cs-13",
+      "field": "topic",
+      "before": "graphs",
+      "after": "icg",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2021-2-cs-13",
+      "field": "tags",
+      "before": [
+        "graphs"
+      ],
+      "after": [
+        "intermediate-representation",
+        "symbol-table",
+        "three-address-code"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2021-2-cs-13",
+      "field": "type",
+      "before": "MCQ",
+      "after": "MSQ",
+      "reason": "Q.11–Q.15 are Multiple Select Questions in the paper.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2021-2-cs-13",
+      "field": "text",
+      "before": "In the context of compilers, which of the following is/are NOT an intermediate\nrepresentation of the source program?",
+      "after": "In the context of compilers, which of the following is/are NOT an intermediate representation of the source program?",
+      "reason": "Clean text from PDF.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2021-2-cs-14",
+      "field": "subject",
+      "before": "coa",
+      "after": "os",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2021-2-cs-14",
+      "field": "topic",
+      "before": "isa",
+      "after": "scheduling",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2021-2-cs-14",
+      "field": "tags",
+      "before": [
+        "isa"
+      ],
+      "after": [
+        "cpu-scheduling",
+        "turnaround-time",
+        "round-robin",
+        "preemption"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2021-2-cs-14",
+      "field": "text",
+      "before": "Which of the following statement (s) is/are correct in the context of CPU scheduling?\nTurnaround time includes waiting time.",
+      "after": "Which of the following statement(s) is/are correct in the context of CPU scheduling?",
+      "reason": "Option A text had leaked into the stem; clean text from PDF.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2021-2-cs-14",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "The goal is to only maximize CPU utilization and minimize throughput."
+        },
+        {
+          "l": "B",
+          "t": "Round-robin policy can be used even when the CPU time required by each of the"
+        },
+        {
+          "l": "C",
+          "t": "processes is not known apriori."
+        },
+        {
+          "l": "D",
+          "t": "Implementing preemptive scheduling needs hardware support."
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Turnaround time includes waiting time."
+        },
+        {
+          "l": "B",
+          "t": "The goal is to only maximize CPU utilization and minimize throughput."
+        },
+        {
+          "l": "C",
+          "t": "Round-robin policy can be used even when the CPU time required by each of the processes is not known apriori."
+        },
+        {
+          "l": "D",
+          "t": "Implementing preemptive scheduling needs hardware support."
+        }
+      ],
+      "reason": "Options were shifted by one (option A was in the stem and option C was split); restored from PDF.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2021-2-cs-15",
+      "field": "subject",
+      "before": "pds",
+      "after": "dm",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2021-2-cs-15",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "logic",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2021-2-cs-15",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "propositional-logic",
+        "tautology",
+        "logical-equivalence"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2021-2-cs-15",
+      "field": "text",
+      "before": "Choose the correct choice(s) regarding the following propositional logic assertion\nS:\nS: ((PAQ) →R) → ((PAQ) → (Q→ R))",
+      "after": "Choose the correct choice(s) regarding the following propositional logic assertion $S$:\n\n$$S: ((P \\wedge Q) \\to R) \\to ((P \\wedge Q) \\to (Q \\to R))$$",
+      "reason": "Clean text with KaTeX from PDF.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2021-2-cs-15",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "S is neither a tautology nor a contradiction."
+        },
+        {
+          "l": "B",
+          "t": "S is a tautology."
+        },
+        {
+          "l": "C",
+          "t": "S is a contradiction."
+        },
+        {
+          "l": "D",
+          "t": "The antecedent of S is logically equivalent to the consequent of S."
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$S$ is neither a tautology nor a contradiction."
+        },
+        {
+          "l": "B",
+          "t": "$S$ is a tautology."
+        },
+        {
+          "l": "C",
+          "t": "$S$ is a contradiction."
+        },
+        {
+          "l": "D",
+          "t": "The antecedent of $S$ is logically equivalent to the consequent of $S$."
+        }
+      ],
+      "reason": "KaTeX for S.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2021-2-cs-16",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "trees",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2021-2-cs-16",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "binary-tree",
+        "bfs",
+        "dfs",
+        "tree-traversal"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2021-2-cs-16",
+      "field": "text",
+      "before": "Consider a complete binary tree with 7 nodes. Let A denote the set of first 3\nelements obtained by performing Breadth-First Search (BFS) starting from the\nroot. Let B denote the set of first 3 elements obtained by performing Depth-First\nSearch (DFS) starting from the root.\nThe value of |A - B| is -",
+      "after": "Consider a complete binary tree with 7 nodes. Let $A$ denote the set of first 3 elements obtained by performing Breadth-First Search (BFS) starting from the root. Let $B$ denote the set of first 3 elements obtained by performing Depth-First Search (DFS) starting from the root.\n\nThe value of $|A - B|$ is _____________.",
+      "reason": "Clean text from PDF.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2021-2-cs-17",
+      "field": "subject",
+      "before": "pds",
+      "after": "toc",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2021-2-cs-17",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "regular",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2021-2-cs-17",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "dfa",
+        "counting-strings",
+        "regular-languages"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2021-2-cs-17",
+      "field": "text",
+      "before": "Consider the following deterministic finite automaton (DFA).\n0,1\nstart —→\n> O.1\n0,1\nThe number of strings of length 8 accepted by the above automaton is",
+      "after": "Consider the following deterministic finite automaton (DFA).\n\nThe number of strings of length 8 accepted by the above automaton is _____________.",
+      "reason": "Clean text from PDF; DFA moved to a figure.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2021-2-cs-17",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2021-2/cs-17-1.svg",
+          "svg": "cse-2021-2/cs-17-1.svg",
+          "alt": "DFA with six states. The start state goes on 0 to an upper state and on 1 to a lower state. The upper state goes on 0 to an upper-right state and on 1 to a lower-right state; the lower state goes on 0 to the upper-right state and on 1 to the lower-right state (the two edges cross). Both right states go on 0,1 to the single accepting state, which has a self-loop on 0,1."
+        }
+      ],
+      "reason": "Redrawn DFA figure from the PDF.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2021-2-cs-18",
+      "field": "subject",
+      "before": "pds",
+      "after": "dl",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2021-2-cs-18",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "number",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2021-2-cs-18",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "binary-fractions",
+        "number-conversion"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2021-2-cs-18",
+      "field": "text",
+      "before": "If x and y are two decimal digits and (0.1101)2 = (0.82y5) 10, the decimal value of\nx + y iS -",
+      "after": "If $x$ and $y$ are two decimal digits and $(0.1101)_2 = (0.8xy5)_{10}$, the decimal value of $x + y$ is _____________.",
+      "reason": "OCR read “0.82y5”; restored $(0.8xy5)_{10}$ from PDF.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2021-2-cs-19",
+      "field": "subject",
+      "before": "pds",
+      "after": "coa",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2021-2-cs-19",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "cache",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2021-2-cs-19",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "set-associative-cache",
+        "address-mapping",
+        "tag-bits"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2021-2-cs-19",
+      "field": "text",
+      "before": "Consider a set-associative cache of size 2KB (1KB = 21° bytes) with cache block\nsize of 64 bytes. Assume that the cache is byte-addressable and a 32-bit address is\nused for accessing the cache. If the width of the tag field is 22 bits, the associativity\nof the cache is",
+      "after": "Consider a set-associative cache of size 2KB (1KB $= 2^{10}$ bytes) with cache block size of 64 bytes. Assume that the cache is byte-addressable and a 32-bit address is used for accessing the cache. If the width of the tag field is 22 bits, the associativity of the cache is _____________.",
+      "reason": "Clean text with KaTeX from PDF.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2021-2-cs-20",
+      "field": "subject",
+      "before": "pds",
+      "after": "coa",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2021-2-cs-20",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "io",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2021-2-cs-20",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "dma",
+        "cycle-stealing",
+        "data-transfer-rate"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2021-2-cs-20",
+      "field": "text",
+      "before": "Consider a computer system with DMA support. The DMA module is transferring\none 8-bit character in one CPU cycle from a device to memory through cycle stealing\nat regular intervals. Consider a 2 MHz processor. If 0.5% processor cycles are used\nfor DMA, the data transfer rate of the device is —\nbits per second.",
+      "after": "Consider a computer system with DMA support. The DMA module is transferring one 8-bit character in one CPU cycle from a device to memory through *cycle stealing* at regular intervals. Consider a 2 MHz processor. If 0.5% processor cycles are used for DMA, the data transfer rate of the device is _____________ bits per second.",
+      "reason": "Clean text from PDF.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2021-2-cs-21",
+      "field": "subject",
+      "before": "pds",
+      "after": "db",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2021-2-cs-21",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "indexing",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2021-2-cs-21",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "dense-index",
+        "secondary-index",
+        "blocking-factor"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2021-2-cs-21",
+      "field": "text",
+      "before": "A data file consisting of 1,50,000 student-records is stored on a hard disk with block\nsize of 4096 bytes. The data file is sorted on the primary key Rol1No. The size of\na record pointer for this disk is 7 bytes. Each student-record has a candidate key\nattribute called ANum of size 12 bytes. Suppose an index file with records consisting\nof two fields, ANum value and the record pointer to the corresponding student record,\nis built and stored on the same disk. Assume that the records of data file and index\nfile are not split across disk blocks. The number of blocks in the index file is",
+      "after": "A data file consisting of 1,50,000 student-records is stored on a hard disk with block size of 4096 bytes. The data file is sorted on the primary key `RollNo`. The size of a record pointer for this disk is 7 bytes. Each student-record has a candidate key attribute called `ANum` of size 12 bytes. Suppose an index file with records consisting of two fields, `ANum` value and the record pointer to the corresponding student record, is built and stored on the same disk. Assume that the records of data file and index file are not split across disk blocks. The number of blocks in the index file is _____________.",
+      "reason": "Clean text from PDF.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2021-2-cs-22",
+      "field": "subject",
+      "before": "pds",
+      "after": "prob",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2021-2-cs-22",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "rv",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2021-2-cs-22",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "binomial-distribution",
+        "standard-deviation",
+        "variance"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2021-2-cs-22",
+      "field": "text",
+      "before": "For a given biased coin, the probability that the outcome of a toss is a head is 0.4.\nThis coin is tossed 1,000 times. Let X denote the random variable whose value\nis the number of times that head appeared in these 1,000 tosses. The standard\ndeviation of X (rounded to 2 decimal places) is —",
+      "after": "For a given biased coin, the probability that the outcome of a toss is a head is 0.4. This coin is tossed 1,000 times. Let $X$ denote the random variable whose value is the number of times that head appeared in these 1,000 tosses. The standard deviation of $X$ (rounded to 2 decimal places) is _____________.",
+      "reason": "Clean text from PDF.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2021-2-cs-23",
+      "field": "subject",
+      "before": "coa",
+      "after": "pds",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2021-2-cs-23",
+      "field": "topic",
+      "before": "isa",
+      "after": "recursion",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2021-2-cs-23",
+      "field": "tags",
+      "before": [
+        "c-prog"
+      ],
+      "after": [
+        "recursion",
+        "gcd",
+        "c-programming"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2021-2-cs-23",
+      "field": "text",
+      "before": "Consider the following ANSI C function:\nint SomeFunction (int x, int y)\nif ((x = 1) || (y = 1)) return 1;\nif (x = y) return x;\nif (x > y) return SomeFunction (x - y, y) ;\nif (y > x) return SomeFunction(x, y - x);\nThe value returned by SomeFunction (15, 255) is -",
+      "after": "Consider the following ANSI C function:\n\n```c\nint SomeFunction(int x, int y)\n{\n  if ((x == 1) || (y == 1)) return 1;\n  if (x == y) return x;\n  if (x > y) return SomeFunction(x - y, y);\n  if (y > x) return SomeFunction(x, y - x);\n}\n```\n\nThe value returned by `SomeFunction(15, 255)` is _____________.",
+      "reason": "Restored code (== and braces) from PDF.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2021-2-cs-24",
+      "field": "subject",
+      "before": "pds",
+      "after": "la",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2021-2-cs-24",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "systems",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2021-2-cs-24",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "rank-nullity",
+        "null-space",
+        "rank"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2021-2-cs-24",
+      "field": "text",
+      "before": "Suppose that P is a 4 × 5 matrix such that every solution of the equation Px = 0\nis a scalar multiple of [2 5 4 3 1]F. The rank of P is -",
+      "after": "Suppose that $P$ is a $4 \\times 5$ matrix such that every solution of the equation $P\\mathbf{x} = 0$ is a scalar multiple of $[2\\ 5\\ 4\\ 3\\ 1]^T$. The rank of $P$ is _____________.",
+      "reason": "Clean text with KaTeX from PDF.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2021-2-cs-25",
+      "field": "subject",
+      "before": "pds",
+      "after": "calc",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2021-2-cs-25",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "mvt",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2021-2-cs-25",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "mean-value-theorem",
+        "bounds"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2021-2-cs-25",
+      "field": "text",
+      "before": "Suppose that f : R → R is a differentiable function in the interval [-3,3] such\nthat for every x in the interval, f'(x) ≤ 2. If f(-3) = 7, then f(3) is at most",
+      "after": "Suppose that $f: \\mathbb{R} \\to \\mathbb{R}$ is a continuous function on the interval $[-3, 3]$ and a differentiable function in the interval $(-3, 3)$ such that for every $x$ in the interval, $f'(x) \\le 2$. If $f(-3) = 7$, then $f(3)$ is at most _____________.",
+      "reason": "Restored continuity/differentiability conditions and KaTeX from PDF.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2021-2-cs-26",
+      "field": "subject",
+      "before": "pds",
+      "after": "algo",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "cse-2021-2-cs-26",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "greedy",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "cse-2021-2-cs-26",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "huffman-coding",
+        "prefix-codes",
+        "greedy"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "cse-2021-2-cs-26",
+      "field": "text",
+      "before": "Consider the string abbeddeee. Each letter in the string must be assigned a\nbinary code satisfying the following properties:\n1. For any two letters, the code assigned to one letter must not be a prefix of the\ncode assigned to the other letter.\n2. For any two letters of the same frequency, the letter which occurs earlier in the\ndictionary order is assigned a code whose length is at most the length of the\ncode assigned to the other letter.\nAmong the set of all binary code assignments which satisfy the above two properties,\nwhat is the minimum length of the encoded string?",
+      "after": "Consider the string **abbccddeee**. Each letter in the string must be assigned a binary code satisfying the following properties:\n\n1. For any two letters, the code assigned to one letter must not be a prefix of the code assigned to the other letter.\n2. For any two letters of the same frequency, the letter which occurs earlier in the dictionary order is assigned a code whose length is at most the length of the code assigned to the other letter.\n\nAmong the set of all binary code assignments which satisfy the above two properties, what is the minimum length of the encoded string?",
+      "reason": "OCR read “abbeddeee”; restored string abbccddeee and list formatting from PDF.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "cse-2021-2-cs-27",
+      "field": "subject",
+      "before": "algo",
+      "after": "coa",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "cse-2021-2-cs-27",
+      "field": "topic",
+      "before": "complexity",
+      "after": "cache",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "cse-2021-2-cs-27",
+      "field": "tags",
+      "before": [
+        "asymptotics"
+      ],
+      "after": [
+        "write-through",
+        "write-back",
+        "write-allocate",
+        "inclusive-cache"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "cse-2021-2-cs-27",
+      "field": "text",
+      "before": "Assume a two-level inclusive cache hierarchy, L1 and L2, where L2 is the larger of\nthe two. Consider the following statements.\nS1: Read misses in a write through L1 cache do not result in writebacks\nof dirty lines to the L2.\nS2: Write allocate policy must be used in conjunction with write\nthrough caches and no-write allocate policy is used with writeback\ncaches.\nWhich of the following statements is correct?",
+      "after": "Assume a two-level inclusive cache hierarchy, L1 and L2, where L2 is the larger of the two. Consider the following statements.\n\n- $S_1$: Read misses in a write through L1 cache do not result in writebacks of dirty lines to the L2.\n- $S_2$: Write allocate policy *must* be used in conjunction with write through caches and no-write allocate policy is used with writeback caches.\n\nWhich of the following statements is correct?",
+      "reason": "Clean text from PDF.",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "cse-2021-2-cs-27",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Sy is true and S2 is false"
+        },
+        {
+          "l": "B",
+          "t": "S1 is false and S2 is true"
+        },
+        {
+          "l": "C",
+          "t": "Sy is true and S2 is true"
+        },
+        {
+          "l": "D",
+          "t": "S1 is false and S2 is false"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$S_1$ is true and $S_2$ is false"
+        },
+        {
+          "l": "B",
+          "t": "$S_1$ is false and $S_2$ is true"
+        },
+        {
+          "l": "C",
+          "t": "$S_1$ is true and $S_2$ is true"
+        },
+        {
+          "l": "D",
+          "t": "$S_1$ is false and $S_2$ is false"
+        }
+      ],
+      "reason": "OCR read S1 as “Sy”.",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "cse-2021-2-cs-28",
+      "field": "subject",
+      "before": "pds",
+      "after": "dl",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.24"
+    },
+    {
+      "id": "cse-2021-2-cs-28",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "sequential",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.24"
+    },
+    {
+      "id": "cse-2021-2-cs-28",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "mealy-machine",
+        "state-assignment",
+        "sequential-circuits"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.24"
+    },
+    {
+      "id": "cse-2021-2-cs-29",
+      "field": "subject",
+      "before": "pds",
+      "after": "prob",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "cse-2021-2-cs-29",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "rv",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "cse-2021-2-cs-29",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "expected-value",
+        "independent-events"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "cse-2021-2-cs-29",
+      "field": "text",
+      "before": "In an examination, a student can choose the order in which two questions (QuesA\nand QuesB) must be attempted.\n- If the first question is answered wrong, the student gets zero marks.\n- If the first question is answered correctly and the second question is not answered\ncorrectly, the student gets the marks only for the first question.\n- If both the questions are answered correctly, the student gets the sum of the\nmarks of the two questions.\nThe following table shows the probability of correctly answering a question and the\nmarks of the question respectively.\nquestion\nprobability of answering correctly\nQuesA\n0.8\nQuesB\n0.5\nmarks\n10\n20\nAssuming that the student always wants to maximize her expected marks in the\nexamination, in which order should she attempt the questions and what is the\nexpected marks for that order (assume that the questions are independent)?",
+      "after": "In an examination, a student can choose the order in which two questions (`QuesA` and `QuesB`) must be attempted.\n\n- If the first question is answered wrong, the student gets zero marks.\n- If the first question is answered correctly and the second question is not answered correctly, the student gets the marks only for the first question.\n- If both the questions are answered correctly, the student gets the sum of the marks of the two questions.\n\nThe following table shows the probability of correctly answering a question and the marks of the question respectively.\n\n| question | probability of answering correctly | marks |\n|---|---|---|\n| `QuesA` | 0.8 | 10 |\n| `QuesB` | 0.5 | 20 |\n\nAssuming that the student always wants to maximize her expected marks in the examination, in which order should she attempt the questions and what is the expected marks for that order (assume that the questions are independent)?",
+      "reason": "Restored table as markdown from PDF.",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "cse-2021-2-cs-29",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "First QuesA and then QuesB. Expected marks 14."
+        },
+        {
+          "l": "B",
+          "t": "First QuesB and then QuesA. Expected marks 14."
+        },
+        {
+          "l": "C",
+          "t": "First QuesB and then QuesA. Expected marks 22."
+        },
+        {
+          "l": "D",
+          "t": "First QuesA and then QuesB. Expected marks 16."
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "First `QuesA` and then `QuesB`. Expected marks 14."
+        },
+        {
+          "l": "B",
+          "t": "First `QuesB` and then `QuesA`. Expected marks 14."
+        },
+        {
+          "l": "C",
+          "t": "First `QuesB` and then `QuesA`. Expected marks 22."
+        },
+        {
+          "l": "D",
+          "t": "First `QuesA` and then `QuesB`. Expected marks 16."
+        }
+      ],
+      "reason": "Monospace question names as in PDF.",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "cse-2021-2-cs-30",
+      "field": "subject",
+      "before": "cn",
+      "after": "cd",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.26"
+    },
+    {
+      "id": "cse-2021-2-cs-30",
+      "field": "topic",
+      "before": "network",
+      "after": "optimization",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.26"
+    },
+    {
+      "id": "cse-2021-2-cs-30",
+      "field": "tags",
+      "before": [
+        "network"
+      ],
+      "after": [
+        "common-subexpression-elimination",
+        "code-optimization"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.26"
+    },
+    {
+      "id": "cse-2021-2-cs-30",
+      "field": "text",
+      "before": "Consider the following ANSI C code segment:\nz = x + 3 + y->f1 + y->f2;\nfor (i = 0; i < 200; i = i + 2){\nif (z > i) {\np=p +x + 3;\nq = q + y->f1;\n} else {\np = p + y->f2;\nq = +x + 3;\nAssume that the variable y points to a struct (allocated on the heap) containing\ntwo fields f1 and f2, and the local variables x, y, z, p, q, and i are allotted\nregisters. Common sub-expression elimination (CSE) optimization is applied on\nthe code. The number of addition and dereference operations (of the form y->f1\nor y->f2) in the optimized code, respectively, are:",
+      "after": "Consider the following ANSI C code segment:\n\n```c\nz = x + 3 + y->f1 + y->f2;\nfor (i = 0; i < 200; i = i + 2){\n  if (z > i) {\n    p = p + x + 3;\n    q = q + y->f1;\n  } else {\n    p = p + y->f2;\n    q = q + x + 3;\n  }\n}\n```\n\nAssume that the variable `y` points to a `struct` (allocated on the heap) containing two fields `f1` and `f2`, and the local variables `x`, `y`, `z`, `p`, `q`, and `i` are allotted registers. Common sub-expression elimination (CSE) optimization is applied on the code. The number of addition and dereference operations (of the form `y->f1` or `y->f2`) in the optimized code, respectively, are:",
+      "reason": "Restored code (else branch was garbled) from PDF.",
+      "source": "pdf p.26"
+    },
+    {
+      "id": "cse-2021-2-cs-31",
+      "field": "subject",
+      "before": "pds",
+      "after": "db",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "cse-2021-2-cs-31",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "sql",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "cse-2021-2-cs-31",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "nested-query",
+        "aggregate",
+        "group-by"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "cse-2021-2-cs-31",
+      "field": "text",
+      "before": "The relation scheme given below is used to store information about the employees of\na company, where empId is the key and deptId indicates the department to which\nthe employee is assigned. Each employee is assigned to exactly one department.\nemp (empId, name, gender, salary, deptId)\nConsider the following SQL query:\nselect deptId, count (*)\nfrom emp\nwhere gender = \"female\" and salary > (select avg(salary) from emp)\ngroup by deptId;\nThe above query gives, for each department in the company, the number of\nfemale employees whose salary is greater than the average salary of",
+      "after": "The relation scheme given below is used to store information about the employees of a company, where `empId` is the key and `deptId` indicates the department to which the employee is assigned. Each employee is assigned to exactly one department.\n\n```\nemp(empId, name, gender, salary, deptId)\n```\n\nConsider the following SQL query:\n\n```sql\nselect deptId, count(*)\nfrom emp\nwhere gender = \"female\" and salary > (select avg(salary) from emp)\ngroup by deptId;\n```\n\nThe above query gives, for each department in the company, the number of female employees whose salary is greater than the average salary of",
+      "reason": "Clean text with code blocks from PDF.",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "cse-2021-2-cs-32",
+      "field": "subject",
+      "before": "ga",
+      "after": "db",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.28"
+    },
+    {
+      "id": "cse-2021-2-cs-32",
+      "field": "topic",
+      "before": "quant",
+      "after": "transactions",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.28"
+    },
+    {
+      "id": "cse-2021-2-cs-32",
+      "field": "tags",
+      "before": [
+        "quant"
+      ],
+      "after": [
+        "conflict-serializability",
+        "recoverability",
+        "precedence-graph"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.28"
+    },
+    {
+      "id": "cse-2021-2-cs-32",
+      "field": "text",
+      "before": "Let $S$ be the following schedule of operations of three transactions $T_1$, $T_2$, and $T_3$:\n\n$$S: r_1(X);\\; r_2(Y);\\; r_3(Z);\\; w_1(X);\\; w_2(Y);\\; w_3(Z);\\; r_2(X);\\; r_1(Y);$$\n\nConsider the following two statements:\n- P: Schedule $S$ is conflict serializable.\n- Q: Schedule $S$ is view serializable.\n\nWhich of the following choices is correct?",
+      "after": "Let $S$ be the following schedule of operations of three transactions $T_1$, $T_2$ and $T_3$ in a relational database system:\n\n$$R_2(Y), R_1(X), R_3(Z), R_1(Y), W_1(X), R_2(Z), W_2(Y), R_3(X), W_3(Z)$$\n\nConsider the statements P and Q below:\n\n- P: $S$ is conflict-serializable.\n- Q: If $T_3$ commits before $T_1$ finishes, then $S$ is recoverable.\n\nWhich one of the following choices is correct?",
+      "reason": "Stored text had a different schedule and a different statement Q; restored the schedule and statements from the PDF.",
+      "source": "pdf p.28"
+    },
+    {
+      "id": "cse-2021-2-cs-33",
+      "field": "subject",
+      "before": "pds",
+      "after": "prob",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.28"
+    },
+    {
+      "id": "cse-2021-2-cs-33",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "basic",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.28"
+    },
+    {
+      "id": "cse-2021-2-cs-33",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "polya-urn",
+        "total-probability",
+        "conditional-probability"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.28"
+    },
+    {
+      "id": "cse-2021-2-cs-33",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "$\\frac{r}{r+b}$"
+        },
+        {
+          "l": "B",
+          "t": "$\\frac{r}{r+b+3}$"
+        },
+        {
+          "l": "C",
+          "t": "$\\frac{r+3}{r+b+3}$"
+        },
+        {
+          "l": "D",
+          "t": "$\\frac{r(r+1)(r+2)(r+3)}{(r+b)(r+b+1)(r+b+2)(r+b+3)}$"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\frac{r}{r+b}$"
+        },
+        {
+          "l": "B",
+          "t": "$\\frac{r}{r+b+3}$"
+        },
+        {
+          "l": "C",
+          "t": "$\\frac{r+3}{r+b+3}$"
+        },
+        {
+          "l": "D",
+          "t": "$\\left(\\frac{r}{r+b}\\right)\\left(\\frac{r+1}{r+b+1}\\right)\\left(\\frac{r+2}{r+b+2}\\right)\\left(\\frac{r+3}{r+b+3}\\right)$"
+        }
+      ],
+      "reason": "Option D written as the product of four factors, as in the PDF.",
+      "source": "pdf p.28"
+    },
+    {
+      "id": "cse-2021-2-cs-34",
+      "field": "subject",
+      "before": "pds",
+      "after": "cn",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.29"
+    },
+    {
+      "id": "cse-2021-2-cs-34",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "datalink",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.29"
+    },
+    {
+      "id": "cse-2021-2-cs-34",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "crc",
+        "error-detection",
+        "polynomial-division"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.29"
+    },
+    {
+      "id": "cse-2021-2-cs-34",
+      "field": "text",
+      "before": "Consider the cyclic redundancy check (CRC) based error detecting scheme having the generator polynomial $X^3 + X + 1$. Suppose the message $M = 11000$ is to be transmitted. Check bits $c_2 c_1 c_0$ are appended at the end of the message by the transmitter using the above CRC scheme. The transmitted bit string is denoted by $M \\, c_2 c_1 c_0$. The value of the checkbit sequence $c_2 c_1 c_0$ is:",
+      "after": "Consider the cyclic redundancy check (CRC) based error detecting scheme having the generator polynomial $X^3 + X + 1$. Suppose the message $m_4m_3m_2m_1m_0 = 11000$ is to be transmitted. Check bits $c_2c_1c_0$ are appended at the end of the message by the transmitter using the above CRC scheme. The transmitted bit string is denoted by $m_4m_3m_2m_1m_0c_2c_1c_0$. The value of the checkbit sequence $c_2c_1c_0$ is",
+      "reason": "Restored message-bit notation from PDF.",
+      "source": "pdf p.29"
+    },
+    {
+      "id": "cse-2021-2-cs-35",
+      "field": "text",
+      "before": "Consider the following ANSI C program:\n#include <stdio.h>\n#include <stdlib.h>\nstruct Nodel\nint value;\nstruct Node *next;};\nint main (){\nstruct Node *boxE, *head, *boxN; int index = 0;\nboxE = head = (struct Node *) malloc(sizeof (struct Node));\nhead-›value = index;\nfor (index = 1; index <= 3; index++){\nboxN = (struct Node *) malloc(sizeof (struct Node)) ;\nboxE-›next = boxN;\nboxN-›value = index;\nboxE = boxN; }\nfor (index = 0; index <= 3; index++) {\nprintf (\"Value at index %d is d\\n\", index, head-›value) ;\nhead = head-›next;\nprintf (\"Value at index %d is %d\\n\", index+1, head-›value); } }\nWhich one of the statements below is correct about the program?",
+      "after": "Consider the following ANSI C program:\n\n```c\n#include <stdio.h>\n#include <stdlib.h>\nstruct Node{\n      int value;\n      struct Node *next;};\nint main(){\n   struct Node  *boxE, *head, *boxN; int index = 0;\n   boxE = head = (struct Node *) malloc(sizeof(struct Node));\n   head->value = index;\n   for (index = 1; index <= 3; index++){\n       boxN = (struct Node *) malloc(sizeof(struct Node));\n       boxE->next =  boxN;\n       boxN->value = index;\n       boxE = boxN; }\n   for (index = 0; index <= 3;  index++) {\n       printf(\"Value at index  %d is %d\\n\", index, head->value);\n       head = head->next;\n       printf(\"Value at index %d is %d\\n\", index+1, head->value); } }\n```\n\nWhich one of the statements below is correct about the program?",
+      "reason": "OCR garbled the program (`Nodel`, `›`, missing `%`); restored it from the paper as a fenced code block.",
+      "source": "GATE 2021 CS Set 2 question paper, p.30"
+    },
+    {
+      "id": "cse-2021-2-cs-35",
+      "field": "subject",
+      "before": "os",
+      "after": "pds",
+      "reason": "Subject was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.30"
+    },
+    {
+      "id": "cse-2021-2-cs-35",
+      "field": "topic",
+      "before": "memory",
+      "after": "linked-lists",
+      "reason": "Topic was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.30"
+    },
+    {
+      "id": "cse-2021-2-cs-35",
+      "field": "tags",
+      "before": [
+        "memory"
+      ],
+      "after": [
+        "c",
+        "pointers",
+        "linked-list",
+        "malloc",
+        "undefined-behaviour"
+      ],
+      "reason": "Tags replaced to match the question content.",
+      "source": "GATE 2021 CS Set 2 question paper, p.30"
+    },
+    {
+      "id": "cse-2021-2-cs-36",
+      "field": "text",
+      "before": "Consider the following two statements about regular languages:\nS1: Every infinite regular language contains an undecidable language as a subset.\nS¿: Every finite language is regular.\nWhich one of the following choices is correct?",
+      "after": "Consider the following two statements about regular languages:\n\n- $S_1$: Every infinite regular language contains an undecidable language as a subset.\n- $S_2$: Every finite language is regular.\n\nWhich one of the following choices is correct?",
+      "reason": "OCR garbled the subscripts ($S_2$ read as \"S¿\").",
+      "source": "GATE 2021 CS Set 2 question paper, p.31"
+    },
+    {
+      "id": "cse-2021-2-cs-36",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Only S1 is true."
+        },
+        {
+          "l": "B",
+          "t": "Only S2 is true."
+        },
+        {
+          "l": "C",
+          "t": "Both S1 and S2 are true."
+        },
+        {
+          "l": "D",
+          "t": "Neither Sy nor So is true."
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Only $S_1$ is true."
+        },
+        {
+          "l": "B",
+          "t": "Only $S_2$ is true."
+        },
+        {
+          "l": "C",
+          "t": "Both $S_1$ and $S_2$ are true."
+        },
+        {
+          "l": "D",
+          "t": "Neither $S_1$ nor $S_2$ is true."
+        }
+      ],
+      "reason": "Option D was garbled (\"Sy nor So\"); subscripts typeset.",
+      "source": "GATE 2021 CS Set 2 question paper, p.31"
+    },
+    {
+      "id": "cse-2021-2-cs-36",
+      "field": "subject",
+      "before": "algo",
+      "after": "toc",
+      "reason": "Subject was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.31"
+    },
+    {
+      "id": "cse-2021-2-cs-36",
+      "field": "topic",
+      "before": "asymptotics",
+      "after": "regular",
+      "reason": "Topic was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.31"
+    },
+    {
+      "id": "cse-2021-2-cs-36",
+      "field": "tags",
+      "before": [
+        "asymptotics"
+      ],
+      "after": [
+        "regular-languages",
+        "decidability",
+        "countability"
+      ],
+      "reason": "Tags replaced to match the question content.",
+      "source": "GATE 2021 CS Set 2 question paper, p.31"
+    },
+    {
+      "id": "cse-2021-2-cs-37",
+      "field": "text",
+      "before": "For two n-dimensional real vectors P and Q, the operation s(P, Q) is defined as\nfollows:\ni=1\nLet C be a set of 10-dimensional non-zero real vectors such that for every pair of\ndistinct vectors P, Q € C, s(P, Q) = 0. What is the maximum cardinality possible\nfor the set L?",
+      "after": "For two $n$-dimensional real vectors $P$ and $Q$, the operation $s(P, Q)$ is defined as follows:\n\n$$s(P, Q) = \\sum_{i=1}^{n} \\left(P[i] \\cdot Q[i]\\right)$$\n\nLet $\\mathcal{L}$ be a set of 10-dimensional non-zero real vectors such that for every pair of distinct vectors $P, Q \\in \\mathcal{L}$, $s(P, Q) = 0$. What is the maximum cardinality possible for the set $\\mathcal{L}$?",
+      "reason": "The defining formula was lost and the set name was read as C / L; restored from the paper.",
+      "source": "GATE 2021 CS Set 2 question paper, p.31"
+    },
+    {
+      "id": "cse-2021-2-cs-37",
+      "field": "subject",
+      "before": "cd",
+      "after": "la",
+      "reason": "Subject was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.31"
+    },
+    {
+      "id": "cse-2021-2-cs-37",
+      "field": "topic",
+      "before": "parsing",
+      "after": "spaces",
+      "reason": "Topic was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.31"
+    },
+    {
+      "id": "cse-2021-2-cs-37",
+      "field": "tags",
+      "before": [
+        "parsing"
+      ],
+      "after": [
+        "orthogonality",
+        "linear-independence",
+        "dot-product"
+      ],
+      "reason": "Tags replaced to match the question content.",
+      "source": "GATE 2021 CS Set 2 question paper, p.31"
+    },
+    {
+      "id": "cse-2021-2-cs-38",
+      "field": "text",
+      "before": "For a statement S in a program, in the context of liveness analysis, the following\nsets are defined:\nUSE(S) : the set of variables used in S\nIN (S)\n: the set of variables that are live at the entry of S\nOUT(S) : the set of variables that are live at the exit of S\nConsider a basic block that consists of two statements, Si followed by S2.\nWhich one of the following statements is correct?",
+      "after": "For a statement $S$ in a program, in the context of liveness analysis, the following sets are defined:\n\n| Set | Meaning |\n|---|---|\n| $USE(S)$ | the set of variables used in $S$ |\n| $IN(S)$ | the set of variables that are live at the entry of $S$ |\n| $OUT(S)$ | the set of variables that are live at the exit of $S$ |\n\nConsider a basic block that consists of two statements, $S_1$ followed by $S_2$. Which one of the following statements is correct?",
+      "reason": "Reflowed the definitions into a table and typeset the set names.",
+      "source": "GATE 2021 CS Set 2 question paper, p.32"
+    },
+    {
+      "id": "cse-2021-2-cs-38",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "OUT (S1) = IN (S2)"
+        },
+        {
+          "l": "B",
+          "t": "OUT (S1) = IN (S1) U USE(S1)"
+        },
+        {
+          "l": "C",
+          "t": "OUT (S1) = IN (S2) U OUT (S2)"
+        },
+        {
+          "l": "D",
+          "t": "OUT (S1) = USE (S1) U IN (S2)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$OUT(S_1) = IN(S_2)$"
+        },
+        {
+          "l": "B",
+          "t": "$OUT(S_1) = IN(S_1) \\cup USE(S_1)$"
+        },
+        {
+          "l": "C",
+          "t": "$OUT(S_1) = IN(S_2) \\cup OUT(S_2)$"
+        },
+        {
+          "l": "D",
+          "t": "$OUT(S_1) = USE(S_1) \\cup IN(S_2)$"
+        }
+      ],
+      "reason": "Typeset the options in KaTeX.",
+      "source": "GATE 2021 CS Set 2 question paper, p.32"
+    },
+    {
+      "id": "cse-2021-2-cs-38",
+      "field": "subject",
+      "before": "dl",
+      "after": "cd",
+      "reason": "Subject was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.32"
+    },
+    {
+      "id": "cse-2021-2-cs-38",
+      "field": "topic",
+      "before": "combinational",
+      "after": "optimization",
+      "reason": "Topic was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.32"
+    },
+    {
+      "id": "cse-2021-2-cs-38",
+      "field": "tags",
+      "before": [
+        "combinational"
+      ],
+      "after": [
+        "liveness-analysis",
+        "data-flow-analysis",
+        "basic-block"
+      ],
+      "reason": "Tags replaced to match the question content.",
+      "source": "GATE 2021 CS Set 2 question paper, p.32"
+    },
+    {
+      "id": "cse-2021-2-cs-39",
+      "field": "text",
+      "before": "For constants $a \\ge 1$ and $b > 1$, consider the following recurrence defined on the non-negative integers:\n\n$$T(n) = a T(n/b) + f(n)$$\n\nWhich one of the following options is correct about the recurrence $T(n)$?",
+      "after": "For constants $a \\ge 1$ and $b > 1$, consider the following recurrence defined on the non-negative integers:\n\n$$T(n) = a \\cdot T\\left(\\frac{n}{b}\\right) + f(n)$$\n\nWhich one of the following options is correct about the recurrence $T(n)$?",
+      "reason": "Typeset $n/b$ as in the paper.",
+      "source": "GATE 2021 CS Set 2 question paper, p.32"
+    },
+    {
+      "id": "cse-2021-2-cs-39",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "If $f(n) = n \\log_b n$, then $T(n) = O(n \\log_b^2 n)$."
+        },
+        {
+          "l": "B",
+          "t": "If $f(n) = \\log_b n$, then $T(n) = O(\\log_2 n)$."
+        },
+        {
+          "l": "C",
+          "t": "If $f(n) = O(n^{\\log_b a - \\epsilon})$ for some $\\epsilon > 0$, then $T(n) = O(n^{\\log_b a})$."
+        },
+        {
+          "l": "D",
+          "t": "If $f(n) = \\Theta(n^{\\log_b a})$, then $T(n) = O(n^{\\log_b a})$."
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "If $f(n)$ is $n \\log_2(n)$, then $T(n)$ is $\\Theta(n \\log_2(n))$."
+        },
+        {
+          "l": "B",
+          "t": "If $f(n)$ is $\\dfrac{n}{\\log_2(n)}$, then $T(n)$ is $\\Theta(\\log_2(n))$."
+        },
+        {
+          "l": "C",
+          "t": "If $f(n)$ is $O(n^{\\log_b(a) - \\epsilon})$ for some $\\epsilon > 0$, then $T(n)$ is $\\Theta(n^{\\log_b(a)})$."
+        },
+        {
+          "l": "D",
+          "t": "If $f(n)$ is $\\Theta(n^{\\log_b(a)})$, then $T(n)$ is $\\Theta(n^{\\log_b(a)})$."
+        }
+      ],
+      "reason": "Stored options did not match the paper (wrong functions and O instead of Θ); restored all four.",
+      "source": "GATE 2021 CS Set 2 question paper, p.32"
+    },
+    {
+      "id": "cse-2021-2-cs-39",
+      "field": "subject",
+      "before": "ga",
+      "after": "algo",
+      "reason": "Subject was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.32"
+    },
+    {
+      "id": "cse-2021-2-cs-39",
+      "field": "topic",
+      "before": "quant",
+      "after": "complexity",
+      "reason": "Topic was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.32"
+    },
+    {
+      "id": "cse-2021-2-cs-39",
+      "field": "tags",
+      "before": [
+        "quant"
+      ],
+      "after": [
+        "master-theorem",
+        "recurrences",
+        "asymptotics"
+      ],
+      "reason": "Tags replaced to match the question content.",
+      "source": "GATE 2021 CS Set 2 question paper, p.32"
+    },
+    {
+      "id": "cse-2021-2-cs-40",
+      "field": "text",
+      "before": "Suppose the following functional dependencies hold on a relation U with attributes\nPIQ, R, S, and T:\nP → QR\nRS → T\nWhich of the following functional dependencies can be inferred from the above\nfunctional dependencies?",
+      "after": "Suppose the following functional dependencies hold on a relation U with attributes $P$, $Q$, $R$, $S$, and $T$:\n\n$$P \\to QR \\qquad RS \\to T$$\n\nWhich of the following functional dependencies can be inferred from the above functional dependencies?",
+      "reason": "Attribute list was garbled (\"PIQ\"); FDs typeset.",
+      "source": "GATE 2021 CS Set 2 question paper, p.33"
+    },
+    {
+      "id": "cse-2021-2-cs-40",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "PS → T"
+        },
+        {
+          "l": "B",
+          "t": "R →T"
+        },
+        {
+          "l": "C",
+          "t": "P → R"
+        },
+        {
+          "l": "D",
+          "t": "PS →Q"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$PS \\to T$"
+        },
+        {
+          "l": "B",
+          "t": "$R \\to T$"
+        },
+        {
+          "l": "C",
+          "t": "$P \\to R$"
+        },
+        {
+          "l": "D",
+          "t": "$PS \\to Q$"
+        }
+      ],
+      "reason": "Typeset the FDs in KaTeX.",
+      "source": "GATE 2021 CS Set 2 question paper, p.33"
+    },
+    {
+      "id": "cse-2021-2-cs-40",
+      "field": "subject",
+      "before": "os",
+      "after": "db",
+      "reason": "Subject was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.33"
+    },
+    {
+      "id": "cse-2021-2-cs-40",
+      "field": "topic",
+      "before": "memory",
+      "after": "normalization",
+      "reason": "Topic was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.33"
+    },
+    {
+      "id": "cse-2021-2-cs-40",
+      "field": "tags",
+      "before": [
+        "memory"
+      ],
+      "after": [
+        "functional-dependencies",
+        "armstrong-axioms",
+        "attribute-closure"
+      ],
+      "reason": "Tags replaced to match the question content.",
+      "source": "GATE 2021 CS Set 2 question paper, p.33"
+    },
+    {
+      "id": "cse-2021-2-cs-41",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "$\\{w x w x^R \\mid w, x \\in \\{0, 1\\}^*\\}$"
+        },
+        {
+          "l": "B",
+          "t": "$\\{w x x^R \\mid w, x \\in \\{0, 1\\}^*\\}$"
+        },
+        {
+          "l": "C",
+          "t": "$\\{w x w^R \\mid w, x \\in \\{0, 1\\}^*\\}$"
+        },
+        {
+          "l": "D",
+          "t": "$\\{x x^R \\mid x \\in \\{0, 1\\}^*\\}$"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\{w x w^R x^R \\mid w, x \\in \\{0,1\\}^*\\}$"
+        },
+        {
+          "l": "B",
+          "t": "$\\{w w^R x x^R \\mid w, x \\in \\{0,1\\}^*\\}$"
+        },
+        {
+          "l": "C",
+          "t": "$\\{w x w^R \\mid w, x \\in \\{0,1\\}^*\\}$"
+        },
+        {
+          "l": "D",
+          "t": "$\\{w x x^R w^R \\mid w, x \\in \\{0,1\\}^*\\}$"
+        }
+      ],
+      "reason": "Stored options did not match the paper; restored all four languages.",
+      "source": "GATE 2021 CS Set 2 question paper, p.33"
+    },
+    {
+      "id": "cse-2021-2-cs-41",
+      "field": "subject",
+      "before": "db",
+      "after": "toc",
+      "reason": "Subject was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.33"
+    },
+    {
+      "id": "cse-2021-2-cs-41",
+      "field": "topic",
+      "before": "sql",
+      "after": "cfg",
+      "reason": "Topic was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.33"
+    },
+    {
+      "id": "cse-2021-2-cs-41",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "context-free-languages",
+        "palindromes",
+        "closure-properties"
+      ],
+      "reason": "Tags replaced to match the question content.",
+      "source": "GATE 2021 CS Set 2 question paper, p.33"
+    },
+    {
+      "id": "cse-2021-2-cs-42",
+      "field": "text",
+      "before": "Consider the following multi-threaded code segment (in a mix of C and pseudo-\ncode), invoked by two processes P1 and P2, and each of the processes spawns two\nthreads T1 and T2:\nint x = 0; // global\nLock L1;\n// global\nmain() {\ncreate a thread to execute foo); // Thread T1\ncreate a thread to execute foo); // Thread T2\nwait for the two threads to finish execution;\nprint (x) ;}\nfoo () {\nint y = 0;\nAcquire L1;\nx = x + 1;\ny = y + 1;\nRelease L1;\nprint (y) ;}\nWhich of the following statement (s) is/are correct?",
+      "after": "Consider the following multi-threaded code segment (in a mix of C and pseudo-code), invoked by two processes P1 and P2, and each of the processes spawns two threads T1 and T2:\n\n```c\nint x = 0;  // global\nLock L1;    // global\nmain() {\n  create a thread to execute foo();  // Thread T1\n  create a thread to execute foo();  // Thread T2\n  wait for the two threads to finish execution;\n  print (x);}\n\nfoo() {\n  int y = 0;\n  Acquire L1;\n  x = x + 1;\n  y = y + 1;\n  Release L1;\n  print (y);}\n```\n\nWhich of the following statement(s) is/are correct?",
+      "reason": "Code was flattened and garbled (\"foo);\"); restored as a fenced block.",
+      "source": "GATE 2021 CS Set 2 question paper, p.34"
+    },
+    {
+      "id": "cse-2021-2-cs-42",
+      "field": "subject",
+      "before": "db",
+      "after": "os",
+      "reason": "Subject was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.34"
+    },
+    {
+      "id": "cse-2021-2-cs-42",
+      "field": "topic",
+      "before": "sql",
+      "after": "sync",
+      "reason": "Topic was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.34"
+    },
+    {
+      "id": "cse-2021-2-cs-42",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "threads",
+        "processes",
+        "address-space",
+        "mutex"
+      ],
+      "reason": "Tags replaced to match the question content.",
+      "source": "GATE 2021 CS Set 2 question paper, p.34"
+    },
+    {
+      "id": "cse-2021-2-cs-43",
+      "field": "text",
+      "before": "Consider a computer system with multiple shared resource types, with one instance\nper resource type. Each instance can be owned by only one process at a time.\nOwning and freeing of resources are done by holding a global lock (L). The following\nscheme is used to own a resource instance :\nfunction OWNRESOURCE(Resource R)\nAcquire lock L // a global lock\nif R is available then\nAcquire R\nRelease lock L\nelse\nif R is owned by another process P then\nTerminate P, after releasing all resources owned by P\nAcquire R\nRestart P\nRelease lock L\nend if\nend if\nend function\nWhich of the following choice(s) about the above scheme is/are correct?",
+      "after": "Consider a computer system with multiple shared resource types, with one instance per resource type. Each instance can be owned by only one process at a time. Owning and freeing of resources are done by holding a global lock (L). The following scheme is used to own a resource instance:\n\n```text\nfunction OWNRESOURCE(Resource R)\n    Acquire lock L // a global lock\n    if R is available then\n        Acquire R\n        Release lock L\n    else\n        if R is owned by another process P then\n            Terminate P, after releasing all resources owned by P\n            Acquire R\n            Restart P\n            Release lock L\n        end if\n    end if\nend function\n```\n\nWhich of the following choice(s) about the above scheme is/are correct?",
+      "reason": "Pseudocode lost its indentation; restored as a fenced block.",
+      "source": "GATE 2021 CS Set 2 question paper, p.35"
+    },
+    {
+      "id": "cse-2021-2-cs-43",
+      "field": "subject",
+      "before": "db",
+      "after": "os",
+      "reason": "Subject was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.35"
+    },
+    {
+      "id": "cse-2021-2-cs-43",
+      "field": "topic",
+      "before": "sql",
+      "after": "deadlock",
+      "reason": "Topic was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.35"
+    },
+    {
+      "id": "cse-2021-2-cs-43",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "deadlock-prevention",
+        "preemption",
+        "livelock",
+        "starvation"
+      ],
+      "reason": "Tags replaced to match the question content.",
+      "source": "GATE 2021 CS Set 2 question paper, p.35"
+    },
+    {
+      "id": "cse-2021-2-cs-44",
+      "field": "text",
+      "before": "If the numerical value of a 2-byte unsigned integer on a little endian computer\nis 255 more than that on a big endian computer, which of the following choices\nrepresent (s) the unsigned integer on a little endian computer?",
+      "after": "If the numerical value of a 2-byte unsigned integer on a little endian computer is 255 more than that on a big endian computer, which of the following choices represent(s) the unsigned integer on a little endian computer?",
+      "reason": "Joined PDF line breaks.",
+      "source": "GATE 2021 CS Set 2 question paper, p.36"
+    },
+    {
+      "id": "cse-2021-2-cs-44",
+      "field": "subject",
+      "before": "db",
+      "after": "coa",
+      "reason": "Subject was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.36"
+    },
+    {
+      "id": "cse-2021-2-cs-44",
+      "field": "topic",
+      "before": "sql",
+      "after": "isa",
+      "reason": "Topic was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.36"
+    },
+    {
+      "id": "cse-2021-2-cs-44",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "endianness",
+        "byte-order",
+        "hexadecimal"
+      ],
+      "reason": "Tags replaced to match the question content.",
+      "source": "GATE 2021 CS Set 2 question paper, p.36"
+    },
+    {
+      "id": "cse-2021-2-cs-45",
+      "field": "text",
+      "before": "Consider a computer network using the distance vector routing algorithm in its\nnetwork layer. The partial topology of the network is as shown below.\nThe objective is to find the shortest-cost path from the router R to routers P and Q.\nAssume that R does not initially know the shortest routes to P and Q. Assume that\nR has three neighbouring routers denoted as X, Y, and Z. During one iteration,\nR measures its distance to its neighbours X, Y, and Z as 3, 2, and 5, respectively.\nRouter R gets routing vectors from its neighbours that indicate that the distance\nto router P from routers X, Y, and Z are 7, 6, and 5, respectively. The routing\nvector also indicates that the distance to router Q from routers X, Y, and Z are\n4, 6, and 8, respectively. Which of the following statement (s) is/are correct with\nrespect to the new routing table of R, after updation during this iteration?",
+      "after": "Consider a computer network using the distance vector routing algorithm in its network layer. The partial topology of the network is as shown below.\n\nThe objective is to find the shortest-cost path from the router $R$ to routers $P$ and $Q$. Assume that $R$ does not initially know the shortest routes to $P$ and $Q$. Assume that $R$ has three neighbouring routers denoted as $X$, $Y$, and $Z$. During one iteration, $R$ measures its distance to its neighbours $X$, $Y$, and $Z$ as 3, 2, and 5, respectively. Router $R$ gets routing vectors from its neighbours that indicate that the distance to router $P$ from routers $X$, $Y$, and $Z$ are 7, 6, and 5, respectively. The routing vector also indicates that the distance to router $Q$ from routers $X$, $Y$, and $Z$ are 4, 6, and 8, respectively. Which of the following statement(s) is/are correct with respect to the new routing table of $R$, after updation during this iteration?",
+      "reason": "Joined PDF line breaks; router names typeset.",
+      "source": "GATE 2021 CS Set 2 question paper, p.37"
+    },
+    {
+      "id": "cse-2021-2-cs-45",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "The distance from R to P will be stored as 10."
+        },
+        {
+          "l": "B",
+          "t": "The distance from R to Q will be stored as 7."
+        },
+        {
+          "l": "C",
+          "t": "The next hop router for a packet from R to P is Y."
+        },
+        {
+          "l": "D",
+          "t": "The next hop router for a packet from R to Q is Z."
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "The distance from $R$ to $P$ will be stored as 10."
+        },
+        {
+          "l": "B",
+          "t": "The distance from $R$ to $Q$ will be stored as 7."
+        },
+        {
+          "l": "C",
+          "t": "The next hop router for a packet from $R$ to $P$ is $Y$."
+        },
+        {
+          "l": "D",
+          "t": "The next hop router for a packet from $R$ to $Q$ is $Z$."
+        }
+      ],
+      "reason": "Router names typeset.",
+      "source": "GATE 2021 CS Set 2 question paper, p.37"
+    },
+    {
+      "id": "cse-2021-2-cs-45",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2021-2/cs-45-1.png",
+          "svg": "cse-2021-2/cs-45-1.svg",
+          "alt": "Network topology with router R connected to X, Y, Z and destination routers P, Q."
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2021-2/cs-45-1.png",
+          "svg": "cse-2021-2/cs-45-1.svg",
+          "alt": "Partial network topology: router R at the top is linked to its three neighbours X, Y and Z; each neighbour has two further links leading off to unspecified parts of the network (shown as dots); routers Q and P appear below, each with a single link leading up into the unspecified part."
+        }
+      ],
+      "reason": "Redrew the SVG from the paper (old one was a generic template) and made the alt text precise.",
+      "source": "GATE 2021 CS Set 2 question paper, p.37"
+    },
+    {
+      "id": "cse-2021-2-cs-45",
+      "field": "subject",
+      "before": "db",
+      "after": "cn",
+      "reason": "Subject was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.37"
+    },
+    {
+      "id": "cse-2021-2-cs-45",
+      "field": "topic",
+      "before": "sql",
+      "after": "routing",
+      "reason": "Topic was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.37"
+    },
+    {
+      "id": "cse-2021-2-cs-45",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "distance-vector",
+        "bellman-ford",
+        "routing-table"
+      ],
+      "reason": "Tags replaced to match the question content.",
+      "source": "GATE 2021 CS Set 2 question paper, p.37"
+    },
+    {
+      "id": "cse-2021-2-cs-46",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2021-2/cs-46-1.png",
+          "svg": "cse-2021-2/cs-46-1.svg",
+          "alt": "Directed graph with 4x4 grid vertices starting from source vertex S at bottom left."
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2021-2/cs-46-1.png",
+          "svg": "cse-2021-2/cs-46-1.svg",
+          "alt": "Directed 4 by 4 grid graph; columns 0-3 left to right, rows 0-3 bottom to top, S = (0,0). Edges: row 0: S→(1,0)→(2,0)→(3,0); row 1: (1,1)→(0,1), (1,1)→(2,1), (3,1)→(2,1); row 2: (0,2)→(1,2)→(2,2)→(3,2); row 3: (0,3)→(1,3), (2,3)→(1,3), (2,3)→(3,3); column 0: (0,1)→S, (0,1)→(0,2)→(0,3); column 1: (1,0)→(1,1)→(1,2), (1,3)→(1,2); column 2: (2,1)→(2,0), (2,1)→(2,2)→(2,3); column 3: (3,0)→(3,1)→(3,2)→(3,3)."
+        }
+      ],
+      "reason": "Redrew the SVG edge-by-edge from the paper (old one was a generic template); alt text now lists every edge.",
+      "source": "GATE 2021 CS Set 2 question paper, p.38"
+    },
+    {
+      "id": "cse-2021-2-cs-46",
+      "field": "subject",
+      "before": "db",
+      "after": "algo",
+      "reason": "Subject was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.38"
+    },
+    {
+      "id": "cse-2021-2-cs-46",
+      "field": "topic",
+      "before": "sql",
+      "after": "graph-traversal",
+      "reason": "Topic was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.38"
+    },
+    {
+      "id": "cse-2021-2-cs-46",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "dfs",
+        "back-edges",
+        "topological-sort",
+        "scc"
+      ],
+      "reason": "Tags replaced to match the question content.",
+      "source": "GATE 2021 CS Set 2 question paper, p.38"
+    },
+    {
+      "id": "cse-2021-2-cs-47",
+      "field": "text",
+      "before": "Which of the following regular expressions represent (s) the set of all binary numbers\nthat are divisible by three? Assume that the string e is divisible by three.",
+      "after": "Which of the following regular expressions represent(s) the set of all binary numbers that are divisible by three? Assume that the string $\\epsilon$ is divisible by three.",
+      "reason": "OCR read ε as \"e\".",
+      "source": "GATE 2021 CS Set 2 question paper, p.39"
+    },
+    {
+      "id": "cse-2021-2-cs-47",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "(0 + 1(01*0)*1)*"
+        },
+        {
+          "l": "B",
+          "t": "(0 + 11 + 10(1 + 00)*01)*"
+        },
+        {
+          "l": "C",
+          "t": "(0*(1(01*0)*1)*)*"
+        },
+        {
+          "l": "D",
+          "t": "(0 + 11 + 11(1 + 00) *00)*"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$(0 + 1(01^*0)^*1)^*$"
+        },
+        {
+          "l": "B",
+          "t": "$(0 + 11 + 10(1 + 00)^*01)^*$"
+        },
+        {
+          "l": "C",
+          "t": "$(0^*(1(01^*0)^*1)^*)^*$"
+        },
+        {
+          "l": "D",
+          "t": "$(0 + 11 + 11(1 + 00)^*00)^*$"
+        }
+      ],
+      "reason": "Typeset the expressions in KaTeX (bare * would be read as markdown emphasis).",
+      "source": "GATE 2021 CS Set 2 question paper, p.39"
+    },
+    {
+      "id": "cse-2021-2-cs-47",
+      "field": "subject",
+      "before": "db",
+      "after": "toc",
+      "reason": "Subject was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.39"
+    },
+    {
+      "id": "cse-2021-2-cs-47",
+      "field": "topic",
+      "before": "sql",
+      "after": "regular",
+      "reason": "Topic was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.39"
+    },
+    {
+      "id": "cse-2021-2-cs-47",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "regular-expressions",
+        "dfa",
+        "divisibility"
+      ],
+      "reason": "Tags replaced to match the question content.",
+      "source": "GATE 2021 CS Set 2 question paper, p.39"
+    },
+    {
+      "id": "cse-2021-2-cs-48",
+      "field": "text",
+      "before": "Consider a three-level page table to translate a 39-bit virtual address to a physical\naddress as shown below.\nLevel 1\noffset\n9 bits\n39-bit virtual address -\nLevel 2\noffset\n9 bits\nLevel 3\noffset\n9 bits\nPage\noffset\n12 bits\nThe page size is 4KB (1KB = 21° bytes) and page table entry size at every level\nis 8 bytes. A process P is currently using 2GB (1GB = 230 bytes) virtual memory\nwhich is mapped to 2GB of physical memory. The minimum amount of memory\nrequired for the page table of P across all levels is —\nKB.",
+      "after": "Consider a three-level page table to translate a 39-bit virtual address to a physical address as shown below.\n\n| Level 1 offset | Level 2 offset | Level 3 offset | Page offset |\n|---|---|---|---|\n| 9 bits | 9 bits | 9 bits | 12 bits |\n\nThe page size is 4 KB ($1\\text{KB} = 2^{10}$ bytes) and page table entry size at every level is 8 bytes. A process $P$ is currently using 2 GB ($1\\text{GB} = 2^{30}$ bytes) virtual memory which is mapped to 2 GB of physical memory. The minimum amount of memory required for the page table of $P$ across all levels is ________ KB.",
+      "reason": "Address-format diagram was flattened and exponents lost (\"21°\", \"230\"); rebuilt as a table and typeset.",
+      "source": "GATE 2021 CS Set 2 question paper, p.40"
+    },
+    {
+      "id": "cse-2021-2-cs-48",
+      "field": "subject",
+      "before": "db",
+      "after": "os",
+      "reason": "Subject was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.40"
+    },
+    {
+      "id": "cse-2021-2-cs-48",
+      "field": "topic",
+      "before": "sql",
+      "after": "virtual-memory",
+      "reason": "Topic was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.40"
+    },
+    {
+      "id": "cse-2021-2-cs-48",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "multilevel-paging",
+        "page-table-size"
+      ],
+      "reason": "Tags replaced to match the question content.",
+      "source": "GATE 2021 CS Set 2 question paper, p.40"
+    },
+    {
+      "id": "cse-2021-2-cs-49",
+      "field": "text",
+      "before": "Consider the following ANSI C program.\n#include <stdio.h›\nint foo(int x, int y, int q)\nif ((x <= 0) && (y <= 0))\nreturn q;\nif (x <= 0)\nreturn foo (x, y-q, q) ;\nif (y <= 0)\nreturn foo (x-q, y, q) ;\nreturn foo(x, y-9, q) + foo (x-9, y, q) ;\nint main()\nint r = foo (15,15,10) ;\nprintf (\"d\", r);\nreturn 0;\nThe output of the program upon execution is -",
+      "after": "Consider the following ANSI C program.\n\n```c\n#include <stdio.h>\n\nint foo(int x, int y, int q)\n{\n    if ((x <= 0) && (y <= 0))\n        return q;\n    if (x <= 0)\n        return foo(x, y-q, q);\n    if (y <= 0)\n        return foo(x-q, y, q);\n    return foo(x, y-q, q) + foo(x-q, y, q);\n}\n\nint main()\n{\n    int r = foo(15,15,10);\n    printf(\"%d\", r);\n    return 0;\n}\n```\n\nThe output of the program upon execution is ________.",
+      "reason": "OCR dropped braces and misread `q` as `9`; restored the program as a fenced block.",
+      "source": "GATE 2021 CS Set 2 question paper, p.40"
+    },
+    {
+      "id": "cse-2021-2-cs-49",
+      "field": "subject",
+      "before": "db",
+      "after": "pds",
+      "reason": "Subject was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.40"
+    },
+    {
+      "id": "cse-2021-2-cs-49",
+      "field": "topic",
+      "before": "sql",
+      "after": "recursion",
+      "reason": "Topic was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.40"
+    },
+    {
+      "id": "cse-2021-2-cs-49",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "recursion",
+        "c",
+        "recursion-tree"
+      ],
+      "reason": "Tags replaced to match the question content.",
+      "source": "GATE 2021 CS Set 2 question paper, p.40"
+    },
+    {
+      "id": "cse-2021-2-cs-50",
+      "field": "text",
+      "before": "Let S be a set consisting of 10 elements. The number of tuples of the form (A, B)\nsuch that A and B are subsets of S, and A C B is -",
+      "after": "Let $S$ be a set consisting of 10 elements. The number of tuples of the form $(A, B)$ such that $A$ and $B$ are subsets of $S$, and $A \\subseteq B$ is ________.",
+      "reason": "OCR read ⊆ as \"C\".",
+      "source": "GATE 2021 CS Set 2 question paper, p.41"
+    },
+    {
+      "id": "cse-2021-2-cs-50",
+      "field": "subject",
+      "before": "db",
+      "after": "dm",
+      "reason": "Subject was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.41"
+    },
+    {
+      "id": "cse-2021-2-cs-50",
+      "field": "topic",
+      "before": "sql",
+      "after": "combinatorics",
+      "reason": "Topic was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.41"
+    },
+    {
+      "id": "cse-2021-2-cs-50",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "counting",
+        "subsets",
+        "power-set"
+      ],
+      "reason": "Tags replaced to match the question content.",
+      "source": "GATE 2021 CS Set 2 question paper, p.41"
+    },
+    {
+      "id": "cse-2021-2-cs-51",
+      "field": "text",
+      "before": "Consider the following augmented grammar with {#, @, <, >, a, b, c} as the set\nof terminals.\nS' → S\nS→S# cS\nS → SS\nS→S@\nS→<S >\nS → a\nS → 6\nS → c\nLet Io = CLOSURE({S' → •S}).\nGOTO(GOTO(I, <), <) is _\nThe number of items in the set",
+      "after": "Consider the following augmented grammar with $\\{\\#, @, <, >, a, b, c\\}$ as the set of terminals.\n\n$$\\begin{aligned} S' &\\to S \\\\ S &\\to S \\# c S \\\\ S &\\to S S \\\\ S &\\to S @ \\\\ S &\\to < S > \\\\ S &\\to a \\\\ S &\\to b \\\\ S &\\to c \\end{aligned}$$\n\nLet $I_0 = \\text{CLOSURE}(\\{S' \\to \\bullet S\\})$. The number of items in the set $\\text{GOTO}(\\text{GOTO}(I_0, <), <)$ is ________.",
+      "reason": "Grammar was garbled (b read as 6, sentence order scrambled); restored and typeset.",
+      "source": "GATE 2021 CS Set 2 question paper, p.41"
+    },
+    {
+      "id": "cse-2021-2-cs-51",
+      "field": "subject",
+      "before": "db",
+      "after": "cd",
+      "reason": "Subject was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.41"
+    },
+    {
+      "id": "cse-2021-2-cs-51",
+      "field": "topic",
+      "before": "sql",
+      "after": "parsing",
+      "reason": "Topic was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.41"
+    },
+    {
+      "id": "cse-2021-2-cs-51",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "lr-parsing",
+        "lr0-items",
+        "closure-goto"
+      ],
+      "reason": "Tags replaced to match the question content.",
+      "source": "GATE 2021 CS Set 2 question paper, p.41"
+    },
+    {
+      "id": "cse-2021-2-cs-52",
+      "field": "text",
+      "before": "Consider a Boolean function f(w, x, y, ¼) such that\nf (w, 0,0, z) = 1\nf(1,х,1,ž) = х+≥\nf(г,1,У,z) = г+У\nThe number of literals in the minimal sum-of-products expression of f is",
+      "after": "Consider a Boolean function $f(w, x, y, z)$ such that\n\n$$\\begin{aligned} f(w, 0, 0, z) &= 1 \\\\ f(1, x, 1, z) &= x + z \\\\ f(w, 1, y, z) &= wz + y \\end{aligned}$$\n\nThe number of literals in the minimal sum-of-products expression of $f$ is ________.",
+      "reason": "OCR garbled the three defining equations (the third read \"f(г,1,У,z) = г+У\"); restored from the paper.",
+      "source": "GATE 2021 CS Set 2 question paper, p.41"
+    },
+    {
+      "id": "cse-2021-2-cs-52",
+      "field": "subject",
+      "before": "db",
+      "after": "dl",
+      "reason": "Subject was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.41"
+    },
+    {
+      "id": "cse-2021-2-cs-52",
+      "field": "topic",
+      "before": "sql",
+      "after": "minimization",
+      "reason": "Topic was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.41"
+    },
+    {
+      "id": "cse-2021-2-cs-52",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "k-map",
+        "sop",
+        "literals"
+      ],
+      "reason": "Tags replaced to match the question content.",
+      "source": "GATE 2021 CS Set 2 question paper, p.41"
+    },
+    {
+      "id": "cse-2021-2-cs-53",
+      "field": "text",
+      "before": "Consider a pipelined processor with 5 stages, Instruction Fetch (IF), Instruction\nDecode (ID), Execute (EX), Memory Access (MEM), and Write Back (WB). Each stage\nof the pipeline, except the EX stage, takes one cycle. Assume that the ID stage\nmerely decodes the instruction and the register read is performed in the EX stage.\nThe EX stage takes one cycle for ADD instruction and two cycles for MUL instruction.\nIgnore pipeline register latencies.\nConsider the following sequence of 8 instructions:\nADD, MUL, ADD, MUL, ADD, MUL, ADD, MUL\nAssume that every MUL instruction is data-dependent on the ADD instruction just\nbefore it and every ADD instruction (except the first ADD) is data-dependent on the\nMUL instruction just before it. The Speedup is defined as follows:\nExecution time without operand forwarding\nSpeedup =\nExecution time with operand forwarding\nThe Speedup achieved in executing the given instruction sequence on the pipelined\nprocessor (rounded to 2 decimal places) is .",
+      "after": "Consider a pipelined processor with 5 stages, Instruction Fetch (`IF`), Instruction Decode (`ID`), Execute (`EX`), Memory Access (`MEM`), and Write Back (`WB`). Each stage of the pipeline, except the `EX` stage, takes one cycle. Assume that the `ID` stage merely decodes the instruction and the register read is performed in the `EX` stage. The `EX` stage takes one cycle for `ADD` instruction and two cycles for `MUL` instruction. Ignore pipeline register latencies.\n\nConsider the following sequence of 8 instructions:\n\n`ADD, MUL, ADD, MUL, ADD, MUL, ADD, MUL`\n\nAssume that every `MUL` instruction is data-dependent on the `ADD` instruction just before it and every `ADD` instruction (except the first `ADD`) is data-dependent on the `MUL` instruction just before it. The *Speedup* is defined as follows:\n\n$$\\text{Speedup} = \\frac{\\text{Execution time without operand forwarding}}{\\text{Execution time with operand forwarding}}$$\n\nThe *Speedup* achieved in executing the given instruction sequence on the pipelined processor (rounded to 2 decimal places) is ________.",
+      "reason": "The speedup fraction was flattened; reflowed and typeset.",
+      "source": "GATE 2021 CS Set 2 question paper, p.42"
+    },
+    {
+      "id": "cse-2021-2-cs-53",
+      "field": "subject",
+      "before": "db",
+      "after": "coa",
+      "reason": "Subject was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.42"
+    },
+    {
+      "id": "cse-2021-2-cs-53",
+      "field": "topic",
+      "before": "sql",
+      "after": "pipeline",
+      "reason": "Topic was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.42"
+    },
+    {
+      "id": "cse-2021-2-cs-53",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "operand-forwarding",
+        "data-hazards",
+        "speedup"
+      ],
+      "reason": "Tags replaced to match the question content.",
+      "source": "GATE 2021 CS Set 2 question paper, p.42"
+    },
+    {
+      "id": "cse-2021-2-cs-54",
+      "field": "text",
+      "before": "Consider a network using the pure ALOHA medium access control protocol, where\neach frame is of length 1,000 bits. The channel transmission rate is 1 Mbps (= 10€\nbits per second). The aggregate number of transmissions across all the nodes (in-\ncluding new frame transmissions and retransmitted frames due to collisions) is\nmodelled as a Poisson process with a rate of 1,000 frames per second. Throughput\nis defined as the average number of frames successfully transmitted per second. The\nthroughput of the network (rounded to the nearest integer) is.",
+      "after": "Consider a network using the pure ALOHA medium access control protocol, where each frame is of length 1,000 bits. The channel transmission rate is 1 Mbps ($= 10^6$ bits per second). The aggregate number of transmissions across all the nodes (including new frame transmissions and retransmitted frames due to collisions) is modelled as a Poisson process with a rate of 1,000 frames per second. Throughput is defined as the average number of frames successfully transmitted per second. The throughput of the network (rounded to the nearest integer) is ________.",
+      "reason": "OCR read $10^6$ as \"10€\"; joined hyphenated line breaks.",
+      "source": "GATE 2021 CS Set 2 question paper, p.42"
+    },
+    {
+      "id": "cse-2021-2-cs-54",
+      "field": "subject",
+      "before": "db",
+      "after": "cn",
+      "reason": "Subject was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.42"
+    },
+    {
+      "id": "cse-2021-2-cs-54",
+      "field": "topic",
+      "before": "sql",
+      "after": "datalink",
+      "reason": "Topic was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.42"
+    },
+    {
+      "id": "cse-2021-2-cs-54",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "aloha",
+        "mac-protocols",
+        "throughput",
+        "poisson"
+      ],
+      "reason": "Tags replaced to match the question content.",
+      "source": "GATE 2021 CS Set 2 question paper, p.42"
+    },
+    {
+      "id": "cse-2021-2-cs-55",
+      "field": "text",
+      "before": "In a directed acyclic graph with a source vertex s, the quality-score of a directed\npath is defined to be the product of the weights of the edges on the path. Further,\nfor a vertex v other than s, the quality-score of v is defined to be the maximum\namong the quality-scores of all the paths from s to v. The quality-score of s is\nassumed to be 1.\nThe sum of the quality-scores of all the vertices in the graph shown above is",
+      "after": "In a directed acyclic graph with a source vertex $s$, the *quality-score* of a directed path is defined to be the product of the weights of the edges on the path. Further, for a vertex $v$ other than $s$, the quality-score of $v$ is defined to be the maximum among the quality-scores of all the paths from $s$ to $v$. The quality-score of $s$ is assumed to be 1.\n\nThe sum of the quality-scores of all the vertices in the graph shown above is ________.",
+      "reason": "Joined PDF line breaks; vertex names typeset.",
+      "source": "GATE 2021 CS Set 2 question paper, p.43"
+    },
+    {
+      "id": "cse-2021-2-cs-55",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2021-2/cs-55-1.svg",
+          "svg": "cse-2021-2/cs-55-1.svg",
+          "alt": "Weighted DAG on a 3 by 3 grid. Bottom row s, a, b; middle row c, d, e; top row f, g, t. Edges: s→a (9), a→b (1), c→d (1), d→e (9), f→g (1), g→t (1), s→c (1), c→f (9), a→d (1), d→g (9), b→e (1), e→t (9)."
+        }
+      ],
+      "reason": "The question depends on the weighted graph, which was missing; redrawn from the paper.",
+      "source": "GATE 2021 CS Set 2 question paper, p.43"
+    },
+    {
+      "id": "cse-2021-2-cs-55",
+      "field": "subject",
+      "before": "db",
+      "after": "algo",
+      "reason": "Subject was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.43"
+    },
+    {
+      "id": "cse-2021-2-cs-55",
+      "field": "topic",
+      "before": "sql",
+      "after": "dp",
+      "reason": "Topic was mis-assigned by the bulk import.",
+      "source": "GATE 2021 CS Set 2 question paper, p.43"
+    },
+    {
+      "id": "cse-2021-2-cs-55",
+      "field": "tags",
+      "before": [
+        "sql"
+      ],
+      "after": [
+        "dag",
+        "longest-path",
+        "dynamic-programming"
+      ],
+      "reason": "Tags replaced to match the question content.",
+      "source": "GATE 2021 CS Set 2 question paper, p.43"
+    }
+  ]
+}

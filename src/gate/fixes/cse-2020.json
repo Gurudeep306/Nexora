@@ -1,0 +1,107 @@
+{
+  "paper": "cse-2020",
+  "fixes": [
+    {
+      "id": "cse-2020-cs-7",
+      "field": "answer",
+      "before": "B",
+      "after": "D",
+      "reason": "B only generates strings ending in 1 (misses 10). The official GATE 2020 CS key is D.",
+      "source": "GATE 2020 official answer key (via trygateai.com/pyq/.../gate-cse-2020-q7)"
+    },
+    {
+      "id": "cse-2020-cs-10",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Key C confirmed against the official key.",
+      "source": "GATE 2020 official answer key (via trygateai.com/pyq/.../gate-cse-2020-q10)"
+    },
+    {
+      "id": "cse-2020-cs-10",
+      "field": "reviewNote",
+      "before": "Statement III (not LL(k)) relies on recalled official key C.",
+      "after": null,
+      "reason": "Official key C confirmed, so the review flag is no longer needed.",
+      "source": "GATE 2020 official answer key"
+    },
+    {
+      "id": "cse-2020-cs-13",
+      "field": "text",
+      "before": "Consider a relational database containing the following schemas.\n\nThe primary key of each table is indicated by underlining the constituent fields.\n\n```sql\nSELECT s.sno, s.sname\nFROM   Suppliers s, Catalogue c\nWHERE  s.sno = c.sno AND\n       cost > (SELECT AVG (cost)\n               FROM   Catalogue\n               WHERE  pno = 'P4'\n               GROUP BY pno);\n```\n\nThe number of rows returned by the above SQL query is",
+      "after": "Consider a relational database containing the following schemas.\n\n**Catalogue** (key: sno, pno)\n\n| sno | pno | cost |\n|---|---|---|\n| S1 | P1 | 150 |\n| S1 | P2 | 50 |\n| S1 | P3 | 100 |\n| S2 | P4 | 200 |\n| S2 | P5 | 250 |\n| S3 | P1 | 250 |\n| S3 | P2 | 150 |\n| S3 | P5 | 300 |\n| S3 | P4 | 250 |\n\n**Suppliers** (key: sno)\n\n| sno | sname | location |\n|---|---|---|\n| S1 | M/s Royal furniture | Delhi |\n| S2 | M/s Balaji furniture | Bangalore |\n| S3 | M/s Premium furniture | Chennai |\n\n**Parts** (key: pno)\n\n| pno | pname | part_spec |\n|---|---|---|\n| P1 | Table | Wood |\n| P2 | Chair | Wood |\n| P3 | Table | Steel |\n| P4 | Almirah | Steel |\n| P5 | Almirah | Wood |\n\nThe primary key of each table is indicated by underlining the constituent fields.\n\n```sql\nSELECT s.sno, s.sname\nFROM   Suppliers s, Catalogue c\nWHERE  s.sno = c.sno AND\n       cost > (SELECT AVG (cost)\n               FROM   Catalogue\n               WHERE  pno = 'P4'\n               GROUP BY pno);\n```\n\nThe number of rows returned by the above SQL query is",
+      "reason": "Tables from the paper written as markdown tables (key fields noted, underlined in the paper).",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2020-cs-13",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2020/cs-13-1.png",
+          "alt": "Catalogue(sno,pno,cost): (S1,P1,150),(S1,P2,50),(S1,P3,100),(S2,P4,200),(S2,P5,250),(S3,P1,250),(S3,P2,150),(S3,P5,300),(S3,P4,250). Suppliers(sno,sname,location): (S1,M/s Royal furniture,Delhi),(S2,M/s Balaji furniture,Bangalore),(S3,M/s Premium furniture,Chennai). Parts(pno,pname,part_spec): (P1,Table,Wood),(P2,Chair,Wood),(P3,Table,Steel),(P4,Almirah,Steel),(P5,Almirah,Wood).",
+          "svg": "cse-2020/cs-13-1.svg"
+        }
+      ],
+      "after": [],
+      "reason": "The figure only contained the three tables, now in the text; old SVG was a generic placeholder.",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2020-cs-14",
+      "field": "answer",
+      "before": "B",
+      "after": "A",
+      "reason": "Official IIT Delhi GATE 2020 key is A: the identifying (supporting many-one) relationship of a weak entity set is a double-bordered diamond.",
+      "source": "official key (IIT Delhi), via trygateai.com"
+    },
+    {
+      "id": "cse-2020-cs-14",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Resolved by the official key.",
+      "source": "official key"
+    },
+    {
+      "id": "cse-2020-cs-14",
+      "field": "reviewNote",
+      "before": "Wording is ambiguous (identifying relationship is a double-bordered diamond, weak entity is a double-bordered rectangle); B is the recalled official key.",
+      "after": null,
+      "reason": "Resolved by the official key.",
+      "source": "official key"
+    },
+    {
+      "id": "cse-2020-cs-19",
+      "field": "subject",
+      "before": "calc",
+      "after": "dl",
+      "reason": "Multiplexer select lines is a digital-logic question, not calculus.",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2020-cs-19",
+      "field": "topic",
+      "before": "maxmin",
+      "after": "combinational",
+      "reason": "Multiplexer is a combinational circuit.",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2020-cs-21",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Both standard AMAT formulas give 13.5 (3 + 0.06×175 and 0.94×3 + 0.06×178); 13.32 omits the cache access on a miss.",
+      "source": "solved"
+    },
+    {
+      "id": "cse-2020-cs-21",
+      "field": "reviewNote",
+      "before": "Alternative interpretation 0.94*3+0.06*175 = 13.32 gives 13.3; 13.5 matches the recalled official key.",
+      "after": null,
+      "reason": "Review resolved; see needsReview fix.",
+      "source": "solved"
+    }
+  ]
+}
