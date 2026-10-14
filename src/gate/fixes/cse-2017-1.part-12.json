@@ -1,0 +1,90 @@
+{
+  "paper": "cse-2017-1",
+  "fixes": [
+    {
+      "id": "cse-2017-1-cs-23",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Query reading (EC = derived per-department counts) gives 2.6, which equals the official key.",
+      "source": "Official GATE 2017 Set-1 answer key (via trygateai.com official-key page)"
+    },
+    {
+      "id": "cse-2017-1-cs-23",
+      "field": "reviewNote",
+      "before": "Query is syntactically odd (EC used as a table and alias in the subquery); answer assumes EC is the derived table of per-department counts.",
+      "after": null,
+      "reason": "Review resolved by the official key (2.6).",
+      "source": "Official GATE 2017 Set-1 answer key (via trygateai.com official-key page)"
+    },
+    {
+      "id": "cse-2017-1-cs-28",
+      "field": "subject",
+      "before": "coa",
+      "after": "calc",
+      "reason": "Limit / L'Hôpital question belongs to calculus, not COA.",
+      "source": "GATE 2017 Set-1 question paper"
+    },
+    {
+      "id": "cse-2017-1-cs-28",
+      "field": "topic",
+      "before": "isa",
+      "after": "limits",
+      "reason": "Question evaluates a limit.",
+      "source": "GATE 2017 Set-1 question paper"
+    },
+    {
+      "id": "cse-2017-1-cs-28",
+      "field": "tags",
+      "before": [
+        "lhopital"
+      ],
+      "after": [
+        "limits",
+        "lhopital"
+      ],
+      "reason": "Add the topic tag.",
+      "source": "GATE 2017 Set-1 question paper"
+    },
+    {
+      "id": "cse-2017-1-cs-30",
+      "field": "topic",
+      "before": "systems",
+      "after": "spaces",
+      "reason": "Question is about vectors in R² (angle bisector), not linear systems.",
+      "source": "GATE 2017 Set-1 question paper"
+    },
+    {
+      "id": "cse-2017-1-cs-38",
+      "field": "topic",
+      "before": "pumping",
+      "after": "cfg",
+      "reason": "Question tests CFL closure under union/intersection, not the pumping lemma.",
+      "source": "GATE 2017 Set-1 question paper"
+    },
+    {
+      "id": "cse-2017-1-cs-41",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Official key confirms D.",
+      "source": "Official GATE 2017 Set-1 answer key (via trygateai.com official-key page)"
+    },
+    {
+      "id": "cse-2017-1-cs-41",
+      "field": "reviewNote",
+      "before": "Key not in PDF; answer D taken from a secondary solution (testbook); some sources may give a different option. Verify.",
+      "after": null,
+      "reason": "Review resolved by the official key (D).",
+      "source": "Official GATE 2017 Set-1 answer key (via trygateai.com official-key page)"
+    },
+    {
+      "id": "cse-2017-1-cs-43",
+      "field": "text",
+      "before": "Consider the following grammar:\n\n```\nstmt   -> if expr then expr else expr; stmt | ò\nexpr   -> term relop term | term\nterm   -> id | number\nid     -> a | b | c\nnumber -> [0-9]\n```\n\nwhere `relop` is a relational operator (e.g. <, >, ...), `ò` refers to the empty statement, and `if`, `then`, `else` are terminals.\n\nConsider a program $P$ following the above grammar containing ten `if` terminals. The number of control flow paths in $P$ is ____________. For example, the program\n\n`if e1 then e2 else e3`\n\nhas 2 control flow paths, e1 -> e2 and e1 -> e3.",
+      "after": "Consider the following grammar:\n\n```\nstmt   -> if expr then expr else expr; stmt | ε\nexpr   -> term relop term | term\nterm   -> id | number\nid     -> a | b | c\nnumber -> [0-9]\n```\n\nwhere `relop` is a relational operator (e.g. <, >, ...), `ε` refers to the empty statement, and `if`, `then`, `else` are terminals.\n\nConsider a program $P$ following the above grammar containing ten `if` terminals. The number of control flow paths in $P$ is ____________. For example, the program\n\n`if e1 then e2 else e3`\n\nhas 2 control flow paths, e1 -> e2 and e1 -> e3.",
+      "reason": "The paper's \"ò\" is a font glitch for ε (empty statement).",
+      "source": "GATE 2017 Set-1 question paper"
+    }
+  ]
+}
