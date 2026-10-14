@@ -1,0 +1,1032 @@
+{
+  "paper": "cse-2015-1",
+  "version": 2,
+  "solutions": {
+    "cse-2015-1-ga-1": {
+      "approach": "A negative question (\"Didn't you…?\") expects a non-assertive determiner, and \"paper\" (stationery) is uncountable, so it needs a determiner that works with uncountable nouns in questions.",
+      "concepts": [
+        "Determiners",
+        "Countable vs uncountable nouns"
+      ],
+      "steps": [
+        {
+          "title": "Noun type",
+          "body": "\"Paper\" in the sense of writing material is **uncountable**, so \"a few\" (countable plural only) is ruled out."
+        },
+        {
+          "title": "Question form",
+          "body": "In questions and negatives the standard determiner is **any**: \"Didn't you buy *any paper*…?\" \"Much\" is grammatical but awkward in this affirmative-expectation question, and \"no\" creates a double negative with \"didn't\"."
+        }
+      ],
+      "answer": {
+        "value": "any paper",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: \"any\" is the natural determiner for an uncountable noun in a negative question."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "\"Much paper\" suggests a quantity judgement (\"a lot of paper\"), which is not what the question asks; it is not the idiomatic choice here."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "\"Didn't … no paper\" is a double negative."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "\"A few\" needs a countable plural noun (\"a few sheets\"), not \"paper\"."
+        }
+      ],
+      "pitfalls": [
+        "Choosing \"much\" just because \"paper\" is uncountable — \"any\" is the default for questions/negatives."
+      ],
+      "verification": "Reading the sentence aloud with each option: only \"any paper\" is both grammatical and idiomatic."
+    },
+    "cse-2015-1-ga-2": {
+      "approach": "\"Enjoyed herself immensely\" means she had a very good time; pick the option whose adjective is strongly positive.",
+      "concepts": [
+        "Synonyms",
+        "Sentence meaning"
+      ],
+      "steps": [
+        {
+          "title": "Meaning of the sentence",
+          "body": "\"Enjoyed herself immensely\" = had a *very good* time."
+        },
+        {
+          "title": "Match the adjective",
+          "body": "*Terrific* means excellent/wonderful. *Terrible*, *horrible* and *terrifying* are all negative."
+        }
+      ],
+      "answer": {
+        "value": "She had a terrific time at the party",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "\"Terrible\" means very bad — opposite meaning."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "\"Horrible\" means very unpleasant — opposite meaning."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: \"terrific\" means extremely good."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "\"Terrifying\" means frightening — a trap based on the shared root with \"terrific\"."
+        }
+      ],
+      "pitfalls": [
+        "Confusing \"terrific\" (great) with \"terrifying\" (frightening)."
+      ],
+      "verification": "Substituting C back keeps the positive sense of \"enjoyed herself immensely\"."
+    },
+    "cse-2015-1-ga-3": {
+      "approach": "Count favourable ordered pairs (a from A, b from B) with a + b = 16 and divide by |A|·|B|.",
+      "concepts": [
+        "Classical probability",
+        "Counting"
+      ],
+      "steps": [
+        {
+          "title": "Sample space",
+          "body": "$|A| \\times |B| = 4 \\times 5 = 20$ equally likely pairs."
+        },
+        {
+          "title": "Favourable pairs",
+          "body": "For each $a \\in A$, need $b = 16 - a$: $2\\to14$, $3\\to13$, $4\\to12$, $5\\to11$ — all four lie in $B$, so 4 pairs."
+        },
+        {
+          "title": "Probability",
+          "body": "$$P = \\frac{4}{20} = 0.20$$"
+        }
+      ],
+      "answer": {
+        "value": "0.20",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: $4/20 = 0.20$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$0.25 = 5/20$ would need five pairs; 15 has no partner in A ($16-15 = 1 \\notin A$)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$0.30 = 6/20$ — too many pairs."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$0.33 \\approx 1/3$ — does not come from a /20 count at all."
+        }
+      ],
+      "pitfalls": [
+        "Counting with denominator 9 (= 4 + 5) instead of 4 × 5."
+      ],
+      "verification": "From B's side: 11, 12, 13, 14 have partners 5, 4, 3, 2 in A; 15 has none → 4 pairs."
+    },
+    "cse-2015-1-ga-4": {
+      "approach": "Number of steps = total rise ÷ rise per step; only the height of a step matters, its width is irrelevant.",
+      "concepts": [
+        "Data sufficiency"
+      ],
+      "steps": [
+        {
+          "title": "Statement I",
+          "body": "Steps $= \\dfrac{9}{3/4} = 9 \\times \\dfrac{4}{3} = 12$. Sufficient on its own."
+        },
+        {
+          "title": "Statement II",
+          "body": "The width (tread) of a step says nothing about how many steps cover a 9-foot rise. Not sufficient."
+        }
+      ],
+      "answer": {
+        "value": "Statement I alone is sufficient, but statement II alone is not sufficient.",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: I gives 12 steps; II is irrelevant to the vertical rise."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Width alone cannot determine the step count."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "I alone already suffices, so \"neither alone\" is false."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "I alone answers the question, so the statements are certainly sufficient together."
+        }
+      ],
+      "pitfalls": [
+        "Thinking the horizontal length of the staircase is needed — the count depends only on the rise."
+      ],
+      "verification": "$12 \\times 0.75 = 9$ feet. ✓"
+    },
+    "cse-2015-1-ga-5": {
+      "approach": "Check each word pair for synonymy; the odd pair is the incorrect combination.",
+      "concepts": [
+        "Vocabulary",
+        "Synonyms"
+      ],
+      "steps": [
+        {
+          "title": "Meanings",
+          "body": "- *Acquiescence* = reluctant acceptance → submission ✓\n- *Wheedle* = coax/persuade by flattery; *roundabout* = indirect ✗\n- *Flippancy* = lack of seriousness → lightness ✓\n- *Profligate* = recklessly wasteful → extravagant ✓"
+        },
+        {
+          "title": "Conclusion",
+          "body": "Only \"Wheedle – Roundabout\" is not a synonym pair."
+        }
+      ],
+      "answer": {
+        "value": "Wheedle - Roundabout",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Acquiescence and submission both mean yielding/accepting — a correct pair."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct (the incorrect combination): wheedle means to coax or cajole, not \"roundabout\"."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Flippancy means treating serious things lightly — a correct pair."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Profligate means wastefully extravagant — a correct pair."
+        }
+      ],
+      "pitfalls": [
+        "Linking \"wheedle\" with \"roundabout\" because coaxing is an indirect approach — the words are not synonyms."
+      ],
+      "verification": "Dictionary meanings: wheedle ≈ cajole, coax, inveigle."
+    },
+    "cse-2015-1-ga-6": {
+      "approach": "Only correct answers earn marks: total = Σ(marks × number correct); divide by the class size (correct + wrong + not attempted for any one question).",
+      "concepts": [
+        "Weighted sum",
+        "Average"
+      ],
+      "steps": [
+        {
+          "title": "Class size",
+          "body": "Every row sums to the same total: $21 + 17 + 6 = 44$ (also $15+27+2 = 44$, etc.)."
+        },
+        {
+          "title": "Total marks",
+          "body": "$2\\times21 + 3\\times15 + 1\\times11 + 2\\times23 + 5\\times31$\n$= 42 + 45 + 11 + 46 + 155 = 299$."
+        },
+        {
+          "title": "Average",
+          "body": "$$\\frac{299}{44} = 6.795\\ldots$$"
+        }
+      ],
+      "answer": {
+        "value": "6.795",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "2.290 does not arise from any sensible weighting of the table."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "2.970 is too small — the per-student total is more than 6."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: $299/44 \\approx 6.795$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "8.795 is 2 more than the correct value — an arithmetic slip."
+        }
+      ],
+      "pitfalls": [
+        "Averaging per question (dividing by 5) instead of per student.",
+        "Adding marks for wrong answers — there is no partial credit."
+      ],
+      "verification": "$44 \\times 6.795 = 298.98 \\approx 299$. ✓"
+    },
+    "cse-2015-1-ga-7": {
+      "approach": "\"Take to one's heels\" is an idiom meaning to run away.",
+      "concepts": [
+        "Idioms"
+      ],
+      "steps": [
+        {
+          "title": "Idiom meaning",
+          "body": "To *take to one's heels* is to run away as fast as possible."
+        },
+        {
+          "title": "Match the option",
+          "body": "Running away from the police = fleeing = **took to flight**. The context (snatchers, police arriving) confirms it."
+        }
+      ],
+      "answer": {
+        "value": "took to flight",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Hiding in a jungle is not what the idiom says."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Firing at the police is the opposite of fleeing."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: \"took to flight\" means fled."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Surrendering is the opposite of running away."
+        }
+      ],
+      "verification": "The context (police arrive) fits criminals fleeing."
+    },
+    "cse-2015-1-ga-8": {
+      "approach": "A course of action follows if it is a practical, reasonable response to the problem without being extreme or discriminatory.",
+      "concepts": [
+        "Courses of action",
+        "Critical reasoning"
+      ],
+      "steps": [
+        {
+          "title": "Problem to solve",
+          "body": "The lakes hold less water, so the available supply must be stretched: a valid action should reduce consumption in a practical and fair way."
+        },
+        {
+          "title": "Evaluate each",
+          "body": "- **I** Partial cut in supply: practical rationing of a reduced resource → follows.\n- **II** Appeal for minimal use: reasonable demand-side measure → follows.\n- **III** Banning supply to lower areas only: extreme and discriminatory; does not fairly address the shortage → does not follow."
+        }
+      ],
+      "answer": {
+        "value": "Statements I and II follow.",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: I and II are proportionate measures; III is not."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "III (a total ban for one region) is unjustified."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "III does not follow."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "III does not follow, so not all three."
+        }
+      ],
+      "pitfalls": [
+        "Accepting any action that saves water — courses of action must also be reasonable and fair."
+      ],
+      "verification": "Matches the official GATE 2015 answer key (A)."
+    },
+    "cse-2015-1-ga-9": {
+      "approach": "Use the Electrical slice to find the total number of students, then compute female counts in Civil and Mechanical with the 5:4 ratio.",
+      "concepts": [
+        "Pie chart",
+        "Ratio and proportion"
+      ],
+      "given": "| Dept | Share |\n|---|---|\n| Computer Science | 40% |\n| Civil | 30% |\n| Electrical | 20% |\n| Mechanical | 10% |",
+      "steps": [
+        {
+          "title": "Total students",
+          "body": "Male : female $= 5:4$, so males are $\\tfrac{5}{9}$ of each department.\nElectrical: $\\tfrac{5}{9}E = 40 \\Rightarrow E = 72$.\n$E$ is 20% of total $\\Rightarrow$ total $= 72 / 0.2 = 360$."
+        },
+        {
+          "title": "Females in Civil and Mechanical",
+          "body": "Civil $= 0.30 \\times 360 = 108$, females $= \\tfrac{4}{9}\\times108 = 48$.\nMechanical $= 0.10 \\times 360 = 36$, females $= \\tfrac{4}{9}\\times36 = 16$."
+        },
+        {
+          "title": "Difference",
+          "body": "Required difference $= 48 - 16 = 32$ female students."
+        }
+      ],
+      "answer": {
+        "value": "32",
+        "number": 32,
+        "matchesKey": true
+      },
+      "shortcut": "Females per 10% of the pie $= \\tfrac{4}{5}\\times 40 / 2 = 16$; Civil − Mechanical = 20% → $2 \\times 16 = 32$.",
+      "pitfalls": [
+        "Using 5/4 as the fraction of males instead of 5/9."
+      ],
+      "verification": "Electrical females $= 32$; total in Electrical $= 72 = 20\\%$ of 360 ✓."
+    },
+    "cse-2015-1-ga-10": {
+      "approach": "Let $e_k$ be the probability of passing exactly $k$ subjects. Then $p+m+c = E[\\text{number passed}] = e_1 + 2e_2 + 3e_3$ and $pmc = e_3$ (independence).",
+      "concepts": [
+        "Linearity of expectation",
+        "Inclusion–exclusion"
+      ],
+      "steps": [
+        {
+          "title": "Exactly-k probabilities",
+          "body": "$e_2 = 0.40$; at least two $= e_2 + e_3 = 0.50 \\Rightarrow e_3 = 0.10$.\nAt least one $= e_1 + e_2 + e_3 = 0.75 \\Rightarrow e_1 = 0.75 - 0.50 = 0.25$."
+        },
+        {
+          "title": "Sum of probabilities",
+          "body": "$$p+m+c = 1(0.25) + 2(0.40) + 3(0.10) = 0.25 + 0.80 + 0.30 = 1.35 = \\tfrac{27}{20}$$\nSo relation I holds and II fails."
+        },
+        {
+          "title": "Product",
+          "body": "Passing all three $= pmc = e_3 = 0.10 = \\tfrac{1}{10}$ (treating the subjects as independent). Relation III holds."
+        }
+      ],
+      "answer": {
+        "value": "Relations I and III are true.",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "III is also true ($pmc = 0.1$)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "II ($13/20 = 0.65$) contradicts $p+m+c = 1.35$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "II is false."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: $p+m+c = 27/20$ and $pmc = 1/10$."
+        }
+      ],
+      "pitfalls": [
+        "Writing $p+m+c = 0.75 + 0.5 + \\ldots$ by adding the given 'at least' probabilities directly."
+      ],
+      "verification": "Inclusion–exclusion check: $P(\\text{at least one}) = \\Sigma p - \\Sigma pq + pmc$ with $\\Sigma pq = e_2 + 3e_3 = 0.7$: $1.35 - 0.7 + 0.1 = 0.75$ ✓."
+    },
+    "cse-2015-1-cs-1": {
+      "approach": "Classify each testing term: coverage criteria are white-box, input partitioning is black-box, volume testing is a performance test, alpha testing is a system-level acceptance test.",
+      "concepts": [
+        "White-box testing",
+        "Black-box testing",
+        "System testing"
+      ],
+      "steps": [
+        {
+          "title": "Classify",
+          "body": "- P Condition coverage → code-structure criterion → **(iii) white-box**\n- Q Equivalence class partitioning → based on input specification → **(i) black-box**\n- R Volume testing → behaviour under large data volumes → **(iv) performance**\n- S Alpha testing → whole system tested by users at developer's site → **(ii) system testing**"
+        },
+        {
+          "title": "Match",
+          "body": "P-iii, Q-i, R-iv, S-ii."
+        }
+      ],
+      "answer": {
+        "value": "P-iii, Q-i, R-iv, S-ii",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Condition coverage is not system testing, and equivalence partitioning is not white-box."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Equivalence partitioning is black-box (i), not performance testing."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: P-iii, Q-i, R-iv, S-ii."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Swaps R and S: volume testing is performance testing, alpha testing is system testing."
+        }
+      ],
+      "verification": "Each item maps to a different category, consistent with standard SE texts (Pressman)."
+    },
+    "cse-2015-1-cs-2": {
+      "approach": "Quicksort's worst case is a maximally unbalanced partition: one side gets $n-1$ elements, the other a single (or no) element, plus linear partitioning work.",
+      "concepts": [
+        "Quicksort",
+        "Recurrences"
+      ],
+      "steps": [
+        {
+          "title": "Worst-case split",
+          "body": "When the pivot is the smallest or largest element (e.g. sorted input with first-element pivot), the partition yields subproblems of size $n-1$ and $1$, after $cn$ partitioning work."
+        },
+        {
+          "title": "Recurrence",
+          "body": "$$T(n) = T(n-1) + T(1) + cn \\Rightarrow T(n) = \\Theta(n^2)$$"
+        }
+      ],
+      "answer": {
+        "value": "$T(n) = T(n-1) + T(1) + cn$",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Balanced split — that is the best/average case, $\\Theta(n\\log n)$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: unbalanced split into $n-1$ and $1$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Two subproblems of size $n-1$ would be exponential — not quicksort."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "One half-size subproblem is quickselect's best case, $\\Theta(n)$."
+        }
+      ],
+      "verification": "Unrolling: $cn + c(n-1) + \\dots = \\Theta(n^2)$, the known worst case."
+    },
+    "cse-2015-1-cs-3": {
+      "approach": "Use closure facts: CFLs are decidable (so their complements are recursive) but not closed under complement; RE languages are closed under union; an RE-but-not-recursive language has a non-RE complement.",
+      "concepts": [
+        "Closure properties",
+        "Recursive vs RE languages"
+      ],
+      "steps": [
+        {
+          "title": "Statements I and III",
+          "body": "$L_1$ is CFL ⇒ recursive ⇒ $\\overline{L_1}$ recursive. **I true.** CFLs are not closed under complement, so $\\overline{L_1}$ need not be CFL. **III not necessarily true.**"
+        },
+        {
+          "title": "Statement II",
+          "body": "If $\\overline{L_2}$ were recursive, $L_2$ would be recursive — contradiction. In fact $\\overline{L_2}$ is not even RE. **II false.**"
+        },
+        {
+          "title": "Statement IV",
+          "body": "$\\overline{L_1}$ is recursive ⊆ RE, $L_2$ is RE, and RE is closed under union. **IV true.**"
+        }
+      ],
+      "answer": {
+        "value": "I and IV only",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Misses IV, which is also necessarily true."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "III is not guaranteed (e.g. $L_1 = \\{a^ib^jc^k : i\\ne j \\text{ or } j\\ne k\\}$ has a non-CFL complement within $a^*b^*c^*$)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "III is not guaranteed."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: I and IV."
+        }
+      ],
+      "pitfalls": [
+        "Assuming CFLs are closed under complement (only DCFLs are)."
+      ],
+      "verification": "Each claim checked against the standard closure table for CFL, recursive and RE classes."
+    },
+    "cse-2015-1-cs-4": {
+      "approach": "Take logarithms: $\\ln y = \\dfrac{\\ln x}{x} \\to 0$, so $y \\to e^0 = 1$.",
+      "concepts": [
+        "Limits",
+        "Indeterminate form ∞⁰",
+        "L'Hôpital's rule"
+      ],
+      "steps": [
+        {
+          "title": "Take log",
+          "body": "Let $y = x^{1/x}$. Then $\\ln y = \\dfrac{\\ln x}{x}$, an $\\infty/\\infty$ form."
+        },
+        {
+          "title": "L'Hôpital",
+          "body": "$$\\lim_{x\\to\\infty}\\frac{\\ln x}{x} = \\lim_{x\\to\\infty}\\frac{1/x}{1} = 0$$"
+        },
+        {
+          "title": "Exponentiate",
+          "body": "Since $\\ln y \\to 0$ and $e^t$ is continuous, $\\lim_{x\\to\\infty} x^{1/x} = e^0 = 1$."
+        }
+      ],
+      "answer": {
+        "value": "1",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The exponent $1/x \\to 0$ shrinks $x$ faster than $x$ grows; the value does not blow up."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$x^{1/x} \\ge 1$ for $x \\ge 1$, so it cannot tend to 0."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: the limit is $e^0 = 1$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The limit exists and is finite."
+        }
+      ],
+      "verification": "Numerically $100^{0.01} \\approx 1.047$, $10^6$ to the power $10^{-6} \\approx 1.0000138$ → 1."
+    },
+    "cse-2015-1-cs-5": {
+      "approach": "Compute both compositions directly and simplify; then compare with each option.",
+      "concepts": [
+        "Function composition",
+        "Algebraic simplification"
+      ],
+      "steps": [
+        {
+          "title": "g(h(x))",
+          "body": "$$g(h(x)) = 1 - \\frac{x}{x-1} = \\frac{x-1-x}{x-1} = \\frac{-1}{x-1}$$"
+        },
+        {
+          "title": "h(g(x))",
+          "body": "$$h(g(x)) = \\frac{1-x}{(1-x)-1} = \\frac{1-x}{-x}$$"
+        },
+        {
+          "title": "Ratio",
+          "body": "$$\\frac{g(h(x))}{h(g(x))} = \\frac{-1}{x-1}\\cdot\\frac{-x}{1-x} = \\frac{x}{(x-1)(1-x)} = \\frac{-x}{(1-x)^2}$$"
+        },
+        {
+          "title": "Compare with A",
+          "body": "$$\\frac{h(x)}{g(x)} = \\frac{x}{(x-1)(1-x)} = \\frac{-x}{(1-x)^2}$$ — identical."
+        }
+      ],
+      "answer": {
+        "value": "$\\dfrac{h(x)}{g(x)}$",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: $h(x)/g(x) = x/((x-1)(1-x))$, the same expression."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$-1/x$ differs (e.g. at $x = 2$ the ratio is $-2$, not $-0.5$)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$g(x)/h(x)$ is the reciprocal of the answer."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Missing the minus sign: $x/(1-x)^2 = +2$ at $x = 2$, but the ratio is $-2$."
+        }
+      ],
+      "pitfalls": [
+        "Dropping the sign when rewriting $(x-1)(1-x)$ as $(1-x)^2$."
+      ],
+      "verification": "At $x = 2$: $h(2) = 2$, $g(h(2)) = -1$; $g(2) = -1$, $h(-1) = 1/2$; ratio $= -2$. And $h(2)/g(2) = 2/(-1) = -2$ ✓."
+    },
+    "cse-2015-1-cs-6": {
+      "approach": "Recall the design paradigm behind each classic algorithm.",
+      "concepts": [
+        "Algorithm design paradigms"
+      ],
+      "steps": [
+        {
+          "title": "Classify",
+          "body": "- P Prim's MST → **greedy** (ii)\n- Q Floyd–Warshall → **dynamic programming** over intermediate vertices (iii)\n- R Mergesort → **divide and conquer** (iv)\n- S Hamiltonian circuit → **backtracking** search (i)"
+        },
+        {
+          "title": "Match",
+          "body": "P-ii, Q-iii, R-iv, S-i — each paradigm used exactly once, which is option C."
+        }
+      ],
+      "answer": {
+        "value": "P-ii, Q-iii, R-iv, S-i",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Prim's is greedy, not DP; Floyd–Warshall is DP, not greedy."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Prim's is not backtracking; Hamiltonian circuit is not DP in this matching."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: P-ii, Q-iii, R-iv, S-i."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Floyd–Warshall is not backtracking and Mergesort is not DP."
+        }
+      ],
+      "verification": "Every paradigm is used exactly once, consistent with textbook classification."
+    },
+    "cse-2015-1-cs-7": {
+      "approach": "The SELECT clause chooses columns (projection), and SQL works on multisets, so duplicates are kept unless DISTINCT is used.",
+      "concepts": [
+        "SQL SELECT",
+        "Projection",
+        "Bag semantics"
+      ],
+      "steps": [
+        {
+          "title": "What SELECT does",
+          "body": "`SELECT a, b FROM r` picks attributes — relational-algebra **projection** $\\pi_{a,b}(r)$. Row filtering (selection $\\sigma$) is done by `WHERE`."
+        },
+        {
+          "title": "Duplicates",
+          "body": "Relational algebra works on sets and removes duplicates; SQL works on bags and retains them unless `SELECT DISTINCT` is written."
+        }
+      ],
+      "answer": {
+        "value": "the projection operation in relational algebra, except that SELECT in SQL retains duplicates",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Selection corresponds to the WHERE clause, not SELECT."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Same confusion with selection."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Ignores that SQL keeps duplicate rows."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: projection with bag (duplicate-retaining) semantics."
+        }
+      ],
+      "verification": "`SELECT DISTINCT` is the exact equivalent of $\\pi$, confirming plain SELECT keeps duplicates."
+    },
+    "cse-2015-1-cs-8": {
+      "approach": "In a three-address format each address field is a general operand specifier: it may name a memory location or a register, and an accumulator is just one register that can be designated.",
+      "concepts": [
+        "Instruction formats",
+        "Addressing modes"
+      ],
+      "steps": [
+        {
+          "title": "Memory and register",
+          "body": "Three-address instructions like `ADD R1, A, B` or `ADD X, Y, Z` use fields that point to memory operands (S1) or processor registers (S2)."
+        },
+        {
+          "title": "Accumulator",
+          "body": "An accumulator is a processor register; a field can designate it as the source/destination, so S3 is also possible. GATE's official key accepts all three."
+        }
+      ],
+      "answer": {
+        "value": "All of S1, S2 and S3",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Omits the accumulator possibility accepted by the official key."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Omits memory operands, which three-address formats certainly allow."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Excludes memory operands."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct (official key): a field can specify a memory operand, a register, or the accumulator register."
+        }
+      ],
+      "pitfalls": [
+        "Over-reading \"implied\" — the official answer treats the accumulator as one more register a field may refer to."
+      ],
+      "verification": "Matches the official GATE 2015 Set 1 answer key (D)."
+    },
+    "cse-2015-1-cs-9": {
+      "approach": "Enumerate the interleavings of the two read–write pairs; only the order of the reads and writes of B matters.",
+      "concepts": [
+        "Race condition",
+        "Interleaving"
+      ],
+      "given": "| P1 | P2 |\n|---|---|\n| a: `C = B - 1` | x: `D = 2 * B` |\n| b: `B = 2 * C` | y: `B = D - 1` |",
+      "steps": [
+        {
+          "title": "Serial orders",
+          "body": "P1 then P2: $C = 1, B = 2$; $D = 4, B = 3$ → **3**.\nP2 then P1: $D = 4, B = 3$; $C = 2, B = 4$ → **4**."
+        },
+        {
+          "title": "Both read B = 2 first",
+          "body": "Orders a x … or x a …: $C = 1$, $D = 4$.\n- b then y: $B = 2$, then $B = 3$ → **3**.\n- y then b: $B = 3$, then $B = 2$ → **2**."
+        },
+        {
+          "title": "Count",
+          "body": "Possible final values $\\{2, 3, 4\\}$ → **3** distinct values."
+        }
+      ],
+      "answer": {
+        "value": "3",
+        "number": 3,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Considering only the two serial executions (giving 2)."
+      ],
+      "verification": "All 6 interleavings of (a,b) with (x,y) checked: a b x y → 3, a x b y → 3, a x y b → 2, x a b y → 3, x a y b → 2, x y a b → 4."
+    },
+    "cse-2015-1-cs-10": {
+      "approach": "The inorder traversal of any BST is sorted in increasing order, and any sorted sequence is the inorder of some BST — so just test each list for sortedness.",
+      "concepts": [
+        "BST inorder property"
+      ],
+      "steps": [
+        {
+          "title": "Key property",
+          "body": "Inorder visits left subtree, root, right subtree; in a BST this lists the keys in increasing order. So a sequence of distinct keys is a BST inorder exactly when it is sorted."
+        },
+        {
+          "title": "Check each",
+          "body": "- I: 3, 5, 7, 8, 15, 19, 25 — increasing ✓\n- II: …12, **10**… — 10 < 12 ✗\n- III: …10, **8**… — 8 < 10 ✗\n- IV: 4, 6, 7, 9, 18, 20, 25 — increasing ✓"
+        }
+      ],
+      "answer": {
+        "value": "I and IV only",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: only I and IV are sorted."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "II and III both contain a descent."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "II is not sorted."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "II is not sorted (12 before 10)."
+        }
+      ],
+      "verification": "Each sorted list is the inorder of, e.g., a right-skewed BST built from it."
+    },
+    "cse-2015-1-cs-11": {
+      "approach": "`f1` swaps copies (call by value) so nothing changes in `main`; `f2` swaps through pointers, exchanging `b` and `c`.",
+      "concepts": [
+        "Call by value",
+        "Pointers"
+      ],
+      "steps": [
+        {
+          "title": "f1(a, b)",
+          "body": "Swaps local copies only → `a = 4, b = 5, c = 6` unchanged."
+        },
+        {
+          "title": "f2(&b, &c)",
+          "body": "Swaps the actual variables → `b = 6, c = 5`."
+        },
+        {
+          "title": "Print",
+          "body": "$c - a - b = 5 - 4 - 6 = -5$."
+        }
+      ],
+      "answer": {
+        "value": "-5",
+        "number": -5,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Assuming f1 also swaps a and b (would give $5-5-6 = -6$)."
+      ],
+      "verification": "Tracing the variables after each call gives (a, b, c) = (4, 6, 5)."
+    },
+    "cse-2015-1-cs-12": {
+      "approach": "Single-level page table size = number of pages × PTE size.",
+      "concepts": [
+        "Paging",
+        "Page table size"
+      ],
+      "steps": [
+        {
+          "title": "Number of pages",
+          "body": "$\\dfrac{2^{32}}{4\\,\\text{KB}} = \\dfrac{2^{32}}{2^{12}} = 2^{20}$ entries."
+        },
+        {
+          "title": "Table size",
+          "body": "$2^{20} \\times 4\\,\\text{B} = 2^{22}\\,\\text{B} = 4\\,\\text{MB}$."
+        }
+      ],
+      "answer": {
+        "value": "4",
+        "number": 4,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Using the 32-bit address width as the PTE size."
+      ],
+      "verification": "Offset 12 bits, page number 20 bits → $2^{20}$ PTEs of 4 B = 4 MB ✓."
+    }
+  }
+}
