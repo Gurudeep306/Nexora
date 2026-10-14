@@ -1,0 +1,151 @@
+{
+  "paper": "it-2007",
+  "fixes": [
+    {
+      "id": "it-2007-cs-32",
+      "field": "answer",
+      "before": "15",
+      "after": "B",
+      "reason": "Stored key \"15\" is not an option letter; the postfix expression 5 2 * 3 3 2 + * + evaluates to 25 = option B (intended answer).",
+      "source": "GATE 2007 IT paper (PDF) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-32",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Literal C semantics differ from every option; flag for review.",
+      "source": "GATE 2007 IT paper (PDF) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-32",
+      "field": "reviewNote",
+      "before": "Printed code pushes the character c (not c-'0') and prints with %c; none of the options is literally produced (prints 'y'). Intended answer is probably 25 (B); one web source claims 150 (D). Left unanswered.",
+      "after": "Key set to B (25), the value of the postfix expression with digit values. Literally the code pushes ASCII codes and prints with %c (output would be the character y, 7801 mod 256 = 121), which matches no option.",
+      "reason": "Explain the remaining ambiguity.",
+      "source": "GATE 2007 IT paper (PDF) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-28",
+      "field": "reviewNote",
+      "before": "Strictly k/20 > 0.5 needs k=11 which is not offered; option D (10) is the intended answer.",
+      "after": "Per-new-key reading: P = k/20 reaches 0.5 at k = 10 (option D, intended; strictly exceeding needs 11). Birthday reading (some collision among k keys) first exceeds 0.5 at k = 6 (option B). Kept D.",
+      "reason": "Record both interpretations.",
+      "source": "GATE 2007 IT paper (PDF) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-27",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "PDF clearly prints f(3n-1); the 5 -> 14 -> 7 -> 20 -> 10 -> 5 cycle proves answer D.",
+      "source": "GATE 2007 IT paper (PDF) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-27",
+      "field": "reviewNote",
+      "before": "Printed call is f(3n-1); analysis uses that.",
+      "after": null,
+      "reason": "Review resolved.",
+      "source": "GATE 2007 IT paper (PDF) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-36",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Rendered PDF reads D, D1, D2 as in the record; computed 0.92t < 1.2t < 1.32t gives B.",
+      "source": "GATE 2007 IT paper (PDF) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-36",
+      "field": "reviewNote",
+      "before": "Design names in the scan are blurry ('design 0.02' read as D2, 'design 0' as D).",
+      "after": null,
+      "reason": "Review resolved.",
+      "source": "GATE 2007 IT paper (PDF) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-40",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Rendered figure clearly shows initial contents 0110; simulation gives 0110 (A).",
+      "source": "GATE 2007 IT paper (PDF) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-40",
+      "field": "reviewNote",
+      "before": "Initial register contents (0110) are blurry in the scan; the input 101101 is a palindrome so bit order does not matter.",
+      "after": null,
+      "reason": "Review resolved.",
+      "source": "GATE 2007 IT paper (PDF) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-41",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Cycle-by-cycle trace gives 13 under the stated latencies (C).",
+      "source": "GATE 2007 IT paper (PDF) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-41",
+      "field": "reviewNote",
+      "before": "Stall counting convention (latency = idle cycles, in-order issue) assumed; matches the standard key 13.",
+      "after": null,
+      "reason": "Review resolved.",
+      "source": "GATE 2007 IT paper (PDF) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-42",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Bases H, B and 8 confirmed; exact computation gives (135103.412)_8 (A).",
+      "source": "GATE 2007 IT paper (PDF) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-42",
+      "field": "reviewNote",
+      "before": "Subscript bases are blurry in the scan (H, B, and octal answer base read from context).",
+      "after": null,
+      "reason": "Review resolved.",
+      "source": "GATE 2007 IT paper (PDF) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-40",
+      "field": "figures",
+      "before": [
+        {
+          "f": "it-2007/cs-40.png",
+          "alt": "Four-cell shift register initially 0 1 1 0; the last (rightmost) cell output is fed back to one input of an XOR gate whose other input is the serial input 101101; the XOR output feeds the first cell.",
+          "svg": "it-2007/cs-40.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "it-2007/cs-40.png",
+          "alt": "Linear feedback shift register: the serial input 101101 enters one input of an XOR gate; the XOR output feeds the leftmost cell of a 4-cell register holding 0 1 1 0; the rightmost cell output is fed back over the top to the other XOR input.",
+          "svg": "it-2007/cs-40.svg"
+        }
+      ],
+      "reason": "Redrawn SVG (old one showed an unrelated AND/OR circuit); precise alt text.",
+      "source": "GATE 2007 IT paper (PDF) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-41",
+      "field": "figures",
+      "before": [
+        {
+          "f": "it-2007/cs-41.png",
+          "alt": "Latency table: ALU->ALU 2, ALU->Store 2, Load->ALU 1, Load->Store 0.",
+          "svg": "it-2007/cs-41.svg"
+        }
+      ],
+      "after": [],
+      "reason": "The figure only duplicated the latency table already in the text (and its SVG was an unrelated waveform).",
+      "source": "GATE 2007 IT paper (PDF) + independent solution"
+    }
+  ]
+}

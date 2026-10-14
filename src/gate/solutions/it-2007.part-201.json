@@ -1,0 +1,1812 @@
+{
+  "paper": "it-2007",
+  "version": 2,
+  "solutions": {
+    "it-2007-cs-23": {
+      "approach": "Unroll the recursive definition: (a, b) ∈ P exactly when every decimal digit of a is ≤ the digit of b in the same position (missing leading digits count as 0). Check each pair digit by digit from the right.",
+      "concepts": [
+        "Partial order",
+        "Recursive definition",
+        "Digit-wise comparison"
+      ],
+      "steps": [
+        {
+          "title": "What the rule really says",
+          "body": "Rule (ii) compares the last digits $a\\%10 \\le b\\%10$ and then recurses on $(\\lfloor a/10\\rfloor, \\lfloor b/10\\rfloor)$. It stops successfully only on $(0,0)$, so **every** digit position (padding the shorter number with leading 0s) must satisfy digit$(a) \\le$ digit$(b)$."
+        },
+        {
+          "title": "Check each pair",
+          "body": "| Pair | Aligned digits | Comparisons | In P? |\n|---|---|---|---|\n| (101, 22) | 101 vs 022 | $1\\le2$, $0\\le2$, $1\\le0$ ✗ | No |\n| (22, 101) | 022 vs 101 | $2\\le1$ ✗ | No |\n| (145, 265) | 145 vs 265 | $5\\le5$, $4\\le6$, $1\\le2$ | Yes |\n| (0, 153) | 000 vs 153 | $0\\le3$, $0\\le5$, $0\\le1$ | Yes |"
+        },
+        {
+          "title": "Conclusion",
+          "body": "Only (iii) and (iv) belong to P, which is option **D**."
+        }
+      ],
+      "answer": {
+        "value": "(iii) and (iv)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "(i) (101, 22) fails at the hundreds digit: 1 ≤ 0 is false."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "(ii) (22, 101) fails immediately at the units digit: 2 ≤ 1 is false."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "(i) is not in P (hundreds digit 1 > 0)."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: (145, 265) and (0, 153) satisfy digit ≤ digit in every position."
+        }
+      ],
+      "pitfalls": [
+        "Comparing the numbers as wholes (101 > 22) instead of digit by digit.",
+        "Forgetting that a shorter number is padded with leading zeros, which is why (101, 22) fails at the hundreds place."
+      ],
+      "verification": "Traced the recursion explicitly: (101,22) → (10,2) → (1,0) fails 1 ≤ 0; (145,265) → (14,26) → (1,2) → (0,0) succeeds."
+    },
+    "it-2007-cs-24": {
+      "approach": "In a DAG there are no back edges, so every edge (u, v) is a tree, forward or cross edge; for all three, v finishes before u. Hence f[u] > f[v] always.",
+      "concepts": [
+        "DFS",
+        "Edge classification",
+        "Topological sort"
+      ],
+      "steps": [
+        {
+          "title": "Edge types in a DAG",
+          "body": "A back edge would close a cycle, so a DAG has only **tree, forward and cross** edges."
+        },
+        {
+          "title": "Finish times for each type",
+          "body": "- Tree/forward edge $(u,v)$: $v$ is a descendant of $u$, so $d[u] < d[v] < f[v] < f[u]$.\n- Cross edge $(u,v)$: $v$ is already finished when $u$ looks at it, so $f[v] < d[u] < f[u]$.\n\nIn every case $f[u] > f[v]$ — this is exactly why sorting by decreasing finish time gives a topological order."
+        },
+        {
+          "title": "Counter-examples for the rest",
+          "body": "Graph with edges $a\\to b$ and $c\\to b$, DFS started at $a$ first: $d[a]=1, d[b]=2, f[b]=3, f[a]=4, d[c]=5, f[c]=6$. For edge $(c,b)$: $d[c]=5 > d[b]=2$ (A fails), $d[c]=5 > f[b]=3$ (B fails), $f[c]=6 > f[b]=3$ (C fails)."
+        }
+      ],
+      "answer": {
+        "value": "f[u] > f[v]",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Fails for a cross edge: u can be discovered after v has been completely explored (d[c]=5 > d[b]=2 above)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Fails for a cross edge: v may already be finished before u is discovered (d[c]=5 > f[b]=3)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "The reverse is true: v always finishes before u."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: holds for tree, forward and cross edges, and a DAG has no back edges."
+        }
+      ],
+      "pitfalls": [
+        "Assuming every edge is a tree edge — cross edges break d[u] < d[v]."
+      ],
+      "verification": "Checked all three possible edge types and built a concrete counter-example for A, B and C."
+    },
+    "it-2007-cs-25": {
+      "approach": "A connected graph with n vertices and n edges is a spanning tree plus one extra edge, so it has exactly one cycle. Removing any one edge of that cycle gives a spanning tree, so the count equals the cycle length, which is at least 3 in a simple graph.",
+      "concepts": [
+        "Spanning tree",
+        "Unicyclic graph",
+        "Simple graph"
+      ],
+      "steps": [
+        {
+          "title": "Structure of the graph",
+          "body": "A spanning tree uses $n-1$ edges, so the graph has exactly $n-(n-1)=1$ extra edge, creating exactly **one cycle** of length $k$."
+        },
+        {
+          "title": "Count spanning trees",
+          "body": "A spanning tree must drop exactly one edge, and it must be a cycle edge (dropping a non-cycle edge disconnects the graph). So there are exactly $k$ spanning trees."
+        },
+        {
+          "title": "Minimise k",
+          "body": "In a simple graph (no loops or parallel edges) a cycle has $k \\ge 3$, and $k=3$ is achievable (a triangle with a path hanging off it). Hence $m = 3$."
+        }
+      ],
+      "answer": {
+        "value": "3",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Too small: every such graph has a cycle of length ≥ 3, giving at least 3 spanning trees."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Would need a 2-cycle, i.e. parallel edges, which a simple graph cannot have."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: the minimum cycle length 3 gives exactly 3 spanning trees, and no graph has fewer."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Only the n-cycle itself reaches n; a triangle with a pendant path has just 3."
+        }
+      ],
+      "pitfalls": [
+        "Forgetting that the graph must be simple — with multi-edges the answer would be 2."
+      ],
+      "verification": "n = 4 example: triangle {1,2,3} plus edge 3–4 has exactly 3 spanning trees (drop 1–2, 2–3 or 1–3)."
+    },
+    "it-2007-cs-26": {
+      "approach": "Use the exchange argument (Smith's rule): swapping two adjacent jobs changes only their own terms, and the swap helps exactly when the later job has the larger ratio w/t. So jobs must run in non-increasing order of w_i/t_i.",
+      "concepts": [
+        "Greedy scheduling",
+        "Exchange argument",
+        "Smith's rule"
+      ],
+      "steps": [
+        {
+          "title": "Effect of swapping neighbours",
+          "body": "The denominator $\\sum w_i$ is fixed, so minimise $\\sum w_iT_i$. Let $J_i$ and $J_j$ run back to back starting at time $s$:\n\n$$i\\text{ first: } w_i(s+t_i)+w_j(s+t_i+t_j)$$\n$$j\\text{ first: } w_j(s+t_j)+w_i(s+t_j+t_i)$$\n\nDifference (i first − j first) $= w_jt_i - w_it_j$."
+        },
+        {
+          "title": "Ordering rule",
+          "body": "$i$ first is no worse iff $w_jt_i \\le w_it_j \\iff \\dfrac{w_i}{t_i} \\ge \\dfrac{w_j}{t_j}$. Any schedule violating this can be improved by a swap, so the optimum is **non-increasing order of $w_i/t_i$**."
+        },
+        {
+          "title": "Check with an example",
+          "body": "$J_1$: $t=1, w=1$; $J_2$: $t=3, w=6$. Ratios 1 and 2. $J_2$ first: $6\\cdot3 + 1\\cdot4 = 22$; $J_1$ first: $1\\cdot1+6\\cdot4 = 25$. The higher ratio first wins, even though $J_1$ is shorter (A fails)."
+        }
+      ],
+      "answer": {
+        "value": "Non-increasing order of w_i/t_i",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Shortest-job-first ignores weights; in the example it gives 25 vs the optimal 22."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Ignores execution times: w=2, t=100 first gives 2·100 + 1·101 = 301, but the light short job first gives 1·1 + 2·101 = 203."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "The product w·t rewards long jobs, the opposite of what is wanted."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: the exchange argument shows the optimum is sorted by w/t in non-increasing order."
+        }
+      ],
+      "pitfalls": [
+        "Minimising the unweighted mean (SJF) instead of the weighted one."
+      ],
+      "verification": "Recomputed both orders for the two-job examples; the w/t ordering is always the cheaper one."
+    },
+    "it-2007-cs-27": {
+      "approach": "Trace small values. Powers of two always terminate (infinitely many n), while n = 5 enters the cycle 5 → 14 → 7 → 20 → 10 → 5, and so does every 5·2^k (infinitely many n).",
+      "concepts": [
+        "Recursion",
+        "Termination",
+        "Cycles in iteration"
+      ],
+      "steps": [
+        {
+          "title": "Infinitely many terminating values",
+          "body": "For $n = 2^k$ the even branch halves repeatedly: $2^k \\to 2^{k-1} \\to \\dots \\to 1$, returning 1. So f terminates for infinitely many $n$: (ii) true, (i) false."
+        },
+        {
+          "title": "A non-terminating value",
+          "body": "Odd $n$ goes to $3n-1$:\n\n$$5 \\to 14 \\to 7 \\to 20 \\to 10 \\to 5 \\to \\cdots$$\n\nThe calls cycle forever, so $f(5)$ never terminates."
+        },
+        {
+          "title": "Infinitely many non-terminating values",
+          "body": "For $n = 5\\cdot 2^k$ the halving reaches 5 and enters the same cycle. So f fails to terminate for infinitely many $n$: (iv) true, (iii) false. Answer: (ii) and (iv)."
+        }
+      ],
+      "answer": {
+        "value": "(ii) and (iv)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Both false: all powers of two terminate and all 5·2^k loop, so neither set is finite."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "(i) is false — every power of two terminates."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "(iii) is false — 5·2^k loops forever for every k ≥ 0."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: infinitely many n terminate (2^k) and infinitely many do not (5·2^k)."
+        }
+      ],
+      "pitfalls": [
+        "Confusing this with the Collatz map (3n+1); with 3n−1 there is a short explicit cycle through 5."
+      ],
+      "verification": "3·5−1 = 14, 14/2 = 7, 3·7−1 = 20, 20/2 = 10, 10/2 = 5 — cycle confirmed."
+    },
+    "it-2007-cs-28": {
+      "approach": "With uniform hashing and k keys already in distinct slots, a new key collides with probability k/20. That reaches 0.5 at k = 10, the intended answer among the options.",
+      "concepts": [
+        "Hashing",
+        "Uniform hashing",
+        "Collision probability"
+      ],
+      "steps": [
+        {
+          "title": "Collision probability for the next key",
+          "body": "With $k$ keys occupying $k$ distinct slots out of 20, a uniformly hashed new key lands in an occupied slot with probability $\\dfrac{k}{20}$."
+        },
+        {
+          "title": "Find k",
+          "body": "$\\dfrac{k}{20} = 0.5 \\Rightarrow k = 10$. After 10 keys a new key collides with probability $0.5$, and beyond that it is more likely to collide than not; the listed threshold is **10** (option D)."
+        }
+      ],
+      "answer": {
+        "value": "10",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "After 5 keys the next key collides with probability 5/20 = 0.25."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "After 6 keys it is 6/20 = 0.3. (6 is the birthday-problem threshold for \"some collision among all keys\", a different question.)"
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "After 7 keys it is 7/20 = 0.35."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Intended answer: k/20 reaches 0.5 at k = 10."
+        }
+      ],
+      "pitfalls": [
+        "Reading it as the birthday problem: P(at least one collision among k keys) first exceeds 0.5 at k = 6 (1 − 0.436 = 0.564).",
+        "Strictly \"exceed 0.5\" needs k = 11, which is not offered."
+      ],
+      "verification": "Birthday check: P(no collision with 6 keys) = 1·0.95·0.90·0.85·0.80·0.75 ≈ 0.436, so B would follow from that other reading; the per-new-key reading gives 10."
+    },
+    "it-2007-cs-29": {
+      "approach": "On the search path to 60, keys smaller than 60 must appear in increasing order and keys larger than 60 in decreasing order (each step narrows the interval around 60). Only the interleaving of the two chains is free: C(7,3) = 35.",
+      "concepts": [
+        "BST search path",
+        "Interval narrowing",
+        "Combinations"
+      ],
+      "steps": [
+        {
+          "title": "Order within each side",
+          "body": "After visiting a key $x < 60$ the search goes right, so every later key is $> x$. Hence the smaller keys appear as $10, 20, 40, 50$ (increasing). Symmetrically, after $y > 60$ the search goes left, so the larger keys appear as $90, 80, 70$ (decreasing)."
+        },
+        {
+          "title": "Count interleavings",
+          "body": "Both chains are forced; only their merge is free. Choose which 3 of the 7 positions hold the larger keys:\n\n$$\\binom{7}{3} = \\frac{7\\cdot6\\cdot5}{3\\cdot2\\cdot1} = 35$$",
+          "scene": {
+            "caption": "One valid path: 10 → 90 → 20 → 80 → 40 → 50 → 70 → 60"
+          }
+        }
+      ],
+      "animation": {
+        "kind": "array",
+        "title": "One of the 35 search paths",
+        "cells": [
+          {
+            "v": 10,
+            "tone": "cat1"
+          },
+          {
+            "v": 90,
+            "tone": "cat2"
+          },
+          {
+            "v": 20,
+            "tone": "cat1"
+          },
+          {
+            "v": 80,
+            "tone": "cat2"
+          },
+          {
+            "v": 40,
+            "tone": "cat1"
+          },
+          {
+            "v": 50,
+            "tone": "cat1"
+          },
+          {
+            "v": 70,
+            "tone": "cat2"
+          },
+          {
+            "v": 60,
+            "tone": "success"
+          }
+        ],
+        "caption": "Smaller keys increase, larger keys decrease; the two chains interleave freely."
+      },
+      "answer": {
+        "value": "35",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: the two monotone chains (4 and 3 keys) interleave in C(7,3) = 35 ways."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "64 = 2^6 has no derivation from the constraints."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "128 = 2^7 would treat every key as freely placed left/right, ignoring the forced order inside each chain."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "5040 = 7! counts all permutations, most of which violate the BST property."
+        }
+      ],
+      "pitfalls": [
+        "Answering 7! — e.g. 20 before 10 is impossible, because after 20 the search only sees keys > 20."
+      ],
+      "verification": "Equivalent count 7!/(4!·3!) = 5040/(24·6) = 35."
+    },
+    "it-2007-cs-30": {
+      "approach": "Each call removes the front element, recursively processes the rest, and only then appends the removed element at the rear. The front element therefore ends up last: the queue is reversed. Trace it on Q = [1, 2, 3].",
+      "concepts": [
+        "Queue",
+        "Recursion",
+        "Reversal"
+      ],
+      "steps": [
+        {
+          "title": "Deletions on the way down",
+          "body": "Take $Q = [1,2,3]$ (front first). The calls delete 1, then 2, then 3, and the innermost call sees an empty queue and returns.",
+          "scene": {
+            "items": [],
+            "dequeued": "3",
+            "caption": "Call stack holds i = 1, 2, 3; queue is empty"
+          }
+        },
+        {
+          "title": "Insertions on the way up",
+          "body": "Calls return in reverse order: the deepest inserts 3, then 2, then 1, giving $Q = [3,2,1]$.",
+          "scene": {
+            "kind": "queue",
+            "title": "Queue Q (front → rear)",
+            "items": [
+              "3",
+              "2",
+              "1"
+            ],
+            "caption": "Inserted 3, then 2, then 1 at the rear"
+          }
+        },
+        {
+          "title": "Conclusion",
+          "body": "The first element removed is the last inserted, so f **reverses** the queue (option B)."
+        }
+      ],
+      "animation": {
+        "kind": "queue",
+        "title": "Queue Q (front → rear)",
+        "items": [
+          "1",
+          "2",
+          "3"
+        ],
+        "caption": "Initial queue"
+      },
+      "answer": {
+        "value": "Reverses the order of the elements in the queue Q",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The elements are re-inserted in reverse order of deletion, so Q changes unless it has ≤ 1 element."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: [1,2,3] becomes [3,2,1]."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "That would need only one delete/insert; here every element is deleted before any insertion."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Every deleted element is inserted back, so Q is not emptied."
+        }
+      ],
+      "pitfalls": [
+        "Thinking the insert happens before the recursive call (that version would rotate the queue)."
+      ],
+      "verification": "Recursion depth equals the queue length; the insertion order 3, 2, 1 is the reverse of the deletion order 1, 2, 3."
+    },
+    "it-2007-cs-31": {
+      "approach": "The loop sums runs of non-negative, non-decreasing elements and records the best run when a run breaks. Trace the six iterations directly.",
+      "concepts": [
+        "C program tracing",
+        "Arrays",
+        "Maximum run sum"
+      ],
+      "steps": [
+        {
+          "title": "Start: i = 0, 1, 2",
+          "body": "i = 0: reset branch, sum $=2$. i = 1: $a[1]=-2<0$, so maxsum $=2$, sum $=0$. i = 2: $a[2]=-1<0$, $0>2$ is false, sum $=0$.",
+          "scene": {
+            "reveal": 18,
+            "hl": [
+              {
+                "r": 1,
+                "tone": "warning"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Run 3, 4",
+          "body": "i = 3: $a[3]=3$ is not negative and $3 < -1$ is false → sum $=0+3=3$. i = 4: $4<3$ false → sum $=3+4=7$.",
+          "scene": {
+            "reveal": 30,
+            "hl": [
+              {
+                "r": 4,
+                "c": 4,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Run breaks at i = 5",
+          "body": "i = 5: $a[5]=2 < a[4]=4$ → reset branch: $7 > 2$, so maxsum $=7$; sum $=2$. After the loop $2 > 7$ is false, so the program prints **7**.",
+          "scene": {
+            "reveal": 42,
+            "hl": [
+              {
+                "r": 5,
+                "c": 5,
+                "tone": "success"
+              },
+              {
+                "r": 6,
+                "c": 5,
+                "tone": "success"
+              }
+            ]
+          }
+        }
+      ],
+      "animation": {
+        "kind": "table",
+        "title": "Trace of the loop",
+        "cols": [
+          "i",
+          "a[i]",
+          "reset condition",
+          "maxsum update",
+          "sum",
+          "maxsum"
+        ],
+        "rows": [
+          [
+            "0",
+            "2",
+            "i == 0",
+            "0 > 0? no",
+            "2",
+            "0"
+          ],
+          [
+            "1",
+            "-2",
+            "a[1] < 0",
+            "2 > 0 → maxsum = 2",
+            "0",
+            "2"
+          ],
+          [
+            "2",
+            "-1",
+            "a[2] < 0",
+            "0 > 2? no",
+            "0",
+            "2"
+          ],
+          [
+            "3",
+            "3",
+            "no (else)",
+            "—",
+            "0 + 3 = 3",
+            "2"
+          ],
+          [
+            "4",
+            "4",
+            "no (else)",
+            "—",
+            "3 + 4 = 7",
+            "2"
+          ],
+          [
+            "5",
+            "2",
+            "a[5] < a[4]",
+            "7 > 2 → maxsum = 7",
+            "2",
+            "7"
+          ],
+          [
+            "end",
+            "",
+            "",
+            "2 > 7? no",
+            "2",
+            "7"
+          ]
+        ],
+        "reveal": 0
+      },
+      "answer": {
+        "value": "7",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "9 = 3 + 4 + 2 would require adding 2 after 4, but 2 < 4 breaks the run."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "8 does not arise from any run of the array."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: the best run is 3, 4 with sum 7."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "6 is not a run sum here; the 3, 4 run gives 7."
+        }
+      ],
+      "pitfalls": [
+        "Missing the a[i] < a[i−1] condition and adding the final 2 (giving 9)."
+      ],
+      "verification": "Runs found: {2}, {}, {}, {3, 4}, {2} with sums 2, 0, 0, 7, 2; the maximum is 7."
+    },
+    "it-2007-cs-32": {
+      "approach": "The input is a postfix expression: evaluate it with a stack. Taken as digit values it gives 5·2 + 3·(3+2) = 25 (the intended answer). Strictly, the code pushes character codes and prints with %c, which no option shows.",
+      "concepts": [
+        "Postfix evaluation",
+        "Stack",
+        "ASCII codes"
+      ],
+      "steps": [
+        {
+          "title": "5 2 *",
+          "body": "Push 5, push 2. On `*`: $m=2$, $n=5$, push $n\\cdot m = 10$.",
+          "scene": {
+            "items": [
+              "10"
+            ],
+            "caption": "5 2 * → 10"
+          }
+        },
+        {
+          "title": "3 3 2 +",
+          "body": "Push 3, 3, 2. On `+`: $m=2$, $n=3$, push $3+2=5$. Stack: 10, 3, 5.",
+          "scene": {
+            "items": [
+              "10",
+              "3",
+              "5"
+            ],
+            "caption": "3 + 2 = 5"
+          }
+        },
+        {
+          "title": "* then +",
+          "body": "On `*`: $m=5$, $n=3$, push $15$. Stack: 10, 15. On `+`: push $10+15=25$. The final pop gives **25** (option B).",
+          "scene": {
+            "items": [
+              "25"
+            ],
+            "caption": "3·5 = 15, then 10 + 15 = 25"
+          }
+        },
+        {
+          "title": "The literal-C caveat",
+          "body": "The code pushes `c` itself (e.g. `'5'` = 53), not `c - '0'`, and prints with `%c`. Literally: $53\\cdot50=2650$, $51+50=101$, $51\\cdot101=5151$, $2650+5151=7801$, and `%c` prints $7801 \\bmod 256 = 121$ = `y`. None of the options matches, so the intended reading (digit values) gives 25."
+        }
+      ],
+      "animation": {
+        "kind": "stack",
+        "title": "Operand stack (bottom → top)",
+        "items": [
+          "5",
+          "2"
+        ],
+        "caption": "Input: 5 2 * 3 3 2 + * +"
+      },
+      "answer": {
+        "value": "25",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "15 is only the value of the sub-expression 3·(3+2), not the whole expression."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Intended answer: 5·2 + 3·(3+2) = 10 + 15 = 25."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "30 would be (5·2)·3 or similar; the operators do not combine that way."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "150 = 10·15 uses * instead of the final +."
+        }
+      ],
+      "pitfalls": [
+        "Stopping at an intermediate result (15).",
+        "Popping operands in the wrong order — harmless for + and * here, but n is the left operand."
+      ],
+      "verification": "Infix form of 5 2 * 3 3 2 + * + is (5*2) + (3*(3+2)) = 25. The literal ASCII trace gives the character y, confirming the options assume digit values."
+    },
+    "it-2007-cs-33": {
+      "approach": "Under call by value, x and y are copies, so only the global assignment i = 100 survives. Under call by reference, x aliases the global i and y aliases j, so assignments go straight through in order.",
+      "concepts": [
+        "Call by value",
+        "Call by reference",
+        "Aliasing"
+      ],
+      "steps": [
+        {
+          "title": "Call by value",
+          "body": "$x=50$, $y=60$ are local copies. `i = 100` changes the global; `x = 10` and `y = y + i = 160` change only copies. Printed: $i = 100$, $j = 60$."
+        },
+        {
+          "title": "Call by reference",
+          "body": "$x \\equiv i$, $y \\equiv j$.\n1. `i = 100` → $i=100$.\n2. `x = 10` → $i = 10$.\n3. `y = y + i` → $j = 60 + 10 = 70$.\n\nPrinted: $i = 10$, $j = 70$."
+        }
+      ],
+      "answer": {
+        "value": "Call by value: i = 100, j = 60; Call by reference: i = 10, j = 70",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Neither 70 nor 10 can be i under call by value; i is set to 100 globally."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Ignores the global assignment i = 100 under call by value, and under reference x = 10 overwrites i."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Swaps the two mechanisms: (10, 70) is the call-by-reference result and (100, 60) the call-by-value result."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: value → (100, 60); reference → (10, 70)."
+        }
+      ],
+      "pitfalls": [
+        "Using i = 100 in y = y + i under reference — x = 10 has already changed i to 10 through the alias."
+      ],
+      "verification": "Re-traced the reference case statement by statement, tracking that x and i are the same cell."
+    },
+    "it-2007-cs-34": {
+      "approach": "Static scoping resolves a free name by where g is defined (global i = 10); dynamic scoping resolves it by the most recent active binding on the call stack (f's local i = 20).",
+      "concepts": [
+        "Static scoping",
+        "Dynamic scoping"
+      ],
+      "steps": [
+        {
+          "title": "Static scoping",
+          "body": "g is defined at top level, where the only visible i is the global, set to 10 in main. So $x = 10$."
+        },
+        {
+          "title": "Dynamic scoping",
+          "body": "Call chain: main → f → g. The most recent binding of i on the stack is f's local `int i = 20`. So $y = 20$."
+        }
+      ],
+      "answer": {
+        "value": "x = 10, y = 20",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: static → global 10, dynamic → f's local 20."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Swaps the two rules."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Ignores f's local i under dynamic scoping."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Static scoping cannot see f's local i from inside g."
+        }
+      ],
+      "pitfalls": [
+        "Treating dynamic scoping as \"the global value\"."
+      ],
+      "verification": "The definition environment of g contains only the global i; the call stack at g has f's i on top."
+    },
+    "it-2007-cs-35": {
+      "approach": "Static scope can be resolved by the compiler (early binding); dynamic scope depends on the run-time call chain (late binding). Resolving at compile time removes run-time work, so early binding increases efficiency and late binding decreases it.",
+      "concepts": [
+        "Binding time",
+        "Static scope",
+        "Dynamic scope"
+      ],
+      "steps": [
+        {
+          "title": "w1 and w2",
+          "body": "Static scope: the binding of a name is fixed by program text → **early** (compile time). Dynamic scope: the binding depends on the calling sequence → **late** (run time)."
+        },
+        {
+          "title": "w3 and w4",
+          "body": "Early binding does the lookup once at compile time → **increases** execution efficiency. Late binding repeats lookups during execution → **decreases** it. So: early, late, increase, decrease."
+        }
+      ],
+      "answer": {
+        "value": "Early, late, increase, decrease",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Scope parts right but efficiency reversed."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Scope parts reversed (static scope does not need late binding)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Both pairs reversed."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: early, late, increase, decrease."
+        }
+      ],
+      "pitfalls": [
+        "Mixing up which binding time costs execution time."
+      ],
+      "verification": "Consistent with how compilers resolve statically scoped names to fixed frame offsets."
+    },
+    "it-2007-cs-36": {
+      "approach": "Compute average cycles per operation for each design with weights 0.8 (fixed) and 0.2 (floating). Fewer cycles means faster.",
+      "concepts": [
+        "Weighted average CPI",
+        "Performance comparison"
+      ],
+      "given": "| Design | Fixed point | Floating point |\n|---|---|---|\n| D | $t$ | $2t$ |\n| D1 | $1.3t$ | $0.7\\cdot2t = 1.4t$ |\n| D2 | $0.6t$ | $1.1\\cdot2t = 2.2t$ |",
+      "steps": [
+        {
+          "title": "Average cycles",
+          "body": "$D: 0.8t + 0.2(2t) = 0.8t + 0.4t = 1.2t$\n\n$D1: 0.8(1.3t) + 0.2(1.4t) = 1.04t + 0.28t = 1.32t$\n\n$D2: 0.8(0.6t) + 0.2(2.2t) = 0.48t + 0.44t = 0.92t$"
+        },
+        {
+          "title": "Order",
+          "body": "$0.92t < 1.2t < 1.32t$, so $D2 > D > D1$ (option B)."
+        }
+      ],
+      "answer": {
+        "value": "D2 > D > D1",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "D1 (1.32t) is the slowest, not the fastest."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: 0.92t < 1.2t < 1.32t."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "D (1.2t) is slower than D2 (0.92t)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "D2 is the fastest, not the slowest."
+        }
+      ],
+      "pitfalls": [
+        "Applying the 30%/10% changes to t instead of to the floating-point time 2t."
+      ],
+      "verification": "D1 trades +0.3t on 80% of ops for −0.6t on 20%: net +0.24t − 0.12t = +0.12t; D2: −0.4t·0.8 + 0.2t·0.2 = −0.32t + 0.04t = −0.28t. Matches 1.32t and 0.92t."
+    },
+    "it-2007-cs-37": {
+      "approach": "Block b goes to cache slot b mod 8. Only the last block mapped to each slot remains, so find, for each slot, the last request that maps to it.",
+      "concepts": [
+        "Direct-mapped cache",
+        "Modulo mapping",
+        "Conflict misses"
+      ],
+      "steps": [
+        {
+          "title": "Map every request",
+          "body": "| Block | 3 | 5 | 2 | 8 | 0 | 63 | 9 | 16 | 20 | 17 |\n|---|---|---|---|---|---|---|---|---|---|---|\n| Slot | 3 | 5 | 2 | 0 | 0 | 7 | 1 | 0 | 4 | 1 |\n\n| Block | 25 | 18 | 30 | 24 | 2 | 63 | 5 | 82 | 17 | 24 |\n|---|---|---|---|---|---|---|---|---|---|---|\n| Slot | 1 | 2 | 6 | 0 | 2 | 7 | 5 | 2 | 1 | 0 |",
+          "scene": {
+            "sets": [
+              {
+                "lines": [
+                  {
+                    "tag": "16"
+                  }
+                ]
+              },
+              {
+                "lines": [
+                  {
+                    "tag": "17"
+                  }
+                ]
+              },
+              {
+                "lines": [
+                  {
+                    "tag": "2"
+                  }
+                ]
+              },
+              {
+                "lines": [
+                  {
+                    "tag": "3"
+                  }
+                ]
+              },
+              {
+                "lines": [
+                  {
+                    "tag": "20"
+                  }
+                ]
+              },
+              {
+                "lines": [
+                  {
+                    "tag": "5"
+                  }
+                ]
+              },
+              {
+                "lines": [
+                  null
+                ]
+              },
+              {
+                "lines": [
+                  {
+                    "tag": "63"
+                  }
+                ]
+              }
+            ],
+            "access": {
+              "set": 1,
+              "way": 0,
+              "result": "miss"
+            },
+            "caption": "After the first 10 requests (…, 16, 20, 17)"
+          }
+        },
+        {
+          "title": "Follow slot 2",
+          "body": "Slot 2 receives 2, then **18** (evicting 2), then 2 again (evicting 18), then 82 (evicting 2). So 18 is gone by the end.",
+          "scene": {
+            "sets": [
+              {
+                "lines": [
+                  {
+                    "tag": "24"
+                  }
+                ]
+              },
+              {
+                "lines": [
+                  {
+                    "tag": "25"
+                  }
+                ]
+              },
+              {
+                "lines": [
+                  {
+                    "tag": "2"
+                  }
+                ]
+              },
+              {
+                "lines": [
+                  {
+                    "tag": "3"
+                  }
+                ]
+              },
+              {
+                "lines": [
+                  {
+                    "tag": "20"
+                  }
+                ]
+              },
+              {
+                "lines": [
+                  {
+                    "tag": "5"
+                  }
+                ]
+              },
+              {
+                "lines": [
+                  {
+                    "tag": "30"
+                  }
+                ]
+              },
+              {
+                "lines": [
+                  {
+                    "tag": "63"
+                  }
+                ]
+              }
+            ],
+            "access": {
+              "set": 2,
+              "way": 0,
+              "result": "miss"
+            },
+            "caption": "25, 18, 30, 24 then 2 evicts 18 from slot 2"
+          }
+        },
+        {
+          "title": "Final contents",
+          "body": "Last block per slot: slot 0 → 24, 1 → 17, 2 → 82, 3 → 3, 4 → 20, 5 → 5, 6 → 30, 7 → 63. Of the options only **18** is absent (option B).",
+          "scene": {
+            "sets": [
+              {
+                "lines": [
+                  {
+                    "tag": "24"
+                  }
+                ]
+              },
+              {
+                "lines": [
+                  {
+                    "tag": "17"
+                  }
+                ]
+              },
+              {
+                "lines": [
+                  {
+                    "tag": "82"
+                  }
+                ]
+              },
+              {
+                "lines": [
+                  {
+                    "tag": "3"
+                  }
+                ]
+              },
+              {
+                "lines": [
+                  {
+                    "tag": "20"
+                  }
+                ]
+              },
+              {
+                "lines": [
+                  {
+                    "tag": "5"
+                  }
+                ]
+              },
+              {
+                "lines": [
+                  {
+                    "tag": "30"
+                  }
+                ]
+              },
+              {
+                "lines": [
+                  {
+                    "tag": "63"
+                  }
+                ]
+              }
+            ],
+            "access": {
+              "set": 0,
+              "way": 0,
+              "result": "hit"
+            },
+            "caption": "End of the sequence (last access 24 hits slot 0)"
+          }
+        }
+      ],
+      "animation": {
+        "kind": "cache",
+        "title": "Direct-mapped cache: 8 slots, slot = block mod 8",
+        "sets": [
+          {
+            "lines": [
+              null
+            ]
+          },
+          {
+            "lines": [
+              null
+            ]
+          },
+          {
+            "lines": [
+              null
+            ]
+          },
+          {
+            "lines": [
+              null
+            ]
+          },
+          {
+            "lines": [
+              null
+            ]
+          },
+          {
+            "lines": [
+              null
+            ]
+          },
+          {
+            "lines": [
+              null
+            ]
+          },
+          {
+            "lines": [
+              null
+            ]
+          }
+        ],
+        "caption": "Empty cache"
+      },
+      "answer": {
+        "value": "18",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Block 3 is the only block mapped to slot 3, so it stays."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: 18 (slot 2) is evicted by the later request for 2, and slot 2 finally holds 82."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Block 20 is the only block mapped to slot 4, so it stays."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Block 30 is the only block mapped to slot 6, so it stays."
+        }
+      ],
+      "pitfalls": [
+        "Computing 82 mod 8 as something other than 2 (82 = 10·8 + 2)."
+      ],
+      "verification": "Slots 3, 4 and 6 each receive only one block (3, 20, 30), so those survive; slot 2's last block is 82."
+    },
+    "it-2007-cs-38": {
+      "approach": "Replace each AND by NAND and simplify. NAND(NAND(x,y),z) = xy + z', so each 3-literal product becomes \"pair + complement of third\"; then absorb.",
+      "concepts": [
+        "NAND gate",
+        "Boolean simplification",
+        "Absorption"
+      ],
+      "steps": [
+        {
+          "title": "Rewrite each term",
+          "body": "$\\overline{\\overline{ab}\\,c} = ab + \\bar c$\n\n$\\overline{\\overline{\\bar a c}\\,d} = \\bar a c + \\bar d$\n\n$\\overline{\\overline{bc}\\,d} = bc + \\bar d$\n\n$\\overline{ad} = \\bar a + \\bar d$"
+        },
+        {
+          "title": "OR them and simplify",
+          "body": "$$F = ab + \\bar c + \\bar a c + \\bar d + bc + \\bar a$$\n\n$\\bar a + ab = \\bar a + b$; then $\\bar a$ absorbs $\\bar a c$ and $b$ absorbs $bc$:\n\n$$F = \\bar a + b + \\bar c + \\bar d$$"
+        }
+      ],
+      "answer": {
+        "value": "ā + b + c̄ + d̄",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "F = 0 for a = 1, b = 0, c = 1, d = 1, so it is not constant 1."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Has b̄ instead of b; at a = 1, b = 0, c = 1, d = 1 option B gives 1 but F = 0."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: ā + b + c̄ + d̄."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Has b̄ and c; at a = 1, b = 1, c = 0, d = 1 option D gives 0 but F = 1 (c̄ = 1)."
+        }
+      ],
+      "pitfalls": [
+        "Forgetting that the outer gate of a nested pair is also a NAND, so the inner NAND gets inverted back."
+      ],
+      "verification": "F = 0 only when a = 1, b = 0, c = 1, d = 1: term values ab + c̄ = 0, āc + d̄ = 0, bc + d̄ = 0, ā + d̄ = 0 — consistent."
+    },
+    "it-2007-cs-39": {
+      "approach": "Compare final machine state (registers and memory) of LHS and RHS. A replacement is safe only if both R2/Loc contents end the same, since later instructions may read either.",
+      "concepts": [
+        "Data forwarding",
+        "Store-load elimination",
+        "Dead stores"
+      ],
+      "steps": [
+        {
+          "title": "Store then load (i), (ii)",
+          "body": "LHS: Loc ← R1, then R2 ← Loc = R1. Final: Loc = R1, R2 = R1.\n- (i) RHS: R2 ← R1, Loc ← R1 → same state ✓.\n- (ii) RHS: R2 ← R1 only → Loc is not updated; a later read of Loc differs ✗."
+        },
+        {
+          "title": "Two stores (iii), (iv)",
+          "body": "LHS: Loc ← R1, then Loc ← R2. Final: Loc = R2 (first store is dead).\n- (iii) RHS: Loc ← R1 → wrong value ✗.\n- (iv) RHS: Loc ← R2 → same ✓.\n\nSo (i) & (iv)."
+        }
+      ],
+      "answer": {
+        "value": "(i) & (iv)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "(iii) leaves Loc = R1 but the LHS leaves Loc = R2."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: both preserve every register and memory value."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "(ii) drops the store to Loc and (iii) keeps the wrong store."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "(ii) drops the store to Loc, which later instructions may read."
+        }
+      ],
+      "pitfalls": [
+        "Removing the store in (ii) — it is only safe if no later instruction reads Loc, which is not guaranteed."
+      ],
+      "verification": "Checked final values of R2 and Loc for all four rewrites."
+    },
+    "it-2007-cs-40": {
+      "approach": "Each clock: new left bit = input XOR rightmost bit, and the register shifts right. Simulate six clocks from 0110; the input 101101 is a palindrome, so the feed order does not matter.",
+      "concepts": [
+        "Linear feedback shift register",
+        "XOR",
+        "Shift register"
+      ],
+      "steps": [
+        {
+          "title": "Rule per clock",
+          "body": "Let the register be $r_1r_2r_3r_4$ (left to right). On each clock: $r_1 \\leftarrow x \\oplus r_4$, and $r_2r_3r_4 \\leftarrow r_1r_2r_3$."
+        },
+        {
+          "title": "Clocks 1–3",
+          "body": "$1\\oplus0=1$: 0110 → **1011**. $0\\oplus1=1$: → **1101**. $1\\oplus1=0$: → **0110**. After 3 bits the register is back to its start.",
+          "scene": {
+            "reveal": 20,
+            "hl": [
+              {
+                "r": 3,
+                "tone": "warning"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Clocks 4–6",
+          "body": "The remaining input bits 1, 0, 1 are the same as the first three, so the same cycle repeats: 1011 → 1101 → **0110**. Final value: 0110 (option A).",
+          "scene": {
+            "reveal": 35,
+            "hl": [
+              {
+                "r": 6,
+                "tone": "success"
+              }
+            ]
+          }
+        }
+      ],
+      "animation": {
+        "kind": "table",
+        "title": "LFSR state per clock",
+        "cols": [
+          "clock",
+          "input x",
+          "r4 (fed back)",
+          "x ⊕ r4 → r1",
+          "register r1 r2 r3 r4"
+        ],
+        "rows": [
+          [
+            "0",
+            "—",
+            "—",
+            "—",
+            "0 1 1 0"
+          ],
+          [
+            "1",
+            "1",
+            "0",
+            "1",
+            "1 0 1 1"
+          ],
+          [
+            "2",
+            "0",
+            "1",
+            "1",
+            "1 1 0 1"
+          ],
+          [
+            "3",
+            "1",
+            "1",
+            "0",
+            "0 1 1 0"
+          ],
+          [
+            "4",
+            "1",
+            "0",
+            "1",
+            "1 0 1 1"
+          ],
+          [
+            "5",
+            "0",
+            "1",
+            "1",
+            "1 1 0 1"
+          ],
+          [
+            "6",
+            "1",
+            "1",
+            "0",
+            "0 1 1 0"
+          ]
+        ],
+        "reveal": 5,
+        "mono": true
+      },
+      "answer": {
+        "value": "0110",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: the state returns to 0110 after every 3 input bits 1, 0, 1."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "1011 is the state after clock 1 (and 4), not the final one."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "1101 is the state after clock 2 (and 5)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "1111 never occurs in this sequence."
+        }
+      ],
+      "pitfalls": [
+        "Shifting in the wrong direction — the XOR output enters the left cell and the right cell is fed back."
+      ],
+      "verification": "Clocks 1–3 and 4–6 use identical input bits (1, 0, 1) and both start from 0110, so the final state equals the state after clock 3: 0110."
+    },
+    "it-2007-cs-41": {
+      "approach": "Issue one instruction per cycle in order; latency L between a producer and its consumer means L idle cycles must separate them. Insert stalls only as needed and count cycles.",
+      "concepts": [
+        "Pipeline stalls",
+        "Data hazards",
+        "Instruction latency"
+      ],
+      "steps": [
+        {
+          "title": "Loads and the Add",
+          "body": "Load R1 (cycle 1), Load R2 (cycle 2). Add needs R2 from a Load with latency 1 → 1 stall (cycle 3), Add in cycle 4.",
+          "scene": {
+            "reveal": 12,
+            "hl": [
+              {
+                "r": 2,
+                "tone": "error"
+              }
+            ]
+          }
+        },
+        {
+          "title": "The two decrements",
+          "body": "Dec R2 needs R2 from the Load (cycle 2), long done → cycle 5. Dec R1 needs R1 from Add (cycle 4) with ALU→ALU latency 2: Dec R2 fills only 1 gap cycle → 1 stall (cycle 6), Dec R1 in cycle 7.",
+          "scene": {
+            "reveal": 21,
+            "hl": [
+              {
+                "r": 5,
+                "tone": "error"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Mpy and Store",
+          "body": "Mpy needs R1 from Dec R1 (cycle 7), latency 2 → stalls in 8, 9; Mpy in 10. Store needs R3 from Mpy, ALU→Store latency 2 → stalls 11, 12; Store in 13.\n\nTotal: 7 instructions + 6 stalls = **13 cycles**.",
+          "scene": {
+            "reveal": 39,
+            "hl": [
+              {
+                "r": 12,
+                "tone": "success"
+              }
+            ]
+          }
+        }
+      ],
+      "animation": {
+        "kind": "table",
+        "title": "Cycle-by-cycle issue",
+        "cols": [
+          "cycle",
+          "issued",
+          "reason"
+        ],
+        "rows": [
+          [
+            "1",
+            "Load R1, Loc1",
+            ""
+          ],
+          [
+            "2",
+            "Load R2, Loc2",
+            ""
+          ],
+          [
+            "3",
+            "stall",
+            "Load→ALU latency 1 (R2)"
+          ],
+          [
+            "4",
+            "Add R1, R2, R1",
+            ""
+          ],
+          [
+            "5",
+            "Dec R2",
+            "R2 from Load: no wait"
+          ],
+          [
+            "6",
+            "stall",
+            "ALU→ALU latency 2 (R1 from Add)"
+          ],
+          [
+            "7",
+            "Dec R1",
+            ""
+          ],
+          [
+            "8",
+            "stall",
+            "ALU→ALU latency 2 (R1 from Dec)"
+          ],
+          [
+            "9",
+            "stall",
+            ""
+          ],
+          [
+            "10",
+            "Mpy R1, R2, R3",
+            ""
+          ],
+          [
+            "11",
+            "stall",
+            "ALU→Store latency 2 (R3)"
+          ],
+          [
+            "12",
+            "stall",
+            ""
+          ],
+          [
+            "13",
+            "Store R3, Loc3",
+            ""
+          ]
+        ],
+        "reveal": 6
+      },
+      "answer": {
+        "value": "13",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "7 ignores all latencies (one instruction per cycle with no stalls)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "10 misses some of the required stalls (e.g. counts only one stall per latency-2 dependence)."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: 7 instructions + 6 stall cycles = 13."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "14 adds an extra stall, e.g. also stalling Dec R1 by 2 although Dec R2 already fills one gap cycle."
+        }
+      ],
+      "pitfalls": [
+        "Forgetting that the independent Dec R2 hides one of the two latency cycles after Add."
+      ],
+      "verification": "Stall count: 1 (Load→Add) + 1 (Add→Dec R1) + 2 (Dec R1→Mpy) + 2 (Mpy→Store) = 6; 7 + 6 = 13."
+    },
+    "it-2007-cs-42": {
+      "approach": "Convert both numbers to decimal, subtract, then convert the result to octal (integer part by repeated division, fraction by repeated multiplication).",
+      "concepts": [
+        "Number systems",
+        "Hexadecimal",
+        "Octal conversion"
+      ],
+      "steps": [
+        {
+          "title": "Both operands in decimal",
+          "body": "$(C012.25)_{16} = 12\\cdot4096 + 0 + 1\\cdot16 + 2 + \\tfrac{2}{16} + \\tfrac{5}{256} = 49170 + 0.14453125 = 49170.14453125$\n\n$(10111001110.101)_2 = (5CE)_{16} + 0.625 = 5\\cdot256 + 12\\cdot16 + 14 + 0.625 = 1486.625$"
+        },
+        {
+          "title": "Subtract",
+          "body": "$49170.14453125 - 1486.625 = 47683.51953125$"
+        },
+        {
+          "title": "To octal",
+          "body": "Integer: $47683 = 8\\cdot5960 + 3$, $5960 = 8\\cdot745 + 0$, $745 = 8\\cdot93 + 1$, $93 = 8\\cdot11 + 5$, $11 = 8\\cdot1 + 3$, $1$ → $135103$.\n\nFraction: $0.51953125\\cdot8 = 4.15625$ → 4; $0.15625\\cdot8 = 1.25$ → 1; $0.25\\cdot8 = 2$ → 2.\n\nResult: $(135103.412)_8$ (option A)."
+        }
+      ],
+      "answer": {
+        "value": "(135103.412)_8",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: 47683.51953125 = (135103.412)_8."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "564411 is not the octal form of 47683 (it is about 190729)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Wrong integer and wrong fraction (.205_8 = 0.259…)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Right integer part but .205_8 ≠ 0.51953125."
+        }
+      ],
+      "pitfalls": [
+        "Mis-grouping the binary fraction .101 (= 0.625)."
+      ],
+      "verification": "Back-convert: 1·32768 + 3·4096 + 5·512 + 1·64 + 0·8 + 3 = 32768 + 12288 + 2560 + 64 + 3 = 47683; 4/8 + 1/64 + 2/512 = 0.51953125."
+    },
+    "it-2007-cs-43": {
+      "approach": "A code corrects t errors when its minimum Hamming distance d ≥ 2t + 1. Find d over all pairs of code words.",
+      "concepts": [
+        "Hamming distance",
+        "Error correction capability"
+      ],
+      "steps": [
+        {
+          "title": "Pairwise distances",
+          "body": "| | 00001111 | 01010101 | 10101010 | 11110000 |\n|---|---|---|---|---|\n| 00000000 | 4 | 4 | 4 | 4 |\n| 00001111 | | 4 | 4 | 8 |\n| 01010101 | | | 8 | 4 |\n| 10101010 | | | | 4 |\n\nMinimum distance $d = 4$."
+        },
+        {
+          "title": "Correction capability",
+          "body": "$t = \\left\\lfloor \\dfrac{d-1}{2} \\right\\rfloor = \\left\\lfloor \\dfrac{3}{2} \\right\\rfloor = 1$. The code corrects **1** bit error (and detects up to 3)."
+        }
+      ],
+      "answer": {
+        "value": "1",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "d = 4 > 1, so at least single errors can be corrected."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: ⌊(4 − 1)/2⌋ = 1."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Correcting 2 errors needs d ≥ 5."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Correcting 3 errors needs d ≥ 7; d − 1 = 3 is the detection limit."
+        }
+      ],
+      "pitfalls": [
+        "Confusing detection (d − 1 = 3) with correction."
+      ],
+      "verification": "Example: 00001111 vs 01010101 differ in positions 2, 4, 5, 7 → 4."
+    },
+    "it-2007-cs-44": {
+      "approach": "Average access time = average seek + average rotational latency + transfer time. Use the half-way seek (250 tracks), half a rotation, and the time for 250 bytes = half a sector.",
+      "concepts": [
+        "Disk access time",
+        "Seek time",
+        "Rotational latency"
+      ],
+      "steps": [
+        {
+          "title": "Rotation figures",
+          "body": "600 rpm = 10 rotations/s → one rotation = 100 ms. Average rotational latency = $100/2 = 50$ ms.\n\nOne track holds $100 \\times 500$ bytes, read in 100 ms → 1 sector (500 bytes) per 1 ms, so 250 bytes take $0.5$ ms."
+        },
+        {
+          "title": "Seek and total",
+          "body": "Average seek ≈ half the tracks: $500/2 \\times 1\\text{ ms} = 250$ ms.\n\n$$T = 250 + 50 + 0.5 = 300.5\\text{ ms}$$"
+        }
+      ],
+      "answer": {
+        "value": "300.5 ms",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: 250 (seek) + 50 (latency) + 0.5 (transfer) = 300.5 ms."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Uses a seek of 205 ms, which no model gives."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "255 = 250 + 5: latency and transfer both wrong."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Omits the 0.5 ms transfer time."
+        }
+      ],
+      "pitfalls": [
+        "Using a full rotation (100 ms) as the average latency.",
+        "Forgetting the transfer time of half a sector."
+      ],
+      "verification": "Transfer: 250 bytes / (50000 bytes per 100 ms) = 0.5 ms."
+    }
+  }
+}
