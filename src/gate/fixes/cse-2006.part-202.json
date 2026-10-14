@@ -1,0 +1,79 @@
+{
+  "paper": "cse-2006",
+  "fixes": [
+    {
+      "id": "cse-2006-cs-54",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Takes $O(3n)$ and $\\Omega(2n)$ time if hashing is permitted"
+        },
+        {
+          "l": "B",
+          "t": "Takes $O(n^3)$ and $\\Omega(n^{2.5})$ time in the key comparison model"
+        },
+        {
+          "l": "C",
+          "t": "Takes $\\Theta(n)$ time and space"
+        },
+        {
+          "l": "D",
+          "t": "Takes $O(\\sqrt{n})$ time only if the sum of the $2n$ elements is an even number"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Takes $O(3^n)$ and $\\Omega(2^n)$ time if hashing is permitted"
+        },
+        {
+          "l": "B",
+          "t": "Takes $O(n^3)$ and $\\Omega(n^{2.5})$ time in the key comparison model"
+        },
+        {
+          "l": "C",
+          "t": "Takes $\\Theta(n)$ time and space"
+        },
+        {
+          "l": "D",
+          "t": "Takes $O(\\sqrt{n})$ time only if the sum of the $2n$ elements is an even number"
+        }
+      ],
+      "reason": "Option (a) in the scan reads O(3^n) and Omega(2^n) (exponents), not O(3n) and Omega(2n).",
+      "source": "GATE 2006 question paper scan"
+    },
+    {
+      "id": "cse-2006-cs-54",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Options re-read from a high-resolution render of the scan; answer C proved independently (prefix differences, Theta(n)).",
+      "source": "GATE 2006 question paper scan"
+    },
+    {
+      "id": "cse-2006-cs-54",
+      "field": "reviewNote",
+      "before": "Option exponents in the scan are blurred (options a and b).",
+      "after": null,
+      "reason": "Review cleared after independent verification.",
+      "source": "GATE 2006 question paper scan"
+    },
+    {
+      "id": "cse-2006-cs-53",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Code and statements verified against a high-resolution render of the scan; invariant k = i + j proves answer D.",
+      "source": "GATE 2006 question paper scan"
+    },
+    {
+      "id": "cse-2006-cs-53",
+      "field": "reviewNote",
+      "before": "Code and statements partly blurred; web text used. Answer derived by hand (k = i + j); a web summary listed 'either (i) or (ii)'.",
+      "after": null,
+      "reason": "Review cleared after independent verification.",
+      "source": "GATE 2006 question paper scan"
+    }
+  ]
+}
