@@ -1,0 +1,21 @@
+{
+  "paper": "cse-2014-1",
+  "fixes": [
+    {
+      "id": "cse-2014-1-cs-3",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Option C also preserves SCCs (E ⊆ E3 and E3 adds no new reachability); official key gives only B.",
+      "source": "analysis; official GATE 2014 key B"
+    },
+    {
+      "id": "cse-2014-1-cs-3",
+      "field": "reviewNote",
+      "before": null,
+      "after": "Official key is B, but option C (edges for paths of length ≤ 2) also preserves SCCs since E ⊆ E3 and reachability is unchanged; consider accepting B or C.",
+      "reason": "Flag ambiguous question.",
+      "source": "analysis"
+    }
+  ]
+}
