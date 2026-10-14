@@ -1,0 +1,101 @@
+{
+  "paper": "cse-2014-1",
+  "fixes": [
+    {
+      "id": "cse-2014-1-cs-3",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Option C also preserves SCCs (E ⊆ E3 and E3 adds no new reachability); official key gives only B.",
+      "source": "analysis; official GATE 2014 key B"
+    },
+    {
+      "id": "cse-2014-1-cs-3",
+      "field": "reviewNote",
+      "before": null,
+      "after": "Official key is B, but option C (edges for paths of length ≤ 2) also preserves SCCs since E ⊆ E3 and reachability is unchanged; consider accepting B or C.",
+      "reason": "Flag ambiguous question.",
+      "source": "analysis"
+    },
+    {
+      "id": "cse-2014-1-cs-26",
+      "field": "answer",
+      "before": "28:30",
+      "after": "28 to 30",
+      "reason": "Official NAT key is the range 28 to 30 µs (10 µs ring latency + 18 or 20 µs holding time); rewrite the colon form as a range.",
+      "source": "Official GATE 2014 CS Set-1 key (IIT Kharagpur), via trygateai.com"
+    },
+    {
+      "id": "cse-2014-1-cs-26",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Resolved: official key range 28 to 30 covers both interpretations.",
+      "source": "Official GATE 2014 CS Set-1 key (IIT Kharagpur), via trygateai.com"
+    },
+    {
+      "id": "cse-2014-1-cs-26",
+      "field": "reviewNote",
+      "before": "Answer depends on whether the monitoring station's own holding time is counted (28 vs 30); the range 28:30 follows the commonly cited key, but it was not printed in this PDF.",
+      "after": null,
+      "reason": "Review resolved (official key located).",
+      "source": "Official GATE 2014 CS Set-1 key (IIT Kharagpur), via trygateai.com"
+    },
+    {
+      "id": "cse-2014-1-cs-27",
+      "field": "answer",
+      "before": 1100,
+      "after": "1100 to 1300",
+      "reason": "Official NAT key is the range 1100 to 1300 ms; 1100 ms is the standard computation (3 RTT slow start + 8 RTT congestion avoidance).",
+      "source": "Official GATE 2014 CS Set-1 key (IIT Kharagpur), via trygateai.com"
+    },
+    {
+      "id": "cse-2014-1-cs-27",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Resolved: official key range confirmed.",
+      "source": "Official GATE 2014 CS Set-1 key (IIT Kharagpur), via trygateai.com"
+    },
+    {
+      "id": "cse-2014-1-cs-27",
+      "field": "reviewNote",
+      "before": "Commonly accepted key is a range (about 1100 to 1300) depending on interpretation of when cwnd starts; 1100 is the standard computation.",
+      "after": null,
+      "reason": "Review resolved (official key located).",
+      "source": "Official GATE 2014 CS Set-1 key (IIT Kharagpur), via trygateai.com"
+    },
+    {
+      "id": "cse-2014-1-cs-43",
+      "field": "subject",
+      "before": "ga",
+      "after": "coa",
+      "reason": "Pipeline speedup question is Computer Organization, not General Aptitude.",
+      "source": "pdf p.17 (Q.43)"
+    },
+    {
+      "id": "cse-2014-1-cs-43",
+      "field": "topic",
+      "before": "quant",
+      "after": "pipeline",
+      "reason": "Instruction pipeline speedup with stall cycles.",
+      "source": "pdf p.17 (Q.43)"
+    },
+    {
+      "id": "cse-2014-1-cs-47",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Option D is also provably true, so the MCQ has two correct statements.",
+      "source": "independent solution (IVT); pdf p.18 (Q.47)"
+    },
+    {
+      "id": "cse-2014-1-cs-47",
+      "field": "reviewNote",
+      "before": null,
+      "after": "Option D is also guaranteed: h(y) = f(y) + f(2-y) has h(0) = -2 and h(1) = 2, so by IVT h has a root in (0,1). Stored key A is also true (g(y) = f(y) - f(y+1) goes from -2 to 2). Confirm against the official GATE 2014 key whether D was also accepted.",
+      "reason": "Explain why the record is flagged: two options are mathematically guaranteed.",
+      "source": "independent solution (IVT); pdf p.18 (Q.47)"
+    }
+  ]
+}

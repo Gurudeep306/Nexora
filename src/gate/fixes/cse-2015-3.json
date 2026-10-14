@@ -1,0 +1,181 @@
+{
+  "paper": "cse-2015-3",
+  "fixes": [
+    {
+      "id": "cse-2015-3-ga-1",
+      "field": "topic",
+      "before": "quant",
+      "after": "analytical",
+      "reason": "Letter-shift coding is an analytical/reasoning item, not quantitative.",
+      "source": "taxonomy"
+    },
+    {
+      "id": "cse-2015-3-ga-4",
+      "field": "answer",
+      "before": "C",
+      "after": "B",
+      "reason": "Relation is \"group of people : doctor for that group\"; Females : Gynaecologist matches, while C and D are organ : specialist. Stored C was a solver key, not official; GeeksforGeeks GATE-CS-2015 Set 3 quiz also marks B.",
+      "source": "https://www.geeksforgeeks.org/questions/select-the-pair-that-best-expresses-a-relationship-similar/"
+    },
+    {
+      "id": "cse-2015-3-ga-4",
+      "field": "reviewNote",
+      "before": "Analogy is subjective (B and D also plausible); C is the commonly accepted key.",
+      "after": "Answer B set from analysis plus the GeeksforGeeks GATE CS 2015 Set 3 key; official IIT key not retrieved, so still flagged.",
+      "reason": "Record why the item stays flagged.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2015-3-ga-9",
+      "field": "text",
+      "before": "Most experts feel that in spite of possessing all the technical skills required to be a batsman of the highest order, he is unlikely to be so due to lack of requisite temperament. He was guilty of throwing away his wicket several times after working hard to lay a strong foundation. His critics pointed out that until he addressed this problem, success at the highest level will continue to elude him.\n\nWhich of the statement(s) below is/are logically valid and can be inferred from the above passage?\n\n(i) He was already a successful batsman at the highest level.\n(ii) He has to improve his temperament in order to become a great batsman.\n(iii) He failed to make many of his good starts count.\n(iv) Improving his technical skills will guarantee success.",
+      "after": "Most experts feel that in spite of possessing all the technical skills required to be a batsman of the highest order, he is unlikely to be so due to lack of requisite temperament. He was guilty of throwing away his wicket several times after working hard to lay a strong foundation. His critics pointed out that until he addressed this problem, success at the highest level will continue to elude him.\n\nWhich of the statement(s) below is/are logically valid and can be inferred from the above passage?\n\n(i) He was already a successful batsman at the highest level.\n\n(ii) He has to improve his temperament in order to become a great batsman.\n\n(iii) He failed to make many of his good starts count.\n\n(iv) Improving his technical skills will guarantee success.",
+      "reason": "Separate the four statements into their own paragraphs so they do not run together when rendered.",
+      "source": "GATE2015-Set-3.pdf"
+    },
+    {
+      "id": "cse-2015-3-cs-2",
+      "field": "text",
+      "before": "Let # be a binary operator defined as\n\n$$X \\# Y = X' + Y'$$\n\nwhere $X$ and $Y$ are Boolean variables. Consider the following two statements.\n\n(S1) $(P \\# Q) \\# R = P \\# (Q \\# R)$\n(S2) $Q \\# R = R \\# Q$\n\nWhich of the following is/are true for the Boolean variables $P$, $Q$ and $R$?",
+      "after": "Let # be a binary operator defined as\n\n$$X \\# Y = X' + Y'$$\n\nwhere $X$ and $Y$ are Boolean variables. Consider the following two statements.\n\n(S1) $(P \\# Q) \\# R = P \\# (Q \\# R)$\n\n(S2) $Q \\# R = R \\# Q$\n\nWhich of the following is/are true for the Boolean variables $P$, $Q$ and $R$?",
+      "reason": "Put S1 and S2 on separate lines when rendered.",
+      "source": "GATE2015-Set-3.pdf"
+    },
+    {
+      "id": "cse-2015-3-cs-4",
+      "field": "text",
+      "before": "Consider the equality $\\sum_{i=0}^{n} i^3 = X$ and the following choices for $X$\n\nI. $\\Theta(n^4)$\nII. $\\Theta(n^5)$\nIII. $O(n^5)$\nIV. $\\Omega(n^3)$\n\nThe equality above remains correct if $X$ is replaced by",
+      "after": "Consider the equality $\\sum_{i=0}^{n} i^3 = X$ and the following choices for $X$\n\nI. $\\Theta(n^4)$\n\nII. $\\Theta(n^5)$\n\nIII. $O(n^5)$\n\nIV. $\\Omega(n^3)$\n\nThe equality above remains correct if $X$ is replaced by",
+      "reason": "Put the four choices I-IV on separate lines when rendered.",
+      "source": "GATE2015-Set-3.pdf"
+    },
+    {
+      "id": "cse-2015-3-cs-8",
+      "field": "text",
+      "before": "In a web server, ten WebPages are stored with the URLs of the form http://www.yourname.com/*var*.html; where, *var* is a different number from 1 to 10 for each Webpage. Suppose, the client stores the Webpage with *var* = 1 (say W1) in local machine, edits and then tests. Rest of the WebPages remains on the web server. W1 contains several relative URLs of the form \"*var*.html\" referring to the other WebPages. Which one of the following statements needs to be added in W1, so that all the relative URLs in W1 refer to the appropriate WebPages on the web server?",
+      "after": "In a web server, ten WebPages are stored with the URLs of the form `http://www.yourname.com/var.html`; where, *var* is a different number from 1 to 10 for each Webpage. Suppose, the client stores the Webpage with *var* = 1 (say W1) in local machine, edits and then tests. Rest of the WebPages remains on the web server. W1 contains several relative URLs of the form \"*var*.html\" referring to the other WebPages. Which one of the following statements needs to be added in W1, so that all the relative URLs in W1 refer to the appropriate WebPages on the web server?",
+      "reason": "Show the URL pattern as code so it is not auto-linked or mangled.",
+      "source": "GATE2015-Set-3.pdf"
+    },
+    {
+      "id": "cse-2015-3-cs-8",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "<a href: \"http://www.yourname.com/\", href: \"...*var*.html\">"
+        },
+        {
+          "l": "B",
+          "t": "<base href: \"http://www.yourname.com/\">"
+        },
+        {
+          "l": "C",
+          "t": "<a href: \"http://www.yourname.com/\">"
+        },
+        {
+          "l": "D",
+          "t": "<base href: \"http://www.yourname.com/\", range: \"...*var*.html\">"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "`<a href: \"http://www.yourname.com/\", href: \"...var.html\">`"
+        },
+        {
+          "l": "B",
+          "t": "`<base href: \"http://www.yourname.com/\">`"
+        },
+        {
+          "l": "C",
+          "t": "`<a href: \"http://www.yourname.com/\">`"
+        },
+        {
+          "l": "D",
+          "t": "`<base href: \"http://www.yourname.com/\", range: \"...var.html\">`"
+        }
+      ],
+      "reason": "Options are HTML tags; raw HTML is stripped by the renderer, so show them as inline code (text as in the PDF).",
+      "source": "GATE2015-Set-3.pdf"
+    },
+    {
+      "id": "cse-2015-3-cs-10",
+      "field": "answer",
+      "before": "B",
+      "after": "A",
+      "reason": "Official key is A: there is no blocking wait, so no deadlock, but both processes can be inside the critical section together. Stored B was a solver key.",
+      "source": "https://www.trygateai.com/pyq/operating-systems/concurrency-and-synchronization/gate-cse-2015-set-3-q10 (official IIT answer key, GATE CSE 2015 Set 3) Q10"
+    },
+    {
+      "id": "cse-2015-3-cs-12",
+      "field": "subject",
+      "before": "coa",
+      "after": "pds",
+      "reason": "Postfix evaluation with a stack is a data-structures question.",
+      "source": "taxonomy"
+    },
+    {
+      "id": "cse-2015-3-cs-12",
+      "field": "topic",
+      "before": "isa",
+      "after": "stacks-queues",
+      "reason": "Postfix evaluation uses a stack.",
+      "source": "taxonomy"
+    },
+    {
+      "id": "cse-2015-3-cs-12",
+      "field": "tags",
+      "before": [
+        "postfix"
+      ],
+      "after": [
+        "postfix",
+        "stack",
+        "expression-evaluation"
+      ],
+      "reason": "Tags for stack-based postfix evaluation.",
+      "source": "taxonomy"
+    },
+    {
+      "id": "cse-2015-3-cs-17",
+      "field": "subject",
+      "before": "pdsa",
+      "after": "pds",
+      "reason": "CSE paper question on hash tables; \"pdsa\" is the DA-paper subject.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2015-3-cs-17",
+      "field": "topic",
+      "before": "dsa",
+      "after": "hashing-ds",
+      "reason": "Load factor of a hash table belongs to the hashing topic.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2015-3-cs-38",
+      "field": "answer",
+      "before": 174,
+      "after": 158,
+      "reason": "200.10.11.144/27: 144 AND 224 = 128, so the block is .128-.159 (broadcast .159); last assignable host is .158. The stored 174 wrongly treated .144 as the network address. 158 is the official GATE 2015 Set 3 key.",
+      "source": "computed; GATE 2015 CS Set 3 official key"
+    },
+    {
+      "id": "cse-2015-3-cs-55",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Verified: V(X)=3 predicates+1=4, V(Y)=10-8+2=4, V(Z)=4+4-1=7 → option A, matching the official GATE 2015 Set 3 key.",
+      "source": "solved; GATE 2015 CS Set 3 official key"
+    },
+    {
+      "id": "cse-2015-3-cs-55",
+      "field": "reviewNote",
+      "before": "Program-X complexity depends on counting the compound AND condition once (official-style answer 4); verify against official key.",
+      "after": null,
+      "reason": "Review resolved (see needsReview fix).",
+      "source": "solved"
+    }
+  ]
+}
