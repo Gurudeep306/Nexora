@@ -2,6 +2,9 @@ const express = require("express");
 const fs = require("fs");
 const path = require("path");
 const { annotateFigure } = require("../gate/figures");
+const { gradeQuestion } = require("../gate/grade");
+const { me } = require("../context");
+const { recordAttempts } = require("../gate/attempts");
 
 /*
  * GATE CSE / IT / DA past-year questions.
@@ -171,22 +174,6 @@ function searchGateQuestions({ q = "", subject = "", year = "", limit = 10 } = {
     if (out.length >= max) break;
   }
   return out.map(strip);
-}
-
-/*
-  Official keys sometimes accept more than one answer ("A;C;D or C;D",
-  "2 to 2 OR 4 to 4"). A response is correct if it matches any alternative.
-*/
-function keyAlternatives(answer) {
-  if (typeof answer !== "string") return [answer];
-  return answer.split(/\s+or\s+/i).map((a) => a.trim()).filter(Boolean);
-}
-
-/** A NAT range key — "lo:hi" or "lo to hi" — as [lo, hi], else null. */
-function natRange(key) {
-  if (typeof key !== "string") return null;
-  const m = key.match(/^\s*(-?[\d.]+)\s*(?::|to)\s*(-?[\d.]+)\s*$/i);
-  return m ? [Number(m[1]), Number(m[2])] : null;
 }
 
 function createGateRouter() {
@@ -418,7 +405,7 @@ function createGateRouter() {
   });
 
   /* Official GATE Examination Evaluator */
-  router.post("/api/gate/evaluate", (req, res) => {
+  router.post("/api/gate/evaluate", async (req, res) => {
     const b = load();
     const { paperId, responses = {}, timeSpent = {} } = req.body || {};
     const paper = b.papers.find((p) => p.id === paperId);
@@ -440,6 +427,7 @@ function createGateRouter() {
     };
 
     const subjectStats = {};
+    const graded = [];
 
     const evaluationDetails = questions.map((q) => {
       const qMarks = q.marks != null ? q.marks : 1;
@@ -456,69 +444,17 @@ function createGateRouter() {
       const userAns = responses[q.id];
       const time = timeSpent[q.id] || 0;
 
-      let isAttempted = false;
-      let isCorrect = false;
-      let marksAwarded = 0;
-
-      if (userAns !== undefined && userAns !== null && userAns !== "" && !(Array.isArray(userAns) && userAns.length === 0)) {
-        isAttempted = true;
-      }
+      const g = gradeQuestion(q, userAns);
+      const isAttempted = g.attempted;
+      const isCorrect = g.correct;
+      const marksAwarded = g.marks;
+      if (isAttempted) graded.push({ q, response: userAns, grade: g, timeMs: Number(time) * 1000 });
 
       if (!isAttempted) {
         unattemptedCount++;
         sectionStats[secKey].unattempted++;
         subjectStats[q.subject].unattempted++;
       } else {
-        if (q.type === "MSQ") {
-          let uArr = Array.isArray(userAns) ? userAns : [userAns];
-          uArr = uArr.map((x) => String(x).trim().toUpperCase()).sort();
-          isCorrect = keyAlternatives(q.answer).some((key) => {
-            let tArr = [];
-            if (Array.isArray(key)) tArr = key.map((x) => String(x).trim().toUpperCase());
-            else if (typeof key === "string") tArr = key.split(/[,;\s]+/).map((x) => x.trim().toUpperCase()).filter(Boolean);
-            tArr.sort();
-            return uArr.length === tArr.length && uArr.every((v, i) => v === tArr[i]);
-          });
-          if (isCorrect) {
-            marksAwarded = qMarks;
-          } else {
-            // MSQ has zero negative marking
-            marksAwarded = 0;
-          }
-        } else if (q.type === "NAT") {
-          const userNum = Number(userAns);
-          if (!isNaN(userNum)) {
-            isCorrect = keyAlternatives(q.answer).some((key) => {
-              const range = natRange(key);
-              if (range) return userNum >= range[0] - 0.01 && userNum <= range[1] + 0.01;
-              return Math.abs(userNum - Number(key)) <= 0.05;
-            });
-          }
-          if (isCorrect) {
-            marksAwarded = qMarks;
-          } else {
-            // NAT has zero negative marking
-            marksAwarded = 0;
-          }
-        } else if (q.type === "MCQ" || (q.options && q.options.length > 0)) {
-          // Standard MCQ
-          isCorrect = keyAlternatives(q.answer).some((key) => String(userAns).trim().toUpperCase() === String(key).trim().toUpperCase());
-          if (isCorrect) {
-            marksAwarded = qMarks;
-          } else {
-            // 1-mark: -1/3, 2-mark: -2/3 (only MCQs carry negative marks)
-            marksAwarded = q.type === "MCQ" ? -(qMarks / 3) : 0;
-          }
-        } else {
-          // Old-pattern True/False, fill-in and descriptive answers: a loose
-          // text match, never negative.
-          const norm = (s) => String(s == null ? "" : s).toLowerCase().replace(/[^a-z0-9.]+/g, "");
-          const u = norm(userAns);
-          const key = norm(q.answer);
-          isCorrect = q.type === "TF" ? !!u && key.startsWith(u) : !!u && u === key;
-          marksAwarded = isCorrect ? qMarks : 0;
-        }
-
         if (isCorrect) {
           correctCount++;
           positiveMarks += qMarks;
@@ -598,6 +534,16 @@ function createGateRouter() {
     } else {
       predictedAir = "Below Cutoff (< 25 marks)";
       percentile = Math.max(10, Math.round((totalScore / 25) * 65));
+    }
+
+    // Signed in: the mock counts as practice (history, review queue, streak).
+    const username = me();
+    if (username && graded.length) {
+      try {
+        await recordAttempts(username, graded.map((x) => ({ ...x, mode: "cbt" })));
+      } catch (err) {
+        console.error(`[gate] could not record CBT attempts: ${err.message}`);
+      }
     }
 
     res.json({
@@ -696,4 +642,4 @@ function createGateRouter() {
   return router;
 }
 
-module.exports = { createGateRouter, findGateQuestion, searchGateQuestions, getGateSolution, solutionText };
+module.exports = { createGateRouter, loadGateBank: load, sortPaperQuestions, strip, findGateQuestion, searchGateQuestions, getGateSolution, solutionText };
