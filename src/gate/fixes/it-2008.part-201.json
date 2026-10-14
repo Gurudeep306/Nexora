@@ -1,0 +1,37 @@
+{
+  "paper": "it-2008",
+  "fixes": [
+    {
+      "id": "it-2008-it-24",
+      "field": "subject",
+      "before": "algo",
+      "after": "dm",
+      "reason": "Legendre-formula question belongs to discrete maths (combinatorics/number theory), not algorithms.",
+      "source": "GATE 2008 IT question paper (scan) + independent solution"
+    },
+    {
+      "id": "it-2008-it-24",
+      "field": "topic",
+      "before": "graphs",
+      "after": "combinatorics",
+      "reason": "Exponent of a prime in n! — combinatorics/number theory, not graph algorithms.",
+      "source": "GATE 2008 IT question paper (scan) + independent solution"
+    },
+    {
+      "id": "it-2008-it-29",
+      "field": "needsReview",
+      "before": true,
+      "after": true,
+      "reason": "Solution (D) disagrees with the stored web key C; keep flagged (already true) so the validator links the disagreement to this review.",
+      "source": "GATE 2008 IT question paper (scan) + independent solution"
+    },
+    {
+      "id": "it-2008-it-29",
+      "field": "reviewNote",
+      "before": "Strictly, 'each' row/column being a combination of the others is not implied by det=0; answer C follows the published key found on the web (geeksforgeeks). Text 'PS' in the scan read as M.",
+      "after": "Stored key C (S1 and S3) comes from a web key, but S1 and S2 are equivalent (row rank = column rank, det M^T = det M): if 'some row is a combination of the others' is accepted for rows it must be accepted for columns, which gives D (S1, S2 and S3). Read literally ('each' row/column) neither S1 nor S2 holds and no option fits. Solution argues D; needs an authoritative key. Text 'PS' in the scan read as M.",
+      "reason": "Solution disagrees with stored key; explain the conflict precisely.",
+      "source": "GATE 2008 IT question paper (scan) + independent solution"
+    }
+  ]
+}
