@@ -2,6 +2,1221 @@
   "paper": "cse-2011",
   "version": 2,
   "solutions": {
+    "cse-2011-cs-1": {
+      "approach": "Keywords are just reserved lexemes, so the scanner (lexical analyser) identifies them while grouping characters into tokens.",
+      "concepts": [
+        "Lexical analysis",
+        "Tokens",
+        "Reserved words"
+      ],
+      "steps": [
+        {
+          "title": "What the scanner does",
+          "body": "The lexical analyser reads the character stream and groups it into **tokens** (identifiers, keywords, literals, operators) using regular-expression patterns."
+        },
+        {
+          "title": "Keywords vs identifiers",
+          "body": "A keyword such as `while` matches the same pattern as an identifier; the scanner distinguishes it by looking it up in a reserved-word table (or by a dedicated pattern) and emits a keyword token. The parser only ever sees the token class."
+        }
+      ],
+      "answer": {
+        "value": "Keywords are recognised during **lexical analysis** — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The parser works on tokens that are already classified; it checks syntax, not which lexemes are keywords."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Code generation happens long after tokens are formed."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: the scanner classifies each lexeme, including reserved words, into token types."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Dataflow analysis is an optimisation phase on intermediate code."
+        }
+      ],
+      "pitfalls": [
+        "Thinking the parser recognises keywords because grammar rules mention them — the grammar uses token names produced by the scanner."
+      ],
+      "verification": "Tools like lex/flex list keywords as patterns (or table lookups) in the scanner specification, confirming they are recognised there."
+    },
+    "cse-2011-cs-2": {
+      "approach": "A layer-4 firewall sees only IP and TCP/UDP/ICMP headers (addresses, ports, protocol numbers) plus the time. Check which rule needs information that is not in those headers.",
+      "concepts": [
+        "Packet-filter firewall",
+        "Transport-layer headers",
+        "Port numbers"
+      ],
+      "steps": [
+        {
+          "title": "What a layer-4 filter can see",
+          "body": "Source/destination IP, protocol field (TCP, UDP, ICMP), source/destination ports, TCP flags and direction of the packet. Rules can also be activated by time of day."
+        },
+        {
+          "title": "Check each rule",
+          "body": "- HTTP traffic is identifiable by port 80 — can be blocked in a time window.\n- ICMP is identified by the IP protocol field — can be blocked.\n- Incoming vs outgoing to one IP: match on source vs destination address — possible.\n- A **specific user** on a multi-user host: no header up to layer 4 carries the user identity; all users share the same host IP. **Not possible.**"
+        }
+      ],
+      "answer": {
+        "value": "It **cannot** block TCP traffic of a specific user on a multi-user system — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Possible: HTTP uses TCP port 80, so a time-based port rule blocks it."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Possible: ICMP is identified by protocol number 1 in the IP header."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Possible: rules can match the source address on inbound packets and the destination address on outbound ones independently."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: the user identity is not in any IP/TCP header, so a layer-4 device cannot tell users on the same host apart."
+        }
+      ],
+      "pitfalls": [
+        "Assuming the source port identifies a user — ephemeral ports are assigned per connection, not per user."
+      ],
+      "verification": "Options A–C each map to a header field (port, protocol number, IP address); D maps to none."
+    },
+    "cse-2011-cs-3": {
+      "approach": "Use conditional probability on the reduced sample space: conditioning on \"at least one head\" removes TT and leaves three equally likely outcomes.",
+      "concepts": [
+        "Conditional probability",
+        "Sample space"
+      ],
+      "steps": [
+        {
+          "title": "Sample space",
+          "body": "Two fair coins: $\\{HH, HT, TH, TT\\}$, each with probability $\\tfrac14$."
+        },
+        {
+          "title": "Condition",
+          "body": "\"At least one head\" $=\\{HH, HT, TH\\}$, so $P(\\text{cond}) = \\tfrac34$."
+        },
+        {
+          "title": "Compute",
+          "body": "$$P(HH \\mid \\ge 1\\,H) = \\frac{P(HH)}{P(\\ge 1\\,H)} = \\frac{1/4}{3/4} = \\frac13$$"
+        }
+      ],
+      "answer": {
+        "value": "$P = \\dfrac13$ — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: one favourable outcome (HH) out of three equally likely outcomes."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$1/4$ is the unconditional probability of HH; it ignores the given information."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$1/2$ comes from wrongly treating \"the other coin\" as independent of the condition (that would be the answer if a *specific* coin were known to be a head)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$2/3$ is the probability of exactly one head given at least one head."
+        }
+      ],
+      "pitfalls": [
+        "Confusing \"at least one is a head\" with \"the first coin is a head\" (which gives 1/2)."
+      ],
+      "verification": "Complement check: $P(\\text{exactly one } H \\mid \\ge 1\\,H) = 2/3$ and $1/3 + 2/3 = 1$."
+    },
+    "cse-2011-cs-4": {
+      "approach": "Match each activity to its standard protocol: clients push mail with SMTP, pull mail from a mailbox with POP3/IMAP, and webmail runs over HTTP.",
+      "concepts": [
+        "SMTP",
+        "POP3",
+        "HTTP",
+        "Email architecture"
+      ],
+      "steps": [
+        {
+          "title": "m1 — client to server",
+          "body": "Submitting mail from a user agent to a mail server is a *push* operation: **SMTP**."
+        },
+        {
+          "title": "m2 — mailbox to client",
+          "body": "Downloading mail from the mailbox server is a *pull* operation: **POP** (POP3) or IMAP."
+        },
+        {
+          "title": "m3 — webmail",
+          "body": "A browser talks to a webmail server with **HTTP**; the web server itself uses SMTP/IMAP behind the scenes."
+        }
+      ],
+      "answer": {
+        "value": "m1: SMTP, m2: POP, m3: HTTP — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "HTTP does not send mail from a mail client, and SMTP cannot download mail from a mailbox."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "FTP is a file-transfer protocol; it is not used to retrieve mail from a mailbox."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: push = SMTP, pull = POP, browser = HTTP."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "POP cannot send mail; SMTP cannot download it; a browser uses HTTP, not IMAP."
+        }
+      ],
+      "pitfalls": [
+        "Using SMTP for retrieval — SMTP only pushes mail toward a server."
+      ],
+      "verification": "Each option has exactly one protocol per activity; only (C) has a push protocol for m1 and a pull protocol for m2."
+    },
+    "cse-2011-cs-5": {
+      "approach": "Write the total cost (development + 5 years of maintenance) of each language as a function of the L1 line count $x$, remembering that L2 needs $2x$ lines, and equate.",
+      "concepts": [
+        "Software cost estimation",
+        "Linear equations"
+      ],
+      "given": "| | L1 | L2 |\n|---|---|---|\n| LOC | $x$ | $2x$ |\n| Man-years | LOC/10000 | LOC/10000 |\n| Cost per man-year | ₹10,00,000 | ₹7,50,000 |\n| Maintenance | 5 × ₹1,00,000 | 5 × ₹50,000 |",
+      "steps": [
+        {
+          "title": "Cost with L1",
+          "body": "$$C_1 = \\frac{x}{10000}\\times 10{,}00{,}000 + 5\\times 1{,}00{,}000 = 100x + 5{,}00{,}000$$"
+        },
+        {
+          "title": "Cost with L2",
+          "body": "L2 needs $2x$ lines:\n$$C_2 = \\frac{2x}{10000}\\times 7{,}50{,}000 + 5\\times 50{,}000 = 150x + 2{,}50{,}000$$"
+        },
+        {
+          "title": "Equate",
+          "body": "$$100x + 5{,}00{,}000 = 150x + 2{,}50{,}000 \\Rightarrow 50x = 2{,}50{,}000 \\Rightarrow x = 5000$$"
+        }
+      ],
+      "answer": {
+        "value": "LOC for L1 $= 5000$ — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "At $x=4000$: $C_1 = 9{,}00{,}000$, $C_2 = 8{,}50{,}000$ — not equal."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: both costs are ₹10,00,000 at $x=5000$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "4333 does not satisfy $50x = 2{,}50{,}000$; it comes from mis-scaling one of the terms."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "4667 likewise does not balance the two cost expressions."
+        }
+      ],
+      "pitfalls": [
+        "Forgetting that L2 needs twice the LOC (using $x$ instead of $2x$ makes L2 always cheaper).",
+        "Using one year of maintenance instead of five."
+      ],
+      "verification": "At $x=5000$: $C_1 = 5{,}00{,}000 + 5{,}00{,}000 = 10{,}00{,}000$ and $C_2 = 7{,}50{,}000 + 2{,}50{,}000 = 10{,}00{,}000$."
+    },
+    "cse-2011-cs-6": {
+      "approach": "A mode switch is only part of a process switch: a context switch enters the kernel, saves and restores full process state and changes the address space, so it costs more.",
+      "concepts": [
+        "Mode switch",
+        "Context switch"
+      ],
+      "steps": [
+        {
+          "title": "Mode switch ($t_1$)",
+          "body": "A trap/interrupt flips the privilege bit and saves a few registers to the kernel stack — the same process keeps running."
+        },
+        {
+          "title": "Process switch ($t_2$)",
+          "body": "Requires entering kernel mode (at least one mode switch), saving the full register state into the PCB, running the scheduler, loading the next PCB, switching page tables / flushing the TLB, and returning to user mode. Hence $t_2 > t_1$."
+        }
+      ],
+      "answer": {
+        "value": "$t_1 < t_2$ — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "A mode switch is a sub-step of a process switch, so it cannot take longer."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "A process switch does strictly more work than a single mode switch."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: the process switch includes mode switches plus state save/restore and address-space change."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The relation is determined because one operation contains the other."
+        }
+      ],
+      "pitfalls": [
+        "Treating the two as unrelated operations; a process switch always passes through the kernel."
+      ],
+      "verification": "Typical figures: a system-call round trip is on the order of 100 ns, a process context switch is several microseconds."
+    },
+    "cse-2011-cs-7": {
+      "approach": "Basic COCOMO: $E = a\\,(\\text{KLOC})^b$ with the given $a = 2.8$, $b = 1.20$ and size in thousands of lines.",
+      "concepts": [
+        "Basic COCOMO",
+        "Effort estimation"
+      ],
+      "steps": [
+        {
+          "title": "Size in KLOC",
+          "body": "$40000$ lines $= 40$ KLOC."
+        },
+        {
+          "title": "Power term",
+          "body": "$$40^{1.2} = e^{1.2\\ln 40} = e^{1.2\\times 3.6889} = e^{4.4267} \\approx 83.66$$"
+        },
+        {
+          "title": "Effort",
+          "body": "$$E = 2.8 \\times 83.66 \\approx 234.2 \\text{ person-months}$$"
+        }
+      ],
+      "answer": {
+        "value": "$E \\approx 234.25$ person-months — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: $2.8 \\times 40^{1.2} \\approx 234.2$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "932.50 is roughly four times too large — not obtainable from $2.8 \\times 40^{1.2}$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "287.80 does not match $2.8 \\times 40^{1.2}$; it would need an exponent of about 1.26."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "122.40 is too small; it corresponds to an exponent near 1.03."
+        }
+      ],
+      "pitfalls": [
+        "Plugging 40000 instead of 40 KLOC into the formula."
+      ],
+      "verification": "$40^{1.2} = 40 \\times 40^{0.2}$ and $40^{0.2} = e^{0.7378} \\approx 2.091$, so $40^{1.2} \\approx 83.65$; $\\times 2.8 = 234.2$."
+    },
+    "cse-2011-cs-8": {
+      "approach": "Recall the equivalence results: nondeterminism adds no power to finite automata or Turing machines, extra tapes add no power to TMs, but NPDAs accept strictly more languages than DPDAs.",
+      "concepts": [
+        "DPDA vs NPDA",
+        "Subset construction",
+        "Turing machine variants"
+      ],
+      "steps": [
+        {
+          "title": "Equivalent pairs",
+          "body": "- DFA = NFA (subset construction).\n- Deterministic TM = nondeterministic TM (breadth-first simulation of the computation tree).\n- Single-tape TM = multi-tape TM (encode the $k$ tapes on one tape)."
+        },
+        {
+          "title": "The odd one out",
+          "body": "DPDAs accept only deterministic CFLs. $L = \\{ww^R \\mid w \\in \\{a,b\\}^*\\}$ is accepted by an NPDA (guess the middle) but by no DPDA. So DPDA $\\subsetneq$ NPDA."
+        }
+      ],
+      "answer": {
+        "value": "DPDA and NPDA have different power — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Same power: every NFA converts to an equivalent DFA."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: NPDAs accept all CFLs, DPDAs only the deterministic CFLs (e.g. not even-length palindromes)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Same power: a deterministic TM can simulate all branches of an NTM."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Same power: multiple tapes only speed computation up (at most quadratically)."
+        }
+      ],
+      "pitfalls": [
+        "Mixing up efficiency with expressive power — multi-tape and nondeterministic TMs are faster, not more powerful."
+      ],
+      "verification": "DCFLs are closed under complement while CFLs are not, so the two classes must differ."
+    },
+    "cse-2011-cs-9": {
+      "approach": "Pure HTML is static markup: tags like `<iframe>`/`<img>` and `<meta http-equiv=\"refresh\">` cover embedding, refresh and redirect, but reading the visitor's clock needs code running on the client.",
+      "concepts": [
+        "HTML",
+        "Meta refresh",
+        "Client-side scripting"
+      ],
+      "steps": [
+        {
+          "title": "What markup can do",
+          "body": "- Embed objects from other sites: `<img src=...>`, `<iframe src=...>`, `<object>`.\n- Auto-refresh: `<meta http-equiv=\"refresh\" content=\"30\">`.\n- Auto-redirect: `<meta http-equiv=\"refresh\" content=\"0; url=...\">`."
+        },
+        {
+          "title": "What it cannot do",
+          "body": "Displaying the **client's** time requires reading the local clock when the page is rendered — only a client-side script (e.g. JavaScript `new Date()`) can do that. A server cannot know the client's clock either."
+        }
+      ],
+      "answer": {
+        "value": "Displaying the client time is **not** supported by pure HTML — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Supported: `<img>`, `<iframe>`, `<object>` can load content from any site."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Supported: `<meta http-equiv=\"refresh\" content=\"n\">`."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Supported: `<meta http-equiv=\"refresh\" content=\"0; url=...\">` redirects after load."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: needs a client-side script to read the local clock."
+        }
+      ],
+      "pitfalls": [
+        "Thinking redirect needs JavaScript — the meta-refresh tag does it."
+      ],
+      "verification": "Each of A–C has a concrete HTML tag; D has none."
+    },
+    "cse-2011-cs-10": {
+      "approach": "An SRS states *what* the system must do (functional, non-functional requirements, goals), not *how* it will be implemented; algorithms are design decisions.",
+      "concepts": [
+        "Software Requirements Specification",
+        "Requirements vs design"
+      ],
+      "steps": [
+        {
+          "title": "What belongs in an SRS",
+          "body": "Functional requirements, non-functional requirements (performance, security, reliability), and goals of implementation/constraints that guide the developers."
+        },
+        {
+          "title": "What does not",
+          "body": "Algorithms describe *how* a requirement is realised. Fixing them in the SRS over-specifies the system and belongs to the design document."
+        }
+      ],
+      "answer": {
+        "value": "Algorithms for implementation are not desired in an SRS — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Functional requirements are the core of an SRS."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Non-functional requirements (performance, usability, etc.) are part of a good SRS."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Goals of implementation give general guidance and are commonly included in an SRS."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: algorithms are design/implementation details, not requirements."
+        }
+      ],
+      "pitfalls": [
+        "Reading \"Goals of implementation\" as implementation detail — it is high-level guidance, not a design choice."
+      ],
+      "verification": "IEEE 830 lists functional/non-functional requirements and design constraints, but warns against including design or project details."
+    },
+    "cse-2011-cs-11": {
+      "approach": "Interrupt priority follows urgency and the cost of ignoring the event: a CPU over-temperature alarm risks hardware damage, so it outranks all I/O interrupts.",
+      "concepts": [
+        "Interrupt priority",
+        "Hardware exceptions"
+      ],
+      "steps": [
+        {
+          "title": "Rank by urgency",
+          "body": "- CPU temperature: a critical machine-check-type event; delay could damage hardware or crash the system.\n- Hard disk: fast device, completion should be served soon to keep the disk busy.\n- Keyboard and mouse: slow human-input devices; a few milliseconds of delay is unnoticeable."
+        },
+        {
+          "title": "Highest priority",
+          "body": "The temperature sensor interrupt must pre-empt the others."
+        }
+      ],
+      "answer": {
+        "value": "The CPU temperature-sensor interrupt has the highest priority — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Disk completion is important but not critical to system safety."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Mouse events are slow human input and can wait."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Keyboard events are also slow human input."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: overheating threatens the hardware itself, so it is handled first."
+        }
+      ],
+      "pitfalls": [
+        "Ranking purely by device speed (disk) and ignoring that the temperature alarm protects the machine."
+      ],
+      "verification": "Real systems route thermal alerts through high-priority machine-check/NMI-class mechanisms."
+    },
+    "cse-2011-cs-12": {
+      "approach": "A candidate key must uniquely identify each row. Check each attribute against the given semantics; joint accounts mean two students can share the same primary account number.",
+      "concepts": [
+        "Candidate key",
+        "Superkey",
+        "Primary key"
+      ],
+      "steps": [
+        {
+          "title": "BankAccount_Num",
+          "body": "Accounts can be **joint**, so two students may both store the same account as their primary account. Duplicate values are possible ⇒ it is not a key. Statement (A) is incorrect."
+        },
+        {
+          "title": "Other options",
+          "body": "- Registration_Num is unique per student ⇒ can be the primary key.\n- UID is unique for every citizen; if all students are from one country it identifies each student ⇒ candidate key.\n- Any superset of a superkey is a superkey, so $S \\cup \\{UID\\}$ is a superkey."
+        }
+      ],
+      "answer": {
+        "value": "The incorrect statement is (A): *BankAccount_Num* is not a candidate key",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct (this is the INCORRECT statement): a joint account can be the primary account of two students, so values repeat."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "True: registration numbers are unique per registered student."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "True: UID is unique within a country, so it identifies students from that country."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "True: adding attributes to a superkey keeps it a superkey."
+        }
+      ],
+      "pitfalls": [
+        "Reading \"unique account number at the bank\" as uniqueness across students — uniqueness of the account does not mean each account belongs to one student."
+      ],
+      "verification": "Counter-example: students X and Y share joint account 123 as primary ⇒ two rows with BankAccount_Num = 123."
+    },
+    "cse-2011-cs-13": {
+      "approach": "Write the Boolean function of each circuit, using $\\overline{X}\\oplus Y = X \\oplus \\overline{Y} = \\overline{X\\oplus Y}$ and $\\overline{X}\\oplus\\overline{Y} = X\\oplus Y$; for circuit D simplify the AND/OR network algebraically.",
+      "concepts": [
+        "XOR/XNOR identities",
+        "Boolean algebra",
+        "De Morgan"
+      ],
+      "steps": [
+        {
+          "title": "Circuits A, B, C",
+          "body": "- A: $F = \\overline{A\\oplus B}$ = XNOR.\n- B: $\\overline{A}\\oplus\\overline{B} = A\\oplus B$, then inverted: $F = \\overline{A\\oplus B}$ = XNOR.\n- C: $F = \\overline{A}\\oplus B = \\overline{A\\oplus B}$ = XNOR."
+        },
+        {
+          "title": "Circuit D — first level",
+          "body": "Inputs: $A$ and $\\overline{B}$.\n- G1 (AND) then NOT: $\\overline{A\\overline{B}} = \\overline{A} + B$.\n- G2 (OR): $A + \\overline{B}$."
+        },
+        {
+          "title": "Circuit D — output",
+          "body": "$$G3 = (\\overline{A}+B)(A+\\overline{B}) = \\overline{A}\\,\\overline{B} + AB = \\overline{A\\oplus B}$$\nThe final NOT gives $F = A \\oplus B$ — an **XOR**, not an XNOR."
+        }
+      ],
+      "answer": {
+        "value": "Circuit (D) computes $A\\oplus B$, so it is **not** an XNOR",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "XOR followed by NOT is the definition of XNOR."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Inverting both XOR inputs leaves XOR unchanged; the output inverter makes it XNOR."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Inverting exactly one XOR input complements the XOR, giving XNOR."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: the AND–OR network before the last inverter is already XNOR, so the final NOT turns it into XOR."
+        }
+      ],
+      "shortcut": "Test $A=B=0$: an XNOR must output 1. In D, $G1 = 0 \\Rightarrow \\overline{G1} = 1$, $G2 = 0 + 1 = 1$, $G3 = 1$, $F = 0$ — so D fails immediately.",
+      "pitfalls": [
+        "Missing that the wire from A hops over the B line (no junction) and goes to the OR gate, not to the inverter."
+      ],
+      "verification": "Truth table for D: $(A,B) = 00,01,10,11$ gives $F = 0,1,1,0$, i.e. XOR."
+    },
+    "cse-2011-cs-14": {
+      "approach": "Each sum term is a maxterm; list the minterms where the product is 0, the rest are 1s, and read off the minimal SOP.",
+      "concepts": [
+        "Maxterms",
+        "POS to SOP",
+        "K-map simplification"
+      ],
+      "steps": [
+        {
+          "title": "Zeros of the function",
+          "body": "A sum term is 0 when every literal is 0:\n- $P+\\overline{Q}+\\overline{R}=0$ at $PQR=011$ (3)\n- $P+\\overline{Q}+R=0$ at $010$ (2)\n- $P+Q+\\overline{R}=0$ at $001$ (1)\n\nSo $F = \\prod M(1,2,3)$ and $F = \\sum m(0,4,5,6,7)$."
+        },
+        {
+          "title": "Group the ones",
+          "body": "- $m(4,5,6,7)$: all cells with $P=1$ ⇒ $P$.\n- $m(0,4)$: $Q=0, R=0$ ⇒ $\\overline{Q}\\,\\overline{R}$.\n\n$$F = P + \\overline{Q}\\,\\overline{R}$$"
+        }
+      ],
+      "answer": {
+        "value": "$F = P + \\overline{Q}.\\overline{R}$ — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$\\overline{P}Q + \\overline{R}$ is 1 at $PQR = 010$, where the given product is 0."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: ones exactly at minterms 0, 4, 5, 6, 7."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$\\overline{P}Q + R$ is 1 at $001$ and $011$, where the product is 0."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$PQ + R$ is 0 at $000$ (where $F=1$) and 1 at $001$ (where $F=0$)."
+        }
+      ],
+      "shortcut": "Algebra: $(P+\\overline{Q}+\\overline{R})(P+\\overline{Q}+R) = P+\\overline{Q}$; then $(P+\\overline{Q})(P+Q+\\overline{R}) = P + \\overline{Q}(Q+\\overline{R}) = P + \\overline{Q}\\,\\overline{R}$.",
+      "pitfalls": [
+        "Reading maxterm indices with complemented literals as 1 — in a sum term a complemented literal is 0 when the variable is 1."
+      ],
+      "verification": "Algebraic shortcut and K-map grouping give the same result."
+    },
+    "cse-2011-cs-15": {
+      "approach": "A mod-$N$ counter needs $N$ distinct states, so the number of flip-flops is the smallest $n$ with $2^n \\ge N$.",
+      "concepts": [
+        "Counters",
+        "State encoding"
+      ],
+      "steps": [
+        {
+          "title": "Bound",
+          "body": "$2^8 = 256 < 258$ and $2^9 = 512 \\ge 258$."
+        },
+        {
+          "title": "Result",
+          "body": "Minimum flip-flops $= \\lceil \\log_2 258 \\rceil = 9$."
+        }
+      ],
+      "answer": {
+        "value": "**9** D flip-flops — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: 9 bits give 512 ≥ 258 states."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "8 bits give only 256 states, two short of 258."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "512 is the number of states 9 flip-flops provide, not the number of flip-flops."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "258 flip-flops would be a one-hot (ring) design — valid but far from minimal."
+        }
+      ],
+      "pitfalls": [
+        "Answering 8 because 258 is \"close to\" 256."
+      ],
+      "verification": "$\\log_2 258 \\approx 8.01$, ceiling 9."
+    },
+    "cse-2011-cs-16": {
+      "approach": "Threads of a process share its address space, so the OS keeps virtual-memory state per process; per thread it keeps registers (incl. PC, SP), a stack, and scheduling state.",
+      "concepts": [
+        "Threads",
+        "Thread control block",
+        "Address space"
+      ],
+      "steps": [
+        {
+          "title": "Per-thread state",
+          "body": "Thread ID, register set (PC, SP, general registers), a separate stack, state/priority and accounting information."
+        },
+        {
+          "title": "Shared (per-process) state",
+          "body": "Code, data, heap, open files and the **virtual-memory state** (page tables). Hence the OS does not maintain VM state per thread."
+        }
+      ],
+      "answer": {
+        "value": "On a per-thread basis the OS does not maintain virtual memory state — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Not *only* registers: each thread also has its own stack and scheduling information."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "False: every thread needs its own stack for its call frames."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: all threads share the process address space and its page tables."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Not *only* scheduling/accounting: register state and the stack are also per thread."
+        }
+      ],
+      "pitfalls": [
+        "Overlooking the word \"only\" in options A and D."
+      ],
+      "verification": "POSIX: threads of a process share memory mappings but each has its own stack and register context."
+    },
+    "cse-2011-cs-17": {
+      "approach": "A graph is planar if it can be redrawn without crossings. $K_4$'s diagonal can be routed outside; $Q_3$ is the cube, whose net has an obvious crossing-free drawing.",
+      "concepts": [
+        "Planar graphs",
+        "Euler formula",
+        "Hypercube"
+      ],
+      "steps": [
+        {
+          "title": "$K_4$",
+          "body": "Move one diagonal outside the square: the drawing has no crossings. Check: $e = 6 \\le 3v - 6 = 6$. Planar."
+        },
+        {
+          "title": "$Q_3$",
+          "body": "Draw the cube as a small square inside a larger square with the four corners joined (no crossings). Check with Euler: $v = 8$, $e = 12$, $f = e - v + 2 = 6$ faces, each a 4-cycle: $4f = 24 = 2e$. Planar."
+        }
+      ],
+      "answer": {
+        "value": "Both $K_4$ and $Q_3$ are planar — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$Q_3$ is planar — the nested-squares drawing has no crossings."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: both have crossing-free drawings."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$K_3$ (a triangle) and $K_4$ are both planar, so the \"is not\" part is false."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Both are planar."
+        }
+      ],
+      "pitfalls": [
+        "Judging planarity from the given drawing — crossings in one drawing do not make a graph non-planar."
+      ],
+      "verification": "Neither graph contains a subdivision of $K_5$ or $K_{3,3}$ ($K_4$ has only 4 vertices; $Q_3$ is bipartite with 12 ≤ $2v - 4 = 12$ edges)."
+    },
+    "cse-2011-cs-18": {
+      "approach": "$E[X^2] - (E[X])^2$ is the variance, i.e. $E[(X-\\mu)^2]$ — an expectation of a non-negative quantity, so it is $\\ge 0$, with equality for a constant $X$.",
+      "concepts": [
+        "Variance",
+        "Expectation"
+      ],
+      "steps": [
+        {
+          "title": "Identify R",
+          "body": "$$R = E[X^2] - (E[X])^2 = E[(X - \\mu)^2] = \\operatorname{Var}(X)$$"
+        },
+        {
+          "title": "Sign",
+          "body": "$(X-\\mu)^2 \\ge 0$ always, so $R \\ge 0$. $R = 0$ exactly when $X$ is constant (almost surely), so strict $R > 0$ is not guaranteed."
+        }
+      ],
+      "answer": {
+        "value": "$R \\ge 0$ — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$R = 0$ only for a degenerate (constant) variable, not in general."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "A variance can never be negative."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: variance is non-negative."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Fails for a constant random variable, where $R = 0$."
+        }
+      ],
+      "pitfalls": [
+        "Choosing $R > 0$ and forgetting the constant random variable."
+      ],
+      "verification": "Jensen: $x^2$ is convex, so $E[X^2] \\ge (E[X])^2$."
+    },
+    "cse-2011-cs-19": {
+      "approach": "Tokens of programming languages (identifiers, numbers, keywords, operators) are described by regular expressions, so a finite automaton is both sufficient and necessary.",
+      "concepts": [
+        "Lexical analysis",
+        "Regular languages",
+        "Finite automata"
+      ],
+      "steps": [
+        {
+          "title": "Sufficient",
+          "body": "Each token class is a regular language (e.g. identifiers $[A{-}Za{-}z\\_][A{-}Za{-}z0{-}9\\_]^*$), and a finite union of regular languages is regular. Scanner generators (lex) build a DFA."
+        },
+        {
+          "title": "Necessary",
+          "body": "Something weaker than an FA cannot recognise even these simple patterns, while stack/tape power (PDA, TM) is not needed — matching nested structure is the parser's job."
+        }
+      ],
+      "answer": {
+        "value": "Finite state automata — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: tokens are regular, so FA power is exactly what is needed."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "A DPDA is more than necessary; nesting is handled by the parser, not the scanner."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "An NPDA is even more powerful and unnecessary for tokens."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "A Turing machine is far more than needed."
+        }
+      ],
+      "pitfalls": [
+        "Confusing lexical analysis with parsing, which needs a PDA."
+      ],
+      "verification": "lex/flex compile token regular expressions into a DFA table."
+    },
+    "cse-2011-cs-20": {
+      "approach": "Effective access time = normal access time + (page-fault rate) × (fault service time); convert 10 ms to ns before combining.",
+      "concepts": [
+        "Effective access time",
+        "Page fault"
+      ],
+      "given": "| Quantity | Value |\n|---|---|\n| Memory access time | 20 ns |\n| Page fault service time | 10 ms $= 10^7$ ns |\n| Fault rate $p$ | $1/10^6$ |",
+      "steps": [
+        {
+          "title": "Formula",
+          "body": "$$\\text{EAT} = (1-p)\\,t_m + p\\,(t_{pf}) \\approx t_m + p\\,t_{pf}$$"
+        },
+        {
+          "title": "Substitute",
+          "body": "$$p\\,t_{pf} = \\frac{10^7 \\text{ ns}}{10^6} = 10 \\text{ ns}$$\n$$\\text{EAT} = 20 + 10 = 30 \\text{ ns}$$\n(Using $(1-p)\\cdot 20$ changes it by only $2\\times10^{-5}$ ns.)"
+        }
+      ],
+      "answer": {
+        "value": "$\\text{EAT} \\approx 30$ ns — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "21 ns comes from mis-converting 10 ms (e.g. as $10^6$ ns), giving a 1 ns penalty."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: $20 + 10^7/10^6 = 30$ ns."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "23 ns has no valid derivation from the given numbers."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "35 ns has no valid derivation from the given numbers."
+        }
+      ],
+      "pitfalls": [
+        "Converting 10 ms to $10^6$ ns instead of $10^7$ ns."
+      ],
+      "verification": "Exact: $(1 - 10^{-6})\\times 20 + 10^{-6}\\times 10^7 = 19.99998 + 10 = 29.99998 \\approx 30$ ns."
+    },
+    "cse-2011-cs-21": {
+      "approach": "The operand address is register R2 plus a constant: a base register plus displacement, which the options call base (indexed) addressing.",
+      "concepts": [
+        "Addressing modes",
+        "Displacement addressing"
+      ],
+      "steps": [
+        {
+          "title": "Effective address",
+          "body": "$$EA = [R2] + 20$$ The operand is fetched from memory at $EA$ — a register value plus a constant offset."
+        },
+        {
+          "title": "Name the mode",
+          "body": "Register + constant offset is base/displacement (base-indexed in the options' terminology). It is not immediate (operand is in memory), not register (operand not in a register), and nothing is scaled."
+        }
+      ],
+      "answer": {
+        "value": "Base Indexed Addressing — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Immediate means the constant itself is the operand; here 20 is only an offset."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Register addressing takes the operand from a register; this instruction reads memory."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "There is no scale factor multiplying the register."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: address = base register R2 + constant 20."
+        }
+      ],
+      "pitfalls": [
+        "Calling it immediate because a constant appears in the instruction."
+      ],
+      "verification": "This is the MIPS `lw` base + offset format, generally classed as base/displacement addressing."
+    },
+    "cse-2011-cs-22": {
+      "approach": "Evaluate the pointer arithmetic using character codes: `p[3]` is `'E'` and `p[1]` is `'A'`, which differ by 4, so the string is printed from index 4.",
+      "concepts": [
+        "Pointer arithmetic",
+        "ASCII arithmetic",
+        "C strings"
+      ],
+      "steps": [
+        {
+          "title": "Lay out the array",
+          "body": "`c` holds `G A T E 2 0 1 1 \\0` at indices 0–8 and `p` points to `c[0]`.",
+          "scene": {
+            "hl": [
+              {
+                "at": 1,
+                "tone": "warning"
+              },
+              {
+                "at": 3,
+                "tone": "warning"
+              }
+            ],
+            "caption": "`p[1]` = `A`, `p[3]` = `E`"
+          }
+        },
+        {
+          "title": "Compute the offset",
+          "body": "`p[3] - p[1]` $= 'E' - 'A' = 69 - 65 = 4$ (the expression is evaluated left to right as `(p + p[3]) - p[1]`, which lands at the same place, `p + 4`).",
+          "scene": {
+            "vars": {
+              "p[3]": 69,
+              "p[1]": 65,
+              "offset": 4
+            }
+          }
+        },
+        {
+          "title": "Print",
+          "body": "`printf(\"%s\", p + 4)` prints from `c[4]` up to the terminator: **2011**.",
+          "scene": {
+            "pointers": [
+              {
+                "name": "p",
+                "at": 0
+              },
+              {
+                "name": "p+4",
+                "at": 4
+              }
+            ],
+            "hl": [
+              {
+                "at": 4,
+                "tone": "success"
+              },
+              {
+                "at": 5,
+                "tone": "success"
+              },
+              {
+                "at": 6,
+                "tone": "success"
+              },
+              {
+                "at": 7,
+                "tone": "success"
+              }
+            ],
+            "caption": "Printed: `2011`"
+          }
+        }
+      ],
+      "animation": {
+        "kind": "array",
+        "label": "c",
+        "title": "char c[] = \"GATE2011\"",
+        "cells": [
+          "G",
+          "A",
+          "T",
+          "E",
+          "2",
+          "0",
+          "1",
+          "1",
+          "\\0"
+        ],
+        "pointers": [
+          {
+            "name": "p",
+            "at": 0
+          }
+        ]
+      },
+      "answer": {
+        "value": "It prints **2011** — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "GATE2011 would need an offset of 0."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "E2011 would need an offset of 3 (printing from `c[3]`)."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: offset 4 starts at `c[4]` = `2`."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "011 would need an offset of 5."
+        }
+      ],
+      "pitfalls": [
+        "Reading `p[3]` as the digit 3 or computing `'E' - 'A'` as a letter instead of the number 4."
+      ],
+      "verification": "In alphabet positions E is the 5th letter and A the 1st, so the gap is 4 regardless of the character set's base value."
+    },
     "cse-2011-cs-23": {
       "approach": "Check the max-heap property (parent ≥ each child) together with the heap shape (complete binary tree, last level filled left to right) for every option.",
       "concepts": [
