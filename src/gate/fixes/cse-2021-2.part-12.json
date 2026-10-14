@@ -1,0 +1,1048 @@
+{
+  "paper": "cse-2021-2",
+  "fixes": [
+    {
+      "id": "cse-2021-2-cs-13",
+      "field": "subject",
+      "before": "algo",
+      "after": "cd",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2021-2-cs-13",
+      "field": "topic",
+      "before": "graphs",
+      "after": "icg",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2021-2-cs-13",
+      "field": "tags",
+      "before": [
+        "graphs"
+      ],
+      "after": [
+        "intermediate-representation",
+        "symbol-table",
+        "three-address-code"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2021-2-cs-13",
+      "field": "type",
+      "before": "MCQ",
+      "after": "MSQ",
+      "reason": "Q.11–Q.15 are Multiple Select Questions in the paper.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2021-2-cs-13",
+      "field": "text",
+      "before": "In the context of compilers, which of the following is/are NOT an intermediate\nrepresentation of the source program?",
+      "after": "In the context of compilers, which of the following is/are NOT an intermediate representation of the source program?",
+      "reason": "Clean text from PDF.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2021-2-cs-14",
+      "field": "subject",
+      "before": "coa",
+      "after": "os",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2021-2-cs-14",
+      "field": "topic",
+      "before": "isa",
+      "after": "scheduling",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2021-2-cs-14",
+      "field": "tags",
+      "before": [
+        "isa"
+      ],
+      "after": [
+        "cpu-scheduling",
+        "turnaround-time",
+        "round-robin",
+        "preemption"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2021-2-cs-14",
+      "field": "text",
+      "before": "Which of the following statement (s) is/are correct in the context of CPU scheduling?\nTurnaround time includes waiting time.",
+      "after": "Which of the following statement(s) is/are correct in the context of CPU scheduling?",
+      "reason": "Option A text had leaked into the stem; clean text from PDF.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2021-2-cs-14",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "The goal is to only maximize CPU utilization and minimize throughput."
+        },
+        {
+          "l": "B",
+          "t": "Round-robin policy can be used even when the CPU time required by each of the"
+        },
+        {
+          "l": "C",
+          "t": "processes is not known apriori."
+        },
+        {
+          "l": "D",
+          "t": "Implementing preemptive scheduling needs hardware support."
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Turnaround time includes waiting time."
+        },
+        {
+          "l": "B",
+          "t": "The goal is to only maximize CPU utilization and minimize throughput."
+        },
+        {
+          "l": "C",
+          "t": "Round-robin policy can be used even when the CPU time required by each of the processes is not known apriori."
+        },
+        {
+          "l": "D",
+          "t": "Implementing preemptive scheduling needs hardware support."
+        }
+      ],
+      "reason": "Options were shifted by one (option A was in the stem and option C was split); restored from PDF.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2021-2-cs-15",
+      "field": "subject",
+      "before": "pds",
+      "after": "dm",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2021-2-cs-15",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "logic",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2021-2-cs-15",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "propositional-logic",
+        "tautology",
+        "logical-equivalence"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2021-2-cs-15",
+      "field": "text",
+      "before": "Choose the correct choice(s) regarding the following propositional logic assertion\nS:\nS: ((PAQ) →R) → ((PAQ) → (Q→ R))",
+      "after": "Choose the correct choice(s) regarding the following propositional logic assertion $S$:\n\n$$S: ((P \\wedge Q) \\to R) \\to ((P \\wedge Q) \\to (Q \\to R))$$",
+      "reason": "Clean text with KaTeX from PDF.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2021-2-cs-15",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "S is neither a tautology nor a contradiction."
+        },
+        {
+          "l": "B",
+          "t": "S is a tautology."
+        },
+        {
+          "l": "C",
+          "t": "S is a contradiction."
+        },
+        {
+          "l": "D",
+          "t": "The antecedent of S is logically equivalent to the consequent of S."
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$S$ is neither a tautology nor a contradiction."
+        },
+        {
+          "l": "B",
+          "t": "$S$ is a tautology."
+        },
+        {
+          "l": "C",
+          "t": "$S$ is a contradiction."
+        },
+        {
+          "l": "D",
+          "t": "The antecedent of $S$ is logically equivalent to the consequent of $S$."
+        }
+      ],
+      "reason": "KaTeX for S.",
+      "source": "pdf p.18"
+    },
+    {
+      "id": "cse-2021-2-cs-16",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "trees",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2021-2-cs-16",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "binary-tree",
+        "bfs",
+        "dfs",
+        "tree-traversal"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2021-2-cs-16",
+      "field": "text",
+      "before": "Consider a complete binary tree with 7 nodes. Let A denote the set of first 3\nelements obtained by performing Breadth-First Search (BFS) starting from the\nroot. Let B denote the set of first 3 elements obtained by performing Depth-First\nSearch (DFS) starting from the root.\nThe value of |A - B| is -",
+      "after": "Consider a complete binary tree with 7 nodes. Let $A$ denote the set of first 3 elements obtained by performing Breadth-First Search (BFS) starting from the root. Let $B$ denote the set of first 3 elements obtained by performing Depth-First Search (DFS) starting from the root.\n\nThe value of $|A - B|$ is _____________.",
+      "reason": "Clean text from PDF.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2021-2-cs-17",
+      "field": "subject",
+      "before": "pds",
+      "after": "toc",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2021-2-cs-17",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "regular",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2021-2-cs-17",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "dfa",
+        "counting-strings",
+        "regular-languages"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2021-2-cs-17",
+      "field": "text",
+      "before": "Consider the following deterministic finite automaton (DFA).\n0,1\nstart —→\n> O.1\n0,1\nThe number of strings of length 8 accepted by the above automaton is",
+      "after": "Consider the following deterministic finite automaton (DFA).\n\nThe number of strings of length 8 accepted by the above automaton is _____________.",
+      "reason": "Clean text from PDF; DFA moved to a figure.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2021-2-cs-17",
+      "field": "figures",
+      "before": [],
+      "after": [
+        {
+          "f": "cse-2021-2/cs-17-1.svg",
+          "svg": "cse-2021-2/cs-17-1.svg",
+          "alt": "DFA with six states. The start state goes on 0 to an upper state and on 1 to a lower state. The upper state goes on 0 to an upper-right state and on 1 to a lower-right state; the lower state goes on 0 to the upper-right state and on 1 to the lower-right state (the two edges cross). Both right states go on 0,1 to the single accepting state, which has a self-loop on 0,1."
+        }
+      ],
+      "reason": "Redrawn DFA figure from the PDF.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2021-2-cs-18",
+      "field": "subject",
+      "before": "pds",
+      "after": "dl",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2021-2-cs-18",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "number",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2021-2-cs-18",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "binary-fractions",
+        "number-conversion"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2021-2-cs-18",
+      "field": "text",
+      "before": "If x and y are two decimal digits and (0.1101)2 = (0.82y5) 10, the decimal value of\nx + y iS -",
+      "after": "If $x$ and $y$ are two decimal digits and $(0.1101)_2 = (0.8xy5)_{10}$, the decimal value of $x + y$ is _____________.",
+      "reason": "OCR read “0.82y5”; restored $(0.8xy5)_{10}$ from PDF.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2021-2-cs-19",
+      "field": "subject",
+      "before": "pds",
+      "after": "coa",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2021-2-cs-19",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "cache",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2021-2-cs-19",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "set-associative-cache",
+        "address-mapping",
+        "tag-bits"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2021-2-cs-19",
+      "field": "text",
+      "before": "Consider a set-associative cache of size 2KB (1KB = 21° bytes) with cache block\nsize of 64 bytes. Assume that the cache is byte-addressable and a 32-bit address is\nused for accessing the cache. If the width of the tag field is 22 bits, the associativity\nof the cache is",
+      "after": "Consider a set-associative cache of size 2KB (1KB $= 2^{10}$ bytes) with cache block size of 64 bytes. Assume that the cache is byte-addressable and a 32-bit address is used for accessing the cache. If the width of the tag field is 22 bits, the associativity of the cache is _____________.",
+      "reason": "Clean text with KaTeX from PDF.",
+      "source": "pdf p.19"
+    },
+    {
+      "id": "cse-2021-2-cs-20",
+      "field": "subject",
+      "before": "pds",
+      "after": "coa",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2021-2-cs-20",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "io",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2021-2-cs-20",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "dma",
+        "cycle-stealing",
+        "data-transfer-rate"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2021-2-cs-20",
+      "field": "text",
+      "before": "Consider a computer system with DMA support. The DMA module is transferring\none 8-bit character in one CPU cycle from a device to memory through cycle stealing\nat regular intervals. Consider a 2 MHz processor. If 0.5% processor cycles are used\nfor DMA, the data transfer rate of the device is —\nbits per second.",
+      "after": "Consider a computer system with DMA support. The DMA module is transferring one 8-bit character in one CPU cycle from a device to memory through *cycle stealing* at regular intervals. Consider a 2 MHz processor. If 0.5% processor cycles are used for DMA, the data transfer rate of the device is _____________ bits per second.",
+      "reason": "Clean text from PDF.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2021-2-cs-21",
+      "field": "subject",
+      "before": "pds",
+      "after": "db",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2021-2-cs-21",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "indexing",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2021-2-cs-21",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "dense-index",
+        "secondary-index",
+        "blocking-factor"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2021-2-cs-21",
+      "field": "text",
+      "before": "A data file consisting of 1,50,000 student-records is stored on a hard disk with block\nsize of 4096 bytes. The data file is sorted on the primary key Rol1No. The size of\na record pointer for this disk is 7 bytes. Each student-record has a candidate key\nattribute called ANum of size 12 bytes. Suppose an index file with records consisting\nof two fields, ANum value and the record pointer to the corresponding student record,\nis built and stored on the same disk. Assume that the records of data file and index\nfile are not split across disk blocks. The number of blocks in the index file is",
+      "after": "A data file consisting of 1,50,000 student-records is stored on a hard disk with block size of 4096 bytes. The data file is sorted on the primary key `RollNo`. The size of a record pointer for this disk is 7 bytes. Each student-record has a candidate key attribute called `ANum` of size 12 bytes. Suppose an index file with records consisting of two fields, `ANum` value and the record pointer to the corresponding student record, is built and stored on the same disk. Assume that the records of data file and index file are not split across disk blocks. The number of blocks in the index file is _____________.",
+      "reason": "Clean text from PDF.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2021-2-cs-22",
+      "field": "subject",
+      "before": "pds",
+      "after": "prob",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2021-2-cs-22",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "rv",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2021-2-cs-22",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "binomial-distribution",
+        "standard-deviation",
+        "variance"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2021-2-cs-22",
+      "field": "text",
+      "before": "For a given biased coin, the probability that the outcome of a toss is a head is 0.4.\nThis coin is tossed 1,000 times. Let X denote the random variable whose value\nis the number of times that head appeared in these 1,000 tosses. The standard\ndeviation of X (rounded to 2 decimal places) is —",
+      "after": "For a given biased coin, the probability that the outcome of a toss is a head is 0.4. This coin is tossed 1,000 times. Let $X$ denote the random variable whose value is the number of times that head appeared in these 1,000 tosses. The standard deviation of $X$ (rounded to 2 decimal places) is _____________.",
+      "reason": "Clean text from PDF.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2021-2-cs-23",
+      "field": "subject",
+      "before": "coa",
+      "after": "pds",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2021-2-cs-23",
+      "field": "topic",
+      "before": "isa",
+      "after": "recursion",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2021-2-cs-23",
+      "field": "tags",
+      "before": [
+        "c-prog"
+      ],
+      "after": [
+        "recursion",
+        "gcd",
+        "c-programming"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2021-2-cs-23",
+      "field": "text",
+      "before": "Consider the following ANSI C function:\nint SomeFunction (int x, int y)\nif ((x = 1) || (y = 1)) return 1;\nif (x = y) return x;\nif (x > y) return SomeFunction (x - y, y) ;\nif (y > x) return SomeFunction(x, y - x);\nThe value returned by SomeFunction (15, 255) is -",
+      "after": "Consider the following ANSI C function:\n\n```c\nint SomeFunction(int x, int y)\n{\n  if ((x == 1) || (y == 1)) return 1;\n  if (x == y) return x;\n  if (x > y) return SomeFunction(x - y, y);\n  if (y > x) return SomeFunction(x, y - x);\n}\n```\n\nThe value returned by `SomeFunction(15, 255)` is _____________.",
+      "reason": "Restored code (== and braces) from PDF.",
+      "source": "pdf p.20"
+    },
+    {
+      "id": "cse-2021-2-cs-24",
+      "field": "subject",
+      "before": "pds",
+      "after": "la",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2021-2-cs-24",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "systems",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2021-2-cs-24",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "rank-nullity",
+        "null-space",
+        "rank"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2021-2-cs-24",
+      "field": "text",
+      "before": "Suppose that P is a 4 × 5 matrix such that every solution of the equation Px = 0\nis a scalar multiple of [2 5 4 3 1]F. The rank of P is -",
+      "after": "Suppose that $P$ is a $4 \\times 5$ matrix such that every solution of the equation $P\\mathbf{x} = 0$ is a scalar multiple of $[2\\ 5\\ 4\\ 3\\ 1]^T$. The rank of $P$ is _____________.",
+      "reason": "Clean text with KaTeX from PDF.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2021-2-cs-25",
+      "field": "subject",
+      "before": "pds",
+      "after": "calc",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2021-2-cs-25",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "mvt",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2021-2-cs-25",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "mean-value-theorem",
+        "bounds"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2021-2-cs-25",
+      "field": "text",
+      "before": "Suppose that f : R → R is a differentiable function in the interval [-3,3] such\nthat for every x in the interval, f'(x) ≤ 2. If f(-3) = 7, then f(3) is at most",
+      "after": "Suppose that $f: \\mathbb{R} \\to \\mathbb{R}$ is a continuous function on the interval $[-3, 3]$ and a differentiable function in the interval $(-3, 3)$ such that for every $x$ in the interval, $f'(x) \\le 2$. If $f(-3) = 7$, then $f(3)$ is at most _____________.",
+      "reason": "Restored continuity/differentiability conditions and KaTeX from PDF.",
+      "source": "pdf p.21"
+    },
+    {
+      "id": "cse-2021-2-cs-26",
+      "field": "subject",
+      "before": "pds",
+      "after": "algo",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "cse-2021-2-cs-26",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "greedy",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "cse-2021-2-cs-26",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "huffman-coding",
+        "prefix-codes",
+        "greedy"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "cse-2021-2-cs-26",
+      "field": "text",
+      "before": "Consider the string abbeddeee. Each letter in the string must be assigned a\nbinary code satisfying the following properties:\n1. For any two letters, the code assigned to one letter must not be a prefix of the\ncode assigned to the other letter.\n2. For any two letters of the same frequency, the letter which occurs earlier in the\ndictionary order is assigned a code whose length is at most the length of the\ncode assigned to the other letter.\nAmong the set of all binary code assignments which satisfy the above two properties,\nwhat is the minimum length of the encoded string?",
+      "after": "Consider the string **abbccddeee**. Each letter in the string must be assigned a binary code satisfying the following properties:\n\n1. For any two letters, the code assigned to one letter must not be a prefix of the code assigned to the other letter.\n2. For any two letters of the same frequency, the letter which occurs earlier in the dictionary order is assigned a code whose length is at most the length of the code assigned to the other letter.\n\nAmong the set of all binary code assignments which satisfy the above two properties, what is the minimum length of the encoded string?",
+      "reason": "OCR read “abbeddeee”; restored string abbccddeee and list formatting from PDF.",
+      "source": "pdf p.22"
+    },
+    {
+      "id": "cse-2021-2-cs-27",
+      "field": "subject",
+      "before": "algo",
+      "after": "coa",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "cse-2021-2-cs-27",
+      "field": "topic",
+      "before": "complexity",
+      "after": "cache",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "cse-2021-2-cs-27",
+      "field": "tags",
+      "before": [
+        "asymptotics"
+      ],
+      "after": [
+        "write-through",
+        "write-back",
+        "write-allocate",
+        "inclusive-cache"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "cse-2021-2-cs-27",
+      "field": "text",
+      "before": "Assume a two-level inclusive cache hierarchy, L1 and L2, where L2 is the larger of\nthe two. Consider the following statements.\nS1: Read misses in a write through L1 cache do not result in writebacks\nof dirty lines to the L2.\nS2: Write allocate policy must be used in conjunction with write\nthrough caches and no-write allocate policy is used with writeback\ncaches.\nWhich of the following statements is correct?",
+      "after": "Assume a two-level inclusive cache hierarchy, L1 and L2, where L2 is the larger of the two. Consider the following statements.\n\n- $S_1$: Read misses in a write through L1 cache do not result in writebacks of dirty lines to the L2.\n- $S_2$: Write allocate policy *must* be used in conjunction with write through caches and no-write allocate policy is used with writeback caches.\n\nWhich of the following statements is correct?",
+      "reason": "Clean text from PDF.",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "cse-2021-2-cs-27",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Sy is true and S2 is false"
+        },
+        {
+          "l": "B",
+          "t": "S1 is false and S2 is true"
+        },
+        {
+          "l": "C",
+          "t": "Sy is true and S2 is true"
+        },
+        {
+          "l": "D",
+          "t": "S1 is false and S2 is false"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$S_1$ is true and $S_2$ is false"
+        },
+        {
+          "l": "B",
+          "t": "$S_1$ is false and $S_2$ is true"
+        },
+        {
+          "l": "C",
+          "t": "$S_1$ is true and $S_2$ is true"
+        },
+        {
+          "l": "D",
+          "t": "$S_1$ is false and $S_2$ is false"
+        }
+      ],
+      "reason": "OCR read S1 as “Sy”.",
+      "source": "pdf p.23"
+    },
+    {
+      "id": "cse-2021-2-cs-28",
+      "field": "subject",
+      "before": "pds",
+      "after": "dl",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.24"
+    },
+    {
+      "id": "cse-2021-2-cs-28",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "sequential",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.24"
+    },
+    {
+      "id": "cse-2021-2-cs-28",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "mealy-machine",
+        "state-assignment",
+        "sequential-circuits"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.24"
+    },
+    {
+      "id": "cse-2021-2-cs-29",
+      "field": "subject",
+      "before": "pds",
+      "after": "prob",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "cse-2021-2-cs-29",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "rv",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "cse-2021-2-cs-29",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "expected-value",
+        "independent-events"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "cse-2021-2-cs-29",
+      "field": "text",
+      "before": "In an examination, a student can choose the order in which two questions (QuesA\nand QuesB) must be attempted.\n- If the first question is answered wrong, the student gets zero marks.\n- If the first question is answered correctly and the second question is not answered\ncorrectly, the student gets the marks only for the first question.\n- If both the questions are answered correctly, the student gets the sum of the\nmarks of the two questions.\nThe following table shows the probability of correctly answering a question and the\nmarks of the question respectively.\nquestion\nprobability of answering correctly\nQuesA\n0.8\nQuesB\n0.5\nmarks\n10\n20\nAssuming that the student always wants to maximize her expected marks in the\nexamination, in which order should she attempt the questions and what is the\nexpected marks for that order (assume that the questions are independent)?",
+      "after": "In an examination, a student can choose the order in which two questions (`QuesA` and `QuesB`) must be attempted.\n\n- If the first question is answered wrong, the student gets zero marks.\n- If the first question is answered correctly and the second question is not answered correctly, the student gets the marks only for the first question.\n- If both the questions are answered correctly, the student gets the sum of the marks of the two questions.\n\nThe following table shows the probability of correctly answering a question and the marks of the question respectively.\n\n| question | probability of answering correctly | marks |\n|---|---|---|\n| `QuesA` | 0.8 | 10 |\n| `QuesB` | 0.5 | 20 |\n\nAssuming that the student always wants to maximize her expected marks in the examination, in which order should she attempt the questions and what is the expected marks for that order (assume that the questions are independent)?",
+      "reason": "Restored table as markdown from PDF.",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "cse-2021-2-cs-29",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "First QuesA and then QuesB. Expected marks 14."
+        },
+        {
+          "l": "B",
+          "t": "First QuesB and then QuesA. Expected marks 14."
+        },
+        {
+          "l": "C",
+          "t": "First QuesB and then QuesA. Expected marks 22."
+        },
+        {
+          "l": "D",
+          "t": "First QuesA and then QuesB. Expected marks 16."
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "First `QuesA` and then `QuesB`. Expected marks 14."
+        },
+        {
+          "l": "B",
+          "t": "First `QuesB` and then `QuesA`. Expected marks 14."
+        },
+        {
+          "l": "C",
+          "t": "First `QuesB` and then `QuesA`. Expected marks 22."
+        },
+        {
+          "l": "D",
+          "t": "First `QuesA` and then `QuesB`. Expected marks 16."
+        }
+      ],
+      "reason": "Monospace question names as in PDF.",
+      "source": "pdf p.25"
+    },
+    {
+      "id": "cse-2021-2-cs-30",
+      "field": "subject",
+      "before": "cn",
+      "after": "cd",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.26"
+    },
+    {
+      "id": "cse-2021-2-cs-30",
+      "field": "topic",
+      "before": "network",
+      "after": "optimization",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.26"
+    },
+    {
+      "id": "cse-2021-2-cs-30",
+      "field": "tags",
+      "before": [
+        "network"
+      ],
+      "after": [
+        "common-subexpression-elimination",
+        "code-optimization"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.26"
+    },
+    {
+      "id": "cse-2021-2-cs-30",
+      "field": "text",
+      "before": "Consider the following ANSI C code segment:\nz = x + 3 + y->f1 + y->f2;\nfor (i = 0; i < 200; i = i + 2){\nif (z > i) {\np=p +x + 3;\nq = q + y->f1;\n} else {\np = p + y->f2;\nq = +x + 3;\nAssume that the variable y points to a struct (allocated on the heap) containing\ntwo fields f1 and f2, and the local variables x, y, z, p, q, and i are allotted\nregisters. Common sub-expression elimination (CSE) optimization is applied on\nthe code. The number of addition and dereference operations (of the form y->f1\nor y->f2) in the optimized code, respectively, are:",
+      "after": "Consider the following ANSI C code segment:\n\n```c\nz = x + 3 + y->f1 + y->f2;\nfor (i = 0; i < 200; i = i + 2){\n  if (z > i) {\n    p = p + x + 3;\n    q = q + y->f1;\n  } else {\n    p = p + y->f2;\n    q = q + x + 3;\n  }\n}\n```\n\nAssume that the variable `y` points to a `struct` (allocated on the heap) containing two fields `f1` and `f2`, and the local variables `x`, `y`, `z`, `p`, `q`, and `i` are allotted registers. Common sub-expression elimination (CSE) optimization is applied on the code. The number of addition and dereference operations (of the form `y->f1` or `y->f2`) in the optimized code, respectively, are:",
+      "reason": "Restored code (else branch was garbled) from PDF.",
+      "source": "pdf p.26"
+    },
+    {
+      "id": "cse-2021-2-cs-31",
+      "field": "subject",
+      "before": "pds",
+      "after": "db",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "cse-2021-2-cs-31",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "sql",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "cse-2021-2-cs-31",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "nested-query",
+        "aggregate",
+        "group-by"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "cse-2021-2-cs-31",
+      "field": "text",
+      "before": "The relation scheme given below is used to store information about the employees of\na company, where empId is the key and deptId indicates the department to which\nthe employee is assigned. Each employee is assigned to exactly one department.\nemp (empId, name, gender, salary, deptId)\nConsider the following SQL query:\nselect deptId, count (*)\nfrom emp\nwhere gender = \"female\" and salary > (select avg(salary) from emp)\ngroup by deptId;\nThe above query gives, for each department in the company, the number of\nfemale employees whose salary is greater than the average salary of",
+      "after": "The relation scheme given below is used to store information about the employees of a company, where `empId` is the key and `deptId` indicates the department to which the employee is assigned. Each employee is assigned to exactly one department.\n\n```\nemp(empId, name, gender, salary, deptId)\n```\n\nConsider the following SQL query:\n\n```sql\nselect deptId, count(*)\nfrom emp\nwhere gender = \"female\" and salary > (select avg(salary) from emp)\ngroup by deptId;\n```\n\nThe above query gives, for each department in the company, the number of female employees whose salary is greater than the average salary of",
+      "reason": "Clean text with code blocks from PDF.",
+      "source": "pdf p.27"
+    },
+    {
+      "id": "cse-2021-2-cs-32",
+      "field": "subject",
+      "before": "ga",
+      "after": "db",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.28"
+    },
+    {
+      "id": "cse-2021-2-cs-32",
+      "field": "topic",
+      "before": "quant",
+      "after": "transactions",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.28"
+    },
+    {
+      "id": "cse-2021-2-cs-32",
+      "field": "tags",
+      "before": [
+        "quant"
+      ],
+      "after": [
+        "conflict-serializability",
+        "recoverability",
+        "precedence-graph"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.28"
+    },
+    {
+      "id": "cse-2021-2-cs-32",
+      "field": "text",
+      "before": "Let $S$ be the following schedule of operations of three transactions $T_1$, $T_2$, and $T_3$:\n\n$$S: r_1(X);\\; r_2(Y);\\; r_3(Z);\\; w_1(X);\\; w_2(Y);\\; w_3(Z);\\; r_2(X);\\; r_1(Y);$$\n\nConsider the following two statements:\n- P: Schedule $S$ is conflict serializable.\n- Q: Schedule $S$ is view serializable.\n\nWhich of the following choices is correct?",
+      "after": "Let $S$ be the following schedule of operations of three transactions $T_1$, $T_2$ and $T_3$ in a relational database system:\n\n$$R_2(Y), R_1(X), R_3(Z), R_1(Y), W_1(X), R_2(Z), W_2(Y), R_3(X), W_3(Z)$$\n\nConsider the statements P and Q below:\n\n- P: $S$ is conflict-serializable.\n- Q: If $T_3$ commits before $T_1$ finishes, then $S$ is recoverable.\n\nWhich one of the following choices is correct?",
+      "reason": "Stored text had a different schedule and a different statement Q; restored the schedule and statements from the PDF.",
+      "source": "pdf p.28"
+    },
+    {
+      "id": "cse-2021-2-cs-33",
+      "field": "subject",
+      "before": "pds",
+      "after": "prob",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.28"
+    },
+    {
+      "id": "cse-2021-2-cs-33",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "basic",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.28"
+    },
+    {
+      "id": "cse-2021-2-cs-33",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "polya-urn",
+        "total-probability",
+        "conditional-probability"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.28"
+    },
+    {
+      "id": "cse-2021-2-cs-33",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "$\\frac{r}{r+b}$"
+        },
+        {
+          "l": "B",
+          "t": "$\\frac{r}{r+b+3}$"
+        },
+        {
+          "l": "C",
+          "t": "$\\frac{r+3}{r+b+3}$"
+        },
+        {
+          "l": "D",
+          "t": "$\\frac{r(r+1)(r+2)(r+3)}{(r+b)(r+b+1)(r+b+2)(r+b+3)}$"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\frac{r}{r+b}$"
+        },
+        {
+          "l": "B",
+          "t": "$\\frac{r}{r+b+3}$"
+        },
+        {
+          "l": "C",
+          "t": "$\\frac{r+3}{r+b+3}$"
+        },
+        {
+          "l": "D",
+          "t": "$\\left(\\frac{r}{r+b}\\right)\\left(\\frac{r+1}{r+b+1}\\right)\\left(\\frac{r+2}{r+b+2}\\right)\\left(\\frac{r+3}{r+b+3}\\right)$"
+        }
+      ],
+      "reason": "Option D written as the product of four factors, as in the PDF.",
+      "source": "pdf p.28"
+    },
+    {
+      "id": "cse-2021-2-cs-34",
+      "field": "subject",
+      "before": "pds",
+      "after": "cn",
+      "reason": "Correct subject for this question.",
+      "source": "pdf p.29"
+    },
+    {
+      "id": "cse-2021-2-cs-34",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "datalink",
+      "reason": "Correct topic for this question.",
+      "source": "pdf p.29"
+    },
+    {
+      "id": "cse-2021-2-cs-34",
+      "field": "tags",
+      "before": [
+        "computer-science"
+      ],
+      "after": [
+        "crc",
+        "error-detection",
+        "polynomial-division"
+      ],
+      "reason": "Specific tags for the corrected subject/topic.",
+      "source": "pdf p.29"
+    },
+    {
+      "id": "cse-2021-2-cs-34",
+      "field": "text",
+      "before": "Consider the cyclic redundancy check (CRC) based error detecting scheme having the generator polynomial $X^3 + X + 1$. Suppose the message $M = 11000$ is to be transmitted. Check bits $c_2 c_1 c_0$ are appended at the end of the message by the transmitter using the above CRC scheme. The transmitted bit string is denoted by $M \\, c_2 c_1 c_0$. The value of the checkbit sequence $c_2 c_1 c_0$ is:",
+      "after": "Consider the cyclic redundancy check (CRC) based error detecting scheme having the generator polynomial $X^3 + X + 1$. Suppose the message $m_4m_3m_2m_1m_0 = 11000$ is to be transmitted. Check bits $c_2c_1c_0$ are appended at the end of the message by the transmitter using the above CRC scheme. The transmitted bit string is denoted by $m_4m_3m_2m_1m_0c_2c_1c_0$. The value of the checkbit sequence $c_2c_1c_0$ is",
+      "reason": "Restored message-bit notation from PDF.",
+      "source": "pdf p.29"
+    }
+  ]
+}
