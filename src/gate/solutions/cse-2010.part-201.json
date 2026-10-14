@@ -1,0 +1,1359 @@
+{
+  "paper": "cse-2010",
+  "version": 2,
+  "solutions": {
+    "cse-2010-cs-23": {
+      "approach": "Read each entry condition: P1 waits while S1 = S2, P2 waits while S1 ≠ S2. The two entry conditions are complementary, and each exit hands the turn to the other process — classic strict alternation.",
+      "concepts": [
+        "Mutual exclusion",
+        "Progress",
+        "Strict alternation"
+      ],
+      "steps": [
+        {
+          "title": "Entry conditions",
+          "body": "P1 passes its loop only when $S1 \\ne S2$; P2 passes only when $S1 = S2$. Both cannot be true at once, so both processes can never be inside together — **mutual exclusion holds**."
+        },
+        {
+          "title": "What each exit does",
+          "body": "P1 exits with $S1 = S2$, which blocks P1 and admits P2. P2 exits with $S2 = \\lnot S1$, i.e. $S1 \\ne S2$, which blocks P2 and admits P1. The turn strictly alternates."
+        },
+        {
+          "title": "Progress fails",
+          "body": "If P1 leaves its CS and P2 never wants to enter, then $S1 = S2$ stays true and P1 waits forever although the CS is free. A process outside its CS (P2) is deciding who enters, so **progress is violated**."
+        }
+      ],
+      "answer": {
+        "value": "Mutual exclusion but not progress",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Complementary entry conditions give mutual exclusion; strict alternation breaks progress."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Mutual exclusion does hold — the two entry conditions cannot both be true."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Mutual exclusion holds, so \"neither\" is wrong."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Progress fails: P1 cannot re-enter unless P2 takes its turn."
+        }
+      ],
+      "shortcut": "Turn-variable style code (enter when it is \"my turn\", exit by giving the turn away) always has ME but no progress.",
+      "pitfalls": [
+        "Random initial values do not matter: whichever condition holds first, exactly one process can enter."
+      ],
+      "verification": "Case S1=S2 initially: only P2 can enter, then the roles swap after each exit — never both inside, but neither can enter twice in a row."
+    },
+    "cse-2010-cs-24": {
+      "approach": "Track what the 4 FIFO frames hold after the forward pass: the last 4 pages referenced. The reverse pass starts with exactly those 4 pages, then every other page is new.",
+      "concepts": [
+        "FIFO page replacement",
+        "Page faults"
+      ],
+      "steps": [
+        {
+          "title": "Forward pass",
+          "body": "Call the pages $1,2,\\dots,100$ in the order first accessed. All 100 are distinct, so every access faults: $100$ faults. FIFO leaves the last four loaded pages in memory: $\\{97, 98, 99, 100\\}$."
+        },
+        {
+          "title": "Reverse pass — first four",
+          "body": "The reverse order begins $100, 99, 98, 97$: all four are resident, so **0 faults**."
+        },
+        {
+          "title": "Reverse pass — the rest",
+          "body": "Pages $96, 95, \\dots, 1$ were evicted long ago and each is accessed once, so each faults: $96$ faults.\n\nTotal $= 100 + 0 + 96 = 196$."
+        }
+      ],
+      "answer": {
+        "value": "196",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "100 + 96 = 196."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "192 would mean 8 hits; only 4 pages are resident at the turnaround."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "197 would mean only 3 hits; all 4 resident pages are hit."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "195 would mean 5 hits; after the 4 hits every reference is a new page."
+        }
+      ],
+      "shortcut": "Faults $= 2n - f = 200 - 4 = 196$ for $n$ pages, $f$ frames.",
+      "verification": "Small case n = 5, f = 4: forward 5 faults, frames {2,3,4,5}; reverse 5,4,3,2 hit, 1 faults → 6 = 2·5 − 4. ✓"
+    },
+    "cse-2010-cs-25": {
+      "approach": "Check each claim against the standard properties of the schedulers.",
+      "concepts": [
+        "SRTF",
+        "Starvation",
+        "Round robin response time"
+      ],
+      "steps": [
+        {
+          "title": "I and II",
+          "body": "SRTF keeps picking whichever job has the least remaining time; a long job can be bypassed forever by a stream of short arrivals — **I true**. SRTF and preemptive priority scheduling are preemptive policies that can starve a process — **II true** (\"may\")."
+        },
+        {
+          "title": "III",
+          "body": "Round robin gives every ready process the CPU within one round of time slices, whereas under FCFS a process waits behind all earlier jobs to completion. RR has better response time — **III true**."
+        }
+      ],
+      "answer": {
+        "value": "I, II and III",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "II and III are also true."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "II is true too: preemptive policies such as SRTF/priority can starve."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "I is true: long jobs can starve under SRTF."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "All three statements are true."
+        }
+      ],
+      "verification": "Each statement uses \"may\"/\"better in terms of response time\", matching textbook properties."
+    },
+    "cse-2010-cs-26": {
+      "approach": "A computer is declared faulty either when it is faulty and the test is right, or when it is fine and the test is wrong. Add the two disjoint cases.",
+      "concepts": [
+        "Total probability"
+      ],
+      "steps": [
+        {
+          "title": "Faulty and correctly flagged",
+          "body": "The computer is faulty with probability $p$, and the test then gives the correct verdict \"faulty\" with probability $q$: $P = p \\cdot q$."
+        },
+        {
+          "title": "Good but wrongly flagged",
+          "body": "The computer is fine with probability $1-p$, and the test errs (says \"faulty\") with probability $1-q$: $P = (1-p)(1-q)$."
+        },
+        {
+          "title": "Add",
+          "body": "$P(\\text{declared faulty}) = pq + (1-p)(1-q)$."
+        }
+      ],
+      "answer": {
+        "value": "pq + (1−p)(1−q)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Sum of both ways of being declared faulty."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "This is faulty-but-declared-good."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "This is good-and-declared-good."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Misses the false-positive case (1−p)(1−q)."
+        }
+      ],
+      "verification": "p = 1, q = 1 gives 1 (every computer faulty and caught); p = 0, q = 1 gives 0. Only A satisfies both."
+    },
+    "cse-2010-cs-27": {
+      "approach": "Write divisors as $2^a5^b$ and count exponent pairs.",
+      "concepts": [
+        "Divisor counting",
+        "Classical probability"
+      ],
+      "steps": [
+        {
+          "title": "All divisors",
+          "body": "$10^{99} = 2^{99}5^{99}$, so a divisor is $2^a5^b$ with $0 \\le a, b \\le 99$: $100 \\times 100 = 10000$ divisors."
+        },
+        {
+          "title": "Multiples of $10^{96}$",
+          "body": "Need $a \\ge 96$ and $b \\ge 96$: $a, b \\in \\{96,97,98,99\\}$, giving $4 \\times 4 = 16$."
+        },
+        {
+          "title": "Probability",
+          "body": "$\\dfrac{16}{10000} = \\dfrac{1}{625}$."
+        }
+      ],
+      "answer": {
+        "value": "1/625",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "16/10000 = 1/625."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "4/625 = 64/10000 — too many favourable divisors."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "12/625 has no matching count."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "16/625 forgets to divide 16 by 10000 (not 625)."
+        }
+      ],
+      "verification": "Equivalently, a divisor is a multiple of 10^96 iff it is 10^96 times a divisor of 10^3 (16 divisors)."
+    },
+    "cse-2010-cs-28": {
+      "approach": "First apply quick filters (max degree ≤ n−1, even degree sum); then run Havel–Hakimi on the survivors.",
+      "concepts": [
+        "Degree sequence",
+        "Havel–Hakimi",
+        "Handshaking lemma"
+      ],
+      "steps": [
+        {
+          "title": "Quick filter",
+          "body": "Each sequence has 8 vertices, so a degree can be at most 7. **IV** contains 8 — impossible. Degree sums: I $=32$, II $=34$, III $=34$ (all even)."
+        },
+        {
+          "title": "Havel–Hakimi on I",
+          "body": "$7,6,5,4,4,3,2,1 \\to 5,4,3,3,2,1,0 \\to 3,2,2,1,0,0 \\to 1,1,0,0,0 \\to 0,0,0,0$ ✓ graphical."
+        },
+        {
+          "title": "Havel–Hakimi on II",
+          "body": "$6,6,6,6,3,3,2,2 \\to 5,5,5,2,2,1,2 = 5,5,5,2,2,2,1 \\to 4,4,1,1,1,1 \\to 3,0,0,0,1 = 3,1,0,0,0 \\to 0,-1,-1,0$ ✗ — a negative degree, so **II is not graphical**."
+        },
+        {
+          "title": "Havel–Hakimi on III",
+          "body": "$7,6,6,4,4,3,2,2 \\to 5,5,3,3,2,1,1 \\to 4,2,2,1,0,1 = 4,2,2,1,1,0 \\to 1,1,0,0,0 \\to 0,0,0,0$ ✓ graphical.\n\nSo II and IV cannot be degree sequences."
+        }
+      ],
+      "answer": {
+        "value": "II and IV",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "I is graphical (Havel–Hakimi reduces to all zeros)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "III is graphical."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "II also fails Havel–Hakimi."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "IV has degree 8 with 8 vertices; II fails Havel–Hakimi."
+        }
+      ],
+      "pitfalls": [
+        "An even degree sum is necessary but not sufficient — II has an even sum yet is not graphical."
+      ],
+      "verification": "For II: the four degree-6 vertices each miss only one other vertex, forcing the two degree-2 vertices to have degree ≥ 3 between them — consistent with the Havel–Hakimi failure."
+    },
+    "cse-2010-cs-29": {
+      "approach": "Use trace = sum of eigenvalues and determinant = product of eigenvalues.",
+      "concepts": [
+        "Eigenvalues",
+        "Trace",
+        "Determinant"
+      ],
+      "steps": [
+        {
+          "title": "Trace",
+          "body": "$2 + y = 4 + 8 = 12 \\Rightarrow y = 10$."
+        },
+        {
+          "title": "Determinant",
+          "body": "$2y - 3x = 4 \\times 8 = 32 \\Rightarrow 20 - 3x = 32 \\Rightarrow x = -4$."
+        }
+      ],
+      "answer": {
+        "value": "x = −4, y = 10",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "det = 20 − 12 = 8 ≠ 32."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Trace = 10 ≠ 12."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Trace = 11 ≠ 12."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Trace 12 and det 20 + 12 = 32."
+        }
+      ],
+      "verification": "$\\det\\begin{bmatrix}2-\\lambda&3\\\\-4&10-\\lambda\\end{bmatrix} = \\lambda^2 - 12\\lambda + 32 = (\\lambda-4)(\\lambda-8)$ ✓"
+    },
+    "cse-2010-cs-30": {
+      "approach": "Push the negation outward: the formula is the negation of \"someone can fool everyone at all times\".",
+      "concepts": [
+        "Quantifier negation"
+      ],
+      "steps": [
+        {
+          "title": "Rewrite",
+          "body": "$\\forall x\\,\\exists y\\,\\exists t\\,\\lnot F(x,y,t) \\equiv \\lnot\\,\\exists x\\,\\forall y\\,\\forall t\\,F(x,y,t)$."
+        },
+        {
+          "title": "Read it",
+          "body": "$\\exists x\\,\\forall y\\,\\forall t\\,F$ = \"someone can fool everyone all the time\". Its negation: **no one can fool everyone all the time**."
+        }
+      ],
+      "answer": {
+        "value": "No one can fool everyone all the time.",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "That is $\\forall x\\exists y\\exists t\\,F$ — the negation sign is missing."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Exact reading of ¬∃x∀y∀t F."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "\"cannot fool some person all the time\" reads as $\\forall x\\exists y\\forall t\\,\\lnot F$ — the time quantifier is wrong."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "That is $\\lnot\\exists x\\exists y\\exists t\\,F$, i.e. nobody ever fools anyone — far stronger."
+        }
+      ],
+      "verification": "For each x the formula only needs one victim y and one instant t where x fails — exactly what \"x cannot fool everyone all the time\" means."
+    },
+    "cse-2010-cs-31": {
+      "approach": "Write each NOR output, then simplify level by level using De Morgan: NOR of two NORs is the AND of their ORs.",
+      "concepts": [
+        "NOR gate",
+        "De Morgan",
+        "Boolean simplification"
+      ],
+      "given": "| Gate | Inputs |\n|---|---|\n| G1 | P, Q |\n| G2 | Q, R |\n| G3 | P, R |\n| G4 | Q, R |\n| G5 | G1, G2 |\n| G6 | G3, G4 |\n| f | G5, G6 |",
+      "steps": [
+        {
+          "title": "Level 2, upper",
+          "body": "$G5 = \\overline{\\overline{P+Q} + \\overline{Q+R}} = (P+Q)(Q+R) = Q + PR$."
+        },
+        {
+          "title": "Level 2, lower",
+          "body": "$G6 = \\overline{\\overline{P+R} + \\overline{Q+R}} = (P+R)(Q+R) = R + PQ$."
+        },
+        {
+          "title": "Output",
+          "body": "$f = \\overline{G5 + G6} = \\overline{Q + PR + R + PQ}$. Since $PR \\le R$ and $PQ \\le Q$ (absorption), $Q + R + PR + PQ = Q + R$, so\n$$f = \\overline{Q+R}.$$"
+        }
+      ],
+      "answer": {
+        "value": "f = (Q + R)′",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": false,
+        "keyNote": "The stored key D, (P+Q+R)′, is wrong: with P = 1, Q = R = 0 the circuit gives G5 = 0, G6 = 0, so f = 1, whereas (P+Q+R)′ = 0. The derivation gives (Q+R)′, option A (also the widely accepted answer)."
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Absorption reduces Q + R + PR + PQ to Q + R."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Q = 0, P = 0, R = 1 gives f = 0 but (P+Q)′ = 1."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "P = 0, R = 0, Q = 1 gives f = 0 but (P+R)′ = 1."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "P = 1, Q = R = 0 gives f = 1 but (P+Q+R)′ = 0 — P does not affect f."
+        }
+      ],
+      "pitfalls": [
+        "Assuming the output depends on all three inputs; P is absorbed completely."
+      ],
+      "verification": "Truth table check: f = 1 exactly when Q = R = 0 — for P = 0 and P = 1 alike (e.g. P=1,Q=R=0: G1=0,G2=1,G3=0,G4=1 → G5=0,G6=0 → f=1)."
+    },
+    "cse-2010-cs-32": {
+      "approach": "Both T inputs are 1, so each flip-flop toggles on every rising edge of its own clock. FF0 toggles on every clock; FF1 toggles when Q0 rises from 0 to 1.",
+      "concepts": [
+        "T flip-flop",
+        "Ripple counter",
+        "Edge triggering"
+      ],
+      "steps": [
+        {
+          "title": "Rule",
+          "body": "$Q_0$ toggles every clock pulse. $Q_1$ toggles only on a $0 \\to 1$ transition of $Q_0$ (positive-edge clock)."
+        },
+        {
+          "title": "Trace from 00",
+          "body": "| Pulse | $Q_0$ | $Q_0$ edge | $Q_1$ | $Q_1Q_0$ |\n|---|---|---|---|---|\n| 1 | 0→1 | rising | 0→1 | 11 |\n| 2 | 1→0 | falling | 1 | 10 |\n| 3 | 0→1 | rising | 1→0 | 01 |\n| 4 | 1→0 | falling | 0 | 00 |",
+          "scene": {
+            "reveal": 20,
+            "hl": [
+              {
+                "r": 3
+              }
+            ]
+          }
+        },
+        {
+          "title": "Read the sequence",
+          "body": "$11, 10, 01, 00$ — a down counter ($3,2,1,0$), because the second stage is clocked by $Q_0$ rather than $\\overline{Q_0}$."
+        }
+      ],
+      "answer": {
+        "value": "11, 10, 01, 00",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Matches the trace (down counting)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "First value 10 has Q0 = 0, but T0 = 1 forces Q0 to toggle to 1 on the first pulse."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Same flaw: first value 10 means Q0 did not toggle."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Third value 00 would need Q0 to stay 0 across a pulse."
+        }
+      ],
+      "shortcut": "Positive-edge T flip-flops with the next stage clocked by Q form a ripple down counter: 00 → 11 → 10 → 01 → 00.",
+      "verification": "After 4 pulses the 2-bit counter returns to 00, as it must.",
+      "animation": {
+        "kind": "table",
+        "title": "T flip-flop trace",
+        "cols": [
+          "Pulse",
+          "Q0",
+          "Q0 edge",
+          "Q1",
+          "Q1Q0"
+        ],
+        "rows": [
+          [
+            1,
+            "0→1",
+            "rising",
+            "0→1",
+            "11"
+          ],
+          [
+            2,
+            "1→0",
+            "falling",
+            "1",
+            "10"
+          ],
+          [
+            3,
+            "0→1",
+            "rising",
+            "1→0",
+            "01"
+          ],
+          [
+            4,
+            "1→0",
+            "falling",
+            "0",
+            "00"
+          ]
+        ],
+        "reveal": 0
+      }
+    },
+    "cse-2010-cs-34": {
+      "approach": "Split on whether a₀ is in the best subsequence. If it is, every following chosen element moves one position right in the weight formula, so its contribution halves.",
+      "concepts": [
+        "Optimal substructure",
+        "Recurrence"
+      ],
+      "steps": [
+        {
+          "title": "a₀ excluded",
+          "body": "The subsequence is a subsequence of $a_1,\\dots,a_{n-1}$; the best weight is $Y$."
+        },
+        {
+          "title": "a₀ included",
+          "body": "If the rest is $b_0, b_1, \\dots$ (from $a_1,\\dots$), the weight is $a_0 + b_0/2 + b_1/4 + \\dots = a_0 + \\tfrac12(b_0 + b_1/2 + \\dots)$. Maximising the bracket gives $a_0 + Y/2$."
+        },
+        {
+          "title": "Combine",
+          "body": "$X = \\max\\left(Y,\\; a_0 + \\dfrac{Y}{2}\\right)$."
+        }
+      ],
+      "answer": {
+        "value": "max(Y, a₀ + Y/2)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Ignores the halving of weights when a₀ is prepended."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Both cases covered with correct halving."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Weights halve, not double."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Forces a₀ to be included; with negative a₀ dropping it is better."
+        }
+      ],
+      "verification": "Sequence (−5, 4): Y = 4, a₀ + Y/2 = −3, so X = 4 (choose just 4 as the first element). Option D would give −3."
+    },
+    "cse-2010-cs-35": {
+      "approach": "Unroll the recursion from the end of the array: f adds an even element and subtracts the remaining result after an odd element.",
+      "concepts": [
+        "Recursion",
+        "Pointer arithmetic"
+      ],
+      "steps": [
+        {
+          "title": "Base and last element",
+          "body": "$f(\\{\\},0) = 0$. Last element $6$ is even: $f(\\{6\\}) = 6 + 0 = 6$.",
+          "scene": {
+            "reveal": 3,
+            "hl": [
+              {
+                "r": 0
+              }
+            ]
+          }
+        },
+        {
+          "title": "Unwind",
+          "body": "$f(\\{11,6\\}) = 11 - 6 = 5$ (odd)\n\n$f(\\{4,11,6\\}) = 4 + 5 = 9$ (even)\n\n$f(\\{13,4,11,6\\}) = 13 - 9 = 4$ (odd)\n\n$f(\\{7,13,4,11,6\\}) = 7 - 4 = 3$ (odd)",
+          "scene": {
+            "reveal": 15,
+            "hl": [
+              {
+                "r": 4
+              }
+            ]
+          }
+        },
+        {
+          "title": "Top call",
+          "body": "$f(\\{12,7,13,4,11,6\\}) = 12 + 3 = 15$ (12 is even). The program prints **15**.",
+          "scene": {
+            "reveal": 18,
+            "hl": [
+              {
+                "r": 5,
+                "tone": "success"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "15",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "−9 does not appear anywhere in the trace; the top call is 12 + 3."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "5 is only f({11,6})."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "12 + 3 = 15."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "19 ignores that odd elements subtract the rest."
+        }
+      ],
+      "verification": "Expanding: 12 + (7 − (13 − (4 + (11 − 6)))) = 12 + (7 − (13 − 9)) = 12 + 3 = 15.",
+      "animation": {
+        "kind": "table",
+        "title": "Return values (innermost first)",
+        "cols": [
+          "call",
+          "parity",
+          "value"
+        ],
+        "rows": [
+          [
+            "f({6})",
+            "even",
+            "6 + 0 = 6"
+          ],
+          [
+            "f({11,6})",
+            "odd",
+            "11 − 6 = 5"
+          ],
+          [
+            "f({4,…})",
+            "even",
+            "4 + 5 = 9"
+          ],
+          [
+            "f({13,…})",
+            "odd",
+            "13 − 9 = 4"
+          ],
+          [
+            "f({7,…})",
+            "odd",
+            "7 − 4 = 3"
+          ],
+          [
+            "f({12,…})",
+            "even",
+            "12 + 3 = 15"
+          ]
+        ],
+        "reveal": 0
+      }
+    },
+    "cse-2010-cs-36": {
+      "approach": "After the loop, p is the last node and q the second-last. Detach p from q, point p at the old head, and make p the head — in that order so no pointer is lost.",
+      "concepts": [
+        "Singly linked list",
+        "Pointer manipulation"
+      ],
+      "steps": [
+        {
+          "title": "State after the loop",
+          "body": "For list $1 \\to 2 \\to 3 \\to 4$: $q$ = node 3, $p$ = node 4, $p \\to next$ = NULL."
+        },
+        {
+          "title": "Required updates",
+          "body": "1. `q->next = NULL;` — node 3 becomes the tail.\n2. `p->next = head;` — node 4 points to node 1.\n3. `head = p;` — result $4 \\to 1 \\to 2 \\to 3$. This is option D."
+        }
+      ],
+      "answer": {
+        "value": "q->next = NULL; p->next = head; head = p;",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Sets the local q to NULL but node 3 still points to node 4, creating a cycle 4→1→2→3→4."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "head = p first, so p->next = head makes p point to itself; the rest of the list is lost."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "p->next = q gives 4→3→NULL; nodes 1, 2 are lost."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct order: cut tail, link to old head, update head."
+        }
+      ],
+      "verification": "Two-node list 1→2: q=1, p=2; D gives 1->next=NULL, 2->next=1, head=2 → 2→1 ✓."
+    },
+    "cse-2010-cs-37": {
+      "approach": "Do liveness analysis in the given order: the minimum registers without spilling equals the maximum number of simultaneously live values.",
+      "concepts": [
+        "Liveness analysis",
+        "Register allocation"
+      ],
+      "steps": [
+        {
+          "title": "Live sets after each statement",
+          "body": "Working backwards (only $d$ and $f$ are used by the return; $d$ is redefined before use, so the first $d$ dies at $e = c + d$):\n\n| Statement | Live after |\n|---|---|\n| a = 1 | a |\n| b = 10 | a, b |\n| c = 20 | a, b, c |\n| d = a + b | c, d |\n| e = c + d | c, e |\n| f = c + e | c, e, f |\n| b = c + e | b, f |\n| e = b + f | e, f |\n| d = 5 + e | d, f |\n| return d + f | — |",
+          "scene": {
+            "reveal": 27,
+            "hl": [
+              {
+                "r": 2,
+                "tone": "warning"
+              },
+              {
+                "r": 5,
+                "tone": "warning"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Maximum",
+          "body": "At most **3** values are live at once (after `c = 20` and after `f = c + e`), and each statement can reuse a register of an operand that dies there, so 3 registers suffice."
+        }
+      ],
+      "answer": {
+        "value": "3",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "After c = 20, a, b and c are all live and needed later."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Maximum live set size is 3."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Never 4 values live at once."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "One register per variable is not the minimum."
+        }
+      ],
+      "verification": "Explicit 3-register assignment: a, b, c → R1, R2, R3; d = a + b → R1; e = c + d → R1; f = c + e → R2; b = c + e → R3; e = b + f → R1; d = 5 + e → R1; return R1 + R2. No spill.",
+      "animation": {
+        "kind": "table",
+        "title": "Live variables",
+        "cols": [
+          "statement",
+          "live after",
+          "count"
+        ],
+        "rows": [
+          [
+            "a = 1",
+            "a",
+            1
+          ],
+          [
+            "b = 10",
+            "a, b",
+            2
+          ],
+          [
+            "c = 20",
+            "a, b, c",
+            3
+          ],
+          [
+            "d = a + b",
+            "c, d",
+            2
+          ],
+          [
+            "e = c + d",
+            "c, e",
+            2
+          ],
+          [
+            "f = c + e",
+            "c, e, f",
+            3
+          ],
+          [
+            "b = c + e",
+            "b, f",
+            2
+          ],
+          [
+            "e = b + f",
+            "e, f",
+            2
+          ],
+          [
+            "d = 5 + e",
+            "d, f",
+            2
+          ]
+        ],
+        "reveal": 0
+      }
+    },
+    "cse-2010-cs-38": {
+      "approach": "Check LL(1) via FIRST sets of the alternatives; every LL(1) grammar is also LR(1).",
+      "concepts": [
+        "LL(1)",
+        "LR(1)",
+        "FIRST sets"
+      ],
+      "steps": [
+        {
+          "title": "LL(1) test",
+          "body": "Alternatives of $S$: $aSa$, $bS$, $c$ with FIRST sets $\\{a\\}$, $\\{b\\}$, $\\{c\\}$ — pairwise disjoint, no $\\varepsilon$-productions. One symbol of lookahead always picks the production, so the grammar is **LL(1)**."
+        },
+        {
+          "title": "LR(1)",
+          "body": "Every LL(1) grammar is LR(1), so it is **also LR(1)**."
+        }
+      ],
+      "answer": {
+        "value": "Both LL(1) and LR(1)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "LL(1) ⊂ LR(1), so \"LL(1) but not LR(1)\" is impossible."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "The grammar is LL(1) — disjoint FIRST sets."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "LL(1), hence LR(1)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "It is both."
+        }
+      ],
+      "verification": "LL(1) table row S: a → aSa, b → bS, c → c; no cell has two entries."
+    },
+    "cse-2010-cs-39": {
+      "approach": "Test each expression for the two failure modes: missing some even-1 strings, or generating odd-1 strings.",
+      "concepts": [
+        "Regular expressions",
+        "Parity"
+      ],
+      "steps": [
+        {
+          "title": "Option B works",
+          "body": "$0^*(10^*10^*)^*$: leading zeros, then blocks each containing exactly two 1s followed by any zeros. Any string with $2k$ ones splits as $0^{m}\\,(1\\,0^{*}\\,1\\,0^{*})^k$, and every generated string has an even number of 1s."
+        },
+        {
+          "title": "Others fail",
+          "body": "(A) $(0^*10^*1)^*$ cannot generate $0$ (or anything ending in 0 after the last 1, e.g. $110$).\n\n(C) $0^*(10^*1)^*0^*$ cannot generate $11011$: zeros between two pairs are not allowed.\n\n(D) $0^*1(10^*1)^*10^*$ needs at least two 1s, so it misses $0$ and $\\varepsilon$."
+        }
+      ],
+      "answer": {
+        "value": "0*(10*10*)*",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Every non-empty string ends in 1, so 0 and 110 are missed."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Generates exactly the strings with an even number of 1s."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Misses strings like 11011 with zeros between pairs."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Requires ≥ 2 ones; misses ε and 0."
+        }
+      ],
+      "verification": "B generates 0110 as 0·(1 1 0) and 1001 as (1 00 1); every block adds exactly two 1s, so strings with an odd number of 1s (1, 0111) are impossible."
+    },
+    "cse-2010-cs-40": {
+      "approach": "Give a CFG (or a union of CFLs) for each language.",
+      "concepts": [
+        "Context-free languages",
+        "Closure under union"
+      ],
+      "steps": [
+        {
+          "title": "L2 and L3",
+          "body": "$L2$: $S \\to 0S1 \\mid \\varepsilon$. $L3$ ($i = 2j+1$): $S \\to 00S1 \\mid 0$."
+        },
+        {
+          "title": "L1 and L4",
+          "body": "$L1 = \\{0^i1^j : i > j\\} \\cup \\{0^i1^j : i < j\\}$; e.g. $i > j$: $S \\to 0S1 \\mid 0A,\\ A \\to 0A \\mid \\varepsilon$ (symmetric for $i<j$). CFLs are closed under union, so $L1$ is CFL.\n\n$L4 = \\{i > 2j\\} \\cup \\{i < 2j\\}$:\n- $i > 2j$: $S \\to 00S1 \\mid 0A,\\ A \\to 0A \\mid \\varepsilon$\n- $i < 2j$: $T \\to 00T1 \\mid U,\\ U \\to 0U1 \\mid U1 \\mid 01 \\mid 1$ (each 1 is matched with 0, 1 or 2 zeros, and $U$ guarantees a shortfall)\n\nSo $L4$ is CFL, and **all four are context free**."
+        }
+      ],
+      "answer": {
+        "value": "All are context free.",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "L1, L3, L4 are CFL too."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "L1 and L4 are CFL too."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "L3 and L4 are CFL too."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Every language compares just two counts linearly — a one-stack PDA suffices."
+        }
+      ],
+      "shortcut": "For 0^i1^j, any condition of the form i (=, ≠, <, >) a·j + b is context-free: a PDA pushes per 0 and pops a per 1.",
+      "verification": "PDA for L4: push each 0; for each 1 pop two; accept unless the stack empties exactly at the end of input with no extra 1s."
+    },
+    "cse-2010-cs-41": {
+      "approach": "Build an NFA from the n+1 positions of w; then show fewer states cannot work because w itself must be accepted along a path with no repeated state.",
+      "concepts": [
+        "NFA",
+        "Substrings",
+        "State lower bound"
+      ],
+      "steps": [
+        {
+          "title": "Upper bound n + 1",
+          "body": "States $q_0,\\dots,q_n$ with $q_{i-1} \\xrightarrow{w_i} q_i$, all accepting. From the start $q_0$ also add $q_0 \\xrightarrow{w_i} q_i$ for every $i$ (start anywhere). It accepts exactly the substrings of $w$ (including $\\varepsilon$)."
+        },
+        {
+          "title": "Lower bound",
+          "body": "$w$ (length $n$) is accepted along a path of $n+1$ states. If a state repeated, the loop could be pumped to accept a string longer than $n$, which is not a substring. So at least $n+1$ states are needed."
+        }
+      ],
+      "answer": {
+        "value": "n + 1",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "n − 1 states force a loop on the path for w."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "n states also force a repeated state on the n + 1-position path."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Achieved by the chain construction and forced by the pumping argument."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Exponential states are never needed; n + 1 suffice."
+        }
+      ],
+      "verification": "w = 0: substrings {ε, 0} need 2 = n + 1 states."
+    },
+    "cse-2010-cs-42": {
+      "approach": "Draw the precedence graph from conflicting pairs (same item, different transactions, at least one write) in schedule order and topologically sort it.",
+      "concepts": [
+        "Conflict serializability",
+        "Precedence graph"
+      ],
+      "steps": [
+        {
+          "title": "Conflicts on Y",
+          "body": "T3 Read(Y) before T2 Write(Y) ⇒ **T3 → T2**. (T2 Read(Y) and T3 Read(Y) do not conflict.)",
+          "scene": {
+            "edgeTones": {
+              "T3>T2": "accent"
+            }
+          }
+        },
+        {
+          "title": "Conflicts on X",
+          "body": "T1 Read/Write(X) before T3 Write(X) ⇒ **T1 → T3**.\n\nT1 Read/Write(X) before T2 Read/Write(X) ⇒ **T1 → T2**.\n\nT3 Write(X) before T2 Read(X), Write(X) ⇒ **T3 → T2**.",
+          "scene": {
+            "edgeTones": {
+              "T3>T2": "accent",
+              "T1>T3": "accent",
+              "T1>T2": "accent"
+            }
+          }
+        },
+        {
+          "title": "Topological order",
+          "body": "No cycle. T1 has no incoming edge, then T3, then T2: **T1 → T3 → T2**.",
+          "scene": {
+            "tones": {
+              "T1": "success",
+              "T3": "success",
+              "T2": "success"
+            },
+            "subs": {
+              "T1": "1st",
+              "T3": "2nd",
+              "T2": "3rd"
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "T1 → T3 → T2",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Unique topological order of the precedence graph."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "T2 cannot precede T1 (edge T1 → T2)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Violates T1 → T2 and T3 → T2."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Violates T1 → T3."
+        }
+      ],
+      "verification": "Each of the three edges points forward in T1, T3, T2.",
+      "animation": {
+        "kind": "graph",
+        "directed": true,
+        "nodes": [
+          {
+            "id": "T1",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "T3",
+            "x": 2,
+            "y": 1
+          },
+          {
+            "id": "T2",
+            "x": 4,
+            "y": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "T1",
+            "to": "T3"
+          },
+          {
+            "from": "T1",
+            "to": "T2"
+          },
+          {
+            "from": "T3",
+            "to": "T2"
+          }
+        ],
+        "edgeTones": {}
+      }
+    },
+    "cse-2010-cs-43": {
+      "approach": "B → A and A → C make B a key of R, so each S tuple matches at most one R tuple on B.",
+      "concepts": [
+        "Functional dependency",
+        "Natural join cardinality"
+      ],
+      "steps": [
+        {
+          "title": "B is a key of R",
+          "body": "$B \\to A$ and $A \\to C$ give $B \\to AC$, so no two R tuples share a B value."
+        },
+        {
+          "title": "Bound the join",
+          "body": "The join attribute is $B$. Each of the 100 S tuples joins with at most one R tuple, so $|R \\bowtie S| \\le 100$, reached when every S tuple's B value appears in R."
+        }
+      ],
+      "answer": {
+        "value": "100",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "At most one partner per S tuple."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "200 would require some S tuple to match two R tuples with the same B — forbidden by B → A, C."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Joins do not add cardinalities."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Product-like counts need duplicate B values in R."
+        }
+      ],
+      "verification": "Example: R has B = 1..200, S has B = 1..100 → exactly 100 joined tuples."
+    },
+    "cse-2010-cs-44": {
+      "approach": "Map each statement to the condition that reaches it, then pick a suite that covers all four.",
+      "concepts": [
+        "Statement coverage",
+        "White-box testing"
+      ],
+      "steps": [
+        {
+          "title": "Path conditions",
+          "body": "S1: $a = b$ (T1 or T3). S2: $a \\ne b, c = d$ (T4); S4 runs right after S2 (S1 and S3 both exit). S3: $a \\ne b, c \\ne d$ (T2)."
+        },
+        {
+          "title": "Pick the suite",
+          "body": "Need T4 and T2, plus T1 or T3. Only **T1, T2, T4** fits."
+        }
+      ],
+      "answer": {
+        "value": "T1, T2, T4",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "No test with a ≠ b and c = d, so S2 and S4 are not covered."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "No test with a = b, so S1 is not covered."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "No test with a ≠ b and c ≠ d, so S3 is not covered."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "T1 → S1, T2 → S3, T4 → S2, S4."
+        }
+      ],
+      "verification": "T1 (all equal) satisfies a = b, so it reaches S1 even though c = d."
+    },
+    "cse-2010-cs-45": {
+      "approach": "Trace the semaphores: P1 and P2 run once each and each releases S0 once, but S0 is binary, so the two releases may merge into one.",
+      "concepts": [
+        "Binary semaphores",
+        "Process synchronization"
+      ],
+      "steps": [
+        {
+          "title": "First print",
+          "body": "$S0 = 1$, so P0 prints '0' and releases $S1$ and $S2$ (both become 1)."
+        },
+        {
+          "title": "Second print is guaranteed",
+          "body": "P1 and P2 each pass their wait and release $S0$ at least once, so P0's next `wait(S0)` succeeds: a **second** '0'."
+        },
+        {
+          "title": "Maybe a third",
+          "body": "If P0 consumes the first release before the second one arrives, $S0$ becomes 1 again and P0 prints a **third** time. If both releases happen before P0's wait, the binary $S0$ just stays 1 and only two prints occur. After that P1, P2 have terminated, so P0 blocks forever.\n\nThe count is 2 or 3: **at least twice**."
+        }
+      ],
+      "answer": {
+        "value": "At least twice",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Two prints are guaranteed; a third depends on interleaving."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "A third print is possible when P0 waits between the two releases."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Exactly three is not guaranteed — both releases can collapse into one."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "P1/P2 always release S0 after the first print."
+        }
+      ],
+      "pitfalls": [
+        "Treating S0 as a counting semaphore would give exactly three."
+      ],
+      "verification": "Interleaving 1: P0, P1, P2, P0, P0-blocked → 2 prints. Interleaving 2: P0, P1, P0, P2, P0 → 3 prints."
+    }
+  }
+}
