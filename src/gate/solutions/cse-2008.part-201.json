@@ -1,0 +1,1319 @@
+{
+  "paper": "cse-2008",
+  "version": 2,
+  "solutions": {
+    "cse-2008-cs-23": {
+      "approach": "Use the Four Colour Theorem: a 4-colouring splits the vertices into 4 independent colour classes, so the largest class has at least $n/4$ vertices, and its complement is a vertex cover. Kill the other options with small counterexamples.",
+      "concepts": [
+        "Planar graphs",
+        "Four colour theorem",
+        "Independent set",
+        "Vertex cover"
+      ],
+      "steps": [
+        {
+          "title": "Big independent set from 4 colours",
+          "body": "Every planar graph is 4-colourable. The 4 colour classes are independent sets whose sizes add to $n$, so the largest has size $\\ge \\lceil n/4 \\rceil$."
+        },
+        {
+          "title": "Complement is a vertex cover",
+          "body": "If $I$ is independent, every edge has at least one endpoint outside $I$, so $V\\setminus I$ is a vertex cover of size $\\le n - n/4 = 3n/4$. Statement (C) always holds."
+        },
+        {
+          "title": "Counterexamples for the rest",
+          "body": "- Two isolated vertices: planar, not connected ⇒ (A) fails.\n- A path $P_3$: planar, has vertices of odd degree ⇒ not Eulerian ⇒ (B) fails.\n- $K_4$ is planar with $n=4$, but its largest independent set has size $1 < 4/3$ ⇒ (D) fails."
+        }
+      ],
+      "answer": {
+        "value": "The graph has a vertex-cover of size at most 3n/4",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Planar graphs need not be connected (e.g. two isolated vertices)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Eulerian needs all degrees even (and connectivity); a path $P_3$ is planar but not Eulerian."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: the largest of the 4 colour classes has $\\ge n/4$ vertices; the remaining $\\le 3n/4$ vertices cover every edge."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$K_4$ is planar with $n/3 = 4/3$ but its largest independent set has size 1."
+        }
+      ],
+      "pitfalls": [
+        "Confusing \"independent set ≥ n/4\" (guaranteed) with \"≥ n/3\" (false for $K_4$)."
+      ],
+      "verification": "$K_4$: minimum vertex cover is $3 = 3\\cdot4/4$, so the bound in (C) is tight and still satisfied."
+    },
+    "cse-2008-cs-24": {
+      "approach": "Compute both sums in closed form: odd numbers up to $2k-1$ sum to $k^2$, even numbers up to $2k$ sum to $k(k+1)$. Or pair terms: each even number exceeds the odd number before it by 1.",
+      "concepts": [
+        "Arithmetic series",
+        "Summation"
+      ],
+      "steps": [
+        {
+          "title": "Sum of the odd terms",
+          "body": "$P = 1+3+\\dots+(2k-1) = k^2$ (sum of the first $k$ odd numbers)."
+        },
+        {
+          "title": "Sum of the even terms",
+          "body": "$Q = 2+4+\\dots+2k = 2(1+2+\\dots+k) = 2\\cdot\\dfrac{k(k+1)}{2} = k^2+k$."
+        },
+        {
+          "title": "Compare",
+          "body": "$Q - P = (k^2+k) - k^2 = k$, so $P = Q - k$."
+        }
+      ],
+      "answer": {
+        "value": "P = Q − k",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: $P = k^2$, $Q = k^2 + k$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Sign reversed: $P$ is smaller than $Q$, not larger."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Only true if $k = 0$, but $k$ is positive."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Wrong sign and wrong magnitude."
+        }
+      ],
+      "shortcut": "Pair $(1,2),(3,4),\\dots,(2k-1,2k)$: each pair contributes $-1$ to $P-Q$, and there are $k$ pairs, so $P - Q = -k$.",
+      "verification": "$k=2$: $P = 1+3 = 4$, $Q = 2+4 = 6$, $Q - k = 4 = P$. ✓"
+    },
+    "cse-2008-cs-25": {
+      "approach": "Find the critical points from $f'(x)=0$ and keep only those where $f'$ changes sign; a repeated root of $f'$ with even multiplicity is a stationary point but not an extremum.",
+      "concepts": [
+        "Critical points",
+        "First derivative test",
+        "Point of inflection"
+      ],
+      "steps": [
+        {
+          "title": "Differentiate and factor",
+          "body": "$f(x) = 3x^4-16x^3+24x^2+37$\n\n$f'(x) = 12x^3 - 48x^2 + 48x = 12x(x^2-4x+4) = 12x(x-2)^2$."
+        },
+        {
+          "title": "Sign of f' around each root",
+          "body": "- At $x=0$: for $x<0$, $f'<0$; for $0<x<2$, $f'>0$ ⇒ sign changes − to + ⇒ local minimum.\n- At $x=2$: $(x-2)^2 \\ge 0$ and $12x>0$ on both sides, so $f'>0$ on both sides ⇒ no sign change ⇒ not an extremum (stationary inflection point)."
+        },
+        {
+          "title": "Count",
+          "body": "Only $x = 0$ is an extremum (local minimum, $f(0)=37$). Number of distinct extrema $= 1$."
+        }
+      ],
+      "answer": {
+        "value": "1",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "A quartic with positive leading coefficient always has a global minimum, so at least one extremum exists."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: only $x=0$ (local minimum)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Counts $x=2$ too, but $f'$ does not change sign there (double root)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "There are only two critical points, so 3 is impossible."
+        }
+      ],
+      "pitfalls": [
+        "Counting every root of $f'(x)=0$ as an extremum."
+      ],
+      "verification": "$f''(x) = 36x^2-96x+48$: $f''(0)=48>0$ (minimum); $f''(2)=144-192+48=0$ and $f'''(2)=72\\cdot2-96=48\\ne0$ ⇒ inflection at $x=2$."
+    },
+    "cse-2008-cs-26": {
+      "approach": "Factor $P$ out of the middle term and use absorption $X(X+Y)=X$ repeatedly; the expression collapses in three short lines.",
+      "concepts": [
+        "Boolean algebra",
+        "Absorption law",
+        "Distributive law"
+      ],
+      "steps": [
+        {
+          "title": "Absorb the first two factors",
+          "body": "$P\\overline Q + PR = P(\\overline Q + R)$. Then $(P+\\overline Q)\\cdot P(\\overline Q+R) = P(\\overline Q+R)$ because $P(P+\\overline Q) = P$."
+        },
+        {
+          "title": "Absorb P into the third factor",
+          "body": "$P\\cdot(P\\overline R + \\overline Q) = P\\overline R + P\\overline Q = P(\\overline R + \\overline Q)$. So the expression is $P(\\overline Q + R)(\\overline Q + \\overline R)$."
+        },
+        {
+          "title": "Finish",
+          "body": "$(\\overline Q + R)(\\overline Q + \\overline R) = \\overline Q + R\\overline R = \\overline Q$. Hence the expression $= P\\overline Q$."
+        }
+      ],
+      "answer": {
+        "value": "P·Q̄",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: the expression equals $P\\overline Q$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$P=1,Q=1,R=0$: $P\\overline R = 1$, but the middle factor $P\\overline Q + PR = 0$, so the expression is 0."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$P=0,R=1$: $P\\overline Q + R = 1$, but the middle factor $P\\overline Q + PR = 0$, so the expression is 0."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$P=0,Q=1$: $P\\overline R + Q = 1$, but the middle factor is 0, so the expression is 0."
+        }
+      ],
+      "verification": "The middle factor forces $P=1$; then the remaining factors are $(\\overline Q+R)(\\overline R+\\overline Q)$, which is 1 exactly when $Q=0$. So the expression is 1 exactly when $P=1, Q=0$, i.e. $P\\overline Q$."
+    },
+    "cse-2008-cs-27": {
+      "approach": "Two-step Markov chain: sum over Tuesday's subject. $P(\\text{CS on Wed}) = P(\\text{CS Tue})\\cdot0.4 + P(\\text{M Tue})\\cdot0.4$.",
+      "concepts": [
+        "Total probability",
+        "Markov chain"
+      ],
+      "given": "| From → To | CS | M |\n|---|---|---|\n| CS | 0.4 | 0.6 |\n| M | 0.4 | 0.6 |",
+      "steps": [
+        {
+          "title": "Tuesday",
+          "body": "Monday is CS, so $P(\\text{CS}_{Tue}) = 1-0.6 = 0.4$ and $P(\\text{M}_{Tue}) = 0.6$."
+        },
+        {
+          "title": "Wednesday",
+          "body": "$P(\\text{CS}_{Wed}) = 0.4\\times0.4 + 0.6\\times0.4 = 0.16 + 0.24 = 0.40$."
+        }
+      ],
+      "answer": {
+        "value": "0.4",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "0.24 is only the CS→M→CS path ($0.6\\times0.4$); the CS→CS→CS path is missing."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "0.36 is $0.6\\times0.6$ (mathematics on both days), not the asked event."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: $0.16 + 0.24 = 0.4$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "0.6 is the probability of switching to mathematics, not of CS on Wednesday."
+        }
+      ],
+      "shortcut": "Both rows of the transition matrix give CS with probability 0.4, so tomorrow's CS probability is 0.4 regardless of today.",
+      "verification": "$P(\\text{M}_{Wed}) = 0.4\\times0.6 + 0.6\\times0.6 = 0.6$, and $0.4 + 0.6 = 1$. ✓"
+    },
+    "cse-2008-cs-28": {
+      "approach": "Eigenvalues of triangular matrices are the diagonal entries; for the third matrix solve the $2\\times2$ characteristic equation. Check whether 1 appears.",
+      "concepts": [
+        "Eigenvalues",
+        "Characteristic polynomial",
+        "Triangular matrix"
+      ],
+      "steps": [
+        {
+          "title": "Triangular matrices",
+          "body": "- $\\begin{bmatrix}1&0\\\\0&0\\end{bmatrix}$: eigenvalues $1, 0$ ⇒ has 1.\n- $\\begin{bmatrix}0&1\\\\0&0\\end{bmatrix}$: eigenvalues $0, 0$ ⇒ no.\n- $\\begin{bmatrix}-1&0\\\\1&-1\\end{bmatrix}$: eigenvalues $-1,-1$ ⇒ no."
+        },
+        {
+          "title": "Third matrix",
+          "body": "$\\det\\begin{bmatrix}1-\\lambda&-1\\\\1&1-\\lambda\\end{bmatrix} = (1-\\lambda)^2 + 1 = 0 \\Rightarrow \\lambda = 1 \\pm i$ ⇒ no eigenvalue 1."
+        },
+        {
+          "title": "Count",
+          "body": "Only the first matrix has eigenvalue 1 ⇒ **one**."
+        }
+      ],
+      "answer": {
+        "value": "one",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: only $\\begin{bmatrix}1&0\\\\0&0\\end{bmatrix}$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "The third matrix has diagonal 1s but complex eigenvalues $1\\pm i$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "The nilpotent matrix and the $-1$ matrix have no eigenvalue 1."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Only one matrix qualifies."
+        }
+      ],
+      "pitfalls": [
+        "Reading eigenvalues off the diagonal of a non-triangular matrix (the third one)."
+      ],
+      "verification": "$\\lambda=1$ is an eigenvalue iff $\\det(A-I)=0$. The determinants of $A-I$ are $0$, $1$, $1$, $4$ — only the first is 0."
+    },
+    "cse-2008-cs-29": {
+      "approach": "Standardise both events. $P(X\\le-1)$ is a left tail at $z=-1$; $P(Y\\ge2)$ is a right tail at $z=3/\\sigma$. By symmetry the tails are equal iff $3/\\sigma = 1$.",
+      "concepts": [
+        "Normal distribution",
+        "Standardisation",
+        "Symmetry of normal"
+      ],
+      "steps": [
+        {
+          "title": "Standardise X",
+          "body": "$\\sigma_X = \\sqrt4 = 2$. $P(X\\le-1) = P\\left(Z \\le \\dfrac{-1-1}{2}\\right) = P(Z\\le-1)$."
+        },
+        {
+          "title": "Standardise Y",
+          "body": "$P(Y\\ge2) = P\\left(Z \\ge \\dfrac{2-(-1)}{\\sigma}\\right) = P\\left(Z\\ge \\dfrac3\\sigma\\right) = P\\left(Z \\le -\\dfrac3\\sigma\\right)$."
+        },
+        {
+          "title": "Equate",
+          "body": "$-1 = -\\dfrac3\\sigma \\Rightarrow \\sigma = 3$."
+        }
+      ],
+      "answer": {
+        "value": "3",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: $3/\\sigma = 1$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "2 is the standard deviation of $X$, not $Y$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$\\sqrt2$ gives $z = 3/\\sqrt2 \\ne 1$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "1 gives $z=3$, a much smaller tail."
+        }
+      ],
+      "pitfalls": [
+        "Using the variance 4 instead of the standard deviation 2 when standardising X."
+      ],
+      "verification": "With $\\sigma_Y=3$: $Y\\ge2$ is exactly one standard deviation above its mean, mirroring $X\\le-1$, one SD below its mean."
+    },
+    "cse-2008-cs-30": {
+      "approach": "The intended formula is $\\forall x\\,(fsa(x)\\Rightarrow\\exists y\\,(pda(y)\\wedge equivalent(x,y)))$. Reject options that force every object to be an FSA/PDA or that negate the claim; (A) is the only one with the right implication structure (reading $\\forall x$ as scoping over the whole implication).",
+      "concepts": [
+        "First-order logic",
+        "Quantifier scope",
+        "Translating English to FOL"
+      ],
+      "steps": [
+        {
+          "title": "Correct translation",
+          "body": "\"Each FSA has an equivalent PDA\": for every $x$, **if** $x$ is an FSA **then** some $y$ is a PDA equivalent to $x$:\n$$\\forall x\\,\\big(fsa(x)\\Rightarrow \\exists y\\,(pda(y)\\wedge equivalent(x,y))\\big)$$"
+        },
+        {
+          "title": "Options with ∧ instead of ⇒",
+          "body": "(C) $\\forall x\\exists y\\,(fsa(x)\\wedge pda(y)\\wedge\\dots)$ claims **every** object is an FSA; (D) claims every object is a PDA with an equivalent FSA. Both are far too strong — a universal quantifier must be paired with $\\Rightarrow$."
+        },
+        {
+          "title": "Option B",
+          "body": "$\\sim\\forall y\\,(\\dots)$ is a negated universal, i.e. it asserts that some $y$ fails the condition — it does not express the property."
+        },
+        {
+          "title": "Option A",
+          "body": "(A) has the right shape: being an FSA implies the existence of an equivalent PDA. Read with $\\forall x$ scoping over the implication it is exactly the translation above, so it is the intended answer."
+        }
+      ],
+      "answer": {
+        "value": "(∀x fsa(x)) ⇒ (∃y pda(y) ∧ equivalent(x,y))",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Intended answer: FSA-ness implies an equivalent PDA exists (taking $\\forall x$ to scope over the whole formula)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Negation of a universal statement; it asserts a counterexample exists, not the property."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Uses $\\wedge$ under $\\forall x$, so it asserts that every object is an FSA."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Swaps the roles: asserts every $x$ is a PDA and some $y$ is an FSA."
+        }
+      ],
+      "pitfalls": [
+        "Using $\\wedge$ instead of $\\Rightarrow$ under a universal quantifier.",
+        "Strictly, the parenthesisation in (A) leaves $x$ free in the consequent; the question intends the wider scope."
+      ],
+      "verification": "Model check: in a domain containing a PDA $p$ that is not an FSA, (C) is false (since $fsa(p)$ fails) even though the English statement can be true — so (C) is wrong."
+    },
+    "cse-2008-cs-31": {
+      "approach": "Reduce each expression to a minimal form (or list its minterms over $(P,Q)$) and compare.",
+      "concepts": [
+        "Propositional equivalence",
+        "De Morgan",
+        "Minterms"
+      ],
+      "steps": [
+        {
+          "title": "I and II",
+          "body": "I: $P\\vee\\sim Q$. II: $\\sim(\\sim P\\wedge Q) = P \\vee \\sim Q$ (De Morgan). So I ≡ II."
+        },
+        {
+          "title": "III and IV as minterms",
+          "body": "III covers $(P,Q) = (1,1),(1,0),(0,0)$ — everything except $(0,1)$ ⇒ $P\\vee\\sim Q$.\n\nIV covers $(1,1),(1,0),(0,1)$ — everything except $(0,0)$ ⇒ $P\\vee Q$."
+        },
+        {
+          "title": "Conclusion",
+          "body": "I, II, III are all $P\\vee\\sim Q$; IV is $P\\vee Q$. Answer: only I, II and III."
+        }
+      ],
+      "answer": {
+        "value": "Only I, II and III",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Misses III, which also equals $P\\vee\\sim Q$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "IV is $P\\vee Q$, not $P\\vee\\sim Q$; and III is missing."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "IV differs from the others at $(P,Q)=(0,1)$ and $(0,0)$."
+        }
+      ],
+      "verification": "At $P=0,Q=1$: I = 0, II = 0, III = 0, IV = 1 — IV is the odd one out."
+    },
+    "cse-2008-cs-32": {
+      "approach": "Seek time = acceleration + coast + deceleration + settle. The arm must start from rest and stop precisely, so short seeks are dominated by fixed start/stop costs — hence the non-linear relation with distance.",
+      "concepts": [
+        "Disk seek time",
+        "Arm inertia"
+      ],
+      "steps": [
+        {
+          "title": "Physics of a seek",
+          "body": "The head arm has mass: it accelerates, (for long seeks) coasts, decelerates and settles on the track. Under constant acceleration, short-seek time grows like $\\sqrt{d}$, plus a fixed settle overhead, so seek time $\\ne c\\cdot d$."
+        },
+        {
+          "title": "Pick the cause",
+          "body": "This is exactly the arm's starting and stopping inertia — option (B). The other options affect *which* requests are served or track capacity, not the time–distance relation of one seek."
+        }
+      ],
+      "answer": {
+        "value": "arm starting and stopping inertia",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Request distribution affects the average seek distance, not the time-vs-distance relation of a single seek."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: acceleration/deceleration and settling make seek time non-linear in distance."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Outer-track capacity affects transfer rate (zoned recording), not seek latency."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Scheduling policy changes which distances occur, not how long a given distance takes."
+        }
+      ],
+      "verification": "Typical drives quote track-to-track seeks of about 1 ms but full-stroke seeks of only 10–20 ms across thousands of tracks — far from proportional."
+    },
+    "cse-2008-cs-33": {
+      "approach": "Check each statement against how auto-increment works: the register is used as the address, then bumped by the operand size. It does not need an extra ALU and has nothing to do with relocation.",
+      "concepts": [
+        "Addressing modes",
+        "Auto-increment",
+        "Position-independent code"
+      ],
+      "steps": [
+        {
+          "title": "Statement I",
+          "body": "Self-relocating (position-independent) code relies on **PC-relative** addressing, not auto-increment. False."
+        },
+        {
+          "title": "Statement II",
+          "body": "The register increment can be done by the existing ALU/an incrementer in another cycle; an additional ALU is not *required*. False."
+        },
+        {
+          "title": "Statement III",
+          "body": "Auto-increment steps the pointer to the next element, so the increment equals the operand size (1 for a byte, 4 for a word, …). True."
+        }
+      ],
+      "answer": {
+        "value": "III only",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "I is false: relocation uses PC-relative addressing."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "II is false: no extra ALU is required."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: only III is true."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Includes the false statement II."
+        }
+      ],
+      "verification": "Example: the MC68000 mode `(A0)+` adds 1, 2 or 4 to A0 for byte, word or long operands — confirming III."
+    },
+    "cse-2008-cs-34": {
+      "approach": "RFE restores the saved PC and processor status (including the mode bit), so it must be privileged and must execute atomically. The accepted key (D) additionally treats RFE as a trap-type instruction.",
+      "concepts": [
+        "Exceptions",
+        "Privileged instructions",
+        "Processor modes"
+      ],
+      "steps": [
+        {
+          "title": "II — privileged",
+          "body": "RFE switches the CPU from kernel mode back to user mode and reloads the status register. If user code could execute it, it could forge a status word and enter kernel mode. So it **must** be privileged."
+        },
+        {
+          "title": "III — no exception during RFE",
+          "body": "RFE restores PC and status as one indivisible step. An exception in the middle would leave half-restored state (e.g. new mode, old PC) and overwrite the saved context, so exceptions must not be taken during it."
+        },
+        {
+          "title": "I — trap instruction",
+          "body": "The accepted key counts RFE as a trap-type instruction (it belongs to the trap/exception mechanism and runs in kernel mode). Many ISAs implement it as an ordinary privileged instruction, so I is debatable; but II and III are both required and (D) is the only option containing both."
+        }
+      ],
+      "answer": {
+        "value": "I, II and III only",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Omits II, which is certainly required (RFE changes the privilege mode)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Omits III: RFE must be atomic with respect to exceptions."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Omits III."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Accepted key: the only option containing both II and III."
+        }
+      ],
+      "pitfalls": [
+        "Thinking an unprivileged RFE is harmless — it would let user code switch to kernel mode."
+      ],
+      "verification": "The two clearly-true statements (II and III) appear together only in option (D); no option lists \"II and III\" alone."
+    },
+    "cse-2008-cs-35": {
+      "approach": "Inclusion means every block in L1 is also present in L2. The only unavoidable requirement is capacity; write policy concerns values, not presence, and associativity mismatches can be handled by back-invalidation.",
+      "concepts": [
+        "Multi-level caches",
+        "Inclusion property",
+        "Write policies"
+      ],
+      "steps": [
+        {
+          "title": "IV is necessary",
+          "body": "If L2 were smaller than L1, L1 could hold more blocks than L2 has room for, so L1's contents could not all be in L2. Hence L2 must be at least as large as L1."
+        },
+        {
+          "title": "I and II are not",
+          "body": "Inclusion is about *which blocks* are present. A write-back L1 only means L2's copy may be stale; the block is still present. L2's write policy towards memory is irrelevant."
+        },
+        {
+          "title": "III is not",
+          "body": "When L2 evicts a block it can back-invalidate the L1 copy; this maintains inclusion even if L2's associativity is not greater than L1's."
+        }
+      ],
+      "answer": {
+        "value": "IV only",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: only the size requirement is necessary."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "A write-back L1 does not break inclusion (presence), only value freshness."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Greater L2 associativity is not necessary with back-invalidation; write-through L1 is not necessary either."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Includes three unnecessary conditions."
+        }
+      ],
+      "verification": "Inclusive last-level caches in commercial processors (e.g. Intel Nehalem L3) are used with write-back L1/L2 caches — so I and II are not needed."
+    },
+    "cse-2008-cs-36": {
+      "approach": "Test each statement against standard counterexamples: the load-use hazard for bypassing, the definition of renaming for WAR, and mispredictions for branch prediction.",
+      "concepts": [
+        "Pipeline hazards",
+        "Operand forwarding",
+        "Register renaming",
+        "Branch prediction"
+      ],
+      "steps": [
+        {
+          "title": "I — bypassing",
+          "body": "A load followed immediately by a use: the data is available only after MEM, but the dependent instruction needs it at the start of EX. Even with forwarding one stall is needed. So I is **not true**."
+        },
+        {
+          "title": "II — renaming",
+          "body": "Register WAR (anti) hazards are name dependences; giving each write a fresh physical register removes all of them. So II is **true**."
+        },
+        {
+          "title": "III — branch prediction",
+          "body": "Predictors can mispredict, and a misprediction still flushes the pipeline. Penalties are reduced, not eliminated. So III is **not true**."
+        }
+      ],
+      "answer": {
+        "value": "I and III only",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "II is true (renaming removes register WAR hazards), so it should not be listed."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: I and III are the false statements."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "II is true and I is false — both placed wrongly."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "II is true."
+        }
+      ],
+      "verification": "Classic 5-stage MIPS: `lw r1,0(r2); add r3,r1,r4` needs a 1-cycle stall even with full forwarding, confirming I is false."
+    },
+    "cse-2008-cs-37": {
+      "approach": "Overlapping register windows let the caller's output registers become the callee's input registers, so parameters and locals live in registers instead of a memory stack frame.",
+      "concepts": [
+        "Register windows",
+        "Procedure call overhead",
+        "RISC (SPARC)"
+      ],
+      "steps": [
+        {
+          "title": "Locals and parameters",
+          "body": "Each call gets a new window: locals stay in its local registers and parameters pass through the overlapping registers, so they are not pushed to or loaded from the stack. I is reduced."
+        },
+        {
+          "title": "Saves/restores",
+          "body": "Windows are still saved to memory on overflow and restored on underflow; the accepted key does not count II as the reduction caused by the overlap."
+        },
+        {
+          "title": "Instruction fetches",
+          "body": "Register windows do not change the instruction stream; instruction fetches are unaffected. III is false."
+        }
+      ],
+      "answer": {
+        "value": "I only",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Accepted answer: locals and parameters stay in registers."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Saves/restores still happen on window overflow/underflow; not the reduction targeted by the overlap."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Instruction fetches are not affected by register windows."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Includes III, which is false."
+        }
+      ],
+      "pitfalls": [
+        "Thinking register windows reduce instruction fetches."
+      ],
+      "verification": "SPARC: the caller's `%o0–%o7` become the callee's `%i0–%i7` — parameter passing with no memory traffic."
+    },
+    "cse-2008-cs-38": {
+      "approach": "The data TLB translates the virtual address of the data operand into a physical address, so it needs the complete effective (virtual) address — available only after effective-address calculation finishes.",
+      "concepts": [
+        "TLB",
+        "Effective address",
+        "Pipeline stages"
+      ],
+      "steps": [
+        {
+          "title": "What the D-TLB needs",
+          "body": "The TLB is looked up with the virtual page number of the data address. That page number is part of the effective address computed as base + offset."
+        },
+        {
+          "title": "Earliest access",
+          "body": "Until the addition completes (carries propagate into the page-number bits) the page number is unknown. So the earliest D-TLB access is **after** effective-address calculation has completed. It need not wait for the cache — in a VIPT cache the TLB and cache are accessed in parallel."
+        }
+      ],
+      "answer": {
+        "value": "after effective address calculation has completed",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Before EA calculation the virtual address does not exist yet."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "During the calculation the page-number bits are not yet final (carry propagation)."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: the TLB needs the complete virtual address."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Too late: a physically-tagged cache lookup itself needs the TLB result (or runs in parallel with it)."
+        }
+      ],
+      "verification": "Classic MIPS pipeline: the EA is computed in EX and the D-TLB is accessed in MEM, immediately after."
+    },
+    "cse-2008-cs-39": {
+      "approach": "Rewrite each function as a power of 2: $h(n) = 2^{(\\log n)^2}$, $f(n)=2^n$, and $n! = 2^{\\Theta(n\\log n)}$. Comparing exponents gives $h \\ll f \\ll g$.",
+      "concepts": [
+        "Asymptotic notation",
+        "Growth rates",
+        "Stirling's approximation"
+      ],
+      "steps": [
+        {
+          "title": "Same base",
+          "body": "$h(n) = n^{\\log n} = 2^{\\log n\\cdot\\log n} = 2^{(\\log n)^2}$, $f(n) = 2^n$, $g(n) = n! = 2^{\\log_2 n!} = 2^{\\Theta(n\\log n)}$."
+        },
+        {
+          "title": "Compare exponents",
+          "body": "$(\\log n)^2 < n < n\\log n$ for large $n$, so $h(n) = O(f(n))$ and $f(n) = O(g(n))$, i.e. $g(n) = \\Omega(f(n))$."
+        },
+        {
+          "title": "Match",
+          "body": "Option (D): $h(n) = O(f(n))$; $g(n) = \\Omega(f(n))$ — both true."
+        }
+      ],
+      "answer": {
+        "value": "h(n)=O(f(n)); g(n)=Ω(f(n))",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$g(n) = O(h(n))$ is false: $n!$ grows much faster than $n^{\\log n}$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Both parts false: $2^n$ is not $\\Omega(n!)$ and $n! \\ne O(n^{\\log n})$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$g(n) = O(f(n))$ is false: $n!/2^n \\to \\infty$."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct."
+        }
+      ],
+      "verification": "$n = 64$: $h = 2^{36}$, $f = 2^{64}$, $g = 64! \\approx 2^{296}$ — order $h < f < g$."
+    },
+    "cse-2008-cs-40": {
+      "approach": "In a sorted array a majority element must occupy the middle position. Binary-search the first occurrence $i$ of the middle value and check $a[i + \\lfloor n/2\\rfloor]$ — $O(\\log n)$, and $\\Omega(\\log n)$ is needed to locate the run boundary.",
+      "concepts": [
+        "Binary search",
+        "Majority element",
+        "Lower bounds"
+      ],
+      "steps": [
+        {
+          "title": "Candidate",
+          "body": "A value occurring more than $n/2$ times in a sorted array forms a contiguous run longer than half the array, so it covers the middle index. Candidate $x = a[\\lceil n/2\\rceil]$."
+        },
+        {
+          "title": "Find the run",
+          "body": "Binary search for the first index $i$ with $a[i] = x$: $O(\\log n)$ comparisons. Then $x$ is a majority iff $i + \\lfloor n/2\\rfloor \\le n$ and $a[i+\\lfloor n/2\\rfloor] = x$ (one more comparison)."
+        },
+        {
+          "title": "Tight",
+          "body": "An adversary can place the run's left end anywhere, so locating the boundary needs $\\Omega(\\log n)$ comparisons. Hence $\\Theta(\\log n)$."
+        }
+      ],
+      "answer": {
+        "value": "Θ(log n)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "A linear scan works but is not the minimum."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: binary search for the run boundary."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$\\log^* n$ comparisons are far too few to locate a boundary among $n$ positions."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "A constant number of comparisons cannot tell where the run of the middle element starts."
+        }
+      ],
+      "verification": "$n=8$, array $1,2,2,2,2,3,4,5$: candidate $a[4]=2$, first occurrence $i=2$, $a[2+4] = a[6] = 3 \\ne 2$ ⇒ 2 occurs only 4 times, not more than 4. ✓"
+    },
+    "cse-2008-cs-41": {
+      "approach": "Order 4 ⇒ at most 3 keys per node; a node splits when a 4th key arrives. Maximise splits by inserting in increasing order and splitting so the right half keeps 2 keys — it overflows again after only 2 more insertions, and the root eventually overflows too.",
+      "concepts": [
+        "B-tree",
+        "Node splitting",
+        "Order of a B-tree"
+      ],
+      "given": "| Order | Max keys per node | Insertions |\n|---|---|---|\n| 4 | 3 | 10 |",
+      "steps": [
+        {
+          "title": "Insert 1–4: first split",
+          "body": "$[1,2,3]$, then 4 overflows: $[1,2,3,4]$ → left $[1]$, push 2 up, right $[3,4]$. **Splits = 1.**",
+          "scene": {
+            "root": {
+              "label": [
+                2
+              ],
+              "children": [
+                {
+                  "label": [
+                    1
+                  ]
+                },
+                {
+                  "label": [
+                    3,
+                    4
+                  ],
+                  "tone": "accent"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Insert 5, 6",
+          "body": "5 gives $[3,4,5]$; 6 overflows $[3,4,5,6]$ → $[3]$, 4 up, $[5,6]$. Root $[2,4]$. **Splits = 2.**",
+          "scene": {
+            "root": {
+              "label": [
+                2,
+                4
+              ],
+              "children": [
+                {
+                  "label": [
+                    1
+                  ]
+                },
+                {
+                  "label": [
+                    3
+                  ]
+                },
+                {
+                  "label": [
+                    5,
+                    6
+                  ],
+                  "tone": "accent"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Insert 7, 8",
+          "body": "8 overflows $[5,6,7,8]$ → $[5]$, 6 up, $[7,8]$. Root $[2,4,6]$ (full). **Splits = 3.**",
+          "scene": {
+            "root": {
+              "label": [
+                2,
+                4,
+                6
+              ],
+              "children": [
+                {
+                  "label": [
+                    1
+                  ]
+                },
+                {
+                  "label": [
+                    3
+                  ]
+                },
+                {
+                  "label": [
+                    5
+                  ]
+                },
+                {
+                  "label": [
+                    7,
+                    8
+                  ],
+                  "tone": "accent"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Insert 9, 10: cascade",
+          "body": "10 overflows $[7,8,9,10]$ → $[7]$, 8 up, $[9,10]$ (**split 4**). The root becomes $[2,4,6,8]$ and overflows → $[2]$, 4 up as the new root, $[6,8]$ (**split 5**).",
+          "scene": {
+            "root": {
+              "label": [
+                4
+              ],
+              "tone": "accent",
+              "children": [
+                {
+                  "label": [
+                    2
+                  ],
+                  "children": [
+                    {
+                      "label": [
+                        1
+                      ]
+                    },
+                    {
+                      "label": [
+                        3
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "label": [
+                    6,
+                    8
+                  ],
+                  "children": [
+                    {
+                      "label": [
+                        5
+                      ]
+                    },
+                    {
+                      "label": [
+                        7
+                      ]
+                    },
+                    {
+                      "label": [
+                        9,
+                        10
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Why not more",
+          "body": "The first split needs 4 keys. A split leaves at most 2 keys in each half, so every later leaf split needs at least 2 new keys: keys 5–10 allow at most 3 more leaf splits (4 in total). 4 leaf splits push 4 keys up, which can overflow a 3-key node only once. Maximum $= 4 + 1 = 5$."
+        }
+      ],
+      "answer": {
+        "value": "5",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Some insertion orders give 3 splits, but that is not the maximum."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Misses the cascading root split after the 4th leaf split."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: 4 leaf splits + 1 root split."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Would need another leaf split, which requires more than 10 keys."
+        }
+      ],
+      "pitfalls": [
+        "Forgetting that the root overflow after the 4th leaf split is itself a split.",
+        "Taking order 4 as 4 keys per node (order is the maximum number of children)."
+      ],
+      "verification": "Final tree has 7 nodes. Starting from 1 node, each non-root split adds 1 node and the root split adds 2: $1 + 4\\cdot1 + 2 = 7$. ✓",
+      "animation": {
+        "kind": "tree",
+        "root": {
+          "label": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "tone": "error"
+        }
+      }
+    },
+    "cse-2008-cs-42": {
+      "approach": "Use the two spanning trees: each tree crosses every cut and is a forest on any vertex subset. That gives (A), (B) and, via Menger, (C). For (D), glue two such graphs at a single vertex to create a cut vertex.",
+      "concepts": [
+        "Spanning trees",
+        "Edge connectivity",
+        "Menger's theorem",
+        "Cut vertex"
+      ],
+      "steps": [
+        {
+          "title": "A is true",
+          "body": "Restricted to any $k$ vertices, each spanning tree is a forest with at most $k-1$ edges, so the induced subgraph has at most $2(k-1) = 2k-2$ edges."
+        },
+        {
+          "title": "B and C are true",
+          "body": "Every cut is crossed by at least one edge of each spanning tree, and the trees are edge-disjoint, so every cut has $\\ge 2$ edges. By Menger's theorem, edge-connectivity $\\ge2$ gives 2 edge-disjoint paths between every pair."
+        },
+        {
+          "title": "D is false",
+          "body": "$K_4$ has $n=4$, $6 = 2\\cdot4-2$ edges and splits into two edge-disjoint Hamiltonian paths. Glue two copies of $K_4$ at one vertex: $n = 7$, edges $= 12 = 2\\cdot7-2$, and combining the paths still gives two edge-disjoint spanning trees. The shared vertex is a cut vertex, so vertices on opposite sides do **not** have two vertex-disjoint paths."
+        }
+      ],
+      "answer": {
+        "value": "There are two vertex-disjoint paths between every pair of vertices",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "True: each tree contributes at most $k-1$ induced edges."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "True: each spanning tree crosses every cut."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "True: follows from (B) by Menger's theorem."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "NOT true: two $K_4$s sharing a vertex is a counterexample (cut vertex)."
+        }
+      ],
+      "verification": "In the glued graph, deleting the shared vertex disconnects it, so any two paths between the halves both pass through that vertex."
+    },
+    "cse-2008-cs-43": {
+      "approach": "The pivot splits $n$ elements into parts of sizes $\\alpha n$ and $(1-\\alpha)n$ with $\\alpha\\in[1/5, 4/5]$; partitioning costs at most $n$ comparisons. The worst allowed split is $n/5$ vs $4n/5$.",
+      "concepts": [
+        "Quicksort",
+        "Recurrence relations",
+        "Balanced partitioning"
+      ],
+      "steps": [
+        {
+          "title": "Write the recurrence",
+          "body": "$T(n) \\le T(\\alpha n) + T((1-\\alpha)n) + n$ with $\\frac15 \\le \\alpha \\le \\frac45$; partitioning compares each element with the pivot ($\\le n$ comparisons)."
+        },
+        {
+          "title": "Worst case",
+          "body": "The most unbalanced permitted split, $\\alpha = 1/5$, gives the largest cost: $T(n) \\le T(n/5) + T(4n/5) + n$, which solves to $O(n\\log n)$."
+        }
+      ],
+      "answer": {
+        "value": "T(n) ≤ T(n/5) + T(4n/5) + n",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Two sub-problems of size $n/5$ cover only $2n/5$ elements — the rest are never sorted."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Two sub-problems of size $4n/5$ total $8n/5 > n$: it does not describe the split (and solves to the loose bound $n^{\\log_{5/4}2}$)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Describes a perfectly balanced split, which is not guaranteed."
+        }
+      ],
+      "verification": "The sub-problem sizes in (B) add to $n/5 + 4n/5 = n$, consistent with partitioning around one pivot."
+    },
+    "cse-2008-cs-44": {
+      "approach": "$O(nW)$ is pseudo-polynomial: polynomial in the *value* $W$ but exponential in the number of bits of $W$. So it is polynomial for unary input but not for binary input, while subset-sum stays NP-complete.",
+      "concepts": [
+        "Pseudo-polynomial time",
+        "Input encoding",
+        "NP-completeness"
+      ],
+      "steps": [
+        {
+          "title": "Unary vs binary",
+          "body": "In unary, $W$ takes $W$ symbols, so $O(nW)$ is polynomial in the input length — (A) true. In binary, $W$ takes $b = \\log_2 W$ bits, and $O(nW) = O(n\\cdot2^{b})$ is exponential in the input length — (B) false."
+        },
+        {
+          "title": "Complexity class",
+          "body": "A subset is a certificate checkable in polynomial time ⇒ subset-sum $\\in$ NP (C true). It is a classic NP-complete problem, hence NP-hard (D true)."
+        }
+      ],
+      "answer": {
+        "value": "Q solves subset-sum in polynomial time when the input is encoded in binary",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "True: with unary encoding the input length is at least $W$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "False (the required answer): $W$ is exponential in its binary length."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "True: the chosen subset is a polynomial-time verifiable certificate."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "True: subset-sum is NP-complete."
+        }
+      ],
+      "pitfalls": [
+        "Treating $O(nW)$ as polynomial because it looks like a product of two input quantities."
+      ],
+      "verification": "If (B) were true, an NP-complete problem would be in P, implying P = NP."
+    }
+  }
+}
