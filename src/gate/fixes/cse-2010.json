@@ -1,0 +1,143 @@
+{
+  "paper": "cse-2010",
+  "fixes": [
+    {
+      "id": "cse-2010-cs-17",
+      "field": "text",
+      "before": "Let L1 be a recursive language. Let L2 and L3 be languages that are recursively enumerable but not recursive. Which of the following statements is not necessarily true?",
+      "after": "Let $L_1$ be a recursive language. Let $L_2$ and $L_3$ be languages that are recursively enumerable but not recursive. Which of the following statements is not necessarily true?",
+      "reason": "Typeset language names with KaTeX subscripts.",
+      "source": "GATE 2010 CS paper Q.17"
+    },
+    {
+      "id": "cse-2010-cs-17",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "L2 $-$ L1 is recursively enumerable."
+        },
+        {
+          "l": "B",
+          "t": "L1 $-$ L3 is recursively enumerable."
+        },
+        {
+          "l": "C",
+          "t": "L2 $\\cap$ L3 is recursively enumerable."
+        },
+        {
+          "l": "D",
+          "t": "L2 $\\cup$ L3 is recursively enumerable."
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$L_2 - L_1$ is recursively enumerable."
+        },
+        {
+          "l": "B",
+          "t": "$L_1 - L_3$ is recursively enumerable."
+        },
+        {
+          "l": "C",
+          "t": "$L_2 \\cap L_3$ is recursively enumerable."
+        },
+        {
+          "l": "D",
+          "t": "$L_2 \\cup L_3$ is recursively enumerable."
+        }
+      ],
+      "reason": "Typeset language expressions with KaTeX subscripts.",
+      "source": "GATE 2010 CS paper Q.17"
+    },
+    {
+      "id": "cse-2010-cs-23",
+      "field": "text",
+      "before": "Consider the methods used by processes P1 and P2 for accessing their critical sections whenever needed, as given below. The initial values of shared boolean variables S1 and S2 are randomly assigned.\n\n| Method used by P1 | Method used by P2 |\n|---|---|\n| `while (S1 == S2);` <br> Critical Section <br> `S1 = S2;` | `while (S1 != S2);` <br> Critical Section <br> `S2 = not(S1);` |\n\nWhich one of the following statements describes the properties achieved?",
+      "after": "Consider the methods used by processes P1 and P2 for accessing their critical sections whenever needed, as given below. The initial values of shared boolean variables S1 and S2 are randomly assigned.\n\n**Method used by P1**\n\n```c\nwhile (S1 == S2);\nCritical Section\nS1 = S2;\n```\n\n**Method used by P2**\n\n```c\nwhile (S1 != S2);\nCritical Section\nS2 = not(S1);\n```\n\nWhich one of the following statements describes the properties achieved?",
+      "reason": "Replace the table with raw <br> HTML by fenced code blocks (no raw HTML in markdown).",
+      "source": "GATE 2010 CS question paper (PDF)"
+    },
+    {
+      "id": "cse-2010-cs-45",
+      "field": "text",
+      "before": "The following program consists of 3 concurrent processes and 3 binary semaphores. The semaphores are initialized as S0=1, S1=0, S2=0.\n\n| Process P0 | Process P1 | Process P2 |\n|---|---|---|\n| `while (true) {` <br> `wait (S0);` <br> `print '0';` <br> `release (S1);` <br> `release (S2);` <br> `}` | `wait (S1);` <br> `release (S0);` | `wait (S2)` <br> `release (S0);` |\n\nHow many times will process P0 print '0'?",
+      "after": "The following program consists of 3 concurrent processes and 3 binary semaphores. The semaphores are initialized as S0=1, S1=0, S2=0.\n\n**Process P0**\n\n```c\nwhile (true) {\n    wait (S0);\n    print '0';\n    release (S1);\n    release (S2);\n}\n```\n\n**Process P1**\n\n```c\nwait (S1);\nrelease (S0);\n```\n\n**Process P2**\n\n```c\nwait (S2)\nrelease (S0);\n```\n\nHow many times will process P0 print '0'?",
+      "reason": "Replace the table with raw <br> HTML by fenced code blocks (no raw HTML in markdown).",
+      "source": "GATE 2010 CS question paper (PDF)"
+    },
+    {
+      "id": "cse-2010-cs-31",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Stored (solved) key D is contradicted by derivation.",
+      "source": "Independent derivation"
+    },
+    {
+      "id": "cse-2010-cs-31",
+      "field": "reviewNote",
+      "before": null,
+      "after": "Stored key D, (P+Q+R)′, is wrong. G5 = (P+Q)(Q+R) = Q+PR, G6 = (P+R)(Q+R) = R+PQ, f = (Q+R+PR+PQ)′ = (Q+R)′ → option A. Check: P=1, Q=R=0 gives f=1 but (P+Q+R)′=0. No official pre-2014 key available; change answer to A after confirmation.",
+      "reason": "Stored (solved) key D is contradicted by derivation.",
+      "source": "Independent derivation"
+    },
+    {
+      "id": "cse-2010-cs-46",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Text verified against the 2010 paper scan (odd branch requests R_{n-i}, then R_{n-i-2}); answer B proved independently.",
+      "source": "GATE2010.pdf p.11"
+    },
+    {
+      "id": "cse-2010-cs-46",
+      "field": "reviewNote",
+      "before": "Subscripts of the odd branch in the scan are hard to read (n-i, and second condition i-2<n vs i+2<n); transcribed per the standard version of the question.",
+      "after": null,
+      "reason": "Review resolved.",
+      "source": "GATE2010.pdf p.11"
+    },
+    {
+      "id": "cse-2010-cs-49",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Independent solution gives 902 ns (C); stored key is B (888 ns).",
+      "source": "solved"
+    },
+    {
+      "id": "cse-2010-cs-49",
+      "field": "reviewNote",
+      "before": null,
+      "after": "Stored key B (888 = 4 x 222) disagrees with the derived 902 ns (C): MM->L2 needs 16/4 = 4 transfers x (200 + 20) = 880 ns, then one L2->L1 transfer of the 4-word block = 22 ns (consistent with Q48 = 22 ns). Verify against an authoritative key.",
+      "reason": "Explain the disagreement.",
+      "source": "solved"
+    },
+    {
+      "id": "cse-2010-ga-60",
+      "field": "answer",
+      "before": "B",
+      "after": "A",
+      "reason": "Unemployed : worker = unused/idle : thing; fallow land is land left unused. Unaware : sleeper does not express idleness. A is the standard accepted answer.",
+      "source": "solved"
+    },
+    {
+      "id": "cse-2010-ga-60",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Analogy resolved to A.",
+      "source": "solved"
+    },
+    {
+      "id": "cse-2010-ga-60",
+      "field": "reviewNote",
+      "before": "Analogy is subjective; verify against official key.",
+      "after": null,
+      "reason": "Review resolved.",
+      "source": "solved"
+    }
+  ]
+}

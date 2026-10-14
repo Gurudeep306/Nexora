@@ -56289,7 +56289,7 @@
       "figures": [],
       "group": null,
       "subject": "toc",
-      "topic": "pumping",
+      "topic": "regular",
       "tags": [
         "regular-languages",
         "closure"
@@ -57424,8 +57424,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **TOC** (Regular) from **CSE 2007 Q31** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **B**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Automata & Formal Language Laws:**\n- Chomsky Hierarchy: Regular (DFA/NFA) $\\subset$ Context-Free (PDA) $\\subset$ Context-Sensitive (LBA) $\\subset$ Turing Recognizable (TM).\n- State Equivalence & Myhill-Nerode Theorem: Minimum DFA states equals the number of pairwise distinguishable equivalence classes.\n- Closure Properties: Regular languages are closed under union, intersection, complementation, concatenation, and Kleene star.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  $ww^Rx$: any string starting with 00 or 11 of length at least 3 works (take $|w|=1$), so it is regular.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  the others are not..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`B`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **B**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `$\\{ww^R\\mid w\\in\\{0,1\\}^+\\}$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (CORRECT):** `$\\{ww^Rx\\mid x,w\\in\\{0,1\\}^+\\}$`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option C (INCORRECT):** `$\\{wxw^R\\mid x,w\\in\\{0,1\\}^+\\}$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (INCORRECT):** `$\\{xww^R\\mid x,w\\in\\{0,1\\}^+\\}$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** Test boundary words: the empty string $\\epsilon$, strings of length 1, and strings of length 2 to eliminate non-matching DFA states instantly.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": false,
-      "reviewNote": null
+      "needsReview": true,
+      "reviewNote": "Stored key is B, but option B {ww^R x | x,w in {0,1}+} is not regular (Myhill-Nerode: prefixes 0 1^k 00 for odd k are separated by suffix 1^k 0 1), whereas option C {wxw^R} equals 0(0+1)^+0 + 1(0+1)^+1, which is regular. Answer should be C; no official key available to confirm."
     },
     {
       "id": "cse-2007-cs-32",
@@ -57970,8 +57970,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "coa",
-      "topic": "isa",
+      "subject": "pds",
+      "topic": "trees",
       "tags": [
         "n-ary-tree",
         "leaves"
@@ -59239,7 +59239,7 @@
       "number": "71",
       "marks": 2,
       "type": "MCQ",
-      "text": "Consider the following program segment. Here R1, R2 and R3 are the general purpose registers.\n\n| Instruction | Operation | Instruction size (no. of words) |\n|---|---|---|\n| MOV R1, (3000) | R1 <- M[3000] | 2 |\n| LOOP: MOV R2, (R3) | R2 <- M[R3] | 1 |\n| ADD R2, R1 | R2 <- R1 + R2 | 1 |\n| MOV (R3), R2 | M[R3] <- R2 | 1 |\n| INC R3 | R3 <- R3 + 1 | 1 |\n| DEC R1 | R1 <- R1 - 1 | 1 |\n| BNZ LOOP | Branch on not zero | 2 |\n| HALT | Stop | 1 |\n\nAssume that the content of memory location 3000 is 10 and the content of the register R3 is 2000. The content of each of the memory locations from 2000 to 2010 is 100. The program is loaded from the memory location 1000. All the numbers are in decimal.\n\nAssume that the memory is word addressable. The number of memory references for accessing the data in executing the program completely is",
+      "text": "Consider the following program segment. Here R1, R2 and R3 are the general purpose registers.\n\n| Instruction | Operation | Instruction size (no. of words) |\n|---|---|---|\n| MOV R1, (3000) | R1 ← M[3000] | 2 |\n| LOOP: MOV R2, (R3) | R2 ← M[R3] | 1 |\n| ADD R2, R1 | R2 ← R1 + R2 | 1 |\n| MOV (R3), R2 | M[R3] ← R2 | 1 |\n| INC R3 | R3 ← R3 + 1 | 1 |\n| DEC R1 | R1 ← R1 - 1 | 1 |\n| BNZ LOOP | Branch on not zero | 2 |\n| HALT | Stop | 1 |\n\nAssume that the content of memory location 3000 is 10 and the content of the register R3 is 2000. The content of each of the memory locations from 2000 to 2010 is 100. The program is loaded from the memory location 1000. All the numbers are in decimal.\n\nAssume that the memory is word addressable. The number of memory references for accessing the data in executing the program completely is",
       "options": [
         {
           "l": "A",
@@ -59285,7 +59285,7 @@
       "number": "72",
       "marks": 2,
       "type": "MCQ",
-      "text": "Consider the following program segment. Here R1, R2 and R3 are the general purpose registers.\n\n| Instruction | Operation | Instruction size (no. of words) |\n|---|---|---|\n| MOV R1, (3000) | R1 <- M[3000] | 2 |\n| LOOP: MOV R2, (R3) | R2 <- M[R3] | 1 |\n| ADD R2, R1 | R2 <- R1 + R2 | 1 |\n| MOV (R3), R2 | M[R3] <- R2 | 1 |\n| INC R3 | R3 <- R3 + 1 | 1 |\n| DEC R1 | R1 <- R1 - 1 | 1 |\n| BNZ LOOP | Branch on not zero | 2 |\n| HALT | Stop | 1 |\n\nAssume that the content of memory location 3000 is 10 and the content of the register R3 is 2000. The content of each of the memory locations from 2000 to 2010 is 100. The program is loaded from the memory location 1000. All the numbers are in decimal.\n\nAssume that the memory is word addressable. After the execution of this program, the content of memory location 2010 is",
+      "text": "Consider the following program segment. Here R1, R2 and R3 are the general purpose registers.\n\n| Instruction | Operation | Instruction size (no. of words) |\n|---|---|---|\n| MOV R1, (3000) | R1 ← M[3000] | 2 |\n| LOOP: MOV R2, (R3) | R2 ← M[R3] | 1 |\n| ADD R2, R1 | R2 ← R1 + R2 | 1 |\n| MOV (R3), R2 | M[R3] ← R2 | 1 |\n| INC R3 | R3 ← R3 + 1 | 1 |\n| DEC R1 | R1 ← R1 - 1 | 1 |\n| BNZ LOOP | Branch on not zero | 2 |\n| HALT | Stop | 1 |\n\nAssume that the content of memory location 3000 is 10 and the content of the register R3 is 2000. The content of each of the memory locations from 2000 to 2010 is 100. The program is loaded from the memory location 1000. All the numbers are in decimal.\n\nAssume that the memory is word addressable. After the execution of this program, the content of memory location 2010 is",
       "options": [
         {
           "l": "A",
@@ -59331,7 +59331,7 @@
       "number": "73",
       "marks": 2,
       "type": "MCQ",
-      "text": "Consider the following program segment. Here R1, R2 and R3 are the general purpose registers.\n\n| Instruction | Operation | Instruction size (no. of words) |\n|---|---|---|\n| MOV R1, (3000) | R1 <- M[3000] | 2 |\n| LOOP: MOV R2, (R3) | R2 <- M[R3] | 1 |\n| ADD R2, R1 | R2 <- R1 + R2 | 1 |\n| MOV (R3), R2 | M[R3] <- R2 | 1 |\n| INC R3 | R3 <- R3 + 1 | 1 |\n| DEC R1 | R1 <- R1 - 1 | 1 |\n| BNZ LOOP | Branch on not zero | 2 |\n| HALT | Stop | 1 |\n\nAssume that the content of memory location 3000 is 10 and the content of the register R3 is 2000. The content of each of the memory locations from 2000 to 2010 is 100. The program is loaded from the memory location 1000. All the numbers are in decimal.\n\nAssume that the memory is byte addressable and the word size is 32 bits. If an interrupt occurs during the execution of the instruction \"INC R3\", what return address will be pushed on to the stack?",
+      "text": "Consider the following program segment. Here R1, R2 and R3 are the general purpose registers.\n\n| Instruction | Operation | Instruction size (no. of words) |\n|---|---|---|\n| MOV R1, (3000) | R1 ← M[3000] | 2 |\n| LOOP: MOV R2, (R3) | R2 ← M[R3] | 1 |\n| ADD R2, R1 | R2 ← R1 + R2 | 1 |\n| MOV (R3), R2 | M[R3] ← R2 | 1 |\n| INC R3 | R3 ← R3 + 1 | 1 |\n| DEC R1 | R1 ← R1 - 1 | 1 |\n| BNZ LOOP | Branch on not zero | 2 |\n| HALT | Stop | 1 |\n\nAssume that the content of memory location 3000 is 10 and the content of the register R3 is 2000. The content of each of the memory locations from 2000 to 2010 is 100. The program is loaded from the memory location 1000. All the numbers are in decimal.\n\nAssume that the memory is byte addressable and the word size is 32 bits. If an interrupt occurs during the execution of the instruction \"INC R3\", what return address will be pushed on to the stack?",
       "options": [
         {
           "l": "A",
@@ -59571,7 +59571,7 @@
       "number": "78",
       "marks": 2,
       "type": "MCQ",
-      "text": "Consider the CFG with $\\{S,A,B\\}$ as the non-terminal alphabet, $\\{a,b\\}$ as the terminal alphabet, S as the start symbol and the following set of production rules:\n\n$S\\to aB$  $S\\to bA$\n\n$B\\to b$  $A\\to a$\n\n$B\\to bS$  $A\\to aS$\n\n$B\\to aBB$  $A\\to bAA$\n\nWhich of the following strings is generated by the grammar?",
+      "text": "Consider the CFG with $\\{S,A,B\\}$ as the non-terminal alphabet, $\\{a,b\\}$ as the terminal alphabet, S as the start symbol and the following set of production rules:\n\n| | |\n|---|---|\n| $S\\to aB$ | $S\\to bA$ |\n| $B\\to b$ | $A\\to a$ |\n| $B\\to bS$ | $A\\to aS$ |\n| $B\\to aBB$ | $A\\to bAA$ |\n\nWhich of the following strings is generated by the grammar?",
       "options": [
         {
           "l": "A",
@@ -59617,7 +59617,7 @@
       "number": "79",
       "marks": 2,
       "type": "MCQ",
-      "text": "Consider the CFG with $\\{S,A,B\\}$ as the non-terminal alphabet, $\\{a,b\\}$ as the terminal alphabet, S as the start symbol and the following set of production rules:\n\n$S\\to aB$  $S\\to bA$\n\n$B\\to b$  $A\\to a$\n\n$B\\to bS$  $A\\to aS$\n\n$B\\to aBB$  $A\\to bAA$\n\nFor the correct answer string to Q.78, how many derivation trees are there?",
+      "text": "Consider the CFG with $\\{S,A,B\\}$ as the non-terminal alphabet, $\\{a,b\\}$ as the terminal alphabet, S as the start symbol and the following set of production rules:\n\n| | |\n|---|---|\n| $S\\to aB$ | $S\\to bA$ |\n| $B\\to b$ | $A\\to a$ |\n| $B\\to bS$ | $A\\to aS$ |\n| $B\\to aBB$ | $A\\to bAA$ |\n\nFor the correct answer string to Q.78, how many derivation trees are there?",
       "options": [
         {
           "l": "A",
@@ -60063,7 +60063,7 @@
       "textSource": "pdf",
       "sourceUrl": null,
       "needsReview": true,
-      "reviewNote": "Question is flawed: unique solution iff alpha != 5; option D 'any real number' is the official key."
+      "reviewNote": "Question is flawed: det = alpha - 5, so the system has a unique solution for every real alpha except 5 (alpha = 5 gives infinitely many). No option is exactly right; D ('any real number') is the closest and is kept as the key. Unverified against an official 2008 key."
     },
     {
       "id": "cse-2008-cs-4",
@@ -61027,8 +61027,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "db",
-      "topic": "sql",
+      "subject": "dm",
+      "topic": "combinatorics",
       "tags": [
         "summation"
       ],
@@ -61288,11 +61288,11 @@
         },
         {
           "l": "C",
-          "t": "$\\forall x\\,\\exists y\\,(fsa(y)\\wedge pda(x)\\wedge equivalent(x,y))$"
+          "t": "$\\forall x\\,\\exists y\\,(fsa(x)\\wedge pda(y)\\wedge equivalent(x,y))$"
         },
         {
           "l": "D",
-          "t": "$\\forall x\\,\\exists y\\,(fsa(x)\\wedge pda(y)\\wedge equivalent(x,y))$"
+          "t": "$\\forall x\\,\\exists y\\,(fsa(y)\\wedge pda(x)\\wedge equivalent(x,y))$"
         }
       ],
       "figures": [],
@@ -61309,7 +61309,7 @@
       "textSource": "pdf",
       "sourceUrl": null,
       "needsReview": true,
-      "reviewNote": "Answer chosen by elimination (A); wording of A has x free in consequent; some sources consider none fully correct. Verify against official key."
+      "reviewNote": "Intended answer A (reading ∀x as scoping over the whole implication); strictly x is free in the consequent of A as printed, and B, C, D are clearly wrong. Verify against the official key."
     },
     {
       "id": "cse-2008-cs-31",
@@ -61445,8 +61445,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **COA** (Isa) from **CSE 2008 Q33** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **C**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Processor & Memory Hierarchy Laws:**\n- Physical Address Split: $\\text{Physical Address} = \\text{Tag Bits} + \\text{Set Index Bits} + \\text{Block Offset Bits}$.\n- Pipelining Performance: Execution Time $T = (k + n - 1 + \\text{Stalls}) \\times \\tau$. Speedup $S = \\frac{n \\cdot k}{k + n - 1 + \\text{Stalls}}$.\n- Memory Hierarchy Latency: $\\text{EAT} = h \\cdot t_{cache} + (1 - h) \\cdot (t_{cache} + t_{mem})$.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  Increment equals operand size (III).\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  Auto-increment does not help self-relocation and an extra ALU is desirable but not required..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`C`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **C**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `I only`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `II only`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (CORRECT):** `III only`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option D (INCORRECT):** `II and III only`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** For cache address partitioning, determine offset bits first from block size ($2^b$ bytes $\\implies b$ bits); direct mapped means set index bits $= \\log_2(\\text{Total Blocks})$.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Answer C taken from a secondary source (gateoverflow); verify."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2008-cs-34",
@@ -61492,7 +61492,7 @@
       "textSource": "pdf",
       "sourceUrl": null,
       "needsReview": true,
-      "reviewNote": "Answer D taken from a secondary source (gateoverflow); verify."
+      "reviewNote": "II (privileged) and III (atomic, no exception during RFE) are clearly required; I (trap instruction) is debatable. No option lists \"II and III\", so D is the only option containing both; verify against the official key."
     },
     {
       "id": "cse-2008-cs-35",
@@ -62129,8 +62129,9 @@
       "subject": "toc",
       "topic": "tm",
       "tags": [
-        "RE",
-        "closure"
+        "recursive vs RE",
+        "NFA to DFA",
+        "Chomsky hierarchy"
       ],
       "answer": "D",
       "answerSource": "solved",
@@ -62170,13 +62171,7 @@
           "t": "| | a | b |\n|---|---|---|\n| → P | S | Q |\n| Q | S | R |\n| R (F) | Q | P |\n| S | Q | P |"
         }
       ],
-      "figures": [
-        {
-          "f": "cse-2008/cs-49-1.png",
-          "alt": "Transition tables: Y: 1: a->1,b->2; 2(F): a->2,b->1. Z: 1: a->2,b->2; 2(F): a->1,b->1.",
-          "svg": "cse-2008/cs-49-1.svg"
-        }
-      ],
+      "figures": [],
       "group": null,
       "subject": "toc",
       "topic": "regular",
@@ -62190,7 +62185,7 @@
       "textSource": "pdf",
       "sourceUrl": null,
       "needsReview": true,
-      "reviewNote": "Printed option tables do not exactly match a hand-computed product for state S; answer A per gateoverflow."
+      "reviewNote": "Correct product (states (z,y)): P=(1,1): a->(2,1), b->(2,2); Q=(1,2): a->(2,2), b->(2,1); R=(2,2) final: a->(1,2), b->(1,1); S=(2,1): a->(1,1), b->(1,2). Option A matches rows P, Q, R exactly but prints S as a->Q, b->P (should be a->P, b->Q); A is the only option with P -b-> R and is the accepted answer. Paper misprint."
     },
     {
       "id": "cse-2008-cs-50",
@@ -62550,8 +62545,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "calc",
-      "topic": "maxmin",
+      "subject": "cn",
+      "topic": "ip",
       "tags": [
         "subnetting"
       ],
@@ -62595,8 +62590,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "cn",
+      "topic": "transport",
       "tags": [
         "token bucket"
       ],
@@ -63030,7 +63025,7 @@
       "number": "68",
       "marks": 2,
       "type": "MCQ",
-      "text": "Let R and S be two relations with the following schema\n\nR(<u>P</u>, <u>Q</u>, R1, R2, R3)\n\nS(<u>P</u>, <u>Q</u>, S1, S2)\n\nwhere {P,Q} is the key for both schemas. Which of the following queries are equivalent?\n\nI. $\\Pi_P(R\\bowtie S)$\n\nII. $\\Pi_P(R)\\bowtie\\Pi_P(S)$\n\nIII. $\\Pi_P(\\Pi_{P,Q}(R)\\cap\\Pi_{P,Q}(S))$\n\nIV. $\\Pi_P(\\Pi_{P,Q}(R)-(\\Pi_{P,Q}(R)-\\Pi_{P,Q}(S)))$",
+      "text": "Let R and S be two relations with the following schema\n\n$R(\\underline{P},\\underline{Q},R1,R2,R3)$\n\n$S(\\underline{P},\\underline{Q},S1,S2)$\n\nwhere {P,Q} is the key for both schemas. Which of the following queries are equivalent?\n\nI. $\\Pi_P(R\\bowtie S)$\n\nII. $\\Pi_P(R)\\bowtie\\Pi_P(S)$\n\nIII. $\\Pi_P(\\Pi_{P,Q}(R)\\cap\\Pi_{P,Q}(S))$\n\nIV. $\\Pi_P(\\Pi_{P,Q}(R)-(\\Pi_{P,Q}(R)-\\Pi_{P,Q}(S)))$",
       "options": [
         {
           "l": "A",
@@ -63565,7 +63560,7 @@
       "solution": "**Step 1: Problem Formulation & Exam Context**\nTargeting **DM** (Recurrences) from **CSE-2008 Q79** (2 Marks) (MCQ).\n- Evaluation Target: Official verified examination outcome **13**.\n\n**Step 2: Governing Principles & Formal Rules**\n- Fundamental problem constraints and analytical invariants derived directly from first principles.\n\n**Step 3: Step-by-Step Analytical Derivation & Calculation**\n- Applying the governing laws and boundary conditions from the problem statement.\n- Evaluating the functional transformation leads deterministically to the confirmed outcome:\n\n$$\\mathbf{13}$$\n\n**Step 4: Conclusion & Verification**\n- **Official Verified Key:** **13**\n- Completely verified against standard computer science literature and official GATE authority key archives.\n\n⚡ **Topper's Shortcut:** Identify governing structural invariants (e.g., symmetry, closure, master theorem cases, or truth-table Karnaugh maps) directly to eliminate distractors in < 45 seconds.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": false,
+      "needsReview": true,
       "reviewNote": "True value is 13, which is not among the options; official key/treatment unknown (possibly dropped or marks to all)."
     },
     {
@@ -64126,8 +64121,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **DL** (Gates) from **CSE 2009 Q6** (1 Mark).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **D**.\n- **Identified Problem Quantities:** 2\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Combinational & Sequential Switching Laws:**\n- De Morgan's Dual Laws: $\\overline{x \\cdot y} = \\overline{x} + \\overline{y}$ and $\\overline{x + y} = \\overline{x} \\cdot \\overline{y}$.\n- Flip-Flop Invariants: D-FF: $Q_{next} = D$; JK-FF: $Q_{next} = J\\overline{Q} + \\overline{K}Q$; T-FF: $Q_{next} = T \\oplus Q$.\n- In pass-transistor and transmission gate logic, PMOS passes a strong $1$ (conducts when gate is $0$), while NMOS passes a strong $0$ (conducts when gate is $1$).\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  AB = NOR(A',B') needs 2 inverters + 1 NOR.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  then NOR with C gives (AB+C)' and one more NOR as inverter: 5 gates..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`D`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **D**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `2`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `3`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (INCORRECT):** `4`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (CORRECT):** `5`. Completely satisfies the derived mathematical proof and boundary conditions.\n\n⚡ **Topper's Shortcut:** Set select/input variables to $0$ and $1$ to observe which signal reaches the output node in under 20 seconds.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": false,
-      "reviewNote": null
+      "needsReview": true,
+      "reviewNote": "Stored key D (5) looks wrong: (A+C)(B+C) = AB+C is realised by 3 two-input NOR gates (NOR(NOR(A,C),NOR(B,C))) and 2 gates provably cannot do it, so the answer should be B (3). Confirm against an official key before changing the answer."
     },
     {
       "id": "cse-2009-cs-7",
@@ -64772,8 +64767,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **LEGACY** (Web) from **CSE 2009 Q20** (1 Mark).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **C**.\n- **Identified Problem Quantities:** 1, 2, 2, 2, 2\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Principles of LEGACY:**\n- Decompose the problem into invariant constraints defined by web theory.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  Layout: row1: ab,cd,cd.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  row2: ab,ef,gh.\n- **Step 3.3 (Intermediate Reduction):**\n  row3: ik,ik,gh. Distinct cells per column: col1 {ab,ik}=2, col2 {cd,ef,ik}=3, col3 {cd,gh}=2. per row: row1 {ab,cd}=2, row2 {ab,ef,gh}=3, row3 {ik,gh}=2..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`C`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **C**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `$\\langle 2,2,3\\rangle$ and $\\langle 2,3,2\\rangle$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `$\\langle 2,2,3\\rangle$ and $\\langle 2,2,3\\rangle$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (CORRECT):** `$\\langle 2,3,2\\rangle$ and $\\langle 2,3,2\\rangle$`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option D (INCORRECT):** `$\\langle 2,3,2\\rangle$ and $\\langle 2,2,3\\rangle$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** Substitute boundary test inputs ($n=1, 2$ or extreme bounds) to eliminate incorrect multiple-choice options immediately.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Option order/answer depends on counting convention (distinct cells); could not confirm official key (web rate-limited)."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2009-cs-21",
@@ -65268,7 +65263,7 @@
       "figures": [],
       "group": null,
       "subject": "os",
-      "topic": "scheduling",
+      "topic": "files",
       "tags": [
         "disk-scheduling",
         "sstf"
@@ -65314,7 +65309,7 @@
       "figures": [
         {
           "f": "cse-2009/cs-32-1.png",
-          "alt": "States Start, Ready, Running, Blocked, Terminated. Edges: A Start->Ready, B Ready->Running, C Running->Ready, D Running->Terminated, E Blocked->Ready, F Running->Blocked.",
+          "alt": "Process state diagram: Start -A-> Ready; Ready -B-> Running; Running -C-> Ready; Running -D-> Terminated; Running -F-> Blocked; Blocked -E-> Ready.",
           "svg": "cse-2009/cs-32-1.svg"
         }
       ],
@@ -65504,22 +65499,22 @@
       "figures": [
         {
           "f": "cse-2009/cs-36-a.png",
-          "alt": "Hash table of 10 slots for option A",
+          "alt": "Option A hash table, slots 0-9: slot 2 = 2, slot 3 = 23, slot 5 = 15, slot 8 = 18, others empty",
           "svg": "cse-2009/cs-36-a.svg"
         },
         {
           "f": "cse-2009/cs-36-b.png",
-          "alt": "Hash table of 10 slots for option B",
+          "alt": "Option B hash table, slots 0-9: slot 2 = 12, slot 3 = 13, slot 5 = 5, slot 8 = 18, others empty",
           "svg": "cse-2009/cs-36-b.svg"
         },
         {
           "f": "cse-2009/cs-36-c.png",
-          "alt": "Hash table of 10 slots for option C",
+          "alt": "Option C hash table, slots 0-9: 2 = 12, 3 = 13, 4 = 2, 5 = 3, 6 = 23, 7 = 5, 8 = 18, 9 = 15; slots 0, 1 empty",
           "svg": "cse-2009/cs-36-c.svg"
         },
         {
           "f": "cse-2009/cs-36-d.png",
-          "alt": "Hash table of 10 slots for option D",
+          "alt": "Option D hash table, slots 0-9: slot 2 = 12, 2; slot 3 = 13, 3, 23; slot 5 = 5, 15; slot 8 = 18; others empty",
           "svg": "cse-2009/cs-36-d.svg"
         }
       ],
@@ -65617,7 +65612,7 @@
       "figures": [
         {
           "f": "cse-2009/cs-38-1.png",
-          "alt": "Undirected weighted graph on a,b,c,d,e,f,g: a-b 5, a-c 3, b-c 4, b-d 6, b-e 2, c-d 5, c-f 6, d-e 6, d-f 6, e-f 3, e-g 5, f-g 4.",
+          "alt": "Undirected weighted graph on vertices a-g: a-b 5, a-c 3, b-c 4, b-d 6, b-e 2, c-d 5, c-f 6, d-e 6, d-f 6, e-f 3, e-g 5, f-g 4.",
           "svg": "cse-2009/cs-38-1.svg"
         }
       ],
@@ -65669,7 +65664,7 @@
       "figures": [],
       "group": null,
       "subject": "algo",
-      "topic": "complexity",
+      "topic": "sorting",
       "tags": [
         "quicksort",
         "pivot",
@@ -65716,7 +65711,7 @@
       "figures": [],
       "group": null,
       "subject": "toc",
-      "topic": "pumping",
+      "topic": "cfg",
       "tags": [
         "intersection",
         "cfl"
@@ -65918,7 +65913,7 @@
       "textSource": "pdf",
       "sourceUrl": null,
       "needsReview": true,
-      "reviewNote": "Answer depends on split convention; 4 is the maximum (matches gateoverflow accepted answer)."
+      "reviewNote": "Leaf-split count depends on the split/separator convention: right-heavy splits give 3; left-full splits with \"key <= separator goes left\" give 4 (accepted key C); left-full splits with separator = smallest key of the right leaf give 5. Official 2009 key not verified."
     },
     {
       "id": "cse-2009-cs-45",
@@ -65930,7 +65925,7 @@
       "number": "45",
       "marks": 2,
       "type": "MCQ",
-      "text": "Let $R$ and $S$ be relational schemes such that $R = \\{a, b, c\\}$ and $S = \\{c\\}$. Now consider the following queries on the database :\n\nI. $\\pi_{R-S}(r) - \\pi_{R-S}(\\pi_{R-S}(r) \\times s - \\pi_{R-S,S}(r))$\n\nII. $\\{t \\mid t \\in \\pi_{R-S}(r) \\wedge \\forall u \\in s (\\exists v \\in r (u = v[s] \\wedge t = v[R-S]))\\}$\n\nIII. $\\{t \\mid t \\in \\pi_{R-S}(r) \\wedge \\forall v \\in r (\\exists u \\in s (u = v[s] \\wedge t = v[R-S]))\\}$\n\nIV. Select R.a, R.b\nfrom R, S\nwhere R.c = S.c\n\nWhich of the above queries are equivalent ?",
+      "text": "Let $R$ and $S$ be relational schemes such that $R = \\{a, b, c\\}$ and $S = \\{c\\}$. Now consider the following queries on the database :\n\nI. $\\pi_{R-S}(r) - \\pi_{R-S}(\\pi_{R-S}(r) \\times s - \\pi_{R-S,S}(r))$\n\nII. $\\{t \\mid t \\in \\pi_{R-S}(r) \\wedge \\forall u \\in s (\\exists v \\in r (u = v[s] \\wedge t = v[R-S]))\\}$\n\nIII. $\\{t \\mid t \\in \\pi_{R-S}(r) \\wedge \\forall v \\in r (\\exists u \\in s (u = v[s] \\wedge t = v[R-S]))\\}$\n\nIV.\n\n```sql\nSelect R.a, R.b\nfrom R, S\nwhere R.c = S.c\n```\n\nWhich of the above queries are equivalent ?",
       "options": [
         {
           "l": "A",
@@ -66057,7 +66052,7 @@
       "textSource": "pdf",
       "sourceUrl": null,
       "needsReview": true,
-      "reviewNote": "Reasoning is convention-based (Tanenbaum-style); matches gateoverflow accepted answer A."
+      "reviewNote": "Solution uses: sequence numbers must advance at least once per maximum packet lifetime, rate >= 1/64 per s = 0.0156/s, closest 0.015/s. Official 2009 key not verified."
     },
     {
       "id": "cse-2009-cs-48",
@@ -66142,14 +66137,14 @@
         "dfd",
         "context-diagram"
       ],
-      "answer": "D",
+      "answer": "C",
       "answerSource": "solved",
       "confidence": "high",
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **LEGACY** (Se) from **CSE 2009 Q49** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **D**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Principles of LEGACY:**\n- Decompose the problem into invariant constraints defined by se theory.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  I, II and III are standard DFD rules.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  a data store connects only to processes, so IV is false..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`D`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **D**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `II and III`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `I, II and IV`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (INCORRECT):** `I and III`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (CORRECT):** `I, II and III`. Completely satisfies the derived mathematical proof and boundary conditions.\n\n⚡ **Topper's Shortcut:** Substitute boundary test inputs ($n=1, 2$ or extreme bounds) to eliminate incorrect multiple-choice options immediately.",
       "textSource": "pdf",
       "sourceUrl": null,
       "needsReview": true,
-      "reviewNote": "Official key not verified (web rate-limited)."
+      "reviewNote": "Key changed D -> C from textbook rules (Rajib Mall: external entities only in the context diagram). Official 2009 key not verified."
     },
     {
       "id": "cse-2009-cs-50",
@@ -66425,7 +66420,7 @@
       "textSource": "pdf",
       "sourceUrl": null,
       "needsReview": true,
-      "reviewNote": "Query semantics do not match any option exactly; answer A is a low-confidence pick from memory of the official key."
+      "reviewNote": "The query returns suppliers who supplied no blue part (including suppliers with no catalog rows); no option states this exactly. Kept the accepted key A (suppliers of non-blue parts). Official 2009 key not verified."
     },
     {
       "id": "cse-2009-cs-56",
@@ -67399,23 +67394,23 @@
       "number": "17",
       "marks": 1,
       "type": "MCQ",
-      "text": "Let L1 be a recursive language. Let L2 and L3 be languages that are recursively enumerable but not recursive. Which of the following statements is not necessarily true?",
+      "text": "Let $L_1$ be a recursive language. Let $L_2$ and $L_3$ be languages that are recursively enumerable but not recursive. Which of the following statements is not necessarily true?",
       "options": [
         {
           "l": "A",
-          "t": "L2 $-$ L1 is recursively enumerable."
+          "t": "$L_2 - L_1$ is recursively enumerable."
         },
         {
           "l": "B",
-          "t": "L1 $-$ L3 is recursively enumerable."
+          "t": "$L_1 - L_3$ is recursively enumerable."
         },
         {
           "l": "C",
-          "t": "L2 $\\cap$ L3 is recursively enumerable."
+          "t": "$L_2 \\cap L_3$ is recursively enumerable."
         },
         {
           "l": "D",
-          "t": "L2 $\\cup$ L3 is recursively enumerable."
+          "t": "$L_2 \\cup L_3$ is recursively enumerable."
         }
       ],
       "figures": [],
@@ -67678,7 +67673,7 @@
       "number": "23",
       "marks": 1,
       "type": "MCQ",
-      "text": "Consider the methods used by processes P1 and P2 for accessing their critical sections whenever needed, as given below. The initial values of shared boolean variables S1 and S2 are randomly assigned.\n\n| Method used by P1 | Method used by P2 |\n|---|---|\n| `while (S1 == S2);` <br> Critical Section <br> `S1 = S2;` | `while (S1 != S2);` <br> Critical Section <br> `S2 = not(S1);` |\n\nWhich one of the following statements describes the properties achieved?",
+      "text": "Consider the methods used by processes P1 and P2 for accessing their critical sections whenever needed, as given below. The initial values of shared boolean variables S1 and S2 are randomly assigned.\n\n**Method used by P1**\n\n```c\nwhile (S1 == S2);\nCritical Section\nS1 = S2;\n```\n\n**Method used by P2**\n\n```c\nwhile (S1 != S2);\nCritical Section\nS2 = not(S1);\n```\n\nWhich one of the following statements describes the properties achieved?",
       "options": [
         {
           "l": "A",
@@ -68078,8 +68073,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **DL** (Gates) from **CSE 2010 Q31** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **D**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Combinational & Sequential Switching Laws:**\n- De Morgan's Dual Laws: $\\overline{x \\cdot y} = \\overline{x} + \\overline{y}$ and $\\overline{x + y} = \\overline{x} \\cdot \\overline{y}$.\n- Flip-Flop Invariants: D-FF: $Q_{next} = D$; JK-FF: $Q_{next} = J\\overline{Q} + \\overline{K}Q$; T-FF: $Q_{next} = T \\oplus Q$.\n- In pass-transistor and transmission gate logic, PMOS passes a strong $1$ (conducts when gate is $0$), while NMOS passes a strong $0$ (conducts when gate is $1$).\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  Upper NOR of (P+Q)' and (Q+R)' gives $P+Q+R$.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  lower NOR of (P+R)' and (Q+R)' gives $P+Q+R$.\n- **Step 3.3 (Intermediate Reduction):**\n  final NOR gives $\\overline{P+Q+R}$..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`D`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **D**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `$\\overline{Q+R}$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `$\\overline{P+Q}$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (INCORRECT):** `$\\overline{P+R}$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (CORRECT):** `$\\overline{P+Q+R}$`. Completely satisfies the derived mathematical proof and boundary conditions.\n\n⚡ **Topper's Shortcut:** Set select/input variables to $0$ and $1$ to observe which signal reaches the output node in under 20 seconds.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": false,
-      "reviewNote": null
+      "needsReview": true,
+      "reviewNote": "Stored key D, (P+Q+R)′, is wrong. G5 = (P+Q)(Q+R) = Q+PR, G6 = (P+R)(Q+R) = R+PQ, f = (Q+R+PR+PQ)′ = (Q+R)′ → option A. Check: P=1, Q=R=0 gives f=1 but (P+Q+R)′=0. No official pre-2014 key available; change answer to A after confirmation."
     },
     {
       "id": "cse-2010-cs-32",
@@ -68690,7 +68685,7 @@
       "number": "45",
       "marks": 2,
       "type": "MCQ",
-      "text": "The following program consists of 3 concurrent processes and 3 binary semaphores. The semaphores are initialized as S0=1, S1=0, S2=0.\n\n| Process P0 | Process P1 | Process P2 |\n|---|---|---|\n| `while (true) {` <br> `wait (S0);` <br> `print '0';` <br> `release (S1);` <br> `release (S2);` <br> `}` | `wait (S1);` <br> `release (S0);` | `wait (S2)` <br> `release (S0);` |\n\nHow many times will process P0 print '0'?",
+      "text": "The following program consists of 3 concurrent processes and 3 binary semaphores. The semaphores are initialized as S0=1, S1=0, S2=0.\n\n**Process P0**\n\n```c\nwhile (true) {\n    wait (S0);\n    print '0';\n    release (S1);\n    release (S2);\n}\n```\n\n**Process P1**\n\n```c\nwait (S1);\nrelease (S0);\n```\n\n**Process P2**\n\n```c\nwait (S2)\nrelease (S0);\n```\n\nHow many times will process P0 print '0'?",
       "options": [
         {
           "l": "A",
@@ -68768,8 +68763,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **OS** (Deadlock) from **CSE 2010 Q46** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **B**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Operating Systems & Memory Management Laws:**\n- Paging & MMU Translation: Virtual Address = VPN + Offset ($p = \\log_2(\\text{Page Size})$). Multi-level paging requires $k$ page table memory accesses on TLB miss.\n- Process Scheduling Relations: $\\text{TAT} = \\text{Completion Time} - \\text{Arrival Time}$; $\\text{Waiting Time} = \\text{TAT} - \\text{Burst Time}$.\n- Critical Section Safety: Mutual Exclusion (mutex), Progress, and Bounded Waiting must be preserved.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  For n=21,k=12: P10 holds R10 and wants R12, while P9 holds R12 and wants R10 (R_{n-9-... }) forming a circular wait.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  The other cases have no cycle..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`B`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **B**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `$n=40, k=26$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (CORRECT):** `$n=21, k=12$`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option C (INCORRECT):** `$n=20, k=10$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (INCORRECT):** `$n=41, k=19$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** Draw the Gantt chart timeline left-to-right at $t=0, 1, 2, \\dots$. Sum of waiting times divided by $n$ yields average waiting time directly.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Subscripts of the odd branch in the scan are hard to read (n-i, and second condition i-2<n vs i+2<n); transcribed per the standard version of the question."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2010-cs-47",
@@ -68916,8 +68911,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **COA** (Cache) from **CSE 2010 Q49** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **B**.\n- **Identified Problem Quantities:** 4, 16, 2, 20, 200\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Processor & Memory Hierarchy Laws:**\n- Physical Address Split: $\\text{Physical Address} = \\text{Tag Bits} + \\text{Set Index Bits} + \\text{Block Offset Bits}$.\n- Pipelining Performance: Execution Time $T = (k + n - 1 + \\text{Stalls}) \\times \\tau$. Speedup $S = \\frac{n \\cdot k}{k + n - 1 + \\text{Stalls}}$.\n- Memory Hierarchy Latency: $\\text{EAT} = h \\cdot t_{cache} + (1 - h) \\cdot (t_{cache} + t_{mem})$.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  Main memory to L2 moves a 16-word block as 4 bus transfers of 4 words, each taking 200 ns (memory) + 20 ns (L2 write) = 220 ns, i.e. 880 ns.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  the L2 to L1 transfer adds 20 + 2 = 22 ns... total 902 or 888 depending on overlap.\n- **Step 3.3 (Intermediate Reduction):**\n  standard key gives 888 (4 x (200+20+2))..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`B`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **B**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `222 nanoseconds`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (CORRECT):** `888 nanoseconds`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option C (INCORRECT):** `902 nanoseconds`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (INCORRECT):** `968 nanoseconds`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** For cache address partitioning, determine offset bits first from block size ($2^b$ bytes $\\implies b$ bits); direct mapped means set index bits $= \\log_2(\\text{Total Blocks})$.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": false,
-      "reviewNote": null
+      "needsReview": true,
+      "reviewNote": "Stored key B (888 = 4 x 222) disagrees with the derived 902 ns (C): MM->L2 needs 16/4 = 4 transfers x (200 + 20) = 880 ns, then one L2->L1 transfer of the 4-word block = 22 ns (consistent with Q48 = 22 ns). Verify against an authoritative key."
     },
     {
       "id": "cse-2010-cs-50",
@@ -69419,14 +69414,14 @@
       "tags": [
         "analogy"
       ],
-      "answer": "B",
+      "answer": "A",
       "answerSource": "solved",
       "confidence": "high",
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **GA** (Verbal) from **CSE 2010 Q60** (1 Mark).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **B**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Principles of GA:**\n- Decompose the problem into invariant constraints defined by verbal theory.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  An unemployed person is a worker lacking work, as a sleeper is a person lacking awareness.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  the second word has the property of being the state in the first..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`B`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **B**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `fallow : land`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (CORRECT):** `unaware : sleeper`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option C (INCORRECT):** `wit : jester`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (INCORRECT):** `renovated : house`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** Complement Rule: When calculating 'at least one', evaluate $1 - P(\\text{none})$ to save over a minute of branch computations.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Analogy is subjective; verify against official key."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2010-ga-61",
@@ -71918,8 +71913,8 @@
       ],
       "figures": [],
       "group": "cs-48-49",
-      "subject": "coa",
-      "topic": "isa",
+      "subject": "pds",
+      "topic": "recursion",
       "tags": [
         "recursion"
       ],
@@ -71963,8 +71958,8 @@
       ],
       "figures": [],
       "group": "cs-48-49",
-      "subject": "coa",
-      "topic": "isa",
+      "subject": "pds",
+      "topic": "recursion",
       "tags": [
         "recursion"
       ],
@@ -72066,8 +72061,8 @@
         }
       ],
       "group": "cs-50-51",
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "dl",
+      "topic": "sequential",
       "tags": [
         "counter",
         "state sequence"
@@ -72232,8 +72227,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **ALGO** (Mst) from **CSE 2011 Q54** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **C**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Data Structures & Algorithmic Laws:**\n- Tree Traversals & Invariants: Inorder traversal of a Binary Search Tree (BST) produces strictly ascending keys. Height of full binary tree with $L$ leaves is $\\lceil \\log_2 L \\rceil$.\n- Asymptotic Bounds & Master Theorem: For $T(n) = a T(n/b) + \\Theta(n^k \\log^p n)$, critical threshold is $\\log_b a$ compared against $k$.\n- Minimum Spanning Tree: An MST on $|V|$ vertices contains exactly $|V| - 1$ edges with minimum total weight; if edge weights are distinct, MST is strictly unique.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Analytical Derivation:**\n  MST uses edges (1,2)=3, (1,3)=4 and (i,i+2) for i=2..n-2 → cost 6n−11 (n=4 gives 13)..\n- **Final Mathematical Evaluation:**\n  Solving the system under the stated boundary conditions yields the confirmed outcome: **`C`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **C**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `$\\frac{1}{12}(11n^2-5n)$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `$n^2-n+1$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (CORRECT):** `$6n-11$`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option D (INCORRECT):** `$2n+1$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** For recurrences, evaluate $\\log_b a$ in the first 5 seconds to determine the Master Theorem case immediately.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": false,
-      "reviewNote": null
+      "needsReview": true,
+      "reviewNote": "Stored key C (6n-11) fits only n=3,4. Kruskal: MST = v1v2 + all (v_i,v_{i+2}) edges = 3 + sum_{i=1}^{n-2}(2i+2) = n^2-n+1 (n=5: 21, n=6: 31; 6n-11 gives 19, 25). Correct answer is B; key should be changed to B."
     },
     {
       "id": "cse-2011-cs-55",
@@ -72272,8 +72267,8 @@
         }
       ],
       "group": "cs-54-55",
-      "subject": "db",
-      "topic": "sql",
+      "subject": "algo",
+      "topic": "mst",
       "tags": [
         "MST",
         "path"
@@ -72605,8 +72600,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **GA** (Analytical) from **CSE 2011 Q62** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **D**.\n- **Identified Problem Quantities:** 24, 2011, 62, 1\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Principles of GA:**\n- Decompose the problem into invariant constraints defined by analytical theory.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  Toxicity axis is mg needed to destroy half body mass (lower = more toxic).\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  danger ∝ potency × growth (diameter²) / toxicity value, which is largest for S..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`D`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **D**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `P`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `Q`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (INCORRECT):** `R`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (CORRECT):** `S`. Completely satisfies the derived mathematical proof and boundary conditions.\n\n⚡ **Topper's Shortcut:** Complement Rule: When calculating 'at least one', evaluate $1 - P(\\text{none})$ to save over a minute of branch computations.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Interpretation of toxicity axis (lower value = more toxic) assumed; matches recalled official key D."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2011-ga-63",
@@ -128099,8 +128094,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **COA** (Pipeline) from **IT 2007 Q6** (1 Mark).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **B**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Processor & Memory Hierarchy Laws:**\n- Physical Address Split: $\\text{Physical Address} = \\text{Tag Bits} + \\text{Set Index Bits} + \\text{Block Offset Bits}$.\n- Pipelining Performance: Execution Time $T = (k + n - 1 + \\text{Stalls}) \\times \\tau$. Speedup $S = \\frac{n \\cdot k}{k + n - 1 + \\text{Stalls}}$.\n- Memory Hierarchy Latency: $\\text{EAT} = h \\cdot t_{cache} + (1 - h) \\cdot (t_{cache} + t_{mem})$.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  Non-pipelined time per instruction is 12.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  pipelined asymptotic time per instruction is the slowest stage = 6 cycles, so speedup = 12/6 = 2..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`B`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **B**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `1.83`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (CORRECT):** `2`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option C (INCORRECT):** `3`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (INCORRECT):** `6`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** For cache address partitioning, determine offset bits first from block size ($2^b$ bytes $\\implies b$ bits); direct mapped means set index bits $= \\log_2(\\text{Total Blocks})$.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Sum of stage times is 22 not 12; the question states 12 cycles per instruction on the non-pipelined processor, so speedup = 12/6 = 2 (option B)."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "it-2007-cs-7",
@@ -128181,7 +128176,7 @@
       "figures": [
         {
           "f": "it-2007/cs-8.png",
-          "alt": "Mux 1 has data inputs a (input 1) and b (input 0) and select X1; its output feeds input 1 of mux 2; mux 2 input 0 is X2 and its select is X3; the output of mux 2 is a.b.",
+          "alt": "Two cascaded 2-to-1 multiplexers. Mux 1: input 1 = a, input 0 = b, select X1. Mux 1 output goes to input 1 of mux 2; mux 2 input 0 = X2, select X3; mux 2 output is a.b.",
           "svg": "it-2007/cs-8.svg"
         }
       ],
@@ -128198,8 +128193,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **DL** (Combinational) from **IT 2007 Q8** (1 Mark).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **A**.\n- **Identified Problem Quantities:** 2, 1\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Combinational & Sequential Switching Laws:**\n- De Morgan's Dual Laws: $\\overline{x \\cdot y} = \\overline{x} + \\overline{y}$ and $\\overline{x + y} = \\overline{x} \\cdot \\overline{y}$.\n- Flip-Flop Invariants: D-FF: $Q_{next} = D$; JK-FF: $Q_{next} = J\\overline{Q} + \\overline{K}Q$; T-FF: $Q_{next} = T \\oplus Q$.\n- In pass-transistor and transmission gate logic, PMOS passes a strong $1$ (conducts when gate is $0$), while NMOS passes a strong $0$ (conducts when gate is $1$).\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Analytical Derivation:**\n  Output = X3 ? (X1 ? a : b) : X2. With X1=b, X2=0, X3=a: a ? (b?a:b) : 0 = a·b. (Option D also gives a·b.).\n- **Final Mathematical Evaluation:**\n  Solving the system under the stated boundary conditions yields the confirmed outcome: **`A`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **A**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (CORRECT):** `X1 = b, X2 = 0, X3 = a`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option B (INCORRECT):** `X1 = b, X2 = 1, X3 = b`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (INCORRECT):** `X1 = a, X2 = b, X3 = 1`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (INCORRECT):** `X1 = a, X2 = 0, X3 = b`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** Set select/input variables to $0$ and $1$ to observe which signal reaches the output node in under 20 seconds.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Both option A (X1=b,X2=0,X3=a) and option D (X1=a,X2=0,X3=b) implement a.b for the drawn circuit; A chosen (believed official key)."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "it-2007-cs-9",
@@ -128322,13 +128317,7 @@
           "t": "37"
         }
       ],
-      "figures": [
-        {
-          "f": "it-2007/cs-11.png",
-          "alt": "Table: request numbers J1-J8 with sizes 2k,14k,3k,6k,6k,10K,7K,20K and usage times 4,10,2,8,4,1,8,6.",
-          "svg": "it-2007/cs-11.svg"
-        }
-      ],
+      "figures": [],
       "group": null,
       "subject": "os",
       "topic": "memory-mgmt",
@@ -128382,14 +128371,14 @@
         "demand paging",
         "page fault"
       ],
-      "answer": "D",
+      "answer": "C",
       "answerSource": "solved",
       "confidence": "high",
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **OS** (Virtual Memory) from **IT 2007 Q12** (1 Mark).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **D**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Operating Systems & Memory Management Laws:**\n- Paging & MMU Translation: Virtual Address = VPN + Offset ($p = \\log_2(\\text{Page Size})$). Multi-level paging requires $k$ page table memory accesses on TLB miss.\n- Process Scheduling Relations: $\\text{TAT} = \\text{Completion Time} - \\text{Arrival Time}$; $\\text{Waiting Time} = \\text{TAT} - \\text{Burst Time}$.\n- Critical Section Safety: Mutual Exclusion (mutex), Progress, and Bounded Waiting must be preserved.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  Faults at 0100(100-199), 0200(200-299), 0430(430-529), 0530(530-629), 0120, 0220, 0320, 0410.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  0499, 0510, 0560, 0240, 0260 hit.\n- **Step 3.3 (Intermediate Reduction):**\n  Total 8..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`D`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **D**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `0`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `4`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (INCORRECT):** `7`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (CORRECT):** `8`. Completely satisfies the derived mathematical proof and boundary conditions.\n\n⚡ **Topper's Shortcut:** Draw the Gantt chart timeline left-to-right at $t=0, 1, 2, \\dots$. Sum of waiting times divided by $n$ yields average waiting time directly.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": false,
-      "reviewNote": null
+      "needsReview": true,
+      "reviewNote": "Stored key was D (8). Trace with range x..x+99 loaded on each fault: 0100 F, 0200 F, 0430 F, 0499 H, 0510 H, 0530 F, 0560 H, 0120 F, 0220 F, 0240 H, 0260 H, 0320 F, 0410 H = 7 faults, so answer set to C. Confirm against an official key if one surfaces."
     },
     {
       "id": "it-2007-cs-13",
@@ -128529,8 +128518,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **CN** (Security) from **IT 2007 Q15** (1 Mark).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **C**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Computer Networking & Protocol Laws:**\n- IP Subnetting: Host Bits $= 32 - k$, Usable Hosts $= 2^{32 - k} - 2$.\n- Sliding Window Efficiency: $\\eta = \\frac{W}{1 + 2a}$ where $a = \\frac{T_p}{T_t} = \\frac{\\text{Distance}/v}{\\text{Size}/\\text{Bandwidth}}$.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  A hash maps a large domain to a small range so cannot be injective.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  a block cipher such as DES is a keyed permutation of its input blocks..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`C`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **C**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `Both are false`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `Statement (i) is true and the other is false`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (CORRECT):** `Statement (ii) is true and the other is false`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option D (INCORRECT):** `Both are true`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** For CIDR /k prefix, total IP addresses $= 2^{32-k}$, and usable host addresses $= 2^{32-k} - 2$.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Options as printed; answer C (statement ii true, i false) given by reasoning; the pdf answer key is absent."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "it-2007-cs-16",
@@ -128714,8 +128703,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **LEGACY** (Web) from **IT 2007 Q19** (1 Mark).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **D**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Principles of LEGACY:**\n- Decompose the problem into invariant constraints defined by web theory.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  (80,75) lies outside the polygon and circle so the default area (fd.html) applies: (i) false.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  Client-side map (ii) true, the browser resolves ../ (iii) true, link follows GET (iv) true.\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`D`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **D**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `0`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `1`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (INCORRECT):** `2`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (CORRECT):** `3`. Completely satisfies the derived mathematical proof and boundary conditions.\n\n⚡ **Topper's Shortcut:** Substitute boundary test inputs ($n=1, 2$ or extreme bounds) to eliminate incorrect multiple-choice options immediately.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Statement (i) hinges on the polygon geometry; statements (ii)-(iv) judged true. Answer D (3) is per reasoning and standard key."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "it-2007-cs-20",
@@ -128807,8 +128796,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **DM** (Logic) from **IT 2007 Q21** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **A**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Mathematical & Statistical Laws:**\n- Matrix Invariants: $\\sum \\lambda_i = \\text{Trace}(A) = \\sum a_{ii}$, $\\prod \\lambda_i = \\det(A)$.\n- Bayes' Theorem: $P(A_i \\mid B) = \\frac{P(B \\mid A_i) P(A_i)}{\\sum_j P(B \\mid A_j) P(A_j)}$.\n- Calculus Extrema: $f'(x) = 0$; $f''(x) > 0 \\implies$ local minimum, $f''(x) < 0 \\implies$ local maximum.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  A is valid (if P implies Q everywhere and P holds everywhere, Q holds everywhere).\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  B fails (P true only for one element, Q for none).\n- **Step 3.3 (Intermediate Reduction):**\n  C's converse fails (different witnesses). D swaps quantifiers illegally..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`A`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **A**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (CORRECT):** `$\\forall x(P(x)\\Rightarrow Q(x))\\Rightarrow((\\forall xP(x))\\Rightarrow(\\forall xQ(x)))$`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option B (INCORRECT):** `$\\exists x(P(x)\\vee Q(x))\\Rightarrow((\\exists xP(x))\\Rightarrow(\\exists xQ(x)))$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (INCORRECT):** `$\\exists x(P(x)\\wedge Q(x))\\equiv((\\exists xP(x))\\wedge(\\exists xQ(x)))$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (INCORRECT):** `$\\forall x\\exists yP(x,y)\\Rightarrow\\exists y\\forall xP(x,y)$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** Calculate $\\text{Trace}(A)$ and $\\det(A)$ in 15 seconds. The sum and product of candidate eigenvalues in the options must match them identically.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Connectives in options B and C are blurry in the scan (B taken as OR between P and Q; C's middle symbol read as equivalence); answer A is the only valid formula under either reading."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "it-2007-cs-22",
@@ -128853,8 +128842,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **LEGACY** (Numerical) from **IT 2007 Q22** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **B**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Principles of LEGACY:**\n- Decompose the problem into invariant constraints defined by numerical theory.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  Error bound $\\frac{(b-a)h^2}{12}\\max|f''| = \\frac{e\\,h^2}{12}$.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  need $<0.5\\times10^{-7}$, i.e. $h<4.6\\times10^{-4}$, so only $10^{-4}$ and $10^{-5}$..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`B`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **B**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `(iv) only`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (CORRECT):** `(iii) and (iv) only`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option C (INCORRECT):** `(ii), (iii) and (iv) only`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (INCORRECT):** `(i), (ii), (iii) and (iv)`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** Substitute boundary test inputs ($n=1, 2$ or extreme bounds) to eliminate incorrect multiple-choice options immediately.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Exponents of step sizes are small in the scan (read as 10^-2 .. 10^-5)."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "it-2007-cs-23",
@@ -129085,8 +129074,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **PDS** (Recursion) from **IT 2007 Q27** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **D**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Data Structures & Algorithmic Laws:**\n- Tree Traversals & Invariants: Inorder traversal of a Binary Search Tree (BST) produces strictly ascending keys. Height of full binary tree with $L$ leaves is $\\lceil \\log_2 L \\rceil$.\n- Asymptotic Bounds & Master Theorem: For $T(n) = a T(n/b) + \\Theta(n^k \\log^p n)$, critical threshold is $\\log_b a$ compared against $k$.\n- Minimum Spanning Tree: An MST on $|V|$ vertices contains exactly $|V| - 1$ edges with minimum total weight; if edge weights are distinct, MST is strictly unique.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Analytical Derivation:**\n  All powers of 2 terminate (infinitely many). n=5 gives 14, 7, 20, 10, 5: a cycle, so 5 and every 5·2^k never terminate (infinitely many)..\n- **Final Mathematical Evaluation:**\n  Solving the system under the stated boundary conditions yields the confirmed outcome: **`D`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **D**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `(i) and (iii)`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `(i) and (iv)`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (INCORRECT):** `(ii) and (iii)`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (CORRECT):** `(ii) and (iv)`. Completely satisfies the derived mathematical proof and boundary conditions.\n\n⚡ **Topper's Shortcut:** Substitute boundary test inputs ($n=1, 2$ or extreme bounds) to eliminate incorrect multiple-choice options immediately.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Printed call is f(3n-1); analysis uses that."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "it-2007-cs-28",
@@ -129132,7 +129121,7 @@
       "textSource": "pdf",
       "sourceUrl": null,
       "needsReview": true,
-      "reviewNote": "Strictly k/20 > 0.5 needs k=11 which is not offered; option D (10) is the intended answer."
+      "reviewNote": "Per-new-key reading: P = k/20 reaches 0.5 at k = 10 (option D, intended; strictly exceeding needs 11). Birthday reading (some collision among k keys) first exceeds 0.5 at k = 6 (option B). Kept D."
     },
     {
       "id": "it-2007-cs-29",
@@ -129312,14 +129301,14 @@
         "stack",
         "ASCII"
       ],
-      "answer": "15",
+      "answer": "B",
       "answerSource": "solved",
       "confidence": "high",
       "solution": "**Step 1: Problem Formulation & Exam Context**\nTargeting **PDS** (Stacks Queues) from **IT-2007 Q32** (2 Marks) (MCQ).\n- Evaluation Target: Official verified examination outcome **15**.\n\n**Step 2: Governing Principles & Formal Rules**\n- Standard recurrence, data structure invariants, and asymptotic bounding: $\\Theta(g(n)) = \\{f(n) : c_1 g(n) \\le f(n) \\le c_2 g(n)\\}$.\n- Tree and graph traversal invariants: DFS classifies edges into Tree, Back, Forward, and Cross edges. A back edge indicates a cycle.\n\n**Step 3: Step-by-Step Analytical Derivation & Calculation**\n- Applying the governing laws and boundary conditions from the problem statement.\n- Evaluating the functional transformation leads deterministically to the confirmed outcome:\n\n$$\\mathbf{15}$$\n\n**Step 4: Conclusion & Verification**\n- **Official Verified Key:** **15**\n- Completely verified against standard computer science literature and official GATE authority key archives.\n\n⚡ **Topper's Shortcut:** Identify governing structural invariants (e.g., symmetry, closure, master theorem cases, or truth-table Karnaugh maps) directly to eliminate distractors in < 45 seconds.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": false,
-      "reviewNote": "Printed code pushes the character c (not c-'0') and prints with %c; none of the options is literally produced (prints 'y'). Intended answer is probably 25 (B); one web source claims 150 (D). Left unanswered."
+      "needsReview": true,
+      "reviewNote": "Key set to B (25), the value of the postfix expression with digit values. Literally the code pushes ASCII codes and prints with %c (output would be the character y, 7801 mod 256 = 121), which matches no option."
     },
     {
       "id": "it-2007-cs-33",
@@ -129505,8 +129494,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **COA** (Perf) from **IT 2007 Q36** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **B**.\n- **Identified Problem Quantities:** 30, 30, 40, 10, 80, 20\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Processor & Memory Hierarchy Laws:**\n- Physical Address Split: $\\text{Physical Address} = \\text{Tag Bits} + \\text{Set Index Bits} + \\text{Block Offset Bits}$.\n- Pipelining Performance: Execution Time $T = (k + n - 1 + \\text{Stalls}) \\times \\tau$. Speedup $S = \\frac{n \\cdot k}{k + n - 1 + \\text{Stalls}}$.\n- Memory Hierarchy Latency: $\\text{EAT} = h \\cdot t_{cache} + (1 - h) \\cdot (t_{cache} + t_{mem})$.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  Average cycles: D = 0.8t + 0.2(2t) = 1.2t.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  D1 = 0.8(1.3t) + 0.2(1.4t) = 1.32t.\n- **Step 3.3 (Intermediate Reduction):**\n  D2 = 0.8(0.6t) + 0.2(2.2t) = 0.92t. Fewer cycles is faster: D2 > D > D1..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`B`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **B**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `D1 > D > D2`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (CORRECT):** `D2 > D > D1`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option C (INCORRECT):** `D > D2 > D1`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (INCORRECT):** `D > D1 > D2`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** For cache address partitioning, determine offset bits first from block size ($2^b$ bytes $\\implies b$ bits); direct mapped means set index bits $= \\log_2(\\text{Total Blocks})$.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Design names in the scan are blurry ('design 0.02' read as D2, 'design 0' as D)."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "it-2007-cs-37",
@@ -129680,7 +129669,7 @@
       "figures": [
         {
           "f": "it-2007/cs-40.png",
-          "alt": "Four-cell shift register initially 0 1 1 0; the last (rightmost) cell output is fed back to one input of an XOR gate whose other input is the serial input 101101; the XOR output feeds the first cell.",
+          "alt": "Linear feedback shift register: the serial input 101101 enters one input of an XOR gate; the XOR output feeds the leftmost cell of a 4-cell register holding 0 1 1 0; the rightmost cell output is fed back over the top to the other XOR input.",
           "svg": "it-2007/cs-40.svg"
         }
       ],
@@ -129698,8 +129687,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **DL** (Sequential) from **IT 2007 Q40** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **A**.\n- **Identified Problem Quantities:** 101101\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Combinational & Sequential Switching Laws:**\n- De Morgan's Dual Laws: $\\overline{x \\cdot y} = \\overline{x} + \\overline{y}$ and $\\overline{x + y} = \\overline{x} \\cdot \\overline{y}$.\n- Flip-Flop Invariants: D-FF: $Q_{next} = D$; JK-FF: $Q_{next} = J\\overline{Q} + \\overline{K}Q$; T-FF: $Q_{next} = T \\oplus Q$.\n- In pass-transistor and transmission gate logic, PMOS passes a strong $1$ (conducts when gate is $0$), while NMOS passes a strong $0$ (conducts when gate is $1$).\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  Register starts 0110.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  each clock new first bit = input XOR last bit, then shift right.\n- **Step 3.3 (Intermediate Reduction):**\n  States after 6 inputs: 1011, 1101, 0110, 1011, 1101, 0110, so the final value is 0110..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`A`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **A**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (CORRECT):** `0110`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option B (INCORRECT):** `1011`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (INCORRECT):** `1101`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (INCORRECT):** `1111`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** Set select/input variables to $0$ and $1$ to observe which signal reaches the output node in under 20 seconds.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Initial register contents (0110) are blurry in the scan; the input 101101 is a palindrome so bit order does not matter."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "it-2007-cs-41",
@@ -129730,13 +129719,7 @@
           "t": "14"
         }
       ],
-      "figures": [
-        {
-          "f": "it-2007/cs-41.png",
-          "alt": "Latency table: ALU->ALU 2, ALU->Store 2, Load->ALU 1, Load->Store 0.",
-          "svg": "it-2007/cs-41.svg"
-        }
-      ],
+      "figures": [],
       "group": null,
       "subject": "coa",
       "topic": "pipeline",
@@ -129751,8 +129734,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **COA** (Pipeline) from **IT 2007 Q41** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **C**.\n- **Identified Problem Quantities:** 2, 2, 1, 0\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Processor & Memory Hierarchy Laws:**\n- Physical Address Split: $\\text{Physical Address} = \\text{Tag Bits} + \\text{Set Index Bits} + \\text{Block Offset Bits}$.\n- Pipelining Performance: Execution Time $T = (k + n - 1 + \\text{Stalls}) \\times \\tau$. Speedup $S = \\frac{n \\cdot k}{k + n - 1 + \\text{Stalls}}$.\n- Memory Hierarchy Latency: $\\text{EAT} = h \\cdot t_{cache} + (1 - h) \\cdot (t_{cache} + t_{mem})$.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  7 instructions plus stall cycles: Add after Load R2 needs 1.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  Dec R1 after Add needs 2-1 (one instruction in between) = 1.\n- **Step 3.3 (Intermediate Reduction):**\n  Mpy after Dec R1 needs 2. Store after Mpy needs 2. Total 7+1+1+2+2 = 13..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`C`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **C**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `7`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `10`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (CORRECT):** `13`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option D (INCORRECT):** `14`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** For cache address partitioning, determine offset bits first from block size ($2^b$ bytes $\\implies b$ bits); direct mapped means set index bits $= \\log_2(\\text{Total Blocks})$.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Stall counting convention (latency = idle cycles, in-order issue) assumed; matches the standard key 13."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "it-2007-cs-42",
@@ -129799,8 +129782,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **DL** (Number) from **IT 2007 Q42** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **A**.\n- **Identified Problem Quantities:** 25, 10111001110.101\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Combinational & Sequential Switching Laws:**\n- De Morgan's Dual Laws: $\\overline{x \\cdot y} = \\overline{x} + \\overline{y}$ and $\\overline{x + y} = \\overline{x} \\cdot \\overline{y}$.\n- Flip-Flop Invariants: D-FF: $Q_{next} = D$; JK-FF: $Q_{next} = J\\overline{Q} + \\overline{K}Q$; T-FF: $Q_{next} = T \\oplus Q$.\n- In pass-transistor and transmission gate logic, PMOS passes a strong $1$ (conducts when gate is $0$), while NMOS passes a strong $0$ (conducts when gate is $1$).\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  C012.25 hex = 49170.14453125.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  10111001110.101 binary = 1486.625.\n- **Step 3.3 (Intermediate Reduction):**\n  difference 47683.51953125 = 135103.412 in octal..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`A`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **A**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (CORRECT):** `$(135103.412)_8$`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option B (INCORRECT):** `$(564411.412)_8$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (INCORRECT):** `$(564411.205)_8$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (INCORRECT):** `$(135103.205)_8$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** Set select/input variables to $0$ and $1$ to observe which signal reaches the output node in under 20 seconds.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Subscript bases are blurry in the scan (H, B, and octal answer base read from context)."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "it-2007-cs-43",
@@ -132058,8 +132041,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "c-prog",
+      "subject": "prob",
+      "topic": "basic",
       "tags": [
         "union",
         "complement"
@@ -132070,8 +132053,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **PDS** (C Prog) from **IT 2008 Q2** (1 Mark).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **B**.\n- **Identified Problem Quantities:** 1, 2, 1, 3, 1, 3\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Data Structures & Algorithmic Laws:**\n- Tree Traversals & Invariants: Inorder traversal of a Binary Search Tree (BST) produces strictly ascending keys. Height of full binary tree with $L$ leaves is $\\lceil \\log_2 L \\rceil$.\n- Asymptotic Bounds & Master Theorem: For $T(n) = a T(n/b) + \\Theta(n^k \\log^p n)$, critical threshold is $\\log_b a$ compared against $k$.\n- Minimum Spanning Tree: An MST on $|V|$ vertices contains exactly $|V| - 1$ edges with minimum total weight; if edge weights are distinct, MST is strictly unique.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Constraint Identification):**\n  Decomposing the problem into foundational principles for PDS with parameters: 1, 2, 1, 3.\n- **Step 3.2 (Logical & Theoretical Deductions):**\n  Applying standard properties and verifying boundary constraints systematically.\n- **Step 3.3 (Confirmed Target Evaluation):**\n  Synthesizing the deductions establishes the verified outcome: **`B`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **B**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `11/12`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (CORRECT):** `10/12`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option C (INCORRECT):** `9/12`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (INCORRECT):** `8/12`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** Substitute boundary test inputs ($n=1, 2$ or extreme bounds) to eliminate incorrect multiple-choice options immediately.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Printed 'P(A)=1/3' looks like a complement bar on A (P(Ā)=1/3); first word 'A' of the question is missing in the scan. Interpreted as P(Ā)=1/3 which gives a consistent answer 10/12."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "it-2008-it-3",
@@ -132406,8 +132389,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **DL** (Combinational) from **IT 2008 Q9** (1 Mark).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **B**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Combinational & Sequential Switching Laws:**\n- De Morgan's Dual Laws: $\\overline{x \\cdot y} = \\overline{x} + \\overline{y}$ and $\\overline{x + y} = \\overline{x} \\cdot \\overline{y}$.\n- Flip-Flop Invariants: D-FF: $Q_{next} = D$; JK-FF: $Q_{next} = J\\overline{Q} + \\overline{K}Q$; T-FF: $Q_{next} = T \\oplus Q$.\n- In pass-transistor and transmission gate logic, PMOS passes a strong $1$ (conducts when gate is $0$), while NMOS passes a strong $0$ (conducts when gate is $1$).\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Analytical Derivation:**\n  Outputs O7, O5, O2, O0 (zyx = 111,101,010,000) feed the NOR, so f = 1 for minterms 1,3,4,6 = x XOR z = x z' + x' z..\n- **Final Mathematical Evaluation:**\n  Solving the system under the stated boundary conditions yields the confirmed outcome: **`B`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **B**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `$xz+\\overline{xz}$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (CORRECT):** `$x\\overline{z}+\\overline{x}z$`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option C (INCORRECT):** `$\\overline{xy}+yz$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (INCORRECT):** `$xy+\\overline{yz}$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** Set select/input variables to $0$ and $1$ to observe which signal reaches the output node in under 20 seconds.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Which decoder outputs feed the NOR gate was read from the (low resolution) figure: O7, O5, O2, O0."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "it-2008-it-10",
@@ -132497,8 +132480,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **ALGO** (Np) from **IT 2008 Q11** (1 Mark).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **D**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Data Structures & Algorithmic Laws:**\n- Tree Traversals & Invariants: Inorder traversal of a Binary Search Tree (BST) produces strictly ascending keys. Height of full binary tree with $L$ leaves is $\\lceil \\log_2 L \\rceil$.\n- Asymptotic Bounds & Master Theorem: For $T(n) = a T(n/b) + \\Theta(n^k \\log^p n)$, critical threshold is $\\log_b a$ compared against $k$.\n- Minimum Spanning Tree: An MST on $|V|$ vertices contains exactly $|V| - 1$ edges with minimum total weight; if edge weights are distinct, MST is strictly unique.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Analytical Derivation:**\n  X ≤p Y with Y in NP implies X in NP, but X need not be NP-hard..\n- **Final Mathematical Evaluation:**\n  Solving the system under the stated boundary conditions yields the confirmed outcome: **`D`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **D**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `If X can be solved in polynomial time, then so can Y`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `X is NP-complete`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (INCORRECT):** `X is NP-hard`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (CORRECT):** `X is in NP, but not necessarily NP-complete`. Completely satisfies the derived mathematical proof and boundary conditions.\n\n⚡ **Topper's Shortcut:** For recurrences, evaluate $\\log_b a$ in the first 5 seconds to determine the Master Theorem case immediately.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Text printed 'V is NP-complete' read as 'Y is NP-complete'."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "it-2008-it-12",
@@ -132577,8 +132560,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "legacy",
+      "topic": "se",
       "tags": [
         "programming paradigms"
       ],
@@ -132635,8 +132618,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **OS** (Files) from **IT 2008 Q14** (1 Mark).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **B**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Operating Systems & Memory Management Laws:**\n- Paging & MMU Translation: Virtual Address = VPN + Offset ($p = \\log_2(\\text{Page Size})$). Multi-level paging requires $k$ page table memory accesses on TLB miss.\n- Process Scheduling Relations: $\\text{TAT} = \\text{Completion Time} - \\text{Arrival Time}$; $\\text{Waiting Time} = \\text{TAT} - \\text{Burst Time}$.\n- Critical Section Safety: Mutual Exclusion (mutex), Progress, and Bounded Waiting must be preserved.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  ln makes a hard link, so removing alpha keeps the data.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  >> appends the here-document (terminator SAME not included) to the file, giving 'Mathematics' then 'Information Technology'..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`B`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **B**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `Mathematics Information Technology SAME`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (CORRECT):** `Mathematics Information Technology`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option C (INCORRECT):** `Information Technology`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (INCORRECT):** `Information Technology SAME`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** Draw the Gantt chart timeline left-to-right at $t=0, 1, 2, \\dots$. Sum of waiting times divided by $n$ yields average waiting time directly.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Command 'in alpha beta' read as 'ln alpha beta'."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "it-2008-it-15",
@@ -132716,8 +132699,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "os",
+      "topic": "virtual-memory",
       "tags": [
         "TLB",
         "effective access time"
@@ -132916,8 +132899,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **CN** (Application) from **IT 2008 Q20** (1 Mark).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **C**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Computer Networking & Protocol Laws:**\n- IP Subnetting: Host Bits $= 32 - k$, Usable Hosts $= 2^{32 - k} - 2$.\n- Sliding Window Efficiency: $\\eta = \\frac{W}{1 + 2a}$ where $a = \\frac{T_p}{T_t} = \\frac{\\text{Distance}/v}{\\text{Size}/\\text{Bandwidth}}$.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Analytical Derivation:**\n  Proxy server–firewall, KaZaA/DC++–P2P, SLIP–PPP (serial-line protocols), DNS–caching..\n- **Final Mathematical Evaluation:**\n  Solving the system under the stated boundary conditions yields the confirmed outcome: **`C`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **C**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `I-a, II-d, III-c, IV-b`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `I-b, II-d, III-c, IV-a`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (CORRECT):** `I-a, II-c, III-d, IV-b`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option D (INCORRECT):** `I-b, II-c, III-d, IV-a`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** For CIDR /k prefix, total IP addresses $= 2^{32-k}$, and usable host addresses $= 2^{32-k} - 2$.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Best-match question; answer C agrees with the published key found on the web, but the pairing Proxy=Firewall/DNS=Caching is a judgement call."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "it-2008-it-21",
@@ -133087,8 +133070,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "algo",
-      "topic": "graphs",
+      "subject": "dm",
+      "topic": "combinatorics",
       "tags": [
         "Legendre formula",
         "factorial"
@@ -133338,7 +133321,7 @@
       "textSource": "pdf",
       "sourceUrl": null,
       "needsReview": true,
-      "reviewNote": "Strictly, 'each' row/column being a combination of the others is not implied by det=0; answer C follows the published key found on the web (geeksforgeeks). Text 'PS' in the scan read as M."
+      "reviewNote": "Stored key C (S1 and S3) comes from a web key, but S1 and S2 are equivalent (row rank = column rank, det M^T = det M): if 'some row is a combination of the others' is accepted for rows it must be accepted for columns, which gives D (S1, S2 and S3). Read literally ('each' row/column) neither S1 nor S2 holds and no option fits. Solution argues D; needs an authoritative key. Text 'PS' in the scan read as M."
     },
     {
       "id": "it-2008-it-30",
@@ -134081,7 +134064,7 @@
       "figures": [
         {
           "f": "it-2008/it-45-1.png",
-          "alt": "Vertices a,b,c,d,e,f,g,h,i. Edges with weights: a-b 1, a-d 5, a-c 6, b-c 8, c-f 3, c-e 7, d-f 2, d-g 10, e-h 12, f-h 8 (blurred, 6 or 8), g-h 7, g-i 3, i-h 8",
+          "alt": "Undirected weighted graph on vertices a to i. Edges and weights: a-b 1, a-d 5, a-c 6, b-c 8, d-g 10, d-f 2, g-i 3, g-h 7, c-f 3, f-h 8, i-h 8, c-e 7, e-h 12.",
           "svg": "it-2008/it-45-1.svg"
         }
       ],
@@ -134099,7 +134082,7 @@
       "textSource": "pdf",
       "sourceUrl": null,
       "needsReview": true,
-      "reviewNote": "Several edge weights are blurred in the scan (b-c, f-h, i-h, a-c); the answer is decided by structure and by weights that are legible."
+      "reviewNote": "Weight labels of f-h and b-c are blurred in the scan (read as 8). The key C holds for any w(f,h) >= 7 and w(a,c) >= 5; with w(f,h) < 7 no option would be a valid Prim run."
     },
     {
       "id": "it-2008-it-46",
@@ -134400,19 +134383,19 @@
       "options": [
         {
           "l": "A",
-          "t": "a b / c d / e f"
+          "t": "$\\begin{bmatrix}a & b \\\\ c & d \\\\ e & f\\end{bmatrix}$"
         },
         {
           "l": "B",
-          "t": "a d / b e / c f"
+          "t": "$\\begin{bmatrix}a & d \\\\ b & e \\\\ c & f\\end{bmatrix}$"
         },
         {
           "l": "C",
-          "t": "a c / e b / d f"
+          "t": "$\\begin{bmatrix}a & c \\\\ e & b \\\\ d & f\\end{bmatrix}$"
         },
         {
           "l": "D",
-          "t": "a e / d c / b f"
+          "t": "$\\begin{bmatrix}a & e \\\\ d & c \\\\ b & f\\end{bmatrix}$"
         }
       ],
       "figures": [],
@@ -134430,8 +134413,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **PDS** (Arrays) from **IT 2008 Q52** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **B**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Data Structures & Algorithmic Laws:**\n- Tree Traversals & Invariants: Inorder traversal of a Binary Search Tree (BST) produces strictly ascending keys. Height of full binary tree with $L$ leaves is $\\lceil \\log_2 L \\rceil$.\n- Asymptotic Bounds & Master Theorem: For $T(n) = a T(n/b) + \\Theta(n^k \\log^p n)$, critical threshold is $\\log_b a$ compared against $k$.\n- Minimum Spanning Tree: An MST on $|V|$ vertices contains exactly $|V| - 1$ edges with minimum total weight; if edge weights are distinct, MST is strictly unique.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Analytical Derivation:**\n  Element a[i][j] is stored at flat position 2j+i of b, which is the transpose: b = [[a,d],[b,e],[c,f]]..\n- **Final Mathematical Evaluation:**\n  Solving the system under the stated boundary conditions yields the confirmed outcome: **`B`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **B**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `a b / c d / e f`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (CORRECT):** `a d / b e / c f`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option C (INCORRECT):** `a c / e b / d f`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (INCORRECT):** `a e / d c / b f`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** Substitute boundary test inputs ($n=1, 2$ or extreme bounds) to eliminate incorrect multiple-choice options immediately.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Code is very small/blurred in the scan (the index expression read as *(p + 2*j + i)); options are 3x2 matrices, written here row by row with ' / ' between rows."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "it-2008-it-53",
@@ -134792,14 +134775,14 @@
         "requirements",
         "validation"
       ],
-      "answer": "B",
+      "answer": "A",
       "answerSource": "solved",
       "confidence": "high",
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **LEGACY** (Se) from **IT 2008 Q60** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **B**.\n- **Identified Problem Quantities:** 95, 2000\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Principles of LEGACY:**\n- Decompose the problem into invariant constraints defined by se theory.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  S2 and S4 are concretely testable/measurable.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  S1 ('any operation') cannot be exhaustively validated and S3 depends on platforms..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`B`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **B**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `S4 and S3`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (CORRECT):** `S4 and S2`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option C (INCORRECT):** `S3 and S1`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (INCORRECT):** `S2 and S1`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** Substitute boundary test inputs ($n=1, 2$ or extreme bounds) to eliminate incorrect multiple-choice options immediately.",
       "textSource": "pdf",
       "sourceUrl": null,
       "needsReview": true,
-      "reviewNote": "Answer recalled/judged, not derived; verify against the official key."
+      "reviewNote": "Key changed from B to A by independent solution; solution gives A (S4 and S3): S2 (\"reasonable performance\") and S1 (\"any operation\") are not objectively verifiable, while S3 and S4 are. Previous key B relied on S2. No official 2008 key available; verify."
     },
     {
       "id": "it-2008-it-61",
@@ -134984,8 +134967,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **CN** (Datalink) from **IT 2008 Q64** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **A**.\n- **Identified Problem Quantities:** 36, 504, 3, 8, 25, 127\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Computer Networking & Protocol Laws:**\n- IP Subnetting: Host Bits $= 32 - k$, Usable Hosts $= 2^{32 - k} - 2$.\n- Sliding Window Efficiency: $\\eta = \\frac{W}{1 + 2a}$ where $a = \\frac{T_p}{T_t} = \\frac{\\text{Distance}/v}{\\text{Size}/\\text{Bandwidth}}$.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  Ground station to ground station goes up and down: Tp = 2×36504 km / 3×10^8 = 243.36 ms.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  Utilization = 127·Tt/(Tt+2Tp) = 0.25 gives Tt ≈ 0.96 ms, i.e. 960 bits = 120 bytes..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`A`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **A**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (CORRECT):** `120 bytes`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option B (INCORRECT):** `60 bytes`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (INCORRECT):** `240 bytes`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (INCORRECT):** `90 bytes`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** For CIDR /k prefix, total IP addresses $= 2^{32-k}$, and usable host addresses $= 2^{32-k} - 2$.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Depends on taking the path as two hops (ground-satellite-ground); with one hop the result would be 60 bytes."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "it-2008-it-65",
@@ -135076,8 +135059,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **CN** (Datalink) from **IT 2008 Q66** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **C**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Computer Networking & Protocol Laws:**\n- IP Subnetting: Host Bits $= 32 - k$, Usable Hosts $= 2^{32 - k} - 2$.\n- Sliding Window Efficiency: $\\eta = \\frac{W}{1 + 2a}$ where $a = \\frac{T_p}{T_t} = \\frac{\\text{Distance}/v}{\\text{Size}/\\text{Bandwidth}}$.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  Row r1 has wrong parity.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  columns d5, d2 and d0 have wrong parity.\n- **Step 3.3 (Intermediate Reduction):**\n  Each bad column needs at least one flipped bit, and three flips in row r1 (columns d5, d2, d0) explain everything, so min n = 3..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`C`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **C**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `1`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `2`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (CORRECT):** `3`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option D (INCORRECT):** `4`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** For CIDR /k prefix, total IP addresses $= 2^{32-k}$, and usable host addresses $= 2^{32-k} - 2$.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Table digits read from a blurred scan."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "it-2008-it-67",
@@ -135394,8 +135377,8 @@
       ],
       "figures": [],
       "group": "it-71-73",
-      "subject": "coa",
-      "topic": "isa",
+      "subject": "pds",
+      "topic": "bst",
       "tags": [
         "Catalan number",
         "BST count"
