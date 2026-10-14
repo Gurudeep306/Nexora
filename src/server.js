@@ -2206,6 +2206,9 @@ app.post("/api/reset-progress", async (req, res) => {
     await run("DELETE FROM daily_activity WHERE username=?", [u]);
     await run("DELETE FROM user_achievements WHERE username=?", [u]);
     await run("DELETE FROM user_daily_challenges WHERE username=?", [u]);
+    for (const t of ["gate_attempts", "gate_qstate", "gate_notes", "gate_collections", "gate_tests", "gate_plans"]) {
+      await run(`DELETE FROM ${t} WHERE username=?`, [u]);
+    }
     invalidateCache();
     res.json({ ok: true });
   } catch (e) {

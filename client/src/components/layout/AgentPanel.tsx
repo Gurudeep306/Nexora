@@ -292,7 +292,8 @@ export function AgentPanel() {
 
   return createPortal(
     <>
-      {!open && !hidden && (
+      {/* No floating bubble while a timed exam runs: it would cover the exam console. */}
+      {!open && !hidden && !summary.examActive && (
         <button
           ref={bubbleRef}
           type="button"
