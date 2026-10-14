@@ -29,7 +29,8 @@ const ROUTES = [
   /^\/learn\/system-design\/[a-z0-9-]{1,60}(\/\d{1,3})?$/,
   /^\/learn\/dsa\/[a-z0-9-]{1,60}\/practice$/,
   /^\/learn\/dsa\/[a-z0-9-]{1,60}(\/[a-z0-9-]{1,60})?$/,
-  /^\/gate$/,
+  /^\/gate(\/(practice|review|daily|tests|analytics|syllabus|planner|notebook|leaderboard))?$/,
+  /^\/gate\/tests\/[A-Za-z0-9_-]{1,60}$/,
   /^\/gate\/cbt(\/[A-Za-z0-9_-]{1,60})?$/,
   /^\/social$/,
   /^\/submissions$/,
@@ -43,7 +44,7 @@ function validNavPath(p) {
   if (!path.startsWith("/") || path.startsWith("//") || path.length > 120) return null;
   const [pathname, query = ""] = path.split("?");
   if (!ROUTES.some((re) => re.test(pathname))) return null;
-  if (query && !/^[A-Za-z0-9_=&%.-]{1,80}$/.test(query)) return null;
+  if (query && !/^[A-Za-z0-9_=&%.,\/-]{1,160}$/.test(query)) return null;
   return query ? `${pathname}?${query}` : pathname;
 }
 
@@ -98,7 +99,7 @@ const DEFINITIONS = [
   ),
   fn(
     "suggest_navigation",
-    "Offer the student a button that opens a Nexora page, e.g. /solve/123, /learn/dsa/arrays, /gate, /analytics. Only real Nexora paths.",
+    "Offer the student a button that opens a Nexora page, e.g. /solve/123, /learn/dsa/arrays, /gate, /gate/practice?subject=os, /gate/tests?focus=mistakes, /gate/review, /analytics. Only real Nexora paths.",
     { path: { type: "string" }, label: { type: "string", description: "short button text" } },
     ["path", "label"],
   ),
