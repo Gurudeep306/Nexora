@@ -1,0 +1,7 @@
+{
+  "paper": "it-2008",
+  "fixes": [
+    { "id": "it-2008-it-73", "field": "subject", "before": "coa", "after": "pds", "reason": "Question counts distinct BSTs on 3 keys (data structures), not computer organisation.", "source": "GATE2008IT.pdf p10 Q73" },
+    { "id": "it-2008-it-73", "field": "topic", "before": "isa", "after": "bst", "reason": "Topic is BST counting (Catalan number), not ISA.", "source": "GATE2008IT.pdf p10 Q73" }
+  ]
+}
