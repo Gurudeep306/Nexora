@@ -1,0 +1,1548 @@
+{
+  "paper": "cse-2008",
+  "version": 2,
+  "solutions": {
+    "cse-2008-cs-45": {
+      "approach": "Dijkstra can fail with negative edges, so do not guess — run it on the graph and compare each finalised label with the true shortest distance. Here the negative edges never improve a vertex after it has been extracted, so every label is correct.",
+      "concepts": [
+        "Dijkstra's algorithm",
+        "Negative edge weights",
+        "Greedy extraction order"
+      ],
+      "given": "| Edges (weight) |\n|---|\n| a→b 1, b→c 2, c→d 3, d→a 2 |\n| b→e −3, c→h −5, d→g 2 |\n| h→e 1, g→e 1, e→f 2, f→g 3, g→h 2 |",
+      "steps": [
+        {
+          "title": "Start at a",
+          "body": "Initialise $d(a)=0$, all others $\\infty$. Extract $a$ and relax $a\\to b$: $d(b)=0+1=1$.",
+          "scene": {
+            "subs": {
+              "a": "0",
+              "b": "1",
+              "c": "∞",
+              "d": "∞",
+              "e": "∞",
+              "f": "∞",
+              "g": "∞",
+              "h": "∞"
+            },
+            "tones": {
+              "a": "success"
+            },
+            "edgeTones": {
+              "a>b": "warning"
+            },
+            "caption": "extract a (0)"
+          }
+        },
+        {
+          "title": "Extract b (1)",
+          "body": "Relax $b\\to c$: $1+2=3$; relax $b\\to e$: $1+(-3)=-2$. Labels: $c=3$, $e=-2$.",
+          "scene": {
+            "subs": {
+              "a": "0",
+              "b": "1",
+              "c": "3",
+              "d": "∞",
+              "e": "−2",
+              "f": "∞",
+              "g": "∞",
+              "h": "∞"
+            },
+            "tones": {
+              "a": "success",
+              "b": "success"
+            },
+            "edgeTones": {
+              "b>c": "warning",
+              "b>e": "warning"
+            },
+            "caption": "extract b (1)"
+          }
+        },
+        {
+          "title": "Extract e (−2), then f (0)",
+          "body": "Smallest label is $e=-2$. Relax $e\\to f$: $-2+2=0$. Next extract $f=0$; relax $f\\to g$: $0+3=3$.",
+          "scene": {
+            "subs": {
+              "a": "0",
+              "b": "1",
+              "c": "3",
+              "d": "∞",
+              "e": "−2",
+              "f": "0",
+              "g": "3",
+              "h": "∞"
+            },
+            "tones": {
+              "a": "success",
+              "b": "success",
+              "e": "success",
+              "f": "success"
+            },
+            "edgeTones": {
+              "e>f": "warning",
+              "f>g": "warning"
+            },
+            "caption": "extract e (−2), f (0)"
+          }
+        },
+        {
+          "title": "Extract c (3), then h (−2)",
+          "body": "Remaining labels: $c=3,\\ g=3$; extract $c$. Relax $c\\to d$: $3+3=6$; $c\\to h$: $3+(-5)=-2$. Now extract $h=-2$: relax $h\\to e$ gives $-2+1=-1$, which is **not** smaller than $d(e)=-2$, so the already-final $e$ is unaffected.",
+          "scene": {
+            "subs": {
+              "a": "0",
+              "b": "1",
+              "c": "3",
+              "d": "6",
+              "e": "−2",
+              "f": "0",
+              "g": "3",
+              "h": "−2"
+            },
+            "tones": {
+              "a": "success",
+              "b": "success",
+              "e": "success",
+              "f": "success",
+              "c": "success",
+              "h": "success"
+            },
+            "edgeTones": {
+              "c>d": "warning",
+              "c>h": "warning",
+              "h>e": "muted"
+            },
+            "caption": "extract c (3), h (−2)"
+          }
+        },
+        {
+          "title": "Extract g (3), d (6)",
+          "body": "From $g$: $g\\to e$ gives $4$, $g\\to h$ gives $5$ — no improvement. From $d$: $d\\to a$ gives $8$, $d\\to g$ gives $8$ — no improvement. Final labels: $a{=}0,\\ b{=}1,\\ c{=}3,\\ d{=}6,\\ e{=}-2,\\ f{=}0,\\ g{=}3,\\ h{=}-2$.",
+          "scene": {
+            "tones": {
+              "a": "success",
+              "b": "success",
+              "c": "success",
+              "d": "success",
+              "e": "success",
+              "f": "success",
+              "g": "success",
+              "h": "success"
+            },
+            "edgeTones": {},
+            "caption": "all extracted"
+          }
+        },
+        {
+          "title": "Compare with true distances",
+          "body": "No negative cycle exists (e.g. $e\\to f\\to g\\to e = 2+3+1=6$). True shortest distances: $e=\\min(1-3,\\ 3-5+1)=\\min(-2,-1)=-2$, $h=3-5=-2$ (the alternative via $g$ is $3+2=5$), $f=-2+2=0$, $g=\\min(0+3,\\ 6+2)=3$, $d=6$. Every label Dijkstra produced is correct, so it computes correct distances to **all** vertices."
+        }
+      ],
+      "answer": {
+        "value": "All the vertices",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Dijkstra also gets $b,c,d$ (and the rest) right; $a$ is not the only one."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$b,c,d$ are correct too; the vertex set is incomplete."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$e,f,g,h$ (reached through negative edges) are also correct here: $e=-2$, $f=0$, $g=3$, $h=-2$."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "The trace gives $0,1,3,6,-2,0,3,-2$ for $a..h$, matching the true shortest distances."
+        }
+      ],
+      "shortcut": "A negative edge only breaks Dijkstra if it creates a cheaper path into an already-extracted vertex. The only such candidate is $h\\to e$ ($-1$ vs $-2$), which is not cheaper.",
+      "pitfalls": [
+        "Answering \"Dijkstra fails with negative edges\" without tracing — it fails only for some graphs.",
+        "Forgetting that $e$ ($-2$) is extracted before $c$ ($3$)."
+      ],
+      "verification": "Recomputed all shortest distances by hand (Bellman–Ford style over the 12 edges); they equal the Dijkstra labels.",
+      "animation": {
+        "kind": "graph",
+        "directed": true,
+        "nodes": [
+          {
+            "id": "a",
+            "x": 0,
+            "y": 2
+          },
+          {
+            "id": "b",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "id": "c",
+            "x": 4,
+            "y": 2
+          },
+          {
+            "id": "d",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "id": "h",
+            "x": 10,
+            "y": 2
+          },
+          {
+            "id": "e",
+            "x": 12,
+            "y": 0
+          },
+          {
+            "id": "f",
+            "x": 14,
+            "y": 2
+          },
+          {
+            "id": "g",
+            "x": 12,
+            "y": 4
+          }
+        ],
+        "edges": [
+          {
+            "from": "a",
+            "to": "b",
+            "w": 1
+          },
+          {
+            "from": "b",
+            "to": "c",
+            "w": 2
+          },
+          {
+            "from": "c",
+            "to": "d",
+            "w": 3
+          },
+          {
+            "from": "d",
+            "to": "a",
+            "w": 2
+          },
+          {
+            "from": "b",
+            "to": "e",
+            "w": -3
+          },
+          {
+            "from": "c",
+            "to": "h",
+            "w": -5
+          },
+          {
+            "from": "d",
+            "to": "g",
+            "w": 2
+          },
+          {
+            "from": "h",
+            "to": "e",
+            "w": 1
+          },
+          {
+            "from": "g",
+            "to": "e",
+            "w": 1
+          },
+          {
+            "from": "e",
+            "to": "f",
+            "w": 2
+          },
+          {
+            "from": "f",
+            "to": "g",
+            "w": 3
+          },
+          {
+            "from": "g",
+            "to": "h",
+            "w": 2
+          }
+        ],
+        "subs": {
+          "a": "0",
+          "b": "∞",
+          "c": "∞",
+          "d": "∞",
+          "e": "∞",
+          "f": "∞",
+          "g": "∞",
+          "h": "∞"
+        },
+        "tones": {},
+        "caption": "source a"
+      }
+    },
+    "cse-2008-cs-46": {
+      "approach": "A BST is determined by its postorder because the inorder is just the sorted order $1..n$. Rebuild it right-to-left from the postorder with a bound (or stack) technique in one linear pass.",
+      "concepts": [
+        "Binary search tree",
+        "Postorder traversal",
+        "Tree reconstruction"
+      ],
+      "steps": [
+        {
+          "title": "Uniqueness",
+          "body": "The inorder of a BST on $1..n$ is always $1,2,\\dots,n$. Postorder + inorder determine a binary tree uniquely, so the BST is unique — option (D) is out."
+        },
+        {
+          "title": "Linear rebuild",
+          "body": "The last element of $P$ is the root. Scan $P$ from right to left, building the right subtree first with the window $(\\text{root},\\ \\text{hi})$ and then the left subtree with $(\\text{lo},\\ \\text{root})$. Each key is consumed exactly once with $O(1)$ work, so the time is $O(n)$."
+        },
+        {
+          "title": "Lower bound",
+          "body": "Every one of the $n$ keys must be read and placed into a node, so $\\Omega(n)$. Hence $\\Theta(n)$."
+        }
+      ],
+      "answer": {
+        "value": "$\\Theta(n)$",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Cannot even read all $n$ keys in $O(\\log n)$ time."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "The bounded right-to-left scan (or a stack) builds the tree in one pass: $\\Theta(n)$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$\\Theta(n\\log n)$ is what naive repeated BST insertion (balanced case) or sorting would cost; not optimal."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The tree is unique since the inorder is the sorted sequence."
+        }
+      ],
+      "pitfalls": [
+        "Thinking postorder alone never fixes a binary tree — for a BST the inorder is implicit.",
+        "Inserting keys one by one costs $\\Theta(n^2)$ in the worst case."
+      ],
+      "verification": "Example $P=1,3,2,5,4$: root 4, right subtree {5}, left subtree root 2 with children 1,3 — each key placed once."
+    },
+    "cse-2008-cs-47": {
+      "approach": "Because the insertions need not be done one after another, append the $n$ new keys to the array and run bottom-up build-heap on all $2n$ elements, which is linear.",
+      "concepts": [
+        "Binary heap",
+        "Build-heap (heapify)",
+        "Linear-time heap construction"
+      ],
+      "steps": [
+        {
+          "title": "Batch the insertions",
+          "body": "Place the $n$ new elements after the existing $n$ in the heap array, giving $2n$ elements."
+        },
+        {
+          "title": "Build-heap",
+          "body": "Bottom-up heapify costs $\\sum_h \\frac{N}{2^{h+1}}\\,O(h)=O(N)$. With $N=2n$ this is $O(2n)=\\Theta(n)$ (and at least $n$ elements must be written, so $\\Omega(n)$)."
+        }
+      ],
+      "answer": {
+        "value": "$\\Theta(n)$",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Writing $n$ new elements alone takes $\\Omega(n)$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Rebuilding a heap of $2n$ elements bottom-up is $\\Theta(n)$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$\\Theta(n\\log n)$ is the cost of $n$ separate inserts, which the question explicitly does not require."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Far too large; even naive insertion is $O(n\\log n)$."
+        }
+      ],
+      "pitfalls": [
+        "Ignoring \"not necessarily one after another\" and summing $n$ individual $O(\\log n)$ inserts."
+      ],
+      "verification": "Build-heap sum $\\sum_{h\\ge0} h/2^{h+1}=1$, so total work $\\le N=2n$ sift steps."
+    },
+    "cse-2008-cs-48": {
+      "approach": "Check each statement against standard results; the false one claims every subset of an r.e. set is recursive, but $\\Sigma^*$ is recursive and has non-recursive subsets.",
+      "concepts": [
+        "Subset construction",
+        "Nondeterministic TM simulation",
+        "Chomsky hierarchy",
+        "Recursive vs recursively enumerable"
+      ],
+      "steps": [
+        {
+          "title": "True statements",
+          "body": "(A) subset construction converts any NFA to a DFA. (B) a deterministic TM simulates an NTM by breadth-first search of its computation tree. (C) every regular language is context-free (right-linear grammar)."
+        },
+        {
+          "title": "The false one",
+          "body": "$\\Sigma^*$ is r.e. (even regular). Its subset $L_u=\\{\\langle M,w\\rangle : M \\text{ accepts } w\\}$ (or the halting set) is **not** recursive. So \"every subset of an r.e. set is recursive\" is false."
+        }
+      ],
+      "answer": {
+        "value": "Every subset of a recursively enumerable set is recursive",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "True — subset (powerset) construction."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "True — NTMs and DTMs are equally powerful."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "True — regular ⊂ context-free."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "False — the halting language is a non-recursive subset of the r.e. set $\\Sigma^*$."
+        }
+      ],
+      "pitfalls": [
+        "Confusing \"subset of a language\" with \"subclass of languages\"; subsets of even regular sets can be undecidable."
+      ],
+      "verification": "Counterexample $\\Sigma^*\\supseteq$ HALT, HALT not recursive."
+    },
+    "cse-2008-cs-49": {
+      "approach": "Build the product on pairs (state of Z, state of Y), moving both machines on each symbol; the only final pair is (2,2). Then match the pair names to the option tables.",
+      "concepts": [
+        "Product automaton",
+        "DFA intersection",
+        "Transition tables"
+      ],
+      "steps": [
+        {
+          "title": "Product transitions",
+          "body": "$\\delta((z,y),x)=(\\delta_Z(z,x),\\delta_Y(y,x))$.\n\n| state | a | b |\n|---|---|---|\n| (1,1) start | (2,1) | (2,2) |\n| (1,2) | (2,2) | (2,1) |\n| (2,1) | (1,1) | (1,2) |\n| (2,2) final | (1,2) | (1,1) |",
+          "scene": {
+            "reveal": 8
+          }
+        },
+        {
+          "title": "Name the states",
+          "body": "Start $P=(1,1)$ and the only final state $R=(2,2)$. From $P$ on b we must reach $R$ — only option (A) has $P\\xrightarrow{b}R$. Then $P\\xrightarrow{a}S$ gives $S=(2,1)$, so $Q=(1,2)$.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Check option (A)",
+          "body": "Rows $P$, $Q$, $R$ of (A) match exactly: $P:(S,R)$, $Q:(R,S)$, $R:(Q,P)$. The computed row for $S=(2,1)$ is $a\\to P,\\ b\\to Q$, whereas (A) prints $a\\to Q,\\ b\\to P$ — a misprint in the paper. (A) is still the only consistent choice and is the accepted answer.",
+          "scene": {
+            "hl": [
+              {
+                "r": 3,
+                "tone": "warning"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "Table (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Rows P, Q, R match the product exactly; only row S appears swapped (paper misprint). Best and accepted match."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$P\\xrightarrow{b}Q$ would send the start state on b to a non-final state, but $(1,1)\\xrightarrow{b}(2,2)$ is final."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$P\\xrightarrow{a}Q$ and $P\\xrightarrow{b}S$, but from $P$ the b-move must reach the final state $R$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$P\\xrightarrow{b}Q$ again misses the final state; also $Q\\xrightarrow{a}S,\\ Q\\xrightarrow{b}R$ is inconsistent with the other rows."
+        }
+      ],
+      "pitfalls": [
+        "Treating any state with one final component as final — in a product for intersection only (2,2) is final."
+      ],
+      "verification": "Re-derived each transition from both tables; (A) agrees on 6 of 8 entries including all entries of P, Q, R; no other option has P on b going to R.",
+      "animation": {
+        "kind": "table",
+        "cols": [
+          "a",
+          "b"
+        ],
+        "rowLabels": [
+          "→ P (1,1)",
+          "Q (1,2)",
+          "R (2,2) F",
+          "S (2,1)"
+        ],
+        "corner": "state",
+        "rows": [
+          [
+            "S (2,1)",
+            "R (2,2)"
+          ],
+          [
+            "R (2,2)",
+            "S (2,1)"
+          ],
+          [
+            "Q (1,2)",
+            "P (1,1)"
+          ],
+          [
+            "P (1,1)",
+            "Q (1,2)"
+          ]
+        ],
+        "reveal": 0
+      }
+    },
+    "cse-2008-cs-50": {
+      "approach": "Judge each statement against standard grammar transformations; only II fails, because a language containing $\\epsilon$ needs at least one $\\epsilon$-production.",
+      "concepts": [
+        "Left-recursion elimination",
+        "ε-production removal",
+        "Right-linear grammars",
+        "Chomsky Normal Form"
+      ],
+      "steps": [
+        {
+          "title": "I and III",
+          "body": "I: left recursion can always be eliminated (and right recursion converted to left) — true. III: productions $X\\to w$ / $X\\to wY$ form a right-linear grammar, which generates exactly the regular languages — true."
+        },
+        {
+          "title": "II and IV",
+          "body": "II: if $\\epsilon\\in L(G)$, some $\\epsilon$-production (at least $S\\to\\epsilon$) must remain, so *all* cannot be removed — false. IV: CNF rules are $A\\to BC$ or $A\\to a$, so every internal node has two children (or one terminal leaf) — derivation trees are binary — true."
+        },
+        {
+          "title": "Combine",
+          "body": "True: I, III, IV."
+        }
+      ],
+      "answer": {
+        "value": "I, III and IV only",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Includes II, which is false."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Includes II and omits I."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Exactly the true statements I, III, IV."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Includes II and omits III."
+        }
+      ],
+      "pitfalls": [
+        "Forgetting the $\\epsilon\\in L$ exception in II."
+      ],
+      "verification": "Counterexample for II: $S\\to\\epsilon\\mid a$ generates $\\{\\epsilon,a\\}$, impossible without an $\\epsilon$-rule."
+    },
+    "cse-2008-cs-51": {
+      "approach": "Map each compiler/language property to the abstract language that models it: copy languages model declare-before-use, crossed counts model parameter matching, nested pairs model expressions, mirror strings model palindromes.",
+      "concepts": [
+        "Non-context-free languages",
+        "Context-free grammars",
+        "Semantic checks"
+      ],
+      "steps": [
+        {
+          "title": "E and F",
+          "body": "E: a declaration string $w$ must reappear later as a use — $\\{wcw\\}$ ⇒ **R**. F: number of formal parameters ($n$) and of actual parameters must agree, with interleaved counts — $\\{a^nb^mc^nd^m\\}$ ⇒ **P**."
+        },
+        {
+          "title": "G and H",
+          "body": "G: $X\\to XbX\\mid XcX\\mid dXf\\mid g$ — binary operators $b,c$, matched brackets $d\\dots f$, operand $g$ ⇒ **Q**. H: $X\\to bXb\\mid cXc\\mid\\epsilon$ generates even palindromes ⇒ **S**."
+        }
+      ],
+      "answer": {
+        "value": "E–R, F–P, G–Q, H–S",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Swaps E and F: $a^nb^mc^nd^m$ models count agreement, not declare-before-use."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "G–S and H–Q are swapped: S is the palindrome grammar."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "All four pairings correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Swaps both E/F and G/H."
+        }
+      ],
+      "pitfalls": [
+        "Mixing up R (copy, declare/use) with P (count matching)."
+      ],
+      "verification": "Each grammar/language checked by generating a sample string: $gbg$, $dgf$ for Q; $bccb$ for S."
+    },
+    "cse-2008-cs-52": {
+      "approach": "Name the states A (start/final, bottom), B (top-left) and C (top-right). Every expression has the shape $\\epsilon+0(\\text{loops at }B)^*(\\text{exit})$, so read the two B-loops and the exit from each NFA.",
+      "concepts": [
+        "NFA to regular expression",
+        "State elimination",
+        "Loops through a hub state"
+      ],
+      "steps": [
+        {
+          "title": "Common structure",
+          "body": "All four: $A\\xrightarrow{0}B$, $C\\xrightarrow{1}B$, an edge $B\\to A$ and $B\\to C$, and a self-loop on C. Any accepted non-empty string is $0$, then loops returning to B, then a final exit."
+        },
+        {
+          "title": "P and Q",
+          "body": "P: $B\\xrightarrow0A$, $B\\xrightarrow0C$, C loop 1, C final. B-loops: $B\\to C\\to B = 01^*1$, $B\\to A\\to B = 00$; exit to final C $=01^*$ (covers exit to A too). ⇒ $\\epsilon+0(01^*1+00)^*01^*$ = **1**.\n\nQ: $B\\xrightarrow0A$, $B\\xrightarrow1C$, C loop 0, C non-final. Loops $10^*1$, $00$; exit only to A by $0$ ⇒ $\\epsilon+0(10^*1+00)^*0$ = **2**."
+        },
+        {
+          "title": "R and S",
+          "body": "R: $B\\xrightarrow1A$, $B\\xrightarrow1C$, C loop 0, C non-final. Loops $10^*1$ and $B\\to A\\to B=10$; exit to A by $1$ ⇒ $\\epsilon+0(10^*1+10)^*1$ = **3**.\n\nS: same edges as R but C is final; exit $B\\to C$ then $0^*$ ⇒ $\\epsilon+0(10^*1+10)^*10^*$ = **4**."
+        }
+      ],
+      "answer": {
+        "value": "P–1, Q–2, R–3, S–4",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "P has $B\\xrightarrow0C$ with a 1-loop, giving $01^*1$ — expression 1, not 2."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Q exits only to A with $0$ (expression 2), not $1$ (expression 3)."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "All four derived expressions match."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "P uses $01^*1$ and $00$ — expression 1, not 3."
+        }
+      ],
+      "pitfalls": [
+        "Missing that the loop $B\\to A\\to B$ reads $00$ in P/Q but $10$ in R/S.",
+        "Ignoring whether C is final (decides between 3 and 4)."
+      ],
+      "verification": "Spot check S: $0\\,1\\,0$ (A→B→C→C) accepted and matches $0\\cdot1\\cdot0$ in expression 4; R rejects it since C is not final, and expression 3 must end in 1."
+    },
+    "cse-2008-cs-53": {
+      "approach": "A set is regular if a finite automaton can check it without unbounded counting. I and IV need no counting; II and III compare two unbounded counts.",
+      "concepts": [
+        "Regular languages",
+        "Pumping lemma",
+        "Closure properties"
+      ],
+      "steps": [
+        {
+          "title": "Regular ones",
+          "body": "I: $a^*(bb)^*$ — regular. IV: $(a+b)^*c(a+b)^*$ — regular."
+        },
+        {
+          "title": "Non-regular ones",
+          "body": "II: $\\{a^{2m}b^m\\}$ requires matching counts — pumping the $a$-block breaks $n=2m$. III: if $\\{a^nb^m: n\\ne m\\}$ were regular, its complement intersected with $a^*b^*$, i.e. $\\{a^nb^n\\}$, would be regular — contradiction."
+        }
+      ],
+      "answer": {
+        "value": "I and IV only",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Exactly I and IV are regular."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "III is not regular (complement within $a^*b^*$ is $a^nb^n$)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Misses IV, which is $(a+b)^*c(a+b)^*$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Misses I, which is $a^*(bb)^*$."
+        }
+      ],
+      "pitfalls": [
+        "Assuming \"$n\\ne m$\" is easy because it is a negation — non-regularity follows by closure."
+      ],
+      "verification": "Wrote regular expressions for I and IV; closure argument for III; pumping for II."
+    },
+    "cse-2008-cs-54": {
+      "approach": "Test each storage-allocation claim against what recursion, nesting and first-class functions actually need: recursion needs a stack, nesting needs access links/display, returned functions (closures) outlive their frame.",
+      "concepts": [
+        "Static vs stack vs heap allocation",
+        "Access links and displays",
+        "Closures"
+      ],
+      "steps": [
+        {
+          "title": "I, III, IV",
+          "body": "I false: recursion needs a fresh activation record per call, impossible with static allocation. III false: dynamic (stack/heap) allocation is exactly how recursion is implemented. IV false: Pascal-style languages implement nesting + recursion with a stack and access links."
+        },
+        {
+          "title": "II and V",
+          "body": "II true: access links / displays are needed only to reach non-local variables of enclosing procedures, i.e. only with nesting. V true: a returned function may refer to locals of a frame that has been popped, so frames must live on the heap."
+        }
+      ],
+      "answer": {
+        "value": "II and V only",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Exactly the true statements II and V."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "I, III, IV are all false."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "I is false (recursion cannot use static allocation)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "III is false."
+        }
+      ],
+      "pitfalls": [
+        "Thinking \"no globals\" makes static allocation enough — recursion still needs multiple live activations."
+      ],
+      "verification": "Each statement checked against C/Pascal/ML implementation practice."
+    },
+    "cse-2008-cs-55": {
+      "approach": "LALR(1) merges LR(1) states with identical cores. Merging can create reduce-reduce conflicts but never a new shift-reduce conflict, so S-R conflicts in LALR(1) exist exactly when they exist in LR(1).",
+      "concepts": [
+        "LR(1) items",
+        "LALR(1) state merging",
+        "Parsing conflicts"
+      ],
+      "steps": [
+        {
+          "title": "Why merging adds no S-R conflict",
+          "body": "Suppose a merged LALR state has $[A\\to\\alpha\\cdot,\\ a]$ and $[B\\to\\beta\\cdot a\\gamma,\\ b]$. The shift item's core is in every LR(1) state being merged, so the LR(1) state that contributed $[A\\to\\alpha\\cdot, a]$ also contains a $B\\to\\beta\\cdot a\\gamma$ item ⇒ that LR(1) state already had the S-R conflict."
+        },
+        {
+          "title": "Conclude",
+          "body": "Conversely LR(1) S-R conflicts survive merging. Hence LALR(1) has S-R conflicts **iff** LR(1) does."
+        }
+      ],
+      "answer": {
+        "value": "the LR(1) parser for G has S-R conflicts",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "SLR(1) can have S-R conflicts that LALR(1) resolves with sharper lookaheads — not \"iff\"."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: merging never introduces S-R conflicts."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "LR(0) conflicts are often removed by lookahead; not equivalent."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "R-R conflicts are a different phenomenon and can arise from merging alone."
+        }
+      ],
+      "pitfalls": [
+        "Confusing the two conflict types: merging can introduce R-R conflicts only."
+      ],
+      "verification": "Standard result (Dragon book §4.7); the core argument above."
+    },
+    "cse-2008-cs-56": {
+      "approach": "In slow start the congestion window grows by one MSS per ACK, which doubles it every RTT — exponential growth.",
+      "concepts": [
+        "TCP slow start",
+        "Congestion window"
+      ],
+      "steps": [
+        {
+          "title": "Per-ACK growth",
+          "body": "Each ACK increases cwnd by 1 MSS. In one RTT, cwnd segments are ACKed, so cwnd $\\to 2\\cdot$cwnd: $1,2,4,8,\\dots$ MSS."
+        },
+        {
+          "title": "Conclude",
+          "body": "Doubling per RTT is exponential growth (until ssthresh, after which congestion avoidance grows linearly)."
+        }
+      ],
+      "answer": {
+        "value": "increases exponentially",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "cwnd does grow in slow start."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Linear (additive) increase is congestion avoidance, not slow start."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "No TCP phase grows quadratically."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Doubles every RTT — exponential."
+        }
+      ],
+      "pitfalls": [
+        "Mixing up slow start (exponential) with congestion avoidance (linear)."
+      ],
+      "verification": "cwnd after $k$ RTTs $=2^k$ MSS starting from 1."
+    },
+    "cse-2008-cs-57": {
+      "approach": "Count host bits from the mask: $255.255.248.0$ has 21 one-bits, leaving 11 host bits; subtract the all-zeros and all-ones addresses.",
+      "concepts": [
+        "Subnet mask",
+        "Host addresses per subnet"
+      ],
+      "steps": [
+        {
+          "title": "Host bits",
+          "body": "$248 = 11111000_2$, so the mask has $8+8+5=21$ ones and $32-21=11$ host bits."
+        },
+        {
+          "title": "Usable hosts",
+          "body": "$2^{11}-2=2048-2=2046$ (network and broadcast addresses excluded)."
+        }
+      ],
+      "answer": {
+        "value": "2046",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "1022 $=2^{10}-2$ — uses 10 host bits (mask .252.0)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "1023 is neither $2^k$ nor $2^k-2$ for this mask."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$2^{11}-2=2046$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "2047 subtracts only one reserved address."
+        }
+      ],
+      "pitfalls": [
+        "Forgetting to subtract both the subnet and broadcast addresses."
+      ],
+      "verification": "Third octet 248 leaves 3 host bits, fourth octet 8: $3+8=11$."
+    },
+    "cse-2008-cs-58": {
+      "approach": "During a burst of length $t$, the bucket supplies its initial $C$ bits plus $\\rho t$ refilled bits, and these must cover $M t$ bits sent: $t=C/(M-\\rho)$.",
+      "concepts": [
+        "Token bucket",
+        "Maximum burst duration"
+      ],
+      "given": "| Quantity | Value |\n|---|---|\n| Line rate $M$ | 10 Mbps |\n| Token rate $\\rho$ | 2 Mbps |\n| Bucket capacity $C$ | 16 Mb |",
+      "steps": [
+        {
+          "title": "Balance tokens",
+          "body": "$C+\\rho t = M t \\Rightarrow 16+2t=10t$."
+        },
+        {
+          "title": "Solve",
+          "body": "$8t=16 \\Rightarrow t=2$ seconds."
+        }
+      ],
+      "answer": {
+        "value": "2 seconds",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "1.6 s $=16/10$ ignores the tokens refilled during the burst."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$16/(10-2)=2$ s."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "5 s does not satisfy $16+2t=10t$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "8 s $=16/2$ divides by the token rate instead of the net drain rate."
+        }
+      ],
+      "pitfalls": [
+        "Using $C/M$ and forgetting the refill."
+      ],
+      "verification": "At $t=2$: tokens available $16+4=20$ Mb = bits sent $10\\times2=20$ Mb."
+    },
+    "cse-2008-cs-59": {
+      "approach": "After `listen()`, the server kernel completes the TCP three-way handshake itself and queues the connection in the backlog; `accept()` only dequeues it. So the client's `connect()` can succeed even though the server process never ran `accept()`.",
+      "concepts": [
+        "Socket API",
+        "TCP three-way handshake",
+        "Listen backlog"
+      ],
+      "steps": [
+        {
+          "title": "What listen() does",
+          "body": "`listen()` marks the socket passive and creates the pending-connection queue. Incoming SYNs are answered with SYN-ACK by the kernel, independent of whether the process is scheduled."
+        },
+        {
+          "title": "Client side",
+          "body": "The client's `connect()` sends SYN, receives SYN-ACK, sends ACK and returns 0 — the connection sits in the server's accept queue until `accept()` is called."
+        }
+      ],
+      "answer": {
+        "value": "connect() system call returns successfully",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Handshake is completed by the server's kernel after listen(), so connect() returns success."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "connect() blocks only until the handshake completes, which does not need accept()."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "An error (ECONNREFUSED) would arise only if no socket were listening on that port (or the backlog overflowed)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "A core dump is unrelated to socket calls."
+        }
+      ],
+      "pitfalls": [
+        "Believing accept() performs the handshake."
+      ],
+      "verification": "Consistent with POSIX/BSD semantics: completed connections wait in the listen queue."
+    },
+    "cse-2008-cs-60": {
+      "approach": "All three parameters alias the same variable `c` except `x`, which is a copy. Trace `c` through the function, reading `z = *ppz` as the intended `**ppz` (as printed it would assign a pointer to an int).",
+      "concepts": [
+        "Pointers to pointers",
+        "Call by value vs aliasing"
+      ],
+      "steps": [
+        {
+          "title": "Setup",
+          "body": "`c = 4`, `b = &c`, `a = &b`. Call `f(c, b, a)`: `x = 4` (copy), `py = &c`, `ppz = &b` so `**ppz` is `c`."
+        },
+        {
+          "title": "Trace",
+          "body": "`**ppz += 1` ⇒ $c=5$; `z = **ppz` ⇒ $z=5$.\n\n`*py += 2` ⇒ $c=7$; `y = *py` ⇒ $y=7$.\n\n`x += 3` ⇒ $x=4+3=7$ (the copy, unaffected by changes to `c`)."
+        },
+        {
+          "title": "Return",
+          "body": "$x+y+z=7+7+5=19$."
+        }
+      ],
+      "answer": {
+        "value": "19",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "18 uses $x=4+3$ but $z=4$ (reading `c` before the increment)."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "19 $=7+7+5$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "21 would use $z=7$ (treating z as read after both updates)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "22 would treat `x` as aliasing `c` ($x=7+3=10$, $10+7+5$)."
+        }
+      ],
+      "pitfalls": [
+        "Forgetting that `x` is a copy taken before any change to `c`.",
+        "Re-reading `z` after `*py += 2` — `z` was captured earlier."
+      ],
+      "verification": "Ran the trace with `c` values 4→5→7; $x$ stays 7."
+    },
+    "cse-2008-cs-61": {
+      "approach": "Each call must read one character into its own local `c`, recurse while that character is not newline, and print `c` on the way back — so reading goes in ?1 and `putchar(c)` in ?2.",
+      "concepts": [
+        "Recursion",
+        "Call stack unwinding",
+        "getchar/putchar"
+      ],
+      "steps": [
+        {
+          "title": "Read before recursing",
+          "body": "?1 = `((c = getchar()) != '\\n')` stores the character in the frame's local `c` and recurses only for non-newline characters."
+        },
+        {
+          "title": "Print while unwinding",
+          "body": "?2 = `putchar(c);` runs after the deeper calls return, so characters come out last-read-first. For input `ab\\n`: frames hold `a`, `b`, `\\n`; output is `\\n`, `b`, `a` — the reversed string."
+        }
+      ],
+      "answer": {
+        "value": "?1 is ((c = getchar()) != '\\n'), ?2 is putchar(c);",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The character is never saved in `c`, and `getchar(c)` reads instead of printing."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Reads correctly but ?2 `getchar(c)` prints nothing."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "`c` is uninitialised — nothing is ever read."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Reads into the local `c`, recurses, then prints on unwinding — reverses the input."
+        }
+      ],
+      "pitfalls": [
+        "Choosing (B) because ?1 is right without checking that ?2 outputs."
+      ],
+      "verification": "Traced input \"ab\\n\" through three frames."
+    },
+    "cse-2008-cs-62": {
+      "approach": "The loop swaps the values of nodes `p` and `q = p->next`, then jumps `p` two nodes ahead. So it swaps adjacent pairs (1,2), (3,4), (5,6) and leaves an odd last node alone.",
+      "concepts": [
+        "Linked list traversal",
+        "Pairwise swap"
+      ],
+      "steps": [
+        {
+          "title": "Pair 1–2",
+          "body": "$p$ = node 1, $q$ = node 2: swap values ⇒ 2,1,3,4,5,6,7. Then $p$ = node 3, $q$ = node 4.",
+          "scene": {
+            "cells": [
+              2,
+              1,
+              3,
+              4,
+              5,
+              6,
+              7
+            ],
+            "pointers": [
+              {
+                "name": "p",
+                "at": 2
+              },
+              {
+                "name": "q",
+                "at": 3
+              }
+            ],
+            "hl": [
+              {
+                "at": [
+                  0,
+                  1
+                ],
+                "tone": "success"
+              }
+            ],
+            "caption": "swap 1↔2"
+          }
+        },
+        {
+          "title": "Pairs 3–4 and 5–6",
+          "body": "Swap ⇒ 2,1,4,3,5,6,7; $p$ = node 5, $q$ = node 6. Swap ⇒ 2,1,4,3,6,5,7; $p$ = node 7.",
+          "scene": {
+            "cells": [
+              2,
+              1,
+              4,
+              3,
+              6,
+              5,
+              7
+            ],
+            "pointers": [
+              {
+                "name": "p",
+                "at": 6
+              }
+            ],
+            "hl": [
+              {
+                "at": [
+                  2,
+                  3
+                ],
+                "tone": "success"
+              },
+              {
+                "at": [
+                  4,
+                  5
+                ],
+                "tone": "success"
+              }
+            ],
+            "caption": "swap 3↔4, 5↔6"
+          }
+        },
+        {
+          "title": "Stop",
+          "body": "$p$ = node 7 has `next == NULL`, so $q = 0$ and the loop ends. Final list: **2,1,4,3,6,5,7**.",
+          "scene": {
+            "hl": [
+              {
+                "at": [
+                  6,
+                  6
+                ],
+                "tone": "muted"
+              }
+            ],
+            "caption": "q = NULL: done"
+          }
+        }
+      ],
+      "answer": {
+        "value": "2,1,4,3,6,5,7",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The function does swap values; list changes."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Pairwise swap with the odd node 7 left in place."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Would require starting the pairing at node 2."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "A rotation by one — would need value shifting along the whole list, not pair swaps."
+        }
+      ],
+      "pitfalls": [
+        "Thinking `p = q->next` advances one node — it advances two."
+      ],
+      "verification": "Pairs (1,2),(3,4),(5,6) swapped; 7 untouched.",
+      "animation": {
+        "kind": "array",
+        "variant": "linked",
+        "label": "list",
+        "cells": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "pointers": [
+          {
+            "name": "p",
+            "at": 0
+          },
+          {
+            "name": "q",
+            "at": 1
+          }
+        ],
+        "caption": "p = list, q = list->next"
+      }
+    },
+    "cse-2008-cs-63": {
+      "approach": "`xb` guards the shared counter `s`, so it is a mutex and must start at 1; `yb` is where processes block until a V wakes them, so it must start at 0.",
+      "concepts": [
+        "Binary semaphores",
+        "Counting semaphore implementation",
+        "Mutual exclusion"
+      ],
+      "steps": [
+        {
+          "title": "Mutex xb",
+          "body": "Every access to `s` is bracketed by `Pb(xb) … Vb(xb)` — a critical section. If $x_b=0$ initially, the first `Pb(xb)` deadlocks. So $x_b=1$."
+        },
+        {
+          "title": "Wait semaphore yb",
+          "body": "A process that drives $s<0$ must block on `Pb(yb)`; it continues only after a `V(s)` does `Vb(yb)`. If $y_b=1$, the first blocking process would pass straight through. So $y_b=0$."
+        }
+      ],
+      "answer": {
+        "value": "1 and 0",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$x_b=0$ blocks the very first P or V on `Pb(xb)`."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$x_b=0$ deadlocks, as in (A)."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Mutex free, wait queue empty."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$y_b=1$ lets one process proceed past `Pb(yb)` without any V(s)."
+        }
+      ],
+      "pitfalls": [
+        "Swapping the roles: `yb` is the waiting semaphore, not the lock."
+      ],
+      "verification": "With $s=0$: P(s) sets $s=-1$, releases xb and blocks on yb (0); V(s) sets $s=0$, signals yb — correct behaviour."
+    },
+    "cse-2008-cs-64": {
+      "approach": "Interrupts signal I/O completion to the CPU regardless of how the process waits; synchronous vs asynchronous only changes whether the process blocks.",
+      "concepts": [
+        "Synchronous I/O",
+        "Asynchronous I/O",
+        "Interrupt service routines"
+      ],
+      "steps": [
+        {
+          "title": "Role of the ISR",
+          "body": "The device raises an interrupt when the transfer finishes; the ISR runs in both modes (B true). In synchronous I/O it wakes the blocked process (D true)."
+        },
+        {
+          "title": "Process behaviour",
+          "body": "Synchronous: caller blocks until completion; asynchronous: caller continues and is notified later (C true). Statement A says no ISR in asynchronous I/O — false."
+        }
+      ],
+      "answer": {
+        "value": "An ISR is invoked on completion of I/O in synchronous I/O but not in asynchronous I/O",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Not true — completion interrupts occur in asynchronous I/O too."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "True — the ISR runs on completion in both modes."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "True — that is the defining difference."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "True — the ISR moves the waiting process to the ready queue."
+        }
+      ],
+      "pitfalls": [
+        "Reading \"NOT true\" as \"true\"."
+      ],
+      "verification": "A and B contradict each other; B is the textbook behaviour."
+    },
+    "cse-2008-cs-65": {
+      "approach": "Safe-state checking is the defining feature of avoidance (Banker's algorithm), not prevention, which just structurally breaks one Coffman condition.",
+      "concepts": [
+        "Deadlock prevention",
+        "Deadlock avoidance",
+        "Safe state"
+      ],
+      "steps": [
+        {
+          "title": "Prevention vs avoidance",
+          "body": "Prevention denies one necessary condition (e.g. ordering resources, no hold-and-wait) and never computes safe states. Avoidance grants a request only if the resulting state is safe, which needs each process's maximum demand in advance."
+        },
+        {
+          "title": "Check the statements",
+          "body": "A attributes safe-state granting to prevention — not true. B, C, D are true: avoidance grants safe requests, is less restrictive, and needs a-priori maximum claims."
+        }
+      ],
+      "answer": {
+        "value": "In deadlock prevention, the request for resources is always granted if the resulting state is safe",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Not true — prevention may deny a request even when the resulting state would be safe (e.g. it violates resource ordering)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "True — that is exactly the avoidance rule."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "True — avoidance permits more states than prevention."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "True — Banker's algorithm needs maximum claims up front."
+        }
+      ],
+      "pitfalls": [
+        "Confusing which scheme uses the safe-state test."
+      ],
+      "verification": "Matches standard OS texts (Silberschatz ch. 7)."
+    },
+    "cse-2008-cs-66": {
+      "approach": "Each `fork()` doubles the number of processes, so after $n$ iterations there are $2^n$ processes; subtract the original parent.",
+      "concepts": [
+        "fork()",
+        "Process tree"
+      ],
+      "steps": [
+        {
+          "title": "Doubling",
+          "body": "Before the loop: 1 process. Every existing process executes each remaining `fork()`, so after iteration $k$ there are $2^k$ processes; after $n$ iterations, $2^n$."
+        },
+        {
+          "title": "Children only",
+          "body": "Child processes created $=2^n-1$ (all except the original). E.g. $n=2$: $2^2-1=3$."
+        }
+      ],
+      "answer": {
+        "value": "$2^n-1$",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$n$ counts only the children of the original process."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Total processes $2^n$ minus the original parent."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$2^n$ counts the original parent as a child."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$2^{n+1}-1$ is the node count of a full binary tree of height $n$ — overcounts."
+        }
+      ],
+      "pitfalls": [
+        "Including the parent in the count."
+      ],
+      "verification": "$n=1$: 1 child $=2^1-1$; $n=3$: 7 children."
+    }
+  }
+}
