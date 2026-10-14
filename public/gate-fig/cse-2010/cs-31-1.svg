@@ -1,29 +1,33 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 240" width="100%" height="100%">
-  <defs>
-    <linearGradient id="gate-grad-cse-2010-cs-31" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stopColor="#1e293b" />
-      <stop offset="100%" stopColor="#0f172a" />
-    </linearGradient>
-  </defs>
-  <rect width="100%" height="100%" rx="16" fill="#0b1329" stroke="#1e293b" stroke-width="1.5" />
-  <rect x="20" y="16" width="160" height="24" rx="6" fill="#1e293b" />
-  <text x="30" y="32" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">LOGIC CIRCUIT</text>
-  <rect x="110" y="50" width="70" height="45" rx="6" fill="url(#gate-grad-cse-2010-cs-31)" stroke="#38bdf8" stroke-width="2" />
-  <text x="145" y="78" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="bold" font-family="monospace">NOR₁</text>
-  <line x1="50" y1="62" x2="110" y2="62" stroke="#38bdf8" stroke-width="2" />
-  <line x1="50" y1="82" x2="110" y2="82" stroke="#38bdf8" stroke-width="2" />
-  <text x="40" y="66" text-anchor="end" fill="#94a3b8" font-size="12" font-family="monospace">A</text>
-  <text x="40" y="86" text-anchor="end" fill="#94a3b8" font-size="12" font-family="monospace">B</text>
-  <rect x="110" y="130" width="70" height="45" rx="6" fill="url(#gate-grad-cse-2010-cs-31)" stroke="#38bdf8" stroke-width="2" />
-  <text x="145" y="158" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="bold" font-family="monospace">NOR₂</text>
-  <line x1="50" y1="142" x2="110" y2="142" stroke="#38bdf8" stroke-width="2" />
-  <line x1="50" y1="162" x2="110" y2="162" stroke="#38bdf8" stroke-width="2" />
-  <text x="40" y="146" text-anchor="end" fill="#94a3b8" font-size="12" font-family="monospace">C</text>
-  <text x="40" y="166" text-anchor="end" fill="#94a3b8" font-size="12" font-family="monospace">D</text>
-  <path d="M 180 72 L 260 72 L 280 105" fill="none" stroke="#38bdf8" stroke-width="2" />
-  <path d="M 180 152 L 260 152 L 280 120" fill="none" stroke="#38bdf8" stroke-width="2" />
-  <rect x="280" y="90" width="80" height="45" rx="6" fill="url(#gate-grad-cse-2010-cs-31)" stroke="#34d399" stroke-width="2" />
-  <text x="320" y="118" text-anchor="middle" fill="#34d399" font-size="13" font-weight="bold" font-family="monospace">NOR₃</text>
-  <line x1="360" y1="112" x2="440" y2="112" stroke="#34d399" stroke-width="3" />
-  <text x="455" y="117" fill="#34d399" font-size="16" font-weight="bold" font-family="monospace">OUT</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 470 280" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round">
+<path d="M 60 22 Q 75 40 60 58 Q 95 58 110 40 Q 95 22 60 22 Z" fill="none"/><circle cx="114" cy="40" r="4" fill="none"/>
+<polyline points="30,32 66,32" fill="none"/>
+<polyline points="30,48 66,48" fill="none"/>
+<text x="22" y="36" text-anchor="end" font-size="13" font-family="Arial, Helvetica, sans-serif" fill="currentColor" stroke="none">P</text>
+<text x="22" y="52" text-anchor="end" font-size="13" font-family="Arial, Helvetica, sans-serif" fill="currentColor" stroke="none">Q</text>
+<path d="M 60 82 Q 75 100 60 118 Q 95 118 110 100 Q 95 82 60 82 Z" fill="none"/><circle cx="114" cy="100" r="4" fill="none"/>
+<polyline points="30,92 66,92" fill="none"/>
+<polyline points="30,108 66,108" fill="none"/>
+<text x="22" y="96" text-anchor="end" font-size="13" font-family="Arial, Helvetica, sans-serif" fill="currentColor" stroke="none">Q</text>
+<text x="22" y="112" text-anchor="end" font-size="13" font-family="Arial, Helvetica, sans-serif" fill="currentColor" stroke="none">R</text>
+<path d="M 60 162 Q 75 180 60 198 Q 95 198 110 180 Q 95 162 60 162 Z" fill="none"/><circle cx="114" cy="180" r="4" fill="none"/>
+<polyline points="30,172 66,172" fill="none"/>
+<polyline points="30,188 66,188" fill="none"/>
+<text x="22" y="176" text-anchor="end" font-size="13" font-family="Arial, Helvetica, sans-serif" fill="currentColor" stroke="none">P</text>
+<text x="22" y="192" text-anchor="end" font-size="13" font-family="Arial, Helvetica, sans-serif" fill="currentColor" stroke="none">R</text>
+<path d="M 60 222 Q 75 240 60 258 Q 95 258 110 240 Q 95 222 60 222 Z" fill="none"/><circle cx="114" cy="240" r="4" fill="none"/>
+<polyline points="30,232 66,232" fill="none"/>
+<polyline points="30,248 66,248" fill="none"/>
+<text x="22" y="236" text-anchor="end" font-size="13" font-family="Arial, Helvetica, sans-serif" fill="currentColor" stroke="none">Q</text>
+<text x="22" y="252" text-anchor="end" font-size="13" font-family="Arial, Helvetica, sans-serif" fill="currentColor" stroke="none">R</text>
+<path d="M 200 52 Q 215 70 200 88 Q 235 88 250 70 Q 235 52 200 52 Z" fill="none"/><circle cx="254" cy="70" r="4" fill="none"/>
+<path d="M 200 192 Q 215 210 200 228 Q 235 228 250 210 Q 235 192 200 192 Z" fill="none"/><circle cx="254" cy="210" r="4" fill="none"/>
+<path d="M 330 122 Q 345 140 330 158 Q 365 158 380 140 Q 365 122 330 122 Z" fill="none"/><circle cx="384" cy="140" r="4" fill="none"/>
+<polyline points="118,40 160,40 160,62 206,62" fill="none"/>
+<polyline points="118,100 160,100 160,78 206,78" fill="none"/>
+<polyline points="118,180 160,180 160,202 206,202" fill="none"/>
+<polyline points="118,240 160,240 160,218 206,218" fill="none"/>
+<polyline points="258,70 290,70 290,132 336,132" fill="none"/>
+<polyline points="258,210 290,210 290,148 336,148" fill="none"/>
+<polyline points="388,140 430,140" fill="none"/>
+<text x="440" y="145" text-anchor="start" font-size="16" font-family="Arial, Helvetica, sans-serif" fill="currentColor" stroke="none">f</text>
 </svg>
