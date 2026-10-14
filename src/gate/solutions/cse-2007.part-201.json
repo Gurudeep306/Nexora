@@ -1,0 +1,1382 @@
+{
+ "paper": "cse-2007",
+ "version": 2,
+ "solutions": {
+  "cse-2007-cs-23": {
+   "approach": "A connected graph has an Eulerian circuit iff every vertex has even degree. Check degree parity and connectivity for each option.",
+   "concepts": [
+    "Eulerian circuit",
+    "Vertex degree",
+    "Graph complement"
+   ],
+   "steps": [
+    {
+     "title": "Criterion",
+     "body": "A graph (ignoring isolated vertices) has an Eulerian circuit $\\iff$ it is **connected** and **every vertex has even degree**."
+    },
+    {
+     "title": "Complement of $C_{25}$",
+     "body": "In $C_{25}$ each vertex has degree 2, so in its complement each vertex has degree $(25-1)-2=22$, which is even.\n\nThe complement is connected: two vertices $u,v$ non-adjacent in $\\overline{C_{25}}$ are adjacent in $C_{25}$, and any third vertex $w$ not adjacent (in $C_{25}$) to either of them — there are at least $25-4=21$ such — is a common neighbour in $\\overline{C_{25}}$. So it has an Eulerian circuit."
+    },
+    {
+     "title": "Other options",
+     "body": "- $K_{90}$: every degree is $89$ (odd) — no.\n- $k$-regular with even $k$: degrees are even but the graph may be **disconnected** (e.g. two disjoint triangles, $k=2$) — not guaranteed."
+    }
+   ],
+   "answer": {
+    "value": "The complement of a cycle on 25 vertices",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Even degrees alone are not enough; a disconnected 2-regular graph such as two disjoint triangles has no Eulerian circuit."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "$K_{90}$ is 89-regular; odd degrees rule out an Eulerian circuit."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "22-regular and connected, so an Eulerian circuit exists."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Option C works."
+    }
+   ],
+   "pitfalls": [
+    "Forgetting the connectivity requirement in option A."
+   ],
+   "verification": "Degree $25-1-2=22$ is even; connectivity shown via a common neighbour."
+  },
+  "cse-2007-cs-24": {
+   "approach": "Only the relative order of the 10 even numbers matters; by symmetry each of them is equally likely to come first among the evens.",
+   "concepts": [
+    "Symmetry in random permutations",
+    "Probability"
+   ],
+   "steps": [
+    {
+     "title": "Reduce to the even numbers",
+     "body": "The evens are $2,4,\\dots,20$ — 10 numbers. In a uniformly random permutation, their relative order is uniformly random over $10!$ orders."
+    },
+    {
+     "title": "Probability",
+     "body": "Each of the 10 evens is equally likely to appear first among them, so\n$$P(2\\text{ first among evens})=\\frac{9!}{10!}=\\frac{1}{10}.$$"
+    }
+   ],
+   "answer": {
+    "value": "$\\frac{1}{10}$",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "$\\frac12$ would be right only if just two evens competed."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "1 of 10 equally likely evens comes first."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "$\\frac{9!}{20!}$ is far too small; it ignores that the other 10 odd numbers are unconstrained."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "B is correct."
+    }
+   ],
+   "verification": "Counting: choose positions for evens ($\\binom{20}{10}$), place 2 in the earliest of them, arrange the other evens $9!$ and odds $10!$ ways: $\\binom{20}{10}9!\\,10!/20!=\\frac{1}{10}$."
+  },
+  "cse-2007-cs-25": {
+   "approach": "For $M=\\begin{bmatrix}A&I\\\\I&A\\end{bmatrix}$, vectors $(v,v)$ and $(v,-v)$ with $Av=\\lambda v$ are eigenvectors with eigenvalues $\\lambda+1$ and $\\lambda-1$.",
+   "concepts": [
+    "Eigenvalues",
+    "Block matrices"
+   ],
+   "steps": [
+    {
+     "title": "Eigenvectors of the block matrix",
+     "body": "If $Av=\\lambda v$:\n$$M\\begin{bmatrix}v\\\\v\\end{bmatrix}=\\begin{bmatrix}Av+v\\\\v+Av\\end{bmatrix}=(\\lambda+1)\\begin{bmatrix}v\\\\v\\end{bmatrix},\\quad M\\begin{bmatrix}v\\\\-v\\end{bmatrix}=(\\lambda-1)\\begin{bmatrix}v\\\\-v\\end{bmatrix}.$$"
+    },
+    {
+     "title": "All 8 eigenvalues",
+     "body": "$\\lambda\\in\\{-5,-2,1,4\\}$ gives $\\lambda+1\\in\\{-4,-1,2,5\\}$ and $\\lambda-1\\in\\{-6,-3,0,3\\}$.\n\nOnly $2$ appears among the options."
+    }
+   ],
+   "answer": {
+    "value": "2",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "$-5$ is an eigenvalue of $A$, not of $M$ (the set is $\\{-6,-4,-3,-1,0,2,3,5\\}$)."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "$-7$ would need $\\lambda=-6$ or $-8$."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "$2=1+1$."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "$1$ would need $\\lambda=0$ or $2$."
+    }
+   ],
+   "verification": "$\\det(M-\\mu I)=\\det((A-\\mu I)^2-I)=\\det(A-(\\mu+1)I)\\det(A-(\\mu-1)I)$, confirming $\\mu=\\lambda\\pm1$."
+  },
+  "cse-2007-cs-26": {
+   "approach": "Determine refinement between each pair of partitions, then draw the Hasse diagram with finer partitions below coarser ones.",
+   "concepts": [
+    "Partition refinement",
+    "Hasse diagram",
+    "Partial order"
+   ],
+   "steps": [
+    {
+     "title": "Refinement relations",
+     "body": "$\\pi_i$ refines $\\pi_j$ if every block of $\\pi_i$ lies inside a block of $\\pi_j$.\n\n- $\\pi_4$ (all singletons) refines every partition.\n- Every partition refines $\\pi_1=\\{abcd\\}$.\n- $\\pi_2=\\{ab,cd\\}$ vs $\\pi_3=\\{abc,d\\}$: block $cd$ is not inside $abc$ or $d$, and block $abc$ is not inside $ab$ or $cd$ — **incomparable**."
+    },
+    {
+     "title": "Hasse diagram",
+     "body": "Bottom $\\pi_4$, top $\\pi_1$, and $\\pi_2,\\pi_3$ incomparable in the middle: a **diamond**."
+    }
+   ],
+   "answer": {
+    "value": "Diamond: $\\pi_1$ top, $\\pi_2,\\pi_3$ middle, $\\pi_4$ bottom",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "A chain would require $\\pi_2$ and $\\pi_3$ to be comparable; they are not."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "It puts $\\pi_3$ below $\\pi_2$ (making them comparable) and $\\pi_4$ beside them rather than at the bottom."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Matches: $\\pi_4\\prec\\pi_2,\\pi_3\\prec\\pi_1$ with $\\pi_2,\\pi_3$ incomparable."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "It misses that $\\pi_2$ and $\\pi_3$ both refine $\\pi_1$."
+    }
+   ],
+   "verification": "Checked all 6 pairs: 5 comparable, only $(\\pi_2,\\pi_3)$ incomparable."
+  },
+  "cse-2007-cs-27": {
+   "approach": "X is the null space of $[1\\ 1\\ 1]$, a 2-dimensional subspace; two independent vectors in X form a basis.",
+   "concepts": [
+    "Subspace",
+    "Basis",
+    "Dimension"
+   ],
+   "steps": [
+    {
+     "title": "X is a subspace of dimension 2",
+     "body": "$X=\\{x: x_1+x_2+x_3=0\\}$ is the null space of the rank-1 matrix $[1\\ 1\\ 1]$, so it is a subspace with $\\dim X=3-1=2$."
+    },
+    {
+     "title": "Check the two vectors",
+     "body": "$1+(-1)+0=0$ and $1+0+(-1)=0$, so both lie in X. They are not multiples of each other, hence independent. Two independent vectors in a 2-dimensional space form a basis."
+    }
+   ],
+   "answer": {
+    "value": "They form a basis of X",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Two independent vectors in the 2-dimensional subspace X."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "They do span X because $\\dim X=2$."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "X is closed under addition and scalar multiplication (a homogeneous linear equation)."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "A is true."
+    }
+   ],
+   "verification": "Any $x\\in X$: $x=-x_2[1,-1,0]^T-x_3[1,0,-1]^T$ since $x_1=-x_2-x_3$."
+  },
+  "cse-2007-cs-28": {
+   "approach": "The iteration converges to a fixed point $x=\\frac{x}{2}+\\frac{9}{8x}$; solve for the positive root (start value is positive).",
+   "concepts": [
+    "Newton-Raphson",
+    "Fixed point"
+   ],
+   "steps": [
+    {
+     "title": "Fixed point",
+     "body": "At convergence $x_{n+1}=x_n=x$:\n$$x=\\frac{x}{2}+\\frac{9}{8x}\\ \\Rightarrow\\ \\frac{x}{2}=\\frac{9}{8x}\\ \\Rightarrow\\ x^2=\\frac{9}{4}\\ \\Rightarrow\\ x=\\pm1.5.$$"
+    },
+    {
+     "title": "Choose the root",
+     "body": "$x_0=0.5>0$ and every iterate stays positive, so the limit is $1.5$. (This is Newton's method for $f(x)=x^2-\\frac94$.)"
+    }
+   ],
+   "answer": {
+    "value": "1.5",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "$x^2=9/4$, positive root."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "$\\sqrt2$ is the fixed point of $\\frac x2+\\frac1x$, not this iteration."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "$1.6^2=2.56\\ne2.25$."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "$1.4^2=1.96\\ne2.25$."
+    }
+   ],
+   "verification": "$x_1=0.25+\\frac{9}{4}=2.5$, $x_2=1.25+0.45=1.7$, $x_3=0.85+0.6618=1.5118$, approaching 1.5."
+  },
+  "cse-2007-cs-29": {
+   "approach": "Track (number of 0s mod 3, number of 1s mod 5): a product of a 3-state and a 5-state counter, all 15 states distinguishable.",
+   "concepts": [
+    "DFA product construction",
+    "Myhill-Nerode"
+   ],
+   "steps": [
+    {
+     "title": "Product DFA",
+     "body": "State = $(a \\bmod 3,\\ b \\bmod 5)$ where $a$ = #0s and $b$ = #1s: $3\\times5=15$ states; accept only $(0,0)$."
+    },
+    {
+     "title": "All states distinct",
+     "body": "For two states $(a,b)\\ne(a',b')$, append $0^{(3-a)\\bmod 3}1^{(5-b)\\bmod 5}$: it leads $(a,b)$ to $(0,0)$ (accept) but $(a',b')$ elsewhere (reject). So no two merge, and the minimum DFA has **15** states."
+    }
+   ],
+   "answer": {
+    "value": "15 states",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "$3\\times5$ pairwise distinguishable states."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Too few: the two counters are independent, so all $3\\times5$ residue pairs are needed."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Too few states — some residue pairs would be merged."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Too few states."
+    }
+   ],
+   "verification": "The distinguishing suffix argument shows all 15 residue pairs are inequivalent."
+  },
+  "cse-2007-cs-30": {
+   "approach": "$0^i21^i$ needs matched counting (not regular), but the middle marker 2 lets a deterministic PDA know when to switch from pushing to popping.",
+   "concepts": [
+    "DCFL",
+    "Pumping lemma",
+    "Recursive languages"
+   ],
+   "steps": [
+    {
+     "title": "Not regular",
+     "body": "Pumping lemma on $0^p21^p$: pumping a block of 0s changes their count but not the number of 1s, so the string leaves L."
+    },
+    {
+     "title": "Deterministic CFL",
+     "body": "DPDA: push for each 0; on reading 2 switch to pop mode; pop one 0 per 1; accept when the stack is back to the bottom marker at end of input. Every move is deterministic. Every DCFL is a CFL, hence decidable (recursive)."
+    }
+   ],
+   "answer": {
+    "value": "Recursive and a deterministic CFL",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Every CFL is recursive."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "A DPDA accepts it; CFLs are decidable."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Requires unbounded counting."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "It is a DCFL — the 2 marks the midpoint."
+    }
+   ],
+   "verification": "DPDA traced on $00211$ accepts; $002111$ is rejected (pop on empty stack)."
+  },
+  "cse-2007-cs-31": {
+   "approach": "Simplify each language by taking $w$ to be a single symbol where possible. $wxw^R$ is exactly 'length $\\ge3$, first symbol = last symbol', which is regular; the others need palindrome matching.",
+   "concepts": [
+    "Regular languages",
+    "Myhill-Nerode",
+    "Palindromes"
+   ],
+   "steps": [
+    {
+     "title": "Option C is regular",
+     "body": "If $s=wxw^R$ with $w=a u$, then $s$ starts with $a$ and ends with $a$, and $|s|\\ge3$.\n\nConversely, any $s=a\\,y\\,a$ with $|y|\\ge1$ is $wxw^R$ with $w=a$, $x=y$.\n\nSo $L_C=0(0+1)^+0+1(0+1)^+1$ — **regular**."
+    },
+    {
+     "title": "Option A is not regular",
+     "body": "$\\{ww^R\\}$ = even palindromes; the strings $0^n1$ are pairwise distinguishable by suffix $10^n$ (Myhill-Nerode), so not regular."
+    },
+    {
+     "title": "Option B is not regular",
+     "body": "Take odd $k$ and prefixes $p_k=01^k00$. For odd $j$, $p_k1^j01$ belongs to $L_B$ iff it has a nonempty even-palindrome prefix followed by $\\ge1$ more symbol. Such a prefix must begin and end with 0; the candidates $01^k0$ (odd length $k+2$) and $01^k00$ fail, so the only one is $01^k001^j0$, a palindrome iff $j=k$. Hence suffix $1^k01$ distinguishes $p_k$ from $p_{k'}$ ($k\\ne k'$): infinitely many classes, **not regular**."
+    },
+    {
+     "title": "Option D is not regular",
+     "body": "$xww^R$ = strings whose suffix (after a nonempty $x$) is an even palindrome. By the mirror of the argument for B (reverse all strings; regular languages are closed under reversal, and $(xww^R)^R=ww^Rx^R$), $L_D$ is not regular."
+    }
+   ],
+   "answer": {
+    "value": "$\\{wxw^R\\mid x,w\\in\\{0,1\\}^+\\}$",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": false,
+    "keyNote": "The stored key is B, but $\\{ww^Rx\\}$ is not regular (Myhill-Nerode argument in step 3), while $\\{wxw^R\\}$ equals the regular set of strings of length at least 3 whose first and last symbols agree. C is the widely accepted GATE 2007 answer."
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Even palindromes — not regular."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Requires recognising an even-palindrome prefix of unbounded length; infinitely many Myhill-Nerode classes."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Equals $0(0+1)^+0+1(0+1)^+1$."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Reverse of B's language, so also not regular."
+    }
+   ],
+   "pitfalls": [
+    "Assuming B is regular by taking only $|w|=1$ — that gives a subset, not the whole language; longer $w$ adds strings like $0110\\,1$ that do not start with $00$ or $11$."
+   ],
+   "verification": "For C, both inclusions were shown; for B, $0\\,1^3\\,00\\,1^3\\,0\\,1\\in L_B$ but $0\\,1^1\\,00\\,1^3\\,0\\,1\\notin L_B$."
+  },
+  "cse-2007-cs-32": {
+   "approach": "Expand each SOP into minterms and compare with $\\{0,4,5,7,8,9,13,15\\}$.",
+   "concepts": [
+    "Sum of products",
+    "Minterms",
+    "Boolean equivalence"
+   ],
+   "steps": [
+    {
+     "title": "Minterm sets of the terms",
+     "body": "Variable order $wxyz$.\n\n| Term | Minterms |\n|---|---|\n| $xz$ | 5, 7, 13, 15 |\n| $x'y'z'$ | 0, 8 |\n| $w'xy'$ | 4, 5 |\n| $wy'z$ | 9, 13 |\n| $w'y'z'$ | 0, 4 |\n| $wx'y'$ | 8, 9 |\n| $xyz$ | 7, 15 |\n| $xy'z$ | 5, 13 |\n| $w'y$ | 2, 3, 6, 7 |"
+    },
+    {
+     "title": "Each expression",
+     "body": "- P: $\\{0,8\\}\\cup\\{4,5\\}\\cup\\{9,13\\}\\cup\\{5,7,13,15\\}=f$ ✓\n- Q: $\\{0,4\\}\\cup\\{8,9\\}\\cup\\{5,7,13,15\\}=f$ ✓\n- R: $\\{0,4\\}\\cup\\{8,9\\}\\cup\\{7,15\\}\\cup\\{5,13\\}=f$ ✓\n- S: $\\{0,8\\}\\cup\\{8,9\\}\\cup\\{2,3,6,7\\}$ — contains 2, 3, 6 (not in $f$) and misses 4, 5, 13, 15 ✗\n\nOnly S is not equivalent."
+    }
+   ],
+   "answer": {
+    "value": "S only",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "P covers exactly f."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Q is equivalent to f."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "R is equivalent to f."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Only S differs from f."
+    }
+   ],
+   "verification": "Union of each expression's minterms was compared with the 8 given minterms."
+  },
+  "cse-2007-cs-33": {
+   "approach": "$X*Y$ is XNOR, i.e. $X\\oplus Y\\oplus1$. XNOR is associative and commutative, so each identity reduces by cancelling equal terms.",
+   "concepts": [
+    "XNOR",
+    "XOR algebra"
+   ],
+   "steps": [
+    {
+     "title": "Rewrite",
+     "body": "$X*Y=XY+X'Y'=X\\odot Y=X\\oplus Y\\oplus1$, so $Z=X\\oplus Y\\oplus1$."
+    },
+    {
+     "title": "Check P, Q, R",
+     "body": "- P: $Y*Z=Y\\oplus Z\\oplus1=Y\\oplus X\\oplus Y\\oplus1\\oplus1=X$ ✓\n- Q: $X*Z=X\\oplus X\\oplus Y\\oplus1\\oplus1=Y$ ✓\n- R: $X*Y*Z=(X*Y)*Z=Z*Z=Z\\oplus Z\\oplus1=1$ ✓"
+    }
+   ],
+   "answer": {
+    "value": "All P, Q, R are valid",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "R is also valid."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "P is also valid."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Q is also valid."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "All three reduce to identities."
+    }
+   ],
+   "verification": "Truth table for $(X,Y)=(0,0),(0,1),(1,0),(1,1)$: $Z=1,0,0,1$; $Y*Z=0,0,1,1=X$ ✓."
+  },
+  "cse-2007-cs-34": {
+   "approach": "Use $n-1$ variables as select lines; each data input is then one of $0,1,x_n,x_n'$, which a single inverter supplies.",
+   "concepts": [
+    "Multiplexer",
+    "Shannon expansion"
+   ],
+   "steps": [
+    {
+     "title": "Expansion on $n-1$ variables",
+     "body": "Fix $x_1,\\dots,x_{n-1}$ (the select lines). The residual function of $x_n$ is one of $0,1,x_n,x_n'$. With one inverter producing $x_n'$, every data input is available."
+    },
+    {
+     "title": "Size",
+     "body": "$n-1$ select lines $\\Rightarrow$ a $2^{n-1}$-to-1 multiplexer. With only $n-2$ select lines the residues would be arbitrary functions of 2 variables, which a single inverter cannot provide in general."
+    }
+   ],
+   "answer": {
+    "value": "$2^{n-1}$ line to 1 line",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "$2^n$:1 works without the inverter but is not minimal."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Larger than needed."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "$n-1$ selects; data inputs from $\\{0,1,x_n,x_n'\\}$."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Residues of two variables (e.g. $x\\oplus y$) need extra gates."
+    }
+   ],
+   "verification": "For $n=2$: XOR = 2:1 MUX with select $a$, inputs $b, b'$ ✓."
+  },
+  "cse-2007-cs-35": {
+   "approach": "Write $C_1..C_4$ in two-level SOP form over $P_i,G_i,C_0$ and count the product terms (AND gates) and sums (OR gates). The sum bits use XOR, not AND/OR.",
+   "concepts": [
+    "Carry look-ahead adder",
+    "Two-level logic"
+   ],
+   "steps": [
+    {
+     "title": "Expand the carries",
+     "body": "$$\\begin{aligned}C_1&=G_0+P_0C_0\\\\C_2&=G_1+P_1G_0+P_1P_0C_0\\\\C_3&=G_2+P_2G_1+P_2P_1G_0+P_2P_1P_0C_0\\\\C_4&=G_3+P_3G_2+P_3P_2G_1+P_3P_2P_1G_0+P_3P_2P_1P_0C_0\\end{aligned}$$"
+    },
+    {
+     "title": "Count gates",
+     "body": "AND gates (product terms with $\\ge2$ literals): $1+2+3+4=10$.\n\nOR gates: one per carry $C_1,C_2,C_3,C_4$ = $4$.\n\n$S_0..S_3=P_i\\oplus C_i$ use XOR gates, which are not counted. Answer: **10, 4**."
+    }
+   ],
+   "answer": {
+    "value": "10, 4",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "6 AND gates is too few: $C_4$ alone needs 4 product terms and $C_3$ needs 3."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "$1+2+3+4=10$ AND, 4 OR."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Undercounts the AND gates."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "There is no fifth OR gate — $C_0$ is an input."
+    }
+   ],
+   "verification": "Each $C_{i+1}$ has $i+1$ products with two or more literals plus the lone $G_i$; $\\sum_{i=0}^{3}(i+1)=10$."
+  },
+  "cse-2007-cs-36": {
+   "approach": "The AND of A3 and A1 drives the asynchronous Clear. With A4 as MSB, A3A1 = 1 first happens at 0101 = 5, which is cleared instantly, so 5 is never a stable state.",
+   "concepts": [
+    "Counters",
+    "Asynchronous clear",
+    "Modulo-N counter"
+   ],
+   "given": "| Signal | Value |\n|---|---|\n| Count | 1 |\n| Load | 0 |\n| Clear | $A_3\\cdot A_1$ |",
+   "steps": [
+    {
+     "title": "Counting mode",
+     "body": "Load = 0, Count = 1, so each clock edge advances the counter by 1 while Clear = 0. The inputs 0011 are never loaded."
+    },
+    {
+     "title": "When Clear fires",
+     "body": "Bits $A_4A_3A_2A_1$ (MSB first):\n\n| Count | $A_4A_3A_2A_1$ | $A_3A_1$ |\n|---|---|---|\n| 0 | 0000 | 0 |\n| 1 | 0001 | 0 |\n| 2 | 0010 | 0 |\n| 3 | 0011 | 0 |\n| 4 | 0100 | 0 |\n| 5 | 0101 | **1** |\n\nAt 5 the AND output becomes 1 and (zero delay) clears the counter to 0 at once, so 5 is transient."
+    },
+    {
+     "title": "Sequence",
+     "body": "Stable states: $0,1,2,3,4$, then back to 0 — a mod-5 counter."
+    }
+   ],
+   "answer": {
+    "value": "0, 1, 2, 3, 4",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Would need loading 0011, but Load = 0."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Would need loading, and 5 is cleared immediately."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Counts 0 to 4; reaching 5 clears asynchronously."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "5 is not a stable state since Clear is asynchronous with zero delay."
+    }
+   ],
+   "pitfalls": [
+    "Treating Clear as synchronous (which would give 0–5).",
+    "Thinking the inputs 0011 matter — Load is tied to 0."
+   ],
+   "verification": "First count with $A_3=A_1=1$ is $0101_2=5$."
+  },
+  "cse-2007-cs-37": {
+   "approach": "Draw the pipeline diagram cycle by cycle; with forwarding, a dependent instruction's EX can start in the cycle right after the producer's last EX cycle.",
+   "concepts": [
+    "Instruction pipeline",
+    "Operand forwarding",
+    "Data hazards"
+   ],
+   "steps": [
+    {
+     "title": "ADD",
+     "body": "ADD: IF 1, ID 2, EX 3, WB 4.",
+     "scene": {
+      "upto": 4
+     }
+    },
+    {
+     "title": "MUL depends on R2",
+     "body": "MUL: IF 2, ID 3. R2 is forwarded from ADD's EX (cycle 3), so MUL's EX runs in cycles 4–6, WB 7.",
+     "scene": {
+      "upto": 7,
+      "hl": [
+       {
+        "r": 1
+       }
+      ]
+     }
+    },
+    {
+     "title": "SUB depends on R4",
+     "body": "SUB: IF 3, ID 4. R4 is available only after MUL's EX finishes in cycle 6, so SUB stalls in cycles 5–6, executes in cycle 7 and writes back in cycle **8**.",
+     "scene": {
+      "upto": 8,
+      "hl": [
+       {
+        "r": 2
+       }
+      ]
+     }
+    }
+   ],
+   "answer": {
+    "value": "8",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "animation": {
+    "kind": "pipeline",
+    "rows": [
+     {
+      "label": "ADD",
+      "start": 1,
+      "cells": [
+       "IF",
+       "ID",
+       "EX",
+       "WB"
+      ]
+     },
+     {
+      "label": "MUL",
+      "start": 2,
+      "cells": [
+       "IF",
+       "ID",
+       "EX",
+       "EX",
+       "EX",
+       "WB"
+      ]
+     },
+     {
+      "label": "SUB",
+      "start": 3,
+      "cells": [
+       "IF",
+       "ID",
+       "-",
+       "-",
+       "EX",
+       "WB"
+      ]
+     }
+    ],
+    "forwards": [
+     {
+      "from": [
+       0,
+       3
+      ],
+      "to": [
+       1,
+       4
+      ]
+     },
+     {
+      "from": [
+       1,
+       6
+      ],
+      "to": [
+       2,
+       7
+      ]
+     }
+    ],
+    "upto": 2
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Ignores the 2 stall cycles caused by the 3-cycle MUL."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Last WB in cycle 8."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Too many stalls — forwarding avoids waiting for WB."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "That is roughly non-pipelined execution."
+    }
+   ],
+   "pitfalls": [
+    "Waiting for MUL's WB instead of forwarding from its last EX cycle."
+   ],
+   "verification": "$4+3-1$ ideal cycles $=6$, plus 2 extra MUL EX cycles $=8$."
+  },
+  "cse-2007-cs-38": {
+   "approach": "Scan left to right: push operands; on an operator pop two, apply (second-popped op first-popped), push the result. Stop after the first `*`.",
+   "concepts": [
+    "Postfix evaluation",
+    "Stack"
+   ],
+   "steps": [
+    {
+     "title": "Push 8, 2, 3",
+     "body": "Operands are pushed as they are read: stack (bottom to top) 8, 2, 3.",
+     "scene": {
+      "items": [
+       "8",
+       "2",
+       "3"
+      ],
+      "caption": "push 8, 2, 3"
+     }
+    },
+    {
+     "title": "Apply ^",
+     "body": "Pop 3 and 2: $2^3=8$. Stack: 8, 8.",
+     "scene": {
+      "items": [
+       "8",
+       "8"
+      ],
+      "popped": "3",
+      "caption": "2 ^ 3 = 8"
+     }
+    },
+    {
+     "title": "Apply /",
+     "body": "Pop 8 and 8: $8/8=1$. Stack: 1.",
+     "scene": {
+      "items": [
+       "1"
+      ],
+      "popped": "8",
+      "caption": "8 / 8 = 1"
+     }
+    },
+    {
+     "title": "Push 2, 3 and apply *",
+     "body": "Stack 1, 2, 3; `*` gives $2\\times3=6$. Stack: 1, 6. Top two: **6, 1**.",
+     "scene": {
+      "items": [
+       "1",
+       "6"
+      ],
+      "popped": "3",
+      "caption": "2 * 3 = 6"
+     }
+    }
+   ],
+   "answer": {
+    "value": "6, 1",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "animation": {
+    "kind": "stack",
+    "items": []
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Stack is 1, 6 (top 6)."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "5, 7 are values from later in the evaluation (after + gives 7 and 5 is pushed)."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "3, 2 are the operands before * is applied."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "1, 5 appear after the second *."
+    }
+   ],
+   "verification": "Full value: $1+6=7$, then $5\\times1=5$, $7-5=2$ — consistent."
+  },
+  "cse-2007-cs-39": {
+   "approach": "The first preorder symbol is the root; split the inorder sequence around it and recurse.",
+   "concepts": [
+    "Tree traversals",
+    "Tree reconstruction"
+   ],
+   "steps": [
+    {
+     "title": "Root a",
+     "body": "Preorder starts with $a$. Inorder $d\\,b\\,e\\mid a\\mid f\\,c\\,g$: left subtree $\\{d,b,e\\}$, right $\\{f,c,g\\}$.",
+     "scene": {
+      "root": {
+       "label": "a",
+       "tone": "accent"
+      }
+     }
+    },
+    {
+     "title": "Subtrees",
+     "body": "Left preorder $b\\,d\\,e$: root $b$, inorder $d\\mid b\\mid e$. Right preorder $c\\,f\\,g$: root $c$, inorder $f\\mid c\\mid g$.",
+     "scene": {
+      "root": {
+       "label": "a",
+       "children": [
+        {
+         "label": "b",
+         "children": [
+          {
+           "label": "d"
+          },
+          {
+           "label": "e"
+          }
+         ]
+        },
+        {
+         "label": "c",
+         "children": [
+          {
+           "label": "f"
+          },
+          {
+           "label": "g"
+          }
+         ]
+        }
+       ]
+      }
+     }
+    },
+    {
+     "title": "Postorder",
+     "body": "Left, right, root: $d\\,e\\,b\\ \\ f\\,g\\,c\\ \\ a$."
+    }
+   ],
+   "answer": {
+    "value": "d e b f g c a",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "animation": {
+    "kind": "tree",
+    "root": {
+     "label": "a"
+    }
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Postorder of the reconstructed tree."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Swaps $d,e$ and $f,g$ — would need them as right/left children reversed."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Swaps $d$ and $e$."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Visits $f,g$ before $b$, mixing the subtrees."
+    }
+   ],
+   "verification": "Rebuilt tree gives inorder $d b e a f c g$ and preorder $a b d e c f g$ ✓."
+  },
+  "cse-2007-cs-40": {
+   "approach": "Closed hashing = open addressing; resolve collisions by linear probing. Compute $(3x+4)\\bmod7$ for each key.",
+   "concepts": [
+    "Hashing",
+    "Open addressing",
+    "Linear probing"
+   ],
+   "steps": [
+    {
+     "title": "Insert 1",
+     "body": "$(3+4)\\bmod7=0$ → slot 0.",
+     "scene": {
+      "cells": [
+       "1",
+       "-",
+       "-",
+       "-",
+       "-",
+       "-",
+       "-"
+      ],
+      "hl": [
+       {
+        "at": [
+         0,
+         0
+        ],
+        "tone": "success"
+       }
+      ]
+     }
+    },
+    {
+     "title": "Insert 3",
+     "body": "$(9+4)\\bmod7=13\\bmod7=6$ → slot 6.",
+     "scene": {
+      "cells": [
+       "1",
+       "-",
+       "-",
+       "-",
+       "-",
+       "-",
+       "3"
+      ],
+      "hl": [
+       {
+        "at": [
+         6,
+         6
+        ],
+        "tone": "success"
+       }
+      ]
+     }
+    },
+    {
+     "title": "Insert 8",
+     "body": "$(24+4)\\bmod7=28\\bmod7=0$ — occupied; probe 1 → slot 1.",
+     "scene": {
+      "cells": [
+       "1",
+       "8",
+       "-",
+       "-",
+       "-",
+       "-",
+       "3"
+      ],
+      "hl": [
+       {
+        "at": [
+         0,
+         0
+        ],
+        "tone": "error"
+       },
+       {
+        "at": [
+         1,
+         1
+        ],
+        "tone": "success"
+       }
+      ]
+     }
+    },
+    {
+     "title": "Insert 10",
+     "body": "$(30+4)\\bmod7=34\\bmod7=6$ — occupied; probe 0 (occupied), 1 (occupied), 2 → slot 2.\n\nTable: **1, 8, 10, –, –, –, 3**.",
+     "scene": {
+      "cells": [
+       "1",
+       "8",
+       "10",
+       "-",
+       "-",
+       "-",
+       "3"
+      ],
+      "hl": [
+       {
+        "at": [
+         6,
+         6
+        ],
+        "tone": "error"
+       },
+       {
+        "at": [
+         0,
+         1
+        ],
+        "tone": "error"
+       },
+       {
+        "at": [
+         2,
+         2
+        ],
+        "tone": "success"
+       }
+      ]
+     }
+    }
+   ],
+   "answer": {
+    "value": "1, 8, 10, -, -, -, 3",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "animation": {
+    "kind": "array",
+    "label": "T",
+    "cells": [
+     "-",
+     "-",
+     "-",
+     "-",
+     "-",
+     "-",
+     "-"
+    ]
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Would mean 8 and 10 hash to 0 and 6 with 1 and 3 absent — keys are never dropped."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Linear probing result."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Drops 8 and 10 (that would be no collision handling)."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "10 is inserted after 8, so it cannot take slot 1."
+    }
+   ],
+   "verification": "Hash values 0, 6, 0, 6 confirm the two collisions."
+  },
+  "cse-2007-cs-41": {
+   "approach": "In an unweighted graph BFS discovers vertices in order of hop distance in $O(V+E)$, the best possible.",
+   "concepts": [
+    "BFS",
+    "Single-source shortest paths"
+   ],
+   "steps": [
+    {
+     "title": "BFS gives shortest paths",
+     "body": "BFS explores level by level, so the level of a vertex is its shortest hop distance. Time $O(V+E)$."
+    },
+    {
+     "title": "Compare",
+     "body": "Dijkstra: $O((V+E)\\log V)$ with a heap — correct but slower. Warshall: $O(V^3)$ (transitive closure/all-pairs). DFS does not give shortest paths."
+    }
+   ],
+   "answer": {
+    "value": "BFS starting from S",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Correct but has the extra priority-queue cost."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "$O(V^3)$ all-pairs; not efficient for single source."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "DFS paths are not necessarily shortest."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "$O(V+E)$ and correct for unit weights."
+    }
+   ],
+   "verification": "Standard result: BFS solves unweighted SSSP in linear time."
+  },
+  "cse-2007-cs-42": {
+   "approach": "Trace the calls, remembering that the static `r` is shared by all calls and is set to 5 before any `+r` is evaluated.",
+   "concepts": [
+    "Static variables",
+    "Recursion trace"
+   ],
+   "steps": [
+    {
+     "title": "f(5)",
+     "body": "$5>3$: `r = 5`, return $f(3)+2$."
+    },
+    {
+     "title": "Unwind f(3) down to f(0)",
+     "body": "$f(3)=f(2)+r$, $f(2)=f(1)+r$, $f(1)=f(0)+r$, $f(0)=1$. The additions of `r` happen on return, when $r=5$."
+    },
+    {
+     "title": "Combine",
+     "body": "$f(1)=1+5=6$, $f(2)=6+5=11$, $f(3)=11+5=16$, $f(5)=16+2=18$."
+    }
+   ],
+   "answer": {
+    "value": "18",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "No path yields 5."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Would need the three `+r` terms to add only 4 in total; with r = 5 they add 15."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Not obtainable with $r=5$."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "$1+5+5+5+2=18$."
+    }
+   ],
+   "pitfalls": [
+    "Treating `r` as a fresh local initialised to 0 in each call."
+   ],
+   "verification": "$f(5)=1+3\\cdot5+2=18$."
+  },
+  "cse-2007-cs-43": {
+   "approach": "In a full $n$-ary tree every internal node has $n$ children, giving $L=(n-1)I+1$.",
+   "concepts": [
+    "Full n-ary tree",
+    "Counting nodes"
+   ],
+   "steps": [
+    {
+     "title": "Relation",
+     "body": "Total nodes $=nI+1$ (every node except the root is a child of an internal node) and also $=I+L$. So $L=(n-1)I+1$."
+    },
+    {
+     "title": "Solve",
+     "body": "$41=(n-1)\\cdot10+1\\Rightarrow 10(n-1)=40\\Rightarrow n=5$."
+    }
+   ],
+   "answer": {
+    "value": "5",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "$n=3$ gives $L=21$."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "$n=4$ gives $L=31$."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "$n=5$ gives $L=41$."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "$n=6$ gives $L=51$."
+    }
+   ],
+   "verification": "Nodes: $5\\cdot10+1=51=10+41$ ✓."
+  },
+  "cse-2007-cs-44": {
+   "approach": "This is Euclid's algorithm; the remainder at least halves every two steps (Lamé: worst case on consecutive Fibonacci numbers), so the number of calls is logarithmic.",
+   "concepts": [
+    "Euclid's algorithm",
+    "Lamé's theorem"
+   ],
+   "steps": [
+    {
+     "title": "Halving argument",
+     "body": "For $n\\ge m$: $n\\bmod m<n/2$ (if $m\\le n/2$ the remainder is $<m\\le n/2$; otherwise it is $n-m<n/2$). Over two calls the first argument at least halves, so there are $O(\\log_2 n)$ calls."
+    },
+    {
+     "title": "Tight worst case",
+     "body": "For consecutive Fibonacci numbers $(F_{k+1},F_k)$ each step only drops one index, giving $k-1=\\Theta(\\log_\\phi n)=\\Theta(\\log_2 n)$ calls. Hence $\\Theta(\\log_2 n)$."
+    }
+   ],
+   "answer": {
+    "value": "$\\Theta(\\log_2 n)$",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Logarithmic bound, tight on Fibonacci inputs."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Linear behaviour would be subtraction-based GCD, not mod-based."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Too small — Fibonacci inputs need $\\Theta(\\log n)$ calls."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Far above the logarithmic upper bound."
+    }
+   ],
+   "verification": "gcd(21,13): (13,8),(8,5),(5,3),(3,2),(2,1) — 5 recursive calls for $n=21$, consistent with $\\log_\\phi 21\\approx6.3$."
+  }
+ }
+}
