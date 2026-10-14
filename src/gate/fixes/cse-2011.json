@@ -118,6 +118,38 @@
       ],
       "reason": "Figure redrawn from the paper (previous SVG showed an unrelated weighted 5-vertex graph); alt text made precise.",
       "source": "pdf p.5"
+    },
+    {
+      "id": "cse-2011-cs-26",
+      "field": "subject",
+      "before": "pds",
+      "after": "toc",
+      "reason": "Question classifies regular/CFL/non-CFL languages — Theory of Computation.",
+      "source": "GATE 2011 paper Q.26"
+    },
+    {
+      "id": "cse-2011-cs-26",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "cfg",
+      "reason": "Topic is context-free languages, not C programming.",
+      "source": "GATE 2011 paper Q.26"
+    },
+    {
+      "id": "cse-2011-cs-32",
+      "field": "subject",
+      "before": "calc",
+      "after": "db",
+      "reason": "SQL query on a table — Databases.",
+      "source": "GATE 2011 paper Q.32"
+    },
+    {
+      "id": "cse-2011-cs-32",
+      "field": "topic",
+      "before": "maxmin",
+      "after": "sql",
+      "reason": "Question is an SQL SELECT.",
+      "source": "GATE 2011 paper Q.32"
     }
   ]
 }

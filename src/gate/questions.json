@@ -69774,8 +69774,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "prob",
+      "topic": "basic",
       "tags": [
         "conditional probability"
       ],
@@ -70229,22 +70229,22 @@
       "figures": [
         {
           "f": "cse-2011/cs-13-A.png",
-          "alt": "XOR gate followed by an inverter (NOT): output = XNOR",
+          "alt": "Option A: inputs A and B feed a 2-input XOR gate whose output goes through a NOT gate to give F",
           "svg": "cse-2011/cs-13-A.svg"
         },
         {
           "f": "cse-2011/cs-13-B.png",
-          "alt": "Each input passes through an inverter, then an XOR gate, then an inverter at the output",
+          "alt": "Option B: input A goes through a NOT gate and input B goes through a NOT gate; the two inverted signals feed a 2-input XOR gate whose output goes through a NOT gate to give F",
           "svg": "cse-2011/cs-13-B.svg"
         },
         {
           "f": "cse-2011/cs-13-C.png",
-          "alt": "One input passes through an inverter, then an XOR gate with the other input directly",
+          "alt": "Option C: input A goes through a NOT gate; the inverted A and the uninverted input B feed a 2-input XOR gate whose output is F (no output inverter)",
           "svg": "cse-2011/cs-13-C.svg"
         },
         {
           "f": "cse-2011/cs-13-D.png",
-          "alt": "Two inputs A and B; an AND gate and an OR gate combined with inverters and a final AND gate followed by an inverter (NAND-like network)",
+          "alt": "Option D: input A feeds the top input of AND gate G1 and, through a wire that hops over the B line, the bottom input of OR gate G2. Input B goes through a NOT gate; the inverted B feeds the bottom input of G1 and the top input of G2. The output of G1 goes through a NOT gate; that signal and the output of G2 feed AND gate G3, whose output goes through a final NOT gate to give F",
           "svg": "cse-2011/cs-13-D.svg"
         }
       ],
@@ -70260,8 +70260,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **DL** (Gates) from **CSE 2011 Q13** (1 Mark).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **D**.\n- **Identified Problem Quantities:** 2\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Combinational & Sequential Switching Laws:**\n- De Morgan's Dual Laws: $\\overline{x \\cdot y} = \\overline{x} + \\overline{y}$ and $\\overline{x + y} = \\overline{x} \\cdot \\overline{y}$.\n- Flip-Flop Invariants: D-FF: $Q_{next} = D$; JK-FF: $Q_{next} = J\\overline{Q} + \\overline{K}Q$; T-FF: $Q_{next} = T \\oplus Q$.\n- In pass-transistor and transmission gate logic, PMOS passes a strong $1$ (conducts when gate is $0$), while NMOS passes a strong $0$ (conducts when gate is $1$).\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  (A) XOR+NOT = XNOR.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  (B) inverting both inputs of XOR leaves XOR, then NOT gives XNOR.\n- **Step 3.3 (Intermediate Reduction):**\n  (C) inverting one input of XOR gives XNOR. (D) is the network that does not realise XNOR..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`D`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **D**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `![](/gate-fig/cse-2011/cs-13-A.png)`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `![](/gate-fig/cse-2011/cs-13-B.png)`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (INCORRECT):** `![](/gate-fig/cse-2011/cs-13-C.png)`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (CORRECT):** `![](/gate-fig/cse-2011/cs-13-D.png)`. Completely satisfies the derived mathematical proof and boundary conditions.\n\n⚡ **Topper's Shortcut:** Set select/input variables to $0$ and $1$ to observe which signal reaches the output node in under 20 seconds.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Option D gate-level circuit is hard to read at this scan quality; answer D matches recalled official key."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2011-cs-14",
@@ -70430,7 +70430,7 @@
       "figures": [
         {
           "f": "cse-2011/cs-17-1.png",
-          "alt": "Two graphs: K4 drawn as a square with both diagonals, and Q3 drawn as a cube (two nested squares joined at corners)",
+          "alt": "Two graphs. K4: four vertices at the corners of a square, joined by the four sides and both diagonals (6 edges). Q3: a cube drawn as two offset squares of four vertices each, with each corner of one square joined to the corresponding corner of the other (8 vertices, 12 edges)",
           "svg": "cse-2011/cs-17-1.svg"
         }
       ],
@@ -70570,8 +70570,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "c-prog",
+      "subject": "os",
+      "topic": "virtual-memory",
       "tags": [
         "effective access time"
       ],
@@ -70861,8 +70861,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "c-prog",
+      "subject": "toc",
+      "topic": "cfg",
       "tags": [
         "CFL"
       ],
@@ -71156,8 +71156,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "calc",
-      "topic": "maxmin",
+      "subject": "db",
+      "topic": "sql",
       "tags": [
         "SQL"
       ],
@@ -72956,8 +72956,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "dl",
-      "topic": "number",
+      "subject": "pds",
+      "topic": "bst",
       "tags": [
         "balanced BST"
       ],
@@ -73147,8 +73147,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **CALC** (Maxmin) from **CSE 2012 Q9** (1 Mark).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **B**.\n- **Identified Problem Quantities:** 4, 7, 4\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Mathematical & Statistical Laws:**\n- Matrix Invariants: $\\sum \\lambda_i = \\text{Trace}(A) = \\sum a_{ii}$, $\\prod \\lambda_i = \\det(A)$.\n- Bayes' Theorem: $P(A_i \\mid B) = \\frac{P(B \\mid A_i) P(A_i)}{\\sum_j P(B \\mid A_j) P(A_j)}$.\n- Calculus Extrema: $f'(x) = 0$; $f''(x) > 0 \\implies$ local minimum, $f''(x) < 0 \\implies$ local maximum.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  sin has a maximum at π/2 and its minimum at 3π/2 inside the interval.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  the endpoints are not local minima..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`B`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **B**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `One, at $\\pi/2$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (CORRECT):** `One, at $3\\pi/2$`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option C (INCORRECT):** `Two, at $\\pi/2$ and $3\\pi/2$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (INCORRECT):** `Two, at $\\pi/4$ and $3\\pi/2$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** Substitute boundary test inputs ($n=1, 2$ or extreme bounds) to eliminate incorrect multiple-choice options immediately.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": false,
-      "reviewNote": null
+      "needsReview": true,
+      "reviewNote": "Stored key B (one minimum at 3π/2). On the closed interval [π/4, 7π/4], sin x is increasing at x = π/4 (cos(π/4) > 0), so π/4 is a local (endpoint) minimum as well; the solution proves D (two, at π/4 and 3π/2), which is the widely reported GATE 2012 answer. Needs confirmation against the official key before changing the answer."
     },
     {
       "id": "cse-2012-cs-10",
@@ -73182,7 +73182,7 @@
       "figures": [],
       "group": null,
       "subject": "cn",
-      "topic": "transport",
+      "topic": "layering",
       "tags": [
         "PDU"
       ],
@@ -73272,7 +73272,7 @@
       "figures": [
         {
           "f": "cse-2012/cs-12-1.png",
-          "alt": "Three states in a row. Start state (arrow in) --a--> middle accepting (double circle) state --ε--> third state; the third state has an ε-edge back to the start state.",
+          "alt": "NFA with three states in a row, no self-loops. An incoming start arrow points to the first (non-accepting) state; it goes on a to the middle state, which is accepting (double circle); the middle state goes on ε to the third (non-accepting) state; a curved ε-edge below leads from the third state back to the first state.",
           "svg": "cse-2012/cs-12-1.svg"
         }
       ],
@@ -73323,8 +73323,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "dm",
+      "topic": "logic",
       "tags": [
         "first-order logic"
       ],
@@ -73551,8 +73551,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "c-prog",
+      "subject": "algo",
+      "topic": "asymptotics",
       "tags": [
         "asymptotic"
       ],
@@ -73687,8 +73687,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "prob",
+      "topic": "rv",
       "tags": [
         "CDF"
       ],
@@ -73732,11 +73732,12 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "c-prog",
+      "subject": "cn",
+      "topic": "transport",
       "tags": [
         "email",
-        "SMTP"
+        "SMTP",
+        "TCP"
       ],
       "answer": "C",
       "answerSource": "official",
@@ -74460,10 +74461,12 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "db",
-      "topic": "sql",
+      "subject": "dm",
+      "topic": "combinatorics",
       "tags": [
-        "surjective"
+        "surjective",
+        "functions",
+        "counting"
       ],
       "answer": "C",
       "answerSource": "official",
@@ -75135,23 +75138,23 @@
       "number": "52",
       "marks": 2,
       "type": "MCQ",
-      "text": "Statement for Linked Answer Questions 52 and 53:\n\nFor the grammar below, a partial LL(1) parsing table is also presented along with the grammar. Entries that need to be filled are indicated as E1, E2, and E3. $\\epsilon$ is the empty string, $ indicates end of input, and, | separates alternate right hand sides of productions.\n\nS → a A b B | b A a B | ε\nA → S\nB → S\n\n| | a | b | $ |\n|---|---|---|---|\n| S | E1 | E2 | S → ε |\n| A | A → S | A → S | error |\n| B | B → S | B → S | E3 |\n\nThe FIRST and FOLLOW sets for the non-terminals A and B are",
+      "text": "Statement for Linked Answer Questions 52 and 53:\n\nFor the grammar below, a partial LL(1) parsing table is also presented along with the grammar. Entries that need to be filled are indicated as E1, E2, and E3. $\\varepsilon$ is the empty string, `$` indicates end of input, and `|` separates alternate right hand sides of productions.\n\n$$\\begin{aligned} S &\\to aAbB \\mid bAaB \\mid \\varepsilon \\\\ A &\\to S \\\\ B &\\to S \\end{aligned}$$\n\n| | a | b | `$` |\n|---|---|---|---|\n| **S** | E1 | E2 | $S \\to \\varepsilon$ |\n| **A** | $A \\to S$ | $A \\to S$ | error |\n| **B** | $B \\to S$ | $B \\to S$ | E3 |\n\nThe FIRST and FOLLOW sets for the non-terminals A and B are",
       "options": [
         {
           "l": "A",
-          "t": "FIRST(A) = {a, b, ε} = FIRST(B)\nFOLLOW(A) = {a, b}\nFOLLOW(B) = {a, b, $}"
+          "t": "$\\text{FIRST}(A) = \\{a, b, \\varepsilon\\} = \\text{FIRST}(B)$\n$\\text{FOLLOW}(A) = \\{a, b\\}$\n$\\text{FOLLOW}(B) = \\{a, b, \\$\\}$"
         },
         {
           "l": "B",
-          "t": "FIRST(A) = {a, b, $}\nFIRST(B) = {a, b, ε}\nFOLLOW(A) = {a, b}\nFOLLOW(B) = {$}"
+          "t": "$\\text{FIRST}(A) = \\{a, b, \\$\\}$\n$\\text{FIRST}(B) = \\{a, b, \\varepsilon\\}$\n$\\text{FOLLOW}(A) = \\{a, b\\}$\n$\\text{FOLLOW}(B) = \\{\\$\\}$"
         },
         {
           "l": "C",
-          "t": "FIRST(A) = {a, b, ε} = FIRST(B)\nFOLLOW(A) = {a, b}\nFOLLOW(B) = ∅"
+          "t": "$\\text{FIRST}(A) = \\{a, b, \\varepsilon\\} = \\text{FIRST}(B)$\n$\\text{FOLLOW}(A) = \\{a, b\\}$\n$\\text{FOLLOW}(B) = \\varnothing$"
         },
         {
           "l": "D",
-          "t": "FIRST(A) = {a, b} = FIRST(B)\nFOLLOW(A) = {a, b}\nFOLLOW(B) = {a, b}"
+          "t": "$\\text{FIRST}(A) = \\{a, b\\} = \\text{FIRST}(B)$\n$\\text{FOLLOW}(A) = \\{a, b\\}$\n$\\text{FOLLOW}(B) = \\{a, b\\}$"
         }
       ],
       "figures": [],
@@ -75181,7 +75184,7 @@
       "number": "53",
       "marks": 2,
       "type": "MCQ",
-      "text": "Statement for Linked Answer Questions 52 and 53:\n\nFor the grammar below, a partial LL(1) parsing table is also presented along with the grammar. Entries that need to be filled are indicated as E1, E2, and E3. $\\epsilon$ is the empty string, $ indicates end of input, and, | separates alternate right hand sides of productions.\n\nS → a A b B | b A a B | ε\nA → S\nB → S\n\n| | a | b | $ |\n|---|---|---|---|\n| S | E1 | E2 | S → ε |\n| A | A → S | A → S | error |\n| B | B → S | B → S | E3 |\n\nThe appropriate entries for E1, E2, and E3 are",
+      "text": "Statement for Linked Answer Questions 52 and 53:\n\nFor the grammar below, a partial LL(1) parsing table is also presented along with the grammar. Entries that need to be filled are indicated as E1, E2, and E3. $\\varepsilon$ is the empty string, `$` indicates end of input, and `|` separates alternate right hand sides of productions.\n\n$$\\begin{aligned} S &\\to aAbB \\mid bAaB \\mid \\varepsilon \\\\ A &\\to S \\\\ B &\\to S \\end{aligned}$$\n\n| | a | b | `$` |\n|---|---|---|---|\n| **S** | E1 | E2 | $S \\to \\varepsilon$ |\n| **A** | $A \\to S$ | $A \\to S$ | error |\n| **B** | $B \\to S$ | $B \\to S$ | E3 |\n\nThe appropriate entries for E1, E2, and E3 are",
       "options": [
         {
           "l": "A",
@@ -75564,7 +75567,7 @@
       "figures": [],
       "group": null,
       "subject": "ga",
-      "topic": "quant",
+      "topic": "verbal",
       "tags": [
         "inference"
       ],
@@ -75834,8 +75837,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "prob",
+      "topic": "rv",
       "tags": [
         "poisson"
       ],
@@ -75890,8 +75893,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **LA** (Matrices) from **CSE 2013 Q3** (1 Mark).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **D**.\n- **Identified Problem Quantities:** 1, 2, 1, 2, 1, 2\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Mathematical & Statistical Laws:**\n- Matrix Invariants: $\\sum \\lambda_i = \\text{Trace}(A) = \\sum a_{ii}$, $\\prod \\lambda_i = \\det(A)$.\n- Bayes' Theorem: $P(A_i \\mid B) = \\frac{P(B \\mid A_i) P(A_i)}{\\sum_j P(B \\mid A_j) P(A_j)}$.\n- Calculus Extrema: $f'(x) = 0$; $f''(x) > 0 \\implies$ local minimum, $f''(x) < 0 \\implies$ local maximum.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  Row/column operations: A (C2-C3 gives x^2-1... swapping gives Vandermonde up to sign check), B (C2-C1, C3-C1 added), C (R1-R2, R2-R3) keep the value.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  D doubles the first column part so it changes the value..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`D`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **D**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `$\\begin{vmatrix} 1 & x(x+1) & x+1 \\\\ 1 & y(y+1) & y+1 \\\\ 1 & z(z+1) & z+1 \\end{vmatrix}$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `$\\begin{vmatrix} 1 & x+1 & x^2+1 \\\\ 1 & y+1 & y^2+1 \\\\ 1 & z+1 & z^2+1 \\end{vmatrix}$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (INCORRECT):** `$\\begin{vmatrix} 0 & x-y & x^2-y^2 \\\\ 0 & y-z & y^2-z^2 \\\\ 1 & z & z^2 \\end{vmatrix}$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (CORRECT):** `$\\begin{vmatrix} 2 & x+y & x^2+y^2 \\\\ 2 & y+z & y^2+z^2 \\\\ 1 & z & z^2 \\end{vmatrix}$`. Completely satisfies the derived mathematical proof and boundary conditions.\n\n⚡ **Topper's Shortcut:** Calculate $\\text{Trace}(A)$ and $\\det(A)$ in 15 seconds. The sum and product of candidate eigenvalues in the options must match them identically.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": false,
-      "reviewNote": null
+      "needsReview": true,
+      "reviewNote": "Stored key D is likely wrong. Option D has rows R1+R2, R2+R3, R3 of the original (row additions keep the determinant), whereas option A reduces via C3-C1 then C2-C3 to columns 1, x^2, x, i.e. the negative of the given determinant. Numeric check x=0,y=1,z=2: original 2, A = -2, D = 2. Answer should be A."
     },
     {
       "id": "cse-2013-cs-4",
@@ -75926,7 +75929,9 @@
       "group": null,
       "subject": "dl",
       "topic": "number",
-      "tags": [],
+      "tags": [
+        "two's complement"
+      ],
       "answer": "B",
       "answerSource": "solved",
       "confidence": "high",
@@ -76102,9 +76107,12 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "c-prog",
-      "tags": [],
+      "subject": "toc",
+      "topic": "regular",
+      "tags": [
+        "kleene star",
+        "empty language"
+      ],
       "answer": "A",
       "answerSource": "official",
       "confidence": "high",
@@ -76147,7 +76155,10 @@
       "group": null,
       "subject": "cd",
       "topic": "parsing",
-      "tags": [],
+      "tags": [
+        "bottom-up parsing",
+        "reductions"
+      ],
       "answer": "B",
       "answerSource": "solved",
       "confidence": "high",
@@ -76190,7 +76201,10 @@
       "group": null,
       "subject": "os",
       "topic": "scheduling",
-      "tags": [],
+      "tags": [
+        "round robin",
+        "aging"
+      ],
       "answer": "B",
       "answerSource": "solved",
       "confidence": "high",
@@ -76233,7 +76247,11 @@
       "group": null,
       "subject": "legacy",
       "topic": "web",
-      "tags": [],
+      "tags": [
+        "SOA",
+        "XML",
+        "BPMN"
+      ],
       "answer": "C",
       "answerSource": "solved",
       "confidence": "high",
@@ -76276,7 +76294,10 @@
       "group": null,
       "subject": "cn",
       "topic": "transport",
-      "tags": [],
+      "tags": [
+        "TCP",
+        "UDP"
+      ],
       "answer": "C",
       "answerSource": "solved",
       "confidence": "high",
@@ -76319,7 +76340,10 @@
       "group": null,
       "subject": "cn",
       "topic": "security",
-      "tags": [],
+      "tags": [
+        "digital signature",
+        "public key"
+      ],
       "answer": "D",
       "answerSource": "solved",
       "confidence": "high",
@@ -76361,14 +76385,17 @@
       "figures": [
         {
           "f": "cse-2013/cs-14-1.png",
-          "alt": "Four nodes in a line joined by links: square S, circle R, circle R, square D.",
+          "alt": "Network path drawn left to right: square S linked to circle R, linked to a second circle R, linked to square D (three links, two intermediate routers).",
           "svg": "cse-2013/cs-14-1.svg"
         }
       ],
       "group": null,
       "subject": "cn",
       "topic": "layering",
-      "tags": [],
+      "tags": [
+        "router",
+        "layers"
+      ],
       "answer": "C",
       "answerSource": "solved",
       "confidence": "high",
@@ -76409,9 +76436,11 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "c-prog",
-      "tags": [],
+      "subject": "db",
+      "topic": "indexing",
+      "tags": [
+        "clustered index"
+      ],
       "answer": "C",
       "answerSource": "official",
       "confidence": "high",
@@ -76454,7 +76483,10 @@
       "group": null,
       "subject": "os",
       "topic": "deadlock",
-      "tags": [],
+      "tags": [
+        "deadlock",
+        "semaphore"
+      ],
       "answer": "B",
       "answerSource": "solved",
       "confidence": "high",
@@ -76497,7 +76529,10 @@
       "group": null,
       "subject": "toc",
       "topic": "tm",
-      "tags": [],
+      "tags": [
+        "closure properties",
+        "recursively enumerable"
+      ],
       "answer": "C",
       "answerSource": "solved",
       "confidence": "high",
@@ -76540,7 +76575,10 @@
       "group": null,
       "subject": "algo",
       "topic": "np",
-      "tags": [],
+      "tags": [
+        "P",
+        "NP"
+      ],
       "answer": "A",
       "answerSource": "solved",
       "confidence": "high",
@@ -76582,8 +76620,10 @@
       "figures": [],
       "group": null,
       "subject": "algo",
-      "topic": "graphs",
-      "tags": [],
+      "topic": "shortest-paths",
+      "tags": [
+        "Bellman-Ford"
+      ],
       "answer": "C",
       "answerSource": "official",
       "confidence": "high",
@@ -76626,7 +76666,9 @@
       "group": null,
       "subject": "coa",
       "topic": "cache",
-      "tags": [],
+      "tags": [
+        "set associative"
+      ],
       "answer": "A",
       "answerSource": "solved",
       "confidence": "high",
@@ -76668,8 +76710,10 @@
       "figures": [],
       "group": null,
       "subject": "dl",
-      "topic": "combinational",
-      "tags": [],
+      "topic": "boolean",
+      "tags": [
+        "XNOR"
+      ],
       "answer": "D",
       "answerSource": "official",
       "confidence": "high",
@@ -76712,15 +76756,17 @@
       "group": null,
       "subject": "calc",
       "topic": "limits",
-      "tags": [],
+      "tags": [
+        "continuity"
+      ],
       "answer": "A",
       "answerSource": "solved",
       "confidence": "high",
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **CALC** (Limits) from **CSE 2013 Q22** (1 Mark).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **A**.\n- **Identified Problem Quantities:** 3\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Mathematical & Statistical Laws:**\n- Matrix Invariants: $\\sum \\lambda_i = \\text{Trace}(A) = \\sum a_{ii}$, $\\prod \\lambda_i = \\det(A)$.\n- Bayes' Theorem: $P(A_i \\mid B) = \\frac{P(B \\mid A_i) P(A_i)}{\\sum_j P(B \\mid A_j) P(A_j)}$.\n- Calculus Extrema: $f'(x) = 0$; $f''(x) > 0 \\implies$ local minimum, $f''(x) < 0 \\implies$ local maximum.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  In A both one-sided limits equal 2 = f(3).\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  B limit 5 ≠ 4.\n- **Step 3.3 (Intermediate Reduction):**\n  C limits 6 and -1. D undefined at 3..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`A`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **A**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (CORRECT):** `$f(x)=\\begin{cases}2, & x=3\\\\ x-1, & x>3\\\\ \\frac{x+3}{3}, & x<3\\end{cases}$`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option B (INCORRECT):** `$f(x)=\\begin{cases}4, & x=3\\\\ 8-x, & x\\neq 3\\end{cases}$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (INCORRECT):** `$f(x)=\\begin{cases}x+3, & x\\le 3\\\\ x-4, & x>3\\end{cases}$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (INCORRECT):** `$f(x)=\\dfrac{1}{x^3-27}$ if $x\\neq 3$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** Substitute boundary test inputs ($n=1, 2$ or extreme bounds) to eliminate incorrect multiple-choice options immediately.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Piecewise definitions transcribed from text layer/image; D's definition at x=3 not shown in the print."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2013-cs-23",
@@ -76753,8 +76799,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "coa",
-      "topic": "isa",
+      "subject": "legacy",
+      "topic": "numerical",
       "tags": [],
       "answer": "D",
       "answerSource": "official",
@@ -76839,8 +76885,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "dm",
+      "topic": "graphs",
       "tags": [],
       "answer": "C",
       "answerSource": "official",
@@ -76885,14 +76931,14 @@
       "subject": "dm",
       "topic": "graphs",
       "tags": [],
-      "answer": "B",
+      "answer": "A",
       "answerSource": "solved",
       "confidence": "high",
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **DM** (Graphs) from **CSE 2013 Q26** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **B**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Mathematical & Statistical Laws:**\n- Matrix Invariants: $\\sum \\lambda_i = \\text{Trace}(A) = \\sum a_{ii}$, $\\prod \\lambda_i = \\det(A)$.\n- Bayes' Theorem: $P(A_i \\mid B) = \\frac{P(B \\mid A_i) P(A_i)}{\\sum_j P(B \\mid A_j) P(A_j)}$.\n- Calculus Extrema: $f'(x) = 0$; $f''(x) > 0 \\implies$ local minimum, $f''(x) < 0 \\implies$ local maximum.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  L(C_n)=C_n true.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  L(K4) is the octahedron, not a clique.\n- **Step 3.3 (Intermediate Reduction):**\n  L(star) is a clique (not tree). planarity claim R taken as true per key..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`B`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **B**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `P only`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (CORRECT):** `P and R only`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option C (INCORRECT):** `R only`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (INCORRECT):** `P, Q and S only`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** Calculate $\\text{Trace}(A)$ and $\\det(A)$ in 15 seconds. The sum and product of candidate eigenvalues in the options must match them identically.",
       "textSource": "pdf",
       "sourceUrl": null,
       "needsReview": true,
-      "reviewNote": "R (line graph of planar graph planar) is false in general (degree>=5 vertices); answer follows the official key B."
+      "reviewNote": "Key changed B -> A by counterexample (L(K_{1,5}) = K_5 is non-planar, so R is false); no official 2013 key was available to cross-check."
     },
     {
       "id": "cse-2013-cs-27",
@@ -76925,8 +76971,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "dm",
+      "topic": "logic",
       "tags": [],
       "answer": "D",
       "answerSource": "official",
@@ -77119,7 +77165,7 @@
       "number": "32",
       "marks": 2,
       "type": "MCQ",
-      "text": "Consider the following languages.\n\n$L_1 = \\{0^p 1^q 0^r \\mid p, q, r \\ge 0\\}$\n$L_2 = \\{0^p 1^q 0^r \\mid p, q, r \\ge 0,\\ p \\ne r\\}$\n\nWhich one of the following statements is FALSE?",
+      "text": "Consider the following languages.\n\n$$L_1 = \\{0^p 1^q 0^r \\mid p, q, r \\ge 0\\}$$\n\n$$L_2 = \\{0^p 1^q 0^r \\mid p, q, r \\ge 0,\\ p \\ne r\\}$$\n\nWhich one of the following statements is FALSE?",
       "options": [
         {
           "l": "A",
@@ -77184,7 +77230,7 @@
       "figures": [
         {
           "f": "cse-2013/cs-33-1.png",
-          "alt": "Three states: start state q0 --1--> q1 (q1 loops on 1); q0 --0--> q2 and q1 --0--> q2; q2 is accepting with a self-loop on 0,1.",
+          "alt": "DFA with three states. Start state q0 goes to q1 on 1 and to q2 on 0. q1 loops on 1 and goes to q2 on 0. q2 is the only accepting state and loops on 0,1.",
           "svg": "cse-2013/cs-33-1.svg"
         }
       ],
@@ -77254,7 +77300,7 @@
       "number": "35",
       "marks": 2,
       "type": "MCQ",
-      "text": "Consider the following relational schema.\n\nStudents(rollno: integer, sname: string)\nCourses(courseno: integer, cname: string)\nRegistration(rollno: integer, courseno: integer, percent: real)\n\nWhich of the following queries are equivalent to this query in English?\n\"Find the distinct names of all students who score more than 90% in the course numbered 107\"\n\n(I) ```SELECT DISTINCT S.sname FROM Students as S, Registration as R WHERE R.rollno=S.rollno AND R.courseno=107 AND R.percent >90```\n\n(II) $\\Pi_{sname}(\\sigma_{courseno=107 \\wedge percent>90}(Registration \\bowtie Students))$\n\n(III) $\\{T \\mid \\exists S\\in Students, \\exists R\\in Registration (S.rollno=R.rollno \\wedge R.courseno=107 \\wedge R.percent>90 \\wedge T.sname=S.sname)\\}$\n\n(IV) $\\{\\langle S_N\\rangle \\mid \\exists S_R \\exists R_P (\\langle S_R, S_N\\rangle \\in Students \\wedge \\langle S_R, 107, R_P\\rangle \\in Registration \\wedge R_P>90)\\}$",
+      "text": "Consider the following relational schema.\n\n- Students(rollno: integer, sname: string)\n- Courses(courseno: integer, cname: string)\n- Registration(rollno: integer, courseno: integer, percent: real)\n\nWhich of the following queries are equivalent to this query in English?\n\n\"Find the distinct names of all students who score more than 90% in the course numbered 107\"\n\n(I)\n\n```sql\nSELECT DISTINCT S.sname\nFROM Students as S, Registration as R\nWHERE R.rollno=S.rollno AND R.courseno=107 AND R.percent >90\n```\n\n(II) $\\Pi_{sname}(\\sigma_{courseno=107 \\wedge percent>90}(Registration \\bowtie Students))$\n\n(III) $\\{T \\mid \\exists S\\in Students, \\exists R\\in Registration (S.rollno=R.rollno \\wedge R.courseno=107 \\wedge R.percent>90 \\wedge T.sname=S.sname)\\}$\n\n(IV) $\\{\\langle S_N\\rangle \\mid \\exists S_R \\exists R_P (\\langle S_R, S_N\\rangle \\in Students \\wedge \\langle S_R, 107, R_P\\rangle \\in Registration \\wedge R_P>90)\\}$",
       "options": [
         {
           "l": "A",
@@ -77275,8 +77321,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "db",
+      "topic": "ra",
       "tags": [],
       "answer": "A",
       "answerSource": "official",
@@ -77405,7 +77451,7 @@
       "figures": [
         {
           "f": "cse-2013/cs-38-1.png",
-          "alt": "Module M1 has 4 methods (filled) and 4 attributes (unfilled) with within-module edges; method m (rightmost in M1) also points to two attributes in M2. Module M2 has 3 methods and 4 attributes with internal edges.",
+          "alt": "Two boxes, Module M1 and Module M2, each with a top row of unfilled attribute circles and a bottom row of filled method circles; arrows go from methods to the attributes they access. M1 has attributes a1-a4 and methods p1, p2, p3, m: p1 accesses a1, a3; p2 accesses a1, a2; p3 accesses a3, a4; m accesses a2, a4 and also the first two attributes b1, b2 of M2. M2 has attributes b1-b4 and methods q1, q2, q3: q1 accesses b3, b4; q2 accesses b1, b4; q3 accesses b2, b3.",
           "svg": "cse-2013/cs-38-1.svg"
         }
       ],
@@ -77413,14 +77459,14 @@
       "subject": "legacy",
       "topic": "se",
       "tags": [],
-      "answer": "B",
+      "answer": "A",
       "answerSource": "solved",
       "confidence": "high",
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **LEGACY** (Se) from **CSE 2013 Q38** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **B**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Principles of LEGACY:**\n- Decompose the problem into invariant constraints defined by se theory.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  m accesses two attributes in each module.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  moving it to M2 removes cross-module edges for M1 methods and raises cohesion per key..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`B`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **B**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `There is no change.`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (CORRECT):** `Average cohesion goes up but coupling is reduced.`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option C (INCORRECT):** `Average cohesion goes down and coupling also reduces.`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (INCORRECT):** `Average cohesion and coupling increase.`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** Substitute boundary test inputs ($n=1, 2$ or extreme bounds) to eliminate incorrect multiple-choice options immediately.",
       "textSource": "pdf",
       "sourceUrl": null,
       "needsReview": true,
-      "reviewNote": "Answer follows the standard key (B); reasoning about cohesion metric is not fully verified."
+      "reviewNote": "Key changed B -> A by counting the access-graph edges (coupling 2 -> 2, per-module cohesion 0.5 -> 0.5); no official 2013 key was available to cross-check."
     },
     {
       "id": "cse-2013-cs-39",
@@ -77807,7 +77853,7 @@
       "textSource": "pdf",
       "sourceUrl": null,
       "needsReview": true,
-      "reviewNote": "By my analysis option A (Q∨P) is also not equivalent; the web-sourced key says D. Verify."
+      "reviewNote": "Question is flawed: with P = ∀y(α), Q = ∀z(β) the given formula is ∀x(¬P ∨ ¬Q). Option A is ∀x(¬Q → P) = ∀x(Q ∨ P) and option D is ∀x(¬P → ¬Q) = ∀x(P ∨ ¬Q); NEITHER is equivalent (B and C are). Stored key D is kept (it is a correct NOT-equivalent option); confirm against the official 2013 key whether A, D or both were accepted."
     },
     {
       "id": "cse-2013-cs-48",
@@ -77905,7 +77951,7 @@
       "number": "50",
       "marks": 2,
       "type": "MCQ",
-      "text": "Common data for Questions 50 and 51: The procedure given below is required to find and replace certain characters inside an input character string supplied in array A. The characters to be replaced are supplied in array oldc, while their respective replacement characters are supplied in array newc. Array A has a fixed length of five characters, while arrays oldc and newc contain three characters each. However, the procedure is flawed.\n\n```c\nvoid find_and_replace (char *A, char *oldc, char *newc) {\n    for (int i=0; i<5; i++)\n        for (int j=0; j<3; j++)\n            if (A[i] == oldc[j]) A[i] = newc[j];\n}\n```\nThe procedure is tested with the following four test cases.\n(1) oldc = \"abc\", newc = \"dab\"  (2) oldc = \"cde\", newc = \"bcd\"  (3) oldc = \"bca\", newc = \"cda\"  (4) oldc = \"abc\", newc = \"bac\"\n\nThe tester now tests the program on all input strings of length five consisting of characters 'a', 'b', 'c', 'd' and 'e' with duplicates allowed. If the tester carries out this testing with the four test cases given above, how many test cases will be able to capture the flaw?",
+      "text": "Common data for Questions 50 and 51: The procedure given below is required to find and replace certain characters inside an input character string supplied in array A. The characters to be replaced are supplied in array oldc, while their respective replacement characters are supplied in array newc. Array A has a fixed length of five characters, while arrays oldc and newc contain three characters each. However, the procedure is flawed.\n\n```c\nvoid find_and_replace (char *A, char *oldc, char *newc) {\n    for (int i=0; i<5; i++)\n        for (int j=0; j<3; j++)\n            if (A[i] == oldc[j]) A[i] = newc[j];\n}\n```\n\nThe procedure is tested with the following four test cases.\n\n1. oldc = \"abc\", newc = \"dab\"\n2. oldc = \"cde\", newc = \"bcd\"\n3. oldc = \"bca\", newc = \"cda\"\n4. oldc = \"abc\", newc = \"bac\"\n\nThe tester now tests the program on all input strings of length five consisting of characters 'a', 'b', 'c', 'd' and 'e' with duplicates allowed. If the tester carries out this testing with the four test cases given above, how many test cases will be able to capture the flaw?",
       "options": [
         {
           "l": "A",
@@ -77948,7 +77994,7 @@
       "number": "51",
       "marks": 2,
       "type": "MCQ",
-      "text": "Common data for Questions 50 and 51: The procedure given below is required to find and replace certain characters inside an input character string supplied in array A. The characters to be replaced are supplied in array oldc, while their respective replacement characters are supplied in array newc. Array A has a fixed length of five characters, while arrays oldc and newc contain three characters each. However, the procedure is flawed.\n\n```c\nvoid find_and_replace (char *A, char *oldc, char *newc) {\n    for (int i=0; i<5; i++)\n        for (int j=0; j<3; j++)\n            if (A[i] == oldc[j]) A[i] = newc[j];\n}\n```\nThe procedure is tested with the following four test cases.\n(1) oldc = \"abc\", newc = \"dab\"  (2) oldc = \"cde\", newc = \"bcd\"  (3) oldc = \"bca\", newc = \"cda\"  (4) oldc = \"abc\", newc = \"bac\"\n\nIf array A is made to hold the string \"abcde\", which of the above four test cases will be successful in exposing the flaw in this procedure?",
+      "text": "Common data for Questions 50 and 51: The procedure given below is required to find and replace certain characters inside an input character string supplied in array A. The characters to be replaced are supplied in array oldc, while their respective replacement characters are supplied in array newc. Array A has a fixed length of five characters, while arrays oldc and newc contain three characters each. However, the procedure is flawed.\n\n```c\nvoid find_and_replace (char *A, char *oldc, char *newc) {\n    for (int i=0; i<5; i++)\n        for (int j=0; j<3; j++)\n            if (A[i] == oldc[j]) A[i] = newc[j];\n}\n```\n\nThe procedure is tested with the following four test cases.\n\n1. oldc = \"abc\", newc = \"dab\"\n2. oldc = \"cde\", newc = \"bcd\"\n3. oldc = \"bca\", newc = \"cda\"\n4. oldc = \"abc\", newc = \"bac\"\n\nIf array A is made to hold the string \"abcde\", which of the above four test cases will be successful in exposing the flaw in this procedure?",
       "options": [
         {
           "l": "A",
@@ -78314,7 +78360,7 @@
       "figures": [],
       "group": null,
       "subject": "ga",
-      "topic": "quant",
+      "topic": "verbal",
       "tags": [],
       "answer": "A",
       "answerSource": "official",

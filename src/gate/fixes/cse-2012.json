@@ -1,0 +1,240 @@
+{
+  "paper": "cse-2012",
+  "fixes": [
+    {
+      "id": "cse-2012-cs-5",
+      "field": "subject",
+      "before": "dl",
+      "after": "pds",
+      "reason": "Searching a balanced BST is a data-structures question, not digital logic.",
+      "source": "GATE 2012 CS question paper (booklet A)"
+    },
+    {
+      "id": "cse-2012-cs-5",
+      "field": "topic",
+      "before": "number",
+      "after": "bst",
+      "reason": "Balanced BST search.",
+      "source": "GATE 2012 CS question paper (booklet A)"
+    },
+    {
+      "id": "cse-2012-cs-10",
+      "field": "topic",
+      "before": "transport",
+      "after": "layering",
+      "reason": "PDU names per layer of the Internet stack.",
+      "source": "GATE 2012 CS question paper (booklet A)"
+    },
+    {
+      "id": "cse-2012-cs-13",
+      "field": "subject",
+      "before": "ga",
+      "after": "dm",
+      "reason": "Translation into predicate logic is discrete mathematics, not general aptitude.",
+      "source": "GATE 2012 CS question paper (booklet A)"
+    },
+    {
+      "id": "cse-2012-cs-13",
+      "field": "topic",
+      "before": "quant",
+      "after": "logic",
+      "reason": "First-order logic.",
+      "source": "GATE 2012 CS question paper (booklet A)"
+    },
+    {
+      "id": "cse-2012-cs-18",
+      "field": "subject",
+      "before": "pds",
+      "after": "algo",
+      "reason": "Worst vs average case asymptotics is algorithm analysis.",
+      "source": "GATE 2012 CS question paper (booklet A)"
+    },
+    {
+      "id": "cse-2012-cs-18",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "asymptotics",
+      "reason": "Asymptotic notation.",
+      "source": "GATE 2012 CS question paper (booklet A)"
+    },
+    {
+      "id": "cse-2012-cs-21",
+      "field": "subject",
+      "before": "ga",
+      "after": "prob",
+      "reason": "CDF of a discrete random variable is probability, not general aptitude.",
+      "source": "GATE 2012 CS question paper (booklet A)"
+    },
+    {
+      "id": "cse-2012-cs-21",
+      "field": "topic",
+      "before": "quant",
+      "after": "rv",
+      "reason": "Random variables / CDF.",
+      "source": "GATE 2012 CS question paper (booklet A)"
+    },
+    {
+      "id": "cse-2012-cs-12",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2012/cs-12-1.png",
+          "alt": "Three states in a row. Start state (arrow in) --a--> middle accepting (double circle) state --ε--> third state; the third state has an ε-edge back to the start state.",
+          "svg": "cse-2012/cs-12-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2012/cs-12-1.png",
+          "alt": "NFA with three states in a row, no self-loops. An incoming start arrow points to the first (non-accepting) state; it goes on a to the middle state, which is accepting (double circle); the middle state goes on ε to the third (non-accepting) state; a curved ε-edge below leads from the third state back to the first state.",
+          "svg": "cse-2012/cs-12-1.svg"
+        }
+      ],
+      "reason": "Redrew the SVG faithfully from the paper (old SVG showed an unrelated automaton) and made the alt text precise.",
+      "source": "GATE 2012 CS question paper (booklet A)"
+    },
+    {
+      "id": "cse-2012-cs-9",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Stored key B ignores the endpoint minimum.",
+      "source": "GATE 2012 CS question paper (booklet A)"
+    },
+    {
+      "id": "cse-2012-cs-9",
+      "field": "reviewNote",
+      "before": null,
+      "after": "Stored key B (one minimum at 3π/2). On the closed interval [π/4, 7π/4], sin x is increasing at x = π/4 (cos(π/4) > 0), so π/4 is a local (endpoint) minimum as well; the solution proves D (two, at π/4 and 3π/2), which is the widely reported GATE 2012 answer. Needs confirmation against the official key before changing the answer.",
+      "reason": "Explain the disagreement.",
+      "source": "GATE 2012 CS question paper (booklet A)"
+    },
+    {
+      "id": "cse-2012-cs-22",
+      "field": "subject",
+      "before": "pds",
+      "after": "cn",
+      "reason": "Transport-layer protocol for e-mail is a computer-networks question, not C programming.",
+      "source": "GATE 2012 CS Q.22 (PDF)"
+    },
+    {
+      "id": "cse-2012-cs-22",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "transport",
+      "reason": "Question asks for the transport-layer protocol (TCP) used by SMTP.",
+      "source": "GATE 2012 CS Q.22 (PDF)"
+    },
+    {
+      "id": "cse-2012-cs-22",
+      "field": "tags",
+      "before": [
+        "email",
+        "SMTP"
+      ],
+      "after": [
+        "email",
+        "SMTP",
+        "TCP"
+      ],
+      "reason": "Add the protocol the answer rests on.",
+      "source": "analysis"
+    },
+    {
+      "id": "cse-2012-cs-37",
+      "field": "subject",
+      "before": "db",
+      "after": "dm",
+      "reason": "Counting onto functions is discrete mathematics, not databases.",
+      "source": "GATE 2012 CS Q.37 (PDF)"
+    },
+    {
+      "id": "cse-2012-cs-37",
+      "field": "topic",
+      "before": "sql",
+      "after": "combinatorics",
+      "reason": "Counting surjections is a combinatorics question.",
+      "source": "GATE 2012 CS Q.37 (PDF)"
+    },
+    {
+      "id": "cse-2012-cs-37",
+      "field": "tags",
+      "before": [
+        "surjective"
+      ],
+      "after": [
+        "surjective",
+        "functions",
+        "counting"
+      ],
+      "reason": "More precise tags.",
+      "source": "analysis"
+    },
+    {
+      "id": "cse-2012-cs-52",
+      "field": "text",
+      "before": "Statement for Linked Answer Questions 52 and 53:\n\nFor the grammar below, a partial LL(1) parsing table is also presented along with the grammar. Entries that need to be filled are indicated as E1, E2, and E3. $\\epsilon$ is the empty string, $ indicates end of input, and, | separates alternate right hand sides of productions.\n\nS → a A b B | b A a B | ε\nA → S\nB → S\n\n| | a | b | $ |\n|---|---|---|---|\n| S | E1 | E2 | S → ε |\n| A | A → S | A → S | error |\n| B | B → S | B → S | E3 |\n\nThe FIRST and FOLLOW sets for the non-terminals A and B are",
+      "after": "Statement for Linked Answer Questions 52 and 53:\n\nFor the grammar below, a partial LL(1) parsing table is also presented along with the grammar. Entries that need to be filled are indicated as E1, E2, and E3. $\\varepsilon$ is the empty string, `$` indicates end of input, and `|` separates alternate right hand sides of productions.\n\n$$\\begin{aligned} S &\\to aAbB \\mid bAaB \\mid \\varepsilon \\\\ A &\\to S \\\\ B &\\to S \\end{aligned}$$\n\n| | a | b | `$` |\n|---|---|---|---|\n| **S** | E1 | E2 | $S \\to \\varepsilon$ |\n| **A** | $A \\to S$ | $A \\to S$ | error |\n| **B** | $B \\to S$ | $B \\to S$ | E3 |\n\nThe FIRST and FOLLOW sets for the non-terminals A and B are",
+      "reason": "Unpaired $ (end-marker) broke KaTeX parsing; grammar and table typeset in KaTeX",
+      "source": "GATE 2012 CS question paper (PDF)"
+    },
+    {
+      "id": "cse-2012-cs-53",
+      "field": "text",
+      "before": "Statement for Linked Answer Questions 52 and 53:\n\nFor the grammar below, a partial LL(1) parsing table is also presented along with the grammar. Entries that need to be filled are indicated as E1, E2, and E3. $\\epsilon$ is the empty string, $ indicates end of input, and, | separates alternate right hand sides of productions.\n\nS → a A b B | b A a B | ε\nA → S\nB → S\n\n| | a | b | $ |\n|---|---|---|---|\n| S | E1 | E2 | S → ε |\n| A | A → S | A → S | error |\n| B | B → S | B → S | E3 |\n\nThe appropriate entries for E1, E2, and E3 are",
+      "after": "Statement for Linked Answer Questions 52 and 53:\n\nFor the grammar below, a partial LL(1) parsing table is also presented along with the grammar. Entries that need to be filled are indicated as E1, E2, and E3. $\\varepsilon$ is the empty string, `$` indicates end of input, and `|` separates alternate right hand sides of productions.\n\n$$\\begin{aligned} S &\\to aAbB \\mid bAaB \\mid \\varepsilon \\\\ A &\\to S \\\\ B &\\to S \\end{aligned}$$\n\n| | a | b | `$` |\n|---|---|---|---|\n| **S** | E1 | E2 | $S \\to \\varepsilon$ |\n| **A** | $A \\to S$ | $A \\to S$ | error |\n| **B** | $B \\to S$ | $B \\to S$ | E3 |\n\nThe appropriate entries for E1, E2, and E3 are",
+      "reason": "Unpaired $ (end-marker) broke KaTeX parsing; grammar and table typeset in KaTeX",
+      "source": "GATE 2012 CS question paper (PDF)"
+    },
+    {
+      "id": "cse-2012-cs-52",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "FIRST(A) = {a, b, ε} = FIRST(B)\nFOLLOW(A) = {a, b}\nFOLLOW(B) = {a, b, $}"
+        },
+        {
+          "l": "B",
+          "t": "FIRST(A) = {a, b, $}\nFIRST(B) = {a, b, ε}\nFOLLOW(A) = {a, b}\nFOLLOW(B) = {$}"
+        },
+        {
+          "l": "C",
+          "t": "FIRST(A) = {a, b, ε} = FIRST(B)\nFOLLOW(A) = {a, b}\nFOLLOW(B) = ∅"
+        },
+        {
+          "l": "D",
+          "t": "FIRST(A) = {a, b} = FIRST(B)\nFOLLOW(A) = {a, b}\nFOLLOW(B) = {a, b}"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\text{FIRST}(A) = \\{a, b, \\varepsilon\\} = \\text{FIRST}(B)$\n$\\text{FOLLOW}(A) = \\{a, b\\}$\n$\\text{FOLLOW}(B) = \\{a, b, \\$\\}$"
+        },
+        {
+          "l": "B",
+          "t": "$\\text{FIRST}(A) = \\{a, b, \\$\\}$\n$\\text{FIRST}(B) = \\{a, b, \\varepsilon\\}$\n$\\text{FOLLOW}(A) = \\{a, b\\}$\n$\\text{FOLLOW}(B) = \\{\\$\\}$"
+        },
+        {
+          "l": "C",
+          "t": "$\\text{FIRST}(A) = \\{a, b, \\varepsilon\\} = \\text{FIRST}(B)$\n$\\text{FOLLOW}(A) = \\{a, b\\}$\n$\\text{FOLLOW}(B) = \\varnothing$"
+        },
+        {
+          "l": "D",
+          "t": "$\\text{FIRST}(A) = \\{a, b\\} = \\text{FIRST}(B)$\n$\\text{FOLLOW}(A) = \\{a, b\\}$\n$\\text{FOLLOW}(B) = \\{a, b\\}$"
+        }
+      ],
+      "reason": "Bare $ end-markers in options broke KaTeX; typeset sets in KaTeX",
+      "source": "GATE 2012 CS question paper (PDF)"
+    },
+    {
+      "id": "cse-2012-ga-61",
+      "field": "topic",
+      "before": "quant",
+      "after": "verbal",
+      "reason": "Inference from a passage is verbal reasoning, not quantitative",
+      "source": "GATE 2012 CS question paper (PDF)"
+    }
+  ]
+}
