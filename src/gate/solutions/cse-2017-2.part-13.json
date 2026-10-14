@@ -1,0 +1,1058 @@
+{
+ "paper": "cse-2017-2",
+ "version": 2,
+ "solutions": {
+  "cse-2017-2-cs-45": {
+   "approach": "Compute the average read time separately for instruction fetches (I-cache → L2 → memory) and operand fetches (D-cache → L2 → memory) using the hierarchical formula $T = t_1 + (1-h_1)(t_2 + (1-h_2)t_m)$, then weight them 60 : 40.",
+   "concepts": [
+    "Average memory access time",
+    "Multi-level cache",
+    "Split I/D cache"
+   ],
+   "given": "| Level | Access time | Hit ratio |\n|---|---|---|\n| I-cache | 2 ns | 0.8 |\n| D-cache | 2 ns | 0.9 |\n| L2 | 8 ns | 0.9 |\n| Memory | 90 ns | 1 |",
+   "steps": [
+    {
+     "title": "Time seen on an L1 miss",
+     "body": "An L1 miss always goes to L2 (8 ns), and an L2 miss also goes to memory (90 ns):\n$$t_{L2\\text{ path}} = 8 + (1-0.9)\\times 90 = 8 + 9 = 17\\text{ ns}$$\nDirty bit 0 means no write-back cost; referred-word-first means the word is delivered as soon as it arrives, so access times simply add."
+    },
+    {
+     "title": "Instruction fetch",
+     "body": "$$T_I = 2 + (1-0.8)\\times 17 = 2 + 0.2\\times 17 = 2 + 3.4 = 5.4\\text{ ns}$$"
+    },
+    {
+     "title": "Operand fetch",
+     "body": "$$T_D = 2 + (1-0.9)\\times 17 = 2 + 0.1\\times 17 = 2 + 1.7 = 3.7\\text{ ns}$$"
+    },
+    {
+     "title": "Weighted average",
+     "body": "$$T = 0.6\\times 5.4 + 0.4\\times 3.7 = 3.24 + 1.48 = 4.72\\text{ ns}$$"
+    }
+   ],
+   "answer": {
+    "value": "4.72",
+    "number": 4.72,
+    "matchesKey": true
+   },
+   "shortcut": "Compute the common L2 miss-path time (17 ns) once, then reuse it for both L1 caches.",
+   "pitfalls": [
+    "Using one L1 hit ratio for all reads — the I- and D-caches have different hit ratios.",
+    "Forgetting the L2 time on an L2 miss (hierarchical access adds 2 + 8 + 90)."
+   ],
+   "verification": "Expanded form: I-fetch $0.8\\cdot2 + 0.18\\cdot10 + 0.02\\cdot100 = 1.6+1.8+2 = 5.4$; D-fetch $0.9\\cdot2+0.09\\cdot10+0.01\\cdot100 = 1.8+0.9+1 = 3.7$. Same 4.72."
+  },
+  "cse-2017-2-cs-46": {
+   "approach": "Evaluate each subquery first. No Spain rows exist, so `> ALL (empty set)` is true for every row; `> ANY` over Germany's goals means \"greater than the minimum German score\". Count the rows above that minimum.",
+   "concepts": [
+    "ALL / ANY subqueries",
+    "Empty-set semantics"
+   ],
+   "steps": [
+    {
+     "title": "> ALL over Spain",
+     "body": "No player has country = 'Spain', so the subquery returns the empty set. `x > ALL (∅)` is vacuously **true**, so this condition filters nothing."
+    },
+    {
+     "title": "> ANY over Germany",
+     "body": "German goals: $\\{16, 14, 11, 10, 10\\}$. `goals > ANY(...)` holds when goals exceed at least one of them, i.e. $\\text{goals} > \\min = 10$."
+    },
+    {
+     "title": "Count rows with goals > 10",
+     "body": "Klose 16, Ronaldo 15, G Müller 14, Fontaine 13, Pelé 12, Klinsmann 11, Kocsis 11 → **7** rows. All six players with 10 goals are excluded."
+    }
+   ],
+   "answer": {
+    "value": "7",
+    "number": 7,
+    "matchesKey": true
+   },
+   "shortcut": "`> ANY` ≡ `> MIN`, `> ALL` ≡ `> MAX` (and `> ALL` of an empty set is always true).",
+   "pitfalls": [
+    "Treating `> ALL (empty)` as false (that would give 0).",
+    "Using `>=` and counting the 10-goal players."
+   ],
+   "verification": "13 rows total, 6 of them have exactly 10 goals; 13 − 6 = 7."
+  },
+  "cse-2017-2-cs-47": {
+   "approach": "Expand $\\frac{1}{(1-z)^3} = \\sum \\binom{n+2}{2} z^n$; multiplying by $(1+z)$ adds a shifted copy, giving a closed form for $a_n$.",
+   "concepts": [
+    "Ordinary generating functions",
+    "Negative binomial series"
+   ],
+   "steps": [
+    {
+     "title": "Coefficients of the two parts",
+     "body": "$$\\frac{1}{(1-z)^3} = \\sum_{n\\ge 0} \\binom{n+2}{2} z^n,\\qquad \\frac{z}{(1-z)^3} = \\sum_{n\\ge 1} \\binom{n+1}{2} z^n$$"
+    },
+    {
+     "title": "Closed form",
+     "body": "$$a_n = \\binom{n+2}{2} + \\binom{n+1}{2} = \\frac{(n+2)(n+1)}{2} + \\frac{(n+1)n}{2} = \\frac{(n+1)(2n+2)}{2} = (n+1)^2$$"
+    },
+    {
+     "title": "Required difference",
+     "body": "$a_3 = 4^2 = 16$, $a_0 = 1^2 = 1$, so $a_3 - a_0 = 16 - 1 = 15$."
+    }
+   ],
+   "answer": {
+    "value": "15",
+    "number": 15,
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Using $\\binom{n+3}{3}$ (that is for $(1-z)^{-4}$)."
+   ],
+   "verification": "Direct expansion: $(1-z)^{-3} = 1 + 3z + 6z^2 + 10z^3 + \\dots$; times $(1+z)$: $1 + 4z + 9z^2 + 16z^3$. So $a_3 - a_0 = 16 - 1 = 15$."
+  },
+  "cse-2017-2-cs-48": {
+   "approach": "Expand the square and use linearity of expectation with the Poisson facts $E[X] = \\operatorname{Var}(X) = \\lambda = 5$.",
+   "concepts": [
+    "Poisson distribution",
+    "Linearity of expectation"
+   ],
+   "steps": [
+    {
+     "title": "Second moment",
+     "body": "$E[X^2] = \\operatorname{Var}(X) + (E[X])^2 = 5 + 5^2 = 30$."
+    },
+    {
+     "title": "Expand",
+     "body": "$$E[(X+2)^2] = E[X^2] + 4E[X] + 4 = 30 + 4\\times 5 + 4 = 30 + 20 + 4 = 54$$"
+    }
+   ],
+   "answer": {
+    "value": "54",
+    "number": 54,
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Computing $(E[X]+2)^2 = 49$ — that ignores the variance."
+   ],
+   "verification": "$E[(X+2)^2] = \\operatorname{Var}(X+2) + (E[X+2])^2 = 5 + 7^2 = 54$."
+  },
+  "cse-2017-2-cs-49": {
+   "approach": "The order $p$ of a B+ tree is the maximum number of child pointers in an internal node: $p$ pointers and $p-1$ keys must fit in one block.",
+   "concepts": [
+    "B+ tree order",
+    "Node capacity"
+   ],
+   "steps": [
+    {
+     "title": "Capacity inequality",
+     "body": "$$p\\cdot 2 + (p-1)\\cdot 8 \\le 512$$"
+    },
+    {
+     "title": "Solve",
+     "body": "$$10p - 8 \\le 512 \\;\\Rightarrow\\; 10p \\le 520 \\;\\Rightarrow\\; p \\le 52$$ So the maximum order is $p = 52$."
+    }
+   ],
+   "answer": {
+    "value": "52",
+    "number": 52,
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Dividing 512 by (8 + 2) = 51.2 → 51, which forgets that an internal node has one more pointer than keys."
+   ],
+   "verification": "$p = 52$: $52\\cdot2 + 51\\cdot8 = 104 + 408 = 512$ fits exactly; $p = 53$ needs $106 + 416 = 522 > 512$."
+  },
+  "cse-2017-2-cs-50": {
+   "approach": "Build the Huffman tree by repeatedly merging the two smallest probabilities, read off each code length (depth), and compute $100 \\times \\sum p_i \\ell_i$.",
+   "concepts": [
+    "Huffman coding",
+    "Expected code length"
+   ],
+   "steps": [
+    {
+     "title": "Merge 1",
+     "body": "Smallest two: T (0.08) and R (0.17) → 0.25. Remaining: 0.19, 0.22, 0.25, 0.34.",
+     "scene": {
+      "root": {
+       "label": "0.25",
+       "children": [
+        {
+         "label": "T 0.08"
+        },
+        {
+         "label": "R 0.17"
+        }
+       ]
+      },
+      "caption": "T + R = 0.25"
+     }
+    },
+    {
+     "title": "Merge 2",
+     "body": "Smallest two: S (0.19) and P (0.22) → 0.41. Remaining: 0.25, 0.34, 0.41.",
+     "scene": {
+      "kind": "panels",
+      "panels": [
+       {
+        "kind": "tree",
+        "root": {
+         "label": "0.25",
+         "children": [
+          {
+           "label": "T 0.08"
+          },
+          {
+           "label": "R 0.17"
+          }
+         ]
+        }
+       },
+       {
+        "kind": "tree",
+        "root": {
+         "label": "0.41",
+         "children": [
+          {
+           "label": "S 0.19"
+          },
+          {
+           "label": "P 0.22"
+          }
+         ]
+        }
+       }
+      ]
+     }
+    },
+    {
+     "title": "Merge 3 and 4",
+     "body": "0.25 + Q (0.34) → 0.59, then 0.41 + 0.59 → 1.00 (root).",
+     "scene": {
+      "kind": "tree",
+      "root": {
+       "label": "1.00",
+       "children": [
+        {
+         "label": "0.41",
+         "children": [
+          {
+           "label": "S 0.19"
+          },
+          {
+           "label": "P 0.22"
+          }
+         ]
+        },
+        {
+         "label": "0.59",
+         "children": [
+          {
+           "label": "0.25",
+           "children": [
+            {
+             "label": "T 0.08",
+             "tone": "accent"
+            },
+            {
+             "label": "R 0.17",
+             "tone": "accent"
+            }
+           ]
+          },
+          {
+           "label": "Q 0.34"
+          }
+         ]
+        }
+       ]
+      },
+      "caption": "Depths: S, P, Q = 2; T, R = 3"
+     }
+    },
+    {
+     "title": "Expected length",
+     "body": "$$\\bar\\ell = 2(0.19 + 0.22 + 0.34) + 3(0.08 + 0.17) = 2(0.75) + 3(0.25) = 1.50 + 0.75 = 2.25\\text{ bits/char}$$ For 100 characters: $100 \\times 2.25 = 225$ bits."
+    }
+   ],
+   "animation": {
+    "kind": "tree",
+    "root": {
+     "label": "start",
+     "children": [
+      {
+       "label": "T 0.08"
+      },
+      {
+       "label": "R 0.17"
+      },
+      {
+       "label": "S 0.19"
+      },
+      {
+       "label": "P 0.22"
+      },
+      {
+       "label": "Q 0.34"
+      }
+     ]
+    },
+    "caption": "Leaves sorted by probability"
+   },
+   "answer": {
+    "value": "225",
+    "number": 225,
+    "matchesKey": true
+   },
+   "shortcut": "Expected length = sum of all internal-node weights: $0.25 + 0.41 + 0.59 + 1.00 = 2.25$.",
+   "pitfalls": [
+    "Merging S with 0.25 instead of the two smallest (0.19, 0.22).",
+    "Answering 2.25 (per character) instead of 225 for 100 characters."
+   ],
+   "verification": "Internal-node sum $0.25 + 0.41 + 0.59 + 1.00 = 2.25$ matches the depth-weighted sum."
+  },
+  "cse-2017-2-cs-51": {
+   "approach": "Simulate preemptive priority scheduling: at every arrival, the ready process with the smallest priority number runs. Then waiting time = completion − arrival − burst.",
+   "concepts": [
+    "Preemptive priority scheduling",
+    "Waiting time"
+   ],
+   "steps": [
+    {
+     "title": "Up to t = 5",
+     "body": "P1 (pri 2) runs 0–2. At 2, P4 (pri 1) arrives and preempts (P1 has 9 left). At 5, P2 (pri 0) arrives and preempts P4 (P4 has 7 left).",
+     "scene": {
+      "upto": 5,
+      "cursor": 5
+     }
+    },
+    {
+     "title": "P2 runs to completion",
+     "body": "P2 has the highest priority, so it runs 5–33 even though P5 (t = 9) and P3 (t = 12) arrive meanwhile.",
+     "scene": {
+      "upto": 33,
+      "cursor": 33
+     }
+    },
+    {
+     "title": "Rest by priority",
+     "body": "Ready at 33: P4 (1), P1 (2), P3 (3), P5 (4). So P4 33–40, P1 40–49, P3 49–51, P5 51–67.",
+     "scene": {
+      "upto": 67,
+      "cursor": 67
+     }
+    },
+    {
+     "title": "Waiting times",
+     "body": "| Process | CT | TAT = CT − AT | WT = TAT − BT |\n|---|---|---|---|\n| P1 | 49 | 49 − 0 = 49 | 49 − 11 = 38 |\n| P2 | 33 | 33 − 5 = 28 | 28 − 28 = 0 |\n| P3 | 51 | 51 − 12 = 39 | 39 − 2 = 37 |\n| P4 | 40 | 40 − 2 = 38 | 38 − 10 = 28 |\n| P5 | 67 | 67 − 9 = 58 | 58 − 16 = 42 |\n\n$$\\text{Avg WT} = \\frac{38 + 0 + 37 + 28 + 42}{5} = \\frac{145}{5} = 29\\text{ ms}$$"
+    }
+   ],
+   "animation": {
+    "kind": "gantt",
+    "unit": "ms",
+    "lanes": [
+     {
+      "label": "CPU",
+      "bars": [
+       {
+        "start": 0,
+        "end": 2,
+        "label": "P1"
+       },
+       {
+        "start": 2,
+        "end": 5,
+        "label": "P4"
+       },
+       {
+        "start": 5,
+        "end": 33,
+        "label": "P2"
+       },
+       {
+        "start": 33,
+        "end": 40,
+        "label": "P4"
+       },
+       {
+        "start": 40,
+        "end": 49,
+        "label": "P1"
+       },
+       {
+        "start": 49,
+        "end": 51,
+        "label": "P3"
+       },
+       {
+        "start": 51,
+        "end": 67,
+        "label": "P5"
+       }
+      ]
+     }
+    ],
+    "marks": [
+     {
+      "t": 2,
+      "label": "P4↓"
+     },
+     {
+      "t": 5,
+      "label": "P2↓"
+     },
+     {
+      "t": 9,
+      "label": "P5↓"
+     },
+     {
+      "t": 12,
+      "label": "P3↓"
+     }
+    ],
+    "upto": 0,
+    "cursor": 0
+   },
+   "answer": {
+    "value": "29",
+    "number": 29,
+    "matchesKey": true
+   },
+   "shortcut": "Total waiting = sum of completion times − sum of arrivals − sum of bursts = $240 - 28 - 67 = 145$; $145/5 = 29$.",
+   "pitfalls": [
+    "Treating a larger number as higher priority (here 0 is highest).",
+    "Running it non-preemptively."
+   ],
+   "verification": "CPU is never idle (all bursts sum to 67 and the last process finishes at 67). Shortcut sum $49+33+51+40+67 = 240$; $240 - 28 - 67 = 145$."
+  },
+  "cse-2017-2-cs-52": {
+   "approach": "Since 2 is a root, substitute $\\lambda = 2$ to find $a$, then factor the cubic and read off the eigenvalues.",
+   "concepts": [
+    "Characteristic polynomial",
+    "Eigenvalues"
+   ],
+   "steps": [
+    {
+     "title": "Find a",
+     "body": "$$2^3 - 4(2^2) + 2a + 30 = 8 - 16 + 2a + 30 = 22 + 2a = 0 \\;\\Rightarrow\\; a = -11$$"
+    },
+    {
+     "title": "Factor",
+     "body": "$$\\lambda^3 - 4\\lambda^2 - 11\\lambda + 30 = (\\lambda - 2)(\\lambda^2 - 2\\lambda - 15) = (\\lambda - 2)(\\lambda - 5)(\\lambda + 3)$$ Eigenvalues: $2, 5, -3$."
+    },
+    {
+     "title": "Largest absolute value",
+     "body": "$\\max(|2|, |5|, |-3|) = 5$."
+    }
+   ],
+   "answer": {
+    "value": "5",
+    "number": 5,
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Answering 3 by confusing the largest |λ| with the absolute value of the negative root."
+   ],
+   "verification": "Sum $2 + 5 - 3 = 4$ (coefficient of $\\lambda^2$ negated ✓); product $2\\cdot5\\cdot(-3) = -30 = -(+30)$ ✓."
+  },
+  "cse-2017-2-cs-53": {
+   "approach": "Split the 32-bit physical address into tag | line index | block offset for a direct-mapped cache.",
+   "concepts": [
+    "Direct-mapped cache",
+    "Address split"
+   ],
+   "steps": [
+    {
+     "title": "Offset and index",
+     "body": "Block size $32 = 2^5$ → offset = 5 bits. Lines $512 = 2^9$ → index = 9 bits."
+    },
+    {
+     "title": "Tag",
+     "body": "$$\\text{tag} = 32 - 9 - 5 = 18\\text{ bits}$$"
+    }
+   ],
+   "answer": {
+    "value": "18",
+    "number": 18,
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Using cache size instead of line count for the index."
+   ],
+   "verification": "Equivalently, memory has $2^{32}/2^5 = 2^{27}$ blocks sharing $2^9$ lines: $2^{27}/2^9 = 2^{18}$ blocks per line → 18 tag bits."
+  },
+  "cse-2017-2-cs-54": {
+   "approach": "Trace the variables line by line, remembering that `++m` increments before use while `m++` uses the old value first.",
+   "concepts": [
+    "Pre-/post-increment",
+    "Code tracing"
+   ],
+   "steps": [
+    {
+     "title": "n = ++m",
+     "body": "`m` becomes 11, then `n = 11`.",
+     "scene": {
+      "line": 3,
+      "vars": {
+       "m": 11,
+       "n": 11
+      }
+     }
+    },
+    {
+     "title": "n1 = m++",
+     "body": "`n1` gets the old value 11, then `m` becomes 12.",
+     "scene": {
+      "line": 4,
+      "vars": {
+       "m": 12,
+       "n": 11,
+       "n1": 11
+      }
+     }
+    },
+    {
+     "title": "Decrements",
+     "body": "`n--` → n = 10; `--n1` → n1 = 10.",
+     "scene": {
+      "line": 6,
+      "vars": {
+       "m": 12,
+       "n": 10,
+       "n1": 10
+      }
+     }
+    },
+    {
+     "title": "n -= n1",
+     "body": "$n = 10 - 10 = 0$; the program prints **0**.",
+     "scene": {
+      "line": 8,
+      "vars": {
+       "m": 12,
+       "n": 0,
+       "n1": 10
+      },
+      "output": "0"
+     }
+    }
+   ],
+   "animation": {
+    "kind": "code",
+    "lang": "c",
+    "code": "int m = 10;\nint n, n1;\nn = ++m;\nn1 = m++;\nn--;\n--n1;\nn -= n1;\nprintf(\"%d\", n);",
+    "line": 1,
+    "vars": {
+     "m": 10
+    },
+    "output": ""
+   },
+   "answer": {
+    "value": "0",
+    "number": 0,
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Giving n1 the value 12 (post-increment yields the old value)."
+   ],
+   "verification": "n and n1 both start at 11 and are each decremented once, so their difference is 0."
+  },
+  "cse-2017-2-cs-55": {
+   "approach": "`i[p]` is the same as `p[i]`. Turn the two characters into ASCII codes, simplify the pointer offset, and take strlen of the remaining suffix.",
+   "concepts": [
+    "Pointer arithmetic",
+    "a[i] ≡ i[a]",
+    "ASCII codes"
+   ],
+   "steps": [
+    {
+     "title": "Index the string",
+     "body": "\"GATECSIT2017\": index 0 G, 1 A, **2 T**, 3 E, 4 C, 5 S, **6 I**, 7 T, 8 2, 9 0, 10 1, 11 7.\nSo `2[p] = p[2] = 'T' = 84` and `6[p] = p[6] = 'I' = 73`."
+    },
+    {
+     "title": "Pointer offset",
+     "body": "$$c + 84 - 73 - 1 = c + 10$$ which points at \"17\"."
+    },
+    {
+     "title": "strlen",
+     "body": "`strlen(\"17\") = 2`, so the output is **2**."
+    }
+   ],
+   "answer": {
+    "value": "2",
+    "number": 2,
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Indexing from 1 (taking A and C).",
+    "Thinking `2[p]` is invalid syntax."
+   ],
+   "verification": "Only the difference matters: 'T' − 'I' = 11 letters apart, so the offset is $11 - 1 = 10$, leaving 12 − 10 = 2 characters."
+  },
+  "cse-2017-2-ga-56": {
+   "approach": "Check each pair for similar meaning; the odd pair is the one whose words are opposites.",
+   "concepts": [
+    "Synonyms",
+    "Antonyms"
+   ],
+   "steps": [
+    {
+     "title": "Check the synonym pairs",
+     "body": "aversion ≈ dislike (distaste); luminous ≈ radiant (shining); plunder ≈ loot (steal by force)."
+    },
+    {
+     "title": "Spot the odd pair",
+     "body": "**Yielding** means giving way, **resistant** means withstanding — they are opposites, so D is the pair that is not synonymous."
+    }
+   ],
+   "answer": {
+    "value": "yielding, resistant",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Aversion and dislike both mean a strong distaste — synonyms."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Luminous and radiant both mean giving off light — synonyms."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Plunder and loot both mean to steal goods by force — synonyms."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Yielding means giving way; resistant means withstanding — antonyms, so not synonyms."
+    }
+   ],
+   "verification": "Only D fails the \"same meaning\" test."
+  },
+  "cse-2017-2-ga-57": {
+   "approach": "\"Enough\" used with an adjective comes after it: adjective + enough + to-infinitive.",
+   "concepts": [
+    "Position of \"enough\""
+   ],
+   "steps": [
+    {
+     "title": "Rule",
+     "body": "\"Enough\" goes **before** a noun (enough light) but **after** an adjective or adverb (bright enough), followed by a to-infinitive."
+    },
+    {
+     "title": "Apply",
+     "body": "\"Bright\" is an adjective, so: \"Saturn is **bright enough** to be seen on a clear night with the naked eye.\""
+    }
+   ],
+   "answer": {
+    "value": "bright enough",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "\"Enough bright\" puts enough before the adjective; enough precedes nouns, not adjectives."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Adjective + enough + to-infinitive is the correct pattern."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "\"As enough bright\" is not a valid construction; \"as\" needs a comparison."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "\"Bright as enough\" is ungrammatical."
+    }
+   ],
+   "verification": "Compare \"old enough to vote\", \"tall enough to reach\" — same pattern."
+  },
+  "cse-2017-2-ga-58": {
+   "approach": "Chain the West-to-East relations into a single order and pick the third of five.",
+   "concepts": [
+    "Linear arrangement"
+   ],
+   "steps": [
+    {
+     "title": "Build the order (West → East)",
+     "body": "Z is East of X and West of V: X < Z < V. V is West of W: V < W. W is West of Y: W < Y.\nSo the row is **X, Z, V, W, Y**."
+    },
+    {
+     "title": "Middle",
+     "body": "The 3rd of 5 buildings is **V**."
+    }
+   ],
+   "answer": {
+    "value": "V",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "V is third in X, Z, V, W, Y."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "W is fourth."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "X is the westernmost (first)."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Y is the easternmost (fifth)."
+    }
+   ],
+   "verification": "All four clues are satisfied by X, Z, V, W, Y, and the chain fixes a unique order."
+  },
+  "cse-2017-2-ga-59": {
+   "approach": "Set up two linear equations (question count and marks) and solve.",
+   "concepts": [
+    "Linear equations"
+   ],
+   "steps": [
+    {
+     "title": "Equations",
+     "body": "Let $m$ = MCQs, $e$ = essays: $m + e = 20$, $3m + 11e = 100$."
+    },
+    {
+     "title": "Solve",
+     "body": "$3m + 11(20 - m) = 100 \\Rightarrow 220 - 8m = 100 \\Rightarrow 8m = 120 \\Rightarrow m = 15$ (and $e = 5$)."
+    }
+   ],
+   "answer": {
+    "value": "15",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "12 MCQs + 8 essays = 36 + 88 = 124 marks."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "15 MCQs + 5 essays = 45 + 55 = 100 marks."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "18 MCQs + 2 essays = 54 + 22 = 76 marks."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "19 MCQs + 1 essay = 57 + 11 = 68 marks."
+    }
+   ],
+   "verification": "$3\\cdot15 + 11\\cdot5 = 45 + 55 = 100$ ✓."
+  },
+  "cse-2017-2-ga-60": {
+   "approach": "Count same-colour pairs and divide by all pairs from 10 socks.",
+   "concepts": [
+    "Combinations",
+    "Classical probability"
+   ],
+   "steps": [
+    {
+     "title": "Total pairs",
+     "body": "$\\binom{10}{2} = 45$."
+    },
+    {
+     "title": "Same-colour pairs",
+     "body": "$\\binom{3}{2} + \\binom{4}{2} + \\binom{3}{2} = 3 + 6 + 3 = 12$."
+    },
+    {
+     "title": "Probability",
+     "body": "$\\dfrac{12}{45} = \\dfrac{4}{15}$."
+    }
+   ],
+   "answer": {
+    "value": "4/15",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "1/5 = 9/45 undercounts the same-colour pairs."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "7/30 does not match 12/45 = 8/30."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "1/4 is not a multiple of 1/45 here."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "12/45 = 4/15."
+    }
+   ],
+   "verification": "Sequential: $\\frac{3}{10}\\cdot\\frac{2}{9} + \\frac{4}{10}\\cdot\\frac{3}{9} + \\frac{3}{10}\\cdot\\frac{2}{9} = \\frac{6+12+6}{90} = \\frac{24}{90} = \\frac{4}{15}$."
+  },
+  "cse-2017-2-ga-61": {
+   "approach": "Look for the word that shows the author's own doubt about ideology's importance, rather than words that just describe the setting.",
+   "concepts": [
+    "Reading comprehension",
+    "Author's tone"
+   ],
+   "steps": [
+    {
+     "title": "What the question asks",
+     "body": "We need the word showing the **author's own** view that ideology is less important than literature — not words that merely describe the society."
+    },
+    {
+     "title": "Find the signal word",
+     "body": "Literature was valued only as a handmaiden to \"something **seemingly** more urgent – namely ideology\". \"Seemingly\" means ideology only *appeared* more urgent — the author does not accept that it really is."
+    }
+   ],
+   "answer": {
+    "value": "'seemingly'",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "\"Culture\" just names the society; it carries no judgement."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "\"Seemingly\" casts doubt on ideology being more urgent, revealing the author's view."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "\"Urgent\" alone would support ideology's importance; the doubt comes from \"seemingly\"."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "\"Political\" describes how gestures were interpreted, not the author's ranking."
+    }
+   ],
+   "verification": "Remove \"seemingly\" and the sentence no longer expresses the author's scepticism — so it is the key word."
+  },
+  "cse-2017-2-ga-62": {
+   "approach": "Every label is wrong, so the box labelled \"Apples and Oranges\" must hold only one kind of fruit — one draw from it identifies it, and the rest follows.",
+   "concepts": [
+    "Logical deduction"
+   ],
+   "steps": [
+    {
+     "title": "Open the mixed-label box",
+     "body": "The box labelled \"Apples and Oranges\" is wrong, so it holds only apples or only oranges. Draw one fruit; say it is an apple → this box is Apples."
+    },
+    {
+     "title": "Deduce the others",
+     "body": "The box labelled \"Oranges\" cannot be oranges (wrong label) or apples (taken), so it is Mixed. The box labelled \"Apples\" is then Oranges. (Symmetric if the fruit is an orange.)"
+    }
+   ],
+   "answer": {
+    "value": "The box labelled 'Apples and Oranges'",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "The \"Apples\" box could be Oranges or Mixed; drawing an orange does not tell which."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "This box is pure, so one fruit identifies it and the rest follow."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "The \"Oranges\" box could be Apples or Mixed; drawing an apple does not tell which."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "It can be determined by opening the \"Apples and Oranges\" box."
+    }
+   ],
+   "verification": "Both outcomes of the draw lead to a unique assignment."
+  },
+  "cse-2017-2-ga-63": {
+   "approach": "Write $X = 4.7\\ldots \\times 10^{29}$ and cube the leading part; the digit count is the exponent plus one.",
+   "concepts": [
+    "Number of digits",
+    "Scientific notation"
+   ],
+   "steps": [
+    {
+     "title": "Bound X",
+     "body": "$4.7\\times10^{29} \\le X < 4.8\\times10^{29}$."
+    },
+    {
+     "title": "Cube",
+     "body": "$4.7^3 = 103.823$ and $4.8^3 = 110.592$, so $1.03823\\times10^{89} \\le X^3 < 1.10592\\times10^{89}$."
+    },
+    {
+     "title": "Digits",
+     "body": "A number in $[10^{89}, 10^{90})$ has $89 + 1 = 90$ digits."
+    }
+   ],
+   "answer": {
+    "value": "90 digits",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "$X^3 \\approx 1.04\\text{–}1.11\\times10^{89}$ has 90 digits."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "91 digits would need $X^3 \\ge 10^{90}$, i.e. a leading part cubing to ≥ 1000; but $4.8^3 \\approx 110.6$."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "92 digits needs $X^3 \\ge 10^{91}$ — far above $1.11\\times10^{89}$."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "93 digits needs $X^3 \\ge 10^{92}$ — impossible for a 30-digit X (max $< 10^{90}$)."
+    }
+   ],
+   "verification": "Any 30-digit number cubes to 88–90 digits; it is 90 exactly when the leading part cubed is ≥ 100, i.e. $X \\ge 4.642\\times10^{29}$, which holds here."
+  },
+  "cse-2017-2-ga-64": {
+   "approach": "Use a sign change on each side of 0 to show at least two roots, and convexity ($f'' > 0$) to show at most two.",
+   "concepts": [
+    "Intermediate value theorem",
+    "Convexity"
+   ],
+   "steps": [
+    {
+     "title": "Signs",
+     "body": "Let $f(x) = e^x + 0.5x^2 - 2$. $f(0) = 1 + 0 - 2 = -1 < 0$; $f(5) = e^5 + 12.5 - 2 > 0$; $f(-5) = e^{-5} + 12.5 - 2 \\approx 10.5 > 0$. So there is a root in $(-5, 0)$ and one in $(0, 5)$."
+    },
+    {
+     "title": "At most two",
+     "body": "$f''(x) = e^x + 1 > 0$, so $f$ is strictly convex and can cross zero at most twice. Hence exactly **2** roots."
+    }
+   ],
+   "answer": {
+    "value": "2",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "f changes sign, so roots exist."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "There is a sign change on both sides of 0, giving two roots."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Two sign changes and strict convexity give exactly 2 roots."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "A strictly convex function has at most 2 zeros."
+    }
+   ],
+   "verification": "Numerically: $f(0.6) = 1.822 + 0.18 - 2 \\approx 0.002$ and $f(-1.93) = 0.145 + 1.862 - 2 \\approx 0.007$, so the roots are near $x \\approx 0.6$ and $x \\approx -1.93$, both inside $[-5, 5]$."
+  },
+  "cse-2017-2-ga-65": {
+   "approach": "Pressure changes fastest where contour lines are packed closest (steepest gradient). Compare contour spacing at the four circled regions.",
+   "concepts": [
+    "Contour plots",
+    "Gradient"
+   ],
+   "steps": [
+    {
+     "title": "Gradient from spacing",
+     "body": "Each line is 0.05 bar apart, so closely spaced lines mean a large pressure change over a short distance."
+    },
+    {
+     "title": "Compare regions",
+     "body": "At **R**, the 0.65 and 0.7 lines (and the next one) are squeezed together within the circle — steepest gradient. P and S sit at the top of pressure highs (flat), and Q lies between widely spaced 0.8/0.75 lines."
+    }
+   ],
+   "answer": {
+    "value": "R",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "P is at the centre of a high (0.9–0.95), where pressure is nearly flat."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Q lies in a broad gap between contours — gentle gradient."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "R has the most tightly packed contours, so pressure changes fastest there."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "S is at the centre of a high (0.95), nearly flat."
+    }
+   ],
+   "verification": "Several contour lines cross the R circle within a short distance, more than at any other circle."
+  }
+ }
+}
