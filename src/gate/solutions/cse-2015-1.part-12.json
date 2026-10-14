@@ -1,0 +1,1554 @@
+{
+  "paper": "cse-2015-1",
+  "version": 2,
+  "solutions": {
+    "cse-2015-1-cs-13": {
+      "approach": "A shift-reduce parser traces a rightmost derivation in reverse, and it only ever shifts while the stack can still be completed into a handle. So whatever is on the stack at a valid moment is a viable prefix.",
+      "concepts": [
+        "Shift-reduce parsing",
+        "Viable prefix",
+        "Handle"
+      ],
+      "steps": [
+        {
+          "title": "Define a viable prefix",
+          "body": "A **viable prefix** is a prefix of a right-sentential form that does not run past the right end of its handle. These are exactly the strings that can appear on the stack of a shift-reduce parser."
+        },
+        {
+          "title": "Stack contents at any valid state",
+          "body": "At every valid configuration $\\$\\,\\alpha \\mid w\\$$, the stack string $\\alpha$ is a viable prefix: the parser reduces as soon as the handle is on top, so $\\alpha$ never extends past a handle. Every prefix of a viable prefix is also viable, so the stack holds only viable prefixes."
+        },
+        {
+          "title": "Pick the option",
+          "body": "Only (C) says this. Viable prefixes are not limited to the top or bottom of the stack, and the stack is never free of them."
+        }
+      ],
+      "answer": {
+        "value": "The stack contains only a set of viable prefixes",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The stack is not split into \"viable\" and \"non-viable\" regions. Every prefix of the stack content, from the bottom up, is viable."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Same mistake as (A), looked at from the other end. The whole stack string is a viable prefix, not just the top part."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: at any valid state the stack content, and every prefix of it, is a viable prefix."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "False. The stack always holds a viable prefix, even the empty one at the start."
+        }
+      ],
+      "pitfalls": [
+        "Reading \"viable prefix\" as a symbol position on the stack. It is a property of the whole stack string read from the bottom."
+      ],
+      "verification": "This matches the definition used for LR parsing: the set of viable prefixes is a regular language recognised by the LR(0) automaton, and the parser stack always spells a string in that set. The official GATE key is C."
+    },
+    "cse-2015-1-cs-14": {
+      "approach": "The biconditional $p \\leftrightarrow q$ is true exactly when $p$ and $q$ have the same truth value. Check which option is true when they differ: that one is XOR, the negation.",
+      "concepts": [
+        "Biconditional",
+        "Logical equivalence",
+        "XOR"
+      ],
+      "steps": [
+        {
+          "title": "Standard forms of $p \\leftrightarrow q$",
+          "body": "$p \\leftrightarrow q \\equiv (p \\rightarrow q) \\wedge (q \\rightarrow p) \\equiv (\\neg p \\vee q) \\wedge (p \\vee \\neg q) \\equiv (p \\wedge q) \\vee (\\neg p \\wedge \\neg q)$."
+        },
+        {
+          "title": "Match the options",
+          "body": "(A) is $(p\\to q)\\wedge(q\\to p)$. (B) is $(p\\to q)\\wedge(q\\to p)$ written with one arrow. (D) says \"both true or both false\". All three are equivalent."
+        },
+        {
+          "title": "The odd one out",
+          "body": "(C) $(\\neg p \\wedge q) \\vee (p \\wedge \\neg q)$ is true exactly when $p \\ne q$. That is $p \\oplus q = \\neg(p \\leftrightarrow q)$, so it is **not** equivalent."
+        }
+      ],
+      "answer": {
+        "value": "$(\\neg p \\wedge q) \\vee (p \\wedge \\neg q)$",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$\\neg p \\vee q = p \\to q$ and $p \\vee \\neg q = q \\to p$, so this equals $p \\leftrightarrow q$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$(\\neg p \\vee q) = p \\to q$, combined with $q \\to p$, gives $p \\leftrightarrow q$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "This is exclusive OR, true when $p$ and $q$ differ. It is the negation of $p \\leftrightarrow q$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "True when both are false or both are true, which is exactly $p \\leftrightarrow q$."
+        }
+      ],
+      "pitfalls": [
+        "Mixing up the sum-of-products form of XNOR, which is (D), with that of XOR, which is (C)."
+      ],
+      "verification": "Try $p=1, q=0$: $p\\leftrightarrow q = 0$, while (C) gives $0 \\vee 1 = 1$. Options (A), (B) and (D) all give 0."
+    },
+    "cse-2015-1-cs-15": {
+      "approach": "Check each statement against the basic facts: XML is case-sensitive and requires every tag to be closed, while HTML is case-insensitive and lenient about closing tags.",
+      "concepts": [
+        "XML",
+        "HTML",
+        "Well-formedness"
+      ],
+      "steps": [
+        {
+          "title": "True statements",
+          "body": "**I** is true: XML was designed to describe structured data, which HTML cannot do. **III** is true: XML lets users define their own tags, while HTML has a fixed tag set."
+        },
+        {
+          "title": "False statements",
+          "body": "**II** is false because it has the facts reversed. XML is case-sensitive (`<Note>` and `<note>` are different tags) and HTML is not. **IV** is false because it is also reversed. A well-formed XML document must close every tag, while HTML tolerates unclosed tags such as `<p>`, `<li>` and `<br>`."
+        },
+        {
+          "title": "Answer",
+          "body": "The false statements are II and IV, which is option (C)."
+        }
+      ],
+      "answer": {
+        "value": "II and IV only",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Misses IV, which is also false."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "I is true. XML does support structured organisation of content."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: II and IV both state the facts the wrong way round."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "III is true, since XML allows user-defined tags."
+        }
+      ],
+      "pitfalls": [
+        "Missing that statements II and IV each swap XML and HTML."
+      ],
+      "verification": "The XML 1.0 well-formedness rules require matching end tags and case-sensitive names. HTML parsers accept unclosed tags and `<P>` is the same as `<p>`."
+    },
+    "cse-2015-1-cs-16": {
+      "approach": "$2^A$ is a set of sets. Something is an **element** of $2^A$ if it is a subset of $A$. Something is a **subset** of $2^A$ if every element of it is a subset of $A$.",
+      "concepts": [
+        "Power set",
+        "Membership vs subset"
+      ],
+      "given": "| Item | Test |\n|---|---|\n| $X \\in 2^A$ | $X \\subseteq A$ |\n| $X \\subseteq 2^A$ | every element of $X$ is a subset of $A$ |",
+      "steps": [
+        {
+          "title": "I and II",
+          "body": "I: $\\emptyset \\subseteq A$, so $\\emptyset \\in 2^A$. **True.**\n\nII: the empty set is a subset of every set, so $\\emptyset \\subseteq 2^A$. **True.**"
+        },
+        {
+          "title": "III and IV",
+          "body": "III: $5 \\in A$ and $\\{6\\} \\in A$, so $\\{5,\\{6\\}\\} \\subseteq A$ and therefore $\\{5,\\{6\\}\\} \\in 2^A$. **True.**\n\nIV: this would need $5 \\in 2^A$, which means $5 \\subseteq A$. But 5 is not a set. It also needs $\\{6\\} \\in 2^A$, which means $\\{6\\} \\subseteq A$, i.e. $6 \\in A$, and that fails. **False.**"
+        },
+        {
+          "title": "Answer",
+          "body": "I, II and III are true, which is option (C)."
+        }
+      ],
+      "answer": {
+        "value": "I, II and III only",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Leaves out II, which is true because $\\emptyset$ is a subset of every set."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Leaves out I, which is true because $\\emptyset \\subseteq A$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: I, II and III are true and IV is false."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Includes IV, which is false because $\\{6\\} \\not\\subseteq A$ (here $6 \\notin A$; only $\\{6\\} \\in A$)."
+        }
+      ],
+      "pitfalls": [
+        "Treating $\\in$ and $\\subseteq$ the same when the elements are themselves sets."
+      ],
+      "verification": "List the elements: $2^A$ has $2^3 = 8$ elements, $\\{\\emptyset, \\{5\\}, \\{\\{6\\}\\}, \\{\\{7\\}\\}, \\{5,\\{6\\}\\}, \\{5,\\{7\\}\\}, \\{\\{6\\},\\{7\\}\\}, A\\}$. Both $\\emptyset$ and $\\{5,\\{6\\}\\}$ appear, but neither 5 nor $\\{6\\}$ does."
+    },
+    "cse-2015-1-cs-17": {
+      "approach": "Ask which protocols open more than one TCP connection between the same client and server. FTP keeps a control connection plus separate data connections, and an HTTP client can open several parallel connections.",
+      "concepts": [
+        "FTP control/data connections",
+        "HTTP parallel connections"
+      ],
+      "steps": [
+        {
+          "title": "Protocols with several connections",
+          "body": "**FTP** uses a persistent control connection (port 21) and opens a new data connection for each file transfer or listing. **HTTP** clients (browsers) may open several parallel TCP connections to the same server to fetch objects concurrently."
+        },
+        {
+          "title": "Protocols with one connection",
+          "body": "**TELNET** runs a single interactive session over one connection. **SMTP** sends commands and mail over one connection per session."
+        },
+        {
+          "title": "Answer",
+          "body": "Both protocols in (A) HTTP, FTP can use multiple TCP connections."
+        }
+      ],
+      "answer": {
+        "value": "HTTP, FTP",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: HTTP uses parallel connections, and FTP uses a control connection plus data connections."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "TELNET uses a single connection."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "SMTP uses a single connection per session."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "SMTP uses a single connection per session."
+        }
+      ],
+      "pitfalls": [
+        "Remembering only FTP and missing that HTTP also allows parallel connections."
+      ],
+      "verification": "Kurose and Ross describe FTP as sending control information \"out-of-band\" on a separate connection, and note that browsers open 5 to 10 parallel TCP connections for HTTP."
+    },
+    "cse-2015-1-cs-18": {
+      "approach": "With $U$ having a unit diagonal (Crout form), multiply a general lower $L$ by a unit upper $U$ and match entries in order.",
+      "concepts": [
+        "LU decomposition",
+        "Crout method"
+      ],
+      "steps": [
+        {
+          "title": "Set up the product",
+          "body": "$$\\begin{bmatrix} l_{11} & 0 \\\\ l_{21} & l_{22} \\end{bmatrix}\\begin{bmatrix} 1 & u_{12} \\\\ 0 & 1 \\end{bmatrix} = \\begin{bmatrix} l_{11} & l_{11}u_{12} \\\\ l_{21} & l_{21}u_{12} + l_{22} \\end{bmatrix} = \\begin{bmatrix} 2 & 2 \\\\ 4 & 9 \\end{bmatrix}$$"
+        },
+        {
+          "title": "Match entries",
+          "body": "$l_{11} = 2$; $\\;l_{11}u_{12} = 2 \\Rightarrow u_{12} = 1$; $\\;l_{21} = 4$; $\\;l_{21}u_{12} + l_{22} = 9 \\Rightarrow 4 \\cdot 1 + l_{22} = 9 \\Rightarrow l_{22} = 5$."
+        }
+      ],
+      "answer": {
+        "value": "5",
+        "number": 5,
+        "matchesKey": true
+      },
+      "shortcut": "$\\det A = l_{11} l_{22}$ because $\\det U = 1$. So $l_{22} = \\det A / a_{11} = (18 - 8)/2 = 5$.",
+      "pitfalls": [
+        "Using the Doolittle form (unit diagonal on $L$), which gives $u_{22} = 5$ and $l_{22} = 1$."
+      ],
+      "verification": "$LU = \\begin{bmatrix}2&0\\\\4&5\\end{bmatrix}\\begin{bmatrix}1&1\\\\0&1\\end{bmatrix} = \\begin{bmatrix}2&2\\\\4&9\\end{bmatrix}$ ✓"
+    },
+    "cse-2015-1-cs-19": {
+      "approach": "Check each statement against how TCP works: sequence numbers count bytes, the RTO is the RTT estimate plus a safety margin, rwnd changes with the receiver buffer, and flow control caps the bytes in flight at rwnd.",
+      "concepts": [
+        "TCP sequence numbers",
+        "Retransmission timeout",
+        "Flow control"
+      ],
+      "steps": [
+        {
+          "title": "I: false",
+          "body": "TCP numbers **bytes**, not segments. If a segment starts at byte $m$ and carries $L$ bytes, the next segment starts at $m + L$, which equals $m+1$ only when $L = 1$."
+        },
+        {
+          "title": "II: true",
+          "body": "$\\text{RTO} = \\text{EstimatedRTT} + 4 \\cdot \\text{DevRTT} \\ge \\text{EstimatedRTT} = t$, because $\\text{DevRTT} \\ge 0$."
+        },
+        {
+          "title": "III: false",
+          "body": "The advertised window is $\\text{rwnd} = \\text{RcvBuffer} - (\\text{LastByteRcvd} - \\text{LastByteRead})$. It changes as the application reads data or as data piles up in the buffer."
+        },
+        {
+          "title": "IV: true",
+          "body": "Flow control requires $\\text{LastByteSent} - \\text{LastByteAcked} \\le \\text{rwnd}$. So the unacknowledged bytes never exceed the advertised window. Answer: I and III are false, which is option (B)."
+        }
+      ],
+      "answer": {
+        "value": "I and III only",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Misses I, which is false because sequence numbers advance by the segment length in bytes."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: I and III are the false statements."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "IV is true, since it is exactly the flow-control rule."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "II and IV are both true."
+        }
+      ],
+      "pitfalls": [
+        "Thinking TCP numbers segments. It numbers bytes."
+      ],
+      "verification": "Matches the official GATE key B."
+    },
+    "cse-2015-1-cs-20": {
+      "approach": "A Johnson (twisted-ring) counter shifts the register and feeds the **complement** of the last bit back into the first, so it cycles through $2n = 8$ states. Shift right, reading the bits as $Q_3Q_2Q_1Q_0$, and convert each state to decimal.",
+      "concepts": [
+        "Johnson counter",
+        "Shift register"
+      ],
+      "steps": [
+        {
+          "title": "Fill with 1s",
+          "body": "Feedback is $\\overline{Q_0} = 1$, so 1s enter from the left: $0000 \\to 1000 \\to 1100 \\to 1110 \\to 1111$.",
+          "scene": {
+            "reveal": 10,
+            "hl": [
+              {
+                "r": 4,
+                "tone": "accent"
+              }
+            ],
+            "caption": "Ones shift in until the register is full"
+          }
+        },
+        {
+          "title": "Empty with 0s",
+          "body": "Now $\\overline{Q_0} = 0$, so 0s enter: $1111 \\to 0111 \\to 0011 \\to 0001 \\to 0000$.",
+          "scene": {
+            "reveal": 18,
+            "hl": [
+              {
+                "r": 8,
+                "tone": "success"
+              }
+            ],
+            "caption": "Zeros shift in; back to 0000 after 8 clocks"
+          }
+        },
+        {
+          "title": "Read in decimal",
+          "body": "$0, 8, 12, 14, 15, 7, 3, 1, 0$, which is option (D). There are $2 \\times 4 = 8$ distinct states and only one bit changes per clock.",
+          "scene": {
+            "hl": [
+              {
+                "c": 1,
+                "tone": "accent"
+              }
+            ],
+            "caption": "Decimal sequence 0, 8, 12, 14, 15, 7, 3, 1, 0"
+          }
+        }
+      ],
+      "animation": {
+        "kind": "table",
+        "cols": [
+          "$Q_3Q_2Q_1Q_0$",
+          "Decimal"
+        ],
+        "rowLabels": [
+          "0",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8"
+        ],
+        "corner": "Clock",
+        "rows": [
+          [
+            "0000",
+            0
+          ],
+          [
+            "1000",
+            8
+          ],
+          [
+            "1100",
+            12
+          ],
+          [
+            "1110",
+            14
+          ],
+          [
+            "1111",
+            15
+          ],
+          [
+            "0111",
+            7
+          ],
+          [
+            "0011",
+            3
+          ],
+          [
+            "0001",
+            1
+          ],
+          [
+            "0000",
+            0
+          ]
+        ],
+        "reveal": 2,
+        "mono": true,
+        "caption": "Initial value 0000"
+      },
+      "answer": {
+        "value": "0, 8, 12, 14, 15, 7, 3, 1, 0",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "This is the same Johnson cycle shifted the other way (1s entering from the LSB end). The official key uses the right-shift reading, which gives (D)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Visits 9 distinct states, and moves such as 1 → 3 → 5 change two bits at once. That is not a Johnson counter."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Even numbers with steps like 2 → 4 change two bits. A 4-bit Johnson counter has 8 states with one-bit changes."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: the right-shifting Johnson sequence."
+        }
+      ],
+      "pitfalls": [
+        "Feeding back $Q_0$ itself instead of its complement. That gives a ring counter, which stays at 0000 forever.",
+        "Option (A) is the mirror-image sequence; the official key is (D)."
+      ],
+      "verification": "8 states = $2n$ for $n = 4$, every transition changes one bit, and the sequence returns to 0000. The official GATE key is D."
+    },
+    "cse-2015-1-cs-21": {
+      "approach": "With symmetric keys, each pair of people needs its own secret key, so count the unordered pairs.",
+      "concepts": [
+        "Symmetric-key cryptography",
+        "Combinations"
+      ],
+      "steps": [
+        {
+          "title": "One key per pair",
+          "body": "A key shared by persons $i$ and $j$ must be unknown to everyone else, so no two pairs can share a key. The same key serves both directions."
+        },
+        {
+          "title": "Count pairs",
+          "body": "$\\binom{N}{2} = \\dfrac{N(N-1)}{2}$."
+        }
+      ],
+      "answer": {
+        "value": "$N(N-1)/2$",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$2N$ is the count for public-key cryptography (a public and a private key per person), not for symmetric keys."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$N(N-1)$ counts ordered pairs. A symmetric key is shared by both people, so each pair is counted twice."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: one key per unordered pair."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$(N-1)^2$ has no counting meaning here."
+        }
+      ],
+      "verification": "$N = 3$ people (A, B, C) need keys AB, AC and BC, which is 3 keys, and $3 \\cdot 2/2 = 3$ ✓"
+    },
+    "cse-2015-1-cs-22": {
+      "approach": "A router decrements TTL, which forces a checksum recalculation, and fragmentation changes the length. It never rewrites the source address (NAT is not typical routing).",
+      "concepts": [
+        "IPv4 header",
+        "Router forwarding"
+      ],
+      "steps": [
+        {
+          "title": "Fields a router changes",
+          "body": "**TTL** is decremented at every hop. The header **checksum** is recomputed because the TTL changed. **Total length** (and the fragment offset/flags) change if the router fragments the datagram."
+        },
+        {
+          "title": "Field it leaves alone",
+          "body": "The **source address** identifies the original sender and is carried unchanged end to end. Answer (B)."
+        }
+      ],
+      "answer": {
+        "value": "Source address",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Recomputed at every hop because the TTL changes."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: a typical router does not modify the source address."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Decremented by 1 at every router."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Changes when the router fragments the datagram."
+        }
+      ],
+      "verification": "Matches RFC 791 forwarding behaviour and the official GATE key B."
+    },
+    "cse-2015-1-cs-23": {
+      "approach": "A plain BST is not balanced. In the worst case (keys inserted in sorted order) it becomes a chain of height $n-1$, and both insertion and deletion may walk the whole chain.",
+      "concepts": [
+        "Binary search tree",
+        "Skewed tree"
+      ],
+      "steps": [
+        {
+          "title": "Worst-case height",
+          "body": "Inserting $1, 2, \\dots, n$ in order gives a right-skewed chain of height $n - 1$."
+        },
+        {
+          "title": "Cost of both operations",
+          "body": "Insertion must reach a leaf position, which takes $\\Theta(n)$. Deletion must first find the key, possibly at depth $n-1$, which also takes $\\Theta(n)$. Answer (B)."
+        }
+      ],
+      "answer": {
+        "value": "$\\theta(n)$ for both insertion and deletion",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$\\Theta(\\log n)$ is guaranteed only for balanced trees such as AVL or red-black trees."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: on a skewed tree both operations walk a path of length $\\Theta(n)$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Deletion also needs a search down the same path, so it cannot be $\\Theta(\\log n)$ in the worst case."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Insertion is also $\\Theta(n)$ on a skewed tree."
+        }
+      ],
+      "verification": "For the chain 1 → 2 → … → n, inserting $n+1$ and deleting $n$ each visit $n$ nodes."
+    },
+    "cse-2015-1-cs-24": {
+      "approach": "This is a definition question. An index is **clustered** when the file’s record order matches (or nearly matches) the index’s search-key order.",
+      "concepts": [
+        "Clustered index",
+        "Dense vs sparse index"
+      ],
+      "steps": [
+        {
+          "title": "Definition",
+          "body": "An index is **clustered** if the data records are stored in the same, or close to the same, order as the index entries. Otherwise it is **unclustered**."
+        },
+        {
+          "title": "Why not dense or sparse",
+          "body": "Dense and sparse describe **how many** index entries there are (one per record, or one per block). They say nothing about record ordering. Answer (C)."
+        }
+      ],
+      "answer": {
+        "value": "Clustered",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Dense means one index entry per search-key value or record, which is not about ordering."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Sparse means entries for only some records (e.g. one per block). It needs a clustered file but is not the term defined here."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: this is the textbook definition of a clustered index."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Unclustered is the opposite: the record order is unrelated to the index order."
+        }
+      ],
+      "verification": "This is the wording of Ramakrishnan and Gehrke’s definition of a clustered index."
+    },
+    "cse-2015-1-cs-25": {
+      "approach": "Height $h$ is counted in edges. The maximum is a complete binary tree with $2^{h+1}-1$ nodes, and the minimum is a single path with $h+1$ nodes.",
+      "concepts": [
+        "Binary tree height",
+        "Node bounds"
+      ],
+      "steps": [
+        {
+          "title": "Maximum",
+          "body": "Levels $0$ to $5$ all full: $2^0 + 2^1 + \\dots + 2^5 = 2^6 - 1 = 63$."
+        },
+        {
+          "title": "Minimum",
+          "body": "A height-5 tree needs one root-to-leaf path of 5 edges, which has $5 + 1 = 6$ nodes. Answer (A)."
+        }
+      ],
+      "answer": {
+        "value": "63 and 6, respectively",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: maximum $2^6 - 1 = 63$, minimum $6$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "64 is not of the form $2^k - 1$, and 5 nodes would give height 4."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$32 = 2^5$ is the number of nodes on level 5 alone, not the whole tree."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "These are the counts for height 4 measured in edges (or height 5 measured in levels), which is the wrong convention."
+        }
+      ],
+      "pitfalls": [
+        "Counting height in nodes. The question defines it as the length of a path, i.e. the number of edges."
+      ],
+      "verification": "Check with height 1: maximum 3 nodes ($2^2 - 1$) and minimum 2 nodes ✓"
+    },
+    "cse-2015-1-cs-26": {
+      "approach": "Split each term with partial fractions; the sum telescopes.",
+      "concepts": [
+        "Partial fractions",
+        "Telescoping series"
+      ],
+      "steps": [
+        {
+          "title": "Partial fractions",
+          "body": "$\\dfrac{1}{x(x+1)} = \\dfrac{1}{x} - \\dfrac{1}{x+1}$."
+        },
+        {
+          "title": "Telescope",
+          "body": "$\\left(1 - \\tfrac12\\right) + \\left(\\tfrac12 - \\tfrac13\\right) + \\dots + \\left(\\tfrac{1}{99} - \\tfrac{1}{100}\\right) = 1 - \\dfrac{1}{100} = 0.99$."
+        }
+      ],
+      "answer": {
+        "value": "0.99",
+        "number": 0.99,
+        "matchesKey": true
+      },
+      "shortcut": "$\\sum_{x=1}^{n} \\frac{1}{x(x+1)} = \\frac{n}{n+1}$, so the answer is $\\frac{99}{100}$.",
+      "verification": "For $n = 2$: $\\frac12 + \\frac16 = \\frac23 = \\frac{n}{n+1}$ ✓"
+    },
+    "cse-2015-1-cs-27": {
+      "approach": "The join keeps every Performance row, but GROUP BY uses **Student_Name**, not Roll_No. Count the distinct names among the joined rows.",
+      "concepts": [
+        "Equi-join",
+        "GROUP BY"
+      ],
+      "steps": [
+        {
+          "title": "Join",
+          "body": "Every Performance row matches a student. Roll 1 → Raj (80, 70), roll 2 → Rohit (75, 65), roll 3 → Raj (80, 80). That gives 6 joined rows."
+        },
+        {
+          "title": "Group by name",
+          "body": "Two different students are both named Raj, so they merge into one group.\n\n| Student_Name | sum(Marks) |\n|---|---|\n| Raj | $80+70+80+80 = 310$ |\n| Rohit | $75+65 = 140$ |\n\nSo **2** rows are returned."
+        }
+      ],
+      "answer": {
+        "value": "2",
+        "number": 2,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Answering 3 by grouping on students (roll numbers) instead of on names."
+      ],
+      "verification": "Distinct Student_Name values in Student = {Raj, Rohit}, and each has at least one Performance row, so there are 2 groups."
+    },
+    "cse-2015-1-cs-28": {
+      "approach": "The table is XOR. Check commutativity from the symmetric rows, and associativity by noting that both bracketings give the parity of $p, q, r$.",
+      "concepts": [
+        "XOR",
+        "Commutativity",
+        "Associativity"
+      ],
+      "steps": [
+        {
+          "title": "Commutative",
+          "body": "Rows $(0,1)$ and $(1,0)$ both give 1, and the diagonal rows are symmetric anyway, so $p \\ne q = q \\ne p$."
+        },
+        {
+          "title": "Associative",
+          "body": "$(p \\oplus q) \\oplus r$ and $p \\oplus (q \\oplus r)$ are both 1 exactly when an odd number of $p, q, r$ are 1. For example $p=q=r=1$: $(1\\oplus1)\\oplus1 = 0 \\oplus 1 = 1$ and $1 \\oplus (1\\oplus1) = 1 \\oplus 0 = 1$. Answer (A)."
+        }
+      ],
+      "answer": {
+        "value": "Both commutative and associative",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: XOR is both commutative and associative."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "XOR is associative, since both bracketings compute parity."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "XOR is commutative, since the truth table is symmetric in $p$ and $q$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "XOR has both properties."
+        }
+      ],
+      "verification": "All 8 combinations of $(p,q,r)$ give equal results for both bracketings, because each equals $p+q+r \\bmod 2$."
+    },
+    "cse-2015-1-cs-29": {
+      "approach": "A frame goes out without collision in slot 1 exactly when **one** station transmits and the other three stay silent. Add the four disjoint cases.",
+      "concepts": [
+        "Slotted access",
+        "Independent events"
+      ],
+      "given": "| Station | $p_i$ | $1-p_i$ |\n|---|---|---|\n| $S_1$ | 0.1 | 0.9 |\n| $S_2$ | 0.2 | 0.8 |\n| $S_3$ | 0.3 | 0.7 |\n| $S_4$ | 0.4 | 0.6 |",
+      "steps": [
+        {
+          "title": "Each station alone",
+          "body": "$S_1$: $0.1 \\times 0.8 \\times 0.7 \\times 0.6 = 0.0336$\n\n$S_2$: $0.9 \\times 0.2 \\times 0.7 \\times 0.6 = 0.0756$\n\n$S_3$: $0.9 \\times 0.8 \\times 0.3 \\times 0.6 = 0.1296$\n\n$S_4$: $0.9 \\times 0.8 \\times 0.7 \\times 0.4 = 0.2016$"
+        },
+        {
+          "title": "Add",
+          "body": "$0.0336 + 0.0756 + 0.1296 + 0.2016 = 0.4404$."
+        }
+      ],
+      "answer": {
+        "value": "0.4404 (about 0.44)",
+        "number": 0.4404,
+        "matchesKey": true
+      },
+      "shortcut": "Let $Q = 0.9 \\cdot 0.8 \\cdot 0.7 \\cdot 0.6 = 0.3024$. The answer is $Q \\sum \\frac{p_i}{1-p_i} = 0.3024\\left(\\tfrac19 + \\tfrac14 + \\tfrac37 + \\tfrac23\\right) = 0.3024 \\times 1.4563 = 0.4404$.",
+      "pitfalls": [
+        "Adding the probabilities that stations transmit without requiring the others to stay silent.",
+        "Computing only the probability that nobody transmits (0.3024)."
+      ],
+      "verification": "The shortcut gives the same 0.4404. The official key accepts 0.42 to 0.46."
+    },
+    "cse-2015-1-cs-30": {
+      "approach": "Simulate both algorithms from track 50. As in the official key, SCAN reverses at the last request in its direction (track 90) instead of running on to track 100.",
+      "concepts": [
+        "SSTF",
+        "SCAN",
+        "Seek distance"
+      ],
+      "steps": [
+        {
+          "title": "SSTF order",
+          "body": "Start at 50, and the request for 50 costs 0. Nearest is 45 (5). From 45, track 60 is 15 away and track 25 is 20 away, so go to 60 (15). Then 70 (10), 80 (10), 90 (10), then 25 (65), 20 (5) and 10 (10).",
+          "scene": {
+            "reveal": 8,
+            "hl": [
+              {
+                "r": 1,
+                "tone": "accent"
+              }
+            ],
+            "caption": "SSTF goes up first because 60 (15) beats 25 (20)"
+          }
+        },
+        {
+          "title": "SSTF total",
+          "body": "$5 + 15 + 10 + 10 + 10 + 65 + 5 + 10 = 130$ tracks.",
+          "scene": {
+            "reveal": 16,
+            "hl": [
+              {
+                "r": 7,
+                "tone": "warning"
+              }
+            ],
+            "caption": "SSTF total = 130"
+          }
+        },
+        {
+          "title": "SCAN total",
+          "body": "Going up: $50 \\to 60 \\to 70 \\to 80 \\to 90$ costs $40$. Coming down: $90 \\to 45 \\to 25 \\to 20 \\to 10$ costs $80$. Total $= 120$ tracks.",
+          "scene": {
+            "kind": "table",
+            "cols": [
+              "Leg",
+              "Tracks"
+            ],
+            "rows": [
+              [
+                "50 → 90 (up)",
+                40
+              ],
+              [
+                "90 → 10 (down)",
+                80
+              ],
+              [
+                "SCAN total",
+                120
+              ],
+              [
+                "SSTF − SCAN",
+                "130 − 120 = 10"
+              ]
+            ],
+            "hl": [
+              {
+                "r": 3,
+                "tone": "success"
+              }
+            ],
+            "caption": "SCAN = 120, extra for SSTF = 10"
+          }
+        },
+        {
+          "title": "Difference",
+          "body": "$130 - 120 = 10$ tracks."
+        }
+      ],
+      "animation": {
+        "kind": "table",
+        "cols": [
+          "Next track",
+          "Seek"
+        ],
+        "rowLabels": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8"
+        ],
+        "corner": "SSTF",
+        "rows": [
+          [
+            "45",
+            5
+          ],
+          [
+            "60",
+            15
+          ],
+          [
+            "70",
+            10
+          ],
+          [
+            "80",
+            10
+          ],
+          [
+            "90",
+            10
+          ],
+          [
+            "25",
+            65
+          ],
+          [
+            "20",
+            5
+          ],
+          [
+            "10",
+            10
+          ]
+        ],
+        "reveal": 0,
+        "mono": true,
+        "caption": "Head at 50 (request 50 served at 0 cost)"
+      },
+      "answer": {
+        "value": "10",
+        "number": 10,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "If SCAN runs all the way to track 99/100 before reversing, it costs $140$ (or $138$) and SSTF would be cheaper. The question’s intended answer (official key 10) assumes reversal at the last request, 90.",
+        "Choosing 25 after 45 in SSTF. Track 60 is closer (15 < 20)."
+      ],
+      "verification": "SSTF and SCAN both visit all 9 requests. Each total was added twice, and the official key is 10."
+    },
+    "cse-2015-1-cs-31": {
+      "approach": "For every $i$, the $j$-loop sets $p \\approx \\log_2 n$. The $k$-loop then doubles $k$ until it reaches $p$, so it runs about $\\log_2 p = \\log\\log n$ times. Multiply by the $n-1$ outer iterations.",
+      "concepts": [
+        "Loop analysis",
+        "Repeated halving/doubling"
+      ],
+      "steps": [
+        {
+          "title": "The $j$-loop",
+          "body": "$j = n, n/2, n/4, \\dots$ while $j > 1$, so $p = \\lfloor \\log_2 n \\rfloor$ after each outer iteration ($p$ is reset to 0 first)."
+        },
+        {
+          "title": "The $k$-loop",
+          "body": "$k = 1, 2, 4, \\dots$ while $k < p$, which runs $\\lceil \\log_2 p \\rceil \\approx \\log_2 \\log_2 n$ times. Each run adds 1 to $q$."
+        },
+        {
+          "title": "Total",
+          "body": "$q = (n - 1)\\,\\lceil \\log_2 \\lfloor \\log_2 n \\rfloor \\rceil \\approx n \\log(\\log n)$. Answer (D)."
+        }
+      ],
+      "answer": {
+        "value": "$n \\log(\\log n)$",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "There are no three nested loops each running about $n$ times."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "This would hold only if the $k$-loop ran $\\log n$ times, but it doubles up to $p = \\log n$, so it runs $\\log\\log n$ times."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$n \\log n$ is the number of $j$-loop steps, but those increment $p$, not $q$."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: $q \\approx n \\log\\log n$."
+        }
+      ],
+      "pitfalls": [
+        "Counting the $j$-loop work as the return value. The function returns $q$, which only the $k$-loop increments."
+      ],
+      "verification": "Running the code: $n = 65536$ gives $p = 16$ and 4 $k$-iterations per $i$, so $q = 65535 \\times 4 = 262140 = (n-1)\\log_2\\log_2 n$ ✓"
+    },
+    "cse-2015-1-cs-32": {
+      "approach": "Put the new key in the next free slot (index 10), then sift it up, swapping with its parent at $\\lfloor i/2 \\rfloor$ while it is larger.",
+      "concepts": [
+        "Max heap",
+        "Heap insertion (sift-up)"
+      ],
+      "steps": [
+        {
+          "title": "Append",
+          "body": "Place 35 at index 10. Its parent is index $\\lfloor 10/2 \\rfloor = 5$, which holds 15.",
+          "scene": {
+            "cells": [
+              {
+                "v": 40,
+                "id": "n40"
+              },
+              {
+                "v": 30,
+                "id": "n30"
+              },
+              {
+                "v": 20,
+                "id": "n20"
+              },
+              {
+                "v": 10,
+                "id": "n10"
+              },
+              {
+                "v": 15,
+                "id": "n15"
+              },
+              {
+                "v": 16,
+                "id": "n16"
+              },
+              {
+                "v": 17,
+                "id": "n17"
+              },
+              {
+                "v": 8,
+                "id": "n8"
+              },
+              {
+                "v": 4,
+                "id": "n4"
+              },
+              {
+                "v": 35,
+                "id": "n35"
+              }
+            ],
+            "hl": [
+              {
+                "at": [
+                  9,
+                  9
+                ],
+                "tone": "accent"
+              },
+              {
+                "at": [
+                  4,
+                  4
+                ],
+                "tone": "warning"
+              }
+            ],
+            "pointers": [
+              {
+                "name": "new",
+                "at": 9
+              }
+            ],
+            "caption": "35 at index 10, parent 15 at index 5"
+          }
+        },
+        {
+          "title": "Swap with 15",
+          "body": "$35 > 15$, so swap. 35 is now at index 5, and its parent is index 2, which holds 30.",
+          "scene": {
+            "cells": [
+              {
+                "v": 40,
+                "id": "n40"
+              },
+              {
+                "v": 30,
+                "id": "n30"
+              },
+              {
+                "v": 20,
+                "id": "n20"
+              },
+              {
+                "v": 10,
+                "id": "n10"
+              },
+              {
+                "v": 35,
+                "id": "n35"
+              },
+              {
+                "v": 16,
+                "id": "n16"
+              },
+              {
+                "v": 17,
+                "id": "n17"
+              },
+              {
+                "v": 8,
+                "id": "n8"
+              },
+              {
+                "v": 4,
+                "id": "n4"
+              },
+              {
+                "v": 15,
+                "id": "n15"
+              }
+            ],
+            "hl": [
+              {
+                "at": [
+                  4,
+                  4
+                ],
+                "tone": "accent"
+              },
+              {
+                "at": [
+                  1,
+                  1
+                ],
+                "tone": "warning"
+              }
+            ],
+            "pointers": [
+              {
+                "name": "new",
+                "at": 4
+              }
+            ],
+            "caption": "35 ↔ 15; next compare with 30"
+          }
+        },
+        {
+          "title": "Swap with 30",
+          "body": "$35 > 30$, so swap. 35 is now at index 2, and its parent is index 1, which holds 40.",
+          "scene": {
+            "cells": [
+              {
+                "v": 40,
+                "id": "n40"
+              },
+              {
+                "v": 35,
+                "id": "n35"
+              },
+              {
+                "v": 20,
+                "id": "n20"
+              },
+              {
+                "v": 10,
+                "id": "n10"
+              },
+              {
+                "v": 30,
+                "id": "n30"
+              },
+              {
+                "v": 16,
+                "id": "n16"
+              },
+              {
+                "v": 17,
+                "id": "n17"
+              },
+              {
+                "v": 8,
+                "id": "n8"
+              },
+              {
+                "v": 4,
+                "id": "n4"
+              },
+              {
+                "v": 15,
+                "id": "n15"
+              }
+            ],
+            "hl": [
+              {
+                "at": [
+                  1,
+                  1
+                ],
+                "tone": "accent"
+              },
+              {
+                "at": [
+                  0,
+                  0
+                ],
+                "tone": "warning"
+              }
+            ],
+            "pointers": [
+              {
+                "name": "new",
+                "at": 1
+              }
+            ],
+            "caption": "35 ↔ 30; next compare with 40"
+          }
+        },
+        {
+          "title": "Stop",
+          "body": "$35 < 40$, so the heap property holds. Result: $40, 35, 20, 10, 30, 16, 17, 8, 4, 15$, which is option (B).",
+          "scene": {
+            "hl": [
+              {
+                "at": [
+                  1,
+                  1
+                ],
+                "tone": "success"
+              }
+            ],
+            "pointers": [],
+            "caption": "Final heap matches option (B)"
+          }
+        }
+      ],
+      "animation": {
+        "kind": "array",
+        "label": "heap (index 1–9)",
+        "cells": [
+          {
+            "v": 40,
+            "id": "n40"
+          },
+          {
+            "v": 30,
+            "id": "n30"
+          },
+          {
+            "v": 20,
+            "id": "n20"
+          },
+          {
+            "v": 10,
+            "id": "n10"
+          },
+          {
+            "v": 15,
+            "id": "n15"
+          },
+          {
+            "v": 16,
+            "id": "n16"
+          },
+          {
+            "v": 17,
+            "id": "n17"
+          },
+          {
+            "v": 8,
+            "id": "n8"
+          },
+          {
+            "v": 4,
+            "id": "n4"
+          }
+        ],
+        "caption": "Max heap before inserting 35"
+      },
+      "answer": {
+        "value": "40, 35, 20, 10, 30, 16, 17, 8, 4, 15",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "35 is left at index 10 below its parent 15, which violates the max-heap property."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: 35 sifts up past 15 and 30 and stops below 40."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Stops after one swap. 35 is still under 30 at index 2."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Moves 35 to index 2 but sends 30 to index 10 as if they swapped directly. Index 10’s parent is index 5, so 30 cannot go there."
+        }
+      ],
+      "verification": "Check every parent–child pair in (B): 40 ≥ 35, 20; 35 ≥ 10, 30; 20 ≥ 16, 17; 10 ≥ 8, 4; 30 ≥ 15 ✓"
+    },
+    "cse-2015-1-cs-33": {
+      "approach": "The loop computes integer division by repeated subtraction. Find the loop invariant and add the exit condition.",
+      "concepts": [
+        "Loop invariant",
+        "Postcondition",
+        "Integer division"
+      ],
+      "steps": [
+        {
+          "title": "Invariant",
+          "body": "Initially $q = 0$ and $r = x$, so $x = qy + r$. Each iteration does $r \\leftarrow r - y$ and $q \\leftarrow q + 1$, so $(q+1)y + (r - y) = qy + r = x$. The invariant $x = qy + r$ holds throughout."
+        },
+        {
+          "title": "Exit",
+          "body": "The loop stops when the guard $r \\ge y$ fails, i.e. $r < y$. Postcondition: $x = qy + r \\wedge r < y$, which is option (B). It is the quotient-remainder relation."
+        }
+      ],
+      "answer": {
+        "value": "$\\{x = qy + r \\wedge r < y\\}$",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$r = qx + y$ swaps the roles of the variables. With $x = 7, y = 3$ the result is $q = 2, r = 1$, and $1 \\ne 2 \\cdot 7 + 3$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: the invariant $x = qy + r$ plus the negated guard $r < y$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$y = qx + r$ is the wrong relation. Also $0 < r$ fails when $y$ divides $x$, where $r = 0$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Not implied: for $x = 7, y = 3$ the result is $q = 2, r = 1$, and $3 < -2$ is false."
+        }
+      ],
+      "verification": "Trace $x = 7, y = 3$: $(q, r) = (0, 7) \\to (1, 4) \\to (2, 1)$, stopping because $1 < 3$. Check: $7 = 2 \\cdot 3 + 1$ ✓"
+    },
+    "cse-2015-1-cs-34": {
+      "approach": "The lattice is the diamond $M_3$, which is not distributive. Find the triples that break $x \\vee (y \\wedge z) = (x \\vee y) \\wedge (x \\vee z)$ and compare with $5^3 = 125$.",
+      "concepts": [
+        "Lattice",
+        "Distributive law",
+        "$M_3$ diamond"
+      ],
+      "steps": [
+        {
+          "title": "Join and meet",
+          "body": "$p$ is the bottom and $t$ is the top. For distinct middle elements, $q \\vee r = t$ and $q \\wedge r = p$ (similarly for every other pair among $q, r, s$)."
+        },
+        {
+          "title": "A failing triple",
+          "body": "$x = q, y = r, z = s$: LHS $= q \\vee (r \\wedge s) = q \\vee p = q$; RHS $= (q \\vee r) \\wedge (q \\vee s) = t \\wedge t = t$. Since $q \\ne t$, the identity fails."
+        },
+        {
+          "title": "Count the failures",
+          "body": "If any of $x, y, z$ is $p$ or $t$, or if two of them are equal, the identity holds. It fails only when $x, y, z$ are three **distinct** elements of $\\{q, r, s\\}$, which gives $3! = 6$ triples."
+        },
+        {
+          "title": "Probability",
+          "body": "$p_r = \\dfrac{125 - 6}{125} = \\dfrac{119}{125} = 0.952$, so $\\tfrac15 < p_r < 1$. Answer (D)."
+        }
+      ],
+      "animation": {
+        "kind": "graph",
+        "directed": false,
+        "nodes": [
+          {
+            "id": "t",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "id": "q",
+            "x": 0,
+            "y": 1
+          },
+          {
+            "id": "r",
+            "x": 2,
+            "y": 1
+          },
+          {
+            "id": "s",
+            "x": 4,
+            "y": 1
+          },
+          {
+            "id": "p",
+            "x": 2,
+            "y": 2
+          }
+        ],
+        "edges": [
+          {
+            "from": "t",
+            "to": "q"
+          },
+          {
+            "from": "t",
+            "to": "r"
+          },
+          {
+            "from": "t",
+            "to": "s"
+          },
+          {
+            "from": "q",
+            "to": "p"
+          },
+          {
+            "from": "r",
+            "to": "p"
+          },
+          {
+            "from": "s",
+            "to": "p"
+          }
+        ],
+        "tones": {
+          "q": "accent",
+          "r": "warning",
+          "s": "warning"
+        },
+        "caption": "x = q, y = r, z = s: LHS = q but RHS = t"
+      },
+      "answer": {
+        "value": "$\\frac15 < p_r < 1$",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Most triples satisfy the law, e.g. any triple containing $p$ or $t$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "The triple $(q, r, s)$ breaks it, so $p_r < 1$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Only 6 of 125 triples fail, so $p_r = 0.952$, far above $\\tfrac15$."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: $p_r = 119/125$."
+        }
+      ],
+      "pitfalls": [
+        "Concluding $p_r = 0$ because the lattice is \"not distributive\". Non-distributive only means that at least one triple fails."
+      ],
+      "verification": "A brute-force check of all 125 triples finds exactly 6 failures: the permutations of $(q, r, s)$."
+    }
+  }
+}
