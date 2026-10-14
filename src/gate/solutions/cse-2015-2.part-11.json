@@ -1,0 +1,1365 @@
+{
+  "paper": "cse-2015-2",
+  "version": 2,
+  "solutions": {
+    "cse-2015-2-ga-1": {
+      "approach": "Check adverb placement in each blank. \"Completely forgot\" is the natural order for a degree adverb before the verb, and \"just don't know\" (= simply do not know) is the idiomatic form; \"don't just know\" changes the meaning to \"do more than merely know\".",
+      "concepts": [
+        "Adverb placement",
+        "Idiomatic usage"
+      ],
+      "steps": [
+        {
+          "title": "First blank",
+          "body": "\"We **completely forgot** our friend's birthday\" — the degree adverb sits before the main verb. \"Forgot completely\" followed directly by the object is awkward (the adverb would normally come after the object). So the first part is *completely forgot* → A or C."
+        },
+        {
+          "title": "Second blank",
+          "body": "\"We **just don't know** how to make it up to him\" expresses helplessness (*just* = simply). \"We **don't just know** how…\" would mean \"we do not merely know how\", which makes no sense here. So the second part is *just don't know* → C."
+        }
+      ],
+      "answer": {
+        "value": "completely forgot --- just don't know",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "First part fine, but \"don't just know\" means \"do more than merely know\" — wrong meaning."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "\"forgot completely our friend's birthday\" is awkward word order, and \"don't just know\" is wrong."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Natural adverb order in both blanks: \"completely forgot\" and \"just don't know\". Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Second part is fine, but \"forgot completely\" before the object is awkward."
+        }
+      ],
+      "pitfalls": [
+        "Treating \"don't just know\" and \"just don't know\" as equivalent — the position of *just* changes the meaning."
+      ],
+      "verification": "Read the completed sentence aloud with each pair; only C reads naturally with the intended meaning."
+    },
+    "cse-2015-2-ga-2": {
+      "approach": "*Personnel* is a noun meaning the people employed in an organisation; *personal* is the adjective meaning \"of one person\". Pick the sentence that needs the noun.",
+      "concepts": [
+        "Confusable words",
+        "personnel vs personal"
+      ],
+      "steps": [
+        {
+          "title": "Meaning",
+          "body": "*personnel* (noun) = staff, employees. *personal* (adjective) = belonging to an individual."
+        },
+        {
+          "title": "Test each sentence",
+          "body": "A jet, a diary and an aspect all need the adjective *personal*. Only \"All **personnel** are being given the day off\" uses the noun meaning staff."
+        }
+      ],
+      "answer": {
+        "value": "All personnel are being given the day off.",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Should be \"personal jet\" (adjective)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Should be \"personal diary\" (adjective)."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "\"All personnel\" = all staff; correct use of the noun."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Should be \"a personal aspect\" (adjective)."
+        }
+      ],
+      "verification": "Substitute \"staff\" for the word: only sentence C still makes sense."
+    },
+    "cse-2015-2-ga-3": {
+      "approach": "Since $|x| \\ge 0$, $f(x) = 1 - |x|$ is largest when $|x|$ is smallest, i.e. at $x = 0$.",
+      "concepts": [
+        "Modulus function",
+        "Maximum of a function"
+      ],
+      "steps": [
+        {
+          "title": "Bound the function",
+          "body": "For every $x$, $|x| \\ge 0$, so $f(x) = 1 - |x| \\le 1 - 0 = 1$."
+        },
+        {
+          "title": "Where equality holds",
+          "body": "$|x| = 0 \\iff x = 0$, which lies in $[-1, 1]$. So the maximum is at $x = 0$ with $f(0) = 1 - 0 = 1$."
+        }
+      ],
+      "answer": {
+        "value": "$x = 0$, maximum value $1$",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The point $x = 0$ is right but $f(0) = 1$, not $-1$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$f(-1) = 1 - 1 = 0$ is the minimum, not the maximum."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Maximum at $x = 0$, value $f(0) = 1$. Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$f(-1) = 0$, and $f$ never exceeds 1, so value 2 is impossible."
+        }
+      ],
+      "verification": "The graph is an inverted V with apex $(0, 1)$ and endpoints $(\\pm1, 0)$."
+    },
+    "cse-2015-2-ga-4": {
+      "approach": "Find the umbrella word for garments. *Apparel* means clothing in general; the other words refer to material.",
+      "concepts": [
+        "Vocabulary",
+        "Hypernyms"
+      ],
+      "steps": [
+        {
+          "title": "Word meanings",
+          "body": "*Fabric* and *textile* are cloth/material; *fibre* is the thread from which cloth is made; *apparel* is clothing (skirts, trousers, shirts…)."
+        },
+        {
+          "title": "Choose",
+          "body": "Only *apparel* is a generic term for items of clothing."
+        }
+      ],
+      "answer": {
+        "value": "apparel",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Fabric is the cloth a garment is made of, not the garment."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Textile is woven or knitted material, not clothing items."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Fibre is the raw strand used to make yarn and cloth."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Apparel = clothing in general; covers skirts, trousers, shirts. Correct."
+        }
+      ],
+      "verification": "\"The store sells apparel\" naturally means it sells clothes — confirms D."
+    },
+    "cse-2015-2-ga-5": {
+      "approach": "Check each statement separately: each one alone fixes the weight $w$ of one pole, hence the total $10w$.",
+      "concepts": [
+        "Data sufficiency",
+        "Linear equations"
+      ],
+      "steps": [
+        {
+          "title": "Statement I alone",
+          "body": "$\\frac{w}{4} = 5 \\Rightarrow w = 20$ kg, so total $= 10 \\times 20 = 200$ kg. Sufficient."
+        },
+        {
+          "title": "Statement II alone",
+          "body": "$10w = 2w + 160 \\Rightarrow 8w = 160 \\Rightarrow w = 20$ kg, total $= 200$ kg. Sufficient."
+        },
+        {
+          "title": "Conclusion",
+          "body": "Either statement alone answers the question."
+        }
+      ],
+      "answer": {
+        "value": "Either I or II alone is sufficient.",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "False — I alone gives $w = 20$ kg."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "False — II alone gives $8w = 160$, $w = 20$ kg."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Each statement alone gives total 200 kg. Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "False — each statement alone is already enough."
+        }
+      ],
+      "verification": "Both statements give the same total, 200 kg, so they are consistent."
+    },
+    "cse-2015-2-ga-6": {
+      "approach": "An AP has a constant difference $d$. Scaling or shifting every term keeps the difference constant; squaring does not.",
+      "concepts": [
+        "Arithmetic progression"
+      ],
+      "steps": [
+        {
+          "title": "I and II",
+          "body": "Let the terms be $a, a+d, a+2d, \\dots$. Doubling: difference $2(a+d) - 2a = 2d$, constant. Subtracting 3: difference $(a+d-3)-(a-3) = d$, constant. Both are APs."
+        },
+        {
+          "title": "III",
+          "body": "Squares: $(a+d)^2 - a^2 = 2ad + d^2$ and $(a+2d)^2 - (a+d)^2 = 2ad + 3d^2$. They differ by $2d^2 \\ne 0$ (for $d \\ne 0$). Example: 1, 2, 3 → 1, 4, 9 (differences 3, 5). Not an AP."
+        }
+      ],
+      "answer": {
+        "value": "I and II",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Misses II — subtracting a constant keeps the common difference."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Both scaling (I) and shifting (II) preserve an AP. Correct."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "III is not an AP: 1, 4, 9 has differences 3 and 5."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "III is not an AP, and II is wrongly left out."
+        }
+      ],
+      "verification": "Example 1, 2, 3, 4, 5: I → 2, 4, 6, 8, 10 (AP); II → −2, −1, 0, 1, 2 (AP); III → 1, 4, 9, 16, 25 (not AP)."
+    },
+    "cse-2015-2-ga-7": {
+      "approach": "Put O at the origin with north = $+y$ and east = $+x$, find coordinates of M and P, then use the distance formula.",
+      "concepts": [
+        "Coordinate geometry",
+        "Directions",
+        "Distance formula"
+      ],
+      "steps": [
+        {
+          "title": "Place the points",
+          "body": "O $= (0, 0)$. P is 2 km south of O: P $= (0, -2)$.\n\nN is 1 km southeast of O: N $= \\left(\\frac{1}{\\sqrt2}, -\\frac{1}{\\sqrt2}\\right) = (0.7071, -0.7071)$.\n\nM is 4 km north of N: M $= (0.7071, -0.7071 + 4) = (0.7071, 3.2929)$."
+        },
+        {
+          "title": "Distance MP",
+          "body": "$\\Delta x = 0.7071$, $\\Delta y = 3.2929 - (-2) = 5.2929$.\n\n$MP^2 = 0.7071^2 + 5.2929^2 = 0.5 + 28.0148 = 28.5148$.\n\n$MP = \\sqrt{28.5148} \\approx 5.34$ km."
+        }
+      ],
+      "answer": {
+        "value": "5.34 km",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$\\sqrt{28.51} \\approx 5.34$. Correct."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Would need $MP^2 \\approx 45.4$; does not match."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "28.5 is $MP^2$, not $MP$ — forgot the square root."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Wrong value; does not come from the geometry."
+        }
+      ],
+      "pitfalls": [
+        "Reporting $MP^2 = 28.5$ (option C) instead of its square root."
+      ],
+      "verification": "Sanity check: the vertical gap alone is about 5.29 km and the horizontal gap is small (0.71 km), so MP is just over 5.29 — 5.34 fits."
+    },
+    "cse-2015-2-ga-8": {
+      "approach": "Use the area method: area($PQR$) = area($PQS$) + area($PSR$) with $\\angle QPS = \\angle SPR = 60^\\circ$ and $\\angle QPR = 120^\\circ$.",
+      "concepts": [
+        "Angle bisector length",
+        "Area of triangle $\\frac12 ab\\sin C$"
+      ],
+      "given": "| Quantity | Value |\n|---|---|\n| $PQ$ | $r$ |\n| $PR$ | $q$ |\n| $\\angle QPS = \\angle SPR$ | $60^\\circ$ |\n| $\\angle QPR$ | $120^\\circ$ |",
+      "steps": [
+        {
+          "title": "Split the area",
+          "body": "$\\frac12 qr\\sin120^\\circ = \\frac12 r\\cdot PS\\sin60^\\circ + \\frac12 q\\cdot PS\\sin60^\\circ$."
+        },
+        {
+          "title": "Simplify",
+          "body": "Since $\\sin120^\\circ = \\sin60^\\circ$, cancel $\\frac12\\sin60^\\circ$ from both sides: $qr = PS\\,(r + q)$.\n\nSo $PS = \\dfrac{qr}{q + r}$."
+        }
+      ],
+      "answer": {
+        "value": "$PS = \\dfrac{qr}{q+r}$",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "This is the reciprocal of the correct expression."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Matches $PS = \\frac{qr}{q+r}$ from the area split. Correct."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "That is the hypotenuse length for a right angle at P; here $\\angle P = 120^\\circ$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Wrong dimensions and wrong form; not derived from the geometry."
+        }
+      ],
+      "shortcut": "General bisector formula $PS = \\frac{2qr\\cos(P/2)}{q+r}$; with $\\cos60^\\circ = \\frac12$ it gives $\\frac{qr}{q+r}$ directly.",
+      "verification": "Equilateral-like check $q = r = 2$: $PS = \\frac{4}{4} = 1$. With $\\angle P = 120^\\circ$, the bisector is the altitude, $PS = 2\\cos60^\\circ = 1$. ✓"
+    },
+    "cse-2015-2-ga-9": {
+      "approach": "Evaluate from the inside out: first $h(2,5,7,3)$, then apply $fg = \\max \\times \\min$ to the four resulting arguments.",
+      "concepts": [
+        "Function evaluation",
+        "Remainder (mod)"
+      ],
+      "steps": [
+        {
+          "title": "Inner $h(2, 5, 7, 3)$",
+          "body": "$p \\times q = 2 \\times 5 = 10$, $r \\times s = 7 \\times 3 = 21$. Since $21 > 10$, $h$ = remainder of $21 / 10 = 1$."
+        },
+        {
+          "title": "Outer $fg(1, 4, 6, 8)$",
+          "body": "$f = \\max(1, 4, 6, 8) = 8$, $g = \\min(1, 4, 6, 8) = 1$.\n\n$fg = f \\times g = 8 \\times 1 = 8$."
+        }
+      ],
+      "answer": {
+        "value": "8",
+        "number": 8,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Taking the quotient $\\lfloor 21/10 \\rfloor = 2$ instead of the remainder 1.",
+        "Treating $fg$ as $f(g(\\dots))$ instead of the product $f \\times g$ (defined like $fgh$)."
+      ],
+      "verification": "Recomputed: $21 = 2 \\times 10 + 1$, so remainder 1; arguments 1, 4, 6, 8 are distinct as required; $8 \\times 1 = 8$."
+    },
+    "cse-2015-2-ga-10": {
+      "approach": "Check each sentence for agreement, adjective/adverb use and verb form. Only A has no error.",
+      "concepts": [
+        "Subject–verb agreement",
+        "Adverb vs adjective",
+        "Verb forms"
+      ],
+      "steps": [
+        {
+          "title": "Find the errors",
+          "body": "- B: \"there **were** no needed information\" — *information* is uncountable, needs \"was\".\n- C: \"not **real** useful\" — an adverb is needed: \"really useful\".\n- D: \"would not **had** been\" — after a modal use the base form: \"would not have been\"."
+        },
+        {
+          "title": "Conclusion",
+          "body": "A (\"Since the report lacked needed information, it was of no use to them.\") is grammatically correct."
+        }
+      ],
+      "answer": {
+        "value": "Since the report lacked needed information, it was of no use to them.",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "No grammatical error. Correct."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "\"were\" disagrees with uncountable \"information\"."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "\"real useful\" — adjective used where the adverb \"really\" is required."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "\"would not had been\" — modal must be followed by \"have\"."
+        }
+      ],
+      "verification": "Correcting B, C, D each needs a change; A needs none."
+    },
+    "cse-2015-2-cs-1": {
+      "approach": "The \"sum stays constant\" rule is an integrity constraint on the database state; preserving such constraints is the Consistency property of ACID.",
+      "concepts": [
+        "ACID properties",
+        "Consistency"
+      ],
+      "steps": [
+        {
+          "title": "Match the property",
+          "body": "Atomicity = all-or-nothing execution; Consistency = a transaction takes the database from one valid state to another (respects constraints such as $x + y$ unchanged); Isolation = concurrent transactions do not interfere; Durability = committed changes survive failures."
+        },
+        {
+          "title": "Apply",
+          "body": "The transfer moves 50 from $x$ to $y$, so $x + y$ is unchanged — that invariant is a consistency requirement."
+        }
+      ],
+      "answer": {
+        "value": "Consistency",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Atomicity ensures both writes happen or neither; it is not the constraint itself."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Keeping $x + y$ constant is an integrity constraint — Consistency. Correct."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Isolation is about concurrent transactions, not this invariant."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Durability is about surviving crashes after commit."
+        }
+      ],
+      "verification": "Standard textbook (Silberschatz) example: the sum-preservation requirement of the funds transfer is labelled the consistency requirement."
+    },
+    "cse-2015-2-cs-2": {
+      "approach": "$Q_1 \\le_p$ 3-SAT puts $Q_1$ in NP (3-SAT ∈ NP). 3-SAT $\\le_p Q_2$ makes $Q_2$ NP-hard (3-SAT is NP-complete).",
+      "concepts": [
+        "Polynomial-time reduction",
+        "NP",
+        "NP-hard"
+      ],
+      "steps": [
+        {
+          "title": "What $Q_1 \\le_p$ 3-SAT gives",
+          "body": "A problem reducible to a problem in NP is itself in NP. So $Q_1 \\in$ NP. Nothing says it is NP-hard."
+        },
+        {
+          "title": "What 3-SAT $\\le_p Q_2$ gives",
+          "body": "Every NP problem reduces to 3-SAT, and 3-SAT reduces to $Q_2$, so $Q_2$ is NP-hard. Nothing says $Q_2 \\in$ NP."
+        }
+      ],
+      "answer": {
+        "value": "$Q_1$ is in NP, $Q_2$ is NP hard.",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Exactly what the two reductions guarantee. Correct."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Reverses the directions of the reductions."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$Q_2$ need not be in NP (it could be undecidable, e.g. the halting problem)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$Q_1$ need not be NP-hard (it could be in P)."
+        }
+      ],
+      "pitfalls": [
+        "Mixing up the direction: hardness flows from left to right along $A \\le_p B$ ($B$ is at least as hard as $A$)."
+      ],
+      "verification": "Example: $Q_1$ = 2-SAT (in P, so in NP), $Q_2$ = halting problem (NP-hard, not in NP) satisfies both reductions, and only A stays true."
+    },
+    "cse-2015-2-cs-3": {
+      "approach": "Write S1 as $C \\to \\neg E$ and S2 as $K \\to E$. The contrapositive of S1 is $E \\to \\neg C$; chain it with S2.",
+      "concepts": [
+        "Contrapositive",
+        "Hypothetical syllogism"
+      ],
+      "steps": [
+        {
+          "title": "Symbolise",
+          "body": "$C$: known to be corrupt, $E$: elected, $K$: kind.\n\nS1: $C \\to \\neg E$, contrapositive $E \\to \\neg C$. S2: $K \\to E$."
+        },
+        {
+          "title": "Chain",
+          "body": "$K \\to E$ and $E \\to \\neg C$ give $K \\to \\neg C$: \"If a person is kind, he is not known to be corrupt.\""
+        }
+      ],
+      "answer": {
+        "value": "If a person is kind, he is not known to be corrupt",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$C \\to K$ does not follow; in fact $C \\to \\neg K$ follows (contrapositive of C)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$\\neg C \\to \\neg K$ is the inverse of $K \\to \\neg C$ — not valid."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$K \\to \\neg C$ follows by hypothetical syllogism. Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$\\neg K \\to \\neg C$ is the inverse of $C \\to K$ — not implied."
+        }
+      ],
+      "verification": "Counter-model for D: a corrupt, unkind person (C true, K false, E false) satisfies S1 and S2 but violates D; no model of S1, S2 has K true and C true."
+    },
+    "cse-2015-2-cs-4": {
+      "approach": "An SRS states **what** the system must do (functional and non-functional requirements, external interfaces), not **how** it will be built. Design details belong in the design document.",
+      "concepts": [
+        "Software requirements specification",
+        "What vs how"
+      ],
+      "steps": [
+        {
+          "title": "What an SRS contains",
+          "body": "Functional requirements, non-functional requirements (performance, reliability…), external interfaces (user interface, hardware, third-party software), constraints."
+        },
+        {
+          "title": "What it avoids",
+          "body": "Design specification (architecture, algorithms, data structures) is the \"how\", decided later in design. So C."
+        }
+      ],
+      "answer": {
+        "value": "Design specification",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "User interface requirements are part of an SRS (external interface requirements)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Non-functional requirements are a standard SRS section."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Design is the \"how\" and should be kept out of the SRS. Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Interfaces with other software are external interface requirements in the SRS."
+        }
+      ],
+      "verification": "IEEE 830 SRS outline lists interfaces and non-functional requirements but tells authors to avoid design detail."
+    },
+    "cse-2015-2-cs-5": {
+      "approach": "For a $2\\times2$ matrix, $\\lambda^2 - (\\text{trace})\\lambda + \\det = 0$.",
+      "concepts": [
+        "Eigenvalues",
+        "Characteristic equation"
+      ],
+      "steps": [
+        {
+          "title": "Trace and determinant",
+          "body": "trace $= 4 + 1 = 5$, $\\det = 4 \\cdot 1 - 5 \\cdot 2 = 4 - 10 = -6$."
+        },
+        {
+          "title": "Solve",
+          "body": "$\\lambda^2 - 5\\lambda - 6 = 0 \\Rightarrow (\\lambda - 6)(\\lambda + 1) = 0 \\Rightarrow \\lambda = 6, -1$. Larger eigenvalue $= 6$."
+        }
+      ],
+      "answer": {
+        "value": "6",
+        "number": 6,
+        "matchesKey": true
+      },
+      "verification": "Sum $6 + (-1) = 5$ = trace and product $6 \\times (-1) = -6$ = det. Also $A\\begin{bmatrix}5\\\\2\\end{bmatrix} = \\begin{bmatrix}30\\\\12\\end{bmatrix} = 6\\begin{bmatrix}5\\\\2\\end{bmatrix}$."
+    },
+    "cse-2015-2-cs-6": {
+      "approach": "A range query in a B+ tree descends once from the root to the leaf holding the lower bound 7, then follows leaf links rightwards until a key $\\ge 15$ is seen.",
+      "concepts": [
+        "B+ tree",
+        "Range query",
+        "Leaf chaining"
+      ],
+      "steps": [
+        {
+          "title": "Fetch the root",
+          "body": "Root holds 9. Since $7 < 9$, go to the left child. Nodes fetched: **1**.",
+          "scene": {
+            "caption": "Root [9]: 7 < 9 → go left",
+            "root": {
+              "label": [
+                9
+              ],
+              "id": "root",
+              "tone": "accent",
+              "children": [
+                {
+                  "label": [
+                    5
+                  ],
+                  "id": "L",
+                  "children": [
+                    {
+                      "label": [
+                        1,
+                        3
+                      ],
+                      "id": "l1"
+                    },
+                    {
+                      "label": [
+                        5,
+                        7
+                      ],
+                      "id": "l2"
+                    }
+                  ]
+                },
+                {
+                  "label": [
+                    13,
+                    17
+                  ],
+                  "id": "R",
+                  "children": [
+                    {
+                      "label": [
+                        9,
+                        11
+                      ],
+                      "id": "l3"
+                    },
+                    {
+                      "label": [
+                        13,
+                        15
+                      ],
+                      "id": "l4"
+                    },
+                    {
+                      "label": [
+                        17
+                      ],
+                      "id": "l5"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Internal node [5]",
+          "body": "$7 \\ge 5$, so follow the right pointer to leaf [5, 7]. Nodes fetched: **2**.",
+          "scene": {
+            "caption": "[5]: 7 ≥ 5 → right pointer",
+            "root": {
+              "label": [
+                9
+              ],
+              "id": "root",
+              "tone": "success",
+              "children": [
+                {
+                  "label": [
+                    5
+                  ],
+                  "id": "L",
+                  "tone": "accent",
+                  "children": [
+                    {
+                      "label": [
+                        1,
+                        3
+                      ],
+                      "id": "l1"
+                    },
+                    {
+                      "label": [
+                        5,
+                        7
+                      ],
+                      "id": "l2"
+                    }
+                  ]
+                },
+                {
+                  "label": [
+                    13,
+                    17
+                  ],
+                  "id": "R",
+                  "children": [
+                    {
+                      "label": [
+                        9,
+                        11
+                      ],
+                      "id": "l3"
+                    },
+                    {
+                      "label": [
+                        13,
+                        15
+                      ],
+                      "id": "l4"
+                    },
+                    {
+                      "label": [
+                        17
+                      ],
+                      "id": "l5"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Leaf [5, 7]",
+          "body": "Key 7 qualifies. Last key in this leaf is $< 15$, so follow the sibling link. Nodes fetched: **3**.",
+          "scene": {
+            "caption": "Leaf [5,7]: output 7",
+            "root": {
+              "label": [
+                9
+              ],
+              "id": "root",
+              "tone": "success",
+              "children": [
+                {
+                  "label": [
+                    5
+                  ],
+                  "id": "L",
+                  "tone": "success",
+                  "children": [
+                    {
+                      "label": [
+                        1,
+                        3
+                      ],
+                      "id": "l1"
+                    },
+                    {
+                      "label": [
+                        5,
+                        7
+                      ],
+                      "id": "l2",
+                      "tone": "accent"
+                    }
+                  ]
+                },
+                {
+                  "label": [
+                    13,
+                    17
+                  ],
+                  "id": "R",
+                  "children": [
+                    {
+                      "label": [
+                        9,
+                        11
+                      ],
+                      "id": "l3"
+                    },
+                    {
+                      "label": [
+                        13,
+                        15
+                      ],
+                      "id": "l4"
+                    },
+                    {
+                      "label": [
+                        17
+                      ],
+                      "id": "l5"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Leaf [9, 11]",
+          "body": "9 and 11 qualify; continue. Nodes fetched: **4**.",
+          "scene": {
+            "caption": "Leaf [9,11]: output 9, 11",
+            "root": {
+              "label": [
+                9
+              ],
+              "id": "root",
+              "tone": "success",
+              "children": [
+                {
+                  "label": [
+                    5
+                  ],
+                  "id": "L",
+                  "tone": "success",
+                  "children": [
+                    {
+                      "label": [
+                        1,
+                        3
+                      ],
+                      "id": "l1"
+                    },
+                    {
+                      "label": [
+                        5,
+                        7
+                      ],
+                      "id": "l2",
+                      "tone": "success"
+                    }
+                  ]
+                },
+                {
+                  "label": [
+                    13,
+                    17
+                  ],
+                  "id": "R",
+                  "children": [
+                    {
+                      "label": [
+                        9,
+                        11
+                      ],
+                      "id": "l3",
+                      "tone": "accent"
+                    },
+                    {
+                      "label": [
+                        13,
+                        15
+                      ],
+                      "id": "l4"
+                    },
+                    {
+                      "label": [
+                        17
+                      ],
+                      "id": "l5"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Leaf [13, 15] — stop",
+          "body": "13 qualifies; 15 is not $< 15$, so the scan stops here. Nodes fetched: **5**.\n\nTotal $= 1$ (root) $+ 1$ (internal) $+ 3$ (leaves) $= 5$.",
+          "scene": {
+            "caption": "Leaf [13,15]: output 13, stop at 15 → 5 nodes",
+            "root": {
+              "label": [
+                9
+              ],
+              "id": "root",
+              "tone": "success",
+              "children": [
+                {
+                  "label": [
+                    5
+                  ],
+                  "id": "L",
+                  "tone": "success",
+                  "children": [
+                    {
+                      "label": [
+                        1,
+                        3
+                      ],
+                      "id": "l1"
+                    },
+                    {
+                      "label": [
+                        5,
+                        7
+                      ],
+                      "id": "l2",
+                      "tone": "success"
+                    }
+                  ]
+                },
+                {
+                  "label": [
+                    13,
+                    17
+                  ],
+                  "id": "R",
+                  "children": [
+                    {
+                      "label": [
+                        9,
+                        11
+                      ],
+                      "id": "l3",
+                      "tone": "success"
+                    },
+                    {
+                      "label": [
+                        13,
+                        15
+                      ],
+                      "id": "l4",
+                      "tone": "warning"
+                    },
+                    {
+                      "label": [
+                        17
+                      ],
+                      "id": "l5"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "animation": {
+        "kind": "tree",
+        "root": {
+          "label": [
+            9
+          ],
+          "id": "root",
+          "children": [
+            {
+              "label": [
+                5
+              ],
+              "id": "L",
+              "children": [
+                {
+                  "label": [
+                    1,
+                    3
+                  ],
+                  "id": "l1"
+                },
+                {
+                  "label": [
+                    5,
+                    7
+                  ],
+                  "id": "l2"
+                }
+              ]
+            },
+            {
+              "label": [
+                13,
+                17
+              ],
+              "id": "R",
+              "children": [
+                {
+                  "label": [
+                    9,
+                    11
+                  ],
+                  "id": "l3"
+                },
+                {
+                  "label": [
+                    13,
+                    15
+                  ],
+                  "id": "l4"
+                },
+                {
+                  "label": [
+                    17
+                  ],
+                  "id": "l5"
+                }
+              ]
+            }
+          ]
+        },
+        "caption": "Query: 7 ≤ key < 15"
+      },
+      "answer": {
+        "value": "5",
+        "number": 5,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Going back up through the right subtree to reach [9, 11] instead of using the leaf links.",
+        "Stopping at [9, 11]: leaf [13, 15] must be read to output 13."
+      ],
+      "verification": "Keys returned: 7, 9, 11, 13 — they lie in exactly three consecutive leaves; plus root and one internal node on the path = 5."
+    },
+    "cse-2015-2-cs-7": {
+      "approach": "A synchronous counter needs one distinct state per position in its cycle. The sequence 0,0,1,1,2,2,3,3 has period 8, and the two 0s must be different states (one goes to 0, the other to 1).",
+      "concepts": [
+        "Synchronous counter",
+        "State count",
+        "Flip-flops needed $\\lceil\\log_2 N\\rceil$"
+      ],
+      "steps": [
+        {
+          "title": "Count the states",
+          "body": "The repeating cycle is 0, 0, 1, 1, 2, 2, 3, 3 — 8 positions. The first 0 is followed by 0, the second by 1, so they cannot be one state; same for each value. Hence 8 distinct states."
+        },
+        {
+          "title": "Flip-flops",
+          "body": "$n$ flip-flops give $2^n$ states: $2^2 = 4 < 8 \\le 2^3 = 8$, so $n = \\lceil\\log_2 8\\rceil = 3$.\n\n(For example, use a mod-8 counter and output its upper two bits.)"
+        }
+      ],
+      "answer": {
+        "value": "3",
+        "number": 3,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Answering 2 because only the values 0–3 appear — a value repeats with different successors, so extra state is needed."
+      ],
+      "verification": "A 3-bit binary counter 000…111 with outputs $Q_2Q_1$ gives 00,00,01,01,10,10,11,11 — exactly the required sequence."
+    },
+    "cse-2015-2-cs-8": {
+      "approach": "Stop-and-wait efficiency $\\eta = \\dfrac{T_t}{T_t + 2T_p}$ (ACK transmission time negligible). Compute $T_t$, then solve for $T_p$.",
+      "concepts": [
+        "Stop-and-wait",
+        "Link utilisation"
+      ],
+      "steps": [
+        {
+          "title": "Transmission time",
+          "body": "$T_t = \\dfrac{1000 \\times 8\\text{ bits}}{10^6\\text{ bits/s}} = 8 \\times 10^{-3}$ s $= 8$ ms."
+        },
+        {
+          "title": "Solve for $T_p$",
+          "body": "$0.25 = \\dfrac{8}{8 + 2T_p} \\Rightarrow 8 + 2T_p = 32 \\Rightarrow 2T_p = 24 \\Rightarrow T_p = 12$ ms."
+        }
+      ],
+      "answer": {
+        "value": "12",
+        "number": 12,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Forgetting the factor 2 (round trip) gives 24 ms.",
+        "Using 1000 bits instead of 8000 bits gives a wrong $T_t$."
+      ],
+      "verification": "Cycle = 8 + 12 + 12 = 32 ms, useful time 8 ms, $8/32 = 25\\%$."
+    },
+    "cse-2015-2-cs-9": {
+      "approach": "If $n = \\prod p_i^{e_i}$, the number of divisors is $\\prod (e_i + 1)$.",
+      "concepts": [
+        "Prime factorisation",
+        "Divisor-count formula"
+      ],
+      "steps": [
+        {
+          "title": "Factorise",
+          "body": "$2100 = 21 \\times 100 = (3 \\times 7)(2^2 \\times 5^2) = 2^2 \\cdot 3^1 \\cdot 5^2 \\cdot 7^1$."
+        },
+        {
+          "title": "Count",
+          "body": "$(2+1)(1+1)(2+1)(1+1) = 3 \\times 2 \\times 3 \\times 2 = 36$."
+        }
+      ],
+      "answer": {
+        "value": "36",
+        "number": 36,
+        "matchesKey": true
+      },
+      "verification": "Check the factorisation: $4 \\times 3 \\times 25 \\times 7 = 12 \\times 175 = 2100$. ✓"
+    },
+    "cse-2015-2-cs-10": {
+      "approach": "In any binary tree, $n_0 = n_2 + 1$ (leaves = nodes with two children + 1).",
+      "concepts": [
+        "Binary tree properties",
+        "Handshake / edge counting"
+      ],
+      "steps": [
+        {
+          "title": "Derive the relation",
+          "body": "Let $n_0, n_1, n_2$ be nodes with 0, 1, 2 children, $n = n_0 + n_1 + n_2$. Edges $= n - 1 = n_1 + 2n_2$. So $n_0 + n_1 + n_2 - 1 = n_1 + 2n_2 \\Rightarrow n_0 = n_2 + 1$."
+        },
+        {
+          "title": "Apply",
+          "body": "$n_2 = n_0 - 1 = 20 - 1 = 19$."
+        }
+      ],
+      "answer": {
+        "value": "19",
+        "number": 19,
+        "matchesKey": true
+      },
+      "verification": "Small case: a root with two leaf children has $n_0 = 2$, $n_2 = 1$. ✓ Nodes with one child do not affect the relation."
+    },
+    "cse-2015-2-cs-11": {
+      "approach": "fun computes $f(1) = 1$ and $f(n) = 1 + \\sum_{k=1}^{n-1} f(k)f(n-k)$. Build the values bottom-up (memoise) instead of expanding the recursion tree.",
+      "concepts": [
+        "Recursion",
+        "Bottom-up evaluation"
+      ],
+      "steps": [
+        {
+          "title": "Recurrence",
+          "body": "`x` starts at 1 and adds `fun(k)*fun(n-k)` for $k = 1 \\dots n-1$:\n\n$$f(1) = 1,\\quad f(n) = 1 + \\sum_{k=1}^{n-1} f(k)\\,f(n-k).$$",
+          "scene": {
+            "reveal": 1,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "accent"
+              }
+            ],
+            "caption": "Base case f(1) = 1"
+          }
+        },
+        {
+          "title": "$f(2)$ and $f(3)$",
+          "body": "$f(2) = 1 + f(1)f(1) = 1 + 1 = 2$.\n\n$f(3) = 1 + f(1)f(2) + f(2)f(1) = 1 + 2 + 2 = 5$.",
+          "scene": {
+            "reveal": 6,
+            "hl": [
+              {
+                "r": 2,
+                "tone": "accent"
+              }
+            ],
+            "caption": "f(2) = 2, f(3) = 5"
+          }
+        },
+        {
+          "title": "$f(4)$",
+          "body": "$f(4) = 1 + f(1)f(3) + f(2)f(2) + f(3)f(1) = 1 + 5 + 4 + 5 = 15$.",
+          "scene": {
+            "reveal": 8,
+            "hl": [
+              {
+                "r": 3,
+                "tone": "accent"
+              }
+            ],
+            "caption": "f(4) = 15"
+          }
+        },
+        {
+          "title": "$f(5)$",
+          "body": "$f(5) = 1 + f(1)f(4) + f(2)f(3) + f(3)f(2) + f(4)f(1)$\n\n$= 1 + 15 + 10 + 10 + 15 = 51$.",
+          "scene": {
+            "reveal": 10,
+            "hl": [
+              {
+                "r": 4,
+                "tone": "success"
+              }
+            ],
+            "caption": "fun(5) = 51"
+          }
+        }
+      ],
+      "animation": {
+        "kind": "table",
+        "cols": [
+          "n",
+          "fun(n)"
+        ],
+        "rows": [
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            2
+          ],
+          [
+            3,
+            5
+          ],
+          [
+            4,
+            15
+          ],
+          [
+            5,
+            51
+          ]
+        ],
+        "reveal": 0,
+        "mono": true
+      },
+      "answer": {
+        "value": "51",
+        "number": 51,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Forgetting the initial `x = 1` (that gives Catalan numbers 1, 1, 2, 5, 14).",
+        "Counting the symmetric products $f(2)f(3)$ and $f(3)f(2)$ only once."
+      ],
+      "verification": "Recomputed each sum term by term: 1+1=2; 1+2+2=5; 1+5+4+5=15; 1+15+10+10+15=51."
+    },
+    "cse-2015-2-cs-12": {
+      "approach": "Basic COCOMO: effort grows as a power of size, $E = a_b(\\text{KLOC})^{b_b}$, and development time as a power of effort, $D = c_b E^{d_b}$. In the options \"exp\" denotes the exponent.",
+      "concepts": [
+        "Basic COCOMO",
+        "Effort and schedule estimation"
+      ],
+      "steps": [
+        {
+          "title": "Recall the model",
+          "body": "$E = a_b(\\text{KLOC})^{b_b}$ person-months, $D = c_b(E)^{d_b}$ months (e.g. organic: $a_b = 2.4, b_b = 1.05, c_b = 2.5, d_b = 0.38$)."
+        },
+        {
+          "title": "Match",
+          "body": "Option A writes exactly these, with exp($\\cdot$) meaning \"raised to the power\". So A."
+        }
+      ],
+      "answer": {
+        "value": "$E = a_b(KLOC)^{b_b},\\ D = c_b(E)^{d_b}$",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Effort from size, time from effort. Correct."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Swaps E and D: time is derived from effort, not the other way round."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Effort must depend on size (KLOC); here it does not."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Same problem as C, with the exponents swapped as well."
+        }
+      ],
+      "verification": "Units check: $E$ (person-months) from KLOC, then $D$ (months) from $E$; staffing $= E/D$."
+    }
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "paper": "cse-2015-2",
+  "fixes": [
+    {
+      "id": "cse-2015-2-ga-1",
+      "field": "answer",
+      "before": "A",
+      "after": "C",
+      "reason": "\"don't just know\" changes the meaning; correct pairing is \"completely forgot --- just don't know\" (C). Stored A was a solver key, not official.",
+      "source": "GATE2015-Set-2.pdf"
+    },
+    {
+      "id": "cse-2015-2-ga-2",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "The industrialist had a <u>personnel</u> jet."
+        },
+        {
+          "l": "B",
+          "t": "I write my experience in my <u>personnel</u> diary."
+        },
+        {
+          "l": "C",
+          "t": "All <u>personnel</u> are being given the day off."
+        },
+        {
+          "l": "D",
+          "t": "Being religious is a <u>personnel</u> aspect."
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "The industrialist had a $\\underline{\\text{personnel}}$ jet."
+        },
+        {
+          "l": "B",
+          "t": "I write my experience in my $\\underline{\\text{personnel}}$ diary."
+        },
+        {
+          "l": "C",
+          "t": "All $\\underline{\\text{personnel}}$ are being given the day off."
+        },
+        {
+          "l": "D",
+          "t": "Being religious is a $\\underline{\\text{personnel}}$ aspect."
+        }
+      ],
+      "reason": "Replace raw HTML underline with KaTeX underline.",
+      "source": "GATE2015-Set-2.pdf"
+    },
+    {
+      "id": "cse-2015-2-ga-4",
+      "field": "topic",
+      "before": "quant",
+      "after": "verbal",
+      "reason": "Vocabulary question is verbal, not quant.",
+      "source": "GATE2015-Set-2.pdf"
+    },
+    {
+      "id": "cse-2015-2-ga-9",
+      "field": "text",
+      "before": "If p, q, r, s are distinct integers such that:\n\nf (p, q, r, s) = max (p, q, r, s)\n\ng (p, q, r, s) = min (p, q, r, s)\n\nh (p, q, r, s) = remainder of (p × q) / (r × s) if (p × q) > (r × s) or remainder of (r × s) / (p × q) if (r × s) > (p × q)\n\nAlso a function fgh (p, q, r, s) = f (p, q, r, s) × g (p, q, r, s) × h (p, q, r, s)\n\nAlso the same operations are valid with two variable functions of the form f (p, q).\n\nWhat is the value of fg (h (2,5,7,3), 4,6,8)?",
+      "after": "If $p, q, r, s$ are distinct integers such that:\n\n$f(p, q, r, s) = \\max(p, q, r, s)$\n\n$g(p, q, r, s) = \\min(p, q, r, s)$\n\n$h(p, q, r, s)$ = remainder of $(p \\times q) / (r \\times s)$ if $(p \\times q) > (r \\times s)$, or remainder of $(r \\times s) / (p \\times q)$ if $(r \\times s) > (p \\times q)$\n\nAlso a function $fgh(p, q, r, s) = f(p, q, r, s) \\times g(p, q, r, s) \\times h(p, q, r, s)$.\n\nAlso the same operations are valid with two variable functions of the form $f(p, q)$.\n\nWhat is the value of $fg(h(2, 5, 7, 3), 4, 6, 8)$?",
+      "reason": "Typeset with KaTeX.",
+      "source": "GATE2015-Set-2.pdf"
+    },
+    {
+      "id": "cse-2015-2-ga-9",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Question is a numerical-answer item in the paper (no options); value 8 recomputed independently and unambiguous.",
+      "source": "GATE2015-Set-2.pdf"
+    },
+    {
+      "id": "cse-2015-2-ga-9",
+      "field": "reviewNote",
+      "before": "No options are printed in this paper for this question; treated as a numeric-answer question. Answer solved, not from an official key.",
+      "after": null,
+      "reason": "Review concern resolved.",
+      "source": "GATE2015-Set-2.pdf"
+    }
+  ]
+}
