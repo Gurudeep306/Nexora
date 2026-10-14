@@ -1,0 +1,53 @@
+{
+  "paper": "cse-2014-1",
+  "fixes": [
+    {
+      "id": "cse-2014-1-cs-26",
+      "field": "answer",
+      "before": "28:30",
+      "after": "28 to 30",
+      "reason": "Official NAT key is the range 28 to 30 µs (10 µs ring latency + 18 or 20 µs holding time); rewrite the colon form as a range.",
+      "source": "Official GATE 2014 CS Set-1 key (IIT Kharagpur), via trygateai.com"
+    },
+    {
+      "id": "cse-2014-1-cs-26",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Resolved: official key range 28 to 30 covers both interpretations.",
+      "source": "Official GATE 2014 CS Set-1 key (IIT Kharagpur), via trygateai.com"
+    },
+    {
+      "id": "cse-2014-1-cs-26",
+      "field": "reviewNote",
+      "before": "Answer depends on whether the monitoring station's own holding time is counted (28 vs 30); the range 28:30 follows the commonly cited key, but it was not printed in this PDF.",
+      "after": null,
+      "reason": "Review resolved (official key located).",
+      "source": "Official GATE 2014 CS Set-1 key (IIT Kharagpur), via trygateai.com"
+    },
+    {
+      "id": "cse-2014-1-cs-27",
+      "field": "answer",
+      "before": 1100,
+      "after": "1100 to 1300",
+      "reason": "Official NAT key is the range 1100 to 1300 ms; 1100 ms is the standard computation (3 RTT slow start + 8 RTT congestion avoidance).",
+      "source": "Official GATE 2014 CS Set-1 key (IIT Kharagpur), via trygateai.com"
+    },
+    {
+      "id": "cse-2014-1-cs-27",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Resolved: official key range confirmed.",
+      "source": "Official GATE 2014 CS Set-1 key (IIT Kharagpur), via trygateai.com"
+    },
+    {
+      "id": "cse-2014-1-cs-27",
+      "field": "reviewNote",
+      "before": "Commonly accepted key is a range (about 1100 to 1300) depending on interpretation of when cwnd starts; 1100 is the standard computation.",
+      "after": null,
+      "reason": "Review resolved (official key located).",
+      "source": "Official GATE 2014 CS Set-1 key (IIT Kharagpur), via trygateai.com"
+    }
+  ]
+}
