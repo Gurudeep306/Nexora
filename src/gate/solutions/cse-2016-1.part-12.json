@@ -1,0 +1,1036 @@
+{
+  "paper": "cse-2016-1",
+  "version": 2,
+  "solutions": {
+    "cse-2016-1-cs-13": {
+      "approach": "Recall each algorithm's worst-case input: reverse-sorted for insertion sort, any input for merge sort, and an already-sorted (or bad-pivot) input for quicksort.",
+      "concepts": [
+        "Insertion sort",
+        "Merge sort",
+        "Quicksort",
+        "Worst-case analysis"
+      ],
+      "steps": [
+        {
+          "title": "Insertion sort",
+          "body": "On a reverse-sorted array, element $i$ is compared with all $i-1$ earlier elements: $1+2+\\cdots+(n-1)=\\frac{n(n-1)}{2}=\\Theta(n^2)$."
+        },
+        {
+          "title": "Merge sort",
+          "body": "It always splits in half and merges in linear time, regardless of input: $T(n)=2T(n/2)+\\Theta(n)=\\Theta(n\\log n)$ — worst case included."
+        },
+        {
+          "title": "Quicksort",
+          "body": "If the pivot is always the minimum or maximum (e.g. sorted input with first-element pivot), each partition removes only one element: $T(n)=T(n-1)+\\Theta(n)=\\Theta(n^2)$."
+        }
+      ],
+      "answer": {
+        "value": "$\\Theta(n^2)$, $\\Theta(n\\log n)$, $\\Theta(n^2)$",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Insertion sort's worst case is $\\Theta(n^2)$, not $\\Theta(n\\log n)$; quicksort part is right."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Merge sort is $\\Theta(n\\log n)$ in every case, and quicksort's worst case is $\\Theta(n^2)$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Quicksort's $\\Theta(n\\log n)$ is its average/best case, not its worst case."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: $\\Theta(n^2)$, $\\Theta(n\\log n)$, $\\Theta(n^2)$."
+        }
+      ],
+      "pitfalls": [
+        "Quoting quicksort's average case $\\Theta(n\\log n)$ as its worst case."
+      ],
+      "verification": "Standard results: only merge sort (and heap sort) guarantee n log n in the worst case among these."
+    },
+    "cse-2016-1-cs-14": {
+      "approach": "Adding the same constant c to every edge leaves the relative order of edge weights unchanged (so MST is unchanged), but adds c × (number of edges) to every path, which penalises paths with more edges — so shortest paths can change.",
+      "concepts": [
+        "Minimum spanning tree",
+        "Kruskal's algorithm",
+        "Shortest paths"
+      ],
+      "steps": [
+        {
+          "title": "Statement P",
+          "body": "Kruskal's algorithm depends only on the **sorted order** of edge weights. $w_1<w_2 \\iff w_1+c<w_2+c$, so the order — and hence the (unique, since weights are distinct) MST — is unchanged. Also every spanning tree has exactly $|V|-1$ edges, so every tree's weight rises by the same $(|V|-1)c$. **P is true.**"
+        },
+        {
+          "title": "Statement Q — counter-example",
+          "body": "Let $A\\to B$ directly have weight $5$, and $A\\to C\\to B$ have weights $2+2=4$. Shortest path: $A\\,C\\,B$ (4). Add $c=2$: direct edge becomes $7$, two-edge path becomes $4+4=8$. Now the direct edge is shorter. **Q is false.**"
+        }
+      ],
+      "answer": {
+        "value": "P only",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: MST unchanged, shortest paths may change."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Q fails — a path with k edges grows by k·c, so paths with different edge counts change relative order."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "P is true because the edge order (all that MST algorithms use) is preserved."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Q is false (see the counter-example)."
+        }
+      ],
+      "pitfalls": [
+        "Assuming shortest paths behave like MSTs; path lengths grow by c times the number of edges, which differs between paths."
+      ],
+      "verification": "Counter-example checked numerically: 5 < 2+2 fails before, 7 < 4+4 holds after."
+    },
+    "cse-2016-1-cs-15": {
+      "approach": "mystery swaps only its local copies of the pointers; it never dereferences them, so nothing in main changes. Then trace main.",
+      "concepts": [
+        "Call by value",
+        "Pointers",
+        "Code tracing"
+      ],
+      "steps": [
+        {
+          "title": "What mystery does",
+          "body": "Inside `mystery`, `ptra` and `ptrb` are **local copies** of the addresses passed in. Swapping them (via `temp`) exchanges the local copies only; there is no `*ptra = …` or `*ptrb = …`, so the pointed-to integers are never modified. The swap vanishes when the function returns.",
+          "scene": {
+            "line": 9,
+            "vars": {
+              "a": 2016,
+              "b": 0,
+              "c": 4,
+              "d": 42
+            },
+            "caption": "mystery(&a,&b): only local pointer copies swap; a, b unchanged"
+          }
+        },
+        {
+          "title": "Trace main",
+          "body": "- Start: $a=2016,\\ b=0,\\ c=4,\\ d=42$.\n- `mystery(&a,&b)`: no change.\n- `if (a < c)` is $2016<4$ → false, so `mystery(&c,&a)` is skipped.\n- `mystery(&a,&d)`: no change.\n- `printf` prints $a = 2016$.",
+          "scene": {
+            "line": 13,
+            "hl": [
+              10
+            ],
+            "output": "2016",
+            "caption": "a < c is false; a is still 2016"
+          }
+        }
+      ],
+      "answer": {
+        "value": "2016",
+        "number": 2016,
+        "matchesKey": true
+      },
+      "animation": {
+        "kind": "code",
+        "lang": "c",
+        "code": "void mystery(int *ptra, int *ptrb) {\n    int *temp;\n    temp = ptrb;\n    ptrb = ptra;\n    ptra = temp;\n}\nint main() {\n    int a=2016, b=0, c=4, d=42;\n    mystery(&a, &b);\n    if (a < c)\n        mystery(&c, &a);\n    mystery(&a, &d);\n    printf(\"%d\\n\", a);\n}",
+        "line": 8,
+        "vars": {
+          "a": 2016,
+          "b": 0,
+          "c": 4,
+          "d": 42
+        },
+        "output": ""
+      },
+      "pitfalls": [
+        "Treating mystery as a real swap of a and b (it would need *ptra/*ptrb assignments).",
+        "Even if it were a real swap, the condition would then be evaluated on the swapped values — read the code literally."
+      ],
+      "verification": "No statement in the program writes through a pointer, and a is never assigned after initialisation, so a = 2016."
+    },
+    "cse-2016-1-cs-16": {
+      "approach": "S → aS | bS | ε lets you emit a or b any number of times in any order and then stop — that is exactly Σ*.",
+      "concepts": [
+        "Context-free grammars",
+        "Regular grammars"
+      ],
+      "steps": [
+        {
+          "title": "Derive any string",
+          "body": "For any $w=c_1c_2\\cdots c_k$ with $c_i\\in\\{a,b\\}$: apply $S\\to c_1S$, then $S\\to c_2S$, …, then $S\\to c_kS$, and finally $S\\to\\varepsilon$. So every string over $\\{a,b\\}$ (including $\\varepsilon$) is derived."
+        },
+        {
+          "title": "Nothing else",
+          "body": "Every production emits only $a$ or $b$, so no other strings can appear. Hence $L(G)=\\{a,b\\}^*$ (it is the right-linear grammar of the regex $(a+b)^*$)."
+        }
+      ],
+      "answer": {
+        "value": "$\\{a,b\\}^*$",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Misses strings like $ba$ (a $b$ before an $a$), which $G$ derives via $S\\to bS\\to baS\\to ba$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$G$ derives $a$, which does not have equal numbers of $a$'s and $b$'s."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Misses $ab\\,a$ or $ba$, which are not of the form $a^n$, $b^n$ or $a^nb^n$."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: every string over $\\{a,b\\}$."
+        }
+      ],
+      "verification": "The grammar is the standard right-linear form of (a+b)*."
+    },
+    "cse-2016-1-cs-17": {
+      "approach": "Classify each problem: emptiness of an intersection of regular languages and CFG membership are decidable; CFG equivalence and TM emptiness are classic undecidable problems.",
+      "concepts": [
+        "Decidability",
+        "Closure properties",
+        "Rice's theorem"
+      ],
+      "steps": [
+        {
+          "title": "I — decidable",
+          "body": "Regular languages are closed under intersection: build the product NFA of $N_1$ and $N_2$ and check whether any accepting state is reachable (graph search). **Decidable.**"
+        },
+        {
+          "title": "II — decidable",
+          "body": "CFG membership is decidable: convert to CNF and run the CYK algorithm in $O(|x|^3)$. **Decidable.**"
+        },
+        {
+          "title": "III and IV — undecidable",
+          "body": "Equivalence of two CFGs is undecidable (even $L(G)=\\Sigma^*$ is undecidable). Emptiness of $L(M)$ for a TM is a non-trivial property of RE languages, so it is undecidable by Rice's theorem. **III and IV are undecidable.**"
+        }
+      ],
+      "answer": {
+        "value": "III and IV only",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "I is decidable (product-automaton emptiness check)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "II is decidable (CYK); only III of this pair is undecidable."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: CFG equivalence and TM emptiness are undecidable."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "II is decidable."
+        }
+      ],
+      "pitfalls": [
+        "Confusing CFG emptiness/membership (decidable) with CFG equivalence (undecidable)."
+      ],
+      "verification": "Matches the standard decidability table: for CFLs, membership and emptiness are decidable; equivalence is not."
+    },
+    "cse-2016-1-cs-18": {
+      "approach": "The string must contain both 00 and 11 as substrings, in either order, possibly far apart (or overlapping in a block like 0011). Check each regex for missing or extra strings.",
+      "concepts": [
+        "Regular expressions",
+        "Substring languages"
+      ],
+      "steps": [
+        {
+          "title": "Structure of the language",
+          "body": "A string has both $00$ and $11$ iff either some $00$ occurs before some $11$, or some $11$ occurs before some $00$. That is $(0+1)^*\\,00\\,(0+1)^*\\,11\\,(0+1)^* + (0+1)^*\\,11\\,(0+1)^*\\,00\\,(0+1)^*$."
+        },
+        {
+          "title": "Match with option B",
+          "body": "Factoring the common prefix and suffix gives $(0+1)^*\\big(00(0+1)^*11 + 11(0+1)^*00\\big)(0+1)^*$ — exactly option B."
+        },
+        {
+          "title": "Test strings",
+          "body": "$001011$ has both $00$ and $11$ but no contiguous $0011$/$1100$: in B, not in A. $00$ is in C but has no $11$. $10011$ has both but starts with $1$, so it is not in D."
+        }
+      ],
+      "answer": {
+        "value": "$(0+1)^*(00(0+1)^*11 + 11(0+1)^*00)(0+1)^*$",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Requires $0011$ or $1100$ as one contiguous block; misses $001011$, which has $00$ and $11$ apart."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: 00 before 11 or 11 before 00, with anything around and between."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Uses \"or\": accepts $00$, which has no $11$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Forces the string to start with $00$/$11$ and end with $11$/$00$; misses $10011$."
+        }
+      ],
+      "verification": "001011 has both pairs: B accepts (00 · 10 · 11), A rejects (no 0011/1100 block)."
+    },
+    "cse-2016-1-cs-19": {
+      "approach": "In SSA every assignment gets a fresh variable name; count the input variables plus one new name per assignment.",
+      "concepts": [
+        "Static single assignment",
+        "Intermediate code"
+      ],
+      "steps": [
+        {
+          "title": "Rename each definition",
+          "body": "```\nx1 = u - t;\ny1 = x1 * v;\nx2 = y1 + w;\ny2 = t - z;\ny3 = x2 * y2;\n```\nEach of the 5 assignments defines a new variable."
+        },
+        {
+          "title": "Count",
+          "body": "Input (never assigned) variables: $u, t, v, w, z$ → 5. Defined variables: $x_1, y_1, x_2, y_2, y_3$ → 5. Total $=5+5=10$. None can be reused, because SSA forbids assigning a name twice."
+        }
+      ],
+      "answer": {
+        "value": "10",
+        "number": 10,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Counting only the new temporaries (5) and forgetting the input variables u, t, v, w, z.",
+        "Reusing a name (e.g. writing y3 back into x1) — that violates single assignment."
+      ],
+      "verification": "5 assignments → 5 distinct targets; 5 distinct used-only operands; 10 in all (official key 10)."
+    },
+    "cse-2016-1-cs-20": {
+      "approach": "With all processes arriving together, SRTF behaves exactly like SJF, which is provably optimal for average waiting time.",
+      "concepts": [
+        "CPU scheduling",
+        "SJF optimality",
+        "SRTF"
+      ],
+      "steps": [
+        {
+          "title": "SRTF = SJF here",
+          "body": "All processes arrive at time 0, so no new arrival can preempt; SRTF just runs jobs in increasing burst order — i.e. non-preemptive SJF."
+        },
+        {
+          "title": "Why SJF is optimal",
+          "body": "If jobs run in order $b_1,b_2,\\ldots,b_n$, total waiting time $=\\sum_{k}(n-k)\\,b_k$. The largest multiplier $(n-1)$ should go to the smallest burst; any out-of-order adjacent pair can be swapped to reduce the sum (exchange argument). So shortest-first minimises average waiting time."
+        }
+      ],
+      "answer": {
+        "value": "Shortest remaining time first",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: equivalent to SJF for simultaneous arrivals, which minimises average waiting time."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Tiny-quantum RR interleaves all jobs, so every job waits roughly until near the end — far worse average waiting time than SJF."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "A random order is optimal only by luck."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Priority ∝ burst length runs the longest job first — the worst ordering (LJF)."
+        }
+      ],
+      "verification": "Example bursts 2, 4, 8: SJF waits 0+2+6 = 8 (avg 2.67); LJF waits 0+8+12 = 20."
+    },
+    "cse-2016-1-cs-21": {
+      "approach": "A superkey must contain a candidate key; since VY is the primary key, any attribute set containing both V and Y is a superkey. Find the option missing V or Y.",
+      "concepts": [
+        "Superkey",
+        "Candidate / primary key"
+      ],
+      "steps": [
+        {
+          "title": "Check each set for V and Y",
+          "body": "| Option | Contains V? | Contains Y? | Superkey? |\n|---|---|---|---|\n| VXYZ | yes | yes | yes |\n| VWXZ | yes | **no** | not guaranteed |\n| VWXY | yes | yes | yes |\n| VWXYZ | yes | yes | yes |"
+        },
+        {
+          "title": "Conclude",
+          "body": "VWXZ lacks Y. With only the primary key VY known, VWXZ is not known to determine Y, so it is the one that is NOT a superkey."
+        }
+      ],
+      "answer": {
+        "value": "VWXZ",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Contains V and Y, so it is a superset of the key VY — a superkey."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: it omits Y, so it does not contain the key VY."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Contains V and Y — a superkey."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "All attributes — trivially a superkey."
+        }
+      ],
+      "verification": "Only option B lacks an attribute of VY."
+    },
+    "cse-2016-1-cs-22": {
+      "approach": "ACID stands for Atomicity, Consistency, Isolation, Durability; deadlock-freedom is not one of them.",
+      "concepts": [
+        "ACID properties",
+        "Transactions"
+      ],
+      "steps": [
+        {
+          "title": "Expand ACID",
+          "body": "**A**tomicity (all or nothing), **C**onsistency (valid state to valid state), **I**solation (concurrent transactions do not interfere), **D**urability (committed changes survive failures)."
+        },
+        {
+          "title": "Spot the odd one",
+          "body": "Deadlock-freedom is a property of a concurrency-control protocol (e.g. timestamp ordering), not an ACID property — 2PL, for instance, guarantees isolation but can deadlock."
+        }
+      ],
+      "answer": {
+        "value": "Deadlock-freedom",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The \"A\" in ACID."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "The \"C\" in ACID."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "The \"I\" in ACID."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: the \"D\" is Durability, not deadlock-freedom."
+        }
+      ],
+      "verification": "Direct from the definition of ACID."
+    },
+    "cse-2016-1-cs-23": {
+      "approach": "Find the weakest normal form the old schema violates: the partial dependency (VOLUME, NUMBER) → YEAR on a proper subset of the key breaks 2NF; the decomposition removes it.",
+      "concepts": [
+        "2NF",
+        "Partial dependency",
+        "Decomposition"
+      ],
+      "steps": [
+        {
+          "title": "Old schema",
+          "body": "Key = (VOLUME, NUMBER, STARTPAGE, ENDPAGE). YEAR is non-prime and depends on (VOLUME, NUMBER), a **proper subset** of the key → partial dependency → **not in 2NF** (it is in 1NF since all attributes are atomic)."
+        },
+        {
+          "title": "New schemas",
+          "body": "(VOLUME, NUMBER, STARTPAGE, ENDPAGE, TITLE, PRICE): TITLE and PRICE depend on the whole key. (VOLUME, NUMBER, YEAR): key (VOLUME, NUMBER) → YEAR. Every FD has a superkey on the left, so both are in BCNF (hence 2NF, 3NF)."
+        },
+        {
+          "title": "Weakest such form",
+          "body": "Old satisfies 1NF but not 2NF; new satisfies 2NF, 3NF and BCNF. The weakest normal form satisfied by the new design but not the old one is **2NF**."
+        }
+      ],
+      "answer": {
+        "value": "2NF",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Both designs are in 1NF."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: the old design fails 2NF (partial dependency); the new one satisfies it."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "The new design is in 3NF too, but 2NF is weaker and already separates them."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Also satisfied by the new design only, but it is not the weakest."
+        }
+      ],
+      "pitfalls": [
+        "Picking BCNF because the new design is in BCNF; the question asks for the weakest separating form."
+      ],
+      "verification": "Old schema: (VOLUME, NUMBER) → YEAR is a partial dependency, so it is not 2NF."
+    },
+    "cse-2016-1-cs-24": {
+      "approach": "DNS, ARP and RARP translate one address form into another; DHCP assigns (leases) IP configuration to a host.",
+      "concepts": [
+        "Address resolution",
+        "DHCP",
+        "ARP / RARP",
+        "DNS"
+      ],
+      "steps": [
+        {
+          "title": "What each protocol maps",
+          "body": "| Protocol | Maps |\n|---|---|\n| DNS | host name → IP address |\n| ARP | IP address → MAC address |\n| RARP | MAC address → IP address |\n| DHCP | allocates an IP address (plus mask, gateway, DNS) from a pool |"
+        },
+        {
+          "title": "Conclude",
+          "body": "DHCP does not resolve an existing address of one form to another; it assigns configuration. So DHCP is the odd one out."
+        }
+      ],
+      "answer": {
+        "value": "DHCP",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Resolves names to IP addresses."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Resolves IP to MAC addresses."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: DHCP allocates addresses rather than resolving them."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Resolves MAC to IP addresses."
+        }
+      ],
+      "verification": "Standard protocol roles."
+    },
+    "cse-2016-1-cs-25": {
+      "approach": "A stateful protocol keeps session state on the server across requests. HTTP is stateless, TCP is not an application-layer protocol, while FTP and POP3 keep per-session state.",
+      "concepts": [
+        "Stateful vs stateless protocols",
+        "Application layer"
+      ],
+      "steps": [
+        {
+          "title": "Check each",
+          "body": "- **HTTP**: each request is independent; the server keeps no session state (cookies are an add-on) → stateless.\n- **FTP**: server remembers the logged-in user and current directory across commands → stateful.\n- **TCP**: transport layer, not application layer → excluded.\n- **POP3**: session moves through AUTHORIZATION → TRANSACTION → UPDATE states and tracks messages marked for deletion → stateful."
+        },
+        {
+          "title": "Conclude",
+          "body": "Stateful application-layer protocols: (ii) FTP and (iv) POP3."
+        }
+      ],
+      "answer": {
+        "value": "(ii) and (iv) only",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "HTTP is stateless."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "TCP is a transport-layer protocol, not application layer."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: FTP and POP3."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Omits FTP, which is also stateful."
+        }
+      ],
+      "verification": "Official GATE 2016 key: (ii) and (iv)."
+    },
+    "cse-2016-1-cs-26": {
+      "approach": "Factor out x^9 and use the series for (1 − x)^(−3); equivalently count solutions of a+b+c = 12 with each part ≥ 3.",
+      "concepts": [
+        "Generating functions",
+        "Stars and bars"
+      ],
+      "steps": [
+        {
+          "title": "Factor",
+          "body": "$(x^3+x^4+\\cdots)^3=\\left(\\frac{x^3}{1-x}\\right)^3=x^9(1-x)^{-3}$. So we need the coefficient of $x^{12-9}=x^3$ in $(1-x)^{-3}$."
+        },
+        {
+          "title": "Coefficient",
+          "body": "$(1-x)^{-3}=\\sum_{k\\ge0}\\binom{k+2}{2}x^k$. For $k=3$: $\\binom{5}{2}=\\frac{5\\cdot4}{2}=10$."
+        }
+      ],
+      "answer": {
+        "value": "10",
+        "number": 10,
+        "matchesKey": true
+      },
+      "shortcut": "Solutions of a+b+c = 12 with a,b,c ≥ 3 ⇒ a′+b′+c′ = 3 with a′,b′,c′ ≥ 0 ⇒ C(5,2) = 10.",
+      "verification": "Listing (a′,b′,c′) with sum 3: 3 permutations of (3,0,0), 6 of (2,1,0), 1 of (1,1,1) = 10."
+    },
+    "cse-2016-1-cs-27": {
+      "approach": "Unroll the recurrence into a sum; note that 6k² + 2k summed from 1 to n gives the closed form 2n(n+1)², and a₁ = 8 fits this form.",
+      "concepts": [
+        "Recurrence relations",
+        "Summation formulas"
+      ],
+      "steps": [
+        {
+          "title": "Unroll",
+          "body": "$a_n=a_1+\\sum_{k=2}^{n}(6k^2+2k)$. Since $6(1)^2+2(1)=8=a_1$, this is $a_n=\\sum_{k=1}^{n}(6k^2+2k)$."
+        },
+        {
+          "title": "Closed form",
+          "body": "$\\sum_{k=1}^{n}6k^2=6\\cdot\\frac{n(n+1)(2n+1)}{6}=n(n+1)(2n+1)$ and $\\sum_{k=1}^{n}2k=n(n+1)$. Adding: $n(n+1)(2n+1+1)=2n(n+1)^2$."
+        },
+        {
+          "title": "Evaluate at n = 99",
+          "body": "$a_{99}=2\\cdot99\\cdot100^2=198\\times10^4$, so $K=198$."
+        }
+      ],
+      "answer": {
+        "value": "198",
+        "number": 198,
+        "matchesKey": true
+      },
+      "verification": "Check n = 2: formula 2·2·9 = 36; recurrence 6·4 + 4 + 8 = 36. ✓"
+    },
+    "cse-2016-1-cs-28": {
+      "approach": "Follow the rules to see which inputs are forced to share a value: every input not divisible by 5 collapses to f(1), every multiple of 5 collapses to f(5), and the two classes never mix.",
+      "concepts": [
+        "Functions",
+        "Equivalence classes",
+        "Invariants"
+      ],
+      "steps": [
+        {
+          "title": "The rules preserve divisibility by 5",
+          "body": "$n\\mapsto n/2$ and $n\\mapsto n+5$ both keep \"$5\\mid n$\" unchanged (5 is odd and coprime to 2). So multiples of 5 are only linked to multiples of 5, and non-multiples only to non-multiples."
+        },
+        {
+          "title": "Non-multiples of 5 all share f(1)",
+          "body": "$f(1)=f(6)=f(3)=f(8)=f(4)=f(2)=f(1)$ covers $1,2,3,4$; $f(7)=f(12)=f(6)$; $f(9)=f(14)=f(7)$. In general an odd $n$ goes to $(n+5)/2<n$ for $n>5$, and even $n$ halves, so every non-multiple of 5 descends to one of $1,2,3,4$, all equal to $f(1)$."
+        },
+        {
+          "title": "Multiples of 5 all share f(5)",
+          "body": "$f(5)=f(10)=f(5)$, $f(15)=f(20)=f(10)$, … every multiple of 5 descends to $5$. Hence $f$ takes at most two values, $f(1)$ and $f(5)$, and they may differ (e.g. $f(n)=1$ if $5\\nmid n$, $2$ otherwise). Maximum $|R|=2$."
+        }
+      ],
+      "answer": {
+        "value": "2",
+        "number": 2,
+        "matchesKey": true
+      },
+      "verification": "The example f(n) = 1 if 5 ∤ n else 2 satisfies both rules, so 2 is attainable."
+    },
+    "cse-2016-1-cs-29": {
+      "approach": "Each round ends with Y, ends with N, or restarts; condition on the round being final: P(Y) = P(TH) / P(not TT).",
+      "concepts": [
+        "Probability",
+        "Geometric series",
+        "Conditional probability"
+      ],
+      "steps": [
+        {
+          "title": "One round",
+          "body": "$P(TH)=\\tfrac14$ (output Y), $P(HH\\text{ or }HT)=\\tfrac12$ (output N), $P(TT)=\\tfrac14$ (repeat)."
+        },
+        {
+          "title": "Sum over rounds",
+          "body": "$P(Y)=\\tfrac14+\\tfrac14\\cdot\\tfrac14+\\left(\\tfrac14\\right)^2\\tfrac14+\\cdots=\\frac{1/4}{1-1/4}=\\frac{1}{3}\\approx 0.33$."
+        }
+      ],
+      "answer": {
+        "value": "$\\frac{1}{3}\\approx 0.33$",
+        "number": 0.33,
+        "matchesKey": true
+      },
+      "shortcut": "Ignore the TT restarts: among the stopping outcomes TH, HH, HT (equally likely), Y is 1 of 3.",
+      "verification": "P(Y) + P(N) = 1/3 + (1/2)/(3/4) = 1/3 + 2/3 = 1. ✓"
+    },
+    "cse-2016-1-cs-30": {
+      "approach": "Write each 2-to-1 MUX as out = s̄·I₀ + s·I₁, substitute MUX 1's output into MUX 2, and simplify.",
+      "concepts": [
+        "Multiplexer",
+        "Boolean algebra",
+        "Sum of products"
+      ],
+      "steps": [
+        {
+          "title": "MUX 1 (select P)",
+          "body": "$I_0=0,\\ I_1=R$: $\\;Y=\\bar P\\cdot0+P\\cdot R=PR$."
+        },
+        {
+          "title": "MUX 2 (select Q)",
+          "body": "$I_0=\\bar R,\\ I_1=Y=PR$: $\\;X=\\bar Q\\,\\bar R+Q\\cdot PR=\\bar Q\\bar R+PQR$."
+        },
+        {
+          "title": "Minimal?",
+          "body": "Minterms: $\\bar Q\\bar R$ gives $PQR\\in\\{000,100\\}$ and $PQR$ gives $111$. $111$ is not adjacent to $000$ or $100$, so the two terms cannot merge or shrink. Minimal SOP: $\\bar Q\\bar R+PQR$."
+        }
+      ],
+      "answer": {
+        "value": "$\\bar Q\\bar R+PQR$",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$\\bar P\\bar Q$ is wrong: for $P=0,Q=0,R=1$ it gives 1, but the circuit gives $\\bar R=0$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "At $P=Q=R=0$ it gives 0, but the circuit outputs $\\bar R=1$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "At $P=Q=1,R=0$ it gives 1, but MUX 1 outputs $PR=0$ so $X=0$."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: $X=\\bar Q\\bar R+PQR$."
+        }
+      ],
+      "verification": "Truth table: X = 1 exactly for PQR = 000, 100, 111, matching option D."
+    },
+    "cse-2016-1-cs-31": {
+      "approach": "A 16-bit count register lets one DMA grant (burst) move at most 2^16 bytes; divide the file size by that and round up.",
+      "concepts": [
+        "DMA",
+        "Burst transfer"
+      ],
+      "steps": [
+        {
+          "title": "Bytes per bus grant",
+          "body": "Count register $=16$ bits → at most $2^{16}=65536$ bytes (memory is byte addressable) per transfer before the count must be reloaded."
+        },
+        {
+          "title": "Number of grants",
+          "body": "File $=29154\\text{ KB}=29154\\times1024$ bytes. $\\dfrac{29154\\times1024}{65536}=\\dfrac{29154}{64}=455.53$. Round up: $\\lceil455.53\\rceil=456$."
+        }
+      ],
+      "answer": {
+        "value": "456",
+        "number": 456,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Taking 1 KB = 1000 bytes.",
+        "Rounding down to 455 — the remaining 0.53 block still needs one more grant."
+      ],
+      "verification": "455 × 64 KB = 29120 KB < 29154 KB ≤ 456 × 64 KB = 29184 KB."
+    },
+    "cse-2016-1-cs-32": {
+      "approach": "Pipeline clock = slowest stage delay, and throughput ∝ 1 / clock; compare the old and new maximum stage delays.",
+      "concepts": [
+        "Pipelining",
+        "Throughput"
+      ],
+      "steps": [
+        {
+          "title": "Old clock",
+          "body": "Stages $800, 500, 400, 300$ ps → cycle $=\\max=800$ ps, throughput $=\\frac{1}{800}$ per ps."
+        },
+        {
+          "title": "New clock",
+          "body": "Stages $600, 350, 500, 400, 300$ ps → cycle $=600$ ps, throughput $=\\frac{1}{600}$."
+        },
+        {
+          "title": "Increase",
+          "body": "$\\dfrac{1/600-1/800}{1/800}=\\dfrac{800}{600}-1=\\dfrac{1}{3}=33.33\\%$."
+        }
+      ],
+      "answer": {
+        "value": "33.33 %",
+        "number": 33.33,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Computing the drop in cycle time relative to the new value (200/800 = 25%) — that is the latency reduction, not throughput increase."
+      ],
+      "verification": "Ratio of throughputs 800/600 = 1.333, i.e. +33.33%."
+    },
+    "cse-2016-1-cs-33": {
+      "approach": "Carry lookahead computes all carries from generate/propagate signals; with fan-in-2 gates, the wide AND/OR terms become balanced trees of depth O(log n).",
+      "concepts": [
+        "Carry lookahead adder",
+        "Fan-in",
+        "Parallel prefix"
+      ],
+      "steps": [
+        {
+          "title": "Carry expression",
+          "body": "$c_{i+1}=g_i+p_ig_{i-1}+p_ip_{i-1}g_{i-2}+\\cdots+p_i\\cdots p_0c_0$, with $g_i=a_ib_i$, $p_i=a_i\\oplus b_i$. With unbounded fan-in this is 2 levels → $\\Theta(1)$."
+        },
+        {
+          "title": "Fan-in limited to 2",
+          "body": "An AND or OR of up to $n+1$ inputs built from 2-input gates is a balanced tree of depth $\\lceil\\log_2(n+1)\\rceil$. Equivalently, a parallel-prefix (Brent–Kung / Kogge–Stone) carry network has $\\Theta(\\log n)$ levels. Total time $=\\Theta(\\log n)$."
+        }
+      ],
+      "answer": {
+        "value": "$\\Theta(\\log n)$",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Constant time needs gates with fan-in growing with $n$; not allowed here."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: fan-in-2 trees give logarithmic depth."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$\\Theta(\\sqrt n)$ is a carry-select / block structure bound, not a full lookahead."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$\\Theta(n)$ is the ripple-carry adder."
+        }
+      ],
+      "pitfalls": [
+        "Answering Θ(1) from the textbook \"two-level\" CLA, which assumes unlimited fan-in."
+      ],
+      "verification": "Official GATE 2016 key: Θ(log n)."
+    },
+    "cse-2016-1-cs-34": {
+      "approach": "The loop keeps the maximum inside [a, b] by discarding the smaller end each time; it must stop exactly when the window shrinks to one element, i.e. when a == b.",
+      "concepts": [
+        "Loop invariant",
+        "Two-pointer technique"
+      ],
+      "steps": [
+        {
+          "title": "Invariant",
+          "body": "If $p[a]\\le p[b]$, $p[a]$ is not larger than another element in the window, so dropping index $a$ keeps a maximum inside; otherwise $p[b]$ is smaller, so drop $b$. Invariant: **the maximum of $p$ lies in $p[a..b]$**. Each iteration shrinks the window by 1."
+        },
+        {
+          "title": "Stopping condition",
+          "body": "When $a=b$ the window holds one element, which must be the maximum, and `return p[a]` is correct. So loop `while (b != a)`. The window shrinks by exactly one each time starting from $a\\le b$, so $a=b$ is always reached and indices stay in range.",
+          "scene": {
+            "pointers": [
+              {
+                "name": "a",
+                "at": 0
+              },
+              {
+                "name": "b",
+                "at": 3
+              }
+            ],
+            "hl": [
+              {
+                "at": [
+                  0,
+                  0
+                ],
+                "tone": "warning"
+              },
+              {
+                "at": [
+                  3,
+                  3
+                ],
+                "tone": "warning"
+              }
+            ],
+            "caption": "p[0]=3 ≤ p[3]=5 → a++"
+          }
+        },
+        {
+          "title": "Trace on p = [3, 7, 2, 5]",
+          "body": "$a=0,b=3$: $3\\le5$ → $a=1$. $a=1,b=3$: $7>5$ → $b=2$. $a=1,b=2$: $7>2$ → $b=1$. Now $a=b=1$: stop, return $p[1]=7$ ✓.",
+          "scene": {
+            "pointers": [
+              {
+                "name": "a",
+                "at": 1
+              },
+              {
+                "name": "b",
+                "at": 1
+              }
+            ],
+            "hl": [
+              {
+                "at": [
+                  1,
+                  1
+                ],
+                "tone": "success"
+              }
+            ],
+            "caption": "a = b = 1 → return p[1] = 7"
+          }
+        },
+        {
+          "title": "Why the others fail",
+          "body": "For $p=[1,2]$: with `b > a+1`, the test $1>1$ fails at once and it returns $p[0]=1$ ✗. With `a != n` or `b != 0`: $a=0,b=1$ → $a=1$; now $a=b=1$ and $p[1]\\le p[1]$ is true, so $a=2$ — past the end of the array, so `p[a]` is read out of bounds ✗."
+        }
+      ],
+      "answer": {
+        "value": "`b != a`",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "animation": {
+        "kind": "array",
+        "label": "p",
+        "cells": [
+          3,
+          7,
+          2,
+          5
+        ],
+        "pointers": [
+          {
+            "name": "a",
+            "at": 0
+          },
+          {
+            "name": "b",
+            "at": 3
+          }
+        ],
+        "caption": "Window [a, b] always contains the maximum"
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Keeps looping after $a=b$; with $p[a]\\le p[a]$ true, $a$ walks past $b$ to $n$ and the final `p[a]` is out of bounds."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "For $p=[1,2]$: $a$ reaches 1 = b, then $p[1]\\le p[1]$ makes $a=2$; loop continues past the array."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Stops with two elements left: $p=[1,2]$ returns 1 instead of 2."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: stops exactly when the window is a single element, the maximum."
+        }
+      ],
+      "verification": "Traced p = [3,7,2,5] → 7 and p = [1,2] → 2 with b != a."
+    }
+  }
+}
