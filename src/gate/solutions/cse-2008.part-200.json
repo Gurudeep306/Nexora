@@ -1,0 +1,377 @@
+{
+  "paper": "cse-2008",
+  "version": 2,
+  "solutions": {
+    "cse-2008-cs-1": {
+      "approach": "Divide numerator and denominator by $x$; the bounded terms $\\sin x/x$ and $\\cos x/x$ vanish.",
+      "concepts": ["Limits at infinity", "Squeeze theorem"],
+      "steps": [
+        { "title": "Divide by x", "body": "$$\\frac{x-\\sin x}{x+\\cos x}=\\frac{1-\\frac{\\sin x}{x}}{1+\\frac{\\cos x}{x}}$$" },
+        { "title": "Bounded over unbounded", "body": "$|\\sin x|\\le 1,\\ |\\cos x|\\le 1$, so $\\frac{\\sin x}{x}\\to 0$ and $\\frac{\\cos x}{x}\\to 0$ (squeeze). Limit $=\\frac{1-0}{1+0}=1$." }
+      ],
+      "answer": { "value": "1", "choice": ["A"], "matchesKey": true },
+      "optionAnalysis": [
+        { "option": "A", "correct": true, "reason": "Both trig terms are bounded, so the ratio tends to $x/x=1$." },
+        { "option": "B", "correct": false, "reason": "Numerator and denominator are both positive for large $x$, so the ratio cannot approach $-1$." },
+        { "option": "C", "correct": false, "reason": "Numerator and denominator grow at the same linear rate; the ratio stays bounded." },
+        { "option": "D", "correct": false, "reason": "The ratio is positive and bounded for large $x$." }
+      ],
+      "pitfalls": ["L'Hôpital gives $\\frac{1-\\cos x}{1-\\sin x}$, which has no limit — L'Hôpital is inconclusive here, not a proof that the limit fails to exist."],
+      "verification": "At $x=1000$: $(1000-\\sin 1000)/(1000+\\cos 1000)\\approx 0.999$."
+    },
+    "cse-2008-cs-2": {
+      "approach": "Factor $Q\\cap R$ out of the first two terms; the rest is the complement of $Q\\cap R$ by De Morgan.",
+      "concepts": ["Set identities", "De Morgan's law"],
+      "steps": [
+        { "title": "Merge first two terms", "body": "$(P\\cap Q\\cap R)\\cup(P^c\\cap Q\\cap R)=(P\\cup P^c)\\cap(Q\\cap R)=Q\\cap R$." },
+        { "title": "De Morgan", "body": "$Q^c\\cup R^c=(Q\\cap R)^c$, so the expression is $(Q\\cap R)\\cup(Q\\cap R)^c=U$." }
+      ],
+      "answer": { "value": "U", "choice": ["D"], "matchesKey": true },
+      "optionAnalysis": [
+        { "option": "A", "correct": false, "reason": "Misses $Q\\cap R$, which the first two terms contribute." },
+        { "option": "B", "correct": false, "reason": "Misses elements of $P^c\\cap Q\\cap R$ (from the second term)." },
+        { "option": "C", "correct": false, "reason": "Misses elements of $P\\cap Q\\cap R$ (from the first term)." },
+        { "option": "D", "correct": true, "reason": "A set union its complement is the universal set." }
+      ],
+      "verification": "Any element either lies in $Q\\cap R$ (covered by term 1 or 2 depending on $P$) or not (covered by $Q^c\\cup R^c$)."
+    },
+    "cse-2008-cs-3": {
+      "approach": "A square system has a unique solution iff its coefficient determinant is non-zero; compute it as a function of $\\alpha$.",
+      "concepts": ["Determinant", "Cramer's rule", "Uniqueness of solutions"],
+      "steps": [
+        { "title": "Determinant", "body": "$$\\begin{vmatrix}1&1&2\\\\1&2&3\\\\1&4&\\alpha\\end{vmatrix}=1(2\\alpha-12)-1(\\alpha-3)+2(4-2)=2\\alpha-12-\\alpha+3+4=\\alpha-5$$" },
+        { "title": "Condition", "body": "Unique solution $\\iff \\alpha-5\\ne 0 \\iff \\alpha\\ne 5$. At $\\alpha=5$: $R_3-R_1=(0,3,3\\mid 3)$ and $R_2-R_1=(0,1,1\\mid 1)$ are proportional, so infinitely many solutions." },
+        { "title": "Match options", "body": "The exact answer is *every real $\\alpha$ except 5*. Options A–C list only some valid values and are not the *only* ones; D (\"any real number\") is the closest option, missing only the exception $\\alpha=5$." }
+      ],
+      "answer": { "value": "any real number (strictly: any $\\alpha\\ne 5$)", "choice": ["D"], "matchesKey": true },
+      "optionAnalysis": [
+        { "option": "A", "correct": false, "reason": "$\\alpha=0$ works, but so do all other $\\alpha\\ne5$; it is not the only value." },
+        { "option": "B", "correct": false, "reason": "0 and 1 work, but they are not the only values." },
+        { "option": "C", "correct": false, "reason": "0, 1, −1 all work, but many more values do too." },
+        { "option": "D", "correct": true, "reason": "Closest: every $\\alpha$ except 5 gives a unique solution. The question is flawed because $\\alpha=5$ fails." }
+      ],
+      "pitfalls": ["Reading \"only possible values\" as asking for a value that works — every one of A–C contains working values, so that reading cannot discriminate."],
+      "verification": "At $\\alpha=0$ the determinant is $-5$; at $\\alpha=5$ rows reduce to rank 2 with a consistent RHS."
+    },
+    "cse-2008-cs-4": {
+      "approach": "All-zero exponent field with zero fraction is the IEEE special encoding of $+0$, not a normalized number.",
+      "concepts": ["IEEE 754 single precision", "Special values"],
+      "steps": [
+        { "title": "Fields", "body": "0x00000000 → sign 0, exponent field $00000000$, fraction 0." },
+        { "title": "Interpretation", "body": "Exponent field 0 is reserved (zero / denormals); with fraction 0 it encodes **+0**, a special value. Normalized numbers need exponent field $1\\ldots254$, the smallest being $2^{-126}$." }
+      ],
+      "answer": { "value": "the special value +0", "choice": ["D"], "matchesKey": true },
+      "optionAnalysis": [
+        { "option": "A", "correct": false, "reason": "$2^{-127}$ is not even representable as a normalized single (min is $2^{-126}$)." },
+        { "option": "B", "correct": false, "reason": "$2^{-126}$ is 0x00800000 (exponent field 1)." },
+        { "option": "C", "correct": false, "reason": "Zero cannot be normalized (no implicit leading 1); it is a special encoding." },
+        { "option": "D", "correct": true, "reason": "Exponent 0 and fraction 0 with sign 0 is the reserved encoding of +0." }
+      ],
+      "verification": "0x80000000 is −0, the companion special value."
+    },
+    "cse-2008-cs-5": {
+      "approach": "Mark minterms (rows $ab$, columns $cd$), then use the don't-cares to form the two largest quads covering all 1s.",
+      "concepts": ["K-map minimization", "Don't-care conditions", "Prime implicants"],
+      "given": "| cell | minterms ($abcd$) |\n|---|---|\n| 1s | 0, 2, 4, 6, 8 |\n| X | 1, 3, 10 |",
+      "steps": [
+        { "title": "Read the map", "body": "Row $cd=00$: $ab=00,01,10$ → $m_0,m_4,m_8$. Row $cd=10$: $ab=00,01$ → $m_2,m_6$; $ab=10$ → X ($m_{10}$). X also at $m_1,m_3$ (column $ab=00$, rows 01, 11).", "scene": { "caption": "1s: 0,2,4,6,8 · don't-cares: 1,3,10" } },
+        { "title": "Quad with corners", "body": "$m_0,m_2,m_8,m_{10}$ (four corners, using X at $m_{10}$): $b=0,\\ d=0$ → $\\overline{b}\\,\\overline{d}$. Covers $m_8$.", "scene": { "groups": [{ "cells": [0, 2, 8, 10], "label": "b′d′" }], "caption": "Corner quad → b′d′" } },
+        { "title": "Second quad", "body": "$m_0,m_2,m_4,m_6$: $a=0,\\ d=0$ → $\\overline{a}\\,\\overline{d}$. Covers $m_4,m_6$.", "scene": { "groups": [{ "cells": [0, 2, 8, 10], "label": "b′d′" }, { "cells": [0, 2, 4, 6], "label": "a′d′" }], "caption": "f = b′d′ + a′d′" } },
+        { "title": "Result", "body": "All 1s are covered by two essential quads: $f=\\overline{b}\\,\\overline{d}+\\overline{a}\\,\\overline{d}$." }
+      ],
+      "answer": { "value": "$\\overline{b}\\,\\overline{d}+\\overline{a}\\,\\overline{d}$", "choice": ["A"], "matchesKey": true },
+      "optionAnalysis": [
+        { "option": "A", "correct": true, "reason": "Two quads cover every 1; no smaller cover exists." },
+        { "option": "B", "correct": false, "reason": "Valid cover but uses three terms where two quads suffice; not minimal." },
+        { "option": "C", "correct": false, "reason": "$ab\\overline{d}$ covers $m_{12},m_{14}$, which are 0s; and $m_4,m_6$ are left uncovered." },
+        { "option": "D", "correct": false, "reason": "$\\overline{a}\\,\\overline{b}$ is redundant once the two quads are present; three terms, not minimal." }
+      ],
+      "verification": "Evaluate A on each 1: $m_4$ ($a=0,d=0$) ✓, $m_8$ ($b=0,d=0$) ✓; on 0s like $m_5$ ($d=1$) both terms are 0 ✓.",
+      "animation": { "kind": "kmap", "variables": ["a", "b", "c", "d"], "ones": [0, 2, 4, 6, 8], "dcs": [1, 3, 10], "groups": [] }
+    },
+    "cse-2008-cs-6": {
+      "approach": "Expand both numerals in base $r$: $121_r=(r+1)^2$ and $11_r=r+1$, an identity valid wherever the digits are legal.",
+      "concepts": ["Positional number systems", "Radix"],
+      "steps": [
+        { "title": "Expand", "body": "$121_r=r^2+2r+1=(r+1)^2$, and $11_r=r+1$." },
+        { "title": "Valid radices", "body": "$\\sqrt{(r+1)^2}=r+1$ holds for every radix. Digit 2 must be legal, so $r\\ge 3$, i.e. any $r>2$." }
+      ],
+      "answer": { "value": "any value > 2", "choice": ["D"], "matchesKey": true },
+      "optionAnalysis": [
+        { "option": "A", "correct": false, "reason": "Works ($\\sqrt{121}=11$) but is not the only value." },
+        { "option": "B", "correct": false, "reason": "Works ($144_{10}$, root $12$) but not uniquely." },
+        { "option": "C", "correct": false, "reason": "Still omits e.g. $r=3$: $121_3=16=4^2$, $11_3=4$." },
+        { "option": "D", "correct": true, "reason": "The identity holds for every radix in which digit 2 exists." }
+      ],
+      "verification": "$r=5$: $121_5=36$, $11_5=6$, $\\sqrt{36}=6$ ✓."
+    },
+    "cse-2008-cs-7": {
+      "approach": "Run DFS/BFS from every unvisited vertex, counting the starts; each vertex and edge is touched a constant number of times.",
+      "concepts": ["DFS/BFS", "Connected components", "Adjacency list"],
+      "steps": [
+        { "title": "Algorithm", "body": "For each vertex not yet visited, increment the counter and DFS from it. The counter ends at the number of components." },
+        { "title": "Cost", "body": "With adjacency lists every vertex is initialised/visited once ($n$) and every edge scanned twice ($2m$): $\\Theta(m+n)$. It cannot be less — every vertex (isolated ones too) and every edge may matter." }
+      ],
+      "answer": { "value": "$\\Theta(m+n)$", "choice": ["C"], "matchesKey": true },
+      "optionAnalysis": [
+        { "option": "A", "correct": false, "reason": "Ignores edges; with $m\\gg n$ just reading the edges takes $\\Theta(m)$." },
+        { "option": "B", "correct": false, "reason": "Ignores vertices; a graph with $m=0$ still has $n$ components to count." },
+        { "option": "C", "correct": true, "reason": "Linear-time DFS/BFS over all vertices and edges." },
+        { "option": "D", "correct": false, "reason": "Far more than needed; no repeated traversal is required." }
+      ],
+      "verification": "Union-Find gives $O((m+n)\\alpha(n))$, consistent with the linear bound."
+    },
+    "cse-2008-cs-8": {
+      "approach": "The circuit computes $f=f_1f_2+f_3$. Minterm 8 of $f$ is missing from $f_3$, so it must come from $f_1f_2$; and $f_1f_2$ must not add any minterm outside $f$.",
+      "concepts": ["Canonical SOP", "AND as intersection, OR as union"],
+      "steps": [
+        { "title": "Write the circuit", "body": "AND gate → $f_1f_2$ (intersection of minterm sets); OR with $f_3$ → union: $f=(f_1\\cap f_2)\\cup f_3$." },
+        { "title": "What f₁f₂ must give", "body": "$f\\setminus f_3=\\{1,6,8,15\\}\\setminus\\{1,6,15\\}=\\{8\\}$ ⇒ $8\\in f_1f_2$. Also $f_1f_2\\subseteq f$, and $f_1f_2\\subseteq f_1=\\{4,5,6,7,8\\}$, so $f_1f_2\\subseteq\\{6,8\\}$." },
+        { "title": "Constraint on f₂", "body": "$8\\in f_2$; $4,5,7\\notin f_2$ (else they would appear in $f$); 6 is optional (already in $f_3$). Among the options only $\\Sigma m(6,8)$ fits: $f_1f_2=\\{6,8\\}$, $f=\\{6,8\\}\\cup\\{1,6,15\\}=\\{1,6,8,15\\}$ ✓." }
+      ],
+      "answer": { "value": "$\\Sigma m(6,8)$", "choice": ["C"], "matchesKey": true },
+      "optionAnalysis": [
+        { "option": "A", "correct": false, "reason": "Lacks 8, so $f$ would miss 8; also adds 4 to $f$." },
+        { "option": "B", "correct": false, "reason": "$f_1f_2=\\{4,8\\}$ puts minterm 4 into $f$." },
+        { "option": "C", "correct": true, "reason": "$f_1f_2=\\{6,8\\}$ and $f=\\{1,6,8,15\\}$ exactly." },
+        { "option": "D", "correct": false, "reason": "Contains 4, which would appear in $f$." }
+      ],
+      "verification": "Recompute with C: $\\{4,5,6,7,8\\}\\cap\\{6,8\\}=\\{6,8\\}$; union with $\\{1,6,15\\}$ gives $\\{1,6,8,15\\}$."
+    },
+    "cse-2008-cs-9": {
+      "approach": "Pumping lemma for CFLs rules out context-freeness (hence regularity); a TM can test primality, so it is recursive.",
+      "concepts": ["Pumping lemma for CFL", "Unary languages", "Decidability"],
+      "steps": [
+        { "title": "Not context-free", "body": "Unary CFLs are regular (Parikh), and the gaps between primes are unbounded, so no DFA works. Directly: pump $a^p$ ($p$ prime $>n$) to $a^{p+i k}$ with $1\\le k\\le n$; taking $i=p$ gives length $p(1+k)$, composite." },
+        { "title": "Accepted by a TM", "body": "A TM can check primality of the input length by trial division and always halts, so the language is recursive." }
+      ],
+      "answer": { "value": "Neither regular nor CFL, but accepted by a TM", "choice": ["D"], "matchesKey": true },
+      "optionAnalysis": [
+        { "option": "A", "correct": false, "reason": "A halting TM decides primality." },
+        { "option": "B", "correct": false, "reason": "Every regular language is context-free, so this combination is impossible." },
+        { "option": "C", "correct": false, "reason": "Pumping to length $p(1+k)$ leaves the language, so it is not context-free." },
+        { "option": "D", "correct": true, "reason": "Not CFL (hence not regular) yet decidable." }
+      ],
+      "verification": "Standard textbook example of a non-CFL unary language."
+    },
+    "cse-2008-cs-10": {
+      "approach": "Check each problem against known closure/decidability results for regular languages and CFLs.",
+      "concepts": ["Decidability", "Regular languages", "CFL properties"],
+      "steps": [
+        { "title": "I and IV", "body": "I: regular languages are closed under intersection; build the product DFA and test whether its graph has a reachable cycle that leads to a final state — **decidable**. IV: check that every production has a single non-terminal on the left — a syntactic test, **decidable**." },
+        { "title": "II and III", "body": "II: whether a CFL is regular is **undecidable**. III: equivalence of two PDAs (CFL equivalence) is **undecidable**." },
+        { "title": "Conclusion", "body": "Decidable: I and IV." }
+      ],
+      "answer": { "value": "I and IV", "choice": ["B"], "matchesKey": true },
+      "optionAnalysis": [
+        { "option": "A", "correct": false, "reason": "II (regularity of a CFL) is undecidable." },
+        { "option": "B", "correct": true, "reason": "Both I and IV are decidable." },
+        { "option": "C", "correct": false, "reason": "II and III are both undecidable." },
+        { "option": "D", "correct": false, "reason": "II is undecidable." }
+      ],
+      "pitfalls": ["Confusing III with DPDA equivalence (decidable, Sénizergues) — the question says general push-down automata."],
+      "verification": "Standard decidability table for regular/CFL problems."
+    },
+    "cse-2008-cs-11": {
+      "approach": "A handle is a right-sentential-form substring matching a production's RHS whose reduction is the next step of the reverse rightmost derivation — both the production and its position.",
+      "concepts": ["Handle", "Bottom-up parsing", "Rightmost derivation"],
+      "steps": [
+        { "title": "Definition", "body": "Handle of a right-sentential form $\\gamma$: a production $A\\to\\beta$ **and** a position in $\\gamma$ where $\\beta$ occurs, such that replacing $\\beta$ by $A$ gives the previous right-sentential form in a rightmost derivation." },
+        { "title": "Match", "body": "Option D states exactly this: the production used for reduction in the **next** step plus where its RHS is found." }
+      ],
+      "answer": { "value": "Production for the next reduction plus where its RHS lies", "choice": ["D"], "matchesKey": true },
+      "optionAnalysis": [
+        { "option": "A", "correct": false, "reason": "Only a position, and it mentions shifts; a handle concerns reductions." },
+        { "option": "B", "correct": false, "reason": "A non-terminal alone is not a handle; the production and its location are needed." },
+        { "option": "C", "correct": false, "reason": "Speaks of a *future* step and the shift/reduce position — not the next reduction." },
+        { "option": "D", "correct": true, "reason": "Matches the textbook (Dragon book) definition." }
+      ],
+      "verification": "Aho–Sethi–Ullman define a handle as a production plus a position."
+    },
+    "cse-2008-cs-12": {
+      "approach": "Machine-independent optimisations on IR are written once and reused when retargeting the back end — a portability benefit.",
+      "concepts": ["Intermediate representation", "Machine-independent optimization", "Retargetable compilers"],
+      "steps": [
+        { "title": "Why IR", "body": "The IR is independent of the target machine. Optimisations done there (constant folding, CSE, loop-invariant motion) stay valid for every target." },
+        { "title": "Consequence", "body": "Porting the compiler needs only a new code generator; the optimiser carries over. That is portability (A). The other claims are false." }
+      ],
+      "answer": { "value": "They enhance portability to other target processors", "choice": ["A"], "matchesKey": true },
+      "optionAnalysis": [
+        { "option": "A", "correct": true, "reason": "Target-independent optimisations are reused across back ends." },
+        { "option": "B", "correct": false, "reason": "Analysis is not inherently more accurate on IR; it is just simpler/portable." },
+        { "option": "C", "correct": false, "reason": "Dataflow analysis can also be done on machine code (peephole, register allocation)." },
+        { "option": "D", "correct": false, "reason": "Front-end information can be passed down; it is not unusable elsewhere." }
+      ],
+      "verification": "Standard motivation for IR-level optimisation in compiler texts."
+    },
+    "cse-2008-cs-13": {
+      "approach": "Run the recognisers of $L$ and $\\overline{L}$ in parallel; one of them must accept, so membership is always decided.",
+      "concepts": ["Recursively enumerable", "Recursive languages", "Complement"],
+      "steps": [
+        { "title": "Construction", "body": "Given $w$, simulate $M_L$ and $M_{\\overline{L}}$ alternately one step each. Exactly one accepts $w$ eventually; answer yes if $M_L$ accepts, no if $M_{\\overline{L}}$ accepts." },
+        { "title": "Conclusion", "body": "The combined machine always halts, so $L$ is recursive (decidable). Nothing forces it to be CSL, CFL or regular." }
+      ],
+      "answer": { "value": "recursive", "choice": ["D"], "matchesKey": true },
+      "optionAnalysis": [
+        { "option": "A", "correct": false, "reason": "Any non-regular decidable language (e.g. $a^nb^n$) satisfies the hypothesis." },
+        { "option": "B", "correct": false, "reason": "$a^nb^nc^n$ is decidable but not CFL." },
+        { "option": "C", "correct": false, "reason": "There are recursive languages that are not context-sensitive." },
+        { "option": "D", "correct": true, "reason": "RE and co-RE together give recursive." }
+      ],
+      "verification": "Theorem: $\\text{R}=\\text{RE}\\cap\\text{co-RE}$."
+    },
+    "cse-2008-cs-14": {
+      "approach": "TCP offers a byte-stream service; it segments arbitrarily large application data itself, so the application can hand it any amount.",
+      "concepts": ["TCP byte stream", "Segmentation", "MSS"],
+      "steps": [
+        { "title": "Byte stream", "body": "The application writes bytes into the socket send buffer; TCP cuts the stream into segments of at most MSS bytes and numbers them with sequence numbers." },
+        { "title": "No limit", "body": "Since TCP itself segments, there is no upper bound on the data the application passes down: any size." }
+      ],
+      "answer": { "value": "Any size", "choice": ["A"], "matchesKey": true },
+      "optionAnalysis": [
+        { "option": "A", "correct": true, "reason": "TCP segments the stream itself." },
+        { "option": "B", "correct": false, "reason": "Resembles a UDP/IP datagram limit; TCP has no such per-write limit." },
+        { "option": "C", "correct": false, "reason": "$2^{16}$ is the IP total-length limit for one packet, not a limit on application data." },
+        { "option": "D", "correct": false, "reason": "1500 bytes is the Ethernet MTU, a link-layer limit." }
+      ],
+      "verification": "A `send()` of 10 MB on a TCP socket is legal; TCP splits it into many segments."
+    },
+    "cse-2008-cs-15": {
+      "approach": "Use the quantifier duality $\\forall t\\,P\\equiv\\neg\\exists t\\,\\neg P$, keeping the range $t\\in r$ unchanged.",
+      "concepts": ["Tuple relational calculus", "Quantifier negation"],
+      "steps": [
+        { "title": "Duality", "body": "$\\forall t\\in r\\,(P(t))\\equiv\\neg\\exists t\\in r\\,(\\neg P(t))$ — no tuple of $r$ violates $P$. This is III." },
+        { "title": "Check the rest", "body": "I says no tuple of $r$ satisfies $P$ (opposite). II and IV quantify over tuples **not** in $r$, which says nothing about $r$." }
+      ],
+      "answer": { "value": "III only", "choice": ["C"], "matchesKey": true },
+      "optionAnalysis": [
+        { "option": "A", "correct": false, "reason": "I means $\\forall t\\in r\\,\\neg P(t)$." },
+        { "option": "B", "correct": false, "reason": "II talks about tuples outside $r$." },
+        { "option": "C", "correct": true, "reason": "III is the exact dual form." },
+        { "option": "D", "correct": false, "reason": "IV is about tuples outside $r$, so it is not equivalent." }
+      ],
+      "verification": "With $r=\\{t_1\\}$ and $P(t_1)$ true: the original and III are true, I is false."
+    },
+    "cse-2008-cs-16": {
+      "approach": "By definition (Elmasri–Navathe) a clustering index is built on a non-key field by which the file is physically ordered.",
+      "concepts": ["Primary index", "Clustering index", "Secondary index"],
+      "steps": [
+        { "title": "Index types", "body": "Ordering **key** field → primary index. Ordering **non-key** field → clustering index (one entry per distinct value). Non-ordering field → secondary index." },
+        { "title": "Answer", "body": "Clustering index: non-key and ordering." }
+      ],
+      "answer": { "value": "non-key and ordering", "choice": ["A"], "matchesKey": true },
+      "optionAnalysis": [
+        { "option": "A", "correct": true, "reason": "Definition of a clustering index." },
+        { "option": "B", "correct": false, "reason": "A non-ordering field gets a secondary index." },
+        { "option": "C", "correct": false, "reason": "An ordering key field gets a primary index." },
+        { "option": "D", "correct": false, "reason": "Non-ordering key → secondary (key) index." }
+      ],
+      "verification": "Elmasri–Navathe, single-level ordered indexes."
+    },
+    "cse-2008-cs-17": {
+      "approach": "The active open — the client's `connect()` — starts the three-way handshake by sending SYN.",
+      "concepts": ["Socket API", "TCP three-way handshake"],
+      "steps": [
+        { "title": "Roles of calls", "body": "`socket` creates a descriptor; `bind` attaches a local address; `listen` marks the socket passive; none of these sends a packet." },
+        { "title": "connect", "body": "`connect()` does the active open: it sends SYN and waits for SYN-ACK." }
+      ],
+      "answer": { "value": "connect", "choice": ["D"], "matchesKey": true },
+      "optionAnalysis": [
+        { "option": "A", "correct": false, "reason": "`socket` only allocates local state." },
+        { "option": "B", "correct": false, "reason": "`bind` only assigns a local address/port." },
+        { "option": "C", "correct": false, "reason": "`listen` makes the socket passive; the server answers SYN with SYN-ACK, it does not send the first SYN." },
+        { "option": "D", "correct": true, "reason": "`connect` sends the SYN." }
+      ],
+      "verification": "A tcpdump trace shows the SYN at the moment the client calls `connect`."
+    },
+    "cse-2008-cs-18": {
+      "approach": "The expression returns $\\max(x,y,z)$; pick the option whose maximum is 4 — but trace each, since ties can change which branch runs.",
+      "concepts": ["Conditional operator", "Expression tracing"],
+      "steps": [
+        { "title": "Meaning", "body": "If $x>y$ it returns $\\max(x,z)$, else $\\max(y,z)$ — overall the maximum of the three." },
+        { "title": "Trace", "body": "A: $3>4$ false → $4>2$ true → $a=4$ ✓. B: $6>5$, $6>3$ → 6. C: $6>3$, $6>5$ → 6. D: $5>4$, $5>5$ false → $z=5$." }
+      ],
+      "answer": { "value": "x = 3, y = 4, z = 2", "choice": ["A"], "matchesKey": true },
+      "optionAnalysis": [
+        { "option": "A", "correct": true, "reason": "Trace gives $a=y=4$." },
+        { "option": "B", "correct": false, "reason": "$a=x=6$." },
+        { "option": "C", "correct": false, "reason": "$a=x=6$." },
+        { "option": "D", "correct": false, "reason": "$a=z=5$." }
+      ],
+      "verification": "max(3,4,2)=4; the other options have maximum 6, 6, 5."
+    },
+    "cse-2008-cs-19": {
+      "approach": "In BFS every neighbour of an earlier-dequeued vertex must appear before any neighbour of a later one. Simulate from each option's first vertex and reject the first ordering violation.",
+      "concepts": ["Breadth first search", "Queue order"],
+      "given": "Edges: M–N, N–O, M–R, M–Q, N–Q, O–P, Q–P",
+      "steps": [
+        { "title": "Option C from Q", "body": "Dequeue Q; enqueue its neighbours in the chosen order M, N, P. Queue: [M, N, P].", "scene": { "tones": { "Q": "success", "M": "warning", "N": "warning", "P": "warning" }, "subs": { "Q": "1" }, "edgeTones": { "M>Q": "accent", "N>Q": "accent", "Q>P": "accent" }, "caption": "Visit Q · queue [M, N, P]" } },
+        { "title": "Dequeue M, N, P", "body": "M → new neighbour R; N → new neighbour O; P → O already queued. Order so far Q M N P, queue [R, O].", "scene": { "tones": { "Q": "success", "M": "success", "N": "success", "P": "success", "R": "warning", "O": "warning" }, "subs": { "Q": "1", "M": "2", "N": "3", "P": "4" }, "edgeTones": { "M>Q": "accent", "N>Q": "accent", "Q>P": "accent", "M>R": "accent", "N>O": "accent" }, "caption": "Visit M, N, P · queue [R, O]" } },
+        { "title": "Finish", "body": "Dequeue R then O → **QMNPRO** is a valid BFS order.", "scene": { "tones": { "Q": "success", "M": "success", "N": "success", "P": "success", "R": "success", "O": "success" }, "subs": { "Q": "1", "M": "2", "N": "3", "P": "4", "R": "5", "O": "6" }, "caption": "Q M N P R O" } },
+        { "title": "Reject the others", "body": "A: after M the next vertices must be M's neighbours N, Q, R — O comes third. B: from N, after Q and M come neighbours of N (O) before neighbours of M; P is not adjacent to N. D: M was dequeued before N, so R (from M) must precede O (from N)." }
+      ],
+      "answer": { "value": "QMNPRO", "choice": ["C"], "matchesKey": true },
+      "optionAnalysis": [
+        { "option": "A", "correct": false, "reason": "O is not adjacent to M, but it is visited third, before M's neighbours Q and R." },
+        { "option": "B", "correct": false, "reason": "After N, Q, M the next vertex must be O (N's last neighbour); P is not adjacent to N." },
+        { "option": "C", "correct": true, "reason": "Valid BFS from Q." },
+        { "option": "D", "correct": false, "reason": "R (child of M) must come before O (child of N), since M was dequeued first." }
+      ],
+      "verification": "Levels from Q: {Q}, {M, N, P}, {R, O}; C lists them level by level in a consistent FIFO order.",
+      "animation": { "kind": "graph", "directed": false,
+        "nodes": [{ "id": "M", "x": 1, "y": 0 }, { "id": "N", "x": 3, "y": 0 }, { "id": "O", "x": 5, "y": 0 }, { "id": "R", "x": 0, "y": 2 }, { "id": "Q", "x": 2, "y": 2 }, { "id": "P", "x": 4, "y": 2 }],
+        "edges": [{ "from": "M", "to": "N" }, { "from": "N", "to": "O" }, { "from": "M", "to": "R" }, { "from": "M", "to": "Q" }, { "from": "N", "to": "Q" }, { "from": "O", "to": "P" }, { "from": "Q", "to": "P" }],
+        "caption": "Graph of Q.19" }
+    },
+    "cse-2008-cs-20": {
+      "approach": "Unix inodes hold direct block pointers plus single, double and triple indirect pointers — a multilevel extension of indexed allocation.",
+      "concepts": ["Inode", "Indexed allocation", "Indirect blocks"],
+      "steps": [
+        { "title": "Inode layout", "body": "An inode has 10–12 direct pointers, then a single-indirect, a double-indirect and a triple-indirect pointer." },
+        { "title": "Large files", "body": "A very large file uses the indirect levels: index blocks pointing to index blocks — an extension of indexed allocation." }
+      ],
+      "answer": { "value": "an extension of indexed allocation", "choice": ["D"], "matchesKey": true },
+      "optionAnalysis": [
+        { "option": "A", "correct": false, "reason": "Unix does not require file blocks to be contiguous." },
+        { "option": "B", "correct": false, "reason": "Blocks are not chained by next-pointers (that is FAT-style linking)." },
+        { "option": "C", "correct": false, "reason": "Plain single-level indexing cannot address a very large file; multilevel indirection is needed." },
+        { "option": "D", "correct": true, "reason": "Multilevel (indirect) indexed allocation." }
+      ],
+      "verification": "Classic UFS/ext2 inode structure."
+    },
+    "cse-2008-cs-21": {
+      "approach": "Use the composite trapezoidal error bound $|E|\\le\\frac{(b-a)h^2}{12}\\max|f''|$ with $h=1/n$ and solve for $n$.",
+      "concepts": ["Trapezoidal rule", "Truncation error bound"],
+      "steps": [
+        { "title": "Second derivative", "body": "$f=xe^x$, $f'=(x+1)e^x$, $f''=(x+2)e^x$, increasing on $[1,2]$, so $\\max|f''|=f''(2)=4e^2$." },
+        { "title": "Error bound", "body": "$b-a=1$, $h=1/n$: $|E|\\le\\dfrac{1\\cdot 4e^2}{12n^2}=\\dfrac{e^2}{3n^2}$." },
+        { "title": "Solve", "body": "$\\dfrac{e^2}{3n^2}\\le\\dfrac{1}{3}\\times10^{-6}\\Rightarrow n^2\\ge e^2\\times10^6\\Rightarrow n\\ge 1000e$." }
+      ],
+      "answer": { "value": "$1000e$", "choice": ["A"], "matchesKey": true },
+      "optionAnalysis": [
+        { "option": "A", "correct": true, "reason": "Exactly the bound $n\\ge 1000e$ (≈ 2719 subintervals)." },
+        { "option": "B", "correct": false, "reason": "$1000<1000e\\approx2718$, so the error bound still exceeds the tolerance." },
+        { "option": "C", "correct": false, "reason": "Off by a factor 10: $\\sqrt{10^6}=1000$, not 100." },
+        { "option": "D", "correct": false, "reason": "$100<1000e$; far too few subintervals." }
+      ],
+      "pitfalls": ["Taking $\\max|f''|$ at $x=1$ ($3e$) instead of $x=2$."],
+      "verification": "With $n=1000e$: $e^2/(3\\cdot10^6e^2)=\\frac13\\times10^{-6}$ exactly."
+    },
+    "cse-2008-cs-22": {
+      "approach": "Recognise the iteration as Newton's method on $f(x)=x^2-R$; its fixed point is $\\sqrt{R}$.",
+      "concepts": ["Newton-Raphson method", "Fixed point"],
+      "steps": [
+        { "title": "Derive", "body": "For $f(x)=x^2-R$, $f'(x)=2x$: $x_{n+1}=x_n-\\dfrac{x_n^2-R}{2x_n}=\\dfrac{x_n^2+R}{2x_n}=\\dfrac12\\left(x_n+\\dfrac{R}{x_n}\\right)$." },
+        { "title": "Fixed point", "body": "At convergence $x=\\frac12(x+R/x)\\Rightarrow x^2=R\\Rightarrow x=\\sqrt R$." }
+      ],
+      "answer": { "value": "square root of R", "choice": ["C"], "matchesKey": true },
+      "optionAnalysis": [
+        { "option": "A", "correct": false, "reason": "The fixed point satisfies $x^2=R$, not $x=R^2$." },
+        { "option": "B", "correct": false, "reason": "Reciprocal iteration is $x_{n+1}=x_n(2-Rx_n)$." },
+        { "option": "C", "correct": true, "reason": "Newton on $x^2-R$; converges to $\\sqrt R$." },
+        { "option": "D", "correct": false, "reason": "No logarithm arises from this rational iteration." }
+      ],
+      "verification": "$R=2,\\ x_0=1$: $x_1=1.5$, $x_2=1.4167$, $x_3=1.41422\\approx\\sqrt2$."
+    }
+  }
+}
