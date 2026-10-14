@@ -1,0 +1,201 @@
+{
+  "paper": "cse-2016-2",
+  "fixes": [
+    {
+      "id": "cse-2016-2-ga-10",
+      "field": "text",
+      "before": "Choose the correct expression for f(x) given in the graph.",
+      "after": "Choose the correct expression for $f(x)$ given in the graph.",
+      "reason": "Typeset f(x) in KaTeX as in the paper.",
+      "source": "GATE 2016 CS Set 2 question paper, GA Q10"
+    },
+    {
+      "id": "cse-2016-2-cs-3",
+      "field": "subject",
+      "before": "calc",
+      "after": "dm",
+      "reason": "Vertex colouring of planar graphs is graph theory (discrete mathematics), not calculus.",
+      "source": "GATE 2016 CS Set 2 question paper, Q1.3"
+    },
+    {
+      "id": "cse-2016-2-cs-3",
+      "field": "topic",
+      "before": "maxmin",
+      "after": "graphs",
+      "reason": "Graph colouring belongs to the graphs topic.",
+      "source": "GATE 2016 CS Set 2 question paper, Q1.3"
+    },
+    {
+      "id": "cse-2016-2-cs-5",
+      "field": "subject",
+      "before": "ga",
+      "after": "prob",
+      "reason": "Total-probability question in the CS technical section, not General Aptitude.",
+      "source": "GATE 2016 CS Set 2 question paper, Q1.5"
+    },
+    {
+      "id": "cse-2016-2-cs-5",
+      "field": "topic",
+      "before": "quant",
+      "after": "basic",
+      "reason": "Conditional / total probability is basic probability.",
+      "source": "GATE 2016 CS Set 2 question paper, Q1.5"
+    },
+    {
+      "id": "cse-2016-2-cs-13",
+      "field": "answer",
+      "before": "C",
+      "after": "D",
+      "reason": "Quicksort (end pivot) is Θ(n²) and insertion sort Θ(n) on sorted input; merge sort is Θ(n log n). The GATE 2016 Set 2 key gives (D).",
+      "source": "GATE 2016 CS Set 2 answer key (D), as listed by GeeksforGeeks GATE-CS-2016 (Set 2) quiz"
+    },
+    {
+      "id": "cse-2016-2-cs-13",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Key corrected to D with external confirmation.",
+      "source": "GATE 2016 CS Set 2 answer key"
+    },
+    {
+      "id": "cse-2016-2-cs-13",
+      "field": "reviewNote",
+      "before": "Statement I depends on pivot choice; answer follows the official key as recalled (C).",
+      "after": null,
+      "reason": "Resolved: key is D.",
+      "source": "GATE 2016 CS Set 2 answer key"
+    },
+    {
+      "id": "cse-2016-2-cs-15",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Standard reading (counts are numbers of operations) gives O(N²), matching the key C; no ambiguity in the printed question.",
+      "source": "PDF p.6 (Q.15)"
+    },
+    {
+      "id": "cse-2016-2-cs-15",
+      "field": "reviewNote",
+      "before": "Interpretation of the operation counts is ambiguous; answer C follows the standard key.",
+      "after": null,
+      "reason": "Resolved, see needsReview.",
+      "source": "PDF p.6 (Q.15)"
+    },
+    {
+      "id": "cse-2016-2-cs-18",
+      "field": "topic",
+      "before": "pumping",
+      "after": "tm",
+      "reason": "Question is about closure properties across regular/CFL/recursive/RE classes, not the pumping lemma.",
+      "source": "PDF p.8 (Q.18)"
+    },
+    {
+      "id": "cse-2016-2-cs-18",
+      "field": "tags",
+      "before": [
+        "closure-properties"
+      ],
+      "after": [
+        "closure-properties",
+        "recursive",
+        "recursively-enumerable",
+        "context-free"
+      ],
+      "reason": "More precise tags.",
+      "source": "PDF p.8 (Q.18)"
+    },
+    {
+      "id": "cse-2016-2-cs-32",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Block size cancels: index+offset = log2(512K/8) = 16 for any block size, so tag = 24 is determined.",
+      "source": "PDF p.10 (Q.32)"
+    },
+    {
+      "id": "cse-2016-2-cs-32",
+      "field": "reviewNote",
+      "before": "Block size is not stated in the printed question; 24 is the commonly accepted key (assumes 64-byte blocks).",
+      "after": null,
+      "reason": "Resolved, see needsReview.",
+      "source": "PDF p.10 (Q.32)"
+    },
+    {
+      "id": "cse-2016-2-cs-39",
+      "field": "text",
+      "before": "The given diagram shows the flowchart for a recursive function $A(n)$. Assume that all statements, except for the recursive calls, have $O(1)$ time complexity. If the worst case time complexity of this function is $O(n^{\\alpha})$, then the least possible value (accurate up to two decimal positions) of $\\alpha$ is ______.\n\nFlowchart for Recursive Function A(n)",
+      "after": "The given diagram shows the flowchart for a recursive function $A(n)$. Assume that all statements, except for the recursive calls, have $O(1)$ time complexity. If the worst case time complexity of this function is $O(n^{\\alpha})$, then the least possible value (accurate up to two decimal positions) of $\\alpha$ is ______.",
+      "reason": "Figure caption was appended to the question text; it is now drawn as the figure title.",
+      "source": "GATE 2016 CS Set 2 PDF, Q.39"
+    },
+    {
+      "id": "cse-2016-2-cs-39",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2016-2/cs-39-1.png",
+          "alt": "Start, then call A(n/2), then a decision: left branch calls A(n/2) and returns; right branch calls A(n/2) twice, then a decision: right returns, down calls A(n/2) then a decision that either calls A(n/2) and returns or returns. Worst path has 5 calls.",
+          "svg": "cse-2016-2/cs-39-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2016-2/cs-39-1.png",
+          "alt": "Flowchart for recursive function A(n): Start, call A(n/2), then a decision. Left branch: call A(n/2), Return. Right branch: call A(n/2), call A(n/2), then a second decision whose right branch Returns and whose lower branch calls A(n/2) and reaches a third decision; its right branch Returns, its left branch calls A(n/2) then Returns.",
+          "svg": "cse-2016-2/cs-39-1.svg"
+        }
+      ],
+      "reason": "Figure redrawn as a faithful SVG; alt text described without giving away the answer.",
+      "source": "GATE 2016 CS Set 2 PDF, Q.39"
+    },
+    {
+      "id": "cse-2016-2-cs-49",
+      "field": "subject",
+      "before": "ga",
+      "after": "os",
+      "reason": "Semaphore question belongs to Operating Systems, not General Aptitude.",
+      "source": "GATE 2016 CS Set 2 PDF, Q.49"
+    },
+    {
+      "id": "cse-2016-2-cs-49",
+      "field": "topic",
+      "before": "quant",
+      "after": "sync",
+      "reason": "Process synchronization topic.",
+      "source": "GATE 2016 CS Set 2 PDF, Q.49"
+    },
+    {
+      "id": "cse-2016-2-cs-49",
+      "field": "tags",
+      "before": [
+        "semaphore"
+      ],
+      "after": [
+        "semaphore",
+        "counting-semaphore"
+      ],
+      "reason": "More precise tags.",
+      "source": "GATE 2016 CS Set 2 PDF, Q.49"
+    },
+    {
+      "id": "cse-2016-2-cs-50",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2016-2/cs-50-1.png",
+          "alt": "Line plot of miss rate (%) against cache size (MB): 10MB→80, 20→60, 30→40, 40→35, 50→30, 60→25, 70→20, 80→15.",
+          "svg": "cse-2016-2/cs-50-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2016-2/cs-50-1.png",
+          "alt": "Line graph of miss rate (%) on the y-axis (0 to 90) against cache size (MB) on the x-axis (0 to 90), dotted grid every 10. Points: 10 MB 80%, 20 MB 60%, 30 MB 40%, 40 MB 35%, 50 MB 30%, 60 MB 25%, 70 MB 20%, 80 MB 15%.",
+          "svg": "cse-2016-2/cs-50-1.svg"
+        }
+      ],
+      "reason": "Figure redrawn as a faithful SVG; alt text made more precise.",
+      "source": "GATE 2016 CS Set 2 PDF, Q.50"
+    }
+  ]
+}
