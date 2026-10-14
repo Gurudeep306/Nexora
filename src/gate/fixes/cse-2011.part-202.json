@@ -1,0 +1,101 @@
+{
+ "paper": "cse-2011",
+ "fixes": [
+  {
+   "id": "cse-2011-cs-48",
+   "field": "subject",
+   "before": "coa",
+   "after": "pds",
+   "reason": "Recursive C function trace belongs to Programming & Data Structures.",
+   "source": "pdf p.14"
+  },
+  {
+   "id": "cse-2011-cs-48",
+   "field": "topic",
+   "before": "isa",
+   "after": "recursion",
+   "reason": "Question traces a recursive function.",
+   "source": "pdf p.14"
+  },
+  {
+   "id": "cse-2011-cs-49",
+   "field": "subject",
+   "before": "coa",
+   "after": "pds",
+   "reason": "Recursive C function trace belongs to Programming & Data Structures.",
+   "source": "pdf p.14"
+  },
+  {
+   "id": "cse-2011-cs-49",
+   "field": "topic",
+   "before": "isa",
+   "after": "recursion",
+   "reason": "Question traces a recursive function.",
+   "source": "pdf p.14"
+  },
+  {
+   "id": "cse-2011-cs-51",
+   "field": "subject",
+   "before": "ga",
+   "after": "dl",
+   "reason": "D flip-flop counter question (common data with Q50) is Digital Logic, not aptitude.",
+   "source": "pdf p.14"
+  },
+  {
+   "id": "cse-2011-cs-51",
+   "field": "topic",
+   "before": "quant",
+   "after": "sequential",
+   "reason": "Counter state sequence is a sequential-circuit topic.",
+   "source": "pdf p.14"
+  },
+  {
+   "id": "cse-2011-cs-55",
+   "field": "subject",
+   "before": "db",
+   "after": "algo",
+   "reason": "MST path question (linked with Q54) is Algorithms.",
+   "source": "pdf p.15"
+  },
+  {
+   "id": "cse-2011-cs-55",
+   "field": "topic",
+   "before": "sql",
+   "after": "mst",
+   "reason": "Question is about the minimum spanning tree.",
+   "source": "pdf p.15"
+  },
+  {
+   "id": "cse-2011-cs-54",
+   "field": "needsReview",
+   "before": false,
+   "after": true,
+   "reason": "Stored key C (6n-11) is disproved by Kruskal for n=5 (MST = 21 = n^2-n+1; 6n-11 = 19).",
+   "source": "independent solution"
+  },
+  {
+   "id": "cse-2011-cs-54",
+   "field": "reviewNote",
+   "before": null,
+   "after": "Stored key C (6n-11) fits only n=3,4. Kruskal: MST = v1v2 + all (v_i,v_{i+2}) edges = 3 + sum_{i=1}^{n-2}(2i+2) = n^2-n+1 (n=5: 21, n=6: 31; 6n-11 gives 19, 25). Correct answer is B; key should be changed to B.",
+   "reason": "Document the key disagreement.",
+   "source": "independent solution"
+  },
+  {
+   "id": "cse-2011-ga-62",
+   "field": "needsReview",
+   "before": true,
+   "after": false,
+   "reason": "Bubble chart redrawn from the PDF; danger index potency*d^2/y gives S = 1.6 as the clear maximum (P 1.25, Q 1.33, R 1.2), and S stays maximal even with d instead of d^2. Key D confirmed.",
+   "source": "pdf p.17"
+  },
+  {
+   "id": "cse-2011-ga-62",
+   "field": "reviewNote",
+   "before": "Interpretation of toxicity axis (lower value = more toxic) assumed; matches recalled official key D.",
+   "after": null,
+   "reason": "Review resolved (see needsReview fix).",
+   "source": "pdf p.17"
+  }
+ ]
+}
