@@ -1,0 +1,1209 @@
+{
+ "paper": "cse-2007",
+ "version": 2,
+ "solutions": {
+  "cse-2007-cs-1": {
+   "approach": "Check continuity and differentiability of $|x|$ separately; the only suspicious point is the corner at $x=0$.",
+   "concepts": [
+    "Continuity",
+    "Differentiability",
+    "One-sided derivatives"
+   ],
+   "steps": [
+    {
+     "title": "Continuity",
+     "body": "For $x\\ne 0$, $|x|$ equals $x$ or $-x$, both continuous. At $0$: $\\lim_{x\\to0^-}(-x)=0=\\lim_{x\\to0^+}x=f(0)$. So $f$ is continuous everywhere — **P is true**."
+    },
+    {
+     "title": "Differentiability at 0",
+     "body": "Left derivative: $\\lim_{h\\to0^-}\\frac{|h|-0}{h}=\\frac{-h}{h}=-1$.\n\nRight derivative: $\\lim_{h\\to0^+}\\frac{|h|}{h}=1$.\n\n$-1\\ne 1$, so $f'(0)$ does not exist — **Q is false**."
+    }
+   ],
+   "answer": {
+    "value": "P true, Q false",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Continuous everywhere, but has a corner at $x=0$ where it is not differentiable."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "P is true: $|x|$ is continuous at every point."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Q fails at $x=0$ (left derivative $-1$, right derivative $+1$)."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "P is true, so 'both false' is wrong."
+    }
+   ],
+   "pitfalls": [
+    "Differentiability implies continuity, but not the other way round — $|x|$ is the standard counterexample."
+   ],
+   "verification": "The graph of $|x|$ is a V with a sharp corner at the origin: unbroken (continuous) but with no unique tangent there."
+  },
+  "cse-2007-cs-2": {
+   "approach": "An equivalence relation must contain every pair $(a,a)$; the largest one contains all pairs.",
+   "concepts": [
+    "Equivalence relation",
+    "Reflexivity"
+   ],
+   "steps": [
+    {
+     "title": "Largest",
+     "body": "The universal relation $S\\times S$ is reflexive, symmetric and transitive, and nothing can be bigger. It has $n\\cdot n=n^2$ ordered pairs."
+    },
+    {
+     "title": "Smallest",
+     "body": "Reflexivity forces all $n$ pairs $(a,a)$. The identity relation $\\{(a,a)\\}$ is already symmetric and transitive, so the smallest equivalence relation has exactly $n$ pairs."
+    }
+   ],
+   "answer": {
+    "value": "$n^2$ and $n$",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "The largest relation is $S\\times S$ with $n^2$ pairs, not $n$."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Universal relation: $n^2$ pairs; identity relation: $n$ pairs."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "The empty relation is not reflexive (for $n\\ge1$), so the smallest cannot have 0 pairs."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Largest has $n^2$ pairs, and one pair cannot cover reflexivity for $n>1$ elements."
+    }
+   ],
+   "pitfalls": [
+    "The empty relation is symmetric and transitive but **not reflexive**."
+   ],
+   "verification": "For $S=\\{1,2\\}$: largest $=\\{(1,1),(1,2),(2,1),(2,2)\\}$ (4 $=2^2$), smallest $=\\{(1,1),(2,2)\\}$ (2 $=n$)."
+  },
+  "cse-2007-cs-3": {
+   "approach": "Count truth tables: a function is fixed by choosing an output bit for every input row.",
+   "concepts": [
+    "Truth table",
+    "Counting"
+   ],
+   "steps": [
+    {
+     "title": "Rows",
+     "body": "$n$ Boolean variables give $2^n$ distinct input combinations (rows of the truth table)."
+    },
+    {
+     "title": "Outputs",
+     "body": "Each row independently gets output 0 or 1, so the number of distinct functions is $2\\cdot2\\cdots2$ ($2^n$ times) $=2^{2^n}$."
+    }
+   ],
+   "answer": {
+    "value": "$2^{2^n}$",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "$n^2$ has no connection to truth tables; for $n=1$ it gives 1, but there are 4 functions."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "$2^n$ is the number of rows, not the number of functions."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "$2$ choices for each of the $2^n$ rows: $2^{2^n}$."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "$2^{n^2}$ would need $n^2$ rows; for $n=1$ it gives 2, not 4."
+    }
+   ],
+   "pitfalls": [
+    "Do not confuse the number of rows ($2^n$) with the number of functions ($2^{2^n}$)."
+   ],
+   "verification": "$n=1$: the functions $0,1,x,\\bar x$ — exactly $2^{2^1}=4$. $n=2$: $2^4=16$ functions, the well-known count."
+  },
+  "cse-2007-cs-4": {
+   "approach": "By Kuratowski, a non-planar graph contains a subdivision of $K_5$ or $K_{3,3}$; take the smaller one in edges.",
+   "concepts": [
+    "Kuratowski's theorem",
+    "Planarity",
+    "Euler's formula"
+   ],
+   "steps": [
+    {
+     "title": "Candidates",
+     "body": "$K_5$: 5 vertices, $\\binom52=10$ edges. $K_{3,3}$: 6 vertices, $3\\cdot3=9$ edges. Both are non-planar."
+    },
+    {
+     "title": "Nothing smaller",
+     "body": "Every non-planar graph contains a subdivision of one of them, so it has at least $\\min(10,9)=9$ edges. With 9 edges, it must be $K_{3,3}$ itself (a subdivision of $K_5$ needs $\\ge10$), so 6 vertices."
+    }
+   ],
+   "answer": {
+    "value": "9 edges and 6 vertices",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "A simple graph with 5 vertices and 9 edges is $K_5$ minus an edge, which is planar."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "$K_{3,3}$: 9 edges, 6 vertices — the minimum-edge non-planar graph."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "$K_5$ (10 edges, 5 vertices) is non-planar but does not have the minimum number of edges."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "10 edges is not minimal; $K_{3,3}$ already needs only 9."
+    }
+   ],
+   "pitfalls": [
+    "Minimum **edges** is asked, not minimum vertices — $K_5$ has fewer vertices but more edges."
+   ],
+   "verification": "Euler bound for bipartite (triangle-free) planar graphs: $e\\le 2v-4$; for $K_{3,3}$: $9>2\\cdot6-4=8$, confirming non-planarity."
+  },
+  "cse-2007-cs-5": {
+   "approach": "In a topological order every edge $u\\to v$ must have $u$ before $v$. Vertex 1 is the **only source**, so every valid order must start with 1 — scan the options for one that does not.",
+   "concepts": [
+    "Topological sort",
+    "DAG",
+    "In-degree"
+   ],
+   "steps": [
+    {
+     "title": "Edges and in-degrees",
+     "body": "Edges: $1\\to2,\\ 1\\to3,\\ 2\\to4,\\ 2\\to5,\\ 3\\to4,\\ 3\\to6,\\ 4\\to5,\\ 4\\to6$.\n\nIn-degrees: $1{:}0,\\ 2{:}1,\\ 3{:}1,\\ 4{:}2,\\ 5{:}2,\\ 6{:}2$. Only vertex 1 has in-degree 0.",
+     "scene": {
+      "subs": {
+       "1": "in 0",
+       "2": "in 1",
+       "3": "in 1",
+       "4": "in 2",
+       "5": "in 2",
+       "6": "in 2"
+      },
+      "tones": {
+       "1": "success"
+      },
+      "caption": "Vertex 1 is the unique source"
+     }
+    },
+    {
+     "title": "Constraints",
+     "body": "Removing 1 frees 2 and 3 (either order). 4 needs both 2 and 3. Then 5 and 6 each need 4 (and 2 resp. 3), so they come last in either order. Valid orders: $1\\,\\{2,3\\}\\,4\\,\\{5,6\\}$ — exactly 4 orders.",
+     "scene": {
+      "tones": {
+       "1": "success",
+       "2": "accent",
+       "3": "accent",
+       "4": "warning",
+       "5": "muted",
+       "6": "muted"
+      },
+      "caption": "1 → {2,3} → 4 → {5,6}"
+     }
+    },
+    {
+     "title": "Check options",
+     "body": "(A) 1 2 3 4 5 6, (B) 1 3 2 4 5 6, (C) 1 3 2 4 6 5 all fit $1\\,\\{2,3\\}\\,4\\,\\{5,6\\}$.\n\n(D) 3 2 4 1 6 5 places 3 before 1, violating edge $1\\to3$ (and $1\\to2$). **D is not a topological order.**",
+     "scene": {
+      "tones": {
+       "1": "error",
+       "3": "error",
+       "2": "error"
+      },
+      "edgeTones": {
+       "1>3": "error",
+       "1>2": "error"
+      },
+      "caption": "D puts 3 and 2 before 1"
+     }
+    }
+   ],
+   "answer": {
+    "value": "3 2 4 1 6 5",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Valid: 1, then 2,3, then 4, then 5,6 — every edge points forward."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Valid: 2 and 3 are independent, so swapping them is fine."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Valid: 5 and 6 are independent, so 6 before 5 is fine."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Starts with 3 although edge $1\\to3$ requires 1 first; also 2 precedes 1 against $1\\to2$."
+    }
+   ],
+   "shortcut": "A source with in-degree 0 that is unique must come first in every topological order — only D does not start with 1.",
+   "pitfalls": [
+    "Independent vertices (2/3, 5/6) may appear in either order — that alone does not make an order invalid."
+   ],
+   "verification": "Each of A, B, C was checked edge by edge (8 edges); D violates $1\\to2$ and $1\\to3$.",
+   "animation": {
+    "kind": "graph",
+    "directed": true,
+    "nodes": [
+     {
+      "id": "1",
+      "x": 0,
+      "y": 1
+     },
+     {
+      "id": "2",
+      "x": 1,
+      "y": 0
+     },
+     {
+      "id": "3",
+      "x": 1,
+      "y": 2
+     },
+     {
+      "id": "4",
+      "x": 2,
+      "y": 1
+     },
+     {
+      "id": "5",
+      "x": 3,
+      "y": 0
+     },
+     {
+      "id": "6",
+      "x": 3,
+      "y": 2
+     }
+    ],
+    "edges": [
+     {
+      "from": "1",
+      "to": "2"
+     },
+     {
+      "from": "1",
+      "to": "3"
+     },
+     {
+      "from": "2",
+      "to": "5"
+     },
+     {
+      "from": "2",
+      "to": "4"
+     },
+     {
+      "from": "3",
+      "to": "4"
+     },
+     {
+      "from": "3",
+      "to": "6"
+     },
+     {
+      "from": "4",
+      "to": "5"
+     },
+     {
+      "from": "4",
+      "to": "6"
+     }
+    ],
+    "caption": "The DAG from the question"
+   }
+  },
+  "cse-2007-cs-6": {
+   "approach": "Recall the standard decidability table: membership, emptiness, finiteness are decidable for CFGs/FSAs and equivalence is decidable for FSAs; ambiguity of a CFG is undecidable.",
+   "concepts": [
+    "Decidability",
+    "Ambiguous grammars",
+    "Closure properties of regular languages"
+   ],
+   "steps": [
+    {
+     "title": "Decidable ones",
+     "body": "CFG membership: CYK algorithm decides $w\\in L(G)$ in $O(n^3)$. FSA finiteness: $L$ is infinite iff the trimmed DFA has a cycle reachable from start and co-reachable to a final state. FSA equivalence: minimise both DFAs and compare (or test emptiness of the symmetric difference)."
+    },
+    {
+     "title": "Undecidable one",
+     "body": "Whether a CFG is ambiguous is undecidable — it reduces from Post's Correspondence Problem."
+    }
+   ],
+   "answer": {
+    "value": "Ambiguity problem for CFGs",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Decidable — CYK (or any CNF-based parser) decides membership."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Undecidable (reduction from PCP)."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Decidable — check for a useful cycle in the DFA graph."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Decidable — $L_1=L_2$ iff $(L_1\\setminus L_2)\\cup(L_2\\setminus L_1)=\\emptyset$, and regular languages are closed under these operations."
+    }
+   ],
+   "pitfalls": [
+    "Equivalence is undecidable for CFGs, but decidable for FSAs — read which model the option names."
+   ],
+   "verification": "Matches the standard table: for CFLs only membership, emptiness and finiteness are decidable; ambiguity, equivalence and universality are not."
+  },
+  "cse-2007-cs-7": {
+   "approach": "Test each statement against a standard example; every finite language is regular, which settles B immediately.",
+   "concepts": [
+    "Regular languages",
+    "Closure properties",
+    "Finite languages"
+   ],
+   "steps": [
+    {
+     "title": "Counterexamples",
+     "body": "(A) $\\Sigma^*$ is regular but its subset $\\{a^nb^n\\}$ is not.\n\n(C) $L$ non-regular and $\\bar L$ non-regular, yet $L\\cup\\bar L=\\Sigma^*$ is regular.\n\n(D) $\\{a^nb^n\\}=\\bigcup_{n\\ge0}\\{a^nb^n\\}$ is an infinite union of finite (one-string) sets but is not regular."
+    },
+    {
+     "title": "Why B holds",
+     "body": "A finite subset of any set is a finite language; a finite language is a finite union of single strings, each regular, so it is regular."
+    }
+   ],
+   "answer": {
+    "value": "Every finite subset of a non-regular set is regular",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "$\\{a^nb^n\\}\\subseteq\\Sigma^*$ is non-regular."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Any finite language is regular, regardless of where it comes from."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "$L\\cup\\bar L=\\Sigma^*$ is regular even when $L$ and $\\bar L$ are not."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Regular languages are closed only under **finite** union; $\\bigcup_n\\{a^nb^n\\}$ is non-regular."
+    }
+   ],
+   "pitfalls": [
+    "Closure under union is for finitely many sets only."
+   ],
+   "verification": "Each false option was refuted by an explicit counterexample."
+  },
+  "cse-2007-cs-8": {
+   "approach": "Build a two-level decoder tree: the 3 high-order bits pick one of 8 output decoders through their enable inputs.",
+   "concepts": [
+    "Decoder expansion",
+    "Enable input"
+   ],
+   "steps": [
+    {
+     "title": "Output level",
+     "body": "64 outputs ÷ 8 outputs per decoder $=8$ decoders, all driven by the low 3 address bits."
+    },
+    {
+     "title": "Selection level",
+     "body": "The high 3 bits go into one more 3-to-8 decoder whose 8 outputs drive the 8 enable inputs.\n\nTotal $=8+1=9$."
+    }
+   ],
+   "answer": {
+    "value": "9",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "7 decoders give at most 56 outputs at the output level."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "8 decoders provide 64 outputs but nothing to decode the top 3 bits without extra gates."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "8 output decoders + 1 enable-selecting decoder."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "One more than needed."
+    }
+   ],
+   "pitfalls": [
+    "Forgetting the selector decoder gives 8."
+   ],
+   "verification": "General formula for a tree of $k$-to-$2^k$ decoders: $2^{6-3}+1=9$."
+  },
+  "cse-2007-cs-9": {
+   "approach": "Write the minterms in binary and look for a pattern (or use a K-map); the function collapses to $x\\oplus z$.",
+   "concepts": [
+    "K-map",
+    "XOR",
+    "Minterms"
+   ],
+   "steps": [
+    {
+     "title": "Binary minterms",
+     "body": "| m | w x y z |\n|---|---|\n| 1 | 0 0 0 1 |\n| 3 | 0 0 1 1 |\n| 4 | 0 1 0 0 |\n| 6 | 0 1 1 0 |\n| 9 | 1 0 0 1 |\n| 11 | 1 0 1 1 |\n| 12 | 1 1 0 0 |\n| 14 | 1 1 1 0 |"
+    },
+    {
+     "title": "Pattern",
+     "body": "All four combinations of $w,y$ appear for each of the two $(x,z)$ patterns $(0,1)$ and $(1,0)$. Hence\n\n$$f=\\bar x z+x\\bar z=x\\oplus z$$\n\n(K-map: two quad groups $\\bar x z$ = {1,3,9,11} and $x\\bar z$ = {4,6,12,14})."
+    },
+    {
+     "title": "Conclusion",
+     "body": "$f$ does not depend on $w$ or $y$ — independent of **two** variables."
+    }
+   ],
+   "answer": {
+    "value": "Independent of two variables ($f=x\\oplus z$)",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "It is independent of both $w$ and $y$, not just one."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "$f=x\\oplus z$; $w$ and $y$ are irrelevant."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "$f$ depends on both $x$ and $z$ (it is their XOR)."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "$w$ and $y$ never matter."
+    }
+   ],
+   "verification": "Count: $x\\oplus z$ is true for 2 of 4 $(x,z)$ pairs, times 4 $(w,y)$ pairs $=8$ minterms — matches the 8 given."
+  },
+  "cse-2007-cs-10": {
+   "approach": "Word field from the line size, set field from the number of sets (lines ÷ ways), tag = the rest.",
+   "concepts": [
+    "Set-associative cache",
+    "Address split"
+   ],
+   "steps": [
+    {
+     "title": "WORD and LINE (set) bits",
+     "body": "Line size $64=2^6$ words → WORD $=6$ bits.\n\nSets $=128/4=32=2^5$ → set index $=5$ bits."
+    },
+    {
+     "title": "TAG",
+     "body": "TAG $=20-5-6=9$ bits. Fields: 9, 5, 6."
+    }
+   ],
+   "answer": {
+    "value": "9, 5, 6",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Uses 6 index bits and 5 word bits — swaps the fields; word needs 6 bits."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "7 index bits would be direct-mapped (128 lines); here there are only 32 sets."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "8 word bits would mean 256-word lines."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Tag 9, set 5, word 6; $9+5+6=20$."
+    }
+   ],
+   "pitfalls": [
+    "In a $k$-way cache the index field addresses **sets**, not lines."
+   ],
+   "verification": "$9+5+6=20$ address bits. ✓"
+  },
+  "cse-2007-cs-11": {
+   "approach": "Capacity = surfaces × tracks × sectors × bytes; sector address bits = $\\log_2$(total sectors).",
+   "concepts": [
+    "Disk geometry",
+    "Addressing"
+   ],
+   "steps": [
+    {
+     "title": "Capacity",
+     "body": "$16\\times128\\times256\\times512=2^4\\cdot2^7\\cdot2^8\\cdot2^9=2^{28}$ bytes $=256$ MB."
+    },
+    {
+     "title": "Sector address",
+     "body": "Total sectors $=2^4\\cdot2^7\\cdot2^8=2^{19}$, so $19$ bits identify one sector."
+    }
+   ],
+   "answer": {
+    "value": "256 Mbyte, 19 bits",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "$2^{28}$ B $=256$ MB; $2^{19}$ sectors → 19 bits."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "28 bits would address individual bytes, not sectors."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Capacity is $2^{28}$ B $=256$ MB, not 512 MB."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "$2^{28}$ bytes is 256 MB, not 64 GB."
+    }
+   ],
+   "pitfalls": [
+    "Bit-serial storage does not change the byte count per sector."
+   ],
+   "verification": "$4+7+8=19$ bits for surface, track and sector numbers. ✓"
+  },
+  "cse-2007-cs-12": {
+   "approach": "A full binary tree of height $h$ has $2^i$ nodes at depth $i$, $i=0..h$; sum the geometric series.",
+   "concepts": [
+    "Binary tree height",
+    "Geometric series"
+   ],
+   "steps": [
+    {
+     "title": "Per level",
+     "body": "Depth $i$ holds at most $2^i$ nodes, depths $0$ to $h$ (height counted in edges)."
+    },
+    {
+     "title": "Sum",
+     "body": "$\\sum_{i=0}^{h}2^i=2^{h+1}-1$."
+    }
+   ],
+   "answer": {
+    "value": "$2^{h+1}-1$",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "$2^h-1$ is the count when height is measured in **levels** (nodes), not edges."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Too small: for $h=0$ it gives $-\\tfrac12$."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Geometric sum over $h+1$ levels."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Off by one: the sum is $2^{h+1}-1$."
+    }
+   ],
+   "pitfalls": [
+    "Check the definition of height used (edges here)."
+   ],
+   "verification": "$h=0$: single node, $2^1-1=1$. $h=1$: 3 nodes, $2^2-1=3$. ✓"
+  },
+  "cse-2007-cs-13": {
+   "approach": "The number of binary-tree shapes on $n$ unlabeled nodes is the Catalan number $C_n=\\frac{1}{n+1}\\binom{2n}{n}$.",
+   "concepts": [
+    "Catalan numbers",
+    "Binary tree shapes"
+   ],
+   "steps": [
+    {
+     "title": "Formula",
+     "body": "$C_3=\\frac{1}{4}\\binom63=\\frac{20}{4}=5$."
+    },
+    {
+     "title": "Enumerate",
+     "body": "Root with both subtrees of size 1: 1 shape. Root with all 2 remaining nodes on one side: 2 sides × 2 shapes of a 2-node tree $=4$. Total $1+4=5$."
+    }
+   ],
+   "answer": {
+    "value": "5",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Many distinct shapes exist."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "$C_3=5$."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Misses the balanced shape (root with two children)."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Counts only some chain/zig-zag shapes."
+    }
+   ],
+   "pitfalls": [
+    "With **labeled** nodes the count would be $5\\cdot3!=30$."
+   ],
+   "verification": "Recurrence $C_3=C_0C_2+C_1C_1+C_2C_0=2+1+2=5$. ✓"
+  },
+  "cse-2007-cs-14": {
+   "approach": "Compare worst-case running times.",
+   "concepts": [
+    "Sorting complexity"
+   ],
+   "steps": [
+    {
+     "title": "Worst cases",
+     "body": "Merge sort: $O(n\\log n)$ always. Bubble sort: $O(n^2)$. Quick sort: $O(n^2)$ (bad pivots). Selection sort: $O(n^2)$."
+    },
+    {
+     "title": "Pick",
+     "body": "Only merge sort is $o(n^2)$ in the worst case."
+    }
+   ],
+   "answer": {
+    "value": "Merge sort",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "$O(n\\log n)$ worst case."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "$O(n^2)$ worst case (reverse sorted input)."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "$O(n\\log n)$ only on average; worst case $O(n^2)$."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Always $O(n^2)$ comparisons."
+    }
+   ],
+   "pitfalls": [
+    "Quick sort is fast on average but its worst case is quadratic."
+   ],
+   "verification": "Standard results; merge sort's recurrence $T(n)=2T(n/2)+n$ gives $\\Theta(n\\log n)$ regardless of input."
+  },
+  "cse-2007-cs-15": {
+   "approach": "Trace how $j$ grows: $1,2,4,\\dots$; the loop condition is true for $j=2^0,\\dots,2^k$ with $2^k\\le n$, i.e. $k=\\lfloor\\log_2 n\\rfloor$.",
+   "concepts": [
+    "Loop analysis",
+    "Logarithms"
+   ],
+   "steps": [
+    {
+     "title": "Successful tests",
+     "body": "$j$ takes values $2^0,2^1,\\dots$. The test $j\\le n$ succeeds for $2^i\\le n$, i.e. $i=0,1,\\dots,\\lfloor\\log_2 n\\rfloor$: that is $\\lfloor\\log_2 n\\rfloor+1$ successful comparisons (= loop iterations)."
+    },
+    {
+     "title": "Final test",
+     "body": "One more comparison fails and exits, so strictly the condition is evaluated $\\lfloor\\log_2 n\\rfloor+2$ times. E.g. $n=1$: $1\\le1$ (true), $2\\le1$ (false) — 2 tests."
+    },
+    {
+     "title": "Matching an option",
+     "body": "No option equals $\\lfloor\\log_2 n\\rfloor+2$. The intended count (iterations / true comparisons) is $\\lfloor\\log_2 n\\rfloor+1$, option D. Option A ($\\lceil\\log_2 n\\rceil+1$) disagrees with this whenever $n$ is not a power of 2, e.g. $n=5$: true tests at $j=1,2,4$ → $3=\\lfloor\\log_2 5\\rfloor+1$, while $\\lceil\\log_2 5\\rceil+1=4$."
+    }
+   ],
+   "answer": {
+    "value": "$\\lfloor\\log_2 n\\rfloor+1$ (intended)",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Wrong for non-powers of 2: $n=5$ gives 4, actual successful tests are 3."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "$j$ doubles, so the count is logarithmic, not linear."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "$n=1$ gives 0, but the loop body runs once."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Counts the comparisons that succeed (= iterations); the exam's intended answer."
+    }
+   ],
+   "pitfalls": [
+    "Strictly counting the final failing test gives $\\lfloor\\log_2 n\\rfloor+2$, matching no option — the question intends D."
+   ],
+   "verification": "Tabulated $n=1..8$: true tests $=1,2,2,3,3,3,3,4=\\lfloor\\log_2 n\\rfloor+1$."
+  },
+  "cse-2007-cs-16": {
+   "approach": "Match each scheduler with what it is designed for.",
+   "concepts": [
+    "Gang scheduling",
+    "Rate monotonic scheduling",
+    "Fair-share scheduling"
+   ],
+   "steps": [
+    {
+     "title": "Matches",
+     "body": "**Gang scheduling** runs all threads of a parallel job simultaneously on different CPUs → thread scheduling (3).\n\n**Rate monotonic** gives static priorities by period for periodic tasks → real-time scheduling (2).\n\n**Fair share** guarantees each user/group a fixed CPU fraction → guaranteed scheduling (1)."
+    },
+    {
+     "title": "Result",
+     "body": "Collecting the pairs: P-3, Q-2, R-1, which is option A."
+    }
+   ],
+   "answer": {
+    "value": "P-3; Q-2; R-1",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "All three pairs correct."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Gang scheduling is about co-scheduling threads, not guarantees; fair share is not thread scheduling."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Gang scheduling is not a real-time policy; RMS is not thread scheduling."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "RMS is a real-time algorithm; fair share is not real-time."
+    }
+   ],
+   "verification": "Each algorithm appears in standard OS texts under the listed application."
+  },
+  "cse-2007-cs-17": {
+   "approach": "Kernel threads are known to the kernel and scheduled independently; user threads are invisible to it.",
+   "concepts": [
+    "User-level threads",
+    "Kernel-level threads"
+   ],
+   "steps": [
+    {
+     "title": "True statements",
+     "body": "(A) Kernel-thread switches need a mode switch into the kernel, so they are slower than user-thread switches.\n\n(B) User threads are managed entirely by a library — no hardware support needed.\n\n(C) The kernel can place kernel threads of one process on different CPUs."
+    },
+    {
+     "title": "False statement",
+     "body": "(D) A kernel thread blocking (e.g. on I/O) blocks only itself; the kernel schedules the other threads. It is **user-level** threads (many-to-one) where one block stalls all."
+    }
+   ],
+   "answer": {
+    "value": "Blocking one kernel level thread blocks all related threads",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "True: kernel involvement makes switches costlier."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "True: implemented in user space."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "True: kernel threads are independently schedulable."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "False: this describes user-level threads, not kernel threads."
+    }
+   ],
+   "verification": "Standard comparison table of ULT vs KLT."
+  },
+  "cse-2007-cs-18": {
+   "approach": "Classify each parser by how it builds the parse tree.",
+   "concepts": [
+    "Top-down parsing",
+    "Bottom-up parsing"
+   ],
+   "steps": [
+    {
+     "title": "Top-down",
+     "body": "Recursive descent starts at the start symbol and expands nonterminals by calling one procedure per nonterminal, tracing a leftmost derivation — **top-down**."
+    },
+    {
+     "title": "Bottom-up",
+     "body": "Operator precedence, LR(k) and LALR(k) are shift-reduce parsers: they reduce handles back to the start symbol (rightmost derivation in reverse) — **bottom-up**."
+    }
+   ],
+   "answer": {
+    "value": "Recursive descent parser",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Top-down."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Bottom-up shift-reduce parser."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Bottom-up (shift-reduce)."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Bottom-up (a restricted LR)."
+    }
+   ],
+   "verification": "LL/recursive-descent = top-down; all shift-reduce families = bottom-up."
+  },
+  "cse-2007-cs-19": {
+   "approach": "Manchester encoding has a transition in the middle of every bit, so each bit uses two signal elements.",
+   "concepts": [
+    "Manchester encoding",
+    "Baud rate"
+   ],
+   "steps": [
+    {
+     "title": "Signal elements per bit",
+     "body": "Each bit is sent as two half-bit levels (high→low or low→high), so baud rate $=2\\times$ bit rate."
+    },
+    {
+     "title": "Invert",
+     "body": "Bit rate $=\\tfrac12$ baud rate. (Classic 10 Mbps Ethernet runs at 20 Mbaud.)"
+    }
+   ],
+   "answer": {
+    "value": "Half the baud rate",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "2 signal elements per bit."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Inverted relation: baud is twice the bit rate."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Holds for NRZ, not Manchester."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "A is correct."
+    }
+   ],
+   "verification": "10BASE-T: 10 Mbps data, 20 Mbaud line signal."
+  },
+  "cse-2007-cs-20": {
+   "approach": "Recall the transport protocol each application uses.",
+   "concepts": [
+    "UDP",
+    "Application-layer protocols"
+   ],
+   "steps": [
+    {
+     "title": "TCP users",
+     "body": "HTTP → TCP port 80, Telnet → TCP port 23, SMTP → TCP port 25: all need a reliable byte stream for a session."
+    },
+    {
+     "title": "UDP user",
+     "body": "DNS queries are short request/response exchanges sent as UDP datagrams to port 53 (TCP only for zone transfers or oversized replies)."
+    }
+   ],
+   "answer": {
+    "value": "DNS",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Uses TCP."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Uses TCP."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Standard queries are UDP datagrams on port 53."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Uses TCP."
+    }
+   ],
+   "verification": "Port/protocol table: DNS 53/UDP."
+  },
+  "cse-2007-cs-21": {
+   "approach": "Use the fundamental theorem of finite Abelian groups: count partitions of the exponent in $4=2^2$.",
+   "concepts": [
+    "Finite Abelian groups",
+    "Integer partitions"
+   ],
+   "steps": [
+    {
+     "title": "Partitions",
+     "body": "$4=2^2$; partitions of 2: $2$ and $1+1$."
+    },
+    {
+     "title": "Groups",
+     "body": "$2\\Rightarrow\\mathbb Z_4$; $1+1\\Rightarrow\\mathbb Z_2\\times\\mathbb Z_2$ (Klein four-group). They differ: $\\mathbb Z_4$ has an element of order 4, the Klein group does not. So **2** groups."
+    }
+   ],
+   "answer": {
+    "value": "2",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "$\\mathbb Z_4$ and $\\mathbb Z_2\\times\\mathbb Z_2$."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "There is no third group of order 4."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Overcounts."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Overcounts."
+    }
+   ],
+   "verification": "Every group of order $p^2$ is Abelian, and there are exactly two of order 4."
+  },
+  "cse-2007-cs-22": {
+   "approach": "Rewrite 'not every graph is connected' as $\\neg\\forall x(G(x)\\Rightarrow C(x))\\equiv\\exists x(G(x)\\wedge\\neg C(x))$ and test each option for equivalence.",
+   "concepts": [
+    "First-order logic",
+    "Quantifier negation"
+   ],
+   "steps": [
+    {
+     "title": "Target",
+     "body": "$\\neg\\forall x\\,(G\\Rightarrow C)\\equiv\\exists x\\,\\neg(\\neg G\\vee C)\\equiv\\exists x\\,(G\\wedge\\neg C)$."
+    },
+    {
+     "title": "Check options",
+     "body": "(A) is the target verbatim. (B) is its equivalent form. (C) uses $G\\Rightarrow C\\equiv\\neg G\\vee C$, so equals (A).\n\n(D) $\\forall x\\,(G\\Rightarrow\\neg C)$ says **no** graph is connected — stronger and different."
+    }
+   ],
+   "answer": {
+    "value": "$\\forall x\\,(Graph(x)\\Rightarrow\\neg Connected(x))$",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Exactly 'not every graph is connected'."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "'Some graph is not connected' — equivalent."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "$\\neg G\\vee C$ is $G\\Rightarrow C$, so this equals (A)."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Means 'no graph is connected' — not the given statement."
+    }
+   ],
+   "verification": "Model check: a world with one connected and one disconnected graph makes A, B, C true but D false."
+  }
+ }
+}
