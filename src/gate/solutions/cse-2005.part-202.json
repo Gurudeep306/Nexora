@@ -1,0 +1,1733 @@
+{
+ "paper": "cse-2005",
+ "version": 2,
+ "solutions": {
+  "cse-2005-cs-47": {
+   "approach": "Use Kuratowski's theorem: a graph is non-planar iff it contains a subdivision of $K_5$ or $K_{3,3}$. $G_1$ is 3-regular on 6 vertices with each vertex joined to its two hexagon neighbours and to its opposite vertex — that is exactly $K_{3,3}$.",
+   "concepts": [
+    "Planarity",
+    "Kuratowski's theorem",
+    "K3,3",
+    "Euler's bound e ≤ 3v − 6"
+   ],
+   "steps": [
+    {
+     "title": "Identify G1",
+     "body": "Number the hexagon vertices $1,\\dots,6$ around the cycle. $G_1$ has the 6 cycle edges plus the three long diagonals $1\\text{–}4$, $2\\text{–}5$, $3\\text{–}6$ (the arc is $3\\text{–}6$ drawn around the crossing). Split into $\\{1,3,5\\}$ and $\\{2,4,6\\}$: every cycle edge and every long diagonal joins odd to even, and each vertex has degree 3, so all $3\\times3=9$ cross pairs are edges. Hence $G_1 = K_{3,3}$, which is non-planar.",
+     "scene": {
+      "tones": {
+       "1": "cat1",
+       "3": "cat1",
+       "5": "cat1",
+       "2": "cat2",
+       "4": "cat2",
+       "6": "cat2"
+      },
+      "caption": "Odd vertices vs even vertices: every edge goes across — K3,3"
+     }
+    },
+    {
+     "title": "G2 is planar",
+     "body": "$G_2$: 6 vertices, 11 edges ($\\le 3\\cdot6-6=12$). Redraw the top chord (upper-left–upper-right) outside the hexagon above the top vertex and the bottom chord (lower-left–lower-right) outside below the bottom vertex. The remaining inside chords top–bottom, top–lower-left and upper-right–bottom pairwise share an endpoint or lie on the same side of each other, so no crossings remain."
+    },
+    {
+     "title": "G3 and G4 are planar",
+     "body": "Both have 5 vertices. $G_3$ has $5+3=8$ edges and $G_4$ has $5+4=9$ edges $=10-1$, i.e. $G_4 = K_5 - e$. $K_5-e$ is planar (draw the triangle of the three vertices adjacent to everything, place one of the remaining two inside and one outside), and $G_3 \\subseteq K_5 - e$ is planar too. So the only non-planar graph is $G_1$."
+    }
+   ],
+   "animation": {
+    "kind": "graph",
+    "directed": false,
+    "nodes": [
+     {
+      "id": "1",
+      "x": 1,
+      "y": 0
+     },
+     {
+      "id": "2",
+      "x": 3,
+      "y": 0
+     },
+     {
+      "id": "3",
+      "x": 4,
+      "y": 2
+     },
+     {
+      "id": "4",
+      "x": 3,
+      "y": 4
+     },
+     {
+      "id": "5",
+      "x": 1,
+      "y": 4
+     },
+     {
+      "id": "6",
+      "x": 0,
+      "y": 2
+     }
+    ],
+    "edges": [
+     {
+      "from": "1",
+      "to": "2"
+     },
+     {
+      "from": "2",
+      "to": "3"
+     },
+     {
+      "from": "3",
+      "to": "4"
+     },
+     {
+      "from": "4",
+      "to": "5"
+     },
+     {
+      "from": "5",
+      "to": "6"
+     },
+     {
+      "from": "6",
+      "to": "1"
+     },
+     {
+      "from": "1",
+      "to": "4"
+     },
+     {
+      "from": "2",
+      "to": "5"
+     },
+     {
+      "from": "3",
+      "to": "6"
+     }
+    ],
+    "caption": "G1: hexagon 1–6 plus the three long diagonals"
+   },
+   "answer": {
+    "value": "G1",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "$G_1$ is $K_{3,3}$ (hexagon + three long diagonals), non-planar by Kuratowski."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "$G_2$ can be redrawn without crossings by routing the two horizontal chords outside the hexagon."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "$G_3$ has only 8 edges on 5 vertices and is a subgraph of $K_5-e$, which is planar."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "$G_4$ is $K_5$ minus one edge, which is planar."
+    }
+   ],
+   "shortcut": "A 3-regular graph on 6 vertices that is a hexagon plus its three long diagonals is always $K_{3,3}$; any graph on 5 vertices missing at least one edge is planar.",
+   "pitfalls": [
+    "Counting crossings in the given drawing — a drawing with crossings can still be planar (G2, G3, G4 all are).",
+    "Using e ≤ 3v − 6 as a sufficient test: it only rules graphs out; K3,3 has 9 ≤ 12 edges yet is non-planar."
+   ],
+   "verification": "For $K_{3,3}$ the bipartite bound $e\\le 2v-4=8$ fails ($9>8$), confirming $G_1$ is non-planar; explicit crossing-free redraws exist for $G_2$–$G_4$."
+  },
+  "cse-2005-cs-48": {
+   "approach": "A square linear system $A\\mathbf{x}=\\mathbf{b}$ has a unique solution exactly when $\\det A \\neq 0$, so just evaluate the $3\\times3$ determinant of the coefficient matrix.",
+   "concepts": [
+    "Determinant",
+    "Consistency of linear systems",
+    "Rank"
+   ],
+   "steps": [
+    {
+     "title": "Coefficient matrix",
+     "body": "$$A=\\begin{bmatrix}2&-1&3\\\\3&2&5\\\\-1&4&1\\end{bmatrix}$$"
+    },
+    {
+     "title": "Expand along row 1",
+     "body": "$$\\det A = 2(2\\cdot1-5\\cdot4) -(-1)(3\\cdot1-5\\cdot(-1)) + 3(3\\cdot4-2\\cdot(-1))$$ $$= 2(2-20) + 1(3+5) + 3(12+2) = -36 + 8 + 42 = 14.$$"
+    },
+    {
+     "title": "Conclude",
+     "body": "$\\det A = 14 \\neq 0$, so $\\operatorname{rank}A = 3$, $A$ is invertible and $\\mathbf{x}=A^{-1}\\mathbf{b}$ is the unique solution."
+    }
+   ],
+   "answer": {
+    "value": "a unique solution",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "No solution needs $\\operatorname{rank}A < \\operatorname{rank}[A\\mid b]$, impossible when $\\det A\\neq0$."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "$\\det A = 14 \\neq 0$, so the system has exactly one solution."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "A linear system never has finitely many (more than one) solutions: it has 0, 1 or infinitely many."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Infinitely many solutions requires $\\det A = 0$."
+    }
+   ],
+   "pitfalls": [
+    "Option C is never possible for a linear system — the solution set is empty, a point, or an affine subspace."
+   ],
+   "verification": "Cross-check by expanding along column 1: $2(2\\cdot1-5\\cdot4) - 3((-1)\\cdot1-3\\cdot4) + (-1)((-1)\\cdot5-3\\cdot2) = -36+39+11 = 14$."
+  },
+  "cse-2005-cs-49": {
+   "approach": "For a $2\\times2$ matrix the eigenvalues are the roots of $\\lambda^2 - (\\operatorname{tr}A)\\lambda + \\det A = 0$.",
+   "concepts": [
+    "Eigenvalues",
+    "Characteristic equation",
+    "Trace and determinant"
+   ],
+   "steps": [
+    {
+     "title": "Trace and determinant",
+     "body": "$\\operatorname{tr}A = 2+5 = 7$, $\\det A = 2\\cdot5-(-1)(-4) = 10-4 = 6$."
+    },
+    {
+     "title": "Solve",
+     "body": "$\\lambda^2-7\\lambda+6=0 \\Rightarrow (\\lambda-1)(\\lambda-6)=0 \\Rightarrow \\lambda = 1, 6.$"
+    }
+   ],
+   "answer": {
+    "value": "1 and 6",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Sum $0\\neq7$ and product $-1\\neq6$."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Sum $1+6=7=\\operatorname{tr}A$ and product $6=\\det A$."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "These are the diagonal entries; the matrix is not triangular, so they are not eigenvalues (product $10\\neq6$)."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Sum $3\\neq7$, product $-4\\neq6$."
+    }
+   ],
+   "shortcut": "Check options against sum = trace (7) and product = determinant (6).",
+   "verification": "$A-I=\\begin{bmatrix}1&-1\\\\-4&4\\end{bmatrix}$ and $A-6I=\\begin{bmatrix}-4&-1\\\\-4&-1\\end{bmatrix}$ are both singular."
+  },
+  "cse-2005-cs-50": {
+   "approach": "Differentiate the geometric series $\\frac{1}{1-x}=\\sum_{i\\ge0}x^i$ term by term; the derivative is exactly $\\frac{1}{(1-x)^2}$.",
+   "concepts": [
+    "Generating functions",
+    "Geometric series",
+    "Term-by-term differentiation"
+   ],
+   "steps": [
+    {
+     "title": "Differentiate",
+     "body": "$$\\frac{d}{dx}\\frac{1}{1-x} = \\frac{1}{(1-x)^2} = \\sum_{i\\ge1} i\\,x^{i-1}.$$"
+    },
+    {
+     "title": "Re-index",
+     "body": "Put $j=i-1$: $\\sum_{j\\ge0}(j+1)x^j$, so $g(i)=i+1$."
+    },
+    {
+     "title": "Check",
+     "body": "$\\frac{1}{(1-x)^2} = (1+x+x^2+\\dots)^2 = 1 + 2x + 3x^2 + \\dots$ — coefficient of $x^i$ counts pairs $(a,b)$ with $a+b=i$, which is $i+1$."
+    }
+   ],
+   "answer": {
+    "value": "i + 1",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Constant coefficients $1$ belong to $\\frac{1}{1-x}$, not its square."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "$g(i)=i$ gives $\\sum i x^i = \\frac{x}{(1-x)^2}$, off by a factor $x$."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "$\\frac{1}{(1-x)^2}=\\sum (i+1)x^i$."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "$g(0)$ would be $0$, but $G(0)=1$."
+    },
+    {
+     "option": "E",
+     "correct": false,
+     "reason": "$\\sum 2^i x^i = \\frac{1}{1-2x}$."
+    }
+   ],
+   "pitfalls": [
+    "Forgetting the shift after differentiating, which gives g(i) = i."
+   ],
+   "verification": "$G(0)=1=g(0)$ and $G'(0)=2=g(1)$, matching $i+1$."
+  },
+  "cse-2005-cs-51": {
+   "approach": "Bayes' theorem: $P(P\\mid R) = \\frac{P(P)P(R\\mid P)}{P(P)P(R\\mid P)+P(Q)P(R\\mid Q)}$.",
+   "concepts": [
+    "Bayes' theorem",
+    "Total probability"
+   ],
+   "steps": [
+    {
+     "title": "Joint probabilities",
+     "body": "$P(P)P(R\\mid P)=\\frac13\\cdot\\frac25=\\frac{2}{15}=\\frac{4}{30}$; $P(Q)P(R\\mid Q)=\\frac23\\cdot\\frac34=\\frac12=\\frac{15}{30}$."
+    },
+    {
+     "title": "Total and posterior",
+     "body": "$P(R)=\\frac{4}{30}+\\frac{15}{30}=\\frac{19}{30}$, so $P(P\\mid R)=\\dfrac{4/30}{19/30}=\\dfrac{4}{19}$."
+    }
+   ],
+   "answer": {
+    "value": "4/19",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "$\\frac{2/15}{19/30} = \\frac{4}{19}$."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Uses $5$ in the numerator (total balls in P) instead of the weighted red count."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "$\\frac{2}{9}$ ignores the correct normalisation by $P(R)$."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "$\\frac{19}{30}$ is $P(R)$, the total probability of red, not the posterior."
+    }
+   ],
+   "verification": "$P(Q\\mid R)=\\frac{15}{19}$ and $\\frac{4}{19}+\\frac{15}{19}=1$."
+  },
+  "cse-2005-cs-52": {
+   "approach": "Use the complement: two independent uniform $n$-bit strings are identical with probability $1/2^n$.",
+   "concepts": [
+    "Complement rule",
+    "Independent events"
+   ],
+   "steps": [
+    {
+     "title": "Probability they are equal",
+     "body": "Whatever the first string is, the second must match it bit by bit: $\\left(\\frac12\\right)^n = \\frac{1}{2^n}$."
+    },
+    {
+     "title": "Complement",
+     "body": "$P(\\text{not identical}) = 1-\\frac{1}{2^n}$."
+    }
+   ],
+   "answer": {
+    "value": "1 − 1/2^n",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "That is the probability the strings ARE identical."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "$1-1/n$ would assume only $n$ equally likely strings."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "$1/n!$ counts permutations, irrelevant here."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "$1 - P(\\text{identical}) = 1-1/2^n$."
+    }
+   ],
+   "verification": "$n=1$: strings differ with probability $\\frac12 = 1-\\frac12$. ✓"
+  },
+  "cse-2005-cs-53": {
+   "approach": "Read the DFA structurally: after an $a$ the machine must see $b,b$ before it can accept, and any $a$ before those two $b$'s goes to the dead state $q_4$; after reaching $q_3$, more $b$'s are fine and a new $a$ restarts the $abb$ requirement.",
+   "concepts": [
+    "DFA",
+    "Language of an automaton",
+    "Dead state"
+   ],
+   "steps": [
+    {
+     "title": "Transitions",
+     "body": "$q_0 \\xrightarrow{b} q_0$, $q_0\\xrightarrow{a}q_1$, $q_1\\xrightarrow{b}q_2$, $q_2\\xrightarrow{b}q_3$ (final), $q_3\\xrightarrow{b}q_3$, $q_3\\xrightarrow{a}q_1$; $q_1,q_2\\xrightarrow{a}q_4$ (dead)."
+    },
+    {
+     "title": "What each a needs",
+     "body": "Reading an $a$ (from $q_0$ or $q_3$) lands in $q_1$; to avoid $q_4$ the next two symbols must be $b,b$. After that ($q_3$) any number of extra $b$'s keep us in $q_3$. So every $a$ is followed by **at least** two $b$'s — e.g. $abbb$ is accepted, which rules out 'exactly two'.",
+     "scene": {
+      "current": [
+       "q3"
+      ],
+      "tape": {
+       "cells": [
+        "a",
+        "b",
+        "b",
+        "b"
+       ],
+       "head": 4
+      },
+      "caption": "abbb: q0 → q1 → q2 → q3 → q3, accepted"
+     }
+    },
+    {
+     "title": "Test the other options",
+     "body": "$abbaa$ contains $abb$ but goes $q_3\\xrightarrow{a}q_1\\xrightarrow{a}q_4$: rejected, so (C) is wrong. $ab$ has no $aa$ but stops in $q_2$: rejected, so (D) is wrong. Hence (B).",
+     "scene": {
+      "current": [
+       "q4"
+      ],
+      "tape": {
+       "cells": [
+        "a",
+        "b",
+        "b",
+        "a",
+        "a"
+       ],
+       "head": 5
+      },
+      "caption": "abbaa: second a reaches q1, third a falls into dead q4"
+     }
+    },
+    {
+     "title": "Caveat on the start state",
+     "body": "$q_0$ is not final, so strings with no $a$ (e.g. $\\varepsilon$, $bbb$) are rejected although they vacuously satisfy (B). The machine actually accepts (B) $\\cap$ \\{strings with at least one $a$\\}; among the options (B) is the only one consistent with the machine, and it is the intended answer."
+    }
+   ],
+   "animation": {
+    "kind": "automaton",
+    "states": [
+     {
+      "id": "q0",
+      "x": 0,
+      "y": 0,
+      "start": true
+     },
+     {
+      "id": "q1",
+      "x": 2,
+      "y": 0
+     },
+     {
+      "id": "q2",
+      "x": 4,
+      "y": 0
+     },
+     {
+      "id": "q3",
+      "x": 6,
+      "y": 0,
+      "accept": true
+     },
+     {
+      "id": "q4",
+      "x": 3,
+      "y": 2
+     }
+    ],
+    "edges": [
+     {
+      "from": "q0",
+      "to": "q0",
+      "label": "b"
+     },
+     {
+      "from": "q0",
+      "to": "q1",
+      "label": "a"
+     },
+     {
+      "from": "q1",
+      "to": "q2",
+      "label": "b"
+     },
+     {
+      "from": "q2",
+      "to": "q3",
+      "label": "b"
+     },
+     {
+      "from": "q3",
+      "to": "q3",
+      "label": "b"
+     },
+     {
+      "from": "q3",
+      "to": "q1",
+      "label": "a"
+     },
+     {
+      "from": "q1",
+      "to": "q4",
+      "label": "a"
+     },
+     {
+      "from": "q2",
+      "to": "q4",
+      "label": "a"
+     },
+     {
+      "from": "q4",
+      "to": "q4",
+      "label": "a,b"
+     }
+    ],
+    "current": [
+     "q0"
+    ],
+    "tape": {
+     "cells": [
+      "a",
+      "b",
+      "b",
+      "b"
+     ],
+     "head": 0
+    },
+    "caption": "The machine M"
+   },
+   "answer": {
+    "value": "every a in w is followed by at least two b's",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "$abbb$ is accepted ($q_3$ loops on $b$), so more than two $b$'s may follow an $a$."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "An $a$ leads to $q_1$, which dies unless $bb$ follows; extra $b$'s are allowed in $q_3$."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "$abba$ contains $abb$ but ends in $q_1$ (non-final)."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "$ab$ has no $aa$ yet is rejected (ends in $q_2$)."
+    }
+   ],
+   "pitfalls": [
+    "Choosing 'exactly two' — the self-loop on b at the final state allows more.",
+    "Strictly, the start state is non-final, so b* strings are rejected; the options are only approximate descriptions."
+   ],
+   "verification": "Traced abb (accept), abbabb (accept), abab (dead), abbb (accept), ab (reject)."
+  },
+  "cse-2005-cs-54": {
+   "approach": "Subset construction shows every NFA has an equivalent DFA, so $D_f=N_f$; but DPDAs are strictly weaker than NPDAs (e.g. even-length palindromes $ww^R$ need nondeterminism), so $D_p\\subset N_p$.",
+   "concepts": [
+    "NFA–DFA equivalence",
+    "DPDA vs NPDA",
+    "Deterministic CFLs"
+   ],
+   "steps": [
+    {
+     "title": "Finite automata",
+     "body": "Subset construction converts any NFA with $n$ states into a DFA with at most $2^n$ states accepting the same language, so $D_f = N_f$ (both = regular languages)."
+    },
+    {
+     "title": "Pushdown automata",
+     "body": "Every DPDA is an NPDA, so $D_p\\subseteq N_p$. The inclusion is strict: $L=\\{ww^R\\}$ is accepted by an NPDA that guesses the middle, but no DPDA accepts it (DCFLs are closed under complement while this language's behaviour needs guessing the midpoint). So $D_p\\subset N_p$."
+    }
+   ],
+   "answer": {
+    "value": "D_f = N_f and D_p ⊂ N_p",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "$D_f\\subset N_f$ is false — NFAs and DFAs are equally powerful."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Both parts are wrong."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "$D_p=N_p$ is false; $ww^R$ separates them."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Subset construction gives $D_f=N_f$; $ww^R$ shows $D_p\\subsetneq N_p$."
+    }
+   ],
+   "verification": "Standard results: regular = NFA = DFA; DCFL ⊊ CFL."
+  },
+  "cse-2005-cs-55": {
+   "approach": "Compute $L_1\\cap L_2$ directly: a string in both must have $\\#a=\\#b$ and $\\#b=\\#c$, giving $\\{a^nb^nc^n\\}$, the textbook non-CFL.",
+   "concepts": [
+    "Closure properties of CFLs",
+    "a^n b^n c^n",
+    "Context-sensitive languages"
+   ],
+   "steps": [
+    {
+     "title": "Each language is CFL",
+     "body": "$L_1 = \\{a^nb^n\\}\\cdot\\{c^m\\}$ and $L_2=\\{a^n\\}\\cdot\\{b^mc^m\\}$ — each is a concatenation of CFLs, hence CFL. So (C) is true, and (B) is true since CFLs are closed under union."
+    },
+    {
+     "title": "Intersection",
+     "body": "$L_1\\cap L_2=\\{a^nb^nc^n\\mid n>0\\}$, which is not context-free (pumping lemma), but is context-sensitive. So (D) is true and (A) is FALSE."
+    }
+   ],
+   "answer": {
+    "value": "L1 ∩ L2 is a context-free language",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "$L_1\\cap L_2=\\{a^nb^nc^n\\}$ is not CFL, so the statement is FALSE."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "True: CFLs are closed under union."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "True: both are concatenations of CFLs."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "True: $a^nb^nc^n$ is context-sensitive."
+    }
+   ],
+   "pitfalls": [
+    "Assuming CFLs are closed under intersection — they are not; this pair is the standard counterexample."
+   ],
+   "verification": "Pumping $a^pb^pc^p$: any window of length $\\le p$ touches at most two letter blocks, so pumping unbalances the counts."
+  },
+  "cse-2005-cs-56": {
+   "approach": "Recursive languages are closed under complement. For an RE-but-not-recursive $L_2$, if $\\overline{L_2}$ were RE then $L_2$ would be recursive (run both recognisers in parallel) — contradiction.",
+   "concepts": [
+    "Recursive languages",
+    "Recursively enumerable languages",
+    "Complement closure"
+   ],
+   "steps": [
+    {
+     "title": "Complement of L1",
+     "body": "A total TM deciding $L_1$ with its accept/reject swapped decides $\\overline{L_1}$, so $\\overline{L_1}$ is recursive."
+    },
+    {
+     "title": "Complement of L2",
+     "body": "Theorem: $L$ and $\\overline{L}$ both RE $\\Rightarrow$ $L$ recursive. Since $L_2$ is RE but not recursive, $\\overline{L_2}$ cannot be RE."
+    }
+   ],
+   "answer": {
+    "value": "complement of L1 recursive, complement of L2 not RE",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "$\\overline{L_2}$ RE would make $L_2$ recursive."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Both facts follow from complement closure and the RE+co-RE theorem."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "$\\overline{L_2}$ is not RE."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "$\\overline{L_2}$ is not even RE, let alone recursive."
+    }
+   ],
+   "verification": "Concrete instance: $L_2$ = halting problem; its complement is the classic non-RE language."
+  },
+  "cse-2005-cs-57": {
+   "approach": "The centre marker # tells a deterministic PDA exactly when to stop pushing and start popping, so $w\\#w^R$ is a DCFL; without it ($ww^R$) the midpoint must be guessed, and $ww$ is not even context-free.",
+   "concepts": [
+    "Deterministic CFL",
+    "Palindromes",
+    "ww is not CFL"
+   ],
+   "steps": [
+    {
+     "title": "L2 is DCFL",
+     "body": "DPDA: push each symbol until # is read, then pop and match each remaining symbol; accept on empty stack at the end. Every move is forced, so $L_2$ is a DCFL."
+    },
+    {
+     "title": "L1 and L3",
+     "body": "$L_1=\\{ww^R\\}$ is a CFL but not a DCFL — the machine cannot know where the middle is. $L_3=\\{ww\\}$ is not context-free at all (pumping $0^p1^p0^p1^p$ breaks it), so (C) and (D) are false."
+    }
+   ],
+   "answer": {
+    "value": "L2 is a deterministic CFL",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "$ww^R$ needs a nondeterministic guess of the midpoint."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "The marker # makes the push/pop switch deterministic."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "$ww$ is not a CFL."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "$ww$ is not a CFL, so not a DCFL either."
+    }
+   ],
+   "verification": "Pumping $0^p1^p0^p1^p\\in L_3$ with $|vxy|\\le p$ always destroys the copy structure, so $L_3$ is not CFL."
+  },
+  "cse-2005-cs-58": {
+   "approach": "Both questions fix a constant: β asks for an independent set of constant size 5, and α is equivalent (by complement) to a vertex cover of constant size 4. Brute force over constant-size subsets is polynomial.",
+   "concepts": [
+    "Independent set",
+    "Vertex cover",
+    "Brute force over constant-size subsets"
+   ],
+   "steps": [
+    {
+     "title": "β is in P",
+     "body": "Try all $\\binom{n}{5}=O(n^5)$ 5-subsets and check each in $O(1)$ pairs ($\\binom52=10$ adjacency tests): $O(n^5)$ time."
+    },
+    {
+     "title": "α is in P",
+     "body": "$S$ is independent $\\iff$ $V\\setminus S$ is a vertex cover. So 'independent set of size $|V|-4$' $\\iff$ 'vertex cover of size 4'. Try all $\\binom n4 = O(n^4)$ 4-subsets and check they cover all $m$ edges: $O(n^4 m)$ time."
+    },
+    {
+     "title": "Conclusion",
+     "body": "Both are in P (NP-completeness needs the size to be part of the input, not a fixed constant)."
+    }
+   ],
+   "answer": {
+    "value": "Both α and β are in P",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "β has a fixed size 5 → $O(n^5)$ brute force."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "α reduces to a size-4 vertex cover → $O(n^4m)$."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Neither has the size as a free parameter."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Both are polynomial by brute force over constant-size subsets."
+    }
+   ],
+   "pitfalls": [
+    "Pattern-matching 'independent set' to NP-complete without noticing the size is a constant (or |V| minus a constant)."
+   ],
+   "verification": "Complement identity: an edge with both ends outside $V\\setminus S$ would have both ends in $S$, contradicting independence."
+  },
+  "cse-2005-cs-59": {
+   "approach": "Run the shift-reduce (rightmost-derivation-in-reverse) parse of $n+n\\times n$ and record the substring reduced at each step; those are the handles.",
+   "concepts": [
+    "Handle",
+    "Shift-reduce parsing",
+    "Right-sentential form"
+   ],
+   "steps": [
+    {
+     "title": "Rightmost derivation",
+     "body": "$E \\Rightarrow E\\times n \\Rightarrow E+n\\times n \\Rightarrow n+n\\times n$ (the grammar is left-recursive, so the last-applied production is innermost-left).",
+     "scene": {
+      "reveal": 3,
+      "caption": "First handle: the leftmost n"
+     }
+    },
+    {
+     "title": "Reductions in order",
+     "body": "$n+n\\times n$: handle $n$ → $E+n\\times n$; handle $E+n$ → $E\\times n$; handle $E\\times n$ → $E$.",
+     "scene": {
+      "reveal": 9,
+      "caption": "Next handles: E + n, then E × n"
+     }
+    },
+    {
+     "title": "Handles",
+     "body": "The handles are $n$, $E+n$, $E\\times n$ — option (D).",
+     "scene": {
+      "reveal": 12,
+      "hl": [
+       {
+        "c": 1,
+        "tone": "success"
+       }
+      ],
+      "caption": "Handles: n, E + n, E × n"
+     }
+    }
+   ],
+   "animation": {
+    "kind": "table",
+    "cols": [
+     "Right-sentential form",
+     "Handle",
+     "Reduce by"
+    ],
+    "rows": [
+     [
+      "n + n × n",
+      "n",
+      "E → n"
+     ],
+     [
+      "E + n × n",
+      "E + n",
+      "E → E + n"
+     ],
+     [
+      "E × n",
+      "E × n",
+      "E → E × n"
+     ],
+     [
+      "E",
+      "—",
+      "accept"
+     ]
+    ],
+    "reveal": 0,
+    "caption": "Bottom-up parse of n + n × n"
+   },
+   "answer": {
+    "value": "n, E + n and E × n",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "$E+n\\times n$ is never a right side of a production."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "$E+E\\times n$ never appears: after reducing the first $n$, only $E+n$ can be reduced."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "$n+n$ is not a right side; the first $n$ is reduced to $E$ first."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Matches the reductions $E\\to n$, $E\\to E+n$, $E\\to E\\times n$."
+    }
+   ],
+   "pitfalls": [
+    "Applying usual precedence (× before +): this grammar gives + and × equal precedence, left-associative."
+   ],
+   "verification": "Each handle is the right side of a production and its reduction leads back to E, i.e., a valid rightmost derivation."
+  },
+  "cse-2005-cs-60": {
+   "approach": "SLR(1) and LALR(1) always have the same number of states as the LR(0) collection; canonical LR(1) splits states by lookahead. Build both collections for $S\\to(S)\\mid a$ and count.",
+   "concepts": [
+    "LR(0) items",
+    "LR(1) items",
+    "SLR vs LALR vs CLR"
+   ],
+   "steps": [
+    {
+     "title": "LR(0) collection",
+     "body": "$I_0:\\{S'\\to\\cdot S,\\ S\\to\\cdot(S),\\ S\\to\\cdot a\\}$, $I_1:\\{S'\\to S\\cdot\\}$, $I_2:\\{S\\to(\\cdot S),\\ S\\to\\cdot(S),\\ S\\to\\cdot a\\}$, $I_3:\\{S\\to a\\cdot\\}$, $I_4:\\{S\\to(S\\cdot)\\}$, $I_5:\\{S\\to(S)\\cdot\\}$. So $n_1=6$, and LALR merges LR(1) states with the same core, giving $n_3=6$.",
+     "scene": {
+      "reveal": 6,
+      "hl": [
+       {
+        "c": 0,
+        "tone": "accent"
+       }
+      ],
+      "caption": "6 LR(0) states → n1 = n3 = 6"
+     }
+    },
+    {
+     "title": "LR(1) collection",
+     "body": "With lookahead \\$: $I_0$, $[S'\\to S\\cdot,\\$]$, $[S\\to a\\cdot,\\$]$, $[S\\to(\\cdot S),\\$]$ (its closure has lookahead ')'), $[S\\to(S\\cdot),\\$]$, $[S\\to(S)\\cdot,\\$]$ — 6 states. With lookahead ')': $[S\\to(\\cdot S),)]$, $[S\\to a\\cdot,)]$, $[S\\to(S\\cdot),)]$, $[S\\to(S)\\cdot,)]$ — 4 more. $n_2 = 10$.",
+     "scene": {
+      "reveal": 14,
+      "hl": [
+       {
+        "c": 1,
+        "tone": "success"
+       }
+      ],
+      "caption": "Lookahead splits give 10 LR(1) states"
+     }
+    },
+    {
+     "title": "Compare",
+     "body": "SLR uses the LR(0) collection and LALR merges the 10 LR(1) states into the same 6 cores, so $n_1=n_3=6$ while $n_2=10$: $n_1=n_3<n_2$."
+    }
+   ],
+   "animation": {
+    "kind": "table",
+    "cols": [
+     "LR(0) core",
+     "LR(1) copies"
+    ],
+    "rows": [
+     [
+      "I0: S'→·S",
+      "1 ($)"
+     ],
+     [
+      "I1: S'→S·",
+      "1 ($)"
+     ],
+     [
+      "I2: S→(·S)",
+      "2 ($ and ))"
+     ],
+     [
+      "I3: S→a·",
+      "2 ($ and ))"
+     ],
+     [
+      "I4: S→(S·)",
+      "2 ($ and ))"
+     ],
+     [
+      "I5: S→(S)·",
+      "2 ($ and ))"
+     ],
+     [
+      "Total",
+      "10"
+     ]
+    ],
+    "reveal": 0,
+    "caption": "Each LR(0) state and how many LR(1) states share its core"
+   },
+   "answer": {
+    "value": "n1 = n3 < n2",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "SLR and LALR never differ in state count, so $n_1<n_3$ is impossible."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "$6=6<10$."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Here CLR has more states (10) because cores repeat with different lookaheads."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "$n_3\\ge n_2$ fails: $6<10$; in general CLR has at least as many states as LALR."
+    }
+   ],
+   "shortcut": "Always n(SLR) = n(LALR) ≤ n(CLR); only B or C can be right, and nesting of parentheses forces lookahead splitting.",
+   "verification": "Every LALR state is a merge of CLR states with identical cores; merging the 4 pairs reduces 10 → 6."
+  },
+  "cse-2005-cs-61": {
+   "approach": "Tokenise the line and then parse it: `fro` is just an identifier, and `fro(I=0, I<N, I++);` is a well-formed function-call expression statement with three comma-separated arguments. Neither the lexer nor the parser can complain.",
+   "concepts": [
+    "Lexical analysis",
+    "Syntax analysis",
+    "Implicit function declaration"
+   ],
+   "steps": [
+    {
+     "title": "Lexical phase",
+     "body": "Tokens: `fro` (identifier), `(`, `I`, `=`, `0`, `,`, `I`, `<`, `N`, `,`, `I`, `++`, `)`, `;`. Every lexeme is a valid C token, so there is **no lexical error** (a misspelt keyword is simply an identifier)."
+    },
+    {
+     "title": "Syntax phase",
+     "body": "The grammar rule *postfix-expression ( argument-expression-list )* matches `fro(I=0, I<N, I++)`: inside a call the commas separate arguments, so this is a call with arguments `I=0`, `I<N`, `I++`, followed by `;`. It is a syntactically valid expression statement — **no syntax error**."
+    },
+    {
+     "title": "What actually happens",
+     "body": "In C89 `fro` is implicitly declared as `int fro()`, so the object module is created without any error (at most a warning); the undefined reference to `fro` only surfaces at **link** time. (C99+ compilers may diagnose the implicit declaration, but that is a semantic, not lexical or syntactic, issue.) Hence the line causes no compilation error — option (A)."
+    },
+    {
+     "title": "Why not (C)",
+     "body": "Answer (C), often quoted for this question, assumes `fro` is a mistyped `for` whose header uses commas instead of semicolons. That reading is wrong for a C compiler: the compiler never sees a `for` statement, so it reports no syntax error."
+    }
+   ],
+   "answer": {
+    "value": "No compilation error",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Valid tokens and a valid function-call statement; only the linker later complains about the undefined `fro`."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "`fro` is a legal identifier — lexers do not detect misspelt keywords."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "There is no `for` statement for the parser to reject; the commas are argument separators in a call."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Neither a lexical nor a syntactic error is present."
+    }
+   ],
+   "pitfalls": [
+    "Treating fro as a broken for-loop: the compiler never knows it was meant to be 'for'.",
+    "Confusing link errors (undefined symbol) with compilation errors."
+   ],
+   "verification": "Compiling the program with gcc -c -std=c89 produces an object file (warning only); linking fails with 'undefined reference to fro'."
+  },
+  "cse-2005-cs-62": {
+   "approach": "Write $D = A\\cdot X + \\overline{X}\\cdot\\overline{Q}$: when $X=1$ the flip-flop loads $A$, when $X=0$ it toggles. The output in period $i$ is $D$ sampled at the rising edge that starts period $i$, i.e. computed from period $i-1$ values.",
+   "concepts": [
+    "D flip-flop",
+    "Timing diagram",
+    "Mux-like next-state logic"
+   ],
+   "steps": [
+    {
+     "title": "Next-state equation",
+     "body": "$D = AX + \\overline X\\,\\overline Q$. So $X=1 \\Rightarrow Q^+ = A$ (load) and $X=0 \\Rightarrow Q^+ = \\overline Q$ (toggle)."
+    },
+    {
+     "title": "Read X per period",
+     "body": "From the timing diagram: $X=1$ in periods 0, 1, 3, 4 and $X=0$ in periods 2 and 5."
+    },
+    {
+     "title": "Periods 1 and 2",
+     "body": "$Y_1 = D$ in period 0 $= A_0$ (since $X_0=1$). $Y_2$: $X_1=1 \\Rightarrow A_1$.",
+     "scene": {
+      "reveal": 8,
+      "caption": "X = 1 → load A of the previous period"
+     }
+    },
+    {
+     "title": "Period 3",
+     "body": "$X_2=0 \\Rightarrow Y_3 = \\overline{Y_2} = A_1'$ (toggle).",
+     "scene": {
+      "reveal": 12,
+      "hl": [
+       {
+        "r": 2,
+        "tone": "warning"
+       }
+      ],
+      "caption": "X = 0 → toggle"
+     }
+    },
+    {
+     "title": "Periods 4 and 5",
+     "body": "$X_3=1\\Rightarrow Y_4=A_3$; $X_4=1\\Rightarrow Y_5=A_4$. Sequence: $A_0\\,A_1\\,A_1'\\,A_3\\,A_4$.",
+     "scene": {
+      "reveal": 20,
+      "hl": [
+       {
+        "c": 3,
+        "tone": "success"
+       }
+      ],
+      "caption": "Y = A0 A1 A1' A3 A4"
+     }
+    }
+   ],
+   "animation": {
+    "kind": "table",
+    "cols": [
+     "Period i−1",
+     "X(i−1)",
+     "D = AX + X'Q'",
+     "Y in period i"
+    ],
+    "rows": [
+     [
+      "0",
+      "1",
+      "A0",
+      "Y1 = A0"
+     ],
+     [
+      "1",
+      "1",
+      "A1",
+      "Y2 = A1"
+     ],
+     [
+      "2",
+      "0",
+      "Q' = A1'",
+      "Y3 = A1'"
+     ],
+     [
+      "3",
+      "1",
+      "A3",
+      "Y4 = A3"
+     ],
+     [
+      "4",
+      "1",
+      "A4",
+      "Y5 = A4"
+     ]
+    ],
+    "reveal": 0,
+    "caption": "Value latched at each rising edge"
+   },
+   "answer": {
+    "value": "A0 A1 A1' A3 A4",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Load, load, toggle, load, load gives $A_0A_1A_1'A_3A_4$."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "In period 3 the flip-flop toggles its own state $A_1$; it never sees $A_2$ because $X_2=0$ blocks $A$."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Off by one period: the edge starting period $i$ samples period $i-1$ values."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Off by one period and wrong toggle positions."
+    }
+   ],
+   "pitfalls": [
+    "Using the value of A in the same period instead of the previous one — the FF samples at the edge that starts the period.",
+    "When X = 0 the output is the complement of the current Q, not of A in that period."
+   ],
+   "verification": "Check period 3 explicitly: $Q=A_1$, $X=0$ so $D=\\overline Q = A_1'$, latched at the edge starting period 3."
+  },
+  "cse-2005-cs-63": {
+   "approach": "Trace the Mealy machine from the LSB: it copies bits up to and including the first 1, then complements every later bit — exactly the 'copy until first 1, then flip' rule for 2's complement.",
+   "concepts": [
+    "Mealy machine",
+    "2's complement",
+    "Serial complementer"
+   ],
+   "steps": [
+    {
+     "title": "Behaviour",
+     "body": "In $Q_0$: input 0 → output 0 (stay), input 1 → output 1 and move to $Q_1$. In $Q_1$: 0 → 1 and 1 → 0 (complement). So: copy trailing zeros and the first 1, then invert the rest."
+    },
+    {
+     "title": "Example",
+     "body": "Take $01100_2$ (12 in 5 bits). Fed LSB first: $0,0,1,1,0$ → outputs $0,0,1,0,1$; read MSB-first that is $10100_2 = 20 = 32-12$, the 5-bit 2's complement of 12. ✓"
+    }
+   ],
+   "answer": {
+    "value": "It computes 2's complement",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "1's complement flips every bit, but this machine copies the trailing 0s and the first 1."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Copy up to the first 1, then complement — the 2's complement rule."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Increment would turn trailing 1s into 0s and the first 0 into 1."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Decrement turns trailing 0s into 1s and the first 1 into 0."
+    }
+   ],
+   "shortcut": "'Copy till first 1 from the right, flip the rest' = 2's complement.",
+   "verification": "Input $0001_2$ (1) → output $1111_2$ = $-1$ in 4-bit 2's complement. ✓"
+  },
+  "cse-2005-cs-64": {
+   "approach": "Read the excitation equations off the circuit — $D_0=\\overline{Q_0}$ and $D_1=Q_0\\oplus\\overline{Q_1}$ — and iterate from 00 until the state repeats.",
+   "concepts": [
+    "D flip-flop",
+    "Excitation equations",
+    "State sequence",
+    "XOR"
+   ],
+   "steps": [
+    {
+     "title": "Equations",
+     "body": "$D_0 = \\overline{Q_0}$ (FF0 toggles every clock); $D_1 = Q_0 \\oplus \\overline{Q_1}$."
+    },
+    {
+     "title": "Iterate",
+     "body": "$00$: $D_0=1$, $D_1=0\\oplus1=1$ → $11$. $11$: $D_0=0$, $D_1=1\\oplus0=1$ → $01$. $01$: $D_0=1$, $D_1=0\\oplus0=0$ → $10$. $10$: $D_0=0$, $D_1=1\\oplus1=0$ → $00$.",
+     "scene": {
+      "reveal": 16,
+      "caption": "00 → 11 → 01 → 10 → 00"
+     }
+    },
+    {
+     "title": "Sequence",
+     "body": "$00\\to11\\to01\\to10\\to00$ — option (D)."
+    }
+   ],
+   "animation": {
+    "kind": "table",
+    "cols": [
+     "Q0Q1",
+     "D0 = Q0'",
+     "D1 = Q0 ⊕ Q1'",
+     "next Q0Q1"
+    ],
+    "rows": [
+     [
+      "00",
+      "1",
+      "0 ⊕ 1 = 1",
+      "11"
+     ],
+     [
+      "11",
+      "0",
+      "1 ⊕ 0 = 1",
+      "01"
+     ],
+     [
+      "01",
+      "1",
+      "0 ⊕ 0 = 0",
+      "10"
+     ],
+     [
+      "10",
+      "0",
+      "1 ⊕ 1 = 0",
+      "00"
+     ]
+    ],
+    "reveal": 0,
+    "caption": "State table from 00"
+   },
+   "answer": {
+    "value": "00 → 11 → 01 → 10 → 00",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "From 01 the next state is 10, not 00."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "From 11 the next state is 01, not 00."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "From 00 the next state is 11 ($D_1=1$), not 10."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Matches the computed table."
+    }
+   ],
+   "pitfalls": [
+    "Feeding Q1 instead of Q1' into the XOR, which gives a different cycle."
+   ],
+   "verification": "$Q_0$ must alternate $0,1,0,1$ because $D_0=\\overline{Q_0}$; only (D) shows $Q_0$ alternating through a 4-state cycle, and the $Q_1$ column $0,1,1,0$ matches the XOR computation."
+  },
+  "cse-2005-cs-65": {
+   "approach": "Count only data-memory accesses after the instruction (all three words) has been fetched: the indirect source needs two reads, the indexed destination needs one read and one write.",
+   "concepts": [
+    "Addressing modes",
+    "Indexed addressing",
+    "Indirect addressing",
+    "Memory cycles"
+   ],
+   "steps": [
+    {
+     "title": "Source @B",
+     "body": "Read $M[B]$ to get the operand's address (1 cycle), then read $M[M[B]]$ to get the operand (1 cycle) → 2 cycles."
+    },
+    {
+     "title": "Destination A[R0]",
+     "body": "Effective address $A+R0$ is computed in the CPU (no memory). Read $M[A+R0]$ (1 cycle) and, after the addition, write the sum back to $M[A+R0]$ (1 cycle) → 2 cycles."
+    },
+    {
+     "title": "Total",
+     "body": "$2+2=4$ memory cycles during execution (the three fetch cycles for the instruction words are part of the fetch phase)."
+    }
+   ],
+   "answer": {
+    "value": "4",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Misses either the indirection read or the final write."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "2 (indirect source) + 1 read + 1 write (indexed destination) = 4."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Counts an extra cycle, e.g. treating the index register as memory."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Adds instruction-word fetches that belong to the fetch cycle."
+    }
+   ],
+   "pitfalls": [
+    "Counting the instruction fetch of words 2 and 3 (A and B) in the execute phase."
+   ],
+   "verification": "Memory references: M[B], M[M[B]], M[A+R0] (read), M[A+R0] (write) — four."
+  },
+  "cse-2005-cs-66": {
+   "approach": "Map each statement to the hardware mode that implements it in a single operand: array subscripts → indexed, pointer walk with post-increment → autoincrement, plain dereference → indirect.",
+   "concepts": [
+    "Addressing modes",
+    "Indexed",
+    "Autoincrement",
+    "Indirect"
+   ],
+   "steps": [
+    {
+     "title": "Match",
+     "body": "| Statement | Natural mode | Why |\n|---|---|---|\n| `A[I] = B[J];` | (b) Indexed | base address + index register |\n| `while (*A++);` | (c) Autoincrement | dereference then advance the pointer |\n| `int temp = *x;` | (a) Indirect | operand's address is held in `x` |"
+    },
+    {
+     "title": "Pick the option",
+     "body": "$(1,b),(2,c),(3,a)$ — option (C)."
+    }
+   ],
+   "answer": {
+    "value": "(1, b), (2, c), (3, a)",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Array access is not autoincrement, and `*A++` is not indexed."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Array subscripting is indexed, not indirect; `*x` is indirect, not indexed."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Indexed, autoincrement, indirect in that order."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "`A[I]` is indexed (not indirect) and `*x` is indirect (not autoincrement)."
+    }
+   ],
+   "verification": "Each mode used exactly once, consistent with the one-to-one matching."
+  },
+  "cse-2005-cs-67": {
+   "approach": "Split the 32-bit address into tag | index | offset: offset from block size, index from number of cache lines, tag is the rest.",
+   "concepts": [
+    "Direct-mapped cache",
+    "Address breakup"
+   ],
+   "steps": [
+    {
+     "title": "Offset and index",
+     "body": "Block $=32=2^5$ B → offset 5 bits. Lines $=\\frac{32\\text{ KB}}{32\\text{ B}}=\\frac{2^{15}}{2^5}=2^{10}$ → index 10 bits."
+    },
+    {
+     "title": "Tag",
+     "body": "$32-10-5 = 17$ tag bits. Answer: $(10, 17)$."
+    }
+   ],
+   "answer": {
+    "value": "10, 17",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Index $=10$, tag $=32-15=17$."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Tag 22 forgets to subtract the 10 index bits (only offset removed)."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "15 is index + offset together, not the index alone."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "5 is the block-offset width, not the index."
+    }
+   ],
+   "verification": "$2^{17}\\cdot2^{10}\\cdot2^5 = 2^{32}$ ✓"
+  },
+  "cse-2005-cs-68": {
+   "approach": "Draw the 5-stage timing with operand forwarding: a load's value is available after MA, so the dependent ALU instruction stalls one cycle; the next ALU instruction gets $I_2$'s result forwarded EX→EX with no stall.",
+   "concepts": [
+    "Pipeline hazards",
+    "Load-use stall",
+    "Operand forwarding"
+   ],
+   "steps": [
+    {
+     "title": "I1 (load)",
+     "body": "IF1 RD2 EX3 MA4 WB5 — R0 is available at the end of MA (cycle 4).",
+     "scene": {
+      "upto": 5
+     }
+    },
+    {
+     "title": "I2 depends on I1",
+     "body": "I2 needs R0 in its EX; earliest is cycle 5 (forward MA→EX). So IF2 RD3 stall4 EX5 MA6 WB7.",
+     "scene": {
+      "upto": 7
+     }
+    },
+    {
+     "title": "I3 depends on I2",
+     "body": "I3 needs the new R0 from I2's EX (cycle 5) → EX in cycle 6 via EX→EX forwarding. It was held one cycle by the stall ahead of it: IF3 stall4 RD5 EX6 MA7 WB8.",
+     "scene": {
+      "upto": 8
+     }
+    },
+    {
+     "title": "Total",
+     "body": "Last WB in cycle 8 → **8 clock cycles**. (Without forwarding the count would be 11 or 13, neither of which is an option, confirming forwarding is assumed.)"
+    }
+   ],
+   "animation": {
+    "kind": "pipeline",
+    "rows": [
+     {
+      "label": "I1: L R0",
+      "start": 1,
+      "cells": [
+       "IF",
+       "RD",
+       "EX",
+       "MA",
+       "WB"
+      ]
+     },
+     {
+      "label": "I2: A R0,R0",
+      "start": 2,
+      "cells": [
+       "IF",
+       "RD",
+       "-",
+       "EX",
+       "MA",
+       "WB"
+      ]
+     },
+     {
+      "label": "I3: S R2,R0",
+      "start": 3,
+      "cells": [
+       "IF",
+       "-",
+       "RD",
+       "EX",
+       "MA",
+       "WB"
+      ]
+     }
+    ],
+    "forwards": [
+     {
+      "from": [
+       0,
+       4
+      ],
+      "to": [
+       1,
+       5
+      ]
+     },
+     {
+      "from": [
+       1,
+       5
+      ],
+      "to": [
+       2,
+       6
+      ]
+     }
+    ],
+    "upto": 1
+   },
+   "answer": {
+    "value": "8",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "5 cycles for $I_1$ + 1 load-use stall + 1 + 1 for the next two instructions = 8."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "10 would mean extra stalls between $I_2$ and $I_3$, which forwarding removes."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "12 is close to the no-forwarding count, not supported by any consistent timing."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "15 is fully sequential execution ($3\\times5$), ignoring pipelining."
+    }
+   ],
+   "pitfalls": [
+    "Forgetting the unavoidable one-cycle load-use stall even with forwarding (gives 7, not an option)."
+   ],
+   "verification": "Formula: $k + (n-1) + \\text{stalls} = 5 + 2 + 1 = 8$."
+  },
+  "cse-2005-cs-69": {
+   "approach": "In program-controlled (busy-wait) mode the CPU is tied up for the whole inter-byte gap; in interrupt mode it spends only the interrupt overhead per byte. Gain = gap / overhead.",
+   "concepts": [
+    "Programmed I/O",
+    "Interrupt-driven I/O",
+    "CPU overhead"
+   ],
+   "steps": [
+    {
+     "title": "Time per byte",
+     "body": "$10\\text{ KB/s} \\Rightarrow 10^4$ bytes/s $\\Rightarrow$ one byte every $\\frac{1}{10^4}\\text{ s} = 100\\ \\mu s$."
+    },
+    {
+     "title": "CPU time per byte",
+     "body": "Programmed I/O: the CPU polls for the full $100\\ \\mu s$. Interrupt mode: only $4\\ \\mu s$ (transfer time negligible)."
+    },
+    {
+     "title": "Gain",
+     "body": "$\\dfrac{100}{4} = 25$."
+    }
+   ],
+   "answer": {
+    "value": "25",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Does not correspond to $100/4$."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "$100\\ \\mu s / 4\\ \\mu s = 25$."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Would need an inter-byte gap of $140\\ \\mu s$."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Would need an inter-byte gap of $180\\ \\mu s$."
+    }
+   ],
+   "pitfalls": [
+    "Using 1 KB = 1024 B gives 97.66 μs and gain ≈ 24.4; the intended (and nearest) value is 25."
+   ],
+   "verification": "With $1\\text{ KB}=1024$ B the gain is $\\approx 24.4$, still closest to 25."
+  }
+ }
+}
