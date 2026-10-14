@@ -1,0 +1,119 @@
+{
+  "paper": "cse-2009",
+  "fixes": [
+    {
+      "id": "cse-2009-cs-31",
+      "field": "topic",
+      "before": "scheduling",
+      "after": "files",
+      "reason": "Disk-head scheduling is filed under os/files across the bank (e.g. 1999-a-10, 2004-cs-12, 2014-1-cs-19).",
+      "source": "GATE 2009 CS question paper (GATE_PYQ/GATE2009.pdf)"
+    },
+    {
+      "id": "cse-2009-cs-39",
+      "field": "topic",
+      "before": "complexity",
+      "after": "sorting",
+      "reason": "Quicksort worst-case question belongs to algo/sorting.",
+      "source": "GATE 2009 CS question paper (GATE_PYQ/GATE2009.pdf)"
+    },
+    {
+      "id": "cse-2009-cs-40",
+      "field": "topic",
+      "before": "pumping",
+      "after": "cfg",
+      "reason": "Classifying a CFL intersected with a regular language is a context-free language question, not a pumping-lemma one.",
+      "source": "GATE 2009 CS question paper (GATE_PYQ/GATE2009.pdf)"
+    },
+    {
+      "id": "cse-2009-cs-32",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2009/cs-32-1.png",
+          "alt": "States Start, Ready, Running, Blocked, Terminated. Edges: A Start->Ready, B Ready->Running, C Running->Ready, D Running->Terminated, E Blocked->Ready, F Running->Blocked.",
+          "svg": "cse-2009/cs-32-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2009/cs-32-1.png",
+          "alt": "Process state diagram: Start -A-> Ready; Ready -B-> Running; Running -C-> Ready; Running -D-> Terminated; Running -F-> Blocked; Blocked -E-> Ready.",
+          "svg": "cse-2009/cs-32-1.svg"
+        }
+      ],
+      "reason": "SVG redrawn from the paper; alt made precise.",
+      "source": "GATE 2009 CS question paper (GATE_PYQ/GATE2009.pdf)"
+    },
+    {
+      "id": "cse-2009-cs-36",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2009/cs-36-a.png",
+          "alt": "Hash table of 10 slots for option A",
+          "svg": "cse-2009/cs-36-a.svg"
+        },
+        {
+          "f": "cse-2009/cs-36-b.png",
+          "alt": "Hash table of 10 slots for option B",
+          "svg": "cse-2009/cs-36-b.svg"
+        },
+        {
+          "f": "cse-2009/cs-36-c.png",
+          "alt": "Hash table of 10 slots for option C",
+          "svg": "cse-2009/cs-36-c.svg"
+        },
+        {
+          "f": "cse-2009/cs-36-d.png",
+          "alt": "Hash table of 10 slots for option D",
+          "svg": "cse-2009/cs-36-d.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2009/cs-36-a.png",
+          "alt": "Option A hash table, slots 0-9: slot 2 = 2, slot 3 = 23, slot 5 = 15, slot 8 = 18, others empty",
+          "svg": "cse-2009/cs-36-a.svg"
+        },
+        {
+          "f": "cse-2009/cs-36-b.png",
+          "alt": "Option B hash table, slots 0-9: slot 2 = 12, slot 3 = 13, slot 5 = 5, slot 8 = 18, others empty",
+          "svg": "cse-2009/cs-36-b.svg"
+        },
+        {
+          "f": "cse-2009/cs-36-c.png",
+          "alt": "Option C hash table, slots 0-9: 2 = 12, 3 = 13, 4 = 2, 5 = 3, 6 = 23, 7 = 5, 8 = 18, 9 = 15; slots 0, 1 empty",
+          "svg": "cse-2009/cs-36-c.svg"
+        },
+        {
+          "f": "cse-2009/cs-36-d.png",
+          "alt": "Option D hash table, slots 0-9: slot 2 = 12, 2; slot 3 = 13, 3, 23; slot 5 = 5, 15; slot 8 = 18; others empty",
+          "svg": "cse-2009/cs-36-d.svg"
+        }
+      ],
+      "reason": "SVGs redrawn from the paper; alt now lists slot contents.",
+      "source": "GATE 2009 CS question paper (GATE_PYQ/GATE2009.pdf)"
+    },
+    {
+      "id": "cse-2009-cs-38",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2009/cs-38-1.png",
+          "alt": "Undirected weighted graph on a,b,c,d,e,f,g: a-b 5, a-c 3, b-c 4, b-d 6, b-e 2, c-d 5, c-f 6, d-e 6, d-f 6, e-f 3, e-g 5, f-g 4.",
+          "svg": "cse-2009/cs-38-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2009/cs-38-1.png",
+          "alt": "Undirected weighted graph on vertices a-g: a-b 5, a-c 3, b-c 4, b-d 6, b-e 2, c-d 5, c-f 6, d-e 6, d-f 6, e-f 3, e-g 5, f-g 4.",
+          "svg": "cse-2009/cs-38-1.svg"
+        }
+      ],
+      "reason": "SVG redrawn from the paper; alt made precise.",
+      "source": "GATE 2009 CS question paper (GATE_PYQ/GATE2009.pdf)"
+    }
+  ]
+}
