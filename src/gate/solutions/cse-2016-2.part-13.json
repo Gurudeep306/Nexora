@@ -1,0 +1,1135 @@
+{
+  "paper": "cse-2016-2",
+  "version": 2,
+  "solutions": {
+    "cse-2016-2-cs-35": {
+      "approach": "Find the loop invariant by checking which expression is unchanged by both branches of the loop body (and holds initially). This is fast exponentiation by squaring.",
+      "concepts": [
+        "Loop invariant",
+        "Exponentiation by squaring"
+      ],
+      "steps": [
+        {
+          "title": "Initial state",
+          "body": "Before the first iteration $res = 1$, $a = X$, $b = Y$, so $res \\cdot a^b = 1 \\cdot X^Y = X^Y$. Option C holds initially."
+        },
+        {
+          "title": "Even branch preserves it",
+          "body": "If $b$ is even: $a' = a^2$, $b' = b/2$, $res' = res$.\n\n$$res' \\cdot (a')^{b'} = res \\cdot (a^2)^{b/2} = res \\cdot a^b$$"
+        },
+        {
+          "title": "Odd branch preserves it",
+          "body": "If $b$ is odd: $res' = res \\cdot a$, $b' = b - 1$, $a' = a$.\n\n$$res' \\cdot (a')^{b'} = res \\cdot a \\cdot a^{b-1} = res \\cdot a^b$$\n\nSo $X^Y = res \\cdot a^b$ is true before every iteration; at exit $b = 0$ gives $res = X^Y$."
+        },
+        {
+          "title": "Test the others on X = 2, Y = 3",
+          "body": "Iteration 1 starts with $(res, a, b) = (1, 2, 3)$; iteration 2 starts with $(2, 2, 2)$.\n\n- A: $a^b = 2^2 = 4 \\ne 8$ ✗\n- B: $(res \\cdot a)^Y = 4^3 = 64$, $(res \\cdot X)^b = 4^2 = 16$ ✗\n- D: $(res \\cdot a)^b = 4^2 = 16 \\ne 8$ ✗\n- C: $res \\cdot a^b = 2 \\cdot 4 = 8$ ✓"
+        }
+      ],
+      "answer": {
+        "value": "$X^Y = res \\cdot a^b$",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Ignores the factor already accumulated in res; fails once res ≠ 1 (e.g. X=2, Y=3 at the second check: $2^2 = 4 \\ne 8$)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Fails at the second check for X=2, Y=3: $4^3 = 64$ vs $4^2 = 16$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Holds initially and is preserved by both branches — the loop invariant."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Raises res to the power b as well; for X=2, Y=3 at the second check gives $16 \\ne 8$."
+        }
+      ],
+      "shortcut": "Plug a tiny case (X=2, Y=3) and evaluate each option at the start of the second iteration — only C survives.",
+      "pitfalls": [
+        "Checking only the first iteration, where res = 1 makes A and C look identical."
+      ],
+      "verification": "Traced X=2, Y=3: states (1,2,3) → (2,2,2) → (2,4,1) → (8,4,0); $res \\cdot a^b$ = 8 at every check."
+    },
+    "cse-2016-2-cs-36": {
+      "approach": "Build the expression tree from the postfix string with a stack, then traverse root → right → left. New-order is exactly the reverse of postorder, so the answer is the input string reversed.",
+      "concepts": [
+        "Expression tree",
+        "Postfix (RPN)",
+        "Tree traversal"
+      ],
+      "steps": [
+        {
+          "title": "Build the tree",
+          "body": "Scan `3 4 * 5 - 2 ^ 6 7 * 1 + -` with a stack:\n\n- `3 4 *` → $(3*4)$\n- `5 -` → $((3*4)-5)$\n- `2 ^` → $(((3*4)-5)\\ \\hat{}\\ 2)$\n- `6 7 *` → $(6*7)$, `1 +` → $((6*7)+1)$\n- final `-` → root `-` with left = `^` subtree, right = `+` subtree.",
+          "scene": {
+            "caption": "Expression tree of the RPN string"
+          }
+        },
+        {
+          "title": "Traverse root, right, left",
+          "body": "Root `-`; then the right subtree `+`: `+`, its right `1`, its left `*` → `* 7 6`; giving `+ 1 * 7 6`.\n\nThen the left subtree `^`: `^`, right `2`, left `-` → `- 5`, then `*` → `* 4 3`; giving `^ 2 - 5 * 4 3`.\n\nResult: `- + 1 * 7 6 ^ 2 - 5 * 4 3`.",
+          "scene": {
+            "root": {
+              "label": "-",
+              "tone": "accent",
+              "children": [
+                {
+                  "label": "^",
+                  "tone": "warning",
+                  "children": [
+                    {
+                      "label": "-",
+                      "id": "m2",
+                      "children": [
+                        {
+                          "label": "*",
+                          "id": "mul1",
+                          "children": [
+                            {
+                              "label": "3"
+                            },
+                            {
+                              "label": "4"
+                            }
+                          ]
+                        },
+                        {
+                          "label": "5"
+                        }
+                      ]
+                    },
+                    {
+                      "label": "2"
+                    }
+                  ]
+                },
+                {
+                  "label": "+",
+                  "tone": "success",
+                  "children": [
+                    {
+                      "label": "*",
+                      "id": "mul2",
+                      "children": [
+                        {
+                          "label": "6"
+                        },
+                        {
+                          "label": "7"
+                        }
+                      ]
+                    },
+                    {
+                      "label": "1"
+                    }
+                  ]
+                }
+              ]
+            },
+            "caption": "Right (+) subtree first, then the left (^) subtree"
+          }
+        },
+        {
+          "title": "Shortcut check",
+          "body": "Root–right–left is postorder (left–right–root) mirrored in time, so it equals the RPN string read backwards: `- + 1 * 7 6 ^ 2 - 5 * 4 3` ✓."
+        }
+      ],
+      "answer": {
+        "value": "- + 1 * 7 6 ^ 2 - 5 * 4 3",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Starts with `+`, but the root (last operator in RPN) is `-`."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Visits left before right inside the `*` subtrees (`6 7`, `3 4`); that is preorder-like ordering, not New-order."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Exactly root → right → left at every node; equals the reversed RPN string."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Ends with the root, so it is a (mirrored) postorder, not New-order."
+        }
+      ],
+      "shortcut": "Reverse the postfix string token by token.",
+      "pitfalls": [
+        "Swapping right/left only at the root and not inside each subtree (gives option B)."
+      ],
+      "verification": "Reversed `3 4 * 5 - 2 ^ 6 7 * 1 + -` token-wise and got the same string as the explicit traversal.",
+      "animation": {
+        "kind": "tree",
+        "root": {
+          "label": "-",
+          "children": [
+            {
+              "label": "^",
+              "children": [
+                {
+                  "label": "-",
+                  "id": "m2",
+                  "children": [
+                    {
+                      "label": "*",
+                      "id": "mul1",
+                      "children": [
+                        {
+                          "label": "3"
+                        },
+                        {
+                          "label": "4"
+                        }
+                      ]
+                    },
+                    {
+                      "label": "5"
+                    }
+                  ]
+                },
+                {
+                  "label": "2"
+                }
+              ]
+            },
+            {
+              "label": "+",
+              "children": [
+                {
+                  "label": "*",
+                  "id": "mul2",
+                  "children": [
+                    {
+                      "label": "6"
+                    },
+                    {
+                      "label": "7"
+                    }
+                  ]
+                },
+                {
+                  "label": "1"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "cse-2016-2-cs-37": {
+      "approach": "f(p, n) returns the maximum of 0 and all adjacent differences p[i] − p[i+1]; just compute those differences.",
+      "concepts": [
+        "Recursion",
+        "Pointer arithmetic"
+      ],
+      "steps": [
+        {
+          "title": "What f computes",
+          "body": "`f(p, n)` = `max(f(p+1, n-1), p[0]-p[1])`, base value 0 when `n <= 1`. Unrolling, $f = \\max(0, a_0-a_1, a_1-a_2, a_2-a_3, a_3-a_4)$."
+        },
+        {
+          "title": "Adjacent differences",
+          "body": "For $a = \\{3,5,2,6,4\\}$:\n\n- $3-5 = -2$\n- $5-2 = 3$\n- $2-6 = -4$\n- $6-4 = 2$\n\n$\\max(0, -2, 3, -4, 2) = 3$.",
+          "scene": {
+            "hl": [
+              {
+                "at": [
+                  1,
+                  2
+                ],
+                "tone": "success"
+              }
+            ],
+            "caption": "Largest drop: 5 − 2 = 3"
+          }
+        }
+      ],
+      "answer": {
+        "value": "3",
+        "number": 3,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Reading it as max − min (6 − 2 = 4); only adjacent pairs are compared."
+      ],
+      "verification": "Bottom-up: f(&a[3],2)=max(0,2)=2; f(&a[2],3)=max(2,−4)=2; f(&a[1],4)=max(2,3)=3; f(a,5)=max(3,−2)=3.",
+      "animation": {
+        "kind": "array",
+        "label": "a",
+        "cells": [
+          3,
+          5,
+          2,
+          6,
+          4
+        ]
+      }
+    },
+    "cse-2016-2-cs-38": {
+      "approach": "Standard matrix-chain DP with dimension vector p = (10, 5, 20, 10, 5): fill chains of length 2, 3, then 4.",
+      "concepts": [
+        "Matrix chain multiplication",
+        "Dynamic programming"
+      ],
+      "given": "| Matrix | Size |\n|---|---|\n| $A_1$ | $10 \\times 5$ |\n| $A_2$ | $5 \\times 20$ |\n| $A_3$ | $20 \\times 10$ |\n| $A_4$ | $10 \\times 5$ |",
+      "steps": [
+        {
+          "title": "Chains of length 2",
+          "body": "$m[1,2] = 10\\cdot5\\cdot20 = 1000$\n\n$m[2,3] = 5\\cdot20\\cdot10 = 1000$\n\n$m[3,4] = 20\\cdot10\\cdot5 = 1000$",
+          "scene": {
+            "reveal": 7
+          }
+        },
+        {
+          "title": "Chains of length 3",
+          "body": "$m[1,3] = \\min(m[1,2] + 10\\cdot20\\cdot10,\\ m[2,3] + 10\\cdot5\\cdot10) = \\min(1000+2000,\\ 1000+500) = 1500$\n\n$m[2,4] = \\min(m[2,3] + 5\\cdot10\\cdot5,\\ m[3,4] + 5\\cdot20\\cdot5) = \\min(1000+250,\\ 1000+500) = 1250$",
+          "scene": {
+            "reveal": 11
+          }
+        },
+        {
+          "title": "Whole chain",
+          "body": "$m[1,4] = \\min\\begin{cases} m[2,4] + 10\\cdot5\\cdot5 = 1250 + 250 = 1500 & (k=1) \\\\ m[1,2] + m[3,4] + 10\\cdot20\\cdot5 = 2000 + 1000 = 3000 & (k=2) \\\\ m[1,3] + 10\\cdot10\\cdot5 = 1500 + 500 = 2000 & (k=3) \\end{cases} = 1500$\n\nOptimal order: $A_1\\big((A_2A_3)A_4\\big)$.",
+          "scene": {
+            "reveal": 16,
+            "hl": [
+              {
+                "r": 0,
+                "c": 3,
+                "tone": "success"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "1500",
+        "number": 1500,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Forgetting the split cost $p_0 p_k p_4$ when combining two sub-chains."
+      ],
+      "verification": "Direct count for $A_1((A_2A_3)A_4)$: 1000 + 5·10·5 = 250 + 10·5·5 = 250 → 1500.",
+      "animation": {
+        "kind": "table",
+        "corner": "i \\ j",
+        "cols": [
+          "1",
+          "2",
+          "3",
+          "4"
+        ],
+        "rowLabels": [
+          "1",
+          "2",
+          "3",
+          "4"
+        ],
+        "rows": [
+          [
+            0,
+            1000,
+            1500,
+            1500
+          ],
+          [
+            "",
+            0,
+            1000,
+            1250
+          ],
+          [
+            "",
+            "",
+            0,
+            1000
+          ],
+          [
+            "",
+            "",
+            "",
+            0
+          ]
+        ],
+        "reveal": 0,
+        "mono": true
+      }
+    },
+    "cse-2016-2-cs-39": {
+      "approach": "Take the path through the flowchart that makes the most recursive calls, write T(n) = c·T(n/2) + O(1), and apply the master theorem.",
+      "concepts": [
+        "Recurrence relation",
+        "Master theorem"
+      ],
+      "steps": [
+        {
+          "title": "Count calls on the worst path",
+          "body": "Every path starts with one call. Then:\n\n- left branch: 1 more call → 2 in total;\n- right branch: 2 calls, then either Return (3 total) or 1 call down and, at the last decision, either Return (4) or 1 more call (5).\n\nWorst case: $1 + 2 + 1 + 1 = 5$ calls on $n/2$."
+        },
+        {
+          "title": "Solve the recurrence",
+          "body": "$$T(n) = 5\\,T(n/2) + O(1)$$\n\nWith $a = 5$, $b = 2$: $n^{\\log_2 5}$ dominates $O(1)$, so $T(n) = \\Theta(n^{\\log_2 5})$.\n\n$\\alpha = \\log_2 5 = \\dfrac{\\ln 5}{\\ln 2} = \\dfrac{1.6094}{0.6931} \\approx 2.32$."
+        }
+      ],
+      "answer": {
+        "value": "$\\alpha = \\log_2 5 \\approx 2.32$",
+        "number": 2.32,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Counting only the calls of one branch (e.g. 3) and getting $\\log_2 3 \\approx 1.58$."
+      ],
+      "verification": "$2^{2.32} \\approx 4.99$ and $2^{2.33} \\approx 5.03$, so $\\log_2 5 = 2.3219$."
+    },
+    "cse-2016-2-cs-40": {
+      "approach": "Height 6 with 7 nodes means the tree is a single path. Each insertion after the first must be the current minimum or maximum of the remaining numbers.",
+      "concepts": [
+        "Binary search tree",
+        "Counting"
+      ],
+      "steps": [
+        {
+          "title": "Shape of the tree",
+          "body": "A tree with 7 nodes and height 6 has one node per level — a chain. The root (first inserted) must have all other keys on one side of it at each level, so each inserted key is the smallest or largest of the keys not yet inserted."
+        },
+        {
+          "title": "Count the sequences",
+          "body": "For the first 6 insertions there are 2 choices each (current min or max); the last key is forced.\n\n$$2^{6} = 64$$"
+        }
+      ],
+      "answer": {
+        "value": "64",
+        "number": 64,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Writing $2^7 = 128$ — the last remaining key has only one choice."
+      ],
+      "verification": "Small case n = 3: sequences giving height 2 are 123, 132, 312, 321 = $2^2 = 4$ ✓."
+    },
+    "cse-2016-2-cs-41": {
+      "approach": "With unlimited memory, index entries by (u, v) in a direct-access table (or bucket the entries by the pair); one pass to record, one pass to link — linear in the size of the lists.",
+      "concepts": [
+        "Adjacency list",
+        "Direct addressing / bucketing"
+      ],
+      "steps": [
+        {
+          "title": "Record every entry",
+          "body": "Scan all lists: for entry $[v]$ in the list of $u$, store a pointer to it in $T[u][v]$ (an $n \\times n$ table; memory is not a constraint, and it need not be initialised — or use a hash map / radix-bucket the $2m$ pairs). Cost $\\Theta(n + m)$."
+        },
+        {
+          "title": "Link twins",
+          "body": "Scan again: for entry $[v]$ in list $u$, set its twin pointer to $T[v][u]$. Each lookup is $O(1)$, so this pass is $\\Theta(n + m)$. Every list must be visited at least once, so $\\Omega(n + m)$ is also a lower bound."
+        }
+      ],
+      "answer": {
+        "value": "$\\Theta(n + m)$",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Would be the cost of initialising/scanning a full $n \\times n$ matrix; not needed (uninitialised table or hashing avoids it), and it is not tight for sparse graphs."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Each of the $2m$ entries is handled a constant number of times plus one visit per vertex list — optimal."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Cost of comparing every entry with every other entry (naive search); far from optimal."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "No algorithm needs anything near $n^4$ time."
+        }
+      ],
+      "pitfalls": [
+        "Assuming you must search the list of v for u, which costs $\\Theta(\\deg v)$ per entry."
+      ],
+      "verification": "Lower bound: you must touch all $2m$ entries and all $n$ list heads, so nothing below $\\Theta(n+m)$ is possible."
+    },
+    "cse-2016-2-cs-42": {
+      "approach": "Disprove I with an NFA that is missing transitions; prove II with A = ∅.",
+      "concepts": [
+        "NFA acceptance",
+        "Regular languages"
+      ],
+      "steps": [
+        {
+          "title": "Statement I is false",
+          "body": "An NFA can have missing transitions. Take one state $q_0$ (start and accepting) with only the transition $q_0 \\xrightarrow{a} q_0$ over $\\Sigma = \\{a, b\\}$. Every state accepts, but $b$ is rejected (the run dies), so $L = a^* \\ne \\Sigma^*$."
+        },
+        {
+          "title": "Statement II is true",
+          "body": "Take $A = \\emptyset$ (regular). For every language $B$, $A \\cap B = \\emptyset$, which is regular. So such an $A$ exists."
+        }
+      ],
+      "answer": {
+        "value": "Only II is true",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "I fails: missing transitions make strings get rejected even when every state is accepting."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "I is false (counterexample $L = a^*$) and II is true ($A = \\emptyset$)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "I is false."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "II is true with $A = \\emptyset$ (or any finite $A$)."
+        }
+      ],
+      "pitfalls": [
+        "Treating the NFA as complete like a DFA — only a complete automaton with all states accepting accepts $\\Sigma^*$."
+      ],
+      "verification": "Any finite $A$ also works for II, since $A \\cap B \\subseteq A$ is finite and hence regular."
+    },
+    "cse-2016-2-cs-43": {
+      "approach": "L1 needs one stack comparison (c-count = a-count + b-count), so it is context-free; L2 needs two independent equalities (a = b and c = 2a), which a single stack cannot check.",
+      "concepts": [
+        "Context-free languages",
+        "Pumping lemma for CFLs"
+      ],
+      "steps": [
+        {
+          "title": "L1 is context-free",
+          "body": "Push a symbol for each $a$ and each $b$, then pop one per $c$; accept on empty stack. Grammar: $S \\to aSc \\mid aTc$, $T \\to bTc \\mid bc$ (gives $n, m \\ge 1$)."
+        },
+        {
+          "title": "L2 is not context-free",
+          "body": "Pump $s = a^p b^p c^{2p}$ with $s = uvwxy$, $|vwx| \\le p$, $|vx| \\ge 1$. The window $vwx$ touches at most two adjacent blocks, so pumping changes at most two of the three counts and breaks either $\\#a = \\#b$ or $\\#c = 2\\#a$ (or the $a^*b^*c^*$ order). Hence $L_2$ is not a CFL."
+        }
+      ],
+      "answer": {
+        "value": "$L_1$ is CFL, $L_2$ is not",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$L_2$ fails the CFL pumping lemma."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: single-counter $L_1$ is CFL; $L_2$ needs two comparisons."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Reversed — $L_1$ is the context-free one."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$L_1$ has a simple PDA/grammar."
+        }
+      ],
+      "pitfalls": [
+        "Thinking the extra $c$s make $L_1$ non-CFL; the $c$s match $a$s and $b$s in nested (LIFO) order."
+      ],
+      "verification": "$L_2$ is a homomorphic-style variant of $a^nb^nc^n$ (replace each pair $cc$ by $c$), a classic non-CFL."
+    },
+    "cse-2016-2-cs-44": {
+      "approach": "A property about “at least 2016 steps” only depends on the first 2016 steps, and those can only read the first 2016 input cells — so finitely many inputs need simulating. L3 is a non-trivial semantic property (Rice).",
+      "concepts": [
+        "Decidability",
+        "Rice's theorem"
+      ],
+      "steps": [
+        {
+          "title": "L1 and L2 are decidable",
+          "body": "In 2016 steps M reads at most the first 2016 cells. So M's behaviour for 2016 steps on any input is identical to its behaviour on one of the finitely many strings of length ≤ 2016 (padded by blanks). Simulate M for 2016 steps on each of them:\n\n- $L_1$: accept if some run lasts ≥ 2016 steps.\n- $L_2$: accept if every run does.\n\nBoth simulations always halt, so $L_1$ and $L_2$ are recursive."
+        },
+        {
+          "title": "L3 is undecidable",
+          "body": "“M accepts ε” is a non-trivial property of $L(M)$ (some TMs accept ε, some do not). By Rice's theorem $L_3$ is not recursive (it is r.e. only)."
+        }
+      ],
+      "answer": {
+        "value": "$L_1, L_2$ recursive; $L_3$ not",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$L_2$ is also decidable by finite simulation."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$L_1$ is also decidable by finite simulation."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Both step-bounded properties are decidable; $L_3$ is undecidable by Rice's theorem."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$L_3$ is not recursive."
+        }
+      ],
+      "pitfalls": [
+        "Applying Rice's theorem to $L_1$/$L_2$ — they are properties of the machine's running time, not of the language $L(M)$."
+      ],
+      "verification": "Reduction check: halting on ε reduces to $L_3$ (build M that runs the given machine then accepts), confirming undecidability."
+    },
+    "cse-2016-2-cs-45": {
+      "approach": "Look for a derivation A ⇒⁺ Aα in each grammar, including indirect cycles through other non-terminals and ε-productions.",
+      "concepts": [
+        "Left recursion",
+        "Context-free grammars"
+      ],
+      "steps": [
+        {
+          "title": "Direct left recursion",
+          "body": "(A) has $A \\to Aa$: the non-terminal $A$ is its own leftmost symbol — directly left-recursive."
+        },
+        {
+          "title": "Indirect cycles",
+          "body": "- (B) $S \\to Ab \\mid Bb \\mid c$, $A \\to Bd \\mid \\varepsilon$, $B \\to e$: leftmost symbols lead $S \\to A \\to B \\to e$; no non-terminal can reach itself on the left. **Free of left recursion.**\n- (C) $S \\to Aa$, $A \\to Sc$: $S \\Rightarrow Aa \\Rightarrow Sca$ — indirect.\n- (D) $A \\to Bd$, $B \\to Ae$: $A \\Rightarrow Bd \\Rightarrow Aed$ — indirect."
+        }
+      ],
+      "answer": {
+        "value": "Grammar (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Direct left recursion in $A \\to Aa$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Leftmost-symbol graph S→A, S→B, A→B has no cycle."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Indirect: $S \\Rightarrow Aa \\Rightarrow Sca$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Indirect: $A \\Rightarrow Bd \\Rightarrow Aed$ (also $B \\Rightarrow Ae \\Rightarrow Bde$)."
+        }
+      ],
+      "pitfalls": [
+        "Only checking for direct left recursion $X \\to X\\alpha$ and missing indirect cycles."
+      ],
+      "verification": "Built the “leftmost non-terminal” graph for each grammar; only B is acyclic."
+    },
+    "cse-2016-2-cs-46": {
+      "approach": "Derive int a[10][3]; (tokens: int id [ num ] [ num ] ;) in each grammar and check that neither grammar allows zero dimensions or malformed brackets.",
+      "concepts": [
+        "Context-free grammars",
+        "Derivations"
+      ],
+      "steps": [
+        {
+          "title": "Grammar G1",
+          "body": "$D \\Rightarrow$ int $L$; $\\Rightarrow$ int id [ $E$ ; $\\Rightarrow$ int id [ num ] [ $E$ ; $\\Rightarrow$ int id [ num ] [ num ] ;\n\n$L \\to$ id [ $E$ supplies the first `[`, and each $E$ closes it with `num ]`, optionally opening the next with `[`. So G1 generates exactly id followed by one or more `[num]`."
+        },
+        {
+          "title": "Grammar G2",
+          "body": "$D \\Rightarrow$ int $L$; $\\Rightarrow$ int id $E$ ; $\\Rightarrow$ int id $E$ [ num ] ; $\\Rightarrow$ int id [ num ] [ num ] ;\n\n$E \\to E$ [num] $\\mid$ [num] is left-recursive but generates $([\\text{num}])^+$ — one or more dimensions."
+        }
+      ],
+      "answer": {
+        "value": "Both G1 and G2",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Both derive the declaration and every string of the form int id ([num])⁺ ;."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "G2 is also correct; left recursion does not make a grammar wrong."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "G1 is also correct; splitting the brackets across productions still yields balanced `[num]` groups."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Both grammars work."
+        }
+      ],
+      "pitfalls": [
+        "Rejecting G2 because it is left-recursive — that matters for top-down parsing, not for the language generated."
+      ],
+      "verification": "Both grammars also derive the 1-D case int id [ num ] ; and cannot derive a declaration with zero dimensions."
+    },
+    "cse-2016-2-cs-47": {
+      "approach": "Simulate preemptive SRTF, re-deciding at every arrival, then TAT = completion − arrival.",
+      "concepts": [
+        "SRTF scheduling",
+        "Turnaround time"
+      ],
+      "given": "| Process | Arrival | Burst |\n|---|---|---|\n| P1 | 0 | 10 |\n| P2 | 3 | 6 |\n| P3 | 7 | 1 |\n| P4 | 8 | 3 |",
+      "steps": [
+        {
+          "title": "0–3: P1",
+          "body": "Only P1 is present; it runs until P2 arrives. P1 remaining $= 10 - 3 = 7$.",
+          "scene": {
+            "upto": 3,
+            "cursor": 3
+          }
+        },
+        {
+          "title": "3–7: P2 preempts",
+          "body": "At $t=3$: P2 (6) < P1 (7) → P2 runs. At $t=7$ P2 remaining $= 6 - 4 = 2$.",
+          "scene": {
+            "upto": 7,
+            "cursor": 7
+          }
+        },
+        {
+          "title": "7–8: P3",
+          "body": "At $t=7$: P3 (1) < P2 (2) < P1 (7) → P3 runs and finishes at 8.",
+          "scene": {
+            "upto": 8,
+            "cursor": 8
+          }
+        },
+        {
+          "title": "8–20: P2, P4, P1",
+          "body": "At $t=8$: P2 (2) < P4 (3) < P1 (7). P2 runs 8–10, P4 runs 10–13, P1 runs 13–20.",
+          "scene": {
+            "upto": 20,
+            "cursor": 20
+          }
+        },
+        {
+          "title": "Turnaround times",
+          "body": "| Process | Completion | TAT |\n|---|---|---|\n| P1 | 20 | $20 - 0 = 20$ |\n| P2 | 10 | $10 - 3 = 7$ |\n| P3 | 8 | $8 - 7 = 1$ |\n| P4 | 13 | $13 - 8 = 5$ |\n\nAverage $= \\dfrac{20 + 7 + 1 + 5}{4} = \\dfrac{33}{4} = 8.25$ ms."
+        }
+      ],
+      "answer": {
+        "value": "8.25 ms",
+        "number": 8.25,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Using burst time instead of remaining time when comparing at t = 3 (P1 has 7 left, not 10)."
+      ],
+      "verification": "Total CPU time 10+6+1+3 = 20 = last completion time, so no idle gaps were missed.",
+      "animation": {
+        "kind": "gantt",
+        "unit": "ms",
+        "lanes": [
+          {
+            "label": "CPU",
+            "bars": [
+              {
+                "start": 0,
+                "end": 3,
+                "label": "P1"
+              },
+              {
+                "start": 3,
+                "end": 7,
+                "label": "P2"
+              },
+              {
+                "start": 7,
+                "end": 8,
+                "label": "P3"
+              },
+              {
+                "start": 8,
+                "end": 10,
+                "label": "P2"
+              },
+              {
+                "start": 10,
+                "end": 13,
+                "label": "P4"
+              },
+              {
+                "start": 13,
+                "end": 20,
+                "label": "P1"
+              }
+            ]
+          }
+        ],
+        "marks": [
+          {
+            "t": 3,
+            "label": "P2↓"
+          },
+          {
+            "t": 7,
+            "label": "P3↓"
+          },
+          {
+            "t": 8,
+            "label": "P4↓"
+          }
+        ],
+        "upto": 0,
+        "cursor": 0
+      }
+    },
+    "cse-2016-2-cs-48": {
+      "approach": "This is strict alternation: mutual exclusion holds, but a process that does not want to enter can block the other — a progress violation.",
+      "concepts": [
+        "Critical section requirements",
+        "Strict alternation"
+      ],
+      "steps": [
+        {
+          "title": "Mutual exclusion holds",
+          "body": "P0 enters only when $turn = 0$ and P1 only when $turn = 1$; $turn$ cannot be both, so both cannot be in the critical section together."
+        },
+        {
+          "title": "Progress fails",
+          "body": "Start $turn = 0$. Suppose P0 does not want to enter (stays in its remainder section) while P1 wants to: P1 loops on `while (turn == 0)` forever, although the critical section is free. The decision depends on a process not competing → progress is violated."
+        },
+        {
+          "title": "Bounded waiting holds",
+          "body": "After P0 exits it sets $turn = 1$, so a waiting P1 gets in after at most one entry by P0 (and vice versa)."
+        }
+      ],
+      "answer": {
+        "value": "Violates progress",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Not correct: progress is violated."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Mutual exclusion holds since turn has a single value."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: a process outside its critical section can prevent the other from entering."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Bounded waiting holds — strict alternation bounds the wait to one turn."
+        }
+      ],
+      "pitfalls": [
+        "Calling it a bounded-wait violation; the wait is bounded, it is just forced alternation."
+      ],
+      "verification": "Classic “turn-variable” solution (Peterson's algorithm adds flags precisely to fix progress)."
+    },
+    "cse-2016-2-cs-49": {
+      "approach": "Every V lets one more P succeed. A P stays blocked exactly when the total P operations exceed initial value plus V operations.",
+      "concepts": [
+        "Counting semaphore"
+      ],
+      "steps": [
+        {
+          "title": "Condition for blocking",
+          "body": "With initial value $S_0$, at most $S_0 + 12$ P operations can complete (each V supplies one). At least one P remains blocked iff\n\n$$20 > S_0 + 12 \\iff S_0 < 8$$"
+        },
+        {
+          "title": "Largest value",
+          "body": "$S_0 = 7$: $7 + 12 = 19 < 20$, so one P stays blocked. $S_0 = 8$: $8 + 12 = 20$, so each of the 20 P operations is eventually matched by an initial unit or a V, and none remains blocked. Answer: **7**."
+        }
+      ],
+      "answer": {
+        "value": "7",
+        "number": 7,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Answering 8 by using ≤ instead of < (with 8, all 20 P operations finish)."
+      ],
+      "verification": "Final semaphore value $S_0 + 12 - 20$ would be −1 for $S_0 = 7$, i.e. one process still waiting."
+    },
+    "cse-2016-2-cs-50": {
+      "approach": "Average latency = miss rate × 10 ms + hit rate × 1 ms < 6 gives the miss-rate threshold; read the smallest cache size below it from the graph.",
+      "concepts": [
+        "Average access time",
+        "Disk cache"
+      ],
+      "steps": [
+        {
+          "title": "Miss-rate threshold",
+          "body": "With miss rate $m$:\n\n$$T = 10m + 1(1 - m) = 1 + 9m < 6 \\Rightarrow m < \\frac{5}{9} \\approx 55.6\\%$$"
+        },
+        {
+          "title": "Read the graph",
+          "body": "- 10 MB: $m = 80\\%$, $T = 1 + 9(0.8) = 8.2$ ms ✗\n- 20 MB: $m = 60\\%$, $T = 1 + 9(0.6) = 6.4$ ms ✗\n- 30 MB: $m = 40\\%$, $T = 1 + 9(0.4) = 4.6$ ms ✓\n\nSmallest size: **30 MB**."
+        }
+      ],
+      "answer": {
+        "value": "30 MB",
+        "number": 30,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Interpolating to a non-multiple of 10 MB — sizes come only in 10 MB steps."
+      ],
+      "verification": "Even with the hierarchical model (miss costs 1 + 10 ms): $T = 1 + 10m < 6 \\Rightarrow m < 50\\%$ — still 30 MB."
+    },
+    "cse-2016-2-cs-51": {
+      "approach": "Check whether any transaction reads a value written by an uncommitted transaction (needed for cascading abort / non-recoverability), and whether anything is overwritten before the writer finishes (strictness).",
+      "concepts": [
+        "Recoverability",
+        "Cascadeless schedules",
+        "Strict schedules"
+      ],
+      "steps": [
+        {
+          "title": "No dirty reads",
+          "body": "Reads: $r_2(X)$ and $r_1(X)$ occur before any write on $X$; $r_2(Y)$, $r_1(Y)$ — nobody writes $Y$. No transaction reads uncommitted data, so the schedule is recoverable and cascadeless: aborting $T_1$ forces no other abort."
+        },
+        {
+          "title": "Not strict",
+          "body": "$w_2(X)$ overwrites $X$ after $w_1(X)$ while $T_1$ is still active (it aborts only later). A strict schedule forbids reading **or writing** an item until the last writer commits/aborts, so $S$ is not strict."
+        }
+      ],
+      "answer": {
+        "value": "S does not have a cascading abort",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "No transaction reads another's uncommitted write, so it is recoverable."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "There is no dirty read, hence no cascading abort."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: no read of uncommitted data → cascadeless."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$w_2(X)$ overwrites $T_1$'s uncommitted write → not strict."
+        }
+      ],
+      "pitfalls": [
+        "Treating the write–write conflict $w_1(X) \\ldots w_2(X)$ as a cascading-abort cause; only dirty reads cascade."
+      ],
+      "verification": "Listed all read operations and the last writer before each — none had an uncommitted writer."
+    },
+    "cse-2016-2-cs-52": {
+      "approach": "Compute total capacity per district, average those totals, and count districts at or above the average.",
+      "concepts": [
+        "GROUP BY",
+        "Aggregates",
+        "WITH clause"
+      ],
+      "steps": [
+        {
+          "title": "total",
+          "body": "| name | capacity |\n|---|---|\n| Ajmer | 20 |\n| Bikaner | $10+10+20 = 40$ |\n| Churu | $10+20 = 30$ |\n| Dungargarh | 10 |"
+        },
+        {
+          "title": "total_avg and filter",
+          "body": "Average of the totals $= \\dfrac{20 + 40 + 30 + 10}{4} = \\dfrac{100}{4} = 25$.\n\nTotals $\\ge 25$: Bikaner (40), Churu (30) → **2** tuples."
+        }
+      ],
+      "answer": {
+        "value": "2",
+        "number": 2,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Averaging the 7 raw rows (100/7 ≈ 14.3) instead of the 4 district totals, which gives 3."
+      ],
+      "verification": "The cross join with the one-row total_avg keeps the row count equal to the number of qualifying districts."
+    },
+    "cse-2016-2-cs-53": {
+      "approach": "For CSMA/CD the transmission time of the smallest frame must be at least the round-trip propagation time: L_min = 2 · T_p · B.",
+      "concepts": [
+        "CSMA/CD",
+        "Minimum frame size"
+      ],
+      "steps": [
+        {
+          "title": "Condition",
+          "body": "$$\\frac{L}{B} \\ge 2T_p \\Rightarrow L_{min} = 2 T_p B$$"
+        },
+        {
+          "title": "Compute",
+          "body": "$L_{min} = 2 \\times 40\\times10^{-6} \\times 20\\times10^{6} = 1600$ bits $= \\dfrac{1600}{8} = 200$ bytes."
+        }
+      ],
+      "answer": {
+        "value": "200 bytes",
+        "number": 200,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Using one-way propagation time (gives 100 bytes)."
+      ],
+      "verification": "200 bytes at 20 Mbps take $1600 / (20\\times10^6) = 80\\ \\mu s = 2 \\times 40\\ \\mu s$ ✓."
+    },
+    "cse-2016-2-cs-54": {
+      "approach": "Recall 802.11 facts: channels 1, 6, 11 in 2.4 GHz are non-overlapping; RTS/CTS is for collision avoidance; unicast data frames get link-layer ACKs.",
+      "concepts": [
+        "IEEE 802.11",
+        "CSMA/CA"
+      ],
+      "steps": [
+        {
+          "title": "Statement I",
+          "body": "True — in the 2.4 GHz band, channels 1, 6 and 11 do not overlap (5 GHz has many more)."
+        },
+        {
+          "title": "Statements II and III",
+          "body": "- II: False — wireless stations cannot detect collisions; RTS/CTS reserves the medium (collision **avoidance**, also handles hidden terminals).\n- III: True — every unicast frame is acknowledged (stop-and-wait ACK); broadcast frames are not."
+        }
+      ],
+      "answer": {
+        "value": "I and III only",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "II is false — RTS/CTS avoids, not detects, collisions."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "I and III are true, II is false."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Leaves out the true statement I and includes false II."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "II is the only false statement."
+        }
+      ],
+      "pitfalls": [
+        "Confusing CSMA/CA (802.11) with CSMA/CD (Ethernet)."
+      ],
+      "verification": "Matches the standard 802.11 MAC description (DCF with ACKs, optional RTS/CTS)."
+    },
+    "cse-2016-2-cs-55": {
+      "approach": "Find the window that keeps the link busy for one full cycle (Tt + 2Tp), then for Selective Repeat the sequence space must be at least 2 × window.",
+      "concepts": [
+        "Selective Repeat",
+        "Sliding window",
+        "Sequence numbers"
+      ],
+      "steps": [
+        {
+          "title": "Transmission time",
+          "body": "Frame $= 1\\text{ KB} = 1024 \\times 8 = 8192$ bits.\n\n$T_t = \\dfrac{8192}{128\\times10^3} = 0.064\\text{ s} = 64$ ms."
+        },
+        {
+          "title": "Window for 100% utilisation",
+          "body": "Cycle $= T_t + 2T_p = 64 + 300 = 364$ ms.\n\n$W \\ge \\dfrac{364}{64} = 5.6875 \\Rightarrow W = 6$ frames."
+        },
+        {
+          "title": "Sequence-number bits",
+          "body": "Selective Repeat needs $2^k \\ge 2W = 12$, so $k = \\lceil \\log_2 12 \\rceil = 4$ bits."
+        }
+      ],
+      "answer": {
+        "value": "4",
+        "number": 4,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Using $2^k \\ge W$ (Go-Back-N style) — SR needs the sender and receiver windows to fit without overlap."
+      ],
+      "verification": "With 1 KB = 8000 bits: $T_t = 62.5$ ms, $W = \\lceil 362.5/62.5 \\rceil = 6$ — still 4 bits."
+    }
+  }
+}
