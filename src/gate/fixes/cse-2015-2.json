@@ -1,0 +1,155 @@
+{
+  "paper": "cse-2015-2",
+  "fixes": [
+    {
+      "id": "cse-2015-2-ga-1",
+      "field": "answer",
+      "before": "A",
+      "after": "C",
+      "reason": "\"don't just know\" changes the meaning; correct pairing is \"completely forgot --- just don't know\" (C). Stored A was a solver key, not official.",
+      "source": "GATE2015-Set-2.pdf"
+    },
+    {
+      "id": "cse-2015-2-ga-2",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "The industrialist had a <u>personnel</u> jet."
+        },
+        {
+          "l": "B",
+          "t": "I write my experience in my <u>personnel</u> diary."
+        },
+        {
+          "l": "C",
+          "t": "All <u>personnel</u> are being given the day off."
+        },
+        {
+          "l": "D",
+          "t": "Being religious is a <u>personnel</u> aspect."
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "The industrialist had a $\\underline{\\text{personnel}}$ jet."
+        },
+        {
+          "l": "B",
+          "t": "I write my experience in my $\\underline{\\text{personnel}}$ diary."
+        },
+        {
+          "l": "C",
+          "t": "All $\\underline{\\text{personnel}}$ are being given the day off."
+        },
+        {
+          "l": "D",
+          "t": "Being religious is a $\\underline{\\text{personnel}}$ aspect."
+        }
+      ],
+      "reason": "Replace raw HTML underline with KaTeX underline.",
+      "source": "GATE2015-Set-2.pdf"
+    },
+    {
+      "id": "cse-2015-2-ga-4",
+      "field": "topic",
+      "before": "quant",
+      "after": "verbal",
+      "reason": "Vocabulary question is verbal, not quant.",
+      "source": "GATE2015-Set-2.pdf"
+    },
+    {
+      "id": "cse-2015-2-ga-9",
+      "field": "text",
+      "before": "If p, q, r, s are distinct integers such that:\n\nf (p, q, r, s) = max (p, q, r, s)\n\ng (p, q, r, s) = min (p, q, r, s)\n\nh (p, q, r, s) = remainder of (p × q) / (r × s) if (p × q) > (r × s) or remainder of (r × s) / (p × q) if (r × s) > (p × q)\n\nAlso a function fgh (p, q, r, s) = f (p, q, r, s) × g (p, q, r, s) × h (p, q, r, s)\n\nAlso the same operations are valid with two variable functions of the form f (p, q).\n\nWhat is the value of fg (h (2,5,7,3), 4,6,8)?",
+      "after": "If $p, q, r, s$ are distinct integers such that:\n\n$f(p, q, r, s) = \\max(p, q, r, s)$\n\n$g(p, q, r, s) = \\min(p, q, r, s)$\n\n$h(p, q, r, s)$ = remainder of $(p \\times q) / (r \\times s)$ if $(p \\times q) > (r \\times s)$, or remainder of $(r \\times s) / (p \\times q)$ if $(r \\times s) > (p \\times q)$\n\nAlso a function $fgh(p, q, r, s) = f(p, q, r, s) \\times g(p, q, r, s) \\times h(p, q, r, s)$.\n\nAlso the same operations are valid with two variable functions of the form $f(p, q)$.\n\nWhat is the value of $fg(h(2, 5, 7, 3), 4, 6, 8)$?",
+      "reason": "Typeset with KaTeX.",
+      "source": "GATE2015-Set-2.pdf"
+    },
+    {
+      "id": "cse-2015-2-ga-9",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Question is a numerical-answer item in the paper (no options); value 8 recomputed independently and unambiguous.",
+      "source": "GATE2015-Set-2.pdf"
+    },
+    {
+      "id": "cse-2015-2-ga-9",
+      "field": "reviewNote",
+      "before": "No options are printed in this paper for this question; treated as a numeric-answer question. Answer solved, not from an official key.",
+      "after": null,
+      "reason": "Review concern resolved.",
+      "source": "GATE2015-Set-2.pdf"
+    },
+    {
+      "id": "cse-2015-2-cs-13",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Independent solve agrees with key A: a cookie is passive data, not code; B, C, D are standard cookie properties.",
+      "source": "GATE 2015 Set 2 question paper (PDF) + RFC 6265"
+    },
+    {
+      "id": "cse-2015-2-cs-13",
+      "field": "reviewNote",
+      "before": "Option A vs B judged from knowledge of cookies; official key not printed in PDF.",
+      "after": null,
+      "reason": "Review cleared.",
+      "source": "independent solution"
+    },
+    {
+      "id": "cse-2015-2-cs-23",
+      "field": "reviewNote",
+      "before": "As printed (max 2 resources each, 6 resources) no option can lead to deadlock; answer D is the commonly published key but the question is flawed. Verify.",
+      "after": "As printed (6 resources, each process needs at most 2) deadlock needs N >= 6 since N(2-1)+1 <= 6 for N <= 5, so none of 1-4 can deadlock. Key D (4) kept as the commonly published key; official key not verified (gateoverflow blocked).",
+      "reason": "Clarify the flaw with the exact condition.",
+      "source": "independent solution; question paper PDF"
+    },
+    {
+      "id": "cse-2015-2-cs-31",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2015-2/cs-31-1.png",
+          "alt": "4x4 table. Row1: 1 2 5 14. Row2: 3 4 6 23. Row3: 10 12 18 25. Row4: 31 inf inf inf.",
+          "svg": "cse-2015-2/cs-31-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2015-2/cs-31-1.png",
+          "alt": "4 by 4 Young tableau. Row 1: 1, 2, 5, 14. Row 2: 3, 4, 6, 23. Row 3: 10, 12, 18, 25. Row 4: 31, infinity, infinity, infinity.",
+          "svg": "cse-2015-2/cs-31-1.svg"
+        }
+      ],
+      "reason": "SVG redrawn as the 4x4 tableau (old SVG showed an unrelated binary tree); precise alt text.",
+      "source": "GATE 2015 Set 2 question paper (PDF), Q31"
+    },
+    {
+      "id": "cse-2015-2-cs-49",
+      "field": "answer",
+      "before": "6.1:6.2",
+      "after": "6.1 to 6.2",
+      "reason": "Normalise range key to the \"lo to hi\" format (computed value 6.11 ms).",
+      "source": "GATE2015-Set-2.pdf"
+    },
+    {
+      "id": "cse-2015-2-cs-48",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Key 19.2 uses the 4 x full-adder-delay model; a gate-level critical path gives 12 µs.",
+      "source": "GATE2015-Set-2.pdf"
+    },
+    {
+      "id": "cse-2015-2-cs-48",
+      "field": "reviewNote",
+      "before": null,
+      "after": "Key 19.2 assumes each full adder contributes its full 4.8 µs delay; strict gate-level carry-path analysis gives 4.8 + 3×2.4 = 12 µs. Confirm against the official key.",
+      "reason": "Document the ambiguity.",
+      "source": "GATE2015-Set-2.pdf"
+    }
+  ]
+}
