@@ -245,6 +245,31 @@ async function runMany(sql, rows, chunkSize = 200) {
   for (const p of rows) await run(sql, p);
 }
 
+/**
+ * Run several different statements ([sql, params] pairs) in order. In cloud
+ * mode they go to libSQL as ONE batched round trip (atomic); locally they run
+ * one after another on the same connection.
+ */
+async function runBatch(stmts) {
+  const list = stmts.filter(Boolean);
+  if (!list.length) return [];
+  if (libsql) {
+    countQuery();
+    try {
+      const rs = await libsql.batch(
+        list.map(([sql, params]) => ({ sql, args: toLibsqlArgs(params) })),
+        "write",
+      );
+      return rs.map((r) => ({ changes: Number(r.rowsAffected || 0) }));
+    } finally {
+      if (writeHooks.length) for (const [sql] of list) notifyWrite(sql);
+    }
+  }
+  const out = [];
+  for (const [sql, params] of list) out.push(await run(sql, params || []));
+  return out;
+}
+
 function dbInfo() {
   return {
     driver: libsql ? "libsql" : _usingBuiltinSqlite ? "node:sqlite" : "sqlite3",
@@ -985,6 +1010,87 @@ async function initDb() {
     created_at TEXT DEFAULT CURRENT_TIMESTAMP,
     answered_at TEXT
   )`);
+
+  await initGateTables();
+}
+
+/* ===== GATE learning platform (src/routes/gate-me.js) =====
+ * All per-user rows are keyed by the session username. One batched round
+ * trip on Turso. */
+async function initGateTables() {
+  await runBatch([
+    [`CREATE TABLE IF NOT EXISTS gate_attempts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      username TEXT NOT NULL,
+      question_id TEXT NOT NULL,
+      paper TEXT,
+      exam TEXT,
+      year INTEGER,
+      subject TEXT,
+      topic TEXT,
+      type TEXT,
+      response TEXT,
+      outcome TEXT NOT NULL,
+      marks REAL DEFAULT 0,
+      time_ms INTEGER DEFAULT 0,
+      mode TEXT NOT NULL,
+      test_id TEXT,
+      created_at INTEGER NOT NULL
+    )`],
+    ["CREATE INDEX IF NOT EXISTS idx_gate_attempts_user ON gate_attempts(username, created_at)"],
+    ["CREATE INDEX IF NOT EXISTS idx_gate_attempts_q ON gate_attempts(question_id)"],
+    ["CREATE INDEX IF NOT EXISTS idx_gate_attempts_time ON gate_attempts(created_at)"],
+    [`CREATE TABLE IF NOT EXISTS gate_qstate (
+      username TEXT NOT NULL,
+      question_id TEXT NOT NULL,
+      outcome TEXT,
+      attempts INTEGER DEFAULT 0,
+      correct INTEGER DEFAULT 0,
+      last_at INTEGER,
+      bookmarked INTEGER DEFAULT 0,
+      collections TEXT DEFAULT '[]',
+      ease REAL DEFAULT 2.5,
+      interval_days REAL DEFAULT 0,
+      due TEXT,
+      srs_streak INTEGER DEFAULT 0,
+      PRIMARY KEY (username, question_id)
+    )`],
+    ["CREATE INDEX IF NOT EXISTS idx_gate_qstate_due ON gate_qstate(username, due)"],
+    [`CREATE TABLE IF NOT EXISTS gate_notes (
+      username TEXT NOT NULL,
+      question_id TEXT NOT NULL,
+      text TEXT NOT NULL,
+      updated_at INTEGER NOT NULL,
+      PRIMARY KEY (username, question_id)
+    )`],
+    [`CREATE TABLE IF NOT EXISTS gate_collections (
+      id TEXT PRIMARY KEY,
+      username TEXT NOT NULL,
+      name TEXT NOT NULL,
+      color TEXT,
+      created_at INTEGER NOT NULL
+    )`],
+    ["CREATE INDEX IF NOT EXISTS idx_gate_collections_user ON gate_collections(username)"],
+    [`CREATE TABLE IF NOT EXISTS gate_tests (
+      id TEXT PRIMARY KEY,
+      username TEXT NOT NULL,
+      title TEXT NOT NULL,
+      config TEXT NOT NULL,
+      question_ids TEXT NOT NULL,
+      qset TEXT NOT NULL,
+      score REAL,
+      created_at INTEGER NOT NULL,
+      submitted_at INTEGER,
+      result TEXT
+    )`],
+    ["CREATE INDEX IF NOT EXISTS idx_gate_tests_user ON gate_tests(username, created_at)"],
+    ["CREATE INDEX IF NOT EXISTS idx_gate_tests_qset ON gate_tests(qset, submitted_at)"],
+    [`CREATE TABLE IF NOT EXISTS gate_plans (
+      username TEXT PRIMARY KEY,
+      plan TEXT NOT NULL,
+      updated_at INTEGER NOT NULL
+    )`],
+  ]);
 }
 
 
@@ -1144,9 +1250,14 @@ async function migratePerUser() {
   ]) {
     await run(`CREATE INDEX IF NOT EXISTS idx_${t}_user ON ${t}(${c})`).catch(() => {});
   }
+  // GATE practice counts toward the daily streak without touching
+  // problems_solved / XP (see src/gate/attempts.js and calcStreak).
+  if (!(await columnsOf("daily_activity")).includes("gate_attempts")) {
+    await run("ALTER TABLE daily_activity ADD COLUMN gate_attempts INTEGER DEFAULT 0").catch(() => {});
+  }
   if (changed.length) {
     console.log(`✓ Per-user data: added owners to ${changed.join(", ")} (existing rows → ${LEGACY_OWNER})`);
   }
 }
 
-module.exports = { run, get, all, runMany, initDb, dbInfo, migratePerUser, LEGACY_OWNER, onWrite };
+module.exports = { run, get, all, runMany, runBatch, initDb, dbInfo, migratePerUser, LEGACY_OWNER, onWrite };

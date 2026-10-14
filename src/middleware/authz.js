@@ -77,6 +77,8 @@ const RULES = [
   ["PUT|DELETE", /^\/api\/testcases\/[^/]+$/, { login: true }],
   // The AI agent (chat, tasks, private conversation history): own account only.
   ["GET|POST|DELETE", /^\/api\/agent(\/.*)?$/, { login: true }],
+  // GATE platform: personal progress, notes, collections, tests and plan.
+  ["GET|POST|PUT|DELETE", /^\/api\/gate\/(attempts|me|tests)(\/.*)?$/, { login: true }],
   ["POST", /^\/api\/(tutorials|forge\/topic)\/[^/]+\/(progress|complete|status)$/, { login: true }],
 ];
 
