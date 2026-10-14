@@ -1,6 +1,9 @@
 import { useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft, Clock, Play, Search } from 'lucide-react'
+import { Play, Search } from 'lucide-react'
+import { Icon } from '@/components/icon/Icon'
+import { GateShell } from '@/gate/shell/GateShell'
+import { GATE_ROUTES } from '@/gate/api'
 import { cn } from '@/lib/utils'
 import { useApi } from '@/hooks/useApi'
 import { api } from '@/lib/api'
@@ -40,21 +43,20 @@ export default function GateCbtPage() {
   }, [meta.data, exam, search])
 
   if (paperId) {
-    return <GateCbtExam key={paperId} paperId={paperId} onExit={() => navigate('/gate/cbt')} />
+    return <GateCbtExam key={paperId} paperId={paperId} onExit={() => navigate(GATE_ROUTES.cbt)} />
   }
 
   return (
-    <div className="mx-auto max-w-5xl space-y-5 pb-28">
-      <header className="space-y-1">
-        <Link to="/gate" className="inline-flex items-center gap-1 text-[12.5px] text-text-muted hover:text-text-primary">
-          <ArrowLeft className="size-3.5" /> Question bank
+    <GateShell
+      title="Official mock papers"
+      subtitle="Sit a past paper as a timed computer-based test — the exam console’s palette, mark for review, calculator and official negative marking. Answers open after you submit."
+      actions={
+        <Link to={GATE_ROUTES.tests} className="btn-secondary inline-flex items-center gap-2 !px-3 !py-2 !text-[13px]">
+          <Icon name="sliders" className="size-4" /> <span className="hidden sm:inline">Custom test</span>
         </Link>
-        <h1 className="font-display text-2xl font-semibold tracking-tight text-text-primary sm:text-[28px]">GATE mock tests</h1>
-        <p className="max-w-2xl text-[13.5px] text-text-muted">
-          Sit a past paper as a timed computer-based test: the exam console’s question palette, mark for review, on-screen calculator and official negative marking. Answers and solutions open after you submit.
-        </p>
-      </header>
-
+      }
+    >
+    <div className="space-y-5 pb-28">
       <div className="flex flex-wrap items-center gap-2">
         <label className="flex h-10 min-w-0 flex-1 basis-56 items-center gap-2 rounded-xl border border-border-input bg-bg-field px-3 focus-within:border-accent-brand">
           <Search className="size-4 text-text-muted" />
@@ -98,7 +100,7 @@ export default function GateCbtPage() {
                   return (
                     <Link
                       key={p.id}
-                      to={`/gate/cbt/${p.id}`}
+                      to={`${GATE_ROUTES.cbt}/${p.id}`}
                       className="card card-interactive group flex items-center gap-3 !p-3.5"
                     >
                       <div className="min-w-0 flex-1">
@@ -110,7 +112,7 @@ export default function GateCbtPage() {
                           <span>{p.count} questions</span>
                           <span aria-hidden="true">·</span>
                           <span className="inline-flex items-center gap-1">
-                            <Clock className="size-3" /> 3 h
+                            <Icon name="clock" className="size-3" /> 3 h
                           </span>
                           {left !== null && <span className="text-state-warning">· In progress</span>}
                         </div>
@@ -127,5 +129,6 @@ export default function GateCbtPage() {
         </div>
       )}
     </div>
+    </GateShell>
   )
 }
