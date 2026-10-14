@@ -1,17 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 240" width="100%" height="100%">
-  <rect width="100%" height="100%" rx="16" fill="#0b1329" stroke="#1e293b" stroke-width="1.5" />
-  <rect x="20" y="16" width="180" height="24" rx="6" fill="#1e293b" />
-  <text x="30" y="32" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">GA SCHEMATIC</text>
-  <g transform="translate(60, 60)">
-    <rect x="0" y="0" width="190" height="48" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.8" />
-    <text x="95" y="28" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="bold" font-family="monospace">Two</text>
-    <line x1="190" y1="24" x2="220" y2="24" stroke="#34d399" stroke-width="2" />
-    <rect x="220" y="0" width="190" height="48" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.8" />
-    <text x="315" y="28" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="bold" font-family="monospace">concentric</text>
-    <rect x="0" y="65" width="190" height="48" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.8" />
-    <text x="95" y="93" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="bold" font-family="monospace">circles</text>
-    <line x1="190" y1="89" x2="220" y2="89" stroke="#34d399" stroke-width="2" />
-    <rect x="220" y="65" width="190" height="48" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.8" />
-    <text x="315" y="93" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="bold" font-family="monospace">inner</text>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 380" fill="none" stroke="currentColor" font-family="Arial, Helvetica, sans-serif" role="img" aria-label="Annular ring with inner radius a and outer radius b, filled by a chain of touching painted circles">
+<title>Annular ring with inner radius a and outer radius b, filled by a chain of touching painted circles</title>
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor" stroke="none"/></marker></defs>
+<circle cx="200" cy="190" r="150" stroke-width="1.6"/>
+<circle cx="200" cy="190" r="100" stroke-width="1.6"/>
+<circle cx="258.7" cy="79.6" r="25" fill="#3b82f6" fill-opacity="0.75" stroke-width="1.2"/>
+<circle cx="297.2" cy="111.5" r="25" fill="#3b82f6" fill-opacity="0.75" stroke-width="1.2"/>
+<circle cx="320.2" cy="155.9" r="25" fill="#3b82f6" fill-opacity="0.75" stroke-width="1.2"/>
+<circle cx="324" cy="205.7" r="25" fill="#3b82f6" fill-opacity="0.75" stroke-width="1.2"/>
+<circle cx="307.9" cy="253.1" r="25" fill="#3b82f6" fill-opacity="0.75" stroke-width="1.2"/>
+<circle cx="274.6" cy="290.3" r="25" fill="#3b82f6" fill-opacity="0.75" stroke-width="1.2"/>
+<circle cx="229.3" cy="311.5" r="25" fill="#3b82f6" fill-opacity="0.75" stroke-width="1.2"/>
+<circle cx="179.3" cy="313.3" r="25" fill="#3b82f6" fill-opacity="0.75" stroke-width="1.2"/>
+<circle cx="132.7" cy="295.3" r="25" fill="#3b82f6" fill-opacity="0.75" stroke-width="1.2"/>
+<circle cx="221.7" cy="66.9" r="2.5" fill="currentColor" stroke="none"/>
+<circle cx="204.4" cy="65.1" r="2.5" fill="currentColor" stroke="none"/>
+<circle cx="186.9" cy="65.7" r="2.5" fill="currentColor" stroke="none"/>
+<line x1="200" y1="190" x2="95.3" y2="85.3" stroke-width="1.6" marker-end="url(#ah)"/>
+<line x1="200" y1="190" x2="130.7" y2="259.3" stroke-width="1.6" marker-end="url(#ah)"/>
+<text x="162" y="115" font-size="22" fill="currentColor" stroke="none" text-anchor="middle" dominant-baseline="central" font-style="italic">b</text>
+<text x="182" y="240" font-size="22" fill="currentColor" stroke="none" text-anchor="middle" dominant-baseline="central" font-style="italic">a</text>
 </svg>
