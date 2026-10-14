@@ -1,0 +1,1653 @@
+{
+  "paper": "cse-2009",
+  "version": 2,
+  "solutions": {
+    "cse-2009-cs-41": {
+      "approach": "Read off what each state remembers about the suffix read so far: q0 = \"does not end in 0\", q1 = \"ends in exactly one 0\", q2 = \"ends in 00\". The accepting state is q2, so the language is strings ending with 00; then kill the other options with one-string counterexamples.",
+      "concepts": [
+        "DFA state meaning",
+        "Suffix languages",
+        "Counterexamples"
+      ],
+      "steps": [
+        {
+          "title": "Meaning of each state",
+          "body": "Every **1** (from any state) goes to $q_0$, so $q_0$ means \"the input is empty or ends in 1\".\n\nA **0** from $q_0$ goes to $q_1$: $q_1$ means \"ends in exactly one 0\".\n\nA **0** from $q_1$ or $q_2$ goes to $q_2$: $q_2$ means \"ends in at least two 0s\", i.e. ends with $00$."
+        },
+        {
+          "title": "Trace 0100",
+          "body": "$q_0 \\xrightarrow{0} q_1 \\xrightarrow{1} q_0 \\xrightarrow{0} q_1 \\xrightarrow{0} q_2$ — accepted, and $0100$ ends with $00$.",
+          "scene": {
+            "current": [
+              "q2"
+            ],
+            "tape": {
+              "cells": [
+                "0",
+                "1",
+                "0",
+                "0"
+              ],
+              "head": 4
+            },
+            "edgeTones": {
+              "q1>q2": "success"
+            },
+            "caption": "0100 ends in q2 (accept)"
+          }
+        },
+        {
+          "title": "Counterexamples for the other options",
+          "body": "- $1$: $q_0 \\to q_0$, rejected, yet it begins with 1 — so not (A).\n- $0$: $q_0 \\to q_1$, rejected, yet it ends with 0 — so not (B).\n- $001$: $q_0 \\to q_1 \\to q_2 \\to q_0$, rejected, yet it contains $00$ — so not (D).\n\nThe accepted language is exactly the strings ending with $00$.",
+          "scene": {
+            "current": [
+              "q0"
+            ],
+            "tape": {
+              "cells": [
+                "0",
+                "0",
+                "1"
+              ],
+              "head": 3
+            },
+            "edgeTones": {
+              "q2>q0": "error"
+            },
+            "caption": "001 contains 00 but ends in q0 (reject)"
+          }
+        }
+      ],
+      "animation": {
+        "kind": "automaton",
+        "layout": "row",
+        "states": [
+          {
+            "id": "q0",
+            "start": true
+          },
+          {
+            "id": "q1"
+          },
+          {
+            "id": "q2",
+            "accept": true
+          }
+        ],
+        "edges": [
+          {
+            "from": "q0",
+            "to": "q0",
+            "label": "1"
+          },
+          {
+            "from": "q0",
+            "to": "q1",
+            "label": "0"
+          },
+          {
+            "from": "q1",
+            "to": "q0",
+            "label": "1"
+          },
+          {
+            "from": "q1",
+            "to": "q2",
+            "label": "0"
+          },
+          {
+            "from": "q2",
+            "to": "q2",
+            "label": "0"
+          },
+          {
+            "from": "q2",
+            "to": "q0",
+            "label": "1"
+          }
+        ],
+        "current": [
+          "q0"
+        ],
+        "tape": {
+          "cells": [
+            "0",
+            "1",
+            "0",
+            "0"
+          ],
+          "head": 0
+        },
+        "caption": "Trace of 0100 from the start state q0"
+      },
+      "answer": {
+        "value": "The DFA accepts exactly the strings that end with 00 — option (C).",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Every string starts with 0 or 1, but e.g. $1$ is rejected (stays in $q_0$)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "The string $0$ ends with 0 but stops in non-accepting $q_1$; one trailing 0 is not enough."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Only $q_2$ accepts and $q_2$ is reached exactly when the last two symbols are $00$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$001$ contains $00$ but the final 1 sends it back to $q_0$, so it is rejected."
+        }
+      ],
+      "pitfalls": [
+        "Reading the $q_2 \\to q_0$ arc on 1 as \"stay accepted\" — any trailing 1 resets to $q_0$, so \"contains 00\" is wrong."
+      ],
+      "verification": "Checked $\\varepsilon$, $0$, $00$, $100$, $001$, $0100$: accepted exactly when the string ends in $00$."
+    },
+    "cse-2009-cs-42": {
+      "approach": "Judge each statement from compiler fundamentals: deterministic parsers (LL/LR) are linear; recursion needs a run-time stack; S-attributed definitions are L-attributed and are evaluated bottom-up; optimisation happens on source and IR.",
+      "concepts": [
+        "LR/LL parsing complexity",
+        "Storage allocation",
+        "L-attributed definitions",
+        "Code optimisation"
+      ],
+      "steps": [
+        {
+          "title": "Statement I — true",
+          "body": "LL(1) and LR(1) parsers run in $O(n)$ time, which is less than $\\Theta(n^3)$ (the bound for general CYK/Earley parsing). Most programming languages have such grammars."
+        },
+        {
+          "title": "Statement II — false",
+          "body": "With recursion several activations of the same procedure are alive at once, each needing its own locals. Static allocation gives one fixed copy per procedure, so recursion needs stack (or heap) allocation."
+        },
+        {
+          "title": "Statement III — false",
+          "body": "Every S-attributed definition is L-attributed and is evaluated directly during bottom-up (LR) parsing; even inherited L-attributes can be handled bottom-up with marker non-terminals. So \"no L-attributed definition\" is false."
+        },
+        {
+          "title": "Statement IV — true",
+          "body": "Code-improving transformations (e.g. loop restructuring at source level, common-subexpression elimination on three-address code) are applied both at source and intermediate-code level. True statements: **I and IV**."
+        }
+      ],
+      "answer": {
+        "value": "Statements I and IV are true — option (B).",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "II is false: recursion cannot be implemented with static storage allocation."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "I (linear-time LL/LR parsers exist) and IV (optimisation at source and IR level) are both true."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "III is false: S-attributed definitions are L-attributed and evaluate bottom-up."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Includes the false statement III."
+        }
+      ],
+      "pitfalls": [
+        "Treating \"L-attributed\" as \"has inherited attributes\" — S-attributed definitions are a subset of L-attributed ones."
+      ],
+      "verification": "Each statement checked against a concrete case: LR(1) is linear, recursive factorial needs per-call frames, YACC evaluates S-attributed rules bottom-up."
+    },
+    "cse-2009-cs-43": {
+      "approach": "Draw the precedence graph for each schedule: add $T_i \\to T_j$ for every conflicting pair (same item, at least one write) where $T_i$'s operation comes first. A schedule is conflict-serializable iff the graph is acyclic.",
+      "concepts": [
+        "Conflict serializability",
+        "Precedence graph",
+        "Conflicting operations"
+      ],
+      "given": "| | Schedule |\n|---|---|\n| $S_1$ | $R_1[x]\\,R_2[x]\\,R_2[y]\\,W_1[x]\\,W_1[y]\\,W_2[y]$ |\n| $S_2$ | $R_1[x]\\,R_2[x]\\,R_2[y]\\,W_1[x]\\,W_2[y]\\,W_1[y]$ |\n| $S_3$ | $R_1[x]\\,W_1[x]\\,R_2[x]\\,W_1[y]\\,R_2[y]\\,W_2[y]$ |\n| $S_4$ | $R_2[x]\\,R_2[y]\\,R_1[x]\\,W_1[x]\\,W_1[y]\\,W_2[y]$ |",
+      "steps": [
+        {
+          "title": "Conflicting pairs",
+          "body": "$T_2$ never writes $x$, so on $x$ the only conflict is $R_2[x]$ vs $W_1[x]$. On $y$ the conflicts are $R_2[y]$ vs $W_1[y]$ and $W_1[y]$ vs $W_2[y]$. ($R_1[x]$ conflicts with nothing in $T_2$.)"
+        },
+        {
+          "title": "S1 — cycle",
+          "body": "$R_2[x] < W_1[x]$ gives $T_2 \\to T_1$; $W_1[y] < W_2[y]$ gives $T_1 \\to T_2$. Cycle $T_1 \\rightleftarrows T_2$ ⇒ **not** conflict-serializable.",
+          "scene": {
+            "kind": "graph",
+            "directed": true,
+            "nodes": [
+              {
+                "id": "T1",
+                "x": 0,
+                "y": 0
+              },
+              {
+                "id": "T2",
+                "x": 3,
+                "y": 0
+              }
+            ],
+            "edges": [
+              {
+                "from": "T2",
+                "to": "T1"
+              },
+              {
+                "from": "T1",
+                "to": "T2"
+              }
+            ],
+            "caption": "S1: cycle",
+            "edgeTones": {
+              "T2>T1": "error",
+              "T1>T2": "error"
+            }
+          }
+        },
+        {
+          "title": "S2 — acyclic",
+          "body": "$R_2[x] < W_1[x]$, $R_2[y] < W_1[y]$ and $W_2[y] < W_1[y]$ all give $T_2 \\to T_1$. Only one direction ⇒ serializable, equivalent to $T_2\\,T_1$.",
+          "scene": {
+            "kind": "graph",
+            "directed": true,
+            "nodes": [
+              {
+                "id": "T1",
+                "x": 0,
+                "y": 0
+              },
+              {
+                "id": "T2",
+                "x": 3,
+                "y": 0
+              }
+            ],
+            "edges": [
+              {
+                "from": "T2",
+                "to": "T1"
+              }
+            ],
+            "caption": "S2: only T2 → T1",
+            "edgeTones": {
+              "T2>T1": "success"
+            }
+          }
+        },
+        {
+          "title": "S3 — acyclic",
+          "body": "$W_1[x] < R_2[x]$, $W_1[y] < R_2[y]$ and $W_1[y] < W_2[y]$ all give $T_1 \\to T_2$ ⇒ serializable, equivalent to $T_1\\,T_2$.",
+          "scene": {
+            "kind": "graph",
+            "directed": true,
+            "nodes": [
+              {
+                "id": "T1",
+                "x": 0,
+                "y": 0
+              },
+              {
+                "id": "T2",
+                "x": 3,
+                "y": 0
+              }
+            ],
+            "edges": [
+              {
+                "from": "T1",
+                "to": "T2"
+              }
+            ],
+            "caption": "S3: only T1 → T2",
+            "edgeTones": {
+              "T1>T2": "success"
+            }
+          }
+        },
+        {
+          "title": "S4 — cycle",
+          "body": "$R_2[x] < W_1[x]$ gives $T_2 \\to T_1$; $W_1[y] < W_2[y]$ gives $T_1 \\to T_2$ ⇒ cycle, **not** serializable. Serializable schedules: $S_2$ and $S_3$.",
+          "scene": {
+            "kind": "graph",
+            "directed": true,
+            "nodes": [
+              {
+                "id": "T1",
+                "x": 0,
+                "y": 0
+              },
+              {
+                "id": "T2",
+                "x": 3,
+                "y": 0
+              }
+            ],
+            "edges": [
+              {
+                "from": "T2",
+                "to": "T1"
+              },
+              {
+                "from": "T1",
+                "to": "T2"
+              }
+            ],
+            "caption": "S4: cycle",
+            "edgeTones": {
+              "T2>T1": "error",
+              "T1>T2": "error"
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "$S_2$ and $S_3$ are conflict-serializable — option (B).",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$S_1$ has the cycle $T_2 \\to T_1$ ($x$) and $T_1 \\to T_2$ ($W_1[y]$ before $W_2[y]$)."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$S_2$ has only $T_2 \\to T_1$ edges and $S_3$ only $T_1 \\to T_2$ edges — both acyclic."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$S_2$ is also conflict-serializable, so \"$S_3$ only\" is incomplete."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$S_4$ has a cycle, exactly like $S_1$."
+        }
+      ],
+      "pitfalls": [
+        "Counting $R_1[x]$ vs $R_2[x]$ as a conflict — two reads never conflict."
+      ],
+      "verification": "Swapping non-conflicting operations turns $S_2$ into $R_2[x]R_2[y]W_2[y]R_1[x]W_1[x]W_1[y]$ = serial $T_2T_1$, and $S_3$ into serial $T_1T_2$."
+    },
+    "cse-2009-cs-44": {
+      "approach": "Simulate the insertions. A leaf holds at most 2 keys, so a third key forces a split. Taking the split that keeps leaves full on the left (2 keys left, 1 right, separator = largest key of the left leaf, keys ≤ separator go left) maximises the splits and gives 4.",
+      "concepts": [
+        "B+ tree insertion",
+        "Leaf split",
+        "Internal node split"
+      ],
+      "steps": [
+        {
+          "title": "Insert 10, 3, 6",
+          "body": "$[10] \\to [3,10]$. Inserting 6 overflows: $[3,6,10] \\Rightarrow [3,6]\\,|\\,[10]$, separator 6 goes up to a new root. **Leaf split 1.**",
+          "scene": {
+            "kind": "tree",
+            "root": {
+              "label": [
+                6
+              ],
+              "children": [
+                {
+                  "label": [
+                    3,
+                    6
+                  ],
+                  "tone": "accent",
+                  "id": "l3_6"
+                },
+                {
+                  "label": [
+                    10
+                  ],
+                  "tone": "accent",
+                  "id": "l10"
+                }
+              ],
+              "id": "i6"
+            },
+            "caption": "Leaf splits so far: 1"
+          }
+        },
+        {
+          "title": "Insert 8",
+          "body": "$8 > 6$ goes to the right leaf: $[10] \\to [8,10]$. No split.",
+          "scene": {
+            "root": {
+              "label": [
+                6
+              ],
+              "children": [
+                {
+                  "label": [
+                    3,
+                    6
+                  ],
+                  "id": "l3_6"
+                },
+                {
+                  "label": [
+                    8,
+                    10
+                  ],
+                  "tone": "success",
+                  "id": "l8_10"
+                }
+              ],
+              "id": "i6"
+            },
+            "caption": "Leaf splits so far: 1"
+          }
+        },
+        {
+          "title": "Insert 4",
+          "body": "$4 \\le 6$: $[3,4,6] \\Rightarrow [3,4]\\,|\\,[6]$, separator 4 goes up; root $[4,6]$ has 3 pointers (allowed). **Leaf split 2.**",
+          "scene": {
+            "root": {
+              "label": [
+                4,
+                6
+              ],
+              "children": [
+                {
+                  "label": [
+                    3,
+                    4
+                  ],
+                  "tone": "accent",
+                  "id": "l3_4"
+                },
+                {
+                  "label": [
+                    6
+                  ],
+                  "tone": "accent",
+                  "id": "l6"
+                },
+                {
+                  "label": [
+                    8,
+                    10
+                  ],
+                  "id": "l8_10"
+                }
+              ],
+              "id": "i4_6"
+            },
+            "caption": "Leaf splits so far: 2"
+          }
+        },
+        {
+          "title": "Insert 2",
+          "body": "$2 \\le 4$: $[2,3,4] \\Rightarrow [2,3]\\,|\\,[4]$, separator 3 goes up. **Leaf split 3.** The root $[3,4,6]$ now needs 4 pointers > 3, so it splits: 4 moves up, giving $[3]$ and $[6]$ below root $[4]$.",
+          "scene": {
+            "root": {
+              "label": [
+                4
+              ],
+              "children": [
+                {
+                  "label": [
+                    3
+                  ],
+                  "children": [
+                    {
+                      "label": [
+                        2,
+                        3
+                      ],
+                      "tone": "accent",
+                      "id": "l2_3"
+                    },
+                    {
+                      "label": [
+                        4
+                      ],
+                      "tone": "accent",
+                      "id": "l4"
+                    }
+                  ],
+                  "id": "i3"
+                },
+                {
+                  "label": [
+                    6
+                  ],
+                  "children": [
+                    {
+                      "label": [
+                        6
+                      ],
+                      "id": "l6"
+                    },
+                    {
+                      "label": [
+                        8,
+                        10
+                      ],
+                      "id": "l8_10"
+                    }
+                  ],
+                  "id": "i6"
+                }
+              ],
+              "id": "i4"
+            },
+            "caption": "Leaf splits so far: 3 (plus one internal split)"
+          }
+        },
+        {
+          "title": "Insert 1",
+          "body": "$1 \\le 4$, $1 \\le 3$: $[1,2,3] \\Rightarrow [1,2]\\,|\\,[3]$, separator 2 joins $[3]$ to make $[2,3]$ (3 pointers, allowed). **Leaf split 4.** Total leaf splits $= 4$.",
+          "scene": {
+            "root": {
+              "label": [
+                4
+              ],
+              "children": [
+                {
+                  "label": [
+                    2,
+                    3
+                  ],
+                  "children": [
+                    {
+                      "label": [
+                        1,
+                        2
+                      ],
+                      "tone": "accent",
+                      "id": "l1_2"
+                    },
+                    {
+                      "label": [
+                        3
+                      ],
+                      "tone": "accent",
+                      "id": "l3"
+                    },
+                    {
+                      "label": [
+                        4
+                      ],
+                      "id": "l4"
+                    }
+                  ],
+                  "id": "i2_3"
+                },
+                {
+                  "label": [
+                    6
+                  ],
+                  "children": [
+                    {
+                      "label": [
+                        6
+                      ],
+                      "id": "l6"
+                    },
+                    {
+                      "label": [
+                        8,
+                        10
+                      ],
+                      "id": "l8_10"
+                    }
+                  ],
+                  "id": "i6"
+                }
+              ],
+              "id": "i4"
+            },
+            "caption": "Leaf splits: 4"
+          }
+        }
+      ],
+      "answer": {
+        "value": "With the left-full split the leaves split 4 times — option (C).",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "2 is below even the minimum count (3) obtained with right-heavy splits."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "3 is what right-heavy splits ($[3]\\,|\\,[6,10]$, $[6]\\,|\\,[8,10]$, $[2]\\,|\\,[3,4]$) give; 4 and 1 then fit without splitting — not the maximum."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Left-full splits with \"key ≤ separator goes left\" give 4 leaf splits (the accepted answer)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "5 needs the left-full split combined with separator = smallest key of the right leaf, which also sends 8 left; this convention is not the one the accepted key uses."
+        }
+      ],
+      "pitfalls": [
+        "Counting the internal (root) split as a leaf split — the question asks only about leaves.",
+        "The count depends on the split/separator convention (3, 4 or 5 are all obtainable); the accepted key is 4."
+      ],
+      "verification": "Final tree: root $[4]$; $[2,3] \\to [1,2],[3],[4]$; $[6] \\to [6],[8,10]$ — all 7 keys present in sorted leaf order, every leaf ≤ 2 keys, every internal node ≤ 3 pointers."
+    },
+    "cse-2009-cs-45": {
+      "approach": "Recognise relational division $r \\div s$: tuples $t$ over $R-S=\\{a,b\\}$ that appear with **every** $c$ in $s$. Check which queries express \"for all $u$ in $s$, $(t,u) \\in r$\".",
+      "concepts": [
+        "Relational division",
+        "Tuple relational calculus",
+        "Universal quantifier"
+      ],
+      "steps": [
+        {
+          "title": "Query I is division",
+          "body": "$\\pi_{R-S}(r) \\times s$ = every candidate $(a,b)$ paired with every $c$. Subtracting $\\pi_{R-S,S}(r)$ leaves the missing pairs; their $(a,b)$ parts are the disqualified tuples. $\\pi_{R-S}(r)$ minus those $= r \\div s$."
+        },
+        {
+          "title": "Query II is division",
+          "body": "$\\forall u \\in s\\; \\exists v \\in r\\,(v[S]=u \\wedge v[R-S]=t)$ says $(t,u) \\in r$ for every $u \\in s$ — exactly the definition of $r \\div s$."
+        },
+        {
+          "title": "Queries III and IV are not",
+          "body": "III quantifies over **all** $v \\in r$ and requires $t = v[R-S]$ for each — it is non-empty only if $r$ has a single $(a,b)$ value and every $c$ of $r$ is in $s$. IV is $\\pi_{a,b}(r \\bowtie s)$: an $(a,b)$ qualifies if it matches **some** $c$ in $s$, not all. So I ≡ II."
+        }
+      ],
+      "answer": {
+        "value": "Queries I and II are equivalent (both compute $r \\div s$) — option (A).",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "I (algebraic division) and II (calculus with $\\forall u \\in s$) both compute $r \\div s$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "III quantifies over every tuple of $r$, not over $s$; it is not division."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "IV is a join + projection (exists one matching $c$), not \"for all $c$\"."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "III and IV compute different, non-division results."
+        }
+      ],
+      "pitfalls": [
+        "Confusing \"some matching $c$\" (join) with \"every $c$\" (division)."
+      ],
+      "verification": "$r=\\{(1,1,x),(1,1,y),(2,2,x)\\}$, $s=\\{x,y\\}$: I and II give $\\{(1,1)\\}$, IV gives $\\{(1,1),(2,2)\\}$, III gives $\\varnothing$."
+    },
+    "cse-2009-cs-46": {
+      "approach": "Recall RSA: encryption and decryption are exponentiation modulo $n$, and the exponents are inverses modulo $\\phi(n)$ so that $M^{ed} \\equiv M \\pmod n$ by Euler's theorem.",
+      "concepts": [
+        "RSA",
+        "Euler's theorem",
+        "Modular inverse"
+      ],
+      "steps": [
+        {
+          "title": "Key relation",
+          "body": "Choose $e$ coprime to $\\phi(n)=(p-1)(q-1)$ and $d$ with $ed \\equiv 1 \\pmod{\\phi(n)}$, i.e. $ed = 1 + k\\phi(n)$. So III is correct and II ($\\bmod\\, n$) is not."
+        },
+        {
+          "title": "Encryption/decryption",
+          "body": "$M' = M^e \\bmod n$ and $(M')^d = M^{ed} = M \\cdot (M^{\\phi(n)})^k \\equiv M \\pmod n$. So I is correct; IV (working $\\bmod\\,\\phi(n)$) does not recover $M$ since $M$ may exceed $\\phi(n)$ and Euler's theorem is mod $n$."
+        }
+      ],
+      "answer": {
+        "value": "Equations I and III describe RSA — option (B).",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "II is wrong: the exponents are inverses modulo $\\phi(n)$, not modulo $n$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "I (exponentiation mod $n$) and III ($ed \\equiv 1 \\bmod \\phi(n)$) are the RSA equations."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Both II and IV are wrong."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "IV is wrong: messages are exponentiated modulo $n$, not $\\phi(n)$."
+        }
+      ],
+      "pitfalls": [
+        "The question swaps the usual names (private $(e,n)$, public $(d,n)$); the equations are symmetric so it does not matter."
+      ],
+      "verification": "$p=3,q=11$: $n=33$, $\\phi=20$, $e=3$, $d=7$ ($21 \\equiv 1 \\bmod 20$). $M=4$: $4^3 \\bmod 33 = 31$, $31^7 \\bmod 33 = 4$ ✓."
+    },
+    "cse-2009-cs-47": {
+      "approach": "Sequence numbers must never repeat while an older packet carrying the same number may still be alive. A packet can live 64 s, so the sequence numbers of a connection must move on by at least one every 64 s: minimum rate $= 1/64$ per second.",
+      "concepts": [
+        "TCP initial sequence number",
+        "Maximum packet lifetime",
+        "Forbidden region"
+      ],
+      "steps": [
+        {
+          "title": "What must be avoided",
+          "body": "The ISN comes from a ToD clock (1 tick/ms, low 32 bits), so it never restarts from a fixed value after a crash. The remaining danger is a connection whose own sequence numbers advance so slowly that a number is reused while a duplicate with the same number is still in the network."
+        },
+        {
+          "title": "Bound from the lifetime",
+          "body": "A duplicate disappears at most $T = 64$ s after it was sent. If the sequence number advances by at least 1 every 64 s, no two live packets share a number. Minimum rate $= \\dfrac{1}{64\\ \\text{s}} = 0.015625/\\text{s}$."
+        },
+        {
+          "title": "Closest choice",
+          "body": "$0.0156/\\text{s}$ is closest to $0.015/\\text{s}$ (next option $0.064$ is 4× larger)."
+        }
+      ],
+      "answer": {
+        "value": "About $1/64 \\approx 0.0156$ per second, closest to $0.015/\\text{s}$ — option (A).",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$1/64 = 0.0156$ s$^{-1}$, closest to 0.015/s."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "0.064 is the lifetime in thousands of ms (64 s), not a rate."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "No reading of the data gives 0.135/s."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "No reading of the data gives 0.327/s."
+        }
+      ],
+      "pitfalls": [
+        "The 32-bit clock wraps only every $2^{32}$ ms $\\approx 49.7$ days, far longer than 64 s, so the clock itself is not the constraint."
+      ],
+      "verification": "$1/64 = 0.015625$; $|0.015625-0.015| = 0.0006$ vs $|0.015625-0.064| = 0.048$."
+    },
+    "cse-2009-cs-48": {
+      "approach": "An error pattern $E(x)$ goes undetected only if $G(x)$ divides $E(x)$. If $(1+x) \\mid G(x)$, then $G(1)=0$; an odd number of errors gives $E(1)=1 \\ne 0$, so $G$ can never divide $E$.",
+      "concepts": [
+        "CRC",
+        "Polynomial division over GF(2)",
+        "Odd-weight errors"
+      ],
+      "steps": [
+        {
+          "title": "Undetected errors",
+          "body": "Received $= T(x)+E(x)$ with $G \\mid T$. The error escapes iff $G(x) \\mid E(x)$."
+        },
+        {
+          "title": "Evaluate at x = 1",
+          "body": "If $G(x) = (1+x)H(x)$ then $G(1) = 0$ (mod 2). An odd number of flipped bits means $E(1) = 1$. If $G \\mid E$ then $E(1) = G(1)Q(1) = 0$ — contradiction. So every odd-weight error is detected."
+        }
+      ],
+      "answer": {
+        "value": "$G(x)$ must have $1+x$ as a factor — option (C).",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "More than two terms is the condition for catching single-bit errors; it does not guarantee odd errors are caught — $G = 1+x+x^2$ (three terms) divides the 3-bit error $E = 1+x+x^2$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Not dividing $1+x^k$ is the condition for detecting **double**-bit errors."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$(1+x) \\mid G$ forces $G(1)=0$, while odd-weight $E$ has $E(1)=1$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "An odd number of terms means $G(1)=1$, i.e. $1+x$ does **not** divide $G$ — the opposite of what is needed."
+        }
+      ],
+      "pitfalls": [
+        "Mixing up the double-error condition (B) with the odd-error condition (C)."
+      ],
+      "verification": "$G = 1+x$: $E = 1+x+x^2$ (3 errors) leaves remainder $1$ — detected. $G = 1+x+x^2$ (odd terms) divides $E = 1+x+x^2$ — missed."
+    },
+    "cse-2009-cs-49": {
+      "approach": "Check each statement against the standard DFD rules (Rajib Mall's list of common DFD mistakes, from which these statements come): one bubble in the context diagram, external entities only in the context diagram, no control information, data stores connect only to processes.",
+      "concepts": [
+        "Data flow diagram",
+        "Context diagram",
+        "DFD levelling rules"
+      ],
+      "steps": [
+        {
+          "title": "I and III — true",
+          "body": "The context (level-0) diagram shows the whole system as a **single bubble** with its external entities. A DFD shows data movement only; control information (e.g. \"if error, go to …\") must not appear."
+        },
+        {
+          "title": "II — false",
+          "body": "External entities appear **only in the context diagram**. Lower-level DFDs refine bubbles and keep the data flows balanced with the parent, but do not redraw the external entities — showing them at all levels is a listed beginner mistake."
+        },
+        {
+          "title": "IV — false",
+          "body": "A data store can be read or written only by a **process** (bubble). Store-to-store or store-to-entity flows are not allowed. True statements: **I and III**."
+        }
+      ],
+      "answer": {
+        "value": "Only statements I and III are true — option (C).",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "II is false (entities only in the context diagram)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "II and IV are false."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "I (single bubble) and III (no control information) are the true rules."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Includes II, which is false: external entities are shown only in the context diagram."
+        }
+      ],
+      "pitfalls": [
+        "Confusing \"balancing\" (flows of a child DFD must match the parent bubble) with redrawing external entities at every level."
+      ],
+      "verification": "Rajib Mall, *Fundamentals of Software Engineering*, \"commonly made errors while constructing a DFD model\" lists: more than one bubble in the context diagram, external entities at all levels, control information in DFDs, and data stores connected to anything but bubbles — matching I, III true and II, IV false."
+    },
+    "cse-2009-cs-50": {
+      "approach": "Use $V(G) = E - N + 2$ and compare it with the cycle count of the control-flow graph itself. The CFG (without an extra exit→entry edge) has only $E - N + 1$ independent circuits, so I is false; II and III are standard facts.",
+      "concepts": [
+        "Cyclomatic complexity",
+        "Independent paths",
+        "Basis path testing"
+      ],
+      "steps": [
+        {
+          "title": "Statement I — false",
+          "body": "For a connected graph the number of linearly independent circuits (cyclomatic number) is $E - N + 1$, but $V(G) = E - N + 2$. Example: if–else diamond, $N=4$, $E=4$: $V(G)=2$, independent circuits $=1$. McCabe's equality needs the extra exit→entry edge, which the program's CFG does not have."
+        },
+        {
+          "title": "Statement II — true",
+          "body": "For binary decisions $V(G) = \\pi + 1$, where $\\pi$ is the number of decision (predicate) nodes: the diamond has 1 decision, $V = 2$ ✓."
+        },
+        {
+          "title": "Statement III — true",
+          "body": "$V(G)$ is the number of linearly independent paths in a basis set, i.e. the number of paths to test for basis-path coverage. True statements: **II and III**."
+        }
+      ],
+      "answer": {
+        "value": "Statements II and III are true — option (B).",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "I is false for the control-flow graph itself ($E-N+1$ circuits vs $V(G)=E-N+2$)."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "II ($\\pi+1$) and III (number of independent test paths) are true."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Includes the false statement I."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Includes the false statement I."
+        }
+      ],
+      "pitfalls": [
+        "Quoting McCabe's theorem (equal to the independent circuits of the strongly connected graph) without noticing it needs the added exit→entry edge."
+      ],
+      "verification": "Single loop (while): $N=3$, $E=3$ → $V=2$, independent circuits $=1$; 1 decision + 1 = 2 ✓; two basis paths (skip loop, enter loop) ✓."
+    },
+    "cse-2009-cs-51": {
+      "approach": "Sectors are numbered sector-first, then surface, then cylinder (like digits of a mixed-radix number), so sector number $= c \\cdot 1260 + h \\cdot 63 + s$.",
+      "concepts": [
+        "Disk CHS addressing",
+        "Mixed-radix numbering"
+      ],
+      "steps": [
+        {
+          "title": "Sectors per cylinder",
+          "body": "One cylinder holds $20 \\times 63 = 1260$ sectors (10 platters × 2 surfaces = 20 surfaces), one track holds 63."
+        },
+        {
+          "title": "Convert ⟨400, 16, 29⟩",
+          "body": "$400 \\times 1260 = 504000$\n\n$16 \\times 63 = 1008$\n\n$504000 + 1008 + 29 = 505037$."
+        }
+      ],
+      "answer": {
+        "value": "Sector number 505037 — option (C).",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "505035 is 2 too small (off-by-two slip in the addition)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "505036 is 1 too small (treats sectors as 1-based)."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$400\\cdot1260 + 16\\cdot63 + 29 = 505037$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "505038 is 1 too large."
+        }
+      ],
+      "pitfalls": [
+        "Using 10 surfaces instead of 20 — each platter has 2 recording surfaces."
+      ],
+      "verification": "Reverse: $505037 = 400 \\cdot 1260 + 1037$; $1037 = 16 \\cdot 63 + 29$ ⇒ ⟨400,16,29⟩ ✓."
+    },
+    "cse-2009-cs-52": {
+      "approach": "Invert the mixed-radix numbering: divide by 1260 for the cylinder, then the remainder by 63 for the surface; the last remainder is the sector.",
+      "concepts": [
+        "Disk CHS addressing",
+        "Integer division"
+      ],
+      "steps": [
+        {
+          "title": "Cylinder",
+          "body": "One cylinder holds $20 \\times 63 = 1260$ sectors (10 platters × 2 surfaces = 20 surfaces), one track holds 63. $1039 < 1260$, so $c = 0$ and the remainder is 1039."
+        },
+        {
+          "title": "Surface and sector",
+          "body": "$1039 \\div 63$: $16 \\times 63 = 1008$, remainder $1039 - 1008 = 31$. So $h = 16$, $s = 31$ → ⟨0, 16, 31⟩."
+        }
+      ],
+      "answer": {
+        "value": "⟨0, 16, 31⟩ — option (C).",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "⟨0,15,31⟩ = $15\\cdot63+31 = 976$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "⟨0,16,30⟩ = 1038 (off by one)."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "⟨0,16,31⟩ = $1008+31 = 1039$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "⟨0,17,31⟩ = $1071+31 = 1102$."
+        }
+      ],
+      "pitfalls": [
+        "Counting from 1: the 0th sector is ⟨0,0,0⟩, so the 1039th sector has number 1039."
+      ],
+      "verification": "$0\\cdot1260 + 16\\cdot63 + 31 = 1039$ ✓."
+    },
+    "cse-2009-cs-53": {
+      "approach": "Standard LCS recurrence: if the last characters match, extend the LCS of both prefixes by 1; otherwise drop the last character of one sequence or the other and take the better result.",
+      "concepts": [
+        "Longest common subsequence",
+        "Optimal substructure"
+      ],
+      "steps": [
+        {
+          "title": "Matching last characters",
+          "body": "If $X[i-1] = Y[j-1]$ the character is in some LCS, so $\\text{expr1} = l(i-1, j-1) + 1$. Neither (A) $l(i-1,j)+1$ nor (B) $l(i,j-1)$ is this."
+        },
+        {
+          "title": "Different last characters",
+          "body": "If $X[i-1] \\ne Y[j-1]$ at least one of them is unused: $\\text{expr2} = \\max(l(i-1,j),\\, l(i,j-1))$ — option (C)."
+        }
+      ],
+      "answer": {
+        "value": "$\\text{expr2} \\equiv \\max(l(i-1,j), l(i,j-1))$ — option (C).",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Must use $l(i-1,j-1)+1$; $l(i-1,j)+1$ can over-count (e.g. X=\"aa\", Y=\"a\" gives 2)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$l(i,j-1)$ ignores the match and under-counts (X=\"a\", Y=\"a\" gives 0)."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct mismatch case: skip the last symbol of X or of Y."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$l(i,j)$ on the right side is circular; and $l(i-1,j-1)$ alone can miss the better choice."
+        }
+      ],
+      "pitfalls": [
+        "Writing the match case as $l(i-1,j)+1$ — both indices must decrease."
+      ],
+      "verification": "X = \"ab\", Y = \"ba\": $l(2,2) = \\max(l(1,2), l(2,1)) = \\max(1,1) = 1$ ✓ (LCS \"a\" or \"b\")."
+    },
+    "cse-2009-cs-54": {
+      "approach": "$L[i,j]$ depends only on $L[i-1,j-1]$, $L[i-1,j]$ and $L[i,j-1]$ — the cell above, left and above-left. Any order that fills these first works, so both row-major and column-major order are valid.",
+      "concepts": [
+        "DP evaluation order",
+        "Dependency direction",
+        "LCS table"
+      ],
+      "steps": [
+        {
+          "title": "Dependencies",
+          "body": "From the recurrence, $L[i,j]$ needs $L[i-1,j-1]$, $L[i-1,j]$, $L[i,j-1]$: all have row $\\le i$ and column $\\le j$, with at least one strictly smaller."
+        },
+        {
+          "title": "Row-major and column-major both work",
+          "body": "Row-major: row $i-1$ is complete and $L[i,j-1]$ was just computed. Column-major: column $j-1$ is complete and $L[i-1,j]$ was just computed. So (B) holds and (C) is false."
+        },
+        {
+          "title": "Other statements",
+          "body": "Only row 0 and column 0 need initial 0s (A is false: the rest is computed). (D) is too strong: $L[0,5]$ need not precede $L[1,0]$ even though $0 < 1$."
+        }
+      ],
+      "answer": {
+        "value": "The table may be filled in row-major or column-major order — option (B).",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Only the boundary row/column must be 0; interior cells are overwritten by the recurrence."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Both orders compute up, left and diagonal neighbours before the cell."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Contradicts (B); both orders work."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "\"Either $p<r$ or $q<s$\" is not required — e.g. $L[0,5]$ and $L[1,0]$ are independent."
+        }
+      ],
+      "pitfalls": [
+        "Reading \"either … or\" in (D) as \"both\" — the real requirement is $p \\le r$ and $q \\le s$."
+      ],
+      "verification": "Filling a 3×3 LCS table for \"ab\"/\"ba\" in row-major and in column-major order gives the same final value 1."
+    },
+    "cse-2009-cs-55": {
+      "approach": "Evaluate the nested NOT IN from the inside out. Inner: non-blue part ids. Middle: suppliers of some part that is NOT non-blue, i.e. of some blue part. Outer: suppliers not in that set — those who supplied no blue part. None of the options states this exactly; the accepted (official) key is (A).",
+      "concepts": [
+        "Nested subqueries",
+        "NOT IN",
+        "Double negation"
+      ],
+      "steps": [
+        {
+          "title": "Innermost query",
+          "body": "$P_{nb}$ = pids with color ≠ 'blue' (non-blue parts)."
+        },
+        {
+          "title": "Middle query",
+          "body": "Catalog rows whose pid is NOT IN $P_{nb}$ are rows for **blue** parts. So the middle query returns sids of suppliers who supplied **at least one blue part**."
+        },
+        {
+          "title": "Outer query",
+          "body": "Suppliers NOT IN that set: suppliers who have supplied **no blue part** (including suppliers with no catalog rows)."
+        },
+        {
+          "title": "Matching to the options",
+          "body": "For a supplier who supplies some part, \"supplied no blue part\" means every supplied part is non-blue, so the supplier **has supplied a non-blue part** — option (A). (A) and the query differ only for suppliers with both blue and non-blue parts or with none, which the paper's key ignores."
+        }
+      ],
+      "answer": {
+        "value": "Closest interpretation: suppliers who have supplied (only) non-blue parts — option (A), the accepted key.",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Accepted key: the query keeps suppliers whose parts are all non-blue, i.e. who supplied non-blue parts (exact only if \"only non-blue\" is understood)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Opposite: a supplier of only non-blue parts is returned by the query but excluded by (B)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Opposite: a supplier of only blue parts is in the middle query and hence excluded."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Includes suppliers with both blue and non-blue parts, who are excluded by the query."
+        }
+      ],
+      "pitfalls": [
+        "Losing track of the double NOT IN: NOT IN (non-blue) = blue."
+      ],
+      "verification": "Data: S1 supplies only red, S2 only blue, S3 red + blue. Query returns S1 only; (A) returns S1 (and S3), (B) S2, (C) S2, (D) S1, S3."
+    },
+    "cse-2009-cs-56": {
+      "approach": "List the FDs: only those implied by the keys sid and (sname, city). Every non-trivial FD then has a superkey on the left, which is exactly BCNF.",
+      "concepts": [
+        "BCNF",
+        "Candidate keys",
+        "Functional dependencies"
+      ],
+      "steps": [
+        {
+          "title": "Suppliers",
+          "body": "Keys: $\\text{sid}$ and $(\\text{sname},\\text{city})$. FDs: $\\text{sid} \\to$ all, $(\\text{sname},\\text{city}) \\to$ all; nothing else is given. Each determinant is a superkey ⇒ BCNF."
+        },
+        {
+          "title": "Parts and Catalog",
+          "body": "Parts: only $\\text{pid} \\to \\text{pname}, \\text{color}$. Catalog: only $(\\text{sid},\\text{pid}) \\to \\text{cost}$. Both determinants are keys ⇒ BCNF. The whole schema is in BCNF."
+        }
+      ],
+      "answer": {
+        "value": "The schema is in BCNF — option (A).",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "All FDs have a key on the left."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "There is no FD with a non-superkey determinant, so nothing violates BCNF."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "No transitive dependency exists (no non-key determinant)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "No partial dependency exists: every determinant is a full key."
+        }
+      ],
+      "pitfalls": [
+        "Inventing $\\text{street} \\to \\text{city}$ from \"unique street names\" — the question says no other FDs hold."
+      ],
+      "verification": "With only key-based FDs, every relation is in BCNF by definition."
+    },
+    "cse-2009-cs-57": {
+      "approach": "Count the frames that can be in flight inside the link at once: propagation time ÷ transmission time. Each needs a distinct sequence number, so $l = \\lceil \\log_2(\\text{count}) \\rceil$.",
+      "concepts": [
+        "Transmission delay",
+        "Propagation delay",
+        "Sequence number bits"
+      ],
+      "steps": [
+        {
+          "title": "Transmission time",
+          "body": "$T_t = \\dfrac{1000\\ \\text{bits}}{10^6\\ \\text{bps}} = 1\\ \\text{ms}$."
+        },
+        {
+          "title": "Frames in the link",
+          "body": "The link holds $\\dfrac{T_p}{T_t} = \\dfrac{25\\ \\text{ms}}{1\\ \\text{ms}} = 25$ frames back to back."
+        },
+        {
+          "title": "Bits needed",
+          "body": "$2^4 = 16 < 25 \\le 32 = 2^5$, so $l = 5$."
+        }
+      ],
+      "answer": {
+        "value": "$l = 5$ — option (D).",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$2^2 = 4 < 25$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$2^3 = 8 < 25$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$2^4 = 16 < 25$."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "$2^5 = 32 \\ge 25$, the smallest that works."
+        }
+      ],
+      "pitfalls": [
+        "Using the round trip ($1 + 2a = 51$ frames → 6 bits): the question asks only for frames packed in the link, and 6 is not an option."
+      ],
+      "verification": "25 frames × 1 ms = 25 ms = propagation time ✓; 5 bits → 32 ≥ 25 ✓."
+    },
+    "cse-2009-cs-58": {
+      "approach": "Timeline: the sender sends $2^5 = 32$ frames in 32 ms. The earliest acknowledgement for frame 1 is piggybacked on a 1000-bit data frame the receiver starts as soon as frame 1 arrives.",
+      "concepts": [
+        "Sliding window",
+        "Piggybacking",
+        "Round-trip time"
+      ],
+      "steps": [
+        {
+          "title": "Sender busy time",
+          "body": "Window $= 2^l = 2^5 = 32$ frames at $1$ ms each ⇒ last bit leaves at $t = 32$ ms."
+        },
+        {
+          "title": "Earliest ack",
+          "body": "Frame 1 fully arrives at $1 + 25 = 26$ ms. The ack rides on a reverse data frame: $1$ ms to transmit + $25$ ms to propagate ⇒ received at $26 + 1 + 25 = 52$ ms."
+        },
+        {
+          "title": "Waiting time",
+          "body": "Sender idles from $t = 32$ ms until the ack at $t = 52$ ms: $52 - 32 = 20$ ms."
+        }
+      ],
+      "answer": {
+        "value": "The sender waits 20 ms — option (C).",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "16 ms does not follow from 52 − 32."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "18 ms would ignore part of the piggyback frame time."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Ack arrives at 52 ms, sender idle from 32 ms ⇒ 20 ms."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "22 ms over-counts transmission times."
+        }
+      ],
+      "pitfalls": [
+        "Forgetting that a piggybacked ack needs the full 1 ms transmission of the reverse data frame (a tiny separate ack would give 19 ms)."
+      ],
+      "verification": "RTT for frame 1 = 1 + 25 + 1 + 25 = 52 ms; 32 frames occupy 32 ms; 52 − 32 = 20 ✓."
+    },
+    "cse-2009-cs-59": {
+      "approach": "In array form the children of index $i$ (1-based) are $2i$ and $2i+1$. Check parent ≥ child for each internal node; one violation rules an option out.",
+      "concepts": [
+        "Binary max-heap",
+        "Array representation of heaps"
+      ],
+      "steps": [
+        {
+          "title": "Parent–child pairs",
+          "body": "For 7 elements: $a_1 \\ge a_2, a_3$; $a_2 \\ge a_4, a_5$; $a_3 \\ge a_6, a_7$."
+        },
+        {
+          "title": "Check each option",
+          "body": "(A) $a_2 = 12 < a_4 = 13$ ✗.\n\n(B) $a_2 = 14 < a_4 = 16$ ✗.\n\n(C) $25 \\ge 14,16$; $14 \\ge 13,10$; $16 \\ge 8,12$ ✓.\n\n(D) $a_3 = 12 < a_7 = 16$ ✗.",
+          "scene": {
+            "kind": "tree",
+            "root": {
+              "label": 25,
+              "children": [
+                {
+                  "label": 14,
+                  "children": [
+                    {
+                      "label": 13
+                    },
+                    {
+                      "label": 10
+                    }
+                  ]
+                },
+                {
+                  "label": 16,
+                  "children": [
+                    {
+                      "label": 8
+                    },
+                    {
+                      "label": 12
+                    }
+                  ]
+                }
+              ]
+            },
+            "caption": "Option C as a tree: every parent ≥ its children"
+          }
+        }
+      ],
+      "answer": {
+        "value": "$\\{25, 14, 16, 13, 10, 8, 12\\}$ is a max-heap — option (C).",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "12 has child 13."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "14 has child 16."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "All three parent conditions hold."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "12 has child 16."
+        }
+      ],
+      "pitfalls": [
+        "Checking only that the array starts with the maximum — every parent must dominate its children."
+      ],
+      "verification": "Drawn as a tree, option C has no parent smaller than a child."
+    },
+    "cse-2009-cs-60": {
+      "approach": "Delete-max twice: move the last element to the root, then sift it down by swapping with the larger child until heap order holds.",
+      "concepts": [
+        "Heap delete-max",
+        "Sift-down (heapify)"
+      ],
+      "animation": {
+        "kind": "tree",
+        "root": {
+          "label": 25,
+          "children": [
+            {
+              "label": 14,
+              "children": [
+                {
+                  "label": 13
+                },
+                {
+                  "label": 10
+                }
+              ]
+            },
+            {
+              "label": 16,
+              "children": [
+                {
+                  "label": 8
+                },
+                {
+                  "label": 12
+                }
+              ]
+            }
+          ]
+        },
+        "caption": "Start: {25, 14, 16, 13, 10, 8, 12}"
+      },
+      "steps": [
+        {
+          "title": "Delete 25",
+          "body": "Remove 25, move last element 12 to the root: $\\{12, 14, 16, 13, 10, 8\\}$. Larger child of 12 is 16 → swap: $\\{16, 14, 12, 13, 10, 8\\}$; 12 now has child 8 only, stop.",
+          "scene": {
+            "root": {
+              "label": 16,
+              "children": [
+                {
+                  "label": 14,
+                  "children": [
+                    {
+                      "label": 13
+                    },
+                    {
+                      "label": 10
+                    }
+                  ]
+                },
+                {
+                  "label": 12,
+                  "children": [
+                    {
+                      "label": 8
+                    }
+                  ],
+                  "tone": "accent"
+                }
+              ],
+              "tone": "success"
+            },
+            "caption": "After first delete: {16, 14, 12, 13, 10, 8}"
+          }
+        },
+        {
+          "title": "Delete 16 — move 8 up",
+          "body": "Remove 16, move last element 8 to the root: $\\{8, 14, 12, 13, 10\\}$. Larger child is 14 → swap: $\\{14, 8, 12, 13, 10\\}$.",
+          "scene": {
+            "root": {
+              "label": 14,
+              "children": [
+                {
+                  "label": 8,
+                  "children": [
+                    {
+                      "label": 13
+                    },
+                    {
+                      "label": 10
+                    }
+                  ],
+                  "tone": "warning"
+                },
+                {
+                  "label": 12
+                }
+              ]
+            },
+            "caption": "8 sifts down past 14"
+          }
+        },
+        {
+          "title": "Finish sift-down",
+          "body": "8's children are 13 and 10; larger is 13 → swap: $\\{14, 13, 12, 8, 10\\}$. 8 is a leaf now.",
+          "scene": {
+            "root": {
+              "label": 14,
+              "children": [
+                {
+                  "label": 13,
+                  "children": [
+                    {
+                      "label": 8,
+                      "tone": "accent"
+                    },
+                    {
+                      "label": 10
+                    }
+                  ]
+                },
+                {
+                  "label": 12
+                }
+              ],
+              "tone": "success"
+            },
+            "caption": "Result: {14, 13, 12, 8, 10}"
+          }
+        }
+      ],
+      "answer": {
+        "value": "$\\{14, 13, 12, 8, 10\\}$ — option (D).",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Has only 4 elements; two deletions from 7 elements must leave 5."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "12 at index 2 with child 13 violates heap order."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "8 at index 3 is wrong — 12 must stay as the right child of the root."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Result of two correct delete-max operations."
+        }
+      ],
+      "pitfalls": [
+        "Swapping with the left child instead of the larger child during sift-down."
+      ],
+      "verification": "Final array: $14 \\ge 13, 12$ and $13 \\ge 8, 10$ ✓; contains the original keys minus 25 and 16 ✓."
+    }
+  }
+}
