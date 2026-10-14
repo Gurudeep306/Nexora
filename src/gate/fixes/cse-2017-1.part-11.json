@@ -1,0 +1,45 @@
+{
+  "paper": "cse-2017-1",
+  "fixes": [
+    {
+      "id": "cse-2017-1-cs-19",
+      "field": "subject",
+      "before": "ga",
+      "after": "prob",
+      "reason": "Probability question (Gaussian median), not General Aptitude",
+      "source": "GATE 2017 Set 1 question paper (PDF)"
+    },
+    {
+      "id": "cse-2017-1-cs-19",
+      "field": "topic",
+      "before": "quant",
+      "after": "rv",
+      "reason": "Random variables and distributions",
+      "source": "GATE 2017 Set 1 question paper (PDF)"
+    },
+    {
+      "id": "cse-2017-1-cs-20",
+      "field": "subject",
+      "before": "ga",
+      "after": "dm",
+      "reason": "Graph theory (trees, handshake lemma), not General Aptitude",
+      "source": "GATE 2017 Set 1 question paper (PDF)"
+    },
+    {
+      "id": "cse-2017-1-cs-20",
+      "field": "topic",
+      "before": "quant",
+      "after": "graphs",
+      "reason": "Graph theory topic",
+      "source": "GATE 2017 Set 1 question paper (PDF)"
+    },
+    {
+      "id": "cse-2017-1-cs-21",
+      "field": "text",
+      "before": "Consider the Karnaugh map given below, where x represents \"don't care\" and blank represents 0.\n\n| dc \\ ba | 00 | 01 | 11 | 10 |\n|---|---|---|---|---|\n| 00 |  | x | x |  |\n| 01 | 1 |  |  | x |\n| 11 | 1 |  |  | 1 |\n| 10 |  | x | x |  |\n\nAssume for all inputs $(a,b,c,d)$, the respective complements $(\\overline{a},\\overline{b},\\overline{c},\\overline{d})$ are also available. The above logic is implemented using 2-input NOR gates only. The minimum number of gates required is ____________.",
+      "after": "Consider the Karnaugh map given below, where x represents \"don't care\" and blank represents 0.\n\nAssume for all inputs $(a,b,c,d)$, the respective complements $(\\overline{a},\\overline{b},\\overline{c},\\overline{d})$ are also available. The above logic is implemented using 2-input NOR gates only. The minimum number of gates required is ____________.",
+      "reason": "K-map is shown in the (redrawn) figure; remove the duplicate markdown table",
+      "source": "GATE 2017 Set 1 question paper (PDF)"
+    }
+  ]
+}
