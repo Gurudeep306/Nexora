@@ -1,0 +1,1155 @@
+{
+  "paper": "cse-2019",
+  "version": 2,
+  "solutions": {
+    "cse-2019-cs-13": {
+      "approach": "Direct substitution gives $\\frac{0}{0}$, so factor out the common $(x-3)$ from numerator and denominator and then substitute $x=3$.",
+      "concepts": [
+        "Limits",
+        "Factorisation",
+        "L'Hôpital's rule"
+      ],
+      "steps": [
+        {
+          "title": "Check the form",
+          "body": "At $x=3$: numerator $3^4-81 = 81-81 = 0$; denominator $2(9)-15-3 = 0$. Indeterminate $\\frac{0}{0}$."
+        },
+        {
+          "title": "Factor",
+          "body": "$x^4-81 = (x^2-9)(x^2+9) = (x-3)(x+3)(x^2+9)$ and $2x^2-5x-3 = (2x+1)(x-3)$.\n\nCancel $(x-3)$: $\\dfrac{(x+3)(x^2+9)}{2x+1}$."
+        },
+        {
+          "title": "Substitute",
+          "body": "$\\dfrac{(3+3)(9+9)}{2\\cdot 3+1} = \\dfrac{6 \\times 18}{7} = \\dfrac{108}{7}$."
+        }
+      ],
+      "answer": {
+        "value": "108/7",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The limit is 108/7 ≈ 15.43, not 1."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "53/12 does not come from any correct simplification; the factored form gives $108/7$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: $\\frac{6\\cdot18}{7}$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The $\\frac{0}{0}$ form is removable, so the limit exists."
+        }
+      ],
+      "shortcut": "L'Hôpital: $\\dfrac{4x^3}{4x-5}\\Big|_{x=3} = \\dfrac{108}{7}$.",
+      "pitfalls": [
+        "Concluding \"limit does not exist\" just because direct substitution gives $\\frac{0}{0}$."
+      ],
+      "verification": "L'Hôpital gives the same $108/7$."
+    },
+    "cse-2019-cs-14": {
+      "approach": "In a B+ tree only the leaf level points to data records; internal nodes hold keys and child pointers purely for routing.",
+      "concepts": [
+        "B+ tree",
+        "Indexing"
+      ],
+      "steps": [
+        {
+          "title": "Internal nodes",
+          "body": "Non-leaf nodes store separator keys and pointers to **child nodes** only. Record pointers (or records) live only in the leaves — that is the key difference from a B tree."
+        },
+        {
+          "title": "Other properties",
+          "body": "All leaves are at the same depth (height-balanced), keys in every node are sorted, and leaves are chained by a next-leaf pointer for range scans."
+        }
+      ],
+      "answer": {
+        "value": "Non-leaf nodes have pointers to data records",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "True: every leaf is at the same level, so the tree is height-balanced."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "NOT correct: internal nodes point only to child nodes; data-record pointers exist only at the leaves."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "True: keys in each node are kept sorted to allow binary/sequential search."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "True: leaves are linked in key order to support range queries."
+        }
+      ],
+      "pitfalls": [
+        "Confusing B+ trees with B trees, where internal nodes do carry record pointers."
+      ],
+      "verification": "Standard B+ tree definition (Silberschatz/Korth): record pointers appear only in leaf nodes."
+    },
+    "cse-2019-cs-15": {
+      "approach": "A pumping length $p$ must make **every** string of length $\\ge p$ pumpable. The string $b^{10}$ cannot be pumped at all, so $p > 10$; then check that 24 works.",
+      "concepts": [
+        "Pumping lemma",
+        "Pumping length"
+      ],
+      "steps": [
+        {
+          "title": "Strings of L",
+          "body": "$a$-strings: lengths $2, 5, 8, 11, \\dots$ ($\\equiv 2 \\bmod 3$). $b$-strings: lengths $10, 22, 34, \\dots$ ($\\equiv 10 \\bmod 12$, at least 10)."
+        },
+        {
+          "title": "b^10 cannot be pumped",
+          "body": "Pumping $y = b^j$ ($1 \\le j \\le 10$) down ($i=0$) gives $b^{10-j}$ of length $< 10$, which is not in $L$. So any valid $p$ must exceed 10, ruling out 3, 5 and 9."
+        },
+        {
+          "title": "24 works",
+          "body": "Strings with length $\\ge 24$: $a^{2+3k}$ ($k \\ge 8$): take $y = aaa$; $a^{2+3(k+i-1)}$ stays in $L$ for all $i \\ge 0$ since $k-1 \\ge 0$.\n\n$b^{10+12k}$ with $k \\ge 2$ (length $\\ge 34$): take $y = b^{12}$ within the first 24 symbols; $i=0$ gives $b^{10+12(k-1)}$, still in $L$.\n\nSo $p = 24$ satisfies the lemma."
+        }
+      ],
+      "answer": {
+        "value": "24",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "With $p=3$ the string $b^{10}$ (length 10 ≥ 3) would have to be pumpable, but it is not."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Same problem: $b^{10}$ has length $\\ge 5$ and cannot be pumped."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$b^{10}$ has length $\\ge 9$ and cannot be pumped."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Every string of length $\\ge 24$ can be pumped with $y = a^3$ or $y = b^{12}$."
+        }
+      ],
+      "pitfalls": [
+        "Picking the smallest number that works for the a-part (3) and forgetting that b^10 must also be pumpable when p ≤ 10."
+      ],
+      "verification": "Options 3, 5 and 9 are all $\\le 10$, so they fail on $b^{10}$; for $p = 24$ every long string has a valid pump ($a^3$ or $b^{12}$), as shown."
+    },
+    "cse-2019-cs-16": {
+      "approach": "SMTP is the push protocol used to send/relay mail; POP3 (or IMAP) is the pull protocol used by a client to retrieve mail from its mailbox.",
+      "concepts": [
+        "SMTP",
+        "POP3/IMAP",
+        "MIME"
+      ],
+      "steps": [
+        {
+          "title": "Sending",
+          "body": "Only **SMTP** sends mail (client → server, server → server). IMAP and POP3 cannot send."
+        },
+        {
+          "title": "Retrieving",
+          "body": "**POP3** and **IMAP** retrieve mail. MIME is a content-encoding format, not a transfer protocol."
+        }
+      ],
+      "answer": {
+        "value": "SMTP, POP3",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "IMAP is a retrieval protocol; it cannot be used to send mail."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "SMTP sends, POP3 retrieves — correct order."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "MIME is a message-format extension, not a retrieval protocol."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Order reversed: IMAP retrieves and SMTP sends."
+        }
+      ],
+      "pitfalls": [
+        "Treating MIME as a protocol for accessing mailboxes."
+      ],
+      "verification": "Standard e-mail architecture: user agent → SMTP → mail server; mail server → POP3/IMAP → user agent."
+    },
+    "cse-2019-cs-17": {
+      "approach": "Each executed fork() doubles the number of processes. fork() runs for $i = 0, 2, 4, 6, 8$ — 5 times — so there are $2^5$ processes, of which one is the original parent.",
+      "concepts": [
+        "fork()",
+        "Process creation"
+      ],
+      "steps": [
+        {
+          "title": "Count the forks",
+          "body": "The condition $i \\% 2 == 0$ holds for $i \\in \\{0, 2, 4, 6, 8\\}$: 5 calls on every process's path."
+        },
+        {
+          "title": "Doubling",
+          "body": "Each fork doubles the population, and children continue the same loop: $1 \\to 2 \\to 4 \\to 8 \\to 16 \\to 32$ processes."
+        },
+        {
+          "title": "Children only",
+          "body": "Child processes $= 2^5 - 1 = 32 - 1 = 31$."
+        }
+      ],
+      "answer": {
+        "value": "31",
+        "number": 31,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Counting 10 forks (the loop runs 10 times, but only even i forks).",
+        "Forgetting to subtract the original parent."
+      ],
+      "verification": "$n$ sequential forks always give $2^n - 1$ children; with $n = 5$, 31."
+    },
+    "cse-2019-cs-18": {
+      "approach": "C passes arguments by value, so jumble just returns 2·(first arg) + (second arg); trace the two calls in main.",
+      "concepts": [
+        "Call by value",
+        "Code tracing"
+      ],
+      "steps": [
+        {
+          "title": "First call",
+          "body": "$y = \\text{jumble}(y, x) = \\text{jumble}(5, 2) = 2\\cdot5 + 2 = 12$. Now $x = 2, y = 12$."
+        },
+        {
+          "title": "Second call",
+          "body": "$x = \\text{jumble}(y, x) = \\text{jumble}(12, 2) = 2\\cdot12 + 2 = 26$."
+        },
+        {
+          "title": "Output",
+          "body": "printf prints **26**."
+        }
+      ],
+      "answer": {
+        "value": "26",
+        "number": 26,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Mixing up the argument order: the first argument is main's y, bound to jumble's x."
+      ],
+      "verification": "Parameter names inside jumble are local copies, so main's x and y change only through the assignments."
+    },
+    "cse-2019-cs-19": {
+      "approach": "FOLLOW(B) comes from $A \\to BD$: add FIRST(D) minus $\\epsilon$, and since D is nullable also add FOLLOW(A).",
+      "concepts": [
+        "FIRST and FOLLOW sets",
+        "Nullable symbols"
+      ],
+      "steps": [
+        {
+          "title": "From A → BD",
+          "body": "FIRST(D) $= \\{d, \\epsilon\\}$, so $d \\in$ FOLLOW(B). D is nullable, so FOLLOW(A) $\\subseteq$ FOLLOW(B)."
+        },
+        {
+          "title": "FOLLOW(A)",
+          "body": "From $S \\to Aa$: FOLLOW(A) $= \\{a\\}$."
+        },
+        {
+          "title": "Combine and encode",
+          "body": "FOLLOW(B) $= \\{a, d\\}$ → indices 3 and 1 → descending: **31**."
+        }
+      ],
+      "answer": {
+        "value": "31",
+        "number": 31,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Adding $ to FOLLOW(B): $ is only in FOLLOW(S), and S always ends with a.",
+        "Missing d by looking only at FOLLOW(A)."
+      ],
+      "verification": "Possible strings: a, ba, da, bda — after B (b or ε) the next symbol is always d or a."
+    },
+    "cse-2019-cs-20": {
+      "approach": "The worst position for the pivot is an extreme of the array (partition of size 0 and n−1), which happens exactly when the smallest or largest element is chosen.",
+      "concepts": [
+        "Randomised quicksort",
+        "Probability"
+      ],
+      "steps": [
+        {
+          "title": "Worst placements",
+          "body": "The pivot lands at index 0 if it is the minimum and at index 24 if it is the maximum — both give the unbalanced 0 / 24 split."
+        },
+        {
+          "title": "Probability",
+          "body": "$P = \\dfrac{2}{25} = 0.08$."
+        }
+      ],
+      "answer": {
+        "value": "0.08",
+        "number": 0.08,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Counting only one extreme (1/25 = 0.04)."
+      ],
+      "verification": "2 favourable pivots out of 25 equally likely ones."
+    },
+    "cse-2019-cs-21": {
+      "approach": "Powers of 3 mod 5 cycle with period 4 (Fermat: $3^4 \\equiv 1$), so reduce the exponent mod 4.",
+      "concepts": [
+        "Modular arithmetic",
+        "Fermat's little theorem"
+      ],
+      "steps": [
+        {
+          "title": "Cycle",
+          "body": "$3^1 \\equiv 3,\\ 3^2 \\equiv 4,\\ 3^3 \\equiv 2,\\ 3^4 \\equiv 1 \\pmod 5$."
+        },
+        {
+          "title": "Reduce",
+          "body": "$51 = 4\\cdot12 + 3$, so $3^{51} = (3^4)^{12}\\cdot 3^3 \\equiv 1 \\cdot 27 \\equiv 2 \\pmod 5$."
+        }
+      ],
+      "answer": {
+        "value": "2",
+        "number": 2,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Reducing the exponent mod 5 instead of mod 4."
+      ],
+      "verification": "$3^{51} = 3^{48}\\cdot 27$ and $3^{48} = 81^{12} \\equiv 1$."
+    },
+    "cse-2019-cs-22": {
+      "approach": "Split 1..13 by the MSB of their 4-bit form, then add the probabilities that both picks fall in the same group.",
+      "concepts": [
+        "Binary representation",
+        "Independent events"
+      ],
+      "steps": [
+        {
+          "title": "Groups",
+          "body": "MSB 0: 1–7 (0001–0111) → 7 numbers. MSB 1: 8–13 (1000–1101) → 6 numbers."
+        },
+        {
+          "title": "Same MSB",
+          "body": "$P = \\left(\\dfrac{7}{13}\\right)^2 + \\left(\\dfrac{6}{13}\\right)^2 = \\dfrac{49 + 36}{169} = \\dfrac{85}{169} \\approx 0.503$."
+        }
+      ],
+      "answer": {
+        "value": "0.503",
+        "number": 0.503,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Choosing \"without replacement\" — the picks are independent, so the same number may repeat."
+      ],
+      "verification": "$85/169 = 0.50296\\ldots$, inside the official range 0.502–0.504."
+    },
+    "cse-2019-cs-23": {
+      "approach": "Each update is read–modify–write, so a process can read D, be pre-empted, and later overwrite other updates (lost update). Maximum: lose only the −50; minimum: lose the +20 and +10.",
+      "concepts": [
+        "Race condition",
+        "Lost update"
+      ],
+      "steps": [
+        {
+          "title": "Maximum Y",
+          "body": "P2 and P1 both read 100. P2 writes 50, then P1 writes 120 (P2's update lost). P3 reads 120 and writes 130.\n\n$Y = 100 + 20 + 10 = 130$."
+        },
+        {
+          "title": "Minimum X",
+          "body": "P2 reads 100 and is pre-empted. P1 runs (D = 120), P3 runs (D = 130). P2 resumes and writes 100 − 50 = 50.\n\n$X = 50$."
+        },
+        {
+          "title": "Difference",
+          "body": "$Y - X = 130 - 50 = 80$."
+        }
+      ],
+      "answer": {
+        "value": "80",
+        "number": 80,
+        "matchesKey": true,
+        "keyNote": "The previously stored key 70 was wrong; the official GATE 2019 CS key for Q.23 is 80 (fixes entry added)."
+      },
+      "pitfalls": [
+        "Taking the minimum as 100 − 50 = 50 but the maximum as only 120 (losing both P2 and P3 is not the maximum).",
+        "Assuming updates are atomic."
+      ],
+      "verification": "Any final value is 100 + (sum of the updates that survive); the survivor sets with largest/smallest sums are $\\{+20,+10\\}$ = 130 and $\\{-50\\}$ = 50."
+    },
+    "cse-2019-cs-24": {
+      "approach": "ip points at arr[4], and ip[1] means *(ip + 1) = arr[5].",
+      "concepts": [
+        "Pointer arithmetic",
+        "Array indexing"
+      ],
+      "steps": [
+        {
+          "title": "Where ip points",
+          "body": "$ip = arr + 4 \\Rightarrow ip$ points to $arr[4] = 5$."
+        },
+        {
+          "title": "Index from ip",
+          "body": "$ip[1] = *(ip+1) = arr[5] = 6$."
+        }
+      ],
+      "answer": {
+        "value": "6",
+        "number": 6,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Counting from 1: arr[4] is the fifth element (5), not 4."
+      ],
+      "verification": "arr = {1,2,3,4,5,6,...}: index 5 holds 6."
+    },
+    "cse-2019-cs-25": {
+      "approach": "Kadane's algorithm scans once, keeping the best sum ending at the current index (reset to 0 when it goes negative); it gives the same result as divide and conquer in $O(n)$.",
+      "concepts": [
+        "Maximum subarray",
+        "Kadane's algorithm",
+        "Divide and conquer"
+      ],
+      "steps": [
+        {
+          "title": "Skip the negative prefix",
+          "body": "$-5$ and $-10$ only lower any sum, so the running sum resets to 0 after each.",
+          "scene": {
+            "pointers": [
+              {
+                "name": "i",
+                "at": 1
+              }
+            ],
+            "hl": [
+              {
+                "at": [
+                  0,
+                  1
+                ],
+                "tone": "muted"
+              }
+            ],
+            "vars": {
+              "cur": 0,
+              "best": -5
+            },
+            "caption": "cur resets to 0 after −5 and −10"
+          }
+        },
+        {
+          "title": "Grow from index 2",
+          "body": "Running sums: $6, 9, 8, 6, 19, 23$ (after 13 and 4). best = 23 at index 7.",
+          "scene": {
+            "pointers": [
+              {
+                "name": "i",
+                "at": 7
+              }
+            ],
+            "ranges": [
+              {
+                "from": 2,
+                "to": 7,
+                "label": "sum 23"
+              }
+            ],
+            "hl": [
+              {
+                "at": [
+                  2,
+                  7
+                ],
+                "tone": "accent"
+              }
+            ],
+            "vars": {
+              "cur": 23,
+              "best": 23
+            },
+            "caption": "6+3−1−2+13+4 = 23"
+          }
+        },
+        {
+          "title": "Keep going through the dip",
+          "body": "$23 - 9 - 1 = 13$ (still positive, so keep it), then $13 + 4 + 12 = 29$. best = 29 at index 11.",
+          "scene": {
+            "pointers": [
+              {
+                "name": "i",
+                "at": 11
+              }
+            ],
+            "ranges": [
+              {
+                "from": 2,
+                "to": 11,
+                "label": "sum 29"
+              }
+            ],
+            "hl": [
+              {
+                "at": [
+                  2,
+                  11
+                ],
+                "tone": "success"
+              }
+            ],
+            "vars": {
+              "cur": 29,
+              "best": 29
+            },
+            "caption": "the −10 dip is outweighed by 4+12"
+          }
+        },
+        {
+          "title": "Finish",
+          "body": "$29 - 3 = 26$, $26 + 0 = 26$ — no improvement. Maximum $S(2, 11) = 29$.",
+          "scene": {
+            "pointers": [
+              {
+                "name": "i",
+                "at": 13
+              }
+            ],
+            "ranges": [
+              {
+                "from": 2,
+                "to": 11,
+                "label": "max = 29"
+              }
+            ],
+            "hl": [
+              {
+                "at": [
+                  2,
+                  11
+                ],
+                "tone": "success"
+              },
+              {
+                "at": [
+                  12,
+                  13
+                ],
+                "tone": "muted"
+              }
+            ],
+            "vars": {
+              "cur": 26,
+              "best": 29
+            },
+            "caption": "answer S(2,11) = 29"
+          }
+        }
+      ],
+      "animation": {
+        "kind": "array",
+        "label": "A",
+        "cells": [
+          -5,
+          -10,
+          6,
+          3,
+          -1,
+          -2,
+          13,
+          4,
+          -9,
+          -1,
+          4,
+          12,
+          -3,
+          0
+        ],
+        "pointers": [
+          {
+            "name": "i",
+            "at": 0
+          }
+        ],
+        "vars": {
+          "cur": 0,
+          "best": "−∞"
+        }
+      },
+      "answer": {
+        "value": "29",
+        "number": 29,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Stopping at 23 because of the −9, −1 that follow.",
+        "Taking the sum of all positive elements (54), which is not a contiguous subarray."
+      ],
+      "verification": "$6+3-1-2+13+4-9-1+4+12 = 29$; extending left adds −10 or −5, extending right adds −3 then 0."
+    },
+    "cse-2019-cs-26": {
+      "approach": "Trace the recursion for any positive n: n/2 eventually becomes 0, and convert(0) calls convert(0) forever because 0 < 0 is false. The prints come after the recursive call, so none is reached.",
+      "concepts": [
+        "Recursion",
+        "Base case",
+        "Integer division"
+      ],
+      "steps": [
+        {
+          "title": "Descend",
+          "body": "e.g. $n = 6$: convert(6) → convert(3) → convert(1) → convert(0) → convert(0) → … since $0/2 = 0$."
+        },
+        {
+          "title": "No base case reached",
+          "body": "The only exit is $n < 0$, which a non-negative $n$ never reaches by halving. The recursion never returns (it ends only by stack overflow)."
+        },
+        {
+          "title": "Nothing printed",
+          "body": "Every printf(\"%d\", n%2) sits **after** convert(n/2), so it would run only when that call returns — which never happens."
+        }
+      ],
+      "answer": {
+        "value": "It will not print anything and will not terminate",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "It would print the binary representation only if the base case were n == 0; with n < 0 it never returns."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "The print order is irrelevant — no print executes."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "It does not terminate, but no digit is printed because printf follows the non-returning call."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: infinite recursion on convert(0) and no output."
+        }
+      ],
+      "pitfalls": [
+        "Reading the base case as n <= 0 or n == 0."
+      ],
+      "verification": "For n = 1: convert(1) → convert(0) → convert(0) … — the printf in convert(1) is never reached."
+    },
+    "cse-2019-cs-27": {
+      "approach": "num is static, so every call to r() returns the current value and then decrements it. List the calls in the order the for loop makes them: init, test, body, update, test, …",
+      "concepts": [
+        "Static variables",
+        "Post-decrement",
+        "for-loop order"
+      ],
+      "steps": [
+        {
+          "title": "Init and first test",
+          "body": "init r() returns 7 (num → 6). test r() returns 6 ≠ 0 → enter loop (num → 5).",
+          "scene": {
+            "line": 6,
+            "vars": {
+              "num": 5
+            },
+            "output": "",
+            "caption": "init: 7, test: 6 (true)"
+          }
+        },
+        {
+          "title": "First body",
+          "body": "printf prints r() = **5** (num → 4). update r() returns 4 (num → 3).",
+          "scene": {
+            "line": 7,
+            "vars": {
+              "num": 3
+            },
+            "output": "5",
+            "caption": "print 5, update returns 4"
+          }
+        },
+        {
+          "title": "Second iteration",
+          "body": "test r() returns 3 → true (num → 2). Body prints **2** (num → 1). update returns 1 (num → 0).",
+          "scene": {
+            "line": 7,
+            "vars": {
+              "num": 0
+            },
+            "output": "52",
+            "caption": "test 3, print 2, update 1"
+          }
+        },
+        {
+          "title": "Exit",
+          "body": "test r() returns 0 → false (num → −1). Output: **52**.",
+          "scene": {
+            "line": 8,
+            "vars": {
+              "num": -1
+            },
+            "output": "52",
+            "caption": "test returns 0 → loop ends"
+          }
+        }
+      ],
+      "animation": {
+        "kind": "code",
+        "lang": "c",
+        "code": "int r(){\n    static int num=7;\n    return num--;\n}\nint main(){\n    for (r();r();r())\n        printf(\"%d\",r());\n    return 0;\n}",
+        "line": 2,
+        "vars": {
+          "num": 7
+        },
+        "output": ""
+      },
+      "answer": {
+        "value": "52",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Would need the printed calls to return 4 and 1; they return 5 and 2."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: the body calls return 5 and 2."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Ignores that init and the first test consume 7 and 6 before the first print."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The loop exits when the test returns 0; that 0 is never printed."
+        }
+      ],
+      "pitfalls": [
+        "Forgetting that the condition r() also decrements num.",
+        "Treating num as re-initialised on every call (it is static)."
+      ],
+      "verification": "Sequence of r() return values: 7 (init), 6 (test), 5 (print), 4 (update), 3 (test), 2 (print), 1 (update), 0 (test, exit)."
+    },
+    "cse-2019-cs-28": {
+      "approach": "Mask 255.255.255.252 (/30) groups the last octet into blocks of 4. AND each last octet with 252 to get its subnet.",
+      "concepts": [
+        "Subnet mask",
+        "Network address"
+      ],
+      "steps": [
+        {
+          "title": "Subnet of each host",
+          "body": "| Machine | Last octet | AND 252 | Subnet |\n|---|---|---|---|\n| M | 2 | 0 | 100.10.5.0/30 |\n| N | 5 | 4 | 100.10.5.4/30 |\n| P | 6 | 4 | 100.10.5.4/30 |"
+        },
+        {
+          "title": "Compare",
+          "body": "N and P share 100.10.5.4; M is in 100.10.5.0. So only N and P are in the same subnet."
+        }
+      ],
+      "answer": {
+        "value": "Only N and P belong to the same subnet",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "M (block 0–3) is in a different /30 block from N and P (4–7)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "M is in 100.10.5.0 and N in 100.10.5.4."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: 5 AND 252 = 6 AND 252 = 4."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "N and P share a subnet, so there are only two subnets."
+        }
+      ],
+      "pitfalls": [
+        "Comparing only the first three octets (all are 100.10.5)."
+      ],
+      "verification": "/30 blocks: .0–.3, .4–.7. Host .2 is in the first, .5 and .6 in the second."
+    },
+    "cse-2019-cs-29": {
+      "approach": "ARP resolves an IP address on the same LAN by broadcasting the request at the link layer (destination MAC FF:FF:FF:FF:FF:FF); Y answers with a unicast reply.",
+      "concepts": [
+        "ARP",
+        "Ethernet broadcast"
+      ],
+      "steps": [
+        {
+          "title": "Same subnet",
+          "body": "Y is local, so no router is involved — X resolves Y's IP directly."
+        },
+        {
+          "title": "ARP request",
+          "body": "X puts Y's IP in the ARP request and sends it in an Ethernet frame with the **broadcast MAC** address. Every host receives it; only Y replies with its MAC."
+        }
+      ],
+      "answer": {
+        "value": "X sends an ARP request packet with broadcast MAC address in its local subnet",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The gateway is needed only for off-subnet destinations; ARP is not forwarded to it for local hosts."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "X does not route the request through the gateway's MAC; ARP for a local host is a broadcast."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: ARP request in a broadcast Ethernet frame."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "ARP is a link-layer protocol and does not use an IP broadcast address; the broadcast is at the MAC level."
+        }
+      ],
+      "pitfalls": [
+        "Confusing an IP-level broadcast with the link-layer broadcast that ARP uses."
+      ],
+      "verification": "RFC 826: ARP requests are sent to the Ethernet broadcast address; replies are unicast."
+    },
+    "cse-2019-cs-30": {
+      "approach": "The AND output is the intersection of the minterm sets of f1 and f2; XOR with f3 keeps minterms that are in exactly one of the two sets (symmetric difference).",
+      "concepts": [
+        "Sum of minterms",
+        "AND as intersection",
+        "XOR as symmetric difference"
+      ],
+      "steps": [
+        {
+          "title": "AND gate",
+          "body": "$f_1 f_2$: common minterms of $\\{0,2,5,8,14\\}$ and $\\{2,3,6,8,14,15\\}$ = $\\{2, 8, 14\\}$."
+        },
+        {
+          "title": "XOR gate",
+          "body": "$\\{2,8,14\\} \\oplus \\{2,7,11,14\\}$: remove the common $\\{2, 14\\}$, keep the rest → $\\{7, 8, 11\\}$."
+        },
+        {
+          "title": "Result",
+          "body": "$f = \\sum(7, 8, 11)$."
+        }
+      ],
+      "answer": {
+        "value": "Σ(7, 8, 11)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: symmetric difference of {2,8,14} and {2,7,11,14}."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "This is the union {2,8,14} ∪ {2,7,11,14} — that would be an OR gate, not XOR."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "This is the intersection — an AND gate at the second stage."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "This is the union of f2 and f3 (plus 0, 5); it ignores both the AND and the XOR cancellation."
+        }
+      ],
+      "pitfalls": [
+        "Treating XOR as OR and keeping minterms 2 and 14."
+      ],
+      "verification": "Minterm 2: f1f2 = 1, f3 = 1 → 0. Minterm 7: 0 ⊕ 1 = 1. Minterm 8: 1 ⊕ 0 = 1. Minterm 11: 0 ⊕ 1 = 1. Minterm 14: 1 ⊕ 1 = 0."
+    },
+    "cse-2019-cs-31": {
+      "approach": "A PDA can match only nested (last-in-first-out) dependencies. In (C) the $w \\ldots w^R$ pair and the $a^n \\ldots b^n$ pair cross each other, which one stack cannot handle.",
+      "concepts": [
+        "Context-free languages",
+        "Crossing dependencies",
+        "Pumping lemma for CFLs"
+      ],
+      "steps": [
+        {
+          "title": "A, B, D are CFLs",
+          "body": "(A) even palindromes: $S \\to aSa \\mid bSb \\mid \\epsilon$.\n\n(B) $w\\,a^nb^n\\,w^R$: nested — $S \\to aSa \\mid bSb \\mid T,\\ T \\to aTb \\mid \\epsilon$.\n\n(D) union of $\\{a^nb^n\\}, \\{a^nb^{3n}\\}, \\{a^nb^{5n}\\}$, each context-free, and CFLs are closed under union."
+        },
+        {
+          "title": "C is not",
+          "body": "In $w\\,a^n\\,w^R\\,b^n$ the block $a^n$ must be matched with $b^n$ **across** $w^R$, while $w$ must be matched with $w^R$ **across** $a^n$. These two dependencies cross, and a single stack can only check nested (LIFO) matchings: after pushing $w$ and then counting $a^n$, the PDA must pop $w$ before it can reach the $a$-count.\n\nA CFL pumping-lemma argument on a long witness (e.g. $w = (ab)^p$, $n = p$) makes this rigorous: a pump window of length $\\le p$ cannot change both crossing pairs consistently. So C is not context-free."
+        }
+      ],
+      "answer": {
+        "value": "$\\{wa^nw^Rb^n\\}$",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Even-length palindromes — a classic CFL."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "The a^n b^n block sits inside the w … w^R nesting, so a single stack handles it."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: the two matchings cross, so no PDA can recognise it."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "A finite union of the CFLs {a^n b^n}, {a^n b^{3n}}, {a^n b^{5n}} is a CFL."
+        }
+      ],
+      "pitfalls": [
+        "Assuming D is not context-free because of the \"set of choices\" for i; a finite union keeps it context-free."
+      ],
+      "verification": "Nesting test: B is properly nested (w ( a^n b^n ) w^R); C interleaves w | a^n | w^R | b^n."
+    },
+    "cse-2019-cs-32": {
+      "approach": "Project F onto each schema and test BCNF; then check that every FD is covered by one schema and that the common attribute is a key of one side.",
+      "concepts": [
+        "BCNF",
+        "Dependency preservation",
+        "Lossless join"
+      ],
+      "steps": [
+        {
+          "title": "Y = (PR)",
+          "body": "FD $R \\to P$; $R$ is a key of Y → BCNF."
+        },
+        {
+          "title": "Z = (QRS)",
+          "body": "FDs $QR \\to S$ and $S \\to Q$. Keys: $QR$ and $RS$. In $S \\to Q$, $S$ is not a superkey → **Z is not in BCNF**. Statement I is false."
+        },
+        {
+          "title": "Preservation",
+          "body": "$R \\to P$ is in Y; $QR \\to S$ and $S \\to Q$ are in Z. All of F is preserved."
+        },
+        {
+          "title": "Lossless",
+          "body": "$Y \\cap Z = \\{R\\}$ and $R \\to P$, so $R$ is a key of Y → lossless. Statement II is true."
+        }
+      ],
+      "answer": {
+        "value": "II only",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Statement I fails because S → Q violates BCNF in Z."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Statement I is false (and II is true)."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: Z violates BCNF, but the decomposition is lossless and dependency-preserving."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Statement II is true."
+        }
+      ],
+      "pitfalls": [
+        "Seeing that S → Q has a prime attribute on the right and calling Z BCNF — that only makes it 3NF."
+      ],
+      "verification": "Closure of S in Z is {S, Q} ≠ QRS, so S is not a superkey of Z."
+    },
+    "cse-2019-cs-33": {
+      "approach": "Each TLB entry maps one whole page, so translation without a miss covers 128 pages. Count addresses per page in words because memory is word-addressable.",
+      "concepts": [
+        "TLB reach",
+        "Word addressing",
+        "Paging"
+      ],
+      "steps": [
+        {
+          "title": "Addresses per page",
+          "body": "Page $= 8\\text{ kB} = 2^{13}$ bytes; word $= 4 = 2^2$ bytes → $2^{11}$ words = $2^{11}$ addresses per page."
+        },
+        {
+          "title": "TLB reach",
+          "body": "$128 \\times 2^{11} = 2^7 \\cdot 2^{11} = 2^{18} = 256 \\times 2^{10}$ addresses."
+        }
+      ],
+      "answer": {
+        "value": "$256 \\times 2^{10}$",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$16 \\times 2^{10} = 2^{14}$ — too small by a factor of 16."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: $2^7 \\times 2^{11} = 2^{18}$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$4 \\times 2^{20} = 2^{22}$ is too large."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$8 \\times 2^{20} = 2^{23}$ — too large; the byte-addressed count would be $2^{20}$, still not this."
+        }
+      ],
+      "pitfalls": [
+        "Using byte addressing: $128 \\times 2^{13} = 2^{20}$ (not an option).",
+        "Letting the 64-bit / 48-bit address widths distract — they do not affect TLB reach."
+      ],
+      "verification": "$2^{18} = 262144 = 256 \\times 1024$."
+    },
+    "cse-2019-cs-34": {
+      "approach": "Anything describable by a finite string (programs, Turing machines) is countable. The power set of the countable set {0,1}* is uncountable, and removing a countable subset from it leaves it uncountable.",
+      "concepts": [
+        "Countable vs uncountable sets",
+        "Cantor diagonalisation"
+      ],
+      "steps": [
+        {
+          "title": "Countable: S1, S2",
+          "body": "Each RE language is accepted by some TM, and TMs are finite strings → countably many. Valid C programs are finite strings over a finite alphabet → countable."
+        },
+        {
+          "title": "Uncountable: S3",
+          "body": "Languages over $\\{0,1\\}$ = subsets of the countable set $\\{0,1\\}^*$, i.e. $2^{\\{0,1\\}^*}$, which is uncountable (Cantor)."
+        },
+        {
+          "title": "Uncountable: S4",
+          "body": "Regular languages are countable (finitely many DFAs of each size). S4 = S3 minus a countable set, so it is still uncountable."
+        }
+      ],
+      "answer": {
+        "value": "S3 and S4",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Both S1 and S2 are countable."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: all languages, and all non-regular languages, are uncountable."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "S2 (C programs) is countable."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "S1 (RE languages) is countable."
+        }
+      ],
+      "pitfalls": [
+        "Thinking \"non-regular\" is a small class — it is almost all languages."
+      ],
+      "verification": "If S4 were countable, S3 = S4 ∪ (regular languages) would be a union of two countable sets and hence countable — a contradiction."
+    }
+  }
+}
