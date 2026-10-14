@@ -1,0 +1,105 @@
+{
+  "paper": "cse-2019",
+  "fixes": [
+    {
+      "id": "cse-2019-cs-13",
+      "field": "subject",
+      "before": "pds",
+      "after": "calc",
+      "reason": "Limit evaluation is calculus, not C programming.",
+      "source": "GATE 2019 CS question paper"
+    },
+    {
+      "id": "cse-2019-cs-13",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "limits",
+      "reason": "Limit evaluation is calculus, not C programming.",
+      "source": "GATE 2019 CS question paper"
+    },
+    {
+      "id": "cse-2019-cs-16",
+      "field": "subject",
+      "before": "pds",
+      "after": "cn",
+      "reason": "E-mail protocols (SMTP/POP3) are computer networks, application layer.",
+      "source": "GATE 2019 CS question paper"
+    },
+    {
+      "id": "cse-2019-cs-16",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "application",
+      "reason": "E-mail protocols (SMTP/POP3) are computer networks, application layer.",
+      "source": "GATE 2019 CS question paper"
+    },
+    {
+      "id": "cse-2019-cs-18",
+      "field": "subject",
+      "before": "coa",
+      "after": "pds",
+      "reason": "Tracing a C function call is programming, not ISA.",
+      "source": "GATE 2019 CS question paper"
+    },
+    {
+      "id": "cse-2019-cs-18",
+      "field": "topic",
+      "before": "isa",
+      "after": "c-prog",
+      "reason": "Tracing a C function call is programming, not ISA.",
+      "source": "GATE 2019 CS question paper"
+    },
+    {
+      "id": "cse-2019-cs-21",
+      "field": "subject",
+      "before": "coa",
+      "after": "dm",
+      "reason": "Modular exponentiation is discrete mathematics (number theory), not ISA.",
+      "source": "GATE 2019 CS question paper"
+    },
+    {
+      "id": "cse-2019-cs-21",
+      "field": "topic",
+      "before": "isa",
+      "after": "groups",
+      "reason": "Modular exponentiation is discrete mathematics (number theory), not ISA.",
+      "source": "GATE 2019 CS question paper"
+    },
+    {
+      "id": "cse-2019-cs-22",
+      "field": "answer",
+      "before": "0.503",
+      "after": "0.502 to 0.504",
+      "reason": "Official key gives the range 0.502 to 0.504 (85/169 = 0.50296).",
+      "source": "GATE 2019 CS official answer key (gate.iitm.ac.in/gate2019/pdfs/Anskey/CS_key_Published.pdf, via web.archive.org)"
+    },
+    {
+      "id": "cse-2019-cs-23",
+      "field": "answer",
+      "before": 70,
+      "after": 80,
+      "reason": "Max 130 (−50 lost) minus min 50 (+20 and +10 lost) = 80; stored 70 was wrong.",
+      "source": "GATE 2019 CS official answer key (gate.iitm.ac.in/gate2019/pdfs/Anskey/CS_key_Published.pdf, via web.archive.org): Q.23 = 80 to 80"
+    },
+    {
+      "id": "cse-2019-cs-30",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2019/cs-30-1.png",
+          "alt": "f1 and f2 feed a 2-input AND gate; its output and f3 feed a 2-input XOR gate whose output is f.",
+          "svg": "cse-2019/cs-30-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2019/cs-30-1.png",
+          "alt": "f1 and f2 are inputs of a 2-input AND gate; the AND output and f3 are inputs of a 2-input XOR gate whose output is f.",
+          "svg": "cse-2019/cs-30-1.svg"
+        }
+      ],
+      "reason": "Redrawn SVG (old one showed two AND gates and an OR gate); alt text made precise.",
+      "source": "GATE 2019 CS question paper"
+    }
+  ]
+}
